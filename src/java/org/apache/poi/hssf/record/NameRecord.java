@@ -17,33 +17,19 @@
 
 package org.apache.poi.hssf.record;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.poi.hssf.model.HSSFFormulaParser;
-import org.apache.poi.hssf.record.formula.Area3DPtg;
-import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.record.formula.Ref3DPtg;
-import org.apache.poi.hssf.record.formula.UnionPtg;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.RangeAddress;
+import org.apache.poi.hssf.record.cont.ContinuableRecord;
+import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
+import org.apache.poi.ss.formula.ptg.Area3DPtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.Ref3DPtg;
 import org.apache.poi.ss.formula.Formula;
-import org.apache.poi.ss.util.AreaReference;
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndianByteArrayOutputStream;
-import org.apache.poi.util.LittleEndianInput;
-import org.apache.poi.util.StringUtil;
+import org.apache.poi.util.*;
 
 /**
- * Title:        DEFINEDNAME Record (0x0018) <p/>
- * Description:  Defines a named range within a workbook. <P>
- * REFERENCE:  <P>
- * @author Libin Roman (Vista Portal LDT. Developer)
- * @author  Sergei Kozello (sergeikozello at mail.ru)
- * @author Glen Stampoultzis (glens at apache.org)
- * @version 1.0-pre
+ * Title:        DEFINEDNAME Record (0x0018)<p>
+ * Description:  Defines a named range within a workbook.
  */
-public final class NameRecord extends Record {
+public final class NameRecord extends ContinuableRecord {
     public final static short sid = 0x0018;
 	/**Included for completeness sake, not implemented */
 	public final static byte  BUILTIN_CONSOLIDATE_AREA      = 1;
@@ -80,6 +66,9 @@ public final class NameRecord extends Record {
 		public static final int OPT_COMPLEX =       0x0010;
 		public static final int OPT_BUILTIN =       0x0020;
 		public static final int OPT_BINDATA =       0x1000;
+		public static boolean isFormula(int optValue) {
+			return (optValue & 0x0F) == 0;
+		}
 	}
 
 	private short             field_1_option_flag;
@@ -112,13 +101,15 @@ public final class NameRecord extends Record {
 	/**
 	 * Constructor to create a built-in named region
 	 * @param builtin Built-in byte representation for the name record, use the public constants
+	 * @param sheetNumber the sheet which the name applies to 
 	 */
 	public NameRecord(byte builtin, int sheetNumber)
 	{
 		this();
 		field_12_built_in_code = builtin;
 		setOptionFlag((short)(field_1_option_flag | Option.OPT_BUILTIN));
-		field_6_sheetNumber = sheetNumber; //the extern sheets are set through references
+		// the extern sheets are set through references
+		field_6_sheetNumber = sheetNumber;
 	}
 
 	/** sets the option flag for the named range
@@ -138,7 +129,7 @@ public final class NameRecord extends Record {
 
 	/**
 	 * For named ranges, and built-in names
-	 * @return the 1-based sheet number. 
+	 * @return the 1-based sheet number.
 	 */
 	public int getSheetNumber()
 	{
@@ -244,10 +235,24 @@ public final class NameRecord extends Record {
 	}
 
 	/**
+	 * Indicates that the defined name refers to a user-defined function.
+	 * This attribute is used when there is an add-in or other code project associated with the file.
+	 *
+	 * @param function <code>true</code> indicates the name refers to a function.
+	 */
+	public void setFunction(boolean function){
+		if (function) {
+			field_1_option_flag |= Option.OPT_FUNCTION_NAME;
+		} else {
+			field_1_option_flag &= (~Option.OPT_FUNCTION_NAME);
+		}
+	}
+
+	/**
 	 * @return <code>true</code> if name has a formula (named range or defined value)
 	 */
 	public boolean hasFormula() {
-		return field_1_option_flag == 0 && field_13_name_definition.getEncodedTokenSize() > 0;
+		return Option.isFormula(field_1_option_flag) && field_13_name_definition.getEncodedTokenSize() > 0;
 	}
 
 	/**
@@ -269,7 +274,10 @@ public final class NameRecord extends Record {
 		return (field_1_option_flag & Option.OPT_COMPLEX) != 0;
 	}
 
-	/**Convenience Function to determine if the name is a built-in name
+	/**
+	 * Convenience Function to determine if the name is a built-in name
+	 * 
+	 * @return true, if the name is a built-in name
 	 */
 	public boolean isBuiltInName()
 	{
@@ -333,36 +341,19 @@ public final class NameRecord extends Record {
 		return field_17_status_bar_text;
 	}
 
-
-	/**
-	 * called by the class that is responsible for writing this sucker.
-	 * Subclasses should implement this so that their data is passed back in a
-	 * @param offset to begin writing at
-	 * @param data byte array containing instance data
-	 * @return number of bytes written
-	 */
-	public int serialize( int offset, byte[] data ) {
+    /**
+     * NameRecord can span into
+     *
+     * @param out a data output stream
+     */
+	@Override
+    public void serialize(ContinuableRecordOutput out) {
 
 		int field_7_length_custom_menu = field_14_custom_menu_text.length();
 		int field_8_length_description_text = field_15_description_text.length();
 		int field_9_length_help_topic_text = field_16_help_topic_text.length();
 		int field_10_length_status_bar_text = field_17_status_bar_text.length();
-		int rawNameSize = getNameRawSize();
 
-		int formulaTotalSize = field_13_name_definition.getEncodedSize();
-		int dataSize = 13 // 3 shorts + 7 bytes
-			+ rawNameSize
-			+ field_7_length_custom_menu
-			+ field_8_length_description_text
-			+ field_9_length_help_topic_text
-			+ field_10_length_status_bar_text
-			+ formulaTotalSize;
-		
-		int recSize = 4 + dataSize;
-		LittleEndianByteArrayOutputStream out = new LittleEndianByteArrayOutputStream(data, offset, recSize);
-		
-		out.writeShort(sid);
-		out.writeShort(dataSize);
 		// size defined below
 		out.writeShort(getOptionFlag());
 		out.writeByte(getKeyboardShortcut());
@@ -390,25 +381,23 @@ public final class NameRecord extends Record {
 		}
 		field_13_name_definition.serializeTokens(out);
 		field_13_name_definition.serializeArrayConstantData(out);
-		
+
 		StringUtil.putCompressedUnicode( getCustomMenuText(), out);
 		StringUtil.putCompressedUnicode( getDescriptionText(), out);
 		StringUtil.putCompressedUnicode( getHelpTopicText(), out);
 		StringUtil.putCompressedUnicode( getStatusBarText(), out);
-
-		return recSize;
 	}
 	private int getNameRawSize() {
 		if (isBuiltInName()) {
 			return 1;
-		} 
+		}
 		int nChars = field_12_name_text.length();
 		if(field_11_nameIsMultibyte) {
 			return 2 * nChars;
-		} 
+		}
 		return nChars;
 	}
-	
+
 	protected int getDataSize() {
 		return 13 // 3 shorts + 7 bytes
 			+ getNameRawSize()
@@ -423,11 +412,12 @@ public final class NameRecord extends Record {
 	 * @return extern sheet index
 	 */
 	public int getExternSheetNumber(){
-		if (field_13_name_definition.getEncodedSize() < 1) {
+	    Ptg[] tokens = field_13_name_definition.getTokens();
+		if (tokens.length == 0) {
 			return 0;
 		}
-		Ptg ptg = field_13_name_definition.getTokens()[0];
 
+		Ptg ptg = tokens[0];
 		if (ptg.getClass() == Area3DPtg.class){
 			return ((Area3DPtg) ptg).getExternSheetIndex();
 
@@ -438,98 +428,23 @@ public final class NameRecord extends Record {
 		return 0;
 	}
 
-	/** sets the extern sheet number
-	 * @param externSheetNumber extern sheet number
-	 */
-	public void setExternSheetNumber(short externSheetNumber){
-		Ptg[] ptgs = field_13_name_definition.getTokens();
-		Ptg ptg;
-
-		if (ptgs.length < 1){
-			ptg = createNewPtg();
-			ptgs = new Ptg[] { ptg, };
-		} else {
-			ptg = ptgs[0];
-		}
-
-		if (ptg.getClass() == Area3DPtg.class){
-			((Area3DPtg) ptg).setExternSheetIndex(externSheetNumber);
-
-		} else if (ptg.getClass() == Ref3DPtg.class){
-			((Ref3DPtg) ptg).setExternSheetIndex(externSheetNumber);
-		}
-		field_13_name_definition = Formula.create(ptgs);
-	}
-
-	private static Ptg createNewPtg(){
-		return new Area3DPtg("A1:A1", 0); // TODO - change to not be partially initialised
-	}
-
-	/** gets the reference , the area only (range)
-	 * @return area reference
-	 */
-	public String getAreaReference(HSSFWorkbook book){
-		return HSSFFormulaParser.toFormulaString(book, field_13_name_definition.getTokens());
-	}
-
-	/** sets the reference , the area only (range)
-	 * @param ref area reference
-	 */
-	public void setAreaReference(String ref){
-		//Trying to find if what ptg do we need
-		RangeAddress ra = new RangeAddress(ref);
-		Ptg oldPtg;
-
-		if (field_13_name_definition.getEncodedTokenSize() < 1){
-			oldPtg = createNewPtg();
-		} else {
-			//Trying to find extern sheet index
-			oldPtg = field_13_name_definition.getTokens()[0];
-		}
-		List temp = new ArrayList();
-		int externSheetIndex = 0;
-
-		if (oldPtg.getClass() == Area3DPtg.class){
-			externSheetIndex =  ((Area3DPtg) oldPtg).getExternSheetIndex();
-
-		} else if (oldPtg.getClass() == Ref3DPtg.class){
-			externSheetIndex =  ((Ref3DPtg) oldPtg).getExternSheetIndex();
-		}
-
-		if (ra.hasRange()) {
-			// Is it contiguous or not?
-			AreaReference[] refs = AreaReference.generateContiguous(ref);
-
-			// Add the area reference(s)
-			for(int i=0; i<refs.length; i++) {
-				Ptg ptg = new Area3DPtg(refs[i].formatAsString(), externSheetIndex);
-				temp.add(ptg);
-			}
-			// And then a union if we had more than one area
-			if(refs.length > 1) {
-				Ptg ptg = UnionPtg.instance;
-				temp.add(ptg);
-			}
-		} else {
-			Ref3DPtg ptg = new Ref3DPtg(ra.getFromCell(), externSheetIndex);
-			temp.add(ptg);
-		}
-		Ptg[] ptgs = new Ptg[temp.size()];
-		temp.toArray(ptgs);
-		field_13_name_definition = Formula.create(ptgs);
-	}
-
 	/**
 	 * called by the constructor, should set class level fields.  Should throw
 	 * runtime exception for bad/icomplete data.
 	 *
-	 * @param in the RecordInputstream to read the record from
+	 * @param ris the RecordInputstream to read the record from
 	 */
 	public NameRecord(RecordInputStream ris) {
-		LittleEndianInput in = ris;
+        // YK: Formula data can span into continue records, for example,
+        // when containing a large array of strings. See Bugzilla 50244
+
+        // read all remaining bytes and wrap into a LittleEndianInput
+        byte[] remainder = ris.readAllContinuedRemainder();
+        LittleEndianInput in = new LittleEndianByteArrayInputStream(remainder);
+
 		field_1_option_flag                 = in.readShort();
 		field_2_keyboard_shortcut           = in.readByte();
-		int field_3_length_name_text        = in.readByte();
+		int field_3_length_name_text        = in.readUByte();
 		int field_4_length_name_definition  = in.readShort();
 		field_5_externSheetIndex_plus1      = in.readShort();
 		field_6_sheetNumber                 = in.readUShort();
@@ -550,7 +465,7 @@ public final class NameRecord extends Record {
 			}
 		}
 
-		int nBytesAvailable = in.available() - (f7_customMenuLen 
+		int nBytesAvailable = in.available() - (f7_customMenuLen
 				+ f8_descriptionTextLen + f9_helpTopicTextLen + f10_statusBarTextLen);
 		field_13_name_definition = Formula.read(field_4_length_name_definition, in, nBytesAvailable);
 
@@ -564,7 +479,8 @@ public final class NameRecord extends Record {
 	/**
 	 * return the non static version of the id for this record.
 	 */
-	public short getSid() {
+	@Override
+    public short getSid() {
 		return sid;
 	}
 	/*
@@ -618,8 +534,9 @@ public final class NameRecord extends Record {
 	  3B 00 00 07 00 07 00 00 00 FF 00 ]
 	 */
 
-	public String toString() {
-		StringBuffer sb = new StringBuffer();
+	@Override
+    public String toString() {
+		StringBuilder sb = new StringBuilder();
 
 		sb.append("[NAME]\n");
 		sb.append("    .option flags           = ").append(HexDump.shortToHex(field_1_option_flag)).append("\n");
@@ -635,9 +552,8 @@ public final class NameRecord extends Record {
 		sb.append("    .Name (Unicode text)    = ").append( getNameText() ).append("\n");
 		Ptg[] ptgs = field_13_name_definition.getTokens();
 		sb.append("    .Formula (nTokens=").append(ptgs.length).append("):") .append("\n");
-		for (int i = 0; i < ptgs.length; i++) {
-			Ptg ptg = ptgs[i];
-			sb.append("       " + ptg.toString()).append(ptg.getRVAType()).append("\n");
+		for (Ptg ptg : ptgs) {
+			sb.append("       ").append(ptg).append(ptg.getRVAType()).append("\n");
 		}
 
 		sb.append("    .Menu text       = ").append(field_14_custom_menu_text).append("\n");

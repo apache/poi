@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,28 +14,26 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hwpf.model;
 
-import junit.framework.*;
-import org.apache.poi.hwpf.*;
-import org.apache.poi.hwpf.model.io.*;
+import static org.junit.Assert.assertTrue;
 
-public class TestFontTable
-  extends TestCase
-{
-  private FontTable _fontTable = null;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import org.apache.poi.hwpf.HWPFDocFixture;
+import org.apache.poi.hwpf.model.io.HWPFFileSystem;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+public final class TestFontTable {
+  private FontTable _fontTable;
   private HWPFDocFixture _hWPFDocFixture;
 
-  public TestFontTable(String name)
-  {
-    super(name);
-  }
-
-  public void testReadWrite()
-    throws Exception
-  {
+  @Test
+  public void testReadWrite() throws IOException {
     FileInformationBlock fib = _hWPFDocFixture._fib;
     byte[] tableStream = _hWPFDocFixture._tableStream;
 
@@ -48,7 +45,7 @@ public class TestFontTable
     HWPFFileSystem fileSys = new HWPFFileSystem();
 
     _fontTable.writeTo(fileSys);
-    HWPFOutputStream  tableOut = fileSys.getStream("1Table");
+    ByteArrayOutputStream  tableOut = fileSys.getStream("1Table");
 
 
     byte[] newTableStream = tableOut.toByteArray();
@@ -60,23 +57,15 @@ public class TestFontTable
 
   }
 
-  protected void setUp()
-    throws Exception
-  {
-    super.setUp();
-    /**@todo verify the constructors*/
-    _hWPFDocFixture = new HWPFDocFixture(this);
-
+  @Before
+  public void setUp() throws IOException {
+    _hWPFDocFixture = new HWPFDocFixture(this, HWPFDocFixture.DEFAULT_TEST_FILE);
     _hWPFDocFixture.setUp();
   }
 
-  protected void tearDown()
-    throws Exception
-  {
+  @After
+  public void tearDown() throws IOException  {
     _hWPFDocFixture.tearDown();
-
-    _hWPFDocFixture = null;
-    super.tearDown();
   }
 
 }

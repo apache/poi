@@ -1,9 +1,10 @@
 /* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
 
        http://www.apache.org/licenses/LICENSE-2.0
 
@@ -16,27 +17,24 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.usermodel.DVConstraint;
+import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.hssf.usermodel.HSSFDataValidation;
+import org.apache.poi.ss.formula.Formula;
+import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
-import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.util.BitField;
-import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
 
 /**
- * Title:        DATAVALIDATION Record (0x01BE)<p/>
+ * Title:        DATAVALIDATION Record (0x01BE)<p>
  * Description:  This record stores data validation settings and a list of cell ranges
  *               which contain these settings. The data validation settings of a sheet
  *               are stored in a sequential list of DV records. This list is followed by
  *               DVAL record(s)
- * @author Dragos Buleandra (dragos.buleandra@trade2b.ro)
- * @author Josh Micich
  */
-public final class DVRecord extends Record {
+public final class DVRecord extends StandardRecord implements Cloneable {
 	public final static short sid = 0x01BE;
 	
 	/** the unicode string used for error/prompt title/text when not present */
@@ -44,19 +42,20 @@ public final class DVRecord extends Record {
 
 	/** Option flags */
 	private int _option_flags;
-	/** Title of the prompt box */
+	/** Title of the prompt box, cannot be longer than 32 chars */
 	private UnicodeString _promptTitle;
-	/** Title of the error box */
+	/** Title of the error box, cannot be longer than 32 chars */
 	private UnicodeString _errorTitle;
-	/** Text of the prompt box */
+	/** Text of the prompt box, cannot be longer than 255 chars */
 	private UnicodeString _promptText;
-	/** Text of the error box */
+	/** Text of the error box, cannot be longer than 255 chars */
 	private UnicodeString _errorText;
 	/** Not used - Excel seems to always write 0x3FE0 */
 	private short _not_used_1 = 0x3FE0;
 	/** Formula data for first condition (RPN token array without size field) */
 	private Formula _formula1;
 	/** Not used - Excel seems to always write 0x0000 */
+	@SuppressWarnings("RedundantFieldInitialization")
 	private short _not_used_2 = 0x0000;
 	/** Formula data for second condition (RPN token array without size field) */
 	private Formula _formula2;
@@ -66,7 +65,7 @@ public final class DVRecord extends Record {
 	/**
 	 * Option flags field
 	 * 
-	 * @see org.apache.poi.hssf.util.HSSFDataValidation utility class
+	 * @see HSSFDataValidation utility class
 	 */
 	private static final BitField opt_data_type                    = new BitField(0x0000000F);
 	private static final BitField opt_error_style                  = new BitField(0x00000070);
@@ -84,6 +83,21 @@ public final class DVRecord extends Record {
 			Ptg[] formula1, Ptg[] formula2,
 			CellRangeAddressList regions) {
 		
+		// check length-limits
+		if(promptTitle != null && promptTitle.length() > 32) {
+			throw new IllegalStateException("Prompt-title cannot be longer than 32 characters, but had: " + promptTitle);
+		}
+		if(promptText != null && promptText.length() > 255) {
+			throw new IllegalStateException("Prompt-text cannot be longer than 255 characters, but had: " + promptText);
+		}
+
+		if(errorTitle != null && errorTitle.length() > 32) {
+			throw new IllegalStateException("Error-title cannot be longer than 32 characters, but had: " + errorTitle);
+		}
+		if(errorText != null && errorText.length() > 255) {
+			throw new IllegalStateException("Error-text cannot be longer than 255 characters, but had: " + errorText);
+		}
+
 		int flags = 0;
 		flags = opt_data_type.setValue(flags, validationType);
 		flags = opt_condition_operator.setValue(flags, operator);
@@ -133,7 +147,7 @@ public final class DVRecord extends Record {
 	// --> start option flags
 	/**
 	 * @return the condition data type
-	 * @see DVConstraint.ValidationType
+	 * @see org.apache.poi.ss.usermodel.DataValidationConstraint.ValidationType
 	 */
 	public int getDataType() {
 	   return opt_data_type.getValue(_option_flags);
@@ -141,7 +155,7 @@ public final class DVRecord extends Record {
 
 	/**
 	 * @return the condition error style
-	 * @see HSSFDataValidation.ErrorStyle
+	 * @see org.apache.poi.ss.usermodel.DataValidation.ErrorStyle
 	 */
 	public int getErrorStyle() {
 	   return opt_error_style.getValue(_option_flags);
@@ -189,15 +203,36 @@ public final class DVRecord extends Record {
 	/**
 	 * get the condition operator
 	 * @return the condition operator
-	 * @see org.apache.poi.hssf.util.HSSFDataValidation utility class
+	 * @see HSSFDataValidation utility class
 	 */
 	public int getConditionOperator() {
 	   return opt_condition_operator.getValue(_option_flags);
 	}
 	// <-- end option flags
 
+    public String getPromptTitle() {
+        return resolveTitleString(_promptTitle);
+    }
 
+    public String getErrorTitle() {
+        return resolveTitleString(_errorTitle);
+    }
 
+    public String getPromptText() {
+        return resolveTitleString(_promptText);
+    }
+
+    public String getErrorText() {
+        return resolveTitleString(_errorText);
+    }
+
+    public Ptg[] getFormula1() {
+        return Formula.getTokens(_formula1);
+    }
+
+    public Ptg[] getFormula2() {
+        return Formula.getTokens(_formula2);
+    }
 
 	public CellRangeAddressList getCellRangeAddress() {
 		return this._regions;
@@ -248,17 +283,12 @@ public final class DVRecord extends Record {
 		}
 		Ptg[] ptgs = f.getTokens();
 		sb.append('\n');
-		for (int i = 0; i < ptgs.length; i++) {
-			sb.append('\t').append(ptgs[i].toString()).append('\n');
+		for (Ptg ptg : ptgs) {
+			sb.append('\t').append(ptg).append('\n');
 		}
 	}
 
-	public int serialize(int offset, byte [] data) {
-		int recSize = getRecordSize();
-		LittleEndianOutput out = new LittleEndianByteArrayOutputStream(data, offset, recSize);
-		
-		out.writeShort(sid);
-		out.writeShort(recSize-4);
+	public void serialize(LittleEndianOutput out) {
 
 		out.writeInt(_option_flags);
 		
@@ -275,7 +305,6 @@ public final class DVRecord extends Record {
 		_formula2.serializeTokens(out);
 		
 		_regions.serialize(out);
-		return recSize;
 	}
 
 	/**
@@ -290,7 +319,14 @@ public final class DVRecord extends Record {
 		}
 		return new UnicodeString(str);
 	}
-	
+
+    private static String resolveTitleString(UnicodeString us) {
+        if (us == null || us.equals(NULL_TEXT_STRING)) {
+            return null;
+        }
+        return us.getString();
+    }
+
 	private static UnicodeString readUnicodeString(RecordInputStream in) {
 		return new UnicodeString(in);
 	}
@@ -323,7 +359,8 @@ public final class DVRecord extends Record {
 	 * Clones the object. Uses serialisation, as the
 	 *  contents are somewhat complex
 	 */
-	public Object clone() {
-		return cloneViaReserialise();
+	@Override
+	public DVRecord clone() {
+		return (DVRecord)cloneViaReserialise();
 	}
 }

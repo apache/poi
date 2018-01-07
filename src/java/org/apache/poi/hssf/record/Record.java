@@ -20,23 +20,12 @@ package org.apache.poi.hssf.record;
 import java.io.ByteArrayInputStream;
 
 /**
- * Title: Record
- * Description: All HSSF Records inherit from this class.  It
- *              populates the fields common to all records (id, size and data).
- *              Subclasses should be sure to validate the id,
- * Company:
- * @author Andrew C. Oliver
- * @author Marc Johnson (mjohnson at apache dot org)
- * @author Jason Height (jheight at chariot dot net dot au)
+ * All HSSF Records inherit from this class.
  */
 public abstract class Record extends RecordBase {
 
-    /**
-     * instantiates a blank record strictly for ID matching
-     */
-
-    protected Record()
-    {
+    protected Record() {
+        // no fields to initialise
     }
 
     /**
@@ -46,7 +35,6 @@ public abstract class Record extends RecordBase {
      *
      * @return byte array containing instance data
      */
-
     public final byte[] serialize() {
         byte[] retval = new byte[ getRecordSize() ];
 
@@ -54,56 +42,48 @@ public abstract class Record extends RecordBase {
         return retval;
     }
 
-    public final int getRecordSize() {
-    	return 4 + getDataSize();
-    }
-    /**
-     * @return the size of the data portion of this record 
-     * (does not include initial 4 bytes for sid and size)
-     */
-    protected abstract int getDataSize();
-    
     /**
      * get a string representation of the record (for biffview/debugging)
      */
-    public String toString()
-    {
+    @Override
+    public String toString() {
         return super.toString();
     }
 
     /**
      * return the non static version of the id for this record.
+     * 
+     * @return he id for this record
      */
-
     public abstract short getSid();
 
-    public Object clone() {
-      throw new RuntimeException("The class "+getClass().getName()+" needs to define a clone method");
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        throw new CloneNotSupportedException("The class "+getClass().getName()+" needs to define a clone method");
     }
-    
+
     /**
-     * Clone the current record, via a call to serialise
+     * Clone the current record, via a call to serialize
      *  it, and another to create a new record from the
      *  bytes.
      * May only be used for classes which don't have
      *  internal counts / ids in them. For those which
-     *  do, a full record-aware serialise is needed, which
+     *  do, a full model-aware cloning is needed, which
      *  allocates new ids / counts as needed.
+     * 
+     * @return the cloned current record
      */
-    public Record cloneViaReserialise()
-    {
-    	// Do it via a re-serialise
-    	// It's a cheat, but it works...
-    	byte[] b = serialize();
-    	RecordInputStream rinp = new RecordInputStream(
-    			new ByteArrayInputStream(b)
-    	);
-    	rinp.nextRecord();
+    public Record cloneViaReserialise() {
+        // Do it via a re-serialization
+        // It's a cheat, but it works...
+        byte[] b = serialize();
+        RecordInputStream rinp = new RecordInputStream(new ByteArrayInputStream(b));
+        rinp.nextRecord();
 
-    	Record[] r = RecordFactory.createRecord(rinp);
-    	if(r.length != 1) {
-    		throw new IllegalStateException("Re-serialised a record to clone it, but got " + r.length + " records back!");
-    	}
-    	return r[0];
+        Record[] r = RecordFactory.createRecord(rinp);
+        if(r.length != 1) {
+            throw new IllegalStateException("Re-serialised a record to clone it, but got " + r.length + " records back!");
+        }
+        return r[0];
     }
 }

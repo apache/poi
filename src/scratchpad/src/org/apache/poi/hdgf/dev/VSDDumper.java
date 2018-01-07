@@ -14,9 +14,12 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hdgf.dev;
 
-import java.io.FileInputStream;
+import java.io.File;
+import java.io.PrintStream;
+import java.util.Arrays;
 
 import org.apache.poi.hdgf.HDGFDiagram;
 import org.apache.poi.hdgf.chunks.Chunk;
@@ -25,98 +28,112 @@ import org.apache.poi.hdgf.pointers.Pointer;
 import org.apache.poi.hdgf.streams.ChunkStream;
 import org.apache.poi.hdgf.streams.PointerContainingStream;
 import org.apache.poi.hdgf.streams.Stream;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 
 /**
  * Developer helper class to dump out the pointer+stream structure
  *  of a Visio file
  */
-public class VSDDumper {
+public final class VSDDumper {
+    final static String tabs = "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t";
+    
+    private final PrintStream ps;
+    private final HDGFDiagram hdgf;
+    VSDDumper(PrintStream ps, HDGFDiagram hdgf) {
+        this.ps = ps;
+        this.hdgf = hdgf;
+    }
+    
 	public static void main(String[] args) throws Exception {
 		if(args.length == 0) {
 			System.err.println("Use:");
 			System.err.println("  VSDDumper <filename>");
 			System.exit(1);
 		}
-		
-		HDGFDiagram hdgf = new HDGFDiagram(
-				new POIFSFileSystem(new FileInputStream(args[0]))
-		);
-		
-		System.out.println("Opened " + args[0]);
-		System.out.println("The document claims a size of " +
-				hdgf.getDocumentSize() + "   (" + 
-				Long.toHexString(hdgf.getDocumentSize()) + ")");
-		System.out.println();
-		
-		dumpStream(hdgf.getTrailerStream(), 0);
+
+		NPOIFSFileSystem poifs = new NPOIFSFileSystem(new File(args[0]));
+		try {
+			HDGFDiagram hdgf = new HDGFDiagram(poifs);
+
+			PrintStream ps = System.out;
+			ps.println("Opened " + args[0]);
+			VSDDumper vd = new VSDDumper(ps, hdgf);
+			vd.dumpFile();
+		} finally {
+			poifs.close();
+		}
+	}
+
+	public void dumpFile() {
+        dumpVal("Claimed document size", hdgf.getDocumentSize(), 0);
+        ps.println();
+        dumpStream(hdgf.getTrailerStream(), 0);
 	}
 	
-	public static void dumpStream(Stream stream, int indent) {
-		String ind = "";
-		for(int i=0; i<indent; i++) {
-			ind += "    ";
-		}
-		String ind2 = ind  + "    ";
-		String ind3 = ind2 + "    ";
-		
-		
+	private void dumpStream(Stream stream, int indent) {
 		Pointer ptr = stream.getPointer();
-		System.out.println(ind + "Stream at\t" + ptr.getOffset() +
-				" - " + Integer.toHexString(ptr.getOffset()));
-		System.out.println(ind + "  Type is\t" + ptr.getType() +
-				" - " + Integer.toHexString(ptr.getType()));
-		System.out.println(ind + "  Format is\t" + ptr.getFormat() +
-				" - " + Integer.toHexString(ptr.getFormat()));
-		System.out.println(ind + "  Length is\t" + ptr.getLength() +
-				" - " + Integer.toHexString(ptr.getLength()));
+		dumpVal("Stream at", ptr.getOffset(), indent);
+		dumpVal("Type is", ptr.getType(), indent+1);
+		dumpVal("Format is", ptr.getFormat(), indent+1);
+        dumpVal("Length is", ptr.getLength(), indent+1);
 		if(ptr.destinationCompressed()) {
-			int decompLen = stream._getContentsLength();
-			System.out.println(ind + "  DC.Length is\t" + decompLen +
-					" - " + Integer.toHexString(decompLen));
+		    dumpVal("DC.Length is", stream._getContentsLength(), indent+1);
 		}
-		System.out.println(ind + "  Compressed is\t" + ptr.destinationCompressed());
-		System.out.println(ind + "  Stream is\t" + stream.getClass().getName());
-		
+		dumpVal("Compressed is", ptr.destinationCompressed(), indent+1);
+		dumpVal("Stream is", stream.getClass().getName(), indent+1);
+
 		byte[] db = stream._getStore()._getContents();
-		String ds = "";
-		if(db.length >= 8) {
-			for(int i=0; i<8; i++) {
-				if(i>0) ds += ", ";
-				ds += db[i];
-			}
-		}
-		System.out.println(ind + "  First few bytes are\t" + ds);
-		
-		if(stream instanceof PointerContainingStream) {
-			PointerContainingStream pcs = (PointerContainingStream)stream;
-			System.out.println(ind + "  Has " + 
-					pcs.getPointedToStreams().length + " children:");
-			
-			for(int i=0; i<pcs.getPointedToStreams().length; i++) {
-				dumpStream(pcs.getPointedToStreams()[i], (indent+1));
+		String ds = (db.length >= 8) ? Arrays.toString(db) : "[]";
+		dumpVal("First few bytes are", ds, indent+1);
+
+		if (stream instanceof PointerContainingStream) {
+		    Stream streams[] = ((PointerContainingStream)stream).getPointedToStreams();
+			dumpVal("Nbr of children", streams.length, indent+1);
+
+			for(Stream s : streams) {
+				dumpStream(s, indent+1);
 			}
 		}
 		if(stream instanceof ChunkStream) {
-			ChunkStream cs = (ChunkStream)stream;
-			System.out.println(ind + "  Has " + cs.getChunks().length +
-					" chunks:");
-			
-			for(int i=0; i<cs.getChunks().length; i++) {
-				Chunk chunk = cs.getChunks()[i];
-				System.out.println(ind2 + "" + chunk.getName());
-				System.out.println(ind2 + "  Length is " + chunk._getContents().length + " (" + Integer.toHexString(chunk._getContents().length) + ")");
-				System.out.println(ind2 + "  OD Size is " + chunk.getOnDiskSize() + " (" + Integer.toHexString(chunk.getOnDiskSize()) + ")");
-				System.out.println(ind2 + "  T / S is " + chunk.getTrailer() + " / " + chunk.getSeparator());
-				System.out.println(ind2 + "  Holds " + chunk.getCommands().length + " commands");
-				for(int j=0; j<chunk.getCommands().length; j++) {
-					Command command = chunk.getCommands()[j];
-					System.out.println(ind3 + "" + 
-							command.getDefinition().getName() +
-							" " + command.getValue()
-					);
-				}
+		    Chunk chunks[] = ((ChunkStream)stream).getChunks();
+			dumpVal("Nbr of chunks", chunks.length, indent+1);
+
+			for(Chunk chunk : chunks) {
+			    dumpChunk(chunk, indent+1);
 			}
 		}
 	}
+
+	private void dumpChunk(Chunk chunk, int indent) {
+        dumpVal(chunk.getName(), "", indent);
+        dumpVal("Length is", chunk._getContents().length, indent);
+        dumpVal("OD Size is", chunk.getOnDiskSize(), indent);
+        dumpVal("T / S is", chunk.getTrailer() + " / " + chunk.getSeparator(), indent);
+        Command commands[] = chunk.getCommands();
+        dumpVal("Nbr of commands", commands.length, indent);
+        for(Command command : commands) {
+            dumpVal(command.getDefinition().getName(), ""+command.getValue(), indent+1);
+        }
+	}
+	
+	private void dumpVal(String label, long value, int indent) {
+        ps.print(tabs.substring(0,indent));
+        ps.print(label);
+        ps.print('\t');
+        ps.print(value);
+        ps.print(" (0x");
+        ps.print(Long.toHexString(value));
+        ps.println(")");
+    }
+
+    private void dumpVal(String label, boolean value, int indent) {
+        dumpVal(label, Boolean.toString(value), indent);
+    }
+
+    private void dumpVal(String label, String value, int indent) {
+        ps.print(tabs.substring(0,indent));
+        ps.print(label);
+        ps.print('\t');
+        ps.println(value);      
+    }
 }

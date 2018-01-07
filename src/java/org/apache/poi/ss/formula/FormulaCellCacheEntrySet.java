@@ -27,18 +27,19 @@ package org.apache.poi.ss.formula;
  * @author Josh Micich
  */
 final class FormulaCellCacheEntrySet {
+	private static final FormulaCellCacheEntry[] EMPTY_ARRAY = { };
 
 	private int _size;
 	private FormulaCellCacheEntry[] _arr;
 
 	public FormulaCellCacheEntrySet() {
-		_arr = FormulaCellCacheEntry.EMPTY_ARRAY;
+		_arr = EMPTY_ARRAY;
 	}
 
 	public FormulaCellCacheEntry[] toArray() {
 		int nItems = _size;
 		if (nItems < 1) {
-			return FormulaCellCacheEntry.EMPTY_ARRAY;
+			return EMPTY_ARRAY;
 		}
 		FormulaCellCacheEntry[] result = new FormulaCellCacheEntry[nItems];
 		int j=0;
@@ -75,8 +76,7 @@ final class FormulaCellCacheEntrySet {
 
 
 	private static boolean addInternal(CellCacheEntry[] arr, CellCacheEntry cce) {
-
-		int startIx = cce.hashCode() % arr.length;
+		int startIx = Math.abs(cce.hashCode() % arr.length);
 
 		for(int i=startIx; i<arr.length; i++) {
 			CellCacheEntry item = arr[i];
@@ -129,7 +129,7 @@ final class FormulaCellCacheEntrySet {
 		// else - usual case
 		// delete single element (without re-hashing)
 
-		int startIx = cce.hashCode() % arr.length;
+		int startIx = Math.abs(cce.hashCode() % arr.length);
 
 		// note - can't exit loops upon finding null because of potential previous deletes
 		for(int i=startIx; i<arr.length; i++) {
@@ -152,5 +152,4 @@ final class FormulaCellCacheEntrySet {
 		}
 		return false;
 	}
-
 }

@@ -21,8 +21,10 @@ package org.apache.poi.hssf.util;
  * Common conversion functions between Excel style A1, C27 style
  *  cell references, and POI usermodel style row=0, column=0
  *  style references.
- * @author  Avik Sengupta
- * @author  Dennis Doubleday (patch to seperateRowColumns())
+ *
+ *  @deprecated POI 4.0.0-SNAPSHOT. Use {@link org.apache.poi.ss.util.CellReference} instead.
+ *          Actually the replacement CellReference was added earlier, but the deprecation notice
+ *          was added only in 4.0.0-SNAPSHOT.
  */
 public final class CellReference extends org.apache.poi.ss.util.CellReference {
     /**
@@ -40,10 +42,8 @@ public final class CellReference extends org.apache.poi.ss.util.CellReference {
     public CellReference(int pRow, int pCol, boolean pAbsRow, boolean pAbsCol) {
         super(null, pRow, pCol, pAbsRow, pAbsCol);
     }
+
     public CellReference(String pSheetName, int pRow, int pCol, boolean pAbsRow, boolean pAbsCol) {
     	super(pSheetName, pRow, pCol, pAbsRow, pAbsCol);
-    }
-    protected static String convertNumToColString(int col) {
-    	return org.apache.poi.ss.util.CellReference.convertNumToColString(col);
     }
 }

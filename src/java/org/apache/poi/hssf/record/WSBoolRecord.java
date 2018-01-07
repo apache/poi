@@ -19,20 +19,16 @@ package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title:        WSBool Record.<p>
+ * Title:        WSBOOL (0x0081) (called SHEETPR in OOO doc)<p>
  * Description:  stores workbook settings  (aka its a big "everything we didn't
- *               put somewhere else")<P>
- * REFERENCE:  PG 425 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author Glen Stampoultzis (gstamp@iprimus.com.au)
- * @author Jason Height (jheight at chariot dot net dot au)
- * @version 2.0-pre
+ *               put somewhere else")<p>
+ * REFERENCE:  PG 425 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
  */
-public final class WSBoolRecord extends Record {
-    public final static short     sid = 0x81;
+public final class WSBoolRecord extends StandardRecord {
+    public final static short     sid = 0x0081;
     private byte                  field_1_wsbool;         // crappy names are because this is really one big short field (2byte)
     private byte                  field_2_wsbool;         // but the docs inconsistently use it as 2 separate bytes
 
@@ -287,42 +283,24 @@ public final class WSBoolRecord extends Record {
     }
 
     // end bitfields
-    public String toString()
-    {
-        StringBuffer buffer = new StringBuffer();
-
-        buffer.append("[WSBOOL]\n");
-        buffer.append("    .wsbool1        = ")
-            .append(Integer.toHexString(getWSBool1())).append("\n");
-        buffer.append("        .autobreaks = ").append(getAutobreaks())
-            .append("\n");
-        buffer.append("        .dialog     = ").append(getDialog())
-            .append("\n");
-        buffer.append("        .rowsumsbelw= ").append(getRowSumsBelow())
-            .append("\n");
-        buffer.append("        .rowsumsrigt= ").append(getRowSumsRight())
-            .append("\n");
-        buffer.append("    .wsbool2        = ")
-            .append(Integer.toHexString(getWSBool2())).append("\n");
-        buffer.append("        .fittopage  = ").append(getFitToPage())
-            .append("\n");
-        buffer.append("        .displayguts= ").append(getDisplayGuts())
-            .append("\n");
-        buffer.append("        .alternateex= ")
-            .append(getAlternateExpression()).append("\n");
-        buffer.append("        .alternatefo= ").append(getAlternateFormula())
-            .append("\n");
-        buffer.append("[/WSBOOL]\n");
-        return buffer.toString();
+    public String toString() {
+        return "[WSBOOL]\n" +
+                "    .wsbool1        = " + Integer.toHexString(getWSBool1()) + "\n" +
+                "        .autobreaks = " + getAutobreaks() + "\n" +
+                "        .dialog     = " + getDialog() + "\n" +
+                "        .rowsumsbelw= " + getRowSumsBelow() + "\n" +
+                "        .rowsumsrigt= " + getRowSumsRight() + "\n" +
+                "    .wsbool2        = " + Integer.toHexString(getWSBool2()) + "\n" +
+                "        .fittopage  = " + getFitToPage() + "\n" +
+                "        .displayguts= " + getDisplayGuts() + "\n" +
+                "        .alternateex= " + getAlternateExpression() + "\n" +
+                "        .alternatefo= " + getAlternateFormula() + "\n" +
+                "[/WSBOOL]\n";
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, ( short ) 0x2);
-        data[ 5 + offset ] = getWSBool1();
-        data[ 4 + offset ] = getWSBool2();
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeByte(getWSBool2());
+        out.writeByte(getWSBool1());
     }
 
     protected int getDataSize() {

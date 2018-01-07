@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,24 +14,22 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.record;
 
 
-import junit.framework.TestCase;
-import java.io.ByteArrayOutputStream;
-import java.util.Arrays;
+import static org.junit.Assert.assertArrayEquals;
 
-import org.apache.poi.util.HexDump;
+import java.io.ByteArrayOutputStream;
+
+import junit.framework.TestCase;
 
 /**
  * Tests that {@link HeadersFootersAtom} works properly
  *
  * @author Yegor Kozlov
  */
-public class TestAnimationInfoAtom extends TestCase {
+public final class TestAnimationInfoAtom extends TestCase {
     // From a real file
     /*
      <AnimationInfoAtom info="1" type="4081" size="28" offset="4015" header="01 00 F1 0F 1C 00 00 00 ">
@@ -40,13 +37,13 @@ public class TestAnimationInfoAtom extends TestCase {
        00 00 00
      </AnimationInfoAtom>
      */
-    private byte[] data = new byte[] {
+    private final byte[] data = new byte[] {
          0x01, 0x00, (byte)0xF1, 0x0F, 0x1C, 0x00, 0x00, 0x00,
             0x00, 0x00, 0x00, 0x07, 0x04, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
             0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     };
 
-    public void testRead() throws Exception {
+    public void testRead() {
         AnimationInfoAtom record = new AnimationInfoAtom(data, 0, data.length);
         assertEquals(RecordTypes.AnimationInfoAtom.typeID, record.getRecordType());
         assertTrue(record.getFlag(AnimationInfoAtom.Automatic));
@@ -70,7 +67,7 @@ public class TestAnimationInfoAtom extends TestCase {
         record.writeOut(baos);
         byte[] b = baos.toByteArray();
 
-        assertTrue(Arrays.equals(data, b));
+        assertArrayEquals(data, b);
     }
 
     public void testNewRecord() throws Exception {
@@ -85,7 +82,6 @@ public class TestAnimationInfoAtom extends TestCase {
         record.writeOut(baos);
         byte[] b = baos.toByteArray();
 
-        assertTrue(Arrays.equals(data, b));
+        assertArrayEquals(data, b);
     }
-
 }

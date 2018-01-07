@@ -22,13 +22,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.poi.hssf.eventusermodel.EventWorkbookBuilder.SheetRecordCollectingListener;
 import org.apache.poi.hssf.eventusermodel.FormatTrackingHSSFListener;
 import org.apache.poi.hssf.eventusermodel.HSSFEventFactory;
 import org.apache.poi.hssf.eventusermodel.HSSFListener;
 import org.apache.poi.hssf.eventusermodel.HSSFRequest;
 import org.apache.poi.hssf.eventusermodel.MissingRecordAwareHSSFListener;
-import org.apache.poi.hssf.eventusermodel.EventWorkbookBuilder.SheetRecordCollectingListener;
 import org.apache.poi.hssf.eventusermodel.dummyrecord.LastCellOfRowDummyRecord;
 import org.apache.poi.hssf.eventusermodel.dummyrecord.MissingCellDummyRecord;
 import org.apache.poi.hssf.model.HSSFFormulaParser;
@@ -75,7 +76,7 @@ public class XLS2CSVmra implements HSSFListener {
 	/** So we known which sheet we're on */
 	private int sheetIndex = -1;
 	private BoundSheetRecord[] orderedBSRs;
-	private ArrayList boundSheetRecords = new ArrayList();
+	private List<BoundSheetRecord> boundSheetRecords = new ArrayList<>();
 
 	// For handling formulas with string results
 	private int nextRow;
@@ -98,8 +99,6 @@ public class XLS2CSVmra implements HSSFListener {
 	 * Creates a new XLS -> CSV converter
 	 * @param filename The file to process
 	 * @param minColumns The minimum number of columns to output, or -1 for no minimum
-	 * @throws IOException
-	 * @throws FileNotFoundException
 	 */
 	public XLS2CSVmra(String filename, int minColumns) throws IOException, FileNotFoundException {
 		this(
@@ -132,7 +131,8 @@ public class XLS2CSVmra implements HSSFListener {
 	 * Main HSSFListener method, processes events, and outputs the
 	 *  CSV as the file is processed.
 	 */
-	public void processRecord(Record record) {
+	@Override
+    public void processRecord(Record record) {
 		int thisRow = -1;
 		int thisColumn = -1;
 		String thisStr = null;
@@ -140,7 +140,7 @@ public class XLS2CSVmra implements HSSFListener {
 		switch (record.getSid())
 		{
 		case BoundSheetRecord.sid:
-			boundSheetRecords.add(record);
+			boundSheetRecords.add((BoundSheetRecord)record);
 			break;
 		case BOFRecord.sid:
 			BOFRecord br = (BOFRecord)record;
@@ -159,7 +159,10 @@ public class XLS2CSVmra implements HSSFListener {
 					orderedBSRs = BoundSheetRecord.orderByBofPosition(boundSheetRecords);
 				}
 				output.println();
-				output.println(orderedBSRs[sheetIndex].getSheetname() + ":");
+				output.println( 
+						orderedBSRs[sheetIndex].getSheetname() +
+						" [" + (sheetIndex+1) + "]:"
+				);
 			}
 			break;
 

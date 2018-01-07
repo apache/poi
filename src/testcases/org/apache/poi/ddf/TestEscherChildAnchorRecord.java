@@ -17,18 +17,20 @@
 
 package org.apache.poi.ddf;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
+import org.junit.Test;
 
-public class TestEscherChildAnchorRecord extends TestCase
-{
+public final class TestEscherChildAnchorRecord {
+    @Test
     public void testSerialize() {
         EscherChildAnchorRecord r = createRecord();
 
         byte[] data = new byte[8 + 16];
         int bytesWritten = r.serialize( 0, data, new NullEscherSerializationListener() );
-        assertEquals( 24, bytesWritten );
+        assertEquals( data.length, bytesWritten );
         assertEquals( "[01, 00, " +
                 "0F, F0, " +
                 "10, 00, 00, 00, " +
@@ -38,8 +40,8 @@ public class TestEscherChildAnchorRecord extends TestCase
                 "04, 00, 00, 00]", HexDump.toHex( data ) );
     }
 
-    public void testFillFields() throws Exception
-    {
+    @Test
+    public void testFillFields() {
         String hexData = "01 00 " +
                 "0F F0 " +
                 "10 00 00 00 " +
@@ -60,21 +62,25 @@ public class TestEscherChildAnchorRecord extends TestCase
         assertEquals( (short) 0x0001, r.getOptions() );
     }
 
+    @Test
     public void testToString(){
         String nl = System.getProperty( "line.separator" );
 
-        String expected = "org.apache.poi.ddf.EscherChildAnchorRecord:" + nl +
-                "  RecordId: 0xF00F" + nl +
-                "  Options: 0x0001" + nl +
-                "  X1: 1" + nl +
-                "  Y1: 2" + nl +
-                "  X2: 3" + nl +
-                "  Y2: 4" + nl;
+        String expected =
+            "org.apache.poi.ddf.EscherChildAnchorRecord (ChildAnchor):" + nl +
+            "  RecordId: 0xF00F" + nl +
+            "  Version: 0x0001" + nl +
+            "  Instance: 0x0000" + nl +
+            "  Options: 0x0001" + nl +
+            "  Record Size: 24" + nl +
+            "  X1: 0x00000001" + nl +
+            "  Y1: 0x00000002" + nl +
+            "  X2: 0x00000003" + nl +
+            "  Y2: 0x00000004";
         assertEquals( expected, createRecord().toString() );
     }
 
-    private static EscherChildAnchorRecord createRecord()
-    {
+    private static EscherChildAnchorRecord createRecord() {
         EscherChildAnchorRecord r = new EscherChildAnchorRecord();
         r.setRecordId( EscherChildAnchorRecord.RECORD_ID );
         r.setOptions( (short) 0x0001 );

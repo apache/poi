@@ -19,7 +19,7 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title: Function Group Count Record<P>
@@ -30,8 +30,8 @@ import org.apache.poi.util.LittleEndian;
  * @version 2.0-pre
  */
 
-public class FnGroupCountRecord
-    extends Record
+public final class FnGroupCountRecord
+    extends StandardRecord
 {
     public final static short sid   = 0x9c;
 
@@ -84,13 +84,8 @@ public class FnGroupCountRecord
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset,
-                              (( short ) 0x02));   // 2 bytes (6 total)
-        LittleEndian.putShort(data, 4 + offset, getCount());
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(getCount());
     }
 
     protected int getDataSize() {

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.property;
 
@@ -25,13 +23,8 @@ import java.io.IOException;
 
 /**
  * Behavior for parent (directory) properties
- *
- * @author Marc Johnson27591@hotmail.com
  */
-
-public interface Parent
-    extends Child
-{
+public interface Parent extends Child, Iterable<Property> {
 
     /**
      * Get an iterator over the children of this Parent; all elements
@@ -40,7 +33,7 @@ public interface Parent
      * @return Iterator of children; may refer to an empty collection
      */
 
-    public Iterator getChildren();
+    public Iterator<Property> getChildren();
 
     /**
      * Add a new child to the collection of children
@@ -71,8 +64,4 @@ public interface Parent
      */
 
     public void setNextChild(final Child child);
-
-    /** *** end methods from interface Child *** */
-
-}   // end public interface Parent
-
+}

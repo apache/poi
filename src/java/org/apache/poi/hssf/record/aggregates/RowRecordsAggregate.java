@@ -24,18 +24,9 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.poi.hssf.model.RecordStream;
-import org.apache.poi.hssf.record.ArrayRecord;
-import org.apache.poi.hssf.record.CellValueRecordInterface;
-import org.apache.poi.hssf.record.DBCellRecord;
-import org.apache.poi.hssf.record.FormulaRecord;
-import org.apache.poi.hssf.record.IndexRecord;
-import org.apache.poi.hssf.record.MergeCellsRecord;
-import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.RowRecord;
-import org.apache.poi.hssf.record.SharedFormulaRecord;
-import org.apache.poi.hssf.record.TableRecord;
-import org.apache.poi.hssf.record.UnknownRecord;
-import org.apache.poi.hssf.record.formula.FormulaShifter;
+import org.apache.poi.hssf.record.*;
+import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.formula.FormulaShifter;
 
 /**
  *
@@ -45,25 +36,34 @@ import org.apache.poi.hssf.record.formula.FormulaShifter;
 public final class RowRecordsAggregate extends RecordAggregate {
     private int _firstrow = -1;
     private int _lastrow  = -1;
-    private final Map _rowRecords;
+    private final Map<Integer, RowRecord> _rowRecords;
     private final ValueRecordsAggregate _valuesAgg;
-    private final List _unknownRecords;
+    private final List<Record> _unknownRecords;
     private final SharedValueManager _sharedValueManager;
+
+    // Cache values to speed up performance of
+    // getStartRowNumberForBlock / getEndRowNumberForBlock, see Bugzilla 47405
+    private RowRecord[] _rowRecordValues;
 
     /** Creates a new instance of ValueRecordsAggregate */
     public RowRecordsAggregate() {
-        this(SharedValueManager.EMPTY);
+        this(SharedValueManager.createEmpty());
     }
     private RowRecordsAggregate(SharedValueManager svm) {
-        _rowRecords = new TreeMap();
+        if (svm == null) {
+            throw new IllegalArgumentException("SharedValueManager must be provided.");
+        }
+        _rowRecords = new TreeMap<>();
         _valuesAgg = new ValueRecordsAggregate();
-        _unknownRecords = new ArrayList();
+        _unknownRecords = new ArrayList<>();
         _sharedValueManager = svm;
     }
 
     /**
      * @param rs record stream with all {@link SharedFormulaRecord}
      * {@link ArrayRecord}, {@link TableRecord} {@link MergeCellsRecord} Records removed
+     * @param svm an initialised {@link SharedValueManager} (from the shared formula, array
+     * and table records of the current sheet).  Never <code>null</code>.
      */
     public RowRecordsAggregate(RecordStream rs, SharedValueManager svm) {
         this(svm);
@@ -73,14 +73,24 @@ public final class RowRecordsAggregate extends RecordAggregate {
                 case RowRecord.sid:
                     insertRow((RowRecord) rec);
                     continue;
+                case DConRefRecord.sid:
+                    addUnknownRecord(rec);
+                    continue;
                 case DBCellRecord.sid:
                     // end of 'Row Block'.  Should only occur after cell records
                     // ignore DBCELL records because POI generates them upon re-serialization
                     continue;
             }
             if (rec instanceof UnknownRecord) {
-                addUnknownRecord((UnknownRecord)rec);
                 // might need to keep track of where exactly these belong
+                addUnknownRecord(rec);
+                while (rs.peekNextSid() == ContinueRecord.sid) {
+                    addUnknownRecord(rs.getNext());
+                }
+                continue;
+            }
+            if (rec instanceof MulBlankRecord) {
+                _valuesAgg.addMultipleBlanks((MulBlankRecord) rec);
                 continue;
             }
             if (!(rec instanceof CellValueRecordInterface)) {
@@ -92,7 +102,7 @@ public final class RowRecordsAggregate extends RecordAggregate {
     /**
      * Handles UnknownRecords which appear within the row/cell records
      */
-    private void addUnknownRecord(UnknownRecord rec) {
+    private void addUnknownRecord(Record rec) {
         // ony a few distinct record IDs are encountered by the existing POI test cases:
         // 0x1065 // many
         // 0x01C2 // several
@@ -103,14 +113,14 @@ public final class RowRecordsAggregate extends RecordAggregate {
         _unknownRecords.add(rec);
     }
     public void insertRow(RowRecord row) {
-        // Integer integer = new Integer(row.getRowNumber());
-        _rowRecords.put(new Integer(row.getRowNumber()), row);
-        if ((row.getRowNumber() < _firstrow) || (_firstrow == -1))
-        {
+        // Integer integer = Integer.valueOf(row.getRowNumber());
+        _rowRecords.put(Integer.valueOf(row.getRowNumber()), row);
+        // Clear the cached values
+        _rowRecordValues = null; 
+        if ((row.getRowNumber() < _firstrow) || (_firstrow == -1)) {
             _firstrow = row.getRowNumber();
         }
-        if ((row.getRowNumber() > _lastrow) || (_lastrow == -1))
-        {
+        if ((row.getRowNumber() > _lastrow) || (_lastrow == -1)) {
             _lastrow = row.getRowNumber();
         }
     }
@@ -118,8 +128,8 @@ public final class RowRecordsAggregate extends RecordAggregate {
     public void removeRow(RowRecord row) {
         int rowIndex = row.getRowNumber();
         _valuesAgg.removeAllCellsValuesForRow(rowIndex);
-        Integer key = new Integer(rowIndex);
-        RowRecord rr = (RowRecord) _rowRecords.remove(key);
+        Integer key = Integer.valueOf(rowIndex);
+        RowRecord rr = _rowRecords.remove(key);
         if (rr == null) {
             throw new RuntimeException("Invalid row index (" + key.intValue() + ")");
         }
@@ -127,13 +137,17 @@ public final class RowRecordsAggregate extends RecordAggregate {
             _rowRecords.put(key, rr);
             throw new RuntimeException("Attempt to remove row that does not belong to this sheet");
         }
+        
+        // Clear the cached values
+        _rowRecordValues = null;
     }
 
     public RowRecord getRow(int rowIndex) {
-        if (rowIndex < 0 || rowIndex > 65535) {
-            throw new IllegalArgumentException("The row number must be between 0 and 65535");
+        int maxrow = SpreadsheetVersion.EXCEL97.getLastRowIndex();
+        if (rowIndex < 0 || rowIndex > maxrow) {
+            throw new IllegalArgumentException("The row number must be between 0 and " + maxrow + ", but had: " + rowIndex);
         }
-        return (RowRecord) _rowRecords.get(new Integer(rowIndex));
+        return _rowRecords.get(Integer.valueOf(rowIndex));
     }
 
     public int getPhysicalNumberOfRows()
@@ -152,72 +166,67 @@ public final class RowRecordsAggregate extends RecordAggregate {
     }
 
     /** Returns the number of row blocks.
-     * <p/>The row blocks are goupings of rows that contain the DBCell record
+     * <p>The row blocks are goupings of rows that contain the DBCell record
      * after them
      */
     public int getRowBlockCount() {
-      int size = _rowRecords.size()/DBCellRecord.BLOCK_SIZE;
-      if ((_rowRecords.size() % DBCellRecord.BLOCK_SIZE) != 0)
-          size++;
-      return size;
+        int size = _rowRecords.size()/DBCellRecord.BLOCK_SIZE;
+        if ((_rowRecords.size() % DBCellRecord.BLOCK_SIZE) != 0)
+            size++;
+        return size;
     }
 
     private int getRowBlockSize(int block) {
-      return RowRecord.ENCODED_SIZE * getRowCountForBlock(block);
+        return RowRecord.ENCODED_SIZE * getRowCountForBlock(block);
     }
 
     /** Returns the number of physical rows within a block*/
     public int getRowCountForBlock(int block) {
-      int startIndex = block * DBCellRecord.BLOCK_SIZE;
-      int endIndex = startIndex + DBCellRecord.BLOCK_SIZE - 1;
-      if (endIndex >= _rowRecords.size())
-        endIndex = _rowRecords.size()-1;
+        int startIndex = block * DBCellRecord.BLOCK_SIZE;
+        int endIndex = startIndex + DBCellRecord.BLOCK_SIZE - 1;
+        if (endIndex >= _rowRecords.size())
+            endIndex = _rowRecords.size()-1;
 
-      return endIndex-startIndex+1;
+        return endIndex-startIndex+1;
     }
 
     /** Returns the physical row number of the first row in a block*/
     private int getStartRowNumberForBlock(int block) {
-      //Given that we basically iterate through the rows in order,
-      // TODO - For a performance improvement, it would be better to return an instance of
-      //an iterator and use that instance throughout, rather than recreating one and
-      //having to move it to the right position.
-      int startIndex = block * DBCellRecord.BLOCK_SIZE;
-      Iterator rowIter = _rowRecords.values().iterator();
-      RowRecord row = null;
-      //Position the iterator at the start of the block
-      for (int i=0; i<=startIndex;i++) {
-        row = (RowRecord)rowIter.next();
-      }
-      if (row == null) {
-          throw new RuntimeException("Did not find start row for block " + block);
-      }
+        int startIndex = block * DBCellRecord.BLOCK_SIZE;
 
-      return row.getRowNumber();
+        if (_rowRecordValues == null) {
+            _rowRecordValues = _rowRecords.values().toArray(new RowRecord[_rowRecords.size()]);
+        }
+
+        try {
+            return _rowRecordValues[startIndex].getRowNumber();
+        } catch(ArrayIndexOutOfBoundsException e) {
+            throw new RuntimeException("Did not find start row for block " + block);
+        }
     }
 
     /** Returns the physical row number of the end row in a block*/
     private int getEndRowNumberForBlock(int block) {
-      int endIndex = ((block + 1)*DBCellRecord.BLOCK_SIZE)-1;
-      if (endIndex >= _rowRecords.size())
-        endIndex = _rowRecords.size()-1;
+        int endIndex = ((block + 1)*DBCellRecord.BLOCK_SIZE)-1;
+        if (endIndex >= _rowRecords.size())
+            endIndex = _rowRecords.size()-1;
 
-      Iterator rowIter = _rowRecords.values().iterator();
-      RowRecord row = null;
-      for (int i=0; i<=endIndex;i++) {
-        row = (RowRecord)rowIter.next();
+        if (_rowRecordValues == null){
+            _rowRecordValues = _rowRecords.values().toArray(new RowRecord[_rowRecords.size()]);
+        }
+
+        try {
+            return _rowRecordValues[endIndex].getRowNumber();
+        } catch(ArrayIndexOutOfBoundsException e) {
+            throw new RuntimeException("Did not find end row for block " + block);
       }
-      if (row == null) {
-          throw new RuntimeException("Did not find start row for block " + block);
-      }
-      return row.getRowNumber();
     }
 
     private int visitRowRecordsForBlock(int blockIndex, RecordVisitor rv) {
         final int startIndex = blockIndex*DBCellRecord.BLOCK_SIZE;
         final int endIndex = startIndex + DBCellRecord.BLOCK_SIZE;
 
-        Iterator rowIterator = _rowRecords.values().iterator();
+        Iterator<RowRecord> rowIterator = _rowRecords.values().iterator();
 
         //Given that we basically iterate through the rows in order,
         //For a performance improvement, it would be better to return an instance of
@@ -228,13 +237,14 @@ public final class RowRecordsAggregate extends RecordAggregate {
           rowIterator.next();
         int result = 0;
         while(rowIterator.hasNext() && (i++ < endIndex)) {
-          Record rec = (Record)rowIterator.next();
+          Record rec = rowIterator.next();
           result += rec.getRecordSize();
           rv.visitRecord(rec);
         }
         return result;
     }
 
+    @Override
     public void visitContainedRecords(RecordVisitor rv) {
 
         PositionTrackingVisitor stv = new PositionTrackingVisitor(rv, 0);
@@ -250,7 +260,7 @@ public final class RowRecordsAggregate extends RecordAggregate {
             // Serialize a block of cells for those rows
             final int startRowNumber = getStartRowNumberForBlock(blockIndex);
             final int endRowNumber = getEndRowNumberForBlock(blockIndex);
-            DBCellRecord cellRecord = new DBCellRecord();
+            DBCellRecord.Builder dbcrBuilder = new DBCellRecord.Builder();
             // Note: Cell references start from the second row...
             int cellRefOffset = (rowBlockSize - RowRecord.ENCODED_SIZE);
             for (int row = startRowNumber; row <= endRowNumber; row++) {
@@ -261,59 +271,44 @@ public final class RowRecordsAggregate extends RecordAggregate {
                     pos += rowCellSize;
                     // Add the offset to the first cell for the row into the
                     // DBCellRecord.
-                    cellRecord.addCellOffset((short) cellRefOffset);
+                    dbcrBuilder.addCellOffset(cellRefOffset);
                     cellRefOffset = rowCellSize;
                 }
             }
             // Calculate Offset from the start of a DBCellRecord to the first Row
-            cellRecord.setRowOffset(pos);
-            rv.visitRecord(cellRecord);
+            rv.visitRecord(dbcrBuilder.build(pos));
         }
-        for (int i=0; i< _unknownRecords.size(); i++) {
+        for (Record _unknownRecord : _unknownRecords) {
             // Potentially breaking the file here since we don't know exactly where to write these records
-            rv.visitRecord((Record) _unknownRecords.get(i));
+            rv.visitRecord(_unknownRecord);
         }
     }
 
-    public Iterator getIterator() {
+    public Iterator<RowRecord> getIterator() {
         return _rowRecords.values().iterator();
     }
 
-    public Iterator getAllRecordsIterator() {
-        List result = new ArrayList(_rowRecords.size() * 2);
-        result.addAll(_rowRecords.values());
-        Iterator vi = _valuesAgg.getIterator();
-        while (vi.hasNext()) {
-            result.add(vi.next());
-        }
-        return result.iterator();
-    }
-
-    public int findStartOfRowOutlineGroup(int row)
-    {
+    public int findStartOfRowOutlineGroup(int row) {
         // Find the start of the group.
         RowRecord rowRecord = this.getRow( row );
         int level = rowRecord.getOutlineLevel();
         int currentRow = row;
-        while (this.getRow( currentRow ) != null)
-        {
+        while (currentRow >= 0 && this.getRow( currentRow ) != null) {
             rowRecord = this.getRow( currentRow );
-            if (rowRecord.getOutlineLevel() < level)
+            if (rowRecord.getOutlineLevel() < level) {
                 return currentRow + 1;
+            }
             currentRow--;
         }
 
         return currentRow + 1;
     }
 
-    public int findEndOfRowOutlineGroup( int row )
-    {
+    public int findEndOfRowOutlineGroup(int row) {
         int level = getRow( row ).getOutlineLevel();
         int currentRow;
-        for (currentRow = row; currentRow < this.getLastRowNum(); currentRow++)
-        {
-            if (getRow(currentRow) == null || getRow(currentRow).getOutlineLevel() < level)
-            {
+        for (currentRow = row; currentRow < getLastRowNum(); currentRow++) {
+            if (getRow(currentRow) == null || getRow(currentRow).getOutlineLevel() < level) {
                 break;
             }
         }
@@ -358,7 +353,7 @@ public final class RowRecordsAggregate extends RecordAggregate {
     /**
      * Create a row record.
      *
-     * @param row number
+     * @param rowNumber row number
      * @return RowRecord created for the passed in row number
      * @see org.apache.poi.hssf.record.RowRecord
      */
@@ -366,32 +361,27 @@ public final class RowRecordsAggregate extends RecordAggregate {
         return new RowRecord(rowNumber);
     }
 
-    public boolean isRowGroupCollapsed( int row )
-    {
-        int collapseRow = findEndOfRowOutlineGroup( row ) + 1;
+    public boolean isRowGroupCollapsed(int row) {
+        int collapseRow = findEndOfRowOutlineGroup(row) + 1;
 
-        if (getRow(collapseRow) == null)
-            return false;
-        else
-            return getRow( collapseRow ).getColapsed();
+        return getRow(collapseRow) != null && getRow(collapseRow).getColapsed();
     }
 
-    public void expandRow( int rowNumber )
-    {
-        int idx = rowNumber;
-        if (idx == -1)
+    public void expandRow(int rowNumber) {
+        if (rowNumber == -1)
             return;
 
         // If it is already expanded do nothing.
-        if (!isRowGroupCollapsed(idx))
+        if (!isRowGroupCollapsed(rowNumber)) {
             return;
+        }
 
         // Find the start of the group.
-        int startIdx = findStartOfRowOutlineGroup( idx );
-        RowRecord row = getRow( startIdx );
+        int startIdx = findStartOfRowOutlineGroup(rowNumber);
+        RowRecord row = getRow(startIdx);
 
         // Find the end of the group.
-        int endIdx = findEndOfRowOutlineGroup( idx );
+        int endIdx = findEndOfRowOutlineGroup(rowNumber);
 
         // expand:
         // collapsed bit must be unset
@@ -400,65 +390,56 @@ public final class RowRecordsAggregate extends RecordAggregate {
         //   to look at the start and the end of the current group to determine which
         //   is the enclosing group
         // hidden bit only is altered for this outline level.  ie.  don't un-collapse contained groups
-        if ( !isRowGroupHiddenByParent( idx ) )
-        {
-            for ( int i = startIdx; i <= endIdx; i++ )
-            {
-                if ( row.getOutlineLevel() == getRow( i ).getOutlineLevel() )
-                    getRow( i ).setZeroHeight( false );
-                else if (!isRowGroupCollapsed(i))
-                    getRow( i ).setZeroHeight( false );
+        if (!isRowGroupHiddenByParent(rowNumber)) {
+            for (int i = startIdx; i <= endIdx; i++) {
+                RowRecord otherRow = getRow(i);
+                if (row.getOutlineLevel() == otherRow.getOutlineLevel() || !isRowGroupCollapsed(i)) {
+                    otherRow.setZeroHeight(false);
+                }
             }
         }
 
         // Write collapse field
-        getRow( endIdx + 1 ).setColapsed( false );
+        getRow(endIdx + 1).setColapsed(false);
     }
 
-    public boolean isRowGroupHiddenByParent( int row )
-    {
+    public boolean isRowGroupHiddenByParent(int row) {
         // Look out outline details of end
         int endLevel;
         boolean endHidden;
-        int endOfOutlineGroupIdx = findEndOfRowOutlineGroup( row );
-        if (getRow( endOfOutlineGroupIdx + 1 ) == null)
-        {
+        int endOfOutlineGroupIdx = findEndOfRowOutlineGroup(row);
+        if (getRow(endOfOutlineGroupIdx + 1) == null) {
             endLevel = 0;
             endHidden = false;
-        }
-        else
-        {
-            endLevel = getRow( endOfOutlineGroupIdx + 1).getOutlineLevel();
-            endHidden = getRow( endOfOutlineGroupIdx + 1).getZeroHeight();
+        } else {
+            endLevel = getRow(endOfOutlineGroupIdx + 1).getOutlineLevel();
+            endHidden = getRow(endOfOutlineGroupIdx + 1).getZeroHeight();
         }
 
         // Look out outline details of start
         int startLevel;
         boolean startHidden;
         int startOfOutlineGroupIdx = findStartOfRowOutlineGroup( row );
-        if (startOfOutlineGroupIdx - 1 < 0 || getRow(startOfOutlineGroupIdx - 1) == null)
-        {
+        if (startOfOutlineGroupIdx - 1 < 0 || getRow(startOfOutlineGroupIdx - 1) == null) {
             startLevel = 0;
             startHidden = false;
-        }
-        else
-        {
-            startLevel = getRow( startOfOutlineGroupIdx - 1).getOutlineLevel();
-            startHidden = getRow( startOfOutlineGroupIdx - 1 ).getZeroHeight();
+        } else {
+            startLevel = getRow(startOfOutlineGroupIdx - 1).getOutlineLevel();
+            startHidden = getRow(startOfOutlineGroupIdx - 1).getZeroHeight();
         }
 
-        if (endLevel > startLevel)
-        {
+        if (endLevel > startLevel) {
             return endHidden;
         }
-        else
-        {
-            return startHidden;
-        }
-    }
 
-    public CellValueRecordInterface[] getValueRecords() {
-        return _valuesAgg.getValueRecords();
+        return startHidden;
+    }
+    
+    /**
+     * Returns an iterator for the cell values
+     */
+    public Iterator<CellValueRecordInterface> getCellValueIterator() {
+        return _valuesAgg.iterator();
     }
 
     public IndexRecord createIndexRecord(int indexRecordOffset, int sizeOfInitialSheetRecords) {
@@ -512,5 +493,13 @@ public final class RowRecordsAggregate extends RecordAggregate {
     }
     public void updateFormulasAfterRowShift(FormulaShifter formulaShifter, int currentExternSheetIndex) {
         _valuesAgg.updateFormulasAfterRowShift(formulaShifter, currentExternSheetIndex);
+    }
+    public DimensionsRecord createDimensions() {
+        DimensionsRecord result = new DimensionsRecord();
+        result.setFirstRow(_firstrow);
+        result.setLastRow(_lastrow);
+        result.setFirstCol((short) _valuesAgg.getFirstCellNum());
+        result.setLastCol((short) _valuesAgg.getLastCellNum());
+        return result;
     }
 }

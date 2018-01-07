@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,25 +14,25 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hwpf.sprm;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Arrays;
 
 import org.apache.poi.hwpf.usermodel.CharacterProperties;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
-public class CharacterSprmCompressor
+@Internal
+public final class CharacterSprmCompressor
 {
   public CharacterSprmCompressor()
   {
   }
   public static byte[] compressCharacterProperty(CharacterProperties newCHP, CharacterProperties oldCHP)
   {
-    ArrayList sprmList = new ArrayList();
+    List<byte[]> sprmList = new ArrayList<>();
     int size = 0;
 
     if (newCHP.isFRMarkDel() != oldCHP.isFRMarkDel())
@@ -212,9 +211,9 @@ public class CharacterSprmCompressor
     {
       size += SprmUtils.addSprm((short)0x484b, newCHP.getHpsKern(), null, sprmList);
     }
-    if (newCHP.getYsr() != oldCHP.getYsr())
+    if (newCHP.getHresi().equals( oldCHP.getHresi() ))
     {
-      size += SprmUtils.addSprm((short)0x484e, newCHP.getYsr(), null, sprmList);
+      size += SprmUtils.addSprm((short)0x484e, newCHP.getHresi().getValue(), null, sprmList);
     }
     if (newCHP.getFtcAscii() != oldCHP.getFtcAscii())
     {
@@ -278,11 +277,13 @@ public class CharacterSprmCompressor
     {
       size += SprmUtils.addSprm((short)0x2859, newCHP.getSfxtText(), null, sprmList);
     }
-    if (newCHP.getIco24() != oldCHP.getIco24())
-    {
-      if(newCHP.getIco24() != -1) // don't add a sprm if we're looking at an ico = Auto
-        size += SprmUtils.addSprm((short)0x6870, newCHP.getIco24(), null, sprmList);
-    }
+        if ( !newCHP.getCv().equals( oldCHP.getCv() ) )
+        {
+            // don't add a sprm if we're looking at an ico = Auto
+            if ( !newCHP.getCv().isEmpty() )
+                size += SprmUtils.addSprm( CharacterProperties.SPRM_CCV, newCHP
+                        .getCv().getValue(), null, sprmList );
+        }
 
     return SprmUtils.getGrpprl(sprmList, size);
   }

@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * 
+ *
  * @author Josh Micich
  */
 public final class LittleEndianOutputStream extends FilterOutputStream implements LittleEndianOutput {
@@ -30,7 +30,8 @@ public final class LittleEndianOutputStream extends FilterOutputStream implement
 		super(out);
 	}
 
-	public void writeByte(int v) {
+	@Override
+    public void writeByte(int v) {
 		try {
 			out.write(v);
 		} catch (IOException e) {
@@ -38,15 +39,17 @@ public final class LittleEndianOutputStream extends FilterOutputStream implement
 		}
 	}
 
-	public void writeDouble(double v) {
+	@Override
+    public void writeDouble(double v) {
 		writeLong(Double.doubleToLongBits(v));
 	}
 
-	public void writeInt(int v) {
+	@Override
+    public void writeInt(int v) {
 		int b3 = (v >>> 24) & 0xFF;
 		int b2 = (v >>> 16) & 0xFF;
 		int b1 = (v >>>  8) & 0xFF;
-		int b0 = (v >>>  0) & 0xFF;
+		int b0 = (v/* >>>  0*/) & 0xFF;
 		try {
 			out.write(b0);
 			out.write(b1);
@@ -57,14 +60,16 @@ public final class LittleEndianOutputStream extends FilterOutputStream implement
 		}
 	}
 
-	public void writeLong(long v) {
-		writeInt((int)(v >>  0));
+	@Override
+    public void writeLong(long v) {
+		writeInt((int)(v/* >>  0*/));
 		writeInt((int)(v >> 32));
 	}
 
-	public void writeShort(int v) {
+	@Override
+    public void writeShort(int v) {
 		int b1 = (v >>>  8) & 0xFF;
-		int b0 = (v >>>  0) & 0xFF;
+		int b0 = (v/* >>>  0*/) & 0xFF;
 		try {
 			out.write(b0);
 			out.write(b1);
@@ -72,7 +77,8 @@ public final class LittleEndianOutputStream extends FilterOutputStream implement
 			throw new RuntimeException(e);
 		}
 	}
-	public void write(byte[] b) {
+	@Override
+    public void write(byte[] b) {
 		// suppress IOException for interface method
 		try {
 			super.write(b);
@@ -80,7 +86,8 @@ public final class LittleEndianOutputStream extends FilterOutputStream implement
 			throw new RuntimeException(e);
 		}
 	}
-	public void write(byte[] b, int off, int len) {
+	@Override
+    public void write(byte[] b, int off, int len) {
 		// suppress IOException for interface method
 		try {
 			super.write(b, off, len);

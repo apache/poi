@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,114 +14,71 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.storage;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import junit.framework.TestCase;
 
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.DummyPOILogger;
-import org.apache.poi.util.POILogFactory;
-
-import junit.framework.*;
+import org.apache.poi.util.POILogger;
 
 /**
  * Class to test RawDataBlockList functionality
  *
  * @author Marc Johnson
  */
-
-public class TestRawDataBlockList
-    extends TestCase
-{
-	static {
-        // We always want to use our own
-        //  logger
-        System.setProperty(
-        		"org.apache.poi.util.POILogger",
-        		"org.apache.poi.util.DummyPOILogger"
-        );
-	}
-
-    /**
-     * Constructor TestRawDataBlockList
-     *
-     * @param name
-     */
-    public TestRawDataBlockList(String name)
-    {
-        super(name);
-    }
-
+public final class TestRawDataBlockList extends TestCase {
     /**
      * Test creating a normal RawDataBlockList
-     *
-     * @exception IOException
      */
-    public void testNormalConstructor()
-        throws IOException
-    {
+    public void testNormalConstructor() throws IOException {
         byte[] data = new byte[ 2560 ];
 
         for (int j = 0; j < 2560; j++)
         {
             data[ j ] = ( byte ) j;
         }
-        new RawDataBlockList(new ByteArrayInputStream(data), POIFSConstants.BIG_BLOCK_SIZE);
+        new RawDataBlockList(new ByteArrayInputStream(data), POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
     }
 
     /**
      * Test creating an empty RawDataBlockList
-     *
-     * @exception IOException
      */
-
-    public void testEmptyConstructor()
-        throws IOException
-    {
-        new RawDataBlockList(new ByteArrayInputStream(new byte[ 0 ]), POIFSConstants.BIG_BLOCK_SIZE);
+    public void testEmptyConstructor() throws IOException {
+        new RawDataBlockList(new ByteArrayInputStream(new byte[ 0 ]), POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
     }
 
     /**
      * Test creating a short RawDataBlockList
      */
-
-    public void testShortConstructor() throws Exception
-    {
+    public void testShortConstructor() throws Exception {
         // Get the logger to be used
-        DummyPOILogger logger = (DummyPOILogger)POILogFactory.getLogger(
-        		RawDataBlock.class
-        );
-        assertEquals(0, logger.logged.size());
-        
-        // Test for various short sizes
-        for (int k = 2049; k < 2560; k++)
-        {
-            byte[] data = new byte[ k ];
-
-            for (int j = 0; j < k; j++)
+        POILogger oldLogger = RawDataBlock.log;
+        DummyPOILogger logger = new DummyPOILogger();
+        try {
+            RawDataBlock.log = logger;
+            assertEquals(0, logger.logged.size());
+    
+            // Test for various short sizes
+            for (int k = 2049; k < 2560; k++)
             {
-                data[ j ] = ( byte ) j;
+                byte[] data = new byte[ k ];
+    
+                for (int j = 0; j < k; j++)
+                {
+                    data[ j ] = ( byte ) j;
+                }
+    
+                // Check we logged the error
+                logger.reset();
+                new RawDataBlockList(new ByteArrayInputStream(data), POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
+                assertEquals(1, logger.logged.size());
             }
-
-            // Check we logged the error
-            logger.reset();
-            new RawDataBlockList(new ByteArrayInputStream(data), POIFSConstants.BIG_BLOCK_SIZE);
-            assertEquals(1, logger.logged.size());
+        } finally {
+            RawDataBlock.log = oldLogger;
         }
-    }
-
-    /**
-     * main method to run the unit tests
-     *
-     * @param ignored_args
-     */
-
-    public static void main(String [] ignored_args)
-    {
-        System.out
-            .println("Testing org.apache.poi.poifs.storage.RawDataBlockList");
-        junit.textui.TestRunner.run(TestRawDataBlockList.class);
     }
 }

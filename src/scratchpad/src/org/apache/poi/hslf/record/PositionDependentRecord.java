@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,10 +14,9 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
-import java.util.Hashtable;
+import java.util.Map;
 
 /**
  * Records which either care about where they are on disk, or have other
@@ -39,15 +37,15 @@ public interface PositionDependentRecord
 	/** Fetch our location on the disk, as of the last write out */
 	public int getLastOnDiskOffset();
 
-	/** 
+	/**
 	 * Update the Record's idea of where on disk it lives, after a write out.
 	 * Use with care...
 	 */
 	public void setLastOnDiskOffset(int offset);
 
 	/**
-	 * Offer the record the list of records that have changed their 
+	 * Offer the record the list of records that have changed their
 	 *  location as part of the writeout.
 	 */
-	public void updateOtherRecordReferences(Hashtable oldToNewReferencesLookup);
+	public void updateOtherRecordReferences(Map<Integer,Integer> oldToNewReferencesLookup);
 }

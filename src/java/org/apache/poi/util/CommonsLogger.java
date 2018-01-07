@@ -27,19 +27,13 @@ import org.apache.commons.logging.LogFactory;
  * developers to write log calls, while simultaneously making those
  * calls as cheap as possible by performing lazy evaluation of the log
  * message.<p>
- *
- * @author Marc Johnson (mjohnson at apache dot org)
- * @author Glen Stampoultzis (glens at apache.org)
- * @author Nicola Ken Barozzi (nicolaken at apache.org)
  */
-
 public class CommonsLogger extends POILogger
 {
+    private static final LogFactory   _creator = LogFactory.getFactory();
+    private Log             log;
 
-    private static LogFactory   _creator = LogFactory.getFactory();
-    private Log             log   = null;
-
-   
+    @Override
     public void initialize(final String cat)
     {
         this.log = _creator.getInstance(cat);
@@ -51,8 +45,11 @@ public class CommonsLogger extends POILogger
      * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
      * @param obj1 The object to log.
      */
-    public void log(final int level, final Object obj1)
+    @Override
+    protected void _log(final int level, final Object obj1)
     {
+        // FIXME: What happens if level is in between two levels (an even number)?
+        // Should this be `if (level >= FATAL) ...`?
         if(level==FATAL)
         {
           if(log.isFatalEnabled())
@@ -104,9 +101,12 @@ public class CommonsLogger extends POILogger
      * @param obj1 The object to log.  This is converted to a string.
      * @param exception An exception to be logged
      */
-    public void log(final int level, final Object obj1,
+    @Override
+    protected void _log(final int level, final Object obj1,
                     final Throwable exception) 
     {
+        // FIXME: What happens if level is in between two levels (an even number)?
+        // Should this be `if (level >= FATAL) ...`?
         if(level==FATAL)
         {
           if(log.isFatalEnabled())
@@ -175,9 +175,11 @@ public class CommonsLogger extends POILogger
      *
      * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
      */
-
+    @Override
     public boolean check(final int level)
     {
+        // FIXME: What happens if level is in between two levels (an even number)?
+        // Should this be `if (level >= FATAL) ...`?
         if(level==FATAL)
         {
           if(log.isFatalEnabled())

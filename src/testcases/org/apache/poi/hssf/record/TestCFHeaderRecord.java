@@ -23,16 +23,11 @@ import junit.framework.TestCase;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
- * Tests the serialization and deserialization of the TestCFHeaderRecord
- * class works correctly.  
- *
- * @author Dmitriy Kumshayev 
+ * Tests the serialization and deserialization of the {@link CFHeaderRecord}
+ *  and {@link CFHeader12Record} classes works correctly.  
  */
-public final class TestCFHeaderRecord extends TestCase
-{
-
-	public void testCreateCFHeaderRecord () 
-	{
+public final class TestCFHeaderRecord extends TestCase {
+	public void testCreateCFHeaderRecord () {
 		CFHeaderRecord record = new CFHeaderRecord();
 		CellRangeAddress[] ranges = {
 			new CellRangeAddress(0,0xFFFF,5,5),
@@ -50,12 +45,52 @@ public final class TestCFHeaderRecord extends TestCase
 		assertEquals(65535, enclosingCellRange.getLastRow());
 		assertEquals(0, enclosingCellRange.getFirstColumn());
 		assertEquals(6, enclosingCellRange.getLastColumn());
+		
+		assertEquals(false, record.getNeedRecalculation());
+		assertEquals(0, record.getID());
+		
 		record.setNeedRecalculation(true);
-		assertTrue(record.getNeedRecalculation());
+        assertEquals(true, record.getNeedRecalculation());
+        assertEquals(0, record.getID());
+        
+        record.setID(7);
 		record.setNeedRecalculation(false);
-		assertFalse(record.getNeedRecalculation());
+        assertEquals(false, record.getNeedRecalculation());
+        assertEquals(7, record.getID());
 	}
 	
+    public void testCreateCFHeader12Record () {
+        CFHeader12Record record = new CFHeader12Record();
+        CellRangeAddress[] ranges = {
+            new CellRangeAddress(0,0xFFFF,5,5),
+            new CellRangeAddress(0,0xFFFF,6,6),
+            new CellRangeAddress(0,1,0,1),
+            new CellRangeAddress(0,1,2,3),
+            new CellRangeAddress(2,3,0,1),
+            new CellRangeAddress(2,3,2,3),
+        };
+        record.setCellRanges(ranges);
+        ranges = record.getCellRanges();
+        assertEquals(6,ranges.length);
+        CellRangeAddress enclosingCellRange = record.getEnclosingCellRange();
+        assertEquals(0, enclosingCellRange.getFirstRow());
+        assertEquals(65535, enclosingCellRange.getLastRow());
+        assertEquals(0, enclosingCellRange.getFirstColumn());
+        assertEquals(6, enclosingCellRange.getLastColumn());
+
+        assertEquals(false, record.getNeedRecalculation());
+        assertEquals(0, record.getID());
+        
+        record.setNeedRecalculation(true);
+        assertEquals(true, record.getNeedRecalculation());
+        assertEquals(0, record.getID());
+        
+        record.setID(7);
+        record.setNeedRecalculation(false);
+        assertEquals(false, record.getNeedRecalculation());
+        assertEquals(7, record.getID());
+    }
+    
 	public void testSerialization() {
 		byte[] recordData = 
 		{

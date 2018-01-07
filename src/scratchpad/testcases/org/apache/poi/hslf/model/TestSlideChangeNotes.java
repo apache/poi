@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,50 +14,52 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.model;
 
 
-import junit.framework.TestCase;
-import org.apache.poi.hslf.*;
-import org.apache.poi.hslf.model.*;
-import org.apache.poi.hslf.usermodel.*;
+import static org.junit.Assert.assertEquals;
+
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.record.SlideAtom;
+import org.apache.poi.hslf.usermodel.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests that changing a slide's idea of what notes sheet is its works right
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestSlideChangeNotes extends TestCase {
+public final class TestSlideChangeNotes {
 	// SlideShow primed on the test data
-	private SlideShow ss;
+	private HSLFSlideShow ss;
 
-    public TestSlideChangeNotes() throws Exception {
-		String dirname = System.getProperty("HSLF.testdata.path");
-		String filename = dirname + "/basic_test_ppt_file.ppt";
-		HSLFSlideShow hss = new HSLFSlideShow(filename);
-		ss = new SlideShow(hss);
-    }
+	@Before
+	public void init() throws Exception {
+        POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
+		HSLFSlideShowImpl hss = new HSLFSlideShowImpl(_slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
+		ss = new HSLFSlideShow(hss);
+	}
 
-    public void testSetToNone() throws Exception {
-		Slide slideOne = ss.getSlides()[0];
+	@Test
+	public void testSetToNone() {
+		HSLFSlide slideOne = ss.getSlides().get(0);
 		SlideAtom sa = slideOne.getSlideRecord().getSlideAtom();
 
 		slideOne.setNotes(null);
 
 		assertEquals(0, sa.getNotesID());
-    }
+	}
 
-    public void testSetToSomething() throws Exception {
-		Slide slideOne = ss.getSlides()[0];
-		Notes notesOne = ss.getNotes()[1];
+	@Test
+	public void testSetToSomething() {
+		HSLFSlide slideOne = ss.getSlides().get(0);
+		HSLFNotes notesOne = ss.getNotes().get(1);
 		SlideAtom sa = slideOne.getSlideRecord().getSlideAtom();
 
 		slideOne.setNotes(notesOne);
 
 		assertEquals(notesOne._getSheetNumber(), sa.getNotesID());
-    }
+	}
 }

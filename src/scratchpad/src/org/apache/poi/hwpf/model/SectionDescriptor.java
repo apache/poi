@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,20 +14,43 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hwpf.model;
 
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
-public class SectionDescriptor
+/**
+ * Section Descriptor (SED)
+ * 
+ * See page 186 for details.
+ */
+@Internal
+public final class SectionDescriptor
 {
 
-  private short fn;
-  private int fc;
-  private short fnMpr;
-  private int fcMpr;
+    /**
+     * "Used internally by Word"
+     */
+    private short fn;
+
+    /**
+     * "File offset in main stream to beginning of SEPX stored for section. If
+     * sed.fcSepx==0xFFFFFFFF, the section properties for the section are equal
+     * to the standard SEP (see SEP definition)."
+     */
+    private int fcSepx;
+    
+    /**
+     * "Used internally by Word"
+     */
+    private short fnMpr;
+
+    /**
+     * "Points to offset in FC space of main stream where the Macintosh Print
+     * Record for a document created on a Macintosh will be stored"
+     */
+    private int fcMpr;
 
   public SectionDescriptor()
   {
@@ -38,7 +60,7 @@ public class SectionDescriptor
   {
     fn = LittleEndian.getShort(buf, offset);
     offset += LittleEndian.SHORT_SIZE;
-    fc = LittleEndian.getInt(buf, offset);
+    fcSepx = LittleEndian.getInt(buf, offset);
     offset += LittleEndian.INT_SIZE;
     fnMpr = LittleEndian.getShort(buf, offset);
     offset += LittleEndian.SHORT_SIZE;
@@ -47,20 +69,28 @@ public class SectionDescriptor
 
   public int getFc()
   {
-    return fc;
+    return fcSepx;
   }
 
   public void setFc(int fc)
   {
-    this.fc = fc;
+    this.fcSepx = fc;
   }
 
+  @Override
   public boolean equals(Object o)
   {
+    if (!(o instanceof SectionDescriptor)) return false;
     SectionDescriptor sed = (SectionDescriptor)o;
     return sed.fn == fn && sed.fnMpr == fnMpr;
   }
 
+  @Override
+  public int hashCode() {
+      assert false : "hashCode not designed";
+      return 42; // any arbitrary constant will do
+  }
+  
   public byte[] toByteArray()
   {
     int offset = 0;
@@ -68,7 +98,7 @@ public class SectionDescriptor
 
     LittleEndian.putShort(buf, offset, fn);
     offset += LittleEndian.SHORT_SIZE;
-    LittleEndian.putInt(buf, offset, fc);
+    LittleEndian.putInt(buf, offset, fcSepx);
     offset += LittleEndian.INT_SIZE;
     LittleEndian.putShort(buf, offset, fnMpr);
     offset += LittleEndian.SHORT_SIZE;
@@ -76,4 +106,11 @@ public class SectionDescriptor
 
     return buf;
   }
+
+    @Override
+    public String toString()
+    {
+        return "[SED] (fn: " + fn + "; fcSepx: " + fcSepx + "; fnMpr: " + fnMpr
+                + "; fcMpr: " + fcMpr + ")";
+    }
 }

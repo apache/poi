@@ -14,107 +14,131 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hdgf.extractor;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 
-import junit.framework.TestCase;
-
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hdgf.HDGFDiagram;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.junit.Test;
 
-public class TestVisioExtractor extends TestCase {
-	private String dirname;
-	private String defFilename;
-	protected void setUp() throws Exception {
-		dirname = System.getProperty("HDGF.testdata.path");
-		defFilename = dirname + "/Test_Visio-Some_Random_Text.vsd";
-	}
-	
+public final class TestVisioExtractor {
+    private static POIDataSamples _dgTests = POIDataSamples.getDiagramInstance();
+
+	private final String defFilename = "Test_Visio-Some_Random_Text.vsd";
+	private final int defTextChunks = 5;
+
 	/**
 	 * Test the 3 different ways of creating one
 	 */
-	public void testCreation() throws Exception {
-		VisioTextExtractor extractor;
+	@Test
+	public void testCreation() throws IOException {
+		VisioTextExtractor extractor1 = openExtractor(defFilename);
+		assertNotNull(extractor1);
+		assertNotNull(extractor1.getAllText());
+		assertEquals(defTextChunks, extractor1.getAllText().length);
+		extractor1.close();
+
+		InputStream is2 = _dgTests.openResourceAsStream(defFilename);
+		POIFSFileSystem poifs2 = new POIFSFileSystem(is2);
+		is2.close();
+		VisioTextExtractor extractor2 = new VisioTextExtractor(poifs2);
+		assertNotNull(extractor2);
+		assertNotNull(extractor2.getAllText());
+		assertEquals(defTextChunks, extractor2.getAllText().length);
+		extractor2.close();
+		poifs2.close();
+
+        InputStream is3 = _dgTests.openResourceAsStream(defFilename);
+        POIFSFileSystem poifs3 = new POIFSFileSystem(is3);
+        is3.close();
+        HDGFDiagram hdgf3 = new HDGFDiagram(poifs3);
+
 		
-		extractor = new VisioTextExtractor(new FileInputStream(defFilename));
-		assertNotNull(extractor);
-		assertNotNull(extractor.getAllText());
-		assertEquals(3, extractor.getAllText().length);
-		
-		extractor = new VisioTextExtractor(
-				new POIFSFileSystem(
-						new FileInputStream(defFilename)
-				)
-		);
-		assertNotNull(extractor);
-		assertNotNull(extractor.getAllText());
-		assertEquals(3, extractor.getAllText().length);
-		
-		extractor = new VisioTextExtractor(
-			new HDGFDiagram(
-				new POIFSFileSystem(
-						new FileInputStream(defFilename)
-				)
-			)
-		);
-		assertNotNull(extractor);
-		assertNotNull(extractor.getAllText());
-		assertEquals(3, extractor.getAllText().length);
+        VisioTextExtractor extractor3 = new VisioTextExtractor(hdgf3);
+		assertNotNull(extractor3);
+		assertNotNull(extractor3.getAllText());
+		assertEquals(defTextChunks, extractor3.getAllText().length);
+		extractor3.close();
+		hdgf3.close();
+		poifs3.close();
 	}
-	
+
+    @Test
 	public void testExtraction() throws Exception {
-		VisioTextExtractor extractor =
-			new VisioTextExtractor(new FileInputStream(defFilename));
-		
+		VisioTextExtractor extractor = openExtractor(defFilename);
+
 		// Check the array fetch
 		String[] text = extractor.getAllText();
 		assertNotNull(text);
-		assertEquals(3, text.length);
-		
-		assertEquals("Test View\n", text[0]);
-		assertEquals("I am a test view\n", text[1]);
-		assertEquals("Some random text, on a page\n", text[2]);
-		
+		assertEquals(defTextChunks, text.length);
+
+		assertEquals("text\n", text[0]);
+		assertEquals("View\n", text[1]);
+		assertEquals("Test View\n", text[2]);
+		assertEquals("I am a test view\n", text[3]);
+		assertEquals("Some random text, on a page\n", text[4]);
+
 		// And the all-in fetch
 		String textS = extractor.getText();
-		assertEquals("Test View\nI am a test view\nSome random text, on a page\n", textS);
+		assertEquals("text\nView\nTest View\nI am a test view\nSome random text, on a page\n", textS);
+		extractor.close();
 	}
-	
+
+    @Test
 	public void testProblemFiles() throws Exception {
-		File a = new File(dirname, "44594.vsd");
-		VisioTextExtractor.main(new String[] {a.toString()});
-		
-		File b = new File(dirname, "44594-2.vsd");
-		VisioTextExtractor.main(new String[] {b.toString()});
-		
-		File c = new File(dirname, "ShortChunk1.vsd");
-		VisioTextExtractor.main(new String[] {c.toString()});
-		
-		File d = new File(dirname, "ShortChunk2.vsd");
-		VisioTextExtractor.main(new String[] {d.toString()});
-		
-		File e = new File(dirname, "ShortChunk3.vsd");
-		VisioTextExtractor.main(new String[] {e.toString()});
+		String[] files = {
+		      "44594.vsd", "44594-2.vsd", 
+		      "ShortChunk1.vsd", "ShortChunk2.vsd", "ShortChunk3.vsd",
+		      "NegativeChunkLength.vsd", "NegativeChunkLength2.vsd"
+		};
+        for(String file : files){
+            VisioTextExtractor ex = openExtractor(file);
+            ex.getText();
+            ex.close();
+        }
 	}
-	
+
+    @Test
 	public void testMain() throws Exception {
 		PrintStream oldOut = System.out;
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		PrintStream capture = new PrintStream(baos);
 		System.setOut(capture);
-		
-		VisioTextExtractor.main(new String[] {defFilename});
-		
+
+        String path = _dgTests.getFile(defFilename).getPath();
+        VisioTextExtractor.main(new String[] {path});
+
 		// Put things back
 		System.setOut(oldOut);
-		
+
 		// Check
 		capture.flush();
 		String text = baos.toString();
-		assertEquals("Test View\nI am a test view\nSome random text, on a page\n", text);
+        // YK: stdout can contain lots of other stuff if logging is sent to console
+        // ( -Dorg.apache.poi.util.POILogger=org.apache.poi.util.SystemOutLogger)
+		assertTrue( text.contains(
+		      "text\nView\n" +
+		      "Test View\nI am a test view\n" +
+		      "Some random text, on a page\n"
+		      ));
 	}
+    
+    private VisioTextExtractor openExtractor(String fileName) throws IOException {
+        InputStream is = _dgTests.openResourceAsStream(fileName);
+        try {
+            return new VisioTextExtractor(is);
+        } finally {
+            is.close();
+        }
+    }
 }

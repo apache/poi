@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,13 +14,8 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.ddf;
-
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.HexRead;
-import org.apache.poi.util.LittleEndian;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -29,16 +23,17 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.zip.InflaterInputStream;
 
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.HexRead;
+import org.apache.poi.util.LittleEndian;
+
 /**
  * Used to dump the contents of escher records to a PrintStream.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
-public class EscherDump
-{
+public final class EscherDump {
 
-    public EscherDump()
-    {
+    public EscherDump() {
+        //
     }
 
     /**
@@ -51,15 +46,14 @@ public class EscherDump
      * @param out       The output stream to write the results to.
      *
      */
-    public void dump( byte[] data, int offset, int size, PrintStream out ) throws IOException, LittleEndian.BufferUnderrunException
-    {
+    public void dump(byte[] data, int offset, int size, PrintStream out) {
         EscherRecordFactory recordFactory = new DefaultEscherRecordFactory();
         int pos = offset;
         while ( pos < offset + size )
         {
             EscherRecord r = recordFactory.createRecord(data, pos);
             int bytesRead = r.fillFields(data, pos, recordFactory );
-            System.out.println( r.toString() );
+            out.println(r);
             pos += bytesRead;
         }
     }
@@ -70,22 +64,22 @@ public class EscherDump
      * @param maxLength The number of bytes to read
      * @param in        An input stream to read from.
      * @param out       An output stream to write to.
+     * 
+     * @throws IOException if the data can't be read or written 
+     * @throws LittleEndian.BufferUnderrunException if an buffer underrun occurs  
      */
-    public void dumpOld( long maxLength, InputStream in, PrintStream out ) throws IOException, LittleEndian.BufferUnderrunException
-    {
+    public void dumpOld(long maxLength, InputStream in, PrintStream out)
+            throws IOException, LittleEndian.BufferUnderrunException {
         long remainingBytes = maxLength;
         short options;      // 4 bits for the version and 12 bits for the instance
         short recordId;
         int recordBytesRemaining;       // including enclosing records
-        StringBuffer stringBuf = new StringBuffer();
         short nDumpSize;
         String recordName;
 
         boolean atEOF = false;
 
-        while ( !atEOF && ( remainingBytes > 0 ) )
-        {
-            stringBuf = new StringBuffer();
+        while (!atEOF && (remainingBytes > 0)) {
             options = LittleEndian.readShort( in );
             recordId = LittleEndian.readShort( in );
             recordBytesRemaining = LittleEndian.readInt( in );
@@ -191,14 +185,16 @@ public class EscherDump
                     recordName = "MsofbtUDefProp";
                     break;
                 default:
-                    if ( recordId >= (short) 0xF018 && recordId <= (short) 0xF117 )
+                    if ( recordId >= (short) 0xF018 && recordId <= (short) 0xF117 ) {
                         recordName = "MsofbtBLIP";
-                    else if ( ( options & (short) 0x000F ) == (short) 0x000F )
+                    } else if ( ( options & (short) 0x000F ) == (short) 0x000F ) {
                         recordName = "UNKNOWN container";
-                    else
+                    } else {
                         recordName = "UNKNOWN ID";
+                    }
             }
 
+            StringBuilder stringBuf = new StringBuilder();
             stringBuf.append( "  " );
             stringBuf.append( HexDump.toHex( recordId ) );
             stringBuf.append( "  " ).append( recordName ).append( " [" );
@@ -207,7 +203,8 @@ public class EscherDump
             stringBuf.append( HexDump.toHex( recordBytesRemaining ) );
             stringBuf.append( "]  instance: " );
             stringBuf.append( HexDump.toHex( ( (short) ( options >> 4 ) ) ) );
-            out.println( stringBuf.toString() );
+            out.println(stringBuf);
+            stringBuf.setLength(0);
 
 
             if ( recordId == (short) 0xF007 && 36 <= remainingBytes && 36 <= recordBytesRemaining )
@@ -218,7 +215,7 @@ public class EscherDump
                 //                short n16;
                 //                int n32;
 
-                stringBuf = new StringBuffer( "    btWin32: " );
+                stringBuf = stringBuf.append( "    btWin32: " );
                 n8 = (byte) in.read();
                 stringBuf.append( HexDump.toHex( n8 ) );
                 stringBuf.append( getBlipType( n8 ) );
@@ -226,7 +223,7 @@ public class EscherDump
                 n8 = (byte) in.read();
                 stringBuf.append( HexDump.toHex( n8 ) );
                 stringBuf.append( getBlipType( n8 ) );
-                out.println( stringBuf.toString() );
+                out.println(stringBuf);
 
                 out.println( "    rgbUid:" );
                 HexDump.dump( in, out, 0, 16 );
@@ -312,8 +309,9 @@ public class EscherDump
                     out.print( " " + propertyId  );
                     if ( ( n16 & (short) 0x8000 ) == 0 )
                     {
-                        if ( ( n16 & (short) 0x4000 ) != 0 )
+                        if ( ( n16 & (short) 0x4000 ) != 0 ) {
                             out.print( ", fBlipID" );
+                        }
                         out.print( ")  " );
 
                         out.print( HexDump.toHex( n32 ) );
@@ -390,8 +388,9 @@ public class EscherDump
 
                 byte[] buf = new byte[nDumpSize];
                 int read = in.read( buf );
-                while ( read != -1 && read < nDumpSize )
+                while ( read != -1 && read < nDumpSize ) {
                     read += in.read( buf, read, buf.length );
+                }
                 ByteArrayInputStream bin = new ByteArrayInputStream( buf );
 
                 InputStream in1 = new InflaterInputStream( bin );
@@ -406,10 +405,11 @@ public class EscherDump
             boolean isContainer = ( options & (short) 0x000F ) == (short) 0x000F;
             if ( isContainer && remainingBytes >= 0 )
             {	// Container
-                if ( recordBytesRemaining <= (int) remainingBytes )
+                if ( recordBytesRemaining <= (int) remainingBytes ) {
                     out.println( "            completed within" );
-                else
+                } else {
                     out.println( "            continued elsewhere" );
+                }
             }
             else if ( remainingBytes >= 0 )
             // -> 0x0000 ... 0x0FFF
@@ -421,9 +421,9 @@ public class EscherDump
                     HexDump.dump( in, out, 0, nDumpSize );
                     remainingBytes -= nDumpSize;
                 }
-            }
-            else
+            } else {
                 out.println( " >> OVERRUN <<" );
+            }
         }
 
     }
@@ -435,17 +435,14 @@ public class EscherDump
      * @param propertyId    The property number for the name
      * @return  A descriptive name.
      */
-    private String propName( short propertyId )
-    {
-        class PropName {
-            public PropName( int id, String name )
-            {
-                this.id = id;
-                this.name = name;
+    private String propName(short propertyId) {
+        final class PropName {
+            final int _id;
+            final String _name;
+            public PropName(int id, String name) {
+                _id = id;
+                _name = name;
             }
-
-            int id;
-            String name;
         }
 
         final PropName[] props = new PropName[] {
@@ -725,11 +722,9 @@ public class EscherDump
             new PropName(959, "groupshape.print"),
         };
 
-        for ( int i = 0; i < props.length; i++ )
-        {
-            if (props[i].id == propertyId)
-            {
-                return props[i].name;
+        for (int i = 0; i < props.length; i++) {
+            if (props[i]._id == propertyId) {
+                return props[i]._name;
             }
         }
 
@@ -742,32 +737,8 @@ public class EscherDump
      * @param   b   blip id
      * @return  A description.
      */
-    private String getBlipType( byte b )
-    {
-        switch ( b )
-        {
-            case 0:
-                return " ERROR";
-            case 1:
-                return " UNKNOWN";
-            case 2:
-                return " EMF";
-            case 3:
-                return " WMF";
-            case 4:
-                return " PICT";
-            case 5:
-                return " JPEG";
-            case 6:
-                return " PNG";
-            case 7:
-                return " DIB";
-            default:
-                if ( b < 32 )
-                    return " NotKnown";
-                else
-                    return " Client";
-        }
+    private static String getBlipType(byte b) {
+        return EscherBSERecord.getBlipType(b);
     }
 
     /**
@@ -778,7 +749,7 @@ public class EscherDump
         String result = "";
         result += (short) ( n32 >> 16 );
         result += '.';
-        result += (short) ( n32 & (short) 0xFFFF );
+        result += (short) ( n32 & 0xFFFF );
         return result;
     }
 
@@ -809,9 +780,14 @@ public class EscherDump
 
     /**
      * A simple test stub.
+     * 
+     * @param args the args
      */
-    public static void main( String[] args ) throws IOException
-    {
+    public static void main( String[] args ) {
+        main(args, System.out);
+    }
+    
+    public static void main( String[] args, PrintStream out ) {
         String dump =
                 "0F 00 00 F0 89 07 00 00 00 00 06 F0 18 00 00 00 " +
                 "05 04 00 00 02 00 00 00 05 00 00 00 01 00 00 00 " +
@@ -937,19 +913,16 @@ public class EscherDump
                 "10                                              ";
 
         // Decode the stream to bytes
-        byte[] bytes = HexRead.readData( new ByteArrayInputStream( dump.getBytes() ), -1 );
+        byte[] bytes = HexRead.readFromString(dump);
         // Create a new instance of the escher dumper
         EscherDump dumper = new EscherDump();
         // Dump the contents of scher to screen.
 //        dumper.dumpOld( bytes.length, new ByteArrayInputStream( bytes ), System.out );
-        dumper.dump(bytes, 0, bytes.length, System.out);
+        dumper.dump(bytes, 0, bytes.length, out);
 
     }
 
-    public void dump( int recordSize, byte[] data, PrintStream out ) throws IOException, LittleEndian.BufferUnderrunException
-    {
-//        ByteArrayInputStream is = new ByteArrayInputStream( data );
-//        dump( recordSize, is, out );
-        dump( data, 0, recordSize, System.out );
+    public void dump( int recordSize, byte[] data, PrintStream out ) {
+        dump( data, 0, recordSize, out );
     }
 }

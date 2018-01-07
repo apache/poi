@@ -19,7 +19,7 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title:        Hide Object Record<P>
@@ -29,8 +29,8 @@ import org.apache.poi.util.LittleEndian;
  * @version 2.0-pre
  */
 
-public class HideObjRecord
-    extends Record
+public final class HideObjRecord
+    extends StandardRecord
 {
     public final static short sid               = 0x8d;
     public final static short HIDE_ALL          = 2;
@@ -86,13 +86,8 @@ public class HideObjRecord
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset,
-                              (( short ) 0x02));   // 2 bytes (6 total)
-        LittleEndian.putShort(data, 4 + offset, getHideObj());
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(getHideObj());
     }
 
     protected int getDataSize() {

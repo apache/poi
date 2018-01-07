@@ -17,11 +17,11 @@
 
 package org.apache.poi.util;
 
+
 /**
  * Utility classes for dealing with arrays.
  *
  * @author Glen Stampoultzis
- * @version $Id$
  */
 public class ArrayUtil
 {
@@ -105,4 +105,5 @@ public class ArrayUtil
     	
     	// We're done - array will now have everything moved as required
     }
+
 }

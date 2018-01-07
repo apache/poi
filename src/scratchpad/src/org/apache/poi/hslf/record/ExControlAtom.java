@@ -27,7 +27,7 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Yegor Kozlov
  */
-public class ExControlAtom extends RecordAtom {
+public final class ExControlAtom extends RecordAtom {
 
 
     /**
@@ -110,7 +110,7 @@ public class ExControlAtom extends RecordAtom {
     public void writeOut(OutputStream out) throws IOException {
         out.write(_header);
         byte[] data = new byte[4];
-        LittleEndian.putInt(data, _id);
+        LittleEndian.putInt(data, 0, _id);
         out.write(data);
     }
 

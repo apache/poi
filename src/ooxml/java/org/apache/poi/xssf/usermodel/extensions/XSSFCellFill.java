@@ -20,7 +20,9 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPatternFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPatternType;
+import org.apache.poi.xssf.usermodel.IndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.util.Internal;
 
 /**
  * This element specifies fill formatting.
@@ -28,6 +30,7 @@ import org.apache.poi.xssf.usermodel.XSSFColor;
  */
 public final class XSSFCellFill {
 
+    private IndexedColorMap _indexedColorMap;
     private CTFill _fill;
 
     /**
@@ -35,8 +38,9 @@ public final class XSSFCellFill {
      *
      * @param fill - fill
      */
-    public XSSFCellFill(CTFill fill) {
+    public XSSFCellFill(CTFill fill, IndexedColorMap colorMap) {
         _fill = fill;
+        _indexedColorMap = colorMap;
     }
 
     /**
@@ -56,7 +60,7 @@ public final class XSSFCellFill {
         if (ptrn == null) return null;
 
         CTColor ctColor = ptrn.getBgColor();
-        return ctColor == null ? null : new XSSFColor(ctColor);
+        return XSSFColor.from(ctColor, _indexedColorMap);
     }
 
     /**
@@ -77,7 +81,11 @@ public final class XSSFCellFill {
      */
     public void setFillBackgroundColor(XSSFColor color) {
         CTPatternFill ptrn = ensureCTPatternFill();
-        ptrn.setBgColor(color.getCTColor());
+        if (color == null) {
+            ptrn.unsetBgColor();
+        } else {
+            ptrn.setBgColor(color.getCTColor());
+        }
     }
 
     /**
@@ -90,7 +98,7 @@ public final class XSSFCellFill {
         if (ptrn == null) return null;
 
         CTColor ctColor = ptrn.getFgColor();
-        return ctColor == null ? null : new XSSFColor(ctColor);
+        return XSSFColor.from(ctColor, _indexedColorMap);
     }
 
     /**
@@ -111,7 +119,11 @@ public final class XSSFCellFill {
      */
     public void setFillForegroundColor(XSSFColor color) {
         CTPatternFill ptrn = ensureCTPatternFill();
-        ptrn.setFgColor(color.getCTColor());
+        if (color == null) {
+            ptrn.unsetFgColor();
+        } else {
+            ptrn.setFgColor(color.getCTColor());
+        }
     }
 
     /**
@@ -147,6 +159,7 @@ public final class XSSFCellFill {
      *
      * @return CTFill
      */
+    @Internal
     public CTFill getCTFill() {
         return _fill;
     }

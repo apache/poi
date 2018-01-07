@@ -17,6 +17,8 @@
 
 package org.apache.poi.hslf.model.textproperties;
 
+import java.util.Locale;
+
 /** 
  * Definition of a property of some text, or its paragraph. Defines 
  * how to find out if it's present (via the mask on the paragraph or 
@@ -29,10 +31,10 @@ package org.apache.poi.hslf.model.textproperties;
  *  TextProps is stored in the different record classes 
  */
 public class TextProp implements Cloneable {
-	protected int sizeOfDataBlock; // Number of bytes the data part uses
-	protected String propName;
-	protected int dataValue;
-	protected int maskInHeader;
+	private int sizeOfDataBlock; // Number of bytes the data part uses
+	private String propName;
+	private int dataValue;
+	private int maskInHeader;
 
 	/** 
 	 * Generate the definition of a given type of text property.
@@ -44,6 +46,16 @@ public class TextProp implements Cloneable {
 		this.dataValue = 0;
 	}
 
+	/**
+	 * Clones the property
+	 */
+	public TextProp(TextProp other) {
+	    this.sizeOfDataBlock = other.sizeOfDataBlock;
+	    this.maskInHeader = other.maskInHeader;
+	    this.propName = other.propName;
+	    this.dataValue = other.dataValue;
+	}
+	
 	/**
 	 * Name of the text property
 	 */
@@ -79,11 +91,65 @@ public class TextProp implements Cloneable {
 	/**
 	 * Clone, eg when you want to actually make use of one of these.
 	 */
-	public Object clone(){
+	@Override
+	public TextProp clone(){
 		try {
-			return super.clone();
+			return (TextProp)super.clone();
 		} catch(CloneNotSupportedException e) {
 			throw new InternalError(e.getMessage());
 		}
 	}
+	
+	@Override
+	public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + dataValue;
+        result = prime * result + maskInHeader;
+        result = prime * result + ((propName == null) ? 0 : propName.hashCode());
+        result = prime * result + sizeOfDataBlock;
+        return result;
+    }
+
+	@Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        TextProp other = (TextProp) obj;
+        if (dataValue != other.dataValue) {
+            return false;
+        }
+        if (maskInHeader != other.maskInHeader) {
+            return false;
+        }
+        if (propName == null) {
+            if (other.propName != null) {
+                return false;
+            }
+        } else if (!propName.equals(other.propName)) {
+            return false;
+        }
+        if (sizeOfDataBlock != other.sizeOfDataBlock) {
+            return false;
+        }
+        return true;
+    }
+    
+    @Override
+    public String toString() {
+        int len;
+        switch (sizeOfDataBlock) {
+        case 1: len = 4; break;
+        case 2: len = 6; break;
+        default: len = 10; break;
+        }
+        return String.format(Locale.ROOT, "%s = %d (%0#"+len+"X mask / %d bytes)", propName, dataValue, maskInHeader, sizeOfDataBlock);
+    }
 }

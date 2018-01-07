@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,27 +14,21 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hwpf.model;
 
 import junit.framework.*;
 
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.poi.hwpf.*;
 import org.apache.poi.hwpf.model.io.*;
 
-public class TestSectionTable
+public final class TestSectionTable
   extends TestCase
 {
   private HWPFDocFixture _hWPFDocFixture;
-
-  public TestSectionTable(String name)
-  {
-    super(name);
-  }
 
   public void testReadWrite()
     throws Exception
@@ -43,17 +36,15 @@ public class TestSectionTable
     FileInformationBlock fib = _hWPFDocFixture._fib;
     byte[] mainStream = _hWPFDocFixture._mainStream;
     byte[] tableStream = _hWPFDocFixture._tableStream;
-    int fcMin = fib.getFcMin();
+    int fcMin = fib.getFibBase().getFcMin();
 
-    CPSplitCalculator cps = new CPSplitCalculator(fib);
-    
     ComplexFileTable cft = new ComplexFileTable(mainStream, tableStream, fib.getFcClx(), fcMin);
     TextPieceTable tpt = cft.getTextPieceTable();
 
     SectionTable sectionTable = new SectionTable(mainStream, tableStream,
                                                  fib.getFcPlcfsed(),
                                                  fib.getLcbPlcfsed(),
-                                                 fcMin, tpt, cps);
+                                                 fcMin, tpt, fib.getSubdocumentTextStreamLength( SubdocumentType.MAIN ));
     HWPFFileSystem fileSys = new HWPFFileSystem();
 
     sectionTable.writeTo(fileSys, 0);
@@ -64,11 +55,11 @@ public class TestSectionTable
     byte[] newMainStream = mainOut.toByteArray();
 
     SectionTable newSectionTable = new SectionTable(
-    		newMainStream, newTableStream, 0, 
-    		newTableStream.length, 0, tpt, cps);
+    		newMainStream, newTableStream, 0,
+    		newTableStream.length, 0, tpt, fib.getSubdocumentTextStreamLength( SubdocumentType.MAIN ));
 
-    ArrayList oldSections = sectionTable.getSections();
-    ArrayList newSections = newSectionTable.getSections();
+    List<SEPX> oldSections = sectionTable.getSections();
+    List<SEPX> newSections = newSectionTable.getSections();
 
     assertEquals(oldSections.size(), newSections.size());
 
@@ -88,23 +79,25 @@ public class TestSectionTable
     int size = oldSections.size();
     for (int x = 0; x < size; x++)
     {
-      PropertyNode oldNode = (PropertyNode)oldSections.get(x);
-      PropertyNode newNode = (PropertyNode)newSections.get(x);
+	  SEPX oldNode = oldSections.get(x);
+	  SEPX newNode = newSections.get(x);
       assertEquals(oldNode, newNode);
     }
   }
 
-  protected void setUp()
+  @Override
+protected void setUp()
     throws Exception
   {
     super.setUp();
     /**@todo verify the constructors*/
-    _hWPFDocFixture = new HWPFDocFixture(this);
+    _hWPFDocFixture = new HWPFDocFixture(this, HWPFDocFixture.DEFAULT_TEST_FILE);
 
     _hWPFDocFixture.setUp();
   }
 
-  protected void tearDown()
+  @Override
+protected void tearDown()
     throws Exception
   {
     _hWPFDocFixture.tearDown();

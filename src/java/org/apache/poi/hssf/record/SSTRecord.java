@@ -19,22 +19,18 @@ package org.apache.poi.hssf.record;
 
 import java.util.Iterator;
 
+import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.hssf.record.cont.ContinuableRecord;
 import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
 import org.apache.poi.util.IntMapper;
 import org.apache.poi.util.LittleEndianConsts;
 
 /**
- * Title:        Static String Table Record (0x00FC)<p/>
+ * Title:        Static String Table Record (0x00FC)<p>
  *
- * Description:  This holds all the strings for LabelSSTRecords.
- * <P>
- * REFERENCE:    PG 389 Microsoft Excel 97 Developer's Kit (ISBN:
- *               1-57231-498-2)
- * <P>
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author Marc Johnson (mjohnson at apache dot org)
- * @author Glen Stampoultzis (glens at apache.org)
+ * Description:  This holds all the strings for LabelSSTRecords.<p>
+ * 
+ * REFERENCE:    PG 389 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
  *
  * @see org.apache.poi.hssf.record.LabelSSTRecord
  * @see org.apache.poi.hssf.record.ContinueRecord
@@ -59,7 +55,7 @@ public final class SSTRecord extends ContinuableRecord {
 
     /** according to docs ONLY SST */
     private int field_2_num_unique_strings;
-    private IntMapper field_3_strings;
+    private IntMapper<UnicodeString> field_3_strings;
 
     private SSTDeserializer deserializer;
 
@@ -68,14 +64,11 @@ public final class SSTRecord extends ContinuableRecord {
     /** Offsets relative the start of the current SST or continue record */
     int[] bucketRelativeOffsets;
 
-    /**
-     * default constructor
-     */
     public SSTRecord()
     {
         field_1_num_strings = 0;
         field_2_num_unique_strings = 0;
-        field_3_strings = new IntMapper();
+        field_3_strings = new IntMapper<>();
         deserializer = new SSTDeserializer(field_3_strings);
     }
 
@@ -86,8 +79,7 @@ public final class SSTRecord extends ContinuableRecord {
      *
      * @return the index of that string in the table
      */
-
-    public int addString( final UnicodeString string )
+    public int addString(UnicodeString string)
     {
         field_1_num_strings++;
         UnicodeString ucs = ( string == null ) ? EMPTY_STRING
@@ -95,12 +87,9 @@ public final class SSTRecord extends ContinuableRecord {
         int rval;
         int index = field_3_strings.getIndex(ucs);
 
-        if ( index != -1 )
-        {
+        if ( index != -1 ) {
             rval = index;
-        }
-        else
-        {
+        } else {
             // This is a new string -- we didn't see it among the
             // strings we've already collected
             rval = field_3_strings.size();
@@ -113,7 +102,6 @@ public final class SSTRecord extends ContinuableRecord {
     /**
      * @return number of strings
      */
-
     public int getNumStrings()
     {
         return field_1_num_strings;
@@ -122,7 +110,6 @@ public final class SSTRecord extends ContinuableRecord {
     /**
      * @return number of unique strings
      */
-
     public int getNumUniqueStrings()
     {
         return field_2_num_unique_strings;
@@ -136,10 +123,9 @@ public final class SSTRecord extends ContinuableRecord {
      *
      * @return the desired string
      */
-
-    public UnicodeString getString( final int id )
+    public UnicodeString getString(int id )
     {
-        return (UnicodeString) field_3_strings.get( id );
+        return field_3_strings.get( id );
     }
 
 
@@ -148,9 +134,7 @@ public final class SSTRecord extends ContinuableRecord {
      *
      * @return string representation
      */
-
-    public String toString()
-    {
+    public String toString() {
         StringBuffer buffer = new StringBuffer();
 
         buffer.append( "[SST]\n" );
@@ -160,7 +144,7 @@ public final class SSTRecord extends ContinuableRecord {
                 .append( Integer.toHexString( getNumUniqueStrings() ) ).append( "\n" );
         for ( int k = 0; k < field_3_strings.size(); k++ )
         {
-          UnicodeString s = (UnicodeString)field_3_strings.get( k );
+          UnicodeString s = field_3_strings.get( k );
             buffer.append( "    .string_" + k + "      = " )
                     .append( s.getDebugInfo() ).append( "\n" );
         }
@@ -168,34 +152,8 @@ public final class SSTRecord extends ContinuableRecord {
         return buffer.toString();
     }
 
-    /**
-     * @return sid
-     */
-    public short getSid()
-    {
+    public short getSid() {
         return sid;
-    }
-
-    /**
-     * @return hashcode
-     */
-    public int hashCode()
-    {
-        return field_2_num_unique_strings;
-    }
-
-    public boolean equals( Object o )
-    {
-        if ( ( o == null ) || ( o.getClass() != this.getClass() ) )
-        {
-            return false;
-        }
-        SSTRecord other = (SSTRecord) o;
-
-        return ( ( field_1_num_strings == other
-                .field_1_num_strings ) && ( field_2_num_unique_strings == other
-                .field_2_num_unique_strings ) && field_3_strings
-                .equals( other.field_3_strings ) );
     }
 
     /**
@@ -204,7 +162,7 @@ public final class SSTRecord extends ContinuableRecord {
      * The data consists of sets of string data. This string data is
      * arranged as follows:
      * <P>
-     * <CODE><pre>
+     * <pre>
      * short  string_length;   // length of string data
      * byte   string_flag;     // flag specifying special string
      *                         // handling
@@ -217,11 +175,11 @@ public final class SSTRecord extends ContinuableRecord {
      *                         // array is run_count)
      * byte[] extension;       // optional extension (length of array
      *                         // is extend_length)
-     * </pre></CODE>
+     * </pre>
      * <P>
      * The string_flag is bit mapped as follows:
      * <P>
-     * <TABLE>
+     * <TABLE summary="string_flag mapping">
      *   <TR>
      *      <TH>Bit number</TH>
      *      <TH>Meaning if 0</TH>
@@ -230,42 +188,42 @@ public final class SSTRecord extends ContinuableRecord {
      *   <TR>
      *      <TD>0</TD>
      *      <TD>string_data is byte[]</TD>
-     *      <TD>string_data is short[]</TH>
+     *      <TD>string_data is short[]</TD>
      *   <TR>
      *   <TR>
      *      <TD>1</TD>
      *      <TD>Should always be 0</TD>
-     *      <TD>string_flag is defective</TH>
+     *      <TD>string_flag is defective</TD>
      *   <TR>
      *   <TR>
      *      <TD>2</TD>
      *      <TD>extension is not included</TD>
-     *      <TD>extension is included</TH>
+     *      <TD>extension is included</TD>
      *   <TR>
      *   <TR>
      *      <TD>3</TD>
      *      <TD>formatting run data is not included</TD>
-     *      <TD>formatting run data is included</TH>
+     *      <TD>formatting run data is included</TD>
      *   <TR>
      *   <TR>
      *      <TD>4</TD>
      *      <TD>Should always be 0</TD>
-     *      <TD>string_flag is defective</TH>
+     *      <TD>string_flag is defective</TD>
      *   <TR>
      *   <TR>
      *      <TD>5</TD>
      *      <TD>Should always be 0</TD>
-     *      <TD>string_flag is defective</TH>
+     *      <TD>string_flag is defective</TD>
      *   <TR>
      *   <TR>
      *      <TD>6</TD>
      *      <TD>Should always be 0</TD>
-     *      <TD>string_flag is defective</TH>
+     *      <TD>string_flag is defective</TD>
      *   <TR>
      *   <TR>
      *      <TD>7</TD>
      *      <TD>Should always be 0</TD>
-     *      <TD>string_flag is defective</TH>
+     *      <TD>string_flag is defective</TD>
      *   <TR>
      * </TABLE>
      * <P>
@@ -276,16 +234,21 @@ public final class SSTRecord extends ContinuableRecord {
      *
      * @param in the RecordInputstream to read the record from
      */
-
-    public SSTRecord( RecordInputStream in )
-    {
+    public SSTRecord(RecordInputStream in) {
         // this method is ALWAYS called after construction -- using
         // the nontrivial constructor, of course -- so this is where
         // we initialize our fields
         field_1_num_strings = in.readInt();
         field_2_num_unique_strings = in.readInt();
-        field_3_strings = new IntMapper();
+        field_3_strings = new IntMapper<>();
+        
         deserializer = new SSTDeserializer(field_3_strings);
+        // Bug 57456: some Excel Sheets send 0 as field=1, but have some random number in field_2,
+        // we should not try to read the strings in this case.
+        if(field_1_num_strings == 0) {
+            field_2_num_unique_strings = 0;
+            return;
+        }
         deserializer.manufactureStrings( field_2_num_unique_strings, in );
     }
 
@@ -294,8 +257,7 @@ public final class SSTRecord extends ContinuableRecord {
      * @return an iterator of the strings we hold. All instances are
      *         UnicodeStrings
      */
-
-    Iterator getStrings()
+    Iterator<UnicodeString> getStrings()
     {
         return field_3_strings.iterator();
     }
@@ -303,9 +265,7 @@ public final class SSTRecord extends ContinuableRecord {
     /**
      * @return count of the strings we hold.
      */
-
-    int countStrings()
-    {
+    int countStrings() {
         return field_3_strings.size();
     }
 
@@ -316,8 +276,7 @@ public final class SSTRecord extends ContinuableRecord {
         bucketRelativeOffsets = serializer.getBucketRelativeOffsets();
     }
 
-    SSTDeserializer getDeserializer()
-    {
+    SSTDeserializer getDeserializer() {
         return deserializer;
     }
 
@@ -334,17 +293,18 @@ public final class SSTRecord extends ContinuableRecord {
      *                      SST record.
      * @return  The new SST record.
      */
-    public ExtSSTRecord createExtSSTRecord(int sstOffset)
-    {
-        if (bucketAbsoluteOffsets == null || bucketAbsoluteOffsets == null)
+    public ExtSSTRecord createExtSSTRecord(int sstOffset) {
+        if (bucketAbsoluteOffsets == null || bucketRelativeOffsets == null) {
             throw new IllegalStateException("SST record has not yet been serialized.");
+        }
 
         ExtSSTRecord extSST = new ExtSSTRecord();
         extSST.setNumStringsPerBucket((short)8);
-        int[] absoluteOffsets = (int[]) bucketAbsoluteOffsets.clone();
-        int[] relativeOffsets = (int[]) bucketRelativeOffsets.clone();
-        for ( int i = 0; i < absoluteOffsets.length; i++ )
+        int[] absoluteOffsets = bucketAbsoluteOffsets.clone();
+        int[] relativeOffsets = bucketRelativeOffsets.clone();
+        for ( int i = 0; i < absoluteOffsets.length; i++ ) {
             absoluteOffsets[i] += sstOffset;
+        }
         extSST.setBucketOffsets(absoluteOffsets, relativeOffsets);
         return extSST;
     }
@@ -355,8 +315,7 @@ public final class SSTRecord extends ContinuableRecord {
      *
      * @return  The size of the ExtSST record in bytes.
      */
-    public int calcExtSSTRecordSize()
-    {
+    public int calcExtSSTRecordSize() {
       return ExtSSTRecord.getRecordSizeForStrings(field_3_strings.size());
     }
 }

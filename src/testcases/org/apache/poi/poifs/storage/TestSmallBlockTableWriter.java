@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,17 +14,18 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.storage;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-import java.util.*;
+import junit.framework.TestCase;
 
-import junit.framework.*;
-
-import org.apache.poi.poifs.filesystem.POIFSDocument;
+import org.apache.poi.poifs.common.POIFSConstants;
+import org.apache.poi.poifs.filesystem.OPOIFSDocument;
 import org.apache.poi.poifs.property.PropertyTable;
 import org.apache.poi.poifs.property.RootProperty;
 
@@ -34,72 +34,52 @@ import org.apache.poi.poifs.property.RootProperty;
  *
  * @author Marc Johnson
  */
+public final class TestSmallBlockTableWriter extends TestCase {
 
-public class TestSmallBlockTableWriter
-    extends TestCase
-{
-
-    /**
-     * Constructor TestSmallBlockTableWriter
-     *
-     * @param name
-     */
-
-    public TestSmallBlockTableWriter(String name)
-    {
-        super(name);
-    }
-
-    /**
-     * test writing constructor
-     *
-     * @exception IOException
-     */
-
-    public void testWritingConstructor()
-        throws IOException
-    {
-        List documents = new ArrayList();
+    public void testWritingConstructor() throws IOException {
+        List<OPOIFSDocument> documents = new ArrayList<>();
 
         documents.add(
-            new POIFSDocument(
+            new OPOIFSDocument(
                 "doc340", new ByteArrayInputStream(new byte[ 340 ])));
         documents.add(
-            new POIFSDocument(
+            new OPOIFSDocument(
                 "doc5000", new ByteArrayInputStream(new byte[ 5000 ])));
         documents
-            .add(new POIFSDocument("doc0",
+            .add(new OPOIFSDocument("doc0",
                                    new ByteArrayInputStream(new byte[ 0 ])));
         documents
-            .add(new POIFSDocument("doc1",
+            .add(new OPOIFSDocument("doc1",
                                    new ByteArrayInputStream(new byte[ 1 ])));
         documents
-            .add(new POIFSDocument("doc2",
+            .add(new OPOIFSDocument("doc2",
                                    new ByteArrayInputStream(new byte[ 2 ])));
         documents
-            .add(new POIFSDocument("doc3",
+            .add(new OPOIFSDocument("doc3",
                                    new ByteArrayInputStream(new byte[ 3 ])));
         documents
-            .add(new POIFSDocument("doc4",
+            .add(new OPOIFSDocument("doc4",
                                    new ByteArrayInputStream(new byte[ 4 ])));
         documents
-            .add(new POIFSDocument("doc5",
+            .add(new OPOIFSDocument("doc5",
                                    new ByteArrayInputStream(new byte[ 5 ])));
         documents
-            .add(new POIFSDocument("doc6",
+            .add(new OPOIFSDocument("doc6",
                                    new ByteArrayInputStream(new byte[ 6 ])));
         documents
-            .add(new POIFSDocument("doc7",
+            .add(new OPOIFSDocument("doc7",
                                    new ByteArrayInputStream(new byte[ 7 ])));
         documents
-            .add(new POIFSDocument("doc8",
+            .add(new OPOIFSDocument("doc8",
                                    new ByteArrayInputStream(new byte[ 8 ])));
         documents
-            .add(new POIFSDocument("doc9",
+            .add(new OPOIFSDocument("doc9",
                                    new ByteArrayInputStream(new byte[ 9 ])));
-        RootProperty               root = new PropertyTable().getRoot();
-        SmallBlockTableWriter      sbtw = new SmallBlockTableWriter(documents,
-                                              root);
+        
+        HeaderBlock              header = new HeaderBlock(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
+        RootProperty               root = new PropertyTable(header).getRoot();
+        SmallBlockTableWriter      sbtw = new SmallBlockTableWriter(
+              POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, documents,root);
         BlockAllocationTableWriter bat  = sbtw.getSBAT();
 
         // 15 small blocks: 6 for doc340, 0 for doc5000 (too big), 0
@@ -112,18 +92,5 @@ public class TestSmallBlockTableWriter
 
         sbtw.setStartBlock(start_block);
         assertEquals(start_block, root.getStartBlock());
-    }
-
-    /**
-     * main method to run the unit tests
-     *
-     * @param ignored_args
-     */
-
-    public static void main(String [] ignored_args)
-    {
-        System.out.println(
-            "Testing org.apache.poi.poifs.storage.SmallBlockTableWriter");
-        junit.textui.TestRunner.run(TestSmallBlockTableWriter.class);
     }
 }

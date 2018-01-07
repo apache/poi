@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 
@@ -23,15 +21,16 @@ import org.apache.poi.util.POILogger;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 
 /**
- * Master container for Document. There is one of these for every 
+ * Master container for Document. There is one of these for every
  *  slideshow, and it holds lots of definitions, and some summaries.
  *
  * @author Nick Burch
  */
 
-public class Document extends PositionDependentRecordContainer
+public final class Document extends PositionDependentRecordContainer
 {
 	private byte[] _header;
 	private static long _type = 1000;
@@ -47,23 +46,34 @@ public class Document extends PositionDependentRecordContainer
 	 * Returns the DocumentAtom of this Document
 	 */
 	public DocumentAtom getDocumentAtom() { return documentAtom; }
+	
 	/**
 	 * Returns the Environment of this Notes, which lots of
-	 *  settings for the document in it
+	 * settings for the document in it
 	 */
 	public Environment getEnvironment() { return environment; }
+	
 	/**
 	 * Returns the PPDrawingGroup, which holds an Escher Structure
-	 *  that contains information on pictures in the slides.
+	 * that contains information on pictures in the slides.
 	 */
 	public PPDrawingGroup getPPDrawingGroup() { return ppDrawing; }
-	/**
-	 * Returns the ExObjList, which holds the references to 
-	 *  external objects used in the slides. This may be null, if
-	 *  there are no external references.
-	 */
-	public ExObjList getExObjList() { return exObjList; }
 	
+	/**
+	 * Returns the ExObjList, which holds the references to
+	 * external objects used in the slides. This may be null, if
+	 * there are no external references.
+	 *  
+	 * @param create if true, create an ExObjList if it doesn't exist
+	 */
+	public ExObjList getExObjList(boolean create) {
+	    if (exObjList == null && create) {
+	        exObjList = new ExObjList();
+	        addChildAfter(exObjList, getDocumentAtom());
+	    }
+	    return exObjList;
+    }
+
 	/**
 	 * Returns all the SlideListWithTexts that are defined for
 	 *  this Document. They hold the text, and some of the text
@@ -74,9 +84,9 @@ public class Document extends PositionDependentRecordContainer
 
     /**
 	 * Returns the SlideListWithText that deals with the
-	 *  Master Slides 
+	 *  Master Slides
 	 */
-	public SlideListWithText getMasterSlideListWithText() { 
+	public SlideListWithText getMasterSlideListWithText() {
         for (int i = 0; i < slwts.length; i++) {
             if(slwts[i].getInstance() == SlideListWithText.MASTER) {
                 return slwts[i];
@@ -111,7 +121,7 @@ public class Document extends PositionDependentRecordContainer
     }
 
 
-	/** 
+	/**
 	 * Set things up, and find our more interesting children
 	 */
 	protected Document(byte[] source, int start, int len) {
@@ -146,7 +156,7 @@ public class Document extends PositionDependentRecordContainer
 				exObjList = (ExObjList)_children[i];
 			}
 		}
-		
+
 		// You should only every have 1, 2 or 3 SLWTs
 		//  (normally it's 2, or 3 if you have notes)
 		// Complain if it's not
@@ -156,7 +166,7 @@ public class Document extends PositionDependentRecordContainer
 		if(slwtcount > 3) {
 			logger.log(POILogger.WARN, "Found " + slwtcount + " SlideListWithTexts - normally there should only be three!");
 		}
-		
+
 		// Now grab all the SLWTs
 		slwts = new SlideListWithText[slwtcount];
 		slwtcount = 0;
@@ -167,22 +177,26 @@ public class Document extends PositionDependentRecordContainer
 			}
 		}
 	}
-	
+
 	/**
-	 * Adds a new SlideListWithText record, at the appropriate 
+	 * Adds a new SlideListWithText record, at the appropriate
 	 *  point in the child records.
 	 */
 	public void addSlideListWithText(SlideListWithText slwt) {
-		// The new SlideListWithText should go in 
+		// The new SlideListWithText should go in
 		//  just before the EndDocumentRecord
 		Record endDoc = _children[_children.length - 1];
+		if(endDoc.getRecordType() == RecordTypes.RoundTripCustomTableStyles12Atom.typeID) {
+		    // last record can optionally be a RoundTripCustomTableStyles12Atom
+		    endDoc = _children[_children.length - 2];
+		}
 		if(endDoc.getRecordType() != RecordTypes.EndDocument.typeID) {
 			throw new IllegalStateException("The last child record of a Document should be EndDocument, but it was " + endDoc);
 		}
-		
+
 		// Add in the record
 		addChildBefore(slwt, endDoc);
-			
+
 		// Updated our cached list of SlideListWithText records
 		int newSize = slwts.length + 1;
 		SlideListWithText[] nl = new SlideListWithText[newSize];
@@ -191,6 +205,16 @@ public class Document extends PositionDependentRecordContainer
 		slwts = nl;
 	}
 
+    public void removeSlideListWithText(SlideListWithText slwt) {
+        ArrayList<SlideListWithText> lst = new ArrayList<>();
+        for(SlideListWithText s : slwts) {
+            if(s != slwt) lst.add(s);
+            else {
+                removeChild(slwt);
+            }
+        }
+        slwts = lst.toArray(new SlideListWithText[lst.size()]);
+    }
 
 	/**
 	 * We are of type 1000

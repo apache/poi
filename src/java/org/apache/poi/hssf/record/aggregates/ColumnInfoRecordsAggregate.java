@@ -18,7 +18,6 @@
 package org.apache.poi.hssf.record.aggregates;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -28,20 +27,20 @@ import org.apache.poi.hssf.record.ColumnInfoRecord;
 /**
  * @author Glen Stampoultzis
  */
-public final class ColumnInfoRecordsAggregate extends RecordAggregate {
+public final class ColumnInfoRecordsAggregate extends RecordAggregate implements Cloneable {
 	/**
-	 * List of {@link ColumnInfoRecord}s assumed to be in order 
+	 * List of {@link ColumnInfoRecord}s assumed to be in order
 	 */
-	private final List records;
-	
-	
-	private static final class CIRComparator implements Comparator {
-		public static final Comparator instance = new CIRComparator();
+	private final List<ColumnInfoRecord> records;
+
+
+	private static final class CIRComparator implements Comparator<ColumnInfoRecord> {
+		public static final Comparator<ColumnInfoRecord> instance = new CIRComparator();
 		private CIRComparator() {
 			// enforce singleton
 		}
-		public int compare(Object a, Object b) {
-			return compareColInfos((ColumnInfoRecord)a, (ColumnInfoRecord)b);
+		public int compare(ColumnInfoRecord a, ColumnInfoRecord b) {
+			return compareColInfos(a, b);
 		}
 		public static int compareColInfos(ColumnInfoRecord a, ColumnInfoRecord b) {
 			return a.getFirstColumn()-b.getFirstColumn();
@@ -52,7 +51,7 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate {
 	 * Creates an empty aggregate
 	 */
 	public ColumnInfoRecordsAggregate() {
-		records = new ArrayList();
+		records = new ArrayList<>();
 	}
 	public ColumnInfoRecordsAggregate(RecordStream rs) {
 		this();
@@ -71,17 +70,14 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate {
 			throw new RuntimeException("No column info records found");
 		}
 		if (!isInOrder) {
-			Collections.sort(records, CIRComparator.instance);
+			records.sort(CIRComparator.instance);
 		}
 	}
 
-	/**
-	 * Performs a deep clone of the record
-	 */
-	public Object clone() {
+	@Override
+	public ColumnInfoRecordsAggregate clone() {
 		ColumnInfoRecordsAggregate rec = new ColumnInfoRecordsAggregate();
-		for (int k = 0; k < records.size(); k++) {
-			ColumnInfoRecord ci = ( ColumnInfoRecord ) records.get(k);
+		for (ColumnInfoRecord ci : records) {
 			rec.records.add(ci.clone());
 		}
 		return rec;
@@ -92,7 +88,7 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate {
 	 */
 	public void insertColumn(ColumnInfoRecord col) {
 		records.add(col);
-		Collections.sort(records, CIRComparator.instance);
+		records.sort(CIRComparator.instance);
 	}
 
 	/**
@@ -113,8 +109,7 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate {
 			return;
 		}
 		ColumnInfoRecord cirPrev = null;
-		for(int i=0; i<nItems; i++) {
-			ColumnInfoRecord cir = (ColumnInfoRecord)records.get(i);
+		for (ColumnInfoRecord cir : records) {
 			rv.visitRecord(cir);
 			if (cirPrev != null && CIRComparator.compareColInfos(cirPrev, cir) > 0) {
 				// Excel probably wouldn't mind, but there is much logic in this class
@@ -127,11 +122,11 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate {
 
 	private int findStartOfColumnOutlineGroup(int pIdx) {
 		// Find the start of the group.
-		ColumnInfoRecord columnInfo = (ColumnInfoRecord) records.get(pIdx);
+		ColumnInfoRecord columnInfo = records.get(pIdx);
 		int level = columnInfo.getOutlineLevel();
 		int idx = pIdx;
 		while (idx != 0) {
-			ColumnInfoRecord prevColumnInfo = (ColumnInfoRecord) records.get(idx - 1);
+			ColumnInfoRecord prevColumnInfo = records.get(idx - 1);
 			if (!prevColumnInfo.isAdjacentBefore(columnInfo)) {
 				break;
 			}
@@ -147,11 +142,11 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate {
 
 	private int findEndOfColumnOutlineGroup(int colInfoIndex) {
 		// Find the end of the group.
-		ColumnInfoRecord columnInfo = (ColumnInfoRecord) records.get(colInfoIndex);
+		ColumnInfoRecord columnInfo = records.get(colInfoIndex);
 		int level = columnInfo.getOutlineLevel();
 		int idx = colInfoIndex;
 		while (idx < records.size() - 1) {
-			ColumnInfoRecord nextColumnInfo = (ColumnInfoRecord) records.get(idx + 1);
+			ColumnInfoRecord nextColumnInfo = records.get(idx + 1);
 			if (!columnInfo.isAdjacentBefore(nextColumnInfo)) {
 				break;
 			}
@@ -165,13 +160,13 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate {
 	}
 
 	private ColumnInfoRecord getColInfo(int idx) {
-		return (ColumnInfoRecord) records.get( idx );
+		return records.get( idx );
 	}
 
 	/**
 	 * 'Collapsed' state is stored in a single column col info record immediately after the outline group
 	 * @param idx
-	 * @return
+	 * @return true, if the column is collapsed, false otherwise.
 	 */
 	private boolean isColumnGroupCollapsed(int idx) {
 		int endOfOutlineGroupIdx = findEndOfColumnOutlineGroup(idx);
@@ -295,17 +290,16 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate {
 	}
 
 	private static ColumnInfoRecord copyColInfo(ColumnInfoRecord ci) {
-		return (ColumnInfoRecord) ci.clone();
+		return ci.clone();
 	}
 
 
-	public void setColumn(int targetColumnIx, Short xfIndex, Integer width, 
+	public void setColumn(int targetColumnIx, Short xfIndex, Integer width,
 					Integer level, Boolean hidden, Boolean collapsed) {
 		ColumnInfoRecord ci = null;
-		int k  = 0;
-
+		int k;
 		for (k = 0; k < records.size(); k++) {
-			ColumnInfoRecord tci = (ColumnInfoRecord) records.get(k);
+			ColumnInfoRecord tci = records.get(k);
 			if (tci.containsColumn(targetColumnIx)) {
 				ci = tci;
 				break;
@@ -366,22 +360,21 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate {
 			attemptMergeColInfoRecords(k);
 		} else {
 			//split to 3 records
-			ColumnInfoRecord ciStart = ci;
-			ColumnInfoRecord ciMid = copyColInfo(ci);
+            ColumnInfoRecord ciMid = copyColInfo(ci);
 			ColumnInfoRecord ciEnd = copyColInfo(ci);
 			int lastcolumn = ci.getLastColumn();
-			
-			ciStart.setLastColumn(targetColumnIx - 1);
+
+			ci.setLastColumn(targetColumnIx - 1);
 
 			ciMid.setFirstColumn(targetColumnIx);
 			ciMid.setLastColumn(targetColumnIx);
 			setColumnInfoFields(ciMid, xfIndex, width, level, hidden, collapsed);
 			insertColumn(++k, ciMid);
-			
+
 			ciEnd.setFirstColumn(targetColumnIx+1);
 			ciEnd.setLastColumn(lastcolumn);
 			insertColumn(++k, ciEnd);
-			// no need to attemptMergeColInfoRecords because we 
+			// no need to attemptMergeColInfoRecords because we
 			// know both on each side are different
 		}
 	}
@@ -389,7 +382,7 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate {
 	/**
 	 * Sets all non null fields into the <code>ci</code> parameter.
 	 */
-	private static void setColumnInfoFields(ColumnInfoRecord ci, Short xfStyle, Integer width, 
+	private static void setColumnInfoFields(ColumnInfoRecord ci, Short xfStyle, Integer width,
 				Integer level, Boolean hidden, Boolean collapsed) {
 		if (xfStyle != null) {
 			ci.setXFIndex(xfStyle.shortValue());
@@ -429,13 +422,13 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate {
 	}
 
 	/**
-	 * Attempts to merge the col info record at the specified index 
+	 * Attempts to merge the col info record at the specified index
 	 * with either or both of its neighbours
 	 */
 	private void attemptMergeColInfoRecords(int colInfoIx) {
 		int nRecords = records.size();
 		if (colInfoIx < 0 || colInfoIx >= nRecords) {
-			throw new IllegalArgumentException("colInfoIx " + colInfoIx 
+			throw new IllegalArgumentException("colInfoIx " + colInfoIx
 					+ " is out of range (0.." + (nRecords-1) + ")");
 		}
 		ColumnInfoRecord currentCol = getColInfo(colInfoIx);
@@ -466,7 +459,7 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate {
 	 * Creates an outline group for the specified columns, by setting the level
 	 * field for each col info record in the range. {@link ColumnInfoRecord}s
 	 * may be created, split or merged as a result of this operation.
-	 * 
+	 *
 	 * @param fromColumnIx
 	 *            group from this column (inclusive)
 	 * @param toColumnIx
@@ -493,9 +486,10 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate {
 				level = Math.min(7, level);
 				colInfoSearchStartIdx = Math.max(0, colInfoIdx - 1); // -1 just in case this column is collapsed later.
 			}
-			setColumn(i, null, null, new Integer(level), null, null);
+			setColumn(i, null, null, Integer.valueOf(level), null, null);
 		}
 	}
+
 	/**
 	 * Finds the <tt>ColumnInfoRecord</tt> which contains the specified columnIndex
 	 * @param columnIndex index of the column (not the index of the ColumnInfoRecord)
@@ -511,6 +505,7 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate {
 		}
 		return null;
 	}
+
 	public int getMaxOutlineLevel() {
 		int result = 0;
 		int count=records.size();
@@ -519,5 +514,44 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate {
 			result = Math.max(columnInfoRecord.getOutlineLevel(), result);
 		}
 		return result;
+	}
+
+	public int getOutlineLevel(int columnIndex) {
+	    ColumnInfoRecord ci = findColumnInfo(columnIndex);
+	    if (ci != null) {
+            return ci.getOutlineLevel();
+	    } else {
+	        return 0;
+	    }
+	}
+
+	public int getMinColumnIndex() {
+		if(records.isEmpty()) {
+			return 0;
+		}
+
+		int minIndex = Integer.MAX_VALUE;
+		int nInfos = records.size();
+		for(int i=0; i< nInfos; i++) {
+			ColumnInfoRecord ci = getColInfo(i);
+			minIndex = Math.min(minIndex, ci.getFirstColumn());
+		}
+
+		return minIndex;
+	}
+
+	public int getMaxColumnIndex() {
+		if(records.isEmpty()) {
+			return 0;
+		}
+
+		int maxIndex = 0;
+		int nInfos = records.size();
+		for(int i=0; i< nInfos; i++) {
+			ColumnInfoRecord ci = getColInfo(i);
+			maxIndex = Math.max(maxIndex, ci.getLastColumn());
+		}
+
+		return maxIndex;
 	}
 }

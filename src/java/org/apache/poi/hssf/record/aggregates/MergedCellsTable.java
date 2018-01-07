@@ -32,13 +32,13 @@ import org.apache.poi.ss.util.CellRangeAddressList;
 public final class MergedCellsTable extends RecordAggregate {
 	private static int MAX_MERGED_REGIONS = 1027; // enforced by the 8224 byte limit
 
-	private final List _mergedRegions;
+	private final List<CellRangeAddress> _mergedRegions;
 
 	/**
 	 * Creates an empty aggregate
 	 */
 	public MergedCellsTable() {
-		_mergedRegions = new ArrayList();
+		_mergedRegions = new ArrayList<>();
 	}
 
 	/**
@@ -46,13 +46,12 @@ public final class MergedCellsTable extends RecordAggregate {
 	 * @param rs
 	 */
 	public void read(RecordStream rs) {
-		List temp = _mergedRegions;
-		while (rs.peekNextClass() == MergeCellsRecord.class) {
+        while (rs.peekNextClass() == MergeCellsRecord.class) {
 			MergeCellsRecord mcr = (MergeCellsRecord) rs.getNext();
 			int nRegions = mcr.getNumAreas();
 			for (int i = 0; i < nRegions; i++) {
 				CellRangeAddress cra = mcr.getAreaAt(i);
-				temp.add(cra);
+				_mergedRegions.add(cra);
 			}
 		}
 	}
@@ -67,10 +66,9 @@ public final class MergedCellsTable extends RecordAggregate {
 		int nMergedCellsRecords = nRegions / MAX_MERGED_REGIONS;
 		int nLeftoverMergedRegions = nRegions % MAX_MERGED_REGIONS;
 
-		int result = nMergedCellsRecords
-				* (4 + CellRangeAddressList.getEncodedSize(MAX_MERGED_REGIONS)) + 4
-				+ CellRangeAddressList.getEncodedSize(nLeftoverMergedRegions);
-		return result;
+        return nMergedCellsRecords
+                * (4 + CellRangeAddressList.getEncodedSize(MAX_MERGED_REGIONS)) + 4
+                + CellRangeAddressList.getEncodedSize(nLeftoverMergedRegions);
 	}
 
 	public void visitContainedRecords(RecordVisitor rv) {
@@ -110,7 +108,7 @@ public final class MergedCellsTable extends RecordAggregate {
 
 	public CellRangeAddress get(int index) {
 		checkIndex(index);
-		return (CellRangeAddress) _mergedRegions.get(index);
+		return _mergedRegions.get(index);
 	}
 
 	public void remove(int index) {

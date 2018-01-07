@@ -14,15 +14,12 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Date;
 
-import org.apache.poi.hslf.util.SystemTimeUtils;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -31,9 +28,7 @@ import org.apache.poi.util.LittleEndian;
  * @since  PowerPoint 2007
  * @author Yegor Kozlov
  */
-
-public class RoundTripHFPlaceholder12 extends RecordAtom
-{
+public final class RoundTripHFPlaceholder12 extends RecordAtom {
     /**
      * Record header.
      */
@@ -42,11 +37,22 @@ public class RoundTripHFPlaceholder12 extends RecordAtom
     /**
      * Specifies the placeholder shape ID.
      *
-     * MUST be {@link OEPlaceholderAtom#MasterDate},  {@link OEPlaceholderAtom#MasterSlideNumber}, 
+     * MUST be {@link OEPlaceholderAtom#MasterDate},  {@link OEPlaceholderAtom#MasterSlideNumber},
      * {@link OEPlaceholderAtom#MasterFooter}, or {@link OEPlaceholderAtom#MasterHeader}
      */
     private byte _placeholderId;
 
+    /**
+     * Create a new instance of <code>RoundTripHFPlaceholder12</code>
+     */
+    public RoundTripHFPlaceholder12(){
+        _header = new byte[8];
+        LittleEndian.putUShort(_header, 0, 0);
+        LittleEndian.putUShort(_header, 2, (int)getRecordType());
+        LittleEndian.putInt(_header, 4, 8);
+        _placeholderId = 0;
+    }
+    
     /**
      * Constructs the comment atom record from its source data.
      *

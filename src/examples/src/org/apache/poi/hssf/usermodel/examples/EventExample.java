@@ -31,15 +31,14 @@ import java.io.InputStream;
 /**
  * This example shows how to use the event API for reading a file.
  */
-public class EventExample
-        implements HSSFListener
-{
+public class EventExample implements HSSFListener {
     private SSTRecord sstrec;
 
     /**
      * This method listens for incoming records and handles them as required.
      * @param record    The record that was found while reading.
      */
+    @Override
     public void processRecord(Record record)
     {
         switch (record.getSid())
@@ -47,11 +46,11 @@ public class EventExample
             // the BOFRecord can represent either the beginning of a sheet or the workbook
             case BOFRecord.sid:
                 BOFRecord bof = (BOFRecord) record;
-                if (bof.getType() == bof.TYPE_WORKBOOK)
+                if (bof.getType() == BOFRecord.TYPE_WORKBOOK)
                 {
                     System.out.println("Encountered workbook");
                     // assigned to the class level member
-                } else if (bof.getType() == bof.TYPE_WORKSHEET)
+                } else if (bof.getType() == BOFRecord.TYPE_WORKSHEET)
                 {
                     System.out.println("Encountered sheet reference");
                 }
@@ -96,23 +95,22 @@ public class EventExample
     {
         // create a new file input stream with the input file specified
         // at the command line
-        FileInputStream fin = new FileInputStream(args[0]);
-        // create a new org.apache.poi.poifs.filesystem.Filesystem
-        POIFSFileSystem poifs = new POIFSFileSystem(fin);
-        // get the Workbook (excel part) stream in a InputStream
-        InputStream din = poifs.createDocumentInputStream("Workbook");
-        // construct out HSSFRequest object
-        HSSFRequest req = new HSSFRequest();
-        // lazy listen for ALL records with the listener shown above
-        req.addListenerForAllRecords(new EventExample());
-        // create our event factory
-        HSSFEventFactory factory = new HSSFEventFactory();
-        // process our events based on the document input stream
-        factory.processEvents(req, din);
-        // once all the events are processed close our file input stream
-        fin.close();
-        // and our document input stream (don't want to leak these!)
-        din.close();
+        try (FileInputStream fin = new FileInputStream(args[0])) {
+            // create a new org.apache.poi.poifs.filesystem.Filesystem
+            try (POIFSFileSystem poifs = new POIFSFileSystem(fin)) {
+                // get the Workbook (excel part) stream in a InputStream
+                try (InputStream din = poifs.createDocumentInputStream("Workbook")) {
+                    // construct out HSSFRequest object
+                    HSSFRequest req = new HSSFRequest();
+                    // lazy listen for ALL records with the listener shown above
+                    req.addListenerForAllRecords(new EventExample());
+                    // create our event factory
+                    HSSFEventFactory factory = new HSSFEventFactory();
+                    // process our events based on the document input stream
+                    factory.processEvents(req, din);
+                }
+            }
+        }
         System.out.println("done.");
     }
 }

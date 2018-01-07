@@ -19,52 +19,55 @@ package org.apache.poi.hpbf;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 
-import org.apache.poi.POIDocument;
+import org.apache.poi.POIReadOnlyDocument;
 import org.apache.poi.hpbf.model.EscherDelayStm;
 import org.apache.poi.hpbf.model.EscherStm;
 import org.apache.poi.hpbf.model.MainContents;
 import org.apache.poi.hpbf.model.QuillContents;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
- * This class provides the basic functionality 
+ * This class provides the basic functionality
  *  for HPBF, our implementation of the publisher
- *  file format. 
+ *  file format.
  */
-public final class HPBFDocument extends POIDocument {
+public final class HPBFDocument extends POIReadOnlyDocument {
 	private MainContents mainContents;
 	private QuillContents quillContents;
 	private EscherStm escherStm;
 	private EscherDelayStm escherDelayStm;
-	
+
 	/**
 	 * Opens a new publisher document
 	 */
 	public HPBFDocument(POIFSFileSystem fs) throws IOException {
-		this(fs.getRoot(), fs);
+	   this(fs.getRoot());
+	}
+	public HPBFDocument(NPOIFSFileSystem fs) throws IOException {
+	   this(fs.getRoot());
 	}
 	public HPBFDocument(InputStream inp) throws IOException {
-		this(new POIFSFileSystem(inp));
+	   this(new NPOIFSFileSystem(inp));
 	}
-	
+
 	/**
-	 * Opens an embeded publisher document,
+	 * Opens an embedded publisher document,
 	 *  at the given directory.
 	 */
-	public HPBFDocument(DirectoryNode dir, POIFSFileSystem fs) throws IOException {
-		super(dir, fs);
-		
-		// Go looking for our interesting child
-		//  streams
-		mainContents = new MainContents(dir);
-		quillContents = new QuillContents(dir);
-		
-		// Now the Escher bits
-		escherStm = new EscherStm(dir);
-		escherDelayStm = new EscherDelayStm(dir);
+	public HPBFDocument(DirectoryNode dir) throws IOException {
+	   super(dir);
+
+	   // Go looking for our interesting child
+	   //  streams
+	   mainContents = new MainContents(dir);
+	   quillContents = new QuillContents(dir);
+
+	   // Now the Escher bits
+	   escherStm = new EscherStm(dir);
+	   escherDelayStm = new EscherDelayStm(dir);
 	}
 
 	public MainContents getMainContents() {
@@ -78,9 +81,5 @@ public final class HPBFDocument extends POIDocument {
 	}
 	public EscherDelayStm getEscherDelayStm() {
 		return escherDelayStm;
-	}
-	
-	public void write(OutputStream out) throws IOException {
-		throw new IllegalStateException("Writing is not yet implemented, see http://poi.apache.org/hpbf/");
 	}
 }

@@ -14,31 +14,66 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.blip;
 
-import org.apache.poi.hslf.model.Picture;
 
 /**
  * Represents a JPEG picture data in a PPT file
- * 
- * @author Yegor Kozlov
  */
-public class JPEG extends Bitmap {
+public final class JPEG extends Bitmap {
 
-    /**
-     * @return type of  this picture
-     * @see  org.apache.poi.hslf.model.Picture#JPEG
-     */
-    public int getType(){
-        return Picture.JPEG;
+    public enum ColorSpace { rgb, cymk }
+
+    private ColorSpace colorSpace = ColorSpace.rgb;
+    
+    @Override
+    public PictureType getType(){
+        return PictureType.JPEG;
     }
 
+    public ColorSpace getColorSpace() {
+        return colorSpace;
+    }
+    
+    public void setColorSpace(ColorSpace colorSpace) {
+        this.colorSpace = colorSpace;
+    }
+    
     /**
-     * JPEG signature is <code>0x46A0</code>
+     * JPEG signature is one of {@code 0x46A0, 0x46B0, 0x6E20, 0x6E30} 
      *
-     * @return JPEG signature (<code>0x46A0</code>)
+     * @return JPEG signature ({@code 0x46A0, 0x46B0, 0x6E20, 0x6E30})
      */
     public int getSignature(){
-        return 0x46A0;
+        return (colorSpace == ColorSpace.rgb)
+            ? (getUIDInstanceCount() == 1 ? 0x46A0 :  0x46B0)
+            : (getUIDInstanceCount() == 1 ? 0x6E20 :  0x6E30);
+    }
+    
+    /**
+     * Sets the PICT signature - either {@code 0x5420} or {@code 0x5430}
+     */
+    public void setSignature(int signature) {
+        switch (signature) {
+            case 0x46A0:
+                setUIDInstanceCount(1);
+                colorSpace = ColorSpace.rgb;
+                break;
+            case 0x46B0:
+                setUIDInstanceCount(2);
+                colorSpace = ColorSpace.rgb;
+                break;
+            case 0x6E20:
+                setUIDInstanceCount(1);
+                colorSpace = ColorSpace.cymk;
+                break;
+            case 0x6E30:
+                setUIDInstanceCount(2);
+                colorSpace = ColorSpace.cymk;
+                break;
+            default:
+                throw new IllegalArgumentException(signature+" is not a valid instance/signature value for JPEG");
+        }        
     }
 }

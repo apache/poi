@@ -14,14 +14,17 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hdgf.chunks;
+
+import java.nio.charset.Charset;
 
 /**
  * A chunk header from v4 or v5
  */
-public class ChunkHeaderV4V5 extends ChunkHeader {
-	protected short unknown2;
-	protected short unknown3;
+public final class ChunkHeaderV4V5 extends ChunkHeader {
+	private short unknown2;
+	private short unknown3;
 
 	public short getUnknown2() {
 		return unknown2;
@@ -29,15 +32,15 @@ public class ChunkHeaderV4V5 extends ChunkHeader {
 	public short getUnknown3() {
 		return unknown3;
 	}
-	
+
 	protected static int getHeaderSize() {
 		return 12;
 	}
-	
+
 	public int getSizeInBytes() {
 		return getHeaderSize();
 	}
-	
+
 	/**
 	 * Does the chunk have a trailer?
 	 */
@@ -45,7 +48,7 @@ public class ChunkHeaderV4V5 extends ChunkHeader {
 		// V4 and V5 never has trailers
 		return false;
 	}
-	
+
 	/**
 	 * Does the chunk have a separator?
 	 */
@@ -53,4 +56,17 @@ public class ChunkHeaderV4V5 extends ChunkHeader {
 		// V4 and V5 never has separators
 		return false;
 	}
+
+	@Override
+	public Charset getChunkCharset() {
+		return Charset.forName("ASCII");
+	}
+
+	void setUnknown2(short unknown2) {
+        this.unknown2 = unknown2;
+    }
+
+    void setUnknown3(short unknown3) {
+        this.unknown3 = unknown3;
+    }
 }

@@ -17,9 +17,13 @@
 
 package org.apache.poi.util;
 
+import static org.junit.Assert.assertArrayEquals;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
 /**
@@ -28,8 +32,8 @@ import junit.framework.TestCase;
  * @author Josh Micich
  */
 public final class TestLittleEndianStreams extends TestCase {
-	
-	public void testRead() {
+
+	public void testRead() throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		LittleEndianOutput leo = new LittleEndianOutputStream(baos);
 		leo.writeInt(12345678);
@@ -39,9 +43,10 @@ public final class TestLittleEndianStreams extends TestCase {
 		leo.writeByte(200);
 		leo.writeLong(1234567890123456789L);
 		leo.writeDouble(123.456);
-		
+		((LittleEndianOutputStream)leo).close();
+
 		LittleEndianInput lei = new LittleEndianInputStream(new ByteArrayInputStream(baos.toByteArray()));
-		
+
 		assertEquals(12345678, lei.readInt());
 		assertEquals(12345, lei.readShort());
 		assertEquals(123, lei.readByte());
@@ -49,5 +54,47 @@ public final class TestLittleEndianStreams extends TestCase {
 		assertEquals(200, lei.readUByte());
 		assertEquals(1234567890123456789L, lei.readLong());
 		assertEquals(123.456, lei.readDouble(), 0.0);
+        ((LittleEndianInputStream)lei).close();
+	}
+
+	/**
+	 * Up until svn r836101 {@link LittleEndianByteArrayInputStream#readFully(byte[], int, int)}
+	 * had an error which resulted in the data being read and written back to the source byte
+	 * array.
+	 */
+	public void testReadFully() {
+		byte[] srcBuf = HexRead.readFromString("99 88 77 66 55 44 33");
+		LittleEndianInput lei = new LittleEndianByteArrayInputStream(srcBuf);
+
+		// do initial read to increment the read index beyond zero
+		assertEquals(0x8899, lei.readUShort());
+
+		byte[] actBuf = new byte[4];
+		lei.readFully(actBuf);
+
+		if (actBuf[0] == 0x00 && srcBuf[0] == 0x77 && srcBuf[3] == 0x44) {
+			throw new AssertionFailedError("Identified bug in readFully() - source buffer was modified");
+		}
+
+		byte[] expBuf = HexRead.readFromString("77 66 55 44");
+		assertArrayEquals(actBuf, expBuf);
+		assertEquals(0x33, lei.readUByte());
+		assertEquals(0, lei.available());
+	}
+
+	public void testBufferOverrun() {
+		byte[] srcBuf = HexRead.readFromString("99 88 77");
+		LittleEndianInput lei = new LittleEndianByteArrayInputStream(srcBuf);
+
+		// do initial read to increment the read index beyond zero
+		assertEquals(0x8899, lei.readUShort());
+
+		// only one byte left, so this should fail
+		try {
+			lei.readFully(new byte[4]);
+			fail("Should catch exception here");
+		} catch (RuntimeException e) {
+			assertTrue(e.getMessage().contains("Buffer overrun"));
+		}
 	}
 }

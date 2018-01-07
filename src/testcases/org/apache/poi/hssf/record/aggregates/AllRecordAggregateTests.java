@@ -17,24 +17,21 @@
 
 package org.apache.poi.hssf.record.aggregates;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * Collects all tests for package <tt>org.apache.poi.hssf.record.aggregates</tt>.
- * 
- * @author Josh Micich
  */
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+    TestCFRecordsAggregate.class,
+    TestColumnInfoRecordsAggregate.class,
+    TestFormulaRecordAggregate.class,
+    TestRowRecordsAggregate.class,
+    TestSharedValueManager.class,
+    TestValueRecordsAggregate.class,
+    TestPageSettingsBlock.class
+})
 public final class AllRecordAggregateTests {
-	
-	public static Test suite() {
-		TestSuite result = new TestSuite(AllRecordAggregateTests.class.getName());
-
-		result.addTestSuite(TestCFRecordsAggregate.class);
-		result.addTestSuite(TestColumnInfoRecordsAggregate.class);
-		result.addTestSuite(TestFormulaRecordAggregate.class);
-		result.addTestSuite(TestRowRecordsAggregate.class);
-		result.addTestSuite(TestValueRecordsAggregate.class);
-		return result;
-	}
 }

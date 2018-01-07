@@ -15,13 +15,15 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 package org.apache.poi.poifs.filesystem;
 
-import java.io.*;
-
-import java.util.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Iterator;
+import java.util.Set;
 
 import org.apache.poi.hpsf.ClassID;
 
@@ -33,7 +35,7 @@ import org.apache.poi.hpsf.ClassID;
  */
 
 public interface DirectoryEntry
-    extends Entry
+    extends Entry, Iterable<Entry>
 {
 
     /**
@@ -47,7 +49,18 @@ public interface DirectoryEntry
      *         implementations of Entry.
      */
 
-    public Iterator getEntries();
+    public Iterator<Entry> getEntries();
+    
+    /**
+     * get the names of all the Entries contained directly in this
+     * instance (in other words, names of children only; no grandchildren
+     * etc).
+     *
+     * @return the names of all the entries that may be retrieved with
+     *         getEntry(String), which may be empty (if this 
+     *         DirectoryEntry is empty)
+     */
+    public Set<String> getEntryNames();
 
     /**
      * is this DirectoryEntry empty?
@@ -66,6 +79,12 @@ public interface DirectoryEntry
      */
 
     public int getEntryCount();
+
+    /**
+     * Checks if entry with specified name present
+     */
+
+    public boolean hasEntry( final String name );
 
     /**
      * get a specified Entry by name

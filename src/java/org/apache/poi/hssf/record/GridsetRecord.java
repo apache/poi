@@ -15,11 +15,9 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title:        Gridset Record.<P>
@@ -33,15 +31,11 @@ import org.apache.poi.util.LittleEndian;
  *
  * @version 2.0-pre
  */
-
-public class GridsetRecord
-    extends Record
-{
+public final class GridsetRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0x82;
     public short              field_1_gridset_flag;
 
-    public GridsetRecord()
-    {
+    public GridsetRecord() {
     }
 
     public GridsetRecord(RecordInputStream in)
@@ -54,15 +48,10 @@ public class GridsetRecord
      *
      * @param gridset - <b>true</b> if no gridlines are print, <b>false</b> if gridlines are not print.
      */
-
-    public void setGridset(boolean gridset)
-    {
-        if (gridset == true)
-        {
+    public void setGridset(boolean gridset) {
+        if (gridset) {
             field_1_gridset_flag = 1;
-        }
-        else
-        {
+        } else {
             field_1_gridset_flag = 0;
         }
     }
@@ -72,29 +61,20 @@ public class GridsetRecord
      *
      * @return gridset - true if gridlines are NOT printed, false if they are.
      */
-
     public boolean getGridset()
     {
         return (field_1_gridset_flag == 1);
     }
 
-    public String toString()
-    {
-        StringBuffer buffer = new StringBuffer();
-
-        buffer.append("[GRIDSET]\n");
-        buffer.append("    .gridset        = ").append(getGridset())
-            .append("\n");
-        buffer.append("[/GRIDSET]\n");
-        return buffer.toString();
+    public String toString() {
+        return "[GRIDSET]\n" +
+                "    .gridset        = " + getGridset() +
+                "\n" +
+                "[/GRIDSET]\n";
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, ( short ) 0x2);
-        LittleEndian.putShort(data, 4 + offset, field_1_gridset_flag);
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(field_1_gridset_flag);
     }
 
     protected int getDataSize() {
@@ -106,7 +86,8 @@ public class GridsetRecord
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public GridsetRecord clone() {
       GridsetRecord rec = new GridsetRecord();
       rec.field_1_gridset_flag = field_1_gridset_flag;
       return rec;

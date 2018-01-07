@@ -14,121 +14,119 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.model;
 
-import junit.framework.*;
+import java.awt.Color;
+import java.io.IOException;
 
-import java.io.FileOutputStream;
-import java.awt.*;
-
-import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.hslf.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.HSLFLine;
+import org.apache.poi.hslf.usermodel.HSLFSlide;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.sl.usermodel.StrokeStyle.LineCompound;
+import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
+import org.junit.Test;
 
 /**
  * Test Line shape.
- * 
- * @author Yegor Kozlov
  */
-public class TestLine extends TestCase {
+public final class TestLine {
 
-    public void setUp() throws Exception {
+    @Test
+    public void testCreateLines() throws IOException {
+        HSLFSlideShow ppt = new HSLFSlideShow();
 
-    }
-
-    public void testCreateLines() throws Exception {
-        SlideShow ppt = new SlideShow();
-
-        Slide slide = ppt.createSlide();
+        HSLFSlide slide = ppt.createSlide();
 
         slide.addTitle().setText("Lines tester");
 
-        Line line;
+        HSLFLine line;
 
         /**
          * line styles
          */
-        line = new Line();
+        line = new HSLFLine();
         line.setAnchor(new java.awt.Rectangle(75, 200, 300, 0));
-        line.setLineStyle(Line.LINE_SIMPLE);
+        line.setLineCompound(LineCompound.SINGLE);
         line.setLineColor(Color.blue);
         slide.addShape(line);
 
-        line = new Line();
+        line = new HSLFLine();
         line.setAnchor(new java.awt.Rectangle(75, 230, 300, 0));
-        line.setLineStyle(Line.LINE_DOUBLE);
+        line.setLineCompound(LineCompound.DOUBLE);
         line.setLineWidth(3.5);
         slide.addShape(line);
 
-        line = new Line();
+        line = new HSLFLine();
         line.setAnchor(new java.awt.Rectangle(75, 260, 300, 0));
-        line.setLineStyle(Line.LINE_TRIPLE);
+        line.setLineCompound(LineCompound.TRIPLE);
         line.setLineWidth(6);
         slide.addShape(line);
 
-        line = new Line();
+        line = new HSLFLine();
         line.setAnchor(new java.awt.Rectangle(75, 290, 300, 0));
-        line.setLineStyle(Line.LINE_THICKTHIN);
+        line.setLineCompound(LineCompound.THICK_THIN);
         line.setLineWidth(4.5);
         slide.addShape(line);
 
-        line = new Line();
+        line = new HSLFLine();
         line.setAnchor(new java.awt.Rectangle(75, 320, 300, 0));
-        line.setLineStyle(Line.LINE_THINTHICK);
+        line.setLineCompound(LineCompound.THIN_THICK);
         line.setLineWidth(5.5);
         slide.addShape(line);
 
         /**
          * line dashing
          */
-        line = new Line();
+        line = new HSLFLine();
         line.setAnchor(new java.awt.Rectangle(450, 200, 300, 0));
-        line.setLineDashing(Line.PEN_SOLID);
+        line.setLineDash(LineDash.SOLID);
         slide.addShape(line);
 
-        line = new Line();
+        line = new HSLFLine();
         line.setAnchor(new java.awt.Rectangle(450, 230, 300, 0));
-        line.setLineDashing(Line.PEN_PS_DASH);
+        line.setLineDash(LineDash.DASH);
         slide.addShape(line);
 
-        line = new Line();
+        line = new HSLFLine();
         line.setAnchor(new java.awt.Rectangle(450, 260, 300, 0));
-        line.setLineDashing(Line.PEN_DOT);
+        line.setLineDash(LineDash.DOT);
         slide.addShape(line);
 
-        line = new Line();
+        line = new HSLFLine();
         line.setAnchor(new java.awt.Rectangle(450, 290, 300, 0));
-        line.setLineDashing(Line.PEN_DOTGEL);
+        line.setLineDash(LineDash.DASH_DOT);
         slide.addShape(line);
 
-        line = new Line();
+        line = new HSLFLine();
         line.setAnchor(new java.awt.Rectangle(450, 320, 300, 0));
-        line.setLineDashing(Line.PEN_LONGDASHDOTDOTGEL);
+        line.setLineDash(LineDash.LG_DASH_DOT_DOT);
         slide.addShape(line);
 
         /**
          * Combinations
          */
-        line = new Line();
+        line = new HSLFLine();
         line.setAnchor(new java.awt.Rectangle(75, 400, 300, 0));
-        line.setLineDashing(Line.PEN_DASHDOT);
-        line.setLineStyle(Line.LINE_TRIPLE);
+        line.setLineDash(LineDash.DASH_DOT);
+        line.setLineCompound(LineCompound.TRIPLE);
         line.setLineWidth(5.0);
         slide.addShape(line);
 
-        line = new Line();
+        line = new HSLFLine();
         line.setAnchor(new java.awt.Rectangle(75, 430, 300, 0));
-        line.setLineDashing(Line.PEN_DASH);
-        line.setLineStyle(Line.LINE_THICKTHIN);
+        line.setLineDash(LineDash.DASH);
+        line.setLineCompound(LineCompound.THICK_THIN);
         line.setLineWidth(4.0);
         slide.addShape(line);
 
-        line = new Line();
+        line = new HSLFLine();
         line.setAnchor(new java.awt.Rectangle(75, 460, 300, 0));
-        line.setLineDashing(Line.PEN_DOT);
-        line.setLineStyle(Line.LINE_DOUBLE);
+        line.setLineDash(LineDash.DOT);
+        line.setLineCompound(LineCompound.DOUBLE);
         line.setLineWidth(8.0);
         slide.addShape(line);
-
+        
+        ppt.close();
     }
-
 }

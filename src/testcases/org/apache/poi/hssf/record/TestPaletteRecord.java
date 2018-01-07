@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,44 +14,38 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hssf.record;
 
-import java.util.Iterator;
+import static org.junit.Assert.assertEquals;
+
 import java.util.Map;
-import junit.framework.TestCase;
+import java.util.Map.Entry;
+
 import org.apache.poi.hssf.util.HSSFColor;
+import org.junit.Test;
 
 /**
  * Verifies that custom palette editing works correctly
- *
- * @author Brian Sanders (bsanders at risklabs dot com)
  */
-public class TestPaletteRecord extends TestCase
-{
-    public TestPaletteRecord(String name)
-    {
-        super(name);
-    }
-    
+public final class TestPaletteRecord {
+
     /**
      * Tests that the default palette matches the constants of HSSFColor
      */
-    public void testDefaultPalette()
-    {
+    @Test
+    public void testDefaultPalette() {
         PaletteRecord palette = new PaletteRecord();
-        
+
         //make sure all the HSSFColor constants match
-        Map colors = HSSFColor.getIndexHash();
-        Iterator indexes = colors.keySet().iterator();
-        while (indexes.hasNext())
-        {
-            Integer index = (Integer) indexes.next();
-            HSSFColor c = (HSSFColor) colors.get(index);
+        Map<Integer, HSSFColor> colors = HSSFColor.getIndexHash();
+        for (Entry<Integer, HSSFColor> entry : colors.entrySet()) {
+            int index = entry.getKey();
+            HSSFColor c = entry.getValue();
             short[] rgbTriplet = c.getTriplet();
-            byte[] paletteTriplet = palette.getColor(index.shortValue());
-            String msg = "Expected HSSFColor constant to match PaletteRecord at index 0x"
-                + Integer.toHexString(c.getIndex());
+            byte[] paletteTriplet = palette.getColor((short) index);
+            String msg = "Expected HSSFColor constant to match PaletteRecord at index" + (index == c.getIndex2() ? "2" : "") + " 0x"
+                + Integer.toHexString(index);
             assertEquals(msg, rgbTriplet[0], paletteTriplet[0] & 0xff);
             assertEquals(msg, rgbTriplet[1], paletteTriplet[1] & 0xff);
             assertEquals(msg, rgbTriplet[2], paletteTriplet[2] & 0xff);

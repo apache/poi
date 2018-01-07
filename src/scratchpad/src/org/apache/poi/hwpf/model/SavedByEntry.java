@@ -15,16 +15,18 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hwpf.model;
+
+import org.apache.poi.util.Internal;
 
 
 /**
  * A single entry in the {@link SavedByTable}.
- * 
+ *
  * @author Daniel Noll
  */
-public class SavedByEntry
+@Internal
+public final class SavedByEntry
 {
   private String userName;
   private String saveLocation;

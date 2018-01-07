@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,65 +14,41 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.extractor;
 
-import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.hslf.usermodel.PictureData;
-import org.apache.poi.hslf.HSLFSlideShow;
-import org.apache.poi.hslf.model.Picture;
-
-import java.io.IOException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+
+import org.apache.poi.hslf.usermodel.HSLFPictureData;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
+import org.apache.poi.sl.usermodel.PictureData.PictureType;
 
 /**
  * Utility to extract pictures from a PowerPoint file.
- *
- * @author Yegor Kozlov
  */
-public class ImageExtractor {
+public final class ImageExtractor {
     public static void main(String args[]) throws IOException {
         if (args.length < 1) {
             System.err.println("Usage:");
             System.err.println("\tImageExtractor <file>");
             return;
         }
-        SlideShow ppt = new SlideShow(new HSLFSlideShow(args[0]));
+        HSLFSlideShow ppt = new HSLFSlideShow(new HSLFSlideShowImpl(args[0]));
 
         //extract all pictures contained in the presentation
-        PictureData[] pdata = ppt.getPictureData();
-        for (int i = 0; i < pdata.length; i++) {
-            PictureData pict = pdata[i];
-
+        int i = 0;
+        for (HSLFPictureData pict : ppt.getPictureData()) {
             // picture data
             byte[] data = pict.getData();
 
-            int type = pict.getType();
-            String ext;
-            switch (type) {
-                case Picture.JPEG:
-                    ext = ".jpg";
-                    break;
-                case Picture.PNG:
-                    ext = ".png";
-                    break;
-                case Picture.WMF:
-                    ext = ".wmf";
-                    break;
-                case Picture.EMF:
-                    ext = ".emf";
-                    break;
-                case Picture.PICT:
-                    ext = ".pict";
-                    break;
-                case Picture.DIB:
-                    ext = ".dib";
-                    break;
-                default:
-                    continue;
-            }
-            FileOutputStream out = new FileOutputStream("pict_" + i + ext);
+            PictureType type = pict.getType();
+            FileOutputStream out = new FileOutputStream("pict_" + i++ + type.extension);
             out.write(data);
             out.close();
         }
+        
+        ppt.close();
     }
 }

@@ -14,29 +14,26 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.blip;
 
-import org.apache.poi.hslf.model.Picture;
-import org.apache.poi.hslf.model.Shape;
-import org.apache.poi.hslf.exceptions.HSLFException;
-
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
+import java.awt.Dimension;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.zip.InflaterInputStream;
-import java.util.zip.DeflaterOutputStream;
+
+import org.apache.poi.hslf.exceptions.HSLFException;
+import org.apache.poi.sl.image.ImageHeaderEMF;
+import org.apache.poi.util.Units;
 
 /**
  * Represents EMF (Windows Enhanced Metafile) picture data.
- * 
- * @author Yegor Kozlov
  */
-public class EMF extends Metafile {
+public final class EMF extends Metafile {
 
-    /**
-     * Extract compressed EMF data from a ppt
-     */
+    @Override
     public byte[] getData(){
         try {
             byte[] rawdata = getRawData();
@@ -45,7 +42,8 @@ public class EMF extends Metafile {
             InputStream is = new ByteArrayInputStream( rawdata );
             Header header = new Header();
             header.read(rawdata, CHECKSUM_SIZE);
-            is.skip(header.getSize() + CHECKSUM_SIZE);
+            long len = is.skip(header.getSize() + (long)CHECKSUM_SIZE);
+            assert(len == header.getSize() + CHECKSUM_SIZE);
 
             InflaterInputStream inflater = new InflaterInputStream( is );
             byte[] chunk = new byte[4096];
@@ -60,35 +58,58 @@ public class EMF extends Metafile {
         }
     }
 
+    @Override
     public void setData(byte[] data) throws IOException {
         byte[] compressed = compress(data, 0, data.length);
 
+        ImageHeaderEMF nHeader = new ImageHeaderEMF(data, 0);
+        
         Header header = new Header();
-        header.wmfsize = data.length;
-        //we don't have a EMF reader in java, have to set default image size  200x200
-        header.bounds = new java.awt.Rectangle(0, 0, 200, 200);
-        header.size = new java.awt.Dimension(header.bounds.width*Shape.EMU_PER_POINT, header.bounds.height*Shape.EMU_PER_POINT);
-        header.zipsize = compressed.length;
+        header.setWmfSize(data.length);
+        header.setBounds(nHeader.getBounds());
+        Dimension nDim = nHeader.getSize();
+        header.setDimension(new Dimension(Units.toEMU(nDim.getWidth()), Units.toEMU(nDim.getHeight())));
+        header.setZipSize(compressed.length);
 
         byte[] checksum = getChecksum(data);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         out.write(checksum);
+        if (getUIDInstanceCount() == 2) {
+            out.write(checksum);
+        }
         header.write(out);
         out.write(compressed);
 
         setRawData(out.toByteArray());
     }
 
-    public int getType(){
-        return Picture.EMF;
+    @Override
+    public PictureType getType(){
+        return PictureType.EMF;
     }
 
     /**
-     * EMF signature is <code>0x3D40</code>
+     * EMF signature is {@code 0x3D40} or {@code 0x3D50}
      *
-     * @return EMF signature (<code>0x3D40</code>)
+     * @return EMF signature ({@code 0x3D40} or {@code 0x3D50})
      */
     public int getSignature(){
-        return 0x3D40;
+        return (getUIDInstanceCount() == 1 ? 0x3D40 : 0x3D50);
+    }
+    
+    /**
+     * Sets the EMF signature - either {@code 0x3D40} or {@code 0x3D50}
+     */
+    public void setSignature(int signature) {
+        switch (signature) {
+            case 0x3D40:
+                setUIDInstanceCount(1);
+                break;
+            case 0x3D50:
+                setUIDInstanceCount(2);
+                break;
+            default:
+                throw new IllegalArgumentException(signature+" is not a valid instance/signature value for EMF");
+        }        
     }
 }

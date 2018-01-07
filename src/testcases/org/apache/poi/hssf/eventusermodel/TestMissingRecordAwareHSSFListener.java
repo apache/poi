@@ -29,10 +29,18 @@ import org.apache.poi.hssf.eventusermodel.dummyrecord.LastCellOfRowDummyRecord;
 import org.apache.poi.hssf.eventusermodel.dummyrecord.MissingCellDummyRecord;
 import org.apache.poi.hssf.eventusermodel.dummyrecord.MissingRowDummyRecord;
 import org.apache.poi.hssf.record.BOFRecord;
+import org.apache.poi.hssf.record.BlankRecord;
+import org.apache.poi.hssf.record.CellValueRecordInterface;
+import org.apache.poi.hssf.record.DimensionsRecord;
+import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.LabelSSTRecord;
+import org.apache.poi.hssf.record.MulBlankRecord;
+import org.apache.poi.hssf.record.NumberRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.hssf.record.SharedFormulaRecord;
+import org.apache.poi.hssf.record.StringRecord;
+import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 /**
  * Tests for MissingRecordAwareHSSFListener
@@ -203,9 +211,9 @@ public final class TestMissingRecordAwareHSSFListener extends TestCase {
 		// Check the numbers of the last seen columns
 		LastCellOfRowDummyRecord[] lrs = new LastCellOfRowDummyRecord[24];
 		int lrscount = 0;
-		for(int i=0; i<r.length; i++) {
-			if(r[i] instanceof LastCellOfRowDummyRecord) {
-				lrs[lrscount] = (LastCellOfRowDummyRecord)r[i];
+		for (final Record rec : r) {
+			if(rec instanceof LastCellOfRowDummyRecord) {
+				lrs[lrscount] = (LastCellOfRowDummyRecord)rec;
 				lrscount++;
 			}
 		}
@@ -343,9 +351,9 @@ public final class TestMissingRecordAwareHSSFListener extends TestCase {
 		readRecords("MRExtraLines.xls");
 		
 		int rowCount=0;
-		for(int i=0; i<r.length; i++) {
-			if(r[i] instanceof LastCellOfRowDummyRecord) {
-				LastCellOfRowDummyRecord eor = (LastCellOfRowDummyRecord) r[i];
+		for (Record rec : r) {
+			if(rec instanceof LastCellOfRowDummyRecord) {
+				LastCellOfRowDummyRecord eor = (LastCellOfRowDummyRecord) rec;
 				assertEquals(rowCount, eor.getRow());
 				rowCount++;
 			}
@@ -356,10 +364,11 @@ public final class TestMissingRecordAwareHSSFListener extends TestCase {
 
 	private static final class MockHSSFListener implements HSSFListener {
 		public MockHSSFListener() {}
-		private final List _records = new ArrayList();
-		private boolean logToStdOut = false;
+		private final List<Record> _records = new ArrayList<>();
+		private final boolean logToStdOut = false;
 
-		public void processRecord(Record record) {
+		@Override
+        public void processRecord(Record record) {
 			_records.add(record);
 			
 			if(record instanceof MissingRowDummyRecord) {
@@ -407,8 +416,7 @@ public final class TestMissingRecordAwareHSSFListener extends TestCase {
 		Record[] rr = r;
 		int eorCount=0;
 		int sfrCount=0;
-		for (int i = 0; i < rr.length; i++) {
-			Record record = rr[i];
+		for (Record record : rr) {
 			if (record instanceof SharedFormulaRecord) {
 				sfrCount++;
 			}
@@ -422,4 +430,466 @@ public final class TestMissingRecordAwareHSSFListener extends TestCase {
 		assertEquals(1, eorCount);
 		assertEquals(1, sfrCount);
 	}
+	
+	/**
+	 * MulBlank records hold multiple blank cells. Check we
+	 *  can handle them correctly.
+	 */
+	public void testMulBlankHandling() {
+		readRecords("45672.xls");
+		
+		// Check that we don't have any MulBlankRecords, but do
+		//  have lots of BlankRecords
+		Record[] rr = r;
+		int eorCount=0;
+		int mbrCount=0;
+		int brCount=0;
+		for (Record record : rr) {
+			if (record instanceof MulBlankRecord) {
+				mbrCount++;
+			}
+			if (record instanceof BlankRecord) {
+				brCount++;
+			}
+			if (record instanceof LastCellOfRowDummyRecord) {
+				eorCount++;
+			}
+		}
+		if (mbrCount > 0) {
+			throw new AssertionFailedError("Identified bug 45672");
+		}
+		if (brCount < 20) {
+			throw new AssertionFailedError("Identified bug 45672");
+		}
+		if (eorCount != 2) {
+			throw new AssertionFailedError("Identified bug 45672");
+		}
+		assertEquals(2, eorCount);
+	}
+
+    public void testStringRecordHandling(){
+        readRecords("53588.xls");
+        Record[] rr = r;
+        int missingCount=0;
+        int lastCount=0;
+        for (Record record : rr) {
+            if (record instanceof MissingCellDummyRecord) {
+                missingCount++;
+            }
+            if (record instanceof LastCellOfRowDummyRecord) {
+                lastCount++;
+            }
+        }
+        assertEquals(1, missingCount);
+        assertEquals(1, lastCount);
+    }
+    
+    public void testFormulasWithStringResultsHandling() {
+        readRecords("53433.xls");
+        
+        int pos = 95;
+        
+        // First three rows are blank
+        assertEquals(DimensionsRecord.class, r[pos++].getClass());
+        
+        assertEquals(MissingRowDummyRecord.class, r[pos].getClass());
+        assertEquals(0, ((MissingRowDummyRecord)r[pos]).getRowNumber());
+        pos++;
+        assertEquals(MissingRowDummyRecord.class, r[pos].getClass());
+        assertEquals(1, ((MissingRowDummyRecord)r[pos]).getRowNumber());
+        pos++;
+        assertEquals(MissingRowDummyRecord.class, r[pos].getClass());
+        assertEquals(2, ((MissingRowDummyRecord)r[pos]).getRowNumber());
+        pos++;
+        
+        // Then rows 4-10 are defined
+        assertEquals(RowRecord.class, r[pos].getClass());
+        assertEquals(3, ((RowRecord)r[pos]).getRowNumber());
+        pos++;
+        assertEquals(RowRecord.class, r[pos].getClass());
+        assertEquals(4, ((RowRecord)r[pos]).getRowNumber());
+        pos++;
+        assertEquals(RowRecord.class, r[pos].getClass());
+        assertEquals(5, ((RowRecord)r[pos]).getRowNumber());
+        pos++;
+        assertEquals(RowRecord.class, r[pos].getClass());
+        assertEquals(6, ((RowRecord)r[pos]).getRowNumber());
+        pos++;
+        assertEquals(RowRecord.class, r[pos].getClass());
+        assertEquals(7, ((RowRecord)r[pos]).getRowNumber());
+        pos++;
+        assertEquals(RowRecord.class, r[pos].getClass());
+        assertEquals(8, ((RowRecord)r[pos]).getRowNumber());
+        pos++;
+        assertEquals(RowRecord.class, r[pos].getClass());
+        assertEquals(9, ((RowRecord)r[pos]).getRowNumber());
+        pos++;
+        
+        // 5 more blank rows
+        assertEquals(MissingRowDummyRecord.class, r[pos].getClass());
+        assertEquals(10, ((MissingRowDummyRecord)r[pos]).getRowNumber());
+        pos++;
+        assertEquals(MissingRowDummyRecord.class, r[pos].getClass());
+        assertEquals(11, ((MissingRowDummyRecord)r[pos]).getRowNumber());
+        pos++;
+        assertEquals(MissingRowDummyRecord.class, r[pos].getClass());
+        assertEquals(12, ((MissingRowDummyRecord)r[pos]).getRowNumber());
+        pos++;
+        assertEquals(MissingRowDummyRecord.class, r[pos].getClass());
+        assertEquals(13, ((MissingRowDummyRecord)r[pos]).getRowNumber());
+        pos++;
+        assertEquals(MissingRowDummyRecord.class, r[pos].getClass());
+        assertEquals(14, ((MissingRowDummyRecord)r[pos]).getRowNumber());
+        pos++;
+        
+        // 2 defined rows
+        assertEquals(RowRecord.class, r[pos].getClass());
+        assertEquals(15, ((RowRecord)r[pos]).getRowNumber());
+        pos++;
+        assertEquals(RowRecord.class, r[pos].getClass());
+        assertEquals(16, ((RowRecord)r[pos]).getRowNumber());
+        pos++;
+        
+        // one blank row
+        assertEquals(MissingRowDummyRecord.class, r[pos].getClass());
+        assertEquals(17, ((MissingRowDummyRecord)r[pos]).getRowNumber());
+        pos++;
+        
+        // one last real row
+        assertEquals(RowRecord.class, r[pos].getClass());
+        assertEquals(18, ((RowRecord)r[pos]).getRowNumber());
+        pos++;
+        
+        
+        
+        // Now onto the cells
+        
+        // Because the 3 first rows are missing, should have last-of-row records first
+        assertEquals(LastCellOfRowDummyRecord.class, r[pos].getClass());
+        assertEquals(0, ((LastCellOfRowDummyRecord)r[pos]).getRow());
+        assertEquals(-1, ((LastCellOfRowDummyRecord)r[pos]).getLastColumnNumber());
+        pos++;
+        assertEquals(LastCellOfRowDummyRecord.class, r[pos].getClass());
+        assertEquals(1, ((LastCellOfRowDummyRecord)r[pos]).getRow());
+        assertEquals(-1, ((LastCellOfRowDummyRecord)r[pos]).getLastColumnNumber());
+        pos++;
+        assertEquals(LastCellOfRowDummyRecord.class, r[pos].getClass());
+        assertEquals(2, ((LastCellOfRowDummyRecord)r[pos]).getRow());
+        assertEquals(-1, ((LastCellOfRowDummyRecord)r[pos]).getLastColumnNumber());
+        pos++;
+        
+        
+        // Onto row 4 (=3)
+        
+        // Now we have blank cell A4
+        assertEquals(MissingCellDummyRecord.class, r[pos].getClass());
+        assertEquals(3, ((MissingCellDummyRecord)r[pos]).getRow());
+        assertEquals(0, ((MissingCellDummyRecord)r[pos]).getColumn());
+        pos++;
+        
+        // Now 4 real cells, all strings
+        assertEquals(LabelSSTRecord.class, r[pos].getClass());
+        assertEquals(3, ((CellValueRecordInterface)r[pos]).getRow());
+        assertEquals(1, ((CellValueRecordInterface)r[pos]).getColumn());
+        pos++;
+        assertEquals(LabelSSTRecord.class, r[pos].getClass());
+        assertEquals(3, ((CellValueRecordInterface)r[pos]).getRow());
+        assertEquals(2, ((CellValueRecordInterface)r[pos]).getColumn());
+        pos++;
+        assertEquals(LabelSSTRecord.class, r[pos].getClass());
+        assertEquals(3, ((CellValueRecordInterface)r[pos]).getRow());
+        assertEquals(3, ((CellValueRecordInterface)r[pos]).getColumn());
+        pos++;
+        assertEquals(LabelSSTRecord.class, r[pos].getClass());
+        assertEquals(3, ((CellValueRecordInterface)r[pos]).getRow());
+        assertEquals(4, ((CellValueRecordInterface)r[pos]).getColumn());
+        pos++;
+        
+        // Final dummy cell for the end-of-row
+        assertEquals(LastCellOfRowDummyRecord.class, r[pos].getClass());
+        assertEquals(3, ((LastCellOfRowDummyRecord)r[pos]).getRow());
+        assertEquals(4, ((LastCellOfRowDummyRecord)r[pos]).getLastColumnNumber());
+        pos++;
+        
+        
+        // Row 5 has string, formula of string, number, formula of string
+        assertEquals(MissingCellDummyRecord.class, r[pos].getClass());
+        assertEquals(4, ((MissingCellDummyRecord)r[pos]).getRow());
+        assertEquals(0, ((MissingCellDummyRecord)r[pos]).getColumn());
+        pos++;
+        
+        assertEquals(LabelSSTRecord.class, r[pos].getClass());
+        assertEquals(4, ((CellValueRecordInterface)r[pos]).getRow());
+        assertEquals(1, ((CellValueRecordInterface)r[pos]).getColumn());
+        pos++;
+        assertEquals(FormulaRecord.class, r[pos].getClass());
+        assertEquals(4, ((CellValueRecordInterface)r[pos]).getRow());
+        assertEquals(2, ((CellValueRecordInterface)r[pos]).getColumn());
+        pos++;
+        assertEquals(StringRecord.class, r[pos].getClass());
+        assertEquals("s1", ((StringRecord)r[pos]).getString());
+        pos++;
+        assertEquals(NumberRecord.class, r[pos].getClass());
+        assertEquals(4, ((CellValueRecordInterface)r[pos]).getRow());
+        assertEquals(3, ((CellValueRecordInterface)r[pos]).getColumn());
+        pos++;
+        assertEquals(FormulaRecord.class, r[pos].getClass());
+        assertEquals(4, ((CellValueRecordInterface)r[pos]).getRow());
+        assertEquals(4, ((CellValueRecordInterface)r[pos]).getColumn());
+        pos++;
+        assertEquals(StringRecord.class, r[pos].getClass());
+        assertEquals("s3845", ((StringRecord)r[pos]).getString());
+        pos++;
+        
+        // Final dummy cell for the end-of-row
+        assertEquals(LastCellOfRowDummyRecord.class, r[pos].getClass());
+        assertEquals(4, ((LastCellOfRowDummyRecord)r[pos]).getRow());
+        assertEquals(4, ((LastCellOfRowDummyRecord)r[pos]).getLastColumnNumber());
+        pos++;
+        
+        
+        // Row 6 is blank / string formula / number / number / string formula
+        assertEquals(MissingCellDummyRecord.class, r[pos].getClass());
+        assertEquals(5, ((MissingCellDummyRecord)r[pos]).getRow());
+        assertEquals(0, ((MissingCellDummyRecord)r[pos]).getColumn());
+        pos++;
+        
+        assertEquals(FormulaRecord.class, r[pos].getClass());
+        assertEquals(5, ((CellValueRecordInterface)r[pos]).getRow());
+        assertEquals(1, ((CellValueRecordInterface)r[pos]).getColumn());
+        pos++;
+        assertEquals(StringRecord.class, r[pos].getClass());
+        assertEquals("s4", ((StringRecord)r[pos]).getString());
+        pos++;
+        assertEquals(NumberRecord.class, r[pos].getClass());
+        assertEquals(5, ((CellValueRecordInterface)r[pos]).getRow());
+        assertEquals(2, ((CellValueRecordInterface)r[pos]).getColumn());
+        pos++;
+        assertEquals(NumberRecord.class, r[pos].getClass());
+        assertEquals(5, ((CellValueRecordInterface)r[pos]).getRow());
+        assertEquals(3, ((CellValueRecordInterface)r[pos]).getColumn());
+        pos++;
+        assertEquals(FormulaRecord.class, r[pos].getClass());
+        assertEquals(5, ((CellValueRecordInterface)r[pos]).getRow());
+        assertEquals(4, ((CellValueRecordInterface)r[pos]).getColumn());
+        pos++;
+        assertEquals(StringRecord.class, r[pos].getClass());
+        assertEquals("s3845", ((StringRecord)r[pos]).getString());
+        pos++;
+        
+        assertEquals(LastCellOfRowDummyRecord.class, r[pos].getClass());
+        assertEquals(5, ((LastCellOfRowDummyRecord)r[pos]).getRow());
+        assertEquals(4, ((LastCellOfRowDummyRecord)r[pos]).getLastColumnNumber());
+        pos++;
+        
+        
+        // Row 7 is blank / blank / number / number / number
+        assertEquals(MissingCellDummyRecord.class, r[pos].getClass());
+        assertEquals(6, ((MissingCellDummyRecord)r[pos]).getRow());
+        assertEquals(0, ((MissingCellDummyRecord)r[pos]).getColumn());
+        pos++;
+        assertEquals(MissingCellDummyRecord.class, r[pos].getClass());
+        assertEquals(6, ((MissingCellDummyRecord)r[pos]).getRow());
+        assertEquals(1, ((MissingCellDummyRecord)r[pos]).getColumn());
+        pos++;
+        
+        assertEquals(NumberRecord.class, r[pos].getClass());
+        assertEquals(6, ((CellValueRecordInterface)r[pos]).getRow());
+        assertEquals(2, ((CellValueRecordInterface)r[pos]).getColumn());
+        pos++;
+        assertEquals(NumberRecord.class, r[pos].getClass());
+        assertEquals(6, ((CellValueRecordInterface)r[pos]).getRow());
+        assertEquals(3, ((CellValueRecordInterface)r[pos]).getColumn());
+        pos++;
+        assertEquals(NumberRecord.class, r[pos].getClass());
+        assertEquals(6, ((CellValueRecordInterface)r[pos]).getRow());
+        assertEquals(4, ((CellValueRecordInterface)r[pos]).getColumn());
+        pos++;
+        
+        assertEquals(LastCellOfRowDummyRecord.class, r[pos].getClass());
+        assertEquals(6, ((LastCellOfRowDummyRecord)r[pos]).getRow());
+        assertEquals(4, ((LastCellOfRowDummyRecord)r[pos]).getLastColumnNumber());
+        pos++;
+        
+        
+        // Row 8 is blank / string / number formula / string formula / blank
+        assertEquals(MissingCellDummyRecord.class, r[pos].getClass());
+        assertEquals(7, ((MissingCellDummyRecord)r[pos]).getRow());
+        assertEquals(0, ((MissingCellDummyRecord)r[pos]).getColumn());
+        pos++;
+        
+        assertEquals(LabelSSTRecord.class, r[pos].getClass());
+        assertEquals(7, ((CellValueRecordInterface)r[pos]).getRow());
+        assertEquals(1, ((CellValueRecordInterface)r[pos]).getColumn());
+        pos++;
+        assertEquals(FormulaRecord.class, r[pos].getClass());
+        assertEquals(7, ((CellValueRecordInterface)r[pos]).getRow());
+        assertEquals(2, ((CellValueRecordInterface)r[pos]).getColumn());
+        pos++;
+        assertEquals(FormulaRecord.class, r[pos].getClass());
+        assertEquals(7, ((CellValueRecordInterface)r[pos]).getRow());
+        assertEquals(3, ((CellValueRecordInterface)r[pos]).getColumn());
+        pos++;
+        assertEquals(StringRecord.class, r[pos].getClass());
+        assertEquals("s4", ((StringRecord)r[pos]).getString());
+        pos++;
+        assertEquals(BlankRecord.class, r[pos].getClass());
+        assertEquals(7, ((CellValueRecordInterface)r[pos]).getRow());
+        assertEquals(4, ((CellValueRecordInterface)r[pos]).getColumn());
+        pos++;
+        
+        assertEquals(LastCellOfRowDummyRecord.class, r[pos].getClass());
+        assertEquals(7, ((LastCellOfRowDummyRecord)r[pos]).getRow());
+        assertEquals(4, ((LastCellOfRowDummyRecord)r[pos]).getLastColumnNumber());
+        pos++;
+        
+        
+        // Row 9 is empty, but with a blank at E9
+        assertEquals(MissingCellDummyRecord.class, r[pos].getClass());
+        assertEquals(8, ((MissingCellDummyRecord)r[pos]).getRow());
+        assertEquals(0, ((MissingCellDummyRecord)r[pos]).getColumn());
+        pos++;
+        assertEquals(MissingCellDummyRecord.class, r[pos].getClass());
+        assertEquals(8, ((MissingCellDummyRecord)r[pos]).getRow());
+        assertEquals(1, ((MissingCellDummyRecord)r[pos]).getColumn());
+        pos++;
+        assertEquals(MissingCellDummyRecord.class, r[pos].getClass());
+        assertEquals(8, ((MissingCellDummyRecord)r[pos]).getRow());
+        assertEquals(2, ((MissingCellDummyRecord)r[pos]).getColumn());
+        pos++;
+        assertEquals(MissingCellDummyRecord.class, r[pos].getClass());
+        assertEquals(8, ((MissingCellDummyRecord)r[pos]).getRow());
+        assertEquals(3, ((MissingCellDummyRecord)r[pos]).getColumn());
+        pos++;
+        assertEquals(BlankRecord.class, r[pos].getClass());
+        assertEquals(8, ((CellValueRecordInterface)r[pos]).getRow());
+        assertEquals(4, ((CellValueRecordInterface)r[pos]).getColumn());
+        pos++;
+        assertEquals(LastCellOfRowDummyRecord.class, r[pos].getClass());
+        assertEquals(8, ((LastCellOfRowDummyRecord)r[pos]).getRow());
+        assertEquals(4, ((LastCellOfRowDummyRecord)r[pos]).getLastColumnNumber());
+        pos++;
+        
+        
+        // Row 10 has a string in D10
+        assertEquals(MissingCellDummyRecord.class, r[pos].getClass());
+        assertEquals(9, ((MissingCellDummyRecord)r[pos]).getRow());
+        assertEquals(0, ((MissingCellDummyRecord)r[pos]).getColumn());
+        pos++;
+        assertEquals(MissingCellDummyRecord.class, r[pos].getClass());
+        assertEquals(9, ((MissingCellDummyRecord)r[pos]).getRow());
+        assertEquals(1, ((MissingCellDummyRecord)r[pos]).getColumn());
+        pos++;
+        assertEquals(MissingCellDummyRecord.class, r[pos].getClass());
+        assertEquals(9, ((MissingCellDummyRecord)r[pos]).getRow());
+        assertEquals(2, ((MissingCellDummyRecord)r[pos]).getColumn());
+        pos++;
+        assertEquals(LabelSSTRecord.class, r[pos].getClass());
+        assertEquals(9, ((CellValueRecordInterface)r[pos]).getRow());
+        assertEquals(3, ((CellValueRecordInterface)r[pos]).getColumn());
+        pos++;
+        assertEquals(LastCellOfRowDummyRecord.class, r[pos].getClass());
+        assertEquals(9, ((LastCellOfRowDummyRecord)r[pos]).getRow());
+        assertEquals(3, ((LastCellOfRowDummyRecord)r[pos]).getLastColumnNumber());
+        pos++;
+        
+        
+        // Now 5 blank rows
+        assertEquals(LastCellOfRowDummyRecord.class, r[pos].getClass());
+        assertEquals(10, ((LastCellOfRowDummyRecord)r[pos]).getRow());
+        assertEquals(-1, ((LastCellOfRowDummyRecord)r[pos]).getLastColumnNumber());
+        pos++;
+        assertEquals(LastCellOfRowDummyRecord.class, r[pos].getClass());
+        assertEquals(11, ((LastCellOfRowDummyRecord)r[pos]).getRow());
+        assertEquals(-1, ((LastCellOfRowDummyRecord)r[pos]).getLastColumnNumber());
+        pos++;
+        assertEquals(LastCellOfRowDummyRecord.class, r[pos].getClass());
+        assertEquals(12, ((LastCellOfRowDummyRecord)r[pos]).getRow());
+        assertEquals(-1, ((LastCellOfRowDummyRecord)r[pos]).getLastColumnNumber());
+        pos++;
+        assertEquals(LastCellOfRowDummyRecord.class, r[pos].getClass());
+        assertEquals(13, ((LastCellOfRowDummyRecord)r[pos]).getRow());
+        assertEquals(-1, ((LastCellOfRowDummyRecord)r[pos]).getLastColumnNumber());
+        pos++;
+        assertEquals(LastCellOfRowDummyRecord.class, r[pos].getClass());
+        assertEquals(14, ((LastCellOfRowDummyRecord)r[pos]).getRow());
+        assertEquals(-1, ((LastCellOfRowDummyRecord)r[pos]).getLastColumnNumber());
+        pos++;
+        
+        
+        // Row 16 has a single string in B16
+        assertEquals(MissingCellDummyRecord.class, r[pos].getClass());
+        assertEquals(15, ((MissingCellDummyRecord)r[pos]).getRow());
+        assertEquals(0, ((MissingCellDummyRecord)r[pos]).getColumn());
+        pos++;
+        assertEquals(LabelSSTRecord.class, r[pos].getClass());
+        assertEquals(15, ((CellValueRecordInterface)r[pos]).getRow());
+        assertEquals(1, ((CellValueRecordInterface)r[pos]).getColumn());
+        pos++;
+        assertEquals(LastCellOfRowDummyRecord.class, r[pos].getClass());
+        assertEquals(15, ((LastCellOfRowDummyRecord)r[pos]).getRow());
+        assertEquals(1, ((LastCellOfRowDummyRecord)r[pos]).getLastColumnNumber());
+        pos++;
+        
+        
+        // Row 17 has a single string in D17
+        assertEquals(MissingCellDummyRecord.class, r[pos].getClass());
+        assertEquals(16, ((MissingCellDummyRecord)r[pos]).getRow());
+        assertEquals(0, ((MissingCellDummyRecord)r[pos]).getColumn());
+        pos++;
+        assertEquals(MissingCellDummyRecord.class, r[pos].getClass());
+        assertEquals(16, ((MissingCellDummyRecord)r[pos]).getRow());
+        assertEquals(1, ((MissingCellDummyRecord)r[pos]).getColumn());
+        pos++;
+        assertEquals(MissingCellDummyRecord.class, r[pos].getClass());
+        assertEquals(16, ((MissingCellDummyRecord)r[pos]).getRow());
+        assertEquals(2, ((MissingCellDummyRecord)r[pos]).getColumn());
+        pos++;
+        assertEquals(LabelSSTRecord.class, r[pos].getClass());
+        assertEquals(16, ((CellValueRecordInterface)r[pos]).getRow());
+        assertEquals(3, ((CellValueRecordInterface)r[pos]).getColumn());
+        pos++;
+        assertEquals(LastCellOfRowDummyRecord.class, r[pos].getClass());
+        assertEquals(16, ((LastCellOfRowDummyRecord)r[pos]).getRow());
+        assertEquals(3, ((LastCellOfRowDummyRecord)r[pos]).getLastColumnNumber());
+        pos++;
+        
+        
+        // Row 18 is blank
+        assertEquals(LastCellOfRowDummyRecord.class, r[pos].getClass());
+        assertEquals(17, ((LastCellOfRowDummyRecord)r[pos]).getRow());
+        assertEquals(-1, ((LastCellOfRowDummyRecord)r[pos]).getLastColumnNumber());
+        pos++;
+        
+        
+        // Row 19 has a single string in E19
+        assertEquals(MissingCellDummyRecord.class, r[pos].getClass());
+        assertEquals(18, ((MissingCellDummyRecord)r[pos]).getRow());
+        assertEquals(0, ((MissingCellDummyRecord)r[pos]).getColumn());
+        pos++;
+        assertEquals(MissingCellDummyRecord.class, r[pos].getClass());
+        assertEquals(18, ((MissingCellDummyRecord)r[pos]).getRow());
+        assertEquals(1, ((MissingCellDummyRecord)r[pos]).getColumn());
+        pos++;
+        assertEquals(MissingCellDummyRecord.class, r[pos].getClass());
+        assertEquals(18, ((MissingCellDummyRecord)r[pos]).getRow());
+        assertEquals(2, ((MissingCellDummyRecord)r[pos]).getColumn());
+        pos++;
+        assertEquals(MissingCellDummyRecord.class, r[pos].getClass());
+        assertEquals(18, ((MissingCellDummyRecord)r[pos]).getRow());
+        assertEquals(3, ((MissingCellDummyRecord)r[pos]).getColumn());
+        pos++;
+        assertEquals(LabelSSTRecord.class, r[pos].getClass());
+        assertEquals(18, ((CellValueRecordInterface)r[pos]).getRow());
+        assertEquals(4, ((CellValueRecordInterface)r[pos]).getColumn());
+        pos++;
+        assertEquals(LastCellOfRowDummyRecord.class, r[pos].getClass());
+        assertEquals(18, ((LastCellOfRowDummyRecord)r[pos]).getRow());
+        assertEquals(4, ((LastCellOfRowDummyRecord)r[pos]).getLastColumnNumber());
+        pos++;
+        
+        
+        // And that's it!
+        assertEquals(WindowTwoRecord.class, r[pos++].getClass());
+    }
 }

@@ -17,17 +17,35 @@
 
 package org.apache.poi.ss.formula;
 
+import org.apache.poi.util.Internal;
+
 /**
- * Abstracts a sheet for the purpose of formula evaluation.<br/>
+ * Abstracts a sheet for the purpose of formula evaluation.<br>
  * 
  * For POI internal use only
  * 
  * @author Josh Micich
  */
+@Internal
 public interface EvaluationSheet {
 
-	/**
-	 * @return <code>null</code> if there is no cell at the specified coordinates
-	 */
-	EvaluationCell getCell(int rowIndex, int columnIndex);
+    /**
+     * @return <code>null</code> if there is no cell at the specified coordinates
+     */
+    EvaluationCell getCell(int rowIndex, int columnIndex);
+    
+    /**
+     * Propagated from {@link EvaluationWorkbook#clearAllCachedResultValues()} to clear locally cached data.
+     * 
+     * @see WorkbookEvaluator#clearAllCachedResultValues()
+     * @see EvaluationWorkbook#clearAllCachedResultValues()
+     * @since POI 3.15 beta 3
+     */
+    public void clearAllCachedResultValues();
+    
+    /**
+     * @return last row index referenced on this sheet, for evaluation optimization
+     * @since POI 4.0.0
+     */
+    public int getLastRowNum();
 }

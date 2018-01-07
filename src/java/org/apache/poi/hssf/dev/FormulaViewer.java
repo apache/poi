@@ -17,19 +17,20 @@
 
 package org.apache.poi.hssf.dev;
 
-import java.io.FileInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordFactory;
-import org.apache.poi.hssf.record.formula.ExpPtg;
-import org.apache.poi.hssf.record.formula.FuncPtg;
-import org.apache.poi.hssf.record.formula.OperationPtg;
-import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.ss.formula.ptg.ExpPtg;
+import org.apache.poi.ss.formula.ptg.FuncPtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
 
 /**
  * FormulaViewer - finds formulas in a BIFF8 file and attempts to read them/display
@@ -41,7 +42,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 public class FormulaViewer
 {
     private String file;
-    private boolean list=false;
+    private boolean list;
 
     /** Creates new FormulaViewer */
 
@@ -51,33 +52,30 @@ public class FormulaViewer
 
     /**
      * Method run
-     *
-     *
-     * @exception Exception
-     *
+     * 
+     * @throws IOException if the file contained errors 
      */
+    public void run() throws IOException {
+        NPOIFSFileSystem fs  = new NPOIFSFileSystem(new File(file), true);
+        try {
+            InputStream is = BiffViewer.getPOIFSInputStream(fs);
+            try {
+                List<Record> records = RecordFactory.createRecords(is);
 
-    public void run()
-        throws Exception
-    {
-        POIFSFileSystem fs      =
-            new POIFSFileSystem(new FileInputStream(file));
-        List            records =
-            RecordFactory
-                .createRecords(fs.createDocumentInputStream("Workbook"));
-
-        for (int k = 0; k < records.size(); k++)
-        {
-            Record record = ( Record ) records.get(k);
-
-            if (record.getSid() == FormulaRecord.sid)
-            {
-               if (list) {
-                    listFormula((FormulaRecord) record);
-               }else {
-                    parseFormulaRecord(( FormulaRecord ) record);
-               }
+                for (Record record : records) {
+                    if (record.getSid() == FormulaRecord.sid) {
+                        if (list) {
+                            listFormula((FormulaRecord) record);
+                        } else {
+                            parseFormulaRecord((FormulaRecord) record);
+                        }
+                    }
+                }
+            } finally {
+                is.close();
             }
+        } finally {
+            fs.close();
         }
     }
     
@@ -94,10 +92,10 @@ public class FormulaViewer
             	numArg = String.valueOf(-1);
             }
             
-            StringBuffer buf = new StringBuffer();
+            StringBuilder buf = new StringBuilder();
             
             if (token instanceof ExpPtg) return;
-            buf.append(((OperationPtg) token).toFormulaString());
+            buf.append(token.toFormulaString());
             buf.append(sep);
             switch (token.getPtgClass()) {
                 case Ptg.CLASS_REF :
@@ -109,6 +107,8 @@ public class FormulaViewer
                 case Ptg.CLASS_ARRAY :
                     buf.append("ARRAY");
                     break;
+                default:
+                    throwInvalidRVAToken(token);
             }
             
             buf.append(sep);
@@ -124,23 +124,22 @@ public class FormulaViewer
                     case Ptg.CLASS_ARRAY :
                         buf.append("ARRAY");
                         break;
+                    default:
+                        throwInvalidRVAToken(token);
                 }
             }else {
                 buf.append("VALUE");
             }
             buf.append(sep);
             buf.append(numArg);
-            System.out.println(buf.toString());
+            System.out.println(buf);
     }
 
     /**
      * Method parseFormulaRecord
      *
-     *
-     * @param record
-     *
+     * @param record the record to be parsed
      */
-
     public void parseFormulaRecord(FormulaRecord record)
     {
         System.out.println("==============================");
@@ -157,11 +156,10 @@ public class FormulaViewer
 
     private String formulaString(FormulaRecord record) {
 
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
 		Ptg[] tokens = record.getParsedExpression();
-		for (int i = 0; i < tokens.length; i++) {
-			Ptg token = tokens[i];
-            buf.append( token.toFormulaString());
+		for (Ptg token : tokens) {
+			buf.append( token.toFormulaString());
             switch (token.getPtgClass()) {
                 case Ptg.CLASS_REF :
                     buf.append("(R)");
@@ -172,24 +170,28 @@ public class FormulaViewer
                 case Ptg.CLASS_ARRAY :
                     buf.append("(A)");
                     break;
+                default:
+                    throwInvalidRVAToken(token);
             }
             buf.append(' ');
         } 
         return buf.toString();
     }
     
+    private static void throwInvalidRVAToken(Ptg token) {
+        throw new IllegalStateException("Invalid RVA type (" + token.getPtgClass() + "). This should never happen.");
+    }
+    
     
     private static String composeFormula(FormulaRecord record)
     {
-       return  HSSFFormulaParser.toFormulaString((HSSFWorkbook)null, record.getParsedExpression());
+       return  HSSFFormulaParser.toFormulaString(null, record.getParsedExpression());
     }
 
     /**
      * Method setFile
      *
-     *
-     * @param file
-     *
+     * @param file the file to process
      */
 
     public void setFile(String file)
@@ -207,10 +209,9 @@ public class FormulaViewer
      * pass me a filename and I'll try and parse the formulas from it
      *
      * @param args pass one argument with the filename or --help
-     *
+     * @throws IOException if the file can't be read or contained errors
      */
-
-    public static void main(String args[])
+    public static void main(String args[]) throws IOException
     {
         if ((args == null) || (args.length >2 )
                 || args[ 0 ].equals("--help"))
@@ -219,31 +220,17 @@ public class FormulaViewer
                 "FormulaViewer .8 proof that the devil lies in the details (or just in BIFF8 files in general)");
             System.out.println("usage: Give me a big fat file name");
         } else if (args[0].equals("--listFunctions")) { // undocumented attribute to research functions!~
-            try {
-                FormulaViewer viewer = new FormulaViewer();
-                viewer.setFile(args[1]);
-                viewer.setList(true);
-                viewer.run();
-            }
-            catch (Exception e) {
-                System.out.println("Whoops!");
-                e.printStackTrace();
-            }
+            FormulaViewer viewer = new FormulaViewer();
+            viewer.setFile(args[1]);
+            viewer.setList(true);
+            viewer.run();
         }
         else
         {
-            try
-            {
-                FormulaViewer viewer = new FormulaViewer();
+            FormulaViewer viewer = new FormulaViewer();
 
-                viewer.setFile(args[ 0 ]);
-                viewer.run();
-            }
-            catch (Exception e)
-            {
-                System.out.println("Whoops!");
-                e.printStackTrace();
-            }
+            viewer.setFile(args[ 0 ]);
+            viewer.run();
         }
     }
 }

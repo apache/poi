@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,72 +14,62 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.record;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-import junit.framework.TestCase;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Arrays;
+import java.io.IOException;
 
-import org.apache.poi.hslf.HSLFSlideShow;
-import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.junit.Test;
 
 /**
- * Tests Sound-related records: SoundCollection(2020), Sound(2022) and SoundData(2023)).
- *
- * @author Yegor Kozlov
+ * Tests Sound-related records: SoundCollection(2020), Sound(2022) and
+ * SoundData(2023)).
  */
-public class TestSound extends TestCase {
-	public void testRealFile() throws Exception {
-		String cwd = System.getProperty("HSLF.testdata.path");
-		FileInputStream is = new FileInputStream(new File(cwd, "sound.ppt"));
-		SlideShow ppt = new SlideShow(is);
-		is.close();
+public final class TestSound {
+    @Test
+	public void testRealFile() throws IOException {
+        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+
+		HSLFSlideShow ppt = new HSLFSlideShow(slTests.openResourceAsStream("sound.ppt"));
 
 		// Get the document
 		Document doc = ppt.getDocumentRecord();
-        SoundCollection soundCollection = null;
-        Record[] doc_ch = doc.getChildRecords();
-        for (int i = 0; i < doc_ch.length; i++) {
-            if(doc_ch[i] instanceof SoundCollection){
-                soundCollection = (SoundCollection)doc_ch[i];
-                break;
-            }
-        }
-        assertNotNull(soundCollection);
+		SoundCollection soundCollection = null;
+		Record[] doc_ch = doc.getChildRecords();
+		for (Record rec : doc_ch) {
+			if (rec instanceof SoundCollection) {
+				soundCollection = (SoundCollection) rec;
+				break;
+			}
+		}
+		assertNotNull(soundCollection);
 
-        Sound sound = null;
-        Record[] sound_ch = soundCollection.getChildRecords();
-        int k = 0;
-        for (int i = 0; i < sound_ch.length; i++) {
-            if(sound_ch[i] instanceof Sound){
-                sound = (Sound)sound_ch[i];
-                k++;
-            }
-        }
-        assertNotNull(sound);
-        assertEquals(1, k);
+		Sound sound = null;
+		Record[] sound_ch = soundCollection.getChildRecords();
+		int k = 0;
+		for (Record rec : sound_ch) {
+			if (rec instanceof Sound) {
+				sound = (Sound) rec;
+				k++;
+			}
+		}
+		
+		assertNotNull(sound);
+		assertEquals(1, k);
 
-        assertEquals("ringin.wav", sound.getSoundName());
-        assertEquals(".WAV", sound.getSoundType());
-        assertNotNull(sound.getSoundData());
+		assertEquals("ringin.wav", sound.getSoundName());
+		assertEquals(".WAV", sound.getSoundType());
+		assertNotNull(sound.getSoundData());
 
-        File f = new File(cwd, "ringin.wav");
-        int length = (int)f.length();
-        byte[] ref_data = new byte[length];
-        is = new FileInputStream(f);
-        is.read(ref_data);
-        is.close();
+		byte[] ref_data = slTests.readFile("ringin.wav");
+		assertArrayEquals(ref_data, sound.getSoundData());
 
-        assertTrue(Arrays.equals(ref_data, sound.getSoundData()));
-
-	}
+		ppt.close();
+    }
 }

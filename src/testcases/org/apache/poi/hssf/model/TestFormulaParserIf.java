@@ -20,19 +20,19 @@ package org.apache.poi.hssf.model;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.record.formula.AddPtg;
-import org.apache.poi.hssf.record.formula.AttrPtg;
-import org.apache.poi.hssf.record.formula.BoolPtg;
-import org.apache.poi.hssf.record.formula.FuncPtg;
-import org.apache.poi.hssf.record.formula.FuncVarPtg;
-import org.apache.poi.hssf.record.formula.IntPtg;
-import org.apache.poi.hssf.record.formula.LessEqualPtg;
-import org.apache.poi.hssf.record.formula.LessThanPtg;
-import org.apache.poi.hssf.record.formula.MultiplyPtg;
-import org.apache.poi.hssf.record.formula.NotEqualPtg;
-import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.record.formula.RefPtg;
-import org.apache.poi.hssf.record.formula.StringPtg;
+import org.apache.poi.ss.formula.ptg.AddPtg;
+import org.apache.poi.ss.formula.ptg.AttrPtg;
+import org.apache.poi.ss.formula.ptg.BoolPtg;
+import org.apache.poi.ss.formula.ptg.FuncPtg;
+import org.apache.poi.ss.formula.ptg.FuncVarPtg;
+import org.apache.poi.ss.formula.ptg.IntPtg;
+import org.apache.poi.ss.formula.ptg.LessEqualPtg;
+import org.apache.poi.ss.formula.ptg.LessThanPtg;
+import org.apache.poi.ss.formula.ptg.MultiplyPtg;
+import org.apache.poi.ss.formula.ptg.NotEqualPtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.RefPtg;
+import org.apache.poi.ss.formula.ptg.StringPtg;
 
 /**
  * Tests <tt>FormulaParser</tt> specifically with respect to IF() functions
@@ -41,11 +41,11 @@ public final class TestFormulaParserIf extends TestCase {
 	private static Ptg[] parseFormula(String formula) {
 		return TestFormulaParser.parseFormula(formula);
 	}
-	
-	private static Ptg[] confirmTokenClasses(String formula, Class[] expectedClasses) {
+
+	private static Ptg[] confirmTokenClasses(String formula, Class<?>[] expectedClasses) {
 		return TestFormulaParser.confirmTokenClasses(formula, expectedClasses);
 	}
-	
+
 	private static void confirmAttrData(Ptg[] ptgs, int i, int expectedData) {
 		Ptg ptg = ptgs[i];
 		if (!(ptg instanceof AttrPtg)) {
@@ -54,10 +54,10 @@ public final class TestFormulaParserIf extends TestCase {
 		AttrPtg attrPtg = (AttrPtg) ptg;
 		assertEquals(expectedData, attrPtg.getData());
 	}
-	
+
 	public void testSimpleIf() {
-		
-		Class[] expClss;
+
+		Class<?>[] expClss;
 
 		expClss = new Class[] {
 				RefPtg.class,
@@ -77,8 +77,8 @@ public final class TestFormulaParserIf extends TestCase {
 	}
 
 	public void testSimpleIfNoFalseParam() {
-		
-		Class[] expClss;
+
+		Class<?>[] expClss;
 
 		expClss = new Class[] {
 				RefPtg.class,
@@ -95,8 +95,8 @@ public final class TestFormulaParserIf extends TestCase {
 	}
 
 	public void testIfWithLargeParams() {
-		
-		Class[] expClss;
+
+		Class<?>[] expClss;
 
 		expClss = new Class[] {
 				RefPtg.class,
@@ -110,11 +110,11 @@ public final class TestFormulaParserIf extends TestCase {
 				AddPtg.class,
 				FuncPtg.class,
 				AttrPtg.class, // tAttrSkip
-				
+
 				RefPtg.class,
 				RefPtg.class,
 				FuncPtg.class,
-				
+
 				AttrPtg.class, // tAttrSkip
 				FuncVarPtg.class,
 		};
@@ -125,10 +125,10 @@ public final class TestFormulaParserIf extends TestCase {
 		confirmAttrData(ptgs, 9, 20);
 		confirmAttrData(ptgs, 13, 3);
 	}
-	
+
 	public void testNestedIf() {
-		
-		Class[] expClss;
+
+		Class<?>[] expClss;
 
 		expClss = new Class[] {
 
@@ -164,7 +164,7 @@ public final class TestFormulaParserIf extends TestCase {
 		confirmAttrData(ptgs, 15, 3);
 		confirmAttrData(ptgs, 17, 3);
 	}
-	
+
 	public void testEmbeddedIf() {
 		Ptg[] ptgs = parseFormula("IF(3>=1,\"*\",IF(4<>1,\"first\",\"second\"))");
 		assertEquals(17, ptgs.length);
@@ -202,7 +202,7 @@ public final class TestFormulaParserIf extends TestCase {
 		assertEquals("Y", y.getValue());
 		assertEquals("N", n.getValue());
 		assertEquals("IF", funif.toFormulaString());
-		assertTrue("Goto ptg exists", goto1.isGoto());
+		assertTrue("tAttrSkip ptg exists", goto1.isSkip());
 	}
 	/**
 	 * Make sure the ptgs are generated properly with two functions embedded

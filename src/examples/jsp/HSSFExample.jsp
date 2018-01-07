@@ -32,7 +32,7 @@ Select an Excel file to read.
 
 <%
 	String filename = request.getParameter("xls_filename"); 
-	if (filename != null && !filename.equals("")) {
+	if (filename != null && !filename.isEmpty()) {
 %>	
 	<br>You chose the file <%= filename %>. 
 	<br><br>It's contents are: 	

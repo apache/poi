@@ -15,28 +15,29 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hwpf.model;
 
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.hwpf.usermodel.CharacterRun;
-import org.apache.poi.hwpf.usermodel.Picture;
-import org.apache.poi.hwpf.usermodel.Range;
-
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.List;
+
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherBlipRecord;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherRecordFactory;
+import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.usermodel.CharacterRun;
+import org.apache.poi.hwpf.usermodel.Picture;
+import org.apache.poi.hwpf.usermodel.Range;
+import org.apache.poi.util.Internal;
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * Holds information about all pictures embedded in Word Document either via "Insert -> Picture -> From File" or via
- * clipboard. Responsible for images extraction and determining whether some document�s piece contains embedded image.
- * Analyzes raw data bytestream �Data� (where Word stores all embedded objects) provided by HWPFDocument.
+ * clipboard. Responsible for images extraction and determining whether some document's piece contains embedded image.
+ * Analyzes raw data bytestream 'Data' (where Word stores all embedded objects) provided by HWPFDocument.
  *
  * Word stores images as is within so called "Data stream" - the stream within a Word docfile containing various data
  * that hang off of characters in the main stream. For example, binary data describing in-line pictures and/or
@@ -50,8 +51,12 @@ import org.apache.poi.ddf.EscherRecordFactory;
  *
  * @author Dmitry Romanov
  */
-public class PicturesTable
+@Internal
+public final class PicturesTable
 {
+    private static final POILogger logger = POILogFactory
+            .getLogger( PicturesTable.class );
+    
   static final int TYPE_IMAGE = 0x08;
   static final int TYPE_IMAGE_WORD2000 = 0x00;
   static final int TYPE_IMAGE_PASTED_FROM_CLIPBOARD = 0xA;
@@ -63,7 +68,9 @@ public class PicturesTable
   private HWPFDocument _document;
   private byte[] _dataStream;
   private byte[] _mainStream;
+  @Deprecated
   private FSPATable _fspa;
+  @Deprecated
   private EscherRecordHolder _dgg;
 
   /** @link dependency
@@ -72,9 +79,10 @@ public class PicturesTable
 
   /**
    *
-   * @param document 
+   * @param _document
    * @param _dataStream
    */
+  @Deprecated
   public PicturesTable(HWPFDocument _document, byte[] _dataStream, byte[] _mainStream, FSPATable fspa, EscherRecordHolder dgg)
   {
     this._document = _document;
@@ -84,17 +92,32 @@ public class PicturesTable
     this._dgg = dgg;
   }
 
+    public PicturesTable( HWPFDocument _document, byte[] _dataStream,
+            byte[] _mainStream )
+    {
+        this._document = _document;
+        this._dataStream = _dataStream;
+        this._mainStream = _mainStream;
+    }
+
   /**
    * determines whether specified CharacterRun contains reference to a picture
    * @param run
    */
   public boolean hasPicture(CharacterRun run) {
-    if (run.isSpecialCharacter() && !run.isObj() && !run.isOle2() && !run.isData() && "\u0001".equals(run.text())) {
-      return isBlockContainsImage(run.getPicOffset());
+    if (run==null) {
+        return false;
+    }
+
+    if (run.isSpecialCharacter() && !run.isObj() && !run.isOle2() && !run.isData()) {
+       // Image should be in it's own run, or in a run with the end-of-special marker
+       if("\u0001".equals(run.text()) || "\u0001\u0015".equals(run.text())) {
+          return isBlockContainsImage(run.getPicOffset());
+       }
     }
     return false;
   }
-  
+
   public boolean hasEscherPicture(CharacterRun run) {
     if (run.isSpecialCharacter() && !run.isObj() && !run.isOle2() && !run.isData() && run.text().startsWith("\u0008")) {
       return true;
@@ -132,7 +155,7 @@ public class PicturesTable
    * to have that byte array in memory but only write picture's contents to stream, pass false and then use Picture.writeImageContent
    * @see Picture#writeImageContent(java.io.OutputStream)
    * @return a Picture object if picture exists for specified CharacterRun, null otherwise. PicturesTable.hasPicture is used to determine this.
-   * @see #hasPicture(org.apache.poi.hwpf.usermodel.CharacterRun) 
+   * @see #hasPicture(org.apache.poi.hwpf.usermodel.CharacterRun)
    */
   public Picture extractPicture(CharacterRun run, boolean fillBytes) {
     if (hasPicture(run)) {
@@ -140,66 +163,79 @@ public class PicturesTable
     }
     return null;
   }
-  
+
   /**
      * Performs a recursive search for pictures in the given list of escher records.
      *
      * @param escherRecords the escher records.
      * @param pictures the list to populate with the pictures.
      */
-    private void searchForPictures(List escherRecords, List pictures)
+    private void searchForPictures(List<EscherRecord> escherRecords, List<Picture> pictures)
     {
-        Iterator recordIter = escherRecords.iterator();
-        while (recordIter.hasNext())
-        {
-            Object obj = recordIter.next();
-            if (obj instanceof EscherRecord)
-            {
-                EscherRecord escherRecord = (EscherRecord) obj;
-
-                if (escherRecord instanceof EscherBSERecord)
+       for(EscherRecord escherRecord : escherRecords) {
+          if (escherRecord instanceof EscherBSERecord) {
+              EscherBSERecord bse = (EscherBSERecord) escherRecord;
+              EscherBlipRecord blip = bse.getBlipRecord();
+              if (blip != null)
+              {
+                  pictures.add(new Picture(blip));
+              }
+                else if ( bse.getOffset() > 0 )
                 {
-                    EscherBSERecord bse = (EscherBSERecord) escherRecord;
-                    EscherBlipRecord blip = bse.getBlipRecord();
-                    if (blip != null)
+                    try
                     {
-                        pictures.add(new Picture(blip.getPicturedata()));
-                    }
-                    else if (bse.getOffset() > 0)
-                    {
-                        // Blip stored in delay stream, which in a word doc, is the main stream
+                        // Blip stored in delay stream, which in a word doc, is
+                        // the main stream
                         EscherRecordFactory recordFactory = new DefaultEscherRecordFactory();
-                        blip = (EscherBlipRecord) recordFactory.createRecord(_mainStream, bse.getOffset());
-                        blip.fillFields(_mainStream, bse.getOffset(), recordFactory);
-                        pictures.add(new Picture(blip.getPicturedata()));
+                        EscherRecord record = recordFactory.createRecord(
+                                _mainStream, bse.getOffset() );
+
+                        if ( record instanceof EscherBlipRecord )
+                        {
+                            record.fillFields( _mainStream, bse.getOffset(),
+                                    recordFactory );
+                            blip = (EscherBlipRecord) record;
+                            pictures.add( new Picture( blip ) );
+                        }
+                    }
+                    catch ( Exception exc )
+                    {
+                        logger.log(
+                                POILogger.WARN,
+                                "Unable to load picture from BLIB record at offset #",
+                                Integer.valueOf( bse.getOffset() ), exc );
                     }
                 }
+          }
 
-                // Recursive call.
-                searchForPictures(escherRecord.getChildRecords(), pictures);
-            }
-        }
+          // Recursive call.
+          searchForPictures(escherRecord.getChildRecords(), pictures);
+       }
     }
 
   /**
    * Not all documents have all the images concatenated in the data stream
    * although MS claims so. The best approach is to scan all character runs.
-   *  
+   *
    * @return a list of Picture objects found in current document
    */
-  public List getAllPictures() {
-    ArrayList pictures = new ArrayList();
-	
-    Range range = _document.getRange();
+  public List<Picture> getAllPictures() {
+    ArrayList<Picture> pictures = new ArrayList<>();
+
+    Range range = _document.getOverallRange();
     for (int i = 0; i < range.numCharacterRuns(); i++) {
     	CharacterRun run = range.getCharacterRun(i);
-    	String text = run.text();
+
+        if (run==null) {
+            continue;
+        }
+
     	Picture picture = extractPicture(run, false);
     	if (picture != null) {
     		pictures.add(picture);
     	}
 	}
-    
+
     searchForPictures(_dgg.getEscherRecords(), pictures);
 
     return pictures;

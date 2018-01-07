@@ -17,23 +17,18 @@
 
 package org.apache.poi.hssf.util;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * Collects all tests for org.apache.poi.hssf.util.
- * 
- * @author Josh Micich
  */
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+    TestAreaReference.class,
+    TestCellReference.class,
+    TestHSSFColor.class,
+    TestRKUtil.class
+})
 public class AllHSSFUtilTests {
-	
-	public static Test suite() {
-		TestSuite result = new TestSuite(AllHSSFUtilTests.class.getName());
-		result.addTestSuite(TestAreaReference.class);
-		result.addTestSuite(TestCellReference.class);
-		result.addTestSuite(TestHSSFColor.class);
-		result.addTestSuite(TestRangeAddress.class);
-		result.addTestSuite(TestRKUtil.class);
-		return result;
-	}
 }

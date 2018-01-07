@@ -15,11 +15,9 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title:        Save Recalc Record <P>
@@ -29,15 +27,13 @@ import org.apache.poi.util.LittleEndian;
  * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  */
-
-public class SaveRecalcRecord
-    extends Record
+public final class SaveRecalcRecord
+    extends StandardRecord
 {
     public final static short sid = 0x5f;
     private short             field_1_recalc;
 
-    public SaveRecalcRecord()
-    {
+    public SaveRecalcRecord() {
     }
 
     public SaveRecalcRecord(RecordInputStream in)
@@ -49,40 +45,28 @@ public class SaveRecalcRecord
      * set whether to recalculate formulas/etc before saving or not
      * @param recalc - whether to recalculate or not
      */
-
-    public void setRecalc(boolean recalc)
-    {
-        field_1_recalc = ( short ) ((recalc == true) ? 1
-                                                     : 0);
+    public void setRecalc(boolean recalc) {
+        field_1_recalc = ( short ) (recalc ? 1 : 0);
     }
 
     /**
      * get whether to recalculate formulas/etc before saving or not
      * @return recalc - whether to recalculate or not
      */
-
     public boolean getRecalc()
     {
         return (field_1_recalc == 1);
     }
 
-    public String toString()
-    {
-        StringBuffer buffer = new StringBuffer();
-
-        buffer.append("[SAVERECALC]\n");
-        buffer.append("    .recalc         = ").append(getRecalc())
-            .append("\n");
-        buffer.append("[/SAVERECALC]\n");
-        return buffer.toString();
+    public String toString() {
+        return "[SAVERECALC]\n" +
+                "    .recalc         = " + getRecalc() +
+                "\n" +
+                "[/SAVERECALC]\n";
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, ( short ) 0x2);
-        LittleEndian.putShort(data, 4 + offset, field_1_recalc);
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(field_1_recalc);
     }
 
     protected int getDataSize() {

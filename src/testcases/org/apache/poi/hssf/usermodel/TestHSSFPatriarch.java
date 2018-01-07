@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
@@ -33,14 +34,12 @@ public final class TestHSSFPatriarch extends TestCase {
 		HSSFSheet sheet = wb.createSheet();
 
 		HSSFPatriarch patr = sheet.createDrawingPatriarch();
-
 		assertNotNull(patr);
 
 		// assert something more interesting
 	}
 
-	// TODO - fix bug 44916 (1-May-2008)
-	public void DISABLED_test44916() {
+	public void test44916() {
 
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet();
@@ -58,7 +57,7 @@ public final class TestHSSFPatriarch extends TestCase {
 
 		// 3. Use patriarch
 		HSSFClientAnchor anchor = new HSSFClientAnchor(0, 0, 600, 245, (short) 1, 1, (short) 1, 2);
-		anchor.setAnchorType(3);
+		anchor.setAnchorType(AnchorType.DONT_MOVE_AND_RESIZE);
 		byte[] pictureData = HSSFTestDataSamples.getTestDataFileContent("logoKarmokar4.png");
 		int idx1 = wb.addPicture(pictureData, HSSFWorkbook.PICTURE_TYPE_PNG);
 		patr.createPicture(anchor, idx1);
@@ -67,5 +66,4 @@ public final class TestHSSFPatriarch extends TestCase {
 		existingPatr = sheet.getDrawingPatriarch();
 		assertNotNull(existingPatr);
 	}
-
 }

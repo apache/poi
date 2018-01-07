@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,78 +14,81 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.model;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.TestCase;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.List;
 
-import org.apache.poi.hslf.HSLFSlideShow;
-import org.apache.poi.hslf.usermodel.RichTextRun;
-import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.poifs.filesystem.*;
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.HSLFTextParagraph;
+import org.apache.poi.hslf.usermodel.HSLFTextRun;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.DocumentEntry;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests that if we load something up, get a TextRun, set the text
  *  to be the same as it was before, and write it all back out again,
- *  that we don't break anything in the process. 
- *
- * @author Nick Burch (nick at torchbox dot com)
+ *  that we don't break anything in the process.
  */
-public class TestTextRunReWrite extends TestCase {
+public final class TestTextRunReWrite {
 	// HSLFSlideShow primed on the test data
-	private HSLFSlideShow hss;
-	// HSLFSlideShow primed on the test data
-	private SlideShow ss;
-	// POIFS primed on the test data
-	private POIFSFileSystem pfs;
+	private HSLFSlideShow ss;
 
 	/**
 	 * Load up a test PPT file with rich data
 	 */
+	@Before
     public void setUp() throws Exception {
-		String dirname = System.getProperty("HSLF.testdata.path");
-		String filename = dirname + "/Single_Coloured_Page_With_Fonts_and_Alignments.ppt";
-		FileInputStream fis = new FileInputStream(filename);
-		pfs = new POIFSFileSystem(fis);
-		hss = new HSLFSlideShow(pfs);
-		ss = new SlideShow(hss);
+        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+		String filename = "Single_Coloured_Page_With_Fonts_and_Alignments.ppt";
+		ss = new HSLFSlideShow(slTests.openResourceAsStream(filename));
     }
 
-    public void testWritesOutTheSameNonRich() throws Exception {
-    	// Grab the first text run on the first sheet
-    	TextRun tr1 = ss.getSlides()[0].getTextRuns()[0];
-    	TextRun tr2 = ss.getSlides()[0].getTextRuns()[1];
-    	
+    @Test
+	public void testWritesOutTheSameNonRich() throws IOException {
     	// Ensure the text lengths are as we'd expect to start with
-    	assertEquals(1, ss.getSlides().length);
-    	assertEquals(2, ss.getSlides()[0].getTextRuns().length);
-    	assertEquals(30, tr1.getText().length());
-    	assertEquals(179, tr2.getText().length());
+    	assertEquals(1, ss.getSlides().size());
+    	assertEquals(2, ss.getSlides().get(0).getTextParagraphs().size());
+
+        // Grab the first text run on the first sheet
+        List<HSLFTextParagraph> tr1 = ss.getSlides().get(0).getTextParagraphs().get(0);
+        List<HSLFTextParagraph> tr2 = ss.getSlides().get(0).getTextParagraphs().get(1);
     	
-    	assertEquals(1, tr1.getRichTextRuns().length);
-    	assertEquals(30, tr1.getRichTextRuns()[0].getLength());
-    	assertEquals(30, tr1.getRichTextRuns()[0].getText().length());
-    	assertEquals(31, tr1.getRichTextRuns()[0]._getRawCharacterStyle().getCharactersCovered());
-    	assertEquals(31, tr1.getRichTextRuns()[0]._getRawParagraphStyle().getCharactersCovered());
     	
+    	assertEquals(30, HSLFTextParagraph.getRawText(tr1).length());
+    	assertEquals(179, HSLFTextParagraph.getRawText(tr2).length());
+
+    	assertEquals(1, tr1.size());
+    	assertEquals(30, HSLFTextParagraph.getText(tr1).length());
+    	assertEquals(30, HSLFTextParagraph.getRawText(tr1).length());
+    	assertEquals(31, tr1.get(0).getTextRuns().get(0).getCharacterStyle().getCharactersCovered());
+    	assertEquals(31, tr1.get(0).getParagraphStyle().getCharactersCovered());
+
     	// Set the text to be as it is now
-    	tr1.setText( tr1.getText() );
-    	
+    	HSLFTextParagraph.setText(tr1, HSLFTextParagraph.getRawText(tr1));
+    	tr1 = ss.getSlides().get(0).getTextParagraphs().get(0);
+
     	// Check the text lengths are still right
-    	assertEquals(30, tr1.getText().length());
-    	assertEquals(179, tr2.getText().length());
-    	
-    	assertEquals(1, tr1.getRichTextRuns().length);
-    	assertEquals(30, tr1.getRichTextRuns()[0].getLength());
-    	assertEquals(30, tr1.getRichTextRuns()[0].getText().length());
-    	assertEquals(31, tr1.getRichTextRuns()[0]._getRawCharacterStyle().getCharactersCovered());
-    	assertEquals(31, tr1.getRichTextRuns()[0]._getRawParagraphStyle().getCharactersCovered());
-    	
-    	
+    	assertEquals(30, HSLFTextParagraph.getRawText(tr1).length());
+    	assertEquals(179, HSLFTextParagraph.getRawText(tr2).length());
+
+        assertEquals(1, tr1.size());
+        assertEquals(30, HSLFTextParagraph.getText(tr1).length());
+        assertEquals(30, HSLFTextParagraph.getRawText(tr1).length());
+        assertEquals(31, tr1.get(0).getTextRuns().get(0).getCharacterStyle().getCharactersCovered());
+        assertEquals(31, tr1.get(0).getParagraphStyle().getCharactersCovered());
+
+
 		// Write the slideshow out to a byte array
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ss.write(baos);
@@ -98,52 +100,53 @@ public class TestTextRunReWrite extends TestCase {
 		POIFSFileSystem npfs = new POIFSFileSystem(bais);
 
 		// Check that the "PowerPoint Document" sections have the same size
-		DocumentEntry oProps = (DocumentEntry)pfs.getRoot().getEntry("PowerPoint Document");
-		DocumentEntry nProps = (DocumentEntry)npfs.getRoot().getEntry("PowerPoint Document");
+		DirectoryNode oDir = ss.getSlideShowImpl().getDirectory();
+
+		DocumentEntry oProps = (DocumentEntry)oDir.getEntry(HSLFSlideShow.POWERPOINT_DOCUMENT);
+		DocumentEntry nProps = (DocumentEntry)npfs.getRoot().getEntry(HSLFSlideShow.POWERPOINT_DOCUMENT);
 		assertEquals(oProps.getSize(),nProps.getSize());
 
 		// Check that they contain the same data
 		byte[] _oData = new byte[oProps.getSize()];
 		byte[] _nData = new byte[nProps.getSize()];
-		pfs.createDocumentInputStream("PowerPoint Document").read(_oData);
-		npfs.createDocumentInputStream("PowerPoint Document").read(_nData);
-		for(int i=0; i<_oData.length; i++) {
-			System.out.println(i + "\t" + Integer.toHexString(i));
-			assertEquals(_oData[i], _nData[i]);
-		}
+		oDir.createDocumentInputStream(HSLFSlideShow.POWERPOINT_DOCUMENT).read(_oData);
+		npfs.createDocumentInputStream(HSLFSlideShow.POWERPOINT_DOCUMENT).read(_nData);
+		assertArrayEquals(_oData, _nData);
+		
+		npfs.close();
 	}
 
-    public void testWritesOutTheSameRich() throws Exception {
+    @Test
+    public void testWritesOutTheSameRich() throws IOException {
     	// Grab the first text run on the first sheet
-    	TextRun tr1 = ss.getSlides()[0].getTextRuns()[0];
-    	
+    	List<HSLFTextParagraph> tr1 = ss.getSlides().get(0).getTextParagraphs().get(0);
+
     	// Get the first rich text run
-    	RichTextRun rtr1 = tr1.getRichTextRuns()[0];
-    	
-    	
+    	HSLFTextRun rtr1 = tr1.get(0).getTextRuns().get(0);
+
+
     	// Check that the text sizes are as expected
-    	assertEquals(1, tr1.getRichTextRuns().length);
-    	assertEquals(30, tr1.getText().length());
-    	assertEquals(30, tr1.getRichTextRuns()[0].getText().length());
+    	assertEquals(1, tr1.get(0).getTextRuns().size());
+        assertEquals(30, HSLFTextParagraph.getRawText(tr1).length());
     	assertEquals(30, rtr1.getLength());
-    	assertEquals(30, rtr1.getText().length());
-    	assertEquals(31, rtr1._getRawCharacterStyle().getCharactersCovered());
-    	assertEquals(31, rtr1._getRawParagraphStyle().getCharactersCovered());
-    	
+    	assertEquals(30, rtr1.getRawText().length());
+    	assertEquals(31, rtr1.getCharacterStyle().getCharactersCovered());
+    	assertEquals(31, tr1.get(0).getParagraphStyle().getCharactersCovered());
+
     	// Set the text to be as it is now
-    	rtr1.setText( rtr1.getText() );
-    	rtr1 = tr1.getRichTextRuns()[0];
-    	
+    	rtr1.setText( rtr1.getRawText() );
+    	rtr1 = tr1.get(0).getTextRuns().get(0);
+
     	// Check that the text sizes are still as expected
-    	assertEquals(1, tr1.getRichTextRuns().length);
-    	assertEquals(30, tr1.getText().length());
-    	assertEquals(30, tr1.getRichTextRuns()[0].getText().length());
+    	assertEquals(1, tr1.get(0).getTextRuns().size());
+    	assertEquals(30, HSLFTextParagraph.getRawText(tr1).length());
+    	assertEquals(30, tr1.get(0).getTextRuns().get(0).getRawText().length());
     	assertEquals(30, rtr1.getLength());
-    	assertEquals(30, rtr1.getText().length());
-    	assertEquals(31, rtr1._getRawCharacterStyle().getCharactersCovered());
-    	assertEquals(31, rtr1._getRawParagraphStyle().getCharactersCovered());
-    	
-    	
+    	assertEquals(30, rtr1.getRawText().length());
+    	assertEquals(31, rtr1.getCharacterStyle().getCharactersCovered());
+    	assertEquals(31, tr1.get(0).getParagraphStyle().getCharactersCovered());
+
+
 		// Write the slideshow out to a byte array
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ss.write(baos);
@@ -155,18 +158,20 @@ public class TestTextRunReWrite extends TestCase {
 		POIFSFileSystem npfs = new POIFSFileSystem(bais);
 
 		// Check that the "PowerPoint Document" sections have the same size
-		DocumentEntry oProps = (DocumentEntry)pfs.getRoot().getEntry("PowerPoint Document");
-		DocumentEntry nProps = (DocumentEntry)npfs.getRoot().getEntry("PowerPoint Document");
+        DirectoryNode oDir = ss.getSlideShowImpl().getDirectory();
+		
+		DocumentEntry oProps = (DocumentEntry)oDir.getEntry(HSLFSlideShow.POWERPOINT_DOCUMENT);
+		DocumentEntry nProps = (DocumentEntry)npfs.getRoot().getEntry(HSLFSlideShow.POWERPOINT_DOCUMENT);
 		assertEquals(oProps.getSize(),nProps.getSize());
 
 		// Check that they contain the same data
 		byte[] _oData = new byte[oProps.getSize()];
 		byte[] _nData = new byte[nProps.getSize()];
-		pfs.createDocumentInputStream("PowerPoint Document").read(_oData);
-		npfs.createDocumentInputStream("PowerPoint Document").read(_nData);
-		for(int i=0; i<_oData.length; i++) {
-			System.out.println(i + "\t" + Integer.toHexString(i) + "\t" + _oData[i]);
-			assertEquals(_oData[i], _nData[i]);
-		}
+
+		oDir.createDocumentInputStream(HSLFSlideShow.POWERPOINT_DOCUMENT).read(_oData);
+		npfs.createDocumentInputStream(HSLFSlideShow.POWERPOINT_DOCUMENT).read(_nData);
+		assertArrayEquals(_oData, _nData);
+		
+		npfs.close();
 	}
 }

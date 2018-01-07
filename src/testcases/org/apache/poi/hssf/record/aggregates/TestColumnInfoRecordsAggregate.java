@@ -17,23 +17,23 @@
 
 package org.apache.poi.hssf.record.aggregates;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
 
 import org.apache.poi.hssf.record.ColumnInfoRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordBase;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
+import org.junit.Test;
 
-/**
- * @author Glen Stampoultzis
- */
-public final class TestColumnInfoRecordsAggregate extends TestCase {
+import junit.framework.AssertionFailedError;
 
-	public void testGetRecordSize() {
+public final class TestColumnInfoRecordsAggregate {
+
+	@Test
+    public void testGetRecordSize() {
 		ColumnInfoRecordsAggregate agg = new ColumnInfoRecordsAggregate();
 		agg.insertColumn(createColInfo(1, 3));
 		agg.insertColumn(createColInfo(4, 7));
@@ -64,23 +64,21 @@ public final class TestColumnInfoRecordsAggregate extends TestCase {
 
 	private static final class CIRCollector implements RecordVisitor {
 
-		private List _list;
-		public CIRCollector() {
-			_list = new ArrayList();
-		}
-		public void visitRecord(Record r) {
+		private final List<Record> _list = new ArrayList<>();
+
+		@Override
+        public void visitRecord(Record r) {
 			_list.add(r);
 		}
+
 		public static ColumnInfoRecord[] getRecords(ColumnInfoRecordsAggregate agg) {
 			CIRCollector circ = new CIRCollector();
 			agg.visitContainedRecords(circ);
-			List list = circ._list;
-			ColumnInfoRecord[] result = new ColumnInfoRecord[list.size()];
-			list.toArray(result);
-			return result;
+            return circ._list.toArray(new ColumnInfoRecord[circ._list.size()]);
 		}
 	}
 
+	@Test
 	public void testGroupColumns_bug45639() {
 		ColumnInfoRecordsAggregate agg = new ColumnInfoRecordsAggregate();
 		agg.groupColumnRange( 7, 9, true);
@@ -102,6 +100,7 @@ public final class TestColumnInfoRecordsAggregate extends TestCase {
 	/**
 	 * Check that an inner group remains hidden
 	 */
+	@Test
 	public void testHiddenAfterExpanding() {
 		ColumnInfoRecordsAggregate agg = new ColumnInfoRecordsAggregate();
 		agg.groupColumnRange(1, 15, true);
@@ -134,6 +133,7 @@ public final class TestColumnInfoRecordsAggregate extends TestCase {
 		confirmCIR(cirs, 2, 13, 15, 1, true, false);
 		confirmCIR(cirs, 3, 16, 16, 0, false, true);
 	}
+	
 	private static void confirmCIR(ColumnInfoRecord[] cirs, int ix, int startColIx, int endColIx, int level, boolean isHidden, boolean isCollapsed) {
 		ColumnInfoRecord cir = cirs[ix];
 		assertEquals("startColIx", startColIx, cir.getFirstColumn());

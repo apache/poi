@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.record;
 
@@ -29,17 +26,17 @@ import java.io.ByteArrayOutputStream;
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestTextHeaderAtom extends TestCase {
+public final class TestTextHeaderAtom extends TestCase {
 	// From a real file
-	private byte[] notes_data = new byte[] { 0, 0, 0x9f-256, 0x0f, 4, 0, 0, 0, 2, 0, 0, 0};
-	private byte[] title_data = new byte[] { 0, 0, 0x9f-256, 0x0f, 4, 0, 0, 0, 0, 0, 0, 0 };
-	private byte[] body_data = new byte[]  { 0, 0, 0x9f-256, 0x0f, 4, 0, 0, 0, 1, 0, 0, 0 };
+	private final byte[] notes_data = new byte[] { 0, 0, 0x9f-256, 0x0f, 4, 0, 0, 0, 2, 0, 0, 0};
+	private final byte[] title_data = new byte[] { 0, 0, 0x9f-256, 0x0f, 4, 0, 0, 0, 0, 0, 0, 0 };
+	private final byte[] body_data = new byte[]  { 0, 0, 0x9f-256, 0x0f, 4, 0, 0, 0, 1, 0, 0, 0 };
 
-    public void testRecordType() throws Exception {
+	public void testRecordType() {
 		TextHeaderAtom tha = new TextHeaderAtom(notes_data,0,12);
 		assertEquals(3999l, tha.getRecordType());
 	}
-	public void testTypes() throws Exception {
+	public void testTypes() {
 		TextHeaderAtom n_tha = new TextHeaderAtom(notes_data,0,12);
 		TextHeaderAtom t_tha = new TextHeaderAtom(title_data,0,12);
 		TextHeaderAtom b_tha = new TextHeaderAtom(body_data,0,12);

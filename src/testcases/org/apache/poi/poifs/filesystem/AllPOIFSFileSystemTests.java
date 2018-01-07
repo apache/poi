@@ -17,28 +17,28 @@
 
 package org.apache.poi.poifs.filesystem;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
- * Tests for org.apache.poi.poifs.filesystem<br/>
- * 
- * @author Josh Micich
+ * Tests for org.apache.poi.poifs.filesystem<br>
  */
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+      TestDirectoryNode.class
+    , TestDocument.class
+    , TestDocumentDescriptor.class
+    , TestDocumentInputStream.class
+    , TestDocumentNode.class
+    , TestDocumentOutputStream.class
+    , TestEmptyDocument.class
+    , TestNotOLE2Exception.class
+    , TestOfficeXMLException.class
+    , TestPOIFSDocumentPath.class
+    , TestPOIFSFileSystem.class
+    , TestNPOIFSFileSystem.class
+    , TestPropertySorter.class
+    , TestOle10Native.class
+})
 public final class AllPOIFSFileSystemTests {
-
-    public static Test suite() {
-        TestSuite result = new TestSuite("Tests for org.apache.poi.poifs.filesystem");
-        result.addTestSuite(TestDirectoryNode.class);
-        result.addTestSuite(TestDocument.class);
-        result.addTestSuite(TestDocumentDescriptor.class);
-        result.addTestSuite(TestDocumentInputStream.class);
-        result.addTestSuite(TestDocumentNode.class);
-        result.addTestSuite(TestDocumentOutputStream.class);
-        result.addTestSuite(TestEmptyDocument.class);
-        result.addTestSuite(TestOffice2007XMLException.class);
-        result.addTestSuite(TestPOIFSDocumentPath.class);
-        result.addTestSuite(TestPropertySorter.class);
-        return result;
-    }
 }

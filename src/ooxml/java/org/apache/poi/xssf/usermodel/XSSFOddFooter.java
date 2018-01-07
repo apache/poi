@@ -34,7 +34,7 @@ public class XSSFOddFooter extends XSSFHeaderFooter implements Footer{
      * @see XSSFSheet#getOddFooter()
      * @param headerFooter
      */
-    public XSSFOddFooter(CTHeaderFooter headerFooter) {
+    protected XSSFOddFooter(CTHeaderFooter headerFooter) {
         super(headerFooter);
     }
     
@@ -42,6 +42,7 @@ public class XSSFOddFooter extends XSSFHeaderFooter implements Footer{
      * Get the content text representing the footer
      * @return text
      */
+    @Override
     public String getText() {
         return getHeaderFooter().getOddFooter();
     }
@@ -51,6 +52,7 @@ public class XSSFOddFooter extends XSSFHeaderFooter implements Footer{
      * @see XSSFHeaderFooter to see how to create a string with Header/Footer Formatting Syntax
      * @param text - a string representing the footer. 
      */
+    @Override
     public void setText(String text) {
     	if(text == null) {
     		getHeaderFooter().unsetOddFooter();

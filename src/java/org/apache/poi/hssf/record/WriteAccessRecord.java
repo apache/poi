@@ -20,30 +20,32 @@ package org.apache.poi.hssf.record;
 import java.util.Arrays;
 
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.StringUtil;
 
 /**
- * Title: Write Access Record (0x005C)<p/>
+ * Title: Write Access Record (0x005C)<p>
  * 
  * Description: Stores the username of that who owns the spreadsheet generator (on unix the user's 
- * login, on Windoze its the name you typed when you installed the thing)
- * <p/>
- * REFERENCE: PG 424 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
- * <p/>
+ * login, on Windoze its the name you typed when you installed the thing)<p>
  * 
- * @author Andrew C. Oliver (acoliver at apache dot org)
+ * REFERENCE: PG 424 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
  */
-public final class WriteAccessRecord extends Record {
-	private static final byte PAD_CHAR = (byte) ' ';
+public final class WriteAccessRecord extends StandardRecord {
 	public final static short sid = 0x005C;
+
+	private static final byte PAD_CHAR = (byte) ' ';
 	private static final int DATA_SIZE = 112;
 	private String field_1_username;
 	/** this record is always padded to a constant length */
-	private byte[] padding;
+	private static final byte[] PADDING = new byte[DATA_SIZE];
+	static {
+		Arrays.fill(PADDING, PAD_CHAR);
+	}
 
 	public WriteAccessRecord() {
 		setUsername("");
-		padding = new byte[DATA_SIZE - 3];
 	}
 
 	public WriteAccessRecord(RecordInputStream in) {
@@ -56,21 +58,33 @@ public final class WriteAccessRecord extends Record {
 
 		int nChars = in.readUShort();
 		int is16BitFlag = in.readUByte();
-		int expectedPadSize = DATA_SIZE - 3;
-		if ((is16BitFlag & 0x01) == 0x00) {
-			field_1_username = StringUtil.readCompressedUnicode(in, nChars);
-			expectedPadSize -= nChars;
-		} else {
-			field_1_username = StringUtil.readUnicodeLE(in, nChars);
-			expectedPadSize -= nChars * 2;
+		if (nChars > DATA_SIZE || (is16BitFlag & 0xFE) != 0) {
+			// String header looks wrong (probably missing)
+			// OOO doc says this is optional anyway.
+			// reconstruct data
+			byte[] data = new byte[3 + in.remaining()];
+			LittleEndian.putUShort(data, 0, nChars);
+			LittleEndian.putByte(data, 2, is16BitFlag);
+			in.readFully(data, 3, data.length-3);
+			String rawValue = new String(data, StringUtil.UTF8);
+			setUsername(rawValue.trim());
+			return;
 		}
-		padding = new byte[expectedPadSize];
+
+		String rawText;
+		if ((is16BitFlag & 0x01) == 0x00) {
+			rawText = StringUtil.readCompressedUnicode(in, nChars);
+		} else {
+			rawText = StringUtil.readUnicodeLE(in, nChars);
+		}
+		field_1_username = rawText.trim();
+
+		// consume padding
 		int padSize = in.remaining();
-		in.readFully(padding, 0, padSize);
-		if (padSize < expectedPadSize) {
-			// this occurs in a couple of test examples: "42564.xls",
-			// "bug_42794.xls"
-			Arrays.fill(padding, padSize, expectedPadSize, PAD_CHAR);
+		while (padSize > 0) {
+			// in some cases this seems to be garbage (non spaces)
+			in.readUByte();
+			padSize--;
 		}
 	}
 
@@ -87,8 +101,6 @@ public final class WriteAccessRecord extends Record {
 		if (paddingSize < 0) {
 			throw new IllegalArgumentException("Name is too long: " + username);
 		}
-		padding = new byte[paddingSize];
-		Arrays.fill(padding, PAD_CHAR);
 
 		field_1_username = username;
 	}
@@ -108,29 +120,25 @@ public final class WriteAccessRecord extends Record {
 		StringBuffer buffer = new StringBuffer();
 
 		buffer.append("[WRITEACCESS]\n");
-		buffer.append("    .name            = ").append(field_1_username.toString()).append("\n");
+		buffer.append("    .name = ").append(field_1_username).append("\n");
 		buffer.append("[/WRITEACCESS]\n");
 		return buffer.toString();
 	}
 
-	public int serialize(int offset, byte[] data) {
+	public void serialize(LittleEndianOutput out) {
 		String username = getUsername();
 		boolean is16bit = StringUtil.hasMultibyte(username);
 
-		LittleEndian.putUShort(data, 0 + offset, sid);
-		LittleEndian.putUShort(data, 2 + offset, DATA_SIZE);
-		LittleEndian.putUShort(data, 4 + offset, username.length());
-		LittleEndian.putByte(data, 6 + offset, is16bit ? 0x01 : 0x00);
-		int pos = offset + 7;
+		out.writeShort(username.length());
+		out.writeByte(is16bit ? 0x01 : 0x00);
 		if (is16bit) {
-			StringUtil.putUnicodeLE(username, data, pos);
-			pos += username.length() * 2;
+			StringUtil.putUnicodeLE(username, out);
 		} else {
-			StringUtil.putCompressedUnicode(username, data, pos);
-			pos += username.length();
+			StringUtil.putCompressedUnicode(username, out);
 		}
-		System.arraycopy(padding, 0, data, pos, padding.length);
-		return 4 + DATA_SIZE;
+		int encodedByteCount = 3 + username.length() * (is16bit ? 2 : 1);
+		int paddingSize = DATA_SIZE - encodedByteCount;
+		out.write(PADDING, 0, paddingSize);
 	}
 
 	protected int getDataSize() {

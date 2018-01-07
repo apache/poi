@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
 import org.apache.poi.util.IntMapper;
 
@@ -31,15 +32,14 @@ final class SSTSerializer {
 	private final int _numStrings;
 	private final int _numUniqueStrings;
 
-    private final IntMapper strings;
+    private final IntMapper<UnicodeString> strings;
 
     /** Offsets from the beginning of the SST record (even across continuations) */
     private final int[] bucketAbsoluteOffsets;
     /** Offsets relative the start of the current SST or continue record */
     private final int[] bucketRelativeOffsets;
-    int startOfSST, startOfRecord;
 
-    public SSTSerializer( IntMapper strings, int numStrings, int numUniqueStrings )
+    public SSTSerializer( IntMapper<UnicodeString> strings, int numStrings, int numUniqueStrings )
     {
         this.strings = strings;
 		_numStrings = numStrings;
@@ -58,14 +58,14 @@ final class SSTSerializer {
         {
             if (k % ExtSSTRecord.DEFAULT_BUCKET_SIZE == 0)
             {
-                int rOff = out.getTotalSize();
+              int rOff = out.getTotalSize();
               int index = k/ExtSSTRecord.DEFAULT_BUCKET_SIZE;
               if (index < ExtSSTRecord.MAX_BUCKETS) {
-                //Excel only indexes the first 128 buckets.
-                    bucketAbsoluteOffsets[index] = rOff;
-                    bucketRelativeOffsets[index] = rOff;
-                }
-            }
+                 //Excel only indexes the first 128 buckets.
+                 bucketAbsoluteOffsets[index] = rOff;
+                 bucketRelativeOffsets[index] = rOff;
+              }
+          }
           UnicodeString s = getUnicodeString(k);
           s.serialize(out);
         }
@@ -77,9 +77,9 @@ final class SSTSerializer {
         return getUnicodeString(strings, index);
     }
 
-    private static UnicodeString getUnicodeString( IntMapper strings, int index )
+    private static UnicodeString getUnicodeString( IntMapper<UnicodeString> strings, int index )
     {
-        return ( (UnicodeString) strings.get( index ) );
+        return ( strings.get( index ) );
     }
 
     public int[] getBucketAbsoluteOffsets()

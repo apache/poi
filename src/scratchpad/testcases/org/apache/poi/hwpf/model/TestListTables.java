@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,46 +14,44 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hwpf.model;
 
-import org.apache.poi.hwpf.*;
-import org.apache.poi.hwpf.model.io.*;
+import static org.junit.Assert.assertEquals;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
-public class TestListTables
-  extends HWPFTestCase
-{
+import org.apache.poi.hwpf.HWPFTestCase;
+import org.apache.poi.hwpf.model.io.HWPFFileSystem;
+import org.junit.Test;
 
-  public TestListTables()
-  {
-  }
+public final class TestListTables extends HWPFTestCase {
 
-  public void testReadWrite()
-    throws Exception
-  {
-    FileInformationBlock fib = _hWPFDocFixture._fib;
-    byte[] tableStream = _hWPFDocFixture._tableStream;
+    @Test
+    public void testReadWrite() throws IOException {
+        FileInformationBlock fib = _hWPFDocFixture._fib;
+        byte[] tableStream = _hWPFDocFixture._tableStream;
 
-    int listOffset = fib.getFcPlcfLst();
-    int lfoOffset = fib.getFcPlfLfo();
-    if (listOffset != 0 && fib.getLcbPlcfLst() != 0)
-    {
-      ListTables listTables = new ListTables (tableStream, fib.getFcPlcfLst (),
-                                              fib.getFcPlfLfo ());
-      HWPFFileSystem fileSys = new HWPFFileSystem ();
-
-      HWPFOutputStream tableOut = fileSys.getStream ("1Table");
-
-      listTables.writeListDataTo (tableOut);
-      int offset = tableOut.getOffset ();
-      listTables.writeListOverridesTo (tableOut);
-
-      ListTables newTables = new ListTables (tableOut.toByteArray (), 0, offset);
-
-      assertEquals(listTables, newTables);
-
+        int listOffset = fib.getFcPlfLst();
+        int lfoOffset = fib.getFcPlfLfo();
+        int bLfoOffset = fib.getLcbPlfLfo();
+        
+        if (listOffset != 0 && bLfoOffset != 0) {
+            // TODO: this is actually never executed ...
+            
+            ListTables listTables = new ListTables(tableStream, listOffset, lfoOffset, bLfoOffset);
+            HWPFFileSystem fileSys = new HWPFFileSystem();
+    
+            ByteArrayOutputStream tableOut = fileSys.getStream("1Table");
+    
+            listTables.writeListDataTo(fib, tableOut);
+            listTables.writeListOverridesTo(fib, tableOut);
+    
+            ListTables newTables = new ListTables(tableOut.toByteArray(),
+                    fib.getFcPlfLst(), fib.getFcPlfLfo(), fib.getLcbPlfLfo());
+    
+            assertEquals(listTables, newTables);
+        }
     }
-  }
-
 }

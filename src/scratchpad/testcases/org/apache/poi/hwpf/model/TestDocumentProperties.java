@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,79 +14,45 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hwpf.model;
 
-import junit.framework.*;
-import org.apache.poi.hwpf.*;
+import org.apache.poi.hwpf.HWPFDocFixture;
+import org.apache.poi.hwpf.model.types.DOPAbstractType;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import java.lang.reflect.*;
-import java.util.Arrays;
+import static org.apache.poi.POITestCase.assertReflectEquals;
 
-public class TestDocumentProperties
-  extends TestCase
-{
-  private DocumentProperties _documentProperties = null;
-  private HWPFDocFixture _hWPFDocFixture;
+// TODO: Add DocumentProperties#equals ???
 
-  public TestDocumentProperties(String name)
-  {
-    super(name);
-  }
+public final class TestDocumentProperties {
+    private DocumentProperties _documentProperties;
+    private HWPFDocFixture _hWPFDocFixture;
 
-
-  public void testReadWrite()
-    throws Exception
-  {
-    int size = _documentProperties.getSize();
-    byte[] buf = new byte[size];
-
-    _documentProperties.serialize(buf, 0);
-
-    DocumentProperties newDocProperties =
-      new DocumentProperties(buf, 0);
-
-    Field[] fields = DocumentProperties.class.getSuperclass().getDeclaredFields();
-    AccessibleObject.setAccessible(fields, true);
-
-    for (int x = 0; x < fields.length; x++)
-    {
-      if (!fields[x].getType().isArray())
-      {
-        assertEquals(fields[x].get(_documentProperties),
-                     fields[x].get(newDocProperties));
-      }
-      else
-      {
-        byte[] buf1 = (byte[])fields[x].get(_documentProperties);
-        byte[] buf2 = (byte[])fields[x].get(newDocProperties);
-        Arrays.equals(buf1, buf2);
-      }
+    @Before
+    public void setUp() throws Exception {
+        // TODO verify the constructors
+        _hWPFDocFixture = new HWPFDocFixture(this, HWPFDocFixture.DEFAULT_TEST_FILE);
+        _hWPFDocFixture.setUp();
+        _documentProperties = new DocumentProperties(_hWPFDocFixture._tableStream, _hWPFDocFixture._fib.getFcDop(), _hWPFDocFixture._fib.getLcbDop());
     }
 
-  }
+    @After
+    public void tearDown() throws Exception {
+        _documentProperties = null;
+        _hWPFDocFixture.tearDown();
+        _hWPFDocFixture = null;
+    }
 
-  protected void setUp()
-    throws Exception
-  {
-    super.setUp();
-    /**@todo verify the constructors*/
+    @Test
+    public void testReadWrite() throws Exception  {
+        int size = DOPAbstractType.getSize();
+        byte[] buf = new byte[size];
+        _documentProperties.serialize(buf, 0);
+        DocumentProperties newDocProperties = new DocumentProperties(buf, 0, size);
 
-    _hWPFDocFixture = new HWPFDocFixture(this);
-
-    _hWPFDocFixture.setUp();
-
-    _documentProperties = new DocumentProperties(_hWPFDocFixture._tableStream, _hWPFDocFixture._fib.getFcDop());
-  }
-
-  protected void tearDown()
-    throws Exception
-  {
-    _documentProperties = null;
-    _hWPFDocFixture.tearDown();
-
-    _hWPFDocFixture = null;
-    super.tearDown();
-  }
-
+        assertReflectEquals(_documentProperties, newDocProperties);
+    }
 }

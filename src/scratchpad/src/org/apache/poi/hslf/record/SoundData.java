@@ -17,12 +17,10 @@
 
 package org.apache.poi.hslf.record;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.zip.InflaterInputStream;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -30,7 +28,11 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Yegor Kozlov
  */
-public class SoundData extends RecordAtom {
+public final class SoundData extends RecordAtom {
+
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 10_485_760;
 
     /**
      * Record header.
@@ -67,14 +69,14 @@ public class SoundData extends RecordAtom {
         System.arraycopy(source,start,_header,0,8);
 
         // Get the record data.
-        _data = new byte[len-8];
+        _data = IOUtils.safelyAllocate(len-8, MAX_RECORD_LENGTH);
         System.arraycopy(source,start+8,_data,0,len-8);
     }
 
     /**
      * Returns the sound data.
      *
-     * @return the sound data 
+     * @return the sound data
      */
     public byte[] getData() {
         return _data;

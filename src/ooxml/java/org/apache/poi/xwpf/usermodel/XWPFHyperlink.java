@@ -18,26 +18,22 @@ package org.apache.poi.xwpf.usermodel;
 
 /**
  * Sketch of XWPF hyperlink class
- * 
-* @author Yury Batrakov (batrakov at gmail.com)
- * 
+ *
+ * @author Yury Batrakov (batrakov at gmail.com)
  */
-public class XWPFHyperlink
-{
+public class XWPFHyperlink {
     String id, url;
-    public XWPFHyperlink(String id, String url)
-    {
+
+    public XWPFHyperlink(String id, String url) {
         this.id = id;
         this.url = url;
     }
-    
-    public String getId()
-    {
+
+    public String getId() {
         return id;
     }
-    
-    public String getURL()
-    {
+
+    public String getURL() {
         return url;
     }
 }

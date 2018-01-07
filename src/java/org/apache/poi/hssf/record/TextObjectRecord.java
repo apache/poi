@@ -19,19 +19,19 @@ package org.apache.poi.hssf.record;
 
 import org.apache.poi.hssf.record.cont.ContinuableRecord;
 import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
-import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
+import org.apache.poi.ss.formula.ptg.OperandPtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
+import org.apache.poi.util.RecordFormatException;
 
 /**
  * The TXO record (0x01B6) is used to define the properties of a text box. It is
  * followed by two or more continue records unless there is no actual text. The
  * first continue records contain the text data and the last continue record
- * contains the formatting runs.<p/>
- * 
- * @author Glen Stampoultzis (glens at apache.org)
+ * contains the formatting runs.
  */
 public final class TextObjectRecord extends ContinuableRecord {
 	public final static short sid = 0x01B6;
@@ -68,19 +68,20 @@ public final class TextObjectRecord extends ContinuableRecord {
 	/*
 	 * Note - the next three fields are very similar to those on
 	 * EmbededObjectRefSubRecord(ftPictFmla 0x0009)
-	 * 
+	 *
 	 * some observed values for the 4 bytes preceding the formula: C0 5E 86 03
 	 * C0 11 AC 02 80 F1 8A 03 D4 F0 8A 03
 	 */
 	private int _unknownPreFormulaInt;
 	/** expect tRef, tRef3D, tArea, tArea3D or tName */
-	private Ptg _linkRefPtg;
+	private OperandPtg _linkRefPtg;
 	/**
-	 * Not clear if needed .  Excel seems to be OK if this byte is not present. 
+	 * Not clear if needed .  Excel seems to be OK if this byte is not present.
 	 * Value is often the same as the earlier firstColumn byte. */
 	private Byte _unknownPostFormulaByte;
 
 	public TextObjectRecord() {
+		//
 	}
 
 	public TextObjectRecord(RecordInputStream in) {
@@ -106,9 +107,9 @@ public final class TextObjectRecord extends ContinuableRecord {
 				throw new RecordFormatException("Read " + ptgs.length
 						+ " tokens but expected exactly 1");
 			}
-			_linkRefPtg = ptgs[0];
+			_linkRefPtg = (OperandPtg) ptgs[0];
 			if (in.remaining() > 0) {
-				_unknownPostFormulaByte = new Byte(in.readByte());
+				_unknownPostFormulaByte = Byte.valueOf(in.readByte());
 			} else {
 				_unknownPostFormulaByte = null;
 			}
@@ -161,7 +162,7 @@ public final class TextObjectRecord extends ContinuableRecord {
 	}
 
 	private void serializeTXORecord(ContinuableRecordOutput out) {
-		
+
 		out.writeShort(field_1_options);
 		out.writeShort(field_2_textOrientation);
 		out.writeShort(field_3_reserved4);
@@ -170,7 +171,7 @@ public final class TextObjectRecord extends ContinuableRecord {
 		out.writeShort(_text.length());
 		out.writeShort(getFormattingDataLength());
 		out.writeInt(field_8_reserved7);
-		
+
 		if (_linkRefPtg != null) {
 			int formulaSize = _linkRefPtg.getSize();
 			out.writeShort(formulaSize);
@@ -194,12 +195,12 @@ public final class TextObjectRecord extends ContinuableRecord {
 		serializeTXORecord(out);
 		if (_text.getString().length() > 0) {
 			serializeTrailingRecords(out);
-		} 
+		}
 	}
 
 	private int getFormattingDataLength() {
 		if (_text.length() < 1) {
-			// important - no formatting data if text is empty 
+			// important - no formatting data if text is empty
 			return 0;
 		}
 		return (_text.numFormattingRuns() + 1) * FORMAT_RUN_ENCODED_SIZE;
@@ -210,7 +211,7 @@ public final class TextObjectRecord extends ContinuableRecord {
 		for (int i = 0; i < nRuns; i++) {
 			out.writeShort(str.getIndexOfFormattingRun(i));
 			int fontIndex = str.getFontOfFormattingRun(i);
-			out.writeShort(fontIndex == str.NO_FONT ? 0 : fontIndex);
+			out.writeShort(fontIndex == HSSFRichTextString.NO_FONT ? 0 : fontIndex);
 			out.writeInt(0); // skip reserved
 		}
 		out.writeShort(str.length());
@@ -262,7 +263,7 @@ public final class TextObjectRecord extends ContinuableRecord {
 
 	/**
 	 * Get the text orientation field for the TextObjectBase record.
-	 * 
+	 *
 	 * @return One of TEXT_ORIENTATION_NONE TEXT_ORIENTATION_TOP_TO_BOTTOM
 	 *         TEXT_ORIENTATION_ROT_RIGHT TEXT_ORIENTATION_ROT_LEFT
 	 */
@@ -272,7 +273,7 @@ public final class TextObjectRecord extends ContinuableRecord {
 
 	/**
 	 * Set the text orientation field for the TextObjectBase record.
-	 * 
+	 *
 	 * @param textOrientation
 	 *            One of TEXT_ORIENTATION_NONE TEXT_ORIENTATION_TOP_TO_BOTTOM
 	 *            TEXT_ORIENTATION_ROT_RIGHT TEXT_ORIENTATION_ROT_LEFT
@@ -288,7 +289,7 @@ public final class TextObjectRecord extends ContinuableRecord {
 	public void setStr(HSSFRichTextString str) {
 		_text = str;
 	}
-	
+
 	public Ptg getLinkRefPtg() {
 		return _linkRefPtg;
 	}
@@ -335,7 +336,7 @@ public final class TextObjectRecord extends ContinuableRecord {
 		if (_linkRefPtg != null) {
 			rec._unknownPreFormulaInt = _unknownPreFormulaInt;
 			rec._linkRefPtg = _linkRefPtg.copy();
-			rec._unknownPostFormulaByte = rec._unknownPostFormulaByte;
+			rec._unknownPostFormulaByte = _unknownPostFormulaByte;
 		}
 		return rec;
 	}

@@ -1,35 +1,27 @@
 Apache POI
-Copyright 2001-2007 The Apache Software Foundation
+Copyright 2003-2017 The Apache Software Foundation
 
 This product includes software developed by
-The Apache Software Foundation (http://www.apache.org/).
+The Apache Software Foundation (https://www.apache.org/).
 
+This product contains parts that were originally based on software from BEA.
+Copyright (c) 2000-2003, BEA Systems, <http://www.bea.com/> (dead link),
+which was acquired by Oracle Corporation in 2008.
+<http://www.oracle.com/us/corporate/Acquisitions/bea/index.html>
+<https://en.wikipedia.org/wiki/BEA_Systems>
 
-Unit testing support is provided by JUnit, under the 
-Common Public License Version 1.0: 
-	http://www.opensource.org/licenses/cpl.php
-See http://www.junit.org/
+This product contains W3C XML Schema documents. Copyright 2001-2003 (c)
+World Wide Web Consortium (Massachusetts Institute of Technology, European
+Research Consortium for Informatics and Mathematics, Keio University)
 
+This product contains the Piccolo XML Parser for Java
+(http://piccolo.sourceforge.net/). Copyright 2002 Yuval Oren.
 
-A single resource file of the POI scratchpad component HDGF is taken from 
- VSDump, and is under the GNU General Public Licence version 3 (GPL v3):
-	http://gplv3.fsf.org/
-Since this is a data file, and has no compiled version (the original
- file is distributed in both source and binary versions of POI), there should
- be little difference in licencing requirements compared to the ASL.
-For those wishing to avoid this component, the HDGF part of the POI 
- scratchpad should be omitted.
-See http://www.gnome.ru/projects/vsdump_en.html
+This product contains the chunks_parse_cmds.tbl file from the vsdump program.
+Copyright (C) 2006-2007 Valek Filippov (frob@df.ru)
 
-
-The Office Open XML support had additional dependencies, with their 
-own licensing:
- * XML Beans - http://xmlbeans.apache.org/
-      Apache Licence Version 2.0 - http://www.apache.org/licenses/LICENSE-2.0
- * DOM4J - http://www.dom4j.org/
-      BSD Licence - http://www.dom4j.org/license.html
- * Jaxen - http://jaxen.org/
-      Apache Style Licence - http://jaxen.org/license.html
- * OpenXml4J - http://www.openxml4j.org/
-      BSD Licence or Apache Licence Version 2.0 - 
-         http://www.openxml4j.org/Licensing/Default.html
+This product contains parts of the eID Applet project 
+<http://eid-applet.googlecode.com> and <https://github.com/e-Contract/eid-applet>.
+Copyright (c) 2009-2014
+FedICT (federal ICT department of Belgium), e-Contract.be BVBA (https://www.e-contract.be),
+Bart Hanssens from FedICT

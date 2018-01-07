@@ -19,7 +19,9 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * Title:        Dimensions Record<P>
@@ -31,9 +33,10 @@ import org.apache.poi.util.LittleEndian;
  * @version 2.0-pre
  */
 
-public class DimensionsRecord
-    extends Record
-{
+public final class DimensionsRecord extends StandardRecord implements Cloneable {
+
+    private static final POILogger logger = POILogFactory.getLogger(DimensionsRecord.class);
+
     public final static short sid = 0x200;
     private int               field_1_first_row;
     private int               field_2_last_row;   // plus 1
@@ -52,6 +55,11 @@ public class DimensionsRecord
         field_3_first_col = in.readShort();
         field_4_last_col  = in.readShort();
         field_5_zero      = in.readShort();
+        //POI-61045 -- in practice, there can be an extra 2 bytes
+        if (in.available() == 2) {
+            logger.log(POILogger.INFO, "DimensionsRecord has extra 2 bytes.");
+            in.readShort();
+        }
     }
 
     /**
@@ -153,16 +161,12 @@ public class DimensionsRecord
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, ( short ) 14);
-        LittleEndian.putInt(data, 4 + offset, getFirstRow());
-        LittleEndian.putInt(data, 8 + offset, getLastRow());
-        LittleEndian.putShort(data, 12 + offset, getFirstCol());
-        LittleEndian.putShort(data, 14 + offset, getLastCol());
-        LittleEndian.putShort(data, 16 + offset, ( short ) 0);
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeInt(getFirstRow());
+        out.writeInt(getLastRow());
+        out.writeShort(getFirstCol());
+        out.writeShort(getLastCol());
+        out.writeShort(( short ) 0);
     }
 
     protected int getDataSize() {
@@ -174,7 +178,8 @@ public class DimensionsRecord
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public DimensionsRecord clone() {
       DimensionsRecord rec = new DimensionsRecord();
       rec.field_1_first_row = field_1_first_row;
       rec.field_2_last_row = field_2_last_row;

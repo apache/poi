@@ -1,9 +1,10 @@
 /* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
 
        http://www.apache.org/licenses/LICENSE-2.0
 
@@ -17,16 +18,13 @@
 package org.apache.poi.hssf.util;
 
 import org.apache.poi.ss.util.CellRangeAddressBase;
-import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * See OOO documentation: excelfileformat.pdf sec 2.5.14 - 'Cell Range Address'<p/>
- * 
- * Like {@link CellRangeAddress} except column fields are 8-bit.
- * 
- * @author Josh Micich
+ * See OOO documentation: excelfileformat.pdf sec 2.5.14 - 'Cell Range Address'<p>
+ *
+ * Implements a CellRangeAddress with 8-but column fields.
  */
 public final class CellRangeAddress8Bit extends CellRangeAddressBase {
 
@@ -48,20 +46,13 @@ public final class CellRangeAddress8Bit extends CellRangeAddressBase {
 		return in.readUShort();
 	}
 
-	/**
-	 * @deprecated use {@link #serialize(LittleEndianOutput)}
-	 */
-	public int serialize(int offset, byte[] data) {
-		serialize(new LittleEndianByteArrayOutputStream(data, offset, ENCODED_SIZE));
-		return ENCODED_SIZE;
-	}
 	public void serialize(LittleEndianOutput out) {
 		out.writeShort(getFirstRow());
 		out.writeShort(getLastRow());
 		out.writeByte(getFirstColumn());
 		out.writeByte(getLastColumn());
 	}
-	
+
 	public CellRangeAddress8Bit copy() {
 		return new CellRangeAddress8Bit(getFirstRow(), getLastRow(), getFirstColumn(), getLastColumn());
 	}

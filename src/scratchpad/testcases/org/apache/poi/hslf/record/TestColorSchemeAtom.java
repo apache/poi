@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.record;
 
@@ -29,21 +26,21 @@ import java.io.ByteArrayOutputStream;
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestColorSchemeAtom extends TestCase {
+public final class TestColorSchemeAtom extends TestCase {
 	// From a real file
-	private byte[] data_a = new byte[] { 60, 0, 0xF0-256, 0x07, 0x20, 0, 0, 0, 
-		0xFF-256, 0xFF-256, 0xFF-256, 00,   00, 00, 00, 00, 
+	private final byte[] data_a = new byte[] { 60, 0, 0xF0-256, 0x07, 0x20, 0, 0, 0,
+		0xFF-256, 0xFF-256, 0xFF-256, 00,   00, 00, 00, 00,
 		0x80-256, 0x80-256, 0x80-256, 00,   00, 00, 00, 00,
 		0xBB-256, 0xE0-256, 0xE3-256, 00,   0x33, 0x33, 0x99-256, 00,
 		00, 0x99-256, 0x99-256, 00,         0x99-256, 0xCC-256, 00, 00
 	};
 
-    public void testRecordType() throws Exception {
+	public void testRecordType() {
 		ColorSchemeAtom csa = new ColorSchemeAtom(data_a,0,data_a.length);
 		assertEquals(2032l, csa.getRecordType());
 	}
 
-	public void testToRGB() throws Exception {
+	public void testToRGB() {
 		byte[] rgb = ColorSchemeAtom.splitRGB(3669760);
 
 		assertEquals(3,rgb.length);
@@ -52,7 +49,7 @@ public class TestColorSchemeAtom extends TestCase {
 		assertEquals(55, rgb[2]);
 	}
 
-	public void testFromRGB() throws Exception {
+	public void testFromRGB() {
 		byte[] rgb_a = new byte[] { 0, 255-256, 55 };
 		byte[] rgb_b = new byte[] { 255-256, 127, 79 };
 
@@ -63,7 +60,7 @@ public class TestColorSchemeAtom extends TestCase {
 		assertEquals( 5210111, ColorSchemeAtom.joinRGB( rgb_b[0], rgb_b[1], rgb_b[2] ) );
 	}
 
-	public void testRGBs() throws Exception {
+	public void testRGBs() {
 		ColorSchemeAtom csa = new ColorSchemeAtom(data_a,0,data_a.length);
 
 		assertEquals( 16777215 , csa.getBackgroundColourRGB() );

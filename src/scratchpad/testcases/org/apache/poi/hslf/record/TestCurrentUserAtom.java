@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,101 +14,92 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.record;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import junit.framework.TestCase;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
-import javax.imageio.stream.FileImageInputStream;
-
-import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.exceptions.EncryptedPowerPointFileException;
+import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.junit.Test;
 
 /**
  * Tests that CurrentUserAtom works properly.
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestCurrentUserAtom extends TestCase {
+public final class TestCurrentUserAtom {
+    private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 	/** Not encrypted */
-	private String normalFile;
+	private static final String normalFile = "basic_test_ppt_file.ppt";
 	/** Encrypted */
-	private String encFile;
+	private static final String encFile = "Password_Protected-hello.ppt";
 
-	protected void setUp() throws Exception {
-		super.setUp();
-		
-		String dirname = System.getProperty("HSLF.testdata.path");
-		normalFile = dirname + "/basic_test_ppt_file.ppt";
-		encFile = dirname + "/Password_Protected-hello.ppt";
-	}
+	@Test
+	public void readNormal() throws Exception {
+		POIFSFileSystem fs = new POIFSFileSystem(_slTests.getFile(normalFile));
 
-	public void testReadNormal() throws Exception {
-		POIFSFileSystem fs = new POIFSFileSystem(
-				new FileInputStream(normalFile)
-		);
-		
-		CurrentUserAtom cu = new CurrentUserAtom(fs);
-		
+		CurrentUserAtom cu = new CurrentUserAtom(fs.getRoot());
+		fs.close();
+
 		// Check the contents
 		assertEquals("Hogwarts", cu.getLastEditUsername());
 		assertEquals(0x2942, cu.getCurrentEditOffset());
-		
+
 		// Round trip
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		cu.writeOut(baos);
+		POIFSFileSystem poifs = new POIFSFileSystem();
+		cu.writeToFS(poifs);
 		
-		CurrentUserAtom cu2 = new CurrentUserAtom(baos.toByteArray());
+		CurrentUserAtom cu2 = new CurrentUserAtom(poifs.getRoot());
 		assertEquals("Hogwarts", cu2.getLastEditUsername());
 		assertEquals(0x2942, cu2.getCurrentEditOffset());
-	}
-	
-	public void testReadEnc() throws Exception {
-		POIFSFileSystem fs = new POIFSFileSystem(
-				new FileInputStream(encFile)
-		);
 		
+		poifs.close();
+	}
+
+	@Test(expected = EncryptedPowerPointFileException.class)
+	public void readEnc() throws Exception {
+		POIFSFileSystem fs = new POIFSFileSystem(_slTests.getFile(encFile));
+
 		try {
-			new CurrentUserAtom(fs);
-			fail();
-		} catch(EncryptedPowerPointFileException e) {
-			// Good
+    		new CurrentUserAtom(fs.getRoot());
+    		assertTrue(true); // not yet failed
+    		
+    		new HSLFSlideShowImpl(fs).close();
+		} finally {
+		    fs.close();
 		}
 	}
-	
-	public void testWriteNormal() throws Exception {
+
+	@Test
+	public void writeNormal() throws Exception {
 		// Get raw contents from a known file
-		POIFSFileSystem fs = new POIFSFileSystem(
-				new FileInputStream(normalFile)
-		);
+		POIFSFileSystem fs = new POIFSFileSystem(_slTests.getFile(normalFile));
 		DocumentEntry docProps = (DocumentEntry)fs.getRoot().getEntry("Current User");
 		byte[] contents = new byte[docProps.getSize()];
 		InputStream in = fs.getRoot().createDocumentInputStream("Current User");
 		in.read(contents);
-		
+		in.close();
+		fs.close();
+
 		// Now build up a new one
 		CurrentUserAtom cu = new CurrentUserAtom();
 		cu.setLastEditUsername("Hogwarts");
 		cu.setCurrentEditOffset(0x2942);
-		
+
 		// Check it matches
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		cu.writeOut(baos);
 		byte[] out = baos.toByteArray();
-		
-		assertEquals(contents.length, out.length);
-		for(int i=0; i<contents.length; i++) {
-			assertEquals("Byte " + i, contents[i], out[i]);
-		}
+
+		assertArrayEquals(contents, out);
 	}
 }

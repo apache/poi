@@ -17,11 +17,6 @@
 
 package org.apache.poi.hslf.record;
 
-import java.io.OutputStream;
-import java.io.IOException;
-
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogger;
 
 /**
  * A container record that specifies information about an ActiveX control. It contains:
@@ -38,7 +33,7 @@ import org.apache.poi.util.POILogger;
  *
  * @author Yegor kozlov
  */
-public class ExControl extends ExEmbed {
+public final class ExControl extends ExEmbed {
 
     /**
      * Set things up, and find our more interesting children
@@ -55,9 +50,7 @@ public class ExControl extends ExEmbed {
      * Create a new ExEmbed, with blank fields
      */
     public ExControl() {
-        super();
-
-        _children[0] = embedAtom = new ExControlAtom();
+        super(new ExControlAtom());
     }
 
     /**

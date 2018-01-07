@@ -17,11 +17,7 @@
 
 package org.apache.poi.hssf;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.apache.poi.hssf.eventmodel.TestEventRecordFactory;
-import org.apache.poi.hssf.eventmodel.TestModelFactory;
 import org.apache.poi.hssf.eventusermodel.AllEventUserModelTests;
 import org.apache.poi.hssf.extractor.TestExcelExtractor;
 import org.apache.poi.hssf.model.AllModelTests;
@@ -29,31 +25,24 @@ import org.apache.poi.hssf.record.AllRecordTests;
 import org.apache.poi.hssf.usermodel.AllUserModelTests;
 import org.apache.poi.hssf.util.AllHSSFUtilTests;
 import org.apache.poi.ss.formula.AllSSFormulaTests;
+import org.apache.poi.ss.util.AllSSUtilTests;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
- * Test Suite for all sub-packages of org.apache.poi.hssf<br/>
- * 
- * Mostly this is for my convenience.
- * 
- * @author Andrew C. Oliver acoliver@apache.org
+ * Test Suite for all sub-packages of org.apache.poi.hssf<br>
  */
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+    AllEventUserModelTests.class,
+    AllModelTests.class,
+    AllUserModelTests.class,
+    AllRecordTests.class,
+    AllHSSFUtilTests.class,
+    TestExcelExtractor.class,
+    TestEventRecordFactory.class,
+    AllSSFormulaTests.class,
+    AllSSUtilTests.class
+})
 public final class HSSFTests {
-
-    public static Test suite() {
-        TestSuite suite = new TestSuite(HSSFTests.class.getName());
-
-        suite.addTest(AllEventUserModelTests.suite());
-        suite.addTest(AllModelTests.suite());
-        suite.addTest(AllUserModelTests.suite());
-        suite.addTest(AllRecordTests.suite());
-        suite.addTest(AllHSSFUtilTests.suite());
-
-        if (false) { // TODO - hook this test up
-            suite.addTest(new TestSuite(TestExcelExtractor.class));
-        }
-        suite.addTest(new TestSuite(TestEventRecordFactory.class));
-        suite.addTest(new TestSuite(TestModelFactory.class));
-        suite.addTest(AllSSFormulaTests.suite());
-        return suite;
-    }
 }

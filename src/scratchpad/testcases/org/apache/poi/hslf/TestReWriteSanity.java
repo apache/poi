@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,17 +14,28 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf;
 
 
-import junit.framework.TestCase;
-import java.io.*;
-import java.util.*;
-import org.apache.poi.hslf.record.*;
-import org.apache.poi.poifs.filesystem.*;
+import static org.apache.poi.POITestCase.assertContains;
+import static org.junit.Assert.assertEquals;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.record.CurrentUserAtom;
+import org.apache.poi.hslf.record.PersistPtrHolder;
+import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.UserEditAtom;
+import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests that HSLFSlideShow writes the powerpoint bit of data back out
@@ -33,69 +43,77 @@ import org.apache.poi.poifs.filesystem.*;
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestReWriteSanity extends TestCase {
-	// HSLFSlideShow primed on the test data
-	private HSLFSlideShow ss;
-	// POIFS primed on the test data
-	private POIFSFileSystem pfs;
+public final class TestReWriteSanity {
+    // HSLFSlideShow primed on the test data
+    private HSLFSlideShowImpl ss;
+    // POIFS primed on the test data
+    private POIFSFileSystem pfs;
 
-    public TestReWriteSanity() throws Exception {
-		String dirname = System.getProperty("HSLF.testdata.path");
-		String filename = dirname + "/basic_test_ppt_file.ppt";
-		FileInputStream fis = new FileInputStream(filename);
-		pfs = new POIFSFileSystem(fis);
-		ss = new HSLFSlideShow(pfs);
+    @Before
+    public void setUp() throws Exception {
+        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+        pfs = new POIFSFileSystem(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
+        ss = new HSLFSlideShowImpl(pfs);
+    }
+    
+    @After
+    public void tearDown() throws Exception {
+        pfs.close();
+        ss.close();
     }
 
-	public void testUserEditAtomsRight() throws Exception {
-		// Write out to a byte array
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		ss.write(baos);
+    @Test
+    public void testUserEditAtomsRight() throws Exception {
+        // Write out to a byte array
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ss.write(baos);
 
-		// Build an input stream of it
-		ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        // Build an input stream of it
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
 
-		// Create a new one from that
-		HSLFSlideShow wss = new HSLFSlideShow(bais);
+        // Create a new one from that
+        HSLFSlideShowImpl wss = new HSLFSlideShowImpl(bais);
 
-		// Find the location of the PersistPtrIncrementalBlocks and 
-		// UserEditAtoms
-		Record[] r = wss.getRecords();
-		Hashtable pp = new Hashtable();
-		Hashtable ue = new Hashtable();
-		ue.put(new Integer(0),new Integer(0)); // Will show 0 if first
-		int pos = 0;
-		int lastUEPos = -1;
+        // Find the location of the PersistPtrIncrementalBlocks and
+        // UserEditAtoms
+        Record[] r = wss.getRecords();
+        Map<Integer,Record> pp = new HashMap<>();
+        Map<Integer,Object> ue = new HashMap<>();
+        ue.put(Integer.valueOf(0),Integer.valueOf(0)); // Will show 0 if first
+        int pos = 0;
+        int lastUEPos = -1;
 
-		for(int i=0; i<r.length; i++) {
-			if(r[i] instanceof PersistPtrHolder) {
-				pp.put(new Integer(pos), r[i]);
-			}
-			if(r[i] instanceof UserEditAtom) {
-				ue.put(new Integer(pos), r[i]);
-				lastUEPos = pos;
-			}
-			
-			ByteArrayOutputStream bc = new ByteArrayOutputStream();
-			r[i].writeOut(bc);
-			pos += bc.size();
-		}
+        for (final Record rec : r) {
+            if(rec instanceof PersistPtrHolder) {
+                pp.put(Integer.valueOf(pos), rec);
+            }
+            if(rec instanceof UserEditAtom) {
+                ue.put(Integer.valueOf(pos), rec);
+                lastUEPos = pos;
+            }
 
-		// Check that the UserEditAtom's point to right stuff
-		for(int i=0; i<r.length; i++) {
-			if(r[i] instanceof UserEditAtom) {
-				UserEditAtom uea = (UserEditAtom)r[i];
-				int luPos = uea.getLastUserEditAtomOffset();
-				int ppPos = uea.getPersistPointersOffset();
+            ByteArrayOutputStream bc = new ByteArrayOutputStream();
+            rec.writeOut(bc);
+            pos += bc.size();
+        }
 
-				assertTrue(pp.containsKey(new Integer(ppPos)));
-				assertTrue(ue.containsKey(new Integer(luPos)));
-			}
-		}
+        // Check that the UserEditAtom's point to right stuff
+        for (final Record rec : r) {
+            if(rec instanceof UserEditAtom) {
+                UserEditAtom uea = (UserEditAtom)rec;
+                int luPos = uea.getLastUserEditAtomOffset();
+                int ppPos = uea.getPersistPointersOffset();
 
-		// Check that the CurrentUserAtom points to the right UserEditAtom
-		CurrentUserAtom cua = wss.getCurrentUserAtom();
-		int listedUEPos = (int)cua.getCurrentEditOffset();
-		assertEquals(lastUEPos,listedUEPos);
-	}
+                assertContains(ue, Integer.valueOf(luPos));
+                assertContains(pp, Integer.valueOf(ppPos));
+            }
+        }
+
+        // Check that the CurrentUserAtom points to the right UserEditAtom
+        CurrentUserAtom cua = wss.getCurrentUserAtom();
+        int listedUEPos = (int)cua.getCurrentEditOffset();
+        assertEquals(lastUEPos,listedUEPos);
+        
+        wss.close();
+    }
 }

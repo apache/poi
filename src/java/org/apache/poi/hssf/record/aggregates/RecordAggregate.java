@@ -21,22 +21,22 @@ import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordBase;
 
 /**
- * <tt>RecordAggregate</tt>s are groups of of BIFF <tt>Record</tt>s that are typically stored 
+ * <tt>RecordAggregate</tt>s are groups of of BIFF <tt>Record</tt>s that are typically stored
  * together and/or updated together.  Workbook / Sheet records are typically stored in a sequential
  * list, which does not provide much structure to coordinate updates.
- * 
+ *
  * @author Josh Micich
  */
 public abstract class RecordAggregate extends RecordBase {
 
 	/**
 	 * Visit each of the atomic BIFF records contained in this {@link RecordAggregate} in the order
-	 * that they should be written to file.  Implementors may or may not return the actual 
+	 * that they should be written to file.  Implementors may or may not return the actual
 	 * {@link Record}s being used to manage POI's internal implementation.  Callers should not
 	 * assume either way, and therefore only attempt to modify those {@link Record}s after cloning
 	 */
 	public abstract void visitContainedRecords(RecordVisitor rv);
-	
+
 	public final int serialize(int offset, byte[] data) {
 		SerializingRecordVisitor srv = new SerializingRecordVisitor(data, offset);
 		visitContainedRecords(srv);
@@ -47,7 +47,7 @@ public abstract class RecordAggregate extends RecordBase {
 		visitContainedRecords(rsv);
 		return rsv.getTotalSize();
 	}
-	
+
 	public interface RecordVisitor {
 		/**
 		 * Implementors may call non-mutating methods on Record r.
@@ -55,7 +55,7 @@ public abstract class RecordAggregate extends RecordBase {
 		 */
 		void visitRecord(Record r);
 	}
-	
+
 	private static final class SerializingRecordVisitor implements RecordVisitor {
 
 		private final byte[] _data;
@@ -78,7 +78,7 @@ public abstract class RecordAggregate extends RecordBase {
 	private static final class RecordSizingVisitor implements RecordVisitor {
 
 		private int _totalSize;
-		
+
 		public RecordSizingVisitor() {
 			_totalSize = 0;
 		}

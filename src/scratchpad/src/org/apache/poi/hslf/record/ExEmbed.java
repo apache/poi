@@ -17,26 +17,24 @@
 
 package org.apache.poi.hslf.record;
 
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogger;
 
 /**
  * This data represents an embedded object in the document.
- *
- * @author Daniel Noll
  */
 public class ExEmbed extends RecordContainer {
 
     /**
      * Record header data.
      */
-    private byte[] _header;
+    private final byte[] _header;
 
     // Links to our more interesting children
-    protected RecordAtom embedAtom;
+    private RecordAtom embedAtom;
     private ExOleObjAtom oleObjAtom;
     private CString menuName;
     private CString progId;
@@ -49,7 +47,7 @@ public class ExEmbed extends RecordContainer {
      * @param start the start offset into the byte array.
      * @param len the length of the slice in the byte array.
      */
-    protected ExEmbed(byte[] source, int start, int len) {
+    protected ExEmbed(final byte[] source, final int start, final int len) {
         // Grab the header
         _header = new byte[8];
         System.arraycopy(source,start,_header,0,8);
@@ -59,6 +57,18 @@ public class ExEmbed extends RecordContainer {
         findInterestingChildren();
     }
 
+    /**
+     * Constructor for derived classes
+     *
+     * @param embedAtom the new embedAtom
+     */
+    protected ExEmbed(final RecordAtom embedAtom) {
+        this();
+        _children[0] = this.embedAtom = embedAtom;
+    }
+    
+    
+    
     /**
      * Create a new ExEmbed, with blank fields
      */
@@ -71,11 +81,11 @@ public class ExEmbed extends RecordContainer {
         LittleEndian.putShort(_header, 2, (short)getRecordType());
 
         // Setup our child records
-        CString cs1 = new CString();
+        final CString cs1 = new CString();
         cs1.setOptions(0x1 << 4);
-        CString cs2 = new CString();
+        final CString cs2 = new CString();
         cs2.setOptions(0x2 << 4);
-        CString cs3 = new CString();
+        final CString cs3 = new CString();
         cs3.setOptions(0x3 << 4);
         _children[0] = new ExEmbedAtom();
         _children[1] = new ExOleObjAtom();
@@ -107,12 +117,13 @@ public class ExEmbed extends RecordContainer {
 
         for (int i = 2; i < _children.length; i++) {
             if (_children[i] instanceof CString){
-                CString cs = (CString)_children[i];
-                int opts = cs.getOptions() >> 4;
+                final CString cs = (CString)_children[i];
+                final int opts = cs.getOptions() >> 4;
                 switch(opts){
                     case 0x1: menuName = cs; break;
                     case 0x2: progId = cs; break;
                     case 0x3: clipboardName = cs; break;
+                    default: break;
                 }
             }
         }
@@ -123,8 +134,7 @@ public class ExEmbed extends RecordContainer {
      *
      * @return the {@link ExEmbedAtom}.
      */
-    public ExEmbedAtom getExEmbedAtom()
-    {
+    public ExEmbedAtom getExEmbedAtom() {
         return (ExEmbedAtom)embedAtom;
     }
 
@@ -133,8 +143,7 @@ public class ExEmbed extends RecordContainer {
      *
      * @return the {@link ExOleObjAtom}.
      */
-    public ExOleObjAtom getExOleObjAtom()
-    {
+    public ExOleObjAtom getExOleObjAtom() {
         return oleObjAtom;
     }
 
@@ -143,14 +152,13 @@ public class ExEmbed extends RecordContainer {
      *
      * @return the name used for menus and the Links dialog box.
      */
-    public String getMenuName()
-    {
+    public String getMenuName() {
         return menuName == null ? null : menuName.getText();
     }
 
-    public void setMenuName(String s)
-    {
-        if(menuName != null) menuName.setText(s);
+    public void setMenuName(final String menuName) {
+        this.menuName = safeCString(this.menuName, 0x1);
+        this.menuName.setText(menuName);
     }
 
     /**
@@ -158,35 +166,38 @@ public class ExEmbed extends RecordContainer {
      * 
      * @return the OLE Programmatic Identifier.
      */
-    public String getProgId()
-    {
+    public String getProgId() {
         return progId == null ? null : progId.getText();
     }
 
-    public void setProgId(String s)
-    {
-        if(progId != null) progId.setText(s);
+    public void setProgId(final String progId) {
+        this.progId = safeCString(this.progId, 0x2);
+        this.progId.setText(progId);
     }
+
+    
+    
     /**
      * Gets the name that appears in the paste special dialog.
      *
      * @return the name that appears in the paste special dialog.
      */
-    public String getClipboardName()
-    {
+    public String getClipboardName() {
         return clipboardName == null ? null : clipboardName.getText();
     }
 
-    public void setClipboardName(String s)
-    {
-        if(clipboardName != null) clipboardName.setText(s);
+    public void setClipboardName(final String clipboardName) {
+        this.clipboardName = safeCString(this.clipboardName, 0x3);
+        this.clipboardName.setText(clipboardName);
     }
+    
     /**
      * Returns the type (held as a little endian in bytes 3 and 4)
      * that this class handles.
      *
      * @return the record type.
      */
+    @Override
     public long getRecordType() {
         return RecordTypes.ExEmbed.typeID;
     }
@@ -198,7 +209,31 @@ public class ExEmbed extends RecordContainer {
      * @param out the output stream.
      * @throws IOException if there was an error writing to the stream.
      */
-    public void writeOut(OutputStream out) throws IOException {
+    @Override
+    public void writeOut(final OutputStream out) throws IOException {
         writeOut(_header[0],_header[1],getRecordType(),_children,out);
+    }
+    
+    private CString safeCString(CString oldStr, int optionsId) {
+        CString newStr = oldStr;
+        if (newStr == null) {
+            newStr = new CString();
+            newStr.setOptions(optionsId << 4);
+        }
+
+        boolean found = false;
+        for (final Record r : _children) {
+            // for simplicity just check for object identity
+            if (r == newStr) {
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            appendChildRecord(newStr);
+        }
+        
+        return newStr;
     }
 }

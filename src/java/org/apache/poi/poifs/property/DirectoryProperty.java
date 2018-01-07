@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,44 +14,40 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.property;
 
-import java.util.*;
-
 import java.io.IOException;
-
-import org.apache.poi.poifs.storage.SmallDocumentBlock;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Directory property
- *
- * @author Marc Johnson (mjohnson at apache dot org)
  */
+public class DirectoryProperty extends Property implements Parent, Iterable<Property> { // TODO - fix instantiable superclass
 
-public class DirectoryProperty
-    extends Property
-    implements Parent
-{
+    /** List of Property instances */
+    private List<Property> _children;
 
-    // List of Property instances
-    private List _children;
-
-    // set of children's names
-    private Set  _children_names;
+    /** set of children's names */
+    private Set<String>  _children_names;
 
     /**
      * Default constructor
      *
      * @param name the name of the directory
      */
-
     public DirectoryProperty(String name)
     {
         super();
-        _children       = new ArrayList();
-        _children_names = new HashSet();
+        _children       = new ArrayList<>();
+        _children_names = new HashSet<>();
         setName(name);
         setSize(0);
         setPropertyType(PropertyConstants.DIRECTORY_TYPE);
@@ -67,13 +62,12 @@ public class DirectoryProperty
      * @param array byte data
      * @param offset offset into byte data
      */
-
     protected DirectoryProperty(final int index, final byte [] array,
                                 final int offset)
     {
         super(index, array, offset);
-        _children       = new ArrayList();
-        _children_names = new HashSet();
+        _children       = new ArrayList<>();
+        _children_names = new HashSet<>();
     }
 
     /**
@@ -84,8 +78,7 @@ public class DirectoryProperty
      *
      * @return true if the name change could be made, else false
      */
-
-    public boolean changeName(final Property property, final String newName)
+    public boolean changeName(Property property, String newName)
     {
         boolean result;
         String  oldName = property.getName();
@@ -116,8 +109,7 @@ public class DirectoryProperty
      *
      * @return true if the Property could be deleted, else false
      */
-
-    public boolean deleteChild(final Property property)
+    public boolean deleteChild(Property property)
     {
         boolean result = _children.remove(property);
 
@@ -128,23 +120,8 @@ public class DirectoryProperty
         return result;
     }
 
-    public static class PropertyComparator
-        implements Comparator
-    {
-
-        /**
-         * Object equality, implemented as object identity
-         *
-         * @param o Object we're being compared to
-         *
-         * @return true if identical, else false
-         */
-
-        public boolean equals(Object o)
-        {
-            return this == o;
-        }
-
+    public static class PropertyComparator implements Comparator<Property>, Serializable {
+        
         /**
          * compare method. Assumes both parameters are non-null
          * instances of Property. One property is less than another if
@@ -160,12 +137,11 @@ public class DirectoryProperty
          *         zero           if o1 == o2,
          *         positive value if o1 >  o2.
          */
-
-        public int compare(Object o1, Object o2)
+        public int compare(Property o1, Property o2)
         {
             String VBA_PROJECT = "_VBA_PROJECT";
-            String name1  = (( Property ) o1).getName();
-            String name2  = (( Property ) o2).getName();
+            String name1  = o1.getName();
+            String name2  = o2.getName();
             int  result = name1.length() - name2.length();
 
             if (result == 0)
@@ -200,14 +176,11 @@ public class DirectoryProperty
             }
             return result;
         }
-    }   // end private class PropertyComparator
-
-    /* ********** START extension of Property ********** */
+    }
 
     /**
      * @return true if a directory type Property
      */
-
     public boolean isDirectory()
     {
         return true;
@@ -217,13 +190,11 @@ public class DirectoryProperty
      * Perform whatever activities need to be performed prior to
      * writing
      */
-
     protected void preWrite()
     {
         if (_children.size() > 0)
         {
-            Property[] children =
-                ( Property [] ) _children.toArray(new Property[ 0 ]);
+            Property[] children = _children.toArray(new Property[ 0 ]);
 
             Arrays.sort(children, new PropertyComparator());
             int midpoint = children.length / 2;
@@ -259,19 +230,22 @@ public class DirectoryProperty
         }
     }
 
-    /* **********  END  extension of Property ********** */
-    /* ********** START implementation of Parent ********** */
-
     /**
      * Get an iterator over the children of this Parent; all elements
      * are instances of Property.
      *
      * @return Iterator of children; may refer to an empty collection
      */
-
-    public Iterator getChildren()
+    public Iterator<Property> getChildren()
     {
         return _children.iterator();
+    }
+    /**
+     * Get an iterator over the children of this Parent, alias for
+     *  {@link #getChildren()} which supports foreach use
+     */
+    public Iterator<Property> iterator() {
+        return getChildren();
     }
 
     /**
@@ -282,7 +256,6 @@ public class DirectoryProperty
      * @exception IOException if we already have a child with the same
      *                        name
      */
-
     public void addChild(final Property property)
         throws IOException
     {
@@ -295,7 +268,4 @@ public class DirectoryProperty
         _children_names.add(name);
         _children.add(property);
     }
-
-    /* **********  END  implementation of Parent ********** */
-}   // end public class DirectoryProperty
-
+}

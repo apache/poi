@@ -17,52 +17,47 @@
 
 package org.apache.poi.ss.formula;
 
-import org.apache.poi.hssf.record.formula.AreaI;
-import org.apache.poi.hssf.record.formula.Ref3DPtg;
-import org.apache.poi.hssf.record.formula.RefPtg;
-import org.apache.poi.hssf.record.formula.AreaI.OffsetArea;
-import org.apache.poi.hssf.record.formula.eval.AreaEval;
-import org.apache.poi.hssf.record.formula.eval.RefEvalBase;
-import org.apache.poi.hssf.record.formula.eval.ValueEval;
-import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.ss.formula.eval.AreaEval;
+import org.apache.poi.ss.formula.eval.RefEvalBase;
+import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.ptg.AreaI;
+import org.apache.poi.ss.formula.ptg.AreaI.OffsetArea;
+import org.apache.poi.ss.util.CellReference;
 
 /**
-*
-* @author Josh Micich 
-*/
-final class LazyRefEval extends RefEvalBase {
+ * Provides Lazy Evaluation to a 3D Reference
+ */
+public final class LazyRefEval extends RefEvalBase {
+	private final SheetRangeEvaluator _evaluator;
 
-	private final SheetRefEvaluator _evaluator;
-
-	public LazyRefEval(RefPtg ptg, SheetRefEvaluator sre) {
-		super(ptg.getRow(), ptg.getColumn());
-		_evaluator = sre;
-	}
-	public LazyRefEval(Ref3DPtg ptg, SheetRefEvaluator sre) {
-		super(ptg.getRow(), ptg.getColumn());
+	public LazyRefEval(int rowIndex, int columnIndex, SheetRangeEvaluator sre) {
+		super(sre, rowIndex, columnIndex);
 		_evaluator = sre;
 	}
 
-	public ValueEval getInnerValueEval() {
-		return _evaluator.getEvalForCell(getRow(), getColumn());
+	public ValueEval getInnerValueEval(int sheetIndex) {
+		return _evaluator.getEvalForCell(sheetIndex, getRow(), getColumn());
 	}
-	
+
 	public AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx, int relLastColIx) {
-		
+
 		AreaI area = new OffsetArea(getRow(), getColumn(),
 				relFirstRowIx, relLastRowIx, relFirstColIx, relLastColIx);
 
 		return new LazyAreaEval(area, _evaluator);
 	}
-	
+
+	public boolean isSubTotal() {
+		SheetRefEvaluator sheetEvaluator = _evaluator.getSheetEvaluator(getFirstSheetIndex());
+		return sheetEvaluator.isSubTotal(getRow(), getColumn());
+	}
+
 	public String toString() {
 		CellReference cr = new CellReference(getRow(), getColumn());
-		StringBuffer sb = new StringBuffer();
-		sb.append(getClass().getName()).append("[");
-		sb.append(_evaluator.getSheetName());
-		sb.append('!');
-		sb.append(cr.formatAsString());
-		sb.append("]");
-		return sb.toString();
+		return getClass().getName() + "[" +
+				_evaluator.getSheetNameRange() +
+				'!' +
+				cr.formatAsString() +
+				"]";
 	}
 }

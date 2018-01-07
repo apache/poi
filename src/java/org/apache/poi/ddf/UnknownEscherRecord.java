@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,53 +14,53 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.ddf;
 
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
-
-import java.util.Iterator;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * This record is used whenever a escher record is encountered that
  * we do not explicitly support.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
-public class UnknownEscherRecord extends EscherRecord
-{
+public final class UnknownEscherRecord extends EscherRecord implements Cloneable {
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000_000;
+
     private static final byte[] NO_BYTES = new byte[0];
 
     /** The data for this record not including the the 8 byte header */
     private byte[] thedata = NO_BYTES;
-    private List childRecords = new ArrayList();
+    private List<EscherRecord> _childRecords;
 
-    public UnknownEscherRecord()
-    {
+    public UnknownEscherRecord() {
+        _childRecords = new ArrayList<>();
     }
 
-    /**
-     * This method deserializes the record from a byte array.
-     *
-     * @param data          The byte array containing the escher record information
-     * @param offset        The starting offset into <code>data</code>.
-     * @param recordFactory May be null since this is not a container record.
-     * @return The number of bytes read from the byte array.
-     */
-    public int fillFields( byte[] data, int offset, EscherRecordFactory recordFactory )
-    {
+    @Override
+    public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesRemaining = readHeader( data, offset );
-        if ( isContainerRecord() )
-        {
+		/*
+		 * Have a check between available bytes and bytesRemaining, 
+		 * take the available length if the bytesRemaining out of range.
+		 */
+		int available = data.length - (offset + 8);
+		if (bytesRemaining > available) {
+			bytesRemaining = available;
+		}
+
+        if (isContainerRecord()) {
             int bytesWritten = 0;
             thedata = new byte[0];
             offset += 8;
             bytesWritten += 8;
-            while ( bytesRemaining > 0 )
-            {
+            while ( bytesRemaining > 0 ) {
                 EscherRecord child = recordFactory.createRecord( data, offset );
                 int childBytesWritten = child.fillFields( data, offset, recordFactory );
                 bytesWritten += childBytesWritten;
@@ -71,38 +70,30 @@ public class UnknownEscherRecord extends EscherRecord
             }
             return bytesWritten;
         }
-        else
-        {
-            thedata = new byte[bytesRemaining];
-            System.arraycopy( data, offset + 8, thedata, 0, bytesRemaining );
-            return bytesRemaining + 8;
+
+        if (bytesRemaining < 0) {
+            bytesRemaining = 0;
         }
+        
+        thedata = IOUtils.safelyAllocate(bytesRemaining, MAX_RECORD_LENGTH);
+        System.arraycopy( data, offset + 8, thedata, 0, bytesRemaining );
+        return bytesRemaining + 8;
     }
 
-    /**
-     * Writes this record and any contained records to the supplied byte
-     * array.
-     *
-     * @return  the number of bytes written.
-     */
-    public int serialize( int offset, byte[] data, EscherSerializationListener listener )
-    {
+    @Override
+    public int serialize(int offset, byte[] data, EscherSerializationListener listener) {
         listener.beforeRecordSerialize( offset, getRecordId(), this );
 
         LittleEndian.putShort(data, offset, getOptions());
         LittleEndian.putShort(data, offset+2, getRecordId());
         int remainingBytes = thedata.length;
-        for ( Iterator iterator = getChildRecords().iterator(); iterator.hasNext(); )
-        {
-            EscherRecord r = (EscherRecord) iterator.next();
+        for (EscherRecord r : _childRecords) {
             remainingBytes += r.getRecordSize();
         }
         LittleEndian.putInt(data, offset+4, remainingBytes);
         System.arraycopy(thedata, 0, data, offset+8, thedata.length);
         int pos = offset+8+thedata.length;
-        for ( Iterator iterator = getChildRecords().iterator(); iterator.hasNext(); )
-        {
-            EscherRecord r = (EscherRecord) iterator.next();
+        for (EscherRecord r : _childRecords) {
             pos += r.serialize(pos, data, listener );
         }
 
@@ -110,90 +101,61 @@ public class UnknownEscherRecord extends EscherRecord
         return pos - offset;
     }
 
-    public byte[] getData()
-    {
+    /**
+     * @return the data which makes up this record
+     */
+    public byte[] getData() {
         return thedata;
     }
 
-    /**
-     * Returns the number of bytes that are required to serialize this record.
-     *
-     * @return Number of bytes
-     */
-    public int getRecordSize()
-    {
+    @Override
+    public int getRecordSize() {
         return 8 + thedata.length;
     }
 
-    public List getChildRecords()
-    {
-        return childRecords;
+    @Override
+    public List<EscherRecord> getChildRecords() {
+        return _childRecords;
     }
 
-    public void setChildRecords( List childRecords )
-    {
-        this.childRecords = childRecords;
+    @Override
+    public void setChildRecords(List<EscherRecord> childRecords) {
+        _childRecords = childRecords;
     }
 
-    public Object clone()
-    {
-        // shallow clone
-        return super.clone();
+    @Override
+    public UnknownEscherRecord clone() {
+        UnknownEscherRecord uer = new UnknownEscherRecord();
+        uer.thedata = this.thedata.clone();
+        uer.setOptions(this.getOptions());
+        uer.setRecordId(this.getRecordId());
+        return uer;
     }
 
-    /**
-     * The short name for this record
-     */
-    public String getRecordName()
-    {
+    @Override
+    public String getRecordName() {
         return "Unknown 0x" + HexDump.toHex(getRecordId());
     }
 
-    public String toString()
-    {
-        String nl = System.getProperty( "line.separator" );
-
-        StringBuffer children = new StringBuffer();
-        if ( getChildRecords().size() > 0 )
-        {
-            children.append( "  children: " + nl );
-            for ( Iterator iterator = getChildRecords().iterator(); iterator.hasNext(); )
-            {
-                EscherRecord record = (EscherRecord) iterator.next();
-                children.append( record.toString() );
-                children.append( nl );
-            }
-        }
-
-        String theDumpHex = "";
-        try
-        {
-            if (thedata.length != 0)
-            {
-                theDumpHex = "  Extra Data("+thedata.length+"):" + nl;
-                theDumpHex += HexDump.dump(thedata, 0, 0);
-            }
-        }
-        catch ( Exception e )
-        {
-            theDumpHex = "Error!!";
-        }
-
-        return getClass().getName() + ":" + nl +
-                "  isContainer: " + isContainerRecord() + nl +
-                "  options: 0x" + HexDump.toHex( getOptions() ) + nl +
-                "  recordId: 0x" + HexDump.toHex( getRecordId() ) + nl +
-                "  numchildren: " + getChildRecords().size() + nl +
-                theDumpHex +
-                children.toString();
-    }
-
-    public void addChildRecord( EscherRecord childRecord )
-    {
+    public void addChildRecord(EscherRecord childRecord) {
         getChildRecords().add( childRecord );
     }
 
+    @Override
+    protected Object[][] getAttributeMap() {
+        int numCh = getChildRecords().size();
+        List<Object> chLst = new ArrayList<>(numCh * 2 + 2);
+        chLst.add("children");
+        chLst.add(numCh);
+        for (EscherRecord er : _childRecords) {
+            chLst.add(er.getRecordName());
+            chLst.add(er);
+        }
+        
+        return new Object[][] {
+            { "isContainer", isContainerRecord() },
+            chLst.toArray(),
+            { "Extra Data", thedata }
+        };
+    }
 }
-
-
-

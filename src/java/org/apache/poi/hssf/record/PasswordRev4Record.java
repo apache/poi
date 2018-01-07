@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,33 +14,26 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title:        Protection Revision 4 password Record<P>
- * Description:  Stores the (2 byte??!!) encrypted password for a shared
- *               workbook<P>
- * REFERENCE:  PG 374 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @version 2.0-pre
+ * Title:        Protection Revision 4 password Record (0x01BC)<p>
+ * Description:  Stores the (2 byte??!!) encrypted password for a shared workbook<p>
+ * REFERENCE:  PG 374 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
  */
+public final class PasswordRev4Record extends StandardRecord {
+    public final static short sid = 0x01BC;
+    private int field_1_password;
 
-public class PasswordRev4Record
-    extends Record
-{
-    public final static short sid = 0x1BC;
-    private short             field_1_password;
-
-    public PasswordRev4Record()
-    {
+    public PasswordRev4Record(int pw) {
+        field_1_password = pw;
     }
 
-    public PasswordRev4Record(RecordInputStream in)
-    {
+    public PasswordRev4Record(RecordInputStream in) {
         field_1_password = in.readShort();
     }
 
@@ -50,49 +42,28 @@ public class PasswordRev4Record
      *
      * @param pw  representing the password
      */
-
-    public void setPassword(short pw)
-    {
+    public void setPassword(short pw) {
         field_1_password = pw;
     }
 
-    /**
-     * get the password
-     *
-     * @return short  representing the password
-     */
-
-    public short getPassword()
-    {
-        return field_1_password;
-    }
-
-    public String toString()
-    {
+    public String toString() {
         StringBuffer buffer = new StringBuffer();
 
         buffer.append("[PROT4REVPASSWORD]\n");
-        buffer.append("    .password       = ")
-            .append(Integer.toHexString(getPassword())).append("\n");
+        buffer.append("    .password = ").append(HexDump.shortToHex(field_1_password)).append("\n");
         buffer.append("[/PROT4REVPASSWORD]\n");
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset,
-                              (( short ) 0x02));   // 2 bytes (6 total)
-        LittleEndian.putShort(data, 4 + offset, getPassword());
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(field_1_password);
     }
 
     protected int getDataSize() {
         return 2;
     }
 
-    public short getSid()
-    {
+    public short getSid() {
         return sid;
     }
 }

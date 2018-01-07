@@ -18,28 +18,25 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * MsoDrawingSelection (0x00ED)<p/>
+ * MsoDrawingSelection (0x00ED)<p>
  * Reference:
  * [MS-OGRAPH].pdf sec 2.4.69
- * 
- * @author Josh Micich
  */
-public final class DrawingSelectionRecord extends Record {
+public final class DrawingSelectionRecord extends StandardRecord implements Cloneable {
 	public static final short sid = 0x00ED;
 
 	/**
-	 * From [MS-ODRAW].pdf sec 2.2.1<br/>
+	 * From [MS-ODRAW].pdf sec 2.2.1<p>
 	 * TODO - make EscherRecordHeader {@link LittleEndianInput} aware and refactor with this
 	 */
 	private static final class OfficeArtRecordHeader {
 		public static final int ENCODED_SIZE = 8;
 		/**
-		 * lower 4 bits is 'version' usually 0x01 or 0x0F (for containers)<br/>
+		 * lower 4 bits is 'version' usually 0x01 or 0x0F (for containers)
 		 * upper 12 bits is 'instance'
 		 */
 		private final int _verAndInstance;
@@ -101,12 +98,7 @@ public final class DrawingSelectionRecord extends Record {
 			+ _shapeIds.length * 4;
 	}
 
-	public int serialize(int offset, byte[] data) {
-		int dataSize = getDataSize();
-		int recSize = 4 + dataSize;
-		LittleEndianOutput out = new LittleEndianByteArrayOutputStream(data, offset, recSize);
-		out.writeShort(sid);
-		out.writeShort(dataSize);
+	public void serialize(LittleEndianOutput out) {
 		_header.serialize(out);
 		out.writeInt(_cpsp);
 		out.writeInt(_dgslk);
@@ -114,10 +106,10 @@ public final class DrawingSelectionRecord extends Record {
 		for (int i = 0; i < _shapeIds.length; i++) {
 			out.writeInt(_shapeIds[i]);
 		}
-		return recSize;
 	}
 
-	public Object clone() {
+	@Override
+	public DrawingSelectionRecord clone() {
 		// currently immutable
 		return this;
 	}

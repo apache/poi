@@ -18,19 +18,17 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.hssf.util.CellRangeAddress8Bit;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title:        Selection Record (0x001D)<P>
  * Description:  shows the user's selection on the sheet
  *               for write set num refs to 0<P>
  *
- * REFERENCE:  PG 291 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author Jason Height (jheight at chariot dot net dot au)
- * @author Glen Stampoultzis (glens at apache.org)
+ * REFERENCE:  PG 291 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
  */
-public final class SelectionRecord extends Record {
+public final class SelectionRecord extends StandardRecord {
     public final static short sid = 0x001D;
     private byte        field_1_pane;
     private int         field_2_row_active_cell;
@@ -40,6 +38,9 @@ public final class SelectionRecord extends Record {
 
     /**
      * Creates a default selection record (cell A1, in pane ID 3)
+     * 
+     * @param activeCellRow the active cells row index
+     * @param activeCellCol the active cells column index
      */
     public SelectionRecord(int activeCellRow, int activeCellCol) {
         field_1_pane = 3; // pane id 3 is always present.  see OOO sec 5.75 'PANE'
@@ -57,7 +58,7 @@ public final class SelectionRecord extends Record {
         field_3_col_active_cell = in.readShort();
         field_4_active_cell_ref_index = in.readShort();
         int field_5_num_refs    = in.readUShort();
-        
+
         field_6_refs = new CellRangeAddress8Bit[field_5_num_refs];
         for (int i = 0; i < field_6_refs.length; i++) {
             field_6_refs[i] = new CellRangeAddress8Bit(in);
@@ -66,6 +67,7 @@ public final class SelectionRecord extends Record {
 
     /**
      * set which window pane this is for
+     * @param pane the window pane
      */
     public void setPane(byte pane) {
         field_1_pane = pane;
@@ -123,51 +125,46 @@ public final class SelectionRecord extends Record {
      * @return ref number of active cell
      */
     public int getActiveCellRef() {
-        return (short)field_4_active_cell_ref_index;
+        return field_4_active_cell_ref_index;
     }
 
+    @Override
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuffer sb = new StringBuffer();
 
-        buffer.append("[SELECTION]\n");
-        buffer.append("    .pane            = ")
-            .append(Integer.toHexString(getPane())).append("\n");
-        buffer.append("    .activecellrow   = ")
-            .append(Integer.toHexString(getActiveCellRow())).append("\n");
-        buffer.append("    .activecellcol   = ")
-            .append(Integer.toHexString(getActiveCellCol())).append("\n");
-        buffer.append("    .activecellref   = ")
-            .append(Integer.toHexString(getActiveCellRef())).append("\n");
-        buffer.append("    .numrefs         = ")
-            .append(Integer.toHexString(field_6_refs.length)).append("\n");
-        buffer.append("[/SELECTION]\n");
-        return buffer.toString();
+        sb.append("[SELECTION]\n");
+        sb.append("    .pane            = ").append(HexDump.byteToHex(getPane())).append("\n");
+        sb.append("    .activecellrow   = ").append(HexDump.shortToHex(getActiveCellRow())).append("\n");
+        sb.append("    .activecellcol   = ").append(HexDump.shortToHex(getActiveCellCol())).append("\n");
+        sb.append("    .activecellref   = ").append(HexDump.shortToHex(getActiveCellRef())).append("\n");
+        sb.append("    .numrefs         = ").append(HexDump.shortToHex(field_6_refs.length)).append("\n");
+        sb.append("[/SELECTION]\n");
+        return sb.toString();
     }
+    @Override
     protected int getDataSize() {
-        return 9 // 1 byte + 4 shorts 
+        return 9 // 1 byte + 4 shorts
             + CellRangeAddress8Bit.getEncodedSize(field_6_refs.length);
     }
-    public int serialize(int offset, byte [] data) {
-        int dataSize = getDataSize();
-        LittleEndian.putUShort(data, 0 + offset, sid);
-        LittleEndian.putUShort(data, 2 + offset, dataSize);
-        LittleEndian.putByte(data, 4 + offset,  getPane());
-        LittleEndian.putUShort(data, 5 + offset, getActiveCellRow());
-        LittleEndian.putUShort(data, 7 + offset, getActiveCellCol());
-        LittleEndian.putUShort(data, 9 + offset, getActiveCellRef());
+    @Override
+    public void serialize(LittleEndianOutput out) {
+        out.writeByte(getPane());
+        out.writeShort(getActiveCellRow());
+        out.writeShort(getActiveCellCol());
+        out.writeShort(getActiveCellRef());
         int nRefs = field_6_refs.length;
-        LittleEndian.putUShort(data, 11 + offset, nRefs);
-        for (int i = 0; i < field_6_refs.length; i++) {
-            CellRangeAddress8Bit r = field_6_refs[i];
-            r.serialize(offset + 13 + i * CellRangeAddress8Bit.ENCODED_SIZE, data);
+        out.writeShort(nRefs);
+        for (CellRangeAddress8Bit field_6_ref : field_6_refs) {
+            field_6_ref.serialize(out);
         }
-        return 4 + dataSize;
     }
 
+    @Override
     public short getSid() {
         return sid;
     }
 
+    @Override
     public Object clone() {
         SelectionRecord rec = new SelectionRecord(field_2_row_active_cell, field_3_col_active_cell);
         rec.field_1_pane = field_1_pane;

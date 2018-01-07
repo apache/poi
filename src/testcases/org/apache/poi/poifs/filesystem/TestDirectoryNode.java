@@ -15,49 +15,30 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.filesystem;
 
-import java.io.*;
-
-import java.util.*;
-
-import junit.framework.*;
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Iterator;
 
 import org.apache.poi.poifs.property.DirectoryProperty;
 import org.apache.poi.poifs.property.DocumentProperty;
+
+import junit.framework.TestCase;
 
 /**
  * Class to test DirectoryNode functionality
  *
  * @author Marc Johnson
  */
-
-public class TestDirectoryNode
-    extends TestCase
-{
-
-    /**
-     * Constructor TestDirectoryNode
-     *
-     * @param name
-     */
-
-    public TestDirectoryNode(String name)
-    {
-        super(name);
-    }
+public final class TestDirectoryNode extends TestCase {
 
     /**
      * test trivial constructor (a DirectoryNode with no children)
-     *
-     * @exception IOException
      */
-
-    public void testEmptyConstructor()
-        throws IOException
-    {
+    public void testEmptyConstructor() {
         POIFSFileSystem   fs        = new POIFSFileSystem();
         DirectoryProperty property1 = new DirectoryProperty("parent");
         DirectoryProperty property2 = new DirectoryProperty("child");
@@ -71,7 +52,7 @@ public class TestDirectoryNode
 
         // verify that getEntries behaves correctly
         int      count = 0;
-        Iterator iter  = node.getEntries();
+        Iterator<Entry> iter  = node.getEntries();
 
         while (iter.hasNext())
         {
@@ -113,13 +94,8 @@ public class TestDirectoryNode
 
     /**
      * test non-trivial constructor (a DirectoryNode with children)
-     *
-     * @exception IOException
      */
-
-    public void testNonEmptyConstructor()
-        throws IOException
-    {
+    public void testNonEmptyConstructor() throws IOException {
         DirectoryProperty property1 = new DirectoryProperty("parent");
         DirectoryProperty property2 = new DirectoryProperty("child1");
 
@@ -131,7 +107,7 @@ public class TestDirectoryNode
 
         // verify that getEntries behaves correctly
         int           count = 0;
-        Iterator      iter  = node.getEntries();
+        Iterator<Entry>      iter  = node.getEntries();
 
         while (iter.hasNext())
         {
@@ -177,49 +153,51 @@ public class TestDirectoryNode
 
     /**
      * test deletion methods
-     *
-     * @exception IOException
      */
-
-    public void testDeletion()
-        throws IOException
-    {
+    public void testDeletion() throws IOException {
         POIFSFileSystem fs   = new POIFSFileSystem();
         DirectoryEntry  root = fs.getRoot();
 
         // verify cannot delete the root directory
-        assertTrue(!root.delete());
+        assertFalse(root.delete());
+        assertTrue(root.isEmpty());
+
         DirectoryEntry dir = fs.createDirectory("myDir");
 
-        assertTrue(!root.isEmpty());
+        assertFalse(root.isEmpty());
+        assertTrue(dir.isEmpty());
 
         // verify can delete empty directory
+        assertFalse(root.delete());
         assertTrue(dir.delete());
+
+        // Now look at a non-empty one
         dir = fs.createDirectory("NextDir");
         DocumentEntry doc =
             dir.createDocument("foo",
                                new ByteArrayInputStream(new byte[ 1 ]));
 
-        assertTrue(!dir.isEmpty());
+        assertFalse(root.isEmpty());
+        assertFalse(dir.isEmpty());
 
-        // verify cannot delete empty directory
-        assertTrue(!dir.delete());
+        // verify cannot delete non-empty directory
+        assertFalse(dir.delete());
+
+        // but we can delete it if we remove the document
         assertTrue(doc.delete());
-
-        // verify now we can delete it
+        assertTrue(dir.isEmpty());
         assertTrue(dir.delete());
+
+        // It's really gone!
         assertTrue(root.isEmpty());
+
+        fs.close();
     }
 
     /**
      * test change name methods
-     *
-     * @exception IOException
      */
-
-    public void testRename()
-        throws IOException
-    {
+    public void testRename() throws IOException {
         POIFSFileSystem fs   = new POIFSFileSystem();
         DirectoryEntry  root = fs.getRoot();
 
@@ -236,18 +214,7 @@ public class TestDirectoryNode
         assertTrue(dir.renameTo("FirstDir"));
         assertTrue(dir2.renameTo("foo"));
         assertEquals("foo", dir2.getName());
-    }
 
-    /**
-     * main method to run the unit tests
-     *
-     * @param ignored_args
-     */
-
-    public static void main(String [] ignored_args)
-    {
-        System.out
-            .println("Testing org.apache.poi.poifs.filesystem.DirectoryNode");
-        junit.textui.TestRunner.run(TestDirectoryNode.class);
+        fs.close();
     }
 }

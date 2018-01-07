@@ -19,9 +19,10 @@
 
 package org.apache.poi.poifs.storage;
 
+import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.filesystem.BATManaged;
-import org.apache.poi.poifs.filesystem.POIFSDocument;
+import org.apache.poi.poifs.filesystem.OPOIFSDocument;
 import org.apache.poi.poifs.property.RootProperty;
 
 import java.util.*;
@@ -39,7 +40,7 @@ public class SmallBlockTableWriter
     implements BlockWritable, BATManaged
 {
     private BlockAllocationTableWriter _sbat;
-    private List                       _small_blocks;
+    private List<SmallDocumentBlock>   _small_blocks;
     private int                        _big_block_count;
     private RootProperty               _root;
 
@@ -49,19 +50,17 @@ public class SmallBlockTableWriter
      * @param documents a List of POIFSDocument instances
      * @param root the Filesystem's root property
      */
-
-    public SmallBlockTableWriter(final List documents,
+    public SmallBlockTableWriter(final POIFSBigBlockSize bigBlockSize,
+                                 final List<OPOIFSDocument> documents,
                                  final RootProperty root)
     {
-        _sbat         = new BlockAllocationTableWriter();
-        _small_blocks = new ArrayList();
+        _sbat         = new BlockAllocationTableWriter(bigBlockSize);
+        _small_blocks = new ArrayList<>();
         _root         = root;
-        Iterator iter = documents.iterator();
 
-        while (iter.hasNext())
+        for (OPOIFSDocument doc : documents)
         {
-            POIFSDocument   doc    = ( POIFSDocument ) iter.next();
-            BlockWritable[] blocks = doc.getSmallBlocks();
+            SmallDocumentBlock[] blocks = doc.getSmallBlocks();
 
             if (blocks.length != 0)
             {
@@ -76,7 +75,7 @@ public class SmallBlockTableWriter
         }
         _sbat.simpleCreateBlocks();
         _root.setSize(_small_blocks.size());
-        _big_block_count = SmallDocumentBlock.fill(_small_blocks);
+        _big_block_count = SmallDocumentBlock.fill(bigBlockSize,_small_blocks);
     }
 
     /**
@@ -141,11 +140,8 @@ public class SmallBlockTableWriter
     public void writeBlocks(final OutputStream stream)
         throws IOException
     {
-        Iterator iter = _small_blocks.iterator();
-
-        while (iter.hasNext())
-        {
-            (( BlockWritable ) iter.next()).writeBlocks(stream);
+        for (BlockWritable block : _small_blocks) {
+            block.writeBlocks(stream);
         }
     }
 

@@ -14,41 +14,47 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.model;
 
-import junit.framework.TestCase;
-import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.hslf.HSLFSlideShow;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.awt.*;
-import java.awt.Rectangle;
-import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.util.List;
+
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.usermodel.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Test drawing shapes via Graphics2D
  *
  * @author Yegor Kozlov
  */
-public class TestPPGraphics2D extends TestCase {
-    private SlideShow ppt;
+public final class TestPPGraphics2D {
+    private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
+    private HSLFSlideShow ppt;
 
-    protected void setUp() throws Exception {
-		String dirname = System.getProperty("HSLF.testdata.path");
-		String filename = dirname + "/empty.ppt";
-		ppt = new SlideShow(new HSLFSlideShow(filename));
+    @Before
+    public void setUp() throws Exception {
+		ppt = new HSLFSlideShow(_slTests.openResourceAsStream("empty.ppt"));
     }
 
+    @Test
     public void testGraphics() throws Exception {
     	// Starts off empty
-    	assertEquals(0, ppt.getSlides().length);
-    	
+    	assertTrue(ppt.getSlides().isEmpty());
+
     	// Add a slide
-        Slide slide = ppt.createSlide();
-    	assertEquals(1, ppt.getSlides().length);
+        HSLFSlide slide = ppt.createSlide();
+    	assertEquals(1, ppt.getSlides().size());
 
     	// Add some stuff into it
-        ShapeGroup group = new ShapeGroup();
+        HSLFGroupShape group = new HSLFGroupShape();
         Dimension pgsize = ppt.getPageSize();
         java.awt.Rectangle bounds = new java.awt.Rectangle(0, 0, (int)pgsize.getWidth(), (int)pgsize.getHeight());
         group.setAnchor(bounds);
@@ -72,18 +78,18 @@ public class TestPPGraphics2D extends TestCase {
         out.close();
 
         // And read it back in
-        ppt = new SlideShow(new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray())));
-        assertEquals(1, ppt.getSlides().length);
+        ppt = new HSLFSlideShow(new HSLFSlideShowImpl(new ByteArrayInputStream(out.toByteArray())));
+        assertEquals(1, ppt.getSlides().size());
 
-        slide = ppt.getSlides()[0];
-        Shape[] shape = slide.getShapes();
-        assertEquals(shape.length, 1); //group shape
+        slide = ppt.getSlides().get(0);
+        List<HSLFShape> shape = slide.getShapes();
+        assertEquals(shape.size(), 1); //group shape
 
-        assertTrue(shape[0] instanceof ShapeGroup); //group shape
+        assertTrue(shape.get(0) instanceof HSLFGroupShape); //group shape
 
-        group = (ShapeGroup)shape[0];
+        group = (HSLFGroupShape)shape.get(0);
         shape = group.getShapes();
-        assertEquals(shape.length, 3);
+        assertEquals(shape.size(), 3);
     }
 
 }

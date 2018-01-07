@@ -17,72 +17,84 @@
 
 package org.apache.poi.hssf.model;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.record.formula.AttrPtg;
-import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.usermodel.FormulaExtractor;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.ss.formula.ptg.AttrPtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.usermodel.CellType;
+import org.junit.AfterClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameter;
+import org.junit.runners.Parameterized.Parameters;
 
 /**
  * Tests 'operand class' transformation performed by
  * <tt>OperandClassTransformer</tt> by comparing its results with those
  * directly produced by Excel (in a sample spreadsheet).
- * 
- * @author Josh Micich
  */
-public final class TestRVA extends TestCase {
+@RunWith(Parameterized.class)
+public final class TestRVA {
 
 	private static final String NEW_LINE = System.getProperty("line.separator");
+	private static NPOIFSFileSystem poifs;
+    private static HSSFWorkbook workbook;
+    private static HSSFSheet sheet;
 
-	public void testFormulas() {
-		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("testRVA.xls");
-		HSSFSheet sheet = wb.getSheetAt(0);
+	
+    @Parameter(value = 0)
+    public HSSFCell formulaCell;
+    @Parameter(value = 1)
+    public String formula;
 
-		int countFailures = 0;
-		int countErrors = 0;
+    @AfterClass
+    public static void closeResource() throws Exception {
+        workbook.close();
+        poifs.close();
+    }
 
-		int rowIx = 0;
-		while (rowIx < 65535) {
-			HSSFRow row = sheet.getRow(rowIx);
-			if (row == null) {
-				break;
-			}
-			HSSFCell cell = row.getCell(0);
-			if (cell == null || cell.getCellType() == HSSFCell.CELL_TYPE_BLANK) {
-				break;
-			}
-			String formula = cell.getCellFormula();
-			try {
-				confirmCell(cell, formula, wb);
-			} catch (AssertionFailedError e) {
-				System.out.flush();
-				System.err.println("Problem with row[" + rowIx + "] formula '" + formula + "'");
-				System.err.println(e.getMessage());
-				System.err.flush();
-				countFailures++;
-			} catch (RuntimeException e) {
-				System.err.println("Problem with row[" + rowIx + "] formula '" + formula + "'");
-				countErrors++;
-				e.printStackTrace();
-			}
-			rowIx++;
-		}
-		if (countErrors + countFailures > 0) {
-			String msg = "One or more RVA tests failed: countFailures=" + countFailures
-					+ " countFailures=" + countErrors + ". See stderr for details.";
-			throw new AssertionFailedError(msg);
-		}
-	}
+    @Parameters(name="{1}")
+    public static Collection<Object[]> data() throws Exception {
+        poifs = new NPOIFSFileSystem(HSSFTestDataSamples.getSampleFile("testRVA.xls"), true);
+        workbook = new HSSFWorkbook(poifs);
+        sheet = workbook.getSheetAt(0);
 
-	private void confirmCell(HSSFCell formulaCell, String formula, HSSFWorkbook wb) {
+        List<Object[]> data = new ArrayList<>();
+        
+        for (int rowIdx = 0; true; rowIdx++) {
+            HSSFRow row = sheet.getRow(rowIdx);
+            if (row == null) {
+                break;
+            }
+            HSSFCell cell = row.getCell(0);
+            if (cell == null || cell.getCellType() == CellType.BLANK) {
+                break;
+            }
+
+            String formula = cell.getCellFormula();
+            data.add(new Object[]{cell,formula});
+        }
+        
+        return data;
+    }
+	
+    @Test
+	public void confirmCell() {
 		Ptg[] excelPtgs = FormulaExtractor.getPtgs(formulaCell);
-		Ptg[] poiPtgs = HSSFFormulaParser.parse(formula, wb);
+		Ptg[] poiPtgs = HSSFFormulaParser.parse(formula, workbook);
 		int nExcelTokens = excelPtgs.length;
 		int nPoiTokens = poiPtgs.length;
 		if (nExcelTokens != nPoiTokens) {
@@ -94,8 +106,7 @@ public final class TestRVA extends TestCase {
 				System.arraycopy(poiPtgs, 0, temp, 1, nPoiTokens);
 				poiPtgs = temp;
 			} else {
-				throw new RuntimeException("Expected " + nExcelTokens + " tokens but got "
-						+ nPoiTokens);
+				fail("Expected " + nExcelTokens + " tokens but got " + nPoiTokens);
 			}
 		}
 		boolean hasMismatch = false;
@@ -114,7 +125,7 @@ public final class TestRVA extends TestCase {
 			if (poiPtg.isBaseToken()) {
 				continue;
 			}
-			sb.append("  token[" + i + "] " + excelPtg.toString() + " "
+			sb.append("  token[" + i + "] " + excelPtg + " "
 					+ excelPtg.getRVAType());
 
 			if (excelPtg.getPtgClass() != poiPtg.getPtgClass()) {
@@ -123,13 +134,11 @@ public final class TestRVA extends TestCase {
 			}
 			sb.append(NEW_LINE);
 		}
-		if (false) { // set 'true' to see trace of RVA values
-			System.out.println(formulaCell.getRowIndex() + " " + formula);
-			System.out.println(sb.toString());
-		}
-		if (hasMismatch) {
-			throw new AssertionFailedError(sb.toString());
-		}
+//		if (false) { // set 'true' to see trace of RVA values
+//			System.out.println(formulaCell.getRowIndex() + " " + formula);
+//			System.out.println(sb.toString());
+//		}
+		assertFalse(hasMismatch);
 	}
 
 	private String getShortClassName(Object o) {

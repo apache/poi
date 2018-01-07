@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 
+import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.IOUtils;
 
@@ -31,9 +32,9 @@ import org.apache.poi.util.IOUtils;
  * @author Marc Johnson (mjohnson at apache dot org)
  */
 public final class DocumentBlock extends BigBlock {
-    private static final int BLOCK_SHIFT = 9;
-    private static final int BLOCK_SIZE = 1 << BLOCK_SHIFT;
-    private static final int BLOCK_MASK = BLOCK_SIZE-1;
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
 
     private static final byte _default_value = ( byte ) 0xFF;
     private byte[]            _data;
@@ -50,6 +51,11 @@ public final class DocumentBlock extends BigBlock {
     public DocumentBlock(final RawDataBlock block)
         throws IOException
     {
+        super(
+              block.getBigBlockSize() == POIFSConstants.SMALLER_BIG_BLOCK_SIZE ?
+                    POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS :
+                    POIFSConstants.LARGER_BIG_BLOCK_SIZE_DETAILS
+        );
         _data       = block.getData();
         _bytes_read = _data.length;
     }
@@ -62,10 +68,10 @@ public final class DocumentBlock extends BigBlock {
      * @exception IOException
      */
 
-    public DocumentBlock(final InputStream stream)
+    public DocumentBlock(final InputStream stream, POIFSBigBlockSize bigBlockSize)
         throws IOException
     {
-        this();
+        this(bigBlockSize);
         int count = IOUtils.readFully(stream, _data);
 
         _bytes_read = (count == -1) ? 0
@@ -76,9 +82,10 @@ public final class DocumentBlock extends BigBlock {
      * Create a single instance initialized with default values
      */
 
-    private DocumentBlock()
+    private DocumentBlock(POIFSBigBlockSize bigBlockSize)
     {
-        _data = new byte[ POIFSConstants.BIG_BLOCK_SIZE ];
+        super(bigBlockSize);
+        _data = IOUtils.safelyAllocate(bigBlockSize.getBigBlockSize(), MAX_RECORD_LENGTH);
         Arrays.fill(_data, _default_value);
     }
 
@@ -101,7 +108,7 @@ public final class DocumentBlock extends BigBlock {
 
     public boolean partiallyRead()
     {
-        return _bytes_read != POIFSConstants.BIG_BLOCK_SIZE;
+        return _bytes_read != bigBlockSize.getBigBlockSize();
     }
 
     /**
@@ -124,26 +131,27 @@ public final class DocumentBlock extends BigBlock {
      *         input array
      */
 
-    public static DocumentBlock [] convert(final byte [] array,
+    public static DocumentBlock [] convert(final POIFSBigBlockSize bigBlockSize,
+                                           final byte [] array,
                                            final int size)
     {
         DocumentBlock[] rval   =
-            new DocumentBlock[ (size + POIFSConstants.BIG_BLOCK_SIZE - 1) / POIFSConstants.BIG_BLOCK_SIZE ];
+            new DocumentBlock[ (size + bigBlockSize.getBigBlockSize() - 1) / bigBlockSize.getBigBlockSize() ];
         int             offset = 0;
 
         for (int k = 0; k < rval.length; k++)
         {
-            rval[ k ] = new DocumentBlock();
+            rval[ k ] = new DocumentBlock(bigBlockSize);
             if (offset < array.length)
             {
-                int length = Math.min(POIFSConstants.BIG_BLOCK_SIZE,
+                int length = Math.min(bigBlockSize.getBigBlockSize(),
                                       array.length - offset);
 
                 System.arraycopy(array, offset, rval[ k ]._data, 0, length);
-                if (length != POIFSConstants.BIG_BLOCK_SIZE)
+                if (length != bigBlockSize.getBigBlockSize())
                 {
                     Arrays.fill(rval[ k ]._data, length,
-                                POIFSConstants.BIG_BLOCK_SIZE,
+                          bigBlockSize.getBigBlockSize(),
                                 _default_value);
                 }
             }
@@ -151,12 +159,23 @@ public final class DocumentBlock extends BigBlock {
             {
                 Arrays.fill(rval[ k ]._data, _default_value);
             }
-            offset += POIFSConstants.BIG_BLOCK_SIZE;
+            offset += bigBlockSize.getBigBlockSize();
         }
         return rval;
     }
 
     public static DataInputBlock getDataInputBlock(DocumentBlock[] blocks, int offset) {
+        if(blocks == null || blocks.length == 0) {
+           return null;
+        }
+        
+        // Key things about the size of the block
+        POIFSBigBlockSize bigBlockSize = blocks[0].bigBlockSize;
+        int BLOCK_SHIFT = bigBlockSize.getHeaderValue();
+        int BLOCK_SIZE = bigBlockSize.getBigBlockSize();
+        int BLOCK_MASK = BLOCK_SIZE - 1;
+
+        // Now do the offset lookup
         int firstBlockIndex = offset >> BLOCK_SHIFT;
         int firstBlockOffset= offset & BLOCK_MASK;
         return new DataInputBlock(blocks[firstBlockIndex]._data, firstBlockOffset);

@@ -15,7 +15,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.ddf;
 
 /**
@@ -31,7 +31,7 @@ public class EscherPropertyMetaData
     public final static byte TYPE_RGB = (byte) 2;
     public final static byte TYPE_SHAPEPATH = (byte) 3;
     public final static byte TYPE_SIMPLE = (byte)4;
-    public final static byte TYPE_ARRAY = (byte)5;;
+    public final static byte TYPE_ARRAY = (byte)5;
 
     private String description;
     private byte type;

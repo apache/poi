@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,18 +14,15 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.ddf;
 
-import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.RecordFormatException;
 
 /**
  * The spgr record defines information about a shape group.  Groups in escher
  * are simply another form of shape that you can't physically see.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 public class EscherSpgrRecord
     extends EscherRecord
@@ -39,16 +35,8 @@ public class EscherSpgrRecord
     private int field_3_rectX2;
     private int field_4_rectY2;
 
-    /**
-     * This method deserializes the record from a byte array.
-     *
-     * @param data          The byte array containing the escher record information
-     * @param offset        The starting offset into <code>data</code>.
-     * @param recordFactory May be null since this is not a container record.
-     * @return The number of bytes read from the byte array.
-     */
-    public int fillFields( byte[] data, int offset, EscherRecordFactory recordFactory )
-    {
+    @Override
+    public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesRemaining = readHeader( data, offset );
         int pos            = offset + 8;
         int size           = 0;
@@ -57,22 +45,15 @@ public class EscherSpgrRecord
         field_3_rectX2 =  LittleEndian.getInt( data, pos + size );size+=4;
         field_4_rectY2 =  LittleEndian.getInt( data, pos + size );size+=4;
         bytesRemaining -= size;
-        if (bytesRemaining != 0) throw new RecordFormatException("Expected no remaining bytes but got " + bytesRemaining);
+        if (bytesRemaining != 0) {
+            throw new RecordFormatException("Expected no remaining bytes but got " + bytesRemaining);
+        }
 //        remainingData  =  new byte[bytesRemaining];
 //        System.arraycopy( data, pos + size, remainingData, 0, bytesRemaining );
         return 8 + size + bytesRemaining;
     }
 
-    /**
-     * This method serializes this escher record into a byte array.
-     *
-     * @param offset   The offset into <code>data</code> to start writing the record data to.
-     * @param data     The byte array to serialize to.
-     * @param listener A listener to retrieve start and end callbacks.  Use a <code>NullEscherSerailizationListener</code> to ignore these events.
-     * @return The number of bytes written.
-     *
-     * @see NullEscherSerializationListener
-     */
+    @Override
     public int serialize( int offset, byte[] data, EscherSerializationListener listener )
     {
         listener.beforeRecordSerialize( offset, getRecordId(), this );
@@ -90,62 +71,26 @@ public class EscherSpgrRecord
         return 8 + 16;
     }
 
-    /**
-     * Returns the number of bytes that are required to serialize this record.
-     *
-     * @return Number of bytes
-     */
+    @Override
     public int getRecordSize()
     {
         return 8 + 16;
     }
 
-    /**
-     * The 16 bit identifier of this shape group record.
-     */
-    public short getRecordId()
-    {
+    @Override
+    public short getRecordId() {
         return RECORD_ID;
     }
 
-    /**
-     * The short name for this record
-     */
-    public String getRecordName()
-    {
+    @Override
+    public String getRecordName() {
         return "Spgr";
     }
 
     /**
-     * @return  the string representation of this record.
-     */
-    public String toString()
-    {
-        String nl = System.getProperty("line.separator");
-
-//        String extraData;
-//        ByteArrayOutputStream b = new ByteArrayOutputStream();
-//        try
-//        {
-//            HexDump.dump(this.remainingData, 0, b, 0);
-//            extraData = b.toString();
-//        }
-//        catch ( Exception e )
-//        {
-//            extraData = "error";
-//        }
-        return getClass().getName() + ":" + nl +
-                "  RecordId: 0x" + HexDump.toHex(RECORD_ID) + nl +
-                "  Options: 0x" + HexDump.toHex(getOptions()) + nl +
-                "  RectX: " + field_1_rectX1 + nl +
-                "  RectY: " + field_2_rectY1 + nl +
-                "  RectWidth: " + field_3_rectX2 + nl +
-                "  RectHeight: " + field_4_rectY2 + nl;
-
-    }
-
-    /**
      * The starting top-left coordinate of child records.
+     * 
+     * @return the top-left x coordinate
      */
     public int getRectX1()
     {
@@ -153,7 +98,9 @@ public class EscherSpgrRecord
     }
 
     /**
-     * The starting top-left coordinate of child records.
+     * The top-left coordinate of child records.
+     * 
+     * @param x1 the top-left x coordinate
      */
     public void setRectX1( int x1 )
     {
@@ -161,7 +108,9 @@ public class EscherSpgrRecord
     }
 
     /**
-     * The starting top-left coordinate of child records.
+     * The top-left coordinate of child records.
+     * 
+     * @return the top-left y coordinate
      */
     public int getRectY1()
     {
@@ -169,7 +118,9 @@ public class EscherSpgrRecord
     }
 
     /**
-     * The starting top-left coordinate of child records.
+     * The top-left y coordinate of child records.
+     * 
+     * @param y1 the top-left y coordinate
      */
     public void setRectY1( int y1 )
     {
@@ -177,7 +128,9 @@ public class EscherSpgrRecord
     }
 
     /**
-     * The starting bottom-right coordinate of child records.
+     * The bottom-right x coordinate of child records.
+     * 
+     * @return the bottom-right x coordinate
      */
     public int getRectX2()
     {
@@ -185,7 +138,9 @@ public class EscherSpgrRecord
     }
 
     /**
-     * The starting bottom-right coordinate of child records.
+     * The bottom-right x coordinate of child records.
+     * 
+     * @param x2 the bottom-right x coordinate
      */
     public void setRectX2( int x2 )
     {
@@ -193,7 +148,9 @@ public class EscherSpgrRecord
     }
 
     /**
-     * The starting bottom-right coordinate of child records.
+     * The bottom-right y coordinate of child records.
+     * 
+     * @return the bottom-right y coordinate
      */
     public int getRectY2()
     {
@@ -201,10 +158,21 @@ public class EscherSpgrRecord
     }
 
     /**
-     * The starting bottom-right coordinate of child records.
+     * The bottom-right y coordinate of child records.
+     * 
+     * @param rectY2 the bottom-right y coordinate
      */
-    public void setRectY2( int field_4_rectY2 )
-    {
-        this.field_4_rectY2 = field_4_rectY2;
+    public void setRectY2(int rectY2) {
+        this.field_4_rectY2 = rectY2;
+    }
+
+    @Override
+    protected Object[][] getAttributeMap() {
+        return new Object[][] {
+            { "RectX", field_1_rectX1 },
+            { "RectY", field_2_rectY1 },
+            { "RectWidth", field_3_rectX2 },
+            { "RectHeight", field_4_rectY2 }
+        };
     }
 }

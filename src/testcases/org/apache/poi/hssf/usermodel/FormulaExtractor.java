@@ -19,7 +19,7 @@ package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
-import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.ss.formula.ptg.Ptg;
 
 /**
  * Test utility class to get <tt>Ptg</tt> arrays out of formula cells

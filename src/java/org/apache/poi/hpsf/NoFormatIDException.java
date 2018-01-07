@@ -14,62 +14,51 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hpsf;
 
 /**
- * <p>This exception is thrown if a {@link MutablePropertySet} is to be written
- * but does not have a formatID set (see {@link
- * MutableSection#setFormatID(ClassID)} or
- * {@link org.apache.poi.hpsf.MutableSection#setFormatID(byte[])}. 
- *
- * @author Rainer Klute <a
- * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
- * @version $Id$
- * @since 2002-09-03
+ * This exception is thrown if a {@link PropertySet} is to be written
+ * but does not have a formatID set (see {@link Section#setFormatID(ClassID)} or
+ * {@link org.apache.poi.hpsf.Section#setFormatID(byte[])}. 
  */
-public class NoFormatIDException extends HPSFRuntimeException
-{
+public class NoFormatIDException extends HPSFRuntimeException {
 
     /**
-     * <p>Constructor</p>
+     * Constructor
      */
-    public NoFormatIDException()
-    {
+    public NoFormatIDException() {
         super();
     }
 
 
     /**
-     * <p>Constructor</p>
+     * Constructor
      * 
      * @param msg The exception's message string
      */
-    public NoFormatIDException(final String msg)
-    {
+    public NoFormatIDException(final String msg) {
         super(msg);
     }
 
 
     /**
-     * <p>Constructor</p>
+     * Constructor
      * 
      * @param reason This exception's underlying reason
      */
-    public NoFormatIDException(final Throwable reason)
-    {
+    public NoFormatIDException(final Throwable reason) {
         super(reason);
     }
 
 
     /**
-     * <p>Constructor</p>
+     * Constructor
      * 
      * @param msg The exception's message string
      * @param reason This exception's underlying reason
      */
-    public NoFormatIDException(final String msg, final Throwable reason)
-    {
+    public NoFormatIDException(final String msg, final Throwable reason) {
         super(msg, reason);
     }
 

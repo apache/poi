@@ -17,66 +17,74 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.util.Iterator;
+import static org.junit.Assert.assertNotNull;
 
-import junit.framework.TestCase;
+import java.util.Iterator;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
-import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.Row;
+import org.junit.Test;
 
 /**
- * 
+ *
  */
-public final class TestBug42464 extends TestCase {
+public final class TestBug42464 {
 
+    @Test
 	public void testOKFile() throws Exception {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("42464-ExpPtg-ok.xls");
 		process(wb);
+		wb.close();
 	}
+    
+    @Test
 	public void testExpSharedBadFile() throws Exception {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("42464-ExpPtg-bad.xls");
 		process(wb);
+		wb.close();
 	}
-	
+
 	private static void process(HSSFWorkbook wb) {
 		HSSFFormulaEvaluator eval =	new HSSFFormulaEvaluator(wb);
 		for(int i=0; i<wb.getNumberOfSheets(); i++) {
 			HSSFSheet s = wb.getSheetAt(i);
-			
-			Iterator it = s.rowIterator();
+
+			Iterator<Row> it = s.rowIterator();
 			while(it.hasNext()) {
 				HSSFRow r = (HSSFRow)it.next();
 				process(r, eval);
 			}
 		}
 	}
-	
+
 	private static void process(HSSFRow row, HSSFFormulaEvaluator eval) {
-		Iterator it = row.cellIterator();
+		Iterator<Cell> it = row.cellIterator();
 		while(it.hasNext()) {
 			HSSFCell cell = (HSSFCell)it.next();
-			if(cell.getCellType() != HSSFCell.CELL_TYPE_FORMULA) {
+			if(cell.getCellType() != CellType.FORMULA) {
 			    continue;
 			}
 			FormulaRecordAggregate record = (FormulaRecordAggregate) cell.getCellValueRecord();
 			FormulaRecord r = record.getFormulaRecord();
-			Ptg[] ptgs = r.getParsedExpression();
-			
-			String cellRef = new CellReference(row.getRowNum(), cell.getColumnIndex(), false, false).formatAsString();
-			if(false && cellRef.equals("BP24")) { // TODO - replace System.out.println()s with asserts
-				System.out.print(cellRef);
-				System.out.println(" - has " + ptgs.length + " ptgs:");
-				for(int i=0; i<ptgs.length; i++) {
-					String c = ptgs[i].getClass().toString();
-					System.out.println("\t" + c.substring(c.lastIndexOf('.')+1) );
-				}
-				System.out.println("-> " + cell.getCellFormula());
-			}
-			
+			/*Ptg[] ptgs =*/ r.getParsedExpression();
+
+			/*String cellRef =*/ new CellReference(row.getRowNum(), cell.getColumnIndex(), false, false).formatAsString();
+//			if(false && cellRef.equals("BP24")) { // TODO - replace System.out.println()s with asserts
+//				System.out.print(cellRef);
+//				System.out.println(" - has " + ptgs.length + " ptgs:");
+//				for(int i=0; i<ptgs.length; i++) {
+//					String c = ptgs[i].getClass().toString();
+//					System.out.println("\t" + c.substring(c.lastIndexOf('.')+1) );
+//				}
+//				System.out.println("-> " + cell.getCellFormula());
+//			}
+
 			CellValue evalResult = eval.evaluate(cell);
 			assertNotNull(evalResult);
 		}

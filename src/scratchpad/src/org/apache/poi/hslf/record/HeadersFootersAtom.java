@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,10 +14,10 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -30,17 +29,23 @@ import java.io.OutputStream;
  * @author Yegor Kozlov
  */
 
-public class HeadersFootersAtom extends RecordAtom {
+public final class HeadersFootersAtom extends RecordAtom {
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
+
 
     /**
      * A bit that specifies whether the date is displayed in the footer.
-     * @see {@link #getMask()}, {@link #setMask(int)}},
+     * @see #getMask()
+     * @see #setMask(int)
      */
     public static final int fHasDate = 1;
 
     /**
      * A bit that specifies whether the current datetime is used for displaying the datetime.
-     * @see {@link #getMask()}, {@link #setMask(int)}},
+     * @see #getMask()
+     * @see #setMask(int)
      */
     public static final int fHasTodayDate = 2;
 
@@ -48,28 +53,32 @@ public class HeadersFootersAtom extends RecordAtom {
      * A bit that specifies whether the date specified in UserDateAtom record
      * is used for displaying the datetime.
      *
-     * @see {@link #getMask()}, {@link #setMask(int)}},
+     * @see #getMask()
+     * @see #setMask(int)
      */
      public static final int fHasUserDate = 4;
 
     /**
      * A bit that specifies whether the slide number is displayed in the footer.
-     * 
-     * @see {@link #getMask()}, {@link #setMask(int)}},
+     *
+     * @see #getMask()
+     * @see #setMask(int)
      */
     public static final int fHasSlideNumber = 8;
 
     /**
      * bit that specifies whether the header text is displayed.
      *
-     * @see {@link #getMask()}, {@link #setMask(int)}},
+     * @see #getMask()
+     * @see #setMask(int)
      */
     public static final int fHasHeader = 16;
 
     /**
      * bit that specifies whether the footer text is displayed.
      *
-     * @see {@link #getMask()}, {@link #setMask(int)}},
+     * @see #getMask()
+     * @see #setMask(int)
      */
     public static final int fHasFooter = 32;
 
@@ -92,7 +101,7 @@ public class HeadersFootersAtom extends RecordAtom {
 		System.arraycopy(source,start,_header,0,8);
 
 		// Grab the record data
-		_recdata = new byte[len-8];
+		_recdata = IOUtils.safelyAllocate(len-8, MAX_RECORD_LENGTH);
 		System.arraycopy(source,start+8,_recdata,0,len-8);
 	}
 

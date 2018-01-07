@@ -15,29 +15,22 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title:        Precision Record<P>
  * Description:  defines whether to store with full precision or what's displayed by the gui
  *               (meaning have really screwed up and skewed figures or only think you do!)<P>
  * REFERENCE:  PG 372 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
- * @author Andrew C. Oliver (acoliver at apache dot org)
  * @version 2.0-pre
  */
-
-public class PrecisionRecord
-    extends Record
-{
+public final class PrecisionRecord extends StandardRecord {
     public final static short sid = 0xE;
     public short              field_1_precision;
 
-    public PrecisionRecord()
-    {
+    public PrecisionRecord() {
     }
 
     public PrecisionRecord(RecordInputStream in)
@@ -50,15 +43,10 @@ public class PrecisionRecord
      *
      * @param fullprecision - or not
      */
-
-    public void setFullPrecision(boolean fullprecision)
-    {
-        if (fullprecision == true)
-        {
+    public void setFullPrecision(boolean fullprecision) {
+        if (fullprecision) {
             field_1_precision = 1;
-        }
-        else
-        {
+        } else {
             field_1_precision = 0;
         }
     }
@@ -68,30 +56,20 @@ public class PrecisionRecord
      *
      * @return fullprecision - or not
      */
-
     public boolean getFullPrecision()
     {
         return (field_1_precision == 1);
     }
 
-    public String toString()
-    {
-        StringBuffer buffer = new StringBuffer();
-
-        buffer.append("[PRECISION]\n");
-        buffer.append("    .precision       = ").append(getFullPrecision())
-            .append("\n");
-        buffer.append("[/PRECISION]\n");
-        return buffer.toString();
+    public String toString() {
+        return "[PRECISION]\n" +
+                "    .precision       = " + getFullPrecision() +
+                "\n" +
+                "[/PRECISION]\n";
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset,
-                              (( short ) 0x02));   // 2 bytes (6 total)
-        LittleEndian.putShort(data, 4 + offset, field_1_precision);
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(field_1_precision);
     }
 
     protected int getDataSize() {

@@ -19,24 +19,23 @@
 
 package org.apache.poi.poifs.filesystem;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.apache.poi.poifs.dev.POIFSViewable;
 import org.apache.poi.poifs.property.DocumentProperty;
 
 /**
- * Simple implementation of DocumentEntry
- *
- * @author Marc Johnson (mjohnson at apache dot org)
+ * Simple implementation of DocumentEntry for OPOIFS
  */
-
 public class DocumentNode
     extends EntryNode
     implements DocumentEntry, POIFSViewable
 {
 
     // underlying POIFSDocument instance
-    private POIFSDocument _document;
+    private OPOIFSDocument _document;
 
     /**
      * create a DocumentNode. This method is not public by design; it
@@ -57,8 +56,7 @@ public class DocumentNode
      *
      * @return the internal POIFSDocument
      */
-
-    POIFSDocument getDocument()
+    OPOIFSDocument getDocument()
     {
         return _document;
     }
@@ -85,6 +83,7 @@ public class DocumentNode
      * @return true if the Entry is a DocumentEntry, else false
      */
 
+    @Override
     public boolean isDocumentEntry()
     {
         return true;
@@ -101,6 +100,7 @@ public class DocumentNode
      *         false
      */
 
+    @Override
     protected boolean isDeleteOK()
     {
         return true;
@@ -129,12 +129,14 @@ public class DocumentNode
      * back end store
      */
 
-    public Iterator getViewableIterator()
+    public Iterator<Object> getViewableIterator()
     {
-        List components = new ArrayList();
+        List<Object> components = new ArrayList<>();
 
         components.add(getProperty());
-        components.add(_document);
+        if (_document != null) {
+            components.add(_document);
+        }
         return components.iterator();
     }
 

@@ -18,14 +18,14 @@
 package org.apache.poi.xssf.usermodel;
 
 import java.io.IOException;
-import org.apache.poi.ss.usermodel.PictureData;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.util.IOUtils;
+
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.POIXMLRelation;
-import org.openxml4j.opc.PackagePart;
-import org.openxml4j.opc.PackageRelationship;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.ss.usermodel.PictureData;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.IOUtils;
 
 /**
  * Raw picture data, normally attached to a SpreadsheetML Drawing.
@@ -38,13 +38,18 @@ public class XSSFPictureData extends POIXMLDocumentPart implements PictureData {
      */
     protected static final POIXMLRelation[] RELATIONS;
     static {
-        RELATIONS = new POIXMLRelation[8];
+        RELATIONS = new POIXMLRelation[13];
         RELATIONS[Workbook.PICTURE_TYPE_EMF] = XSSFRelation.IMAGE_EMF;
         RELATIONS[Workbook.PICTURE_TYPE_WMF] = XSSFRelation.IMAGE_WMF;
         RELATIONS[Workbook.PICTURE_TYPE_PICT] = XSSFRelation.IMAGE_PICT;
         RELATIONS[Workbook.PICTURE_TYPE_JPEG] = XSSFRelation.IMAGE_JPEG;
         RELATIONS[Workbook.PICTURE_TYPE_PNG] = XSSFRelation.IMAGE_PNG;
         RELATIONS[Workbook.PICTURE_TYPE_DIB] = XSSFRelation.IMAGE_DIB;
+        RELATIONS[XSSFWorkbook.PICTURE_TYPE_GIF] = XSSFRelation.IMAGE_GIF;
+        RELATIONS[XSSFWorkbook.PICTURE_TYPE_TIFF] = XSSFRelation.IMAGE_TIFF;
+        RELATIONS[XSSFWorkbook.PICTURE_TYPE_EPS] = XSSFRelation.IMAGE_EPS;
+        RELATIONS[XSSFWorkbook.PICTURE_TYPE_BMP] = XSSFRelation.IMAGE_BMP;
+        RELATIONS[XSSFWorkbook.PICTURE_TYPE_WPG] = XSSFRelation.IMAGE_WPG;
     }
 
     /**
@@ -60,19 +65,19 @@ public class XSSFPictureData extends POIXMLDocumentPart implements PictureData {
      * Construct XSSFPictureData from a package part
      *
      * @param part the package part holding the drawing data,
-     * @param rel  the package relationship holding this drawing,
-     * the relationship type must be http://schemas.openxmlformats.org/officeDocument/2006/relationships/image
+     * 
+     * @since POI 3.14-Beta1
      */
-    protected XSSFPictureData(PackagePart part, PackageRelationship rel) {
-        super(part, rel);
+    protected XSSFPictureData(PackagePart part) {
+        super(part);
     }
-
+    
     /**
      * Gets the picture data as a byte array.
      * <p>
      * Note, that this call might be expensive since all the picture data is copied into a temporary byte array.
      * You can grab the picture data directly from the underlying package part as follows:
-     * <br/>
+     * <br>
      * <code>
      * InputStream is = getPackagePart().getInputStream();
      * </code>
@@ -101,12 +106,12 @@ public class XSSFPictureData extends POIXMLDocumentPart implements PictureData {
      * Return an integer constant that specifies type of this picture
      *
      * @return an integer constant that specifies type of this picture 
-     * @see Workbook#PICTURE_TYPE_EMF
-     * @see Workbook#PICTURE_TYPE_WMF
-     * @see Workbook#PICTURE_TYPE_PICT
-     * @see Workbook#PICTURE_TYPE_JPEG
-     * @see Workbook#PICTURE_TYPE_PNG
-     * @see Workbook#PICTURE_TYPE_DIB
+     * @see org.apache.poi.ss.usermodel.Workbook#PICTURE_TYPE_EMF
+     * @see org.apache.poi.ss.usermodel.Workbook#PICTURE_TYPE_WMF
+     * @see org.apache.poi.ss.usermodel.Workbook#PICTURE_TYPE_PICT
+     * @see org.apache.poi.ss.usermodel.Workbook#PICTURE_TYPE_JPEG
+     * @see org.apache.poi.ss.usermodel.Workbook#PICTURE_TYPE_PNG
+     * @see org.apache.poi.ss.usermodel.Workbook#PICTURE_TYPE_DIB
      */
     public int getPictureType(){
         String contentType = getPackagePart().getContentType();
@@ -118,5 +123,18 @@ public class XSSFPictureData extends POIXMLDocumentPart implements PictureData {
             }
         }
         return 0;
+    }
+
+    public String getMimeType() {
+        return getPackagePart().getContentType();
+    }
+
+    /**
+     * *PictureData objects store the actual content in the part directly without keeping a 
+     * copy like all others therefore we need to handle them differently.
+     */
+    @Override
+    protected void prepareForCommit() {
+        // do not clear the part here
     }
 }

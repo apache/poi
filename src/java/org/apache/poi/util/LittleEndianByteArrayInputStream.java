@@ -17,104 +17,112 @@
 
 package org.apache.poi.util;
 
+import java.io.ByteArrayInputStream;
+
 /**
- * Adapts a plain byte array to {@link LittleEndianInput} 
- * 
- * 
- * @author Josh Micich
+ * Adapts a plain byte array to {@link LittleEndianInput}
  */
-public final class LittleEndianByteArrayInputStream implements LittleEndianInput {
-	private final byte[] _buf;
-	private final int _endIndex;
-	private int _readIndex;
-
-	public LittleEndianByteArrayInputStream(byte[] buf, int startOffset, int maxReadLen) {
-		_buf = buf;
-		_readIndex = startOffset;
-		_endIndex = startOffset + maxReadLen;
+public class LittleEndianByteArrayInputStream extends ByteArrayInputStream implements LittleEndianInput {
+	public LittleEndianByteArrayInputStream(byte[] buf, int startOffset, int maxReadLen) { // NOSONAR
+	    super(buf, startOffset, maxReadLen);
 	}
+	
 	public LittleEndianByteArrayInputStream(byte[] buf, int startOffset) {
-		this(buf, startOffset, buf.length - startOffset);
+	    this(buf, startOffset, buf.length - startOffset);
 	}
+	
 	public LittleEndianByteArrayInputStream(byte[] buf) {
-		this(buf, 0, buf.length);
+	    this(buf, 0);
 	}
 
-	public int available() {
-		return _endIndex - _readIndex;
-	}
-	private void checkPosition(int i) {
-		if (i > _endIndex - _readIndex) {
-			throw new RuntimeException("Buffer overrun");
+	protected void checkPosition(int i) {
+		if (i > count - pos) {
+			throw new RuntimeException("Buffer overrun, having " + count + " bytes in the stream and position is at " + pos +
+					", but trying to increment position by " + i);
 		}
 	}
 
 	public int getReadIndex() {
-		return _readIndex;
-	}
-	public byte readByte() {
-		checkPosition(1);
-		return _buf[_readIndex++];
+		return pos;
 	}
 
-	public int readInt() {
-		checkPosition(4);
-		int i = _readIndex;
-		
-		int b0 = _buf[i++] & 0xFF;
-		int b1 = _buf[i++] & 0xFF;
-		int b2 = _buf[i++] & 0xFF;
-		int b3 = _buf[i++] & 0xFF;
-		_readIndex = i;
-		return (b3 << 24) + (b2 << 16) + (b1 << 8) + (b0 << 0);
+	public void setReadIndex(int pos) {
+	   if (pos < 0 || pos >= count) {
+	        throw new IndexOutOfBoundsException();
+	   }
+	   this.pos = pos;
 	}
-	public long readLong() {
-		checkPosition(8);
-		int i = _readIndex;
-		
-		int b0 = _buf[i++] & 0xFF;
-		int b1 = _buf[i++] & 0xFF;
-		int b2 = _buf[i++] & 0xFF;
-		int b3 = _buf[i++] & 0xFF;
-		int b4 = _buf[i++] & 0xFF;
-		int b5 = _buf[i++] & 0xFF;
-		int b6 = _buf[i++] & 0xFF;
-		int b7 = _buf[i++] & 0xFF;
-		_readIndex = i;
-		return (((long)b7 << 56) +
-				((long)b6 << 48) +
-				((long)b5 << 40) +
-				((long)b4 << 32) +
-				((long)b3 << 24) +
-				(b2 << 16) +
-				(b1 <<  8) +
-				(b0 <<  0));
-	}
-	public short readShort() {
-		return (short)readUShort();
-	}
-	public int readUByte() {
+	
+	
+	@Override
+    public byte readByte() {
 		checkPosition(1);
-		return _buf[_readIndex++] & 0xFF;
+		return (byte)read();
 	}
-	public int readUShort() {
-		checkPosition(2);
-		int i = _readIndex;
-		
-		int b0 = _buf[i++] & 0xFF;
-		int b1 = _buf[i++] & 0xFF;
-		_readIndex = i;
-		return (b1 << 8) + (b0 << 0);
+
+	@Override
+    public int readInt() {
+	    final int size = LittleEndianConsts.INT_SIZE;
+		checkPosition(size);
+		int le = LittleEndian.getInt(buf, pos);
+        long skipped = super.skip(size);
+        assert skipped == size : "Buffer overrun";
+		return le;
 	}
-	public void readFully(byte[] buf, int off, int len) {
+
+	@Override
+    public long readLong() {
+	    final int size = LittleEndianConsts.LONG_SIZE;
+		checkPosition(size);
+		long le = LittleEndian.getLong(buf, pos);
+        long skipped = super.skip(size);
+        assert skipped == size : "Buffer overrun";
+		return le;
+	}
+
+	@Override
+    public short readShort() {
+        final int size = LittleEndianConsts.SHORT_SIZE;
+        checkPosition(size);
+        short le = LittleEndian.getShort(buf, pos);
+        long skipped = super.skip(size);
+        assert skipped == size : "Buffer overrun";
+        return le;
+	}
+
+	@Override
+    public int readUByte() {
+	    return readByte() & 0x00FF;
+	}
+
+	@Override
+    public int readUShort() {
+        return readShort() & 0x00FFFF;
+	}
+
+	public long readUInt() {
+	    return readInt() & 0x00FFFFFFFFL; 
+    }
+
+    @Override
+    public double readDouble() {
+        return Double.longBitsToDouble(readLong());
+    }
+	
+	@Override
+    public void readFully(byte[] buffer, int off, int len) {
 		checkPosition(len);
-		System.arraycopy(_buf, _readIndex, _buf, off, len);
-		_readIndex+=len;
+		read(buffer, off, len);
 	}
-	public void readFully(byte[] buf) {
-		readFully(buf, 0, buf.length);
+
+	@Override
+    public void readFully(byte[] buffer) {
+        checkPosition(buffer.length);
+        read(buffer, 0, buffer.length);
 	}
-	public double readDouble() {
-		return Double.longBitsToDouble(readLong());
-	}
+
+    @Override
+    public void readPlain(byte[] buf, int off, int len) {
+        readFully(buf, off, len);
+    }
 }

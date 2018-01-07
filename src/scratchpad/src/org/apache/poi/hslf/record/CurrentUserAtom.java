@@ -20,29 +20,39 @@
 
 package org.apache.poi.hslf.record;
 
-import java.io.*;
-import org.apache.poi.poifs.filesystem.*;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.StringUtil;
-import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
-import org.apache.poi.hslf.exceptions.EncryptedPowerPointFileException;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
+import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
+import org.apache.poi.hslf.exceptions.OldPowerPointFormatException;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.DocumentEntry;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.StringUtil;
 
 /**
- * This is a special kind of Atom, becauase it doesn't live inside the
- *  PowerPoint document. Instead, it lives in a seperate stream in the
- *  document. As such, it has to be treaded specially
- *
- * @author Nick Burch
+ * This is a special kind of Atom, because it doesn't live inside the
+ *  PowerPoint document. Instead, it lives in a separate stream in the
+ *  document. As such, it has to be treated specially
  */
-
 public class CurrentUserAtom
 {
+	private final static POILogger logger = POILogFactory.getLogger(CurrentUserAtom.class);
+	//arbitrarily selected; may need to increase
+	private static final int MAX_RECORD_LENGTH = 1_000_000;
+
 	/** Standard Atom header */
 	public static final byte[] atomHeader = new byte[] { 0, 0, -10, 15 };
 	/** The PowerPoint magic number for a non-encrypted file */
 	public static final byte[] headerToken = new byte[] { 95, -64, -111, -29 };
-	/** The PowerPoint magic number for an encrytpted file */ 
+	/** The PowerPoint magic number for an encrypted file */ 
 	public static final byte[] encHeaderToken = new byte[] { -33, -60, -47, -13 };
 	/** The Powerpoint 97 version, major and minor numbers */
 	public static final byte[] ppt97FileVer = new byte[] { 8, 00, -13, 03, 03, 00 };
@@ -61,6 +71,9 @@ public class CurrentUserAtom
 
 	/** Only correct after reading in or writing out */
 	private byte[] _contents;
+	
+	/** Flag for encryption state of the whole file */
+	private boolean isEncrypted;
 
 
 	/* ********************* getter/setter follows *********************** */
@@ -79,6 +92,9 @@ public class CurrentUserAtom
 	public String getLastEditUsername() { return lastEditUser; }
 	public void setLastEditUsername(String u) { lastEditUser = u; }
 
+	public boolean isEncrypted() { return isEncrypted; }
+	public void setEncrypted(boolean isEncrypted) { this.isEncrypted = isEncrypted; }
+	
 
 	/* ********************* real code follows *************************** */
 
@@ -95,14 +111,10 @@ public class CurrentUserAtom
 		releaseVersion = 8;
 		currentEditOffset = 0;
 		lastEditUser = "Apache POI";
+		isEncrypted = false;
 	}
 
-	/** 
-	 * Find the Current User in the filesystem, and create from that
-	 */
-	public CurrentUserAtom(POIFSFileSystem fs) throws IOException {
-		this(fs.getRoot());
-	}
+
 	/** 
 	 * Find the Current User in the filesystem, and create from that
 	 */
@@ -110,27 +122,42 @@ public class CurrentUserAtom
 		// Decide how big it is
 		DocumentEntry docProps =
 			(DocumentEntry)dir.getEntry("Current User");
-		_contents = new byte[docProps.getSize()];
+		
+		// If it's clearly junk, bail out
+		if(docProps.getSize() > 131072) {
+			throw new CorruptPowerPointFileException("The Current User stream is implausably long. It's normally 28-200 bytes long, but was " + docProps.getSize() + " bytes");
+		}
+		
+		// Grab the contents
+		int len = docProps.getSize();
+		_contents = IOUtils.safelyAllocate(len, MAX_RECORD_LENGTH);
+		InputStream in = dir.createDocumentInputStream("Current User");
+		int readLen = in.read(_contents);
+		in.close();
 
-		// Check it's big enough - if it's not at least 28 bytes long, then
-		//  the record is corrupt
+        if (len != readLen) {
+            throw new IOException("Current User input stream ended prematurely - expected "+len+" bytes - received "+readLen+" bytes");
+        }
+		
+		
+		// See how long it is. If it's under 28 bytes long, we can't
+		//  read it
 		if(_contents.length < 28) {
-			throw new CorruptPowerPointFileException("The Current User stream must be at least 28 bytes long, but was only " + _contents.length);
+		    boolean isPP95 = dir.hasEntry("PP40");
+		    // PPT95 has 4 byte size, then data
+			if (!isPP95 && _contents.length >= 4) {
+				int size = LittleEndian.getInt(_contents);
+				isPP95 = (size + 4 == _contents.length);
+			}
+
+			if (isPP95) {
+			    throw new OldPowerPointFormatException("Based on the Current User stream, you seem to have supplied a PowerPoint95 file, which isn't supported");
+			} else {
+			    throw new CorruptPowerPointFileException("The Current User stream must be at least 28 bytes long, but was only " + _contents.length);
+			}
 		}
 
-		// Grab the contents
-		InputStream in = dir.createDocumentInputStream("Current User");
-		in.read(_contents);
-
 		// Set everything up
-		init();
-	}
-
-	/** 
-	 * Create things from the bytes
-	 */
-	public CurrentUserAtom(byte[] b) {
-		_contents = b;
 		init();
 	}
 
@@ -139,14 +166,10 @@ public class CurrentUserAtom
 	 */
 	private void init() {
 		// First up is the size, in 4 bytes, which is fixed
-		// Then is the header - check for encrypted
-		if(_contents[12] == encHeaderToken[0] && 
-			_contents[13] == encHeaderToken[1] &&
-			_contents[14] == encHeaderToken[2] &&
-			_contents[15] == encHeaderToken[3]) {
-			throw new EncryptedPowerPointFileException("The CurrentUserAtom specifies that the document is encrypted");
-		}
+		// Then is the header
 		
+	    isEncrypted = (LittleEndian.getInt(encHeaderToken) == LittleEndian.getInt(_contents,12)); 
+	    
 		// Grab the edit offset
 		currentEditOffset = LittleEndian.getUInt(_contents,16);
 
@@ -159,7 +182,7 @@ public class CurrentUserAtom
 		long usernameLen = LittleEndian.getUShort(_contents,20);
 		if(usernameLen > 512) {
 			// Handle the case of it being garbage
-			System.err.println("Warning - invalid username length " + usernameLen + " found, treating as if there was no username set");
+			logger.log(POILogger.WARN, "Warning - invalid username length " + usernameLen + " found, treating as if there was no username set");
 			usernameLen = 0;
 		}
 
@@ -177,12 +200,12 @@ public class CurrentUserAtom
 		int len = 2*(int)usernameLen;
 
 		if(_contents.length >= start+len) {
-			byte[] textBytes = new byte[len];
+			byte[] textBytes = IOUtils.safelyAllocate(len, MAX_RECORD_LENGTH);
 			System.arraycopy(_contents,start,textBytes,0,len);
 			lastEditUser = StringUtil.getFromUnicodeLE(textBytes);
 		} else {
 			// Fake from the 8 bit version
-			byte[] textBytes = new byte[(int)usernameLen];
+			byte[] textBytes = IOUtils.safelyAllocate(usernameLen, MAX_RECORD_LENGTH);
 			System.arraycopy(_contents,28,textBytes,0,(int)usernameLen);
 			lastEditUser = StringUtil.getFromCompressedUnicode(textBytes,0,(int)usernameLen);
 		}
@@ -199,7 +222,7 @@ public class CurrentUserAtom
 		//  4 = revision
 		//  3 * len = ascii + unicode
 		int size = 8 + 20 + 4 + (3 * lastEditUser.length());
-		_contents = new byte[size];
+		_contents = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH);
 
 		// First we have a 8 byte atom header
 		System.arraycopy(atomHeader,0,_contents,0,4);	
@@ -211,14 +234,14 @@ public class CurrentUserAtom
 		LittleEndian.putInt(_contents,8,20);
 
 		// Now the ppt un-encrypted header token (4 bytes)
-		System.arraycopy(headerToken,0,_contents,12,4);
+		System.arraycopy((isEncrypted ? encHeaderToken : headerToken),0,_contents,12,4);
 
 		// Now the current edit offset
 		LittleEndian.putInt(_contents,16,(int)currentEditOffset);
 
 		// The username gets stored twice, once as US 
 		//  ascii, and again as unicode laster on
-		byte[] asciiUN = new byte[lastEditUser.length()];
+		byte[] asciiUN = IOUtils.safelyAllocate(lastEditUser.length(), MAX_RECORD_LENGTH);
 		StringUtil.putCompressedUnicode(lastEditUser,asciiUN,0);
 		
 		// Now we're able to do the length of the last edited user
@@ -240,7 +263,7 @@ public class CurrentUserAtom
 		LittleEndian.putInt(_contents,28+asciiUN.length,(int)releaseVersion);
 
 		// username in unicode
-		byte [] ucUN = new byte[lastEditUser.length()*2];
+		byte [] ucUN = IOUtils.safelyAllocate(lastEditUser.length()*2, MAX_RECORD_LENGTH);
 		StringUtil.putUnicodeLE(lastEditUser,ucUN,0);
 		System.arraycopy(ucUN,0,_contents,28+asciiUN.length+4,ucUN.length);
 
@@ -251,7 +274,7 @@ public class CurrentUserAtom
 	/**
 	 * Writes ourselves back out to a filesystem
 	 */
-	public void writeToFS(POIFSFileSystem fs) throws IOException {
+	public void writeToFS(NPOIFSFileSystem fs) throws IOException {
 		// Grab contents
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		writeOut(baos);
@@ -259,6 +282,6 @@ public class CurrentUserAtom
 			new ByteArrayInputStream(baos.toByteArray());
 
 		// Write out
-		fs.createDocument(bais,"Current User");
+		fs.createOrUpdateDocument(bais,"Current User");
 	}
 }

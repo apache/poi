@@ -14,37 +14,43 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.model;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import java.io.*;
-import java.awt.*;
 import java.awt.geom.Rectangle2D;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 
-import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.hslf.HSLFSlideShow;
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.usermodel.HSLFPictureData;
+import org.apache.poi.hslf.usermodel.HSLFSlide;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.sl.usermodel.PictureData.PictureType;
+import org.junit.Test;
 
 /**
  * Test <code>MovieShape</code> object.
- * 
- * @author Yegor Kozlov
  */
-public class TestMovieShape extends TestCase {
+public final class TestMovieShape {
 
-    protected String cwd = System.getProperty("HSLF.testdata.path");
+    private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
+    @Test
     public void testCreate() throws Exception {
-        SlideShow ppt = new SlideShow();
+        HSLFSlideShow ppt = new HSLFSlideShow();
 
-        Slide slide = ppt.createSlide();
+        HSLFSlide slide = ppt.createSlide();
 
-        String path = cwd + "/test-movie.mpg";
+        String path = "/test-movie.mpg";
         int movieIdx = ppt.addMovie(path, MovieShape.MOVIE_MPEG);
-        int thumbnailIdx = ppt.addPicture(new File(cwd, "tomcat.png"), Picture.PNG);
+        HSLFPictureData thumbnailData = ppt.addPicture(_slTests.readFile("tomcat.png"), PictureType.PNG);
 
-        MovieShape shape = new MovieShape(movieIdx, thumbnailIdx);
-        shape.setAnchor(new Rectangle2D.Float(300,225,120,90));
+        MovieShape shape = new MovieShape(movieIdx, thumbnailData);
+        shape.setAnchor(new Rectangle2D.Double(300,225,120,90));
         slide.addShape(shape);
 
         assertEquals(path, shape.getPath());
@@ -55,12 +61,10 @@ public class TestMovieShape extends TestCase {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ppt.write(out);
 
-        ppt = new SlideShow(new ByteArrayInputStream(out.toByteArray()));
-        slide = ppt.getSlides()[0];
-        shape = (MovieShape)slide.getShapes()[0];
+        ppt = new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray()));
+        slide = ppt.getSlides().get(0);
+        shape = (MovieShape)slide.getShapes().get(0);
         assertEquals(path, shape.getPath());
         assertFalse(shape.isAutoPlay());
-
     }
-
 }

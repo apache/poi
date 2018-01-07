@@ -25,11 +25,8 @@ import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Border Formatting Block of the Conditional Formatting Rule Record.
- *
- * @author Dmitriy Kumshayev
  */
-public final class BorderFormatting {
-
+public final class BorderFormatting implements Cloneable {
     /** No border */
     public final static short    BORDER_NONE                = 0x0;
     /** Thin border */
@@ -89,6 +86,9 @@ public final class BorderFormatting {
         field_14_border_styles2    = in.readInt();
     }
 
+    public int getDataLength() {
+        return 8;
+    }
 
     /**
      * set the type of border to use for the left border of the cell
@@ -321,7 +321,7 @@ public final class BorderFormatting {
     /**
      * get the color to use for the left border
      * @see org.apache.poi.hssf.usermodel.HSSFPalette#getColor(short)
-     * @param color The index of the color definition
+     * @return  The index of the color definition
      */
     public int getLeftBorderColor() {
         return bordLeftLineColor.getValue(field_13_border_styles1);
@@ -338,7 +338,7 @@ public final class BorderFormatting {
     /**
      * get the color to use for the right border
      * @see org.apache.poi.hssf.usermodel.HSSFPalette#getColor(short)
-     * @param color The index of the color definition
+     * @return The index of the color definition
      */
     public int getRightBorderColor() {
         return bordRightLineColor.getValue(field_13_border_styles1);
@@ -355,7 +355,7 @@ public final class BorderFormatting {
     /**
      * get the color to use for the top border
      * @see org.apache.poi.hssf.usermodel.HSSFPalette#getColor(short)
-     * @param color The index of the color definition
+     * @return The index of the color definition
      */
     public int getTopBorderColor() {
         return bordTopLineColor.getValue(field_14_border_styles2);
@@ -373,7 +373,7 @@ public final class BorderFormatting {
     /**
      * get the color to use for the bottom border
      * @see org.apache.poi.hssf.usermodel.HSSFPalette#getColor(short)
-     * @param color The index of the color definition
+     * @return The index of the color definition
      */
     public int getBottomBorderColor() {
         return bordBottomLineColor.getValue(field_14_border_styles2);
@@ -390,7 +390,7 @@ public final class BorderFormatting {
     /**
      * get the color to use for the diagonal border
      * @see org.apache.poi.hssf.usermodel.HSSFPalette#getColor(short)
-     * @param color The index of the color definition
+     * @return The index of the color definition
      */
     public int getDiagonalBorderColor() {
         return bordDiagLineColor.getValue(field_14_border_styles2);
@@ -446,7 +446,8 @@ public final class BorderFormatting {
         return buffer.toString();
     }
 
-    public Object clone() {
+    @Override
+    public BorderFormatting clone() {
       BorderFormatting rec = new BorderFormatting();
       rec.field_13_border_styles1 = field_13_border_styles1;
       rec.field_14_border_styles2 = field_14_border_styles2;

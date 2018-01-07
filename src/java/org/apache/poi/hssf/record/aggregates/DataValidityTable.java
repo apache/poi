@@ -23,12 +23,10 @@ import java.util.List;
 import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.record.DVALRecord;
 import org.apache.poi.hssf.record.DVRecord;
-import org.apache.poi.hssf.record.Record;
 
 /**
- * Manages the DVALRecord and DVRecords for a single sheet<br/>
+ * Manages the DVALRecord and DVRecords for a single sheet<p>
  * See OOO excelfileformat.pdf section 4.14
- * @author Josh Micich
  */
 public final class DataValidityTable extends RecordAggregate {
 
@@ -37,20 +35,20 @@ public final class DataValidityTable extends RecordAggregate {
 	 * The list of data validations for the current sheet.
 	 * Note - this may be empty (contrary to OOO documentation)
 	 */
-	private final List _validationList;
+	private final List<DVRecord> _validationList;
 
 	public DataValidityTable(RecordStream rs) {
 		_headerRec = (DVALRecord) rs.getNext();
-		List temp = new ArrayList();
+		List<DVRecord> temp = new ArrayList<>();
 		while (rs.peekNextClass() == DVRecord.class) {
-			temp.add(rs.getNext());
+			temp.add((DVRecord) rs.getNext());
 		}
 		_validationList = temp;
 	}
 
 	public DataValidityTable() {
 		_headerRec = new DVALRecord();
-		_validationList = new ArrayList();
+		_validationList = new ArrayList<>();
 	}
 
 	public void visitContainedRecords(RecordVisitor rv) {
@@ -59,10 +57,10 @@ public final class DataValidityTable extends RecordAggregate {
 		}
 		rv.visitRecord(_headerRec);
 		for (int i = 0; i < _validationList.size(); i++) {
-			rv.visitRecord((Record) _validationList.get(i));
+			rv.visitRecord(_validationList.get(i));
 		}
 	}
-	
+
 	public void addDataValidation(DVRecord dvRecord) {
 		_validationList.add(dvRecord);
 		_headerRec.setDVRecNo(_validationList.size());

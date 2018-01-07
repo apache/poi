@@ -46,7 +46,7 @@ public interface POIFSViewable
      */
 
     public Object [] getViewableArray();
-
+    
     /**
      * Get an Iterator of objects, some of which may implement
      * POIFSViewable
@@ -54,8 +54,7 @@ public interface POIFSViewable
      * @return an Iterator; may not be null, but may have an empty
      * back end store
      */
-
-    public Iterator getViewableIterator();
+    public Iterator<Object> getViewableIterator();
 
     /**
      * Give viewers a hint as to whether to call getViewableArray or

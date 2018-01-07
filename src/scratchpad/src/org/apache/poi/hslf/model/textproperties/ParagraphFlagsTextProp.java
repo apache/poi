@@ -17,25 +17,25 @@
 
 package org.apache.poi.hslf.model.textproperties;
 
-/** 
+/**
  * Definition for the common paragraph text property bitset.
  *
  * @author Yegor Kozlov
  */
-public class ParagraphFlagsTextProp extends BitMaskTextProp {
+public final class ParagraphFlagsTextProp extends BitMaskTextProp {
 	public static final int BULLET_IDX = 0;
 	public static final int BULLET_HARDFONT_IDX = 1;
 	public static final int BULLET_HARDCOLOR_IDX = 2;
 	public static final int BULLET_HARDSIZE_IDX = 4;
 
-    public static String NAME = "paragraph_flags";
+    public static final String NAME = "paragraph_flags";
 
 	public ParagraphFlagsTextProp() {
-		super(2,  0xF, NAME, new String[] {
-					"bullet",
-                    "bullet.hardfont",
-					"bullet.hardcolor",
-                    "bullet.hardsize"}
+		super(2,  0xF, NAME,
+			"bullet",
+            "bullet.hardfont",
+			"bullet.hardcolor",
+            "bullet.hardsize"
 		);
 	}
 }

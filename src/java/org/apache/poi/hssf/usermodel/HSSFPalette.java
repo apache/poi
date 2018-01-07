@@ -17,26 +17,26 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import java.util.Locale;
+
 import org.apache.poi.hssf.record.PaletteRecord;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 
 /**
  * Represents a workbook color palette.
  * Internally, the XLS format refers to colors using an offset into the palette
  * record.  Thus, the first color in the palette has the index 0x8, the second
  * has the index 0x9, etc. through 0x40
- *
- * @author Brian Sanders (bsanders at risklabs dot com)
  */
-public class HSSFPalette
-{
-    private PaletteRecord palette;
-    
+public final class HSSFPalette {
+    private PaletteRecord _palette;
+
     protected HSSFPalette(PaletteRecord palette)
     {
-        this.palette = palette;
+        _palette = palette;
     }
-    
+
     /**
      * Retrieves the color at a given index
      *
@@ -45,18 +45,14 @@ public class HSSFPalette
      */
     public HSSFColor getColor(short index)
     {
-    	//Handle the special AUTOMATIC case
-    	if (index == HSSFColor.AUTOMATIC.index)
-    		return HSSFColor.AUTOMATIC.getInstance();
-    	else {
-          byte[] b = palette.getColor(index);
-          if (b != null)
-          {
-             return new CustomColor(index, b);
-          }
-    	}
-        return null;
+        //Handle the special AUTOMATIC case
+        if (index == HSSFColorPredefined.AUTOMATIC.getIndex()) {
+            return HSSFColorPredefined.AUTOMATIC.getColor();
+        }
+        byte[] b = _palette.getColor(index);
+        return (b == null) ? null : new CustomColor(index, b);
     }
+
     /**
      * Retrieves the color at a given index
      *
@@ -66,9 +62,9 @@ public class HSSFPalette
     public HSSFColor getColor(int index) {
     	return getColor((short)index);
     }
-    
+
     /**
-     * Finds the first occurance of a given color
+     * Finds the first occurrence of a given color
      *
      * @param red the RGB red component, between 0 and 255 inclusive
      * @param green the RGB green component, between 0 and 255 inclusive
@@ -77,9 +73,9 @@ public class HSSFPalette
      */
     public HSSFColor findColor(byte red, byte green, byte blue)
     {
-        byte[] b = palette.getColor(PaletteRecord.FIRST_COLOR_INDEX);
-        for (short i = (short) PaletteRecord.FIRST_COLOR_INDEX; b != null;
-            b = palette.getColor(++i))
+        byte[] b = _palette.getColor(PaletteRecord.FIRST_COLOR_INDEX);
+        for (short i = PaletteRecord.FIRST_COLOR_INDEX; b != null;
+            b = _palette.getColor(++i))
         {
             if (b[0] == red && b[1] == green && b[2] == blue)
             {
@@ -100,16 +96,30 @@ public class HSSFPalette
      * @return  The closest color or null if there are no custom
      *          colors currently defined.
      */
-    public HSSFColor findSimilarColor(byte red, byte green, byte blue)
-    {
+    public HSSFColor findSimilarColor(byte red, byte green, byte blue) {
+    	return findSimilarColor(unsignedInt(red), unsignedInt(green), unsignedInt(blue));
+    }
+    /**
+     * Finds the closest matching color in the custom palette.  The
+     * method for finding the distance between the colors is fairly
+     * primative.
+     *
+     * @param red   The red component of the color to match.
+     * @param green The green component of the color to match.
+     * @param blue  The blue component of the color to match.
+     * @return  The closest color or null if there are no custom
+     *          colors currently defined.
+     */
+    public HSSFColor findSimilarColor(int red, int green, int blue) {
         HSSFColor result = null;
         int minColorDistance = Integer.MAX_VALUE;
-        byte[] b = palette.getColor(PaletteRecord.FIRST_COLOR_INDEX);
-        for (short i = (short) PaletteRecord.FIRST_COLOR_INDEX; b != null;
-            b = palette.getColor(++i))
+        byte[] b = _palette.getColor(PaletteRecord.FIRST_COLOR_INDEX);
+        for (short i = PaletteRecord.FIRST_COLOR_INDEX; b != null;
+            b = _palette.getColor(++i))
         {
-            int colorDistance = Math.abs(red - b[0]) + 
-            	Math.abs(green - b[1]) + Math.abs(blue - b[2]);
+            int colorDistance = Math.abs(red - unsignedInt(b[0])) +
+            	Math.abs(green - unsignedInt(b[1])) +
+            	Math.abs(blue - unsignedInt(b[2]));
             if (colorDistance < minColorDistance)
             {
                 minColorDistance = colorDistance;
@@ -117,6 +127,14 @@ public class HSSFPalette
             }
         }
         return result;
+    }
+    
+    /**
+     * Turn a byte of between -127 and 127 into something between
+     *  0 and 255, so distance calculations work as expected.
+     */
+    private int unsignedInt(byte b) {
+    	return 0xFF & b;
     }
 
     /**
@@ -129,7 +147,7 @@ public class HSSFPalette
      */
     public void setColorAtIndex(short index, byte red, byte green, byte blue)
     {
-        palette.setColor(index, red, green, blue);
+        _palette.setColor(index, red, green, blue);
     }
 
     /**
@@ -144,9 +162,9 @@ public class HSSFPalette
      */
     public HSSFColor addColor( byte red, byte green, byte blue )
     {
-        byte[] b = palette.getColor(PaletteRecord.FIRST_COLOR_INDEX);
+        byte[] b = _palette.getColor(PaletteRecord.FIRST_COLOR_INDEX);
         short i;
-        for (i = (short) PaletteRecord.FIRST_COLOR_INDEX; i < PaletteRecord.STANDARD_PALETTE_SIZE + PaletteRecord.FIRST_COLOR_INDEX; b = palette.getColor(++i))
+        for (i = PaletteRecord.FIRST_COLOR_INDEX; i < PaletteRecord.STANDARD_PALETTE_SIZE + PaletteRecord.FIRST_COLOR_INDEX; b = _palette.getColor(++i))
         {
             if (b == null)
             {
@@ -157,52 +175,54 @@ public class HSSFPalette
         throw new RuntimeException("Could not find free color index");
     }
 
-    private static class CustomColor extends HSSFColor
-    {
-        private short byteOffset;
-        private byte red;
-        private byte green;
-        private byte blue;
-        
-        private CustomColor(short byteOffset, byte[] colors)
+    private static final class CustomColor extends HSSFColor {
+        private short _byteOffset;
+        private byte _red;
+        private byte _green;
+        private byte _blue;
+
+        public CustomColor(short byteOffset, byte[] colors)
         {
             this(byteOffset, colors[0], colors[1], colors[2]);
         }
-        
+
         private CustomColor(short byteOffset, byte red, byte green, byte blue)
         {
-            this.byteOffset = byteOffset;
-            this.red = red;
-            this.green = green;
-            this.blue = blue;
+            _byteOffset = byteOffset;
+            _red = red;
+            _green = green;
+            _blue = blue;
         }
-        
+
+        @Override
         public short getIndex()
         {
-            return byteOffset;
+            return _byteOffset;
         }
-        
+
+        @Override
         public short[] getTriplet()
         {
             return new short[]
             {
-                (short) (red   & 0xff),
-                (short) (green & 0xff),
-                (short) (blue  & 0xff)
+                (short) (_red   & 0xff),
+                (short) (_green & 0xff),
+                (short) (_blue  & 0xff)
             };
         }
-        
+
+        @Override
         public String getHexString()
         {
             StringBuffer sb = new StringBuffer();
-            sb.append(getGnumericPart(red));
+            sb.append(getGnumericPart(_red));
             sb.append(':');
-            sb.append(getGnumericPart(green));
+            sb.append(getGnumericPart(_green));
             sb.append(':');
-            sb.append(getGnumericPart(blue));
+            sb.append(getGnumericPart(_blue));
             return sb.toString();
         }
-        
+
         private String getGnumericPart(byte color)
         {
             String s;
@@ -214,7 +234,7 @@ public class HSSFPalette
             {
                 int c = color & 0xff; //as unsigned
                 c = (c << 8) | c; //pad to 16-bit
-                s = Integer.toHexString(c).toUpperCase();
+                s = Integer.toHexString(c).toUpperCase(Locale.ROOT);
                 while (s.length() < 4)
                 {
                     s = "0" + s;

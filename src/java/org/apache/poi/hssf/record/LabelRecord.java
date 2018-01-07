@@ -18,17 +18,20 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.HexDump;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.RecordFormatException;
 
 /**
- * Label Record (0x0204) - read only support for strings stored directly in the cell..  Don't
- * use this (except to read), use LabelSST instead <P>
- * REFERENCE:  PG 325 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author Jason Height (jheight at chariot dot net dot au)
- * @version 2.0-pre
+ * Label Record (0x0204) - read only support for strings stored directly in the cell...
+ * Don't use this (except to read), use LabelSST instead <P>
+ * REFERENCE:  PG 325 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
+ * 
  * @see org.apache.poi.hssf.record.LabelSSTRecord
  */
-public final class LabelRecord extends Record implements CellValueRecordInterface {
+public final class LabelRecord extends Record implements CellValueRecordInterface, Cloneable {
+    private final static POILogger logger = POILogFactory.getLogger(LabelRecord.class);
+
     public final static short sid = 0x0204;
 
     private int               field_1_row;
@@ -62,21 +65,31 @@ public final class LabelRecord extends Record implements CellValueRecordInterfac
         } else {
             field_6_value = "";
         }
+
+        if (in.remaining() > 0) {
+           logger.log(POILogger.INFO,
+                   "LabelRecord data remains: " + in.remaining() +
+                           " : " + HexDump.toHex(in.readRemainder())
+           );
+        }
     }
 
 /*
  * READ ONLY ACCESS... THIS IS FOR COMPATIBILITY ONLY...USE LABELSST! public
  */
+    @Override
     public int getRow()
     {
         return field_1_row;
     }
 
+    @Override
     public short getColumn()
     {
         return field_2_column;
     }
 
+    @Override
     public short getXFIndex()
     {
         return field_3_xf_index;
@@ -97,7 +110,7 @@ public final class LabelRecord extends Record implements CellValueRecordInterfac
      */
     public boolean isUnCompressedUnicode()
     {
-        return (field_5_unicode_flag == 1);
+        return (field_5_unicode_flag & 0x01) != 0;
     }
 
     /**
@@ -114,18 +127,22 @@ public final class LabelRecord extends Record implements CellValueRecordInterfac
     /**
      * THROWS A RUNTIME EXCEPTION..  USE LABELSSTRecords.  YOU HAVE NO REASON to use LABELRecord!!
      */
+    @Override
     public int serialize(int offset, byte [] data) {
         throw new RecordFormatException("Label Records are supported READ ONLY...convert to LabelSST");
     }
-    protected int getDataSize() {
+    @Override
+    public int getRecordSize() {
         throw new RecordFormatException("Label Records are supported READ ONLY...convert to LabelSST");
     }
 
+    @Override
     public short getSid()
     {
         return sid;
     }
 
+    @Override
     public String toString()
     {
         StringBuffer sb = new StringBuffer();
@@ -143,6 +160,7 @@ public final class LabelRecord extends Record implements CellValueRecordInterfac
     /**
 	 * NO-OP!
 	 */
+    @Override
     public void setColumn(short col)
     {
     }
@@ -150,6 +168,7 @@ public final class LabelRecord extends Record implements CellValueRecordInterfac
     /**
      * NO-OP!
      */
+    @Override
     public void setRow(int row)
     {
     }
@@ -157,11 +176,13 @@ public final class LabelRecord extends Record implements CellValueRecordInterfac
     /**
      * no op!
      */
+    @Override
     public void setXFIndex(short xf)
     {
     }
 
-    public Object clone() {
+    @Override
+    public LabelRecord clone() {
       LabelRecord rec = new LabelRecord();
       rec.field_1_row = field_1_row;
       rec.field_2_column = field_2_column;

@@ -17,323 +17,180 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.util.Iterator;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 
-import junit.framework.TestCase;
+import java.io.IOException;
 
+import org.apache.poi.ss.usermodel.BaseTestXRow;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellCopyPolicy;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.model.SharedStringsTable;
-import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.xssf.XSSFITestDataProvider;
+import org.junit.Test;
 
 /**
  * Tests for XSSFRow
  */
-public final class TestXSSFRow extends TestCase {
+public final class TestXSSFRow extends BaseTestXRow {
 
-    /**
-     * Test adding cells to a row in various places and see if we can find them again.
-     */
-    public void testAddAndIterateCells() {
-        XSSFSheet sheet = createParentObjects();
-        XSSFRow row = sheet.createRow(0);
-
-        // One cell at the beginning
-        Cell cell1 = row.createCell((short) 1);
-        Iterator<Cell> it = row.cellIterator();
-        assertTrue(it.hasNext());
-        assertTrue(cell1 == it.next());
-        assertFalse(it.hasNext());
-
-        // Add another cell at the end
-        Cell cell2 = row.createCell((short) 99);
-        it = row.cellIterator();
-        assertTrue(it.hasNext());
-        assertTrue(cell1 == it.next());
-        assertTrue(it.hasNext());
-        assertTrue(cell2 == it.next());
-
-        // Add another cell at the beginning
-        Cell cell3 = row.createCell((short) 0);
-        it = row.cellIterator();
-        assertTrue(it.hasNext());
-        assertTrue(cell3 == it.next());
-        assertTrue(it.hasNext());
-        assertTrue(cell1 == it.next());
-        assertTrue(it.hasNext());
-        assertTrue(cell2 == it.next());
-
-        // Replace cell1
-        Cell cell4 = row.createCell((short) 1);
-        it = row.cellIterator();
-        assertTrue(it.hasNext());
-        assertTrue(cell3 == it.next());
-        assertTrue(it.hasNext());
-        assertTrue(cell4 == it.next());
-        assertTrue(it.hasNext());
-        assertTrue(cell2 == it.next());
-        assertFalse(it.hasNext());
-
-        // Add another cell, specifying the cellType
-        Cell cell5 = row.createCell((short) 2, Cell.CELL_TYPE_STRING);
-        it = row.cellIterator();
-        assertNotNull(cell5);
-        assertTrue(it.hasNext());
-        assertTrue(cell3 == it.next());
-        assertTrue(it.hasNext());
-        assertTrue(cell4 == it.next());
-        assertTrue(it.hasNext());
-        assertTrue(cell5 == it.next());
-        assertTrue(it.hasNext());
-        assertTrue(cell2 == it.next());
-        assertEquals(Cell.CELL_TYPE_STRING, cell5.getCellType());
+    public TestXSSFRow() {
+        super(XSSFITestDataProvider.instance);
     }
-
-    public void testGetCell() {
-        XSSFRow row = getSampleRow();
-
-        assertNotNull(row.getCell((short) 2));
-        assertNotNull(row.getCell((short) 3));
-        assertNotNull(row.getCell((short) 4));
-        // cell3 may have been created as CELL_TYPE_NUMERIC, but since there is no numeric
-        // value set yet, its cell type is classified as 'blank'
-        assertEquals(Cell.CELL_TYPE_BLANK, row.getCell((short) 3).getCellType());
-        assertNull(row.getCell((short) 5));
+    
+    @Test
+    public void testCopyRowFrom() throws IOException {
+        final XSSFWorkbook workbook = new XSSFWorkbook();
+        final XSSFSheet sheet = workbook.createSheet("test");
+        final XSSFRow srcRow = sheet.createRow(0);
+        srcRow.createCell(0).setCellValue("Hello");
+        final XSSFRow destRow = sheet.createRow(1);
+        
+        destRow.copyRowFrom(srcRow, new CellCopyPolicy());
+        assertNotNull(destRow.getCell(0));
+        assertEquals("Hello", destRow.getCell(0).getStringCellValue());
+        
+        workbook.close();
     }
+    
+    @Test
+    public void testCopyRowFromExternalSheet() throws IOException {
+        final XSSFWorkbook workbook = new XSSFWorkbook();
+        final Sheet srcSheet = workbook.createSheet("src");
+        final XSSFSheet destSheet = workbook.createSheet("dest");
+        workbook.createSheet("other");
+        
+        final Row srcRow = srcSheet.createRow(0);
+        int col = 0;
+        //Test 2D and 3D Ref Ptgs (Pxg for OOXML Workbooks)
+        srcRow.createCell(col++).setCellFormula("B5");
+        srcRow.createCell(col++).setCellFormula("src!B5");
+        srcRow.createCell(col++).setCellFormula("dest!B5");
+        srcRow.createCell(col++).setCellFormula("other!B5");
+        
+        //Test 2D and 3D Ref Ptgs with absolute row
+        srcRow.createCell(col++).setCellFormula("B$5");
+        srcRow.createCell(col++).setCellFormula("src!B$5");
+        srcRow.createCell(col++).setCellFormula("dest!B$5");
+        srcRow.createCell(col++).setCellFormula("other!B$5");
+        
+        //Test 2D and 3D Area Ptgs (Pxg for OOXML Workbooks)
+        srcRow.createCell(col++).setCellFormula("SUM(B5:D$5)");
+        srcRow.createCell(col++).setCellFormula("SUM(src!B5:D$5)");
+        srcRow.createCell(col++).setCellFormula("SUM(dest!B5:D$5)");
+        srcRow.createCell(col++).setCellFormula("SUM(other!B5:D$5)");
 
-    public void testGetPhysicalNumberOfCells() {
-        XSSFRow row = getSampleRow();
-        assertEquals(7, row.getPhysicalNumberOfCells());
+        //////////////////
+
+        final XSSFRow destRow = destSheet.createRow(1);
+        destRow.copyRowFrom(srcRow, new CellCopyPolicy());
+        
+        //////////////////
+        
+        //Test 2D and 3D Ref Ptgs (Pxg for OOXML Workbooks)
+        col = 0;
+        Cell cell = destRow.getCell(col++);
+        assertNotNull(cell);
+        assertEquals("RefPtg", "B6", cell.getCellFormula());
+        
+        cell = destRow.getCell(col++);
+        assertNotNull(cell);
+        assertEquals("Ref3DPtg", "src!B6", cell.getCellFormula());
+        
+        cell = destRow.getCell(col++);
+        assertNotNull(cell);
+        assertEquals("Ref3DPtg", "dest!B6", cell.getCellFormula());
+        
+        cell = destRow.getCell(col++);
+        assertNotNull(cell);
+        assertEquals("Ref3DPtg", "other!B6", cell.getCellFormula());
+        
+        /////////////////////////////////////////////
+        
+        //Test 2D and 3D Ref Ptgs with absolute row (Ptg row number shouldn't change)
+        cell = destRow.getCell(col++);
+        assertNotNull(cell);
+        assertEquals("RefPtg", "B$5", cell.getCellFormula());
+        
+        cell = destRow.getCell(col++);
+        assertNotNull(cell);
+        assertEquals("Ref3DPtg", "src!B$5", cell.getCellFormula());
+        
+        cell = destRow.getCell(col++);
+        assertNotNull(cell);
+        assertEquals("Ref3DPtg", "dest!B$5", cell.getCellFormula());
+        
+        cell = destRow.getCell(col++);
+        assertNotNull(cell);
+        assertEquals("Ref3DPtg", "other!B$5", cell.getCellFormula());
+        
+        //////////////////////////////////////////
+        
+        //Test 2D and 3D Area Ptgs (Pxg for OOXML Workbooks)
+        // Note: absolute row changes from last cell to first cell in order
+        // to maintain topLeft:bottomRight order
+        cell = destRow.getCell(col++);
+        assertNotNull(cell);
+        assertEquals("Area2DPtg", "SUM(B$5:D6)", cell.getCellFormula());
+        
+        cell = destRow.getCell(col++);
+        assertNotNull(cell);
+        assertEquals("Area3DPtg", "SUM(src!B$5:D6)", cell.getCellFormula());
+        
+        cell = destRow.getCell(col++);
+        assertNotNull(destRow.getCell(6));
+        assertEquals("Area3DPtg", "SUM(dest!B$5:D6)", cell.getCellFormula());
+        
+        cell = destRow.getCell(col++);
+        assertNotNull(destRow.getCell(7));
+        assertEquals("Area3DPtg", "SUM(other!B$5:D6)", cell.getCellFormula());
+        
+        workbook.close();
     }
-
-    public void testGetFirstCellNum() {
-        // Test a row with some cells
-        XSSFRow row = getSampleRow();
-        assertFalse(row.getFirstCellNum() == (short) 0);
-        assertEquals((short) 2, row.getFirstCellNum());
-
-        // Test after removing the first cell
-        Cell cell = row.getCell((short) 2);
-        row.removeCell(cell);
-        assertFalse(row.getFirstCellNum() == (short) 2);
-
-        // Test a row without cells
-        XSSFSheet sheet = createParentObjects();
-        XSSFRow emptyRow = sheet.createRow(0);
-        assertEquals(-1, emptyRow.getFirstCellNum());
-    }
-
-    public void testGetSetHeight() {
-        XSSFRow row = getSampleRow();
-        // I assume that "ht" attribute value is in 'points', please verify that
-        // Test that no rowHeight is set
-        assertEquals(row.getSheet().getDefaultRowHeight(), row.getHeight());
-        // Set a rowHeight and test the new value
-        row.setHeight((short) 240);
-        assertEquals((short) 240.0, row.getHeight());
-        assertEquals(12.0f, row.getHeightInPoints());
-        // Set a new rowHeight in points and test the new value
-        row.setHeightInPoints(13);
-        assertEquals((float) 13.0, row.getHeightInPoints());
-        assertEquals((short)(13.0*20), row.getHeight());
-    }
-
-    public void testGetSetZeroHeight() throws Exception {
-        XSSFRow row = getSampleRow();
-        assertFalse(row.getZeroHeight());
-        row.setZeroHeight(true);
-        assertTrue(row.getZeroHeight());
-    }
-
-    /**
-     * Tests for the missing/blank cell policy stuff
-     */
-    public void testGetCellPolicy() throws Exception {
-        XSSFSheet sheet = createParentObjects();
-        XSSFRow row = sheet.createRow(0);
-
-        // 0 -> string
-        // 1 -> num
-        // 2 missing
-        // 3 missing
-        // 4 -> blank
-        // 5 -> num
-        row.createCell((short)0).setCellValue(new XSSFRichTextString("test"));
-        row.createCell((short)1).setCellValue(3.2);
-        row.createCell((short)4, Cell.CELL_TYPE_BLANK);
-        row.createCell((short)5).setCellValue(4);
-
-        // First up, no policy
-        assertEquals(Cell.CELL_TYPE_STRING,  row.getCell(0).getCellType());
-        assertEquals(Cell.CELL_TYPE_NUMERIC, row.getCell(1).getCellType());
-        assertEquals(null, row.getCell(2));
-        assertEquals(null, row.getCell(3));
-        assertEquals(Cell.CELL_TYPE_BLANK,   row.getCell(4).getCellType());
-        assertEquals(Cell.CELL_TYPE_NUMERIC, row.getCell(5).getCellType());
-
-        // RETURN_NULL_AND_BLANK - same as default
-        assertEquals(Cell.CELL_TYPE_STRING,  row.getCell(0, Row.RETURN_NULL_AND_BLANK).getCellType());
-        assertEquals(Cell.CELL_TYPE_NUMERIC, row.getCell(1, Row.RETURN_NULL_AND_BLANK).getCellType());
-        assertEquals(null, row.getCell(2, Row.RETURN_NULL_AND_BLANK));
-        assertEquals(null, row.getCell(3, Row.RETURN_NULL_AND_BLANK));
-        assertEquals(Cell.CELL_TYPE_BLANK,   row.getCell(4, Row.RETURN_NULL_AND_BLANK).getCellType());
-        assertEquals(Cell.CELL_TYPE_NUMERIC, row.getCell(5, Row.RETURN_NULL_AND_BLANK).getCellType());
-
-        // RETURN_BLANK_AS_NULL - nearly the same
-        assertEquals(Cell.CELL_TYPE_STRING,  row.getCell(0, XSSFRow.RETURN_BLANK_AS_NULL).getCellType());
-        assertEquals(Cell.CELL_TYPE_NUMERIC, row.getCell(1, XSSFRow.RETURN_BLANK_AS_NULL).getCellType());
-        assertEquals(null, row.getCell(2, XSSFRow.RETURN_BLANK_AS_NULL));
-        assertEquals(null, row.getCell(3, XSSFRow.RETURN_BLANK_AS_NULL));
-        assertEquals(null, row.getCell(4, XSSFRow.RETURN_BLANK_AS_NULL));
-        assertEquals(Cell.CELL_TYPE_NUMERIC, row.getCell(5, XSSFRow.RETURN_BLANK_AS_NULL).getCellType());
-
-        // CREATE_NULL_AS_BLANK - creates as needed
-        assertEquals(Cell.CELL_TYPE_STRING,  row.getCell(0, XSSFRow.CREATE_NULL_AS_BLANK).getCellType());
-        assertEquals(Cell.CELL_TYPE_NUMERIC, row.getCell(1, XSSFRow.CREATE_NULL_AS_BLANK).getCellType());
-        assertEquals(Cell.CELL_TYPE_BLANK,   row.getCell(2, XSSFRow.CREATE_NULL_AS_BLANK).getCellType());
-        assertEquals(Cell.CELL_TYPE_BLANK,   row.getCell(3, XSSFRow.CREATE_NULL_AS_BLANK).getCellType());
-        assertEquals(Cell.CELL_TYPE_BLANK,   row.getCell(4, XSSFRow.CREATE_NULL_AS_BLANK).getCellType());
-        assertEquals(Cell.CELL_TYPE_NUMERIC, row.getCell(5, XSSFRow.CREATE_NULL_AS_BLANK).getCellType());
-
-        // Check created ones get the right column
-        assertEquals((short)0, row.getCell(0, XSSFRow.CREATE_NULL_AS_BLANK).getColumnIndex());
-        assertEquals((short)1, row.getCell(1, XSSFRow.CREATE_NULL_AS_BLANK).getColumnIndex());
-        assertEquals((short)2, row.getCell(2, XSSFRow.CREATE_NULL_AS_BLANK).getColumnIndex());
-        assertEquals((short)3, row.getCell(3, XSSFRow.CREATE_NULL_AS_BLANK).getColumnIndex());
-        assertEquals((short)4, row.getCell(4, XSSFRow.CREATE_NULL_AS_BLANK).getColumnIndex());
-        assertEquals((short)5, row.getCell(5, XSSFRow.CREATE_NULL_AS_BLANK).getColumnIndex());
-    }
-
-    /**
-     * Method that returns a row with some sample cells
-     * @return row
-     */
-    private static XSSFRow getSampleRow() {
-        XSSFSheet sheet = createParentObjects();
-        XSSFRow row = sheet.createRow(0);
-        row.createCell((short) 2);
-        row.createCell((short) 3, Cell.CELL_TYPE_NUMERIC);
-        row.createCell((short) 4);
-        row.createCell((short) 6);
-        row.createCell((short) 7);
-        row.createCell((short) 8);
-        row.createCell((short) 100);
-        return row;
-    }
-
-    private static XSSFSheet createParentObjects() {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        return wb.createSheet();
-    }
-
-    /**
-     * Test that XSSFRow.getLastCellNum is consistent with HSSFRow.getLastCellNum
-     */
-    public void testLastCellNum() {
-        HSSFWorkbook wb1 = new HSSFWorkbook();
-        XSSFWorkbook wb2 = new XSSFWorkbook();
-
-        HSSFSheet sheet1 = wb1.createSheet();
-        XSSFSheet sheet2 = wb2.createSheet();
-
-        for (int i = 0; i < 10; i++) {
-            HSSFRow row1 = sheet1.createRow(i);
-            XSSFRow row2 = sheet2.createRow(i);
-
-            for (int j = 0; j < 5; j++) {
-                //before adding a cell
-                assertEquals(row1.getLastCellNum(), row2.getLastCellNum());
-
-                HSSFCell cell1 = row1.createCell(j);
-                XSSFCell cell2 = row2.createCell(j);
-
-                //after adding a cell
-                assertEquals(row1.getLastCellNum(), row2.getLastCellNum());
-            }
-        }
-    }
-
-    public void testRemoveCell() {
-        XSSFRow row = getSampleRow();
-
-        // Test removing the first cell
-        Cell firstCell = row.getCell((short) 2);
-        assertNotNull(firstCell);
-        assertEquals(7, row.getPhysicalNumberOfCells());
-        row.removeCell(firstCell);
-        assertEquals(6, row.getPhysicalNumberOfCells());
-        firstCell = row.getCell((short) 2);
-        assertNull(firstCell);
-
-        // Test removing the last cell
-        Cell lastCell = row.getCell((short) 100);
-        row.removeCell(lastCell);
-    }
-
-    public void testFirstLastCellNum() {
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = workbook.createSheet();
-        XSSFRow row = sheet.createRow(0);
-        assertEquals(-1, row.getLastCellNum());
-        assertEquals(-1, row.getFirstCellNum());
-        row.createCell(1);
-        assertEquals(2, row.getLastCellNum());
-        assertEquals(1, row.getFirstCellNum());
-        row.createCell(3);
-        assertEquals(4, row.getLastCellNum());
-        assertEquals(1, row.getFirstCellNum());
-        row.removeCell(row.getCell(3));
-        assertEquals(2, row.getLastCellNum());
-        assertEquals(1, row.getFirstCellNum());
-        row.removeCell(row.getCell(1));
-        assertEquals(-1, row.getLastCellNum());
-        assertEquals(-1, row.getFirstCellNum());
-
-        workbook = XSSFTestDataSamples.writeOutAndReadBack(workbook);
-        sheet = workbook.getSheetAt(0);
-
-        assertEquals(-1, sheet.getRow(0).getLastCellNum());
-        assertEquals(-1, sheet.getRow(0).getFirstCellNum());
-    }
-
-    public void testRowHeightCompatibility(){
-        Workbook wb1 = new HSSFWorkbook();
-        Workbook wb2 = new XSSFWorkbook();
-
-        Sheet sh1 = wb1.createSheet();
-        Sheet sh2 = wb2.createSheet();
-
-        sh2.setDefaultRowHeight(sh1.getDefaultRowHeight());
-
-        assertEquals(sh1.getDefaultRowHeight(), sh2.getDefaultRowHeight());
-
-        //junit.framework.AssertionFailedError: expected:<12.0> but was:<12.75>
-        //YK: there is a bug in HSSF version, it trunkates decimal part
-        //assertEquals(sh1.getDefaultRowHeightInPoints(), sh2.getDefaultRowHeightInPoints());
-
-        Row row1 = sh1.createRow(0);
-        Row row2 = sh2.createRow(0);
-
-        assertEquals(row1.getHeight(), row2.getHeight());
-        assertEquals(row1.getHeightInPoints(), row2.getHeightInPoints());
-        row1.setHeight((short)100);
-        row2.setHeight((short)100);
-        assertEquals(row1.getHeight(), row2.getHeight());
-        assertEquals(row1.getHeightInPoints(), row2.getHeightInPoints());
-
-        row1.setHeightInPoints(25.5f);
-        row2.setHeightInPoints(25.5f);
-        assertEquals(row1.getHeight(), row2.getHeight());
-        assertEquals(row1.getHeightInPoints(), row2.getHeightInPoints());
-
-
+    
+    @Test
+    public void testCopyRowOverwritesExistingRow() throws IOException {
+        final XSSFWorkbook workbook = new XSSFWorkbook();
+        final XSSFSheet sheet1 = workbook.createSheet("Sheet1");
+        final Sheet sheet2 = workbook.createSheet("Sheet2");
+        
+        final Row srcRow = sheet1.createRow(0);
+        final XSSFRow destRow = sheet1.createRow(1);
+        final Row observerRow = sheet1.createRow(2);
+        final Row externObserverRow = sheet2.createRow(0);
+        
+        srcRow.createCell(0).setCellValue("hello");
+        srcRow.createCell(1).setCellValue("world");
+        destRow.createCell(0).setCellValue(5.0); //A2 -> 5.0
+        destRow.createCell(1).setCellFormula("A1"); // B2 -> A1 -> "hello"
+        observerRow.createCell(0).setCellFormula("A2"); // A3 -> A2 -> 5.0
+        observerRow.createCell(1).setCellFormula("B2"); // B3 -> B2 -> A1 -> "hello"
+        externObserverRow.createCell(0).setCellFormula("Sheet1!A2"); //Sheet2!A1 -> Sheet1!A2 -> 5.0
+        
+        // overwrite existing destRow with row-copy of srcRow
+        destRow.copyRowFrom(srcRow, new CellCopyPolicy());
+        
+        // copyRowFrom should update existing destRow, rather than creating a new row and reassigning the destRow pointer
+        // to the new row (and allow the old row to be garbage collected)
+        // this is mostly so existing references to rows that are overwritten are updated
+        // rather than allowing users to continue updating rows that are no longer part of the sheet
+        assertSame("existing references to srcRow are still valid", srcRow, sheet1.getRow(0));
+        assertSame("existing references to destRow are still valid", destRow, sheet1.getRow(1));
+        assertSame("existing references to observerRow are still valid", observerRow, sheet1.getRow(2));
+        assertSame("existing references to externObserverRow are still valid", externObserverRow, sheet2.getRow(0));
+        
+        // Make sure copyRowFrom actually copied row (this is tested elsewhere)
+        assertEquals(CellType.STRING, destRow.getCell(0).getCellType());
+        assertEquals("hello", destRow.getCell(0).getStringCellValue());
+        
+        // We don't want #REF! errors if we copy a row that contains cells that are referred to by other cells outside of copied region
+        assertEquals("references to overwritten cells are unmodified", "A2", observerRow.getCell(0).getCellFormula());
+        assertEquals("references to overwritten cells are unmodified", "B2", observerRow.getCell(1).getCellFormula());
+        assertEquals("references to overwritten cells are unmodified", "Sheet1!A2", externObserverRow.getCell(0).getCellFormula());
+        
+        workbook.close();
     }
 }

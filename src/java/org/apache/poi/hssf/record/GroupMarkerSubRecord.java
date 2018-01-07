@@ -18,28 +18,31 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.HexDump;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * ftGmo (0x0006)<p/>
+ * ftGmo (0x0006)<p>
  * The group marker record is used as a position holder for groups.
-
- * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class GroupMarkerSubRecord extends SubRecord {
+public final class GroupMarkerSubRecord extends SubRecord implements Cloneable {
     public final static short sid = 0x0006;
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
+
 
     private static final byte[] EMPTY_BYTE_ARRAY = { };
 
-    private byte[] reserved;    // would really love to know what goes in here.
+    // would really love to know what goes in here.
+    private byte[] reserved;
 
     public GroupMarkerSubRecord() {
         reserved = EMPTY_BYTE_ARRAY;
     }
 
     public GroupMarkerSubRecord(LittleEndianInput in, int size) {
-        byte[] buf = new byte[size];
+        byte[] buf = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH);
         in.readFully(buf);
         reserved = buf;
     }
@@ -70,7 +73,8 @@ public final class GroupMarkerSubRecord extends SubRecord {
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public GroupMarkerSubRecord clone() {
         GroupMarkerSubRecord rec = new GroupMarkerSubRecord();
         rec.reserved = new byte[reserved.length];
         for ( int i = 0; i < reserved.length; i++ )

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,25 +14,25 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.record;
 
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertArrayEquals;
+
 import java.io.ByteArrayOutputStream;
-import java.util.Arrays;
+
+import junit.framework.TestCase;
 
 /**
  * Tests that {@link HeadersFootersAtom} works properly
  *
  * @author Yegor Kozlov
  */
-public class TestExVideoContainer extends TestCase {
+public final class TestExVideoContainer extends TestCase {
 
     // From a real file
-    private byte[] data = new byte[]{
+    private final byte[] data = new byte[]{
             0x0F, 0x00, 0x05, 0x10, (byte) 0x9E, 0x00, 0x00, 0x00,
             0x00, 0x00, 0x04, 0x10, 0x08, 0x00, 0x00, 0x00,
             0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -51,9 +50,9 @@ public class TestExVideoContainer extends TestCase {
 
 
 
-    public void testRead() throws Exception {
-		ExVideoContainer record = new ExVideoContainer(data, 0, data.length);
-		assertEquals(RecordTypes.ExVideoContainer.typeID, record.getRecordType());
+    public void testRead() {
+        ExVideoContainer record = new ExVideoContainer(data, 0, data.length);
+        assertEquals(RecordTypes.ExVideoContainer.typeID, record.getRecordType());
 
         ExMediaAtom exMedia = record.getExMediaAtom();
         assertEquals(1, exMedia.getObjectId());
@@ -67,14 +66,14 @@ public class TestExVideoContainer extends TestCase {
         assertEquals("D:\\projects\\SchulerAG\\mcom_v_1_0_4\\view\\data\\tests\\images\\cards.mpg", path.getText());
     }
 
-	public void testWrite() throws Exception {
-		ExVideoContainer record = new ExVideoContainer(data, 0, data.length);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		record.writeOut(baos);
-		byte[] b = baos.toByteArray();
+    public void testWrite() throws Exception {
+        ExVideoContainer record = new ExVideoContainer(data, 0, data.length);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        record.writeOut(baos);
+        byte[] b = baos.toByteArray();
 
-		assertTrue(Arrays.equals(data, b));
-	}
+        assertArrayEquals(data, b);
+    }
 
     public void testNewRecord() throws Exception {
         ExVideoContainer record = new ExVideoContainer();
@@ -85,6 +84,6 @@ public class TestExVideoContainer extends TestCase {
         record.writeOut(baos);
         byte[] b = baos.toByteArray();
 
-        assertTrue(Arrays.equals(data, b));
+        assertArrayEquals(data, b);
     }
 }

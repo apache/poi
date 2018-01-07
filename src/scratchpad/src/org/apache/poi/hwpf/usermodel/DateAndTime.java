@@ -15,31 +15,32 @@
    limitations under the License.
 ==================================================================== */
 
-
-
 package org.apache.poi.hwpf.usermodel;
+
+import java.util.Calendar;
 
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LocaleUtil;
 
 /**
  * This class is used to represent a date and time in a Word document.
  *
  * @author Ryan Ackley
  */
-public class DateAndTime
+public final class DateAndTime
   implements Cloneable
 {
-  public static final int SIZE = 4;
-  private short _info;
+    public static final int SIZE = 4;
+    private short _info;
     private static final BitField _minutes = BitFieldFactory.getInstance(0x3f);
     private static final BitField _hours = BitFieldFactory.getInstance(0x7c0);
     private static final BitField _dom = BitFieldFactory.getInstance(0xf800);
-  private short _info2;
+    private short _info2;
     private static final BitField _months = BitFieldFactory.getInstance(0xf);
     private static final BitField _years = BitFieldFactory.getInstance(0x1ff0);
-    private static final BitField _weekday = BitFieldFactory.getInstance(0xe000);
+    // private static final BitField _weekday = BitFieldFactory.getInstance(0xe000);
 
   public DateAndTime()
   {
@@ -50,6 +51,18 @@ public class DateAndTime
     _info = LittleEndian.getShort(buf, offset);
     _info2 = LittleEndian.getShort(buf, offset + LittleEndian.SHORT_SIZE);
   }
+  
+  public Calendar getDate() {
+     // TODO Discover if the timezone is stored somewhere else or not
+      return LocaleUtil.getLocaleCalendar(
+            _years.getValue(_info2)+1900,
+            _months.getValue(_info2)-1,
+            _dom.getValue(_info),
+            _hours.getValue(_info),
+            _minutes.getValue(_info),
+            0
+      );
+  }
 
   public void serialize(byte[] buf, int offset)
   {
@@ -57,15 +70,37 @@ public class DateAndTime
     LittleEndian.putShort(buf, offset + LittleEndian.SHORT_SIZE, _info2);
   }
 
+  @Override
   public boolean equals(Object o)
   {
+    if (!(o instanceof DateAndTime)) return false;
     DateAndTime dttm = (DateAndTime)o;
     return _info == dttm._info && _info2 == dttm._info2;
   }
 
+  @Override
+  public int hashCode() {
+      assert false : "hashCode not designed";
+      return 42; // any arbitrary constant will do
+  }
+  
   public Object clone()
     throws CloneNotSupportedException
   {
     return super.clone();
   }
+
+    public boolean isEmpty()
+    {
+        return _info == 0 && _info2 == 0;
+    }
+
+    @Override
+    public String toString()
+    {
+        if ( isEmpty() )
+            return "[DTTM] EMPTY";
+
+        return "[DTTM] " + getDate();
+    }
 }

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,44 +14,34 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hwpf;
 
-import java.io.FileInputStream;
-
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.hwpf.model.FileInformationBlock;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.POIDataSamples;
 
-import org.apache.poi.hwpf.model.*;
-import java.io.File;
+import java.io.IOException;
 
 
-public class HWPFDocFixture
+public final class HWPFDocFixture
 {
+  public static final String DEFAULT_TEST_FILE = "test.doc";
+  
   public byte[] _tableStream;
   public byte[] _mainStream;
   public FileInformationBlock _fib;
+  private final String _testFile;
 
-  public HWPFDocFixture(Object obj)
+  public HWPFDocFixture(Object obj, String testFile)
   {
-
+    _testFile = testFile;
   }
 
-  public void setUp()
-  {
-    try
-    {
-      String filename = System.getProperty("HWPF.testdata.path");
-      if (filename == null)
-      {
-        filename = "c:";
-      }
-
-      filename = filename + "/test.doc";
-
-
-      POIFSFileSystem filesystem = new POIFSFileSystem(new FileInputStream(
-        new File(filename)));
+  public void setUp() throws IOException {
+      POIFSFileSystem filesystem = new POIFSFileSystem(
+              POIDataSamples.getDocumentInstance().openResourceAsStream(_testFile));
 
       DocumentEntry documentProps =
         (DocumentEntry) filesystem.getRoot().getEntry("WordDocument");
@@ -63,7 +52,7 @@ public class HWPFDocFixture
       _fib = new FileInformationBlock(_mainStream);
 
       String name = "0Table";
-      if (_fib.isFWhichTblStm())
+      if (_fib.getFibBase().isFWhichTblStm())
       {
         name = "1Table";
       }
@@ -75,11 +64,6 @@ public class HWPFDocFixture
       filesystem.createDocumentInputStream(name).read(_tableStream);
 
       _fib.fillVariableFields(_mainStream, _tableStream);
-    }
-    catch (Throwable t)
-    {
-      t.printStackTrace();
-    }
   }
 
   public void tearDown()

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.filesystem;
 
@@ -30,12 +28,10 @@ import java.util.*;
  * @author Marc Johnson (mjohnson at apache dot org)
  */
 
-public class DocumentOutputStream
-    extends OutputStream
-{
-    private OutputStream stream;
-    private int          limit;
-    private int          written;
+public final class DocumentOutputStream extends OutputStream {
+    private final OutputStream _stream;
+    private final int          _limit;
+    private int          _written;
 
     /**
      * Create a DocumentOutputStream
@@ -44,12 +40,10 @@ public class DocumentOutputStream
      *               read
      * @param limit the maximum number of bytes that can be written
      */
-
-    DocumentOutputStream(final OutputStream stream, final int limit)
-    {
-        this.stream  = stream;
-        this.limit   = limit;
-        this.written = 0;
+    DocumentOutputStream(OutputStream stream, int limit) {
+        _stream  = stream;
+        _limit   = limit;
+        _written = 0;
     }
 
     /**
@@ -64,12 +58,11 @@ public class DocumentOutputStream
      *                        output stream has been closed, or if the
      *                        writer tries to write too much data.
      */
-
-    public void write(final int b)
+    public void write(int b)
         throws IOException
     {
         limitCheck(1);
-        stream.write(b);
+        _stream.write(b);
     }
 
     /**
@@ -79,8 +72,7 @@ public class DocumentOutputStream
      * @param b the data.
      * @exception IOException if an I/O error occurs.
      */
-
-    public void write(final byte b[])
+    public void write(byte b[])
         throws IOException
     {
         write(b, 0, b.length);
@@ -106,12 +98,11 @@ public class DocumentOutputStream
      *                        output stream is closed or if the writer
      *                        tries to write too many bytes.
      */
-
-    public void write(final byte b[], final int off, final int len)
+    public void write(byte b[], int off, int len)
         throws IOException
     {
         limitCheck(len);
-        stream.write(b, off, len);
+        _stream.write(b, off, len);
     }
 
     /**
@@ -120,11 +111,10 @@ public class DocumentOutputStream
      *
      * @exception IOException if an I/O error occurs.
      */
-
     public void flush()
         throws IOException
     {
-        stream.flush();
+        _stream.flush();
     }
 
     /**
@@ -135,10 +125,7 @@ public class DocumentOutputStream
      *
      * @exception IOException if an I/O error occurs.
      */
-
-    public void close()
-        throws IOException
-    {
+    public void close() {
 
         // ignore this call
     }
@@ -152,27 +139,25 @@ public class DocumentOutputStream
      *
      * @exception IOException on I/O error
      */
-
-    void writeFiller(final int totalLimit, final byte fill)
+    void writeFiller(int totalLimit, byte fill)
         throws IOException
     {
-        if (totalLimit > written)
+        if (totalLimit > _written)
         {
-            byte[] filler = new byte[ totalLimit - written ];
+            byte[] filler = new byte[ totalLimit - _written ];
 
             Arrays.fill(filler, fill);
-            stream.write(filler);
+            _stream.write(filler);
         }
     }
 
-    private void limitCheck(final int toBeWritten)
+    private void limitCheck(int toBeWritten)
         throws IOException
     {
-        if ((written + toBeWritten) > limit)
+        if ((_written + toBeWritten) > _limit)
         {
             throw new IOException("tried to write too much data");
         }
-        written += toBeWritten;
+        _written += toBeWritten;
     }
-}   // end public class DocumentOutputStream
-
+}

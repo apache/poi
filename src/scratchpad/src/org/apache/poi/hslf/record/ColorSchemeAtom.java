@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,26 +14,25 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 
-import org.apache.poi.util.LittleEndian;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.ByteArrayOutputStream;
+
+import org.apache.poi.hslf.exceptions.HSLFException;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * A ColorSchemeAtom (type 2032). Holds the 8 RGB values for the different
  *  colours of bits of text, that makes up a given colour scheme.
- * Slides (presumably) link to a given colour scheme atom, and that 
+ * Slides (presumably) link to a given colour scheme atom, and that
  *  defines the colours to be used
  *
  * @author Nick Burch
  */
-
-public class ColorSchemeAtom extends RecordAtom
-{
+public final class ColorSchemeAtom extends RecordAtom {
 	private byte[] _header;
 	private static long _type = 2032l;
 
@@ -85,7 +83,7 @@ public class ColorSchemeAtom extends RecordAtom
 			{ accentAndHyperlinkColourRGB = rgb; }
 
 	/** Fetch the RGB value for Accent And Following Hyperlink Colour */
-	public int getAccentAndFollowingHyperlinkColourRGB() 
+	public int getAccentAndFollowingHyperlinkColourRGB()
 		{ return accentAndFollowingHyperlinkColourRGB; }
 	/** Set the RGB value for Accent And Following Hyperlink Colour */
 	public void setAccentAndFollowingHyperlinkColourRGB(int rgb)
@@ -93,7 +91,7 @@ public class ColorSchemeAtom extends RecordAtom
 
 	/* *************** record code follows ********************** */
 
-	/** 
+	/**
 	 * For the Colour Scheme (ColorSchem) Atom
 	 */
 	protected ColorSchemeAtom(byte[] source, int start, int len) {
@@ -101,7 +99,7 @@ public class ColorSchemeAtom extends RecordAtom
 		if(len < 40) {
 			len = 40;
 			if(source.length - start < 40) {
-				throw new RuntimeException("Not enough data to form a ColorSchemeAtom (always 40 bytes long) - found " + (source.length - start));
+				throw new HSLFException("Not enough data to form a ColorSchemeAtom (always 40 bytes long) - found " + (source.length - start));
 			}
 		}
 
@@ -110,16 +108,16 @@ public class ColorSchemeAtom extends RecordAtom
 		System.arraycopy(source,start,_header,0,8);
 
 		// Grab the rgb values
-		backgroundColourRGB = (int)LittleEndian.getInt(source,start+8+0);
-		textAndLinesColourRGB = (int)LittleEndian.getInt(source,start+8+4);
-		shadowsColourRGB = (int)LittleEndian.getInt(source,start+8+8);
-		titleTextColourRGB = (int)LittleEndian.getInt(source,start+8+12);
-		fillsColourRGB = (int)LittleEndian.getInt(source,start+8+16);
-		accentColourRGB = (int)LittleEndian.getInt(source,start+8+20);
-		accentAndHyperlinkColourRGB = (int)LittleEndian.getInt(source,start+8+24);
-		accentAndFollowingHyperlinkColourRGB = (int)LittleEndian.getInt(source,start+8+28);
+		backgroundColourRGB = LittleEndian.getInt(source,start+8+0);
+		textAndLinesColourRGB = LittleEndian.getInt(source,start+8+4);
+		shadowsColourRGB = LittleEndian.getInt(source,start+8+8);
+		titleTextColourRGB = LittleEndian.getInt(source,start+8+12);
+		fillsColourRGB = LittleEndian.getInt(source,start+8+16);
+		accentColourRGB = LittleEndian.getInt(source,start+8+20);
+		accentAndHyperlinkColourRGB = LittleEndian.getInt(source,start+8+24);
+		accentAndFollowingHyperlinkColourRGB = LittleEndian.getInt(source,start+8+28);
 	}
-	
+
 	/**
 	 * Create a new ColorSchemeAtom, to go with a new Slide
 	 */
@@ -128,7 +126,7 @@ public class ColorSchemeAtom extends RecordAtom
 		LittleEndian.putUShort(_header, 0, 16);
 		LittleEndian.putUShort(_header, 2, (int)_type);
 		LittleEndian.putInt(_header, 4, 32);
-		 
+
 		// Setup the default rgb values
 		backgroundColourRGB = 16777215;
 		textAndLinesColourRGB = 0;
@@ -139,12 +137,13 @@ public class ColorSchemeAtom extends RecordAtom
 		accentAndHyperlinkColourRGB = 16764108;
 		accentAndFollowingHyperlinkColourRGB = 11711154;
 	}
-	
+
 
 	/**
 	 * We are of type 3999
 	 */
-	public long getRecordType() { return _type; }
+	@Override
+    public long getRecordType() { return _type; }
 
 
 	/**
@@ -159,7 +158,7 @@ public class ColorSchemeAtom extends RecordAtom
 			writeLittleEndian(rgb,baos);
 		} catch(IOException ie) {
 			// Should never happen
-			throw new RuntimeException(ie);
+			throw new HSLFException(ie);
 		}
 		byte[] b = baos.toByteArray();
 		System.arraycopy(b,0,ret,0,3);
@@ -178,13 +177,12 @@ public class ColorSchemeAtom extends RecordAtom
 	 */
 	public static int joinRGB(byte[] rgb) {
 		if(rgb.length != 3) {
-			throw new RuntimeException("joinRGB accepts a byte array of 3 values, but got one of " + rgb.length + " values!");
+			throw new HSLFException("joinRGB accepts a byte array of 3 values, but got one of " + rgb.length + " values!");
 		}
 		byte[] with_zero = new byte[4];
 		System.arraycopy(rgb,0,with_zero,0,3);
 		with_zero[3] = 0;
-		int ret = (int)LittleEndian.getInt(with_zero,0);
-		return ret;
+        return LittleEndian.getInt(with_zero,0);
 	}
 
 
@@ -192,7 +190,8 @@ public class ColorSchemeAtom extends RecordAtom
 	 * Write the contents of the record back, so it can be written
 	 *  to disk
 	 */
-	public void writeOut(OutputStream out) throws IOException {
+	@Override
+    public void writeOut(OutputStream out) throws IOException {
 		// Header - size or type unchanged
 		out.write(_header);
 
@@ -207,16 +206,15 @@ public class ColorSchemeAtom extends RecordAtom
 		writeLittleEndian(accentAndFollowingHyperlinkColourRGB,out);
 	}
 
-    /**
-     * Returns color by its index
-     *
-     * @param idx 0-based color index
-     * @return color by its index
-     */
-    public int getColor(int idx){
-        int[] clr = {backgroundColourRGB, textAndLinesColourRGB, shadowsColourRGB, titleTextColourRGB,
-            fillsColourRGB, accentColourRGB, accentAndHyperlinkColourRGB, accentAndFollowingHyperlinkColourRGB};
-        return clr[idx];
-    }
-
+	/**
+	 * Returns color by its index
+	 *
+	 * @param idx 0-based color index
+	 * @return color by its index
+	 */
+	public int getColor(int idx){
+		int[] clr = {backgroundColourRGB, textAndLinesColourRGB, shadowsColourRGB, titleTextColourRGB,
+				fillsColourRGB, accentColourRGB, accentAndHyperlinkColourRGB, accentAndFollowingHyperlinkColourRGB};
+		return clr[idx];
+	}
 }

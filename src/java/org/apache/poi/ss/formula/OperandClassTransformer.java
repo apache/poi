@@ -17,43 +17,50 @@
 
 package org.apache.poi.ss.formula;
 
-import org.apache.poi.hssf.record.formula.AbstractFunctionPtg;
-import org.apache.poi.hssf.record.formula.ControlPtg;
-import org.apache.poi.hssf.record.formula.RangePtg;
-import org.apache.poi.hssf.record.formula.ValueOperatorPtg;
-import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.ss.formula.ptg.AbstractFunctionPtg;
+import org.apache.poi.ss.formula.ptg.AttrPtg;
+import org.apache.poi.ss.formula.ptg.ControlPtg;
+import org.apache.poi.ss.formula.ptg.FuncVarPtg;
+import org.apache.poi.ss.formula.ptg.IntersectionPtg;
+import org.apache.poi.ss.formula.ptg.MemAreaPtg;
+import org.apache.poi.ss.formula.ptg.MemFuncPtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.RangePtg;
+import org.apache.poi.ss.formula.ptg.UnionPtg;
+import org.apache.poi.ss.formula.ptg.ValueOperatorPtg;
+import org.apache.poi.util.Removal;
 
 /**
- * This class performs 'operand class' transformation. Non-base tokens are classified into three 
+ * This class performs 'operand class' transformation. Non-base tokens are classified into three
  * operand classes:
  * <ul>
- * <li>reference</li> 
- * <li>value</li> 
- * <li>array</li> 
+ * <li>reference</li>
+ * <li>value</li>
+ * <li>array</li>
  * </ul>
- * <p/>
- * 
+ * <p>
+ *
  * The final operand class chosen for each token depends on the formula type and the token's place
  * in the formula. If POI gets the operand class wrong, Excel <em>may</em> interpret the formula
  * incorrectly.  This condition is typically manifested as a formula cell that displays as '#VALUE!',
- * but resolves correctly when the user presses F2, enter.<p/>
- * 
+ * but resolves correctly when the user presses F2, enter.<p>
+ *
  * The logic implemented here was partially inspired by the description in
  * "OpenOffice.org's Documentation of the Microsoft Excel File Format".  The model presented there
  * seems to be inconsistent with observed Excel behaviour (These differences have not been fully
  * investigated). The implementation in this class has been heavily modified in order to satisfy
- * concrete examples of how Excel performs the same logic (see TestRVA).<p/>
- * 
- * Hopefully, as additional important test cases are identified and added to the test suite, 
+ * concrete examples of how Excel performs the same logic (see TestRVA).<p>
+ *
+ * Hopefully, as additional important test cases are identified and added to the test suite,
  * patterns might become more obvious in this code and allow for simplification.
- * 
+ *
  * @author Josh Micich
  */
 final class OperandClassTransformer {
 
-	private final int _formulaType;
+	private final FormulaType _formulaType;
 
-	public OperandClassTransformer(int formulaType) {
+	public OperandClassTransformer(FormulaType formulaType) {
 		_formulaType = formulaType;
 	}
 
@@ -64,22 +71,26 @@ final class OperandClassTransformer {
 	public void transformFormula(ParseNode rootNode) {
 		byte rootNodeOperandClass;
 		switch (_formulaType) {
-			case FormulaType.CELL:
+			case CELL:
 				rootNodeOperandClass = Ptg.CLASS_VALUE;
 				break;
-			case FormulaType.DATAVALIDATION_LIST:
+			case ARRAY:
+				rootNodeOperandClass = Ptg.CLASS_ARRAY;
+				break;
+			case NAMEDRANGE:
+			case DATAVALIDATION_LIST:
 				rootNodeOperandClass = Ptg.CLASS_REF;
 				break;
 			default:
-				throw new RuntimeException("Incomplete code - formula type (" 
+				throw new RuntimeException("Incomplete code - formula type ("
 						+ _formulaType + ") not supported yet");
-		
+
 		}
 		transformNode(rootNode, rootNodeOperandClass, false);
 	}
 
 	/**
-	 * @param callerForceArrayFlag <code>true</code> if one of the current node's parents is a 
+	 * @param callerForceArrayFlag <code>true</code> if one of the current node's parents is a
 	 * function Ptg which has been changed from default 'V' to 'A' type (due to requirements on
 	 * the function return value).
 	 */
@@ -88,7 +99,7 @@ final class OperandClassTransformer {
 		Ptg token = node.getToken();
 		ParseNode[] children = node.getChildren();
 		boolean isSimpleValueFunc = isSimpleValueFunction(token);
-		
+
 		if (isSimpleValueFunc) {
 			boolean localForceArray = desiredOperandClass == Ptg.CLASS_ARRAY;
 			for (int i = 0; i < children.length; i++) {
@@ -97,13 +108,24 @@ final class OperandClassTransformer {
 			setSimpleValueFuncClass((AbstractFunctionPtg) token, desiredOperandClass, callerForceArrayFlag);
 			return;
 		}
-		
-		if (token instanceof ValueOperatorPtg || token instanceof ControlPtg) {
+
+		if (isSingleArgSum(token)) {
+			// Need to process the argument of SUM with transformFunctionNode below
+			// so make a dummy FuncVarPtg for that call.
+			token = FuncVarPtg.SUM;
+			// Note - the tAttrSum token (node.getToken()) is a base
+			// token so does not need to have its operand class set
+		}
+		if (token instanceof ValueOperatorPtg || token instanceof ControlPtg
+				|| token instanceof MemFuncPtg
+				|| token instanceof MemAreaPtg
+				|| token instanceof UnionPtg
+				|| token instanceof IntersectionPtg) {
 			// Value Operator Ptgs and Control are base tokens, so token will be unchanged
 			// but any child nodes are processed according to desiredOperandClass and callerForceArrayFlag
-			
+
 			// As per OOO documentation Sec 3.2.4 "Token Class Transformation", "Step 1"
-			// All direct operands of value operators that are initially 'R' type will 
+			// All direct operands of value operators that are initially 'R' type will
 			// be converted to 'V' type.
 			byte localDesiredOperandClass = desiredOperandClass == Ptg.CLASS_REF ? Ptg.CLASS_VALUE : desiredOperandClass;
 			for (int i = 0; i < children.length; i++) {
@@ -128,6 +150,14 @@ final class OperandClassTransformer {
 			return;
 		}
 		token.setClass(transformClass(token.getPtgClass(), desiredOperandClass, callerForceArrayFlag));
+	}
+
+	private static boolean isSingleArgSum(Ptg token) {
+		if (token instanceof AttrPtg) {
+			AttrPtg attrPtg = (AttrPtg) token;
+			return attrPtg.isSum();
+		}
+		return false;
 	}
 
 	private static boolean isSimpleValueFunction(Ptg token) {
@@ -156,12 +186,12 @@ final class OperandClassTransformer {
 				}
 				// else fall through
 			case Ptg.CLASS_ARRAY:
-				return Ptg.CLASS_ARRAY; 
+				return Ptg.CLASS_ARRAY;
 			case Ptg.CLASS_REF:
 				if (!callerForceArrayFlag) {
 					return currentOperandClass;
 				}
-				return Ptg.CLASS_REF; 
+				return Ptg.CLASS_REF;
 		}
 		throw new IllegalStateException("Unexpected operand class (" + desiredOperandClass + ")");
 	}
@@ -197,15 +227,15 @@ final class OperandClassTransformer {
 		} else {
 			if (defaultReturnOperandClass == desiredOperandClass) {
 				localForceArrayFlag = false;
-				// an alternative would have been to for non-base Ptgs to set their operand class 
+				// an alternative would have been to for non-base Ptgs to set their operand class
 				// from their default, but this would require the call in many subclasses because
 				// the default OC is not known until the end of the constructor
-				afp.setClass(defaultReturnOperandClass); 
+				afp.setClass(defaultReturnOperandClass);
 			} else {
 				switch (desiredOperandClass) {
 					case Ptg.CLASS_VALUE:
 						// always OK to set functions to return 'value'
-						afp.setClass(Ptg.CLASS_VALUE); 
+						afp.setClass(Ptg.CLASS_VALUE);
 						localForceArrayFlag = false;
 						break;
 					case Ptg.CLASS_ARRAY:
@@ -258,7 +288,7 @@ final class OperandClassTransformer {
 		if (callerForceArrayFlag  || desiredOperandClass == Ptg.CLASS_ARRAY) {
 			afp.setClass(Ptg.CLASS_ARRAY);
 		} else {
-			afp.setClass(Ptg.CLASS_VALUE); 
+			afp.setClass(Ptg.CLASS_VALUE);
 		}
 	}
 }

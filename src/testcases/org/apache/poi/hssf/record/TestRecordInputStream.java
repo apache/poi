@@ -30,7 +30,7 @@ import junit.framework.TestCase;
 public final class TestRecordInputStream extends TestCase {
 
 	/**
-	 * Data inspired by attachment 22626 of bug 45866<br/>
+	 * Data inspired by attachment 22626 of bug 45866<br>
 	 * A unicode string of 18 chars, with a continue record where the compression flag changes
 	 */
 	private static final String HED_DUMP1 = ""
@@ -93,5 +93,13 @@ public final class TestRecordInputStream extends TestCase {
 		RecordInputStream in = TestcaseRecordInputStream.create(changingFlagFullData);
 		String actual = in.readString();
 		assertEquals("Multilingual - \u591A\u8A00\u8A9E", actual);
+	}
+
+	public void testLeftoverDataException() {
+	    // just ensure that the exception is created correctly, even with unknown sids
+	    new RecordInputStream.LeftoverDataException(1, 200);
+	    new RecordInputStream.LeftoverDataException(0, 200);
+        new RecordInputStream.LeftoverDataException(999999999, 200);
+	    new RecordInputStream.LeftoverDataException(HeaderRecord.sid, 200);
 	}
 }

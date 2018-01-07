@@ -19,21 +19,24 @@
 
 package org.apache.poi.poifs.eventfilesystem;
 
-import java.io.*;
-
-import java.util.*;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Iterator;
 
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
-import org.apache.poi.poifs.filesystem.POIFSDocument;
+import org.apache.poi.poifs.filesystem.OPOIFSDocument;
 import org.apache.poi.poifs.filesystem.POIFSDocumentPath;
 import org.apache.poi.poifs.property.DirectoryProperty;
 import org.apache.poi.poifs.property.Property;
 import org.apache.poi.poifs.property.PropertyTable;
+import org.apache.poi.poifs.property.RootProperty;
 import org.apache.poi.poifs.storage.BlockAllocationTableReader;
 import org.apache.poi.poifs.storage.BlockList;
-import org.apache.poi.poifs.storage.HeaderBlockReader;
+import org.apache.poi.poifs.storage.HeaderBlock;
 import org.apache.poi.poifs.storage.RawDataBlockList;
 import org.apache.poi.poifs.storage.SmallBlockTableReader;
+import org.apache.poi.util.IOUtils;
 
 /**
  * An event-driven reader for POIFS file systems. Users of this class
@@ -42,14 +45,13 @@ import org.apache.poi.poifs.storage.SmallBlockTableReader;
  * documents. Once all the listeners have been registered, the read()
  * method is called, which results in the listeners being notified as
  * their documents are read.
- *
- * @author Marc Johnson (mjohnson at apache dot org)
  */
 
 public class POIFSReader
 {
-    private POIFSReaderRegistry registry;
-    private boolean             registryClosed;
+    private final POIFSReaderRegistry registry;
+    private boolean registryClosed;
+    private boolean notifyEmptyDirectories;
 
     /**
      * Create a POIFSReader
@@ -75,30 +77,34 @@ public class POIFSReader
         registryClosed = true;
 
         // read the header block from the stream
-        HeaderBlockReader header_block_reader = new HeaderBlockReader(stream);
+        HeaderBlock header_block = new HeaderBlock(stream);
 
         // read the rest of the stream into blocks
-        RawDataBlockList  data_blocks         = new RawDataBlockList(stream, header_block_reader.getBigBlockSize());
+        RawDataBlockList data_blocks = new RawDataBlockList(stream, header_block.getBigBlockSize());
 
         // set up the block allocation table (necessary for the
         // data_blocks to be manageable
-        new BlockAllocationTableReader(header_block_reader.getBATCount(),
-                                       header_block_reader.getBATArray(),
-                                       header_block_reader.getXBATCount(),
-                                       header_block_reader.getXBATIndex(),
+        new BlockAllocationTableReader(header_block.getBigBlockSize(),
+                                       header_block.getBATCount(),
+                                       header_block.getBATArray(),
+                                       header_block.getXBATCount(),
+                                       header_block.getXBATIndex(),
                                        data_blocks);
 
         // get property table from the document
         PropertyTable properties =
-            new PropertyTable(header_block_reader.getPropertyStart(),
-                              data_blocks);
+            new PropertyTable(header_block, data_blocks);
 
         // process documents
+        RootProperty root = properties.getRoot();
         processProperties(SmallBlockTableReader
-            .getSmallDocumentBlocks(data_blocks, properties
-                .getRoot(), header_block_reader
-                    .getSBATStart()), data_blocks, properties.getRoot()
-                        .getChildren(), new POIFSDocumentPath());
+            .getSmallDocumentBlocks(
+                  header_block.getBigBlockSize(),
+                  data_blocks, root,
+                  header_block.getSBATStart()
+            ),
+            data_blocks, root.getChildren(), new POIFSDocumentPath()
+        );
     }
 
     /**
@@ -176,6 +182,18 @@ public class POIFSReader
     }
 
     /**
+     * Activates the notification of empty directories.<p>
+     * If this flag is activated, the {@link POIFSReaderListener listener} receives
+     * {@link POIFSReaderEvent POIFSReaderEvents} with nulled {@code name} and {@code stream} 
+     *
+     * @param notifyEmptyDirectories
+     */
+    public void setNotifyEmptyDirectories(boolean notifyEmptyDirectories) {
+        this.notifyEmptyDirectories = notifyEmptyDirectories;
+    }
+    
+    
+    /**
      * read in files
      *
      * @param args names of the files
@@ -188,20 +206,19 @@ public class POIFSReader
     {
         if (args.length == 0)
         {
-            System.err
-                .println("at least one argument required: input filename(s)");
+            System.err.println("at least one argument required: input filename(s)");
             System.exit(1);
         }
 
         // register for all
-        for (int j = 0; j < args.length; j++)
+        for (String arg : args)
         {
             POIFSReader         reader   = new POIFSReader();
             POIFSReaderListener listener = new SampleListener();
 
             reader.registerListener(listener);
-            System.out.println("reading " + args[ j ]);
-            FileInputStream istream = new FileInputStream(args[ j ]);
+            System.out.println("reading " + arg);
+            FileInputStream istream = new FileInputStream(arg);
 
             reader.read(istream);
             istream.close();
@@ -210,53 +227,52 @@ public class POIFSReader
 
     private void processProperties(final BlockList small_blocks,
                                    final BlockList big_blocks,
-                                   final Iterator properties,
+                                   final Iterator<Property> properties,
                                    final POIFSDocumentPath path)
-        throws IOException
-    {
+    throws IOException {
+        if (!properties.hasNext() && notifyEmptyDirectories) {
+            Iterator<POIFSReaderListener> listeners  = registry.getListeners(path, ".");
+            while (listeners.hasNext()) {
+                POIFSReaderListener pl = listeners.next();
+                POIFSReaderEvent pe = new POIFSReaderEvent(null, path, null);
+                pl.processPOIFSReaderEvent(pe);
+            }
+            return;
+        }
+        
         while (properties.hasNext())
         {
-            Property property = ( Property ) properties.next();
+            Property property = properties.next();
             String   name     = property.getName();
 
-            if (property.isDirectory())
-            {
-                POIFSDocumentPath new_path = new POIFSDocumentPath(path,
-                                                 new String[]
-                {
-                    name
-                });
-
-                processProperties(
-                    small_blocks, big_blocks,
-                    (( DirectoryProperty ) property).getChildren(), new_path);
-            }
-            else
-            {
-                int      startBlock = property.getStartBlock();
-                Iterator listeners  = registry.getListeners(path, name);
+            if (property.isDirectory()) {
+                POIFSDocumentPath new_path = new POIFSDocumentPath(path,new String[]{name});
+                DirectoryProperty dp = (DirectoryProperty) property;
+                processProperties(small_blocks, big_blocks, dp.getChildren(), new_path);
+            } else {
+                int startBlock = property.getStartBlock();
+                Iterator<POIFSReaderListener> listeners  = registry.getListeners(path, name);
 
                 if (listeners.hasNext())
                 {
-                    int           size     = property.getSize();
-                    POIFSDocument document = null;
+                    int            size     = property.getSize();
+                    OPOIFSDocument document = null;
 
                     if (property.shouldUseSmallBlocks())
                     {
                         document =
-                            new POIFSDocument(name, small_blocks
-                                .fetchBlocks(startBlock), size);
+                            new OPOIFSDocument(name, small_blocks
+                                .fetchBlocks(startBlock, -1), size);
                     }
                     else
                     {
                         document =
-                            new POIFSDocument(name, big_blocks
-                                .fetchBlocks(startBlock), size);
+                            new OPOIFSDocument(name, big_blocks
+                                .fetchBlocks(startBlock, -1), size);
                     }
                     while (listeners.hasNext())
                     {
-                        POIFSReaderListener listener =
-                            ( POIFSReaderListener ) listeners.next();
+                        POIFSReaderListener listener = listeners.next();
 
                         listener.processPOIFSReaderEvent(
                             new POIFSReaderEvent(
@@ -270,11 +286,11 @@ public class POIFSReader
                     // consume the document's data and discard it
                     if (property.shouldUseSmallBlocks())
                     {
-                        small_blocks.fetchBlocks(startBlock);
+                        small_blocks.fetchBlocks(startBlock, -1);
                     }
                     else
                     {
-                        big_blocks.fetchBlocks(startBlock);
+                        big_blocks.fetchBlocks(startBlock, -1);
                     }
                 }
             }
@@ -299,30 +315,25 @@ public class POIFSReader
          * @param event
          */
 
-        public void processPOIFSReaderEvent(final POIFSReaderEvent event)
-        {
+        @Override
+        public void processPOIFSReaderEvent(final POIFSReaderEvent event) {
             DocumentInputStream istream = event.getStream();
             POIFSDocumentPath   path    = event.getPath();
             String              name    = event.getName();
 
-            try
-            {
-                byte[] data = new byte[ istream.available() ];
-
-                istream.read(data);
+            try {
+                byte[] data = IOUtils.toByteArray(istream);
                 int pathLength = path.length();
 
-                for (int k = 0; k < pathLength; k++)
-                {
+                for (int k = 0; k < pathLength; k++) {
                     System.out.print("/" + path.getComponent(k));
                 }
-                System.out.println("/" + name + ": " + data.length
-                                   + " bytes read");
-            }
-            catch (IOException ignored)
-            {
+                System.out.println("/" + name + ": " + data.length + " bytes read");
+            } catch (IOException ignored) {
+            } finally {
+                IOUtils.closeQuietly(istream);
             }
         }
-    }   // end private class SampleListener
-}       // end public class POIFSReader
+    }
+}
 

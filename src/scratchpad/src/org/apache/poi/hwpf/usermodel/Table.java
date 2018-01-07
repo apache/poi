@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -20,44 +19,73 @@ package org.apache.poi.hwpf.usermodel;
 
 import java.util.ArrayList;
 
-public class Table
-  extends Range
+public final class Table extends Range
 {
-  ArrayList _rows;
+    private ArrayList<TableRow> _rows;
 
-  Table(int startIdx, int endIdx, Range parent, int levelNum)
-  {
-    super(startIdx, endIdx, Range.TYPE_PARAGRAPH, parent);
-    _rows = new ArrayList();
-    int numParagraphs = numParagraphs();
+    private boolean _rowsFound;
 
-    int rowStart = 0;
-    int rowEnd = 0;
+    private int _tableLevel;
 
-    while (rowEnd < numParagraphs)
+    Table( int startIdxInclusive, int endIdxExclusive, Range parent,
+            int levelNum )
     {
-      Paragraph p = getParagraph(rowEnd);
-      rowEnd++;
-      if (p.isTableRowEnd() && p.getTableLevel() == levelNum)
-      {
-        _rows.add(new TableRow(rowStart, rowEnd, this, levelNum));
-        rowStart = rowEnd;
-      }
+        super( startIdxInclusive, endIdxExclusive, parent );
+        _tableLevel = levelNum;
+        initRows();
     }
-  }
 
-  public int numRows()
-  {
-    return _rows.size();
-  }
+    public TableRow getRow( int index )
+    {
+        initRows();
+        return _rows.get( index );
+    }
 
-  public int type()
-  {
-    return TYPE_TABLE;
-  }
+    public int getTableLevel()
+    {
+        return _tableLevel;
+    }
 
-  public TableRow getRow(int index)
-  {
-    return (TableRow)_rows.get(index);
-  }
+    private void initRows()
+    {
+        if ( _rowsFound )
+            return;
+
+        _rows = new ArrayList<>();
+        int rowStart = 0;
+        int rowEnd = 0;
+
+        int numParagraphs = numParagraphs();
+        while ( rowEnd < numParagraphs )
+        {
+            Paragraph startRowP = getParagraph( rowStart );
+            Paragraph endRowP = getParagraph( rowEnd );
+            rowEnd++;
+            if ( endRowP.isTableRowEnd()
+                    && endRowP.getTableLevel() == _tableLevel )
+            {
+                _rows.add( new TableRow( startRowP.getStartOffset(), endRowP
+                        .getEndOffset(), this, _tableLevel ) );
+                rowStart = rowEnd;
+            }
+        }
+        _rowsFound = true;
+    }
+
+    public int numRows()
+    {
+        initRows();
+        return _rows.size();
+    }
+
+    @Override
+    protected void reset()
+    {
+        _rowsFound = false;
+    }
+
+    public int type()
+    {
+        return TYPE_TABLE;
+    }
 }

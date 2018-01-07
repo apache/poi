@@ -21,26 +21,26 @@ import java.util.Comparator;
 
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
 
-public class CTColComparator implements Comparator<CTCol>{
+public class CTColComparator {
 
-    public int compare(CTCol o1, CTCol o2) {
-        if (o1.getMin() < o2.getMin()) {
-            return -1;
+    private CTColComparator() {}
+
+    public static final Comparator<CTCol> BY_MAX = new Comparator<CTCol>() {
+        @Override
+        public int compare(CTCol col1, CTCol col2) {
+            long col1max = col1.getMax();
+            long col2max = col2.getMax();
+            return Long.compare(col1max, col2max);
         }
-        else if (o1.getMin() > o2.getMin()) {
-            return 1;
+    };
+
+    public static final Comparator<CTCol> BY_MIN_MAX = new Comparator<CTCol>() {
+        @Override
+        public int compare(CTCol col1, CTCol col2) {
+            long col11min = col1.getMin();
+            long col2min = col2.getMin();
+            return col11min < col2min ? -1 : col11min > col2min ? 1 : BY_MAX.compare(col1, col2);
         }
-        else {
-            if (o1.getMax() < o2.getMax()) {
-                return -1;
-            }
-            if (o1.getMax() > o2.getMax()) {
-                return 1;
-            }
-            return 0;
-        }
-    }
-    
-    
-    
+    };
+
 }

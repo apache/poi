@@ -19,7 +19,7 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title:        Calc Count Record
@@ -29,15 +29,11 @@ import org.apache.poi.util.LittleEndian;
  *               changes.  This is essentially a failsafe against an infinate
  *               loop in the event the formulas are not independant. <P>
  * REFERENCE:  PG 292 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author Jason Height (jheight at chariot dot net dot au)
  * @version 2.0-pre
  * @see org.apache.poi.hssf.record.CalcModeRecord
  */
 
-public class CalcCountRecord
-    extends Record
-{
+public final class CalcCountRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0xC;
     private short             field_1_iterations;
 
@@ -81,12 +77,8 @@ public class CalcCountRecord
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, ( short ) 0x2);
-        LittleEndian.putShort(data, 4 + offset, getIterations());
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(getIterations());
     }
 
     protected int getDataSize() {
@@ -98,7 +90,8 @@ public class CalcCountRecord
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    public CalcCountRecord clone() {
       CalcCountRecord rec = new CalcCountRecord();
       rec.field_1_iterations = field_1_iterations;
       return rec;

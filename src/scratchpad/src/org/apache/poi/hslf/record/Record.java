@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,18 +14,19 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.record;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Vector;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.POILogFactory;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
+import org.apache.poi.hslf.exceptions.HSLFException;
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * This abstract class represents a record in the PowerPoint document.
@@ -39,7 +39,7 @@ import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 public abstract class Record
 {
     // For logging
-    protected POILogger logger = POILogFactory.getLogger(this.getClass());
+	protected static final POILogger logger = POILogFactory.getLogger(Record.class);
 
 	/**
 	 * Is this record type an Atom record (only has data),
@@ -53,10 +53,10 @@ public abstract class Record
 	 */
 	public abstract long getRecordType();
 
-	/** 
+	/**
 	 * Fetch all the child records of this record
 	 * If this record is an atom, will return null
-	 * If this record is a non-atom, but has no children, will return 
+	 * If this record is a non-atom, but has no children, will return
 	 *  an empty array
 	 */
 	public abstract Record[] getChildRecords();
@@ -65,7 +65,7 @@ public abstract class Record
 	 * Have the contents printer out into an OutputStream, used when
 	 *  writing a file back out to disk
 	 * (Normally, atom classes will keep their bytes around, but
-	 *  non atom classes will just request the bytes from their 
+	 *  non atom classes will just request the bytes from their
 	 *  children, then chuck on their header and return)
 	 */
 	public abstract void writeOut(OutputStream o) throws IOException;
@@ -75,7 +75,7 @@ public abstract class Record
 	 */
 	public static void writeLittleEndian(int i,OutputStream o) throws IOException {
 		byte[] bi = new byte[4];
-		LittleEndian.putInt(bi,i);
+		LittleEndian.putInt(bi,0,i);
 		o.write(bi);
 	}
 	/**
@@ -83,10 +83,10 @@ public abstract class Record
 	 */
 	public static void writeLittleEndian(short s,OutputStream o) throws IOException {
 		byte[] bs = new byte[2];
-		LittleEndian.putShort(bs,s);
+		LittleEndian.putShort(bs,0,s);
 		o.write(bs);
 	}
-	
+
 	/**
 	 * Build and return the Record at the given offset.
 	 * Note - does less error checking and handling than findChildRecords
@@ -108,7 +108,7 @@ public abstract class Record
 	 * Default method for finding child records of a container record
 	 */
 	public static Record[] findChildRecords(byte[] b, int start, int len) {
-		Vector children = new Vector(5);
+		List<Record> children = new ArrayList<>(5);
 
 		// Jump our little way along, creating records as we go
 		int pos = start;
@@ -137,11 +137,7 @@ public abstract class Record
 		}
 
 		// Turn the vector into an array, and return
-		Record[] cRecords = new Record[children.size()];
-		for(int i=0; i < children.size(); i++) {
-			cRecords[i] = (Record)children.get(i);
-		}
-		return cRecords;
+        return children.toArray( new Record[children.size()] );
 	}
 
 	/**
@@ -159,7 +155,7 @@ public abstract class Record
 		// Handle case of a corrupt last record, whose claimed length
 		//  would take us passed the end of the file
 		if(start + len > b.length) {
-			System.err.println("Warning: Skipping record of type " + type + " at position " + start + " which claims to be longer than the file! (" + len + " vs " + (b.length-start) + ")");
+			logger.log(POILogger.WARN, "Warning: Skipping record of type " + type + " at position " + start + " which claims to be longer than the file! (" + len + " vs " + (b.length-start) + ")");
 			return null;
 		}
 
@@ -168,29 +164,29 @@ public abstract class Record
 		// A spot of reflection gets us the (byte[],int,int) constructor
 		// From there, we instanciate the class
 		// Any special record handling occurs once we have the class
-		Class c = null;
+		Class<? extends Record> c = null;
 		try {
-			c = RecordTypes.recordHandlingClass((int)type);
-			if(c == null) { 
-				// How odd. RecordTypes normally subsitutes in
+			c = RecordTypes.forTypeID((short)type).handlingClass;
+			if(c == null) {
+				// How odd. RecordTypes normally substitutes in
 				//  a default handler class if it has heard of the record
 				//  type but there's no support for it. Explicitly request
 				//  that now
-				c = RecordTypes.recordHandlingClass( RecordTypes.Unknown.typeID );
+				c = RecordTypes.UnknownRecordPlaceholder.handlingClass;
 			}
 
 			// Grab the right constructor
-			java.lang.reflect.Constructor con = c.getDeclaredConstructor(new Class[] { byte[].class, Integer.TYPE, Integer.TYPE });
+			java.lang.reflect.Constructor<? extends Record> con = c.getDeclaredConstructor(new Class[] { byte[].class, Integer.TYPE, Integer.TYPE });
 			// Instantiate
-			toReturn = (Record)(con.newInstance(new Object[] { b, new Integer(start), new Integer(len) }));
+			toReturn = con.newInstance(new Object[] { b, start, len });
 		} catch(InstantiationException ie) {
-			throw new RuntimeException("Couldn't instantiate the class for type with id " + type + " on class " + c + " : " + ie, ie);
+			throw new HSLFException("Couldn't instantiate the class for type with id " + type + " on class " + c + " : " + ie, ie);
 		} catch(java.lang.reflect.InvocationTargetException ite) {
-			throw new RuntimeException("Couldn't instantiate the class for type with id " + type + " on class " + c + " : " + ite + "\nCause was : " + ite.getCause(), ite);
+			throw new HSLFException("Couldn't instantiate the class for type with id " + type + " on class " + c + " : " + ite + "\nCause was : " + ite.getCause(), ite);
 		} catch(IllegalAccessException iae) {
-			throw new RuntimeException("Couldn't access the constructor for type with id " + type + " on class " + c + " : " + iae, iae);
+			throw new HSLFException("Couldn't access the constructor for type with id " + type + " on class " + c + " : " + iae, iae);
 		} catch(NoSuchMethodException nsme) {
-			throw new RuntimeException("Couldn't access the constructor for type with id " + type + " on class " + c + " : " + nsme, nsme);
+			throw new HSLFException("Couldn't access the constructor for type with id " + type + " on class " + c + " : " + nsme, nsme);
 		}
 
 		// Handling for special kinds of records follow

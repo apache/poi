@@ -17,28 +17,25 @@
 
 package org.apache.poi.hssf.model;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * Collects all tests for <tt>org.apache.poi.hssf.model</tt>.
- * 
- * @author Josh Micich
  */
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+    TestDrawingManager2.class,
+    TestFormulaParser.class,
+    TestFormulaParserEval.class,
+    TestFormulaParserIf.class,
+    TestLinkTable.class,
+    TestOperandClassTransformer.class,
+    TestRowBlocksReader.class,
+    TestRVA.class,
+    TestSheet.class,
+    TestSheetAdditional.class,
+    TestWorkbook.class
+})
 public final class AllModelTests {
-	
-	public static Test suite() {
-		TestSuite result = new TestSuite(AllModelTests.class.getName());
-		result.addTestSuite(TestDrawingManager.class);
-		result.addTestSuite(TestDrawingManager2.class);
-		result.addTestSuite(TestFormulaParser.class);
-		result.addTestSuite(TestFormulaParserEval.class);
-		result.addTestSuite(TestFormulaParserIf.class);
-		result.addTestSuite(TestOperandClassTransformer.class);
-		result.addTestSuite(TestRVA.class);
-		result.addTestSuite(TestSheet.class);
-		result.addTestSuite(TestSheetAdditional.class);
-		result.addTestSuite(TestWorkbook.class);
-		return result;
-	}
 }

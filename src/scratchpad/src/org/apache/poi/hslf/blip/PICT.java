@@ -14,46 +14,38 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.blip;
 
-import org.apache.poi.hslf.model.Picture;
-import org.apache.poi.hslf.model.Shape;
-import org.apache.poi.hslf.exceptions.HSLFException;
-import org.apache.poi.util.LittleEndian;
-
-import java.io.*;
+import java.awt.Dimension;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.EOFException;
+import java.io.IOException;
 import java.util.zip.InflaterInputStream;
-import java.util.zip.DeflaterOutputStream;
+
+import org.apache.poi.hslf.exceptions.HSLFException;
+import org.apache.poi.sl.image.ImageHeaderPICT;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.Units;
 
 /**
  * Represents Macintosh PICT picture data.
- * 
- * @author Yegor Kozlov
  */
-public class PICT extends Metafile {
-
-    public PICT(){
-        super();
-    }
-
-    /**
-     * Extract compressed PICT data from a ppt
-     */
+public final class PICT extends Metafile {
+    private static final POILogger LOG = POILogFactory.getLogger(PICT.class);
+    
+    
+    @Override
     public byte[] getData(){
         byte[] rawdata = getRawData();
         try {
             byte[] macheader = new byte[512];
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             out.write(macheader);
-            int pos = CHECKSUM_SIZE;
-            byte[] pict;
-            try {
-                pict = read(rawdata, pos);
-            } catch (IOException e){
-                //weird MAC behaviour.
-                //if failed to read right after the checksum - skip 16 bytes and try again
-                pict = read(rawdata, pos + 16);
-            }
+            int pos = CHECKSUM_SIZE*getUIDInstanceCount();
+            byte[] pict = read(rawdata, pos);
             out.write(pict);
             return out.toByteArray();
         } catch (IOException e){
@@ -62,58 +54,116 @@ public class PICT extends Metafile {
     }
 
     private byte[] read(byte[] data, int pos) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
         ByteArrayInputStream bis = new ByteArrayInputStream(data);
         Header header = new Header();
         header.read(data, pos);
-        bis.skip(pos + header.getSize());
-        InflaterInputStream inflater = new InflaterInputStream( bis );
-        byte[] chunk = new byte[4096];
-        int count;
-        while ((count = inflater.read(chunk)) >=0 ) {
-            out.write(chunk,0,count);
+        long bs_exp = (long)pos + header.getSize();
+        long bs_act = bis.skip(bs_exp);
+        if (bs_exp != bs_act) {
+            throw new EOFException();
         }
-        inflater.close();
+        byte[] chunk = new byte[4096];
+        ByteArrayOutputStream out = new ByteArrayOutputStream(header.getWmfSize());
+        InflaterInputStream inflater = new InflaterInputStream( bis );
+        try {
+            int count;
+            while ((count = inflater.read(chunk)) >=0 ) {
+                out.write(chunk,0,count);
+                // PICT zip-stream can be erroneous, so we clear the array to determine
+                // the maximum of read bytes, after the inflater crashed
+                bytefill(chunk, (byte)0);
+            }
+        } catch (Exception e) {
+            int lastLen;
+            for (lastLen=chunk.length-1; lastLen>=0 && chunk[lastLen] == 0; lastLen--);
+            if (++lastLen > 0) {
+                if (header.getWmfSize() > out.size()) {
+                    // sometimes the wmfsize is smaller than the amount of already successfully read bytes
+                    // in this case we take the lastLen as-is, otherwise we truncate it to the given size
+                    lastLen = Math.min(lastLen, header.getWmfSize() - out.size());
+                }
+                out.write(chunk,0,lastLen);
+            }
+            // End of picture marker for PICT is 0x00 0xFF
+            LOG.log(POILogger.ERROR, "PICT zip-stream is invalid, read as much as possible. Uncompressed length of header: "+header.getWmfSize()+" / Read bytes: "+out.size(), e);
+        } finally {
+            inflater.close();
+        }
         return out.toByteArray();
     }
 
+    @Override
     public void setData(byte[] data) throws IOException {
-        int pos = 512; //skip the first 512 bytes - they are MAC specific crap
-        byte[] compressed = compress(data, pos, data.length-pos);
-
+        // skip the first 512 bytes - they are MAC specific crap
+        final int nOffset = ImageHeaderPICT.PICT_HEADER_OFFSET;
+        ImageHeaderPICT nHeader = new ImageHeaderPICT(data, nOffset);
+        
         Header header = new Header();
-        header.wmfsize = data.length - 512;
-        //we don't have a PICT reader in java, have to set default image size  200x200
-        header.bounds = new java.awt.Rectangle(0, 0, 200, 200);
-        header.size = new java.awt.Dimension(header.bounds.width*Shape.EMU_PER_POINT,
-                header.bounds.height*Shape.EMU_PER_POINT);
-        header.zipsize = compressed.length;
+        int wmfSize = data.length - nOffset;
+        header.setWmfSize(wmfSize);
+        byte[] compressed = compress(data, nOffset, wmfSize);
+        header.setZipSize(compressed.length);
+        header.setBounds(nHeader.getBounds());
+        Dimension nDim = nHeader.getSize();
+        header.setDimension(new Dimension(Units.toEMU(nDim.getWidth()), Units.toEMU(nDim.getHeight())));
 
         byte[] checksum = getChecksum(data);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         out.write(checksum);
-
-        out.write(new byte[16]); //16-byte prefix which is safe to ignore
+        if (getUIDInstanceCount() == 2) {
+            out.write(checksum);
+        }
         header.write(out);
         out.write(compressed);
 
         setRawData(out.toByteArray());
     }
 
-    /**
-     * @see org.apache.poi.hslf.model.Picture#PICT
-     */
-    public int getType(){
-        return Picture.PICT;
+    @Override
+    public PictureType getType(){
+        return PictureType.PICT;
     }
 
     /**
-     * PICT signature is <code>0x5430</code>
+     * PICT signature is {@code 0x5420} or {@code 0x5430}
      *
-     * @return PICT signature (<code>0x5430</code>)
+     * @return PICT signature ({@code 0x5420} or {@code 0x5430})
      */
     public int getSignature(){
-        return 0x5430;
+        return (getUIDInstanceCount() == 1 ? 0x5420 : 0x5430);
     }
 
+    /**
+     * Sets the PICT signature - either {@code 0x5420} or {@code 0x5430}
+     */
+    public void setSignature(int signature) {
+        switch (signature) {
+            case 0x5420:
+                setUIDInstanceCount(1);
+                break;
+            case 0x5430:
+                setUIDInstanceCount(2);
+                break;
+            default:
+                throw new IllegalArgumentException(signature+" is not a valid instance/signature value for PICT");
+        }        
+    }
+    
+    
+    /*
+     * initialize a smaller piece of the array and use the System.arraycopy 
+     * call to fill in the rest of the array in an expanding binary fashion
+     */
+    private static void bytefill(byte[] array, byte value) {
+        // http://stackoverflow.com/questions/9128737/fastest-way-to-set-all-values-of-an-array
+        int len = array.length;
+
+        if (len > 0){
+            array[0] = value;
+        }
+
+        for (int i = 1; i < len; i += i) {
+            System.arraycopy(array, 0, array, i, ((len - i) < i) ? (len - i) : i);
+        }
+    }
 }

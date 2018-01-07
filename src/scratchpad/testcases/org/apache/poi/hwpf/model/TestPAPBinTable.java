@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,87 +14,69 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hwpf.model;
 
-import junit.framework.*;
-import org.apache.poi.hwpf.*;
-import org.apache.poi.hwpf.model.io.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import java.io.*;
-import java.util.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.List;
 
-public class TestPAPBinTable
-  extends TestCase
-{
-  private PAPBinTable _pAPBinTable = null;
-  private HWPFDocFixture _hWPFDocFixture;
+import org.apache.poi.hwpf.HWPFDocFixture;
+import org.apache.poi.hwpf.HWPFTestDataSamples;
+import org.apache.poi.hwpf.model.io.HWPFFileSystem;
+import org.junit.Test;
 
-  private TextPieceTable fakeTPT = new TextPieceTable();
+public final class TestPAPBinTable {
 
-  public TestPAPBinTable(String name)
-  {
-    super(name);
-  }
-
-  public void testReadWrite()
-    throws Exception
-  {
-    FileInformationBlock fib = _hWPFDocFixture._fib;
-    byte[] mainStream = _hWPFDocFixture._mainStream;
-    byte[] tableStream = _hWPFDocFixture._tableStream;
-    int fcMin = fib.getFcMin();
-
-    _pAPBinTable = new PAPBinTable(mainStream, tableStream, null, fib.getFcPlcfbtePapx(), fib.getLcbPlcfbtePapx(), fcMin, fakeTPT);
-
-    HWPFFileSystem fileSys = new HWPFFileSystem();
-
-    _pAPBinTable.writeTo(fileSys, 0);
-    ByteArrayOutputStream tableOut = fileSys.getStream("1Table");
-    ByteArrayOutputStream mainOut =  fileSys.getStream("WordDocument");
-
-    byte[] newTableStream = tableOut.toByteArray();
-    byte[] newMainStream = mainOut.toByteArray();
-
-    PAPBinTable newBinTable = new PAPBinTable(newMainStream, newTableStream, null,0, newTableStream.length, 0, fakeTPT);
-
-    ArrayList oldTextRuns = _pAPBinTable.getParagraphs();
-    ArrayList newTextRuns = newBinTable.getParagraphs();
-
-    assertEquals(oldTextRuns.size(), newTextRuns.size());
-
-    int size = oldTextRuns.size();
-    for (int x = 0; x < size; x++)
-    {
-     PropertyNode oldNode = (PropertyNode)oldTextRuns.get(x);
-     PropertyNode newNode = (PropertyNode)newTextRuns.get(x);
-
-     assertTrue(oldNode.equals(newNode));
+    @Test
+    public void testObIs() throws IOException {
+        // shall not fail with assertions on
+        HWPFTestDataSamples.openSampleFile( "ob_is.doc" ).close();
     }
 
+    @Test
+    public void testReadWrite() throws IOException {
+        /** @todo verify the constructors */
+        HWPFDocFixture _hWPFDocFixture = new HWPFDocFixture( this, HWPFDocFixture.DEFAULT_TEST_FILE );
 
+        _hWPFDocFixture.setUp();
+        TextPieceTable fakeTPT = new TextPieceTable();
 
+        FileInformationBlock fib = _hWPFDocFixture._fib;
+        byte[] mainStream = _hWPFDocFixture._mainStream;
+        byte[] tableStream = _hWPFDocFixture._tableStream;
 
-  }
+        PAPBinTable _pAPBinTable = new PAPBinTable( mainStream, tableStream,
+                null, fib.getFcPlcfbtePapx(), fib.getLcbPlcfbtePapx(), fakeTPT );
 
-  protected void setUp()
-    throws Exception
-  {
-    super.setUp();
-    /**@todo verify the constructors*/
-    _hWPFDocFixture = new HWPFDocFixture(this);
+        HWPFFileSystem fileSys = new HWPFFileSystem();
+        ByteArrayOutputStream tableOut = fileSys.getStream( "1Table" );
+        ByteArrayOutputStream mainOut = fileSys.getStream( "WordDocument" );
+        _pAPBinTable.writeTo( mainOut, tableOut, fakeTPT );
 
-    _hWPFDocFixture.setUp();
-  }
+        byte[] newTableStream = tableOut.toByteArray();
+        byte[] newMainStream = mainOut.toByteArray();
 
-  protected void tearDown()
-    throws Exception
-  {
-    _hWPFDocFixture.tearDown();
+        PAPBinTable newBinTable = new PAPBinTable( newMainStream,
+                newTableStream, null, 0, newTableStream.length, fakeTPT );
 
-    _hWPFDocFixture = null;
-    super.tearDown();
-  }
+        List<PAPX> oldTextRuns = _pAPBinTable.getParagraphs();
+        List<PAPX> newTextRuns = newBinTable.getParagraphs();
 
+        assertEquals( oldTextRuns.size(), newTextRuns.size() );
+
+        int size = oldTextRuns.size();
+        for ( int x = 0; x < size; x++ )
+        {
+            PAPX oldNode = oldTextRuns.get( x );
+            PAPX newNode = newTextRuns.get( x );
+
+            assertTrue( oldNode.equals( newNode ) );
+        }
+
+        _hWPFDocFixture.tearDown();
+    }
 }

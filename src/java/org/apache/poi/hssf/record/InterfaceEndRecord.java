@@ -17,7 +17,8 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.RecordFormatException;
 
 /**
  * Title: Interface End Record (0x00E2)<P>
@@ -25,45 +26,39 @@ import org.apache.poi.util.LittleEndian;
  *  (has no fields)<P>
  * REFERENCE:  PG 324 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
  * @author Andrew C. Oliver (acoliver at apache dot org)
- * @version 2.0-pre
  */
-public final class InterfaceEndRecord extends Record {
-    public final static short sid = 0x00E2;
+public final class InterfaceEndRecord extends StandardRecord {
 
-    public InterfaceEndRecord()
-    {
+    public static final short sid = 0x00E2;
+    public static final InterfaceEndRecord instance = new InterfaceEndRecord();
+
+    private InterfaceEndRecord() {
+        // enforce singleton
     }
 
-    /**
-     * @param in unused (since this record has no data)
-     */
-    public InterfaceEndRecord(RecordInputStream in)
-    {
+    public static Record create(RecordInputStream in) {
+        switch (in.remaining()) {
+            case 0:
+                return instance;
+            case 2:
+                return new InterfaceHdrRecord(in);
+        }
+        throw new RecordFormatException("Invalid record data size: " + in.remaining());
     }
 
-    public String toString()
-    {
-        StringBuffer buffer = new StringBuffer();
-
-        buffer.append("[INTERFACEEND]\n");
-        buffer.append("[/INTERFACEEND]\n");
-        return buffer.toString();
+    public String toString() {
+        return "[INTERFACEEND/]\n";
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset,
-                              (( short ) 0x00));   // 0 bytes (4 total)
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        // no instance data
     }
 
     protected int getDataSize() {
         return 0;
     }
 
-    public short getSid()
-    {
+    public short getSid() {
         return sid;
     }
 }

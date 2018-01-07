@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,10 +14,10 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hwpf.model;
 
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -41,27 +40,24 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Ryan Ackley
  */
-public abstract class FormattedDiskPage
-{
+@Internal
+public abstract class FormattedDiskPage {
     protected byte[] _fkp;
     protected int _crun;
     protected int _offset;
 
-
-    public FormattedDiskPage()
-    {
-
+    public FormattedDiskPage() {
     }
 
     /**
      * Uses a 512-byte array to create a FKP
      */
-    public FormattedDiskPage(byte[] documentStream, int offset)
-    {
-        _crun = LittleEndian.getUnsignedByte(documentStream, offset + 511);
+    public FormattedDiskPage(byte[] documentStream, int offset) {
+        _crun = LittleEndian.getUByte(documentStream, offset + 511);
         _fkp = documentStream;
         _offset = offset;
     }
+
     /**
      * Used to get a text offset corresponding to a grpprl in this fkp.
      * @param index The index of the property in this FKP
@@ -71,6 +67,7 @@ public abstract class FormattedDiskPage
     {
         return LittleEndian.getInt(_fkp, _offset + (index * 4));
     }
+
     /**
      * Used to get the end of the text corresponding to a grpprl in this fkp.
      * @param index The index of the property in this fkp.
@@ -80,6 +77,7 @@ public abstract class FormattedDiskPage
     {
         return LittleEndian.getInt(_fkp, _offset + ((index + 1) * 4));
     }
+
     /**
      * Used to get the total number of grrprl's stored int this FKP
      * @return The number of grpprls in this FKP

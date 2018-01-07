@@ -14,34 +14,29 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.util;
 
-import org.openxml4j.opc.*;
-import org.openxml4j.opc.Package;
-import org.openxml4j.opc.internal.PackagePropertiesPart;
-import org.openxml4j.opc.internal.marshallers.PackagePropertiesMarshaller;
-import org.openxml4j.exceptions.OpenXML4JException;
-import org.apache.poi.util.IOUtils;
+import org.apache.poi.openxml4j.opc.*;
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.POIXMLException;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.lang.reflect.Method;
+import java.net.URI;
 
 /**
  * Provides handy methods to work with OOXML packages
- *
- * @author Yegor Kozlov
  */
-public class PackageHelper {
+public final class PackageHelper {
 
-    /**
-     * Clone the specified package.
-     *
-     * @param   pkg   the package to clone
-     * @return  the cloned package
-     */
-    public static Package clone(Package pkg) throws OpenXML4JException, IOException {
-        return clone(pkg, createTempFile());
+    public static OPCPackage open(InputStream is) throws IOException {
+        try {
+            return OPCPackage.open(is);
+        } catch (InvalidFormatException e){
+            throw new POIXMLException(e);
+        }
     }
 
     /**
@@ -51,11 +46,11 @@ public class PackageHelper {
      * @param   file  the destination file
      * @return  the cloned package
      */
-    public static Package clone(Package pkg, File file) throws OpenXML4JException, IOException {
+    public static OPCPackage clone(OPCPackage pkg, File file) throws OpenXML4JException, IOException {
 
         String path = file.getAbsolutePath();
 
-        Package dest = Package.create(path);
+        OPCPackage dest = OPCPackage.create(path);
         PackageRelationshipCollection rels = pkg.getRelationships();
         for (PackageRelationship rel : rels) {
             PackagePart part = pkg.getPart(rel);
@@ -63,10 +58,9 @@ public class PackageHelper {
             if (rel.getRelationshipType().equals(PackageRelationshipTypes.CORE_PROPERTIES)) {
                 copyProperties(pkg.getPackageProperties(), dest.getPackageProperties());
                 continue;
-            } else {
-                dest.addRelationship(part.getPartName(), rel.getTargetMode(), rel.getRelationshipType());
-                part_tgt = dest.createPart(part.getPartName(), part.getContentType());
             }
+            dest.addRelationship(part.getPartName(), rel.getTargetMode(), rel.getRelationshipType());
+            part_tgt = dest.createPart(part.getPartName(), part.getContentType());
 
             OutputStream out = part_tgt.getOutputStream();
             IOUtils.copy(part.getInputStream(), out);
@@ -80,28 +74,13 @@ public class PackageHelper {
 
         //the temp file will be deleted when JVM terminates
         new File(path).deleteOnExit();
-        return Package.open(path);
-    }
-
-    /**
-     *
-     * @return
-     * @throws IOException
-     */
-    public static File createTempFile() throws IOException {
-        File file = File.createTempFile("poi-ooxml-", ".tmp");
-        //there is no way to pass an existing file to Package.create(file),
-        //delete first, the file will be re-created in Packe.create(file)
-        file.delete();
-        file.deleteOnExit();
-        return file;
-
+        return OPCPackage.open(path);
     }
 
     /**
      * Recursively copy package parts to the destination package
      */
-    private static void copy(Package pkg, PackagePart part, Package tgt, PackagePart part_tgt) throws OpenXML4JException, IOException {
+    private static void copy(OPCPackage pkg, PackagePart part, OPCPackage tgt, PackagePart part_tgt) throws OpenXML4JException, IOException {
         PackageRelationshipCollection rels = part.getRelationships();
         if(rels != null) for (PackageRelationship rel : rels) {
             PackagePart p;
@@ -109,12 +88,19 @@ public class PackageHelper {
                 part_tgt.addExternalRelationship(rel.getTargetURI().toString(), rel.getRelationshipType(), rel.getId());
                 //external relations don't have associated package parts
                 continue;
-            } else {
-                PackagePartName relName = PackagingURIHelper.createPartName(rel.getTargetURI());
-                p = pkg.getPart(relName);
             }
+            URI uri = rel.getTargetURI();
 
+            if(uri.getRawFragment() != null) {
+                part_tgt.addRelationship(uri, rel.getTargetMode(), rel.getRelationshipType(), rel.getId());
+                continue;
+            }
+            PackagePartName relName = PackagingURIHelper.createPartName(rel.getTargetURI());
+            p = pkg.getPart(relName);
             part_tgt.addRelationship(p.getPartName(), rel.getTargetMode(), rel.getRelationshipType(), rel.getId());
+
+
+
 
             PackagePart dest;
             if(!tgt.containPart(p.getPartName())){

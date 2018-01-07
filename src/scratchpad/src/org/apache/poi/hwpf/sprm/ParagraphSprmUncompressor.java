@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -16,26 +15,34 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hwpf.sprm;
 
-import org.apache.poi.hwpf.usermodel.ParagraphProperties;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.poi.hwpf.model.TabDescriptor;
 import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.hwpf.usermodel.DateAndTime;
-import org.apache.poi.hwpf.usermodel.LineSpacingDescriptor;
-import org.apache.poi.hwpf.usermodel.ShadingDescriptor;
 import org.apache.poi.hwpf.usermodel.DropCapSpecifier;
+import org.apache.poi.hwpf.usermodel.LineSpacingDescriptor;
+import org.apache.poi.hwpf.usermodel.ParagraphProperties;
+import org.apache.poi.hwpf.usermodel.ShadingDescriptor;
+import org.apache.poi.hwpf.usermodel.ShadingDescriptor80;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
-import java.util.HashMap;
-import java.util.Set;
-import java.util.Iterator;
-import java.util.Collections;
-import java.util.ArrayList;
-
-public class ParagraphSprmUncompressor
+@Internal
+public final class ParagraphSprmUncompressor
   extends SprmUncompressor
 {
+    private static final POILogger logger = POILogFactory
+            .getLogger( ParagraphSprmUncompressor.class );
+
   public ParagraphSprmUncompressor()
   {
   }
@@ -57,13 +64,23 @@ public class ParagraphSprmUncompressor
 
     while (sprmIt.hasNext())
     {
-      SprmOperation sprm = (SprmOperation)sprmIt.next();
+      SprmOperation sprm = sprmIt.next();
 
       // PAPXs can contain table sprms if the paragraph marks the end of a
       // table row
-      if (sprm.getType() == SprmOperation.PAP_TYPE)
+      if (sprm.getType() == SprmOperation.TYPE_PAP)
       {
-        unCompressPAPOperation(newProperties, sprm);
+          try
+          {
+              unCompressPAPOperation( newProperties, sprm );
+          }
+          catch ( Exception exc )
+          {
+              logger.log(
+                      POILogger.ERROR,
+                      "Unable to apply SPRM operation '"
+                              + sprm.getOperation() + "': ", exc );
+          }
       }
     }
 
@@ -118,19 +135,20 @@ public class ParagraphSprmUncompressor
         }
         break;
       case 0x3:
+        // Physical justification of the paragraph
         newPAP.setJc ((byte) sprm.getOperand());
         break;
       case 0x4:
-        newPAP.setFSideBySide ((byte) sprm.getOperand());
+        newPAP.setFSideBySide (sprm.getOperand() != 0);
         break;
       case 0x5:
-        newPAP.setFKeep ((byte) sprm.getOperand());
+        newPAP.setFKeep (sprm.getOperand() != 0);
         break;
       case 0x6:
-        newPAP.setFKeepFollow ((byte) sprm.getOperand());
+        newPAP.setFKeepFollow (sprm.getOperand() != 0);
         break;
       case 0x7:
-        newPAP.setFPageBreakBefore ((byte) sprm.getOperand());
+        newPAP.setFPageBreakBefore (sprm.getOperand() != 0);
         break;
       case 0x8:
         newPAP.setBrcl ((byte) sprm.getOperand());
@@ -141,11 +159,12 @@ public class ParagraphSprmUncompressor
       case 0xa:
         newPAP.setIlvl ((byte) sprm.getOperand());
         break;
-      case 0xb:
-        newPAP.setIlfo (sprm.getOperand());
-        break;
+        case 0xb:
+            /* sprmPIlfo -- 0x460B */
+            newPAP.setIlfo( sprm.getOperandShortSigned() );
+            break;
       case 0xc:
-        newPAP.setFNoLnn ((byte) sprm.getOperand());
+        newPAP.setFNoLnn (sprm.getOperand() != 0);
         break;
       case 0xd:
         /**handle tabs . variable parameter. seperate processing needed*/
@@ -179,11 +198,12 @@ public class ParagraphSprmUncompressor
         // fast saved only
         //applySprmPChgTabs (newPAP, varParam, opSize);
         break;
-      case 0x16:
-        newPAP.setFInTable ((byte) sprm.getOperand());
-        break;
+        case 0x16:
+            // sprmPFInTable -- 0x2416
+            newPAP.setFInTable( sprm.getOperand()  != 0);
+            break;
       case 0x17:
-        newPAP.setFTtp ((byte) sprm.getOperand());
+        newPAP.setFTtp ( sprm.getOperand() != 0);
         break;
       case 0x18:
         newPAP.setDxaAbs (sprm.getOperand());
@@ -210,30 +230,25 @@ public class ParagraphSprmUncompressor
         break;
 
         // BrcXXX1 is older Version. Brc is used
-      case 0x1c:
+        // case 0x1c:
+        // newPAP.setBrcTop1((short)param);
+        // break;
+        // case 0x1d:
+        // newPAP.setBrcLeft1((short)param);
+        // break;
+        // case 0x1e:
+        // newPAP.setBrcBottom1((short)param);
+        // break;
+        // case 0x1f:
+        // newPAP.setBrcRight1((short)param);
+        // break;
+        // case 0x20:
+        // newPAP.setBrcBetween1((short)param);
+        // break;
+        // case 0x21:
+        // newPAP.setBrcBar1((byte)param);
+        // break;
 
-        //newPAP.setBrcTop1((short)param);
-        break;
-      case 0x1d:
-
-        //newPAP.setBrcLeft1((short)param);
-        break;
-      case 0x1e:
-
-        //newPAP.setBrcBottom1((short)param);
-        break;
-      case 0x1f:
-
-        //newPAP.setBrcRight1((short)param);
-        break;
-      case 0x20:
-
-        //newPAP.setBrcBetween1((short)param);
-        break;
-      case 0x21:
-
-        //newPAP.setBrcBar1((byte)param);
-        break;
       case 0x22:
         newPAP.setDxaFromText (sprm.getOperand());
         break;
@@ -259,7 +274,7 @@ public class ParagraphSprmUncompressor
         newPAP.setBrcBar (new BorderCode(sprm.getGrpprl(), sprm.getGrpprlOffset()));
         break;
       case 0x2a:
-        newPAP.setFNoAutoHyph ((byte) sprm.getOperand());
+        newPAP.setFNoAutoHyph (sprm.getOperand() != 0);
         break;
       case 0x2b:
         newPAP.setDyaHeight (sprm.getOperand());
@@ -267,9 +282,10 @@ public class ParagraphSprmUncompressor
       case 0x2c:
         newPAP.setDcs (new DropCapSpecifier((short)sprm.getOperand()));
         break;
-      case 0x2d:
-        newPAP.setShd (new ShadingDescriptor((short)sprm.getOperand()));
-        break;
+        case 0x2d:
+            newPAP.setShd( new ShadingDescriptor80( (short) sprm.getOperand() )
+                    .toShadingDescriptor() );
+            break;
       case 0x2e:
         newPAP.setDyaFromText (sprm.getOperand());
         break;
@@ -277,32 +293,28 @@ public class ParagraphSprmUncompressor
         newPAP.setDxaFromText (sprm.getOperand());
         break;
       case 0x30:
-        newPAP.setFLocked ((byte) sprm.getOperand());
+        newPAP.setFLocked (sprm.getOperand() != 0);
         break;
       case 0x31:
-        newPAP.setFWidowControl ((byte) sprm.getOperand());
-        break;
-      case 0x32:
-
-        //undocumented
+        newPAP.setFWidowControl (sprm.getOperand() != 0);
         break;
       case 0x33:
-        newPAP.setFKinsoku ((byte) sprm.getOperand());
+        newPAP.setFKinsoku (sprm.getOperand() != 0);
         break;
       case 0x34:
-        newPAP.setFWordWrap ((byte) sprm.getOperand());
+        newPAP.setFWordWrap (sprm.getOperand() != 0);
         break;
       case 0x35:
-        newPAP.setFOverflowPunct ((byte) sprm.getOperand());
+        newPAP.setFOverflowPunct (sprm.getOperand() != 0);
         break;
       case 0x36:
-        newPAP.setFTopLinePunct ((byte) sprm.getOperand());
+        newPAP.setFTopLinePunct (sprm.getOperand() != 0);
         break;
       case 0x37:
-        newPAP.setFAutoSpaceDE ((byte) sprm.getOperand());
+        newPAP.setFAutoSpaceDE (sprm.getOperand() != 0);
         break;
       case 0x38:
-        newPAP.setFAutoSpaceDN ((byte) sprm.getOperand());
+        newPAP.setFAutoSpaceDN (sprm.getOperand() != 0);
         break;
       case 0x39:
         newPAP.setWAlignFont (sprm.getOperand());
@@ -311,7 +323,6 @@ public class ParagraphSprmUncompressor
         newPAP.setFontAlign ((short) sprm.getOperand());
         break;
       case 0x3b:
-
         //obsolete
         break;
       case 0x3e:
@@ -325,35 +336,29 @@ public class ParagraphSprmUncompressor
       case 0x3f:
         //don't really need this. spec is confusing regarding this
         //sprm
-        try
-        {
           byte[] varParam = sprm.getGrpprl();
           int offset = sprm.getGrpprlOffset();
-          newPAP.setFPropRMark ((int) varParam[offset]);
-          newPAP.setIbstPropRMark ((int) LittleEndian.getShort (varParam, offset + 1));
+          newPAP.setFPropRMark (varParam[offset]  != 0 );
+          newPAP.setIbstPropRMark (LittleEndian.getShort (varParam, offset + 1));
           newPAP.setDttmPropRMark (new DateAndTime(varParam, offset + 3));
-        }
-        catch (Exception e)
-        {
-          e.printStackTrace ();
-        }
         break;
       case 0x40:
-
-        //newPAP._lvl = param;
-        if (newPAP.getIstd () >= 1 && newPAP.getIstd () <= 9)
+        // This condition commented out, as Word seems to set outline levels even for 
+        //  paragraph with other styles than Heading 1..9, even though specification 
+        //  does not say so. See bug 49820 for discussion.
+        //if (newPAP.getIstd () < 1 && newPAP.getIstd () > 9)
         {
-          newPAP.setIlvl ((byte) sprm.getOperand());
+          newPAP.setLvl ((byte) sprm.getOperand());
         }
         break;
       case 0x41:
-
-        // undocumented
+        // sprmPFBiDi 
+        newPAP.setFBiDi(sprm.getOperand() != 0);
         break;
       case 0x43:
 
         //pap.fNumRMIns
-        newPAP.setFNumRMIns ((byte) sprm.getOperand());
+        newPAP.setFNumRMIns (sprm.getOperand() != 0);
         break;
       case 0x44:
 
@@ -373,23 +378,57 @@ public class ParagraphSprmUncompressor
         break;
 
       case 0x47:
-        newPAP.setFUsePgsuSettings ((byte) sprm.getOperand());
+        newPAP.setFUsePgsuSettings (sprm.getOperand() != 0);
         break;
       case 0x48:
-        newPAP.setFAdjustRight ((byte) sprm.getOperand());
+        newPAP.setFAdjustRight (sprm.getOperand() != 0);
         break;
-      case 0x49:
-        newPAP.setTableLevel((byte)sprm.getOperand());
+        case 0x49:
+            // sprmPItap -- 0x6649
+            newPAP.setItap( sprm.getOperand() );
+            break;
+        case 0x4a:
+            // sprmPDtap -- 0x664a
+            newPAP.setItap( (byte) ( newPAP.getItap() + sprm.getOperand() ) );
+            break;
+        case 0x4b:
+            // sprmPFInnerTableCell -- 0x244b
+            newPAP.setFInnerTableCell( sprm.getOperand()  != 0);
+            break;
+        case 0x4c:
+            // sprmPFInnerTtp -- 0x244c
+            newPAP.setFTtpEmbedded( sprm.getOperand()  != 0);
+            break;
+        case 0x4d:
+            // sprmPShd -- 0xc64d
+            ShadingDescriptor shadingDescriptor = new ShadingDescriptor(
+                    sprm.getGrpprl(), 3 );
+            newPAP.setShading( shadingDescriptor );
+            break;
+        case 0x5d:
+            // sprmPDxaRight -- 0x845d
+            newPAP.setDxaRight( sprm.getOperand() );
+            break;
+        case 0x5e:
+            // sprmPDxaLeft -- 0x845e
+            newPAP.setDxaLeft( sprm.getOperand() );
+            break;
+        case 0x60:
+            // sprmPDxaLeft1 -- 0x8460
+            newPAP.setDxaLeft1( sprm.getOperand() );
+            break;
+      case 0x61:
+        // sprmPJc 
+        newPAP.setJustificationLogical((byte) sprm.getOperand());
         break;
-      case 0x4b:
-        newPAP.setEmbeddedCellMark((byte)sprm.getOperand());
-        break;
-      case 0x4c:
-        newPAP.setFTtpEmbedded((byte)sprm.getOperand());
-        break;
-      default:
-        break;
-    }
+      case 0x67:
+          // sprmPRsid -- 0x6467 
+          newPAP.setRsid( sprm.getOperand() );
+          break;
+        default:
+            logger.log( POILogger.DEBUG, "Unknown PAP sprm ignored: " + sprm );
+            break;
+        }
   }
 
   private static void handleTabs(ParagraphProperties pap, SprmOperation sprm)
@@ -398,17 +437,17 @@ public class ParagraphSprmUncompressor
     int offset = sprm.getGrpprlOffset();
     int delSize = grpprl[offset++];
     int[] tabPositions = pap.getRgdxaTab();
-    byte[] tabDescriptors = pap.getRgtbd();
+    TabDescriptor[] tabDescriptors = pap.getRgtbd();
 
-    HashMap tabMap = new HashMap();
+    Map<Integer, TabDescriptor> tabMap = new HashMap<>();
     for (int x = 0; x < tabPositions.length; x++)
     {
-      tabMap.put(new Integer(tabPositions[x]), new Byte(tabDescriptors[x]));
+      tabMap.put(Integer.valueOf(tabPositions[x]), tabDescriptors[x]);
     }
 
     for (int x = 0; x < delSize; x++)
     {
-      tabMap.remove(new Integer(LittleEndian.getShort(grpprl, offset)));
+      tabMap.remove(Integer.valueOf(LittleEndian.getShort(grpprl, offset)));
       offset += LittleEndian.SHORT_SIZE;
     }
 
@@ -416,28 +455,26 @@ public class ParagraphSprmUncompressor
     int start = offset;
     for (int x = 0; x < addSize; x++)
     {
-      Integer key = new Integer(LittleEndian.getShort(grpprl, offset));
-      Byte val = new Byte(grpprl[start + ((LittleEndian.SHORT_SIZE * addSize) + x)]);
+      Integer key = Integer.valueOf(LittleEndian.getShort(grpprl, offset));
+      TabDescriptor val = new TabDescriptor( grpprl, start + ((TabDescriptor.getSize() * addSize) + x) );
       tabMap.put(key, val);
       offset += LittleEndian.SHORT_SIZE;
     }
 
     tabPositions = new int[tabMap.size()];
-    tabDescriptors = new byte[tabPositions.length];
-    ArrayList list = new ArrayList();
-
-    Iterator keyIT = tabMap.keySet().iterator();
-    while (keyIT.hasNext())
-    {
-      list.add(keyIT.next());
-    }
+    tabDescriptors = new TabDescriptor[tabPositions.length];
+    
+    List<Integer> list = new ArrayList<>(tabMap.keySet());
     Collections.sort(list);
 
     for (int x = 0; x < tabPositions.length; x++)
     {
-      Integer key = ((Integer)list.get(x));
+      Integer key = list.get(x);
       tabPositions[x] = key.intValue();
-      tabDescriptors[x] = ((Byte)tabMap.get(key)).byteValue();
+      if (tabMap.containsKey( key ))
+          tabDescriptors[x] = tabMap.get(key);
+      else
+          tabDescriptors[x] = new TabDescriptor();
     }
 
     pap.setRgdxaTab(tabPositions);
@@ -455,20 +492,20 @@ public class ParagraphSprmUncompressor
 //    HashMap tabMap = new HashMap();
 //    for (int x = 0; x < tabPositions.length; x++)
 //    {
-//      tabMap.put(new Integer(tabPositions[x]), new Byte(tabDescriptors[x]));
+//      tabMap.put(Integer.valueOf(tabPositions[x]), Byte.valueOf(tabDescriptors[x]));
 //    }
 //
 //    for (int x = 0; x < delSize; x++)
 //    {
-//      tabMap.remove(new Integer(LittleEndian.getInt(grpprl, offset)));
+//      tabMap.remove(Integer.valueOf(LittleEndian.getInt(grpprl, offset)));
 //      offset += LittleEndian.INT_SIZE;;
 //    }
 //
 //    int addSize = grpprl[offset++];
 //    for (int x = 0; x < addSize; x++)
 //    {
-//      Integer key = new Integer(LittleEndian.getInt(grpprl, offset));
-//      Byte val = new Byte(grpprl[(LittleEndian.INT_SIZE * (addSize - x)) + x]);
+//      Integer key = Integer.valueOf(LittleEndian.getInt(grpprl, offset));
+//      Byte val = Byte.valueOf(grpprl[(LittleEndian.INT_SIZE * (addSize - x)) + x]);
 //      tabMap.put(key, val);
 //      offset += LittleEndian.INT_SIZE;
 //    }

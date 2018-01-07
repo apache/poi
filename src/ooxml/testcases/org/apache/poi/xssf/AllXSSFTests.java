@@ -17,40 +17,34 @@
 
 package org.apache.poi.xssf;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-import org.apache.poi.ss.util.TestCellReference;
-import org.apache.poi.xssf.eventusermodel.TestXSSFReader;
+import org.apache.poi.ss.format.TestCellFormatPart;
 import org.apache.poi.xssf.extractor.TestXSSFExcelExtractor;
 import org.apache.poi.xssf.io.TestLoadSaveXSSF;
 import org.apache.poi.xssf.model.TestCommentsTable;
-import org.apache.poi.xssf.model.TestStylesTable;
+import org.apache.poi.xssf.model.TestSharedStringsTable;
 import org.apache.poi.xssf.usermodel.AllXSSFUsermodelTests;
-import org.apache.poi.xssf.usermodel.TestXSSFFont;
-import org.apache.poi.xssf.usermodel.TestXSSFSheet;
-import org.apache.poi.xssf.usermodel.TestXSSFWorkbook;
 import org.apache.poi.xssf.util.TestCTColComparator;
 import org.apache.poi.xssf.util.TestNumericRanges;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * Collects all tests for <tt>org.apache.poi.xssf</tt> and sub-packages.
- * 
- * @author Josh Micich
  */
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+    AllXSSFUsermodelTests.class,
+    //TestXSSFReader.class, //converted to junit4
+    TestXSSFExcelExtractor.class,
+    TestLoadSaveXSSF.class,
+    TestCommentsTable.class,
+    TestSharedStringsTable.class,
+    //TestStylesTable.class, //converted to junit4
+    //TestCellReference.class, //converted to junit4
+    TestCTColComparator.class,
+    TestNumericRanges.class,       
+    TestCellFormatPart.class,
+    TestXSSFCloneSheet.class
+})
 public final class AllXSSFTests {
-
-	public static Test suite() {
-		TestSuite result = new TestSuite(AllXSSFTests.class.getName());
-		result.addTest(AllXSSFUsermodelTests.suite());
-		result.addTestSuite(TestXSSFReader.class);
-		result.addTestSuite(TestXSSFExcelExtractor.class);
-		result.addTestSuite(TestLoadSaveXSSF.class);
-		result.addTestSuite(TestCommentsTable.class);
-		result.addTestSuite(TestStylesTable.class);
-		result.addTestSuite(TestCellReference.class);
-		result.addTestSuite(TestCTColComparator.class);
-		result.addTestSuite(TestNumericRanges.class);		
-		return result;
-	}
 }

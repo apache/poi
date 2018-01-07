@@ -20,26 +20,29 @@ package org.apache.poi.hssf.record;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * EXTERNSHEET (0x0017)<br/>
- * A List of Indexes to  EXTERNALBOOK (supplemental book) Records <p/>
- * 
- * @author Libin Roman (Vista Portal LDT. Developer)
+ * EXTERNSHEET (0x0017)<p>
+ * A List of Indexes to  EXTERNALBOOK (supplemental book) Records
  */
-public class ExternSheetRecord extends Record {
-	public final static short sid = 0x0017;
-	private List _list;
+public class ExternSheetRecord extends StandardRecord {
+
+    public final static short sid = 0x0017;
+	private final List<RefSubRecord> _list;
 	
-	private final class RefSubRecord {
+	private static final class RefSubRecord {
 		public static final int ENCODED_SIZE = 6;
 
 		/** index to External Book Block (which starts with a EXTERNALBOOK record) */
-		private int _extBookIndex;
+		private final int _extBookIndex;
 		private int _firstSheetIndex; // may be -1 (0xFFFF)
 		private int _lastSheetIndex;  // may be -1 (0xFFFF)
 		
+		public void adjustIndex(int offset) {
+			_firstSheetIndex += offset;
+			_lastSheetIndex += offset;
+		}
 		
 		/** a Constructor for making new sub record
 		 */
@@ -65,6 +68,7 @@ public class ExternSheetRecord extends Record {
 			return _lastSheetIndex;
 		}
 		
+		@Override
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("extBook=").append(_extBookIndex);
@@ -73,43 +77,27 @@ public class ExternSheetRecord extends Record {
 			return buffer.toString();
 		}
 		
-		/**
-		 * called by the class that is responsible for writing this sucker.
-		 * Subclasses should implement this so that their data is passed back in a
-		 * byte array.
-		 *
-		 * @param offset to begin writing at
-		 * @param data byte array containing instance data
-		 * @return number of bytes written
-		 */
-		public void serialize(int offset, byte [] data) {
-			LittleEndian.putUShort(data, 0 + offset, _extBookIndex);
-			LittleEndian.putUShort(data, 2 + offset, _firstSheetIndex);
-			LittleEndian.putUShort(data, 4 + offset, _lastSheetIndex);
+		public void serialize(LittleEndianOutput out) {
+			out.writeShort(_extBookIndex);
+			out.writeShort(_firstSheetIndex);
+			out.writeShort(_lastSheetIndex);
 		}
 	}	
 	
 	
 	
 	public ExternSheetRecord() {
-		_list = new ArrayList();
+		_list = new ArrayList<>();
 	}
-	
-	/**
-	 * called by the constructor, should set class level fields.  Should throw
-	 * runtime exception for bad/icomplete data.
-	 *
-	 * @param in the RecordInputstream to read the record from
-	 */
+
 	public ExternSheetRecord(RecordInputStream in) {
-		_list		   = new ArrayList();
+		_list = new ArrayList<>();
 		
 		int nItems  = in.readShort();
 		
 		for (int i = 0 ; i < nItems ; ++i) {
 			RefSubRecord rec = new RefSubRecord(in);
-			
-			_list.add( rec);
+			_list.add(rec);
 		}
 	}
 	
@@ -137,6 +125,7 @@ public class ExternSheetRecord extends Record {
 	}
 	
 	
+	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		int nItems = _list.size();
@@ -144,7 +133,7 @@ public class ExternSheetRecord extends Record {
 		sb.append("   numOfRefs     = ").append(nItems).append("\n");
 		for (int i=0; i < nItems; i++) {
 			sb.append("refrec         #").append(i).append(": ");
-			sb.append(getRef(i).toString());
+			sb.append(getRef(i));
 			sb.append('\n');
 		}
 		sb.append("[/EXTERNSHEET]\n");
@@ -153,53 +142,62 @@ public class ExternSheetRecord extends Record {
 		return sb.toString();
 	}
 	
+	@Override
 	protected int getDataSize() {
 		return 2 + _list.size() * RefSubRecord.ENCODED_SIZE;
 	}
 	
-	/**
-	 * called by the class that is responsible for writing this sucker.
-	 * Subclasses should implement this so that their data is passed back in a
-	 * byte array.
-	 *
-	 * @param offset to begin writing at
-	 * @param data byte array containing instance data
-	 * @return number of bytes written
-	 */
-	public int serialize(int offset, byte [] data) {
-		int dataSize = getDataSize();
-		
+	@Override
+	public void serialize(LittleEndianOutput out) {
 		int nItems = _list.size();
 
-		LittleEndian.putShort(data, 0 + offset, sid);
-		LittleEndian.putUShort(data, 2 + offset, dataSize);
-		LittleEndian.putUShort(data, 4 + offset, nItems);
-		
-		int pos = 6 ;
+		out.writeShort(nItems);
 		
 		for (int i = 0; i < nItems; i++) {
-			getRef(i).serialize(offset + pos, data);
-			pos +=6;
+			getRef(i).serialize(out);
 		}
-		return dataSize + 4;
 	}
 
 	private RefSubRecord getRef(int i) {
-		return (RefSubRecord) _list.get(i);
+		return _list.get(i);
+	}
+	
+	public void removeSheet(int sheetIdx) {
+        int nItems = _list.size();
+        for (int i = 0; i < nItems; i++) {
+            RefSubRecord refSubRecord = _list.get(i);
+            if(refSubRecord.getFirstSheetIndex() == sheetIdx && 
+                    refSubRecord.getLastSheetIndex() == sheetIdx) {
+            	// removing the entry would mess up the sheet index in Formula of NameRecord
+            	_list.set(i, new RefSubRecord(refSubRecord.getExtBookIndex(), -1, -1));
+            } else if (refSubRecord.getFirstSheetIndex() > sheetIdx && 
+                    refSubRecord.getLastSheetIndex() > sheetIdx) {
+                _list.set(i, new RefSubRecord(refSubRecord.getExtBookIndex(), refSubRecord.getFirstSheetIndex()-1, refSubRecord.getLastSheetIndex()-1));
+            }
+        }
 	}
 	
 	/**
 	 * return the non static version of the id for this record.
 	 */
+	@Override
 	public short getSid() {
 		return sid;
 	}
 
-	public int getExtbookIndexFromRefIndex(int refIndex) {
-		return getRef(refIndex).getExtBookIndex();
-	}
+    /**
+     * @param refIndex specifies the n-th refIndex
+     * 
+     * @return the index of the SupBookRecord for this index
+     */
+    public int getExtbookIndexFromRefIndex(int refIndex) {
+        RefSubRecord refRec = getRef(refIndex);
+        return refRec.getExtBookIndex();
+    }
 
 	/**
+	 * @param extBookIndex external sheet reference index
+	 * 
 	 * @return -1 if not found
 	 */
 	public int findRefIndexFromExtBookIndex(int extBookIndex) {
@@ -212,11 +210,65 @@ public class ExternSheetRecord extends Record {
 		return -1;
 	}
 
+    /**
+     * Returns the first sheet that the reference applies to, or
+     *  -1 if the referenced sheet can't be found, or -2 if the
+     *  reference is workbook scoped.
+     *  
+     * @param extRefIndex external sheet reference index
+     * 
+     * @return the first sheet that the reference applies to, or
+     *  -1 if the referenced sheet can't be found, or -2 if the
+     *  reference is workbook scoped
+     */
 	public int getFirstSheetIndexFromRefIndex(int extRefIndex) {
 		return getRef(extRefIndex).getFirstSheetIndex();
 	}
 
+    /**
+     * Returns the last sheet that the reference applies to, or
+     *  -1 if the referenced sheet can't be found, or -2 if the
+     *  reference is workbook scoped.
+     * For a single sheet reference, the first and last should be
+     *  the same.
+     *  
+     * @param extRefIndex external sheet reference index
+     * 
+     * @return the last sheet that the reference applies to, or
+     *  -1 if the referenced sheet can't be found, or -2 if the
+     *  reference is workbook scoped.
+     */
+    public int getLastSheetIndexFromRefIndex(int extRefIndex) {
+        return getRef(extRefIndex).getLastSheetIndex();
+    }
+
 	/**
+     * Add a zero-based reference to a {@link org.apache.poi.hssf.record.SupBookRecord}.
+     * <p>
+     *  If the type of the SupBook record is same-sheet referencing, Add-In referencing,
+     *  DDE data source referencing, or OLE data source referencing,
+     *  then no scope is specified and this value <em>MUST</em> be -2. Otherwise,
+     *  the scope must be set as follows:
+     *  <ol>
+     *    <li><code>-2</code> Workbook-level reference that applies to the entire workbook.</li>
+     *    <li><code>-1</code> Sheet-level reference. </li>
+     *    <li><code>&gt;=0</code> Sheet-level reference. This specifies the first sheet in the reference.
+     *    <p>If the SupBook type is unused or external workbook referencing,
+     *    then this value specifies the zero-based index of an external sheet name,
+     *    see {@link org.apache.poi.hssf.record.SupBookRecord#getSheetNames()}.
+     *    This referenced string specifies the name of the first sheet within the external workbook that is in scope.
+     *    This sheet MUST be a worksheet or macro sheet.</p>
+     *    
+     *    <p>If the supporting link type is self-referencing, then this value specifies the zero-based index of a
+     *    {@link org.apache.poi.hssf.record.BoundSheetRecord} record in the workbook stream that specifies
+     *    the first sheet within the scope of this reference. This sheet MUST be a worksheet or a macro sheet.
+     *    </p>
+     *    </li>
+     *  </ol>
+     *
+     * @param extBookIndex  the external book block index
+     * @param firstSheetIndex  the scope, must be -2 for add-in references
+     * @param lastSheetIndex   the scope, must be -2 for add-in references
 	 * @return index of newly added ref
 	 */
 	public int addRef(int extBookIndex, int firstSheetIndex, int lastSheetIndex) {
@@ -224,14 +276,15 @@ public class ExternSheetRecord extends Record {
 		return _list.size() - 1;
 	}
 
-	public int getRefIxForSheet(int externalBookIndex, int sheetIndex) {
+	public int getRefIxForSheet(int externalBookIndex, int firstSheetIndex, int lastSheetIndex) {
 		int nItems = _list.size();
 		for (int i = 0; i < nItems; i++) {
 			RefSubRecord ref = getRef(i);
 			if (ref.getExtBookIndex() != externalBookIndex) {
 				continue;
 			}
-			if (ref.getFirstSheetIndex() == sheetIndex && ref.getLastSheetIndex() == sheetIndex) {
+			if (ref.getFirstSheetIndex() == firstSheetIndex && 
+			        ref.getLastSheetIndex() == lastSheetIndex) {
 				return i;
 			}
 		}
@@ -240,8 +293,7 @@ public class ExternSheetRecord extends Record {
 
 	public static ExternSheetRecord combine(ExternSheetRecord[] esrs) {
 		ExternSheetRecord result = new ExternSheetRecord();
-		for (int i = 0; i < esrs.length; i++) {
-			ExternSheetRecord esr = esrs[i];
+		for (ExternSheetRecord esr : esrs) {
 			int nRefs = esr.getNumOfREFRecords();
 			for (int j=0; j<nRefs; j++) {
 				result.addREFRecord(esr.getRef(j));

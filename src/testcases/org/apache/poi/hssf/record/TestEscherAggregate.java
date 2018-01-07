@@ -20,9 +20,7 @@ package org.apache.poi.hssf.record;
 import junit.framework.TestCase;
 import org.apache.poi.ddf.EscherClientDataRecord;
 import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherDggRecord;
 import org.apache.poi.ddf.EscherSpRecord;
-import org.apache.poi.hssf.model.DrawingManager2;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
 
@@ -34,15 +32,11 @@ import java.util.List;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class TestEscherAggregate extends TestCase
-{
+public final class TestEscherAggregate extends TestCase {
     /**
      * Tests that the create aggregate method correctly rejoins escher records together.
-     *
-     * @throws Exception
      */
-    public void testCreateAggregate() throws Exception
-    {
+    public void testCreateAggregate() {
         String msoDrawingRecord1 =
                 "0F 00 02 F0 20 01 00 00 10 00 08 F0 08 00 00 00 \n" +
                 "03 00 00 00 02 04 00 00 0F 00 03 F0 08 01 00 00 \n" +
@@ -76,14 +70,13 @@ public class TestEscherAggregate extends TestCase
 
         ObjRecord r2 = new ObjRecord();
 
-        List records = new ArrayList();
+        List<RecordBase> records = new ArrayList<>();
         records.add( d1 );
         records.add( r1 );
         records.add( d2 );
         records.add( r2 );
 
-        DrawingManager2 drawingManager = new DrawingManager2(new EscherDggRecord() );
-        EscherAggregate aggregate = EscherAggregate.createAggregate( records, 0, drawingManager );
+        EscherAggregate aggregate = EscherAggregate.createAggregate(records, 0);
 
         assertEquals( 1, aggregate.getEscherRecords().size() );
         assertEquals( (short) 0xF002, aggregate.getEscherRecord( 0 ).getRecordId() );
@@ -92,8 +85,7 @@ public class TestEscherAggregate extends TestCase
 //        System.out.println( "aggregate = " + aggregate );
     }
 
-    public void testSerialize() throws Exception
-    {
+    public void testSerialize() {
 
         EscherContainerRecord container1 = new EscherContainerRecord();
         EscherContainerRecord spContainer1 = new EscherContainerRecord();
@@ -125,10 +117,10 @@ public class TestEscherAggregate extends TestCase
         spContainer2.addChildRecord( d2 );
         spContainer3.addChildRecord( d3 );
 
-        EscherAggregate aggregate = new EscherAggregate(null);
+        EscherAggregate aggregate = new EscherAggregate(false);
         aggregate.addEscherRecord( container1 );
-        aggregate.assoicateShapeToObjRecord( d2, new ObjRecord() );
-        aggregate.assoicateShapeToObjRecord( d3, new ObjRecord() );
+        aggregate.associateShapeToObjRecord( d2, new ObjRecord() );
+        aggregate.associateShapeToObjRecord( d3, new ObjRecord() );
 
         byte[] data = new byte[112];
         int bytesWritten = aggregate.serialize( 0, data );
@@ -136,5 +128,4 @@ public class TestEscherAggregate extends TestCase
         assertEquals( "[EC, 00, 40, 00, 0F, 00, 00, 00, 58, 00, 00, 00, 0F, 00, 04, F0, 10, 00, 00, 00, 00, 00, 0A, F0, 08, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 0F, 00, 04, F0, 18, 00, 00, 00, 00, 00, 0A, F0, 08, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 11, F0, 00, 00, 00, 00, 5D, 00, 00, 00, EC, 00, 20, 00, 0F, 00, 04, F0, 18, 00, 00, 00, 00, 00, 0A, F0, 08, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 00, 11, F0, 00, 00, 00, 00, 5D, 00, 00, 00]",
                 HexDump.toHex( data ) );
     }
-
 }

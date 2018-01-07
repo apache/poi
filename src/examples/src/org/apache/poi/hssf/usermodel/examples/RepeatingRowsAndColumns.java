@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,56 +14,51 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hssf.usermodel.examples;
 
-import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-
-import java.io.IOException;
 import java.io.FileOutputStream;
-import java.io.FileInputStream;
+import java.io.IOException;
 
-/**
- * @author Glen Stampoultzis (glens at apache.org)
- */
-public class RepeatingRowsAndColumns
-{
-    public static void main(String[] args)
-        throws IOException
-    {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet1 = wb.createSheet("first sheet");
-        HSSFSheet sheet2 = wb.createSheet("second sheet");
-        HSSFSheet sheet3 = wb.createSheet("third sheet");
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 
-//        POIFSFileSystem fs      =
-//                new POIFSFileSystem(new FileInputStream("workbook.xls"));
-//        HSSFWorkbook wb = new HSSFWorkbook(fs);
-//        HSSFSheet sheet1 = wb.getSheetAt(0);
+public class RepeatingRowsAndColumns {
+    public static void main(String[] args) throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet1 = wb.createSheet("first sheet");
+            HSSFSheet sheet2 = wb.createSheet("second sheet");
+            HSSFSheet sheet3 = wb.createSheet("third sheet");
 
-        HSSFFont boldFont = wb.createFont();
-        boldFont.setFontHeightInPoints((short)22);
-        boldFont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+            HSSFFont boldFont = wb.createFont();
+            boldFont.setFontHeightInPoints((short) 22);
+            boldFont.setBold(true);
 
-        HSSFCellStyle boldStyle = wb.createCellStyle();
-        boldStyle.setFont(boldFont);
+            HSSFCellStyle boldStyle = wb.createCellStyle();
+            boldStyle.setFont(boldFont);
 
-        HSSFRow row = sheet1.createRow((short)1);
-        HSSFCell cell = row.createCell((short)0);
-        cell.setCellValue("This quick brown fox");
-        cell.setCellStyle(boldStyle);
+            HSSFRow row = sheet1.createRow(1);
+            HSSFCell cell = row.createCell(0);
+            cell.setCellValue("This quick brown fox");
+            cell.setCellStyle(boldStyle);
 
-        // Set the columns to repeat from column 0 to 2 on the first sheet
-        wb.setRepeatingRowsAndColumns(0,0,2,-1,-1);
-        // Set the rows to repeat from row 0 to 2 on the second sheet.
-        wb.setRepeatingRowsAndColumns(1,-1,-1,0,2);
-        // Set the the repeating rows and columns on the third sheet.
-        wb.setRepeatingRowsAndColumns(2,4,5,1,2);
+            // Set the columns to repeat from column 0 to 2 on the first sheet
+            sheet1.setRepeatingColumns(CellRangeAddress.valueOf("A:C"));
+            // Set the rows to repeat from row 0 to 2 on the second sheet.
+            sheet2.setRepeatingRows(CellRangeAddress.valueOf("1:3"));
+            // Set the the repeating rows and columns on the third sheet.
+            CellRangeAddress cra = CellRangeAddress.valueOf("D1:E2");
+            sheet3.setRepeatingColumns(cra);
+            sheet3.setRepeatingRows(cra);
 
-        FileOutputStream fileOut = new FileOutputStream("workbook.xls");
-        wb.write(fileOut);
-        fileOut.close();
+            try (FileOutputStream fileOut = new FileOutputStream("workbook.xls")) {
+                wb.write(fileOut);
+            }
+        }
     }
 }

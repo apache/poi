@@ -14,17 +14,12 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hpsf;
 
 /**
  * <p>This exception is thrown if an {@link java.io.InputStream} does
  * not support the {@link java.io.InputStream#mark} operation.</p>
- *
- * @author Rainer Klute <a
- * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
- * @version $Id$
- * @since 2002-02-09
  */
 public class MarkUnsupportedException extends HPSFException
 {

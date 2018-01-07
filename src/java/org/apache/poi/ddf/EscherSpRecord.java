@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.ddf;
 
 import org.apache.poi.util.HexDump;
@@ -24,8 +23,6 @@ import org.apache.poi.util.LittleEndian;
 /**
  * Together the the EscherOptRecord this record defines some of the basic
  * properties of a shape.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 public class EscherSpRecord
     extends EscherRecord
@@ -49,17 +46,9 @@ public class EscherSpRecord
     private int field_1_shapeId;
     private int field_2_flags;
 
-    /**
-     * This method deserializes the record from a byte array.
-     *
-     * @param data          The byte array containing the escher record information
-     * @param offset        The starting offset into <code>data</code>.
-     * @param recordFactory May be null since this is not a container record.
-     * @return The number of bytes read from the byte array.
-     */
-    public int fillFields( byte[] data, int offset, EscherRecordFactory recordFactory )
-    {
-        int bytesRemaining = readHeader( data, offset );
+    @Override
+    public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
+        /*int bytesRemaining =*/ readHeader( data, offset );
         int pos            = offset + 8;
         int size           = 0;
         field_1_shapeId    =  LittleEndian.getInt( data, pos + size );     size += 4;
@@ -80,6 +69,7 @@ public class EscherSpRecord
      *
      * @see NullEscherSerializationListener
      */
+    @Override
     public int serialize( int offset, byte[] data, EscherSerializationListener listener )
     {
         listener.beforeRecordSerialize( offset, getRecordId(), this );
@@ -95,45 +85,20 @@ public class EscherSpRecord
         return 8 + 8;
     }
 
-    /**
-     * Returns the number of bytes that are required to serialize this record.
-     *
-     * @return Number of bytes
-     */
+    @Override
     public int getRecordSize()
     {
         return 8 + 8;
     }
 
-    /**
-     * @return  the 16 bit identifier for this record.
-     */
-    public short getRecordId()
-    {
+    @Override
+    public short getRecordId() {
         return RECORD_ID;
     }
 
-    /**
-     * The short name for this record
-     */
-    public String getRecordName()
-    {
+    @Override
+    public String getRecordName() {
         return "Sp";
-    }
-
-    /**
-     * @return  the string representing this shape.
-     */
-    public String toString()
-    {
-        String nl = System.getProperty("line.separator");
-
-        return getClass().getName() + ":" + nl +
-                "  RecordId: 0x" + HexDump.toHex(RECORD_ID) + nl +
-                "  Options: 0x" + HexDump.toHex(getOptions()) + nl +
-                "  ShapeId: " + field_1_shapeId + nl +
-                "  Flags: " + decodeFlags(field_2_flags) + " (0x" + HexDump.toHex(field_2_flags) + ")" + nl;
-
     }
 
     /**
@@ -172,6 +137,8 @@ public class EscherSpRecord
 
     /**
      * Sets a number that identifies this shape.
+     * 
+     * @param field_1_shapeId the shape id
      */
     public void setShapeId( int field_1_shapeId )
     {
@@ -180,6 +147,8 @@ public class EscherSpRecord
 
     /**
      * The flags that apply to this shape.
+     * 
+     * @return the flags
      *
      * @see #FLAG_GROUP
      * @see #FLAG_CHILD
@@ -201,6 +170,8 @@ public class EscherSpRecord
 
     /**
      * The flags that apply to this shape.
+     * 
+     * @param field_2_flags the flags
      *
      * @see #FLAG_GROUP
      * @see #FLAG_CHILD
@@ -218,5 +189,37 @@ public class EscherSpRecord
     public void setFlags( int field_2_flags )
     {
         this.field_2_flags = field_2_flags;
+    }
+
+    /**
+     * Returns shape type. Must be one of MSOSPT values (see [MS-ODRAW] for
+     * details).
+     * 
+     * @return shape type
+     */
+    public short getShapeType()
+    {
+        return getInstance();
+    }
+
+    /**
+     * Sets shape type. Must be one of MSOSPT values (see [MS-ODRAW] for
+     * details).
+     * 
+     * @param value
+     *            new shape type
+     */
+    public void setShapeType( short value )
+    {
+        setInstance( value );
+    }
+
+    @Override
+    protected Object[][] getAttributeMap() {
+        return new Object[][] {
+            { "ShapeType", getShapeType() },
+            { "ShapeId", field_1_shapeId },
+            { "Flags", decodeFlags(field_2_flags)+" (0x"+HexDump.toHex(field_2_flags)+")" }
+        };
     }
 }

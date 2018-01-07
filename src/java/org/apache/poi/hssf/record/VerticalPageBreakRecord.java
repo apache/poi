@@ -20,10 +20,9 @@ package org.apache.poi.hssf.record;
 import java.util.Iterator;
 
 /**
- * VerticalPageBreak (0x001A) record that stores page breaks at columns<p/>
+ * VerticalPageBreak (0x001A) record that stores page breaks at columns
  * 
  * @see PageBreakRecord
- * @author Danny Mui (dmui at apache dot org)
  */
 public final class VerticalPageBreakRecord extends PageBreakRecord {
 
@@ -49,9 +48,9 @@ public final class VerticalPageBreakRecord extends PageBreakRecord {
 
 	public Object clone() {
 		PageBreakRecord result = new VerticalPageBreakRecord();
-		Iterator iterator = getBreaksIterator();
+		Iterator<Break> iterator = getBreaksIterator();
 		while (iterator.hasNext()) {
-			Break original = (Break) iterator.next();
+			Break original = iterator.next();
 			result.addBreak(original.main, original.subFrom, original.subTo);
 		}
 		return result;

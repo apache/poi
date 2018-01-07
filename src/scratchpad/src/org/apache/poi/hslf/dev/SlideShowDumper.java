@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,21 +14,25 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.dev;
 
-import java.util.*;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.util.Locale;
 
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.poifs.filesystem.POIFSDocument;
-import org.apache.poi.poifs.filesystem.DocumentEntry;
-
-import org.apache.poi.ddf.*;
+import org.apache.poi.ddf.DefaultEscherRecordFactory;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.ddf.EscherTextboxRecord;
+import org.apache.poi.hslf.record.HSLFEscherRecordFactory;
 import org.apache.poi.hslf.record.RecordTypes;
-
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -40,24 +43,23 @@ import org.apache.poi.util.LittleEndian;
  * To figure out what things are, and if they are atoms or not, used the
  *  list in hslf.record.RecordTypes
  *
- * To peek inside PPDrawings, which hold Escher drawings, we use the 
+ * To peek inside PPDrawings, which hold Escher drawings, we use the
  *  DDF package from POI (but we can fake it by using the Escher listings
  *  from hslf.record.RecordTypes also)
- * 
- * @author Nick Burch
  */
+public final class SlideShowDumper {
 
-public class SlideShowDumper
-{
-  private InputStream istream;
-  private POIFSFileSystem filesystem;
+	//arbitrarily selected; may need to increase
+	private static final int MAX_RECORD_LENGTH = 100_000;
 
-  private byte[] _docstream;
+	private byte[] docstream;
 
   /** Do we try to use DDF to understand the escher objects? */
-  private boolean ddfEscher = false;
+  private boolean ddfEscher;
   /** Do we use our own built-in basic escher groker to understand the escher objects? */
-  private boolean basicEscher = false;
+  private boolean basicEscher;
+  
+  private PrintStream out;
 
   /**
    *  right now this function takes one parameter: a ppt file, and outputs
@@ -75,7 +77,9 @@ public class SlideShowDumper
 		filename = args[1];
 	}
 
-	SlideShowDumper foo = new SlideShowDumper(filename);
+	NPOIFSFileSystem poifs = new NPOIFSFileSystem(new File(filename));
+	SlideShowDumper foo = new SlideShowDumper(poifs, System.out);
+    poifs.close();
 
 	if(args.length > 1) {
 		if(args[0].equalsIgnoreCase("-escher")) {
@@ -86,54 +90,21 @@ public class SlideShowDumper
 	}
 
 	foo.printDump();
-	foo.close();
-  }
-
-
-  /**
-   * Constructs a Powerpoint dump from fileName. Parses the document 
-   * and dumps out the contents
-   *
-   * @param fileName The name of the file to read.
-   * @throws IOException if there is a problem while parsing the document.
-   */
-  public SlideShowDumper(String fileName) throws IOException
-  {
-  	this(new FileInputStream(fileName));
-  }
-  
-  /**
-   * Constructs a Powerpoint dump from an input stream. Parses the 
-   * document and dumps out the contents
-   *
-   * @param inputStream the source of the data
-   * @throws IOException if there is a problem while parsing the document.
-   */
-  public SlideShowDumper(InputStream inputStream) throws IOException
-  {
-	//do Ole stuff
-	this(new POIFSFileSystem(inputStream));
-	istream = inputStream;
   }
 
   /**
-   * Constructs a Powerpoint dump from a POIFS Filesystem. Parses the 
+   * Constructs a Powerpoint dump from a POIFS Filesystem. Parses the
    * document and dumps out the contents
    *
    * @param filesystem the POIFS FileSystem to read from
    * @throws IOException if there is a problem while parsing the document.
    */
-  public SlideShowDumper(POIFSFileSystem filesystem) throws IOException
-  {
-	this.filesystem = filesystem;
-
-	// Get the main document stream
-	DocumentEntry docProps =
-		(DocumentEntry)filesystem.getRoot().getEntry("PowerPoint Document");
-
+  public SlideShowDumper(NPOIFSFileSystem filesystem, PrintStream out) throws IOException {
 	// Grab the document stream
-	_docstream = new byte[docProps.getSize()];
-	filesystem.createDocumentInputStream("PowerPoint Document").read(_docstream);
+	InputStream is = filesystem.createDocumentInputStream(HSLFSlideShow.POWERPOINT_DOCUMENT);
+	docstream = IOUtils.toByteArray(is);
+	is.close();
+	this.out = out;
   }
 
   /**
@@ -153,21 +124,7 @@ public class SlideShowDumper
 	ddfEscher = !(grok);
   }
 
-  /**
-   * Shuts things down. Closes underlying streams etc
-   *
-   * @throws IOException
-   */
-  public void close() throws IOException
-  {
-	if(istream != null) {
-		istream.close();
-	}
-	filesystem = null;
-  }
-
-
-  public void printDump() {
+  public void printDump() throws IOException {
 	// The format of records in a powerpoint file are:
 	//   <little endian 2 byte "info">
 	//   <little endian 2 byte "type">
@@ -189,7 +146,7 @@ public class SlideShowDumper
 	//     (type 1001 = document atom, info 00 01 normal, 28 bytes long)
 
 	// When parsing a document, look to see if you know about that type
-	//  of the current record. If you know it's a type that has children, 
+	//  of the current record. If you know it's a type that has children,
 	//  process the record's data area looking for more records
 	// If you know about the type and it doesn't have children, either do
 	//  something with the data (eg TextRun) or skip over it
@@ -197,75 +154,53 @@ public class SlideShowDumper
 	//  0x0f (15) and get back 0x0f, you know it has children. Otherwise
 	//  it doesn't
 
-	walkTree(0,0,_docstream.length);
+	walkTree(0,0,docstream.length);
 }
 
-public String makeHex(short s) {
-	String hex = Integer.toHexString((int)s).toUpperCase();
-	if(hex.length() == 1) { return "0" + hex; }
-	return hex;
-}
-public String makeHex(int i) {
-	String hex = Integer.toHexString(i).toUpperCase();
-	if(hex.length() == 1) { return "000" + hex; }
-	if(hex.length() == 2) { return "00" + hex; }
-	if(hex.length() == 3) { return "0" + hex; }
-	return hex;
-}
-
-public void walkTree(int depth, int startPos, int maxLen) {
+public void walkTree(int depth, int startPos, int maxLen) throws IOException {
 	int pos = startPos;
 	int endPos = startPos + maxLen;
-	int indent = depth;
+	final String ind = (depth == 0) ? "%1$s" : "%1$"+depth+"s";
 	while(pos <= endPos - 8) {
-		long type = LittleEndian.getUShort(_docstream,pos+2);
-		long len = LittleEndian.getUInt(_docstream,pos+4);
-		byte opt = _docstream[pos];
+		long type = LittleEndian.getUShort(docstream,pos+2);
+		long len = LittleEndian.getUInt(docstream,pos+4);
+		byte opt = docstream[pos];
 
-		String ind = "";
-		for(int i=0; i<indent; i++) { ind += " "; }
-
-		System.out.println(ind + "At position " + pos + " (" + makeHex(pos) + "):");
-		System.out.println(ind + "Type is " + type + " (" + makeHex((int)type) + "), len is " + len + " (" + makeHex((int)len) + ")");
+		String fmt = ind+"At position %2$d (%2$04x): type is %3$d (%3$04x), len is %4$d (%4$04x)";
+		out.println(String.format(Locale.ROOT, fmt, "", pos, type, len));
 
 		// See if we know about the type of it
-		String recordName = RecordTypes.recordName((int)type);
+		String recordName = RecordTypes.forTypeID((short)type).name();
 
 		// Jump over header, and think about going on more
 		pos += 8;
-		if(recordName != null) {
-			System.out.println(ind + "That's a " + recordName);
+		out.println(String.format(Locale.ROOT, ind+"That's a %2$s", "", recordName));
 
-			// Now check if it's a container or not
-			int container = (int)opt & 0x0f;
+		// Now check if it's a container or not
+		int container = opt & 0x0f;
 
-			// BinaryTagData seems to contain records, but it
-			//  isn't tagged as doing so. Try stepping in anyway
-			if(type == 5003L && opt == 0L) {
-				container = 0x0f;
-			}
-
-			if(type == 0L || (container != 0x0f)) {
-				System.out.println();
-			} else if (type == 1035l || type == 1036l) {
-				// Special Handling of 1035=PPDrawingGroup and 1036=PPDrawing
-				System.out.println();
-
-				if(ddfEscher) {
-					// Seems to be:
-					walkEscherDDF((indent+3),pos+8,(int)len-8);
-				} else if(basicEscher) {
-					walkEscherBasic((indent+3),pos+8,(int)len-8);
-				}
-			} else {
-				// General container record handling code
-				System.out.println();
-				walkTree((indent+2),pos,(int)len);
-			}
-		} else {
-			System.out.println(ind + "** unknown record **");
-			System.out.println();
+		// BinaryTagData seems to contain records, but it
+		//  isn't tagged as doing so. Try stepping in anyway
+		if(type == 5003L && opt == 0L) {
+			container = 0x0f;
 		}
+
+        out.println();
+		if (type != 0L && container == 0x0f) {
+		    if (type == 1035L || type == 1036L) {
+    			// Special Handling of 1035=PPDrawingGroup and 1036=PPDrawing
+    			if(ddfEscher) {
+    				// Seems to be:
+    				walkEscherDDF((depth+3),pos+8,(int)len-8);
+    			} else if(basicEscher) {
+    				walkEscherBasic((depth+3),pos+8,(int)len-8);
+    			}
+    		} else {
+    			// General container record handling code
+    			walkTree((depth+2),pos,(int)len);
+    		}
+		}
+
 		pos += (int)len;
 	}
   }
@@ -276,12 +211,11 @@ public void walkTree(int depth, int startPos, int maxLen) {
   public void walkEscherDDF(int indent, int pos, int len) {
 	if(len < 8) { return; }
 
-	String ind = "";
-	for(int i=0; i<indent; i++) { ind += " "; }
+	final String ind = (indent == 0) ? "%1$s" : "%1$"+indent+"s";
 
-	byte[] contents = new byte[len];
-	System.arraycopy(_docstream,pos,contents,0,len);
-	DefaultEscherRecordFactory erf = new DefaultEscherRecordFactory();
+	byte[] contents = IOUtils.safelyAllocate(len, MAX_RECORD_LENGTH);
+	System.arraycopy(docstream,pos,contents,0,len);
+	DefaultEscherRecordFactory erf = new HSLFEscherRecordFactory();
 	EscherRecord record = erf.createRecord(contents,0);
 
 	// For now, try filling in the fields
@@ -293,39 +227,38 @@ public void walkTree(int depth, int startPos, int maxLen) {
 	// This (should) include the 8 byte header size
 	int recordLen = record.getRecordSize();
 
-
-	System.out.println(ind + "At position " + pos + " (" + makeHex(pos) + "):");
-	System.out.println(ind + "Type is " + atomType + " (" + makeHex((int)atomType) + "), len is " + atomLen + " (" + makeHex((int)atomLen) + ") (" + (atomLen+8) + ") - record claims " + recordLen);
-
+    String fmt = ind+"At position %2$d (%2$04x): type is %3$d (%3$04x), len is %4$d (%4$04x) (%5$d) - record claims %6$d";
+    out.println(String.format(Locale.ROOT, fmt, "", pos, atomType, atomLen, atomLen+8, recordLen));
+	
+	
 	// Check for corrupt / lying ones
 	if(recordLen != 8 && (recordLen != (atomLen+8))) {
-		System.out.println(ind + "** Atom length of " + atomLen + " (" + (atomLen+8) + ") doesn't match record length of " + recordLen);
+		out.println(String.format(Locale.ROOT, ind+"** Atom length of $2d ($3d) doesn't match record length of %4d", "", atomLen, atomLen+8, recordLen));
 	}
 
 	// Print the record's details
-	if(record instanceof EscherContainerRecord) {
-		EscherContainerRecord ecr = (EscherContainerRecord)record;
-		System.out.println(ind + ecr.toString());
+    String recordStr = record.toString().replace("\n", String.format(Locale.ROOT,  "\n"+ind, ""));
+    out.println(String.format(Locale.ROOT, ind+"%2$s", "", recordStr));
+
+    if(record instanceof EscherContainerRecord) {
 		walkEscherDDF((indent+3), pos + 8, (int)atomLen );
-	} else {
-		System.out.println(ind + record.toString());
 	}
 
 	// Handle records that seem to lie
-	if(atomType == 61451l) {
+	if(atomType == 61451L) {
 		// Normally claims a size of 8
 		recordLen = (int)atomLen + 8;
 	}
-	if(atomType == 61453l) {
+	if(atomType == 61453L) {
 		// Returns EscherContainerRecord, but really msofbtClientTextbox
 		recordLen = (int)atomLen + 8;
 		record.fillFields( contents, 0, erf );
 		if(! (record instanceof EscherTextboxRecord)) {
-			System.out.println(ind + "** Really a msofbtClientTextbox !");
+			out.println(String.format(Locale.ROOT, ind+"%2$s", "", "** Really a msofbtClientTextbox !"));
 		}
 	}
 
-	// Decide on what to do, based on how the lenghts match up
+	// Decide on what to do, based on how the lengths match up
 	if(recordLen == 8 && atomLen > 8 ) {
 		// Assume it has children, rather than being corrupted
 		walkEscherDDF((indent+3), pos + 8, (int)atomLen );
@@ -352,61 +285,34 @@ public void walkTree(int depth, int startPos, int maxLen) {
   /**
    * Use the basic record format groking code to walk the Escher records
    */
-  public void walkEscherBasic(int indent, int pos, int len) {
+  public void walkEscherBasic(int indent, int pos, int len) throws IOException {
 	if(len < 8) { return; }
 
-	String ind = "";
-	for(int i=0; i<indent; i++) { ind += " "; }
+	final String ind = (indent == 0) ? "%1$s" : "%1$"+indent+"s";
 
-	long type = LittleEndian.getUShort(_docstream,pos+2);
-	long atomlen = LittleEndian.getUInt(_docstream,pos+4);
-	String typeS = makeHex((int)type);
+	long type = LittleEndian.getUShort(docstream,pos+2);
+	long atomlen = LittleEndian.getUInt(docstream,pos+4);
 
-	System.out.println(ind + "At position " + pos + " (" + makeHex(pos) + "):");
-	System.out.println(ind + "Type is " + type + " (" + typeS + "), len is " + atomlen + " (" + makeHex((int)atomlen) + ")");
+	String fmt = ind+"At position %2$d ($2$04x): type is %3$d (%3$04x), len is %4$d (%4$04x)";
+	out.println(String.format(Locale.ROOT, fmt, "", pos, type, atomlen));
 
-	String typeName = RecordTypes.recordName((int)type);
-	if(typeName != null) {
-		System.out.println(ind + "That's an Escher Record: " + typeName);
-	} else {
-		System.out.println(ind + "(Unknown Escher Record)");
-	}
-
-
-	// Code to print the first 8 bytes
-//	System.out.print(ind);
-//	for(int i=0; i<8; i++) {
-//		short bv = _docstream[i+pos];
-//		if(bv < 0) { bv += 256; }
-//		System.out.print(i + "=" + bv + " (" + makeHex(bv) + ")  ");
-//	}
-//	System.out.println("");
+	String typeName = RecordTypes.forTypeID((short)type).name();
+	out.println(String.format(Locale.ROOT, ind+"%2$s", "That's an Escher Record: ", typeName));
 
 	// Record specific dumps
-	if(type == 61453l) {
+	if(type == 61453L) {
 		// Text Box. Print out first 8 bytes of data, then 8 4 later
-		System.out.print(ind);
-		for(int i=8; i<16; i++) {
-			short bv = _docstream[i+pos];
-			if(bv < 0) { bv += 256; }
-			System.out.print(i + "=" + bv + " (" + makeHex(bv) + ")  ");
-		}
-		System.out.println("");
-		System.out.print(ind);
-		for(int i=20; i<28; i++) {
-			short bv = _docstream[i+pos];
-			if(bv < 0) { bv += 256; }
-			System.out.print(i + "=" + bv + " (" + makeHex(bv) + ")  ");
-		}
-		System.out.println("");
+	    HexDump.dump(docstream, 0, out, pos+8, 8);
+	    HexDump.dump(docstream, 0, out, pos+20, 8);
+		out.println();
 	}
 
 
 	// Blank line before next entry
-	System.out.println("");
+	out.println();
 
 	// Look in children if we are a container
-	if(type == 61443l || type == 61444l) {
+	if(type == 61443L || type == 61444L) {
 		walkEscherBasic((indent+3), pos+8, (int)atomlen);
 	}
 

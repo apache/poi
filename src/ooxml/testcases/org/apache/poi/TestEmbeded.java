@@ -19,15 +19,12 @@
 
 package org.apache.poi;
 
-import java.io.File;
-import java.util.Iterator;
-
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.xslf.XSLFSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFSlideShow;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.xwpf.XWPFDocument;
-import org.openxml4j.opc.Package;
-import org.openxml4j.opc.PackagePart;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackagePart;
 
 import junit.framework.TestCase;
 
@@ -37,34 +34,24 @@ import junit.framework.TestCase;
  */
 public class TestEmbeded extends TestCase
 {
-	public String dirname;
-
-	public void setUp() {
-		dirname = System.getProperty("OOXML.testdata.path");
-		assertNotNull(dirname);
-	}
-
 	public void testExcel() throws Exception {
-		File f = new File(dirname, "ExcelWithAttachments.xlsx");
-		assertTrue(f.exists());
-		
-		POIXMLDocument doc = new XSSFWorkbook(Package.open(f.toString()));
+		POIXMLDocument doc = new XSSFWorkbook(
+                POIDataSamples.getSpreadSheetInstance().openResourceAsStream("ExcelWithAttachments.xlsm")
+        );
 		test(doc, 4);
 	}
 
 	public void testWord() throws Exception {
-		File f = new File(dirname, "WordWithAttachments.docx");
-		assertTrue(f.exists());
-		
-		POIXMLDocument doc = new XWPFDocument(Package.open(f.toString()));
+		POIXMLDocument doc = new XWPFDocument(
+                POIDataSamples.getDocumentInstance().openResourceAsStream("WordWithAttachments.docx")
+        );
 		test(doc, 5);
 	}
 
 	public void testPowerPoint() throws Exception {
-		File f = new File(dirname, "PPTWithAttachments.pptx");
-		assertTrue(f.exists());
-		
-		POIXMLDocument doc = new XSLFSlideShow(Package.open(f.toString()));
+		POIXMLDocument doc = new XSLFSlideShow(OPCPackage.open(
+                POIDataSamples.getSlideShowInstance().openResourceAsStream("PPTWithAttachments.pptm"))
+        );
 		test(doc, 4);
 	}
 	

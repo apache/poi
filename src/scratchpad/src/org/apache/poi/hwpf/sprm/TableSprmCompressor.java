@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,28 +14,34 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hwpf.sprm;
 
-import org.apache.poi.hwpf.usermodel.TableProperties;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.hwpf.usermodel.TableCellDescriptor;
-import org.apache.poi.hwpf.usermodel.ShadingDescriptor;
-import org.apache.poi.hwpf.usermodel.BorderCode;
-
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
-public class TableSprmCompressor
+import org.apache.poi.hwpf.usermodel.BorderCode;
+import org.apache.poi.hwpf.usermodel.TableAutoformatLookSpecifier;
+import org.apache.poi.hwpf.usermodel.TableCellDescriptor;
+import org.apache.poi.hwpf.usermodel.TableProperties;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.Internal;
+import org.apache.poi.util.LittleEndian;
+
+@Internal
+public final class TableSprmCompressor
 {
+  //arbitrarily selected; may need to increase
+  private static final int MAX_RECORD_LENGTH = 100_000;
+
   public TableSprmCompressor()
   {
   }
   public static byte[] compressTableProperty(TableProperties newTAP)
   {
     int size = 0;
-    ArrayList sprmList = new ArrayList();
+    List<byte[]> sprmList = new ArrayList<>();
 
     if (newTAP.getJc() != 0)
     {
@@ -75,7 +80,9 @@ public class TableSprmCompressor
     if (newTAP.getItcMac() > 0)
     {
       int itcMac = newTAP.getItcMac();
-      byte[] buf = new byte[1 + (LittleEndian.SHORT_SIZE*(itcMac + 1)) + (TableCellDescriptor.SIZE*itcMac)];
+      byte[] buf = IOUtils.safelyAllocate(
+              1 + (LittleEndian.SHORT_SIZE*(itcMac + 1)) + (TableCellDescriptor.SIZE*itcMac),
+              MAX_RECORD_LENGTH);
       buf[0] = (byte)itcMac;
 
       short[] dxaCenters = newTAP.getRgdxaCenter();
@@ -102,10 +109,13 @@ public class TableSprmCompressor
 //      }
 //      size += SprmUtils.addSpecialSprm((short)0xD609, buf, sprmList);
     }
-    if (newTAP.getTlp() != 0)
-    {
-      size += SprmUtils.addSprm((short)0x740a, newTAP.getTlp(), null, sprmList);
-    }
+
+        if ( newTAP.getTlp() != null && !newTAP.getTlp().isEmpty() )
+        {
+            byte[] buf = new byte[TableAutoformatLookSpecifier.SIZE];
+            newTAP.getTlp().serialize( buf, 0 );
+            size += SprmUtils.addSprm( (short) 0x740a, 0, buf, sprmList );
+        }
 
     return SprmUtils.getGrpprl(sprmList, size);
   }

@@ -14,15 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Date;
 
-import org.apache.poi.hslf.util.SystemTimeUtils;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -30,8 +28,10 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Yegor Kozlov
  */
-public class ExMediaAtom extends RecordAtom
+public final class ExMediaAtom extends RecordAtom
 {
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 1_000_000;
 
     /**
      * A bit that specifies whether the audio or video data is repeated continuously during playback.
@@ -81,7 +81,7 @@ public class ExMediaAtom extends RecordAtom
         System.arraycopy(source,start,_header,0,8);
 
         // Grab the record data
-        _recdata = new byte[len-8];
+        _recdata = IOUtils.safelyAllocate(len-8, MAX_RECORD_LENGTH);
         System.arraycopy(source,start+8,_recdata,0,len-8);
     }
 

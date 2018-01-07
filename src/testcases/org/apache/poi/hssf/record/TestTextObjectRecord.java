@@ -17,14 +17,15 @@
 
 package org.apache.poi.hssf.record;
 
+import static org.junit.Assert.assertArrayEquals;
+
 import java.io.ByteArrayInputStream;
-import java.util.Arrays;
 
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.record.formula.RefPtg;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.RefPtg;
 import org.apache.poi.util.HexRead;
 import org.apache.poi.util.LittleEndian;
 
@@ -73,7 +74,7 @@ public final class TestTextObjectRecord extends TestCase {
         byte [] ser = record.serialize();
         assertEquals(ser.length , simpleData.length);
 
-        assertTrue(Arrays.equals(simpleData, ser));
+        assertArrayEquals(simpleData, ser);
 
         //read again
         RecordInputStream is = TestcaseRecordInputStream.create(simpleData);
@@ -106,10 +107,10 @@ public final class TestTextObjectRecord extends TestCase {
      * Test that TextObjectRecord serializes logs records properly.
      */
     public void testLongRecords() {
-        int[] length = {1024, 2048, 4096, 8192, 16384}; //test against strings of different length
-        for (int i = 0; i < length.length; i++) {
-            StringBuffer buff = new StringBuffer(length[i]);
-            for (int j = 0; j < length[i]; j++) {
+        int[] lengths = {1024, 2048, 4096, 8192, 16384}; //test against strings of different length
+        for (int length : lengths) {
+            StringBuffer buff = new StringBuffer(length);
+            for (int j = 0; j < length; j++) {
                 buff.append("x");
             }
             HSSFRichTextString str = new HSSFRichTextString(buff.toString());
@@ -126,7 +127,6 @@ public final class TestTextObjectRecord extends TestCase {
             assertEquals(buff.length(), str.length());
             assertEquals(buff.toString(), str.getString());
         }
-
     }
 
     /**
@@ -148,7 +148,7 @@ public final class TestTextObjectRecord extends TestCase {
         //finally check that the serialized data is the same
         byte[] src = obj.serialize();
         byte[] cln = cloned.serialize();
-        assertTrue(Arrays.equals(src, cln));
+        assertArrayEquals(src, cln);
     }
 
     /** similar to {@link #simpleData} but with link formula at end of TXO rec*/
@@ -190,7 +190,6 @@ public final class TestTextObjectRecord extends TestCase {
 
         byte [] data2 = rec.serialize();
         assertEquals(linkData.length, data2.length);
-        assertTrue(Arrays.equals(linkData, data2));
+        assertArrayEquals(linkData, data2);
     }
-
 }

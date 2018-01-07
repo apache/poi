@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -16,15 +15,15 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hwpf.usermodel;
 
+import org.apache.poi.hwpf.model.Colorref;
 import org.apache.poi.hwpf.model.types.CHPAbstractType;
 
 /**
  * @author Ryan Ackley
  */
-public class CharacterProperties
+public final class CharacterProperties
   extends CHPAbstractType implements Cloneable
 {
   public final static short SPRM_FRMARKDEL = (short)0x0800;
@@ -67,6 +66,10 @@ public class CharacterProperties
   public final static short SPRM_PROPRMARK = (short)0xCA57;
   public final static short SPRM_FEMBOSS = 0x0858;
   public final static short SPRM_SFXTEXT = 0x2859;
+    /*
+     * Microsoft Office Word 97-2007 Binary File Format (.doc) Specification;
+     * Page 60 of 210
+     */
   public final static short SPRM_DISPFLDRMARK = (short)0xCA62;
   public final static short SPRM_IBSTRMARKDEL = 0x4863;
   public final static short SPRM_DTTMRMARKDEL = 0x6864;
@@ -77,25 +80,16 @@ public class CharacterProperties
   public final static short SPRM_NONFELID = 0x486D;
   public final static short SPRM_FELID = 0x486E;
   public final static short SPRM_IDCTHINT = 0x286F;
+    /**
+     * change chp.cv
+     */
+    public final static short SPRM_CCV = 0x6870;
 
-  int _ico24 = -1; // default to -1 so we can ignore it for word 97 files
-
-  public CharacterProperties()
-  {
-    field_17_fcPic = -1;
-    field_22_dttmRMark = new DateAndTime();
-    field_23_dttmRMarkDel = new DateAndTime();
-    field_36_dttmPropRMark = new DateAndTime();
-    field_40_dttmDispFldRMark = new DateAndTime();
-    field_41_xstDispFldRMark = new byte[36];
-    field_42_shd = new ShadingDescriptor();
-    field_43_brc = new BorderCode();
-    field_7_hps = 20;
-    field_24_istd = 10;
-    field_16_wCharScale = 100;
-    field_13_lidDefault = 0x0400;
-    field_14_lidFE = 0x0400;
-  }
+    public CharacterProperties()
+    {
+        setFUsePgsuSettings( true );
+        setXstDispFldRMark( new byte[36] );
+    }
 
   public boolean isMarkedDeleted()
   {
@@ -295,7 +289,7 @@ public class CharacterProperties
 
   public void setVerticalOffset(int hpsPos)
   {
-    super.setHpsPos(hpsPos);
+    super.setHpsPos((short) hpsPos);
   }
 
   public int getKerning()
@@ -318,77 +312,85 @@ public class CharacterProperties
     super.setIcoHighlight(color);
   }
 
-  /**
-  * Get the ico24 field for the CHP record.
-  */
-  public int getIco24()
-  {
-    if ( _ico24 == -1 )
+    /**
+     * Get the ico24 field for the CHP record.
+     */
+    public int getIco24()
     {
-      switch(field_11_ico) // convert word 97 colour numbers to 0xBBGGRR value
-      {
+        if ( !getCv().isEmpty() )
+            return getCv().getValue();
+
+        // convert word 97 colour numbers to 0xBBRRGGRR value
+        switch ( getIco() )
+        {
         case 0: // auto
-          return -1;
+            return -1;
         case 1: // black
-          return 0x000000;
+            return 0x00000000;
         case 2: // blue
-          return 0xFF0000;
+            return 0x00FF0000;
         case 3: // cyan
-          return 0xFFFF00;
+            return 0x00FFFF00;
         case 4: // green
-          return 0x00FF00;
+            return 0x0000FF00;
         case 5: // magenta
-          return 0xFF00FF;
+            return 0x00FF00FF;
         case 6: // red
-          return 0x0000FF;
+            return 0x000000FF;
         case 7: // yellow
-          return 0x00FFFF;
+            return 0x0000FFFF;
         case 8: // white
-          return 0x0FFFFFF;
+            return 0x00FFFFFF;
         case 9: // dark blue
-          return 0x800000;
+            return 0x00800000;
         case 10: // dark cyan
-          return 0x808000;
+            return 0x00808000;
         case 11: // dark green
-          return 0x008000;
+            return 0x00008000;
         case 12: // dark magenta
-          return 0x800080;
+            return 0x00800080;
         case 13: // dark red
-          return 0x000080;
+            return 0x00000080;
         case 14: // dark yellow
-          return 0x008080;
+            return 0x00008080;
         case 15: // dark grey
-          return 0x808080;
+            return 0x00808080;
         case 16: // light grey
-         return 0xC0C0C0;
-      }
+            return 0x00C0C0C0;
+        }
+
+        return -1;
     }
-    return _ico24;
-  }
 
-  /**
-   * Set the ico24 field for the CHP record.
-   */
-  public void setIco24(int colour24)
-  {
-    _ico24 = colour24 & 0xFFFFFF; // only keep the 24bit 0xBBGGRR colour
-  }
+    /**
+     * Set the ico24 field for the CHP record.
+     */
+    public void setIco24( int colour24 )
+    {
+        setCv( new Colorref( colour24 & 0xFFFFFF ) );
+    }
 
-  public Object clone()
-    throws CloneNotSupportedException
-  {
-    CharacterProperties cp = (CharacterProperties)super.clone();
-    cp.field_22_dttmRMark = (DateAndTime)field_22_dttmRMark.clone();
-    cp.field_23_dttmRMarkDel = (DateAndTime)field_23_dttmRMarkDel.clone();
-    cp.field_36_dttmPropRMark = (DateAndTime)field_36_dttmPropRMark.clone();
-    cp.field_40_dttmDispFldRMark = (DateAndTime)field_40_dttmDispFldRMark.clone();
-    cp.field_41_xstDispFldRMark = (byte[])field_41_xstDispFldRMark.clone();
-    cp.field_42_shd = (ShadingDescriptor)field_42_shd.clone();
+    public CharacterProperties clone()
+    {
+        try
+        {
+            CharacterProperties cp = (CharacterProperties) super.clone();
 
-    cp._ico24 = _ico24;
+            cp.setCv( getCv().clone() );
+            cp.setDttmRMark( (DateAndTime) getDttmRMark().clone() );
+            cp.setDttmRMarkDel( (DateAndTime) getDttmRMarkDel().clone() );
+            cp.setDttmPropRMark( (DateAndTime) getDttmPropRMark().clone() );
+            cp.setDttmDispFldRMark( (DateAndTime) getDttmDispFldRMark().clone() );
+            cp.setXstDispFldRMark( getXstDispFldRMark().clone() );
+            cp.setShd( getShd().clone() );
+            cp.setBrc( (BorderCode) getBrc().clone() );
 
-    return cp;
-  }
-
-
+            return cp;
+        }
+        catch ( CloneNotSupportedException exc )
+        {
+            throw new UnsupportedOperationException(
+                    "Impossible CloneNotSupportedException occured", exc );
+        }
+    }
 }

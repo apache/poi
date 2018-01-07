@@ -19,7 +19,10 @@
 
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.util.IntMapper;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * Handles the task of deserializing a SST string.  The two main entry points are
@@ -29,10 +32,10 @@ import org.apache.poi.util.IntMapper;
  */
 class SSTDeserializer
 {
+	private static POILogger logger = POILogFactory.getLogger(SSTDeserializer.class);
+    private IntMapper<UnicodeString> strings;
 
-    private IntMapper strings;
-
-    public SSTDeserializer( IntMapper strings )
+    public SSTDeserializer( IntMapper<UnicodeString> strings )
     {
         this.strings = strings;
     }
@@ -45,14 +48,20 @@ class SSTDeserializer
     public void manufactureStrings( int stringCount, RecordInputStream in )
     {
       for (int i=0;i<stringCount;i++) {
-        //Extract exactly the count of strings from the SST record.
-        UnicodeString str = new UnicodeString(in);
-        addToStringTable( strings, str );
-        }
+         // Extract exactly the count of strings from the SST record.
+         UnicodeString str;
+         if(in.available() == 0 && ! in.hasNextRecord()) {
+        	 logger.log( POILogger.ERROR, "Ran out of data before creating all the strings! String at index " + i + "");
+            str = new UnicodeString("");
+         } else {
+            str = new UnicodeString(in);
+         }
+         addToStringTable( strings, str );
+      }
     }
 
-    static public void addToStringTable( IntMapper strings, UnicodeString string )
-            {
-      strings.add(string );
-            }
-        }
+    static public void addToStringTable( IntMapper<UnicodeString> strings, UnicodeString string )
+    {
+      strings.add(string);
+    }
+}

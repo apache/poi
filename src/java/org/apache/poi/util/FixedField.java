@@ -41,7 +41,7 @@ public interface FixedField
      *            of the array's valid index range
      */
 
-    public void readFromBytes(byte [] data)
+    void readFromBytes(byte [] data)
         throws ArrayIndexOutOfBoundsException;
 
     /**
@@ -56,8 +56,8 @@ public interface FixedField
      *            the InputStream
      */
 
-    public void readFromStream(InputStream stream)
-        throws IOException, BufferUnderrunException;
+    void readFromStream(InputStream stream)
+        throws IOException;
 
     /**
      * write the value out to an array of bytes at the appropriate
@@ -70,7 +70,7 @@ public interface FixedField
      *            of the array's valid index range
      */
 
-    public void writeToBytes(byte [] data)
+    void writeToBytes(byte [] data)
         throws ArrayIndexOutOfBoundsException;
 
     /**
@@ -79,6 +79,6 @@ public interface FixedField
      * @return the value as a String
      */
 
-    public String toString();
+    String toString();
 }   // end public interface FixedField
 

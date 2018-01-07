@@ -17,25 +17,24 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.hssf.util.CellRangeAddress8Bit;
 import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * ARRAY (0x0221)<p/>
- * 
+ * ARRAY (0x0221)<p>
+ *
  * Treated in a similar way to SharedFormulaRecord
- * 
- * @author Josh Micich
- */		
-public final class ArrayRecord extends SharedValueRecordBase {
+ */
+public final class ArrayRecord extends SharedValueRecordBase implements Cloneable {
 
 	public final static short sid = 0x0221;
 	private static final int OPT_ALWAYS_RECALCULATE = 0x0001;
 	private static final int OPT_CALCULATE_ON_OPEN  = 0x0002;
-	
-	private int	_options;
+
+	private int _options;
 	private int _field3notUsed;
 	private Formula _formula;
 
@@ -48,6 +47,13 @@ public final class ArrayRecord extends SharedValueRecordBase {
 		_formula = Formula.read(formulaTokenLen, in, totalFormulaLen);
 	}
 
+	public ArrayRecord(Formula formula, CellRangeAddress8Bit range) {
+		super(range);
+		_options = 0; //YK: Excel 2007 leaves this field unset
+		_field3notUsed = 0;
+		_formula = formula;
+	}
+
 	public boolean isAlwaysRecalculate() {
 		return (_options & OPT_ALWAYS_RECALCULATE) != 0;
 	}
@@ -55,9 +61,12 @@ public final class ArrayRecord extends SharedValueRecordBase {
 		return (_options & OPT_CALCULATE_ON_OPEN) != 0;
 	}
 
+	public Ptg[] getFormulaTokens() {
+		return _formula.getTokens();
+	}
+
 	protected int getExtraDataSize() {
-		return 2 + 4
-			+ _formula.getEncodedSize();
+		return 2 + 4 + _formula.getEncodedSize();
 	}
 	protected void serializeExtraData(LittleEndianOutput out) {
 		out.writeShort(_options);
@@ -72,16 +81,27 @@ public final class ArrayRecord extends SharedValueRecordBase {
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append(getClass().getName()).append(" [ARRAY]\n");
-		sb.append(" range=").append(getRange().toString()).append("\n");
+		sb.append(" range=").append(getRange()).append("\n");
 		sb.append(" options=").append(HexDump.shortToHex(_options)).append("\n");
 		sb.append(" notUsed=").append(HexDump.intToHex(_field3notUsed)).append("\n");
 		sb.append(" formula:").append("\n");
 		Ptg[] ptgs = _formula.getTokens();
 		for (int i = 0; i < ptgs.length; i++) {
 			Ptg ptg = ptgs[i];
-			sb.append(ptg.toString()).append(ptg.getRVAType()).append("\n");
+			sb.append(ptg).append(ptg.getRVAType()).append("\n");
 		}
 		sb.append("]");
 		return sb.toString();
-	}
+	}	
+    
+	@Override
+    public ArrayRecord clone() {
+        ArrayRecord rec = new ArrayRecord(_formula.copy(), getRange());
+
+        // they both seem unused, but clone them nevertheless to have an exact copy
+        rec._options = _options;
+        rec._field3notUsed = _field3notUsed;
+
+        return rec;
+    }
 }

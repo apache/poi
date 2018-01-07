@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,48 +14,45 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.usermodel;
 
 
+import org.apache.poi.POIDataSamples;
+
 import junit.framework.TestCase;
-import org.apache.poi.hslf.*;
-import org.apache.poi.hslf.model.*;
 
 /**
  * Tests that SlideShow returns MetaSheets which have the right text in them
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestNotesText extends TestCase {
+public final class TestNotesText extends TestCase {
 	// SlideShow primed on the test data
-	private SlideShow ss;
+	private final HSLFSlideShow ss;
 
-    public TestNotesText() throws Exception {
-		String dirname = System.getProperty("HSLF.testdata.path");
-		String filename = dirname + "/basic_test_ppt_file.ppt";
-		HSLFSlideShow hss = new HSLFSlideShow(filename);
-		ss = new SlideShow(hss);
-    }
+	public TestNotesText() throws Exception {
+        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+		HSLFSlideShowImpl hss = new HSLFSlideShowImpl(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
+		ss = new HSLFSlideShow(hss);
+	}
 
-    public void testNotesOne() throws Exception {
-		Notes notes = ss.getNotes()[0];
+	public void testNotesOne() {
+		HSLFNotes notes = ss.getNotes().get(0);
 
 		String[] expectText = new String[] {"These are the notes for page 1"};
-		assertEquals(expectText.length, notes.getTextRuns().length);
+		assertEquals(expectText.length, notes.getTextParagraphs().size());
 		for(int i=0; i<expectText.length; i++) {
-			assertEquals(expectText[i], notes.getTextRuns()[i].getText());
+			assertEquals(expectText[i], HSLFTextParagraph.getRawText(notes.getTextParagraphs().get(i)));
 		}
-    }
+	}
 
-	public void testNotesTwo() throws Exception {
-		Notes notes = ss.getNotes()[1];
+	public void testNotesTwo() {
+		HSLFNotes notes = ss.getNotes().get(1);
 		String[] expectText = new String[] {"These are the notes on page two, again lacking formatting"};
-		assertEquals(expectText.length, notes.getTextRuns().length);
+		assertEquals(expectText.length, notes.getTextParagraphs().size());
 		for(int i=0; i<expectText.length; i++) {
-			assertEquals(expectText[i], notes.getTextRuns()[i].getText());
+			assertEquals(expectText[i], HSLFTextParagraph.getRawText(notes.getTextParagraphs().get(i)));
 		}
 	}
 }

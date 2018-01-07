@@ -28,6 +28,7 @@ import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordFactory;
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 import org.apache.poi.hssf.record.UnknownRecord;
+import org.apache.poi.util.NotImplemented;
 
 /**
  * enclosing_type describe the purpose here
@@ -46,6 +47,7 @@ public final class TestEventRecordFactory extends TestCase {
         final boolean[] wascalled = { false, }; // hack to pass boolean by ref into inner class
 
         ERFListener listener = new ERFListener() {
+            @Override
             public boolean processRecord(Record rec) {
                 wascalled[0] = true;
                 assertTrue("must be BOFRecord got SID="+rec.getSid(),
@@ -72,6 +74,7 @@ public final class TestEventRecordFactory extends TestCase {
         factory.processRecords(new ByteArrayInputStream(bytes));    
         assertTrue("The record listener must be called", wascalled[0]);    
     }
+    
 
     /**
      * tests that the create record function returns a properly 
@@ -122,6 +125,7 @@ public final class TestEventRecordFactory extends TestCase {
      * constructed record in the case of a continued record.
      * TODO - need a real world example to put in a unit test
      */
+    @NotImplemented
     public void testCreateContinuedRecord()
     {
       //  fail("not implemented");
@@ -146,12 +150,13 @@ public final class TestEventRecordFactory extends TestCase {
         final int[] recCnt = { 0 };
         final int[] offset = { 0 };
         ERFListener listener = new ERFListener() {
-              private String[] expectedRecordTypes = {
+              private final String[] expectedRecordTypes = {
                   UnknownRecord.class.getName(),
                   ContinueRecord.class.getName(),
                   ContinueRecord.class.getName()
               };
-              public boolean processRecord(Record rec)
+              @Override
+            public boolean processRecord(Record rec)
               {
                   // System.out.println(rec.toString());
                   assertEquals(

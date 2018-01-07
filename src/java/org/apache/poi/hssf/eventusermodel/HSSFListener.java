@@ -27,7 +27,6 @@ import org.apache.poi.hssf.record.Record;
  *
  * @see org.apache.poi.hssf.eventusermodel.HSSFEventFactory
  * @see org.apache.poi.hssf.eventusermodel.HSSFRequest
- * @author  acoliver@apache.org
  */
 
 public interface HSSFListener
@@ -35,7 +34,8 @@ public interface HSSFListener
 
     /**
      * process an HSSF Record. Called when a record occurs in an HSSF file.
+     * 
+     * @param record the record to be processed
      */
-
     public void processRecord(Record record);
 }

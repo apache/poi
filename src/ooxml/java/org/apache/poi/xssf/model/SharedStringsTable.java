@@ -17,24 +17,28 @@
 
 package org.apache.poi.xssf.model;
 
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_SPREADSHEETML;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.util.Removal;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
-import org.apache.poi.POIXMLDocumentPart;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSst;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.SstDocument;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
-import org.openxml4j.opc.PackagePart;
-import org.openxml4j.opc.PackageRelationship;
-
 
 /**
  * Table of strings shared across all sheets in a workbook.
@@ -56,21 +60,18 @@ import org.openxml4j.opc.PackageRelationship;
  * The shared string table contains all the necessary information for displaying the string: the text, formatting
  * properties, and phonetic properties (for East Asian languages).
  * </p>
- *
- * @author Nick Birch
- * @author Yegor Kozlov
  */
 public class SharedStringsTable extends POIXMLDocumentPart {
 
     /**
      *  Array of individual string items in the Shared String table.
      */
-    private final List<CTRst> strings = new ArrayList<CTRst>();
+    private final List<CTRst> strings = new ArrayList<>();
 
     /**
      *  Maps strings and their indexes in the <code>strings</code> arrays
      */
-    private final Map<String, Integer> stmap = new HashMap<String, Integer>();
+    private final Map<String, Integer> stmap = new HashMap<>();
 
     /**
      * An integer representing the total count of strings in the workbook. This count does not
@@ -85,15 +86,30 @@ public class SharedStringsTable extends POIXMLDocumentPart {
      */
     private int uniqueCount;
 
+    private SstDocument _sstDoc;
+
+    private static final XmlOptions options = new XmlOptions();
+    static {
+        options.put( XmlOptions.SAVE_INNER );
+     	options.put( XmlOptions.SAVE_AGGRESSIVE_NAMESPACES );
+     	options.put( XmlOptions.SAVE_USE_DEFAULT_NAMESPACE );
+        options.setSaveImplicitNamespaces(Collections.singletonMap("", NS_SPREADSHEETML));
+    }
+
     public SharedStringsTable() {
         super();
+        _sstDoc = SstDocument.Factory.newInstance();
+        _sstDoc.addNewSst();
     }
 
-    public SharedStringsTable(PackagePart part, PackageRelationship rel) throws IOException {
-        super(part, rel);
+    /**
+     * @since POI 3.14-Beta1
+     */
+    public SharedStringsTable(PackagePart part) throws IOException {
+        super(part);
         readFrom(part.getInputStream());
-    }
-
+    }    
+    
     /**
      * Read this shared strings table from an XML file.
      * 
@@ -103,17 +119,35 @@ public class SharedStringsTable extends POIXMLDocumentPart {
     public void readFrom(InputStream is) throws IOException {
         try {
             int cnt = 0;
-            CTSst sst = SstDocument.Factory.parse(is).getSst();
+            _sstDoc = SstDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
+            CTSst sst = _sstDoc.getSst();
             count = (int)sst.getCount();
             uniqueCount = (int)sst.getUniqueCount();
+            //noinspection deprecation
             for (CTRst st : sst.getSiArray()) {
-                stmap.put(st.toString(), cnt);
+                stmap.put(getKey(st), cnt);
                 strings.add(st);
                 cnt++;
             }
         } catch (XmlException e) {
-            throw new IOException(e.getLocalizedMessage());
+            throw new IOException("unable to parse shared strings table", e);
         }
+    }
+
+    private String getKey(CTRst st) {
+        return st.xmlText(options);
+    }
+
+    /**
+     * Return a string item by index
+     *
+     * @param idx index of item to return.
+     * @return the item at the specified position in this Shared String table.
+     * @deprecated use <code>getItemAt(int idx)</code> instead
+     */
+    @Removal(version = "4.2")
+    public CTRst getEntryAt(int idx) {
+        return strings.get(idx);
     }
 
     /**
@@ -122,8 +156,8 @@ public class SharedStringsTable extends POIXMLDocumentPart {
      * @param idx index of item to return.
      * @return the item at the specified position in this Shared String table.
      */
-    public CTRst getEntryAt(int idx) {
-        return strings.get(idx);
+    public RichTextString getItemAt(int idx) {
+        return new XSSFRichTextString(strings.get(idx));
     }
 
     /**
@@ -148,7 +182,7 @@ public class SharedStringsTable extends POIXMLDocumentPart {
     }
 
     /**
-     * Add an entry to this Shared String table (a new value is appened to the end).
+     * Add an entry to this Shared String table (a new value is appended to the end).
      *
      * <p>
      * If the Shared String table already contains this <code>CTRst</code> bean, its index is returned.
@@ -157,26 +191,67 @@ public class SharedStringsTable extends POIXMLDocumentPart {
      *
      * @param st the entry to add
      * @return index the index of added entry
+     * @deprecated use <code>addSharedStringItem(RichTextString string)</code> instead
      */
+    @Removal(version = "4.2") //make private in 4.2
     public int addEntry(CTRst st) {
-        String s = st.toString();
+        String s = getKey(st);
         count++;
         if (stmap.containsKey(s)) {
             return stmap.get(s);
         }
+
         uniqueCount++;
+        //create a CTRst bean attached to this SstDocument and copy the argument CTRst into it
+        CTRst newSt = _sstDoc.getSst().addNewSi();
+        newSt.set(st);
         int idx = strings.size();
         stmap.put(s, idx);
-        strings.add(st);
+        strings.add(newSt);
         return idx;
     }
+
+    /**
+     * Add an entry to this Shared String table (a new value is appended to the end).
+     *
+     * <p>
+     * If the Shared String table already contains this string entry, its index is returned.
+     * Otherwise a new entry is added.
+     * </p>
+     *
+     * @param string the entry to add
+     * @since POI 4.0.0
+     * @return index the index of added entry
+     */
+    public int addSharedStringItem(RichTextString string) {
+        if(!(string instanceof XSSFRichTextString)){
+            throw new IllegalArgumentException("Only XSSFRichTextString argument is supported");
+        }
+        return addEntry(((XSSFRichTextString) string).getCTRst());
+    }
+
     /**
      * Provide low-level access to the underlying array of CTRst beans
      *
      * @return array of CTRst beans
+     * @deprecated use <code>getSharedStringItems</code> instead
      */
+    @Removal(version = "4.2")
     public List<CTRst> getItems() {
-        return strings;
+        return Collections.unmodifiableList(strings);
+    }
+
+    /**
+     * Provide access to the strings in the SharedStringsTable
+     *
+     * @return list of shared string instances
+     */
+    public List<RichTextString> getSharedStringItems() {
+        ArrayList<RichTextString> items = new ArrayList<>();
+        for (CTRst rst : strings) {
+            items.add(new XSSFRichTextString(rst));
+        }
+        return Collections.unmodifiableList(items);
     }
 
     /**
@@ -186,24 +261,25 @@ public class SharedStringsTable extends POIXMLDocumentPart {
      * @throws IOException if an error occurs while writing.
      */
     public void writeTo(OutputStream out) throws IOException {
-        XmlOptions options = new XmlOptions(DEFAULT_XML_OPTIONS);
+        XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
+        // the following two lines turn off writing CDATA
+        // see Bugzilla 48936
+        xmlOptions.setSaveCDataLengthThreshold(1000000);
+        xmlOptions.setSaveCDataEntityCountThreshold(-1);
 
         //re-create the sst table every time saving a workbook
-        SstDocument doc = SstDocument.Factory.newInstance();
-        CTSst sst = doc.addNewSst();
+        CTSst sst = _sstDoc.getSst();
         sst.setCount(count);
         sst.setUniqueCount(uniqueCount);
 
-        CTRst[] ctr = strings.toArray(new CTRst[strings.size()]);
-        sst.setSiArray(ctr);
-        doc.save(out, options);
+        _sstDoc.save(out, xmlOptions);
     }
 
     @Override
     protected void commit() throws IOException {
         PackagePart part = getPackagePart();
-        OutputStream out = part.getOutputStream();
-        writeTo(out);
-        out.close();
+        try (OutputStream out = part.getOutputStream()) {
+            writeTo(out);
+        }
     }
 }

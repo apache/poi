@@ -15,17 +15,14 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.ddf;
 
-import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 
 /**
  * This record simply holds the number of shapes in the drawing group and the
  * last shape id used for this drawing group.
- *
- * @author Glen Stampoultzis
  */
 public class EscherDgRecord
     extends EscherRecord
@@ -36,17 +33,9 @@ public class EscherDgRecord
     private int field_1_numShapes;
     private int field_2_lastMSOSPID;
 
-    /**
-     * This method deserializes the record from a byte array.
-     *
-     * @param data          The byte array containing the escher record information
-     * @param offset        The starting offset into <code>data</code>.
-     * @param recordFactory May be null since this is not a container record.
-     * @return The number of bytes read from the byte array.
-     */
-    public int fillFields( byte[] data, int offset, EscherRecordFactory recordFactory )
-    {
-        int bytesRemaining = readHeader( data, offset );
+    @Override
+    public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
+        /*int bytesRemaining =*/ readHeader( data, offset );
         int pos            = offset + 8;
         int size           = 0;
         field_1_numShapes   =  LittleEndian.getInt( data, pos + size );     size += 4;
@@ -57,15 +46,7 @@ public class EscherDgRecord
         return getRecordSize();
     }
 
-    /**
-     * This method serializes this escher record into a byte array.
-     *
-     * @param offset   The offset into <code>data</code> to start writing the record data to.
-     * @param data     The byte array to serialize to.
-     * @param listener A listener to retrieve start and end callbacks.  Use a <code>NullEscherSerailizationListener</code> to ignore these events.
-     * @return The number of bytes written.
-     * @see NullEscherSerializationListener
-     */
+    @Override
     public int serialize( int offset, byte[] data, EscherSerializationListener listener )
     {
         listener.beforeRecordSerialize( offset, getRecordId(), this );
@@ -87,52 +68,26 @@ public class EscherDgRecord
      *
      * @return Number of bytes
      */
+    @Override
     public int getRecordSize()
     {
         return 8 + 8;
     }
 
-    public short getRecordId()
-    {
+    @Override
+    public short getRecordId() {
         return RECORD_ID;
     }
 
-    /**
-     * The short name for this record
-     */
-    public String getRecordName()
-    {
+    @Override
+    public String getRecordName() {
         return "Dg";
     }
 
     /**
-     * Returns the string representation of this record.
-     */
-    public String toString()
-    {
-        String nl = System.getProperty("line.separator");
-
-//        String extraData;
-//        ByteArrayOutputStream b = new ByteArrayOutputStream();
-//        try
-//        {
-//            HexDump.dump(this.remainingData, 0, b, 0);
-//            extraData = b.toString();
-//        }
-//        catch ( Exception e )
-//        {
-//            extraData = "error";
-//        }
-        return getClass().getName() + ":" + nl +
-                "  RecordId: 0x" + HexDump.toHex(RECORD_ID) + nl +
-                "  Options: 0x" + HexDump.toHex(getOptions()) + nl +
-                "  NumShapes: " + field_1_numShapes + nl +
-                "  LastMSOSPID: " + field_2_lastMSOSPID + nl;
-
-    }
-
-    /**
      * The number of shapes in this drawing group.
+     * 
+     * @return the number of shapes
      */
     public int getNumShapes()
     {
@@ -141,6 +96,8 @@ public class EscherDgRecord
 
     /**
      * The number of shapes in this drawing group.
+     * 
+     * @param field_1_numShapes the number of shapes
      */
     public void setNumShapes( int field_1_numShapes )
     {
@@ -149,6 +106,8 @@ public class EscherDgRecord
 
     /**
      * The last shape id used in this drawing group.
+     * 
+     * @return the last shape id
      */
     public int getLastMSOSPID()
     {
@@ -157,6 +116,8 @@ public class EscherDgRecord
 
     /**
      * The last shape id used in this drawing group.
+     * 
+     * @param field_2_lastMSOSPID the last shape id
      */
     public void setLastMSOSPID( int field_2_lastMSOSPID )
     {
@@ -174,8 +135,19 @@ public class EscherDgRecord
         return (short) ( getOptions() >> 4 );
     }
 
+    /**
+     * Increments the number of shapes
+     */
     public void incrementShapeCount()
     {
         this.field_1_numShapes++;
+    }
+
+    @Override
+    protected Object[][] getAttributeMap() {
+        return new Object[][] {
+            { "NumShapes", field_1_numShapes },
+            { "LastMSOSPID", field_2_lastMSOSPID }
+        };
     }
 }

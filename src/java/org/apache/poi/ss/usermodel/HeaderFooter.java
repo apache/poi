@@ -17,8 +17,8 @@
 package org.apache.poi.ss.usermodel;
 
 /**
- * Common interface for {@link Header} and
- *  {@link Footer}.
+ * Common interface for {@link org.apache.poi.ss.usermodel.Header} and
+ *  {@link org.apache.poi.ss.usermodel.Footer}.
  */
 public interface HeaderFooter {
     /**

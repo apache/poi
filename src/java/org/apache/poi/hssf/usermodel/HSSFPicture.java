@@ -1,45 +1,53 @@
-/*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
+
 package org.apache.poi.hssf.usermodel;
 
+import java.awt.Dimension;
+import java.io.ByteArrayInputStream;
+
+import org.apache.poi.ddf.DefaultEscherRecordFactory;
 import org.apache.poi.ddf.EscherBSERecord;
+import org.apache.poi.ddf.EscherBlipRecord;
+import org.apache.poi.ddf.EscherClientDataRecord;
+import org.apache.poi.ddf.EscherComplexProperty;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherOptRecord;
+import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherSimpleProperty;
+import org.apache.poi.ddf.EscherTextboxRecord;
+import org.apache.poi.hssf.model.InternalWorkbook;
+import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
+import org.apache.poi.hssf.record.EscherAggregate;
+import org.apache.poi.hssf.record.ObjRecord;
+import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
+import org.apache.poi.ss.usermodel.Picture;
+import org.apache.poi.ss.util.ImageUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
-import java.awt.image.BufferedImage;
-import java.awt.*;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.Iterator;
+import org.apache.poi.util.StringUtil;
 
 /**
  * Represents a escher picture.  Eg. A GIF, JPEG etc...
- *
- * @author Glen Stampoultzis
- * @author Yegor Kozlov (yegor at apache.org)
  */
-public class HSSFPicture
-        extends HSSFSimpleShape
-{
+public class HSSFPicture extends HSSFSimpleShape implements Picture {
+	@SuppressWarnings("unused")
+    private static POILogger logger = POILogFactory.getLogger(HSSFPicture.class);
+	
     public static final int PICTURE_TYPE_EMF = HSSFWorkbook.PICTURE_TYPE_EMF;                // Windows Enhanced Metafile
     public static final int PICTURE_TYPE_WMF = HSSFWorkbook.PICTURE_TYPE_WMF;                // Windows Metafile
     public static final int PICTURE_TYPE_PICT = HSSFWorkbook.PICTURE_TYPE_PICT;              // Macintosh PICT
@@ -47,64 +55,102 @@ public class HSSFPicture
     public static final int PICTURE_TYPE_PNG = HSSFWorkbook.PICTURE_TYPE_PNG;                // PNG
     public static final int PICTURE_TYPE_DIB = HSSFWorkbook.PICTURE_TYPE_DIB;                // Windows DIB
 
-    /**
-     * width of 1px in columns with default width in units of 1/256 of a character width
-     */
-    private static final float PX_DEFAULT = 32.00f;
-    /**
-     * width of 1px in columns with overridden width in units of 1/256 of a character width
-     */
-    private static final float PX_MODIFIED = 36.56f;
-
-    /**
-     * Height of 1px of a row
-     */
-    private static final int PX_ROW = 15;
-
-    int pictureIndex;
-    HSSFPatriarch patriarch;
-
-    private static final POILogger log = POILogFactory.getLogger(HSSFPicture.class);
+    public HSSFPicture(EscherContainerRecord spContainer, ObjRecord objRecord) {
+        super(spContainer, objRecord);
+    }
 
     /**
      * Constructs a picture object.
      */
-    HSSFPicture( HSSFShape parent, HSSFAnchor anchor )
+    public HSSFPicture( HSSFShape parent, HSSFAnchor anchor )
     {
         super( parent, anchor );
-        setShapeType(OBJECT_TYPE_PICTURE);
+        super.setShapeType(OBJECT_TYPE_PICTURE);
+        CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) getObjRecord().getSubRecords().get(0);
+        cod.setObjectType(CommonObjectDataSubRecord.OBJECT_TYPE_PICTURE);
     }
 
     public int getPictureIndex()
     {
-        return pictureIndex;
+        EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.BLIP__BLIPTODISPLAY);
+        if (null == property){
+            return -1;
+        }
+        return property.getPropertyValue();
     }
 
     public void setPictureIndex( int pictureIndex )
     {
-        this.pictureIndex = pictureIndex;
+        setPropertyValue(new EscherSimpleProperty( EscherProperties.BLIP__BLIPTODISPLAY, false, true, pictureIndex));
+    }
+
+    @Override
+    protected EscherContainerRecord createSpContainer() {
+        EscherContainerRecord spContainer = super.createSpContainer();
+        EscherOptRecord opt = spContainer.getChildById(EscherOptRecord.RECORD_ID);
+        opt.removeEscherProperty(EscherProperties.LINESTYLE__LINEDASHING);
+        opt.removeEscherProperty(EscherProperties.LINESTYLE__NOLINEDRAWDASH);
+        spContainer.removeChildRecord(spContainer.getChildById(EscherTextboxRecord.RECORD_ID));
+        return spContainer;
     }
 
     /**
-     * Reset the image to the original size.
-     *
-     * @since POI 3.0.2
+     * Reset the image to the dimension of the embedded image
+     * 
+     * <p>
+     * Please note, that this method works correctly only for workbooks
+     * with default font size (Arial 10pt for .xls).
+     * If the default font is changed the resized image can be streched vertically or horizontally.
+     * </p>
      */
+    @Override
     public void resize(){
-        HSSFClientAnchor anchor = (HSSFClientAnchor)getAnchor();
-        anchor.setAnchorType(2);
+        resize(Double.MAX_VALUE);
+    }
 
-        HSSFClientAnchor pref = getPreferredSize();
+    /**
+     * Resize the image proportionally.
+     *
+     * @see #resize(double, double)
+     */
+    @Override
+    public void resize(double scale) {
+        resize(scale,scale);
+    }
+    
+    /**
+     * Resize the image
+     * <p>
+     * Please note, that this method works correctly only for workbooks
+     * with default font size (Arial 10pt for .xls).
+     * If the default font is changed the resized image can be streched vertically or horizontally.
+     * </p>
+     * <p>
+     * <code>resize(1.0,1.0)</code> keeps the original size,<br>
+     * <code>resize(0.5,0.5)</code> resize to 50% of the original,<br>
+     * <code>resize(2.0,2.0)</code> resizes to 200% of the original.<br>
+     * <code>resize({@link Double#MAX_VALUE},{@link Double#MAX_VALUE})</code> resizes to the dimension of the embedded image. 
+     * </p>
+     *
+     * @param scaleX the amount by which the image width is multiplied relative to the original width.
+     * @param scaleY the amount by which the image height is multiplied relative to the original height.
+     */
+    @Override
+    public void resize(double scaleX, double scaleY) {
+        HSSFClientAnchor anchor = getClientAnchor();
+        anchor.setAnchorType(AnchorType.MOVE_DONT_RESIZE);
+
+        HSSFClientAnchor pref = getPreferredSize(scaleX,scaleY);
 
         int row2 = anchor.getRow1() + (pref.getRow2() - pref.getRow1());
         int col2 = anchor.getCol1() + (pref.getCol2() - pref.getCol1());
 
         anchor.setCol2((short)col2);
-        anchor.setDx1(0);
+        // anchor.setDx1(0);
         anchor.setDx2(pref.getDx2());
 
         anchor.setRow2(row2);
-        anchor.setDy1(0);
+        // anchor.setDy1(0);
         anchor.setDy2(pref.getDy2());
     }
 
@@ -114,143 +160,136 @@ public class HSSFPicture
      * @return HSSFClientAnchor with the preferred size for this image
      * @since POI 3.0.2
      */
+    @Override
     public HSSFClientAnchor getPreferredSize(){
-        HSSFClientAnchor anchor = (HSSFClientAnchor)getAnchor();
-
-        Dimension size = getImageDimension();
-
-        float w = 0;
-
-        //space in the leftmost cell
-        w += getColumnWidthInPixels(anchor.col1)*(1 - anchor.dx1/1024);
-        short col2 = (short)(anchor.col1 + 1);
-        int dx2 = 0;
-
-        while(w < size.width){
-            w += getColumnWidthInPixels(col2++);
-        }
-
-        if(w > size.width) {
-            //calculate dx2, offset in the rightmost cell
-            col2--;
-            float cw = getColumnWidthInPixels(col2);
-            float delta = w - size.width;
-            dx2 = (int)((cw-delta)/cw*1024);
-        }
-        anchor.col2 = col2;
-        anchor.dx2 = dx2;
-
-        float h = 0;
-        h += (1 - anchor.dy1/256)* getRowHeightInPixels(anchor.row1);
-        int row2 = anchor.row1 + 1;
-        int dy2 = 0;
-
-        while(h < size.height){
-            h += getRowHeightInPixels(row2++);
-        }
-        if(h > size.height) {
-            row2--;
-            float ch = getRowHeightInPixels(row2);
-            float delta = h - size.height;
-            dy2 = (int)((ch-delta)/ch*256);
-        }
-        anchor.row2 = row2;
-        anchor.dy2 = dy2;
-
-        return anchor;
-    }
-
-    private float getColumnWidthInPixels(int column){
-
-        int cw = patriarch.sheet.getColumnWidth(column);
-        float px = getPixelWidth(column);
-
-        return cw/px;
-    }
-
-    private float getRowHeightInPixels(int i){
-
-        HSSFRow row = patriarch.sheet.getRow(i);
-        float height;
-        if(row != null) height = row.getHeight();
-        else height = patriarch.sheet.getDefaultRowHeight();
-
-        return height/PX_ROW;
-    }
-
-    private float getPixelWidth(int column){
-
-        int def = patriarch.sheet.getDefaultColumnWidth()*256;
-        int cw = patriarch.sheet.getColumnWidth(column);
-
-        return cw == def ? PX_DEFAULT : PX_MODIFIED;
+        return getPreferredSize(1.0);
     }
 
     /**
-     * The metadata of PNG and JPEG can contain the width of a pixel in millimeters.
-     * Return the the "effective" dpi calculated as <code>25.4/HorizontalPixelSize</code>
-     * and <code>25.4/VerticalPixelSize</code>.  Where 25.4 is the number of mm in inch.
+     * Calculate the preferred size for this picture.
      *
-     * @return array of two elements: <code>{horisontalPdi, verticalDpi}</code>.
-     * {96, 96} is the default.
+     * @param scale the amount by which image dimensions are multiplied relative to the original size.
+     * @return HSSFClientAnchor with the preferred size for this image
+     * @since POI 3.0.2
      */
-    protected int[] getResolution(ImageReader r) throws IOException {
-        int hdpi=96, vdpi=96;
-        double mm2inch = 25.4;
-
-        NodeList lst;
-        Element node = (Element)r.getImageMetadata(0).getAsTree("javax_imageio_1.0");
-        lst = node.getElementsByTagName("HorizontalPixelSize");
-        if(lst != null && lst.getLength() == 1) hdpi = (int)(mm2inch/Float.parseFloat(((Element)lst.item(0)).getAttribute("value")));
-
-        lst = node.getElementsByTagName("VerticalPixelSize");
-        if(lst != null && lst.getLength() == 1) vdpi = (int)(mm2inch/Float.parseFloat(((Element)lst.item(0)).getAttribute("value")));
-
-        return new int[]{hdpi, vdpi};
+    public HSSFClientAnchor getPreferredSize(double scale){
+        return getPreferredSize(scale, scale);
+    }
+    
+    /**
+     * Calculate the preferred size for this picture.
+     *
+     * @param scaleX the amount by which image width is multiplied relative to the original width.
+     * @param scaleY the amount by which image height is multiplied relative to the original height.
+     * @return HSSFClientAnchor with the preferred size for this image
+     * @since POI 3.11
+     */
+    @Override
+    public HSSFClientAnchor getPreferredSize(double scaleX, double scaleY){
+        ImageUtils.setPreferredSize(this, scaleX, scaleY);
+        return getClientAnchor();
     }
 
     /**
-     * Return the dimension of this image
+     * Return the dimension of the embedded image in pixel
      *
-     * @return image dimension
+     * @return image dimension in pixels
      */
+    @Override
     public Dimension getImageDimension(){
-        EscherBSERecord bse = patriarch.sheet.book.getBSERecord(pictureIndex);
+        InternalWorkbook iwb = getPatriarch().getSheet().getWorkbook().getWorkbook();
+        EscherBSERecord bse = iwb.getBSERecord(getPictureIndex());
         byte[] data = bse.getBlipRecord().getPicturedata();
         int type = bse.getBlipTypeWin32();
-        Dimension size = new Dimension();
-
-        switch (type){
-            //we can calculate the preferred size only for JPEG and PNG
-            //other formats like WMF, EMF and PICT are not supported in Java
-            case HSSFWorkbook.PICTURE_TYPE_JPEG:
-            case HSSFWorkbook.PICTURE_TYPE_PNG:
-            case HSSFWorkbook.PICTURE_TYPE_DIB:
-                try {
-                    //read the image using javax.imageio.*
-                    ImageInputStream iis = ImageIO.createImageInputStream( new ByteArrayInputStream(data) );
-                    Iterator i = ImageIO.getImageReaders( iis );
-                    ImageReader r = (ImageReader) i.next();
-                    r.setInput( iis );
-                    BufferedImage img = r.read(0);
-
-                    int[] dpi = getResolution(r);
-
-                    //if DPI is zero then assume standard 96 DPI
-                    //since cannot divide by zero
-                    if (dpi[0] == 0) dpi[0] = 96;
-                    if (dpi[1] == 0) dpi[1] = 96;
-                    
-                    size.width = img.getWidth()*96/dpi[0];
-                    size.height = img.getHeight()*96/dpi[1];
-
-                } catch (IOException e){
-                    //silently return if ImageIO failed to read the image
-                    log.log(POILogger.WARN, e);
-                }
-
-                break;
+        return ImageUtils.getImageDimension(new ByteArrayInputStream(data), type);
+    }
+    
+    /**
+     * Return picture data for this shape
+     *
+     * @return picture data for this shape or {@code null} if picture wasn't embedded, i.e. external linked
+     */
+    @Override
+    public HSSFPictureData getPictureData(){
+        int picIdx = getPictureIndex();
+        if (picIdx == -1) {
+            return null;
         }
-        return size;
+        
+        HSSFPatriarch patriarch = getPatriarch();
+        HSSFShape parent = getParent();
+        while(patriarch == null && parent != null) {
+            patriarch = parent.getPatriarch();
+            parent = parent.getParent();
+        }
+        if(patriarch == null) {
+            throw new IllegalStateException("Could not find a patriarch for a HSSPicture");
+        }
+
+        InternalWorkbook iwb = patriarch.getSheet().getWorkbook().getWorkbook();
+        EscherBSERecord bse = iwb.getBSERecord(picIdx);
+    	EscherBlipRecord blipRecord = bse.getBlipRecord();
+    	return new HSSFPictureData(blipRecord);
+    }
+
+    @Override
+    void afterInsert(HSSFPatriarch patriarch) {
+        EscherAggregate agg = patriarch.getBoundAggregate();
+        agg.associateShapeToObjRecord(getEscherContainer().getChildById(EscherClientDataRecord.RECORD_ID), getObjRecord());
+        if(getPictureIndex() != -1) {
+            EscherBSERecord bse =
+                    patriarch.getSheet().getWorkbook().getWorkbook().getBSERecord(getPictureIndex());
+            bse.setRef(bse.getRef() + 1);
+        }
+    }
+
+    /**
+     * The filename of the embedded image
+     */
+    public String getFileName() {
+        EscherComplexProperty propFile = getOptRecord().lookup(
+                      EscherProperties.BLIP__BLIPFILENAME);
+        return (null == propFile)
+            ? ""
+            : StringUtil.getFromUnicodeLE(propFile.getComplexData()).trim();
+    }
+    
+    public void setFileName(String data){
+        // TODO: add trailing \u0000? 
+        byte bytes[] = StringUtil.getToUnicodeLE(data);
+        EscherComplexProperty prop = new EscherComplexProperty(EscherProperties.BLIP__BLIPFILENAME, true, bytes);
+        setPropertyValue(prop);
+    }
+
+    @Override
+    public void setShapeType(int shapeType) {
+        throw new IllegalStateException("Shape type can not be changed in "+this.getClass().getSimpleName());
+    }
+
+    @Override
+    protected HSSFShape cloneShape() {
+        EscherContainerRecord spContainer = new EscherContainerRecord();
+        byte [] inSp = getEscherContainer().serialize();
+        spContainer.fillFields(inSp, 0, new DefaultEscherRecordFactory());
+        ObjRecord obj = (ObjRecord) getObjRecord().cloneViaReserialise();
+        return new HSSFPicture(spContainer, obj);
+    }
+    
+    /**
+     * @return the anchor that is used by this picture.
+     */
+    @Override
+    public HSSFClientAnchor getClientAnchor() {
+        HSSFAnchor a = getAnchor();
+        return (a instanceof HSSFClientAnchor) ? (HSSFClientAnchor)a : null;
+    }
+
+    
+    /**
+     * @return the sheet which contains the picture shape
+     */
+    @Override
+    public HSSFSheet getSheet() {
+        return getPatriarch().getSheet();
     }
 }

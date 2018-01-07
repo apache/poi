@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,26 +14,31 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hwpf.model.io;
 
 
+import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
+import java.util.Map;
 
-public class HWPFFileSystem
+import org.apache.poi.util.Internal;
+
+@Internal
+public final class HWPFFileSystem
 {
-  HashMap _streams = new HashMap();
+  private Map<String, ByteArrayOutputStream> _streams = new HashMap<>();
 
   public HWPFFileSystem()
   {
-    _streams.put("WordDocument", new HWPFOutputStream());
-    _streams.put("1Table", new HWPFOutputStream());
-    _streams.put("Data", new HWPFOutputStream());
+    _streams.put("WordDocument", new ByteArrayOutputStream(100000));
+    _streams.put("1Table", new ByteArrayOutputStream(100000));
+    _streams.put("Data", new ByteArrayOutputStream(100000));
   }
 
-  public HWPFOutputStream getStream(String name)
+  public ByteArrayOutputStream getStream(String name)
   {
-    return (HWPFOutputStream)_streams.get(name);
+    return _streams.get(name);
   }
 
 }

@@ -20,6 +20,7 @@ package org.apache.poi.hslf.record;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -39,6 +40,9 @@ import org.apache.poi.util.LittleEndian;
  * @author Daniel Noll
  */
 public class ExEmbedAtom extends RecordAtom {
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 1_000_000;
 
     /**
      * Embedded document does not follow the color scheme.
@@ -70,7 +74,7 @@ public class ExEmbedAtom extends RecordAtom {
      */
     protected ExEmbedAtom() {
         _header = new byte[8];
-        _data = new byte[7];
+        _data = new byte[8];
 
         LittleEndian.putShort(_header, 2, (short)getRecordType());
         LittleEndian.putInt(_header, 4, _data.length);
@@ -91,11 +95,11 @@ public class ExEmbedAtom extends RecordAtom {
         System.arraycopy(source,start,_header,0,8);
 
         // Get the record data.
-        _data = new byte[len-8];
+        _data = IOUtils.safelyAllocate(len-8, MAX_RECORD_LENGTH);
         System.arraycopy(source,start+8,_data,0,len-8);
 
-        // Must be at least 4 bytes long
-        if(_data.length < 7) {
+        // Must be at least 8 bytes long
+        if(_data.length < 8) {
         	throw new IllegalArgumentException("The length of the data for a ExEmbedAtom must be at least 4 bytes, but was only " + _data.length);
         }
     }
@@ -120,6 +124,10 @@ public class ExEmbedAtom extends RecordAtom {
         return _data[4] != 0;
     }
 
+    public void setCantLockServerB(boolean cantBeLocked) {
+    	_data[4] = (byte)(cantBeLocked ? 1 : 0);
+    }
+    
     /**
      * Gets whether it is not required to send the dimensions to the embedded object.
      *

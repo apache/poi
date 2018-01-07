@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.util;
 
@@ -28,34 +26,15 @@ import java.io.*;
  *
  * @author  Marc Johnson (mjohnson at apache dot org)
  */
+public final class TestShortField extends TestCase {
 
-public class TestShortField
-    extends TestCase
-{
-
-    /**
-     * Constructor
-     *
-     * @param name
-     */
-
-    public TestShortField(String name)
-    {
-        super(name);
-    }
-
-    static private final short[] _test_array =
+    private static final short[] _test_array =
     {
         Short.MIN_VALUE, ( short ) -1, ( short ) 0, ( short ) 1,
         Short.MAX_VALUE
     };
 
-    /**
-     * Test constructors.
-     */
-
-    public void testConstructors()
-    {
+    public void testConstructors() {
         try
         {
             new ShortField(-1);
@@ -108,20 +87,14 @@ public class TestShortField
 
             // as expected
         }
-        for (int j = 0; j < _test_array.length; j++)
-        {
+        for (short element : _test_array) {
             array = new byte[ 2 ];
-            new ShortField(0, _test_array[ j ], array);
-            assertEquals(_test_array[ j ], new ShortField(0, array).get());
+            new ShortField(0, element, array);
+            assertEquals(element, new ShortField(0, array).get());
         }
     }
 
-    /**
-     * Test set() methods
-     */
-
-    public void testSet()
-    {
+    public void testSet() {
         ShortField field = new ShortField(0);
         byte[]     array = new byte[ 2 ];
 
@@ -140,12 +113,7 @@ public class TestShortField
         }
     }
 
-    /**
-     * Test readFromBytes
-     */
-
-    public void testReadFromBytes()
-    {
+    public void testReadFromBytes() {
         ShortField field = new ShortField(1);
         byte[]     array = new byte[ 2 ];
 
@@ -169,15 +137,7 @@ public class TestShortField
         }
     }
 
-    /**
-     * Test readFromStream
-     *
-     * @exception IOException
-     */
-
-    public void testReadFromStream()
-        throws IOException
-    {
+    public void testReadFromStream() throws IOException {
         ShortField field  = new ShortField(0);
         byte[]     buffer = new byte[ _test_array.length * 2 ];
 
@@ -195,36 +155,18 @@ public class TestShortField
         }
     }
 
-    /**
-     * test writeToBytes
-     */
-
-    public void testWriteToBytes()
-    {
+    public void testWriteToBytes() {
         ShortField field = new ShortField(0);
         byte[]     array = new byte[ 2 ];
 
-        for (int j = 0; j < _test_array.length; j++)
-        {
-            field.set(_test_array[ j ]);
+        for (short element : _test_array) {
+            field.set(element);
             field.writeToBytes(array);
             short val = ( short ) (array[ 1 ] << 8);
 
             val &= ( short ) 0xFF00;
             val += ( short ) (array[ 0 ] & 0x00FF);
-            assertEquals("testing ", _test_array[ j ], val);
+            assertEquals("testing ", element, val);
         }
-    }
-
-    /**
-     * Main
-     *
-     * @param args
-     */
-
-    public static void main(String [] args)
-    {
-        System.out.println("Testing util.ShortField functionality");
-        junit.textui.TestRunner.run(TestShortField.class);
     }
 }

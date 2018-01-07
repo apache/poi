@@ -22,7 +22,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
  * Allows tests to execute {@link WorkbookEvaluator}s and track the internal workings.
- *  
+ *
  * @author Josh Micich
  */
 public final class WorkbookEvaluatorTestHelper {
@@ -30,8 +30,8 @@ public final class WorkbookEvaluatorTestHelper {
 	private WorkbookEvaluatorTestHelper() {
 		// no instances of this class
 	}
-	
+
 	public static WorkbookEvaluator createEvaluator(HSSFWorkbook wb, EvaluationListener listener) {
-		return new WorkbookEvaluator(HSSFEvaluationWorkbook.create(wb), listener);
+		return new WorkbookEvaluator(HSSFEvaluationWorkbook.create(wb), listener, null, null);
 	}
 }

@@ -17,47 +17,30 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import org.apache.poi.hslf.*;
-import org.apache.poi.hslf.exceptions.HSLFException;
-import org.apache.poi.hslf.blip.*;
-import org.apache.poi.hslf.model.*;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
-import java.io.*;
-import java.util.Arrays;
+import org.apache.poi.hslf.HSLFTestDataSamples;
+import org.junit.Test;
 
 /**
  * Test reading sound data from a ppt
- *
- * @author Yegor Kozlov
  */
-public class TestSoundData extends TestCase{
-
-    protected File cwd;
-
-    public void setUp() throws Exception {
-        cwd = new File(System.getProperty("HSLF.testdata.path"));
-    }
-
+public final class TestSoundData {
     /**
      * Read a reference sound file from disk and compare it from the data extracted from the slide show
-     */ 
+     */
+    @Test
     public void testSounds() throws Exception {
         //read the reference sound file
-        File f = new File(cwd, "ringin.wav");
-        int length = (int)f.length();
-        byte[] ref_data = new byte[length];
-        FileInputStream is = new FileInputStream(f);
-        is.read(ref_data);
-        is.close();
+        byte[] ref_data = HSLFTestDataSamples.getTestDataFileContent("ringin.wav");
 
-        is = new FileInputStream(new File(cwd, "sound.ppt"));
-        SlideShow ppt = new SlideShow(is);
-        is.close();
+        HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("sound.ppt");
 
-        SoundData[] sound = ppt.getSoundData();
+        HSLFSoundData[] sound = ppt.getSoundData();
         assertEquals("Expected 1 sound", 1, sound.length);
 
-        assertTrue(Arrays.equals(ref_data, sound[0].getData()));
+        assertArrayEquals(ref_data, sound[0].getData());
+        ppt.close();
     }
 }

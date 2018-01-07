@@ -19,28 +19,29 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.CodePageUtil;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title: Codepage Record<P>
- * Description:  the default characterset. for the workbook<P>
- * REFERENCE:  PG 293 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
- * @author Andrew C. Oliver (acoliver at apache dot org)
+ * Title: Codepage Record
+ * <p>Description:  the default characterset. for the workbook</p>
+ * <p>REFERENCE:  PG 293 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)</p>
+ * <p>Use {@link CodePageUtil} to turn these values into Java code pages
+ *  to encode/decode strings.</p>
  * @version 2.0-pre
  */
 
-public class CodepageRecord
-    extends Record
+public final class CodepageRecord
+    extends StandardRecord
 {
     public final static short sid = 0x42;
     private short             field_1_codepage;   // = 0;
 
     /**
-     * the likely correct value for CODEPAGE (at least for US versions).  We could use
-     * some help with international versions (which we do not have access to documentation
-     * for)
+     * Excel 97+ (Biff 8) should always store strings as UTF-16LE or
+     *  compressed versions of that. As such, this should always be
+     *  0x4b0 = UTF_16, except for files coming from older versions.
      */
-
     public final static short CODEPAGE = ( short ) 0x4b0;
 
     public CodepageRecord()
@@ -87,13 +88,8 @@ public class CodepageRecord
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset,
-                              (( short ) 0x02));   // 2 bytes (6 total)
-        LittleEndian.putShort(data, 4 + offset, getCodepage());
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(getCodepage());
     }
 
     protected int getDataSize() {

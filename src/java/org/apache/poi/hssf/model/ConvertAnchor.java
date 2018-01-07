@@ -25,7 +25,7 @@ import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
 import org.apache.poi.hssf.usermodel.HSSFChildAnchor;
 
 /**
- * $Id$
+ *
  */
 public class ConvertAnchor
 {
@@ -38,7 +38,7 @@ public class ConvertAnchor
             EscherClientAnchorRecord anchor = new EscherClientAnchorRecord();
             anchor.setRecordId( EscherClientAnchorRecord.RECORD_ID );
             anchor.setOptions( (short) 0x0000 );
-            anchor.setFlag( (short) a.getAnchorType() );
+            anchor.setFlag( a.getAnchorType().value );
             anchor.setCol1( (short) Math.min(a.getCol1(), a.getCol2()) );
             anchor.setDx1( (short) a.getDx1() );
             anchor.setRow1( (short) Math.min(a.getRow1(), a.getRow2()) );
@@ -50,18 +50,14 @@ public class ConvertAnchor
             anchor.setDy2( (short) a.getDy2() );
             return anchor;
         }
-        else
-        {
-            HSSFChildAnchor a = (HSSFChildAnchor) userAnchor;
-            EscherChildAnchorRecord anchor = new EscherChildAnchorRecord();
-            anchor.setRecordId( EscherChildAnchorRecord.RECORD_ID );
-            anchor.setOptions( (short) 0x0000 );
-            anchor.setDx1( (short) Math.min(a.getDx1(), a.getDx2()) );
-            anchor.setDy1( (short) Math.min(a.getDy1(), a.getDy2()) );
-            anchor.setDx2( (short) Math.max(a.getDx2(), a.getDx1()) );
-            anchor.setDy2( (short) Math.max(a.getDy2(), a.getDy1()) );
-            return anchor;
-        }
+        HSSFChildAnchor a = (HSSFChildAnchor) userAnchor;
+        EscherChildAnchorRecord anchor = new EscherChildAnchorRecord();
+        anchor.setRecordId( EscherChildAnchorRecord.RECORD_ID );
+        anchor.setOptions( (short) 0x0000 );
+        anchor.setDx1( (short) Math.min(a.getDx1(), a.getDx2()) );
+        anchor.setDy1( (short) Math.min(a.getDy1(), a.getDy2()) );
+        anchor.setDx2( (short) Math.max(a.getDx2(), a.getDx1()) );
+        anchor.setDy2( (short) Math.max(a.getDy2(), a.getDy1()) );
+        return anchor;
     }
-
 }

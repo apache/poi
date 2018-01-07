@@ -17,32 +17,38 @@
 
 package org.apache.poi.ss.formula;
 
-import org.apache.poi.hssf.record.formula.AreaI;
-import org.apache.poi.hssf.record.formula.AreaI.OffsetArea;
-import org.apache.poi.hssf.record.formula.eval.AreaEval;
-import org.apache.poi.hssf.record.formula.eval.AreaEvalBase;
-import org.apache.poi.hssf.record.formula.eval.ValueEval;
-import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.ss.formula.eval.AreaEval;
+import org.apache.poi.ss.formula.eval.AreaEvalBase;
+import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.ptg.AreaI;
+import org.apache.poi.ss.formula.ptg.AreaI.OffsetArea;
+import org.apache.poi.ss.util.CellReference;
 
 /**
- *
- * @author Josh Micich 
+ * Provides Lazy Evaluation to 3D Ranges
  */
 final class LazyAreaEval extends AreaEvalBase {
+	private final SheetRangeEvaluator _evaluator;
 
-	private final SheetRefEvaluator _evaluator;
-
-	public LazyAreaEval(AreaI ptg, SheetRefEvaluator evaluator) {
-		super(ptg);
+	LazyAreaEval(AreaI ptg, SheetRangeEvaluator evaluator) {
+		super(ptg, evaluator);
 		_evaluator = evaluator;
 	}
 
-	public ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex) { 
-		
-		int rowIx = (relativeRowIndex + getFirstRow() ) & 0xFFFF;
-		int colIx = (relativeColumnIndex + getFirstColumn() ) & 0x00FF;
-		
-		return _evaluator.getEvalForCell(rowIx, colIx);
+	public LazyAreaEval(int firstRowIndex, int firstColumnIndex, int lastRowIndex,
+			int lastColumnIndex, SheetRangeEvaluator evaluator) {
+		super(evaluator, firstRowIndex, firstColumnIndex, lastRowIndex, lastColumnIndex);
+		_evaluator = evaluator;
+	}
+
+    public ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex) {
+        return getRelativeValue(getFirstSheetIndex(), relativeRowIndex, relativeColumnIndex);
+    }
+    public ValueEval getRelativeValue(int sheetIndex, int relativeRowIndex, int relativeColumnIndex) {
+		int rowIx = (relativeRowIndex + getFirstRow() ) ;
+		int colIx = (relativeColumnIndex + getFirstColumn() ) ;
+
+		return _evaluator.getEvalForCell(sheetIndex, rowIx, colIx);
 	}
 
 	public AreaEval offset(int relFirstRowIx, int relLastRowIx, int relFirstColIx, int relLastColIx) {
@@ -51,17 +57,41 @@ final class LazyAreaEval extends AreaEvalBase {
 
 		return new LazyAreaEval(area, _evaluator);
 	}
+	public LazyAreaEval getRow(int rowIndex) {
+		if (rowIndex >= getHeight()) {
+			throw new IllegalArgumentException("Invalid rowIndex " + rowIndex
+					+ ".  Allowable range is (0.." + getHeight() + ").");
+		}
+		int absRowIx = getFirstRow() + rowIndex;
+		return new LazyAreaEval(absRowIx, getFirstColumn(), absRowIx, getLastColumn(), _evaluator);
+	}
+	public LazyAreaEval getColumn(int columnIndex) {
+		if (columnIndex >= getWidth()) {
+			throw new IllegalArgumentException("Invalid columnIndex " + columnIndex
+					+ ".  Allowable range is (0.." + getWidth() + ").");
+		}
+		int absColIx = getFirstColumn() + columnIndex;
+		return new LazyAreaEval(getFirstRow(), absColIx, getLastRow(), absColIx, _evaluator);
+	}
+
 	public String toString() {
 		CellReference crA = new CellReference(getFirstRow(), getFirstColumn());
 		CellReference crB = new CellReference(getLastRow(), getLastColumn());
-		StringBuffer sb = new StringBuffer();
-		sb.append(getClass().getName()).append("[");
-		sb.append(_evaluator.getSheetName());
-		sb.append('!');
-		sb.append(crA.formatAsString());
-		sb.append(':');
-		sb.append(crB.formatAsString());
-		sb.append("]");
-		return sb.toString();
+		return getClass().getName() + "[" +
+				_evaluator.getSheetNameRange() +
+				'!' +
+				crA.formatAsString() +
+				':' +
+				crB.formatAsString() +
+				"]";
 	}
+
+    /**
+     * @return  whether cell at rowIndex and columnIndex is a subtotal
+    */
+    public boolean isSubTotal(int rowIndex, int columnIndex){
+        // delegate the query to the sheet evaluator which has access to internal ptgs
+        SheetRefEvaluator _sre = _evaluator.getSheetEvaluator(_evaluator.getFirstSheetIndex());
+        return _sre.isSubTotal(getFirstRow() + rowIndex, getFirstColumn() + columnIndex);
+    }
 }

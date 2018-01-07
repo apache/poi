@@ -14,21 +14,19 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.model;
 
-import junit.framework.TestCase;
-import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.hslf.usermodel.RichTextRun;
-import org.apache.poi.hslf.HSLFSlideShow;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import java.awt.*;
-import java.awt.Rectangle;
-import java.awt.geom.*;
-import java.io.ByteArrayOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
+import java.awt.geom.Area;
+import java.awt.geom.Line2D;
+import java.awt.geom.Path2D;
+import java.awt.geom.Rectangle2D;
+
+import org.apache.poi.hslf.usermodel.HSLFFreeformShape;
+import org.junit.Test;
 
 /**
  * Test Freeform object.
@@ -38,43 +36,59 @@ import java.util.ArrayList;
  *
  * @author Yegor Kozlov
  */
-public class TestFreeform extends TestCase {
+public final class TestFreeform {
 
-    public void testClosedPath() throws Exception {
+    @Test
+    public void testClosedPath() {
 
-        GeneralPath path1 = new GeneralPath();
+        Path2D.Double path1 = new Path2D.Double();
         path1.moveTo(100, 100);
         path1.lineTo(200, 100);
         path1.lineTo(200, 200);
         path1.lineTo(100, 200);
         path1.closePath();
 
-        Freeform p = new Freeform();
+        HSLFFreeformShape p = new HSLFFreeformShape();
         p.setPath(path1);
 
-        java.awt.Shape path2 = p.getOutline();
+        java.awt.Shape path2 = p.getPath();
         assertTrue(new Area(path1).equals(new Area(path2)));
     }
 
-    public void testLine() throws Exception {
+    @Test
+    public void testLine() {
 
-        GeneralPath path1 = new GeneralPath(new Line2D.Double(100, 100, 200, 100));
+        Path2D.Double path1 = new Path2D.Double(new Line2D.Double(100, 100, 200, 100));
 
-        Freeform p = new Freeform();
+        HSLFFreeformShape p = new HSLFFreeformShape();
         p.setPath(path1);
 
-        java.awt.Shape path2 = p.getOutline();
+        java.awt.Shape path2 = p.getPath();
         assertTrue(new Area(path1).equals(new Area(path2)));
     }
 
-    public void testRectangle() throws Exception {
+    @Test
+    public void testRectangle() {
 
-        GeneralPath path1 = new GeneralPath(new Rectangle2D.Double(100, 100, 200, 50));
+        Path2D.Double path1 = new Path2D.Double(new Rectangle2D.Double(100, 100, 200, 50));
 
-        Freeform p = new Freeform();
+        HSLFFreeformShape p = new HSLFFreeformShape();
         p.setPath(path1);
 
-        java.awt.Shape path2 = p.getOutline();
+        java.awt.Shape path2 = p.getPath();
         assertTrue(new Area(path1).equals(new Area(path2)));
    }
+
+    /**
+     * Avoid NPE in  Freeform.getOutline() if either GEOMETRY__VERTICES or
+     * GEOMETRY__SEGMENTINFO is missing, see Bugzilla 54188
+     */
+    @Test
+    public void test54188() {
+
+        HSLFFreeformShape p = new HSLFFreeformShape();
+        Path2D.Double path = p.getPath();
+        Path2D.Double emptyPath = new Path2D.Double();
+        assertEquals(emptyPath.getBounds2D(), path.getBounds2D());
+    }
 }

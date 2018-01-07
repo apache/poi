@@ -20,9 +20,9 @@ package org.apache.poi.hssf.model;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.record.formula.AbstractFunctionPtg;
-import org.apache.poi.hssf.record.formula.FuncVarPtg;
-import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.ss.formula.ptg.AbstractFunctionPtg;
+import org.apache.poi.ss.formula.ptg.FuncVarPtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
@@ -33,7 +33,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 public final class TestOperandClassTransformer extends TestCase {
 
 	private static Ptg[] parseFormula(String formula) {
-		Ptg[] result = HSSFFormulaParser.parse(formula, (HSSFWorkbook)null);
+		Ptg[] result = HSSFFormulaParser.parse(formula, null);
 		assertNotNull("Ptg array should not be null", result);
 		return result;
 	}
@@ -126,7 +126,7 @@ public final class TestOperandClassTransformer extends TestCase {
 		}
 		if (operandClass != ptg.getPtgClass()) {
 			throw new AssertionFailedError("Wrong operand class for ptg ("
-					+ ptg.toString() + "). Expected " + getOperandClassName(operandClass)
+					+ ptg + "). Expected " + getOperandClassName(operandClass)
 					+ " but got " + getOperandClassName(ptg.getPtgClass()));
 		}
 	}

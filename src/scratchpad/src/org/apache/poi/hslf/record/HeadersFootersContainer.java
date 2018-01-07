@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -37,7 +36,7 @@ import java.io.IOException;
  *
  * @author Yegor Kozlov
  */
-public class HeadersFootersContainer extends RecordContainer {
+public final class HeadersFootersContainer extends RecordContainer {
 
     /**
      * "instance" field in the record header indicating that this HeadersFootersContaine

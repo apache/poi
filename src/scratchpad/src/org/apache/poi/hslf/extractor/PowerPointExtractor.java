@@ -17,238 +17,359 @@
 
 package org.apache.poi.hslf.extractor;
 
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.poi.POIOLE2TextExtractor;
-import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.model.Comment;
+import org.apache.poi.hslf.model.HSLFMetroShape;
 import org.apache.poi.hslf.model.HeadersFooters;
-import org.apache.poi.hslf.model.Notes;
-import org.apache.poi.hslf.model.Slide;
-import org.apache.poi.hslf.model.TextRun;
-import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.hslf.usermodel.HSLFMasterSheet;
+import org.apache.poi.hslf.usermodel.HSLFNotes;
+import org.apache.poi.hslf.usermodel.HSLFShape;
+import org.apache.poi.hslf.usermodel.HSLFSlide;
+import org.apache.poi.hslf.usermodel.HSLFSlideMaster;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
+import org.apache.poi.hslf.usermodel.HSLFTable;
+import org.apache.poi.hslf.usermodel.HSLFTableCell;
+import org.apache.poi.hslf.usermodel.HSLFTextParagraph;
+import org.apache.poi.hslf.usermodel.HSLFTextShape;
+import org.apache.poi.hslf.usermodel.HSLFObjectShape;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
- * This class can be used to extract text from a PowerPoint file.
- *  Can optionally also get the notes from one.
- *
- * @author Nick Burch
+ * This class can be used to extract text from a PowerPoint file. Can optionally
+ * also get the notes from one.
  */
 public final class PowerPointExtractor extends POIOLE2TextExtractor {
-	private HSLFSlideShow _hslfshow;
-	private SlideShow _show;
-	private Slide[] _slides;
-	
-	private boolean slidesByDefault = true;
-	private boolean notesByDefault = false;
-	private boolean commentsByDefault = false;
+   private static final POILogger LOG = POILogFactory.getLogger(PowerPointExtractor.class);
+    
+   private final HSLFSlideShow _show;
+   private final List<HSLFSlide> _slides;
 
-  /**
-   * Basic extractor. Returns all the text, and optionally all the notes
-   */
-  public static void main(String args[]) throws IOException
-  {
-	if(args.length < 1) {
-		System.err.println("Useage:");
-		System.err.println("\tPowerPointExtractor [-notes] <file>");
-		System.exit(1);
-	}
+   private boolean _slidesByDefault = true;
+   private boolean _notesByDefault;
+   private boolean _commentsByDefault;
+   private boolean _masterByDefault;
 
-	boolean notes = false;
-	boolean comments = false;
-	String file;
-	if(args.length > 1) {
-		notes = true;
-		file = args[1];
-		if(args.length > 2) {
-			comments = true;
+	/**
+	 * Basic extractor. Returns all the text, and optionally all the notes
+	 */
+	public static void main(String args[]) throws IOException {
+		if (args.length < 1) {
+			System.err.println("Useage:");
+			System.err.println("\tPowerPointExtractor [-notes] <file>");
+			System.exit(1);
 		}
-	} else {
-		file = args[0];
-	}
 
-	PowerPointExtractor ppe = new PowerPointExtractor(file);
-	System.out.println(ppe.getText(true,notes,comments));
-  }
+		boolean notes = false;
+		boolean comments = false;
+        boolean master = true;
+        
+		String file;
+		if (args.length > 1) {
+			notes = true;
+			file = args[1];
+			if (args.length > 2) {
+				comments = true;
+			}
+		} else {
+			file = args[0];
+		}
+
+		PowerPointExtractor ppe = new PowerPointExtractor(file);
+		System.out.println(ppe.getText(true, notes, comments, master));
+		ppe.close();
+	}
 
 	/**
 	 * Creates a PowerPointExtractor, from a file
+	 *
 	 * @param fileName The name of the file to extract from
 	 */
 	public PowerPointExtractor(String fileName) throws IOException {
-		this(new FileInputStream(fileName));
+		this(new NPOIFSFileSystem(new File(fileName)));
 	}
+
 	/**
 	 * Creates a PowerPointExtractor, from an Input Stream
+	 *
 	 * @param iStream The input stream containing the PowerPoint document
 	 */
 	public PowerPointExtractor(InputStream iStream) throws IOException {
 		this(new POIFSFileSystem(iStream));
 	}
+
 	/**
 	 * Creates a PowerPointExtractor, from an open POIFSFileSystem
+	 *
 	 * @param fs the POIFSFileSystem containing the PowerPoint document
 	 */
 	public PowerPointExtractor(POIFSFileSystem fs) throws IOException {
-		this(new HSLFSlideShow(fs));
+		this(fs.getRoot());
 	}
-	public PowerPointExtractor(DirectoryNode dir, POIFSFileSystem fs) throws IOException {
-		this(new HSLFSlideShow(dir, fs));
-	}
+
+   /**
+    * Creates a PowerPointExtractor, from an open NPOIFSFileSystem
+    *
+    * @param fs the NPOIFSFileSystem containing the PowerPoint document
+    */
+   public PowerPointExtractor(NPOIFSFileSystem fs) throws IOException {
+      this(fs.getRoot());
+      setFilesystem(fs);
+   }
+
+   /**
+    * Creates a PowerPointExtractor, from a specific place
+    *  inside an open NPOIFSFileSystem
+    *
+    * @param dir the POIFS Directory containing the PowerPoint document
+    */
+   public PowerPointExtractor(DirectoryNode dir) throws IOException {
+      this(new HSLFSlideShowImpl(dir));
+   }
 
 	/**
 	 * Creates a PowerPointExtractor, from a HSLFSlideShow
+	 *
 	 * @param ss the HSLFSlideShow to extract text from
 	 */
-	public PowerPointExtractor(HSLFSlideShow ss) throws IOException {
+	public PowerPointExtractor(HSLFSlideShowImpl ss) {
 		super(ss);
-		_hslfshow = ss;
-		_show = new SlideShow(_hslfshow);
+		_show = new HSLFSlideShow(ss);
 		_slides = _show.getSlides();
 	}
 
 	/**
-	 * Should a call to getText() return slide text?
-	 * Default is yes
+	 * Should a call to getText() return slide text? Default is yes
 	 */
 	public void setSlidesByDefault(boolean slidesByDefault) {
-		this.slidesByDefault = slidesByDefault;
-	}
-	/**
-	 * Should a call to getText() return notes text?
-	 * Default is no
-	 */
-	public void setNotesByDefault(boolean notesByDefault) {
-		this.notesByDefault = notesByDefault;
-	}
-	/**
-	 * Should a call to getText() return comments text?
-	 * Default is no
-	 */
-	public void setCommentsByDefault(boolean commentsByDefault) {
-		this.commentsByDefault = commentsByDefault;
+		this._slidesByDefault = slidesByDefault;
 	}
 
 	/**
-	 * Fetches all the slide text from the slideshow, 
-	 *  but not the notes, unless you've called
-	 *  setSlidesByDefault() and setNotesByDefault()
-	 *  to change this
+	 * Should a call to getText() return notes text? Default is no
 	 */
-	public String getText() {
-		return getText(slidesByDefault,notesByDefault,commentsByDefault);
+	public void setNotesByDefault(boolean notesByDefault) {
+		this._notesByDefault = notesByDefault;
+	}
+
+	/**
+	 * Should a call to getText() return comments text? Default is no
+	 */
+	public void setCommentsByDefault(boolean commentsByDefault) {
+		this._commentsByDefault = commentsByDefault;
+	}
+
+    /**
+     * Should a call to getText() return text from master? Default is no
+     */
+    public void setMasterByDefault(boolean masterByDefault) {
+        this._masterByDefault = masterByDefault;
+    }
+
+	/**
+	 * Fetches all the slide text from the slideshow, but not the notes, unless
+	 * you've called setSlidesByDefault() and setNotesByDefault() to change this
+	 */
+	@Override
+    public String getText() {
+		return getText(_slidesByDefault, _notesByDefault, _commentsByDefault, _masterByDefault);
 	}
 
 	/**
 	 * Fetches all the notes text from the slideshow, but not the slide text
 	 */
 	public String getNotes() {
-		return getText(false,true);
+		return getText(false, true);
 	}
 
-  /**
-   * Fetches text from the slideshow, be it slide text or note text.
-   * Because the final block of text in a TextRun normally have their
-   *  last \n stripped, we add it back
-   * @param getSlideText fetch slide text
-   * @param getNoteText fetch note text
-   */
-  public String getText(boolean getSlideText, boolean getNoteText) {
-	  return getText(getSlideText, getNoteText, commentsByDefault);
-  }
-  public String getText(boolean getSlideText, boolean getNoteText, boolean getCommentText) {
-	StringBuffer ret = new StringBuffer(); 
+	public List<HSLFObjectShape> getOLEShapes() {
+		List<HSLFObjectShape> list = new ArrayList<>();
 
-	if(getSlideText) {
-		for(int i=0; i<_slides.length; i++) {
-			Slide slide = _slides[i];
-			
-			// Slide header, if set
-			HeadersFooters hf = slide.getHeadersFooters();
-			if(hf != null && hf.isHeaderVisible() && hf.getHeaderText() != null) {
-				ret.append(hf.getHeaderText() + "\n");
+		for (HSLFSlide slide : _slides) {
+			for (HSLFShape shape : slide.getShapes()) {
+				if (shape instanceof HSLFObjectShape) {
+					list.add((HSLFObjectShape) shape);
+				}
 			}
-			
-			// Slide text
-			TextRun[] runs = slide.getTextRuns();
-			for(int j=0; j<runs.length; j++) {
-				TextRun run = runs[j];
-				if(run != null) {
-					String text = run.getText();
-					ret.append(text);
-					if(! text.endsWith("\n")) {
-						ret.append("\n");
+		}
+
+		return list;
+	}
+
+	/**
+	 * Fetches text from the slideshow, be it slide text or note text. Because
+	 * the final block of text in a TextRun normally have their last \n
+	 * stripped, we add it back
+	 *
+	 * @param getSlideText fetch slide text
+	 * @param getNoteText fetch note text
+	 */
+	public String getText(boolean getSlideText, boolean getNoteText) {
+		return getText(getSlideText, getNoteText, _commentsByDefault, _masterByDefault);
+	}
+
+	public String getText(boolean getSlideText, boolean getNoteText, boolean getCommentText, boolean getMasterText) {
+		StringBuffer ret = new StringBuffer();
+
+		if (getSlideText) {
+            if (getMasterText) {
+                for (HSLFSlideMaster master : _show.getSlideMasters()) {
+                    for(HSLFShape sh : master.getShapes()){
+                        if(sh instanceof HSLFTextShape){
+                            HSLFTextShape hsh = (HSLFTextShape)sh;
+                            final String text = hsh.getText();
+                            if (text == null || text.isEmpty() || "*".equals(text)) {
+                                continue;
+                            }
+                            
+                            if (HSLFMasterSheet.isPlaceholder(sh)) {
+                                // check for metro shape of complex placeholder
+                                boolean isMetro = new HSLFMetroShape<HSLFShape>(sh).hasMetroBlob();
+                                
+                                if (!isMetro) {
+                                    // don't bother about boiler plate text on master sheets
+                                    LOG.log(POILogger.INFO, "Ignoring boiler plate (placeholder) text on slide master:", text);
+                                    continue;
+                                }
+                            }
+                            
+                            ret.append(text);
+                            if (!text.endsWith("\n")) {
+                                ret.append("\n");
+                            }
+                        }
+                    }
+                }
+            }
+
+            for (HSLFSlide slide : _slides) {
+                String headerText = "";
+                String footerText = "";
+                HeadersFooters hf = slide.getHeadersFooters();
+                if (hf != null) {
+                    if (hf.isHeaderVisible()) {
+                        headerText = safeLine(hf.getHeaderText());
+                    }
+                    if (hf.isFooterVisible()) {
+                        footerText = safeLine(hf.getFooterText());
+                    }
+                }
+                
+                // Slide header, if set
+                ret.append(headerText);
+
+                // Slide text
+                textRunsToText(ret, slide.getTextParagraphs());
+
+                // Table text
+                for (HSLFShape shape : slide.getShapes()){
+                    if (shape instanceof HSLFTable){
+                        extractTableText(ret, (HSLFTable)shape);
+                    }
+                }
+                // Slide footer, if set
+                ret.append(footerText);
+
+				// Comments, if requested and present
+				if (getCommentText) {
+					for (Comment comment : slide.getComments()) {
+						ret.append(comment.getAuthor() + " - " + comment.getText() + "\n");
 					}
 				}
 			}
-			
-			// Slide footer, if set
-			if(hf != null && hf.isFooterVisible() && hf.getFooterText() != null) {
-				ret.append(hf.getFooterText() + "\n");
+			if (getNoteText) {
+				ret.append('\n');
+			}
+		}
+
+		if (getNoteText) {
+			// Not currently using _notes, as that can have the notes of
+			// master sheets in. Grab Slide list, then work from there,
+			// but ensure no duplicates
+			Set<Integer> seenNotes = new HashSet<>();
+            String headerText = "";
+            String footerText = "";
+			HeadersFooters hf = _show.getNotesHeadersFooters();
+			if (hf != null) {
+			    if (hf.isHeaderVisible()) {
+			        headerText = safeLine(hf.getHeaderText());
+			    }
+			    if (hf.isFooterVisible()) {
+                    footerText = safeLine(hf.getFooterText());
+			    }
 			}
 			
-			// Comments, if requested and present
-			if(getCommentText) {
-				Comment[] comments = slide.getComments();
-				for(int j=0; j<comments.length; j++) {
-					ret.append(
-							comments[j].getAuthor() + 
-							" - " +
-							comments[j].getText() + 
-							"\n"
-					);
+
+			for (HSLFSlide slide : _slides) {
+				HSLFNotes notes = slide.getNotes();
+				if (notes == null) {
+					continue;
 				}
+				Integer id = Integer.valueOf(notes._getSheetNumber());
+				if (seenNotes.contains(id)) {
+					continue;
+				}
+				seenNotes.add(id);
+
+				// Repeat the Notes header, if set
+				ret.append(headerText);
+
+				// Notes text
+				textRunsToText(ret, notes.getTextParagraphs());
+
+				// Repeat the notes footer, if set
+				ret.append(footerText);
 			}
 		}
-		if(getNoteText) {
-			ret.append("\n");
-		}
+
+		return ret.toString();
+	}
+	
+	private static String safeLine(String text) {
+	    return (text == null) ? "" : (text+'\n');
 	}
 
-	if(getNoteText) {
-		// Not currently using _notes, as that can have the notes of
-		//  master sheets in. Grab Slide list, then work from there,
-		//  but ensure no duplicates
-		HashSet seenNotes = new HashSet();
-		HeadersFooters hf = _show.getNotesHeadersFooters();
-		
-		for(int i=0; i<_slides.length; i++) {
-			Notes notes = _slides[i].getNotesSheet();
-			if(notes == null) { continue; }
-			Integer id = new Integer(notes._getSheetNumber());
-			if(seenNotes.contains(id)) { continue; }
-			seenNotes.add(id);
-			
-			// Repeat the Notes header, if set
-			if(hf != null && hf.isHeaderVisible() && hf.getHeaderText() != null) {
-				ret.append(hf.getHeaderText() + "\n");
-			}
+    private void extractTableText(StringBuffer ret, HSLFTable table) {
+        final int nrows = table.getNumberOfRows();
+        final int ncols = table.getNumberOfColumns();
+        for (int row = 0; row < nrows; row++){
+            for (int col = 0; col < ncols; col++){
+                HSLFTableCell cell = table.getCell(row, col);
+                //defensive null checks; don't know if they're necessary
+                if (cell != null){
+                    String txt = cell.getText();
+                    txt = (txt == null) ? "" : txt;
+                    ret.append(txt);
+                    if (col < ncols-1){
+                        ret.append('\t');
+                    }
+                }
+            }
+            ret.append('\n');
+        }
+    }
+    private void textRunsToText(StringBuffer ret, List<List<HSLFTextParagraph>> paragraphs) {
+        if (paragraphs==null) {
+            return;
+        }
 
-			// Notes text
-			TextRun[] runs = notes.getTextRuns();
-			if(runs != null && runs.length > 0) {
-				for(int j=0; j<runs.length; j++) {
-					TextRun run = runs[j];
-					String text = run.getText();
-					ret.append(text);
-					if(! text.endsWith("\n")) {
-						ret.append("\n");
-					}
-				}
-			}
-			
-			// Repeat the notes footer, if set
-			if(hf != null && hf.isFooterVisible() && hf.getFooterText() != null) {
-				ret.append(hf.getFooterText() + "\n");
-			}
-		}
-	}
-
-	return ret.toString();
-  }
+        for (List<HSLFTextParagraph> lp : paragraphs) {
+            ret.append(HSLFTextParagraph.getText(lp));
+            if (ret.length() > 0 && ret.charAt(ret.length()-1) != '\n') {
+                ret.append('\n');
+            }
+        }
+    }
 }

@@ -17,12 +17,11 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
 
 import org.apache.poi.hssf.record.BOFRecord;
 import org.apache.poi.hssf.record.BoundSheetRecord;
@@ -31,23 +30,26 @@ import org.apache.poi.hssf.record.InterfaceHdrRecord;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.usermodel.SanityChecker.CheckRecord;
+import org.junit.Test;
 
 /**
- * A Test case for a test utility class.<br/>
+ * A Test case for a test utility class.<br>
  * Okay, this may seem strange but I need to test my test logic.
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class TestSanityChecker extends TestCase {
-
+public final class TestSanityChecker {
+	private static final Record INTERFACEHDR = new InterfaceHdrRecord(InterfaceHdrRecord.CODEPAGE);
 	private static BoundSheetRecord createBoundSheetRec() {
 		return new BoundSheetRecord("Sheet1");
 	}
+	
+	@Test
 	public void testCheckRecordOrder() {
 		final SanityChecker c = new SanityChecker();
-		List records = new ArrayList();
+		List<Record> records = new ArrayList<>();
 		records.add(new BOFRecord());
-		records.add(new InterfaceHdrRecord());
+		records.add(INTERFACEHDR);
 		records.add(createBoundSheetRec());
 		records.add(EOFRecord.instance);
 		CheckRecord[] check = {
@@ -71,15 +73,15 @@ public final class TestSanityChecker extends TestCase {
 		confirmBadRecordOrder(check, new Record[] {
 				new BOFRecord(),
 				createBoundSheetRec(),
-				new InterfaceHdrRecord(),
+				INTERFACEHDR,
 				EOFRecord.instance,
 		});
 
 		confirmBadRecordOrder(check, new Record[] {
 				new BOFRecord(),
-				new InterfaceHdrRecord(),
+				INTERFACEHDR,
 				createBoundSheetRec(),
-				new InterfaceHdrRecord(),
+				INTERFACEHDR,
 				EOFRecord.instance,
 		});
 
@@ -92,19 +94,19 @@ public final class TestSanityChecker extends TestCase {
 		});
 
 		confirmBadRecordOrder(check, new Record[] {
-				new InterfaceHdrRecord(),
+				INTERFACEHDR,
 				createBoundSheetRec(),
 				EOFRecord.instance,
 		});
 
 		confirmBadRecordOrder(check, new Record[] {
 				new BOFRecord(),
-				new InterfaceHdrRecord(),
+				INTERFACEHDR,
 				EOFRecord.instance,
 		});
 
 		confirmBadRecordOrder(check, new Record[] {
-				new InterfaceHdrRecord(),
+				INTERFACEHDR,
 				createBoundSheetRec(),
 				new BOFRecord(),
 				EOFRecord.instance,
@@ -113,23 +115,24 @@ public final class TestSanityChecker extends TestCase {
 		confirmBadRecordOrder(check, new Record[] {
 				new BOFRecord(),
 				createBoundSheetRec(),
-				new InterfaceHdrRecord(),
+				INTERFACEHDR,
 				EOFRecord.instance,
 		});
 	}
 	private static void confirmBadRecordOrder(final SanityChecker.CheckRecord[] check, Record[] recs) {
 		final SanityChecker c = new SanityChecker();
-		final List records = Arrays.asList(recs);
+		final List<Record> records = Arrays.asList(recs);
 		try {
 			new Runnable() {
-				public void run() {
+				@Override
+                public void run() {
 					c.checkRecordOrder(records, check);
 				}
 			}.run();
-		} catch (AssertionFailedError pass) {
+		} catch (AssertionError pass) {
 			// expected during normal test
 			return;
 		}
-		throw new AssertionFailedError("Did not get failure exception as expected");
+		fail("Did not get failure exception as expected");
 	}
 }

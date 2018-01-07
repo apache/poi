@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,65 +14,41 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.ddf;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.HexDump;
 
-import java.io.ByteArrayOutputStream;
+public class EscherBlipRecord extends EscherRecord {
 
-/**
- * @author Glen Stampoultzis
- * @version $Id$
- */
-public class EscherBlipRecord
-        extends EscherRecord
-{
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 104_857_600;
+
     public static final short  RECORD_ID_START    = (short) 0xF018;
     public static final short  RECORD_ID_END      = (short) 0xF117;
     public static final String RECORD_DESCRIPTION = "msofbtBlip";
 
     private static final int   HEADER_SIZE               = 8;
 
-    protected              byte[] field_pictureData;
+    private byte[] field_pictureData;
 
-    public EscherBlipRecord()
-    {
+    public EscherBlipRecord() {
     }
 
-    /**
-     * This method deserializes the record from a byte array.
-     *
-     * @param data          The byte array containing the escher record information
-     * @param offset        The starting offset into <code>data</code>.
-     * @param recordFactory May be null since this is not a container record.
-     * @return The number of bytes read from the byte array.
-     */
-    public int fillFields( byte[] data, int offset, EscherRecordFactory recordFactory )
-    {
+    @Override
+    public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesAfterHeader = readHeader( data, offset );
         int pos              = offset + HEADER_SIZE;
 
-        field_pictureData = new byte[bytesAfterHeader];
+        field_pictureData = IOUtils.safelyAllocate(bytesAfterHeader, MAX_RECORD_LENGTH);
         System.arraycopy(data, pos, field_pictureData, 0, bytesAfterHeader);
 
         return bytesAfterHeader + 8;
     }
 
-    /**
-     * Serializes the record to an existing byte array.
-     *
-     * @param offset    the offset within the byte array
-     * @param data      the data array to serialize to
-     * @param listener  a listener for begin and end serialization events.  This
-     *                  is useful because the serialization is
-     *                  hierarchical/recursive and sometimes you need to be able
-     *                  break into that.
-     * @return the number of bytes written.
-     */
-    public int serialize( int offset, byte[] data, EscherSerializationListener listener )
-    {
+    @Override
+    public int serialize(int offset, byte[] data, EscherSerializationListener listener) {
         listener.beforeRecordSerialize(offset, getRecordId(), this);
 
         LittleEndian.putShort( data, offset, getOptions() );
@@ -85,53 +60,53 @@ public class EscherBlipRecord
         return field_pictureData.length + 4;
     }
 
-    /**
-     * Returns the number of bytes that are required to serialize this record.
-     *
-     * @return Number of bytes
-     */
-    public int getRecordSize()
-    {
+    @Override
+    public int getRecordSize() {
         return field_pictureData.length + HEADER_SIZE;
     }
 
-    /**
-     * The short name for this record
-     */
-    public String getRecordName()
-    {
+    @Override
+    public String getRecordName() {
         return "Blip";
     }
 
-    public byte[] getPicturedata()
-    {
+    /**
+     * Gets the picture data bytes
+     *
+     * @return the picture data
+     */
+    public byte[] getPicturedata() {
         return field_pictureData;
     }
 
-    public void setPictureData(byte[] pictureData)
-    {
-        field_pictureData = pictureData;
+    /**
+     * Sets the picture data bytes
+     *
+     * @param pictureData the picture data
+     */
+    public void setPictureData(byte[] pictureData) {
+        setPictureData(pictureData, 0, (pictureData == null ? 0 : pictureData.length));
     }
 
-    public String toString()
-    {
-        String nl = System.getProperty( "line.separator" );
-
-        String extraData;
-        ByteArrayOutputStream b = new ByteArrayOutputStream();
-        try
-        {
-            HexDump.dump( this.field_pictureData, 0, b, 0 );
-            extraData = b.toString();
+    /**
+     * Sets the picture data bytes
+     *
+     * @param pictureData the picture data
+     * @param offset the offset into the picture data
+     * @param length the amount of bytes to be used
+     */
+    public void setPictureData(byte[] pictureData, int offset, int length) {
+        if (pictureData == null || offset < 0 || length < 0 || pictureData.length < offset+length) {
+            throw new IllegalArgumentException("picture data can't be null");
         }
-        catch ( Exception e )
-        {
-            extraData = e.toString();
-        }
-        return getClass().getName() + ":" + nl +
-                "  RecordId: 0x" + HexDump.toHex( getRecordId() ) + nl +
-                "  Options: 0x" + HexDump.toHex( getOptions() ) + nl +
-                "  Extra Data:" + nl + extraData;
+        field_pictureData = IOUtils.safelyAllocate(length, MAX_RECORD_LENGTH);
+        System.arraycopy(pictureData, offset, field_pictureData, 0, length);
+    }
 
+    @Override
+    protected Object[][] getAttributeMap() {
+        return new Object[][] {
+            { "Extra Data", getPicturedata() }
+        };
     }
 }

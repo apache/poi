@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,28 +14,31 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 
-import org.apache.poi.util.LittleEndian;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.poi.hslf.record.SlideAtomLayout.SlideLayoutType;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.LittleEndian;
+
 /**
  * A Slide Atom (type 1007). Holds information on the parent Slide, what
- *  Master Slide it uses, what Notes is attached to it, that sort of thing.
- *  It also has a SSlideLayoutAtom embeded in it, but without the Atom header
- *
- * @author Nick Burch
+ * Master Slide it uses, what Notes is attached to it, that sort of thing.
+ * It also has a SSlideLayoutAtom embedded in it, but without the Atom header
  */
 
-public class SlideAtom extends RecordAtom
-{
+public final class SlideAtom extends RecordAtom {
+    public static final int USES_MASTER_SLIDE_ID  =  0x80000000;
+    // private static final int MASTER_SLIDE_ID      =  0x00000000;
+
+	//arbitrarily selected; may need to increase
+	private static final int MAX_RECORD_LENGTH = 1_000_000;
+
 	private byte[] _header;
 	private static long _type = 1007l;
-	public static final int MASTER_SLIDE_ID = 0;
-	public static final int USES_MASTER_SLIDE_ID = -2147483648;
 
 	private int masterID;
 	private int notesID;
@@ -44,18 +46,18 @@ public class SlideAtom extends RecordAtom
 	private boolean followMasterObjects;
 	private boolean followMasterScheme;
 	private boolean followMasterBackground;
-	private SSlideLayoutAtom layoutAtom;
+	private SlideAtomLayout layoutAtom;
 	private byte[] reserved;
 
 
 	/** Get the ID of the master slide used. 0 if this is a master slide, otherwise -2147483648 */
 	public int getMasterID() { return masterID; }
-    /** Change slide master.  */ 
+    /** Change slide master.  */
     public void setMasterID(int id) { masterID = id; }
 	/** Get the ID of the notes for this slide. 0 if doesn't have one */
 	public int getNotesID()  { return notesID; }
-	/** Get the embeded SSlideLayoutAtom */
-	public SSlideLayoutAtom getSSlideLayoutAtom() { return layoutAtom; }
+	/** Get the embedded SSlideLayoutAtom */
+	public SlideAtomLayout getSSlideLayoutAtom() { return layoutAtom; }
 
 	/** Change the ID of the notes for this slide. 0 if it no longer has one */
 	public void setNotesID(int id) { notesID = id; }
@@ -70,7 +72,7 @@ public class SlideAtom extends RecordAtom
 
 	/* *************** record code follows ********************** */
 
-	/** 
+	/**
 	 * For the Slide Atom
 	 */
 	protected SlideAtom(byte[] source, int start, int len) {
@@ -85,11 +87,11 @@ public class SlideAtom extends RecordAtom
 		byte[] SSlideLayoutAtomData = new byte[12];
 		System.arraycopy(source,start+8,SSlideLayoutAtomData,0,12);
 		// Use them to build up the SSlideLayoutAtom
-		layoutAtom = new SSlideLayoutAtom(SSlideLayoutAtomData);
+		layoutAtom = new SlideAtomLayout(SSlideLayoutAtomData);
 
 		// Get the IDs of the master and notes
-		masterID = (int)LittleEndian.getInt(source,start+12+8);
-		notesID = (int)LittleEndian.getInt(source,start+16+8);
+		masterID = LittleEndian.getInt(source,start+12+8);
+		notesID = LittleEndian.getInt(source,start+16+8);
 
 		// Grok the flags, stored as bits
 		int flags = LittleEndian.getUShort(source,start+20+8);
@@ -111,10 +113,10 @@ public class SlideAtom extends RecordAtom
 
 		// If there's any other bits of data, keep them about
 		// 8 bytes header + 20 bytes to flags + 2 bytes flags = 30 bytes
-		reserved = new byte[len-30];
+		reserved = IOUtils.safelyAllocate(len-30, MAX_RECORD_LENGTH);
 		System.arraycopy(source,start+30,reserved,0,reserved.length);
 	}
-	
+
 	/**
 	 * Create a new SlideAtom, to go with a new Slide
 	 */
@@ -123,15 +125,15 @@ public class SlideAtom extends RecordAtom
 		LittleEndian.putUShort(_header, 0, 2);
 		LittleEndian.putUShort(_header, 2, (int)_type);
 		LittleEndian.putInt(_header, 4, 24);
-		 
+
 		byte[] ssdate = new byte[12];
-		layoutAtom = new SSlideLayoutAtom(ssdate);
-		layoutAtom.setGeometryType(SSlideLayoutAtom.BLANK_SLIDE);
+		layoutAtom = new SlideAtomLayout(ssdate);
+		layoutAtom.setGeometryType(SlideLayoutType.BLANK_SLIDE);
 
 		followMasterObjects = true;
 		followMasterScheme = true;
 		followMasterBackground = true;
-		masterID = -2147483648;
+		masterID = USES_MASTER_SLIDE_ID; // -2147483648;
 		notesID = 0;
 		reserved = new byte[2];
 	}
@@ -139,13 +141,15 @@ public class SlideAtom extends RecordAtom
 	/**
 	 * We are of type 1007
 	 */
-	public long getRecordType() { return _type; }
+	@Override
+    public long getRecordType() { return _type; }
 
 	/**
 	 * Write the contents of the record back, so it can be written
 	 *  to disk
 	 */
-	public void writeOut(OutputStream out) throws IOException {
+	@Override
+    public void writeOut(OutputStream out) throws IOException {
 		// Header
 		out.write(_header);
 
@@ -165,71 +169,5 @@ public class SlideAtom extends RecordAtom
 
 		// Reserved data
 		out.write(reserved);
-	}
-
-
-	/**
-	 * Holds the geometry of the Slide, and the ID of the placeholders
-	 *  on the slide.
-	 * (Embeded inside SlideAtom is a SSlideLayoutAtom, without the
-	 *  usual record header. Since it's a fixed size and tied to 
-	 *  the SlideAtom, we'll hold it here.)
-	 */
-	public class SSlideLayoutAtom {
-		// The different kinds of geometry
-		public static final int TITLE_SLIDE = 0;
-		public static final int TITLE_BODY_SLIDE = 1;
-		public static final int TITLE_MASTER_SLIDE = 2;
-		public static final int MASTER_SLIDE = 3;
-		public static final int MASTER_NOTES = 4;
-		public static final int NOTES_TITLE_BODY = 5;
-		public static final int HANDOUT = 6; // Only header, footer and date placeholders
-		public static final int TITLE_ONLY = 7;
-		public static final int TITLE_2_COLUMN_BODY = 8;
-		public static final int TITLE_2_ROW_BODY = 9;
-		public static final int TITLE_2_COLUNM_RIGHT_2_ROW_BODY = 10;
-		public static final int TITLE_2_COLUNM_LEFT_2_ROW_BODY = 11;
-		public static final int TITLE_2_ROW_BOTTOM_2_COLUMN_BODY = 12;
-		public static final int TITLE_2_ROW_TOP_2_COLUMN_BODY = 13;
-		public static final int FOUR_OBJECTS = 14;
-		public static final int BIG_OBJECT = 15;
-		public static final int BLANK_SLIDE = 16;
-		public static final int VERTICAL_TITLE_BODY_LEFT = 17;
-		public static final int VERTICAL_TITLE_2_ROW_BODY_LEFT = 17;
-
-		/** What geometry type we are */
-		private int geometry;
-		/** What placeholder IDs we have */
-		private byte[] placeholderIDs;
-
-		/** Retrieve the geometry type */
-		public int getGeometryType() { return geometry; }
-		/** Set the geometry type */
-		public void setGeometryType(int geom) { geometry = geom; }
-
-		/**
-		 * Create a new Embeded SSlideLayoutAtom, from 12 bytes of data
-		 */
-		public SSlideLayoutAtom(byte[] data) {
-			if(data.length != 12) {
-				throw new RuntimeException("SSlideLayoutAtom created with byte array not 12 bytes long - was " + data.length + " bytes in size");
-			}
-
-			// Grab out our data
-			geometry = (int)LittleEndian.getInt(data,0);
-			placeholderIDs = new byte[8];
-			System.arraycopy(data,4,placeholderIDs,0,8);
-		}
-
-		/**
-		 * Write the contents of the record back, so it can be written
-		 *  to disk. Skips the record header
-		 */
-		public void writeOut(OutputStream out) throws IOException {
-			// Write the geometry
-			writeLittleEndian(geometry,out);
-			// Write the placeholder IDs
-			out.write(placeholderIDs);
-		}
 	}
 }

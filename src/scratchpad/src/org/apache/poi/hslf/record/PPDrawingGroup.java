@@ -1,39 +1,44 @@
-/*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements.  See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License.  You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
+
 package org.apache.poi.hslf.record;
 
 import org.apache.poi.ddf.*;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
 import java.io.OutputStream;
 import java.io.IOException;
 import java.io.ByteArrayOutputStream;
-import java.util.List;
 import java.util.Iterator;
 
 /**
  * Container records which always exists inside Document.
  * It always acts as a holder for escher DGG container
- *  which may contain which Escher BStore container information 
+ *  which may contain which Escher BStore container information
  *  about pictures containes in the presentation (if any).
- * 
+ *
  * @author Yegor Kozlov
  */
-public class PPDrawingGroup extends RecordAtom {
+public final class PPDrawingGroup extends RecordAtom {
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 10_485_760;
+
 
     private byte[] _header;
     private EscherContainerRecord dggContainer;
@@ -46,10 +51,10 @@ public class PPDrawingGroup extends RecordAtom {
         System.arraycopy(source,start,_header,0,8);
 
         // Get the contents for now
-        byte[] contents = new byte[len];
+        byte[] contents = IOUtils.safelyAllocate(len, MAX_RECORD_LENGTH);
         System.arraycopy(source,start,contents,0,len);
 
-        DefaultEscherRecordFactory erf = new DefaultEscherRecordFactory();
+        DefaultEscherRecordFactory erf = new HSLFEscherRecordFactory();
         EscherRecord child = erf.createRecord(contents, 0);
         child.fillFields( contents, 0, erf );
         dggContainer = (EscherContainerRecord)child.getChild(0);
@@ -71,18 +76,14 @@ public class PPDrawingGroup extends RecordAtom {
 
     public void writeOut(OutputStream out) throws IOException {
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
-        List child = dggContainer.getChildRecords();
-        for (int i = 0; i < child.size(); i++) {
-            EscherRecord r = (EscherRecord)child.get(i);
+        for (EscherRecord r : dggContainer) {
             if (r.getRecordId() == EscherContainerRecord.BSTORE_CONTAINER){
                 EscherContainerRecord bstore = (EscherContainerRecord)r;
 
                 ByteArrayOutputStream b2 = new ByteArrayOutputStream();
-                List blip = bstore.getChildRecords();
-                for (Iterator it=blip.iterator(); it.hasNext();) {
-                    EscherBSERecord bse = (EscherBSERecord)it.next();
+                for (EscherRecord br : bstore) {
                     byte[] b = new byte[36+8];
-                    bse.serialize(0, b);
+                    br.serialize(0, b);
                     b2.write(b);
                 }
                 byte[] bstorehead = new byte[8];
@@ -121,8 +122,7 @@ public class PPDrawingGroup extends RecordAtom {
 
     public EscherDggRecord getEscherDggRecord(){
         if(dgg == null){
-            for(Iterator it = dggContainer.getChildRecords().iterator(); it.hasNext();){
-                EscherRecord r = (EscherRecord) it.next();
+            for(EscherRecord r : dggContainer){
                 if(r instanceof EscherDggRecord){
                     dgg = (EscherDggRecord)r;
                     break;

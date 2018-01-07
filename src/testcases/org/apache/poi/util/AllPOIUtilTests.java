@@ -17,34 +17,27 @@
 
 package org.apache.poi.util;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-/**
- * Test suite for all sub-packages of org.apache.poi.util<br/>
- * 
- * @author Josh Micich
- */
-public final class AllPOIUtilTests {
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-    public static Test suite() {
-        TestSuite result = new TestSuite(AllPOIUtilTests.class.getName());
-        result.addTestSuite(TestArrayUtil.class);
-        result.addTestSuite(TestBinaryTree.class);
-        result.addTestSuite(TestBitField.class);
-        result.addTestSuite(TestByteField.class);
-        result.addTestSuite(TestHexDump.class);
-        result.addTestSuite(TestIntegerField.class);
-        result.addTestSuite(TestIntList.class);
-        result.addTestSuite(TestIntList2d.class);
-        result.addTestSuite(TestList2d.class);
-        result.addTestSuite(TestLittleEndian.class);
-        result.addTestSuite(TestLongField.class);
-        result.addTestSuite(TestPOILogFactory.class);
-        result.addTestSuite(TestPOILogger.class);
-        result.addTestSuite(TestShortField.class);
-        result.addTestSuite(TestShortList.class);
-        result.addTestSuite(TestStringUtil.class);
-        result.addTestSuite(TestTempFile.class);
-        return result;
-    }
+/**
+ * Test suite for all sub-packages of org.apache.poi.util<br>
+ */
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+      TestArrayUtil.class
+    , TestBitField.class
+    , TestByteField.class
+    , TestHexDump.class
+    , TestIntegerField.class
+    , TestIntList.class
+    , TestLittleEndian.class
+    , TestLongField.class
+    , TestPOILogFactory.class
+    , TestPOILogger.class
+    , TestShortField.class
+    , TestStringUtil.class
+    , TestTempFile.class
+})
+public final class AllPOIUtilTests {
 }

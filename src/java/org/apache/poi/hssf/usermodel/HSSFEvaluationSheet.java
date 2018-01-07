@@ -19,32 +19,53 @@ package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.ss.formula.EvaluationCell;
 import org.apache.poi.ss.formula.EvaluationSheet;
+import org.apache.poi.util.Internal;
 
 /**
  * HSSF wrapper for a sheet under evaluation
- * 
- * @author Josh Micich
  */
+@Internal
 final class HSSFEvaluationSheet implements EvaluationSheet {
 
-	private final HSSFSheet _hs;
+    private final HSSFSheet _hs;
+    private int _lastDefinedRow = -1;
 
-	public HSSFEvaluationSheet(HSSFSheet hs) {
-		_hs = hs;
-	}
+    public HSSFEvaluationSheet(HSSFSheet hs) {
+        _hs = hs;
+        _lastDefinedRow = _hs.getLastRowNum();
+    }
 
-	public HSSFSheet getHSSFSheet() {
-		return _hs;
-	}
-	public EvaluationCell getCell(int rowIndex, int columnIndex) {
-		HSSFRow row = _hs.getRow(rowIndex);
-		if (row == null) {
-			return null;
-		}
-		HSSFCell cell = row.getCell(columnIndex);
-		if (cell == null) {
-			return null;
-		}
-		return new HSSFEvaluationCell(cell, this);
-	}
+    public HSSFSheet getHSSFSheet() {
+        return _hs;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.apache.poi.ss.formula.EvaluationSheet#getlastRowNum()
+     * @since POI 4.0.0
+     */
+    @Override
+    public int getLastRowNum() {
+        return _lastDefinedRow;
+    }
+    
+    @Override
+    public EvaluationCell getCell(int rowIndex, int columnIndex) {
+        HSSFRow row = _hs.getRow(rowIndex);
+        if (row == null) {
+            return null;
+        }
+        HSSFCell cell = row.getCell(columnIndex);
+        if (cell == null) {
+            return null;
+        }
+        return new HSSFEvaluationCell(cell, this);
+    }
+
+    /* (non-JavaDoc), inherit JavaDoc from EvaluationSheet
+     * @since POI 3.15 beta 3
+     */    
+    @Override
+    public void clearAllCachedResultValues() {
+        _lastDefinedRow = _hs.getLastRowNum();
+    }
 }

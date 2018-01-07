@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,14 +14,16 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 
-import org.apache.poi.util.LittleEndian;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Hashtable;
+import java.util.Map;
+
+import org.apache.poi.hslf.exceptions.HSLFException;
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 
 /**
  * A UserEdit Atom (type 4085). Holds information which bits of the file
@@ -35,7 +36,7 @@ import java.util.Hashtable;
  * @author Nick Burch
  */
 
-public class UserEditAtom extends PositionDependentRecordAtom
+public final class UserEditAtom extends PositionDependentRecordAtom
 {
 	public static final int LAST_VIEW_NONE = 0;
 	public static final int LAST_VIEW_SLIDE_VIEW = 1;
@@ -44,7 +45,7 @@ public class UserEditAtom extends PositionDependentRecordAtom
 
 	private byte[] _header;
 	private static long _type = 4085l;
-	private byte[] reserved;
+	private short unused;
 
 	private int lastViewedSlideID;
 	private int pptVersion;
@@ -53,6 +54,7 @@ public class UserEditAtom extends PositionDependentRecordAtom
 	private int docPersistRef;
 	private int maxPersistWritten;
 	private short lastViewType;
+	private int encryptSessionPersistIdRef = -1;
 
 	// Somewhat user facing getters
 	public int getLastViewedSlideID() { return lastViewedSlideID; }
@@ -63,80 +65,104 @@ public class UserEditAtom extends PositionDependentRecordAtom
 	public int getPersistPointersOffset()  { return persistPointersOffset; }
 	public int getDocPersistRef()          { return docPersistRef; }
 	public int getMaxPersistWritten()      { return maxPersistWritten; }
+	public int getEncryptSessionPersistIdRef() { return encryptSessionPersistIdRef; }
 
 	// More scary internal setters
 	public void setLastUserEditAtomOffset(int offset) { lastUserEditAtomOffset = offset; }
 	public void setPersistPointersOffset(int offset)  { persistPointersOffset = offset; }
 	public void setLastViewType(short type)           { lastViewType=type; }
-    public void setMaxPersistWritten(int max)           { maxPersistWritten=max; }
+    public void setMaxPersistWritten(int max)         { maxPersistWritten=max; }
+    public void setEncryptSessionPersistIdRef(int id) {
+        encryptSessionPersistIdRef=id;
+        LittleEndian.putInt(_header,4,(id == -1 ? 28 : 32));
+    }
 
 	/* *************** record code follows ********************** */
 
-	/** 
+	/**
 	 * For the UserEdit Atom
 	 */
 	protected UserEditAtom(byte[] source, int start, int len) {
 		// Sanity Checking
 		if(len < 34) { len = 34; }
 
+		int offset = start;
 		// Get the header
 		_header = new byte[8];
-		System.arraycopy(source,start,_header,0,8);
+		System.arraycopy(source,offset,_header,0,8);
+		offset += 8;
 
 		// Get the last viewed slide ID
-		lastViewedSlideID = (int)LittleEndian.getInt(source,start+0+8);
+		lastViewedSlideID = LittleEndian.getInt(source,offset);
+		offset += LittleEndianConsts.INT_SIZE;
 
 		// Get the PPT version
-		pptVersion = (int)LittleEndian.getInt(source,start+4+8);
+		pptVersion = LittleEndian.getInt(source,offset);
+		offset += LittleEndianConsts.INT_SIZE;
 
 		// Get the offset to the previous incremental save's UserEditAtom
-		// This will be the byte offset on disk where the previous one 
+		// This will be the byte offset on disk where the previous one
 		//  starts, or 0 if this is the first one
-		lastUserEditAtomOffset = (int)LittleEndian.getInt(source,start+8+8);
+		lastUserEditAtomOffset = LittleEndian.getInt(source,offset);
+		offset += LittleEndianConsts.INT_SIZE;
 
 		// Get the offset to the persist pointers
-		// This will be the byte offset on disk where the preceding 
+		// This will be the byte offset on disk where the preceding
 		//  PersistPtrFullBlock or PersistPtrIncrementalBlock starts
-		persistPointersOffset = (int)LittleEndian.getInt(source,start+12+8);
+		persistPointersOffset = LittleEndian.getInt(source,offset);
+		offset += LittleEndianConsts.INT_SIZE;
 
 		// Get the persist reference for the document persist object
 		// Normally seems to be 1
-		docPersistRef = (int)LittleEndian.getInt(source,start+16+8);
+		docPersistRef = LittleEndian.getInt(source,offset);
+		offset += LittleEndianConsts.INT_SIZE;
 
 		// Maximum number of persist objects written
-		maxPersistWritten = (int)LittleEndian.getInt(source,start+20+8);
-		
+		maxPersistWritten = LittleEndian.getInt(source,offset);
+		offset += LittleEndianConsts.INT_SIZE;
+
 		// Last view type
-		lastViewType = (short)LittleEndian.getShort(source,start+24+8);
+		lastViewType = LittleEndian.getShort(source,offset);
+		offset += LittleEndianConsts.SHORT_SIZE;
+		
+		// unused
+		unused = LittleEndian.getShort(source,offset);
+		offset += LittleEndianConsts.SHORT_SIZE;
 
 		// There might be a few more bytes, which are a reserved field
-		reserved = new byte[len-26-8];
-		System.arraycopy(source,start+26+8,reserved,0,reserved.length);
+		if (offset-start<len) {
+		    encryptSessionPersistIdRef = LittleEndian.getInt(source,offset);
+		    offset += LittleEndianConsts.INT_SIZE;
+		}
+		
+		assert(offset-start == len);
 	}
 
 	/**
 	 * We are of type 4085
 	 */
-	public long getRecordType() { return _type; }
+	@Override
+    public long getRecordType() { return _type; }
 
 	/**
 	 * At write-out time, update the references to PersistPtrs and
 	 *  other UserEditAtoms to point to their new positions
 	 */
-	public void updateOtherRecordReferences(Hashtable oldToNewReferencesLookup) {
+	@Override
+    public void updateOtherRecordReferences(Map<Integer,Integer> oldToNewReferencesLookup) {
 		// Look up the new positions of our preceding UserEditAtomOffset
 		if(lastUserEditAtomOffset != 0) {
-			Integer newLocation = (Integer)oldToNewReferencesLookup.get(new Integer(lastUserEditAtomOffset));
+			Integer newLocation = oldToNewReferencesLookup.get(Integer.valueOf(lastUserEditAtomOffset));
 			if(newLocation == null) {
-				throw new RuntimeException("Couldn't find the new location of the UserEditAtom that used to be at " + lastUserEditAtomOffset);
+				throw new HSLFException("Couldn't find the new location of the UserEditAtom that used to be at " + lastUserEditAtomOffset);
 			}
 			lastUserEditAtomOffset = newLocation.intValue();
 		}
 
 		// Ditto for our PersistPtr
-		Integer newLocation = (Integer)oldToNewReferencesLookup.get(new Integer(persistPointersOffset));
+		Integer newLocation = oldToNewReferencesLookup.get(Integer.valueOf(persistPointersOffset));
 		if(newLocation == null) {
-			throw new RuntimeException("Couldn't find the new location of the PersistPtr that used to be at " + persistPointersOffset);
+			throw new HSLFException("Couldn't find the new location of the PersistPtr that used to be at " + persistPointersOffset);
 		}
 		persistPointersOffset = newLocation.intValue();
 	}
@@ -145,7 +171,8 @@ public class UserEditAtom extends PositionDependentRecordAtom
 	 * Write the contents of the record back, so it can be written
 	 *  to disk
 	 */
-	public void writeOut(OutputStream out) throws IOException {
+	@Override
+    public void writeOut(OutputStream out) throws IOException {
 		// Header
 		out.write(_header);
 
@@ -157,8 +184,10 @@ public class UserEditAtom extends PositionDependentRecordAtom
 		writeLittleEndian(docPersistRef,out);
 		writeLittleEndian(maxPersistWritten,out);
 		writeLittleEndian(lastViewType,out);
-
-		// Reserved fields
-		out.write(reserved);
+		writeLittleEndian(unused,out);
+		if (encryptSessionPersistIdRef != -1) {
+		    // optional field
+		    writeLittleEndian(encryptSessionPersistIdRef,out);
+		}
 	}
 }

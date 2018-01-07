@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.record;
 
@@ -29,17 +26,17 @@ import java.io.ByteArrayOutputStream;
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestSlidePersistAtom extends TestCase {
+public final class TestSlidePersistAtom extends TestCase {
 	// From a real file
-	private byte[] data_a = new byte[] { 0, 0, 0xF3-256, 3, 0x14, 0, 0, 0,
+	private final byte[] data_a = new byte[] { 0, 0, 0xF3-256, 3, 0x14, 0, 0, 0,
 		4, 0, 0, 0, 4, 0, 0, 0, 2, 0, 0, 0, 0,
 		1, 0, 0, 0, 0, 0, 0 };
 
-    public void testRecordType() throws Exception {
+	public void testRecordType() {
 		SlidePersistAtom spa = new SlidePersistAtom(data_a, 0, data_a.length);
 		assertEquals(1011l, spa.getRecordType());
 	}
-	public void testFlags() throws Exception {
+	public void testFlags() {
 		SlidePersistAtom spa = new SlidePersistAtom(data_a, 0, data_a.length);
 		assertEquals(4, spa.getRefID() );
 		assertEquals(true, spa.getHasShapesOtherThanPlaceholders() );

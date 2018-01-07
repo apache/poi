@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,158 +14,370 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hwpf.model.types;
 
 
+import java.util.Arrays;
 
+import org.apache.poi.hwpf.model.TabDescriptor;
+import org.apache.poi.hwpf.usermodel.BorderCode;
+import org.apache.poi.hwpf.usermodel.DateAndTime;
+import org.apache.poi.hwpf.usermodel.DropCapSpecifier;
+import org.apache.poi.hwpf.usermodel.LineSpacingDescriptor;
+import org.apache.poi.hwpf.usermodel.ShadingDescriptor;
 import org.apache.poi.util.BitField;
-import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.StringUtil;
-import org.apache.poi.util.HexDump;
-import org.apache.poi.hdf.model.hdftypes.HDFType;
-import org.apache.poi.hwpf.usermodel.*;
+import org.apache.poi.util.Internal;
 
 /**
  * Paragraph Properties.
+ * <p>
  * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
- *       remove the record in src/records/definitions.
+ *       remove the record in src/types/definitions.
+ * <p>
+ * This class is internal. It content or properties may change without notice 
+ * due to changes in our knowledge of internal Microsoft Word binary structures.
 
  * @author S. Ryan Ackley
  */
+@Internal
 public abstract class PAPAbstractType
-    implements HDFType
 {
 
-    protected  int field_1_istd;
-    protected  byte field_2_jc;
-    protected  byte field_3_fKeep;
-    protected  byte field_4_fKeepFollow;
-    protected  byte field_5_fPageBreakBefore;
-    protected  byte field_6_fBrLnAbove;
-    protected  byte field_7_fBrLnBelow;
-    protected  byte field_8_pcVert;
-    protected  byte field_9_pcHorz;
-    protected  byte field_10_brcp;
-    protected  byte field_11_brcl;
-    protected  byte field_12_ilvl;
-    protected  byte field_13_fNoLnn;
-    protected  int field_14_ilfo;
-    protected  byte field_15_fSideBySide;
-    protected  byte field_16_fNoAutoHyph;
-    protected  byte field_17_fWidowControl;
-    protected  int field_18_dxaRight;
-    protected  int field_19_dxaLeft;
-    protected  int field_20_dxaLeft1;
-    protected  LineSpacingDescriptor field_21_lspd;
-    protected  int field_22_dyaBefore;
-    protected  int field_23_dyaAfter;
-    protected  byte[] field_24_phe;
-    protected  byte field_25_fCrLf;
-    protected  byte field_26_fUsePgsuSettings;
-    protected  byte field_27_fAdjustRight;
-    protected  byte field_28_fKinsoku;
-    protected  byte field_29_fWordWrap;
-    protected  byte field_30_fOverflowPunct;
-    protected  byte field_31_fTopLinePunct;
-    protected  byte field_32_fAutoSpaceDE;
-    protected  byte field_33_fAutoSpaceDN;
-    protected  int field_34_wAlignFont;
-    protected  short field_35_fontAlign;
-        private static BitField  fVertical = BitFieldFactory.getInstance(0x0001);
-        private static BitField  fBackward = BitFieldFactory.getInstance(0x0002);
-        private static BitField  fRotateFont = BitFieldFactory.getInstance(0x0004);
-    protected  byte field_36_fBackward;
-    protected  byte field_37_fRotateFont;
-    protected  byte field_38_fInTable;
-    protected  byte field_39_fTtp;
-    protected  byte field_40_wr;
-    protected  byte field_41_fLocked;
-    protected  byte[] field_42_ptap;
-    protected  int field_43_dxaAbs;
-    protected  int field_44_dyaAbs;
-    protected  int field_45_dxaWidth;
-    protected  BorderCode field_46_brcTop;
-    protected  BorderCode field_47_brcLeft;
-    protected  BorderCode field_48_brcBottom;
-    protected  BorderCode field_49_brcRight;
-    protected  BorderCode field_50_brcBetween;
-    protected  BorderCode field_51_brcBar;
-    protected  int field_52_dxaFromText;
-    protected  int field_53_dyaFromText;
-    protected  int field_54_dyaHeight;
-    protected  byte field_55_fMinHeight;
-    protected  ShadingDescriptor field_56_shd;
-    protected  DropCapSpecifier field_57_dcs;
-    protected  byte field_58_lvl;
-    protected  byte field_59_fNumRMIns;
-    protected  byte[] field_60_anld;
-    protected  int field_61_fPropRMark;
-    protected  int field_62_ibstPropRMark;
-    protected  DateAndTime field_63_dttmPropRMark;
-    protected  byte[] field_64_numrm;
-    protected  int field_65_itbdMac;
-    protected  int[] field_66_rgdxaTab;
-    protected  byte[] field_67_rgtbd;
-    protected  byte field_68_tableLevel;
-    protected  byte field_69_fTtpEmbedded;
-    protected  byte field_70_embeddedCellMark;
+    protected int field_1_istd;
+    protected boolean field_2_fSideBySide;
+    protected boolean field_3_fKeep;
+    protected boolean field_4_fKeepFollow;
+    protected boolean field_5_fPageBreakBefore;
+    protected byte field_6_brcl;
+    /**/protected final static byte BRCL_SINGLE = 0;
+    /**/protected final static byte BRCL_THICK = 1;
+    /**/protected final static byte BRCL_DOUBLE = 2;
+    /**/protected final static byte BRCL_SHADOW = 3;
+    protected byte field_7_brcp;
+    /**/protected final static byte BRCP_NONE = 0;
+    /**/protected final static byte BRCP_BORDER_ABOVE = 1;
+    /**/protected final static byte BRCP_BORDER_BELOW = 2;
+    /**/protected final static byte BRCP_BOX_AROUND = 15;
+    /**/protected final static byte BRCP_BAR_TO_LEFT_OF_PARAGRAPH = 16;
+    protected byte field_8_ilvl;
+    protected int field_9_ilfo;
+    protected boolean field_10_fNoLnn;
+    protected LineSpacingDescriptor field_11_lspd;
+    protected int field_12_dyaBefore;
+    protected int field_13_dyaAfter;
+    protected boolean field_14_fInTable;
+    protected boolean field_15_finTableW97;
+    protected boolean field_16_fTtp;
+    protected int field_17_dxaAbs;
+    protected int field_18_dyaAbs;
+    protected int field_19_dxaWidth;
+    protected boolean field_20_fBrLnAbove;
+    protected boolean field_21_fBrLnBelow;
+    protected byte field_22_pcVert;
+    protected byte field_23_pcHorz;
+    protected byte field_24_wr;
+    protected boolean field_25_fNoAutoHyph;
+    protected int field_26_dyaHeight;
+    protected boolean field_27_fMinHeight;
+    /**/protected final static boolean FMINHEIGHT_EXACT = false;
+    /**/protected final static boolean FMINHEIGHT_AT_LEAST = true;
+    protected DropCapSpecifier field_28_dcs;
+    protected int field_29_dyaFromText;
+    protected int field_30_dxaFromText;
+    protected boolean field_31_fLocked;
+    protected boolean field_32_fWidowControl;
+    protected boolean field_33_fKinsoku;
+    protected boolean field_34_fWordWrap;
+    protected boolean field_35_fOverflowPunct;
+    protected boolean field_36_fTopLinePunct;
+    protected boolean field_37_fAutoSpaceDE;
+    protected boolean field_38_fAutoSpaceDN;
+    protected int field_39_wAlignFont;
+    /**/protected final static byte WALIGNFONT_HANGING = 0;
+    /**/protected final static byte WALIGNFONT_CENTERED = 1;
+    /**/protected final static byte WALIGNFONT_ROMAN = 2;
+    /**/protected final static byte WALIGNFONT_VARIABLE = 3;
+    /**/protected final static byte WALIGNFONT_AUTO = 4;
+    protected short field_40_fontAlign;
+    /**/private static BitField fVertical = new BitField(0x0001);
+    /**/private static BitField fBackward = new BitField(0x0002);
+    /**/private static BitField fRotateFont = new BitField(0x0004);
+    protected byte field_41_lvl;
+    protected boolean field_42_fBiDi;
+    protected boolean field_43_fNumRMIns;
+    protected boolean field_44_fCrLf;
+    protected boolean field_45_fUsePgsuSettings;
+    protected boolean field_46_fAdjustRight;
+    protected int field_47_itap;
+    protected boolean field_48_fInnerTableCell;
+    protected boolean field_49_fOpenTch;
+    protected boolean field_50_fTtpEmbedded;
+    protected short field_51_dxcRight;
+    protected short field_52_dxcLeft;
+    protected short field_53_dxcLeft1;
+    protected boolean field_54_fDyaBeforeAuto;
+    protected boolean field_55_fDyaAfterAuto;
+    protected int field_56_dxaRight;
+    protected int field_57_dxaLeft;
+    protected int field_58_dxaLeft1;
+    protected byte field_59_jc;
+    protected BorderCode field_60_brcTop;
+    protected BorderCode field_61_brcLeft;
+    protected BorderCode field_62_brcBottom;
+    protected BorderCode field_63_brcRight;
+    protected BorderCode field_64_brcBetween;
+    protected BorderCode field_65_brcBar;
+    protected ShadingDescriptor field_66_shd;
+    protected byte[] field_67_anld;
+    protected byte[] field_68_phe;
+    protected boolean field_69_fPropRMark;
+    protected int field_70_ibstPropRMark;
+    protected DateAndTime field_71_dttmPropRMark;
+    protected int field_72_itbdMac;
+    protected int[] field_73_rgdxaTab;
+    protected TabDescriptor[] field_74_rgtbd;
+    protected byte[] field_75_numrm;
+    protected byte[] field_76_ptap;
+    protected boolean field_77_fNoAllowOverlap;
+    protected long field_78_ipgp;
+    protected long field_79_rsid;
 
-
-    public PAPAbstractType()
+    protected PAPAbstractType()
     {
+        this.field_11_lspd = new LineSpacingDescriptor();
+        this.field_11_lspd = new LineSpacingDescriptor();
+        this.field_28_dcs = new DropCapSpecifier();
+        this.field_32_fWidowControl = true;
+        this.field_41_lvl = 9;
+        this.field_60_brcTop = new BorderCode();
+        this.field_61_brcLeft = new BorderCode();
+        this.field_62_brcBottom = new BorderCode();
+        this.field_63_brcRight = new BorderCode();
+        this.field_64_brcBetween = new BorderCode();
+        this.field_65_brcBar = new BorderCode();
+        this.field_66_shd = new ShadingDescriptor();
+        this.field_67_anld = new byte[0];
+        this.field_68_phe = new byte[0];
+        this.field_71_dttmPropRMark = new DateAndTime();
+        this.field_73_rgdxaTab = new int[0];
+        this.field_74_rgtbd = new TabDescriptor[0];
+        this.field_75_numrm = new byte[0];
+        this.field_76_ptap = new byte[0];
+    }
 
+
+    public String toString()
+    {
+        StringBuilder builder = new StringBuilder();
+        builder.append("[PAP]\n");
+        builder.append("    .istd                 = ");
+        builder.append(" (").append(getIstd()).append(" )\n");
+        builder.append("    .fSideBySide          = ");
+        builder.append(" (").append(getFSideBySide()).append(" )\n");
+        builder.append("    .fKeep                = ");
+        builder.append(" (").append(getFKeep()).append(" )\n");
+        builder.append("    .fKeepFollow          = ");
+        builder.append(" (").append(getFKeepFollow()).append(" )\n");
+        builder.append("    .fPageBreakBefore     = ");
+        builder.append(" (").append(getFPageBreakBefore()).append(" )\n");
+        builder.append("    .brcl                 = ");
+        builder.append(" (").append(getBrcl()).append(" )\n");
+        builder.append("    .brcp                 = ");
+        builder.append(" (").append(getBrcp()).append(" )\n");
+        builder.append("    .ilvl                 = ");
+        builder.append(" (").append(getIlvl()).append(" )\n");
+        builder.append("    .ilfo                 = ");
+        builder.append(" (").append(getIlfo()).append(" )\n");
+        builder.append("    .fNoLnn               = ");
+        builder.append(" (").append(getFNoLnn()).append(" )\n");
+        builder.append("    .lspd                 = ");
+        builder.append(" (").append(getLspd()).append(" )\n");
+        builder.append("    .dyaBefore            = ");
+        builder.append(" (").append(getDyaBefore()).append(" )\n");
+        builder.append("    .dyaAfter             = ");
+        builder.append(" (").append(getDyaAfter()).append(" )\n");
+        builder.append("    .fInTable             = ");
+        builder.append(" (").append(getFInTable()).append(" )\n");
+        builder.append("    .finTableW97          = ");
+        builder.append(" (").append(getFinTableW97()).append(" )\n");
+        builder.append("    .fTtp                 = ");
+        builder.append(" (").append(getFTtp()).append(" )\n");
+        builder.append("    .dxaAbs               = ");
+        builder.append(" (").append(getDxaAbs()).append(" )\n");
+        builder.append("    .dyaAbs               = ");
+        builder.append(" (").append(getDyaAbs()).append(" )\n");
+        builder.append("    .dxaWidth             = ");
+        builder.append(" (").append(getDxaWidth()).append(" )\n");
+        builder.append("    .fBrLnAbove           = ");
+        builder.append(" (").append(getFBrLnAbove()).append(" )\n");
+        builder.append("    .fBrLnBelow           = ");
+        builder.append(" (").append(getFBrLnBelow()).append(" )\n");
+        builder.append("    .pcVert               = ");
+        builder.append(" (").append(getPcVert()).append(" )\n");
+        builder.append("    .pcHorz               = ");
+        builder.append(" (").append(getPcHorz()).append(" )\n");
+        builder.append("    .wr                   = ");
+        builder.append(" (").append(getWr()).append(" )\n");
+        builder.append("    .fNoAutoHyph          = ");
+        builder.append(" (").append(getFNoAutoHyph()).append(" )\n");
+        builder.append("    .dyaHeight            = ");
+        builder.append(" (").append(getDyaHeight()).append(" )\n");
+        builder.append("    .fMinHeight           = ");
+        builder.append(" (").append(getFMinHeight()).append(" )\n");
+        builder.append("    .dcs                  = ");
+        builder.append(" (").append(getDcs()).append(" )\n");
+        builder.append("    .dyaFromText          = ");
+        builder.append(" (").append(getDyaFromText()).append(" )\n");
+        builder.append("    .dxaFromText          = ");
+        builder.append(" (").append(getDxaFromText()).append(" )\n");
+        builder.append("    .fLocked              = ");
+        builder.append(" (").append(getFLocked()).append(" )\n");
+        builder.append("    .fWidowControl        = ");
+        builder.append(" (").append(getFWidowControl()).append(" )\n");
+        builder.append("    .fKinsoku             = ");
+        builder.append(" (").append(getFKinsoku()).append(" )\n");
+        builder.append("    .fWordWrap            = ");
+        builder.append(" (").append(getFWordWrap()).append(" )\n");
+        builder.append("    .fOverflowPunct       = ");
+        builder.append(" (").append(getFOverflowPunct()).append(" )\n");
+        builder.append("    .fTopLinePunct        = ");
+        builder.append(" (").append(getFTopLinePunct()).append(" )\n");
+        builder.append("    .fAutoSpaceDE         = ");
+        builder.append(" (").append(getFAutoSpaceDE()).append(" )\n");
+        builder.append("    .fAutoSpaceDN         = ");
+        builder.append(" (").append(getFAutoSpaceDN()).append(" )\n");
+        builder.append("    .wAlignFont           = ");
+        builder.append(" (").append(getWAlignFont()).append(" )\n");
+        builder.append("    .fontAlign            = ");
+        builder.append(" (").append(getFontAlign()).append(" )\n");
+        builder.append("         .fVertical                = ").append(isFVertical()).append('\n');
+        builder.append("         .fBackward                = ").append(isFBackward()).append('\n');
+        builder.append("         .fRotateFont              = ").append(isFRotateFont()).append('\n');
+        builder.append("    .lvl                  = ");
+        builder.append(" (").append(getLvl()).append(" )\n");
+        builder.append("    .fBiDi                = ");
+        builder.append(" (").append(getFBiDi()).append(" )\n");
+        builder.append("    .fNumRMIns            = ");
+        builder.append(" (").append(getFNumRMIns()).append(" )\n");
+        builder.append("    .fCrLf                = ");
+        builder.append(" (").append(getFCrLf()).append(" )\n");
+        builder.append("    .fUsePgsuSettings     = ");
+        builder.append(" (").append(getFUsePgsuSettings()).append(" )\n");
+        builder.append("    .fAdjustRight         = ");
+        builder.append(" (").append(getFAdjustRight()).append(" )\n");
+        builder.append("    .itap                 = ");
+        builder.append(" (").append(getItap()).append(" )\n");
+        builder.append("    .fInnerTableCell      = ");
+        builder.append(" (").append(getFInnerTableCell()).append(" )\n");
+        builder.append("    .fOpenTch             = ");
+        builder.append(" (").append(getFOpenTch()).append(" )\n");
+        builder.append("    .fTtpEmbedded         = ");
+        builder.append(" (").append(getFTtpEmbedded()).append(" )\n");
+        builder.append("    .dxcRight             = ");
+        builder.append(" (").append(getDxcRight()).append(" )\n");
+        builder.append("    .dxcLeft              = ");
+        builder.append(" (").append(getDxcLeft()).append(" )\n");
+        builder.append("    .dxcLeft1             = ");
+        builder.append(" (").append(getDxcLeft1()).append(" )\n");
+        builder.append("    .fDyaBeforeAuto       = ");
+        builder.append(" (").append(getFDyaBeforeAuto()).append(" )\n");
+        builder.append("    .fDyaAfterAuto        = ");
+        builder.append(" (").append(getFDyaAfterAuto()).append(" )\n");
+        builder.append("    .dxaRight             = ");
+        builder.append(" (").append(getDxaRight()).append(" )\n");
+        builder.append("    .dxaLeft              = ");
+        builder.append(" (").append(getDxaLeft()).append(" )\n");
+        builder.append("    .dxaLeft1             = ");
+        builder.append(" (").append(getDxaLeft1()).append(" )\n");
+        builder.append("    .jc                   = ");
+        builder.append(" (").append(getJc()).append(" )\n");
+        builder.append("    .brcTop               = ");
+        builder.append(" (").append(getBrcTop()).append(" )\n");
+        builder.append("    .brcLeft              = ");
+        builder.append(" (").append(getBrcLeft()).append(" )\n");
+        builder.append("    .brcBottom            = ");
+        builder.append(" (").append(getBrcBottom()).append(" )\n");
+        builder.append("    .brcRight             = ");
+        builder.append(" (").append(getBrcRight()).append(" )\n");
+        builder.append("    .brcBetween           = ");
+        builder.append(" (").append(getBrcBetween()).append(" )\n");
+        builder.append("    .brcBar               = ");
+        builder.append(" (").append(getBrcBar()).append(" )\n");
+        builder.append("    .shd                  = ");
+        builder.append(" (").append(getShd()).append(" )\n");
+        builder.append("    .anld                 = ");
+        builder.append(" (").append(Arrays.toString(getAnld())).append(" )\n");
+        builder.append("    .phe                  = ");
+        builder.append(" (").append(Arrays.toString(getPhe())).append(" )\n");
+        builder.append("    .fPropRMark           = ");
+        builder.append(" (").append(getFPropRMark()).append(" )\n");
+        builder.append("    .ibstPropRMark        = ");
+        builder.append(" (").append(getIbstPropRMark()).append(" )\n");
+        builder.append("    .dttmPropRMark        = ");
+        builder.append(" (").append(getDttmPropRMark()).append(" )\n");
+        builder.append("    .itbdMac              = ");
+        builder.append(" (").append(getItbdMac()).append(" )\n");
+        builder.append("    .rgdxaTab             = ");
+        builder.append(" (").append(Arrays.toString(getRgdxaTab())).append(" )\n");
+        builder.append("    .rgtbd                = ");
+        builder.append(" (").append(Arrays.toString(getRgtbd())).append(" )\n");
+        builder.append("    .numrm                = ");
+        builder.append(" (").append(Arrays.toString(getNumrm())).append(" )\n");
+        builder.append("    .ptap                 = ");
+        builder.append(" (").append(Arrays.toString(getPtap())).append(" )\n");
+        builder.append("    .fNoAllowOverlap      = ");
+        builder.append(" (").append(getFNoAllowOverlap()).append(" )\n");
+        builder.append("    .ipgp                 = ");
+        builder.append(" (").append(getIpgp()).append(" )\n");
+        builder.append("    .rsid                 = ");
+        builder.append(" (").append(getRsid()).append(" )\n");
+
+        builder.append("[/PAP]\n");
+        return builder.toString();
     }
 
     /**
-     * Size of record (exluding 4 byte header)
+     * Index to style descriptor.
      */
-    public int getSize()
-    {
-        return 4 +  + 2 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 2 + 1 + 1 + 1 + 4 + 4 + 4 + 4 + 4 + 4 + 12 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 1 + 2 + 2 + 1 + 1 + 1 + 1 + 1 + 1 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4 + 2 + 1 + 2 + 2 + 1 + 1 + 84 + 1 + 2 + 4 + 128 + 2 + 128 + 128 + 1 + 1 + 1;
-    }
-
-
-
-    /**
-     * Get the istd field for the PAP record.
-     */
+    @Internal
     public int getIstd()
     {
         return field_1_istd;
     }
 
     /**
-     * Set the istd field for the PAP record.
+     * Index to style descriptor.
      */
-    public void setIstd(int field_1_istd)
+    @Internal
+    public void setIstd( int field_1_istd )
     {
         this.field_1_istd = field_1_istd;
     }
 
     /**
-     * Get the jc field for the PAP record.
+     * Get the fSideBySide field for the PAP record.
      */
-    public byte getJc()
+    @Internal
+    public boolean getFSideBySide()
     {
-        return field_2_jc;
+        return field_2_fSideBySide;
     }
 
     /**
-     * Set the jc field for the PAP record.
+     * Set the fSideBySide field for the PAP record.
      */
-    public void setJc(byte field_2_jc)
+    @Internal
+    public void setFSideBySide( boolean field_2_fSideBySide )
     {
-        this.field_2_jc = field_2_jc;
+        this.field_2_fSideBySide = field_2_fSideBySide;
     }
 
     /**
      * Get the fKeep field for the PAP record.
      */
-    public byte getFKeep()
+    @Internal
+    public boolean getFKeep()
     {
         return field_3_fKeep;
     }
@@ -174,7 +385,8 @@ public abstract class PAPAbstractType
     /**
      * Set the fKeep field for the PAP record.
      */
-    public void setFKeep(byte field_3_fKeep)
+    @Internal
+    public void setFKeep( boolean field_3_fKeep )
     {
         this.field_3_fKeep = field_3_fKeep;
     }
@@ -182,7 +394,8 @@ public abstract class PAPAbstractType
     /**
      * Get the fKeepFollow field for the PAP record.
      */
-    public byte getFKeepFollow()
+    @Internal
+    public boolean getFKeepFollow()
     {
         return field_4_fKeepFollow;
     }
@@ -190,7 +403,8 @@ public abstract class PAPAbstractType
     /**
      * Set the fKeepFollow field for the PAP record.
      */
-    public void setFKeepFollow(byte field_4_fKeepFollow)
+    @Internal
+    public void setFKeepFollow( boolean field_4_fKeepFollow )
     {
         this.field_4_fKeepFollow = field_4_fKeepFollow;
     }
@@ -198,7 +412,8 @@ public abstract class PAPAbstractType
     /**
      * Get the fPageBreakBefore field for the PAP record.
      */
-    public byte getFPageBreakBefore()
+    @Internal
+    public boolean getFPageBreakBefore()
     {
         return field_5_fPageBreakBefore;
     }
@@ -206,1117 +421,1491 @@ public abstract class PAPAbstractType
     /**
      * Set the fPageBreakBefore field for the PAP record.
      */
-    public void setFPageBreakBefore(byte field_5_fPageBreakBefore)
+    @Internal
+    public void setFPageBreakBefore( boolean field_5_fPageBreakBefore )
     {
         this.field_5_fPageBreakBefore = field_5_fPageBreakBefore;
     }
 
     /**
-     * Get the fBrLnAbove field for the PAP record.
+     * Border line style.
+     *
+     * @return One of 
+     * <li>{@link #BRCL_SINGLE}
+     * <li>{@link #BRCL_THICK}
+     * <li>{@link #BRCL_DOUBLE}
+     * <li>{@link #BRCL_SHADOW}
      */
-    public byte getFBrLnAbove()
-    {
-        return field_6_fBrLnAbove;
-    }
-
-    /**
-     * Set the fBrLnAbove field for the PAP record.
-     */
-    public void setFBrLnAbove(byte field_6_fBrLnAbove)
-    {
-        this.field_6_fBrLnAbove = field_6_fBrLnAbove;
-    }
-
-    /**
-     * Get the fBrLnBelow field for the PAP record.
-     */
-    public byte getFBrLnBelow()
-    {
-        return field_7_fBrLnBelow;
-    }
-
-    /**
-     * Set the fBrLnBelow field for the PAP record.
-     */
-    public void setFBrLnBelow(byte field_7_fBrLnBelow)
-    {
-        this.field_7_fBrLnBelow = field_7_fBrLnBelow;
-    }
-
-    /**
-     * Get the pcVert field for the PAP record.
-     */
-    public byte getPcVert()
-    {
-        return field_8_pcVert;
-    }
-
-    /**
-     * Set the pcVert field for the PAP record.
-     */
-    public void setPcVert(byte field_8_pcVert)
-    {
-        this.field_8_pcVert = field_8_pcVert;
-    }
-
-    /**
-     * Get the pcHorz field for the PAP record.
-     */
-    public byte getPcHorz()
-    {
-        return field_9_pcHorz;
-    }
-
-    /**
-     * Set the pcHorz field for the PAP record.
-     */
-    public void setPcHorz(byte field_9_pcHorz)
-    {
-        this.field_9_pcHorz = field_9_pcHorz;
-    }
-
-    /**
-     * Get the brcp field for the PAP record.
-     */
-    public byte getBrcp()
-    {
-        return field_10_brcp;
-    }
-
-    /**
-     * Set the brcp field for the PAP record.
-     */
-    public void setBrcp(byte field_10_brcp)
-    {
-        this.field_10_brcp = field_10_brcp;
-    }
-
-    /**
-     * Get the brcl field for the PAP record.
-     */
+    @Internal
     public byte getBrcl()
     {
-        return field_11_brcl;
+        return field_6_brcl;
     }
 
     /**
-     * Set the brcl field for the PAP record.
+     * Border line style.
+     *
+     * @param field_6_brcl
+     *        One of 
+     * <li>{@link #BRCL_SINGLE}
+     * <li>{@link #BRCL_THICK}
+     * <li>{@link #BRCL_DOUBLE}
+     * <li>{@link #BRCL_SHADOW}
      */
-    public void setBrcl(byte field_11_brcl)
+    @Internal
+    public void setBrcl( byte field_6_brcl )
     {
-        this.field_11_brcl = field_11_brcl;
+        this.field_6_brcl = field_6_brcl;
     }
 
     /**
-     * Get the ilvl field for the PAP record.
+     * Rectangle border codes.
+     *
+     * @return One of 
+     * <li>{@link #BRCP_NONE}
+     * <li>{@link #BRCP_BORDER_ABOVE}
+     * <li>{@link #BRCP_BORDER_BELOW}
+     * <li>{@link #BRCP_BOX_AROUND}
+     * <li>{@link #BRCP_BAR_TO_LEFT_OF_PARAGRAPH}
      */
+    @Internal
+    public byte getBrcp()
+    {
+        return field_7_brcp;
+    }
+
+    /**
+     * Rectangle border codes.
+     *
+     * @param field_7_brcp
+     *        One of 
+     * <li>{@link #BRCP_NONE}
+     * <li>{@link #BRCP_BORDER_ABOVE}
+     * <li>{@link #BRCP_BORDER_BELOW}
+     * <li>{@link #BRCP_BOX_AROUND}
+     * <li>{@link #BRCP_BAR_TO_LEFT_OF_PARAGRAPH}
+     */
+    @Internal
+    public void setBrcp( byte field_7_brcp )
+    {
+        this.field_7_brcp = field_7_brcp;
+    }
+
+    /**
+     * List level if non-zero.
+     */
+    @Internal
     public byte getIlvl()
     {
-        return field_12_ilvl;
+        return field_8_ilvl;
     }
 
     /**
-     * Set the ilvl field for the PAP record.
+     * List level if non-zero.
      */
-    public void setIlvl(byte field_12_ilvl)
+    @Internal
+    public void setIlvl( byte field_8_ilvl )
     {
-        this.field_12_ilvl = field_12_ilvl;
+        this.field_8_ilvl = field_8_ilvl;
     }
 
     /**
-     * Get the fNoLnn field for the PAP record.
+     * "A 16-bit signed integer value that is used to determine which list
+     * contains the paragraph. This value MUST be one of the following:
+     * 
+     * 0x0000 -- This paragraph is not in a list, and any list formatting on the
+     * paragraph is removed.
+     * 
+     * 0x0001 - 0x07FE -- The value is a 1-based index into PlfLfo.rgLfo. The
+     * LFO at this index defines the list that this paragraph is in.
+     * 
+     * 0xF801 -- This paragraph is not in a list.
+     * 
+     * 0xF802 - 0xFFFF -- The value is the negation of a 1-based index into
+     * PlfLfo.rgLfo. The LFO at this index defines the list that this paragraph
+     * is in. The logical left indentation (see sprmPDxaLeft) and the logical
+     * left first line indentation (see sprmPDxaLeft1) of the paragraph MUST be
+     * preserved despite any list formatting.
+     * 
+     * By default, a paragraph is not in a list."
+     * 
+     * Quote from [MS-DOC] -- v20110315, page 125
      */
-    public byte getFNoLnn()
-    {
-        return field_13_fNoLnn;
-    }
-
-    /**
-     * Set the fNoLnn field for the PAP record.
-     */
-    public void setFNoLnn(byte field_13_fNoLnn)
-    {
-        this.field_13_fNoLnn = field_13_fNoLnn;
-    }
-
-    /**
-     * Get the ilfo field for the PAP record.
-     */
+    @Internal
     public int getIlfo()
     {
-        return field_14_ilfo;
+        return field_9_ilfo;
     }
 
     /**
-     * Set the ilfo field for the PAP record.
+     * "A 16-bit signed integer value that is used to determine which list
+     * contains the paragraph. This value MUST be one of the following:
+     * 
+     * 0x0000 -- This paragraph is not in a list, and any list formatting on the
+     * paragraph is removed.
+     * 
+     * 0x0001 - 0x07FE -- The value is a 1-based index into PlfLfo.rgLfo. The
+     * LFO at this index defines the list that this paragraph is in.
+     * 
+     * 0xF801 -- This paragraph is not in a list.
+     * 
+     * 0xF802 - 0xFFFF -- The value is the negation of a 1-based index into
+     * PlfLfo.rgLfo. The LFO at this index defines the list that this paragraph
+     * is in. The logical left indentation (see sprmPDxaLeft) and the logical
+     * left first line indentation (see sprmPDxaLeft1) of the paragraph MUST be
+     * preserved despite any list formatting. By default, a paragraph is not in
+     * a list."
+     * 
+     * Quote from [MS-DOC] -- v20110315, page 125
      */
-    public void setIlfo(int field_14_ilfo)
+    @Internal
+    public void setIlfo( int field_9_ilfo )
     {
-        this.field_14_ilfo = field_14_ilfo;
+        this.field_9_ilfo = field_9_ilfo;
     }
 
     /**
-     * Get the fSideBySide field for the PAP record.
+     * No line numbering.
      */
-    public byte getFSideBySide()
+    @Internal
+    public boolean getFNoLnn()
     {
-        return field_15_fSideBySide;
+        return field_10_fNoLnn;
     }
 
     /**
-     * Set the fSideBySide field for the PAP record.
+     * No line numbering.
      */
-    public void setFSideBySide(byte field_15_fSideBySide)
+    @Internal
+    public void setFNoLnn( boolean field_10_fNoLnn )
     {
-        this.field_15_fSideBySide = field_15_fSideBySide;
+        this.field_10_fNoLnn = field_10_fNoLnn;
     }
 
     /**
-     * Get the fNoAutoHyph field for the PAP record.
+     * Line spacing descriptor.
      */
-    public byte getFNoAutoHyph()
-    {
-        return field_16_fNoAutoHyph;
-    }
-
-    /**
-     * Set the fNoAutoHyph field for the PAP record.
-     */
-    public void setFNoAutoHyph(byte field_16_fNoAutoHyph)
-    {
-        this.field_16_fNoAutoHyph = field_16_fNoAutoHyph;
-    }
-
-    /**
-     * Get the fWidowControl field for the PAP record.
-     */
-    public byte getFWidowControl()
-    {
-        return field_17_fWidowControl;
-    }
-
-    /**
-     * Set the fWidowControl field for the PAP record.
-     */
-    public void setFWidowControl(byte field_17_fWidowControl)
-    {
-        this.field_17_fWidowControl = field_17_fWidowControl;
-    }
-
-    /**
-     * Get the dxaRight field for the PAP record.
-     */
-    public int getDxaRight()
-    {
-        return field_18_dxaRight;
-    }
-
-    /**
-     * Set the dxaRight field for the PAP record.
-     */
-    public void setDxaRight(int field_18_dxaRight)
-    {
-        this.field_18_dxaRight = field_18_dxaRight;
-    }
-
-    /**
-     * Get the dxaLeft field for the PAP record.
-     */
-    public int getDxaLeft()
-    {
-        return field_19_dxaLeft;
-    }
-
-    /**
-     * Set the dxaLeft field for the PAP record.
-     */
-    public void setDxaLeft(int field_19_dxaLeft)
-    {
-        this.field_19_dxaLeft = field_19_dxaLeft;
-    }
-
-    /**
-     * Get the dxaLeft1 field for the PAP record.
-     */
-    public int getDxaLeft1()
-    {
-        return field_20_dxaLeft1;
-    }
-
-    /**
-     * Set the dxaLeft1 field for the PAP record.
-     */
-    public void setDxaLeft1(int field_20_dxaLeft1)
-    {
-        this.field_20_dxaLeft1 = field_20_dxaLeft1;
-    }
-
-    /**
-     * Get the lspd field for the PAP record.
-     */
+    @Internal
     public LineSpacingDescriptor getLspd()
     {
-        return field_21_lspd;
+        return field_11_lspd;
     }
 
     /**
-     * Set the lspd field for the PAP record.
+     * Line spacing descriptor.
      */
-    public void setLspd(LineSpacingDescriptor field_21_lspd)
+    @Internal
+    public void setLspd( LineSpacingDescriptor field_11_lspd )
     {
-        this.field_21_lspd = field_21_lspd;
+        this.field_11_lspd = field_11_lspd;
     }
 
     /**
-     * Get the dyaBefore field for the PAP record.
+     * Space before paragraph.
      */
+    @Internal
     public int getDyaBefore()
     {
-        return field_22_dyaBefore;
+        return field_12_dyaBefore;
     }
 
     /**
-     * Set the dyaBefore field for the PAP record.
+     * Space before paragraph.
      */
-    public void setDyaBefore(int field_22_dyaBefore)
+    @Internal
+    public void setDyaBefore( int field_12_dyaBefore )
     {
-        this.field_22_dyaBefore = field_22_dyaBefore;
+        this.field_12_dyaBefore = field_12_dyaBefore;
     }
 
     /**
-     * Get the dyaAfter field for the PAP record.
+     * Space after paragraph.
      */
+    @Internal
     public int getDyaAfter()
     {
-        return field_23_dyaAfter;
+        return field_13_dyaAfter;
     }
 
     /**
-     * Set the dyaAfter field for the PAP record.
+     * Space after paragraph.
      */
-    public void setDyaAfter(int field_23_dyaAfter)
+    @Internal
+    public void setDyaAfter( int field_13_dyaAfter )
     {
-        this.field_23_dyaAfter = field_23_dyaAfter;
+        this.field_13_dyaAfter = field_13_dyaAfter;
     }
 
     /**
-     * Get the phe field for the PAP record.
+     * Paragraph is in table flag.
      */
-    public byte[] getPhe()
+    @Internal
+    public boolean getFInTable()
     {
-        return field_24_phe;
+        return field_14_fInTable;
     }
 
     /**
-     * Set the phe field for the PAP record.
+     * Paragraph is in table flag.
      */
-    public void setPhe(byte[] field_24_phe)
+    @Internal
+    public void setFInTable( boolean field_14_fInTable )
     {
-        this.field_24_phe = field_24_phe;
+        this.field_14_fInTable = field_14_fInTable;
     }
 
     /**
-     * Get the fCrLf field for the PAP record.
+     * Archaic paragraph is in table flag.
      */
-    public byte getFCrLf()
+    @Internal
+    public boolean getFinTableW97()
     {
-        return field_25_fCrLf;
+        return field_15_finTableW97;
     }
 
     /**
-     * Set the fCrLf field for the PAP record.
+     * Archaic paragraph is in table flag.
      */
-    public void setFCrLf(byte field_25_fCrLf)
+    @Internal
+    public void setFinTableW97( boolean field_15_finTableW97 )
     {
-        this.field_25_fCrLf = field_25_fCrLf;
+        this.field_15_finTableW97 = field_15_finTableW97;
     }
 
     /**
-     * Get the fUsePgsuSettings field for the PAP record.
+     * Table trailer paragraph (last in table row).
      */
-    public byte getFUsePgsuSettings()
+    @Internal
+    public boolean getFTtp()
     {
-        return field_26_fUsePgsuSettings;
+        return field_16_fTtp;
     }
 
     /**
-     * Set the fUsePgsuSettings field for the PAP record.
+     * Table trailer paragraph (last in table row).
      */
-    public void setFUsePgsuSettings(byte field_26_fUsePgsuSettings)
+    @Internal
+    public void setFTtp( boolean field_16_fTtp )
     {
-        this.field_26_fUsePgsuSettings = field_26_fUsePgsuSettings;
-    }
-
-    /**
-     * Get the fAdjustRight field for the PAP record.
-     */
-    public byte getFAdjustRight()
-    {
-        return field_27_fAdjustRight;
-    }
-
-    /**
-     * Set the fAdjustRight field for the PAP record.
-     */
-    public void setFAdjustRight(byte field_27_fAdjustRight)
-    {
-        this.field_27_fAdjustRight = field_27_fAdjustRight;
-    }
-
-    /**
-     * Get the fKinsoku field for the PAP record.
-     */
-    public byte getFKinsoku()
-    {
-        return field_28_fKinsoku;
-    }
-
-    /**
-     * Set the fKinsoku field for the PAP record.
-     */
-    public void setFKinsoku(byte field_28_fKinsoku)
-    {
-        this.field_28_fKinsoku = field_28_fKinsoku;
-    }
-
-    /**
-     * Get the fWordWrap field for the PAP record.
-     */
-    public byte getFWordWrap()
-    {
-        return field_29_fWordWrap;
-    }
-
-    /**
-     * Set the fWordWrap field for the PAP record.
-     */
-    public void setFWordWrap(byte field_29_fWordWrap)
-    {
-        this.field_29_fWordWrap = field_29_fWordWrap;
-    }
-
-    /**
-     * Get the fOverflowPunct field for the PAP record.
-     */
-    public byte getFOverflowPunct()
-    {
-        return field_30_fOverflowPunct;
-    }
-
-    /**
-     * Set the fOverflowPunct field for the PAP record.
-     */
-    public void setFOverflowPunct(byte field_30_fOverflowPunct)
-    {
-        this.field_30_fOverflowPunct = field_30_fOverflowPunct;
-    }
-
-    /**
-     * Get the fTopLinePunct field for the PAP record.
-     */
-    public byte getFTopLinePunct()
-    {
-        return field_31_fTopLinePunct;
-    }
-
-    /**
-     * Set the fTopLinePunct field for the PAP record.
-     */
-    public void setFTopLinePunct(byte field_31_fTopLinePunct)
-    {
-        this.field_31_fTopLinePunct = field_31_fTopLinePunct;
-    }
-
-    /**
-     * Get the fAutoSpaceDE field for the PAP record.
-     */
-    public byte getFAutoSpaceDE()
-    {
-        return field_32_fAutoSpaceDE;
-    }
-
-    /**
-     * Set the fAutoSpaceDE field for the PAP record.
-     */
-    public void setFAutoSpaceDE(byte field_32_fAutoSpaceDE)
-    {
-        this.field_32_fAutoSpaceDE = field_32_fAutoSpaceDE;
-    }
-
-    /**
-     * Get the fAutoSpaceDN field for the PAP record.
-     */
-    public byte getFAutoSpaceDN()
-    {
-        return field_33_fAutoSpaceDN;
-    }
-
-    /**
-     * Set the fAutoSpaceDN field for the PAP record.
-     */
-    public void setFAutoSpaceDN(byte field_33_fAutoSpaceDN)
-    {
-        this.field_33_fAutoSpaceDN = field_33_fAutoSpaceDN;
-    }
-
-    /**
-     * Get the wAlignFont field for the PAP record.
-     */
-    public int getWAlignFont()
-    {
-        return field_34_wAlignFont;
-    }
-
-    /**
-     * Set the wAlignFont field for the PAP record.
-     */
-    public void setWAlignFont(int field_34_wAlignFont)
-    {
-        this.field_34_wAlignFont = field_34_wAlignFont;
-    }
-
-    /**
-     * Get the fontAlign field for the PAP record.
-     */
-    public short getFontAlign()
-    {
-        return field_35_fontAlign;
-    }
-
-    /**
-     * Set the fontAlign field for the PAP record.
-     */
-    public void setFontAlign(short field_35_fontAlign)
-    {
-        this.field_35_fontAlign = field_35_fontAlign;
-    }
-
-    /**
-     * Get the fBackward field for the PAP record.
-     */
-    public byte getFBackward()
-    {
-        return field_36_fBackward;
-    }
-
-    /**
-     * Set the fBackward field for the PAP record.
-     */
-    public void setFBackward(byte field_36_fBackward)
-    {
-        this.field_36_fBackward = field_36_fBackward;
-    }
-
-    /**
-     * Get the fRotateFont field for the PAP record.
-     */
-    public byte getFRotateFont()
-    {
-        return field_37_fRotateFont;
-    }
-
-    /**
-     * Set the fRotateFont field for the PAP record.
-     */
-    public void setFRotateFont(byte field_37_fRotateFont)
-    {
-        this.field_37_fRotateFont = field_37_fRotateFont;
-    }
-
-    /**
-     * Get the fInTable field for the PAP record.
-     */
-    public byte getFInTable()
-    {
-        return field_38_fInTable;
-    }
-
-    /**
-     * Set the fInTable field for the PAP record.
-     */
-    public void setFInTable(byte field_38_fInTable)
-    {
-        this.field_38_fInTable = field_38_fInTable;
-    }
-
-    /**
-     * Get the fTtp field for the PAP record.
-     */
-    public byte getFTtp()
-    {
-        return field_39_fTtp;
-    }
-
-    /**
-     * Set the fTtp field for the PAP record.
-     */
-    public void setFTtp(byte field_39_fTtp)
-    {
-        this.field_39_fTtp = field_39_fTtp;
-    }
-
-    /**
-     * Get the wr field for the PAP record.
-     */
-    public byte getWr()
-    {
-        return field_40_wr;
-    }
-
-    /**
-     * Set the wr field for the PAP record.
-     */
-    public void setWr(byte field_40_wr)
-    {
-        this.field_40_wr = field_40_wr;
-    }
-
-    /**
-     * Get the fLocked field for the PAP record.
-     */
-    public byte getFLocked()
-    {
-        return field_41_fLocked;
-    }
-
-    /**
-     * Set the fLocked field for the PAP record.
-     */
-    public void setFLocked(byte field_41_fLocked)
-    {
-        this.field_41_fLocked = field_41_fLocked;
-    }
-
-    /**
-     * Get the ptap field for the PAP record.
-     */
-    public byte[] getPtap()
-    {
-        return field_42_ptap;
-    }
-
-    /**
-     * Set the ptap field for the PAP record.
-     */
-    public void setPtap(byte[] field_42_ptap)
-    {
-        this.field_42_ptap = field_42_ptap;
+        this.field_16_fTtp = field_16_fTtp;
     }
 
     /**
      * Get the dxaAbs field for the PAP record.
      */
+    @Internal
     public int getDxaAbs()
     {
-        return field_43_dxaAbs;
+        return field_17_dxaAbs;
     }
 
     /**
      * Set the dxaAbs field for the PAP record.
      */
-    public void setDxaAbs(int field_43_dxaAbs)
+    @Internal
+    public void setDxaAbs( int field_17_dxaAbs )
     {
-        this.field_43_dxaAbs = field_43_dxaAbs;
+        this.field_17_dxaAbs = field_17_dxaAbs;
     }
 
     /**
      * Get the dyaAbs field for the PAP record.
      */
+    @Internal
     public int getDyaAbs()
     {
-        return field_44_dyaAbs;
+        return field_18_dyaAbs;
     }
 
     /**
      * Set the dyaAbs field for the PAP record.
      */
-    public void setDyaAbs(int field_44_dyaAbs)
+    @Internal
+    public void setDyaAbs( int field_18_dyaAbs )
     {
-        this.field_44_dyaAbs = field_44_dyaAbs;
+        this.field_18_dyaAbs = field_18_dyaAbs;
     }
 
     /**
      * Get the dxaWidth field for the PAP record.
      */
+    @Internal
     public int getDxaWidth()
     {
-        return field_45_dxaWidth;
+        return field_19_dxaWidth;
     }
 
     /**
      * Set the dxaWidth field for the PAP record.
      */
-    public void setDxaWidth(int field_45_dxaWidth)
+    @Internal
+    public void setDxaWidth( int field_19_dxaWidth )
     {
-        this.field_45_dxaWidth = field_45_dxaWidth;
+        this.field_19_dxaWidth = field_19_dxaWidth;
     }
 
     /**
-     * Get the brcTop field for the PAP record.
+     * Get the fBrLnAbove field for the PAP record.
      */
-    public BorderCode getBrcTop()
+    @Internal
+    public boolean getFBrLnAbove()
     {
-        return field_46_brcTop;
+        return field_20_fBrLnAbove;
     }
 
     /**
-     * Set the brcTop field for the PAP record.
+     * Set the fBrLnAbove field for the PAP record.
      */
-    public void setBrcTop(BorderCode field_46_brcTop)
+    @Internal
+    public void setFBrLnAbove( boolean field_20_fBrLnAbove )
     {
-        this.field_46_brcTop = field_46_brcTop;
+        this.field_20_fBrLnAbove = field_20_fBrLnAbove;
     }
 
     /**
-     * Get the brcLeft field for the PAP record.
+     * Get the fBrLnBelow field for the PAP record.
      */
-    public BorderCode getBrcLeft()
+    @Internal
+    public boolean getFBrLnBelow()
     {
-        return field_47_brcLeft;
+        return field_21_fBrLnBelow;
     }
 
     /**
-     * Set the brcLeft field for the PAP record.
+     * Set the fBrLnBelow field for the PAP record.
      */
-    public void setBrcLeft(BorderCode field_47_brcLeft)
+    @Internal
+    public void setFBrLnBelow( boolean field_21_fBrLnBelow )
     {
-        this.field_47_brcLeft = field_47_brcLeft;
+        this.field_21_fBrLnBelow = field_21_fBrLnBelow;
     }
 
     /**
-     * Get the brcBottom field for the PAP record.
+     * Get the pcVert field for the PAP record.
      */
-    public BorderCode getBrcBottom()
+    @Internal
+    public byte getPcVert()
     {
-        return field_48_brcBottom;
+        return field_22_pcVert;
     }
 
     /**
-     * Set the brcBottom field for the PAP record.
+     * Set the pcVert field for the PAP record.
      */
-    public void setBrcBottom(BorderCode field_48_brcBottom)
+    @Internal
+    public void setPcVert( byte field_22_pcVert )
     {
-        this.field_48_brcBottom = field_48_brcBottom;
+        this.field_22_pcVert = field_22_pcVert;
     }
 
     /**
-     * Get the brcRight field for the PAP record.
+     * Get the pcHorz field for the PAP record.
      */
-    public BorderCode getBrcRight()
+    @Internal
+    public byte getPcHorz()
     {
-        return field_49_brcRight;
+        return field_23_pcHorz;
     }
 
     /**
-     * Set the brcRight field for the PAP record.
+     * Set the pcHorz field for the PAP record.
      */
-    public void setBrcRight(BorderCode field_49_brcRight)
+    @Internal
+    public void setPcHorz( byte field_23_pcHorz )
     {
-        this.field_49_brcRight = field_49_brcRight;
+        this.field_23_pcHorz = field_23_pcHorz;
     }
 
     /**
-     * Get the brcBetween field for the PAP record.
+     * Get the wr field for the PAP record.
      */
-    public BorderCode getBrcBetween()
+    @Internal
+    public byte getWr()
     {
-        return field_50_brcBetween;
+        return field_24_wr;
     }
 
     /**
-     * Set the brcBetween field for the PAP record.
+     * Set the wr field for the PAP record.
      */
-    public void setBrcBetween(BorderCode field_50_brcBetween)
+    @Internal
+    public void setWr( byte field_24_wr )
     {
-        this.field_50_brcBetween = field_50_brcBetween;
+        this.field_24_wr = field_24_wr;
     }
 
     /**
-     * Get the brcBar field for the PAP record.
+     * Get the fNoAutoHyph field for the PAP record.
      */
-    public BorderCode getBrcBar()
+    @Internal
+    public boolean getFNoAutoHyph()
     {
-        return field_51_brcBar;
+        return field_25_fNoAutoHyph;
     }
 
     /**
-     * Set the brcBar field for the PAP record.
+     * Set the fNoAutoHyph field for the PAP record.
      */
-    public void setBrcBar(BorderCode field_51_brcBar)
+    @Internal
+    public void setFNoAutoHyph( boolean field_25_fNoAutoHyph )
     {
-        this.field_51_brcBar = field_51_brcBar;
-    }
-
-    /**
-     * Get the dxaFromText field for the PAP record.
-     */
-    public int getDxaFromText()
-    {
-        return field_52_dxaFromText;
-    }
-
-    /**
-     * Set the dxaFromText field for the PAP record.
-     */
-    public void setDxaFromText(int field_52_dxaFromText)
-    {
-        this.field_52_dxaFromText = field_52_dxaFromText;
-    }
-
-    /**
-     * Get the dyaFromText field for the PAP record.
-     */
-    public int getDyaFromText()
-    {
-        return field_53_dyaFromText;
-    }
-
-    /**
-     * Set the dyaFromText field for the PAP record.
-     */
-    public void setDyaFromText(int field_53_dyaFromText)
-    {
-        this.field_53_dyaFromText = field_53_dyaFromText;
+        this.field_25_fNoAutoHyph = field_25_fNoAutoHyph;
     }
 
     /**
      * Get the dyaHeight field for the PAP record.
      */
+    @Internal
     public int getDyaHeight()
     {
-        return field_54_dyaHeight;
+        return field_26_dyaHeight;
     }
 
     /**
      * Set the dyaHeight field for the PAP record.
      */
-    public void setDyaHeight(int field_54_dyaHeight)
+    @Internal
+    public void setDyaHeight( int field_26_dyaHeight )
     {
-        this.field_54_dyaHeight = field_54_dyaHeight;
+        this.field_26_dyaHeight = field_26_dyaHeight;
     }
 
     /**
-     * Get the fMinHeight field for the PAP record.
+     * Minimum height is exact or auto.
+     *
+     * @return One of 
+     * <li>{@link #FMINHEIGHT_EXACT}
+     * <li>{@link #FMINHEIGHT_AT_LEAST}
      */
-    public byte getFMinHeight()
+    @Internal
+    public boolean getFMinHeight()
     {
-        return field_55_fMinHeight;
+        return field_27_fMinHeight;
     }
 
     /**
-     * Set the fMinHeight field for the PAP record.
+     * Minimum height is exact or auto.
+     *
+     * @param field_27_fMinHeight
+     *        One of 
+     * <li>{@link #FMINHEIGHT_EXACT}
+     * <li>{@link #FMINHEIGHT_AT_LEAST}
      */
-    public void setFMinHeight(byte field_55_fMinHeight)
+    @Internal
+    public void setFMinHeight( boolean field_27_fMinHeight )
     {
-        this.field_55_fMinHeight = field_55_fMinHeight;
-    }
-
-    /**
-     * Get the shd field for the PAP record.
-     */
-    public ShadingDescriptor getShd()
-    {
-        return field_56_shd;
-    }
-
-    /**
-     * Set the shd field for the PAP record.
-     */
-    public void setShd(ShadingDescriptor field_56_shd)
-    {
-        this.field_56_shd = field_56_shd;
+        this.field_27_fMinHeight = field_27_fMinHeight;
     }
 
     /**
      * Get the dcs field for the PAP record.
      */
+    @Internal
     public DropCapSpecifier getDcs()
     {
-        return field_57_dcs;
+        return field_28_dcs;
     }
 
     /**
      * Set the dcs field for the PAP record.
      */
-    public void setDcs(DropCapSpecifier field_57_dcs)
+    @Internal
+    public void setDcs( DropCapSpecifier field_28_dcs )
     {
-        this.field_57_dcs = field_57_dcs;
+        this.field_28_dcs = field_28_dcs;
     }
 
     /**
-     * Get the lvl field for the PAP record.
+     * Vertical distance between text and absolutely positioned object.
      */
+    @Internal
+    public int getDyaFromText()
+    {
+        return field_29_dyaFromText;
+    }
+
+    /**
+     * Vertical distance between text and absolutely positioned object.
+     */
+    @Internal
+    public void setDyaFromText( int field_29_dyaFromText )
+    {
+        this.field_29_dyaFromText = field_29_dyaFromText;
+    }
+
+    /**
+     * Horizontal distance between text and absolutely positioned object.
+     */
+    @Internal
+    public int getDxaFromText()
+    {
+        return field_30_dxaFromText;
+    }
+
+    /**
+     * Horizontal distance between text and absolutely positioned object.
+     */
+    @Internal
+    public void setDxaFromText( int field_30_dxaFromText )
+    {
+        this.field_30_dxaFromText = field_30_dxaFromText;
+    }
+
+    /**
+     * Anchor of an absolutely positioned frame is locked.
+     */
+    @Internal
+    public boolean getFLocked()
+    {
+        return field_31_fLocked;
+    }
+
+    /**
+     * Anchor of an absolutely positioned frame is locked.
+     */
+    @Internal
+    public void setFLocked( boolean field_31_fLocked )
+    {
+        this.field_31_fLocked = field_31_fLocked;
+    }
+
+    /**
+     * 1, Word will prevent widowed lines in this paragraph from being placed at the beginning of a page.
+     */
+    @Internal
+    public boolean getFWidowControl()
+    {
+        return field_32_fWidowControl;
+    }
+
+    /**
+     * 1, Word will prevent widowed lines in this paragraph from being placed at the beginning of a page.
+     */
+    @Internal
+    public void setFWidowControl( boolean field_32_fWidowControl )
+    {
+        this.field_32_fWidowControl = field_32_fWidowControl;
+    }
+
+    /**
+     * apply Kinsoku rules when performing line wrapping.
+     */
+    @Internal
+    public boolean getFKinsoku()
+    {
+        return field_33_fKinsoku;
+    }
+
+    /**
+     * apply Kinsoku rules when performing line wrapping.
+     */
+    @Internal
+    public void setFKinsoku( boolean field_33_fKinsoku )
+    {
+        this.field_33_fKinsoku = field_33_fKinsoku;
+    }
+
+    /**
+     * perform word wrap.
+     */
+    @Internal
+    public boolean getFWordWrap()
+    {
+        return field_34_fWordWrap;
+    }
+
+    /**
+     * perform word wrap.
+     */
+    @Internal
+    public void setFWordWrap( boolean field_34_fWordWrap )
+    {
+        this.field_34_fWordWrap = field_34_fWordWrap;
+    }
+
+    /**
+     * apply overflow punctuation rules when performing line wrapping.
+     */
+    @Internal
+    public boolean getFOverflowPunct()
+    {
+        return field_35_fOverflowPunct;
+    }
+
+    /**
+     * apply overflow punctuation rules when performing line wrapping.
+     */
+    @Internal
+    public void setFOverflowPunct( boolean field_35_fOverflowPunct )
+    {
+        this.field_35_fOverflowPunct = field_35_fOverflowPunct;
+    }
+
+    /**
+     * perform top line punctuation processing.
+     */
+    @Internal
+    public boolean getFTopLinePunct()
+    {
+        return field_36_fTopLinePunct;
+    }
+
+    /**
+     * perform top line punctuation processing.
+     */
+    @Internal
+    public void setFTopLinePunct( boolean field_36_fTopLinePunct )
+    {
+        this.field_36_fTopLinePunct = field_36_fTopLinePunct;
+    }
+
+    /**
+     * auto space East Asian and alphabetic characters.
+     */
+    @Internal
+    public boolean getFAutoSpaceDE()
+    {
+        return field_37_fAutoSpaceDE;
+    }
+
+    /**
+     * auto space East Asian and alphabetic characters.
+     */
+    @Internal
+    public void setFAutoSpaceDE( boolean field_37_fAutoSpaceDE )
+    {
+        this.field_37_fAutoSpaceDE = field_37_fAutoSpaceDE;
+    }
+
+    /**
+     * auto space East Asian and numeric characters.
+     */
+    @Internal
+    public boolean getFAutoSpaceDN()
+    {
+        return field_38_fAutoSpaceDN;
+    }
+
+    /**
+     * auto space East Asian and numeric characters.
+     */
+    @Internal
+    public void setFAutoSpaceDN( boolean field_38_fAutoSpaceDN )
+    {
+        this.field_38_fAutoSpaceDN = field_38_fAutoSpaceDN;
+    }
+
+    /**
+     * Get the wAlignFont field for the PAP record.
+     *
+     * @return One of 
+     * <li>{@link #WALIGNFONT_HANGING}
+     * <li>{@link #WALIGNFONT_CENTERED}
+     * <li>{@link #WALIGNFONT_ROMAN}
+     * <li>{@link #WALIGNFONT_VARIABLE}
+     * <li>{@link #WALIGNFONT_AUTO}
+     */
+    @Internal
+    public int getWAlignFont()
+    {
+        return field_39_wAlignFont;
+    }
+
+    /**
+     * Set the wAlignFont field for the PAP record.
+     *
+     * @param field_39_wAlignFont
+     *        One of 
+     * <li>{@link #WALIGNFONT_HANGING}
+     * <li>{@link #WALIGNFONT_CENTERED}
+     * <li>{@link #WALIGNFONT_ROMAN}
+     * <li>{@link #WALIGNFONT_VARIABLE}
+     * <li>{@link #WALIGNFONT_AUTO}
+     */
+    @Internal
+    public void setWAlignFont( int field_39_wAlignFont )
+    {
+        this.field_39_wAlignFont = field_39_wAlignFont;
+    }
+
+    /**
+     * Used internally by Word.
+     */
+    @Internal
+    public short getFontAlign()
+    {
+        return field_40_fontAlign;
+    }
+
+    /**
+     * Used internally by Word.
+     */
+    @Internal
+    public void setFontAlign( short field_40_fontAlign )
+    {
+        this.field_40_fontAlign = field_40_fontAlign;
+    }
+
+    /**
+     * Outline level.
+     */
+    @Internal
     public byte getLvl()
     {
-        return field_58_lvl;
+        return field_41_lvl;
     }
 
     /**
-     * Set the lvl field for the PAP record.
+     * Outline level.
      */
-    public void setLvl(byte field_58_lvl)
+    @Internal
+    public void setLvl( byte field_41_lvl )
     {
-        this.field_58_lvl = field_58_lvl;
+        this.field_41_lvl = field_41_lvl;
+    }
+
+    /**
+     * Get the fBiDi field for the PAP record.
+     */
+    @Internal
+    public boolean getFBiDi()
+    {
+        return field_42_fBiDi;
+    }
+
+    /**
+     * Set the fBiDi field for the PAP record.
+     */
+    @Internal
+    public void setFBiDi( boolean field_42_fBiDi )
+    {
+        this.field_42_fBiDi = field_42_fBiDi;
     }
 
     /**
      * Get the fNumRMIns field for the PAP record.
      */
-    public byte getFNumRMIns()
+    @Internal
+    public boolean getFNumRMIns()
     {
-        return field_59_fNumRMIns;
+        return field_43_fNumRMIns;
     }
 
     /**
      * Set the fNumRMIns field for the PAP record.
      */
-    public void setFNumRMIns(byte field_59_fNumRMIns)
+    @Internal
+    public void setFNumRMIns( boolean field_43_fNumRMIns )
     {
-        this.field_59_fNumRMIns = field_59_fNumRMIns;
+        this.field_43_fNumRMIns = field_43_fNumRMIns;
+    }
+
+    /**
+     * Get the fCrLf field for the PAP record.
+     */
+    @Internal
+    public boolean getFCrLf()
+    {
+        return field_44_fCrLf;
+    }
+
+    /**
+     * Set the fCrLf field for the PAP record.
+     */
+    @Internal
+    public void setFCrLf( boolean field_44_fCrLf )
+    {
+        this.field_44_fCrLf = field_44_fCrLf;
+    }
+
+    /**
+     * Get the fUsePgsuSettings field for the PAP record.
+     */
+    @Internal
+    public boolean getFUsePgsuSettings()
+    {
+        return field_45_fUsePgsuSettings;
+    }
+
+    /**
+     * Set the fUsePgsuSettings field for the PAP record.
+     */
+    @Internal
+    public void setFUsePgsuSettings( boolean field_45_fUsePgsuSettings )
+    {
+        this.field_45_fUsePgsuSettings = field_45_fUsePgsuSettings;
+    }
+
+    /**
+     * Get the fAdjustRight field for the PAP record.
+     */
+    @Internal
+    public boolean getFAdjustRight()
+    {
+        return field_46_fAdjustRight;
+    }
+
+    /**
+     * Set the fAdjustRight field for the PAP record.
+     */
+    @Internal
+    public void setFAdjustRight( boolean field_46_fAdjustRight )
+    {
+        this.field_46_fAdjustRight = field_46_fAdjustRight;
+    }
+
+    /**
+     * Table nesting level.
+     */
+    @Internal
+    public int getItap()
+    {
+        return field_47_itap;
+    }
+
+    /**
+     * Table nesting level.
+     */
+    @Internal
+    public void setItap( int field_47_itap )
+    {
+        this.field_47_itap = field_47_itap;
+    }
+
+    /**
+     * When 1, the end of paragraph mark is really an end of cell mark for a nested table cell.
+     */
+    @Internal
+    public boolean getFInnerTableCell()
+    {
+        return field_48_fInnerTableCell;
+    }
+
+    /**
+     * When 1, the end of paragraph mark is really an end of cell mark for a nested table cell.
+     */
+    @Internal
+    public void setFInnerTableCell( boolean field_48_fInnerTableCell )
+    {
+        this.field_48_fInnerTableCell = field_48_fInnerTableCell;
+    }
+
+    /**
+     * Ensure the Table Cell char doesn't show up as zero height.
+     */
+    @Internal
+    public boolean getFOpenTch()
+    {
+        return field_49_fOpenTch;
+    }
+
+    /**
+     * Ensure the Table Cell char doesn't show up as zero height.
+     */
+    @Internal
+    public void setFOpenTch( boolean field_49_fOpenTch )
+    {
+        this.field_49_fOpenTch = field_49_fOpenTch;
+    }
+
+    /**
+     * Word 97 compatibility indicates this end of paragraph mark is really an end of row marker for a nested table.
+     */
+    @Internal
+    public boolean getFTtpEmbedded()
+    {
+        return field_50_fTtpEmbedded;
+    }
+
+    /**
+     * Word 97 compatibility indicates this end of paragraph mark is really an end of row marker for a nested table.
+     */
+    @Internal
+    public void setFTtpEmbedded( boolean field_50_fTtpEmbedded )
+    {
+        this.field_50_fTtpEmbedded = field_50_fTtpEmbedded;
+    }
+
+    /**
+     * Right indent in character units.
+     */
+    @Internal
+    public short getDxcRight()
+    {
+        return field_51_dxcRight;
+    }
+
+    /**
+     * Right indent in character units.
+     */
+    @Internal
+    public void setDxcRight( short field_51_dxcRight )
+    {
+        this.field_51_dxcRight = field_51_dxcRight;
+    }
+
+    /**
+     * Left indent in character units.
+     */
+    @Internal
+    public short getDxcLeft()
+    {
+        return field_52_dxcLeft;
+    }
+
+    /**
+     * Left indent in character units.
+     */
+    @Internal
+    public void setDxcLeft( short field_52_dxcLeft )
+    {
+        this.field_52_dxcLeft = field_52_dxcLeft;
+    }
+
+    /**
+     * First line indent in character units.
+     */
+    @Internal
+    public short getDxcLeft1()
+    {
+        return field_53_dxcLeft1;
+    }
+
+    /**
+     * First line indent in character units.
+     */
+    @Internal
+    public void setDxcLeft1( short field_53_dxcLeft1 )
+    {
+        this.field_53_dxcLeft1 = field_53_dxcLeft1;
+    }
+
+    /**
+     * Vertical spacing before is automatic.
+     */
+    @Internal
+    public boolean getFDyaBeforeAuto()
+    {
+        return field_54_fDyaBeforeAuto;
+    }
+
+    /**
+     * Vertical spacing before is automatic.
+     */
+    @Internal
+    public void setFDyaBeforeAuto( boolean field_54_fDyaBeforeAuto )
+    {
+        this.field_54_fDyaBeforeAuto = field_54_fDyaBeforeAuto;
+    }
+
+    /**
+     * Vertical spacing after is automatic.
+     */
+    @Internal
+    public boolean getFDyaAfterAuto()
+    {
+        return field_55_fDyaAfterAuto;
+    }
+
+    /**
+     * Vertical spacing after is automatic.
+     */
+    @Internal
+    public void setFDyaAfterAuto( boolean field_55_fDyaAfterAuto )
+    {
+        this.field_55_fDyaAfterAuto = field_55_fDyaAfterAuto;
+    }
+
+    /**
+     * Get the dxaRight field for the PAP record.
+     */
+    @Internal
+    public int getDxaRight()
+    {
+        return field_56_dxaRight;
+    }
+
+    /**
+     * Set the dxaRight field for the PAP record.
+     */
+    @Internal
+    public void setDxaRight( int field_56_dxaRight )
+    {
+        this.field_56_dxaRight = field_56_dxaRight;
+    }
+
+    /**
+     * Get the dxaLeft field for the PAP record.
+     */
+    @Internal
+    public int getDxaLeft()
+    {
+        return field_57_dxaLeft;
+    }
+
+    /**
+     * Set the dxaLeft field for the PAP record.
+     */
+    @Internal
+    public void setDxaLeft( int field_57_dxaLeft )
+    {
+        this.field_57_dxaLeft = field_57_dxaLeft;
+    }
+
+    /**
+     * Get the dxaLeft1 field for the PAP record.
+     */
+    @Internal
+    public int getDxaLeft1()
+    {
+        return field_58_dxaLeft1;
+    }
+
+    /**
+     * Set the dxaLeft1 field for the PAP record.
+     */
+    @Internal
+    public void setDxaLeft1( int field_58_dxaLeft1 )
+    {
+        this.field_58_dxaLeft1 = field_58_dxaLeft1;
+    }
+
+    /**
+     * Get the jc field for the PAP record.
+     */
+    @Internal
+    public byte getJc()
+    {
+        return field_59_jc;
+    }
+
+    /**
+     * Set the jc field for the PAP record.
+     */
+    @Internal
+    public void setJc( byte field_59_jc )
+    {
+        this.field_59_jc = field_59_jc;
+    }
+
+    /**
+     * Get the brcTop field for the PAP record.
+     */
+    @Internal
+    public BorderCode getBrcTop()
+    {
+        return field_60_brcTop;
+    }
+
+    /**
+     * Set the brcTop field for the PAP record.
+     */
+    @Internal
+    public void setBrcTop( BorderCode field_60_brcTop )
+    {
+        this.field_60_brcTop = field_60_brcTop;
+    }
+
+    /**
+     * Get the brcLeft field for the PAP record.
+     */
+    @Internal
+    public BorderCode getBrcLeft()
+    {
+        return field_61_brcLeft;
+    }
+
+    /**
+     * Set the brcLeft field for the PAP record.
+     */
+    @Internal
+    public void setBrcLeft( BorderCode field_61_brcLeft )
+    {
+        this.field_61_brcLeft = field_61_brcLeft;
+    }
+
+    /**
+     * Get the brcBottom field for the PAP record.
+     */
+    @Internal
+    public BorderCode getBrcBottom()
+    {
+        return field_62_brcBottom;
+    }
+
+    /**
+     * Set the brcBottom field for the PAP record.
+     */
+    @Internal
+    public void setBrcBottom( BorderCode field_62_brcBottom )
+    {
+        this.field_62_brcBottom = field_62_brcBottom;
+    }
+
+    /**
+     * Get the brcRight field for the PAP record.
+     */
+    @Internal
+    public BorderCode getBrcRight()
+    {
+        return field_63_brcRight;
+    }
+
+    /**
+     * Set the brcRight field for the PAP record.
+     */
+    @Internal
+    public void setBrcRight( BorderCode field_63_brcRight )
+    {
+        this.field_63_brcRight = field_63_brcRight;
+    }
+
+    /**
+     * Get the brcBetween field for the PAP record.
+     */
+    @Internal
+    public BorderCode getBrcBetween()
+    {
+        return field_64_brcBetween;
+    }
+
+    /**
+     * Set the brcBetween field for the PAP record.
+     */
+    @Internal
+    public void setBrcBetween( BorderCode field_64_brcBetween )
+    {
+        this.field_64_brcBetween = field_64_brcBetween;
+    }
+
+    /**
+     * Get the brcBar field for the PAP record.
+     */
+    @Internal
+    public BorderCode getBrcBar()
+    {
+        return field_65_brcBar;
+    }
+
+    /**
+     * Set the brcBar field for the PAP record.
+     */
+    @Internal
+    public void setBrcBar( BorderCode field_65_brcBar )
+    {
+        this.field_65_brcBar = field_65_brcBar;
+    }
+
+    /**
+     * Get the shd field for the PAP record.
+     */
+    @Internal
+    public ShadingDescriptor getShd()
+    {
+        return field_66_shd;
+    }
+
+    /**
+     * Set the shd field for the PAP record.
+     */
+    @Internal
+    public void setShd( ShadingDescriptor field_66_shd )
+    {
+        this.field_66_shd = field_66_shd;
     }
 
     /**
      * Get the anld field for the PAP record.
      */
+    @Internal
     public byte[] getAnld()
     {
-        return field_60_anld;
+        return field_67_anld;
     }
 
     /**
      * Set the anld field for the PAP record.
      */
-    public void setAnld(byte[] field_60_anld)
+    @Internal
+    public void setAnld( byte[] field_67_anld )
     {
-        this.field_60_anld = field_60_anld;
+        this.field_67_anld = field_67_anld;
+    }
+
+    /**
+     * Get the phe field for the PAP record.
+     */
+    @Internal
+    public byte[] getPhe()
+    {
+        return field_68_phe;
+    }
+
+    /**
+     * Set the phe field for the PAP record.
+     */
+    @Internal
+    public void setPhe( byte[] field_68_phe )
+    {
+        this.field_68_phe = field_68_phe;
     }
 
     /**
      * Get the fPropRMark field for the PAP record.
      */
-    public int getFPropRMark()
+    @Internal
+    public boolean getFPropRMark()
     {
-        return field_61_fPropRMark;
+        return field_69_fPropRMark;
     }
 
     /**
      * Set the fPropRMark field for the PAP record.
      */
-    public void setFPropRMark(int field_61_fPropRMark)
+    @Internal
+    public void setFPropRMark( boolean field_69_fPropRMark )
     {
-        this.field_61_fPropRMark = field_61_fPropRMark;
+        this.field_69_fPropRMark = field_69_fPropRMark;
     }
 
     /**
      * Get the ibstPropRMark field for the PAP record.
      */
+    @Internal
     public int getIbstPropRMark()
     {
-        return field_62_ibstPropRMark;
+        return field_70_ibstPropRMark;
     }
 
     /**
      * Set the ibstPropRMark field for the PAP record.
      */
-    public void setIbstPropRMark(int field_62_ibstPropRMark)
+    @Internal
+    public void setIbstPropRMark( int field_70_ibstPropRMark )
     {
-        this.field_62_ibstPropRMark = field_62_ibstPropRMark;
+        this.field_70_ibstPropRMark = field_70_ibstPropRMark;
     }
 
     /**
      * Get the dttmPropRMark field for the PAP record.
      */
+    @Internal
     public DateAndTime getDttmPropRMark()
     {
-        return field_63_dttmPropRMark;
+        return field_71_dttmPropRMark;
     }
 
     /**
      * Set the dttmPropRMark field for the PAP record.
      */
-    public void setDttmPropRMark(DateAndTime field_63_dttmPropRMark)
+    @Internal
+    public void setDttmPropRMark( DateAndTime field_71_dttmPropRMark )
     {
-        this.field_63_dttmPropRMark = field_63_dttmPropRMark;
+        this.field_71_dttmPropRMark = field_71_dttmPropRMark;
+    }
+
+    /**
+     * Number of tabs stops defined for paragraph. Must be >= 0 and <= 64..
+     */
+    @Internal
+    public int getItbdMac()
+    {
+        return field_72_itbdMac;
+    }
+
+    /**
+     * Number of tabs stops defined for paragraph. Must be >= 0 and <= 64..
+     */
+    @Internal
+    public void setItbdMac( int field_72_itbdMac )
+    {
+        this.field_72_itbdMac = field_72_itbdMac;
+    }
+
+    /**
+     * Array of positions of itbdMac tab stops. itbdMax==64.
+     */
+    @Internal
+    public int[] getRgdxaTab()
+    {
+        return field_73_rgdxaTab;
+    }
+
+    /**
+     * Array of positions of itbdMac tab stops. itbdMax==64.
+     */
+    @Internal
+    public void setRgdxaTab( int[] field_73_rgdxaTab )
+    {
+        this.field_73_rgdxaTab = field_73_rgdxaTab;
+    }
+
+    /**
+     * Array of itbdMac tab descriptors.
+     */
+    @Internal
+    public TabDescriptor[] getRgtbd()
+    {
+        return field_74_rgtbd;
+    }
+
+    /**
+     * Array of itbdMac tab descriptors.
+     */
+    @Internal
+    public void setRgtbd( TabDescriptor[] field_74_rgtbd )
+    {
+        this.field_74_rgtbd = field_74_rgtbd;
     }
 
     /**
      * Get the numrm field for the PAP record.
      */
+    @Internal
     public byte[] getNumrm()
     {
-        return field_64_numrm;
+        return field_75_numrm;
     }
 
     /**
      * Set the numrm field for the PAP record.
      */
-    public void setNumrm(byte[] field_64_numrm)
+    @Internal
+    public void setNumrm( byte[] field_75_numrm )
     {
-        this.field_64_numrm = field_64_numrm;
+        this.field_75_numrm = field_75_numrm;
     }
 
     /**
-     * Get the itbdMac field for the PAP record.
+     * Get the ptap field for the PAP record.
      */
-    public int getItbdMac()
+    @Internal
+    public byte[] getPtap()
     {
-        return field_65_itbdMac;
+        return field_76_ptap;
     }
 
     /**
-     * Set the itbdMac field for the PAP record.
+     * Set the ptap field for the PAP record.
      */
-    public void setItbdMac(int field_65_itbdMac)
+    @Internal
+    public void setPtap( byte[] field_76_ptap )
     {
-        this.field_65_itbdMac = field_65_itbdMac;
+        this.field_76_ptap = field_76_ptap;
     }
 
     /**
-     * Get the rgdxaTab field for the PAP record.
+     * When 1, absolutely positioned paragraph cannot overlap with another paragraph.
      */
-    public int[] getRgdxaTab()
+    @Internal
+    public boolean getFNoAllowOverlap()
     {
-        return field_66_rgdxaTab;
+        return field_77_fNoAllowOverlap;
     }
 
     /**
-     * Set the rgdxaTab field for the PAP record.
+     * When 1, absolutely positioned paragraph cannot overlap with another paragraph.
      */
-    public void setRgdxaTab(int[] field_66_rgdxaTab)
+    @Internal
+    public void setFNoAllowOverlap( boolean field_77_fNoAllowOverlap )
     {
-        this.field_66_rgdxaTab = field_66_rgdxaTab;
+        this.field_77_fNoAllowOverlap = field_77_fNoAllowOverlap;
     }
 
     /**
-     * Get the rgtbd field for the PAP record.
+     * HTML DIV ID for this paragraph.
      */
-    public byte[] getRgtbd()
+    @Internal
+    public long getIpgp()
     {
-        return field_67_rgtbd;
+        return field_78_ipgp;
     }
 
     /**
-     * Set the rgtbd field for the PAP record.
+     * HTML DIV ID for this paragraph.
      */
-    public void setRgtbd(byte[] field_67_rgtbd)
+    @Internal
+    public void setIpgp( long field_78_ipgp )
     {
-        this.field_67_rgtbd = field_67_rgtbd;
+        this.field_78_ipgp = field_78_ipgp;
     }
 
     /**
-     * Get the tableLevel field for the PAP record.
+     * Save ID for last time this PAP was revised.
      */
-    public byte getTableLevel()
+    @Internal
+    public long getRsid()
     {
-        return field_68_tableLevel;
+        return field_79_rsid;
     }
 
     /**
-     * Set the tableLevel field for the PAP record.
+     * Save ID for last time this PAP was revised.
      */
-    public void setTableLevel(byte field_68_tableLevel)
+    @Internal
+    public void setRsid( long field_79_rsid )
     {
-        this.field_68_tableLevel = field_68_tableLevel;
-    }
-
-    /**
-     * Get the fTtpEmbedded field for the PAP record.
-     */
-    public byte getFTtpEmbedded()
-    {
-        return field_69_fTtpEmbedded;
-    }
-
-    /**
-     * Set the fTtpEmbedded field for the PAP record.
-     */
-    public void setFTtpEmbedded(byte field_69_fTtpEmbedded)
-    {
-        this.field_69_fTtpEmbedded = field_69_fTtpEmbedded;
-    }
-
-    /**
-     * Get the embeddedCellMark field for the PAP record.
-     */
-    public byte getEmbeddedCellMark()
-    {
-        return field_70_embeddedCellMark;
-    }
-
-    /**
-     * Set the embeddedCellMark field for the PAP record.
-     */
-    public void setEmbeddedCellMark(byte field_70_embeddedCellMark)
-    {
-        this.field_70_embeddedCellMark = field_70_embeddedCellMark;
+        this.field_79_rsid = field_79_rsid;
     }
 
     /**
      * Sets the fVertical field value.
      * 
      */
-    public void setFVertical(boolean value)
+    @Internal
+    public void setFVertical( boolean value )
     {
-        field_35_fontAlign = (short)fVertical.setBoolean(field_35_fontAlign, value);
-
-        
+        field_40_fontAlign = (short)fVertical.setBoolean(field_40_fontAlign, value);
     }
 
     /**
      * 
      * @return  the fVertical field value.
      */
+    @Internal
     public boolean isFVertical()
     {
-        return fVertical.isSet(field_35_fontAlign);
-        
+        return fVertical.isSet(field_40_fontAlign);
     }
 
     /**
      * Sets the fBackward field value.
      * 
      */
-    public void setFBackward(boolean value)
+    @Internal
+    public void setFBackward( boolean value )
     {
-        field_35_fontAlign = (short)fBackward.setBoolean(field_35_fontAlign, value);
-
-        
+        field_40_fontAlign = (short)fBackward.setBoolean(field_40_fontAlign, value);
     }
 
     /**
      * 
      * @return  the fBackward field value.
      */
+    @Internal
     public boolean isFBackward()
     {
-        return fBackward.isSet(field_35_fontAlign);
-        
+        return fBackward.isSet(field_40_fontAlign);
     }
 
     /**
      * Sets the fRotateFont field value.
      * 
      */
-    public void setFRotateFont(boolean value)
+    @Internal
+    public void setFRotateFont( boolean value )
     {
-        field_35_fontAlign = (short)fRotateFont.setBoolean(field_35_fontAlign, value);
-
-        
+        field_40_fontAlign = (short)fRotateFont.setBoolean(field_40_fontAlign, value);
     }
 
     /**
      * 
      * @return  the fRotateFont field value.
      */
+    @Internal
     public boolean isFRotateFont()
     {
-        return fRotateFont.isSet(field_35_fontAlign);
-        
+        return fRotateFont.isSet(field_40_fontAlign);
     }
 
-
 }  // END OF CLASS
-
-
-
-

@@ -14,10 +14,15 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.model;
 
 import org.apache.poi.ddf.*;
+import org.apache.poi.hslf.usermodel.*;
+import org.apache.poi.sl.usermodel.ShapeContainer;
+import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.Units;
 
 import java.awt.geom.Point2D;
 
@@ -26,14 +31,14 @@ import java.awt.geom.Point2D;
  *
  * @author Yegor Kozlov
  */
-public class Polygon extends AutoShape {
+public final class Polygon extends HSLFAutoShape {
     /**
      * Create a Polygon object and initialize it from the supplied Record container.
      *
      * @param escherRecord       <code>EscherSpContainer</code> container which holds information about this shape
      * @param parent    the parent of the shape
      */
-   protected Polygon(EscherContainerRecord escherRecord, Shape parent){
+   protected Polygon(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
         super(escherRecord, parent);
 
     }
@@ -44,9 +49,9 @@ public class Polygon extends AutoShape {
      * @param parent    the parent of this Shape. For example, if this text box is a cell
      * in a table then the parent is Table.
      */
-    public Polygon(Shape parent){
-        super(null, parent);
-        _escherContainer = createSpContainer(ShapeTypes.NotPrimitive, parent instanceof ShapeGroup);
+    public Polygon(ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
+        super((EscherContainerRecord)null, parent);
+        createSpContainer(ShapeType.NOT_PRIMITIVE, parent instanceof HSLFGroupShape);
     }
 
     /**
@@ -70,9 +75,9 @@ public class Polygon extends AutoShape {
         float left   = findSmallest(xPoints);
         float top    = findSmallest(yPoints);
 
-        EscherOptRecord opt = (EscherOptRecord)getEscherChild(_escherContainer, EscherOptRecord.RECORD_ID);
-        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.GEOMETRY__RIGHT, (int)((right - left)*POINT_DPI/MASTER_DPI)));
-        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.GEOMETRY__BOTTOM, (int)((bottom - top)*POINT_DPI/MASTER_DPI)));
+        AbstractEscherOptRecord opt = getEscherOptRecord();
+        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.GEOMETRY__RIGHT, Units.pointsToMaster(right - left)));
+        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.GEOMETRY__BOTTOM, Units.pointsToMaster(bottom - top)));
 
         for (int i = 0; i < xPoints.length; i++) {
             xPoints[i] += -left;
@@ -88,13 +93,13 @@ public class Polygon extends AutoShape {
         for (int i = 0; i < numpoints; i++)
         {
             byte[] data = new byte[4];
-            LittleEndian.putShort(data, 0, (short)(xPoints[i]*POINT_DPI/MASTER_DPI));
-            LittleEndian.putShort(data, 2, (short)(yPoints[i]*POINT_DPI/MASTER_DPI));
+            LittleEndian.putShort(data, 0, (short)Units.pointsToMaster(xPoints[i]));
+            LittleEndian.putShort(data, 2, (short)Units.pointsToMaster(yPoints[i]));
             verticesProp.setElement(i, data);
         }
         byte[] data = new byte[4];
-        LittleEndian.putShort(data, 0, (short)(xPoints[0]*POINT_DPI/MASTER_DPI));
-        LittleEndian.putShort(data, 2, (short)(yPoints[0]*POINT_DPI/MASTER_DPI));
+        LittleEndian.putShort(data, 0, (short)Units.pointsToMaster(xPoints[0]));
+        LittleEndian.putShort(data, 2, (short)Units.pointsToMaster(yPoints[0]));
         verticesProp.setElement(numpoints, data);
         opt.addEscherProperty(verticesProp);
 

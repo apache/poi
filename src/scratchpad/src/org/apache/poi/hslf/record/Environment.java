@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 
@@ -23,12 +21,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * Environment, which contains lots of settings for the document. 
+ * Environment, which contains lots of settings for the document.
  *
  * @author Nick Burch
  */
 
-public class Environment extends PositionDependentRecordContainer
+public final class Environment extends PositionDependentRecordContainer
 {
 	private byte[] _header;
 	private static long _type = 1010;
@@ -44,7 +42,7 @@ public class Environment extends PositionDependentRecordContainer
 	public FontCollection getFontCollection() { return fontCollection; }
 
 
-	/** 
+	/**
 	 * Set things up, and find our more interesting children
 	 */
 	protected Environment(byte[] source, int start, int len) {
@@ -54,7 +52,7 @@ public class Environment extends PositionDependentRecordContainer
 
 		// Find our children
 		_children = Record.findChildRecords(source,start+8,len-8);
-		
+
 		// Find our FontCollection record
 		for(int i=0; i<_children.length; i++) {
 			if(_children[i] instanceof FontCollection) {
@@ -63,7 +61,7 @@ public class Environment extends PositionDependentRecordContainer
                 txmaster = (TxMasterStyleAtom)_children[i];
             }
 		}
-		
+
 		if(fontCollection == null) {
 			throw new IllegalStateException("Environment didn't contain a FontCollection record!");
 		}

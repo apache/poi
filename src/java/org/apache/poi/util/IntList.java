@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,11 +14,8 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.util;
-
-import java.util.*;
 
 /**
  * A List of int's; as full an implementation of the java.util.List
@@ -47,12 +43,10 @@ import java.util.*;
  *
  * @author Marc Johnson
  */
-
 public class IntList
 {
     private int[]            _array;
     private int              _limit;
-    private int              fillval = 0;
     private static final int _default_size = 128;
 
     /**
@@ -62,14 +56,15 @@ public class IntList
     public IntList()
     {
         this(_default_size);
-    }    
+    }
 
     public IntList(final int initialCapacity)
     {
-        this(initialCapacity,0);
+        _array = new int[ initialCapacity ];
+        _limit = 0;
     }
-    
-    
+
+
     /**
      * create a copy of an existing IntList
      *
@@ -84,29 +79,7 @@ public class IntList
     }
 
     /**
-     * create an IntList with a predefined initial size
-     *
-     * @param initialCapacity the size for the internal array
-     */
-
-    public IntList(final int initialCapacity, int fillvalue)
-    {
-        _array = new int[ initialCapacity ];
-        if (fillval != 0) {
-            fillval = fillvalue;
-            fillArray(fillval, _array, 0);        
-        }
-        _limit = 0;
-    }
-
-    private void fillArray(int val, int[] array, int index) {
-      for (int k = index; k < array.length; k++) {
-        array[k] = val;   
-      }
-    }
-    
-    /**
-     * add the specfied value at the specified index
+     * add the specified value at the specified index
      *
      * @param index the index where the new value is to be added
      * @param value the new value
@@ -348,7 +321,9 @@ public class IntList
     {
         if (index >= _limit)
         {
-            throw new IndexOutOfBoundsException();
+            throw new IndexOutOfBoundsException(
+                  index + " not accessible in a list of length " + _limit
+            );
         }
         return _array[ index ];
     }
@@ -653,13 +628,8 @@ public class IntList
         int   size      = (new_size == _array.length) ? new_size + 1
                                                       : new_size;
         int[] new_array = new int[ size ];
-        
-        if (fillval != 0) {
-          fillArray(fillval, new_array, _array.length);                
-        }
-        
+
         System.arraycopy(_array, 0, new_array, 0, _limit);
         _array = new_array;
     }
-}   // end public class IntList
-
+}

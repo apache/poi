@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,39 +14,25 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.util;
 
-import junit.framework.*;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Class to test IntList
  *
  * @author Marc Johnson
  */
-
-public class TestIntList
-    extends TestCase
-{
-
-    /**
-     * Constructor TestIntList
-     *
-     * @param name
-     */
-
-    public TestIntList(String name)
-    {
-        super(name);
-    }
-
-    /**
-     * test the various IntListconstructors
-     */
-
-    public void testConstructors()
-    {
+public final class TestIntList {
+    @Test
+    public void testConstructors() {
         IntList list = new IntList();
 
         assertTrue(list.isEmpty());
@@ -61,21 +46,16 @@ public class TestIntList
         assertTrue(list3.isEmpty());
     }
 
-    /**
-     * test the add method
-     */
-
-    public void testAdd()
-    {
+    @Test
+    public void testAdd() {
         IntList list      = new IntList();
         int[]   testArray =
         {
             0, 1, 2, 3, 5
         };
 
-        for (int j = 0; j < testArray.length; j++)
-        {
-            list.add(testArray[ j ]);
+        for (int element : testArray) {
+            list.add(element);
         }
         for (int j = 0; j < testArray.length; j++)
         {
@@ -144,12 +124,8 @@ public class TestIntList
         }
     }
 
-    /**
-     * test the addAll method
-     */
-
-    public void testAddAll()
-    {
+    @Test
+    public void testAddAll() {
         IntList list = new IntList();
 
         for (int j = 0; j < 5; j++)
@@ -223,12 +199,18 @@ public class TestIntList
         assertEquals(list.get(4), empty.get(14));
     }
 
-    /**
-     * test the clear method
-     */
+    @Test
+    public void testAddAllGrow() {
+        IntList list = new IntList(0);
+        IntList addList = new IntList(0);
+        addList.add(1);
+        addList.add(2);
 
-    public void testClear()
-    {
+        assertTrue(list.addAll(0, addList));
+    }
+
+    @Test
+    public void testClear() {
         IntList list = new IntList();
 
         for (int j = 0; j < 500; j++)
@@ -249,12 +231,8 @@ public class TestIntList
         }
     }
 
-    /**
-     * test the contains method
-     */
-
-    public void testContains()
-    {
+    @Test
+    public void testContains() {
         IntList list = new IntList();
 
         for (int j = 0; j < 1000; j += 2)
@@ -269,17 +247,13 @@ public class TestIntList
             }
             else
             {
-                assertTrue(!list.contains(j));
+                assertFalse(list.contains(j));
             }
         }
     }
 
-    /**
-     * test the containsAll method
-     */
-
-    public void testContainsAll()
-    {
+    @Test
+    public void testContainsAll() {
         IntList list = new IntList();
 
         assertTrue(list.containsAll(list));
@@ -293,22 +267,19 @@ public class TestIntList
         assertTrue(list.containsAll(list2));
         list2.add(10);
         assertTrue(list2.containsAll(list));
-        assertTrue(!list.containsAll(list2));
+        assertFalse(list.containsAll(list2));
         list.add(11);
-        assertTrue(!list2.containsAll(list));
-        assertTrue(!list.containsAll(list2));
+        assertFalse(list2.containsAll(list));
+        assertFalse(list.containsAll(list2));
     }
 
-    /**
-     * test the equals method
-     */
-
-    public void testEquals()
-    {
+    @Test
+    public void testEquals() {
         IntList list = new IntList();
 
         assertEquals(list, list);
-        assertTrue(!list.equals(null));
+        //noinspection ObjectEqualsNull
+        assertFalse(list.equals(null));
         IntList list2 = new IntList(200);
 
         assertEquals(list, list2);
@@ -318,22 +289,19 @@ public class TestIntList
         list.add(1);
         list2.add(1);
         list2.add(0);
-        assertTrue(!list.equals(list2));
+        assertFalse(list.equals(list2));
         list2.removeValue(1);
         list2.add(1);
         assertEquals(list, list2);
         assertEquals(list2, list);
+        assertEquals(list.hashCode(), list2.hashCode());
         list2.add(2);
-        assertTrue(!list.equals(list2));
-        assertTrue(!list2.equals(list));
+        assertFalse(list.equals(list2));
+        assertFalse(list2.equals(list));
     }
 
-    /**
-     * test the get method
-     */
-
-    public void testGet()
-    {
+    @Test
+    public void testGet() {
         IntList list = new IntList();
 
         for (int j = 0; j < 1000; j++)
@@ -360,12 +328,8 @@ public class TestIntList
         }
     }
 
-    /**
-     * test the indexOf method
-     */
-
-    public void testIndexOf()
-    {
+    @Test
+    public void testIndexOf() {
         IntList list = new IntList();
 
         for (int j = 0; j < 1000; j++)
@@ -385,12 +349,8 @@ public class TestIntList
         }
     }
 
-    /**
-     * test the isEmpty method
-     */
-
-    public void testIsEmpty()
-    {
+    @Test
+    public void testIsEmpty() {
         IntList list1 = new IntList();
         IntList list2 = new IntList(1000);
         IntList list3 = new IntList(list1);
@@ -401,9 +361,9 @@ public class TestIntList
         list1.add(1);
         list2.add(2);
         list3 = new IntList(list2);
-        assertTrue(!list1.isEmpty());
-        assertTrue(!list2.isEmpty());
-        assertTrue(!list3.isEmpty());
+        assertFalse(list1.isEmpty());
+        assertFalse(list2.isEmpty());
+        assertFalse(list3.isEmpty());
         list1.clear();
         list2.remove(0);
         list3.removeValue(2);
@@ -412,12 +372,8 @@ public class TestIntList
         assertTrue(list3.isEmpty());
     }
 
-    /**
-     * test the lastIndexOf method
-     */
-
-    public void testLastIndexOf()
-    {
+    @Test
+    public void testLastIndexOf() {
         IntList list = new IntList();
 
         for (int j = 0; j < 1000; j++)
@@ -437,12 +393,8 @@ public class TestIntList
         }
     }
 
-    /**
-     * test the remove method
-     */
-
-    public void testRemove()
-    {
+    @Test
+    public void testRemove() {
         IntList list = new IntList();
 
         for (int j = 0; j < 1000; j++)
@@ -475,12 +427,8 @@ public class TestIntList
         }
     }
 
-    /**
-     * test the removeValue method
-     */
-
-    public void testRemoveValue()
-    {
+    @Test
+    public void testRemoveValue() {
         IntList list = new IntList();
 
         for (int j = 0; j < 1000; j++)
@@ -494,16 +442,12 @@ public class TestIntList
                 assertTrue(list.removeValue(j));
                 assertTrue(list.removeValue(j));
             }
-            assertTrue(!list.removeValue(j));
+            assertFalse(list.removeValue(j));
         }
     }
 
-    /**
-     * test the removeAll method
-     */
-
-    public void testRemoveAll()
-    {
+    @Test
+    public void testRemoveAll() {
         IntList list = new IntList();
 
         for (int j = 0; j < 1000; j++)
@@ -525,22 +469,27 @@ public class TestIntList
                 listOdd.add(j);
             }
         }
-        list.removeAll(listEven);
+
+        assertTrue(list.removeAll(listEven));
         assertEquals(list, listOdd);
-        list.removeAll(listOdd);
+
+        assertTrue(list.removeAll(listOdd));
         assertTrue(list.isEmpty());
-        listCopy.removeAll(listOdd);
+
+        assertTrue(listCopy.removeAll(listOdd));
         assertEquals(listCopy, listEven);
-        listCopy.removeAll(listEven);
+
+        assertTrue(listCopy.removeAll(listEven));
         assertTrue(listCopy.isEmpty());
+
+        assertFalse(list.removeAll(listEven));
+        assertFalse(list.removeAll(listOdd));
+        assertFalse(listCopy.removeAll(listEven));
+        assertFalse(listCopy.removeAll(listEven));
     }
 
-    /**
-     * test the retainAll method
-     */
-
-    public void testRetainAll()
-    {
+    @Test
+    public void testRetainAll() {
         IntList list = new IntList();
 
         for (int j = 0; j < 1000; j++)
@@ -562,22 +511,26 @@ public class TestIntList
                 listOdd.add(j);
             }
         }
-        list.retainAll(listOdd);
+        assertTrue(list.retainAll(listOdd));
         assertEquals(list, listOdd);
-        list.retainAll(listEven);
+
+        assertTrue(list.retainAll(listEven));
         assertTrue(list.isEmpty());
-        listCopy.retainAll(listEven);
+
+        assertTrue(listCopy.retainAll(listEven));
         assertEquals(listCopy, listEven);
-        listCopy.retainAll(listOdd);
+
+        assertTrue(listCopy.retainAll(listOdd));
         assertTrue(listCopy.isEmpty());
+
+        assertFalse(list.retainAll(listOdd));
+        assertFalse(list.retainAll(listEven));
+        assertFalse(listCopy.retainAll(listEven));
+        assertFalse(listCopy.retainAll(listOdd));
     }
 
-    /**
-     * test the set method
-     */
-
-    public void testSet()
-    {
+    @Test
+    public void testSet() {
         IntList list = new IntList();
 
         for (int j = 0; j < 1000; j++)
@@ -605,12 +558,8 @@ public class TestIntList
         }
     }
 
-    /**
-     * test the size method
-     */
-
-    public void testSize()
-    {
+    @Test
+    public void testSize() {
         IntList list = new IntList();
 
         for (int j = 0; j < 1000; j++)
@@ -627,12 +576,8 @@ public class TestIntList
         }
     }
 
-    /**
-     * test the toArray method
-     */
-
-    public void testToArray()
-    {
+    @Test
+    public void testToArray() {
         IntList list = new IntList();
 
         for (int j = 0; j < 1000; j++)
@@ -671,17 +616,5 @@ public class TestIntList
         {
             assertEquals(a5[ j ], list.get(j));
         }
-    }
-
-    /**
-     * main method to run the unit tests
-     *
-     * @param unused_args
-     */
-
-    public static void main(String [] unused_args)
-    {
-        System.out.println("Testing util.IntList functionality");
-        junit.textui.TestRunner.run(TestIntList.class);
     }
 }

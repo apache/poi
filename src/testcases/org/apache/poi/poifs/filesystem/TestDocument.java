@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,63 +14,38 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.filesystem;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
-import java.util.*;
-
-import junit.framework.*;
-
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.poifs.property.DocumentProperty;
 import org.apache.poi.poifs.storage.RawDataBlock;
-import org.apache.poi.poifs.storage.SmallDocumentBlock;
+
+import junit.framework.TestCase;
 
 /**
- * Class to test POIFSDocument functionality
- *
- * @author Marc Johnson
+ * Class to test OPOIFSDocument functionality
  */
-
-public class TestDocument
-    extends TestCase
-{
-
-    /**
-     * Constructor TestDocument
-     *
-     * @param name
-     */
-
-    public TestDocument(String name)
-    {
-        super(name);
-    }
+public final class TestDocument extends TestCase {
 
     /**
      * Integration test -- really about all we can do
-     *
-     * @exception IOException
      */
-
-    public void testPOIFSDocument()
-        throws IOException
-    {
+    public void testOPOIFSDocument() throws IOException {
 
         // verify correct number of blocks get created for document
         // that is exact multituple of block size
-        POIFSDocument document;
+        OPOIFSDocument document;
         byte[]        array = new byte[ 4096 ];
 
         for (int j = 0; j < array.length; j++)
         {
             array[ j ] = ( byte ) j;
         }
-        document = new POIFSDocument("foo", new SlowInputStream(new ByteArrayInputStream(array)));
+        document = new OPOIFSDocument("foo", new SlowInputStream(new ByteArrayInputStream(array)));
         checkDocument(document, array);
 
         // verify correct number of blocks get created for document
@@ -81,7 +55,7 @@ public class TestDocument
         {
             array[ j ] = ( byte ) j;
         }
-        document = new POIFSDocument("bar", new ByteArrayInputStream(array));
+        document = new OPOIFSDocument("bar", new ByteArrayInputStream(array));
         checkDocument(document, array);
 
         // verify correct number of blocks get created for document
@@ -91,7 +65,7 @@ public class TestDocument
         {
             array[ j ] = ( byte ) j;
         }
-        document = new POIFSDocument("_bar", new ByteArrayInputStream(array));
+        document = new OPOIFSDocument("_bar", new ByteArrayInputStream(array));
         checkDocument(document, array);
 
         // verify correct number of blocks get created for document
@@ -101,7 +75,7 @@ public class TestDocument
         {
             array[ j ] = ( byte ) j;
         }
-        document = new POIFSDocument("_bar2",
+        document = new OPOIFSDocument("_bar2",
                                      new ByteArrayInputStream(array));
         checkDocument(document, array);
 
@@ -111,7 +85,7 @@ public class TestDocument
         {
             array[ j ] = ( byte ) j;
         }
-        document = new POIFSDocument("foobar",
+        document = new OPOIFSDocument("foobar",
                                      new ByteArrayInputStream(array));
         checkDocument(document, array);
         document.setStartBlock(0x12345678);   // what a big file!!
@@ -158,11 +132,9 @@ public class TestDocument
         }
     }
 
-    private POIFSDocument makeCopy(POIFSDocument document, byte [] input,
-                                   byte [] data)
-        throws IOException
-    {
-        POIFSDocument copy = null;
+    private static OPOIFSDocument makeCopy(OPOIFSDocument document, byte[] input, byte[] data)
+            throws IOException {
+        OPOIFSDocument copy = null;
 
         if (input.length >= 4096)
         {
@@ -181,23 +153,18 @@ public class TestDocument
                 }
                 blocks[ index++ ] = block;
             }
-            copy = new POIFSDocument("test" + input.length, blocks,
+            copy = new OPOIFSDocument("test" + input.length, blocks,
                                      input.length);
         }
         else
         {
-            copy = new POIFSDocument(
-                "test" + input.length,
-                ( SmallDocumentBlock [] ) document.getSmallBlocks(),
-                input.length);
+            copy = new OPOIFSDocument("test"+input.length, document.getSmallBlocks(), input.length);
         }
         return copy;
     }
 
-    private void checkDocument(final POIFSDocument document,
-                               final byte [] input)
-        throws IOException
-    {
+    private static void checkDocument(final OPOIFSDocument document, final byte[] input)
+            throws IOException {
         int big_blocks   = 0;
         int small_blocks = 0;
         int total_output = 0;
@@ -221,11 +188,8 @@ public class TestDocument
                 input)), input);
     }
 
-    private byte [] checkValues(int big_blocks, int small_blocks,
-                                int total_output, POIFSDocument document,
-                                byte [] input)
-        throws IOException
-    {
+    private static byte[] checkValues(int big_blocks, int small_blocks, int total_output,
+            OPOIFSDocument document, byte[] input) throws IOException {
         assertEquals(document, document.getDocumentProperty().getDocument());
         int increment = ( int ) Math.sqrt(input.length);
 
@@ -266,18 +230,5 @@ public class TestDocument
                          output[ j ]);
         }
         return output;
-    }
-
-    /**
-     * main method to run the unit tests
-     *
-     * @param ignored_args
-     */
-
-    public static void main(String [] ignored_args)
-    {
-        System.out
-            .println("Testing org.apache.poi.poifs.filesystem.POIFSDocument");
-        junit.textui.TestRunner.run(TestDocument.class);
     }
 }

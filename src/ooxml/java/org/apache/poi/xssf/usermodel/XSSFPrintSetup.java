@@ -17,25 +17,41 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.POIXMLException;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
+import org.apache.poi.ss.usermodel.PageOrder;
+import org.apache.poi.ss.usermodel.PaperSize;
+import org.apache.poi.ss.usermodel.PrintCellComments;
+import org.apache.poi.ss.usermodel.PrintOrientation;
+import org.apache.poi.ss.usermodel.PrintSetup;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageMargins;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageSetup;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellComments;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STOrientation;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPageOrder;
 
 
 /**
  * Page setup and page margins settings for the worksheet.
  */
 public class XSSFPrintSetup implements PrintSetup {
-
     private CTWorksheet ctWorksheet;
     private CTPageSetup pageSetup;
     private CTPageMargins pageMargins;
 
-
     protected XSSFPrintSetup(CTWorksheet worksheet) {
         this.ctWorksheet = worksheet;
-        this.pageSetup = ctWorksheet.getPageSetup() == null ? ctWorksheet.addNewPageSetup() : ctWorksheet.getPageSetup();
-        this.pageMargins = ctWorksheet.getPageMargins() == null ? ctWorksheet.addNewPageMargins() : ctWorksheet.getPageMargins();
+        
+        if(ctWorksheet.isSetPageSetup()) {
+           this.pageSetup = ctWorksheet.getPageSetup();
+        } else {
+           this.pageSetup = ctWorksheet.addNewPageSetup();
+        }
+        if(ctWorksheet.isSetPageMargins()) {
+           this.pageMargins = ctWorksheet.getPageMargins();
+        } else {
+           this.pageMargins = ctWorksheet.addNewPageMargins();
+        }
     }
 
     /**
@@ -104,6 +120,8 @@ public class XSSFPrintSetup implements PrintSetup {
     public void setLeftToRight(boolean ltor) {
         if (ltor)
             setPageOrder(PageOrder.OVER_THEN_DOWN);
+        else 
+            setPageOrder(PageOrder.DOWN_THEN_OVER);
     }
 
     /**
@@ -114,6 +132,8 @@ public class XSSFPrintSetup implements PrintSetup {
     public void setLandscape(boolean ls) {
         if (ls)
             setOrientation(PrintOrientation.LANDSCAPE);
+        else 
+            setOrientation(PrintOrientation.PORTRAIT);
     }
 
     /**
@@ -285,7 +305,7 @@ public class XSSFPrintSetup implements PrintSetup {
      * @see PaperSize
      */
     public PaperSize getPaperSizeEnum() {
-        return PaperSize.values()[((int) getPaperSize() - 1)];
+        return PaperSize.values()[getPaperSize() - 1];
     }
 
     /**
@@ -344,7 +364,7 @@ public class XSSFPrintSetup implements PrintSetup {
     }
 
     /**
-     * Use the printer’s defaults settings for page setup values and don't use the default values
+     * Use the printer's defaults settings for page setup values and don't use the default values
      * specified in the schema. For example, if dpi is not present or specified in the XML, the
      * application shall not assume 600dpi as specified in the schema as a default and instead
      * shall let the printer specify the default dpi.

@@ -17,133 +17,116 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.hssf.record.CFRuleRecord;
+import org.apache.poi.hssf.record.CFRuleBase;
 import org.apache.poi.hssf.record.cf.PatternFormatting;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.Color;
 
 /**
  * High level representation for Conditional Formatting settings
- * 
- * @author Dmitriy Kumshayev
- *
  */
-public class HSSFPatternFormatting
-{
-	/**  No background */
-	public final static short NO_FILL 				=  PatternFormatting.NO_FILL;
-	/**  Solidly filled */
-	public final static short SOLID_FOREGROUND 		=  PatternFormatting.SOLID_FOREGROUND;
-	/**  Small fine dots */
-	public final static short FINE_DOTS 			=  PatternFormatting.FINE_DOTS;
-	/**  Wide dots */
-	public final static short ALT_BARS 				=  PatternFormatting.ALT_BARS;
-	/**  Sparse dots */
-	public final static short SPARSE_DOTS 			=  PatternFormatting.SPARSE_DOTS;
-	/**  Thick horizontal bands */
-	public final static short THICK_HORZ_BANDS 		=  PatternFormatting.THICK_HORZ_BANDS;
-	/**  Thick vertical bands */
-	public final static short THICK_VERT_BANDS 		=  PatternFormatting.THICK_VERT_BANDS;
-	/**  Thick backward facing diagonals */
-	public final static short THICK_BACKWARD_DIAG 	=  PatternFormatting.THICK_BACKWARD_DIAG;
-	/**  Thick forward facing diagonals */
-	public final static short THICK_FORWARD_DIAG 	=  PatternFormatting.THICK_FORWARD_DIAG;
-	/**  Large spots */
-	public final static short BIG_SPOTS 			=  PatternFormatting.BIG_SPOTS;
-	/**  Brick-like layout */
-	public final static short BRICKS 				=  PatternFormatting.BRICKS;
-	/**  Thin horizontal bands */
-	public final static short THIN_HORZ_BANDS 		=  PatternFormatting.THIN_HORZ_BANDS;
-	/**  Thin vertical bands */
-	public final static short THIN_VERT_BANDS 		=  PatternFormatting.THIN_VERT_BANDS;
-	/**  Thin backward diagonal */
-	public final static short THIN_BACKWARD_DIAG 	=  PatternFormatting.THIN_BACKWARD_DIAG;
-	/**  Thin forward diagonal */
-	public final static short THIN_FORWARD_DIAG 	=  PatternFormatting.THIN_FORWARD_DIAG;
-	/**  Squares */
-	public final static short SQUARES 				=  PatternFormatting.SQUARES;
-	/**  Diamonds */
-	public final static short DIAMONDS 				=  PatternFormatting.DIAMONDS;
-	/**  Less Dots */
-	public final static short LESS_DOTS 			=  PatternFormatting.LESS_DOTS;
-	/**  Least Dots */
-	public final static short LEAST_DOTS 			=  PatternFormatting.LEAST_DOTS;
+public class HSSFPatternFormatting implements org.apache.poi.ss.usermodel.PatternFormatting {
+    private final HSSFWorkbook workbook;
+    private final CFRuleBase cfRuleRecord;
+    private final PatternFormatting patternFormatting;
 
-	private final CFRuleRecord cfRuleRecord;
-	private final PatternFormatting patternFormatting;
-	
-	protected HSSFPatternFormatting(CFRuleRecord cfRuleRecord)
-	{
-		this.cfRuleRecord = cfRuleRecord; 
-		this.patternFormatting = cfRuleRecord.getPatternFormatting();
-	}
+    protected HSSFPatternFormatting(CFRuleBase cfRuleRecord, HSSFWorkbook workbook) {
+        this.workbook = workbook;
+        this.cfRuleRecord = cfRuleRecord; 
+        this.patternFormatting = cfRuleRecord.getPatternFormatting();
+    }
 
-	protected PatternFormatting getPatternFormattingBlock()
-	{
-		return patternFormatting;
-	}
+    protected PatternFormatting getPatternFormattingBlock()
+    {
+        return patternFormatting;
+    }
 
-	/**
-	 * @return
-	 * @see org.apache.poi.hssf.record.cf.PatternFormatting#getFillBackgroundColor()
-	 */
-	public short getFillBackgroundColor()
-	{
-		return (short)patternFormatting.getFillBackgroundColor();
-	}
+    public HSSFColor getFillBackgroundColorColor() {
+        return workbook.getCustomPalette().getColor(getFillBackgroundColor());
+    }
 
-	/**
-	 * @return
-	 * @see org.apache.poi.hssf.record.cf.PatternFormatting#getFillForegroundColor()
-	 */
-	public short getFillForegroundColor()
-	{
-		return (short)patternFormatting.getFillForegroundColor();
-	}
+    public HSSFColor getFillForegroundColorColor() {
+        return workbook.getCustomPalette().getColor(getFillForegroundColor());
+    }
 
-	/**
-	 * @return
-	 * @see org.apache.poi.hssf.record.cf.PatternFormatting#getFillPattern()
-	 */
-	public short getFillPattern()
-	{
-		return (short)patternFormatting.getFillPattern();
-	}
+    /**
+     * @see org.apache.poi.hssf.record.cf.PatternFormatting#getFillBackgroundColor()
+     */
+    public short getFillBackgroundColor()
+    {
+        return (short)patternFormatting.getFillBackgroundColor();
+    }
 
-	/**
-	 * @param bg
-	 * @see org.apache.poi.hssf.record.cf.PatternFormatting#setFillBackgroundColor(short)
-	 */
-	public void setFillBackgroundColor(short bg)
-	{
-		patternFormatting.setFillBackgroundColor(bg);
-		if( bg != 0)
-		{
-			cfRuleRecord.setPatternBackgroundColorModified(true);
-		}
-	}
+    /**
+     * @see org.apache.poi.hssf.record.cf.PatternFormatting#getFillForegroundColor()
+     */
+    public short getFillForegroundColor()
+    {
+        return (short)patternFormatting.getFillForegroundColor();
+    }
 
-	/**
-	 * @param fg
-	 * @see org.apache.poi.hssf.record.cf.PatternFormatting#setFillForegroundColor(short)
-	 */
-	public void setFillForegroundColor(short fg)
-	{
-		patternFormatting.setFillForegroundColor(fg);
-		if( fg != 0)
-		{
-			cfRuleRecord.setPatternColorModified(true);
-		}
-	}
+    /**
+     * @see org.apache.poi.hssf.record.cf.PatternFormatting#getFillPattern()
+     */
+    public short getFillPattern()
+    {
+        return (short)patternFormatting.getFillPattern();
+    }
 
-	/**
-	 * @param fp
-	 * @see org.apache.poi.hssf.record.cf.PatternFormatting#setFillPattern(short)
-	 */
-	public void setFillPattern(short fp)
-	{
-		patternFormatting.setFillPattern(fp);
-		if( fp != 0)
-		{
-			cfRuleRecord.setPatternStyleModified(true);
-		}
-	}
+    public void setFillBackgroundColor(Color bg) {
+        HSSFColor hcolor = HSSFColor.toHSSFColor(bg);
+        if (hcolor == null) {
+            setFillBackgroundColor((short)0);
+        } else {
+            setFillBackgroundColor(hcolor.getIndex());
+        }
+    }
+
+    public void setFillForegroundColor(Color fg) {
+        HSSFColor hcolor = HSSFColor.toHSSFColor(fg);
+        if (hcolor == null) {
+            setFillForegroundColor((short)0);
+        } else {
+            setFillForegroundColor(hcolor.getIndex());
+        }
+    }
+
+    /**
+     * @param bg
+     * @see org.apache.poi.hssf.record.cf.PatternFormatting#setFillBackgroundColor(int)
+     */
+    public void setFillBackgroundColor(short bg)
+    {
+        patternFormatting.setFillBackgroundColor(bg);
+        if( bg != 0)
+        {
+            cfRuleRecord.setPatternBackgroundColorModified(true);
+        }
+    }
+
+    /**
+     * @param fg
+     * @see org.apache.poi.hssf.record.cf.PatternFormatting#setFillForegroundColor(int)
+     */
+    public void setFillForegroundColor(short fg)
+    {
+        patternFormatting.setFillForegroundColor(fg);
+        if( fg != 0)
+        {
+            cfRuleRecord.setPatternColorModified(true);
+        }
+    }
+
+    /**
+     * @param fp
+     * @see org.apache.poi.hssf.record.cf.PatternFormatting#setFillPattern(int)
+     */
+    public void setFillPattern(short fp)
+    {
+        patternFormatting.setFillPattern(fp);
+        if( fp != 0)
+        {
+            cfRuleRecord.setPatternStyleModified(true);
+        }
+    }
 }

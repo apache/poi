@@ -22,23 +22,19 @@ import org.apache.poi.hpsf.basic.AllPOIHPSFBasicTests;
 import org.apache.poi.hssf.HSSFTests;
 import org.apache.poi.poifs.AllPOIFSTests;
 import org.apache.poi.util.AllPOIUtilTests;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 /**
- * Root Test Suite for entire POI project.  (Includes all sub-packages of org.apache.poi)<br/>
- * 
- * @author Josh Micich
+ * Root Test Suite for entire POI project.  (Includes all sub-packages of org.apache.poi)<br>
  */
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+    TestPOIDocumentMain.class,
+    AllPOIDDFTests.class,
+    AllPOIHPSFBasicTests.class,
+    HSSFTests.class,
+    AllPOIFSTests.class,
+    AllPOIUtilTests.class
+})
 public final class AllPOITests {
-    public static Test suite() {
-        TestSuite result = new TestSuite("Tests for org.apache.poi");
-        result.addTestSuite(TestPOIDocumentMain.class);
-        result.addTest(AllPOIDDFTests.suite());
-        result.addTest(AllPOIHPSFBasicTests.suite());
-        result.addTest(HSSFTests.suite());
-        result.addTest(AllPOIFSTests.suite());
-        result.addTest(AllPOIUtilTests.suite());
-        return result;
-    }
 }

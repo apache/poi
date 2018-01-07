@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,17 +14,24 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.POILogger;
-
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
+
+import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
+import org.apache.poi.hslf.exceptions.HSLFException;
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogger;
 
 /**
  * General holder for PersistPtrFullBlock and PersistPtrIncrementalBlock
@@ -39,36 +45,42 @@ import java.util.Hashtable;
  * @author Nick Burch
  */
 
-public class PersistPtrHolder extends PositionDependentRecordAtom
+public final class PersistPtrHolder extends PositionDependentRecordAtom
 {
-	private byte[] _header;
+
+	//arbitrarily selected; may need to increase
+	private static final int MAX_RECORD_LENGTH = 100_000;
+
+	private final byte[] _header;
 	private byte[] _ptrData; // Will need to update this once we allow updates to _slideLocations
 	private long _type;
-	
-	/** 
+
+	/**
 	 * Holds the lookup for slides to their position on disk.
 	 * You always need to check the most recent PersistPtrHolder
 	 *  that knows about a given slide to find the right location
 	 */
-	private Hashtable _slideLocations;
-	/**
-	 * Holds the lookup from slide id to where their offset is
-	 *  held inside _ptrData. Used when writing out, and updating
-	 *  the positions of the slides
-	 */
-	private Hashtable _slideOffsetDataLocation;
+	private Map<Integer,Integer> _slideLocations;
+
+	private static final BitField persistIdFld = new BitField(0X000FFFFF);
+	private static final BitField cntPersistFld  = new BitField(0XFFF00000);
+	
+    /**
+     * Return the value we were given at creation, be it 6001 or 6002
+     */
+    @Override
+    public long getRecordType() { return _type; }
 
 	/**
 	 * Get the list of slides that this PersistPtrHolder knows about.
-	 * (They will be the keys in the hashtable for looking up the positions
+	 * (They will be the keys in the map for looking up the positions
 	 *  of these slides)
 	 */
 	public int[] getKnownSlideIDs() {
 		int[] ids = new int[_slideLocations.size()];
-		Enumeration e = _slideLocations.keys();
-		for(int i=0; i<ids.length; i++) {
-			Integer id = (Integer)e.nextElement();
-			ids[i] = id.intValue();
+		int i = 0;
+		for (Integer slideId : _slideLocations.keySet()) {
+		    ids[i++] = slideId;
 		}
 		return ids;
 	}
@@ -77,52 +89,11 @@ public class PersistPtrHolder extends PositionDependentRecordAtom
 	 * Get the lookup from slide numbers to byte offsets, for the slides
 	 *  known about by this PersistPtrHolder.
 	 */
-	public Hashtable getSlideLocationsLookup() {
-		return _slideLocations;
+	public Map<Integer,Integer> getSlideLocationsLookup() {
+		return Collections.unmodifiableMap(_slideLocations);
 	}
+	
 	/**
-	 * Get the lookup from slide numbers to their offsets inside
-	 *  _ptrData, used when adding or moving slides. 
-	 */
-	public Hashtable getSlideOffsetDataLocationsLookup() {
-		return _slideOffsetDataLocation;
-	}
-
-	/**
-	 * Adds a new slide, notes or similar, to be looked up by this.
-	 * For now, won't look for the most optimal on disk representation.
-	 */
-	public void addSlideLookup(int slideID, int posOnDisk) {
-		// PtrData grows by 8 bytes:
-		//  4 bytes for the new info block
-		//  4 bytes for the slide offset
-		byte[] newPtrData = new byte[_ptrData.length + 8];
-		System.arraycopy(_ptrData,0,newPtrData,0,_ptrData.length);
-
-		// Add to the slide location lookup hash
-		_slideLocations.put(new Integer(slideID), new Integer(posOnDisk));
-		// Add to the ptrData offset lookup hash
-		_slideOffsetDataLocation.put(new Integer(slideID), 
-				new Integer(_ptrData.length + 4));
-
-		// Build the info block
-		// First 20 bits = offset number = slide ID
-		// Remaining 12 bits = offset count = 1
-		int infoBlock = slideID;
-		infoBlock += (1 << 20);
-
-		// Write out the data for this
-		LittleEndian.putInt(newPtrData,newPtrData.length-8,infoBlock);
-		LittleEndian.putInt(newPtrData,newPtrData.length-4,posOnDisk);
-
-		// Save the new ptr data
-		_ptrData = newPtrData;
-
-		// Update the atom header
-		LittleEndian.putInt(_header,4,newPtrData.length);
-	}
-
-	/** 
 	 * Create a new holder for a PersistPtr record
 	 */
 	protected PersistPtrHolder(byte[] source, int start, int len) {
@@ -142,31 +113,28 @@ public class PersistPtrHolder extends PositionDependentRecordAtom
 		//      base number for these entries
 		//   count * 32 bit offsets
 		// Repeat as many times as you have data
-		_slideLocations = new Hashtable();
-		_slideOffsetDataLocation = new Hashtable();
-		_ptrData = new byte[len-8];
+		_slideLocations = new HashMap<>();
+		_ptrData = IOUtils.safelyAllocate(len-8, MAX_RECORD_LENGTH);
 		System.arraycopy(source,start+8,_ptrData,0,_ptrData.length);
 
 		int pos = 0;
 		while(pos < _ptrData.length) {
-			// Grab the info field
-			long info = LittleEndian.getUInt(_ptrData,pos);
+		    // Grab the info field
+			int info = LittleEndian.getInt(_ptrData,pos);
 
 			// First 20 bits = offset number
 			// Remaining 12 bits = offset count
-			int offset_count = (int)(info >> 20);
-			int offset_no = (int)(info - (offset_count << 20));
-//System.out.println("Info is " + info + ", count is " + offset_count + ", number is " + offset_no);
-
+            int offset_no = persistIdFld.getValue(info);
+			int offset_count = cntPersistFld.getValue(info);
+			
 			// Wind on by the 4 byte info header
 			pos += 4;
 
 			// Grab the offsets for each of the sheets
 			for(int i=0; i<offset_count; i++) {
 				int sheet_no = offset_no + i;
-				long sheet_offset = LittleEndian.getUInt(_ptrData,pos);
-				_slideLocations.put(new Integer(sheet_no), new Integer((int)sheet_offset));
-				_slideOffsetDataLocation.put(new Integer(sheet_no), new Integer(pos));
+				int sheet_offset = (int)LittleEndian.getUInt(_ptrData,pos);
+				_slideLocations.put(sheet_no, sheet_offset);
 
 				// Wind on by 4 bytes per sheet found
 				pos += 4;
@@ -174,48 +142,110 @@ public class PersistPtrHolder extends PositionDependentRecordAtom
 		}
 	}
 
-	/**
-	 * Return the value we were given at creation, be it 6001 or 6002
-	 */
-	public long getRecordType() { return _type; }
+    /**
+     *  remove all slide references
+     *  
+     *  Convenience method provided, for easier reviewing of invocations
+     */
+    public void clear() {
+        _slideLocations.clear();
+    }
+    
+    /**
+     * Adds a new slide, notes or similar, to be looked up by this.
+     */
+    public void addSlideLookup(int slideID, int posOnDisk) {
+        if (_slideLocations.containsKey(slideID)) {
+            throw new CorruptPowerPointFileException("A record with persistId "+slideID+" already exists.");
+        }
+
+        _slideLocations.put(slideID, posOnDisk);
+    }
 
 	/**
 	 * At write-out time, update the references to the sheets to their
-	 *  new positions 
+	 *  new positions
 	 */
-	public void updateOtherRecordReferences(Hashtable oldToNewReferencesLookup) {
-		int[] slideIDs = getKnownSlideIDs();
-
+	@Override
+	public void updateOtherRecordReferences(Map<Integer,Integer> oldToNewReferencesLookup) {
 		// Loop over all the slides we know about
 		// Find where they used to live, and where they now live
-		// Then, update the right bit of _ptrData with their new location
-		for(int i=0; i<slideIDs.length; i++) {
-			Integer id = new Integer(slideIDs[i]);
-			Integer oldPos = (Integer)_slideLocations.get(id);
-			Integer newPos = (Integer)oldToNewReferencesLookup.get(oldPos);
+	    for (Entry<Integer,Integer> me : _slideLocations.entrySet()) {
+	        Integer oldPos = me.getValue();
+	        Integer newPos = oldToNewReferencesLookup.get(oldPos);
 
-			if(newPos == null) {
-				logger.log(POILogger.WARN, "Couldn't find the new location of the \"slide\" with id " + id + " that used to be at " + oldPos);
-				logger.log(POILogger.WARN, "Not updating the position of it, you probably won't be able to find it any more (if you ever could!)");
-				newPos = oldPos;
-			}
-
-			// Write out the new location
-			Integer dataOffset = (Integer)_slideOffsetDataLocation.get(id);
-			LittleEndian.putInt(_ptrData,dataOffset.intValue(),newPos.intValue());
-
-			// Update our hashtable
-			_slideLocations.remove(id);
-			_slideLocations.put(id,newPos);
-		}
+            if (newPos == null) {
+                Integer id = me.getKey();
+                logger.log(POILogger.WARN, "Couldn't find the new location of the \"slide\" with id " + id + " that used to be at " + oldPos);
+                logger.log(POILogger.WARN, "Not updating the position of it, you probably won't be able to find it any more (if you ever could!)");
+            } else {
+                me.setValue(newPos);
+            }
+	    }
 	}
 
+	private void normalizePersistDirectory() {
+        TreeMap<Integer,Integer> orderedSlideLocations = new TreeMap<>(_slideLocations);
+        
+        @SuppressWarnings("resource")
+        BufAccessBAOS bos = new BufAccessBAOS(); // NOSONAR
+        byte intbuf[] = new byte[4];
+        int lastPersistEntry = -1;
+        int lastSlideId = -1;
+        for (Entry<Integer,Integer> me : orderedSlideLocations.entrySet()) {
+            int nextSlideId = me.getKey();
+            int offset = me.getValue();
+            try {
+                // Building the info block
+                // First 20 bits = offset number = slide ID (persistIdFld, i.e. first slide ID of a continuous group)
+                // Remaining 12 bits = offset count = 1 (cntPersistFld, i.e. continuous entries in a group)
+                
+                if (lastSlideId+1 == nextSlideId) {
+                    // use existing PersistDirectoryEntry, need to increase entry count
+                    assert(lastPersistEntry != -1);
+                    int infoBlock = LittleEndian.getInt(bos.getBuf(), lastPersistEntry);
+                    int entryCnt = cntPersistFld.getValue(infoBlock);
+                    infoBlock = cntPersistFld.setValue(infoBlock, entryCnt+1);
+                    LittleEndian.putInt(bos.getBuf(), lastPersistEntry, infoBlock);
+                } else {
+                    // start new PersistDirectoryEntry
+                    lastPersistEntry = bos.size();
+                    int infoBlock = persistIdFld.setValue(0, nextSlideId);
+                    infoBlock = cntPersistFld.setValue(infoBlock, 1);
+                    LittleEndian.putInt(intbuf, 0, infoBlock);
+                    bos.write(intbuf);
+                }
+                // Add to the ptrData offset lookup hash
+                LittleEndian.putInt(intbuf, 0, offset);
+                bos.write(intbuf);
+                lastSlideId = nextSlideId;
+            } catch (IOException e) {
+                // ByteArrayOutputStream is very unlikely throwing a IO exception (maybe because of OOM ...)
+                throw new HSLFException(e);
+            }
+        }
+        
+        // Save the new ptr data
+        _ptrData = bos.toByteArray();
+
+        // Update the atom header
+        LittleEndian.putInt(_header,4,bos.size());
+	}
+	
 	/**
 	 * Write the contents of the record back, so it can be written
 	 *  to disk
 	 */
-	public void writeOut(OutputStream out) throws IOException {
+	@Override
+    public void writeOut(OutputStream out) throws IOException {
+	    normalizePersistDirectory();
 		out.write(_header);
 		out.write(_ptrData);
 	}
+	
+    private static class BufAccessBAOS extends ByteArrayOutputStream {
+        public byte[] getBuf() {
+            return buf;
+        }
+    }
 }

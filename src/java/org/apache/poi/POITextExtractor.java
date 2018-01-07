@@ -16,36 +16,24 @@
 ==================================================================== */
 package org.apache.poi;
 
+import java.io.Closeable;
+import java.io.IOException;
+
 /**
  * Common Parent for Text Extractors
  *  of POI Documents. 
  * You will typically find the implementation of
  *  a given format's text extractor under
  *  org.apache.poi.[format].extractor .
+ *  
  * @see org.apache.poi.hssf.extractor.ExcelExtractor
  * @see org.apache.poi.hslf.extractor.PowerPointExtractor
  * @see org.apache.poi.hdgf.extractor.VisioTextExtractor
  * @see org.apache.poi.hwpf.extractor.WordExtractor
  */
-public abstract class POITextExtractor {
-	/** The POIDocument that's open */
-	protected POIDocument document;
-
-	/**
-	 * Creates a new text extractor for the given document
-	 */
-	public POITextExtractor(POIDocument document) {
-		this.document = document;
-	}
-	/**
-	 * Creates a new text extractor, using the same
-	 *  document as another text extractor. Normally
-	 *  only used by properties extractors.
-	 */
-	protected POITextExtractor(POITextExtractor otherExtractor) {
-		this.document = otherExtractor.document;
-	}
-	
+public abstract class POITextExtractor implements Closeable {
+    private Closeable fsToClose;
+    
 	/**
 	 * Retrieves all the text from the document.
 	 * How cells, paragraphs etc are separated in the text
@@ -59,6 +47,31 @@ public abstract class POITextExtractor {
 	 * Returns another text extractor, which is able to
 	 *  output the textual content of the document
 	 *  metadata / properties, such as author and title.
+	 * 
+	 * @return the metadata and text extractor
 	 */
 	public abstract POITextExtractor getMetadataTextExtractor();
+
+	/**
+	 * Used to ensure file handle cleanup.
+	 * 
+	 * @param fs filesystem to close
+	 */
+	public void setFilesystem(Closeable fs) {
+	    fsToClose = fs;
+	}
+	
+	/**
+	 * Allows to free resources of the Extractor as soon as
+	 * it is not needed any more. This may include closing
+	 * open file handles and freeing memory.
+	 * 
+	 * The Extractor cannot be used after close has been called.
+	 */
+	@Override
+    public void close() throws IOException {
+		if(fsToClose != null) {
+		    fsToClose.close();
+		}
+	}
 }

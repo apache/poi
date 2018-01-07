@@ -20,8 +20,8 @@ package org.apache.poi.dev;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.Reader;
+import java.io.IOException;
+import java.util.Locale;
 import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -34,6 +34,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.poi.util.XMLHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -66,18 +67,20 @@ public class RecordGenerator {
 
     private static void generateRecords(String defintionsDir, String recordStyleDir, String destSrcPathDir, String testSrcPathDir)
              throws Exception {
-        File definitionsFile = new File(defintionsDir);
+        File definitionsFiles[] = new File(defintionsDir).listFiles();
+        if (definitionsFiles == null) {
+            System.err.println(defintionsDir+" is not a directory.");
+            return;
+        }
 
-        for (int i = 0; i < definitionsFile.listFiles().length; i++) {
-            File file = definitionsFile.listFiles()[i];
+        for (File file : definitionsFiles) {
             if (file.isFile() &&
                     (file.getName().endsWith("_record.xml") ||
                     file.getName().endsWith("_type.xml")
                     )
                     ) {
                 // Get record name and package
-                DocumentBuilderFactory factory =
-                        DocumentBuilderFactory.newInstance();
+                DocumentBuilderFactory factory = XMLHelper.getDocumentBuilderFactory();
                 DocumentBuilder builder = factory.newDocumentBuilder();
                 Document document = builder.parse(file);
                 Element record = document.getDocumentElement();
@@ -90,18 +93,27 @@ public class RecordGenerator {
                 // Generate record
                 String destinationPath = destSrcPathDir + "/" + packageName;
                 File destinationPathFile = new File(destinationPath);
-                destinationPathFile.mkdirs();
+                if(!destinationPathFile.mkdirs()) {
+                    throw new IOException("Could not create directory " + destinationPathFile);
+                } else {
+					System.out.println("Created destination directory: " + destinationPath);
+                }
                 String destinationFilepath = destinationPath + "/" + recordName + suffix + ".java";
-                transform(file, new File(destinationFilepath), new File(recordStyleDir + "/" + extendstg.toLowerCase() + ".xsl"));
+                transform(file, new File(destinationFilepath), 
+                          new File(recordStyleDir + "/" + extendstg.toLowerCase(Locale.ROOT) + ".xsl"));
                 System.out.println("Generated " + suffix + ": " + destinationFilepath);
 
                 // Generate test (if not already generated)
                 destinationPath = testSrcPathDir + "/" + packageName;
                 destinationPathFile = new File(destinationPath);
-                destinationPathFile.mkdirs();
+                if(!destinationPathFile.mkdirs()) {
+                    throw new IOException("Could not create directory " + destinationPathFile);
+                } else {
+                    System.out.println("Created destination directory: " + destinationPath);
+                }
                 destinationFilepath = destinationPath + "/Test" + recordName + suffix + ".java";
-                if (new File(destinationFilepath).exists() == false) {
-                    String temp = (recordStyleDir + "/" + extendstg.toLowerCase() + "_test.xsl");
+                if (!new File(destinationFilepath).exists()) {
+                    String temp = (recordStyleDir + "/" + extendstg.toLowerCase(Locale.ROOT) + "_test.xsl");
                     transform(file, new File(destinationFilepath), new File(temp));
                     System.out.println("Generated test: " + destinationFilepath);
                 } else {
@@ -126,8 +138,7 @@ public class RecordGenerator {
     private static void transform(final File in, final File out, final File xslt)
     throws FileNotFoundException, TransformerException
     {
-        final Reader r = new FileReader(xslt);
-        final StreamSource ss = new StreamSource(r);
+        final StreamSource ss = new StreamSource(xslt);
         final TransformerFactory tf = TransformerFactory.newInstance();
         final Transformer t;
         try

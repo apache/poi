@@ -19,72 +19,105 @@ package org.apache.poi.hssf.usermodel;
 
 import java.util.Iterator;
 
-import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.LabelSSTRecord;
-import org.apache.poi.hssf.record.UnicodeString;
+import org.apache.poi.hssf.record.common.UnicodeString;
+import org.apache.poi.hssf.record.common.UnicodeString.FormatRun;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.RichTextString;
 /**
  * Rich text unicode string.  These strings can have fonts applied to
  * arbitary parts of the string.
  *
- * @author Glen Stampoultzis (glens at apache.org)
- * @author Jason Height (jheight at apache.org)
+ * <p>
+ * Note, that in certain cases creating too many HSSFRichTextString cells may cause Excel 2003 and lower to crash
+ * when changing the color of the cells and then saving the Excel file. Compare two snippets that produce equivalent output:
+ *
+ * <p><blockquote><pre>
+ *  HSSFCell hssfCell = row.createCell(idx);
+ *  //rich text consists of two runs
+ *  HSSFRichTextString richString = new HSSFRichTextString( "Hello, World!" );
+ *  richString.applyFont( 0, 6, font1 );
+ *  richString.applyFont( 6, 13, font2 );
+ *  hssfCell.setCellValue( richString );
+ * </pre></blockquote>
+ *
+ * and
+ *
+ * <p><blockquote><pre>
+ *  //create a cell style and assign the first font to it
+ *  HSSFCellStyle style = workbook.createCellStyle();
+ *  style.setFont(font1);
+ *
+ *  HSSFCell hssfCell = row.createCell(idx);
+ *  hssfCell.setCellStyle(style);
+ *
+ *  //rich text consists of one run overriding the cell style
+ *  HSSFRichTextString richString = new HSSFRichTextString( "Hello, World!" );
+ *  richString.applyFont( 6, 13, font2 );
+ *  hssfCell.setCellValue( richString );
+ * </pre></blockquote><p>
+ *
+ * Excel always uses the latter approach: for a reach text containing N runs Excel saves the font of the first run in the cell's
+ * style and subsequent N-1 runs override this font.
+ *
+ * <p> For more information regarding this behavior please consult Bugzilla 47543:
+ *
+ * <a href="https://issues.apache.org/bugzilla/show_bug.cgi?id=47543">
+ * https://issues.apache.org/bugzilla/show_bug.cgi?id=47543</a>
  */
-public class HSSFRichTextString
-        implements Comparable, RichTextString
-{
+public final class HSSFRichTextString implements Comparable<HSSFRichTextString>, RichTextString {
     /** Place holder for indicating that NO_FONT has been applied here */
     public static final short NO_FONT = 0;
 
-    private UnicodeString string;
-    private Workbook book;
-    private LabelSSTRecord record;
+    private UnicodeString _string;
+    private InternalWorkbook _book;
+    private LabelSSTRecord _record;
 
     public HSSFRichTextString()
     {
         this("");
     }
 
-    public HSSFRichTextString( String string )
-    {
-        if (string == null)
-          string = "";
-        this.string = new UnicodeString(string);
+    public HSSFRichTextString(String string) {
+        if (string == null) {
+            _string = new UnicodeString("");
+        } else {
+            _string = new UnicodeString(string);
+        }
     }
 
-    HSSFRichTextString(Workbook book, LabelSSTRecord record) {
+    HSSFRichTextString(InternalWorkbook book, LabelSSTRecord record) {
       setWorkbookReferences(book, record);
-      
-      this.string = book.getSSTString(record.getSSTIndex());
+
+      _string = book.getSSTString(record.getSSTIndex());
     }
-    
+
     /** This must be called to setup the internal work book references whenever
      * a RichTextString is added to a cell
-     */    
-    void setWorkbookReferences(Workbook book, LabelSSTRecord record) {
-      this.book = book;
-      this.record = record;      
+     */
+    void setWorkbookReferences(InternalWorkbook book, LabelSSTRecord record) {
+      _book = book;
+      _record = record;
     }
-    
+
     /** Called whenever the unicode string is modified. When it is modified
      *  we need to create a new SST index, so that other LabelSSTRecords will not
      *  be affected by changes that we make to this string.
      */
     private UnicodeString cloneStringIfRequired() {
-      if (book == null)
-        return string;
-      UnicodeString s = (UnicodeString)string.clone();
-      return s;
+      if (_book == null)
+        return _string;
+        return (UnicodeString)_string.clone();
     }
 
     private void addToSSTIfRequired() {
-      if (book != null) {
-        int index = book.addSSTString(string);
-        record.setSSTIndex(index);
+      if (_book != null) {
+        int index = _book.addSSTString(_string);
+        _record.setSSTIndex(index);
         //The act of adding the string to the SST record may have meant that
-        //a extsing string was returned for the index, so update our local version
-        string = book.getSSTString(index);
+        //an existing string was returned for the index, so update our local version
+        _string = _book.getSSTString(index);
       }
     }
 
@@ -109,25 +142,25 @@ public class HSSFRichTextString
         //the range is completed
         short currentFont = NO_FONT;
         if (endIndex != length()) {
-          currentFont = this.getFontAtIndex(startIndex);
+          currentFont = this.getFontAtIndex(endIndex);
         }
 
         //Need to clear the current formatting between the startIndex and endIndex
-        string = cloneStringIfRequired();
-        Iterator formatting = string.formatIterator();
+        _string = cloneStringIfRequired();
+        Iterator<FormatRun> formatting = _string.formatIterator();
         if (formatting != null) {
           while (formatting.hasNext()) {
-            UnicodeString.FormatRun r = (UnicodeString.FormatRun)formatting.next();
+            UnicodeString.FormatRun r = formatting.next();
             if ((r.getCharacterPos() >= startIndex) && (r.getCharacterPos() < endIndex))
               formatting.remove();
           }
         }
 
 
-        string.addFormatRun(new UnicodeString.FormatRun((short)startIndex, fontIndex));
+        _string.addFormatRun(new UnicodeString.FormatRun((short)startIndex, fontIndex));
         if (endIndex != length())
-          string.addFormatRun(new UnicodeString.FormatRun((short)endIndex, currentFont));
-          
+          _string.addFormatRun(new UnicodeString.FormatRun((short)endIndex, currentFont));
+
         addToSSTIfRequired();
     }
 
@@ -140,7 +173,7 @@ public class HSSFRichTextString
      */
     public void applyFont(int startIndex, int endIndex, Font font)
     {
-        applyFont(startIndex, endIndex, ((HSSFFont) font).getIndex());
+        applyFont(startIndex, endIndex, font.getIndex());
     }
 
     /**
@@ -149,15 +182,15 @@ public class HSSFRichTextString
      */
     public void applyFont(Font font)
     {
-        applyFont(0, string.getCharCount(), font);
+        applyFont(0, _string.getCharCount(), font);
     }
 
     /**
      * Removes any formatting that may have been applied to the string.
      */
     public void clearFormatting() {
-      string = cloneStringIfRequired();
-      string.clearFormatting();
+      _string = cloneStringIfRequired();
+      _string.clearFormatting();
       addToSSTIfRequired();
     }
 
@@ -166,41 +199,40 @@ public class HSSFRichTextString
      */
     public String getString()
     {
-        return string.getString();
+        return _string.getString();
     }
 
-    /** 
-     * Used internally by the HSSFCell to get the internal 
+    /**
+     * Used internally by the HSSFCell to get the internal
      * string value.
      * Will ensure the string is not shared
      */
     UnicodeString getUnicodeString() {
       return cloneStringIfRequired();
     }
-    
+
     /**
-     * Returns the raw, probably shared Unicode String. 
-     * Used when tweaking the styles, eg updating font 
+     * Returns the raw, probably shared Unicode String.
+     * Used when tweaking the styles, eg updating font
      *  positions.
      * Changes to this string may well effect
-     *  other RichTextStrings too! 
+     *  other RichTextStrings too!
      */
     UnicodeString getRawUnicodeString() {
-    	return string;
+    	return _string;
     }
 
     /** Used internally by the HSSFCell to set the internal string value*/
     void setUnicodeString(UnicodeString str) {
-      this.string = str;
+      this._string = str;
     }
-    
+
 
     /**
      * @return  the number of characters in the text.
      */
-    public int length()
-    {
-        return string.getCharCount();
+    public int length() {
+        return _string.getCharCount();
     }
 
     /**
@@ -213,17 +245,19 @@ public class HSSFRichTextString
      */
     public short getFontAtIndex( int index )
     {
-      int size = string.getFormatRunCount();
+      int size = _string.getFormatRunCount();
       UnicodeString.FormatRun currentRun = null;
       for (int i=0;i<size;i++) {
-        UnicodeString.FormatRun r = string.getFormatRun(i);
-        if (r.getCharacterPos() > index)
-          break;
-        else currentRun = r;
+        UnicodeString.FormatRun r = _string.getFormatRun(i);
+        if (r.getCharacterPos() > index) {
+            break;
+        }
+        currentRun = r;
       }
-      if (currentRun == null)
-        return NO_FONT;
-      else return currentRun.getFontIndex();
+      if (currentRun == null) {
+          return NO_FONT;
+      }
+      return currentRun.getFontIndex();
     }
 
     /**
@@ -234,7 +268,7 @@ public class HSSFRichTextString
      */
     public int numFormattingRuns()
     {
-        return string.getFormatRunCount();
+        return _string.getFormatRunCount();
     }
 
     /**
@@ -244,7 +278,7 @@ public class HSSFRichTextString
      */
     public int getIndexOfFormattingRun(int index)
     {
-        UnicodeString.FormatRun r = string.getFormatRun(index);
+        UnicodeString.FormatRun r = _string.getFormatRun(index);
         return r.getCharacterPos();
     }
 
@@ -256,33 +290,39 @@ public class HSSFRichTextString
      */
     public short getFontOfFormattingRun(int index)
     {
-      UnicodeString.FormatRun r = string.getFormatRun(index);
+      UnicodeString.FormatRun r = _string.getFormatRun(index);
       return r.getFontIndex();
     }
 
     /**
      * Compares one rich text string to another.
      */
-    public int compareTo( Object o )
-    {
-       HSSFRichTextString r = (HSSFRichTextString)o;
-       return string.compareTo(r.string);
+    public int compareTo(HSSFRichTextString r) {
+       return _string.compareTo(r._string);
     }
 
+    @Override
     public boolean equals(Object o) {
       if (o instanceof HSSFRichTextString) {
-        return string.equals(((HSSFRichTextString)o).string);
+        return _string.equals(((HSSFRichTextString)o)._string);
       }
       return false;
-    
+
     }
 
+    @Override
+    public int hashCode() {
+        assert false : "hashCode not designed";
+        return 42; // any arbitrary constant will do
+    }
+
+    
     /**
      * @return  the plain text representation of this string.
      */
     public String toString()
     {
-        return string.toString();
+        return _string.toString();
     }
 
     /**
@@ -292,6 +332,6 @@ public class HSSFRichTextString
      */
     public void applyFont( short fontIndex )
     {
-        applyFont(0, string.getCharCount(), fontIndex);
+        applyFont(0, _string.getCharCount(), fontIndex);
     }
 }

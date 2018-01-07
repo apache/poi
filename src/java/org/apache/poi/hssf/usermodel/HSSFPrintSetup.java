@@ -26,6 +26,7 @@ import org.apache.poi.ss.usermodel.PrintSetup;
  * <P>
  * Paper size constants have been added for the ones I have access
  * to.  They follow as:<br>
+ *  public static final short PRINTER_DEFAULT_PAPERSIZE   = 0;<br>
  *  public static final short LETTER_PAPERSIZE 	          = 1;<br>
  *  public static final short LEGAL_PAPERSIZE 		  = 5;<br>
  *  public static final short EXECUTIVE_PAPERSIZE 	  = 7;<br>
@@ -35,8 +36,7 @@ import org.apache.poi.ss.usermodel.PrintSetup;
  *  public static final short ENVELOPE_DL_PAPERSIZE 	  = 27;<br>
  *  public static final short ENVELOPE_CS_PAPERSIZE 	  = 28;<br>
  *  public static final short ENVELOPE_MONARCH_PAPERSIZE  = 37;<br>
- * <P>
- * @author Shawn Laubach (slaubach at apache dot org) */
+ */
 public class HSSFPrintSetup implements PrintSetup {    
     PrintSetupRecord printSetupRecord;
     

@@ -17,48 +17,50 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.util.GregorianCalendar;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.model.Sheet;
+import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.record.BOFRecord;
 import org.apache.poi.hssf.record.EOFRecord;
+import org.apache.poi.hssf.record.RecordBase;
+import org.apache.poi.util.LocaleUtil;
+import org.junit.Test;
 
 /**
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class TestReadWriteChart extends TestCase {
+public final class TestReadWriteChart {
 
     /**
      * In the presence of a chart we need to make sure BOF/EOF records still exist.
      */
-    public void testBOFandEOFRecords() {
+    @Test
+    public void testBOFandEOFRecords() throws Exception {
         HSSFWorkbook workbook  = HSSFTestDataSamples.openSampleWorkbook("SimpleChart.xls");
         HSSFSheet       sheet     = workbook.getSheetAt(0);
         HSSFRow         firstRow  = sheet.getRow(0);
         HSSFCell        firstCell = firstRow.getCell(0);
 
         //System.out.println("first assertion for date");
-        assertEquals(new GregorianCalendar(2000, 0, 1, 10, 51, 2).getTime(),
-                     HSSFDateUtil
-                         .getJavaDate(firstCell.getNumericCellValue(), false));
+        Calendar calExp = LocaleUtil.getLocaleCalendar(2000, 0, 1, 10, 51, 2);
+        Date dateAct = HSSFDateUtil.getJavaDate(firstCell.getNumericCellValue(), false);
+        assertEquals(calExp.getTime(), dateAct);
         HSSFRow  row  = sheet.createRow(15);
         HSSFCell cell = row.createCell(1);
 
         cell.setCellValue(22);
-        Sheet newSheet = workbook.getSheetAt(0).getSheet();
-        List  records  = newSheet.getRecords();
+        InternalSheet newSheet = workbook.getSheetAt(0).getSheet();
+        List<RecordBase> records  = newSheet.getRecords();
 
-        //System.out.println("BOF Assertion");
         assertTrue(records.get(0) instanceof BOFRecord);
-        //System.out.println("EOF Assertion");
         assertTrue(records.get(records.size() - 1) instanceof EOFRecord);
-    }
-    
-    public static void main(String [] args) {
-        junit.textui.TestRunner.run(TestReadWriteChart.class);
+        
+        workbook.close();
     }
 }

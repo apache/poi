@@ -17,6 +17,8 @@
 
 package org.apache.poi.hpsf.basic;
 
+import org.apache.poi.POIDataSamples;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.util.logging.Logger;
@@ -25,22 +27,12 @@ import java.util.logging.Logger;
  * <p>Processes a test method for all OLE2 files in the HPSF test data
  * directory. Well, this class does not check whether a file is an OLE2 file but
  * rather whether its name begins with "Test".</p>
- * 
- * @author Rainer Klute <a
- *         href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
- * @since 2006-02-11
- * @version $Id$
  */
-public class AllDataFilesTester
-{
+public class AllDataFilesTester {
+    private static final POIDataSamples _samples = POIDataSamples.getHPSFInstance();
 
     /**
      * <p>Interface specifying how to run a test on a single file.</p>
-     *
-     * @author Rainer Klute <a
-     * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
-     * @since 2006-02-11
-     * @version $Id$
      */
     public interface TestTask
     {
@@ -61,19 +53,18 @@ public class AllDataFilesTester
      */
     public void runTests(final TestTask task) throws Throwable
     {
-        final String dataDirName = System.getProperty("HPSF.testdata.path");
-        final File dataDir = new File(dataDirName);
+        POIDataSamples _samples = POIDataSamples.getHPSFInstance();
+        final File dataDir = _samples.getFile("");
         final File[] docs = dataDir.listFiles(new FileFilter()
         {
+            @Override
             public boolean accept(final File file)
             {
                 return file.isFile() && file.getName().startsWith("Test");
             }});
-        for (int i = 0; i < docs.length; i++)
-        {
-            final File doc = docs[i];
+        for (final File doc : docs) {
             final Logger logger = Logger.getLogger(getClass().getName());
-            logger.info("Processing file \" " + doc.toString() + "\".");
+            logger.info("Processing file \" " + doc + "\".");
 
             /* Execute the test task. */
             task.runTest(doc);

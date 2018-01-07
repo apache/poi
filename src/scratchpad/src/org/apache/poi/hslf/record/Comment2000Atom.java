@@ -14,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 
@@ -23,6 +22,7 @@ import java.io.OutputStream;
 import java.util.Date;
 
 import org.apache.poi.hslf.util.SystemTimeUtils;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -31,8 +31,12 @@ import org.apache.poi.util.LittleEndian;
  * @author Daniel Noll
  */
 
-public class Comment2000Atom extends RecordAtom
+public final class Comment2000Atom extends RecordAtom
 {
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
+
     /**
      * Record header.
      */
@@ -52,7 +56,7 @@ public class Comment2000Atom extends RecordAtom
 
         LittleEndian.putShort(_header, 2, (short)getRecordType());
         LittleEndian.putInt(_header, 4, _data.length);
-        
+
         // It is fine for the other values to be zero
     }
 
@@ -67,9 +71,9 @@ public class Comment2000Atom extends RecordAtom
         // Get the header.
         _header = new byte[8];
         System.arraycopy(source,start,_header,0,8);
-        
+
         // Get the record data.
-        _data = new byte[len-8];
+        _data = IOUtils.safelyAllocate(len-8, MAX_RECORD_LENGTH);
         System.arraycopy(source,start+8,_data,0,len-8);
     }
 

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,59 +14,38 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.storage;
 
-import java.io.*;
+import static org.junit.Assert.assertEquals;
 
-import java.util.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-import junit.framework.*;
-
+import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.property.Property;
+import org.junit.Test;
 
 /**
  * Class to test PropertyBlock functionality
- *
- * @author Marc Johnson
  */
+public final class TestPropertyBlock {
 
-public class TestPropertyBlock
-    extends TestCase
-{
-
-    /**
-     * Constructor TestPropertyBlock
-     *
-     * @param name
-     */
-
-    public TestPropertyBlock(String name)
-    {
-        super(name);
-    }
-
-    /**
-     * Test constructing PropertyBlocks
-     *
-     * @exception IOException
-     */
-
-    public void testCreatePropertyBlocks()
-        throws IOException
-    {
+    @Test
+    public void testCreatePropertyBlocks() throws Exception {
 
         // test with 0 properties
-        List            properties = new ArrayList();
+        List<Property> properties = new ArrayList<>();
         BlockWritable[] blocks     =
-            PropertyBlock.createPropertyBlockArray(properties);
+            PropertyBlock.createPropertyBlockArray(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS,properties);
 
         assertEquals(0, blocks.length);
 
         // test with 1 property
         properties.add(new LocalProperty("Root Entry"));
-        blocks = PropertyBlock.createPropertyBlockArray(properties);
+        blocks = PropertyBlock.createPropertyBlockArray(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS,properties);
         assertEquals(1, blocks.length);
         byte[] testblock = new byte[ 512 ];
 
@@ -91,7 +69,7 @@ public class TestPropertyBlock
         // test with 3 properties
         properties.add(new LocalProperty("workbook"));
         properties.add(new LocalProperty("summary"));
-        blocks = PropertyBlock.createPropertyBlockArray(properties);
+        blocks = PropertyBlock.createPropertyBlockArray(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS,properties);
         assertEquals(1, blocks.length);
         testblock[ 0x0080 ] = ( byte ) 'w';
         testblock[ 0x0082 ] = ( byte ) 'o';
@@ -114,7 +92,7 @@ public class TestPropertyBlock
 
         // test with 4 properties
         properties.add(new LocalProperty("wintery"));
-        blocks = PropertyBlock.createPropertyBlockArray(properties);
+        blocks = PropertyBlock.createPropertyBlockArray(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS,properties);
         assertEquals(1, blocks.length);
         testblock[ 0x0180 ] = ( byte ) 'w';
         testblock[ 0x0182 ] = ( byte ) 'i';
@@ -128,7 +106,7 @@ public class TestPropertyBlock
 
         // test with 5 properties
         properties.add(new LocalProperty("foo"));
-        blocks = PropertyBlock.createPropertyBlockArray(properties);
+        blocks = PropertyBlock.createPropertyBlockArray(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS,properties);
         assertEquals(2, blocks.length);
         testblock = new byte[ 1024 ];
         for (int j = 0; j < 8; j++)
@@ -178,7 +156,7 @@ public class TestPropertyBlock
         verifyCorrect(blocks, testblock);
     }
 
-    private void setDefaultBlock(byte [] testblock, int j)
+    private static void setDefaultBlock(byte [] testblock, int j)
     {
         int base  = j * 128;
         int index = 0;
@@ -204,36 +182,20 @@ public class TestPropertyBlock
         }
     }
 
-    private void verifyCorrect(BlockWritable [] blocks, byte [] testblock)
-        throws IOException
-    {
+    private static void verifyCorrect(BlockWritable[] blocks, byte[] testblock)
+    throws IOException {
         ByteArrayOutputStream stream = new ByteArrayOutputStream(512
                                            * blocks.length);
 
-        for (int j = 0; j < blocks.length; j++)
-        {
-            blocks[ j ].writeBlocks(stream);
+        for (BlockWritable b : blocks) {
+			b.writeBlocks(stream);
         }
         byte[] output = stream.toByteArray();
 
         assertEquals(testblock.length, output.length);
-        for (int j = 0; j < testblock.length; j++)
-        {
+        for (int j = 0; j < testblock.length; j++) {
             assertEquals("mismatch at offset " + j, testblock[ j ],
                          output[ j ]);
         }
-    }
-
-    /**
-     * main method to run the unit tests
-     *
-     * @param ignored_args
-     */
-
-    public static void main(String [] ignored_args)
-    {
-        System.out
-            .println("Testing org.apache.poi.poifs.storage.PropertyBlock");
-        junit.textui.TestRunner.run(TestPropertyBlock.class);
     }
 }

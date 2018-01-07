@@ -16,27 +16,40 @@
 ==================================================================== */
 package org.apache.poi;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Iterator;
+
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackagePartName;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
+import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+
 /**
  * Represents a descriptor of a OOXML relation.
- *
- * @author Yegor Kozlov
  */
 public abstract class POIXMLRelation {
+
+    private static final POILogger log = POILogFactory.getLogger(POIXMLRelation.class);
 
     /**
      * Describes the content stored in a part.
      */
-    protected String _type;
+    private String _type;
 
     /**
      * The kind of connection between a source part and a target part in a package.
      */
-    protected String _relation;
+    private String _relation;
 
     /**
      * The path component of a pack URI.
      */
-    protected String _defaultName;
+    private String _defaultName;
 
     /**
      * Defines what object is used to construct instances of this relationship
@@ -100,23 +113,58 @@ public abstract class POIXMLRelation {
     }
 
     /**
-     * Returns the filename for the nth one of these,
-     *  eg /xl/comments4.xml
+     * Returns the filename for the nth one of these, e.g. /xl/comments4.xml
+     * 
+     * @param index the suffix for the document type
+     * @return the filename including the suffix
      */
     public String getFileName(int index) {
-        if(_defaultName.indexOf("#") == -1) {
+        if(! _defaultName.contains("#")) {
             // Generic filename in all cases
             return getDefaultFileName();
         }
         return _defaultName.replace("#", Integer.toString(index));
     }
-
+    
     /**
-     * Return type of the obejct used to construct instances of this relationship
+     * Returns the index of the filename within the package for the given part.
+     *  e.g. 4 for /xl/comments4.xml
+     *  
+     * @param part the part to read the suffix from
+     * @return the suffix
+     */
+    public Integer getFileNameIndex(POIXMLDocumentPart part) {
+        String regex = _defaultName.replace("#", "(\\d+)");
+        return Integer.valueOf(part.getPackagePart().getPartName().getName().replaceAll(regex, "$1"));
+    }
+    
+    /**
+     * Return type of the object used to construct instances of this relationship
      *
      * @return the class of the object used to construct instances of this relation
      */
     public Class<? extends POIXMLDocumentPart> getRelationClass(){
         return _cls;
+    }
+
+    /**
+     *  Fetches the InputStream to read the contents, based
+     *  of the specified core part, for which we are defined
+     *  as a suitable relationship
+     *
+     *  @since 3.16-beta3
+     */
+    public InputStream getContents(PackagePart corePart) throws IOException, InvalidFormatException {
+        PackageRelationshipCollection prc =
+                corePart.getRelationshipsByType(getRelation());
+        Iterator<PackageRelationship> it = prc.iterator();
+        if(it.hasNext()) {
+            PackageRelationship rel = it.next();
+            PackagePartName relName = PackagingURIHelper.createPartName(rel.getTargetURI());
+            PackagePart part = corePart.getPackage().getPart(relName);
+            return part.getInputStream();
+        }
+        log.log(POILogger.WARN, "No part " + getDefaultFileName() + " found");
+        return null;
     }
 }

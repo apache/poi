@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.util;
 
@@ -29,7 +27,7 @@ import java.io.ByteArrayOutputStream;
  * @author Nick Burch
  */
 
-public class MutableByteArrayOutputStream extends ByteArrayOutputStream
+public final class MutableByteArrayOutputStream extends ByteArrayOutputStream
 {
 	/** Return how many bytes we've stuffed in so far */
 	public int getBytesWritten() { return -1; }

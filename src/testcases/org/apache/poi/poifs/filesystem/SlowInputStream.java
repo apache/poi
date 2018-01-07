@@ -28,12 +28,13 @@ import java.util.Random;
  */
 public class SlowInputStream extends FilterInputStream
 {
-    private Random r = new Random(0);
+    private final Random r = new Random(0);
     
     public SlowInputStream(InputStream in) {
         super(in);
     }
 
+    @Override
     public int read(byte[] b, int off, int len) throws IOException {
         return super.read(b, off, r.nextInt(len) + 1);
     }

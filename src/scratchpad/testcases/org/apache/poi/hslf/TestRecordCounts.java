@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,14 +14,15 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf;
 
 
 import junit.framework.TestCase;
+
 import org.apache.poi.hslf.record.*;
+import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
+import org.apache.poi.POIDataSamples;
 
 /**
  * Tests that HSLFSlideShow returns the right numbers of key records when
@@ -30,23 +30,22 @@ import org.apache.poi.hslf.record.*;
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestRecordCounts extends TestCase {
+public final class TestRecordCounts extends TestCase {
 	// HSLFSlideShow primed on the test data
-	private HSLFSlideShow ss;
+	private final HSLFSlideShowImpl ss;
 
-    public TestRecordCounts() throws Exception {
-		String dirname = System.getProperty("HSLF.testdata.path");
-		String filename = dirname + "/basic_test_ppt_file.ppt";
-		ss = new HSLFSlideShow(filename);
-    }
+	public TestRecordCounts() throws Exception {
+        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+		ss = new HSLFSlideShowImpl(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
+	}
 
-    public void testSheetsCount() throws Exception {
+	public void testSheetsCount() {
 		// Top level
 		Record[] r = ss.getRecords();
 
 		int count = 0;
-		for(int i=0; i<r.length; i++) {
-			if(r[i] instanceof Slide) {
+		for (final Record rec : r) {
+			if(rec instanceof Slide) {
 				count++;
 			}
 		}
@@ -54,14 +53,13 @@ public class TestRecordCounts extends TestCase {
 		assertEquals(3,count);
 	}
 
-    public void testNotesCount() throws Exception {
+	public void testNotesCount() {
 		// Top level
 		Record[] r = ss.getRecords();
 
 		int count = 0;
-		for(int i=0; i<r.length; i++) {
-			if(r[i] instanceof Notes &&
-			r[i].getRecordType() == 1008l) {
+		for (final Record rec : r) {
+			if (rec instanceof Notes && rec.getRecordType() == 1008l) {
 				count++;
 			}
 		}
@@ -69,15 +67,14 @@ public class TestRecordCounts extends TestCase {
 		assertEquals(3,count);
 	}
 
-    public void testSlideListWithTextCount() throws Exception {
+	public void testSlideListWithTextCount() {
 		// Second level
 		Record[] rt = ss.getRecords();
 		Record[] r = rt[0].getChildRecords();
 
 		int count = 0;
-		for(int i=0; i<r.length; i++) {
-			if(r[i] instanceof SlideListWithText &&
-			r[i].getRecordType() == 4080l) {
+		for (final Record rec : r) {
+			if (rec instanceof SlideListWithText && rec.getRecordType() == 4080l) {
 				count++;
 			}
 		}

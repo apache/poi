@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,10 +14,11 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hssf.usermodel.examples;
 
 import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 
 import java.io.*;
 
@@ -27,30 +27,28 @@ import java.io.*;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class OfficeDrawing
-{
-    public static void main(String[] args)
-        throws IOException
-    {
+public class OfficeDrawing {
+    public static void main(String[] args) throws IOException {
         // Create the workbook and sheets.
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet1 = wb.createSheet("new sheet");
-        HSSFSheet sheet2 = wb.createSheet("second sheet");
-        HSSFSheet sheet3 = wb.createSheet("third sheet");
-        HSSFSheet sheet4 = wb.createSheet("fourth sheet");
-        HSSFSheet sheet5 = wb.createSheet("fifth sheet");
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet1 = wb.createSheet("new sheet");
+            HSSFSheet sheet2 = wb.createSheet("second sheet");
+            HSSFSheet sheet3 = wb.createSheet("third sheet");
+            HSSFSheet sheet4 = wb.createSheet("fourth sheet");
+            HSSFSheet sheet5 = wb.createSheet("fifth sheet");
 
-        // Draw stuff in them
-        drawSheet1( sheet1 );
-        drawSheet2( sheet2 );
-        drawSheet3( sheet3 );
-        drawSheet4( sheet4, wb );
-        drawSheet5( sheet5, wb );
+            // Draw stuff in them
+            drawSheet1(sheet1);
+            drawSheet2(sheet2);
+            drawSheet3(sheet3);
+            drawSheet4(sheet4, wb);
+            drawSheet5(sheet5, wb);
 
-        // Write the file out.
-        FileOutputStream fileOut = new FileOutputStream("workbook.xls");
-        wb.write(fileOut);
-        fileOut.close();
+            // Write the file out.
+            try (FileOutputStream fileOut = new FileOutputStream("workbook.xls")) {
+                wb.write(fileOut);
+            }
+        }
     }
 
     private static void drawSheet1( HSSFSheet sheet1 )
@@ -58,8 +56,8 @@ public class OfficeDrawing
         // Create a row and size one of the cells reasonably large.
         HSSFRow row = sheet1.createRow(2);
         row.setHeight((short) 2800);
-        row.createCell( (short)1 );
-        sheet1.setColumnWidth((short) 2, (short) 9000);
+        row.createCell(1);
+        sheet1.setColumnWidth(2, 9000);
 
         // Create the drawing patriarch.  This is the top level container for
         // all shapes.
@@ -80,9 +78,9 @@ public class OfficeDrawing
     {
         // Create a row and size one of the cells reasonably large.
         HSSFRow row = sheet2.createRow(2);
-        row.createCell( (short)1 );
+        row.createCell(1);
         row.setHeightInPoints(240);
-        sheet2.setColumnWidth((short) 2, (short) 9000);
+        sheet2.setColumnWidth(2, 9000);
 
         // Create the drawing patriarch.  This is the top level container for
         // all shapes. This will clear out any existing shapes for that sheet.
@@ -97,8 +95,8 @@ public class OfficeDrawing
         // Create a row and size one of the cells reasonably large
         HSSFRow row = sheet3.createRow(2);
         row.setHeightInPoints(140);
-        row.createCell( (short)1 );
-        sheet3.setColumnWidth((short) 2, (short) 9000);
+        row.createCell(1);
+        sheet3.setColumnWidth(2, 9000);
 
         // Create the drawing patriarch.  This is the top level container for
         // all shapes. This will clear out any existing shapes for that sheet.
@@ -156,19 +154,19 @@ public class OfficeDrawing
 
         HSSFClientAnchor anchor;
         anchor = new HSSFClientAnchor(0,0,0,255,(short)2,2,(short)4,7);
-        anchor.setAnchorType( 2 );
+        anchor.setAnchorType( AnchorType.MOVE_DONT_RESIZE );
         patriarch.createPicture(anchor, loadPicture( "src/resources/logos/logoKarmokar4.png", wb ));
 
         anchor = new HSSFClientAnchor(0,0,0,255,(short)4,2,(short)5,7);
-        anchor.setAnchorType( 2 );
+        anchor.setAnchorType( AnchorType.MOVE_DONT_RESIZE );
         patriarch.createPicture(anchor, loadPicture( "src/resources/logos/logoKarmokar4edited.png", wb ));
 
         anchor = new HSSFClientAnchor(0,0,1023,255,(short)6,2,(short)8,7);
-        anchor.setAnchorType( 2 );
+        anchor.setAnchorType( AnchorType.MOVE_DONT_RESIZE );
         HSSFPicture picture = patriarch.createPicture(anchor, loadPicture( "src/resources/logos/logoKarmokar4s.png", wb ));
         //Reset the image to the original size.
         picture.resize();
-        picture.setLineStyle( picture.LINESTYLE_DASHDOTGEL );
+        picture.setLineStyle( HSSFShape.LINESTYLE_DASHDOTGEL );
 
     }
 

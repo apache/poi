@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,13 +14,11 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hwpf.usermodel;
 
 
-import java.util.ArrayList;
-
-public class TableIterator
+public final class TableIterator
 {
   Range _range;
   int _index;
@@ -57,7 +54,6 @@ public class TableIterator
   public Table next()
   {
     int numParagraphs = _range.numParagraphs();
-    int numRows = 0;
     int startIndex = _index;
     int endIndex = _index;
 
@@ -70,7 +66,9 @@ public class TableIterator
         break;
       }
     }
-    return new Table(startIndex, endIndex, _range, _levelNum);
+        return new Table( _range.getParagraph( startIndex ).getStartOffset(),
+                _range.getParagraph( endIndex - 1 ).getEndOffset(), _range,
+                _levelNum );
   }
 
 }

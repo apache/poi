@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -16,77 +15,69 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hwpf.model;
 
-import java.io.*;
-import java.util.*;
-import junit.framework.*;
+import static org.junit.Assert.assertEquals;
 
-import org.apache.poi.hwpf.*;
-import org.apache.poi.hwpf.model.*;
-import org.apache.poi.util.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
+
+import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.HWPFTestDataSamples;
+import org.junit.Test;
 
 /**
  * Unit test for {@link SavedByTable} and {@link SavedByEntry}.
- *
- * @author Daniel Noll
  */
-public class TestSavedByTable
-  extends TestCase
-{
-  /** Data dir */
-  private File testFile = new File(new File(System.getProperty("HWPF.testdata.path")), "saved-by-table.doc");
+public final class TestSavedByTable {
 
-  /** The expected entries in the test document. */
-  private List expected = Arrays.asList(new Object[] {
-    new SavedByEntry("cic22", "C:\\DOCUME~1\\phamill\\LOCALS~1\\Temp\\AutoRecovery save of Iraq - security.asd"),
-    new SavedByEntry("cic22", "C:\\DOCUME~1\\phamill\\LOCALS~1\\Temp\\AutoRecovery save of Iraq - security.asd"),
-    new SavedByEntry("cic22", "C:\\DOCUME~1\\phamill\\LOCALS~1\\Temp\\AutoRecovery save of Iraq - security.asd"),
-    new SavedByEntry("JPratt", "C:\\TEMP\\Iraq - security.doc"),
-    new SavedByEntry("JPratt", "A:\\Iraq - security.doc"),
-    new SavedByEntry("ablackshaw", "C:\\ABlackshaw\\Iraq - security.doc"),
-    new SavedByEntry("ablackshaw", "C:\\ABlackshaw\\A;Iraq - security.doc"),
-    new SavedByEntry("ablackshaw", "A:\\Iraq - security.doc"),
-    new SavedByEntry("MKhan", "C:\\TEMP\\Iraq - security.doc"),
-    new SavedByEntry("MKhan", "C:\\WINNT\\Profiles\\mkhan\\Desktop\\Iraq.doc")
-  });
+    /** The expected entries in the test document. */
+    private final List<SavedByEntry> expected = Arrays.asList(
+        new SavedByEntry("cic22", "C:\\DOCUME~1\\phamill\\LOCALS~1\\Temp\\AutoRecovery save of Iraq - security.asd"),
+        new SavedByEntry("cic22", "C:\\DOCUME~1\\phamill\\LOCALS~1\\Temp\\AutoRecovery save of Iraq - security.asd"),
+        new SavedByEntry("cic22", "C:\\DOCUME~1\\phamill\\LOCALS~1\\Temp\\AutoRecovery save of Iraq - security.asd"),
+        new SavedByEntry("JPratt", "C:\\TEMP\\Iraq - security.doc"),
+        new SavedByEntry("JPratt", "A:\\Iraq - security.doc"),
+        new SavedByEntry("ablackshaw", "C:\\ABlackshaw\\Iraq - security.doc"),
+        new SavedByEntry("ablackshaw", "C:\\ABlackshaw\\A;Iraq - security.doc"),
+        new SavedByEntry("ablackshaw", "A:\\Iraq - security.doc"),
+        new SavedByEntry("MKhan", "C:\\TEMP\\Iraq - security.doc"),
+        new SavedByEntry("MKhan", "C:\\WINNT\\Profiles\\mkhan\\Desktop\\Iraq.doc")
+    );
 
-  /**
-   * Tests reading in the entries, comparing them against the expected entries.
-   * Then tests writing the document out and reading the entries yet again.
-   *
-   * @throws Exception if an unexpected error occurs.
-   */
-  public void testReadWrite()
-    throws Exception
-  {
-    // This document is widely available on the internet as "blair.doc".
-    // I tried stripping the content and saving the document but my version
-    // of Word (from Office XP) strips this table out.
-    InputStream stream = new BufferedInputStream(new FileInputStream(testFile));
-    HWPFDocument doc;
-    try
-    {
-      doc = new HWPFDocument(stream);
+    /**
+     * Tests reading in the entries, comparing them against the expected
+     * entries. Then tests writing the document out and reading the entries yet
+     * again.
+     *
+     * @throws Exception if an unexpected error occurs.
+     */
+    @Test
+    public void testReadWrite() throws IOException {
+        // This document is widely available on the internet as "blair.doc".
+        // I tried stripping the content and saving the document but my version
+        // of Word (from Office XP) strips this table out.
+        HWPFDocument doc = HWPFTestDataSamples.openSampleFile("saved-by-table.doc");
+
+        // Check what we just read.
+        assertEquals("List of saved-by entries was not as expected", expected,
+                doc.getSavedByTable().getEntries());
+
+        // Now write the entire document out, and read it back in...
+        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+        doc.write(byteStream);
+        InputStream copyStream = new ByteArrayInputStream(byteStream.toByteArray());
+        doc.close();
+        HWPFDocument copy = new HWPFDocument(copyStream);
+
+        // And check again.
+        assertEquals("List of saved-by entries was incorrect after writing",
+                expected, copy.getSavedByTable().getEntries());
+        
+        copy.close();
     }
-    finally
-    {
-      stream.close();
-    }
-
-    // Check what we just read.
-    assertEquals("List of saved-by entries was not as expected",
-                 expected, doc.getSavedByTable().getEntries());
-
-    // Now write the entire document out, and read it back in...
-    ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-    doc.write(byteStream);
-    InputStream copyStream = new ByteArrayInputStream(byteStream.toByteArray());
-    HWPFDocument copy = new HWPFDocument(copyStream);
-
-    // And check again.
-    assertEquals("List of saved-by entries was incorrect after writing",
-                 expected, copy.getSavedByTable().getEntries());
-  }
 }

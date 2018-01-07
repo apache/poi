@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -16,12 +15,16 @@
    limitations under the License.
 ==================================================================== */
 
-
-
 package org.apache.poi.hslf.dev;
 
-import org.apache.poi.hslf.*;
-import org.apache.poi.hslf.record.*;
+import java.io.IOException;
+
+import org.apache.poi.hslf.record.Notes;
+import org.apache.poi.hslf.record.NotesAtom;
+import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.Slide;
+import org.apache.poi.hslf.record.SlideAtom;
+import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 
 
 /**
@@ -30,14 +33,14 @@ import org.apache.poi.hslf.record.*;
  *  what they are all about. Useful for checking the matching between
  *  Slides, Master Slides and Notes
  */
-public class SlideAndNotesAtomListing {
-	public static void main(String[] args) throws Exception {
+public final class SlideAndNotesAtomListing {
+	public static void main(String[] args) throws IOException {
 		if(args.length < 1) {
 			System.err.println("Need to give a filename");
 			System.exit(1);
 		}
 
-		HSLFSlideShow ss = new HSLFSlideShow(args[0]);
+		HSLFSlideShowImpl ss = new HSLFSlideShowImpl(args[0]);
 		System.out.println("");
 
 		// Find either Slides or Notes
@@ -62,5 +65,7 @@ public class SlideAndNotesAtomListing {
 				System.out.println("");
 			}
 		}
+		
+		ss.close();
 	}
 }

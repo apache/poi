@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -21,7 +20,7 @@ package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title:        Extended Format Record
@@ -34,153 +33,153 @@ import org.apache.poi.util.LittleEndian;
  *               places this is better than others.
  *<P>
  *
- * REFERENCE:  PG 426 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @version 2.0-pre
+ * REFERENCE:  PG 426 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
+
+ * @since 2.0-pre
  */
 
-public class ExtendedFormatRecord
-    extends Record
+public final class ExtendedFormatRecord
+    extends StandardRecord
 {
-    public final static short     sid                 = 0xE0;
+    public static final short     sid                 = 0xE0;
 
     // null constant
-    public final static short     NULL                = (short)0xfff0;
+    public static final short     NULL                = (short)0xfff0;
 
     // xf type
-    public final static short     XF_STYLE            = 1;
-    public final static short     XF_CELL             = 0;
+    public static final short     XF_STYLE            = 1;
+    public static final short     XF_CELL             = 0;
 
     // borders
-    public final static short     NONE                = 0x0;
-    public final static short     THIN                = 0x1;
-    public final static short     MEDIUM              = 0x2;
-    public final static short     DASHED              = 0x3;
-    public final static short     DOTTED              = 0x4;
-    public final static short     THICK               = 0x5;
-    public final static short     DOUBLE              = 0x6;
-    public final static short     HAIR                = 0x7;
-    public final static short     MEDIUM_DASHED       = 0x8;
-    public final static short     DASH_DOT            = 0x9;
-    public final static short     MEDIUM_DASH_DOT     = 0xA;
-    public final static short     DASH_DOT_DOT        = 0xB;
-    public final static short     MEDIUM_DASH_DOT_DOT = 0xC;
-    public final static short     SLANTED_DASH_DOT    = 0xD;
+    public static final short     NONE                = 0x0;
+    public static final short     THIN                = 0x1;
+    public static final short     MEDIUM              = 0x2;
+    public static final short     DASHED              = 0x3;
+    public static final short     DOTTED              = 0x4;
+    public static final short     THICK               = 0x5;
+    public static final short     DOUBLE              = 0x6;
+    public static final short     HAIR                = 0x7;
+    public static final short     MEDIUM_DASHED       = 0x8;
+    public static final short     DASH_DOT            = 0x9;
+    public static final short     MEDIUM_DASH_DOT     = 0xA;
+    public static final short     DASH_DOT_DOT        = 0xB;
+    public static final short     MEDIUM_DASH_DOT_DOT = 0xC;
+    public static final short     SLANTED_DASH_DOT    = 0xD;
 
     // alignment
-    public final static short     GENERAL             = 0x0;
-    public final static short     LEFT                = 0x1;
-    public final static short     CENTER              = 0x2;
-    public final static short     RIGHT               = 0x3;
-    public final static short     FILL                = 0x4;
-    public final static short     JUSTIFY             = 0x5;
-    public final static short     CENTER_SELECTION    = 0x6;
+    public static final short     GENERAL             = 0x0;
+    public static final short     LEFT                = 0x1;
+    public static final short     CENTER              = 0x2;
+    public static final short     RIGHT               = 0x3;
+    public static final short     FILL                = 0x4;
+    public static final short     JUSTIFY             = 0x5;
+    public static final short     CENTER_SELECTION    = 0x6;
 
     // vertical alignment
-    public final static short     VERTICAL_TOP        = 0x0;
-    public final static short     VERTICAL_CENTER     = 0x1;
-    public final static short     VERTICAL_BOTTOM     = 0x2;
-    public final static short     VERTICAL_JUSTIFY    = 0x3;
+    public static final short     VERTICAL_TOP        = 0x0;
+    public static final short     VERTICAL_CENTER     = 0x1;
+    public static final short     VERTICAL_BOTTOM     = 0x2;
+    public static final short     VERTICAL_JUSTIFY    = 0x3;
 
     // fill
-    public final static short     NO_FILL             = 0  ;
-    public final static short     SOLID_FILL          = 1  ;
-    public final static short     FINE_DOTS           = 2  ;
-    public final static short     ALT_BARS            = 3  ;
-    public final static short     SPARSE_DOTS         = 4  ;
-    public final static short     THICK_HORZ_BANDS    = 5  ;
-    public final static short     THICK_VERT_BANDS    = 6  ;
-    public final static short     THICK_BACKWARD_DIAG = 7  ;
-    public final static short     THICK_FORWARD_DIAG  = 8  ;
-    public final static short     BIG_SPOTS           = 9  ;
-    public final static short     BRICKS              = 10 ;
-    public final static short     THIN_HORZ_BANDS     = 11 ;
-    public final static short     THIN_VERT_BANDS     = 12 ;
-    public final static short     THIN_BACKWARD_DIAG  = 13 ;
-    public final static short     THIN_FORWARD_DIAG   = 14 ;
-    public final static short     SQUARES             = 15 ;
-    public final static short     DIAMONDS            = 16 ;
+    public static final short     NO_FILL             = 0  ;
+    public static final short     SOLID_FILL          = 1  ;
+    public static final short     FINE_DOTS           = 2  ;
+    public static final short     ALT_BARS            = 3  ;
+    public static final short     SPARSE_DOTS         = 4  ;
+    public static final short     THICK_HORZ_BANDS    = 5  ;
+    public static final short     THICK_VERT_BANDS    = 6  ;
+    public static final short     THICK_BACKWARD_DIAG = 7  ;
+    public static final short     THICK_FORWARD_DIAG  = 8  ;
+    public static final short     BIG_SPOTS           = 9  ;
+    public static final short     BRICKS              = 10 ;
+    public static final short     THIN_HORZ_BANDS     = 11 ;
+    public static final short     THIN_VERT_BANDS     = 12 ;
+    public static final short     THIN_BACKWARD_DIAG  = 13 ;
+    public static final short     THIN_FORWARD_DIAG   = 14 ;
+    public static final short     SQUARES             = 15 ;
+    public static final short     DIAMONDS            = 16 ;
 
     // fields in BOTH style and Cell XF records
     private short                 field_1_font_index;             // not bit-mapped
     private short                 field_2_format_index;           // not bit-mapped
 
     // field_3_cell_options bit map
-    static final private BitField _locked       = BitFieldFactory.getInstance(0x0001);
-    static final private BitField _hidden       = BitFieldFactory.getInstance(0x0002);
-    static final private BitField _xf_type      = BitFieldFactory.getInstance(0x0004);
-    static final private BitField _123_prefix   = BitFieldFactory.getInstance(0x0008);
-    static final private BitField _parent_index = BitFieldFactory.getInstance(0xFFF0);
+    private static final BitField _locked       = BitFieldFactory.getInstance(0x0001);
+    private static final BitField _hidden       = BitFieldFactory.getInstance(0x0002);
+    private static final BitField _xf_type      = BitFieldFactory.getInstance(0x0004);
+    private static final BitField _123_prefix   = BitFieldFactory.getInstance(0x0008);
+    private static final BitField _parent_index = BitFieldFactory.getInstance(0xFFF0);
     private short                 field_3_cell_options;
 
     // field_4_alignment_options bit map
-    static final private BitField _alignment          = BitFieldFactory.getInstance(0x0007);
-    static final private BitField _wrap_text          = BitFieldFactory.getInstance(0x0008);
-    static final private BitField _vertical_alignment = BitFieldFactory.getInstance(0x0070);
-    static final private BitField _justify_last       = BitFieldFactory.getInstance(0x0080);
-    static final private BitField _rotation           = BitFieldFactory.getInstance(0xFF00);
+    private static final BitField _alignment          = BitFieldFactory.getInstance(0x0007);
+    private static final BitField _wrap_text          = BitFieldFactory.getInstance(0x0008);
+    private static final BitField _vertical_alignment = BitFieldFactory.getInstance(0x0070);
+    private static final BitField _justify_last       = BitFieldFactory.getInstance(0x0080);
+    private static final BitField _rotation           = BitFieldFactory.getInstance(0xFF00);
     private short                 field_4_alignment_options;
 
     // field_5_indention_options
-    static final private BitField _indent                         =
+    private static final BitField _indent                         =
         BitFieldFactory.getInstance(0x000F);
-    static final private BitField _shrink_to_fit                  =
+    private static final BitField _shrink_to_fit                  =
         BitFieldFactory.getInstance(0x0010);
-    static final private BitField _merge_cells                    =
+    private static final BitField _merge_cells                    =
         BitFieldFactory.getInstance(0x0020);
-    static final private BitField _reading_order                  =
+    private static final BitField _reading_order                  =
         BitFieldFactory.getInstance(0x00C0);
 
     // apparently bits 8 and 9 are unused
-    static final private BitField _indent_not_parent_format       =
+    private static final BitField _indent_not_parent_format       =
         BitFieldFactory.getInstance(0x0400);
-    static final private BitField _indent_not_parent_font         =
+    private static final BitField _indent_not_parent_font         =
         BitFieldFactory.getInstance(0x0800);
-    static final private BitField _indent_not_parent_alignment    =
+    private static final BitField _indent_not_parent_alignment    =
         BitFieldFactory.getInstance(0x1000);
-    static final private BitField _indent_not_parent_border       =
+    private static final BitField _indent_not_parent_border       =
         BitFieldFactory.getInstance(0x2000);
-    static final private BitField _indent_not_parent_pattern      =
+    private static final BitField _indent_not_parent_pattern      =
         BitFieldFactory.getInstance(0x4000);
-    static final private BitField _indent_not_parent_cell_options =
+    private static final BitField _indent_not_parent_cell_options =
         BitFieldFactory.getInstance(0x8000);
     private short                 field_5_indention_options;
 
     // field_6_border_options bit map
-    static final private BitField _border_left   = BitFieldFactory.getInstance(0x000F);
-    static final private BitField _border_right  = BitFieldFactory.getInstance(0x00F0);
-    static final private BitField _border_top    = BitFieldFactory.getInstance(0x0F00);
-    static final private BitField _border_bottom = BitFieldFactory.getInstance(0xF000);
+    private static final BitField _border_left   = BitFieldFactory.getInstance(0x000F);
+    private static final BitField _border_right  = BitFieldFactory.getInstance(0x00F0);
+    private static final BitField _border_top    = BitFieldFactory.getInstance(0x0F00);
+    private static final BitField _border_bottom = BitFieldFactory.getInstance(0xF000);
     private short                 field_6_border_options;
 
     // all three of the following attributes are palette options
     // field_7_palette_options bit map
-    static final private BitField _left_border_palette_idx  =
+    private static final BitField _left_border_palette_idx  =
         BitFieldFactory.getInstance(0x007F);
-    static final private BitField _right_border_palette_idx =
+    private static final BitField _right_border_palette_idx =
         BitFieldFactory.getInstance(0x3F80);
-    static final private BitField _diag                     =
+    private static final BitField _diag                     =
         BitFieldFactory.getInstance(0xC000);
     private short                 field_7_palette_options;
 
     // field_8_adtl_palette_options bit map
-    static final private BitField _top_border_palette_idx    =
+    private static final BitField _top_border_palette_idx    =
         BitFieldFactory.getInstance(0x0000007F);
-    static final private BitField _bottom_border_palette_idx =
+    private static final BitField _bottom_border_palette_idx =
         BitFieldFactory.getInstance(0x00003F80);
-    static final private BitField _adtl_diag                 =
+    private static final BitField _adtl_diag                 =
         BitFieldFactory.getInstance(0x001fc000);
-    static final private BitField _adtl_diag_line_style      =
+    private static final BitField _adtl_diag_line_style      =
         BitFieldFactory.getInstance(0x01e00000);
 
     // apparently bit 25 is unused
-    static final private BitField _adtl_fill_pattern         =
+    private static final BitField _adtl_fill_pattern         =
         BitFieldFactory.getInstance(0xfc000000);
     private int                   field_8_adtl_palette_options;   // additional to avoid 2
 
     // field_9_fill_palette_options bit map
-    static final private BitField _fill_foreground = BitFieldFactory.getInstance(0x007F);
-    static final private BitField _fill_background = BitFieldFactory.getInstance(0x3f80);
+    private static final BitField _fill_foreground = BitFieldFactory.getInstance(0x007F);
+    private static final BitField _fill_background = BitFieldFactory.getInstance(0x3f80);
 
     // apparently bits 15 and 14 are unused
     private short                 field_9_fill_palette_options;
@@ -399,8 +398,7 @@ public class ExtendedFormatRecord
      * Dunno.  Docs just say this is for far east versions..  (I'm guessing it
      * justifies for right-to-left read languages)
      *
-     *
-     * @param justify
+     * @param justify use 0 for US
      * @see #setAlignmentOptions(short)
      */
 
@@ -411,7 +409,7 @@ public class ExtendedFormatRecord
     }
 
     /**
-     * set the degree of rotation.  (I've not actually seen this used anywhere)
+     * set the degree of rotation.
      *
      *
      * @param rotation the degree of rotation
@@ -563,8 +561,8 @@ public class ExtendedFormatRecord
      * <p>Sets whether or not to use the pattern in this XF instead of the
      * parent XF (foreground/background).</p>
      * 
-     * @param pattern <code>true</code> if this XF has a different pattern
-     *        value than its parent,</code> false</code> otherwise.
+     * @param pattern {@code true} if this XF has a different pattern
+     *        value than its parent, {@code false} otherwise.
      * @see #setIndentionOptions(short)
      */
 
@@ -908,14 +906,10 @@ public class ExtendedFormatRecord
             _adtl_fill_pattern.setValue(field_8_adtl_palette_options, fill);
     }
 
-    // end bitfields for additional palette options
-
     /**
-     * set the fill palette options bitmask (see
+     * set the fill palette options bitmask (see bitfields for additional palette options)
      *
-     *
-     * @param options
-     *
+     * @param options the palette options
      */
 
     public void setFillPaletteOptions(short options)
@@ -1146,7 +1140,7 @@ public class ExtendedFormatRecord
     }
 
     /**
-     * get the degree of rotation.  (I've not actually seen this used anywhere)
+     * get the degree of rotation.
      *
      *
      * @return rotation - the degree of rotation
@@ -1663,6 +1657,7 @@ public class ExtendedFormatRecord
         return _fill_background.getShortValue(field_9_fill_palette_options);
     }
 
+    @Override
     public String toString()
     {
         StringBuffer buffer = new StringBuffer();
@@ -1770,27 +1765,25 @@ public class ExtendedFormatRecord
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset,
-                              ( short ) (20));   // 24 - 4(sid/len)
-        LittleEndian.putShort(data, 4 + offset, getFontIndex());
-        LittleEndian.putShort(data, 6 + offset, getFormatIndex());
-        LittleEndian.putShort(data, 8 + offset, getCellOptions());
-        LittleEndian.putShort(data, 10 + offset, getAlignmentOptions());
-        LittleEndian.putShort(data, 12 + offset, getIndentionOptions());
-        LittleEndian.putShort(data, 14 + offset, getBorderOptions());
-        LittleEndian.putShort(data, 16 + offset, getPaletteOptions());
-        LittleEndian.putInt(data, 18 + offset, getAdtlPaletteOptions());
-        LittleEndian.putShort(data, 22 + offset, getFillPaletteOptions());
-        return getRecordSize();
+    @Override
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(getFontIndex());
+        out.writeShort(getFormatIndex());
+        out.writeShort(getCellOptions());
+        out.writeShort(getAlignmentOptions());
+        out.writeShort(getIndentionOptions());
+        out.writeShort(getBorderOptions());
+        out.writeShort(getPaletteOptions());
+        out.writeInt(getAdtlPaletteOptions());
+        out.writeShort(getFillPaletteOptions());
     }
 
+    @Override
     protected int getDataSize() {
         return 20;
     }
 
+    @Override
     public short getSid()
     {
         return sid;
@@ -1803,7 +1796,9 @@ public class ExtendedFormatRecord
      *  
      * If The source ExtendedFormatRecord comes from
      *  a different Workbook, you will need to sort
-     *  out the font and format indicies yourself!
+     *  out the font and format indices yourself!
+     * 
+     * @param source the ExtendedFormatRecord to copy from
      */
     public void cloneStyleFrom(ExtendedFormatRecord source) {
         field_1_font_index           = source.field_1_font_index;
@@ -1817,7 +1812,8 @@ public class ExtendedFormatRecord
         field_9_fill_palette_options = source.field_9_fill_palette_options;
     }
 
-	public int hashCode() {
+	@Override
+    public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + field_1_font_index;
@@ -1837,7 +1833,8 @@ public class ExtendedFormatRecord
 	 *  contents as equals, as the various indexes
 	 *  that matter are embedded in the records
 	 */
-	public boolean equals(Object obj) {
+	@Override
+    public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
 		if (obj == null)
@@ -1865,6 +1862,11 @@ public class ExtendedFormatRecord
 			return true;
 		}
 		return false;
+	}
+	
+	public int[] stateSummary() {
+		return new int[] { field_1_font_index, field_2_format_index, field_3_cell_options, field_4_alignment_options,
+				field_5_indention_options, field_6_border_options, field_7_palette_options, field_8_adtl_palette_options, field_9_fill_palette_options };
 	}
     
     

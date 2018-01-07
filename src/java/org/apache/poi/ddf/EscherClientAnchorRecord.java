@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,13 +14,11 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.ddf;
 
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
-
-import java.io.ByteArrayOutputStream;
 
 /**
  * The escher client anchor specifies which rows and cells the shape is bound to as well as
@@ -29,15 +26,25 @@ import java.io.ByteArrayOutputStream;
  * of the actual size of the cell.  The EscherClientAnchorRecord only applies to the top-most
  * shapes.  Shapes contained in groups are bound using the EscherChildAnchorRecords.
  *
- * @author Glen Stampoultzis
  * @see EscherChildAnchorRecord
  */
 public class EscherClientAnchorRecord
         extends EscherRecord
 {
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
+
     public static final short RECORD_ID = (short) 0xF010;
     public static final String RECORD_DESCRIPTION = "MsofbtClientAnchor";
 
+    /**
+     * bit[0] -  fMove (1 bit): A bit that specifies whether the shape will be kept intact when the cells are moved.
+     * bit[1] - fSize (1 bit): A bit that specifies whether the shape will be kept intact when the cells are resized. If fMove is 1, the value MUST be 1.
+     * bit[2-4] - reserved, MUST be 0 and MUST be ignored
+     * bit[5-15]- Undefined and MUST be ignored.
+     *
+     * it can take values: 0, 2, 3
+     */
     private short field_1_flag;
     private short field_2_col1;
     private short field_3_dx1;
@@ -47,29 +54,22 @@ public class EscherClientAnchorRecord
     private short field_7_dx2;
     private short field_8_row2;
     private short field_9_dy2;
-    private byte[] remainingData;
-    private boolean shortRecord = false;
+    private byte[] remainingData = new byte[0];
+    private boolean shortRecord;
 
-    /**
-     * This method deserializes the record from a byte array.
-     *
-     * @param data          The byte array containing the escher record information
-     * @param offset        The starting offset into <code>data</code>.
-     * @param recordFactory May be null since this is not a container record.
-     * @return The number of bytes read from the byte array.
-     */
-    public int fillFields( byte[] data, int offset, EscherRecordFactory recordFactory )
-    {
+    @Override
+    public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesRemaining = readHeader( data, offset );
         int pos            = offset + 8;
         int size           = 0;
 
         // Always find 4 two byte entries. Sometimes find 9
-        if (bytesRemaining == 4) // Word format only 4 bytes
+        /*if (bytesRemaining == 4) // Word format only 4 bytes
         {
             // Not sure exactly what the format is quite yet, likely a reference to a PLC
         }
-        else
+        else */
+        if (bytesRemaining != 4) // Word format only 4 bytes
         {
             field_1_flag   =  LittleEndian.getShort( data, pos + size );     size += 2;
             field_2_col1   =  LittleEndian.getShort( data, pos + size );     size += 2;
@@ -87,25 +87,19 @@ public class EscherClientAnchorRecord
             }
         }
         bytesRemaining -= size;
-        remainingData  =  new byte[bytesRemaining];
+        remainingData  = IOUtils.safelyAllocate(bytesRemaining, MAX_RECORD_LENGTH);
         System.arraycopy( data, pos + size, remainingData, 0, bytesRemaining );
         return 8 + size + bytesRemaining;
     }
 
-    /**
-     * This method serializes this escher record into a byte array.
-     *
-     * @param offset   The offset into <code>data</code> to start writing the record data to.
-     * @param data     The byte array to serialize to.
-     * @param listener A listener to retrieve start and end callbacks.  Use a <code>NullEscherSerailizationListener</code> to ignore these events.
-     * @return The number of bytes written.
-     * @see NullEscherSerializationListener
-     */
+    @Override
     public int serialize( int offset, byte[] data, EscherSerializationListener listener )
     {
         listener.beforeRecordSerialize( offset, getRecordId(), this );
 
-        if (remainingData == null) remainingData = new byte[0];
+        if (remainingData == null) {
+            remainingData = new byte[0];
+        }
         LittleEndian.putShort( data, offset, getOptions() );
         LittleEndian.putShort( data, offset + 2, getRecordId() );
         int remainingBytes = remainingData.length + (shortRecord ? 8 : 18);
@@ -128,70 +122,26 @@ public class EscherClientAnchorRecord
         return pos - offset;
     }
 
-    /**
-     * Returns the number of bytes that are required to serialize this record.
-     *
-     * @return Number of bytes
-     */
+    @Override
     public int getRecordSize()
     {
         return 8 + (shortRecord ? 8 : 18) + (remainingData == null ? 0 : remainingData.length);
     }
 
-    /**
-     * The record id for this record.
-     */
-    public short getRecordId()
-    {
+    @Override
+    public short getRecordId() {
         return RECORD_ID;
     }
 
-    /**
-     * The short name for this record
-     */
-    public String getRecordName()
-    {
+    @Override
+    public String getRecordName() {
         return "ClientAnchor";
     }
 
     /**
-     * Returns the string representation for this record.
-     *
-     * @return A string
-     */
-    public String toString()
-    {
-        String nl = System.getProperty("line.separator");
-
-        String extraData;
-        ByteArrayOutputStream b = new ByteArrayOutputStream();
-        try
-        {
-            HexDump.dump(this.remainingData, 0, b, 0);
-            extraData = b.toString();
-        }
-        catch ( Exception e )
-        {
-            extraData = "error\n";
-        }
-        return getClass().getName() + ":" + nl +
-                "  RecordId: 0x" + HexDump.toHex(RECORD_ID) + nl +
-                "  Options: 0x" + HexDump.toHex(getOptions()) + nl +
-                "  Flag: " + field_1_flag + nl +
-                "  Col1: " + field_2_col1 + nl +
-                "  DX1: " + field_3_dx1 + nl +
-                "  Row1: " + field_4_row1 + nl +
-                "  DY1: " + field_5_dy1 + nl +
-                "  Col2: " + field_6_col2 + nl +
-                "  DX2: " + field_7_dx2 + nl +
-                "  Row2: " + field_8_row2 + nl +
-                "  DY2: " + field_9_dy2 + nl +
-                "  Extra Data:" + nl + extraData;
-
-    }
-
-    /**
      * 0 = Move and size with Cells, 2 = Move but don't size with cells, 3 = Don't move or size with cells.
+     *
+     * @return the move/size flag
      */
     public short getFlag()
     {
@@ -200,6 +150,8 @@ public class EscherClientAnchorRecord
 
     /**
      * 0 = Move and size with Cells, 2 = Move but don't size with cells, 3 = Don't move or size with cells.
+     *
+     * @param field_1_flag the move/size flag
      */
     public void setFlag( short field_1_flag )
     {
@@ -208,6 +160,8 @@ public class EscherClientAnchorRecord
 
     /**
      * The column number for the top-left position.  0 based.
+     *
+     * @return the column number of the top-left corner
      */
     public short getCol1()
     {
@@ -216,6 +170,8 @@ public class EscherClientAnchorRecord
 
     /**
      * The column number for the top-left position.  0 based.
+     *
+     * @param field_2_col1 the column number of the top-left corner
      */
     public void setCol1( short field_2_col1 )
     {
@@ -224,6 +180,8 @@ public class EscherClientAnchorRecord
 
     /**
      * The x offset within the top-left cell.  Range is from 0 to 1023.
+     *
+     * @return the x offset of the top-left corner
      */
     public short getDx1()
     {
@@ -232,6 +190,8 @@ public class EscherClientAnchorRecord
 
     /**
      * The x offset within the top-left cell.  Range is from 0 to 1023.
+     *
+     * @param field_3_dx1 the x offset of the top-left corner
      */
     public void setDx1( short field_3_dx1 )
     {
@@ -240,6 +200,8 @@ public class EscherClientAnchorRecord
 
     /**
      * The row number for the top-left corner of the shape.
+     *
+     * @return the row number of the top-left corner
      */
     public short getRow1()
     {
@@ -247,7 +209,9 @@ public class EscherClientAnchorRecord
     }
 
     /**
-     * The row number for the top-left corner of the shape.
+     * The row number of the top-left corner of the shape.
+     *
+     * @param field_4_row1 the row number of the top-left corner
      */
     public void setRow1( short field_4_row1 )
     {
@@ -256,6 +220,8 @@ public class EscherClientAnchorRecord
 
     /**
      * The y offset within the top-left corner of the current shape.
+     *
+     * @return the y offset of the top-left corner
      */
     public short getDy1()
     {
@@ -264,6 +230,8 @@ public class EscherClientAnchorRecord
 
     /**
      * The y offset within the top-left corner of the current shape.
+     *
+     * @param field_5_dy1 the y offset of the top-left corner
      */
     public void setDy1( short field_5_dy1 )
     {
@@ -273,6 +241,8 @@ public class EscherClientAnchorRecord
 
     /**
      * The column of the bottom right corner of this shape.
+     *
+     * @return the column of the bottom right corner
      */
     public short getCol2()
     {
@@ -281,6 +251,8 @@ public class EscherClientAnchorRecord
 
     /**
      * The column of the bottom right corner of this shape.
+     *
+     * @param field_6_col2 the column of the bottom right corner
      */
     public void setCol2( short field_6_col2 )
     {
@@ -290,6 +262,8 @@ public class EscherClientAnchorRecord
 
     /**
      * The x offset withing the cell for the bottom-right corner of this shape.
+     *
+     * @return the x offset of the bottom-right corner
      */
     public short getDx2()
     {
@@ -298,6 +272,8 @@ public class EscherClientAnchorRecord
 
     /**
      * The x offset withing the cell for the bottom-right corner of this shape.
+     *
+     * @param field_7_dx2 the x offset of the bottom-right corner
      */
     public void setDx2( short field_7_dx2 )
     {
@@ -307,6 +283,8 @@ public class EscherClientAnchorRecord
 
     /**
      * The row number for the bottom-right corner of the current shape.
+     *
+     * @return the row number for the bottom-right corner
      */
     public short getRow2()
     {
@@ -315,6 +293,8 @@ public class EscherClientAnchorRecord
 
     /**
      * The row number for the bottom-right corner of the current shape.
+     *
+     * @param field_8_row2 the row number for the bottom-right corner
      */
     public void setRow2( short field_8_row2 )
     {
@@ -324,6 +304,8 @@ public class EscherClientAnchorRecord
 
     /**
      * The y offset withing the cell for the bottom-right corner of this shape.
+     *
+     * @return the y offset of the bottom-right corner
      */
     public short getDy2()
     {
@@ -332,6 +314,8 @@ public class EscherClientAnchorRecord
 
     /**
      * The y offset withing the cell for the bottom-right corner of this shape.
+     *
+     * @param field_9_dy2 the y offset of the bottom-right corner
      */
     public void setDy2( short field_9_dy2 )
     {
@@ -341,6 +325,8 @@ public class EscherClientAnchorRecord
 
     /**
      * Any remaining data in the record
+     *
+     * @return the remaining bytes
      */
     public byte[] getRemainingData()
     {
@@ -349,9 +335,30 @@ public class EscherClientAnchorRecord
 
     /**
      * Any remaining data in the record
+     *
+     * @param remainingData the remaining bytes
      */
-    public void setRemainingData( byte[] remainingData )
-    {
-        this.remainingData = remainingData;
+    public void setRemainingData( byte[] remainingData ) {
+        if (remainingData == null) {
+            this.remainingData = new byte[0];
+        } else {
+            this.remainingData = remainingData.clone();
+        }
+    }
+
+    @Override
+    protected Object[][] getAttributeMap() {
+        return new Object[][] {
+            { "Flag", field_1_flag },
+            { "Col1", field_2_col1 },
+            { "DX1", field_3_dx1 },
+            { "Row1", field_4_row1 },
+            { "DY1", field_5_dy1 },
+            { "Col2", field_6_col2 },
+            { "DX2", field_7_dx2 },
+            { "Row2", field_8_row2 },
+            { "DY2", field_9_dy2 },
+            { "Extra Data", remainingData }
+        };
     }
 }

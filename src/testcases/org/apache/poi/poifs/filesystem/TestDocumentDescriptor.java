@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,53 +14,30 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.filesystem;
 
-import junit.framework.*;
+import junit.framework.TestCase;
 
 /**
  * Class to test DocumentDescriptor functionality
  *
  * @author Marc Johnson
  */
-
-public class TestDocumentDescriptor
-    extends TestCase
-{
-
-    /**
-     * Constructor TestDocumentDescriptor
-     *
-     * @param name
-     */
-
-    public TestDocumentDescriptor(String name)
-    {
-        super(name);
-    }
+public final class TestDocumentDescriptor extends TestCase {
 
     /**
      * test equality
      */
-
-    public void testEquality()
-    {
-        String[]            names =
-        {
-            "c1", "c2", "c3", "c4", "c5"
-        };
+    public void testEquality() {
+        String[] names = { "c1", "c2", "c3", "c4", "c5" };
         POIFSDocumentPath   a1    = new POIFSDocumentPath();
         POIFSDocumentPath   a2    = new POIFSDocumentPath(null);
         POIFSDocumentPath   a3    = new POIFSDocumentPath(new String[ 0 ]);
         POIFSDocumentPath   a4    = new POIFSDocumentPath(a1, null);
         POIFSDocumentPath   a5    = new POIFSDocumentPath(a1,
                                         new String[ 0 ]);
-        POIFSDocumentPath[] paths =
-        {
-            a1, a2, a3, a4, a5
-        };
+        POIFSDocumentPath[] paths = { a1, a2, a3, a4, a5 };
 
         for (int j = 0; j < paths.length; j++)
         {
@@ -195,18 +171,5 @@ public class TestDocumentDescriptor
                 }
             }
         }
-    }
-
-    /**
-     * main method to run the unit tests
-     *
-     * @param ignored_args
-     */
-
-    public static void main(String [] ignored_args)
-    {
-        System.out.println(
-            "Testing org.apache.poi.poifs.eventfilesystem.DocumentDescriptor");
-        junit.textui.TestRunner.run(TestDocumentDescriptor.class);
     }
 }

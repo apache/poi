@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,20 +14,17 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.storage;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.ByteBuffer;
 
-import java.util.*;
-
+import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.filesystem.BATManaged;
 import org.apache.poi.util.IntList;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.LittleEndianConsts;
 
 /**
  * This class manages and creates the Block Allocation Table, which is
@@ -45,23 +41,21 @@ import org.apache.poi.util.LittleEndianConsts;
  *
  * @author Marc Johnson (mjohnson at apache dot org)
  */
-
-public class BlockAllocationTableWriter
-    implements BlockWritable, BATManaged
-{
+public final class BlockAllocationTableWriter implements BlockWritable, BATManaged {
     private IntList    _entries;
     private BATBlock[] _blocks;
     private int        _start_block;
+    private POIFSBigBlockSize _bigBlockSize;
 
     /**
      * create a BlockAllocationTableWriter
      */
-
-    public BlockAllocationTableWriter()
+    public BlockAllocationTableWriter(POIFSBigBlockSize bigBlockSize)
     {
-        _start_block = POIFSConstants.END_OF_CHAIN;
-        _entries     = new IntList();
-        _blocks      = new BATBlock[ 0 ];
+       _bigBlockSize = bigBlockSize; 
+        _start_block  = POIFSConstants.END_OF_CHAIN;
+        _entries      = new IntList();
+        _blocks       = new BATBlock[ 0 ];
     }
 
     /**
@@ -69,7 +63,6 @@ public class BlockAllocationTableWriter
      *
      * @return start block index of BAT blocks
      */
-
     public int createBlocks()
     {
         int xbat_blocks = 0;
@@ -78,12 +71,13 @@ public class BlockAllocationTableWriter
         while (true)
         {
             int calculated_bat_blocks  =
-                BATBlock.calculateStorageRequirements(bat_blocks
+                BATBlock.calculateStorageRequirements(_bigBlockSize,
+                                                      bat_blocks
                                                       + xbat_blocks
                                                       + _entries.size());
             int calculated_xbat_blocks =
-                HeaderBlockWriter
-                    .calculateXBATStorageRequirements(calculated_bat_blocks);
+                HeaderBlockWriter.calculateXBATStorageRequirements(
+                      _bigBlockSize, calculated_bat_blocks);
 
             if ((bat_blocks == calculated_bat_blocks)
                     && (xbat_blocks == calculated_xbat_blocks))
@@ -92,11 +86,8 @@ public class BlockAllocationTableWriter
                 // stable ... we're OK
                 break;
             }
-            else
-            {
-                bat_blocks  = calculated_bat_blocks;
-                xbat_blocks = calculated_xbat_blocks;
-            }
+            bat_blocks  = calculated_bat_blocks;
+            xbat_blocks = calculated_xbat_blocks;
         }
         int startBlock = allocateSpace(bat_blocks);
 
@@ -112,7 +103,6 @@ public class BlockAllocationTableWriter
      *
      * @return the starting index of the blocks
      */
-
     public int allocateSpace(final int blockCount)
     {
         int startBlock = _entries.size();
@@ -136,7 +126,6 @@ public class BlockAllocationTableWriter
      *
      * @return the starting block index
      */
-
     public int getStartBlock()
     {
         return _start_block;
@@ -145,13 +134,10 @@ public class BlockAllocationTableWriter
     /**
      * create the BATBlocks
      */
-
     void simpleCreateBlocks()
     {
-        _blocks = BATBlock.createBATBlocks(_entries.toArray());
+        _blocks = BATBlock.createBATBlocks(_bigBlockSize, _entries.toArray());
     }
-
-    /* ********** START implementation of BlockWritable ********** */
 
     /**
      * Write the storage to an OutputStream
@@ -162,7 +148,6 @@ public class BlockAllocationTableWriter
      * @exception IOException on problems writing to the specified
      *            stream
      */
-
     public void writeBlocks(final OutputStream stream)
         throws IOException
     {
@@ -171,16 +156,21 @@ public class BlockAllocationTableWriter
             _blocks[ j ].writeBlocks(stream);
         }
     }
-
-    /* **********  END  implementation of BlockWritable ********** */
-    /* ********** START implementation of BATManaged ********** */
+    
+    /**
+     * Write the BAT into its associated block
+     */
+    public static void writeBlock(final BATBlock bat, final ByteBuffer block) 
+        throws IOException
+    {
+        bat.writeData(block);
+    }
 
     /**
      * Return the number of BigBlock's this instance uses
      *
      * @return count of BigBlock instances
      */
-
     public int countBlocks()
     {
         return _blocks.length;
@@ -188,15 +178,9 @@ public class BlockAllocationTableWriter
 
     /**
      * Set the start block for this instance
-     *
-     * @param start_block
      */
-
     public void setStartBlock(int start_block)
     {
         _start_block = start_block;
     }
-
-    /* **********  END  implementation of BATManaged ********** */
-}   // end class BlockAllocationTableWriter
-
+}

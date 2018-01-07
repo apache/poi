@@ -15,35 +15,43 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-package org.apache.poi.ddf;
 
-import org.apache.poi.util.LittleEndian;
+package org.apache.poi.ddf;
 
 import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.Internal;
+import org.apache.poi.util.LittleEndian;
+
 /**
  * The base abstract record from which all escher records are defined.  Subclasses will need
  * to define methods for serialization/deserialization and for determining the record size.
- *
- * @author Glen Stampoultzis
  */
-abstract public class EscherRecord
-{
-    private short options;
-    private short recordId;
+public abstract class EscherRecord implements Cloneable {
+    private static final BitField fInstance = BitFieldFactory.getInstance(0xfff0);
+    private static final BitField fVersion = BitFieldFactory.getInstance(0x000f);
+
+    private short _options;
+    private short _recordId;
 
     /**
      * Create a new instance
      */
-    public EscherRecord()
-    {
+    public EscherRecord() {
+        // fields uninitialised
     }
 
     /**
      * Delegates to fillFields(byte[], int, EscherRecordFactory)
+     *
+     * @param data they bytes to serialize from
+     * @param f the escher record factory
+     * @return The number of bytes written.
      *
      * @see #fillFields(byte[], int, org.apache.poi.ddf.EscherRecordFactory)
      */
@@ -73,39 +81,59 @@ abstract public class EscherRecord
      * @return          the number of bytes remaining in this record.  This
      *                  may include the children if this is a container.
      */
-    protected int readHeader( byte[] data, int offset )
-    {
-        EscherRecordHeader header = EscherRecordHeader.readHeader(data, offset);
-        options = header.getOptions();
-        recordId = header.getRecordId();
-        return header.getRemainingBytes();
+    protected int readHeader( byte[] data, int offset ) {
+        _options = LittleEndian.getShort( data, offset );
+        _recordId = LittleEndian.getShort( data, offset + 2 );
+        return LittleEndian.getInt( data, offset + 4 );
     }
 
     /**
-     * Determine whether this is a container record by inspecting the option
-     * field.
+     * Read the options field from header and return instance part of it.
+     * @param data      the byte array to read from
+     * @param offset    the offset to start reading from
+     * @return          value of instance part of options field
+     */
+    protected static short readInstance( byte data[], int offset ) {
+        final short options = LittleEndian.getShort( data, offset );
+        return fInstance.getShortValue( options );
+    }
+
+    /**
+     * Determine whether this is a container record by inspecting the option field.
+     *
      * @return  true is this is a container field.
      */
-    public boolean isContainerRecord()
-    {
-        return (options & (short)0x000f) == (short)0x000f;
+    public boolean isContainerRecord() {
+        return getVersion() == (short)0x000f;
     }
 
     /**
-     * @return The options field for this record.  All records have one.
+     * Note that <code>options</code> is an internal field.
+     * Use {@link #setInstance(short)} ()} and {@link #setVersion(short)} ()} to set the actual fields.
+     *
+     * @return The options field for this record. All records have one.
      */
+    @Internal
     public short getOptions()
     {
-        return options;
+        return _options;
     }
 
     /**
-     * Set the options this this record.  Container records should have the
-     * last nibble set to 0xF.
+     * Set the options this this record. Container records should have the
+     * last nibble set to 0xF.<p>
+     *
+     * Note that {@code options} is an internal field.
+     * Use {@link #getInstance()} and {@link #getVersion()} to access actual fields.
+     *
+     * @param options the record options
      */
-    public void setOptions( short options )
-    {
-        this.options = options;
+    @Internal
+    public void setOptions( short options ) {
+        // call to handle correct/incorrect values
+        setVersion( fVersion.getShortValue( options ) );
+        setInstance( fInstance.getShortValue( options ) );
+        _options = options;
     }
 
     /**
@@ -164,17 +192,17 @@ abstract public class EscherRecord
      *
      * @return  The 16 bit record id.
      */
-    public short getRecordId()
-    {
-        return recordId;
+    public short getRecordId() {
+        return _recordId;
     }
 
     /**
      * Sets the record id for this record.
+     *
+     * @param recordId the record id
      */
-    public void setRecordId( short recordId )
-    {
-        this.recordId = recordId;
+    public void setRecordId( short recordId ) {
+        _recordId = recordId;
     }
 
     /**
@@ -184,7 +212,7 @@ abstract public class EscherRecord
      *
      * @see EscherContainerRecord
      */
-    public List getChildRecords() { return Collections.EMPTY_LIST; }
+    public List<EscherRecord> getChildRecords() { return Collections.emptyList(); }
 
     /**
      * Sets the child records for this record.  By default this will throw
@@ -192,22 +220,30 @@ abstract public class EscherRecord
      *
      * @param childRecords  Not used in base implementation.
      */
-    public void setChildRecords( List childRecords ) { throw new IllegalArgumentException("This record does not support child records."); }
+    public void setChildRecords(List<EscherRecord> childRecords) {
+        throw new UnsupportedOperationException("This record does not support child records.");
+    }
 
     /**
      * Escher records may need to be clonable in the future.
+     *
+     * @return the cloned object
+     *
+     * @throws CloneNotSupportedException if the subclass hasn't implemented {@link Cloneable}
      */
-    public Object clone()
-    {
-        throw new RuntimeException( "The class " + getClass().getName() + " needs to define a clone method" );
+    @Override
+    public EscherRecord clone() throws CloneNotSupportedException {
+        return (EscherRecord)super.clone();
     }
 
     /**
      * Returns the indexed child record.
+     *
+     * @param index the index of the child within the child records
+     * @return the indexed child record
      */
-    public EscherRecord getChild( int index )
-    {
-        return (EscherRecord) getChildRecords().get(index);
+    public EscherRecord getChild( int index ) {
+        return getChildRecords().get(index);
     }
 
     /**
@@ -219,12 +255,16 @@ abstract public class EscherRecord
      */
     public void display(PrintWriter w, int indent)
     {
-        for (int i = 0; i < indent * 4; i++) w.print(' ');
+        for (int i = 0; i < indent * 4; i++) {
+            w.print(' ');
+        }
         w.println(getRecordName());
     }
 
     /**
      * Subclasses should return the short name for this escher record.
+     *
+     * @return the short name for this escher record
      */
     public abstract String getRecordName();
 
@@ -235,57 +275,229 @@ abstract public class EscherRecord
      */
     public short getInstance()
     {
-        return (short) ( options >> 4 );
+        return fInstance.getShortValue( _options );
     }
 
     /**
-     * This class reads the standard escher header.
+     * Sets the instance part of record
+     *
+     * @param value instance part value
      */
-    static class EscherRecordHeader
+    public void setInstance( short value )
     {
-        private short options;
-        private short recordId;
-        private int remainingBytes;
-
-        private EscherRecordHeader()
-        {
-        }
-
-        public static EscherRecordHeader readHeader( byte[] data, int offset )
-        {
-            EscherRecordHeader header = new EscherRecordHeader();
-            header.options = LittleEndian.getShort(data, offset);
-            header.recordId = LittleEndian.getShort(data, offset + 2);
-            header.remainingBytes = LittleEndian.getInt( data, offset + 4 );
-            return header;
-        }
-
-
-        public short getOptions()
-        {
-            return options;
-        }
-
-        public short getRecordId()
-        {
-            return recordId;
-        }
-
-        public int getRemainingBytes()
-        {
-            return remainingBytes;
-        }
-
-        public String toString()
-        {
-            return "EscherRecordHeader{" +
-                    "options=" + options +
-                    ", recordId=" + recordId +
-                    ", remainingBytes=" + remainingBytes +
-                    "}";
-        }
-
-
+        _options = fInstance.setShortValue( _options, value );
     }
 
+    /**
+     * Returns the version part of the option record.
+     *
+     * @return The version part of the option record
+     */
+    public short getVersion()
+    {
+        return fVersion.getShortValue( _options );
+    }
+
+    /**
+     * Sets the version part of record
+     *
+     * @param value version part value
+     */
+    public void setVersion( short value )
+    {
+        _options = fVersion.setShortValue( _options, value );
+    }
+
+    public String toXml(){
+        return toXml("");
+    }
+
+    /**
+     * @param tab - each children must be indented right relative to its parent
+     * @return xml representation of this record
+     */
+    public final String toXml(String tab){
+        final String nl = System.getProperty( "line.separator" );
+        String clsNm = getClass().getSimpleName();
+        StringBuilder sb = new StringBuilder(1000);
+        sb.append(tab).append("<").append(clsNm)
+          .append(" recordId=\"0x").append(HexDump.toHex(getRecordId()))
+          .append("\" version=\"0x").append(HexDump.toHex(getVersion()))
+          .append("\" instance=\"0x").append(HexDump.toHex(getInstance()))
+          .append("\" options=\"0x").append(HexDump.toHex(getOptions()))
+          .append("\" recordSize=\"").append(getRecordSize());
+        Object[][] attrList = getAttributeMap();
+        if (attrList == null || attrList.length == 0) {
+            sb.append("\" />").append(nl);
+        } else {
+            sb.append("\">").append(nl);
+            String childTab = tab+"   ";
+            for (Object[] attrs : attrList) {
+                String tagName = capitalizeAndTrim((String)attrs[0]);
+                boolean hasValue = false;
+                boolean lastChildComplex = false;
+                for (int i=0; i<attrs.length; i+=2) {
+                    Object value = attrs[i+1];
+                    if (value == null) {
+                        // ignore null values
+                        continue;
+                    }
+                    if (!hasValue) {
+                        // only add tagname, when there was a value
+                        sb.append(childTab).append("<").append(tagName).append(">");
+                    }
+                    // add names for optional attributes
+                    String optName = capitalizeAndTrim((String)attrs[i+0]);
+                    if (i>0) {
+                        sb.append(nl).append(childTab).append("  <").append(optName).append(">");
+                    }
+                    lastChildComplex = appendValue(sb, value, true, childTab);
+                    if (i>0) {
+                        sb.append(nl).append(childTab).append("  </").append(optName).append(">");
+                    }
+                    hasValue = true;
+                }
+                if (hasValue) {
+                    if (lastChildComplex) {
+                        sb.append(nl).append(childTab);
+                    }
+                    sb.append("</").append(tagName).append(">").append(nl);
+                }
+            }
+            sb.append(tab).append("</").append(clsNm).append(">");
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public final String toString() {
+        final String nl = System.getProperty( "line.separator" );
+        StringBuilder sb = new StringBuilder(1000);
+        sb.append(getClass().getName()).append(" (").append(getRecordName()).append("):").append(nl)
+          .append("  RecordId: 0x").append(HexDump.toHex( getRecordId() )).append(nl)
+          .append("  Version: 0x").append(HexDump.toHex( getVersion() )).append(nl)
+          .append("  Instance: 0x").append(HexDump.toHex( getInstance() )).append(nl)
+          .append("  Options: 0x").append(HexDump.toHex( getOptions() )).append(nl)
+          .append("  Record Size: ").append( getRecordSize() );
+
+        Object[][] attrList = getAttributeMap();
+        if (attrList != null && attrList.length > 0) {
+            String childTab = "  ";
+            for (Object[] attrs : attrList) {
+                for (int i=0; i<attrs.length; i+=2) {
+                    Object value = attrs[i+1];
+                    if (value == null) {
+                        // ignore null values
+                        continue;
+                    }
+                    String name = (String)attrs[i+0];
+                    sb.append(nl).append(childTab).append(name).append(": ");
+                    appendValue(sb, value, false, childTab);
+                }
+            }
+        }
+
+        return sb.toString();
+    }
+    
+    /**
+     * @return true, if value was a complex record, false otherwise
+     */
+    private static boolean appendValue(StringBuilder sb, Object value, boolean toXML, String childTab) {
+        final String nl = System.getProperty( "line.separator" );
+        boolean isComplex = false;
+        if (value instanceof String) {
+            if (toXML) {
+                escapeXML((String)value, sb);
+            } else {
+                sb.append((String)value);
+            }
+        } else if (value instanceof Byte) {
+            sb.append("0x").append(HexDump.toHex((Byte)value));
+        } else if (value instanceof Short) {
+            sb.append("0x").append(HexDump.toHex((Short)value));
+        } else if (value instanceof Integer) {
+            sb.append("0x").append(HexDump.toHex((Integer)value));
+        } else if (value instanceof byte[]) {
+            sb.append(nl).append(HexDump.toHex((byte[])value, 32).replaceAll("(?m)^",childTab+"   "));
+        } else if (value instanceof Boolean) {
+            sb.append(((Boolean)value).booleanValue());
+        } else if (value instanceof EscherRecord) {
+            EscherRecord er = (EscherRecord)value;
+            if (toXML) {
+                sb.append(nl).append(er.toXml(childTab+"    "));
+            } else {
+                sb.append(er.toString().replaceAll("(?m)^",childTab));
+            }
+            isComplex = true;
+        } else if (value instanceof EscherProperty) {
+            EscherProperty ep = (EscherProperty)value;
+            if (toXML) {
+                sb.append(nl).append(ep.toXml(childTab+"  "));
+            } else {
+                sb.append(ep.toString().replaceAll("(?m)^",childTab));
+            }
+            isComplex = true;
+        } else {
+            throw new IllegalArgumentException("unknown attribute type "+value.getClass().getSimpleName());
+        }
+        return isComplex;
+    }
+
+    /**
+     * For the purpose of providing toString() and toXml() a subclass can either override those methods
+     * or provide a Object[][] array in the form {@code { { "Attribute Name (Header)", value, "optional attribute", value }, ... } }.<p>
+     *
+     * Null values won't be printed.<p>
+     *
+     * The attributes record, version, instance, options must not be returned.
+     *
+     * @return the attribute map
+     * 
+     * @since POI 3.17-beta2
+     */
+    @Internal
+    protected abstract Object[][] getAttributeMap();
+
+    private static String capitalizeAndTrim(final String str) {
+        if (str == null || str.length() == 0) {
+            return str;
+        }
+
+        StringBuilder sb = new StringBuilder(str.length());
+        boolean capitalizeNext = true;
+        for (char ch : str.toCharArray()) {
+            if (!Character.isLetterOrDigit(ch)) {
+                capitalizeNext = true;
+                continue;
+            }
+
+            if (capitalizeNext) {
+                if (!Character.isLetter(ch)) {
+                    sb.append('_');
+                } else {
+                    ch = Character.toTitleCase(ch);
+                }
+                capitalizeNext = false;
+            }
+            sb.append(ch);
+        }
+
+        return sb.toString();
+    }
+
+    private static void escapeXML(String s, StringBuilder out) {
+        if (s == null || s.isEmpty()) {
+            return;
+        }
+        for (char c : s.toCharArray()) {
+            if (c > 127 || c == '"' || c == '<' || c == '>' || c == '&') {
+                out.append("&#");
+                out.append((int) c);
+                out.append(';');
+            } else {
+                out.append(c);
+            }
+        }
+    }
 }

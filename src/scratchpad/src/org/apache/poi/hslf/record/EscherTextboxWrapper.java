@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 
@@ -26,7 +24,7 @@ import java.io.OutputStream;
 import java.io.ByteArrayOutputStream;
 
 /**
- * A wrapper around a DDF (Escher) EscherTextbox Record. Causes the DDF 
+ * A wrapper around a DDF (Escher) EscherTextbox Record. Causes the DDF
  *  Record to be accessible as if it were a HSLF record.
  * Note: when asked to write out, will simply put any child records correctly
  *  into the Escher layer. A call to the escher layer to write out (by the
@@ -34,30 +32,33 @@ import java.io.ByteArrayOutputStream;
  *
  * @author Nick Burch
  */
-
-public class EscherTextboxWrapper extends RecordContainer
-{
+public final class EscherTextboxWrapper extends RecordContainer {
 	private EscherTextboxRecord _escherRecord;
 	private long _type;
-    private int shapeId;
+	private int shapeId;
+	private StyleTextPropAtom styleTextPropAtom;
+	private StyleTextProp9Atom styleTextProp9Atom;
 
 	/**
 	 * Returns the underlying DDF Escher Record
 	 */
 	public EscherTextboxRecord getEscherRecord() { return _escherRecord; }
 
-	/** 
+	/**
 	 * Creates the wrapper for the given DDF Escher Record and children
 	 */
 	public EscherTextboxWrapper(EscherTextboxRecord textbox) {
 		_escherRecord = textbox;
-		_type = (long)_escherRecord.getRecordId();
+		_type = _escherRecord.getRecordId();
 
 		// Find the child records in the escher data
 		byte[] data = _escherRecord.getData();
 		_children = Record.findChildRecords(data,0,data.length);
+		for (Record r : this._children) {
+			if (r instanceof StyleTextPropAtom) { this.styleTextPropAtom = (StyleTextPropAtom) r; }
+		}
 	}
-	
+
 	/**
 	 * Creates a new, empty wrapper for DDF Escher Records and their children
 	 */
@@ -68,7 +69,7 @@ public class EscherTextboxWrapper extends RecordContainer
 
 		_children = new Record[0];
 	}
-	
+
 
 	/**
 	 * Return the type of the escher record (normally in the 0xFnnn range)
@@ -86,26 +87,35 @@ public class EscherTextboxWrapper extends RecordContainer
 
 		// Grab the children's data
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		for(int i=0; i<_children.length; i++) {
-			_children[i].writeOut(baos);
-		}
+		for (Record r : _children) r.writeOut(baos);
 		byte[] data = baos.toByteArray();
 
 		// Save in the escher layer
 		_escherRecord.setData(data);
 	}
 
-    /**
-     * @return  Shape ID
-     */
-    public int getShapeId(){
-        return shapeId;
-    }
+	/**
+	 * @return  Shape ID
+	 */
+	public int getShapeId(){
+		return shapeId;
+	}
 
-    /**
-     *  @param id Shape ID
-     */
-    public void setShapeId(int id){
-        shapeId = id;
-    }
+	/**
+	 *  @param id Shape ID
+	 */
+	public void setShapeId(int id){
+		shapeId = id;
+	}
+
+	public StyleTextPropAtom getStyleTextPropAtom() {
+		return styleTextPropAtom;
+	}
+
+	public void setStyleTextProp9Atom(final StyleTextProp9Atom nineAtom) {
+		this.styleTextProp9Atom = nineAtom;
+	}
+	public StyleTextProp9Atom getStyleTextProp9Atom() {
+		return this.styleTextProp9Atom;
+	}
 }

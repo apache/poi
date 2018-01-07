@@ -1,9 +1,10 @@
 /* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
 
        http://www.apache.org/licenses/LICENSE-2.0
 
@@ -41,10 +42,10 @@ public class CellRangeAddressList {
 	/**
 	 * List of <tt>CellRangeAddress</tt>es. Each structure represents a cell range
 	 */
-	protected final List _list;
+	protected final List<CellRangeAddress> _list;
 
 	public CellRangeAddressList() {
-		_list = new ArrayList();
+		_list = new ArrayList<>();
 	}
 	/**
 	 * Convenience constructor for creating a <tt>CellRangeAddressList</tt> with a single 
@@ -84,7 +85,6 @@ public class CellRangeAddressList {
 	 * @param firstCol - the upper left hand corner's col
 	 * @param lastRow - the lower right hand corner's row
 	 * @param lastCol - the lower right hand corner's col
-	 * @return the index of this ADDR structure
 	 */
 	public void addCellRangeAddress(int firstRow, int firstCol, int lastRow, int lastCol) {
 		CellRangeAddress region = new CellRangeAddress(firstRow, lastRow, firstCol, lastCol);
@@ -101,14 +101,14 @@ public class CellRangeAddressList {
 			throw new RuntimeException("Range index (" + rangeIndex 
 					+ ") is outside allowable range (0.." + (_list.size()-1) + ")");
 		}
-		return (CellRangeAddress) _list.remove(rangeIndex);
+		return _list.remove(rangeIndex);
 	}
 
 	/**
 	 * @return <tt>CellRangeAddress</tt> at the given index
 	 */
 	public CellRangeAddress getCellRangeAddress(int index) {
-		return (CellRangeAddress) _list.get(index);
+		return _list.get(index);
 	}
 
 	public int getSize() {
@@ -131,7 +131,7 @@ public class CellRangeAddressList {
 		int nItems = _list.size();
 		out.writeShort(nItems);
 		for (int k = 0; k < nItems; k++) {
-			CellRangeAddress region = (CellRangeAddress) _list.get(k);
+			CellRangeAddress region = _list.get(k);
 			region.serialize(out);
 		}
 	}
@@ -142,7 +142,7 @@ public class CellRangeAddressList {
 		
 		int nItems = _list.size();
 		for (int k = 0; k < nItems; k++) {
-			CellRangeAddress region = (CellRangeAddress) _list.get(k);
+			CellRangeAddress region = _list.get(k);
 			result.addCellRangeAddress(region.copy());
 		}
 		return result;

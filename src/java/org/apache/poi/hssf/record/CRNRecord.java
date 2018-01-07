@@ -17,18 +17,15 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.hssf.record.constant.ConstantValueParser;
-import org.apache.poi.util.LittleEndianByteArrayOutputStream;
+import org.apache.poi.ss.formula.constant.ConstantValueParser;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title:       CRN(0x005A) <p/>
- * Description: This record stores the contents of an external cell or cell range <p/>
- * REFERENCE:   OOO 5.23<p/>
- *
- * @author josh micich
+ * Title:       CRN(0x005A)<p>
+ * Description: This record stores the contents of an external cell or cell range<p>
+ * REFERENCE:   OOO 5.23
  */
-public final class CRNRecord extends Record {
+public final class CRNRecord extends StandardRecord {
 	public final static short sid = 0x005A;
 
 	private int	 field_1_last_column_index;
@@ -67,17 +64,11 @@ public final class CRNRecord extends Record {
 		return 4 + ConstantValueParser.getEncodedSize(field_4_constant_values);
 	}
 
-	public int serialize(int offset, byte [] data) {
-		int dataSize = getDataSize();
-		int recSize = 4 + dataSize;
-		LittleEndianOutput out = new LittleEndianByteArrayOutputStream(data, offset, recSize);
-		out.writeShort(sid);
-		out.writeShort(dataSize);
+	public void serialize(LittleEndianOutput out) {
 		out.writeByte(field_1_last_column_index);
 		out.writeByte(field_2_first_column_index);
 		out.writeShort(field_3_row_index);
 		ConstantValueParser.encode(out, field_4_constant_values);
-		return recSize;
 	}
 
 	/**

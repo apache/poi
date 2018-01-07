@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,135 +14,98 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.record;
 
 
-import junit.framework.TestCase;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-import org.apache.poi.hslf.HSLFSlideShow;
-import org.apache.poi.hslf.usermodel.SlideShow;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
+import org.junit.Test;
 
 /**
  * Tests that ExHyperlink works properly.
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestExHyperlink extends TestCase {
-	// From a real file
-	private byte[] data_a = new byte[] {
-		0x0F, 00, 0xD7-256, 0x0F, 0xA8-256, 00, 00, 00,
-		
-		00, 00, 0xD3-256, 0x0F, 04, 00, 00, 00, 
-		03, 00, 00, 00,
-		
-		00, 00, 0xBA-256, 0x0F, 0x46, 00, 00, 00, 
-		0x68, 00, 0x74, 00, 0x74, 00, 0x70, 00,
-		0x3A, 00, 0x2F, 00, 0x2F, 00, 0x6A, 00, 
-		0x61, 00, 0x6B, 00, 0x61, 00, 0x72, 00,
-		0x74, 00, 0x61, 00, 0x2E, 00, 0x61, 00,
-		0x70, 00, 0x61, 00, 0x63, 00, 0x68, 00,
-		0x65, 00, 0x2E, 00, 0x6F, 00, 0x72, 00,
-		0x67, 00, 0x2F, 00, 0x70, 00, 0x6F, 00,
-		0x69, 00, 0x2F, 00, 0x68, 00, 0x73, 00, 
-		0x73, 00, 0x66, 00, 0x2F, 00, 
-		
-		0x10, 00, 0xBA-256, 0x0F, 0x46, 00, 00, 00,
-		0x68, 00, 0x74, 00, 0x74, 00, 0x70, 00,
-		0x3A, 00, 0x2F, 00, 0x2F, 00, 0x6A, 00, 
-		0x61, 00, 0x6B, 00, 0x61, 00, 0x72, 00,
-		0x74, 00, 0x61, 00, 0x2E, 00, 0x61, 00,
-		0x70, 00, 0x61, 00, 0x63, 00, 0x68, 00,
-		0x65, 00, 0x2E, 00, 0x6F, 00, 0x72, 00,
-		0x67, 00, 0x2F, 00, 0x70, 00, 0x6F, 00,
-		0x69, 00, 0x2F, 00, 0x68, 00, 0x73, 00, 
-		0x73, 00, 0x66, 00, 0x2F, 00 
-	};
+public final class TestExHyperlink {
+	@Test
+    public void testReadWrite() throws IOException {
+        // From a real file
+        byte[] exHyperlinkBytes = org.apache.poi.poifs.storage.RawDataUtil.decompress(
+            "H4sIAAAAAAAAAONnuM6/ggEELvOzAElmMHsXvxuQzGAoAcICBisGfSDMYkhkyAbi"+
+            "IqBYIoMeEBcAcTJQVSqQlw8UTweqKgCyMoF0BkMxEKYBWQJUNQ0A/k1x3rAAAAA="
+        );
+	    ExHyperlink exHyperlink = new ExHyperlink(exHyperlinkBytes, 0, exHyperlinkBytes.length);
+
+	    
+	    assertEquals(4055l, exHyperlink.getRecordType());
+        assertEquals(3, exHyperlink.getExHyperlinkAtom().getNumber());
+        String expURL = "http://jakarta.apache.org/poi/hssf/";
+        assertEquals(expURL, exHyperlink.getLinkURL());
+        assertEquals(expURL, exHyperlink._getDetailsA());
+        assertEquals(expURL, exHyperlink._getDetailsB());
 	
-    public void testRecordType() throws Exception {
-    	ExHyperlink eh = new ExHyperlink(data_a, 0, data_a.length);
-		assertEquals(4055l, eh.getRecordType());
-	}
-    
-    public void testNumber() throws Exception {
-    	ExHyperlink eh = new ExHyperlink(data_a, 0, data_a.length);
-		assertEquals(3, eh.getExHyperlinkAtom().getNumber());
-    }
-    
-	public void testLinkURL() throws Exception {
-    	ExHyperlink eh = new ExHyperlink(data_a, 0, data_a.length);
-    	assertEquals("http://jakarta.apache.org/poi/hssf/", eh.getLinkURL());
-	}
-	public void testDetails() throws Exception {
-    	ExHyperlink eh = new ExHyperlink(data_a, 0, data_a.length);
-    	assertEquals("http://jakarta.apache.org/poi/hssf/", eh._getDetailsA());
-    	assertEquals("http://jakarta.apache.org/poi/hssf/", eh._getDetailsB());
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        exHyperlink.writeOut(baos);
+        assertArrayEquals(exHyperlinkBytes, baos.toByteArray());
 	}
 
-	public void testWrite() throws Exception {
-    	ExHyperlink eh = new ExHyperlink(data_a, 0, data_a.length);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		eh.writeOut(baos);
-		byte[] b = baos.toByteArray();
+	@Test
+	public void testRealFile() throws IOException {
+        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+		HSLFSlideShowImpl hss = new HSLFSlideShowImpl(slTests.openResourceAsStream("WithLinks.ppt"));
+		HSLFSlideShow ss = new HSLFSlideShow(hss);
 
-		assertEquals(data_a.length, b.length);
-		for(int i=0; i<data_a.length; i++) {
-			assertEquals(data_a[i],b[i]);
-		}
-	}
-	
-	public void testRealFile() throws Exception {
-		String dirname = System.getProperty("HSLF.testdata.path");
-		HSLFSlideShow hss = new HSLFSlideShow(dirname + File.separator + "WithLinks.ppt");
-		SlideShow ss = new SlideShow(hss);
-		
 		// Get the document
 		Document doc = ss.getDocumentRecord();
 		// Get the ExObjList
 		ExObjList exObjList = null;
-		for(int i=0; i<doc._children.length; i++) {
-			if(doc._children[i] instanceof ExObjList) {
-				exObjList = (ExObjList)doc._children[i];
+		for (final Record rec : doc._children) {
+			if(rec instanceof ExObjList) {
+				exObjList = (ExObjList)rec;
 			}
 		}
+
 		assertNotNull(exObjList);
-		
+
 		// Within that, grab out the Hyperlink atoms
-		ArrayList linksA = new ArrayList();
-		for(int i=0; i<exObjList._children.length; i++) {
-			if(exObjList._children[i] instanceof ExHyperlink) {
-				linksA.add(exObjList._children[i]);
+		List<ExHyperlink> linksA = new ArrayList<>();
+		for (Record ch : exObjList._children) {
+			if(ch instanceof ExHyperlink) {
+				linksA.add((ExHyperlink) ch);
 			}
 		}
-		
+
 		// Should be 4 of them
 		assertEquals(4, linksA.size());
 		ExHyperlink[] links = new ExHyperlink[linksA.size()];
 		linksA.toArray(links);
-		
+
 		assertEquals(4, exObjList.getExHyperlinks().length);
-		
+
 		// Check the other way
-		
+
 		// Check they have what we expect in them
 		assertEquals(1, links[0].getExHyperlinkAtom().getNumber());
 		assertEquals("http://jakarta.apache.org/poi/", links[0].getLinkURL());
-		
+
 		assertEquals(2, links[1].getExHyperlinkAtom().getNumber());
 		assertEquals("http://slashdot.org/", links[1].getLinkURL());
-		
+
 		assertEquals(3, links[2].getExHyperlinkAtom().getNumber());
 		assertEquals("http://jakarta.apache.org/poi/hssf/", links[2].getLinkURL());
-		
+
 		assertEquals(4, links[3].getExHyperlinkAtom().getNumber());
 		assertEquals("http://jakarta.apache.org/hslf/", links[3].getLinkURL());
-		
+
+	    ss.close();
 	}
 }

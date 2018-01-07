@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,38 +14,46 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.record;
 
-import org.apache.poi.hslf.record.SlideAtom.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import junit.framework.TestCase;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import org.apache.poi.hslf.HSLFTestDataSamples;
+import org.apache.poi.hslf.record.SlideAtomLayout.SlideLayoutType;
+import org.apache.poi.hslf.usermodel.HSLFSlide;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.junit.Test;
 
 /**
  * Tests that SlideAtom works properly
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestSlideAtom extends TestCase {
+public final class TestSlideAtom {
 	// From a real file
-	private byte[] data_a = new byte[] { 1, 0, 0xEF-256, 3, 0x18, 0, 0, 0,
-		0, 0, 0, 0, 0x0F, 0x10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x80-256, 
+	private static final byte[] data_a = new byte[] { 1, 0, 0xEF-256, 3, 0x18, 0, 0, 0,
+		0, 0, 0, 0, 0x0F, 0x10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0x80-256,
 		0, 1, 0, 0, 7, 0, 0x0C, 0x30 };
 
-    public void testRecordType() throws Exception {
+	@Test
+	public void testRecordType() {
 		SlideAtom sa = new SlideAtom(data_a, 0, data_a.length);
 		assertEquals(1007l, sa.getRecordType());
 	}
-	public void testFlags() throws Exception {
+	
+    @Test
+	public void testFlags() {
 		SlideAtom sa = new SlideAtom(data_a, 0, data_a.length);
 
 		// First 12 bytes are a SSlideLayoutAtom, checked elsewhere
 
 		// Check the IDs
-		assertEquals(0x80000000, sa.getMasterID());
+		assertEquals(SlideAtom.USES_MASTER_SLIDE_ID, sa.getMasterID());
 		assertEquals(256, sa.getNotesID());
 
 		// Check the flags
@@ -54,24 +61,37 @@ public class TestSlideAtom extends TestCase {
 		assertEquals(true, sa.getFollowMasterScheme());
 		assertEquals(true, sa.getFollowMasterBackground());
 	}
-	public void testSSlideLayoutAtom() throws Exception {
+
+    @Test
+    public void testSSlideLayoutAtom() {
 		SlideAtom sa = new SlideAtom(data_a, 0, data_a.length);
-		SSlideLayoutAtom ssla = sa.getSSlideLayoutAtom();
+		SlideAtomLayout ssla = sa.getSSlideLayoutAtom();
 
-		assertEquals(0, ssla.getGeometryType());
+		assertEquals(SlideLayoutType.TITLE_SLIDE, ssla.getGeometryType());
 
-		// Should also check the placehold IDs at some point
+		// Should also check the placeholder IDs at some point
 	}
 
-	public void testWrite() throws Exception {
+    @Test
+	public void testWrite() throws IOException {
 		SlideAtom sa = new SlideAtom(data_a, 0, data_a.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		sa.writeOut(baos);
-		byte[] b = baos.toByteArray();
+		assertArrayEquals(data_a, baos.toByteArray());
+	}
+	
+    @Test
+	public void testSSSlideInfoAtom() throws IOException {
+		HSLFSlideShow ss1 = new HSLFSlideShow();
+		HSLFSlide slide1 = ss1.createSlide(), slide2 = ss1.createSlide();
+		slide2.setHidden(true);
 
-		assertEquals(data_a.length, b.length);
-		for(int i=0; i<data_a.length; i++) {
-			assertEquals(data_a[i],b[i]);
-		}
+		HSLFSlideShow ss2 = HSLFTestDataSamples.writeOutAndReadBack(ss1);
+		slide1 = ss2.getSlides().get(0);
+		slide2 = ss2.getSlides().get(1);
+		assertFalse(slide1.isHidden());
+		assertTrue(slide2.isHidden());
+		ss2.close();
+		ss1.close();
 	}
 }

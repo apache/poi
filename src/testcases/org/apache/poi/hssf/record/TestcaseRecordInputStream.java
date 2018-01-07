@@ -21,7 +21,9 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import junit.framework.Assert;
+import junit.framework.AssertionFailedError;
 
+import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianInput;
@@ -29,29 +31,29 @@ import org.apache.poi.util.LittleEndianInput;
 /**
  * A Record Input Stream derivative that makes access to byte arrays used in the
  * test cases work a bit easier.
- * <p> Creates the sream and moves to the first record.
+ * <p> Creates the stream and moves to the first record.
  *
  * @author Jason Height (jheight at apache.org)
  */
 public final class TestcaseRecordInputStream {
-	
+
 	private TestcaseRecordInputStream() {
 		// no instances of this class
 	}
-	
+
 	/**
-	 * Prepends a mock record identifier to the supplied data and opens a record input stream 
+	 * Prepends a mock record identifier to the supplied data and opens a record input stream
 	 */
 	public static LittleEndianInput createLittleEndian(byte[] data) {
 		return new LittleEndianByteArrayInputStream(data);
-		
+
 	}
 	public static RecordInputStream create(int sid, byte[] data) {
 		return create(mergeDataAndSid(sid, data.length, data));
 	}
 	/**
-	 * First 4 bytes of <tt>data</tt> are assumed to be record identifier and length. The supplied 
-	 * <tt>data</tt> can contain multiple records (sequentially encoded in the same way) 
+	 * First 4 bytes of <tt>data</tt> are assumed to be record identifier and length. The supplied
+	 * <tt>data</tt> can contain multiple records (sequentially encoded in the same way)
 	 */
 	public static RecordInputStream create(byte[] data) {
 		InputStream is = new ByteArrayInputStream(data);
@@ -59,40 +61,45 @@ public final class TestcaseRecordInputStream {
 		result.nextRecord();
 		return result;
 	}
-	
-    /**
-     * Convenience constructor
-     */
-//    public TestcaseRecordInputStream(int sid, byte[] data)
-//    {
-//      super(new ByteArrayInputStream(mergeDataAndSid(sid, data.length, data)));
-//      nextRecord();
-//    }
-//    public TestcaseRecordInputStream(short sid, short length, byte[] data)
-//    {
-//      super(new ByteArrayInputStream(mergeDataAndSid(sid, length, data)));
-//      nextRecord();
-//    }
 
-    public static byte[] mergeDataAndSid(int sid, int length, byte[] data) {
-      byte[] result = new byte[data.length + 4];
-      LittleEndian.putUShort(result, 0, sid);
-      LittleEndian.putUShort(result, 2, length);
-      System.arraycopy(data, 0, result, 4, data.length);
-      return result;
-    }
-    /**
-     * Confirms data sections are equal
-     * @param expectedData - just raw data (without sid or size short ints)
-     * @param actualRecordBytes this includes 4 prefix bytes (sid & size)
-     */
-    public static void confirmRecordEncoding(int expectedSid, byte[] expectedData, byte[] actualRecordBytes) {
-        int expectedDataSize = expectedData.length;
-        Assert.assertEquals(actualRecordBytes.length - 4, expectedDataSize);
-        Assert.assertEquals(expectedSid, LittleEndian.getShort(actualRecordBytes, 0));
-        Assert.assertEquals(expectedDataSize, LittleEndian.getShort(actualRecordBytes, 2));
-        for (int i = 0; i < expectedDataSize; i++)
-            Assert.assertEquals("At offset " + i, expectedData[i], actualRecordBytes[i+4]);
-        
-    }
+	public static byte[] mergeDataAndSid(int sid, int length, byte[] data) {
+	  byte[] result = new byte[data.length + 4];
+	  LittleEndian.putUShort(result, 0, sid);
+	  LittleEndian.putUShort(result, 2, length);
+	  System.arraycopy(data, 0, result, 4, data.length);
+	  return result;
+	}
+	/**
+	 * Confirms data sections are equal
+	 * @param expectedData - just raw data (without sid or size short ints)
+	 * @param actualRecordBytes this includes 4 prefix bytes (sid & size)
+	 */
+	public static void confirmRecordEncoding(int expectedSid, byte[] expectedData, byte[] actualRecordBytes)
+			throws AssertionFailedError {
+		confirmRecordEncoding(null, expectedSid, expectedData, actualRecordBytes);
+	}
+	/**
+	 * Confirms data sections are equal
+	 * @param msgPrefix message prefix to be displayed in case of failure
+	 * @param expectedData - just raw data (without ushort sid, ushort size)
+	 * @param actualRecordBytes this includes 4 prefix bytes (sid & size)
+	 */
+	public static void confirmRecordEncoding(String msgPrefix, int expectedSid, byte[] expectedData, byte[] actualRecordBytes)
+			throws AssertionFailedError {
+		int expectedDataSize = expectedData.length;
+		Assert.assertEquals("Size of encode data mismatch", actualRecordBytes.length - 4, expectedDataSize);
+		Assert.assertEquals(expectedSid, LittleEndian.getShort(actualRecordBytes, 0));
+		Assert.assertEquals(expectedDataSize, LittleEndian.getShort(actualRecordBytes, 2));
+		for (int i = 0; i < expectedDataSize; i++)
+			if (expectedData[i] != actualRecordBytes[i+4]) {
+				StringBuilder sb = new StringBuilder(64);
+				if (msgPrefix != null) {
+					sb.append(msgPrefix).append(": ");
+				}
+				sb.append("At offset ").append(i);
+				sb.append(": expected ").append(HexDump.byteToHex(expectedData[i]));
+				sb.append(" but found ").append(HexDump.byteToHex(actualRecordBytes[i+4]));
+				throw new AssertionFailedError(sb.toString());
+			}
+	}
 }

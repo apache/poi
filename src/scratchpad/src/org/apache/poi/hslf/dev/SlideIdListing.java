@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -16,28 +15,35 @@
    limitations under the License.
 ==================================================================== */
 
-
-
 package org.apache.poi.hslf.dev;
 
-import org.apache.poi.hslf.*;
-import org.apache.poi.hslf.record.*;
-import org.apache.poi.hslf.usermodel.SlideShow;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Map;
 
+import org.apache.poi.hslf.record.Document;
+import org.apache.poi.hslf.record.Notes;
+import org.apache.poi.hslf.record.NotesAtom;
+import org.apache.poi.hslf.record.PersistPtrHolder;
+import org.apache.poi.hslf.record.PositionDependentRecord;
+import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.Slide;
+import org.apache.poi.hslf.record.SlideAtom;
+import org.apache.poi.hslf.record.SlideListWithText;
+import org.apache.poi.hslf.record.SlidePersistAtom;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 import org.apache.poi.util.LittleEndian;
-
-import java.io.*;
-import java.util.Hashtable;
 
 /**
  * Gets all the different things that have Slide IDs (of sorts)
  *  in them, and displays them, so you can try to guess what they
  *  all mean
  */
-public class SlideIdListing {
+public final class SlideIdListing {
 	private static byte[] fileContents;
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws IOException {
 		if(args.length < 1) {
 			System.err.println("Need to give a filename");
 			System.exit(1);
@@ -45,14 +51,14 @@ public class SlideIdListing {
 
 
 		// Create the slideshow object, for normal working with
-		HSLFSlideShow hss = new HSLFSlideShow(args[0]);
-		SlideShow ss = new SlideShow(hss);
-		
+		HSLFSlideShowImpl hss = new HSLFSlideShowImpl(args[0]);
+		HSLFSlideShow ss = new HSLFSlideShow(hss);
+
 		// Grab the base contents
 		fileContents = hss.getUnderlyingBytes();
 		Record[] records = hss.getRecords();
 		Record[] latestRecords = ss.getMostRecentCoreRecords();
-		
+
 		// Grab any records that interest us
 		Document document = null;
 		for(int i=0; i<latestRecords.length; i++) {
@@ -60,10 +66,10 @@ public class SlideIdListing {
 				document = (Document)latestRecords[i];
 			}
 		}
-		
+
 		System.out.println("");
-		
-		
+
+
 		// Look for SlidePersistAtoms, and report what they have to
 		//  say about possible slide IDs
 		SlideListWithText[] slwts = document.getSlideListWithTexts();
@@ -78,9 +84,9 @@ public class SlideIdListing {
 				}
 			}
 		}
-		
+
 		System.out.println("");
-		
+
 		// Look for latest core records that are slides or notes
 		for(int i=0; i<latestRecords.length; i++) {
 			if(latestRecords[i] instanceof Slide) {
@@ -108,7 +114,7 @@ public class SlideIdListing {
 		}
 
 		System.out.println("");
-		
+
 		// Find any persist ones first
 		int pos = 0;
 		for(int i=0; i<records.length; i++) {
@@ -125,10 +131,10 @@ public class SlideIdListing {
 
 				// Check the sheet offsets
 				int[] sheetIDs = pph.getKnownSlideIDs();
-				Hashtable sheetOffsets = pph.getSlideLocationsLookup();
+				Map<Integer,Integer> sheetOffsets = pph.getSlideLocationsLookup();
 				for(int j=0; j<sheetIDs.length; j++) {
-					Integer id = new Integer(sheetIDs[j]);
-					Integer offset = (Integer)sheetOffsets.get(id);
+					Integer id = sheetIDs[j];
+					Integer offset = sheetOffsets.get(id);
 
 					System.out.println("  Knows about sheet " + id);
 					System.out.println("    That sheet lives at " + offset);
@@ -149,6 +155,8 @@ public class SlideIdListing {
 			pos += baos.size();
 		}
 
+		ss.close();
+		
 		System.out.println("");
 	}
 
@@ -158,8 +166,6 @@ public class SlideIdListing {
 		long type = LittleEndian.getUShort(fileContents, pos+2);
 		long rlen = LittleEndian.getUInt(fileContents, pos+4);
 
-		Record r = Record.createRecordForType(type,fileContents,pos,(int)rlen+8);
-		
-		return r;
+        return Record.createRecordForType(type,fileContents,pos,(int)rlen+8);
 	}
 }

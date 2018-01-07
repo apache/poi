@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,38 +14,50 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hwpf;
 
-import junit.framework.TestCase;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
+import org.junit.After;
+import org.junit.Before;
 
-public abstract class HWPFTestCase
-  extends TestCase
-{
-  protected HWPFDocFixture _hWPFDocFixture;
+public abstract class HWPFTestCase {
+    protected HWPFDocFixture _hWPFDocFixture;
 
-  public HWPFTestCase()
-  {
-  }
+    @Before
+    public void setUp() throws Exception {
+        /** @todo verify the constructors */
+        _hWPFDocFixture = new HWPFDocFixture(this, getTestFile());
 
-  protected void setUp()
-    throws Exception
-  {
-    super.setUp();
-    /**@todo verify the constructors*/
-    _hWPFDocFixture = new HWPFDocFixture(this);
+        _hWPFDocFixture.setUp();
+    }
 
-    _hWPFDocFixture.setUp();
-  }
+    protected String getTestFile() {
+        return HWPFDocFixture.DEFAULT_TEST_FILE;
+    }
 
-  protected void tearDown()
-    throws Exception
-  {
-    _hWPFDocFixture.tearDown();
+    @After
+    public void tearDown() throws Exception {
+        if (_hWPFDocFixture != null) {
+            _hWPFDocFixture.tearDown();
+        }
 
-    _hWPFDocFixture = null;
-    super.tearDown();
-  }
+        _hWPFDocFixture = null;
+    }
 
+    public HWPFDocument writeOutAndRead(HWPFDocument doc) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        HWPFDocument newDoc;
+        try {
+            doc.write(baos);
+            ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+            newDoc = new HWPFDocument(bais);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return newDoc;
+    }
 }

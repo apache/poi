@@ -41,7 +41,6 @@ public interface BlockWritable
      *            stream
      */
 
-    public void writeBlocks(final OutputStream stream)
-        throws IOException;
+    void writeBlocks(final OutputStream stream) throws IOException;
 }   // end public interface BlockWritable
 

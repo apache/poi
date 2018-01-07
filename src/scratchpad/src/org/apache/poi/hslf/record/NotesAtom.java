@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,10 +14,10 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -30,8 +29,12 @@ import java.io.OutputStream;
  * @author Nick Burch
  */
 
-public class NotesAtom extends RecordAtom
+public final class NotesAtom extends RecordAtom
 {
+
+	//arbitrarily selected; may need to increase
+	private static final int MAX_RECORD_LENGTH = 1_000_000;
+
 	private byte[] _header;
 	private static long _type = 1009l;
 
@@ -55,7 +58,7 @@ public class NotesAtom extends RecordAtom
 
 	/* *************** record code follows ********************** */
 
-	/** 
+	/**
 	 * For the Notes Atom
 	 */
 	protected NotesAtom(byte[] source, int start, int len) {
@@ -67,7 +70,7 @@ public class NotesAtom extends RecordAtom
 		System.arraycopy(source,start,_header,0,8);
 
 		// Get the slide ID
-		slideID = (int)LittleEndian.getInt(source,start+8);
+		slideID = LittleEndian.getInt(source,start+8);
 
 		// Grok the flags, stored as bits
 		int flags = LittleEndian.getUShort(source,start+12);
@@ -88,7 +91,7 @@ public class NotesAtom extends RecordAtom
 		}
 
 		// There might be 2 more bytes, which are a reserved field
-		reserved = new byte[len-14];
+		reserved = IOUtils.safelyAllocate(len-14, MAX_RECORD_LENGTH);
 		System.arraycopy(source,start+14,reserved,0,reserved.length);
 	}
 

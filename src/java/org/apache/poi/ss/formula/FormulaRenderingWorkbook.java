@@ -17,24 +17,32 @@
 
 package org.apache.poi.ss.formula;
 
-import org.apache.poi.hssf.record.formula.NamePtg;
-import org.apache.poi.hssf.record.formula.NameXPtg;
 import org.apache.poi.ss.formula.EvaluationWorkbook.ExternalSheet;
+import org.apache.poi.ss.formula.ptg.NamePtg;
+import org.apache.poi.ss.formula.ptg.NameXPtg;
 
 /**
- * Abstracts a workbook for the purpose of converting formula to text.<br/>
- * 
+ * Abstracts a workbook for the purpose of converting formula to text.<br>
+ *
  * For POI internal use only
- * 
+ *
  * @author Josh Micich
  */
 public interface FormulaRenderingWorkbook {
-
 	/**
 	 * @return <code>null</code> if externSheetIndex refers to a sheet inside the current workbook
 	 */
 	ExternalSheet getExternalSheet(int externSheetIndex);
-	String getSheetNameByExternSheet(int externSheetIndex);
+	
+	/**
+	 * @return the name of the (first) sheet referred to by the given external sheet index
+	 */
+	String getSheetFirstNameByExternSheet(int externSheetIndex);
+    /**
+     * @return the name of the (last) sheet referred to by the given external sheet index
+     */
+    String getSheetLastNameByExternSheet(int externSheetIndex);
+	
 	String resolveNameXText(NameXPtg nameXPtg);
 	String getNameText(NamePtg namePtg);
 }

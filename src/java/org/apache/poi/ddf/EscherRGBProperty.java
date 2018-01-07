@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,13 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.ddf;
+
+import org.apache.poi.util.HexDump;
 
 /**
  * A color property.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 public class EscherRGBProperty
         extends EscherSimpleProperty
@@ -32,24 +31,44 @@ public class EscherRGBProperty
         super( propertyNumber, rgbColor );
     }
 
+    /**
+     * @return the rgb color as int value
+     */
     public int getRgbColor()
     {
-        return propertyValue;
+        return getPropertyValue();
     }
 
+    /**
+     * @return the red part
+     */
     public byte getRed()
     {
-        return (byte) ( propertyValue & 0xFF );
+        return (byte) ( getRgbColor() & 0xFF );
     }
 
+    /**
+     * @return the green part
+     */
     public byte getGreen()
     {
-        return (byte) ( (propertyValue >> 8) & 0xFF );
+        return (byte) ( (getRgbColor() >> 8) & 0xFF );
     }
 
+    /**
+     * @return the blue part
+     */
     public byte getBlue()
     {
-        return (byte) ( (propertyValue >> 16) & 0xFF );
+        return (byte) ( (getRgbColor() >> 16) & 0xFF );
     }
 
+    @Override
+    public String toXml(String tab){
+        StringBuilder builder = new StringBuilder();
+        builder.append(tab).append("<").append(getClass().getSimpleName()).append(" id=\"0x").append(HexDump.toHex(getId()))
+                .append("\" name=\"").append(getName()).append("\" blipId=\"")
+                .append(isBlipId()).append("\" value=\"0x").append(HexDump.toHex(getRgbColor())).append("\"/>");
+        return builder.toString();
+    }
 }

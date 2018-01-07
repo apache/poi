@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hpsf;
 
 import org.apache.poi.util.HexDump;
@@ -22,11 +22,6 @@ import org.apache.poi.util.HexDump;
 /**
  * <p>This exception is thrown if HPSF encounters a variant type that is illegal
  * in the current context.</p>
- * 
- * @author Rainer Klute <a
- * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
- * @since 2004-06-21
- * @version $Id$
  */
 public class IllegalVariantTypeException extends VariantTypeException
 {

@@ -17,19 +17,19 @@
 
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.ss.formula.ptg.AttrPtg;
+import org.apache.poi.ss.formula.ptg.FuncVarPtg;
+import org.apache.poi.ss.formula.ptg.IntPtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.RefPtg;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.FormulaError;
+
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
-import org.apache.poi.hssf.record.formula.AttrPtg;
-import org.apache.poi.hssf.record.formula.FuncVarPtg;
-import org.apache.poi.hssf.record.formula.IntPtg;
-import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.record.formula.RefPtg;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFErrorConstants;
-
 /**
- * Tests the serialization and deserialization of the FormulaRecord
- * class works correctly.
+ * Tests for {@link FormulaRecord}
  *
  * @author Andrew C. Oliver
  */
@@ -58,7 +58,7 @@ public final class TestFormulaRecord extends TestCase {
 			// 8 bytes cached number is a 'special value' in this case
 			0x02, // special cached value type 'error'
 			0x00,
-			HSSFErrorConstants.ERROR_DIV_0,
+			FormulaError.DIV0.getCode(),
 			0x00,
 			0x00,
 			0x00,
@@ -83,7 +83,7 @@ public final class TestFormulaRecord extends TestCase {
 		FormulaRecord record = new FormulaRecord(TestcaseRecordInputStream.create(FormulaRecord.sid, formulaByte));
 		assertEquals("Row", 0, record.getRow());
 		assertEquals("Column", 0, record.getColumn());
-		assertEquals(HSSFCell.CELL_TYPE_ERROR, record.getCachedResultType());
+		assertEquals(CellType.ERROR.getCode(), record.getCachedResultType());
 
 		byte[] output = record.serialize();
 		assertEquals("Output size", 33, output.length); //includes sid+recordlength
@@ -167,5 +167,27 @@ public final class TestFormulaRecord extends TestCase {
 		assertEquals(1, ptgs.length);
 		RefPtg rp = (RefPtg) ptgs[0];
 		assertEquals("B$5", rp.toFormulaString());
+	}
+	
+	/**
+	 * Bug noticed while fixing 46479.  Operands of conditional operator ( ? : ) were swapped
+	 * inside {@link FormulaRecord}
+	 */
+	public void testCachedValue_bug46479() {
+		FormulaRecord fr0 = new FormulaRecord();
+		FormulaRecord fr1 = new FormulaRecord();
+		// test some other cached value types 
+		fr0.setValue(3.5);
+		assertEquals(3.5, fr0.getValue(), 0.0);
+		fr0.setCachedResultErrorCode(FormulaError.REF.getCode());
+		assertEquals(FormulaError.REF.getCode(), fr0.getCachedErrorValue());
+
+		fr0.setCachedResultBoolean(false);
+		fr1.setCachedResultBoolean(true);
+		if (fr0.getCachedBooleanValue() && !fr1.getCachedBooleanValue()) {
+			throw new AssertionFailedError("Identified bug 46479c");
+		}
+		assertEquals(false, fr0.getCachedBooleanValue());
+		assertEquals(true, fr1.getCachedBooleanValue());
 	}
 }

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,15 +14,19 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hwpf.model;
 
-import org.apache.poi.poifs.common.POIFSConstants;
-import org.apache.poi.util.LittleEndian;
-
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.Internal;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * Represents a PAP FKP. The style properties for paragraph and character runs
@@ -41,39 +44,45 @@ import java.util.Arrays;
  *
  * @author Ryan Ackley
  */
-public class PAPFormattedDiskPage extends FormattedDiskPage
-{
-
+@Internal
+public final class PAPFormattedDiskPage extends FormattedDiskPage {
     private static final int BX_SIZE = 13;
     private static final int FC_SIZE = 4;
 
-    private ArrayList _papxList = new ArrayList();
-    private ArrayList _overFlow;
-    private byte[] _dataStream;
+    private ArrayList<PAPX> _papxList = new ArrayList<>();
+    private ArrayList<PAPX> _overFlow;
 
 
-    public PAPFormattedDiskPage(byte[] dataStream)
-    {
-      _dataStream = dataStream;
-    }
+
+    public PAPFormattedDiskPage() { }
 
     /**
      * Creates a PAPFormattedDiskPage from a 512 byte array
      */
-    public PAPFormattedDiskPage(byte[] documentStream, byte[] dataStream, int offset, int fcMin, TextPieceTable tpt)
-    {
-      super(documentStream, offset);
+    public PAPFormattedDiskPage( byte[] documentStream, byte[] dataStream,
+            int offset, CharIndexTranslator translator ) {
+        super( documentStream, offset );
+        for ( int x = 0; x < _crun; x++ )
+        {
+            int bytesStartAt = getStart( x );
+            int bytesEndAt = getEnd( x );
 
-      for (int x = 0; x < _crun; x++) {
-         int startAt = getStart(x) - fcMin;
-         int endAt = getEnd(x) - fcMin;
-    	 boolean isUnicode = tpt.isUnicodeAtByteOffset(startAt);
-         //System.err.println(startAt + " -> " + endAt + " = " + isUnicode);
-    	 
-         _papxList.add(new PAPX(startAt, endAt, getGrpprl(x), getParagraphHeight(x), dataStream, isUnicode));
-      }
-      _fkp = null;
-      _dataStream = dataStream;
+            // int charStartAt = translator.getCharIndex( bytesStartAt );
+            // int charEndAt = translator.getCharIndex( bytesEndAt, charStartAt
+            // );
+            // PAPX papx = new PAPX( charStartAt, charEndAt, getGrpprl( x ),
+            // getParagraphHeight( x ), dataStream );
+            // _papxList.add( papx );
+
+            for ( int[] range : translator.getCharIndexRanges( bytesStartAt,
+                    bytesEndAt ) )
+            {
+                PAPX papx = new PAPX( range[0], range[1], getGrpprl( x ),
+                        getParagraphHeight( x ), dataStream );
+                _papxList.add( papx );
+            }
+        }
+        _fkp = null;
     }
 
     /**
@@ -81,7 +90,7 @@ public class PAPFormattedDiskPage extends FormattedDiskPage
      *
      * @param filler a List of PAPXs
      */
-    public void fill(List filler)
+    public void fill(List<PAPX> filler)
     {
       _papxList.addAll(filler);
     }
@@ -98,7 +107,7 @@ public class PAPFormattedDiskPage extends FormattedDiskPage
      *
      * @return The remaining PAPXs that didn't fit into this FKP.
      */
-    ArrayList getOverflow()
+    ArrayList<PAPX> getOverflow()
     {
       return _overFlow;
     }
@@ -110,7 +119,12 @@ public class PAPFormattedDiskPage extends FormattedDiskPage
      */
     public PAPX getPAPX(int index)
     {
-      return (PAPX)_papxList.get(index);
+      return _papxList.get(index);
+    }
+
+    public List<PAPX> getPAPXs()
+    {
+        return Collections.unmodifiableList( _papxList );
     }
 
     /**
@@ -121,18 +135,18 @@ public class PAPFormattedDiskPage extends FormattedDiskPage
      */
     protected byte[] getGrpprl(int index)
     {
-        int papxOffset = 2 * LittleEndian.getUnsignedByte(_fkp, _offset + (((_crun + 1) * FC_SIZE) + (index * BX_SIZE)));
-        int size = 2 * LittleEndian.getUnsignedByte(_fkp, _offset + papxOffset);
+        int papxOffset = 2 * LittleEndian.getUByte(_fkp, _offset + (((_crun + 1) * FC_SIZE) + (index * BX_SIZE)));
+        int size = 2 * LittleEndian.getUByte(_fkp, _offset + papxOffset);
         if(size == 0)
         {
-            size = 2 * LittleEndian.getUnsignedByte(_fkp, _offset + ++papxOffset);
+            size = 2 * LittleEndian.getUByte(_fkp, _offset + ++papxOffset);
         }
         else
         {
             size--;
         }
 
-        byte[] papx = new byte[size];
+        byte[] papx = IOUtils.safelyAllocate(size, 512);
         System.arraycopy(_fkp, _offset + ++papxOffset, papx, 0, size);
         return papx;
     }
@@ -140,159 +154,181 @@ public class PAPFormattedDiskPage extends FormattedDiskPage
     /**
      * Creates a byte array representation of this data structure. Suitable for
      * writing to a Word document.
-     *
-     * @param fcMin The file offset in the main stream where text begins.
+     * 
+     * @param dataStream required if PAPX is too big to fit in FKP
+     * 
      * @return A byte array representing this data structure.
+     * @throws IOException
+     *             if an I/O error occurs.
      */
-    protected byte[] toByteArray(int fcMin)
+    protected byte[] toByteArray( ByteArrayOutputStream dataStream,
+            CharIndexTranslator translator ) throws IOException
     {
-      byte[] buf = new byte[512];
-      int size = _papxList.size();
-      int grpprlOffset = 0;
-      int bxOffset = 0;
-      int fcOffset = 0;
-      byte[] lastGrpprl = new byte[0];
+        byte[] buf = new byte[512];
+        int size = _papxList.size();
+        int grpprlOffset = 0;
+        int bxOffset = 0;
+        int fcOffset = 0;
+        byte[] lastGrpprl = new byte[0];
 
-      // total size is currently the size of one FC
-      int totalSize = FC_SIZE;
+        // total size is currently the size of one FC
+        int totalSize = FC_SIZE;
 
-      int index = 0;
-      for (; index < size; index++)
-      {
-        byte[] grpprl = ((PAPX)_papxList.get(index)).getGrpprl();
-        int grpprlLength = grpprl.length;
-
-        // is grpprl huge?
-        if(grpprlLength > 488)
+        int index = 0;
+        for ( ; index < size; index++ )
         {
-          grpprlLength = 8; // set equal to size of sprmPHugePapx grpprl
+            byte[] grpprl = _papxList.get( index ).getGrpprl();
+            int grpprlLength = grpprl.length;
+
+            // is grpprl huge?
+            if ( grpprlLength > 488 )
+            {
+                grpprlLength = 8; // set equal to size of sprmPHugePapx grpprl
+            }
+
+            // check to see if we have enough room for an FC, a BX, and the
+            // grpprl
+            // and the 1 byte size of the grpprl.
+            int addition = 0;
+            if ( !Arrays.equals( grpprl, lastGrpprl ) )
+            {
+                addition = ( FC_SIZE + BX_SIZE + grpprlLength + 1 );
+            }
+            else
+            {
+                addition = ( FC_SIZE + BX_SIZE );
+            }
+
+            totalSize += addition;
+
+            // if size is uneven we will have to add one so the first grpprl
+            // falls
+            // on a word boundary
+            if ( totalSize > 511 + ( index % 2 ) )
+            {
+                totalSize -= addition;
+                break;
+            }
+
+            // grpprls must fall on word boundaries
+            if ( grpprlLength % 2 > 0 )
+            {
+                totalSize += 1;
+            }
+            else
+            {
+                totalSize += 2;
+            }
+            lastGrpprl = grpprl;
         }
 
-        // check to see if we have enough room for an FC, a BX, and the grpprl
-        // and the 1 byte size of the grpprl.
-        int addition = 0;
-        if (!Arrays.equals(grpprl, lastGrpprl))
+        // see if we couldn't fit some
+        if ( index != size )
         {
-          addition = (FC_SIZE + BX_SIZE + grpprlLength + 1);
-        }
-        else
-        {
-          addition = (FC_SIZE + BX_SIZE);
+            _overFlow = new ArrayList<>();
+            _overFlow.addAll( _papxList.subList( index, size ) );
         }
 
-        totalSize += addition;
+        // index should equal number of papxs that will be in this fkp now.
+        buf[511] = (byte) index;
 
-        // if size is uneven we will have to add one so the first grpprl falls
-        // on a word boundary
-        if (totalSize > 511 + (index % 2))
+        bxOffset = ( FC_SIZE * index ) + FC_SIZE;
+        grpprlOffset = 511;
+
+        PAPX papx = null;
+        lastGrpprl = new byte[0];
+        for ( int x = 0; x < index; x++ )
         {
-          totalSize -= addition;
-          break;
+            papx = _papxList.get( x );
+            byte[] phe = papx.getParagraphHeight().toByteArray();
+            byte[] grpprl = papx.getGrpprl();
+
+            // is grpprl huge?
+            if ( grpprl.length > 488 )
+            {
+                // if so do we have storage at getHugeGrpprlOffset()
+                // int hugeGrpprlOffset = papx.getHugeGrpprlOffset();
+                // if ( hugeGrpprlOffset == -1 ) // then we have no storage...
+                // {
+                // throw new UnsupportedOperationException(
+                // "This Paragraph has no dataStream storage." );
+                // }
+                // we have some storage...
+
+                // get the size of the existing storage
+                // int maxHugeGrpprlSize = LittleEndian.getUShort( dataStream,
+                // hugeGrpprlOffset );
+                //
+                // if ( maxHugeGrpprlSize < grpprl.length - 2 )
+                // { // grpprl.length-2 because we don't store the istd
+                // throw new UnsupportedOperationException(
+                // "This Paragraph's dataStream storage is too small." );
+                // }
+
+                // store grpprl at hugeGrpprlOffset
+                // grpprl.length-2 because we don't store the istd
+                // System.arraycopy( grpprl, 2, dataStream, hugeGrpprlOffset +
+                // 2,
+                // grpprl.length - 2 );
+                // LittleEndian.putUShort( dataStream, hugeGrpprlOffset,
+                // grpprl.length - 2 );
+
+                byte[] hugePapx = new byte[grpprl.length - 2];
+                System.arraycopy( grpprl, 2, hugePapx, 0, grpprl.length - 2 );
+                int dataStreamOffset = dataStream.size();
+                dataStream.write( hugePapx );
+
+                // grpprl = grpprl containing only a sprmPHugePapx2
+                int istd = LittleEndian.getUShort( grpprl, 0 );
+
+                grpprl = new byte[8];
+                LittleEndian.putUShort( grpprl, 0, istd );
+                LittleEndian.putUShort( grpprl, 2, 0x6646 ); // sprmPHugePapx2
+                LittleEndian.putInt( grpprl, 4, dataStreamOffset );
+            }
+
+            boolean same = Arrays.equals( lastGrpprl, grpprl );
+            if ( !same )
+            {
+                grpprlOffset -= ( grpprl.length + ( 2 - grpprl.length % 2 ) );
+                grpprlOffset -= ( grpprlOffset % 2 );
+            }
+            // LittleEndian.putInt( buf, fcOffset, papx.getStartBytes() );
+            LittleEndian.putInt( buf, fcOffset,
+                    translator.getByteIndex( papx.getStart() ) );
+            buf[bxOffset] = (byte) ( grpprlOffset / 2 );
+            System.arraycopy( phe, 0, buf, bxOffset + 1, phe.length );
+
+            /*
+             * refer to the section on PAPX in the spec. Places a size on the
+             * front of the PAPX. Has to do with how the grpprl stays on word
+             * boundaries.
+             */
+            if ( !same )
+            {
+                int copyOffset = grpprlOffset;
+                if ( ( grpprl.length % 2 ) > 0 )
+                {
+                    buf[copyOffset++] = (byte) ( ( grpprl.length + 1 ) / 2 );
+                }
+                else
+                {
+                    buf[++copyOffset] = (byte) ( ( grpprl.length ) / 2 );
+                    copyOffset++;
+                }
+                System.arraycopy( grpprl, 0, buf, copyOffset, grpprl.length );
+                lastGrpprl = grpprl;
+            }
+
+            bxOffset += BX_SIZE;
+            fcOffset += FC_SIZE;
+
         }
 
-        // grpprls must fall on word boundaries
-        if (grpprlLength % 2 > 0)
-        {
-          totalSize += 1;
-        }
-        else
-        {
-          totalSize += 2;
-        }
-        lastGrpprl = grpprl;
-      }
-
-      // see if we couldn't fit some
-      if (index != size)
-      {
-        _overFlow = new ArrayList();
-        _overFlow.addAll(_papxList.subList(index, size));
-      }
-
-      // index should equal number of papxs that will be in this fkp now.
-      buf[511] = (byte)index;
-
-      bxOffset = (FC_SIZE * index) + FC_SIZE;
-      grpprlOffset =  511;
-
-      PAPX papx = null;
-      lastGrpprl = new byte[0];
-      for (int x = 0; x < index; x++)
-      {
-        papx = (PAPX)_papxList.get(x);
-        byte[] phe = papx.getParagraphHeight().toByteArray();
-        byte[] grpprl = papx.getGrpprl();
-
-        // is grpprl huge?
-        if(grpprl.length > 488)
-        {
-          // if so do we have storage at getHugeGrpprlOffset()
-          int hugeGrpprlOffset = papx.getHugeGrpprlOffset();
-          if(hugeGrpprlOffset == -1) // then we have no storage...
-          {
-            throw new UnsupportedOperationException(
-                  "This Paragraph has no dataStream storage.");
-          }
-          else // we have some storage...
-          {
-            // get the size of the existing storage
-            int maxHugeGrpprlSize = LittleEndian.getUShort(_dataStream,
-                hugeGrpprlOffset);
-
-            if (maxHugeGrpprlSize < grpprl.length-2) // grpprl.length-2 because we don't store the istd
-              throw new UnsupportedOperationException(
-                  "This Paragraph's dataStream storage is too small.");
-          }
-
-          // store grpprl at hugeGrpprlOffset
-          System.arraycopy(grpprl, 2, _dataStream, hugeGrpprlOffset + 2,
-                           grpprl.length - 2); // grpprl.length-2 because we don't store the istd
-          LittleEndian.putUShort(_dataStream, hugeGrpprlOffset, grpprl.length - 2);
-
-          // grpprl = grpprl containing only a sprmPHugePapx2
-          int istd = LittleEndian.getUShort(grpprl, 0);
-          grpprl = new byte[8];
-          LittleEndian.putUShort(grpprl, 0, istd);
-          LittleEndian.putUShort(grpprl, 2, 0x6646); // sprmPHugePapx2
-          LittleEndian.putInt(grpprl, 4, hugeGrpprlOffset);
-        }
-
-        boolean same = Arrays.equals(lastGrpprl, grpprl);
-        if (!same)
-        {
-          grpprlOffset -= (grpprl.length + (2 - grpprl.length % 2));
-          grpprlOffset -= (grpprlOffset % 2);
-        }
-        LittleEndian.putInt(buf, fcOffset, papx.getStartBytes() + fcMin);
-        buf[bxOffset] = (byte)(grpprlOffset/2);
-        System.arraycopy(phe, 0, buf, bxOffset + 1, phe.length);
-
-        // refer to the section on PAPX in the spec. Places a size on the front
-        // of the PAPX. Has to do with how the grpprl stays on word
-        // boundaries.
-        if (!same)
-        {
-          int copyOffset = grpprlOffset;
-          if ( (grpprl.length % 2) > 0)
-          {
-            buf[copyOffset++] = (byte) ( (grpprl.length + 1) / 2);
-          }
-          else
-          {
-            buf[++copyOffset] = (byte) ( (grpprl.length) / 2);
-            copyOffset++;
-          }
-          System.arraycopy(grpprl, 0, buf, copyOffset, grpprl.length);
-          lastGrpprl = grpprl;
-        }
-
-        bxOffset += BX_SIZE;
-        fcOffset += FC_SIZE;
-
-      }
-
-      LittleEndian.putInt(buf, fcOffset, papx.getEndBytes() + fcMin);
-      return buf;
+        // LittleEndian.putInt(buf, fcOffset, papx.getEndBytes() + fcMin);
+        LittleEndian.putInt( buf, fcOffset,
+                translator.getByteIndex( papx.getEnd() ) );
+        return buf;
     }
 
     /**
@@ -304,8 +340,6 @@ public class PAPFormattedDiskPage extends FormattedDiskPage
     {
       int pheOffset = _offset + 1 + (((_crun + 1) * 4) + (index * 13));
 
-      ParagraphHeight phe = new ParagraphHeight(_fkp, pheOffset);
-
-      return phe;
+        return new ParagraphHeight(_fkp, pheOffset);
     }
 }

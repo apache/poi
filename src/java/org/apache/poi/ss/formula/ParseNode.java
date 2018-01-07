@@ -17,16 +17,17 @@
 
 package org.apache.poi.ss.formula;
 
-import org.apache.poi.hssf.record.formula.AttrPtg;
-import org.apache.poi.hssf.record.formula.FuncVarPtg;
-import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.record.formula.function.FunctionMetadataRegistry;
+import org.apache.poi.ss.formula.ptg.ArrayPtg;
+import org.apache.poi.ss.formula.ptg.AttrPtg;
+import org.apache.poi.ss.formula.ptg.FuncVarPtg;
+import org.apache.poi.ss.formula.ptg.MemAreaPtg;
+import org.apache.poi.ss.formula.ptg.MemFuncPtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.function.FunctionMetadataRegistry;
 /**
  * Represents a syntactic element from a formula by encapsulating the corresponding <tt>Ptg</tt>
  * token.  Each <tt>ParseNode</tt> may have child <tt>ParseNode</tt>s in the case when the wrapped
  * <tt>Ptg</tt> is non-atomic.
- * 
- * @author Josh Micich
  */
 final class ParseNode {
 
@@ -37,8 +38,11 @@ final class ParseNode {
 	private final int _tokenCount;
 
 	public ParseNode(Ptg token, ParseNode[] children) {
+		if (token == null) {
+			throw new IllegalArgumentException("token must not be null");
+		}
 		_token = token;
-		_children = children;
+		_children = children.clone();
 		_isIf = isIf(token);
 		int tokenCount = 1;
 		for (int i = 0; i < children.length; i++) {
@@ -62,6 +66,13 @@ final class ParseNode {
 	private int getTokenCount() {
 		return _tokenCount;
 	}
+	public int getEncodedSize() {
+		int result = _token instanceof ArrayPtg ? ArrayPtg.PLAIN_TOKEN_SIZE : _token.getSize();
+		for (int i = 0; i < _children.length; i++) {
+			result += _children[i].getEncodedSize();
+		}
+		return result;
+	}
 
 	/**
 	 * Collects the array of <tt>Ptg</tt> tokens for the specified tree.
@@ -72,71 +83,68 @@ final class ParseNode {
 		return temp.getResult();
 	}
 	private void collectPtgs(TokenCollector temp) {
-		if (isIf(getToken())) {
+		if (isIf(_token)) {
 			collectIfPtgs(temp);
 			return;
+		}
+		boolean isPreFixOperator = _token instanceof MemFuncPtg || _token instanceof MemAreaPtg;
+		if (isPreFixOperator) {
+			temp.add(_token);
 		}
 		for (int i=0; i< getChildren().length; i++) {
 			getChildren()[i].collectPtgs(temp);
 		}
-		temp.add(getToken());
+		if (!isPreFixOperator) {
+			temp.add(_token);
+		}
 	}
 	/**
 	 * The IF() function gets marked up with two or three tAttr tokens.
 	 * Similar logic will be required for CHOOSE() when it is supported
-	 * 
+	 *
 	 * See excelfileformat.pdf sec 3.10.5 "tAttr (19H)
 	 */
 	private void collectIfPtgs(TokenCollector temp) {
 
 		// condition goes first
 		getChildren()[0].collectPtgs(temp);
-		
+
 		// placeholder for tAttrIf
 		int ifAttrIndex = temp.createPlaceholder();
-		
+
 		// true parameter
 		getChildren()[1].collectPtgs(temp);
-		
+
 		// placeholder for first skip attr
 		int skipAfterTrueParamIndex = temp.createPlaceholder();
 		int trueParamSize = temp.sumTokenSizes(ifAttrIndex+1, skipAfterTrueParamIndex);
 
-		AttrPtg attrIf = new AttrPtg();
-		attrIf.setOptimizedIf(true);
-		AttrPtg attrSkipAfterTrue = new AttrPtg();
-		attrSkipAfterTrue.setGoto(true);
-		
+		AttrPtg attrIf = AttrPtg.createIf(trueParamSize + 4); // distance to start of false parameter/tFuncVar. +4 for tAttrSkip after true
+
 		if (getChildren().length > 2) {
 			// false param present
-			
+
 			// false parameter
 			getChildren()[2].collectPtgs(temp);
-			
+
 			int skipAfterFalseParamIndex = temp.createPlaceholder();
 
-			AttrPtg attrSkipAfterFalse = new AttrPtg();
-			attrSkipAfterFalse.setGoto(true);
-
 			int falseParamSize =  temp.sumTokenSizes(skipAfterTrueParamIndex+1, skipAfterFalseParamIndex);
-			
-			attrIf.setData((short)(trueParamSize + 4)); // distance to start of false parameter. +4 for skip after true
-			attrSkipAfterTrue.setData((short)(falseParamSize + 4 + 4 - 1)); // 1 less than distance to end of if FuncVar(size=4). +4 for attr skip before 
-			attrSkipAfterFalse.setData((short)(4 - 1)); // 1 less than distance to end of if FuncVar(size=4). 
+
+			AttrPtg attrSkipAfterTrue = AttrPtg.createSkip(falseParamSize + 4 + 4 - 1); // 1 less than distance to end of if FuncVar(size=4). +4 for attr skip before
+			AttrPtg attrSkipAfterFalse = AttrPtg.createSkip(4 - 1); // 1 less than distance to end of if FuncVar(size=4).
 
 			temp.setPlaceholder(ifAttrIndex, attrIf);
 			temp.setPlaceholder(skipAfterTrueParamIndex, attrSkipAfterTrue);
 			temp.setPlaceholder(skipAfterFalseParamIndex, attrSkipAfterFalse);
 		} else {
 			// false parameter not present
-			attrIf.setData((short)(trueParamSize + 4)); // distance to start of FuncVar. +4 for skip after true
-			attrSkipAfterTrue.setData((short)(4 - 1)); // 1 less than distance to end of if FuncVar(size=4). 
-			
+			AttrPtg attrSkipAfterTrue = AttrPtg.createSkip(4 - 1); // 1 less than distance to end of if FuncVar(size=4).
+
 			temp.setPlaceholder(ifAttrIndex, attrIf);
 			temp.setPlaceholder(skipAfterTrueParamIndex, attrSkipAfterTrue);
 		}
-		
-		temp.add(getToken());
+		temp.add(_token);
 	}
 
 	private static boolean isIf(Ptg token) {

@@ -42,7 +42,7 @@ public final class TestMergeCellsRecord extends TestCase {
 	public void testCloneReferences() {
 		CellRangeAddress[] cras = { new CellRangeAddress(0, 1, 0, 2), };
 		MergeCellsRecord merge = new MergeCellsRecord(cras, 0, cras.length);
-		MergeCellsRecord clone = (MergeCellsRecord)merge.clone();
+		MergeCellsRecord clone = merge.clone();
 
 		assertNotSame("Merged and cloned objects are the same", merge, clone);
 
@@ -58,13 +58,14 @@ public final class TestMergeCellsRecord extends TestCase {
 	}
    
 	private static final RecordVisitor dummyRecordVisitor = new RecordVisitor() {
-		public void visitRecord(Record r) {
+		@Override
+        public void visitRecord(Record r) {
 			// do nothing
 		}
 	};
 	public void testMCTable_bug46009() {
 		MergedCellsTable mct = new MergedCellsTable();
-		List recList = new ArrayList();
+		List<Record> recList = new ArrayList<>();
 		CellRangeAddress[] cras = new CellRangeAddress[] {
 				new CellRangeAddress(0, 0, 0, 3), 
 		};

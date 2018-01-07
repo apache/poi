@@ -15,31 +15,79 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 package org.apache.poi.hssf.usermodel;
 
-import junit.framework.Assert;
-import org.apache.poi.hssf.model.Sheet;
-import org.apache.poi.hssf.model.Workbook;
-import org.apache.poi.hssf.record.*;
-import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.List;
+
+import org.apache.poi.hssf.model.InternalSheet;
+import org.apache.poi.hssf.model.InternalWorkbook;
+import org.apache.poi.hssf.record.BOFRecord;
+import org.apache.poi.hssf.record.BackupRecord;
+import org.apache.poi.hssf.record.BookBoolRecord;
+import org.apache.poi.hssf.record.BoundSheetRecord;
+import org.apache.poi.hssf.record.CalcModeRecord;
+import org.apache.poi.hssf.record.CodepageRecord;
+import org.apache.poi.hssf.record.CountryRecord;
+import org.apache.poi.hssf.record.DSFRecord;
+import org.apache.poi.hssf.record.DateWindow1904Record;
+import org.apache.poi.hssf.record.DefaultColWidthRecord;
+import org.apache.poi.hssf.record.DefaultRowHeightRecord;
+import org.apache.poi.hssf.record.DeltaRecord;
+import org.apache.poi.hssf.record.DimensionsRecord;
+import org.apache.poi.hssf.record.EOFRecord;
+import org.apache.poi.hssf.record.ExtSSTRecord;
+import org.apache.poi.hssf.record.ExtendedFormatRecord;
+import org.apache.poi.hssf.record.ExternSheetRecord;
+import org.apache.poi.hssf.record.FnGroupCountRecord;
+import org.apache.poi.hssf.record.FontRecord;
+import org.apache.poi.hssf.record.FormatRecord;
+import org.apache.poi.hssf.record.GridsetRecord;
+import org.apache.poi.hssf.record.GutsRecord;
+import org.apache.poi.hssf.record.HideObjRecord;
+import org.apache.poi.hssf.record.InterfaceEndRecord;
+import org.apache.poi.hssf.record.InterfaceHdrRecord;
+import org.apache.poi.hssf.record.IterationRecord;
+import org.apache.poi.hssf.record.MMSRecord;
+import org.apache.poi.hssf.record.NameRecord;
+import org.apache.poi.hssf.record.PasswordRev4Record;
+import org.apache.poi.hssf.record.PrecisionRecord;
+import org.apache.poi.hssf.record.PrintGridlinesRecord;
+import org.apache.poi.hssf.record.PrintHeadersRecord;
+import org.apache.poi.hssf.record.ProtectRecord;
+import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.RecordBase;
+import org.apache.poi.hssf.record.RefModeRecord;
+import org.apache.poi.hssf.record.RefreshAllRecord;
+import org.apache.poi.hssf.record.SSTRecord;
+import org.apache.poi.hssf.record.SaveRecalcRecord;
+import org.apache.poi.hssf.record.SelectionRecord;
+import org.apache.poi.hssf.record.StyleRecord;
+import org.apache.poi.hssf.record.SupBookRecord;
+import org.apache.poi.hssf.record.TabIdRecord;
+import org.apache.poi.hssf.record.UseSelFSRecord;
+import org.apache.poi.hssf.record.WSBoolRecord;
+import org.apache.poi.hssf.record.WindowOneRecord;
+import org.apache.poi.hssf.record.WindowProtectRecord;
+import org.apache.poi.hssf.record.WindowTwoRecord;
+import org.apache.poi.hssf.record.WriteAccessRecord;
+import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
 
 /**
  * Designed to check wither the records written actually make sense.
  */
-public class SanityChecker
-        extends Assert
-{
+public class SanityChecker {
     static class CheckRecord
     {
-        Class record;
+        Class<? extends RecordBase> record;
         char occurance;  // 1 = one time, M = 1..many times, * = 0..many, 0 = optional
-        private boolean together;
+        private final boolean together;
 
-        public CheckRecord( Class record, char occurance )
+        public CheckRecord( Class<? extends RecordBase> record, char occurance )
         {
             this(record, occurance, true);
         }
@@ -49,14 +97,14 @@ public class SanityChecker
          * @param occurance     The occurance 1 = occurs once, M = occurs many times
          * @param together
          */
-        public CheckRecord(Class record, char occurance, boolean together)
+        public CheckRecord(Class<? extends RecordBase> record, char occurance, boolean together)
         {
             this.record = record;
             this.occurance = occurance;
             this.together = together;
         }
 
-        public Class getRecord()
+        public Class<? extends RecordBase> getRecord()
         {
             return record;
         }
@@ -86,20 +134,17 @@ public class SanityChecker
             return occurance == '*' || occurance == 'M';
         }
 
-        public int match( List records, int recordIdx )
+        public int match( List<? extends RecordBase> records, int recordIdx )
         {
             int firstRecord = findFirstRecord(records, getRecord(), recordIdx);
             if (isRequired())
             {
                 return matchRequired( firstRecord, records, recordIdx );
             }
-            else
-            {
-                return matchOptional( firstRecord, records, recordIdx );
-            }
+            return matchOptional( firstRecord, records, recordIdx );
         }
 
-        private int matchOptional( int firstRecord, List records, int recordIdx )
+        private int matchOptional( int firstRecord, List<? extends RecordBase> records, int recordIdx )
         {
             if (firstRecord == -1)
             {
@@ -109,7 +154,7 @@ public class SanityChecker
             return matchOneOrMany( records, firstRecord );
         }
 
-        private int matchRequired( int firstRecord, List records, int recordIdx )
+        private int matchRequired( int firstRecord, List<? extends RecordBase> records, int recordIdx )
         {
             if (firstRecord == -1)
             {
@@ -119,7 +164,7 @@ public class SanityChecker
             return matchOneOrMany( records, firstRecord );
         }
 
-        private int matchOneOrMany( List records, int recordIdx )
+        private int matchOneOrMany( List<? extends RecordBase> records, int recordIdx )
         {
             if (isZeroOrOne())
             {
@@ -211,9 +256,9 @@ public class SanityChecker
         new CheckRecord(EOFRecord.class, '1')
     };
 
-    private void checkWorkbookRecords(Workbook workbook)
+    private void checkWorkbookRecords(InternalWorkbook workbook)
     {
-        List records = workbook.getRecords();
+        List<Record> records = workbook.getRecords();
         assertTrue(records.get(0) instanceof BOFRecord);
         assertTrue(records.get(records.size() - 1) instanceof EOFRecord);
 
@@ -221,9 +266,8 @@ public class SanityChecker
 //        checkRecordsTogether(records, workbookRecords);
     }
 
-    private void checkSheetRecords(Sheet sheet)
-    {
-        List records = sheet.getRecords();
+    private void checkSheetRecords(InternalSheet sheet) {
+        List<RecordBase> records = sheet.getRecords();
         assertTrue(records.get(0) instanceof BOFRecord);
         assertTrue(records.get(records.size() - 1) instanceof EOFRecord);
 
@@ -270,7 +314,7 @@ public class SanityChecker
         }
     } */
 
-    /* package */ static int findFirstRecord( List records, Class record, int startIndex )
+    /* package */ static int findFirstRecord( List<? extends RecordBase> records, Class<? extends RecordBase> record, int startIndex )
     {
         for (int i = startIndex; i < records.size(); i++)
         {
@@ -280,12 +324,11 @@ public class SanityChecker
         return -1;
     }
 
-    void checkRecordOrder(List records, CheckRecord[] check)
+    void checkRecordOrder(List<? extends RecordBase> records, CheckRecord[] check)
     {
         int recordIdx = 0;
-        for ( int checkIdx = 0; checkIdx < check.length; checkIdx++ )
-        {
-            recordIdx = check[checkIdx].match(records, recordIdx);
+        for (CheckRecord element : check) {
+            recordIdx = element.match(records, recordIdx);
         }
     }
 

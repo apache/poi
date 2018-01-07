@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,14 +14,16 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hwpf.model;
 
+import java.util.Arrays;
+
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
-import java.util.Arrays;
 
 /**
  * FFN - Font Family Name. FFN is a data structure that stores the names of the Main
@@ -31,8 +32,13 @@ import java.util.Arrays;
  *
  * @author Praveen Mathew
  */
-public class Ffn
+@Internal
+public final class Ffn
 {
+
+  //arbitrarily selected; may need to increase
+  private static final int MAX_RECORD_LENGTH = 100_000;
+
   private int _cbFfnM1;//total length of FFN - 1.
   private byte _info;
     private static BitField _prq = BitFieldFactory.getInstance(0x0003);// pitch request
@@ -56,7 +62,7 @@ public class Ffn
   {
     int offsetTmp = offset;
 
-    _cbFfnM1 = LittleEndian.getUnsignedByte(buf,offset);
+    _cbFfnM1 = LittleEndian.getUByte(buf,offset);
     offset += LittleEndian.BYTE_SIZE;
     _info = buf[offset];
     offset += LittleEndian.BYTE_SIZE;
@@ -152,7 +158,7 @@ public class Ffn
   public byte[] toByteArray()
   {
     int offset = 0;
-    byte[] buf = new byte[this.getSize()];
+    byte[] buf = IOUtils.safelyAllocate(this.getSize(), MAX_RECORD_LENGTH);
 
     buf[offset] = (byte)_cbFfnM1;
     offset += LittleEndian.BYTE_SIZE;
@@ -180,52 +186,29 @@ public class Ffn
 
   }
 
-    public boolean equals(Object o)
-    {
-    boolean retVal = true;
-
-    if (((Ffn)o).get_cbFfnM1() == _cbFfnM1)
-    {
-      if(((Ffn)o)._info == _info)
-      {
-      if(((Ffn)o)._wWeight == _wWeight)
-      {
-        if(((Ffn)o)._chs == _chs)
-        {
-        if(((Ffn)o)._ixchSzAlt == _ixchSzAlt)
-        {
-          if(Arrays.equals(((Ffn)o)._panose,_panose))
-          {
-          if(Arrays.equals(((Ffn)o)._fontSig,_fontSig))
-          {
-                  if(!(Arrays.equals(((Ffn)o)._xszFfn,_xszFfn)))
-                    retVal = false;
-          }
-          else
-            retVal = false;
-          }
-          else
-          retVal = false;
-        }
-        else
-          retVal = false;
-        }
-        else
-        retVal = false;
-      }
-      else
-        retVal = false;
-      }
-      else
-      retVal = false;
-    }
-    else
-      retVal = false;
-
-    return retVal;
+  @Override
+  public boolean equals(Object other) {
+      if (!(other instanceof Ffn)) return false;
+      Ffn o = (Ffn)other;
+      
+      return (
+             o._cbFfnM1 == this._cbFfnM1
+          && o._info == this._info
+          && o._wWeight == _wWeight
+          && o._chs == _chs
+          && o._ixchSzAlt == _ixchSzAlt
+          && Arrays.equals(o._panose,_panose)
+          && Arrays.equals(o._fontSig,_fontSig)
+          && Arrays.equals(o._xszFfn,_xszFfn)
+      );
   }
 
 
+    @Override
+    public int hashCode() {
+        assert false : "hashCode not designed";
+        return 42; // any arbitrary constant will do
+    }
 }
 
 

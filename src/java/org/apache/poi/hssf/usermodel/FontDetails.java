@@ -24,14 +24,12 @@ import java.util.StringTokenizer;
 
 /**
  * Stores width and height details about a font.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 public class FontDetails
 {
-    private String fontName;
-    private int height;
-    private Map charWidths = new HashMap();
+    private String _fontName;
+    private int _height;
+    private final Map<Character, Integer> charWidths = new HashMap<>();
 
     /**
      * Construct the font details with the given name and height.
@@ -41,23 +39,23 @@ public class FontDetails
      */
     public FontDetails( String fontName, int height )
     {
-        this.fontName = fontName;
-        this.height = height;
+        _fontName = fontName;
+        _height = height;
     }
 
     public String getFontName()
     {
-        return fontName;
+        return _fontName;
     }
 
     public int getHeight()
     {
-        return height;
+        return _height;
     }
 
     public void addChar( char c, int width )
     {
-        charWidths.put(new Character(c), new Integer(width));
+        charWidths.put(Character.valueOf(c), Integer.valueOf(width));
     }
 
     /**
@@ -67,30 +65,30 @@ public class FontDetails
      */
     public int getCharWidth( char c )
     {
-        Integer widthInteger = (Integer)(charWidths.get(new Character(c)));
-        if (widthInteger == null && c != 'W')
-            return getCharWidth('W');
-        else
-            return widthInteger.intValue();
+        Integer widthInteger = charWidths.get(Character.valueOf(c));
+        if (widthInteger == null) {
+            return 'W' == c ? 0 : getCharWidth('W');
+        }
+        return widthInteger;
     }
 
     public void addChars( char[] characters, int[] widths )
     {
         for ( int i = 0; i < characters.length; i++ )
         {
-            charWidths.put( new Character(characters[i]), new Integer(widths[i]));
+            charWidths.put( Character.valueOf(characters[i]), Integer.valueOf(widths[i]));
         }
     }
 
-	protected static String buildFontHeightProperty(String fontName) {
-		return "font." + fontName + ".height";
-	}
-	protected static String buildFontWidthsProperty(String fontName) {
-		return "font." + fontName + ".widths";
-	}
-	protected static String buildFontCharactersProperty(String fontName) {
-		return "font." + fontName + ".characters";
-	}
+    protected static String buildFontHeightProperty(String fontName) {
+        return "font." + fontName + ".height";
+    }
+    protected static String buildFontWidthsProperty(String fontName) {
+        return "font." + fontName + ".widths";
+    }
+    protected static String buildFontCharactersProperty(String fontName) {
+        return "font." + fontName + ".characters";
+    }
 
     /**
      * Create an instance of <code>FontDetails</code> by loading them from the
@@ -173,6 +171,4 @@ public class FontDetails
 
         return list;
     }
-
-
 }

@@ -17,21 +17,20 @@
 
 package org.apache.poi.hslf.record;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.zip.InflaterInputStream;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogger;
 
 /**
  * Ruler of a text as it differs from the style's ruler settings.
- *
- * @author Yegor Kozlov
  */
-public class TextRulerAtom extends RecordAtom {
+public final class TextRulerAtom extends RecordAtom {
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
 
     /**
      * Record header.
@@ -75,14 +74,13 @@ public class TextRulerAtom extends RecordAtom {
         System.arraycopy(source,start,_header,0,8);
 
         // Get the record data.
-        _data = new byte[len-8];
+        _data = IOUtils.safelyAllocate(len-8, MAX_RECORD_LENGTH);
         System.arraycopy(source,start+8,_data,0,len-8);
 
         try {
             read();
         } catch (Exception e){
-            logger.log(POILogger.ERROR, "Failed to parse TextRulerAtom: " + e.getMessage()); 
-            e.printStackTrace();
+            logger.log(POILogger.ERROR, "Failed to parse TextRulerAtom: " + e.getMessage());
         }
     }
 
@@ -152,6 +150,8 @@ public class TextRulerAtom extends RecordAtom {
                         val = LittleEndian.getShort(_data, pos); pos += 2;
                         textOffsets[bits[i]-8] = val;
                         break;
+                    default:
+                        break;
                 }
             }
         }
@@ -197,8 +197,7 @@ public class TextRulerAtom extends RecordAtom {
             0x00, 0x00, (byte)0xA6, 0x0F, 0x0A, 0x00, 0x00, 0x00,
             0x10, 0x03, 0x00, 0x00, (byte)0xF9, 0x00, 0x41, 0x01, 0x41, 0x01
         };
-        TextRulerAtom ruler = new TextRulerAtom(data, 0, data.length);
-        return ruler;
+        return new TextRulerAtom(data, 0, data.length);
     }
 
     public void setParagraphIndent(short tetxOffset, short bulletOffset){

@@ -14,41 +14,40 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import org.apache.poi.common.usermodel.fonts.FontInfo;
+import org.apache.poi.hslf.usermodel.HSLFFontInfo;
+import org.apache.poi.hslf.usermodel.HSLFFontInfoPredefined;
 import org.apache.poi.util.POILogger;
 
-import java.io.*;
-import java.util.*;
-
 /**
- * <code>FontCollection</code> ia a container that holds information
+ * {@code FontCollection} ia a container that holds information
  * about all the fonts in the presentation.
- *
- * @author Yegor Kozlov
  */
 
-public class FontCollection extends RecordContainer {
-    private List fonts;
-	private byte[] _header;
+public final class FontCollection extends RecordContainer {
+    private final Map<String,HSLFFontInfo> fonts = new LinkedHashMap<>();
+    private byte[] _header;
 
 	protected FontCollection(byte[] source, int start, int len) {
-		// Grab the header
 		_header = new byte[8];
 		System.arraycopy(source,start,_header,0,8);
 
 		_children = Record.findChildRecords(source,start+8,len-8);
 
-		// Save font names into <code>List</code>
-		fonts = new ArrayList();
-		for (int i = 0; i < _children.length; i++){
-			if(_children[i] instanceof FontEntityAtom) {
-	            FontEntityAtom atom = (FontEntityAtom)_children[i];
-	            fonts.add(atom.getFontName());
+		for (Record r : _children){
+			if(r instanceof FontEntityAtom) {
+			    HSLFFontInfo fi = new HSLFFontInfo((FontEntityAtom)r);
+	            fonts.put(fi.getTypeface(), fi);
 			} else {
-				logger.log(POILogger.WARN, "Warning: FontCollection child wasn't a FontEntityAtom, was " + _children[i]);
+				logger.log(POILogger.WARN, "Warning: FontCollection child wasn't a FontEntityAtom, was " + r.getClass().getSimpleName());
 			}
 		}
 	}
@@ -56,7 +55,8 @@ public class FontCollection extends RecordContainer {
 	/**
 	 * Return the type, which is 2005
 	 */
-	public long getRecordType() {
+	@Override
+    public long getRecordType() {
         return RecordTypes.FontCollection.typeID;
     }
 
@@ -64,66 +64,72 @@ public class FontCollection extends RecordContainer {
 	 * Write the contents of the record back, so it can be written
 	 *  to disk
 	 */
-	public void writeOut(OutputStream out) throws IOException {
+	@Override
+    public void writeOut(OutputStream out) throws IOException {
 		writeOut(_header[0],_header[1],getRecordType(),_children,out);
 	}
 
     /**
-     * Add font with the specified name to the font collection.
-     * If the font is already present return its index.
-     * @param name of the font
-     * @return zero based index of the font in the collection
+     * Add font with the given FontInfo configuration to the font collection.
+     * The returned FontInfo contains the HSLF specific details and the collection 
+     * uniquely contains fonts based on their typeface, i.e. calling the method with FontInfo
+     * objects having the same name results in the same HSLFFontInfo reference.
+     * 
+     * @param fontInfo the FontInfo configuration, can be a instance of {@link HSLFFontInfo},
+     *      {@link HSLFFontInfoPredefined} or a custom implementation
+     * @return the register HSLFFontInfo object
      */
-    public int addFont(String name) {
-        int idx = getFontIndex(name);
-        if(idx != -1) return idx;
+    public HSLFFontInfo addFont(FontInfo fontInfo) {
+        HSLFFontInfo fi = getFontInfo(fontInfo.getTypeface());
+        if (fi != null) {
+            return fi;
+        }
 
-        return addFont(name, 0, 0, 4, 34);
-    }
-
-    public int addFont(String name, int charset, int flags, int type, int pitch) {
-        FontEntityAtom fnt = new FontEntityAtom();
-        fnt.setFontIndex(fonts.size() << 4);
-        fnt.setFontName(name);
-        fnt.setCharSet(charset);
-        fnt.setFontFlags(flags);
-        fnt.setFontType(type);
-        fnt.setPitchAndFamily(pitch);
-        fonts.add(name);
+        fi = new HSLFFontInfo(fontInfo);
+        fi.setIndex(fonts.size());
+        fonts.put(fi.getTypeface(), fi);
+        
+        FontEntityAtom fnt = fi.createRecord();
 
         // Append new child to the end
-		appendChildRecord(fnt);
+        appendChildRecord(fnt);
 
-        return fonts.size()-1; //the added font is the last in the list
+        // the added font is the last in the list
+        return fi;
+    }
+
+
+    /**
+     * Lookup a FontInfo object by its typeface
+     * 
+     * @param typeface the full font name
+     * 
+     * @return the HSLFFontInfo for the given name or {@code null} if not found
+     */
+    public HSLFFontInfo getFontInfo(String typeface) {
+        return fonts.get(typeface);
     }
 
     /**
-     * @return zero based index of the font in the collection or -1 if not found
+     * Lookup a FontInfo object by its internal font index
+     * 
+     * @param index the internal font index
+     * 
+     * @return the HSLFFontInfo for the given index or {@code null} if not found
      */
-    public int getFontIndex(String name) {
-        for (int i = 0; i < fonts.size(); i++) {
-            if(fonts.get(i).equals(name)){
-                //if the font is already present return its index
-                return i;
+    public HSLFFontInfo getFontInfo(int index) {
+        for (HSLFFontInfo fi : fonts.values()) {
+            if (fi.getIndex() == index) {
+                return fi;
             }
         }
-        return -1;
+        return null;
     }
-
+    
+    /**
+     * @return the number of registered fonts
+     */
     public int getNumberOfFonts() {
         return fonts.size();
     }
-
-    /**
-	 * Get the name of the font at the given ID, or null if there is
-	 *  no font at that ID.
-	 * @param id
-	 */
-	public String getFontWithId(int id) {
-		if(id >= fonts.size()) {
-			// No font with that id
-			return null;
-		}
-		return (String)fonts.get(id);
-	}
 }

@@ -17,21 +17,21 @@
 
 package org.apache.poi.hssf.record;
 
-import java.util.Arrays;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.List;
 
 import org.apache.poi.util.HexRead;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Tests the serialization and deserialization of the ObjRecord class works correctly.
  * Test data taken directly from a real Excel file.
- *
- * @author Yegor Kozlov
  */
-public final class TestObjRecord extends TestCase {
+public final class TestObjRecord {
     /**
      * OBJ record data containing two sub-records.
      * The data taken directly from a real Excel file.
@@ -48,22 +48,29 @@ public final class TestObjRecord extends TestCase {
             // it's not bug 38607 attachment 17639
     );
 
+    /**
+     * Hex dump from
+     * offset 0x2072 in att 22076 of bug 45133
+     */
     private static final byte[] recdataNeedingPadding = HexRead.readFromString(""
+            + "5D 00 20 00"
             + "15 00 12 00 00 00 01 00 11 60 00 00 00 00 38 6F CC 03 00 00 00 00 06 00 02 00 00 00 00 00 00 00"
     );
 
+    @Test
     public void testLoad() {
         ObjRecord record = new ObjRecord(TestcaseRecordInputStream.create(ObjRecord.sid, recdata));
 
         assertEquals(26, record.getRecordSize() - 4);
 
-        List subrecords = record.getSubRecords();
+        List<SubRecord> subrecords = record.getSubRecords();
         assertEquals(2, subrecords.size() );
         assertTrue(subrecords.get(0) instanceof CommonObjectDataSubRecord);
         assertTrue(subrecords.get(1) instanceof EndSubRecord );
 
     }
 
+    @Test
     public void testStore() {
         ObjRecord record = new ObjRecord(TestcaseRecordInputStream.create(ObjRecord.sid, recdata));
 
@@ -71,14 +78,15 @@ public final class TestObjRecord extends TestCase {
         assertEquals(26, recordBytes.length - 4);
         byte[] subData = new byte[recdata.length];
         System.arraycopy(recordBytes, 4, subData, 0, subData.length);
-        assertTrue(Arrays.equals(recdata, subData));
+        assertArrayEquals(recdata, subData);
     }
 
+    @Test
     public void testConstruct() {
         ObjRecord record = new ObjRecord();
         CommonObjectDataSubRecord ftCmo = new CommonObjectDataSubRecord();
         ftCmo.setObjectType( CommonObjectDataSubRecord.OBJECT_TYPE_COMMENT);
-        ftCmo.setObjectId( (short) 1024 );
+        ftCmo.setObjectId( 1024 );
         ftCmo.setLocked( true );
         ftCmo.setPrintable( true );
         ftCmo.setAutofill( true );
@@ -94,22 +102,23 @@ public final class TestObjRecord extends TestCase {
         System.arraycopy(recordBytes, 4, bytes, 0, bytes.length);
 
         record = new ObjRecord(TestcaseRecordInputStream.create(ObjRecord.sid, bytes));
-        List subrecords = record.getSubRecords();
+        List<SubRecord> subrecords = record.getSubRecords();
         assertEquals( 2, subrecords.size() );
         assertTrue( subrecords.get(0) instanceof CommonObjectDataSubRecord);
         assertTrue( subrecords.get(1) instanceof EndSubRecord );
     }
     
+    @Test
     public void testReadWriteWithPadding_bug45133() {
-        ObjRecord record = new ObjRecord(TestcaseRecordInputStream.create(ObjRecord.sid, recdataNeedingPadding));
+        ObjRecord record = new ObjRecord(TestcaseRecordInputStream.create(recdataNeedingPadding));
         
         if (record.getRecordSize() == 34) {
-            throw new AssertionFailedError("Identified bug 45133");
+            fail("Identified bug 45133");
         }
 
         assertEquals(36, record.getRecordSize());
 
-        List subrecords = record.getSubRecords();
+        List<SubRecord> subrecords = record.getSubRecords();
         assertEquals(3, subrecords.size() );
         assertEquals(CommonObjectDataSubRecord.class, subrecords.get(0).getClass());
         assertEquals(GroupMarkerSubRecord.class, subrecords.get(1).getClass());
@@ -120,6 +129,7 @@ public final class TestObjRecord extends TestCase {
      * Check that ObjRecord tolerates and preserves padding to a 4-byte boundary
      * (normally padding is to a 2-byte boundary).
      */
+    @Test
     public void test4BytePadding() {
         // actual data from file saved by Excel 2007
         byte[] data = HexRead.readFromString(""

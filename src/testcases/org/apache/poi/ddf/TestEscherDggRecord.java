@@ -17,12 +17,14 @@
 
 package org.apache.poi.ddf;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
+import org.junit.Test;
 
-public class TestEscherDggRecord extends TestCase
-{
+public final class TestEscherDggRecord {
+    @Test
     public void testSerialize() {
         EscherDggRecord r = createRecord();
 
@@ -40,6 +42,7 @@ public class TestEscherDggRecord extends TestCase
                 HexDump.toHex( data ) );
     }
 
+    @Test
     public void testFillFields() {
         String hexData = "00 00 " +
                 "06 F0 " +
@@ -63,18 +66,22 @@ public class TestEscherDggRecord extends TestCase
         assertEquals( 0x02, r.getFileIdClusters()[0].getNumShapeIdsUsed());
     }
 
+    @Test
     public void testToString() {
         String nl = System.getProperty("line.separator");
-
-        String expected = "org.apache.poi.ddf.EscherDggRecord:" + nl +
-                "  RecordId: 0xF006" + nl +
-                "  Options: 0x0000" + nl +
-                "  ShapeIdMax: 1026" + nl +
-                "  NumIdClusters: 2" + nl +
-                "  NumShapesSaved: 2" + nl +
-                "  DrawingsSaved: 1" + nl +
-                "  DrawingGroupId1: 1" + nl +
-                "  NumShapeIdsUsed1: 2" + nl;
+        String expected =
+            "org.apache.poi.ddf.EscherDggRecord (Dgg):" + nl +
+            "  RecordId: 0xF006" + nl +
+            "  Version: 0x0000" + nl +
+            "  Instance: 0x0000" + nl +
+            "  Options: 0x0000" + nl +
+            "  Record Size: 32" + nl +
+            "  ShapeIdMax: 0x00000402" + nl +
+            "  NumIdClusters: 0x00000002" + nl +
+            "  NumShapesSaved: 0x00000002" + nl +
+            "  DrawingsSaved: 0x00000001" + nl +
+            "  FileId Clusters: 0x00000001" + nl +
+            "  Group1: 0x00000002";
         assertEquals( expected, createRecord().toString() );
     }
 
@@ -92,6 +99,7 @@ public class TestEscherDggRecord extends TestCase
         return r;
     }
 
+    @Test
     public void testGetRecordSize() {
         EscherDggRecord r = new EscherDggRecord();
         r.setFileIdClusters(new EscherDggRecord.FileIdCluster[] { new EscherDggRecord.FileIdCluster(0,0) } );

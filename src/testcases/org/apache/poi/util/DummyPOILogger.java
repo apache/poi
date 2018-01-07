@@ -23,24 +23,29 @@ import java.util.List;
  * POILogger which logs into an ArrayList, so that 
  *  tests can see what got logged
  */
+@Internal
 public class DummyPOILogger extends POILogger {
-	public List logged = new ArrayList(); 
+	public List<String>logged = new ArrayList<>();
 
 	public void reset() {
-		logged = new ArrayList();
+		logged = new ArrayList<>();
 	}
 	
+    @Override
 	public boolean check(int level) {
 		return true;
 	}
 
+    @Override
 	public void initialize(String cat) {}
 
-	public void log(int level, Object obj1) {
-		logged.add(new String(level + " - " + obj1));
+    @Override
+	protected void _log(int level, Object obj1) {
+		logged.add(level + " - " + obj1);
 	}
 
-	public void log(int level, Object obj1, Throwable exception) {
-		logged.add(new String(level + " - " + obj1 + " - " + exception));
+    @Override
+	protected void _log(int level, Object obj1, Throwable exception) {
+		logged.add(level + " - " + obj1 + " - " + exception);
 	}
 }

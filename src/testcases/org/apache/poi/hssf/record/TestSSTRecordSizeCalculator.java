@@ -19,6 +19,7 @@ package org.apache.poi.hssf.record;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
 import org.apache.poi.util.IntMapper;
 
@@ -32,9 +33,8 @@ public final class TestSSTRecordSizeCalculator extends TestCase {
 	private static final int COMPRESSED_PLAIN_STRING_OVERHEAD = 3;
 	private static final int OPTION_FIELD_SIZE = 1;
 	
-	private final IntMapper strings = new IntMapper();
+	private final IntMapper<UnicodeString> strings = new IntMapper<>();
 
-	
 	private void confirmSize(int expectedSize) {
 		ContinuableRecordOutput cro = ContinuableRecordOutput.createForCountingOnly();
 		SSTSerializer ss = new SSTSerializer(strings, 0, 0);

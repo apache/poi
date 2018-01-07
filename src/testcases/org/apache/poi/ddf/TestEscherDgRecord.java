@@ -17,12 +17,14 @@
 
 package org.apache.poi.ddf;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
+import org.junit.Test;
 
-public class TestEscherDgRecord extends TestCase
-{
+public final class TestEscherDgRecord {
+    @Test
     public void testSerialize() {
         EscherDgRecord r = createRecord();
 
@@ -37,6 +39,7 @@ public class TestEscherDgRecord extends TestCase
                 HexDump.toHex( data ) );
     }
 
+    @Test
     public void testFillFields() {
         String hexData = "10 00 " +
                 "08 F0 " +
@@ -52,14 +55,18 @@ public class TestEscherDgRecord extends TestCase
         assertEquals( 1025, r.getLastMSOSPID() );
     }
 
+    @Test
     public void testToString() {
         String nl = System.getProperty("line.separator");
-
-        String expected = "org.apache.poi.ddf.EscherDgRecord:" + nl +
-                "  RecordId: 0xF008" + nl +
-                "  Options: 0x0010" + nl +
-                "  NumShapes: 2" + nl +
-                "  LastMSOSPID: 1025" + nl;
+        String expected =
+            "org.apache.poi.ddf.EscherDgRecord (Dg):" + nl +
+            "  RecordId: 0xF008" + nl +
+            "  Version: 0x0000" + nl +
+            "  Instance: 0x0001" + nl +
+            "  Options: 0x0010" + nl +
+            "  Record Size: 16" + nl +
+            "  NumShapes: 0x00000002" + nl +
+            "  LastMSOSPID: 0x00000401";
         assertEquals( expected, createRecord().toString() );
     }
 

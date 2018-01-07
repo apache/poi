@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.record;
 
@@ -29,16 +26,16 @@ import java.io.ByteArrayOutputStream;
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestNotesAtom extends TestCase {
+public final class TestNotesAtom extends TestCase {
 	// From a real file
-	private byte[] data_a = new byte[] { 1, 0, 0xF1-256, 3, 8, 0, 0, 0,
+	private final byte[] data_a = new byte[] { 1, 0, 0xF1-256, 3, 8, 0, 0, 0,
 		0, 0, 0, 0x80-256, 0, 0, 0x0D, 0x30 };
 
-    public void testRecordType() throws Exception {
+	public void testRecordType() {
 		NotesAtom na = new NotesAtom(data_a, 0, data_a.length);
 		assertEquals(1009l, na.getRecordType());
 	}
-	public void testFlags() throws Exception {
+	public void testFlags() {
 		NotesAtom na = new NotesAtom(data_a, 0, data_a.length);
 		assertEquals(0x80000000, na.getSlideID());
 		assertEquals(false, na.getFollowMasterObjects());

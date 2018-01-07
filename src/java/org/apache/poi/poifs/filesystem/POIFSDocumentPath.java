@@ -21,6 +21,9 @@ package org.apache.poi.poifs.filesystem;
 
 import java.io.File;
 
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+
 /**
  * Class POIFSDocumentPath
  *
@@ -30,8 +33,10 @@ import java.io.File;
 
 public class POIFSDocumentPath
 {
-    private String[] components;
-    private int      hashcode = 0;
+    private static final POILogger log = POILogFactory.getLogger(POIFSDocumentPath.class);
+          
+    private final String[] components;
+    private int hashcode; //lazy-compute hashCode
 
     /**
      * constructor for the path of a document that is not in the root
@@ -125,12 +130,17 @@ public class POIFSDocumentPath
         {
             for (int j = 0; j < components.length; j++)
             {
-                if ((components[ j ] == null)
-                        || (components[ j ].length() == 0))
+                if (components[ j ] == null)
                 {
                     throw new IllegalArgumentException(
-                        "components cannot contain null or empty strings");
+                        "components cannot contain null");
                 }
+                if (components[ j ].length() == 0)
+                {
+                    log.log(POILogger.WARN, "Directory under " + path + " has an empty name, " +
+                            "not all OLE2 readers will handle this file correctly!");
+                }
+                
                 this.components[ j + path.components.length ] =
                     components[ j ];
             }
@@ -189,12 +199,18 @@ public class POIFSDocumentPath
     {
         if (hashcode == 0)
         {
-            for (int j = 0; j < components.length; j++)
-            {
-                hashcode += components[ j ].hashCode();
-            }
+            hashcode = computeHashCode();
         }
         return hashcode;
+    }
+    
+    private int computeHashCode() {
+        int code = 0;
+        for (int j = 0; j < components.length; j++)
+        {
+            code += components[ j ].hashCode();
+        }
+        return code;
     }
 
     /**
@@ -213,8 +229,7 @@ public class POIFSDocumentPath
      *
      * @return the nth component;
      *
-     * @exception ArrayIndexOutOfBoundsException if n < 0 or n >=
-     *                                           length()
+     * @exception ArrayIndexOutOfBoundsException if n &lt; 0 or n >= length()
      */
 
     public String getComponent(int n)
@@ -239,16 +254,31 @@ public class POIFSDocumentPath
         {
             return null;
         }
-        POIFSDocumentPath parent = new POIFSDocumentPath(null);
+        String[] parentComponents = new String[ length ];
+        System.arraycopy(components, 0, parentComponents, 0, length);
 
-        parent.components = new String[ length ];
-        System.arraycopy(components, 0, parent.components, 0, length);
-        return parent;
+        return new POIFSDocumentPath(parentComponents);
+    }
+    
+    /**
+     * <p>Returns the last name in the document path's name sequence.
+     * If the document path's name sequence is empty, then the empty string is returned.</p>
+     *
+     * @since 2016-04-09
+     * @return The last name in the document path's name sequence, or empty string if this is the root path
+     */
+
+    public String getName()
+    {
+        if (components.length == 0) {
+            return "";
+        }
+        return components[components.length - 1];
     }
 
     /**
      * <p>Returns a string representation of the path. Components are
-     * separated by the platform-specific file separator.</p>
+     * separated by the platform-specific file separator {@link File#separatorChar}</p>
      *
      * @return string representation
      *

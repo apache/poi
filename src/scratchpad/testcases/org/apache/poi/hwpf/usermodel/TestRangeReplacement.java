@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -7,7 +6,7 @@
    (the "License"); you may not use this file except in compliance with
    the License.  You may obtain a copy of the License at
 
-	   http://www.apache.org/licenses/LICENSE-2.0
+       http://www.apache.org/licenses/LICENSE-2.0
 
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,11 +17,10 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import java.io.FileInputStream;
-
 import junit.framework.TestCase;
 
 import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.HWPFTestDataSamples;
 
 /**
  *	Test to see if Range.replaceText() works even if the Range contains a
@@ -30,40 +28,33 @@ import org.apache.poi.hwpf.HWPFDocument;
  *
  * TODO - re-enable me when unicode paragraph stuff is fixed!
  */
-public class TestRangeReplacement extends TestCase {
+public final class TestRangeReplacement extends TestCase {
 
 	// u201c and u201d are "smart-quotes"
-	private String originalText =
+	private final String originalText =
 		"It is used to confirm that text replacement works even if Unicode characters (such as \u201c\u2014\u201d (U+2014), \u201c\u2e8e\u201d (U+2E8E), or \u201c\u2714\u201d (U+2714)) are present.  Everybody should be thankful to the ${organization} and all the POI contributors for their assistance in this matter.\r";
-	private String searchText = "${organization}";
-	private String replacementText = "Apache Software Foundation";
-	private String expectedText2 =
+	private final String searchText = "${organization}";
+	private final String replacementText = "Apache Software Foundation";
+	private final String expectedText2 =
 		"It is used to confirm that text replacement works even if Unicode characters (such as \u201c\u2014\u201d (U+2014), \u201c\u2e8e\u201d (U+2E8E), or \u201c\u2714\u201d (U+2714)) are present.  Everybody should be thankful to the Apache Software Foundation and all the POI contributors for their assistance in this matter.\r";
-	private String expectedText3 = "Thank you, Apache Software Foundation!\r";
+	private final String expectedText3 = "Thank you, Apache Software Foundation!\r";
 
-	private String illustrativeDocFile;
-
-	protected void setUp() throws Exception {
-
-		String dirname = System.getProperty("HWPF.testdata.path");
-
-		illustrativeDocFile = dirname + "/testRangeReplacement.doc";
-	}
+	private final String illustrativeDocFile = "testRangeReplacement.doc";
 
 	/**
 	 * Test just opening the files
 	 */
-	public void testOpen() throws Exception {
+	public void testOpen() {
 
-		HWPFDocument docA = new HWPFDocument(new FileInputStream(illustrativeDocFile));
+		HWPFTestDataSamples.openSampleFile(illustrativeDocFile);
 	}
 
 	/**
 	 * Test (more "confirm" than test) that we have the general structure that we expect to have.
 	 */
-	public void testDocStructure() throws Exception {
+	public void testDocStructure() {
 
-		HWPFDocument daDoc = new HWPFDocument(new FileInputStream(illustrativeDocFile));
+		HWPFDocument daDoc = HWPFTestDataSamples.openSampleFile(illustrativeDocFile);
 
 		Range range = daDoc.getRange();
 		assertEquals(414, range.text().length());
@@ -76,8 +67,8 @@ public class TestRangeReplacement extends TestCase {
 		Paragraph para = section.getParagraph(2);
 
 		assertEquals(5, para.numCharacterRuns());
-		String text = 
-			para.getCharacterRun(0).text() + 
+		String text =
+			para.getCharacterRun(0).text() +
 			para.getCharacterRun(1).text() +
 			para.getCharacterRun(2).text() +
 			para.getCharacterRun(3).text() +
@@ -90,16 +81,20 @@ public class TestRangeReplacement extends TestCase {
 	/**
 	 * Test that we can replace text in our Range with Unicode text.
 	 */
-	public void testRangeReplacementOne() throws Exception {
+	public void testRangeReplacementOne() {
 
-		HWPFDocument daDoc = new HWPFDocument(new FileInputStream(illustrativeDocFile));
+		HWPFDocument daDoc = HWPFTestDataSamples.openSampleFile(illustrativeDocFile);
 
+		// Has one section
 		Range range = daDoc.getRange();
 		assertEquals(1, range.numSections());
 
+		// The first section has 5 paragraphs
 		Section section = range.getSection(0);
 		assertEquals(5, section.numParagraphs());
 
+		
+		// Change some text
 		Paragraph para = section.getParagraph(2);
 
 		String text = para.text();
@@ -110,12 +105,14 @@ public class TestRangeReplacement extends TestCase {
 
 		para.replaceText(searchText, replacementText, offset);
 
+		// Ensure we still have one section, 5 paragraphs
 		assertEquals(1, range.numSections());
 		section = range.getSection(0);
 
-		assertEquals(4, section.numParagraphs());
+		assertEquals(5, section.numParagraphs());
 		para = section.getParagraph(2);
 
+		// Ensure the text is what we should now have
 		text = para.text();
 		assertEquals(expectedText2, text);
 	}
@@ -123,9 +120,9 @@ public class TestRangeReplacement extends TestCase {
 	/**
 	 * Test that we can replace text in our Range with Unicode text.
 	 */
-	public void testRangeReplacementAll() throws Exception {
+	public void testRangeReplacementAll() {
 
-		HWPFDocument daDoc = new HWPFDocument(new FileInputStream(illustrativeDocFile));
+		HWPFDocument daDoc = HWPFTestDataSamples.openSampleFile(illustrativeDocFile);
 
 		Range range = daDoc.getRange();
 		assertEquals(1, range.numSections());

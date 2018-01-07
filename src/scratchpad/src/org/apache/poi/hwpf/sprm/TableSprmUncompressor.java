@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -16,43 +15,68 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hwpf.sprm;
 
-import org.apache.poi.hwpf.usermodel.TableProperties;
-import org.apache.poi.hwpf.usermodel.TableCellDescriptor;
 import org.apache.poi.hwpf.usermodel.BorderCode;
-
+import org.apache.poi.hwpf.usermodel.TableCellDescriptor;
+import org.apache.poi.hwpf.usermodel.TableProperties;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
-public class TableSprmUncompressor
+@Internal
+public final class TableSprmUncompressor
   extends SprmUncompressor
 {
+  private static final POILogger logger = POILogFactory.getLogger( TableSprmUncompressor.class );
+
   public TableSprmUncompressor()
   {
   }
 
-  public static TableProperties uncompressTAP(byte[] grpprl,
-                                                  int offset)
-  {
-    TableProperties newProperties = new TableProperties();
-
-    SprmIterator sprmIt = new SprmIterator(grpprl, offset);
-
-    while (sprmIt.hasNext())
+    public static TableProperties uncompressTAP( SprmBuffer sprmBuffer )
     {
-      SprmOperation sprm = (SprmOperation)sprmIt.next();
+        TableProperties tableProperties;
 
-      //TAPXs are actually PAPXs so we have to make sure we are only trying to
-      //uncompress the right type of sprm.
-      if (sprm.getType() == SprmOperation.TAP_TYPE)
-      {
-        unCompressTAPOperation(newProperties, sprm);
-      }
+        SprmOperation sprmOperation = sprmBuffer.findSprm( (short) 0xd608 );
+        if ( sprmOperation != null )
+        {
+            byte[] grpprl = sprmOperation.getGrpprl();
+            int offset = sprmOperation.getGrpprlOffset();
+            short itcMac = grpprl[offset];
+            tableProperties = new TableProperties( itcMac );
+        }
+        else
+        {
+            logger.log( POILogger.WARN,
+                    "Some table rows didn't specify number of columns in SPRMs" );
+            tableProperties = new TableProperties( (short) 1 );
+        }
+
+        for ( SprmIterator iterator = sprmBuffer.iterator(); iterator.hasNext(); )
+        {
+            SprmOperation sprm = iterator.next();
+
+            /*
+             * TAPXs are actually PAPXs so we have to make sure we are only
+             * trying to uncompress the right type of sprm.
+             */
+            if ( sprm.getType() == SprmOperation.TYPE_TAP )
+            {
+                try
+                {
+                    unCompressTAPOperation( tableProperties, sprm );
+                }
+                catch ( ArrayIndexOutOfBoundsException ex )
+                {
+                    logger.log( POILogger.ERROR, "Unable to apply ", sprm,
+                            ": ", ex, ex );
+                }
+            }
+        }
+        return tableProperties;
     }
-
-    return newProperties;
-  }
 
   /**
    * Used to uncompress a table property. Performs an operation defined
@@ -253,6 +277,37 @@ public class TableSprmUncompressor
       case 0x2a:
       case 0x2b:
       case 0x2c:
+        break;
+      case 0x34:
+        // sprmTCellPaddingDefault -- (0xd634)
+        // TODO: extract into CSSA structure
+        byte itcFirst = sprm.getGrpprl()[sprm.getGrpprlOffset()];
+        byte itcLim = sprm.getGrpprl()[sprm.getGrpprlOffset() + 1];
+        byte grfbrc = sprm.getGrpprl()[sprm.getGrpprlOffset() + 2];
+        byte ftsWidth = sprm.getGrpprl()[sprm.getGrpprlOffset() + 3];
+        short wWidth = LittleEndian.getShort(sprm.getGrpprl(),
+            sprm.getGrpprlOffset() + 4);
+
+        for (int c = itcFirst; c < itcLim; c++) {
+          TableCellDescriptor tableCellDescriptor = newTAP.getRgtc()[c];
+
+          if ((grfbrc & 0x01) != 0) {
+            tableCellDescriptor.setFtsCellPaddingTop(ftsWidth);
+            tableCellDescriptor.setWCellPaddingTop(wWidth);
+          }
+          if ((grfbrc & 0x02) != 0) {
+            tableCellDescriptor.setFtsCellPaddingLeft(ftsWidth);
+            tableCellDescriptor.setWCellPaddingLeft(wWidth);
+          }
+          if ((grfbrc & 0x04) != 0) {
+            tableCellDescriptor.setFtsCellPaddingBottom(ftsWidth);
+            tableCellDescriptor.setWCellPaddingBottom(wWidth);
+          }
+          if ((grfbrc & 0x08) != 0) {
+            tableCellDescriptor.setFtsCellPaddingRight(ftsWidth);
+            tableCellDescriptor.setWCellPaddingRight(wWidth);
+          }
+        }
         break;
       default:
         break;

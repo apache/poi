@@ -17,11 +17,19 @@
 
 package org.apache.poi.xssf.extractor;
 
+import static org.apache.poi.POITestCase.assertStartsWith;
+import static org.apache.poi.POITestCase.assertEndsWith;
+import static org.apache.poi.POITestCase.assertContains;
+import static org.apache.poi.POITestCase.assertNotContained;
+
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.HashMap;
 
 import junit.framework.TestCase;
-
 import org.apache.poi.POITextExtractor;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
@@ -30,27 +38,24 @@ import org.apache.poi.xssf.XSSFTestDataSamples;
 /**
  * Tests for {@link XSSFExcelExtractor}
  */
-public final class TestXSSFExcelExtractor extends TestCase {
-
-
-	private static final XSSFExcelExtractor getExtractor(String sampleName) {
+public class TestXSSFExcelExtractor extends TestCase {
+	protected XSSFExcelExtractor getExtractor(String sampleName) {
 		return new XSSFExcelExtractor(XSSFTestDataSamples.openSampleWorkbook(sampleName));
 	}
 
 	/**
 	 * Get text out of the simple file
 	 */
-	public void testGetSimpleText() {
+	public void testGetSimpleText() throws IOException {
 		// a very simple file
 		XSSFExcelExtractor extractor = getExtractor("sample.xlsx");
-		extractor.getText();
 		
 		String text = extractor.getText();
 		assertTrue(text.length() > 0);
 		
 		// Check sheet names
-		assertTrue(text.startsWith("Sheet1"));
-		assertTrue(text.endsWith("Sheet3\n"));
+		assertStartsWith(text, "Sheet1");
+		assertEndsWith(text, "Sheet3\n");
 		
 		// Now without, will have text
 		extractor.setIncludeSheetNames(false);
@@ -96,22 +101,24 @@ public final class TestXSSFExcelExtractor extends TestCase {
 				CHUNK2 +
 				"Sheet3\n"
 				, text);
+		
+		extractor.close();
 	}
-	
-	public void testGetComplexText() {
+
+	public void testGetComplexText() throws IOException {
 		// A fairly complex file
 		XSSFExcelExtractor extractor = getExtractor("AverageTaxRates.xlsx");
-		extractor.getText();
 		
 		String text = extractor.getText();
 		assertTrue(text.length() > 0);
 		
 		// Might not have all formatting it should do!
-		// TODO decide if we should really have the "null" in there
-		assertTrue(text.startsWith(
+		assertStartsWith(text,
 						"Avgtxfull\n" +
-						"null\t(iii) AVERAGE TAX RATES ON ANNUAL"	
-		));
+						"\t(iii) AVERAGE TAX RATES ON ANNUAL"
+		);
+		
+		extractor.close();
 	}
 	
 	/**
@@ -119,30 +126,35 @@ public final class TestXSSFExcelExtractor extends TestCase {
 	 *  ExcelExtractor does, when we're both passed
 	 *  the same file, just saved as xls and xlsx
 	 */
-	public void testComparedToOLE2() {
+	public void testComparedToOLE2() throws IOException {
 		// A fairly simple file - ooxml
 		XSSFExcelExtractor ooxmlExtractor = getExtractor("SampleSS.xlsx");
 
 		ExcelExtractor ole2Extractor =
 			new ExcelExtractor(HSSFTestDataSamples.openSampleWorkbook("SampleSS.xls"));
 		
-		POITextExtractor[] extractors =
-			new POITextExtractor[] { ooxmlExtractor, ole2Extractor };
-		for (int i = 0; i < extractors.length; i++) {
-			POITextExtractor extractor = extractors[i];
-			
+		Map<String, POITextExtractor> extractors = new HashMap<>();
+		extractors.put("SampleSS.xlsx", ooxmlExtractor);
+		extractors.put("SampleSS.xls", ole2Extractor);
+		
+		for (final Entry<String, POITextExtractor> e : extractors.entrySet()) {
+			String filename = e.getKey();
+			POITextExtractor extractor = e.getValue();
 			String text = extractor.getText().replaceAll("[\r\t]", "");
-			assertTrue(text.startsWith("First Sheet\nTest spreadsheet\n2nd row2nd row 2nd column\n"));
+			assertStartsWith(filename, text, "First Sheet\nTest spreadsheet\n2nd row2nd row 2nd column\n");
 			Pattern pattern = Pattern.compile(".*13(\\.0+)?\\s+Sheet3.*", Pattern.DOTALL);
 			Matcher m = pattern.matcher(text);
-			assertTrue(m.matches());			
+			assertTrue(filename, m.matches());
 		}
+
+		ole2Extractor.close();
+		ooxmlExtractor.close();
 	}
 	
 	/**
 	 * From bug #45540
 	 */
-	public void testHeaderFooter() {
+	public void testHeaderFooter() throws IOException {
 		String[] files = new String[] {
 			"45540_classic_Header.xlsx", "45540_form_Header.xlsx",
 			"45540_classic_Footer.xlsx", "45540_form_Footer.xlsx",
@@ -151,27 +163,83 @@ public final class TestXSSFExcelExtractor extends TestCase {
 			XSSFExcelExtractor extractor = getExtractor(sampleName);
 			String text = extractor.getText();
 			
-			assertTrue("Unable to find expected word in text from " + sampleName + "\n" + text, text.contains("testdoc"));
-			assertTrue("Unable to find expected word in text\n" + text, text.contains("test phrase")); 
+			assertContains(sampleName, text, "testdoc");
+			assertContains(sampleName, text, "test phrase");
+			
+			extractor.close();
 		}
 	}
 
 	/**
 	 * From bug #45544
 	 */
-	public void testComments() {
-		
+	public void testComments() throws IOException {
 		XSSFExcelExtractor extractor = getExtractor("45544.xlsx");
 		String text = extractor.getText();
 
 		// No comments there yet
-		assertFalse("Unable to find expected word in text\n" + text, text.contains("testdoc"));
-		assertFalse("Unable to find expected word in text\n" + text, text.contains("test phrase"));
+		assertNotContained(text, "testdoc");
+		assertNotContained(text, "test phrase");
 
 		// Turn on comment extraction, will then be
 		extractor.setIncludeCellComments(true);
 		text = extractor.getText();
-		assertTrue("Unable to find expected word in text\n" + text, text.contains("testdoc"));
-		assertTrue("Unable to find expected word in text\n" + text, text.contains("test phrase"));
+		assertContains(text, "testdoc");
+		assertContains(text, "test phrase");
+		
+		extractor.close();
+	}
+	
+	public void testInlineStrings() throws IOException {
+      XSSFExcelExtractor extractor = getExtractor("InlineStrings.xlsx");
+      extractor.setFormulasNotResults(true);
+      String text = extractor.getText();
+
+      // Numbers
+      assertContains(text, "43");
+      assertContains(text, "22");
+      
+      // Strings
+      assertContains(text, "ABCDE");
+      assertContains(text, "Long Text");
+      
+      // Inline Strings
+      assertContains(text, "1st Inline String");
+      assertContains(text, "And More");
+      
+      // Formulas
+      assertContains(text, "A2");
+      assertContains(text, "A5-A$2");
+      
+      extractor.close();
+	}
+	/**
+	 * Simple test for text box text
+	 */
+	public void testTextBoxes() throws IOException {
+	    XSSFExcelExtractor extractor = getExtractor("WithTextBox.xlsx");
+	    try {
+    	    extractor.setFormulasNotResults(true);
+    	    String text = extractor.getText();
+    	    assertContains(text, "Line 1");
+    	    assertContains(text, "Line 2");
+    	    assertContains(text, "Line 3");
+	    } finally {
+	        extractor.close();
+	    }
+	}
+
+	public void testPhoneticRuns() throws Exception {
+		XSSFExcelExtractor extractor = getExtractor("51519.xlsx");
+		try {
+			String text = extractor.getText();
+			assertContains(text, "\u8C4A\u7530");
+			//this shows up only as a phonetic run and should not appear
+			//in the extracted text
+			assertNotContained(text, "\u30CB\u30DB\u30F3");
+		} finally {
+			extractor.close();
+		}
+
 	}
 }

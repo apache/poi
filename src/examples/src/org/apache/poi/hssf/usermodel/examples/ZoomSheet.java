@@ -32,14 +32,14 @@ import java.io.FileOutputStream;
  */
 public class ZoomSheet
 {
-    public static void main(String[] args)
-        throws IOException
-    {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet1 = wb.createSheet("new sheet");
-        sheet1.setZoom(3,4);   // 75 percent magnification
-        FileOutputStream fileOut = new FileOutputStream("workbook.xls");
-        wb.write(fileOut);
-        fileOut.close();
+    public static void main(String[] args) throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet1 = wb.createSheet("new sheet");
+            sheet1.setZoom(75);   // 75 percent magnification
+
+            try (FileOutputStream fileOut = new FileOutputStream("workbook.xls")) {
+                wb.write(fileOut);
+            }
+        }
     }
 }

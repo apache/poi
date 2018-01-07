@@ -17,21 +17,23 @@
 
 package org.apache.poi.hssf.record;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 import java.io.InputStream;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.util.HexRead;
 import org.apache.poi.util.IntMapper;
+import org.junit.Test;
 
 /**
  * Exercise the SSTDeserializer class.
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class TestSSTDeserializer extends TestCase {
+public final class TestSSTDeserializer {
 	private static final int FAKE_SID = -5555;
 
     private static byte[] concat(byte[] a, byte[] b) {
@@ -41,36 +43,36 @@ public final class TestSSTDeserializer extends TestCase {
         return result;
     }
     
-    private static byte[] readSampleHexData(String sampleFileName, String sectionName, int recSid) {
+    private static byte[] readSampleHexData(String sampleFileName, String sectionName, int recSid)
+    throws IOException {
         InputStream is = HSSFTestDataSamples.openSampleFileStream(sampleFileName);
-        byte[] data;
-        try {
-			data = HexRead.readData(is, sectionName);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        return TestcaseRecordInputStream.mergeDataAndSid(recSid, data.length, data);
+        byte[] data = HexRead.readData(is, sectionName);
+        byte[] result = TestcaseRecordInputStream.mergeDataAndSid(recSid, data.length, data);
+        is.close();
+        return result;
     }
 
-    public void testSpanRichTextToPlainText() {
+    @Test
+    public void testSpanRichTextToPlainText() throws IOException {
         byte[] header = readSampleHexData("richtextdata.txt", "header", FAKE_SID);
         byte[] continueBytes = readSampleHexData("richtextdata.txt", "continue1", ContinueRecord.sid);
         RecordInputStream in = TestcaseRecordInputStream.create(concat(header, continueBytes));
       
 
-        IntMapper strings = new IntMapper();
+        IntMapper<UnicodeString> strings = new IntMapper<>();
         SSTDeserializer deserializer = new SSTDeserializer( strings );
         deserializer.manufactureStrings(1, in );
 
         assertEquals( "At a dinner party orAt At At ", strings.get( 0 ) + "" );
     }
 
-    public void testContinuationWithNoOverlap() {
+    @Test
+    public void testContinuationWithNoOverlap() throws IOException {
         byte[] header = readSampleHexData("evencontinuation.txt", "header", FAKE_SID);
         byte[] continueBytes = readSampleHexData("evencontinuation.txt", "continue1", ContinueRecord.sid);
         RecordInputStream in = TestcaseRecordInputStream.create(concat(header, continueBytes));
 
-        IntMapper strings = new IntMapper();
+        IntMapper<UnicodeString> strings = new IntMapper<>();
         SSTDeserializer deserializer = new SSTDeserializer( strings );
         deserializer.manufactureStrings( 2, in);
 
@@ -81,14 +83,15 @@ public final class TestSSTDeserializer extends TestCase {
     /**
      * Strings can actually span across more than one continuation.
      */
-    public void testStringAcross2Continuations() {
+    @Test
+    public void testStringAcross2Continuations() throws IOException {
         byte[] header = readSampleHexData("stringacross2continuations.txt", "header", FAKE_SID);
         byte[] continue1 = readSampleHexData("stringacross2continuations.txt", "continue1", ContinueRecord.sid);
         byte[] continue2 = readSampleHexData("stringacross2continuations.txt", "continue2", ContinueRecord.sid);
         
         RecordInputStream in = TestcaseRecordInputStream.create(concat(header, concat(continue1, continue2)));
 
-        IntMapper strings = new IntMapper();
+        IntMapper<UnicodeString> strings = new IntMapper<>();
         SSTDeserializer deserializer = new SSTDeserializer( strings );
         deserializer.manufactureStrings( 2, in);
 
@@ -96,12 +99,13 @@ public final class TestSSTDeserializer extends TestCase {
         assertEquals( "At a dinner partyAt a dinner party", strings.get( 1 ) + "" );
     }
 
-    public void testExtendedStrings() {
+    @Test
+    public void testExtendedStrings() throws IOException {
         byte[] header = readSampleHexData("extendedtextstrings.txt", "rich-header", FAKE_SID);
         byte[] continueBytes = readSampleHexData("extendedtextstrings.txt", "rich-continue1", ContinueRecord.sid);
         RecordInputStream in = TestcaseRecordInputStream.create(concat(header, continueBytes));
         
-        IntMapper strings = new IntMapper();
+        IntMapper<UnicodeString> strings = new IntMapper<>();
         SSTDeserializer deserializer = new SSTDeserializer( strings );
         deserializer.manufactureStrings( 1, in);
 
@@ -112,7 +116,7 @@ public final class TestSSTDeserializer extends TestCase {
         continueBytes = readSampleHexData("extendedtextstrings.txt", "norich-continue1", ContinueRecord.sid);
         in = TestcaseRecordInputStream.create(concat(header, continueBytes));
         
-        strings = new IntMapper();
+        strings = new IntMapper<>();
         deserializer = new SSTDeserializer( strings );
         deserializer.manufactureStrings( 1, in);
 

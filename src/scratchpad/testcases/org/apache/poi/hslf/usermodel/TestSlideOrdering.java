@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,143 +14,121 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.usermodel;
 
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.TestCase;
-import org.apache.poi.hslf.*;
-import org.apache.poi.hslf.model.*;
+import java.io.IOException;
+import java.util.List;
+
+import org.apache.poi.hslf.HSLFTestDataSamples;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests that SlideShow returns Sheets in the right order
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestSlideOrdering extends TestCase {
+public final class TestSlideOrdering {
 	// Simple slideshow, record order matches slide order
-	private SlideShow ssA;
+	private HSLFSlideShow ssA;
 	// Complex slideshow, record order doesn't match slide order
-	private SlideShow ssB;
+	private HSLFSlideShow ssB;
 
-    public TestSlideOrdering() throws Exception {
-		String dirname = System.getProperty("HSLF.testdata.path");
-		
-		String filenameA = dirname + "/basic_test_ppt_file.ppt";
-		HSLFSlideShow hssA = new HSLFSlideShow(filenameA);
-		ssA = new SlideShow(hssA);
-		
-		String filenameB = dirname + "/incorrect_slide_order.ppt";
-		HSLFSlideShow hssB = new HSLFSlideShow(filenameB);
-		ssB = new SlideShow(hssB);
-    }
+	@Before
+	public void init() throws IOException {
+		ssA = HSLFTestDataSamples.getSlideShow("basic_test_ppt_file.ppt");
+		ssB = HSLFTestDataSamples.getSlideShow("incorrect_slide_order.ppt");
+	}
 
-    /**
-     * Test the simple case - record order matches slide order
-     */
-    public void testSimpleCase() throws Exception {
-    	assertEquals(2, ssA.getSlides().length);
-    	
-    	Slide s1 = ssA.getSlides()[0];
-    	Slide s2 = ssA.getSlides()[1];
-    	
-    	String[] firstTRs = new String[] {
-    			"This is a test title",
-    			"This is the title on page 2"
-    	};
-    	
-    	assertEquals(firstTRs[0], s1.getTextRuns()[0].getText());
-    	assertEquals(firstTRs[1], s2.getTextRuns()[0].getText());
-    }
+	@After
+	public void tearDown() throws IOException {
+	    ssA.close();
+	    ssB.close();
+	}
 
-    /**
-     * Test the complex case - record order differs from slide order
-     */
-    public void testComplexCase() throws Exception {
-    	assertEquals(3, ssB.getSlides().length);
-    	
-    	Slide s1 = ssB.getSlides()[0];
-    	Slide s2 = ssB.getSlides()[1];
-    	Slide s3 = ssB.getSlides()[2];
-    	
-    	String[] firstTRs = new String[] {
-    			"Slide 1",
-    			"Slide 2",
-    			"Slide 3"
-    	};
-    	
-    	assertEquals(firstTRs[0], s1.getTextRuns()[0].getText());
-    	assertEquals(firstTRs[1], s2.getTextRuns()[0].getText());
-    	assertEquals(firstTRs[2], s3.getTextRuns()[0].getText());
-    }
+	/**
+	 * Test the simple case - record order matches slide order
+	 */
+	@Test
+	public void testSimpleCase() {
+		assertEquals(2, ssA.getSlides().size());
 
-    /**
-     * Assert that the order of slides is correct.
-     *
-     * @param filename  file name of the slide show to assert
-     * @param titles    array of reference slide titles
-     */
-    protected void assertSlideOrdering(String filename, String[] titles) throws Exception {
-        SlideShow ppt = new SlideShow(new HSLFSlideShow(filename));
-        Slide[] slide = ppt.getSlides();
+		HSLFSlide s1 = ssA.getSlides().get(0);
+		HSLFSlide s2 = ssA.getSlides().get(1);
 
-        assertEquals(titles.length, slide.length);
-        for (int i = 0; i < slide.length; i++) {
-            String title = slide[i].getTitle();
-            assertEquals("Wrong slide title in " + filename, titles[i], title);
-        }
-    }
+		String[] firstTRs = new String[] { "This is a test title", "This is the title on page 2" };
 
-    public void testTitles() throws Exception{
-        String dirname = System.getProperty("HSLF.testdata.path");
+		assertEquals(firstTRs[0], HSLFTextParagraph.getRawText(s1.getTextParagraphs().get(0)));
+		assertEquals(firstTRs[1], HSLFTextParagraph.getRawText(s2.getTextParagraphs().get(0)));
+	}
 
-        assertSlideOrdering(dirname + "/basic_test_ppt_file.ppt",
-                new String[]{
-                    "This is a test title",
-                    "This is the title on page 2"
-                });
+	/**
+	 * Test the complex case - record order differs from slide order
+	 */
+    @Test
+	public void testComplexCase() {
+		assertEquals(3, ssB.getSlides().size());
+		int i=1;
+		for (HSLFSlide s : ssB.getSlides()) {
+		    assertEquals("Slide "+(i++), HSLFTextParagraph.getRawText(s.getTextParagraphs().get(0)));
+		}
+	}
 
-        assertSlideOrdering(dirname + "/incorrect_slide_order.ppt",
-                new String[]{
-                    "Slide 1",
-                    "Slide 2",
-                    "Slide 3"
-                });
+	/**
+	 * Assert that the order of slides is correct.
+	 *
+	 * @param filename
+	 *            file name of the slide show to assert
+	 * @param titles
+	 *            array of reference slide titles
+	 */
+	protected void assertSlideOrdering(String filename, String[] titles) throws IOException {
+        HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow(filename);
+		List<HSLFSlide> slide = ppt.getSlides();
 
-        assertSlideOrdering(dirname + "/next_test_ppt_file.ppt",
-                new String[]{
-                    "This is a test title",
-                    "This is the title on page 2"
-                });
+		assertEquals(titles.length, slide.size());
+		for (int i = 0; i < slide.size(); i++) {
+			String title = slide.get(i).getTitle();
+			assertEquals("Wrong slide title in " + filename, titles[i], title);
+		}
+		ppt.close();
+	}
 
-        assertSlideOrdering(dirname + "/Single_Coloured_Page.ppt",
-                new String[]{
-                    "This is a title, it" + (char)0x2019 +"s in black"
-                });
+    @Test
+	public void testTitles() throws Exception {
+		assertSlideOrdering("basic_test_ppt_file.ppt", new String[] {
+				"This is a test title", "This is the title on page 2" });
 
-        assertSlideOrdering(dirname + "/Single_Coloured_Page_With_Fonts_and_Alignments.ppt",
-                new String[]{
-                    "This is a title, it"+ (char)0x2019 +"s in black"
-                });
+		assertSlideOrdering("incorrect_slide_order.ppt", new String[] { "Slide 1",
+				"Slide 2", "Slide 3" });
 
-        assertSlideOrdering(dirname + "/ParagraphStylesShorterThanCharStyles.ppt",
-                new String[]{
-                    "ROMANCE: AN ANALYSIS",
-                    "AGENDA",
-                    "You are an important supplier of various items that I need",
-                    '\n' + "Although The Psycho set back my relationship process, recovery is luckily enough under way",
-                    "Since the time that we seriously go out together, you rank highly among existing relationships",
-                    "Although our personal interests are mostly compatible, the greatest gap exists in Sex and Shopping",
-                    "Your physical characteristics are strong when compared with your competition",
-                    "The combination of your high physical appearance and personality rank you highly, although your sister is also a top prospect",
-                    "When people found out that we were going out, their responses have been mixed",
-                    "The benchmark of relationship lifecycles, suggests that we are on schedule",
-                    "In summary we can say that we are on the right track, but we must remain aware of possible roadblocks ",
-                    "THE ANSWER",
-                    "Unfortunately a huge disconnect exists between my needs and your existing service",
-                    "SUMMARY",
-                });
-    }
+		assertSlideOrdering("next_test_ppt_file.ppt", new String[] {
+				"This is a test title", "This is the title on page 2" });
+
+		assertSlideOrdering("Single_Coloured_Page.ppt",
+				new String[] { "This is a title, it" + (char) 0x2019 + "s in black" });
+
+		assertSlideOrdering("Single_Coloured_Page_With_Fonts_and_Alignments.ppt",
+				new String[] { "This is a title, it" + (char) 0x2019 + "s in black" });
+
+		assertSlideOrdering(
+				"ParagraphStylesShorterThanCharStyles.ppt",
+				new String[] {
+						"ROMANCE: AN ANALYSIS",
+						"AGENDA",
+						"You are an important supplier of various items that I need",
+						'\n' + "Although The Psycho set back my relationship process, recovery is luckily enough under way",
+						"Since the time that we seriously go out together, you rank highly among existing relationships",
+						"Although our personal interests are mostly compatible, the greatest gap exists in Sex and Shopping",
+						"Your physical characteristics are strong when compared with your competition",
+						"The combination of your high physical appearance and personality rank you highly, although your sister is also a top prospect",
+						"When people found out that we were going out, their responses have been mixed",
+						"The benchmark of relationship lifecycles, suggests that we are on schedule",
+						"In summary we can say that we are on the right track, but we must remain aware of possible roadblocks ",
+						"THE ANSWER",
+						"Unfortunately a huge disconnect exists between my needs and your existing service",
+						"SUMMARY", });
+	}
 }

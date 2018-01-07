@@ -22,17 +22,21 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Wraps an {@link InputStream} providing {@link LittleEndianInput}<p/>
- * 
- * This class does not buffer any input, so the stream read position maintained 
+ * Wraps an {@link InputStream} providing {@link LittleEndianInput}<p>
+ *
+ * This class does not buffer any input, so the stream read position maintained
  * by this class is consistent with that of the inner stream.
- * 
- * @author Josh Micich
  */
 public class LittleEndianInputStream extends FilterInputStream implements LittleEndianInput {
+
+	private static final int EOF = -1;
+
 	public LittleEndianInputStream(InputStream is) {
 		super(is);
 	}
+	
+	@Override
+	@SuppressForbidden("just delegating")
 	public int available() {
 		try {
 			return super.available();
@@ -40,105 +44,117 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
 			throw new RuntimeException(e);
 		}
 	}
+	
+	@Override
 	public byte readByte() {
 		return (byte)readUByte();
 	}
+	
+	@Override
 	public int readUByte() {
-		int ch;
+		byte buf[] = new byte[1];
 		try {
-			ch = in.read();
+			checkEOF(read(buf), 1);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		checkEOF(ch);
-		return ch;
+		return LittleEndian.getUByte(buf);
 	}
+	
+	@Override
 	public double readDouble() {
 		return Double.longBitsToDouble(readLong());
 	}
+	
+	@Override
 	public int readInt() {
-		int ch1;
-		int ch2;
-		int ch3;
-		int ch4;
+		byte buf[] = new byte[LittleEndianConsts.INT_SIZE];
 		try {
-			ch1 = in.read();
-			ch2 = in.read();
-			ch3 = in.read();
-			ch4 = in.read();
+			checkEOF(read(buf), buf.length);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		checkEOF(ch1 | ch2 | ch3 | ch4);
-		return (ch4 << 24) + (ch3 << 16) + (ch2 << 8) + (ch1 << 0);
+		return LittleEndian.getInt(buf);
 	}
+	
+    /**
+     * get an unsigned int value from an InputStream
+     * 
+     * @return the unsigned int (32-bit) value
+     * @exception RuntimeException
+     *                wraps any IOException thrown from reading the stream.
+     */
+    //@Override
+    public long readUInt() {
+       long retNum = readInt();
+       return retNum & 0x00FFFFFFFFL;
+    }
+	
+	@Override
 	public long readLong() {
-		int b0;
-		int b1;
-		int b2;
-		int b3;
-		int b4;
-		int b5;
-		int b6;
-		int b7;
+		byte buf[] = new byte[LittleEndianConsts.LONG_SIZE];
 		try {
-			b0 = in.read();
-			b1 = in.read();
-			b2 = in.read();
-			b3 = in.read();
-			b4 = in.read();
-			b5 = in.read();
-			b6 = in.read();
-			b7 = in.read();
+		    checkEOF(read(buf), LittleEndianConsts.LONG_SIZE);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		checkEOF(b0 | b1 | b2 | b3 | b4 | b5 | b6 | b7);
-		return (((long)b7 << 56) +
-				((long)b6 << 48) +
-				((long)b5 << 40) +
-				((long)b4 << 32) +
-				((long)b3 << 24) +
-				(b2 << 16) +
-				(b1 <<  8) +
-				(b0 <<  0));
+		return LittleEndian.getLong(buf);
 	}
+	
+	@Override
 	public short readShort() {
 		return (short)readUShort();
 	}
+	
+	@Override
 	public int readUShort() {
-		int ch1;
-		int ch2;
+		byte buf[] = new byte[LittleEndianConsts.SHORT_SIZE];
 		try {
-			ch1 = in.read();
-			ch2 = in.read();
+		    checkEOF(read(buf), LittleEndianConsts.SHORT_SIZE);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-		checkEOF(ch1 | ch2);
-		return (ch2 << 8) + (ch1 << 0);
+		return LittleEndian.getUShort(buf);
 	}
-	private static void checkEOF(int value) {
-		if (value <0) {
+	
+	private static void checkEOF(int actualBytes, int expectedBytes) {
+		if (expectedBytes != 0 && (actualBytes == -1 || actualBytes != expectedBytes)) {
 			throw new RuntimeException("Unexpected end-of-file");
 		}
 	}
 
-	public void readFully(byte[] buf) {
-		readFully(buf, 0, buf.length);
+    @Override
+    public void readFully(byte[] buf) {
+        readFully(buf, 0, buf.length);
+    }
+
+    @Override
+    public void readFully(byte[] buf, int off, int len) {
+        try {
+        	checkEOF(_read(buf, off, len), len);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    //Makes repeated calls to super.read() until length is read or EOF is reached
+	private int _read(byte[] buffer, int offset, int length) throws IOException {
+    	//lifted directly from org.apache.commons.io.IOUtils 2.4
+		int remaining = length;
+		while (remaining > 0) {
+			int location = length - remaining;
+			int count = read(buffer, offset + location, remaining);
+			if (EOF == count) { // EOF
+				break;
+			}
+			remaining -= count;
+		}
+
+		return length - remaining;
 	}
 
-	public void readFully(byte[] buf, int off, int len) {
-		int max = off+len;
-		for(int i=off; i<max; i++) {
-			int ch;
-			try {
-				ch = in.read();
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-			checkEOF(ch);
-			buf[i] = (byte) ch;
-		}
-	}
+    @Override
+    public void readPlain(byte[] buf, int off, int len) {
+        readFully(buf, off, len);
+    }
 }

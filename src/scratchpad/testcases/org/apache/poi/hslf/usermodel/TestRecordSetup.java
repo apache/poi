@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,55 +14,54 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.usermodel;
 
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.TestCase;
-import org.apache.poi.hslf.*;
-import org.apache.poi.hslf.model.*;
-import org.apache.poi.hslf.record.ParentAwareRecord;
-import org.apache.poi.hslf.record.Record;
-import org.apache.poi.hslf.record.RecordContainer;
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.record.*;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
- * Tests that the record setup done by SlideShow 
+ * Tests that the record setup done by SlideShow
  *  has worked correctly
  * Note: most recent record stuff has its own test
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestRecordSetup extends TestCase {
+public final class TestRecordSetup {
 	// SlideShow primed on the test data
-	private SlideShow ss;
-	private HSLFSlideShow hss;
+	@SuppressWarnings("unused")
+    private HSLFSlideShow ss;
+	private HSLFSlideShowImpl hss;
 
-    public TestRecordSetup() throws Exception {
-		String dirname = System.getProperty("HSLF.testdata.path");
-		String filename = dirname + "/basic_test_ppt_file.ppt";
-		hss = new HSLFSlideShow(filename);
-		ss = new SlideShow(hss);
-    }
-
-    public void testHandleParentAwareRecords() throws Exception {
-    	Record[] records = hss.getRecords();
-    	for(int i=0; i<records.length; i++) {
-    		ensureParentAware(records[i],null);
-    	}
+	@Before
+	public void init() throws Exception {
+        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+		hss = new HSLFSlideShowImpl(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
+		ss = new HSLFSlideShow(hss);
 	}
-    private void ensureParentAware(Record r,RecordContainer parent) {
-    	if(r instanceof ParentAwareRecord) {
-    		ParentAwareRecord pr = (ParentAwareRecord)r;
-    		assertEquals(parent, pr.getParentRecord());
-    	}
-    	if(r instanceof RecordContainer) {
-    		RecordContainer rc = (RecordContainer)r;
-    		Record[] children = rc.getChildRecords();
-    		for(int i=0; i<children.length; i++) {
-    			ensureParentAware(children[i], rc);
-    		}
-    	}
-    }
+
+	@Test
+	public void testHandleParentAwareRecords() {
+		Record[] records = hss.getRecords();
+		for (Record record : records) {
+			ensureParentAware(record,null);
+		}
+	}
+	private void ensureParentAware(Record r,RecordContainer parent) {
+		if(r instanceof ParentAwareRecord) {
+			ParentAwareRecord pr = (ParentAwareRecord)r;
+			assertEquals(parent, pr.getParentRecord());
+		}
+		if(r instanceof RecordContainer) {
+			RecordContainer rc = (RecordContainer)r;
+			Record[] children = rc.getChildRecords();
+			for (Record rec : children) {
+				ensureParentAware(rec, rc);
+			}
+		}
+	}
 }

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,100 +14,87 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.ddf;
 
-import org.apache.poi.util.HexDump;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.BitSet;
+import java.util.Comparator;
+import java.util.List;
+
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.RecordFormatException;
-
-import java.util.*;
 
 /**
  * This record defines the drawing groups used for a particular sheet.
  */
-public class EscherDggRecord
-    extends EscherRecord
-{
+public final class EscherDggRecord extends EscherRecord {
     public static final short RECORD_ID = (short) 0xF006;
     public static final String RECORD_DESCRIPTION = "MsofbtDgg";
-
+    
     private int field_1_shapeIdMax;
-//    private int field_2_numIdClusters;      // for some reason the number of clusters is actually the real number + 1
+    // for some reason the number of clusters is actually the real number + 1
+    // private int field_2_numIdClusters;
     private int field_3_numShapesSaved;
     private int field_4_drawingsSaved;
-    private FileIdCluster[] field_5_fileIdClusters;
+    private final List<FileIdCluster> field_5_fileIdClusters = new ArrayList<>();
     private int maxDgId;
 
-    public static class FileIdCluster
-    {
-        public FileIdCluster( int drawingGroupId, int numShapeIdsUsed )
-        {
+    public static class FileIdCluster {
+        private int field_1_drawingGroupId;
+        private int field_2_numShapeIdsUsed;
+
+        public FileIdCluster( int drawingGroupId, int numShapeIdsUsed ) {
             this.field_1_drawingGroupId = drawingGroupId;
             this.field_2_numShapeIdsUsed = numShapeIdsUsed;
         }
 
-        private int field_1_drawingGroupId;
-        private int field_2_numShapeIdsUsed;
-
-        public int getDrawingGroupId()
-        {
+        public int getDrawingGroupId() {
             return field_1_drawingGroupId;
         }
 
-        public int getNumShapeIdsUsed()
-        {
+        public int getNumShapeIdsUsed() {
             return field_2_numShapeIdsUsed;
         }
 
-        public void incrementShapeId( )
-        {
-            this.field_2_numShapeIdsUsed++;
+        private void incrementUsedShapeId() {
+            field_2_numShapeIdsUsed++;
         }
     }
 
-    /**
-     * This method deserializes the record from a byte array.
-     *
-     * @param data          The byte array containing the escher record information
-     * @param offset        The starting offset into <code>data</code>.
-     * @param recordFactory May be null since this is not a container record.
-     * @return The number of bytes read from the byte array.
-     */
-    public int fillFields( byte[] data, int offset, EscherRecordFactory recordFactory )
-    {
+    @Override
+    public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesRemaining = readHeader( data, offset );
         int pos            = offset + 8;
         int size           = 0;
         field_1_shapeIdMax     =  LittleEndian.getInt( data, pos + size );size+=4;
-        int field_2_numIdClusters  =  LittleEndian.getInt( data, pos + size );size+=4;
+        // field_2_numIdClusters = LittleEndian.getInt( data, pos + size );
+        size+=4; 
         field_3_numShapesSaved =  LittleEndian.getInt( data, pos + size );size+=4;
         field_4_drawingsSaved  =  LittleEndian.getInt( data, pos + size );size+=4;
-        field_5_fileIdClusters = new FileIdCluster[(bytesRemaining-size) / 8];  // Can't rely on field_2_numIdClusters
-        for (int i = 0; i < field_5_fileIdClusters.length; i++)
-        {
-            field_5_fileIdClusters[i] = new FileIdCluster(LittleEndian.getInt( data, pos + size ), LittleEndian.getInt( data, pos + size + 4 ));
-            maxDgId = Math.max(maxDgId, field_5_fileIdClusters[i].getDrawingGroupId());
+        
+        field_5_fileIdClusters.clear();
+        // Can't rely on field_2_numIdClusters
+        int numIdClusters = (bytesRemaining-size) / 8;
+        
+        for (int i = 0; i < numIdClusters; i++) {
+            int drawingGroupId = LittleEndian.getInt( data, pos + size );
+            int numShapeIdsUsed = LittleEndian.getInt( data, pos + size + 4 );
+            FileIdCluster fic = new FileIdCluster(drawingGroupId, numShapeIdsUsed);
+            field_5_fileIdClusters.add(fic);
+            maxDgId = Math.max(maxDgId, drawingGroupId);
             size += 8;
         }
-        bytesRemaining         -= size;
-        if (bytesRemaining != 0)
+        bytesRemaining -= size;
+        if (bytesRemaining != 0) {
             throw new RecordFormatException("Expecting no remaining data but got " + bytesRemaining + " byte(s).");
-        return 8 + size + bytesRemaining;
+        }
+        return 8 + size;
     }
 
-    /**
-     * This method serializes this escher record into a byte array.
-     *
-     * @param offset   The offset into <code>data</code> to start writing the record data to.
-     * @param data     The byte array to serialize to.
-     * @param listener A listener to retrieve start and end callbacks.  Use a <code>NullEscherSerailizationListener</code> to ignore these events.
-     * @return The number of bytes written.
-     *
-     * @see NullEscherSerializationListener
-     */
-    public int serialize( int offset, byte[] data, EscherSerializationListener listener )
-    {
+    @Override
+    public int serialize(int offset, byte[] data, EscherSerializationListener listener) {
         listener.beforeRecordSerialize( offset, getRecordId(), this );
 
         int pos = offset;
@@ -121,140 +107,133 @@ public class EscherDggRecord
         LittleEndian.putInt( data, pos, getNumIdClusters() );          pos += 4;
         LittleEndian.putInt( data, pos, field_3_numShapesSaved );      pos += 4;
         LittleEndian.putInt( data, pos, field_4_drawingsSaved );       pos += 4;
-        for ( int i = 0; i < field_5_fileIdClusters.length; i++ )
-        {
-            LittleEndian.putInt( data, pos, field_5_fileIdClusters[i].field_1_drawingGroupId );   pos += 4;
-            LittleEndian.putInt( data, pos, field_5_fileIdClusters[i].field_2_numShapeIdsUsed );  pos += 4;
+        
+        for (FileIdCluster fic : field_5_fileIdClusters) {
+            LittleEndian.putInt( data, pos, fic.getDrawingGroupId() );   pos += 4;
+            LittleEndian.putInt( data, pos, fic.getNumShapeIdsUsed() );  pos += 4;
         }
 
         listener.afterRecordSerialize( pos, getRecordId(), getRecordSize(), this );
         return getRecordSize();
     }
 
-    /**
-     * Returns the number of bytes that are required to serialize this record.
-     *
-     * @return Number of bytes
-     */
-    public int getRecordSize()
-    {
-        return 8 + 16 + (8 * field_5_fileIdClusters.length);
+    @Override
+    public int getRecordSize() {
+        return 8 + 16 + (8 * field_5_fileIdClusters.size());
     }
 
-    public short getRecordId()
-    {
+    @Override
+    public short getRecordId() {
         return RECORD_ID;
     }
 
-    /**
-     * The short name for this record
-     */
-    public String getRecordName()
-    {
+    @Override
+    public String getRecordName() {
         return "Dgg";
     }
 
-    public String toString()
-    {
-        String nl = System.getProperty("line.separator");
-
-//        String extraData;
-//        ByteArrayOutputStream b = new ByteArrayOutputStream();
-//        try
-//        {
-//            HexDump.dump(this.remainingData, 0, b, 0);
-//            extraData = b.toString();
-//        }
-//        catch ( Exception e )
-//        {
-//            extraData = "error";
-//        }
-        StringBuffer field_5_string = new StringBuffer();
-        for ( int i = 0; i < field_5_fileIdClusters.length; i++ )
-        {
-            field_5_string.append("  DrawingGroupId").append(i+1).append(": ");
-            field_5_string.append(field_5_fileIdClusters[i].field_1_drawingGroupId);
-            field_5_string.append(nl);
-            field_5_string.append("  NumShapeIdsUsed").append(i+1).append(": ");
-            field_5_string.append(field_5_fileIdClusters[i].field_2_numShapeIdsUsed);
-            field_5_string.append(nl);
-        }
-        return getClass().getName() + ":" + nl +
-                "  RecordId: 0x" + HexDump.toHex(RECORD_ID) + nl +
-                "  Options: 0x" + HexDump.toHex(getOptions()) + nl +
-                "  ShapeIdMax: " + field_1_shapeIdMax + nl +
-                "  NumIdClusters: " + getNumIdClusters() + nl +
-                "  NumShapesSaved: " + field_3_numShapesSaved + nl +
-                "  DrawingsSaved: " + field_4_drawingsSaved + nl +
-                "" + field_5_string.toString();
-
-    }
-
-    public int getShapeIdMax()
-    {
+    /**
+     * Gets the next available shape id
+     *
+     * @return the next available shape id
+     */
+    public int getShapeIdMax() {
         return field_1_shapeIdMax;
     }
 
     /**
-     * The maximum is actually the next available. shape id.
+     * The maximum is actually the next available shape id.
+     * 
+     * @param shapeIdMax the next available shape id
      */
-    public void setShapeIdMax( int field_1_shapeIdMax )
-    {
-        this.field_1_shapeIdMax = field_1_shapeIdMax;
+    public void setShapeIdMax(int shapeIdMax) {
+        this.field_1_shapeIdMax = shapeIdMax;
     }
 
     /**
      * Number of id clusters + 1
-     */ 
-    public int getNumIdClusters()
-    {
-        return field_5_fileIdClusters.length + 1;
-    }
-
-    public int getNumShapesSaved()
-    {
-        return field_3_numShapesSaved;
-    }
-
-    public void setNumShapesSaved( int field_3_numShapesSaved )
-    {
-        this.field_3_numShapesSaved = field_3_numShapesSaved;
-    }
-
-    public int getDrawingsSaved()
-    {
-        return field_4_drawingsSaved;
-    }
-
-    public void setDrawingsSaved( int field_4_drawingsSaved )
-    {
-        this.field_4_drawingsSaved = field_4_drawingsSaved;
+     * 
+     * @return the number of id clusters + 1
+     */
+    public int getNumIdClusters() {
+        return (field_5_fileIdClusters.isEmpty() ? 0 : field_5_fileIdClusters.size() + 1);
     }
 
     /**
+     * Gets the number of shapes saved
+     *
+     * @return the number of shapes saved
+     */
+    public int getNumShapesSaved() {
+        return field_3_numShapesSaved;
+    }
+
+    /**
+     * Sets the number of shapes saved
+     * 
+     * @param numShapesSaved the number of shapes saved
+     */
+    public void setNumShapesSaved(int numShapesSaved) {
+        this.field_3_numShapesSaved = numShapesSaved;
+    }
+
+    /**
+     * Gets the number of drawings saved
+     *
+     * @return the number of drawings saved
+     */
+    public int getDrawingsSaved() {
+        return field_4_drawingsSaved;
+    }
+
+    /**
+     * Sets the number of drawings saved
+     *
+     * @param drawingsSaved the number of drawings saved
+     */
+    public void setDrawingsSaved(int drawingsSaved) {
+        this.field_4_drawingsSaved = drawingsSaved;
+    }
+
+    /**
+     * Gets the maximum drawing group ID
+     * 
      * @return The maximum drawing group ID
      */
-    public int getMaxDrawingGroupId(){
+    public int getMaxDrawingGroupId() {
         return maxDgId;
     }
 
-    public void setMaxDrawingGroupId(int id){
-        maxDgId = id;
+    /**
+     * @return the file id clusters
+     */
+    public FileIdCluster[] getFileIdClusters() {
+        return field_5_fileIdClusters.toArray(new FileIdCluster[field_5_fileIdClusters.size()]);
     }
 
-     public FileIdCluster[] getFileIdClusters()
-    {
-        return field_5_fileIdClusters;
+    /**
+     * Sets the file id clusters
+     *
+     * @param fileIdClusters the file id clusters
+     */
+    public void setFileIdClusters(FileIdCluster[] fileIdClusters) {
+        field_5_fileIdClusters.clear();
+        if (fileIdClusters != null) {
+            field_5_fileIdClusters.addAll(Arrays.asList(fileIdClusters));
+        }
     }
 
-    public void setFileIdClusters( FileIdCluster[] field_5_fileIdClusters )
-    {
-        this.field_5_fileIdClusters = field_5_fileIdClusters;
-    }
-
-    public void addCluster( int dgId, int numShapedUsed )
-    {
-        addCluster(dgId, numShapedUsed, true);
+    
+    /**
+     * Add a new cluster
+     *
+     * @param dgId  id of the drawing group (stored in the record options)
+     * @param numShapedUsed initial value of the numShapedUsed field
+     * 
+     * @return the new {@link FileIdCluster}
+     */
+    public FileIdCluster addCluster(int dgId, int numShapedUsed) {
+        return addCluster(dgId, numShapedUsed, true);
     }
 
     /**
@@ -264,26 +243,105 @@ public class EscherDggRecord
      * @param numShapedUsed initial value of the numShapedUsed field
      * @param sort if true then sort clusters by drawing group id.(
      *  In Excel the clusters are sorted but in PPT they are not)
+     * 
+     * @return the new {@link FileIdCluster}
      */
-    public void addCluster( int dgId, int numShapedUsed, boolean sort )
-    {
-        List clusters = new ArrayList(Arrays.asList(field_5_fileIdClusters));
-        clusters.add(new FileIdCluster(dgId, numShapedUsed));
-        if(sort) Collections.sort(clusters, new Comparator()
-        {
-            public int compare( Object o1, Object o2 )
-            {
-                FileIdCluster f1 = (FileIdCluster) o1;
-                FileIdCluster f2 = (FileIdCluster) o2;
-                if (f1.getDrawingGroupId() == f2.getDrawingGroupId())
-                    return 0;
-                if (f1.getDrawingGroupId() < f2.getDrawingGroupId())
-                    return -1;
-                else
-                    return +1;
-            }
-        } );
+    public FileIdCluster addCluster( int dgId, int numShapedUsed, boolean sort ) {
+        FileIdCluster ficNew = new FileIdCluster(dgId, numShapedUsed);
+        field_5_fileIdClusters.add(ficNew);
         maxDgId = Math.min(maxDgId, dgId);
-        field_5_fileIdClusters = (FileIdCluster[]) clusters.toArray( new FileIdCluster[clusters.size()] );
+        
+        if (sort) {
+            sortCluster();
+        }
+        
+        return ficNew;
+    }
+
+    private void sortCluster() {
+        field_5_fileIdClusters.sort(new Comparator<FileIdCluster>() {
+            @Override
+            public int compare(FileIdCluster f1, FileIdCluster f2) {
+                int dgDif = f1.getDrawingGroupId() - f2.getDrawingGroupId();
+                int cntDif = f2.getNumShapeIdsUsed() - f1.getNumShapeIdsUsed();
+                return (dgDif != 0) ? dgDif : cntDif;
+            }
+        });
+    }
+    
+    /**
+     * Finds the next available (1 based) drawing group id
+     * 
+     * @return the next available drawing group id
+     */
+    public short findNewDrawingGroupId() {
+        BitSet bs = new BitSet();
+        bs.set(0);
+        for (FileIdCluster fic : field_5_fileIdClusters) {
+            bs.set(fic.getDrawingGroupId());
+        }
+        return (short)bs.nextClearBit(0);
+    }
+    
+    /**
+     * Allocates new shape id for the drawing group
+     *
+     * @param dg the EscherDgRecord which receives the new shape
+     * @param sort if true then sort clusters by drawing group id.(
+     *  In Excel the clusters are sorted but in PPT they are not)
+     *
+     * @return a new shape id.
+     */
+    public int allocateShapeId(EscherDgRecord dg, boolean sort) {
+        final short drawingGroupId = dg.getDrawingGroupId();
+        field_3_numShapesSaved++;
+        
+        // check for an existing cluster, which has space available
+        // see 2.2.46 OfficeArtIDCL (cspidCur) for the 1024 limitation
+        // multiple clusters can belong to the same drawing group
+        FileIdCluster ficAdd = null;
+        int index = 1;
+        for (FileIdCluster fic : field_5_fileIdClusters) {
+            if (fic.getDrawingGroupId() == drawingGroupId
+                && fic.getNumShapeIdsUsed() < 1024) {
+                ficAdd = fic;
+                break;
+            }
+            index++;
+        }
+
+        if (ficAdd == null) {
+            ficAdd = addCluster( drawingGroupId, 0, sort );
+            maxDgId = Math.max(maxDgId, drawingGroupId);
+        }
+        
+        int shapeId = index*1024 + ficAdd.getNumShapeIdsUsed();
+        ficAdd.incrementUsedShapeId();
+        
+        dg.setNumShapes( dg.getNumShapes() + 1 );
+        dg.setLastMSOSPID( shapeId );
+        field_1_shapeIdMax = Math.max(field_1_shapeIdMax, shapeId + 1);
+        
+        return shapeId;
+    }    
+    
+    
+    @Override
+    protected Object[][] getAttributeMap() {
+        List<Object> fldIds = new ArrayList<>();
+        fldIds.add("FileId Clusters");
+        fldIds.add(field_5_fileIdClusters.size());
+        for (FileIdCluster fic : field_5_fileIdClusters) {
+            fldIds.add("Group"+fic.field_1_drawingGroupId);
+            fldIds.add(fic.field_2_numShapeIdsUsed);
+        }
+        
+        return new Object[][] {
+            { "ShapeIdMax", field_1_shapeIdMax },
+            { "NumIdClusters", getNumIdClusters() },
+            { "NumShapesSaved", field_3_numShapesSaved },
+            { "DrawingsSaved", field_4_drawingsSaved },
+            fldIds.toArray()
+        };
     }
 }

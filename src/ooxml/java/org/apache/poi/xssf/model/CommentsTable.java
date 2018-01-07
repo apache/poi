@@ -16,38 +16,60 @@
 ==================================================================== */
 package org.apache.poi.xssf.model;
 
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
-import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.ss.util.CellAddress;
+import org.apache.poi.util.Internal;
+import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.apache.xmlbeans.XmlException;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTAuthors;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCommentList;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CommentsDocument;
-import org.openxml4j.opc.PackagePart;
-import org.openxml4j.opc.PackageRelationship;
 
+@Internal
 public class CommentsTable extends POIXMLDocumentPart {
-    protected CTComments comments;
+    public static final String DEFAULT_AUTHOR = "";
+    public static final int DEFAULT_AUTHOR_ID = 0;
+    /**
+     * Underlying XML Beans CTComment list.
+     */
+    private CTComments comments;
+    /**
+     * XML Beans uses a list, which is very slow
+     *  to search, so we wrap things with our own
+     *  map for fast lookup.
+     */
+    private Map<CellAddress, CTComment> commentRefs;
 
     public CommentsTable() {
         super();
         comments = CTComments.Factory.newInstance();
+        comments.addNewCommentList();
+        comments.addNewAuthors().addAuthor(DEFAULT_AUTHOR);
     }
 
-    public CommentsTable(PackagePart part, PackageRelationship rel) throws IOException {
-        super(part, rel);
+    /**
+     * @since POI 3.14-Beta1
+     */
+    public CommentsTable(PackagePart part) throws IOException {
+        super(part);
         readFrom(part.getInputStream());
     }
-
+    
     public void readFrom(InputStream is) throws IOException {
         try {
-            CommentsDocument doc = CommentsDocument.Factory.parse(is);
+            CommentsDocument doc = CommentsDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
             comments = doc.getComments();
         } catch (XmlException e) {
             throw new IOException(e.getLocalizedMessage());
@@ -66,69 +88,162 @@ public class CommentsTable extends POIXMLDocumentPart {
         writeTo(out);
         out.close();
     }
+    
+    /**
+     * Called after the reference is updated, so that
+     *  we can reflect that in our cache
+     *  @param oldReference the comment to remove from the commentRefs map
+     *  @param comment the comment to replace in the commentRefs map
+     */
+    public void referenceUpdated(CellAddress oldReference, CTComment comment) {
+       if(commentRefs != null) {
+          commentRefs.remove(oldReference);
+          commentRefs.put(new CellAddress(comment.getRef()), comment);
+       }
+    }
 
     public int getNumberOfComments() {
         return comments.getCommentList().sizeOfCommentArray();
     }
+
     public int getNumberOfAuthors() {
-        return getCommentsAuthors().sizeOfAuthorArray();
+        return comments.getAuthors().sizeOfAuthorArray();
     }
 
     public String getAuthor(long authorId) {
-        return getCommentsAuthors().getAuthorArray((int)authorId);
+        return comments.getAuthors().getAuthorArray((int)authorId);
     }
 
     public int findAuthor(String author) {
-        for (int i = 0 ; i < getCommentsAuthors().sizeOfAuthorArray() ; i++) {
-            if (getCommentsAuthors().getAuthorArray(i).equals(author)) {
+        String[] authorArray = comments.getAuthors().getAuthorArray();
+        for (int i = 0 ; i < authorArray.length; i++) {
+            if (authorArray[i].equals(author)) {
                 return i;
             }
         }
         return addNewAuthor(author);
     }
 
-    public XSSFComment findCellComment(int row, int column) {
-        return findCellComment(
-                (new CellReference(row, column)).formatAsString() );
+    /**
+     * Finds the cell comment at cellAddress, if one exists
+     *
+     * @param cellAddress the address of the cell to find a comment
+     * @return cell comment if one exists, otherwise returns null
+     */
+    public XSSFComment findCellComment(CellAddress cellAddress) {
+        CTComment ct = getCTComment(cellAddress);
+        return ct == null ? null : new XSSFComment(this, ct, null);
     }
+    
+    /**
+     * Get the underlying CTComment xmlbean for a comment located at cellRef, if it exists
+     *
+     * @param cellRef the location of the cell comment
+     * @return CTComment xmlbean if comment exists, otherwise return null.
+     */
+    @Internal
+    public CTComment getCTComment(CellAddress cellRef) {
+        // Create the cache if needed
+        prepareCTCommentCache();
 
-    public XSSFComment findCellComment(String cellRef) {
-        for (CTComment comment : getCommentsList().getCommentArray()) {
-            if (cellRef.equals(comment.getRef())) {
-                return new XSSFComment(this, comment);
-            }
+        // Return the comment, or null if not known
+        return commentRefs.get(cellRef);
+    }
+    
+    /**
+     * Returns all cell comments on this sheet.
+     * @return A map of each Comment in this sheet, keyed on the cell address where
+     * the comment is located.
+     */
+    public Map<CellAddress, XSSFComment> getCellComments() {
+        prepareCTCommentCache();
+        final TreeMap<CellAddress, XSSFComment> map = new TreeMap<>();
+        
+        for (final Entry<CellAddress, CTComment> e: commentRefs.entrySet()) {
+            map.put(e.getKey(), new XSSFComment(this, e.getValue(), null));
         }
-        return null;
+        
+        return map;
     }
 
     /**
-     * Generates a new XSSFComment, associated with the
-     *  current comments list.
+     * Refresh Map<CellAddress, CTComment> commentRefs cache,
+     * Calls that use the commentRefs cache will perform in O(1)
+     * time rather than O(n) lookup time for List<CTComment> comments.
      */
-    public XSSFComment addComment() {
-        return new XSSFComment(this, getCommentsList().addNewComment());
-    }
-
-    private CTCommentList getCommentsList() {
-        if (comments.getCommentList() == null) {
-            comments.addNewCommentList();
+    private void prepareCTCommentCache() {
+        // Create the cache if needed
+        if(commentRefs == null) {
+           commentRefs = new HashMap<>();
+           for (CTComment comment : comments.getCommentList().getCommentArray()) {
+              commentRefs.put(new CellAddress(comment.getRef()), comment);
+           }
         }
-        return comments.getCommentList();
     }
-
-    private CTAuthors getCommentsAuthors() {
-        if (comments.getAuthors() == null) {
-            comments.addNewAuthors();
+    
+    /**
+     * Create a new comment located` at cell address
+     *
+     * @param ref the location to add the comment
+     * @return a new CTComment located at ref with default author
+     */
+    @Internal
+    public CTComment newComment(CellAddress ref) {
+        CTComment ct = comments.getCommentList().addNewComment();
+        ct.setRef(ref.formatAsString());
+        ct.setAuthorId(DEFAULT_AUTHOR_ID);
+        
+        if(commentRefs != null) {
+           commentRefs.put(ref, ct);
         }
-        return comments.getAuthors();
+        return ct;
     }
 
+    /**
+     * Remove the comment at cellRef location, if one exists
+     *
+     * @param cellRef the location of the comment to remove
+     * @return returns true if a comment was removed
+     */
+    public boolean removeComment(CellAddress cellRef) {
+        final String stringRef = cellRef.formatAsString();
+        CTCommentList lst = comments.getCommentList();
+        if(lst != null) {
+            CTComment[] commentArray = lst.getCommentArray();
+            for (int i = 0; i < commentArray.length; i++) {
+                CTComment comment = commentArray[i];
+                if (stringRef.equals(comment.getRef())) {
+                    lst.removeComment(i);
+
+                    if(commentRefs != null) {
+                       commentRefs.remove(cellRef);
+                    }
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Add a new author to the CommentsTable.
+     * This does not check if the author already exists.
+     *
+     * @param author the name of the comment author
+     * @return the index of the new author
+     */
     private int addNewAuthor(String author) {
-        int index = getCommentsAuthors().sizeOfAuthorArray();
-        getCommentsAuthors().insertAuthor(index, author);
+        int index = comments.getAuthors().sizeOfAuthorArray();
+        comments.getAuthors().insertAuthor(index, author);
         return index;
     }
 
+    /**
+     * Returns the underlying CTComments list xmlbean
+     *
+     * @return underlying comments list xmlbean
+     */
+    @Internal
     public CTComments getCTComments(){
         return comments;
     }

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 
@@ -35,12 +33,12 @@ import java.io.OutputStream;
  * @author Nick Burch
  */
 
-public class DummyPositionSensitiveRecordWithChildren extends PositionDependentRecordContainer
+public final class DummyPositionSensitiveRecordWithChildren extends PositionDependentRecordContainer
 {
 	private byte[] _header;
 	private long _type;
 
-	/** 
+	/**
 	 * Create a new holder for a boring record with children, but with
 	 *  position dependent characteristics
 	 */

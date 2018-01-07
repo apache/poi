@@ -16,12 +16,13 @@
 ==================================================================== */
 
 package org.apache.poi.hssf.eventusermodel;
-import java.io.IOException;
-import java.io.InputStream;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
@@ -29,10 +30,11 @@ import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.NumberRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.junit.Test;
 /**
  * Tests for FormatTrackingHSSFListener
  */
-public final class TestFormatTrackingHSSFListener extends TestCase {
+public final class TestFormatTrackingHSSFListener {
 	private FormatTrackingHSSFListener listener;
 	private MockHSSFListener mockListen;
 
@@ -42,22 +44,21 @@ public final class TestFormatTrackingHSSFListener extends TestCase {
 		listener = new FormatTrackingHSSFListener(mockListen);
 		req.addListenerForAllRecords(listener);
 		
+        File file = HSSFTestDataSamples.getSampleFile(filename);
 		HSSFEventFactory factory = new HSSFEventFactory();
-		try {
-			InputStream is = HSSFTestDataSamples.openSampleFileStream(filename);
-			POIFSFileSystem fs = new POIFSFileSystem(is);
-			factory.processWorkbookEvents(req, fs);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+		POIFSFileSystem fs = new POIFSFileSystem(file);
+		factory.processWorkbookEvents(req, fs);
+		fs.close();
 	} 
 	
+	@Test
 	public void testFormats() throws Exception {
 		processFile("MissingBits.xls");
-		
-		assertEquals("_(*#,##0_);_(*(#,##0);_(* \"-\"_);_(@_)", listener.getFormatString(41));
-		assertEquals("_($*#,##0_);_($*(#,##0);_($* \"-\"_);_(@_)", listener.getFormatString(42));
-		assertEquals("_(*#,##0.00_);_(*(#,##0.00);_(*\"-\"??_);_(@_)", listener.getFormatString(43));
+
+		assertEquals("_(* #,##0_);_(* (#,##0);_(* \"-\"_);_(@_)", listener.getFormatString(41));
+		assertEquals("_(\"$\"* #,##0_);_(\"$\"* (#,##0);_(\"$\"* \"-\"_);_(@_)", listener.getFormatString(42));
+		assertEquals("_(* #,##0.00_);_(* (#,##0.00);_(* \"-\"??_);_(@_)", listener.getFormatString(43));
+		assertEquals("_(\"$\"* #,##0.00_);_(\"$\"* (#,##0.00);_(\"$\"* \"-\"??_);_(@_)", listener.getFormatString(44));
 	}
 	
 	/**
@@ -67,12 +68,13 @@ public final class TestFormatTrackingHSSFListener extends TestCase {
 	 *  exceptions thrown, but in future we might also
 	 *  want to check the exact strings!
 	 */
+	@Test
 	public void testTurnToString() throws Exception {
 		String[] files = new String[] { 
 				"45365.xls", "45365-2.xls", "MissingBits.xls" 
 		};
-		for(int k=0; k<files.length; k++) {
-			processFile(files[k]);
+		for (String file : files) {
+			processFile(file);
 			
 			// Check we found our formats
 			assertTrue(listener.getNumberOfCustomFormats() > 5);
@@ -80,8 +82,7 @@ public final class TestFormatTrackingHSSFListener extends TestCase {
 			
 			// Now check we can turn all the numeric
 			//  cells into strings without error
-			for(int i=0; i<mockListen._records.size(); i++) {
-				Record r = (Record)mockListen._records.get(i);
+			for(Record r : mockListen._records) {
 				CellValueRecordInterface cvr = null;
 				
 				if(r instanceof NumberRecord) {
@@ -105,9 +106,10 @@ public final class TestFormatTrackingHSSFListener extends TestCase {
 	
 	private static final class MockHSSFListener implements HSSFListener {
 		public MockHSSFListener() {}
-		private final List _records = new ArrayList();
+		private final List<Record> _records = new ArrayList<>();
 
-		public void processRecord(Record record) {
+		@Override
+        public void processRecord(Record record) {
 			_records.add(record);
 		}
 	}

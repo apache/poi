@@ -17,156 +17,114 @@
 
 package org.apache.poi.poifs.filesystem;
 
-import java.io.IOException;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.util.Arrays;
-
-import junit.framework.TestCase;
+import java.io.IOException;
 
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.poifs.filesystem.POIFSWriterEvent;
-import org.apache.poi.poifs.filesystem.POIFSWriterListener;
-import org.apache.poi.poifs.filesystem.DirectoryEntry;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+import org.junit.Test;
 
-public class TestEmptyDocument extends TestCase {
+public final class TestEmptyDocument {
+    private static final POILogger LOG = POILogFactory.getLogger(TestEmptyDocument.class);
 
-  public static void main(String[] args) {
-    TestEmptyDocument driver = new TestEmptyDocument();
+    @Test
+	public void testSingleEmptyDocument() throws IOException {
+		POIFSFileSystem fs = new POIFSFileSystem();
+		DirectoryEntry dir = fs.getRoot();
+		dir.createDocument("Foo", new ByteArrayInputStream(new byte[] {}));
 
-    System.out.println();
-    System.out.println("As only file...");
-    System.out.println();
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		fs.writeFilesystem(out);
+		new POIFSFileSystem(new ByteArrayInputStream(out.toByteArray())).close();
+		fs.close();
+	}
 
-    System.out.print("Trying using createDocument(String,InputStream): ");
-    try {
-      driver.testSingleEmptyDocument();
-      System.out.println("Worked!");
-    } catch (IOException exception) {
-      System.out.println("failed! ");
-      System.out.println(exception.toString());
-    }
-    System.out.println();
+    @Test
+	public void testSingleEmptyDocumentEvent() throws IOException {
+		POIFSFileSystem fs = new POIFSFileSystem();
+		DirectoryEntry dir = fs.getRoot();
+		dir.createDocument("Foo", 0, new POIFSWriterListener() {
+			@Override
+            public void processPOIFSWriterEvent(POIFSWriterEvent event) {
+				LOG.log(POILogger.WARN, "written");
+			}
+		});
 
-    System.out.print
-      ("Trying using createDocument(String,int,POIFSWriterListener): ");
-    try {
-      driver.testSingleEmptyDocumentEvent();
-      System.out.println("Worked!");
-    } catch (IOException exception) {
-      System.out.println("failed!");
-      System.out.println(exception.toString());
-    }
-    System.out.println();
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		fs.writeFilesystem(out);
+		new POIFSFileSystem(new ByteArrayInputStream(out.toByteArray())).close();
+		fs.close();
+	}
 
-    System.out.println();
-    System.out.println("After another file...");
-    System.out.println();
+    @Test
+	public void testEmptyDocumentWithFriend() throws IOException {
+		POIFSFileSystem fs = new POIFSFileSystem();
+		DirectoryEntry dir = fs.getRoot();
+		dir.createDocument("Bar", new ByteArrayInputStream(new byte[] { 0 }));
+		dir.createDocument("Foo", new ByteArrayInputStream(new byte[] {}));
 
-    System.out.print("Trying using createDocument(String,InputStream): ");
-    try {
-      driver.testEmptyDocumentWithFriend();
-      System.out.println("Worked!");
-    } catch (IOException exception) {
-      System.out.println("failed! ");
-      System.out.println(exception.toString());
-    }
-    System.out.println();
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		fs.writeFilesystem(out);
+		new POIFSFileSystem(new ByteArrayInputStream(out.toByteArray())).close();
+		fs.close();
+	}
 
-    System.out.print
-      ("Trying using createDocument(String,int,POIFSWriterListener): ");
-    try {
-      driver.testEmptyDocumentWithFriend();
-      System.out.println("Worked!");
-    } catch (IOException exception) {
-      System.out.println("failed!");
-      System.out.println(exception.toString());
-    }
-    System.out.println();
-  }
+    @Test
+	public void testEmptyDocumentEventWithFriend() throws IOException {
+		POIFSFileSystem fs = new POIFSFileSystem();
+		DirectoryEntry dir = fs.getRoot();
+		dir.createDocument("Bar", 1, new POIFSWriterListener() {
+			@Override
+            public void processPOIFSWriterEvent(POIFSWriterEvent event) {
+				try {
+					event.getStream().write(0);
+				} catch (IOException exception) {
+					throw new RuntimeException("exception on write: " + exception);
+				}
+			}
+		});
+		dir.createDocument("Foo", 0, new POIFSWriterListener() {
+			@Override
+            public void processPOIFSWriterEvent(POIFSWriterEvent event) {
+			}
+		});
 
-  public void testSingleEmptyDocument() throws IOException {
-    POIFSFileSystem fs = new POIFSFileSystem();
-    DirectoryEntry dir = fs.getRoot();
-    dir.createDocument("Foo", new ByteArrayInputStream(new byte[] { }));
-    
-    ByteArrayOutputStream out = new ByteArrayOutputStream();
-    fs.writeFilesystem(out);
-    new POIFSFileSystem(new ByteArrayInputStream(out.toByteArray()));
-  }
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		fs.writeFilesystem(out);
+		new POIFSFileSystem(new ByteArrayInputStream(out.toByteArray())).close();
+		fs.close();
+	}
 
-  public void testSingleEmptyDocumentEvent() throws IOException {
-    POIFSFileSystem fs = new POIFSFileSystem();
-    DirectoryEntry dir = fs.getRoot();
-    dir.createDocument("Foo", 0, new POIFSWriterListener() {
-      public void processPOIFSWriterEvent(POIFSWriterEvent event) {
-      	System.out.println("written");
-      }
-    });
-    
-    ByteArrayOutputStream out = new ByteArrayOutputStream();
-    fs.writeFilesystem(out);
-    new POIFSFileSystem(new ByteArrayInputStream(out.toByteArray()));
-  }
+    @Test
+	public void testEmptyDocumentBug11744() throws Exception {
+		byte[] testData = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
-  public void testEmptyDocumentWithFriend() throws IOException {
-    POIFSFileSystem fs = new POIFSFileSystem();
-    DirectoryEntry dir = fs.getRoot();
-    dir.createDocument("Bar", new ByteArrayInputStream(new byte[] { 0 }));
-    dir.createDocument("Foo", new ByteArrayInputStream(new byte[] { }));
-    
-    ByteArrayOutputStream out = new ByteArrayOutputStream();
-    fs.writeFilesystem(out);
-    new POIFSFileSystem(new ByteArrayInputStream(out.toByteArray()));
-  }
+		POIFSFileSystem fs = new POIFSFileSystem();
+		fs.createDocument(new ByteArrayInputStream(new byte[0]), "Empty");
+		fs.createDocument(new ByteArrayInputStream(testData), "NotEmpty");
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		fs.writeFilesystem(out);
+		out.toByteArray();
+		fs.close();
 
-  public void testEmptyDocumentEventWithFriend() throws IOException {
-    POIFSFileSystem fs = new POIFSFileSystem();
-    DirectoryEntry dir = fs.getRoot();
-    dir.createDocument("Bar", 1, new POIFSWriterListener() {
-      public void processPOIFSWriterEvent(POIFSWriterEvent event) {
-        try {
-          event.getStream().write(0);
-        } catch (IOException exception) {
-          throw new RuntimeException("exception on write: " + exception);
-        }
-      }
-    });
-    dir.createDocument("Foo", 0, new POIFSWriterListener() {
-      public void processPOIFSWriterEvent(POIFSWriterEvent event) {
-      }
-    });
-    
-    ByteArrayOutputStream out = new ByteArrayOutputStream();
-    fs.writeFilesystem(out);
-    new POIFSFileSystem(new ByteArrayInputStream(out.toByteArray()));
-  }
+		// This line caused the error.
+		fs = new POIFSFileSystem(new ByteArrayInputStream(out.toByteArray()));
 
-  public void testEmptyDocumentBug11744() throws Exception {
-        byte[] testData = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+		DocumentEntry entry = (DocumentEntry) fs.getRoot().getEntry("Empty");
+		assertEquals("Expected zero size", 0, entry.getSize());
+		byte[] actualReadbackData;
+		actualReadbackData = IOUtils.toByteArray(new DocumentInputStream(entry));
+		assertEquals("Expected zero read from stream", 0, actualReadbackData.length);
 
-        POIFSFileSystem fs = new POIFSFileSystem();
-        fs.createDocument(new ByteArrayInputStream(new byte[0]), "Empty");
-        fs.createDocument(new ByteArrayInputStream(testData), "NotEmpty");
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        fs.writeFilesystem(out);
-        out.toByteArray();
-
-        // This line caused the error.
-        fs = new POIFSFileSystem(new ByteArrayInputStream(out.toByteArray()));
-
-        DocumentEntry entry = (DocumentEntry) fs.getRoot().getEntry("Empty");
-        assertEquals("Expected zero size", 0, entry.getSize());
-        byte[] actualReadbackData;
-        actualReadbackData = IOUtils.toByteArray(new DocumentInputStream(entry));
-        assertEquals("Expected zero read from stream", 0,
-                     actualReadbackData.length);
-
-        entry = (DocumentEntry) fs.getRoot().getEntry("NotEmpty");
-        actualReadbackData = IOUtils.toByteArray(new DocumentInputStream(entry));
-        assertEquals("Expected size was wrong", testData.length, entry.getSize());
-        assertTrue("Expected different data read from stream", 
-                Arrays.equals(testData, actualReadbackData));
-    }
+		entry = (DocumentEntry) fs.getRoot().getEntry("NotEmpty");
+		actualReadbackData = IOUtils.toByteArray(new DocumentInputStream(entry));
+		assertEquals("Expected size was wrong", testData.length, entry.getSize());
+		assertArrayEquals("Expected same data read from stream", testData, actualReadbackData);
+		fs.close();
+	}
 }

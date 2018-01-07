@@ -17,10 +17,11 @@
 
 package org.apache.poi.hssf.record;
 
-
+import static org.junit.Assert.assertArrayEquals;
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
-import java.util.Arrays;
+import org.apache.poi.util.HexRead;
 
 /**
  * Tests the serialization and deserialization of the NoteRecord
@@ -30,16 +31,16 @@ import java.util.Arrays;
  * @author Yegor Kozlov
  */
 public final class TestNoteRecord extends TestCase {
-    private byte[] data = new byte[] {
-        0x06, 0x00, 0x01, 0x00, 0x02, 0x00, 0x02, 0x04, 0x1A, 0x00,
-        0x00, 0x41, 0x70, 0x61, 0x63, 0x68, 0x65, 0x20, 0x53, 0x6F,
-        0x66, 0x74, 0x77, 0x61, 0x72, 0x65, 0x20, 0x46, 0x6F, 0x75,
-        0x6E, 0x64, 0x61, 0x74, 0x69, 0x6F, 0x6E, 0x00
-    };
+    private final byte[] testData = HexRead.readFromString(
+            "06 00 01 00 02 00 02 04 " +
+            "1A 00 00 " +
+            "41 70 61 63 68 65 20 53 6F 66 74 77 61 72 65 20 46 6F 75 6E 64 61 74 69 6F 6E " +
+            "00" // padding byte
+            );
 
     public void testRead() {
 
-        NoteRecord record = new NoteRecord(TestcaseRecordInputStream.create(NoteRecord.sid, data));
+        NoteRecord record = new NoteRecord(TestcaseRecordInputStream.create(NoteRecord.sid, testData));
 
         assertEquals(NoteRecord.sid, record.getSid());
         assertEquals(6, record.getRow());
@@ -47,7 +48,6 @@ public final class TestNoteRecord extends TestCase {
         assertEquals(NoteRecord.NOTE_VISIBLE, record.getFlags());
         assertEquals(1026, record.getShapeId());
         assertEquals("Apache Software Foundation", record.getAuthor());
-
     }
 
     public void testWrite() {
@@ -60,16 +60,11 @@ public final class TestNoteRecord extends TestCase {
         record.setShapeId((short)1026);
         record.setAuthor("Apache Software Foundation");
 
-        byte [] ser = record.serialize();
-        assertEquals(ser.length - 4, data.length);
-
-        byte[] recdata = new byte[ser.length - 4];
-        System.arraycopy(ser, 4, recdata, 0, recdata.length);
-        assertTrue(Arrays.equals(data, recdata));
+        byte[] ser = record.serialize();
+        TestcaseRecordInputStream.confirmRecordEncoding(NoteRecord.sid, testData, ser);
     }
 
-    public void testClone()
-    {
+    public void testClone() {
         NoteRecord record = new NoteRecord();
 
         record.setRow((short)1);
@@ -78,7 +73,7 @@ public final class TestNoteRecord extends TestCase {
         record.setShapeId((short)1026);
         record.setAuthor("Apache Software Foundation");
 
-        NoteRecord cloned = (NoteRecord)record.clone();
+        NoteRecord cloned = record.clone();
         assertEquals(record.getRow(), cloned.getRow());
         assertEquals(record.getColumn(), cloned.getColumn());
         assertEquals(record.getFlags(), cloned.getFlags());
@@ -88,6 +83,52 @@ public final class TestNoteRecord extends TestCase {
         //finally check that the serialized data is the same
         byte[] src = record.serialize();
         byte[] cln = cloned.serialize();
-        assertTrue(Arrays.equals(src, cln));
+        assertArrayEquals(src, cln);
+    }
+    
+    public void testUnicodeAuthor() {
+        // This sample data was created by setting the 'user name' field in the 'Personalize' 
+        // section of Excel's options to \u30A2\u30D1\u30C3\u30C1\u65CF, and then 
+        // creating a cell comment.
+        byte[] data = HexRead.readFromString("01 00 01 00 00 00 03 00 " +
+                "05 00 01 " + // len=5, 16bit
+                "A2 30 D1 30 C3 30 C1 30 CF 65 " + // character data 
+                "00 " // padding byte
+                );
+        RecordInputStream in = TestcaseRecordInputStream.create(NoteRecord.sid, data);
+        NoteRecord nr = new NoteRecord(in);
+        if ("\u00A2\u0030\u00D1\u0030\u00C3".equals(nr.getAuthor())) {
+            throw new AssertionFailedError("Identified bug in reading note with unicode author");
+        }
+        assertEquals("\u30A2\u30D1\u30C3\u30C1\u65CF", nr.getAuthor());
+        assertTrue(nr.authorIsMultibyte());
+        
+        byte[] ser = nr.serialize();
+        TestcaseRecordInputStream.confirmRecordEncoding(NoteRecord.sid, data, ser);
+
+        // Re-check
+        in = TestcaseRecordInputStream.create(ser);
+        nr = new NoteRecord(in);
+        assertEquals("\u30A2\u30D1\u30C3\u30C1\u65CF", nr.getAuthor());
+        assertTrue(nr.authorIsMultibyte());
+        
+        
+        // Change to a non unicode author, will stop being unicode
+        nr.setAuthor("Simple");
+        ser = nr.serialize();
+        in = TestcaseRecordInputStream.create(ser);
+        nr = new NoteRecord(in);
+        
+        assertEquals("Simple", nr.getAuthor());
+        assertFalse(nr.authorIsMultibyte());
+        
+        // Now set it back again
+        nr.setAuthor("Unicode\u1234");
+        ser = nr.serialize();
+        in = TestcaseRecordInputStream.create(ser);
+        nr = new NoteRecord(in);
+        
+        assertEquals("Unicode\u1234", nr.getAuthor());
+        assertTrue(nr.authorIsMultibyte());
     }
 }

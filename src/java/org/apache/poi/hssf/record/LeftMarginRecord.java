@@ -17,15 +17,12 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Record for the left margin.<p/>
- * 
- * @author Shawn Laubach (slaubach at apache dot org)
+ * Record for the left margin.
  */
-public class LeftMarginRecord extends Record implements Margin
-{
+public final class LeftMarginRecord extends StandardRecord implements Margin, Cloneable {
     public final static short sid = 0x0026;
     private double field_1_margin;
 
@@ -45,12 +42,8 @@ public class LeftMarginRecord extends Record implements Margin
         return buffer.toString();
     }
 
-    public int serialize( int offset, byte[] data )
-    {
-        LittleEndian.putShort( data, 0 + offset, sid );
-        LittleEndian.putShort( data, 2 + offset, (short) ( getRecordSize() - 4 ) );
-        LittleEndian.putDouble( data, 4 + offset, field_1_margin );
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeDouble(field_1_margin);
     }
 
     protected int getDataSize() {
@@ -76,10 +69,10 @@ public class LeftMarginRecord extends Record implements Margin
         this.field_1_margin = field_1_margin;
     }
 
-    public Object clone()
-    {
+    @Override
+    public LeftMarginRecord clone() {
         LeftMarginRecord rec = new LeftMarginRecord();
         rec.field_1_margin = this.field_1_margin;
         return rec;
     }
-}  // END OF C
+} 

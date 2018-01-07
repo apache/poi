@@ -17,45 +17,50 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
+import org.apache.poi.ss.formula.eval.forked.TestForkedEvaluator;
 import org.apache.poi.xssf.usermodel.extensions.TestXSSFBorder;
 import org.apache.poi.xssf.usermodel.extensions.TestXSSFCellFill;
 import org.apache.poi.xssf.usermodel.extensions.TestXSSFSheetComments;
 import org.apache.poi.xssf.usermodel.helpers.TestColumnHelper;
 import org.apache.poi.xssf.usermodel.helpers.TestHeaderFooterHelper;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * Collects all tests for <tt>org.apache.poi.xssf.usermodel</tt> and sub-packages.
- * 
- * @author Josh Micich
  */
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+    TestFormulaEvaluatorOnXSSF.class,
+    TestMultiSheetFormulaEvaluatorOnXSSF.class,
+    TestSheetHiding.class,
+    TestXSSFBugs.class,
+    TestXSSFDataFormat.class,
+    TestXSSFCellStyle.class,
+    TestXSSFComment.class,
+    TestXSSFDialogSheet.class,
+    TestXSSFDrawing.class,
+    TestXSSFFont.class,
+    TestXSSFFormulaEvaluation.class,
+    //TestXSSFHeaderFooter.class, //converted to junit4
+    TestXSSFHyperlink.class,
+    TestXSSFName.class,
+    TestXSSFPicture.class,
+    TestXSSFPictureData.class,
+    TestXSSFPrintSetup.class,
+    TestXSSFRichTextString.class,
+    TestXSSFRow.class,
+    TestXSSFSheet.class,
+    TestXSSFSheetUpdateArrayFormulas.class,
+    TestXSSFTable.class,
+    TestXSSFWorkbook.class,
+    TestXSSFBorder.class,
+    TestXSSFCellFill.class,
+    TestXSSFSheetComments.class,
+    TestColumnHelper.class,
+    TestHeaderFooterHelper.class,
+    //TestXSSFPivotTable.class, //converted to junit4
+    TestForkedEvaluator.class
+})
 public final class AllXSSFUsermodelTests {
-
-	public static Test suite() {
-		TestSuite result = new TestSuite(AllXSSFUsermodelTests.class.getName());
-		result.addTestSuite(TestXSSFBorder.class);
-		result.addTestSuite(TestXSSFBugs.class);
-		result.addTestSuite(TestXSSFCellFill.class);
-		result.addTestSuite(TestXSSFHeaderFooter.class);
-		result.addTestSuite(TestXSSFSheetComments.class);
-		result.addTestSuite(TestColumnHelper.class);
-		result.addTestSuite(TestHeaderFooterHelper.class);
-		result.addTestSuite(TestFormulaEvaluatorOnXSSF.class);
-		result.addTestSuite(TestXSSFCell.class);
-		result.addTestSuite(TestXSSFCellStyle.class);
-		result.addTestSuite(TestXSSFComment.class);
-		result.addTestSuite(TestXSSFDialogSheet.class);
-		result.addTestSuite(TestXSSFFormulaEvaluation.class);
-		result.addTestSuite(TestXSSFHeaderFooter.class);
-		result.addTestSuite(TestXSSFRow.class);
-		result.addTestSuite(TestXSSFSheet.class);
-		result.addTestSuite(TestXSSFWorkbook.class);
-				
-		result.addTestSuite(TestXSSFFont.class);
-		result.addTestSuite(TestXSSFPrintSetup.class);
-
-		return result;
-	}
 }

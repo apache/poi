@@ -14,46 +14,49 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hpbf;
 
-import java.io.File;
-import java.io.FileInputStream;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-import junit.framework.TestCase;
+import java.io.IOException;
+import java.io.InputStream;
 
-public class TestHPBFDocument extends TestCase {
-	private String dir;
+import org.apache.poi.POIDataSamples;
+import org.junit.Test;
 
-	protected void setUp() throws Exception {
-		dir = System.getProperty("HPBF.testdata.path");
-	}
+public final class TestHPBFDocument {
+    private static final POIDataSamples _samples = POIDataSamples.getPublisherInstance();
 
-	public void testOpen() throws Exception {
-		File f = new File(dir, "Sample.pub");
-		HPBFDocument doc = new HPBFDocument(
-				new FileInputStream(f)
-		);
-		
+    @Test
+	public void testOpen() throws IOException {
+	    InputStream is = _samples.openResourceAsStream("Sample.pub");
+		HPBFDocument doc = new HPBFDocument(is);
+		is.close();
 		assertNotNull(doc);
+		doc.close();
 	}
-	
-	public void testBits() throws Exception {
-		File f = new File(dir, "Sample.pub");
-		HPBFDocument doc = new HPBFDocument(
-				new FileInputStream(f)
-		);
+
+    @Test
+	public void testBits() throws IOException {
+        InputStream is = _samples.openResourceAsStream("Sample.pub");
+		HPBFDocument doc = new HPBFDocument(is);
+        is.close();
 
 		assertNotNull(doc.getMainContents());
 		assertNotNull(doc.getQuillContents());
 		assertNotNull(doc.getEscherStm());
 		assertNotNull(doc.getEscherDelayStm());
-		
+
 		assertTrue(doc.getMainContents().getData().length > 0);
 		assertTrue(doc.getQuillContents().getData().length > 0);
 		assertTrue(doc.getEscherStm().getData().length > 0);
 		assertTrue(doc.getEscherDelayStm().getData().length == 0);
+
+       doc.close();
 	}
-	
+
 	// TODO
 //	public void testWrite() throws Exception {
 //	}

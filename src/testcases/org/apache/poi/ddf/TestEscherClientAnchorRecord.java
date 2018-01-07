@@ -17,12 +17,14 @@
 
 package org.apache.poi.ddf;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
+import org.junit.Test;
 
-public class TestEscherClientAnchorRecord extends TestCase
-{
+public class TestEscherClientAnchorRecord {
+    @Test
     public void testSerialize() {
         EscherClientAnchorRecord r = createRecord();
 
@@ -38,6 +40,7 @@ public class TestEscherClientAnchorRecord extends TestCase
                 "FF, DD]", HexDump.toHex( data ) );
     }
 
+    @Test
     public void testFillFields() {
         String hexData = "01 00 " +
                 "10 F0 " +
@@ -65,23 +68,27 @@ public class TestEscherClientAnchorRecord extends TestCase
         assertEquals( (byte) 0xDD, r.getRemainingData()[1] );
     }
 
+    @Test
     public void testToString() {
         String nl = System.getProperty("line.separator");
-
-        String expected = "org.apache.poi.ddf.EscherClientAnchorRecord:" + nl +
-                "  RecordId: 0xF010" + nl +
-                "  Options: 0x0001" + nl +
-                "  Flag: 77" + nl +
-                "  Col1: 55" + nl +
-                "  DX1: 33" + nl +
-                "  Row1: 88" + nl +
-                "  DY1: 11" + nl +
-                "  Col2: 44" + nl +
-                "  DX2: 22" + nl +
-                "  Row2: 99" + nl +
-                "  DY2: 66" + nl +
-                "  Extra Data:" + nl +
-                "00000000 FF DD                                           .." + nl;
+        String expected =
+            "org.apache.poi.ddf.EscherClientAnchorRecord (ClientAnchor):" + nl +
+            "  RecordId: 0xF010" + nl +
+            "  Version: 0x0001" + nl +
+            "  Instance: 0x0000" + nl +
+            "  Options: 0x0001" + nl +
+            "  Record Size: 28" + nl +
+            "  Flag: 0x004D" + nl +
+            "  Col1: 0x0037" + nl +
+            "  DX1: 0x0021" + nl +
+            "  Row1: 0x0058" + nl +
+            "  DY1: 0x000B" + nl +
+            "  Col2: 0x002C" + nl +
+            "  DX2: 0x0016" + nl +
+            "  Row2: 0x0063" + nl +
+            "  DY2: 0x0042" + nl +
+            "  Extra Data: " + nl +
+            "     0: FF, DD";
         assertEquals( expected, createRecord().toString() );
     }
 

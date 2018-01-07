@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,91 +14,90 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.ddf;
 
-import org.apache.poi.util.LittleEndian;
-
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * Generates a property given a reference into the byte array storing that property.
- *
- * @author Glen Stampoultzis
  */
-public class EscherPropertyFactory
-{
+public final class EscherPropertyFactory {
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000_000;
+
     /**
      * Create new properties from a byte array.
      *
      * @param data              The byte array containing the property
      * @param offset            The starting offset into the byte array
+     * @param numProperties     The number of properties to be read
      * @return                  The new properties
      */
-    public List createProperties( byte[] data, int offset, short numProperties )
-    {
-        List results = new ArrayList();
+    public List<EscherProperty> createProperties(byte[] data, int offset, short numProperties) {
+        List<EscherProperty> results = new ArrayList<>();
 
         int pos = offset;
 
-//        while ( bytesRemaining >= 6 )
-        for (int i = 0; i < numProperties; i++)
-        {
+        for (int i = 0; i < numProperties; i++) {
             short propId;
             int propData;
             propId = LittleEndian.getShort( data, pos );
             propData = LittleEndian.getInt( data, pos + 2 );
             short propNumber = (short) ( propId & (short) 0x3FFF );
             boolean isComplex = ( propId & (short) 0x8000 ) != 0;
-            boolean isBlipId = ( propId & (short) 0x4000 ) != 0;
+            // boolean isBlipId = ( propId & (short) 0x4000 ) != 0;
 
-            byte propertyType = EscherProperties.getPropertyType( (short) propNumber );
-            if ( propertyType == EscherPropertyMetaData.TYPE_BOOLEAN )
-                results.add( new EscherBoolProperty( propId, propData ) );
-            else if ( propertyType == EscherPropertyMetaData.TYPE_RGB )
-                results.add( new EscherRGBProperty( propId, propData ) );
-            else if ( propertyType == EscherPropertyMetaData.TYPE_SHAPEPATH )
-                results.add( new EscherShapePathProperty( propId, propData ) );
-            else
-            {
-                if ( !isComplex )
-                    results.add( new EscherSimpleProperty( propId, propData ) );
-                else
-                {
-                    if ( propertyType == EscherPropertyMetaData.TYPE_ARRAY)
-                        results.add( new EscherArrayProperty( propId, new byte[propData]) );
-                    else
-                        results.add( new EscherComplexProperty( propId, new byte[propData]) );
-
-                }
+            byte propertyType = EscherProperties.getPropertyType(propNumber);
+            EscherProperty ep;
+            switch (propertyType) {
+                case EscherPropertyMetaData.TYPE_BOOLEAN:
+                    ep = new EscherBoolProperty( propId, propData );
+                    break;
+                case EscherPropertyMetaData.TYPE_RGB:
+                    ep = new EscherRGBProperty( propId, propData );
+                    break;
+                case EscherPropertyMetaData.TYPE_SHAPEPATH:
+                    ep = new EscherShapePathProperty( propId, propData );
+                    break;
+                default:
+                    if ( !isComplex ) {
+                        ep = new EscherSimpleProperty( propId, propData );
+                    } else if ( propertyType == EscherPropertyMetaData.TYPE_ARRAY) {
+                        ep = new EscherArrayProperty( propId, IOUtils.safelyAllocate(propData, MAX_RECORD_LENGTH));
+                    } else {
+                        ep = new EscherComplexProperty( propId, IOUtils.safelyAllocate(propData, MAX_RECORD_LENGTH));
+                    }
+                    break;
             }
+            results.add( ep );
             pos += 6;
-//            bytesRemaining -= 6 + complexBytes;
         }
 
         // Get complex data
-        for ( Iterator iterator = results.iterator(); iterator.hasNext(); )
-        {
-            EscherProperty p = (EscherProperty) iterator.next();
-            if (p instanceof EscherComplexProperty)
-            {
-                if (p instanceof EscherArrayProperty)
-                {
+        for (EscherProperty p : results) {
+            if (p instanceof EscherComplexProperty) {
+                if (p instanceof EscherArrayProperty) {
                     pos += ((EscherArrayProperty)p).setArrayData(data, pos);
-                }
-                else
-                {
+                } else {
                     byte[] complexData = ((EscherComplexProperty)p).getComplexData();
+
+                    int leftover = data.length - pos;
+                    if (leftover < complexData.length) {
+                        throw new IllegalStateException("Could not read complex escher property, length was " + complexData.length + ", but had only " +
+                                leftover + " bytes left");
+                    }
+
                     System.arraycopy(data, pos, complexData, 0, complexData.length);
                     pos += complexData.length;
                 }
             }
         }
-
         return results;
     }
-
-
 }

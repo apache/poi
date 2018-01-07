@@ -15,117 +15,86 @@
    limitations under the License.
 ==================================================================== */
 
-
 package org.apache.poi.hwpf.model;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.NoSuchElementException;
+
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
-import org.apache.poi.hwpf.model.io.*;
-
-import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
 /**
  * @author Ryan Ackley
  */
-public class ListTables
+@Internal
+public final class ListTables
 {
-  private static final int LIST_DATA_SIZE = 28;
-  private static final int LIST_FORMAT_OVERRIDE_SIZE = 16;
-  private static POILogger log = POILogFactory.getLogger(ListTables.class);
+  private final static POILogger log = POILogFactory.getLogger(ListTables.class);
 
-  HashMap _listMap = new HashMap();
-  ArrayList _overrideList = new ArrayList();
+    /**
+     * Both PlfLst and the following LVLs
+     */
+    private final LinkedHashMap<Integer, ListData> _listMap = new LinkedHashMap<>();
+    private PlfLfo _plfLfo;
 
   public ListTables()
   {
 
   }
 
-  public ListTables(byte[] tableStream, int lstOffset, int lfoOffset)
-  {
-    // get the list data
-    int length = LittleEndian.getShort(tableStream, lstOffset);
-    lstOffset += LittleEndian.SHORT_SIZE;
-    int levelOffset = lstOffset + (length * LIST_DATA_SIZE);
-
-    for (int x = 0; x < length; x++)
+    public ListTables( byte[] tableStream, final int lstOffset,
+            final int fcPlfLfo, final int lcbPlfLfo )
     {
-      ListData lst = new ListData(tableStream, lstOffset);
-      _listMap.put(new Integer(lst.getLsid()), lst);
-      lstOffset += LIST_DATA_SIZE;
 
-      int num = lst.numLevels();
-      for (int y = 0; y < num; y++)
-      {
-        ListLevel lvl = new ListLevel(tableStream, levelOffset);
-        lst.setLevel(y, lvl);
-        levelOffset += lvl.getSizeInBytes();
-      }
-    }
+        /*
+         * The PlfLst structure contains the list formatting information for the
+         * document. -- Page 425 of 621. [MS-DOC] -- v20110315 Word (.doc)
+         * Binary File Format
+         */
+        int offset = lstOffset;
 
-    // now get the list format overrides. The size is an int unlike the LST size
-    length = LittleEndian.getInt(tableStream, lfoOffset);
-    lfoOffset += LittleEndian.INT_SIZE;
-    int lfolvlOffset = lfoOffset + (LIST_FORMAT_OVERRIDE_SIZE * length);
-    for (int x = 0; x < length; x++)
-    {
-      ListFormatOverride lfo = new ListFormatOverride(tableStream, lfoOffset);
-      lfoOffset += LIST_FORMAT_OVERRIDE_SIZE;
-      int num = lfo.numOverrides();
-      for (int y = 0; y < num; y++)
-      {
-        while(tableStream[lfolvlOffset] == -1)
+        int cLst = LittleEndian.getShort( tableStream, offset );
+        offset += LittleEndian.SHORT_SIZE;
+        int levelOffset = offset + ( cLst * LSTF.getSize() );
+
+        for ( int x = 0; x < cLst; x++ )
         {
-          lfolvlOffset++;
+            ListData lst = new ListData( tableStream, offset );
+            _listMap.put( Integer.valueOf( lst.getLsid() ), lst );
+            offset += LSTF.getSize();
+
+            int num = lst.numLevels();
+            for ( int y = 0; y < num; y++ )
+            {
+                ListLevel lvl = new ListLevel();
+                levelOffset += lvl.read( tableStream, levelOffset );
+                lst.setLevel( y, lvl );
+            }
         }
-        ListFormatOverrideLevel lfolvl = new ListFormatOverrideLevel(tableStream, lfolvlOffset);
-        lfo.setOverride(y, lfolvl);
-        lfolvlOffset += lfolvl.getSizeInBytes();
-      }
-      _overrideList.add(lfo);
-    }
-  }
 
-  public int addList(ListData lst, ListFormatOverride override)
-  {
-    int lsid = lst.getLsid();
-    while (_listMap.get(new Integer(lsid)) != null)
+        this._plfLfo = new PlfLfo( tableStream, fcPlfLfo, lcbPlfLfo );
+    }
+
+    public void writeListDataTo( FileInformationBlock fib,
+            ByteArrayOutputStream tableStream ) throws IOException
     {
-      lsid = lst.resetListID();
-      override.setLsid(lsid);
-    }
-    _listMap.put(new Integer(lsid), lst);
-    _overrideList.add(override);
-    return lsid;
-  }
+        final int startOffset = tableStream.size();
+        fib.setFcPlfLst( startOffset );
 
-  public void writeListDataTo(HWPFOutputStream tableStream)
-    throws IOException
-  {
-
-    Integer[] intList = (Integer[])_listMap.keySet().toArray(new Integer[0]);
+    int listSize = _listMap.size();
 
     // use this stream as a buffer for the levels since their size varies.
     ByteArrayOutputStream levelBuf = new ByteArrayOutputStream();
 
-    // use a byte array for the lists because we know their size.
-    byte[] listBuf = new byte[intList.length * LIST_DATA_SIZE];
-
     byte[] shortHolder = new byte[2];
-    LittleEndian.putShort(shortHolder, (short)intList.length);
+    LittleEndian.putShort(shortHolder, 0, (short)listSize);
     tableStream.write(shortHolder);
 
-    for (int x = 0; x < intList.length; x++)
-    {
-      ListData lst = (ListData)_listMap.get(intList[x]);
+    for(ListData lst : _listMap.values()) {
       tableStream.write(lst.toByteArray());
       ListLevel[] lvls = lst.getLevels();
       for (int y = 0; y < lvls.length; y++)
@@ -133,114 +102,126 @@ public class ListTables
         levelBuf.write(lvls[y].toByteArray());
       }
     }
-    tableStream.write(levelBuf.toByteArray());
-  }
 
-  public void writeListOverridesTo(HWPFOutputStream tableStream)
-    throws IOException
-  {
-
-    // use this stream as a buffer for the levels since their size varies.
-    ByteArrayOutputStream levelBuf = new ByteArrayOutputStream();
-
-    int size = _overrideList.size();
-
-    byte[] intHolder = new byte[4];
-    LittleEndian.putInt(intHolder, size);
-    tableStream.write(intHolder);
-
-    for (int x = 0; x < size; x++)
-    {
-      ListFormatOverride lfo = (ListFormatOverride)_overrideList.get(x);
-      tableStream.write(lfo.toByteArray());
-      ListFormatOverrideLevel[] lfolvls = lfo.getLevelOverrides();
-      for (int y = 0; y < lfolvls.length; y++)
-      {
-        levelBuf.write(lfolvls[y].toByteArray());
-      }
+        /*
+         * An array of LVLs is appended to the PlfLst. lcbPlfLst does not
+         * account for the array of LVLs. -- Page 76 of 621 -- [MS-DOC] --
+         * v20110315 Word (.doc) Binary File Format
+         */
+        fib.setLcbPlfLst( tableStream.size() - startOffset );
+        tableStream.write( levelBuf.toByteArray() );
     }
-    tableStream.write(levelBuf.toByteArray());
 
-  }
-
-  public ListFormatOverride getOverride(int lfoIndex)
-  {
-    return (ListFormatOverride)_overrideList.get(lfoIndex - 1);
-  }
-
-  public int getOverrideIndexFromListID(int lstid)
-  {
-    int returnVal = -1;
-    int size = _overrideList.size();
-    for (int x = 0; x < size; x++)
+    public void writeListOverridesTo( FileInformationBlock fib,
+            ByteArrayOutputStream tableStream ) throws IOException
     {
-      ListFormatOverride next = (ListFormatOverride)_overrideList.get(x);
-      if (next.getLsid() == lstid)
-      {
-        // 1-based index I think
-        returnVal = x+1;
-        break;
-      }
+        _plfLfo.writeTo( fib, tableStream );
     }
-    if (returnVal == -1)
-    {
-      throw new NoSuchElementException("No list found with the specified ID");
-    }
-    return returnVal;
-  }
 
-  public ListLevel getLevel(int listID, int level)
+    public LFO getLfo( int ilfo ) throws NoSuchElementException
+    {
+        return _plfLfo.getLfo( ilfo );
+    }
+
+    public LFOData getLfoData( int ilfo ) throws NoSuchElementException
+    {
+        return _plfLfo.getLfoData( ilfo );
+    }
+
+    public int getOverrideIndexFromListID( int lsid )
+            throws NoSuchElementException
+    {
+        return _plfLfo.getIlfoByLsid( lsid );
+    }
+
+    /**
+     * Get the ListLevel for a given lsid and level
+     * @param lsid
+     * @param level
+     * @return ListLevel if found, or <code>null</code> if ListData can't be found or if level is > that available
+     */
+  public ListLevel getLevel(int lsid, int level)
   {
-    ListData lst = (ListData)_listMap.get(new Integer(listID));
+    ListData lst = _listMap.get(Integer.valueOf(lsid));
+    if (lst == null) {
+        if (log.check(POILogger.WARN)) {
+            log.log(POILogger.WARN, "ListData for " +
+                    lsid + " was null.");
+        }
+        return null;
+    }
     if(level < lst.numLevels()) {
-    	ListLevel lvl = lst.getLevels()[level];
-    	return lvl;
-    } else {
-    	log.log(POILogger.WARN, "Requested level " + level + " which was greater than the maximum defined (" + lst.numLevels() + ")"); 
-    	return null;
+        return lst.getLevels()[level];
     }
+    if (log.check(POILogger.WARN)) {
+        log.log(POILogger.WARN, "Requested level " + level + " which was greater than the maximum defined (" + lst.numLevels() + ")");
+    }
+	return null;
   }
 
-  public ListData getListData(int listID)
+  public ListData getListData(int lsid)
   {
-    return (ListData) _listMap.get(new Integer(listID));
+    return _listMap.get(Integer.valueOf(lsid));
   }
 
-  public boolean equals(Object obj)
-  {
-    if (obj == null)
+    @Override
+    public int hashCode()
     {
-      return false;
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+                + ( ( _listMap == null ) ? 0 : _listMap.hashCode() );
+        result = prime * result
+                + ( ( _plfLfo == null ) ? 0 : _plfLfo.hashCode() );
+        return result;
     }
 
-    ListTables tables = (ListTables)obj;
-
-    if (_listMap.size() == tables._listMap.size())
+    @Override
+    public boolean equals( Object obj )
     {
-      Iterator it = _listMap.keySet().iterator();
-      while (it.hasNext())
-      {
-        Object key = it.next();
-        ListData lst1 = (ListData)_listMap.get(key);
-        ListData lst2 = (ListData)tables._listMap.get(key);
-        if (!lst1.equals(lst2))
-        {
-          return false;
-        }
-      }
-      int size = _overrideList.size();
-      if (size == tables._overrideList.size())
-      {
-        for (int x = 0; x < size; x++)
-        {
-          if (!_overrideList.get(x).equals(tables._overrideList.get(x)))
-          {
+        if ( this == obj )
+            return true;
+        if ( obj == null )
             return false;
-          }
+        if ( getClass() != obj.getClass() )
+            return false;
+        ListTables other = (ListTables) obj;
+        if ( _listMap == null )
+        {
+            if ( other._listMap != null )
+                return false;
         }
+        else if ( !_listMap.equals( other._listMap ) )
+            return false;
+        if ( _plfLfo == null )
+        {
+            if ( other._plfLfo != null )
+                return false;
+        }
+        else if ( !_plfLfo.equals( other._plfLfo ) )
+            return false;
         return true;
-      }
     }
-    return false;
-  }
+
+    public int addList( ListData lst, LFO lfo, LFOData lfoData )
+    {
+        int lsid = lst.getLsid();
+        while ( _listMap.get( Integer.valueOf( lsid ) ) != null )
+        {
+            lsid = lst.resetListID();
+            lfo.setLsid( lsid );
+        }
+        _listMap.put( Integer.valueOf( lsid ), lst );
+
+        if ( lfo == null && lfoData != null )
+        {
+            throw new IllegalArgumentException(
+                    "LFO and LFOData should be specified both or noone" );
+        }
+        if ( lfo != null )
+        {
+            _plfLfo.add( lfo, lfoData );
+        }
+        return lsid;
+    }
 }

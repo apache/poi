@@ -21,53 +21,56 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.poi.hssf.record.AreaFormatRecord;
-import org.apache.poi.hssf.record.AxisLineFormatRecord;
-import org.apache.poi.hssf.record.AxisOptionsRecord;
-import org.apache.poi.hssf.record.AxisParentRecord;
-import org.apache.poi.hssf.record.AxisRecord;
-import org.apache.poi.hssf.record.AxisUsedRecord;
 import org.apache.poi.hssf.record.BOFRecord;
-import org.apache.poi.hssf.record.BarRecord;
-import org.apache.poi.hssf.record.BeginRecord;
-import org.apache.poi.hssf.record.CategorySeriesAxisRecord;
-import org.apache.poi.hssf.record.ChartFormatRecord;
-import org.apache.poi.hssf.record.ChartRecord;
-import org.apache.poi.hssf.record.ChartTitleFormatRecord;
-import org.apache.poi.hssf.record.DataFormatRecord;
-import org.apache.poi.hssf.record.DefaultDataLabelTextPropertiesRecord;
 import org.apache.poi.hssf.record.DimensionsRecord;
 import org.apache.poi.hssf.record.EOFRecord;
-import org.apache.poi.hssf.record.EndRecord;
-import org.apache.poi.hssf.record.FontBasisRecord;
-import org.apache.poi.hssf.record.FontIndexRecord;
 import org.apache.poi.hssf.record.FooterRecord;
-import org.apache.poi.hssf.record.FrameRecord;
 import org.apache.poi.hssf.record.HCenterRecord;
 import org.apache.poi.hssf.record.HeaderRecord;
-import org.apache.poi.hssf.record.LegendRecord;
-import org.apache.poi.hssf.record.LineFormatRecord;
-import org.apache.poi.hssf.record.LinkedDataFormulaField;
-import org.apache.poi.hssf.record.LinkedDataRecord;
-import org.apache.poi.hssf.record.PlotAreaRecord;
-import org.apache.poi.hssf.record.PlotGrowthRecord;
 import org.apache.poi.hssf.record.PrintSetupRecord;
 import org.apache.poi.hssf.record.ProtectRecord;
+import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordBase;
 import org.apache.poi.hssf.record.SCLRecord;
-import org.apache.poi.hssf.record.SeriesIndexRecord;
-import org.apache.poi.hssf.record.SeriesRecord;
-import org.apache.poi.hssf.record.SeriesTextRecord;
-import org.apache.poi.hssf.record.SeriesToChartGroupRecord;
-import org.apache.poi.hssf.record.SheetPropertiesRecord;
-import org.apache.poi.hssf.record.TextRecord;
-import org.apache.poi.hssf.record.TickRecord;
-import org.apache.poi.hssf.record.UnitsRecord;
 import org.apache.poi.hssf.record.UnknownRecord;
 import org.apache.poi.hssf.record.VCenterRecord;
-import org.apache.poi.hssf.record.ValueRangeRecord;
-import org.apache.poi.hssf.record.formula.Area3DPtg;
-import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.hssf.record.chart.AreaFormatRecord;
+import org.apache.poi.hssf.record.chart.AxisLineFormatRecord;
+import org.apache.poi.hssf.record.chart.AxisOptionsRecord;
+import org.apache.poi.hssf.record.chart.AxisParentRecord;
+import org.apache.poi.hssf.record.chart.AxisRecord;
+import org.apache.poi.hssf.record.chart.AxisUsedRecord;
+import org.apache.poi.hssf.record.chart.BarRecord;
+import org.apache.poi.hssf.record.chart.BeginRecord;
+import org.apache.poi.hssf.record.chart.CategorySeriesAxisRecord;
+import org.apache.poi.hssf.record.chart.ChartFormatRecord;
+import org.apache.poi.hssf.record.chart.ChartRecord;
+import org.apache.poi.hssf.record.chart.ChartTitleFormatRecord;
+import org.apache.poi.hssf.record.chart.DataFormatRecord;
+import org.apache.poi.hssf.record.chart.DefaultDataLabelTextPropertiesRecord;
+import org.apache.poi.hssf.record.chart.EndRecord;
+import org.apache.poi.hssf.record.chart.FontBasisRecord;
+import org.apache.poi.hssf.record.chart.FontIndexRecord;
+import org.apache.poi.hssf.record.chart.FrameRecord;
+import org.apache.poi.hssf.record.chart.LegendRecord;
+import org.apache.poi.hssf.record.chart.LineFormatRecord;
+import org.apache.poi.hssf.record.chart.LinkedDataRecord;
+import org.apache.poi.hssf.record.chart.PlotAreaRecord;
+import org.apache.poi.hssf.record.chart.PlotGrowthRecord;
+import org.apache.poi.hssf.record.chart.SeriesIndexRecord;
+import org.apache.poi.hssf.record.chart.SeriesRecord;
+import org.apache.poi.hssf.record.chart.SeriesTextRecord;
+import org.apache.poi.hssf.record.chart.SeriesToChartGroupRecord;
+import org.apache.poi.hssf.record.chart.SheetPropertiesRecord;
+import org.apache.poi.hssf.record.chart.TextRecord;
+import org.apache.poi.hssf.record.chart.TickRecord;
+import org.apache.poi.hssf.record.chart.UnitsRecord;
+import org.apache.poi.hssf.record.chart.ValueRangeRecord;
+import org.apache.poi.ss.formula.ptg.Area3DPtg;
+import org.apache.poi.ss.formula.ptg.AreaPtgBase;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellRangeAddressBase;
 
 /**
  * Has methods for construction of a chart object.
@@ -75,16 +78,63 @@ import org.apache.poi.hssf.record.formula.Ptg;
  * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class HSSFChart {
+	private HSSFSheet sheet;
 	private ChartRecord chartRecord;
-	
+
 	private LegendRecord legendRecord;
-	private ChartTitleFormatRecord chartTitleFormat;
+	@SuppressWarnings("unused")
+    private ChartTitleFormatRecord chartTitleFormat;
 	private SeriesTextRecord chartTitleText;
+	private List<ValueRangeRecord> valueRanges = new ArrayList<>();
 	
-	private List series = new ArrayList();
+	private HSSFChartType type = HSSFChartType.Unknown;
 	
-	private HSSFChart(ChartRecord chartRecord) {
+	private List<HSSFSeries> series = new ArrayList<>();
+
+	public enum HSSFChartType {
+		Area {
+			@Override
+			public short getSid() {
+				return 0x101A;
+			}
+		},
+		Bar {
+			@Override
+			public short getSid() {
+				return 0x1017;
+			}
+		},
+		Line {
+			@Override
+			public short getSid() {
+				return 0x1018;
+			}
+		},
+		Pie {
+			@Override
+			public short getSid() {
+				return 0x1019;
+			}
+		},
+		Scatter {
+			@Override
+			public short getSid() {
+				return 0x101B;
+			}
+		},
+		Unknown {
+			@Override
+			public short getSid() {
+				return 0;
+			}
+		};
+		
+		public abstract short getSid();
+	}
+
+	private HSSFChart(HSSFSheet sheet, ChartRecord chartRecord) {
 		this.chartRecord = chartRecord;
+		this.sheet = sheet;
 	}
 
 	/**
@@ -93,22 +143,22 @@ public final class HSSFChart {
 	 * NOTE:  Does not yet work...  checking it in just so others
 	 * can take a look.
 	 */
-	public void createBarChart( HSSFWorkbook workbook, HSSFSheet sheet )
+	public void createBarChart( HSSFWorkbook workbook, HSSFSheet parentSheet )
 	{
 
-		List records = new ArrayList();
+		List<Record> records = new ArrayList<>();
 		records.add( createMSDrawingObjectRecord() );
 		records.add( createOBJRecord() );
 		records.add( createBOFRecord() );
-		records.add( createHeaderRecord() );
-		records.add( createFooterRecord() );
+		records.add(new HeaderRecord(""));
+		records.add(new FooterRecord(""));
 		records.add( createHCenterRecord() );
 		records.add( createVCenterRecord() );
 		records.add( createPrintSetupRecord() );
 		// unknown 33
 		records.add( createFontBasisRecord1() );
 		records.add( createFontBasisRecord2() );
-		records.add( createProtectRecord() );
+		records.add(new ProtectRecord(false));
 		records.add( createUnitsRecord() );
 		records.add( createChartRecord( 0, 0, 30434904, 19031616 ) );
 		records.add( createBeginRecord() );
@@ -157,57 +207,73 @@ public final class HSSFChart {
 
 
 
-		sheet.insertChartRecords( records );
+		parentSheet.insertChartRecords( records );
 		workbook.insertChartRecord();
 	}
-	
+
 	/**
 	 * Returns all the charts for the given sheet.
-	 * 
+	 *
 	 * NOTE: You won't be able to do very much with
 	 *  these charts yet, as this is very limited support
 	 */
 	public static HSSFChart[] getSheetCharts(HSSFSheet sheet) {
-		List charts = new ArrayList();
+		List<HSSFChart> charts = new ArrayList<>();
 		HSSFChart lastChart = null;
-		
+		HSSFSeries lastSeries = null;
 		// Find records of interest
-		List records = sheet.getSheet().getRecords();
-		for(Iterator it = records.iterator(); it.hasNext();) {
-			RecordBase r = (RecordBase)it.next();
-			
+		List<RecordBase> records = sheet.getSheet().getRecords();
+		for(RecordBase r : records) {
+
 			if(r instanceof ChartRecord) {
-				lastChart = new HSSFChart((ChartRecord)r);
+				lastSeries = null;
+				lastChart = new HSSFChart(sheet,(ChartRecord)r);
 				charts.add(lastChart);
+            } else if (r instanceof LinkedDataRecord) {
+                LinkedDataRecord linkedDataRecord = (LinkedDataRecord) r;
+                if (lastSeries != null) {
+                    lastSeries.insertData(linkedDataRecord);
+                }
 			}
-			if(r instanceof LegendRecord) {
+            
+            if (lastChart == null) {
+                continue;
+            }
+            
+            if (r instanceof LegendRecord) {
 				lastChart.legendRecord = (LegendRecord)r;
-			}
-			if(r instanceof SeriesRecord) {
-				HSSFSeries series = lastChart.new HSSFSeries( (SeriesRecord)r );
+			} else if(r instanceof SeriesRecord) {
+				HSSFSeries series = new HSSFSeries( (SeriesRecord)r );
 				lastChart.series.add(series);
-			}
-			if(r instanceof ChartTitleFormatRecord) {
-				lastChart.chartTitleFormat =
-					(ChartTitleFormatRecord)r;
-			}
-			if(r instanceof SeriesTextRecord) {
-				// Applies to a series, unless we've seen
-				//  a legend already
+				lastSeries = series;
+			} else if(r instanceof ChartTitleFormatRecord) {
+				lastChart.chartTitleFormat = (ChartTitleFormatRecord)r;
+			} else if(r instanceof SeriesTextRecord) {
+				// Applies to a series, unless we've seen a legend already
 				SeriesTextRecord str = (SeriesTextRecord)r;
-				if(lastChart.legendRecord == null &&
-						lastChart.series.size() > 0) {
-					HSSFSeries series = (HSSFSeries)
-						lastChart.series.get(lastChart.series.size()-1);
+				if(lastChart.legendRecord == null && lastChart.series.size() > 0) {
+					HSSFSeries series = lastChart.series.get(lastChart.series.size()-1);
 					series.seriesTitleText = str;
 				} else {
 					lastChart.chartTitleText = str;
 				}
+			} else if(r instanceof ValueRangeRecord){
+				lastChart.valueRanges.add((ValueRangeRecord)r);
+			} else if (r instanceof Record) {
+				Record record = (Record) r;
+				for (HSSFChartType type : HSSFChartType.values()) {
+					if (type == HSSFChartType.Unknown) {
+						continue;
+					}
+					if (record.getSid() == type.getSid()) {
+						lastChart.type = type;
+						break;
+					}
+				}
 			}
 		}
-		
-		return (HSSFChart[])
-			charts.toArray( new HSSFChart[charts.size()] );
+
+		return charts.toArray( new HSSFChart[charts.size()] );
 	}
 
 	/** Get the X offset of the chart */
@@ -227,15 +293,14 @@ public final class HSSFChart {
 	public void setChartWidth(int width) { chartRecord.setWidth(width); }
 	/** Sets the height of the chart. {@link ChartRecord} */
 	public void setChartHeight(int height) { chartRecord.setHeight(height); }
-	
+
 	/**
 	 * Returns the series of the chart
 	 */
 	public HSSFSeries[] getSeries() {
-		return (HSSFSeries[])
-			series.toArray(new HSSFSeries[series.size()]);
+		return series.toArray(new HSSFSeries[series.size()]);
 	}
-	
+
 	/**
 	 * Returns the chart's title, if there is one,
 	 *  or null if not
@@ -246,9 +311,9 @@ public final class HSSFChart {
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Changes the chart's title, but only if there 
+	 * Changes the chart's title, but only if there
 	 *  was one already.
 	 * TODO - add in the records if not
 	 */
@@ -257,6 +322,35 @@ public final class HSSFChart {
 			chartTitleText.setText(title);
 		} else {
 			throw new IllegalStateException("No chart title found to change");
+		}
+	}
+	
+	/**
+	 * Set value range (basic Axis Options) 
+	 * @param axisIndex 0 - primary axis, 1 - secondary axis
+	 * @param minimum minimum value; Double.NaN - automatic; null - no change
+	 * @param maximum maximum value; Double.NaN - automatic; null - no change
+	 * @param majorUnit major unit value; Double.NaN - automatic; null - no change
+	 * @param minorUnit minor unit value; Double.NaN - automatic; null - no change
+	 */
+	public void setValueRange( int axisIndex, Double minimum, Double maximum, Double majorUnit, Double minorUnit){
+		ValueRangeRecord valueRange = valueRanges.get( axisIndex );
+		if( valueRange == null ) return;
+		if( minimum != null ){
+			valueRange.setAutomaticMinimum(minimum.isNaN());
+			valueRange.setMinimumAxisValue(minimum);
+		}
+		if( maximum != null ){
+			valueRange.setAutomaticMaximum(maximum.isNaN());
+			valueRange.setMaximumAxisValue(maximum);
+		}
+		if( majorUnit != null ){
+			valueRange.setAutomaticMajor(majorUnit.isNaN());
+			valueRange.setMajorIncrement(majorUnit);
+		}
+		if( minorUnit != null ){
+			valueRange.setAutomaticMinor(minorUnit.isNaN());
+			valueRange.setMinorIncrement(minorUnit);
 		}
 	}
 
@@ -333,27 +427,6 @@ public final class HSSFChart {
 		return r;
 	}
 
-	private ProtectRecord createProtectRecord()
-	{
-		ProtectRecord r = new ProtectRecord();
-		r.setProtect(false);
-		return r;
-	}
-
-	private FooterRecord createFooterRecord()
-	{
-		FooterRecord r = new FooterRecord();
-		r.setFooter(null);
-		return r;
-	}
-
-	private HeaderRecord createHeaderRecord()
-	{
-		HeaderRecord r = new HeaderRecord();
-		r.setHeader(null);
-		return r;
-	}
-
 	private BOFRecord createBOFRecord()
 	{
 		BOFRecord r = new BOFRecord();
@@ -400,7 +473,7 @@ public final class HSSFChart {
 		return new UnknownRecord((short)0x00EC, data);
 	}
 
-	private void createAxisRecords( List records )
+	private void createAxisRecords( List<Record> records )
 	{
 		records.add( createAxisParentRecord() );
 		records.add( createBeginRecord() );
@@ -447,7 +520,7 @@ public final class HSSFChart {
 		r.setReferenceType(LinkedDataRecord.REFERENCE_TYPE_DIRECT);
 		r.setCustomNumberFormat(false);
 		r.setIndexNumberFmtRecord((short)0);
-		r.setFormulaOfLink( new LinkedDataFormulaField() );
+		r.setFormulaOfLink(null);
 		return r;
 	}
 
@@ -524,8 +597,7 @@ public final class HSSFChart {
 
 	private PlotAreaRecord createPlotAreaRecord()
 	{
-		PlotAreaRecord r = new PlotAreaRecord(  );
-		return r;
+        return new PlotAreaRecord(  );
 	}
 
 	private AxisLineFormatRecord createAxisLineFormatRecord( short format )
@@ -647,7 +719,7 @@ public final class HSSFChart {
 		r.setReferenceType( LinkedDataRecord.REFERENCE_TYPE_DIRECT );
 		r.setCustomNumberFormat( false );
 		r.setIndexNumberFmtRecord( (short) 0 );
-		r.setFormulaOfLink( new LinkedDataFormulaField() );
+		r.setFormulaOfLink(null);
 		return r;
 	}
 
@@ -758,11 +830,9 @@ public final class HSSFChart {
 		r.setReferenceType( LinkedDataRecord.REFERENCE_TYPE_WORKSHEET );
 		r.setCustomNumberFormat( false );
 		r.setIndexNumberFmtRecord( (short) 0 );
-		LinkedDataFormulaField formula = new LinkedDataFormulaField();
 		Area3DPtg p = new Area3DPtg(0, 31, 1, 1,
 		        false, false, false, false, 0);
-		formula.setFormulaTokens(new Ptg[] { p, });
-		r.setFormulaOfLink( formula );
+		r.setFormulaOfLink(new Ptg[] { p, });
 		return r;
 	}
 
@@ -773,11 +843,9 @@ public final class HSSFChart {
 		r.setReferenceType( LinkedDataRecord.REFERENCE_TYPE_WORKSHEET );
 		r.setCustomNumberFormat( false );
 		r.setIndexNumberFmtRecord( (short) 0 );
-		LinkedDataFormulaField formula = new LinkedDataFormulaField();
 		Area3DPtg p = new Area3DPtg(0, 31, 0, 0,
 				false, false, false, false, 0);
-		formula.setFormulaTokens(new Ptg[] { p, });
-		r.setFormulaOfLink( formula );
+		r.setFormulaOfLink(new Ptg[] { p, });
 		return r;
 	}
 
@@ -788,7 +856,7 @@ public final class HSSFChart {
 		r.setReferenceType( LinkedDataRecord.REFERENCE_TYPE_DIRECT );
 		r.setCustomNumberFormat( false );
 		r.setIndexNumberFmtRecord( (short) 0 );
-		r.setFormulaOfLink( new LinkedDataFormulaField() );
+		r.setFormulaOfLink(null);
 		return r;
 	}
 
@@ -916,16 +984,45 @@ public final class HSSFChart {
 		return r;
 	}
 
-	
+
 	/**
 	 * A series in a chart
 	 */
-	public class HSSFSeries {
+	public static class HSSFSeries {
 		private SeriesRecord series;
 		private SeriesTextRecord seriesTitleText;
-		
+		private LinkedDataRecord dataName;
+		private LinkedDataRecord dataValues;
+		private LinkedDataRecord dataCategoryLabels;
+		private LinkedDataRecord dataSecondaryCategoryLabels;
+
 		/* package */ HSSFSeries(SeriesRecord series) {
 			this.series = series;
+		}
+
+		/* package */ void insertData(LinkedDataRecord data){
+			switch(data.getLinkType()){
+			
+				case LinkedDataRecord.LINK_TYPE_TITLE_OR_TEXT:
+					dataName = data;
+					break;
+				case LinkedDataRecord.LINK_TYPE_VALUES:
+					dataValues = data;
+					break;
+				case LinkedDataRecord.LINK_TYPE_CATEGORIES:
+					dataCategoryLabels = data;
+					break;
+				case LinkedDataRecord.LINK_TYPE_SECONDARY_CATEGORIES:
+					dataSecondaryCategoryLabels = data;
+					break;
+				default:
+					throw new IllegalStateException("Invalid link type: " + data.getLinkType());
+			}
+		}
+		
+		/* package */ void setSeriesTitleText(SeriesTextRecord seriesTitleText)
+		{
+			this.seriesTitleText = seriesTitleText;
 		}
 		
 		public short getNumValues() {
@@ -937,7 +1034,7 @@ public final class HSSFChart {
 		public short getValueType() {
 			return series.getValuesDataType();
 		}
-		
+
 		/**
 		 * Returns the series' title, if there is one,
 		 *  or null if not
@@ -948,9 +1045,9 @@ public final class HSSFChart {
 			}
 			return null;
 		}
-		
+
 		/**
-		 * Changes the series' title, but only if there 
+		 * Changes the series' title, but only if there
 		 *  was one already.
 		 * TODO - add in the records if not
 		 */
@@ -961,5 +1058,314 @@ public final class HSSFChart {
 				throw new IllegalStateException("No series title found to change");
 			}
 		}
+
+		/**
+		 * @return record with data names
+		 */
+		public LinkedDataRecord getDataName(){
+			return dataName;
+		}
+		
+		/**
+		 * @return record with data values
+		 */
+		public LinkedDataRecord getDataValues(){
+			return dataValues;
+		}
+		
+		/**
+		 * @return record with data category labels
+		 */
+		public LinkedDataRecord getDataCategoryLabels(){
+			return dataCategoryLabels;
+		}
+		
+		/**
+		 * @return record with data secondary category labels
+		 */
+		public LinkedDataRecord getDataSecondaryCategoryLabels() {
+			return dataSecondaryCategoryLabels;
+		}
+		
+		/**
+		 * @return record with series
+		 */
+		public SeriesRecord getSeries() {
+			return series;
+		}
+		
+		private CellRangeAddressBase getCellRange(LinkedDataRecord linkedDataRecord) {
+			if (linkedDataRecord == null)
+			{
+				return null ;
+			}
+			
+			int firstRow = 0;
+			int lastRow = 0;
+			int firstCol = 0;
+			int lastCol = 0;
+			
+			for (Ptg ptg : linkedDataRecord.getFormulaOfLink()) {
+				if (ptg instanceof AreaPtgBase) {
+					AreaPtgBase areaPtg = (AreaPtgBase) ptg;
+					
+					firstRow = areaPtg.getFirstRow();
+					lastRow = areaPtg.getLastRow();
+					
+					firstCol = areaPtg.getFirstColumn();
+					lastCol = areaPtg.getLastColumn();
+				}
+			}
+			
+			return new CellRangeAddress(firstRow, lastRow, firstCol, lastCol);
+		}
+		
+		public CellRangeAddressBase getValuesCellRange() {
+			return getCellRange(dataValues);
+		}
+	
+		public CellRangeAddressBase getCategoryLabelsCellRange() {
+			return getCellRange(dataCategoryLabels);
+		}
+	
+		private Integer setVerticalCellRange(LinkedDataRecord linkedDataRecord,
+				                             CellRangeAddressBase range) {
+			if (linkedDataRecord == null)
+			{
+				return null;
+			}
+			
+			List<Ptg> ptgList = new ArrayList<>();
+			
+			int rowCount = (range.getLastRow() - range.getFirstRow()) + 1;
+			int colCount = (range.getLastColumn() - range.getFirstColumn()) + 1;
+			
+			for (Ptg ptg : linkedDataRecord.getFormulaOfLink()) {
+				if (ptg instanceof AreaPtgBase) {
+					AreaPtgBase areaPtg = (AreaPtgBase) ptg;
+					
+					areaPtg.setFirstRow(range.getFirstRow());
+					areaPtg.setLastRow(range.getLastRow());
+					
+					areaPtg.setFirstColumn(range.getFirstColumn());
+					areaPtg.setLastColumn(range.getLastColumn());
+					ptgList.add(areaPtg);
+				}
+			}
+			
+			linkedDataRecord.setFormulaOfLink(ptgList.toArray(new Ptg[ptgList.size()]));
+			
+			return rowCount * colCount;
+		}
+		
+		public void setValuesCellRange(CellRangeAddressBase range) {
+			Integer count = setVerticalCellRange(dataValues, range);
+			if (count == null)
+			{
+				return;
+			}
+			
+			series.setNumValues((short)(int)count);
+		}
+		
+		public void setCategoryLabelsCellRange(CellRangeAddressBase range) {
+			Integer count = setVerticalCellRange(dataCategoryLabels, range);
+			if (count == null)
+			{
+				return;
+			}
+			
+			series.setNumCategories((short)(int)count);
+		}
+	}
+	
+	public HSSFSeries createSeries() throws Exception {
+		ArrayList<RecordBase> seriesTemplate = new ArrayList<>();
+		boolean seriesTemplateFilled = false;
+		
+		int idx = 0;
+		int deep = 0;
+		int chartRecordIdx = -1;
+		int chartDeep = -1;
+		int lastSeriesDeep = -1;
+		int endSeriesRecordIdx = -1;
+		int seriesIdx = 0;
+		final List<RecordBase> records = sheet.getSheet().getRecords();
+		
+		/* store first series as template and find last series index */
+		for(final RecordBase record : records) {		
+			
+			idx++;
+			
+			if (record instanceof BeginRecord) {
+				deep++;
+			} else if (record instanceof EndRecord) {
+				deep--;
+				
+				if (lastSeriesDeep == deep) {
+					lastSeriesDeep = -1;
+					endSeriesRecordIdx = idx;
+					if (!seriesTemplateFilled) {
+						seriesTemplate.add(record);
+						seriesTemplateFilled = true;
+					}
+				}
+				
+				if (chartDeep == deep) {
+					break;
+				}
+			}
+			
+			if (record instanceof ChartRecord) {
+				if (record == chartRecord) {
+					chartRecordIdx = idx;
+					chartDeep = deep;
+				}
+			} else if (record instanceof SeriesRecord) {
+				if (chartRecordIdx != -1) {
+					seriesIdx++;
+					lastSeriesDeep = deep;
+				}
+			}
+			
+			if (lastSeriesDeep != -1 && !seriesTemplateFilled) {
+				seriesTemplate.add(record) ;
+			}
+		}
+		
+		/* check if a series was found */
+		if (endSeriesRecordIdx == -1) {
+			return null;
+		}
+		
+		/* next index in the records list where the new series can be inserted */
+		idx = endSeriesRecordIdx + 1;
+
+		HSSFSeries newSeries = null;
+		
+		/* duplicate record of the template series */
+		ArrayList<RecordBase> clonedRecords = new ArrayList<>();
+		for(final RecordBase record : seriesTemplate) {		
+			
+			Record newRecord = null;
+			
+			if (record instanceof BeginRecord) {
+				newRecord = new BeginRecord();
+			} else if (record instanceof EndRecord) {
+				newRecord = new EndRecord();
+			} else if (record instanceof SeriesRecord) {
+				SeriesRecord seriesRecord = (SeriesRecord) ((SeriesRecord)record).clone();
+				newSeries = new HSSFSeries(seriesRecord);
+				newRecord = seriesRecord;
+			} else if (record instanceof LinkedDataRecord) {
+				LinkedDataRecord linkedDataRecord = ((LinkedDataRecord)record).clone();
+				if (newSeries != null) {
+					newSeries.insertData(linkedDataRecord);
+				}
+				newRecord = linkedDataRecord;
+			} else if (record instanceof DataFormatRecord) {
+				DataFormatRecord dataFormatRecord = ((DataFormatRecord)record).clone();
+				
+				dataFormatRecord.setSeriesIndex((short)seriesIdx) ;
+				dataFormatRecord.setSeriesNumber((short)seriesIdx) ;
+				
+				newRecord = dataFormatRecord;
+			} else if (record instanceof SeriesTextRecord) {
+				SeriesTextRecord seriesTextRecord = (SeriesTextRecord) ((SeriesTextRecord)record).clone();
+				if (newSeries != null) {
+					newSeries.setSeriesTitleText(seriesTextRecord);
+				}
+				newRecord = seriesTextRecord;
+			} else if (record instanceof Record) {
+				newRecord = (Record) ((Record)record).clone();
+			}
+			
+			if (newRecord != null)
+			{
+				clonedRecords.add(newRecord);
+			}
+		}
+		
+		/* check if a user model series object was created */
+		if (newSeries == null)
+		{
+			return null;
+		}
+		
+		/* transfer series to record list */
+		for(final RecordBase record : clonedRecords) {		
+			records.add(idx++, record);
+		}
+		
+		return newSeries;
+	}
+	
+	public boolean removeSeries(HSSFSeries remSeries) {
+		int deep = 0;
+		int chartDeep = -1;
+		int lastSeriesDeep = -1;
+		int seriesIdx = -1;
+		boolean removeSeries = false;
+		boolean chartEntered = false;
+		boolean result = false;
+		final List<RecordBase> records = sheet.getSheet().getRecords();
+		
+		/* store first series as template and find last series index */
+		Iterator<RecordBase> iter = records.iterator();
+		while (iter.hasNext()) {		
+			RecordBase record = iter.next();
+			
+			if (record instanceof BeginRecord) {
+				deep++;
+			} else if (record instanceof EndRecord) {
+				deep--;
+				
+				if (lastSeriesDeep == deep) {
+					lastSeriesDeep = -1;
+					
+					if (removeSeries) {
+						removeSeries = false;
+						result = true;
+						iter.remove();
+					}
+				}
+				
+				if (chartDeep == deep) {
+					break;
+				}
+			}
+			
+			if (record instanceof ChartRecord) {
+				if (record == chartRecord) {
+					chartDeep = deep;
+					chartEntered = true;
+				}
+			} else if (record instanceof SeriesRecord) {
+				if (chartEntered) {
+					if (remSeries.series == record) {
+						lastSeriesDeep = deep;
+						removeSeries = true;
+					} else {
+						seriesIdx++;
+					}
+				}
+			} else if (record instanceof DataFormatRecord) {
+				if (chartEntered && !removeSeries) {
+					DataFormatRecord dataFormatRecord = (DataFormatRecord) record;
+					dataFormatRecord.setSeriesIndex((short) seriesIdx);
+					dataFormatRecord.setSeriesNumber((short) seriesIdx);
+				}
+			}
+			
+			if (removeSeries) {
+				iter.remove();
+			}
+		}
+		
+		return result;
+	}
+	
+	public HSSFChartType getType() {
+		return type;
 	}
 }

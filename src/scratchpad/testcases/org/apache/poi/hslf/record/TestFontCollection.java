@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -18,30 +17,41 @@
 
 package org.apache.poi.hslf.record;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.io.ByteArrayOutputStream;
-import java.util.Arrays;
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.usermodel.HSLFFontInfo;
+import org.apache.poi.hslf.usermodel.HSLFFontInfoPredefined;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.poifs.storage.RawDataUtil;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
- * Tests <code>FontCollection</code> and <code>FontEntityAtom</code> records
- *
- * @author Yegor Kozlov
+ * Tests {@code FontCollection} and {@code FontEntityAtom} records
  */
-public class TestFontCollection extends TestCase {
+public final class TestFontCollection {
+    private static final POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
+    
     // From a real file
-    private byte[] data = new byte[]  {
-        0x0F, 0x00, 0xD5-256, 0x07, 0x4C, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0xB7-256, 0x0F, 0x44, 0x00, 0x00, 0x00,
-        0x54, 0x00, 0x69, 0x00, 0x6D, 0x00, 0x65, 0x00, 0x73, 0x00,
-        0x20, 0x00, 0x4E, 0x00, 0x65, 0x00, 0x77, 0x00, 0x20, 0x00,
-        0x52, 0x00, 0x6F, 0x00, 0x6D, 0x00, 0x61, 0x00, 0x6E, 0x00,
-        0x00, 0x00, 0x74, 0x34, 0xB8-256, 0x00, 0x7C, 0xDA-256, 0x12, 0x00,
-        0x64, 0xDA-256, 0x12, 0x00, 0x76, 0xC7-256, 0x0B, 0x30, 0x08, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x7C, 0xDA-256, 0x12, 0x00,
-        0x28, 0xDD-256, 0x0D, 0x30, 0x00, 0x00, 0x04, 0x00  };
+    private static byte[] data;
+    
+    @BeforeClass
+    public static void init() throws IOException {
+        data = RawDataUtil.decompress(
+            "H4sIAAAAAAAAAONnuMruwwAC2/ldgGQIQyZDLkMqQzGDAoMfkC4H0kEM+U"+
+            "CxRIY8oHyJyQ6GmltCDClAXHac24CDAQJAYhp3eQ0YGFgYAAusGftUAAAA"
+        );
+    }
 
-    public void testFonts() throws Exception {
+    @Test
+    public void testFonts() {
         FontCollection fonts = new FontCollection(data, 0, data.length);
         Record[] child = fonts.getChildRecords();
         assertEquals(child.length, 1);
@@ -50,33 +60,45 @@ public class TestFontCollection extends TestCase {
         assertEquals(fnt.getFontName(), "Times New Roman");
     }
 
-    public void testAddFont() throws Exception {
+    @Test
+    public void testAddFont() {
         FontCollection fonts = new FontCollection(data, 0, data.length);
-        int idx = fonts.addFont("Times New Roman");
-        assertEquals(idx, 0);
-        idx = fonts.addFont("Helvetica");
-        assertEquals(idx, 1);
-        idx = fonts.addFont("Arial");
-        assertEquals(idx, 2);
-        idx = fonts.addFont("Arial"); //the font being added twice
-        assertEquals(idx, 2);
+        HSLFFontInfo fi = fonts.addFont(HSLFFontInfoPredefined.TIMES_NEW_ROMAN);
+        assertEquals((int)fi.getIndex(), 0);
+        fi = fonts.addFont(new HSLFFontInfo("Helvetica"));
+        assertEquals((int)fi.getIndex(), 1);
+        fi = fonts.addFont(HSLFFontInfoPredefined.ARIAL);
+        assertEquals((int)fi.getIndex(), 2);
+        //the font being added twice
+        fi = fonts.addFont(HSLFFontInfoPredefined.ARIAL);
+        assertEquals((int)fi.getIndex(), 2);
 
         // Font collection should contain 3 fonts
         Record[] child = fonts.getChildRecords();
         assertEquals(child.length, 3);
-        
+
         // Check we get the right font name for the indicies
-        assertEquals("Times New Roman", fonts.getFontWithId(0));
-        assertEquals("Helvetica", fonts.getFontWithId(1));
-        assertEquals("Arial", fonts.getFontWithId(2));
-        assertNull(fonts.getFontWithId(3));
+        assertEquals("Times New Roman", fonts.getFontInfo(0).getTypeface());
+        assertEquals("Helvetica", fonts.getFontInfo(1).getTypeface());
+        assertEquals("Arial", fonts.getFontInfo(2).getTypeface());
+        assertNull(fonts.getFontInfo(3));
     }
 
+    @Test
     public void testWrite() throws Exception {
         FontCollection fonts = new FontCollection(data, 0, data.length);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         fonts.writeOut(out);
         byte[] recdata = out.toByteArray();
-        assertTrue(Arrays.equals(recdata, data));
+        assertArrayEquals(recdata, data);
+    }
+    
+    @Test
+    public void bug61881() throws IOException {
+        try (InputStream is = _slTests.openResourceAsStream("bug61881.ppt")) {
+            try (HSLFSlideShow ppt = new HSLFSlideShow(is)) {
+                assertEquals("?imes New Roman",ppt.getFont(3).getTypeface());
+            }
+        }
     }
 }

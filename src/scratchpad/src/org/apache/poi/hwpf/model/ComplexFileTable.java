@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,70 +14,101 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hwpf.model;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.LinkedList;
+import java.util.List;
 
+import org.apache.poi.hwpf.model.io.HWPFFileSystem;
+import org.apache.poi.hwpf.sprm.SprmBuffer;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.hwpf.model.io.*;
+import org.apache.poi.util.StringUtil;
 
-public class ComplexFileTable
-{
+@Internal
+public class ComplexFileTable {
 
-  private static final byte GRPPRL_TYPE = 1;
-  private static final byte TEXT_PIECE_TABLE_TYPE = 2;
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
 
-  protected TextPieceTable _tpt;
+    private static final byte GRPPRL_TYPE = 1;
+    private static final byte TEXT_PIECE_TABLE_TYPE = 2;
 
-  public ComplexFileTable()
-  {
-    _tpt = new TextPieceTable();
-  }
+    protected TextPieceTable _tpt;
 
-  public ComplexFileTable(byte[] documentStream, byte[] tableStream, int offset, int fcMin) throws IOException
-  {
-    //skips through the prms before we reach the piece table. These contain data
-    //for actual fast saved files
-    while (tableStream[offset] == GRPPRL_TYPE)
-    {
-      offset++;
-      int skip = LittleEndian.getShort(tableStream, offset);
-      offset += LittleEndian.SHORT_SIZE + skip;
+    private SprmBuffer[] _grpprls;
+
+    public ComplexFileTable() {
+        _tpt = new TextPieceTable();
     }
-    if(tableStream[offset] != TEXT_PIECE_TABLE_TYPE)
-    {
-      throw new IOException("The text piece table is corrupted");
+
+    protected ComplexFileTable(byte[] documentStream, byte[] tableStream, int offset, int fcMin,
+                               Charset charset) throws IOException {
+        //skips through the prms before we reach the piece table. These contain data
+        //for actual fast saved files
+        List<SprmBuffer> sprmBuffers = new LinkedList<>();
+        while (tableStream[offset] == GRPPRL_TYPE) {
+            offset++;
+            int size = LittleEndian.getShort(tableStream, offset);
+            offset += LittleEndian.SHORT_SIZE;
+            byte[] bs = LittleEndian.getByteArray(tableStream, offset, size, MAX_RECORD_LENGTH);
+            offset += size;
+
+            SprmBuffer sprmBuffer = new SprmBuffer(bs, false, 0);
+            sprmBuffers.add(sprmBuffer);
+        }
+        this._grpprls = sprmBuffers.toArray(new SprmBuffer[sprmBuffers.size()]);
+
+        if (tableStream[offset] != TEXT_PIECE_TABLE_TYPE) {
+            throw new IOException("The text piece table is corrupted");
+        }
+        int pieceTableSize = LittleEndian.getInt(tableStream, ++offset);
+        offset += LittleEndian.INT_SIZE;
+        _tpt = newTextPieceTable(documentStream, tableStream, offset, pieceTableSize, fcMin, charset);
+
     }
-    else
-    {
-      int pieceTableSize = LittleEndian.getInt(tableStream, ++offset);
-      offset += LittleEndian.INT_SIZE;
-      _tpt = new TextPieceTable(documentStream, tableStream, offset, pieceTableSize, fcMin);
+
+    public ComplexFileTable(byte[] documentStream, byte[] tableStream, int offset, int fcMin) throws IOException {
+        this(documentStream, tableStream, offset, fcMin, StringUtil.WIN_1252);
     }
-  }
 
-  public TextPieceTable getTextPieceTable()
-  {
-    return _tpt;
-  }
+    public TextPieceTable getTextPieceTable() {
+        return _tpt;
+    }
 
-  public void writeTo(HWPFFileSystem sys)
-    throws IOException
-  {
-    HWPFOutputStream docStream = sys.getStream("WordDocument");
-    HWPFOutputStream tableStream = sys.getStream("1Table");
+    public SprmBuffer[] getGrpprls() {
+        return _grpprls;
+    }
 
-    tableStream.write(TEXT_PIECE_TABLE_TYPE);
+    @Deprecated
+    public void writeTo(HWPFFileSystem sys) throws IOException {
+        ByteArrayOutputStream docStream = sys.getStream("WordDocument");
+        ByteArrayOutputStream tableStream = sys.getStream("1Table");
 
-    byte[] table = _tpt.writeTo(docStream);
+        writeTo(docStream, tableStream);
+    }
 
-    byte[] numHolder = new byte[LittleEndian.INT_SIZE];
-    LittleEndian.putInt(numHolder, table.length);
-    tableStream.write(numHolder);
-    tableStream.write(table);
-  }
+    public void writeTo(ByteArrayOutputStream wordDocumentStream,
+                        ByteArrayOutputStream tableStream) throws IOException {
+        tableStream.write(TEXT_PIECE_TABLE_TYPE);
+
+        byte[] table = _tpt.writeTo(wordDocumentStream);
+
+        byte[] numHolder = new byte[LittleEndian.INT_SIZE];
+        LittleEndian.putInt(numHolder, 0, table.length);
+        tableStream.write(numHolder);
+        tableStream.write(table);
+    }
+
+    protected TextPieceTable newTextPieceTable(byte[] documentStream,
+                                               byte[] tableStream, int offset, int pieceTableSize, int fcMin,
+                                               Charset charset) {
+        return new TextPieceTable(documentStream, tableStream, offset, pieceTableSize, fcMin);
+    }
+
 
 }

@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hpsf;
 
 import org.apache.poi.util.LittleEndian;
@@ -22,20 +22,17 @@ import org.apache.poi.util.LittleEndian;
  * <p>Class to manipulate data in the Clipboard Variant ({@link
  * Variant#VT_CF VT_CF}) format.</p>
  *
- * @author Drew Varner (Drew.Varner inOrAround sc.edu)
  * @see SummaryInformation#getThumbnail()
- * @version $Id$
- * @since 2002-04-29
+ * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms649014(v=vs.85).aspx">Clipboard Operations</a>
  */
-public class Thumbnail
-{
+public final class Thumbnail {
 
     /**
      * <p>Offset in bytes where the Clipboard Format Tag starts in the
      * <code>byte[]</code> returned by {@link
      * SummaryInformation#getThumbnail()}</p>
      */
-    public static int OFFSET_CFTAG = 4;
+    public static final int OFFSET_CFTAG = 4;
 
     /**
      * <p>Offset in bytes where the Clipboard Format starts in the
@@ -45,7 +42,7 @@ public class Thumbnail
      * <p>This is only valid if the Clipboard Format Tag is {@link
      * #CFTAG_WINDOWS}</p>
      */
-    public static int OFFSET_CF = 8;
+    public static final int OFFSET_CF = 8;
 
     /**
      * <p>Offset in bytes where the Windows Metafile (WMF) image data
@@ -63,7 +60,7 @@ public class Thumbnail
      * image. It can be saved to disk with a <code>.wmf</code> file
      * type and read using a WMF-capable image viewer.</p>
      */
-    public static int OFFSET_WMFDATA = 20;
+    public static final int OFFSET_WMFDATA = 20;
 
     /**
      * <p>Clipboard Format Tag - Windows clipboard format</p>
@@ -71,7 +68,7 @@ public class Thumbnail
      * <p>A <code>DWORD</code> indicating a built-in Windows clipboard
      * format value</p>
      */
-    public static int CFTAG_WINDOWS = -1;
+    public static final int CFTAG_WINDOWS = -1;
 
     /**
      * <p>Clipboard Format Tag - Macintosh clipboard format</p>
@@ -79,7 +76,7 @@ public class Thumbnail
      * <p>A <code>DWORD</code> indicating a Macintosh clipboard format
      * value</p>
      */
-    public static int CFTAG_MACINTOSH = -2;
+    public static final int CFTAG_MACINTOSH = -2;
 
     /**
      * <p>Clipboard Format Tag - Format ID</p>
@@ -87,7 +84,7 @@ public class Thumbnail
      * <p>A GUID containing a format identifier (FMTID). This is
      * rarely used.</p>
      */
-    public static int CFTAG_FMTID = -3;
+    public static final int CFTAG_FMTID = -3;
 
     /**
      * <p>Clipboard Format Tag - No Data</p>
@@ -95,7 +92,7 @@ public class Thumbnail
      * <p>A <code>DWORD</code> indicating No data. This is rarely
      * used.</p>
      */
-    public static int CFTAG_NODATA = 0;
+    public static final int CFTAG_NODATA = 0;
 
     /**
      * <p>Clipboard Format - Windows metafile format. This is the
@@ -105,32 +102,28 @@ public class Thumbnail
      * regular WMF images. The clipboard version of this format has an
      * extra clipboard-specific header.</p>
      */
-    public static int CF_METAFILEPICT = 3;
+    public static final int CF_METAFILEPICT = 3;
 
     /**
      * <p>Clipboard Format - Device Independent Bitmap</p>
      */
-    public static int CF_DIB = 8;
+    public static final int CF_DIB = 8;
 
     /**
      * <p>Clipboard Format - Enhanced Windows metafile format</p>
      */
-    public static int CF_ENHMETAFILE = 14;
+    public static final int CF_ENHMETAFILE = 14;
 
     /**
      * <p>Clipboard Format - Bitmap</p>
-     *
-     * <p>Obsolete, see <a
-     * href="msdn.microsoft.com/library/en-us/dnw98bk/html/clipboardoperations.asp
-     * target="_blank">msdn.microsoft.com/library/en-us/dnw98bk/html/clipboardoperations.asp</a>.</p>
      */
-    public static int CF_BITMAP = 2;
+    public static final int CF_BITMAP = 2;
 
     /**
      * <p>A <code>byte[]</code> to hold a thumbnail image in ({@link
      * Variant#VT_CF VT_CF}) format.</p>
      */
-    private byte[] thumbnailData = null;
+    private byte[] _thumbnailData;
 
 
 
@@ -156,7 +149,7 @@ public class Thumbnail
      */
     public Thumbnail(final byte[] thumbnailData)
     {
-        this.thumbnailData = thumbnailData;
+        this._thumbnailData = thumbnailData;
     }
 
 
@@ -170,7 +163,7 @@ public class Thumbnail
      */
     public byte[] getThumbnail()
     {
-        return thumbnailData;
+        return _thumbnailData;
     }
 
 
@@ -184,7 +177,7 @@ public class Thumbnail
      */
     public void setThumbnail(final byte[] thumbnail)
     {
-        this.thumbnailData = thumbnail;
+        this._thumbnailData = thumbnail;
     }
 
 
@@ -205,9 +198,8 @@ public class Thumbnail
      */
     public long getClipboardFormatTag()
     {
-        long clipboardFormatTag = LittleEndian.getUInt(getThumbnail(),
+        return (long) LittleEndian.getInt(getThumbnail(),
                                                        OFFSET_CFTAG);
-        return clipboardFormatTag;
     }
 
 
@@ -237,7 +229,7 @@ public class Thumbnail
             throw new HPSFException("Clipboard Format Tag of Thumbnail must " +
                                     "be CFTAG_WINDOWS.");
 
-        return LittleEndian.getUInt(getThumbnail(), OFFSET_CF);
+        return LittleEndian.getInt(getThumbnail(), OFFSET_CF);
     }
 
 
@@ -263,21 +255,18 @@ public class Thumbnail
         if (!(getClipboardFormatTag() == CFTAG_WINDOWS))
             throw new HPSFException("Clipboard Format Tag of Thumbnail must " +
                                     "be CFTAG_WINDOWS.");
-        if (!(getClipboardFormat() == CF_METAFILEPICT))
+        if (!(getClipboardFormat() == CF_METAFILEPICT)) {
             throw new HPSFException("Clipboard Format of Thumbnail must " +
                                     "be CF_METAFILEPICT.");
-        else
-        {
-            byte[] thumbnail = getThumbnail();
-            int wmfImageLength = thumbnail.length - OFFSET_WMFDATA;
-            byte[] wmfImage = new byte[wmfImageLength];
-            System.arraycopy(thumbnail,
-                             OFFSET_WMFDATA,
-                             wmfImage,
-                             0,
-                             wmfImageLength);
-            return wmfImage;
         }
+        byte[] thumbnail = getThumbnail();
+        int wmfImageLength = thumbnail.length - OFFSET_WMFDATA;
+        byte[] wmfImage = new byte[wmfImageLength];
+        System.arraycopy(thumbnail,
+                         OFFSET_WMFDATA,
+                         wmfImage,
+                         0,
+                         wmfImageLength);
+        return wmfImage;
     }
-
 }

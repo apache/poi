@@ -19,23 +19,23 @@ package org.apache.poi.ss.formula;
 
 import java.util.Stack;
 
-import org.apache.poi.hssf.record.formula.AttrPtg;
-import org.apache.poi.hssf.record.formula.MemAreaPtg;
-import org.apache.poi.hssf.record.formula.MemErrPtg;
-import org.apache.poi.hssf.record.formula.MemFuncPtg;
-import org.apache.poi.hssf.record.formula.OperationPtg;
-import org.apache.poi.hssf.record.formula.ParenthesisPtg;
-import org.apache.poi.hssf.record.formula.Ptg;
+import org.apache.poi.ss.formula.ptg.AttrPtg;
+import org.apache.poi.ss.formula.ptg.MemAreaPtg;
+import org.apache.poi.ss.formula.ptg.MemErrPtg;
+import org.apache.poi.ss.formula.ptg.MemFuncPtg;
+import org.apache.poi.ss.formula.ptg.OperationPtg;
+import org.apache.poi.ss.formula.ptg.ParenthesisPtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
 
 /**
- * Common logic for rendering formulas.<br/>
- * 
+ * Common logic for rendering formulas.<br>
+ *
  * For POI internal use only
- * 
+ *
  * @author Josh Micich
  */
 public class FormulaRenderer {
-    
+
     /**
      * Static method to convert an array of {@link Ptg}s in RPN order
      * to a human readable string format in infix mode.
@@ -47,10 +47,9 @@ public class FormulaRenderer {
         if (ptgs == null || ptgs.length == 0) {
             throw new IllegalArgumentException("ptgs must not be null");
         }
-        Stack stack = new Stack();
+        Stack<String> stack = new Stack<>();
 
-        for (int i=0 ; i < ptgs.length; i++) {
-            Ptg ptg = ptgs[i];
+        for (Ptg ptg : ptgs) {
             // TODO - what about MemNoMemPtg?
             if(ptg instanceof MemAreaPtg || ptg instanceof MemFuncPtg || ptg instanceof MemErrPtg) {
                 // marks the start of a list of area expressions which will be naturally combined
@@ -59,13 +58,13 @@ public class FormulaRenderer {
                 continue;
             }
             if (ptg instanceof ParenthesisPtg) {
-                String contents = (String)stack.pop();
+                String contents = stack.pop();
                 stack.push ("(" + contents + ")");
                 continue;
             }
             if (ptg instanceof AttrPtg) {
                 AttrPtg attrPtg = ((AttrPtg) ptg);
-                if (attrPtg.isOptimizedIf() || attrPtg.isOptimizedChoose() || attrPtg.isGoto()) {
+                if (attrPtg.isOptimizedIf() || attrPtg.isOptimizedChoose() || attrPtg.isSkip()) {
                     continue;
                 }
                 if (attrPtg.isSpace()) {
@@ -84,12 +83,12 @@ public class FormulaRenderer {
                     stack.push(attrPtg.toFormulaString(operands));
                     continue;
                 }
-                throw new RuntimeException("Unexpected tAttr: " + attrPtg.toString());
+                throw new RuntimeException("Unexpected tAttr: " + attrPtg);
             }
 
             if (ptg instanceof WorkbookDependentFormula) {
                 WorkbookDependentFormula optg = (WorkbookDependentFormula) ptg;
-				stack.push(optg.toFormulaString(book));
+                stack.push(optg.toFormulaString(book));
                 continue;
             }
             if (! (ptg instanceof OperationPtg)) {
@@ -106,7 +105,7 @@ public class FormulaRenderer {
             // stack.push(). So this is either an internal error or impossible.
             throw new IllegalStateException("Stack underflow");
         }
-        String result = (String) stack.pop();
+        String result = stack.pop();
         if(!stack.isEmpty()) {
             // Might be caused by some tokens like AttrPtg and Mem*Ptg, which really shouldn't
             // put anything on the stack
@@ -115,7 +114,7 @@ public class FormulaRenderer {
         return result;
     }
 
-    private static String[] getOperands(Stack stack, int nOperands) {
+    private static String[] getOperands(Stack<String> stack, int nOperands) {
         String[] operands = new String[nOperands];
 
         for (int j = nOperands-1; j >= 0; j--) { // reverse iteration because args were pushed in-order
@@ -124,7 +123,7 @@ public class FormulaRenderer {
                     + ") operands but got (" + (nOperands - j - 1) + ")";
                 throw new IllegalStateException(msg);
             }
-            operands[j] = (String) stack.pop();
+            operands[j] = stack.pop();
         }
         return operands;
     }

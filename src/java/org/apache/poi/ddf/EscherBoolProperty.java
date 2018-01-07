@@ -15,15 +15,16 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.ddf;
+
+import org.apache.poi.util.HexDump;
 
 /**
  * Represents a boolean property.  The actual utility of this property is in doubt because many
  * of the properties marked as boolean seem to actually contain special values.  In other words
  * they're not true booleans.
  *
- * @author Glen Stampoultzis
  * @see EscherSimpleProperty
  * @see EscherProperty
  */
@@ -43,18 +44,12 @@ public class EscherBoolProperty
 
     /**
      * Whether this boolean property is true
+     * 
+     * @return the boolean property value
      */
     public boolean isTrue()
     {
-        return propertyValue != 0;
-    }
-
-    /**
-     * Whether this boolean property is false
-     */
-    public boolean isFalse()
-    {
-        return propertyValue == 0;
+        return getPropertyValue() != 0;
     }
 
 //    public String toString()
@@ -65,4 +60,12 @@ public class EscherBoolProperty
 //                + ", value: " + (getValue() != 0);
 //    }
 
+    @Override
+    public String toXml(String tab){
+        StringBuilder builder = new StringBuilder();
+        builder.append(tab).append("<").append(getClass().getSimpleName()).append(" id=\"0x").append(HexDump.toHex(getId()))
+                .append("\" name=\"").append(getName()).append("\" simpleValue=\"").append(getPropertyValue()).append("\" blipId=\"")
+                .append(isBlipId()).append("\" value=\"").append(isTrue()).append("\"").append("/>");
+        return builder.toString();
+    }
 }

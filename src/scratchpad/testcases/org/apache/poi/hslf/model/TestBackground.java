@@ -14,170 +14,214 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hslf.model;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import java.io.*;
-import java.awt.*;
+import java.awt.Color;
+import java.io.IOException;
+import java.util.List;
 
-import org.apache.poi.hslf.usermodel.SlideShow;
-import org.apache.poi.hslf.HSLFSlideShow;
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.ddf.AbstractEscherOptRecord;
+import org.apache.poi.ddf.EscherBSERecord;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.ddf.EscherSimpleProperty;
+import org.apache.poi.hslf.HSLFTestDataSamples;
+import org.apache.poi.hslf.record.Document;
+import org.apache.poi.hslf.usermodel.HSLFAutoShape;
+import org.apache.poi.hslf.usermodel.HSLFFill;
+import org.apache.poi.hslf.usermodel.HSLFPictureData;
+import org.apache.poi.hslf.usermodel.HSLFShape;
+import org.apache.poi.hslf.usermodel.HSLFSheet;
+import org.apache.poi.hslf.usermodel.HSLFSlide;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.sl.usermodel.PictureData.PictureType;
+import org.apache.poi.sl.usermodel.ShapeType;
+import org.junit.Test;
+
 
 /**
  * Test <code>Fill</code> object.
- * 
+ *
  * @author Yegor Kozlov
  */
-public class TestBackground extends TestCase {
+public final class TestBackground {
+    private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
     /**
      * Default background for slide, shape and slide master.
      */
-    public void testDefaults() throws Exception {
-        SlideShow ppt = new SlideShow();
+    @Test
+    public void defaults() throws IOException {
+        HSLFSlideShow ppt = new HSLFSlideShow();
 
-        assertEquals(Fill.FILL_SOLID, ppt.getSlidesMasters()[0].getBackground().getFill().getFillType());
+        assertEquals(HSLFFill.FILL_SOLID, ppt.getSlideMasters().get(0).getBackground().getFill().getFillType());
 
-        Slide slide = ppt.createSlide();
+        HSLFSlide slide = ppt.createSlide();
         assertTrue(slide.getFollowMasterBackground());
-        assertEquals(Fill.FILL_SOLID, slide.getBackground().getFill().getFillType());
+        assertEquals(HSLFFill.FILL_SOLID, slide.getBackground().getFill().getFillType());
 
-        Shape shape = new AutoShape(ShapeTypes.Rectangle);
-        assertEquals(Fill.FILL_SOLID, shape.getFill().getFillType());
+        HSLFShape shape = new HSLFAutoShape(ShapeType.RECT);
+        assertEquals(HSLFFill.FILL_SOLID, shape.getFill().getFillType());
+        ppt.close();
     }
 
     /**
      * Read fill information from an reference ppt file
      */
-    public void testReadBackground() throws Exception {
-        SlideShow ppt = new SlideShow(new HSLFSlideShow(System.getProperty("HSLF.testdata.path") + "/backgrounds.ppt"));
-        Fill fill;
-        Shape shape;
+    @Test
+    public void readBackground() throws IOException {
+        HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("backgrounds.ppt");
+        HSLFFill fill;
+        HSLFShape shape;
 
-        Slide[] slide = ppt.getSlides();
+        List<HSLFSlide> slide = ppt.getSlides();
 
-        fill = slide[0].getBackground().getFill();
-        assertEquals(Fill.FILL_PICTURE, fill.getFillType());
-        shape = slide[0].getShapes()[0];
-        assertEquals(Fill.FILL_SOLID, shape.getFill().getFillType());
+        fill = slide.get(0).getBackground().getFill();
+        assertEquals(HSLFFill.FILL_PICTURE, fill.getFillType());
+        shape = slide.get(0).getShapes().get(0);
+        assertEquals(HSLFFill.FILL_SOLID, shape.getFill().getFillType());
 
-        fill = slide[1].getBackground().getFill();
-        assertEquals(Fill.FILL_PATTERN, fill.getFillType());
-        shape = slide[1].getShapes()[0];
-        assertEquals(Fill.FILL_BACKGROUND, shape.getFill().getFillType());
+        fill = slide.get(1).getBackground().getFill();
+        assertEquals(HSLFFill.FILL_PATTERN, fill.getFillType());
+        shape = slide.get(1).getShapes().get(0);
+        assertEquals(HSLFFill.FILL_BACKGROUND, shape.getFill().getFillType());
 
-        fill = slide[2].getBackground().getFill();
-        assertEquals(Fill.FILL_TEXTURE, fill.getFillType());
-        shape = slide[2].getShapes()[0];
-        assertEquals(Fill.FILL_PICTURE, shape.getFill().getFillType());
+        fill = slide.get(2).getBackground().getFill();
+        assertEquals(HSLFFill.FILL_TEXTURE, fill.getFillType());
+        shape = slide.get(2).getShapes().get(0);
+        assertEquals(HSLFFill.FILL_PICTURE, shape.getFill().getFillType());
 
-        fill = slide[3].getBackground().getFill();
-        assertEquals(Fill.FILL_SHADE_CENTER, fill.getFillType());
-        shape = slide[3].getShapes()[0];
-        assertEquals(Fill.FILL_SHADE, shape.getFill().getFillType());
+        fill = slide.get(3).getBackground().getFill();
+        assertEquals(HSLFFill.FILL_SHADE_CENTER, fill.getFillType());
+        shape = slide.get(3).getShapes().get(0);
+        assertEquals(HSLFFill.FILL_SHADE, shape.getFill().getFillType());
+        ppt.close();
     }
 
     /**
      * Create a ppt with various fill effects
      */
-    public void testBackgroundPicture() throws Exception {
-        SlideShow ppt = new SlideShow();
-        Slide slide;
-        Fill fill;
-        Shape shape;
-        int idx;
+    @Test
+    public void backgroundPicture() throws IOException {
+        HSLFSlideShow ppt1 = new HSLFSlideShow();
+        HSLFSlide slide;
+        HSLFFill fill;
+        HSLFShape shape;
+        HSLFPictureData data;
 
         //slide 1
-        slide = ppt.createSlide();
+        slide = ppt1.createSlide();
         slide.setFollowMasterBackground(false);
         fill = slide.getBackground().getFill();
-        idx = ppt.addPicture(new File(System.getProperty("HSLF.testdata.path") + "/tomcat.png"), Picture.PNG);
-        fill.setFillType(Fill.FILL_PICTURE);
-        fill.setPictureData(idx);
+        data = ppt1.addPicture(_slTests.readFile("tomcat.png"), PictureType.PNG);
+        fill.setFillType(HSLFFill.FILL_PICTURE);
+        fill.setPictureData(data);
 
-        shape = new AutoShape(ShapeTypes.Rectangle);
+        shape = new HSLFAutoShape(ShapeType.RECT);
         shape.setAnchor(new java.awt.Rectangle(100, 100, 200, 200));
         fill = shape.getFill();
-        fill.setFillType(Fill.FILL_SOLID);
+        fill.setFillType(HSLFFill.FILL_SOLID);
         slide.addShape(shape);
 
         //slide 2
-        slide = ppt.createSlide();
+        slide = ppt1.createSlide();
         slide.setFollowMasterBackground(false);
         fill = slide.getBackground().getFill();
-        idx = ppt.addPicture(new File(System.getProperty("HSLF.testdata.path") + "/tomcat.png"), Picture.PNG);
-        fill.setFillType(Fill.FILL_PATTERN);
-        fill.setPictureData(idx);
+        data = ppt1.addPicture(_slTests.readFile("tomcat.png"), PictureType.PNG);
+        fill.setFillType(HSLFFill.FILL_PATTERN);
+        fill.setPictureData(data);
         fill.setBackgroundColor(Color.green);
         fill.setForegroundColor(Color.red);
 
-        shape = new AutoShape(ShapeTypes.Rectangle);
+        shape = new HSLFAutoShape(ShapeType.RECT);
         shape.setAnchor(new java.awt.Rectangle(100, 100, 200, 200));
         fill = shape.getFill();
-        fill.setFillType(Fill.FILL_BACKGROUND);
+        fill.setFillType(HSLFFill.FILL_BACKGROUND);
         slide.addShape(shape);
 
         //slide 3
-        slide = ppt.createSlide();
+        slide = ppt1.createSlide();
         slide.setFollowMasterBackground(false);
         fill = slide.getBackground().getFill();
-        idx = ppt.addPicture(new File(System.getProperty("HSLF.testdata.path") + "/tomcat.png"), Picture.PNG);
-        fill.setFillType(Fill.FILL_TEXTURE);
-        fill.setPictureData(idx);
+        data = ppt1.addPicture(_slTests.readFile("tomcat.png"), PictureType.PNG);
+        fill.setFillType(HSLFFill.FILL_TEXTURE);
+        fill.setPictureData(data);
 
-        shape = new AutoShape(ShapeTypes.Rectangle);
+        shape = new HSLFAutoShape(ShapeType.RECT);
         shape.setAnchor(new java.awt.Rectangle(100, 100, 200, 200));
         fill = shape.getFill();
-        fill.setFillType(Fill.FILL_PICTURE);
-        idx = ppt.addPicture(new File(System.getProperty("HSLF.testdata.path") + "/clock.jpg"), Picture.JPEG);
-        fill.setPictureData(idx);
+        fill.setFillType(HSLFFill.FILL_PICTURE);
+        data = ppt1.addPicture(_slTests.readFile("clock.jpg"), PictureType.JPEG);
+        fill.setPictureData(data);
         slide.addShape(shape);
 
         // slide 4
-        slide = ppt.createSlide();
+        slide = ppt1.createSlide();
         slide.setFollowMasterBackground(false);
         fill = slide.getBackground().getFill();
-        fill.setFillType(Fill.FILL_SHADE_CENTER);
+        fill.setFillType(HSLFFill.FILL_SHADE_CENTER);
         fill.setBackgroundColor(Color.white);
         fill.setForegroundColor(Color.darkGray);
 
-        shape = new AutoShape(ShapeTypes.Rectangle);
+        shape = new HSLFAutoShape(ShapeType.RECT);
         shape.setAnchor(new java.awt.Rectangle(100, 100, 200, 200));
         fill = shape.getFill();
-        fill.setFillType(Fill.FILL_SHADE);
+        fill.setFillType(HSLFFill.FILL_SHADE);
         fill.setBackgroundColor(Color.red);
         fill.setForegroundColor(Color.green);
         slide.addShape(shape);
 
         //serialize and read again
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ppt.write(out);
-        out.close();
+        HSLFSlideShow ppt2 = HSLFTestDataSamples.writeOutAndReadBack(ppt1);
+        List<HSLFSlide> slides = ppt2.getSlides();
 
-        ppt = new SlideShow(new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray())));
-        Slide[] slides = ppt.getSlides();
+        fill = slides.get(0).getBackground().getFill();
+        assertEquals(HSLFFill.FILL_PICTURE, fill.getFillType());
+        assertEquals(3, getFillPictureRefCount(slides.get(0).getBackground(), fill));
+        shape = slides.get(0).getShapes().get(0);
+        assertEquals(HSLFFill.FILL_SOLID, shape.getFill().getFillType());
 
-        fill = slides[0].getBackground().getFill();
-        assertEquals(Fill.FILL_PICTURE, fill.getFillType());
-        shape = slides[0].getShapes()[0];
-        assertEquals(Fill.FILL_SOLID, shape.getFill().getFillType());
+        fill = slides.get(1).getBackground().getFill();
+        assertEquals(HSLFFill.FILL_PATTERN, fill.getFillType());
+        shape = slides.get(1).getShapes().get(0);
+        assertEquals(HSLFFill.FILL_BACKGROUND, shape.getFill().getFillType());
 
-        fill = slides[1].getBackground().getFill();
-        assertEquals(Fill.FILL_PATTERN, fill.getFillType());
-        shape = slides[1].getShapes()[0];
-        assertEquals(Fill.FILL_BACKGROUND, shape.getFill().getFillType());
+        fill = slides.get(2).getBackground().getFill();
+        assertEquals(HSLFFill.FILL_TEXTURE, fill.getFillType());
+        assertEquals(3, getFillPictureRefCount(slides.get(2).getBackground(), fill));
+        shape = slides.get(2).getShapes().get(0);
+        assertEquals(HSLFFill.FILL_PICTURE, shape.getFill().getFillType());
+        assertEquals(1, getFillPictureRefCount(shape, fill));
 
-        fill = slides[2].getBackground().getFill();
-        assertEquals(Fill.FILL_TEXTURE, fill.getFillType());
-        shape = slides[2].getShapes()[0];
-        assertEquals(Fill.FILL_PICTURE, shape.getFill().getFillType());
+        fill = slides.get(3).getBackground().getFill();
+        assertEquals(HSLFFill.FILL_SHADE_CENTER, fill.getFillType());
+        shape = slides.get(3).getShapes().get(0);
+        assertEquals(HSLFFill.FILL_SHADE, shape.getFill().getFillType());
+        ppt2.close();
+        ppt1.close();
+    }
 
-        fill = slides[3].getBackground().getFill();
-        assertEquals(Fill.FILL_SHADE_CENTER, fill.getFillType());
-        shape = slides[3].getShapes()[0];
-        assertEquals(Fill.FILL_SHADE, shape.getFill().getFillType());
+    private int getFillPictureRefCount(HSLFShape shape, HSLFFill fill) {
+        AbstractEscherOptRecord opt = shape.getEscherOptRecord();
+        EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__PATTERNTEXTURE);
+        if(p != null) {
+            int idx = p.getPropertyValue();
 
+            HSLFSheet sheet = shape.getSheet();
+            HSLFSlideShow ppt = sheet.getSlideShow();
+            Document doc = ppt.getDocumentRecord();
+            EscherContainerRecord dggContainer = doc.getPPDrawingGroup().getDggContainer();
+            EscherContainerRecord bstore = HSLFShape.getEscherChild(dggContainer, EscherContainerRecord.BSTORE_CONTAINER);
+            List<EscherRecord> lst = bstore.getChildRecords();
+            return ((EscherBSERecord)lst.get(idx-1)).getRef();
+        }
+        return 0;
     }
 
 }

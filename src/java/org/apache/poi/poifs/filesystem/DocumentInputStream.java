@@ -20,40 +20,28 @@ package org.apache.poi.poifs.filesystem;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.poi.poifs.storage.DataInputBlock;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianInput;
+import org.apache.poi.util.SuppressForbidden;
 
 /**
  * This class provides methods to read a DocumentEntry managed by a
- * {@link POIFSFileSystem} instance.
- *
- * @author Marc Johnson (mjohnson at apache dot org)
+ *  {@link POIFSFileSystem} or {@link NPOIFSFileSystem} instance.
+ * It creates the appropriate one, and delegates, allowing us to
+ *  work transparently with the two.
  */
-public final class DocumentInputStream extends InputStream implements LittleEndianInput {
+public class DocumentInputStream extends InputStream implements LittleEndianInput {
 	/** returned by read operations if we're at end of document */
-	private static final int EOF = -1;
+	protected static final int EOF = -1;
 
-	private static final int SIZE_SHORT = 2;
-	private static final int SIZE_INT = 4;
-	private static final int SIZE_LONG = 8;
-
-	/** current offset into the Document */
-	private int _current_offset;
-
-	/** current marked offset into the Document (used by mark and reset) */
-	private int _marked_offset;
-
-	/** the Document's size */
-	private int _document_size;
-
-	/** have we been closed? */
-	private boolean _closed;
-
-	/** the actual Document */
-	private POIFSDocument _document;
-
-	/** the data block containing the current stream pointer */
-	private DataInputBlock _currentBlock;
+	protected static final int SIZE_SHORT = 2;
+	protected static final int SIZE_INT = 4;
+	protected static final int SIZE_LONG = 8;
+	
+	private DocumentInputStream delegate;
+	
+	/** For use by downstream implementations */
+	protected DocumentInputStream() {}
 
 	/**
 	 * Create an InputStream from the specified DocumentEntry
@@ -64,15 +52,21 @@ public final class DocumentInputStream extends InputStream implements LittleEndi
 	 *                been deleted?)
 	 */
 	public DocumentInputStream(DocumentEntry document) throws IOException {
-		if (!(document instanceof DocumentNode)) {
-			throw new IOException("Cannot open internal document storage");
-		}
-		_current_offset = 0;
-		_marked_offset = 0;
-		_document_size = document.getSize();
-		_closed = false;
-		_document = ((DocumentNode) document).getDocument();
-		_currentBlock = getDataInputBlock(0);
+	   if (!(document instanceof DocumentNode)) {
+	      throw new IOException("Cannot open internal document storage");
+	   }
+	   DocumentNode documentNode = (DocumentNode)document;
+	   DirectoryNode parentNode = (DirectoryNode)document.getParent();
+
+	   if(documentNode.getDocument() != null) {
+	      delegate = new ODocumentInputStream(document);
+	   } else if(parentNode.getOFileSystem() != null) {
+	      delegate = new ODocumentInputStream(document);
+	   } else if(parentNode.getNFileSystem() != null) {
+	      delegate = new NDocumentInputStream(document);
+	   } else {
+	      throw new IOException("No FileSystem bound on the parent, can't read contents");
+	   }
 	}
 
 	/**
@@ -80,28 +74,33 @@ public final class DocumentInputStream extends InputStream implements LittleEndi
 	 * 
 	 * @param document the Document to be read
 	 */
-	public DocumentInputStream(POIFSDocument document) {
-		_current_offset = 0;
-		_marked_offset = 0;
-		_document_size = document.getSize();
-		_closed = false;
-		_document = document;
-		_currentBlock = getDataInputBlock(0);
+	public DocumentInputStream(OPOIFSDocument document) {
+	   delegate = new ODocumentInputStream(document);
 	}
 
+   /**
+    * Create an InputStream from the specified Document
+    * 
+    * @param document the Document to be read
+    */
+   public DocumentInputStream(NPOIFSDocument document) {
+      delegate = new NDocumentInputStream(document);
+   }
+
+    @Override
+    @SuppressForbidden("just delegating")
 	public int available() {
-		if (_closed) {
-			throw new IllegalStateException("cannot perform requested operation on a closed stream");
-		}
-		return _document_size - _current_offset;
+	   return delegate.available();
 	}
 
+    @Override
 	public void close() {
-		_closed = true;
+	   delegate.close();
 	}
 
+    @Override
 	public void mark(int ignoredReadlimit) {
-		_marked_offset = _current_offset;
+		delegate.mark(ignoredReadlimit);
 	}
 
 	/**
@@ -109,48 +108,24 @@ public final class DocumentInputStream extends InputStream implements LittleEndi
 	 * 
 	 * @return <code>true</code> always
 	 */
+    @Override
 	public boolean markSupported() {
 		return true;
 	}
 
-	private DataInputBlock getDataInputBlock(int offset) {
-		return _document.getDataInputBlock(offset);
-	}
-
+    @Override
 	public int read() throws IOException {
-		dieIfClosed();
-		if (atEOD()) {
-			return EOF;
-		}
-		int result = _currentBlock.readUByte();
-		_current_offset++;
-		if (_currentBlock.available() < 1) {
-			_currentBlock = getDataInputBlock(_current_offset);
-		}
-		return result;
+	   return delegate.read();
 	}
 
+	@Override
 	public int read(byte[] b) throws IOException {
 		return read(b, 0, b.length);
 	}
 
+    @Override
 	public int read(byte[] b, int off, int len) throws IOException {
-		dieIfClosed();
-		if (b == null) {
-			throw new IllegalArgumentException("buffer must not be null");
-		}
-		if (off < 0 || len < 0 || b.length < off + len) {
-			throw new IndexOutOfBoundsException("can't read past buffer boundaries");
-		}
-		if (len == 0) {
-			return 0;
-		}
-		if (atEOD()) {
-			return EOF;
-		}
-		int limit = Math.min(available(), len);
-		readFully(b, off, limit);
-		return limit;
+	   return delegate.read(b, off, len);
 	}
 
 	/**
@@ -158,170 +133,68 @@ public final class DocumentInputStream extends InputStream implements LittleEndi
 	 * last called on this input stream. If mark() has not been called this
 	 * method repositions the stream to its beginning.
 	 */
+    @Override
 	public void reset() {
-		_current_offset = _marked_offset;
-		_currentBlock = getDataInputBlock(_current_offset);
+	   delegate.reset();
 	}
 
+    @Override
 	public long skip(long n) throws IOException {
-		dieIfClosed();
-		if (n < 0) {
-			return 0;
-		}
-		int new_offset = _current_offset + (int) n;
-
-		if (new_offset < _current_offset) {
-
-			// wrap around in converting a VERY large long to an int
-			new_offset = _document_size;
-		} else if (new_offset > _document_size) {
-			new_offset = _document_size;
-		}
-		long rval = new_offset - _current_offset;
-
-		_current_offset = new_offset;
-		_currentBlock = getDataInputBlock(_current_offset);
-		return rval;
+	   return delegate.skip(n);
 	}
 
-	private void dieIfClosed() throws IOException {
-		if (_closed) {
-			throw new IOException("cannot perform requested operation on a closed stream");
-		}
-	}
-
-	private boolean atEOD() {
-		return _current_offset == _document_size;
-	}
-
-	private void checkAvaliable(int requestedSize) {
-		if (_closed) {
-			throw new IllegalStateException("cannot perform requested operation on a closed stream");
-		}
-		if (requestedSize > _document_size - _current_offset) {
-			throw new RuntimeException("Buffer underrun - requested " + requestedSize
-					+ " bytes but " + (_document_size - _current_offset) + " was available");
-		}
-	}
-
+    @Override
 	public byte readByte() {
-		return (byte) readUByte();
+	   return delegate.readByte();
 	}
 
+    @Override
 	public double readDouble() {
-		return Double.longBitsToDouble(readLong());
+	   return delegate.readDouble();
 	}
 
-	public void readFully(byte[] buf) {
-		readFully(buf, 0, buf.length);
-	}
-
+    @Override
 	public short readShort() {
 		return (short) readUShort();
 	}
 
+    @Override
+    public void readFully(byte[] buf) {
+        readFully(buf, 0, buf.length);
+    }
+
+    @Override
 	public void readFully(byte[] buf, int off, int len) {
-		checkAvaliable(len);
-		int blockAvailable = _currentBlock.available();
-		if (blockAvailable > len) {
-			_currentBlock.readFully(buf, off, len);
-			_current_offset += len;
-			return;
-		}
-		// else read big amount in chunks
-		int remaining = len;
-		int writePos = off;
-		while (remaining > 0) {
-			boolean blockIsExpiring = remaining >= blockAvailable;
-			int reqSize;
-			if (blockIsExpiring) {
-				reqSize = blockAvailable;
-			} else {
-				reqSize = remaining;
-			}
-			_currentBlock.readFully(buf, writePos, reqSize);
-			remaining -= reqSize;
-			writePos += reqSize;
-			_current_offset += reqSize;
-			if (blockIsExpiring) {
-				if (_current_offset == _document_size) {
-					if (remaining > 0) {
-						throw new IllegalStateException(
-								"reached end of document stream unexpectedly");
-					}
-					_currentBlock = null;
-					break;
-				}
-				_currentBlock = getDataInputBlock(_current_offset);
-				blockAvailable = _currentBlock.available();
-			}
-		}
+	   delegate.readFully(buf, off, len);
 	}
 
+    @Override
 	public long readLong() {
-		checkAvaliable(SIZE_LONG);
-		int blockAvailable = _currentBlock.available();
-		long result;
-		if (blockAvailable > SIZE_LONG) {
-			result = _currentBlock.readLongLE();
-		} else {
-			DataInputBlock nextBlock = getDataInputBlock(_current_offset + blockAvailable);
-			if (blockAvailable == SIZE_LONG) {
-				result = _currentBlock.readLongLE();
-			} else {
-				result = nextBlock.readLongLE(_currentBlock, blockAvailable);
-			}
-			_currentBlock = nextBlock;
-		}
-		_current_offset += SIZE_LONG;
-		return result;
+	   return delegate.readLong();
 	}
 
+    @Override
 	public int readInt() {
-		checkAvaliable(SIZE_INT);
-		int blockAvailable = _currentBlock.available();
-		int result;
-		if (blockAvailable > SIZE_INT) {
-			result = _currentBlock.readIntLE();
-		} else {
-			DataInputBlock nextBlock = getDataInputBlock(_current_offset + blockAvailable);
-			if (blockAvailable == SIZE_INT) {
-				result = _currentBlock.readIntLE();
-			} else {
-				result = nextBlock.readIntLE(_currentBlock, blockAvailable);
-			}
-			_currentBlock = nextBlock;
-		}
-		_current_offset += SIZE_INT;
-		return result;
+	   return delegate.readInt();
 	}
 
+    @Override
 	public int readUShort() {
-		checkAvaliable(SIZE_SHORT);
-		int blockAvailable = _currentBlock.available();
-		int result;
-		if (blockAvailable > SIZE_SHORT) {
-			result = _currentBlock.readUShortLE();
-		} else {
-			DataInputBlock nextBlock = getDataInputBlock(_current_offset + blockAvailable);
-			if (blockAvailable == SIZE_SHORT) {
-				result = _currentBlock.readUShortLE();
-			} else {
-				result = nextBlock.readUShortLE(_currentBlock);
-			}
-			_currentBlock = nextBlock;
-		}
-		_current_offset += SIZE_SHORT;
-		return result;
+	   return delegate.readUShort();
 	}
 
+    @Override
 	public int readUByte() {
-		checkAvaliable(1);
-		int result = _currentBlock.readUByte();
-		_current_offset++;
-		if (_currentBlock.available() < 1) {
-			_currentBlock = getDataInputBlock(_current_offset);
-		}
-		return result;
+	   return delegate.readUByte();
 	}
+	
+    public long readUInt() {
+        int i = readInt();
+        return i & 0xFFFFFFFFL;
+    }
+
+    @Override
+    public void readPlain(byte[] buf, int off, int len) {
+        readFully(buf, off, len);
+    }
 }

@@ -1,4 +1,21 @@
-#Adapted from the Makefile for PyLucene, by the OSAF
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+# 
+# http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
+
 # Makefile for building Poi4R
 #
 # Supported operating systems: Linux, Mac OS X and Windows.
@@ -19,11 +36,9 @@
 # PATH (Windows) need to be set accordingly.
 # 
 
-# 
-# 
 
 VERSION=0.1.0
-POI_VER=2.0-final-20040126
+POI_VER=$(shell grep '<property name="version.id"' ../../../build.xml | awk -F'"' '{print $$4}')
 RUBY_VER=1.8
 
 POI4R:=$(shell pwd)
@@ -148,6 +163,7 @@ JCCH=$(GCJ_HOME)/bin/gcjh
 JAR=$(GCJ_HOME)/bin/jar
 POI_ZIP=poi-$(POI_VER).jar
 POI_JAR=poi-$(POI_VER).jar
+POI_JAR_WC=poi-$(POI_VER)-*.jar
 
 POI4R_CP:=$(BINDIR)/$(POI_JAR):$(CLASSES)
 
@@ -188,8 +204,8 @@ _poi=$(POI)
 endif
 
 $(BINDIR)/$(POI_JAR): 
-	cp $(POI4R)/$(POI_JAR) $(BINDIR)/$(POI_JAR)
-	cd $(JAR_CLASSES); $(JAR) -xf $(POI4R)/$(POI_JAR)
+	cp ../../../build/dist/$(POI_JAR_WC) $(BINDIR)/$(POI_JAR)
+	cd $(JAR_CLASSES); $(JAR) -xf ../../$(POI_JAR)
 
 $(BINDIR)/io.java.o: java/org/apache/poi/RubyOutputStream.java
 	$(JCC) $(JCCFLAGS) -C -d $(CLASSES) java/org/apache/poi/RubyOutputStream.java

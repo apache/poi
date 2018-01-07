@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,24 +14,24 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.record;
 
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertArrayEquals;
+
 import java.io.ByteArrayOutputStream;
-import java.util.Arrays;
+
+import junit.framework.TestCase;
 
 /**
  * Tests that {@link HeadersFootersContainer} works properly
  *
  * @author Yegor Kozlov
  */
-public class TestHeadersFootersContainer extends TestCase {
+public final class TestHeadersFootersContainer extends TestCase {
 	// SlideHeadersFootersContainer
-	private byte[] slideData = new byte[] {
+	private final byte[] slideData = new byte[] {
             0x3F, 0x00, (byte)0xD9, 0x0F, 0x2E, 0x00, 0x00, 0x00,
             0x00, 0x00, (byte)0xDA, 0x0F, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x23, 0x00,
             0x20, 0x00, (byte)0xBA, 0x0F, 0x1A, 0x00, 0x00, 0x00,
@@ -42,7 +41,7 @@ public class TestHeadersFootersContainer extends TestCase {
     };
 
     // NotesHeadersFootersContainer
-    private byte[] notesData = new byte[] {
+    private final byte[] notesData = new byte[] {
             0x4F, 0x00, (byte)0xD9, 0x0F, 0x48, 0x00, 0x00, 0x00,
             0x00, 0x00, (byte)0xDA, 0x0F, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x3D, 0x00,
             0x10, 0x00, (byte)0xBA, 0x0F, 0x16, 0x00, 0x00, 0x00,
@@ -53,7 +52,7 @@ public class TestHeadersFootersContainer extends TestCase {
             0x6F, 0x00, 0x6F, 0x00, 0x74, 0x00, 0x65, 0x00, 0x72, 0x00
     };
 
-    public void testReadSlideHeadersFootersContainer() throws Exception {
+    public void testReadSlideHeadersFootersContainer() {
 		HeadersFootersContainer record = new HeadersFootersContainer(slideData, 0, slideData.length);
 		assertEquals(RecordTypes.HeadersFooters.typeID, record.getRecordType());
         assertEquals(HeadersFootersContainer.SlideHeadersFootersContainer, record.getOptions());
@@ -78,7 +77,7 @@ public class TestHeadersFootersContainer extends TestCase {
 		record.writeOut(baos);
 		byte[] b = baos.toByteArray();
 
-		assertTrue(Arrays.equals(slideData, b));
+		assertArrayEquals(slideData, b);
 	}
 
     public void testNewSlideHeadersFootersContainer() throws Exception {
@@ -103,10 +102,10 @@ public class TestHeadersFootersContainer extends TestCase {
         record.writeOut(baos);
         byte[] b = baos.toByteArray();
 
-        assertTrue(Arrays.equals(slideData, b));
+        assertArrayEquals(slideData, b);
     }
 
-    public void testReadNotesHeadersFootersContainer() throws Exception {
+    public void testReadNotesHeadersFootersContainer() {
 		HeadersFootersContainer record = new HeadersFootersContainer(notesData, 0, notesData.length);
 		assertEquals(RecordTypes.HeadersFooters.typeID, record.getRecordType());
         assertEquals(HeadersFootersContainer.NotesHeadersFootersContainer, record.getOptions());
@@ -132,7 +131,7 @@ public class TestHeadersFootersContainer extends TestCase {
 		record.writeOut(baos);
 		byte[] b = baos.toByteArray();
 
-		assertTrue(Arrays.equals(notesData, b));
+		assertArrayEquals(notesData, b);
 	}
 
     public void testNewNotesHeadersFootersContainer() throws Exception {
@@ -165,7 +164,7 @@ public class TestHeadersFootersContainer extends TestCase {
         record.writeOut(baos);
         byte[] b = baos.toByteArray();
 
-        assertTrue(Arrays.equals(notesData, b));
+        assertArrayEquals(notesData, b);
     }
 
 }

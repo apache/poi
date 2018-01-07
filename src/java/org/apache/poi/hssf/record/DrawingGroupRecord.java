@@ -19,7 +19,6 @@ package org.apache.poi.hssf.record;
 
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.NullEscherSerializationListener;
-import org.apache.poi.util.ArrayUtil;
 import org.apache.poi.util.LittleEndian;
 
 import java.util.Iterator;
@@ -58,45 +57,43 @@ public final class DrawingGroupRecord extends AbstractEscherHolderRecord {
         {
             return writeData( offset, data, rawData );
         }
-        else
+        byte[] buffer = new byte[getRawDataSize()];
+        int pos = 0;
+        for ( Iterator<EscherRecord> iterator = getEscherRecords().iterator(); iterator.hasNext(); )
         {
-            byte[] buffer = new byte[getRawDataSize()];
-            int pos = 0;
-            for ( Iterator iterator = getEscherRecords().iterator(); iterator.hasNext(); )
-            {
-                EscherRecord r = (EscherRecord) iterator.next();
-                pos += r.serialize(pos, buffer, new NullEscherSerializationListener() );
-            }
-
-            return writeData( offset, data, buffer );
+            EscherRecord r = iterator.next();
+            pos += r.serialize(pos, buffer, new NullEscherSerializationListener() );
         }
+
+        return writeData( offset, data, buffer );
     }
-    
+
     /**
      * Process the bytes into escher records.
      * (Not done by default in case we break things,
-     *  unless you set the "poi.deserialize.escher" 
+     *  unless you set the "poi.deserialize.escher"
      *  system property)
      */
     public void processChildRecords() {
     	convertRawBytesToEscherRecords();
     }
-    protected int getDataSize() {
-    	// TODO - convert this to a RecordAggregate
-    	return grossSizeFromDataSize( getRawDataSize() ) - 4;
+
+    public int getRecordSize() {
+        // TODO - convert this to a RecordAggregate
+        return grossSizeFromDataSize(getRawDataSize());
     }
 
     private int getRawDataSize() {
-        List escherRecords = getEscherRecords();
+        List<EscherRecord> escherRecords = getEscherRecords();
         byte[] rawData = getRawData();
         if (escherRecords.size() == 0 && rawData != null)
         {
             return rawData.length;
         }
         int size = 0;
-        for ( Iterator iterator = escherRecords.iterator(); iterator.hasNext(); )
+        for ( Iterator<EscherRecord> iterator = escherRecords.iterator(); iterator.hasNext(); )
         {
-            EscherRecord r = (EscherRecord) iterator.next();
+            EscherRecord r = iterator.next();
             size += r.getRecordSize();
         }
         return size;
@@ -120,7 +117,7 @@ public final class DrawingGroupRecord extends AbstractEscherHolderRecord {
                 writeHeader( data, offset, segmentLength );
             writtenActualData += 4;
             offset += 4;
-            ArrayUtil.arraycopy( rawData, writtenRawData, data, offset, segmentLength );
+            System.arraycopy( rawData, writtenRawData, data, offset, segmentLength );
             offset += segmentLength;
             writtenRawData += segmentLength;
             writtenActualData += segmentLength;
@@ -139,5 +136,4 @@ public final class DrawingGroupRecord extends AbstractEscherHolderRecord {
         LittleEndian.putShort(data, 0 + offset, ContinueRecord.sid);
         LittleEndian.putShort(data, 2 + offset, (short) sizeExcludingHeader);
     }
-
 }

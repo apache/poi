@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,62 +14,56 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.record;
 
 
-import junit.framework.TestCase;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-import org.apache.poi.hslf.HSLFSlideShow;
-import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.junit.Test;
 
 /**
  * Tests that ExObjList works properly.
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestExObjList extends TestCase {
-	public void testRealFile() throws Exception {
-		String dirname = System.getProperty("HSLF.testdata.path");
-		HSLFSlideShow hss = new HSLFSlideShow(dirname + File.separator + "WithLinks.ppt");
-		SlideShow ss = new SlideShow(hss);
-		
+public class TestExObjList {
+    @Test
+    public void testRealFile() throws Exception {
+        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+		HSLFSlideShow ss = new HSLFSlideShow(slTests.openResourceAsStream("WithLinks.ppt"));
+
 		// Get the document
 		Document doc = ss.getDocumentRecord();
 		// Get the ExObjList
-		ExObjList exObjList = doc.getExObjList();
+		ExObjList exObjList = doc.getExObjList(false);
 		assertNotNull(exObjList);
 		assertEquals(1033l, exObjList.getRecordType());
-		
+
 		// Check the atom
 		assertNotNull(exObjList.getExObjListAtom());
 		assertEquals(4, exObjList.getExObjListAtom().getObjectIDSeed());
-		
+
 		// Check the Hyperlinks
 		assertEquals(4, exObjList.getExHyperlinks().length);
-		
+
 		// Check the contents
 		ExHyperlink[] links = exObjList.getExHyperlinks();
-		
+
 		// Check they have what we expect in them
 		assertEquals(1, links[0].getExHyperlinkAtom().getNumber());
 		assertEquals("http://jakarta.apache.org/poi/", links[0].getLinkURL());
-		
+
 		assertEquals(2, links[1].getExHyperlinkAtom().getNumber());
 		assertEquals("http://slashdot.org/", links[1].getLinkURL());
-		
+
 		assertEquals(3, links[2].getExHyperlinkAtom().getNumber());
 		assertEquals("http://jakarta.apache.org/poi/hssf/", links[2].getLinkURL());
-		
+
 		assertEquals(4, links[3].getExHyperlinkAtom().getNumber());
 		assertEquals("http://jakarta.apache.org/hslf/", links[3].getLinkURL());
-		
+
+	    ss.close();
 	}
 }

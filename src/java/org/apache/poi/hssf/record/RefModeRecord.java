@@ -19,7 +19,7 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title:        RefMode Record<P>
@@ -30,8 +30,8 @@ import org.apache.poi.util.LittleEndian;
  * @version 2.0-pre
  */
 
-public class RefModeRecord
-    extends Record
+public final class RefModeRecord
+    extends StandardRecord
 {
     public final static short sid           = 0xf;
     public final static short USE_A1_MODE   = 1;
@@ -83,12 +83,8 @@ public class RefModeRecord
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, ( short ) 0x2);
-        LittleEndian.putShort(data, 4 + offset, getMode());
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(getMode());
     }
 
     protected int getDataSize() {

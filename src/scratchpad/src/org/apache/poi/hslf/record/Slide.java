@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 
@@ -31,7 +29,7 @@ import org.apache.poi.util.LittleEndian;
  * @author Nick Burch
  */
 
-public class Slide extends SheetContainer
+public final class Slide extends SheetContainer
 {
 	private byte[] _header;
 	private static long _type = 1006l;
@@ -47,13 +45,13 @@ public class Slide extends SheetContainer
 	public SlideAtom getSlideAtom() { return slideAtom; }
 
 	/**
-	 * Returns the PPDrawing of this Slide, which has all the 
+	 * Returns the PPDrawing of this Slide, which has all the
 	 *  interesting data in it
 	 */
 	public PPDrawing getPPDrawing() { return ppDrawing; }
 
 
-	/** 
+	/**
 	 * Set things up, and find our more interesting children
 	 */
 	protected Slide(byte[] source, int start, int len) {
@@ -105,7 +103,7 @@ public class Slide extends SheetContainer
 	 * We are of type 1006
 	 */
 	public long getRecordType() { return _type; }
-	
+
 	/**
 	 * Write the contents of the record back, so it can be written
 	 *  to disk

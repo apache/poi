@@ -17,86 +17,76 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
-
-public final class DrawingRecord extends Record {
+import org.apache.poi.util.LittleEndianOutput;
+/**
+ * DrawingRecord (0x00EC)
+ */
+public final class DrawingRecord extends StandardRecord implements Cloneable {
     public static final short sid = 0x00EC;
 
-	private static final byte[] EMPTY_BYTE_ARRAY = { };
+    private static final byte[] EMPTY_BYTE_ARRAY = {};
 
     private byte[] recordData;
     private byte[] contd;
 
     public DrawingRecord() {
-    	recordData = EMPTY_BYTE_ARRAY;
+        recordData = EMPTY_BYTE_ARRAY;
     }
 
-    public DrawingRecord( RecordInputStream in )
-    {
-      recordData = in.readRemainder();
+    public DrawingRecord(RecordInputStream in) {
+        recordData = in.readRemainder();
     }
 
-    public void processContinueRecord( byte[] record )
-    {
+    /**
+     * @deprecated POI 3.9
+     */
+    @Deprecated
+    void processContinueRecord(byte[] record) {
         //don't merge continue record with the drawing record, it must be serialized separately
         contd = record;
     }
 
-    public int serialize( int offset, byte[] data )
-    {
-        if (recordData == null)
-        {
-            recordData = new byte[ 0 ];
-        }
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, ( short ) (recordData.length));
-        if (recordData.length > 0)
-        {
-            System.arraycopy(recordData, 0, data, 4 + offset, recordData.length);
-        }
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.write(recordData);
     }
+
     protected int getDataSize() {
-        int retval = 0;
-
-        if (recordData != null) {
-            retval += recordData.length;
-        }
-        return retval;
+        return recordData.length;
     }
 
-    public short getSid()
-    {
+    public short getSid() {
         return sid;
     }
 
-    public byte[] getData()
-    {
-        if(contd != null) {
-            byte[] newBuffer = new byte[ recordData.length + contd.length ];
-            System.arraycopy( recordData, 0, newBuffer, 0, recordData.length );
-            System.arraycopy( contd, 0, newBuffer, recordData.length, contd.length);
-            return newBuffer;
-        } else {
-            return recordData;
+    public byte[] getRecordData(){
+        return recordData;
+    }
+
+    public void setData(byte[] thedata) {
+        if (thedata == null) {
+            throw new IllegalArgumentException("data must not be null");
         }
+        recordData = thedata;
     }
 
-    public void setData( byte[] thedata )
-    {
-        this.recordData = thedata;
+    /**
+     * Cloning of drawing records must be executed through HSSFPatriarch, because all id's must be changed
+     * @return cloned drawing records
+     */
+    @Override
+    public DrawingRecord clone() {
+        DrawingRecord rec = new DrawingRecord();
+        rec.recordData = recordData.clone();
+        if (contd != null) {
+            // TODO - this code probably never executes
+            rec.contd = contd.clone();
+        }
+
+        return rec;
     }
 
-    public Object clone() {
-    	DrawingRecord rec = new DrawingRecord();
-    	
-    	rec.recordData = new byte[ recordData.length ];
-    	System.arraycopy(recordData, 0, rec.recordData, 0, recordData.length);
-    	if (contd != null) {
-	    	System.arraycopy(contd, 0, rec.contd, 0, contd.length);
-	    	rec.contd = new byte[ contd.length ];
-    	}
-    	
-    	return rec;
+    @Override
+    public String toString() {
+        return "DrawingRecord["+recordData.length+"]";
     }
 }

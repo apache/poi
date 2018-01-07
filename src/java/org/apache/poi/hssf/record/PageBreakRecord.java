@@ -23,7 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * <p>Record that contains the functionality page breaks (horizontal and vertical)</p>
@@ -36,11 +36,11 @@ import org.apache.poi.util.LittleEndian;
  * @see VerticalPageBreakRecord
  * @author Danny Mui (dmui at apache dot org)
  */
-public abstract class PageBreakRecord extends Record {
+public abstract class PageBreakRecord extends StandardRecord {
     private static final int[] EMPTY_INT_ARRAY = { };
 
-    private List _breaks;
-    private Map _breakMap;
+    private List<Break> _breaks;
+    private Map<Integer, Break> _breakMap;
 
     /**
      * Since both records store 2byte integers (short), no point in
@@ -49,7 +49,7 @@ public abstract class PageBreakRecord extends Record {
      * The subs (rows or columns, don't seem to be able to set but excel sets
      * them automatically)
      */
-    public class Break {
+    public static final class Break {
 
         public static final int ENCODED_SIZE = 6;
         public int main;
@@ -69,29 +69,28 @@ public abstract class PageBreakRecord extends Record {
             subTo = in.readUShort();
         }
 
-        public int serialize(int offset, byte[] data) {
-            LittleEndian.putUShort(data, offset + 0, main + 1);
-            LittleEndian.putUShort(data, offset + 2, subFrom);
-            LittleEndian.putUShort(data, offset + 4, subTo);
-            return ENCODED_SIZE;
+        public void serialize(LittleEndianOutput out) {
+            out.writeShort(main + 1);
+            out.writeShort(subFrom);
+            out.writeShort(subTo);
         }
     }
 
     protected PageBreakRecord() {
-        _breaks = new ArrayList();
-        _breakMap = new HashMap();
+        _breaks = new ArrayList<>();
+        _breakMap = new HashMap<>();
     }
 
     public PageBreakRecord(RecordInputStream in)
     {
         int nBreaks = in.readShort();
-        _breaks = new ArrayList(nBreaks + 2);
-        _breakMap = new HashMap();
+        _breaks = new ArrayList<>(nBreaks + 2);
+        _breakMap = new HashMap<>();
 
         for(int k = 0; k < nBreaks; k++) {
             Break br = new Break(in);
             _breaks.add(br);
-            _breakMap.put(new Integer(br.main), br);
+            _breakMap.put(Integer.valueOf(br.main), br);
         }
 
     }
@@ -103,33 +102,24 @@ public abstract class PageBreakRecord extends Record {
         return 2 + _breaks.size() * Break.ENCODED_SIZE;
     }
 
-    public final int serialize(int offset, byte data[]) {
+    public final void serialize(LittleEndianOutput out) {
         int nBreaks = _breaks.size();
-        int dataSize = getDataSize();
-        LittleEndian.putUShort(data, offset + 0, getSid());
-        LittleEndian.putUShort(data, offset + 2, dataSize);
-        LittleEndian.putUShort(data, offset + 4, nBreaks);
-        int pos = 6;
+        out.writeShort(nBreaks);
         for (int i=0; i<nBreaks; i++) {
-            Break br = (Break)_breaks.get(i);
-            pos += br.serialize(offset+pos, data);
+            _breaks.get(i).serialize(out);
         }
-
-        return 4 + dataSize;
     }
 
     public int getNumBreaks() {
         return _breaks.size();
     }
 
-    public final Iterator getBreaksIterator() {
+    public final Iterator<Break> getBreaksIterator() {
         return _breaks.iterator();
     }
 
-    public String toString()
-    {
+    public String toString() {
         StringBuffer retval = new StringBuffer();
-
 
         String label;
         String mainLabel;
@@ -148,10 +138,10 @@ public abstract class PageBreakRecord extends Record {
         retval.append("["+label+"]").append("\n");
         retval.append("     .sid        =").append(getSid()).append("\n");
         retval.append("     .numbreaks =").append(getNumBreaks()).append("\n");
-        Iterator iterator = getBreaksIterator();
+        Iterator<Break> iterator = getBreaksIterator();
         for(int k = 0; k < getNumBreaks(); k++)
         {
-            Break region = (Break)iterator.next();
+            Break region = iterator.next();
 
             retval.append("     .").append(mainLabel).append(" (zero-based) =").append(region.main).append("\n");
             retval.append("     .").append(subLabel).append("From    =").append(region.subFrom).append("\n");
@@ -170,8 +160,8 @@ public abstract class PageBreakRecord extends Record {
     */
     public void addBreak(int main, int subFrom, int subTo) {
 
-        Integer key = new Integer(main);
-        Break region = (Break)_breakMap.get(key);
+        Integer key = Integer.valueOf(main);
+        Break region = _breakMap.get(key);
         if(region == null) {
             region = new Break(main, subFrom, subTo);
             _breakMap.put(key, region);
@@ -188,8 +178,8 @@ public abstract class PageBreakRecord extends Record {
      * @param main (zero-based)
      */
     public final void removeBreak(int main) {
-        Integer rowKey = new Integer(main);
-        Break region = (Break)_breakMap.get(rowKey);
+        Integer rowKey = Integer.valueOf(main);
+        Break region = _breakMap.get(rowKey);
         _breaks.remove(region);
         _breakMap.remove(rowKey);
     }
@@ -200,8 +190,8 @@ public abstract class PageBreakRecord extends Record {
      * @return The Break or null if no break exists at the row/col specified.
      */
     public final Break getBreak(int main) {
-        Integer rowKey = new Integer(main);
-        return (Break)_breakMap.get(rowKey);
+        Integer rowKey = Integer.valueOf(main);
+        return _breakMap.get(rowKey);
     }
 
     public final int[] getBreaks() {
@@ -211,7 +201,7 @@ public abstract class PageBreakRecord extends Record {
         }
         int[] result = new int[count];
         for (int i=0; i<count; i++) {
-            Break breakItem = (Break)_breaks.get(i);
+            Break breakItem = _breaks.get(i);
             result[i] = breakItem.main;
         }
         return result;

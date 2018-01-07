@@ -1,9 +1,10 @@
 /* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
 
        http://www.apache.org/licenses/LICENSE-2.0
 
@@ -19,82 +20,31 @@ package org.apache.poi.hssf.usermodel;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 import org.apache.poi.hssf.model.HSSFFormulaParser;
-import org.apache.poi.hssf.record.formula.NumberPtg;
-import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.record.formula.StringPtg;
-import org.apache.poi.ss.formula.FormulaParser;
+import org.apache.poi.hssf.record.DVRecord;
+import org.apache.poi.ss.formula.FormulaRenderer;
+import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.formula.ptg.NumberPtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.StringPtg;
+import org.apache.poi.ss.usermodel.DataValidationConstraint;
+import org.apache.poi.util.LocaleUtil;
 
 /**
- * 
- * @author Josh Micich
+ * Data Validation Constraint
  */
-public class DVConstraint {
-	/**
-	 * ValidationType enum
-	 */
-	public static final class ValidationType {
-		private ValidationType() {
-			// no instances of this class
-		}
-		/** 'Any value' type - value not restricted */
-		public static final int ANY         = 0x00;
-		/** Integer ('Whole number') type */
-		public static final int INTEGER     = 0x01;
-		/** Decimal type */
-		public static final int DECIMAL     = 0x02;
-		/** List type ( combo box type ) */
-		public static final int LIST        = 0x03;
-		/** Date type */
-		public static final int DATE        = 0x04;
-		/** Time type */
-		public static final int TIME        = 0x05;
-		/** String length type */
-		public static final int TEXT_LENGTH = 0x06;
-		/** Formula ( 'Custom' ) type */
-		public static final int FORMULA     = 0x07;
-	}
-	/**
-	 * Condition operator enum
-	 */
-	public static final class OperatorType {
-		private OperatorType() {
-			// no instances of this class
-		}
-
-		public static final int BETWEEN = 0x00;
-		public static final int NOT_BETWEEN = 0x01;
-		public static final int EQUAL = 0x02;
-		public static final int NOT_EQUAL = 0x03;
-		public static final int GREATER_THAN = 0x04;
-		public static final int LESS_THAN = 0x05;
-		public static final int GREATER_OR_EQUAL = 0x06;
-		public static final int LESS_OR_EQUAL = 0x07;
-		/** default value to supply when the operator type is not used */
-		public static final int IGNORED = BETWEEN;
-		
-		/* package */ static void validateSecondArg(int comparisonOperator, String paramValue) {
-			switch (comparisonOperator) {
-				case BETWEEN:
-				case NOT_BETWEEN:
-					if (paramValue == null) {
-						throw new IllegalArgumentException("expr2 must be supplied for 'between' comparisons");
-					}
-				// all other operators don't need second arg
-			}
-		}
-	}
-	
+public class DVConstraint implements DataValidationConstraint {
 	/* package */ static final class FormulaPair {
 
 		private final Ptg[] _formula1;
 		private final Ptg[] _formula2;
 
-		public FormulaPair(Ptg[] formula1, Ptg[] formula2) {
-			_formula1 = formula1;
-			_formula2 = formula2;
+		FormulaPair(Ptg[] formula1, Ptg[] formula2) {
+			_formula1 = (formula1 == null) ? null : formula1.clone();
+			_formula2 = (formula2 == null) ? null : formula2.clone();
 		}
 		public Ptg[] getFormula1() {
 			return _formula1;
@@ -104,10 +54,6 @@ public class DVConstraint {
 		}
 		
 	}
-	
-	// convenient access to ValidationType namespace
-	private static final ValidationType VT = null;
-
 	
 	private final int _validationType;
 	private int _operator;
@@ -120,23 +66,23 @@ public class DVConstraint {
 
 	
 	private DVConstraint(int validationType, int comparisonOperator, String formulaA,
-			String formulaB, Double value1, Double value2, String[] excplicitListValues) {
+			String formulaB, Double value1, Double value2, String[] explicitListValues) {
 		_validationType = validationType;
 		_operator = comparisonOperator;
 		_formula1 = formulaA;
 		_formula2 = formulaB;
 		_value1 = value1;
 		_value2 = value2;
-		_explicitListValues = excplicitListValues;
+		_explicitListValues = (explicitListValues == null) ? null : explicitListValues.clone();
 	}
 	
 	
 	/**
 	 * Creates a list constraint
 	 */
-	private DVConstraint(String listFormula, String[] excplicitListValues) {
+	private DVConstraint(String listFormula, String[] explicitListValues) {
 		this(ValidationType.LIST, OperatorType.IGNORED,
-			listFormula, null, null, null, excplicitListValues);
+			listFormula, null, null, null, explicitListValues);
 	}
 
 	/**
@@ -144,9 +90,11 @@ public class DVConstraint {
 	 * can be either standard Excel formulas or formatted number values. If the expression starts 
 	 * with '=' it is parsed as a formula, otherwise it is parsed as a formatted number. 
 	 * 
-	 * @param validationType one of {@link ValidationType#ANY}, {@link ValidationType#DECIMAL},
-	 * {@link ValidationType#INTEGER}, {@link ValidationType#TEXT_LENGTH}
-	 * @param comparisonOperator any constant from {@link OperatorType} enum
+	 * @param validationType one of {@link org.apache.poi.ss.usermodel.DataValidationConstraint.ValidationType#ANY},
+     * {@link org.apache.poi.ss.usermodel.DataValidationConstraint.ValidationType#DECIMAL},
+     * {@link org.apache.poi.ss.usermodel.DataValidationConstraint.ValidationType#INTEGER},
+     * {@link org.apache.poi.ss.usermodel.DataValidationConstraint.ValidationType#TEXT_LENGTH}
+	 * @param comparisonOperator any constant from {@link org.apache.poi.ss.usermodel.DataValidationConstraint.OperatorType} enum
 	 * @param expr1 date formula (when first char is '=') or formatted number value
 	 * @param expr2 date formula (when first char is '=') or formatted number value
 	 */
@@ -194,7 +142,7 @@ public class DVConstraint {
 	 * formatted times, two formats are supported:  "HH:MM" or "HH:MM:SS".  This is contrary to 
 	 * Excel which uses the default time format from the OS.
 	 * 
-	 * @param comparisonOperator constant from {@link OperatorType} enum
+	 * @param comparisonOperator constant from {@link org.apache.poi.ss.usermodel.DataValidationConstraint.OperatorType} enum
 	 * @param expr1 date formula (when first char is '=') or formatted time value
 	 * @param expr2 date formula (when first char is '=') or formatted time value
 	 */
@@ -210,9 +158,9 @@ public class DVConstraint {
 		// formula2 and value2 are mutually exclusive
 		String formula2 = getFormulaFromTextExpression(expr2);
 		Double value2 = formula2 == null ? convertTime(expr2) : null;
-		return new DVConstraint(VT.TIME, comparisonOperator, formula1, formula2, value1, value2, null);
-		
+		return new DVConstraint(ValidationType.TIME, comparisonOperator, formula1, formula2, value1, value2, null);
 	}
+	
 	/**
 	 * Creates a date based data validation constraint. The text values entered for expr1 and expr2
 	 * can be either standard Excel formulas or formatted date values. If the expression starts 
@@ -220,7 +168,7 @@ public class DVConstraint {
 	 * the same convention).  To parse formatted dates, a date format needs to be specified.  This
 	 * is contrary to Excel which uses the default short date format from the OS.
 	 * 
-	 * @param comparisonOperator constant from {@link OperatorType} enum
+	 * @param comparisonOperator constant from {@link org.apache.poi.ss.usermodel.DataValidationConstraint.OperatorType} enum
 	 * @param expr1 date formula (when first char is '=') or formatted date value
 	 * @param expr2 date formula (when first char is '=') or formatted date value
 	 * @param dateFormat ignored if both expr1 and expr2 are formulas.  Default value is "YYYY/MM/DD"
@@ -232,7 +180,11 @@ public class DVConstraint {
 			throw new IllegalArgumentException("expr1 must be supplied");
 		}
 		OperatorType.validateSecondArg(comparisonOperator, expr2);
-		SimpleDateFormat df = dateFormat == null ? null : new SimpleDateFormat(dateFormat);
+		SimpleDateFormat df = null;
+		if (dateFormat != null) {
+		    df = new SimpleDateFormat(dateFormat, LocaleUtil.getUserLocale());
+		    df.setTimeZone(LocaleUtil.getUserTimeZone());
+		}
 		
 		// formula1 and value1 are mutually exclusive
 		String formula1 = getFormulaFromTextExpression(expr1);
@@ -240,7 +192,7 @@ public class DVConstraint {
 		// formula2 and value2 are mutually exclusive
 		String formula2 = getFormulaFromTextExpression(expr2);
 		Double value2 = formula2 == null ? convertDate(expr2, df) : null;
-		return new DVConstraint(VT.DATE, comparisonOperator, formula1, formula2, value1, value2, null);
+		return new DVConstraint(ValidationType.DATE, comparisonOperator, formula1, formula2, value1, value2, null);
 	}
 	
 	/**
@@ -276,7 +228,7 @@ public class DVConstraint {
 			return null;
 		}
 		try {
-			return new Double(numberStr);
+			return Double.valueOf(numberStr);
 		} catch (NumberFormatException e) {
 			throw new RuntimeException("The supplied text '" + numberStr 
 					+ "' could not be parsed as a number");
@@ -290,7 +242,7 @@ public class DVConstraint {
 		if (timeStr == null) {
 			return null;
 		}
-		return new Double(HSSFDateUtil.convertTime(timeStr));
+		return Double.valueOf(HSSFDateUtil.convertTime(timeStr));
 	}
 	/**
 	 * @param dateFormat pass <code>null</code> for default YYYYMMDD
@@ -311,73 +263,18 @@ public class DVConstraint {
 						+ "' using specified format '" + dateFormat + "'", e);
 			}
 		}
-		return new Double(HSSFDateUtil.getExcelDate(dateVal));
+		return Double.valueOf(HSSFDateUtil.getExcelDate(dateVal));
 	}
 
 	public static DVConstraint createCustomFormulaConstraint(String formula) {
 		if (formula == null) {
 			throw new IllegalArgumentException("formula must be supplied");
 		}
-		return new DVConstraint(VT.FORMULA, OperatorType.IGNORED, formula, null, null, null, null);
+		return new DVConstraint(ValidationType.FORMULA, OperatorType.IGNORED, formula, null, null, null, null);
 	}
 	
-	/**
-	 * @return both parsed formulas (for expression 1 and 2). 
-	 */
-	/* package */ FormulaPair createFormulas(HSSFWorkbook workbook) {
-		Ptg[] formula1;
-		Ptg[] formula2;
-		if (isListValidationType()) {
-			formula1 = createListFormula(workbook);
-			formula2 = Ptg.EMPTY_PTG_ARRAY;
-		} else {
-			formula1 = convertDoubleFormula(_formula1, _value1, workbook);
-			formula2 = convertDoubleFormula(_formula2, _value2, workbook);
-		}
-		return new FormulaPair(formula1, formula2);
-	}
-
-	private Ptg[] createListFormula(HSSFWorkbook workbook) {
-
-		if (_explicitListValues == null) {
-			// formula is parsed with slightly different RVA rules: (root node type must be 'reference')
-			return HSSFFormulaParser.parse(_formula1, workbook, FormulaType.DATAVALIDATION_LIST);
-			// To do: Excel places restrictions on the available operations within a list formula.
-			// Some things like union and intersection are not allowed.
-		}
-		// explicit list was provided
-		StringBuffer sb = new StringBuffer(_explicitListValues.length * 16);
-		for (int i = 0; i < _explicitListValues.length; i++) {
-			if (i > 0) {
-				sb.append('\0'); // list delimiter is the nul char
-			}
-			sb.append(_explicitListValues[i]);
-		
-		}
-		return new Ptg[] { new StringPtg(sb.toString()), };
-	}
-
-	/**
-	 * @return The parsed token array representing the formula or value specified. 
-	 * Empty array if both formula and value are <code>null</code>
-	 */
-	private static Ptg[] convertDoubleFormula(String formula, Double value, HSSFWorkbook workbook) {
-		if (formula == null) {
-			if (value == null) {
-				return Ptg.EMPTY_PTG_ARRAY;
-			}
-			return new Ptg[] { new NumberPtg(value.doubleValue()), };
-		}
-		if (value != null) {
-			throw new IllegalStateException("Both formula and value cannot be present");
-		}
-		return HSSFFormulaParser.parse(formula, workbook);
-	}
-	
-	
-	/**
-	 * @return data validation type of this constraint
-	 * @see ValidationType
+	/* (non-Javadoc)
+	 * @see org.apache.poi.hssf.usermodel.DataValidationConstraint#getValidationType()
 	 */
 	public int getValidationType() {
 		return _validationType;
@@ -387,49 +284,53 @@ public class DVConstraint {
 	 * @return <code>true</code> if this constraint is a 'list' validation
 	 */
 	public boolean isListValidationType() {
-		return _validationType == VT.LIST;
+		return _validationType == ValidationType.LIST;
 	}
 	/**
 	 * Convenience method
 	 * @return <code>true</code> if this constraint is a 'list' validation with explicit values
 	 */
 	public boolean isExplicitList() {
-		return _validationType == VT.LIST && _explicitListValues != null;
+		return _validationType == ValidationType.LIST && _explicitListValues != null;
 	}
-	/**
-	 * @return the operator used for this constraint
-	 * @see OperatorType
+	/* (non-Javadoc)
+	 * @see org.apache.poi.hssf.usermodel.DataValidationConstraint#getOperator()
 	 */
 	public int getOperator() {
 		return _operator;
 	}
-	/**
-	 * Sets the comparison operator for this constraint
-	 * @see OperatorType
+	/* (non-Javadoc)
+	 * @see org.apache.poi.hssf.usermodel.DataValidationConstraint#setOperator(int)
 	 */
 	public void setOperator(int operator) {
 		_operator = operator;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.apache.poi.hssf.usermodel.DataValidationConstraint#getExplicitListValues()
+	 */
 	public String[] getExplicitListValues() {
 		return _explicitListValues;
 	}
+	/* (non-Javadoc)
+	 * @see org.apache.poi.hssf.usermodel.DataValidationConstraint#setExplicitListValues(java.lang.String[])
+	 */
 	public void setExplicitListValues(String[] explicitListValues) {
-		if (_validationType != VT.LIST) {
+		if (_validationType != ValidationType.LIST) {
 			throw new RuntimeException("Cannot setExplicitListValues on non-list constraint");
 		}
 		_formula1 = null;
 		_explicitListValues = explicitListValues;
 	}
 
-	/**
-	 * @return the formula for expression 1. May be <code>null</code>
+	/* (non-Javadoc)
+	 * @see org.apache.poi.hssf.usermodel.DataValidationConstraint#getFormula1()
 	 */
 	public String getFormula1() {
 		return _formula1;
 	}
-	/**
-	 * Sets a formula for expression 1.
+	/* (non-Javadoc)
+	 * @see org.apache.poi.hssf.usermodel.DataValidationConstraint#setFormula1(java.lang.String)
 	 */
 	public void setFormula1(String formula1) {
 		_value1 = null;
@@ -437,14 +338,14 @@ public class DVConstraint {
 		_formula1 = formula1;
 	}
 
-	/**
-	 * @return the formula for expression 2. May be <code>null</code>
+	/* (non-Javadoc)
+	 * @see org.apache.poi.hssf.usermodel.DataValidationConstraint#getFormula2()
 	 */
 	public String getFormula2() {
 		return _formula2;
 	}
-	/**
-	 * Sets a formula for expression 2.
+	/* (non-Javadoc)
+	 * @see org.apache.poi.hssf.usermodel.DataValidationConstraint#setFormula2(java.lang.String)
 	 */
 	public void setFormula2(String formula2) {
 		_value2 = null;
@@ -462,7 +363,7 @@ public class DVConstraint {
 	 */
 	public void setValue1(double value1) {
 		_formula1 = null;
-		_value1 = new Double(value1);
+		_value1 = Double.valueOf(value1);
 	}
 
 	/**
@@ -476,6 +377,137 @@ public class DVConstraint {
 	 */
 	public void setValue2(double value2) {
 		_formula2 = null;
-		_value2 = new Double(value2);
+		_value2 = Double.valueOf(value2);
 	}
+	
+	/**
+	 * @return both parsed formulas (for expression 1 and 2). 
+	 */
+	/* package */ FormulaPair createFormulas(HSSFSheet sheet) {
+		Ptg[] formula1;
+		Ptg[] formula2;
+		if (isListValidationType()) {
+			formula1 = createListFormula(sheet);
+			formula2 = Ptg.EMPTY_PTG_ARRAY;
+		} else {
+			formula1 = convertDoubleFormula(_formula1, _value1, sheet);
+			formula2 = convertDoubleFormula(_formula2, _value2, sheet);
+		}
+		return new FormulaPair(formula1, formula2);
+	}
+
+    @SuppressWarnings("resource")
+    private Ptg[] createListFormula(HSSFSheet sheet) {
+
+		if (_explicitListValues == null) {
+            HSSFWorkbook wb = sheet.getWorkbook();
+            // formula is parsed with slightly different RVA rules: (root node type must be 'reference')
+			return HSSFFormulaParser.parse(_formula1, wb, FormulaType.DATAVALIDATION_LIST, wb.getSheetIndex(sheet));
+			// To do: Excel places restrictions on the available operations within a list formula.
+			// Some things like union and intersection are not allowed.
+		}
+		// explicit list was provided
+		StringBuilder sb = new StringBuilder(_explicitListValues.length * 16);
+		for (int i = 0; i < _explicitListValues.length; i++) {
+			if (i > 0) {
+				sb.append('\0'); // list delimiter is the nul char
+			}
+			sb.append(_explicitListValues[i]);
+		
+		}
+		return new Ptg[] { new StringPtg(sb.toString()), };
+	}
+
+	/**
+	 * @return The parsed token array representing the formula or value specified. 
+	 * Empty array if both formula and value are <code>null</code>
+	 */
+    @SuppressWarnings("resource")
+	private static Ptg[] convertDoubleFormula(String formula, Double value, HSSFSheet sheet) {
+		if (formula == null) {
+			if (value == null) {
+				return Ptg.EMPTY_PTG_ARRAY;
+			}
+			return new Ptg[] { new NumberPtg(value.doubleValue()), };
+		}
+		if (value != null) {
+			throw new IllegalStateException("Both formula and value cannot be present");
+		}
+        HSSFWorkbook wb = sheet.getWorkbook();
+		return HSSFFormulaParser.parse(formula, wb, FormulaType.CELL, wb.getSheetIndex(sheet));
+	}	
+
+    static DVConstraint createDVConstraint(DVRecord dvRecord, FormulaRenderingWorkbook book) {
+        switch (dvRecord.getDataType()) {
+        case ValidationType.ANY:
+            return new DVConstraint(ValidationType.ANY, dvRecord.getConditionOperator(), null, null, null, null, null);
+        case ValidationType.INTEGER:
+        case ValidationType.DECIMAL:
+        case ValidationType.DATE:
+        case ValidationType.TIME:
+        case ValidationType.TEXT_LENGTH:
+            FormulaValuePair pair1 = toFormulaString(dvRecord.getFormula1(), book);
+            FormulaValuePair pair2 = toFormulaString(dvRecord.getFormula2(), book);
+            return new DVConstraint(dvRecord.getDataType(), dvRecord.getConditionOperator(), pair1.formula(),
+                    pair2.formula(), pair1.value(), pair2.value(), null);
+        case ValidationType.LIST:
+            if (dvRecord.getListExplicitFormula()) {
+                String values = toFormulaString(dvRecord.getFormula1(), book).string();
+                if (values.startsWith("\"")) {
+                    values = values.substring(1);
+                }
+                if (values.endsWith("\"")) {
+                    values = values.substring(0, values.length() - 1);
+                }
+                String[] explicitListValues = values.split(Pattern.quote("\0"));
+                return createExplicitListConstraint(explicitListValues);
+            } else {
+                String listFormula = toFormulaString(dvRecord.getFormula1(), book).string();
+                return createFormulaListConstraint(listFormula);
+            }
+        case ValidationType.FORMULA:
+            return createCustomFormulaConstraint(toFormulaString(dvRecord.getFormula1(), book).string());
+        default:
+            throw new UnsupportedOperationException("validationType="+dvRecord.getDataType());
+        }
+    }
+
+    private static class FormulaValuePair {
+        private String _formula;
+        private String _value;
+
+        public String formula() {
+            return _formula;
+        }
+
+        public Double value() {
+            if (_value == null) {
+                return null;
+            }
+            return Double.valueOf(_value);
+        }
+
+        public String string() {
+            if (_formula != null) {
+                return _formula;
+            }
+            if (_value != null) {
+                return _value;
+            }
+            return null;
+        }
+    }
+
+    private static FormulaValuePair toFormulaString(Ptg[] ptgs, FormulaRenderingWorkbook book) {
+        FormulaValuePair pair = new FormulaValuePair();
+        if (ptgs != null && ptgs.length > 0) {
+            String string = FormulaRenderer.toFormulaString(book, ptgs);
+            if (ptgs.length == 1 && ptgs[0].getClass() == NumberPtg.class) {
+                pair._value = string;
+            } else {
+                pair._formula = string;
+            }
+        }
+        return pair;
+    }
 }

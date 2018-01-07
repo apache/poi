@@ -25,23 +25,22 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianInputStream;
+import org.apache.poi.util.RecordFormatException;
 
 /**
- * OBJRECORD (0x005D)<p/>
+ * OBJRECORD (0x005D)<p>
  * 
  * The obj record is used to hold various graphic objects and controls.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class ObjRecord extends Record {
+public final class ObjRecord extends Record implements Cloneable {
 	public final static short sid = 0x005D;
 
 	private static final int NORMAL_PAD_ALIGNMENT = 2;
 	private static int MAX_PAD_ALIGNMENT = 4;
 	
-	private List subrecords;
+	private List<SubRecord> subrecords;
 	/** used when POI has no idea what is going on */
-	private byte[] _uninterpretedData;
+	private final byte[] _uninterpretedData;
 	/**
 	 * Excel seems to tolerate padding to quad or double byte length
 	 */
@@ -52,19 +51,18 @@ public final class ObjRecord extends Record {
 
 
 	public ObjRecord() {
-		subrecords = new ArrayList(2);
+		subrecords = new ArrayList<>(2);
 		// TODO - ensure 2 sub-records (ftCmo 15h, and ftEnd 00h) are always created
+		_uninterpretedData = null;
 	}
 
 	public ObjRecord(RecordInputStream in) {
 		// TODO - problems with OBJ sub-records stream
-		// MS spec says first sub-records is always CommonObjectDataSubRecord,
-		// and last is
-		// always EndSubRecord. OOO spec does not mention ObjRecord(0x005D).
+		// MS spec says first sub-record is always CommonObjectDataSubRecord,
+		// and last is always EndSubRecord. OOO spec does not mention ObjRecord(0x005D).
 		// Existing POI test data seems to violate that rule. Some test data
-		// seems to contain
-		// garbage, and a crash is only averted by stopping at what looks like
-		// the 'EndSubRecord'
+		// seems to contain garbage, and a crash is only averted by stopping at
+                // what looks like the 'EndSubRecord'
 
 		// Check if this can be continued, if so then the
 		// following wont work properly
@@ -74,22 +72,27 @@ public final class ObjRecord extends Record {
 			// Excel tolerates the funny ObjRecord, and replaces it with a corrected version
 			// The exact logic/reasoning is not yet understood
 			_uninterpretedData = subRecordData;
+			subrecords = null;
 			return;
 		}
-		if (subRecordData.length % 2 != 0) {
+
+        //YK: files produced by OO violate the condition below
+        /*
+        if (subRecordData.length % 2 != 0) {
 			String msg = "Unexpected length of subRecordData : " + HexDump.toHex(subRecordData);
 			throw new RecordFormatException(msg);
 		}
+        */
 
-//		System.out.println(HexDump.toHex(subRecordData));
-
-		subrecords = new ArrayList();
+		subrecords = new ArrayList<>();
 		ByteArrayInputStream bais = new ByteArrayInputStream(subRecordData);
 		LittleEndianInputStream subRecStream = new LittleEndianInputStream(bais);
-		while (true) {
-			SubRecord subRecord = SubRecord.createSubRecord(subRecStream);
+		CommonObjectDataSubRecord cmo = (CommonObjectDataSubRecord)SubRecord.createSubRecord(subRecStream, 0);
+        subrecords.add(cmo);
+        while (true) {
+			SubRecord subRecord = SubRecord.createSubRecord(subRecStream, cmo.getObjectType());
 			subrecords.add(subRecord);
-			if (subRecord instanceof EndSubRecord) {
+			if (subRecord.isTerminating()) {
 				break;
 			}
 		}
@@ -98,34 +101,60 @@ public final class ObjRecord extends Record {
 			// At present (Oct-2008), most unit test samples have (subRecordData.length % 2 == 0)
 			_isPaddedToQuadByteMultiple = subRecordData.length % MAX_PAD_ALIGNMENT == 0;
 			if (nRemainingBytes >= (_isPaddedToQuadByteMultiple ? MAX_PAD_ALIGNMENT : NORMAL_PAD_ALIGNMENT)) {
-				String msg = "Leftover " + nRemainingBytes 
-				+ " bytes in subrecord data " + HexDump.toHex(subRecordData);
-				throw new RecordFormatException(msg);
+				if (!canPaddingBeDiscarded(subRecordData, nRemainingBytes)) {
+					String msg = "Leftover " + nRemainingBytes 
+						+ " bytes in subrecord data " + HexDump.toHex(subRecordData);
+					throw new RecordFormatException(msg);
+				}
+				_isPaddedToQuadByteMultiple = false;
 			}
-		} else {
+
+        } else {
 			_isPaddedToQuadByteMultiple = false;
 		}
+		_uninterpretedData = null;
 	}
 
+	/**
+	 * Some XLS files have ObjRecords with nearly 8Kb of excessive padding. These were probably
+	 * written by a version of POI (around 3.1) which incorrectly interpreted the second short of
+	 * the ftLbs subrecord (0x1FEE) as a length, and read that many bytes as padding (other bugs
+	 * helped allow this to occur).
+	 * 
+	 * Excel reads files with this excessive padding OK, truncating the over-sized ObjRecord back
+	 * to the its proper size.  POI does the same.
+	 */
+	private static boolean canPaddingBeDiscarded(byte[] data, int nRemainingBytes) {
+        // make sure none of the padding looks important
+		for(int i=data.length-nRemainingBytes; i<data.length; i++) {
+			if (data[i] != 0x00) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 
 		sb.append("[OBJ]\n");
-		for (int i = 0; i < subrecords.size(); i++) {
-			SubRecord record = (SubRecord) subrecords.get(i);
-			sb.append("SUBRECORD: ").append(record.toString());
+		if(subrecords != null) {	// there are special cases where this can be, see comments in constructor above
+			for (final SubRecord record : subrecords) {
+				sb.append("SUBRECORD: ").append(record);
+			}
 		}
 		sb.append("[/OBJ]\n");
 		return sb.toString();
 	}
 	
-	protected int getDataSize() {
+	@Override
+	public int getRecordSize() {
 		if (_uninterpretedData != null) {
-			return _uninterpretedData.length;
+			return _uninterpretedData.length + 4;
 		}
 		int size = 0;
-		for (int i=subrecords.size()-1; i>=0; i--) {
-			SubRecord record = (SubRecord) subrecords.get(i);
+		for (SubRecord record : subrecords) {
 			size += record.getDataSize()+4;
 		}
 		if (_isPaddedToQuadByteMultiple) {
@@ -137,13 +166,14 @@ public final class ObjRecord extends Record {
 				size++;
 			}
 		}
-		return size;
+		return size + 4;
 	}
 
+	@Override
 	public int serialize(int offset, byte[] data) {
-		int dataSize = getDataSize();
-		int recSize = 4 + dataSize;
-		LittleEndianByteArrayOutputStream out = new LittleEndianByteArrayOutputStream(data, offset, recSize);
+		int recSize = getRecordSize();
+		int dataSize = recSize - 4;
+		LittleEndianByteArrayOutputStream out = new LittleEndianByteArrayOutputStream(data, offset, recSize); // NOSONAR
 
 		out.writeShort(sid);
 		out.writeShort(dataSize);
@@ -151,7 +181,7 @@ public final class ObjRecord extends Record {
 		if (_uninterpretedData == null) {
 
 			for (int i = 0; i < subrecords.size(); i++) {
-				SubRecord record = (SubRecord) subrecords.get(i);
+				SubRecord record = subrecords.get(i);
 				record.serialize(out);
 			}
 			int expectedEndIx = offset+dataSize;
@@ -165,11 +195,13 @@ public final class ObjRecord extends Record {
 		return recSize;
 	}
 
+	@Override
 	public short getSid() {
 		return sid;
 	}
 
-	public List getSubRecords() {
+        // FIXME: return Collections.unmodifiableList?
+	public List<SubRecord> getSubRecords() {
 		return subrecords;
 	}
 
@@ -177,19 +209,19 @@ public final class ObjRecord extends Record {
 		subrecords.clear();
 	}
 
-	public void addSubRecord(int index, Object element) {
+	public void addSubRecord(int index, SubRecord element) {
 		subrecords.add(index, element);
 	}
 
-	public boolean addSubRecord(Object o) {
+	public boolean addSubRecord(SubRecord o) {
 		return subrecords.add(o);
 	}
 
-	public Object clone() {
+	@Override
+	public ObjRecord clone() {
 		ObjRecord rec = new ObjRecord();
 
-		for (int i = 0; i < subrecords.size(); i++) {
-			SubRecord record = (SubRecord) subrecords.get(i);
+		for (SubRecord record : subrecords) {
 			rec.addSubRecord(record.clone());
 		}
 		return rec;

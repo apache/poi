@@ -1,4 +1,4 @@
-:tab<?xml version="1.0"?>
+<?xml version="1.0"?>
 <!--
 
    Licensed to the Apache Software Foundation (ASF) under one or more
@@ -24,7 +24,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.apache.poi</groupId>
-	<artifactId>@ARTIFICAT@</artifactId>
+	<artifactId>poi-ooxml</artifactId>
 	<version>@VERSION@</version>
 	<packaging>jar</packaging>
 	<name>Apache POI</name>
@@ -33,12 +33,10 @@
 
   <mailingLists>
     <mailingList>
-      <name>OpenXML4J Users List</name>
-      <archive>http://sourceforge.net/mailarchive/forum.php?forum_name=openxml4j-users</archive>
-    </mailingList>
-    <mailingList>
-      <name>OpenXML4J Developer List</name>
-      <archive>http://sourceforge.net/mailarchive/forum.php?forum_name=openxml4j-devs</archive>
+      <name>POI Users List</name>
+      <subscribe>user-subscribe@poi.apache.org</subscribe>
+      <unsubscribe>user-unsubscribe@poi.apache.org</unsubscribe>
+      <archive>http://mail-archives.apache.org/mod_mbox/poi-user/</archive>
     </mailingList>
     <mailingList>
       <name>POI Developer List</name>
@@ -52,7 +50,6 @@
     <license>
       <name>The Apache Software License, Version 2.0</name>
       <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-      <distribution>repo</distribution>
     </license>
   </licenses>
 
@@ -63,24 +60,19 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.apache.xmlbeans</groupId>
-      <artifactId>xmlbeans</artifactId>
-      <version>2.3.0</version>
+       <groupId>org.apache.poi</groupId>
+       <artifactId>poi</artifactId>
+       <version>@VERSION@</version>
     </dependency>
     <dependency>
       <groupId>org.apache.poi</groupId>
-      <artifactId>poi</artifactId>
+      <artifactId>poi-ooxml-schemas</artifactId>
       <version>@VERSION@</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.poi</groupId>
-      <artifactId>openxml4j</artifactId>
-      <version>@VERSION@</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.poi</groupId>
-      <artifactId>ooxml-schemas</artifactId>
-      <version>@VERSION@</version>
+    	<groupId>com.github.virtuald</groupId>
+    	<artifactId>curvesapi</artifactId>
+    	<version>1.04</version>
     </dependency>
   </dependencies>
 </project>

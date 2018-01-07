@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,145 +14,130 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hwpf.model;
 
-import org.apache.poi.util.BitField;
-import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.LittleEndian;
-
 import java.util.Arrays;
 
-public class ListData
+import org.apache.poi.util.Internal;
+
+@Internal
+public final class ListData
 {
-  private int _lsid;
-  private int _tplc;
-  private short[] _rgistd;
-  private byte _info;
-    private static BitField _fSimpleList = BitFieldFactory.getInstance(0x1);
-    private static BitField _fRestartHdn = BitFieldFactory.getInstance(0x2);
-  private byte _reserved;
-  ListLevel[] _levels;
+    private ListLevel[] _levels;
 
-  public ListData(int listID, boolean numbered)
-  {
-    _lsid = listID;
-    _rgistd = new short[9];
+    private LSTF _lstf;
 
-    for (int x = 0; x < 9; x++)
+    ListData( byte[] buf, int offset )
     {
-      _rgistd[x] = StyleSheet.NIL_STYLE;
+        _lstf = new LSTF( buf, offset );
+
+        if ( _lstf.isFSimpleList() )
+        {
+            _levels = new ListLevel[1];
+        }
+        else
+        {
+            _levels = new ListLevel[9];
+        }
     }
 
-    _levels = new ListLevel[9];
+    public ListData( int listID, boolean numbered )
+    {
+        _lstf = new LSTF();
+        _lstf.setLsid( listID );
+        _lstf.setRgistdPara( new short[9] );
+        Arrays.fill( _lstf.getRgistdPara(), (short) StyleSheet.NIL_STYLE );
 
-    for (int x = 0; x < _levels.length; x++)
-    {
-      _levels[x] = new ListLevel(x, numbered);
-    }
-  }
-
-  ListData(byte[] buf, int offset)
-  {
-    _lsid = LittleEndian.getInt(buf, offset);
-    offset += LittleEndian.INT_SIZE;
-    _tplc = LittleEndian.getInt(buf, offset);
-    offset += LittleEndian.INT_SIZE;
-    _rgistd = new short[9];
-    for (int x = 0; x < 9; x++)
-    {
-      _rgistd[x] = LittleEndian.getShort(buf, offset);
-      offset += LittleEndian.SHORT_SIZE;
-    }
-    _info = buf[offset++];
-    _reserved = buf[offset];
-    if (_fSimpleList.getValue(_info) > 0)
-    {
-      _levels = new ListLevel[1];
-    }
-    else
-    {
-      _levels = new ListLevel[9];
+        _levels = new ListLevel[9];
+        for ( int x = 0; x < _levels.length; x++ )
+        {
+            _levels[x] = new ListLevel( x, numbered );
+        }
     }
 
-  }
-
-  public int getLsid()
-  {
-    return _lsid;
-  }
-
-  public int numLevels()
-  {
-    return _levels.length;
-  }
-
-  public void setLevel(int index, ListLevel level)
-  {
-    _levels[index] = level;
-  }
-
-  public ListLevel[] getLevels()
-  {
-    return _levels;
-  }
-
-  /**
-   * Gets the level associated to a particular List at a particular index.
-   *
-   * @param index 1-based index
-   * @return a list level
-   */
-  public ListLevel getLevel(int index)
-  {
-    return _levels[index - 1];
-  }
-
-  public int getLevelStyle(int index)
-  {
-    return _rgistd[index];
-  }
-
-  public void setLevelStyle(int index, int styleIndex)
-  {
-    _rgistd[index] = (short)styleIndex;
-  }
-
-  public boolean equals(Object obj)
-  {
-    if (obj == null)
+    @Override
+    public boolean equals( Object obj )
     {
-      return false;
+        if ( this == obj )
+            return true;
+        if ( obj == null )
+            return false;
+        if ( getClass() != obj.getClass() )
+            return false;
+        ListData other = (ListData) obj;
+        if ( !Arrays.equals( _levels, other._levels ) )
+            return false;
+        if ( _lstf == null )
+        {
+            if ( other._lstf != null )
+                return false;
+        }
+        else if ( !_lstf.equals( other._lstf ) )
+            return false;
+        return true;
     }
 
-    ListData lst = (ListData)obj;
-    return lst._info == _info && Arrays.equals(lst._levels, _levels) &&
-      lst._lsid == _lsid && lst._reserved == _reserved && lst._tplc == _tplc &&
-      Arrays.equals(lst._rgistd, _rgistd);
-  }
-
-  int resetListID()
-  {
-    _lsid = (int)(Math.random() * (double)System.currentTimeMillis());
-    return _lsid;
-  }
-
-  public byte[] toByteArray()
-  {
-    byte[] buf = new byte[28];
-    int offset = 0;
-    LittleEndian.putInt(buf, _lsid);
-    offset += LittleEndian.INT_SIZE;
-    LittleEndian.putInt(buf, offset, _tplc);
-    offset += LittleEndian.INT_SIZE;
-    for (int x = 0; x < 9; x++)
+    /**
+     * Gets the level associated to a particular List at a particular index.
+     * 
+     * @param index
+     *            1-based index
+     * @return a list level
+     */
+    public ListLevel getLevel( int index )
     {
-      LittleEndian.putShort(buf, offset, _rgistd[x]);
-      offset += LittleEndian.SHORT_SIZE;
+        return _levels[index - 1];
     }
-    buf[offset++] = _info;
-    buf[offset] = _reserved;
-    return buf;
-  }
+
+    public ListLevel[] getLevels()
+    {
+        return _levels;
+    }
+
+    public int getLevelStyle( int index )
+    {
+        return _lstf.getRgistdPara()[index];
+    }
+
+    public int getLsid()
+    {
+        return _lstf.getLsid();
+    }
+
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.hashCode( _levels );
+        result = prime * result + ( ( _lstf == null ) ? 0 : _lstf.hashCode() );
+        return result;
+    }
+
+    public int numLevels()
+    {
+        return _levels.length;
+    }
+
+    int resetListID()
+    {
+        _lstf.setLsid( (int) ( Math.random() * System.currentTimeMillis() ) );
+        return _lstf.getLsid();
+    }
+
+    public void setLevel( int index, ListLevel level )
+    {
+        _levels[index] = level;
+    }
+
+    public void setLevelStyle( int index, int styleIndex )
+    {
+        _lstf.getRgistdPara()[index] = (short) styleIndex;
+    }
+
+    public byte[] toByteArray()
+    {
+        return _lstf.serialize();
+    }
 }

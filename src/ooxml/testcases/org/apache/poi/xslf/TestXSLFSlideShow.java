@@ -16,76 +16,82 @@
 ==================================================================== */
 package org.apache.poi.xslf;
 
-import java.io.File;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
-import org.apache.poi.POIXMLDocument;
-import org.openxml4j.opc.Package;
-import org.openxml4j.opc.PackagePart;
+import java.awt.Color;
+import java.awt.geom.Rectangle2D;
+import java.io.IOException;
+
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.POIXMLProperties.CoreProperties;
+import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.sl.usermodel.ShapeType;
+import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFAutoShape;
+import org.apache.poi.xslf.usermodel.XSLFBackground;
+import org.apache.poi.xslf.usermodel.XSLFRelation;
+import org.apache.poi.xslf.usermodel.XSLFSlide;
+import org.apache.poi.xslf.usermodel.XSLFSlideShow;
+import org.apache.xmlbeans.XmlException;
+import org.junit.Before;
+import org.junit.Test;
+import org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTProperties;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdListEntry;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMasterIdListEntry;
 
-import junit.framework.TestCase;
+public class TestXSLFSlideShow {
+    private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+    private OPCPackage pack;
 
-public class TestXSLFSlideShow extends TestCase {
-	private String sampleFile;
-
-	protected void setUp() throws Exception {
-		super.setUp();
-		
-		sampleFile = new File(
-				System.getProperty("HSLF.testdata.path") +
-				File.separator + "sample.pptx"
-		).toString();
+    @Before
+    public void setUp() throws Exception {
+		pack = OPCPackage.open(slTests.openResourceAsStream("sample.pptx"));
 	}
 
+    @Test
 	public void testContainsMainContentType() throws Exception {
-		Package pack = POIXMLDocument.openPackage(sampleFile);
-		
 		boolean found = false;
 		for(PackagePart part : pack.getParts()) {
-			if(part.getContentType().equals(XSLFSlideShow.MAIN_CONTENT_TYPE)) {
+			if(part.getContentType().equals(XSLFRelation.MAIN.getContentType())) {
 				found = true;
 			}
-			//System.out.println(part);
 		}
 		assertTrue(found);
 	}
 
-	public void testOpen() throws Exception {
-		POIXMLDocument.openPackage(sampleFile);
-		
-		XSLFSlideShow xml;
-		
-		// With the finalised uri, should be fine
-		xml = new XSLFSlideShow(
-				POIXMLDocument.openPackage(sampleFile)
-		);
-		
+    @Test
+	public void testOpen() throws IOException, OpenXML4JException, XmlException {
+		// With the finalized uri, should be fine
+		XSLFSlideShow xml = new XSLFSlideShow(pack);
 		// Check the core
 		assertNotNull(xml.getPresentation());
 		
 		// Check it has some slides
-		assertTrue(
-			xml.getSlideReferences().sizeOfSldIdArray() > 0
-		);
-		assertTrue(
-				xml.getSlideMasterReferences().sizeOfSldMasterIdArray() > 0
-			);
+		assertNotEquals(0, xml.getSlideReferences().sizeOfSldIdArray());
+		assertNotEquals(0, xml.getSlideMasterReferences().sizeOfSldMasterIdArray());
+		
+		xml.close();
 	}
 	
-	public void testSlideBasics() throws Exception {
-		XSLFSlideShow xml = new XSLFSlideShow(sampleFile);
+    @Test
+	public void testSlideBasics() throws IOException, OpenXML4JException, XmlException {
+		XSLFSlideShow xml = new XSLFSlideShow(pack);
 		
 		// Should have 1 master
 		assertEquals(1, xml.getSlideMasterReferences().sizeOfSldMasterIdArray());
-		assertEquals(1, xml.getSlideMasterReferences().getSldMasterIdArray().length);
-		
+
 		// Should have three sheets
 		assertEquals(2, xml.getSlideReferences().sizeOfSldIdArray());
-		assertEquals(2, xml.getSlideReferences().getSldIdArray().length);
-		
+
 		// Check they're as expected
 		CTSlideIdListEntry[] slides = xml.getSlideReferences().getSldIdArray();
+
 		assertEquals(256, slides[0].getId());
 		assertEquals(257, slides[1].getId());
 		assertEquals("rId2", slides[0].getId2());
@@ -100,24 +106,52 @@ public class TestXSLFSlideShow extends TestCase {
 		assertNotNull(xml.getNotes(slides[1]));
 		
 		// And again for the master
-		CTSlideMasterIdListEntry[] masters =
-			xml.getSlideMasterReferences().getSldMasterIdArray();
-		assertEquals(2147483648l, masters[0].getId());
+		CTSlideMasterIdListEntry[] masters = xml.getSlideMasterReferences().getSldMasterIdArray();
+		
+		// see SlideAtom.USES_MASTER_SLIDE_ID
+		assertEquals(0x80000000L, masters[0].getId());
 		assertEquals("rId1", masters[0].getId2());
 		assertNotNull(xml.getSlideMaster(masters[0]));
+		
+		xml.close();
 	}
 	
-	public void testMetadataBasics() throws Exception {
-		XSLFSlideShow xml = new XSLFSlideShow(sampleFile);
+    @Test
+	public void testMetadataBasics() throws IOException, OpenXML4JException, XmlException {
+		XSLFSlideShow xml = new XSLFSlideShow(pack);
 		
 		assertNotNull(xml.getProperties().getCoreProperties());
 		assertNotNull(xml.getProperties().getExtendedProperties());
 		
-		assertEquals("Microsoft Office PowerPoint", xml.getProperties().getExtendedProperties().getUnderlyingProperties().getApplication());
-		assertEquals(0, xml.getProperties().getExtendedProperties().getUnderlyingProperties().getCharacters());
-		assertEquals(0, xml.getProperties().getExtendedProperties().getUnderlyingProperties().getLines());
+		CTProperties props = xml.getProperties().getExtendedProperties().getUnderlyingProperties();
+		assertEquals("Microsoft Office PowerPoint", props.getApplication());
+		assertEquals(0, props.getCharacters());
+		assertEquals(0, props.getLines());
 		
-		assertEquals(null, xml.getProperties().getCoreProperties().getTitle());
-		assertEquals(null, xml.getProperties().getCoreProperties().getUnderlyingProperties().getSubjectProperty().getValue());
+		CoreProperties cprops = xml.getProperties().getCoreProperties();
+		assertNull(cprops.getTitle());
+		assertNull(cprops.getUnderlyingProperties().getSubjectProperty().getValue());
+		
+		xml.close();
 	}
+    
+    @Test
+    public void testMasterBackground() throws IOException {
+        XMLSlideShow ppt = new XMLSlideShow();
+        XSLFBackground b = ppt.getSlideMasters().get(0).getBackground();
+        b.setFillColor(Color.RED);
+        
+        XSLFSlide sl = ppt.createSlide();
+        XSLFAutoShape as = sl.createAutoShape();
+        as.setAnchor(new Rectangle2D.Double(100,100,100,100));
+        as.setShapeType(ShapeType.CLOUD);
+        
+        XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt);
+        ppt.close();
+        
+        XSLFBackground b2 = ppt2.getSlideMasters().get(0).getBackground();
+        assertEquals(Color.RED, b2.getFillColor());
+        
+        ppt2.close();
+    }
 }

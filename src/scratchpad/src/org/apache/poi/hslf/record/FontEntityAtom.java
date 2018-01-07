@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,15 +14,17 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.StringUtil;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+
+import org.apache.poi.hslf.exceptions.HSLFException;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.StringUtil;
 
 /**
  * This atom corresponds exactly to a Windows Logical Font (LOGFONT) structure.
@@ -34,8 +35,12 @@ import java.io.UnsupportedEncodingException;
  * @author Yegor Kozlov
  */
 
-public class FontEntityAtom extends RecordAtom {
-	/**
+public final class FontEntityAtom extends RecordAtom {
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 1_000_000;
+
+    /**
      * record header
      */
     private byte[] _header;
@@ -54,7 +59,7 @@ public class FontEntityAtom extends RecordAtom {
 		System.arraycopy(source,start,_header,0,8);
 
 		// Grab the record data
-		_recdata = new byte[len-8];
+		_recdata = IOUtils.safelyAllocate(len-8, MAX_RECORD_LENGTH);
 		System.arraycopy(source,start+8,_recdata,0,len-8);
 	}
 
@@ -69,59 +74,71 @@ public class FontEntityAtom extends RecordAtom {
         LittleEndian.putInt(_header, 4, _recdata.length);
     }
 
+    @Override
     public long getRecordType() {
         return RecordTypes.FontEntityAtom.typeID;
     }
 
     /**
      * A null-terminated string that specifies the typeface name of the font.
-     * The length of this string must not exceed 32 characters 
+     * The length of this string must not exceed 32 characters
 	 *  including the null terminator.
      * @return font name
      */
     public String getFontName(){
-        String name = null;
-        try {
-            int i = 0;
-            while(i < 64){
-                //loop until find null-terminated end of the font name
-                if(_recdata[i] == 0 && _recdata[i + 1] == 0) {
-                    name = new String(_recdata, 0, i, "UTF-16LE");
-                    break;
-                }
-                i += 2;
+    	final int maxLen = Math.min(_recdata.length,64);
+        for(int i = 0; i+1 < maxLen; i+=2){
+            //loop until find null-terminated end of the font name
+            if(_recdata[i] == 0 && _recdata[i + 1] == 0 && !isFontNamePremature0terminated(i)) {
+                return StringUtil.getFromUnicodeLE(_recdata, 0, i/2);
             }
-        } catch (UnsupportedEncodingException e){
-            throw new RuntimeException(e.getMessage(), e);
         }
-        return name;
+        return null;
+    }
+    
+    /**
+     * #61881: there seem to be programs out there, which write the 0-termination also
+     * at the beginning of the string. Check if the next two bytes contain a valid ascii char
+     * and correct the _recdata with a '?' char
+     */
+    private boolean isFontNamePremature0terminated(final int index) {
+        if (index > 0) {
+            // for now we only check the first char
+            return false;
+        }
+        
+        if (_recdata.length < index+4) {
+            return false;
+        }
+        
+        final int cp = LittleEndian.getShort(_recdata, index+2);
+        if (!Character.isJavaIdentifierPart(cp)) {
+            return false;
+        }
+        
+        _recdata[index] = '?';
+        return true;
     }
 
     /**
      * Set the name of the font.
-     * The length of this string must not exceed 32 characters 
+     * The length of this string must not exceed 32 characters
 	 *  including the null terminator.
 	 * Will be converted to null-terminated if not already
      * @param name of the font
      */
-    public void setFontName(String name){
-		// Add a null termination if required
-		if(! name.endsWith("\000")) {
-			name = name + "\000";
-		}
-
-		// Ensure it's not now too long
-		if(name.length() > 32) {
-			throw new RuntimeException("The length of the font name, including null termination, must not exceed 32 characters");
-		}
-
-		// Everything's happy, so save the name
-        try {
-            byte[] bytes = name.getBytes("UTF-16LE");
-            System.arraycopy(bytes, 0, _recdata, 0, bytes.length);
-        } catch (UnsupportedEncodingException e){
-            throw new RuntimeException(e.getMessage(), e);
+    public void setFontName(String name) {
+        // Ensure it's not now too long
+        int nameLen = name.length() + (name.endsWith("\u0000") ? 0 : 1);
+        if (nameLen > 32) {
+            throw new HSLFException("The length of the font name, including null termination, must not exceed 32 characters");
         }
+
+        // Everything's happy, so save the name
+        byte[] bytes = StringUtil.getToUnicodeLE(name);
+        System.arraycopy(bytes, 0, _recdata, 0, bytes.length);
+        // null the remaining bytes
+        Arrays.fill(_recdata, 64-bytes.length, 64, (byte)0);
     }
 
     public void setFontIndex(int idx){
@@ -220,7 +237,8 @@ public class FontEntityAtom extends RecordAtom {
     /**
 	 * Write the contents of the record back, so it can be written to disk
 	 */
-	public void writeOut(OutputStream out) throws IOException {
+	@Override
+    public void writeOut(OutputStream out) throws IOException {
 		out.write(_header);
 		out.write(_recdata);
 	}

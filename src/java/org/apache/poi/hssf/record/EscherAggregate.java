@@ -17,62 +17,78 @@
 
 package org.apache.poi.hssf.record;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
-import org.apache.poi.ddf.EscherBoolProperty;
-import org.apache.poi.ddf.EscherClientAnchorRecord;
 import org.apache.poi.ddf.EscherClientDataRecord;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherDgRecord;
-import org.apache.poi.ddf.EscherDggRecord;
-import org.apache.poi.ddf.EscherOptRecord;
-import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherRecordFactory;
 import org.apache.poi.ddf.EscherSerializationListener;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.ddf.EscherSpgrRecord;
 import org.apache.poi.ddf.EscherTextboxRecord;
-import org.apache.poi.hssf.model.AbstractShape;
-import org.apache.poi.hssf.model.CommentShape;
-import org.apache.poi.hssf.model.ConvertAnchor;
-import org.apache.poi.hssf.model.DrawingManager2;
-import org.apache.poi.hssf.model.TextboxShape;
-import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
-import org.apache.poi.hssf.usermodel.HSSFPatriarch;
-import org.apache.poi.hssf.usermodel.HSSFShape;
-import org.apache.poi.hssf.usermodel.HSSFShapeContainer;
-import org.apache.poi.hssf.usermodel.HSSFShapeGroup;
-import org.apache.poi.hssf.usermodel.HSSFTextbox;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.RecordFormatException;
 
 /**
  * This class is used to aggregate the MSODRAWING and OBJ record
  * combinations.  This is necessary due to the bizare way in which
  * these records are serialized.  What happens is that you get a
- * combination of MSODRAWING -> OBJ -> MSODRAWING -> OBJ records
+ * combination of MSODRAWING -&gt; OBJ -&gt; MSODRAWING -&gt; OBJ records
  * but the escher records are serialized _across_ the MSODRAWING
  * records.
  * <p>
  * It gets even worse when you start looking at TXO records.
  * <p>
  * So what we do with this class is aggregate lazily.  That is
- * we don't aggregate the MSODRAWING -> OBJ records unless we
+ * we don't aggregate the MSODRAWING -&gt; OBJ records unless we
  * need to modify them.
- *
- *
- * @author Glen Stampoultzis (glens at apache.org)
+ * <p>
+ * At first document contains 4 types of records which belong to drawing layer.
+ * There are can be such sequence of record:
+ * <p>
+ * DrawingRecord
+ * ContinueRecord
+ * ...
+ * ContinueRecord
+ * ObjRecord | TextObjectRecord
+ * .....
+ * ContinueRecord
+ * ...
+ * ContinueRecord
+ * ObjRecord | TextObjectRecord
+ * NoteRecord
+ * ...
+ * NoteRecord
+ * <p>
+ * To work with shapes we have to read data from Drawing and Continue records into single array of bytes and
+ * build escher(office art) records tree from this array.
+ * Each shape in drawing layer matches corresponding ObjRecord
+ * Each textbox matches corresponding TextObjectRecord
+ * <p>
+ * ObjRecord contains information about shape. Thus each ObjRecord corresponds EscherContainerRecord(SPGR)
+ * <p>
+ * EscherAggrefate contains also NoteRecords
+ * NoteRecords must be serial
  */
-public class EscherAggregate extends AbstractEscherHolderRecord
-{
-    public static final short sid = 9876;
+
+public final class EscherAggregate extends AbstractEscherHolderRecord {
+    public static final short sid = 9876; // not a real sid - dummy value
     private static POILogger log = POILogFactory.getLogger(EscherAggregate.class);
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000_000;
+
 
     public static final short ST_MIN = (short) 0;
     public static final short ST_NOT_PRIMATIVE = ST_MIN;
@@ -280,28 +296,31 @@ public class EscherAggregate extends AbstractEscherHolderRecord
     public static final short ST_TEXTBOX = (short) 202;
     public static final short ST_NIL = (short) 0x0FFF;
 
-    protected HSSFPatriarch patriarch;
-
-    /** Maps shape container objects to their OBJ records */
-    private Map shapeToObj = new HashMap();
-    private DrawingManager2 drawingManager;
-    private short drawingGroupId;
+    /**
+     * Maps shape container objects to their {@link TextObjectRecord} or {@link ObjRecord}
+     */
+    private final Map<EscherRecord, Record> shapeToObj = new HashMap<>();
 
     /**
      * list of "tail" records that need to be serialized after all drawing group records
      */
-    private List tailRec = new ArrayList();
+    private final Map<Integer, NoteRecord> tailRec = new LinkedHashMap<>();
 
-    public EscherAggregate( DrawingManager2 drawingManager )
-    {
-        this.drawingManager = drawingManager;
+    /**
+     * create new EscherAggregate
+     * @param createDefaultTree if true creates base tree of the escher records, see EscherAggregate.buildBaseTree()
+     *                          else return empty escher aggregate
+     */
+    public EscherAggregate(boolean createDefaultTree) {
+        if (createDefaultTree){
+            buildBaseTree();
+        }
     }
 
     /**
-     * @return  Returns the current sid.
+     * @return Returns the current sid.
      */
-    public short getSid()
-    {
+    public short getSid() {
         return sid;
     }
 
@@ -309,585 +328,490 @@ public class EscherAggregate extends AbstractEscherHolderRecord
      * Calculates the string representation of this record.  This is
      * simply a dump of all the records.
      */
-    public String toString()
-    {
-        String nl = System.getProperty( "line.separtor" );
+    public String toString() {
+        String nl = System.getProperty("line.separtor");
 
-        StringBuffer result = new StringBuffer();
-        result.append( '[' ).append( getRecordName() ).append( ']' + nl );
-        for ( Iterator iterator = getEscherRecords().iterator(); iterator.hasNext(); )
-        {
-            EscherRecord escherRecord = (EscherRecord) iterator.next();
-            result.append( escherRecord.toString() );
+        StringBuilder result = new StringBuilder();
+        result.append('[').append(getRecordName()).append(']').append(nl);
+        for (EscherRecord escherRecord : getEscherRecords()) {
+            result.append(escherRecord);
         }
-        result.append( "[/" ).append( getRecordName() ).append( ']' + nl );
+        result.append("[/").append(getRecordName()).append(']').append(nl);
 
         return result.toString();
     }
 
     /**
-     * Collapses the drawing records into an aggregate.
+     * Calculates the xml representation of this record.  This is
+     * simply a dump of all the records.
+     * @param tab - string which must be added before each line (used by default '\t')
+     * @return xml representation of the all aggregated records
      */
-    public static EscherAggregate createAggregate( List records, int locFirstDrawingRecord, DrawingManager2 drawingManager )
-    {
+    public String toXml(String tab) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(tab).append("<").append(getRecordName()).append(">\n");
+        for (EscherRecord escherRecord : getEscherRecords()) {
+            builder.append(escherRecord.toXml(tab + "\t"));
+        }
+        builder.append(tab).append("</").append(getRecordName()).append(">\n");
+        return builder.toString();
+    }
+
+    /**
+     * @param sid - record sid we want to check if it belongs to drawing layer
+     * @return true if record is instance of DrawingRecord or ContinueRecord or ObjRecord or TextObjRecord
+     */
+    private static boolean isDrawingLayerRecord(final short sid) {
+        return sid == DrawingRecord.sid ||
+                sid == ContinueRecord.sid ||
+                sid == ObjRecord.sid ||
+                sid == TextObjectRecord.sid;
+    }
+
+    /**
+     * Collapses the drawing records into an aggregate.
+     * read Drawing, Obj, TxtObj, Note and Continue records into single byte array,
+     * create Escher tree from byte array, create map &lt;EscherRecord, Record&gt;
+     *
+     * @param records - list of all records inside sheet
+     * @param locFirstDrawingRecord - location of the first DrawingRecord inside sheet
+     * @return new EscherAggregate create from all aggregated records which belong to drawing layer
+     */
+    public static EscherAggregate createAggregate(List<RecordBase> records, int locFirstDrawingRecord) {
         // Keep track of any shape records created so we can match them back to the object id's.
         // Textbox objects are also treated as shape objects.
-        final List shapeRecords = new ArrayList();
-        EscherRecordFactory recordFactory = new DefaultEscherRecordFactory()
-        {
-            public EscherRecord createRecord( byte[] data, int offset )
-            {
-                EscherRecord r = super.createRecord( data, offset );
-                if ( r.getRecordId() == EscherClientDataRecord.RECORD_ID || r.getRecordId() == EscherTextboxRecord.RECORD_ID )
-                {
-                    shapeRecords.add( r );
+        final List<EscherRecord> shapeRecords = new ArrayList<>();
+        EscherRecordFactory recordFactory = new DefaultEscherRecordFactory() {
+            public EscherRecord createRecord(byte[] data, int offset) {
+                EscherRecord r = super.createRecord(data, offset);
+                if (r.getRecordId() == EscherClientDataRecord.RECORD_ID || r.getRecordId() == EscherTextboxRecord.RECORD_ID) {
+                    shapeRecords.add(r);
                 }
                 return r;
             }
         };
 
-        // Calculate the size of the buffer
-        EscherAggregate agg = new EscherAggregate(drawingManager);
-        int loc = locFirstDrawingRecord;
-        int dataSize = 0;
-        while ( loc + 1 < records.size()
-                && sid( records, loc ) == DrawingRecord.sid
-                && isObjectRecord( records, loc + 1 ) )
-        {
-            dataSize += ( (DrawingRecord) records.get( loc ) ).getData().length;
-            loc += 2;
-        }
-
         // Create one big buffer
-        byte buffer[] = new byte[dataSize];
-        int offset = 0;
-        loc = locFirstDrawingRecord;
-        while ( loc + 1 < records.size()
-                && sid( records, loc ) == DrawingRecord.sid
-                && isObjectRecord( records, loc + 1 ) )
-        {
-            DrawingRecord drawingRecord = (DrawingRecord) records.get( loc );
-            System.arraycopy( drawingRecord.getData(), 0, buffer, offset, drawingRecord.getData().length );
-            offset += drawingRecord.getData().length;
-            loc += 2;
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        EscherAggregate agg = new EscherAggregate(false);
+        int loc = locFirstDrawingRecord;
+        while (loc + 1 < records.size()
+                && (isDrawingLayerRecord(sid(records, loc)))) {
+            try {
+                if (!(sid(records, loc) == DrawingRecord.sid || sid(records, loc) == ContinueRecord.sid)) {
+                    loc++;
+                    continue;
+                }
+                if (sid(records, loc) == DrawingRecord.sid) {
+                    buffer.write(((DrawingRecord) records.get(loc)).getRecordData());
+                } else {
+                    buffer.write(((ContinueRecord) records.get(loc)).getData());
+                }
+            } catch (IOException e) {
+                throw new RuntimeException("Couldn't get data from drawing/continue records", e);
+            }
+            loc++;
         }
 
         // Decode the shapes
-        //        agg.escherRecords = new ArrayList();
+        // agg.escherRecords = new ArrayList();
         int pos = 0;
-        while ( pos < dataSize )
-        {
-            EscherRecord r = recordFactory.createRecord( buffer, pos );
-            int bytesRead = r.fillFields( buffer, pos, recordFactory );
-            agg.addEscherRecord( r );
+        while (pos < buffer.size()) {
+            EscherRecord r = recordFactory.createRecord(buffer.toByteArray(), pos);
+            int bytesRead = r.fillFields(buffer.toByteArray(), pos, recordFactory);
+            agg.addEscherRecord(r);
             pos += bytesRead;
         }
 
         // Associate the object records with the shapes
-        loc = locFirstDrawingRecord;
+        loc = locFirstDrawingRecord + 1;
         int shapeIndex = 0;
-        agg.shapeToObj = new HashMap();
-        while ( loc + 1 < records.size()
-                && sid( records, loc ) == DrawingRecord.sid
-                && isObjectRecord( records, loc + 1 ) )
-        {
-            Record objRecord = (Record) records.get( loc + 1 );
-            agg.shapeToObj.put( shapeRecords.get( shapeIndex++ ), objRecord );
-            loc += 2;
+        while (loc < records.size()
+                && (isDrawingLayerRecord(sid(records, loc)))) {
+            if (!isObjectRecord(records, loc)) {
+                loc++;
+                continue;
+            }
+            Record objRecord = (Record) records.get(loc);
+            agg.shapeToObj.put(shapeRecords.get(shapeIndex++), objRecord);
+            loc++;
         }
 
-        return agg;
+        // any NoteRecords that follow the drawing block must be aggregated and and saved in the tailRec collection
+        while (loc < records.size()) {
+            if (sid(records, loc) == NoteRecord.sid) {
+                NoteRecord r = (NoteRecord) records.get(loc);
+                agg.tailRec.put(r.getShapeId(), r);
+            } else {
+                break;
+            }
+            loc++;
+        }
 
+        int locLastDrawingRecord = loc;
+        // replace drawing block with the created EscherAggregate
+        records.subList(locFirstDrawingRecord, locLastDrawingRecord).clear();
+        records.add(locFirstDrawingRecord, agg);
+        return agg;
     }
 
     /**
      * Serializes this aggregate to a byte array.  Since this is an aggregate
      * record it will effectively serialize the aggregated records.
      *
-     * @param offset    The offset into the start of the array.
-     * @param data      The byte array to serialize to.
-     * @return          The number of bytes serialized.
+     * @param offset The offset into the start of the array.
+     * @param data   The byte array to serialize to.
+     * @return The number of bytes serialized.
      */
-    public int serialize( int offset, byte[] data )
-    {
-        convertUserModelToRecords();
-
+    public int serialize(int offset, byte[] data) {
         // Determine buffer size
-        List records = getEscherRecords();
-        int size = getEscherRecordSize( records );
+        List <EscherRecord>records = getEscherRecords();
+        int size = getEscherRecordSize(records);
         byte[] buffer = new byte[size];
 
-
         // Serialize escher records into one big data structure and keep note of ending offsets.
-        final List spEndingOffsets = new ArrayList();
-        final List shapes = new ArrayList();
+        final List <Integer>spEndingOffsets = new ArrayList<>();
+        final List <EscherRecord> shapes = new ArrayList<>();
         int pos = 0;
-        for ( Iterator iterator = records.iterator(); iterator.hasNext(); )
-        {
-            EscherRecord e = (EscherRecord) iterator.next();
-            pos += e.serialize( pos, buffer, new EscherSerializationListener()
-            {
-                public void beforeRecordSerialize( int offset, short recordId, EscherRecord record )
-                {
+        for (Object record : records) {
+            EscherRecord e = (EscherRecord) record;
+            pos += e.serialize(pos, buffer, new EscherSerializationListener() {
+                public void beforeRecordSerialize(int offset, short recordId, EscherRecord record) {
                 }
 
-                public void afterRecordSerialize( int offset, short recordId, int size, EscherRecord record )
-                {
-                    if ( recordId == EscherClientDataRecord.RECORD_ID || recordId == EscherTextboxRecord.RECORD_ID )
-                    {
-                        spEndingOffsets.add( new Integer( offset ) );
-                        shapes.add( record );
+                public void afterRecordSerialize(int offset, short recordId, int size, EscherRecord record) {
+                    if (recordId == EscherClientDataRecord.RECORD_ID || recordId == EscherTextboxRecord.RECORD_ID) {
+                        spEndingOffsets.add(offset);
+                        shapes.add(record);
                     }
                 }
-            } );
+            });
         }
-        // todo: fix this
-        shapes.add( 0, null );
-        spEndingOffsets.add( 0, null );
+        shapes.add(0, null);
+        spEndingOffsets.add(0, 0);
 
         // Split escher records into separate MSODRAWING and OBJ, TXO records.  (We don't break on
         // the first one because it's the patriach).
         pos = offset;
-        for ( int i = 1; i < shapes.size(); i++ )
-        {
-            int endOffset = ( (Integer) spEndingOffsets.get( i ) ).intValue() - 1;
+        int writtenEscherBytes = 0;
+        int i;
+        for (i = 1; i < shapes.size(); i++) {
+            int endOffset = spEndingOffsets.get(i) - 1;
             int startOffset;
-            if ( i == 1 )
+            if (i == 1)
                 startOffset = 0;
             else
-                startOffset = ( (Integer) spEndingOffsets.get( i - 1 ) ).intValue();
+                startOffset = spEndingOffsets.get(i - 1);
 
-            // Create and write a new MSODRAWING record
-            DrawingRecord drawing = new DrawingRecord();
             byte[] drawingData = new byte[endOffset - startOffset + 1];
-            System.arraycopy( buffer, startOffset, drawingData, 0, drawingData.length );
-            drawing.setData( drawingData );
-            int temp = drawing.serialize( pos, data );
-            pos += temp;
+            System.arraycopy(buffer, startOffset, drawingData, 0, drawingData.length);
+            pos += writeDataIntoDrawingRecord(drawingData, writtenEscherBytes, pos, data, i);
+
+            writtenEscherBytes += drawingData.length;
 
             // Write the matching OBJ record
-            Record obj = (Record) shapeToObj.get( shapes.get( i ) );
-            temp = obj.serialize( pos, data );
-            pos += temp;
+            Record obj = shapeToObj.get(shapes.get(i));
+            pos += obj.serialize(pos, data);
 
+            if (i == shapes.size() - 1 && endOffset < buffer.length - 1) {
+                drawingData = new byte[buffer.length - endOffset - 1];
+                System.arraycopy(buffer, endOffset + 1, drawingData, 0, drawingData.length);
+                pos += writeDataIntoDrawingRecord(drawingData, writtenEscherBytes, pos, data, i);
+            }
+        }
+        if ((pos - offset) < buffer.length - 1) {
+            byte[] drawingData = new byte[buffer.length - (pos - offset)];
+            System.arraycopy(buffer, (pos - offset), drawingData, 0, drawingData.length);
+            pos += writeDataIntoDrawingRecord(drawingData, writtenEscherBytes, pos, data, i);
         }
 
-        // write records that need to be serialized after all drawing group records
-        for ( int i = 0; i < tailRec.size(); i++ )
-        {
-            Record rec = (Record)tailRec.get(i);
-            pos += rec.serialize( pos, data );
+        for (NoteRecord noteRecord : tailRec.values()) {
+            pos += noteRecord.serialize(pos, data);
         }
-
         int bytesWritten = pos - offset;
-        if ( bytesWritten != getRecordSize() )
-            throw new RecordFormatException( bytesWritten + " bytes written but getRecordSize() reports " + getRecordSize() );
+        if (bytesWritten != getRecordSize())
+            throw new RecordFormatException(bytesWritten + " bytes written but getRecordSize() reports " + getRecordSize());
         return bytesWritten;
     }
 
     /**
-     * How many bytes do the raw escher records contain.
-     * @param records   List of escher records
-     * @return  the number of bytes
+     * @param drawingData - escher records saved into single byte array
+     * @param writtenEscherBytes - count of bytes already saved into drawing records (we should know it to decide create
+     *                           drawing or continue record)
+     * @param pos current position of data array
+     * @param data - array of bytes where drawing records must be serialized
+     * @param i - number of shape, saved into data array
+     * @return offset of data array after serialization
      */
-    private int getEscherRecordSize( List records )
-    {
+    private int writeDataIntoDrawingRecord(byte[] drawingData, int writtenEscherBytes, int pos, byte[] data, int i) {
+        int temp = 0;
+        //First record in drawing layer MUST be DrawingRecord
+        if (writtenEscherBytes + drawingData.length > RecordInputStream.MAX_RECORD_DATA_SIZE && i != 1) {
+            for (int j = 0; j < drawingData.length; j += RecordInputStream.MAX_RECORD_DATA_SIZE) {
+                byte[] buf = new byte[Math.min(RecordInputStream.MAX_RECORD_DATA_SIZE, drawingData.length - j)];
+                System.arraycopy(drawingData, j, buf, 0, Math.min(RecordInputStream.MAX_RECORD_DATA_SIZE, drawingData.length - j));
+                ContinueRecord drawing = new ContinueRecord(buf);
+                temp += drawing.serialize(pos + temp, data);
+            }
+        } else {
+            for (int j = 0; j < drawingData.length; j += RecordInputStream.MAX_RECORD_DATA_SIZE) {
+                if (j == 0) {
+                    DrawingRecord drawing = new DrawingRecord();
+                    byte[] buf = new byte[Math.min(RecordInputStream.MAX_RECORD_DATA_SIZE, drawingData.length - j)];
+                    System.arraycopy(drawingData, j, buf, 0, Math.min(RecordInputStream.MAX_RECORD_DATA_SIZE, drawingData.length - j));
+                    drawing.setData(buf);
+                    temp += drawing.serialize(pos + temp, data);
+                } else {
+                    byte[] buf = new byte[Math.min(RecordInputStream.MAX_RECORD_DATA_SIZE, drawingData.length - j)];
+                    System.arraycopy(drawingData, j, buf, 0, Math.min(RecordInputStream.MAX_RECORD_DATA_SIZE, drawingData.length - j));
+                    ContinueRecord drawing = new ContinueRecord(buf);
+                    temp += drawing.serialize(pos + temp, data);
+                }
+            }
+        }
+        return temp;
+    }
+
+    /**
+     * How many bytes do the raw escher records contain.
+     *
+     * @param records List of escher records
+     * @return the number of bytes
+     */
+    private int getEscherRecordSize(List<EscherRecord> records) {
         int size = 0;
-        for ( Iterator iterator = records.iterator(); iterator.hasNext(); )
-            size += ( (EscherRecord) iterator.next() ).getRecordSize();
+        for (EscherRecord record : records){
+            size += record.getRecordSize();
+        }
         return size;
     }
 
-    protected int getDataSize() {
-    	// TODO - convert this to RecordAggregate
-        convertUserModelToRecords();
-        List records = getEscherRecords();
-        int rawEscherSize = getEscherRecordSize( records );
-        int drawingRecordSize = rawEscherSize + ( shapeToObj.size() ) * 4;
+    /**
+     * @return record size, including header size of obj, text, note, drawing, continue records
+     */
+    public int getRecordSize() {
+        // To determine size of aggregate record we have to know size of each DrawingRecord because if DrawingRecord
+        // is split into several continue records we have to add header size to total EscherAggregate size
+        int continueRecordsHeadersSize = 0;
+        // Determine buffer size
+        List<EscherRecord> records = getEscherRecords();
+        int rawEscherSize = getEscherRecordSize(records);
+        byte[] buffer = IOUtils.safelyAllocate(rawEscherSize, MAX_RECORD_LENGTH);
+        final List<Integer> spEndingOffsets = new ArrayList<>();
+        int pos = 0;
+        for (EscherRecord e : records) {
+            pos += e.serialize(pos, buffer, new EscherSerializationListener() {
+                public void beforeRecordSerialize(int offset, short recordId, EscherRecord record) {
+                }
+
+                public void afterRecordSerialize(int offset, short recordId, int size, EscherRecord record) {
+                    if (recordId == EscherClientDataRecord.RECORD_ID || recordId == EscherTextboxRecord.RECORD_ID) {
+                        spEndingOffsets.add(offset);
+                    }
+                }
+            });
+        }
+        spEndingOffsets.add(0, 0);
+
+        for (int i = 1; i < spEndingOffsets.size(); i++) {
+            if (i == spEndingOffsets.size() - 1 && spEndingOffsets.get(i) < pos) {
+                continueRecordsHeadersSize += 4;
+            }
+            if (spEndingOffsets.get(i) - spEndingOffsets.get(i - 1) <= RecordInputStream.MAX_RECORD_DATA_SIZE) {
+                continue;
+            }
+            continueRecordsHeadersSize += ((spEndingOffsets.get(i) - spEndingOffsets.get(i - 1)) / RecordInputStream.MAX_RECORD_DATA_SIZE) * 4;
+        }
+
+        int drawingRecordSize = rawEscherSize + (shapeToObj.size()) * 4;
+        if (rawEscherSize != 0 && spEndingOffsets.size() == 1/**EMPTY**/) {
+            continueRecordsHeadersSize += 4;
+        }
         int objRecordSize = 0;
-        for ( Iterator iterator = shapeToObj.values().iterator(); iterator.hasNext(); )
-        {
-            Record r = (Record) iterator.next();
+        for (Record r : shapeToObj.values()) {
             objRecordSize += r.getRecordSize();
         }
         int tailRecordSize = 0;
-        for ( Iterator iterator = tailRec.iterator(); iterator.hasNext(); )
-        {
-            Record r = (Record) iterator.next();
-            tailRecordSize += r.getRecordSize();
+        for (NoteRecord noteRecord : tailRec.values()) {
+            tailRecordSize += noteRecord.getRecordSize();
         }
-        return drawingRecordSize + objRecordSize + tailRecordSize - 4;
+        return drawingRecordSize + objRecordSize + tailRecordSize + continueRecordsHeadersSize;
     }
 
     /**
      * Associates an escher record to an OBJ record or a TXO record.
+     * @param r - ClientData or Textbox record
+     * @param objRecord - Obj or TextObj record
      */
-    public Object assoicateShapeToObjRecord( EscherRecord r, Record objRecord )
-    {
-        return shapeToObj.put( r, objRecord );
+    public void associateShapeToObjRecord(EscherRecord r, Record objRecord) {
+        shapeToObj.put(r, objRecord);
     }
 
-    public HSSFPatriarch getPatriarch()
-    {
-        return patriarch;
-    }
-
-    public void setPatriarch( HSSFPatriarch patriarch )
-    {
-        this.patriarch = patriarch;
-    }
-    
     /**
-     * Converts the Records into UserModel
-     *  objects on the bound HSSFPatriarch
+     * Remove echerRecord and associated to it Obj or TextObj record
+     * @param rec - clientData or textbox record to be removed
      */
-    public void convertRecordsToUserModel() {
-    	if(patriarch == null) {
-    		throw new IllegalStateException("Must call setPatriarch() first");
-    	}
-    	
-    	// The top level container ought to have
-    	//  the DgRecord and the container of one container
-    	//  per shape group (patriach overall first)
-    	EscherContainerRecord topContainer = getEscherContainer();
-    	if(topContainer == null) {
-    		return;
-    	}
-    	topContainer = (EscherContainerRecord) 
-    		topContainer.getChildContainers().get(0);
-    	
-    	List tcc = topContainer.getChildContainers();
-    	if(tcc.size() == 0) {
-    		throw new IllegalStateException("No child escher containers at the point that should hold the patriach data, and one container per top level shape!");
-    	}
-    	
-    	// First up, get the patriach position
-    	// This is in the first EscherSpgrRecord, in
-    	//  the first container, with a EscherSRecord too
-    	EscherContainerRecord patriachContainer =
-    		(EscherContainerRecord)tcc.get(0);
-    	EscherSpgrRecord spgr = null;
-    	for(Iterator it = patriachContainer.getChildRecords().iterator(); it.hasNext();) {
-    		EscherRecord r = (EscherRecord)it.next();
-    		if(r instanceof EscherSpgrRecord) {
-    			spgr = (EscherSpgrRecord)r;
-    			break;
-    		}
-    	}
-    	if(spgr != null) {
-    		patriarch.setCoordinates(
-    				spgr.getRectX1(), spgr.getRectY1(),
-    				spgr.getRectX2(), spgr.getRectY2()
-    		);
-    	}
-    	
-    	// Now process the containers for each group
-    	//  and objects
-    	for(int i=1; i<tcc.size(); i++) {
-    		EscherContainerRecord shapeContainer =
-    			(EscherContainerRecord)tcc.get(i);
-    		//System.err.println("\n\n*****\n\n");
-    		//System.err.println(shapeContainer);
-    		
-    		// Could be a group, or a base object
-    		if(shapeContainer.getChildRecords().size() == 1 &&
-    				shapeContainer.getChildContainers().size() == 1) {
-    			// Group
-    			HSSFShapeGroup group =
-    				new HSSFShapeGroup(null, new HSSFClientAnchor());
-    			patriarch.getChildren().add(group);
-    			
-    			EscherContainerRecord groupContainer =
-    				(EscherContainerRecord)shapeContainer.getChild(0);
-    			convertRecordsToUserModel(groupContainer, group);
-    		} else if(shapeContainer.hasChildOfType((short)0xF00D)) {
-    			// TextBox
-    			HSSFTextbox box =
-    				new HSSFTextbox(null, new HSSFClientAnchor());
-    			patriarch.getChildren().add(box);
-    			
-    			convertRecordsToUserModel(shapeContainer, box);
-    		} else if(shapeContainer.hasChildOfType((short)0xF011)) {
-    			// Not yet supporting EscherClientDataRecord stuff
-    		} else {
-    			// Base level
-    			convertRecordsToUserModel(shapeContainer, patriarch);
-    		}
-    	}
-    	
-    	// Now, clear any trace of what records make up
-    	//  the patriarch
-    	// Otherwise, everything will go horribly wrong
-    	//  when we try to write out again....
-//    	clearEscherRecords();
-    	drawingManager.getDgg().setFileIdClusters(new EscherDggRecord.FileIdCluster[0]);
-
-    	// TODO: Support converting our records
-    	//  back into shapes
-    	log.log(POILogger.WARN, "Not processing objects into Patriarch!");
-    }
-    
-    private void convertRecordsToUserModel(EscherContainerRecord shapeContainer, Object model) {
-    	for(Iterator it = shapeContainer.getChildRecords().iterator(); it.hasNext();) {
-    		EscherRecord r = (EscherRecord)it.next();
-    		if(r instanceof EscherSpgrRecord) {
-    			// This may be overriden by a later EscherClientAnchorRecord
-    			EscherSpgrRecord spgr = (EscherSpgrRecord)r;
-    			
-    			if(model instanceof HSSFShapeGroup) {
-    				HSSFShapeGroup g = (HSSFShapeGroup)model;
-    				g.setCoordinates(
-    						spgr.getRectX1(), spgr.getRectY1(),
-    						spgr.getRectX2(), spgr.getRectY2()
-    				);
-    			} else {
-    				throw new IllegalStateException("Got top level anchor but not processing a group");
-    			}
-    		} 
-    		else if(r instanceof EscherClientAnchorRecord) {
-    			EscherClientAnchorRecord car = (EscherClientAnchorRecord)r;
-    			
-    			if(model instanceof HSSFShape) {
-    				HSSFShape g = (HSSFShape)model;
-    				g.getAnchor().setDx1(car.getDx1());
-    				g.getAnchor().setDx2(car.getDx2());
-    				g.getAnchor().setDy1(car.getDy1());
-    				g.getAnchor().setDy2(car.getDy2());
-    			} else {
-    				throw new IllegalStateException("Got top level anchor but not processing a group or shape");
-    			}
-    		}
-    		else if(r instanceof EscherTextboxRecord) {
-    			EscherTextboxRecord tbr = (EscherTextboxRecord)r;
-    			
-    			// Also need to find the TextObjectRecord too
-    			// TODO
-    		}
-    		else if(r instanceof EscherSpRecord) {
-    			// Use flags if needed
-    		}
-    		else if(r instanceof EscherOptRecord) {
-    			// Use properties if needed
-    		}
-    		else {
-    			//System.err.println(r);
-    		}
-    	}
-    }
-    
-    public void clear()
-    {
-        clearEscherRecords();
-        shapeToObj.clear();
-//        lastShapeId = 1024;
+    public void removeShapeToObjRecord(EscherRecord rec) {
+        shapeToObj.remove(rec);
     }
 
-    protected String getRecordName()
-    {
+    /**
+     * @return "ESCHERAGGREGATE"
+     */
+    protected String getRecordName() {
         return "ESCHERAGGREGATE";
     }
 
     // =============== Private methods ========================
 
-    private static boolean isObjectRecord( List records, int loc )
-    {
-        return sid( records, loc ) == ObjRecord.sid || sid( records, loc ) == TextObjectRecord.sid;
+    /**
+     *
+     * @param records list of the record to look inside
+     * @param loc location of the checked record
+     * @return true if record is instance of ObjRecord or TextObjectRecord
+     */
+    private static boolean isObjectRecord(List <RecordBase>records, int loc) {
+        return sid(records, loc) == ObjRecord.sid || sid(records, loc) == TextObjectRecord.sid;
     }
 
-    private void convertUserModelToRecords()
-    {
-        if ( patriarch != null )
-        {
-            shapeToObj.clear();
-            tailRec.clear();
-            clearEscherRecords();
-            if ( patriarch.getChildren().size() != 0 )
-            {
-                convertPatriarch( patriarch );
-                EscherContainerRecord dgContainer = (EscherContainerRecord) getEscherRecord( 0 );
-                EscherContainerRecord spgrContainer = null;
-                for ( int i = 0; i < dgContainer.getChildRecords().size(); i++ )
-                    if ( dgContainer.getChild( i ).getRecordId() == EscherContainerRecord.SPGR_CONTAINER )
-                        spgrContainer = (EscherContainerRecord) dgContainer.getChild( i );
-                convertShapes( patriarch, spgrContainer, shapeToObj );
-
-                patriarch = null;
-            }
-        }
-    }
-
-    private void convertShapes( HSSFShapeContainer parent, EscherContainerRecord escherParent, Map shapeToObj )
-    {
-        if ( escherParent == null ) throw new IllegalArgumentException( "Parent record required" );
-
-        List shapes = parent.getChildren();
-        for ( Iterator iterator = shapes.iterator(); iterator.hasNext(); )
-        {
-            HSSFShape shape = (HSSFShape) iterator.next();
-            if ( shape instanceof HSSFShapeGroup )
-            {
-                convertGroup( (HSSFShapeGroup) shape, escherParent, shapeToObj );
-            }
-            else
-            {
-                AbstractShape shapeModel = AbstractShape.createShape(
-                        shape,
-                        drawingManager.allocateShapeId(drawingGroupId) );
-                shapeToObj.put( findClientData( shapeModel.getSpContainer() ), shapeModel.getObjRecord() );
-                if ( shapeModel instanceof TextboxShape )
-                {
-                    EscherRecord escherTextbox = ( (TextboxShape) shapeModel ).getEscherTextbox();
-                    shapeToObj.put( escherTextbox, ( (TextboxShape) shapeModel ).getTextObjectRecord() );
-                    //                    escherParent.addChildRecord(escherTextbox);
-                    
-                    if ( shapeModel instanceof CommentShape ){
-                        CommentShape comment = (CommentShape)shapeModel;
-                        tailRec.add(comment.getNoteRecord());
-                    }
-
-                }
-                escherParent.addChildRecord( shapeModel.getSpContainer() );
-            }
-        }
-//        drawingManager.newCluster( (short)1 );
-//        drawingManager.newCluster( (short)2 );
-
-    }
-
-    private void convertGroup( HSSFShapeGroup shape, EscherContainerRecord escherParent, Map shapeToObj )
-    {
-        EscherContainerRecord spgrContainer = new EscherContainerRecord();
-        EscherContainerRecord spContainer = new EscherContainerRecord();
-        EscherSpgrRecord spgr = new EscherSpgrRecord();
-        EscherSpRecord sp = new EscherSpRecord();
-        EscherOptRecord opt = new EscherOptRecord();
-        EscherRecord anchor;
-        EscherClientDataRecord clientData = new EscherClientDataRecord();
-
-        spgrContainer.setRecordId( EscherContainerRecord.SPGR_CONTAINER );
-        spgrContainer.setOptions( (short) 0x000F );
-        spContainer.setRecordId( EscherContainerRecord.SP_CONTAINER );
-        spContainer.setOptions( (short) 0x000F );
-        spgr.setRecordId( EscherSpgrRecord.RECORD_ID );
-        spgr.setOptions( (short) 0x0001 );
-        spgr.setRectX1( shape.getX1() );
-        spgr.setRectY1( shape.getY1() );
-        spgr.setRectX2( shape.getX2() );
-        spgr.setRectY2( shape.getY2() );
-        sp.setRecordId( EscherSpRecord.RECORD_ID );
-        sp.setOptions( (short) 0x0002 );
-        int shapeId = drawingManager.allocateShapeId(drawingGroupId);
-        sp.setShapeId( shapeId );
-        if (shape.getAnchor() instanceof HSSFClientAnchor)
-            sp.setFlags( EscherSpRecord.FLAG_GROUP | EscherSpRecord.FLAG_HAVEANCHOR );
-        else
-            sp.setFlags( EscherSpRecord.FLAG_GROUP | EscherSpRecord.FLAG_HAVEANCHOR | EscherSpRecord.FLAG_CHILD );
-        opt.setRecordId( EscherOptRecord.RECORD_ID );
-        opt.setOptions( (short) 0x0023 );
-        opt.addEscherProperty( new EscherBoolProperty( EscherProperties.PROTECTION__LOCKAGAINSTGROUPING, 0x00040004 ) );
-        opt.addEscherProperty( new EscherBoolProperty( EscherProperties.GROUPSHAPE__PRINT, 0x00080000 ) );
-
-        anchor = ConvertAnchor.createAnchor( shape.getAnchor() );
-//        clientAnchor.setCol1( ( (HSSFClientAnchor) shape.getAnchor() ).getCol1() );
-//        clientAnchor.setRow1( (short) ( (HSSFClientAnchor) shape.getAnchor() ).getRow1() );
-//        clientAnchor.setDx1( (short) shape.getAnchor().getDx1() );
-//        clientAnchor.setDy1( (short) shape.getAnchor().getDy1() );
-//        clientAnchor.setCol2( ( (HSSFClientAnchor) shape.getAnchor() ).getCol2() );
-//        clientAnchor.setRow2( (short) ( (HSSFClientAnchor) shape.getAnchor() ).getRow2() );
-//        clientAnchor.setDx2( (short) shape.getAnchor().getDx2() );
-//        clientAnchor.setDy2( (short) shape.getAnchor().getDy2() );
-        clientData.setRecordId( EscherClientDataRecord.RECORD_ID );
-        clientData.setOptions( (short) 0x0000 );
-
-        spgrContainer.addChildRecord( spContainer );
-        spContainer.addChildRecord( spgr );
-        spContainer.addChildRecord( sp );
-        spContainer.addChildRecord( opt );
-        spContainer.addChildRecord( anchor );
-        spContainer.addChildRecord( clientData );
-
-        ObjRecord obj = new ObjRecord();
-        CommonObjectDataSubRecord cmo = new CommonObjectDataSubRecord();
-        cmo.setObjectType( CommonObjectDataSubRecord.OBJECT_TYPE_GROUP );
-        cmo.setObjectId( (short) ( shapeId ) );
-        cmo.setLocked( true );
-        cmo.setPrintable( true );
-        cmo.setAutofill( true );
-        cmo.setAutoline( true );
-        GroupMarkerSubRecord gmo = new GroupMarkerSubRecord();
-        EndSubRecord end = new EndSubRecord();
-        obj.addSubRecord( cmo );
-        obj.addSubRecord( gmo );
-        obj.addSubRecord( end );
-        shapeToObj.put( clientData, obj );
-
-        escherParent.addChildRecord( spgrContainer );
-
-        convertShapes( shape, spgrContainer, shapeToObj );
-
-    }
-
-    private EscherRecord findClientData( EscherContainerRecord spContainer )
-    {
-        for ( Iterator iterator = spContainer.getChildRecords().iterator(); iterator.hasNext(); )
-        {
-            EscherRecord r = (EscherRecord) iterator.next();
-            if ( r.getRecordId() == EscherClientDataRecord.RECORD_ID )
-                return r;
-        }
-        throw new IllegalArgumentException( "Can not find client data record" );
-    }
-
-    private void convertPatriarch( HSSFPatriarch patriarch )
-    {
+    /**
+     * create base tree with such structure:
+     * EscherDgContainer
+     * -EscherSpgrContainer
+     * --EscherSpContainer
+     * ---EscherSpRecord
+     * ---EscherSpgrRecord
+     * ---EscherSpRecord
+     * -EscherDgRecord
+     *
+     * id of DgRecord and SpRecord are empty and must be set later by HSSFPatriarch
+     */
+    private void buildBaseTree() {
         EscherContainerRecord dgContainer = new EscherContainerRecord();
-        EscherDgRecord dg;
         EscherContainerRecord spgrContainer = new EscherContainerRecord();
         EscherContainerRecord spContainer1 = new EscherContainerRecord();
         EscherSpgrRecord spgr = new EscherSpgrRecord();
         EscherSpRecord sp1 = new EscherSpRecord();
+        dgContainer.setRecordId(EscherContainerRecord.DG_CONTAINER);
+        dgContainer.setOptions((short) 0x000F);
+        EscherDgRecord dg = new EscherDgRecord();
+        dg.setRecordId(EscherDgRecord.RECORD_ID);
+        short dgId = 1;
+        dg.setOptions((short) (dgId << 4));
+        dg.setNumShapes(0);
+        dg.setLastMSOSPID(1024);
+        spgrContainer.setRecordId(EscherContainerRecord.SPGR_CONTAINER);
+        spgrContainer.setOptions((short) 0x000F);
+        spContainer1.setRecordId(EscherContainerRecord.SP_CONTAINER);
+        spContainer1.setOptions((short) 0x000F);
+        spgr.setRecordId(EscherSpgrRecord.RECORD_ID);
+        spgr.setOptions((short) 0x0001);    // version
+        spgr.setRectX1(0);
+        spgr.setRectY1(0);
+        spgr.setRectX2(1023);
+        spgr.setRectY2(255);
+        sp1.setRecordId(EscherSpRecord.RECORD_ID);
 
-        dgContainer.setRecordId( EscherContainerRecord.DG_CONTAINER );
-        dgContainer.setOptions( (short) 0x000F );
-        dg = drawingManager.createDgRecord();
-        drawingGroupId = dg.getDrawingGroupId();
-//        dg.setOptions( (short) ( drawingId << 4 ) );
-//        dg.setNumShapes( getNumberOfShapes( patriarch ) );
-//        dg.setLastMSOSPID( 0 );  // populated after all shape id's are assigned.
-        spgrContainer.setRecordId( EscherContainerRecord.SPGR_CONTAINER );
-        spgrContainer.setOptions( (short) 0x000F );
-        spContainer1.setRecordId( EscherContainerRecord.SP_CONTAINER );
-        spContainer1.setOptions( (short) 0x000F );
-        spgr.setRecordId( EscherSpgrRecord.RECORD_ID );
-        spgr.setOptions( (short) 0x0001 );    // version
-        spgr.setRectX1( patriarch.getX1() );
-        spgr.setRectY1( patriarch.getY1() );
-        spgr.setRectX2( patriarch.getX2() );
-        spgr.setRectY2( patriarch.getY2() );
-        sp1.setRecordId( EscherSpRecord.RECORD_ID );
-        sp1.setOptions( (short) 0x0002 );
-        sp1.setShapeId( drawingManager.allocateShapeId(dg.getDrawingGroupId()) );
-        sp1.setFlags( EscherSpRecord.FLAG_GROUP | EscherSpRecord.FLAG_PATRIARCH );
-
-        dgContainer.addChildRecord( dg );
-        dgContainer.addChildRecord( spgrContainer );
-        spgrContainer.addChildRecord( spContainer1 );
-        spContainer1.addChildRecord( spgr );
-        spContainer1.addChildRecord( sp1 );
-
-        addEscherRecord( dgContainer );
+        sp1.setOptions((short) 0x0002);
+        sp1.setVersion((short) 0x2);
+        sp1.setShapeId(-1);
+        sp1.setFlags(EscherSpRecord.FLAG_GROUP | EscherSpRecord.FLAG_PATRIARCH);
+        dgContainer.addChildRecord(dg);
+        dgContainer.addChildRecord(spgrContainer);
+        spgrContainer.addChildRecord(spContainer1);
+        spContainer1.addChildRecord(spgr);
+        spContainer1.addChildRecord(sp1);
+        addEscherRecord(dgContainer);
     }
 
-    /** Retrieve the number of shapes (including the patriarch). */
-//    private int getNumberOfShapes( HSSFPatriarch patriarch )
-//    {
-//        return patriarch.countOfAllChildren();
-//    }
-
-    private static short sid( List records, int loc )
-    {
-        return ( (Record) records.get( loc ) ).getSid();
+    /**
+     * EscherDgContainer
+     * -EscherSpgrContainer
+     * -EscherDgRecord - set id for this record
+     * set id for DgRecord of DgContainer
+     * @param dgId - id which must be set
+     */
+    public void setDgId(short dgId) {
+        EscherContainerRecord dgContainer = getEscherContainer();
+        EscherDgRecord dg = dgContainer.getChildById(EscherDgRecord.RECORD_ID);
+        dg.setOptions((short) (dgId << 4));
     }
 
+    /**
+     * EscherDgContainer
+     * -EscherSpgrContainer
+     * --EscherSpContainer
+     * ---EscherSpRecord -set id for this record
+     * ---***
+     * --***
+     * -EscherDgRecord
+     * set id for the sp record of the first spContainer in main spgrConatiner
+     * @param shapeId - id which must be set
+     */
+    public void setMainSpRecordId(int shapeId) {
+        EscherContainerRecord dgContainer = getEscherContainer();
+        EscherContainerRecord spgrConatiner = dgContainer.getChildById(EscherContainerRecord.SPGR_CONTAINER);
+        EscherContainerRecord spContainer = (EscherContainerRecord) spgrConatiner.getChild(0);
+        EscherSpRecord sp = spContainer.getChildById(EscherSpRecord.RECORD_ID);
+        sp.setShapeId(shapeId);
+    }
 
+    /**
+     * @param records list of records to look into
+     * @param loc - location of the record which sid must be returned
+     * @return sid of the record with selected location
+     */
+    private static short sid(List<RecordBase> records, int loc) {
+        RecordBase record = records.get(loc);
+        if (record instanceof Record) {
+            return ((Record)record).getSid();
+        } else {
+            // Aggregates don't have a sid
+            // We could step into them, but for these needs we don't care
+            return -1;
+        }
+    }
+
+    /**
+     * @return unmodifiable copy of the mapping  of {@link EscherClientDataRecord} and {@link EscherTextboxRecord}
+     * to their {@link TextObjectRecord} or {@link ObjRecord} .
+     * <p>
+     * We need to access it outside of EscherAggregate when building shapes
+     */
+    public Map<EscherRecord, Record> getShapeToObjMapping() {
+        return Collections.unmodifiableMap(shapeToObj);
+    }
+
+    /**
+     * @return unmodifiable copy of tail records. We need to access them when building shapes.
+     *         Every HSSFComment shape has a link to a NoteRecord from the tailRec collection.
+     */
+    public Map<Integer, NoteRecord> getTailRecords() {
+        return Collections.unmodifiableMap(tailRec);
+    }
+
+    /**
+     * @param obj - ObjRecord with id == NoteRecord.id
+     * @return null if note record is not found else returns note record with id == obj.id
+     */
+    public NoteRecord getNoteRecordByObj(ObjRecord obj) {
+        CommonObjectDataSubRecord cod = (CommonObjectDataSubRecord) obj.getSubRecords().get(0);
+        return tailRec.get(cod.getObjectId());
+    }
+
+    /**
+     * Add tail record to existing map
+     * @param note to be added
+     */
+    public void addTailRecord(NoteRecord note) {
+        tailRec.put(note.getShapeId(), note);
+    }
+
+    /**
+     * Remove tail record from the existing map
+     * @param note to be removed
+     */
+    public void removeTailRecord(NoteRecord note) {
+        tailRec.remove(note.getShapeId());
+    }
 }

@@ -17,23 +17,21 @@
 
 package org.apache.poi.hpsf.basic;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 /**
  * Test suite for org.apache.poi.hpsf.basic
- * 
- * @author Josh Micich
  */
-public final class AllPOIHPSFBasicTests {
-    public static Test suite() {
-        TestSuite result = new TestSuite("Tests for org.apache.poi.hpsf.basic");
-        result.addTestSuite(TestBasic.class);
-        result.addTestSuite(TestClassID.class);
-        result.addTestSuite(TestEmptyProperties.class);
-        result.addTestSuite(TestMetaDataIPI.class);
-        result.addTestSuite(TestUnicode.class);
-        result.addTestSuite(TestWrite.class);
-        result.addTestSuite(TestWriteWellKnown.class);
-        return result;
-    }
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+    TestBasic.class,
+    TestClassID.class,
+    TestEmptyProperties.class,
+    TestHPSFBugs.class,
+    TestMetaDataIPI.class,
+    TestUnicode.class,
+    TestWrite.class,
+    TestWriteWellKnown.class    
+})
+public class AllPOIHPSFBasicTests {
 }

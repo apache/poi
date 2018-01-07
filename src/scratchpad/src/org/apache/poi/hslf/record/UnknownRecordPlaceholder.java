@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,10 +14,10 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -31,12 +30,16 @@ import java.io.OutputStream;
  * @author Nick Burch
  */
 
-public class UnknownRecordPlaceholder extends RecordAtom
+public final class UnknownRecordPlaceholder extends RecordAtom
 {
+
+	//arbitrarily selected; may need to increase
+	private static final int MAX_RECORD_LENGTH = 1_000_000;
+
 	private byte[] _contents;
 	private long _type;
 
-	/** 
+	/**
 	 * Create a new holder for a record we don't grok
 	 */
 	protected UnknownRecordPlaceholder(byte[] source, int start, int len) {
@@ -45,7 +48,7 @@ public class UnknownRecordPlaceholder extends RecordAtom
 		if(len < 0) { len = 0; }
 
 		// Treat as an atom, grab and hold everything
-		_contents = new byte[len];
+		_contents = IOUtils.safelyAllocate(len, MAX_RECORD_LENGTH);
 		System.arraycopy(source,start,_contents,0,len);
 		_type = LittleEndian.getUShort(_contents,2);
 	}

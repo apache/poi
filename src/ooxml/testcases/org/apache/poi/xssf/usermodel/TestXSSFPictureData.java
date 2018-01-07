@@ -14,22 +14,27 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.xssf.usermodel;
 
-import junit.framework.TestCase;
-import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.apache.poi.POIXMLDocumentPart;
-import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTDrawing;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 
-import java.util.List;
-import java.util.Arrays;
 import java.io.IOException;
+import java.util.List;
+
+import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.junit.Test;
 
 /**
  * @author Yegor Kozlov
  */
-public class TestXSSFPictureData extends TestCase {
-    public void testRead(){
+public final class TestXSSFPictureData {
+    @Test
+    public void testRead() throws IOException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("WithDrawing.xlsx");
         List<XSSFPictureData> pictures = wb.getAllPictures();
         //wb.getAllPictures() should return the same instance across multiple calls
@@ -37,8 +42,10 @@ public class TestXSSFPictureData extends TestCase {
 
         assertEquals(5, pictures.size());
         String[] ext = {"jpeg", "emf", "png", "emf", "wmf"};
+        String[] mimetype = {"image/jpeg", "image/x-emf", "image/png", "image/x-emf", "image/x-wmf"};
         for (int i = 0; i < pictures.size(); i++) {
             assertEquals(ext[i], pictures.get(i).suggestFileExtension());
+            assertEquals(mimetype[i], pictures.get(i).getMimeType());
         }
 
         int num = pictures.size();
@@ -51,17 +58,19 @@ public class TestXSSFPictureData extends TestCase {
         assertEquals(pictures.size() - 1, idx);
         XSSFPictureData pict = pictures.get(idx);
         assertEquals("jpeg", pict.suggestFileExtension());
-        assertTrue(Arrays.equals(pictureData, pict.getData()));
+        assertArrayEquals(pictureData, pict.getData());
+        wb.close();
     }
 
-    public void testNew(){
+    @Test
+    public void testNew() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
 
-        byte[] jpegData = "test jpeg data".getBytes();
-        byte[] wmfData =  "test wmf data".getBytes();
-        byte[] pngData =  "test png data".getBytes();
+        byte[] jpegData = "test jpeg data".getBytes(LocaleUtil.CHARSET_1252);
+        byte[] wmfData =  "test wmf data".getBytes(LocaleUtil.CHARSET_1252);
+        byte[] pngData =  "test png data".getBytes(LocaleUtil.CHARSET_1252);
 
         List<XSSFPictureData> pictures = wb.getAllPictures();
         assertEquals(0, pictures.size());
@@ -69,36 +78,69 @@ public class TestXSSFPictureData extends TestCase {
         int jpegIdx = wb.addPicture(jpegData, XSSFWorkbook.PICTURE_TYPE_JPEG);
         assertEquals(1, pictures.size());
         assertEquals("jpeg", pictures.get(jpegIdx).suggestFileExtension());
-        assertTrue(Arrays.equals(jpegData, pictures.get(jpegIdx).getData()));
+        assertArrayEquals(jpegData, pictures.get(jpegIdx).getData());
 
         int wmfIdx = wb.addPicture(wmfData, XSSFWorkbook.PICTURE_TYPE_WMF);
         assertEquals(2, pictures.size());
         assertEquals("wmf", pictures.get(wmfIdx).suggestFileExtension());
-        assertTrue(Arrays.equals(wmfData, pictures.get(wmfIdx).getData()));
+        assertArrayEquals(wmfData, pictures.get(wmfIdx).getData());
 
         int pngIdx = wb.addPicture(pngData, XSSFWorkbook.PICTURE_TYPE_PNG);
         assertEquals(3, pictures.size());
         assertEquals("png", pictures.get(pngIdx).suggestFileExtension());
-        assertTrue(Arrays.equals(pngData, pictures.get(pngIdx).getData()));
+        assertArrayEquals(pngData, pictures.get(pngIdx).getData());
 
         //TODO finish usermodel API for XSSFPicture
         XSSFPicture p1 = drawing.createPicture(new XSSFClientAnchor(), jpegIdx);
+        assertNotNull(p1);
         XSSFPicture p2 = drawing.createPicture(new XSSFClientAnchor(), wmfIdx);
+        assertNotNull(p2);
         XSSFPicture p3 = drawing.createPicture(new XSSFClientAnchor(), pngIdx);
+        assertNotNull(p3);
 
         //check that the added pictures are accessible after write
-        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
-        List<XSSFPictureData> pictures2 = wb.getAllPictures();
+        XSSFWorkbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        List<XSSFPictureData> pictures2 = wbBack.getAllPictures();
         assertEquals(3, pictures2.size());
 
         assertEquals("jpeg", pictures2.get(jpegIdx).suggestFileExtension());
-        assertTrue(Arrays.equals(jpegData, pictures2.get(jpegIdx).getData()));
+        assertArrayEquals(jpegData, pictures2.get(jpegIdx).getData());
 
         assertEquals("wmf", pictures2.get(wmfIdx).suggestFileExtension());
-        assertTrue(Arrays.equals(wmfData, pictures2.get(wmfIdx).getData()));
+        assertArrayEquals(wmfData, pictures2.get(wmfIdx).getData());
 
         assertEquals("png", pictures2.get(pngIdx).suggestFileExtension());
-        assertTrue(Arrays.equals(pngData, pictures2.get(pngIdx).getData()));
+        assertArrayEquals(pngData, pictures2.get(pngIdx).getData());
+        wbBack.close();
+        wb.close();
+    }
 
+    /**
+     * Bug 53568:  XSSFPicture.getPictureData() can return null.
+     */
+    @Test
+    public void test53568() throws IOException {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("53568.xlsx");
+        List<XSSFPictureData> pictures = wb.getAllPictures();
+        assertNotNull(pictures);
+        assertEquals(4, pictures.size());
+
+        XSSFSheet sheet1 = wb.getSheetAt(0);
+        List<XSSFShape> shapes1 = sheet1.createDrawingPatriarch().getShapes();
+        assertNotNull(shapes1);
+        assertEquals(5, shapes1.size());
+        
+        for(int i = 0; i < wb.getNumberOfSheets(); i++){
+            XSSFSheet sheet = wb.getSheetAt(i);
+            XSSFDrawing drawing = sheet.createDrawingPatriarch();
+            for(XSSFShape shape : drawing.getShapes()){
+                if(shape instanceof XSSFPicture){
+                    XSSFPicture pic = (XSSFPicture)shape;
+                    XSSFPictureData picData = pic.getPictureData();
+                    assertNotNull(picData);
+                }
+            }
+        }
+        wb.close();
     }
 }

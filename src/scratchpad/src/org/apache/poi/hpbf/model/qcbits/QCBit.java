@@ -14,28 +14,29 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hpbf.model.qcbits;
 
 /**
  * Parent of all Quill CONTENTS bits
  */
 public abstract class QCBit {
-	protected String thingType;
-	protected String bitType;
-	protected byte[] data;
-	
-	protected int optA;
-	protected int optB;
-	protected int optC;
-	
-	protected int dataOffset;
-	
+	private String thingType;
+	private String bitType;
+	private byte[] data;
+
+	private int optA;
+	private int optB;
+	private int optC;
+
+	private int dataOffset;
+
 	public QCBit(String thingType, String bitType, byte[] data) {
 		this.thingType = thingType;
 		this.bitType = bitType;
-		this.data = data;
+		this.data = data.clone();
 	}
-	
+
 	/**
 	 * Returns the type of the thing, eg TEXT, FONT
 	 *  or TOKN
@@ -46,7 +47,10 @@ public abstract class QCBit {
 	 *  or PLC
 	 */
 	public String getBitType() { return bitType; }
-	public byte[] getData() { return data; }
+	public final byte[] getData() { return data; }
+	protected final void setData(byte data[]) {
+	    this.data = data.clone();
+	}
 
 	public int getOptA() {
 		return optA;
@@ -75,7 +79,7 @@ public abstract class QCBit {
 	public void setDataOffset(int offset) {
 		this.dataOffset = offset;
 	}
-	
+
 	public int getLength() {
 		return data.length;
 	}

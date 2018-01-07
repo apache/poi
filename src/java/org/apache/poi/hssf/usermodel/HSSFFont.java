@@ -15,29 +15,35 @@
    limitations under the License.
 ==================================================================== */
 
-
-/*
- * HSSFFont.java
- *
- * Created on December 9, 2001, 10:34 AM
- */
 package org.apache.poi.hssf.usermodel;
 
 import org.apache.poi.hssf.record.FontRecord;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Font;
 
 /**
  * Represents a Font used in a workbook.
- *
- * @version 1.0-pre
- * @author  Andrew C. Oliver
+ * 
  * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createFont()
  * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getFontAt(short)
  * @see org.apache.poi.hssf.usermodel.HSSFCellStyle#setFont(HSSFFont)
  */
+public final class HSSFFont implements Font {
 
-public class HSSFFont implements Font
-{
+    /**
+     * Normal boldness (not bold)
+     */
+    final static short BOLDWEIGHT_NORMAL = 0x190;
+
+    /**
+     * Bold boldness (bold)
+     */
+    final static short BOLDWEIGHT_BOLD = 0x2bc;
+
+    /**
+     * Arial font
+     */
+    public final static String FONT_ARIAL = "Arial";
 
 
     private FontRecord         font;
@@ -60,7 +66,6 @@ public class HSSFFont implements Font
     public void setFontName(String name)
     {
         font.setFontName(name);
-        font.setFontNameLength(( byte ) name.length());
     }
 
     /**
@@ -194,29 +199,33 @@ public class HSSFFont implements Font
     {
         return font.getColorPaletteIndex();
     }
-
+    
     /**
-     * set the boldness to use
-     * @param boldweight
-     * @see #BOLDWEIGHT_NORMAL
-     * @see #BOLDWEIGHT_BOLD
+     * get the color value for the font
      */
-
-    public void setBoldweight(short boldweight)
+    public HSSFColor getHSSFColor(HSSFWorkbook wb)
     {
-        font.setBoldWeight(boldweight);
+       HSSFPalette pallette = wb.getCustomPalette();
+       return pallette.getColor( getColor() );
     }
-
+    
     /**
-     * get the boldness to use
-     * @return boldweight
-     * @see #BOLDWEIGHT_NORMAL
-     * @see #BOLDWEIGHT_BOLD
+     * sets the font to be bold or not
      */
-
-    public short getBoldweight()
+    public void setBold(boolean bold)
     {
-        return font.getBoldWeight();
+        if (bold)
+            font.setBoldWeight(BOLDWEIGHT_BOLD);
+        else
+            font.setBoldWeight(BOLDWEIGHT_NORMAL);
+    }
+    
+    /**
+     * get if the font is bold or not
+     */
+    public boolean getBold()
+    {
+        return font.getBoldWeight() == BOLDWEIGHT_BOLD;
     }
 
     /**
@@ -283,9 +292,29 @@ public class HSSFFont implements Font
      * @see #DEFAULT_CHARSET
      * @see #SYMBOL_CHARSET
      */
-    public byte getCharSet()
+    public int getCharSet()
     {
-        return font.getCharset();
+        byte charset = font.getCharset();
+        if(charset >= 0) {
+           return charset;
+        } else {
+           return charset + 256;
+        }
+    }
+
+    /**
+     * set character-set to use.
+     * @see #ANSI_CHARSET
+     * @see #DEFAULT_CHARSET
+     * @see #SYMBOL_CHARSET
+     */
+    public void setCharSet(int charset)
+    {
+        byte cs = (byte)charset;
+        if(charset > 127) {
+           cs = (byte)(charset-256);
+        }
+        setCharSet(cs);
     }
 
     /**

@@ -16,17 +16,125 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
+import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import javax.xml.namespace.QName;
+
+import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.POIXMLException;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHdrFtr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTNumbering;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtBlock;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.HdrDocument;
 
 /**
  * Sketch of XWPF header class
  */
 public class XWPFHeader extends XWPFHeaderFooter {
-	public XWPFHeader() {
-		super();
-	}
-	public XWPFHeader(CTHdrFtr hdrFtr) {
-		super(hdrFtr);
-	}
-	
-}
+    public XWPFHeader() {
+        super();
+    }
+
+    /**
+     * @since POI 3.14-Beta1
+     */
+    public XWPFHeader(POIXMLDocumentPart parent, PackagePart part) throws IOException {
+        super(parent, part);
+    }
+
+    public XWPFHeader(XWPFDocument doc, CTHdrFtr hdrFtr) {
+        super(doc, hdrFtr);
+        XmlCursor cursor = headerFooter.newCursor();
+        cursor.selectPath("./*");
+        while (cursor.toNextSelection()) {
+            XmlObject o = cursor.getObject();
+            if (o instanceof CTP) {
+                XWPFParagraph p = new XWPFParagraph((CTP) o, this);
+                paragraphs.add(p);
+            }
+            if (o instanceof CTTbl) {
+                XWPFTable t = new XWPFTable((CTTbl) o, this);
+                tables.add(t);
+            }
+        }
+        cursor.dispose();
+    }
+
+    /**
+     * save and commit footer
+     */
+    @Override
+    protected void commit() throws IOException {
+        XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
+        xmlOptions.setSaveSyntheticDocumentElement(new QName(CTNumbering.type.getName().getNamespaceURI(), "hdr"));
+        PackagePart part = getPackagePart();
+        OutputStream out = part.getOutputStream();
+        super._getHdrFtr().save(out, xmlOptions);
+        out.close();
+    }
+
+    /**
+     * reads the document
+     *
+     * @throws IOException
+     */
+    @Override
+    protected void onDocumentRead() throws IOException {
+        super.onDocumentRead();
+        HdrDocument hdrDocument = null;
+        InputStream is = null;
+        try {
+            is = getPackagePart().getInputStream();
+            hdrDocument = HdrDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
+            headerFooter = hdrDocument.getHdr();
+            // parse the document with cursor and add
+            // the XmlObject to its lists
+            XmlCursor cursor = headerFooter.newCursor();
+            cursor.selectPath("./*");
+            while (cursor.toNextSelection()) {
+                XmlObject o = cursor.getObject();
+                if (o instanceof CTP) {
+                    XWPFParagraph p = new XWPFParagraph((CTP) o, this);
+                    paragraphs.add(p);
+                    bodyElements.add(p);
+                }
+                if (o instanceof CTTbl) {
+                    XWPFTable t = new XWPFTable((CTTbl) o, this);
+                    tables.add(t);
+                    bodyElements.add(t);
+                }
+                if (o instanceof CTSdtBlock) {
+                    XWPFSDT c = new XWPFSDT((CTSdtBlock) o, this);
+                    bodyElements.add(c);
+                }
+            }
+            cursor.dispose();
+        } catch (XmlException e) {
+            throw new POIXMLException(e);
+        } finally {
+            if (is != null) {
+                is.close();
+            }
+        }
+    }
+
+    /**
+     * get the PartType of the body
+     *
+     * @see org.apache.poi.xwpf.usermodel.IBody#getPartType()
+     */
+    public BodyType getPartType() {
+        return BodyType.HEADER;
+    }
+}//end class

@@ -18,170 +18,134 @@
 package org.apache.poi.ss.formula;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.poi.hssf.record.formula.AddPtg;
-import org.apache.poi.hssf.record.formula.ConcatPtg;
-import org.apache.poi.hssf.record.formula.DividePtg;
-import org.apache.poi.hssf.record.formula.EqualPtg;
-import org.apache.poi.hssf.record.formula.ExpPtg;
-import org.apache.poi.hssf.record.formula.FuncPtg;
-import org.apache.poi.hssf.record.formula.FuncVarPtg;
-import org.apache.poi.hssf.record.formula.GreaterEqualPtg;
-import org.apache.poi.hssf.record.formula.GreaterThanPtg;
-import org.apache.poi.hssf.record.formula.LessEqualPtg;
-import org.apache.poi.hssf.record.formula.LessThanPtg;
-import org.apache.poi.hssf.record.formula.MultiplyPtg;
-import org.apache.poi.hssf.record.formula.NotEqualPtg;
-import org.apache.poi.hssf.record.formula.OperationPtg;
-import org.apache.poi.hssf.record.formula.PercentPtg;
-import org.apache.poi.hssf.record.formula.PowerPtg;
-import org.apache.poi.hssf.record.formula.Ptg;
-import org.apache.poi.hssf.record.formula.RangePtg;
-import org.apache.poi.hssf.record.formula.SubtractPtg;
-import org.apache.poi.hssf.record.formula.UnaryMinusPtg;
-import org.apache.poi.hssf.record.formula.UnaryPlusPtg;
-import org.apache.poi.hssf.record.formula.eval.AddEval;
-import org.apache.poi.hssf.record.formula.eval.ConcatEval;
-import org.apache.poi.hssf.record.formula.eval.DivideEval;
-import org.apache.poi.hssf.record.formula.eval.EqualEval;
-import org.apache.poi.hssf.record.formula.eval.FuncVarEval;
-import org.apache.poi.hssf.record.formula.eval.GreaterEqualEval;
-import org.apache.poi.hssf.record.formula.eval.GreaterThanEval;
-import org.apache.poi.hssf.record.formula.eval.LessEqualEval;
-import org.apache.poi.hssf.record.formula.eval.LessThanEval;
-import org.apache.poi.hssf.record.formula.eval.MultiplyEval;
-import org.apache.poi.hssf.record.formula.eval.NotEqualEval;
-import org.apache.poi.hssf.record.formula.eval.OperationEval;
-import org.apache.poi.hssf.record.formula.eval.PercentEval;
-import org.apache.poi.hssf.record.formula.eval.PowerEval;
-import org.apache.poi.hssf.record.formula.eval.RangeEval;
-import org.apache.poi.hssf.record.formula.eval.SubtractEval;
-import org.apache.poi.hssf.record.formula.eval.UnaryMinusEval;
-import org.apache.poi.hssf.record.formula.eval.UnaryPlusEval;
+import org.apache.poi.ss.formula.functions.FreeRefFunction;
+import org.apache.poi.ss.formula.ptg.AbstractFunctionPtg;
+import org.apache.poi.ss.formula.ptg.AddPtg;
+import org.apache.poi.ss.formula.ptg.ConcatPtg;
+import org.apache.poi.ss.formula.ptg.DividePtg;
+import org.apache.poi.ss.formula.ptg.EqualPtg;
+import org.apache.poi.ss.formula.ptg.GreaterEqualPtg;
+import org.apache.poi.ss.formula.ptg.GreaterThanPtg;
+import org.apache.poi.ss.formula.ptg.IntersectionPtg;
+import org.apache.poi.ss.formula.ptg.LessEqualPtg;
+import org.apache.poi.ss.formula.ptg.LessThanPtg;
+import org.apache.poi.ss.formula.ptg.MultiplyPtg;
+import org.apache.poi.ss.formula.ptg.NotEqualPtg;
+import org.apache.poi.ss.formula.ptg.OperationPtg;
+import org.apache.poi.ss.formula.ptg.PercentPtg;
+import org.apache.poi.ss.formula.ptg.PowerPtg;
+import org.apache.poi.ss.formula.ptg.RangePtg;
+import org.apache.poi.ss.formula.ptg.SubtractPtg;
+import org.apache.poi.ss.formula.ptg.UnaryMinusPtg;
+import org.apache.poi.ss.formula.ptg.UnaryPlusPtg;
+import org.apache.poi.ss.formula.eval.ConcatEval;
+import org.apache.poi.ss.formula.eval.FunctionEval;
+import org.apache.poi.ss.formula.eval.IntersectionEval;
+import org.apache.poi.ss.formula.eval.PercentEval;
+import org.apache.poi.ss.formula.eval.RangeEval;
+import org.apache.poi.ss.formula.eval.RelationalOperationEval;
+import org.apache.poi.ss.formula.eval.TwoOperandNumericOperation;
+import org.apache.poi.ss.formula.eval.UnaryMinusEval;
+import org.apache.poi.ss.formula.eval.UnaryPlusEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.function.FunctionMetadataRegistry;
+import org.apache.poi.ss.formula.functions.ArrayFunction;
+import org.apache.poi.ss.formula.functions.Function;
+import org.apache.poi.ss.formula.functions.Indirect;
 
 /**
  * This class creates <tt>OperationEval</tt> instances to help evaluate <tt>OperationPtg</tt>
  * formula tokens.
- * 
+ *
  * @author Josh Micich
  */
 final class OperationEvaluatorFactory {
-	private static final Class[] OPERATION_CONSTRUCTOR_CLASS_ARRAY = new Class[] { Ptg.class };
-	// TODO - use singleton instances directly instead of reflection
-	private static final Map _constructorsByPtgClass = initialiseConstructorsMap();
-	private static final Map _instancesByPtgClass = initialiseInstancesMap();
-	
+
+	private static final Map<OperationPtg, Function> _instancesByPtgClass = initialiseInstancesMap();
+
 	private OperationEvaluatorFactory() {
 		// no instances of this class
 	}
-	
-	private static Map initialiseConstructorsMap() {
-		Map m = new HashMap(32);
-		add(m, ConcatPtg.class, ConcatEval.class);
-		add(m, FuncPtg.class, FuncVarEval.class);
-		add(m, FuncVarPtg.class, FuncVarEval.class);
-		return m;
-	}
-	private static Map initialiseInstancesMap() {
-		Map m = new HashMap(32);
-		add(m, EqualPtg.class, EqualEval.instance);
-		add(m, GreaterEqualPtg.class, GreaterEqualEval.instance);
-		add(m, GreaterThanPtg.class, GreaterThanEval.instance);
-		add(m, LessEqualPtg.class, LessEqualEval.instance);
-		add(m, LessThanPtg.class, LessThanEval.instance);
-		add(m, NotEqualPtg.class, NotEqualEval.instance);
 
-		add(m, AddPtg.class, AddEval.instance);
-		add(m, DividePtg.class, DivideEval.instance);
-		add(m, MultiplyPtg.class, MultiplyEval.instance);
-		add(m, PercentPtg.class, PercentEval.instance);
-		add(m, PowerPtg.class, PowerEval.instance);
-		add(m, SubtractPtg.class, SubtractEval.instance);
-		add(m, UnaryMinusPtg.class, UnaryMinusEval.instance);
-		add(m, UnaryPlusPtg.class, UnaryPlusEval.instance);
-		add(m, RangePtg.class, RangeEval.instance);
+	private static Map<OperationPtg, Function> initialiseInstancesMap() {
+		Map<OperationPtg, Function> m = new HashMap<>(32);
+
+		put(m, EqualPtg.instance, RelationalOperationEval.EqualEval);
+		put(m, GreaterEqualPtg.instance, RelationalOperationEval.GreaterEqualEval);
+		put(m, GreaterThanPtg.instance, RelationalOperationEval.GreaterThanEval);
+		put(m, LessEqualPtg.instance, RelationalOperationEval.LessEqualEval);
+		put(m, LessThanPtg.instance, RelationalOperationEval.LessThanEval);
+		put(m, NotEqualPtg.instance, RelationalOperationEval.NotEqualEval);
+
+		put(m, ConcatPtg.instance, ConcatEval.instance);
+		put(m, AddPtg.instance, TwoOperandNumericOperation.AddEval);
+		put(m, DividePtg.instance, TwoOperandNumericOperation.DivideEval);
+		put(m, MultiplyPtg.instance, TwoOperandNumericOperation.MultiplyEval);
+		put(m, PercentPtg.instance, PercentEval.instance);
+		put(m, PowerPtg.instance, TwoOperandNumericOperation.PowerEval);
+		put(m, SubtractPtg.instance, TwoOperandNumericOperation.SubtractEval);
+		put(m, UnaryMinusPtg.instance, UnaryMinusEval.instance);
+		put(m, UnaryPlusPtg.instance, UnaryPlusEval.instance);
+		put(m, RangePtg.instance, RangeEval.instance);
+		put(m, IntersectionPtg.instance, IntersectionEval.instance);
 		return m;
 	}
 
-	private static void add(Map m, Class ptgClass, OperationEval evalInstance) {
-		if(!Ptg.class.isAssignableFrom(ptgClass)) {
-			throw new IllegalArgumentException("Expected Ptg subclass");
+	private static void put(Map<OperationPtg, Function> m, OperationPtg ptgKey,
+			Function instance) {
+		// make sure ptg has single private constructor because map lookups assume singleton keys
+		Constructor<?>[] cc = ptgKey.getClass().getDeclaredConstructors();
+		if (cc.length > 1 || !Modifier.isPrivate(cc[0].getModifiers())) {
+			throw new RuntimeException("Failed to verify instance ("
+					+ ptgKey.getClass().getName() + ") is a singleton.");
 		}
-		m.put(ptgClass, evalInstance);
-	}
-
-	private static void add(Map m, Class ptgClass, Class evalClass) {
-		// perform some validation now, to keep later exception handlers simple
-		if(!Ptg.class.isAssignableFrom(ptgClass)) {
-			throw new IllegalArgumentException("Expected Ptg subclass");
-		}
-		
-		if(!OperationEval.class.isAssignableFrom(evalClass)) {
-			throw new IllegalArgumentException("Expected OperationEval subclass");
-		}
-		if (!Modifier.isPublic(evalClass.getModifiers())) {
-			throw new RuntimeException("Eval class must be public");
-		}
-		if (Modifier.isAbstract(evalClass.getModifiers())) {
-			throw new RuntimeException("Eval class must not be abstract");
-		}
-		
-		Constructor constructor;
-		try {
-			constructor = evalClass.getDeclaredConstructor(OPERATION_CONSTRUCTOR_CLASS_ARRAY);
-		} catch (NoSuchMethodException e) {
-			throw new RuntimeException("Missing constructor");
-		}
-		if (!Modifier.isPublic(constructor.getModifiers())) {
-			throw new RuntimeException("Eval constructor must be public");
-		}
-		m.put(ptgClass, constructor);
+		m.put(ptgKey, instance);
 	}
 
 	/**
 	 * returns the OperationEval concrete impl instance corresponding
 	 * to the supplied operationPtg
 	 */
-	public static OperationEval create(OperationPtg ptg) {
+	public static ValueEval evaluate(OperationPtg ptg, ValueEval[] args,
+			OperationEvaluationContext ec) {
 		if(ptg == null) {
 			throw new IllegalArgumentException("ptg must not be null");
 		}
-		Object result;
-		
-		Class ptgClass = ptg.getClass();
-		
-		result = _instancesByPtgClass.get(ptgClass);
-		if (result != null) {
-			return (OperationEval) result;
-		}
-		
-		
-		Constructor constructor = (Constructor) _constructorsByPtgClass.get(ptgClass);
-		if(constructor == null) {
-			if(ptgClass == ExpPtg.class) {
-				// ExpPtg is used for array formulas and shared formulas.
-				// it is currently unsupported, and may not even get implemented here
-				throw new RuntimeException("ExpPtg currently not supported");
+		Function result = _instancesByPtgClass.get(ptg);
+		FreeRefFunction udfFunc = null;
+		if (result == null) {
+			if (ptg instanceof AbstractFunctionPtg) {
+				AbstractFunctionPtg fptg = (AbstractFunctionPtg)ptg;
+				int functionIndex = fptg.getFunctionIndex();
+				switch (functionIndex) {
+					case FunctionMetadataRegistry.FUNCTION_INDEX_INDIRECT:
+						udfFunc = Indirect.instance;
+						break;
+					case FunctionMetadataRegistry.FUNCTION_INDEX_EXTERNAL:
+						udfFunc = UserDefinedFunction.instance;
+						break;
+					default:
+						result = FunctionEval.getBasicFunction(functionIndex);
+						break;
+				}
 			}
-			throw new RuntimeException("Unexpected operation ptg class (" + ptgClass.getName() + ")");
 		}
-		
-		Object[] initargs = { ptg };
-		try {
-			result = constructor.newInstance(initargs);
-		} catch (IllegalArgumentException e) {
-			throw new RuntimeException(e);
-		} catch (InstantiationException e) {
-			throw new RuntimeException(e);
-		} catch (IllegalAccessException e) {
-			throw new RuntimeException(e);
-		} catch (InvocationTargetException e) {
-			throw new RuntimeException(e);
+		if (result != null) {
+			EvaluationSheet evalSheet = ec.getWorkbook().getSheet(ec.getSheetIndex());
+			EvaluationCell evalCell = evalSheet.getCell(ec.getRowIndex(), ec.getColumnIndex());
+
+		    if (evalCell != null && (evalCell.isPartOfArrayFormulaGroup() || ec.isArraymode()) && result instanceof ArrayFunction)
+		        return ((ArrayFunction) result).evaluateArray(args, ec.getRowIndex(), ec.getColumnIndex());
+		                
+			return  result.evaluate(args, ec.getRowIndex(), ec.getColumnIndex());
+		} else if (udfFunc != null){
+			return  udfFunc.evaluate(args, ec);
 		}
-		return (OperationEval) result;
+
+		throw new RuntimeException("Unexpected operation ptg class (" + ptg.getClass().getName() + ")");
 	}
 }

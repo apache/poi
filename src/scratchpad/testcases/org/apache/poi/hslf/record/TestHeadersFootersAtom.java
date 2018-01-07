@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,28 +14,28 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.record;
 
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertArrayEquals;
+
 import java.io.ByteArrayOutputStream;
-import java.util.Arrays;
+
+import junit.framework.TestCase;
 
 /**
  * Tests that {@link HeadersFootersAtom} works properly
  *
  * @author Yegor Kozlov
  */
-public class TestHeadersFootersAtom extends TestCase {
+public final class TestHeadersFootersAtom extends TestCase {
 	// From a real file
-	private byte[] data = new byte[] {
+	private final byte[] data = new byte[] {
             0x00, 0x00, (byte)0xDA, 0x0F, 0x04, 0x00, 0x00, 00,
             0x00, 0x00, 0x23, 0x00 };
 
-    public void testRead() throws Exception {
+    public void testRead() {
 		HeadersFootersAtom record = new HeadersFootersAtom(data, 0, data.length);
 		assertEquals(RecordTypes.HeadersFootersAtom.typeID, record.getRecordType());
 
@@ -57,7 +56,7 @@ public class TestHeadersFootersAtom extends TestCase {
 		record.writeOut(baos);
 		byte[] b = baos.toByteArray();
 
-		assertTrue(Arrays.equals(data, b));
+		assertArrayEquals(data, b);
 	}
 
     public void testNewRecord() throws Exception {
@@ -70,10 +69,10 @@ public class TestHeadersFootersAtom extends TestCase {
         record.writeOut(baos);
         byte[] b = baos.toByteArray();
 
-        assertTrue(Arrays.equals(data, b));
+        assertArrayEquals(data, b);
     }
 
-    public void testFlags() throws Exception {
+    public void testFlags() {
         HeadersFootersAtom record = new HeadersFootersAtom();
 
         //in a new record all the bits are 0
@@ -90,6 +89,5 @@ public class TestHeadersFootersAtom extends TestCase {
 
         record.setFlag(HeadersFootersAtom.fHasTodayDate, false);
         assertFalse(record.getFlag(HeadersFootersAtom.fHasTodayDate));
-
     }
 }

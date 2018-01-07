@@ -14,45 +14,59 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.util;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Random;
 
 /**
- * Interface for creating temporary files.  Collects them all into one directory.
- *
- * @author Glen Stampoultzis
+ * Interface for creating temporary files. Collects them all into one directory by default.
  */
-public class TempFile
-{
-    static File dir;
-    static Random rnd = new Random();
+public final class TempFile {
+    /** The strategy used by {@link #createTempFile(String, String)} to create the temporary files. */
+    private static TempFileCreationStrategy strategy = new DefaultTempFileCreationStrategy();
 
-    /**
-     * Creates a temporary file.  Files are collected into one directory and by default are
-     * deleted on exit from the VM.  Files can be kept by defining the system property
-     * <code>poi.keep.tmp.files</code>.
-     * <p>
-     * Dont forget to close all files or it might not be possible to delete them.
-     */
-    public static File createTempFile(String prefix, String suffix) throws IOException
-    {
-        if (dir == null)
-        {
-            dir = new File(System.getProperty("java.io.tmpdir"), "poifiles");
-            dir.mkdir();
-            if (System.getProperty("poi.keep.tmp.files") == null)
-                dir.deleteOnExit();
-        }
-
-        File newFile = new File(dir, prefix + rnd.nextInt() + suffix);
-        if (System.getProperty("poi.keep.tmp.files") == null)
-            newFile.deleteOnExit();
-        return newFile;
+    /** Define a constant for this property as it is sometimes mistypes as "tempdir" otherwise */
+    public static final String JAVA_IO_TMPDIR = "java.io.tmpdir";
+    
+    private TempFile() {
+        // no instances of this class
     }
 
-
-
+    /**
+     * Configures the strategy used by {@link #createTempFile(String, String)} to create the temporary files.
+     *
+     * @param strategy The new strategy to be used to create the temporary files.
+     * 
+     * @throws IllegalArgumentException When the given strategy is <code>null</code>.
+     */
+    public static void setTempFileCreationStrategy(TempFileCreationStrategy strategy) {
+        if (strategy == null) {
+            throw new IllegalArgumentException("strategy == null");
+        }
+        TempFile.strategy = strategy;
+    }
+    
+    /**
+     * Creates a new and empty temporary file. By default, files are collected into one directory and are
+     * deleted on exit from the VM, although they can be kept by defining the system property
+     * <code>poi.keep.tmp.files</code> (see {@link DefaultTempFileCreationStrategy}).
+     * <p>
+     * Don't forget to close all files or it might not be possible to delete them.
+     *
+     * @param prefix The prefix to be used to generate the name of the temporary file.
+     * @param suffix The suffix to be used to generate the name of the temporary file.
+     * 
+     * @return The path to the newly created and empty temporary file.
+     * 
+     * @throws IOException If no temporary file could be created.
+     */
+    public static File createTempFile(String prefix, String suffix) throws IOException {
+        return strategy.createTempFile(prefix, suffix);
+    }
+    
+    public static File createTempDirectory(String name) throws IOException {
+        return strategy.createTempDirectory(name);
+    }
 }

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,50 +14,76 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hwpf.model;
 
 import org.apache.poi.hwpf.sprm.SectionSprmCompressor;
 import org.apache.poi.hwpf.sprm.SectionSprmUncompressor;
+import org.apache.poi.hwpf.sprm.SprmBuffer;
 import org.apache.poi.hwpf.usermodel.SectionProperties;
+import org.apache.poi.util.Internal;
 
-/**
- */
-public class SEPX extends BytePropertyNode
+@Internal
+public final class SEPX extends PropertyNode<SEPX>
 {
 
-  SectionDescriptor _sed;
+    SectionProperties sectionProperties;
 
-  public SEPX(SectionDescriptor sed, int start, int end, byte[] grpprl, boolean isUnicode)
-  {
-    super(start, end, SectionSprmUncompressor.uncompressSEP(grpprl, 0), isUnicode);
-    _sed = sed;
-  }
+    SectionDescriptor _sed;
 
-  public byte[] getGrpprl()
-  {
-    return SectionSprmCompressor.compressSectionProperty((SectionProperties)_buf);
-  }
-
-  public SectionDescriptor getSectionDescriptor()
-  {
-    return _sed;
-  }
-
-  public SectionProperties getSectionProperties()
-  {
-    return (SectionProperties)_buf;
-  }
-
-  public boolean equals(Object o)
-  {
-    SEPX sepx = (SEPX)o;
-    if (super.equals(o))
+    public SEPX( SectionDescriptor sed, int start, int end, byte[] grpprl )
     {
-      return sepx._sed.equals(_sed);
+        super( start, end, new SprmBuffer( grpprl, 0 ) );
+        _sed = sed;
     }
-    return false;
-  }
+
+    public byte[] getGrpprl()
+    {
+        if ( sectionProperties != null )
+        {
+            byte[] grpprl = SectionSprmCompressor
+                    .compressSectionProperty( sectionProperties );
+            _buf = new SprmBuffer( grpprl, 0 );
+        }
+
+        return ( (SprmBuffer) _buf ).toByteArray();
+    }
+
+    public SectionDescriptor getSectionDescriptor()
+    {
+        return _sed;
+    }
+
+    public SectionProperties getSectionProperties()
+    {
+        if ( sectionProperties == null )
+        {
+            sectionProperties = SectionSprmUncompressor.uncompressSEP(
+                    ( (SprmBuffer) _buf ).toByteArray(), 0 );
+        }
+        return sectionProperties;
+    }
+
+    @Override
+    public boolean equals( Object o )
+    {
+        if (!(o instanceof SEPX)) return false;
+        SEPX sepx = (SEPX) o;
+        if ( super.equals( o ) )
+        {
+            return sepx._sed.equals( _sed );
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        assert false : "hashCode not designed";
+        return 42; // any arbitrary constant will do
+    }
+
+    public String toString()
+    {
+        return "SEPX from " + getStart() + " to " + getEnd();
+    }
 }

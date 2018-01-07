@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,35 +14,33 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.usermodel;
 
 
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.record.Record;
+
 import junit.framework.TestCase;
-import org.apache.poi.hslf.*;
-import org.apache.poi.hslf.record.*;
 
 /**
  * Tests that SlideShow finds the right records as its most recent ones
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestMostRecentRecords extends TestCase {
+public final class TestMostRecentRecords extends TestCase {
 	// HSLFSlideShow primed on the test data
-	private HSLFSlideShow hss;
+	private final HSLFSlideShowImpl hss;
 	// SlideShow primed on the test data
-	private SlideShow ss;
+	private final HSLFSlideShow ss;
 
-    public TestMostRecentRecords() throws Exception {
-		String dirname = System.getProperty("HSLF.testdata.path");
-		String filename = dirname + "/basic_test_ppt_file.ppt";
-		hss = new HSLFSlideShow(filename);
-		ss = new SlideShow(hss);
-    }
+	public TestMostRecentRecords() throws Exception {
+        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+		hss = new HSLFSlideShowImpl(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
+		ss = new HSLFSlideShow(hss);
+	}
 
-    public void testCount() throws Exception {
+	public void testCount() {
 		// Most recent core records
 		Record[] mrcr = ss.getMostRecentCoreRecords();
 
@@ -51,7 +48,7 @@ public class TestMostRecentRecords extends TestCase {
 		assertEquals(7, mrcr.length);
 	}
 
-    public void testRightRecordTypes() throws Exception {
+	public void testRightRecordTypes() {
 		// Most recent core records
 		Record[] mrcr = ss.getMostRecentCoreRecords();
 
@@ -72,7 +69,7 @@ public class TestMostRecentRecords extends TestCase {
 		assertEquals(1008, mrcr[6].getRecordType());
 	}
 
-    public void testCorrectRecords() throws Exception {
+	public void testCorrectRecords() {
 		// Most recent core records
 		Record[] mrcr = ss.getMostRecentCoreRecords();
 

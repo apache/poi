@@ -20,32 +20,43 @@ package org.apache.poi.ss.usermodel;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
+import java.util.TimeZone;
 import java.util.regex.Pattern;
+
+import org.apache.poi.ss.formula.ConditionalFormattingEvaluator;
+import org.apache.poi.util.LocaleUtil;
 
 /**
  * Contains methods for dealing with Excel dates.
- *
- * @author  Michael Harhen
- * @author  Glen Stampoultzis (glens at apache.org)
- * @author  Dan Sherman (dsherman at isisph.com)
- * @author  Hack Kampbjorn (hak at 2mba.dk)
- * @author  Alex Jacoby (ajacoby at gmail.com)
- * @author  Pavel Krupets (pkrupets at palmtreebusiness dot com)
  */
 public class DateUtil {
     protected DateUtil() {
         // no instances of this class
     }
-    private static final int SECONDS_PER_MINUTE = 60;
-    private static final int MINUTES_PER_HOUR = 60;
-    private static final int HOURS_PER_DAY = 24;
-    private static final int SECONDS_PER_DAY = (HOURS_PER_DAY * MINUTES_PER_HOUR * SECONDS_PER_MINUTE);
+
+    public static final int SECONDS_PER_MINUTE = 60;
+    public static final int MINUTES_PER_HOUR = 60;
+    public static final int HOURS_PER_DAY = 24;
+    public static final int SECONDS_PER_DAY = (HOURS_PER_DAY * MINUTES_PER_HOUR * SECONDS_PER_MINUTE);
 
     private static final int    BAD_DATE         = -1;   // used to specify that date is invalid
-    private static final long   DAY_MILLISECONDS = SECONDS_PER_DAY * 1000L;
+    public static final long   DAY_MILLISECONDS = SECONDS_PER_DAY * 1000L;
 
     private static final Pattern TIME_SEPARATOR_PATTERN = Pattern.compile(":");
+
+    /**
+     * The following patterns are used in {@link #isADateFormat(int, String)}
+     */
+    private static final Pattern date_ptrn1 = Pattern.compile("^\\[\\$\\-.*?\\]");
+    private static final Pattern date_ptrn2 = Pattern.compile("^\\[[a-zA-Z]+\\]");
+    private static final Pattern date_ptrn3a = Pattern.compile("[yYmMdDhHsS]");
+    // add "\u5e74 \u6708 \u65e5" for Chinese/Japanese date format:2017 \u5e74 2 \u6708 7 \u65e5
+    private static final Pattern date_ptrn3b = Pattern.compile("^[\\[\\]yYmMdDhHsS\\-T/\u5e74\u6708\u65e5,. :\"\\\\]+0*[ampAMP/]*$");
+    //  elapsed time patterns: [h],[m] and [s]
+    private static final Pattern date_ptrn4 = Pattern.compile("^\\[([hH]+|[mM]+|[sS]+)\\]");
+    
+    // for format which start with "[DBNum1]" or "[DBNum2]" or "[DBNum3]" could be a Chinese date
+    private static final Pattern date_ptrn5 = Pattern.compile("^\\[DBNum(1|2|3)\\]");
 
     /**
      * Given a Date, converts it into a double representing its internal Excel representation,
@@ -66,7 +77,7 @@ public class DateUtil {
      * @param use1904windowing Should 1900 or 1904 date windowing be used?
      */
     public static double getExcelDate(Date date, boolean use1904windowing) {
-        Calendar calStart = new GregorianCalendar();
+        Calendar calStart = LocaleUtil.getLocaleCalendar();
         calStart.setTime(date);   // If date includes hours, minutes, and seconds, set them to 0
         return internalGetExcelDate(calStart, use1904windowing);
     }
@@ -117,6 +128,22 @@ public class DateUtil {
 
     /**
      *  Given an Excel date with using 1900 date windowing, and
+     *  converts it to a java.util.Date.
+     *  
+     *  Excel Dates and Times are stored without any timezone 
+     *  information. If you know (through other means) that your file 
+     *  uses a different TimeZone to the system default, you can use
+     *  this version of the getJavaDate() method to handle it.
+     *   
+     *  @param date  The Excel date.
+     *  @param tz The TimeZone to evaluate the date in
+     *  @return Java representation of the date, or null if date is not a valid Excel date
+     */
+    public static Date getJavaDate(double date, TimeZone tz) {
+       return getJavaDate(date, false, tz, false);
+    }
+    /**
+     *  Given an Excel date with using 1900 date windowing, and
      *   converts it to a java.util.Date.
      *
      *  NOTE: If the default <code>TimeZone</code> in Java uses Daylight
@@ -133,8 +160,49 @@ public class DateUtil {
      *  @see java.util.TimeZone
      */
     public static Date getJavaDate(double date) {
-        return getJavaDate(date, false);
+        return getJavaDate(date, false, null, false);
     }
+
+    /**
+     *  Given an Excel date with either 1900 or 1904 date windowing,
+     *  converts it to a java.util.Date.
+     *  
+     *  Excel Dates and Times are stored without any timezone 
+     *  information. If you know (through other means) that your file 
+     *  uses a different TimeZone to the system default, you can use
+     *  this version of the getJavaDate() method to handle it.
+     *   
+     *  @param date  The Excel date.
+     *  @param tz The TimeZone to evaluate the date in
+     *  @param use1904windowing  true if date uses 1904 windowing,
+     *   or false if using 1900 date windowing.
+     *  @return Java representation of the date, or null if date is not a valid Excel date
+     */
+    public static Date getJavaDate(double date, boolean use1904windowing, TimeZone tz) {
+        return getJavaDate(date, use1904windowing, tz, false);
+    }
+    
+    /**
+     *  Given an Excel date with either 1900 or 1904 date windowing,
+     *  converts it to a java.util.Date.
+     *  
+     *  Excel Dates and Times are stored without any timezone 
+     *  information. If you know (through other means) that your file 
+     *  uses a different TimeZone to the system default, you can use
+     *  this version of the getJavaDate() method to handle it.
+     *   
+     *  @param date  The Excel date.
+     *  @param tz The TimeZone to evaluate the date in
+     *  @param use1904windowing  true if date uses 1904 windowing,
+     *   or false if using 1900 date windowing.
+     *  @param roundSeconds round to closest second
+     *  @return Java representation of the date, or null if date is not a valid Excel date
+     */
+    public static Date getJavaDate(double date, boolean use1904windowing, TimeZone tz, boolean roundSeconds) {
+        Calendar calendar = getJavaCalendar(date, use1904windowing, tz, roundSeconds);
+        return calendar == null ? null : calendar.getTime();
+    }
+    
     /**
      *  Given an Excel date with either 1900 or 1904 date windowing,
      *  converts it to a java.util.Date.
@@ -155,17 +223,11 @@ public class DateUtil {
      *  @see java.util.TimeZone
      */
     public static Date getJavaDate(double date, boolean use1904windowing) {
-        if (!isValidExcelDate(date)) {
-            return null;
-        }
-        int wholeDays = (int)Math.floor(date);
-        int millisecondsInDay = (int)((date - wholeDays) * DAY_MILLISECONDS + 0.5);
-        Calendar calendar = new GregorianCalendar(); // using default time-zone
-        setCalendar(calendar, wholeDays, millisecondsInDay, use1904windowing);
-        return calendar.getTime();
-    }        
-    public static void setCalendar(Calendar calendar, int wholeDays, 
-            int millisecondsInDay, boolean use1904windowing) {
+        return getJavaDate(date, use1904windowing, null, false);
+    }
+
+    public static void setCalendar(Calendar calendar, int wholeDays,
+            int millisecondsInDay, boolean use1904windowing, boolean roundSeconds) {
         int startYear = 1900;
         int dayAdjust = -1; // Excel thinks 2/29/1900 is a valid date, which it isn't
         if (use1904windowing) {
@@ -178,7 +240,112 @@ public class DateUtil {
             dayAdjust = 0;
         }
         calendar.set(startYear,0, wholeDays + dayAdjust, 0, 0, 0);
-        calendar.set(GregorianCalendar.MILLISECOND, millisecondsInDay);
+        calendar.set(Calendar.MILLISECOND, millisecondsInDay);
+        if (calendar.get(Calendar.MILLISECOND) == 0) {
+            calendar.clear(Calendar.MILLISECOND);
+        }
+        if (roundSeconds) {
+            calendar.add(Calendar.MILLISECOND, 500);
+            calendar.clear(Calendar.MILLISECOND);
+        }
+    }
+
+
+    /**
+     * Get EXCEL date as Java Calendar (with default time zone).
+     * This is like {@link #getJavaDate(double)} but returns a Calendar object.
+     *  @param date  The Excel date.
+     *  @return Java representation of the date, or null if date is not a valid Excel date
+     */
+    public static Calendar getJavaCalendar(double date) {
+        return getJavaCalendar(date, false, null, false);
+    }
+
+    /**
+     * Get EXCEL date as Java Calendar (with default time zone).
+     * This is like {@link #getJavaDate(double, boolean)} but returns a Calendar object.
+     *  @param date  The Excel date.
+     *  @param use1904windowing  true if date uses 1904 windowing,
+     *   or false if using 1900 date windowing.
+     *  @return Java representation of the date, or null if date is not a valid Excel date
+     */
+    public static Calendar getJavaCalendar(double date, boolean use1904windowing) {
+        return getJavaCalendar(date, use1904windowing, null, false);
+    }
+
+    /**
+     * Get EXCEL date as Java Calendar with UTC time zone.
+     * This is similar to {@link #getJavaDate(double, boolean)} but returns a
+     * Calendar object that has UTC as time zone, so no daylight saving hassle.
+     * @param date  The Excel date.
+     * @param use1904windowing  true if date uses 1904 windowing,
+     *  or false if using 1900 date windowing.
+     * @return Java representation of the date in UTC, or null if date is not a valid Excel date
+     */
+    public static Calendar getJavaCalendarUTC(double date, boolean use1904windowing) {
+    	return getJavaCalendar(date, use1904windowing, LocaleUtil.TIMEZONE_UTC, false);
+    }
+
+
+    /**
+     * Get EXCEL date as Java Calendar with given time zone.
+     * @param date  The Excel date.
+     * @param use1904windowing  true if date uses 1904 windowing,
+     *  or false if using 1900 date windowing.
+     * @param timeZone The TimeZone to evaluate the date in
+     * @return Java representation of the date, or null if date is not a valid Excel date
+     */
+    public static Calendar getJavaCalendar(double date, boolean use1904windowing, TimeZone timeZone) {
+        return getJavaCalendar(date, use1904windowing, timeZone, false);
+    }
+        
+    /**
+     * Get EXCEL date as Java Calendar with given time zone.
+     * @param date  The Excel date.
+     * @param use1904windowing  true if date uses 1904 windowing,
+     *  or false if using 1900 date windowing.
+     * @param timeZone The TimeZone to evaluate the date in
+     * @param roundSeconds round to closest second
+     * @return Java representation of the date, or null if date is not a valid Excel date
+     */
+    public static Calendar getJavaCalendar(double date, boolean use1904windowing, TimeZone timeZone, boolean roundSeconds) {
+        if (!isValidExcelDate(date)) {
+            return null;
+        }
+        int wholeDays = (int)Math.floor(date);
+        int millisecondsInDay = (int)((date - wholeDays) * DAY_MILLISECONDS + 0.5);
+        Calendar calendar;
+        if (timeZone != null) {
+            calendar = LocaleUtil.getLocaleCalendar(timeZone);
+        } else {
+            calendar = LocaleUtil.getLocaleCalendar(); // using default time-zone
+        }
+        setCalendar(calendar, wholeDays, millisecondsInDay, use1904windowing, roundSeconds);
+        return calendar;
+    }
+
+    // variables for performance optimization:
+    // avoid re-checking DataUtil.isADateFormat(int, String) if a given format
+    // string represents a date format if the same string is passed multiple times.
+    // see https://issues.apache.org/bugzilla/show_bug.cgi?id=55611
+    private static ThreadLocal<Integer> lastFormatIndex = new ThreadLocal<Integer>() {
+        protected Integer initialValue() {
+            return -1;
+        }
+    };
+    private static ThreadLocal<String> lastFormatString = new ThreadLocal<>();
+    private static ThreadLocal<Boolean> lastCachedResult = new ThreadLocal<>();
+    
+    private static boolean isCached(String formatString, int formatIndex) {
+        String cachedFormatString = lastFormatString.get();
+        return cachedFormatString != null && formatIndex == lastFormatIndex.get()
+                && formatString.equals(cachedFormatString);
+    }
+
+    private static void cache(String formatString, int formatIndex, boolean cached) {
+        lastFormatIndex.set(formatIndex);
+        lastFormatString.set(formatString);
+        lastCachedResult.set(Boolean.valueOf(cached));
     }
 
     /**
@@ -190,50 +357,131 @@ public class DateUtil {
      *  date formatting characters (ymd-/), which covers most
      *  non US date formats.
      *
+     * @param numFmt The number format index and string expression, or null if not specified
+     * @return true if it is a valid date format, false if not or null
+     * @see #isInternalDateFormat(int)
+     */
+    public static boolean isADateFormat(ExcelNumberFormat numFmt) {
+        
+        if (numFmt == null) return false;
+        
+        return isADateFormat(numFmt.getIdx(), numFmt.getFormat());
+    }
+        
+    /**
+     * Given a format ID and its format String, will check to see if the
+     *  format represents a date format or not.
+     * Firstly, it will check to see if the format ID corresponds to an
+     *  internal excel date format (eg most US date formats)
+     * If not, it will check to see if the format string only contains
+     *  date formatting characters (ymd-/), which covers most
+     *  non US date formats.
+     *
      * @param formatIndex The index of the format, eg from ExtendedFormatRecord.getFormatIndex
      * @param formatString The format string, eg from FormatRecord.getFormatString
+     * @return true if it is a valid date format, false if not or null
      * @see #isInternalDateFormat(int)
      */
     public static boolean isADateFormat(int formatIndex, String formatString) {
+        
         // First up, is this an internal date format?
         if(isInternalDateFormat(formatIndex)) {
+            cache(formatString, formatIndex, true);
             return true;
         }
 
-        // If we didn't get a real string, it can't be
+        // If we didn't get a real string, don't even cache it as we can always find this out quickly
         if(formatString == null || formatString.length() == 0) {
             return false;
         }
 
-        String fs = formatString;
-
-        // Translate \- into just -, before matching
-        fs = fs.replaceAll("\\\\-","-");
-        // And \, into ,
-        fs = fs.replaceAll("\\\\,",",");
-        // And '\ ' into ' '
-        fs = fs.replaceAll("\\\\ "," ");
-
-        // If it end in ;@, that's some crazy dd/mm vs mm/dd
-        //  switching stuff, which we can ignore
-        fs = fs.replaceAll(";@", "");
-
-        // If it starts with [$-...], then could be a date, but
-        //  who knows what that starting bit is all about
-        fs = fs.replaceAll("^\\[\\$\\-.*?\\]", "");
-
-        // If it starts with something like [Black] or [Yellow],
-        //  then it could be a date
-        fs = fs.replaceAll("^\\[[a-zA-Z]+\\]", "");
-
-        // Otherwise, check it's only made up, in any case, of:
-        //  y m d h s - / , . :
-        // optionally followed by AM/PM
-        if(fs.matches("^[yYmMdDhHsS\\-/,. :]+[ampAMP/]*$")) {
-            return true;
+        // check the cache first
+        if (isCached(formatString, formatIndex)) {
+            return lastCachedResult.get();
         }
 
-        return false;
+        String fs = formatString;
+        /*if (false) {
+            // Normalize the format string. The code below is equivalent
+            // to the following consecutive regexp replacements:
+
+             // Translate \- into just -, before matching
+             fs = fs.replaceAll("\\\\-","-");
+             // And \, into ,
+             fs = fs.replaceAll("\\\\,",",");
+             // And \. into .
+             fs = fs.replaceAll("\\\\\\.",".");
+             // And '\ ' into ' '
+             fs = fs.replaceAll("\\\\ "," ");
+
+             // If it end in ;@, that's some crazy dd/mm vs mm/dd
+             //  switching stuff, which we can ignore
+             fs = fs.replaceAll(";@", "");
+
+             // The code above was reworked as suggested in bug 48425:
+             // simple loop is more efficient than consecutive regexp replacements.
+        }*/
+        final int length = fs.length();
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            char c = fs.charAt(i);
+            if (i < length - 1) {
+                char nc = fs.charAt(i + 1);
+                if (c == '\\') {
+                    switch (nc) {
+                        case '-':
+                        case ',':
+                        case '.':
+                        case ' ':
+                        case '\\':
+                            // skip current '\' and continue to the next char
+                            continue;
+                    }
+                } else if (c == ';' && nc == '@') {
+                    i++;
+                    // skip ";@" duplets
+                    continue;
+                }
+            }
+            sb.append(c);
+        }
+        fs = sb.toString();
+
+        // short-circuit if it indicates elapsed time: [h], [m] or [s]
+        if(date_ptrn4.matcher(fs).matches()){
+            cache(formatString, formatIndex, true);
+            return true;
+        }
+        // If it starts with [DBNum1] or [DBNum2] or [DBNum3]
+        // then it could be a Chinese date 
+        fs = date_ptrn5.matcher(fs).replaceAll("");
+        // If it starts with [$-...], then could be a date, but
+        //  who knows what that starting bit is all about
+        fs = date_ptrn1.matcher(fs).replaceAll("");
+        // If it starts with something like [Black] or [Yellow],
+        //  then it could be a date
+        fs = date_ptrn2.matcher(fs).replaceAll("");
+        // You're allowed something like dd/mm/yy;[red]dd/mm/yy
+        //  which would place dates before 1900/1904 in red
+        // For now, only consider the first one
+        final int separatorIndex = fs.indexOf(';');
+        if(0 < separatorIndex && separatorIndex < fs.length()-1) {
+           fs = fs.substring(0, separatorIndex);
+        }
+
+        // Ensure it has some date letters in it
+        // (Avoids false positives on the rest of pattern 3)
+        if (! date_ptrn3a.matcher(fs).find()) {
+           return false;
+        }
+        
+        // If we get here, check it's only made up, in any case, of:
+        //  y m d h s - \ / , . : [ ] T
+        // optionally followed by AM/PM
+
+        boolean result = date_ptrn3b.matcher(fs).matches();
+        cache(formatString, formatIndex, result);
+        return result;
     }
 
     /**
@@ -266,23 +514,40 @@ public class DateUtil {
      *  Check if a cell contains a date
      *  Since dates are stored internally in Excel as double values
      *  we infer it is a date if it is formatted as such.
+     * @param cell 
+     * @return true if it looks like a date
      *  @see #isADateFormat(int, String)
      *  @see #isInternalDateFormat(int)
      */
     public static boolean isCellDateFormatted(Cell cell) {
+        return isCellDateFormatted(cell, null);
+    }
+    
+    /**
+     *  Check if a cell contains a date
+     *  Since dates are stored internally in Excel as double values
+     *  we infer it is a date if it is formatted as such.
+     *  Format is determined from applicable conditional formatting, if
+     *  any, or cell style.
+     * @param cell 
+     * @param cfEvaluator if available, or null
+     * @return true if it looks like a date
+     *  @see #isADateFormat(int, String)
+     *  @see #isInternalDateFormat(int)
+     */
+    public static boolean isCellDateFormatted(Cell cell, ConditionalFormattingEvaluator cfEvaluator) {
         if (cell == null) return false;
         boolean bDate = false;
 
         double d = cell.getNumericCellValue();
         if ( DateUtil.isValidExcelDate(d) ) {
-            CellStyle style = cell.getCellStyle();
-            if(style==null) return false;
-            int i = style.getDataFormat();
-            String f = style.getDataFormatString();
-            bDate = isADateFormat(i, f);
+            ExcelNumberFormat nf = ExcelNumberFormat.from(cell, cfEvaluator);
+            if(nf==null) return false;
+            bDate = isADateFormat(nf);
         }
         return bDate;
     }
+    
     /**
      *  Check if a cell contains a date, checking only for internal
      *   excel date formats.
@@ -341,7 +606,7 @@ public class DateUtil {
 
     private static int daysInPriorYears(int yr, boolean use1904windowing)
     {
-        if ((!use1904windowing && yr < 1900) || (use1904windowing && yr < 1900)) {
+        if ((!use1904windowing && yr < 1900) || (use1904windowing && yr < 1904)) {
             throw new IllegalArgumentException("'year' must be 1900 or greater");
         }
 
@@ -369,6 +634,7 @@ public class DateUtil {
     }
 
 
+    @SuppressWarnings("serial")
     private static final class FormatException extends Exception {
         public FormatException(String msg) {
             super(msg);
@@ -438,8 +704,7 @@ public class DateUtil {
         int month = parseInt(monthStr, "month", 1, 12);
         int day = parseInt(dayStr, "day", 1, 31);
 
-        Calendar cal = new GregorianCalendar(year, month-1, day, 0, 0, 0);
-        cal.set(Calendar.MILLISECOND, 0);
+        Calendar cal = LocaleUtil.getLocaleCalendar(year, month-1, day);
         return cal.getTime();
     }
     private static int parseInt(String strVal, String fieldName, int rangeMax) throws FormatException {

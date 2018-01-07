@@ -17,10 +17,25 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.TreeMap;
 
+import org.apache.poi.ss.formula.FormulaShifter;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellCopyPolicy;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.Beta;
+import org.apache.poi.util.Internal;
+import org.apache.poi.xssf.model.CalculationChain;
+import org.apache.poi.xssf.model.StylesTable;
+import org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
 
@@ -28,22 +43,23 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
  * High level representation of a row of a spreadsheet.
  */
 public class XSSFRow implements Row, Comparable<XSSFRow> {
+    //private static final POILogger _logger = POILogFactory.getLogger(XSSFRow.class);
 
     /**
      * the xml bean containing all cell definitions for this row
      */
-    private final CTRow row;
+    private final CTRow _row;
 
     /**
      * Cells of this row keyed by their column indexes.
      * The TreeMap ensures that the cells are ordered by columnIndex in the ascending order.
      */
-    private final TreeMap<Integer, Cell> cells;
+    private final TreeMap<Integer, XSSFCell> _cells;
 
     /**
      * the parent sheet
      */
-    private final XSSFSheet sheet;
+    private final XSSFSheet _sheet;
 
     /**
      * Construct a XSSFRow.
@@ -52,12 +68,25 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * @param sheet the parent sheet.
      */
     protected XSSFRow(CTRow row, XSSFSheet sheet) {
-        this.row = row;
-        this.sheet = sheet;
-        this.cells = new TreeMap<Integer, Cell>();
+        _row = row;
+        _sheet = sheet;
+        _cells = new TreeMap<>();
         for (CTCell c : row.getCArray()) {
             XSSFCell cell = new XSSFCell(this, c);
-            this.cells.put(cell.getColumnIndex(), cell);
+            // Performance optimization for bug 57840: explicit boxing is slightly faster than auto-unboxing, though may use more memory
+            final Integer colI = Integer.valueOf(cell.getColumnIndex()); // NOSONAR
+            _cells.put(colI, cell);
+            sheet.onReadCell(cell);
+        }
+        
+        if (! row.isSetR()) {
+            // Certain file format writers skip the row number
+            // Assume no gaps, and give this the next row number
+            int nextRowNum = sheet.getLastRowNum()+2;
+            if (nextRowNum == 2 && sheet.getPhysicalNumberOfRows() == 0) {
+                nextRowNum = 1;
+            }
+            row.setR(nextRowNum);
         }
     }
 
@@ -66,8 +95,9 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      *
      * @return the XSSFSheet that owns this row
      */
+    @Override
     public XSSFSheet getSheet() {
-        return this.sheet;
+        return this._sheet;
     }
 
     /**
@@ -81,8 +111,10 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      *
      * @return an iterator over cells in this row.
      */
+    @Override
+    @SuppressWarnings("unchecked")
     public Iterator<Cell> cellIterator() {
-        return cells.values().iterator();
+        return (Iterator<Cell>)(Iterator<? extends Cell>)_cells.values().iterator();
     }
 
     /**
@@ -95,43 +127,75 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      *
      * @return an iterator over cells in this row.
      */
+    @Override
     public Iterator<Cell> iterator() {
-    	return cellIterator();
+        return cellIterator();
     }
 
     /**
      * Compares two <code>XSSFRow</code> objects.  Two rows are equal if they belong to the same worksheet and
      * their row indexes are equal.
      *
-     * @param   row   the <code>XSSFRow</code> to be compared.
-     * @return	the value <code>0</code> if the row number of this <code>XSSFRow</code> is
-     * 		equal to the row number of the argument <code>XSSFRow</code>; a value less than
-     * 		<code>0</code> if the row number of this this <code>XSSFRow</code> is numerically less
-     * 		than the row number of the argument <code>XSSFRow</code>; and a value greater
-     * 		than <code>0</code> if the row number of this this <code>XSSFRow</code> is numerically
-     * 		 greater than the row number of the argument <code>XSSFRow</code>.
+     * @param   other   the <code>XSSFRow</code> to be compared.
+     * @return  <ul>
+     *      <li>
+     *      the value <code>0</code> if the row number of this <code>XSSFRow</code> is
+     *      equal to the row number of the argument <code>XSSFRow</code>
+     *      </li>
+     *      <li>
+     *      a value less than <code>0</code> if the row number of this this <code>XSSFRow</code> is
+     *      numerically less than the row number of the argument <code>XSSFRow</code>
+     *      </li>
+     *      <li>
+     *      a value greater than <code>0</code> if the row number of this this <code>XSSFRow</code> is
+     *      numerically greater than the row number of the argument <code>XSSFRow</code>
+     *      </li>
+     *      </ul>
      * @throws IllegalArgumentException if the argument row belongs to a different worksheet
      */
-    public int compareTo(XSSFRow row) {
-        int thisVal = this.getRowNum();
-        if(row.getSheet() != getSheet()) throw new IllegalArgumentException("The compared rows must belong to the same XSSFSheet");
+    @Override
+    public int compareTo(XSSFRow other) {
+        if (this.getSheet() != other.getSheet()) {
+            throw new IllegalArgumentException("The compared rows must belong to the same sheet");
+        }
 
-        int anotherVal = row.getRowNum();
-        return (thisVal < anotherVal ? -1 : (thisVal == anotherVal ? 0 : 1));
+        Integer thisRow = this.getRowNum();
+        Integer otherRow = other.getRowNum();
+        return thisRow.compareTo(otherRow);
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (!(obj instanceof XSSFRow))
+        {
+            return false;
+        }
+        XSSFRow other = (XSSFRow) obj;
+
+        return (this.getRowNum() == other.getRowNum()) &&
+               (this.getSheet() == other.getSheet());
+    }
+
+    @Override
+    public int hashCode() {
+        return _row.hashCode();
     }
 
     /**
      * Use this to create new cells within the row and return it.
      * <p>
-     * The cell that is returned is a {@link Cell#CELL_TYPE_BLANK}. The type can be changed
+     * The cell that is returned is a {@link CellType#BLANK}. The type can be changed
      * either through calling <code>setCellValue</code> or <code>setCellType</code>.
      * </p>
      * @param columnIndex - the column number this cell represents
      * @return Cell a high level representation of the created cell.
-     * @throws IllegalArgumentException if columnIndex < 0
+     * @throws IllegalArgumentException if columnIndex < 0 or greater than 16384,
+     *   the maximum number of columns supported by the SpreadsheetML format (.xlsx)
      */
+    @Override
     public XSSFCell createCell(int columnIndex) {
-    	return createCell(columnIndex, Cell.CELL_TYPE_BLANK);
+        return createCell(columnIndex, CellType.BLANK);
     }
 
     /**
@@ -140,77 +204,76 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * @param columnIndex - the column number this cell represents
      * @param type - the cell's data type
      * @return XSSFCell a high level representation of the created cell.
-     * @throws IllegalArgumentException if columnIndex < 0 or if the specified cell type is invalid
-     * @see Cell#CELL_TYPE_BLANK
-     * @see Cell#CELL_TYPE_BOOLEAN
-     * @see Cell#CELL_TYPE_ERROR
-     * @see Cell#CELL_TYPE_FORMULA
-     * @see Cell#CELL_TYPE_NUMERIC
-     * @see Cell#CELL_TYPE_STRING
+     * @throws IllegalArgumentException if the specified cell type is invalid, columnIndex < 0
+     *   or greater than 16384, the maximum number of columns supported by the SpreadsheetML format (.xlsx)
      */
-    public XSSFCell createCell(int columnIndex, int type) {
-        if(columnIndex < 0) throw new IllegalArgumentException("columnIndex must be >= 0, was " + columnIndex);
-
-        CTCell ctcell = CTCell.Factory.newInstance();
-        XSSFCell xcell = new XSSFCell(this, ctcell);
-        xcell.setCellNum(columnIndex);
-        if (type != Cell.CELL_TYPE_BLANK) {
-        	xcell.setCellType(type);
+    @Override
+    public XSSFCell createCell(int columnIndex, CellType type) {
+        // Performance optimization for bug 57840: explicit boxing is slightly faster than auto-unboxing, though may use more memory
+        final Integer colI = Integer.valueOf(columnIndex); // NOSONAR
+        CTCell ctCell;
+        XSSFCell prev = _cells.get(colI);
+        if(prev != null){
+            ctCell = prev.getCTCell();
+            ctCell.set(CTCell.Factory.newInstance());
+        } else {
+            ctCell = _row.addNewC();
         }
-        cells.put(columnIndex, xcell);
+        XSSFCell xcell = new XSSFCell(this, ctCell);
+        xcell.setCellNum(columnIndex);
+        if (type != CellType.BLANK) {
+            xcell.setCellType(type);
+        }
+        _cells.put(colI, xcell);
         return xcell;
     }
 
     /**
      * Returns the cell at the given (0 based) index,
-     *  with the {@link MissingCellPolicy} from the parent Workbook.
+     *  with the {@link org.apache.poi.ss.usermodel.Row.MissingCellPolicy} from the parent Workbook.
      *
      * @return the cell at the given (0 based) index
      */
+    @Override
     public XSSFCell getCell(int cellnum) {
-    	return getCell(cellnum, sheet.getWorkbook().getMissingCellPolicy());
+        return getCell(cellnum, _sheet.getWorkbook().getMissingCellPolicy());
     }
 
     /**
-     * Returns the cell at the given (0 based) index, with the specified {@link MissingCellPolicy}
+     * Returns the cell at the given (0 based) index, with the specified {@link org.apache.poi.ss.usermodel.Row.MissingCellPolicy}
      *
      * @return the cell at the given (0 based) index
-     * @throws IllegalArgumentException if cellnum < 0 or the specified MissingCellPolicy is invalid
-     * @see Row#RETURN_NULL_AND_BLANK
-     * @see Row#RETURN_BLANK_AS_NULL
-     * @see Row#CREATE_NULL_AS_BLANK
+     * @throws IllegalArgumentException if cellnum &lt; 0 or the specified MissingCellPolicy is invalid
      */
+    @Override
     public XSSFCell getCell(int cellnum, MissingCellPolicy policy) {
-    	if(cellnum < 0) throw new IllegalArgumentException("Cell index must be >= 0");
+        if(cellnum < 0) throw new IllegalArgumentException("Cell index must be >= 0");
 
-        XSSFCell cell = (XSSFCell)cells.get(cellnum);
-    	if(policy == RETURN_NULL_AND_BLANK) {
-    		return cell;
-    	}
-    	if(policy == RETURN_BLANK_AS_NULL) {
-    		if(cell == null) return cell;
-    		if(cell.getCellType() == Cell.CELL_TYPE_BLANK) {
-    			return null;
-    		}
-    		return cell;
-    	}
-    	if(policy == CREATE_NULL_AS_BLANK) {
-    		if(cell == null) {
-    			return createCell((short)cellnum, Cell.CELL_TYPE_BLANK);
-    		}
-    		return cell;
-    	}
-    	throw new IllegalArgumentException("Illegal policy " + policy + " (" + policy.id + ")");
+        // Performance optimization for bug 57840: explicit boxing is slightly faster than auto-unboxing, though may use more memory
+        final Integer colI = Integer.valueOf(cellnum); // NOSONAR
+        XSSFCell cell = _cells.get(colI);
+        switch (policy) {
+            case RETURN_NULL_AND_BLANK:
+                return cell;
+            case RETURN_BLANK_AS_NULL:
+                boolean isBlank = (cell != null && cell.getCellType() == CellType.BLANK);
+                return (isBlank) ? null : cell;
+            case CREATE_NULL_AS_BLANK:
+                return (cell == null) ? createCell(cellnum, CellType.BLANK) : cell;
+            default:
+                throw new IllegalArgumentException("Illegal policy " + policy);
+        }
     }
 
     /**
-     * Get the number of the first cell contained in this row.
+     * Get the 0-based number of the first cell contained in this row.
      *
      * @return short representing the first logical cell in the row,
      *  or -1 if the row does not contain any cells.
      */
+    @Override
     public short getFirstCellNum() {
-    	return (short)(cells.size() == 0 ? -1 : cells.firstKey());
+        return (short)(_cells.size() == 0 ? -1 : _cells.firstKey());
     }
 
     /**
@@ -232,8 +295,9 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * @return short representing the last logical cell in the row <b>PLUS ONE</b>,
      *   or -1 if the row does not contain any cells.
      */
+    @Override
     public short getLastCellNum() {
-    	return (short)(cells.size() == 0 ? -1 : (cells.lastKey() + 1));
+        return (short)(_cells.size() == 0 ? -1 : (_cells.lastKey() + 1));
     }
 
     /**
@@ -242,6 +306,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      *
      * @return row height measured in twips (1/20th of a point)
      */
+    @Override
     public short getHeight() {
         return (short)(getHeightInPoints()*20);
     }
@@ -253,12 +318,12 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * @return row height measured in point size
      * @see org.apache.poi.xssf.usermodel.XSSFSheet#getDefaultRowHeightInPoints()
      */
+    @Override
     public float getHeightInPoints() {
-    	if (this.row.isSetHt()) {
-    		return (float) this.row.getHt();
-    	} else {
-            return sheet.getDefaultRowHeightInPoints();
+        if (this._row.isSetHt()) {
+            return (float) this._row.getHt();
         }
+        return _sheet.getDefaultRowHeightInPoints();
     }
 
     /**
@@ -266,13 +331,14 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      *
      * @param height the height in "twips" or  1/20th of a point. <code>-1</code>  resets to the default height
      */
+    @Override
     public void setHeight(short height) {
         if (height == -1) {
-            if (row.isSetHt()) row.unsetHt();
-            if (row.isSetCustomHeight()) row.unsetCustomHeight();
+            if (_row.isSetHt()) _row.unsetHt();
+            if (_row.isSetCustomHeight()) _row.unsetCustomHeight();
         } else {
-            row.setHt((double) height / 20);
-            row.setCustomHeight(true);
+            _row.setHt((double) height / 20);
+            _row.setCustomHeight(true);
 
         }
     }
@@ -282,8 +348,9 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      *
      * @param height the height in points. <code>-1</code>  resets to the default height
      */
+    @Override
     public void setHeightInPoints(float height) {
-	    setHeight((short)(height == -1 ? -1 : (height*20)));
+        setHeight((short)(height == -1 ? -1 : (height*20)));
     }
 
     /**
@@ -292,8 +359,9 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      *
      * @return int representing the number of defined cells in the row.
      */
+    @Override
     public int getPhysicalNumberOfCells() {
-    	return cells.size();
+        return _cells.size();
     }
 
     /**
@@ -301,20 +369,25 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      *
      * @return the row number (0 based)
      */
+    @Override
     public int getRowNum() {
-        return (int) (row.getR() - 1);
+        return (int) (_row.getR() - 1);
     }
 
     /**
      * Set the row number of this row.
      *
-     * @param rowNum  the row number (0-based)
-     * @throws IllegalArgumentException if rowNum < 0
+     * @param rowIndex  the row number (0-based)
+     * @throws IllegalArgumentException if rowNum < 0 or greater than 1048575
      */
-    public void setRowNum(int rowNum) {
-        if(rowNum < 0) throw new IllegalArgumentException("Row number must be >= 0");
-
-        this.row.setR(rowNum + 1);
+    @Override
+    public void setRowNum(int rowIndex) {
+        int maxrow = SpreadsheetVersion.EXCEL2007.getLastRowIndex();
+        if (rowIndex < 0 || rowIndex > maxrow) {
+            throw new IllegalArgumentException("Invalid row number (" + rowIndex
+                    + ") outside allowable range (0.." + maxrow + ")");
+        }
+        _row.setR(rowIndex + 1);
     }
 
     /**
@@ -322,8 +395,9 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      *
      * @return - height is zero or not.
      */
+    @Override
     public boolean getZeroHeight() {
-    	return this.row.getHidden();
+        return this._row.getHidden();
     }
 
     /**
@@ -331,18 +405,83 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      *
      * @param height  height is zero or not.
      */
+    @Override
     public void setZeroHeight(boolean height) {
-    	this.row.setHidden(height);
+        this._row.setHidden(height);
 
     }
 
+    /**
+     * Is this row formatted? Most aren't, but some rows
+     *  do have whole-row styles. For those that do, you
+     *  can get the formatting from {@link #getRowStyle()}
+     */
+    @Override
+    public boolean isFormatted() {
+        return _row.isSetS();
+    }
+    /**
+     * Returns the whole-row cell style. Most rows won't
+     *  have one of these, so will return null. Call
+     *  {@link #isFormatted()} to check first.
+     */
+    @Override
+    public XSSFCellStyle getRowStyle() {
+       if(!isFormatted()) return null;
+       
+       StylesTable stylesSource = getSheet().getWorkbook().getStylesSource();
+       if(stylesSource.getNumCellStyles() > 0) {
+           return stylesSource.getStyleAt((int)_row.getS());
+       } else {
+          return null;
+       }
+    }
+    
+    /**
+     * Applies a whole-row cell styling to the row.
+     * If the value is null then the style information is removed,
+     *  causing the cell to used the default workbook style.
+     */
+    @Override
+    public void setRowStyle(CellStyle style) {
+        if(style == null) {
+           if(_row.isSetS()) {
+              _row.unsetS();
+              _row.unsetCustomFormat();
+           }
+        } else {
+            StylesTable styleSource = getSheet().getWorkbook().getStylesSource();
+            
+            XSSFCellStyle xStyle = (XSSFCellStyle)style;
+            xStyle.verifyBelongsToStylesSource(styleSource);
+
+            long idx = styleSource.putStyle(xStyle);
+            _row.setS(idx);
+            _row.setCustomFormat(true);
+        }
+    }
+    
     /**
      * Remove the Cell from this row.
      *
      * @param cell the cell to remove
      */
+    @Override
     public void removeCell(Cell cell) {
-    	cells.remove(cell.getColumnIndex());
+        if (cell.getRow() != this) {
+            throw new IllegalArgumentException("Specified cell does not belong to this row");
+        }
+
+        XSSFCell xcell = (XSSFCell)cell;
+        if(xcell.isPartOfArrayFormulaGroup()) {
+            xcell.notifyArrayFormulaChanging();
+        }
+        if(cell.getCellType() == CellType.FORMULA) {
+           _sheet.getWorkbook().onDeleteFormula(xcell);
+        }
+        // Performance optimization for bug 57840: explicit boxing is slightly faster than auto-unboxing, though may use more memory
+        final Integer colI = Integer.valueOf(cell.getColumnIndex()); // NOSONAR
+        _cells.remove(colI);
     }
 
     /**
@@ -350,26 +489,54 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      *
      * @return the underlying CTRow xml bean
      */
+    @Internal
     public CTRow getCTRow(){
-    	return row;
+        return _row;
     }
 
     /**
      * Fired when the document is written to an output stream.
-     * <p>
-     * Attaches CTCell beans to the underlying CTRow bean
-     * </p>
-     * @see org.apache.poi.xssf.usermodel.XSSFSheet#commit()
+     *
+     * @see org.apache.poi.xssf.usermodel.XSSFSheet#write(java.io.OutputStream) ()
      */
     protected void onDocumentWrite(){
-        ArrayList<CTCell> cArray = new ArrayList<CTCell>(cells.size());
-        //create array of CTCell objects.
-        //TreeMap's value iterator ensures that the cells are ordered by columnIndex in the ascending order
-        for (Cell cell : cells.values()) {
-            XSSFCell c = (XSSFCell)cell;
-            cArray.add(c.getCTCell());
+        // check if cells in the CTRow are ordered
+        boolean isOrdered = true;
+        CTCell[] cArray = _row.getCArray();
+        if (cArray.length != _cells.size()) {
+            isOrdered = false;
+        } else {
+            int i = 0;
+            for (XSSFCell cell : _cells.values()) {
+                CTCell c1 = cell.getCTCell();
+                CTCell c2 = cArray[i++];
+
+                String r1 = c1.getR();
+                String r2 = c2.getR();
+                if (!(r1==null ? r2==null : r1.equals(r2))){
+                    isOrdered = false;
+                    break;
+                }
+            }
         }
-        row.setCArray(cArray.toArray(new CTCell[cArray.size()]));
+
+        if(!isOrdered){
+            cArray = new CTCell[_cells.size()];
+            int i = 0;
+            for (XSSFCell xssfCell : _cells.values()) {
+                cArray[i] = (CTCell) xssfCell.getCTCell().copy();
+                
+                // we have to copy and re-create the XSSFCell here because the 
+                // elements as otherwise setCArray below invalidates all the columns!
+                // see Bug 56170, XMLBeans seems to always release previous objects
+                // in the CArray, so we need to provide completely new ones here!
+                //_cells.put(entry.getKey(), new XSSFCell(this, cArray[i]));
+                xssfCell.setCTCell(cArray[i]);
+                i++;
+            }
+
+            _row.setCArray(cArray);
+        }
     }
 
     /**
@@ -377,6 +544,112 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      */
     @Override
     public String toString(){
-        return row.toString();
+        return _row.toString();
+    }
+
+    /**
+     * update cell references when shifting rows
+     *
+     * @param n the number of rows to move
+     */
+    protected void shift(int n) {
+        int rownum = getRowNum() + n;
+        CalculationChain calcChain = _sheet.getWorkbook().getCalculationChain();
+        int sheetId = (int)_sheet.sheet.getSheetId();
+        String msg = "Row[rownum="+getRowNum()+"] contains cell(s) included in a multi-cell array formula. " +
+                "You cannot change part of an array.";
+        for(Cell c : this){
+            XSSFCell cell = (XSSFCell)c;
+            if(cell.isPartOfArrayFormulaGroup()){
+                cell.notifyArrayFormulaChanging(msg);
+            }
+
+            //remove the reference in the calculation chain
+            if(calcChain != null) calcChain.removeItem(sheetId, cell.getReference());
+
+            CTCell ctCell = cell.getCTCell();
+            String r = new CellReference(rownum, cell.getColumnIndex()).formatAsString();
+            ctCell.setR(r);
+        }
+        setRowNum(rownum);
+    }
+    
+    /**
+     * Copy the cells from srcRow to this row
+     * If this row is not a blank row, this will merge the two rows, overwriting
+     * the cells in this row with the cells in srcRow
+     * If srcRow is null, overwrite cells in destination row with blank values, styles, etc per cell copy policy
+     * srcRow may be from a different sheet in the same workbook
+     * @param srcRow the rows to copy from
+     * @param policy the policy to determine what gets copied
+     */
+    @Beta
+    public void copyRowFrom(Row srcRow, CellCopyPolicy policy) {
+        if (srcRow == null) {
+            // srcRow is blank. Overwrite cells with blank values, blank styles, etc per cell copy policy
+            for (Cell destCell : this) {
+                final XSSFCell srcCell = null;
+                // FIXME: remove type casting when copyCellFrom(Cell, CellCopyPolicy) is added to Cell interface
+                ((XSSFCell)destCell).copyCellFrom(srcCell, policy);
+            }
+
+            if (policy.isCopyMergedRegions()) {
+                // Remove MergedRegions in dest row
+                final int destRowNum = getRowNum();
+                int index = 0;
+                final Set<Integer> indices = new HashSet<>();
+                for (CellRangeAddress destRegion : getSheet().getMergedRegions()) {
+                    if (destRowNum == destRegion.getFirstRow() && destRowNum == destRegion.getLastRow()) {
+                        indices.add(index);
+                    }
+                    index++;
+                }
+                getSheet().removeMergedRegions(indices);
+            }
+
+            if (policy.isCopyRowHeight()) {
+                // clear row height
+                setHeight((short)-1);
+            }
+
+        }
+        else {
+            for (final Cell c : srcRow){
+                final XSSFCell srcCell = (XSSFCell)c;
+                final XSSFCell destCell = createCell(srcCell.getColumnIndex(), srcCell.getCellType());
+                destCell.copyCellFrom(srcCell, policy);
+            }
+
+            final XSSFRowShifter rowShifter = new XSSFRowShifter(_sheet);
+            final int sheetIndex = _sheet.getWorkbook().getSheetIndex(_sheet);
+            final String sheetName = _sheet.getWorkbook().getSheetName(sheetIndex);
+            final int srcRowNum = srcRow.getRowNum();
+            final int destRowNum = getRowNum();
+            final int rowDifference = destRowNum - srcRowNum;
+            final FormulaShifter formulaShifter = FormulaShifter.createForRowCopy(sheetIndex, sheetName, srcRowNum, srcRowNum, rowDifference, SpreadsheetVersion.EXCEL2007);
+            rowShifter.updateRowFormulas(this, formulaShifter);
+
+            // Copy merged regions that are fully contained on the row
+            // FIXME: is this something that rowShifter could be doing?
+            if (policy.isCopyMergedRegions()) {
+                for (CellRangeAddress srcRegion : srcRow.getSheet().getMergedRegions()) {
+                    if (srcRowNum == srcRegion.getFirstRow() && srcRowNum == srcRegion.getLastRow()) {
+                        CellRangeAddress destRegion = srcRegion.copy();
+                        destRegion.setFirstRow(destRowNum);
+                        destRegion.setLastRow(destRowNum);
+                        getSheet().addMergedRegion(destRegion);
+                    }
+                }
+            }
+
+            if (policy.isCopyRowHeight()) {
+                setHeight(srcRow.getHeight());
+            }
+        }
+    }
+
+    @Override
+    public int getOutlineLevel() {
+        return _row.getOutlineLevel();
     }
 }

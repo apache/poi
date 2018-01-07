@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,10 +14,10 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hwpf.usermodel;
 
-public class TableCell
+public final class TableCell
   extends Range
 {
   private int _levelNum;
@@ -26,14 +25,16 @@ public class TableCell
   private int _leftEdge;
   private int _width;
 
-  public TableCell(int startIdx, int endIdx, TableRow parent, int levelNum, TableCellDescriptor tcd, int leftEdge, int width)
-  {
-    super(startIdx, endIdx, Range.TYPE_PARAGRAPH, parent);
-    _tcd = tcd;
-    _leftEdge = leftEdge;
-    _width = width;
-    _levelNum = levelNum;
-  }
+    public TableCell( int startIdxInclusive, int endIdxExclusive,
+            TableRow parent, int levelNum, TableCellDescriptor tcd,
+            int leftEdge, int width )
+    {
+        super( startIdxInclusive, endIdxExclusive, parent );
+        _tcd = tcd;
+        _leftEdge = leftEdge;
+        _width = width;
+        _levelNum = levelNum;
+    }
 
   public boolean isFirstMerged()
   {
@@ -103,6 +104,11 @@ public class TableCell
   public int getWidth() // twips
   {
     return _width;
+  }
+
+  /** Returns the TableCellDescriptor for this cell.*/
+  public TableCellDescriptor getDescriptor(){
+  	return _tcd;
   }
 
 }

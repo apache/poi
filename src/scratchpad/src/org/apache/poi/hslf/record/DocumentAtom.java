@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,10 +14,10 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -30,8 +29,11 @@ import java.io.OutputStream;
  * @author Nick Burch
  */
 
-public class DocumentAtom extends RecordAtom
+public final class DocumentAtom extends RecordAtom
 {
+	//arbitrarily selected; may need to increase
+	private static final int MAX_RECORD_LENGTH = 1_000_000;
+
 	private byte[] _header;
 	private static long _type = 1001l;
 
@@ -82,21 +84,28 @@ public class DocumentAtom extends RecordAtom
 
 	/** Was the document saved with True Type fonts embeded? */
 	public boolean getSaveWithFonts() {
-		if(saveWithFonts == 0) { return false; } else { return true; } }
+		return saveWithFonts != 0;
+	}
+
 	/** Have the placeholders on the title slide been omitted? */
 	public boolean getOmitTitlePlace() {
-		if(omitTitlePlace == 0) { return false; } else { return true; } }
+		return omitTitlePlace != 0;
+	}
+
 	/** Is this a Bi-Directional PPT Doc? */
 	public boolean getRightToLeft() {
-		if(rightToLeft == 0) { return false; } else { return true; } }
+		return rightToLeft != 0;
+	}
+
 	/** Are comment shapes visible? */
 	public boolean getShowComments() {
-		if(showComments == 0) { return false; } else { return true; } }
+		return showComments != 0;
+	}
 
 
 	/* *************** record code follows ********************** */
 
-	/** 
+	/**
 	 * For the Document Atom
 	 */
 	protected DocumentAtom(byte[] source, int start, int len) {
@@ -120,10 +129,10 @@ public class DocumentAtom extends RecordAtom
 		handoutMasterPersist = LittleEndian.getInt(source,start+28+8);
 
 		// Get the ID of the first slide
-		firstSlideNum = (int)LittleEndian.getShort(source,start+32+8);
+		firstSlideNum = LittleEndian.getShort(source,start+32+8);
 
 		// Get the slide size type
-		slideSizeType = (int)LittleEndian.getShort(source,start+34+8);
+		slideSizeType = LittleEndian.getShort(source,start+34+8);
 
 		// Get the booleans as bytes
 		saveWithFonts = source[start+36+8];
@@ -132,7 +141,7 @@ public class DocumentAtom extends RecordAtom
 		showComments = source[start+39+8];
 
 		// If there's any other bits of data, keep them about
-		reserved = new byte[len-40-8];
+		reserved = IOUtils.safelyAllocate(len-40-8, MAX_RECORD_LENGTH);
 		System.arraycopy(source,start+48,reserved,0,reserved.length);
 	}
 

@@ -17,21 +17,21 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.util.StringUtil;
 
 /**
- * Title:        Sup Book - EXTERNALBOOK (0x01AE) <p/>
+ * Title:        Sup Book - EXTERNALBOOK (0x01AE)<p>
  * Description:  A External Workbook Description (Supplemental Book)
- *               Its only a dummy record for making new ExternSheet Record <P>
- * REFERENCE:  5.38<P>
- * @author Libin Roman (Vista Portal LDT. Developer)
- * @author Andrew C. Oliver (acoliver@apache.org)
- *
+ *               Its only a dummy record for making new ExternSheet Record<p>
+ * REFERENCE:  5.38
  */
-public final class SupBookRecord extends Record {
+public final class SupBookRecord extends StandardRecord {
 
+    private final static POILogger logger = POILogFactory.getLogger(SupBookRecord.class);
+	
     public final static short sid = 0x01AE;
 
     private static final short SMALL_RECORD_SIZE = 4;
@@ -43,12 +43,21 @@ public final class SupBookRecord extends Record {
     private String[] field_3_sheet_names;
     private boolean _isAddInFunctions;
 
+    protected static final char CH_VOLUME = 1;
+    protected static final char CH_SAME_VOLUME = 2;
+    protected static final char CH_DOWN_DIR = 3;
+    protected static final char CH_UP_DIR = 4;
+    protected static final char CH_LONG_VOLUME = 5;
+    protected static final char CH_STARTUP_DIR = 6;
+    protected static final char CH_ALT_STARTUP_DIR = 7;
+    protected static final char CH_LIB_DIR = 8;
+    protected static final String PATH_SEPERATOR = System.getProperty("file.separator");
 
     public static SupBookRecord createInternalReferences(short numberOfSheets) {
         return new SupBookRecord(false, numberOfSheets);
     }
     public static SupBookRecord createAddInFunctions() {
-        return new SupBookRecord(true, (short)0);
+        return new SupBookRecord(true, (short)1 /* this field MUST be 0x0001 for add-in referencing */);
     }
     public static SupBookRecord createExternalReferences(String url, String[] sheetNames) {
         return new SupBookRecord(url, sheetNames);
@@ -80,9 +89,7 @@ public final class SupBookRecord extends Record {
      * called by the constructor, should set class level fields.  Should throw
      * runtime exception for bad/incomplete data.
      *
-     * @param data raw data
-     * @param size size of data
-     * @param offset of the record's data (provided a big array of the file)
+     * @param in the stream to read from
      */
     public SupBookRecord(RecordInputStream in) {
         int recLen = in.remaining();
@@ -124,17 +131,21 @@ public final class SupBookRecord extends Record {
 
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        sb.append(getClass().getName()).append(" [SUPBOOK ");
+        sb.append("[SUPBOOK ");
 
         if(isExternalReferences()) {
-            sb.append("External References");
-            sb.append(" nSheets=").append(field_1_number_of_sheets);
-            sb.append(" url=").append(field_2_encoded_url);
+            sb.append("External References]\n");
+            sb.append(" .url     = ").append(field_2_encoded_url).append("\n");
+            sb.append(" .nSheets = ").append(field_1_number_of_sheets).append("\n");
+            for (String sheetname : field_3_sheet_names) {
+                sb.append("    .name = ").append(sheetname).append("\n");
+            }
+            sb.append("[/SUPBOOK");
         } else if(_isAddInFunctions) {
             sb.append("Add-In Functions");
         } else {
-            sb.append("Internal References ");
-            sb.append(" nSheets= ").append(field_1_number_of_sheets);
+            sb.append("Internal References");
+            sb.append(" nSheets=").append(field_1_number_of_sheets);
         }
         sb.append("]");
         return sb.toString();
@@ -152,22 +163,8 @@ public final class SupBookRecord extends Record {
         }
         return sum;
     }
-    /**
-     * called by the class that is responsible for writing this sucker.
-     * Subclasses should implement this so that their data is passed back in a
-     * byte array.
-     *
-     * @param offset to begin writing at
-     * @param data byte array containing instance data
-     * @return number of bytes written
-     */
-    public int serialize(int offset, byte [] data) {
-        int dataSize = getDataSize();
-        int recordSize = 4 + dataSize;
-        LittleEndianOutput out = new LittleEndianByteArrayOutputStream(data, offset, recordSize);
 
-        out.writeShort(sid);
-        out.writeShort(dataSize);
+    public void serialize(LittleEndianOutput out) {
         out.writeShort(field_1_number_of_sheets);
 
         if(isExternalReferences()) {
@@ -181,7 +178,6 @@ public final class SupBookRecord extends Record {
 
             out.writeShort(field2val);
         }
-        return recordSize;
     }
 
     public void setNumberOfSheets(short number){
@@ -210,21 +206,51 @@ public final class SupBookRecord extends Record {
         return encodedUrl;
     }
     private static String decodeFileName(String encodedUrl) {
-        return encodedUrl.substring(1);
-        // TODO the following special characters may appear in the rest of the string, and need to get interpreted
-        /* see "MICROSOFT OFFICE EXCEL 97-2007  BINARY FILE FORMAT SPECIFICATION"
-        chVolume  1
-        chSameVolume  2
-        chDownDir  3
-        chUpDir  4
-        chLongVolume  5
-        chStartupDir  6
-        chAltStartupDir 7
-        chLibDir  8
-
-        */
+        /* see "MICROSOFT OFFICE EXCEL 97-2007  BINARY FILE FORMAT SPECIFICATION" */
+    	StringBuilder sb = new StringBuilder();
+        for(int i=1; i<encodedUrl.length(); i++) {
+        	char c = encodedUrl.charAt(i);
+        	switch (c) {
+        	case CH_VOLUME:
+        		char driveLetter = encodedUrl.charAt(++i);
+        		if (driveLetter == '@') {
+        			sb.append("\\\\");
+        		} else {
+        			//Windows notation for drive letters
+        			sb.append(driveLetter).append(":");
+        		}
+        		break;
+        	case CH_SAME_VOLUME:
+        		sb.append(PATH_SEPERATOR);
+        		break;
+        	case CH_DOWN_DIR:
+        		sb.append(PATH_SEPERATOR);
+        		break;
+        	case CH_UP_DIR:
+        		sb.append("..").append(PATH_SEPERATOR);
+        		break;
+        	case CH_LONG_VOLUME:
+        		//Don't known to handle...
+        		logger.log(POILogger.WARN, "Found unexpected key: ChLongVolume - IGNORING");
+        		break;
+        	case CH_STARTUP_DIR:
+        	case CH_ALT_STARTUP_DIR:
+        	case CH_LIB_DIR:
+        		logger.log(POILogger.WARN, "EXCEL.EXE path unkown - using this directoy instead: .");
+        		sb.append(".").append(PATH_SEPERATOR);
+        		break;
+        	default:
+        		sb.append(c);
+        	}
+        }
+        return sb.toString();
     }
     public String[] getSheetNames() {
-        return (String[]) field_3_sheet_names.clone();
+        return field_3_sheet_names.clone();
+    }
+    
+    public void setURL(String pUrl) {
+    	//Keep the first marker character!
+    	field_2_encoded_url = field_2_encoded_url.substring(0, 1) + pUrl; 
     }
 }

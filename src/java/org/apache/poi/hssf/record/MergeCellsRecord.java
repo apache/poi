@@ -19,21 +19,17 @@ package org.apache.poi.hssf.record;
 
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title: Merged Cells Record (0x00E5)
- * <br/>
- * Description:  Optional record defining a square area of cells to "merged" into
- *               one cell. <br>
- * REFERENCE:  NONE (UNDOCUMENTED PRESENTLY) <br>
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @version 2.0-pre
+ * Title: Merged Cells Record (0x00E5)<p>
+ * 
+ * Description:  Optional record defining a square area of cells to "merged" into one cell.
  */
-public final class MergeCellsRecord extends Record {
+public final class MergeCellsRecord extends StandardRecord implements Cloneable {
     public final static short sid = 0x00E5;
     /** sometimes the regions array is shared with other MergedCellsRecords */ 
-    private CellRangeAddress[] _regions;
+    private final CellRangeAddress[] _regions;
     private final int _startIndex;
     private final int _numberOfRegions;
 
@@ -66,57 +62,52 @@ public final class MergeCellsRecord extends Record {
     }
 
     /**
+     * @param index the n-th MergedRegion
+     * 
      * @return MergedRegion at the given index representing the area that is Merged (r1,c1 - r2,c2)
      */
     public CellRangeAddress getAreaAt(int index) {
         return _regions[_startIndex + index];
     }
 
+    @Override
     protected int getDataSize() {
 		return CellRangeAddressList.getEncodedSize(_numberOfRegions);
 	}
 
+    @Override
     public short getSid() {
         return sid;
     }
 
-    public int serialize(int offset, byte [] data) {
-        int dataSize = CellRangeAddressList.getEncodedSize(_numberOfRegions);
-
-        LittleEndian.putUShort(data, offset + 0, sid);
-        LittleEndian.putUShort(data, offset + 2, dataSize);
-        int nItems = _numberOfRegions;
-        LittleEndian.putUShort(data, offset + 4, nItems);
-        int pos = 6;
+    @Override
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(_numberOfRegions);
         for (int i = 0; i < _numberOfRegions; i++) {
-			pos += _regions[_startIndex + i].serialize(offset+pos, data);
+			_regions[_startIndex + i].serialize(out);
 		}
-        return 4 + dataSize;
     }
 
+    @Override
     public String toString() {
         StringBuffer retval = new StringBuffer();
 
         retval.append("[MERGEDCELLS]").append("\n");
-        retval.append("     .numregions =").append(getNumAreas())
-            .append("\n");
+        retval.append("     .numregions =").append(getNumAreas()).append("\n");
         for (int k = 0; k < _numberOfRegions; k++) {
-            CellRangeAddress region = _regions[_startIndex + k];
+            CellRangeAddress r = _regions[_startIndex + k];
 
-            retval.append("     .rowfrom    =").append(region.getFirstRow())
-                .append("\n");
-            retval.append("     .rowto      =").append(region.getLastRow())
-            	.append("\n");
-            retval.append("     .colfrom    =").append(region.getFirstColumn())
-                .append("\n");
-            retval.append("     .colto      =").append(region.getLastColumn())
-                .append("\n");
+            retval.append("     .rowfrom =").append(r.getFirstRow()).append("\n");
+            retval.append("     .rowto   =").append(r.getLastRow()).append("\n");
+            retval.append("     .colfrom =").append(r.getFirstColumn()).append("\n");
+            retval.append("     .colto   =").append(r.getLastColumn()).append("\n");
         }
         retval.append("[MERGEDCELLS]").append("\n");
         return retval.toString();
     }
 
-    public Object clone() {
+    @Override
+    public MergeCellsRecord clone() {
     	int nRegions = _numberOfRegions;
     	CellRangeAddress[] clonedRegions = new CellRangeAddress[nRegions];
 		for (int i = 0; i < clonedRegions.length; i++) {

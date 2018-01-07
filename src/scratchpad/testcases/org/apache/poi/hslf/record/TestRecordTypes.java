@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,46 +14,48 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.record;
 
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 /**
  * Tests that RecordTypes returns the right records and classes when asked
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestRecordTypes extends TestCase {
-    public void testPPTNameLookups() throws Exception {
-		assertEquals("MainMaster", RecordTypes.recordName(1016));
-		assertEquals("TextBytesAtom", RecordTypes.recordName(4008));
-		assertEquals("VBAInfo", RecordTypes.recordName(1023));
+public final class TestRecordTypes {
+    @Test
+	public void testPPTNameLookups() {
+		assertEquals("MainMaster", RecordTypes.MainMaster.name());
+		assertEquals("TextBytesAtom", RecordTypes.TextBytesAtom.name());
+		assertEquals("VBAInfo", RecordTypes.VBAInfo.name());
 	}
 
-    public void testEscherNameLookups() throws Exception {
-		assertEquals("EscherDggContainer", RecordTypes.recordName(0xf000));
-		assertEquals("EscherClientTextbox", RecordTypes.recordName(0xf00d));
-		assertEquals("EscherSelection", RecordTypes.recordName(0xf119));
+    @Test
+	public void testEscherNameLookups() {
+		assertEquals("EscherDggContainer", RecordTypes.EscherDggContainer.name());
+		assertEquals("EscherClientTextbox", RecordTypes.EscherClientTextbox.name());
+		assertEquals("EscherSelection", RecordTypes.EscherSelection.name());
 	}
 
-	public void testPPTClassLookups() throws Exception {
-		assertEquals(Slide.class, RecordTypes.recordHandlingClass(1006));
-		assertEquals(TextCharsAtom.class, RecordTypes.recordHandlingClass(4000));
-		assertEquals(TextBytesAtom.class, RecordTypes.recordHandlingClass(4008));
-		assertEquals(SlideListWithText.class, RecordTypes.recordHandlingClass(4080));
+    @Test
+	public void testPPTClassLookups() {
+		assertEquals(Slide.class, RecordTypes.Slide.handlingClass);
+		assertEquals(TextCharsAtom.class, RecordTypes.TextCharsAtom.handlingClass);
+		assertEquals(TextBytesAtom.class, RecordTypes.TextBytesAtom.handlingClass);
+		assertEquals(SlideListWithText.class, RecordTypes.SlideListWithText.handlingClass);
 
 		// If this record is ever implemented, change to one that isn't!
 		// This is checking the "unhandled default" stuff works
-		assertEquals(UnknownRecordPlaceholder.class, RecordTypes.recordHandlingClass(2019));
+		assertEquals(UnknownRecordPlaceholder.class, RecordTypes.forTypeID(-10).handlingClass);
 	}
 
-	public void testEscherClassLookups() throws Exception {
+    @Test
+    public void testEscherClassLookups() {
 		// Should all come back with null, as DDF handles them
-		assertEquals(null, RecordTypes.recordHandlingClass(0xf000));
-		assertEquals(null, RecordTypes.recordHandlingClass(0xf001));
+		assertEquals(null, RecordTypes.EscherDggContainer.handlingClass);
+		assertEquals(null, RecordTypes.EscherBStoreContainer.handlingClass);
 	}
 }

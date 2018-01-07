@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hwpf.model;
 
 /**
@@ -22,39 +23,47 @@ package org.apache.poi.hwpf.model;
  *  still work despite that.
  * It handles the conversion as required between bytes
  *  and characters.
+ *  
+ *  @deprecated byte positions shall not be saved in memory
  */
-public abstract class BytePropertyNode extends PropertyNode {
-	private boolean isUnicode;
-	
-	/**
-	 * @param fcStart The start of the text for this property, in _bytes_
-	 * @param fcEnd The end of the text for this property, in _bytes_
-	 */
-	public BytePropertyNode(int fcStart, int fcEnd, Object buf, boolean isUnicode) {
-		super(
-				generateCp(fcStart, isUnicode),
-				generateCp(fcEnd, isUnicode),
-				buf
-		);
-		this.isUnicode = isUnicode;
-	}
-	private static int generateCp(int val, boolean isUnicode) {
-		if(isUnicode)
-			return val/2;
-		return val;
-	}
-	
-	public boolean isUnicode() {
-		return isUnicode;
-	}
-	public int getStartBytes() {
-		if(isUnicode)
-			return getStart()*2;
-		return getStart();
-	}
-	public int getEndBytes() {
-		if(isUnicode)
-			return getEnd()*2;
-		return getEnd();
-	}
+@Deprecated
+public abstract class BytePropertyNode<T extends BytePropertyNode<T>> extends
+        PropertyNode<T>
+{
+    private final int startBytes;
+    private final int endBytes;
+
+    public BytePropertyNode( int charStart, int charEnd, Object buf )
+    {
+        super( charStart, charEnd, buf );
+
+        if ( charStart > charEnd )
+            throw new IllegalArgumentException( "charStart (" + charStart
+                    + ") > charEnd (" + charEnd + ")" );
+
+        this.startBytes = -1;
+        this.endBytes = -1;
+    }
+
+    /**
+     * @deprecated Though bytes are actually stored in file, it is advised to
+     *             use char positions for all operations. Including save
+     *             operations, because only char positions are preserved.
+     */
+	@Deprecated
+    public int getStartBytes()
+    {
+        return startBytes;
+    }
+
+    /**
+     * @deprecated Though bytes are actually stored in file, it is advised to
+     *             use char positions for all operations. Including save
+     *             operations, because only char positions are preserved.
+     */
+    @Deprecated
+    public int getEndBytes()
+    {
+        return endBytes;
+    }
 }

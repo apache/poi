@@ -17,32 +17,24 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.model.Workbook;
+import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.BackupRecord;
 import org.apache.poi.hssf.record.LabelSSTRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.Region;
-import org.apache.poi.util.TempFile;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * Class to test Workbook functionality
- *
- * @author Andrew C. Oliver
- * @author Greg Merrill
- * @author Siggi Cherem
  */
-public final class TestWorkbook extends TestCase {
+public final class TestWorkbook {
     private static final String LAST_NAME_KEY        = "lastName";
     private static final String FIRST_NAME_KEY       = "firstName";
     private static final String SSN_KEY              = "ssn";
@@ -53,7 +45,7 @@ public final class TestWorkbook extends TestCase {
     private static final String LAST_NAME_VALUE      = "Bush";
     private static final String FIRST_NAME_VALUE     = "George";
     private static final String SSN_VALUE            = "555555555";
-    private SanityChecker sanityChecker = new SanityChecker();
+    private final SanityChecker sanityChecker = new SanityChecker();
 
 
     private static HSSFWorkbook openSample(String sampleFileName) {
@@ -67,34 +59,26 @@ public final class TestWorkbook extends TestCase {
      *             Last row, first row is tested against the correct values (99,0).<P>
      * FAILURE:    HSSF does not create a sheet or excepts.  Filesize does not match the known good.
      *             HSSFSheet last row or first row is incorrect.             <P>
-     *
      */
+    @Test
     public void testWriteSheetSimple() throws IOException {
-        File             file = TempFile.createTempFile("testWriteSheetSimple",
-                                                    ".xls");
-        FileOutputStream out  = new FileOutputStream(file);
-        HSSFWorkbook     wb   = new HSSFWorkbook();
-        HSSFSheet        s    = wb.createSheet();
-        HSSFRow          r    = null;
-        HSSFCell         c    = null;
+        HSSFWorkbook wb1  = new HSSFWorkbook();
+        HSSFSheet s = wb1.createSheet();
 
-        for (int rownum = 0; rownum < 100; rownum++) {
-            r = s.createRow(rownum);
+        populateSheet(s);
 
-            for (int cellnum = 0; cellnum < 50; cellnum += 2) {
-                c = r.createCell(cellnum);
-                c.setCellValue(rownum * 10000 + cellnum
-                               + ((( double ) rownum / 1000)
-                                  + (( double ) cellnum / 10000)));
-                c = r.createCell(cellnum + 1);
-                c.setCellValue(new HSSFRichTextString("TEST"));
-            }
-        }
-        wb.write(out);
-        out.close();
-        sanityChecker.checkHSSFWorkbook(wb);
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+        
+        sanityChecker.checkHSSFWorkbook(wb1);
         assertEquals("LAST ROW == 99", 99, s.getLastRowNum());
         assertEquals("FIRST ROW == 0", 0, s.getFirstRowNum());
+
+        sanityChecker.checkHSSFWorkbook(wb2);
+        s = wb2.getSheetAt(0);
+        assertEquals("LAST ROW == 99", 99, s.getLastRowNum());
+        assertEquals("FIRST ROW == 0", 0, s.getFirstRowNum());
+        wb2.close();
+        wb1.close();
     }
 
     /**
@@ -105,46 +89,36 @@ public final class TestWorkbook extends TestCase {
      *             Last row, first row is tested against the correct values (74,25).<P>
      * FAILURE:    HSSF does not create a sheet or excepts.  Filesize does not match the known good.
      *             HSSFSheet last row or first row is incorrect.             <P>
-     *
      */
+    @Test
+    public void testWriteModifySheetSimple() throws IOException {
+        HSSFWorkbook wb1 = new HSSFWorkbook();
+        HSSFSheet s = wb1.createSheet();
 
-    public void testWriteModifySheetSimple()
-        throws IOException
-    {
-        File             file = TempFile.createTempFile("testWriteSheetSimple",
-                                                    ".xls");
-        FileOutputStream out  = new FileOutputStream(file);
-        HSSFWorkbook     wb   = new HSSFWorkbook();
-        HSSFSheet        s    = wb.createSheet();
-        HSSFRow          r    = null;
-        HSSFCell         c    = null;
+        populateSheet(s);
 
-        for (int rownum = 0; rownum < 100; rownum++) {
-            r = s.createRow(rownum);
-
-            for (int cellnum = 0; cellnum < 50; cellnum += 2) {
-                c = r.createCell(cellnum);
-                c.setCellValue(rownum * 10000 + cellnum
-                               + ((( double ) rownum / 1000)
-                                  + (( double ) cellnum / 10000)));
-                c = r.createCell(cellnum + 1);
-                c.setCellValue(new HSSFRichTextString("TEST"));
-            }
-        }
         for (int rownum = 0; rownum < 25; rownum++) {
-            r = s.getRow(rownum);
+            HSSFRow r = s.getRow(rownum);
             s.removeRow(r);
         }
         for (int rownum = 75; rownum < 100; rownum++) {
-            r = s.getRow(rownum);
+            HSSFRow r = s.getRow(rownum);
             s.removeRow(r);
         }
-        wb.write(out);
-        out.close();
 
-        sanityChecker.checkHSSFWorkbook(wb);
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+        
+        sanityChecker.checkHSSFWorkbook(wb1);
         assertEquals("LAST ROW == 74", 74, s.getLastRowNum());
         assertEquals("FIRST ROW == 25", 25, s.getFirstRowNum());
+
+        sanityChecker.checkHSSFWorkbook(wb2);
+        s = wb2.getSheetAt(0);
+        assertEquals("LAST ROW == 74", 74, s.getLastRowNum());
+        assertEquals("FIRST ROW == 25", 25, s.getFirstRowNum());
+    
+        wb2.close();
+        wb1.close();
     }
 
     /**
@@ -153,15 +127,15 @@ public final class TestWorkbook extends TestCase {
      * SUCCESS:    HSSF reads the sheet.  Matches values in their particular positions.<P>
      * FAILURE:    HSSF does not read a sheet or excepts.  HSSF cannot identify values
      *             in the sheet in their known positions.<P>
-     *
      */
-
-    public void testReadSimple() {
-        HSSFWorkbook workbook = openSample("Simple.xls");
-        HSSFSheet sheet = workbook.getSheetAt(0);
+    @Test
+    public void testReadSimple() throws IOException {
+        HSSFWorkbook wb = openSample("Simple.xls");
+        HSSFSheet sheet = wb.getSheetAt(0);
 
         HSSFCell cell = sheet.getRow(0).getCell(0);
         assertEquals(REPLACE_ME, cell .getRichStringCellValue().getString());
+        wb.close();
     }
 
     /**
@@ -170,18 +144,19 @@ public final class TestWorkbook extends TestCase {
      * SUCCESS:    HSSF reads the sheet.  Matches values in their particular positions and format is correct<P>
      * FAILURE:    HSSF does not read a sheet or excepts.  HSSF cannot identify values
      *             in the sheet in their known positions.<P>
-     *
      */
-
-    public void testReadSimpleWithDataFormat() {
-        HSSFWorkbook workbook = openSample("SimpleWithDataFormat.xls");
-        HSSFSheet       sheet    = workbook.getSheetAt(0);
-        HSSFDataFormat  format   = workbook.createDataFormat();
+    @Test
+    public void testReadSimpleWithDataFormat() throws IOException {
+        HSSFWorkbook wb = openSample("SimpleWithDataFormat.xls");
+        HSSFSheet       sheet    = wb.getSheetAt(0);
+        HSSFDataFormat  format   = wb.createDataFormat();
         HSSFCell cell = sheet.getRow(0).getCell(0);
 
         assertEquals(1.25,cell.getNumericCellValue(), 1e-10);
 
         assertEquals(format.getFormat(cell.getCellStyle().getDataFormat()), "0.0");
+        
+        wb.close();
     }
 
 /**
@@ -190,48 +165,36 @@ public final class TestWorkbook extends TestCase {
      * SUCCESS:    HSSF reads the sheet.  Matches values in their particular positions and format is correct<P>
      * FAILURE:    HSSF does not read a sheet or excepts.  HSSF cannot identify values
      *             in the sheet in their known positions.<P>
-     *
      */
+    @Test
+    public void testWriteDataFormat() throws IOException {
+        HSSFWorkbook wb1 = new HSSFWorkbook();
+        HSSFSheet s1 = wb1.createSheet();
+        HSSFDataFormat format = wb1.createDataFormat();
+        HSSFCellStyle cs = wb1.createCellStyle();
 
-    public void testWriteDataFormat()
-        throws IOException
-    {
-    File             file = TempFile.createTempFile("testWriteDataFormat",
-                                                    ".xls");
-        FileOutputStream out  = new FileOutputStream(file);
-        HSSFWorkbook     wb   = new HSSFWorkbook();
-        HSSFSheet        s    = wb.createSheet();
-        HSSFRow          r    = null;
-        HSSFCell         c    = null;
-    HSSFDataFormat format = wb.createDataFormat();
-    HSSFCellStyle    cs   = wb.createCellStyle();
+        short df = format.getFormat("0.0");
+        cs.setDataFormat(df);
 
-    short df = format.getFormat("0.0");
-    cs.setDataFormat(df);
+        HSSFCell c1 = s1.createRow(0).createCell(0);
+        c1.setCellStyle(cs);
+        c1.setCellValue(1.25);
 
-    r = s.createRow(0);
-    c = r.createCell(0);
-    c.setCellStyle(cs);
-    c.setCellValue(1.25);
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+        wb1.close();
 
-        wb.write(out);
-        out.close();
+        HSSFSheet s2 = wb2.getSheetAt(0);
+        HSSFCell c2 = s2.getRow(0).getCell(0);
+        format = wb2.createDataFormat();
 
-        FileInputStream stream   = new FileInputStream(file);
-        POIFSFileSystem fs       = new POIFSFileSystem(stream);
-        HSSFWorkbook    workbook = new HSSFWorkbook(fs);
-        HSSFSheet       sheet    = workbook.getSheetAt(0);
-    HSSFCell    cell     =
-                     sheet.getRow(0).getCell(0);
-    format = workbook.createDataFormat();
+        assertEquals(1.25, c2.getNumericCellValue(), 1e-10);
 
-        assertEquals(1.25,cell.getNumericCellValue(), 1e-10);
+        assertEquals(format.getFormat(df), "0.0");
 
-    assertEquals(format.getFormat(df), "0.0");
+        assertEquals(format, wb2.createDataFormat());
 
-    assertEquals(format, workbook.createDataFormat());
-
-        stream.close();
+        wb2.close();
+        wb1.close();
     }
 
     /**
@@ -242,15 +205,17 @@ public final class TestWorkbook extends TestCase {
      *             in the sheet in their known positions.<P>
      *
      */
-
-    public void testReadEmployeeSimple() {
-        HSSFWorkbook workbook = openSample("Employee.xls");
-        HSSFSheet       sheet    = workbook.getSheetAt(0);
+    @Test
+    public void testReadEmployeeSimple() throws IOException {
+        HSSFWorkbook wb = openSample("Employee.xls");
+        HSSFSheet sheet = wb.getSheetAt(0);
 
         assertEquals(EMPLOYEE_INFORMATION, sheet.getRow(1).getCell(1).getRichStringCellValue().getString());
         assertEquals(LAST_NAME_KEY, sheet.getRow(3).getCell(2).getRichStringCellValue().getString());
         assertEquals(FIRST_NAME_KEY, sheet.getRow(4).getCell(2).getRichStringCellValue().getString());
         assertEquals(SSN_KEY, sheet.getRow(5).getCell(2).getRichStringCellValue().getString());
+        
+        wb.close();
     }
 
     /**
@@ -263,20 +228,22 @@ public final class TestWorkbook extends TestCase {
      * FAILURE:    HSSF does not read a sheet or excepts.  HSSF does not write the sheet or excepts.
      *             HSSF does not re-read the sheet or excepts.  Upon re-reading the sheet the value
      *             is incorrect or has not been replaced. <P>
-     *
      */
-
-    public void testModifySimple() {
-        HSSFWorkbook workbook = openSample("Simple.xls");
-        HSSFSheet sheet = workbook.getSheetAt(0);
+    @Test
+    public void testModifySimple() throws IOException {
+        HSSFWorkbook wb1 = openSample("Simple.xls");
+        HSSFSheet sheet = wb1.getSheetAt(0);
         HSSFCell cell = sheet.getRow(0).getCell(0);
 
         cell.setCellValue(new HSSFRichTextString(REPLACED));
 
-        workbook = HSSFTestDataSamples.writeOutAndReadBack(workbook);
-        sheet    = workbook.getSheetAt(0);
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+        sheet    = wb2.getSheetAt(0);
         cell     = sheet.getRow(0).getCell(0);
         assertEquals(REPLACED, cell.getRichStringCellValue().getString());
+        
+        wb2.close();
+        wb1.close();
     }
 
     /**
@@ -290,20 +257,20 @@ public final class TestWorkbook extends TestCase {
      *             HSSF does not re-read the sheet or excepts.  Upon re-reading the sheet the value
      *             is incorrect or has not been replaced or the incorrect cell has its value replaced
      *             or is incorrect. <P>
-     *
      */
-    public void testModifySimpleWithSkip() {
-        HSSFWorkbook workbook = openSample("SimpleWithSkip.xls");
-        HSSFSheet sheet = workbook.getSheetAt(0);
+    @Test
+    public void testModifySimpleWithSkip() throws IOException {
+        HSSFWorkbook wb1 = openSample("SimpleWithSkip.xls");
+        HSSFSheet sheet = wb1.getSheetAt(0);
         HSSFCell cell = sheet.getRow(0).getCell(1);
 
         cell.setCellValue(new HSSFRichTextString(REPLACED));
         cell = sheet.getRow(1).getCell(0);
         cell.setCellValue(new HSSFRichTextString(REPLACED));
 
-        workbook = HSSFTestDataSamples.writeOutAndReadBack(workbook);
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
 
-        sheet    = workbook.getSheetAt(0);
+        sheet    = wb2.getSheetAt(0);
         cell     = sheet.getRow(0).getCell(1);
         assertEquals(REPLACED, cell.getRichStringCellValue().getString());
         cell = sheet.getRow(0).getCell(0);
@@ -312,6 +279,9 @@ public final class TestWorkbook extends TestCase {
         assertEquals(REPLACED, cell.getRichStringCellValue().getString());
         cell = sheet.getRow(1).getCell(1);
         assertEquals(DO_NOT_REPLACE, cell.getRichStringCellValue().getString());
+        
+        wb2.close();
+        wb1.close();
     }
 
     /**
@@ -325,28 +295,26 @@ public final class TestWorkbook extends TestCase {
      * FAILURE:    HSSF does not read a sheet or excepts.  HSSF does not write the sheet or excepts.
      *             HSSF does not re-read the sheet or excepts.  Upon re-reading the sheet the value
      *             is incorrect or has not been replaced. <P>
-     *
      */
-    public void testModifySimpleWithStyling() {
-        HSSFWorkbook workbook = openSample("SimpleWithStyling.xls");
-        HSSFSheet       sheet    = workbook.getSheetAt(0);
+    @Test
+    public void testModifySimpleWithStyling() throws IOException {
+        HSSFWorkbook wb1 = openSample("SimpleWithStyling.xls");
+        HSSFSheet  sheet = wb1.getSheetAt(0);
 
-        for (int k = 0; k < 4; k++)
-        {
+        for (int k = 0; k < 4; k++) {
             HSSFCell cell = sheet.getRow(k).getCell(0);
-
             cell.setCellValue(new HSSFRichTextString(REPLACED));
         }
 
-
-        workbook = HSSFTestDataSamples.writeOutAndReadBack(workbook);
-        sheet    = workbook.getSheetAt(0);
-        for (int k = 0; k < 4; k++)
-        {
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+        sheet    = wb2.getSheetAt(0);
+        for (int k = 0; k < 4; k++) {
             HSSFCell cell = sheet.getRow(k).getCell(0);
-
             assertEquals(REPLACED, cell.getRichStringCellValue().getString());
         }
+        
+        wb2.close();
+        wb1.close();
     }
 
     /**
@@ -360,12 +328,12 @@ public final class TestWorkbook extends TestCase {
      * FAILURE:    HSSF does not read a sheet or excepts.  HSSF does not write the sheet or excepts.
      *             HSSF does not re-read the sheet or excepts.  Upon re-reading the sheet the value
      *             is incorrect or has not been replaced. <P>
-     *
      */
-    public void testModifyEmployee() {
-        HSSFWorkbook workbook = openSample("Employee.xls");
-        HSSFSheet       sheet    = workbook.getSheetAt(0);
-        HSSFCell        cell     = sheet.getRow(3).getCell(2);
+    @Test
+    public void testModifyEmployee() throws IOException {
+        HSSFWorkbook wb1 = openSample("Employee.xls");
+        HSSFSheet  sheet = wb1.getSheetAt(0);
+        HSSFCell    cell = sheet.getRow(3).getCell(2);
 
         cell.setCellValue(new HSSFRichTextString(LAST_NAME_VALUE));
         cell = sheet.getRow(4).getCell(2);
@@ -373,12 +341,15 @@ public final class TestWorkbook extends TestCase {
         cell = sheet.getRow(5).getCell(2);
         cell.setCellValue(new HSSFRichTextString(SSN_VALUE));
 
-        workbook = HSSFTestDataSamples.writeOutAndReadBack(workbook);
-        sheet    = workbook.getSheetAt(0);
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+        sheet = wb2.getSheetAt(0);
         assertEquals(EMPLOYEE_INFORMATION, sheet.getRow(1).getCell(1).getRichStringCellValue().getString());
         assertEquals(LAST_NAME_VALUE, sheet.getRow(3).getCell(2).getRichStringCellValue().getString());
         assertEquals(FIRST_NAME_VALUE, sheet.getRow(4).getCell(2).getRichStringCellValue().getString());
         assertEquals(SSN_VALUE, sheet.getRow(5).getCell(2).getRichStringCellValue().getString());
+        
+        wb2.close();
+        wb1.close();
     }
 
     /**
@@ -386,16 +357,17 @@ public final class TestWorkbook extends TestCase {
      * OBJECTIVE:  Test that HSSF can read a simple spreadsheet with and RKRecord and correctly
      *             identify the cell as numeric and convert it to a NumberRecord.  <P>
      * SUCCESS:    HSSF reads a sheet.  HSSF returns that the cell is a numeric type cell.    <P>
-     * FAILURE:    HSSF does not read a sheet or excepts.  HSSF incorrectly indentifies the cell<P>
-     *
+     * FAILURE:    HSSF does not read a sheet or excepts.  HSSF incorrectly identifies the cell<P>
      */
-    public void testReadSheetWithRK() {
-        HSSFWorkbook h = openSample("rk.xls");
-        HSSFSheet       s  = h.getSheetAt(0);
-        HSSFCell        c  = s.getRow(0).getCell(0);
-        int             a  = c.getCellType();
+    @Test
+    public void testReadSheetWithRK() throws IOException {
+        HSSFWorkbook wb = openSample("rk.xls");
+        HSSFSheet    s  = wb.getSheetAt(0);
+        HSSFCell     c  = s.getRow(0).getCell(0);
 
-        assertEquals(a, c.CELL_TYPE_NUMERIC);
+        assertEquals(CellType.NUMERIC, c.getCellType());
+        
+        wb.close();
     }
 
     /**
@@ -406,35 +378,43 @@ public final class TestWorkbook extends TestCase {
      *             Last row, first row is tested against the correct values (74,25).<P>
      * FAILURE:    HSSF does not create a sheet or excepts.  Filesize does not match the known good.
      *             HSSFSheet last row or first row is incorrect.             <P>
-     *
      */
-    public void testWriteModifySheetMerged() {
-        HSSFWorkbook     wb   = new HSSFWorkbook();
-        HSSFSheet        s    = wb.createSheet();
+    @Test
+    public void testWriteModifySheetMerged() throws IOException {
+        HSSFWorkbook wb1 = new HSSFWorkbook();
+        HSSFSheet    s   = wb1.createSheet();
 
-        for (int rownum = 0; rownum < 100; rownum++) {
-            HSSFRow r = s.createRow(rownum);
+        populateSheet(s);
 
-            for (int cellnum = 0; cellnum < 50; cellnum += 2) {
-                HSSFCell c = r.createCell(cellnum);
-                c.setCellValue(rownum * 10000 + cellnum
-                               + ((( double ) rownum / 1000)
-                                  + (( double ) cellnum / 10000)));
-                c = r.createCell(cellnum + 1);
-                c.setCellValue(new HSSFRichTextString("TEST"));
-            }
-        }
         s.addMergedRegion(new CellRangeAddress(0, 10, 0, 10));
         s.addMergedRegion(new CellRangeAddress(30, 40, 5, 15));
-        sanityChecker.checkHSSFWorkbook(wb);
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        
-        s  = wb.getSheetAt(0);
+        sanityChecker.checkHSSFWorkbook(wb1);
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+
+        s  = wb2.getSheetAt(0);
         CellRangeAddress r1 = s.getMergedRegion(0);
         CellRangeAddress r2 = s.getMergedRegion(1);
 
         confirmRegion(new CellRangeAddress(0, 10, 0, 10), r1);
         confirmRegion(new CellRangeAddress(30, 40,5, 15), r2);
+
+        wb2.close();
+        wb1.close();
+    }
+
+    private void populateSheet(Sheet s) {
+        for (int rownum = 0; rownum < 100; rownum++) {
+            Row r = s.createRow(rownum);
+
+            for (int cellnum = 0; cellnum < 50; cellnum += 2) {
+                Cell c = r.createCell(cellnum);
+                c.setCellValue(rownum * 10000 + cellnum
+                        + ((( double ) rownum / 1000)
+                        + (( double ) cellnum / 10000)));
+                c = r.createCell(cellnum + 1);
+                c.setCellValue(new HSSFRichTextString("TEST"));
+            }
+        }
     }
 
     private static void confirmRegion(CellRangeAddress ra, CellRangeAddress rb) {
@@ -447,15 +427,23 @@ public final class TestWorkbook extends TestCase {
     /**
      * Test the backup field gets set as expected.
      */
-    public void testBackupRecord() {
+    @Test
+    public void testBackupRecord() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
 		wb.createSheet();
-		Workbook workbook = wb.getWorkbook();
+		InternalWorkbook workbook = wb.getWorkbook();
         BackupRecord record   = workbook.getBackupRecord();
 
         assertEquals(0, record.getBackup());
+        assertFalse(wb.getBackupFlag());
         wb.setBackupFlag(true);
         assertEquals(1, record.getBackup());
+        assertTrue(wb.getBackupFlag());
+        wb.setBackupFlag(false);
+        assertEquals(0, record.getBackup());
+        assertFalse(wb.getBackupFlag());
+        
+        wb.close();
     }
 
     private static final class RecordCounter implements RecordVisitor {
@@ -467,19 +455,21 @@ public final class TestWorkbook extends TestCase {
         public int getCount() {
             return _count;
         }
+        @Override
         public void visitRecord(Record r) {
             if (r instanceof LabelSSTRecord) {
                 _count++;
             }
         }
     }
-    
+
     /**
      * This tests is for bug [ #506658 ] Repeating output.
      *
      * We need to make sure only one LabelSSTRecord is produced.
      */
-    public void testRepeatingBug() {
+    @Test
+    public void testRepeatingBug() throws IOException {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet    sheet    = workbook.createSheet("Design Variants");
         HSSFRow      row      = sheet.createRow(2);
@@ -487,10 +477,13 @@ public final class TestWorkbook extends TestCase {
 
         cell.setCellValue(new HSSFRichTextString("Class"));
         cell = row.createCell(2);
+        assertNotNull(cell);
 
         RecordCounter rc = new RecordCounter();
         sheet.getSheet().visitContainedRecords(rc, 0);
         assertEquals(1, rc.getCount());
+        
+        workbook.close();
     }
 
 
@@ -498,9 +491,10 @@ public final class TestWorkbook extends TestCase {
      * Test for row indexes beyond {@link Short#MAX_VALUE}.
      * This bug was first fixed in svn r352609.
      */
-    public void testRowIndexesBeyond32768() {
-        HSSFWorkbook workbook = new HSSFWorkbook();
-        HSSFSheet sheet = workbook.createSheet();
+    @Test
+    public void testRowIndexesBeyond32768() throws IOException {
+        HSSFWorkbook wb1 = new HSSFWorkbook();
+        HSSFSheet sheet = wb1.createSheet();
         HSSFRow row;
         HSSFCell cell;
         for (int i = 32700; i < 32771; i++) {
@@ -508,23 +502,53 @@ public final class TestWorkbook extends TestCase {
             cell = row.createCell(0);
             cell.setCellValue(i);
         }
-        sanityChecker.checkHSSFWorkbook(workbook);
+        sanityChecker.checkHSSFWorkbook(wb1);
         assertEquals("LAST ROW == 32770", 32770, sheet.getLastRowNum());
         cell = sheet.getRow(32770).getCell(0);
         double lastVal = cell.getNumericCellValue();
 
-        HSSFWorkbook    wb = HSSFTestDataSamples.writeOutAndReadBack(workbook);
-        HSSFSheet       s    = wb.getSheetAt(0);
+        HSSFWorkbook    wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+        HSSFSheet       s    = wb2.getSheetAt(0);
         row = s.getRow(32770);
         cell = row.getCell(0);
         assertEquals("Value from last row == 32770", lastVal, cell.getNumericCellValue(), 0);
         assertEquals("LAST ROW == 32770", 32770, s.getLastRowNum());
+        
+        wb2.close();
+        wb1.close();
     }
 
     /**
-     * Generate a file to visually/programmatically verify repeating rows and cols made it
+     * Generate a file to verify repeating rows and cols made it
      */
-    public void testRepeatingColsRows() throws IOException
+    @Test
+    public void testRepeatingColsRows() throws IOException {
+        HSSFWorkbook wb1 = new HSSFWorkbook();
+        HSSFSheet sheet = wb1.createSheet("Test Print Titles");
+
+        HSSFRow row = sheet.createRow(0);
+
+        HSSFCell cell = row.createCell(1);
+        cell.setCellValue(new HSSFRichTextString("hi"));
+
+        CellRangeAddress cra = CellRangeAddress.valueOf("A1:B1");
+        sheet.setRepeatingColumns(cra);
+        sheet.setRepeatingRows(cra);
+
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+        sheet = wb2.getSheetAt(0);
+        assertEquals("A:B", sheet.getRepeatingColumns().formatAsString());
+        assertEquals("1:1", sheet.getRepeatingRows().formatAsString());
+        
+        wb2.close();
+        wb1.close();
+    }
+
+    /**
+     * Test setRepeatingRowsAndColumns when startRow and startColumn are -1.
+     */
+    @Test
+    public void testRepeatingColsRowsMinusOne() throws IOException
     {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("Test Print Titles");
@@ -533,16 +557,74 @@ public final class TestWorkbook extends TestCase {
 
         HSSFCell cell = row.createCell(1);
         cell.setCellValue(new HSSFRichTextString("hi"));
+        CellRangeAddress cra = new CellRangeAddress(-1, 1, -1, 1);
+        try {
+            sheet.setRepeatingColumns(cra);
+            fail("invalid start index is ignored");
+        } catch (IllegalArgumentException e) {
+            // expected here
+        }
+        
+        try {
+            sheet.setRepeatingRows(cra);
+            fail("invalid start index is ignored");
+        } catch (IllegalArgumentException e) {
+            // expected here
+        }
 
+        sheet.setRepeatingColumns(null);
+        sheet.setRepeatingRows(null);
+        
+        HSSFTestDataSamples.writeOutAndReadBack(workbook).close();
+        
+        workbook.close();
+    }
 
-        workbook.setRepeatingRowsAndColumns(0, 0, 1, 0, 0);
+    @Test
+    public void testBug58085RemoveSheetWithNames() throws Exception {
+        HSSFWorkbook wb1 = new HSSFWorkbook();
+        Sheet sheet1 = wb1.createSheet("sheet1");
+        Sheet sheet2 = wb1.createSheet("sheet2");
+        Sheet sheet3 = wb1.createSheet("sheet3");
 
-        File file = TempFile.createTempFile("testPrintTitles",".xls");
+        sheet1.createRow(0).createCell((short) 0).setCellValue("val1");
+        sheet2.createRow(0).createCell((short) 0).setCellValue("val2");
+        sheet3.createRow(0).createCell((short) 0).setCellValue("val3");
+        
+        Name namedCell1 = wb1.createName();
+        namedCell1.setNameName("name1");
+        String reference1 = "sheet1!$A$1";
+        namedCell1.setRefersToFormula(reference1);
+        
+        Name namedCell2= wb1.createName();
+        namedCell2.setNameName("name2");
+        String reference2 = "sheet2!$A$1";
+        namedCell2.setRefersToFormula(reference2);
 
-        FileOutputStream fileOut = new FileOutputStream(file);
-        workbook.write(fileOut);
-        fileOut.close();
+        Name namedCell3 = wb1.createName();
+        namedCell3.setNameName("name3");
+        String reference3 = "sheet3!$A$1";
+        namedCell3.setRefersToFormula(reference3);
 
-        assertTrue("file exists",file.exists());
+        Workbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
+        wb1.close();
+        
+        Name nameCell = wb2.getName("name1");
+        assertEquals("sheet1!$A$1", nameCell.getRefersToFormula());
+        nameCell = wb2.getName("name2");
+        assertEquals("sheet2!$A$1", nameCell.getRefersToFormula());
+        nameCell = wb2.getName("name3");
+        assertEquals("sheet3!$A$1", nameCell.getRefersToFormula());
+        
+        wb2.removeSheetAt(wb2.getSheetIndex("sheet1"));
+        
+        nameCell = wb2.getName("name1");
+        assertEquals("#REF!$A$1", nameCell.getRefersToFormula());
+        nameCell = wb2.getName("name2");
+        assertEquals("sheet2!$A$1", nameCell.getRefersToFormula());
+        nameCell = wb2.getName("name3");
+        assertEquals("sheet3!$A$1", nameCell.getRefersToFormula());
+        
+        wb2.close();
     }
 }

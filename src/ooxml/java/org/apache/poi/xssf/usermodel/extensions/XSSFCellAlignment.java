@@ -16,18 +16,19 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel.extensions;
 
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.ReadingOrder;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellAlignment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STHorizontalAlignment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STVerticalAlignment;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
 
 
 /**
- * Cell settings avaiable in the Format/Alignment tab
+ * Cell settings available in the Format/Alignment tab
  */
 public class XSSFCellAlignment {
-
     private CTCellAlignment cellAlignement;
 
     /**
@@ -84,7 +85,30 @@ public class XSSFCellAlignment {
     public void setHorizontal(HorizontalAlignment align) {
         cellAlignement.setHorizontal(STHorizontalAlignment.Enum.forInt(align.ordinal() + 1));
     }
-
+    
+    /**
+     * Set the type of reading order for the cell
+     *
+     * @param order - the type of reading order
+     * @see ReadingOrder
+     */
+    public void setReadingOrder(ReadingOrder order) {
+        cellAlignement.setReadingOrder(order.getCode());
+    }
+    
+    /**
+     * Get the reading order for the cell
+     *
+     * @return the value of reading order
+     * @see ReadingOrder
+     */
+    public ReadingOrder getReadingOrder() {
+        if(cellAlignement != null && cellAlignement.isSetReadingOrder()) {
+            return ReadingOrder.forLong(cellAlignement.getReadingOrder());
+        }
+        return ReadingOrder.CONTEXT;
+    }
+    
     /**
      * Get the number of spaces to indent the text in the cell
      *
@@ -105,13 +129,13 @@ public class XSSFCellAlignment {
 
     /**
      * Get the degree of rotation for the text in the cell
-     * <p/>
+     * <p>
      * Expressed in degrees. Values range from 0 to 180. The first letter of
      * the text is considered the center-point of the arc.
-     * <br/>
+     * <br>
      * For 0 - 90, the value represents degrees above horizon. For 91-180 the degrees below the
      * horizon is calculated as:
-     * <br/>
+     * <br>
      * <code>[degrees below horizon] = 90 - textRotation.</code>
      * </p>
      *
@@ -123,19 +147,27 @@ public class XSSFCellAlignment {
 
     /**
      * Set the degree of rotation for the text in the cell
-     * <p/>
+     * <p>
      * Expressed in degrees. Values range from 0 to 180. The first letter of
      * the text is considered the center-point of the arc.
-     * <br/>
+     * <br>
      * For 0 - 90, the value represents degrees above horizon. For 91-180 the degrees below the
      * horizon is calculated as:
-     * <br/>
+     * <br>
      * <code>[degrees below horizon] = 90 - textRotation.</code>
      * </p>
+     *
+     * Note: HSSF uses values from -90 to 90 degrees, whereas XSSF 
+     * uses values from 0 to 180 degrees. The implementations of this method will map between these two value-ranges 
+     * accordingly, however the corresponding getter is returning values in the range mandated by the current type
+     * of Excel file-format that this CellStyle is applied to.
      *
      * @param rotation - the rotation degrees (between 0 and 180 degrees)
      */
     public void setTextRotation(long rotation) {
+        if(rotation < 0 && rotation >= -90) {
+            rotation = 90 + ((-1)*rotation);
+        }
         cellAlignement.setTextRotation(rotation);
     }
 
@@ -157,9 +189,18 @@ public class XSSFCellAlignment {
         cellAlignement.setWrapText(wrapped);
     }
 
+    public boolean getShrinkToFit() {
+    	return cellAlignement.getShrinkToFit();
+    }
+    
+    public void setShrinkToFit(boolean shrink) {
+    	cellAlignement.setShrinkToFit(shrink);
+    }
+    
     /**
      * Access to low-level data
      */
+    @Internal
     public CTCellAlignment getCTCellAlignment() {
         return cellAlignement;
     }

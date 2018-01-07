@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hpsf.examples;
 
 import java.io.FileInputStream;
@@ -33,11 +32,6 @@ import org.apache.poi.poifs.eventfilesystem.POIFSReaderListener;
  * parameter.</p>
  *
  * <p>Explanations can be found in the HPSF HOW-TO.</p>
- *
- * @author Rainer Klute <a
- * href="mailto:klute@rainer-klute.de">&lt;klute@rainer-klute.de&gt;</a>
- * @version $Id$
- * @since 2003-02-01
  */
 public class ReadTitle
 {
@@ -60,9 +54,10 @@ public class ReadTitle
 
     static class MyPOIFSReaderListener implements POIFSReaderListener
     {
+        @Override
         public void processPOIFSReaderEvent(final POIFSReaderEvent event)
         {
-            SummaryInformation si = null;
+            SummaryInformation si;
             try
             {
                 si = (SummaryInformation)

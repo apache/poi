@@ -14,68 +14,95 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.hslf.blip;
 
-import org.apache.poi.hslf.model.Picture;
-import org.apache.poi.util.LittleEndian;
+package org.apache.poi.hslf.blip;
 
 import java.io.IOException;
 
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.LittleEndian;
+
 /**
  * Represents a DIB picture data in a PPT file
- * 
- * @author Yegor Kozlov
  */
-public class DIB extends Bitmap {
+public final class DIB extends Bitmap {
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 1_000_000;
+
     /**
      * Size of the BITMAPFILEHEADER structure preceding the actual DIB bytes
      */
-    public static final int HEADER_SIZE = 14;
+    private static final int HEADER_SIZE = 14;
 
-    /**
-     * @return type of  this picture
-     * @see  org.apache.poi.hslf.model.Picture#DIB
-     */
-    public int getType(){
-        return Picture.DIB;
+    @Override
+    public PictureType getType(){
+        return PictureType.DIB;
     }
 
     /**
-     * DIB signature is <code>0x7A80</code>
+     * DIB signature is {@code 0x7A80} or {@code 0x7A90}
      *
-     * @return DIB signature (<code>0x7A80</code>)
+     * @return DIB signature ({@code 0x7A80} or {@code 0x7A90})
      */
     public int getSignature(){
-        return 0x7A80;
+        return (getUIDInstanceCount() == 1 ? 0x7A80 : 0x7A90);
     }
 
+    /**
+     * Sets the DIB signature - either {@code 0x7A80} or {@code 0x7A90}
+     */
+    public void setSignature(int signature) {
+        switch (signature) {
+            case 0x7A80:
+                setUIDInstanceCount(1);
+                break;
+            case 0x7A90:
+                setUIDInstanceCount(2);
+                break;
+            default:
+                throw new IllegalArgumentException(signature+" is not a valid instance/signature value for DIB");
+        }        
+    }    
+    
+    @Override
     public byte[] getData(){
-        byte[] data = super.getData();
+        return addBMPHeader ( super.getData() );
+    }
 
+    public static byte[] addBMPHeader(byte[] data){
         // bitmap file-header, corresponds to a
         // Windows  BITMAPFILEHEADER structure
         // (For more information, consult the Windows API Programmer's reference )
         byte[] header = new byte[HEADER_SIZE];
         //Specifies the file type. It must be set to the signature word BM (0x4D42) to indicate bitmap.
         LittleEndian.putInt(header, 0, 0x4D42);
-        //Specifies the size, in bytes, of the bitmap file.
-        LittleEndian.putInt(header, 2, data.length); //DIB length including the header
-        //Reserved; set to zero
-        LittleEndian.putInt(header, 6, 0);
-        //the offset, in bytes, from the header to the bitmap bits (looks like it is always 2)
-        LittleEndian.putInt(header, 10, 2);
 
+        // read the size of the image and calculate the overall file size
+        // and the offset where the bitmap starts
+        int imageSize = LittleEndian.getInt(data, 0x22 - HEADER_SIZE);
+        int fileSize = data.length + HEADER_SIZE;
+        int offset = fileSize - imageSize;
+        
+		// specifies the size, in bytes, of the bitmap file - must add the length of the header
+        LittleEndian.putInt(header, 2, fileSize); 
+        // Reserved; set to zero
+        LittleEndian.putInt(header, 6, 0);
+        // the offset, i.e. starting address, of the byte where the bitmap data can be found
+        LittleEndian.putInt(header, 10, offset);
+        
         //DIB data is the header + dib bytes
-        byte[] dib = new byte[header.length + data.length];
+        byte[] dib = IOUtils.safelyAllocate(header.length + data.length, MAX_RECORD_LENGTH);
         System.arraycopy(header, 0, dib, 0, header.length);
         System.arraycopy(data, 0, dib, header.length, data.length);
 
         return dib;
     }
 
+    @Override
     public void setData(byte[] data) throws IOException {
         //cut off the bitmap file-header
-        byte[] dib = new byte[data.length-HEADER_SIZE];
+        byte[] dib = IOUtils.safelyAllocate(data.length-HEADER_SIZE, data.length);
         System.arraycopy(data, HEADER_SIZE, dib, 0, dib.length);
         super.setData(dib);
     }

@@ -17,12 +17,14 @@
  
 package org.apache.poi.ddf;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
+import org.junit.Test;
 
-public class TestEscherClientDataRecord extends TestCase
-{
+public class TestEscherClientDataRecord {
+    @Test
     public void testSerialize() {
         EscherClientDataRecord r = createRecord();
 
@@ -35,6 +37,7 @@ public class TestEscherClientDataRecord extends TestCase
                 HexDump.toHex( data ) );
     }
 
+    @Test
     public void testFillFields() {
         String hexData = "02 00 " +
                 "11 F0 " +
@@ -48,14 +51,19 @@ public class TestEscherClientDataRecord extends TestCase
         assertEquals( "[]", HexDump.toHex(r.getRemainingData()) );
     }
 
+    @Test
     public void testToString() {
         String nl = System.getProperty("line.separator");
 
-        String expected = "org.apache.poi.ddf.EscherClientDataRecord:" + nl +
-                "  RecordId: 0xF011" + nl +
-                "  Options: 0x0002" + nl +
-                "  Extra Data:" + nl +
-                "No Data" + nl ;
+        String expected =
+            "org.apache.poi.ddf.EscherClientDataRecord (ClientData):" + nl +
+            "  RecordId: 0xF011" + nl +
+            "  Version: 0x0002" + nl +
+            "  Instance: 0x0000" + nl +
+            "  Options: 0x0002" + nl +
+            "  Record Size: 8" + nl +
+            "  Extra Data: " + nl +
+            "     : 0";
         assertEquals( expected, createRecord().toString() );
     }
 

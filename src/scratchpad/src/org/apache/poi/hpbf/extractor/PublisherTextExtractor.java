@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hpbf.extractor;
 
 import java.io.FileInputStream;
@@ -25,26 +26,34 @@ import org.apache.poi.hpbf.HPBFDocument;
 import org.apache.poi.hpbf.model.qcbits.QCBit;
 import org.apache.poi.hpbf.model.qcbits.QCTextBit;
 import org.apache.poi.hpbf.model.qcbits.QCPLCBit.Type12;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
- * Extract text from HPBF Publisher files 
+ * Extract text from HPBF Publisher files
  */
-public class PublisherTextExtractor extends POIOLE2TextExtractor {
-	private HPBFDocument doc;
-	private boolean hyperlinksByDefault = false;
-	
-	public PublisherTextExtractor(HPBFDocument doc) {
-		super(doc);
-		this.doc = doc;
-	}
-	public PublisherTextExtractor(POIFSFileSystem fs) throws IOException {
-		this(new HPBFDocument(fs));
-	}
-	public PublisherTextExtractor(InputStream is) throws IOException {
-		this(new POIFSFileSystem(is));
-	}
-	
+public final class PublisherTextExtractor extends POIOLE2TextExtractor {
+   private HPBFDocument doc;
+   private boolean hyperlinksByDefault;
+
+   public PublisherTextExtractor(HPBFDocument doc) {
+      super(doc);
+      this.doc = doc;
+   }
+   public PublisherTextExtractor(DirectoryNode dir) throws IOException {
+      this(new HPBFDocument(dir));
+   }
+   public PublisherTextExtractor(POIFSFileSystem fs) throws IOException {
+      this(new HPBFDocument(fs));
+   }
+   public PublisherTextExtractor(NPOIFSFileSystem fs) throws IOException {
+      this(new HPBFDocument(fs));
+   }
+   public PublisherTextExtractor(InputStream is) throws IOException {
+      this(new POIFSFileSystem(is));
+   }
+
 	/**
 	 * Should a call to getText() return hyperlinks inline
 	 *  with the text?
@@ -54,10 +63,10 @@ public class PublisherTextExtractor extends POIOLE2TextExtractor {
 		this.hyperlinksByDefault = hyperlinksByDefault;
 	}
 
-	
+
 	public String getText() {
 		StringBuffer text = new StringBuffer();
-		
+
 		// Get the text from the Quill Contents
 		QCBit[] bits = doc.getQuillContents().getBits();
 		for(int i=0; i<bits.length; i++) {
@@ -66,7 +75,7 @@ public class PublisherTextExtractor extends POIOLE2TextExtractor {
 				text.append( t.getText().replace('\r', '\n') );
 			}
 		}
-		
+
 		// If requested, add in the hyperlinks
 		// Ideally, we'd do these inline, but the hyperlink
 		//  positions are relative to the text area the
@@ -84,25 +93,29 @@ public class PublisherTextExtractor extends POIOLE2TextExtractor {
 				}
 			}
 		}
-		
+
 		// Get more text
 		// TODO
-		
+
 		return text.toString();
 	}
-	
-	
+
+
 	public static void main(String[] args) throws Exception {
 		if(args.length == 0) {
 			System.err.println("Use:");
 			System.err.println("  PublisherTextExtractor <file.pub>");
 		}
-		
+
 		for(int i=0; i<args.length; i++) {
-			PublisherTextExtractor te = new PublisherTextExtractor(
-					new FileInputStream(args[i])
-			);
-			System.out.println(te.getText());
+		    FileInputStream fis = new FileInputStream(args[i]);
+		    try {
+		        PublisherTextExtractor te = new PublisherTextExtractor(fis);
+		        System.out.println(te.getText());
+		        te.close();
+		    } finally {
+		        fis.close();
+		    }
 		}
 	}
 }

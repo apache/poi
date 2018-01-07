@@ -1,9 +1,10 @@
 /* ====================================================================
-   Copyright 2002-2004   Apache Software Foundation
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
 
        http://www.apache.org/licenses/LICENSE-2.0
 
@@ -14,37 +15,21 @@
    limitations under the License.
 ==================================================================== */
         
-
-/*
- * TestRowStyle.java
- *
- * Created on May 20, 2005
- */
 package org.apache.poi.hssf.usermodel;
 
-import java.io.IOException;
+import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.util.IOUtils;
 
 import junit.framework.TestCase;
-
-import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.util.TempFile;
 
 /**
  * Class to test row styling functionality
  *
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  */
-
-public class TestRowStyle
-    extends TestCase
-{
-
-    /** Creates a new instance of TestCellStyle */
-
-    public TestRowStyle(String name)
-    {
-        super(name);
-    }
+public final class TestRowStyle extends TestCase {
 
     /**
      * TEST NAME:  Test Write Sheet Font <P>
@@ -53,46 +38,41 @@ public class TestRowStyle
      *             Last row, first row is tested against the correct values (99,0).<P>
      * FAILURE:    HSSF does not create a sheet or excepts.  Filesize does not match the known good.
      *             HSSFSheet last row or first row is incorrect.             <P>
-     *
      */
-
-    public void testWriteSheetFont()
-        throws IOException
-    {
+    public void testWriteSheetFont() {
         HSSFWorkbook     wb   = new HSSFWorkbook();
         HSSFSheet        s    = wb.createSheet();
         HSSFRow          r    = null;
-        HSSFCell         c    = null;
         HSSFFont         fnt  = wb.createFont();
         HSSFCellStyle    cs   = wb.createCellStyle();
 
         fnt.setColor(HSSFFont.COLOR_RED);
-        fnt.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+        fnt.setBold(true);
         cs.setFont(fnt);
-        for (short rownum = ( short ) 0; rownum < 100; rownum++)
+        for (int rownum = 0; rownum < 100; rownum++)
         {
             r = s.createRow(rownum);
             r.setRowStyle(cs);
             r.createCell(0);
         }
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        IOUtils.closeQuietly(wb);
         		
         SanityChecker sanityChecker = new SanityChecker();
-        sanityChecker.checkHSSFWorkbook(wb);
+        sanityChecker.checkHSSFWorkbook(wb2);
         assertEquals("LAST ROW == 99", 99, s.getLastRowNum());
         assertEquals("FIRST ROW == 0", 0, s.getFirstRowNum());
+        IOUtils.closeQuietly(wb2);
     }
 
     /**
      * Tests that is creating a file with a date or an calendar works correctly.
      */
-    public void testDataStyle()
-            throws Exception
-    {
+    public void testDataStyle() {
         HSSFWorkbook     wb   = new HSSFWorkbook();
         HSSFSheet        s    = wb.createSheet();
         HSSFCellStyle    cs   = wb.createCellStyle();
-        HSSFRow row = s.createRow((short)0);
+        HSSFRow row = s.createRow(0);
 
         // with Date:
         cs.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy"));
@@ -101,19 +81,20 @@ public class TestRowStyle
 
 
         // with Calendar:
-        row = s.createRow((short)1);
+        row = s.createRow(1);
         cs.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy"));
         row.setRowStyle(cs);
         row.createCell(0);
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        IOUtils.closeQuietly(wb);
         
         SanityChecker sanityChecker = new SanityChecker();
-        sanityChecker.checkHSSFWorkbook(wb);
+        sanityChecker.checkHSSFWorkbook(wb2);
 
         assertEquals("LAST ROW ", 1, s.getLastRowNum());
         assertEquals("FIRST ROW ", 0, s.getFirstRowNum());
-
+        IOUtils.closeQuietly(wb2);
     }
 
     /**
@@ -124,12 +105,8 @@ public class TestRowStyle
      *             Last row, first row is tested against the correct values (99,0).<P>
      * FAILURE:    HSSF does not create a sheet or excepts.  Filesize does not match the known good.
      *             HSSFSheet last row or first row is incorrect.             <P>
-     *
      */
-
-    public void testWriteSheetStyle()
-        throws IOException
-    {
+    public void testWriteSheetStyle() {
         HSSFWorkbook     wb   = new HSSFWorkbook();
         HSSFSheet        s    = wb.createSheet();
         HSSFRow          r    = null;
@@ -137,18 +114,18 @@ public class TestRowStyle
         HSSFCellStyle    cs   = wb.createCellStyle();
         HSSFCellStyle    cs2  = wb.createCellStyle();
 
-        cs.setBorderBottom(HSSFCellStyle.BORDER_THIN);
-        cs.setBorderLeft(HSSFCellStyle.BORDER_THIN);
-        cs.setBorderRight(HSSFCellStyle.BORDER_THIN);
-        cs.setBorderTop(HSSFCellStyle.BORDER_THIN);
+        cs.setBorderBottom(BorderStyle.THIN);
+        cs.setBorderLeft(BorderStyle.THIN);
+        cs.setBorderRight(BorderStyle.THIN);
+        cs.setBorderTop(BorderStyle.THIN);
         cs.setFillForegroundColor(( short ) 0xA);
-        cs.setFillPattern(( short ) 1);
+        cs.setFillPattern(FillPatternType.BRICKS);
         fnt.setColor(( short ) 0xf);
         fnt.setItalic(true);
         cs2.setFillForegroundColor(( short ) 0x0);
-        cs2.setFillPattern(( short ) 1);
+        cs2.setFillPattern(FillPatternType.BRICKS);
         cs2.setFont(fnt);
-        for (short rownum = ( short ) 0; rownum < 100; rownum++)
+        for (int rownum = 0; rownum < 100; rownum++)
         {
             r = s.createRow(rownum);
             r.setRowStyle(cs);
@@ -161,28 +138,29 @@ public class TestRowStyle
             r.setRowStyle(cs2);
             r.createCell(0);
         }
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb);
+        IOUtils.closeQuietly(wb);
         
         SanityChecker sanityChecker = new SanityChecker();
-        sanityChecker.checkHSSFWorkbook(wb);
+        sanityChecker.checkHSSFWorkbook(wb2);
         assertEquals("LAST ROW == 99", 99, s.getLastRowNum());
         assertEquals("FIRST ROW == 0", 0, s.getFirstRowNum());
         
-        s    = wb.getSheetAt(0);
+        s    = wb2.getSheetAt(0);
         assertNotNull("Sheet is not null", s);
         
-        for (short rownum = ( short ) 0; rownum < 100; rownum++)
+        for (int rownum = 0; rownum < 100; rownum++)
         {
             r = s.getRow(rownum);
             assertNotNull("Row is not null", r);
             
             cs = r.getRowStyle();
-            assertEquals("FillForegroundColor for row: ", cs.getBorderBottom(), HSSFCellStyle.BORDER_THIN);
-            assertEquals("FillPattern for row: ", cs.getBorderLeft(), HSSFCellStyle.BORDER_THIN);
-            assertEquals("FillForegroundColor for row: ", cs.getBorderRight(), HSSFCellStyle.BORDER_THIN);
-            assertEquals("FillPattern for row: ", cs.getBorderTop(), HSSFCellStyle.BORDER_THIN);
-            assertEquals("FillForegroundColor for row: ", cs.getFillForegroundColor(), 0xA);
-            assertEquals("FillPattern for row: ", cs.getFillPattern(), (short) 0x1);
+            assertEquals("Bottom Border Style for row:", BorderStyle.THIN, cs.getBorderBottom());
+            assertEquals("Left Border Style for row:",   BorderStyle.THIN, cs.getBorderLeft());
+            assertEquals("Right Border Style for row:",  BorderStyle.THIN, cs.getBorderRight());
+            assertEquals("Top Border Style for row:",    BorderStyle.THIN, cs.getBorderTop());
+            assertEquals("FillForegroundColor for row:", 0xA, cs.getFillForegroundColor());
+            assertEquals("FillPattern for row:",         FillPatternType.BRICKS, cs.getFillPattern());
             
             rownum++;
             if (rownum >= 100) break; // I feel too lazy to check if this isreqd :-/ 
@@ -191,14 +169,8 @@ public class TestRowStyle
             assertNotNull("Row is not null", r);
             cs2 = r.getRowStyle();
             assertEquals("FillForegroundColor for row: ", cs2.getFillForegroundColor(), (short) 0x0);
-            assertEquals("FillPattern for row: ", cs2.getFillPattern(), (short) 0x1);
+            assertEquals("FillPattern for row: ", cs2.getFillPattern(), FillPatternType.BRICKS);
         }
-    }
-
-    public static void main(String [] ignored_args)
-    {
-        System.out
-            .println("Testing org.apache.poi.hssf.usermodel.HSSFCellStyle");
-        junit.textui.TestRunner.run(TestCellStyle.class);
+        IOUtils.closeQuietly(wb2);
     }
 }

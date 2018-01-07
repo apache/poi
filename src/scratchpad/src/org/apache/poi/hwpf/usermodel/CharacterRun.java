@@ -15,22 +15,22 @@
    limitations under the License.
 ==================================================================== */
 
-
-
 package org.apache.poi.hwpf.usermodel;
 
+import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.HWPFOldDocument;
 import org.apache.poi.hwpf.model.CHPX;
+import org.apache.poi.hwpf.model.FFData;
+import org.apache.poi.hwpf.model.Ffn;
+import org.apache.poi.hwpf.model.NilPICFAndBinData;
 import org.apache.poi.hwpf.model.StyleSheet;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
 
 /**
  * This class represents a run of text that share common properties.
- *
- * @author Ryan Ackley
  */
-public class CharacterRun
-  extends Range
-  implements Cloneable
+public final class CharacterRun extends Range
+  implements Cloneable, org.apache.poi.wp.usermodel.CharacterRun
 {
   public final static short SPRM_FRMARKDEL = (short)0x0800;
   public final static short SPRM_FRMARK = 0x0801;
@@ -83,8 +83,9 @@ public class CharacterRun
   public final static short SPRM_FELID = 0x486E;
   public final static short SPRM_IDCTHINT = 0x286F;
 
-  SprmBuffer _chpx;
-  CharacterProperties _props;
+  protected short _istd;
+  protected SprmBuffer _chpx;
+  protected CharacterProperties _props;
 
   /**
    *
@@ -98,6 +99,7 @@ public class CharacterRun
     super(Math.max(parent._start, chpx.getStart()), Math.min(parent._end, chpx.getEnd()), parent);
     _props = chpx.getCharacterProperties(ss, istd);
     _chpx = chpx.getSprmBuf();
+    _istd = istd;
   }
 
   /**
@@ -105,6 +107,7 @@ public class CharacterRun
    *
    * @return TYPE_CHARACTER
    */
+  @SuppressWarnings("deprecation")
   public int type()
   {
     return TYPE_CHARACTER;
@@ -241,6 +244,10 @@ public class CharacterRun
     return _props.isFStrike();
   }
 
+  public void setStrikeThrough(boolean strike)
+  {
+      strikeThrough(strike);
+  }
   public void strikeThrough(boolean strike)
   {
     _props.setFStrike(strike);
@@ -398,7 +405,7 @@ public class CharacterRun
 
   public void setVerticalOffset(int hpsPos)
   {
-    _props.setHpsPos(hpsPos);
+    _props.setHpsPos((short) hpsPos);
     _chpx.updateSprm(SPRM_HPSPOS, (byte)hpsPos);
   }
 
@@ -418,6 +425,11 @@ public class CharacterRun
     return _props.isFHighlight();
   }
 
+  public byte getHighlightedColor()
+  {
+      return _props.getIcoHighlight();
+  }
+
   public void setHighlighted(byte color)
   {
     _props.setFHighlight(true);
@@ -427,6 +439,14 @@ public class CharacterRun
 
   public String getFontName()
   {
+    if (_doc instanceof HWPFOldDocument) {
+      return ((HWPFOldDocument) _doc).getOldFontTable().getMainFont(_props.getFtcAscii());
+    }
+
+    if (_doc.getFontTable() == null)
+      // old word format
+      return null;
+
     return _doc.getFontTable().getMainFont(_props.getFtcAscii());
   }
 
@@ -467,7 +487,13 @@ public class CharacterRun
     _chpx.updateSprm(SPRM_PICLOCATION, offset);
   }
 
-
+  /**
+   * Does the picture offset represent picture
+   *  or binary data?
+   * If it's set, then the picture offset refers to
+   *  a NilPICFAndBinData structure, otherwise to a
+   *  PICFAndOfficeArtData
+   */
   public boolean isData()
   {
     return _props.isFData();
@@ -522,18 +548,6 @@ public class CharacterRun
   }
 
   /**
-   * clone the CharacterProperties object associated with this
-   * characterRun so that you can apply it to another CharacterRun
-   */
-  public CharacterProperties cloneProperties() {
-    try {
-       return (CharacterProperties)_props.clone();
-    } catch(java.lang.CloneNotSupportedException e) {
-       throw new RuntimeException(e);
-    } 
-  }
-
-  /**
    * Used to create a deep copy of this object.
    *
    * @return A deep copy.
@@ -548,10 +562,123 @@ public class CharacterRun
     cp._props.setDttmPropRMark((DateAndTime)_props.getDttmPropRMark().clone());
     cp._props.setDttmDispFldRMark((DateAndTime)_props.getDttmDispFldRMark().
                                   clone());
-    cp._props.setXstDispFldRMark((byte[])_props.getXstDispFldRMark().clone());
-    cp._props.setShd((ShadingDescriptor)_props.getShd().clone());
+    cp._props.setXstDispFldRMark(_props.getXstDispFldRMark().clone());
+    cp._props.setShd(_props.getShd().clone());
 
     return cp;
   }
+  
+  /**
+   * Returns true, if the CharacterRun is a special character run containing a symbol, otherwise false.
+   *
+   * <p>In case of a symbol, the {@link #text()} method always returns a single character 0x0028, but word actually stores
+   * the character in a different field. Use {@link #getSymbolCharacter()} to get that character and {@link #getSymbolFont()}
+   * to determine its font.
+   */
+  public boolean isSymbol()
+  {
+    return isSpecialCharacter() && text().equals("\u0028");
+  }
+
+  /**
+   * Returns the symbol character, if this is a symbol character run.
+   * 
+   * @see #isSymbol()
+   * @throws IllegalStateException If this is not a symbol character run: call {@link #isSymbol()} first.
+   */
+  public char getSymbolCharacter()
+  {
+    if (isSymbol()) {
+      return (char)_props.getXchSym();
+    } else
+      throw new IllegalStateException("Not a symbol CharacterRun");
+  }
+
+  /**
+   * Returns the symbol font, if this is a symbol character run. Might return null, if the font index is not found in the font table.
+   * 
+   * @see #isSymbol()
+   * @throws IllegalStateException If this is not a symbol character run: call {@link #isSymbol()} first.
+   */
+  public Ffn getSymbolFont()
+  {
+    if (isSymbol()) {
+      if (_doc.getFontTable() == null)
+        return null;
+      
+      // Fetch all font names
+      Ffn[] fontNames = _doc.getFontTable().getFontNames();
+
+      // Try to find the name of the font for our symbol
+      if (fontNames.length <= _props.getFtcSym())
+        return null;
+
+      return fontNames[_props.getFtcSym()];
+    } else
+      throw new IllegalStateException("Not a symbol CharacterRun");
+  }
+  
+  public BorderCode getBorder() {
+    return _props.getBrc();
+  }
+
+  public int getLanguageCode() {
+      return _props.getLidDefault();
+  }
+  
+  /**
+   * <p>Returns the index of the base style which applies to
+   *  this Run. Details of the style can be looked up
+   *  from the {@link StyleSheet}, via
+   *  {@link StyleSheet#getStyleDescription(int)}.</p>
+   * <p>Note that runs typically override some of the style
+   *  properties from the base, so normally style information
+   *  should be fetched directly from the {@link CharacterRun}
+   *  itself.</p>
+   */
+  public short getStyleIndex() {
+    return _istd;
+  }
+  
+  public String toString() {
+     String text = text();
+     return "CharacterRun of " + text.length() + " characters - " + text; 
+  }
+
+    public String[] getDropDownListValues()
+    {
+        if ( getDocument() instanceof HWPFDocument )
+        {
+            char c = _text.charAt( _start );
+            if ( c == 0x01 )
+            {
+                NilPICFAndBinData data = new NilPICFAndBinData(
+                        ( (HWPFDocument) getDocument() ).getDataStream(),
+                        getPicOffset() );
+                FFData ffData = new FFData( data.getBinData(), 0 );
+
+                return ffData.getDropList();
+            }
+        }
+        return null;
+    }
+
+    public Integer getDropDownListDefaultItemIndex()
+    {
+        if ( getDocument() instanceof HWPFDocument )
+        {
+            char c = _text.charAt( _start );
+            if ( c == 0x01 )
+            {
+                NilPICFAndBinData data = new NilPICFAndBinData(
+                        ( (HWPFDocument) getDocument() ).getDataStream(),
+                        getPicOffset() );
+                FFData ffData = new FFData( data.getBinData(), 0 );
+
+                return Integer.valueOf( ffData.getDefaultDropDownItemIndex() );
+            }
+        }
+        return null;
+    }
 
 }

@@ -17,47 +17,241 @@
 
 package org.apache.poi.hsmf.datatypes;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
- * Collection of convenence chunks for standard parts of the MSG file.
+ * Collection of convenience chunks for standard parts of the MSG file.
  * 
- * @author Travis Ferguson
+ * Not all of these will be present in any given file.
+ * 
+ * A partial list is available at:
+ * http://msdn.microsoft.com/en-us/library/ms526356%28v=exchg.10%29.aspx
+ * 
+ * TODO Deprecate the public Chunks in favour of Property Lookups
  */
-public class Chunks {
-	/* String parts of Outlook Messages that are currently known */
+public final class Chunks implements ChunkGroupWithProperties {
+    private static final POILogger LOG = POILogFactory.getLogger(Chunks.class);
 
-	/** Type of message that the MSG represents (ie. IPM.Note) */
-	public StringChunk messageClass;
-	/** BODY Chunk, for plain/text messages */
-	public StringChunk textBodyChunk;
-	/** Subject link chunk, in plain/text */
-	public StringChunk subjectChunk;
-	/** Value that is in the TO field (not actually the addresses as they are stored in recip directory nodes */
-	public StringChunk displayToChunk;
-	/** Value that is in the FROM field */
-	public StringChunk displayFromChunk;
-	/** value that shows in the CC field */
-	public StringChunk displayCCChunk;
-	/** Value that shows in the BCC field */
-	public StringChunk displayBCCChunk;
-	/** Sort of like the subject line, but without the RE: and FWD: parts. */
-	public StringChunk conversationTopic;
-	/** Type of server that the message originated from (SMTP, etc). */
-	public StringChunk sentByServerType;
-	
-	private Chunks(boolean newStringType) {
-		messageClass = new StringChunk(0x001A, newStringType);
-		textBodyChunk = new StringChunk(0x1000, newStringType);
-		subjectChunk = new StringChunk(0x0037, newStringType);
-		displayToChunk = new StringChunk(0x0E04, newStringType);
-		displayFromChunk = new StringChunk(0x0C1A, newStringType);
-		displayCCChunk = new StringChunk(0x0E03, newStringType);
-		displayBCCChunk = new StringChunk(0x0E02, newStringType);
-		conversationTopic = new StringChunk(0x0070, newStringType);
-		sentByServerType = new StringChunk(0x0075, newStringType);
-	}
-	
-	public static Chunks getInstance(boolean newStringType) {
-		return new Chunks(newStringType);
-	}
+    /**
+     * Holds all the chunks that were found, indexed by their MAPIProperty.
+     * Normally a property will have zero chunks (fixed sized) or one chunk
+     * (variable size), but in some cases (eg Unknown) you may get more.
+     */
+    private Map<MAPIProperty, List<Chunk>> allChunks = new HashMap<>();
+
+    /** Type of message that the MSG represents (ie. IPM.Note) */
+    private StringChunk messageClass;
+    /** BODY Chunk, for plain/text messages */
+    private StringChunk textBodyChunk;
+    /** BODY Html Chunk, for html messages */
+    private StringChunk htmlBodyChunkString;
+    private ByteChunk htmlBodyChunkBinary;
+    /** BODY Rtf Chunk, for Rtf (Rich) messages */
+    private ByteChunk rtfBodyChunk;
+    /** Subject link chunk, in plain/text */
+    private StringChunk subjectChunk;
+    /**
+     * Value that is in the TO field (not actually the addresses as they are
+     * stored in recip directory nodes
+     */
+    private StringChunk displayToChunk;
+    /** Value that is in the FROM field */
+    private StringChunk displayFromChunk;
+    /** value that shows in the CC field */
+    private StringChunk displayCCChunk;
+    /** Value that shows in the BCC field */
+    private StringChunk displayBCCChunk;
+    /** Sort of like the subject line, but without the RE: and FWD: parts. */
+    private StringChunk conversationTopic;
+    /** Type of server that the message originated from (SMTP, etc). */
+    private StringChunk sentByServerType;
+    /** The email headers */
+    private StringChunk messageHeaders;
+    /** TODO */
+    private MessageSubmissionChunk submissionChunk;
+    /** TODO */
+    private StringChunk emailFromChunk;
+    /** The message ID */
+    private StringChunk messageId;
+    /** The message properties */
+    private MessagePropertiesChunk messageProperties;
+
+    @Override
+    public Map<MAPIProperty, List<PropertyValue>> getProperties() {
+        if (messageProperties != null) {
+            return messageProperties.getProperties();
+        } else {
+            return Collections.emptyMap();
+        }
+    }
+
+    public Map<MAPIProperty, PropertyValue> getRawProperties() {
+        if (messageProperties != null) {
+            return messageProperties.getRawProperties();
+        } else {
+            return Collections.emptyMap();
+        }
+    }
+
+    public Map<MAPIProperty, List<Chunk>> getAll() {
+        return allChunks;
+    }
+
+    @Override
+    public Chunk[] getChunks() {
+        ArrayList<Chunk> chunks = new ArrayList<>(allChunks.size());
+        for (List<Chunk> c : allChunks.values()) {
+            chunks.addAll(c);
+        }
+        return chunks.toArray(new Chunk[chunks.size()]);
+    }
+
+    public StringChunk getMessageClass() {
+        return messageClass;
+    }
+
+    public StringChunk getTextBodyChunk() {
+        return textBodyChunk;
+    }
+
+    public StringChunk getHtmlBodyChunkString() {
+        return htmlBodyChunkString;
+    }
+
+    public ByteChunk getHtmlBodyChunkBinary() {
+        return htmlBodyChunkBinary;
+    }
+
+    public ByteChunk getRtfBodyChunk() {
+        return rtfBodyChunk;
+    }
+
+    public StringChunk getSubjectChunk() {
+        return subjectChunk;
+    }
+
+    public StringChunk getDisplayToChunk() {
+        return displayToChunk;
+    }
+
+    public StringChunk getDisplayFromChunk() {
+        return displayFromChunk;
+    }
+
+    public StringChunk getDisplayCCChunk() {
+        return displayCCChunk;
+    }
+
+    public StringChunk getDisplayBCCChunk() {
+        return displayBCCChunk;
+    }
+
+    public StringChunk getConversationTopic() {
+        return conversationTopic;
+    }
+
+    public StringChunk getSentByServerType() {
+        return sentByServerType;
+    }
+
+    public StringChunk getMessageHeaders() {
+        return messageHeaders;
+    }
+
+    public MessageSubmissionChunk getSubmissionChunk() {
+        return submissionChunk;
+    }
+
+    public StringChunk getEmailFromChunk() {
+        return emailFromChunk;
+    }
+
+    public StringChunk getMessageId() {
+        return messageId;
+    }
+
+    public MessagePropertiesChunk getMessageProperties() {
+        return messageProperties;
+    }
+
+    /**
+     * Called by the parser whenever a chunk is found.
+     */
+    @Override
+    public void record(Chunk chunk) {
+        // Work out what MAPIProperty this corresponds to
+        MAPIProperty prop = MAPIProperty.get(chunk.getChunkId());
+
+        // Assign it for easy lookup, as best we can
+        if (prop == MAPIProperty.MESSAGE_CLASS) {
+            messageClass = (StringChunk) chunk;
+        } else if (prop == MAPIProperty.INTERNET_MESSAGE_ID) {
+            messageId = (StringChunk) chunk;
+        } else if (prop == MAPIProperty.MESSAGE_SUBMISSION_ID) {
+            // TODO - parse
+            submissionChunk = (MessageSubmissionChunk) chunk;
+        } else if (prop == MAPIProperty.RECEIVED_BY_ADDRTYPE) {
+            sentByServerType = (StringChunk) chunk;
+        } else if (prop == MAPIProperty.TRANSPORT_MESSAGE_HEADERS) {
+            messageHeaders = (StringChunk) chunk;
+        }
+
+        else if (prop == MAPIProperty.CONVERSATION_TOPIC) {
+            conversationTopic = (StringChunk) chunk;
+        } else if (prop == MAPIProperty.SUBJECT) {
+            subjectChunk = (StringChunk) chunk;
+        } /*else if (prop == MAPIProperty.ORIGINAL_SUBJECT) {
+            // TODO
+        }*/
+
+        else if (prop == MAPIProperty.DISPLAY_TO) {
+            displayToChunk = (StringChunk) chunk;
+        } else if (prop == MAPIProperty.DISPLAY_CC) {
+            displayCCChunk = (StringChunk) chunk;
+        } else if (prop == MAPIProperty.DISPLAY_BCC) {
+            displayBCCChunk = (StringChunk) chunk;
+        }
+
+        else if (prop == MAPIProperty.SENDER_EMAIL_ADDRESS) {
+            emailFromChunk = (StringChunk) chunk;
+        } else if (prop == MAPIProperty.SENDER_NAME) {
+            displayFromChunk = (StringChunk) chunk;
+        } else if (prop == MAPIProperty.BODY) {
+            textBodyChunk = (StringChunk) chunk;
+        } else if (prop == MAPIProperty.BODY_HTML) {
+            if (chunk instanceof StringChunk) {
+                htmlBodyChunkString = (StringChunk) chunk;
+            }
+            if (chunk instanceof ByteChunk) {
+                htmlBodyChunkBinary = (ByteChunk) chunk;
+            }
+        } else if (prop == MAPIProperty.RTF_COMPRESSED) {
+            rtfBodyChunk = (ByteChunk) chunk;
+        } else if (chunk instanceof MessagePropertiesChunk) {
+            messageProperties = (MessagePropertiesChunk) chunk;
+        }
+
+        // And add to the main list
+        if (allChunks.get(prop) == null) {
+            allChunks.put(prop, new ArrayList<>());
+        }
+        allChunks.get(prop).add(chunk);
+    }
+
+    @Override
+    public void chunksComplete() {
+        if (messageProperties != null) {
+            messageProperties.matchVariableSizedPropertiesToChunks();
+        } else {
+            LOG.log(POILogger.WARN,
+                    "Message didn't contain a root list of properties!");
+        }
+    }
 }

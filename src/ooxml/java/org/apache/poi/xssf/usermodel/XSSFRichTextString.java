@@ -17,12 +17,24 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import java.util.*;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+
+import javax.xml.namespace.QName;
+
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.xssf.model.StylesTable;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
-
-import java.util.ArrayList;
+import org.apache.poi.xssf.model.ThemesTable;
+import org.apache.poi.util.Internal;
+import org.apache.xmlbeans.XmlCursor;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRElt;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRPrElt;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STXstring;
 
 
 /**
@@ -61,24 +73,24 @@ import java.util.ArrayList;
  *     cell2.setCellValue(s2);
  * </pre>
  * </blockquote>
- *
- *
- * @author Yegor Kozlov
  */
 public class XSSFRichTextString implements RichTextString {
+    private static final Pattern utfPtrn = Pattern.compile("_x([0-9A-Fa-f]{4})_");
+
     private CTRst st;
     private StylesTable styles;
 
     /**
-     * Create a rich text string and initialize it with empty string
+     * Create a rich text string
      */
     public XSSFRichTextString(String str) {
         st = CTRst.Factory.newInstance();
         st.setT(str);
+        preserveSpaces(st.xgetT());
     }
 
     /**
-     * Create empty rich text string
+     * Create empty rich text string and initialize it with empty string
      */
     public XSSFRichTextString() {
         st = CTRst.Factory.newInstance();
@@ -87,6 +99,7 @@ public class XSSFRichTextString implements RichTextString {
     /**
      * Create a rich text string from the supplied XML bean
      */
+    @Internal
     public XSSFRichTextString(CTRst st) {
         this.st = st;
     }
@@ -120,9 +133,10 @@ public class XSSFRichTextString implements RichTextString {
      */
     public void applyFont(int startIndex, int endIndex, Font font) {
         if (startIndex > endIndex)
-            throw new IllegalArgumentException("Start index must be less than end index.");
+            throw new IllegalArgumentException("Start index must be less than end index, but had " + startIndex + " and " + endIndex);
         if (startIndex < 0 || endIndex > length())
-            throw new IllegalArgumentException("Start and end index not in range.");
+            throw new IllegalArgumentException("Start and end index not in range, but had " + startIndex + " and " + endIndex);
+
         if (startIndex == endIndex)
             return;
 
@@ -133,55 +147,15 @@ public class XSSFRichTextString implements RichTextString {
         }
 
         String text = getString();
-
         XSSFFont xssfFont = (XSSFFont)font;
-        ArrayList<CTRElt> runs = new ArrayList<CTRElt>();
 
-        CTRElt[] r = st.getRArray();
-        int pos = 0;
-        for (int i = 0; i < r.length; i++) {
-            int rStart = pos;
-            String t = r[i].getT();
-            int rEnd = rStart + t.length();
+        TreeMap<Integer, CTRPrElt> formats = getFormatMap(st);
+        CTRPrElt fmt = CTRPrElt.Factory.newInstance();
+        setRunAttributes(xssfFont.getCTFont(), fmt);
+        applyFont(formats, startIndex, endIndex, fmt);
 
-            if(rEnd <= startIndex) {
-                runs.add(r[i]);
-                pos += r[i].getT().length();
-            }
-            else if (startIndex > rStart && startIndex < rEnd){
-                CTRElt c = (CTRElt)r[i].copy();
-                String txt = text.substring(rStart, startIndex);
-                c.setT(txt);
-                runs.add(c);
-                pos += txt.length();
-            } else {
-                break;
-            }
-        }
-        CTRElt rt = CTRElt.Factory.newInstance();
-        String txt = text.substring(startIndex, endIndex);
-        rt.setT(txt);
-        CTRPrElt pr = rt.addNewRPr();
-        setRunAttributes(xssfFont.getCTFont(), pr);
-        runs.add(rt);
-        pos += txt.length();
-
-        for (int i = 0; i < r.length; i++) {
-            int rStart = pos;
-            String t = r[i].getT();
-            int rEnd = Math.min(rStart + t.length(), text.length());
-
-            if (endIndex < rEnd){
-                CTRElt c = (CTRElt)r[i].copy();
-                txt = text.substring(rStart, rEnd);
-                c.setT(txt);
-                runs.add(c);
-                pos += txt.length();
-            }
-        }
-
-
-        st.setRArray(runs.toArray(new CTRElt[runs.size()]));
+        CTRst newSt = buildCTRst(text, formats);
+        st.set(newSt);
     }
 
     /**
@@ -189,17 +163,8 @@ public class XSSFRichTextString implements RichTextString {
      * @param font          The font to use.
      */
     public void applyFont(Font font) {
-        if(st.sizeOfRArray() == 0 && st.isSetT()) {
-            CTRElt r = st.addNewR();
-            r.setT(st.getT());
-            setRunAttributes(((XSSFFont)font).getCTFont(), r.addNewRPr());
-            st.unsetT();
-        } else {
-            CTRElt r = CTRElt.Factory.newInstance();
-            r.setT(getString());
-            setRunAttributes(((XSSFFont)font).getCTFont(), r.addNewRPr());
-            st.setRArray(new CTRElt[]{r});
-        }
+        String text = getString();
+        applyFont(0, text.length(), font);
     }
 
     /**
@@ -215,7 +180,8 @@ public class XSSFRichTextString implements RichTextString {
         } else {
             font = styles.getFontAt(fontIndex);
         }
-        applyFont(font);
+        String text = getString();
+        applyFont(0, text.length(), font);
     }
 
     /**
@@ -227,13 +193,19 @@ public class XSSFRichTextString implements RichTextString {
     public void append(String text, XSSFFont font){
         if(st.sizeOfRArray() == 0 && st.isSetT()) {
             //convert <t>string</t> into a text run: <r><t>string</t></r>
-            st.addNewR().setT(st.getT());
+            CTRElt lt = st.addNewR();
+            lt.setT(st.getT());
+            preserveSpaces(lt.xgetT());
             st.unsetT();
         }
         CTRElt lt = st.addNewR();
         lt.setT(text);
-        CTRPrElt pr = lt.addNewRPr();
-        if(font != null) setRunAttributes(font.getCTFont(), pr);
+        preserveSpaces(lt.xgetT());
+        
+        if (font != null) {
+            CTRPrElt pr = lt.addNewRPr();
+            setRunAttributes(font.getCTFont(), pr);
+        }
     }
 
     /**
@@ -261,6 +233,7 @@ public class XSSFRichTextString implements RichTextString {
             if(c1.isSetTheme()) c2.setTheme(c1.getTheme());
             if(c1.isSetTint()) c2.setTint(c1.getTint());
         }
+        if(ctFont.sizeOfSzArray() > 0) pr.addNewSz().setVal(ctFont.getSzArray(0).getVal());
         if(ctFont.sizeOfNameArray() > 0) pr.addNewRFont().setVal(ctFont.getNameArray(0).getVal());
         if(ctFont.sizeOfFamilyArray() > 0) pr.addNewFamily().setVal(ctFont.getFamilyArray(0).getVal());
         if(ctFont.sizeOfSchemeArray() > 0) pr.addNewScheme().setVal(ctFont.getSchemeArray(0).getVal());
@@ -274,13 +247,27 @@ public class XSSFRichTextString implements RichTextString {
     }
 
     /**
+     * Does this string have any explicit formatting applied, or is 
+     *  it just text in the default style?
+     */
+    public boolean hasFormatting() {
+        //noinspection deprecation - for performance reasons!
+        CTRElt[] rs = st.getRArray();
+        if (rs == null || rs.length == 0) {
+            return false;
+        }
+        for (CTRElt r : rs) {
+            if (r.isSetRPr()) return true;
+        }
+        return false;
+    }
+
+    /**
      * Removes any formatting that may have been applied to the string.
      */
     public void clearFormatting() {
         String text = getString();
-        while (st.sizeOfRArray() > 0) {
-            st.removeR(st.sizeOfRArray()-1);
-        }
+        st.setRArray(null);
         st.setT(text);
     }
 
@@ -310,27 +297,27 @@ public class XSSFRichTextString implements RichTextString {
      * @return  the number of characters this format run covers
      */
     public int getLengthOfFormattingRun(int index) {
-        if(st.sizeOfRArray() == 0) return length();
-
-        for(int i = 0; i < st.sizeOfRArray(); i++){
-            CTRElt r = st.getRArray(i);
-            if(i == index) return r.getT().length();
+        if(st.sizeOfRArray() == 0 || index >= st.sizeOfRArray()) {
+            return -1;
         }
-        return -1;
+
+        CTRElt r = st.getRArray(index);
+        return r.getT().length();
     }
 
     /**
      * Returns the plain string representation.
      */
     public String getString() {
-        if(st.sizeOfRArray() == 0) return st.getT();
-        else {
-            StringBuffer buf = new StringBuffer();
-            for(CTRElt r : st.getRArray()){
-                buf.append(r.getT());
-            }
-            return buf.toString();
+        if(st.sizeOfRArray() == 0) {
+            return utfDecode(st.getT());
         }
+        StringBuilder buf = new StringBuilder();
+        //noinspection deprecation - for performance reasons!
+        for(CTRElt r : st.getRArray()){
+            buf.append(r.getT());
+        }
+        return utfDecode(buf.toString());
     }
 
     /**
@@ -338,9 +325,10 @@ public class XSSFRichTextString implements RichTextString {
      *
      * @param s new string value
      */
-    public void setString(String s){
+    public void setString(String s) {
         clearFormatting();
         st.setT(s);
+        preserveSpaces(st.xgetT());
     }
 
     /**
@@ -371,12 +359,17 @@ public class XSSFRichTextString implements RichTextString {
      * @return  A copy of the  font used or null if no formatting is applied to the specified text run.
      */
     public XSSFFont getFontOfFormattingRun(int index) {
-        if(st.sizeOfRArray() == 0) return null;
-
-        for(int i = 0; i < st.sizeOfRArray(); i++){
-            CTRElt r = st.getRArray(i);
-            if(i == index) return new XSSFFont(toCTFont(r.getRPr()));
+        if(st.sizeOfRArray() == 0 || index >= st.sizeOfRArray()) {
+            return null;
         }
+
+        CTRElt r = st.getRArray(index);
+        if(r.getRPr() != null) {
+           XSSFFont fnt = new XSSFFont(toCTFont(r.getRPr()));
+           fnt.setThemesTable(getThemesTable());
+           return fnt;
+        }
+
         return null;
     }
 
@@ -389,14 +382,18 @@ public class XSSFRichTextString implements RichTextString {
      *                      index is out of range.
      */
     public XSSFFont getFontAtIndex( int index ) {
-        if(st.sizeOfRArray() == 0) return null;
-
+        final ThemesTable themes = getThemesTable();
         int pos = 0;
-        for(int i = 0; i < st.sizeOfRArray(); i++){
-            CTRElt r = st.getRArray(i);
-            if(index >= pos && index < pos + r.getT().length()) return new XSSFFont(toCTFont(r.getRPr()));
+        //noinspection deprecation - for performance reasons!
+        for(CTRElt r : st.getRArray()){
+            final int length = r.getT().length();
+            if(index >= pos && index < pos + length) {
+               XSSFFont fnt = new XSSFFont(toCTFont(r.getRPr()));
+               fnt.setThemesTable(themes);
+               return fnt;
+            }
 
-            pos += r.getT().length();
+            pos += length;
         }
         return null;
 
@@ -405,6 +402,7 @@ public class XSSFRichTextString implements RichTextString {
     /**
      * Return the underlying xml bean
      */
+    @Internal
     public CTRst getCTRst() {
         return st;
     }
@@ -412,9 +410,10 @@ public class XSSFRichTextString implements RichTextString {
     protected void setStylesTableReference(StylesTable tbl){
         styles = tbl;
         if(st.sizeOfRArray() > 0) {
+            //noinspection deprecation - for performance reasons!
             for (CTRElt r : st.getRArray()) {
                 CTRPrElt pr = r.getRPr();
-                if(pr != null){
+                if(pr != null && pr.sizeOfRFontArray() > 0){
                     String fontName = pr.getRFontArray(0).getVal();
                     if(fontName.startsWith("#")){
                         int idx = Integer.parseInt(fontName.substring(1));
@@ -433,6 +432,11 @@ public class XSSFRichTextString implements RichTextString {
      */
     protected static CTFont toCTFont(CTRPrElt pr){
         CTFont ctFont =  CTFont.Factory.newInstance();
+
+        // Bug 58315: there are files where there is no pr-entry for a RichTextString
+        if(pr == null) {
+            return ctFont;
+        }
 
         if(pr.sizeOfBArray() > 0) ctFont.addNewB().setVal(pr.getBArray(0).getVal());
         if(pr.sizeOfUArray() > 0) ctFont.addNewU().setVal(pr.getUArray(0).getVal());
@@ -459,5 +463,140 @@ public class XSSFRichTextString implements RichTextString {
         if(pr.sizeOfStrikeArray() > 0) ctFont.addNewStrike().setVal(pr.getStrikeArray(0).getVal());
 
         return ctFont;
+    }
+
+    /**
+     * Add the xml:spaces="preserve" attribute if the string has leading or trailing spaces
+     *
+     * @param xs    the string to check
+     */
+    protected static void preserveSpaces(STXstring xs) {
+        String text = xs.getStringValue();
+        if (text != null && text.length() > 0) {
+            char firstChar = text.charAt(0);
+            char lastChar  = text.charAt(text.length() - 1);
+            if(Character.isWhitespace(firstChar) || Character.isWhitespace(lastChar)) {
+                XmlCursor c = xs.newCursor();
+                c.toNextToken();
+                c.insertAttributeWithValue(new QName("http://www.w3.org/XML/1998/namespace", "space"), "preserve");
+                c.dispose();
+            }
+        }
+    }
+
+    /**
+     * For all characters which cannot be represented in XML as defined by the XML 1.0 specification,
+     * the characters are escaped using the Unicode numerical character representation escape character
+     * format _xHHHH_, where H represents a hexadecimal character in the character's value.
+     * <p>
+     * Example: The Unicode character 0D is invalid in an XML 1.0 document,
+     * so it shall be escaped as <code>_x000D_</code>.
+     * </p>
+     * See section 3.18.9 in the OOXML spec.
+     *
+     * @param   value the string to decode
+     * @return  the decoded string
+     */
+    static String utfDecode(String value) {
+        if(value == null || !value.contains("_x")) {
+            return value;
+        }
+        
+        StringBuilder buf = new StringBuilder();
+        Matcher m = utfPtrn.matcher(value);
+        int idx = 0;
+        while(m.find()) {
+            int pos = m.start();
+            if( pos > idx) {
+                buf.append(value.substring(idx, pos));
+            }
+
+            String code = m.group(1);
+            int icode = Integer.decode("0x" + code);
+            buf.append((char)icode);
+
+            idx = m.end();
+        }
+        
+        // small optimization: don't go via StringBuilder if not necessary, 
+        // the encodings are very rare, so we should almost always go via this shortcut. 
+        if(idx == 0) {
+            return value;
+        }
+        
+        buf.append(value.substring(idx));
+        return buf.toString();
+    }
+
+    void applyFont(TreeMap<Integer, CTRPrElt> formats, int startIndex, int endIndex, CTRPrElt fmt) {
+            // delete format runs that fit between startIndex and endIndex
+            // runs intersecting startIndex and endIndex remain
+            int runStartIdx = 0;
+            for (Iterator<Integer> it = formats.keySet().iterator(); it.hasNext();) {
+                int runEndIdx = it.next();
+                if (runStartIdx >= startIndex && runEndIdx < endIndex) {
+                   it.remove();
+                }
+                runStartIdx = runEndIdx;
+            }
+
+            if(startIndex > 0 && !formats.containsKey(startIndex)) {
+                // If there's a format that starts later in the string, make it start now
+                for(Map.Entry<Integer, CTRPrElt> entry : formats.entrySet()) {
+                   if(entry.getKey() > startIndex) {
+                      formats.put(startIndex, entry.getValue());
+                      break;
+                   }
+                }
+            }
+            formats.put(endIndex, fmt);
+
+            // assure that the range [startIndex, endIndex] consists if a single run
+            // there can be two or three runs depending whether startIndex or endIndex
+            // intersected existing format runs
+            SortedMap<Integer, CTRPrElt> sub = formats.subMap(startIndex, endIndex);
+            while(sub.size() > 1) sub.remove(sub.lastKey());
+        }
+
+    TreeMap<Integer, CTRPrElt> getFormatMap(CTRst entry){
+        int length = 0;
+        TreeMap<Integer, CTRPrElt> formats = new TreeMap<>();
+        //noinspection deprecation - for performance reasons!
+        for (CTRElt r : entry.getRArray()) {
+            String txt = r.getT();
+            CTRPrElt fmt = r.getRPr();
+
+            length += txt.length();
+            formats.put(length, fmt);
+        }
+        return formats;
+    }
+
+    CTRst buildCTRst(String text, TreeMap<Integer, CTRPrElt> formats){
+        if(text.length() != formats.lastKey()) {
+            throw new IllegalArgumentException("Text length was " + text.length() +
+                    " but the last format index was " + formats.lastKey());
+        }
+        CTRst stf = CTRst.Factory.newInstance();
+        int runStartIdx = 0;
+        for (Map.Entry<Integer, CTRPrElt> me : formats.entrySet()) {
+            int runEndIdx = me.getKey();
+            CTRElt run = stf.addNewR();
+            String fragment = text.substring(runStartIdx, runEndIdx);
+            run.setT(fragment);
+            preserveSpaces(run.xgetT());
+
+            CTRPrElt fmt = me.getValue();
+            if (fmt != null) {
+                run.setRPr(fmt);
+            }
+            runStartIdx = runEndIdx;
+        }
+        return stf;
+    }
+    
+    private ThemesTable getThemesTable() {
+       if(styles == null) return null;
+       return styles.getTheme();
     }
 }

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,16 +14,15 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hslf.record;
 
-import org.apache.poi.util.ArrayUtil;
-import org.apache.poi.util.LittleEndian;
-
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.poi.util.LittleEndian;
 
 /**
  * These are tricky beasts. They contain the text of potentially
@@ -48,31 +46,30 @@ import java.util.Vector;
  */
 
 // For now, pretend to be an atom
-public class SlideListWithText extends RecordContainer
-{
+public final class SlideListWithText extends RecordContainer {
 
-    /**
-     * Instance filed of the record header indicates that this SlideListWithText stores
-     * references to slides
-     */
-    public static final int SLIDES = 0;
-    /**
-     * Instance filed of the record header indicates that this SlideListWithText stores
-     * references to master slides
-     */
-    public static final int MASTER = 1;
-    /**
-     * Instance filed of the record header indicates that this SlideListWithText stores
-     * references to notes
-     */
-    public static final int NOTES = 2;
+	/**
+	 * Instance filed of the record header indicates that this SlideListWithText stores
+	 * references to slides
+	 */
+	public static final int SLIDES = 0;
+	/**
+	 * Instance filed of the record header indicates that this SlideListWithText stores
+	 * references to master slides
+	 */
+	public static final int MASTER = 1;
+	/**
+	 * Instance filed of the record header indicates that this SlideListWithText stores
+	 * references to notes
+	 */
+	public static final int NOTES = 2;
 
-    private byte[] _header;
+	private byte[] _header;
 	private static long _type = 4080;
 
 	private SlideAtomsSet[] slideAtomsSets;
 
-	/** 
+	/**
 	 * Create a new holder for slide records
 	 */
 	protected SlideListWithText(byte[] source, int start, int len) {
@@ -81,12 +78,12 @@ public class SlideListWithText extends RecordContainer
 		System.arraycopy(source,start,_header,0,8);
 
 		// Find our children
-		_children = Record.findChildRecords(source,start+8,len-8);	
+		_children = Record.findChildRecords(source,start+8,len-8);
 
 		// Group our children together into SlideAtomsSets
-		// That way, model layer code can just grab the sets to use, 
+		// That way, model layer code can just grab the sets to use,
 		//  without having to try to match the children together
-		Vector sets = new Vector();
+		List<SlideAtomsSet> sets = new ArrayList<>();
 		for(int i=0; i<_children.length; i++) {
 			if(_children[i] instanceof SlidePersistAtom) {
 				// Find where the next SlidePersistAtom is
@@ -96,9 +93,7 @@ public class SlideListWithText extends RecordContainer
 				}
 
 				int clen = endPos - i - 1;
-				boolean emptySet = false;
-				if(clen == 0) { emptySet = true; }
-				
+
 				// Create a SlideAtomsSets, not caring if they're empty
 				//if(emptySet) { continue; }
 				Record[] spaChildren = new Record[clen];
@@ -111,11 +106,8 @@ public class SlideListWithText extends RecordContainer
 			}
 		}
 
-		// Turn the vector into an array
-		slideAtomsSets = new SlideAtomsSet[sets.size()];
-		for(int i=0; i<slideAtomsSets.length; i++) {
-			slideAtomsSets[i] = (SlideAtomsSet)sets.get(i);
-		}
+		// Turn the list into an array
+		slideAtomsSets = sets.toArray( new SlideAtomsSet[sets.size()] );
 	}
 
 	/**
@@ -127,11 +119,11 @@ public class SlideListWithText extends RecordContainer
 		LittleEndian.putUShort(_header, 2, (int)_type);
 		LittleEndian.putInt(_header, 4, 0);
 
-		// We have no children to start with 
+		// We have no children to start with
 		_children = new Record[0];
 		slideAtomsSets = new SlideAtomsSet[0];
 	}
-	
+
 	/**
 	 * Add a new SlidePersistAtom, to the end of the current list,
 	 *  and update the internal list of SlidePersistAtoms
@@ -150,18 +142,27 @@ public class SlideListWithText extends RecordContainer
 		slideAtomsSets = sas;
 	}
 
-    public int getInstance(){
-        return LittleEndian.getShort(_header, 0) >> 4;
-    }
+	public int getInstance(){
+		return LittleEndian.getShort(_header, 0) >> 4;
+	}
 
-    public void setInstance(int inst){
-        LittleEndian.putShort(_header, (short)((inst << 4) | 0xF));
-    }
+	public void setInstance(int inst){
+		LittleEndian.putShort(_header, 0, (short)((inst << 4) | 0xF));
+	}
 
-    /**
+	/**
 	 * Get access to the SlideAtomsSets of the children of this record
 	 */
-	public SlideAtomsSet[] getSlideAtomsSets() { return slideAtomsSets; }
+	public SlideAtomsSet[] getSlideAtomsSets() {
+	    return slideAtomsSets;
+    }
+
+	/**
+	* Get access to the SlideAtomsSets of the children of this record
+	*/
+	public void setSlideAtomsSets( SlideAtomsSet[] sas ) {
+	    slideAtomsSets = sas.clone();
+    }
 
 	/**
 	 * Return the value we were given at creation
@@ -179,11 +180,11 @@ public class SlideListWithText extends RecordContainer
 	/**
 	 * Inner class to wrap up a matching set of records that hold the
 	 *  text for a given sheet. Contains the leading SlidePersistAtom,
-	 *  and all of the records until the next SlidePersistAtom. This 
+	 *  and all of the records until the next SlidePersistAtom. This
 	 *  includes sets of TextHeaderAtom and TextBytesAtom/TextCharsAtom,
 	 *  along with some others.
 	 */
-	public class SlideAtomsSet {
+	public static class SlideAtomsSet {
 		private SlidePersistAtom slidePersistAtom;
 		private Record[] slideRecords;
 
@@ -195,7 +196,7 @@ public class SlideListWithText extends RecordContainer
 		/** Create one to hold the Records for one Slide's text */
 		public SlideAtomsSet(SlidePersistAtom s, Record[] r) {
 			slidePersistAtom = s;
-			slideRecords = r;
+			slideRecords = r.clone();
 		}
 	}
 }

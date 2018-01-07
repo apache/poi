@@ -21,6 +21,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.apache.poi.poifs.common.POIFSConstants;
+
 import junit.framework.TestCase;
 
 /**
@@ -55,7 +57,7 @@ public final class TestDocumentBlock extends TestCase {
             byte[] data = new byte[ Math.min(_testdata.length - index, 512) ];
 
             System.arraycopy(_testdata, index, data, 0, data.length);
-            DocumentBlock block = new DocumentBlock(input);
+            DocumentBlock block = new DocumentBlock(input, POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
 
             verifyOutput(block, data);
             size += block.size();

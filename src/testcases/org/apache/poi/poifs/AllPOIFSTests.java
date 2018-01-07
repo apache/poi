@@ -17,25 +17,26 @@
 
 package org.apache.poi.poifs;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.apache.poi.poifs.eventfilesystem.TestPOIFSReaderRegistry;
 import org.apache.poi.poifs.filesystem.AllPOIFSFileSystemTests;
+import org.apache.poi.poifs.macros.TestVBAMacroReader;
+import org.apache.poi.poifs.nio.TestDataSource;
 import org.apache.poi.poifs.property.AllPOIFSPropertyTests;
 import org.apache.poi.poifs.storage.AllPOIFSStorageTests;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+
 /**
  * Test suite for all sub-packages of org.apache.poi.poifs
- * 
- * @author Josh Micich
  */
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+      TestPOIFSReaderRegistry.class
+    , TestDataSource.class
+    , TestVBAMacroReader.class
+    , AllPOIFSFileSystemTests.class
+    , AllPOIFSPropertyTests.class
+    , AllPOIFSStorageTests.class
+})
 public final class AllPOIFSTests {
-    public static Test suite() {
-        TestSuite result = new TestSuite("Tests for org.apache.poi.poifs");
-        result.addTestSuite(TestPOIFSReaderRegistry.class);
-        result.addTest(AllPOIFSFileSystemTests.suite());
-        result.addTest(AllPOIFSPropertyTests.suite());
-        result.addTest(AllPOIFSStorageTests.suite());
-        return result;
-    }
 }

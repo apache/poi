@@ -14,10 +14,25 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.xssf.usermodel;
 
-import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.*;
-import org.openxmlformats.schemas.drawingml.x2006.main.*;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTFontReference;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetGeometry2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeStyle;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTStyleMatrixReference;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.STFontCollectionIndex;
+import org.openxmlformats.schemas.drawingml.x2006.main.STSchemeColorVal;
+import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTConnector;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTConnectorNonVisual;
+import org.apache.poi.util.Internal;
 
 /**
  * A connection shape drawing element. A connection shape is a line, etc.
@@ -25,9 +40,9 @@ import org.openxmlformats.schemas.drawingml.x2006.main.*;
  *
  * @author Yegor Kozlov
  */
-public class XSSFConnector extends XSSFShape {
+public final class XSSFConnector extends XSSFShape {
 
-    private static CTConnector prototype = null;
+    private static CTConnector prototype;
 
     private CTConnector ctShape;
 
@@ -90,6 +105,7 @@ public class XSSFConnector extends XSSFShape {
         return prototype;
     }
 
+    @Internal
     public CTConnector getCTConnector(){
         return ctShape;
     }
@@ -118,4 +134,8 @@ public class XSSFConnector extends XSSFShape {
         return ctShape.getSpPr();
     }
 
+    @Override
+    public String getShapeName() {
+        return ctShape.getNvCxnSpPr().getCNvPr().getName();
+    }
 }

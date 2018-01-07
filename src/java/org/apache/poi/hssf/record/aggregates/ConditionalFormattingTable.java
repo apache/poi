@@ -21,39 +21,37 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.hssf.model.RecordStream;
+import org.apache.poi.hssf.record.CFHeader12Record;
 import org.apache.poi.hssf.record.CFHeaderRecord;
-import org.apache.poi.hssf.record.formula.FormulaShifter;
+import org.apache.poi.ss.formula.FormulaShifter;
 
 /**
- * Holds all the conditional formatting for a workbook sheet.<p/>
+ * Holds all the conditional formatting for a workbook sheet.<p>
  * 
  * See OOO exelfileformat.pdf sec 4.12 'Conditional Formatting Table'
- * 
- * @author Josh Micich
  */
 public final class ConditionalFormattingTable extends RecordAggregate {
-
-	private final List _cfHeaders;
+	private final List<CFRecordsAggregate> _cfHeaders;
 
 	/**
 	 * Creates an empty ConditionalFormattingTable
 	 */
 	public ConditionalFormattingTable() {
-		_cfHeaders = new ArrayList();
+		_cfHeaders = new ArrayList<>();
 	}
 
 	public ConditionalFormattingTable(RecordStream rs) {
 
-		List temp = new ArrayList();
-		while (rs.peekNextClass() == CFHeaderRecord.class) {
+		List<CFRecordsAggregate> temp = new ArrayList<>();
+		while (rs.peekNextClass() == CFHeaderRecord.class ||
+		       rs.peekNextClass() == CFHeader12Record.class) {
 			temp.add(CFRecordsAggregate.createCFAggregate(rs));
 		}
 		_cfHeaders = temp;
 	}
 
 	public void visitContainedRecords(RecordVisitor rv) {
-		for (int i = 0; i < _cfHeaders.size(); i++) {
-			CFRecordsAggregate subAgg = (CFRecordsAggregate) _cfHeaders.get(i);
+		for (CFRecordsAggregate subAgg : _cfHeaders) {
 			subAgg.visitContainedRecords(rv);
 		}
 	}
@@ -62,6 +60,7 @@ public final class ConditionalFormattingTable extends RecordAggregate {
 	 * @return index of the newly added CF header aggregate
 	 */
 	public int add(CFRecordsAggregate cfAggregate) {
+	    cfAggregate.getHeader().setID(_cfHeaders.size());
 		_cfHeaders.add(cfAggregate);
 		return _cfHeaders.size() - 1;
 	}
@@ -72,7 +71,7 @@ public final class ConditionalFormattingTable extends RecordAggregate {
 
 	public CFRecordsAggregate get(int index) {
 		checkIndex(index);
-		return (CFRecordsAggregate) _cfHeaders.get(index);
+		return _cfHeaders.get(index);
 	}
 
 	public void remove(int index) {
@@ -89,7 +88,7 @@ public final class ConditionalFormattingTable extends RecordAggregate {
 
 	public void updateFormulasAfterCellShift(FormulaShifter shifter, int externSheetIndex) {
 		for (int i = 0; i < _cfHeaders.size(); i++) {
-			CFRecordsAggregate subAgg = (CFRecordsAggregate) _cfHeaders.get(i);
+			CFRecordsAggregate subAgg = _cfHeaders.get(i);
 			boolean shouldKeep = subAgg.updateFormulasAfterCellShift(shifter, externSheetIndex);
 			if (!shouldKeep) {
 				_cfHeaders.remove(i);

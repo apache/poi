@@ -17,164 +17,71 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.hssf.record.formula.NamePtg;
-import org.apache.poi.hssf.record.formula.NameXPtg;
-import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.ss.formula.EvaluationCell;
-import org.apache.poi.ss.formula.EvaluationName;
 import org.apache.poi.ss.formula.EvaluationSheet;
-import org.apache.poi.ss.formula.EvaluationWorkbook;
 import org.apache.poi.ss.formula.FormulaParser;
-import org.apache.poi.ss.formula.FormulaParsingWorkbook;
-import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
+import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.util.Internal;
 
 /**
  * Internal POI use only
- * 
- * @author Josh Micich
  */
-public final class XSSFEvaluationWorkbook implements FormulaRenderingWorkbook, EvaluationWorkbook, FormulaParsingWorkbook {
+@Internal
+public final class XSSFEvaluationWorkbook extends BaseXSSFEvaluationWorkbook {
+    private XSSFEvaluationSheet[] _sheetCache;
+    
+    public static XSSFEvaluationWorkbook create(XSSFWorkbook book) {
+        if (book == null) {
+            return null;
+        }
+        return new XSSFEvaluationWorkbook(book);
+    }
 
-	private final XSSFWorkbook _uBook;
-	
-	public static XSSFEvaluationWorkbook create(XSSFWorkbook book) {
-		if (book == null) {
-			return null;
-		}
-		return new XSSFEvaluationWorkbook(book);
-	}
+    private XSSFEvaluationWorkbook(XSSFWorkbook book) {
+        super(book);
+    }
 
-	private XSSFEvaluationWorkbook(XSSFWorkbook book) {
-		_uBook = book;
-	}
-
-	private int convertFromExternalSheetIndex(int externSheetIndex) {
-		return externSheetIndex;
-	}
-	/**
-	 * @return the sheet index of the sheet with the given external index.
-	 */
-	public int convertFromExternSheetIndex(int externSheetIndex) {
-		return externSheetIndex;
-	}
-	/**
-	 * @return  the external sheet index of the sheet with the given internal
-	 * index. Used by some of the more obscure formula and named range things. 
-	 * Fairly easy on XSSF (we think...) since the internal and external 
-	 * indicies are the same
-	 */
-	private int convertToExternalSheetIndex(int sheetIndex) {
-		return sheetIndex;
-	}
-
-	public int getExternalSheetIndex(String sheetName) {
-		int sheetIndex = _uBook.getSheetIndex(sheetName);
-		return convertToExternalSheetIndex(sheetIndex);
-	}
-
-	public EvaluationName getName(String name) {
-		for(int i=0; i < _uBook.getNumberOfNames(); i++) {
-			String nameText = _uBook.getNameAt(i).getNameName();
-			if (name.equalsIgnoreCase(nameText)) {
-				return new Name(_uBook.getNameAt(i), i, this);
-			}
-		}
-		return null;
-	}
-
-	public int getSheetIndex(EvaluationSheet evalSheet) {
-		XSSFSheet sheet = ((XSSFEvaluationSheet)evalSheet).getXSSFSheet();
-		return _uBook.getSheetIndex(sheet);
-	}
-
-	public String getSheetName(int sheetIndex) {
-		return _uBook.getSheetName(sheetIndex);
-	}
-
-	public NameXPtg getNameXPtg(String name) {
-		// may require to return null to make tests pass
-		throw new RuntimeException("Not implemented yet");
-	}
-
-	public EvaluationSheet getSheet(int sheetIndex) {
-		return new XSSFEvaluationSheet(_uBook.getSheetAt(sheetIndex));
-	}
-
-	public ExternalSheet getExternalSheet(int externSheetIndex) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	public int getExternalSheetIndex(String workbookName, String sheetName) {
-		throw new RuntimeException("not implemented yet");
-	}
-	public int getSheetIndex(String sheetName) {
-		return _uBook.getSheetIndex(sheetName);
-	}
-
-    /**
-     * TODO - figure out what the hell this methods does in
-     *  HSSF...
+    /* (non-JavaDoc), inherit JavaDoc from EvaluationSheet
+     * @since POI 3.15 beta 3
      */
-	public String resolveNameXText(NameXPtg n) {
-		throw new RuntimeException("method not implemented yet");
-	}
+    @Override
+    public void clearAllCachedResultValues() {
+        super.clearAllCachedResultValues();
+        _sheetCache = null;
+    }
+    
+    @Override
+    public int getSheetIndex(EvaluationSheet evalSheet) {
+        XSSFSheet sheet = ((XSSFEvaluationSheet)evalSheet).getXSSFSheet();
+        return _uBook.getSheetIndex(sheet);
+    }
 
-	public String getSheetNameByExternSheet(int externSheetIndex) {
-		int sheetIndex = convertFromExternalSheetIndex(externSheetIndex);
-		return _uBook.getSheetName(sheetIndex);
-	}
+    @Override
+    public EvaluationSheet getSheet(int sheetIndex) {
+        // Performance optimization: build sheet cache the first time this is called
+        // to avoid re-creating the XSSFEvaluationSheet each time a new cell is evaluated
+        // EvaluationWorkbooks make not guarantee to synchronize changes made to
+        // the underlying workbook after the EvaluationWorkbook is created.
+        if (_sheetCache == null) {
+            final int numberOfSheets = _uBook.getNumberOfSheets();
+            _sheetCache = new XSSFEvaluationSheet[numberOfSheets];
+            for (int i=0; i < numberOfSheets; i++) {
+                _sheetCache[i] = new XSSFEvaluationSheet(_uBook.getSheetAt(i));
+            }
+        }
+        if (sheetIndex < 0 || sheetIndex >= _sheetCache.length) {
+            // do this to reuse the out-of-bounds logic and message from XSSFWorkbook
+            _uBook.getSheetAt(sheetIndex);
+        }
+        return _sheetCache[sheetIndex];
+    }
 
-	public String getNameText(NamePtg namePtg) {
-		return _uBook.getNameAt(namePtg.getIndex()).getNameName();
-	}
-	public EvaluationName getName(NamePtg namePtg) {
-		int ix = namePtg.getIndex();
-		return new Name(_uBook.getNameAt(ix), ix, this);
-	}
-	public Ptg[] getFormulaTokens(EvaluationCell evalCell) {
-		XSSFCell cell = ((XSSFEvaluationCell)evalCell).getXSSFCell();
-		XSSFEvaluationWorkbook frBook = XSSFEvaluationWorkbook.create(_uBook);
-		return FormulaParser.parse(cell.getCellFormula(), frBook);
-	}
-
-	private static final class Name implements EvaluationName {
-
-		private final XSSFName _nameRecord;
-		private final int _index;
-		private final FormulaParsingWorkbook _fpBook;
-
-		public Name(XSSFName name, int index, FormulaParsingWorkbook fpBook) {
-			_nameRecord = name;
-			_index = index;
-			_fpBook = fpBook;
-		}
-
-		public Ptg[] getNameDefinition() {
-			
-			return FormulaParser.parse(_nameRecord.getReference(), _fpBook);
-		}
-
-		public String getNameText() {
-			return _nameRecord.getNameName();
-		}
-
-		public boolean hasFormula() {
-			// TODO - no idea if this is right
-			CTDefinedName ctn = _nameRecord.getCTName();
-			String strVal = ctn.getStringValue();
-			return !ctn.getFunction() && strVal != null && strVal.length() > 0;
-		}
-
-		public boolean isFunctionName() {
-			return _nameRecord.isFunctionName();
-		}
-
-		public boolean isRange() {
-			return hasFormula(); // TODO - is this right?
-		}
-		public NamePtg createPtg() {
-			return new NamePtg(_index);
-		}
-	}
+    @Override    
+    public Ptg[] getFormulaTokens(EvaluationCell evalCell) {
+        final XSSFCell cell = ((XSSFEvaluationCell)evalCell).getXSSFCell();
+        final int sheetIndex = _uBook.getSheetIndex(cell.getSheet());
+        final int rowIndex = cell.getRowIndex();
+        return FormulaParser.parse(cell.getCellFormula(this), this, FormulaType.CELL, sheetIndex, rowIndex);
+    }
 }

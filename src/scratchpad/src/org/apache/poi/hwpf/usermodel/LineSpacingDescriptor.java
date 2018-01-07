@@ -24,7 +24,7 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Ryan Ackley
  */
-public class LineSpacingDescriptor
+public final class LineSpacingDescriptor
   implements Cloneable
 {
   short _dyaLine;
@@ -32,6 +32,9 @@ public class LineSpacingDescriptor
 
   public LineSpacingDescriptor()
   {
+      //see page 181
+      _dyaLine = 240;
+      _fMultiLinespace = 1;
   }
 
   public LineSpacingDescriptor(byte[] buf, int offset)
@@ -68,10 +71,34 @@ public class LineSpacingDescriptor
   {
     _dyaLine = dyaLine;
   }
+  
+  @Override
   public boolean equals(Object o)
   {
+    if (!(o instanceof LineSpacingDescriptor)) return false;
     LineSpacingDescriptor lspd = (LineSpacingDescriptor)o;
 
     return _dyaLine == lspd._dyaLine && _fMultiLinespace == lspd._fMultiLinespace;
   }
+
+  @Override
+  public int hashCode() {
+      assert false : "hashCode not designed";
+      return 42; // any arbitrary constant will do
+  }
+  
+    public boolean isEmpty()
+    {
+        return _dyaLine == 0 && _fMultiLinespace == 0;
+    }
+
+    @Override
+    public String toString()
+    {
+        if ( isEmpty() )
+            return "[LSPD] EMPTY";
+
+        return "[LSPD] (dyaLine: " + _dyaLine + "; fMultLinespace: "
+                + _fMultiLinespace + ")";
+    }
 }

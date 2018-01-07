@@ -14,28 +14,49 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hdgf.streams;
+
+import static org.apache.poi.hdgf.pointers.PointerV6.getNumPointersOffsetV6;
+import static org.apache.poi.hdgf.pointers.PointerV6.getNumPointersV6;
+import static org.apache.poi.hdgf.pointers.PointerV6.getPostNumPointersSkipV6;
 
 import org.apache.poi.hdgf.pointers.Pointer;
 
-import junit.framework.TestCase;
+public abstract class StreamTest {
+    public static class TestPointer extends Pointer {
+        private final boolean compressed;
+        protected boolean hasPointers;
+        public TestPointer(boolean compressed, int offset, int length, int type, short format) {
+            this.compressed = compressed;
+            setOffset(offset);
+            setLength(length);
+            setType(type);
+            setFormat(format);
+        }
 
-public abstract class StreamTest extends TestCase {
-	public static class TestPointer extends Pointer {
-		private boolean compressed;
-		protected boolean hasPointers = false;
-		public TestPointer(boolean compressed, int offset, int length, int type, short format) {
-			this.compressed = compressed;
-			this.offset = offset;
-			this.length = length;
-			this.type = type;
-			this.format = format;
-		}
+        @Override
+        public boolean destinationCompressed() { return compressed; }
+        @Override
+        public boolean destinationHasChunks() { return false; }
+        @Override
+        public boolean destinationHasPointers() { return hasPointers; }
+        @Override
+        public boolean destinationHasStrings() { return false; }
 
-		public boolean destinationCompressed() { return compressed; }
-		public boolean destinationHasChunks() { return false; }
-		public boolean destinationHasPointers() { return hasPointers; }
-		public boolean destinationHasStrings() { return false; }
-		public int getSizeInBytes() { return -1; }
-	}
+        @Override
+        public int getSizeInBytes() { return -1; }
+        @Override
+        public int getNumPointersOffset(byte[] data) { 
+            return getNumPointersOffsetV6(data); 
+        }
+        @Override
+        public int getNumPointers(int offset, byte[] data) { 
+            return getNumPointersV6(offset, data);
+        }
+        @Override
+        public int getPostNumPointersSkip() {
+            return getPostNumPointersSkipV6();
+        }
+    }
 }

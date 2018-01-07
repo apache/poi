@@ -21,17 +21,14 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.poi.hssf.record.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.FormulaUsedBlankCellSet.BookSheetKey;
 
 
 /**
- * Stores the cached result of a formula evaluation, along with the set of sensititive input cells
- * 
- * @author Josh Micich
+ * Stores the cached result of a formula evaluation, along with the set of sensitive input cells
  */
 final class FormulaCellCacheEntry extends CellCacheEntry {
-	public static final FormulaCellCacheEntry[] EMPTY_ARRAY = { };
 	
 	/**
 	 * Cells 'used' in the current evaluation of the formula corresponding to this cache entry
@@ -43,14 +40,28 @@ final class FormulaCellCacheEntry extends CellCacheEntry {
 	private FormulaUsedBlankCellSet _usedBlankCellGroup;
 
 	public FormulaCellCacheEntry() {
-		
+		// leave fields un-set
+	}
+	
+	public boolean isInputSensitive() {
+		if (_sensitiveInputCells != null) {
+			if (_sensitiveInputCells.length > 0 ) {
+				return true;
+			}
+		}
+		return _usedBlankCellGroup == null ? false : !_usedBlankCellGroup.isEmpty();
 	}
 
 	public void setSensitiveInputCells(CellCacheEntry[] sensitiveInputCells) {
 		// need to tell all cells that were previously used, but no longer are, 
 		// that they are not consumed by this cell any more
-		changeConsumingCells(sensitiveInputCells == null ? CellCacheEntry.EMPTY_ARRAY : sensitiveInputCells);
-		_sensitiveInputCells = sensitiveInputCells;
+	    if (sensitiveInputCells == null) {
+            _sensitiveInputCells = null;
+	        changeConsumingCells(CellCacheEntry.EMPTY_ARRAY);
+	    } else {
+	        _sensitiveInputCells = sensitiveInputCells.clone();
+	        changeConsumingCells(_sensitiveInputCells);
+	    }
 	}
 
 	public void clearFormulaEntry() {
@@ -78,11 +89,11 @@ final class FormulaCellCacheEntry extends CellCacheEntry {
 		if (nPrevUsed < 1) {
 			return;
 		}
-		Set usedSet;
+		Set<CellCacheEntry> usedSet;
 		if (nUsed < 1) {
-			usedSet = Collections.EMPTY_SET;
+			usedSet = Collections.emptySet();
 		} else {
-			usedSet = new HashSet(nUsed * 3 / 2);
+			usedSet = new HashSet<>(nUsed * 3 / 2);
 			for (int i = 0; i < nUsed; i++) {
 				usedSet.add(usedCells[i]);
 			}

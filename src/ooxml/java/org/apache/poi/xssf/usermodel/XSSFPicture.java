@@ -14,38 +14,53 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.xssf.usermodel;
 
-import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.*;
-import org.openxmlformats.schemas.drawingml.x2006.main.*;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.POIXMLDocumentPart;
-import org.openxml4j.opc.PackageRelationship;
-import org.openxml4j.opc.PackagePart;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Element;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
-import java.awt.*;
-import java.awt.image.BufferedImage;
+import java.awt.Dimension;
 import java.io.IOException;
-import java.util.Iterator;
+
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.ss.usermodel.Picture;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.ImageUtils;
+import org.apache.poi.util.Internal;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualPictureProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetGeometry2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTPicture;
+import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTPictureNonVisual;
 
 /**
  * Represents a picture shape in a SpreadsheetML drawing.
  *
  * @author Yegor Kozlov
  */
-public class XSSFPicture extends XSSFShape {
+public final class XSSFPicture extends XSSFShape implements Picture {
     private static final POILogger logger = POILogFactory.getLogger(XSSFPicture.class);
+
+    /**
+     * Column width measured as the number of characters of the maximum digit width of the
+     * numbers 0, 1, 2, ..., 9 as rendered in the normal style's font. There are 4 pixels of margin
+     * padding (two on each side), plus 1 pixel padding for the gridlines.
+     *
+     * This value is the same for default font in Office 2007 (Calibri) and Office 2003 and earlier (Arial)
+     */
+    // private static float DEFAULT_COLUMN_WIDTH = 9.140625f;
 
     /**
      * A default instance of CTShape used for creating new shapes.
      */
-    private static CTPicture prototype = null;
+    private static CTPicture prototype;
 
     /**
      * This object specifies a picture object and all its properties
@@ -117,27 +132,62 @@ public class XSSFPicture extends XSSFShape {
      *
      * @return the underlying CTPicture bean
      */
+    @Internal
     public CTPicture getCTPicture(){
         return ctPicture;
     }
 
     /**
-     * Reset the image to the original size.
+     * Reset the image to the dimension of the embedded image
+     *
+     * @see #resize(double, double)
      */
     public void resize(){
-        XSSFClientAnchor anchor = (XSSFClientAnchor)getAnchor();
+        resize(Double.MAX_VALUE);
+    }
 
-        XSSFClientAnchor pref = getPreferredSize();
+    /**
+     * Resize the image proportionally.
+     *
+     * @see #resize(double, double)
+     */
+    public void resize(double scale) {
+        resize(scale, scale);
+    }
+    
+    /**
+     * Resize the image relatively to its current size.
+     * <p>
+     * Please note, that this method works correctly only for workbooks
+     * with the default font size (Calibri 11pt for .xlsx).
+     * If the default font is changed the resized image can be streched vertically or horizontally.
+     * </p>
+     * <p>
+     * <code>resize(1.0,1.0)</code> keeps the original size,<br>
+     * <code>resize(0.5,0.5)</code> resize to 50% of the original,<br>
+     * <code>resize(2.0,2.0)</code> resizes to 200% of the original.<br>
+     * <code>resize({@link Double#MAX_VALUE},{@link Double#MAX_VALUE})</code> resizes to the dimension of the embedded image. 
+     * </p>
+     *
+     * @param scaleX the amount by which the image width is multiplied relative to the original width,
+     *  when set to {@link java.lang.Double#MAX_VALUE} the width of the embedded image is used
+     * @param scaleY the amount by which the image height is multiplied relative to the original height,
+     *  when set to {@link java.lang.Double#MAX_VALUE} the height of the embedded image is used
+     */
+    public void resize(double scaleX, double scaleY){
+        XSSFClientAnchor anchor = getClientAnchor();
+
+        XSSFClientAnchor pref = getPreferredSize(scaleX,scaleY);
 
         int row2 = anchor.getRow1() + (pref.getRow2() - pref.getRow1());
         int col2 = anchor.getCol1() + (pref.getCol2() - pref.getCol1());
 
-        anchor.setCol2((short)col2);
-        anchor.setDx1(0);
+        anchor.setCol2(col2);
+        // anchor.setDx1(0);
         anchor.setDx2(pref.getDx2());
 
         anchor.setRow2(row2);
-        anchor.setDy1(0);
+        // anchor.setDy1(0);
         anchor.setDy2(pref.getDy2());
     }
 
@@ -147,148 +197,63 @@ public class XSSFPicture extends XSSFShape {
      * @return XSSFClientAnchor with the preferred size for this image
      */
     public XSSFClientAnchor getPreferredSize(){
-        XSSFClientAnchor anchor = (XSSFClientAnchor)getAnchor();
+        return getPreferredSize(1);
+    }
 
-        XSSFPictureData data = getPictureData();
-        Dimension size = getImageDimension(data.getPackagePart(), data.getPictureType());
-
-        float w = 0;
-        int col2 = anchor.getCol1();
-        int dx2 = 0;
-        if(anchor.getDx1() > 0){
-            w += getColumnWidthInPixels(col2) - anchor.getDx1();
-            col2++;
-        }
-
-        for (;;) {
-            w += getColumnWidthInPixels(col2);
-            if(w > size.width) break;
-            col2++;
-        }
-
-        if(w > size.width) {
-            float cw = getColumnWidthInPixels(col2 + 1);
-            float delta = w - size.width;
-            dx2 = (int)(EMU_PER_PIXEL*(cw-delta));
-        }
-        anchor.setCol2(col2);
-        anchor.setDx2(dx2);
-
-        float h = 0;
-        int row2 = anchor.getRow1();
-        int dy2 = 0;
-
-        if(anchor.getDy1() > 0){
-            h += getRowHeightInPixels(row2) - anchor.getDy1();
-            row2++;
-        }
-
-        for (;;) {
-            h += getRowHeightInPixels(row2);
-            if(h > size.height) break;
-            row2++;
-        }
-
-        if(h > size.height) {
-            float ch = getRowHeightInPixels(row2 + 1);
-            float delta = h - size.height;
-            dy2 = (int)(EMU_PER_PIXEL*(ch-delta));
-        }
-        anchor.setRow2(row2);
-        anchor.setDy2(dy2);
-
+    /**
+     * Calculate the preferred size for this picture.
+     *
+     * @param scale the amount by which image dimensions are multiplied relative to the original size.
+     * @return XSSFClientAnchor with the preferred size for this image
+     */
+    public XSSFClientAnchor getPreferredSize(double scale){
+        return getPreferredSize(scale, scale);
+    }
+    
+    /**
+     * Calculate the preferred size for this picture.
+     *
+     * @param scaleX the amount by which image width is multiplied relative to the original width.
+     * @param scaleY the amount by which image height is multiplied relative to the original height.
+     * @return XSSFClientAnchor with the preferred size for this image
+     */
+    public XSSFClientAnchor getPreferredSize(double scaleX, double scaleY){
+        Dimension dim = ImageUtils.setPreferredSize(this, scaleX, scaleY);
         CTPositiveSize2D size2d =  ctPicture.getSpPr().getXfrm().getExt();
-        size2d.setCx(size.width*EMU_PER_PIXEL);
-        size2d.setCy(size.height*EMU_PER_PIXEL);
-
-        return anchor;
-    }
-
-    private float getColumnWidthInPixels(int columnIndex){
-        XSSFSheet sheet = (XSSFSheet)getDrawing().getParent();
-        float numChars = (float)sheet.getColumnWidth(columnIndex)/256;
-
-        return numChars*XSSFWorkbook.DEFAULT_CHARACTER_WIDTH;
-    }
-
-    private float getRowHeightInPixels(int rowIndex){
-        XSSFSheet sheet = (XSSFSheet)getDrawing().getParent();
-
-        XSSFRow row = sheet.getRow(rowIndex);
-        float height = row != null ?  row.getHeightInPoints() : sheet.getDefaultRowHeightInPoints();
-        return height*PIXEL_DPI/POINT_DPI;
+        size2d.setCx((int)dim.getWidth());
+        size2d.setCy((int)dim.getHeight());
+        return getClientAnchor();
     }
 
     /**
      * Return the dimension of this image
      *
      * @param part the package part holding raw picture data
-     * @param type type of the picture: {@link Workbook#PICTURE_TYPE_JPEG, Workbook#PICTURE_TYPE_PNG or Workbook#PICTURE_TYPE_DIB)
+     * @param type type of the picture: {@link Workbook#PICTURE_TYPE_JPEG},
+     * {@link Workbook#PICTURE_TYPE_PNG} or {@link Workbook#PICTURE_TYPE_DIB}
      *
      * @return image dimension in pixels
      */
     protected static Dimension getImageDimension(PackagePart part, int type){
-        Dimension size = new Dimension();
-
-        switch (type){
-            //we can calculate the preferred size only for JPEG, PNG and BMP
-            //other formats like WMF, EMF and PICT are not supported in Java
-            case Workbook.PICTURE_TYPE_JPEG:
-            case Workbook.PICTURE_TYPE_PNG:
-            case Workbook.PICTURE_TYPE_DIB:
-                try {
-                    //read the image using javax.imageio.*
-                    ImageInputStream iis = ImageIO.createImageInputStream( part.getInputStream() );
-                    Iterator i = ImageIO.getImageReaders( iis );
-                    ImageReader r = (ImageReader) i.next();
-                    r.setInput( iis );
-                    BufferedImage img = r.read(0);
-
-                    int[] dpi = getResolution(r);
-
-                    //if DPI is zero then assume standard 96 DPI
-                    //since cannot divide by zero
-                    if (dpi[0] == 0) dpi[0] = PIXEL_DPI;
-                    if (dpi[1] == 0) dpi[1] = PIXEL_DPI;
-
-                    size.width = img.getWidth()*PIXEL_DPI/dpi[0];
-                    size.height = img.getHeight()*PIXEL_DPI/dpi[1];
-
-                } catch (IOException e){
-                    //silently return if ImageIO failed to read the image
-                    logger.log(POILogger.WARN, e);
-                }
-
-                break;
-            default:
-                logger.log(POILogger.WARN, "Only JPEG, PNG and DIB pictures can be automatically sized");
+        try {
+            return ImageUtils.getImageDimension(part.getInputStream(), type);
+        } catch (IOException e){
+            //return a "singulariry" if ImageIO failed to read the image
+            logger.log(POILogger.WARN, e);
+            return new Dimension();
         }
-        return size;
     }
 
     /**
-     * The metadata of PNG and JPEG can contain the width of a pixel in millimeters.
-     * Return the the "effective" dpi calculated as <code>25.4/HorizontalPixelSize</code>
-     * and <code>25.4/VerticalPixelSize</code>.  Where 25.4 is the number of mm in inch.
+     * Return the dimension of the embedded image in pixel
      *
-     * @return array of two elements: <code>{horisontalPdi, verticalDpi}</code>.
-     * {96, 96} is the default.
+     * @return image dimension in pixels
      */
-    protected static int[] getResolution(ImageReader r) throws IOException {
-        int hdpi = PIXEL_DPI, vdpi = PIXEL_DPI;
-        double mm2inch = 25.4;
-
-        NodeList lst;
-        Element node = (Element)r.getImageMetadata(0).getAsTree("javax_imageio_1.0");
-        lst = node.getElementsByTagName("HorizontalPixelSize");
-        if(lst != null && lst.getLength() == 1) hdpi = (int)(mm2inch/Float.parseFloat(((Element)lst.item(0)).getAttribute("value")));
-
-        lst = node.getElementsByTagName("VerticalPixelSize");
-        if(lst != null && lst.getLength() == 1) vdpi = (int)(mm2inch/Float.parseFloat(((Element)lst.item(0)).getAttribute("value")));
-
-        return new int[]{hdpi, vdpi};
+    public Dimension getImageDimension() {
+        XSSFPictureData picData = getPictureData();
+        return getImageDimension(picData.getPackagePart(), picData.getPictureType());
     }
-
+    
     /**
      * Return picture data for this shape
      *
@@ -296,17 +261,32 @@ public class XSSFPicture extends XSSFShape {
      */
     public XSSFPictureData getPictureData() {
         String blipId = ctPicture.getBlipFill().getBlip().getEmbed();
-        for (POIXMLDocumentPart part : getDrawing().getRelations()) {
-            if(part.getPackageRelationship().getId().equals(blipId)){
-                return (XSSFPictureData)part;
-            }
-        }
-        logger.log(POILogger.WARN, "Picture data was not found for blipId=" + blipId);
-        return null;
+        return  (XSSFPictureData)getDrawing().getRelationById(blipId);
     }
 
     protected CTShapeProperties getShapeProperties(){
         return ctPicture.getSpPr();
     }
 
+    /**
+     * @return the anchor that is used by this shape.
+     */
+    @Override
+    public XSSFClientAnchor getClientAnchor() {
+        XSSFAnchor a = getAnchor();
+        return (a instanceof XSSFClientAnchor) ? (XSSFClientAnchor)a : null;
+    }
+
+    /**
+     * @return the sheet which contains the picture shape
+     */
+    @Override
+    public XSSFSheet getSheet() {
+        return (XSSFSheet)getDrawing().getParent();
+    }
+
+    @Override
+    public String getShapeName() {
+        return ctPicture.getNvPicPr().getCNvPr().getName();
+    }
 }

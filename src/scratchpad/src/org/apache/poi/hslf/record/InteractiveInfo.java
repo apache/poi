@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogger;
 
 /**
  * This class represents the metadata of a link in a slide/notes/etc.
@@ -59,11 +60,12 @@ public class InteractiveInfo extends RecordContainer {
 	 */	
 	private void findInterestingChildren() {
 		// First child should be the InteractiveInfoAtom
-		if(_children[0] instanceof InteractiveInfoAtom) {
-			infoAtom = (InteractiveInfoAtom)_children[0];
-		} else {
-			throw new IllegalStateException("First child record wasn't a InteractiveInfoAtom, was of type " + _children[0].getRecordType());
-		}
+	    if (_children == null || _children.length == 0 || !(_children[0] instanceof InteractiveInfoAtom)) {
+	        logger.log(POILogger.WARN, "First child record wasn't a InteractiveInfoAtom - leaving this atom in an invalid state...");
+	        return;
+	    }
+
+	    infoAtom = (InteractiveInfoAtom)_children[0];
 	}
 	
 	/**

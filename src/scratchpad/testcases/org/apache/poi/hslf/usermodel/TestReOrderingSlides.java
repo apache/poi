@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,100 +14,97 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.usermodel;
 
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
-import junit.framework.TestCase;
-import org.apache.poi.hslf.*;
-import org.apache.poi.hslf.model.*;
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.HSLFTestDataSamples;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests that SlideShow can re-order slides properly
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestReOrderingSlides extends TestCase {
+public final class TestReOrderingSlides {
 	// A SlideShow with one slide
-	private HSLFSlideShow hss_one;
-	private SlideShow ss_one;
-	
+	private HSLFSlideShowImpl hss_one;
+	private HSLFSlideShow ss_one;
+
 	// A SlideShow with two slides
-	private HSLFSlideShow hss_two;
-	private SlideShow ss_two;
-	
+	private HSLFSlideShowImpl hss_two;
+	private HSLFSlideShow ss_two;
+
 	// A SlideShow with three slides
-	private HSLFSlideShow hss_three;
-	private SlideShow ss_three;
-	
+	private HSLFSlideShowImpl hss_three;
+	private HSLFSlideShow ss_three;
+
 	/**
 	 * Create/open the slideshows
 	 */
+	@Before
 	public void setUp() throws Exception {
-		String dirname = System.getProperty("HSLF.testdata.path");
-		
-		String filename = dirname + "/Single_Coloured_Page.ppt";
-		hss_one = new HSLFSlideShow(filename);
-		ss_one = new SlideShow(hss_one);
-		
-		filename = dirname + "/basic_test_ppt_file.ppt";
-		hss_two = new HSLFSlideShow(filename);
-		ss_two = new SlideShow(hss_two);
-		
-		filename = dirname + "/incorrect_slide_order.ppt";
-		hss_three = new HSLFSlideShow(filename);
-		ss_three = new SlideShow(hss_three);
+        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+
+		hss_one = new HSLFSlideShowImpl(slTests.openResourceAsStream("Single_Coloured_Page.ppt"));
+		ss_one = new HSLFSlideShow(hss_one);
+
+		hss_two = new HSLFSlideShowImpl(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
+		ss_two = new HSLFSlideShow(hss_two);
+
+		hss_three = new HSLFSlideShowImpl(slTests.openResourceAsStream("incorrect_slide_order.ppt"));
+		ss_three = new HSLFSlideShow(hss_three);
 	}
 
 	/**
 	 * Test that we can "re-order" a slideshow with only 1 slide on it
 	 */
-	public void testReOrder1() throws Exception {
+	@Test
+	public void testReOrder1() throws IOException {
 		// Has one slide
-		assertEquals(1, ss_one.getSlides().length);
-		Slide s1 = ss_one.getSlides()[0];
-		
+		assertEquals(1, ss_one.getSlides().size());
+		HSLFSlide s1 = ss_one.getSlides().get(0);
+
 		// Check slide 1 is as expected
 		assertEquals(256, s1._getSheetNumber());
 		assertEquals(3, s1._getSheetRefId());
 		assertEquals(1, s1.getSlideNumber());
-		
+
 		// Now move it to one
 		ss_one.reorderSlide(1, 1);
-				
+
 		// Write out, and read back in
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		hss_one.write(baos);
-		ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-		
-		HSLFSlideShow hss_read = new HSLFSlideShow(bais);
-		SlideShow ss_read = new SlideShow(hss_read);
-		
+        HSLFSlideShow ss_read = HSLFTestDataSamples.writeOutAndReadBack(ss_one);
+
 		// Check it still has 1 slide
-		assertEquals(1, ss_read.getSlides().length);
-		
+		assertEquals(1, ss_read.getSlides().size());
+
 		// And check it's as expected
-		s1 = ss_read.getSlides()[0];
+		s1 = ss_read.getSlides().get(0);
 		assertEquals(256, s1._getSheetNumber());
 		assertEquals(3, s1._getSheetRefId());
 		assertEquals(1, s1.getSlideNumber());
+		
+		ss_read.close();
 	}
-	
+
 	/**
 	 * Test doing a dummy re-order on a slideshow with
 	 *  two slides in it
 	 */
-	public void testReOrder2() throws Exception {
+    @Test
+	public void testReOrder2() throws IOException {
 		// Has two slides
-		assertEquals(2, ss_two.getSlides().length);
-		Slide s1 = ss_two.getSlides()[0];
-		Slide s2 = ss_two.getSlides()[1];
-		
+		assertEquals(2, ss_two.getSlides().size());
+		HSLFSlide s1 = ss_two.getSlides().get(0);
+		HSLFSlide s2 = ss_two.getSlides().get(1);
+
 		// Check slide 1 is as expected
 		assertEquals(256, s1._getSheetNumber());
 		assertEquals(4, s1._getSheetRefId()); // master has notes
@@ -117,41 +113,39 @@ public class TestReOrderingSlides extends TestCase {
 		assertEquals(257, s2._getSheetNumber());
 		assertEquals(6, s2._getSheetRefId()); // master and 1 have notes
 		assertEquals(2, s2.getSlideNumber());
-		
+
 		// Don't swap them around
 		ss_two.reorderSlide(2, 2);
-		
+
 		// Write out, and read back in
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		hss_two.write(baos);
-		ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-		
-		HSLFSlideShow hss_read = new HSLFSlideShow(bais);
-		SlideShow ss_read = new SlideShow(hss_read);
-		
+        HSLFSlideShow ss_read = HSLFTestDataSamples.writeOutAndReadBack(ss_two);
+
 		// Check it still has 2 slides
-		assertEquals(2, ss_read.getSlides().length);
-		
+		assertEquals(2, ss_read.getSlides().size());
+
 		// And check it's as expected
-		s1 = ss_read.getSlides()[0];
-		s2 = ss_read.getSlides()[1];
+		s1 = ss_read.getSlides().get(0);
+		s2 = ss_read.getSlides().get(1);
 		assertEquals(256, s1._getSheetNumber());
 		assertEquals(4, s1._getSheetRefId());
 		assertEquals(1, s1.getSlideNumber());
 		assertEquals(257, s2._getSheetNumber());
 		assertEquals(6, s2._getSheetRefId());
 		assertEquals(2, s2.getSlideNumber());
-	}
-	
+
+        ss_read.close();
+    }
+
 	/**
 	 * Test re-ordering slides in a slideshow with 2 slides on it
 	 */
-	public void testReOrder2swap() throws Exception {
+    @Test
+	public void testReOrder2swap() throws IOException {
 		// Has two slides
-		assertEquals(2, ss_two.getSlides().length);
-		Slide s1 = ss_two.getSlides()[0];
-		Slide s2 = ss_two.getSlides()[1];
-		
+		assertEquals(2, ss_two.getSlides().size());
+		HSLFSlide s1 = ss_two.getSlides().get(0);
+		HSLFSlide s2 = ss_two.getSlides().get(1);
+
 		// Check slide 1 is as expected
 		assertEquals(256, s1._getSheetNumber());
 		assertEquals(4, s1._getSheetRefId()); // master has notes
@@ -160,43 +154,41 @@ public class TestReOrderingSlides extends TestCase {
 		assertEquals(257, s2._getSheetNumber());
 		assertEquals(6, s2._getSheetRefId()); // master and 1 have notes
 		assertEquals(2, s2.getSlideNumber());
-		
+
 		// Swap them around
 		ss_two.reorderSlide(2, 1);
-		
+
 		// Write out, and read back in
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		hss_two.write(baos);
-		ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-		
-		HSLFSlideShow hss_read = new HSLFSlideShow(bais);
-		SlideShow ss_read = new SlideShow(hss_read);
-		
+        HSLFSlideShow ss_read = HSLFTestDataSamples.writeOutAndReadBack(ss_two);
+
 		// Check it still has 2 slides
-		assertEquals(2, ss_read.getSlides().length);
-		
+		assertEquals(2, ss_read.getSlides().size());
+
 		// And check it's as expected
-		s1 = ss_read.getSlides()[0];
-		s2 = ss_read.getSlides()[1];
+		s1 = ss_read.getSlides().get(0);
+		s2 = ss_read.getSlides().get(1);
 		assertEquals(257, s1._getSheetNumber());
 		assertEquals(6, s1._getSheetRefId());
 		assertEquals(1, s1.getSlideNumber());
 		assertEquals(256, s2._getSheetNumber());
 		assertEquals(4, s2._getSheetRefId());
 		assertEquals(2, s2.getSlideNumber());
-	}
-	
+
+		ss_read.close();
+    }
+
 	/**
 	 * Test doing a dummy re-order on a slideshow with
 	 *  three slides in it
 	 */
-	public void testReOrder3() throws Exception {
+    @Test
+	public void testReOrder3() throws IOException {
 		// Has three slides
-		assertEquals(3, ss_three.getSlides().length);
-		Slide s1 = ss_three.getSlides()[0];
-		Slide s2 = ss_three.getSlides()[1];
-		Slide s3 = ss_three.getSlides()[2];
-		
+		assertEquals(3, ss_three.getSlides().size());
+		HSLFSlide s1 = ss_three.getSlides().get(0);
+		HSLFSlide s2 = ss_three.getSlides().get(1);
+		HSLFSlide s3 = ss_three.getSlides().get(2);
+
 		// Check slide 1 is as expected
 		assertEquals(256, s1._getSheetNumber());
 		assertEquals(3, s1._getSheetRefId()); // no notes on master
@@ -209,26 +201,21 @@ public class TestReOrderingSlides extends TestCase {
 		assertEquals(257, s3._getSheetNumber());
 		assertEquals(4, s3._getSheetRefId()); // no notes on slide
 		assertEquals(3, s3.getSlideNumber());
-		
+
 		// Don't swap them around
 		ss_three.reorderSlide(2, 2);
-		
+
 		// Write out, and read back in
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		hss_three.write(baos);
-		ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-		
-		HSLFSlideShow hss_read = new HSLFSlideShow(bais);
-		SlideShow ss_read = new SlideShow(hss_read);
-		
+        HSLFSlideShow ss_read = HSLFTestDataSamples.writeOutAndReadBack(ss_three);
+
 		// Check it still has 3 slides
-		assertEquals(3, ss_read.getSlides().length);
-		
+		assertEquals(3, ss_read.getSlides().size());
+
 		// And check it's as expected
-		s1 = ss_read.getSlides()[0];
-		s2 = ss_read.getSlides()[1];
-		s3 = ss_read.getSlides()[2];
-		
+		s1 = ss_read.getSlides().get(0);
+		s2 = ss_read.getSlides().get(1);
+		s3 = ss_read.getSlides().get(2);
+
 		assertEquals(256, s1._getSheetNumber());
 		assertEquals(3, s1._getSheetRefId());
 		assertEquals(1, s1.getSlideNumber());
@@ -238,18 +225,21 @@ public class TestReOrderingSlides extends TestCase {
 		assertEquals(257, s3._getSheetNumber());
 		assertEquals(4, s3._getSheetRefId());
 		assertEquals(3, s3.getSlideNumber());
-	}
-	
+
+        ss_read.close();
+    }
+
 	/**
 	 * Test re-ordering slides in a slideshow with 3 slides on it
 	 */
-	public void testReOrder3swap() throws Exception {
+    @Test
+	public void testReOrder3swap() throws IOException {
 		// Has three slides
-		assertEquals(3, ss_three.getSlides().length);
-		Slide s1 = ss_three.getSlides()[0];
-		Slide s2 = ss_three.getSlides()[1];
-		Slide s3 = ss_three.getSlides()[2];
-		
+		assertEquals(3, ss_three.getSlides().size());
+		HSLFSlide s1 = ss_three.getSlides().get(0);
+		HSLFSlide s2 = ss_three.getSlides().get(1);
+		HSLFSlide s3 = ss_three.getSlides().get(2);
+
 		// Check slide 1 is as expected
 		assertEquals(256, s1._getSheetNumber());
 		assertEquals(3, s1._getSheetRefId()); // no notes on master
@@ -262,30 +252,37 @@ public class TestReOrderingSlides extends TestCase {
 		assertEquals(257, s3._getSheetNumber());
 		assertEquals(4, s3._getSheetRefId()); // no notes on slide
 		assertEquals(3, s3.getSlideNumber());
-		
+
 		// Put 3 in place of 1
 		// (1 -> 2, 2 -> 3)
 		ss_three.reorderSlide(3, 1);
+
+		// refresh the slides
+		s1 = ss_three.getSlides().get(0);
+        s2 = ss_three.getSlides().get(1);
+        s3 = ss_three.getSlides().get(2);
 		
+		assertEquals(1, s1.getSlideNumber());
+        assertEquals(2, s2.getSlideNumber());
+        assertEquals(3, s3.getSlideNumber());
+        
+        assertEquals("Slide 3", ((HSLFTextShape)s1.getShapes().get(0)).getText());
+        assertEquals("Slide 1", ((HSLFTextShape)s3.getShapes().get(0)).getText());
+
 		// Write out, and read back in
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		hss_three.write(baos);
-		ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-		
-		HSLFSlideShow hss_read = new HSLFSlideShow(bais);
-		SlideShow ss_read = new SlideShow(hss_read);
-		
+        HSLFSlideShow ss_read = HSLFTestDataSamples.writeOutAndReadBack(ss_three);
+
 		// Check it still has 3 slides
-		assertEquals(3, ss_read.getSlides().length);
-		
+		assertEquals(3, ss_read.getSlides().size());
+
 		// And check it's as expected
-		Slide _s1 = ss_read.getSlides()[0];
-		Slide _s2 = ss_read.getSlides()[1];
-		Slide _s3 = ss_read.getSlides()[2];
+		HSLFSlide _s1 = ss_read.getSlides().get(0);
+		HSLFSlide _s2 = ss_read.getSlides().get(1);
+		HSLFSlide _s3 = ss_read.getSlides().get(2);
 
         // 1 --> 3
-        assertEquals(s1._getSheetNumber(), _s3._getSheetNumber());
-		assertEquals(s1._getSheetRefId(), _s3._getSheetRefId());
+        assertEquals(s1._getSheetNumber(), _s1._getSheetNumber());
+		assertEquals(s1._getSheetRefId(), _s1._getSheetRefId());
 		assertEquals(1, s1.getSlideNumber());
 
         // 2nd slide is not updated
@@ -294,8 +291,10 @@ public class TestReOrderingSlides extends TestCase {
 		assertEquals(2, s2.getSlideNumber());
 
         // 3 --> 1
-        assertEquals(s3._getSheetNumber(), _s1._getSheetNumber());
-        assertEquals(s3._getSheetRefId(), _s1._getSheetRefId());
+        assertEquals(s3._getSheetNumber(), _s3._getSheetNumber());
+        assertEquals(s3._getSheetRefId(), _s3._getSheetRefId());
 		assertEquals(3, s3.getSlideNumber());
+		
+		ss_read.close();
 	}
 }

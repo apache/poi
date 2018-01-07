@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,15 +14,22 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hwpf.sprm;
 
-import org.apache.poi.hwpf.usermodel.SectionProperties;
 import org.apache.poi.hwpf.usermodel.BorderCode;
+import org.apache.poi.hwpf.usermodel.SectionProperties;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.Internal;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
-public class SectionSprmUncompressor extends SprmUncompressor
+
+@Internal
+public final class SectionSprmUncompressor extends SprmUncompressor
 {
+  private static final POILogger logger = POILogFactory.getLogger(SectionSprmUncompressor.class);
+
   public SectionSprmUncompressor()
   {
   }
@@ -35,7 +41,7 @@ public class SectionSprmUncompressor extends SprmUncompressor
 
     while (sprmIt.hasNext())
     {
-      SprmOperation sprm = (SprmOperation)sprmIt.next();
+      SprmOperation sprm = sprmIt.next();
       unCompressSEPOperation(newProperties, sprm);
     }
 
@@ -46,14 +52,15 @@ public class SectionSprmUncompressor extends SprmUncompressor
    * Used in decompression of a sepx. This performs an operation defined by
    * a single sprm.
    *
-   * @param newSEP The SectionProperty to perfrom the operation on.
+   * @param newSEP The SectionProperty to perform the operation on.
    * @param operand The operation to perform.
    * @param param The operation's parameter.
    * @param varParam The operation variable length parameter.
    */
   static void unCompressSEPOperation (SectionProperties newSEP, SprmOperation sprm)
   {
-    switch (sprm.getOperation())
+    int operation = sprm.getOperation();
+    switch (operation)
     {
       case 0:
         newSEP.setCnsPgn ((byte) sprm.getOperand());
@@ -145,7 +152,7 @@ public class SectionSprmUncompressor extends SprmUncompressor
         newSEP.setPgnStart ((short) sprm.getOperand());
         break;
       case 0x1d:
-        newSEP.setDmOrientPage ((byte) sprm.getOperand());
+        newSEP.setDmOrientPage( sprm.getOperand() != 0 );
         break;
       case 0x1e:
 
@@ -208,7 +215,32 @@ public class SectionSprmUncompressor extends SprmUncompressor
       case 0x33:
         newSEP.setWTextFlow ((short) sprm.getOperand());
         break;
+      case 0x3C:
+        // [MS-DOC], v20140721, 2.6.4, sprmSRncFtn        
+        newSEP.setRncFtn((short) sprm.getOperand());
+        break;
+      case 0x3E:
+        // [MS-DOC], v20140721, 2.6.4, sprmSRncEdn        
+        newSEP.setRncEdn((short) sprm.getOperand());
+        break;
+      case 0x3F:
+        // [MS-DOC], v20140721, 2.6.4, sprmSNFtn
+        newSEP.setNFtn(sprm.getOperand());
+        break;
+      case 0x40:
+        // [MS-DOC], v20140721, 2.6.4, sprmSNFtnRef
+        newSEP.setNfcFtnRef(sprm.getOperand());
+        break;
+      case 0x41:
+        // [MS-DOC], v20140721, 2.6.4, sprmSNEdn
+        newSEP.setNEdn(sprm.getOperand());
+        break;
+      case 0x42:
+        // [MS-DOC], v20140721, 2.6.4, sprmSNEdnRef
+        newSEP.setNfcEdnRef(sprm.getOperand());
+        break;
       default:
+        logger.log(POILogger.INFO, "Unsupported Sprm operation: " + operation + " (" + HexDump.byteToHex(operation) + ")");
         break;
     }
 

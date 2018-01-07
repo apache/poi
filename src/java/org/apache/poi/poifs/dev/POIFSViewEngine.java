@@ -19,9 +19,12 @@
 
 package org.apache.poi.poifs.dev;
 
-import java.io.*;
-
-import java.util.*;
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * This class contains methods used to inspect POIFSViewable objects
@@ -47,12 +50,12 @@ public class POIFSViewEngine
      * @return a List of Strings holding the content
      */
 
-    public static List inspectViewable(final Object viewable,
+    public static List<String> inspectViewable(final Object viewable,
                                        final boolean drilldown,
                                        final int indentLevel,
                                        final String indentString)
     {
-        List objects = new ArrayList();
+        List<String> objects = new ArrayList<>();
 
         if (viewable instanceof POIFSViewable)
         {
@@ -75,7 +78,7 @@ public class POIFSViewEngine
                 }
                 else
                 {
-                    Iterator iter = inspected.getViewableIterator();
+                    Iterator<Object> iter = inspected.getViewableIterator();
 
                     while (iter.hasNext())
                     {

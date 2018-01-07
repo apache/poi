@@ -14,20 +14,25 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.hdgf.chunks;
 
 /**
  * A trailer that follows a chunk
  */
-public class ChunkTrailer {
-	protected byte[] trailerData;
-	
+public final class ChunkTrailer {
+	private byte[] trailerData;
+
 	public ChunkTrailer(byte[] data, int offset) {
 		trailerData = new byte[8];
 		System.arraycopy(data, offset, trailerData, 0, 8);
 	}
-	
+
 	public String toString() {
 		return "<ChunkTrailer of length " + trailerData.length + ">";
 	}
+
+    byte[] getTrailerData() {
+        return trailerData;
+    }
 }

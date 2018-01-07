@@ -19,7 +19,7 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Title:        Country Record (aka WIN.INI country)<P>
@@ -31,8 +31,8 @@ import org.apache.poi.util.LittleEndian;
  * @version 2.0-pre
  */
 
-public class CountryRecord
-    extends Record
+public final class CountryRecord
+    extends StandardRecord
 {
     public final static short sid = 0x8c;
 
@@ -107,14 +107,9 @@ public class CountryRecord
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset,
-                              (( short ) 0x04));   // 4 bytes (8 total)
-        LittleEndian.putShort(data, 4 + offset, getDefaultCountry());
-        LittleEndian.putShort(data, 6 + offset, getCurrentCountry());
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(getDefaultCountry());
+        out.writeShort(getCurrentCountry());
     }
 
     protected int getDataSize() {

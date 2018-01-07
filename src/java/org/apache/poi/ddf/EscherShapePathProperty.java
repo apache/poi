@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.ddf;
 
 /**
@@ -23,9 +22,7 @@ package org.apache.poi.ddf;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
-public class EscherShapePathProperty
-        extends EscherSimpleProperty
-{
+public class EscherShapePathProperty extends EscherSimpleProperty {
 
     public static final int LINE_OF_STRAIGHT_SEGMENTS = 0;
     public static final int CLOSED_POLYGON = 1;
@@ -37,7 +34,4 @@ public class EscherShapePathProperty
     {
         super( propertyNumber, false, false, shapePath );
     }
-
-
-
 }

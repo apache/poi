@@ -17,24 +17,22 @@
 
 package org.apache.poi.ss.formula;
 
-import org.apache.poi.hssf.record.formula.eval.BlankEval;
-import org.apache.poi.hssf.record.formula.eval.BoolEval;
-import org.apache.poi.hssf.record.formula.eval.ErrorEval;
-import org.apache.poi.hssf.record.formula.eval.NumberEval;
-import org.apache.poi.hssf.record.formula.eval.StringEval;
-import org.apache.poi.hssf.record.formula.eval.ValueEval;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.ss.formula.FormulaCellCache.IEntryOperation;
 import org.apache.poi.ss.formula.FormulaUsedBlankCellSet.BookSheetKey;
 import org.apache.poi.ss.formula.PlainCellCache.Loc;
+import org.apache.poi.ss.formula.eval.BlankEval;
+import org.apache.poi.ss.formula.eval.BoolEval;
+import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.StringEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.usermodel.CellType;
 
 /**
- * Performance optimisation for {@link HSSFFormulaEvaluator}. This class stores previously
- * calculated values of already visited cells, to avoid unnecessary re-calculation when the 
- * same cells are referenced multiple times
- * 
- * 
+ * Performance optimisation for {@link org.apache.poi.ss.usermodel.FormulaEvaluator}.
+ * This class stores previously calculated values of already visited cells,
+ * to avoid unnecessary re-calculation when the same cells are referenced multiple times
+ *
  * @author Josh Micich
  */
 final class EvaluationCache {
@@ -53,19 +51,21 @@ final class EvaluationCache {
 	public void notifyUpdateCell(int bookIndex, int sheetIndex, EvaluationCell cell) {
 		FormulaCellCacheEntry fcce = _formulaCellCache.get(cell);
 
-		Loc loc = new Loc(bookIndex, sheetIndex, cell.getRowIndex(), cell.getColumnIndex());
+		int rowIndex = cell.getRowIndex();
+		int columnIndex = cell.getColumnIndex();
+		Loc loc = new Loc(bookIndex, sheetIndex, rowIndex, columnIndex);
 		PlainValueCellCacheEntry pcce = _plainCellCache.get(loc);
 
-		if (cell.getCellType() == HSSFCell.CELL_TYPE_FORMULA) {
+		if (cell.getCellType() == CellType.FORMULA) {
 			if (fcce == null) {
 				fcce = new FormulaCellCacheEntry();
 				if (pcce == null) {
 					if (_evaluationListener != null) {
-						_evaluationListener.onChangeFromBlankValue(sheetIndex, cell.getRowIndex(),
-								cell.getColumnIndex(), cell, fcce);
+						_evaluationListener.onChangeFromBlankValue(sheetIndex, rowIndex,
+								columnIndex, cell, fcce);
 					}
-					updateAnyBlankReferencingFormulas(bookIndex, sheetIndex, cell.getRowIndex(),
-							cell.getColumnIndex());
+					updateAnyBlankReferencingFormulas(bookIndex, sheetIndex, rowIndex,
+							columnIndex);
 				}
 				_formulaCellCache.put(cell, fcce);
 			} else {
@@ -82,18 +82,17 @@ final class EvaluationCache {
 		} else {
 			ValueEval value = WorkbookEvaluator.getValueFromNonFormulaCell(cell);
 			if (pcce == null) {
-				if (value != BlankEval.INSTANCE) {
+				if (value != BlankEval.instance) {
 					// only cache non-blank values in the plain cell cache
 					// (dependencies on blank cells are managed by
 					// FormulaCellCacheEntry._usedBlankCellGroup)
 					pcce = new PlainValueCellCacheEntry(value);
 					if (fcce == null) {
 						if (_evaluationListener != null) {
-							_evaluationListener.onChangeFromBlankValue(sheetIndex, cell
-									.getRowIndex(), cell.getColumnIndex(), cell, pcce);
+							_evaluationListener.onChangeFromBlankValue(sheetIndex, rowIndex, columnIndex, cell, pcce);
 						}
 						updateAnyBlankReferencingFormulas(bookIndex, sheetIndex,
-								cell.getRowIndex(), cell.getColumnIndex());
+								rowIndex, columnIndex);
 					}
 					_plainCellCache.put(loc, pcce);
 				}
@@ -101,7 +100,7 @@ final class EvaluationCache {
 				if (pcce.updateValue(value)) {
 					pcce.recurseClearCachedFormulaResults(_evaluationListener);
 				}
-				if (value == BlankEval.INSTANCE) {
+				if (value == BlankEval.instance) {
 					_plainCellCache.remove(loc);
 				}
 			}
@@ -116,7 +115,7 @@ final class EvaluationCache {
 		}
 	}
 
-	private void updateAnyBlankReferencingFormulas(int bookIndex, int sheetIndex, 
+	private void updateAnyBlankReferencingFormulas(int bookIndex, int sheetIndex,
 			final int rowIndex, final int columnIndex) {
 		final BookSheetKey bsk = new BookSheetKey(bookIndex, sheetIndex);
 		_formulaCellCache.applyOperation(new IEntryOperation() {
@@ -129,7 +128,7 @@ final class EvaluationCache {
 
 	public PlainValueCellCacheEntry getPlainValueEntry(int bookIndex, int sheetIndex,
 			int rowIndex, int columnIndex, ValueEval value) {
-		
+
 		Loc loc = new Loc(bookIndex, sheetIndex, rowIndex, columnIndex);
 		PlainValueCellCacheEntry result = _plainCellCache.get(loc);
 		if (result == null) {
@@ -139,7 +138,7 @@ final class EvaluationCache {
 				_evaluationListener.onReadPlainValue(sheetIndex, rowIndex, columnIndex, result);
 			}
 		} else {
-			// TODO - if we are confident that this sanity check is not required, we can remove 'value' from plain value cache entry  
+			// TODO - if we are confident that this sanity check is not required, we can remove 'value' from plain value cache entry
 			if (!areValuesEqual(result.getValue(), value)) {
 				throw new IllegalStateException("value changed");
 			}
@@ -153,12 +152,12 @@ final class EvaluationCache {
 		if (a == null) {
 			return false;
 		}
-		Class cls = a.getClass();
+		Class<?> cls = a.getClass();
 		if (cls != b.getClass()) {
 			// value type is changing
 			return false;
 		}
-		if (a == BlankEval.INSTANCE) {
+		if (a == BlankEval.instance) {
 			return b == a;
 		}
 		if (cls == NumberEval.class) {
@@ -175,11 +174,11 @@ final class EvaluationCache {
 		}
 		throw new IllegalStateException("Unexpected value class (" + cls.getName() + ")");
 	}
-	
+
 	public FormulaCellCacheEntry getOrCreateFormulaCellEntry(EvaluationCell cell) {
 		FormulaCellCacheEntry result = _formulaCellCache.get(cell);
 		if (result == null) {
-			
+
 			result = new FormulaCellCacheEntry();
 			_formulaCellCache.put(cell, result);
 		}
@@ -197,11 +196,11 @@ final class EvaluationCache {
 		_formulaCellCache.clear();
 	}
 	public void notifyDeleteCell(int bookIndex, int sheetIndex, EvaluationCell cell) {
-		
-		if (cell.getCellType() == HSSFCell.CELL_TYPE_FORMULA) {
+
+		if (cell.getCellType() == CellType.FORMULA) {
 			FormulaCellCacheEntry fcce = _formulaCellCache.remove(cell);
 			if (fcce == null) {
-				// formula cell has not been evaluated yet 
+				// formula cell has not been evaluated yet
 			} else {
 				fcce.setSensitiveInputCells(null);
 				fcce.recurseClearCachedFormulaResults(_evaluationListener);
@@ -209,7 +208,7 @@ final class EvaluationCache {
 		} else {
 			Loc loc = new Loc(bookIndex, sheetIndex, cell.getRowIndex(), cell.getColumnIndex());
 			PlainValueCellCacheEntry pcce = _plainCellCache.get(loc);
-			
+
 			if (pcce == null) {
 				// cache entry doesn't exist. nothing to do
 			} else {

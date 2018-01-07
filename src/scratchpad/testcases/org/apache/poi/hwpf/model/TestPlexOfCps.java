@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.hwpf.model;
 
@@ -24,19 +22,13 @@ import org.apache.poi.hwpf.*;
 
 import org.apache.poi.util.LittleEndian;
 
-public class TestPlexOfCps
+public final class TestPlexOfCps
   extends TestCase
 {
-  private PlexOfCps _plexOfCps = null;
+  private PlexOfCps _plexOfCps;
   private HWPFDocFixture _hWPFDocFixture;
 
-  public TestPlexOfCps(String name)
-  {
-    super(name);
-  }
-  public void testWriteRead()
-    throws Exception
-  {
+  public void testWriteRead() {
     _plexOfCps = new PlexOfCps(4);
 
     int last = 0;
@@ -44,7 +36,7 @@ public class TestPlexOfCps
     {
       byte[] intHolder = new byte[4];
       int span = (int)(110.0f * Math.random());
-      LittleEndian.putInt(intHolder, span);
+      LittleEndian.putInt(intHolder, 0, span);
       _plexOfCps.addProperty(new GenericPropertyNode(last, last + span, intHolder));
       last += span;
     }
@@ -64,17 +56,19 @@ public class TestPlexOfCps
       assertEquals(node.getEnd()-node.getStart(), span);
     }
   }
-  protected void setUp()
+  @Override
+protected void setUp()
     throws Exception
   {
     super.setUp();
     /**@todo verify the constructors*/
-    _hWPFDocFixture = new HWPFDocFixture(this);
+    _hWPFDocFixture = new HWPFDocFixture(this, HWPFDocFixture.DEFAULT_TEST_FILE);
 
     _hWPFDocFixture.setUp();
   }
 
-  protected void tearDown()
+  @Override
+protected void tearDown()
     throws Exception
   {
     _plexOfCps = null;

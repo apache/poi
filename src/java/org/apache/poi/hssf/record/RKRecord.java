@@ -18,81 +18,36 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.hssf.util.RKUtil;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title:        RK Record (0x027E)
+ * Title:        RK Record (0x027E)<p>
  * Description:  An internal 32 bit number with the two most significant bits
  *               storing the type.  This is part of a bizarre scheme to save disk
  *               space and memory (gee look at all the other whole records that
  *               are in the file just "cause"..,far better to waste processor
- *               cycles on this then leave on of those "valuable" records out).<P>
- * We support this in READ-ONLY mode.  HSSF converts these to NUMBER records<P>
+ *               cycles on this then leave on of those "valuable" records out).<p>
+ * We support this in READ-ONLY mode.  HSSF converts these to NUMBER records<p>
  *
- *
- *
- * REFERENCE:  PG 376 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author Jason Height (jheight at chariot dot net dot au)
+ * REFERENCE:  PG 376 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
+ * 
  * @see org.apache.poi.hssf.record.NumberRecord
  */
-public final class RKRecord extends Record implements CellValueRecordInterface {
+public final class RKRecord extends CellRecord {
     public final static short sid                      = 0x027E;
     public final static short RK_IEEE_NUMBER           = 0;
     public final static short RK_IEEE_NUMBER_TIMES_100 = 1;
     public final static short RK_INTEGER               = 2;
     public final static short RK_INTEGER_TIMES_100     = 3;
-    private int field_1_row;
-    private int field_2_col;
-    private int field_3_xf_index;
     private int field_4_rk_number;
 
-    public RKRecord()
-    {
+    private RKRecord() {
+    	// fields uninitialised
     }
 
-    public RKRecord(RecordInputStream in)
-    {
-        field_1_row       = in.readUShort();
-        field_2_col       = in.readUShort();
-        field_3_xf_index  = in.readUShort();
+    public RKRecord(RecordInputStream in) {
+        super(in);
         field_4_rk_number = in.readInt();
-    }
-
-    public int getRow()
-    {
-        return field_1_row;
-    }
-
-    public short getColumn()
-    {
-        return (short) field_2_col;
-    }
-
-    public short getXFIndex()
-    {
-        return (short) field_3_xf_index;
-    }
-
-    public int getRKField()
-    {
-        return field_4_rk_number;
-    }
-
-    /**
-     * Get the type of the number
-     *
-     * @return one of these values:
-     *         <OL START="0">
-     *             <LI>RK_IEEE_NUMBER</LI>
-     *             <LI>RK_IEEE_NUMBER_TIMES_100</LI>
-     *             <LI>RK_INTEGER</LI>
-     *             <LI>RK_INTEGER_TIMES_100</LI>
-     *         </OL>
-     */
-    public short getRKType()
-    {
-        return ( short ) (field_4_rk_number & 3);
     }
 
     /**
@@ -112,60 +67,39 @@ public final class RKRecord extends Record implements CellValueRecordInterface {
      * @return the value as a proper double (hey, it <B>could</B>
      *         happen)
      */
-    public double getRKNumber()
-    {
+    public double getRKNumber() {
         return RKUtil.decodeNumber(field_4_rk_number);
     }
 
-
-    public String toString()
-    {
-        StringBuffer sb = new StringBuffer();
-
-        sb.append("[RK]\n");
-        sb.append("    .row       = ").append(HexDump.shortToHex(getRow())).append("\n");
-        sb.append("    .col       = ").append(HexDump.shortToHex(getColumn())).append("\n");
-        sb.append("    .xfindex   = ").append(HexDump.shortToHex(getXFIndex())).append("\n");
-        sb.append("    .rknumber  = ").append(HexDump.intToHex(getRKField())).append("\n");
-        sb.append("      .rktype  = ").append(HexDump.byteToHex(getRKType())).append("\n");
-        sb.append("      .rknumber= ").append(getRKNumber()).append("\n");
-        sb.append("[/RK]\n");
-        return sb.toString();
+    @Override
+    protected String getRecordName() {
+    	return "RK";
     }
 
-	public int serialize(int offset, byte [] data) {
-		throw new RecordFormatException( "Sorry, you can't serialize RK in this release");
-	}
-	protected int getDataSize() {
-		throw new RecordFormatException( "Sorry, you can't serialize RK in this release");
-	}
+    @Override
+    protected void appendValueText(StringBuilder sb) {
+    	sb.append("  .value= ").append(getRKNumber());
+    }
 
-    public short getSid()
-    {
+    @Override
+    protected void serializeValue(LittleEndianOutput out) {
+    	out.writeInt(field_4_rk_number);
+    }
+
+    @Override
+    protected int getValueDataSize() {
+    	return 4;
+    }
+
+    @Override
+    public short getSid() {
         return sid;
     }
 
-    public void setColumn(short col)
-    {
-    }
-
-    public void setRow(int row)
-    {
-    }
-
-    /**
-     * NO OP!
-     */
-
-    public void setXFIndex(short xf)
-    {
-    }
-
+    @Override
     public Object clone() {
       RKRecord rec = new RKRecord();
-      rec.field_1_row = field_1_row;
-      rec.field_2_col = field_2_col;
-      rec.field_3_xf_index = field_3_xf_index;
+      copyBaseFields(rec);
       rec.field_4_rk_number = field_4_rk_number;
       return rec;
     }

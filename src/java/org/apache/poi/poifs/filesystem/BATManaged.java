@@ -35,7 +35,7 @@ public interface BATManaged
      * @return count of BigBlock instances
      */
 
-    public int countBlocks();
+    int countBlocks();
 
     /**
      * Set the start block for this instance
@@ -44,6 +44,6 @@ public interface BATManaged
      *              up the the filesystem
      */
 
-    public void setStartBlock(final int index);
+    void setStartBlock(final int index);
 }   // end public interface BATManaged
 

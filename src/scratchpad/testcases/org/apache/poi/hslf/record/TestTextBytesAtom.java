@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 
 package org.apache.poi.hslf.record;
 
@@ -29,28 +26,28 @@ import java.io.ByteArrayOutputStream;
  *
  * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestTextBytesAtom extends TestCase {
+public final class TestTextBytesAtom extends TestCase {
 	// From a real file
-	private byte[] data = new byte[]  { 0, 0, 0xA8-256, 0x0f, 0x1c, 0, 0, 0, 
-		0x54, 0x68, 0x69, 0x73, 0x20, 0x69, 0x73, 0x20, 0x74, 0x68, 
+	private final byte[] data = new byte[]  { 0, 0, 0xA8-256, 0x0f, 0x1c, 0, 0, 0,
+		0x54, 0x68, 0x69, 0x73, 0x20, 0x69, 0x73, 0x20, 0x74, 0x68,
 		0x65, 0x20, 0x74, 0x69, 0x74, 0x6C,	0x65, 0x20, 0x6F, 0x6E,
 		0x20, 0x70, 0x61, 0x67, 0x65, 0x20, 0x32 };
-	private String data_text = "This is the title on page 2";
-	private byte[] alt_data = new byte[] { 0, 0, 0xA8-256, 0x0F, 0x14, 0, 0, 0,
-		0x54, 0x68, 0x69, 0x73, 0x20, 0x69, 0x73, 0x20, 0x61, 0x20, 
+	private final String data_text = "This is the title on page 2";
+	private final byte[] alt_data = new byte[] { 0, 0, 0xA8-256, 0x0F, 0x14, 0, 0, 0,
+		0x54, 0x68, 0x69, 0x73, 0x20, 0x69, 0x73, 0x20, 0x61, 0x20,
 		0x74, 0x65, 0x73, 0x74, 0x20, 0x74, 0x69, 0x74, 0x6C, 0x65 };
-	private String alt_text = "This is a test title";
+	private final String alt_text = "This is a test title";
 
-    public void testRecordType() throws Exception {
+    public void testRecordType() {
 		TextBytesAtom tba = new TextBytesAtom(data,0,data.length);
 		assertEquals(4008l, tba.getRecordType());
 	}
 
-	public void testTextA() throws Exception {
+	public void testTextA() {
 		TextBytesAtom tba = new TextBytesAtom(data,0,data.length);
 		assertEquals(data_text, tba.getText());
 	}
-	public void testTextB() throws Exception {
+	public void testTextB() {
 		TextBytesAtom tba = new TextBytesAtom(alt_data,0,alt_data.length);
 		assertEquals(alt_text, tba.getText());
 	}

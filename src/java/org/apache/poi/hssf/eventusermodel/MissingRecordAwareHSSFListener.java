@@ -22,10 +22,14 @@ import org.apache.poi.hssf.eventusermodel.dummyrecord.MissingCellDummyRecord;
 import org.apache.poi.hssf.eventusermodel.dummyrecord.MissingRowDummyRecord;
 import org.apache.poi.hssf.record.BOFRecord;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
+import org.apache.poi.hssf.record.MulBlankRecord;
+import org.apache.poi.hssf.record.MulRKRecord;
 import org.apache.poi.hssf.record.NoteRecord;
 import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.RecordFactory;
 import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.hssf.record.SharedFormulaRecord;
+import org.apache.poi.hssf.record.StringRecord;
 
 /**
  * <p>A HSSFListener which tracks rows and columns, and will
@@ -39,15 +43,15 @@ import org.apache.poi.hssf.record.SharedFormulaRecord;
  */
 public final class MissingRecordAwareHSSFListener implements HSSFListener {
 	private HSSFListener childListener;
-	
+
 	// Need to have different counters for cell rows and
 	//  row rows, as you sometimes get a RowRecord in the
 	//  middle of some cells, and that'd break everything
 	private int lastRowRow;
-	
+
 	private int lastCellRow;
 	private int lastCellColumn;
-	
+
 	/**
 	 * Constructs a new MissingRecordAwareHSSFListener, which
 	 *  will fire processRecord on the supplied child
@@ -62,13 +66,18 @@ public final class MissingRecordAwareHSSFListener implements HSSFListener {
 	public void processRecord(Record record) {
 		int thisRow;
 		int thisColumn;
-
+		CellValueRecordInterface[] expandedRecords = null;
 
 		if (record instanceof CellValueRecordInterface) {
 			CellValueRecordInterface valueRec = (CellValueRecordInterface) record;
 			thisRow = valueRec.getRow();
 			thisColumn = valueRec.getColumn();
 		} else {
+            if (record instanceof StringRecord){
+                //it contains only cashed result of the previous FormulaRecord evaluation
+                childListener.processRecord(record);
+                return;
+            }
 			thisRow = -1;
 			thisColumn = -1;
 
@@ -77,7 +86,8 @@ public final class MissingRecordAwareHSSFListener implements HSSFListener {
 				// the workbook
 				case BOFRecord.sid:
 					BOFRecord bof = (BOFRecord) record;
-					if (bof.getType() == bof.TYPE_WORKBOOK || bof.getType() == bof.TYPE_WORKSHEET) {
+					if (bof.getType() == BOFRecord.TYPE_WORKBOOK || 
+					        bof.getType() == BOFRecord.TYPE_WORKSHEET) {
 						// Reset the row and column counts - new workbook / worksheet
 						resetCounts();
 					}
@@ -97,6 +107,7 @@ public final class MissingRecordAwareHSSFListener implements HSSFListener {
 
 					// Record this as the last row we saw
 					lastRowRow = rowrec.getRowNumber();
+					lastCellColumn = -1;
 					break;
 
 				case SharedFormulaRecord.sid:
@@ -105,17 +116,40 @@ public final class MissingRecordAwareHSSFListener implements HSSFListener {
 					// - so don't fire off the LastCellOfRowDummyRecord yet
 					childListener.processRecord(record);
 					return;
+				case MulBlankRecord.sid:
+					// These appear in the middle of the cell records, to
+					//  specify that the next bunch are empty but styled
+					// Expand this out into multiple blank cells
+					MulBlankRecord mbr = (MulBlankRecord)record;
+					expandedRecords = RecordFactory.convertBlankRecords(mbr);
+					break;
+				case MulRKRecord.sid:
+					// This is multiple consecutive number cells in one record
+					// Exand this out into multiple regular number cells
+					MulRKRecord mrk = (MulRKRecord)record;
+					expandedRecords = RecordFactory.convertRKRecords(mrk);
+					break;
 				case NoteRecord.sid:
 					NoteRecord nrec = (NoteRecord) record;
 					thisRow = nrec.getRow();
 					thisColumn = nrec.getColumn();
 					break;
+				default:
+					break;
 			}
 		}
+
+		// First part of expanded record handling
+		if(expandedRecords != null && expandedRecords.length > 0) {
+			thisRow = expandedRecords[0].getRow();
+			thisColumn = expandedRecords[0].getColumn();
+		}
+
 		// If we're on cells, and this cell isn't in the same
-		//  row as the last one, then fire the 
+		//  row as the last one, then fire the
 		//  dummy end-of-row records
-		if(thisRow != lastCellRow && lastCellRow > -1) {
+		if(thisRow != lastCellRow && thisRow > 0) {
+		    if (lastCellRow == -1) lastCellRow = 0;
 			for(int i=lastCellRow; i<thisRow; i++) {
 				int cols = -1;
 				if(i == lastCellRow) {
@@ -124,22 +158,22 @@ public final class MissingRecordAwareHSSFListener implements HSSFListener {
 				childListener.processRecord(new LastCellOfRowDummyRecord(i, cols));
 			}
 		}
-		
+
 		// If we've just finished with the cells, then fire the
 		// final dummy end-of-row record
 		if(lastCellRow != -1 && lastCellColumn != -1 && thisRow == -1) {
 			childListener.processRecord(new LastCellOfRowDummyRecord(lastCellRow, lastCellColumn));
-			
+
 			lastCellRow = -1;
 			lastCellColumn = -1;
 		}
-		
+
 		// If we've moved onto a new row, the ensure we re-set
 		//  the column counter
 		if(thisRow != lastCellRow) {
 			lastCellColumn = -1;
 		}
-		
+
 		// If there's a gap in the cells, then fire
 		//  the dummy cell records
 		if(lastCellColumn != thisColumn-1) {
@@ -147,14 +181,27 @@ public final class MissingRecordAwareHSSFListener implements HSSFListener {
 				childListener.processRecord(new MissingCellDummyRecord(thisRow, i));
 			}
 		}
-		
+
+		// Next part of expanded record handling
+		if(expandedRecords != null && expandedRecords.length > 0) {
+			thisColumn = expandedRecords[expandedRecords.length-1].getColumn();
+		}
+
+
 		// Update cell and row counts as needed
 		if(thisColumn != -1) {
 			lastCellColumn = thisColumn;
 			lastCellRow = thisRow;
 		}
 
-		childListener.processRecord(record);
+		// Pass along the record(s)
+		if(expandedRecords != null && expandedRecords.length > 0) {
+			for(CellValueRecordInterface r : expandedRecords) {
+				childListener.processRecord((Record)r);
+			}
+		} else {
+			childListener.processRecord(record);
+		}
 	}
 
 	private void resetCounts() {

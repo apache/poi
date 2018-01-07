@@ -19,16 +19,16 @@ package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.RecordFormatException;
 
 /**
- * ftEnd (0x0000)<p/>
+ * ftEnd (0x0000)<p>
  * 
- * The end data record is used to denote the end of the subrecords.<p/>
- * 
- * @author Glen Stampoultzis (glens at apache.org)
+ * The end data record is used to denote the end of the subrecords.
  */
-public final class EndSubRecord extends SubRecord {
-    public final static short sid = 0x0000; // Note - zero sid is somewhat unusual (compared to plain Records)
+public final class EndSubRecord extends SubRecord implements Cloneable {
+    // Note - zero sid is somewhat unusual (compared to plain Records)
+    public final static short sid = 0x0000;
     private static final int ENCODED_SIZE = 0;
 
     public EndSubRecord()
@@ -38,12 +38,17 @@ public final class EndSubRecord extends SubRecord {
 
     /**
      * @param in unused (since this record has no data)
-     * @param size 
+     * @param size must be 0
      */
     public EndSubRecord(LittleEndianInput in, int size) {
         if ((size & 0xFF) != ENCODED_SIZE) { // mask out random crap in upper byte
             throw new RecordFormatException("Unexpected size (" + size + ")");
         }
+    }
+
+    @Override
+    public boolean isTerminating(){
+        return true;
     }
 
     public String toString()
@@ -70,9 +75,9 @@ public final class EndSubRecord extends SubRecord {
         return sid;
     }
 
-    public Object clone() {
-        EndSubRecord rec = new EndSubRecord();
-    
-        return rec;
+    @Override
+    public EndSubRecord clone() {
+
+        return new EndSubRecord();
     }
 }

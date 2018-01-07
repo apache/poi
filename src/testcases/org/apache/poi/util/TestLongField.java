@@ -93,11 +93,10 @@ public final class TestLongField extends TestCase {
 
             // as expected
         }
-        for (int j = 0; j < _test_array.length; j++)
-        {
+        for (long element : _test_array) {
             array = new byte[ 8 ];
-            new LongField(0, _test_array[ j ], array);
-            assertEquals(_test_array[ j ], new LongField(0, array).get());
+            new LongField(0, element, array);
+            assertEquals(element, new LongField(0, array).get());
         }
     }
 
@@ -201,9 +200,8 @@ public final class TestLongField extends TestCase {
         LongField field = new LongField(0);
         byte[]    array = new byte[ 8 ];
 
-        for (int j = 0; j < _test_array.length; j++)
-        {
-            field.set(_test_array[ j ]);
+        for (long element : _test_array) {
+            field.set(element);
             field.writeToBytes(array);
             long val = (( long ) array[ 7 ]) << 56;
 
@@ -215,7 +213,7 @@ public final class TestLongField extends TestCase {
             val += ((( long ) array[ 2 ]) << 16) & 0x0000000000FF0000L;
             val += ((( long ) array[ 1 ]) << 8) & 0x000000000000FF00L;
             val += (array[ 0 ] & 0x00000000000000FFL);
-            assertEquals("testing ", _test_array[ j ], val);
+            assertEquals("testing ", element, val);
         }
     }
 }

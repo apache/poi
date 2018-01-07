@@ -1,0 +1,178 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.apache.poi</groupId>
+        <artifactId>poi-parent</artifactId>
+        <version>4.0.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>poi-ooxml</artifactId>
+    <packaging>jar</packaging>
+
+    <name>Apache POI OOXML package</name>
+	
+    <build>
+		<plugins>
+			<!-- copy sources, resources and tests in place as otherwise Sonar does not pick them up correctly! -->
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>${maven.plugin.resources.version}</version>
+				<executions>
+					<execution>
+						<id>copy-sources</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/src/main/java</outputDirectory>
+							<resources>          
+								<resource>
+									<directory>../../src/ooxml/java</directory>
+								</resource>
+							</resources>              
+						</configuration>            
+					</execution>
+					<execution>
+						<id>copy-resources</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/src/main/resources</outputDirectory>
+							<resources>          
+								<resource>
+									<directory>../../src/resources/ooxml</directory>
+								</resource>
+							</resources>              
+						</configuration>            
+					</execution>
+					<execution>
+						<id>copy-tests</id>
+						<phase>generate-test-sources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/src/test/java</outputDirectory>
+							<resources>          
+								<resource>
+									<directory>../../src/ooxml/testcases</directory>
+								</resource>
+							</resources>              
+						</configuration>            
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- clean copied sources afterwards -->
+			<plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>${maven.plugin.clean.version}</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>src</directory>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                        <fileset>
+                            <directory>build</directory>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>			
+
+
+            <!-- set jvm parameters for surefire plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven.plugin.surefire.version}</version>
+                <configuration>
+                    <argLine>@{argLine} -Duser.language=en -Duser.country=US -Xmx1024m -Djava.io.tmpdir=target/tmp -XX:-OmitStackTraceInFastThrow</argLine>
+                </configuration>
+            </plugin>
+		</plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+			<groupId>${project.groupId}</groupId>
+            <artifactId>poi-ooxml-schema</artifactId>
+			<version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>poi-ooxml-schema-encryption</artifactId>
+			<version>${project.version}</version>
+        </dependency>
+        <dependency>
+			<groupId>${project.groupId}</groupId>
+            <artifactId>poi-ooxml-schema-security</artifactId>
+			<version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>poi-main</artifactId>
+			<version>${project.version}</version>
+        </dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>poi-main</artifactId>
+			<version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+		</dependency>
+
+		<dependency>
+		  <groupId>org.apache.xmlbeans</groupId>
+		  <artifactId>xmlbeans</artifactId>
+		  <version>${xmlbeans.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcpkix-jdk15on</artifactId>
+			<version>1.54</version>
+		</dependency>
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk15on</artifactId>
+			<version>1.58</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.santuario</groupId>
+			<artifactId>xmlsec</artifactId>
+			<version>2.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.virtuald</groupId>
+			<artifactId>curvesapi</artifactId>
+			<version>1.05</version>
+		</dependency>
+  
+		<!-- non-test dependency for OOXMLLite -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-core</artifactId>
+            <version>1.19</version>
+			<scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-generator-annprocess</artifactId>
+            <version>1.19</version>
+			<scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

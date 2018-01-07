@@ -17,111 +17,77 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title: Recalc Id Record<P>
+ * Title: Recalc Id Record (0x01C1)<p>
  * Description:  This record contains an ID that marks when a worksheet was last
  *               recalculated. It's an optimization Excel uses to determine if it
  *               needs to  recalculate the spreadsheet when it's opened. So far, only
- *               the two values <code>0xC1 0x01 0x00 0x00 0x80 0x38 0x01 0x00</code>
- *               (do not recalculate) and <code>0xC1 0x01 0x00 0x00 0x60 0x69 0x01
- *               0x00</code> have been seen. If the field <code>isNeeded</code> is
- *               set to false (default), then this record is swallowed during the
- *               serialization process<P>
- * REFERENCE:  http://chicago.sourceforge.net/devel/docs/excel/biff8.html<P>
- * @author Luc Girardin (luc dot girardin at macrofocus dot com)
- * @version 2.0-pre
- * @see org.apache.poi.hssf.model.Workbook
+ *               the two engine ids {@code 0x80 0x38 0x01 0x00}
+ *               and {@code 0x60 0x69 0x01 0x00} have been seen.
+ *               A value of {@code 0x00} will cause Excel to recalculate
+ *               all formulas on the next load.<p>
+ * REFERENCE:  http://chicago.sourceforge.net/devel/docs/excel/biff8.html
  */
-
-public final class RecalcIdRecord extends Record {
-    public final static short sid = 0x1c1;
-    public short[]            field_1_recalcids;
-
-    private boolean isNeeded = true;
-
-    public RecalcIdRecord()
-    {
-    }
-
-    public RecalcIdRecord(RecordInputStream in)
-    {
-        field_1_recalcids = new short[ in.remaining() / 2 ];
-        for (int k = 0; k < field_1_recalcids.length; k++)
-        {
-            field_1_recalcids[ k ] = in.readShort();
-        }
-    }
+public final class RecalcIdRecord extends StandardRecord {
+    public final static short sid = 0x01C1;
+    private final int _reserved0;
 
     /**
-     * set the recalc array.
-     * @param array of recalc id's
+     * An unsigned integer that specifies the recalculation engine identifier
+     * of the recalculation engine that performed the last recalculation.
+     * If the value is less than the recalculation engine identifier associated with the application,
+     * the application will recalculate the results of all formulas on
+     * this workbook immediately after loading the file
      */
+    private int _engineId;
 
-    public void setRecalcIdArray(short [] array)
-    {
-        field_1_recalcids = array;
+    public RecalcIdRecord() {
+        _reserved0 = 0;
+        _engineId = 0;
     }
 
-    /**
-     * get the recalc array.
-     * @return array of recalc id's
-     */
-
-    public short [] getRecalcIdArray()
-    {
-        return field_1_recalcids;
-    }
-
-    public void setIsNeeded(boolean isNeeded) {
-        this.isNeeded = isNeeded;
+    public RecalcIdRecord(RecordInputStream in) {
+    	in.readUShort(); // field 'rt' should have value 0x01C1, but Excel doesn't care during reading
+    	_reserved0 = in.readUShort();
+    	_engineId = in.readInt();
     }
 
     public boolean isNeeded() {
-        return isNeeded;
+        return true;
     }
 
-    public String toString()
-    {
+    public void setEngineId(int val) {
+        _engineId = val;
+    }
+
+    public int getEngineId() {
+        return _engineId;
+    }
+
+    public String toString() {
         StringBuffer buffer = new StringBuffer();
 
         buffer.append("[RECALCID]\n");
-        buffer.append("    .elements        = ").append(field_1_recalcids.length)
-            .append("\n");
-        for (int k = 0; k < field_1_recalcids.length; k++)
-        {
-            buffer.append("    .element_" + k + "       = ")
-                .append(field_1_recalcids[ k ]).append("\n");
-        }
+        buffer.append("    .reserved = ").append(HexDump.shortToHex(_reserved0)).append("\n");
+        buffer.append("    .engineId = ").append(HexDump.intToHex(_engineId)).append("\n");
         buffer.append("[/RECALCID]\n");
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte [] data)
-    {
-        short[] tabids     = getRecalcIdArray();
-        short   length     = ( short ) (tabids.length * 2);
-        int     byteoffset = 4;
-
-        LittleEndian.putUShort(data, 0 + offset, sid);
-        LittleEndian.putUShort(data, 2 + offset, length);
-
-        // 2 (num bytes in a short)
-        for (int k = 0; k < (length / 2); k++)
-        {
-            LittleEndian.putShort(data, byteoffset + offset, tabids[ k ]);
-            byteoffset += 2;
-        }
-        return getRecordSize();
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(sid); // always write 'rt' field as 0x01C1
+        out.writeShort(_reserved0);
+        out.writeInt(_engineId);
     }
 
     protected int getDataSize() {
-        return (getRecalcIdArray().length * 2);
+        return 8;
     }
 
-    public short getSid()
-    {
+    public short getSid() {
         return sid;
     }
 }

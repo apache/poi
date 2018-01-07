@@ -17,52 +17,76 @@
 
 package org.apache.poi.hssf.model;
 
-import org.apache.poi.hssf.record.formula.Ptg;
 import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaParsingWorkbook;
 import org.apache.poi.ss.formula.FormulaRenderer;
 import org.apache.poi.ss.formula.FormulaType;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 
 /**
- * HSSF wrapper for the {@link FormulaParser} and {@link FormulaRenderer} 
- * 
- * @author Josh Micich
+ * HSSF wrapper for the {@link FormulaParser} and {@link FormulaRenderer}
  */
+@Internal
 public final class HSSFFormulaParser {
 
-	private static FormulaParsingWorkbook createParsingWorkbook(HSSFWorkbook book) {
-		return HSSFEvaluationWorkbook.create(book);
-	}
+    private static FormulaParsingWorkbook createParsingWorkbook(HSSFWorkbook book) {
+        return HSSFEvaluationWorkbook.create(book);
+    }
 
-	private HSSFFormulaParser() {
-		// no instances of this class
-	}
+    private HSSFFormulaParser() {
+        // no instances of this class
+    }
 
-	/**
-	 * Convenience method for parsing cell formulas. see {@link #parse(String, HSSFWorkbook, int)}
-	 */
-	public static Ptg[] parse(String formula, HSSFWorkbook workbook) {
-		return FormulaParser.parse(formula, createParsingWorkbook(workbook));
-	}
+    /**
+     * Convenience method for parsing cell formulas. see {@link #parse(String, HSSFWorkbook, FormulaType, int)}
+     * @param formula   The formula to parse, excluding the leading equals sign
+     * @param workbook  The parent workbook
+     * @return the parsed formula tokens
+     * @throws FormulaParseException if the formula has incorrect syntax or is otherwise invalid
+     */
+    public static Ptg[] parse(String formula, HSSFWorkbook workbook) throws FormulaParseException {
+        return parse(formula, workbook, FormulaType.CELL);
+    }
 
-	/**
-	 * @param formulaType a constant from {@link FormulaType}
-	 * @return the parsed formula tokens
-	 */
-	public static Ptg[] parse(String formula, HSSFWorkbook workbook, int formulaType) {
-		return FormulaParser.parse(formula, createParsingWorkbook(workbook), formulaType);
-	}
+    /**
+     * @param formula     The formula to parse, excluding the leading equals sign
+     * @param workbook    The parent workbook
+     * @param formulaType The type of formula
+     * @return The parsed formula tokens
+     * @throws FormulaParseException if the formula has incorrect syntax or is otherwise invalid
+     */
+    public static Ptg[] parse(String formula, HSSFWorkbook workbook, FormulaType formulaType) throws FormulaParseException {
+        return parse(formula, workbook, formulaType, -1);
+    }
 
-	/**
-	 * Static method to convert an array of {@link Ptg}s in RPN order
-	 * to a human readable string format in infix mode.
-	 * @param book  used for defined names and 3D references
-	 * @param ptgs  must not be <code>null</code>
-	 * @return a human readable String
-	 */
-	public static String toFormulaString(HSSFWorkbook book, Ptg[] ptgs) {
-		return FormulaRenderer.toFormulaString(HSSFEvaluationWorkbook.create(book), ptgs);
-	}
+    /**
+     * @param formula     The formula to parse
+     * @param workbook    The parent workbook
+     * @param formulaType The type of formula
+     * @param sheetIndex  The 0-based index of the sheet this formula belongs to.
+     * The sheet index is required to resolve sheet-level names. <code>-1</code> means that
+     * the scope of the name will be ignored and  the parser will match named ranges only by name
+     *
+     * @return the parsed formula tokens
+     * @throws FormulaParseException if the formula has incorrect syntax or is otherwise invalid
+     */
+    public static Ptg[] parse(String formula, HSSFWorkbook workbook, FormulaType formulaType, int sheetIndex) throws FormulaParseException {
+        return FormulaParser.parse(formula, createParsingWorkbook(workbook), formulaType, sheetIndex);
+    }
+
+    /**
+     * Static method to convert an array of {@link Ptg}s in RPN order
+     * to a human readable string format in infix mode.
+     * @param book  used for defined names and 3D references
+     * @param ptgs  must not be <code>null</code>
+     * @return a human readable String
+     */
+    public static String toFormulaString(HSSFWorkbook book, Ptg[] ptgs) {
+        return FormulaRenderer.toFormulaString(HSSFEvaluationWorkbook.create(book), ptgs);
+    }
 }

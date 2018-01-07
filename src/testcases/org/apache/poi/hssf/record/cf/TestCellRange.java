@@ -17,10 +17,13 @@ limitations under the License.
 
 package org.apache.poi.hssf.record.cf;
 
-import org.apache.poi.ss.util.CellRangeAddress;
+import java.util.Arrays;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
+
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellRangeUtil;
 
 /**
  * Tests CellRange operations.
@@ -150,6 +153,10 @@ public final class TestCellRange extends TestCase
 		assertEquals(CellRangeUtil.OVERLAP, CellRangeUtil.intersect(tenthRow, tenthColumn));
 		assertEquals(CellRangeUtil.INSIDE, CellRangeUtil.intersect(tenthColumn, tenthColumn));
 		assertEquals(CellRangeUtil.INSIDE, CellRangeUtil.intersect(tenthRow, tenthRow));
+		
+		// Bug 55380
+		assertEquals(CellRangeUtil.OVERLAP, CellRangeUtil.intersect(
+		        CellRangeAddress.valueOf("C1:D2"), CellRangeAddress.valueOf("C2:C3")));
 	}
 	
 	/**
@@ -178,4 +185,90 @@ public final class TestCellRange extends TestCase
 		assertEquals("isFullRowRange", isFullRow, cr.isFullRowRange());
 		assertEquals("isFullColumnRange", isFullColumn, cr.isFullColumnRange());
 	}
+	
+	public void testNumberOfCells() {
+		assertEquals(1, oneCell.getNumberOfCells());
+		assertEquals(100, box9x9.getNumberOfCells());
+		assertEquals(121, box10to20c.getNumberOfCells());
+	}
+
+    public void testMergeCellRanges() {
+        // no result on empty
+        cellRangeTest(new String[]{ });
+
+        // various cases with two ranges
+        cellRangeTest(new String[]{"A1:B1", "A2:B2"}, "A1:B2");
+        cellRangeTest(new String[]{"A1:B1" }, "A1:B1");
+        cellRangeTest(new String[]{"A1:B2", "A2:B2"}, "A1:B2");
+        cellRangeTest(new String[]{"A1:B3", "A2:B2"}, "A1:B3");
+        cellRangeTest(new String[]{"A1:C1", "A2:B2"}, new String[] {"A1:C1", "A2:B2"});
+        
+        // cases with three ranges
+        cellRangeTest(new String[]{"A1:A1", "A2:B2", "A1:C1"}, new String[] {"A1:C1", "A2:B2"});
+        cellRangeTest(new String[]{"A1:C1", "A2:B2", "A1:A1"}, new String[] {"A1:C1", "A2:B2"});
+        
+        // "standard" cases
+        // enclose
+        cellRangeTest(new String[]{"A1:D4", "B2:C3"}, new String[] {"A1:D4"});
+        // inside
+        cellRangeTest(new String[]{"B2:C3", "A1:D4"}, new String[] {"A1:D4"});
+        cellRangeTest(new String[]{"B2:C3", "A1:D4"}, new String[] {"A1:D4"});
+        // disjunct
+        cellRangeTest(new String[]{"A1:B2", "C3:D4"}, new String[] {"A1:B2", "C3:D4"});
+        cellRangeTest(new String[]{"A1:B2", "A3:D4"}, new String[] {"A1:B2", "A3:D4"});
+        // overlap that cannot be merged
+        cellRangeTest(new String[]{"C1:D2", "C2:C3"}, new String[] {"C1:D2", "C2:C3"});
+        // overlap which could theoretically be merged, but isn't because the implementation was buggy and therefore was removed
+        cellRangeTest(new String[]{"A1:C3", "B1:D3"}, new String[] {"A1:C3", "B1:D3"}); // could be one region "A1:D3"
+        cellRangeTest(new String[]{"A1:C3", "B1:D1"}, new String[] {"A1:C3", "B1:D1"}); // could be one region "A1:D3"
+    }
+
+    public void testMergeCellRanges55380() {
+        cellRangeTest(new String[]{"C1:D2", "C2:C3"}, new String[] {"C1:D2", "C2:C3"});
+        cellRangeTest(new String[]{"A1:C3", "B2:D2"}, new String[] {"A1:C3", "B2:D2"});
+        cellRangeTest(new String[]{"C9:D30", "C7:C31"}, new String[] {"C9:D30",  "C7:C31"});
+    }
+    
+//    public void testResolveRangeOverlap() {
+//        resolveRangeOverlapTest("C1:D2", "C2:C3");
+//    }
+    
+    private void cellRangeTest(String[] input, String... expectedOutput) {
+        CellRangeAddress[] inputArr = new CellRangeAddress[input.length];
+        for(int i = 0;i < input.length;i++) {
+            inputArr[i] = CellRangeAddress.valueOf(input[i]);
+        }
+        CellRangeAddress[] result = CellRangeUtil.mergeCellRanges(inputArr);
+        verifyExpectedResult(result, expectedOutput);
+    }
+
+//    private void resolveRangeOverlapTest(String a, String b, String...expectedOutput) {
+//        CellRangeAddress rangeA = CellRangeAddress.valueOf(a);
+//        CellRangeAddress rangeB = CellRangeAddress.valueOf(b);
+//        CellRangeAddress[] result = CellRangeUtil.resolveRangeOverlap(rangeA, rangeB);
+//        verifyExpectedResult(result, expectedOutput);
+//    }
+    
+    private void verifyExpectedResult(CellRangeAddress[] result, String... expectedOutput) {
+        assertEquals("\nExpected: " + Arrays.toString(expectedOutput) + "\nHad: " + Arrays.toString(result), 
+                expectedOutput.length, result.length);
+        for(int i = 0;i < expectedOutput.length;i++) {
+            assertEquals("\nExpected: " + Arrays.toString(expectedOutput) + "\nHad: " + Arrays.toString(result),
+                    expectedOutput[i], result[i].formatAsString());
+        }
+    }
+    
+    public void testValueOf() {
+        CellRangeAddress cr1 = CellRangeAddress.valueOf("A1:B1");
+        assertEquals(0, cr1.getFirstColumn());
+        assertEquals(0, cr1.getFirstRow());
+        assertEquals(1, cr1.getLastColumn());
+        assertEquals(0, cr1.getLastRow());
+
+        CellRangeAddress cr2 = CellRangeAddress.valueOf("B1");
+        assertEquals(1, cr2.getFirstColumn());
+        assertEquals(0, cr2.getFirstRow());
+        assertEquals(1, cr2.getLastColumn());
+        assertEquals(0, cr2.getLastRow());
+    }
 }

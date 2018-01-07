@@ -15,55 +15,69 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.util;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
 
 /**
  * Tests the log class.
- *
- * @author Glen Stampoultzis (glens at apache.org)
- * @author Marc Johnson (mjohnson at apache dot org)
- * @author Nicola Ken Barozzi (nicolaken at apache.org)
  */
-
-public class TestPOILogger
-        extends TestCase
-{
-    /**
-     * Constructor TestPOILogger
-     *
-     *
-     * @param s
-     *
-     */
-
-    public TestPOILogger( String s )
-    {
-        super( s );
-    }
-
+public final class TestPOILogger extends POILogger {
+    private String lastLog = "";
+    private Throwable lastEx;
+    
     /**
      * Test different types of log output.
-     *
-     * @exception Exception
      */
-    public void testVariousLogTypes()
-            throws Exception
-    {
-        //NKB Testing only that logging classes use gives no exception
-        //    Since logging can be disabled, no checking of logging
-        //    output is done.
+    @Test
+    public void testVariousLogTypes() throws Exception {
+        String oldLCN = POILogFactory._loggerClassName;
+        try {
+            POILogFactory._loggerClassName = TestPOILogger.class.getName();
+            POILogger log = POILogFactory.getLogger( "foo" );
+            assertTrue(log instanceof TestPOILogger);
+            
+            TestPOILogger tLog = (TestPOILogger)log;
+    
+            log.log(POILogger.WARN, "Test = ", 1);
+            assertEquals("Test = 1", tLog.lastLog);
+            
+            log.log(POILogger.ERROR, "Test ", 1,2,new Exception("bla"));
+            assertEquals("Test 12", tLog.lastLog);
+            assertNotNull(tLog.lastEx);
+            
+            log.log(POILogger.ERROR, "log\nforging", "\nevil","\nlog");
+            assertEquals("log forging evil log", tLog.lastLog);
+        } finally {
+            POILogFactory._loggerClassName = oldLCN;
+        }
+    }
+    
+    // ---------- POI Logger methods implemented for testing ----------
 
-        POILogger log = POILogFactory.getLogger( "foo" );
+    @Override
+    public void initialize(String cat) {
+    }
 
-        log.log( POILogger.WARN, "Test = ", new Integer( 1 ) );
-        log.logFormatted( POILogger.ERROR, "Test param 1 = %, param 2 = %", "2", new Integer( 3 ) );
-        log.logFormatted( POILogger.ERROR, "Test param 1 = %, param 2 = %", new int[]{4, 5} );
-        log.logFormatted( POILogger.ERROR,
-                "Test param 1 = %1.1, param 2 = %0.1", new double[]{4, 5.23} );
+    @Override
+    protected void _log(int level, Object obj1) {
+        lastLog = (obj1 == null) ? "" : obj1.toString();
+        lastEx = null;
+    }
 
+    @Override
+    protected void _log(int level, Object obj1, Throwable exception) {
+        lastLog = (obj1 == null) ? "" : obj1.toString();
+        lastEx = exception;
+    }
+
+    @Override
+    public boolean check(int level) {
+        return true;
     }
 }

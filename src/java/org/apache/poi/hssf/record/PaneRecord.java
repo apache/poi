@@ -19,14 +19,12 @@ package org.apache.poi.hssf.record;
 
 
 import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Describes the frozen and unfozen panes.<p/>
- * 
- * @author Glen Stampoultzis (glens at apache.org)
+ * Describes the frozen and unfrozen panes.
  */
-public final class PaneRecord extends Record {
+public final class PaneRecord extends StandardRecord {
     public final static short      sid                             = 0x41;
     private  short      field_1_x;
     private  short      field_2_y;
@@ -36,9 +34,6 @@ public final class PaneRecord extends Record {
     public final static short       ACTIVE_PANE_LOWER_RIGHT        = 0;
     public final static short       ACTIVE_PANE_UPPER_RIGHT        = 1;
     public final static short       ACTIVE_PANE_LOWER_LEFT         = 2;
-    // TODO - remove obsolete field (it was deprecated May-2008 v3.1)
-    /** @deprecated use ACTIVE_PANE_UPPER_LEFT */
-    public final static short       ACTIVE_PANE_UPER_LEFT          = 3;
     public final static short       ACTIVE_PANE_UPPER_LEFT         = 3;
 
 
@@ -56,6 +51,7 @@ public final class PaneRecord extends Record {
         field_5_activePane             = in.readShort();
     }
 
+    @Override
     public String toString()
     {
         StringBuffer buffer = new StringBuffer();
@@ -86,31 +82,27 @@ public final class PaneRecord extends Record {
         return buffer.toString();
     }
 
-    public int serialize(int offset, byte[] data)
-    {
-        int pos = 0;
-
-        LittleEndian.putShort(data, 0 + offset, sid);
-        LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
-
-        LittleEndian.putShort(data, 4 + offset + pos, field_1_x);
-        LittleEndian.putShort(data, 6 + offset + pos, field_2_y);
-        LittleEndian.putShort(data, 8 + offset + pos, field_3_topRow);
-        LittleEndian.putShort(data, 10 + offset + pos, field_4_leftColumn);
-        LittleEndian.putShort(data, 12 + offset + pos, field_5_activePane);
-
-        return getRecordSize();
+    @Override
+    public void serialize(LittleEndianOutput out) {
+        out.writeShort(field_1_x);
+        out.writeShort(field_2_y);
+        out.writeShort(field_3_topRow);
+        out.writeShort(field_4_leftColumn);
+        out.writeShort(field_5_activePane);
     }
 
+    @Override
     protected int getDataSize() {
         return 2 + 2 + 2 + 2 + 2;
     }
 
+    @Override
     public short getSid()
     {
         return sid;
     }
 
+    @Override
     public Object clone() {
         PaneRecord rec = new PaneRecord();
     
@@ -122,11 +114,10 @@ public final class PaneRecord extends Record {
         return rec;
     }
 
-
-
-
     /**
      * Get the x field for the Pane record.
+     * 
+     * @return the x value
      */
     public short getX()
     {
@@ -135,6 +126,8 @@ public final class PaneRecord extends Record {
 
     /**
      * Set the x field for the Pane record.
+     * 
+     * @param field_1_x the x value
      */
     public void setX(short field_1_x)
     {
@@ -143,6 +136,8 @@ public final class PaneRecord extends Record {
 
     /**
      * Get the y field for the Pane record.
+     * 
+     * @return the y value
      */
     public short getY()
     {
@@ -151,6 +146,8 @@ public final class PaneRecord extends Record {
 
     /**
      * Set the y field for the Pane record.
+     * 
+     * @param field_2_y the y value
      */
     public void setY(short field_2_y)
     {
@@ -159,6 +156,8 @@ public final class PaneRecord extends Record {
 
     /**
      * Get the top row field for the Pane record.
+     * 
+     * @return the top row
      */
     public short getTopRow()
     {
@@ -167,6 +166,8 @@ public final class PaneRecord extends Record {
 
     /**
      * Set the top row field for the Pane record.
+     * 
+     * @param field_3_topRow the top row
      */
     public void setTopRow(short field_3_topRow)
     {
@@ -175,6 +176,8 @@ public final class PaneRecord extends Record {
 
     /**
      * Get the left column field for the Pane record.
+     * 
+     * @return the left column
      */
     public short getLeftColumn()
     {
@@ -183,6 +186,8 @@ public final class PaneRecord extends Record {
 
     /**
      * Set the left column field for the Pane record.
+     * 
+     * @param field_4_leftColumn the left column
      */
     public void setLeftColumn(short field_4_leftColumn)
     {
