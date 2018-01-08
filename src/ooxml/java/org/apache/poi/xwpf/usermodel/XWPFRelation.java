@@ -20,6 +20,7 @@ package org.apache.poi.xwpf.usermodel;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.poi.POIXMLDocument;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLRelation;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
@@ -112,6 +113,14 @@ public final class XWPFRelation extends POIXMLRelation {
             "/word/theme/theme#.xml",
             null
     );
+    
+    public static final XWPFRelation CHART_SHEET = new XWPFRelation(
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            POIXMLDocument.PACK_OBJECT_REL_TYPE,
+            "/word/embeddings/Microsoft_Excel_Worksheet#.xlsx",
+            XWPFChartData.class
+        );
+    
     public static final XWPFRelation CHART = new XWPFRelation(
             "application/vnd.openxmlformats-officedocument.drawingml.chart+xml",
             "http://schemas.openxmlformats.org/officeDocument/2006/relationships/chart",
