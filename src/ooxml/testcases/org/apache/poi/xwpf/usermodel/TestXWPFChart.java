@@ -87,4 +87,29 @@ public class TestXWPFChart extends TestCase {
         assertEquals("/word/document.xml", chart.getParent().getPackagePart().getPartName().getName());
         assertEquals("/word/charts/chart1.xml", chart.getPackagePart().getPartName().getName());
     }
+    /**
+	*test method to check adding chart in document
+	*/
+	public static void testAddChartsToNewDocument() throws InvalidFormatException, IOException {
+
+		XWPFDocument document = new XWPFDocument();
+		
+		XWPFChart chart = document.addChart();
+		assertEquals(1, document.getCharts().size());
+		assertNotNull(chart);
+		assertNotNull(chart.getCTChartSpace());
+		assertNotNull(chart.getCTChart());
+		assertEquals(XWPFChart.HEIGHT,chart.getChartHeight());
+		assertEquals(XWPFChart.WIDTH,chart.getChartWidth());
+		
+		XWPFChart chart2 = document.addChart();
+		assertEquals(2, document.getCharts().size());
+		assertNotNull(chart2);
+		assertNotNull(chart2.getCTChartSpace());
+		assertNotNull(chart2.getCTChart());
+		chart.setChartHeight(500500);
+		assertEquals(500500,chart.getChartHeight());
+		
+        assertNotNull(XWPFTestDataSamples.writeOutAndReadBack(document));
+	}
 }
