@@ -63,6 +63,7 @@ import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
+import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.CTInline;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBody;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTComment;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDocument1;
@@ -245,7 +246,6 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                 } else if (relation.equals(XWPFRelation.CHART.getRelation())) {
                     //now we can use all methods to modify charts in XWPFDocument
                     XWPFChart chartData = (XWPFChart) p;
-//                    chartData.onDocumentRead(); // ??? there is nothing to be done there!!!
                     charts.add(chartData);
                 } else if (relation.equals(XWPFRelation.GLOSSARY_DOCUMENT.getRelation())) {
                     // We don't currently process the glossary itself
@@ -1608,4 +1608,64 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     public XWPFDocument getXWPFDocument() {
         return this;
     }
+    
+    /**
+     * This method is used to create template for chart XML
+     * no need to read MS-Word file and modify charts
+     * @return This method return object of XWPFChart Object with default height and width
+     * @throws InvalidFormatException
+     * @throws IOException
+     * @since POI 4.0
+     */
+	public XWPFChart addChart() throws InvalidFormatException, IOException{
+		return addChart(XWPFChart.WIDTH, XWPFChart.HEIGHT);
+	}
+    
+    /**
+     * This method is used to create template for chart XML
+     * no need to read MS-Word file and modify charts
+     * @param width
+     * @param height
+     * @return This method return object of XWPFChart
+     * @throws InvalidFormatException
+     * @throws IOException
+     * @since POI 4.0
+     */
+	public XWPFChart addChart(int width, int height) throws InvalidFormatException, IOException{
+		
+		//get chart number
+    	int chartNumber = getPackagePart().getPackage().
+				getPartsByContentType(XWPFRelation.CHART.getContentType()).size() + 1;
+    	
+    	//create relationship in document for new chart
+		RelationPart rp = createRelationship(
+				XWPFRelation.CHART, XWPFFactory.getInstance(), chartNumber, false);
+		
+		//get chart relationship id
+		String chartId = rp.getRelationship().getId();
+		
+		//create paragraph and run object
+		XWPFRun xRun = this.createParagraph().createRun();
+		
+		CTInline inline = xRun.addChart(width, height,chartId);
+		
+		//get package part of xwpfchart object
+		XWPFChart xwpfChart=rp.getDocumentPart();
+		
+		//create embedded part for embedded xlsx file
+		RelationPart xlsx = xwpfChart.createRelationship(XWPFRelation.CHART_SHEET,chartNumber);
+		
+		//add output stream in xwpfchart object
+		xwpfChart.addEmbeddedWorkSheet(xlsx.getDocumentPart().getPackagePart().getOutputStream());
+		
+		//set in line object into xwpfchart object
+		xwpfChart.setInLine(inline);
+		
+		//add relation id in xwpfchart object
+		xwpfChart.getCTChartSpace().addNewExternalData().setId(xlsx.getRelationship().getId());
+		
+		//add chart object to chart list
+		charts.add(xwpfChart);
+		return xwpfChart;
+	}
 }

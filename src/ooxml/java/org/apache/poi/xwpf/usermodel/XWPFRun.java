@@ -39,6 +39,8 @@ import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
 import org.apache.xmlbeans.XmlToken;
 import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTRelId;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGraphicalObject;
@@ -1025,6 +1027,63 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         }
     }
 
+    /**
+     * this method add chart template into document
+     * @param width set width of chart object
+     * @param height set height of chart  object
+     * @param chartRelId relation id of chart in document relation file
+     * @throws InvalidFormatException
+     * @throws IOException
+     * @since POI 4.0
+     */
+    public CTInline addChart(int width, int height,String chartRelId)
+            throws InvalidFormatException, IOException {
+    	try {
+    		
+    		CTDrawing drawing = run.addNewDrawing();
+    		
+    		CTInline inline = drawing.addNewInline();
+    		
+    		//xml part of chart in document
+    		String xml =
+    				"<a:graphic xmlns:a=\"" + CTGraphicalObject.type.getName().getNamespaceURI() + "\">" +
+    						"<a:graphicData uri=\"" + CTChart.type.getName().getNamespaceURI() + "\">" +
+    						"<c:chart xmlns:c=\"" + CTChart.type.getName().getNamespaceURI() + "\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" r:id=\""+chartRelId+"\" />" +
+    						"</a:graphicData>" +
+    						"</a:graphic>";
+    		
+    		InputSource is = new InputSource(new StringReader(xml));
+    		
+    		org.w3c.dom.Document doc = DocumentHelper.readDocument(is);
+    		
+    		inline.set(XmlToken.Factory.parse(doc.getDocumentElement(), DEFAULT_XML_OPTIONS));
+
+    		// Setup the inline with 0 margin
+    		inline.setDistT(0);
+    		inline.setDistR(0);
+    		inline.setDistB(0);
+    		inline.setDistL(0);
+
+    		CTNonVisualDrawingProps docPr = inline.addNewDocPr();
+    		long id = getParent().getDocument().getDrawingIdManager().reserveNew();
+    		docPr.setId(id);
+    		//This name is not visible in Word anywhere.
+    		docPr.setName("chart " + id);
+
+    		CTPositiveSize2D extent = inline.addNewExtent();
+    		//set hegiht and width of drawaing object;
+    		extent.setCx(width);
+    		extent.setCy(height);
+    		
+    		return inline;
+    	} catch (XmlException e) {
+            throw new IllegalStateException(e);
+        } catch (SAXException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    
     /**
      * Returns the embedded pictures of the run. These
      * are pictures which reference an external,
