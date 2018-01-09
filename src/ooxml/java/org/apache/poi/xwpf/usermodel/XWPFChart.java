@@ -41,58 +41,61 @@ import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.CTInline
  */
 @Beta
 public class XWPFChart extends XDDFChart {
-
-	/**
-	 * default width of chart in emu
-	 */
-    public static final int WIDTH 	= 500000;
     
     /**
-	 * default height of chart in emu
-	 */
-	public static final int HEIGHT 	= 500000;
+     * default width of chart in emu
+     */
+    public static final int DEFAULT_WIDTH 	= 500000;
+    
+    /**
+     * default height of chart in emu
+     */
+    public static final int DEFAULT_HEIGHT 	= 500000;
     // lazy initialization
     private Long checksum;
     /**
-	 * this object is used to write embedded part of chart i.e. xlsx file in docx
-	 */
+     * this object is used to write embedded part of chart i.e. xlsx file in docx
+     */
     private OutputStream sheet;
     /**
      * this object is used to modify drawing properties
      */
-	private CTInline ctInline;
-	
-	/**
-	 * constructor to
-	 * Create a new chart in document
-	 * 
-	 * @since POI 4.0
-	 */
-	protected XWPFChart() {
-		super();
-	}
+    private CTInline ctInline;
+    
+    /**
+     * constructor to Create a new chart in document
+     * 
+     * @since POI 4.0.0
+     */
+    protected XWPFChart() {
+        super();
+    }
+    
     /**
      * Construct a chart from a package part.
      *
-     * @param part the package part holding the chart data,
-     * the content type must be <code>application/vnd.openxmlformats-officedocument.drawingml.chart+xml</code>
+     * @param part
+     *            the package part holding the chart data, the content type must
+     *            be
+     *            <code>application/vnd.openxmlformats-officedocument.drawingml.chart+xml</code>
      *
-     * @since POI 4.0
+     * @since POI 4.0.0
      */
     protected XWPFChart(PackagePart part) throws IOException, XmlException {
         super(part);
     }
-
+    
     @Override
     protected void commit() throws IOException {
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
-        xmlOptions.setSaveSyntheticDocumentElement(new QName(CTChartSpace.type.getName().getNamespaceURI(), "chartSpace", "c"));
-
+        xmlOptions.setSaveSyntheticDocumentElement(
+                new QName(CTChartSpace.type.getName().getNamespaceURI(), "chartSpace", "c"));
+        
         try (OutputStream out = getPackagePart().getOutputStream()) {
             chartSpace.save(out, xmlOptions);
         }
     }
-
+    
     public Long getChecksum() {
         if (this.checksum == null) {
             InputStream is = null;
@@ -115,7 +118,7 @@ public class XWPFChart extends XDDFChart {
         }
         return this.checksum;
     }
-
+    
     @Override
     public boolean equals(Object obj) {
         /**
@@ -133,211 +136,218 @@ public class XWPFChart extends XDDFChart {
         if (obj == this) {
             return true;
         }
-
+        
         if (obj == null) {
             return false;
         }
-
+        
         if (!(obj instanceof XWPFChart)) {
             return false;
         }
         return false;
     }
-
+    
     @Override
     public int hashCode() {
         return getChecksum().hashCode();
     }
     
     /**
-     * method to create relationship with embedded part
-     * for example writing xlsx file stream into output stream
-     * @param chartSheet
-     * @return return relation part which used to write relation in .rels file and get relation id
-     * @since POI 4.0
+     * method to create relationship with embedded part for example writing xlsx
+     * file stream into output stream
+     * 
+     * @param chartRelation chart relationship object which used to create relation with chart
+     * @param index its chart index
+     * @return return relation part which used to write relation in .rels file
+     *         and get relation id
+     * @since POI 4.0.0
      */
-	public RelationPart createRelationship(XWPFRelation chartRelation,int index) {
-		return createRelationship(chartRelation, XWPFFactory.getInstance(), index, false);
-	}
-	
-	/**
-	 * protected method which used to initialization of sheet output stream 
-	 * @param sheet
-	 * @since POI 4.0
-	 */
-	protected void addEmbeddedWorkSheet(OutputStream sheet) {
-			this.sheet=sheet;
-	}
-	
-	/**
-	 * this method is used to write workbook object in embedded part of chart
-	 * return's true in case of successfully write work book in embedded part or return's false
-	 * @param wb
-	 * @return return's true in case of successfully write work book in embedded part or return's false
-	 * @throws IOException
-	 * @since POI 4.0
-	 */
-	public boolean writeEmbeddedWorkSheet(Workbook wb) throws IOException
-	{
-		if(this.sheet!=null && wb!=null)
-		{
-			wb.write(this.sheet);
-			return true;
-		}
-		return false;
-	}
-	
-	/**
-	 * initialize in line object
-	 * @param inline
-	 * @since POI 4.0
-	 */
-	protected void setInLine(CTInline ctInline) {
-		this.ctInline=ctInline;
-	}
-	
-	/**
-	 * set chart height 
-	 * @param height
-	 * @since POI 4.0
-	 */
-	public void setChartHeight(long height)
-	{
-		ctInline.getExtent().setCy(height);
-	}
-	
-	/**
-	 * set chart width 
-	 * @param width
-	 * @since POI 4.0
-	 */
-	public void setChartWidth(long width)
-	{
-		ctInline.getExtent().setCx(width);
-	}
-	/**
-	 * get chart height 
-	 * @since POI 4.0
-	 */
-	public long getChartHeight()
-	{
-		return ctInline.getExtent().getCy();
-	}
-	
-	/**
-	 * get chart width 
-	 * @since POI 4.0
-	 */
-	public long getChartWidth()
-	{
-		return ctInline.getExtent().getCx();
-	}
-	
-	/**
-	 * set chart height and width
-	 * @param width
-	 * @param height 
-	 * @since POI 4.0
-	 */
-	public void setChartWidthHeight(long width,long height)
-	{
-		this.setChartWidth(width);
-		this.setChartHeight(height);
-	}
-	
-	/**
-	 * set margin from top
-	 * @param height
-	 * @since POI 4.0
-	 */
-	public void setChartTopMargin(long margin)
-	{
-		ctInline.setDistT(margin);
-	}
-	
-	/**
-	 * get margin from Top
-	 * @param margin
-	 * @since POI 4.0
-	 */
-	public long getChartTopMargin(long margin)
-	{
-		return ctInline.getDistT();
-	}
-	
-	/**
-	 * set margin from bottom
-	 * @param height
-	 * @since POI 4.0
-	 */
-	public void setChartBottomMargin(long margin)
-	{
-		ctInline.setDistB(margin);
-	}
-	
-	/**
-	 * get margin from Bottom
-	 * @param margin
-	 * @since POI 4.0
-	 */
-	public long getChartBottomMargin(long margin)
-	{
-		return ctInline.getDistB();
-	}
-	
-	/**
-	 * set margin from left
-	 * @param margin
-	 * @since POI 4.0
-	 */
-	public void setChartLeftMargin(long margin)
-	{
-		ctInline.setDistL(margin);
-	}
-	
-	/**
-	 * get margin from left
-	 * @param margin
-	 * @since POI 4.0
-	 */
-	public long getChartLeftMargin(long margin)
-	{
-		return ctInline.getDistL();
-	}
-	
-	/**
-	 * set margin from Right
-	 * @param margin
-	 * @since POI 4.0
-	 */
-	public void setChartRightMargin(long margin)
-	{
-		ctInline.setDistR(margin);
-	}
-	
-	/**
-	 * get margin from Right
-	 * @param margin
-	 * @since POI 4.0
-	 */
-	public long getChartRightMargin(long margin)
-	{
-		return ctInline.getDistR();
-	}
-	
-	/**
-	 * set chart margin
-	 * @param top
-	 * @param right
-	 * @param bottom
-	 * @param left 
-	 * @since POI 4.0
-	 */
-	public void setChartMargin(long top,long right,long bottom,long left)
-	{
-		this.setChartBottomMargin(bottom);
-		this.setChartRightMargin(right);
-		this.setChartLeftMargin(left);
-		this.setChartRightMargin(right);
-	}
+    public RelationPart createRelationship(XWPFRelation chartRelation, int index) {
+        return createRelationship(chartRelation, XWPFFactory.getInstance(), index, false);
+    }
+    
+    /**
+     * protected method which used to initialization of sheet output stream
+     * 
+     * @param sheet output stream of embedded xlsx file
+     * @since POI 4.0.0
+     */
+    protected void addEmbeddedWorkSheet(OutputStream sheet) {
+        this.sheet = sheet;
+    }
+    
+    /**
+     * this method is used to write workbook object in embedded part of chart
+     * return true in case of successfully write work book in embedded part or
+     * return false
+     * 
+     * @param wb this is workbook object which we used to write in embedded xlsx file
+     * @return returns true in case of successfully write workbook in embedded
+     *         part or returns false
+     * @throws IOException
+     * @since POI 4.0.0
+     */
+    public boolean writeEmbeddedWorkSheet(Workbook wb) throws IOException {
+        if (this.sheet != null && wb != null) {
+            wb.write(this.sheet);
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * initialize in line object
+     * 
+     * @param inline this object is used to adjust the margin and dimension of chart 
+     * @since POI 4.0.0
+     */
+    protected void setInLine(CTInline ctInline) {
+        this.ctInline = ctInline;
+    }
+    
+    /**
+     * set chart height
+     * 
+     * @param height height of chart
+     * @since POI 4.0.0
+     */
+    public void setChartHeight(long height) {
+        ctInline.getExtent().setCy(height);
+    }
+    
+    /**
+     * set chart width
+     * 
+     * @param width width of chart
+     * @since POI 4.0.0
+     */
+    public void setChartWidth(long width) {
+        ctInline.getExtent().setCx(width);
+    }
+    
+    /**
+     * get chart height
+     * 
+     * @since POI 4.0.0
+     */
+    public long getChartHeight() {
+        return ctInline.getExtent().getCy();
+    }
+    
+    /**
+     * get chart width
+     * 
+     * @since POI 4.0.0
+     */
+    public long getChartWidth() {
+        return ctInline.getExtent().getCx();
+    }
+    
+    /**
+     * set chart height and width
+     * 
+     * @param width width of chart
+     * @param height height of chart
+     * @since POI 4.0.0
+     */
+    public void setChartBoundingBox(long width, long height) {
+        this.setChartWidth(width);
+        this.setChartHeight(height);
+    }
+    
+    /**
+     * set margin from top
+     * 
+     * @param margin margin from top
+     * @since POI 4.0.0
+     */
+    public void setChartTopMargin(long margin) {
+        ctInline.setDistT(margin);
+    }
+    
+    /**
+     * get margin from Top
+     * 
+     * @param margin
+     * @since POI 4.0.0
+     */
+    public long getChartTopMargin(long margin) {
+        return ctInline.getDistT();
+    }
+    
+    /**
+     * set margin from bottom
+     * 
+     * @param margin margin from Bottom
+     * @since POI 4.0.0
+     */
+    public void setChartBottomMargin(long margin) {
+        ctInline.setDistB(margin);
+    }
+    
+    /**
+     * get margin from Bottom
+     * 
+     * @param margin
+     * @since POI 4.0.0
+     */
+    public long getChartBottomMargin(long margin) {
+        return ctInline.getDistB();
+    }
+    
+    /**
+     * set margin from left
+     * 
+     * @param margin margin from left
+     * @since POI 4.0.0
+     */
+    public void setChartLeftMargin(long margin) {
+        ctInline.setDistL(margin);
+    }
+    
+    /**
+     * get margin from left
+     * 
+     * @param margin
+     * @since POI 4.0.0
+     */
+    public long getChartLeftMargin(long margin) {
+        return ctInline.getDistL();
+    }
+    
+    /**
+     * set margin from Right
+     * 
+     * @param margin from right
+     * @since POI 4.0.0
+     */
+    public void setChartRightMargin(long margin) {
+        ctInline.setDistR(margin);
+    }
+    
+    /**
+     * get margin from Right
+     * 
+     * @param margin
+     * @since POI 4.0.0
+     */
+    public long getChartRightMargin(long margin) {
+        return ctInline.getDistR();
+    }
+    
+    /**
+     * set chart margin
+     * 
+     * @param top margin from top
+     * @param right margin from right
+     * @param bottom margin from bottom
+     * @param left margin from left
+     * @since POI 4.0.0
+     */
+    public void setChartMargin(long top, long right, long bottom, long left) {
+        this.setChartBottomMargin(bottom);
+        this.setChartRightMargin(right);
+        this.setChartLeftMargin(left);
+        this.setChartRightMargin(right);
+    }
 }
