@@ -33,7 +33,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
 import junit.framework.TestCase;
 
 public class TestXWPFChart extends TestCase {
-
+    
     /**
      * test method to check charts are not null
      */
@@ -46,7 +46,7 @@ public class TestXWPFChart extends TestCase {
         checkData(charts.get(0));
         checkData(charts.get(1));
     }
-
+    
     private void checkData(XWPFChart chart) {
         assertNotNull(chart);
         assertEquals(1, chart.getChartSeries().size());
@@ -54,7 +54,7 @@ public class TestXWPFChart extends TestCase {
         assertEquals(XDDFBarChartData.class, data.getClass());
         assertEquals(3, data.getSeries().size());
     }
-
+    
     /**
      * test method to add chart title and check whether it's set
      */
@@ -88,28 +88,28 @@ public class TestXWPFChart extends TestCase {
         assertEquals("/word/charts/chart1.xml", chart.getPackagePart().getPartName().getName());
     }
     /**
-	*test method to check adding chart in document
-	*/
-	public static void testAddChartsToNewDocument() throws InvalidFormatException, IOException {
-
-		XWPFDocument document = new XWPFDocument();
-		
-		XWPFChart chart = document.addChart();
-		assertEquals(1, document.getCharts().size());
-		assertNotNull(chart);
-		assertNotNull(chart.getCTChartSpace());
-		assertNotNull(chart.getCTChart());
-		assertEquals(XWPFChart.HEIGHT,chart.getChartHeight());
-		assertEquals(XWPFChart.WIDTH,chart.getChartWidth());
-		
-		XWPFChart chart2 = document.addChart();
-		assertEquals(2, document.getCharts().size());
-		assertNotNull(chart2);
-		assertNotNull(chart2.getCTChartSpace());
-		assertNotNull(chart2.getCTChart());
-		chart.setChartHeight(500500);
-		assertEquals(500500,chart.getChartHeight());
-		
+     *test method to check adding chart in document
+     */
+    public static void testAddChartsToNewDocument() throws InvalidFormatException, IOException {
+        
+        XWPFDocument document = new XWPFDocument();
+        
+        XWPFChart chart = document.addChart();
+        assertEquals(1, document.getCharts().size());
+        assertNotNull(chart);
+        assertNotNull(chart.getCTChartSpace());
+        assertNotNull(chart.getCTChart());
+        assertEquals(XWPFChart.HEIGHT,chart.getChartHeight());
+        assertEquals(XWPFChart.WIDTH,chart.getChartWidth());
+        
+        XWPFChart chart2 = document.addChart();
+        assertEquals(2, document.getCharts().size());
+        assertNotNull(chart2);
+        assertNotNull(chart2.getCTChartSpace());
+        assertNotNull(chart2.getCTChart());
+        chart.setChartHeight(500500);
+        assertEquals(500500,chart.getChartHeight());
+        
         assertNotNull(XWPFTestDataSamples.writeOutAndReadBack(document));
-	}
+    }
 }
