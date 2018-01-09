@@ -234,7 +234,7 @@ public class SignatureConfig {
     }
 
     /**
-     * @return the main digest algorithm, defaults to sha-1
+     * @return the main digest algorithm, defaults to sha-256
      */
     public HashAlgorithm getDigestAlgo() {
         return digestAlgo;
