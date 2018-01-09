@@ -29,39 +29,39 @@ import org.apache.poi.openxml4j.opc.PackagePart;
  * As a rule, embedded xlsx are stored in the /word/embedded/ part of a WordprocessingML package.
  */
 public class XWPFChartData extends POIXMLDocumentPart {
-
+    
     /**
-	 * Create a new XWPFChartData node
-	 * @since POI 4.0
+     * Create a new XWPFChartData node
+     * @since POI 4.0.0
      */
     protected XWPFChartData() {
         super();
     }
-
+    
     /**
-	 * Construct XWPFChartData from a package part
+     * Construct XWPFChartData from a package part
      *
      * @param part the package part holding the drawing data,
      * 
-     * @since POI 4.0
+     * @since POI 4.0.0
      */
     public XWPFChartData(PackagePart part) {
         super(part);
     }
-
+    
     /**
      * Gets the WorkBook data as a byte array.
      * <p>
-	 * Note, that this call might be expensive since excel data is copied into a temporary byte array.
-	 * You can grab the chart data directly from the underlying package part as follows:
+     * Note, that this call might be expensive since excel data is copied into a temporary byte array.
+     * You can grab the chart data directly from the underlying package part as follows:
      * <br>
      * <code>
      * InputStream is = getPackagePart().getInputStream();
      * </code>
      * </p>
      *
-	 * @return the embedded excel data.
-	 * @since POI 4.0
+     * @return the embedded excel data.
+     * @since POI 4.0.0
      */
     public InputStream getData() {
         try {
@@ -70,7 +70,7 @@ public class XWPFChartData extends POIXMLDocumentPart {
             throw new POIXMLException(e);
         }
     }
-
+    
     /**
      * chartData objects store the actual content in the part directly without keeping a
      * copy like all others therefore we need to handle them differently.
