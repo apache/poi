@@ -197,7 +197,7 @@ public class XWPFChart extends XDDFChart {
     
     /**
      * initialize in line object
-     * 
+     * @internal
      * @param inline this object is used to adjust the margin and dimension of chart 
      * @since POI 4.0.0
      */
