@@ -1650,7 +1650,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         CTInline inline = xRun.addChart(width, height,chartId);
         
         //get package part of xwpfchart object
-        XWPFChart xwpfChart=rp.getDocumentPart();
+        XWPFChart xwpfChart = rp.getDocumentPart();
         
         //create embedded part for embedded xlsx file
         RelationPart xlsx = xwpfChart.createRelationship(XWPFRelation.CHART_SHEET,chartNumber);
