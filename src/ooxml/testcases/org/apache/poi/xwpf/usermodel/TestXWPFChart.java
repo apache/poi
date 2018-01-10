@@ -99,8 +99,8 @@ public class TestXWPFChart extends TestCase {
         assertNotNull(chart);
         assertNotNull(chart.getCTChartSpace());
         assertNotNull(chart.getCTChart());
-        assertEquals(XWPFChart.HEIGHT,chart.getChartHeight());
-        assertEquals(XWPFChart.WIDTH,chart.getChartWidth());
+        assertEquals(XWPFChart.DEFAULT_HEIGHT,chart.getChartHeight());
+        assertEquals(XWPFChart.DEFAULT_WIDTH,chart.getChartWidth());
         
         XWPFChart chart2 = document.addChart();
         assertEquals(2, document.getCharts().size());
