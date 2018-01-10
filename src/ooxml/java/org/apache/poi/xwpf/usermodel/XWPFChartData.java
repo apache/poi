@@ -28,6 +28,7 @@ import org.apache.poi.openxml4j.opc.PackagePart;
  * Raw picture data, normally attached to a WordprocessingML Drawing.
  * As a rule, embedded xlsx are stored in the /word/embedded/ part of a WordprocessingML package.
  */
+@Beta
 public class XWPFChartData extends POIXMLDocumentPart {
     
     /**
