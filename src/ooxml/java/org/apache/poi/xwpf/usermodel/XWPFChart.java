@@ -29,6 +29,7 @@ import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xddf.usermodel.chart.XDDFChart;
 import org.apache.xmlbeans.XmlException;
@@ -197,10 +198,11 @@ public class XWPFChart extends XDDFChart {
     
     /**
      * initialize in line object
-     * @internal
+     * 
      * @param inline this object is used to adjust the margin and dimension of chart 
      * @since POI 4.0.0
      */
+   @Internal
     protected void setInLine(CTInline ctInline) {
         this.ctInline = ctInline;
     }
