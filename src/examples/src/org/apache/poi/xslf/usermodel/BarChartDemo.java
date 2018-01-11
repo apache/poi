@@ -55,9 +55,9 @@ public class BarChartDemo {
             return;
         }
 
-        BufferedReader modelReader = new BufferedReader(new FileReader(args[1]));
-        XMLSlideShow pptx = null;
-        try {
+        try (FileInputStream argIS = new FileInputStream(args[0]);
+            BufferedReader modelReader = new BufferedReader(new FileReader(args[1]))) {
+
             String chartTitle = modelReader.readLine();  // first line is chart title
 
             // Category Axis Data
@@ -76,25 +76,18 @@ public class BarChartDemo {
             String[] categories = listCategories.toArray(new String[listCategories.size()]);
             Double[] values = listValues.toArray(new Double[listValues.size()]);
 
-            pptx = new XMLSlideShow(new FileInputStream(args[0]));
-            XSLFSlide slide = pptx.getSlides().get(0);
-            setBarData(findChart(slide), chartTitle, categories, values);
+            try (XMLSlideShow pptx = new XMLSlideShow(argIS)) {
+                XSLFSlide slide = pptx.getSlides().get(0);
+                setBarData(findChart(slide), chartTitle, categories, values);
 
-            XSLFChart chart = findChart(pptx.createSlide().importContent(slide));
-            setColumnData(chart, "Column variant");
+                XSLFChart chart = findChart(pptx.createSlide().importContent(slide));
+                setColumnData(chart, "Column variant");
 
-            // save the result
-            OutputStream out = new FileOutputStream("bar-chart-demo-output.pptx");
-            try {
-                pptx.write(out);
-            } finally {
-                out.close();
+                // save the result
+                try (OutputStream out = new FileOutputStream("bar-chart-demo-output.pptx")) {
+                    pptx.write(out);
+                }
             }
-        } finally {
-            if (pptx != null) {
-                pptx.close();
-            }
-            modelReader.close();
         }
     }
 

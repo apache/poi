@@ -49,12 +49,12 @@ import org.openxmlformats.schemas.drawingml.x2006.main.ThemeDocument;
 public class XSLFTheme extends POIXMLDocumentPart {
     private CTOfficeStyleSheet _theme;
     private Map<String, CTColor> _schemeColors;
-    
+
     XSLFTheme() {
         super();
         _theme = CTOfficeStyleSheet.Factory.newInstance();
     }
-    
+
     /**
      * @since POI 3.14-Beta1
      */
@@ -65,7 +65,7 @@ public class XSLFTheme extends POIXMLDocumentPart {
         _theme = doc.getTheme();
         initialize();
     }
-    
+
     public void importTheme(XSLFTheme theme) {
         _theme = theme.getXmlObject();
         _schemeColors = theme._schemeColors;
@@ -74,7 +74,7 @@ public class XSLFTheme extends POIXMLDocumentPart {
     private void initialize(){
     	CTBaseStyles elems = _theme.getThemeElements();
     	CTColorScheme scheme = elems.getClrScheme();
-    	// The color scheme is responsible for defining a list of twelve colors. 
+    	// The color scheme is responsible for defining a list of twelve colors.
     	_schemeColors = new HashMap<>(12);
     	for(XmlObject o : scheme.selectPath("*")){
     		CTColor c = (CTColor)o;
@@ -114,13 +114,14 @@ public class XSLFTheme extends POIXMLDocumentPart {
 
     /**
      * Get a color from the theme's color scheme by name
-     * 
+     *
      * @return a theme color or <code>null</code> if not found
      */
-    CTColor getCTColor(String name){
+    @Internal
+    public CTColor getCTColor(String name){
     	return _schemeColors.get(name);
     }
-    
+
     /**
      * While developing only!
      */
@@ -129,6 +130,7 @@ public class XSLFTheme extends POIXMLDocumentPart {
         return _theme;
     }
 
+    @Override
     protected final void commit() throws IOException {
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
         xmlOptions.setSaveSyntheticDocumentElement(

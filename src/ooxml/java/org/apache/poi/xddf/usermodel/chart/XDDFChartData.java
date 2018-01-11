@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Beta;
+import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumData;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
@@ -87,6 +88,8 @@ public abstract class XDDFChartData {
         protected abstract CTSerTx getSeriesText();
 
         public abstract void setShowLeaderLines(boolean showLeaderLines);
+        public abstract XDDFShapeProperties getShapeProperties();
+        public abstract void setShapeProperties(XDDFShapeProperties properties);
 
         protected XDDFDataSource<?> categoryData;
         protected XDDFNumericalDataSource<? extends Number> valuesData;

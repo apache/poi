@@ -46,7 +46,9 @@ public class XDDFLegendEntry {
 
     public void setTextBody(XDDFTextBody body) {
         if (body == null) {
-            entry.unsetTxPr();
+            if (entry.isSetTxPr()) {
+                entry.unsetTxPr();
+            }
         } else {
             entry.setTxPr(body.getXmlObject());
         }
@@ -62,7 +64,9 @@ public class XDDFLegendEntry {
 
     public void setDelete(Boolean delete) {
         if (delete == null) {
-            entry.unsetDelete();
+            if (entry.isSetDelete()) {
+                entry.unsetDelete();
+            }
         } else {
             if (entry.isSetDelete()) {
                 entry.getDelete().setVal(delete);
@@ -82,7 +86,9 @@ public class XDDFLegendEntry {
 
     public void setExtensionList(XDDFChartExtensionList list) {
         if (list == null) {
-            entry.unsetExtLst();
+            if (entry.isSetExtLst()) {
+                entry.unsetExtLst();
+            }
         } else {
             entry.setExtLst(list.getXmlObject());
         }

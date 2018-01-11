@@ -52,10 +52,11 @@ public class PieChartDemo {
             return;
         }
 
-        try (BufferedReader modelReader = new BufferedReader(new FileReader(args[1]))) {
+        try (FileInputStream argIS = new FileInputStream(args[0]);
+            BufferedReader modelReader = new BufferedReader(new FileReader(args[1]))) {
             String chartTitle = modelReader.readLine();  // first line is chart title
 
-            try (XMLSlideShow pptx = new XMLSlideShow(new FileInputStream(args[0]))) {
+            try (XMLSlideShow pptx = new XMLSlideShow(argIS)) {
                 XSLFSlide slide = pptx.getSlides().get(0);
 
                 // find chart in the slide
@@ -70,17 +71,17 @@ public class PieChartDemo {
 	            if(chart == null) {
 	                throw new IllegalStateException("chart not found in the template");
 	            }
-	
+
 	            // Series Text
 	            List<XDDFChartData> series = chart.getChartSeries();
 	            XDDFPieChartData pie = (XDDFPieChartData) series.get(0);
-	
+
 	            // Category Axis Data
 	            List<String> listCategories = new ArrayList<String>(3);
-	
+
 	            // Values
 	            List<Double> listValues = new ArrayList<Double>(3);
-	
+
 	            // set model
 	            String ln;
 	            while((ln = modelReader.readLine()) != null){
