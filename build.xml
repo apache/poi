@@ -189,9 +189,9 @@ under the License.
     <property name="ooxml.curvesapi.jar" location="${ooxml.lib}/curvesapi-1.05.jar"/>
     <property name="ooxml.curvesapi.url"
               value="${repository.m2}/maven2/com/github/virtuald/curvesapi/1.05/curvesapi-1.05.jar"/>
-    <property name="ooxml.xmlbeans26.jar" location="${ooxml.lib}/xmlbeans-2.6.3.jar"/>
+    <property name="ooxml.xmlbeans26.jar" location="${ooxml.lib}/xmlbeans-2.6.4.jar"/>
     <property name="ooxml.xmlbeans26.url"
-              value="${repository.m2}/maven2/com/github/pjfanning/xmlbeans/2.6.3/xmlbeans-2.6.3.jar"/>
+              value="${repository.m2}/maven2/com/github/pjfanning/xmlbeans/2.6.4/xmlbeans-2.6.4.jar"/>
 
     <!-- coverage libs -->
     <property name="jacoco.zip" location="${main.lib}/jacoco-0.7.9.zip"/>
@@ -686,11 +686,7 @@ under the License.
     <target name="fetch-ooxml-jars" depends="check-ooxml-jars" unless="ooxml.jars.present">
         <mkdir dir="${ooxml.lib}"/>
         <downloadfile src="${ooxml.curvesapi.url}" dest="${ooxml.curvesapi.jar}"/>
-        <downloadfile src="${ooxml.xmlbeans26.url}" dest="${ooxml.xmlbeans26.jar}.orig"/>
-        <!-- remove piccolo parser, so we don't use unsafe calls to it instead of using jaxp -->
-        <zip destfile="${ooxml.xmlbeans26.jar}">
-            <zipfileset src="${ooxml.xmlbeans26.jar}.orig" excludes="org/apache/xmlbeans/impl/piccolo/**"/>
-        </zip>
+        <downloadfile src="${ooxml.xmlbeans26.url}" dest="${ooxml.xmlbeans26.jar}"/>
     </target>
     <target name="check-svn-jars">
         <condition property="svn.jars.present">
@@ -796,7 +792,7 @@ under the License.
 
             <taskdef name="xmlbean"
                      classname="org.apache.xmlbeans.impl.tool.XMLBean"
-                     classpath="${ooxml.xmlbeans26.jar}.orig"/>
+                     classpath="${ooxml.xmlbeans26.jar}"/>
 
             <property name="xmlbean.xsds.dir" location="build/xmlbean-xsds"/>
             <property name="xmlbean.sources.dir" location="build/xmlbean-sources"/>
@@ -827,7 +823,7 @@ under the License.
                     nopvr="@{nopvr}"
                     >
                 <classpath>
-                    <path location="${ooxml.xmlbeans26.jar}.orig"/>
+                    <path location="${ooxml.xmlbeans26.jar}"/>
                 </classpath>
             </xmlbean>
 
@@ -1906,7 +1902,7 @@ under the License.
                 <globmapper from="*" to="${zipdir}/lib/*"/>
             </mappedresources>
             <mappedresources cache="true">
-                <fileset dir="${ooxml.lib}" includes="xmlbeans-2.6.*.jar.orig,curvesapi-*.jar"/>
+                <fileset dir="${ooxml.lib}" includes="xmlbeans-2.6.*.jar,curvesapi-*.jar"/>
                 <regexpmapper from="^(.*\.jar)(\.orig)?$$" to="${zipdir}/ooxml-lib/\1"/>
             </mappedresources>
             <mappedresources cache="true">
