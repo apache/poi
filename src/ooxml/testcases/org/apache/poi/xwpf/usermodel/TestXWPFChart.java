@@ -94,7 +94,7 @@ public class TestXWPFChart extends TestCase {
         
         XWPFDocument document = new XWPFDocument();
         
-        XWPFChart chart = document.addChart();
+        XWPFChart chart = document.createChart();
         assertEquals(1, document.getCharts().size());
         assertNotNull(chart);
         assertNotNull(chart.getCTChartSpace());
@@ -102,7 +102,7 @@ public class TestXWPFChart extends TestCase {
         assertEquals(XWPFChart.DEFAULT_HEIGHT,chart.getChartHeight());
         assertEquals(XWPFChart.DEFAULT_WIDTH,chart.getChartWidth());
         
-        XWPFChart chart2 = document.addChart();
+        XWPFChart chart2 = document.createChart();
         assertEquals(2, document.getCharts().size());
         assertNotNull(chart2);
         assertNotNull(chart2.getCTChartSpace());
