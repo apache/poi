@@ -17,24 +17,15 @@
 
 package org.apache.poi.xwpf.usermodel;
 
-import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
-
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-
-import javax.xml.namespace.QName;
 
 import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.Beta;
-import org.apache.poi.util.Internal;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xddf.usermodel.chart.XDDFChart;
 import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlOptions;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartSpace;
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.CTInline;
 
 /**
@@ -42,7 +33,6 @@ import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.CTInline
  */
 @Beta
 public class XWPFChart extends XDDFChart {
-    
     /**
      * default width of chart in emu
      */
@@ -52,49 +42,33 @@ public class XWPFChart extends XDDFChart {
      * default height of chart in emu
      */
     public static final int DEFAULT_HEIGHT 	= 500000;
+    
     // lazy initialization
     private Long checksum;
-    /**
-     * this object is used to write embedded part of chart i.e. xlsx file in docx
-     */
-    private OutputStream sheet;
+    
     /**
      * this object is used to modify drawing properties
      */
     private CTInline ctInline;
     
     /**
-     * constructor to Create a new chart in document
-     * 
+     * constructor to
+     * Create a new chart in document
      * @since POI 4.0.0
      */
     protected XWPFChart() {
         super();
     }
-    
     /**
      * Construct a chart from a package part.
      *
-     * @param part
-     *            the package part holding the chart data, the content type must
-     *            be
-     *            <code>application/vnd.openxmlformats-officedocument.drawingml.chart+xml</code>
+     * @param part the package part holding the chart data,
+     * the content type must be <code>application/vnd.openxmlformats-officedocument.drawingml.chart+xml</code>
      *
      * @since POI 4.0.0
      */
     protected XWPFChart(PackagePart part) throws IOException, XmlException {
         super(part);
-    }
-    
-    @Override
-    protected void commit() throws IOException {
-        XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
-        xmlOptions.setSaveSyntheticDocumentElement(
-                new QName(CTChartSpace.type.getName().getNamespaceURI(), "chartSpace", "c"));
-        
-        try (OutputStream out = getPackagePart().getOutputStream()) {
-            chartSpace.save(out, xmlOptions);
-        }
     }
     
     public Long getChecksum() {
@@ -154,56 +128,12 @@ public class XWPFChart extends XDDFChart {
     }
     
     /**
-     * method to create relationship with embedded part for example writing xlsx
-     * file stream into output stream
-     * 
-     * @param chartRelation chart relationship object which used to create relation with chart
-     * @param index its chart index
-     * @return return relation part which used to write relation in .rels file
-     *         and get relation id
-     * @since POI 4.0.0
-     */
-    public RelationPart createRelationship(XWPFRelation chartRelation, int index) {
-        return createRelationship(chartRelation, XWPFFactory.getInstance(), index, false);
-    }
-    
-    /**
-     * protected method which used to initialization of sheet output stream
-     * 
-     * @param sheet output stream of embedded xlsx file
-     * @since POI 4.0.0
-     */
-    protected void addEmbeddedWorkSheet(OutputStream sheet) {
-        this.sheet = sheet;
-    }
-    
-    /**
-     * this method is used to write workbook object in embedded part of chart
-     * return true in case of successfully write work book in embedded part or
-     * return false
-     * 
-     * @param wb this is workbook object which we used to write in embedded xlsx file
-     * @return returns true in case of successfully write workbook in embedded
-     *         part or returns false
-     * @throws IOException
-     * @since POI 4.0.0
-     */
-    public boolean writeEmbeddedWorkSheet(Workbook wb) throws IOException {
-        if (this.sheet != null && wb != null) {
-            wb.write(this.sheet);
-            return true;
-        }
-        return false;
-    }
-    
-    /**
      * initialize in line object
      * 
      * @param inline this object is used to adjust the margin and dimension of chart 
      * @since POI 4.0.0
      */
-   @Internal
-    protected void setInLine(CTInline ctInline) {
+    protected void setAttachTo(CTInline ctInline) {
         this.ctInline = ctInline;
     }
     
