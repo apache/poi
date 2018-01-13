@@ -54,7 +54,7 @@ public class XWPFChart extends XDDFChart {
     /**
      * constructor to
      * Create a new chart in document
-     * @since POI 4.0
+     * @since POI 4.0.0
      */
     protected XWPFChart() {
         super();
@@ -65,7 +65,7 @@ public class XWPFChart extends XDDFChart {
      * @param part the package part holding the chart data,
      * the content type must be <code>application/vnd.openxmlformats-officedocument.drawingml.chart+xml</code>
      *
-     * @since POI 4.0
+     * @since POI 4.0.0
      */
     protected XWPFChart(PackagePart part) throws IOException, XmlException {
         super(part);
