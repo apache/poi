@@ -1040,10 +1040,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     public CTInline addChart(int width, int height,String chartRelId)
             throws InvalidFormatException, IOException {
         try {
-            
-            CTDrawing drawing = run.addNewDrawing();
-            
-            CTInline inline = drawing.addNewInline();
+    		CTInline inline = run.addNewDrawing().addNewInline();
             
             //xml part of chart in document
             String xml =
