@@ -1036,7 +1036,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * @throws IOException
      * @since POI 4.0.0
      */
-   @Internal
+    @Internal
     public CTInline addChart(int width, int height,String chartRelId)
             throws InvalidFormatException, IOException {
         try {

@@ -1617,21 +1617,21 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * @throws IOException
      * @since POI 4.0.0
      */
-    public XWPFChart addChart() throws InvalidFormatException, IOException{
-        return addChart(XWPFChart.DEFAULT_WIDTH, XWPFChart.DEFAULT_HEIGHT);
+    public XWPFChart createChart() throws InvalidFormatException, IOException{
+        return createChart(XWPFChart.DEFAULT_WIDTH, XWPFChart.DEFAULT_HEIGHT);
     }
     
     /**
      * This method is used to create template for chart XML
      * no need to read MS-Word file and modify charts
-     * @param width width of chart
-     * @param height height of chart
+     * @param width width of chart in document
+     * @param height height of chart in document
      * @return This method return object of XWPFChart
      * @throws InvalidFormatException
      * @throws IOException
      * @since POI 4.0.0
      */
-    public XWPFChart addChart(int width, int height) throws InvalidFormatException, IOException{
+    public XWPFChart createChart(int width, int height) throws InvalidFormatException, IOException{
         
         //get chart number
         int chartNumber = getPackagePart().getPackage().
@@ -1653,16 +1653,13 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         XWPFChart xwpfChart = rp.getDocumentPart();
         
         //create embedded part for embedded xlsx file
-        RelationPart xlsx = xwpfChart.createRelationship(XWPFRelation.CHART_SHEET,chartNumber);
-        
-        //add output stream in xwpfchart object
-        xwpfChart.addEmbeddedWorkSheet(xlsx.getDocumentPart().getPackagePart().getOutputStream());
+        PackageRelationship xlsx = xwpfChart.createRelationshipInChart(XWPFRelation.WORKBOOK_RELATIONSHIP,XWPFFactory.getInstance(),chartNumber);
         
         //set in line object into xwpfchart object
-        xwpfChart.setInLine(inline);
+        xwpfChart.setAttachTo(inline);
         
         //add relation id in xwpfchart object
-        xwpfChart.getCTChartSpace().addNewExternalData().setId(xlsx.getRelationship().getId());
+        xwpfChart.setExternalId(xlsx.getId());
         
         //add chart object to chart list
         charts.add(xwpfChart);
