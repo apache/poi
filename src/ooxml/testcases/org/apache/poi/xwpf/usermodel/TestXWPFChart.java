@@ -20,6 +20,7 @@ package org.apache.poi.xwpf.usermodel;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.xddf.usermodel.chart.XDDFBarChartData;
 import org.apache.poi.xddf.usermodel.chart.XDDFChartData;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
