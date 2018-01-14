@@ -381,7 +381,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
      * @param chartFactory ChartFactory object
      * @param chartIndex index used to suffix on file
      * @return return relation part which used to write relation in .rels file and get relation id
-     * @since POI 4.0
+     * @since POI 4.0.0
      */
     public PackageRelationship createRelationshipInChart(POIXMLRelation chartRelation,POIXMLFactory chartFactory,int chartIndex) {
         POIXMLDocumentPart documentPart = createRelationship(chartRelation, chartFactory, chartIndex, true).getDocumentPart();
@@ -395,6 +395,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
      * @param chartFactory factory object of POIXMLFactory (XWPFFactory/XSLFFactory)
      * @return return the new package part
      * @throws InvalidFormatException
+     * @since POI 4.0.0
      */
     private PackagePart createWorksheetPart(POIXMLRelation chartRelation,POIXMLRelation chartWorkbookRelation,POIXMLFactory chartFactory) throws InvalidFormatException {
         Integer chartIdx = chartRelation.getFileNameIndex(this);
@@ -406,6 +407,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
      * @param workbook XSSFworkbook object
      * @throws IOException
      * @throws InvalidFormatException
+     * @since POI 4.0.0
      */
     public void saveWorkbook(XSSFWorkbook workbook) throws IOException, InvalidFormatException {
         PackagePart worksheetPart = getWorksheetPart(true);
@@ -436,6 +438,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
      * @param sheet sheet of embedded excel
      * @param categoryData category values
      * @param valuesData data values
+     * @since POI 4.0.0
      */
     protected void fillSheet(XSSFSheet sheet, XDDFDataSource<?> categoryData, XDDFNumericalDataSource<?> valuesData) {
         int numOfPoints = categoryData.getPointCount();
@@ -449,6 +452,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     /**
      * import content from other chart to created chart
      * @param other chart object
+     * @since POI 4.0.0
      */
     public void importContent(XDDFChart other) {
         this.chart.set(other.chart);
@@ -480,6 +484,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
      * set sheet time in excel file
      * @param title title of sheet
      * @return return cell reference
+     * @since POI 4.0.0
      */
     public CellReference setSheetTitle(String title) {
         XSSFSheet sheet = getSheet();
@@ -491,6 +496,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
      * 
      * @param range
      * @return
+     * @since POI 4.0.0
      */
     public String formatRange(CellRangeAddress range) {
         return range.formatAsString(getSheet().getSheetName(), true);
@@ -498,6 +504,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     /**
      * get sheet object of embedded excel file
      * @return excel sheet object
+     * @since POI 4.0.0
      */
     private XSSFSheet getSheet() {
         XSSFSheet sheet = null;
@@ -513,6 +520,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
      * default method for worksheet part
      * @return return embedded worksheet part
      * @throws InvalidFormatException
+     * @since POI 4.0.0
      */
     private PackagePart getWorksheetPart() throws InvalidFormatException
     {
@@ -526,6 +534,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
      * @param isCommitted if it's true then it shows that we are writing xssfworkbook object into output stream of embedded part
      * @return returns the packagepart of embedded file
      * @throws InvalidFormatException
+     * @since POI 4.0.0
      */
     private PackagePart getWorksheetPart(boolean isCommitted) throws InvalidFormatException {
         for (RelationPart part : getRelationParts()) {
@@ -545,6 +554,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
      * @return returns the workbook object of embedded excel file
      * @throws IOException
      * @throws InvalidFormatException
+     * @since POI 4.0.0
      */
     public XSSFWorkbook getWorkbook() throws IOException, InvalidFormatException {
         if (workbook == null) {
@@ -566,6 +576,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     /**
      * set the relation id of embedded excel relation id into external data realtion tag
      * @param id
+     * @since POI 4.0.0
      */
     public void setExternalId(String id)
     {
