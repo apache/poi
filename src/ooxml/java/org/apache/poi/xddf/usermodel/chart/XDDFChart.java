@@ -573,6 +573,18 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
         }
         return workbook;
     }
+    
+    /**
+     * while reading chart from template file then we need to parse and store embedded excel
+     * file in chart object show that we can modify value according to use
+     * @param workbook workbook object which we read from chart embedded part
+     * @since POI 4.0.0
+     */
+    public void setWorkbook(XSSFWorkbook workbook)
+    {
+        this.workbook = workbook;
+    }
+    
     /**
      * set the relation id of embedded excel relation id into external data realtion tag
      * @param id
