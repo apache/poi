@@ -48,14 +48,12 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.xdgf.extractor.XDGFVisioExtractor;
 import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
 import org.apache.poi.xssf.extractor.XSSFEventBasedExcelExtractor;
 import org.apache.poi.xssf.extractor.XSSFExcelExtractor;
-import org.apache.poi.xssf.usermodel.TestMatrixFormulasFromXMLSpreadsheet;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -779,19 +777,27 @@ public class TestExtractorFactory {
     }
 
     /**
-     * Test embeded docs text extraction. For now, only
-     *  does poifs embeded, but will do ooxml ones 
+     * Test embedded docs text extraction. For now, only
+     *  does poifs embedded, but will do ooxml ones
      *  at some point.
      */
+    @SuppressWarnings("deprecation")
     @Test
-    public void testEmbeded() throws Exception {
+    public void testEmbedded() throws Exception {
         POIOLE2TextExtractor ext;
         POITextExtractor[] embeds;
 
-        // No embedings
+        // No embeddings
         ext = (POIOLE2TextExtractor)
                 ExtractorFactory.createExtractor(xls);
         embeds = ExtractorFactory.getEmbededDocsTextExtractors(ext);
+        assertEquals(0, embeds.length);
+        ext.close();
+
+        // No embeddings
+        ext = (POIOLE2TextExtractor)
+                ExtractorFactory.createExtractor(xls);
+        embeds = ExtractorFactory.getEmbeddedDocsTextExtractors(ext);
         assertEquals(0, embeds.length);
         ext.close();
 
@@ -799,6 +805,12 @@ public class TestExtractorFactory {
         ext = (POIOLE2TextExtractor)
                 ExtractorFactory.createExtractor(xlsEmb);
         embeds = ExtractorFactory.getEmbededDocsTextExtractors(ext);
+        assertNotNull(embeds);
+
+        // Excel
+        ext = (POIOLE2TextExtractor)
+                ExtractorFactory.createExtractor(xlsEmb);
+        embeds = ExtractorFactory.getEmbeddedDocsTextExtractors(ext);
 
         assertEquals(6, embeds.length);
         int numWord = 0, numXls = 0, numPpt = 0, numMsg = 0, numWordX;
@@ -1016,11 +1028,20 @@ public class TestExtractorFactory {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testGetEmbeddedFromXMLExtractor() {
         try {
             // currently not implemented
             ExtractorFactory.getEmbededDocsTextExtractors((POIXMLTextExtractor)null);
+            fail("Unsupported currently");
+        } catch (IllegalStateException e) {
+            // expected here
+        }
+
+        try {
+            // currently not implemented
+            ExtractorFactory.getEmbeddedDocsTextExtractors((POIXMLTextExtractor)null);
             fail("Unsupported currently");
         } catch (IllegalStateException e) {
             // expected here
@@ -1032,13 +1053,10 @@ public class TestExtractorFactory {
     // bug 45565: text within TextBoxes is extracted by ExcelExtractor and WordExtractor
     @Test(expected=AssertionError.class)
     public void test45565() throws Exception {
-        POITextExtractor extractor = ExtractorFactory.createExtractor(HSSFTestDataSamples.getSampleFile("45565.xls"));
-        try {
+        try (POITextExtractor extractor = ExtractorFactory.createExtractor(HSSFTestDataSamples.getSampleFile("45565.xls"))) {
             String text = extractor.getText();
             assertContains(text, "testdoc");
             assertContains(text, "test phrase");
-        } finally {
-            extractor.close();
         }
     }
 }

@@ -1670,4 +1670,19 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
         this.isDirty = true;
     }
 
+
+    /**
+     * Get an unused part index based on the namePattern, which doesn't exist yet
+     * and has the lowest positive index
+     *
+     * @param nameTemplate
+     *      The template for new part names containing a {@code '#'} for the index,
+     *      e.g. "/ppt/slides/slide#.xml"
+     * @return the next available part name index
+     * @throws InvalidFormatException if the nameTemplate is null or doesn't contain
+     *      the index char (#) or results in an invalid part name 
+     */
+    public int getUnusedPartIndex(final String nameTemplate) throws InvalidFormatException {
+        return partList.getUnusedPartIndex(nameTemplate);
+    }
 }

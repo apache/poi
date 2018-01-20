@@ -35,6 +35,7 @@ import org.apache.poi.hslf.usermodel.HSLFShape;
 import org.apache.poi.hslf.usermodel.HSLFSlide;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
+import org.apache.poi.hslf.usermodel.HSLFObjectShape;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hwpf.HWPFDocument;
@@ -70,7 +71,7 @@ public final class TestOleEmbedding {
         HSLFObjectData[] objects = slideShow.getEmbeddedObjects();
         assertEquals("Should be two objects", 2, objects.length);
         for (HSLFObjectData od : objects) {
-            long checkEMF = IOUtils.calculateChecksum(od.getData());
+            long checkEMF = IOUtils.calculateChecksum(od.getInputStream());
             assertEquals(checkSums[checkId++], checkEMF);
         }
         
@@ -86,13 +87,13 @@ public final class TestOleEmbedding {
         HSLFSlide slide = ppt.getSlides().get(0);
         int cnt = 0;
         for (HSLFShape sh : slide.getShapes()) {
-            if(sh instanceof OLEShape){
+            if(sh instanceof HSLFObjectShape){
                 cnt++;
-                OLEShape ole = (OLEShape)sh;
+                HSLFObjectShape ole = (HSLFObjectShape)sh;
                 HSLFObjectData data = ole.getObjectData();
                 if("Worksheet".equals(ole.getInstanceName())){
                     //Voila! we created a workbook from the embedded OLE data
-                    HSSFWorkbook wb = new HSSFWorkbook(data.getData());
+                    HSSFWorkbook wb = new HSSFWorkbook(data.getInputStream());
                     HSSFSheet sheet = wb.getSheetAt(0);
                     //verify we can access the xls data
                     assertEquals(1, sheet.getRow(0).getCell(0).getNumericCellValue(), 0);
@@ -103,7 +104,7 @@ public final class TestOleEmbedding {
                     wb.close();
                 } else if ("Document".equals(ole.getInstanceName())){
                     //creating a HWPF document
-                    HWPFDocument doc = new HWPFDocument(data.getData());
+                    HWPFDocument doc = new HWPFDocument(data.getInputStream());
                     String txt = doc.getRange().getParagraph(0).text();
                     assertEquals("OLE embedding is thoroughly unremarkable.\r", txt);
                     doc.close();
@@ -129,14 +130,14 @@ public final class TestOleEmbedding {
     	int oleObjectId1 = ppt.addEmbed(poiData1);
     	
     	HSLFSlide slide1 = ppt.createSlide();
-    	OLEShape oleShape1 = new OLEShape(pictData);
+    	HSLFObjectShape oleShape1 = new HSLFObjectShape(pictData);
     	oleShape1.setObjectID(oleObjectId1);
     	slide1.addShape(oleShape1);
     	oleShape1.setAnchor(new Rectangle2D.Double(100,100,100,100));
     	
     	// add second slide with different order in object creation
     	HSLFSlide slide2 = ppt.createSlide();
-    	OLEShape oleShape2 = new OLEShape(pictData);
+    	HSLFObjectShape oleShape2 = new HSLFObjectShape(pictData);
 
         is = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("SimpleWithImages.xls");
         POIFSFileSystem poiData2 = new POIFSFileSystem(is);
@@ -152,8 +153,8 @@ public final class TestOleEmbedding {
     	ppt.write(bos);
     	
     	ppt = new HSLFSlideShow(new ByteArrayInputStream(bos.toByteArray()));
-    	OLEShape comp = (OLEShape)ppt.getSlides().get(0).getShapes().get(0);
-    	byte compData[] = IOUtils.toByteArray(comp.getObjectData().getData());
+    	HSLFObjectShape comp = (HSLFObjectShape)ppt.getSlides().get(0).getShapes().get(0);
+    	byte compData[] = IOUtils.toByteArray(comp.getObjectData().getInputStream());
     	
     	bos.reset();
     	poiData1.writeFilesystem(bos);

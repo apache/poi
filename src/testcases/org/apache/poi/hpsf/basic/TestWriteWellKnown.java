@@ -34,8 +34,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.hpsf.*;
-import org.apache.poi.hpsf.wellknown.SectionIDMap;
+import org.apache.poi.hpsf.CustomProperties;
+import org.apache.poi.hpsf.CustomProperty;
+import org.apache.poi.hpsf.DocumentSummaryInformation;
+import org.apache.poi.hpsf.MarkUnsupportedException;
+import org.apache.poi.hpsf.NoPropertySetStreamException;
+import org.apache.poi.hpsf.Property;
+import org.apache.poi.hpsf.PropertySet;
+import org.apache.poi.hpsf.PropertySetFactory;
+import org.apache.poi.hpsf.Section;
+import org.apache.poi.hpsf.SummaryInformation;
+import org.apache.poi.hpsf.UnexpectedPropertySetTypeException;
+import org.apache.poi.hpsf.Variant;
+import org.apache.poi.hpsf.VariantSupport;
+import org.apache.poi.hpsf.WritingNotSupportedException;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.util.IOUtils;
@@ -562,7 +574,7 @@ public class TestWriteWellKnown {
 
         /* Test an empty custom properties set. */
         s = new Section();
-        s.setFormatID(SectionIDMap.DOCUMENT_SUMMARY_INFORMATION_ID[1]);
+        s.setFormatID(DocumentSummaryInformation.FORMAT_ID[1]);
         // s.setCodepage(CodePageUtil.CP_UNICODE);
         dsi.addSection(s);
         cps = dsi.getCustomProperties();

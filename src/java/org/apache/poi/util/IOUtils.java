@@ -95,11 +95,13 @@ public final class IOUtils {
 
         return peekedBytes;
     }
-    
-    
-    
+
     /**
      * Reads all the data from the input stream, and returns the bytes read.
+     *
+     * @param stream The byte stream of data to read.
+     * @return A byte array with the read bytes.
+     * @throws IOException If reading data fails or EOF is encountered too early for the given length.
      */
     public static byte[] toByteArray(InputStream stream) throws IOException {
         return toByteArray(stream, Integer.MAX_VALUE);
@@ -107,6 +109,12 @@ public final class IOUtils {
 
     /**
      * Reads up to {@code length} bytes from the input stream, and returns the bytes read.
+     *
+     * @param stream The byte stream of data to read.
+     * @param length The maximum length to read, use Integer.MAX_VALUE to read the stream
+     *               until EOF.
+     * @return A byte array with the read bytes.
+     * @throws IOException If reading data fails or EOF is encountered too early for the given length.
      */
     public static byte[] toByteArray(InputStream stream, int length) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream(length == Integer.MAX_VALUE ? 4096 : length);

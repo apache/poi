@@ -28,7 +28,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -94,7 +94,7 @@ public class TestHxxFEncryption {
     }
 
     private static String x(String base64) throws IOException {
-        return new String(RawDataUtil.decompress(base64), Charset.forName("UTF-8"));
+        return new String(RawDataUtil.decompress(base64), StandardCharsets.UTF_8);
     }
     
     @Test

@@ -22,8 +22,9 @@ import org.apache.poi.ss.usermodel.charts.AxisOrientation;
 import org.apache.poi.ss.usermodel.charts.AxisPosition;
 import org.apache.poi.ss.usermodel.charts.AxisTickMark;
 import org.apache.poi.ss.usermodel.charts.ChartAxis;
-import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
+import org.apache.poi.xddf.usermodel.chart.XDDFCategoryAxis;
 import org.apache.poi.xssf.usermodel.XSSFChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
@@ -39,9 +40,10 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 /**
  * Category axis type.
  *
- * @author Martin Andersson
+ * @deprecated use {@link XDDFCategoryAxis} instead
  */
-@Beta
+@Deprecated
+@Removal(version="4.2")
 public class XSSFCategoryAxis extends XSSFChartAxis {
 
 	private CTCatAx ctCatAx;
@@ -66,7 +68,7 @@ public class XSSFCategoryAxis extends XSSFChartAxis {
 	public CTShapeProperties getLine() {
 	    return ctCatAx.getSpPr();
 	}
-	
+
 	@Override
 	protected CTAxPos getCTAxPos() {
 		return ctCatAx.getAxPos();
@@ -110,7 +112,7 @@ public class XSSFCategoryAxis extends XSSFChartAxis {
 	public CTChartLines getMajorGridLines() {
 	    return ctCatAx.getMajorGridlines();
 	}
-	
+
 	@Override
 	public void crossAxis(ChartAxis axis) {
 		ctCatAx.getCrossAx().setVal(axis.getId());

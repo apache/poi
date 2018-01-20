@@ -31,7 +31,6 @@ import java.util.TreeMap;
 
 import org.apache.commons.collections4.bidimap.TreeBidiMap;
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
-import org.apache.poi.hpsf.wellknown.SectionIDMap;
 import org.apache.poi.util.CodePageUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
@@ -597,29 +596,33 @@ public class Section {
 
     /**
      * Returns the PID string associated with a property ID. The ID
-     * is first looked up in the {@link Section}'s private
-     * dictionary. If it is not found there, the method calls {@link
-     * SectionIDMap#getPIDString}.
+     * is first looked up in the {@link Section Sections} private dictionary.
+     * If it is not found there, the property PID string is taken
+     * from sections format IDs namespace.
+     * If the PID is also undefined there, i.e. it is not well-known,
+     * {@code "[undefined]"} is returned.
      *
      * @param pid The property ID
      *
-     * @return The property ID's string value
+     * @return The well-known property ID string associated with the
+     * property ID {@code pid}
      */
     public String getPIDString(final long pid) {
-        String s = null;
         Map<Long,String> dic = getDictionary();
-        if (dic != null) {
-            s = dic.get(pid);
+        if (dic == null || !dic.containsKey(pid)) {
+            ClassID fmt = getFormatID();
+            if (SummaryInformation.FORMAT_ID.equals(fmt)) {
+                dic = PropertyIDMap.getSummaryInformationProperties();
+            } else if (DocumentSummaryInformation.FORMAT_ID[0].equals(fmt)) {
+                dic = PropertyIDMap.getDocumentSummaryInformationProperties();
+            }
         }
-        if (s == null) {
-            s = SectionIDMap.getPIDString(getFormatID(), pid);
-        }
-        return s;
+        
+        return (dic != null && dic.containsKey(pid)) ? dic.get(pid) : PropertyIDMap.UNDEFINED;
     }
 
     /**
-     * Removes all properties from the section including 0 (dictionary) and
-     * 1 (codepage).
+     * Removes all properties from the section including 0 (dictionary) and 1 (codepage).
      */
     public void clear() {
         for (Property p : getProperties()) {

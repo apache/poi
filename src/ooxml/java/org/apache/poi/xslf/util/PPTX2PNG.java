@@ -116,8 +116,7 @@ public class PPTX2PNG {
         if (!quiet) {
             System.out.println("Processing " + file);
         }
-        SlideShow<?,?> ss = SlideShowFactory.create(file, null, true);
-        try {
+        try (SlideShow<?, ?> ss = SlideShowFactory.create(file, null, true)) {
             List<? extends Slide<?, ?>> slides = ss.getSlides();
 
             Set<Integer> slidenum = slideIndexes(slides.size(), slidenumStr);
@@ -160,12 +159,10 @@ public class PPTX2PNG {
                     File outfile = new File(outdir, outname);
                     ImageIO.write(img, format, outfile);
                 }
-                
+
                 graphics.dispose();
                 img.flush();
             }
-        } finally {
-            ss.close();
         }
 
         if (!quiet) {

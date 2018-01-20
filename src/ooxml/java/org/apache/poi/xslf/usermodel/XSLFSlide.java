@@ -49,10 +49,10 @@ import org.xml.sax.SAXException;
 @Beta
 public final class XSLFSlide extends XSLFSheet
 implements Slide<XSLFShape,XSLFTextParagraph> {
-   private final CTSlide _slide;
-   private XSLFSlideLayout _layout;
-   private XSLFComments _comments;
-   private XSLFNotes _notes;
+    private final CTSlide _slide;
+    private XSLFSlideLayout _layout;
+    private XSLFComments _comments;
+    private XSLFNotes _notes;
 
     /**
      * Create a new slide
@@ -67,7 +67,7 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
      *
      * @param part the package part holding the slide data,
      * the content type must be <code>application/vnd.openxmlformats-officedocument.slide+xml</code>
-     * 
+     *
      * @since POI 3.14-Beta1
      */
     XSLFSlide(PackagePart part) throws IOException, XmlException {
@@ -79,11 +79,11 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
         } catch (SAXException e) {
             throw new IOException(e);
         }
-        
+
         SldDocument doc = SldDocument.Factory.parse(_doc, DEFAULT_XML_OPTIONS);
         _slide = doc.getSld();
     }
-    
+
     private static CTSlide prototype(){
         CTSlide ctSlide = CTSlide.Factory.newInstance();
         CTCommonSlideData cSld = ctSlide.addNewCSld();
@@ -115,13 +115,21 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
     }
 
     @Override
-	public CTSlide getXmlObject() {
-		return _slide;
-	}
+    public CTSlide getXmlObject() {
+        return _slide;
+    }
 
     @Override
     protected String getRootElementName(){
-        return "sld";        
+        return "sld";
+    }
+
+    protected void removeChartRelation(XSLFChart chart) {
+        removeRelation(chart);
+    }
+
+    protected void removeLayoutRelation(XSLFSlideLayout layout) {
+        removeRelation(layout, false);
     }
 
     @Override
@@ -131,9 +139,9 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
 
     public XSLFSlideLayout getSlideLayout(){
         if(_layout == null){
-             for (POIXMLDocumentPart p : getRelations()) {
+            for (POIXMLDocumentPart p : getRelations()) {
                 if (p instanceof XSLFSlideLayout){
-                   _layout = (XSLFSlideLayout)p;
+                    _layout = (XSLFSlideLayout)p;
                 }
             }
         }
@@ -148,36 +156,36 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
     }
 
     public XSLFComments getComments() {
-       if(_comments == null) {
-          for (POIXMLDocumentPart p : getRelations()) {
-             if (p instanceof XSLFComments) {
-                _comments = (XSLFComments)p;
-             }
-          }
-       }
-       if(_comments == null) {
-          // This slide lacks comments
-          // Not all have them, sorry...
-          return null;
-       }
-       return _comments;
+        if(_comments == null) {
+            for (POIXMLDocumentPart p : getRelations()) {
+                if (p instanceof XSLFComments) {
+                    _comments = (XSLFComments)p;
+                }
+            }
+        }
+        if(_comments == null) {
+            // This slide lacks comments
+            // Not all have them, sorry...
+            return null;
+        }
+        return _comments;
     }
 
     @Override
     public XSLFNotes getNotes() {
-       if(_notes == null) {
-          for (POIXMLDocumentPart p : getRelations()) {
-             if (p instanceof XSLFNotes){
-                _notes = (XSLFNotes)p;
-             }
-          }
-       }
-       if(_notes == null) {
-          // This slide lacks notes
-          // Not all have them, sorry...
-          return null;
-       }
-       return _notes;
+        if(_notes == null) {
+            for (POIXMLDocumentPart p : getRelations()) {
+                if (p instanceof XSLFNotes){
+                    _notes = (XSLFNotes)p;
+                }
+            }
+        }
+        if(_notes == null) {
+            // This slide lacks notes
+            // Not all have them, sorry...
+            return null;
+        }
+        return _notes;
     }
 
     @Override
@@ -185,10 +193,10 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
         XSLFTextShape txt = getTextShapeByType(Placeholder.TITLE);
         return txt == null ? null : txt.getText();
     }
-    
+
     @Override
     public XSLFTheme getTheme(){
-    	return getSlideLayout().getSlideMaster().getTheme();
+        return getSlideLayout().getSlideMaster().getTheme();
     }
 
     /**
@@ -241,7 +249,7 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
         if (bgOther == null) {
             return this;
         }
-        
+
         CTBackground bgThis = _slide.getCSld().getBg();
         // remove existing background
         if (bgThis != null) {
@@ -251,14 +259,14 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
             }
             _slide.getCSld().unsetBg();
         }
-            
+
         bgThis = (CTBackground)_slide.getCSld().addNewBg().set(bgOther);
-            
+
         if(bgOther.isSetBgPr() && bgOther.getBgPr().isSetBlipFill()){
             String idOther = bgOther.getBgPr().getBlipFill().getBlip().getEmbed();
             String idThis = importBlip(idOther, src.getPackagePart());
             bgThis.getBgPr().getBlipFill().getBlip().setEmbed(idThis);
-            
+
         }
 
         return this;
@@ -294,7 +302,7 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
         assert(notes instanceof XSLFNotes);
         // TODO Auto-generated method stub
     }
-    
+
     @Override
     public int getSlideNumber() {
         int idx = getSlideShow().getSlides().indexOf(this);

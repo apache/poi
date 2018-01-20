@@ -29,7 +29,6 @@ import java.util.List;
 
 import org.apache.poi.EmptyFileException;
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
-import org.apache.poi.hpsf.wellknown.SectionIDMap;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.util.CodePageUtil;
@@ -659,7 +658,7 @@ public class PropertySet {
      * represents a Summary Information, else {@code false}.
      */
     public boolean isSummaryInformation() {
-        return !sections.isEmpty() && matchesSummary(getFirstSection().getFormatID(), SectionIDMap.SUMMARY_INFORMATION_ID); 
+        return !sections.isEmpty() && matchesSummary(getFirstSection().getFormatID(), SummaryInformation.FORMAT_ID); 
     }
 
     /**
@@ -669,7 +668,7 @@ public class PropertySet {
      * represents a Document Summary Information, else {@code false}.
      */
     public boolean isDocumentSummaryInformation() {
-        return !sections.isEmpty() && matchesSummary(getFirstSection().getFormatID(), SectionIDMap.DOCUMENT_SUMMARY_INFORMATION_ID); 
+        return !sections.isEmpty() && matchesSummary(getFirstSection().getFormatID(), DocumentSummaryInformation.FORMAT_ID); 
     }
     
     /* package */ static boolean matchesSummary(ClassID actual, ClassID... expected) {

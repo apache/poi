@@ -30,10 +30,7 @@ import org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment.WorkbookNotFo
 import org.apache.poi.ss.formula.atp.AnalysisToolPak;
 import org.apache.poi.ss.formula.eval.*;
 import org.apache.poi.ss.formula.function.FunctionMetadataRegistry;
-import org.apache.poi.ss.formula.functions.Choose;
-import org.apache.poi.ss.formula.functions.FreeRefFunction;
-import org.apache.poi.ss.formula.functions.Function;
-import org.apache.poi.ss.formula.functions.IfFunc;
+import org.apache.poi.ss.formula.functions.*;
 import org.apache.poi.ss.formula.ptg.*;
 import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
 import org.apache.poi.ss.formula.udf.UDFFinder;
@@ -253,7 +250,7 @@ public final class WorkbookEvaluator {
         if (srcCell == null || srcCell.getCellType() != CellType.FORMULA) {
             ValueEval result = getValueFromNonFormulaCell(srcCell);
             if (shouldCellDependencyBeRecorded) {
-                tracker.acceptPlainValueDependency(_workbookIx, sheetIndex, rowIndex, columnIndex, result);
+                tracker.acceptPlainValueDependency(_workbook, _workbookIx, sheetIndex, rowIndex, columnIndex, result);
             }
             return result;
         }
@@ -268,11 +265,12 @@ public final class WorkbookEvaluator {
             if (!tracker.startEvaluate(cce)) {
                 return ErrorEval.CIRCULAR_REF_ERROR;
             }
-            OperationEvaluationContext ec = new OperationEvaluationContext(this, _workbook, sheetIndex, rowIndex, columnIndex, tracker);
 
             try {
 
                 Ptg[] ptgs = _workbook.getFormulaTokens(srcCell);
+                OperationEvaluationContext ec = new OperationEvaluationContext
+                        (this, _workbook, sheetIndex, rowIndex, columnIndex, tracker);
                 if (evalListener == null) {
                     result = evaluateFormula(ec, ptgs);
                 } else {
@@ -505,12 +503,38 @@ public final class WorkbookEvaluator {
                 ValueEval[] ops = new ValueEval[numops];
 
                 // storing the ops in reverse order since they are popping
+                boolean areaArg = false; // whether one of the operands is an area
                 for (int j = numops - 1; j >= 0; j--) {
                     ValueEval p = stack.pop();
                     ops[j] = p;
+                    if(p instanceof AreaEval){
+                        areaArg = true;
+                    }
                 }
+
+                boolean arrayMode = false;
+                if(areaArg) for (int ii = i; ii < iSize; ii++) {
+                    if(ptgs[ii] instanceof FuncVarPtg){
+                        FuncVarPtg f = (FuncVarPtg)ptgs[ii];
+                        try {
+                            Function func = FunctionEval.getBasicFunction(f.getFunctionIndex());
+                            if (func != null && func instanceof ArrayMode) {
+                                arrayMode = true;
+                            }
+                        } catch (NotImplementedException ne){
+                            //FunctionEval.getBasicFunction can throw NotImplementedException
+                            // if the fucntion is not yet supported.
+                        }
+                        break;
+                    }
+                }
+                ec.setArrayMode(arrayMode);
+
 //                logDebug("invoke " + operation + " (nAgs=" + numops + ")");
                 opResult = OperationEvaluatorFactory.evaluate(optg, ops, ec);
+
+                ec.setArrayMode(false);
+
             } else {
                 opResult = getEvalForPtg(ptg, ec);
             }
@@ -596,7 +620,7 @@ public final class WorkbookEvaluator {
         EvaluationSheet evalSheet = ec.getWorkbook().getSheet(ec.getSheetIndex());
         EvaluationCell evalCell = evalSheet.getCell(ec.getRowIndex(), ec.getColumnIndex());
  
-        if (evalCell.isPartOfArrayFormulaGroup() && evaluationResult instanceof AreaEval) {
+        if (evalCell != null && evalCell.isPartOfArrayFormulaGroup() && evaluationResult instanceof AreaEval) {
             value = OperandResolver.getElementFromArray((AreaEval) evaluationResult, evalCell);
         }
         else {
@@ -842,6 +866,11 @@ public final class WorkbookEvaluator {
     
     /**
      * Adjust formula relative references by the offset between the start of the given region and the given target cell.
+     * That is, treat the region top-left cell as "A1" for the purposes of evaluating relative reference components (row and/or column),
+     * and further move references by the position of the target within the region.
+     * <p><pre>formula ref + range top-left + current cell range offset </pre></p>
+     * which simplifies to
+     * <p><pre>formula ref + current cell ref</pre></p>
      * @param ptgs
      * @param target cell within the region to use.
      * @param region containing the cell
@@ -854,22 +883,11 @@ public final class WorkbookEvaluator {
             throw new IllegalArgumentException(target + " is not within " + region);
         }
         
-        return adjustRegionRelativeReference(ptgs, target.getRow() - region.getFirstRow(), target.getCol() - region.getFirstColumn());
-    }
-    
-    /**
-     * Adjust the formula relative cell references by a given delta
-     * @param ptgs
-     * @param deltaRow target row offset from the top left cell of a region
-     * @param deltaColumn target column offset from the top left cell of a region
-     * @return true if any Ptg references were shifted
-     * @throws IndexOutOfBoundsException if the resulting shifted row/column indexes are over the document format limits
-     * @throws IllegalArgumentException if either of the deltas are negative, as the assumption is we are shifting formulas
-     * relative to the top left cell of a region.
-     */
-    protected boolean adjustRegionRelativeReference(Ptg[] ptgs, int deltaRow, int deltaColumn) {
-        if (deltaRow < 0) throw new IllegalArgumentException("offset row must be positive");
-        if (deltaColumn < 0) throw new IllegalArgumentException("offset column must be positive");
+        //return adjustRegionRelativeReference(ptgs, target.getRow() - region.getFirstRow(), target.getCol() - region.getFirstColumn());
+        
+        int deltaRow = target.getRow();
+        int deltaColumn = target.getCol();
+        
         boolean shifted = false;
         for (Ptg ptg : ptgs) {
             // base class for cell reference "things"

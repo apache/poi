@@ -17,12 +17,17 @@
 
 package org.apache.poi.ss.formula;
 
+import java.text.CollationKey;
+import java.text.Collator;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -46,6 +51,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.LocaleUtil;
 
 /**
  * Abstracted and cached version of a Conditional Format rule for use with a
@@ -82,10 +88,16 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
     private final int ruleIndex;
     private final String formula1;
     private final String formula2;
+    private final String text;
+    // cached for performance, used with cell text comparisons, which are case insensitive and need to be Locale aware (contains, starts with, etc.) 
+    private final String lowerText;
+
     private final OperatorEnum operator;
     private final ConditionType type;
     // cached for performance, to avoid reading the XMLBean every time a conditionally formatted cell is rendered
     private final ExcelNumberFormat numberFormat;
+    // cached for performance, used to format numeric cells for string comparisons.  See Bug #61764 for explanation
+    private final DecimalFormat decimalTextFormat;
     
     /**
      *
@@ -112,10 +124,18 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
         this.regions = regions;
         formula1 = rule.getFormula1();
         formula2 = rule.getFormula2();
+        
+        text = rule.getText();
+        lowerText = text == null ? null : text.toLowerCase(LocaleUtil.getUserLocale());
+        
         numberFormat = rule.getNumberFormat();
         
         operator = OperatorEnum.values()[rule.getComparisonOperation()];
         type = rule.getConditionType();
+        
+//         Excel uses the stored text representation from the XML apparently, in tests done so far
+        decimalTextFormat = new DecimalFormat("0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+        decimalTextFormat.setMaximumFractionDigits(340); // DecimalFormat.DOUBLE_FRACTION_DIGITS, which is default scoped
     }
 
     /**
@@ -186,6 +206,13 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
      */
     public String getFormula2() {
         return formula2;
+    }
+    
+    /**
+     * @return condition text if any, or null
+     */
+    public String getText() {
+        return text;
     }
     
     /**
@@ -328,33 +355,32 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
         ValueEval eval = unwrapEval(workbookEvaluator.evaluate(rule.getFormula1(), ConditionalFormattingEvaluator.getRef(cell), region));
         
         String f2 = rule.getFormula2();
-        ValueEval eval2 = null;
+        ValueEval eval2 = BlankEval.instance;
         if (f2 != null && f2.length() > 0) {
             eval2 = unwrapEval(workbookEvaluator.evaluate(f2, ConditionalFormattingEvaluator.getRef(cell), region));
         }
         
         // we assume the cell has been evaluated, and the current formula value stored
-        if (DataValidationEvaluator.isType(cell, CellType.BOOLEAN)) {
-            if (eval instanceof BoolEval && (eval2 == null || eval2 instanceof BoolEval) ) {
-                return operator.isValid(cell.getBooleanCellValue(), ((BoolEval) eval).getBooleanValue(), eval2 == null ? null : ((BoolEval) eval2).getBooleanValue());
-            }
-            return false; // wrong types
+        if (DataValidationEvaluator.isType(cell, CellType.BOOLEAN) 
+                && (eval == BlankEval.instance || eval instanceof BoolEval) 
+                && (eval2 == BlankEval.instance || eval2 instanceof BoolEval) 
+           ) {
+            return operator.isValid(cell.getBooleanCellValue(), eval == BlankEval.instance ? null : ((BoolEval) eval).getBooleanValue(), eval2 == BlankEval.instance ? null : ((BoolEval) eval2).getBooleanValue());
         }
-        if (DataValidationEvaluator.isType(cell, CellType.NUMERIC)) {
-            if (eval instanceof NumberEval && (eval2 == null || eval2 instanceof NumberEval) ) {
-                return operator.isValid(cell.getNumericCellValue(), ((NumberEval) eval).getNumberValue(), eval2 == null ? null : ((NumberEval) eval2).getNumberValue());
-            }
-            return false; // wrong types
+        if (DataValidationEvaluator.isType(cell, CellType.NUMERIC) 
+                && (eval == BlankEval.instance || eval instanceof NumberEval )
+                && (eval2 == BlankEval.instance || eval2 instanceof NumberEval) 
+           ) {
+            return operator.isValid(cell.getNumericCellValue(), eval == BlankEval.instance ? null : ((NumberEval) eval).getNumberValue(), eval2 == BlankEval.instance ? null : ((NumberEval) eval2).getNumberValue());
         }
-        if (DataValidationEvaluator.isType(cell, CellType.STRING)) {
-            if (eval instanceof StringEval && (eval2 == null || eval2 instanceof StringEval) ) {
-                return operator.isValid(cell.getStringCellValue(), ((StringEval) eval).getStringValue(), eval2 == null ? null : ((StringEval) eval2).getStringValue());
-            }
-            return false; // wrong types
+        if (DataValidationEvaluator.isType(cell, CellType.STRING)
+                && (eval == BlankEval.instance || eval instanceof StringEval )
+                && (eval2 == BlankEval.instance || eval2 instanceof StringEval) 
+           ) {
+                return operator.isValid(cell.getStringCellValue(), eval == BlankEval.instance ? null : ((StringEval) eval).getStringValue(), eval2 == BlankEval.instance ? null : ((StringEval) eval2).getStringValue());
         }
         
-        // should not get here, but in case...
-        return false;
+        return operator.isValidForIncompatibleTypes();
     }
     
     private ValueEval unwrapEval(ValueEval eval) {
@@ -399,7 +425,7 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
         }
 
         final ValueAndFormat cv = getCellValue(cell);
-        
+
         // TODO: this could/should be delegated to the Enum type, but that's in the usermodel package,
         // we may not want evaluation code there.  Of course, maybe the enum should go here in formula,
         // and not be returned by the SS model, but then we need the XSSF rule to expose the raw OOXML
@@ -502,10 +528,10 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
                     }
 
                     final Set<ValueAndFormat> avgSet = new LinkedHashSet<>(1);
-                    avgSet.add(new ValueAndFormat(Double.valueOf(allValues.size() == 0 ? 0 : total / allValues.size()), null));
+                    avgSet.add(new ValueAndFormat(Double.valueOf(allValues.size() == 0 ? 0 : total / allValues.size()), null, decimalTextFormat));
 
                     final double stdDev = allValues.size() <= 1 ? 0 : ((NumberEval) AggregateFunction.STDEV.evaluate(pop, 0, 0)).getNumberValue();
-                    avgSet.add(new ValueAndFormat(Double.valueOf(stdDev), null));
+                    avgSet.add(new ValueAndFormat(Double.valueOf(stdDev), null, decimalTextFormat));
                     return avgSet;
                 }
             }));
@@ -542,17 +568,17 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
             }
             return op.isValid(val, comp, null);
         case CONTAINS_TEXT:
-            // implemented both by a cfRule "text" attribute and a formula.  Use the formula.
-            return checkFormula(ref, region);
+            // implemented both by a cfRule "text" attribute and a formula.  Use the text.
+            return text == null ? false : cv.toString().toLowerCase(LocaleUtil.getUserLocale()).contains(lowerText);
         case NOT_CONTAINS_TEXT:
-            // implemented both by a cfRule "text" attribute and a formula.  Use the formula.
-            return checkFormula(ref, region);
+            // implemented both by a cfRule "text" attribute and a formula.  Use the text.
+            return text == null ? true : ! cv.toString().toLowerCase(LocaleUtil.getUserLocale()).contains(lowerText);
         case BEGINS_WITH:
-            // implemented both by a cfRule "text" attribute and a formula.  Use the formula.
-            return checkFormula(ref, region);
+            // implemented both by a cfRule "text" attribute and a formula.  Use the text.
+            return cv.toString().toLowerCase(LocaleUtil.getUserLocale()).startsWith(lowerText);
         case ENDS_WITH:
-            // implemented both by a cfRule "text" attribute and a formula.  Use the formula.
-            return checkFormula(ref, region);
+            // implemented both by a cfRule "text" attribute and a formula.  Use the text.
+            return cv.toString().toLowerCase(LocaleUtil.getUserLocale()).endsWith(lowerText);
         case CONTAINS_BLANKS:
             try {
                 String v = cv.getString();
@@ -622,7 +648,7 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
         if (cell != null) {
             final CellType type = cell.getCellType();
             if (type == CellType.NUMERIC || (type == CellType.FORMULA && cell.getCachedFormulaResultType() == CellType.NUMERIC) ) {
-                return new ValueAndFormat(Double.valueOf(cell.getNumericCellValue()), cell.getCellStyle().getDataFormatString());
+                return new ValueAndFormat(Double.valueOf(cell.getNumericCellValue()), cell.getCellStyle().getDataFormatString(), decimalTextFormat);
             } else if (type == CellType.STRING || (type == CellType.FORMULA && cell.getCachedFormulaResultType() == CellType.STRING) ) {
                 return new ValueAndFormat(cell.getStringCellValue(), cell.getCellStyle().getDataFormatString());
             } else if (type == CellType.BOOLEAN || (type == CellType.FORMULA && cell.getCachedFormulaResultType() == CellType.BOOLEAN) ) {
@@ -662,18 +688,57 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
         BETWEEN {
             @Override
             public <C extends Comparable<C>> boolean isValid(C cellValue, C v1, C v2) {
+                if (v1 == null) {
+                    if (cellValue instanceof Number) {
+                        // use zero for null
+                        double n1 = 0;
+                        double n2 = v2 == null ? 0 : ((Number) v2).doubleValue();
+                        return Double.compare( ((Number) cellValue).doubleValue(), n1) >= 0 && Double.compare(((Number) cellValue).doubleValue(), n2) <= 0;
+                    } else if (cellValue instanceof String) {
+                        String n1 = "";
+                        String n2 = v2 == null ? "" : (String) v2;
+                        return ((String) cellValue).compareToIgnoreCase(n1) >= 0 && ((String) cellValue).compareToIgnoreCase(n2) <= 0;
+                    } else if (cellValue instanceof Boolean) return false;
+                    return false; // just in case - not a typical possibility
+                }
                 return cellValue.compareTo(v1) >= 0 && cellValue.compareTo(v2) <= 0;
             }
         },
         NOT_BETWEEN {
             @Override
             public <C extends Comparable<C>> boolean isValid(C cellValue, C v1, C v2) {
+                if (v1 == null) {
+                    if (cellValue instanceof Number) {
+                        // use zero for null
+                        double n1 = 0;
+                        double n2 = v2 == null ? 0 : ((Number) v2).doubleValue();
+                        return Double.compare( ((Number) cellValue).doubleValue(), n1) < 0 || Double.compare(((Number) cellValue).doubleValue(), n2) > 0;
+                    } else if (cellValue instanceof String) {
+                        String n1 = "";
+                        String n2 = v2 == null ? "" : (String) v2;
+                        return ((String) cellValue).compareToIgnoreCase(n1) < 0 || ((String) cellValue).compareToIgnoreCase(n2) > 0;
+                    } else if (cellValue instanceof Boolean) return true;
+                    return false; // just in case - not a typical possibility
+                }
                 return cellValue.compareTo(v1) < 0 || cellValue.compareTo(v2) > 0;
+            }
+            
+            public boolean isValidForIncompatibleTypes() {
+                return true;
             }
         },
         EQUAL {
             @Override
             public <C extends Comparable<C>> boolean isValid(C cellValue, C v1, C v2) {
+                if (v1 == null) {
+                    if (cellValue instanceof Number) {
+                        // use zero for null
+                        return Double.compare( ((Number) cellValue).doubleValue(), 0) == 0;
+                    } else if (cellValue instanceof String) {
+                        return false; // even an empty string is not equal the empty cell, only another empty cell is, handled higher up
+                    } else if (cellValue instanceof Boolean) return false;
+                    return false; // just in case - not a typical possibility
+                }
                 // need to avoid instanceof, to work around a 1.6 compiler bug
                 if (cellValue.getClass() == String.class) {
                     return cellValue.toString().compareToIgnoreCase(v1.toString()) == 0;
@@ -684,34 +749,77 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
         NOT_EQUAL {
             @Override
             public <C extends Comparable<C>> boolean isValid(C cellValue, C v1, C v2) {
+                if (v1 == null) {
+                    return true; // non-null not equal null, returns true
+                }
                 // need to avoid instanceof, to work around a 1.6 compiler bug
                 if (cellValue.getClass() == String.class) {
                     return cellValue.toString().compareToIgnoreCase(v1.toString()) == 0;
                 }
                 return cellValue.compareTo(v1) != 0;
             }
+            
+            public boolean isValidForIncompatibleTypes() {
+                return true;
+            }
         },
         GREATER_THAN {
             @Override
             public <C extends Comparable<C>> boolean isValid(C cellValue, C v1, C v2) {
+                if (v1 == null) {
+                    if (cellValue instanceof Number) {
+                        // use zero for null
+                        return Double.compare( ((Number) cellValue).doubleValue(), 0) > 0;
+                    } else if (cellValue instanceof String) {
+                        return true; // non-null string greater than empty cell
+                    } else if (cellValue instanceof Boolean) return true;
+                    return false; // just in case - not a typical possibility
+                }
                 return cellValue.compareTo(v1) > 0;
             }
         },
         LESS_THAN {
             @Override
             public <C extends Comparable<C>> boolean isValid(C cellValue, C v1, C v2) {
+                if (v1 == null) {
+                    if (cellValue instanceof Number) {
+                        // use zero for null
+                        return Double.compare( ((Number) cellValue).doubleValue(), 0) < 0;
+                    } else if (cellValue instanceof String) {
+                        return false; // non-null string greater than empty cell
+                    } else if (cellValue instanceof Boolean) return false;
+                    return false; // just in case - not a typical possibility
+                }
                 return cellValue.compareTo(v1) < 0;
             }
         },
         GREATER_OR_EQUAL {
             @Override
             public <C extends Comparable<C>> boolean isValid(C cellValue, C v1, C v2) {
+                if (v1 == null) {
+                    if (cellValue instanceof Number) {
+                        // use zero for null
+                        return Double.compare( ((Number) cellValue).doubleValue(), 0) >= 0;
+                    } else if (cellValue instanceof String) {
+                        return true; // non-null string greater than empty cell
+                    } else if (cellValue instanceof Boolean) return true;
+                    return false; // just in case - not a typical possibility
+                }
                 return cellValue.compareTo(v1) >= 0;
             }
         },
         LESS_OR_EQUAL {
             @Override
             public <C extends Comparable<C>> boolean isValid(C cellValue, C v1, C v2) {
+                if (v1 == null) {
+                    if (cellValue instanceof Number) {
+                        // use zero for null
+                        return Double.compare( ((Number) cellValue).doubleValue(), 0) <= 0;
+                    } else if (cellValue instanceof String) {
+                        return false; // non-null string not less than empty cell
+                    } else if (cellValue instanceof Boolean) return false; // for completeness
+                    return false; // just in case - not a typical possibility
+                }
                 return cellValue.compareTo(v1) <= 0;
             }
         },
@@ -720,11 +828,20 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
         /**
          * Evaluates comparison using operator instance rules
          * @param cellValue won't be null, assumption is previous checks handled that
-         * @param v1 if null, value assumed invalid, anything passes, per Excel behavior
-         * @param v2 null if not needed.  If null when needed, assume anything passes, per Excel behavior
+         * @param v1 if null, per Excel behavior various results depending on the type of cellValue and the specific enum instance
+         * @param v2 null if not needed.  If null when needed, various results, per Excel behavior
          * @return true if the comparison is valid
          */
         public abstract <C extends Comparable<C>> boolean isValid(C cellValue, C v1, C v2);
+        
+        /**
+         * Called when the cell and comparison values are of different data types
+         * Needed for negation operators, which should return true.
+         * @return true if this comparison is true when the types to compare are different
+         */
+        public boolean isValidForIncompatibleTypes() {
+            return false;
+        }
     }
     
     /**
@@ -735,17 +852,20 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
         private final Double value;
         private final String string;
         private final String format;
+        private final DecimalFormat decimalTextFormat;
         
-        public ValueAndFormat(Double value, String format) {
+        public ValueAndFormat(Double value, String format, DecimalFormat df) {
             this.value = value;
             this.format = format;
             string = null;
+            decimalTextFormat = df;
         }
         
         public ValueAndFormat(String value, String format) {
             this.value = null;
             this.format = format;
             string = value;
+            decimalTextFormat = null;
         }
         
         public boolean isNumber() {
@@ -758,6 +878,14 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
         
         public String getString() {
             return string;
+        }
+        
+        public String toString() {
+            if(isNumber()) {
+                return decimalTextFormat.format(getValue().doubleValue());
+            } else {
+                return getString();
+            }
         }
         
         @Override

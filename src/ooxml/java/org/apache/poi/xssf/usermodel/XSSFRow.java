@@ -263,7 +263,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
     }
 
     /**
-     * Get the number of the first cell contained in this row.
+     * Get the 0-based number of the first cell contained in this row.
      *
      * @return short representing the first logical cell in the row,
      *  or -1 if the row does not contain any cells.

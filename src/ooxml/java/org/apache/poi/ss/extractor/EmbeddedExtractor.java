@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.hpsf.ClassID;
+import org.apache.poi.hpsf.ClassIDPredefined;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.Entry;
@@ -167,13 +168,10 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
     protected EmbeddedData extract(DirectoryNode dn) throws IOException {
         assert(canExtract(dn));
         ByteArrayOutputStream bos = new ByteArrayOutputStream(20000);
-        POIFSFileSystem dest = new POIFSFileSystem();
-        try {
+        try (POIFSFileSystem dest = new POIFSFileSystem()) {
             copyNodes(dn, dest.getRoot());
             // start with a reasonable big size
             dest.writeFilesystem(bos);
-        } finally {
-            dest.close();
         }
 
         return new EmbeddedData(dn.getName(), bos.toByteArray(), CONTENT_TYPE_BYTES);
@@ -187,7 +185,7 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
         @Override
         public boolean canExtract(DirectoryNode dn) {
             ClassID clsId = dn.getStorageClsid();
-            return ClassID.OLE10_PACKAGE.equals(clsId);
+            return ClassIDPredefined.lookup(clsId) == ClassIDPredefined.OLE_V1_PACKAGE;
         }
 
         @Override
@@ -207,17 +205,16 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
         @Override
         public boolean canExtract(DirectoryNode dn) {
             ClassID clsId = dn.getStorageClsid();
-            return (PdfClassID.equals(clsId)
-            || dn.hasEntry("CONTENTS"));
+            return (PdfClassID.equals(clsId) || dn.hasEntry("CONTENTS"));
         }
 
         @Override
         public EmbeddedData extract(DirectoryNode dn) throws IOException {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            InputStream is = dn.createDocumentInputStream("CONTENTS");
-            IOUtils.copy(is, bos);
-            is.close();
-            return new EmbeddedData(dn.getName() + ".pdf", bos.toByteArray(), CONTENT_TYPE_PDF);
+            try(ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                InputStream is = dn.createDocumentInputStream("CONTENTS")) {
+                IOUtils.copy(is, bos);
+                return new EmbeddedData(dn.getName() + ".pdf", bos.toByteArray(), CONTENT_TYPE_PDF);
+            }
         }
         
         @Override
@@ -275,33 +272,19 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
         @Override
         public EmbeddedData extract(DirectoryNode dn) throws IOException {
 
-            ClassID clsId = dn.getStorageClsid();
+            ClassIDPredefined clsId = ClassIDPredefined.lookup(dn.getStorageClsid());
 
-            String contentType, ext;
-            if (ClassID.WORD2007.equals(clsId)) {
-                ext = ".docx";
-                contentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-            } else if (ClassID.WORD2007_MACRO.equals(clsId)) {
-                ext = ".docm";
-                contentType = "application/vnd.ms-word.document.macroEnabled.12";
-            } else if (ClassID.EXCEL2007.equals(clsId) || ClassID.EXCEL2003.equals(clsId) || ClassID.EXCEL2010.equals(clsId)) {
-                ext = ".xlsx";
-                contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-            } else if (ClassID.EXCEL2007_MACRO.equals(clsId)) {
-                ext = ".xlsm";
-                contentType = "application/vnd.ms-excel.sheet.macroEnabled.12";
-            } else if (ClassID.EXCEL2007_XLSB.equals(clsId)) {
-                ext = ".xlsb";
-                contentType = "application/vnd.ms-excel.sheet.binary.macroEnabled.12";
-            } else if (ClassID.POWERPOINT2007.equals(clsId)) {
-                ext = ".pptx";
-                contentType = "application/vnd.openxmlformats-officedocument.presentationml.presentation";
-            } else if (ClassID.POWERPOINT2007_MACRO.equals(clsId)) {
-                ext = ".ppsm";
-                contentType = "application/vnd.ms-powerpoint.slideshow.macroEnabled.12";
-            } else {
-                ext = ".zip";
+            String contentType = null;
+            String ext = null;
+            
+            if (clsId != null) {
+                contentType = clsId.getContentType();
+                ext = clsId.getFileExtension();
+            }
+            
+            if (contentType == null || ext == null) {
                 contentType = "application/zip";
+                ext = ".zip";
             }
 
             DocumentInputStream dis = dn.createDocumentInputStream("package");
@@ -319,16 +302,16 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
         }
         
         protected boolean canExtractExcel(DirectoryNode dn) {
-            ClassID clsId = dn.getStorageClsid();
-            return (ClassID.EXCEL95.equals(clsId)
-                || ClassID.EXCEL97.equals(clsId)
+            ClassIDPredefined clsId = ClassIDPredefined.lookup(dn.getStorageClsid());
+            return (ClassIDPredefined.EXCEL_V7 == clsId
+                || ClassIDPredefined.EXCEL_V8 == clsId
                 || dn.hasEntry("Workbook") /*...*/);
         }
 
         protected boolean canExtractWord(DirectoryNode dn) {
-            ClassID clsId = dn.getStorageClsid();
-            return (ClassID.WORD95.equals(clsId)
-                || ClassID.WORD97.equals(clsId)
+            ClassIDPredefined clsId = ClassIDPredefined.lookup(dn.getStorageClsid());
+            return (ClassIDPredefined.WORD_V7 == clsId
+                || ClassIDPredefined.WORD_V8 == clsId
                 || dn.hasEntry("WordDocument"));
         }
         
@@ -369,11 +352,8 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
                 destDir.setStorageClsid(srcDir.getStorageClsid());
                 copyNodes(srcDir, destDir);
             } else {
-                InputStream is = src.createDocumentInputStream(e);
-                try {
+                try (InputStream is = src.createDocumentInputStream(e)) {
                     dest.createDocument(e.getName(), is);
-                } finally {
-                    is.close();
                 }
             }
         }

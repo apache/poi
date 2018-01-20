@@ -15,7 +15,12 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hslf.model;
+package org.apache.poi.hslf.usermodel;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherProperties;
@@ -26,22 +31,22 @@ import org.apache.poi.hslf.record.ExObjRefAtom;
 import org.apache.poi.hslf.record.HSLFEscherClientDataRecord;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordTypes;
-import org.apache.poi.hslf.usermodel.HSLFObjectData;
-import org.apache.poi.hslf.usermodel.HSLFPictureData;
-import org.apache.poi.hslf.usermodel.HSLFPictureShape;
-import org.apache.poi.hslf.usermodel.HSLFShape;
-import org.apache.poi.hslf.usermodel.HSLFSlideShow;
-import org.apache.poi.hslf.usermodel.HSLFTextParagraph;
+import org.apache.poi.poifs.filesystem.FileMagic;
+import org.apache.poi.poifs.filesystem.Ole10Native;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.sl.usermodel.ObjectMetaData;
+import org.apache.poi.sl.usermodel.ObjectMetaData.Application;
+import org.apache.poi.sl.usermodel.ObjectShape;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
 
 /**
- * A shape representing embedded OLE obejct.
+ * A shape representing embedded OLE object.
  */
-public final class OLEShape extends HSLFPictureShape {
-    private static final POILogger LOG = POILogFactory.getLogger(OLEShape.class);
+public final class HSLFObjectShape extends HSLFPictureShape implements ObjectShape<HSLFShape,HSLFTextParagraph> {
+    private static final POILogger LOG = POILogFactory.getLogger(HSLFObjectShape.class);
 
     private ExEmbed _exEmbed;
 
@@ -50,7 +55,7 @@ public final class OLEShape extends HSLFPictureShape {
      *
     * @param data the picture data
      */
-    public OLEShape(HSLFPictureData data){
+    public HSLFObjectShape(HSLFPictureData data){
         super(data);
     }
 
@@ -60,7 +65,7 @@ public final class OLEShape extends HSLFPictureShape {
      * @param data the picture data
      * @param parent the parent shape
      */
-    public OLEShape(HSLFPictureData data, ShapeContainer<HSLFShape,HSLFTextParagraph> parent) {
+    public HSLFObjectShape(HSLFPictureData data, ShapeContainer<HSLFShape,HSLFTextParagraph> parent) {
         super(data, parent);
     }
 
@@ -71,7 +76,7 @@ public final class OLEShape extends HSLFPictureShape {
       *        this picture in the <code>Slide</code>
       * @param parent the parent shape of this picture
       */
-    public OLEShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
+    public HSLFObjectShape(EscherContainerRecord escherRecord, ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
         super(escherRecord, parent);
     }
 
@@ -87,12 +92,12 @@ public final class OLEShape extends HSLFPictureShape {
     /**
      * Set the unique identifier for the OLE object and
      * register it in the necessary structures
-     * 
+     *
      * @param objectId the unique identifier for the OLE object
      */
     public void setObjectID(int objectId){
     	setEscherProperty(EscherProperties.BLIP__PICTUREID, objectId);
-    	
+
     	EscherContainerRecord ecr = getSpContainer();
     	EscherSpRecord spRecord = ecr.getChildById(EscherSpRecord.RECORD_ID);
         spRecord.setFlags(spRecord.getFlags()|EscherSpRecord.FLAG_OLESHAPE);
@@ -111,14 +116,13 @@ public final class OLEShape extends HSLFPictureShape {
         }
         uer.setExObjIdRef(objectId);
     }
-    
-    
+
+
     /**
      * Returns unique identifier for the OLE object.
      *
      * @return the unique identifier for the OLE object
      */
-    @SuppressWarnings("resource")
     public HSLFObjectData getObjectData(){
         HSLFSlideShow ppt = getSheet().getSlideShow();
         HSLFObjectData[] ole = ppt.getEmbeddedObjects();
@@ -129,9 +133,10 @@ public final class OLEShape extends HSLFPictureShape {
         if(exEmbed != null) {
             int ref = exEmbed.getExOleObjAtom().getObjStgDataRef();
 
-            for (int i = 0; i < ole.length; i++) {
-                if(ole[i].getExOleObjStg().getPersistId() == ref) {
-                    data=ole[i];
+            for (HSLFObjectData hod : ole) {
+                if(hod.getExOleObjStg().getPersistId() == ref) {
+                    data=hod;
+                    // keep searching to return the last persistent object with that refId
                 }
             }
         }
@@ -156,29 +161,40 @@ public final class OLEShape extends HSLFPictureShape {
      * 6. MetaFile( 4033), optional
      * </p>
      */
-    @SuppressWarnings("resource")
     public ExEmbed getExEmbed(){
-        if(_exEmbed == null){
+        return getExEmbed(false);
+    }
+
+    private ExEmbed getExEmbed(boolean create) {
+        if (_exEmbed == null) {
             HSLFSlideShow ppt = getSheet().getSlideShow();
 
-            ExObjList lst = ppt.getDocumentRecord().getExObjList(false);
+            ExObjList lst = ppt.getDocumentRecord().getExObjList(create);
             if(lst == null){
                 LOG.log(POILogger.WARN, "ExObjList not found");
                 return null;
             }
 
             int id = getObjectID();
-            Record[] ch = lst.getChildRecords();
-            for (int i = 0; i < ch.length; i++) {
-                if(ch[i] instanceof ExEmbed){
-                    ExEmbed embd = (ExEmbed)ch[i];
-                    if( embd.getExOleObjAtom().getObjID() == id) _exEmbed = embd;
+            for (Record ch : lst.getChildRecords()) {
+                if(ch instanceof ExEmbed){
+                    ExEmbed embd = (ExEmbed)ch;
+                    if( embd.getExOleObjAtom().getObjID() == id) {
+                        _exEmbed = embd;
+                    }
                 }
+            }
+            
+            if (_exEmbed == null && create) {
+                _exEmbed = new ExEmbed();
+                _exEmbed.getExOleObjAtom().setObjID(id);
+                lst.appendChildRecord(_exEmbed);
             }
         }
         return _exEmbed;
     }
-
+    
+    
     /**
      * Returns the instance name of the embedded object, e.g. "Document" or "Workbook".
      *
@@ -189,26 +205,63 @@ public final class OLEShape extends HSLFPictureShape {
         return (ee == null) ? null : ee.getMenuName();
     }
 
-    /**
-     * Returns the full name of the embedded object,
-     *  e.g. "Microsoft Word Document" or "Microsoft Office Excel Worksheet".
-     *
-     * @return the full name of the embedded object
-     */
+    @Override
     public String getFullName(){
         ExEmbed ee = getExEmbed();
         return (ee == null) ? null : ee.getClipboardName();
     }
 
-    /**
-     * Returns the ProgID that stores the OLE Programmatic Identifier.
-     * A ProgID is a string that uniquely identifies a given object, for example,
-     * "Word.Document.8" or "Excel.Sheet.8".
-     *
-     * @return the ProgID
-     */
-    public String getProgID(){
+    public void setFullName(final String fullName) {
+        getExEmbed(true).setClipboardName(fullName);
+    }
+
+    @Override
+    public String getProgId(){
         ExEmbed ee = getExEmbed();
         return (ee == null) ? null : ee.getProgId();
+    }
+
+    public void setProgId(final String progId) {
+        getExEmbed(true).setProgId(progId);
+    }
+
+    public OutputStream updateObjectData(final Application application, final ObjectMetaData metaData) throws IOException {
+        final ObjectMetaData md = (application != null) ? application.getMetaData() : metaData;
+        if (md == null) {
+            throw new RuntimeException("either application or metaData needs to be set");
+        }
+
+        return new ByteArrayOutputStream(100000) {
+            public void close() throws IOException {
+                final FileMagic fm = FileMagic.valueOf(this.buf);
+                final ByteArrayInputStream bis = new ByteArrayInputStream(this.buf, 0, this.count);
+                final HSLFSlideShow ppt = getSheet().getSlideShow();
+
+                try (POIFSFileSystem poifs = (fm == FileMagic.OLE2) ? new POIFSFileSystem(bis) : new POIFSFileSystem()) {
+                    if (fm != FileMagic.OLE2) {
+                        poifs.createDocument(bis, md.getOleEntry());
+                    }
+
+                    Ole10Native.createOleMarkerEntry(poifs);
+
+                    poifs.getRoot().setStorageClsid(md.getClassID());
+
+
+                    int oid = getObjectID();
+                    if (oid == 0) {
+                        // assign new embedding
+                        oid = ppt.addEmbed(poifs);
+                        setObjectID(oid);
+                    } else {
+                        ByteArrayOutputStream bos = new ByteArrayOutputStream(this.size()+1000);
+                        poifs.writeFilesystem(bos);
+                        getObjectData().setData(bos.toByteArray());
+                    }
+
+                    setProgId(md.getProgId());
+                    setFullName(md.getObjectName());
+                }
+            }
+        };
     }
 }

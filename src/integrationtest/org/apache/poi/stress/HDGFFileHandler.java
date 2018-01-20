@@ -68,11 +68,8 @@ public class HDGFFileHandler extends POIFSFileHandler {
 		
 		stream = new FileInputStream(file);
 		try {
-			VisioTextExtractor extractor = new VisioTextExtractor(stream);
-			try {
+			try (VisioTextExtractor extractor = new VisioTextExtractor(stream)) {
 				assertNotNull(extractor.getText());
-			} finally {
-				extractor.close();
 			}
 		} finally {
 			stream.close();

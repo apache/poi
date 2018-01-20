@@ -364,6 +364,6 @@ public class XSSFBorderFormatting implements BorderFormatting  {
     }
     
     private XSSFColor getColor(CTBorderPr pr) {
-        return pr == null ? null : new XSSFColor(pr.getColor(), _colorMap);
+        return pr == null ? null : XSSFColor.from(pr.getColor(), _colorMap);
     }
 }

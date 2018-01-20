@@ -37,6 +37,7 @@ import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -229,7 +230,8 @@ public final class TestPOIXMLProperties {
         return utcString.equals(dateTimeUtcString);
     }
 
-    //@Test
+    @Ignore("Fails to add some of the thumbnails, needs more investigation")
+    @Test
     public void testThumbnails() throws Exception {
         POIXMLProperties noThumbProps = sampleNoThumb.getProperties();
 

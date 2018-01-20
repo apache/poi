@@ -51,11 +51,8 @@ public class HMEFFileHandler extends AbstractFileHandler {
 	@Test
 	public void test() throws Exception {
 	    String path = "test-data/hmef/quick-winmail.dat";
-		InputStream stream = new FileInputStream(path);
-		try {
+		try (InputStream stream = new FileInputStream(path)) {
 			handleFile(stream, path);
-		} finally {
-			stream.close();
 		}
 	}
 }

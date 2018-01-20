@@ -65,11 +65,14 @@ import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.formula.ConditionalFormattingEvaluator;
+import org.apache.poi.ss.formula.EvaluationConditionalFormatRule;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaRenderer;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
+import org.apache.poi.ss.formula.WorkbookEvaluatorProvider;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.functions.Function;
@@ -2921,7 +2924,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFCell cell = workbook.createSheet().createRow(0).createCell(0);
 
-        XSSFColor color = new XSSFColor(java.awt.Color.RED);
+        XSSFColor color = new XSSFColor(java.awt.Color.RED, workbook.getStylesSource().getIndexedColors());
         XSSFCellStyle style = workbook.createCellStyle();
         style.setFillForegroundColor(color);
         style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
@@ -2941,7 +2944,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         XSSFWorkbook nwb = XSSFTestDataSamples.writeOutAndReadBack(workbook);
         workbook.close();
         XSSFCell ncell = nwb.getSheetAt(0).getRow(0).getCell(0);
-        XSSFColor ncolor = new XSSFColor(java.awt.Color.RED);
+        XSSFColor ncolor = new XSSFColor(java.awt.Color.RED, workbook.getStylesSource().getIndexedColors());
 
         // Now the cell is all black
         XSSFColor nactual = ncell.getCellStyle().getFillBackgroundColorColor();
@@ -3102,6 +3105,8 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         Cell cell = row.createCell(1);
         cell.setCellValue("blabla");
 
+        //0 1 2 3 4 5 6 7
+        //A B C D E F G H
         row = sheet.createRow(4);
         cell = row.createCell(7);
         cell.setCellValue("blabla");
@@ -3110,7 +3115,29 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         // to avoid having to iterate all rows/cells in each add/remove of a row or cell
         wb.write(new NullOutputStream());
 
-        assertEquals("B2:I5", ((XSSFSheet) sheet).getCTWorksheet().getDimension().getRef());
+        assertEquals("B2:H5", ((XSSFSheet) sheet).getCTWorksheet().getDimension().getRef());
+
+        wb.close();
+    }
+
+    @Test
+    public void test61798() throws IOException {
+        Workbook wb = new XSSFWorkbook();
+        Sheet sheet = wb.createSheet("test");
+        Row row = sheet.createRow(1);
+        Cell cell = row.createCell(1);
+        cell.setCellValue("blabla");
+
+        row = sheet.createRow(4);
+        // Allowable column range for EXCEL2007 is (0..16383) or ('A'..'XDF')
+        cell = row.createCell(16383);
+        cell.setCellValue("blabla");
+
+        // we currently only populate the dimension during writing out
+        // to avoid having to iterate all rows/cells in each add/remove of a row or cell
+        wb.write(new NullOutputStream());
+
+        assertEquals("B2:XFD5", ((XSSFSheet)sheet).getCTWorksheet().getDimension().getRef());
 
         wb.close();
     }
@@ -3184,5 +3211,45 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             CellValue cellValue = evaluator.evaluate(c2);
             assertEquals(1, cellValue.getNumberValue(), 0.0001);
         }
+    }
+
+    @Test
+    public void test61652() throws IOException {
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("61652.xlsx")) {
+            Sheet sheet = wb.getSheet("IRPPCalc");
+            Row row = sheet.getRow(11);
+            Cell cell = row.getCell(18);
+            WorkbookEvaluatorProvider fe = (WorkbookEvaluatorProvider) wb.getCreationHelper().createFormulaEvaluator();
+            ConditionalFormattingEvaluator condfmt = new ConditionalFormattingEvaluator(wb, fe);
+
+            assertEquals("Conditional formatting is not triggered for this cell",
+                    "[]", condfmt.getConditionalFormattingForCell(cell).toString());
+
+            // but we can read the conditional formatting itself
+            List<EvaluationConditionalFormatRule> rules = condfmt.getFormatRulesForSheet(sheet);
+            assertEquals(1, rules.size());
+            assertEquals("AND($A1>=EDATE($D$6,3),$B1>0)", rules.get(0).getFormula1());
+        }
+    }
+
+    @Test
+    public void test61543() throws IOException {
+        XSSFWorkbook wb = new XSSFWorkbook();
+
+        XSSFSheet sheet = wb.createSheet();
+        XSSFTable table1 = sheet.createTable();
+        XSSFTable table2 = sheet.createTable();
+        XSSFTable table3 = sheet.createTable();
+
+        sheet.removeTable(table1);
+
+        sheet.createTable();
+
+        sheet.removeTable(table2);
+        sheet.removeTable(table3);
+
+        sheet.createTable();
+
+        wb.close();
     }
 }

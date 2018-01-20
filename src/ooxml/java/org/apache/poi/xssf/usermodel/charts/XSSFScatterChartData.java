@@ -25,7 +25,8 @@ import org.apache.poi.ss.usermodel.charts.ChartAxis;
 import org.apache.poi.ss.usermodel.charts.ChartDataSource;
 import org.apache.poi.ss.usermodel.charts.ScatterChartData;
 import org.apache.poi.ss.usermodel.charts.ScatterChartSeries;
-import org.apache.poi.util.Beta;
+import org.apache.poi.util.Removal;
+import org.apache.poi.xddf.usermodel.chart.XDDFScatterChartData;
 import org.apache.poi.xssf.usermodel.XSSFChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
@@ -38,8 +39,11 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.STScatterStyle;
 
 /**
  * Represents DrawingML scatter charts.
+ *
+ * @deprecated use {@link XDDFScatterChartData} instead
  */
-@Beta
+@Deprecated
+@Removal(version="4.2")
 public class XSSFScatterChartData implements ScatterChartData {
 
     /**
@@ -48,7 +52,7 @@ public class XSSFScatterChartData implements ScatterChartData {
     private List<Series> series;
 
     public XSSFScatterChartData() {
-        series = new ArrayList<>();
+        series = new ArrayList<Series>();
     }
 
     /**
@@ -74,6 +78,7 @@ public class XSSFScatterChartData implements ScatterChartData {
          * Returns data source used for X axis values.
          * @return data source used for X axis values
          */
+        @Override
         public ChartDataSource<?> getXValues() {
             return xs;
         }
@@ -82,6 +87,7 @@ public class XSSFScatterChartData implements ScatterChartData {
          * Returns data source used for Y axis values.
          * @return data source used for Y axis values
          */
+        @Override
         public ChartDataSource<? extends Number> getYValues() {
             return ys;
         }
@@ -103,6 +109,7 @@ public class XSSFScatterChartData implements ScatterChartData {
         }
     }
 
+    @Override
     public ScatterChartSeries addSerie(ChartDataSource<?> xs,
                                       ChartDataSource<? extends Number> ys) {
         if (!ys.isNumeric()) {
@@ -114,6 +121,7 @@ public class XSSFScatterChartData implements ScatterChartData {
         return newSerie;
     }
 
+    @Override
     public void fillChart(Chart chart, ChartAxis... axis) {
         if (!(chart instanceof XSSFChart)) {
             throw new IllegalArgumentException("Chart must be instance of XSSFChart");
@@ -133,6 +141,7 @@ public class XSSFScatterChartData implements ScatterChartData {
         }
     }
 
+    @Override
     public List<? extends Series> getSeries() {
         return series;
     }

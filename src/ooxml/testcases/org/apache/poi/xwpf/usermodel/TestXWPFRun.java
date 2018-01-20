@@ -18,6 +18,7 @@ package org.apache.poi.xwpf.usermodel;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -37,11 +38,14 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLang;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLanguage;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBrClear;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHighlightColor;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STLang;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STUnderline;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalAlignRun;
@@ -451,6 +455,21 @@ public class TestXWPFRun {
 
         assertEquals(1, count);
         sampleDoc.close();
+    }
+    
+    @Test
+    public void testSetGetLang() throws IOException {
+        XWPFRun run = p.createRun();
+        assertNull(run.getLang());
+
+        run.getCTR().addNewRPr().addNewLang().setVal("en-CA");
+        assertEquals("en-CA", run.getLang());
+
+        run.getCTR().getRPr().getLang().setVal("fr-CA");
+        assertEquals("fr-CA", run.getLang());
+
+        run.getCTR().getRPr().getLang().setVal(null);
+        assertNull(run.getLang());
     }
 
     @Test

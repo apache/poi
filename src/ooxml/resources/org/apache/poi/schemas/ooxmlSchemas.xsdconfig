@@ -39,4 +39,8 @@
     <xb:package>com.microsoft.schemas.vml</xb:package>
   </xb:namespace>
 
+  <xb:namespace uri="http://schemas.openxmlformats.org/markup-compatibility/2006">
+    <xb:package>com.microsoft.schemas.compatibility</xb:package>
+  </xb:namespace>
+
 </xb:config>

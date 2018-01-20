@@ -38,7 +38,7 @@ public class TestXSSFSimpleShape {
             
             XSSFFont font = wb.createFont();
             Color color = new Color(0, 255, 255);
-            font.setColor(new XSSFColor(color));
+            font.setColor(new XSSFColor(color, wb.getStylesSource().getIndexedColors()));
             font.setFontName("Arial");
             rt.applyFont(font);
     

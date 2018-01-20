@@ -17,15 +17,15 @@
 
 package org.apache.poi.ss.usermodel.charts;
 
-import org.apache.poi.util.Beta;
+import org.apache.poi.util.Removal;
 
 /**
  * High level representation of chart legend.
  *
- * @author Roman Kashitsyn
- * @author Martin Andersson
+ * @deprecated use XDDFChartLegend instead
  */
-@Beta
+@Deprecated
+@Removal(version="4.2")
 public interface ChartLegend extends ManuallyPositionable {
 
 	/**

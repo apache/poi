@@ -80,6 +80,7 @@ public final class TestXSSFFont extends BaseTestFont{
 		assertEquals(true, ctFont.getBArray(0).getVal());
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testCharSet() throws IOException {
 		CTFont ctFont=CTFont.Factory.newInstance();
@@ -108,7 +109,9 @@ public final class TestXSSFFont extends BaseTestFont{
         try {
            xssfFont.setCharSet(9999);
            fail("Shouldn't be able to set an invalid charset");
-        } catch(POIXMLException e) {}
+        } catch(POIXMLException e) {
+        	// expected here
+		}
       
 		
 		// Now try with a few sample files
@@ -120,7 +123,7 @@ public final class TestXSSFFont extends BaseTestFont{
         );
         wb1.close();
 		
-		// GB2312 charact set
+		// GB2312 charset
         XSSFWorkbook wb2 = XSSFTestDataSamples.openSampleWorkbook("49273.xlsx");
         assertEquals(134, 
               wb2.getSheetAt(0).getRow(0).getCell(0).getCellStyle().getFont().getCharSet()
@@ -253,7 +256,7 @@ public final class TestXSSFFont extends BaseTestFont{
 		
 		byte[] bytes = Integer.toHexString(0xF1F1F1).getBytes(LocaleUtil.CHARSET_1252);
         color.setRgb(bytes);
-		XSSFColor newColor=new XSSFColor(color, null);
+		XSSFColor newColor=XSSFColor.from(color, null);
 		xssfFont.setColor(newColor);
 		assertEquals(ctFont.getColorArray(0).getRgb()[2],newColor.getRGB()[2]);
 		

@@ -18,7 +18,7 @@
 package org.apache.poi.hwmf.record;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.poi.common.usermodel.fonts.FontCharset;
 import org.apache.poi.common.usermodel.fonts.FontFamily;
@@ -369,7 +369,7 @@ public class HwmfFont implements FontInfo {
             buf[readBytes++] = b = leis.readByte();
         } while (b != 0 && b != -1 && readBytes <= 32);
         
-        facename = new String(buf, 0, readBytes-1, Charset.forName("ISO-8859-1"));
+        facename = new String(buf, 0, readBytes-1, StandardCharsets.ISO_8859_1);
         
         return 5*LittleEndianConsts.SHORT_SIZE+8*LittleEndianConsts.BYTE_SIZE+readBytes;
     }

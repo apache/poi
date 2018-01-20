@@ -79,11 +79,8 @@ public class HSMFFileHandler extends POIFSFileHandler {
     @Test
 	public void test() throws Exception {
         File file = new File("test-data/hsmf/logsat.com_signatures_valid.msg");
-        InputStream stream = new FileInputStream(file);
-		try {
+		try (InputStream stream = new FileInputStream(file)) {
 			handleFile(stream, file.getPath());
-		} finally {
-			stream.close();
 		}
 		
 		handleExtracting(file);

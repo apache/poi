@@ -21,7 +21,7 @@ import java.awt.Insets;
 
 public interface PictureShape<
     S extends Shape<S,P>,
-    P extends TextParagraph<S,P,?>
+    P extends TextParagraph<S,P,? extends TextRun>
 > extends SimpleShape<S,P> {
     /**
      * Returns the picture data for this picture.

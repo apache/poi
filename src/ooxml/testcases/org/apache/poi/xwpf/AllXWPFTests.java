@@ -19,6 +19,7 @@ package org.apache.poi.xwpf;
 
 import org.apache.poi.xwpf.extractor.TestXWPFWordExtractor;
 import org.apache.poi.xwpf.model.TestXWPFHeaderFooterPolicy;
+import org.apache.poi.xwpf.usermodel.TestXWPFChart;
 import org.apache.poi.xwpf.usermodel.TestXWPFDocument;
 import org.apache.poi.xwpf.usermodel.TestXWPFHeader;
 import org.apache.poi.xwpf.usermodel.TestXWPFHeadings;
@@ -38,6 +39,7 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
         TestXWPFBugs.class,
         org.apache.poi.xwpf.usermodel.TestXWPFBugs.class,
+        TestXWPFChart.class,
         TestXWPFDocument.class,
         TestXWPFWordExtractor.class,
         TestXWPFHeaderFooterPolicy.class,

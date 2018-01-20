@@ -17,6 +17,8 @@
 
 package org.apache.poi.sl.usermodel;
 
+import org.apache.poi.util.StringUtil;
+
 /**
  * known preset shape geometries in PresentationML
  */
@@ -299,7 +301,7 @@ public enum ShapeType {
                 toLower = false;
                 continue;
             }
-            sb.append(toLower ? Character.toLowerCase(ch) : Character.toUpperCase(ch));
+            sb.append(toLower ? StringUtil.toLowerCase(ch) : StringUtil.toUpperCase(ch));
             toLower = true;
         }
         

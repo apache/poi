@@ -19,86 +19,61 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
-
 import java.io.IOException;
-import java.io.OutputStream;
 
-import javax.xml.namespace.QName;
-
-import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.POIXMLDocument;
+import org.apache.poi.POIXMLRelation;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.util.Beta;
-import org.apache.poi.util.Internal;
+import org.apache.poi.xddf.usermodel.chart.XDDFChart;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlOptions;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartSpace;
-import org.openxmlformats.schemas.drawingml.x2006.chart.ChartSpaceDocument;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTTitle;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
 
 /**
  * Represents a Chart in a .pptx presentation
- *
- *
  */
 @Beta
-public final class XSLFChart extends POIXMLDocumentPart {
-
-	/**
-	 * Root element of the Chart part
-	 */
-	private CTChartSpace chartSpace;
+public final class XSLFChart extends XDDFChart {
 
     /**
-	 * The Chart within that
-	 */
-	private CTChart chart;
+     * Construct a PresentationML chart.
+     */
+    protected XSLFChart() {
+        super();
+    }
 
     /**
-     * Construct a chart from a package part.
+     * Construct a PresentationML chart from a package part.
      *
      * @param part the package part holding the chart data,
-     * the content type must be <code>application/vnd.openxmlformats-officedocument.drawingml.chart+xml</code>
-     * 
+     *             the content type must be <code>application/vnd.openxmlformats-officedocument.drawingml.chart+xml</code>
      * @since POI 3.14-Beta1
      */
     protected XSLFChart(PackagePart part) throws IOException, XmlException {
         super(part);
-
-        chartSpace = ChartSpaceDocument.Factory.parse(part.getInputStream(), DEFAULT_XML_OPTIONS).getChartSpace(); 
-        chart = chartSpace.getChart();
     }
 
-	/**
-	 * Return the underlying CTChartSpace bean, the root element of the Chart part.
-	 *
-	 * @return the underlying CTChartSpace bean
-	 */
-	@Internal
-	public CTChartSpace getCTChartSpace(){
-		return chartSpace;
-	}
-
-	/**
-	 * Return the underlying CTChart bean, within the Chart Space
-	 *
-	 * @return the underlying CTChart bean
-	 */
-	@Internal
-	public CTChart getCTChart(){
-		return chart;
-	}
-
-	@Override
-	protected void commit() throws IOException {
-		XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
-		xmlOptions.setSaveSyntheticDocumentElement(new QName(CTChartSpace.type.getName().getNamespaceURI(), "chartSpace", "c"));
-
-		PackagePart part = getPackagePart();
-		OutputStream out = part.getOutputStream();
-		chartSpace.save(out, xmlOptions);
-		out.close();
-	}
-
-
+    public XSLFTextShape getTitle() {
+        if (!chart.isSetTitle()) {
+            chart.addNewTitle();
+        }
+        final CTTitle title = chart.getTitle();
+        if (title.getTx() != null && title.getTx().isSetRich()) {
+            return new XSLFTextShape(title, null) {
+                @Override
+                protected CTTextBody getTextBody(boolean create) {
+                    return title.getTx().getRich();
+                }
+            };
+        } else {
+            return new XSLFTextShape(title, null) {
+                @Override
+                protected CTTextBody getTextBody(boolean create) {
+                    return title.getTxPr();
+                }
+            };
+        }
+    }
 }

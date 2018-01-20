@@ -21,9 +21,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.poi.hpsf.*;
+import org.apache.poi.hpsf.Property;
+import org.apache.poi.hpsf.PropertySet;
+import org.apache.poi.hpsf.Section;
+import org.apache.poi.hpsf.SummaryInformation;
+import org.apache.poi.hpsf.Variant;
+import org.apache.poi.hpsf.WritingNotSupportedException;
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
-import org.apache.poi.hpsf.wellknown.SectionIDMap;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
@@ -64,7 +68,7 @@ public class WriteTitle
         /* Turn the property set into a summary information property. This is
          * done by setting the format ID of its first section to
          * SectionIDMap.SUMMARY_INFORMATION_ID. */
-        ms.setFormatID(SectionIDMap.SUMMARY_INFORMATION_ID);
+        ms.setFormatID(SummaryInformation.FORMAT_ID);
 
         /* Create an empty property. */    
         final Property p = new Property();

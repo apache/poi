@@ -48,6 +48,8 @@ import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
 
 import static org.junit.Assert.*;
@@ -669,5 +671,78 @@ public final class TestXSSFCell extends BaseTestXCell {
         srcCell.setCellStyle(style);
         
         destCell.setCellValue(true);
+    }
+
+    /**
+     * Bug 61869: updating a shared formula produces an unreadable file
+     */
+    @Test
+    public void test61869() throws Exception {
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("61869.xlsx")) {
+            XSSFSheet sheet = wb.getSheetAt(0);
+            XSSFCell c2 = sheet.getRow(1).getCell(2);
+            assertEquals("SUM(A2,B2)", c2.getCellFormula());
+            assertEquals(STCellFormulaType.SHARED, c2.getCTCell().getF().getT());
+            assertEquals(0, c2.getCTCell().getF().getSi());
+            XSSFCell c3 = sheet.getRow(2).getCell(2);
+            assertEquals(STCellFormulaType.SHARED, c3.getCTCell().getF().getT());
+            assertEquals(0, c3.getCTCell().getF().getSi());
+            assertEquals("SUM(A3,B3)", c3.getCellFormula());
+
+            assertEquals("SUM(A2,B2)", sheet.getSharedFormula(0).getStringValue());
+
+            c2.setCellFormula("SUM(A2:B2)");
+            assertEquals(STCellFormulaType.SHARED, c2.getCTCell().getF().getT()); // c2 remains the master formula
+
+            assertEquals("SUM(A2:B2)", sheet.getSharedFormula(0).getStringValue());
+            assertEquals(STCellFormulaType.SHARED, c3.getCTCell().getF().getT());
+            assertEquals(0, c3.getCTCell().getF().getSi());
+            assertEquals("SUM(A3:B3)", c3.getCellFormula());  // formula in the follower cell is rebuilt
+
+        }
+
+    }
+
+    @Test
+    public void testBug58106RemoveSharedFormula() throws Exception {
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("58106.xlsx")) {
+            XSSFSheet sheet = wb.getSheetAt(0);
+            XSSFRow row = sheet.getRow(12);
+            XSSFCell cell = row.getCell(1);
+            CTCellFormula f = cell.getCTCell().getF();
+            assertEquals("B13:G13", f.getRef());
+            assertEquals("SUM(B1:B3)", f.getStringValue());
+            assertEquals(0, f.getSi());
+            assertEquals(STCellFormulaType.SHARED, f.getT());
+            for(char i = 'C'; i <= 'G'; i++){
+                XSSFCell sc =row.getCell(i-'A');
+                CTCellFormula sf = sc.getCTCell().getF();
+                assertFalse(sf.isSetRef());
+                assertEquals("", sf.getStringValue());
+                assertEquals(0, sf.getSi());
+                assertEquals(STCellFormulaType.SHARED, sf.getT());
+            }
+            assertEquals("B13:G13", sheet.getSharedFormula(0).getRef());
+
+            cell.setCellType(CellType.NUMERIC);
+
+            assertFalse(cell.getCTCell().isSetF());
+
+            XSSFCell nextFormulaMaster = row.getCell(2);
+            assertEquals("C13:G13", nextFormulaMaster.getCTCell().getF().getRef());
+            assertEquals("SUM(C1:C3)", nextFormulaMaster.getCTCell().getF().getStringValue());
+            assertEquals(0, nextFormulaMaster.getCTCell().getF().getSi());
+            for(char i = 'D'; i <= 'G'; i++){
+                XSSFCell sc =row.getCell(i-'A');
+                CTCellFormula sf = sc.getCTCell().getF();
+                assertFalse(sf.isSetRef());
+                assertEquals("", sf.getStringValue());
+                assertEquals(0, sf.getSi());
+                assertEquals(STCellFormulaType.SHARED, sf.getT());
+            }
+            assertEquals("C13:G13", sheet.getSharedFormula(0).getRef());
+
+        }
+
     }
 }

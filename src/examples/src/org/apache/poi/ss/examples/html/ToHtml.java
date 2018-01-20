@@ -250,18 +250,14 @@ public class ToHtml {
         ensureOut();
 
         // First, copy the base css
-        BufferedReader in = null;
-        try {
-            in = new BufferedReader(new InputStreamReader(
-                    getClass().getResourceAsStream("excelStyle.css")));
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(
+                getClass().getResourceAsStream("excelStyle.css")))){
             String line;
             while ((line = in.readLine()) != null) {
                 out.format("%s%n", line);
             }
         } catch (IOException e) {
             throw new IllegalStateException("Reading standard css", e);
-        } finally {
-            IOUtils.closeQuietly(in);
         }
 
         // now add css for each used style

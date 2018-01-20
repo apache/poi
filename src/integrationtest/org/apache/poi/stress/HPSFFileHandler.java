@@ -24,7 +24,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -88,11 +88,8 @@ public class HPSFFileHandler extends POIFSFileHandler {
 	    if (!root.hasEntry(streamName)) {
 	        return false;
 	    }
-	    DocumentInputStream dis = root.createDocumentInputStream(streamName);
-	    try {
-	        return PropertySet.isPropertySetStream(dis);
-	    } finally {
-	        dis.close();
+        try (DocumentInputStream dis = root.createDocumentInputStream(streamName)) {
+            return PropertySet.isPropertySetStream(dis);
         }
 	}
 	
@@ -110,7 +107,7 @@ public class HPSFFileHandler extends POIFSFileHandler {
         try {
             System.setOut(psNew);
             CopyCompare.main(new String[]{file.getAbsolutePath(), copyOutput.getAbsolutePath()});
-            assertEquals("Equal" + NL, new String(bos.toByteArray(), Charset.forName("UTF-8")));
+            assertEquals("Equal" + NL, new String(bos.toByteArray(), StandardCharsets.UTF_8));
         } finally {
             System.setOut(ps);
         }
@@ -122,12 +119,9 @@ public class HPSFFileHandler extends POIFSFileHandler {
     @Test
 	public void test() throws Exception {
 	    String path = "test-data/hpsf/Test0313rur.adm";
-		InputStream stream = new FileInputStream(path);
-		try {
-			handleFile(stream, path);
-		} finally {
-			stream.close();
-		}
+        try (InputStream stream = new FileInputStream(path)) {
+            handleFile(stream, path);
+        }
 	}
 
     // a test-case to test this locally without executing the full TestAllFiles

@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
-import org.apache.poi.hpsf.wellknown.SectionIDMap;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
@@ -110,9 +109,9 @@ public class PropertySetFactory {
         stream.reset();
         
         ClassID clsId = new ClassID(clsIdBuf, 0);
-        if (sectionCount > 0 && PropertySet.matchesSummary(clsId, SectionIDMap.SUMMARY_INFORMATION_ID)) {
+        if (sectionCount > 0 && PropertySet.matchesSummary(clsId, SummaryInformation.FORMAT_ID)) {
             return new SummaryInformation(stream);
-        } else if (sectionCount > 0 && PropertySet.matchesSummary(clsId, SectionIDMap.DOCUMENT_SUMMARY_INFORMATION_ID)) {
+        } else if (sectionCount > 0 && PropertySet.matchesSummary(clsId, DocumentSummaryInformation.FORMAT_ID)) {
             return new DocumentSummaryInformation(stream);
         } else {
             return new PropertySet(stream);

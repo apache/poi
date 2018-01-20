@@ -39,8 +39,6 @@ import org.apache.poi.util.Units;
 
 /**
  *  Represents a group of shapes.
- *
- * @author Yegor Kozlov
  */
 public class HSLFGroupShape extends HSLFShape
 implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
@@ -358,6 +356,17 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
             throw new IllegalArgumentException("numRows and numCols must be greater than 0");
         }
         HSLFTable s = new HSLFTable(numRows,numCols,this);
+        s.setAnchor(new Rectangle2D.Double(0, 0, 100, 100));
+        addShape(s);
+        return s;
+    }
+
+    @Override
+    public HSLFObjectShape createOleShape(PictureData pictureData) {
+        if (!(pictureData instanceof HSLFPictureData)) {
+            throw new IllegalArgumentException("pictureData needs to be of type HSLFPictureData");
+        }
+        HSLFObjectShape s = new HSLFObjectShape((HSLFPictureData)pictureData, this);
         s.setAnchor(new Rectangle2D.Double(0, 0, 100, 100));
         addShape(s);
         return s;

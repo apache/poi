@@ -21,12 +21,18 @@ import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
 
 /**
+ * <p>
+ * All Header/Footer properties for a sheet are scoped to the sheet. This includes Different First Page,
+ * and Different Even/Odd. These properties can be set or unset explicitly in this class. Note that while
+ * Scale With Document and Align With Margins default to unset, Different First, and Different Even/Odd
+ * are updated automatically as headers and footers are added and removed. 
+ * </p>
  */
 public class XSSFHeaderFooterProperties {
 	private CTHeaderFooter headerFooter;
 
 	/**
-	 * Create an instance of XSSFAbstractHeaderFooter from the supplied XML bean
+	 * Create an instance of XSSFHeaderFooterProperties from the supplied XML bean
 	 *
 	 * @param headerFooter
 	 */

@@ -22,6 +22,7 @@ import static org.apache.poi.POITestCase.testPassesNow;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
@@ -739,6 +740,32 @@ public abstract class BaseTestSheetShiftRows {
 
         wb.close();
     }
+    
+    @Test
+    public void test61840_shifting_rows_up_does_not_produce_REF_errors() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet = wb.createSheet();
+        Cell cell = sheet.createRow(4).createCell(0);
+        
+        cell.setCellFormula("(B5-C5)/B5");
+        sheet.shiftRows(4, 4, -1);
+        
+        // Cell objects created before a row shift are still valid.
+        // The row number of those cell references will be shifted if
+        // the cell is within the shift range.
+        assertEquals("(B4-C4)/B4", cell.getCellFormula());
+        
+        // New cell references are also valid.
+        Cell shiftedCell = sheet.getRow(3).getCell(0);
+        assertNotNull(shiftedCell);
+        assertEquals("(B4-C4)/B4", shiftedCell.getCellFormula());
+        
+        wb.close();
+    }
+    
+    
+    
+    
 
     private void createHyperlink(CreationHelper helper, Cell cell, HyperlinkType linkType, String ref) {
         cell.setCellValue(ref);

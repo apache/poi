@@ -238,7 +238,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
      * @param pictureData The picture data
      * @param format      The format of the picture.
      * @return the index to this picture (0 based), the added picture can be obtained from {@link #getAllPictures()} .
-     * @throws InvalidFormatException
+     * @throws InvalidFormatException If the format of the picture is not known.
      */
     public String addPictureData(byte[] pictureData, int format) throws InvalidFormatException {
         XWPFPictureData xwpfPicData = document.findPackagePictureData(pictureData, format);
@@ -289,8 +289,8 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
      * @param is     The stream to read image from
      * @param format The format of the picture.
      * @return the index to this picture (0 based), the added picture can be obtained from {@link #getAllPictures()} .
-     * @throws InvalidFormatException
-     * @throws IOException
+     * @throws InvalidFormatException If the format of the picture is not known.
+     * @throws IOException If reading the picture-data from the stream fails.
      */
     public String addPictureData(InputStream is, int format) throws InvalidFormatException, IOException {
         byte[] data = IOUtils.toByteArray(is);

@@ -66,7 +66,7 @@ public class XSSFDataBarFormatting implements DataBarFormatting {
     }
 
     public XSSFColor getColor() {
-        return new XSSFColor(_databar.getColor(), _colorMap);
+        return XSSFColor.from(_databar.getColor(), _colorMap);
     }
     public void setColor(Color color) {
         _databar.setColor( ((XSSFColor)color).getCTColor() );

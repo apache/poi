@@ -23,11 +23,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -86,7 +83,7 @@ public final class TestUnfixedBugs {
     private void verifyBug54084Unicode(Workbook wb) {
         // expected data is stored in UTF-8 in a text-file
         byte data[] = HSSFTestDataSamples.getTestDataFileContent("54084 - Greek - beyond BMP.txt");
-        String testData = new String(data, Charset.forName("UTF-8")).trim();
+        String testData = new String(data, StandardCharsets.UTF_8).trim();
 
         Sheet sheet = wb.getSheetAt(0);
         Row row = sheet.getRow(0);
@@ -342,4 +339,41 @@ public final class TestUnfixedBugs {
        assertEquals("Did not have expected contents at rownum " + rowNum, 
                contents + ".0", cell.toString());
    }
+
+    @Test
+    public void bug57423_shiftRowsByLargeOffset() throws IOException {
+        try (
+            XSSFWorkbook wb = new XSSFWorkbook();
+            //OutputStream out = new FileOutputStream("/tmp/57423." + wb.getClass().getName() + ".xlsx"));
+        ) {
+            Sheet sh = wb.createSheet();
+            sh.createRow(0).createCell(0).setCellValue("a");
+            sh.createRow(1).createCell(0).setCellValue("b");
+            sh.createRow(2).createCell(0).setCellValue("c");
+            sh.shiftRows(0, 1, 3);
+
+            XSSFWorkbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
+
+            assertThatRowsInAscendingOrder(wb);
+            assertThatRowsInAscendingOrder(wbBack);
+
+            //wbBack.write(out);
+            // Excel reports that the workbook is corrupt because the rows are not in ascending order
+            // LibreOffice doesn't complain when rows are not in ascending order
+
+            wbBack.close();
+        }
+    }
+
+    private void assertThatRowsInAscendingOrder(final XSSFWorkbook wb) {
+        // Check that CTRows are stored in ascending order of row index
+        long maxSeenRowNum = 0; //1-based
+        for (final CTRow ctRow : wb.getSheetAt(0).getCTWorksheet().getSheetData().getRowArray()) {
+            final long rowNum = ctRow.getR(); //1-based
+            assertTrue("Row " + rowNum + " (1-based) is not in ascending order; previously saw " + maxSeenRowNum,
+                       rowNum > maxSeenRowNum);
+            maxSeenRowNum = rowNum;
+        }
+    }
+
 }

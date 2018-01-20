@@ -27,6 +27,7 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRElt;
@@ -42,6 +43,7 @@ import junit.framework.TestCase;
  */
 public final class TestSharedStringsTable extends TestCase {
 
+    @SuppressWarnings("deprecation")
     public void testCreateNew() {
         SharedStringsTable sst = new SharedStringsTable();
 
@@ -111,6 +113,72 @@ public final class TestSharedStringsTable extends TestCase {
         assertEquals("Hello, World!", new XSSFRichTextString(sst.getEntryAt(0)).toString());
         assertEquals("Second string", new XSSFRichTextString(sst.getEntryAt(1)).toString());
         assertEquals("Second string", new XSSFRichTextString(sst.getEntryAt(2)).toString());
+    }
+
+    public void testCreateUsingRichTextStrings() {
+        SharedStringsTable sst = new SharedStringsTable();
+
+        // Check defaults
+        assertNotNull(sst.getSharedStringItems());
+        assertEquals(0, sst.getSharedStringItems().size());
+        assertEquals(0, sst.getCount());
+        assertEquals(0, sst.getUniqueCount());
+
+        int idx;
+
+        XSSFRichTextString rts = new XSSFRichTextString("Hello, World!");
+
+        idx = sst.addSharedStringItem(rts);
+        assertEquals(0, idx);
+        assertEquals(1, sst.getCount());
+        assertEquals(1, sst.getUniqueCount());
+
+        //add the same entry again
+        idx = sst.addSharedStringItem(rts);
+        assertEquals(0, idx);
+        assertEquals(2, sst.getCount());
+        assertEquals(1, sst.getUniqueCount());
+
+        //and again
+        idx = sst.addSharedStringItem(rts);
+        assertEquals(0, idx);
+        assertEquals(3, sst.getCount());
+        assertEquals(1, sst.getUniqueCount());
+
+        rts = new XSSFRichTextString("Second string");
+
+        idx = sst.addSharedStringItem(rts);
+        assertEquals(1, idx);
+        assertEquals(4, sst.getCount());
+        assertEquals(2, sst.getUniqueCount());
+
+        //add the same entry again
+        idx = sst.addSharedStringItem(rts);
+        assertEquals(1, idx);
+        assertEquals(5, sst.getCount());
+        assertEquals(2, sst.getUniqueCount());
+
+        rts = new XSSFRichTextString("Second string");
+        XSSFFont font = new XSSFFont();
+        font.setFontName("Arial");
+        font.setBold(true);
+        rts.applyFont(font);
+
+        idx = sst.addSharedStringItem(rts);
+        assertEquals(2, idx);
+        assertEquals(6, sst.getCount());
+        assertEquals(3, sst.getUniqueCount());
+
+        idx = sst.addSharedStringItem(rts);
+        assertEquals(2, idx);
+        assertEquals(7, sst.getCount());
+        assertEquals(3, sst.getUniqueCount());
+
+        //OK. the sst table is filled, check the contents
+        assertEquals(3, sst.getSharedStringItems().size());
+        assertEquals("Hello, World!", sst.getItemAt(0).toString());
+        assertEquals("Second string", sst.getItemAt(1).toString());
+        assertEquals("Second string", sst.getItemAt(2).toString());
     }
 
     public void testReadWrite() throws IOException {

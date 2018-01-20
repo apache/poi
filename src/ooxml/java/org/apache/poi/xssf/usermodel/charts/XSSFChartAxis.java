@@ -22,8 +22,9 @@ import org.apache.poi.ss.usermodel.charts.AxisOrientation;
 import org.apache.poi.ss.usermodel.charts.AxisPosition;
 import org.apache.poi.ss.usermodel.charts.AxisTickMark;
 import org.apache.poi.ss.usermodel.charts.ChartAxis;
-import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
+import org.apache.poi.xddf.usermodel.chart.XDDFChartAxis;
 import org.apache.poi.xssf.usermodel.XSSFChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
@@ -43,9 +44,10 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 /**
  * Base class for all axis types.
  *
- * @author Roman Kashitsyn
+ * @deprecated use {@link XDDFChartAxis} instead
  */
-@Beta
+@Deprecated
+@Removal(version="4.2")
 public abstract class XSSFChartAxis implements ChartAxis {
 
 	protected XSSFChart chart;
@@ -221,7 +223,7 @@ public abstract class XSSFChartAxis implements ChartAxis {
 	protected abstract CTTickMark getMinorCTTickMark();
 	@Internal public abstract CTChartLines getMajorGridLines();
 	@Internal public abstract CTShapeProperties getLine();
-	
+
 	private static STOrientation.Enum fromAxisOrientation(AxisOrientation orientation) {
 		switch (orientation) {
 			case MIN_MAX: return STOrientation.MIN_MAX;

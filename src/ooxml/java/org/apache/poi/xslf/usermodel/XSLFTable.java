@@ -59,24 +59,27 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
 
         CTGraphicalObjectData god = shape.getGraphic().getGraphicData();
         XmlCursor xc = god.newCursor();
-        if (!xc.toChild(DRAWINGML_URI, "tbl")) {
-            throw new IllegalStateException("a:tbl element was not found in\n " + god);
+        try {
+            if (!xc.toChild(DRAWINGML_URI, "tbl")) {
+                throw new IllegalStateException("a:tbl element was not found in\n " + god);
+            }
+    
+            XmlObject xo = xc.getObject();
+            // Pesky XmlBeans bug - see Bugzilla #49934
+            // it never happens when using the full ooxml-schemas jar but may happen with the abridged poi-ooxml-schemas
+            if (xo instanceof XmlAnyTypeImpl){
+                String errStr =
+                    "Schemas (*.xsb) for CTTable can't be loaded - usually this happens when OSGI " +
+                    "loading is used and the thread context classloader has no reference to " +
+                    "the xmlbeans classes - use POIXMLTypeLoader.setClassLoader() to set the loader, " +
+                    "e.g. with CTTable.class.getClassLoader()"
+                ;
+                throw new IllegalStateException(errStr);
+            }
+            _table = (CTTable)xo;
+        } finally {
+            xc.dispose();
         }
-
-        XmlObject xo = xc.getObject();
-        // Pesky XmlBeans bug - see Bugzilla #49934
-        // it never happens when using the full ooxml-schemas jar but may happen with the abridged poi-ooxml-schemas
-        if (xo instanceof XmlAnyTypeImpl){
-            String errStr =
-                "Schemas (*.xsb) for CTTable can't be loaded - usually this happens when OSGI " +
-                "loading is used and the thread context classloader has no reference to " +
-                "the xmlbeans classes - use POIXMLTypeLoader.setClassLoader() to set the loader, " +
-                "e.g. with CTTable.class.getClassLoader()"
-            ;
-            throw new IllegalStateException(errStr);
-        }
-        _table = (CTTable)xo;
-        xc.dispose();
 
         _rows = new ArrayList<>(_table.sizeOfTrArray());
         for(CTTableRow row : _table.getTrArray()) {

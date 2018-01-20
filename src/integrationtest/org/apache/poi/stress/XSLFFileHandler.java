@@ -52,17 +52,14 @@ public class XSLFFileHandler extends SlideShowHandler {
         
         
         // additionally try the other getText() methods
-        
-        XSLFPowerPointExtractor extractor = (XSLFPowerPointExtractor) ExtractorFactory.createExtractor(file);
-        try  {
-            assertNotNull(extractor);
 
-            assertNotNull(extractor.getText(true, true, true));
-            assertEquals("With all options disabled we should not get text", 
-                    "", extractor.getText(false, false, false));
-        } finally {
-            extractor.close();
-        }
+		try (XSLFPowerPointExtractor extractor = (XSLFPowerPointExtractor) ExtractorFactory.createExtractor(file)) {
+			assertNotNull(extractor);
+
+			assertNotNull(extractor.getText(true, true, true));
+			assertEquals("With all options disabled we should not get text",
+					"", extractor.getText(false, false, false));
+		}
     }
 
     // a test-case to test this locally without executing the full TestAllFiles
@@ -70,11 +67,8 @@ public class XSLFFileHandler extends SlideShowHandler {
     @Test
 	public void test() throws Exception {
         File file = new File("test-data/slideshow/ae.ac.uaeu.faculty_nafaachbili_GeomLec1.pptx");
-        InputStream stream = new FileInputStream(file);
-		try {
+		try (InputStream stream = new FileInputStream(file)) {
 			handleFile(stream, file.getPath());
-		} finally {
-			stream.close();
 		}
 
 		handleExtracting(file);

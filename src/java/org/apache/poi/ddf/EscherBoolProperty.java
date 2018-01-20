@@ -52,19 +52,6 @@ public class EscherBoolProperty
         return getPropertyValue() != 0;
     }
 
-    /**
-     * Whether this boolean property is false
-     * 
-     * @return true, if this boolean property is false
-     * 
-     * @deprecated use !isTrue() instead, planed to be removed in POI 3.17
-     */
-    @Deprecated
-    public boolean isFalse()
-    {
-        return !isTrue();
-    }
-
 //    public String toString()
 //    {
 //        return "propNum: " + getPropertyNumber()

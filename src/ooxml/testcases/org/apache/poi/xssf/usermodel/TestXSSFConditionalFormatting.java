@@ -25,6 +25,15 @@ import java.io.IOException;
 
 import org.apache.poi.ss.usermodel.BaseTestConditionalFormatting;
 import org.apache.poi.ss.usermodel.Color;
+import org.apache.poi.ss.usermodel.ConditionalFormatting;
+import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
+import org.apache.poi.ss.usermodel.ExtendedColor;
+import org.apache.poi.ss.usermodel.FontFormatting;
+import org.apache.poi.ss.usermodel.PatternFormatting;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.junit.Test;
 
@@ -55,5 +64,70 @@ public class TestXSSFConditionalFormatting extends BaseTestConditionalFormatting
     @Test
     public void testReadOffice2007() throws IOException {
         testReadOffice2007("NewStyleConditionalFormattings.xlsx");
+    }
+
+    private final static java.awt.Color PEAK_ORANGE = new java.awt.Color(255, 239, 221);
+
+    @Test
+    public void testFontFormattingColor() {
+        XSSFWorkbook wb = XSSFITestDataProvider.instance.createWorkbook();
+        final Sheet sheet = wb.createSheet();
+
+        final SheetConditionalFormatting formatting = sheet.getSheetConditionalFormatting();
+
+        // the conditional formatting is not automatically added when it is created...
+        assertEquals(0, formatting.getNumConditionalFormattings());
+        ConditionalFormattingRule formattingRule = formatting.createConditionalFormattingRule("A1");
+        assertEquals(0, formatting.getNumConditionalFormattings());
+
+        // adding the formatting makes it available
+        int idx = formatting.addConditionalFormatting(new CellRangeAddress[] {}, formattingRule);
+
+        // verify that it can be accessed now
+        assertEquals(0, idx);
+        assertEquals(1, formatting.getNumConditionalFormattings());
+        assertEquals(1, formatting.getConditionalFormattingAt(idx).getNumberOfRules());
+
+        // this is confusing: the rule is not connected to the sheet, changes are not applied
+        // so we need to use setRule() explicitly!
+        FontFormatting fontFmt = formattingRule.createFontFormatting();
+        assertNotNull(formattingRule.getFontFormatting());
+        assertEquals(1, formatting.getConditionalFormattingAt(idx).getNumberOfRules());
+        formatting.getConditionalFormattingAt(idx).setRule(0, formattingRule);
+        assertNotNull(formatting.getConditionalFormattingAt(idx).getRule(0).getFontFormatting());
+
+        fontFmt.setFontStyle(true, false);
+
+        assertEquals(-1, fontFmt.getFontColorIndex());
+
+        //fontFmt.setFontColorIndex((short)11);
+        final ExtendedColor extendedColor = new XSSFColor(PEAK_ORANGE, wb.getStylesSource().getIndexedColors());
+        fontFmt.setFontColor(extendedColor);
+
+        PatternFormatting patternFmt = formattingRule.createPatternFormatting();
+        assertNotNull(patternFmt);
+        patternFmt.setFillBackgroundColor(extendedColor);
+
+        assertEquals(1, formatting.getConditionalFormattingAt(0).getNumberOfRules());
+        assertNotNull(formatting.getConditionalFormattingAt(0).getRule(0).getFontFormatting());
+        assertNotNull(formatting.getConditionalFormattingAt(0).getRule(0).getFontFormatting().getFontColor());
+        assertNotNull(formatting.getConditionalFormattingAt(0).getRule(0).getPatternFormatting().getFillBackgroundColorColor());
+
+        checkFontFormattingColorWriteOutAndReadBack(wb, extendedColor);
+    }
+
+    private void checkFontFormattingColorWriteOutAndReadBack(Workbook wb, ExtendedColor extendedColor) {
+        Workbook wbBack = XSSFITestDataProvider.instance.writeOutAndReadBack(wb);
+        assertNotNull(wbBack);
+
+        assertEquals(1, wbBack.getSheetAt(0).getSheetConditionalFormatting().getNumConditionalFormattings());
+        final ConditionalFormatting formattingBack = wbBack.getSheetAt(0).getSheetConditionalFormatting().getConditionalFormattingAt(0);
+        assertEquals(1, wbBack.getSheetAt(0).getSheetConditionalFormatting().getConditionalFormattingAt(0).getNumberOfRules());
+        final ConditionalFormattingRule ruleBack = formattingBack.getRule(0);
+        final FontFormatting fontFormattingBack = ruleBack.getFontFormatting();
+        assertNotNull(formattingBack);
+        assertNotNull(fontFormattingBack.getFontColor());
+        assertEquals(extendedColor, fontFormattingBack.getFontColor());
+        assertEquals(extendedColor, ruleBack.getPatternFormatting().getFillBackgroundColorColor());
     }
 }

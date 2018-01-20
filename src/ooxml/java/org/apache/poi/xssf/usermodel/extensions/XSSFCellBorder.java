@@ -133,7 +133,7 @@ public class XSSFCellBorder {
         CTBorderPr borderPr = getBorder(side);
         
         if(borderPr != null && borderPr.isSetColor()) { 
-            XSSFColor clr = new XSSFColor(borderPr.getColor(), _indexedColorMap);
+            XSSFColor clr = XSSFColor.from(borderPr.getColor(), _indexedColorMap);
             if(_theme != null) {
                _theme.inheritFromThemeAsRequired(clr);
             }

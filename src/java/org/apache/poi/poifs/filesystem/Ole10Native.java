@@ -17,6 +17,7 @@
 
 package org.apache.poi.poifs.filesystem;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -30,8 +31,6 @@ import org.apache.poi.util.StringUtil;
 /**
  * Represents an Ole10Native record which is wrapped around certain binary
  * files being embedded in OLE2 documents.
- *
- * @author Rainer Schwarze
  */
 public class Ole10Native {
 
@@ -41,6 +40,15 @@ public class Ole10Native {
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000_000;
 
+    /**
+     * Default content of the \u0001Ole entry
+     */
+    private static final byte[] OLE_MARKER_BYTES = 
+        { 1, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    private static final String OLE_MARKER_NAME = "\u0001Ole";
+
+    
+    
     // (the fields as they appear in the raw record:)
     private int totalSize;             // 4 bytes, total size of record not including this field
     private short flags1 = 2;          // 2 bytes, unknown, mostly [02 00]
@@ -205,6 +213,27 @@ public class Ole10Native {
         ofs += dataSize;
     }
 
+    /**
+     * Add the \1OLE marker entry, which is not the Ole10Native entry.
+     * Beside this "\u0001Ole" record there were several other records, e.g. CompObj,  
+     * OlePresXXX, but it seems, that they aren't necessary
+     */
+    public static void createOleMarkerEntry(final DirectoryEntry parent) throws IOException {
+        if (!parent.hasEntry(OLE_MARKER_NAME)) {
+            parent.createDocument(OLE_MARKER_NAME, new ByteArrayInputStream(OLE_MARKER_BYTES));
+        }
+    }
+
+    /**
+     * Add the \1OLE marker entry, which is not the Ole10Native entry.
+     * Beside this "\u0001Ole" record there were several other records, e.g. CompObj,  
+     * OlePresXXX, but it seems, that they aren't necessary
+     */
+    public static void createOleMarkerEntry(final POIFSFileSystem poifs) throws IOException {
+        createOleMarkerEntry(poifs.getRoot());
+    }
+    
+    
     /*
      * Helper - determine length of zero terminated string (ASCIIZ).
      */

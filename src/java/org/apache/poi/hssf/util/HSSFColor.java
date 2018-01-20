@@ -366,7 +366,7 @@ public class HSSFColor implements Color {
         // Currently the only benefit of this method is to throw an IllegalArgumentException
         // instead of a ClassCastException.
         if (color != null && !(color instanceof HSSFColor)) {
-            throw new IllegalArgumentException("Only HSSFColor objects are supported");
+            throw new IllegalArgumentException("Only HSSFColor objects are supported, but had " + color.getClass());
         }
         return (HSSFColor)color;
     }

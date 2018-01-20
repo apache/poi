@@ -19,7 +19,7 @@ package org.apache.poi.xssf.usermodel;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -403,7 +403,7 @@ public enum XSSFBuiltinTableStyle {
                     // hack because I can't figure out how to get XMLBeans to parse a sub-element in a standalone manner
                     // - build a fake styles.xml file with just this built-in
                     StylesTable styles = new StylesTable();
-                    styles.readFrom(new ByteArrayInputStream(styleXML(dxfsNode, tableStyleNode).getBytes(Charset.forName("UTF-8"))));
+                    styles.readFrom(new ByteArrayInputStream(styleXML(dxfsNode, tableStyleNode).getBytes(StandardCharsets.UTF_8)));
                     styleMap.put(builtIn, new XSSFBuiltinTypeStyleStyle(builtIn, styles.getExplicitTableStyle(styleName)));
                 }
             } finally {

@@ -3595,9 +3595,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
                 // Resetting the hyperlink array seems to break some XML nodes.
                 //worksheet.getHyperlinks().setHyperlinkArray(new CTHyperlink[0]);
                 worksheet.unsetHyperlinks();
-            } else {
+            } /*else {
                 // nothing to do
-            }
+            }*/
         }
 
         int minCell=Integer.MAX_VALUE, maxCell=Integer.MIN_VALUE;
@@ -3610,7 +3610,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
                 minCell = Math.min(minCell, row.getFirstCellNum());
             }
             if(row.getLastCellNum() != -1) {
-                maxCell = Math.max(maxCell, row.getLastCellNum());
+                maxCell = Math.max(maxCell, row.getLastCellNum()-1);
             }
         }
 
@@ -3954,7 +3954,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
 
     @Override
     public CellRange<XSSFCell> setArrayFormula(String formula, CellRangeAddress range) {
-
         CellRange<XSSFCell> cr = getCellRange(range);
 
         XSSFCell mainArrayFormulaCell = cr.getTopLeftCell();
@@ -4061,24 +4060,40 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * Creates a new Table, and associates it with this Sheet
      */
     public XSSFTable createTable() {
-       if(! worksheet.isSetTableParts()) {
-          worksheet.addNewTableParts();
-       }
+        if(! worksheet.isSetTableParts()) {
+            worksheet.addNewTableParts();
+        }
 
-       CTTableParts tblParts = worksheet.getTableParts();
-       CTTablePart tbl = tblParts.addNewTablePart();
+        CTTableParts tblParts = worksheet.getTableParts();
+        CTTablePart tbl = tblParts.addNewTablePart();
 
-       // Table numbers need to be unique in the file, not just
-       //  unique within the sheet. Find the next one
-       int tableNumber = getPackagePart().getPackage().getPartsByContentType(XSSFRelation.TABLE.getContentType()).size() + 1;
-       RelationPart rp = createRelationship(XSSFRelation.TABLE, XSSFFactory.getInstance(), tableNumber, false);
-       XSSFTable table = rp.getDocumentPart();
-       tbl.setId(rp.getRelationship().getId());
-       table.getCTTable().setId(tableNumber);
+        // Table numbers need to be unique in the file, not just
+        //  unique within the sheet. Find the next one
+        int tableNumber = getPackagePart().getPackage().getPartsByContentType(XSSFRelation.TABLE.getContentType()).size() + 1;
 
-       tables.put(tbl.getId(), table);
+        // the id could already be taken after insertion/deletion of different tables
+        outerloop:
+        while(true) {
+            for (PackagePart packagePart : getPackagePart().getPackage().getPartsByContentType(XSSFRelation.TABLE.getContentType())) {
+                String fileName = XSSFRelation.TABLE.getFileName(tableNumber);
+                if(fileName.equals(packagePart.getPartName().getName())) {
+                    // duplicate found, increase the number and start iterating again
+                    tableNumber++;
+                    continue outerloop;
+                }
+            }
 
-       return table;
+            break;
+        }
+
+        RelationPart rp = createRelationship(XSSFRelation.TABLE, XSSFFactory.getInstance(), tableNumber, false);
+        XSSFTable table = rp.getDocumentPart();
+        tbl.setId(rp.getRelationship().getId());
+        table.getCTTable().setId(tableNumber);
+
+        tables.put(tbl.getId(), table);
+
+        return table;
     }
 
     /**
@@ -4125,7 +4140,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         if (!pr.isSetTabColor()) {
             return null;
         }
-        return new XSSFColor(pr.getTabColor(), getWorkbook().getStylesSource().getIndexedColors());
+        return XSSFColor.from(pr.getTabColor(), getWorkbook().getStylesSource().getIndexedColors());
     }
     
     /**
@@ -4558,7 +4573,40 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             removeRelation(part.getDocumentPart(), true);
         }
     }
-    
+
+    /**
+     *  when a cell with a 'master' shared formula is removed,  the next cell in the range becomes the master
+     */
+    protected void onDeleteFormula(XSSFCell cell){
+
+        CTCellFormula f = cell.getCTCell().getF();
+        if (f != null && f.getT() == STCellFormulaType.SHARED && f.isSetRef() && f.getStringValue() != null) {
+
+            CellRangeAddress ref = CellRangeAddress.valueOf(f.getRef());
+            if(ref.getNumberOfCells() > 1){
+                DONE:
+                for(int i = cell.getRowIndex(); i <= ref.getLastRow(); i++){
+                    XSSFRow row = getRow(i);
+                    if(row != null) for(int j = cell.getColumnIndex(); j <= ref.getLastColumn(); j++){
+                        XSSFCell nextCell = row.getCell(j);
+                        if(nextCell != null && nextCell != cell){
+                            CTCellFormula nextF = nextCell.getCTCell().getF();
+                            nextF.setStringValue(nextCell.getCellFormula());
+                            CellRangeAddress nextRef = new CellRangeAddress(
+                                    nextCell.getRowIndex(), ref.getLastRow(),
+                                    nextCell.getColumnIndex(), ref.getLastColumn());
+                            nextF.setRef(nextRef.formatAsString());
+
+                            sharedFormulas.put((int)nextF.getSi(), nextF);
+                            break DONE;
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+
     /**
      * Determine the OleObject which links shapes with embedded resources
      *

@@ -202,7 +202,7 @@ public final class OperandResolver {
         if(!ae.isRow()) {
             // multi-column, multi-row area
             if(ae.containsRow(srcCellRow) && ae.containsColumn(srcCellCol)) {
-                return ae.getAbsoluteValue(ae.getFirstRow(), ae.getFirstColumn());
+                return ae.getAbsoluteValue(srcCellRow, srcCellCol);
             }
             throw EvaluationException.invalidValue();
         }
