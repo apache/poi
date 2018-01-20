@@ -67,12 +67,12 @@ import org.openxmlformats.schemas.presentationml.x2006.main.PresentationDocument
 /**
  * High level representation of a ooxml slideshow.
  * This is the first object most users will construct whether
- *  they are reading or writing a slideshow. It is also the
- *  top level object for creating new slides/etc.
+ * they are reading or writing a slideshow. It is also the
+ * top level object for creating new slides/etc.
  */
 @Beta
 public class XMLSlideShow extends POIXMLDocument
-implements SlideShow<XSLFShape,XSLFTextParagraph> {
+        implements SlideShow<XSLFShape, XSLFTextParagraph> {
     private static final POILogger LOG = POILogFactory.getLogger(XMLSlideShow.class);
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 1_000_000;
@@ -94,13 +94,13 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
         super(pkg);
 
         try {
-            if(getCorePart().getContentType().equals(XSLFRelation.THEME_MANAGER.getContentType())) {
+            if (getCorePart().getContentType().equals(XSLFRelation.THEME_MANAGER.getContentType())) {
                 rebase(getPackage());
             }
 
             //build a tree of POIXMLDocumentParts, this presentation being the root
             load(XSLFFactory.getInstance());
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new POIXMLException(e);
         }
     }
@@ -116,7 +116,7 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
         }
         try {
             return OPCPackage.open(is);
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new POIXMLException(e);
         } finally {
             IOUtils.closeQuietly(is);
@@ -144,17 +144,17 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
                     }
                 } else if (p instanceof XSLFSlideMaster) {
                     masterMap.put(getRelationId(p), (XSLFSlideMaster) p);
-                } else if (p instanceof XSLFTableStyles){
-                    _tableStyles = (XSLFTableStyles)p;
+                } else if (p instanceof XSLFTableStyles) {
+                    _tableStyles = (XSLFTableStyles) p;
                 } else if (p instanceof XSLFNotesMaster) {
-                    _notesMaster = (XSLFNotesMaster)p;
+                    _notesMaster = (XSLFNotesMaster) p;
                 } else if (p instanceof XSLFCommentAuthors) {
-                    _commentAuthors = (XSLFCommentAuthors)p;
+                    _commentAuthors = (XSLFCommentAuthors) p;
                 }
             }
 
             _charts = new ArrayList<>(chartMap.size());
-            for(XSLFChart chart : chartMap.values()) {
+            for (XSLFChart chart : chartMap.values()) {
                 _charts.add(chart);
             }
 
@@ -200,10 +200,10 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
 
     @Override
     public List<XSLFPictureData> getPictureData() {
-        if(_pictures == null){
+        if (_pictures == null) {
             List<PackagePart> mediaParts = getPackage().getPartsByName(Pattern.compile("/ppt/media/.*?"));
             _pictures = new ArrayList<>(mediaParts.size());
-            for(PackagePart part : mediaParts){
+            for (PackagePart part : mediaParts) {
                 XSLFPictureData pd = new XSLFPictureData(part);
                 pd.setIndex(_pictures.size());
                 _pictures.add(pd);
@@ -226,8 +226,8 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
             slideList = _presentation.addNewSldIdLst();
         } else {
             slideList = _presentation.getSldIdLst();
-            for(CTSlideIdListEntry slideId : slideList.getSldIdArray()){
-                slideNumber = (int)Math.max(slideId.getId() + 1, slideNumber);
+            for (CTSlideIdListEntry slideId : slideList.getSldIdArray()) {
+                slideNumber = (int) Math.max(slideId.getId() + 1, slideNumber);
                 cnt++;
             }
 
@@ -253,7 +253,7 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
     private int findNextAvailableFileNameIndex(XSLFRelation relationType, int idx) {
         // Bug 55791: We also need to check that the resulting file name is not already taken
         // this can happen when removing/adding slides, notes or charts
-        while(true) {
+        while (true) {
             String fileName = relationType.getFileName(idx);
             boolean found = false;
             for (POIXMLDocumentPart relation : getRelations()) {
@@ -265,7 +265,7 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
                 }
             }
 
-            if(!found &&
+            if (!found &&
                     getPackage().getPartsByName(Pattern.compile(Pattern.quote(fileName))).size() > 0) {
                 // name is taken => try next one
                 found = true;
@@ -305,14 +305,9 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
         int chartIdx = findNextAvailableFileNameIndex(XSLFRelation.CHART, _charts.size() + 1);
         XSLFChart chart = (XSLFChart) createRelationship(XSLFRelation.CHART, XSLFFactory.getInstance(), chartIdx, true).getDocumentPart();
         slide.addRelation(null, XSLFRelation.CHART, chart);
-        createWorkbookRelationship(chart, chartIdx);
+        chart.setChartIndex(chartIdx);
         _charts.add(chart);
         return chart;
-    }
-
-    protected PackageRelationship createWorkbookRelationship(XSLFChart chart, int chartIdx) {
-        POIXMLDocumentPart worksheet = createRelationship(XSLFChart.WORKBOOK_RELATIONSHIP, XSLFFactory.getInstance(), chartIdx, true).getDocumentPart();
-        return chart.addRelation(null, XSLFChart.WORKBOOK_RELATIONSHIP, worksheet).getRelationship();
     }
 
     /**
@@ -344,7 +339,7 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
 
         // add notes slide to presentation
         XSLFNotes notesSlide = (XSLFNotes) createRelationship
-            (relationType, XSLFFactory.getInstance(), slideIndex);
+                (relationType, XSLFFactory.getInstance(), slideIndex);
         // link slide and notes slide with each other
         slide.addRelation(null, relationType, notesSlide);
         notesSlide.addRelation(null, XSLFRelation.NOTES_MASTER, _notesMaster);
@@ -360,7 +355,7 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
      */
     public void createNotesMaster() {
         RelationPart rp = createRelationship
-            (XSLFRelation.NOTES_MASTER, XSLFFactory.getInstance(), 1, false);
+                (XSLFRelation.NOTES_MASTER, XSLFFactory.getInstance(), 1, false);
         _notesMaster = rp.getDocumentPart();
 
         CTNotesMasterIdList notesMasterIdList = _presentation.addNewNotesMasterIdLst();
@@ -390,7 +385,7 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
         }
 
         XSLFTheme theme = (XSLFTheme) createRelationship
-            (XSLFRelation.THEME, XSLFFactory.getInstance(), themeIndex);
+                (XSLFRelation.THEME, XSLFFactory.getInstance(), themeIndex);
         theme.importTheme(getSlides().get(0).getTheme());
 
         _notesMaster.addRelation(null, XSLFRelation.THEME, theme);
@@ -433,12 +428,11 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
     }
 
     /**
-     *
      * @param newIndex 0-based index of the slide
      */
-    public void setSlideOrder(XSLFSlide slide, int newIndex){
+    public void setSlideOrder(XSLFSlide slide, int newIndex) {
         int oldIndex = _slides.indexOf(slide);
-        if(oldIndex == -1) {
+        if (oldIndex == -1) {
             throw new IllegalArgumentException("Slide not found");
         }
         if (oldIndex == newIndex) {
@@ -461,7 +455,7 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
         sldIdLst.setSldIdArray(entries);
     }
 
-    public XSLFSlide removeSlide(int index){
+    public XSLFSlide removeSlide(int index) {
         XSLFSlide slide = _slides.remove(index);
         removeRelation(slide);
         _presentation.getSldIdLst().removeSldId(index);
@@ -479,15 +473,15 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
     }
 
     @Override
-    public Dimension getPageSize(){
+    public Dimension getPageSize() {
         CTSlideSize sz = _presentation.getSldSz();
         int cx = sz.getCx();
         int cy = sz.getCy();
-        return new Dimension((int)Units.toPoints(cx), (int)Units.toPoints(cy));
+        return new Dimension((int) Units.toPoints(cx), (int) Units.toPoints(cy));
     }
 
     @Override
-    public void setPageSize(Dimension pgSize){
+    public void setPageSize(Dimension pgSize) {
         CTSlideSize sz = CTSlideSize.Factory.newInstance();
         sz.setCx(Units.toEMU(pgSize.getWidth()));
         sz.setCy(Units.toEMU(pgSize.getHeight()));
@@ -496,16 +490,15 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
 
 
     @Internal
-    public CTPresentation getCTPresentation(){
+    public CTPresentation getCTPresentation() {
         return _presentation;
     }
 
     /**
      * Adds a picture to the workbook.
      *
-     * @param pictureData       The bytes of the picture
-     * @param format            The format of the picture.
-     *
+     * @param pictureData The bytes of the picture
+     * @param format      The format of the picture.
      * @return the picture data
      */
     @Override
@@ -518,7 +511,7 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
         int imageNumber = _pictures.size();
         XSLFRelation relType = XSLFPictureData.getRelationForType(format);
         if (relType == null) {
-            throw new IllegalArgumentException("Picture type "+format+" is not supported.");
+            throw new IllegalArgumentException("Picture type " + format + " is not supported.");
         }
 
         img = createRelationship(relType, XSLFFactory.getInstance(), imageNumber + 1, true).getDocumentPart();
@@ -538,15 +531,13 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
     /**
      * Adds a picture to the slideshow.
      *
-     * @param is                The stream to read image from
-     * @param format              The format of the picture
-     *
+     * @param is     The stream to read image from
+     * @param format The format of the picture
      * @return the picture data
      * @since 3.15 beta 2
      */
     @Override
-    public XSLFPictureData addPicture(InputStream is, PictureType format) throws IOException
-    {
+    public XSLFPictureData addPicture(InputStream is, PictureType format) throws IOException {
         return addPicture(IOUtils.toByteArray(is), format);
     }
 
@@ -554,15 +545,13 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
     /**
      * Adds a picture to the presentation.
      *
-     * @param pict             The file containing the image to add
-     * @param format           The format of the picture.
-     *
+     * @param pict   The file containing the image to add
+     * @param format The format of the picture.
      * @return the picture data
      * @since 3.15 beta 2
      */
     @Override
-    public XSLFPictureData addPicture(File pict, PictureType format) throws IOException
-    {
+    public XSLFPictureData addPicture(File pict, PictureType format) throws IOException {
         int length = (int) pict.length();
         byte[] data = IOUtils.safelyAllocate(length, MAX_RECORD_LENGTH);
         try (InputStream is = new FileInputStream(pict)) {
@@ -583,10 +572,10 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
     public XSLFPictureData findPictureData(byte[] pictureData) {
         long checksum = IOUtils.calculateChecksum(pictureData);
         byte cs[] = new byte[LittleEndianConsts.LONG_SIZE];
-        LittleEndian.putLong(cs,0,checksum);
+        LittleEndian.putLong(cs, 0, checksum);
 
-        for(XSLFPictureData pic : getPictureData()){
-            if(Arrays.equals(pic.getChecksum(), cs)) {
+        for (XSLFPictureData pic : getPictureData()) {
+            if (Arrays.equals(pic.getChecksum(), cs)) {
                 return pic;
             }
         }
@@ -597,7 +586,7 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
     /**
      * Scan the master slides for the first slide layout with the given name.
      *
-     * @param name  The layout name (case-insensitive). Cannot be null.
+     * @param name The layout name (case-insensitive). Cannot be null.
      * @return the first layout found or null on failure
      */
     public XSLFSlideLayout findLayout(String name) {
@@ -611,23 +600,23 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
     }
 
 
-    public XSLFTableStyles getTableStyles(){
+    public XSLFTableStyles getTableStyles() {
         return _tableStyles;
     }
 
     CTTextParagraphProperties getDefaultParagraphStyle(int level) {
         XmlObject[] o = _presentation.selectPath(
                 "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' " +
-                "declare namespace a='http://schemas.openxmlformats.org/drawingml/2006/main' " +
-                ".//p:defaultTextStyle/a:lvl" +(level+1)+ "pPr");
-        if(o.length == 1){
-            return (CTTextParagraphProperties)o[0];
+                        "declare namespace a='http://schemas.openxmlformats.org/drawingml/2006/main' " +
+                        ".//p:defaultTextStyle/a:lvl" + (level + 1) + "pPr");
+        if (o.length == 1) {
+            return (CTTextParagraphProperties) o[0];
         }
         return null;
     }
 
     @Override
-    public MasterSheet<XSLFShape,XSLFTextParagraph> createMasterSheet() throws IOException {
+    public MasterSheet<XSLFShape, XSLFTextParagraph> createMasterSheet() throws IOException {
         // TODO: implement!
         throw new UnsupportedOperationException();
     }
