@@ -1652,14 +1652,10 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         //get package part of xwpfchart object
         XWPFChart xwpfChart = rp.getDocumentPart();
         
-        //create embedded part for embedded xlsx file
-        PackageRelationship xlsx = xwpfChart.createRelationshipInChart(XWPFRelation.WORKBOOK_RELATIONSHIP,XWPFFactory.getInstance(),chartNumber);
+		xwpfChart.setChartIndex(chartNumber);
         
         //set in line object into xwpfchart object
         xwpfChart.setAttachTo(inline);
-        
-        //add relation id in xwpfchart object
-        xwpfChart.setExternalId(xlsx.getId());
         
         //add chart object to chart list
         charts.add(xwpfChart);
