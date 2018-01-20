@@ -39,7 +39,9 @@ import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.xddf.usermodel.chart.XDDFChart;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * Represents an entry of a OOXML package.
@@ -50,12 +52,29 @@ import org.apache.poi.xssf.usermodel.XSSFRelation;
  */
 public class POIXMLDocumentPart {
     private static final POILogger logger = POILogFactory.getLogger(POIXMLDocumentPart.class);
-
+    
     private String coreDocumentRel = PackageRelationshipTypes.CORE_DOCUMENT;
     private PackagePart packagePart;
     private POIXMLDocumentPart parent;
     private Map<String,RelationPart> relations = new LinkedHashMap<>();
-
+    private boolean isCommited = false;
+    
+    /**
+     * to check whether embedded part is already committed 
+     * @return return true if embedded part is committed
+     */
+    public boolean isCommited() {
+        return isCommited;
+    }
+    
+    /**
+     * setter method to set embedded part is committed
+     * @param isCommited boolean value
+     */
+    public void setCommited(boolean isCommited) {
+        this.isCommited = isCommited;
+    }
+    
     /**
      * The RelationPart is a cached relationship between the document, which contains the RelationPart,
      * and one of its referenced child document parts.
@@ -88,27 +107,27 @@ public class POIXMLDocumentPart {
             return (T)documentPart;
         }
     }
-
+    
     /**
      * Counter that provides the amount of incoming relations from other parts
      * to this part.
      */
     private int relationCounter;
-
+    
     int incrementRelationCounter() {
         relationCounter++;
         return relationCounter;
     }
-
+    
     int decrementRelationCounter() {
         relationCounter--;
         return relationCounter;
     }
-
+    
     int getRelationCounter() {
         return relationCounter;
     }
-
+    
     /**
      * Construct POIXMLDocumentPart representing a "core document" package part.
      * 
@@ -117,7 +136,7 @@ public class POIXMLDocumentPart {
     public POIXMLDocumentPart(OPCPackage pkg) {
         this(pkg, PackageRelationshipTypes.CORE_DOCUMENT);
     }
-
+    
     /**
      * Construct POIXMLDocumentPart representing a custom "core document" package part.
      * 
@@ -136,7 +155,7 @@ public class POIXMLDocumentPart {
      */
     public POIXMLDocumentPart() {
     }
-
+    
     /**
      * Creates an POIXMLDocumentPart representing the given package part and relationship.
      * Called by {@link #read(POIXMLFactory, java.util.Map)} when reading in an existing file.
@@ -149,7 +168,7 @@ public class POIXMLDocumentPart {
     public POIXMLDocumentPart(PackagePart part) {
         this(null, part);
     }
-
+    
     /**
      * Creates an POIXMLDocumentPart representing the given package part, relationship and parent
      * Called by {@link #read(POIXMLFactory, java.util.Map)} when reading in an existing file.
@@ -164,7 +183,7 @@ public class POIXMLDocumentPart {
         this.packagePart = part;
         this.parent = parent;
     }
-
+    
     /**
      * When you open something like a theme, call this to
      *  re-base the XML Document onto the core child of the
@@ -177,16 +196,16 @@ public class POIXMLDocumentPart {
      */
     protected final void rebase(OPCPackage pkg) throws InvalidFormatException {
         PackageRelationshipCollection cores =
-            packagePart.getRelationshipsByType(coreDocumentRel);
+                packagePart.getRelationshipsByType(coreDocumentRel);
         if(cores.size() != 1) {
             throw new IllegalStateException(
-                "Tried to rebase using " + coreDocumentRel +
-                " but found " + cores.size() + " parts of the right type"
-            );
+                    "Tried to rebase using " + coreDocumentRel +
+                    " but found " + cores.size() + " parts of the right type"
+                    );
         }
         packagePart = packagePart.getRelatedPart(cores.getRelationship(0));
     }
-
+    
     /**
      * Provides access to the underlying PackagePart
      *
@@ -195,7 +214,7 @@ public class POIXMLDocumentPart {
     public final PackagePart getPackagePart(){
         return packagePart;
     }
-
+    
     /**
      * Returns the list of child relations for this POIXMLDocumentPart
      *
@@ -208,7 +227,7 @@ public class POIXMLDocumentPart {
         }
         return Collections.unmodifiableList(l);
     }
-
+    
     /**
      * Returns the list of child relations for this POIXMLDocumentPart
      *
@@ -218,7 +237,7 @@ public class POIXMLDocumentPart {
         List<RelationPart> l = new ArrayList<>(relations.values());
         return Collections.unmodifiableList(l);
     }
-
+    
     /**
      * Returns the target {@link POIXMLDocumentPart}, where a
      * {@link PackageRelationship} is set from the {@link PackagePart} of this
@@ -234,7 +253,7 @@ public class POIXMLDocumentPart {
         RelationPart rp = getRelationPartById(id);
         return (rp == null) ? null : rp.getDocumentPart();
     }
-
+    
     /**
      * Returns the target {@link RelationPart}, where a
      * {@link PackageRelationship} is set from the {@link PackagePart} of this
@@ -251,7 +270,7 @@ public class POIXMLDocumentPart {
     public final RelationPart getRelationPartById(String id) {
         return relations.get(id);
     }
-
+    
     /**
      * Returns the first {@link PackageRelationship#getId()} of the
      * {@link PackageRelationship}, that sources from the {@link PackagePart} of
@@ -275,7 +294,7 @@ public class POIXMLDocumentPart {
         }
         return null;
     }
-
+    
     /**
      * Add a new child POIXMLDocumentPart
      *
@@ -297,7 +316,7 @@ public class POIXMLDocumentPart {
         addRelation(pr, part);
         return new RelationPart(pr, part);
     }
-
+    
     /**
      * Add a new child POIXMLDocumentPart
      *
@@ -307,9 +326,9 @@ public class POIXMLDocumentPart {
     private void addRelation(PackageRelationship pr, POIXMLDocumentPart part) {
         relations.put(pr.getId(), new RelationPart(pr,part));
         part.incrementRelationCounter();
-
+        
     }
-
+    
     /**
      * Remove the relation to the specified part in this package and remove the
      * part, if it is no longer needed.<p>
@@ -323,7 +342,7 @@ public class POIXMLDocumentPart {
     protected final void removeRelation(POIXMLDocumentPart part){
         removeRelation(part,true);
     }
-
+    
     /**
      * Remove the relation to the specified part in this package and remove the
      * part, if it is no longer needed and flag is set to true.<p>
@@ -343,7 +362,7 @@ public class POIXMLDocumentPart {
         String id = getRelationId(part);
         return removeRelation(id, removeUnusedParts);
     }
-
+    
     /**
      * Remove the relation to the specified part in this package and remove the
      * part, if it is no longer needed.<p>
@@ -359,7 +378,7 @@ public class POIXMLDocumentPart {
     protected final void removeRelation(String partId) {
         removeRelation(partId, true);
     }
-
+    
     /**
      * Remove the relation to the specified part in this package and remove the
      * part, if it is no longer needed and flag is set to true.<p>
@@ -386,7 +405,7 @@ public class POIXMLDocumentPart {
         getPackagePart().removeRelationship(partId);
         /* remove POIXMLDocument from relations */
         relations.remove(partId);
-
+        
         if (removeUnusedParts) {
             /* if last relation to target part was removed, delete according target part */
             if (part.getRelationCounter() == 0) {
@@ -400,7 +419,7 @@ public class POIXMLDocumentPart {
         }
         return true;
     }
-
+    
     
     
     /**
@@ -411,12 +430,12 @@ public class POIXMLDocumentPart {
     public final POIXMLDocumentPart getParent(){
         return parent;
     }
-
+    
     @Override
     public String toString(){
         return packagePart == null ? "" : packagePart.toString();
     }
-
+    
     /**
      * Save the content in the underlying package part.
      * Default implementation is empty meaning that the package part is left unmodified.
@@ -437,9 +456,9 @@ public class POIXMLDocumentPart {
      * @throws IOException a subclass may throw an IOException if the changes can't be committed
      */
     protected void commit() throws IOException {
-
+        
     }
-
+    
     /**
      * Save changes in the underlying OOXML package.
      * Recursively fires {@link #commit()} for each package part
@@ -449,9 +468,15 @@ public class POIXMLDocumentPart {
      * @throws IOException a related part may throw an IOException if the changes can't be saved
      */
     protected final void onSave(Set<PackagePart> alreadySaved) throws IOException{
+        //if part is already committed then return
+        if(this.isCommited)
+        {
+            return ;
+        }
+        
         // this usually clears out previous content in the part...
         prepareForCommit();
-
+        
         commit();
         alreadySaved.add(this.getPackagePart());
         for(RelationPart rp : relations.values()){
@@ -461,7 +486,7 @@ public class POIXMLDocumentPart {
             }
         }
     }
-
+    
     /**
      * Ensure that a memory based package part does not have lingering data from previous
      * commit() calls.
@@ -475,7 +500,7 @@ public class POIXMLDocumentPart {
             part.clear();
         }
     }
-
+    
     /**
      * Create a new child POIXMLDocumentPart
      *
@@ -490,7 +515,7 @@ public class POIXMLDocumentPart {
     public final POIXMLDocumentPart createRelationship(POIXMLRelation descriptor, POIXMLFactory factory){
         return createRelationship(descriptor, factory, -1, false).getDocumentPart();
     }
-
+    
     /**
      * Create a new child POIXMLDocumentPart
      *
@@ -557,7 +582,7 @@ public class POIXMLDocumentPart {
         }
         return -1;
     }
-
+    
     /**
      * Create a new child POIXMLDocumentPart
      *
@@ -587,18 +612,18 @@ public class POIXMLDocumentPart {
                 /* only add to relations, if according relationship is being created. */
                 addRelation(rel,doc);
             }
-
+            
             return new RelationPart(rel,doc);
         } catch (PartAlreadyExistsException pae) {
-           // Return the specific exception so the user knows
-           //  that the name is already taken
-           throw pae;
+            // Return the specific exception so the user knows
+            //  that the name is already taken
+            throw pae;
         } catch (Exception e){
-           // Give a general wrapped exception for the problem
-           throw new POIXMLException(e);
+            // Give a general wrapped exception for the problem
+            throw new POIXMLException(e);
         }
     }
-
+    
     /**
      * Iterate through the underlying PackagePart and create child POIXMLFactory instances
      * using the specified factory
@@ -615,17 +640,17 @@ public class POIXMLDocumentPart {
         if (otherChild != null && otherChild != this) {
             throw new POIXMLException("Unique PackagePart-POIXMLDocumentPart relation broken!");
         }
-
+        
         if (!pp.hasRelationships()) return;
-
+        
         PackageRelationshipCollection rels = packagePart.getRelationships();
         List<POIXMLDocumentPart> readLater = new ArrayList<>();
-
+        
         // scan breadth-first, so parent-relations are hopefully the shallowest element
         for (PackageRelationship rel : rels) {
             if(rel.getTargetMode() == TargetMode.INTERNAL){
                 URI uri = rel.getTargetURI();
-
+                
                 // check for internal references (e.g. '#Sheet1!A1')
                 PackagePartName relName;
                 if(uri.getRawFragment() != null) {
@@ -633,31 +658,37 @@ public class POIXMLDocumentPart {
                 } else {
                     relName = PackagingURIHelper.createPartName(uri);
                 }
-
+                
                 final PackagePart p = packagePart.getPackage().getPart(relName);
                 if (p == null) {
                     logger.log(POILogger.ERROR, "Skipped invalid entry " + rel.getTargetURI());
                     continue;
                 }
-
+                
                 POIXMLDocumentPart childPart = context.get(p);
                 if (childPart == null) {
                     childPart = factory.createDocumentPart(this, p);
+                    //here we are checking if part if embedded and excel then set it to chart class
+                    //so that at the time to writing we can also write updated embedded part
+                    if(this instanceof XDDFChart && childPart instanceof XSSFWorkbook)
+                    {
+                        ((XDDFChart)this).setWorkbook((XSSFWorkbook)childPart);
+                    }
                     childPart.parent = this;
                     // already add child to context, so other children can reference it
                     context.put(p, childPart);
                     readLater.add(childPart);
                 }
-
+                
                 addRelation(rel,childPart);
             }
         }
-
+        
         for (POIXMLDocumentPart childPart : readLater) {
             childPart.read(factory, context);
         }
     }
-
+    
     /**
      * Get the PackagePart that is the target of a relationship from this Part.
      *
@@ -668,35 +699,35 @@ public class POIXMLDocumentPart {
     protected PackagePart getTargetPart(PackageRelationship rel) throws InvalidFormatException {
         return getPackagePart().getRelatedPart(rel);
     }
-
-
+    
+    
     /**
      * Fired when a new package part is created
      * 
      * @throws IOException a subclass may throw an IOException on document creation
      */
     protected void onDocumentCreate() throws IOException {
-
+        
     }
-
+    
     /**
      * Fired when a package part is read
      * 
      * @throws IOException a subclass may throw an IOException when a document is read
      */
     protected void onDocumentRead() throws IOException {
-
+        
     }
-
+    
     /**
      * Fired when a package part is about to be removed from the package
      * 
      * @throws IOException a subclass may throw an IOException when a document is removed
      */
     protected void onDocumentRemove() throws IOException {
-
+        
     }
-
+    
     /**
      * Internal method, do not use!
      * <p>
@@ -711,7 +742,7 @@ public class POIXMLDocumentPart {
     public static void _invokeOnDocumentRead(POIXMLDocumentPart part) throws IOException {
         part.onDocumentRead();
     }
-
+    
     /**
      * Retrieves the core document part
      * 
@@ -719,7 +750,7 @@ public class POIXMLDocumentPart {
      */
     private static PackagePart getPartFromOPCPackage(OPCPackage pkg, String coreDocumentRel) {
         PackageRelationship coreRel = pkg.getRelationshipsByType(coreDocumentRel).getRelationship(0);
-
+        
         if (coreRel != null) {
             PackagePart pp = pkg.getPart(coreRel);
             if (pp == null) {
@@ -732,7 +763,7 @@ public class POIXMLDocumentPart {
         if (coreRel != null) {
             throw new POIXMLException("Strict OOXML isn't currently supported, please see bug #57699");
         }
-
+        
         throw new POIXMLException("OOXML file structure broken/invalid - no core document found!");
     }
 }

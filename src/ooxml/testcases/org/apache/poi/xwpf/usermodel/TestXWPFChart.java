@@ -20,6 +20,7 @@ package org.apache.poi.xwpf.usermodel;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.xddf.usermodel.chart.XDDFBarChartData;
 import org.apache.poi.xddf.usermodel.chart.XDDFChartData;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
@@ -33,7 +34,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
 import junit.framework.TestCase;
 
 public class TestXWPFChart extends TestCase {
-
+    
     /**
      * test method to check charts are not null
      */
@@ -46,7 +47,7 @@ public class TestXWPFChart extends TestCase {
         checkData(charts.get(0));
         checkData(charts.get(1));
     }
-
+    
     private void checkData(XWPFChart chart) {
         assertNotNull(chart);
         assertEquals(1, chart.getChartSeries().size());
@@ -54,7 +55,7 @@ public class TestXWPFChart extends TestCase {
         assertEquals(XDDFBarChartData.class, data.getClass());
         assertEquals(3, data.getSeries().size());
     }
-
+    
     /**
      * test method to add chart title and check whether it's set
      */
@@ -86,5 +87,30 @@ public class TestXWPFChart extends TestCase {
         assertEquals(XWPFRelation.CHART.getContentType(), chart.getPackagePart().getContentType());
         assertEquals("/word/document.xml", chart.getParent().getPackagePart().getPartName().getName());
         assertEquals("/word/charts/chart1.xml", chart.getPackagePart().getPartName().getName());
+    }
+    /**
+     *test method to check adding chart in document
+     */
+    public static void testAddChartsToNewDocument() throws InvalidFormatException, IOException {
+        
+        XWPFDocument document = new XWPFDocument();
+        
+        XWPFChart chart = document.createChart();
+        assertEquals(1, document.getCharts().size());
+        assertNotNull(chart);
+        assertNotNull(chart.getCTChartSpace());
+        assertNotNull(chart.getCTChart());
+        assertEquals(XWPFChart.DEFAULT_HEIGHT,chart.getChartHeight());
+        assertEquals(XWPFChart.DEFAULT_WIDTH,chart.getChartWidth());
+        
+        XWPFChart chart2 = document.createChart();
+        assertEquals(2, document.getCharts().size());
+        assertNotNull(chart2);
+        assertNotNull(chart2.getCTChartSpace());
+        assertNotNull(chart2.getCTChart());
+        chart.setChartHeight(500500);
+        assertEquals(500500,chart.getChartHeight());
+        
+        assertNotNull(XWPFTestDataSamples.writeOutAndReadBack(document));
     }
 }

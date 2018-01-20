@@ -17,13 +17,8 @@
 
 package org.apache.poi.xwpf.usermodel;
 
-import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
-
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-
-import javax.xml.namespace.QName;
 
 import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -31,18 +26,39 @@ import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xddf.usermodel.chart.XDDFChart;
 import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlOptions;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartSpace;
+import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.CTInline;
 
 /**
  * Represents a Chart in a .docx file
  */
 @Beta
 public class XWPFChart extends XDDFChart {
-
+    /**
+     * default width of chart in emu
+     */
+    public static final int DEFAULT_WIDTH 	= 500000;
+    
+    /**
+     * default height of chart in emu
+     */
+    public static final int DEFAULT_HEIGHT 	= 500000;
+    
     // lazy initialization
     private Long checksum;
-
+    
+    /**
+     * this object is used to modify drawing properties
+     */
+    private CTInline ctInline;
+    
+    /**
+     * constructor to
+     * Create a new chart in document
+     * @since POI 4.0.0
+     */
+    protected XWPFChart() {
+        super();
+    }
     /**
      * Construct a chart from a package part.
      *
@@ -54,17 +70,7 @@ public class XWPFChart extends XDDFChart {
     protected XWPFChart(PackagePart part) throws IOException, XmlException {
         super(part);
     }
-
-    @Override
-    protected void commit() throws IOException {
-        XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
-        xmlOptions.setSaveSyntheticDocumentElement(new QName(CTChartSpace.type.getName().getNamespaceURI(), "chartSpace", "c"));
-
-        try (OutputStream out = getPackagePart().getOutputStream()) {
-            chartSpace.save(out, xmlOptions);
-        }
-    }
-
+    
     public Long getChecksum() {
         if (this.checksum == null) {
             InputStream is = null;
@@ -87,7 +93,7 @@ public class XWPFChart extends XDDFChart {
         }
         return this.checksum;
     }
-
+    
     @Override
     public boolean equals(Object obj) {
         /**
@@ -105,19 +111,175 @@ public class XWPFChart extends XDDFChart {
         if (obj == this) {
             return true;
         }
-
+        
         if (obj == null) {
             return false;
         }
-
+        
         if (!(obj instanceof XWPFChart)) {
             return false;
         }
         return false;
     }
-
+    
     @Override
     public int hashCode() {
         return getChecksum().hashCode();
+    }
+    
+    /**
+     * initialize in line object
+     * 
+     * @param inline this object is used to adjust the margin and dimension of chart 
+     * @since POI 4.0.0
+     */
+    protected void setAttachTo(CTInline ctInline) {
+        this.ctInline = ctInline;
+    }
+    
+    /**
+     * set chart height
+     * 
+     * @param height height of chart
+     * @since POI 4.0.0
+     */
+    public void setChartHeight(long height) {
+        ctInline.getExtent().setCy(height);
+    }
+    
+    /**
+     * set chart width
+     * 
+     * @param width width of chart
+     * @since POI 4.0.0
+     */
+    public void setChartWidth(long width) {
+        ctInline.getExtent().setCx(width);
+    }
+    
+    /**
+     * get chart height
+     * 
+     * @since POI 4.0.0
+     */
+    public long getChartHeight() {
+        return ctInline.getExtent().getCy();
+    }
+    
+    /**
+     * get chart width
+     * 
+     * @since POI 4.0.0
+     */
+    public long getChartWidth() {
+        return ctInline.getExtent().getCx();
+    }
+    
+    /**
+     * set chart height and width
+     * 
+     * @param width width of chart
+     * @param height height of chart
+     * @since POI 4.0.0
+     */
+    public void setChartBoundingBox(long width, long height) {
+        this.setChartWidth(width);
+        this.setChartHeight(height);
+    }
+    
+    /**
+     * set margin from top
+     * 
+     * @param margin margin from top
+     * @since POI 4.0.0
+     */
+    public void setChartTopMargin(long margin) {
+        ctInline.setDistT(margin);
+    }
+    
+    /**
+     * get margin from Top
+     * 
+     * @param margin
+     * @since POI 4.0.0
+     */
+    public long getChartTopMargin(long margin) {
+        return ctInline.getDistT();
+    }
+    
+    /**
+     * set margin from bottom
+     * 
+     * @param margin margin from Bottom
+     * @since POI 4.0.0
+     */
+    public void setChartBottomMargin(long margin) {
+        ctInline.setDistB(margin);
+    }
+    
+    /**
+     * get margin from Bottom
+     * 
+     * @param margin
+     * @since POI 4.0.0
+     */
+    public long getChartBottomMargin(long margin) {
+        return ctInline.getDistB();
+    }
+    
+    /**
+     * set margin from left
+     * 
+     * @param margin margin from left
+     * @since POI 4.0.0
+     */
+    public void setChartLeftMargin(long margin) {
+        ctInline.setDistL(margin);
+    }
+    
+    /**
+     * get margin from left
+     * 
+     * @param margin
+     * @since POI 4.0.0
+     */
+    public long getChartLeftMargin(long margin) {
+        return ctInline.getDistL();
+    }
+    
+    /**
+     * set margin from Right
+     * 
+     * @param margin from right
+     * @since POI 4.0.0
+     */
+    public void setChartRightMargin(long margin) {
+        ctInline.setDistR(margin);
+    }
+    
+    /**
+     * get margin from Right
+     * 
+     * @param margin
+     * @since POI 4.0.0
+     */
+    public long getChartRightMargin(long margin) {
+        return ctInline.getDistR();
+    }
+    
+    /**
+     * set chart margin
+     * 
+     * @param top margin from top
+     * @param right margin from right
+     * @param bottom margin from bottom
+     * @param left margin from left
+     * @since POI 4.0.0
+     */
+    public void setChartMargin(long top, long right, long bottom, long left) {
+        this.setChartBottomMargin(bottom);
+        this.setChartRightMargin(right);
+        this.setChartLeftMargin(left);
+        this.setChartRightMargin(right);
     }
 }
