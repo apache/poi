@@ -80,6 +80,8 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
      */
     private XSSFWorkbook workbook;
     
+    private int chartIndex = 0;
+
     protected List<XDDFChartAxis> axes = new ArrayList<>();
     
     /**
@@ -385,6 +387,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
      */
     public PackageRelationship createRelationshipInChart(POIXMLRelation chartRelation,POIXMLFactory chartFactory,int chartIndex) {
         POIXMLDocumentPart documentPart = createRelationship(chartRelation, chartFactory, chartIndex, true).getDocumentPart();
+        documentPart.setCommited(true);
         return this.addRelation(null, chartRelation, documentPart).getRelationship();
     }
     
@@ -398,8 +401,9 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
      * @since POI 4.0.0
      */
     private PackagePart createWorksheetPart(POIXMLRelation chartRelation,POIXMLRelation chartWorkbookRelation,POIXMLFactory chartFactory) throws InvalidFormatException {
-        Integer chartIdx = chartRelation.getFileNameIndex(this);
-        return getTargetPart(createRelationshipInChart(chartWorkbookRelation,chartFactory, chartIdx));
+        PackageRelationship xlsx = createRelationshipInChart(XSLFRelation.WORKBOOK_RELATIONSHIP, XSLFFactory.getInstance(), chartIndex);
+        this.setExternalId(xlsx.getId());
+        return getTargetPart(xlsx);
     }
     
     /**
@@ -458,10 +462,10 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
         this.chart.set(other.chart);
     }
     
-    @Override
     /**
      * save chart xml
      */
+    @Override
     protected void commit() throws IOException {
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
         xmlOptions.setSaveSyntheticDocumentElement(new QName(CTChartSpace.type.getName().getNamespaceURI(), "chartSpace", "c"));
@@ -586,12 +590,28 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     }
     
     /**
-     * set the relation id of embedded excel relation id into external data realtion tag
-     * @param id
+     * set the relation id of embedded excel relation id into external data relation tag
+     * @param id relation id of embedded excel relation id into external data relation tag
      * @since POI 4.0.0
      */
     public void setExternalId(String id)
     {
         getCTChartSpace().addNewExternalData().setId(id);
+    }
+    
+    /**
+     * @return method return chart index
+     * @since POI 4.0.0 
+     */
+    protected int getChartIndex() {
+        return chartIndex;
+    }
+
+    /**
+     * set chart index which can be use for relation part
+     * @param chartIndex chart index which can be use for relation part
+     */
+    public void setChartIndex(int chartIndex) {
+        this.chartIndex = chartIndex;
     }
 }
