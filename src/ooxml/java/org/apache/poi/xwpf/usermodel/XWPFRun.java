@@ -39,6 +39,8 @@ import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
 import org.apache.xmlbeans.XmlToken;
 import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTRelId;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGraphicalObject;
@@ -242,9 +244,9 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
             return true;
         final STOnOff.Enum val = onoff.getVal();
         return (
-            (STOnOff.TRUE == val) ||
-            (STOnOff.X_1 == val) ||
-            (STOnOff.ON == val)
+                (STOnOff.TRUE == val) ||
+                        (STOnOff.X_1 == val) ||
+                        (STOnOff.ON == val)
         );
     }
 
@@ -256,7 +258,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     public String getLang() {
         CTRPr pr = run.getRPr();
         Object lang = pr == null || !pr.isSetLang() ? null : pr.getLang().getVal();
-        return (String)lang;
+        return (String) lang;
     }
 
     /**
@@ -917,7 +919,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * @param width       width in EMUs. To convert to / from points use {@link org.apache.poi.util.Units}
      * @param height      height in EMUs. To convert to / from points use {@link org.apache.poi.util.Units}
      * @throws InvalidFormatException If the format of the picture is not known.
-     * @throws IOException If reading the picture-data from the stream fails.
+     * @throws IOException            If reading the picture-data from the stream fails.
      * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_EMF
      * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_WMF
      * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_PICT
@@ -929,12 +931,12 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
             throws InvalidFormatException, IOException {
         String relationId;
         XWPFPictureData picData;
-        
+
         // Work out what to add the picture to, then add both the
         //  picture and the relationship for it
         // TODO Should we have an interface for this sort of thing?
         if (parent.getPart() instanceof XWPFHeaderFooter) {
-            XWPFHeaderFooter headerFooter = (XWPFHeaderFooter)parent.getPart();
+            XWPFHeaderFooter headerFooter = (XWPFHeaderFooter) parent.getPart();
             relationId = headerFooter.addPictureData(pictureData, pictureType);
             picData = (XWPFPictureData) headerFooter.getRelationById(relationId);
         } else {
@@ -1026,6 +1028,62 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     }
 
     /**
+     * this method add chart template into document
+     *
+     * @param width      set width of chart object
+     * @param height     set height of chart  object
+     * @param chartRelId relation id of chart in document relation file
+     * @throws InvalidFormatException
+     * @throws IOException
+     * @since POI 4.0.0
+     */
+    @Internal
+    public CTInline addChart(int width, int height, String chartRelId)
+            throws InvalidFormatException, IOException {
+        try {
+            CTInline inline = run.addNewDrawing().addNewInline();
+
+            //xml part of chart in document
+            String xml =
+                    "<a:graphic xmlns:a=\"" + CTGraphicalObject.type.getName().getNamespaceURI() + "\">" +
+                            "<a:graphicData uri=\"" + CTChart.type.getName().getNamespaceURI() + "\">" +
+                            "<c:chart xmlns:c=\"" + CTChart.type.getName().getNamespaceURI() + "\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" r:id=\"" + chartRelId + "\" />" +
+                            "</a:graphicData>" +
+                            "</a:graphic>";
+
+            InputSource is = new InputSource(new StringReader(xml));
+
+            org.w3c.dom.Document doc = DocumentHelper.readDocument(is);
+
+            inline.set(XmlToken.Factory.parse(doc.getDocumentElement(), DEFAULT_XML_OPTIONS));
+
+            // Setup the inline with 0 margin
+            inline.setDistT(0);
+            inline.setDistR(0);
+            inline.setDistB(0);
+            inline.setDistL(0);
+
+            CTNonVisualDrawingProps docPr = inline.addNewDocPr();
+            long id = getParent().getDocument().getDrawingIdManager().reserveNew();
+            docPr.setId(id);
+            //This name is not visible in Word anywhere.
+            docPr.setName("chart " + id);
+
+            CTPositiveSize2D extent = inline.addNewExtent();
+            //set hegiht and width of drawaing object;
+            extent.setCx(width);
+            extent.setCy(height);
+
+            return inline;
+        } catch (XmlException e) {
+            throw new IllegalStateException(e);
+        } catch (SAXException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+
+    /**
      * Returns the embedded pictures of the run. These
      * are pictures which reference an external,
      * embedded picture image such as a .png or .jpg
@@ -1040,7 +1098,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     public String toString() {
         String phonetic = getPhonetic();
         if (phonetic.length() > 0) {
-            return text() +" ("+ phonetic +")";
+            return text() + " (" + phonetic + ")";
         } else {
             return text();
         }
@@ -1071,7 +1129,6 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     }
 
     /**
-     *
      * @return the phonetic (ruby) string associated with this run or an empty String if none exists
      */
     public String getPhonetic() {
@@ -1096,9 +1153,8 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     }
 
     /**
-     *
-     * @param rubyObj rubyobject
-     * @param text buffer to which to append the content
+     * @param rubyObj         rubyobject
+     * @param text            buffer to which to append the content
      * @param extractPhonetic extract the phonetic (rt) component or the base component
      */
     private void handleRuby(XmlObject rubyObj, StringBuilder text, boolean extractPhonetic) {
@@ -1124,7 +1180,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
             } else {
                 if (extractPhonetic && inRT) {
                     _getText(o, text);
-                } else if (! extractPhonetic && inBase) {
+                } else if (!extractPhonetic && inBase) {
                     _getText(o, text);
                 }
             }
