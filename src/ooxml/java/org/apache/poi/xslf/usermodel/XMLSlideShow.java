@@ -305,8 +305,7 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
         int chartIdx = findNextAvailableFileNameIndex(XSLFRelation.CHART, _charts.size() + 1);
         XSLFChart chart = (XSLFChart) createRelationship(XSLFRelation.CHART, XSLFFactory.getInstance(), chartIdx, true).getDocumentPart();
         slide.addRelation(null, XSLFRelation.CHART, chart);
-        PackageRelationship xlsx = chart.createRelationshipInChart(XSLFRelation.WORKBOOK_RELATIONSHIP, XSLFFactory.getInstance(), chartIdx);
-        chart.setExternalId(xlsx.getId());
+        chart.setChartIndex(chartIdx);
         _charts.add(chart);
         return chart;
     }
