@@ -12,28 +12,23 @@ import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.xssf.XSSFITestDataProvider;
-import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Before;
 import org.junit.Test;
 
-public class BaseTestSheetShiftColumns {
-    protected Sheet sheet1, sheet2;
-    protected Workbook wb;
+public abstract class BaseTestSheetShiftColumns {
+    protected Sheet sheet1;
+    protected Sheet sheet2;
+    protected Workbook workbook;
 
-    protected final ITestDataProvider _testDataProvider;
+    protected ITestDataProvider _testDataProvider;
 
     public BaseTestSheetShiftColumns(){
-        _testDataProvider = XSSFITestDataProvider.instance; 
     }
 
     @Before
     public void init() {
         int rowIndex = 0;
-        sheet1 = wb.createSheet("sheet1");
+        sheet1 = workbook.createSheet("sheet1");
         Row row = sheet1.createRow(rowIndex++);
         row.createCell(0, CellType.NUMERIC).setCellValue(0);
         row.createCell(1, CellType.NUMERIC).setCellValue(1);
@@ -57,13 +52,13 @@ public class BaseTestSheetShiftColumns {
         row.createCell(2, CellType.FORMULA).setCellFormula("$C1+C$2");
         row = sheet1.createRow(rowIndex++);
         row.createCell(1, CellType.NUMERIC).setCellValue(1.5);
-        row = sheet1.createRow(rowIndex++);
+        row = sheet1.createRow(rowIndex);
         row.createCell(1, CellType.BOOLEAN).setCellValue(false);
         Cell textCell =  row.createCell(2, CellType.STRING);
         textCell.setCellValue("TEXT");
         textCell.setCellStyle(newCenterBottomStyle());
 
-        sheet2 = wb.createSheet("sheet2"); 
+        sheet2 = workbook.createSheet("sheet2"); 
         row = sheet2.createRow(0); row.createCell(0, CellType.NUMERIC).setCellValue(10); 
         row.createCell(1, CellType.NUMERIC).setCellValue(11); 
         row.createCell(2, CellType.FORMULA).setCellFormula("SUM(sheet1!B3:C3)"); 
@@ -80,17 +75,17 @@ public class BaseTestSheetShiftColumns {
         writeSheetToLog(sheet1);
     }
     private CellStyle newCenterBottomStyle(){
-        CellStyle style = wb.createCellStyle();
+        CellStyle style = workbook.createCellStyle();
         style.setAlignment(HorizontalAlignment.CENTER);
         style.setVerticalAlignment(VerticalAlignment.BOTTOM);
         return style;
     }
     @Test
     public void testShiftOneColumnRight() {
-        //writeSheetToLog(sheet2);
+        //writeSheetToLog(sheet2); // NOSONAR, this statement is needed sometimes
         sheet1.shiftColumns(1, 2, 1);
         writeSheetToLog(sheet1);
-        //writeSheetToLog(sheet2);
+        //writeSheetToLog(sheet2);  // NOSONAR, this statement is needed sometimes
         double c1Value = sheet1.getRow(0).getCell(2).getNumericCellValue();
         assertEquals(1d, c1Value, 0.01);
         String formulaA4 = sheet1.getRow(3).getCell(0).getCellFormula();
@@ -248,9 +243,11 @@ public class BaseTestSheetShiftColumns {
 
     private void verifyHyperlink(Cell cell, HyperlinkType linkType, String ref) {
         assertTrue(cellHasHyperlink(cell));
-        Hyperlink link = cell.getHyperlink();
-        assertEquals(linkType, link.getType());
-        assertEquals(ref, link.getAddress());
+        if(cell != null){
+            Hyperlink link = cell.getHyperlink();
+            assertEquals(linkType, link.getType());
+            assertEquals(ref, link.getAddress());
+        }
     }
 
     private boolean cellHasHyperlink(Cell cell) {
@@ -265,8 +262,8 @@ public class BaseTestSheetShiftColumns {
         // populate sheet cells
         populateSheetCells(sheet);
         writeSheetToLog(sheet);
-        CellRangeAddress A1_A5 = new CellRangeAddress(0, 4, 0, 0);
-        CellRangeAddress B1_B3 = new CellRangeAddress(0, 2, 1, 1);
+        CellRangeAddress A1_A5 = new CellRangeAddress(0, 4, 0, 0); // NOSONAR, it's more readable this way
+        CellRangeAddress B1_B3 = new CellRangeAddress(0, 2, 1, 1); // NOSONAR, it's more readable this way
 
         sheet.addMergedRegion(B1_B3);
         sheet.addMergedRegion(A1_A5);
@@ -287,8 +284,8 @@ public class BaseTestSheetShiftColumns {
         Sheet sheet = wb.createSheet("test");
         populateSheetCells(sheet);
 
-        CellRangeAddress A1_A5 = new CellRangeAddress(0, 4, 0, 0);
-        CellRangeAddress B1_B3 = new CellRangeAddress(0, 2, 1, 1);
+        CellRangeAddress A1_A5 = new CellRangeAddress(0, 4, 0, 0);  // NOSONAR, it's more readable this way
+        CellRangeAddress B1_B3 = new CellRangeAddress(0, 2, 1, 1);  // NOSONAR, it's more readable this way
 
         sheet.addMergedRegion(A1_A5);
         sheet.addMergedRegion(B1_B3);
@@ -333,18 +330,22 @@ public class BaseTestSheetShiftColumns {
         wb.close();
     }
 
+    protected abstract Workbook openWorkbook(String spreadsheetFileName) throws IOException;
+    protected abstract Workbook getReadBackWorkbook(Workbook wb) throws IOException;
+    
+    protected static final String AMDOCS = "Amdocs";
+    protected static final String AMDOCS_TEST = "Amdocs:\ntest\n";
     @Test
     public void testCommentsShifting() throws IOException {
-        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56017.xlsx");
+        Workbook inputWb = openWorkbook("56017.xlsx");
 
-        Sheet sheet = wb.getSheetAt(0);
+        Sheet sheet = inputWb.getSheetAt(0);
         Comment comment = sheet.getCellComment(new CellAddress(0, 0));
         assertNotNull(comment);
-        assertEquals("Amdocs", comment.getAuthor());
-        assertEquals("Amdocs:\ntest\n", comment.getString().getString());
+        assertEquals(AMDOCS, comment.getAuthor());
+        assertEquals(AMDOCS_TEST, comment.getString().getString());
         
         writeSheetToLog(sheet);
-        System.out.println("shifting column...");
         sheet.shiftColumns(0, 1, 1);
         writeSheetToLog(sheet);
         
@@ -355,11 +356,11 @@ public class BaseTestSheetShiftColumns {
         // comment is column in column 1
         comment = sheet.getCellComment(new CellAddress(0, 1));
         assertNotNull(comment);
-        assertEquals("Amdocs", comment.getAuthor());
-        assertEquals("Amdocs:\ntest\n", comment.getString().getString());
+        assertEquals(AMDOCS, comment.getAuthor());
+        assertEquals(AMDOCS_TEST, comment.getString().getString());
 
-        Workbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
-        wb.close();
+        Workbook wbBack = getReadBackWorkbook(inputWb);
+        inputWb.close();
         assertNotNull(wbBack);
 
         Sheet sheetBack = wbBack.getSheetAt(0);
@@ -371,8 +372,8 @@ public class BaseTestSheetShiftColumns {
         // comment is now in column 1
         comment = sheetBack.getCellComment(new CellAddress(0, 1));
         assertNotNull(comment);
-        assertEquals("Amdocs", comment.getAuthor());
-        assertEquals("Amdocs:\ntest\n", comment.getString().getString());
+        assertEquals(AMDOCS, comment.getAuthor());
+        assertEquals(AMDOCS_TEST, comment.getString().getString());
         wbBack.close();
     }
     
@@ -402,7 +403,7 @@ public class BaseTestSheetShiftColumns {
     }
 
 
-    // I need these methods for testing. When we finish with project, we can easily remove them. 
+    // I need this method for testing. When we finish with project, we can easily remove them. 
     // Dragan Jovanović
     public static void writeSheetToLog(Sheet sheet) {
         DataFormatter formatter = new DataFormatter();
