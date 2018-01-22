@@ -40,11 +40,8 @@ public class XWPFFileHandler extends AbstractFileHandler {
     public void test() throws Exception {
         File file = new File("test-data/document/51921-Word-Crash067.docx");
 
-        InputStream stream = new BufferedInputStream(new FileInputStream(file));
-        try {
+        try (InputStream stream = new BufferedInputStream(new FileInputStream(file))) {
             handleFile(stream, file.getPath());
-        } finally {
-            stream.close();
         }
 
         handleExtracting(file);

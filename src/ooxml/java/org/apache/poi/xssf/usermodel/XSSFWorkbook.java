@@ -47,7 +47,7 @@ import org.apache.poi.POIXMLDocument;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.POIXMLProperties;
-import org.apache.poi.hpsf.ClassID;
+import org.apache.poi.hpsf.ClassIDPredefined;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -329,6 +329,15 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         this(openPackage(path));
     }
     
+    /**
+     * Constructs a XSSFWorkbook object using Package Part.
+     * @param part  package part
+     * @since POI 4.0.0
+     */
+    public XSSFWorkbook(PackagePart part) throws IOException {
+        this(part.getInputStream());
+    }
+    
     protected void beforeDocumentRead() {
         // Ensure it isn't a XLSB file, which we don't support
         if (getCorePart().getContentType().equals(XSSFRelation.XLSB_BINARY_WORKBOOK.getContentType())) {
@@ -517,10 +526,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     public int addPicture(byte[] pictureData, int format) {
         int imageNumber = getAllPictures().size() + 1;
         XSSFPictureData img = createRelationship(XSSFPictureData.RELATIONS[format], XSSFFactory.getInstance(), imageNumber, true).getDocumentPart();
-        try {
-            OutputStream out = img.getPackagePart().getOutputStream();
+        try (OutputStream out = img.getPackagePart().getOutputStream()) {
             out.write(pictureData);
-            out.close();
         } catch (IOException e){
             throw new POIXMLException(e);
         }
@@ -546,9 +553,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     public int addPicture(InputStream is, int format) throws IOException {
         int imageNumber = getAllPictures().size() + 1;
         XSSFPictureData img = createRelationship(XSSFPictureData.RELATIONS[format], XSSFFactory.getInstance(), imageNumber, true).getDocumentPart();
-        OutputStream out = img.getPackagePart().getOutputStream();
-        IOUtils.copy(is, out);
-        out.close();
+        try (OutputStream out = img.getPackagePart().getOutputStream()) {
+            IOUtils.copy(is, out);
+        }
         pictures.add(img);
         return imageNumber - 1;
     }
@@ -619,10 +626,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         }
         
         
-        try {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             srcSheet.write(out);
-            clonedSheet.read(new ByteArrayInputStream(out.toByteArray()));
+            try (ByteArrayInputStream bis = new ByteArrayInputStream(out.toByteArray())) {
+                clonedSheet.read(bis);
+            }
         } catch (IOException e){
             throw new POIXMLException("Failed to clone sheet", e);
         }
@@ -1114,7 +1122,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     /**
      * Get the XSSFSheet object at the given index.
      *
-     * @param index of the sheet number (0-based physical & logical)
+     * @param index of the sheet number (0-based physical &amp; logical)
      * @return XSSFSheet at the provided index
      * @throws IllegalArgumentException if the index is out of range (index
      *            &lt; 0 || index &gt;= getNumberOfSheets()).
@@ -1129,7 +1137,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      * Returns the index of the sheet by his name (case insensitive match)
      *
      * @param name the sheet name
-     * @return index of the sheet (0 based) or <tt>-1</tt if not found
+     * @return index of the sheet (0 based) or <tt>-1</tt> if not found
      */
     @Override
     public int getSheetIndex(String name) {
@@ -1745,9 +1753,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         xmlOptions.setSaveSyntheticDocumentElement(new QName(CTWorkbook.type.getName().getNamespaceURI(), "workbook"));
 
         PackagePart part = getPackagePart();
-        OutputStream out = part.getOutputStream();
-        workbook.save(out, xmlOptions);
-        out.close();
+        try (OutputStream out = part.getOutputStream()) {
+            workbook.save(out, xmlOptions);
+        }
     }
     
     /**
@@ -2368,18 +2376,19 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         
         Ole10Native ole10 = new Ole10Native(label, fileName, command, oleData);
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream(oleData.length+500);
-        ole10.writeOut(bos);
-        
-        try (POIFSFileSystem poifs = new POIFSFileSystem()) {
-            DirectoryNode root = poifs.getRoot();
-            root.createDocument(Ole10Native.OLE10_NATIVE, new ByteArrayInputStream(bos.toByteArray()));
-            root.setStorageClsid(ClassID.OLE10_PACKAGE);
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream(oleData.length+500)) {
+            ole10.writeOut(bos);
 
-            // TODO: generate CombObj stream
+            try (POIFSFileSystem poifs = new POIFSFileSystem()) {
+                DirectoryNode root = poifs.getRoot();
+                root.createDocument(Ole10Native.OLE10_NATIVE, new ByteArrayInputStream(bos.toByteArray()));
+                root.setStorageClsid(ClassIDPredefined.OLE_V1_PACKAGE.getClassID());
 
-            try (OutputStream os = pp.getOutputStream()) {
-                poifs.writeFilesystem(os);
+                // TODO: generate CombObj stream
+
+                try (OutputStream os = pp.getOutputStream()) {
+                    poifs.writeFilesystem(os);
+                }
             }
         }
 

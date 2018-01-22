@@ -55,6 +55,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.Removal;
 import org.apache.poi.xdgf.extractor.XDGFVisioExtractor;
 import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
 import org.apache.poi.xslf.usermodel.XSLFRelation;
@@ -136,42 +137,20 @@ public class ExtractorFactory {
             POIOLE2TextExtractor extractor = createExtractor(fs);
             extractor.setFilesystem(fs);
             return extractor;
-
         } catch (OfficeXmlFileException e) {
             // ensure file-handle release
             IOUtils.closeQuietly(fs);
             return createExtractor(OPCPackage.open(f.toString(), PackageAccess.READ));
-
         } catch (NotOLE2FileException ne) {
             // ensure file-handle release
             IOUtils.closeQuietly(fs);
             throw new IllegalArgumentException("Your File was neither an OLE2 file, nor an OOXML file");
-
-        } catch (OpenXML4JException e) {
-            // ensure file-handle release
-            IOUtils.closeQuietly(fs);
-            throw e;
-
-        } catch (XmlException e) {
-            // ensure file-handle release
-            IOUtils.closeQuietly(fs);
-            throw e;
-
-        } catch (IOException e) {
-            // ensure file-handle release
-            IOUtils.closeQuietly(fs);
-            throw e;
-
-        } catch (RuntimeException e) {
-            // ensure file-handle release
-            IOUtils.closeQuietly(fs);
-            throw e;
-        } catch (Error e) {
+        } catch (OpenXML4JException | Error | RuntimeException | IOException | XmlException e) {
             // ensure file-handle release
             IOUtils.closeQuietly(fs);
             throw e;
         }
-     }
+    }
 
     public static POITextExtractor createExtractor(InputStream inp) throws IOException, OpenXML4JException, XmlException {
         InputStream is = FileMagic.prepareToCheckMagic(inp);
@@ -265,27 +244,7 @@ public class ExtractorFactory {
 
             throw new IllegalArgumentException("No supported documents found in the OOXML package (found "+contentType+")");
 
-        } catch (IOException e) {
-            // ensure that we close the package again if there is an error opening it, however
-            // we need to revert the package to not re-write the file via close(), which is very likely not wanted for a TextExtractor!
-            pkg.revert();
-            throw e;
-        } catch (OpenXML4JException e) {
-            // ensure that we close the package again if there is an error opening it, however
-            // we need to revert the package to not re-write the file via close(), which is very likely not wanted for a TextExtractor!
-            pkg.revert();
-            throw e;
-        } catch (XmlException e) {
-            // ensure that we close the package again if there is an error opening it, however
-            // we need to revert the package to not re-write the file via close(), which is very likely not wanted for a TextExtractor!
-            pkg.revert();
-            throw e;
-        } catch (RuntimeException e) {
-            // ensure that we close the package again if there is an error opening it, however
-            // we need to revert the package to not re-write the file via close(), which is very likely not wanted for a TextExtractor!
-            pkg.revert();
-            throw e;
-        } catch (Error e) {
+        } catch (IOException | Error | RuntimeException | XmlException | OpenXML4JException e) {
             // ensure that we close the package again if there is an error opening it, however
             // we need to revert the package to not re-write the file via close(), which is very likely not wanted for a TextExtractor!
             pkg.revert();
@@ -323,8 +282,23 @@ public class ExtractorFactory {
      * If there are no embedded documents, you'll get back an
      *  empty array. Otherwise, you'll get one open
      *  {@link POITextExtractor} for each embedded file.
+     *
+     *  @deprecated Use the method with correct "embedded"
      */
+    @Deprecated
+    @Removal(version="4.2")
     public static POITextExtractor[] getEmbededDocsTextExtractors(POIOLE2TextExtractor ext) throws IOException, OpenXML4JException, XmlException {
+        return getEmbeddedDocsTextExtractors(ext);
+    }
+
+    /**
+     * Returns an array of text extractors, one for each of
+     *  the embedded documents in the file (if there are any).
+     * If there are no embedded documents, you'll get back an
+     *  empty array. Otherwise, you'll get one open
+     *  {@link POITextExtractor} for each embedded file.
+     */
+    public static POITextExtractor[] getEmbeddedDocsTextExtractors(POIOLE2TextExtractor ext) throws IOException, OpenXML4JException, XmlException {
         // All the embedded directories we spotted
         ArrayList<Entry> dirs = new ArrayList<>();
         // For anything else not directly held in as a POIFS directory
@@ -392,9 +366,7 @@ public class ExtractorFactory {
                 // Ignore, just means it didn't contain
                 //  a format we support as yet
                 logger.log(POILogger.INFO, "Format not supported yet", e.getLocalizedMessage());
-            } catch (XmlException e) {
-                throw new IOException(e.getMessage(), e);
-            } catch (OpenXML4JException e) {
+            } catch (XmlException | OpenXML4JException e) {
                 throw new IOException(e.getMessage(), e);
             }
         }
@@ -407,10 +379,27 @@ public class ExtractorFactory {
      * If there are no embedded documents, you'll get back an
      *  empty array. Otherwise, you'll get one open
      *  {@link POITextExtractor} for each embedded file.
+     *
+     *  @deprecated Use the method with correct "embedded"
+     */
+    @Deprecated
+    @Removal(version="4.2")
+    @NotImplemented
+    @SuppressWarnings({"UnusedParameters", "UnusedReturnValue"})
+    public static POITextExtractor[] getEmbededDocsTextExtractors(POIXMLTextExtractor ext) {
+        return getEmbeddedDocsTextExtractors(ext);
+    }
+
+    /**
+     * Returns an array of text extractors, one for each of
+     *  the embedded documents in the file (if there are any).
+     * If there are no embedded documents, you'll get back an
+     *  empty array. Otherwise, you'll get one open
+     *  {@link POITextExtractor} for each embedded file.
      */
     @NotImplemented
-    @SuppressWarnings("UnusedParameters")
-    public static POITextExtractor[] getEmbededDocsTextExtractors(POIXMLTextExtractor ext) {
+    @SuppressWarnings({"UnusedParameters", "UnusedReturnValue"})
+    public static POITextExtractor[] getEmbeddedDocsTextExtractors(POIXMLTextExtractor ext) {
         throw new IllegalStateException("Not yet supported");
     }
     

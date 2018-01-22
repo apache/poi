@@ -17,13 +17,14 @@
 
 package org.apache.poi.xssf.usermodel.charts;
 
-import org.apache.poi.ss.usermodel.charts.*;
-import org.apache.poi.util.Beta;
+import org.apache.poi.ss.usermodel.charts.ChartDataFactory;
+import org.apache.poi.util.Removal;
 
 /**
- * @author Roman Kashitsyn
+ * @deprecated
  */
-@Beta
+@Deprecated
+@Removal(version="4.2")
 public class XSSFChartDataFactory implements ChartDataFactory {
 
 	private static XSSFChartDataFactory instance;
@@ -35,14 +36,16 @@ public class XSSFChartDataFactory implements ChartDataFactory {
 	/**
 	 * @return new scatter charts data instance
 	 */
-	public XSSFScatterChartData createScatterChartData() {
+	@Override
+    public XSSFScatterChartData createScatterChartData() {
 		return new XSSFScatterChartData();
 	}
 
 	/**
 	 * @return new line charts data instance
 	 */
-	public XSSFLineChartData createLineChartData() {
+	@Override
+    public XSSFLineChartData createLineChartData() {
 		return new XSSFLineChartData();
 	}
 

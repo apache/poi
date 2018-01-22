@@ -17,25 +17,27 @@
 
 package org.apache.poi.xssf.usermodel.charts;
 
-import org.apache.poi.util.Beta;
-import org.apache.poi.util.Internal;
-import org.apache.poi.ss.usermodel.charts.ManualLayout;
 import org.apache.poi.ss.usermodel.charts.LayoutMode;
 import org.apache.poi.ss.usermodel.charts.LayoutTarget;
+import org.apache.poi.ss.usermodel.charts.ManualLayout;
+import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
+import org.apache.poi.xddf.usermodel.chart.XDDFManualLayout;
 import org.apache.poi.xssf.usermodel.XSSFChart;
-import org.openxmlformats.schemas.drawingml.x2006.chart.STLayoutTarget;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTLayout;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTManualLayout;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTLayoutMode;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTLayoutTarget;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTManualLayout;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STLayoutMode;
+import org.openxmlformats.schemas.drawingml.x2006.chart.STLayoutTarget;
 
 /**
  * Represents a SpreadsheetML manual layout.
- * @author Roman Kashitsyn
+ * @deprecated use {@link XDDFManualLayout instead}
  */
-@Beta
+@Deprecated
+@Removal(version="4.2")
 public final class XSSFManualLayout implements ManualLayout {
 
 	/**
@@ -75,126 +77,144 @@ public final class XSSFManualLayout implements ManualLayout {
 		return layout;
 	}
 
-	public void setWidthRatio(double ratio) {
+	@Override
+    public void setWidthRatio(double ratio) {
 		if (!layout.isSetW()) {
 			layout.addNewW();
 		}
 		layout.getW().setVal(ratio);
 	}
 
-	public double getWidthRatio() {
+	@Override
+    public double getWidthRatio() {
 		if (!layout.isSetW()) {
 			return 0.0;
 		}
 		return layout.getW().getVal();
 	}
 
-	public void setHeightRatio(double ratio) {
+	@Override
+    public void setHeightRatio(double ratio) {
 		if (!layout.isSetH()) {
 			layout.addNewH();
 		}
 		layout.getH().setVal(ratio);
 	}
 
-	public double getHeightRatio() {
+	@Override
+    public double getHeightRatio() {
 		if (!layout.isSetH()) {
 			return 0.0;
 		}
 		return layout.getH().getVal();
 	}
 
-	public LayoutTarget getTarget() {
+	@Override
+    public LayoutTarget getTarget() {
 		if (!layout.isSetLayoutTarget()) {
 			return defaultLayoutTarget;
 		}
 		return toLayoutTarget(layout.getLayoutTarget());
 	}
 
-	public void setTarget(LayoutTarget target) {
+	@Override
+    public void setTarget(LayoutTarget target) {
 		if (!layout.isSetLayoutTarget()) {
 			layout.addNewLayoutTarget();
 		}
 		layout.getLayoutTarget().setVal(fromLayoutTarget(target));
 	}
 
-	public LayoutMode getXMode() {
+	@Override
+    public LayoutMode getXMode() {
 		if (!layout.isSetXMode()) {
 			return defaultLayoutMode;
 		}
 		return toLayoutMode(layout.getXMode());
 	}
 
-	public void setXMode(LayoutMode mode) {
+	@Override
+    public void setXMode(LayoutMode mode) {
 		if (!layout.isSetXMode()) {
 			layout.addNewXMode();
 		}
 		layout.getXMode().setVal(fromLayoutMode(mode));
 	}
 
-	public LayoutMode getYMode() {
+	@Override
+    public LayoutMode getYMode() {
 		if (!layout.isSetYMode()) {
 			return defaultLayoutMode;
 		}
 		return toLayoutMode(layout.getYMode());
 	}
 
-	public void setYMode(LayoutMode mode) {
+	@Override
+    public void setYMode(LayoutMode mode) {
 		if (!layout.isSetYMode()) {
 			layout.addNewYMode();
 		}
 		layout.getYMode().setVal(fromLayoutMode(mode));
 	}
 
-	public double getX() {
+	@Override
+    public double getX() {
 		if (!layout.isSetX()) {
 			return 0.0;
 		}
 		return layout.getX().getVal();
 	}
 
-	public void setX(double x) {
+	@Override
+    public void setX(double x) {
 		if (!layout.isSetX()) {
 			layout.addNewX();
 		}
 		layout.getX().setVal(x);
 	}
 
-	public double getY() {
+	@Override
+    public double getY() {
 		if (!layout.isSetY()) {
 			return 0.0;
 		}
 		return layout.getY().getVal();
 	}
 
-	public void setY(double y) {
+	@Override
+    public void setY(double y) {
 		if (!layout.isSetY()) {
 			layout.addNewY();
 		}
 		layout.getY().setVal(y);
 	}
 
-	public LayoutMode getWidthMode() {
+	@Override
+    public LayoutMode getWidthMode() {
 		if (!layout.isSetWMode()) {
 			return defaultLayoutMode;
 		}
 		return toLayoutMode(layout.getWMode());
 	}
 
-	public void setWidthMode(LayoutMode mode) {
+	@Override
+    public void setWidthMode(LayoutMode mode) {
 		if (!layout.isSetWMode()) {
 			layout.addNewWMode();
 		}
 		layout.getWMode().setVal(fromLayoutMode(mode));
 	}
 
-	public LayoutMode getHeightMode() {
+	@Override
+    public LayoutMode getHeightMode() {
 		if (!layout.isSetHMode()) {
 			return defaultLayoutMode;
 		}
 		return toLayoutMode(layout.getHMode());
 	}
 
-	public void setHeightMode(LayoutMode mode) {
+	@Override
+    public void setHeightMode(LayoutMode mode) {
 		if (!layout.isSetHMode()) {
 			layout.addNewHMode();
 		}

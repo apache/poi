@@ -19,6 +19,7 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -44,6 +45,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTConnector;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFrame;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShapeNonVisual;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTOleObject;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 
@@ -275,6 +277,29 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
         return sh;
     }
 
+    @Override
+    public XSLFObjectShape createOleShape(PictureData pictureData) {
+        if (!(pictureData instanceof XSLFPictureData)) {
+            throw new IllegalArgumentException("pictureData needs to be of type XSLFPictureData");
+        }
+        XSLFPictureData xPictureData = (XSLFPictureData)pictureData;
+        PackagePart pic = xPictureData.getPackagePart();
+
+        PackageRelationship rel = getSheet().getPackagePart().addRelationship(
+                pic.getPartName(), TargetMode.INTERNAL, XSLFRelation.IMAGES.getRelation());
+        
+        XSLFObjectShape sh = getDrawing().createOleShape(rel.getId());
+        CTOleObject oleObj = sh.getCTOleObject();
+        Dimension dim = pictureData.getImageDimension();
+        oleObj.setImgW(Units.toEMU(dim.getWidth()));
+        oleObj.setImgH(Units.toEMU(dim.getHeight()));
+        
+        
+        getShapes().add(sh);
+        sh.setParent(this);
+        return sh;
+    }
+    
     public XSLFTable createTable(){
         XSLFTable sh = getDrawing().createTable();
         _shapes.add(sh);
@@ -360,12 +385,12 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
                 XSLFShape newShape;
                 if (shape instanceof XSLFTextBox) {
                     newShape = createTextBox();
+                } else if (shape instanceof XSLFFreeformShape) {
+                    newShape = createFreeform();
                 } else if (shape instanceof XSLFAutoShape) {
                     newShape = createAutoShape();
                 } else if (shape instanceof XSLFConnectorShape) {
                     newShape = createConnector();
-                } else if (shape instanceof XSLFFreeformShape) {
-                    newShape = createFreeform();
                 } else if (shape instanceof XSLFPictureShape) {
                     XSLFPictureShape p = (XSLFPictureShape)shape;
                     XSLFPictureData pd = p.getPictureData();

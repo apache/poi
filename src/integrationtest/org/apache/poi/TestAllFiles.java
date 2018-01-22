@@ -394,7 +394,7 @@ public class TestAllFiles {
             fail("Did not find a handler for file " + file);
         }
 
-        System.out.println("Reading " + file + " with " + handler.getClass());
+        System.out.println("Reading " + file + " with " + handler.getClass().getSimpleName());
         assertNotNull("Unknown file extension for file: " + file + ": " + getExtension(file), handler);
         File inputFile = new File(ROOT_DIR, file);
 
@@ -405,13 +405,10 @@ public class TestAllFiles {
         boolean ignoreHPSF = (handler instanceof HPSFFileHandler);
         
         try {
-            InputStream stream = new BufferedInputStream(new FileInputStream(inputFile), 64*1024);
-            try {
+            try (InputStream stream = new BufferedInputStream(new FileInputStream(inputFile), 64 * 1024)) {
                 handler.handleFile(stream, file);
-                assertFalse("Expected to fail for file " + file + " and handler " + handler + ", but did not fail!", 
-                    OLD_FILES_HWPF.contains(file) && !ignoreHPSF);
-            } finally {
-                stream.close();
+                assertFalse("Expected to fail for file " + file + " and handler " + handler + ", but did not fail!",
+                        OLD_FILES_HWPF.contains(file) && !ignoreHPSF);
             }
 
             handler.handleExtracting(inputFile);

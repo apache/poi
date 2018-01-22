@@ -104,7 +104,7 @@ public final class TestFileSystemBugs extends TestCase {
             Iterator<Entry> it = dir.getEntries();
             entry = it.next();
             assertEquals(true, entry.isDocumentEntry());
-            assertEquals("\u0001Ole10Native", entry.getName());
+            assertEquals(Ole10Native.OLE10_NATIVE, entry.getName());
 
             entry = it.next();
             assertEquals(true, entry.isDocumentEntry());

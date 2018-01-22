@@ -42,6 +42,7 @@ public class XSSFOddHeader extends XSSFHeaderFooter implements Header{
      * Get the content text representing this header
      * @return text
      */
+    @Override
     public String getText() {
         return getHeaderFooter().getOddHeader();
     }
@@ -51,6 +52,7 @@ public class XSSFOddHeader extends XSSFHeaderFooter implements Header{
      * @see XSSFHeaderFooter to see how to create a string with Header/Footer Formatting Syntax
      * @param text - a string representing the header. 
      */
+    @Override
     public void setText(String text) {
     	if(text == null) {
     		getHeaderFooter().unsetOddHeader();

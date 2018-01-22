@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -394,8 +395,8 @@ public class SXSSFWorkbook implements Workbook {
     }
 
     private static void copyStreamAndInjectWorksheet(InputStream in, OutputStream out, InputStream worksheetData) throws IOException {
-        InputStreamReader inReader=new InputStreamReader(in,"UTF-8");
-        OutputStreamWriter outWriter=new OutputStreamWriter(out,"UTF-8");
+        InputStreamReader inReader = new InputStreamReader(in, StandardCharsets.UTF_8);
+        OutputStreamWriter outWriter = new OutputStreamWriter(out, StandardCharsets.UTF_8);
         boolean needsStartTag = true;
         int c;
         int pos=0;
@@ -904,8 +905,7 @@ public class SXSSFWorkbook implements Workbook {
      * @exception IOException if anything can't be written.
      */
     @Override
-    public void write(OutputStream stream) throws IOException
-    {
+    public void write(OutputStream stream) throws IOException {
         flushSheets();
 
         //Save the template

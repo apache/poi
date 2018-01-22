@@ -20,10 +20,8 @@ package org.apache.poi.ss.util;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assume.assumeTrue;
 import java.util.Set;
 import java.util.HashSet;
-import java.util.Iterator;
 import org.apache.commons.collections4.IteratorUtils;
 
 /**
@@ -54,7 +52,7 @@ public final class TestCellRangeUtil {
         assertCellRangesEqual(asArray(A1_B2), merge(A1, B1, A2, B2));
         assertCellRangesEqual(asArray(A1_B2), merge(A1, B2, A2, B1));
 
-        // Partially mergeable: multiple possible mergings
+        // Partially mergeable: multiple possible merges
         //    A B
         //  1 x x   A1,A2,B1 --> A1:B1,A2 or A1:A2,B1
         //  2 x 
@@ -82,8 +80,8 @@ public final class TestCellRangeUtil {
         }
         return set;
     }
-            
-    private static <T> T[] asArray(T...ts) {
+
+    private static CellRangeAddress[] asArray(CellRangeAddress...ts) {
         return ts;
     }
 

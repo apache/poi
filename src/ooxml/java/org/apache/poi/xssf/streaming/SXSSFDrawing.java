@@ -19,7 +19,6 @@ package org.apache.poi.xssf.streaming;
 
 import java.util.Iterator;
 
-import org.apache.poi.ss.usermodel.Chart;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.Drawing;
@@ -51,11 +50,6 @@ public class SXSSFDrawing implements Drawing<XSSFShape> {
     @Override
     public Comment createCellComment(ClientAnchor anchor) {
         return _drawing.createCellComment(anchor);
-    }
-
-    @Override
-    public Chart createChart(ClientAnchor anchor) {
-        return _drawing.createChart(anchor);
     }
 
     @Override

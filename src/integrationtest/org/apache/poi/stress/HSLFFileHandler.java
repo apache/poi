@@ -58,12 +58,7 @@ public class HSLFFileHandler extends SlideShowHandler {
     @Override
     @Test
     public void test() throws Exception {
-        File[] files = new File("test-data/slideshow/").listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".ppt");
-            }
-        });
+        File[] files = new File("test-data/slideshow/").listFiles((dir, name) -> name.endsWith(".ppt"));
         assertNotNull(files);
 
         System.out.println("Testing " + files.length + " files");
@@ -82,11 +77,8 @@ public class HSLFFileHandler extends SlideShowHandler {
         System.out.println(file);
 
         //System.setProperty("org.apache.poi.util.POILogger", "org.apache.poi.util.SystemOutLogger");
-        InputStream stream = new FileInputStream(file);
-        try {
+        try (InputStream stream = new FileInputStream(file)) {
             handleFile(stream, file.getPath());
-        } finally {
-            stream.close();
         }
 
         handleExtracting(file);
@@ -94,11 +86,8 @@ public class HSLFFileHandler extends SlideShowHandler {
 
     public static void main(String[] args) throws Exception {
         System.setProperty("org.apache.poi.util.POILogger", "org.apache.poi.util.SystemOutLogger");
-        InputStream stream = new FileInputStream(args[0]);
-        try {
+        try (InputStream stream = new FileInputStream(args[0])) {
             new HSLFFileHandler().handleFile(stream, args[0]);
-        } finally {
-            stream.close();
         }
     }
 }

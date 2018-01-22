@@ -195,19 +195,7 @@ public class XSSFFileHandler extends SpreadsheetHandler {
 
         } catch (OLE2NotOfficeXmlFileException e) {
             // we have some files that are not actually OOXML and thus cannot be tested here
-        } catch (IllegalArgumentException e) {
-            if(!EXPECTED_ADDITIONAL_FAILURES.contains(file.getParentFile().getName() + "/" + file.getName())) {
-                throw e;
-            }
-        } catch (InvalidFormatException e) {
-            if(!EXPECTED_ADDITIONAL_FAILURES.contains(file.getParentFile().getName() + "/" + file.getName())) {
-                throw e;
-            }
-        } catch (IOException e) {
-            if(!EXPECTED_ADDITIONAL_FAILURES.contains(file.getParentFile().getName() + "/" + file.getName())) {
-                throw e;
-            }
-        } catch (POIXMLException e) {
+        } catch (IllegalArgumentException | InvalidFormatException | POIXMLException | IOException e) {
             if(!EXPECTED_ADDITIONAL_FAILURES.contains(file.getParentFile().getName() + "/" + file.getName())) {
                 throw e;
             }
@@ -221,11 +209,8 @@ public class XSSFFileHandler extends SpreadsheetHandler {
     public void test() throws Exception {
         File file = new File("test-data/spreadsheet/ref-56737.xlsx");
 
-        InputStream stream = new BufferedInputStream(new FileInputStream(file));
-        try {
+        try (InputStream stream = new BufferedInputStream(new FileInputStream(file))) {
             handleFile(stream, file.getPath());
-        } finally {
-            stream.close();
         }
 
         handleExtracting(file);

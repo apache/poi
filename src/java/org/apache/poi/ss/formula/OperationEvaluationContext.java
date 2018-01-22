@@ -33,13 +33,7 @@ import org.apache.poi.ss.formula.eval.RefEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
-import org.apache.poi.ss.formula.ptg.Area3DPtg;
-import org.apache.poi.ss.formula.ptg.Area3DPxg;
-import org.apache.poi.ss.formula.ptg.NameXPtg;
-import org.apache.poi.ss.formula.ptg.NameXPxg;
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.formula.ptg.Ref3DPtg;
-import org.apache.poi.ss.formula.ptg.Ref3DPxg;
+import org.apache.poi.ss.formula.ptg.*;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.CellReference.NameType;
 
@@ -58,7 +52,8 @@ public final class OperationEvaluationContext {
     private final EvaluationTracker _tracker;
     private final WorkbookEvaluator _bookEvaluator;
     private final boolean _isSingleValue;
-    
+    private boolean _isInArrayContext;
+
     public OperationEvaluationContext(WorkbookEvaluator bookEvaluator, EvaluationWorkbook workbook, int sheetIndex, int srcRowNum,
             int srcColNum, EvaluationTracker tracker) {
         this(bookEvaluator, workbook, sheetIndex, srcRowNum, srcColNum, tracker, true);
@@ -73,6 +68,13 @@ public final class OperationEvaluationContext {
         _columnIndex = srcColNum;
         _tracker = tracker;
         _isSingleValue = isSingleValue;
+    }
+
+    public boolean isArraymode(){
+        return _isInArrayContext;
+    }
+    public void setArrayMode(boolean value){
+        _isInArrayContext = value;
     }
 
     public EvaluationWorkbook getWorkbook() {

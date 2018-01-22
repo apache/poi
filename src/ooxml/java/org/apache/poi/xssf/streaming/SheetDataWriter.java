@@ -38,6 +38,7 @@ import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.StringCodepointsIterable;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
@@ -190,6 +191,8 @@ public class SheetDataWriter implements Closeable {
      *
      * @param rownum 0-based row number
      * @param row    a row
+     *
+     * @throws IOException If an I/O error occurs
      */
     public void writeRow(int rownum, SXSSFRow row) throws IOException {
         if (_numberOfFlushedRows == 0)
@@ -279,7 +282,7 @@ public class SheetDataWriter implements Closeable {
             case STRING: {
                 if (_sharedStringSource != null) {
                     XSSFRichTextString rt = new XSSFRichTextString(cell.getStringCellValue());
-                    int sRef = _sharedStringSource.addEntry(rt.getCTRst());
+                    int sRef = _sharedStringSource.addSharedStringItem(rt);
 
                     writeAttribute("t", STCellType.S.toString());
                     _out.write("><v>");
@@ -348,92 +351,53 @@ public class SheetDataWriter implements Closeable {
         return false;
     }
 
-    //Taken from jdk1.3/src/javax/swing/text/html/HTMLWriter.java
     protected void outputQuotedString(String s) throws IOException {
         if (s == null || s.length() == 0) {
             return;
         }
 
-        char[] chars = s.toCharArray();
-        int last = 0;
-        int length = s.length();
-        for (int counter = 0; counter < length; counter++) {
-            char c = chars[counter];
-            switch (c) {
-                case '<':
-                    writeLastChars(_out, chars, last, counter);
-                    last = counter + 1;
+        for (String codepoint : new StringCodepointsIterable(s)) {
+            switch (codepoint) {
+                case "<":
                     _out.write("&lt;");
                     break;
-                case '>':
-                    writeLastChars(_out, chars, last, counter);
-                    last = counter + 1;
+                case ">":
                     _out.write("&gt;");
                     break;
-                case '&':
-                    writeLastChars(_out, chars, last, counter);
-                    last = counter + 1;
+                case "&":
                     _out.write("&amp;");
                     break;
-                case '"':
-                    writeLastChars(_out, chars, last, counter);
-                    last = counter + 1;
+                case "\"":
                     _out.write("&quot;");
                     break;
                 // Special characters
-                case '\n':
-                    writeLastChars(_out, chars, last, counter);
+                case "\n":
                     _out.write("&#xa;");
-                    last = counter + 1;
                     break;
-                case '\r':
-                    writeLastChars(_out, chars, last, counter);
+                case "\r":
                     _out.write("&#xd;");
-                    last = counter + 1;
                     break;
-                case '\t':
-                    writeLastChars(_out, chars, last, counter);
+                case "\t":
                     _out.write("&#x9;");
-                    last = counter + 1;
                     break;
-                case 0xa0:
-                    writeLastChars(_out, chars, last, counter);
+                case "\u00A0": // NO-BREAK SPACE
                     _out.write("&#xa0;");
-                    last = counter + 1;
                     break;
                 default:
-                    // YK: XmlBeans silently replaces all ISO control characters ( < 32) with question marks.
-                    // the same rule applies to "not a character" symbols.
-                    if (replaceWithQuestionMark(c)) {
-                        writeLastChars(_out, chars, last, counter);
-                        _out.write('?');
-                        last = counter + 1;
-                    }
-                    else if (Character.isHighSurrogate(c) || Character.isLowSurrogate(c)) {
-                        writeLastChars(_out, chars, last, counter);
-                        _out.write(c);
-                        last = counter + 1;
-                    }
-                    else if (c > 127) {
-                        writeLastChars(_out, chars, last, counter);
-                        last = counter + 1;
-                        // If the character is outside of ascii, write the
-                        // numeric value.
-                        _out.write("&#");
-                        _out.write(String.valueOf((int) c));
-                        _out.write(";");
+                    if (codepoint.length() == 1) {
+                        char c = codepoint.charAt(0);
+                        // YK: XmlBeans silently replaces all ISO control characters ( < 32) with question marks.
+                        // the same rule applies to "not a character" symbols.
+                        if (replaceWithQuestionMark(c)) {
+                            _out.write('?');
+                        } else {
+                            _out.write(c);
+                        }
+                    } else {
+                        _out.write(codepoint);
                     }
                     break;
             }
-        }
-        if (last < length) {
-            _out.write(chars, last, length - last);
-        }
-    }
-
-    private static void writeLastChars(Writer out, char[] chars, int last, int counter) throws IOException {
-        if (counter > last) {
-            out.write(chars, last, counter - last);
         }
     }
 

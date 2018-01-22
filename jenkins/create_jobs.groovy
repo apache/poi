@@ -250,6 +250,13 @@ poijobs.each { poijob ->
                         project / publishers << 'hudson.plugins.cigame.GamePublisher' {}
                     }
                 }
+                if (!poijob.sonar) {
+                    archiveJunit('sonar/*/target/surefire-reports/TEST-*.xml') {
+                        testDataPublishers {
+                            publishTestStabilityData()
+                        }
+                    }
+                }
                 mailer(email, false, false)
             }
         } else if (poijob.javadoc) {

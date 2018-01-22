@@ -17,10 +17,11 @@
 
 package org.apache.poi.xssf.usermodel.charts;
 
-import org.apache.poi.util.Beta;
-import org.apache.poi.util.Internal;
 import org.apache.poi.ss.usermodel.charts.ChartLegend;
 import org.apache.poi.ss.usermodel.charts.LegendPosition;
+import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
+import org.apache.poi.xddf.usermodel.chart.XDDFChartLegend;
 import org.apache.poi.xssf.usermodel.XSSFChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTLegend;
@@ -29,10 +30,10 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.STLegendPos;
 
 /**
  * Represents a SpreadsheetML chart legend
- * @author Roman Kashitsyn
- * @author Martin Andersson
+ * @deprecated use {@link XDDFChartLegend} instead
  */
-@Beta
+@Deprecated
+@Removal(version="4.2")
 public final class XSSFChartLegend implements ChartLegend {
 
 	/**
@@ -72,7 +73,8 @@ public final class XSSFChartLegend implements ChartLegend {
 		return legend;
 	}
 
-	public void setPosition(LegendPosition position) {
+	@Override
+    public void setPosition(LegendPosition position) {
 		if (!legend.isSetLegendPos()) {
 			legend.addNewLegendPos();
 		}
@@ -82,7 +84,8 @@ public final class XSSFChartLegend implements ChartLegend {
 	/*
 	 * According to ECMA-376 default position is RIGHT.
 	 */
-	public LegendPosition getPosition() {
+	@Override
+    public LegendPosition getPosition() {
 		if (legend.isSetLegendPos()) {
 			return toLegendPosition(legend.getLegendPos());
 		} else {
@@ -90,18 +93,21 @@ public final class XSSFChartLegend implements ChartLegend {
 		}
 	}
 
-	public XSSFManualLayout getManualLayout() {
+	@Override
+    public XSSFManualLayout getManualLayout() {
 		if (!legend.isSetLayout()) {
 			legend.addNewLayout();
 		}
 		return new XSSFManualLayout(legend.getLayout());
 	}
 
-	public boolean isOverlay() {
+	@Override
+    public boolean isOverlay() {
 		return legend.getOverlay().getVal();
 	}
 
-	public void setOverlay(boolean value) {
+	@Override
+    public void setOverlay(boolean value) {
 		legend.getOverlay().setVal(value);
 	}
 

@@ -146,6 +146,11 @@ public abstract class XSSFHeaderFooter implements HeaderFooter {
 		return this.headerFooter;
 	}
 
+    /**
+     * Returns the value of the header or footer.
+     *
+     * @return the value of the header or footer.
+     */
 	public String getValue() {
 		String value = getText();
 		if (value == null)
@@ -187,6 +192,7 @@ public abstract class XSSFHeaderFooter implements HeaderFooter {
 	/**
 	 * get the text representing the center part of this element
 	 */
+	@Override
 	public String getCenter() {
 		String text = helper.getCenterSection(getText());
 		if (stripFields)
@@ -197,6 +203,7 @@ public abstract class XSSFHeaderFooter implements HeaderFooter {
 	/**
 	 * get the text representing the left part of this element
 	 */
+	@Override
 	public String getLeft() {
 		String text = helper.getLeftSection(getText());
 		if (stripFields)
@@ -207,6 +214,7 @@ public abstract class XSSFHeaderFooter implements HeaderFooter {
 	/**
 	 * get the text representing the right part of this element
 	 */
+	@Override
 	public String getRight() {
 		String text = helper.getRightSection(getText());
 		if (stripFields)
@@ -217,6 +225,7 @@ public abstract class XSSFHeaderFooter implements HeaderFooter {
 	/**
 	 * set a centered string value for this element
 	 */
+	@Override
 	public void setCenter(String newCenter) {
 		setText(helper.setCenterSection(getText(), newCenter));
 	}
@@ -224,6 +233,7 @@ public abstract class XSSFHeaderFooter implements HeaderFooter {
 	/**
 	 * set a left string value for this element
 	 */
+	@Override
 	public void setLeft(String newLeft) {
 		setText(helper.setLeftSection(getText(), newLeft));
 	}
@@ -231,6 +241,7 @@ public abstract class XSSFHeaderFooter implements HeaderFooter {
 	/**
 	 * set a right string value for this element
 	 */
+	@Override
 	public void setRight(String newRight) {
 		setText(helper.setRightSection(getText(), newRight));
 	}

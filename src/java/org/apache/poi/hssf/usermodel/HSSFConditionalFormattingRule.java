@@ -305,6 +305,10 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
         return null;
     }
 
+    public String getText() {
+        return null; // not available here, unless it exists and is unimplemented in cfRuleRecord
+    }
+    
     protected String toFormulaString(Ptg[] parsedExpression) {
         return toFormulaString(parsedExpression, workbook);
     }

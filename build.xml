@@ -91,7 +91,7 @@ under the License.
     <property name="javax.xml.stream.XMLInputFactory" value="com.sun.xml.internal.stream.XMLInputFactoryImpl"/>
     <!-- need to override POILogger property before commons logging works -->
     <property name="org.apache.commons.logging.Log" value="org.apache.commons.logging.impl.Log4JLogger"/>
-
+    <property name="tempdir" value="build/tmp"/>
 
     <!-- Main: -->
     <property name="main.resource1.dir" value="src/resources/main"/>
@@ -150,9 +150,9 @@ under the License.
     <property name="main.commons-logging.jar" location="${main.lib}/commons-logging-1.2.jar"/>
     <property name="main.commons-logging.url"
               value="${repository.m2}/maven2/commons-logging/commons-logging/1.2/commons-logging-1.2.jar"/>
-    <property name="main.commons-codec.jar" location="${main.lib}/commons-codec-1.10.jar"/>
+    <property name="main.commons-codec.jar" location="${main.lib}/commons-codec-1.11.jar"/>
     <property name="main.commons-codec.url"
-              value="${repository.m2}/maven2/commons-codec/commons-codec/1.10/commons-codec-1.10.jar"/>
+              value="${repository.m2}/maven2/commons-codec/commons-codec/1.11/commons-codec-1.11.jar"/>
     <property name="main.log4j.jar" location="${main.lib}/log4j-1.2.17.jar"/>
     <property name="main.log4j.url" value="${repository.m2}/maven2/log4j/log4j/1.2.17/log4j-1.2.17.jar"/>
     <property name="main.junit.jar" location="${main.lib}/junit-4.12.jar"/>
@@ -189,9 +189,6 @@ under the License.
     <property name="ooxml.curvesapi.jar" location="${ooxml.lib}/curvesapi-1.05.jar"/>
     <property name="ooxml.curvesapi.url"
               value="${repository.m2}/maven2/com/github/virtuald/curvesapi/1.05/curvesapi-1.05.jar"/>
-    <property name="ooxml.xmlbeans23.jar" location="${ooxml.lib}/xmlbeans-2.3.0.jar"/>
-    <property name="ooxml.xmlbeans23.url"
-              value="${repository.m2}/maven2/org/apache/xmlbeans/xmlbeans/2.3.0/xmlbeans-2.3.0.jar"/>
     <property name="ooxml.xmlbeans26.jar" location="${ooxml.lib}/xmlbeans-2.6.0.jar"/>
     <property name="ooxml.xmlbeans26.url"
               value="${repository.m2}/maven2/org/apache/xmlbeans/xmlbeans/2.6.0/xmlbeans-2.6.0.jar"/>
@@ -208,15 +205,17 @@ under the License.
     <property name="forbidden.jar" location="${main.lib}/forbiddenapis-2.3.jar"/>
     <property name="forbidden.url" value="${repository.m2}/maven2/de/thetaphi/forbiddenapis/2.3/forbiddenapis-2.3.jar"/>
 
-    <!-- See http://www.ecma-international.org/publications/standards/Ecma-376.htm -->
+    <property name="maven.ooxml.xsds.version.id" value="1.4"/>
+	
+	<!-- See http://www.ecma-international.org/publications/standards/Ecma-376.htm -->
     <!-- "Copy these file(s), free of charge" -->
     <property name="ooxml.xsds.ozip.1" value="OfficeOpenXML-Part4.zip"/>
     <property name="ooxml.xsds.izip.1" value="OfficeOpenXML-XMLSchema.zip"/>
     <property name="ooxml.xsds.url.1"
               value="http://www.ecma-international.org/publications/files/ECMA-ST/Office%20Open%20XML%201st%20edition%20Part%204%20(PDF).zip"/>
     <property name="ooxml.xsds.src.dir" location="build/ooxml-xsds-src"/>
-    <property name="ooxml.xsds.src.jar" location="${ooxml.lib}/ooxml-schemas-1.3-sources.jar"/>
-    <property name="ooxml.xsds.jar" location="${ooxml.lib}/ooxml-schemas-1.3.jar"/>
+    <property name="ooxml.xsds.src.jar" location="${ooxml.lib}/ooxml-schemas-${maven.ooxml.xsds.version.id}-sources.jar"/>
+    <property name="ooxml.xsds.jar" location="${ooxml.lib}/ooxml-schemas-${maven.ooxml.xsds.version.id}.jar"/>
 
     <!-- additional schemas are packed into the poi schemas jar, -->
     <!-- so we don't have to care about a seperate versioning of the original ooxml schemas -->
@@ -233,10 +232,6 @@ under the License.
     <property name="ooxml.security.xsd.dir" location="src/ooxml/resources/org/apache/poi/poifs/crypt"/>
     <property name="ooxml.visio.xsd.dir" location="src/ooxml/resources/org/apache/poi/xdgf"/>
     <property name="ooxml.schema.xsdconfig.dir" location="src/ooxml/resources/org/apache/poi/schemas"/>
-
-
-    <property name="maven.ooxml.xsds.version.id" value="1.3"/>
-    <property name="maven.ooxml.xsds.jar" value="ooxml-schemas-${maven.ooxml.xsds.version.id}.jar"/>
 
     <!-- Coverage -->
     <property name="coverage.dir" value="build/coverage"/>
@@ -553,6 +548,7 @@ under the License.
                 <include name="asm-all-5.0.3*"/>
                 <include name="commons-codec-1.5*"/>
                 <include name="commons-codec-1.9*"/>
+                <include name="commons-codec-1.10*"/>
                 <include name="commons-logging-1.1*.jar"/>
                 <include name="findbugs-noUpdateChecks-2.0.3*"/>
                 <include name="jacoco-0.6*"/>
@@ -591,10 +587,13 @@ under the License.
                 <include name="ooxml-schemas-1.1.jar"/>
                 <include name="ooxml-schemas-1.2-sources.jar"/>
                 <include name="ooxml-schemas-1.2.jar"/>
+                <include name="ooxml-schemas-1.3-sources.jar"/>
+                <include name="ooxml-schemas-1.3.jar"/>
                 <include name="ooxml-security-1.0-sources.jar"/>
                 <include name="ooxml-security-1.0.jar"/>
                 <include name="curvesapi-1.03.jar"/>
                 <include name="curvesapi-1.04.jar"/>
+                <include name="xmlbeans-2.3.0.jar"/>
             </fileset>
             <fileset dir="${compile.lib}">
                 <include name="xercesImpl-*.jar"/>
@@ -634,6 +633,9 @@ under the License.
                     <available file="${dsig.sl4j-api.jar}"/>
                     <available file="${main.commons-collections4.jar}"/>
                     <available file="${main.commons-math3.jar}"/>
+
+                    <!-- we had some CI failures when the extracted files for JaCoCo were missing somehow... -->
+                    <available file="${main.lib}/jacocoagent.jar"/>
                 </and>
                 <isset property="disconnected"/>
             </or>
@@ -674,7 +676,6 @@ under the License.
             <or>
                 <and>
                     <available file="${ooxml.curvesapi.jar}"/>
-                    <available file="${ooxml.xmlbeans23.jar}"/>
                     <available file="${ooxml.xmlbeans26.jar}"/>
                 </and>
                 <isset property="disconnected"/>
@@ -684,12 +685,8 @@ under the License.
     <target name="fetch-ooxml-jars" depends="check-ooxml-jars" unless="ooxml.jars.present">
         <mkdir dir="${ooxml.lib}"/>
         <downloadfile src="${ooxml.curvesapi.url}" dest="${ooxml.curvesapi.jar}"/>
-        <downloadfile src="${ooxml.xmlbeans23.url}" dest="${ooxml.xmlbeans23.jar}.orig"/>
         <downloadfile src="${ooxml.xmlbeans26.url}" dest="${ooxml.xmlbeans26.jar}.orig"/>
         <!-- remove piccolo parser, so we don't use unsafe calls to it instead of using jaxp -->
-        <zip destfile="${ooxml.xmlbeans23.jar}">
-            <zipfileset src="${ooxml.xmlbeans23.jar}.orig" excludes="org/apache/xmlbeans/impl/piccolo/**"/>
-        </zip>
         <zip destfile="${ooxml.xmlbeans26.jar}">
             <zipfileset src="${ooxml.xmlbeans26.jar}.orig" excludes="org/apache/xmlbeans/impl/piccolo/**"/>
         </zip>
@@ -798,7 +795,7 @@ under the License.
 
             <taskdef name="xmlbean"
                      classname="org.apache.xmlbeans.impl.tool.XMLBean"
-                     classpath="${ooxml.xmlbeans23.jar}.orig"/>
+                     classpath="${ooxml.xmlbeans26.jar}.orig"/>
 
             <property name="xmlbean.xsds.dir" location="build/xmlbean-xsds"/>
             <property name="xmlbean.sources.dir" location="build/xmlbean-sources"/>
@@ -829,7 +826,7 @@ under the License.
                     nopvr="@{nopvr}"
                     >
                 <classpath>
-                    <path location="${ooxml.xmlbeans23.jar}.orig"/>
+                    <path location="${ooxml.xmlbeans26.jar}.orig"/>
                 </classpath>
             </xmlbean>
 
@@ -1259,6 +1256,7 @@ under the License.
                 <classpath refid="test.classpath"/>
                 <classpath refid="test.jar.classpath"/>
                 <syspropertyset refid="junit.properties"/>
+                <sysproperty key="java.io.tmpdir" value="${tempdir}"/>
                 <jvmarg value="-ea"/>
                 <jvmarg value="-Xmx256m"/>
                 <!-- jvmarg value="-Duser.timezone=UTC"/ -->
@@ -1324,6 +1322,7 @@ under the License.
                 <classpath refid="test.scratchpad.classpath"/>
                 <classpath refid="test.jar.classpath"/>
                 <syspropertyset refid="junit.properties"/>
+                <sysproperty key="java.io.tmpdir" value="${tempdir}"/>
                 <jvmarg value="-ea"/>
                 <!-- jvmarg value="-Duser.timezone=UTC"/ -->
                 <jvmarg value="${file.leak.detector}" />
@@ -1380,7 +1379,8 @@ under the License.
                       <path refid="test.jar.classpath"/>
                   </classpath>
                   <syspropertyset refid="junit.properties"/>
-                    <jvmarg value="-Xmx768M"/>
+                  <sysproperty key="java.io.tmpdir" value="${tempdir}"/>
+                  <jvmarg value="-Xmx768M"/>
                   <jvmarg value="-ea"/>
                   <jvmarg value="${java9addmods}" />
                   <jvmarg value="${java9addmodsvalue}" />
@@ -1414,7 +1414,8 @@ under the License.
                       <path refid="ooxml.xmlsec.classpath"/>
                   </classpath>
                   <syspropertyset refid="junit.properties"/>
-                    <jvmarg value="-Xmx768M"/>
+                  <sysproperty key="java.io.tmpdir" value="${tempdir}"/>
+                  <jvmarg value="-Xmx768M"/>
                   <jvmarg value="-ea"/>
                   <jvmarg value="${java9addmods}" />
                   <jvmarg value="${java9addmodsvalue}" />
@@ -1462,6 +1463,7 @@ under the License.
                    failureproperty="integration.test.failed" showoutput="true">
                 <classpath refid="test.integration.classpath"/>
                 <syspropertyset refid="junit.properties"/>
+                <sysproperty key="java.io.tmpdir" value="${tempdir}"/>
                 <jvmarg value="-ea"/>
                 <jvmarg value="-Xmx1512M"/>
                 <jvmarg value="${java9addmods}" />
@@ -1521,6 +1523,7 @@ under the License.
             <classpath refid="test.ooxml.classpath"/>
             <classpath refid="ooxml.xmlsec.classpath"/>
             <syspropertyset refid="junit.properties"/>
+            <sysproperty key="java.io.tmpdir" value="${tempdir}"/>
             <jvmarg value="-Xmx512m"/>
             <jvmarg value="${java9addmods}" />
             <jvmarg value="${java9addmodsvalue}" />
@@ -1566,6 +1569,7 @@ under the License.
                    failureproperty="excelant.test.failed">
                 <classpath refid="test.excelant.classpath"/>
                 <syspropertyset refid="junit.properties"/>
+                <sysproperty key="java.io.tmpdir" value="${tempdir}"/>
                 <jvmarg value="-ea"/>
                 <jvmarg value="${java9addmods}" />
                 <jvmarg value="${java9addmodsvalue}" />
@@ -2040,7 +2044,7 @@ under the License.
               <exclude name="resources/main/org/apache/poi/sl/draw/geom/presetShapeDefinitions.xml" />
                  <exclude name="resources/ooxml/org/apache/poi/xssf/usermodel/presetTableStyles.xml" />
               <exclude name="ooxml/resources/org/apache/poi/xdgf/visio.xsd" />
-              <exclude name="examples/src/org/apache/poi/xslf/usermodel/pie-chart-data.txt" />
+              <exclude name="examples/src/org/apache/poi/xslf/usermodel/*-chart-data.txt" />
               <exclude name="**/*.iml" />
               <exclude name="documentation/resources/images/pb-poi.cdr"/>
                  <exclude name="scratchpad/models/poi-hdf.zargo"/>

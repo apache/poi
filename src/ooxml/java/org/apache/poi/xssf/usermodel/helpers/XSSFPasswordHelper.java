@@ -29,6 +29,8 @@ import javax.xml.namespace.QName;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.StringUtil;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 
@@ -130,7 +132,7 @@ public final class XSSFPasswordHelper {
         if (prefix == null || prefix.isEmpty()) {
             return new QName(name);
         } else {
-            return new QName(prefix+Character.toUpperCase(name.charAt(0))+name.substring(1));
+            return new QName(prefix + StringUtil.toUpperCase(name.charAt(0)) + name.substring(1));
         }
     }
 }

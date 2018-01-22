@@ -70,6 +70,7 @@ public class XSSFFont implements Font {
      *
      * @param font the underlying CTFont bean
      */
+    @Internal
     public XSSFFont(CTFont font) {
         _ctFont = font;
         _index = 0;
@@ -81,6 +82,7 @@ public class XSSFFont implements Font {
      * @param index font index
      * @param colorMap for default or custom indexed colors
      */
+    @Internal
     public XSSFFont(CTFont font, int index, IndexedColorMap colorMap) {
         _ctFont = font;
         _index = (short)index;
@@ -90,7 +92,7 @@ public class XSSFFont implements Font {
     /**
      * Create a new XSSFont. This method is protected to be used only by XSSFWorkbook
      */
-    protected XSSFFont() {
+    public XSSFFont() {
         this._ctFont = CTFont.Factory.newInstance();
         setFontName(DEFAULT_FONT_NAME);
         setFontHeight((double)DEFAULT_FONT_SIZE);
@@ -157,7 +159,7 @@ public class XSSFFont implements Font {
     public XSSFColor getXSSFColor() {
         CTColor ctColor = _ctFont.sizeOfColorArray() == 0 ? null : _ctFont.getColorArray(0);
         if(ctColor != null) {
-           XSSFColor color = new XSSFColor(ctColor, _indexedColorMap);
+           XSSFColor color = XSSFColor.from(ctColor, _indexedColorMap);
            if(_themes != null) {
               _themes.inheritFromThemeAsRequired(color);
            }

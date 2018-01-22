@@ -41,7 +41,7 @@ public final class DrawingRecord extends StandardRecord implements Cloneable {
      * @deprecated POI 3.9
      */
     @Deprecated
-    public void processContinueRecord(byte[] record) {
+    void processContinueRecord(byte[] record) {
         //don't merge continue record with the drawing record, it must be serialized separately
         contd = record;
     }

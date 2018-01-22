@@ -18,16 +18,14 @@ package org.apache.poi.hssf.converter;
 
 import java.util.Arrays;
 
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.Beta;
 
 @Beta
-public class ExcelToHtmlUtils extends AbstractExcelUtils
-{
-    public static void appendAlign( StringBuilder style, HorizontalAlignment alignment )
-    {
+public class ExcelToHtmlUtils extends AbstractExcelUtils {
+    public static void appendAlign( StringBuilder style, HorizontalAlignment alignment ) {
         String cssAlign = getAlign( alignment );
         if ( isEmpty( cssAlign ) )
             return;
@@ -44,14 +42,11 @@ public class ExcelToHtmlUtils extends AbstractExcelUtils
      * 
      * @see #getMergedRange(CellRangeAddress[][], int, int)
      */
-    public static CellRangeAddress[][] buildMergedRangesMap( HSSFSheet sheet )
-    {
+    public static CellRangeAddress[][] buildMergedRangesMap( Sheet sheet ) {
         CellRangeAddress[][] mergedRanges = new CellRangeAddress[1][];
-        for ( final CellRangeAddress cellRangeAddress : sheet.getMergedRegions() )
-        {
+        for ( final CellRangeAddress cellRangeAddress : sheet.getMergedRegions() ) {
             final int requiredHeight = cellRangeAddress.getLastRow() + 1;
-            if ( mergedRanges.length < requiredHeight )
-            {
+            if ( mergedRanges.length < requiredHeight ) {
                 CellRangeAddress[][] newArray = new CellRangeAddress[requiredHeight][];
                 System.arraycopy( mergedRanges, 0, newArray, 0,
                         mergedRanges.length );
@@ -59,18 +54,14 @@ public class ExcelToHtmlUtils extends AbstractExcelUtils
             }
 
             for ( int r = cellRangeAddress.getFirstRow(); r <= cellRangeAddress
-                    .getLastRow(); r++ )
-            {
+                    .getLastRow(); r++ ) {
                 final int requiredWidth = cellRangeAddress.getLastColumn() + 1;
 
                 CellRangeAddress[] rowMerged = mergedRanges[r];
-                if ( rowMerged == null )
-                {
+                if ( rowMerged == null ) {
                     rowMerged = new CellRangeAddress[requiredWidth];
                     mergedRanges[r] = rowMerged;
-                }
-                else
-                {
+                } else {
                     final int rowMergedLength = rowMerged.length;
                     if ( rowMergedLength < requiredWidth )
                     {
@@ -89,5 +80,4 @@ public class ExcelToHtmlUtils extends AbstractExcelUtils
         }
         return mergedRanges;
     }
-
 }

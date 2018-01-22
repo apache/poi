@@ -483,12 +483,10 @@ public final class BiffViewer {
 		    return result;
 		}
 		private static String formatRecordDetails(int globalOffset, int sid, int size, int recordCounter) {
-			StringBuilder sb = new StringBuilder(64);
-			sb.append("Offset=").append(HexDump.intToHex(globalOffset)).append("(").append(globalOffset).append(")");
-			sb.append(" recno=").append(recordCounter);
-			sb.append(  " sid=").append(HexDump.shortToHex(sid));
-			sb.append( " size=").append(HexDump.shortToHex(size)).append("(").append(size).append(")");
-			return sb.toString();
+            return "Offset=" + HexDump.intToHex(globalOffset) + "(" + globalOffset + ")" +
+                    " recno=" + recordCounter +
+                    " sid=" + HexDump.shortToHex(sid) +
+                    " size=" + HexDump.shortToHex(size) + "(" + size + ")";
 		}
 	}
 

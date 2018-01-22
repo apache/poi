@@ -44,7 +44,7 @@ import org.apache.poi.ss.formula.TwoDEval;
  *
  * @author Josh Micich
  */
-public final class Index implements Function2Arg, Function3Arg, Function4Arg {
+public final class Index implements Function2Arg, Function3Arg, Function4Arg, ArrayMode {
 
 	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
 		TwoDEval reference = convertFirstArg(arg0);

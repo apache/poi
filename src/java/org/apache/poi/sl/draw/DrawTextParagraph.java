@@ -50,13 +50,12 @@ import org.apache.poi.sl.usermodel.TextParagraph.BulletStyle;
 import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.sl.usermodel.TextRun.FieldType;
-import org.apache.poi.sl.usermodel.TextRun.TextCap;
 import org.apache.poi.sl.usermodel.TextShape;
 import org.apache.poi.sl.usermodel.TextShape.TextDirection;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
-
 
 public class DrawTextParagraph implements Drawable {
     private static final POILogger LOG = POILogFactory.getLogger(DrawTextParagraph.class);
@@ -379,33 +378,20 @@ public class DrawTextParagraph implements Drawable {
             Slide<?,?> slide = (Slide<?,?>)graphics.getRenderingHint(Drawable.CURRENT_SLIDE);
             return (slide == null) ? "" : Integer.toString(slide.getSlideNumber());
         }
-        StringBuilder buf = new StringBuilder();
-        TextCap cap = tr.getTextCap();
-        String tabs = null;
-        for (char c : tr.getRawText().toCharArray()) {
-            switch (c) {
-                case '\t':
-                    if (tabs == null) {
-                        tabs = tab2space(tr);
-                    }
-                    buf.append(tabs);
-                    break;
-                case '\u000b':
-                    buf.append('\n');
-                    break;
-                default:
-                    switch (cap) {
-                        case ALL: c = Character.toUpperCase(c); break;
-                        case SMALL: c = Character.toLowerCase(c); break;
-                        case NONE: break;
-                    }
+        return getRenderableText(tr);
+    }
 
-                    buf.append(c);
-                    break;
-            }
+    String getRenderableText(TextRun tr) {
+        String txt = tr.getRawText();
+        txt.replace("\t", tab2space(tr)).replace("\u000b", "\n");
+
+        switch (tr.getTextCap()) {
+            case ALL: txt.toUpperCase(LocaleUtil.getUserLocale()); break;
+            case SMALL: txt.toLowerCase(LocaleUtil.getUserLocale()); break;
+            case NONE: break;
         }
 
-        return buf.toString();
+        return txt;
     }
 
     /**

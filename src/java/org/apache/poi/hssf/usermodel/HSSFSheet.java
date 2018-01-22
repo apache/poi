@@ -149,7 +149,8 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     }
 
     HSSFSheet cloneSheet(HSSFWorkbook workbook) {
-        this.getDrawingPatriarch();/**Aggregate drawing records**/
+        // Aggregate drawing records
+        this.getDrawingPatriarch();
         HSSFSheet sheet = new HSSFSheet(workbook, _sheet.cloneSheet());
         int pos = sheet._sheet.findFirstRecordLocBySid(DrawingRecord.sid);
         DrawingRecord dr = (DrawingRecord) sheet._sheet.findFirstRecordBySid(DrawingRecord.sid);

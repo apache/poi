@@ -21,7 +21,7 @@ import java.awt.geom.Path2D;
 
 public interface FreeformShape<
     S extends Shape<S,P>,
-    P extends TextParagraph<S,P,?>
+    P extends TextParagraph<S,P,? extends TextRun>
 > extends AutoShape<S,P> {
     /**
      * Gets the shape path.

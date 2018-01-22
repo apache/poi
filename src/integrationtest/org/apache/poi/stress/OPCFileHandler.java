@@ -65,12 +65,9 @@ public class OPCFileHandler extends AbstractFileHandler {
 	public void test() throws Exception {
         File file = new File("test-data/diagram/test.vsdx");
 
-        InputStream stream = new PushbackInputStream(new FileInputStream(file), 100000);
-		try {
-			handleFile(stream, file.getPath());
-		} finally {
-			stream.close();
-		}
+        try (InputStream stream = new PushbackInputStream(new FileInputStream(file), 100000)) {
+            handleFile(stream, file.getPath());
+        }
 		
 		handleExtracting(file);
 	}

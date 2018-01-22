@@ -29,7 +29,6 @@ import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.hslf.model.Comment;
 import org.apache.poi.hslf.model.HSLFMetroShape;
 import org.apache.poi.hslf.model.HeadersFooters;
-import org.apache.poi.hslf.model.OLEShape;
 import org.apache.poi.hslf.usermodel.HSLFMasterSheet;
 import org.apache.poi.hslf.usermodel.HSLFNotes;
 import org.apache.poi.hslf.usermodel.HSLFShape;
@@ -41,6 +40,7 @@ import org.apache.poi.hslf.usermodel.HSLFTable;
 import org.apache.poi.hslf.usermodel.HSLFTableCell;
 import org.apache.poi.hslf.usermodel.HSLFTextParagraph;
 import org.apache.poi.hslf.usermodel.HSLFTextShape;
+import org.apache.poi.hslf.usermodel.HSLFObjectShape;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -194,13 +194,13 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 		return getText(false, true);
 	}
 
-	public List<OLEShape> getOLEShapes() {
-		List<OLEShape> list = new ArrayList<>();
+	public List<HSLFObjectShape> getOLEShapes() {
+		List<HSLFObjectShape> list = new ArrayList<>();
 
 		for (HSLFSlide slide : _slides) {
 			for (HSLFShape shape : slide.getShapes()) {
-				if (shape instanceof OLEShape) {
-					list.add((OLEShape) shape);
+				if (shape instanceof HSLFObjectShape) {
+					list.add((HSLFObjectShape) shape);
 				}
 			}
 		}

@@ -148,6 +148,12 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                 // This implementation does not preserve the tagging information
                 buildRunsInOrderFromXml(o);
             }
+            if (o instanceof CTRunTrackChange) {
+                // add all the insertions as text
+                for (CTRunTrackChange change : ((CTRunTrackChange) o).getInsArray()) {
+                    buildRunsInOrderFromXml(change);
+                }
+            }
         }
         c.dispose();
     }
@@ -189,7 +195,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
             if (run instanceof XWPFRun) {
                 XWPFRun xRun = (XWPFRun) run;
                 // don't include the text if reviewing is enabled and this is a deleted run
-                if (!xRun.getCTR().isSetRsidDel()) {
+                if (xRun.getCTR().getDelTextArray().length == 0) {
                     out.append(xRun);
                 }
             } else if (run instanceof XWPFSDT) {

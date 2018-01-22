@@ -31,6 +31,9 @@ import java.util.Map;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.util.Removal;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
@@ -140,9 +143,21 @@ public class SharedStringsTable extends POIXMLDocumentPart {
      *
      * @param idx index of item to return.
      * @return the item at the specified position in this Shared String table.
+     * @deprecated use <code>getItemAt(int idx)</code> instead
      */
+    @Removal(version = "4.2")
     public CTRst getEntryAt(int idx) {
         return strings.get(idx);
+    }
+
+    /**
+     * Return a string item by index
+     *
+     * @param idx index of item to return.
+     * @return the item at the specified position in this Shared String table.
+     */
+    public RichTextString getItemAt(int idx) {
+        return new XSSFRichTextString(strings.get(idx));
     }
 
     /**
@@ -167,7 +182,7 @@ public class SharedStringsTable extends POIXMLDocumentPart {
     }
 
     /**
-     * Add an entry to this Shared String table (a new value is appened to the end).
+     * Add an entry to this Shared String table (a new value is appended to the end).
      *
      * <p>
      * If the Shared String table already contains this <code>CTRst</code> bean, its index is returned.
@@ -176,7 +191,9 @@ public class SharedStringsTable extends POIXMLDocumentPart {
      *
      * @param st the entry to add
      * @return index the index of added entry
+     * @deprecated use <code>addSharedStringItem(RichTextString string)</code> instead
      */
+    @Removal(version = "4.2") //make private in 4.2
     public int addEntry(CTRst st) {
         String s = getKey(st);
         count++;
@@ -193,13 +210,48 @@ public class SharedStringsTable extends POIXMLDocumentPart {
         strings.add(newSt);
         return idx;
     }
+
+    /**
+     * Add an entry to this Shared String table (a new value is appended to the end).
+     *
+     * <p>
+     * If the Shared String table already contains this string entry, its index is returned.
+     * Otherwise a new entry is added.
+     * </p>
+     *
+     * @param string the entry to add
+     * @since POI 4.0.0
+     * @return index the index of added entry
+     */
+    public int addSharedStringItem(RichTextString string) {
+        if(!(string instanceof XSSFRichTextString)){
+            throw new IllegalArgumentException("Only XSSFRichTextString argument is supported");
+        }
+        return addEntry(((XSSFRichTextString) string).getCTRst());
+    }
+
     /**
      * Provide low-level access to the underlying array of CTRst beans
      *
      * @return array of CTRst beans
+     * @deprecated use <code>getSharedStringItems</code> instead
      */
+    @Removal(version = "4.2")
     public List<CTRst> getItems() {
         return Collections.unmodifiableList(strings);
+    }
+
+    /**
+     * Provide access to the strings in the SharedStringsTable
+     *
+     * @return list of shared string instances
+     */
+    public List<RichTextString> getSharedStringItems() {
+        ArrayList<RichTextString> items = new ArrayList<>();
+        for (CTRst rst : strings) {
+            items.add(new XSSFRichTextString(rst));
+        }
+        return Collections.unmodifiableList(items);
     }
 
     /**
@@ -226,8 +278,8 @@ public class SharedStringsTable extends POIXMLDocumentPart {
     @Override
     protected void commit() throws IOException {
         PackagePart part = getPackagePart();
-        OutputStream out = part.getOutputStream();
-        writeTo(out);
-        out.close();
+        try (OutputStream out = part.getOutputStream()) {
+            writeTo(out);
+        }
     }
 }

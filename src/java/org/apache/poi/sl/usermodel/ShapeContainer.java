@@ -22,7 +22,7 @@ import java.util.List;
 
 public interface ShapeContainer<
     S extends Shape<S,P>,
-    P extends TextParagraph<S,P,?>
+    P extends TextParagraph<S,P,? extends TextRun>
 > extends Iterable<S> {
     /**
      * Returns an list containing all of the elements in this container in proper
@@ -84,4 +84,11 @@ public interface ShapeContainer<
      * @param numCols the number of columns
      */
 	TableShape<S,P> createTable(int numRows, int numCols);
+	
+	/**
+	 * Create a new OLE object shape with the given pictureData as preview image
+	 *
+	 * @param pictureData the preview image
+	 */
+    ObjectShape<?,?> createOleShape(PictureData pictureData);
 }

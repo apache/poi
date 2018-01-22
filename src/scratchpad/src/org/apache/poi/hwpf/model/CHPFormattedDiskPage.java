@@ -147,15 +147,6 @@ public final class CHPFormattedDiskPage extends FormattedDiskPage
         return chpx;
     }
 
-    /**
-     * @deprecated Use {@link #toByteArray(CharIndexTranslator)} instead
-     */
-    @Deprecated
-    protected byte[] toByteArray(CharIndexTranslator translator, int fcMin)
-    {
-        return toByteArray( translator );
-    }
-
     protected byte[] toByteArray( CharIndexTranslator translator )
     {
         byte[] buf = new byte[512];

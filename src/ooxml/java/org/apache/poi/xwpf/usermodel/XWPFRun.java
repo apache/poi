@@ -39,6 +39,8 @@ import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
 import org.apache.xmlbeans.XmlToken;
 import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTRelId;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGraphicalObject;
@@ -104,7 +106,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         this.run = r;
         this.parent = p;
 
-        /**
+        /*
          * reserve already occupied drawing ids, so reserving new ids later will
          * not corrupt the document
          */
@@ -242,10 +244,21 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
             return true;
         final STOnOff.Enum val = onoff.getVal();
         return (
-            (STOnOff.TRUE == val) ||
-            (STOnOff.X_1 == val) ||
-            (STOnOff.ON == val)
+                (STOnOff.TRUE == val) ||
+                        (STOnOff.X_1 == val) ||
+                        (STOnOff.ON == val)
         );
+    }
+
+    /**
+     * Get the language tag associated with this run, if any.
+     *
+     * @return the language tag associated with this run, if any
+     */
+    public String getLang() {
+        CTRPr pr = run.getRPr();
+        Object lang = pr == null || !pr.isSetLang() ? null : pr.getLang().getVal();
+        return (String) lang;
     }
 
     /**
@@ -256,10 +269,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public boolean isBold() {
         CTRPr pr = run.getRPr();
-        if (pr == null || !pr.isSetB()) {
-            return false;
-        }
-        return isCTOnOff(pr.getB());
+        return pr != null && pr.isSetB() && isCTOnOff(pr.getB());
     }
 
     /**
@@ -366,9 +376,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public boolean isItalic() {
         CTRPr pr = run.getRPr();
-        if (pr == null || !pr.isSetI())
-            return false;
-        return isCTOnOff(pr.getI());
+        return pr != null && pr.isSetI() && isCTOnOff(pr.getI());
     }
 
     /**
@@ -445,9 +453,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public boolean isStrikeThrough() {
         CTRPr pr = run.getRPr();
-        if (pr == null || !pr.isSetStrike())
-            return false;
-        return isCTOnOff(pr.getStrike());
+        return pr != null && pr.isSetStrike() && isCTOnOff(pr.getStrike());
     }
 
     /**
@@ -498,9 +504,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public boolean isDoubleStrikeThrough() {
         CTRPr pr = run.getRPr();
-        if (pr == null || !pr.isSetDstrike())
-            return false;
-        return isCTOnOff(pr.getDstrike());
+        return pr != null && pr.isSetDstrike() && isCTOnOff(pr.getDstrike());
     }
 
     /**
@@ -517,9 +521,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
 
     public boolean isSmallCaps() {
         CTRPr pr = run.getRPr();
-        if (pr == null || !pr.isSetSmallCaps())
-            return false;
-        return isCTOnOff(pr.getSmallCaps());
+        return pr != null && pr.isSetSmallCaps() && isCTOnOff(pr.getSmallCaps());
     }
 
     public void setSmallCaps(boolean value) {
@@ -530,9 +532,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
 
     public boolean isCapitalized() {
         CTRPr pr = run.getRPr();
-        if (pr == null || !pr.isSetCaps())
-            return false;
-        return isCTOnOff(pr.getCaps());
+        return pr != null && pr.isSetCaps() && isCTOnOff(pr.getCaps());
     }
 
     public void setCapitalized(boolean value) {
@@ -543,9 +543,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
 
     public boolean isShadowed() {
         CTRPr pr = run.getRPr();
-        if (pr == null || !pr.isSetShadow())
-            return false;
-        return isCTOnOff(pr.getShadow());
+        return pr != null && pr.isSetShadow() && isCTOnOff(pr.getShadow());
     }
 
     public void setShadow(boolean value) {
@@ -556,9 +554,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
 
     public boolean isImprinted() {
         CTRPr pr = run.getRPr();
-        if (pr == null || !pr.isSetImprint())
-            return false;
-        return isCTOnOff(pr.getImprint());
+        return pr != null && pr.isSetImprint() && isCTOnOff(pr.getImprint());
     }
 
     public void setImprinted(boolean value) {
@@ -569,9 +565,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
 
     public boolean isEmbossed() {
         CTRPr pr = run.getRPr();
-        if (pr == null || !pr.isSetEmboss())
-            return false;
-        return isCTOnOff(pr.getEmboss());
+        return pr != null && pr.isSetEmboss() && isCTOnOff(pr.getEmboss());
     }
 
     public void setEmbossed(boolean value) {
@@ -607,7 +601,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * the contents of this run.
      * </p>
      *
-     * @param valign
+     * @param valign Type of vertical align to apply
      * @see VerticalAlign
      */
     public void setSubscript(VerticalAlign valign) {
@@ -671,7 +665,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * <p>
      * Also sets the other font ranges, if they haven't been set before
      *
-     * @param fontFamily
+     * @param fontFamily The font family to apply
      * @see FontCharRange
      */
     public void setFontFamily(String fontFamily) {
@@ -716,7 +710,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * ascii font char range with the given font family and also set all not
      * specified font ranges
      *
-     * @param fontFamily
+     * @param fontFamily The font family to apply
      * @param fcr        FontCharRange or null for default handling
      */
     public void setFontFamily(String fontFamily, FontCharRange fcr) {
@@ -773,7 +767,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * be used for non complex script characters.
      * </p>
      *
-     * @param size
+     * @param size The font size as number of point measurements.
      */
     public void setFontSize(int size) {
         BigInteger bint = new BigInteger("" + size);
@@ -816,7 +810,8 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * contents of this run.
      * </p>
      *
-     * @param val
+     * @param val Positive values will raise the baseline of the text, negative
+     *            values will lower it.
      */
     public void setTextPosition(int val) {
         BigInteger bint = new BigInteger("" + val);
@@ -923,8 +918,8 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * @param pictureType The type of the picture, eg {@link Document#PICTURE_TYPE_JPEG}
      * @param width       width in EMUs. To convert to / from points use {@link org.apache.poi.util.Units}
      * @param height      height in EMUs. To convert to / from points use {@link org.apache.poi.util.Units}
-     * @throws org.apache.poi.openxml4j.exceptions.InvalidFormatException
-     * @throws IOException
+     * @throws InvalidFormatException If the format of the picture is not known.
+     * @throws IOException            If reading the picture-data from the stream fails.
      * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_EMF
      * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_WMF
      * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_PICT
@@ -936,12 +931,12 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
             throws InvalidFormatException, IOException {
         String relationId;
         XWPFPictureData picData;
-        
+
         // Work out what to add the picture to, then add both the
         //  picture and the relationship for it
         // TODO Should we have an interface for this sort of thing?
         if (parent.getPart() instanceof XWPFHeaderFooter) {
-            XWPFHeaderFooter headerFooter = (XWPFHeaderFooter)parent.getPart();
+            XWPFHeaderFooter headerFooter = (XWPFHeaderFooter) parent.getPart();
             relationId = headerFooter.addPictureData(pictureData, pictureType);
             picData = (XWPFPictureData) headerFooter.getRelationById(relationId);
         } else {
@@ -1027,12 +1022,66 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
             XWPFPicture xwpfPicture = new XWPFPicture(pic, this);
             pictures.add(xwpfPicture);
             return xwpfPicture;
+        } catch (XmlException | SAXException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    /**
+     * this method add chart template into document
+     *
+     * @param width      set width of chart object
+     * @param height     set height of chart  object
+     * @param chartRelId relation id of chart in document relation file
+     * @throws InvalidFormatException
+     * @throws IOException
+     * @since POI 4.0.0
+     */
+    @Internal
+    public CTInline addChart(int width, int height, String chartRelId)
+            throws InvalidFormatException, IOException {
+        try {
+            CTInline inline = run.addNewDrawing().addNewInline();
+
+            //xml part of chart in document
+            String xml =
+                    "<a:graphic xmlns:a=\"" + CTGraphicalObject.type.getName().getNamespaceURI() + "\">" +
+                            "<a:graphicData uri=\"" + CTChart.type.getName().getNamespaceURI() + "\">" +
+                            "<c:chart xmlns:c=\"" + CTChart.type.getName().getNamespaceURI() + "\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" r:id=\"" + chartRelId + "\" />" +
+                            "</a:graphicData>" +
+                            "</a:graphic>";
+
+            InputSource is = new InputSource(new StringReader(xml));
+
+            org.w3c.dom.Document doc = DocumentHelper.readDocument(is);
+
+            inline.set(XmlToken.Factory.parse(doc.getDocumentElement(), DEFAULT_XML_OPTIONS));
+
+            // Setup the inline with 0 margin
+            inline.setDistT(0);
+            inline.setDistR(0);
+            inline.setDistB(0);
+            inline.setDistL(0);
+
+            CTNonVisualDrawingProps docPr = inline.addNewDocPr();
+            long id = getParent().getDocument().getDrawingIdManager().reserveNew();
+            docPr.setId(id);
+            //This name is not visible in Word anywhere.
+            docPr.setName("chart " + id);
+
+            CTPositiveSize2D extent = inline.addNewExtent();
+            //set hegiht and width of drawaing object;
+            extent.setCx(width);
+            extent.setCy(height);
+
+            return inline;
         } catch (XmlException e) {
             throw new IllegalStateException(e);
         } catch (SAXException e) {
             throw new IllegalStateException(e);
         }
     }
+
 
     /**
      * Returns the embedded pictures of the run. These
@@ -1049,7 +1098,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     public String toString() {
         String phonetic = getPhonetic();
         if (phonetic.length() > 0) {
-            return text() +" ("+ phonetic +")";
+            return text() + " (" + phonetic + ")";
         } else {
             return text();
         }
@@ -1080,7 +1129,6 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     }
 
     /**
-     *
      * @return the phonetic (ruby) string associated with this run or an empty String if none exists
      */
     public String getPhonetic() {
@@ -1105,9 +1153,8 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     }
 
     /**
-     *
-     * @param rubyObj rubyobject
-     * @param text buffer to which to append the content
+     * @param rubyObj         rubyobject
+     * @param text            buffer to which to append the content
      * @param extractPhonetic extract the phonetic (rt) component or the base component
      */
     private void handleRuby(XmlObject rubyObj, StringBuilder text, boolean extractPhonetic) {
@@ -1133,7 +1180,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
             } else {
                 if (extractPhonetic && inRT) {
                     _getText(o, text);
-                } else if (! extractPhonetic && inBase) {
+                } else if (!extractPhonetic && inBase) {
                     _getText(o, text);
                 }
             }

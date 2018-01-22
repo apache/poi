@@ -26,7 +26,6 @@ import org.apache.poi.crypt.examples.EncryptionUtils;
 import org.apache.poi.examples.util.TempFileUtils;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.poifs.crypt.temp.AesZipFileZipEntrySource;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.eventusermodel.XSSFReader.SheetIterator;
 
@@ -47,38 +46,24 @@ public class LoadPasswordProtectedXlsxStreaming {
         TempFileUtils.checkTempFiles();
         String filename = args[0];
         String password = args[1];
-        FileInputStream fis = new FileInputStream(filename);
-        try {
-            InputStream unencryptedStream = EncryptionUtils.decrypt(fis, password);
-            try {
-                printSheetCount(unencryptedStream);
-            } finally {
-                IOUtils.closeQuietly(unencryptedStream);
-            }
-        } finally {
-            IOUtils.closeQuietly(fis);
+        try (FileInputStream fis = new FileInputStream(filename);
+             InputStream unencryptedStream = EncryptionUtils.decrypt(fis, password)) {
+            printSheetCount(unencryptedStream);
         }
         TempFileUtils.checkTempFiles();
     }
 
     public static void printSheetCount(final InputStream inputStream) throws Exception {
-        AesZipFileZipEntrySource source = AesZipFileZipEntrySource.createZipEntrySource(inputStream);
-        try {
-            OPCPackage pkg = OPCPackage.open(source);
-            try {
-                XSSFReader reader = new XSSFReader(pkg);
-                SheetIterator iter = (SheetIterator)reader.getSheetsData();
-                int count = 0;
-                while(iter.hasNext()) {
-                    iter.next();
-                    count++;
-                }
-                System.out.println("sheet count: " + count);
-            } finally {
-                IOUtils.closeQuietly(pkg);
+        try (AesZipFileZipEntrySource source = AesZipFileZipEntrySource.createZipEntrySource(inputStream);
+             OPCPackage pkg = OPCPackage.open(source)) {
+            XSSFReader reader = new XSSFReader(pkg);
+            SheetIterator iter = (SheetIterator)reader.getSheetsData();
+            int count = 0;
+            while(iter.hasNext()) {
+                iter.next();
+                count++;
             }
-        } finally {
-            IOUtils.closeQuietly(source);
+            System.out.println("sheet count: " + count);
         }
     }
 }

@@ -414,7 +414,9 @@ public final class TestXWPFParagraph {
         //CTMoveBookmarkImpl into ooxml-lite.
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Tika-792.docx");
         XWPFParagraph paragraph = doc.getParagraphs().get(0);
-        assertEquals("s", paragraph.getText());
+        assertEquals("", paragraph.getText());
+        paragraph = doc.getParagraphs().get(1);
+        assertEquals("b", paragraph.getText());
         doc.close();
     }
 
@@ -612,7 +614,19 @@ public final class TestXWPFParagraph {
         }
         assertEquals("This is a test.\n\n\n\n3\n4\n5\n\n\n\nThis is a whole paragraph where one word is deleted.\n", str.toString());
     }
-    
+
+    @Test
+    public void test61787() throws IOException {
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("61787.docx");
+
+        StringBuilder str = new StringBuilder();
+        for(XWPFParagraph par : doc.getParagraphs()) {
+            str.append(par.getText()).append("\n");
+        }
+        String s = str.toString();
+        assertTrue("Having text: \n" + s + "\nTrimmed lenght: " + s.trim().length(), s.trim().length() > 0);
+    }
+
     /**
      * Tests for numbered lists
      * 

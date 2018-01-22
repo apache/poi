@@ -74,12 +74,10 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor
             System.err.println("  XSSFExcelExtractor <filename.xlsx>");
             System.exit(1);
         }
-        OPCPackage pkg = OPCPackage.create(args[0]);
-        POIXMLTextExtractor extractor = new XSSFExcelExtractor(pkg);
-        try {
+
+        try (OPCPackage pkg = OPCPackage.create(args[0]);
+             POIXMLTextExtractor extractor = new XSSFExcelExtractor(pkg)) {
             System.out.println(extractor.getText());
-        } finally {
-            extractor.close();
         }
     }
 

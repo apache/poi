@@ -19,6 +19,7 @@ package org.apache.poi.hwpf;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -57,6 +58,11 @@ public final class TestHWPFPictures extends TestCase {
 		imgBFile = "simple_image.png";
 		imgCFile = "vector_image.emf";
 		imgDFile = "GaiaTestImg.png";
+
+		// we use ImageIO in one of the tests here so we should ensure that the temporary directory is created correctly
+		File tempDir = new File(System.getProperty("java.io.tmpdir"));
+		assertTrue("Could not create temporary directory " + tempDir.getAbsolutePath() + ": " + tempDir.exists() + "/" + tempDir.isDirectory(),
+				tempDir.exists() || tempDir.mkdirs());
 	}
 
 	/**

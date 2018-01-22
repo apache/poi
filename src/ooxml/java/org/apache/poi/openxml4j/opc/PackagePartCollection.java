@@ -18,28 +18,34 @@
 package org.apache.poi.openxml4j.opc;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.BitSet;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.function.ToIntFunction;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 
 /**
  * A package part collection.
- *
- * @author Julien Chable
- * @version 0.1
  */
 public final class PackagePartCollection implements Serializable {
 
 	private static final long serialVersionUID = 2515031135957635517L;
 
-	/**
-	 * HashSet use to store this collection part names as string for rule
-	 * M1.11 optimized checking.
-	 */
-	private HashSet<String> registerPartNameStr = new HashSet<>();
+    /**
+     * HashSet use to store this collection part names as string for rule
+     * M1.11 optimized checking.
+     */
+    private final Set<String> registerPartNameStr = new HashSet<>();
 
-
-	private final HashMap<PackagePartName, PackagePart> packagePartLookup = new HashMap<>();
+	private final TreeMap<String, PackagePart> packagePartLookup =
+        new TreeMap<>(PackagePartName::compare);
 
 
 	/**
@@ -51,26 +57,32 @@ public final class PackagePartCollection implements Serializable {
 	 *                Throws if you try to add a part with a name derived from
 	 *                another part name.
 	 */
-	public PackagePart put(PackagePartName partName, PackagePart part) {
-		String[] segments = partName.getURI().toASCIIString().split(
-				PackagingURIHelper.FORWARD_SLASH_STRING);
-		StringBuilder concatSeg = new StringBuilder();
-		for (String seg : segments) {
-			if (!seg.isEmpty())
-				concatSeg.append(PackagingURIHelper.FORWARD_SLASH_CHAR);
+	public PackagePart put(final PackagePartName partName, final PackagePart part) {
+	    final String ppName = partName.getName();
+        final StringBuilder concatSeg = new StringBuilder();
+        // split at slash, but keep leading slash
+        final String delim = "(?=["+PackagingURIHelper.FORWARD_SLASH_STRING+".])";
+		for (String seg : ppName.split(delim)) {
 			concatSeg.append(seg);
-			if (this.registerPartNameStr.contains(concatSeg.toString())) {
+			if (registerPartNameStr.contains(concatSeg.toString())) {
 				throw new InvalidOperationException(
-						"You can't add a part with a part name derived from another part ! [M1.11]");
+					"You can't add a part with a part name derived from another part ! [M1.11]");
 			}
 		}
-		this.registerPartNameStr.add(partName.getName());
-		return packagePartLookup.put(partName, part);
+		registerPartNameStr.add(ppName);
+		return packagePartLookup.put(ppName, part);
 	}
 
 	public PackagePart remove(PackagePartName key) {
-		this.registerPartNameStr.remove(key.getName());
-		return packagePartLookup.remove(key);
+	    if (key == null) {
+	        return null;
+	    }
+        final String ppName = key.getName();
+	    PackagePart pp = packagePartLookup.remove(ppName);
+	    if (pp != null) {
+	        this.registerPartNameStr.remove(ppName);
+	    }
+		return pp;
 	}
 
 
@@ -79,21 +91,49 @@ public final class PackagePartCollection implements Serializable {
 	 * avoids paying the high cost of Natural Ordering per insertion.
 	 */
 	public Collection<PackagePart> sortedValues() {
-		ArrayList<PackagePart> packageParts = new ArrayList<>(packagePartLookup.values());
-		Collections.sort(packageParts);
-		return packageParts;
+	    return Collections.unmodifiableCollection(packagePartLookup.values());
 
 	}
 
 	public boolean containsKey(PackagePartName partName) {
-		return packagePartLookup.containsKey(partName);
+		return partName != null && packagePartLookup.containsKey(partName.getName());
 	}
 
 	public PackagePart get(PackagePartName partName) {
-		return packagePartLookup.get(partName);
+		return partName == null ? null : packagePartLookup.get(partName.getName());
 	}
 
 	public int size() {
 		return packagePartLookup.size();
 	}
+
+
+
+    /**
+     * Get an unused part index based on the namePattern, which doesn't exist yet
+     * and has the lowest positive index
+     *
+     * @param nameTemplate
+     *      The template for new part names containing a {@code '#'} for the index,
+     *      e.g. "/ppt/slides/slide#.xml"
+     * @return the next available part name index
+     * @throws InvalidFormatException if the nameTemplate is null or doesn't contain
+     *      the index char (#) or results in an invalid part name 
+     */
+    public int getUnusedPartIndex(final String nameTemplate) throws InvalidFormatException {
+        if (nameTemplate == null || !nameTemplate.contains("#")) {
+            throw new InvalidFormatException("name template must not be null and contain an index char (#)");
+        }
+
+        final Pattern pattern = Pattern.compile(nameTemplate.replace("#", "([0-9]+)"));
+        
+        final ToIntFunction<String> indexFromName = name -> {
+            Matcher m = pattern.matcher(name);
+            return m.matches() ? Integer.parseInt(m.group(1)) : 0;
+        };
+        
+        return packagePartLookup.keySet().stream()
+            .mapToInt(indexFromName)
+            .collect(BitSet::new, BitSet::set, BitSet::or).nextClearBit(1);
+    }
 }

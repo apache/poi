@@ -99,6 +99,7 @@ public class XSSFRichTextString implements RichTextString {
     /**
      * Create a rich text string from the supplied XML bean
      */
+    @Internal
     public XSSFRichTextString(CTRst st) {
         this.st = st;
     }
@@ -324,7 +325,7 @@ public class XSSFRichTextString implements RichTextString {
      *
      * @param s new string value
      */
-    public void setString(String s){
+    public void setString(String s) {
         clearFormatting();
         st.setT(s);
         preserveSpaces(st.xgetT());
@@ -496,7 +497,7 @@ public class XSSFRichTextString implements RichTextString {
      * @param   value the string to decode
      * @return  the decoded string
      */
-    static String utfDecode(String value){
+    static String utfDecode(String value) {
         if(value == null || !value.contains("_x")) {
             return value;
         }

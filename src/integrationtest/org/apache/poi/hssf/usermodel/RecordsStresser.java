@@ -68,13 +68,10 @@ public class RecordsStresser {
     // a test-case to test this locally without executing the full TestAllFiles
     @Test
     public void test() throws Exception {
-        InputStream stream = new FileInputStream("test-data/spreadsheet/15556.xls");
-        try {
+        try (InputStream stream = new FileInputStream("test-data/spreadsheet/15556.xls")) {
             HSSFWorkbook wb = new HSSFWorkbook(stream);
             handleWorkbook(wb);
             wb.close();
-        } finally {
-            stream.close();
         }
     }
 }

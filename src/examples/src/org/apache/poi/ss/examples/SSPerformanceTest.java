@@ -20,10 +20,12 @@ package org.apache.poi.ss.examples;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.poi.POIXMLTypeLoader;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -42,27 +44,47 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class SSPerformanceTest {
     public static void main(String[] args) throws IOException {
-        if (args.length != 4) usage("need four command arguments");
+        if (args.length < 4) {
+            usage("need at least four command arguments");
+        }
 
         String type = args[0];
-        long timeStarted = System.currentTimeMillis();
-        Workbook workBook = createWorkbook(type);
-        boolean isHType = workBook instanceof HSSFWorkbook;
-
         int rows = parseInt(args[1], "Failed to parse rows value as integer");
         int cols = parseInt(args[2], "Failed to parse cols value as integer");
         boolean saveFile = parseInt(args[3], "Failed to parse saveFile value as integer") != 0;
 
-        addContent(workBook, isHType, rows, cols);
-
-        if (saveFile) {
-            String fileName = type + "_" + rows + "_" + cols + "." + getFileSuffix(args[0]);
-            saveFile(workBook, fileName);
+        boolean warmup = false;
+        for(int arg = 4; arg < args.length;arg++) {
+            if(args[arg].equals("--unsynchronized-xmlbeans")) {
+                POIXMLTypeLoader.DEFAULT_XML_OPTIONS.setUnsynchronized();
+            }
+            if(args[arg].equals("--with-warmup-run")) {
+                warmup = true;
+            }
         }
+
+        if(warmup) {
+            System.out.println("Performing a warmup run first");
+            runWithArgs(type, rows, cols, saveFile);
+        }
+
+        long timeStarted = System.currentTimeMillis();
+        runWithArgs(type, rows, cols, saveFile);
         long timeFinished = System.currentTimeMillis();
-        System.out.println("Elapsed " + (timeFinished-timeStarted)/1000 + " seconds");
-        
-        workBook.close();
+
+        System.out.printf("Elapsed %.2f seconds for arguments %s\n", ((double)timeFinished - timeStarted) / 1000, Arrays.toString(args));
+    }
+
+    private static void runWithArgs(String type, int rows, int cols, boolean saveFile) throws IOException {
+        try (Workbook workBook = createWorkbook(type)) {
+            boolean isHType = workBook instanceof HSSFWorkbook;
+            addContent(workBook, isHType, rows, cols);
+
+            if (saveFile) {
+                String fileName = type + "_" + rows + "_" + cols + "." + getFileSuffix(type);
+                saveFile(workBook, fileName);
+            }
+        }
     }
 
     private static void addContent(Workbook workBook, boolean isHType, int rows, int cols) {
@@ -192,7 +214,7 @@ public class SSPerformanceTest {
 
     static void usage(String message) {
         System.err.println(message);
-        System.err.println("usage: java SSPerformanceTest HSSF|XSSF|SXSSF rows cols saveFile (0|1)? ");
+        System.err.println("usage: java SSPerformanceTest HSSF|XSSF|SXSSF rows cols saveFile (0|1)? [--unsynchronized-xmlbeans] [--with-warmup-run]");
         System.exit(1);
     }
 
@@ -203,9 +225,9 @@ public class SSPerformanceTest {
             return new XSSFWorkbook();
         else if ("SXSSF".equals(type))
             return new SXSSFWorkbook();
-        else
-            usage("Unknown type \"" + type + "\"");
-        return null;
+
+        usage("Unknown type \"" + type + "\"");
+        throw new IllegalArgumentException("Should not reach this point");
     }
 
     static String getFileSuffix(String type) {

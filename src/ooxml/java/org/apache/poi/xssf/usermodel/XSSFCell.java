@@ -451,7 +451,7 @@ public final class XSSFCell implements Cell {
                     _cell.setT(STCellType.S);
                     XSSFRichTextString rt = (XSSFRichTextString)str;
                     rt.setStylesTableReference(_stylesSource);
-                    int sRef = _sharedStringSource.addEntry(rt.getCTRst());
+                    int sRef = _sharedStringSource.addSharedStringItem(rt);
                     _cell.setV(Integer.toString(sRef));
                 }
                 break;
@@ -559,21 +559,31 @@ public final class XSSFCell implements Cell {
         XSSFWorkbook wb = _row.getSheet().getWorkbook();
         if (formula == null) {
             wb.onDeleteFormula(this);
-            if(_cell.isSetF()) {
+            if (_cell.isSetF()) {
+                _row.getSheet().onDeleteFormula(this);
                 _cell.unsetF();
             }
             return;
         }
 
-        if(wb.getCellFormulaValidation()) {
+        if (wb.getCellFormulaValidation()) {
             XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
             //validate through the FormulaParser
             FormulaParser.parse(formula, fpb, formulaType, wb.getSheetIndex(getSheet()), getRowIndex());
         }
 
-        CTCellFormula f = CTCellFormula.Factory.newInstance();
-        f.setStringValue(formula);
-        _cell.setF(f);
+        CTCellFormula f;
+        if (_cell.isSetF()) {
+            f = _cell.getF();
+            f.setStringValue(formula);
+            if(f.getT() == STCellFormulaType.SHARED){
+                getRow().getSheet().onReadCell(this);
+            }
+        } else {
+            f = CTCellFormula.Factory.newInstance();
+            f.setStringValue(formula);
+            _cell.setF(f);
+        }
         if(_cell.isSetV()) {
             _cell.unsetV();
         }
@@ -955,6 +965,9 @@ public final class XSSFCell implements Cell {
             notifyArrayFormulaChanging();
         }
         if(prevType == CellType.FORMULA && cellType != CellType.FORMULA) {
+            if (_cell.isSetF()) {
+                _row.getSheet().onDeleteFormula(this);
+            }
             getSheet().getWorkbook().onDeleteFormula(this);
         }
 
@@ -967,7 +980,7 @@ public final class XSSFCell implements Cell {
                     String str = convertCellValueToString();
                     XSSFRichTextString rt = new XSSFRichTextString(str);
                     rt.setStylesTableReference(_stylesSource);
-                    int sRef = _sharedStringSource.addEntry(rt.getCTRst());
+                    int sRef = _sharedStringSource.addSharedStringItem(rt);
                     _cell.setV(Integer.toString(sRef));
                 }
                 _cell.setT(STCellType.S);

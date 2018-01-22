@@ -21,8 +21,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 
-import org.apache.poi.hslf.model.OLEShape;
 import org.apache.poi.hslf.usermodel.HSLFObjectData;
+import org.apache.poi.hslf.usermodel.HSLFObjectShape;
 import org.apache.poi.hslf.usermodel.HSLFPictureData;
 import org.apache.poi.hslf.usermodel.HSLFPictureShape;
 import org.apache.poi.hslf.usermodel.HSLFShape;
@@ -67,19 +67,19 @@ public final class DataExtraction {
         for (HSLFSlide slide : ppt.getSlides()) {
             //extract embedded OLE documents
             for (HSLFShape shape : slide.getShapes()) {
-                if (shape instanceof OLEShape) {
+                if (shape instanceof HSLFObjectShape) {
                     oleIdx++;
-                    OLEShape ole = (OLEShape) shape;
+                    HSLFObjectShape ole = (HSLFObjectShape) shape;
                     HSLFObjectData data = ole.getObjectData();
                     String name = ole.getInstanceName();
                     if ("Worksheet".equals(name)) {
 
                         //read xls
                         @SuppressWarnings({ "unused", "resource" })
-                        HSSFWorkbook wb = new HSSFWorkbook(data.getData());
+                        HSSFWorkbook wb = new HSSFWorkbook(data.getInputStream());
 
                     } else if ("Document".equals(name)) {
-                        HWPFDocument doc = new HWPFDocument(data.getData());
+                        HWPFDocument doc = new HWPFDocument(data.getInputStream());
                         //read the word document
                         Range r = doc.getRange();
                         for(int k = 0; k < r.numParagraphs(); k++) {
@@ -93,8 +93,8 @@ public final class DataExtraction {
                         out.close();
                         doc.close();
                      }  else {
-                        FileOutputStream out = new FileOutputStream(ole.getProgID() + "-"+(oleIdx+1)+".dat");
-                        InputStream dis = data.getData();
+                        FileOutputStream out = new FileOutputStream(ole.getProgId() + "-"+(oleIdx+1)+".dat");
+                        InputStream dis = data.getInputStream();
                         byte[] chunk = new byte[2048];
                         int count;
                         while ((count = dis.read(chunk)) >= 0) {

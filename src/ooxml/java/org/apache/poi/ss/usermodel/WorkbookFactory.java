@@ -250,15 +250,8 @@ public class WorkbookFactory {
             throw new FileNotFoundException(file.toString());
         }
 
-        try {
-            NPOIFSFileSystem fs = new NPOIFSFileSystem(file, readOnly);
-            try {
-                return create(fs, password);
-            } catch (RuntimeException e) {
-                // ensure that the file-handle is closed again
-                IOUtils.closeQuietly(fs);
-                throw e;
-            }
+        try (NPOIFSFileSystem fs = new NPOIFSFileSystem(file, readOnly)) {
+            return create(fs, password);
         } catch(OfficeXmlFileException e) {
             // opening as .xls failed => try opening as .xlsx
             OPCPackage pkg = OPCPackage.open(file, readOnly ? PackageAccess.READ : PackageAccess.READ_WRITE); // NOSONAR

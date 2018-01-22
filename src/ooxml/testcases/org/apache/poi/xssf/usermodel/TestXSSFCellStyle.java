@@ -359,7 +359,7 @@ public class TestXSSFCellStyle {
 
         //setting XSSFColor
         num = stylesTable.getBorders().size();
-        clr = new XSSFColor(java.awt.Color.CYAN);
+        clr = new XSSFColor(java.awt.Color.CYAN, stylesTable.getIndexedColors());
         cellStyle.setBottomBorderColor(clr);
         assertEquals(clr.getCTColor().toString(), cellStyle.getBottomBorderXSSFColor().getCTColor().toString());
         byte[] rgb = cellStyle.getBottomBorderXSSFColor().getRGB();
@@ -400,7 +400,7 @@ public class TestXSSFCellStyle {
 
         //setting XSSFColor
         num = stylesTable.getBorders().size();
-        clr = new XSSFColor(java.awt.Color.CYAN);
+        clr = new XSSFColor(java.awt.Color.CYAN, stylesTable.getIndexedColors());
         cellStyle.setTopBorderColor(clr);
         assertEquals(clr.getCTColor().toString(), cellStyle.getTopBorderXSSFColor().getCTColor().toString());
         byte[] rgb = cellStyle.getTopBorderXSSFColor().getRGB();
@@ -441,7 +441,7 @@ public class TestXSSFCellStyle {
 
         //setting XSSFColor
         num = stylesTable.getBorders().size();
-        clr = new XSSFColor(java.awt.Color.CYAN);
+        clr = new XSSFColor(java.awt.Color.CYAN, stylesTable.getIndexedColors());
         cellStyle.setLeftBorderColor(clr);
         assertEquals(clr.getCTColor().toString(), cellStyle.getLeftBorderXSSFColor().getCTColor().toString());
         byte[] rgb = cellStyle.getLeftBorderXSSFColor().getRGB();
@@ -482,7 +482,7 @@ public class TestXSSFCellStyle {
 
         //setting XSSFColor
         num = stylesTable.getBorders().size();
-        clr = new XSSFColor(java.awt.Color.CYAN);
+        clr = new XSSFColor(java.awt.Color.CYAN, stylesTable.getIndexedColors());
         cellStyle.setRightBorderColor(clr);
         assertEquals(clr.getCTColor().toString(), cellStyle.getRightBorderXSSFColor().getCTColor().toString());
         byte[] rgb = cellStyle.getRightBorderXSSFColor().getRGB();
@@ -523,7 +523,7 @@ public class TestXSSFCellStyle {
 
         //setting XSSFColor
         num = stylesTable.getFills().size();
-        clr = new XSSFColor(java.awt.Color.CYAN);
+        clr = new XSSFColor(java.awt.Color.CYAN, stylesTable.getIndexedColors());
         cellStyle.setFillBackgroundColor(clr);
         assertEquals(clr.getCTColor().toString(), cellStyle.getFillBackgroundXSSFColor().getCTColor().toString());
         byte[] rgb = cellStyle.getFillBackgroundXSSFColor().getRGB();
