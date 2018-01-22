@@ -312,7 +312,7 @@ public abstract class BaseTestSheetShiftColumns {
     }
 
     @Test
-    public final void testShiftWithMergedRegions() throws IOException {
+    public void testShiftWithMergedRegions() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet();
         Row row = sheet.createRow(0);
