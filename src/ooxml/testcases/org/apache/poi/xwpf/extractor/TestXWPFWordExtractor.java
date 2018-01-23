@@ -433,4 +433,12 @@ public class TestXWPFWordExtractor extends TestCase {
         assertEquals("\u6771\u4EAC", extractor.getText().trim());
     }
 
+    public void testCTPictureBase() throws IOException {
+        //This forces ctpicturebase to be included in the poi-ooxml-schemas jar
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("61991.docx");
+        XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
+        String txt = extractor.getText();
+        assertContains(txt, "Sequencing data");
+        extractor.close();
+    }
 }
