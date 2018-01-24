@@ -41,6 +41,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeStyle;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBodyProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextField;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextFont;
@@ -206,9 +207,18 @@ public class XSLFTextRun implements TextRun {
     @Override
     public Double getFontSize(){
         double scale = 1;
-        CTTextNormalAutofit afit = getParentParagraph().getParentShape().getTextBodyPr().getNormAutofit();
-        if(afit != null) {
-            scale = (double)afit.getFontScale() / 100000;
+        XSLFTextParagraph pp = getParentParagraph();
+        if (pp!=null) {
+            XSLFTextShape ps = pp.getParentShape();
+            if (ps!=null) {
+                CTTextBodyProperties tbp = ps.getTextBodyPr();
+                if (tbp!=null) {
+                    CTTextNormalAutofit afit = tbp.getNormAutofit();
+                    if(afit != null) {
+                        scale = (double)afit.getFontScale() / 100000;
+                    }
+                }
+            }
         }
 
         CharacterPropertyFetcher<Double> fetcher = new CharacterPropertyFetcher<Double>(_p.getIndentLevel()){
@@ -222,7 +232,8 @@ public class XSLFTextRun implements TextRun {
             }
         };
         fetchCharacterProperty(fetcher);
-        return fetcher.getValue() == null ? null : fetcher.getValue()*scale;
+        Double result=fetcher.getValue() == null ? null : fetcher.getValue()*scale;
+        return result;
     }
 
     /**
@@ -586,10 +597,12 @@ public class XSLFTextRun implements TextRun {
 
         PaintStyle srcFontColor = r.getFontColor();
         if(srcFontColor != null && !srcFontColor.equals(getFontColor())){
-            setFontColor(srcFontColor);
+            // setFontColor will throw IllegalArgumentException if this is not checked
+            if (srcFontColor instanceof SolidPaint)
+                setFontColor(srcFontColor);
         }
 
-        double srcFontSize = r.getFontSize();
+        Double srcFontSize=r.getFontSize();
         if(srcFontSize  != getFontSize()){
             setFontSize(srcFontSize);
         }

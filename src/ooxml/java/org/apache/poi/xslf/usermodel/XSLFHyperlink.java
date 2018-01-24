@@ -54,10 +54,17 @@ public class XSLFHyperlink implements Hyperlink<XSLFShape,XSLFTextParagraph> {
         if (id == null || id.isEmpty()) {
             return _link.getAction();
         }
-
-        URI targetURI = _sheet.getPackagePart().getRelationship(id).getTargetURI();
+        String url=null;
+        PackagePart pp = _sheet.getPackagePart();
+        if (pp!=null) {
+            PackageRelationship rs = pp.getRelationship(id);
+            if (rs!=null) {
+                URI targetURI = rs.getTargetURI();
+                url=targetURI.toASCIIString();
+            }
+        }
         
-        return targetURI.toASCIIString();
+        return url;
     }
 
     @Override

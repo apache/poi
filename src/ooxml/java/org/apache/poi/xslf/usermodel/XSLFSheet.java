@@ -591,7 +591,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
         PackagePart blipPart;
         try {
             blipPart = packagePart.getRelatedPart(blipRel);
-        } catch (InvalidFormatException e){
+        } catch (Exception e){
             throw new POIXMLException(e);
         }
         XSLFPictureData data = new XSLFPictureData(blipPart);

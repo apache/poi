@@ -197,7 +197,12 @@ public final class PackageRelationshipCollection implements
      *            The relationship to add.
      */
     public void addRelationship(PackageRelationship relPart) {
-        relationshipsByID.put(relPart.getId(), relPart);
+        String id=relPart.getId();
+        if (id==null) {
+            // should we throw an IllegalArgumentException here?
+            return;
+        }
+        relationshipsByID.put(id, relPart);
         relationshipsByType.put(relPart.getRelationshipType(), relPart);
     }
 
@@ -231,8 +236,7 @@ public final class PackageRelationshipCollection implements
 
         PackageRelationship rel = new PackageRelationship(container,
                 sourcePart, targetUri, targetMode, relationshipType, id);
-        relationshipsByID.put(rel.getId(), rel);
-        relationshipsByType.put(rel.getRelationshipType(), rel);
+        addRelationship(rel);;
         if (targetMode == TargetMode.INTERNAL){
             internalRelationshipsByTargetName.put(targetUri.toASCIIString(), rel);
         }

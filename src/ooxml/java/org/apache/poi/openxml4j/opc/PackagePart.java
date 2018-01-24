@@ -388,7 +388,10 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
 	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#getRelationship(java.lang.String)
 	 */
 	public PackageRelationship getRelationship(String id) {
-		return this._relationships.getRelationshipByID(id);
+	    if (id==null)
+	        return null;
+	    PackageRelationship result = this._relationships.getRelationshipByID(id);
+		return result;
 	}
 
 	/**
@@ -457,7 +460,16 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
 	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#isRelationshipExists(org.apache.poi.openxml4j.opc.PackageRelationship)
 	 */
 	public boolean isRelationshipExists(PackageRelationship rel) {
-		return _relationships.getRelationshipByID(rel.getId()) != null;
+	    // should we throw an IllegalArgumentException here?
+	    if (rel==null)
+	        return false;
+	    String id=rel.getId();
+	    // how do we avoid the id to be null in the first place?
+	    if (id==null) {
+	        return false;
+	    }
+	    PackageRelationship rs = _relationships.getRelationshipByID(id);
+		return  rs!= null;
 	}
 
    /**

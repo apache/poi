@@ -201,6 +201,10 @@ public class XSLFPictureShape extends XSLFSimpleShape
 
         XSLFPictureShape p = (XSLFPictureShape)sh;
         String blipId = p.getBlipId();
+        if (blipId==null) {
+            // should we do anything about this?
+            return;
+        }
         String relId = getSheet().importBlip(blipId, p.getSheet().getPackagePart());
 
         CTPicture ct = (CTPicture)getXmlObject();
