@@ -46,14 +46,9 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
-import org.apache.poi.xslf.usermodel.XSLFChart;
-import org.apache.poi.xslf.usermodel.XSLFFactory;
-import org.apache.poi.xslf.usermodel.XSLFRelation;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.xwpf.usermodel.XWPFFactory;
-import org.apache.poi.xwpf.usermodel.XWPFRelation;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBarChart;
@@ -403,7 +398,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
      * @since POI 4.0.0
      */
     private PackagePart createWorksheetPart(POIXMLRelation chartRelation, POIXMLRelation chartWorkbookRelation, POIXMLFactory chartFactory) throws InvalidFormatException {
-        PackageRelationship xlsx = createRelationshipInChart(XSLFRelation.WORKBOOK_RELATIONSHIP, XSLFFactory.getInstance(), chartIndex);
+        PackageRelationship xlsx = createRelationshipInChart(chartWorkbookRelation, chartFactory, chartIndex);
         this.setExternalId(xlsx.getId());
         return getTargetPart(xlsx);
     }
@@ -419,24 +414,40 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     public void saveWorkbook(XSSFWorkbook workbook) throws IOException, InvalidFormatException {
         PackagePart worksheetPart = getWorksheetPart(true);
         if (worksheetPart == null) {
-            POIXMLRelation chartRelation = null;
-            POIXMLRelation chartWorkbookRelation = null;
-            POIXMLFactory chartFactory = null;
-            if (this instanceof XSLFChart) {
-                chartRelation = XSLFRelation.CHART;
-                chartWorkbookRelation = XSLFRelation.WORKBOOK_RELATIONSHIP;
-                chartFactory = XSLFFactory.getInstance();
-            } else {
-                chartRelation = XWPFRelation.CHART;
-                chartRelation = XWPFRelation.WORKBOOK_RELATIONSHIP;
-                chartFactory = XWPFFactory.getInstance();
+            POIXMLRelation chartRelation = getChartRelation();
+            POIXMLRelation chartWorkbookRelation = getChartWorkbookRelation();
+            POIXMLFactory chartFactory = getChartFactory();
+            if (chartRelation != null
+                && chartWorkbookRelation != null
+                && chartFactory != null) {
+                worksheetPart = createWorksheetPart(chartRelation, chartWorkbookRelation, chartFactory);
             }
-            worksheetPart = createWorksheetPart(chartRelation, chartWorkbookRelation, chartFactory);
         }
         try (OutputStream xlsOut = worksheetPart.getOutputStream()) {
             workbook.write(xlsOut);
         }
     }
+
+    /**
+     *
+     * @return the chart relation in the implementing subclass.
+     * @since POI 4.0.0
+     */
+    protected abstract POIXMLRelation getChartRelation();
+
+    /**
+     *
+     * @return the chart workbook relation in the implementing subclass.
+     * @since POI 4.0.0
+     */
+    protected abstract POIXMLRelation getChartWorkbookRelation();
+
+    /**
+     *
+     * @return the chart factory in the implementing subclass.
+     * @since POI 4.0.0
+     */
+    protected abstract POIXMLFactory getChartFactory();
 
     /**
      * this method writes the data into sheet
