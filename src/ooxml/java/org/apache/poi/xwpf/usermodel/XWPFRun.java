@@ -40,7 +40,6 @@ import org.apache.xmlbeans.XmlString;
 import org.apache.xmlbeans.XmlToken;
 import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTRelId;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGraphicalObject;
@@ -134,8 +133,9 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
                 NodeList kids = t.getDomNode().getChildNodes();
                 for (int n = 0; n < kids.getLength(); n++) {
                     if (kids.item(n) instanceof Text) {
-                        if (text.length() > 0)
+                        if (text.length() > 0) {
                             text.append("\n");
+                        }
                         text.append(kids.item(n).getNodeValue());
                     }
                 }
@@ -157,6 +157,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     /**
      * @deprecated Use {@link XWPFRun#XWPFRun(CTR, IRunBody)}
      */
+    @Deprecated
     public XWPFRun(CTR r, XWPFParagraph p) {
         this(r, (IRunBody) p);
     }
@@ -219,9 +220,11 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      *
      * @deprecated use {@link XWPFRun#getParent()} instead
      */
+    @Deprecated
     public XWPFParagraph getParagraph() {
-        if (parent instanceof XWPFParagraph)
+        if (parent instanceof XWPFParagraph) {
             return (XWPFParagraph) parent;
+        }
         return null;
     }
 
@@ -240,8 +243,9 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * For isBold, isItalic etc
      */
     private static boolean isCTOnOff(CTOnOff onoff) {
-        if (!onoff.isSetVal())
+        if (!onoff.isSetVal()) {
             return true;
+        }
         final STOnOff.Enum val = onoff.getVal();
         return (
                 (STOnOff.TRUE == val) ||
@@ -267,6 +271,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      *
      * @return <code>true</code> if the bold property is applied
      */
+    @Override
     public boolean isBold() {
         CTRPr pr = run.getRPr();
         return pr != null && pr.isSetB() && isCTOnOff(pr.getB());
@@ -296,6 +301,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * @param value <code>true</code> if the bold property is applied to
      *              this run
      */
+    @Override
     public void setBold(boolean value) {
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
         CTOnOff bold = pr.isSetB() ? pr.getB() : pr.addNewB();
@@ -361,8 +367,9 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * @param pos   - position in the text array (NB: 0 based)
      */
     public void setText(String value, int pos) {
-        if (pos > run.sizeOfTArray())
+        if (pos > run.sizeOfTArray()) {
             throw new ArrayIndexOutOfBoundsException("Value too large for the parameter position in XWPFRun.setText(String value,int pos)");
+        }
         CTText t = (pos < run.sizeOfTArray() && pos >= 0) ? run.getTArray(pos) : run.addNewT();
         t.setStringValue(value);
         preserveSpaces(t);
@@ -374,6 +381,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      *
      * @return <code>true</code> if the italic property is applied
      */
+    @Override
     public boolean isItalic() {
         CTRPr pr = run.getRPr();
         return pr != null && pr.isSetI() && isCTOnOff(pr.getI());
@@ -404,6 +412,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * @param value <code>true</code> if the italic property is applied to
      *              this run
      */
+    @Override
     public void setItalic(boolean value) {
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
         CTOnOff italic = pr.isSetI() ? pr.getI() : pr.addNewI();
@@ -451,6 +460,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      *
      * @return <code>true</code> if the strike property is applied
      */
+    @Override
     public boolean isStrikeThrough() {
         CTRPr pr = run.getRPr();
         return pr != null && pr.isSetStrike() && isCTOnOff(pr.getStrike());
@@ -480,6 +490,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * @param value <code>true</code> if the strike property is applied to
      *              this run
      */
+    @Override
     public void setStrikeThrough(boolean value) {
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
         CTOnOff strike = pr.isSetStrike() ? pr.getStrike() : pr.addNewStrike();
@@ -502,6 +513,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      *
      * @return <code>true</code> if the double strike property is applied
      */
+    @Override
     public boolean isDoubleStrikeThrough() {
         CTRPr pr = run.getRPr();
         return pr != null && pr.isSetDstrike() && isCTOnOff(pr.getDstrike());
@@ -513,61 +525,72 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      *
      * @see #setStrikeThrough(boolean) for the rules about this
      */
+    @Override
     public void setDoubleStrikethrough(boolean value) {
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
         CTOnOff dstrike = pr.isSetDstrike() ? pr.getDstrike() : pr.addNewDstrike();
         dstrike.setVal(value ? STOnOff.TRUE : STOnOff.FALSE);
     }
 
+    @Override
     public boolean isSmallCaps() {
         CTRPr pr = run.getRPr();
         return pr != null && pr.isSetSmallCaps() && isCTOnOff(pr.getSmallCaps());
     }
 
+    @Override
     public void setSmallCaps(boolean value) {
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
         CTOnOff caps = pr.isSetSmallCaps() ? pr.getSmallCaps() : pr.addNewSmallCaps();
         caps.setVal(value ? STOnOff.TRUE : STOnOff.FALSE);
     }
 
+    @Override
     public boolean isCapitalized() {
         CTRPr pr = run.getRPr();
         return pr != null && pr.isSetCaps() && isCTOnOff(pr.getCaps());
     }
 
+    @Override
     public void setCapitalized(boolean value) {
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
         CTOnOff caps = pr.isSetCaps() ? pr.getCaps() : pr.addNewCaps();
         caps.setVal(value ? STOnOff.TRUE : STOnOff.FALSE);
     }
 
+    @Override
     public boolean isShadowed() {
         CTRPr pr = run.getRPr();
         return pr != null && pr.isSetShadow() && isCTOnOff(pr.getShadow());
     }
 
+    @Override
     public void setShadow(boolean value) {
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
         CTOnOff shadow = pr.isSetShadow() ? pr.getShadow() : pr.addNewShadow();
         shadow.setVal(value ? STOnOff.TRUE : STOnOff.FALSE);
     }
 
+    @Override
     public boolean isImprinted() {
         CTRPr pr = run.getRPr();
         return pr != null && pr.isSetImprint() && isCTOnOff(pr.getImprint());
     }
 
+    @Override
     public void setImprinted(boolean value) {
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
         CTOnOff imprinted = pr.isSetImprint() ? pr.getImprint() : pr.addNewImprint();
         imprinted.setVal(value ? STOnOff.TRUE : STOnOff.FALSE);
     }
 
+    @Override
     public boolean isEmbossed() {
         CTRPr pr = run.getRPr();
         return pr != null && pr.isSetEmboss() && isCTOnOff(pr.getEmboss());
     }
 
+    @Override
     public void setEmbossed(boolean value) {
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
         CTOnOff emboss = pr.isSetEmboss() ? pr.getEmboss() : pr.addNewEmboss();
@@ -610,37 +633,46 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         ctValign.setVal(STVerticalAlignRun.Enum.forInt(valign.getValue()));
     }
 
+    @Override
     public int getKerning() {
         CTRPr pr = run.getRPr();
-        if (pr == null || !pr.isSetKern())
+        if (pr == null || !pr.isSetKern()) {
             return 0;
+        }
         return pr.getKern().getVal().intValue();
     }
 
+    @Override
     public void setKerning(int kern) {
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
         CTHpsMeasure kernmes = pr.isSetKern() ? pr.getKern() : pr.addNewKern();
         kernmes.setVal(BigInteger.valueOf(kern));
     }
 
+    @Override
     public boolean isHighlighted() {
         CTRPr pr = run.getRPr();
-        if (pr == null || !pr.isSetHighlight())
+        if (pr == null || !pr.isSetHighlight()) {
             return false;
-        if (pr.getHighlight().getVal() == STHighlightColor.NONE)
+        }
+        if (pr.getHighlight().getVal() == STHighlightColor.NONE) {
             return false;
+        }
         return true;
     }
     // TODO Provide a wrapper round STHighlightColor, then expose getter/setter
     //  for the highlight colour. Ideally also then add to CharacterRun interface
 
+    @Override
     public int getCharacterSpacing() {
         CTRPr pr = run.getRPr();
-        if (pr == null || !pr.isSetSpacing())
+        if (pr == null || !pr.isSetSpacing()) {
             return 0;
+        }
         return pr.getSpacing().getVal().intValue();
     }
 
+    @Override
     public void setCharacterSpacing(int twips) {
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
         CTSignedTwipsMeasure spc = pr.isSetSpacing() ? pr.getSpacing() : pr.addNewSpacing();
@@ -675,6 +707,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     /**
      * Alias for {@link #getFontFamily()}
      */
+    @Override
     public String getFontName() {
         return getFontFamily();
     }
@@ -688,7 +721,9 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public String getFontFamily(FontCharRange fcr) {
         CTRPr pr = run.getRPr();
-        if (pr == null || !pr.isSetRFonts()) return null;
+        if (pr == null || !pr.isSetRFonts()) {
+            return null;
+        }
 
         CTFonts fonts = pr.getRFonts();
         switch (fcr == null ? FontCharRange.ascii : fcr) {
@@ -752,6 +787,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      *
      * @return value representing the font size
      */
+    @Override
     public int getFontSize() {
         CTRPr pr = run.getRPr();
         return (pr != null && pr.isSetSz()) ? pr.getSz().getVal().divide(new BigInteger("2")).intValue() : -1;
@@ -769,6 +805,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      *
      * @param size The font size as number of point measurements.
      */
+    @Override
     public void setFontSize(int size) {
         BigInteger bint = new BigInteger("" + size);
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
@@ -1030,15 +1067,13 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     /**
      * this method add chart template into document
      *
-     * @param width      set width of chart object
-     * @param height     set height of chart  object
      * @param chartRelId relation id of chart in document relation file
      * @throws InvalidFormatException
      * @throws IOException
      * @since POI 4.0.0
      */
     @Internal
-    public CTInline addChart(int width, int height, String chartRelId)
+    public CTInline addChart(String chartRelId)
             throws InvalidFormatException, IOException {
         try {
             CTInline inline = run.addNewDrawing().addNewInline();
@@ -1069,11 +1104,6 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
             //This name is not visible in Word anywhere.
             docPr.setName("chart " + id);
 
-            CTPositiveSize2D extent = inline.addNewExtent();
-            //set hegiht and width of drawaing object;
-            extent.setCx(width);
-            extent.setCy(height);
-
             return inline;
         } catch (XmlException e) {
             throw new IllegalStateException(e);
@@ -1095,6 +1125,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     /**
      * Returns the string version of the text and the phonetic string
      */
+    @Override
     public String toString() {
         String phonetic = getPhonetic();
         if (phonetic.length() > 0) {
@@ -1108,6 +1139,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * Returns the string version of the text, with tabs and
      * carriage returns in place of their xml equivalents.
      */
+    @Override
     public String text() {
         StringBuilder text = new StringBuilder(64);
 
