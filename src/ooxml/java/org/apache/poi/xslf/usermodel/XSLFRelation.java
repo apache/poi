@@ -139,7 +139,7 @@ public class XSLFRelation extends POIXMLRelation {
             null
     );
 
-    public static final XSLFRelation WORKBOOK_RELATIONSHIP = new XSLFRelation(
+    public static final XSLFRelation WORKBOOK = new XSLFRelation(
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             POIXMLDocument.PACK_OBJECT_REL_TYPE,
             "/ppt/embeddings/Microsoft_Excel_Worksheet#.xlsx",
