@@ -74,7 +74,7 @@ public class SignatureConfig {
     private ThreadLocal<Provider> provider = new ThreadLocal<>();
     
     private List<SignatureFacet> signatureFacets = new ArrayList<>();
-    private HashAlgorithm digestAlgo = HashAlgorithm.sha1;
+    private HashAlgorithm digestAlgo = HashAlgorithm.sha256;
     private Date executionTime = new Date();
     private PrivateKey key;
     private List<X509Certificate> signingCertificateChain;
@@ -234,7 +234,7 @@ public class SignatureConfig {
     }
 
     /**
-     * @return the main digest algorithm, defaults to sha-1
+     * @return the main digest algorithm, defaults to sha-256
      */
     public HashAlgorithm getDigestAlgo() {
         return digestAlgo;
