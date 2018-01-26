@@ -154,6 +154,14 @@
 			<artifactId>curvesapi</artifactId>
 			<version>1.05</version>
 		</dependency>
+
+        <!-- runtime dependency needed just for SXSSF temp file shared string strings support -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>1.4.196</version>
+			<scope>provided</scope>
+		</dependency>
   
 		<!-- non-test dependency for OOXMLLite -->
         <dependency>
