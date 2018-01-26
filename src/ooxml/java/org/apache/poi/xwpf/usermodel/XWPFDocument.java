@@ -245,7 +245,6 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                 } else if (relation.equals(XWPFRelation.CHART.getRelation())) {
                     //now we can use all methods to modify charts in XWPFDocument
                     XWPFChart chartData = (XWPFChart) p;
-//                    chartData.onDocumentRead(); // ??? there is nothing to be done there!!!
                     charts.add(chartData);
                 } else if (relation.equals(XWPFRelation.GLOSSARY_DOCUMENT.getRelation())) {
                     // We don't currently process the glossary itself
@@ -356,6 +355,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     public List<XWPFChart> getCharts() {
         return Collections.unmodifiableList(charts);
     }
+
     /**
      * @see org.apache.poi.xwpf.usermodel.IBody#getTableArray(int)
      */
@@ -375,7 +375,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     public XWPFFooter getFooterArray(int pos) {
-        if(pos >=0 && pos < footers.size()) {
+        if (pos >= 0 && pos < footers.size()) {
             return footers.get(pos);
         }
         return null;
@@ -389,7 +389,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     public XWPFHeader getHeaderArray(int pos) {
-        if(pos >=0 && pos < headers.size()) {
+        if (pos >= 0 && pos < headers.size()) {
             return headers.get(pos);
         }
         return null;
@@ -468,11 +468,12 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     public XWPFHeaderFooterPolicy getHeaderFooterPolicy() {
         return headerFooterPolicy;
     }
+
     public XWPFHeaderFooterPolicy createHeaderFooterPolicy() {
         if (headerFooterPolicy == null) {
-//            if (! ctDocument.getBody().isSetSectPr()) {
-//                ctDocument.getBody().addNewSectPr();
-//            }
+            //            if (! ctDocument.getBody().isSetSectPr()) {
+            //                ctDocument.getBody().addNewSectPr();
+            //            }
             headerFooterPolicy = new XWPFHeaderFooterPolicy(this);
         }
         return headerFooterPolicy;
@@ -493,7 +494,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                 CTOnOff titlePg = ctSectPr.addNewTitlePg();
                 titlePg.setVal(STOnOff.ON);
             }
-        // } else if (type == HeaderFooterType.EVEN) {
+            // } else if (type == HeaderFooterType.EVEN) {
             // TODO Add support for Even/Odd headings and footers
         }
         return hfPolicy.createHeader(STHdrFtr.Enum.forInt(type.toInt()));
@@ -515,7 +516,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                 CTOnOff titlePg = ctSectPr.addNewTitlePg();
                 titlePg.setVal(STOnOff.ON);
             }
-        // } else if (type == HeaderFooterType.EVEN) {
+            // } else if (type == HeaderFooterType.EVEN) {
             // TODO Add support for Even/Odd headings and footers
         }
         return hfPolicy.createFooter(STHdrFtr.Enum.forInt(type.toInt()));
@@ -1014,7 +1015,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         ctDocument.getBody().setTblArray(pos, table.getCTTbl());
     }
 
-	/**
+    /**
      * Verifies that the documentProtection tag in settings.xml file <br>
      * specifies that the protection is enforced (w:enforcement="1") <br>
      * <br>
@@ -1607,5 +1608,49 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     @Override
     public XWPFDocument getXWPFDocument() {
         return this;
+    }
+
+    /**
+     * This method is used to create template for chart XML
+     * no need to read MS-Word file and modify charts
+     *
+     * @return This method return object of XWPFChart Object with default height and width
+     * @throws InvalidFormatException
+     * @throws IOException
+     * @since POI 4.0.0
+     */
+    public XWPFChart createChart() throws InvalidFormatException, IOException {
+        return createChart(XWPFChart.DEFAULT_WIDTH, XWPFChart.DEFAULT_HEIGHT);
+    }
+
+    /**
+     * This method is used to create template for chart XML
+     * no need to read MS-Word file and modify charts
+     *
+     * @param width  width of chart in document
+     * @param height height of chart in document
+     * @return This method return object of XWPFChart
+     * @throws InvalidFormatException
+     * @throws IOException
+     * @since POI 4.0.0
+     */
+    public XWPFChart createChart(int width, int height) throws InvalidFormatException, IOException {
+
+        //get chart number
+        int chartNumber = getNextPartNumber(XWPFRelation.CHART, charts.size() + 1);
+
+        //create relationship in document for new chart
+        RelationPart rp = createRelationship(
+                XWPFRelation.CHART, XWPFFactory.getInstance(), chartNumber, false);
+
+        // initialize xwpfchart object
+        XWPFChart xwpfChart = rp.getDocumentPart();
+        xwpfChart.setChartIndex(chartNumber);
+        xwpfChart.attach(rp.getRelationship().getId(), createParagraph().createRun());
+        xwpfChart.setChartBoundingBox(width, height);
+
+        //add chart object to chart list
+        charts.add(xwpfChart);
+        return xwpfChart;
     }
 }

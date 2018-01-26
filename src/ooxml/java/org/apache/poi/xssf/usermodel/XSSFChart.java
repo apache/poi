@@ -26,6 +26,8 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
+import org.apache.poi.POIXMLFactory;
+import org.apache.poi.POIXMLRelation;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.usermodel.Chart;
 import org.apache.poi.ss.usermodel.charts.ChartAxis;
@@ -94,6 +96,21 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
      */
     protected XSSFChart(PackagePart part) throws IOException, XmlException {
         super(part);
+    }
+
+    @Override
+    protected POIXMLRelation getChartRelation() {
+        return null;
+    }
+
+    @Override
+    protected POIXMLRelation getChartWorkbookRelation() {
+        return null;
+    }
+
+    @Override
+    protected POIXMLFactory getChartFactory() {
+        return null;
     }
 
     /**

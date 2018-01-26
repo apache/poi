@@ -341,6 +341,15 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         this(openPackage(path));
     }
     
+    /**
+     * Constructs a XSSFWorkbook object using Package Part.
+     * @param part  package part
+     * @since POI 4.0.0
+     */
+    public XSSFWorkbook(PackagePart part) throws IOException {
+        this(part.getInputStream());
+    }
+    
     protected void beforeDocumentRead() {
         // Ensure it isn't a XLSB file, which we don't support
         if (getCorePart().getContentType().equals(XSSFRelation.XLSB_BINARY_WORKBOOK.getContentType())) {
