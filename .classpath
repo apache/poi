@@ -28,8 +28,8 @@
 	<classpathentry kind="lib" path="lib/jmh-generator-annprocess-1.19.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry exported="true" kind="lib" path="compile-lib/slf4j-api-1.7.25.jar"/>
-	<classpathentry kind="lib" path="compile-lib/bcpkix-jdk15on-1.58.jar"/>
-	<classpathentry kind="lib" path="compile-lib/bcprov-ext-jdk15on-1.58.jar"/>
+	<classpathentry kind="lib" path="compile-lib/bcpkix-jdk15on-1.59.jar"/>
+	<classpathentry kind="lib" path="compile-lib/bcprov-ext-jdk15on-1.59.jar"/>
 	<classpathentry exported="true" kind="lib" path="compile-lib/xmlsec-2.1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-codec-1.11.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-logging-1.2.jar"/>

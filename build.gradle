@@ -199,7 +199,7 @@ project('ooxml') {
 		compile 'org.apache.commons:commons-collections4:4.1'
 		compile 'org.apache.commons:commons-math3:3.6.1'
 		compile 'org.apache.santuario:xmlsec:2.1.0'
-		compile 'org.bouncycastle:bcpkix-jdk15on:1.58'
+		compile 'org.bouncycastle:bcpkix-jdk15on:1.59'
 		compile 'com.github.virtuald:curvesapi:1.05'
 
 		// for ooxml-lite, should we move this somewhere else?
@@ -216,7 +216,7 @@ project('ooxml') {
 		testCompile 'org.openjdk.jmh:jmh-generator-annprocess:1.19'
 	}
 
-	// TOOD: we should not duplicate this task in each project, but I did not figure out how to inject the artifactId for each project
+	// TODO: we should not duplicate this task in each project, but I did not figure out how to inject the artifactId for each project
     task japicmp(type: me.champeau.gradle.ArtifactJapicmpTask, dependsOn: jar) {
 		baseline = 'org.apache.poi:poi-ooxml:' + japicmpversion + '@jar'
 		to = jar.archivePath

@@ -178,10 +178,10 @@ under the License.
     <!-- xml signature libs -->
     <property name="dsig.xmlsec.jar" location="${compile.lib}/xmlsec-2.1.0.jar"/>
     <property name="dsig.xmlsec.url" value="${repository.m2}/maven2/org/apache/santuario/xmlsec/2.1.0/xmlsec-2.1.0.jar"/>
-    <property name="dsig.bouncycastle-prov.jar" location="${compile.lib}/bcprov-ext-jdk15on-1.58.jar"/>
-    <property name="dsig.bouncycastle-prov.url" value="${repository.m2}/maven2/org/bouncycastle/bcprov-ext-jdk15on/1.58/bcprov-ext-jdk15on-1.58.jar"/>
-    <property name="dsig.bouncycastle-pkix.jar" location="${compile.lib}/bcpkix-jdk15on-1.58.jar"/>
-    <property name="dsig.bouncycastle-pkix.url" value="${repository.m2}/maven2/org/bouncycastle/bcpkix-jdk15on/1.58/bcpkix-jdk15on-1.58.jar"/>
+    <property name="dsig.bouncycastle-prov.jar" location="${compile.lib}/bcprov-ext-jdk15on-1.59.jar"/>
+    <property name="dsig.bouncycastle-prov.url" value="${repository.m2}/maven2/org/bouncycastle/bcprov-ext-jdk15on/1.59/bcprov-ext-jdk15on-1.59.jar"/>
+    <property name="dsig.bouncycastle-pkix.jar" location="${compile.lib}/bcpkix-jdk15on-1.59.jar"/>
+    <property name="dsig.bouncycastle-pkix.url" value="${repository.m2}/maven2/org/bouncycastle/bcpkix-jdk15on/1.59/bcpkix-jdk15on-1.59.jar"/>
     <property name="dsig.sl4j-api.jar" location="${compile.lib}/slf4j-api-1.7.25.jar"/>
     <property name="dsig.sl4j-api.url" value="${repository.m2}/maven2/org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar"/>
 
@@ -253,10 +253,10 @@ under the License.
     <property name="halt.on.test.failure" value="true"/>
 
     <!-- helper jars for pgp signing, building and nexus staging -->
-    <property name="dist.bouncycastle-prov.jar" location="${compile.lib}/bcprov-ext-jdk15on-1.58.jar"/>
-    <property name="dist.bouncycastle-prov.url" value="${repository.m2}/maven2/org/bouncycastle/bcprov-ext-jdk15on/1.58/bcprov-ext-jdk15on-1.58.jar"/>
-    <property name="dist.bouncycastle-bcpg.jar" location="${compile.lib}/bcpg-jdk15on-1.58.jar"/>
-    <property name="dist.bouncycastle-bcpg.url" value="${repository.m2}/maven2/org/bouncycastle/bcpg-jdk15on/1.58/bcpg-jdk15on-1.58.jar"/>
+    <property name="dist.bouncycastle-prov.jar" location="${compile.lib}/bcprov-ext-jdk15on-1.59.jar"/>
+    <property name="dist.bouncycastle-prov.url" value="${repository.m2}/maven2/org/bouncycastle/bcprov-ext-jdk15on/1.59/bcprov-ext-jdk15on-1.59.jar"/>
+    <property name="dist.bouncycastle-bcpg.jar" location="${compile.lib}/bcpg-jdk15on-1.59.jar"/>
+    <property name="dist.bouncycastle-bcpg.url" value="${repository.m2}/maven2/org/bouncycastle/bcpg-jdk15on/1.59/bcpg-jdk15on-1.59.jar"/>
     <property name="dist.commons-openpgp.jar" location="${compile.lib}/commons-openpgp-1.0-SNAPSHOT.jar"/>
     <property name="dist.commons-openpgp.url" value="https://repository.apache.org/snapshots/org/apache/commons/commons-openpgp/1.0-SNAPSHOT/commons-openpgp-1.0-20140717.171036-11.jar"/>
     <property name="dist.nexus-staging.jar" location="${compile.lib}/nexus-staging-ant-tasks-1.6.3-uber.jar"/>
@@ -600,12 +600,10 @@ under the License.
                 <include name="xmlsec-2.0.1.jar"/>
                 <include name="xmlsec-2.0.5.jar"/>
                 <include name="xmlsec-2.0.6.jar"/>
-                <include name="bcprov-ext-jdk15on-1.51.jar"/>
-                <include name="bcprov-ext-jdk15on-1.53.jar"/>
-                <include name="bcprov-ext-jdk15on-1.54.jar"/>
-                <include name="bcpkix-jdk15on-1.51.jar"/>
-                <include name="bcpkix-jdk15on-1.53.jar"/>
-                <include name="bcpkix-jdk15on-1.54.jar"/>
+                <include name="bc*jdk15on-1.51.jar"/>
+                <include name="bc*jdk15on-1.53.jar"/>
+                <include name="bc*jdk15on-1.54.jar"/>
+                <include name="bc*jdk15on-1.58.jar"/>
                 <include name="slf4j-api-1.7.7.jar"/>
                 <include name="slf4j-api-1.7.12.jar"/>
             </fileset>
