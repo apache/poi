@@ -60,44 +60,44 @@ public class XSLFTextRun implements TextRun {
     private final XmlObject _r;
     private final XSLFTextParagraph _p;
 
-    protected XSLFTextRun(XmlObject r, XSLFTextParagraph p){
+    protected XSLFTextRun(XmlObject r, XSLFTextParagraph p) {
         _r = r;
         _p = p;
         if (!(r instanceof CTRegularTextRun || r instanceof CTTextLineBreak || r instanceof CTTextField)) {
-            throw new OpenXML4JRuntimeException("unsupported text run of type "+r.getClass());
+            throw new OpenXML4JRuntimeException("unsupported text run of type " + r.getClass());
         }
     }
 
-    XSLFTextParagraph getParentParagraph(){
+    XSLFTextParagraph getParentParagraph() {
         return _p;
     }
 
     @Override
-    public String getRawText(){
+    public String getRawText() {
         if (_r instanceof CTTextField) {
-            return ((CTTextField)_r).getT();
+            return ((CTTextField) _r).getT();
         } else if (_r instanceof CTTextLineBreak) {
             return "\n";
         }
-        return ((CTRegularTextRun)_r).getT();
+        return ((CTRegularTextRun) _r).getT();
     }
 
-    String getRenderableText(){
+    String getRenderableText() {
         if (_r instanceof CTTextField) {
-            CTTextField tf = (CTTextField)_r;
+            CTTextField tf = (CTTextField) _r;
             XSLFSheet sheet = _p.getParentShape().getSheet();
             if ("slidenum".equals(tf.getType()) && sheet instanceof XSLFSlide) {
-                return Integer.toString(((XSLFSlide)sheet).getSlideNumber());
+                return Integer.toString(((XSLFSlide) sheet).getSlideNumber());
             }
             return tf.getT();
         } else if (_r instanceof CTTextLineBreak) {
             return "\n";
         }
 
-        return getRenderableText(((CTRegularTextRun)_r).getT());
+        return getRenderableText(((CTRegularTextRun) _r).getT());
     }
 
-    String getRenderableText(String txt){
+    String getRenderableText(String txt) {
         // TODO: finish support for tabs
         txt.replace("\t", "  ");
 
@@ -113,11 +113,11 @@ public class XSLFTextRun implements TextRun {
     }
 
     @Override
-    public void setText(String text){
+    public void setText(String text) {
         if (_r instanceof CTTextField) {
-            ((CTTextField)_r).setT(text);
+            ((CTTextField) _r).setT(text);
         } else if (!(_r instanceof CTTextLineBreak)) {
-            ((CTRegularTextRun)_r).setT(text);
+            ((CTRegularTextRun) _r).setT(text);
         }
     }
 
@@ -128,7 +128,7 @@ public class XSLFTextRun implements TextRun {
      *
      * @return the xmlbeans object
      */
-    public XmlObject getXmlObject(){
+    public XmlObject getXmlObject() {
         return _r;
     }
 
@@ -142,7 +142,7 @@ public class XSLFTextRun implements TextRun {
         if (!(color instanceof SolidPaint)) {
             throw new IllegalArgumentException("Currently only SolidPaint is supported!");
         }
-        SolidPaint sp = (SolidPaint)color;
+        SolidPaint sp = (SolidPaint) color;
         Color c = DrawPaint.applyColorTransform(sp.getSolidColor());
 
         CTTextCharacterProperties rPr = getRPr(true);
@@ -153,11 +153,11 @@ public class XSLFTextRun implements TextRun {
     }
 
     @Override
-    public PaintStyle getFontColor(){
+    public PaintStyle getFontColor() {
         final boolean hasPlaceholder = getParentParagraph().getParentShape().getPlaceholder() != null;
-        CharacterPropertyFetcher<PaintStyle> fetcher = new CharacterPropertyFetcher<PaintStyle>(_p.getIndentLevel()){
+        CharacterPropertyFetcher<PaintStyle> fetcher = new CharacterPropertyFetcher<PaintStyle>(_p.getIndentLevel()) {
             @Override
-            public boolean fetch(CTTextCharacterProperties props){
+            public boolean fetch(CTTextCharacterProperties props) {
                 if (props == null) {
                     return false;
                 }
@@ -175,7 +175,7 @@ public class XSLFTextRun implements TextRun {
                 XSLFTheme theme = sheet.getTheme();
                 PaintStyle ps = XSLFShape.selectPaint(fp, phClr, pp, theme, hasPlaceholder);
 
-                if (ps != null)  {
+                if (ps != null) {
                     setValue(ps);
                     return true;
                 }
@@ -188,9 +188,9 @@ public class XSLFTextRun implements TextRun {
     }
 
     @Override
-    public void setFontSize(Double fontSize){
+    public void setFontSize(Double fontSize) {
         CTTextCharacterProperties rPr = getRPr(true);
-        if(fontSize == null) {
+        if (fontSize == null) {
             if (rPr.isSetSz()) {
                 rPr.unsetSz();
             }
@@ -199,44 +199,43 @@ public class XSLFTextRun implements TextRun {
                 throw new IllegalArgumentException("Minimum font size is 1pt but was " + fontSize);
             }
 
-            rPr.setSz((int)(100*fontSize));
+            rPr.setSz((int) (100 * fontSize));
         }
     }
 
     @Override
-    public Double getFontSize(){
+    public Double getFontSize() {
         double scale = 1;
         CTTextNormalAutofit afit = getParentParagraph().getParentShape().getTextBodyPr().getNormAutofit();
-        if(afit != null) {
-            scale = (double)afit.getFontScale() / 100000;
+        if (afit != null) {
+            scale = (double) afit.getFontScale() / 100000;
         }
 
-        CharacterPropertyFetcher<Double> fetcher = new CharacterPropertyFetcher<Double>(_p.getIndentLevel()){
+        CharacterPropertyFetcher<Double> fetcher = new CharacterPropertyFetcher<Double>(_p.getIndentLevel()) {
             @Override
-            public boolean fetch(CTTextCharacterProperties props){
+            public boolean fetch(CTTextCharacterProperties props) {
                 if (props != null && props.isSetSz()) {
-                    setValue(props.getSz()*0.01);
+                    setValue(props.getSz() * 0.01);
                     return true;
                 }
                 return false;
             }
         };
         fetchCharacterProperty(fetcher);
-        return fetcher.getValue() == null ? null : fetcher.getValue()*scale;
+        return fetcher.getValue() == null ? null : fetcher.getValue() * scale;
     }
 
     /**
-     *
      * @return the spacing between characters within a text run,
      * If this attribute is omitted than a value of 0 or no adjustment is assumed.
      */
-    public double getCharacterSpacing(){
+    public double getCharacterSpacing() {
 
-        CharacterPropertyFetcher<Double> fetcher = new CharacterPropertyFetcher<Double>(_p.getIndentLevel()){
+        CharacterPropertyFetcher<Double> fetcher = new CharacterPropertyFetcher<Double>(_p.getIndentLevel()) {
             @Override
-            public boolean fetch(CTTextCharacterProperties props){
+            public boolean fetch(CTTextCharacterProperties props) {
                 if (props != null && props.isSetSpc()) {
-                    setValue(props.getSpc()*0.01);
+                    setValue(props.getSpc() * 0.01);
                     return true;
                 }
                 return false;
@@ -253,16 +252,16 @@ public class XSLFTextRun implements TextRun {
      * negative values to condense.
      * </p>
      *
-     * @param spc  character spacing in points.
+     * @param spc character spacing in points.
      */
-    public void setCharacterSpacing(double spc){
+    public void setCharacterSpacing(double spc) {
         CTTextCharacterProperties rPr = getRPr(true);
-        if(spc == 0.0) {
-            if(rPr.isSetSpc()) {
+        if (spc == 0.0) {
+            if (rPr.isSetSpc()) {
                 rPr.unsetSpc();
             }
         } else {
-            rPr.setSpc((int)(100*spc));
+            rPr.setSpc((int) (100 * spc));
         }
     }
 
@@ -300,7 +299,7 @@ public class XSLFTextRun implements TextRun {
     }
 
     @Override
-    public byte getPitchAndFamily(){
+    public byte getPitchAndFamily() {
         FontGroup fg = FontGroup.getFontGroupFirst(getRawText());
         XSLFFontInfo fontInfo = new XSLFFontInfo(fg);
         FontPitch pitch = fontInfo.getPitch();
@@ -321,10 +320,10 @@ public class XSLFTextRun implements TextRun {
 
     @Override
     public boolean isStrikethrough() {
-        CharacterPropertyFetcher<Boolean> fetcher = new CharacterPropertyFetcher<Boolean>(_p.getIndentLevel()){
+        CharacterPropertyFetcher<Boolean> fetcher = new CharacterPropertyFetcher<Boolean>(_p.getIndentLevel()) {
             @Override
-            public boolean fetch(CTTextCharacterProperties props){
-                if(props != null && props.isSetStrike()) {
+            public boolean fetch(CTTextCharacterProperties props) {
+                if (props != null && props.isSetStrike()) {
                     setValue(props.getStrike() != STTextStrikeType.NO_STRIKE);
                     return true;
                 }
@@ -337,9 +336,9 @@ public class XSLFTextRun implements TextRun {
 
     @Override
     public boolean isSuperscript() {
-        CharacterPropertyFetcher<Boolean> fetcher = new CharacterPropertyFetcher<Boolean>(_p.getIndentLevel()){
+        CharacterPropertyFetcher<Boolean> fetcher = new CharacterPropertyFetcher<Boolean>(_p.getIndentLevel()) {
             @Override
-            public boolean fetch(CTTextCharacterProperties props){
+            public boolean fetch(CTTextCharacterProperties props) {
                 if (props != null && props.isSetBaseline()) {
                     setValue(props.getBaseline() > 0);
                     return true;
@@ -352,16 +351,16 @@ public class XSLFTextRun implements TextRun {
     }
 
     /**
-     *  Set the baseline for both the superscript and subscript fonts.
-     *  <p>
-     *     The size is specified using a percentage.
-     *     Positive values indicate superscript, negative values indicate subscript.
-     *  </p>
+     * Set the baseline for both the superscript and subscript fonts.
+     * <p>
+     * The size is specified using a percentage.
+     * Positive values indicate superscript, negative values indicate subscript.
+     * </p>
      *
      * @param baselineOffset
      */
-    public void setBaselineOffset(double baselineOffset){
-       getRPr(true).setBaseline((int) baselineOffset * 1000);
+    public void setBaselineOffset(double baselineOffset) {
+        getRPr(true).setBaseline((int) baselineOffset * 1000);
     }
 
     /**
@@ -370,7 +369,7 @@ public class XSLFTextRun implements TextRun {
      *
      * @see #setBaselineOffset(double)
      */
-    public void setSuperscript(boolean flag){
+    public void setSuperscript(boolean flag) {
         setBaselineOffset(flag ? 30. : 0.);
     }
 
@@ -380,15 +379,15 @@ public class XSLFTextRun implements TextRun {
      *
      * @see #setBaselineOffset(double)
      */
-    public void setSubscript(boolean flag){
+    public void setSubscript(boolean flag) {
         setBaselineOffset(flag ? -25.0 : 0.);
     }
 
     @Override
     public boolean isSubscript() {
-        CharacterPropertyFetcher<Boolean> fetcher = new CharacterPropertyFetcher<Boolean>(_p.getIndentLevel()){
+        CharacterPropertyFetcher<Boolean> fetcher = new CharacterPropertyFetcher<Boolean>(_p.getIndentLevel()) {
             @Override
-            public boolean fetch(CTTextCharacterProperties props){
+            public boolean fetch(CTTextCharacterProperties props) {
                 if (props != null && props.isSetBaseline()) {
                     setValue(props.getBaseline() < 0);
                     return true;
@@ -405,9 +404,9 @@ public class XSLFTextRun implements TextRun {
      */
     @Override
     public TextCap getTextCap() {
-        CharacterPropertyFetcher<TextCap> fetcher = new CharacterPropertyFetcher<TextCap>(_p.getIndentLevel()){
+        CharacterPropertyFetcher<TextCap> fetcher = new CharacterPropertyFetcher<TextCap>(_p.getIndentLevel()) {
             @Override
-            public boolean fetch(CTTextCharacterProperties props){
+            public boolean fetch(CTTextCharacterProperties props) {
                 if (props != null && props.isSetCap()) {
                     int idx = props.getCap().intValue() - 1;
                     setValue(TextCap.values()[idx]);
@@ -421,15 +420,15 @@ public class XSLFTextRun implements TextRun {
     }
 
     @Override
-    public void setBold(boolean bold){
+    public void setBold(boolean bold) {
         getRPr(true).setB(bold);
     }
 
     @Override
-    public boolean isBold(){
-        CharacterPropertyFetcher<Boolean> fetcher = new CharacterPropertyFetcher<Boolean>(_p.getIndentLevel()){
+    public boolean isBold() {
+        CharacterPropertyFetcher<Boolean> fetcher = new CharacterPropertyFetcher<Boolean>(_p.getIndentLevel()) {
             @Override
-            public boolean fetch(CTTextCharacterProperties props){
+            public boolean fetch(CTTextCharacterProperties props) {
                 if (props != null && props.isSetB()) {
                     setValue(props.getB());
                     return true;
@@ -442,15 +441,15 @@ public class XSLFTextRun implements TextRun {
     }
 
     @Override
-    public void setItalic(boolean italic){
+    public void setItalic(boolean italic) {
         getRPr(true).setI(italic);
     }
 
     @Override
-    public boolean isItalic(){
-        CharacterPropertyFetcher<Boolean> fetcher = new CharacterPropertyFetcher<Boolean>(_p.getIndentLevel()){
+    public boolean isItalic() {
+        CharacterPropertyFetcher<Boolean> fetcher = new CharacterPropertyFetcher<Boolean>(_p.getIndentLevel()) {
             @Override
-            public boolean fetch(CTTextCharacterProperties props){
+            public boolean fetch(CTTextCharacterProperties props) {
                 if (props != null && props.isSetI()) {
                     setValue(props.getI());
                     return true;
@@ -468,10 +467,10 @@ public class XSLFTextRun implements TextRun {
     }
 
     @Override
-    public boolean isUnderlined(){
-        CharacterPropertyFetcher<Boolean> fetcher = new CharacterPropertyFetcher<Boolean>(_p.getIndentLevel()){
+    public boolean isUnderlined() {
+        CharacterPropertyFetcher<Boolean> fetcher = new CharacterPropertyFetcher<Boolean>(_p.getIndentLevel()) {
             @Override
-            public boolean fetch(CTTextCharacterProperties props){
+            public boolean fetch(CTTextCharacterProperties props) {
                 if (props != null && props.isSetU()) {
                     setValue(props.getU() != STTextUnderlineType.NONE);
                     return true;
@@ -491,21 +490,21 @@ public class XSLFTextRun implements TextRun {
      */
     protected CTTextCharacterProperties getRPr(boolean create) {
         if (_r instanceof CTTextField) {
-            CTTextField tf = (CTTextField)_r;
+            CTTextField tf = (CTTextField) _r;
             if (tf.isSetRPr()) {
                 return tf.getRPr();
             } else if (create) {
                 return tf.addNewRPr();
             }
         } else if (_r instanceof CTTextLineBreak) {
-            CTTextLineBreak tlb = (CTTextLineBreak)_r;
+            CTTextLineBreak tlb = (CTTextLineBreak) _r;
             if (tlb.isSetRPr()) {
                 return tlb.getRPr();
             } else if (create) {
                 return tlb.addNewRPr();
             }
         } else {
-            CTRegularTextRun tr = (CTRegularTextRun)_r;
+            CTRegularTextRun tr = (CTRegularTextRun) _r;
             if (tr.isSetRPr()) {
                 return tr.getRPr();
             } else if (create) {
@@ -516,12 +515,12 @@ public class XSLFTextRun implements TextRun {
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return "[" + getClass() + "]" + getRawText();
     }
 
     @Override
-    public XSLFHyperlink createHyperlink(){
+    public XSLFHyperlink createHyperlink() {
         XSLFHyperlink hl = getHyperlink();
         if (hl != null) {
             return hl;
@@ -532,7 +531,7 @@ public class XSLFTextRun implements TextRun {
     }
 
     @Override
-    public XSLFHyperlink getHyperlink(){
+    public XSLFHyperlink getHyperlink() {
         CTTextCharacterProperties rPr = getRPr(false);
         if (rPr == null) {
             return null;
@@ -544,7 +543,7 @@ public class XSLFTextRun implements TextRun {
         return new XSLFHyperlink(hl, _p.getParentShape().getSheet());
     }
 
-    private boolean fetchCharacterProperty(CharacterPropertyFetcher<?> fetcher){
+    private boolean fetchCharacterProperty(CharacterPropertyFetcher<?> fetcher) {
         XSLFTextShape shape = _p.getParentShape();
         XSLFSheet sheet = shape.getSheet();
 
@@ -558,7 +557,7 @@ public class XSLFTextRun implements TextRun {
         }
 
         CTPlaceholder ph = shape.getCTPlaceholder();
-        if (ph == null){
+        if (ph == null) {
             // if it is a plain text box then take defaults from presentation.xml
             @SuppressWarnings("resource")
             XMLSlideShow ppt = sheet.getSlideShow();
@@ -570,47 +569,47 @@ public class XSLFTextRun implements TextRun {
         }
 
         // TODO: determine master shape
-        CTTextParagraphProperties defaultProps =  _p.getDefaultMasterStyle();
-        if(defaultProps != null && fetcher.fetch(defaultProps)) {
+        CTTextParagraphProperties defaultProps = _p.getDefaultMasterStyle();
+        if (defaultProps != null && fetcher.fetch(defaultProps)) {
             return true;
         }
 
         return false;
     }
 
-    void copy(XSLFTextRun r){
+    void copy(XSLFTextRun r) {
         String srcFontFamily = r.getFontFamily();
-        if(srcFontFamily != null && !srcFontFamily.equals(getFontFamily())){
+        if (srcFontFamily != null && !srcFontFamily.equals(getFontFamily())) {
             setFontFamily(srcFontFamily);
         }
 
         PaintStyle srcFontColor = r.getFontColor();
-        if(srcFontColor != null && !srcFontColor.equals(getFontColor())){
+        if (srcFontColor != null && !srcFontColor.equals(getFontColor())) {
             setFontColor(srcFontColor);
         }
 
-        double srcFontSize = r.getFontSize();
-        if(srcFontSize  != getFontSize()){
+        Double srcFontSize = r.getFontSize();
+        if (srcFontSize != getFontSize()) {
             setFontSize(srcFontSize);
         }
 
         boolean bold = r.isBold();
-        if(bold != isBold()) {
+        if (bold != isBold()) {
             setBold(bold);
         }
 
         boolean italic = r.isItalic();
-        if(italic != isItalic()) {
+        if (italic != isItalic()) {
             setItalic(italic);
         }
 
         boolean underline = r.isUnderlined();
-        if(underline != isUnderlined()) {
+        if (underline != isUnderlined()) {
             setUnderlined(underline);
         }
 
         boolean strike = r.isStrikethrough();
-        if(strike != isStrikethrough()) {
+        if (strike != isStrikethrough()) {
             setStrikethrough(strike);
         }
     }
@@ -619,7 +618,7 @@ public class XSLFTextRun implements TextRun {
     @Override
     public FieldType getFieldType() {
         if (_r instanceof CTTextField) {
-            CTTextField tf = (CTTextField)_r;
+            CTTextField tf = (CTTextField) _r;
             if ("slidenum".equals(tf.getType())) {
                 return FieldType.SLIDE_NUMBER;
             }
@@ -673,48 +672,48 @@ public class XSLFTextRun implements TextRun {
                 getXmlObject(true).setTypeface(typeface);
                 return;
             }
-            
+
             CTTextCharacterProperties props = getRPr(false);
             if (props == null) {
                 return;
             }
             FontGroup fg = FontGroup.getFontGroupFirst(getRawText());
             switch (fg) {
-            default:
-            case LATIN:
-                if (props.isSetLatin()) {
-                    props.unsetLatin();
-                }
-                break;
-            case EAST_ASIAN:
-                if (props.isSetEa()) {
-                    props.unsetEa();
-                }
-                break;
-            case COMPLEX_SCRIPT:
-                if (props.isSetCs()) {
-                    props.unsetCs();
-                }
-                break;
-            case SYMBOL:
-                if (props.isSetSym()) {
-                    props.unsetSym();
-                }
-                break;
+                default:
+                case LATIN:
+                    if (props.isSetLatin()) {
+                        props.unsetLatin();
+                    }
+                    break;
+                case EAST_ASIAN:
+                    if (props.isSetEa()) {
+                        props.unsetEa();
+                    }
+                    break;
+                case COMPLEX_SCRIPT:
+                    if (props.isSetCs()) {
+                        props.unsetCs();
+                    }
+                    break;
+                case SYMBOL:
+                    if (props.isSetSym()) {
+                        props.unsetSym();
+                    }
+                    break;
             }
         }
 
         @Override
         public FontCharset getCharset() {
             CTTextFont tf = getXmlObject(false);
-            return (tf != null && tf.isSetCharset()) ? FontCharset.valueOf(tf.getCharset()&0xFF) : null;
+            return (tf != null && tf.isSetCharset()) ? FontCharset.valueOf(tf.getCharset() & 0xFF) : null;
         }
 
         @Override
         public void setCharset(FontCharset charset) {
             CTTextFont tf = getXmlObject(true);
             if (charset != null) {
-                tf.setCharset((byte)charset.getNativeId());
+                tf.setCharset((byte) charset.getNativeId());
             } else {
                 if (tf.isSetCharset()) {
                     tf.unsetCharset();
@@ -735,8 +734,8 @@ public class XSLFTextRun implements TextRun {
                 return;
             }
             FontPitch pitch = (tf.isSetPitchFamily())
-                ? FontPitch.valueOfPitchFamily(tf.getPitchFamily())
-                : FontPitch.VARIABLE;
+                    ? FontPitch.valueOfPitchFamily(tf.getPitchFamily())
+                    : FontPitch.VARIABLE;
             byte pitchFamily = FontPitch.getNativeId(pitch, family != null ? family : FontFamily.FF_SWISS);
             tf.setPitchFamily(pitchFamily);
         }
@@ -754,8 +753,8 @@ public class XSLFTextRun implements TextRun {
                 return;
             }
             FontFamily family = (tf.isSetPitchFamily())
-                ? FontFamily.valueOfPitchFamily(tf.getPitchFamily())
-                : FontFamily.FF_SWISS;
+                    ? FontFamily.valueOfPitchFamily(tf.getPitchFamily())
+                    : FontFamily.FF_SWISS;
             byte pitchFamily = FontPitch.getNativeId(pitch != null ? pitch : FontPitch.VARIABLE, family);
             tf.setPitchFamily(pitchFamily);
         }
@@ -765,9 +764,9 @@ public class XSLFTextRun implements TextRun {
                 return getCTTextFont(getRPr(true), true);
             }
 
-            CharacterPropertyFetcher<CTTextFont> visitor = new CharacterPropertyFetcher<CTTextFont>(_p.getIndentLevel()){
+            CharacterPropertyFetcher<CTTextFont> visitor = new CharacterPropertyFetcher<CTTextFont>(_p.getIndentLevel()) {
                 @Override
-                public boolean fetch(CTTextCharacterProperties props){
+                public boolean fetch(CTTextCharacterProperties props) {
                     CTTextFont font = getCTTextFont(props, false);
                     if (font == null) {
                         return false;
@@ -778,7 +777,7 @@ public class XSLFTextRun implements TextRun {
             };
             fetchCharacterProperty(visitor);
 
-            return  visitor.getValue();
+            return visitor.getValue();
         }
 
         private CTTextFont getCTTextFont(CTTextCharacterProperties props, boolean create) {
@@ -788,31 +787,31 @@ public class XSLFTextRun implements TextRun {
 
             CTTextFont font;
             switch (fontGroup) {
-            default:
-            case LATIN:
-                font = props.getLatin();
-                if (font == null && create) {
-                    font = props.addNewLatin();
-                }
-                break;
-            case EAST_ASIAN:
-                font = props.getEa();
-                if (font == null && create) {
-                    font = props.addNewEa();
-                }
-                break;
-            case COMPLEX_SCRIPT:
-                font = props.getCs();
-                if (font == null && create) {
-                    font = props.addNewCs();
-                }
-                break;
-            case SYMBOL:
-                font = props.getSym();
-                if (font == null && create) {
-                    font = props.addNewSym();
-                }
-                break;
+                default:
+                case LATIN:
+                    font = props.getLatin();
+                    if (font == null && create) {
+                        font = props.addNewLatin();
+                    }
+                    break;
+                case EAST_ASIAN:
+                    font = props.getEa();
+                    if (font == null && create) {
+                        font = props.addNewEa();
+                    }
+                    break;
+                case COMPLEX_SCRIPT:
+                    font = props.getCs();
+                    if (font == null && create) {
+                        font = props.addNewCs();
+                    }
+                    break;
+                case SYMBOL:
+                    font = props.getSym();
+                    if (font == null && create) {
+                        font = props.addNewSym();
+                    }
+                    break;
             }
 
             if (font == null) {
@@ -825,7 +824,7 @@ public class XSLFTextRun implements TextRun {
                 final XSLFTheme theme = _p.getParentShape().getSheet().getTheme();
                 CTFontScheme fontTheme = theme.getXmlObject().getThemeElements().getFontScheme();
                 CTFontCollection coll = typeface.startsWith("+mj-")
-                    ? fontTheme.getMajorFont() : fontTheme.getMinorFont();
+                        ? fontTheme.getMajorFont() : fontTheme.getMinorFont();
                 // TODO: handle LCID codes
                 // see https://blogs.msdn.microsoft.com/officeinteroperability/2013/04/22/office-open-xml-themes-schemes-and-fonts/
                 String fgStr = typeface.substring(4);
@@ -837,7 +836,7 @@ public class XSLFTextRun implements TextRun {
                     font = coll.getLatin();
                 }
                 // SYMBOL is missing
-                
+
                 if (font == null || !font.isSetTypeface() || "".equals(font.getTypeface())) {
                     font = coll.getLatin();
                 }
