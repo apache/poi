@@ -127,7 +127,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      * @deprecated POI 3.17 beta 1
      * @see Units#DEFAULT_CHARACTER_WIDTH
      */
-    @Removal(version="3.19")
+    @Removal(version="4.1")
     public static final float DEFAULT_CHARACTER_WIDTH = Units.DEFAULT_CHARACTER_WIDTH;
 
     /**
@@ -186,7 +186,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      * TODO
      */
     private CalculationChain calcChain;
-    
+
     /**
      * External Links, for referencing names or cells in other workbooks.
      */
@@ -267,11 +267,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     /**
      * Constructs a XSSFWorkbook object given a OpenXML4J <code>Package</code> object,
      *  see <a href="http://poi.apache.org/oxml4j/">http://poi.apache.org/oxml4j/</a>.
-     * 
+     *
      * <p>Once you have finished working with the Workbook, you should close the package
-     * by calling either {@link #close()} or {@link OPCPackage#close()}, to avoid 
+     * by calling either {@link #close()} or {@link OPCPackage#close()}, to avoid
      * leaving file handles open.
-     * 
+     *
      * <p>Creating a XSSFWorkbook from a file-backed OPC Package has a lower memory
      *  footprint than an InputStream backed one.
      *
@@ -282,10 +282,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         this.xssfFactory = XSSFFactory.getInstance();
 
         beforeDocumentRead();
-        
+
         // Build a tree of POIXMLDocumentParts, this workbook being the root
         load(this.xssfFactory);
-        
+
         // some broken Workbooks miss this...
         setBookViewsIfMissing();
     }
@@ -293,7 +293,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     /**
      * Constructs a XSSFWorkbook object, by buffering the whole stream into memory
      *  and then opening an {@link OPCPackage} object for it.
-     * 
+     *
      * <p>Using an {@link InputStream} requires more memory than using a File, so
      *  if a {@link File} is available then you should instead do something like
      *   <pre><code>
@@ -310,29 +310,29 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
     /**
      * Constructs a XSSFWorkbook object from a given file.
-     * 
-     * <p>Once you have finished working with the Workbook, you should close 
-     * the package by calling  {@link #close()}, to avoid leaving file 
+     *
+     * <p>Once you have finished working with the Workbook, you should close
+     * the package by calling  {@link #close()}, to avoid leaving file
      * handles open.
-     * 
-     * <p>Opening a XSSFWorkbook from a file has a lower memory footprint 
+     *
+     * <p>Opening a XSSFWorkbook from a file has a lower memory footprint
      *  than opening from an InputStream
-     *  
+     *
      * @param file   the file to open
      */
     public XSSFWorkbook(File file) throws IOException, InvalidFormatException {
         this(OPCPackage.open(file));
     }
-    
+
     /**
      * Constructs a XSSFWorkbook object given a file name.
      *
-     * 
-     * <p>Once you have finished working with the Workbook, you should close 
-     * the package by calling  {@link #close()}, to avoid leaving file 
+     *
+     * <p>Once you have finished working with the Workbook, you should close
+     * the package by calling  {@link #close()}, to avoid leaving file
      * handles open.
-     * 
-     * <p>Opening a XSSFWorkbook from a file has a lower memory footprint 
+     *
+     * <p>Opening a XSSFWorkbook from a file has a lower memory footprint
      *  than opening from an InputStream
      *
      * @param path   the file name.
@@ -340,7 +340,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     public XSSFWorkbook(String path) throws IOException {
         this(openPackage(path));
     }
-    
+
     /**
      * Constructs a XSSFWorkbook object using Package Part.
      * @param part  package part
@@ -349,7 +349,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     public XSSFWorkbook(PackagePart part) throws IOException {
         this(part.getInputStream());
     }
-    
+
     protected void beforeDocumentRead() {
         // Ensure it isn't a XLSB file, which we don't support
         if (getCorePart().getContentType().equals(XSSFRelation.XLSB_BINARY_WORKBOOK.getContentType())) {
@@ -389,7 +389,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                 }
             }
             boolean packageReadOnly = (getPackage().getPackageAccess() == PackageAccess.READ);
-            
+
             if (stylesSource == null) {
                 // Create Styles if it is missing
                 if (packageReadOnly) {
@@ -409,7 +409,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                     sharedStringSource = (SharedStringsTable)createRelationship(XSSFRelation.SHARED_STRINGS, this.xssfFactory);
                 }
             }
-            
+
             // Load individual sheets. The order of sheets is defined by the order
             //  of CTSheet elements in the workbook
             sheets = new ArrayList<>(shIdMap.size());
@@ -417,8 +417,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             for (CTSheet ctSheet : this.workbook.getSheets().getSheetArray()) {
                 parseSheet(shIdMap, ctSheet);
             }
-            
-            // Load the external links tables. Their order is defined by the order 
+
+            // Load the external links tables. Their order is defined by the order
             //  of CTExternalReference elements in the workbook
             externalLinks = new ArrayList<>(elIdMap.size());
             if (this.workbook.isSetExternalReferences()) {
@@ -431,7 +431,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                     externalLinks.add(el);
                 }
             }
-            
+
             // Process the named ranges
             reprocessNamedRanges();
         } catch (XmlException e) {
@@ -479,7 +479,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         sheets = new ArrayList<>();
         pivotTables = new ArrayList<>();
     }
-    
+
     private void setBookViewsIfMissing() {
         if(!workbook.isSetBookViews()) {
             CTBookViews bvs = workbook.addNewBookViews();
@@ -636,14 +636,14 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             for(PackageRelationship pr : srcSheet.getPackagePart().getRelationships()) {
                 if (pr.getTargetMode() == TargetMode.EXTERNAL) {
                     clonedSheet.getPackagePart().addExternalRelationship
-                        (pr.getTargetURI().toASCIIString(), pr.getRelationshipType(), pr.getId());
+                            (pr.getTargetURI().toASCIIString(), pr.getRelationshipType(), pr.getId());
                 }
             }
         } catch (InvalidFormatException e) {
             throw new POIXMLException("Failed to clone sheet", e);
         }
-        
-        
+
+
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             srcSheet.write(out);
             try (ByteArrayInputStream bis = new ByteArrayInputStream(out.toByteArray())) {
@@ -676,7 +676,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             clonedDg.getCTDrawing().set(dg.getCTDrawing());
 
             clonedDg = clonedSheet.createDrawingPatriarch();
-            
+
             // Clone drawing relations
             List<RelationPart> srcRels = srcSheet.createDrawingPatriarch().getRelationParts();
             for (RelationPart rp : srcRels) {
@@ -685,7 +685,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         }
         return clonedSheet;
     }
-    
+
     /**
      * @since 3.14-Beta1
      */
@@ -693,8 +693,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         PackageRelationship rel = rp.getRelationship();
         if (rel.getTargetMode() == TargetMode.EXTERNAL) {
             target.getPackagePart().addRelationship(
-                rel.getTargetURI(), rel.getTargetMode(), rel.getRelationshipType(), rel.getId());
-        } else {        
+                    rel.getTargetURI(), rel.getTargetMode(), rel.getRelationshipType(), rel.getId());
+        } else {
             XSSFRelation xssfRel = XSSFRelation.getInstance(rel.getRelationshipType());
             if (xssfRel == null) {
                 // Don't copy all relations blindly, but only the ones we know about
@@ -877,12 +877,12 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             for(XSSFSheet sh : sheets) {
                 sheetNumber = (int)Math.max(sh.sheet.getSheetId() + 1, sheetNumber);
             }
-            
+
             // Bug 57165: We also need to check that the resulting file name is not already taken
             // this can happen when moving/cloning sheets
             String sheetName = XSSFRelation.WORKSHEET.getFileName(sheetNumber);
             for(POIXMLDocumentPart relation : getRelations()) {
-                if(relation.getPackagePart() != null && 
+                if(relation.getPackagePart() != null &&
                         sheetName.equals(relation.getPackagePart().getPartName().getName())) {
                     // name is taken => try next one
                     sheetNumber++;
@@ -922,7 +922,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         sheet.setName(sheetname);
         return sheet;
     }
-    
+
     /**
      * Finds a font that matches the one with the supplied attributes
      */
@@ -1212,21 +1212,21 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     public Iterator<Sheet> sheetIterator() {
         return new SheetIterator<>();
     }
-    
+
     /**
      * Alias for {@link #sheetIterator()} to allow
      * foreach loops
-     * 
+     *
      * Note: remove() is not supported on this iterator.
      * Use {@link #removeSheetAt(int)} to remove sheets instead.
-     * 
+     *
      * @return an iterator of the sheets.
      */
     @Override
     public Iterator<Sheet> iterator() {
         return sheetIterator();
     }
-    
+
     private final class SheetIterator<T extends Sheet> implements Iterator<T> {
         final private Iterator<T> it;
         @SuppressWarnings("unchecked")
@@ -1252,7 +1252,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                     "Use Sheet.removeSheetAt(int) instead.");
         }
     }
-    
+
     /**
      * Are we a normal workbook (.xlsx), or a
      *  macro enabled workbook (.xlsm)?
@@ -1276,11 +1276,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
     /**
      * Remove the first named range found with the given name.
-     * 
+     *
      * Note: names of named ranges are not unique (name + sheet
      * index is unique), so {@link #removeName(Name)} should
      * be used if possible.
-     * 
+     *
      * @param name the named range name to remove
      *
      * @throws IllegalArgumentException if no named range could be found
@@ -1391,7 +1391,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         final XSSFSheet sheet = getSheetAt(index);
 
         sheet.onSheetDelete();
-        
+
         //delete the CTSheet reference from workbook.xml
         workbook.getSheets().removeSheet(index);
 
@@ -1463,7 +1463,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      * @param index the index to validate
      * @throws IllegalArgumentException if the index is out of range (index
      *            &lt; 0 || index &gt;= getNumberOfSheets()).
-    */
+     */
     private void validateSheetIndex(int index) {
         int lastSheetIx = sheets.size() - 1;
         if (index < 0 || index > lastSheetIx) {
@@ -1610,7 +1610,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         if (sheetname == null) {
             throw new IllegalArgumentException( "sheetName must not be null" );
         }
-        
+
         validateSheetIndex(sheetIndex);
         String oldSheetName = getSheetName(sheetIndex);
 
@@ -1624,7 +1624,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         if (sheetname.equals(oldSheetName)) {
             return;
         }
-        
+
         // Check it isn't already taken
         if (containsSheet(sheetname, sheetIndex )) {
             throw new IllegalArgumentException( "The workbook already contains a sheet of this name" );
@@ -1661,11 +1661,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         for(int i=0; i < sheetArray.length; i++) {
             sheets.get(i).sheet = sheetArray[i];
         }
-        
+
         updateNamedRangesAfterSheetReorder(idx, pos);
         updateActiveSheetAfterSheetReorder(idx, pos);
     }
-    
+
     /**
      * update sheet-scoped named ranges in this workbook after changing the sheet order
      * of a sheet at oldIndex to newIndex.
@@ -1695,7 +1695,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             }
         }
     }
-    
+
     private void updateActiveSheetAfterSheetReorder(int oldIndex, int newIndex) {
         // adjust active sheet if necessary
         int active = getActiveSheetIndex();
@@ -1732,7 +1732,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                 workbook.unsetDefinedNames();
             }
             workbook.setDefinedNames(names);
-                        
+
             // Re-process the named ranges
             reprocessNamedRanges();
         } else {
@@ -1741,7 +1741,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             }
         }
     }
-    
+
     private void reprocessNamedRanges() {
         namedRangesByName = new ArrayListValuedHashMap<>();
         namedRanges = new ArrayList<>();
@@ -1775,7 +1775,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             workbook.save(out, xmlOptions);
         }
     }
-    
+
     /**
      * Returns SharedStringsTable - tha cache of string for this workbook
      *
@@ -1873,7 +1873,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             }
 
             for(PackageRelationship rel : sheet.getPackagePart().getRelationshipsByType(XSSFRelation.PACKEMBEDDINGS.getRelation())) {
-               embedds.add( sheet.getPackagePart().getRelatedPart(rel) );
+                embedds.add( sheet.getPackagePart().getRelatedPart(rel) );
             }
         }
         return embedds;
@@ -1904,7 +1904,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         CTSheet ctSheet = sheets.get(sheetIx).sheet;
         return ctSheet.getState() == STSheetState.VERY_HIDDEN;
     }
-    
+
     @Override
     public SheetVisibility getSheetVisibility(int sheetIx) {
         validateSheetIndex(sheetIx);
@@ -1930,7 +1930,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     @Override
     public void setSheetVisibility(int sheetIx, SheetVisibility visibility) {
         validateSheetIndex(sheetIx);
-        
+
         final CTSheet ctSheet = sheets.get(sheetIx).sheet;
         switch (visibility) {
             case VISIBLE:
@@ -1946,9 +1946,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
                 throw new IllegalArgumentException("This should never happen");
         }
     }
-    
-    
-    
+
+
+
 
     /**
      * Fired when a formula is deleted from this workbook,
@@ -1975,10 +1975,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     public CalculationChain getCalculationChain() {
         return calcChain;
     }
-    
+
     /**
      * Returns the list of {@link ExternalLinksTable} object for this workbook
-     * 
+     *
      * <p>The external links table specifies details of named ranges etc
      *  that are referenced from other workbooks, along with the last seen
      *  values of what they point to.</p>
@@ -2012,9 +2012,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     }
 
     /**
-     * Adds the External Link Table part and relations required to allow formulas 
+     * Adds the External Link Table part and relations required to allow formulas
      *  referencing the specified external workbook to be added to this one. Allows
-     *  formulas such as "[MyOtherWorkbook.xlsx]Sheet3!$A$5" to be added to the 
+     *  formulas such as "[MyOtherWorkbook.xlsx]Sheet3!$A$5" to be added to the
      *  file, for workbooks not already linked / referenced.
      *
      *  Note: this is not implemented and thus currently throws an Exception stating this.
@@ -2106,8 +2106,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     }
 
     /**
-     * Sets the workbook password. 
-     * 
+     * Sets the workbook password.
+     *
      * @param password if null, the password will be removed
      * @param hashAlgo if null, the password will be set as XOR password (Excel 2010 and earlier)
      *  otherwise the given algorithm is used for calculating the hash password (Excel 2013)
@@ -2133,7 +2133,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
     /**
      * Sets the revisions password.
-     * 
+     *
      * @param password if null, the password will be removed
      * @param hashAlgo if null, the password will be set as XOR password (Excel 2010 and earlier)
      *  otherwise the given algorithm is used for calculating the hash password (Excel 2013)
@@ -2156,7 +2156,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         }
         return validatePassword(safeGetWorkbookProtection(), password, "revisions");
     }
-    
+
     /**
      * Removes the workbook protection settings
      */
@@ -2165,7 +2165,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
             workbook.unsetWorkbookProtection();
         }
     }
-    
+
     private boolean workbookProtectionPresent() {
         return workbook.isSetWorkbookProtection();
     }
@@ -2176,7 +2176,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         }
         return workbook.getWorkbookProtection();
     }
-    
+
     /**
      *
      * Returns the locator of user-defined functions.
@@ -2346,7 +2346,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
     /**
      * Returns the spreadsheet version (EXCLE2007) of this workbook
-     * 
+     *
      * @return EXCEL2007 SpreadsheetVersion enum
      * @since 3.14 beta 2
      */
@@ -2354,10 +2354,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
     public SpreadsheetVersion getSpreadsheetVersion() {
         return SpreadsheetVersion.EXCEL2007;
     }
-    
+
     /**
      * Returns the data table with the given name (case insensitive).
-     * 
+     *
      * @param name the data table name (case-insensitive)
      * @return The Data table in the workbook named <tt>name</tt>, or <tt>null</tt> if no table is named <tt>name</tt>.
      * @since 3.15 beta 2
@@ -2377,7 +2377,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
     @Override
     public int addOlePackage(byte[] oleData, String label, String fileName, String command)
-                throws IOException {
+            throws IOException {
         // find an unused part name
         OPCPackage opc = getPackage();
         PackagePartName pnOLE;
@@ -2391,7 +2391,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         } while (opc.containPart(pnOLE));
 
         PackagePart pp = opc.createPart( pnOLE, "application/vnd.openxmlformats-officedocument.oleObject" );
-        
+
         Ole10Native ole10 = new Ole10Native(label, fileName, command, oleData);
 
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream(oleData.length+500)) {

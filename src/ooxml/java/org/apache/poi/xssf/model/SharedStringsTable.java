@@ -92,8 +92,8 @@ public class SharedStringsTable extends POIXMLDocumentPart implements Closeable 
     private static final XmlOptions options = new XmlOptions();
     static {
         options.put( XmlOptions.SAVE_INNER );
-     	options.put( XmlOptions.SAVE_AGGRESSIVE_NAMESPACES );
-     	options.put( XmlOptions.SAVE_USE_DEFAULT_NAMESPACE );
+        options.put( XmlOptions.SAVE_AGGRESSIVE_NAMESPACES );
+        options.put( XmlOptions.SAVE_USE_DEFAULT_NAMESPACE );
         options.setSaveImplicitNamespaces(Collections.singletonMap("", NS_SPREADSHEETML));
     }
 
@@ -109,11 +109,11 @@ public class SharedStringsTable extends POIXMLDocumentPart implements Closeable 
     public SharedStringsTable(PackagePart part) throws IOException {
         super(part);
         readFrom(part.getInputStream());
-    }    
-    
+    }
+
     /**
      * Read this shared strings table from an XML file.
-     * 
+     *
      * @param is The input stream containing the XML document.
      * @throws IOException if an error occurs while reading.
      */
@@ -257,7 +257,7 @@ public class SharedStringsTable extends POIXMLDocumentPart implements Closeable 
 
     /**
      * Write this table out as XML.
-     * 
+     *
      * @param out The stream to write to.
      * @throws IOException if an error occurs while writing.
      */
@@ -284,6 +284,15 @@ public class SharedStringsTable extends POIXMLDocumentPart implements Closeable 
         }
     }
 
+    /**
+     * Close any open resources, like temp files. This method is called by <code>XSSFWorkbook#close()</code>.
+     * <p>
+     *     This implementation is empty but subclasses may need to implement some logic.
+     * </p>
+     *
+     * @since 4.0.0
+     * @throws IOException if an error occurs while closing.
+     */
     @Override
     public void close() throws IOException {}
 }

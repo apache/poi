@@ -50,8 +50,8 @@ public class XSSFFactory extends POIXMLFactory {
      */
     @Override
     protected POIXMLDocumentPart createDocumentPart
-        (Class<? extends POIXMLDocumentPart> cls, Class<?>[] classes, Object[] values)
-    throws SecurityException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
+    (Class<? extends POIXMLDocumentPart> cls, Class<?>[] classes, Object[] values)
+            throws SecurityException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
         Constructor<? extends POIXMLDocumentPart> constructor = cls.getDeclaredConstructor(classes);
         return constructor.newInstance(values);
     }
