@@ -22,6 +22,8 @@ import static org.apache.poi.sl.TestCommonSL.sameColor;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -95,5 +97,18 @@ public class TestXSLFTextRun {
             XSLFTextRun r = sh.addNewTextParagraph().addNewTextRun();
             assertEquals(unicodeSurrogates, r.getRenderableText(unicodeSurrogates));
         }
+    }
+
+    @Test
+    public void testCopyNullFontSize() throws IOException {
+        XMLSlideShow ppt = new XMLSlideShow();
+        XSLFSlide slide = ppt.createSlide();
+        XSLFTextShape sh = slide.createAutoShape();
+
+        XSLFTextRun r = sh.addNewTextParagraph().addNewTextRun();
+        XSLFTextRun s = mock(XSLFTextRun.class);
+        when(s.getFontSize()).thenReturn(null);
+
+        r.copy(s);
     }
 }

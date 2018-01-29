@@ -211,6 +211,7 @@ project('ooxml') {
 		compile files('../../ooxml-lib/ooxml-security-1.1.jar')
 		
 		testCompile 'junit:junit:4.12'
+		testCompile 'org.mockito:mockito-core:2.13.0'
 		testCompile project(path: ':main', configuration: 'tests')
 		testCompile 'org.openjdk.jmh:jmh-core:1.19'
 		testCompile 'org.openjdk.jmh:jmh-generator-annprocess:1.19'
