@@ -164,6 +164,8 @@ under the License.
 
     <property name="main.hamcrest.jar" location="${main.lib}/hamcrest-core-1.3.jar"/>
     <property name="main.hamcrest.url" value="${repository.m2}/maven2/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar"/>
+    <property name="main.mockito.jar" location="${main.lib}/mockito-core-2.13.0.jar"/>
+    <property name="main.mockito.url" value="${repository.m2}/maven2/org/mockito/mockito-core/2.13.0/mockito-core-2.13.0.jar"/>
     <property name="main.ant.jar" location="${main.lib}/ant-1.10.1.jar"/>
     <property name="main.ant.url" value="${repository.m2}/maven2/org/apache/ant/ant/1.10.1/ant-1.10.1.jar"/>
     <property name="main.antlauncher.jar" location="${main.lib}/ant-launcher-1.10.1.jar"/>
@@ -317,6 +319,7 @@ under the License.
         <pathelement location="${main.jmh.jar}"/>
         <pathelement location="${main.jmhAnnotation.jar}"/>
         <pathelement location="${main.hamcrest.jar}"/>
+        <pathelement location="${main.mockito.jar}"/>
     </path>
 
     <path id="scratchpad.classpath">
@@ -620,6 +623,7 @@ under the License.
                     <available file="${main.jmh.jar}"/>
                     <available file="${main.jmhAnnotation.jar}"/>
                     <available file="${main.hamcrest.jar}"/>
+                    <available file="${main.mockito.jar}"/>
                     <available file="${main.ant.jar}"/>
                     <available file="${main.antlauncher.jar}"/>
                     <available file="${asm.jar}"/>
@@ -651,6 +655,7 @@ under the License.
         <downloadfile src="${main.jmh.url}" dest="${main.jmh.jar}"/>
         <downloadfile src="${main.jmhAnnotation.url}" dest="${main.jmhAnnotation.jar}"/>
         <downloadfile src="${main.hamcrest.url}" dest="${main.hamcrest.jar}"/>
+        <downloadfile src="${main.mockito.url}" dest="${main.mockito.jar}"/>
         <downloadfile src="${main.ant.url}" dest="${main.ant.jar}"/>
         <downloadfile src="${main.antlauncher.url}" dest="${main.antlauncher.jar}"/>
         <downloadfile src="${asm.url}" dest="${asm.jar}"/>
