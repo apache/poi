@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.Beta;
@@ -118,5 +119,19 @@ public abstract class ColumnShifter extends BaseRowColShifter {
 
         // if the merged-region and the overwritten area intersect, we need to remove it
         return merged.intersects(overwrite);
+    }
+
+    public void shiftColumns(int firstShiftColumnIndex, int lastShiftColumnIndex, int step){
+        if(step > 0){
+            for (Row row : sheet)
+                if(row != null)
+                    row.shiftCellsRight(firstShiftColumnIndex, lastShiftColumnIndex, step);
+        }
+        else if(step < 0){
+            for (Row row : sheet)
+                if(row != null)
+                    row.shiftCellsLeft(firstShiftColumnIndex, lastShiftColumnIndex, -step);
+        }
+        //else step == 0 => nothing to shift
     }
 }

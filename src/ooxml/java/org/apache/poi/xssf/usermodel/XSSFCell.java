@@ -49,6 +49,7 @@ import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.Removal;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
+import org.apache.poi.xssf.model.CalculationChain;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
@@ -1324,4 +1325,22 @@ public final class XSSFCell implements Cell {
                 "You cannot change part of an array.";
         notifyArrayFormulaChanging(msg);
     }
+    
+    
+    //Moved from XSSFRow.shift(). Not sure what is purpose. 
+    public void updateCellReferencesForShifting(String msg){
+        if(isPartOfArrayFormulaGroup())
+            notifyArrayFormulaChanging(msg);
+        CalculationChain calcChain = getSheet().getWorkbook().getCalculationChain();
+        int sheetId = (int)getSheet().sheet.getSheetId();
+    
+        //remove the reference in the calculation chain
+        if(calcChain != null) calcChain.removeItem(sheetId, getReference());
+    
+        CTCell ctCell = getCTCell();
+        String r = new CellReference(getRowIndex(), getColumnIndex()).formatAsString();
+        ctCell.setR(r);
+    }
+        
 }
+    
