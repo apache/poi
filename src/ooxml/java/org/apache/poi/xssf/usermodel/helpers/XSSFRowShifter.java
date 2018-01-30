@@ -36,7 +36,6 @@ public final class XSSFRowShifter extends RowShifter {
     public XSSFRowShifter(XSSFSheet sh) {
         super(sh);
     }
-
     @Override
     public void updateNamedRanges(FormulaShifter formulaShifter) {
         XSSFRowColShifter.updateNamedRanges(sheet, formulaShifter);
@@ -46,7 +45,7 @@ public final class XSSFRowShifter extends RowShifter {
     public void updateFormulas(FormulaShifter formulaShifter) {
         XSSFRowColShifter.updateFormulas(sheet, formulaShifter);
     }
-
+    
     /**
      * Update the formulas in specified row using the formula shifting policy specified by shifter
      *

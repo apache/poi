@@ -234,4 +234,7 @@ public interface Row extends Iterable<Cell> {
      *  you take it out of them.
      */
     public int getOutlineLevel();
+    
+    public void shiftCellsRight(int firstShiftColumnIndex, int lastShiftColumnIndex, int step);
+    public void shiftCellsLeft(int firstShiftColumnIndex, int lastShiftColumnIndex, int step);
 }
