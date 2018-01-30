@@ -21,12 +21,11 @@ package org.apache.poi.xslf.usermodel;
 
 import java.io.IOException;
 
-import org.apache.poi.POIXMLDocument;
+import org.apache.poi.POIXMLFactory;
 import org.apache.poi.POIXMLRelation;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.util.Beta;
 import org.apache.poi.xddf.usermodel.chart.XDDFChart;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTitle;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
@@ -53,6 +52,21 @@ public final class XSLFChart extends XDDFChart {
      */
     protected XSLFChart(PackagePart part) throws IOException, XmlException {
         super(part);
+    }
+
+    @Override
+    protected POIXMLRelation getChartRelation() {
+        return XSLFRelation.CHART;
+    }
+
+    @Override
+    protected POIXMLRelation getChartWorkbookRelation() {
+        return XSLFRelation.WORKBOOK;
+    }
+
+    @Override
+    protected POIXMLFactory getChartFactory() {
+        return XSLFFactory.getInstance();
     }
 
     public XSLFTextShape getTitle() {

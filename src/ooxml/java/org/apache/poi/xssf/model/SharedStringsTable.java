@@ -20,6 +20,7 @@ package org.apache.poi.xssf.model;
 import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_SPREADSHEETML;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -61,7 +62,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.SstDocument;
  * properties, and phonetic properties (for East Asian languages).
  * </p>
  */
-public class SharedStringsTable extends POIXMLDocumentPart {
+public class SharedStringsTable extends POIXMLDocumentPart implements Closeable {
 
     /**
      *  Array of individual string items in the Shared String table.
@@ -77,22 +78,22 @@ public class SharedStringsTable extends POIXMLDocumentPart {
      * An integer representing the total count of strings in the workbook. This count does not
      * include any numbers, it counts only the total of text strings in the workbook.
      */
-    private int count;
+    protected int count;
 
     /**
      * An integer representing the total count of unique strings in the Shared String Table.
      * A string is unique even if it is a copy of another string, but has different formatting applied
      * at the character level.
      */
-    private int uniqueCount;
+    protected int uniqueCount;
 
     private SstDocument _sstDoc;
 
     private static final XmlOptions options = new XmlOptions();
     static {
         options.put( XmlOptions.SAVE_INNER );
-     	options.put( XmlOptions.SAVE_AGGRESSIVE_NAMESPACES );
-     	options.put( XmlOptions.SAVE_USE_DEFAULT_NAMESPACE );
+        options.put( XmlOptions.SAVE_AGGRESSIVE_NAMESPACES );
+        options.put( XmlOptions.SAVE_USE_DEFAULT_NAMESPACE );
         options.setSaveImplicitNamespaces(Collections.singletonMap("", NS_SPREADSHEETML));
     }
 
@@ -108,11 +109,11 @@ public class SharedStringsTable extends POIXMLDocumentPart {
     public SharedStringsTable(PackagePart part) throws IOException {
         super(part);
         readFrom(part.getInputStream());
-    }    
-    
+    }
+
     /**
      * Read this shared strings table from an XML file.
-     * 
+     *
      * @param is The input stream containing the XML document.
      * @throws IOException if an error occurs while reading.
      */
@@ -125,7 +126,7 @@ public class SharedStringsTable extends POIXMLDocumentPart {
             uniqueCount = (int)sst.getUniqueCount();
             //noinspection deprecation
             for (CTRst st : sst.getSiArray()) {
-                stmap.put(getKey(st), cnt);
+                stmap.put(xmlText(st), cnt);
                 strings.add(st);
                 cnt++;
             }
@@ -134,7 +135,7 @@ public class SharedStringsTable extends POIXMLDocumentPart {
         }
     }
 
-    private String getKey(CTRst st) {
+    protected String xmlText(CTRst st) {
         return st.xmlText(options);
     }
 
@@ -195,7 +196,7 @@ public class SharedStringsTable extends POIXMLDocumentPart {
      */
     @Removal(version = "4.2") //make private in 4.2
     public int addEntry(CTRst st) {
-        String s = getKey(st);
+        String s = xmlText(st);
         count++;
         if (stmap.containsKey(s)) {
             return stmap.get(s);
@@ -256,7 +257,7 @@ public class SharedStringsTable extends POIXMLDocumentPart {
 
     /**
      * Write this table out as XML.
-     * 
+     *
      * @param out The stream to write to.
      * @throws IOException if an error occurs while writing.
      */
@@ -282,4 +283,16 @@ public class SharedStringsTable extends POIXMLDocumentPart {
             writeTo(out);
         }
     }
+
+    /**
+     * Close any open resources, like temp files. This method is called by <code>XSSFWorkbook#close()</code>.
+     * <p>
+     *     This implementation is empty but subclasses may need to implement some logic.
+     * </p>
+     *
+     * @since 4.0.0
+     * @throws IOException if an error occurs while closing.
+     */
+    @Override
+    public void close() throws IOException {}
 }
