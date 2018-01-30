@@ -280,6 +280,50 @@ public class TestXSSFDataValidation extends BaseTestDataValidation {
             wb.close();
         }
     }
+	
+	@Test
+    public void testDefaultErrorStyle() throws IOException {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        try {
+            XSSFSheet sheet = wb.createSheet();
+    
+            final XSSFDataValidation validation = createValidation(sheet);
+            sheet.addValidationData(validation);
+    
+            final List<XSSFDataValidation> dataValidations = sheet.getDataValidations();
+            assertEquals(DataValidation.ErrorStyle.STOP, dataValidations.get(0).getErrorStyle());
+        } finally {
+            wb.close();
+        }
+    }
+	
+	@Test
+    public void testSetErrorStyles() throws IOException {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        try {
+            XSSFSheet sheet = wb.createSheet();
+    
+            final XSSFDataValidation validation = createValidation(sheet);
+            sheet.addValidationData(validation);
+            
+            // test INFO
+            validation.setErrorStyle(DataValidation.ErrorStyle.INFO);
+            List<XSSFDataValidation> dataValidations = sheet.getDataValidations();
+            assertEquals(DataValidation.ErrorStyle.INFO, dataValidations.get(0).getErrorStyle());
+            
+            // test WARNING
+            validation.setErrorStyle(DataValidation.ErrorStyle.WARNING);
+            dataValidations = sheet.getDataValidations();
+            assertEquals(DataValidation.ErrorStyle.WARNING, dataValidations.get(0).getErrorStyle());
+            
+            // test STOP
+            validation.setErrorStyle(DataValidation.ErrorStyle.STOP);
+            dataValidations = sheet.getDataValidations();
+            assertEquals(DataValidation.ErrorStyle.STOP, dataValidations.get(0).getErrorStyle());
+        } finally {
+            wb.close();
+        }
+    }
 
 	@Test
     public void testDefaultAllowBlank() throws IOException {
