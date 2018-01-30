@@ -166,7 +166,13 @@ under the License.
     <property name="main.hamcrest.url" value="${repository.m2}/maven2/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar"/>
     <property name="main.mockito.jar" location="${main.lib}/mockito-core-2.13.0.jar"/>
     <property name="main.mockito.url" value="${repository.m2}/maven2/org/mockito/mockito-core/2.13.0/mockito-core-2.13.0.jar"/>
+    <property name="main.byte-buddy.jar" location="${main.lib}/byte-buddy-1.7.9.jar"/>
+    <property name="main.byte-buddy.url" value="${repository.m2}/maven2/net/bytebuddy/byte-buddy/1.7.9/byte-buddy-1.7.9.jar"/>
+    <property name="main.byte-buddy-agent.jar" location="${main.lib}/byte-buddy-agent-1.7.9.jar"/>
+    <property name="main.byte-buddy-agent.url" value="${repository.m2}/maven2/net/bytebuddy/byte-buddy-agent/1.7.9/byte-buddy-agent-1.7.9.jar"/>
     <property name="main.ant.jar" location="${main.lib}/ant-1.10.1.jar"/>
+    <property name="main.objenesis.jar" location="${main.lib}/objenesis-2.6.jar"/>
+    <property name="main.objenesis.url" value="${repository.m2}/maven2/org/objenesis/objenesis/2.6/objenesis-2.6.jar"/>
     <property name="main.ant.url" value="${repository.m2}/maven2/org/apache/ant/ant/1.10.1/ant-1.10.1.jar"/>
     <property name="main.antlauncher.jar" location="${main.lib}/ant-launcher-1.10.1.jar"/>
     <property name="main.antlauncher.url" value="${repository.m2}/maven2/org/apache/ant/ant-launcher/1.10.1/ant-launcher-1.10.1.jar"/>
@@ -320,6 +326,9 @@ under the License.
         <pathelement location="${main.jmhAnnotation.jar}"/>
         <pathelement location="${main.hamcrest.jar}"/>
         <pathelement location="${main.mockito.jar}"/>
+        <pathelement location="${main.byte-buddy.jar}"/>
+        <pathelement location="${main.byte-buddy-agent.jar}"/>
+        <pathelement location="${main.objenesis.jar}"/>
     </path>
 
     <path id="scratchpad.classpath">
@@ -624,6 +633,9 @@ under the License.
                     <available file="${main.jmhAnnotation.jar}"/>
                     <available file="${main.hamcrest.jar}"/>
                     <available file="${main.mockito.jar}"/>
+                    <available file="${main.byte-buddy.jar}"/>
+                    <available file="${main.byte-buddy-agent.jar}"/>
+                    <available file="${main.objenesis.jar}"/>
                     <available file="${main.ant.jar}"/>
                     <available file="${main.antlauncher.jar}"/>
                     <available file="${asm.jar}"/>
@@ -656,6 +668,9 @@ under the License.
         <downloadfile src="${main.jmhAnnotation.url}" dest="${main.jmhAnnotation.jar}"/>
         <downloadfile src="${main.hamcrest.url}" dest="${main.hamcrest.jar}"/>
         <downloadfile src="${main.mockito.url}" dest="${main.mockito.jar}"/>
+        <downloadfile src="${main.byte-buddy.url}" dest="${main.byte-buddy.jar}"/>
+        <downloadfile src="${main.byte-buddy-agent.url}" dest="${main.byte-buddy-agent.jar}"/>
+        <downloadfile src="${main.objenesis.url}" dest="${main.objenesis.jar}"/>
         <downloadfile src="${main.ant.url}" dest="${main.ant.jar}"/>
         <downloadfile src="${main.antlauncher.url}" dest="${main.antlauncher.jar}"/>
         <downloadfile src="${asm.url}" dest="${asm.jar}"/>
