@@ -1,3 +1,21 @@
+/*
+ *  ====================================================================
+ *    Licensed to the Apache Software Foundation (ASF) under one or more
+ *    contributor license agreements.  See the NOTICE file distributed with
+ *    this work for additional information regarding copyright ownership.
+ *    The ASF licenses this file to You under the Apache License, Version 2.0
+ *    (the "License"); you may not use this file except in compliance with
+ *    the License.  You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ * ====================================================================
+ */
 package org.apache.poi.hssf.usermodel;
 
 import java.io.IOException;
@@ -10,7 +28,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 public class TestHSSFSheetShiftColumns extends BaseTestSheetShiftColumns {
-    public TestHSSFSheetShiftColumns(){
+    public TestHSSFSheetShiftColumns() {
         super(); 
         workbook = new HSSFWorkbook();
         _testDataProvider = HSSFITestDataProvider.instance; 
@@ -26,34 +44,43 @@ public class TestHSSFSheetShiftColumns extends BaseTestSheetShiftColumns {
     }
     
     @Override    
-    @Ignore("see <https://bz.apache.org/bugzilla/show_bug.cgi?id=62030>") @Test
+    @Ignore("see <https://bz.apache.org/bugzilla/show_bug.cgi?id=62030>")
+    @Test
     public void shiftMergedColumnsToMergedColumnsLeft() throws IOException {
         // This override is used only in order to test failing for HSSF. Please remove method after code is fixed on hssf, 
         // so that original method from BaseTestSheetShiftColumns can be executed. 
     }
     @Override    
-    @Ignore("see <https://bz.apache.org/bugzilla/show_bug.cgi?id=62030>") @Test
+    @Ignore("see <https://bz.apache.org/bugzilla/show_bug.cgi?id=62030>")
+    @Test
     public void shiftMergedColumnsToMergedColumnsRight() throws IOException {
         // This override is used only in order to test failing for HSSF. Please remove method after code is fixed on hssf, 
         // so that original method from BaseTestSheetShiftColumns can be executed. 
     }
     @Override    
-    @Ignore("see <https://bz.apache.org/bugzilla/show_bug.cgi?id=62030>") @Test
+    @Ignore("see <https://bz.apache.org/bugzilla/show_bug.cgi?id=62030>")
+    @Test
     public void testBug54524() throws IOException {
         // This override is used only in order to test failing for HSSF. Please remove method after code is fixed on hssf, 
         // so that original method from BaseTestSheetShiftColumns can be executed. 
     }
     @Override    
-    @Ignore("see <https://bz.apache.org/bugzilla/show_bug.cgi?id=62030>") @Test
+    @Ignore("see <https://bz.apache.org/bugzilla/show_bug.cgi?id=62030>")
+    @Test
     public void testCommentsShifting() throws IOException {
         // This override is used only in order to test failing for HSSF. Please remove method after code is fixed on hssf, 
         // so that original method from BaseTestSheetShiftColumns can be executed. 
     }
     @Override    
-    @Ignore("see <https://bz.apache.org/bugzilla/show_bug.cgi?id=62030>") @Test
+    @Ignore("see <https://bz.apache.org/bugzilla/show_bug.cgi?id=62030>")
+    @Test
     public void testShiftWithMergedRegions() throws IOException {
         // This override is used only in order to test failing for HSSF. Please remove method after code is fixed on hssf, 
         // so that original method from BaseTestSheetShiftColumns can be executed. 
         // After removing, you can re-add 'final' keyword to specification of original method. 
     }
+    @Override
+    @Ignore("see <https://bz.apache.org/bugzilla/show_bug.cgi?id=62030>")
+    @Test
+    public void testShiftHyperlinks() throws IOException {}
 }

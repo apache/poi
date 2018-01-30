@@ -1,3 +1,21 @@
+/*
+ *  ====================================================================
+ *    Licensed to the Apache Software Foundation (ASF) under one or more
+ *    contributor license agreements.  See the NOTICE file distributed with
+ *    this work for additional information regarding copyright ownership.
+ *    The ASF licenses this file to You under the Apache License, Version 2.0
+ *    (the "License"); you may not use this file except in compliance with
+ *    the License.  You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    Unless required by applicable law or agreed to in writing, software
+ *    distributed under the License is distributed on an "AS IS" BASIS,
+ *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    See the License for the specific language governing permissions and
+ *    limitations under the License.
+ * ====================================================================
+ */
 package org.apache.poi.ss.usermodel;
 
 import static org.junit.Assert.assertEquals;
@@ -21,9 +39,6 @@ public abstract class BaseTestSheetShiftColumns {
     protected Workbook workbook;
 
     protected ITestDataProvider _testDataProvider;
-
-    public BaseTestSheetShiftColumns(){
-    }
 
     @Before
     public void init() {
@@ -71,10 +86,9 @@ public abstract class BaseTestSheetShiftColumns {
         row.createCell(1, CellType.FORMULA).setCellFormula("SUM(sheet1!A3:$C3)"); 
         row = sheet2.createRow(3); 
         row.createCell(0, CellType.STRING).setCellValue("dummy");
-
-        writeSheetToLog(sheet1);
     }
-    private CellStyle newCenterBottomStyle(){
+
+    private CellStyle newCenterBottomStyle() {
         CellStyle style = workbook.createCellStyle();
         style.setAlignment(HorizontalAlignment.CENTER);
         style.setVerticalAlignment(VerticalAlignment.BOTTOM);
@@ -82,10 +96,7 @@ public abstract class BaseTestSheetShiftColumns {
     }
     @Test
     public void testShiftOneColumnRight() {
-        //writeSheetToLog(sheet2); // NOSONAR, this statement is needed sometimes
         sheet1.shiftColumns(1, 2, 1);
-        writeSheetToLog(sheet1);
-        //writeSheetToLog(sheet2);  // NOSONAR, this statement is needed sometimes
         double c1Value = sheet1.getRow(0).getCell(2).getNumericCellValue();
         assertEquals(1d, c1Value, 0.01);
         String formulaA4 = sheet1.getRow(3).getCell(0).getCellFormula();
@@ -115,7 +126,6 @@ public abstract class BaseTestSheetShiftColumns {
     @Test
     public void testShiftTwoColumnsRight() {
         sheet1.shiftColumns(1, 2, 2);
-        writeSheetToLog(sheet1);
         String formulaA4 = sheet1.getRow(3).getCell(0).getCellFormula();
         assertEquals("A2*D3", formulaA4);
         String formulaD4 = sheet1.getRow(3).getCell(4).getCellFormula();
@@ -134,8 +144,7 @@ public abstract class BaseTestSheetShiftColumns {
     @Test
     public void testShiftOneColumnLeft() {
         sheet1.shiftColumns(1, 2, -1);
-        writeSheetToLog(sheet1);
-        
+
         String formulaA5 = sheet1.getRow(4).getCell(0).getCellFormula();
         assertEquals("SUM(A3:B3)", formulaA5);
         String formulaB4 = sheet1.getRow(3).getCell(1).getCellFormula();
@@ -146,19 +155,12 @@ public abstract class BaseTestSheetShiftColumns {
         assertEquals(newb6Null, null);
     }
     
-    @Test
+    @Test(expected = IllegalStateException.class)
     public void testShiftTwoColumnsLeft() {
-        try {
-            sheet1.shiftColumns(1, 2, -2);
-            writeSheetToLog(sheet1);
-            assertTrue("shiftColumns(1, 2, -2) should raise exception, because 1-2=-1<0", false);
-        }
-        catch (IllegalStateException e) {
-            // this is expected be cause first column tries to be shifted to index -1
-            assertTrue(true);
-        }
+        sheet1.shiftColumns(1, 2, -2);
     }
-    
+
+    @Test
     public void testShiftHyperlinks() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet("test");
@@ -207,9 +209,7 @@ public abstract class BaseTestSheetShiftColumns {
         int startRow = 0;
         int endRow = 4;
         int n = 3;
-        writeSheetToLog(sheet);
         sheet.shiftColumns(startRow, endRow, n);
-        writeSheetToLog(sheet);
 
         Workbook read = _testDataProvider.writeOutAndReadBack(wb);
         wb.close();
@@ -243,7 +243,7 @@ public abstract class BaseTestSheetShiftColumns {
 
     private void verifyHyperlink(Cell cell, HyperlinkType linkType, String ref) {
         assertTrue(cellHasHyperlink(cell));
-        if(cell != null){
+        if (cell != null) {
             Hyperlink link = cell.getHyperlink();
             assertEquals(linkType, link.getType());
             assertEquals(ref, link.getAddress());
@@ -261,7 +261,6 @@ public abstract class BaseTestSheetShiftColumns {
 
         // populate sheet cells
         populateSheetCells(sheet);
-        writeSheetToLog(sheet);
         CellRangeAddress A1_A5 = new CellRangeAddress(0, 4, 0, 0); // NOSONAR, it's more readable this way
         CellRangeAddress B1_B3 = new CellRangeAddress(0, 2, 1, 1); // NOSONAR, it's more readable this way
 
@@ -271,13 +270,12 @@ public abstract class BaseTestSheetShiftColumns {
         // A1:A5 should be moved to B1:B5
         // B1:B3 will be removed
         sheet.shiftColumns(0, 0, 1);
-        writeSheetToLog(sheet);
-        
         assertEquals(1, sheet.getNumMergedRegions());
         assertEquals(CellRangeAddress.valueOf("B1:B5"), sheet.getMergedRegion(0));
 
         wb.close();
     }
+
     @Test
     public void shiftMergedColumnsToMergedColumnsLeft() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
@@ -335,6 +333,7 @@ public abstract class BaseTestSheetShiftColumns {
     
     protected static final String AMDOCS = "Amdocs";
     protected static final String AMDOCS_TEST = "Amdocs:\ntest\n";
+
     @Test
     public void testCommentsShifting() throws IOException {
         Workbook inputWb = openWorkbook("56017.xlsx");
@@ -345,10 +344,8 @@ public abstract class BaseTestSheetShiftColumns {
         assertEquals(AMDOCS, comment.getAuthor());
         assertEquals(AMDOCS_TEST, comment.getString().getString());
         
-        writeSheetToLog(sheet);
         sheet.shiftColumns(0, 1, 1);
-        writeSheetToLog(sheet);
-        
+
         // comment in column 0 is gone
         comment = sheet.getCellComment(new CellAddress(0, 0));
         assertNull(comment);
@@ -389,9 +386,7 @@ public abstract class BaseTestSheetShiftColumns {
         firstRow.createCell(3).setCellFormula("SUM(B1:C1)");
         firstRow.createCell(4).setCellValue("X");
         
-        writeSheetToLog(sheet);
         sheet.shiftColumns(3, 5, -1);
-        writeSheetToLog(sheet);
 
         Cell cell = CellUtil.getCell(sheet.getRow(0), 1);
         assertEquals(1.0, cell.getNumericCellValue(), 0);
@@ -401,33 +396,4 @@ public abstract class BaseTestSheetShiftColumns {
         assertEquals("X", cell.getStringCellValue());
         wb.close();
     }
-
-
-    // I need this method for testing. When we finish with project, we can easily remove them. 
-    // Dragan Jovanović
-    public static void writeSheetToLog(Sheet sheet) {
-        DataFormatter formatter = new DataFormatter();
-        int rowIndex = sheet.getFirstRowNum();
-        while (rowIndex <= sheet.getLastRowNum()) {
-            Row row = sheet.getRow(rowIndex);
-            if (row == null)
-                //log.trace("null row");
-                System.out.println("null row");
-            else {
-                String line = "";
-                for(int columnIndex = 0; columnIndex < 7; columnIndex++){
-                    //String comment = sheet.getCellComment(new CellAddress(rowIndex, columnIndex)) == null ? "no comment" : sheet.getCellComment(new CellAddress(rowIndex, columnIndex)).getString().getString();
-                    //line +=  String.format("; %1$12s    %2$20s",  ""/*getValue(row.getCell(columnIndex))*/, comment);
-                    line +=  String.format("; %1$12s",  formatter.formatCellValue(row.getCell(columnIndex)));
-                }
-                line = line.substring(2);
-                System.out.println(line);
-                //log.trace(line);
-            }
-            rowIndex++;
-        }
-        //log.trace("");
-        System.out.println("");
-    }
-
 }

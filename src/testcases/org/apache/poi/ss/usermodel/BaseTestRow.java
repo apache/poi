@@ -468,7 +468,7 @@ public abstract class BaseTestRow {
     }
     
     @Test
-    public void testCellShiftingRight(){
+    public void testCellShiftingRight() {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet("sheet1");
         Row row = sheet.createRow(0);
@@ -479,11 +479,10 @@ public abstract class BaseTestRow {
         row.createCell(4, CellType.NUMERIC).setCellValue(4);//E
         row.createCell(5, CellType.NUMERIC).setCellValue(5);//F
         row.createCell(6, CellType.NUMERIC).setCellValue(6);//G
-        try{
+        try {
             row.shiftCellsLeft(6, 4, 2); // range [6-4] is illegal
-            assertTrue(false);
-        }
-        catch (IllegalArgumentException e){ 
+            fail("expected shiftLeft to fail");
+        } catch (IllegalArgumentException e){
             row.shiftCellsRight(2, 4, 1);
             //should be [0.0, 1.0, null, 2.0, 3.0, 4.0, 6.0, null]
             
@@ -502,7 +501,7 @@ public abstract class BaseTestRow {
         }
     }
     @Test
-    public void testCellShiftingLeft(){
+    public void testCellShiftingLeft() {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet("sheet1");
         Row row = sheet.createRow(0);
@@ -513,11 +512,10 @@ public abstract class BaseTestRow {
         row.createCell(4, CellType.NUMERIC).setCellValue(4);//E
         row.createCell(5, CellType.NUMERIC).setCellValue(5);//F
         row.createCell(6, CellType.NUMERIC).setCellValue(6);//G
-        try{
+        try {
             row.shiftCellsLeft(4, 6, -2); // step = -1 is illegal
-            assertTrue(false);
-        }
-        catch (IllegalArgumentException e){ 
+            fail("expected shiftLeft to fail");
+        } catch (IllegalArgumentException e){
             row.shiftCellsLeft(4, 6, 2);
             //should be [0.0, 1.0, 4.0, 5.0, 6.0, null, null, null]
             
