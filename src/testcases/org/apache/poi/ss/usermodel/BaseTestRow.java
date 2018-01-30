@@ -466,4 +466,71 @@ public abstract class BaseTestRow {
        
        wb2.close();
     }
+    
+    @Test
+    public void testCellShiftingRight(){
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet = wb.createSheet("sheet1");
+        Row row = sheet.createRow(0);
+        row.createCell(0, CellType.NUMERIC).setCellValue(0);
+        row.createCell(1, CellType.NUMERIC).setCellValue(1);
+        row.createCell(2, CellType.NUMERIC).setCellValue(2);//C
+        row.createCell(3, CellType.NUMERIC).setCellValue(3);//D
+        row.createCell(4, CellType.NUMERIC).setCellValue(4);//E
+        row.createCell(5, CellType.NUMERIC).setCellValue(5);//F
+        row.createCell(6, CellType.NUMERIC).setCellValue(6);//G
+        try{
+            row.shiftCellsLeft(6, 4, 2); // range [6-4] is illegal
+            assertTrue(false);
+        }
+        catch (IllegalArgumentException e){ 
+            row.shiftCellsRight(2, 4, 1);
+            //should be [0.0, 1.0, null, 2.0, 3.0, 4.0, 6.0, null]
+            
+            Cell h1 = row.getCell(7);
+            assertNull(h1);
+            Cell g1 = row.getCell(6);
+            assertEquals(6, g1.getNumericCellValue(), 0.01);
+            Cell f1 = row.getCell(5);
+            assertEquals(4, f1.getNumericCellValue(), 0.01);
+            Cell e1 = row.getCell(4);
+            assertEquals(3, e1.getNumericCellValue(), 0.01);
+            Cell d1 = row.getCell(3);
+            assertEquals(2, d1.getNumericCellValue(), 0.01);
+            Cell c1 = row.getCell(2);
+            assertNull(c1);
+        }
+    }
+    @Test
+    public void testCellShiftingLeft(){
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet = wb.createSheet("sheet1");
+        Row row = sheet.createRow(0);
+        row.createCell(0, CellType.NUMERIC).setCellValue(0);
+        row.createCell(1, CellType.NUMERIC).setCellValue(1);
+        row.createCell(2, CellType.NUMERIC).setCellValue(2);//C
+        row.createCell(3, CellType.NUMERIC).setCellValue(3);//D
+        row.createCell(4, CellType.NUMERIC).setCellValue(4);//E
+        row.createCell(5, CellType.NUMERIC).setCellValue(5);//F
+        row.createCell(6, CellType.NUMERIC).setCellValue(6);//G
+        try{
+            row.shiftCellsLeft(4, 6, -2); // step = -1 is illegal
+            assertTrue(false);
+        }
+        catch (IllegalArgumentException e){ 
+            row.shiftCellsLeft(4, 6, 2);
+            //should be [0.0, 1.0, 4.0, 5.0, 6.0, null, null, null]
+            
+            Cell b1 = row.getCell(1);
+            assertEquals(1, b1.getNumericCellValue(), 0.01);
+            Cell c1 = row.getCell(2);
+            assertEquals(4, c1.getNumericCellValue(), 0.01);
+            Cell d1 = row.getCell(3);
+            assertEquals(5, d1.getNumericCellValue(), 0.01);
+            Cell e1 = row.getCell(4);
+            assertEquals(6, e1.getNumericCellValue(), 0.01);
+            Cell f1 = row.getCell(5);
+            assertNull(f1);
+        }
+    }
 }
