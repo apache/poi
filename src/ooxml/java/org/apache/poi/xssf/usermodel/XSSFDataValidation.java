@@ -19,6 +19,7 @@ package org.apache.poi.xssf.usermodel;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.collections4.MapUtils;
 import org.apache.poi.ss.usermodel.DataValidation;
 import org.apache.poi.ss.usermodel.DataValidationConstraint;
 import org.apache.poi.ss.usermodel.DataValidationConstraint.ValidationType;
@@ -41,16 +42,19 @@ public class XSSFDataValidation implements DataValidation {
 	private XSSFDataValidationConstraint validationConstraint;
 	private CellRangeAddressList regions;
 
-    static Map<Integer,STDataValidationOperator.Enum> operatorTypeMappings = new HashMap<>();
-	static Map<STDataValidationOperator.Enum,Integer> operatorTypeReverseMappings = new HashMap<>();
-	static Map<Integer,STDataValidationType.Enum> validationTypeMappings = new HashMap<>();
-	static Map<STDataValidationType.Enum,Integer> validationTypeReverseMappings = new HashMap<>();
-	static Map<Integer,STDataValidationErrorStyle.Enum> errorStyleMappings = new HashMap<>();
+    static Map<Integer, STDataValidationOperator.Enum> operatorTypeMappings = new HashMap<>();
+	static Map<STDataValidationOperator.Enum, Integer> operatorTypeReverseMappings = new HashMap<>();
+	static Map<Integer, STDataValidationType.Enum> validationTypeMappings = new HashMap<>();
+	static Map<STDataValidationType.Enum, Integer> validationTypeReverseMappings = new HashMap<>();
+	static Map<Integer, STDataValidationErrorStyle.Enum> errorStyleMappings = new HashMap<>();
+	static Map<STDataValidationErrorStyle.Enum, Integer> reverseErrorStyleMappings;
 
     static {
 		errorStyleMappings.put(DataValidation.ErrorStyle.INFO, STDataValidationErrorStyle.INFORMATION);
 		errorStyleMappings.put(DataValidation.ErrorStyle.STOP, STDataValidationErrorStyle.STOP);
 		errorStyleMappings.put(DataValidation.ErrorStyle.WARNING, STDataValidationErrorStyle.WARNING);
+		
+		reverseErrorStyleMappings = MapUtils.invertMap(errorStyleMappings);
 
 		operatorTypeMappings.put(DataValidationConstraint.OperatorType.BETWEEN,STDataValidationOperator.BETWEEN);
 		operatorTypeMappings.put(DataValidationConstraint.OperatorType.NOT_BETWEEN,STDataValidationOperator.NOT_BETWEEN);
@@ -182,7 +186,7 @@ public class XSSFDataValidation implements DataValidation {
 	 * @see org.apache.poi.ss.usermodel.DataValidation#getErrorStyle()
 	 */
 	public int getErrorStyle() {
-		return ctDdataValidation.getErrorStyle().intValue();
+		return reverseErrorStyleMappings.get(ctDdataValidation.getErrorStyle());
 	}
 
 	/* (non-Javadoc)
