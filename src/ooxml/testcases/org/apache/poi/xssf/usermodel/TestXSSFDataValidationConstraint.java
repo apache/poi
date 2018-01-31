@@ -49,11 +49,11 @@ public class TestXSSFDataValidationConstraint {
         assertArrayEquals(expected, constraint.getExplicitListValues());
         // Excel and DataValidationConstraint parser ignore (strip) whitespace; quotes should still be intact
         assertEquals(literal.replace(" ", ""), constraint.getFormula1());
-	}
-	
+    }
+
     @Test
     public void rangeReference() {
-		// (unnamed range) reference list        
+        // (unnamed range) reference list
         String reference = "A1:A5";
         DataValidationConstraint constraint = new XSSFDataValidationConstraint(listType, ignoredType, reference, null);
         assertNull(constraint.getExplicitListValues());
