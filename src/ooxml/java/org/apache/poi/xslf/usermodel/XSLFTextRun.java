@@ -99,7 +99,7 @@ public class XSLFTextRun implements TextRun {
 
     String getRenderableText(String txt) {
         // TODO: finish support for tabs
-        txt.replace("\t", "  ");
+        txt = txt.replace("\t", "  ");
 
         switch (getTextCap()) {
             case ALL:
@@ -589,7 +589,9 @@ public class XSLFTextRun implements TextRun {
         }
 
         Double srcFontSize = r.getFontSize();
-        if (srcFontSize != getFontSize()) {
+        if (srcFontSize == null) {
+            if (getFontSize() != null) setFontSize(null);
+        } else if(!srcFontSize.equals(getFontSize())) {
             setFontSize(srcFontSize);
         }
 
