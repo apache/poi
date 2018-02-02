@@ -426,7 +426,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
                 && chartFactory != null) {
                 worksheetPart = createWorksheetPart(chartRelation, chartWorkbookRelation, chartFactory);
             }
-		}
+        }
         try (OutputStream xlsOut = worksheetPart.getOutputStream()) {
             setWorksheetPartCommitted();
             workbook.write(xlsOut);
