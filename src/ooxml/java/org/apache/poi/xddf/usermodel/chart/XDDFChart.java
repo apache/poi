@@ -46,6 +46,7 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
+import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -425,6 +426,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
                 && chartFactory != null) {
                 worksheetPart = createWorksheetPart(chartRelation, chartWorkbookRelation, chartFactory);
             }
+		}
         try (OutputStream xlsOut = worksheetPart.getOutputStream()) {
             setWorksheetPartCommitted();
             workbook.write(xlsOut);
