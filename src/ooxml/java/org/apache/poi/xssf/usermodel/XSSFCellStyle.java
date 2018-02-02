@@ -118,7 +118,7 @@ public class XSSFCellStyle implements CellStyle {
      */
     public void verifyBelongsToStylesSource(StylesTable src) {
         if(this._stylesSource != src) {
-            throw new IllegalArgumentException("This Style does not belong to the supplied Workbook Styles Source. Are you trying to assign a style from one workbook to the cell of a differnt workbook?");
+            throw new IllegalArgumentException("This Style does not belong to the supplied Workbook Styles Source. Are you trying to assign a style from one workbook to the cell of a different workbook?");
         }
     }
 
