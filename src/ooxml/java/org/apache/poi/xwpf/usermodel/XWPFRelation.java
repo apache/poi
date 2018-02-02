@@ -115,7 +115,7 @@ public final class XWPFRelation extends POIXMLRelation {
             null
             );
     
-    public static final XWPFRelation WORKBOOK_RELATIONSHIP = new XWPFRelation(
+    public static final XWPFRelation WORKBOOK = new XWPFRelation(
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             POIXMLDocument.PACK_OBJECT_REL_TYPE,
             "/word/embeddings/Microsoft_Excel_Worksheet#.xlsx",

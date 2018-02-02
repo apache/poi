@@ -46,15 +46,9 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
-import org.apache.poi.xslf.usermodel.XSLFChart;
-import org.apache.poi.xslf.usermodel.XSLFFactory;
-import org.apache.poi.xslf.usermodel.XSLFRelation;
-import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.xwpf.usermodel.XWPFFactory;
-import org.apache.poi.xwpf.usermodel.XWPFRelation;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBarChart;
@@ -115,7 +109,6 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
      *
      * @param part the package part holding the chart data,
      * the content type must be <code>application/vnd.openxmlformats-officedocument.drawingml.chart+xml</code>
-     *
      * @since POI 3.14-Beta1
      */
     protected XDDFChart(PackagePart part) throws IOException, XmlException {
@@ -381,9 +374,11 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
             axes.add(new XDDFValueAxis(valAx));
         }
     }
+
     /**
      * method to create relationship with embedded part
      * for example writing xlsx file stream into output stream
+     *
      * @param chartRelation relationship object
      * @param chartFactory ChartFactory object
      * @param chartIndex index used to suffix on file
@@ -397,6 +392,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     
     /**
      * if embedded part was null then create new part
+     *
      * @param chartRelation chart relation object
      * @param chartWorkbookRelation chart workbook relation object
      * @param chartFactory factory object of POIXMLFactory (XWPFFactory/XSLFFactory)
@@ -405,13 +401,14 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
      * @since POI 4.0.0
      */
     private PackagePart createWorksheetPart(POIXMLRelation chartRelation,POIXMLRelation chartWorkbookRelation,POIXMLFactory chartFactory) throws InvalidFormatException {
-        PackageRelationship xlsx = createRelationshipInChart(XSLFRelation.WORKBOOK_RELATIONSHIP, XSLFFactory.getInstance(), chartIndex);
+        PackageRelationship xlsx = createRelationshipInChart(chartWorkbookRelation, chartFactory, chartIndex);
         this.setExternalId(xlsx.getId());
         return getTargetPart(xlsx);
     }
     
     /**
      * this method write the XSSFWorkbook object data into embedded excel file
+     *
      * @param workbook XSSFworkbook object
      * @throws IOException
      * @throws InvalidFormatException
@@ -420,21 +417,12 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     public void saveWorkbook(XSSFWorkbook workbook) throws IOException, InvalidFormatException {
         PackagePart worksheetPart = getWorksheetPart();
         if (worksheetPart == null) {
-            POIXMLRelation chartRelation = null;
-            POIXMLRelation chartWorkbookRelation = null;
-            POIXMLFactory chartFactory = null;
-            if (this instanceof XSLFChart)
-            {
-                chartRelation = XSLFRelation.CHART;
-                chartWorkbookRelation = XSLFRelation.WORKBOOK_RELATIONSHIP;
-                chartFactory = XSLFFactory.getInstance();
-            }
-            else
-            {
-                chartRelation = XWPFRelation.CHART;
-                chartRelation = XWPFRelation.WORKBOOK_RELATIONSHIP;
-                chartFactory = XWPFFactory.getInstance();
-            }
+            POIXMLRelation chartRelation = getChartRelation();
+            POIXMLRelation chartWorkbookRelation = getChartWorkbookRelation();
+            POIXMLFactory chartFactory = getChartFactory();
+            if (chartRelation != null
+                && chartWorkbookRelation != null
+                && chartFactory != null) {
             worksheetPart = createWorksheetPart(chartRelation,chartWorkbookRelation,chartFactory);
         }
         try (OutputStream xlsOut = worksheetPart.getOutputStream()) {
@@ -442,8 +430,31 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
             workbook.write(xlsOut);
         }
     }
+
+    /**
+     *
+     * @return the chart relation in the implementing subclass.
+     * @since POI 4.0.0
+     */
+    protected abstract POIXMLRelation getChartRelation();
+
+    /**
+     *
+     * @return the chart workbook relation in the implementing subclass.
+     * @since POI 4.0.0
+     */
+    protected abstract POIXMLRelation getChartWorkbookRelation();
+
+    /**
+     *
+     * @return the chart factory in the implementing subclass.
+     * @since POI 4.0.0
+     */
+    protected abstract POIXMLFactory getChartFactory();
+
     /**
      * this method writes the data into sheet
+     *
      * @param sheet sheet of embedded excel
      * @param categoryData category values
      * @param valuesData data values
@@ -492,6 +503,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     
     /**
      * import content from other chart to created chart
+     *
      * @param other chart object
      * @since POI 4.0.0
      */
@@ -523,6 +535,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     
     /**
      * set sheet time in excel file
+     *
      * @param title title of sheet
      * @return return cell reference
      * @since POI 4.0.0
@@ -534,7 +547,6 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     }
     
     /**
-     * 
      * @param range
      * @return
      * @since POI 4.0.0
@@ -542,12 +554,13 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     public String formatRange(CellRangeAddress range) {
         return range.formatAsString(getSheet().getSheetName(), true);
     }
+
     /**
      * get sheet object of embedded excel file
+     *
      * @return excel sheet object
      * @since POI 4.0.0
      */
-    @SuppressWarnings("resource")
     private XSSFSheet getSheet() {
         if(sheet==null)
         {
@@ -561,6 +574,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
      * this method is used to get worksheet part
      * if call is from saveworkbook method then check isCommitted
      * isCommitted variable shows that we are writing xssfworkbook object into output stream of embedded part
+     *
      * @param isCommitted if it's true then it shows that we are writing xssfworkbook object into output stream of embedded part
      * @return returns the packagepart of embedded file
      * @throws InvalidFormatException
@@ -585,7 +599,6 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     }
     
     /**
-     * 
      * @return returns the workbook object of embedded excel file
      * @throws IOException
      * @throws InvalidFormatException
@@ -612,21 +625,21 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     /**
      * while reading chart from template file then we need to parse and store embedded excel
      * file in chart object show that we can modify value according to use
+     *
      * @param workbook workbook object which we read from chart embedded part
      * @since POI 4.0.0
      */
-    public void setWorkbook(XSSFWorkbook workbook)
-    {
+    public void setWorkbook(XSSFWorkbook workbook) {
         this.workbook = workbook;
     }
     
     /**
      * set the relation id of embedded excel relation id into external data relation tag
+     *
      * @param id relation id of embedded excel relation id into external data relation tag
      * @since POI 4.0.0
      */
-    public void setExternalId(String id)
-    {
+    public void setExternalId(String id) {
         getCTChartSpace().addNewExternalData().setId(id);
     }
     
@@ -640,6 +653,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     
     /**
      * set chart index which can be use for relation part
+     *
      * @param chartIndex chart index which can be use for relation part
      */
     public void setChartIndex(int chartIndex) {

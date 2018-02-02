@@ -258,8 +258,7 @@ public class TestXSSFDataValidation extends BaseTestDataValidation {
 
 	@Test
     public void test53965() throws Exception {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        try {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sheet = wb.createSheet();
             List<XSSFDataValidation> lst = sheet.getDataValidations();    //<-- works
             assertEquals(0, lst.size());
@@ -276,15 +275,51 @@ public class TestXSSFDataValidation extends BaseTestDataValidation {
             // this line caused XmlValueOutOfRangeException , see Bugzilla 3965
             lst = sheet.getDataValidations();
             assertEquals(1, lst.size());
-        } finally {
-            wb.close();
+        }
+    }
+
+    @Test
+    public void testDefaultErrorStyle() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+    
+            final XSSFDataValidation validation = createValidation(sheet);
+            sheet.addValidationData(validation);
+    
+            final List<XSSFDataValidation> dataValidations = sheet.getDataValidations();
+            assertEquals(DataValidation.ErrorStyle.STOP, dataValidations.get(0).getErrorStyle());
+        }
+    }
+
+    @Test
+    public void testSetErrorStyles() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+    
+            XSSFDataValidation validation = createValidation(sheet);
+            sheet.addValidationData(validation);
+            
+            // extract generated validation from sheet
+            List<XSSFDataValidation> dataValidations = sheet.getDataValidations();
+            validation = dataValidations.get(0);
+            
+            // test INFO
+            validation.setErrorStyle(DataValidation.ErrorStyle.INFO);
+            assertEquals(DataValidation.ErrorStyle.INFO, dataValidations.get(0).getErrorStyle());
+            
+            // test WARNING
+            validation.setErrorStyle(DataValidation.ErrorStyle.WARNING);
+            assertEquals(DataValidation.ErrorStyle.WARNING, dataValidations.get(0).getErrorStyle());
+            
+            // test STOP
+            validation.setErrorStyle(DataValidation.ErrorStyle.STOP);
+            assertEquals(DataValidation.ErrorStyle.STOP, dataValidations.get(0).getErrorStyle());
         }
     }
 
 	@Test
     public void testDefaultAllowBlank() throws IOException {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        try {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sheet = wb.createSheet();
     
             final XSSFDataValidation validation = createValidation(sheet);
@@ -292,15 +327,12 @@ public class TestXSSFDataValidation extends BaseTestDataValidation {
     
             final List<XSSFDataValidation> dataValidations = sheet.getDataValidations();
             assertEquals(true, dataValidations.get(0).getCtDdataValidation().getAllowBlank());
-        } finally {
-            wb.close();
         }
     }
 
 	@Test
     public void testSetAllowBlankToFalse() throws IOException {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        try {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sheet = wb.createSheet();
     
             final XSSFDataValidation validation = createValidation(sheet);
@@ -310,15 +342,12 @@ public class TestXSSFDataValidation extends BaseTestDataValidation {
     
             final List<XSSFDataValidation> dataValidations = sheet.getDataValidations();
             assertEquals(false, dataValidations.get(0).getCtDdataValidation().getAllowBlank());
-        } finally {
-            wb.close();
         }
     }
 
 	@Test
     public void testSetAllowBlankToTrue() throws IOException {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        try {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sheet = wb.createSheet();
     
             final XSSFDataValidation validation = createValidation(sheet);
@@ -328,8 +357,6 @@ public class TestXSSFDataValidation extends BaseTestDataValidation {
     
             final List<XSSFDataValidation> dataValidations = sheet.getDataValidations();
             assertEquals(true, dataValidations.get(0).getCtDdataValidation().getAllowBlank());
-        } finally {
-            wb.close();
         }
     }
 
@@ -345,11 +372,12 @@ public class TestXSSFDataValidation extends BaseTestDataValidation {
     }
     
     @Test
-    public void testTableBasedValidationList() {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("dataValidationTableRange.xlsx");
+    public void testTableBasedValidationList() throws IOException {
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("dataValidationTableRange.xlsx")) {
         XSSFFormulaEvaluator fEval = wb.getCreationHelper().createFormulaEvaluator();
         DataValidationEvaluator dve = new DataValidationEvaluator(wb, fEval);
         List<ValueEval> values = dve.getValidationValuesForCell(new CellReference("County Ranking", 8, 6, false, false));
         assertEquals("wrong # of valid values", 32, values.size());
     }
+}
 }

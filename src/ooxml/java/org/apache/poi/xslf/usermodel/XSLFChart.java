@@ -21,20 +21,17 @@ package org.apache.poi.xslf.usermodel;
 
 import java.io.IOException;
 
-import org.apache.poi.POIXMLDocument;
+import org.apache.poi.POIXMLFactory;
 import org.apache.poi.POIXMLRelation;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.util.Beta;
 import org.apache.poi.xddf.usermodel.chart.XDDFChart;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTitle;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
 
 /**
  * Represents a Chart in a .pptx presentation
- *
- *
  */
 @Beta
 public final class XSLFChart extends XDDFChart {
@@ -51,13 +48,27 @@ public final class XSLFChart extends XDDFChart {
      *
      * @param part the package part holding the chart data,
      * the content type must be <code>application/vnd.openxmlformats-officedocument.drawingml.chart+xml</code>
-     *
      * @since POI 3.14-Beta1
      */
     protected XSLFChart(PackagePart part) throws IOException, XmlException {
         super(part);
     }
     
+    @Override
+    protected POIXMLRelation getChartRelation() {
+        return XSLFRelation.CHART;
+    }
+
+    @Override
+    protected POIXMLRelation getChartWorkbookRelation() {
+        return XSLFRelation.WORKBOOK;
+    }
+
+    @Override
+    protected POIXMLFactory getChartFactory() {
+        return XSLFFactory.getInstance();
+    }
+
     public XSLFTextShape getTitle() {
         if (!chart.isSetTitle()) {
             chart.addNewTitle();

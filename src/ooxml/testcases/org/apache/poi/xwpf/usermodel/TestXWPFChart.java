@@ -38,8 +38,7 @@ public class TestXWPFChart extends TestCase {
     /**
      * test method to check charts are not null
      */
-    public void testRead() throws IOException
-    {
+    public void testRead() throws IOException {
         XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("61745.docx");
         List<XWPFChart> charts = sampleDoc.getCharts();
         assertNotNull(charts);
@@ -59,8 +58,7 @@ public class TestXWPFChart extends TestCase {
     /**
      * test method to add chart title and check whether it's set
      */
-    public void testChartTitle() throws IOException
-    {
+    public void testChartTitle() throws IOException {
         XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("61745.docx");
         List<XWPFChart> charts = sampleDoc.getCharts();
         XWPFChart chart=charts.get(0);
@@ -76,11 +74,11 @@ public class TestXWPFChart extends TestCase {
         r.setT("XWPF CHART");
         assertEquals("XWPF CHART", chart.getCTChart().getTitle().getTx().getRich().getPArray(0).getRArray(0).getT());
     }
+
     /**
      * test method to check relationship
      */
-    public void testChartRelation() throws IOException
-    {
+    public void testChartRelation() throws IOException {
         XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("61745.docx");
         List<XWPFChart> charts = sampleDoc.getCharts();
         XWPFChart chart=charts.get(0);
@@ -88,6 +86,7 @@ public class TestXWPFChart extends TestCase {
         assertEquals("/word/document.xml", chart.getParent().getPackagePart().getPartName().getName());
         assertEquals("/word/charts/chart1.xml", chart.getPackagePart().getPartName().getName());
     }
+
     /**
      *test method to check adding chart in document
      */

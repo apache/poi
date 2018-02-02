@@ -99,7 +99,7 @@ public class XSLFTextRun implements TextRun {
 
     String getRenderableText(String txt){
         // TODO: finish support for tabs
-        txt.replace("\t", "  ");
+        txt = txt.replace("\t", "  ");
 
         switch (getTextCap()) {
             case ALL:
@@ -226,7 +226,6 @@ public class XSLFTextRun implements TextRun {
     }
 
     /**
-     *
      * @return the spacing between characters within a text run,
      * If this attribute is omitted than a value of 0 or no adjustment is assumed.
      */
@@ -589,8 +588,10 @@ public class XSLFTextRun implements TextRun {
             setFontColor(srcFontColor);
         }
 
-        double srcFontSize = r.getFontSize();
-        if(srcFontSize  != getFontSize()){
+        Double srcFontSize = r.getFontSize();
+        if (srcFontSize == null) {
+            if (getFontSize() != null) setFontSize(null);
+        } else if(!srcFontSize.equals(getFontSize())) {
             setFontSize(srcFontSize);
         }
 

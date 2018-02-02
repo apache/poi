@@ -21,6 +21,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.poi.POIXMLException;
+import org.apache.poi.POIXMLFactory;
+import org.apache.poi.POIXMLRelation;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
@@ -54,23 +57,39 @@ public class XWPFChart extends XDDFChart {
     /**
      * constructor to
      * Create a new chart in document
+     *
      * @since POI 4.0.0
      */
     protected XWPFChart() {
         super();
     }
+
     /**
      * Construct a chart from a package part.
      *
      * @param part the package part holding the chart data,
      * the content type must be <code>application/vnd.openxmlformats-officedocument.drawingml.chart+xml</code>
-     *
      * @since POI 4.0.0
      */
     protected XWPFChart(PackagePart part) throws IOException, XmlException {
         super(part);
     }
     
+    @Override
+    protected POIXMLRelation getChartRelation() {
+        return XWPFRelation.CHART;
+    }
+
+    @Override
+    protected POIXMLRelation getChartWorkbookRelation() {
+        return XWPFRelation.WORKBOOK;
+    }
+
+    @Override
+    protected POIXMLFactory getChartFactory() {
+        return XWPFFactory.getInstance();
+    }
+
     public Long getChecksum() {
         if (this.checksum == null) {
             InputStream is = null;
@@ -128,13 +147,19 @@ public class XWPFChart extends XDDFChart {
     }
     
     /**
-     * initialize in line object
+     * Attach this chart known by its relation id to the given text run.
      * 
-     * @param inline this object is used to adjust the margin and dimension of chart 
+     * @param chartRelId the relation id of this chart in its parent document.
+     * @param run the text run to which this chart will be inlined.
+     * @throws InvalidFormatException
+     * @throws IOException
      * @since POI 4.0.0
      */
-    protected void setAttachTo(CTInline ctInline) {
-        this.ctInline = ctInline;
+    protected void attach(String chartRelId, XWPFRun run)
+        throws InvalidFormatException, IOException {
+        ctInline = run.addChart(chartRelId);
+        ctInline.addNewExtent();
+        setChartBoundingBox(DEFAULT_WIDTH, DEFAULT_HEIGHT);
     }
     
     /**

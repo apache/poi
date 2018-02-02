@@ -16,40 +16,28 @@
  *    limitations under the License.
  * ====================================================================
  */
+package org.apache.poi.xssf.usermodel;
 
-package org.apache.poi.xssf.streaming;
+import java.io.IOException;
 
-import org.apache.poi.ss.usermodel.BaseTestXRow;
-import org.apache.poi.xssf.SXSSFITestDataProvider;
-import org.junit.After;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.apache.poi.ss.usermodel.BaseTestSheetShiftColumns;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.XSSFITestDataProvider;
+import org.apache.poi.xssf.XSSFTestDataSamples;
 
-/**
- * Tests for XSSFRow
- */
-public final class TestSXSSFRow extends BaseTestXRow {
-
-    public TestSXSSFRow() {
-        super(SXSSFITestDataProvider.instance);
+public class TestXSSFSheetShiftColumns extends BaseTestSheetShiftColumns {
+    public TestXSSFSheetShiftColumns() {
+        super(); 
+        workbook = new XSSFWorkbook();
+        _testDataProvider = XSSFITestDataProvider.instance; 
     }
 
-
-    @After
-    public void tearDown() {
-        ((SXSSFITestDataProvider) _testDataProvider).cleanup();
+    protected Workbook openWorkbook(String spreadsheetFileName) throws IOException {
+        return XSSFTestDataSamples.openSampleWorkbook(spreadsheetFileName);
     }
 
-    @Override
-    @Ignore ("see <https://bz.apache.org/bugzilla/show_bug.cgi?id=62030#c1>") @Test
-    public void testCellShiftingRight(){
-        // Remove when SXSSFRow.shiftCellsRight() is implemented.
-    }
-    @Override
-    @Ignore ("see <https://bz.apache.org/bugzilla/show_bug.cgi?id=62030#c1>") @Test
-    public void testCellShiftingLeft(){
-        // Remove when SXSSFRow.shiftCellsLeft() is implemented. 
+    protected Workbook getReadBackWorkbook(Workbook wb) {
+        return XSSFTestDataSamples.writeOutAndReadBack(wb);
     }
 
-    
 }

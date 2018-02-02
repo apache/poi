@@ -428,7 +428,6 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
     }
     
     /**
-     *
      * @param newIndex 0-based index of the slide
      */
     public void setSlideOrder(XSLFSlide slide, int newIndex){
@@ -500,7 +499,6 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
      *
      * @param pictureData       The bytes of the picture
      * @param format            The format of the picture.
-     *
      * @return the picture data
      */
     @Override
@@ -535,13 +533,11 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
      *
      * @param is                The stream to read image from
      * @param format              The format of the picture
-     *
      * @return the picture data
      * @since 3.15 beta 2
      */
     @Override
-    public XSLFPictureData addPicture(InputStream is, PictureType format) throws IOException
-    {
+    public XSLFPictureData addPicture(InputStream is, PictureType format) throws IOException {
         return addPicture(IOUtils.toByteArray(is), format);
     }
     
@@ -551,13 +547,11 @@ implements SlideShow<XSLFShape,XSLFTextParagraph> {
      *
      * @param pict             The file containing the image to add
      * @param format           The format of the picture.
-     *
      * @return the picture data
      * @since 3.15 beta 2
      */
     @Override
-    public XSLFPictureData addPicture(File pict, PictureType format) throws IOException
-    {
+    public XSLFPictureData addPicture(File pict, PictureType format) throws IOException {
         int length = (int) pict.length();
         byte[] data = IOUtils.safelyAllocate(length, MAX_RECORD_LENGTH);
         try (InputStream is = new FileInputStream(pict)) {
