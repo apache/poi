@@ -68,6 +68,11 @@ public class XDDFDataSourcesFactory {
             public String getDataRangeReference() {
                 return categoryDS.getStrRef().getF();
             }
+
+            @Override
+            public int getColIndex() {
+                return 0;
+            }
         };
     }
 
@@ -110,6 +115,11 @@ public class XDDFDataSourcesFactory {
             public String getDataRangeReference() {
                 return valuesDS.getNumRef().getF();
             }
+
+            @Override
+            public int getColIndex() {
+                return 0;
+            }
         };
     }
 
@@ -119,6 +129,14 @@ public class XDDFDataSourcesFactory {
 
     public static XDDFCategoryDataSource fromArray(String[] elements, String dataRange) {
         return new StringArrayDataSource(elements, dataRange);
+    }
+
+    public static <T extends Number> XDDFNumericalDataSource<T> fromArray(T[] elements, String dataRange,int col) {
+        return new NumericalArrayDataSource<T>(elements, dataRange,col);
+    }
+
+    public static XDDFCategoryDataSource fromArray(String[] elements, String dataRange,int col) {
+        return new StringArrayDataSource(elements, dataRange,col);
     }
 
     public static XDDFNumericalDataSource<Double> fromNumericCellRange(XSSFSheet sheet,
@@ -133,10 +151,17 @@ public class XDDFDataSourcesFactory {
     private abstract static class AbstractArrayDataSource<T> implements XDDFDataSource<T> {
         private final T[] elements;
         private final String dataRange;
+        private int col = 0;
 
         public AbstractArrayDataSource(T[] elements, String dataRange) {
             this.elements = elements.clone();
             this.dataRange = dataRange;
+        }
+
+        public AbstractArrayDataSource(T[] elements, String dataRange, int col) {
+            this.elements = elements.clone();
+            this.dataRange = dataRange;
+            this.col = col;
         }
 
         @Override
@@ -168,6 +193,12 @@ public class XDDFDataSourcesFactory {
                 return dataRange;
             }
         }
+        
+        @Override
+        public int getColIndex()
+        {
+            return col;
+        }
     }
 
     private static class NumericalArrayDataSource<T extends Number> extends AbstractArrayDataSource<T>
@@ -176,6 +207,10 @@ public class XDDFDataSourcesFactory {
 
         public NumericalArrayDataSource(T[] elements, String dataRange) {
             super(elements, dataRange);
+        }
+
+        public NumericalArrayDataSource(T[] elements, String dataRange, int col) {
+            super(elements, dataRange, col);
         }
 
         @Override
@@ -193,6 +228,10 @@ public class XDDFDataSourcesFactory {
             implements XDDFCategoryDataSource {
         public StringArrayDataSource(String[] elements, String dataRange) {
             super(elements, dataRange);
+        }
+
+        public StringArrayDataSource(String[] elements, String dataRange, int col) {
+            super(elements, dataRange,col);
         }
     }
 
@@ -218,6 +257,12 @@ public class XDDFDataSourcesFactory {
         @Override
         public boolean isReference() {
             return true;
+        }
+
+        @Override
+        public int getColIndex()
+        {
+            return cellRangeAddress.getFirstColumn();
         }
 
         @Override
