@@ -474,6 +474,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     /**
      * this method return row on given index
      * if row is null then create new row
+     *
      * @param sheet current sheet object
      * @param index index of current row
      * @return this method return sheet row on given index
@@ -490,6 +491,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     /**
      * this method return cell on given index
      * if cell is null then create new cell
+     *
      * @param row current row object
      * @param index index of current cell
      * @return this method return sheet cell on given index
