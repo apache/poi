@@ -76,11 +76,11 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
      */
     private XSSFWorkbook workbook;
 
-    XSSFSheet sheet = null;
+    private XSSFSheet sheet = null;
     
     private int chartIndex = 0;
 
-    POIXMLDocumentPart documentPart = null;
+    private POIXMLDocumentPart documentPart = null;
     
     protected List<XDDFChartAxis> axes = new ArrayList<>();
 
@@ -466,8 +466,8 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
         int numOfPoints = categoryData.getPointCount();
         for (int i = 0; i < numOfPoints; i++) {
             XSSFRow row = this.getRow(sheet,i + 1); // first row is for title
-            this.getCell(row,categoryData.getColIndex()).setCellValue(categoryData.getPointAt(i).toString());
-            this.getCell(row,valuesData.getColIndex()).setCellValue(valuesData.getPointAt(i).doubleValue());
+            this.getCell(row, categoryData.getColIndex()).setCellValue(categoryData.getPointAt(i).toString());
+            this.getCell(row, valuesData.getColIndex()).setCellValue(valuesData.getPointAt(i).doubleValue());
         }
     }
 
@@ -480,9 +480,8 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
      * @return this method return sheet row on given index
      * @since POI 4.0.0
      */
-    private XSSFRow getRow(XSSFSheet sheet,int index)
-    {
-        if(sheet.getRow(index)!=null)
+    private XSSFRow getRow(XSSFSheet sheet,int index){
+        if(sheet.getRow(index) != null)
             return sheet.getRow(index);
         else
             return sheet.createRow(index);
@@ -497,9 +496,8 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
      * @return this method return sheet cell on given index
      * @since POI 4.0.0
      */
-    private XSSFCell getCell(XSSFRow row,int index)
-    {
-        if(row.getCell(index)!=null)
+    private XSSFCell getCell(XSSFRow row,int index){
+        if(row.getCell(index) != null)
             return row.getCell(index);
         else
             return row.createCell(index);
