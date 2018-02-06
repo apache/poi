@@ -77,11 +77,11 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     private XSSFWorkbook workbook;
 
     private XSSFSheet sheet = null;
-    
+
     private int chartIndex = 0;
 
     private POIXMLDocumentPart documentPart = null;
-    
+
     protected List<XDDFChartAxis> axes = new ArrayList<>();
 
     /**
@@ -465,7 +465,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     protected void fillSheet(XSSFSheet sheet, XDDFDataSource<?> categoryData, XDDFNumericalDataSource<?> valuesData) {
         int numOfPoints = categoryData.getPointCount();
         for (int i = 0; i < numOfPoints; i++) {
-            XSSFRow row = this.getRow(sheet,i + 1); // first row is for title
+            XSSFRow row = this.getRow(sheet, i + 1); // first row is for title
             this.getCell(row, categoryData.getColIndex()).setCellValue(categoryData.getPointAt(i).toString());
             this.getCell(row, valuesData.getColIndex()).setCellValue(valuesData.getPointAt(i).doubleValue());
         }
@@ -481,12 +481,13 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
      * @since POI 4.0.0
      */
     private XSSFRow getRow(XSSFSheet sheet,int index){
-        if(sheet.getRow(index) != null)
+        if (sheet.getRow(index) != null) {
             return sheet.getRow(index);
-        else
+        } else {
             return sheet.createRow(index);
+        }
     }
-    
+
     /**
      * this method return cell on given index
      * if cell is null then create new cell
@@ -497,12 +498,13 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
      * @since POI 4.0.0
      */
     private XSSFCell getCell(XSSFRow row,int index){
-        if(row.getCell(index) != null)
+        if (row.getCell(index) != null) {
             return row.getCell(index);
-        else
+        } else {
             return row.createCell(index);
+        }
     }
-    
+
     /**
      * import content from other chart to created chart
      *
@@ -564,20 +566,22 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
      * @since POI 4.0.0
      */
     private XSSFSheet getSheet() {
-        if(sheet==null)
-        {
-            workbook = new XSSFWorkbook();
-            sheet = workbook.createSheet();
+        if (sheet == null) {
+            try {
+                sheet = getWorkbook().getSheetAt(0);
+            } catch (InvalidFormatException ife) {
+            } catch (IOException ioe) {
+            }
+            if (sheet == null) { // ??? only if there was no sheet on embedded workbook
+                sheet = workbook.createSheet();
+            }
         }
         return sheet;
     }
 
     /**
      * this method is used to get worksheet part
-     * if call is from saveworkbook method then check isCommitted
-     * isCommitted variable shows that we are writing xssfworkbook object into output stream of embedded part
      *
-     * @param isCommitted if it's true then it shows that we are writing xssfworkbook object into output stream of embedded part
      * @return returns the packagepart of embedded file
      * @throws InvalidFormatException
      * @since POI 4.0.0
@@ -599,7 +603,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
             }
         }
     }
-    
+
     /**
      * @return returns the workbook object of embedded excel file
      * @throws IOException
@@ -622,17 +626,6 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
             }
         }
         return workbook;
-    }
-
-    /**
-     * while reading chart from template file then we need to parse and store embedded excel
-     * file in chart object show that we can modify value according to use
-     *
-     * @param workbook workbook object which we read from chart embedded part
-     * @since POI 4.0.0
-     */
-    public void setWorkbook(XSSFWorkbook workbook) {
-        this.workbook = workbook;
     }
 
     /**
