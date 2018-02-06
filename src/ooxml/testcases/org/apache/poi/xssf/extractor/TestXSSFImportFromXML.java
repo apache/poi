@@ -23,6 +23,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DateFormatSymbols;
 import java.text.ParseException;
@@ -32,6 +33,7 @@ import java.util.Locale;
 
 import javax.xml.xpath.XPathExpressionException;
 
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFMap;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -85,7 +87,7 @@ public class TestXSSFImportFromXML {
 		}
 	}
 	
-	@Test(timeout=60000)
+	@Test(timeout=60000_00)
 	public void testMultiTable() throws IOException, XPathExpressionException, SAXException{
 		try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("CustomXMLMappings-complex-type.xlsx")) {
 			String cellC6 = "c6";
@@ -98,9 +100,10 @@ public class TestXSSFImportFromXML {
 					"<ns1:Schema ID=\"" + cellC7 + "\" SchemaRef=\"b\" />" +
 					"<ns1:Schema ID=\"" + cellC8 + "\" SchemaRef=\"c\" />" +
 					"<ns1:Schema ID=\"" + cellC9 + "\" SchemaRef=\"d\" />");
-
-			for (int i = 10; i < 10010; i++) {
-				testXML.append("<ns1:Schema ID=\"c").append(i).append("\" SchemaRef=\"d\" />");
+			
+			int cellOffset = 10; // cell C10
+			for (int i = 0; i < 10000; i++) {
+				testXML.append("<ns1:Schema ID=\"c").append(i + cellOffset).append("\" SchemaRef=\"d\" />");
 			}
 
 			testXML.append("<ns1:Map ID=\"1\" Name=\"\" RootElement=\"\" SchemaID=\"\" ShowImportExportValidationErrors=\"\" AutoFit=\"\" Append=\"\" PreserveSortAFLayout=\"\" PreserveFormat=\"\">" + "<ns1:DataBinding DataBindingLoadMode=\"\" />" + "</ns1:Map>" + "<ns1:Map ID=\"2\" Name=\"\" RootElement=\"\" SchemaID=\"\" ShowImportExportValidationErrors=\"\" AutoFit=\"\" Append=\"\" PreserveSortAFLayout=\"\" PreserveFormat=\"\">" + "<ns1:DataBinding DataBindingLoadMode=\"\" />" + "</ns1:Map>" + "<ns1:Map ID=\"3\" Name=\"\" RootElement=\"\" SchemaID=\"\" ShowImportExportValidationErrors=\"\" AutoFit=\"\" Append=\"\" PreserveSortAFLayout=\"\" PreserveFormat=\"\">" + "<ns1:DataBinding DataBindingLoadMode=\"\" />" + "</ns1:Map>" + "</ns1:MapInfo>\u0000");
@@ -113,7 +116,18 @@ public class TestXSSFImportFromXML {
 
 			//Check for Schema element
 			XSSFSheet sheet = wb.getSheetAt(1);
-
+			wb.write(new FileOutputStream("C:/Users/lka/CustomXMLMappings-complex-type-test.xlsx"));
+			
+			// check table size (+1 for the header row)
+			assertEquals(3 + 1, wb.getTable("Tabella1").getRowCount());
+			assertEquals(10004 + 1, wb.getTable("Tabella2").getRowCount());
+			
+			// table1 size was reduced, check that former table cells have been cleared
+			assertEquals(CellType.BLANK, wb.getSheetAt(0).getRow(8).getCell(5).getCellType());
+			
+			// table2 size was increased, check that new table cells have been cleared
+            assertEquals(CellType.BLANK, sheet.getRow(10).getCell(3).getCellType());
+			
 			assertEquals(cellC6, sheet.getRow(5).getCell(2).getStringCellValue());
 			assertEquals(cellC7, sheet.getRow(6).getCell(2).getStringCellValue());
 			assertEquals(cellC8, sheet.getRow(7).getCell(2).getStringCellValue());
