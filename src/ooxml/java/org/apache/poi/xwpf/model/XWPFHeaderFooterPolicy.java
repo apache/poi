@@ -18,8 +18,6 @@ package org.apache.poi.xwpf.model;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLDocumentPart.RelationPart;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFFactory;
 import org.apache.poi.xwpf.usermodel.XWPFFooter;
@@ -187,8 +185,7 @@ public class XWPFHeaderFooterPolicy {
                     XWPFFactory.getInstance(), i);
             wrapper.setXWPFDocument(doc);
 
-            String pStyle = "Header";
-            CTHdrFtr hdr = buildHdr(type, pStyle, wrapper, pars);
+            CTHdrFtr hdr = buildHdr(type, wrapper, pars);
             wrapper.setHeaderFooter(hdr);
             hdrDoc.setHdr(hdr);
             assignHeader(wrapper, type);
@@ -224,8 +221,7 @@ public class XWPFHeaderFooterPolicy {
                     XWPFFactory.getInstance(), i);
             wrapper.setXWPFDocument(doc);
 
-            String pStyle = "Footer";
-            CTHdrFtr ftr = buildFtr(type, pStyle, wrapper, pars);
+            CTHdrFtr ftr = buildFtr(type, wrapper, pars);
             wrapper.setHeaderFooter(ftr);
             ftrDoc.setFtr(ftr);
             assignFooter(wrapper, type);
@@ -245,16 +241,16 @@ public class XWPFHeaderFooterPolicy {
         return i;
     }
 
-    private CTHdrFtr buildFtr(Enum type, String pStyle, XWPFHeaderFooter wrapper, XWPFParagraph[] pars) {
+    private CTHdrFtr buildFtr(Enum type, XWPFHeaderFooter wrapper, XWPFParagraph[] pars) {
         //CTHdrFtr ftr = buildHdrFtr(pStyle, pars);				// MB 24 May 2010
-        CTHdrFtr ftr = buildHdrFtr(pStyle, pars, wrapper);        // MB 24 May 2010
+        CTHdrFtr ftr = buildHdrFtr(pars, wrapper);        // MB 24 May 2010
         setFooterReference(type, wrapper);
         return ftr;
     }
 
-    private CTHdrFtr buildHdr(Enum type, String pStyle, XWPFHeaderFooter wrapper, XWPFParagraph[] pars) {
+    private CTHdrFtr buildHdr(Enum type, XWPFHeaderFooter wrapper, XWPFParagraph[] pars) {
         //CTHdrFtr hdr = buildHdrFtr(pStyle, pars);				// MB 24 May 2010
-        CTHdrFtr hdr = buildHdrFtr(pStyle, pars, wrapper);        // MB 24 May 2010
+        CTHdrFtr hdr = buildHdrFtr(pars, wrapper);        // MB 24 May 2010
         setHeaderReference(type, wrapper);
         return hdr;
     }
@@ -271,11 +267,11 @@ public class XWPFHeaderFooterPolicy {
      * that had previoulsy been instantiated in the createHeader(int, XWPFParagraph[]) or
      * createFooter(int, XWPFParagraph[]) methods.
      */
-    private CTHdrFtr buildHdrFtr(String pStyle, XWPFParagraph[] paragraphs, XWPFHeaderFooter wrapper) {
+    private CTHdrFtr buildHdrFtr(XWPFParagraph[] paragraphs, XWPFHeaderFooter wrapper) {
         CTHdrFtr ftr = wrapper._getHdrFtr();
         if (paragraphs != null) {
             for (int i = 0; i < paragraphs.length; i++) {
-                CTP p = ftr.addNewP();
+                /*CTP p =*/ ftr.addNewP();
                 ftr.setPArray(i, paragraphs[i].getCTP());
             }
 //        } else {
