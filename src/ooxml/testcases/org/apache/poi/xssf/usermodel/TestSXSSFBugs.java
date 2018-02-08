@@ -110,18 +110,18 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
     @Test
     public void bug61648() throws Exception {
         // works as expected
-        writeWorkbook(new XSSFWorkbook(), "/tmp/61648.xlsx", XSSFITestDataProvider.instance);
+        writeWorkbook(new XSSFWorkbook(), XSSFITestDataProvider.instance);
 
         // does not work
         try {
-            writeWorkbook(new SXSSFWorkbook(), "/tmp/61648s.xlsx", SXSSFITestDataProvider.instance);
+            writeWorkbook(new SXSSFWorkbook(), SXSSFITestDataProvider.instance);
             fail("Should catch exception here");
         } catch (RuntimeException e) {
             // this is not implemented yet
         }
     }
 
-    void writeWorkbook(Workbook wb, String filename, ITestDataProvider testDataProvider) throws IOException {
+    void writeWorkbook(Workbook wb, ITestDataProvider testDataProvider) throws IOException {
         Sheet sheet = wb.createSheet("array formula test");
 
         int rowIndex = 0;
