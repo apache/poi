@@ -22,7 +22,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumn;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXmlColumnPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STXmlDataType.Enum;
 
-
 /**
  * 
  * This class is a wrapper around the CTXmlColumnPr (Open Office XML Part 4:
@@ -32,56 +31,60 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STXmlDataType.Enum;
  * @author Roberto Manicardi
  */
 public class XSSFXmlColumnPr {
-	
-	private XSSFTable table;
-	private CTTableColumn ctTableColumn;
-	private CTXmlColumnPr ctXmlColumnPr;
-	
-	public XSSFXmlColumnPr(XSSFTable table ,CTTableColumn ctTableColum,CTXmlColumnPr ctXmlColumnPr){
-		this.table = table;
-		this.ctTableColumn = ctTableColum;
-		this.ctXmlColumnPr = ctXmlColumnPr;
-	}
-	
-	public long getMapId(){
-		return ctXmlColumnPr.getMapId();
-	}
-	
-	public String getXPath(){
-		return ctXmlColumnPr.getXpath();
-	}
-	/**
-	 * (see Open Office XML Part 4: chapter 3.5.1.3)
-	 * @return An integer representing the unique identifier of this column. 
-	 */
-	public long getId(){
-		return ctTableColumn.getId();
-	}
-	
-	
-	/**
-	 * If the XPath is, for example, /Node1/Node2/Node3 and /Node1/Node2 is the common XPath for the table, the local XPath is /Node3
-	 * 	
-	 * @return the local XPath 
-	 */
-	public String getLocalXPath(){
-		StringBuilder localXPath = new StringBuilder();
-		int numberOfCommonXPathAxis = table.getCommonXpath().split("/").length-1;
-		
-		String[] xPathTokens = ctXmlColumnPr.getXpath().split("/");
-		for(int i=numberOfCommonXPathAxis; i<xPathTokens.length;i++){
-			localXPath.append("/" +xPathTokens[i]);
-		}
-		return localXPath.toString();
-	}
 
-	public Enum getXmlDataType() {
-		
-		return ctXmlColumnPr.getXmlDataType();
-	}
-	
-	
-	
-	
+    private XSSFTable table;
+    private CTTableColumn ctTableColumn;
+    private CTXmlColumnPr ctXmlColumnPr;
+
+    public XSSFXmlColumnPr(XSSFTable table, CTTableColumn ctTableColum, CTXmlColumnPr ctXmlColumnPr) {
+        this.table = table;
+        this.ctTableColumn = ctTableColum;
+        this.ctXmlColumnPr = ctXmlColumnPr;
+    }
+
+    public long getMapId() {
+        return ctXmlColumnPr.getMapId();
+    }
+
+    public String getXPath() {
+        return ctXmlColumnPr.getXpath();
+    }
+
+    /**
+     * (see Open Office XML Part 4: chapter 3.5.1.3)
+     * 
+     * @return An integer representing the unique identifier of this column.
+     */
+    public long getId() {
+        return ctTableColumn.getId();
+    }
+
+    /**
+     * If the XPath is, for example, /Node1/Node2/Node3 and /Node1/Node2 is the common XPath for the table, the local XPath is /Node3
+     * 
+     * @return the local XPath
+     */
+    public String getLocalXPath() {
+        StringBuilder localXPath = new StringBuilder();
+        int numberOfCommonXPathAxis = table.getCommonXpath().split("/").length-1;
+
+        String[] xPathTokens = ctXmlColumnPr.getXpath().split("/");
+        for (int i = numberOfCommonXPathAxis; i < xPathTokens.length; i++) {
+            localXPath.append("/" + xPathTokens[i]);
+        }
+        return localXPath.toString();
+    }
+
+    public Enum getXmlDataType() {
+
+        return ctXmlColumnPr.getXmlDataType();
+    }
+
+    /**
+     * @return the column name
+     */
+    public String getName() {
+        return ctTableColumn.getName();
+    }
 
 }

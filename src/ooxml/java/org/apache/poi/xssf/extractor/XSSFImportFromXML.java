@@ -52,7 +52,6 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFTable;
 import org.apache.poi.xssf.usermodel.helpers.XSSFSingleXmlCell;
 import org.apache.poi.xssf.usermodel.helpers.XSSFXmlColumnPr;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumn;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STXmlDataType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -139,19 +138,13 @@ public class XSSFImportFromXML {
                 // OpenOffice part 4: chapter 3.5.1.7)
 
                 Node singleNode = result.item(i).cloneNode(true);
-                int localColumnIndex = -1;
-                for (CTTableColumn ctTableColumn : table.getCTTable().getTableColumns().getTableColumnList()) {
 
-                    localColumnIndex++;
-                    if (ctTableColumn.getXmlColumnPr() == null) {
-                        continue;
-                    }
+                for (XSSFXmlColumnPr xmlColumnPr : table.getXmlColumnPrs()) {
 
-                    XSSFXmlColumnPr xmlColumnPr = new XSSFXmlColumnPr(table, ctTableColumn, ctTableColumn.getXmlColumnPr());
                     int rowId = rowOffset + i;
-                    int columnId = columnOffset + localColumnIndex;
+                    int columnId = columnOffset + table.findColumnIndex(xmlColumnPr.getName());
                     String localXPath = xmlColumnPr.getLocalXPath();
-                    localXPath = localXPath.substring(localXPath.substring(1).indexOf('/') + 2);
+                    localXPath = localXPath.substring(localXPath.indexOf('/', 1) + 1);
 
                     // TODO: convert the data to the cell format
                     String value = (String) xpath.evaluate(localXPath, singleNode, XPathConstants.STRING);
@@ -220,8 +213,7 @@ public class XSSFImportFromXML {
         }
 
         // update table area
-        table.getCTTable().setRef(newTableAreaReference.formatAsString());
-        table.updateReferences();
+        table.setCellReferences(newTableAreaReference);
     }
 
     private static enum DataType {
