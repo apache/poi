@@ -91,25 +91,25 @@ public class XSSFImportFromXML {
      * @throws IOException  if there are problems reading the input string
      */
     public void importFromXML(String xmlInputString) throws SAXException, XPathExpressionException, IOException {
-    
+
         DocumentBuilder builder = DocumentHelper.newDocumentBuilder();
-    
+
         Document doc = builder.parse(new InputSource(new StringReader(xmlInputString.trim())));
-    
+
         List<XSSFSingleXmlCell> singleXmlCells = _map.getRelatedSingleXMLCell();
-    
+
         List<XSSFTable> tables = _map.getRelatedTables();
-    
+
         XPathFactory xpathFactory = XPathFactory.newInstance();
         XPath xpath = xpathFactory.newXPath();
-    
+
         // Setting namespace context to XPath
         // Assuming that the namespace prefix in the mapping xpath is the
         // same as the one used in the document
         xpath.setNamespaceContext(new DefaultNamespaceContext(doc));
-    
+
         for (XSSFSingleXmlCell singleXmlCell : singleXmlCells) {
-    
+
             STXmlDataType.Enum xmlDataType = singleXmlCell.getXmlDataType();
             String xpathString = singleXmlCell.getXpath();
             Node result = (Node) xpath.evaluate(xpathString, doc, XPathConstants.NODE);
@@ -123,44 +123,44 @@ public class XSSFImportFromXML {
                 setCellValue(textContent, cell, xmlDataType);
             }
         }
-    
+
         for (XSSFTable table : tables) {
-    
+
             String commonXPath = table.getCommonXpath();
             NodeList result = (NodeList) xpath.evaluate(commonXPath, doc, XPathConstants.NODESET);
             int rowOffset = table.getStartCellReference().getRow() + table.getHeaderRowCount();
             int columnOffset = table.getStartCellReference().getCol();
-            
+
             resizeTable(table, result.getLength());
-            
+
             for (int i = 0; i < result.getLength(); i++) {
-    
+
                 // TODO: implement support for denormalized XMLs (see
                 // OpenOffice part 4: chapter 3.5.1.7)
-                
-            	Node singleNode = result.item(i).cloneNode(true);
-            	int localColumnIndex = -1;
+
+                Node singleNode = result.item(i).cloneNode(true);
+                int localColumnIndex = -1;
                 for (CTTableColumn ctTableColumn : table.getCTTable().getTableColumns().getTableColumnList()) {
-    
+
                     localColumnIndex++;
-                    if(ctTableColumn.getXmlColumnPr() == null) {
+                    if (ctTableColumn.getXmlColumnPr() == null) {
                         continue;
                     }
-                    
+
                     XSSFXmlColumnPr xmlColumnPr = new XSSFXmlColumnPr(table, ctTableColumn, ctTableColumn.getXmlColumnPr());
                     int rowId = rowOffset + i;
                     int columnId = columnOffset + localColumnIndex;
                     String localXPath = xmlColumnPr.getLocalXPath();
                     localXPath = localXPath.substring(localXPath.substring(1).indexOf('/') + 2);
-    
+
                     // TODO: convert the data to the cell format
-    				String value = (String) xpath.evaluate(localXPath, singleNode, XPathConstants.STRING);
+                    String value = (String) xpath.evaluate(localXPath, singleNode, XPathConstants.STRING);
                     logger.log(POILogger.DEBUG, "Extracting with xpath " + localXPath + " : value is '" + value + "'");
                     XSSFRow row = table.getXSSFSheet().getRow(rowId);
                     if (row == null) {
                         row = table.getXSSFSheet().createRow(rowId);
                     }
-    
+
                     XSSFCell cell = row.getCell(columnId);
                     if (cell == null) {
                         cell = row.createCell(columnId);
@@ -172,7 +172,7 @@ public class XSSFImportFromXML {
             }
         }
     }
-    
+
     /**
      * Resize the table by setting a new row count.
      * 
@@ -186,19 +186,19 @@ public class XSSFImportFromXML {
         
         table.updateReferences();
         int rowCount = table.getRowCount();
-        if(rowCount == newRowCount) {
+        if (rowCount == newRowCount) {
             return;
         }
-        
+
         // calculate new area
         SpreadsheetVersion spreadsheetVersion = table.getXSSFSheet().getWorkbook().getSpreadsheetVersion();
         CellReference newEndCellReference = new CellReference(table.getStartCellReference().getRow() + newRowCount, table.getEndCellReference().getCol());
         AreaReference newTableAreaReference = new AreaReference(table.getStartCellReference(), newEndCellReference, spreadsheetVersion);
-        
+
         // clear cells
         CellReference clearAreaStartCell;
         CellReference clearAreaEndCell;
-        if(newRowCount < rowCount) {
+        if (newRowCount < rowCount) {
             // clear all table cells that are outside of the new area
             clearAreaStartCell = new CellReference(newTableAreaReference.getLastCell().getRow() + 1, newTableAreaReference.getFirstCell().getCol());
             clearAreaEndCell = table.getEndCellReference();
@@ -212,13 +212,13 @@ public class XSSFImportFromXML {
             XSSFRow row = table.getXSSFSheet().getRow(cellRef.getRow());
             if (row != null) {
                 XSSFCell cell = row.getCell(cellRef.getCol());
-                if(cell != null) {
+                if (cell != null) {
                     cell.setCellType(CellType.BLANK);
                     cell.setCellStyle(null);
                 }
             }
         }
-        
+
         // update table area
         table.getCTTable().setRef(newTableAreaReference.formatAsString());
         table.updateReferences();
