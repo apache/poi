@@ -101,11 +101,12 @@ subprojects {
 		exclude '**/TestUnfixedBugs.class'
 		exclude '**/TestOneFile.class'
 
-        systemProperties = System.properties
-    
         // set heap size for the test JVM(s)
         minHeapSize = "128m"
         maxHeapSize = "768m"
+
+        // Specifying the local via system properties did not work, so we set them this way
+        jvmArgs '-Duser.language=en -Duser.country=US'
   
         // show standard out and standard error of the test JVM(s) on the console
         //testLogging.showStandardStreams = true
@@ -114,14 +115,7 @@ subprojects {
         systemProperties['user.dir'] = workingDir
         
         systemProperties['POI.testdata.path'] = '../../test-data'
-        //systemProperties['user.language'] = 'en'
-        //systemProperties['user.country'] = 'US'
     }
-
-	test.beforeSuite { TestDescriptor suite ->
-	   System.setProperty('user.language', 'en')
-	   System.setProperty('user.country', 'US')
-	}
 
     jacoco {
         toolVersion = '0.7.9'
@@ -212,6 +206,7 @@ project('ooxml') {
 		compile files('../../ooxml-lib/ooxml-security-1.1.jar')
 		
 		testCompile 'junit:junit:4.12'
+		testCompile 'org.mockito:mockito-core:2.13.0'
 		testCompile project(path: ':main', configuration: 'tests')
 		testCompile 'org.openjdk.jmh:jmh-core:1.19'
 		testCompile 'org.openjdk.jmh:jmh-generator-annprocess:1.19'

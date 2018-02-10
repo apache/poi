@@ -16,40 +16,19 @@
  *    limitations under the License.
  * ====================================================================
  */
+package org.apache.poi.hssf.usermodel;
 
-package org.apache.poi.xssf.streaming;
+import org.apache.poi.hssf.usermodel.helpers.HSSFColumnShifter;
+import org.apache.poi.ss.usermodel.BaseTestColumnShifting;
 
-import org.apache.poi.ss.usermodel.BaseTestXRow;
-import org.apache.poi.xssf.SXSSFITestDataProvider;
-import org.junit.After;
-import org.junit.Ignore;
-import org.junit.Test;
-
-/**
- * Tests for XSSFRow
- */
-public final class TestSXSSFRow extends BaseTestXRow {
-
-    public TestSXSSFRow() {
-        super(SXSSFITestDataProvider.instance);
-    }
-
-
-    @After
-    public void tearDown() {
-        ((SXSSFITestDataProvider) _testDataProvider).cleanup();
-    }
-
-    @Override
-    @Ignore ("see <https://bz.apache.org/bugzilla/show_bug.cgi?id=62030#c1>") @Test
-    public void testCellShiftingRight(){
-        // Remove when SXSSFRow.shiftCellsRight() is implemented.
+public class TestHSSFColumnShifting extends BaseTestColumnShifting {
+    public TestHSSFColumnShifting() {
+        super(); 
+        wb = new HSSFWorkbook();
     }
     @Override
-    @Ignore ("see <https://bz.apache.org/bugzilla/show_bug.cgi?id=62030#c1>") @Test
-    public void testCellShiftingLeft(){
-        // Remove when SXSSFRow.shiftCellsLeft() is implemented. 
+    protected void initColumnShifter(){
+        columnShifter = new HSSFColumnShifter((HSSFSheet)sheet1);
     }
 
-    
 }

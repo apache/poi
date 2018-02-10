@@ -383,11 +383,11 @@ public class DrawTextParagraph implements Drawable {
 
     String getRenderableText(TextRun tr) {
         String txt = tr.getRawText();
-        txt.replace("\t", tab2space(tr)).replace("\u000b", "\n");
+        txt = txt.replace("\t", tab2space(tr)).replace("\u000b", "\n");
 
         switch (tr.getTextCap()) {
-            case ALL: txt.toUpperCase(LocaleUtil.getUserLocale()); break;
-            case SMALL: txt.toLowerCase(LocaleUtil.getUserLocale()); break;
+            case ALL: txt = txt.toUpperCase(LocaleUtil.getUserLocale()); break;
+            case SMALL: txt = txt.toLowerCase(LocaleUtil.getUserLocale()); break;
             case NONE: break;
         }
 

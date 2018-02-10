@@ -20,6 +20,8 @@ package org.apache.poi.hssf.usermodel.helpers;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.helpers.RowShifter;
 import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.POILogFactory;
