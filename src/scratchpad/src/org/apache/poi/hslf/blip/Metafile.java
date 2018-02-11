@@ -19,30 +19,29 @@ package org.apache.poi.hslf.blip;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.zip.DeflaterOutputStream;
 
 import org.apache.poi.hslf.usermodel.HSLFPictureData;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianInputStream;
+import org.apache.poi.util.LittleEndianOutputStream;
 import org.apache.poi.util.Units;
 
 /**
  * Represents a metafile picture which can be one of the following types: EMF, WMF, or PICT.
  * A metafile is stored compressed using the ZIP deflate/inflate algorithm.
- *
- * @author Yegor Kozlov
  */
 public abstract class Metafile extends HSLFPictureData {
 
     /**
      *  A structure which represents a 34-byte header preceding the compressed metafile data
-     *
-     * @author Yegor Kozlov
      */
     public static class Header{
-
+        private static final int RECORD_LENGTH = 34;
+        
         /**
          * size of the original file
          */
@@ -74,43 +73,48 @@ public abstract class Metafile extends HSLFPictureData {
         private int filter = 254;
 
         public void read(byte[] data, int offset){
-            int pos = offset;
-            wmfsize = LittleEndian.getInt(data, pos);   pos += LittleEndian.INT_SIZE;
+            @SuppressWarnings("resource")
+            LittleEndianInputStream leis = new LittleEndianInputStream(
+                new ByteArrayInputStream(data, offset, RECORD_LENGTH));
+            
+            wmfsize = leis.readInt();
 
-            int left = LittleEndian.getInt(data, pos); pos += LittleEndian.INT_SIZE;
-            int top = LittleEndian.getInt(data, pos); pos += LittleEndian.INT_SIZE;
-            int right = LittleEndian.getInt(data, pos); pos += LittleEndian.INT_SIZE;
-            int bottom = LittleEndian.getInt(data, pos); pos += LittleEndian.INT_SIZE;
-
+            int left = leis.readInt();
+            int top = leis.readInt();
+            int right = leis.readInt();
+            int bottom = leis.readInt();
             bounds.setBounds(left, top, right-left, bottom-top);
-            int width = LittleEndian.getInt(data, pos); pos += LittleEndian.INT_SIZE;
-            int height = LittleEndian.getInt(data, pos); pos += LittleEndian.INT_SIZE;
 
+            int width = leis.readInt();
+            int height = leis.readInt();
             size.setSize(width, height);
 
-            zipsize = LittleEndian.getInt(data, pos); pos += LittleEndian.INT_SIZE;
-
-            compression = LittleEndian.getUByte(data, pos); pos++;
-            filter = LittleEndian.getUByte(data, pos); pos++;
+            zipsize = leis.readInt();
+            compression = leis.readUByte();
+            filter = leis.readUByte();
         }
 
         public void write(OutputStream out) throws IOException {
-            byte[] header = new byte[34];
-            int pos = 0;
-            LittleEndian.putInt(header, pos, wmfsize); pos += LittleEndian.INT_SIZE; //hmf
-
-            LittleEndian.putInt(header, pos, bounds.x); pos += LittleEndian.INT_SIZE; //left
-            LittleEndian.putInt(header, pos, bounds.y); pos += LittleEndian.INT_SIZE; //top
-            LittleEndian.putInt(header, pos, bounds.x + bounds.width); pos += LittleEndian.INT_SIZE; //right
-            LittleEndian.putInt(header, pos, bounds.y + bounds.height); pos += LittleEndian.INT_SIZE; //bottom
-            LittleEndian.putInt(header, pos, size.width); pos += LittleEndian.INT_SIZE; //inch
-            LittleEndian.putInt(header, pos, size.height); pos += LittleEndian.INT_SIZE; //inch
-            LittleEndian.putInt(header, pos, zipsize); pos += LittleEndian.INT_SIZE; //inch
-
-            header[pos] = 0; pos ++;
-            header[pos] = (byte)filter; pos ++;
-
-            out.write(header);
+            @SuppressWarnings("resource")
+            LittleEndianOutputStream leos = new LittleEndianOutputStream(out);
+            
+            //hmf
+            leos.writeInt(wmfsize);
+            //left
+            leos.writeInt(bounds.x);
+            //top
+            leos.writeInt(bounds.y);
+            //right
+            leos.writeInt(bounds.x + bounds.width);
+            //bottom
+            leos.writeInt(bounds.y + bounds.height);
+            //inch
+            leos.writeInt(size.width);
+            //inch
+            leos.writeInt(size.height); 
+            leos.writeInt(zipsize); 
+            leos.writeByte(compression);
+            leos.writeByte(filter);
         }
 
         public int getSize(){
