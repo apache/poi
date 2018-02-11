@@ -20,7 +20,7 @@ package org.apache.poi.hslf.usermodel;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.hslf.model.textproperties.TextProp;
+import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.record.SlideAtom;
 
 /**
@@ -55,11 +55,11 @@ public final class HSLFTitleMaster extends HSLFMasterSheet {
      * Delegate the call to the underlying slide master.
      */
     @Override
-    public TextProp getStyleAttribute(int txtype, int level, String name, boolean isCharacter) {
-        HSLFMasterSheet master = getMasterSheet();
-        return (master == null) ? null : master.getStyleAttribute(txtype, level, name, isCharacter);
+    public TextPropCollection getPropCollection(final int txtype, final int level, final String name, final boolean isCharacter) {
+        final HSLFMasterSheet master = getMasterSheet();
+        return (master == null) ? null : master.getPropCollection(txtype, level, name, isCharacter);
     }
-
+    
     /**
      * Returns the slide master for this title master.
      */

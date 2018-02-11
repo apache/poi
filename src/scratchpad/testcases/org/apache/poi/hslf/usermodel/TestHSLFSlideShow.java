@@ -17,8 +17,14 @@
 package org.apache.poi.hslf.usermodel;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 import org.apache.poi.sl.usermodel.BaseTestSlideShow;
+import org.apache.poi.sl.usermodel.SlideShow;
 import org.junit.Test;
 
 public class TestHSLFSlideShow extends BaseTestSlideShow {
@@ -31,5 +37,26 @@ public class TestHSLFSlideShow extends BaseTestSlideShow {
     @Test
     public void dummy() {
         assertNotNull(createSlideShow());
+    }
+
+    public SlideShow<?, ?> reopen(SlideShow<?, ?> show) {
+        return reopen((HSLFSlideShow)show);
+    }
+
+    public static HSLFSlideShow reopen(HSLFSlideShow show) {
+        try {
+            BufAccessBAOS bos = new BufAccessBAOS();
+            show.write(bos);
+            return new HSLFSlideShow(new ByteArrayInputStream(bos.getBuf()));
+        } catch (IOException e) {
+            fail(e.getMessage());
+            return null;
+        }
+    }
+
+    private static class BufAccessBAOS extends ByteArrayOutputStream {
+        public byte[] getBuf() {
+            return buf;
+        }
     }
 }
