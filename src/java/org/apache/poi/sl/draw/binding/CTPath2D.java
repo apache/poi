@@ -33,53 +33,53 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="CT_Path2D">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;choice maxOccurs="unbounded" minOccurs="0">
- *         &lt;element name="close" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_Path2DClose"/>
- *         &lt;element name="moveTo" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_Path2DMoveTo"/>
- *         &lt;element name="lnTo" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_Path2DLineTo"/>
- *         &lt;element name="arcTo" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_Path2DArcTo"/>
- *         &lt;element name="quadBezTo" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_Path2DQuadBezierTo"/>
- *         &lt;element name="cubicBezTo" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_Path2DCubicBezierTo"/>
- *       &lt;/choice>
- *       &lt;attribute name="w" type="{http://schemas.openxmlformats.org/drawingml/2006/main}ST_PositiveCoordinate" default="0" />
- *       &lt;attribute name="h" type="{http://schemas.openxmlformats.org/drawingml/2006/main}ST_PositiveCoordinate" default="0" />
- *       &lt;attribute name="fill" type="{http://schemas.openxmlformats.org/drawingml/2006/main}ST_PathFillMode" default="norm" />
- *       &lt;attribute name="stroke" type="{http://www.w3.org/2001/XMLSchema}boolean" default="true" />
- *       &lt;attribute name="extrusionOk" type="{http://www.w3.org/2001/XMLSchema}boolean" default="true" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="CT_Path2D"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *         &lt;element name="close" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_Path2DClose"/&gt;
+ *         &lt;element name="moveTo" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_Path2DMoveTo"/&gt;
+ *         &lt;element name="lnTo" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_Path2DLineTo"/&gt;
+ *         &lt;element name="arcTo" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_Path2DArcTo"/&gt;
+ *         &lt;element name="quadBezTo" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_Path2DQuadBezierTo"/&gt;
+ *         &lt;element name="cubicBezTo" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_Path2DCubicBezierTo"/&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attribute name="w" type="{http://schemas.openxmlformats.org/drawingml/2006/main}ST_PositiveCoordinate" default="0" /&gt;
+ *       &lt;attribute name="h" type="{http://schemas.openxmlformats.org/drawingml/2006/main}ST_PositiveCoordinate" default="0" /&gt;
+ *       &lt;attribute name="fill" type="{http://schemas.openxmlformats.org/drawingml/2006/main}ST_PathFillMode" default="norm" /&gt;
+ *       &lt;attribute name="stroke" type="{http://www.w3.org/2001/XMLSchema}boolean" default="true" /&gt;
+ *       &lt;attribute name="extrusionOk" type="{http://www.w3.org/2001/XMLSchema}boolean" default="true" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "CT_Path2D", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", propOrder = {
+@XmlType(name = "CT_Path2D", propOrder = {
     "closeOrMoveToOrLnTo"
 })
 public class CTPath2D {
 
     @XmlElements({
-        @XmlElement(name = "lnTo", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", type = CTPath2DLineTo.class),
-        @XmlElement(name = "close", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", type = CTPath2DClose.class),
-        @XmlElement(name = "cubicBezTo", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", type = CTPath2DCubicBezierTo.class),
-        @XmlElement(name = "quadBezTo", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", type = CTPath2DQuadBezierTo.class),
-        @XmlElement(name = "arcTo", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", type = CTPath2DArcTo.class),
-        @XmlElement(name = "moveTo", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", type = CTPath2DMoveTo.class)
+        @XmlElement(name = "close", type = CTPath2DClose.class),
+        @XmlElement(name = "moveTo", type = CTPath2DMoveTo.class),
+        @XmlElement(name = "lnTo", type = CTPath2DLineTo.class),
+        @XmlElement(name = "arcTo", type = CTPath2DArcTo.class),
+        @XmlElement(name = "quadBezTo", type = CTPath2DQuadBezierTo.class),
+        @XmlElement(name = "cubicBezTo", type = CTPath2DCubicBezierTo.class)
     })
     protected List<Object> closeOrMoveToOrLnTo;
-    @XmlAttribute
+    @XmlAttribute(name = "w")
     protected Long w;
-    @XmlAttribute
+    @XmlAttribute(name = "h")
     protected Long h;
-    @XmlAttribute
+    @XmlAttribute(name = "fill")
     protected STPathFillMode fill;
-    @XmlAttribute
+    @XmlAttribute(name = "stroke")
     protected Boolean stroke;
-    @XmlAttribute
+    @XmlAttribute(name = "extrusionOk")
     protected Boolean extrusionOk;
 
     /**
@@ -100,18 +100,18 @@ public class CTPath2D {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link CTPath2DLineTo }
      * {@link CTPath2DClose }
-     * {@link CTPath2DCubicBezierTo }
-     * {@link CTPath2DQuadBezierTo }
-     * {@link CTPath2DArcTo }
      * {@link CTPath2DMoveTo }
+     * {@link CTPath2DLineTo }
+     * {@link CTPath2DArcTo }
+     * {@link CTPath2DQuadBezierTo }
+     * {@link CTPath2DCubicBezierTo }
      * 
      * 
      */
     public List<Object> getCloseOrMoveToOrLnTo() {
         if (closeOrMoveToOrLnTo == null) {
-            closeOrMoveToOrLnTo = new ArrayList<>();
+            closeOrMoveToOrLnTo = new ArrayList<Object>();
         }
         return this.closeOrMoveToOrLnTo;
     }

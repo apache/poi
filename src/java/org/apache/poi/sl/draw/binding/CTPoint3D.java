@@ -29,28 +29,28 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="CT_Point3D">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;attribute name="x" use="required" type="{http://schemas.openxmlformats.org/drawingml/2006/main}ST_Coordinate" />
- *       &lt;attribute name="y" use="required" type="{http://schemas.openxmlformats.org/drawingml/2006/main}ST_Coordinate" />
- *       &lt;attribute name="z" use="required" type="{http://schemas.openxmlformats.org/drawingml/2006/main}ST_Coordinate" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="CT_Point3D"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;attribute name="x" use="required" type="{http://schemas.openxmlformats.org/drawingml/2006/main}ST_Coordinate" /&gt;
+ *       &lt;attribute name="y" use="required" type="{http://schemas.openxmlformats.org/drawingml/2006/main}ST_Coordinate" /&gt;
+ *       &lt;attribute name="z" use="required" type="{http://schemas.openxmlformats.org/drawingml/2006/main}ST_Coordinate" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "CT_Point3D", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main")
+@XmlType(name = "CT_Point3D")
 public class CTPoint3D {
 
-    @XmlAttribute(required = true)
+    @XmlAttribute(name = "x", required = true)
     protected long x;
-    @XmlAttribute(required = true)
+    @XmlAttribute(name = "y", required = true)
     protected long y;
-    @XmlAttribute(required = true)
+    @XmlAttribute(name = "z", required = true)
     protected long z;
 
     /**

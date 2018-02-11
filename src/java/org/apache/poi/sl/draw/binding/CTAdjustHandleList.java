@@ -32,29 +32,29 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="CT_AdjustHandleList">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;choice maxOccurs="unbounded" minOccurs="0">
- *         &lt;element name="ahXY" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_XYAdjustHandle"/>
- *         &lt;element name="ahPolar" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_PolarAdjustHandle"/>
- *       &lt;/choice>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="CT_AdjustHandleList"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *         &lt;element name="ahXY" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_XYAdjustHandle"/&gt;
+ *         &lt;element name="ahPolar" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_PolarAdjustHandle"/&gt;
+ *       &lt;/choice&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "CT_AdjustHandleList", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", propOrder = {
+@XmlType(name = "CT_AdjustHandleList", propOrder = {
     "ahXYOrAhPolar"
 })
 public class CTAdjustHandleList {
 
     @XmlElements({
-        @XmlElement(name = "ahXY", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", type = CTXYAdjustHandle.class),
-        @XmlElement(name = "ahPolar", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", type = CTPolarAdjustHandle.class)
+        @XmlElement(name = "ahXY", type = CTXYAdjustHandle.class),
+        @XmlElement(name = "ahPolar", type = CTPolarAdjustHandle.class)
     })
     protected List<Object> ahXYOrAhPolar;
 
@@ -83,7 +83,7 @@ public class CTAdjustHandleList {
      */
     public List<Object> getAhXYOrAhPolar() {
         if (ahXYOrAhPolar == null) {
-            ahXYOrAhPolar = new ArrayList<>();
+            ahXYOrAhPolar = new ArrayList<Object>();
         }
         return this.ahXYOrAhPolar;
     }

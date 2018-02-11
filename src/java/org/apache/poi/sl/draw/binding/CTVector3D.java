@@ -29,28 +29,28 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="CT_Vector3D">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;attribute name="dx" use="required" type="{http://schemas.openxmlformats.org/drawingml/2006/main}ST_Coordinate" />
- *       &lt;attribute name="dy" use="required" type="{http://schemas.openxmlformats.org/drawingml/2006/main}ST_Coordinate" />
- *       &lt;attribute name="dz" use="required" type="{http://schemas.openxmlformats.org/drawingml/2006/main}ST_Coordinate" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="CT_Vector3D"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;attribute name="dx" use="required" type="{http://schemas.openxmlformats.org/drawingml/2006/main}ST_Coordinate" /&gt;
+ *       &lt;attribute name="dy" use="required" type="{http://schemas.openxmlformats.org/drawingml/2006/main}ST_Coordinate" /&gt;
+ *       &lt;attribute name="dz" use="required" type="{http://schemas.openxmlformats.org/drawingml/2006/main}ST_Coordinate" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "CT_Vector3D", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main")
+@XmlType(name = "CT_Vector3D")
 public class CTVector3D {
 
-    @XmlAttribute(required = true)
+    @XmlAttribute(name = "dx", required = true)
     protected long dx;
-    @XmlAttribute(required = true)
+    @XmlAttribute(name = "dy", required = true)
     protected long dy;
-    @XmlAttribute(required = true)
+    @XmlAttribute(name = "dz", required = true)
     protected long dz;
 
     /**
