@@ -80,11 +80,4 @@ public class XSSFXmlColumnPr {
         return ctXmlColumnPr.getXmlDataType();
     }
 
-    /**
-     * @return the column name
-     */
-    public String getName() {
-        return ctTableColumn.getName();
-    }
-
 }

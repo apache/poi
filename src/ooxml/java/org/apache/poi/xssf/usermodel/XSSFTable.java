@@ -61,7 +61,8 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.TableDocument;
 public class XSSFTable extends POIXMLDocumentPart implements Table {
 
     private CTTable ctTable;
-    private transient List<XSSFXmlColumnPr> xmlColumnPr;
+    private transient List<XSSFXmlColumnPr> xmlColumnPrs;
+    private transient List<XSSFTableColumn> tableColumns;
     private transient CTTableColumn[] ctColumns;
     private transient HashMap<String, Integer> columnMap;
     private transient CellReference startCellReference;
@@ -161,7 +162,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
       * Updated via updateHeaders
       * @since 3.15 beta 2
       */
-    private CTTableColumn[] getTableColumns() {
+    private CTTableColumn[] getCTTableColumns() {
         if (ctColumns == null) {
             ctColumns = ctTable.getTableColumns().getTableColumnArray();
         }
@@ -179,7 +180,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     public String getCommonXpath() {
         if (commonXPath == null) {
             String[] commonTokens = {};
-            for (CTTableColumn column : getTableColumns()) {
+            for (CTTableColumn column : getCTTableColumns()) {
                 if (column.getXmlColumnPr()!=null) {
                     String xpath = column.getXmlColumnPr().getXpath();
                     String[] tokens =  xpath.split("/");
@@ -210,6 +211,22 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         return commonXPath;
     }
 
+    /**
+     * Note this list is static - once read, it does not notice later changes to the underlying column structures
+     * To clear the cache, call {@link #updateHeaders}
+     * @return List of XSSFTableColumn
+     * @since 4.0.0
+     */
+    public List<XSSFTableColumn> getTableColumns() {
+        if (tableColumns == null) {
+            tableColumns = new ArrayList<>();
+            for (CTTableColumn column: getCTTableColumns()) {
+                XSSFTableColumn tableColumn = new XSSFTableColumn(this, column);
+                tableColumns.add(tableColumn);
+            }
+        }
+        return tableColumns;
+    }
     
     /**
      * Note this list is static - once read, it does not notice later changes to the underlying column structures
@@ -217,16 +234,16 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      * @return List of XSSFXmlColumnPr
      */
     public List<XSSFXmlColumnPr> getXmlColumnPrs() {
-        if (xmlColumnPr==null) {
-            xmlColumnPr = new ArrayList<>();
-            for (CTTableColumn column: getTableColumns()) {
-                if (column.getXmlColumnPr()!=null) {
-                    XSSFXmlColumnPr columnPr = new XSSFXmlColumnPr(this,column,column.getXmlColumnPr());
-                    xmlColumnPr.add(columnPr);
+        if (xmlColumnPrs == null) {
+            xmlColumnPrs = new ArrayList<>();
+            for (XSSFTableColumn column: getTableColumns()) {
+                XSSFXmlColumnPr xmlColumnPr = column.getXmlColumnPr();
+                if (xmlColumnPr != null) {
+                    xmlColumnPrs.add(xmlColumnPr);
                 }
             }
         }
-        return xmlColumnPr;
+        return xmlColumnPrs;
     }
     
     /**
@@ -483,9 +500,10 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
                 }
                 cellnum++;
             }
+            tableColumns = null;
             ctColumns = null;
             columnMap = null;
-            xmlColumnPr = null;
+            xmlColumnPrs = null;
             commonXPath = null;
         }
     }
@@ -510,11 +528,11 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         if (columnHeader == null) return -1;
         if (columnMap == null) {
             // FIXME: replace with org.apache.commons.collections.map.CaseInsensitiveMap
-            final int count = getTableColumns().length;
+            final int count = getCTTableColumns().length;
             columnMap = new HashMap<>(count * 3 / 2);
             
             int i = 0;
-            for (CTTableColumn column : getTableColumns()) {
+            for (CTTableColumn column : getCTTableColumns()) {
                 String columnName = column.getName();
                 columnMap.put(caseInsensitive(columnName), i);
                 i++;

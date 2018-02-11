@@ -50,6 +50,7 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFMap;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFTable;
+import org.apache.poi.xssf.usermodel.XSSFTableColumn;
 import org.apache.poi.xssf.usermodel.helpers.XSSFSingleXmlCell;
 import org.apache.poi.xssf.usermodel.helpers.XSSFXmlColumnPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STXmlDataType;
@@ -139,10 +140,15 @@ public class XSSFImportFromXML {
 
                 Node singleNode = result.item(i).cloneNode(true);
 
-                for (XSSFXmlColumnPr xmlColumnPr : table.getXmlColumnPrs()) {
+                for (XSSFTableColumn tableColum : table.getTableColumns()) {
+
+                    XSSFXmlColumnPr xmlColumnPr = tableColum.getXmlColumnPr();
+                    if(xmlColumnPr == null) {
+                        continue;
+                    }
 
                     int rowId = rowOffset + i;
-                    int columnId = columnOffset + table.findColumnIndex(xmlColumnPr.getName());
+                    int columnId = columnOffset + tableColum.getColumnIndex();
                     String localXPath = xmlColumnPr.getLocalXPath();
                     localXPath = localXPath.substring(localXPath.indexOf('/', 1) + 1);
 
