@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
 
@@ -62,6 +63,11 @@ public class TestXWPFTable extends TestCase {
         assertEquals(3, ctTable.sizeOfTrArray());
         assertEquals(2, ctTable.getTrArray(0).sizeOfTcArray());
         assertNotNull(ctTable.getTrArray(0).getTcArray(0).getPArray(0));
+        try {
+            doc.close();
+        } catch (IOException e) {
+            fail("Unable to close doc");
+        }
     }
 
     public void testTblGrid() {
@@ -74,6 +80,11 @@ public class TestXWPFTable extends TestCase {
         XWPFTable xtab = new XWPFTable(ctTable, doc);
         assertEquals(123, xtab.getCTTbl().getTblGrid().getGridColArray(0).getW().intValue());
         assertEquals(321, xtab.getCTTbl().getTblGrid().getGridColArray(1).getW().intValue());
+        try {
+            doc.close();
+        } catch (IOException e) {
+            fail("Unable to close doc");
+        }
     }
 
     public void testGetText() {
@@ -88,6 +99,11 @@ public class TestXWPFTable extends TestCase {
 
         XWPFTable xtab = new XWPFTable(table, doc);
         assertEquals("finally I can write!\n", xtab.getText());
+        try {
+            doc.close();
+        } catch (IOException e) {
+            fail("Unable to close doc");
+        }
     }
 
 
@@ -119,6 +135,11 @@ public class TestXWPFTable extends TestCase {
         //check creation of first row
         xtab = new XWPFTable(CTTbl.Factory.newInstance(), doc);
         assertEquals(1, xtab.getCTTbl().getTrArray(0).sizeOfTcArray());
+        try {
+            doc.close();
+        } catch (IOException e) {
+            fail("Unable to close doc");
+        }
     }
 
 
@@ -134,6 +155,11 @@ public class TestXWPFTable extends TestCase {
 
         xtab.setWidth(100);
         assertEquals(100, table.getTblPr().getTblW().getW().intValue());
+        try {
+            doc.close();
+        } catch (IOException e) {
+            fail("Unable to close doc");
+        }
     }
 
     public void testSetGetHeight() {
@@ -145,6 +171,11 @@ public class TestXWPFTable extends TestCase {
         XWPFTableRow row = xtab.createRow();
         row.setHeight(20);
         assertEquals(20, row.getHeight());
+        try {
+            doc.close();
+        } catch (IOException e) {
+            fail("Unable to close doc");
+        }
     }
 
     public void testSetGetMargins() {
@@ -168,6 +199,11 @@ public class TestXWPFTable extends TestCase {
         assertEquals(250, b);
         int r = table.getCellMarginRight();
         assertEquals(450, r);
+        try {
+            doc.close();
+        } catch (IOException e) {
+            fail("Unable to close doc");
+        }
     }
 
     public void testSetGetHBorders() {
@@ -182,17 +218,64 @@ public class TestXWPFTable extends TestCase {
         XWPFDocument doc = new XWPFDocument();
         CTTbl ctTable = CTTbl.Factory.newInstance();
         XWPFTable table = new XWPFTable(ctTable, doc);
+        // check initial state
+        XWPFBorderType bt = table.getInsideHBorderType();
+        assertEquals(XWPFBorderType.SINGLE, bt);
+        int sz = table.getInsideHBorderSize();
+        assertEquals(-1, sz);
+        int sp = table.getInsideHBorderSpace();
+        assertEquals(-1, sp);
+        String clr = table.getInsideHBorderColor();
+        assertNull(clr);
         // set inside horizontal border
         table.setInsideHBorder(XWPFBorderType.SINGLE, 4, 0, "FF0000");
         // get inside horizontal border components
-        int s = table.getInsideHBorderSize();
-        assertEquals(4, s);
-        int sp = table.getInsideHBorderSpace();
-        assertEquals(0, sp);
-        String clr = table.getInsideHBorderColor();
-        assertEquals("FF0000", clr);
-        XWPFBorderType bt = table.getInsideHBorderType();
+        bt = table.getInsideHBorderType();
         assertEquals(XWPFBorderType.SINGLE, bt);
+        sz = table.getInsideHBorderSize();
+        assertEquals(4, sz);
+        sp = table.getInsideHBorderSpace();
+        assertEquals(0, sp);
+        clr = table.getInsideHBorderColor();
+        assertEquals("FF0000", clr);
+        // remove the border and verify state
+        table.removeInsideHBorder();
+        bt = table.getInsideHBorderType();
+        assertNull(bt);
+        sz = table.getInsideHBorderSize();
+        assertEquals(-1, sz);
+        sp = table.getInsideHBorderSpace();
+        assertEquals(-1, sp);
+        clr = table.getInsideHBorderColor();
+        assertNull(clr);
+        // check other borders
+        bt = table.getInsideVBorderType();
+        assertEquals(XWPFBorderType.SINGLE, bt);
+        bt = table.getTopBorderType();
+        assertEquals(XWPFBorderType.SINGLE, bt);
+        bt = table.getBottomBorderType();
+        assertEquals(XWPFBorderType.SINGLE, bt);
+        bt = table.getLeftBorderType();
+        assertEquals(XWPFBorderType.SINGLE, bt);
+        bt = table.getRightBorderType();
+        assertEquals(XWPFBorderType.SINGLE, bt);
+        // remove the rest all at once and test
+        table.removeBorders();
+        bt = table.getInsideVBorderType();
+        assertNull(bt);
+        bt = table.getTopBorderType();
+        assertNull(bt);
+        bt = table.getBottomBorderType();
+        assertNull(bt);
+        bt = table.getLeftBorderType();
+        assertNull(bt);
+        bt = table.getRightBorderType();
+        assertNull(bt);
+        try {
+            doc.close();
+        } catch (IOException e) {
+            fail("Unable to close doc");
+        }
     }
 
     public void testSetGetVBorders() {
@@ -200,17 +283,236 @@ public class TestXWPFTable extends TestCase {
         XWPFDocument doc = new XWPFDocument();
         CTTbl ctTable = CTTbl.Factory.newInstance();
         XWPFTable table = new XWPFTable(ctTable, doc);
+        // check initial state
+        XWPFBorderType bt = table.getInsideVBorderType();
+        assertEquals(XWPFBorderType.SINGLE, bt);
+        int sz = table.getInsideVBorderSize();
+        assertEquals(-1, sz);
+        int sp = table.getInsideVBorderSpace();
+        assertEquals(-1, sp);
+        String clr = table.getInsideVBorderColor();
+        assertNull(clr);
         // set inside vertical border
         table.setInsideVBorder(XWPFBorderType.DOUBLE, 4, 0, "00FF00");
         // get inside vertical border components
-        XWPFBorderType bt = table.getInsideVBorderType();
+        bt = table.getInsideVBorderType();
         assertEquals(XWPFBorderType.DOUBLE, bt);
-        int sz = table.getInsideVBorderSize();
+        sz = table.getInsideVBorderSize();
         assertEquals(4, sz);
-        int sp = table.getInsideVBorderSpace();
+        sp = table.getInsideVBorderSpace();
         assertEquals(0, sp);
-        String clr = table.getInsideVBorderColor();
+        clr = table.getInsideVBorderColor();
         assertEquals("00FF00", clr);
+        // remove the border and verify state
+        table.removeInsideVBorder();
+        bt = table.getInsideVBorderType();
+        assertNull(bt);
+        sz = table.getInsideVBorderSize();
+        assertEquals(-1, sz);
+        sp = table.getInsideVBorderSpace();
+        assertEquals(-1, sp);
+        clr = table.getInsideVBorderColor();
+        assertNull(clr);
+        // check the rest
+        bt = table.getInsideHBorderType();
+        assertEquals(XWPFBorderType.SINGLE, bt);
+        bt = table.getTopBorderType();
+        assertEquals(XWPFBorderType.SINGLE, bt);
+        bt = table.getBottomBorderType();
+        assertEquals(XWPFBorderType.SINGLE, bt);
+        bt = table.getLeftBorderType();
+        assertEquals(XWPFBorderType.SINGLE, bt);
+        bt = table.getRightBorderType();
+        assertEquals(XWPFBorderType.SINGLE, bt);
+        // remove the rest one at a time and test
+        table.removeInsideHBorder();
+        table.removeTopBorder();
+        table.removeBottomBorder();
+        table.removeLeftBorder();
+        table.removeRightBorder();
+        bt = table.getInsideHBorderType();
+        assertNull(bt);
+        bt = table.getTopBorderType();
+        assertNull(bt);
+        bt = table.getBottomBorderType();
+        assertNull(bt);
+        bt = table.getLeftBorderType();
+        assertNull(bt);
+        bt = table.getRightBorderType();
+        assertNull(bt);
+        try {
+            doc.close();
+        } catch (IOException e) {
+            fail("Unable to close doc");
+        }
+    }
+
+    public void testSetGetTopBorders() {
+        // create a table
+        XWPFDocument doc = new XWPFDocument();
+        CTTbl ctTable = CTTbl.Factory.newInstance();
+        XWPFTable table = new XWPFTable(ctTable, doc);
+        // check initial state
+        XWPFBorderType bt = table.getTopBorderType();
+        assertEquals(XWPFBorderType.SINGLE, bt);
+        int sz = table.getTopBorderSize();
+        assertEquals(-1, sz);
+        int sp = table.getTopBorderSpace();
+        assertEquals(-1, sp);
+        String clr = table.getTopBorderColor();
+        assertNull(clr);
+        // set top border
+        table.setTopBorder(XWPFBorderType.THICK, 4, 0, "00FF00");
+        // get inside vertical border components
+        bt = table.getTopBorderType();
+        assertEquals(XWPFBorderType.THICK, bt);
+        sz = table.getTopBorderSize();
+        assertEquals(4, sz);
+        sp = table.getTopBorderSpace();
+        assertEquals(0, sp);
+        clr = table.getTopBorderColor();
+        assertEquals("00FF00", clr);
+        // remove the border and verify state
+        table.removeTopBorder();
+        bt = table.getTopBorderType();
+        assertNull(bt);
+        sz = table.getTopBorderSize();
+        assertEquals(-1, sz);
+        sp = table.getTopBorderSpace();
+        assertEquals(-1, sp);
+        clr = table.getTopBorderColor();
+        assertNull(clr);
+        try {
+            doc.close();
+        } catch (IOException e) {
+            fail("Unable to close doc");
+        }
+    }
+
+    public void testSetGetBottomBorders() {
+        // create a table
+        XWPFDocument doc = new XWPFDocument();
+        CTTbl ctTable = CTTbl.Factory.newInstance();
+        XWPFTable table = new XWPFTable(ctTable, doc);
+        // check initial state
+        XWPFBorderType bt = table.getBottomBorderType();
+        assertEquals(XWPFBorderType.SINGLE, bt);
+        int sz = table.getBottomBorderSize();
+        assertEquals(-1, sz);
+        int sp = table.getBottomBorderSpace();
+        assertEquals(-1, sp);
+        String clr = table.getBottomBorderColor();
+        assertNull(clr);
+        // set inside vertical border
+        table.setBottomBorder(XWPFBorderType.DOTTED, 4, 0, "00FF00");
+        // get inside vertical border components
+        bt = table.getBottomBorderType();
+        assertEquals(XWPFBorderType.DOTTED, bt);
+        sz = table.getBottomBorderSize();
+        assertEquals(4, sz);
+        sp = table.getBottomBorderSpace();
+        assertEquals(0, sp);
+        clr = table.getBottomBorderColor();
+        assertEquals("00FF00", clr);
+        // remove the border and verify state
+        table.removeBottomBorder();
+        bt = table.getBottomBorderType();
+        assertNull(bt);
+        sz = table.getBottomBorderSize();
+        assertEquals(-1, sz);
+        sp = table.getBottomBorderSpace();
+        assertEquals(-1, sp);
+        clr = table.getBottomBorderColor();
+        assertNull(clr);
+        try {
+            doc.close();
+        } catch (IOException e) {
+            fail("Unable to close doc");
+        }
+    }
+
+    public void testSetGetLeftBorders() {
+        // create a table
+        XWPFDocument doc = new XWPFDocument();
+        CTTbl ctTable = CTTbl.Factory.newInstance();
+        XWPFTable table = new XWPFTable(ctTable, doc);
+        // check initial state
+        XWPFBorderType bt = table.getLeftBorderType();
+        assertEquals(XWPFBorderType.SINGLE, bt);
+        int sz = table.getLeftBorderSize();
+        assertEquals(-1, sz);
+        int sp = table.getLeftBorderSpace();
+        assertEquals(-1, sp);
+        String clr = table.getLeftBorderColor();
+        assertNull(clr);
+        // set inside vertical border
+        table.setLeftBorder(XWPFBorderType.DASHED, 4, 0, "00FF00");
+        // get inside vertical border components
+        bt = table.getLeftBorderType();
+        assertEquals(XWPFBorderType.DASHED, bt);
+        sz = table.getLeftBorderSize();
+        assertEquals(4, sz);
+        sp = table.getLeftBorderSpace();
+        assertEquals(0, sp);
+        clr = table.getLeftBorderColor();
+        assertEquals("00FF00", clr);
+        // remove the border and verify state
+        table.removeLeftBorder();
+        bt = table.getLeftBorderType();
+        assertNull(bt);
+        sz = table.getLeftBorderSize();
+        assertEquals(-1, sz);
+        sp = table.getLeftBorderSpace();
+        assertEquals(-1, sp);
+        clr = table.getLeftBorderColor();
+        assertNull(clr);
+        try {
+            doc.close();
+        } catch (IOException e) {
+            fail("Unable to close doc");
+        }
+    }
+
+    public void testSetGetRightBorders() {
+        // create a table
+        XWPFDocument doc = new XWPFDocument();
+        CTTbl ctTable = CTTbl.Factory.newInstance();
+        XWPFTable table = new XWPFTable(ctTable, doc);
+        // check initial state
+        XWPFBorderType bt = table.getRightBorderType();
+        assertEquals(XWPFBorderType.SINGLE, bt);
+        int sz = table.getRightBorderSize();
+        assertEquals(-1, sz);
+        int sp = table.getRightBorderSpace();
+        assertEquals(-1, sp);
+        String clr = table.getRightBorderColor();
+        assertNull(clr);
+        // set inside vertical border
+        table.setRightBorder(XWPFBorderType.DOT_DASH, 4, 0, "00FF00");
+        // get inside vertical border components
+        bt = table.getRightBorderType();
+        assertEquals(XWPFBorderType.DOT_DASH, bt);
+        sz = table.getRightBorderSize();
+        assertEquals(4, sz);
+        sp = table.getRightBorderSpace();
+        assertEquals(0, sp);
+        clr = table.getRightBorderColor();
+        assertEquals("00FF00", clr);
+        // remove the border and verify state
+        table.removeRightBorder();
+        bt = table.getRightBorderType();
+        assertNull(bt);
+        sz = table.getRightBorderSize();
+        assertEquals(-1, sz);
+        sp = table.getRightBorderSpace();
+        assertEquals(-1, sp);
+        clr = table.getRightBorderColor();
+        assertNull(clr);
+        try {
+            doc.close();
+        } catch (IOException e) {
+            fail("Unable to close doc");
+        }
     }
 
     public void testSetGetRowBandSize() {
@@ -220,6 +522,11 @@ public class TestXWPFTable extends TestCase {
         table.setRowBandSize(12);
         int sz = table.getRowBandSize();
         assertEquals(12, sz);
+        try {
+            doc.close();
+        } catch (IOException e) {
+            fail("Unable to close doc");
+        }
     }
 
     public void testSetGetColBandSize() {
@@ -229,6 +536,11 @@ public class TestXWPFTable extends TestCase {
         table.setColBandSize(16);
         int sz = table.getColBandSize();
         assertEquals(16, sz);
+        try {
+            doc.close();
+        } catch (IOException e) {
+            fail("Unable to close doc");
+        }
     }
 
     public void testCreateTable() throws Exception {
@@ -254,5 +566,10 @@ public class TestXWPFTable extends TestCase {
             }
         }
         doc.getPackage().revert();
+        try {
+            doc.close();
+        } catch (IOException e) {
+            fail("Unable to close doc");
+        }
     }
 }

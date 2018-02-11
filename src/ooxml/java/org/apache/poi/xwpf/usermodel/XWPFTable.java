@@ -103,12 +103,12 @@ public class XWPFTable implements IBodyElement, ISDTContents {
         if (table.sizeOfTrArray() == 0)
             createEmptyTable(table);
 
-        for (CTRow row : table.getTrArray()) {
+        for (CTRow row : table.getTrList()) {
             StringBuilder rowText = new StringBuilder();
             XWPFTableRow tabRow = new XWPFTableRow(row, this);
             tableRows.add(tabRow);
-            for (CTTc cell : row.getTcArray()) {
-                for (CTP ctp : cell.getPArray()) {
+            for (CTTc cell : row.getTcList()) {
+                for (CTP ctp : cell.getPList()) {
                     XWPFParagraph p = new XWPFParagraph(ctp, part);
                     if (rowText.length() > 0) {
                         rowText.append('\t');
@@ -228,7 +228,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * @return width value
      */
     public int getWidth() {
-        CTTblPr tblPr = getTrPr();
+        CTTblPr tblPr = getTblPr();
         return tblPr.isSetTblW() ? tblPr.getTblW().getW().intValue() : -1;
     }
 
@@ -236,7 +236,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * @param width
      */
     public void setWidth(int width) {
-        CTTblPr tblPr = getTrPr();
+        CTTblPr tblPr = getTblPr();
         CTTblWidth tblWidth = tblPr.isSetTblW() ? tblPr.getTblW() : tblPr.addNewTblW();
         tblWidth.setW(new BigInteger("" + width));
     }
@@ -248,11 +248,130 @@ public class XWPFTable implements IBodyElement, ISDTContents {
         return ctTbl.sizeOfTrArray();
     }
 
-    private CTTblPr getTrPr() {
-        return (ctTbl.getTblPr() != null) ? ctTbl.getTblPr() : ctTbl
-                .addNewTblPr();
+    /**
+     * Returns CTTblPr object for table. Creates it if it does not exist.
+     */
+    private CTTblPr getTblPr() {
+        return getTblPr(true);
     }
 
+    /**
+     * Returns CTTblPr object for table. If force parameter is true, will 
+     * create the element if necessary. If force parameter is false, returns
+     * null when CTTblPr element is missing.
+     *
+     * @param force - force creation of CTTblPr element if necessary
+     */
+    private CTTblPr getTblPr(boolean force) {
+        return (ctTbl.getTblPr() != null) ? ctTbl.getTblPr() 
+                : (force ? ctTbl.addNewTblPr() : null);
+    }
+
+    /**
+     * Return CTTblBorders object for table. If force parameter is true, will
+     * create the element if necessary. If force parameter is false, returns
+     * null when CTTblBorders element is missing.
+     *
+     * @param force - force creation of CTTblBorders element if necessary
+     */
+    private CTTblBorders getTblBorders(boolean force) {
+        CTTblPr tblPr = getTblPr(force);
+        return tblPr == null ? null
+               : tblPr.isSetTblBorders() ? tblPr.getTblBorders() 
+               : force ? tblPr.addNewTblBorders()
+               : null;
+    }
+    
+    /**
+     * Return CTBorder object for Inside Vertical border. If force parameter is true,
+     * will create the element if necessary. If force parameter is false, returns 
+     * null when Inside Vertical border is missing.
+     *
+     * @param force - force creation of Inside Vertical border if necessary.
+     */
+    private CTBorder getTblInsideVBorder(boolean force) {
+        CTTblBorders ctb = getTblBorders(force);
+        return ctb == null ? null
+               : ctb.isSetInsideV() ? ctb.getInsideV() 
+               : force ? ctb.addNewInsideV() 
+               : null;
+    }
+
+    /**
+     * Return CTBorder object for Inside Horizontal border. If force parameter is true,
+     * will create the element if necessary. If force parameter is false, returns 
+     * null when Inside Horizontal border is missing.
+     *
+     * @param force - force creation of Inside Horizontal border if necessary.
+     */
+    private CTBorder getTblInsideHBorder(boolean force) {
+        CTTblBorders ctb = getTblBorders(force);
+        return ctb == null ? null
+               : ctb.isSetInsideH() ? ctb.getInsideH() 
+               : force ? ctb.addNewInsideH() 
+               : null;
+    }
+
+    /**
+     * Return CTBorder object for Top border. If force parameter is true,
+     * will create the element if necessary. If force parameter is false, returns 
+     * null when Top border is missing.
+     *
+     * @param force - force creation of Top border if necessary.
+     */
+    private CTBorder getTblTopBorder(boolean force) {
+        CTTblBorders ctb = getTblBorders(force);
+        return ctb == null ? null
+               : ctb.isSetTop() ? ctb.getTop() 
+               : force ? ctb.addNewTop() 
+               : null;
+    }
+
+    /**
+     * Return CTBorder object for Bottom border. If force parameter is true,
+     * will create the element if necessary. If force parameter is false, returns 
+     * null when Bottom border is missing.
+     *
+     * @param force - force creation of Bottom border if necessary.
+     */
+    private CTBorder getTblBottomBorder(boolean force) {
+        CTTblBorders ctb = getTblBorders(force);
+        return ctb == null ? null
+               : ctb.isSetBottom() ? ctb.getBottom() 
+               : force ? ctb.addNewBottom() 
+               : null;
+    }
+
+    /**
+     * Return CTBorder object for Left border. If force parameter is true,
+     * will create the element if necessary. If force parameter is false, returns 
+     * null when Left border is missing.
+     *
+     * @param force - force creation of Left border if necessary.
+     */
+    private CTBorder getTblLeftBorder(boolean force) {
+        CTTblBorders ctb = getTblBorders(force);
+        return ctb == null ? null
+               : ctb.isSetLeft() ? ctb.getLeft() 
+               : force ? ctb.addNewLeft() 
+               : null;
+    }
+
+    /**
+     * Return CTBorder object for Right border. If force parameter is true,
+     * will create the element if necessary. If force parameter is false, returns 
+     * null when Right border is missing.
+     *
+     * @param force - force creation of Right border if necessary.
+     */
+    private CTBorder getTblRightBorder(boolean force) {
+        CTTblBorders ctb = getTblBorders(force);
+        return ctb == null ? null
+               : ctb.isSetRight() ? ctb.getRight() 
+               : force ? ctb.addNewRight() 
+               : null;
+    }
+    
     private void addColumn(XWPFTableRow tabRow, int sizeCol) {
         if (sizeCol > 0) {
             for (int i = 0; i < sizeCol; i++) {
@@ -285,7 +404,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * @param styleName - the style name to apply to this table
      */
     public void setStyleID(String styleName) {
-        CTTblPr tblPr = getTrPr();
+        CTTblPr tblPr = getTblPr();
         CTString styleStr = tblPr.getTblStyle();
         if (styleStr == null) {
             styleStr = tblPr.addNewTblStyle();
@@ -293,121 +412,297 @@ public class XWPFTable implements IBodyElement, ISDTContents {
         styleStr.setVal(styleName);
     }
 
+    /**
+     * Get inside horizontal border type
+     *
+     * @return {@link XWPFBorderType} of the inside horizontal borders or null if missing
+     */
     public XWPFBorderType getInsideHBorderType() {
-        XWPFBorderType bt = null;
-
-        CTTblPr tblPr = getTrPr();
-        if (tblPr.isSetTblBorders()) {
-            CTTblBorders ctb = tblPr.getTblBorders();
-            if (ctb.isSetInsideH()) {
-                CTBorder border = ctb.getInsideH();
-                bt = stBorderTypeMap.get(border.getVal().intValue());
-            }
-        }
-        return bt;
+        CTBorder b = getTblInsideHBorder(false);
+        return (b != null) ? stBorderTypeMap.get(b.getVal().intValue()) : null;
     }
 
+    /**
+     * Get inside horizontal border size
+     * 
+     * @return The width of the Inside Horizontal borders in 1/8th points,
+     * -1 if missing.
+     */
     public int getInsideHBorderSize() {
-        int size = -1;
-
-        CTTblPr tblPr = getTrPr();
-        if (tblPr.isSetTblBorders()) {
-            CTTblBorders ctb = tblPr.getTblBorders();
-            if (ctb.isSetInsideH()) {
-                CTBorder border = ctb.getInsideH();
-                size = border.getSz().intValue();
-            }
-        }
-        return size;
+        CTBorder b = getTblInsideHBorder(false);
+        return (b != null) 
+                ? (b.isSetSz() ? b.getSz().intValue() : -1)
+                        : -1;        
     }
 
+    /**
+     * Get inside horizontal border spacing
+     * 
+     * @return The offset to the Inside Horizontal borders in points,
+     * -1 if missing.
+     */
     public int getInsideHBorderSpace() {
-        int space = -1;
-
-        CTTblPr tblPr = getTrPr();
-        if (tblPr.isSetTblBorders()) {
-            CTTblBorders ctb = tblPr.getTblBorders();
-            if (ctb.isSetInsideH()) {
-                CTBorder border = ctb.getInsideH();
-                space = border.getSpace().intValue();
-            }
-        }
-        return space;
+        CTBorder b = getTblInsideHBorder(false);
+        return (b != null) 
+                ? (b.isSetSpace() ? b.getSpace().intValue() : -1)
+                        : -1;        
     }
 
+    /**
+     * Get inside horizontal border color
+     * 
+     * @return The color of the Inside Horizontal borders, null if missing.
+     */
     public String getInsideHBorderColor() {
-        String color = null;
-
-        CTTblPr tblPr = getTrPr();
-        if (tblPr.isSetTblBorders()) {
-            CTTblBorders ctb = tblPr.getTblBorders();
-            if (ctb.isSetInsideH()) {
-                CTBorder border = ctb.getInsideH();
-                color = border.xgetColor().getStringValue();
-            }
-        }
-        return color;
+        CTBorder b = getTblInsideHBorder(false);
+        return (b != null) 
+                ? (b.isSetColor() ? b.xgetColor().getStringValue() : null)
+                        : null;        
     }
 
+    /**
+     * Get inside vertical border type
+     *
+     * @return {@link XWPFBorderType} of the inside vertical borders or null if missing
+     */
     public XWPFBorderType getInsideVBorderType() {
-        XWPFBorderType bt = null;
-
-        CTTblPr tblPr = getTrPr();
-        if (tblPr.isSetTblBorders()) {
-            CTTblBorders ctb = tblPr.getTblBorders();
-            if (ctb.isSetInsideV()) {
-                CTBorder border = ctb.getInsideV();
-                bt = stBorderTypeMap.get(border.getVal().intValue());
-            }
-        }
-        return bt;
+        CTBorder b = getTblInsideVBorder(false);
+        return (b != null) ? stBorderTypeMap.get(b.getVal().intValue()) : null;
     }
 
+    /**
+     * Get inside vertical border size
+     * 
+     * @return The width of the Inside vertical borders in 1/8th points,
+     * -1 if missing.
+     */
     public int getInsideVBorderSize() {
-        int size = -1;
-
-        CTTblPr tblPr = getTrPr();
-        if (tblPr.isSetTblBorders()) {
-            CTTblBorders ctb = tblPr.getTblBorders();
-            if (ctb.isSetInsideV()) {
-                CTBorder border = ctb.getInsideV();
-                size = border.getSz().intValue();
-            }
-        }
-        return size;
+        CTBorder b = getTblInsideVBorder(false);
+        return (b != null) 
+                ? (b.isSetSz() ? b.getSz().intValue() : -1)
+                        : -1;        
     }
 
+    /**
+     * Get inside vertical border spacing
+     * 
+     * @return The offset to the Inside vertical borders in points,
+     * -1 if missing.
+     */
     public int getInsideVBorderSpace() {
-        int space = -1;
-
-        CTTblPr tblPr = getTrPr();
-        if (tblPr.isSetTblBorders()) {
-            CTTblBorders ctb = tblPr.getTblBorders();
-            if (ctb.isSetInsideV()) {
-                CTBorder border = ctb.getInsideV();
-                space = border.getSpace().intValue();
-            }
-        }
-        return space;
+        CTBorder b = getTblInsideVBorder(false);
+        return (b != null) 
+                ? (b.isSetSpace() ? b.getSpace().intValue() : -1)
+                        : -1;        
     }
 
+    /**
+     * Get inside vertical border color
+     * 
+     * @return The color of the Inside vertical borders, null if missing.
+     */
     public String getInsideVBorderColor() {
-        String color = null;
+        CTBorder b = getTblInsideVBorder(false);
+        return (b != null) 
+                ? (b.isSetColor() ? b.xgetColor().getStringValue() : null)
+                        : null;        
+    }
 
-        CTTblPr tblPr = getTrPr();
-        if (tblPr.isSetTblBorders()) {
-            CTTblBorders ctb = tblPr.getTblBorders();
-            if (ctb.isSetInsideV()) {
-                CTBorder border = ctb.getInsideV();
-                color = border.xgetColor().getStringValue();
-            }
-        }
-        return color;
+    /**
+     * Get top border type
+     *
+     * @return {@link XWPFBorderType} of the top borders or null if missing
+     */
+    public XWPFBorderType getTopBorderType() {
+        CTBorder b = getTblTopBorder(false);
+        return (b != null) ? stBorderTypeMap.get(b.getVal().intValue()) : null;
+    }
+
+    /**
+     * Get top border size
+     * 
+     * @return The width of the top borders in 1/8th points,
+     * -1 if missing.
+     */
+    public int getTopBorderSize() {
+        CTBorder b = getTblTopBorder(false);
+        return (b != null) 
+                ? (b.isSetSz() ? b.getSz().intValue() : -1)
+                        : -1;        
+    }
+
+    /**
+     * Get top border spacing
+     * 
+     * @return The offset to the top borders in points,
+     * -1 if missing.
+     */
+    public int getTopBorderSpace() {
+        CTBorder b = getTblTopBorder(false);
+        return (b != null) 
+                ? (b.isSetSpace() ? b.getSpace().intValue() : -1)
+                        : -1;        
+    }
+
+    /**
+     * Get top border color
+     * 
+     * @return The color of the top borders, null if missing.
+     */
+    public String getTopBorderColor() {
+        CTBorder b = getTblTopBorder(false);
+        return (b != null) 
+                ? (b.isSetColor() ? b.xgetColor().getStringValue() : null)
+                        : null;        
+    }
+
+    /**
+     * Get bottom border type
+     *
+     * @return {@link XWPFBorderType} of the bottom borders or null if missing
+     */
+    public XWPFBorderType getBottomBorderType() {
+        CTBorder b = getTblBottomBorder(false);
+        return (b != null) ? stBorderTypeMap.get(b.getVal().intValue()) : null;
+    }
+
+    /**
+     * Get bottom border size
+     * 
+     * @return The width of the bottom borders in 1/8th points,
+     * -1 if missing.
+     */
+    public int getBottomBorderSize() {
+        CTBorder b = getTblBottomBorder(false);
+        return (b != null) 
+                ? (b.isSetSz() ? b.getSz().intValue() : -1)
+                        : -1;        
+    }
+
+    /**
+     * Get bottom border spacing
+     * 
+     * @return The offset to the bottom borders in points,
+     * -1 if missing.
+     */
+    public int getBottomBorderSpace() {
+        CTBorder b = getTblBottomBorder(false);
+        return (b != null) 
+                ? (b.isSetSpace() ? b.getSpace().intValue() : -1)
+                        : -1;        
+    }
+
+    /**
+     * Get bottom border color
+     * 
+     * @return The color of the bottom borders, null if missing.
+     */
+    public String getBottomBorderColor() {
+        CTBorder b = getTblBottomBorder(false);
+        return (b != null) 
+                ? (b.isSetColor() ? b.xgetColor().getStringValue() : null)
+                        : null;        
+    }
+
+    /**
+     * Get Left border type
+     *
+     * @return {@link XWPFBorderType} of the Left borders or null if missing
+     */
+    public XWPFBorderType getLeftBorderType() {
+        CTBorder b = getTblLeftBorder(false);
+        return (b != null) ? stBorderTypeMap.get(b.getVal().intValue()) : null;
+    }
+
+    /**
+     * Get Left border size
+     * 
+     * @return The width of the Left borders in 1/8th points,
+     * -1 if missing.
+     */
+    public int getLeftBorderSize() {
+        CTBorder b = getTblLeftBorder(false);
+        return (b != null) 
+                ? (b.isSetSz() ? b.getSz().intValue() : -1)
+                        : -1;        
+    }
+
+    /**
+     * Get Left border spacing
+     * 
+     * @return The offset to the Left borders in points,
+     * -1 if missing.
+     */
+    public int getLeftBorderSpace() {
+        CTBorder b = getTblLeftBorder(false);
+        return (b != null) 
+                ? (b.isSetSpace() ? b.getSpace().intValue() : -1)
+                        : -1;        
+    }
+
+    /**
+     * Get Left border color
+     * 
+     * @return The color of the Left borders, null if missing.
+     */
+    public String getLeftBorderColor() {
+        CTBorder b = getTblLeftBorder(false);
+        return (b != null) 
+                ? (b.isSetColor() ? b.xgetColor().getStringValue() : null)
+                        : null;        
+    }
+
+    /**
+     * Get Right border type
+     *
+     * @return {@link XWPFBorderType} of the Right borders or null if missing
+     */
+    public XWPFBorderType getRightBorderType() {
+        CTBorder b = getTblRightBorder(false);
+        return (b != null) ? stBorderTypeMap.get(b.getVal().intValue()) : null;
+    }
+
+    /**
+     * Get Right border size
+     * 
+     * @return The width of the Right borders in 1/8th points,
+     * -1 if missing.
+     */
+    public int getRightBorderSize() {
+        CTBorder b = getTblRightBorder(false);
+        return (b != null) 
+                ? (b.isSetSz() ? b.getSz().intValue() : -1)
+                        : -1;        
+    }
+
+    /**
+     * Get Right border spacing
+     * 
+     * @return The offset to the Right borders in points,
+     * -1 if missing.
+     */
+    public int getRightBorderSpace() {
+        CTBorder b = getTblRightBorder(false);
+        return (b != null) 
+                ? (b.isSetSpace() ? b.getSpace().intValue() : -1)
+                        : -1;        
+    }
+
+    /**
+     * Get Right border color
+     * 
+     * @return The color of the Right borders, null if missing.
+     */
+    public String getRightBorderColor() {
+        CTBorder b = getTblRightBorder(false);
+        return (b != null) 
+                ? (b.isSetColor() ? b.xgetColor().getStringValue() : null)
+                        : null;        
     }
 
     public int getRowBandSize() {
         int size = 0;
-        CTTblPr tblPr = getTrPr();
+        CTTblPr tblPr = getTblPr();
         if (tblPr.isSetTblStyleRowBandSize()) {
             CTDecimalNumber rowSize = tblPr.getTblStyleRowBandSize();
             size = rowSize.getVal().intValue();
@@ -416,14 +711,14 @@ public class XWPFTable implements IBodyElement, ISDTContents {
     }
 
     public void setRowBandSize(int size) {
-        CTTblPr tblPr = getTrPr();
+        CTTblPr tblPr = getTblPr();
         CTDecimalNumber rowSize = tblPr.isSetTblStyleRowBandSize() ? tblPr.getTblStyleRowBandSize() : tblPr.addNewTblStyleRowBandSize();
         rowSize.setVal(BigInteger.valueOf(size));
     }
 
     public int getColBandSize() {
         int size = 0;
-        CTTblPr tblPr = getTrPr();
+        CTTblPr tblPr = getTblPr();
         if (tblPr.isSetTblStyleColBandSize()) {
             CTDecimalNumber colSize = tblPr.getTblStyleColBandSize();
             size = colSize.getVal().intValue();
@@ -432,34 +727,228 @@ public class XWPFTable implements IBodyElement, ISDTContents {
     }
 
     public void setColBandSize(int size) {
-        CTTblPr tblPr = getTrPr();
+        CTTblPr tblPr = getTblPr();
         CTDecimalNumber colSize = tblPr.isSetTblStyleColBandSize() ? tblPr.getTblStyleColBandSize() : tblPr.addNewTblStyleColBandSize();
         colSize.setVal(BigInteger.valueOf(size));
     }
 
+    /**
+     * Set Inside horizontal borders for a table
+     *
+     * @param type - {@link XWPFBorderType} e.g. single, double, thick
+     * @param size - Specifies the width of the current border. The width of this border is
+     *      specified in measurements of eighths of a point, with a minimum value of two (onefourth
+     *      of a point) and a maximum value of 96 (twelve points). Any values outside this
+     *      range may be reassigned to a more appropriate value.
+     * @param space - Specifies the spacing offset that shall be used to place this border on the table
+     * @param rgbColor - This color may either be presented as a hex value (in RRGGBB format), 
+     *      or auto to allow a consumer to automatically determine the border color as appropriate.
+     */
     public void setInsideHBorder(XWPFBorderType type, int size, int space, String rgbColor) {
-        CTTblPr tblPr = getTrPr();
-        CTTblBorders ctb = tblPr.isSetTblBorders() ? tblPr.getTblBorders() : tblPr.addNewTblBorders();
-        CTBorder b = ctb.isSetInsideH() ? ctb.getInsideH() : ctb.addNewInsideH();
+        CTBorder b = getTblInsideHBorder(true);
         b.setVal(xwpfBorderTypeMap.get(type));
         b.setSz(BigInteger.valueOf(size));
         b.setSpace(BigInteger.valueOf(space));
         b.setColor(rgbColor);
     }
 
+    /**
+     * Set Inside Vertical borders for table
+     *
+     * @param type - {@link XWPFBorderType} e.g. single, double, thick
+     * @param size - Specifies the width of the current border. The width of this border is
+     *      specified in measurements of eighths of a point, with a minimum value of two (onefourth
+     *      of a point) and a maximum value of 96 (twelve points). Any values outside this
+     *      range may be reassigned to a more appropriate value.
+     * @param space - Specifies the spacing offset that shall be used to place this border on the table
+     * @param rgbColor - This color may either be presented as a hex value (in RRGGBB format), 
+     *      or auto to allow a consumer to automatically determine the border color as appropriate.
+     */
     public void setInsideVBorder(XWPFBorderType type, int size, int space, String rgbColor) {
-        CTTblPr tblPr = getTrPr();
-        CTTblBorders ctb = tblPr.isSetTblBorders() ? tblPr.getTblBorders() : tblPr.addNewTblBorders();
-        CTBorder b = ctb.isSetInsideV() ? ctb.getInsideV() : ctb.addNewInsideV();
+        CTBorder b = getTblInsideVBorder(true);
         b.setVal(xwpfBorderTypeMap.get(type));
         b.setSz(BigInteger.valueOf(size));
         b.setSpace(BigInteger.valueOf(space));
         b.setColor(rgbColor);
     }
 
+    /**
+     * Set Top borders for table
+     *
+     * @param type - {@link XWPFBorderType} e.g. single, double, thick
+     * @param size - Specifies the width of the current border. The width of this border is
+     *      specified in measurements of eighths of a point, with a minimum value of two (onefourth
+     *      of a point) and a maximum value of 96 (twelve points). Any values outside this
+     *      range may be reassigned to a more appropriate value.
+     * @param space - Specifies the spacing offset that shall be used to place this border on the table
+     * @param rgbColor - This color may either be presented as a hex value (in RRGGBB format), 
+     *      or auto to allow a consumer to automatically determine the border color as appropriate.
+     */
+    public void setTopBorder(XWPFBorderType type, int size, int space, String rgbColor) {
+        CTBorder b = getTblTopBorder(true);
+        b.setVal(xwpfBorderTypeMap.get(type));
+        b.setSz(BigInteger.valueOf(size));
+        b.setSpace(BigInteger.valueOf(space));
+        b.setColor(rgbColor);
+    }
+
+    /**
+     * Set Bottom borders for table
+     *
+     * @param type - {@link XWPFBorderType} e.g. single, double, thick
+     * @param size - Specifies the width of the current border. The width of this border is
+     *      specified in measurements of eighths of a point, with a minimum value of two (onefourth
+     *      of a point) and a maximum value of 96 (twelve points). Any values outside this
+     *      range may be reassigned to a more appropriate value.
+     * @param space - Specifies the spacing offset that shall be used to place this border on the table
+     * @param rgbColor - This color may either be presented as a hex value (in RRGGBB format), 
+     *      or auto to allow a consumer to automatically determine the border color as appropriate.
+     */
+    public void setBottomBorder(XWPFBorderType type, int size, int space, String rgbColor) {
+        CTBorder b = getTblBottomBorder(true);
+        b.setVal(xwpfBorderTypeMap.get(type));
+        b.setSz(BigInteger.valueOf(size));
+        b.setSpace(BigInteger.valueOf(space));
+        b.setColor(rgbColor);
+    }
+
+    /**
+     * Set Left borders for table
+     *
+     * @param type - {@link XWPFBorderType} e.g. single, double, thick
+     * @param size - Specifies the width of the current border. The width of this border is
+     *      specified in measurements of eighths of a point, with a minimum value of two (onefourth
+     *      of a point) and a maximum value of 96 (twelve points). Any values outside this
+     *      range may be reassigned to a more appropriate value.
+     * @param space - Specifies the spacing offset that shall be used to place this border on the table
+     * @param rgbColor - This color may either be presented as a hex value (in RRGGBB format), 
+     *      or auto to allow a consumer to automatically determine the border color as appropriate.
+     */
+    public void setLeftBorder(XWPFBorderType type, int size, int space, String rgbColor) {
+        CTBorder b = getTblLeftBorder(true);
+        b.setVal(xwpfBorderTypeMap.get(type));
+        b.setSz(BigInteger.valueOf(size));
+        b.setSpace(BigInteger.valueOf(space));
+        b.setColor(rgbColor);
+    }
+
+    /**
+     * Set Right borders for table
+     *
+     * @param type - {@link XWPFBorderType} e.g. single, double, thick
+     * @param size - Specifies the width of the current border. The width of this border is
+     *      specified in measurements of eighths of a point, with a minimum value of two (onefourth
+     *      of a point) and a maximum value of 96 (twelve points). Any values outside this
+     *      range may be reassigned to a more appropriate value.
+     * @param space - Specifies the spacing offset that shall be used to place this border on the table
+     * @param rgbColor - This color may either be presented as a hex value (in RRGGBB format), 
+     *      or auto to allow a consumer to automatically determine the border color as appropriate.
+     */
+    public void setRightBorder(XWPFBorderType type, int size, int space, String rgbColor) {
+        CTBorder b = getTblRightBorder(true);
+        b.setVal(xwpfBorderTypeMap.get(type));
+        b.setSz(BigInteger.valueOf(size));
+        b.setSpace(BigInteger.valueOf(space));
+        b.setColor(rgbColor);
+    }
+    
+    /**
+     * Remove inside horizontal borders for table
+     */
+    public void removeInsideHBorder() {
+        CTBorder b = getTblInsideHBorder(false);
+        if (b != null) {
+            getTblBorders(false).unsetInsideH();
+            cleanupTblBorders();
+        }
+    }
+    
+    /**
+     * Remove inside vertical borders for table
+     */
+    public void removeInsideVBorder() {
+        CTBorder b = getTblInsideVBorder(false);
+        if (b != null) {
+            getTblBorders(false).unsetInsideV();
+            cleanupTblBorders();
+        }
+    }
+    
+    /**
+     * Remove top borders for table
+     */
+    public void removeTopBorder() {
+        CTBorder b = getTblTopBorder(false);
+        if (b != null) {
+            getTblBorders(false).unsetTop();
+            cleanupTblBorders();
+        }
+    }
+    
+    /**
+     * Remove bottom borders for table
+     */
+    public void removeBottomBorder() {
+        CTBorder b = getTblBottomBorder(false);
+        if (b != null) {
+            getTblBorders(false).unsetBottom();
+            cleanupTblBorders();
+        }
+    }
+    
+    /**
+     * Remove left borders for table
+     */
+    public void removeLeftBorder() {
+        CTBorder b = getTblLeftBorder(false);
+        if (b != null) {
+            getTblBorders(false).unsetLeft();
+            cleanupTblBorders();
+        }
+    }
+    
+    /**
+     * Remove right borders for table
+     */
+    public void removeRightBorder() {
+        CTBorder b = getTblRightBorder(false);
+        if (b != null) {
+            getTblBorders(false).unsetRight();
+            cleanupTblBorders();
+        }
+    }
+    
+    /**
+     * Remove all borders from table
+     */
+    public void removeBorders() {
+        CTTblBorders b = getTblBorders(false);
+        if (b != null) {
+            getTblPr(false).unsetTblBorders();
+        }
+    }
+    
+    /**
+     * removes the Borders node from Table properties if there are 
+     * no border elements
+     */
+    private void cleanupTblBorders() {
+        CTTblBorders b = getTblBorders(false);
+        if (b != null) {
+            if (b.getInsideH() == null &&
+                    b.getInsideV() == null &&
+                    b.getTop() == null &&
+                    b.getBottom() == null &&
+                    b.getLeft() == null &&
+                    b.getRight() == null) {
+                getTblPr(false).unsetTblBorders();
+            }
+        }
+    }
+    
     public int getCellMarginTop() {
         int margin = 0;
-        CTTblPr tblPr = getTrPr();
+        CTTblPr tblPr = getTblPr();
         CTTblCellMar tcm = tblPr.getTblCellMar();
         if (tcm != null) {
             CTTblWidth tw = tcm.getTop();
@@ -472,7 +961,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
 
     public int getCellMarginLeft() {
         int margin = 0;
-        CTTblPr tblPr = getTrPr();
+        CTTblPr tblPr = getTblPr();
         CTTblCellMar tcm = tblPr.getTblCellMar();
         if (tcm != null) {
             CTTblWidth tw = tcm.getLeft();
@@ -485,7 +974,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
 
     public int getCellMarginBottom() {
         int margin = 0;
-        CTTblPr tblPr = getTrPr();
+        CTTblPr tblPr = getTblPr();
         CTTblCellMar tcm = tblPr.getTblCellMar();
         if (tcm != null) {
             CTTblWidth tw = tcm.getBottom();
@@ -498,7 +987,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
 
     public int getCellMarginRight() {
         int margin = 0;
-        CTTblPr tblPr = getTrPr();
+        CTTblPr tblPr = getTblPr();
         CTTblCellMar tcm = tblPr.getTblCellMar();
         if (tcm != null) {
             CTTblWidth tw = tcm.getRight();
@@ -510,7 +999,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
     }
 
     public void setCellMargins(int top, int left, int bottom, int right) {
-        CTTblPr tblPr = getTrPr();
+        CTTblPr tblPr = getTblPr();
         CTTblCellMar tcm = tblPr.isSetTblCellMar() ? tblPr.getTblCellMar() : tblPr.addNewTblCellMar();
 
         CTTblWidth tw = tcm.isSetLeft() ? tcm.getLeft() : tcm.addNewLeft();
