@@ -29,28 +29,28 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="CT_SphereCoords">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;attribute name="lat" use="required" type="{http://schemas.openxmlformats.org/drawingml/2006/main}ST_PositiveFixedAngle" />
- *       &lt;attribute name="lon" use="required" type="{http://schemas.openxmlformats.org/drawingml/2006/main}ST_PositiveFixedAngle" />
- *       &lt;attribute name="rev" use="required" type="{http://schemas.openxmlformats.org/drawingml/2006/main}ST_PositiveFixedAngle" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="CT_SphereCoords"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;attribute name="lat" use="required" type="{http://schemas.openxmlformats.org/drawingml/2006/main}ST_PositiveFixedAngle" /&gt;
+ *       &lt;attribute name="lon" use="required" type="{http://schemas.openxmlformats.org/drawingml/2006/main}ST_PositiveFixedAngle" /&gt;
+ *       &lt;attribute name="rev" use="required" type="{http://schemas.openxmlformats.org/drawingml/2006/main}ST_PositiveFixedAngle" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "CT_SphereCoords", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main")
+@XmlType(name = "CT_SphereCoords")
 public class CTSphereCoords {
 
-    @XmlAttribute(required = true)
+    @XmlAttribute(name = "lat", required = true)
     protected int lat;
-    @XmlAttribute(required = true)
+    @XmlAttribute(name = "lon", required = true)
     protected int lon;
-    @XmlAttribute(required = true)
+    @XmlAttribute(name = "rev", required = true)
     protected int rev;
 
     /**

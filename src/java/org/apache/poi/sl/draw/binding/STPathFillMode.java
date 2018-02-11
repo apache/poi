@@ -28,20 +28,20 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
- * &lt;simpleType name="ST_PathFillMode">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}token">
- *     &lt;enumeration value="none"/>
- *     &lt;enumeration value="norm"/>
- *     &lt;enumeration value="lighten"/>
- *     &lt;enumeration value="lightenLess"/>
- *     &lt;enumeration value="darken"/>
- *     &lt;enumeration value="darkenLess"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="ST_PathFillMode"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}token"&gt;
+ *     &lt;enumeration value="none"/&gt;
+ *     &lt;enumeration value="norm"/&gt;
+ *     &lt;enumeration value="lighten"/&gt;
+ *     &lt;enumeration value="lightenLess"/&gt;
+ *     &lt;enumeration value="darken"/&gt;
+ *     &lt;enumeration value="darkenLess"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  * 
  */
-@XmlType(name = "ST_PathFillMode", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main")
+@XmlType(name = "ST_PathFillMode")
 @XmlEnum
 public enum STPathFillMode {
 
