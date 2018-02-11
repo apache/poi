@@ -17,11 +17,21 @@
 
 package org.apache.poi.hslf.record;
 
+import static org.apache.poi.util.BitFieldFactory.getInstance;
+
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-import org.apache.poi.util.IOUtils;
+import org.apache.poi.hslf.model.textproperties.HSLFTabStop;
+import org.apache.poi.hslf.model.textproperties.HSLFTabStopPropCollection;
+import org.apache.poi.util.BitField;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianByteArrayInputStream;
+import org.apache.poi.util.LittleEndianOutputStream;
 import org.apache.poi.util.POILogger;
 
 /**
@@ -31,33 +41,38 @@ public final class TextRulerAtom extends RecordAtom {
 
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
+    
+    private static final BitField DEFAULT_TAB_SIZE = getInstance(0x0001);
+    private static final BitField C_LEVELS = getInstance(0x0002);
+    private static final BitField TAB_STOPS = getInstance(0x0004);
+    private static final BitField[] LEFT_MARGIN = {
+        getInstance(0x0008), getInstance(0x0010), getInstance(0x0020),
+        getInstance(0x0040), getInstance(0x0080),
+    };
+    private static final BitField[] INDENT = {
+        getInstance(0x0100), getInstance(0x0200), getInstance(0x0400),
+        getInstance(0x0800), getInstance(0x1000),
+    };
 
     /**
      * Record header.
      */
-    private byte[] _header;
-
-    /**
-     * Record data.
-     */
-    private byte[] _data;
+    private final byte[] _header = new byte[8];
 
     //ruler internals
-    private int defaultTabSize;
-    private int numLevels;
-    private int[] tabStops;
-    private int[] bulletOffsets = new int[5];
-    private int[] textOffsets = new int[5];
+    private Integer defaultTabSize;
+    private Integer numLevels;
+    private final List<HSLFTabStop> tabStops = new ArrayList<>();
+    //bullet.offset
+    private final Integer[] leftMargin = new Integer[5];
+    //text.offset
+    private final Integer[] indent = new Integer[5];
 
     /**
      * Constructs a new empty ruler atom.
      */
     public TextRulerAtom() {
-        _header = new byte[8];
-        _data = new byte[0];
-
         LittleEndian.putShort(_header, 2, (short)getRecordType());
-        LittleEndian.putInt(_header, 4, _data.length);
     }
 
     /**
@@ -68,18 +83,17 @@ public final class TextRulerAtom extends RecordAtom {
      * @param start the start offset into the byte array.
      * @param len the length of the slice in the byte array.
      */
-    protected TextRulerAtom(byte[] source, int start, int len) {
-        // Get the header.
-        _header = new byte[8];
-        System.arraycopy(source,start,_header,0,8);
-
-        // Get the record data.
-        _data = IOUtils.safelyAllocate(len-8, MAX_RECORD_LENGTH);
-        System.arraycopy(source,start+8,_data,0,len-8);
+    protected TextRulerAtom(final byte[] source, final int start, final int len) {
+        final LittleEndianByteArrayInputStream leis = new LittleEndianByteArrayInputStream(source, start, Math.min(len, MAX_RECORD_LENGTH));
+        
 
         try {
-            read();
-        } catch (Exception e){
+            // Get the header.
+            leis.read(_header);
+
+            // Get the record data.
+            read(leis);
+        } catch (IOException e){
             logger.log(POILogger.ERROR, "Failed to parse TextRulerAtom: " + e.getMessage());
         }
     }
@@ -89,6 +103,7 @@ public final class TextRulerAtom extends RecordAtom {
      *
      * @return the record type.
      */
+    @Override
     public long getRecordType() {
         return RecordTypes.TextRulerAtom.typeID;
     }
@@ -100,109 +115,110 @@ public final class TextRulerAtom extends RecordAtom {
      * @param out the output stream to write to.
      * @throws java.io.IOException if an error occurs.
      */
-    public void writeOut(OutputStream out) throws IOException {
+    @Override
+    public void writeOut(final OutputStream out) throws IOException {
+        final ByteArrayOutputStream bos = new ByteArrayOutputStream(200);
+        final LittleEndianOutputStream lbos = new LittleEndianOutputStream(bos);
+        int mask = 0;
+        mask |= writeIf(lbos, numLevels, C_LEVELS);
+        mask |= writeIf(lbos, defaultTabSize, DEFAULT_TAB_SIZE);
+        mask |= writeIf(lbos, tabStops, TAB_STOPS);
+        for (int i=0; i<5; i++) {
+            mask |= writeIf(lbos, leftMargin[i], LEFT_MARGIN[i]);
+            mask |= writeIf(lbos, indent[i], INDENT[i]);
+        }
+        LittleEndian.putInt(_header, 4, bos.size()+4);
         out.write(_header);
-        out.write(_data);
+        LittleEndian.putUShort(mask, out);
+        LittleEndian.putUShort(0, out);
+        bos.writeTo(out);
     }
 
+    private static int writeIf(final LittleEndianOutputStream lbos, Integer value, BitField bit) {
+        boolean isSet = false;
+        if (value != null) {
+            lbos.writeShort(value);
+            isSet = true;
+        }
+        return bit.setBoolean(0, isSet);
+    }
+    
+    private static int writeIf(final LittleEndianOutputStream lbos, List<HSLFTabStop> value, BitField bit) {
+        boolean isSet = false;
+        if (value != null && !value.isEmpty()) {
+            HSLFTabStopPropCollection.writeTabStops(lbos, value);
+            isSet = true;
+        }
+        return bit.setBoolean(0, isSet);
+    }
+    
     /**
      * Read the record bytes and initialize the internal variables
      */
-    private void read(){
-        int pos = 0;
-        short mask = LittleEndian.getShort(_data);  pos += 4;
-        short val;
-        int[] bits = {1, 0, 2, 3, 8, 4, 9, 5, 10, 6, 11, 7, 12};
-        for (int i = 0; i < bits.length; i++) {
-            if((mask & 1 << bits[i]) != 0){
-                switch (bits[i]){
-                    case 0:
-                        //defaultTabSize
-                        defaultTabSize = LittleEndian.getShort(_data, pos); pos += 2;
-                        break;
-                    case 1:
-                        //numLevels
-                        numLevels = LittleEndian.getShort(_data, pos); pos += 2;
-                        break;
-                    case 2:
-                        //tabStops
-                        val = LittleEndian.getShort(_data, pos); pos += 2;
-                        tabStops = new int[val*2];
-                        for (int j = 0; j < tabStops.length; j++) {
-                            tabStops[j] = LittleEndian.getUShort(_data, pos); pos += 2;
-                        }
-                        break;
-                    case 3:
-                    case 4:
-                    case 5:
-                    case 6:
-                    case 7:
-                        //bullet.offset
-                        val = LittleEndian.getShort(_data, pos); pos += 2;
-                        bulletOffsets[bits[i]-3] = val;
-                        break;
-                    case 8:
-                    case 9:
-                    case 10:
-                    case 11:
-                    case 12:
-                        //text.offset
-                        val = LittleEndian.getShort(_data, pos); pos += 2;
-                        textOffsets[bits[i]-8] = val;
-                        break;
-                    default:
-                        break;
-                }
-            }
+    private void read(final LittleEndianByteArrayInputStream leis) {
+        final int mask = leis.readInt();
+        numLevels = readIf(leis, mask, C_LEVELS);
+        defaultTabSize = readIf(leis, mask, DEFAULT_TAB_SIZE);
+        if (TAB_STOPS.isSet(mask)) {
+            tabStops.addAll(HSLFTabStopPropCollection.readTabStops(leis));
+        }
+        for (int i=0; i<5; i++) {
+            leftMargin[i] = readIf(leis, mask, LEFT_MARGIN[i]);
+            indent[i] = readIf(leis, mask, INDENT[i]);
         }
     }
 
+    private static Integer readIf(final LittleEndianByteArrayInputStream leis, final int mask, final BitField bit) {
+        return (bit.isSet(mask)) ? (int)leis.readShort() : null;
+    }    
+    
     /**
      * Default distance between tab stops, in master coordinates (576 dpi).
      */
     public int getDefaultTabSize(){
-        return defaultTabSize;
+        return defaultTabSize == null ? 0 : defaultTabSize;
     }
 
     /**
      * Number of indent levels (maximum 5).
      */
     public int getNumberOfLevels(){
-        return numLevels;
+        return numLevels == null ? 0 : numLevels;
     }
 
     /**
      * Default distance between tab stops, in master coordinates (576 dpi).
      */
-    public int[] getTabStops(){
+    public List<HSLFTabStop> getTabStops(){
         return tabStops;
     }
 
     /**
      * Paragraph's distance from shape's left margin, in master coordinates (576 dpi).
      */
-    public int[] getTextOffsets(){
-        return textOffsets;
+    public Integer[] getTextOffsets(){
+        return indent;
     }
 
     /**
      * First line of paragraph's distance from shape's left margin, in master coordinates (576 dpi).
      */
-    public int[] getBulletOffsets(){
-        return bulletOffsets;
+    public Integer[] getBulletOffsets(){
+        return leftMargin;
     }
 
     public static TextRulerAtom getParagraphInstance(){
-        byte[] data = new byte[] {
-            0x00, 0x00, (byte)0xA6, 0x0F, 0x0A, 0x00, 0x00, 0x00,
-            0x10, 0x03, 0x00, 0x00, (byte)0xF9, 0x00, 0x41, 0x01, 0x41, 0x01
-        };
-        return new TextRulerAtom(data, 0, data.length);
+        final TextRulerAtom tra = new TextRulerAtom();
+        tra.indent[0] = 249;
+        tra.indent[1] = tra.leftMargin[1] = 321;
+        return tra;
     }
 
-    public void setParagraphIndent(short tetxOffset, short bulletOffset){
-        LittleEndian.putShort(_data, 4, tetxOffset);
-        LittleEndian.putShort(_data, 6, bulletOffset);
-        LittleEndian.putShort(_data, 8, bulletOffset);
+    public void setParagraphIndent(short leftMargin, short indent) {
+        Arrays.fill(this.leftMargin, null);
+        Arrays.fill(this.indent, null);
+        this.leftMargin[0] = (int)leftMargin;
+        this.indent[0] = (int)indent;
+        this.indent[1] = (int)indent;
     }
 }

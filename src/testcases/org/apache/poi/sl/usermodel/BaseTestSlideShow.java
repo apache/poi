@@ -21,18 +21,24 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
+import java.awt.Color;
+import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
+import org.apache.poi.sl.usermodel.TabStop.TabStopType;
 import org.junit.Test;
 
 public abstract class BaseTestSlideShow {
     protected static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
     
     public abstract SlideShow<?, ?> createSlideShow();
+
+    public abstract SlideShow<?, ?> reopen(SlideShow<?, ?> show);
     
     @Test
     public void addPicture_File() throws IOException {
@@ -91,5 +97,64 @@ public abstract class BaseTestSlideShow {
         assertEquals(picture, found);
         
         show.close();
+    }
+    
+    @Test
+    public void addTabStops() throws IOException {
+        try (final SlideShow<?,?> show1 = createSlideShow()) {
+            // first set the TabStops in the Master sheet
+            final MasterSheet<?, ?> master1 = show1.getSlideMasters().get(0);
+            final AutoShape<?, ?> master1_as = (AutoShape<?,?>)master1.getPlaceholder(Placeholder.BODY);
+            final TextParagraph<?, ?, ? extends TextRun> master1_tp = master1_as.getTextParagraphs().get(0);
+            master1_tp.clearTabStops();
+            int i1 = 0;
+            for (final TabStopType tst : TabStopType.values()) {
+                master1_tp.addTabStops(10+i1*10, tst);
+                i1++;
+            }
+            
+            // then set it on a normal slide
+            final Slide<?,?> slide1 = show1.createSlide();
+            final AutoShape<?, ?> slide1_as = slide1.createAutoShape();
+            slide1_as.setText("abc");
+            slide1_as.setAnchor(new Rectangle2D.Double(100,100,100,100));
+            final TextParagraph<?, ?, ? extends TextRun> slide1_tp = slide1_as.getTextParagraphs().get(0);
+            slide1_tp.getTextRuns().get(0).setFontColor(new Color(0x563412));
+            slide1_tp.clearTabStops();
+            int i2 = 0;
+            for (final TabStopType tst : TabStopType.values()) {
+                slide1_tp.addTabStops(15+i2*5, tst);
+                i2++;
+            }
+            
+            try (final SlideShow<?, ?> show2 = reopen(show1)) {
+                final MasterSheet<?, ?> master2 = show2.getSlideMasters().get(0);
+                final AutoShape<?, ?> master2_as = (AutoShape<?,?>)master2.getPlaceholder(Placeholder.BODY);
+                final TextParagraph<?, ?, ? extends TextRun> master2_tp = master2_as.getTextParagraphs().get(0);
+                final List<? extends TabStop> master2_tabStops = master2_tp.getTabStops();
+                assertNotNull(master2_tabStops);
+                int i3 = 0;
+                for (final TabStopType tst : TabStopType.values()) {
+                    final TabStop ts = master2_tabStops.get(i3);
+                    assertEquals(10+i3*10, ts.getPositionInPoints(), 0.0);
+                    assertEquals(tst, ts.getType());
+                    i3++;
+                }
+                
+                
+                final Slide<?,?> slide2 = show2.getSlides().get(0);
+                final AutoShape<?,?> slide2_as = (AutoShape<?,?>)slide2.getShapes().get(0);
+                final TextParagraph<?, ?, ? extends TextRun> slide2_tp = slide2_as.getTextParagraphs().get(0);
+                final List<? extends TabStop> slide2_tabStops = slide2_tp.getTabStops();
+                assertNotNull(slide2_tabStops);
+                int i4 = 0;
+                for (final TabStopType tst : TabStopType.values()) {
+                    final TabStop ts = slide2_tabStops.get(i4);
+                    assertEquals(15+i4*5, ts.getPositionInPoints(), 0.0);
+                    assertEquals(tst, ts.getType());
+                    i4++;
+                }
+            }
+        }        
     }
 }

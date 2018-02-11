@@ -25,6 +25,7 @@ import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.AutoNumberingScheme;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
+import org.apache.poi.sl.usermodel.TabStop.TabStopType;
 import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
@@ -32,26 +33,7 @@ import org.apache.poi.util.Units;
 import org.apache.poi.xslf.model.ParagraphPropertyFetcher;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTColor;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextAutonumberBullet;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBulletSizePercent;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBulletSizePoint;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharBullet;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextField;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextFont;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextLineBreak;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextNormalAutofit;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextSpacing;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextTabStop;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextTabStopList;
-import org.openxmlformats.schemas.drawingml.x2006.main.STTextAlignType;
-import org.openxmlformats.schemas.drawingml.x2006.main.STTextAutonumberScheme;
-import org.openxmlformats.schemas.drawingml.x2006.main.STTextFontAlignType;
+import org.openxmlformats.schemas.drawingml.x2006.main.*;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
 
@@ -800,25 +782,27 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
 
     private <T> boolean fetchParagraphProperty(ParagraphPropertyFetcher<T> visitor){
         boolean ok = false;
-        XSLFTextShape shape = getParentShape();
-        XSLFSheet sheet = shape.getSheet();
+        final XSLFTextShape shape = getParentShape();
+        final XSLFSheet sheet = shape.getSheet();
         
-        if(_p.isSetPPr()) ok = visitor.fetch(_p.getPPr());
-        if (ok) return true;
-
-        ok = shape.fetchShapeProperty(visitor);
-        if (ok) return true;
-                
-        
-        CTPlaceholder ph = shape.getCTPlaceholder();
-        if(ph == null){
-            // if it is a plain text box then take defaults from presentation.xml
-            @SuppressWarnings("resource")
-            XMLSlideShow ppt = sheet.getSlideShow();
-            CTTextParagraphProperties themeProps = ppt.getDefaultParagraphStyle(getIndentLevel());
-            if (themeProps != null) ok = visitor.fetch(themeProps);
+        if (!(sheet instanceof XSLFSlideMaster)) {
+            if(_p.isSetPPr()) ok = visitor.fetch(_p.getPPr());
+            if (ok) return true;
+    
+            ok = shape.fetchShapeProperty(visitor);
+            if (ok) return true;
+                    
+            
+            CTPlaceholder ph = shape.getCTPlaceholder();
+            if(ph == null){
+                // if it is a plain text box then take defaults from presentation.xml
+                @SuppressWarnings("resource")
+                XMLSlideShow ppt = sheet.getSlideShow();
+                CTTextParagraphProperties themeProps = ppt.getDefaultParagraphStyle(getIndentLevel());
+                if (themeProps != null) ok = visitor.fetch(themeProps);
+            }
+            if (ok) return true;
         }
-        if (ok) return true;
 
         // defaults for placeholders are defined in the slide master
         CTTextParagraphProperties defaultProps = getDefaultMasterStyle();
@@ -1011,7 +995,51 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
             }
         }
     }
-    
+
+    @Override
+    public List<XSLFTabStop> getTabStops() {
+        ParagraphPropertyFetcher<List<XSLFTabStop>> fetcher = new ParagraphPropertyFetcher<List<XSLFTabStop>>(getIndentLevel()){
+            public boolean fetch(CTTextParagraphProperties props) {
+                if (props.isSetTabLst()) {
+                    final List<XSLFTabStop> list = new ArrayList<>();
+                    for (final CTTextTabStop ta : props.getTabLst().getTabArray()) {
+                        list.add(new XSLFTabStop(ta));
+                    }
+                    setValue(list);
+                    return true;
+                }
+                return false;
+            }
+        };
+        fetchParagraphProperty(fetcher);
+        return fetcher.getValue();        
+    }
+
+    @Override
+    public void addTabStops(double positionInPoints, TabStopType tabStopType) {
+        final XSLFSheet sheet = getParentShape().getSheet();
+        final CTTextParagraphProperties tpp;
+        if (sheet instanceof XSLFSlideMaster) {
+            tpp = getDefaultMasterStyle();
+        } else {
+            final CTTextParagraph xo = getXmlObject();
+            tpp = (xo.isSetPPr()) ? xo.getPPr() : xo.addNewPPr();
+        }
+        final CTTextTabStopList stl = (tpp.isSetTabLst()) ? tpp.getTabLst() : tpp.addNewTabLst();
+        XSLFTabStop tab = new XSLFTabStop(stl.addNewTab());
+        tab.setPositionInPoints(positionInPoints);
+        tab.setType(tabStopType);
+    }
+
+    @Override
+    public void clearTabStops() {
+        final XSLFSheet sheet = getParentShape().getSheet();
+        CTTextParagraphProperties tpp = (sheet instanceof XSLFSlideMaster) ? getDefaultMasterStyle() : getXmlObject().getPPr();
+        if (tpp != null && tpp.isSetTabLst()) {
+            tpp.unsetTabLst();
+        }
+    }
+
     /**
      * Helper method for appending text and keeping paragraph and character properties.
      * The character properties are moved to the end paragraph marker

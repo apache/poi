@@ -36,7 +36,6 @@ import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.sl.usermodel.TextShape;
-import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -61,8 +60,6 @@ public final class HSLFTextRun implements TextRun {
 	 */
 	private TextPropCollection characterStyle = new TextPropCollection(1, TextPropType.character);
 
-	private TextPropCollection masterStyle;
-
 	/**
 	 * Create a new wrapper around a rich text string
 	 * @param parentParagraph the parent paragraph
@@ -79,19 +76,6 @@ public final class HSLFTextRun implements TextRun {
 	    this.characterStyle.copy(characterStyle);
 	    this.characterStyle.updateTextSize(_runText.length());
 	}
-
-    /**
-     * Setting a master style reference
-     *
-     * @param characterStyle the master style reference
-     *
-     * @since POI 3.14-Beta1
-     */
-	@Internal
-    /* package */ void setMasterStyleReference(TextPropCollection masterStyle) {
-        this.masterStyle = masterStyle;
-    }
-
 
 	/**
 	 * Supply the SlideShow we belong to
@@ -149,28 +133,34 @@ public final class HSLFTextRun implements TextRun {
 	}
 
 	protected boolean getFlag(int index) {
-	    if (characterStyle == null) {
-            return false;
-        }
-
-		BitMaskTextProp prop = (BitMaskTextProp)characterStyle.findByName(CharFlagsTextProp.NAME);
+		BitMaskTextProp prop = (characterStyle == null) ? null : characterStyle.findByName(CharFlagsTextProp.NAME);
 
 		if (prop == null || !prop.getSubPropMatches()[index]) {
-            int txtype = parentParagraph.getRunType();
-			HSLFSheet sheet = parentParagraph.getSheet();
-			if (sheet != null) {
-				HSLFMasterSheet master = sheet.getMasterSheet();
-				if (master != null){
-					prop = (BitMaskTextProp)master.getStyleAttribute(txtype, parentParagraph.getIndentLevel(), CharFlagsTextProp.NAME, true);
-				}
-			} else {
-				logger.log(POILogger.WARN, "MasterSheet is not available");
-			}
+		    prop = getMasterProp(CharFlagsTextProp.NAME);
 		}
 
 		return prop == null ? false : prop.getSubValue(index);
 	}
 
+	private <T extends TextProp> T getMasterProp(final String name) {
+        final int txtype = parentParagraph.getRunType();
+        final HSLFSheet sheet = parentParagraph.getSheet();
+        if (sheet == null) {
+            logger.log(POILogger.ERROR, "Sheet is not available");
+            return null;
+        }
+        
+        final HSLFMasterSheet master = sheet.getMasterSheet();
+        if (master == null) {
+            logger.log(POILogger.WARN, "MasterSheet is not available");
+            return null;
+        }
+        
+        final TextPropCollection col = master.getPropCollection(txtype, parentParagraph.getIndentLevel(), name, true);
+        return (col == null) ? null : col.findByName(name);
+	}
+	
+	
 	/**
 	 * Set the value of the given flag in the CharFlagsTextProp, adding
 	 *  it if required.
@@ -189,8 +179,7 @@ public final class HSLFTextRun implements TextRun {
 	 * @param val The value to set for the TextProp
 	 */
 	public void setCharTextPropVal(String propName, Integer val) {
-	    getTextParagraph().setPropVal(characterStyle, masterStyle, propName, val);
-	    getTextParagraph().setDirty();
+	    getTextParagraph().setPropVal(characterStyle, propName, val);
 	}
 
 
@@ -270,7 +259,7 @@ public final class HSLFTextRun implements TextRun {
 	 * @return the percentage of the font size. If the value is positive, it is superscript, otherwise it is subscript
 	 */
 	public int getSuperscript() {
-		TextProp tp = getTextParagraph().getPropVal(characterStyle, masterStyle, "superscript");
+		TextProp tp = getTextParagraph().getPropVal(characterStyle, "superscript");
 		return tp == null ? 0 : tp.getValue();
 	}
 
@@ -285,7 +274,7 @@ public final class HSLFTextRun implements TextRun {
 
     @Override
 	public Double getFontSize() {
-        TextProp tp = getTextParagraph().getPropVal(characterStyle, masterStyle, "font.size");
+        TextProp tp = getTextParagraph().getPropVal(characterStyle, "font.size");
         return tp == null ? null : (double)tp.getValue();
 	}
 
@@ -300,7 +289,7 @@ public final class HSLFTextRun implements TextRun {
 	 * Gets the font index
 	 */
 	public int getFontIndex() {
-        TextProp tp = getTextParagraph().getPropVal(characterStyle, masterStyle, "font.index");
+        TextProp tp = getTextParagraph().getPropVal(characterStyle, "font.index");
         return tp == null ? -1 : tp.getValue();
 	}
 
@@ -401,7 +390,7 @@ public final class HSLFTextRun implements TextRun {
 	        break;
 		}
 
-        TextProp tp = getTextParagraph().getPropVal(characterStyle, masterStyle, propName);
+        TextProp tp = getTextParagraph().getPropVal(characterStyle, propName);
 		return (tp != null) ? slideShow.getFont(tp.getValue()) : null;
 	}
 
@@ -410,7 +399,7 @@ public final class HSLFTextRun implements TextRun {
 	 */
 	@Override
 	public SolidPaint getFontColor() {
-		TextProp tp = getTextParagraph().getPropVal(characterStyle, masterStyle, "font.color");
+		TextProp tp = getTextParagraph().getPropVal(characterStyle, "font.color");
 		if (tp == null) {
             return null;
         }
