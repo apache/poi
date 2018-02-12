@@ -16,13 +16,18 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
 
-import junit.framework.TestCase;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.usermodel.XWPFTable.XWPFBorderType;
+import org.junit.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
@@ -34,20 +39,13 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder;
 
+
 /**
  * Tests for XWPF Tables
  */
-public class TestXWPFTable extends TestCase {
-    @Override
-    protected void setUp() {
-        /*
-          XWPFDocument doc = new XWPFDocument();
-          p = doc.createParagraph();
+public class TestXWPFTable {
 
-          this.ctRun = CTR.Factory.newInstance();
-       */
-    }
-
+    @Test
     public void testConstructor() {
         XWPFDocument doc = new XWPFDocument();
         CTTbl ctTable = CTTbl.Factory.newInstance();
@@ -70,6 +68,7 @@ public class TestXWPFTable extends TestCase {
         }
     }
 
+    @Test
     public void testTblGrid() {
         XWPFDocument doc = new XWPFDocument();
         CTTbl ctTable = CTTbl.Factory.newInstance();
@@ -87,6 +86,7 @@ public class TestXWPFTable extends TestCase {
         }
     }
 
+    @Test
     public void testGetText() {
         XWPFDocument doc = new XWPFDocument();
         CTTbl table = CTTbl.Factory.newInstance();
@@ -106,7 +106,7 @@ public class TestXWPFTable extends TestCase {
         }
     }
 
-
+    @Test
     public void testCreateRow() {
         XWPFDocument doc = new XWPFDocument();
 
@@ -142,7 +142,7 @@ public class TestXWPFTable extends TestCase {
         }
     }
 
-
+    @Test
     public void testSetGetWidth() {
         XWPFDocument doc = new XWPFDocument();
 
@@ -162,6 +162,7 @@ public class TestXWPFTable extends TestCase {
         }
     }
 
+    @Test
     public void testSetGetHeight() {
         XWPFDocument doc = new XWPFDocument();
 
@@ -178,6 +179,7 @@ public class TestXWPFTable extends TestCase {
         }
     }
 
+    @Test
     public void testSetGetMargins() {
         // instantiate the following class so it'll get picked up by
         // the XmlBean process and added to the jar file. it's required
@@ -206,6 +208,7 @@ public class TestXWPFTable extends TestCase {
         }
     }
 
+    @Test
     public void testSetGetHBorders() {
         // instantiate the following classes so they'll get picked up by
         // the XmlBean process and added to the jar file. they are required
@@ -278,6 +281,7 @@ public class TestXWPFTable extends TestCase {
         }
     }
 
+    @Test
     public void testSetGetVBorders() {
         // create a table
         XWPFDocument doc = new XWPFDocument();
@@ -347,6 +351,7 @@ public class TestXWPFTable extends TestCase {
         }
     }
 
+    @Test
     public void testSetGetTopBorders() {
         // create a table
         XWPFDocument doc = new XWPFDocument();
@@ -389,6 +394,7 @@ public class TestXWPFTable extends TestCase {
         }
     }
 
+    @Test
     public void testSetGetBottomBorders() {
         // create a table
         XWPFDocument doc = new XWPFDocument();
@@ -431,6 +437,7 @@ public class TestXWPFTable extends TestCase {
         }
     }
 
+    @Test
     public void testSetGetLeftBorders() {
         // create a table
         XWPFDocument doc = new XWPFDocument();
@@ -473,6 +480,7 @@ public class TestXWPFTable extends TestCase {
         }
     }
 
+    @Test
     public void testSetGetRightBorders() {
         // create a table
         XWPFDocument doc = new XWPFDocument();
@@ -515,6 +523,7 @@ public class TestXWPFTable extends TestCase {
         }
     }
 
+    @Test
     public void testSetGetRowBandSize() {
         XWPFDocument doc = new XWPFDocument();
         CTTbl ctTable = CTTbl.Factory.newInstance();
@@ -529,6 +538,7 @@ public class TestXWPFTable extends TestCase {
         }
     }
 
+    @Test
     public void testSetGetColBandSize() {
         XWPFDocument doc = new XWPFDocument();
         CTTbl ctTable = CTTbl.Factory.newInstance();
@@ -543,6 +553,7 @@ public class TestXWPFTable extends TestCase {
         }
     }
 
+    @Test
     public void testCreateTable() throws Exception {
         // open an empty document
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
@@ -566,6 +577,25 @@ public class TestXWPFTable extends TestCase {
             }
         }
         doc.getPackage().revert();
+        try {
+            doc.close();
+        } catch (IOException e) {
+            fail("Unable to close doc");
+        }
+    }
+    
+    @Test
+    public void testSetGetTableAlignment() {
+        XWPFDocument doc = new XWPFDocument();
+        XWPFTable tbl = doc.createTable(1, 1);
+        tbl.setTableAlignment(TableRowAlign.LEFT);
+        assertEquals(TableRowAlign.LEFT, tbl.getTableAlignment());
+        tbl.setTableAlignment(TableRowAlign.CENTER);
+        assertEquals(TableRowAlign.CENTER, tbl.getTableAlignment());
+        tbl.setTableAlignment(TableRowAlign.RIGHT);
+        assertEquals(TableRowAlign.RIGHT, tbl.getTableAlignment());
+        tbl.removeTableAlignment();
+        assertNull(tbl.getTableAlignment());
         try {
             doc.close();
         } catch (IOException e) {
