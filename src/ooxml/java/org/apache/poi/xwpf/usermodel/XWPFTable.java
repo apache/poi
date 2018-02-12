@@ -29,6 +29,7 @@ import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.Removal;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDecimalNumber;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTJc;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTString;
@@ -39,6 +40,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblWidth;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STJc;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTblWidth;
 
 /**
@@ -408,6 +410,39 @@ public class XWPFTable implements IBodyElement, ISDTContents {
                : ctb.isSetRight() ? ctb.getRight() 
                : force ? ctb.addNewRight() 
                : null;
+    }
+    
+    /**
+     * Returns the current table alignment or NULL
+     *
+     * @return Table Alignment as a {@link TableRowAlign} enum
+     */
+    public TableRowAlign getTableAlignment() {
+        CTTblPr tPr = getTblPr(false);
+        return tPr == null ? null
+                : tPr.isSetJc() ? TableRowAlign.valueOf(tPr.getJc().getVal().intValue())
+                : null;
+    }
+    
+    /**
+     * Set table alignment to specified {@link TableRowAlign}
+     *
+     * @param ha {@link TableRowAlign} to set
+     */
+    public void setTableAlignment(TableRowAlign tra) {
+        CTTblPr tPr = getTblPr(true);
+        CTJc jc = tPr.isSetJc() ? tPr.getJc() : tPr.addNewJc();
+        jc.setVal(STJc.Enum.forInt(tra.getValue()));
+    }
+    
+    /**
+     * Removes the table alignment attribute from a table
+     */
+    public void removeTableAlignment() {
+        CTTblPr tPr = getTblPr(false);
+        if (tPr != null && tPr.isSetJc()) {
+            tPr.unsetJc();
+        }
     }
     
     private void addColumn(XWPFTableRow tabRow, int sizeCol) {
@@ -1172,6 +1207,6 @@ public class XWPFTable implements IBodyElement, ISDTContents {
         THIN_THICK_MEDIUM_GAP, THICK_THIN_MEDIUM_GAP, THIN_THICK_THIN_MEDIUM_GAP,
         THIN_THICK_LARGE_GAP, THICK_THIN_LARGE_GAP, THIN_THICK_THIN_LARGE_GAP,
         WAVE, DOUBLE_WAVE, DASH_SMALL_GAP, DASH_DOT_STROKED, THREE_D_EMBOSS, THREE_D_ENGRAVE,
-        OUTSET, INSET
+        OUTSET, INSET;
     }
 }
