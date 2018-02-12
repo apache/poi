@@ -62,9 +62,7 @@ public class XDGFMasters extends XDGFXMLDocumentPart {
         try {
             try {
                 _mastersObject = MastersDocument.Factory.parse(getPackagePart().getInputStream()).getMasters();
-            } catch (XmlException e) {
-                throw new POIXMLException(e);
-            } catch (IOException e) {
+            } catch (XmlException | IOException e) {
                 throw new POIXMLException(e);
             }
 
