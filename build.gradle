@@ -195,6 +195,7 @@ project('ooxml') {
 		compile 'org.apache.santuario:xmlsec:2.1.0'
 		compile 'org.bouncycastle:bcpkix-jdk15on:1.59'
 		compile 'com.github.virtuald:curvesapi:1.05'
+		compile 'com.h2database:h2:1.4.196'
 
 		// for ooxml-lite, should we move this somewhere else?
 		compile 'junit:junit:4.12'
