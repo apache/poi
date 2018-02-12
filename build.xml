@@ -972,8 +972,6 @@ under the License.
 
     <target name="generate-geometry" depends="fetch-ooxml-xsds" if="ignoreme">
         <delete dir="${geometry.output.tmpdir}"/>
-        <!-- taskdef xjc -->
-        <!-- "D:\Program Files\Java\jdk1.6.0_45\bin\xjc" -p org.apache.poi.sl.model.geom.binding -readOnly -Xlocator -mark-generated ooxml-schemas\dml-shapeGeometry.xsd -->
         <unzip src="${ooxml.lib}/${ooxml.xsds.izip.1}" dest="${geometry.output.tmpdir}"/>
         <exec executable="${env.JAVA_HOME}/bin/xjc">
             <arg value="-p"/>
@@ -981,8 +979,8 @@ under the License.
             <arg value="-b"/>
             <arg file="src/types/definitions/dml-shapeGeometry.xjb"/>
             <arg value="-readOnly"/>
-            <arg value="-npa"/>
             <arg value="-no-header"/>
+            <!--arg value="-npa"/ -->
             <!--arg value="-mark-generated"/ -->
             <!--arg value="-Xlocator"/ -->
             <arg file="${geometry.output.tmpdir}/dml-shapeGeometry.xsd"/>
@@ -998,6 +996,9 @@ under the License.
             <fileset dir="${geometry.output.tmpdir}" includes="**/*.java"/>
              <filterchain>
                  <concatfilter prepend="${geometry.output.tmpdir}/apache-license.txt"/>
+         		 <!-- fix javadocs for java 8 doclint -->
+             	 <replaceregex pattern="&amp;lt;(.*)>" replace="&amp;lt;\1&amp;gt;" flags="g"/>
+             	 <fixcrlf eol="lf"/>
              </filterchain>
         </copy>
     </target>

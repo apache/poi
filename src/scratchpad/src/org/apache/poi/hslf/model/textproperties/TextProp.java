@@ -96,7 +96,7 @@ public class TextProp implements Cloneable {
 		try {
 			return (TextProp)super.clone();
 		} catch(CloneNotSupportedException e) {
-			throw new InternalError(e.getMessage());
+			throw new IllegalStateException(e);
 		}
 	}
 	
@@ -145,11 +145,11 @@ public class TextProp implements Cloneable {
     @Override
     public String toString() {
         int len;
-        switch (sizeOfDataBlock) {
+        switch (getSize()) {
         case 1: len = 4; break;
         case 2: len = 6; break;
         default: len = 10; break;
         }
-        return String.format(Locale.ROOT, "%s = %d (%0#"+len+"X mask / %d bytes)", propName, dataValue, maskInHeader, sizeOfDataBlock);
+        return String.format(Locale.ROOT, "%s = %d (%0#"+len+"X mask / %d bytes)", getName(), getValue(), getMask(), getSize());
     }
 }

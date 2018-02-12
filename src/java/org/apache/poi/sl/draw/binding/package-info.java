@@ -14,20 +14,5 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-
-package org.apache.poi.ss.formula.udf;
-
-import org.apache.poi.ss.formula.functions.FreeRefFunction;
-
-/**
- * Common interface for "Add-in" libraries and user defined function libraries.
- */
-public interface UDFFinder {
-    /**
-     * Returns executor by specified name. Returns <code>null</code> if the function name is unknown.
-     *
-     * @param name Name of function.
-     * @return Function executor.
-     */
-    FreeRefFunction findFunction(String name);
-}
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+package org.apache.poi.sl.draw.binding;

@@ -74,42 +74,50 @@ public final class HSLFSlideMaster extends HSLFMasterSheet {
     }
 
     /**
-     * Pickup a style attribute from the master.
+     * Find the master collection for the given txtype/level/name.
      * This is the "workhorse" which returns the default style attributes.
+     * If {@code name = "*"} return the current collection, otherwise if the name is not found
+     * in the current selection of txtype/level/name, first try lower levels then try parent types,
+     * if it wasn't found there return {@code null}.
+     * 
+     * @param txtype the {@link TextHeaderAtom} type
+     * @param level the indent level of the paragraph, if the level is not defined for the found
+     *      collection, the highest existing level will be used
+     * @param name the property name, 
+     * @param isCharacter if {@code true} use character styles, otherwise use paragraph styles
      */
     @Override
-    public TextProp getStyleAttribute(int txtype, int level, String name, boolean isCharacter) {
-        if (_txmaster.length <= txtype) {
-            return null;
-        }
-        TxMasterStyleAtom t = _txmaster[txtype];
-        List<TextPropCollection> styles = isCharacter ? t.getCharacterStyles() : t.getParagraphStyles();
-        
-        TextProp prop = null;
-        for (int i = Math.min(level, styles.size()-1); prop == null && i >= 0; i--) {
-            prop = styles.get(i).findByName(name);
+    public TextPropCollection getPropCollection(final int txtype, final int level, final String name, final boolean isCharacter) {
+        if (txtype < _txmaster.length) {
+            final TxMasterStyleAtom t = _txmaster[txtype];
+            final List<TextPropCollection> styles = isCharacter ? t.getCharacterStyles() : t.getParagraphStyles();
+            // TODO: what is the reaction for readOnly=false and styles.isEmpty()?
+            final int minLevel = Math.min(level, styles.size()-1);
+            if ("*".equals(name)) {
+                return styles.get(minLevel);
+            }
+            
+            for (int i=minLevel; i >= 0; i--) {
+                final TextPropCollection col = styles.get(i);
+                final TextProp tp = col.findByName(name);
+                if (tp != null) {
+                    return col;
+                }
+            }
         }
 
-        if (prop != null) {
-            return prop;
-        }
-        
         switch (txtype) {
             case TextHeaderAtom.CENTRE_BODY_TYPE:
             case TextHeaderAtom.HALF_BODY_TYPE:
             case TextHeaderAtom.QUARTER_BODY_TYPE:
-                txtype = TextHeaderAtom.BODY_TYPE;
-                break;
+                return getPropCollection(TextHeaderAtom.BODY_TYPE, level, name, isCharacter);
             case TextHeaderAtom.CENTER_TITLE_TYPE:
-                txtype = TextHeaderAtom.TITLE_TYPE;
-                break;
+                return getPropCollection(TextHeaderAtom.TITLE_TYPE, level, name, isCharacter);
             default:
                 return null;
         }
-
-        return getStyleAttribute(txtype, level, name, isCharacter);
     }
-    
+
     /**
      * Assign SlideShow for this slide master.
      */
@@ -132,7 +140,7 @@ public final class HSLFSlideMaster extends HSLFMasterSheet {
                 _txmaster[txType] = txrec[i];
             }
         }
-        
+
         for (List<HSLFTextParagraph> paras : getTextParagraphs()) {
             for (HSLFTextParagraph htp : paras) {
                 int txType = htp.getRunType();
@@ -147,11 +155,6 @@ public final class HSLFSlideMaster extends HSLFMasterSheet {
                 if (charStyles == null || paragraphStyles == null ||
                     charStyles.size() <= level || paragraphStyles.size() <= level) {
                     throw new HSLFException("Master styles not initialized");
-                }
-                
-                htp.setMasterStyleReference(paragraphStyles.get(level));
-                for (HSLFTextRun htr : htp.getTextRuns()) {
-                    htr.setMasterStyleReference(charStyles.get(level));
                 }
             }
         }

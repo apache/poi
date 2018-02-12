@@ -17,16 +17,13 @@
 
 package org.apache.poi.hslf.usermodel;
 
+import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.record.SheetContainer;
-import org.apache.poi.hslf.model.textproperties.TextProp;
+import org.apache.poi.hslf.record.TextHeaderAtom;
 import org.apache.poi.sl.usermodel.MasterSheet;
 
 /**
  * The superclass of all master sheets - Slide masters, Notes masters, etc.
- *
- * For now it's empty. When we understand more about masters in ppt we will add the common functionality here.
- *
- * @author Yegor Kozlov
  */
 public abstract class HSLFMasterSheet extends HSLFSheet implements MasterSheet<HSLFShape,HSLFTextParagraph> {
     public HSLFMasterSheet(SheetContainer container, int sheetNo){
@@ -34,10 +31,19 @@ public abstract class HSLFMasterSheet extends HSLFSheet implements MasterSheet<H
     }
 
     /**
-     * Pickup a style attribute from the master.
-     * This is the "workhorse" which returns the default style attrubutes.
+     * Find the master collection for the given txtype/level/name.
+     * This is the "workhorse" which returns the default style attributes.
+     * If {@code name = "*"} return the current collection, otherwise if the name is not found
+     * in the current selection of txtype/level/name, first try lower levels then try parent types,
+     * if it wasn't found there return {@code null}.
+     * 
+     * @param txtype the {@link TextHeaderAtom} type
+     * @param level the indent level of the paragraph, if the level is not defined for the found
+     *      collection, the highest existing level will be used
+     * @param name the property name, 
+     * @param isCharacter if {@code true} use character styles, otherwise use paragraph styles
      */
-    public abstract TextProp getStyleAttribute(int txtype, int level, String name, boolean isCharacter) ;
+    public abstract TextPropCollection getPropCollection(int txtype, int level, String name, boolean isCharacter);
 
 
     /**

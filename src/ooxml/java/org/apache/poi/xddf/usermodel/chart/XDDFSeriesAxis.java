@@ -21,37 +21,37 @@ import org.apache.poi.util.Beta;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTCatAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartLines;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTCrosses;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumFmt;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTScaling;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTSerAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTickMark;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTUnsignedInt;
 import org.openxmlformats.schemas.drawingml.x2006.chart.STTickLblPos;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 
 @Beta
-public class XDDFCategoryAxis extends XDDFChartAxis {
+public class XDDFSeriesAxis extends XDDFChartAxis {
 
-    private CTCatAx ctCatAx;
+    private CTSerAx ctSerAx;
 
-    public XDDFCategoryAxis(CTPlotArea plotArea, AxisPosition position) {
+    public XDDFSeriesAxis(CTPlotArea plotArea, AxisPosition position) {
         initializeAxis(plotArea, position);
     }
 
-    public XDDFCategoryAxis(CTCatAx ctCatAx) {
-        this.ctCatAx = ctCatAx;
+    public XDDFSeriesAxis(CTSerAx ctSerAx) {
+        this.ctSerAx = ctSerAx;
     }
 
     @Override
     public XDDFShapeProperties getOrAddMajorGridProperties() {
         CTChartLines majorGridlines;
-        if (ctCatAx.isSetMajorGridlines()) {
-            majorGridlines = ctCatAx.getMajorGridlines();
+        if (ctSerAx.isSetMajorGridlines()) {
+            majorGridlines = ctSerAx.getMajorGridlines();
         } else {
-            majorGridlines = ctCatAx.addNewMajorGridlines();
+            majorGridlines = ctSerAx.addNewMajorGridlines();
         }
         return new XDDFShapeProperties(getOrAddLinesProperties(majorGridlines));
     }
@@ -59,10 +59,10 @@ public class XDDFCategoryAxis extends XDDFChartAxis {
     @Override
     public XDDFShapeProperties getOrAddMinorGridProperties() {
         CTChartLines minorGridlines;
-        if (ctCatAx.isSetMinorGridlines()) {
-            minorGridlines = ctCatAx.getMinorGridlines();
+        if (ctSerAx.isSetMinorGridlines()) {
+            minorGridlines = ctSerAx.getMinorGridlines();
         } else {
-            minorGridlines = ctCatAx.addNewMinorGridlines();
+            minorGridlines = ctSerAx.addNewMinorGridlines();
         }
         return new XDDFShapeProperties(getOrAddLinesProperties(minorGridlines));
     }
@@ -70,10 +70,10 @@ public class XDDFCategoryAxis extends XDDFChartAxis {
     @Override
     public XDDFShapeProperties getOrAddShapeProperties() {
         CTShapeProperties properties;
-        if (ctCatAx.isSetSpPr()) {
-            properties = ctCatAx.getSpPr();
+        if (ctSerAx.isSetSpPr()) {
+            properties = ctSerAx.getSpPr();
         } else {
-            properties = ctCatAx.addNewSpPr();
+            properties = ctSerAx.addNewSpPr();
         }
 
         return new XDDFShapeProperties(properties);
@@ -111,42 +111,42 @@ public class XDDFCategoryAxis extends XDDFChartAxis {
 
     @Override
     public void crossAxis(XDDFChartAxis axis) {
-        ctCatAx.getCrossAx().setVal(axis.getId());
+        ctSerAx.getCrossAx().setVal(axis.getId());
     }
 
     @Override
     protected CTUnsignedInt getCTAxId() {
-        return ctCatAx.getAxId();
+        return ctSerAx.getAxId();
     }
 
     @Override
     protected CTAxPos getCTAxPos() {
-        return ctCatAx.getAxPos();
+        return ctSerAx.getAxPos();
     }
 
     @Override
     public boolean hasNumberFormat() {
-        return ctCatAx.isSetNumFmt();
+        return ctSerAx.isSetNumFmt();
     }
 
     @Override
     protected CTNumFmt getCTNumFmt() {
-        if (ctCatAx.isSetNumFmt()) {
-            return ctCatAx.getNumFmt();
+        if (ctSerAx.isSetNumFmt()) {
+            return ctSerAx.getNumFmt();
         }
-        return ctCatAx.addNewNumFmt();
+        return ctSerAx.addNewNumFmt();
     }
 
     @Override
     protected CTScaling getCTScaling() {
-        return ctCatAx.getScaling();
+        return ctSerAx.getScaling();
     }
 
     @Override
     protected CTCrosses getCTCrosses() {
-        CTCrosses crosses = ctCatAx.getCrosses();
+        CTCrosses crosses = ctSerAx.getCrosses();
         if (crosses == null) {
-            return ctCatAx.addNewCrosses();
+            return ctSerAx.addNewCrosses();
         } else {
             return crosses;
         }
@@ -154,39 +154,31 @@ public class XDDFCategoryAxis extends XDDFChartAxis {
 
     @Override
     protected CTBoolean getDelete() {
-        return ctCatAx.getDelete();
+        return ctSerAx.getDelete();
     }
 
     @Override
     protected CTTickMark getMajorCTTickMark() {
-        return ctCatAx.getMajorTickMark();
+        return ctSerAx.getMajorTickMark();
     }
 
     @Override
     protected CTTickMark getMinorCTTickMark() {
-        return ctCatAx.getMinorTickMark();
-    }
-
-    public AxisLabelAlignment getLabelAlignment() {
-        return AxisLabelAlignment.valueOf(ctCatAx.getLblAlgn().getVal());
-    }
-
-    public void setLabelAlignment(AxisLabelAlignment labelAlignment) {
-        ctCatAx.getLblAlgn().setVal(labelAlignment.underlying);
+        return ctSerAx.getMinorTickMark();
     }
 
     private void initializeAxis(CTPlotArea plotArea, AxisPosition position) {
         final long id = getNextAxId(plotArea);
-        ctCatAx = plotArea.addNewCatAx();
-        ctCatAx.addNewAxId().setVal(id);
-        ctCatAx.addNewAxPos();
-        ctCatAx.addNewScaling();
-        ctCatAx.addNewCrosses();
-        ctCatAx.addNewCrossAx();
-        ctCatAx.addNewTickLblPos().setVal(STTickLblPos.NEXT_TO);
-        ctCatAx.addNewDelete();
-        ctCatAx.addNewMajorTickMark();
-        ctCatAx.addNewMinorTickMark();
+        ctSerAx = plotArea.addNewSerAx();
+        ctSerAx.addNewAxId().setVal(id);
+        ctSerAx.addNewAxPos();
+        ctSerAx.addNewScaling();
+        ctSerAx.addNewCrosses();
+        ctSerAx.addNewCrossAx();
+        ctSerAx.addNewTickLblPos().setVal(STTickLblPos.NEXT_TO);
+        ctSerAx.addNewDelete();
+        ctSerAx.addNewMajorTickMark();
+        ctSerAx.addNewMinorTickMark();
 
         setPosition(position);
         setOrientation(AxisOrientation.MIN_MAX);
