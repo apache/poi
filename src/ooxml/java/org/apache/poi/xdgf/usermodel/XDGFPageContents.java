@@ -46,9 +46,7 @@ public class XDGFPageContents extends XDGFBaseContents {
         try {
             try {
                 _pageContents = PageContentsDocument.Factory.parse(getPackagePart().getInputStream()).getPageContents();
-            } catch (XmlException e) {
-                throw new POIXMLException(e);
-            } catch (IOException e) {
+            } catch (XmlException | IOException e) {
                 throw new POIXMLException(e);
             }
 

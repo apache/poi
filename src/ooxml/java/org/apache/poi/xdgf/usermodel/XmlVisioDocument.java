@@ -26,7 +26,6 @@ import java.util.List;
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
@@ -67,9 +66,7 @@ public class XmlVisioDocument extends POIXMLDocument {
 
         try {
             document = VisioDocumentDocument1.Factory.parse(getPackagePart().getInputStream()).getVisioDocument();
-        } catch (XmlException e) {
-            throw new POIXMLException(e);
-        } catch (IOException e) {
+        } catch (XmlException | IOException e) {
             throw new POIXMLException(e);
         }
 
@@ -84,7 +81,7 @@ public class XmlVisioDocument extends POIXMLDocument {
     }
 
     @Override
-    protected void onDocumentRead() throws IOException {
+    protected void onDocumentRead() {
 
         // by the time this gets called, all other document parts should
         // have been loaded, so it's safe to build the document structure
@@ -112,7 +109,7 @@ public class XmlVisioDocument extends POIXMLDocument {
      * Not currently implemented
      */
     @Override
-    public List<PackagePart> getAllEmbedds() throws OpenXML4JException {
+    public List<PackagePart> getAllEmbedds() {
         return new ArrayList<>();
     }
 

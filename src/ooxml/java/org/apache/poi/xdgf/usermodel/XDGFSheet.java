@@ -127,7 +127,7 @@ public abstract class XDGFSheet {
     }
 
     public Color getFontColor() {
-        Color fontColor = null;
+        Color fontColor;
 
         if (_character != null) {
             fontColor = _character.getFontColor();
@@ -143,7 +143,7 @@ public abstract class XDGFSheet {
     }
 
     public Double getFontSize() {
-        Double fontSize = null;
+        Double fontSize;
 
         if (_character != null) {
             fontSize = _character.getFontSize();

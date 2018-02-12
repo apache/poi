@@ -27,7 +27,6 @@ import java.util.Map;
 
 import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xdgf.exceptions.XDGFException;
 import org.apache.poi.xdgf.usermodel.shape.ShapeRenderer;
@@ -112,7 +111,7 @@ public class XDGFBaseContents extends XDGFXMLDocumentPart {
     /**
      * Draws the contents of a page onto a Graphics2D object
      *
-     * @param graphics
+     * @param graphics The context to draw on.
      */
     public void draw(Graphics2D graphics) {
         visitShapes(new ShapeRenderer(graphics));

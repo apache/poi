@@ -48,9 +48,7 @@ public class GeometryRowFactory {
             _rowTypes.put("RelQuadBezTo", RelQuadBezTo.class, RowType.class);
             _rowTypes.put("SplineKnot", SplineKnot.class, RowType.class);
             _rowTypes.put("SplineStart", SplineStart.class, RowType.class);
-        } catch (NoSuchMethodException e) {
-            throw new POIXMLException("Internal error", e);
-        } catch (SecurityException e) {
+        } catch (NoSuchMethodException | SecurityException e) {
             throw new POIXMLException("Internal error", e);
         }
 
