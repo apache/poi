@@ -79,7 +79,6 @@ public class TestHSSFSheetShiftColumns extends BaseTestSheetShiftColumns {
         // so that original method from BaseTestSheetShiftColumns can be executed. 
         // After removing, you can re-add 'final' keyword to specification of original method. 
     }
-
     @Override
     @Ignore("see <https://bz.apache.org/bugzilla/show_bug.cgi?id=62030>")
     @Test

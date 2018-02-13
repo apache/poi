@@ -31,5 +31,4 @@ public class TestXSSFColumnShifting extends BaseTestColumnShifting {
     protected void initColumnShifter(){
         columnShifter = new XSSFColumnShifter((XSSFSheet)sheet1);
     }
-
 }

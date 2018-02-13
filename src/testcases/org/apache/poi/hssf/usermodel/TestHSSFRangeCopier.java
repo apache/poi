@@ -16,28 +16,27 @@
  *    limitations under the License.
  * ====================================================================
  */
-package org.apache.poi.xssf.usermodel;
 
-import java.io.IOException;
+package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.ss.usermodel.BaseTestSheetShiftColumns;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.XSSFITestDataProvider;
-import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.hssf.HSSFITestDataProvider;
+import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.ss.usermodel.TestRangeCopier;
+import org.junit.Before;
 
-public class TestXSSFSheetShiftColumns extends BaseTestSheetShiftColumns {
-    public TestXSSFSheetShiftColumns() {
+public class TestHSSFRangeCopier extends TestRangeCopier {
+
+    public TestHSSFRangeCopier() {
         super(); 
-        workbook = new XSSFWorkbook();
-        _testDataProvider = XSSFITestDataProvider.instance; 
+        workbook = new HSSFWorkbook();
+        testDataProvider = HSSFITestDataProvider.instance; 
     }
 
-    protected Workbook openWorkbook(String spreadsheetFileName) throws IOException {
-        return XSSFTestDataSamples.openSampleWorkbook(spreadsheetFileName);
+    @Before
+    public void init() {
+        workbook = HSSFTestDataSamples.openSampleWorkbook("tile range test.xls");
+        initSheets();
+        rangeCopier = new HSSFRangeCopier(sheet1, sheet1);
+        transSheetRangeCopier = new HSSFRangeCopier(sheet1, sheet2);
     }
-
-    protected Workbook getReadBackWorkbook(Workbook wb) {
-        return XSSFTestDataSamples.writeOutAndReadBack(wb);
-    }
-
 }
