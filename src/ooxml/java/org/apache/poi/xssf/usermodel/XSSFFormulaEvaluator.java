@@ -79,6 +79,21 @@ public final class XSSFFormulaEvaluator extends BaseXSSFFormulaEvaluator {
     public static void evaluateAllFormulaCells(XSSFWorkbook wb) {
         BaseFormulaEvaluator.evaluateAllFormulaCells(wb);
     }
+
+    /**
+     * Loops over all cells in all sheets of the supplied
+     *  workbook.
+     * For cells that contain formulas, their formulas are
+     *  evaluated, and the results are saved. The formulas
+     *  in these cells are removed.
+     * For cells that do not contain formulas, no changes
+     *  are made.
+     * This is a helpful wrapper around looping over all
+     *  cells, and calling evaluateFormulaCell on each one.
+     */
+    public static void evaluateAllFormulaCellsInCell(XSSFWorkbook wb) {
+        BaseFormulaEvaluator.evaluateAllFormulaCellsInCell(wb);
+    }
     
     @Override
     public XSSFCell evaluateInCell(Cell cell) {

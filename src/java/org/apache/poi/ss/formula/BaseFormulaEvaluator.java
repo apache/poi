@@ -284,6 +284,35 @@ public abstract class BaseFormulaEvaluator implements FormulaEvaluator, Workbook
         }
     }
 
+    /**
+     * Loops over all cells in all sheets of the supplied
+     *  workbook.
+     * For cells that contain formulas, their formulas are
+     *  evaluated, and the results are saved. The formulas
+     *  in these cells are removed.
+     * For cells that do not contain formulas, no changes
+     *  are made.
+     * This is a helpful wrapper around looping over all
+     *  cells, and calling evaluateFormulaCell on each one.
+     */
+    public static void evaluateAllFormulaCellsInCell(Workbook wb) {
+        FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+        evaluateAllFormulaCellsInCell(wb, evaluator);
+    }
+    protected static void evaluateAllFormulaCellsInCell(Workbook wb, FormulaEvaluator evaluator) {
+        for(int i=0; i<wb.getNumberOfSheets(); i++) {
+            Sheet sheet = wb.getSheetAt(i);
+
+            for(Row r : sheet) {
+                for (Cell c : r) {
+                    if (c.getCellType() == CellType.FORMULA) {
+                        evaluator.evaluateInCell(c);
+                    }
+                }
+            }
+        }
+    }
+
     /** {@inheritDoc} */
     @Override
     public void setIgnoreMissingWorkbooks(boolean ignore){
