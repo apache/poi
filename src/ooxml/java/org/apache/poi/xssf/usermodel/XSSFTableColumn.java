@@ -33,9 +33,28 @@ public class XSSFTableColumn {
     private final CTTableColumn ctTableColumn;
     private XSSFXmlColumnPr xmlColumnPr;
 
+    /**
+     * Create a new table column.
+     *
+     * @param table
+     *            the table which contains the column
+     * @param ctTableColumn
+     *            the table column xmlbean to wrap
+     * @since 4.0.0
+     */
     public XSSFTableColumn(XSSFTable table, CTTableColumn ctTableColumn) {
         this.table = table;
         this.ctTableColumn = ctTableColumn;
+    }
+
+    /**
+     * Get the table which contains this column
+     *
+     * @return the table containing this column
+     * @since 4.0.0
+     */
+    public XSSFTable getTable() {
+        return table;
     }
 
     /**
@@ -70,7 +89,7 @@ public class XSSFTableColumn {
         if (xmlColumnPr == null) {
             CTXmlColumnPr ctXmlColumnPr = ctTableColumn.getXmlColumnPr();
             if (ctXmlColumnPr != null) {
-                xmlColumnPr = new XSSFXmlColumnPr(table, ctTableColumn, ctXmlColumnPr);
+                xmlColumnPr = new XSSFXmlColumnPr(this, ctXmlColumnPr);
             }
         }
         return xmlColumnPr;

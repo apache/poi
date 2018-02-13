@@ -17,7 +17,9 @@
 
 package org.apache.poi.xssf.usermodel.helpers;
 
+import org.apache.poi.util.Removal;
 import org.apache.poi.xssf.usermodel.XSSFTable;
+import org.apache.poi.xssf.usermodel.XSSFTableColumn;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumn;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXmlColumnPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STXmlDataType.Enum;
@@ -33,13 +35,40 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STXmlDataType.Enum;
 public class XSSFXmlColumnPr {
 
     private XSSFTable table;
-    private CTTableColumn ctTableColumn;
+    private XSSFTableColumn tableColumn;
     private CTXmlColumnPr ctXmlColumnPr;
 
+    /**
+     * Create a new XSSFXmlColumnPr (XML column properties) wrapper around a
+     * CTXmlColumnPr.
+     *
+     * @param tableColumn
+     *            table column for which the XML column properties are set
+     * @param ctXmlColumnPr
+     *            the XML column properties xmlbean to wrap
+     */
+    public XSSFXmlColumnPr(XSSFTableColumn tableColumn, CTXmlColumnPr ctXmlColumnPr) {
+        this.table = tableColumn.getTable();
+        this.tableColumn = tableColumn;
+        this.ctXmlColumnPr = ctXmlColumnPr;
+    }
+
+    @Deprecated
+    @Removal(version="4.2")
     public XSSFXmlColumnPr(XSSFTable table, CTTableColumn ctTableColum, CTXmlColumnPr ctXmlColumnPr) {
         this.table = table;
-        this.ctTableColumn = ctTableColum;
+        this.tableColumn = table.getTableColumns().get(table.findColumnIndex(ctTableColum.getName()));
         this.ctXmlColumnPr = ctXmlColumnPr;
+    }
+
+    /**
+     * Get the column for which these XML column properties are set.
+     *
+     * @return the table column
+     * @since 4.0.0
+     */
+    public XSSFTableColumn getTableColumn() {
+        return tableColumn;
     }
 
     public long getMapId() {
@@ -53,10 +82,14 @@ public class XSSFXmlColumnPr {
     /**
      * (see Open Office XML Part 4: chapter 3.5.1.3)
      * 
+     * @deprecated Use {@link XSSFTableColumn#getId()} instead.
+     * 
      * @return An integer representing the unique identifier of this column.
      */
+    @Deprecated
+    @Removal(version="4.2")
     public long getId() {
-        return ctTableColumn.getId();
+        return tableColumn.getId();
     }
 
     /**
