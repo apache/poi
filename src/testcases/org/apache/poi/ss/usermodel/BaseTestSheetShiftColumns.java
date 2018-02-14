@@ -94,7 +94,6 @@ public abstract class BaseTestSheetShiftColumns {
         style.setVerticalAlignment(VerticalAlignment.BOTTOM);
         return style;
     }
-
     @Test
     public void testShiftOneColumnRight() {
         sheet1.shiftColumns(1, 2, 1);
@@ -271,7 +270,6 @@ public abstract class BaseTestSheetShiftColumns {
         // A1:A5 should be moved to B1:B5
         // B1:B3 will be removed
         sheet.shiftColumns(0, 0, 1);
-
         assertEquals(1, sheet.getNumMergedRegions());
         assertEquals(CellRangeAddress.valueOf("B1:B5"), sheet.getMergedRegion(0));
 
@@ -398,6 +396,4 @@ public abstract class BaseTestSheetShiftColumns {
         assertEquals("X", cell.getStringCellValue());
         wb.close();
     }
-
-
 }
