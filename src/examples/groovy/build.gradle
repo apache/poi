@@ -1,0 +1,26 @@
+// Add the POI core and OOXML support dependencies into your gradle build,
+//  along with all of Groovy so it can run as a standalone script
+apply plugin: 'groovy'
+repositories {
+    mavenCentral()
+}
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.4.13'
+    compile 'org.apache.poi:poi:3.17'
+    compile 'org.apache.poi:poi-ooxml:3.17'
+}
+
+// Our files are in the current directory
+sourceSets {
+   main { groovy { srcDirs = ['.'] } }
+}
+
+// Run out read demo by default
+tasks.withType(JavaExec) {
+   classpath = sourceSets.main.runtimeClasspath
+}
+task runScript(type: JavaExec) {
+    main = "SpreadSheetDemo"
+    args = ["../../../test-data/spreadsheet/Simple.xls"]
+}
+defaultTasks 'runScript'
