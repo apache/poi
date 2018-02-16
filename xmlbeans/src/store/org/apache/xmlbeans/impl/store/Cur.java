@@ -3466,28 +3466,36 @@ final class Cur
 
         String s = CharUtil.getString( src, off, cch );
 
-        for ( int i = 0 ; i < s.length() ; i++ )
+        for ( int i = 0 ; i < s.length(); )
         {
-            if (i== 36)
+            if (i == 36)
             {
                 o.print( "..." );
                 break;
             }
 
-            char ch = s.charAt( i );
-
-            if (ch >= 32 && ch < 127)
-                o.print( ch );
-            else if (ch == '\n')
-                o.print( "\\n" );
-            else if (ch == '\r')
-                o.print( "\\r" );
-            else if (ch == '\t')
-                o.print( "\\t" );
-            else if (ch == '\"')
-                o.print( "\\\"" );
-            else
-                o.print( "<#" + ((int) ch) + ">" );
+            int codePoint = s.codePointAt( i );
+            char[] chars = Character.toChars(codePoint);
+            
+            if ( chars.length == 1 ) {
+                char ch = chars[0];
+                if (ch >= 32 && ch < 127)
+                    o.print( ch );
+                else if (ch == '\n')
+                    o.print( "\\n" );
+                else if (ch == '\r')
+                    o.print( "\\r" );
+                else if (ch == '\t')
+                    o.print( "\\t" );
+                else if (ch == '\"')
+                    o.print( "\\\"" );
+                else
+                    o.print( "<#" + ((int) ch) + ">" );
+            } else {
+                o.print( "<#" + codePoint + ">" );
+            }
+            
+            i += Character.charCount(codePoint);
         }
 
         o.print( "\"" );
