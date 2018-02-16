@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema
+    targetNamespace="urn:test-date-attribute"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="urn:test-date-attribute" elementFormDefault="qualified"
+    attributeFormDefault="unqualified" version="1">
+    <xsd:simpleType name="testDatewTZone">
+        <xsd:restriction base="xsd:date">
+            <xsd:minInclusive value="1970-01-01"/>
+            <xsd:maxInclusive value="2049-12-31"/>
+            <xsd:pattern value="\d\d\d\d-\d\d-\d\d"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:element name="TestElementWithDateAttribute">
+        <xsd:complexType>
+            <xsd:attribute name="SomeDate" type="testDatewTZone" use="required"/>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

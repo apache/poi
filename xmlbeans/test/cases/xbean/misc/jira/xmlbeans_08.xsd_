@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+        elementFormDefault="qualified">
+
+<xsd:element name="speaktest" type="speaktest"/>
+
+<xsd:group name="speaktest.class">
+        <xsd:sequence>
+            <xsd:choice minOccurs="0" maxOccurs="unbounded">
+                <xsd:element name="metadata">
+                    <xsd:complexType>
+                        <xsd:choice minOccurs="0" maxOccurs="unbounded">
+                            <xsd:any namespace="##other" processContents="lax"/>
+                        </xsd:choice>
+                        <xsd:anyAttribute namespace="##any"
+processContents="strict"/>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:choice>
+        </xsd:sequence>
+    </xsd:group>
+
+<xsd:complexType name="speaktest" mixed="true">
+        <xsd:group ref="speaktest.class"/>
+    </xsd:complexType>
+
+</xsd:schema>

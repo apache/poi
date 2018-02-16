@@ -1,0 +1,21 @@
+<xsd:schema
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://xbean/scomp/derivation/SimpleTypeRestriction"
+    targetNamespace="http://xbean/scomp/derivation/SimpleTypeRestriction"
+    xmlns:base="http://xbean/scomp/contentType/SimpleType"
+    >
+
+      <xsd:import namespace="http://xbean/scomp/contentType/SimpleType"
+    schemaLocation="../contentType/SimpleType.xsd"/>
+
+   <!--Pattern Restriction-->
+    <xsd:simpleType name="SmallPantSize">
+        <xsd:restriction base="base:PantSize">
+            <xsd:minInclusive value="0"/>
+            <xsd:maxInclusive value="8"/>
+            <xsd:pattern value="\d{1}" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:element name="SmallPantSizeElt" type="SmallPantSize"/>
+</xsd:schema>

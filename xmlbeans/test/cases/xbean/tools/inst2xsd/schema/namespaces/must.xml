@@ -1,0 +1,6 @@
+<a xmlns="namespace_uri" >
+    <x xmlns="x_uri" >
+	<a xmlns="namespace_uri" ></a>
+    </x>
+</a>
+

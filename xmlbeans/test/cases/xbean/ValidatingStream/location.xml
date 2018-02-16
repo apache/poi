@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<lo:Location xmlns:lo="http://openuri.org/test/Location"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<lo:CityName>Bellevue</lo:CityName>
+	<lo:StateCode>WA</lo:StateCode>
+	<lo:PostalCode>98033</lo:PostalCode>
+	<lo:CountryCode>USA</lo:CountryCode>
+	<lo:LocationIdentifier>NA</lo:LocationIdentifier>
+	<lo:SubdivisionCode>1234</lo:SubdivisionCode>
+</lo:Location>

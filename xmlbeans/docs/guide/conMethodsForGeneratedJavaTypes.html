@@ -1,0 +1,275 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<!-- Copyright 2004 The Apache Software Foundation
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License. -->
+<html>
+<head>
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Methods for Types Generated From Schema</title>
+<!-- InstanceEndEditable -->
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=Content-Type content="text/html; charset=$CHARSET;">
+
+
+<!-- InstanceBeginEditable name="metatags" -->
+
+<meta name="component" content="">
+<!-- In the description metatag, please provide a BRIEF description of the topic contents. -->
+<meta name="description" content="">
+<!-- In the component metatag, please list keywords that will help a user search for this topic. -->
+<meta name="keywords" content="">
+<!-- InstanceEndEditable -->
+
+<!--(Links)=========================================================-->
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<link href="../xmlbeans.css" rel="stylesheet" type="text/css">
+<a href="../../../core/index.html" id="index"></a>
+<script language="JavaScript" src="../../../core/topicInfo.js"></script>
+<script language="JavaScript" src="../../../core/CookieClass.js"></script>
+<script language="JavaScript" src="../../../core/displayContent.js"></script>
+</head>
+
+<!--(Body)==========================================================-->
+<body>
+<script language="JavaScript">
+
+</script>
+<!-- InstanceBeginEditable name="body" -->
+<div id=topictitle>
+  <p class=Title>Methods for Types Generated From Schema</p>
+</div>
+<div id=topictext>
+  <p>As you may have seen in <a href="conGettingStartedwithXMLBeans.html">Getting
+    Started with XMLBeans</a>, you use the types generated from schema to access
+    XML instances based on the schema. If you're familiar with the JavaBeans technology,
+    the conventions used in the generated API will be recognizable. </p>
+  <p>In general, elements and attributes are treated as &quot;properties&quot;
+    in the JavaBeans sense. In other words, as you would with JavaBeans properties,
+    you manipulate parts of the XML through accessor methods such as getCustomer()
+    (where you have a &quot;customer&quot; element), setId(String) (where you
+    have an &quot;id&quot; attribute), and so on. However, because schema structures
+    can be somewhat complex, XMLBeans provides several other method styles for
+    handling those structures in XML instances.</p>
+  <div>
+    <h2>Prototypes for Methods in Generated Interfaces</h2>
+    <p>Several methods are generated for each element or attribute within the
+      complex type. This topic lists each method that could be generated for a
+      given element or attribute. </p>
+    <p>Note that whether or not a given method is generated is based on how the
+      element or attribute is defined in schema. For example, a customer element
+      definition with a <span class="langinline">maxOccurs</span> attribute value
+      of 1 will result in a getCustomer method, but not a getCustomerArray method
+      &#8212; after all, only one customer element is possible in an instance
+      document.</p>
+    <p>Note, too, that there may be two sets of parallel methods: one whose prototype
+      starts with an &quot;x&quot;. An &quot;x&quot; method such as xgetName or
+      xsetName would be generated for elements or attribute whose type is a simple
+      type. A simple type may be one of the 44 built-in simple types or may be
+      a restriction in schema of one of those built-in types. Of course, an attribute
+      will always be of a simple type. For built-in simple types, an &quot;x&quot;
+      method will get or set one of the types provided with XMLBeans, such as
+      <span class="langinline"><a href="../reference/org/apache/xmlbeans/XmlString.html">XmlString</a></span>,
+      <span class="langinline"><a href="../reference/org/apache/xmlbeans/XmlInteger.html">XmlInteger</a></span>,
+      <span class="langinline"><a href="../reference/org/apache/xmlbeans/XmlGDay.html">XmlGDay</a></span>,
+      and so on. For derived types, the &quot;x&quot; method will get or set a
+      generated type.</p>
+    <h3>Single Occurrence Methods</h3>
+    <p>Methods generated for elements or attributes that allow a single occurrence.
+      An element is singular if it was declared with maxOccurs=&quot;1&quot;.
+      An attribute is singular if it was not declared with use=&quot;prohibited&quot;.</p>
+    <pre>
+Type getFoo()
+void setFoo(Type newValue)
+</pre>
+  </div>
+  <blockquote>
+    <div>Returns or sets the value of Foo. Generated when Foo is an attribute,
+      or is an element that can occur only once as a child.</div>
+  </blockquote>
+  <div>
+    <hr size="1">
+    <pre>XmlType xgetFoo()
+void xsetFoo(XmlType newValue)</pre>
+  </div>
+  <blockquote>
+    <div>Returns or sets the value of Foo as an XMLBean simple type. These methods
+      are generated if Foo's type is defined in schema as a simpleType.</div>
+  </blockquote>
+  <div>
+    <hr size="1">
+    <pre>boolean isNilFoo()
+void setNilFoo()</pre>
+  </div>
+  <blockquote>
+    <div>Determines or specifies whether the Foo element is nil (in other words,
+      &quot;null&quot; in schema terms), meaning it can be empty. A nil element
+      looks something like this:</div>
+    <div>
+      <pre>&lt;foo/&gt;</pre>
+    </div>
+    <div>These methods are only generated when an element type is declared as
+      nillable in schema &#8212; it has a nillable=&quot;true&quot; attribute.</div>
+  </blockquote>
+  <div>
+    <hr size="1">
+    <pre>XmlType addNewFoo()</pre>
+  </div>
+  <blockquote>
+    <div>Adds a new Foo as an XMLBean simple to the document, or returns Foo's
+      value if one exists already.</div>
+  </blockquote>
+  <div>
+    <hr size="1">
+    <pre>boolean isSetFoo()
+void unSetFoo()</pre>
+  </div>
+  <blockquote>
+    <div>Determines whether the Foo element or attribute exists in the document;
+      removes Foo. These methods are generated for elements and attributes that
+      are optional. In schema, and optional element has an <span class="langinline">minOccurs</span>
+      attribute set to &quot;0&quot;; an optional attribute has a <span class="langinline">use</span>
+      attribute set to &quot;optional&quot;.</div>
+  </blockquote>
+  <div>
+    <hr size="1">
+    <h3>Multiple Occurrence Methods</h3>
+    <p>Methods generated for elements that allow multiple occurrences. </p>
+    <p>An element may occur multiple times if it has a <span class="langinline">maxOccurs</span>
+      attribute set to &quot;unbounded&quot; or greater than 1. Attributes can't
+      occur multiple times.</p>
+    <pre>Type[] getFooArray()
+void setFooArray(Type[] newValue) </pre>
+  </div>
+  <blockquote>
+    <div>Returns or sets all of the Foo elements. </div>
+    <div>
+      <pre>
+// Get an array of the all of the purchase-order elements item children.
+Item[] items = myPO.getItemArray();
+</pre>
+    </div>
+  </blockquote>
+  <div>
+    <hr size="1">
+    <pre>Type getFooArray(int index)
+void setFooArray(Type newValue, int index)</pre>
+  </div>
+  <blockquote>
+    <div>Returns or sets the Foo child element at the specified index.</div>
+    <div>
+      <pre>// Sets the value of the third item child element.
+myPO.setItem(newItem, 2);</pre>
+    </div>
+  </blockquote>
+  <div>
+    <hr size="1">
+    <pre>int sizeOfFooArray()</pre>
+  </div>
+  <blockquote>
+    <div>Returns the number of Foo child elements.</div>
+    <div>
+      <pre>// Returns the number of item child elements.
+int itemCount = myPO.sizeOfItemArray();</pre>
+    </div>
+  </blockquote>
+  <div>
+    <hr size="1">
+    <pre>void removeFoo(int index)</pre>
+  </div>
+  <blockquote>
+    <div>Removes the Foo child element at the specified index.</div>
+  </blockquote>
+  <div>
+    <hr size="1">
+    <pre>XmlType[] xgetFooArray()
+void xsetFooArray(XmlType[] arrayOfNewValues)</pre>
+  </div>
+  <blockquote>
+    <div>Returns or sets all of the Foo elements as XMLBeans simple types. Generated
+      only when the Foo element is defined as a simple type.</div>
+    <div>
+      <pre>/*
+ * Returns values of all the phone child elements of an employee element,
+ * where the phone element has been defined as xs:string.
+ */
+XmlString[] empPhones = currentEmployee.xGetPhoneArray();
+</pre>
+    </div>
+  </blockquote>
+  <div>
+    <hr size="1">
+    <pre>XmlType xgetFooArray(int index)
+void xsetFooArray(int index, XmlType newValue)</pre>
+  </div>
+  <blockquote>
+    <div>Returns or sets the Foo element at the specified index, using an XMLBeans
+      simple type value. Generated for an element defined as a simple type in
+      schema.</div>
+  </blockquote>
+  <div>
+    <hr size="1">
+    <pre>void insertFoo(int index, FooType newValue)</pre>
+  </div>
+  <blockquote>
+    <div>Inserts the specified Foo child element at the specified index.</div>
+  </blockquote>
+  <div>
+    <hr size="1">
+    <pre>void addFoo(FooType newValue)</pre>
+  </div>
+  <blockquote>
+    <div>Adds the specified Foo to the end of the list of Foo child elements.</div>
+  </blockquote>
+  <div>
+    <hr size="1">
+    <pre>XmlType insertNewFoo(int index)</pre>
+  </div>
+  <blockquote>
+    <div>Inserts a new Foo at the specified index, returning an XMLBeans simple
+      type representing the new element; returns the existing Foo if there's already
+      one at index.</div>
+  </blockquote>
+  <div>
+    <hr size="1">
+    <pre>XmlType addNewFoo()</pre>
+  </div>
+  <blockquote>
+    <div>Adds a new Foo element to the end of the list of Foo child elements,
+      returning an XMLBeans simple type representing the newly added element.</div>
+  </blockquote>
+  <div>
+    <hr size="1">
+    <pre>boolean isNilFooArray(int index)
+void setNilFooArray(int index)</pre>
+  </div>
+  <blockquote>
+    <div>Determines or specifies whether the Foo element at the specified index
+      is nil.</div>
+  </blockquote>
+  <div>
+    <hr size="1">
+  </div>
+  <div id="topictext"></div>
+  <p class=relatedtopics>Related Topics</p>
+  <p><a href="conJavaTypesGeneratedFromUserDerived.html">Java Types Generated
+    from User-Derived Schema Types</a></p>
+</div>
+<!-- InstanceEndEditable -->
+<script language="JavaScript">
+
+</script>
+</body>
+</html>

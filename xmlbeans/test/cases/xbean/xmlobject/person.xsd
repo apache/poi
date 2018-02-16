@@ -1,0 +1,104 @@
+<xs:schema
+   xmlns:xs="http://www.w3.org/2001/XMLSchema"
+   xmlns:mt="http://openuri.org/xstypes/test"
+   targetNamespace="http://openuri.org/xstypes/test"
+   elementFormDefault="qualified"
+   attributeFormDefault="unqualified" >
+
+  <xs:notation name="jpeg" public="JPEG" />
+  <xs:notation name="gif" public="GIF" />
+
+  <xs:complexType name="person">
+    <xs:sequence>
+      <xs:element name="firstname" type="xs:string"/>
+      <xs:choice maxOccurs="unbounded">
+        <xs:element name="number">
+           <xs:simpleType>
+             <xs:restriction base="xs:integer">
+               <xs:minInclusive value="1"/>
+               <xs:maxInclusive value="1000"/>
+             </xs:restriction>
+           </xs:simpleType>
+        </xs:element>
+        <xs:element name="birthday" type="xs:date"/>
+        <!-- test that int-value does not collide with getIntValue() on SimpleValue -->
+        <xs:element name="int-value" type="xs:int"/>
+      </xs:choice>
+      <xs:element name="hex" type="xs:hexBinary"/>
+      <xs:element name="base64" type="xs:base64Binary"/>
+      <xs:element name="anyuri" type="xs:anyURI"/>
+      <xs:element name="qname" type="xs:QName"/>
+      <xs:element name="notation">
+        <xs:simpleType>
+          <xs:restriction base="xs:NOTATION">
+            <xs:enumeration value="jpeg" />
+            <xs:enumeration value="gif" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="gender">
+      <xs:simpleType>
+        <xs:restriction base="xs:NMTOKEN">
+          <xs:enumeration value="male"/>
+          <xs:enumeration value="female"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="hexAtt">
+      <xs:simpleType>
+        <xs:restriction base="xs:hexBinary">
+          <xs:pattern value="([45][0-9A-F])*"/>
+       </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="base64Att">
+      <xs:simpleType>
+        <xs:restriction base="xs:base64Binary">
+          <xs:whiteSpace value="collapse"/>
+          <xs:enumeration value="VGhpcyBzdHJpbmcgaXMgYmFzZTY0QmluYXJ5IGVuY29kZWQh"/>
+       </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="anyuriAtt">
+      <xs:simpleType>
+        <xs:restriction base="xs:anyURI">
+          <xs:whiteSpace value="collapse"/>
+          <xs:length value="100"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="qnameAtt">
+      <xs:simpleType>
+        <xs:restriction base="xs:QName">
+          <xs:whiteSpace value="collapse"/>
+       </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="notationAtt">
+      <xs:simpleType>
+        <xs:restriction base="xs:NOTATION">
+          <xs:enumeration value="jpeg"/>
+          <xs:enumeration value="gif"/>
+          <xs:length value="20"/>
+       </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:element name="customer" type="mt:person"/>
+
+  <xs:element name="employee">
+    <xs:complexType>
+      <xs:complexContent>
+        <xs:extension base="mt:person">
+          <xs:sequence>
+            <xs:element name="eid" type="xs:int"/>
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>
+

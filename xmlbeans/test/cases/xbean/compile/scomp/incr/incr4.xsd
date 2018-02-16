@@ -1,0 +1,11 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="tnsadvanced" xmlns:r="tnsrecord" xmlns:i="ids">
+    <xs:import namespace="tnsrecord" schemaLocation="incr2.xsd"/>
+    <xs:import namespace="ids" schemaLocation="incr3.xsd"/>
+    <xs:complexType name="adv_record">
+        <xs:complexContent>
+            <xs:extension base="r:record">
+                <xs:attribute ref="i:id"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+</xs:schema>

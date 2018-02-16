@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--
+    Copyright 2004 The Apache Software Foundation
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<html>
+<head>
+</head>
+<body bgcolor="white">
+
+Provides classes for XML Beans schema, infoset, xpath, and xquery handling.
+
+<p>
+The XML Beans API is designed to work with the XML Beans <em>schema compiler</em>.
+The schema compiler produces XML Bean classes that extend and interact
+with the basic XML Bean classes and interfaces in this package.  It is
+also possible to use XML Beans without the schema compiler to manipulate
+and validate XML in a late-bound way (with no types, or with
+runtime-loaded types only).
+
+<p>
+This package contains:
+<ol>
+<li>All the built-in XML Bean classes 
+such as {@link org.apache.xmlbeans.XmlObject}, {@link org.apache.xmlbeans.XmlAnySimpleType}, and
+{@link org.apache.xmlbeans.XmlInt}
+(one for each of the 
+<a target="_blank" href="http://www.w3.org/TR/xmlschema-2/#built-in-datatypes">46 built-in XML Schema types</a>).
+<li>Support for full XML infoset, XPath, and XQuery
+(via {@link org.apache.xmlbeans.XmlCursor}, {@link org.apache.xmlbeans.XmlObject#selectPath} and related methods).
+<li>Support for computation using XML Schema data types (via datatype
+classes such as {@link org.apache.xmlbeans.GDuration}).
+<li>Support for working with XML Schema type metadata itself
+(via {@link org.apache.xmlbeans.SchemaType}, {@link org.apache.xmlbeans.SchemaTypeSystem}, and related classes).
+</ol>
+
+<p>
+The place to begin when working with the XML Beans API is the following
+fundamental classes:
+
+<ol>
+<li>{@link org.apache.xmlbeans.XmlObject} is the base class for all XML Beans.
+<li>{@link org.apache.xmlbeans.XmlObject.Factory} is used to load and create XML Bean instances.
+Each XML Bean class has its own nested factory class.
+<li>{@link org.apache.xmlbeans.XmlCursor} is an efficient treewalking API for the full XML infoset.
+<li>{@link org.apache.xmlbeans.SchemaType} is the type metadata interface for XML Schema types
+<li>{@link org.apache.xmlbeans.XmlBeans} provides a collection of utility functions.
+</ol>
+
+</body>
+</html>

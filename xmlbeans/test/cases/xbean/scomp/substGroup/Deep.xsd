@@ -1,0 +1,81 @@
+<xsd:schema
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://xbean/scomp/substGroup/Deep"
+    targetNamespace="http://xbean/scomp/substGroup/Deep"
+
+    >
+     <!--  elementFormDefault="qualified"   -->
+    <xsd:simpleType name="colorType">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="blue|white|purple|green"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="colorTypeRest">
+        <xsd:restriction base="colorType">
+            <xsd:pattern value="blue|white"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="funcolorType">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="yellow|green|red"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="ItemType">
+        <xsd:sequence>
+            <xsd:element ref="product" maxOccurs="3"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="productType">
+        <xsd:sequence>
+            <xsd:element name="number" type="xsd:token"/>
+            <xsd:element name="name" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="shirtType">
+        <xsd:complexContent>
+            <xsd:extension base="productType">
+                <xsd:sequence>
+                    <xsd:element name="size" type="xsd:positiveInteger"/>
+                     <xsd:element name="color" type="colorType"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="businessShirtType">
+        <xsd:complexContent>
+            <xsd:restriction base="shirtType">
+                <xsd:sequence>
+                    <xsd:element name="number" type="xsd:token"/>
+                    <xsd:element name="name" type="xsd:string"/>
+                    <xsd:element name="size" type="xsd:positiveInteger"/>
+                    <xsd:element name="color" type="colorTypeRest"/>
+                </xsd:sequence>
+            </xsd:restriction>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="businessCasualShirtType">
+        <xsd:complexContent>
+            <xsd:extension base="businessShirtType">
+                <xsd:sequence>
+                    <xsd:element name="pokadotColor" type="funcolorType"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+
+    <xsd:element name="businessShirt" substitutionGroup="shirt"/>
+    <xsd:element name="casualBShirt" type="businessCasualShirtType"
+        substitutionGroup="businessShirt"/>
+    <xsd:element name="umbrella" substitutionGroup="product"/>
+    <xsd:element name="shirt" type="shirtType" substitutionGroup="product"/>
+    <xsd:element name="product" type="productType"/>
+    <xsd:element name="items" type="ItemType"/>
+</xsd:schema>
