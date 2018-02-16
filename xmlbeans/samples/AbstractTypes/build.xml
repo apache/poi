@@ -1,0 +1,108 @@
+<?xml version="1.0"?>
+
+<project name="abstracttypes" basedir="." default="build-run" >
+
+    <!-- ===================================================================
+       - Properties
+      -->
+
+    <property environment="env"/>
+
+    <target name="init">
+        <property name="xmlbeans.home" value="${env.XMLBEANS_HOME}"/>
+        <echo message="xmlbeans.home: ${xmlbeans.home}"/>
+
+        <!-- check for xbean.jar from binary distribution -->
+        <available
+            property="xmlbeans.lib"
+            value="${xmlbeans.home}/lib"
+            file="${xmlbeans.home}/lib/xbean.jar" />
+
+        <!-- check for xbean.jar compiled from source -->
+        <available
+            property="xmlbeans.lib"
+            value="${xmlbeans.home}/build/lib"
+            file="${xmlbeans.home}/build/lib/xbean.jar" />
+
+        <fail message="Set XMLBEANS_HOME in your enviornment."
+            unless="xmlbeans.lib"/>
+
+        <echo message="xmlbeans.lib: ${xmlbeans.lib}"/>
+        <path id="xmlbeans.classpath">
+            <fileset dir="${xmlbeans.lib}" includes="xbean.jar,xmlbeans-qname.jar,jsr173_1.0_api.jar"/>
+        </path>
+
+        <taskdef name="scomp"
+            classname="org.apache.xmlbeans.impl.tool.XMLBean"
+            classpathref="xmlbeans.classpath"/>
+    </target>
+
+    <property name="abstract.jar" value="abstractbase.jar"/>
+    <property name="myfigures.jar" value="mytypes.jar"/>
+
+    <target name="build-run" depends="build,run"/>
+
+    <target name="schemas.abstract.check">
+        <uptodate property="schemas.abstract.notRequired" targetfile="build/${abstract.jar}">
+            <srcfiles dir="schemas" includes="abstractBase.xsd"/>
+        </uptodate>
+    </target>
+
+    <target name="build.check">
+        <uptodate property="build.notRequired" targetfile="build/org/apache/xmlbeans/samples/abstracttypes/AbstractTypes.class">
+            <srcfiles dir="." includes="schemas/*.xsd,src/**/*.java"/>
+        </uptodate>
+    </target>
+
+    <target name="schemas.abstract" depends="init,schemas.abstract.check" unless="schemas.abstract.notRequired">
+        <mkdir dir="build"/>
+        <scomp schema="schemas/abstractBase.xsd" destfile="build/${abstract.jar}">
+            <classpath>
+                <path refid="xmlbeans.classpath"/>
+            </classpath>
+        </scomp>
+    </target>
+
+    <target name="build" depends="init,schemas.abstract,build.check" unless="build.notRequired">
+        <scomp schema="schemas/myfigures.xsd" destfile="build/${myfigures.jar}">
+            <classpath>
+                <pathelement location="build/${abstract.jar}"/>
+                <path refid="xmlbeans.classpath"/>
+            </classpath>
+        </scomp>
+        <javac srcdir="src" destdir="build" debug="on" source="1.4">
+            <classpath>
+                <path refid="xmlbeans.classpath"/>
+                <pathelement location="build/${abstract.jar}"/>
+                <pathelement location="build/${myfigures.jar}"/>
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="run" depends="build">
+        <java classname="org.apache.xmlbeans.samples.abstracttypes.AbstractTypes" fork="yes">
+            <classpath>
+                <path refid="xmlbeans.classpath"/>
+                <pathelement location="build/${abstract.jar}"/>
+                <pathelement location="build/${myfigures.jar}"/>
+                <pathelement location="build"/>
+            </classpath>
+        </java>
+    </target>
+
+    <target name="test" depends="build">
+        <echo message="============================== testing AbstractTypes"/>
+        <java classname="org.apache.xmlbeans.samples.abstracttypes.AbstractTypesTest" fork="yes">
+            <classpath>
+                <path refid="xmlbeans.classpath"/>
+                <pathelement location="build/${abstract.jar}"/>
+                <pathelement location="build/${myfigures.jar}"/>
+                <pathelement location="build"/>
+            </classpath>
+        </java>
+    </target>
+
+    <target name="clean">
+        <delete quiet="true" dir="build"/>
+    </target>
+</project>

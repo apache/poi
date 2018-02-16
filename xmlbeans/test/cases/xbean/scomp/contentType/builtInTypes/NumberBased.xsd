@@ -1,0 +1,25 @@
+<xsd:schema
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://xbean/scomp/contentType/builtIn/Number"
+    targetNamespace="http://xbean/scomp/contentType/builtIn/Number"
+    elementFormDefault="qualified"
+    >
+
+
+    <xsd:element name="FloatElt" type="xsd:float"/>
+    <xsd:element name="DoubleElt" type="xsd:double"/>
+    <xsd:element name="DecimalElt" type="xsd:decimal"/>
+      <xsd:element name="IntegerElt" type="xsd:integer"/>
+      <xsd:element name="LongElt" type="xsd:long"/>
+      <xsd:element name="IntElt" type="xsd:int"/>
+       <xsd:element name="ShortElt" type="xsd:short"/>
+       <xsd:element name="ByteElt" type="xsd:byte"/>
+       <xsd:element name="NonPosIntElt" type="xsd:nonPositiveInteger"/>
+    <xsd:element name="NegativeIntElt" type="xsd:negativeInteger"/>
+
+    <xsd:element name="NonNegIntElt" type="xsd:nonNegativeInteger"/>
+     <xsd:element name="UnsignedLongElt" type="xsd:unsignedLong"/>
+     <xsd:element name="UnsignedIntElt" type="xsd:unsignedInt"/>
+     <xsd:element name="UnsignedShortElt" type="xsd:unsignedShort"/>
+     <xsd:element name="UnsignedByteElt" type="xsd:unsignedByte"/>
+ </xsd:schema>

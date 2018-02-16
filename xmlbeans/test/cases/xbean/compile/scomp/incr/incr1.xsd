@@ -1,0 +1,9 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="tnsperson">
+    <xs:complexType name="person">
+        <xs:sequence>
+            <xs:element name="firstname" type="xs:string"/>
+	        <xs:element name="lastname" type="xs:string"/>
+	        <xs:element name="age" type="xs:string"/>
+	    </xs:sequence>
+    </xs:complexType>
+</xs:schema>

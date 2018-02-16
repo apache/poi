@@ -1,0 +1,23 @@
+<xsd:schema
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://xbean/scomp/derivation/ComplexExtension"
+    targetNamespace="http://xbean/scomp/derivation/ComplexExtension"
+    xmlns:base="http://xbean/scomp/contentType/ComplexTypeTest"
+    >
+
+    <xsd:import namespace="http://xbean/scomp/contentType/ComplexTypeTest"
+    schemaLocation="../contentType/ComplexTypeTest.xsd"/>
+
+     <xsd:complexType name="ExtendedMixedT" mixed="true">
+         <xsd:complexContent>
+             <xsd:extension base="base:mixedT">
+                 <xsd:attribute name="extendedAttr" type="xsd:string"/>
+             </xsd:extension>
+         </xsd:complexContent>
+     </xsd:complexType>
+
+
+   <xsd:element name="ExtendedMixedElt" type="ExtendedMixedT"/>
+
+
+</xsd:schema>

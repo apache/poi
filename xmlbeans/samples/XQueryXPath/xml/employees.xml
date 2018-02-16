@@ -1,0 +1,71 @@
+<!--
+Copyright 2004 The Apache Software Foundation
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+ -->
+ <employees xmlns="http://xmlbeans.apache.org/samples/xquery/employees">
+  <employee>
+    <name>Fred Jones</name>
+    <address location="home">
+      <street>900 Aurora Ave.</street>
+      <city>Seattle</city>
+      <state>WA</state>
+      <zip>98115</zip>
+    </address>
+    <address location="work">
+      <street>2011 152nd Avenue NE</street>
+      <city>Redmond</city>
+      <state>WA</state>
+      <zip>98052</zip>
+    </address>
+    <phone location="work">(425)555-5665</phone>
+    <phone location="home">(206)555-5555</phone>
+    <phone location="mobile">(206)555-4321</phone>
+  </employee>
+  <employee>
+    <name>Sally Smith</name>
+    <address location="home">
+      <street>1430 Oak Place</street>
+      <city>Salem</city>
+      <state>OR</state>
+      <zip>97125</zip>
+    </address>
+    <address location="work">
+      <street>765 Main St.</street>
+      <city>Keizer</city>
+      <state>OR</state>
+      <zip>97303</zip>
+    </address>
+    <phone location="work">(503)555-3856</phone>
+    <phone location="home">(503)555-6951</phone>
+    <phone location="mobile">(503)555-5152</phone>
+  </employee>
+  <employee>
+    <name>Gladys Kravitz</name>
+    <address location="home">
+      <street>1313 Mockingbird Lane</street>
+      <city>Seattle</city>
+      <state>WA</state>
+      <zip>98115</zip>
+    </address>
+    <address location="work">
+      <street>2011 152nd Avenue NE</street>
+      <city>Redmond</city>
+      <state>WA</state>
+      <zip>98052</zip>
+    </address>
+    <phone location="work">(425)555-6897</phone>
+    <phone location="home">(206)555-6594</phone>
+    <phone location="mobile">(206)555-7894</phone>
+  </employee>
+</employees>

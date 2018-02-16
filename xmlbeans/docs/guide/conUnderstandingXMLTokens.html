@@ -1,0 +1,189 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<!-- Copyright 2004 The Apache Software Foundation
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License. -->
+<html>
+<head>
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Understanding XML Tokens</title>
+<!-- InstanceEndEditable -->
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=Content-Type content="text/html; charset=$CHARSET;">
+
+
+<!-- InstanceBeginEditable name="metatags" -->
+
+<meta name="component" content="">
+<!-- In the description metatag, please provide a BRIEF description of the topic contents. -->
+<meta name="description" content="">
+<!-- In the component metatag, please list keywords that will help a user search for this topic. -->
+<meta name="keywords" content="">
+<!-- InstanceEndEditable -->
+
+<!--(Links)=========================================================-->
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<link href="../xmlbeans.css" rel="stylesheet" type="text/css">
+<a href="../../../core/index.html" id="index"></a>
+<script language="JavaScript" src="../../../core/topicInfo.js"></script>
+<script language="JavaScript" src="../../../core/CookieClass.js"></script>
+<script language="JavaScript" src="../../../core/displayContent.js"></script>
+</head>
+
+<!--(Body)==========================================================-->
+<body>
+<script language="JavaScript">
+
+</script>
+<!-- InstanceBeginEditable name="body" -->
+<div id=topictitle>
+  <p class=Title>Understanding XML Tokens</p>
+</div>
+<div id=topictext>
+  <p>An XML cursor (an instance of the <a href="../reference/org/apache/xmlbeans/XmlCursor.html"><span class="langinline">XmlCursor</span></a>
+    interface) moves from token to token as your code moves the cursor. When you
+    move a cursor using a method such as <span class="langinline">toParent</span>,
+    <span class="langinline">toFirstAttribute</span>, <span class="langinline">toPrevSibling</span>,
+    and so on, the cursor moves to the token fitting the description. If there
+    is no appropriate token to move to, the cursor remains where it is, and <span class="langinline">false</span>
+    is returned to indicate that it didn't move. For example, if the cursor is
+    at the ENDDOC token (the last tag in the document), a call to the <span class="langinline">toNextSibling</span>
+    method will not move the cursor and will return <span class="langinline">false</span>
+    to indicate that the move was unsuccessful.</p>
+  <p>Note that while you can call the <span class="langinline">XmlCursor.currentTokenType</span>
+    method to find out which token type the cursor is at, you might find it more
+    convenient to use a method such as <span class="langinline">isEnddoc</span>.
+    The <span class="langinline">XmlCursor</span> interface provides several methods
+    that make it easy to discover whether the cursor you're moving is at the token
+    you're looking for. These methods, such as <span class="langinline">isStart</span>,
+    <span class="langinline">isAttr</span>, <span class="langinline">isText</span>,
+    and so on, return a <span class="langinline">boolean</span> value that indicates
+    whether the cursor is at the token type in question.</p>
+  <P>Tokens are represented by constants in the <span class="langinline"><a href="../reference/org/apache/xmlbeans/XmlCursor.TokenType.html">TokenType</a></span>
+    class, an inner class of the <span class="langinline">XmlCursor</span> interface.
+    Each has a constant you can use in switch statements to perform by-token actions.
+    The following table lists the token types:</P>
+  <TABLE id="Table1">
+    <TR>
+      <TD><STRONG>Token Type</STRONG></TD>
+      <TD><STRONG>Switch Constant</STRONG></TD>
+      <TD><STRONG>Description</STRONG></TD>
+    </TR>
+    <TR>
+      <TD>STARTDOC</TD>
+      <TD>INT_STARTDOC</TD>
+      <TD>Represents the start of the XML. Always the first token. The document
+        element itself is represented by a START token, not the STARTDOC token.</TD>
+    </TR>
+    <TR>
+      <TD>ENDDOC </TD>
+      <TD>INT_ENDDOC</TD>
+      <TD>Represents the end of the XML. Always the last token.</TD>
+    </TR>
+    <TR>
+      <TD>START </TD>
+      <TD>INT_START</TD>
+      <TD>Represents the start of an element.</TD>
+    </TR>
+    <TR>
+      <TD>END </TD>
+      <TD>INT_END</TD>
+      <TD>Represents the end of an element. The END token has no value, but marks
+        the element's end.</TD>
+    </TR>
+    <TR>
+      <TD>TEXT</TD>
+      <TD>INT_TEXT</TD>
+      <TD>Represents text.</TD>
+    </TR>
+    <TR>
+      <TD>ATTR </TD>
+      <TD>INT_ATTR</TD>
+      <TD>Represents an attribute. ATTR tokens are allowed to appear after a STARTDOC
+        or START token.</TD>
+    </TR>
+    <TR>
+      <TD>NAMESPACE</TD>
+      <TD>INT_NAMESPACE</TD>
+      <TD>Represents a namespace (xmlns) attribute. Also only allowed after START
+        or STARTDOC tokens.</TD>
+    </TR>
+    <TR>
+      <TD>COMMENT </TD>
+      <TD>INT_COMMENT</TD>
+      <TD>Represents a comment.</TD>
+    </TR>
+    <TR>
+      <TD>PROCINST </TD>
+      <TD>INT_PROCINST</TD>
+      <TD>Represents a processing instruction.</TD>
+    </TR>
+  </TABLE>
+  <P>As you use a cursor to navigate through XML, you can use one of the convenience
+    methods described above to discover whether you're at the token you're looking
+    for, or use the <span class="langinline">XmlCursor.currentTokenType</span>&nbsp;method
+    to discover the current token's type. The following figure illustrates example
+    locations for token types:</P>
+  <P><IMG src="../images/conCursorTokenLocations.gif" width="727" height="532">
+  <h2>Switching to Test for Token Types</h2>
+  <p>Here's a bit of code illustrating how you might use a Java <span class="langinline">switch</span>
+    statement to test for the START token type.</p>
+  <pre>
+// Take an incoming XmlObject and insert a cursor.
+XmlCursor documentCursor = xmlDoc.newCursor();
+
+/*
+ * Loop through the document, passing the cursor when it stops at each token
+ * to a function designed to discover the token type. Continue the loop
+ * as long at the cursor is at a token (until it reaches the end).
+ */
+while (!documentCursor.toNextToken().isNone())
+{
+    /*
+     * Use the intValue method to return the int corresponding to the
+	 * current token type. If it is the value for INT_START,
+	 * then you have a match.
+	 */
+    switch (cursor.currentTokenType().intValue())
+    {
+        case TokenType.INT_START:
+        // Print out the token type and a message.
+        System.out.println(cursor.currentTokenType() +
+            "; cursor is at the start of an element.");
+        break;
+    }
+}
+// Be sure to dispose of a cursor when you're finished.
+documentCursor.dispose();
+</pre>
+  <p>The scope of an XML cursor is the XML document in which it is created. For
+    example, you can create a cursor at the orderItem element in the example earlier
+    in this topic. If you then use that <span class="langinline">XmlCursor</span>
+    instance's <span class="langinline">toNextToken</span> method to move the
+    cursor until it won't move any further, you'll have reached the ENDDOC token.
+    In this example, that's at the <span class="langinline">&lt;/batchWidgetOrder&gt;</span>
+    tag. In other words, the cursor's scope is not limited to the element at which
+    it was created.</p>
+  <p class=relatedtopics>Related Topics</p>
+  <p><a href="../reference/org/apache/xmlbeans/XmlCursor.TokenType.html">XmlCursor.TokenType
+    Class</a></p>
+  <p><a href="conNavigatingXMLwithCursors.html">Navigating XML with Cursors</a></p>
+</div>
+<!-- InstanceEndEditable -->
+<script language="JavaScript">
+
+</script>
+</body>
+</html>

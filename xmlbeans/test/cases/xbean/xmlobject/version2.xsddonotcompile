@@ -1,0 +1,17 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://openuri.org/versionstest"
+    xmlns:tns="http://openuri.org/versionstest">
+
+  <xs:redefine schemaLocation="version1.xsddonotcompile">
+    <xs:complexType name="typeX">
+      <xs:complexContent>
+        <xs:extension base="tns:typeX">
+          <xs:sequence>
+            <xs:element name="b" type="xs:string"/>
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+  </xs:redefine>
+  
+</xs:schema>

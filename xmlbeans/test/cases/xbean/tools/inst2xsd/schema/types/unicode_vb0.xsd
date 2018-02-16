@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="note" type="noteType"/>
+  <xs:complexType name="noteType">
+    <xs:sequence>
+      <xs:element type="xs:string" name="from" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+      <xs:element type="xs:string" name="to" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+      <xs:element type="xs:string" name="message" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

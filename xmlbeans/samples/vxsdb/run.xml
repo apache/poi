@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<!--
+/* Copyright 2002-2004 Apache Software Foundation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<project name="vxsdb-runtime" default="create-db-sql">
+
+    <description>
+        Execute vxsdb sample.
+    </description>
+
+    <property environment="env" />
+    <property name="targetDatabase" value="derby" />
+    <property name="schema" value="schemas/easypo.xsd" />
+    <property name="template" value="datamodel.vm" />
+    <property name="output" value="build/datamodel.xml" />
+    <property name="ddl" value="build/create.sql" />
+
+    <path id="vxsdb.runtime.classpath">
+        <pathelement path="build" />
+        <pathelement location="lib/commons-collections-3.1.jar" />
+        <pathelement location="lib/commons-lang-2.1.jar" />
+        <pathelement location="lib/commons-logging-1.0.3.jar" />
+        <pathelement location="lib/log4j-1.2.8.jar" />
+        <pathelement location="lib/velocity-1.5.jar" />
+        <path refid="xmlbeans.path" />
+    </path>
+
+    <path id="commons-sql.runtime.classpath">
+        <pathelement location="lib/commons-beanutils-1.7.0.jar" />
+        <pathelement location="lib/commons-betwixt-0.8.jar" />
+        <pathelement location="lib/commons-collections-3.1.jar" />
+        <pathelement location="lib/commons-digester-1.5.jar" />
+        <pathelement location="lib/commons-logging-1.0.3.jar" />
+        <pathelement location="lib/commons-dbcp-1.2.1.jar" />
+        <pathelement location="lib/commons-pool-1.2.jar" />
+        <pathelement location="lib/commons-lang-2.1.jar" />
+        <pathelement location="lib/DdlUtils-1.0-RC1.jar" />
+        <pathelement location="lib/dom4j-1.4.jar" />
+    	<pathelement location="lib/log4j-1.2.8.jar"/>
+        <pathelement location="lib/derby-10.1.1.0.jar" />
+    </path>
+
+    <target name="run" depends="init" description="Run the sample code">
+        <!-- VelocityXmlBeans Task -->
+        <taskdef name="vxsdb" classname="org.apache.xmlbeans.samples.vxsdb.VelocityXmlBeansDB" description="The task used to run the sample code." classpathref="vxsdb.runtime.classpath" />
+        <!-- Substitute any of your own schemas templates and output files -->
+        <vxsdb schema="${schema}" template="${template}" output="${output}" />
+    </target>
+
+    <target name="create-db-sql" depends="run" description="Create an sql script (DDL) from the xml datamodel">
+        <!-- DDLUtils Task-->
+        <taskdef name="ddl" classname="org.apache.ddlutils.task.DdlToDatabaseTask" description="The task used to create a ddl from the datamodel xml." classpathref="commons-sql.runtime.classpath" />
+        <ddl schemaFile="${output}" databaseType="${targetDatabase}">
+            <database url="jdbc:derby:build/db"
+                      driverClassName="org.apache.derby.jdbc.EmbeddedDriver"
+                      username=""
+                      password=""/>
+            <createDatabase failonerror="false"/>
+            <writeSchemaSqlToFile outputFile="${ddl}" />
+        </ddl>
+    </target>
+
+    <target name="clean" description="Delete the generated files">
+        <delete file="xml/datamodel.xml" />
+        <delete file="sql/create.sql" />
+    </target>
+
+    <target name="init" description="Preexecution initialization">
+
+        <property name="xmlbeans.home" value="${env.XMLBEANS_HOME}" />
+        <echo message="xmlbeans.home: ${xmlbeans.home}" />
+
+        <!-- check for xbean.jar from binary distribution -->
+        <available property="xmlbeans.lib" value="${xmlbeans.home}/lib" file="${xmlbeans.home}/lib/xbean.jar" />
+
+        <!-- check for xbean.jar compiled from source -->
+        <available property="xmlbeans.lib" value="${xmlbeans.home}/build/lib" file="${xmlbeans.home}/build/lib/xbean.jar" />
+
+        <fail message="Set XMLBEANS_HOME in your enviornment." unless="xmlbeans.lib" />
+
+        <echo message="xmlbeans.lib: ${xmlbeans.lib}" />
+        <path id="xmlbeans.path">
+            <fileset dir="${xmlbeans.lib}" includes="*.jar" />
+        </path>
+
+    </target>
+
+</project>
+

@@ -1,0 +1,33 @@
+<xs:schema
+   xmlns:xs="http://www.w3.org/2001/XMLSchema"
+   xmlns:nw="http://openuri.org/nameworld"
+   targetNamespace="http://openuri.org/nameworld"
+   elementFormDefault="qualified">
+
+  <xs:element name="nameworld">
+    <xs:complexType>
+      <xs:sequence maxOccurs="unbounded">
+        <xs:element name="island">
+          <xs:complexType>
+            <xs:sequence maxOccurs="unbounded">
+              <xs:element name="location" type="nw:loc"/>
+            </xs:sequence>
+            <xs:attribute name="targetNamespace" type="xs:string"/>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name="loc">
+    <xs:sequence maxOccurs="unbounded">
+      <xs:element name="reference">
+        <xs:complexType>
+          <xs:attribute name="to" type="xs:QName"/>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string"/>
+  </xs:complexType>
+
+</xs:schema>

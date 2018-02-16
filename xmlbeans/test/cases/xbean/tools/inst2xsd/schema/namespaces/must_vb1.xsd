@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="x_uri" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="x" type="x:xType" xmlns:x="x_uri"/>
+  <xs:complexType name="xType">
+    <xs:sequence>
+      <xs:element ref="nam:a" xmlns:nam="namespace_uri"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

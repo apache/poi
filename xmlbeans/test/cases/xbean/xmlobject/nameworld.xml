@@ -1,0 +1,34 @@
+<nw:nameworld xmlns:nw="http://openuri.org/nameworld"
+              xmlns:foo="http://foo.com/"
+              xmlns:bar="http://bar.com/">
+
+  <nw:island targetNamespace="http://foo.com/">
+    <nw:location name="foocity">
+      <nw:reference to="bar:barcity"/>
+      <nw:reference to="foo:footown"/>
+      <nw:reference to="bar:barvillage"/>
+    </nw:location>
+    <nw:location name="footown">
+      <nw:reference to="bar:bartown"/>
+      <nw:reference to="foo:foovillage"/>
+    </nw:location>
+    <nw:location name="foovillage">
+      <nw:reference to="bar:barvillage"/>
+    </nw:location>
+  </nw:island>
+
+  <nw:island targetNamespace="http://bar.com/">
+    <nw:location name="barcity">
+      <nw:reference to="foo:foocity"/>
+      <nw:reference to="bar:bartown"/>
+      <nw:reference to="foo:foovillage"/>
+    </nw:location>
+    <nw:location name="bartown">
+      <nw:reference to="foo:footown"/>
+      <nw:reference to="bar:barvillage"/>
+    </nw:location>
+    <nw:location name="barvillage">
+      <nw:reference to="foo:foovillage"/>
+    </nw:location>
+  </nw:island>
+</nw:nameworld>

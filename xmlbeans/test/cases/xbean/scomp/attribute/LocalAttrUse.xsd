@@ -1,0 +1,27 @@
+ <xsd:schema
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:xs="http://www.w3.org/2001/XMLSchema"
+     xmlns="http://xbean/scomp/attribute/LocalAttrUse"
+     targetNamespace="http://xbean/scomp/attribute/LocalAttrUse"
+     >
+
+    <xsd:attribute name="attRequiredFixed" type="xsd:string" fixed="XBeanFix"/>
+    <xsd:attribute name="attRequiredDefault" type="xsd:string" default="XBeanDef"/>
+
+     <xsd:complexType name="LocalAttrUseT">
+         <xsd:attribute name="attDefault" type="xsd:string"/>
+         <xsd:attribute name="attOpt" type="xsd:string" use="optional"/>
+         <!--from a customer complaint-->
+         <xs:attribute name="lastPasswordUpdate" type="xs:dateTime"
+         use="optional"/>
+
+         <xsd:attribute name="attProhibited" type="xsd:integer" use="prohibited"/>
+         <xsd:attribute name="attRequired" type="xsd:integer" use="required"/>
+         <xsd:attribute ref="attRequiredDefault" use="required"/>
+         <xsd:attribute ref="attRequiredFixed" use="required"/>
+     </xsd:complexType>
+
+     <xsd:element name="LocalAttrUseDoc" type="LocalAttrUseT">
+
+     </xsd:element>
+ </xsd:schema>
