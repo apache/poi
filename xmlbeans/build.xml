@@ -15,11 +15,11 @@
 -->
 <project name="Xbean" default="default" basedir=".">
 
-    <property name="build.compiler" value="javac1.4"/>
-    <property name="javac.source" value="1.4"/>
-    <property name="javac.target" value="1.4"/>
+    <property name="build.compiler" value="javac1.6"/>
+    <property name="javac.source" value="1.6"/>
+    <property name="javac.target" value="1.6"/>
 
-    <property name="version.base" value="2.6.0"/>
+    <property name="version.base" value="2.6.4"/>
     <property name="version.rc" value=""/>
 
     <!-- manifest entries -->
@@ -126,39 +126,6 @@
         <copy file="external/lib/saxon9.jar" tofile="build/lib/saxon9.jar"/>
         <!-- saxon9-dom.jar is used to register DOMObjectModel -->
         <copy file="external/lib/saxon9-dom.jar" tofile="build/lib/saxon9-dom.jar"/>
-    </target>
-
-    <target name="jsr173-bundle.downloaded">
-        <condition property="jsr173-bundle.exists">
-            <available file="external/lib/jsr173_1.0_api_bundle.jar"/>
-        </condition>
-    </target>
-
-    <target name="jsr173-bundle.jar"
-            depends="jsr173-bundle.downloaded, dirs"
-            unless="jsr173-bundle.exists">
-        <get dest="external/lib/jsr173_1.0_api_bundle.jar"
-            src="http://www.apache.org/dist/java-repository/xmlbeans/jars/jsr173_1.0_api_bundle.jar"
-            verbose="true" usetimestamp="true" ignoreerrors="true"/>
-    </target>
-
-    <target name="jsr173_1.0.jars.extracted">
-        <condition property="jsr173_1.0.jars.exist">
-            <available file="build/lib/jsr173_1.0_api.jar"/>
-        </condition>
-    </target>
-
-    <target name="jsr173_1.0.jars"
-            depends="jsr173-bundle.jar, jsr173_1.0.jars.extracted"
-            unless="jsr173_1.0.jars.exist">
-        <unjar src="external/lib/jsr173_1.0_api_bundle.jar" dest="external/lib" >
-            <patternset>
-                <include name="jsr173_1.0_api.jar"/>
-            </patternset>
-        </unjar>
-
-        <!-- copy jsr173 API jar and license files to build/lib -->
-        <copy file="external/lib/jsr173_1.0_api.jar" tofile="build/lib/jsr173_1.0_api.jar"/>
     </target>
 
     <!-- get resolver.jar -->
@@ -353,12 +320,8 @@
             <fileset dir="build/lib">
                 <include name="xbean.jar"/>
                 <include name="xmlpublic.jar"/>
-                <include name="xmlbeans-qname.jar"/>
                 <include name="xbean_xpath.jar"/>
                 <include name="resolver.jar"/>
-                <include name="jsr173_1.0_api.jar"/>
-                <include name="BEA Binary RI License (JSR 173).1(Clean).txt"/>
-                <include name="README(jsr_173 api and ri).txt"/>
             </fileset>
         </copy>
 
@@ -488,7 +451,7 @@
                  store.classes, saaj_api.classes,
                  marshal.classes, xpath.classes, oldxbean.jar, xsdschema.classes,
                  xmlinputstream.classes, resolver.jar, xbean_xpath.jar,
-                 piccolo.classes, tools.classes, jamsupport.classes">
+                 tools.classes, jamsupport.classes">
         <jar jarfile="build/lib/xbean.jar" index="true">
             <fileset dir="build/classes/xmlpublic"
                 excludes="javax/**"/>
@@ -509,7 +472,6 @@
             <fileset dir="build/classes/marshal"/>
             <fileset dir="build/classes/repackage"/>
             <fileset dir="build/classes/jam"/>
-            <fileset dir="build/classes/piccolo"/>
             <fileset dir="build/classes/tools"/>
             <fileset file="LICENSE.txt"/>
             <fileset file="NOTICE.txt"/>
@@ -522,10 +484,6 @@
                     <attribute name="Implementation-URL" value="${manifest.url}"/>
                 </section>
             </manifest>
-        </jar>
-        <jar jarfile="build/lib/xmlbeans-qname.jar">
-            <fileset dir="build/classes/xmlpublic"
-                includes="javax/xml/namespace/QName.class,javax/xml/namespace/NamespaceContext.class"/>
         </jar>
     </target>
 
@@ -545,12 +503,10 @@
 
     <!-- xmlpublic target ============================================== -->
 
-    <target name="xmlpublic.classes" depends="dirs, jsr173_1.0.jars">
+    <target name="xmlpublic.classes" depends="dirs">
         <mkdir dir="build/classes/xmlpublic"/>
         <javac srcdir="src/xmlpublic" sourcepath="src/xmlinputstream" destdir="build/classes/xmlpublic" source="${javac.source}" target="${javac.target}" debug="on">
-            <classpath>
-                <pathelement location="build/lib/jsr173_1.0_api.jar"/>
-            </classpath>
+            <classpath/>
         </javac>
 
         <!-- Need properties files for XmlError -->
@@ -586,7 +542,6 @@
         <mkdir dir="build/classes/typestore"/>
         <javac srcdir="src/typestore" destdir="build/classes/typestore" source="${javac.source}" target="${javac.target}" debug="on">
             <classpath>
-                <pathelement location="build/lib/jsr173_1.0_api.jar"/>
                 <pathelement location="build/classes/xmlinputstream"/>
                 <pathelement location="build/classes/xmlpublic"/>
                 <pathelement location="build/classes/common"/>
@@ -597,11 +552,10 @@
 
     <!-- common target ============================================= -->
 
-    <target name="common.classes" depends="dirs, xmlpublic.classes, xmlinputstream.classes, jsr173_1.0.jars">
+    <target name="common.classes" depends="dirs, xmlpublic.classes, xmlinputstream.classes">
         <mkdir dir="build/classes/common"/>
         <javac srcdir="src/common" destdir="build/classes/common" source="${javac.source}" target="${javac.target}" debug="on">
             <classpath>
-                <pathelement location="build/lib/jsr173_1.0_api.jar"/>
                 <pathelement location="build/classes/xmlinputstream"/>
                 <pathelement location="build/classes/xmlpublic"/>
             </classpath>
@@ -639,7 +593,7 @@
 
     <target name="typeimpl.classes" depends="dirs, store.classes,
         repackage.classes, xmlpublic.classes, typeholder.template, typestore.classes, xsdschema.classes,
-        configschema.classes, toolschema.classes, jsr173_1.0.jars, jam.classes">
+        configschema.classes, toolschema.classes, jam.classes">
         <mkdir dir="build/classes/typeimpl"/>
         <javac destdir="build/classes/typeimpl" source="${javac.source}" target="${javac.target}" debug="on">
             <classpath>
@@ -655,7 +609,6 @@
                 <pathelement location="build/classes/xmlschema"/>
                 <pathelement location="build/classes/toolschema"/>
                 <pathelement location="build/classes/jam"/>
-                <pathelement location="build/lib/jsr173_1.0_api.jar"/>
             </classpath>
 
             <src path="src/typeimpl"/>
@@ -681,7 +634,6 @@
         <mkdir dir="build/classes/xmlcomp"/>
         <javac srcdir="src/xmlcomp" destdir="build/classes/xmlcomp" source="${javac.source}" target="${javac.target}" debug="on">
             <classpath>
-                <pathelement location="build/lib/jsr173_1.0_api.jar"/>
                 <pathelement location="build/classes/xmlinputstream"/>
                 <pathelement location="build/classes/xmlpublic"/>
                 <pathelement location="build/classes/common"/>
@@ -691,17 +643,17 @@
                 <pathelement location="build/classes/configschema"/>
                 <pathelement location="build/classes/toolschema"/>
                 <pathelement location="build/classes/xsdschema"/>
+                <pathelement location="build/classes/typestore"/>
             </classpath>
         </javac>
     </target>
 
     <!-- marshal target =============================================== -->
 
-    <target name="marshal.classes" depends="dirs, typeimpl.classes, xmlpublic.classes, jsr173_1.0.jars">
+    <target name="marshal.classes" depends="dirs, typeimpl.classes, xmlpublic.classes">
         <mkdir dir="build/classes/marshal"/>
         <javac srcdir="src/marshal" destdir="build/classes/marshal" source="${javac.source}" target="${javac.target}" debug="on">
             <classpath>
-                <pathelement location="build/lib/jsr173_1.0_api.jar"/>
                 <pathelement location="build/classes/configschema"/>
                 <pathelement location="build/classes/xmlinputstream"/>
                 <pathelement location="build/classes/xmlpublic"/>
@@ -738,17 +690,15 @@
     <!-- store target ============================================== -->
 
     <target name="store.classes"
-        depends="dirs, common.classes, xmlpublic.classes, typestore.classes, saaj_api.classes, piccolo.classes">
+        depends="dirs, common.classes, xmlpublic.classes, typestore.classes, saaj_api.classes">
         <mkdir dir="build/classes/store"/>
         <javac srcdir="src/store" destdir="build/classes/store" source="${javac.source}" target="${javac.target}" debug="on">
             <classpath id="store.compile.path">
                 <pathelement location="build/classes/typestore"/>
-                <pathelement location="build/lib/jsr173_1.0_api.jar"/>
                 <pathelement location="build/classes/xmlinputstream"/>
                 <pathelement location="build/classes/xmlpublic"/>
                 <pathelement location="build/classes/common"/>
                 <pathelement location="build/classes/saaj_api"/>
-                <pathelement location="build/classes/piccolo"/>
             </classpath>
         </javac>
     </target>
@@ -756,18 +706,16 @@
     <!-- tools target ============================================== -->
 
     <target name="tools.classes"
-        depends="dirs, common.classes, xmlpublic.classes, typestore.classes, saaj_api.classes, piccolo.classes,
+        depends="dirs, common.classes, xmlpublic.classes, typestore.classes, saaj_api.classes,
         typeimpl.classes, xmlcomp.classes">
         <mkdir dir="build/classes/tools"/>
         <javac srcdir="src/tools" destdir="build/classes/tools" source="${javac.source}" target="${javac.target}" debug="on">
             <classpath id="tools.compile.path">
                 <pathelement location="build/classes/typestore"/>
-                <pathelement location="build/lib/jsr173_1.0_api.jar"/>
                 <pathelement location="build/classes/xmlinputstream"/>
                 <pathelement location="build/classes/xmlpublic"/>
                 <pathelement location="build/classes/common"/>
                 <pathelement location="build/classes/saaj_api"/>
-                <pathelement location="build/classes/piccolo"/>
                 <pathelement location="build/classes/typeimpl"/>
                 <pathelement location="build/classes/xmlcomp"/>
             </classpath>
@@ -784,13 +732,11 @@
 
     <path id="bootstrap.run.path">
         <pathelement location="build/private/lib/oldxbean.jar"/>
-        <pathelement location="build/lib/jsr173_1.0_api.jar"/>
         <pathelement location="build/classes/xmlpublic"/>
     </path>
 
     <path id="bootstrap.compile.path">
         <pathelement location="build/classes/xmlpublic"/>
-        <pathelement location="build/lib/jsr173_1.0_api.jar"/>
     </path>
 
     <property name="bootstrap.compile.path" refid="bootstrap.compile.path"/>
@@ -834,7 +780,7 @@
         </condition>
     </target>
 
-    <target name="xmlschema.classes" depends="xmlschema.check, xmlpublic.classes, oldxbean.jar, jsr173_1.0.jars" unless="xmlschema.notRequired">
+    <target name="xmlschema.classes" depends="xmlschema.check, xmlpublic.classes, oldxbean.jar" unless="xmlschema.notRequired">
         <delete dir="build/classes/xmlschema"/>
         <delete dir="build/src/xmlschema"/>
         <java classname="${bootstrap_schema_compiler}" classpathref="bootstrap.run.path" fork="true" failonerror="true">
@@ -919,7 +865,6 @@
     <property name="repackage_arg" value=""/>
     <property name="schema_compiler" value="org.apache.xmlbeans.impl.tool.SchemaCompiler"/>
     <property name="bootstrap_schema_compiler" value="org.apache.xmlbeans.impl.tool.SchemaCompiler"/>
-    <property name="piccolo_package_name" value="org.apache.xmlbeans.impl.piccolo"/>
     <property name="jam_package_name" value="org.apache.xmlbeans.impl.jam"/>
 
     <!--
@@ -1063,7 +1008,6 @@
         <pathelement location="build/classes/common"/>
         <pathelement location="external/lib/junit.jar"/>
         <pathelement location="build/ar/xbean.jar"/>
-        <pathelement location="build/lib/jsr173_1.0_api.jar"/>
         <pathelement location="build/classes/xmlinputstream"/>
     </path>
 
@@ -1073,7 +1017,7 @@
     </path>
 
 
-    <target name="drt.classes" depends="dirs,jsr173_1.0.jars">
+    <target name="drt.classes" depends="dirs">
         <mkdir dir="build/private/classes/drt"/>
         <javac
             destdir="build/private/classes/drt"
@@ -1093,7 +1037,6 @@
 
     <path id="scomp.run.path">
         <pathelement location="build/lib/xbean.jar"/>
-        <pathelement location="build/lib/jsr173_1.0_api.jar"/>
     </path>
 
     <target name="stsschema.check">
@@ -1118,7 +1061,7 @@
         </uptodate>
     </target>
 
-    <target name="jam.classes" depends="jam.classes.check, dirs, repackage.classes, jsr173_1.0.jars" unless="jam.classes.notRequired">
+    <target name="jam.classes" depends="jam.classes.check, dirs, repackage.classes" unless="jam.classes.notRequired">
         <delete dir="build/private/jam"/>
         <mkdir dir="build/private/jam"/>
         <unjar src="external/lib/jam-0.1.0-src.jar" dest="build/private/jam"/>
@@ -1140,43 +1083,7 @@
             source="1.4" target="1.4"
             debug="on">
             <src path="build/private/jam/src_repackage"/>
-            <classpath>
-                <pathelement location="build/lib/jsr173_1.0_api.jar"/>
-            </classpath>
+            <classpath/>
         </javac>
     </target>
-
-    <!-- Piccolo deployment -->
-    <target name="piccolo.classes.check">
-        <uptodate property="piccolo.classes.notRequired"
-            targetfile="build/ar/xbean.jar">
-            <srcfiles dir="external/lib" includes="**/piccolo_*.jar"/>
-        </uptodate>
-    </target>
-
-    <target name="piccolo.classes" depends="piccolo.classes.check, dirs, repackage.classes" unless="piccolo.classes.notRequired">
-        <delete dir="build/private/piccolo"/>
-        <mkdir dir="build/private/piccolo"/>
-        <unjar src="external/lib/piccolo_apache_dist_20040711_v2.jar" dest="build/private/piccolo"/>
-
-        <echo message="Re-packaging Piccolo"/>
-
-        <java classname="repackage.Repackage" fork="true" failonerror="true">
-            <classpath>
-                <pathelement location="build/classes/repackage"/>
-            </classpath>
-            <arg line="-repackage com.bluecast:${piccolo_package_name} -f build/private/piccolo/src -t build/private/piccolo/src_repackage"/>
-        </java>
-
-        <delete dir="build/classes/piccolo"/>
-        <mkdir dir="build/classes/piccolo"/>
-        <javac
-            destdir="build/classes/piccolo"
-            classpath=""
-            source="1.3" target="1.4"
-            debug="on">
-            <src path="build/private/piccolo/src_repackage"/>
-        </javac>
-    </target>
-
 </project>
