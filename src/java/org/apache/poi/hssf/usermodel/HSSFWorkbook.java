@@ -178,13 +178,13 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * this holds the HSSFFont objects attached to this workbook.
      * We only create these from the low level records as required.
      */
-    private Map<Short,HSSFFont> fonts;
+    private Map<Integer,HSSFFont> fonts;
 
     /**
      * holds whether or not to preserve other nodes in the POIFS.  Used
      * for macros and embedded objects.
      */
-    private boolean   preserveNodes;
+    private boolean preserveNodes;
 
     /**
      * Used to keep track of the data formatter so that all
@@ -1171,13 +1171,13 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     public HSSFFont createFont()
     {
         /*FontRecord font =*/ workbook.createNewFont();
-        short fontindex = (short) (getNumberOfFonts() - 1);
+        int fontindex = getIntNumberOfFonts() - 1;
 
         if (fontindex > 3)
         {
             fontindex++;   // THERE IS NO FOUR!!
         }
-        if(fontindex == Short.MAX_VALUE){
+        if(fontindex >= Short.MAX_VALUE){
             throw new IllegalArgumentException("Maximum number of fonts was exceeded");
         }
 
@@ -1194,8 +1194,8 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
                              String name, boolean italic, boolean strikeout,
                              short typeOffset, byte underline)
     {
-        short numberOfFonts = getNumberOfFonts();
-        for (short i=0; i<=numberOfFonts; i++) {
+        int numberOfFonts = getIntNumberOfFonts();
+        for (int i = 0; i <= numberOfFonts; i++) {
             // Remember - there is no 4!
             if(i == 4) {
                 continue;
@@ -1218,24 +1218,25 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         return null;
     }
 
-    /**
-     * get the number of fonts in the font table
-     * @return number of fonts
-     */
-
     @Override
-    public short getNumberOfFonts()
-    {
-        return (short) workbook.getNumberOfFontRecords();
+    @Deprecated
+    public short getNumberOfFonts() {
+        return (short)getIntNumberOfFonts();
     }
 
-    /**
-     * Get the font at the given index number
-     * @param idx  index number
-     * @return HSSFFont at the index
-     */
     @Override
+    public int getIntNumberOfFonts() {
+        return workbook.getNumberOfFontRecords();
+    }
+
+    @Override
+    @Deprecated
     public HSSFFont getFontAt(short idx) {
+        return getFontAt((int)idx);
+    }
+
+    @Override
+    public HSSFFont getFontAt(int idx) {
         if(fonts == null) {
             fonts = new HashMap<>();
         }
@@ -1243,7 +1244,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         // So we don't confuse users, give them back
         //  the same object every time, but create
         //  them lazily
-        Short sIdx = Short.valueOf(idx);
+        Integer sIdx = Integer.valueOf(idx);
         if(fonts.containsKey(sIdx)) {
             return fonts.get(sIdx);
         }

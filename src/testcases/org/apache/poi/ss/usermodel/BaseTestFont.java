@@ -58,7 +58,7 @@ public abstract class BaseTestFont {
     @Test
     public final void testGetNumberOfFonts() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
-        int num0 = wb.getNumberOfFonts();
+        int num0 = wb.getIntNumberOfFonts();
 
         Font f1=wb.createFont();
         f1.setBold(true);

@@ -811,27 +811,28 @@ public class SXSSFWorkbook implements Workbook {
     {
         return _wb.findFont(bold, color, fontHeight, name, italic, strikeout, typeOffset, underline);
     }
-   
 
-    /**
-     * Get the number of fonts in the font table
-     *
-     * @return number of fonts
-     */
     @Override
-    public short getNumberOfFonts()
-    {
-        return _wb.getNumberOfFonts();
+    @Deprecated
+    public short getNumberOfFonts() {
+        return (short)getIntNumberOfFonts();
     }
 
-    /**
-     * Get the font at the given index number
-     *
-     * @param idx  index number (0-based)
-     * @return font at the index
-     */
     @Override
+    public int getIntNumberOfFonts()
+    {
+        return _wb.getIntNumberOfFonts();
+    }
+
+    @Override
+    @Deprecated
     public Font getFontAt(short idx)
+    {
+        return getFontAt((int)idx);
+    }
+
+    @Override
+    public Font getFontAt(int idx)
     {
         return _wb.getFontAt(idx);
     }

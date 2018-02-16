@@ -63,7 +63,7 @@ public class XSSFFont implements Font {
     private IndexedColorMap _indexedColorMap;
     private ThemesTable _themes;
     private CTFont _ctFont;
-    private short _index;
+    private int _index;
 
     /**
      * Create a new XSSFFont
@@ -615,12 +615,14 @@ public class XSSFFont implements Font {
         setFamily(family.getValue());
     }
 
-    /**
-     * get the index within the XSSFWorkbook (sequence within the collection of Font objects)
-     * @return unique index number of the underlying record this Font represents (probably you don't care
-     *  unless you're comparing which one is which)
-     */
-    public short getIndex()
+    @Override
+    @Deprecated
+    public short getIndex() {
+        return (short)getIntIndex();
+    }
+
+    @Override
+    public int getIntIndex()
     {
         return _index;
     }

@@ -925,6 +925,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
     /**
      * Finds a font that matches the one with the supplied attributes
+     *
+     * @return the font with the matched attributes or <code>null</code>
      */
     @Override
     public XSSFFont findFont(boolean bold, short color, short fontHeight, String name, boolean italic, boolean strikeout, short typeOffset, byte underline) {
@@ -972,14 +974,13 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         return stylesSource.getStyleAt(idx);
     }
 
-    /**
-     * Get the font at the given index number
-     *
-     * @param idx  index number
-     * @return XSSFFont at the index
-     */
     @Override
     public XSSFFont getFontAt(short idx) {
+        return stylesSource.getFontAt(idx);
+    }
+
+    @Override
+    public XSSFFont getFontAt(int idx) {
         return stylesSource.getFontAt(idx);
     }
 
@@ -1075,13 +1076,13 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         return stylesSource.getNumCellStyles();
     }
 
-    /**
-     * Get the number of fonts in the this workbook
-     *
-     * @return number of fonts
-     */
     @Override
     public short getNumberOfFonts() {
+        return (short)getIntNumberOfFonts();
+    }
+
+    @Override
+    public int getIntNumberOfFonts() {
         return (short)stylesSource.getFonts().size();
     }
 

@@ -25,7 +25,7 @@ import org.apache.poi.ss.usermodel.Font;
  * Represents a Font used in a workbook.
  * 
  * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createFont()
- * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getFontAt(short)
+ * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getFontAt(int)
  * @see org.apache.poi.hssf.usermodel.HSSFCellStyle#setFont(HSSFFont)
  */
 public final class HSSFFont implements Font {
@@ -46,12 +46,12 @@ public final class HSSFFont implements Font {
     public final static String FONT_ARIAL = "Arial";
 
 
-    private FontRecord         font;
-    private short              index;
+    private FontRecord font;
+    private int index;
 
     /** Creates a new instance of HSSFFont */
 
-    protected HSSFFont(short index, FontRecord rec)
+    protected HSSFFont(int index, FontRecord rec)
     {
         font       = rec;
         this.index = index;
@@ -85,7 +85,15 @@ public final class HSSFFont implements Font {
      *  unless you're comparing which one is which)
      */
 
-    public short getIndex()
+    public short getIndex() { return (short)index; }
+
+    /**
+     * get the index within the HSSFWorkbook (sequence within the collection of Font objects)
+     * @return unique index number of the underlying record this Font represents (probably you don't care
+     *  unless you're comparing which one is which)
+     */
+
+    public int getIntIndex()
     {
         return index;
     }
