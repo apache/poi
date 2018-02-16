@@ -440,7 +440,7 @@ public final class CellUtil {
      *
      * @param properties map of named properties (String -> Object)
      * @param name property name
-     * @return zero if the property does not exist, or is not a {@link Short}
+     * @return zero if the property does not exist, or is not a {@link Integer}
      *         otherwise the property value
      */
     private static int getInt(Map<String, Object> properties, String name) {
