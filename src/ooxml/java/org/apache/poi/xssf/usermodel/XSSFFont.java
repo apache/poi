@@ -618,11 +618,11 @@ public class XSSFFont implements Font {
     @Override
     @Deprecated
     public short getIndex() {
-        return (short)getIntIndex();
+        return (short)getIndexAsInt();
     }
 
     @Override
-    public int getIntIndex()
+    public int getIndexAsInt()
     {
         return _index;
     }

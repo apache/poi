@@ -1078,11 +1078,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
 
     @Override
     public short getNumberOfFonts() {
-        return (short)getIntNumberOfFonts();
+        return (short)getNumberOfFontsAsInt();
     }
 
     @Override
-    public int getIntNumberOfFonts() {
+    public int getNumberOfFontsAsInt() {
         return (short)stylesSource.getFonts().size();
     }
 

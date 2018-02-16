@@ -276,7 +276,7 @@ public abstract class BaseTestCell {
         cs = c.getCellStyle();
 
         assertNotNull("Formula Cell Style", cs);
-        assertEquals("Font Index Matches", f.getIntIndex(), cs.getFontIndex());
+        assertEquals("Font Index Matches", f.getIndexAsInt(), cs.getFontIndex());
         assertEquals("Top Border", BorderStyle.THIN, cs.getBorderTop());
         assertEquals("Left Border", BorderStyle.THIN, cs.getBorderLeft());
         assertEquals("Right Border", BorderStyle.THIN, cs.getBorderRight());

@@ -269,7 +269,7 @@ public interface Font {
      * 
      * @return unique index number of the underlying record this Font represents (probably you don't care
      *  unless you're comparing which one is which)
-     * @deprecated use <code>getIntIndex()</code> instead
+     * @deprecated use <code>getIndexAsInt()</code> instead
      */
     @Removal(version = "4.2")
     public short getIndex();
@@ -281,7 +281,7 @@ public interface Font {
      *  unless you're comparing which one is which)
      * @since 4.0.0
      */
-    public int getIntIndex();
+    public int getIndexAsInt();
 
     public void setBold(boolean bold);
 

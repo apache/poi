@@ -1013,19 +1013,19 @@ public abstract class BaseTestBugzillaIssues {
         Workbook wb = _testDataProvider.createWorkbook();
         int startingFonts = wb instanceof HSSFWorkbook ? 4 : 1;
 
-        assertEquals(startingFonts, wb.getIntNumberOfFonts());
+        assertEquals(startingFonts, wb.getNumberOfFontsAsInt());
 
         // Get a font, and slightly change it
         Font a = wb.createFont();
-        assertEquals(startingFonts+1, wb.getIntNumberOfFonts());
+        assertEquals(startingFonts+1, wb.getNumberOfFontsAsInt());
         a.setFontHeightInPoints((short)23);
-        assertEquals(startingFonts+1, wb.getIntNumberOfFonts());
+        assertEquals(startingFonts+1, wb.getNumberOfFontsAsInt());
 
         // Get two more, unchanged
         /*Font b =*/ wb.createFont();
-        assertEquals(startingFonts+2, wb.getIntNumberOfFonts());
+        assertEquals(startingFonts+2, wb.getNumberOfFontsAsInt());
         /*Font c =*/ wb.createFont();
-        assertEquals(startingFonts+3, wb.getIntNumberOfFonts());
+        assertEquals(startingFonts+3, wb.getNumberOfFontsAsInt());
         
         wb.close();
     }

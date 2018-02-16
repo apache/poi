@@ -1171,7 +1171,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     public HSSFFont createFont()
     {
         /*FontRecord font =*/ workbook.createNewFont();
-        int fontindex = getIntNumberOfFonts() - 1;
+        int fontindex = getNumberOfFontsAsInt() - 1;
 
         if (fontindex > 3)
         {
@@ -1194,7 +1194,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
                              String name, boolean italic, boolean strikeout,
                              short typeOffset, byte underline)
     {
-        int numberOfFonts = getIntNumberOfFonts();
+        int numberOfFonts = getNumberOfFontsAsInt();
         for (int i = 0; i <= numberOfFonts; i++) {
             // Remember - there is no 4!
             if(i == 4) {
@@ -1221,11 +1221,11 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     @Override
     @Deprecated
     public short getNumberOfFonts() {
-        return (short)getIntNumberOfFonts();
+        return (short)getNumberOfFontsAsInt();
     }
 
     @Override
-    public int getIntNumberOfFonts() {
+    public int getNumberOfFontsAsInt() {
         return workbook.getNumberOfFontRecords();
     }
 

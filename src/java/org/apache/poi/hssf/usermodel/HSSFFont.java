@@ -93,7 +93,7 @@ public final class HSSFFont implements Font {
      *  unless you're comparing which one is which)
      */
 
-    public int getIntIndex()
+    public int getIndexAsInt()
     {
         return index;
     }
