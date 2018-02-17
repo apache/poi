@@ -1,0 +1,767 @@
+<?xml version="1.0" encoding="iso8859-1"?>
+<xs:schema
+    targetNamespace="http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd"
+    xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:portlet="http://java.sun.com/xml/ns/portlet/portlet-app_1_0.xsd"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:xml="http://www.w3.org/XML/1998/namespace"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified" version="1.0"
+    xml:lang="en">
+    <xs:annotation>
+        <xs:documentation>
+                        This is the XML Schema for the Portlet 1.0 deployment
+                        descriptor.
+        </xs:documentation>
+    </xs:annotation>
+    <xs:annotation>
+        <xs:documentation>
+                        The following conventions apply to all J2EE
+                        deployment descriptor elements unless indicated
+                        otherwise.
+                        - In elements that specify a pathname to a file within
+                        the
+                        same JAR file, relative filenames (i.e., those not
+                        starting with "/") are considered relative to the root
+                        of
+                        the JAR file's namespace. Absolute filenames (i.e.,
+                        those
+                        starting with "/") also specify names in the root of the
+
+                        JAR file's namespace. In general, relative names are
+                        preferred. The exception is .war files where absolute
+                        names are preferred for consistency with the Servlet
+                        API.
+        </xs:documentation>
+    </xs:annotation>
+    <!--
+    ***********************************************************
+    -->
+    <xs:import
+        namespace="http://www.w3.org/XML/1998/namespace"
+        schemaLocation="http://www.w3.org/2001/03/xml.xsd"/>
+    <xs:element name="portlet-app"
+        type="portlet:portlet-appType">
+        <xs:annotation>
+            <xs:documentation>
+                        The portlet-app element is the root of the deployment
+                        descriptor
+                        for a portlet application. This element has a required
+                        attribute version
+                        to specify to which version of the schema the deployment
+                        descriptor
+                        conforms.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:unique name="portlet-name-uniqueness">
+            <xs:annotation>
+                <xs:documentation>
+                        The portlet element contains the name of a portlet.
+                        This name must be unique within the portlet application.
+
+                </xs:documentation>
+            </xs:annotation>
+            <xs:selector xpath="portlet:portlet"/>
+            <xs:field xpath="portlet:portlet-name"/>
+        </xs:unique>
+        <xs:unique name="custom-portlet-mode-uniqueness">
+            <xs:annotation>
+                <xs:documentation>
+                        The custom-portlet-mode element contains the
+                        portlet-mode.
+                        This portlet mode must be unique within the portlet
+                        application.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:selector xpath="portlet:custom-portlet-mode"/>
+            <xs:field xpath="portlet:portlet-mode"/>
+        </xs:unique>
+        <xs:unique name="custom-window-state-uniqueness">
+            <xs:annotation>
+                <xs:documentation>
+                        The custom-window-state element contains the
+                        window-state.
+                        This window state must be unique within the portlet
+                        application.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:selector xpath="portlet:custom-window-state"/>
+            <xs:field xpath="portlet:window-state"/>
+        </xs:unique>
+        <xs:unique name="user-attribute-name-uniqueness">
+            <xs:annotation>
+                <xs:documentation>
+                        The user-attribute element contains the name the
+                        attribute.
+                        This name must be unique within the portlet application.
+
+                </xs:documentation>
+            </xs:annotation>
+            <xs:selector xpath="portlet:user-attribute"/>
+            <xs:field xpath="portlet:name"/>
+        </xs:unique>
+    </xs:element>
+    <xs:complexType name="portlet-appType">
+        <xs:sequence>
+            <xs:element name="portlet" type="portlet:portletType"
+                maxOccurs="unbounded">
+                <xs:unique name="init-param-name-uniqueness">
+                    <xs:annotation>
+                        <xs:documentation>
+                        The init-param element contains the name the attribute.
+                        This name must be unique within the portlet.
+                        </xs:documentation>
+                    </xs:annotation>
+                    <xs:selector xpath="portlet:init-param"/>
+                    <xs:field xpath="portlet:name"/>
+                </xs:unique>
+                <xs:unique name="supports-mime-type-uniqueness">
+                    <xs:annotation>
+                        <xs:documentation>
+                        The supports element contains the supported mime-type.
+                        This mime type must be unique within the portlet.
+                        </xs:documentation>
+                    </xs:annotation>
+                    <xs:selector xpath="portlet:supports"/>
+                    <xs:field xpath="portlet:mime-type"/>
+                </xs:unique>
+                <xs:unique name="preference-name-uniqueness">
+                    <xs:annotation>
+                        <xs:documentation>
+                        The preference element contains the name the preference.
+
+                        This name must be unique within the portlet.
+                        </xs:documentation>
+                    </xs:annotation>
+                    <xs:selector
+                        xpath="portlet:portlet-preferences/portlet:preference"/>
+
+                    <xs:field xpath="portlet:name"/>
+                </xs:unique>
+                <xs:unique name="security-role-ref-name-uniqueness">
+                    <xs:annotation>
+                        <xs:documentation>
+                        The security-role-ref element contains the role-name.
+                        This role name must be unique within the portlet.
+                        </xs:documentation>
+                    </xs:annotation>
+                    <xs:selector xpath="portlet:security-role-ref"/>
+                    <xs:field xpath="portlet:role-name"/>
+                </xs:unique>
+            </xs:element>
+            <xs:element name="custom-portlet-mode"
+                type="portlet:custom-portlet-modeType" minOccurs="0"
+                maxOccurs="unbounded"/>
+            <xs:element name="custom-window-state"
+                type="portlet:custom-window-stateType" minOccurs="0"
+                maxOccurs="unbounded"/>
+            <xs:element name="user-attribute"
+                type="portlet:user-attributeType" minOccurs="0"
+                maxOccurs="unbounded"/>
+            <xs:element name="security-constraint"
+                type="portlet:security-constraintType" minOccurs="0"
+                maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="version" type="string"
+            use="required"/>
+        <xs:attribute name="id" type="string" use="optional"/>
+    </xs:complexType>
+    <xs:complexType name="custom-portlet-modeType">
+        <xs:annotation>
+            <xs:documentation>
+                        A custom portlet mode that one or more portlets in
+                        this portlet application supports.
+                        Used in: portlet-app
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="description"
+                type="portlet:descriptionType" minOccurs="0"
+                maxOccurs="unbounded"/>
+            <xs:element name="portlet-mode"
+                type="portlet:portlet-modeType"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="string" use="optional"/>
+    </xs:complexType>
+    <xs:complexType name="custom-window-stateType">
+        <xs:annotation>
+            <xs:documentation>
+                        A custom window state that one or more portlets in this
+                        portlet application supports.
+                        Used in: portlet-app
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="description"
+                type="portlet:descriptionType" minOccurs="0"
+                maxOccurs="unbounded"/>
+            <xs:element name="window-state"
+                type="portlet:window-stateType"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="string" use="optional"/>
+    </xs:complexType>
+    <xs:complexType name="expiration-cacheType">
+        <xs:annotation>
+            <xs:documentation>
+                        Expriation-cache defines expiration-based caching for
+                        this
+                        portlet. The parameter indicates
+                        the time in seconds after which the portlet output
+                        expires.
+                        -1 indicates that the output never expires.
+                        Used in: portlet
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="int"/>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="init-paramType">
+        <xs:annotation>
+            <xs:documentation>
+                        The init-param element contains a name/value pair as an
+                        initialization param of the portlet
+                        Used in:portlet
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="description"
+                type="portlet:descriptionType" minOccurs="0"
+                maxOccurs="unbounded"/>
+            <xs:element name="name" type="portlet:nameType"/>
+            <xs:element name="value" type="portlet:valueType"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="string" use="optional"/>
+    </xs:complexType>
+    <xs:complexType name="keywordsType">
+        <xs:annotation>
+            <xs:documentation>
+                        Locale specific keywords associated with this portlet.
+                        The kewords are separated by commas.
+                        Used in: portlet-info
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="string"/>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="mime-typeType">
+        <xs:annotation>
+            <xs:documentation>
+                        MIME type name, e.g. "text/html".
+                        The MIME type may also contain the wildcard
+                        character '*', like "text/*" or "*/*".
+                        Used in: supports
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="string"/>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="nameType">
+        <xs:annotation>
+            <xs:documentation>
+                        The name element contains the name of a parameter.
+                        Used in: init-param, ...
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="string"/>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="portletType">
+        <xs:annotation>
+            <xs:documentation>
+                        The portlet element contains the declarative data of a
+                        portlet.
+                        Used in: portlet-app
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="description"
+                type="portlet:descriptionType" minOccurs="0"
+                maxOccurs="unbounded"/>
+            <xs:element name="portlet-name"
+                type="portlet:portlet-nameType"/>
+            <xs:element name="display-name"
+                type="portlet:display-nameType" minOccurs="0"
+                maxOccurs="unbounded"/>
+            <xs:element name="portlet-class"
+                type="portlet:portlet-classType"/>
+            <xs:element name="init-param"
+                type="portlet:init-paramType" minOccurs="0"
+                maxOccurs="unbounded"/>
+            <xs:element name="expiration-cache"
+                type="portlet:expiration-cacheType" minOccurs="0"/>
+            <xs:element name="supports" type="portlet:supportsType"
+                maxOccurs="unbounded"/>
+            <xs:element name="supported-locale"
+                type="portlet:supported-localeType" minOccurs="0"
+                maxOccurs="unbounded"/>
+            <xs:choice>
+                <xs:sequence>
+                    <xs:element name="resource-bundle"
+                        type="portlet:resource-bundleType"/>
+                    <xs:element name="portlet-info"
+                        type="portlet:portlet-infoType" minOccurs="0"/>
+                </xs:sequence>
+                <xs:element name="portlet-info"
+                    type="portlet:portlet-infoType"/>
+            </xs:choice>
+            <xs:element name="portlet-preferences"
+                type="portlet:portlet-preferencesType" minOccurs="0"/>
+            <xs:element name="security-role-ref"
+                type="portlet:security-role-refType" minOccurs="0"
+                maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="string" use="optional"/>
+    </xs:complexType>
+    <xs:simpleType name="portlet-classType">
+        <xs:annotation>
+            <xs:documentation>
+                        The portlet-class element contains the fully
+                        qualified class name of the portlet.
+                        Used in: portlet
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction
+            base="portlet:fully-qualified-classType"/>
+    </xs:simpleType>
+    <xs:complexType name="portlet-collectionType">
+        <xs:annotation>
+            <xs:documentation>
+                        The portlet-collectionType is used to identify a subset
+                        of portlets within a portlet application to which a
+                        security constraint applies.
+                        Used in: security-constraint
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="portlet-name"
+                type="portlet:portlet-nameType" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="portlet-infoType">
+        <xs:sequence>
+            <xs:element name="title" type="portlet:titleType"/>
+            <xs:element name="short-title"
+                type="portlet:short-titleType" minOccurs="0"/>
+            <xs:element name="keywords" type="portlet:keywordsType"
+                minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="string" use="optional"/>
+    </xs:complexType>
+    <xs:complexType name="portlet-modeType">
+        <xs:annotation>
+            <xs:documentation>
+                        Portlet modes. The specification pre-defines the
+                        following values
+                        as valid portlet mode constants:
+                        "edit", "help", "view".
+                        Portlet mode names are not case sensitive.
+                        Used in: custom-portlet-mode, supports
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="string"/>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="portlet-nameType">
+        <xs:annotation>
+            <xs:documentation>
+                        The portlet-name element contains the canonical name of
+                        the
+                        portlet. Each portlet name is unique within the portlet
+                        application.
+                        Used in: portlet, portlet-mapping
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="string"/>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="portlet-preferencesType">
+        <xs:annotation>
+            <xs:documentation>
+                        Portlet persistent preference store.
+                        Used in: portlet
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="preference"
+                type="portlet:preferenceType" minOccurs="0"
+                maxOccurs="unbounded"/>
+            <xs:element name="preferences-validator"
+                type="portlet:preferences-validatorType" minOccurs="0"/>
+
+        </xs:sequence>
+        <xs:attribute name="id" type="string" use="optional"/>
+    </xs:complexType>
+    <xs:complexType name="preferenceType">
+        <xs:annotation>
+            <xs:documentation>
+                        Persistent preference values that may be used for
+                        customization
+                        and personalization by the portlet.
+                        Used in: portlet-preferences
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="name" type="portlet:nameType"/>
+            <xs:element name="value" type="portlet:valueType"
+                minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="read-only"
+                type="portlet:read-onlyType" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="string" use="optional"/>
+    </xs:complexType>
+    <xs:simpleType name="preferences-validatorType">
+        <xs:annotation>
+            <xs:documentation>
+                        The class specified under preferences-validator
+                        implements
+                        the PreferencesValidator interface to validate the
+                        preferences settings.
+                        Used in: portlet-preferences
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction
+            base="portlet:fully-qualified-classType"/>
+    </xs:simpleType>
+    <xs:simpleType name="read-onlyType">
+        <xs:annotation>
+            <xs:documentation>
+                        read-only indicates that a setting cannot
+                        be changed in any of the standard portlet modes
+                        ("view","edit" or "help").
+                        Per default all preferences are modifiable.
+                        Valid values are:
+                        - true for read-only
+                        - false for modifiable
+                        Used in: preferences
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="portlet:string">
+            <xs:enumeration value="true"/>
+            <xs:enumeration value="false"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="resource-bundleType">
+        <xs:annotation>
+            <xs:documentation>
+                        Filename of the resource bundle containing the language
+                        specific
+                        portlet informations in different languages.
+                        Used in: portlet-info
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="string"/>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="role-linkType">
+        <xs:annotation>
+            <xs:documentation>
+                        The role-link element is a reference to a defined
+                        security role.
+                        The role-link element must contain the name of one of
+                        the
+                        security roles defined in the security-role elements.
+                        Used in: security-role-ref
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="string"/>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="security-constraintType">
+        <xs:annotation>
+            <xs:documentation>
+                        The security-constraintType is used to associate
+                        intended security constraints with one or more portlets.
+
+                        Used in: portlet-app
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="display-name"
+                type="portlet:display-nameType" minOccurs="0"
+                maxOccurs="unbounded"/>
+            <xs:element name="portlet-collection"
+                type="portlet:portlet-collectionType"/>
+            <xs:element name="user-data-constraint"
+                type="portlet:user-data-constraintType"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="string" use="optional"/>
+    </xs:complexType>
+    <xs:complexType name="security-role-refType">
+        <xs:annotation>
+            <xs:documentation>
+                        The security-role-ref element contains the declaration
+                        of a
+                        security role reference in the code of the web
+                        application. The
+                        declaration consists of an optional description, the
+                        security
+                        role name used in the code, and an optional link to a
+                        security
+                        role. If the security role is not specified, the
+                        Deployer must
+                        choose an appropriate security role.
+                        The value of the role name element must be the String
+                        used
+                        as the parameter to the
+                        EJBContext.isCallerInRole(String roleName) method
+                        or the HttpServletRequest.isUserInRole(String role)
+                        method.
+                        Used in: portlet
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="description"
+                type="portlet:descriptionType" minOccurs="0"
+                maxOccurs="unbounded"/>
+            <xs:element name="role-name"
+                type="portlet:role-nameType"/>
+            <xs:element name="role-link"
+                type="portlet:role-linkType" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="string" use="optional"/>
+    </xs:complexType>
+    <xs:complexType name="short-titleType">
+        <xs:annotation>
+            <xs:documentation>
+                        Locale specific short version of the static title.
+                        Used in: portlet-info
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="string"/>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="supportsType">
+        <xs:annotation>
+            <xs:documentation>
+                        Supports indicates the portlet modes a
+                        portlet supports for a specific content type. All
+                        portlets must
+                        support the view mode.
+                        Used in: portlet
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="mime-type"
+                type="portlet:mime-typeType"/>
+            <xs:element name="portlet-mode"
+                type="portlet:portlet-modeType" minOccurs="0"
+                maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="string" use="optional"/>
+    </xs:complexType>
+    <xs:complexType name="supported-localeType">
+        <xs:annotation>
+            <xs:documentation>
+                        Indicated the locales the portlet supports.
+                        Used in: portlet
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="string"/>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="titleType">
+        <xs:annotation>
+            <xs:documentation>
+                        Locale specific static title for this portlet.
+                        Used in: portlet-info
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="string"/>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:simpleType name="transport-guaranteeType">
+        <xs:annotation>
+            <xs:documentation>
+                        The transport-guaranteeType specifies that
+                        the communication between client and portlet should
+                        be NONE, INTEGRAL, or CONFIDENTIAL.
+                        NONE means that the portlet does not
+                        require any transport guarantees. A value of
+                        INTEGRAL means that the portlet requires that the
+                        data sent between the client and portlet be sent in
+                        such a way that it can't be changed in transit.
+                        CONFIDENTIAL means that the portlet requires
+                        that the data be transmitted in a fashion that
+                        prevents other entities from observing the contents
+                        of the transmission.
+                        In most cases, the presence of the INTEGRAL or
+                        CONFIDENTIAL flag will indicate that the use
+                        of SSL is required.
+                          Used in: user-data-constraint
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="portlet:string">
+            <xs:enumeration value="NONE"/>
+            <xs:enumeration value="INTEGRAL"/>
+            <xs:enumeration value="CONFIDENTIAL"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="user-attributeType">
+        <xs:annotation>
+            <xs:documentation>
+                        User attribute defines a user specific attribute that
+                        the
+                        portlet application needs. The portlet within this
+                        application
+                        can access this attribute via the request parameter
+                        USER_INFO
+                        map.
+                        Used in: portlet-app
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="description"
+                type="portlet:descriptionType" minOccurs="0"
+                maxOccurs="unbounded"/>
+            <xs:element name="name" type="portlet:nameType"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="string" use="optional"/>
+    </xs:complexType>
+    <xs:complexType name="user-data-constraintType">
+        <xs:annotation>
+            <xs:documentation>
+                        The user-data-constraintType is used to indicate how
+                        data communicated between the client and portlet should
+                        be
+                        protected.
+                        Used in: security-constraint
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="description"
+                type="portlet:descriptionType" minOccurs="0"
+                maxOccurs="unbounded"/>
+            <xs:element name="transport-guarantee"
+                type="portlet:transport-guaranteeType"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="string" use="optional"/>
+    </xs:complexType>
+    <xs:complexType name="valueType">
+        <xs:annotation>
+            <xs:documentation>
+                        The value element contains the value of a parameter.
+                        Used in: init-param
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="string"/>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="window-stateType">
+        <xs:annotation>
+            <xs:documentation>
+                        Portlet window state. Window state names are not case
+                        sensitive.
+                        Used in: custom-window-state
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="string"/>
+        </xs:simpleContent>
+    </xs:complexType>
+    <!--- everything below is copied from j2ee_1_4.xsd -->
+    <xs:complexType name="descriptionType">
+        <xs:annotation>
+            <xs:documentation>
+                        The description element is used to provide text
+                        describing the
+                        parent element. The description element should include
+                        any
+                        information that the portlet application war file
+                        producer wants
+                        to provide to the consumer of the portlet application
+                        war file
+                        (i.e., to the Deployer). Typically, the tools used by
+                        the
+                        portlet application war file consumer will display the
+                        description when processing the parent element that
+                        contains the
+                        description. It has an optional attribute xml:lang to
+                        indicate
+                        which language is used in the description according to
+                        RFC 1766 (http://www.ietf.org/rfc/rfc1766.txt). The
+                        default
+                        value of this attribute is English(â€œenâ€?).
+                        Used in: init-param, portlet, portlet-app, security-role
+
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="string">
+                <xs:attribute ref="xml:lang"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="display-nameType">
+        <xs:annotation>
+            <xs:documentation>
+                        The display-name type contains a short name that is
+                        intended
+                        to be displayed by tools. It is used by display-name
+                        elements. The display name need not be unique.
+                        Example:
+                        ...
+                <display-name xml:lang="en">Employee Self
+                        Service</display-name>
+
+                        It has an optional attribute xml:lang to indicate
+                        which language is used in the description according to
+                        RFC 1766 (http://www.ietf.org/rfc/rfc1766.txt). The
+                        default
+                        value of this attribute is English(â€œenâ€?).
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="portlet:string">
+                <xs:attribute ref="xml:lang"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:simpleType name="fully-qualified-classType">
+        <xs:annotation>
+            <xs:documentation>
+                        The elements that use this type designate the name of a
+                        Java class or interface.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="portlet:string"/>
+    </xs:simpleType>
+    <xs:simpleType name="role-nameType">
+        <xs:annotation>
+            <xs:documentation>
+                        The role-nameType designates the name of a security
+                        role.
+
+                        The name must conform to the lexical rules for an
+                        NMTOKEN.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="NMTOKEN"/>
+    </xs:simpleType>
+    <xs:simpleType name="string">
+        <xs:annotation>
+            <xs:documentation>
+                        This is a special string datatype that is defined by
+                        J2EE
+                        as a base type for defining collapsed strings. When
+                        schemas require trailing/leading space elimination as
+                        well as collapsing the existing whitespace, this base
+                        type may be used.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="string">
+            <xs:whiteSpace value="collapse"/>
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

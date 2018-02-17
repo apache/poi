@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="item">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="productName"/>
+        <xs:element ref="quantity"/>
+        <xs:element ref="USPrice"/>
+        <xs:element ref="comment" minOccurs="0"/>
+        <xs:element ref="shipDate" minOccurs="0"/>
+      </xs:sequence>
+      <xs:attribute type="xs:string" name="partNum" use="optional" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="street" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+  <xs:element name="productName" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+  <xs:element name="comment" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+  <xs:element name="USPrice" type="xs:float" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+  <xs:element name="items">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="item" maxOccurs="unbounded" minOccurs="0"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="purchaseOrder">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="shipTo"/>
+        <xs:element ref="billTo"/>
+        <xs:element ref="comment"/>
+        <xs:element ref="items"/>
+      </xs:sequence>
+      <xs:attribute type="xs:date" name="orderDate" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="shipTo">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="name"/>
+        <xs:element ref="street"/>
+        <xs:element ref="city"/>
+        <xs:element ref="state"/>
+        <xs:element ref="zip"/>
+      </xs:sequence>
+      <xs:attribute type="xs:string" name="country" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="state" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+  <xs:element name="zip" type="xs:int" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+  <xs:element name="name" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+  <xs:element name="quantity" type="xs:byte" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+  <xs:element name="billTo">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="name"/>
+        <xs:element ref="street"/>
+        <xs:element ref="city"/>
+        <xs:element ref="state"/>
+        <xs:element ref="zip"/>
+      </xs:sequence>
+      <xs:attribute type="xs:string" name="country" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="city" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+  <xs:element name="shipDate" type="xs:date" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+</xs:schema>

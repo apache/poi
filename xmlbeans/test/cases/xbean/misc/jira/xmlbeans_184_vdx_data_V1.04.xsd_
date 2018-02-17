@@ -1,0 +1,1261 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+/*   Copyright 2004 The Apache Software Foundation
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+-->
+<xs:schema xmlns:sciphox="urn::sciphox-org/sciphox" xmlns:ehdtl="urn:ehd/001" xmlns="urn:ehd/vdx/001" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:ehd/vdx/001" elementFormDefault="qualified">
+	<xs:include schemaLocation="xmlbeans_184_datentypen_V1.30.xsd_"/>
+	<!-- Schema -->
+	<!-- ======================================================================= 
+	vdx-Schnittstelle
+	======================================================================= -->
+	<xs:element name="vdx_data">
+		<xs:annotation>
+			<xs:documentation>klammerndes Element von jeweils einem LE und seinen Fällen oder einer Kasse und zahlungspflichtigen KV mit den zugehörigen Vorgängen. Das Element vdx_data nimmt die zahlungsfordernde KV auf.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:choice>
+				<xs:sequence>
+					<xs:element name="provider" type="vdx_provider_typ" minOccurs="0">
+						<xs:annotation>
+							<xs:documentation>abrechnende, leistungserbringende Organisation oder Person. In der an die KBV zu übermittelnden DA D06 ist "provider" Pflichtelement</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="fall_liste" type="fall_liste_typ"/>
+				</xs:sequence>
+				<xs:sequence>
+					<xs:element ref="vknr"/>
+					<xs:element name="vorgang_liste" type="vorgang_liste_typ"/>
+				</xs:sequence>
+			</xs:choice>
+			<xs:attribute name="V" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="S" type="xs:string" use="optional" fixed="1.2.276.0.76.3.1.1.5.1.12"/>
+			<xs:attribute name="SN" type="xs:string" use="prohibited" fixed="ST 12"/>
+		</xs:complexType>
+	</xs:element>
+	<!-- ****************************** vdx-typen ****************************** -->
+	<xs:complexType name="vdx_id_typ">
+		<xs:annotation>
+			<xs:documentation> EX-Attribut enthält eine eindeutige ID des Objekts</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:restriction base="id_typ">
+				<xs:attribute name="EX" use="required">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:maxLength value="128"/>
+							<xs:minLength value="1"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
+				<xs:attribute name="RT" use="required">
+					<xs:annotation>
+						<xs:documentation> RT-Attribut enthält eine eindeutige Stamm-ID</xs:documentation>
+					</xs:annotation>
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:length value="2"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
+				<xs:attribute name="RTV" type="xs:string" use="prohibited"/>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="vdx_provider_typ">
+		<xs:complexContent>
+			<xs:restriction base="provider_typ">
+				<xs:sequence>
+					<xs:element name="person" maxOccurs="unbounded">
+						<xs:complexType>
+							<xs:complexContent>
+								<xs:restriction base="person_typ">
+									<xs:sequence>
+										<xs:element name="id" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Leistungserbringer-Kennzeichen des Arztes in kennzeichnungspflichtigen Versorgungsformen, FK 0213</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:complexContent>
+													<xs:restriction base="id_typ">
+														<xs:attribute name="RT" use="required">
+															<xs:annotation>
+																<xs:documentation>RT-Attribut enthält Praxisabrechnungsnummer</xs:documentation>
+															</xs:annotation>
+															<xs:simpleType>
+																<xs:restriction base="xs:string">
+																	<xs:length value="9"/>
+																</xs:restriction>
+															</xs:simpleType>
+														</xs:attribute>
+														<xs:attribute name="RTV" type="xs:string" use="prohibited"/>
+														<xs:attribute name="EX" use="required">
+															<xs:annotation>
+																<xs:documentation>Leistungserbringer-Kennzeichen des Arztes in kennzeichnungspflichtigen Versorgungsformen, FK 0213</xs:documentation>
+															</xs:annotation>
+															<xs:simpleType>
+																<xs:restriction base="xs:string">
+																	<xs:minLength value="1"/>
+																	<xs:maxLength value="3"/>
+																</xs:restriction>
+															</xs:simpleType>
+														</xs:attribute>
+													</xs:restriction>
+												</xs:complexContent>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="local_header">
+											<xs:complexType>
+												<xs:complexContent>
+													<xs:restriction base="local_header-cont.model">
+														<xs:sequence>
+															<xs:element ref="teilnahmestatus"/>
+															<xs:element name="fachgruppe_liste">
+																<xs:complexType>
+																	<xs:complexContent>
+																		<xs:extension base="liste_id_typ">
+																			<xs:sequence>
+																				<xs:element ref="fachgruppe" maxOccurs="unbounded"/>
+																			</xs:sequence>
+																		</xs:extension>
+																	</xs:complexContent>
+																</xs:complexType>
+															</xs:element>
+															<xs:element ref="ha_fa_kennung"/>
+															<xs:element ref="ms_kennung"/>
+															<!-- Element fachgruppe_liste =========================================== -->
+															<!-- Element ha_fa_kennung =========================================== -->
+															<!-- Element ms_kennung =========================================== -->
+														</xs:sequence>
+														<xs:attribute name="ignore" use="prohibited"/>
+														<xs:attribute name="descriptor" use="prohibited"/>
+														<xs:attribute name="render" use="prohibited"/>
+													</xs:restriction>
+												</xs:complexContent>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:restriction>
+							</xs:complexContent>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="organization">
+						<xs:complexType>
+							<xs:complexContent>
+								<xs:restriction base="organization_typ">
+									<xs:sequence>
+										<xs:element name="id">
+											<xs:annotation>
+												<xs:documentation>Praxisabrechnungsnummer (pseudonymisiert)</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:complexContent>
+													<xs:restriction base="id_typ">
+														<xs:attribute name="EX" use="required">
+															<xs:simpleType>
+																<xs:restriction base="xs:string">
+																	<xs:length value="9"/>
+																</xs:restriction>
+															</xs:simpleType>
+															<!-- Das EX-Attribut nimmt eine neunstellige (ggf. mit Nullen aufzufüllen und als string zu behandeln), pseudonymisierte Abrechnugsnummer auf -->
+														</xs:attribute>
+														<xs:attribute name="RT" use="required">
+															<xs:simpleType>
+																<xs:restriction base="xs:string">
+																	<xs:length value="2"/>
+																</xs:restriction>
+															</xs:simpleType>
+															<!-- Das RT-Attribut nimmt die zweistellige KV-Landesstelle auf -->
+														</xs:attribute>
+														<xs:attribute name="RTV" type="xs:string" use="prohibited"/>
+													</xs:restriction>
+												</xs:complexContent>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="local_header">
+											<xs:complexType>
+												<xs:complexContent>
+													<xs:restriction base="local_header-cont.model">
+														<xs:sequence>
+															<xs:element ref="organization_type_cd"/>
+															<xs:element ref="kbv_pruefnummer"/>
+															<xs:element ref="regelleistungsvolumen" minOccurs="0"/>
+															<xs:element name="honorargruppe_liste" minOccurs="0">
+																<xs:complexType>
+																	<xs:complexContent>
+																		<xs:extension base="liste_id_typ">
+																			<xs:sequence>
+																				<xs:element name="honorargruppe" maxOccurs="unbounded">
+																					<xs:annotation>
+																						<xs:documentation>KVspez. Honorartopf, aus dem die für Fachgruppentöpfe relevanten Leistungen honoriert werden</xs:documentation>
+																					</xs:annotation>
+																					<xs:complexType>
+																						<xs:attribute name="V" type="xs:string" use="required"/>
+																					</xs:complexType>
+																				</xs:element>
+																			</xs:sequence>
+																		</xs:extension>
+																	</xs:complexContent>
+																</xs:complexType>
+															</xs:element>
+															<xs:element name="honorar_liste" type="honorar_liste_typ">
+																<xs:annotation>
+																	<xs:documentation>Liste des Bruttohonorars nach diversen Kennungen</xs:documentation>
+																</xs:annotation>
+															</xs:element>
+															<xs:element name="leistungsbedarf_liste" type="leistungsbedarf_liste_typ">
+																<xs:annotation>
+																	<xs:documentation>Liste des Leistungsbedarfs nach diversen Kennungen aller im Abrechnungsquartal abrechnenden Leistungserbringer</xs:documentation>
+																</xs:annotation>
+															</xs:element>
+															<!-- Element honorargruppe_liste =========================================== -->
+															<!-- Element honorar_liste =========================================== -->
+														</xs:sequence>
+														<xs:attribute name="ignore" use="prohibited"/>
+														<xs:attribute name="descriptor" use="prohibited"/>
+														<xs:attribute name="render" use="prohibited"/>
+													</xs:restriction>
+												</xs:complexContent>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:restriction>
+							</xs:complexContent>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="honorar_liste_typ">
+		<xs:annotation>
+			<xs:documentation>Listenelement zur Verarbeitungssteuerung</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="liste_id_typ">
+				<xs:sequence>
+					<xs:element name="kt_honorar" maxOccurs="4">
+						<xs:annotation>
+							<xs:documentation>Gesamthonorar der Praxis nach allen 4 Kostenträgerarten</xs:documentation>
+						</xs:annotation>
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element ref="kt_kennung"/>
+							</xs:sequence>
+							<xs:attribute name="V" type="xs:long" use="required"/>
+							<xs:attribute name="U" type="xs:string" use="prohibited" fixed="EUR"/>
+							<!-- V-Attribut des kt_honorars enthält 2 sog. Nachkommastellen -->
+						</xs:complexType>
+						<!-- In VDX sollen nur Datensätze von Leistungserbringern übertragen werden, die im Abrecfhnungsquartal Leistungen erbracht haben. Daher sind sowohl LB als auch Hon Pflichtelemente. -->
+					</xs:element>
+					<xs:element name="ms_honorar" maxOccurs="4">
+						<xs:annotation>
+							<xs:documentation>GKV-Honorar der Praxis gegliedert nach Mengensteuerungskennung</xs:documentation>
+						</xs:annotation>
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element ref="lb_hon_ms_kennung"/>
+							</xs:sequence>
+							<xs:attribute name="V" type="xs:long" use="required"/>
+							<xs:attribute name="U" type="xs:string" use="prohibited" fixed="EUR"/>
+							<!-- V-Attribut des ms_honorars enthält 2 sog. Nachkommastellen -->
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="honorarkorrekturen" minOccurs="0" maxOccurs="4">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element ref="kt_kennung"/>
+							</xs:sequence>
+							<xs:attribute name="V" type="xs:long" use="required">
+								<!-- V-Attribut der honorarkorrekturen enthält 2 sog. Nachkommastellen -->
+							</xs:attribute>
+							<xs:attribute name="U" type="xs:string" use="prohibited" fixed="EUR"/>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+		<!--   -->
+		<!-- leistungsbedarf_liste_typ ************************************************************************* -->
+	</xs:complexType>
+	<xs:complexType name="leistungsbedarf_liste_typ">
+		<xs:annotation>
+			<xs:documentation>Listenelement zur Verarbeitungssteuerung</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="liste_id_typ">
+				<xs:sequence>
+					<xs:element name="kt_leistungsbedarf" maxOccurs="8">
+						<xs:annotation>
+							<xs:documentation>Gesamt- oder GKV-Leistungsbedarf der Praxis nach Kostenträgerarten</xs:documentation>
+						</xs:annotation>
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element ref="kt_kennung"/>
+							</xs:sequence>
+							<xs:attribute name="V" type="xs:long" use="required"/>
+							<xs:attribute name="U" use="required">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:length value="1"/>
+										<xs:pattern value="[12]"/>
+										<xs:enumeration value="1"/>
+										<xs:enumeration value="2"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:attribute>
+							<!-- kt_leistungsbedarf enthält 2 sog. Nachkommastellen -->
+						</xs:complexType>
+						<!-- In VDX sollen nur Datensätze von Leistungserbringern übertragen werden, die im Abrechnungsquartal Leistungen erbracht haben. Daher sind sowohl LB als auch Hon Pflichtelemente. -->
+					</xs:element>
+					<xs:element name="ms_leistungsbedarf" maxOccurs="8">
+						<xs:annotation>
+							<xs:documentation>GKV-Leistungsbedarf der Praxis nach Mengensteuerungskennung</xs:documentation>
+						</xs:annotation>
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element ref="lb_hon_ms_kennung"/>
+							</xs:sequence>
+							<xs:attribute name="V" type="xs:long" use="required"/>
+							<xs:attribute name="U" use="required">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:length value="1"/>
+										<xs:enumeration value="1"/>
+										<xs:enumeration value="2"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:attribute>
+							<!-- ms_leistungsbedarf enthält 2 sog. Nachkommastellen -->
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+		<!--   -->
+		<!-- liste_id_typ ***************************************************************** -->
+	</xs:complexType>
+	<xs:complexType name="liste_id_typ">
+		<xs:annotation>
+			<xs:documentation>Basistyp für listen_ids zur Verarbeitungssteuerung</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:restriction base="id_typ">
+				<xs:attribute name="EX" use="required">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="9"/>
+							<xs:maxLength value="128"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
+				<xs:attribute name="RT" use="required">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:length value="2"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
+				<xs:attribute name="RTV" type="xs:string" use="prohibited"/>
+			</xs:restriction>
+		</xs:complexContent>
+		<!--   -->
+		<!-- fall_liste_id_typ ****************************************************************************** -->
+	</xs:complexType>
+	<xs:complexType name="fall_liste_typ">
+		<xs:annotation>
+			<xs:documentation>Listenelement zur Verarbeitungssteuerung</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="liste_id_typ">
+				<xs:sequence>
+					<xs:element ref="fall_id" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+		<!--   -->
+		<!-- schein_liste_id_typ ************************************************************************* -->
+	</xs:complexType>
+	<xs:complexType name="schein_liste_typ">
+		<xs:annotation>
+			<xs:documentation>Listenelement zur Verarbeitungssteuerung</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="liste_id_typ">
+				<xs:sequence>
+					<xs:element name="schein" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>enthält Scheinuntergruppe 
+gem. FK 4239</xs:documentation>
+						</xs:annotation>
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="leistung_liste" type="leistung_liste_typ"/>
+								<xs:element name="diagnose_liste" type="diagnose_liste_typ" minOccurs="0"/>
+							</xs:sequence>
+							<xs:attribute name="V" use="required">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:length value="2"/>
+										<xs:pattern value="00|2[013467]|3[012]|4[123456]"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:attribute>
+							<xs:attribute name="S" type="xs:string" use="optional" fixed="1.2.276.0.76.3.1.1.5.1.19"/>
+							<xs:attribute name="SN" type="xs:string" use="prohibited" fixed="Scheinuntergruppe ST 19"/>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+		<!--   -->
+		<!-- vorgang_liste_typ ************************************************************************** -->
+	</xs:complexType>
+	<xs:complexType name="vorgang_liste_typ">
+		<xs:annotation>
+			<xs:documentation>Listenelement zur Verarbeitungssteuerung</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="liste_id_typ">
+				<xs:sequence>
+					<xs:element ref="vorgang" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+		<!--   -->
+		<!-- leistung_liste_typ ************************************************************************* -->
+	</xs:complexType>
+	<xs:complexType name="leistung_liste_typ">
+		<xs:annotation>
+			<xs:documentation>Listenelement zur Verarbeitungssteuerung</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="liste_id_typ">
+				<xs:sequence>
+					<xs:element name="leistung" maxOccurs="unbounded">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element ref="gkv_konto"/>
+								<xs:element ref="gnr"/>
+								<xs:element ref="vorgang_kennung" minOccurs="0"/>
+								<xs:element ref="le_kennung" minOccurs="0"/>
+								<xs:element ref="budget_kennung"/>
+								<xs:element ref="kv_bewertungssteuerung" minOccurs="0" maxOccurs="2"/>
+								<xs:element ref="kbv_bewertungssteuerung" minOccurs="0"/>
+								<xs:element ref="leistungsbedarf"/>
+								<xs:element ref="haeufigkeit"/>
+								<xs:element name="vertrag" minOccurs="0">
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element name="vertragsart">
+												<xs:annotation>
+													<xs:documentation>Kennzeichnung der FKZ-Berechtigung nach FKZ-Richtlinie Kap. 1.3.2 ff., 1.3.7 und AV | ST 15</xs:documentation>
+												</xs:annotation>
+												<xs:complexType>
+													<xs:attribute name="V" use="required">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:length value="2"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:attribute>
+													<xs:attribute name="S" type="xs:string" use="optional" fixed="1.2.276.0.76.3.1.1.5.1.15"/>
+													<xs:attribute name="SN" type="xs:string" use="prohibited" fixed="FKZ-Berechtigungscodes ST 15"/>
+												</xs:complexType>
+											</xs:element>
+											<xs:element name="id" minOccurs="0">
+												<xs:annotation>
+													<xs:documentation>eindeutige Vertragsnummer</xs:documentation>
+												</xs:annotation>
+												<xs:complexType>
+													<xs:complexContent>
+														<xs:restriction base="id_typ">
+															<xs:attribute name="RT" use="required">
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:length value="2"/>
+																		<xs:pattern value="\d{2}"/>
+																	</xs:restriction>
+																</xs:simpleType>
+																<!-- Das RT-Attribut nimmt die zweistellige KV-Landesstelle auf -->
+															</xs:attribute>
+															<xs:attribute name="EX" use="required">
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:minLength value="1"/>
+																		<xs:maxLength value="7"/>
+																	</xs:restriction>
+																</xs:simpleType>
+																<!-- Das EX-Attribut nimmt die 7stellige eigentliche Vertragsnummer auf. Die Zeichenkette muss ggf. auf 7 Stellen aufgefüllt werden. -->
+															</xs:attribute>
+															<xs:attribute name="RTV" type="xs:string" use="prohibited"/>
+														</xs:restriction>
+													</xs:complexContent>
+												</xs:complexType>
+											</xs:element>
+											<xs:element name="bezeichnung" minOccurs="0">
+												<xs:complexType>
+													<xs:attribute name="V" use="required">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:minLength value="1"/>
+																<xs:maxLength value="80"/>
+															</xs:restriction>
+														</xs:simpleType>
+														<!-- enthält einen beliebigen Freitext zur Bezeichnung des Vertrages, max. 80 Zeichen -->
+													</xs:attribute>
+												</xs:complexType>
+											</xs:element>
+											<xs:element name="verguetung" minOccurs="0">
+												<xs:annotation>
+													<xs:documentation>bei GNRn gemäß Anerkennungsvereinbarung Anlage 15 und 17 sowie FKZ-Richtlinie Kap.1.3.7, immer in EUR</xs:documentation>
+												</xs:annotation>
+												<xs:complexType>
+													<xs:attribute name="V" type="xs:int" use="required"/>
+													<xs:attribute name="U" type="xs:string" use="prohibited" fixed="2"/>
+													<xs:attribute name="DN" type="xs:int" use="optional" fixed="5"/>
+												</xs:complexType>
+											</xs:element>
+											<xs:element ref="bewertung" minOccurs="0"/>
+											<xs:element name="gnr_text">
+												<xs:annotation>
+													<xs:documentation>erläuternder Text der GNR</xs:documentation>
+												</xs:annotation>
+												<xs:complexType>
+													<xs:attribute name="V" use="required">
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:maxLength value="230"/>
+																<xs:minLength value="1"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:attribute>
+												</xs:complexType>
+											</xs:element>
+										</xs:sequence>
+									</xs:complexType>
+								</xs:element>
+								<xs:element name="ops_code_liste" minOccurs="0">
+									<xs:complexType>
+										<xs:complexContent>
+											<xs:extension base="liste_id_typ">
+												<xs:sequence>
+													<xs:element name="ops_code" maxOccurs="unbounded">
+														<xs:annotation>
+															<xs:documentation>Schlüssel gem. OPS-301</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:attribute name="V" use="required">
+																<xs:simpleType>
+																	<xs:restriction base="xs:string">
+																		<xs:length value="7"/>
+																		<xs:pattern value="\d-\d\d\d\.[a-zA-Z]"/>
+																	</xs:restriction>
+																</xs:simpleType>
+															</xs:attribute>
+															<xs:attribute name="S" type="xs:string" use="optional" fixed="1.2.276.0.76.3.1.1.5.2"/>
+															<xs:attribute name="SN" type="xs:string" use="prohibited" fixed="GO-Stammdatei"/>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:extension>
+										</xs:complexContent>
+									</xs:complexType>
+								</xs:element>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+		<!--   -->
+		<!-- diagnose_liste_typ ************************************************************************ -->
+	</xs:complexType>
+	<xs:complexType name="diagnose_liste_typ">
+		<xs:annotation>
+			<xs:documentation>Listenelement zur Verarbeitungssteuerung</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="liste_id_typ">
+				<xs:sequence>
+					<xs:element name="diagnose" maxOccurs="unbounded">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="diagnose_code">
+									<xs:annotation>
+										<xs:documentation>FK:6001</xs:documentation>
+									</xs:annotation>
+									<xs:complexType>
+										<xs:attribute name="V" use="required">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:pattern value=""/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:attribute>
+										<xs:attribute name="S" type="xs:string" use="optional" fixed="2.16.840.1.113883.3.7.1.6"/>
+										<xs:attribute name="SN" type="xs:string" use="prohibited" fixed="ICD10-CODE"/>
+									</xs:complexType>
+								</xs:element>
+								<xs:element name="sicherheit">
+									<xs:annotation>
+										<xs:documentation>FK:60003</xs:documentation>
+									</xs:annotation>
+									<xs:complexType>
+										<xs:attribute name="V" use="required">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:length value="1"/>
+													<xs:pattern value="[VZAG]"/>
+													<xs:enumeration value="V"/>
+													<xs:enumeration value="Z"/>
+													<xs:enumeration value="A"/>
+													<xs:enumeration value="G"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:attribute>
+										<xs:attribute name="S" type="xs:string" use="optional" fixed="2.16.840.1.113883.3.7.1.8"/>
+										<xs:attribute name="SN" type="xs:string" use="prohibited" fixed="Diagnosesicherheits-Tabelle"/>
+									</xs:complexType>
+								</xs:element>
+								<xs:element name="lokalisation" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>FK:6004</xs:documentation>
+									</xs:annotation>
+									<xs:complexType>
+										<xs:attribute name="V" use="required">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:length value="1"/>
+													<xs:pattern value="[RLB]"/>
+													<xs:enumeration value="R"/>
+													<xs:enumeration value="L"/>
+													<xs:enumeration value="B"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:attribute>
+										<xs:attribute name="S" type="xs:string" use="optional" fixed="2.16.840.1.113883.3.7.1.7"/>
+										<xs:attribute name="SN" type="xs:string" use="prohibited" fixed="Seitenlokalisations-Tabelle | ST 22"/>
+									</xs:complexType>
+								</xs:element>
+								<xs:element name="dokumentation" minOccurs="0">
+									<xs:annotation>
+										<xs:documentation>Diagnoseerläuterung FK:6006</xs:documentation>
+									</xs:annotation>
+									<xs:complexType>
+										<xs:attribute name="V" use="required">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:maxLength value="60"/>
+													<xs:whiteSpace value="collapse"/>
+													<xs:minLength value="1"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:attribute>
+									</xs:complexType>
+								</xs:element>
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- ======================================================================= 
+	vdx-Schnittstelle
+	======================================================================= -->
+	<!-- *************************************************************Elemente aus vdx_provider***** -->
+	<xs:element name="teilnahmestatus">
+		<xs:annotation>
+			<xs:documentation>Teilnahmestatus des Leistungserbringers gem. Anlage 25 BAR | ST 01</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:attribute name="V" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="S" type="xs:string" use="optional" fixed="1.2.276.0.76.3.1.1.5.1.1"/>
+			<xs:attribute name="SN" type="xs:string" use="prohibited" fixed="teilnahmestatus"/>
+		</xs:complexType>
+		<!-- *************************************************************Element teilnahmestatus******* -->
+	</xs:element>
+	<xs:element name="fachgruppe">
+		<xs:annotation>
+			<xs:documentation>Fachgruppen nach Abrechnungsschwerpunkten  | ST 02</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:attribute name="V" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="S" type="xs:string" use="optional" fixed="1.2.276.0.76.3.1.1.5.1.2"/>
+			<xs:attribute name="SN" type="xs:string" use="prohibited" fixed="Fachgruppe"/>
+		</xs:complexType>
+		<!-- *************************************************************Element fachgruppe************ -->
+	</xs:element>
+	<xs:element name="regelleistungsvolumen">
+		<xs:annotation>
+			<xs:documentation>Regelleistungsvolumen der organization (falls vorhanden)</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:attribute name="V" type="xs:int" use="required"/>
+		</xs:complexType>
+		<!-- *************************************************************Element regelleistungsvolumen* -->
+		<!-- rlv ist immer positiv ganzzahlig -->
+	</xs:element>
+	<xs:element name="organization_type_cd">
+		<xs:annotation>
+			<xs:documentation>Praxistyp | ST 04</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:attribute name="V" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="S" use="optional" fixed="1.2.276.0.76.3.1.1.5.1.04">
+				<xs:simpleType>
+					<xs:restriction base="xs:string"/>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="SN" type="xs:string" use="prohibited" fixed="ST 04"/>
+		</xs:complexType>
+		<!-- *************************************************************Element organization_type_cd** -->
+	</xs:element>
+	<xs:element name="kbv_pruefnummer">
+		<xs:annotation>
+			<xs:documentation>Softwarezertifizierungs-
+nummer, FK 0105</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:attribute name="V" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="8"/>
+						<xs:pattern value="[A-Za-z]\d{7}"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+		<!-- *************************************************************Element kbv_pruefnummer******* -->
+	</xs:element>
+	<!-- *************************************************************abrechnungsparameter********** -->
+	<xs:element name="vdx_abrechnungsbereich">
+		<xs:annotation>
+			<xs:documentation> ST 08</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:attribute name="V" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="S" type="xs:string" use="optional" fixed="1.2.276.0.76.3.1.1.5.1.08"/>
+			<xs:attribute name="SN" type="xs:string" use="prohibited" fixed="VDX-Abrechnungsbereich ST 08"/>
+		</xs:complexType>
+		<!-- *************************************************************Element vdx_abrechnungsbereich -->
+		<!-- noch zu klären ist, ob Schlüssel 000 = 001 + 002 + 011 + 090 -->
+	</xs:element>
+	<xs:element name="gnr">
+		<xs:complexType>
+			<xs:attribute name="V" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="5"/>
+						<xs:maxLength value="6"/>
+						<xs:pattern value="\d{5}|\d{5}[A-Z]"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="S" type="xs:string" use="optional" fixed="1.2.276.0.76.3.1.1.5.2"/>
+			<xs:attribute name="SN" type="xs:string" use="prohibited" fixed="GO-Stammdatei der KV des entsprechenden Abrechnungsquartals"/>
+		</xs:complexType>
+		<!-- *************************************************************Element gnr******************* -->
+	</xs:element>
+	<xs:element name="bewertung">
+		<xs:annotation>
+			<xs:documentation>Punktwert oder Quote, nur bei GNRn gemäß Anerkennungsvereinbarung Anlage 15 und 17 sowie FKZ-Richtlinie Kap. 1.3.7. </xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:attribute name="V" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:int">
+						<xs:pattern value="\d{1,3}\d{2}|\d{1,3}\d{5}"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="U" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="1"/>
+						<xs:enumeration value="1"/>
+						<xs:enumeration value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+				<!-- erlaubte Werte für U-Attribut: 1=Punktwert in cent, 2=Quote in Prozent -->
+			</xs:attribute>
+			<xs:attribute name="DN" type="xs:int" use="optional" fixed="5"/>
+		</xs:complexType>
+		<!-- *************************************************************Element bewertung************* -->
+	</xs:element>
+	<xs:element name="gkv_konto">
+		<xs:annotation>
+			<xs:documentation>ST 17</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:attribute name="V" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="4"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="S" type="xs:string" use="optional" fixed="1.2.276.0.76.3.1.1.5.1.17"/>
+			<xs:attribute name="SN" type="xs:string" use="prohibited" fixed="GKV-Konto ST 17 sowie GOS"/>
+		</xs:complexType>
+		<!-- *************************************************************Element gkv_konto************* -->
+	</xs:element>
+	<xs:element name="vknr">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="zp_kv"/>
+			</xs:sequence>
+			<xs:attribute name="V" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="S" type="xs:string" use="optional" fixed="1.2.276.0.76.4.7"/>
+			<xs:attribute name="SN" type="xs:string" use="prohibited" fixed="Kostenträgerstammdatei"/>
+		</xs:complexType>
+		<!-- *************************************************************Element vknr****************** -->
+	</xs:element>
+	<xs:element name="zp_kv">
+		<xs:annotation>
+			<xs:documentation>für Rechnungslegung gegenüber KT zuständige KV-Stelle | ST 12</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:attribute name="V" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="S" type="xs:string" use="optional" fixed="1.2.276.0.76.3.1.1.5.1.12"/>
+			<xs:attribute name="SN" type="xs:string" use="prohibited" fixed="KV ST 12"/>
+		</xs:complexType>
+		<!-- *************************************************************Element zp_kv***************** -->
+	</xs:element>
+	<xs:element name="kv_bewertungssteuerung">
+		<xs:annotation>
+			<xs:documentation>nimmt Kriterien zur gruppenweisen oder diskrimierenden Bewertung bereichseigener Leistungen auf</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:attribute name="V" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="1"/>
+						<xs:maxLength value="6"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="U" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="1"/>
+						<xs:pattern value="[12]"/>
+						<xs:enumeration value="1"/>
+						<xs:enumeration value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+		<!-- *************************************************************Element kv_bewertungssteuerung**************** -->
+	</xs:element>
+	<xs:element name="kbv_bewertungssteuerung">
+		<xs:annotation>
+			<xs:documentation>nimmt steuernde Attribute für ggf. abweichende Bewertung bereichsfremder Leistungen auf | ST 07</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:attribute name="V" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:pattern value="\d{2}"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="S" type="xs:string" use="optional" fixed="1.2.276.0.76.3.1.1.5.1.7"/>
+			<xs:attribute name="SN" type="xs:string" use="prohibited" fixed="ST 07"/>
+		</xs:complexType>
+		<!-- *************************************************************Element kbv_bewertungssteuerung*************** -->
+	</xs:element>
+	<xs:element name="haeufigkeit">
+		<xs:complexType>
+			<xs:attribute name="V" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:int"/>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="wert">
+		<xs:complexType>
+			<xs:attribute name="V" type="xs:int" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="leistungsbedarf">
+		<xs:annotation>
+			<xs:documentation>LB nach FB3-Inhaltsbeschreibung</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:attribute name="V" type="xs:long" use="required"/>
+			<xs:attribute name="U" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="1"/>
+						<xs:enumeration value="1"/>
+						<xs:enumeration value="2"/>
+						<xs:enumeration value="5"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="DN" type="xs:int" use="optional" fixed="5"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="verguetung">
+		<xs:complexType>
+			<xs:attribute name="V" type="xs:long" use="required"/>
+			<xs:attribute name="U" type="xs:string" use="prohibited" fixed="2"/>
+			<xs:attribute name="DN" type="xs:int" use="optional" fixed="5"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="fall_id">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="vdx_id_typ">
+					<xs:sequence>
+						<xs:element name="patient_id">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element ref="vknr"/>
+									<xs:element ref="vdx_abrechnungsbereich"/>
+									<xs:element name="geschlecht">
+										<xs:annotation>
+											<xs:documentation>S_KBV_GESCHLECHT</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:attribute name="V" use="required">
+												<xs:simpleType>
+													<xs:restriction base="xs:string">
+														<xs:length value="1"/>
+														<xs:pattern value="[012]"/>
+													</xs:restriction>
+												</xs:simpleType>
+											</xs:attribute>
+											<xs:attribute name="S" type="xs:string" use="optional" fixed="1.2.276.0.76.5.232"/>
+											<xs:attribute name="SN" type="xs:string" use="prohibited" fixed="S_KBV_GESCHLECHT"/>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="geburtsdatum">
+										<xs:annotation>
+											<xs:documentation>gem. KVDT FK 3103</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:attribute name="V" type="xs:date" use="required"/>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="versichertenstatus">
+										<xs:annotation>
+											<xs:documentation>gem. KVDT, FK 4112 | ST 10</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:attribute name="V" use="required">
+												<xs:simpleType>
+													<xs:restriction base="xs:string">
+														<xs:length value="4"/>
+														<xs:pattern value="([1,3,5]|9)([0-8]|9)(\d{2}|xx)"/>
+													</xs:restriction>
+												</xs:simpleType>
+											</xs:attribute>
+											<xs:attribute name="S" type="xs:string" use="optional" fixed="1.2.276.0.76.3.1.1.5.1.10"/>
+											<xs:attribute name="SN" type="xs:string" use="prohibited" fixed="Versichertenstatus KVK ST 10"/>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="statusergaenzung">
+										<xs:annotation>
+											<xs:documentation>gem. KVDT, FK 4113 | ST 11</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:attribute name="V" use="required">
+												<xs:simpleType>
+													<xs:restriction base="xs:string">
+														<xs:length value="1"/>
+														<xs:pattern value="[149MXACKLEN0]"/>
+													</xs:restriction>
+												</xs:simpleType>
+											</xs:attribute>
+											<xs:attribute name="S" type="xs:string" use="optional" fixed="1.2.276.0.76.3.1.1.5.1.11"/>
+											<xs:attribute name="SN" type="xs:string" use="prohibited" fixed="ST 11"/>
+										</xs:complexType>
+									</xs:element>
+									<xs:element name="behandlungstage" minOccurs="0">
+										<xs:annotation>
+											<xs:documentation>Anzahl der Tage, an denen Leistungen abgerechnet wurden</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:attribute name="V" use="required">
+												<xs:simpleType>
+													<xs:restriction base="xs:int">
+														<xs:totalDigits value="2"/>
+													</xs:restriction>
+												</xs:simpleType>
+											</xs:attribute>
+										</xs:complexType>
+									</xs:element>
+								</xs:sequence>
+								<xs:attribute name="RT" use="required">
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:length value="2"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:attribute>
+								<xs:attribute name="EX" use="optional">
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:minLength value="9"/>
+											<xs:maxLength value="128"/>
+										</xs:restriction>
+									</xs:simpleType>
+								</xs:attribute>
+								<xs:attribute name="RTV" type="xs:string" use="prohibited"/>
+							</xs:complexType>
+							<!-- *****************************************Element patient ********************************** -->
+						</xs:element>
+						<xs:element name="schein_liste" type="schein_liste_typ"/>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="vorgang">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="vdx_abrechnungsbereich" minOccurs="0"/>
+				<xs:element ref="gkv_konto"/>
+				<xs:element ref="vorgang_code"/>
+				<xs:element ref="budget_kennung"/>
+				<xs:element ref="kv_bewertungssteuerung" minOccurs="0" maxOccurs="2"/>
+				<xs:element ref="kbv_bewertungssteuerung" minOccurs="0"/>
+				<xs:element ref="leistungsbedarf" minOccurs="0"/>
+				<xs:element ref="verguetung" minOccurs="0"/>
+				<xs:element ref="wert" minOccurs="0"/>
+				<xs:element name="id" minOccurs="0">
+					<xs:annotation>
+						<xs:documentation>Praxisabrechnungsnummer bei LE-bezogenen Vorgängen</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:complexContent>
+							<xs:restriction base="id_typ">
+								<xs:attribute name="EX" use="required">
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:length value="9"/>
+										</xs:restriction>
+									</xs:simpleType>
+									<!-- Das EX-Attribut enthält eine eindeutige Vorgangsnummer -->
+								</xs:attribute>
+								<xs:attribute name="RT" use="required">
+									<xs:simpleType>
+										<xs:restriction base="xs:string">
+											<xs:length value="2"/>
+										</xs:restriction>
+									</xs:simpleType>
+									<!-- das RT-Attribut nimmt die 2stellige KV-Landesstelle auf-->
+								</xs:attribute>
+								<xs:attribute name="RTV" type="xs:string" use="prohibited"/>
+							</xs:restriction>
+						</xs:complexContent>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+		<!-- Element kann optional ein Attribut enthalten, das eine in der KV eindeutige Vorgangs-ID aufnimmt. -->
+	</xs:element>
+	<xs:element name="vorgang_code">
+		<xs:annotation>
+			<xs:documentation>ST 18</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:attribute name="V" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="2"/>
+						<xs:maxLength value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+				<!-- Codes für nicht FKZfähige KVspezifische Vorgänge müssen dem Wertebereich ab 100 inkl. entstammen. FKZfähige KVspezifische Vorgänge zum Abbilden von Vorquartalsberichtigungen aus regionalen Anerkennungsvereinbarungen werden von der KBV im Wertebereich 50-79 definiert. -->
+			</xs:attribute>
+			<xs:attribute name="S" type="xs:string" use="optional" fixed="1.2.276.0.76.3.1.1.5.1.18"/>
+			<xs:attribute name="SN" type="xs:string" use="prohibited" fixed="Bezeichnung des Vorgangs ST 18"/>
+		</xs:complexType>
+	</xs:element>
+	<!--************************************************************ kennungen ********************* -->
+	<xs:element name="ms_kennung">
+		<xs:annotation>
+			<xs:documentation>Kennzeichnung, ob Leistungserbringer ein RLV hat oder nicht | ST 03</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:attribute name="V" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="1"/>
+						<xs:pattern value="[01]"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="S" type="xs:string" use="optional" fixed="1.2.276.0.76.3.1.1.5.1.3"/>
+			<xs:attribute name="SN" type="xs:string" use="prohibited" fixed="Mengensteuerungs-Kennung"/>
+		</xs:complexType>
+		<!--************************************************************ ms_kennung ******************** -->
+		<!-- #### MS-Kennung an person kann evtl. künftig entfallen, wenn der Inhalt eindeutig aus fachgruppe + Def. in EBM hervorgeht -->
+	</xs:element>
+	<xs:element name="kt_kennung">
+		<xs:annotation>
+			<xs:documentation>Kostenträgerarten-
+Kennung | ST 06</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:attribute name="V" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="1"/>
+						<xs:pattern value="[12345]"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="S" type="xs:string" use="optional" fixed="1.2.276.0.76.3.1.1.5.1.6"/>
+			<xs:attribute name="SN" type="xs:string" use="prohibited" fixed="Kostenträgerarten-
+Kennung ST 06"/>
+		</xs:complexType>
+		<!--************************************************************ kt_kennung *************************************************************************************-->
+	</xs:element>
+	<xs:element name="lb_hon_ms_kennung">
+		<xs:annotation>
+			<xs:documentation>Mengensteuerungskennung für Honorar und Leistungsbedarf | ST 05</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:attribute name="V" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="1"/>
+						<xs:pattern value="[12345]"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="S" type="xs:string" use="optional" fixed="1.2.276.0.76.3.1.1.5.1.5"/>
+			<xs:attribute name="SN" type="xs:string" use="prohibited" fixed="Mengensteuerungskennung für Honorar und Leistungsbedarf | ST 05"/>
+		</xs:complexType>
+		<!--************************************************************ lb_hon_ms_kennung *************************************************************************************-->
+	</xs:element>
+	<xs:element name="budget_kennung">
+		<xs:annotation>
+			<xs:documentation>ST 16</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:attribute name="V" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="1"/>
+						<xs:pattern value="[125]"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="S" type="xs:string" use="optional" fixed="1.2.276.0.76.3.1.1.5.1.16"/>
+			<xs:attribute name="SN" type="xs:string" use="prohibited" fixed="Budget-Kennung für bereichseigene oder bereichsfremde Leistungen und Vorgänge"/>
+		</xs:complexType>
+		<!--************************************************************ budget_kennung *************************************************************************************-->
+	</xs:element>
+	<xs:element name="ha_fa_kennung">
+		<xs:annotation>
+			<xs:documentation>Versorgungsbereichskennung | ST 20</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:attribute name="V" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="1"/>
+						<xs:pattern value="[123]"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="S" type="xs:string" use="optional" fixed="1.2.276.0.76.3.1.1.5.1.20"/>
+			<xs:attribute name="SN" type="xs:string" use="prohibited" fixed="Versorgungsbereichskennung"/>
+		</xs:complexType>
+		<!--************************************************************ ha_fa_kennung *************************************************************************************-->
+	</xs:element>
+	<xs:element name="le_kennung">
+		<xs:annotation>
+			<xs:documentation>Kennzeichen des Leistung erbringenden Arztes in Gemeinschaftspraxen und ggf. MVZ, FK 5039</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:attribute name="V" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:minLength value="1"/>
+						<xs:maxLength value="3"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+		<!--************************************************************ le_kennung *************************************************************************************-->
+	</xs:element>
+	<xs:element name="vorgang_kennung">
+		<xs:annotation>
+			<xs:documentation>Kennzeichnet die GNR als Pseudo-GNR, die die Einstellung des Leistungsbedarfs in einen Vorgang abbildet.  | ST 18</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:attribute name="V" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:pattern value="20|25|30|31|32|33"/>
+						<!-- Einschränkung des Wertebereichs der ST18 auf die hier zur Kennzeichnung erlaubten Werte -->
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="S" type="xs:string" use="optional" fixed="1.2.276.0.76.3.1.1.5.1.18"/>
+			<xs:attribute name="SN" type="xs:string" use="prohibited" fixed="Kennzeichnung des Vorgangs an gnr | Teilmenge aus ST 18"/>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

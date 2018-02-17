@@ -1,0 +1,6 @@
+<statusreport xmlns="http://openuri.org/enumtest">
+  <status name="first" target="all">all</status>
+  <status name="second" target="all">few</status>
+  <status name="third" target="none">most</status>
+  <status name="first" target="none">none</status>
+</statusreport>

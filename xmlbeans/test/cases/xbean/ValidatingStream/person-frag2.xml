@@ -1,0 +1,5 @@
+<xml-fragment><per:First xmlns:per="http://openuri.org/test/Person"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Person</per:First>
+        <per:Last xmlns:per="http://openuri.org/test/Person"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Two</per:Last>
+</xml-fragment>

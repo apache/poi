@@ -1,0 +1,16 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://example.org/prod"
+    targetNamespace="http://example.org/prod" >
+
+    <xsd:redefine schemaLocation="redefine1.xsd">
+        <xsd:simpleType name="DressSizeType">
+            <xsd:restriction base="DressSizeType">
+                <xsd:minInclusive value="2" />
+                <xsd:maxInclusive value="16" />
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:redefine>
+
+    <xsd:element name="newSize" type="DressSizeType" />
+
+</xsd:schema>

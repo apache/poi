@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -31,26 +30,25 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="CT_Path2DList">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="path" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_Path2D" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="CT_Path2DList"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="path" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_Path2D" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "CT_Path2DList", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", propOrder = {
+@XmlType(name = "CT_Path2DList", propOrder = {
     "path"
 })
 public class CTPath2DList {
 
-    @XmlElement(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main")
     protected List<CTPath2D> path;
 
     /**
@@ -77,7 +75,7 @@ public class CTPath2DList {
      */
     public List<CTPath2D> getPath() {
         if (path == null) {
-            path = new ArrayList<>();
+            path = new ArrayList<CTPath2D>();
         }
         return this.path;
     }

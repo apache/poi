@@ -1,0 +1,8 @@
+<p:Person
+    xmlns:p="a:b:c:People"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:type="p:Employee">
+    <name>John</name>
+    <height>59</height>
+    <jobDescription>manager</jobDescription>
+</p:Person>

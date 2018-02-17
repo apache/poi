@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://beehive.apache.org/netui/tools/testrecorder/2004/session"
+    targetNamespace="http://beehive.apache.org/netui/tools/testrecorder/2004/session"
+    elementFormDefault="qualified">
+
+    <xs:element name="recorderSession">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="sessionName" type="nonZeroLengthString"/>
+                <xs:element name="tester" type="xs:string"/>
+                <xs:element name="startDate" type="xs:string"/>
+                <xs:element name="description" type="xs:string"/>
+                <xs:element name="tests" type="testsType"/>
+                <xs:element name="endDate" type="xs:string"/>
+                <xs:element name="sessionStatus" type="statusType" minOccurs="0"/>
+                <xs:element name="testCount" type="positiveInt"/>
+                <xs:element name="passedCount" type="nonNegativeInt" minOccurs="0"/>
+                <xs:element name="failedCount" type="nonNegativeInt" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="testsType">
+        <xs:sequence>
+            <xs:element name="test" type="testType" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="testType">
+        <xs:sequence>
+            <xs:element name="testNumber" type="positiveInt"/>
+            <xs:element name="request" type="requestType"/>
+            <xs:element name="response" type="responseType"/>
+            <xs:element name="testResults" type="testResultsType" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="requestType">
+        <xs:sequence>
+            <xs:element name="protocol" type="protocolType"/>
+            <xs:element name="protocolVersion" type="xs:string"/>
+            <xs:element name="host" type="xs:string"/>
+            <xs:element name="port" type="positiveInt"/>
+            <xs:element name="uri" type="xs:string"/>
+            <xs:element name="method" type="methodType"/>
+            <xs:element name="parameters" type="parametersType"/>
+            <xs:element name="cookies" type="cookiesType"/>
+            <xs:element name="headers" type="headersType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="responseType">
+        <xs:sequence>
+            <xs:element name="statusCode" type="positiveInt"/>
+            <xs:element name="reason" type="xs:string"/>
+            <xs:element name="responseBody" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="testResultsType">
+        <xs:sequence>
+            <xs:element name="testStatus" type="statusType"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="parametersType">
+        <xs:sequence>
+            <xs:element name="parameter" type="nameValueType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="cookiesType">
+        <xs:sequence>
+            <xs:element name="cookie" type="nameValueType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="headersType">
+        <xs:sequence>
+            <xs:element name="header" type="nameValueType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="nameValueType">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="value" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="protocolType">
+        <xs:restriction base="xs:token">
+            <xs:enumeration value="HTTP"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="statusType">
+        <xs:restriction base="xs:token">
+            <xs:enumeration value="pass"/>
+            <xs:enumeration value="fail"/>
+            <xs:enumeration value="error"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="methodType">
+        <xs:restriction base="xs:token">
+            <xs:enumeration value="GET"/>
+            <xs:enumeration value="POST"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="positiveInt">
+        <xs:restriction base="xs:int">
+            <xs:minInclusive value="1"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="nonNegativeInt">
+        <xs:restriction base="xs:int">
+            <xs:minInclusive value="0"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="nonZeroLengthString">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+</xs:schema>

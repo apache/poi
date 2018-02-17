@@ -82,10 +82,7 @@ public class Ellipse implements GeometryRow {
         if (deleted != null)
             return deleted;
 
-        if (_master != null)
-            return _master.getDel();
-
-        return false;
+        return _master != null && _master.getDel();
     }
 
     public Double getX() {

@@ -1,0 +1,4 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified" targetNamespace="DAV:" xmlns="DAV:">
+    <xs:element name="simpleTest" type="xs:string"/>
+</xs:schema>

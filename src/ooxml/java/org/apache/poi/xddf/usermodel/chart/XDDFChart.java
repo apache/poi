@@ -63,6 +63,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTPieChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTRadarChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTScatterChart;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTSerAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTSurface;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTValAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.ChartSpaceDocument;
@@ -364,15 +365,44 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     }
 
     private void parseAxes() {
-        // TODO: add other axis types
         for (CTCatAx catAx : chart.getPlotArea().getCatAxArray()) {
             axes.add(new XDDFCategoryAxis(catAx));
         }
         for (CTDateAx dateAx : chart.getPlotArea().getDateAxArray()) {
             axes.add(new XDDFDateAxis(dateAx));
         }
+        for (CTSerAx serAx : chart.getPlotArea().getSerAxArray()) {
+            axes.add(new XDDFSeriesAxis(serAx));
+        }
         for (CTValAx valAx : chart.getPlotArea().getValAxArray()) {
             axes.add(new XDDFValueAxis(valAx));
+        }
+    }
+
+    /**
+     * Set value range (basic Axis Options)
+     * @param axisIndex 0 - primary axis, 1 - secondary axis
+     * @param minimum minimum value; Double.NaN - automatic; null - no change
+     * @param maximum maximum value; Double.NaN - automatic; null - no change
+     * @param majorUnit major unit value; Double.NaN - automatic; null - no change
+     * @param minorUnit minor unit value; Double.NaN - automatic; null - no change
+     */
+    public void setValueRange(int axisIndex, Double minimum, Double maximum, Double majorUnit, Double minorUnit) {
+        XDDFChartAxis axis = getAxes().get(axisIndex);
+        if (axis == null) {
+            return;
+        }
+        if (minimum != null) {
+            axis.setMinimum(minimum);
+        }
+        if (maximum != null) {
+            axis.setMaximum(maximum);
+        }
+        if (majorUnit != null) {
+            axis.setMajorUnit(majorUnit);
+        }
+        if (minorUnit != null) {
+            axis.setMinorUnit(minorUnit);
         }
     }
 

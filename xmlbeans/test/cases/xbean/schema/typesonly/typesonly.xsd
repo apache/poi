@@ -1,0 +1,60 @@
+<xs:schema
+   xmlns:xs="http://www.w3.org/2001/XMLSchema"
+   xmlns:mt="http://openuri.org/typesonly"
+   targetNamespace="http://openuri.org/typesonly"
+   elementFormDefault="qualified"
+   attributeFormDefault="unqualified" >
+
+  <xs:complexType name="person">
+    <xs:sequence>
+      <xs:element name="firstname" type="xs:string"/>
+      <xs:choice>
+        <xs:element name="age">
+           <xs:simpleType>
+             <xs:restriction base="xs:integer">
+               <xs:minInclusive value="1"/>
+               <xs:maxInclusive value="100"/>
+             </xs:restriction>
+           </xs:simpleType>
+        </xs:element>
+        <xs:element name="birthday" type="xs:date"/>
+      </xs:choice>
+        
+      <xs:element minOccurs="0" maxOccurs="unbounded" type="mt:person" name="child"/>
+    </xs:sequence>
+      
+    <xs:attribute name="gender">
+      <xs:simpleType>
+        <xs:restriction base="xs:NMTOKEN">
+          <xs:enumeration value="male"/>
+          <xs:enumeration value="female"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+      
+  </xs:complexType>
+
+  <xs:element name="record" type="mt:person"/>
+  
+  <xs:simpleType name="State">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="AK"/>
+      <xs:enumeration value="AL"/>
+      <xs:enumeration value="AS"/>
+      <xs:enumeration value="AZ"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ListOfStates">
+    <xs:list itemType="mt:State"/>
+  </xs:simpleType>
+  
+  <xs:complexType name="candidate">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string"/>
+      <xs:element name="states" type="mt:ListOfStates"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+</xs:schema>
+

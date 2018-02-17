@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.w3.org/TR/xsl" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="stylesheet">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="template">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element ref="html"/>
+            </xs:sequence>
+            <xs:attribute type="xs:string" name="match" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="for-each">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="tr"/>
+      </xs:sequence>
+      <xs:attribute type="xs:string" name="select" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="value-of">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+          <xs:attribute type="xs:string" name="select" use="optional"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

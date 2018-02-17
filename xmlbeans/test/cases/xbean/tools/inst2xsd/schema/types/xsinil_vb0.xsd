@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="a:b:c" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="person" type="a:personType" xmlns:a="a:b:c"/>
+  <xs:complexType name="personType">
+    <xs:sequence>
+      <xs:element ref="name"/>
+      <xs:element ref="height"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

@@ -1,0 +1,15 @@
+<xsd:schema
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://xbean/scomp/contentType/SimpleType"
+    targetNamespace="http://xbean/scomp/contentType/SimpleType"
+    >
+   <!--Pattern-->
+    <xsd:simpleType name="PantSize">
+        <xsd:restriction base="xsd:integer">
+            <xsd:minInclusive value="0"/>
+            <xsd:maxInclusive value="14"/>
+            <xsd:pattern value="\d{1,2}" />
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:element name="PantSizeElt" type="PantSize"/>
+</xsd:schema>

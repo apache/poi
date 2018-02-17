@@ -29,30 +29,30 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="CT_Scale2D">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="sx" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_Ratio"/>
- *         &lt;element name="sy" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_Ratio"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="CT_Scale2D"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="sx" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_Ratio"/&gt;
+ *         &lt;element name="sy" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_Ratio"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "CT_Scale2D", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", propOrder = {
+@XmlType(name = "CT_Scale2D", propOrder = {
     "sx",
     "sy"
 })
 public class CTScale2D {
 
-    @XmlElement(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", required = true)
+    @XmlElement(required = true)
     protected CTRatio sx;
-    @XmlElement(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", required = true)
+    @XmlElement(required = true)
     protected CTRatio sy;
 
     /**

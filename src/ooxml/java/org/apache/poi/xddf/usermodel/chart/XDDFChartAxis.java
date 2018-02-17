@@ -24,7 +24,6 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartLines;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTCrosses;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTLogBase;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumFmt;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTScaling;
@@ -56,6 +55,38 @@ public abstract class XDDFChartAxis implements HasShapeProperties {
     public abstract XDDFShapeProperties getOrAddMajorGridProperties();
 
     public abstract XDDFShapeProperties getOrAddMinorGridProperties();
+
+    /**
+     * @return true if minor unit value is defined, false otherwise
+     */
+    public abstract boolean isSetMinorUnit();
+
+    /**
+     * @param minor
+     *            axis minor unit
+     */
+    public abstract void setMinorUnit(double minor);
+
+    /**
+     * @return axis minor unit or NaN if not set
+     */
+    public abstract double getMinorUnit();
+
+    /**
+     * @return true if major unit value is defined, false otherwise
+     */
+    public abstract boolean isSetMajorUnit();
+
+    /**
+     * @param major
+     *            axis major unit
+     */
+    public abstract void setMajorUnit(double major);
+
+    /**
+     * @return axis major unit or NaN if not set
+     */
+    public abstract double getMajorUnit();
 
     /**
      * @return axis id
@@ -132,14 +163,14 @@ public abstract class XDDFChartAxis implements HasShapeProperties {
     }
 
     /**
-     * @return axis log base or 0.0 if not set
+     * @return axis log base or NaN if not set
      */
     public double getLogBase() {
-        CTLogBase logBase = getCTScaling().getLogBase();
-        if (logBase != null) {
-            return logBase.getVal();
+        CTScaling scaling = getCTScaling();
+        if (scaling.isSetLogBase()) {
+            return scaling.getLogBase().getVal();
         }
-        return 0.0;
+        return Double.NaN;
     }
 
     /**
@@ -155,22 +186,28 @@ public abstract class XDDFChartAxis implements HasShapeProperties {
      */
     public void setMinimum(double min) {
         CTScaling scaling = getCTScaling();
-        if (scaling.isSetMin()) {
-            scaling.getMin().setVal(min);
+        if (Double.isNaN(min)) {
+            if (scaling.isSetMin()) {
+                scaling.unsetMin();
+            }
         } else {
-            scaling.addNewMin().setVal(min);
+            if (scaling.isSetMin()) {
+                scaling.getMin().setVal(min);
+            } else {
+                scaling.addNewMin().setVal(min);
+            }
         }
     }
 
     /**
-     * @return axis minimum or 0.0 if not set
+     * @return axis minimum or NaN if not set
      */
     public double getMinimum() {
         CTScaling scaling = getCTScaling();
         if (scaling.isSetMin()) {
             return scaling.getMin().getVal();
         } else {
-            return 0.0;
+            return Double.NaN;
         }
     }
 
@@ -187,22 +224,28 @@ public abstract class XDDFChartAxis implements HasShapeProperties {
      */
     public void setMaximum(double max) {
         CTScaling scaling = getCTScaling();
-        if (scaling.isSetMax()) {
-            scaling.getMax().setVal(max);
+        if (Double.isNaN(max)) {
+            if (scaling.isSetMax()) {
+                scaling.unsetMax();
+            }
         } else {
-            scaling.addNewMax().setVal(max);
+            if (scaling.isSetMax()) {
+                scaling.getMax().setVal(max);
+            } else {
+                scaling.addNewMax().setVal(max);
+            }
         }
     }
 
     /**
-     * @return axis maximum or 0.0 if not set
+     * @return axis maximum or NaN if not set
      */
     public double getMaximum() {
         CTScaling scaling = getCTScaling();
         if (scaling.isSetMax()) {
             return scaling.getMax().getVal();
         } else {
-            return 0.0;
+            return Double.NaN;
         }
     }
 

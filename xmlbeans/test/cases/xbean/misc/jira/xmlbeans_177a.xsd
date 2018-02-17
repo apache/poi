@@ -1,0 +1,17 @@
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        targetNamespace="http://jira/xmlbeans_177a">
+
+  <xs:element name="testListA">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="test" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:attribute name="a" type="xs:string" use="required"/>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+</schema>

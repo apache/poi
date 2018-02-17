@@ -1,0 +1,20 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://openuri.org/versionstest"
+    xmlns:tns="http://openuri.org/versionstest">
+
+  <xs:complexType name="typeX">
+    <xs:complexContent>
+    <xs:extension base="tns:type">
+    <xs:sequence>
+      <xs:element name="a" type="xs:string"/>
+    </xs:sequence>
+    </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="type">
+    <xs:sequence>
+      <xs:element name="aa" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

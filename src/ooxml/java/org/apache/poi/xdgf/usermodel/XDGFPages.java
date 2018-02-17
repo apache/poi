@@ -61,9 +61,7 @@ public class XDGFPages extends XDGFXMLDocumentPart {
         try {
             try {
                 _pagesObject = PagesDocument.Factory.parse(getPackagePart().getInputStream()).getPages();
-            } catch (XmlException e) {
-                throw new POIXMLException(e);
-            } catch (IOException e) {
+            } catch (XmlException | IOException e) {
                 throw new POIXMLException(e);
             }
 

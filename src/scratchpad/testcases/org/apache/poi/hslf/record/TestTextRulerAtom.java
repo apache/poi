@@ -18,17 +18,17 @@
 package org.apache.poi.hslf.record;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.ByteArrayOutputStream;
+import java.util.List;
 
-import junit.framework.TestCase;
+import org.apache.poi.hslf.model.textproperties.HSLFTabStop;
+import org.junit.Test;
 
-/**
- * Tests TextRulerAtom
- *
- * @author Yegor Kozlov
- */
-public final class TestTextRulerAtom extends TestCase {
+public final class TestTextRulerAtom {
 
 	//from a real file
 	private final byte[] data_1 = new byte[] {
@@ -40,25 +40,27 @@ public final class TestTextRulerAtom extends TestCase {
 
 	private final byte[] data_2 = new byte[] {
 		0x00, 0x00, (byte)0xA6, 0x0F, 0x0A, 0x00, 0x00, 0x00,
-		0x10, 0x03, 0x00, 0x00, (byte)0xF9, 0x00, 0x41, 0x01, 0x41, 0x01
+		0x08, 0x03, 0x00, 0x00, (byte)0xF9, 0x00, 0x41, 0x01, 0x41, 0x01
 	};
 
+	@Test
 	public void testReadRuler() {
 		TextRulerAtom ruler = new TextRulerAtom(data_1, 0, data_1.length);
 		assertEquals(ruler.getNumberOfLevels(), 0);
 		assertEquals(ruler.getDefaultTabSize(), 0);
 
-		int[] tabStops = ruler.getTabStops();
-		assertNull(tabStops);
+		List<HSLFTabStop> tabStops = ruler.getTabStops();
+		assertNotNull(tabStops);
 
-		int[] textOffsets = ruler.getTextOffsets();
-		assertArrayEquals(new int[]{226, 451, 903, 1129, 1526}, textOffsets);
+		Integer[] textOffsets = ruler.getTextOffsets();
+		assertArrayEquals(new Integer[]{226, 451, 903, 1129, 1526}, textOffsets);
 
-		int[] bulletOffsets = ruler.getBulletOffsets();
-		assertArrayEquals(new int[]{117, 345, 794, 1016, 1526}, bulletOffsets);
+		Integer[] bulletOffsets = ruler.getBulletOffsets();
+		assertArrayEquals(new Integer[]{117, 345, 794, 1016, 1526}, bulletOffsets);
 
 	}
 
+    @Test
 	public void testWriteRuler() throws Exception {
 		TextRulerAtom ruler = new TextRulerAtom(data_1, 0, data_1.length);
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -68,6 +70,7 @@ public final class TestTextRulerAtom extends TestCase {
 		assertArrayEquals(result, data_1);
 	}
 
+    @Test
 	public void testRead2() throws Exception {
 		TextRulerAtom ruler = TextRulerAtom.getParagraphInstance();
 		ruler.setParagraphIndent((short)249, (short)321);
@@ -75,6 +78,6 @@ public final class TestTextRulerAtom extends TestCase {
 		ruler.writeOut(out);
 
 		byte[] result = out.toByteArray();
-		assertArrayEquals(result, data_2);
+		assertArrayEquals(data_2, result);
 	}
 }

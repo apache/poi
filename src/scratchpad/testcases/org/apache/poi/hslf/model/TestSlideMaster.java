@@ -17,6 +17,10 @@
 
 package org.apache.poi.hslf.model;
 
+import static org.apache.poi.hslf.record.TextHeaderAtom.BODY_TYPE;
+import static org.apache.poi.hslf.record.TextHeaderAtom.CENTER_TITLE_TYPE;
+import static org.apache.poi.hslf.record.TextHeaderAtom.CENTRE_BODY_TYPE;
+import static org.apache.poi.hslf.record.TextHeaderAtom.TITLE_TYPE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -27,6 +31,7 @@ import java.util.List;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.model.textproperties.CharFlagsTextProp;
+import org.apache.poi.hslf.model.textproperties.TextProp;
 import org.apache.poi.hslf.record.Environment;
 import org.apache.poi.hslf.record.TextHeaderAtom;
 import org.apache.poi.hslf.usermodel.HSLFMasterSheet;
@@ -51,62 +56,70 @@ public final class TestSlideMaster {
      */
     @Test
     public void testSlideMaster() throws IOException {
-        HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("slide_master.ppt"));
+        final HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("slide_master.ppt"));
 
-        Environment env = ppt.getDocumentRecord().getEnvironment();
+        final Environment env = ppt.getDocumentRecord().getEnvironment();
 
-        List<HSLFSlideMaster> master = ppt.getSlideMasters();
-        assertEquals(2, master.size());
+        assertEquals(2, ppt.getSlideMasters().size());
 
         //character attributes
-        assertEquals(40, master.get(0).getStyleAttribute(TextHeaderAtom.TITLE_TYPE, 0, "font.size", true).getValue());
-        assertEquals(48, master.get(1).getStyleAttribute(TextHeaderAtom.TITLE_TYPE, 0, "font.size", true).getValue());
+        assertEquals(40, getMasterVal(ppt, 0, TITLE_TYPE, "font.size", true));
+        assertEquals(48, getMasterVal(ppt, 1, TITLE_TYPE, "font.size", true));
 
-        int font1 = master.get(0).getStyleAttribute(TextHeaderAtom.TITLE_TYPE, 0, "font.index", true).getValue();
-        int font2 = master.get(1).getStyleAttribute(TextHeaderAtom.TITLE_TYPE, 0, "font.index", true).getValue();
+        int font1 = getMasterVal(ppt, 0, TITLE_TYPE, "font.index", true);
+        int font2 = getMasterVal(ppt, 1, TITLE_TYPE, "font.index", true);
         assertEquals("Arial", env.getFontCollection().getFontInfo(font1).getTypeface());
         assertEquals("Georgia", env.getFontCollection().getFontInfo(font2).getTypeface());
 
-        CharFlagsTextProp prop1 = (CharFlagsTextProp)master.get(0).getStyleAttribute(TextHeaderAtom.TITLE_TYPE, 0, "char_flags", true);
+        CharFlagsTextProp prop1 = getMasterProp(ppt, 0, TITLE_TYPE, "char_flags", true);
         assertEquals(false, prop1.getSubValue(CharFlagsTextProp.BOLD_IDX));
         assertEquals(false, prop1.getSubValue(CharFlagsTextProp.ITALIC_IDX));
         assertEquals(true, prop1.getSubValue(CharFlagsTextProp.UNDERLINE_IDX));
 
-        CharFlagsTextProp prop2 = (CharFlagsTextProp)master.get(1).getStyleAttribute(TextHeaderAtom.TITLE_TYPE, 0, "char_flags", true);
+        CharFlagsTextProp prop2 = getMasterProp(ppt, 1, TITLE_TYPE, "char_flags", true);
         assertEquals(false, prop2.getSubValue(CharFlagsTextProp.BOLD_IDX));
         assertEquals(true, prop2.getSubValue(CharFlagsTextProp.ITALIC_IDX));
         assertEquals(false, prop2.getSubValue(CharFlagsTextProp.UNDERLINE_IDX));
 
         //now paragraph attributes
-        assertEquals(0x266B, master.get(0).getStyleAttribute(TextHeaderAtom.BODY_TYPE, 0, "bullet.char", false).getValue());
-        assertEquals(0x2022, master.get(1).getStyleAttribute(TextHeaderAtom.BODY_TYPE, 0, "bullet.char", false).getValue());
+        assertEquals(0x266B, getMasterVal(ppt, 0, BODY_TYPE, "bullet.char", false));
+        assertEquals(0x2022, getMasterVal(ppt, 1, BODY_TYPE, "bullet.char", false));
 
-        int b1 = master.get(0).getStyleAttribute(TextHeaderAtom.BODY_TYPE, 0, "bullet.font", false).getValue();
-        int b2 = master.get(1).getStyleAttribute(TextHeaderAtom.BODY_TYPE, 0, "bullet.font", false).getValue();
+        int b1 = getMasterVal(ppt, 0, BODY_TYPE, "bullet.font", false);
+        int b2 = getMasterVal(ppt, 1, BODY_TYPE, "bullet.font", false);
         assertEquals("Arial", env.getFontCollection().getFontInfo(b1).getTypeface());
         assertEquals("Georgia", env.getFontCollection().getFontInfo(b2).getTypeface());
 
         ppt.close();
     }
 
+    @SuppressWarnings("unchecked")
+    private static <T extends TextProp> T getMasterProp(HSLFSlideShow ppt, int masterIdx, int txtype, String propName, boolean isCharacter) {
+        return (T)ppt.getSlideMasters().get(masterIdx).getPropCollection(txtype, 0, propName, isCharacter).findByName(propName);
+    }
+
+    private static int getMasterVal(HSLFSlideShow ppt, int masterIdx, int txtype, String propName, boolean isCharacter) {
+        return getMasterProp(ppt, masterIdx, txtype, propName, isCharacter).getValue();
+    }
+
+    
     /**
      * Test we can read default text attributes for a title master sheet
      */
     @Test
     public void testTitleMasterTextAttributes() throws IOException {
         HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("slide_master.ppt"));
-        List<HSLFTitleMaster> master = ppt.getTitleMasters();
-        assertEquals(1, master.size());
+        assertEquals(1, ppt.getTitleMasters().size());
 
-        assertEquals(32, master.get(0).getStyleAttribute(TextHeaderAtom.CENTER_TITLE_TYPE, 0, "font.size", true).getValue());
-        CharFlagsTextProp prop1 = (CharFlagsTextProp)master.get(0).getStyleAttribute(TextHeaderAtom.CENTER_TITLE_TYPE, 0, "char_flags", true);
-        assertEquals(true, prop1.getSubValue(CharFlagsTextProp.BOLD_IDX));
+        assertEquals(40, getMasterVal(ppt, 0, CENTER_TITLE_TYPE, "font.size", true));
+        CharFlagsTextProp prop1 = getMasterProp(ppt, 0, CENTER_TITLE_TYPE, "char_flags", true);
+        assertEquals(false, prop1.getSubValue(CharFlagsTextProp.BOLD_IDX));
         assertEquals(false, prop1.getSubValue(CharFlagsTextProp.ITALIC_IDX));
         assertEquals(true, prop1.getSubValue(CharFlagsTextProp.UNDERLINE_IDX));
 
-        assertEquals(20, master.get(0).getStyleAttribute(TextHeaderAtom.CENTRE_BODY_TYPE, 0, "font.size", true).getValue());
-        CharFlagsTextProp prop2 = (CharFlagsTextProp)master.get(0).getStyleAttribute(TextHeaderAtom.CENTRE_BODY_TYPE, 0, "char_flags", true);
-        assertEquals(true, prop2.getSubValue(CharFlagsTextProp.BOLD_IDX));
+        assertEquals(32, getMasterVal(ppt, 0, CENTRE_BODY_TYPE, "font.size", true));
+        CharFlagsTextProp prop2 = getMasterProp(ppt, 0, CENTRE_BODY_TYPE, "char_flags", true);
+        assertEquals(false, prop2.getSubValue(CharFlagsTextProp.BOLD_IDX));
         assertEquals(false, prop2.getSubValue(CharFlagsTextProp.ITALIC_IDX));
         assertEquals(false, prop2.getSubValue(CharFlagsTextProp.UNDERLINE_IDX));
 

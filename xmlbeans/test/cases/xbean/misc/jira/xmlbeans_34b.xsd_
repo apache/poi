@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*   Copyright 2004 The Apache Software Foundation
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+-->
+<xsd:schema targetNamespace="http://openuri.org/this" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://openuri.org/this" xmlns:sl10="http://openuri.org/" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.1.0">
+
+<xsd:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="http://www.w3.org/TR/xmldsig-core/xmldsig-core-schema.xsd"/>
+<xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
+<xsd:import namespace="http://openuri.org/" schemaLocation="xmlbeans_34a.xsd_"/>
+
+    <!--### Verify XML Signature Response ###-->
+    <xsd:element name="TestElem" type="ReferencesCheckResultType"/>
+    <xsd:complexType name="ReferencesCheckResultType">
+        <xsd:complexContent>
+            <xsd:restriction base="sl10:CheckResultType">
+                <xsd:sequence>
+                    <xsd:element name="Code" type="xsd:nonNegativeInteger"/>
+                    <xsd:element name="Info" type="ReferencesCheckResultInfoType" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:restriction>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="ReferencesCheckResultInfoType" mixed="true">
+        <xsd:complexContent mixed="true">
+            <xsd:restriction base="sl10:AnyChildrenType">
+                <xsd:sequence>
+                    <xsd:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+                    <xsd:element name="FailedReference" type="xsd:positiveInteger" minOccurs="0" maxOccurs="unbounded"/>
+                </xsd:sequence>
+            </xsd:restriction>
+        </xsd:complexContent>
+    </xsd:complexType>
+</xsd:schema>

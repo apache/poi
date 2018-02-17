@@ -29,22 +29,22 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="CT_FixedPercentage">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;attribute name="val" use="required" type="{http://schemas.openxmlformats.org/drawingml/2006/main}ST_FixedPercentage" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="CT_FixedPercentage"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;attribute name="val" use="required" type="{http://schemas.openxmlformats.org/drawingml/2006/main}ST_FixedPercentage" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "CT_FixedPercentage", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main")
+@XmlType(name = "CT_FixedPercentage")
 public class CTFixedPercentage {
 
-    @XmlAttribute(required = true)
+    @XmlAttribute(name = "val", required = true)
     protected int val;
 
     /**
