@@ -39,9 +39,7 @@ import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.xddf.usermodel.chart.XDDFChart;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * Represents an entry of a OOXML package.
@@ -646,11 +644,6 @@ public class POIXMLDocumentPart {
                 POIXMLDocumentPart childPart = context.get(p);
                 if (childPart == null) {
                     childPart = factory.createDocumentPart(this, p);
-                    //here we are checking if part if embedded and excel then set it to chart class
-                    //so that at the time to writing we can also write updated embedded part
-                    if (this instanceof XDDFChart && childPart instanceof XSSFWorkbook) {
-                        ((XDDFChart) this).setWorkbook((XSSFWorkbook) childPart);
-                    }
                     childPart.parent = this;
                     // already add child to context, so other children can reference it
                     context.put(p, childPart);

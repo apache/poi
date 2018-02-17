@@ -131,12 +131,12 @@ public class XDDFDataSourcesFactory {
         return new StringArrayDataSource(elements, dataRange);
     }
 
-    public static <T extends Number> XDDFNumericalDataSource<T> fromArray(T[] elements, String dataRange,int col) {
-        return new NumericalArrayDataSource<T>(elements, dataRange,col);
+    public static <T extends Number> XDDFNumericalDataSource<T> fromArray(T[] elements, String dataRange, int col) {
+        return new NumericalArrayDataSource<T>(elements, dataRange, col);
     }
 
-    public static XDDFCategoryDataSource fromArray(String[] elements, String dataRange,int col) {
-        return new StringArrayDataSource(elements, dataRange,col);
+    public static XDDFCategoryDataSource fromArray(String[] elements, String dataRange, int col) {
+        return new StringArrayDataSource(elements, dataRange, col);
     }
 
     public static XDDFNumericalDataSource<Double> fromNumericCellRange(XSSFSheet sheet,
@@ -193,10 +193,9 @@ public class XDDFDataSourcesFactory {
                 return dataRange;
             }
         }
-        
+
         @Override
-        public int getColIndex()
-        {
+        public int getColIndex() {
             return col;
         }
     }
@@ -260,8 +259,7 @@ public class XDDFDataSourcesFactory {
         }
 
         @Override
-        public int getColIndex()
-        {
+        public int getColIndex() {
             return cellRangeAddress.getFirstColumn();
         }
 
@@ -307,7 +305,7 @@ public class XDDFDataSourcesFactory {
         @Override
         public Double getPointAt(int index) {
             CellValue cellValue = getCellValueAt(index);
-            if (cellValue != null && cellValue.getCellTypeEnum() == CellType.NUMERIC) {
+            if (cellValue != null && cellValue.getCellType() == CellType.NUMERIC) {
                 return Double.valueOf(cellValue.getNumberValue());
             } else {
                 return null;
@@ -329,7 +327,7 @@ public class XDDFDataSourcesFactory {
         @Override
         public String getPointAt(int index) {
             CellValue cellValue = getCellValueAt(index);
-            if (cellValue != null && cellValue.getCellTypeEnum() == CellType.STRING) {
+            if (cellValue != null && cellValue.getCellType() == CellType.STRING) {
                 return cellValue.getStringValue();
             } else {
                 return null;

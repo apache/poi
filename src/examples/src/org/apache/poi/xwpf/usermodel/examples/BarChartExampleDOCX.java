@@ -18,7 +18,7 @@
  * ====================================================================
  */
 
-package org.apache.poi.xwpf.usermodel;
+package org.apache.poi.xwpf.usermodel.examples;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -51,24 +51,24 @@ public class BarChartExampleDOCX {
         System.out.println("    bar-chart-data.txt          the model to set. First line is chart title, " +
                 "then go pairs {axis-label value}");
     }
-    
+
     public static void main(String[] args) throws Exception {
         if(args.length < 2) {
             usage();
             return;
         }
-        
+
         try (FileInputStream argIS = new FileInputStream(args[0]);
                 BufferedReader modelReader = new BufferedReader(new FileReader(args[1]))) {
-            
+
             String chartTitle = modelReader.readLine();  // first line is chart title
-            
+
             // Category Axis Data
             List<String> listCategories = new ArrayList<String>(3);
-            
+
             // Values
             List<Double> listValues = new ArrayList<Double>(3);
-            
+
             // set model
             String ln;
             while((ln = modelReader.readLine()) != null){
@@ -78,12 +78,12 @@ public class BarChartExampleDOCX {
             }
             String[] categories = listCategories.toArray(new String[listCategories.size()]);
             Double[] values = listValues.toArray(new Double[listValues.size()]);
-            
+
             try (XWPFDocument doc = new XWPFDocument(argIS)) {
                 XWPFChart chart = findChart(doc);
                 setBarData(chart, chartTitle, categories, values);
                 setColumnData(chart, "Column variant");
-                
+
                 // save the result
                 try (OutputStream out = new FileOutputStream("bar-chart-demo-output.docx")) {
                     doc.write(out);
@@ -92,39 +92,39 @@ public class BarChartExampleDOCX {
         }
         System.out.println("Done");
     }
-    
+
     private static void setBarData(XWPFChart chart, String chartTitle, String[] categories, Double[] values) {
         final List<XDDFChartData> series = chart.getChartSeries();
         final XDDFBarChartData bar = (XDDFBarChartData) series.get(0);
-        
+
         final int numOfPoints = categories.length;
         final String categoryDataRange = chart.formatRange(new CellRangeAddress(1, numOfPoints, 0, 0));
         final String valuesDataRange = chart.formatRange(new CellRangeAddress(1, numOfPoints, 1, 1));
         final String valuesDataRange2 = chart.formatRange(new CellRangeAddress(1, numOfPoints, 2, 2));
         final XDDFDataSource<?> categoriesData = XDDFDataSourcesFactory.fromArray(categories, categoryDataRange,0);
         final XDDFNumericalDataSource<? extends Number> valuesData = XDDFDataSourcesFactory.fromArray(values, valuesDataRange,1);
-        values[3]=(double) 10;
+        values[2] = 10.0;
         final XDDFNumericalDataSource<? extends Number> valuesData2 = XDDFDataSourcesFactory.fromArray(values, valuesDataRange2,2);
         bar.getSeries().get(0).replaceData(categoriesData, valuesData2);
         bar.addSeries(categoriesData, valuesData);
         bar.getSeries().get(0).setTitle(chartTitle, chart.setSheetTitle(chartTitle));
         chart.plot(bar);
     }
-    
+
     private static void setColumnData(XWPFChart chart, String chartTitle) {
         // Series Text
         List<XDDFChartData> series = chart.getChartSeries();
         XDDFBarChartData bar = (XDDFBarChartData) series.get(0);
         bar.getSeries().get(0).setTitle(chartTitle, chart.setSheetTitle(chartTitle));
-        
+
         // in order to transform a bar chart into a column chart, you just need to change the bar direction
         bar.setBarDirection(BarDirection.COL);
-        
+
         // additionally, you can adjust the axes
         bar.getCategoryAxis().setOrientation(AxisOrientation.MAX_MIN);
         bar.getValueAxes().get(0).setPosition(AxisPosition.TOP);
     }
-    
+
     private static XWPFChart findChart(XWPFDocument document) {
         XWPFChart chart=null;
         for (POIXMLDocumentPart part : document.getRelations()) {
@@ -133,7 +133,7 @@ public class BarChartExampleDOCX {
                 break;
             }
         }
-        
+
         if(chart == null) {
             throw new IllegalStateException("chart not found in the template");
         }
