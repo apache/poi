@@ -83,9 +83,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
      * Underlying workbook
      */
     private XSSFWorkbook workbook;
-
-    private XSSFSheet sheet = null;
-
+    
     private int chartIndex = 0;
 
     private POIXMLDocumentPart documentPart = null;
@@ -628,9 +626,11 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
      * @since POI 4.0.0
      */
     private XSSFSheet getSheet() {
-        if(sheet==null)
-        {
-            sheet = workbook.getSheetAt(0);
+        XSSFSheet sheet = null;
+        try {
+            sheet = getWorkbook().getSheetAt(0);
+        } catch (InvalidFormatException ife) {
+        } catch (IOException ioe) {
         }
         return sheet;
     }
