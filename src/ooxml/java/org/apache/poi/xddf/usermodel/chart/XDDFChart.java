@@ -21,6 +21,8 @@ package org.apache.poi.xddf.usermodel.chart;
 
 import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -41,10 +43,12 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.NotOfficeXmlFileException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.TempFile;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -68,6 +72,9 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTSurface;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTValAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.ChartSpaceDocument;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumn;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumns;
 
 @Beta
 public abstract class XDDFChart extends POIXMLDocumentPart {
@@ -576,8 +583,33 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
      */
     public CellReference setSheetTitle(String title) {
         XSSFSheet sheet = getSheet();
-        sheet.createRow(0).createCell(1).setCellValue(title);
+        XSSFRow row = this.getRow(sheet, 0);
+        XSSFCell cell = this.getCell(row, 1);
+        cell.setCellValue(title);
+        this.updateSheetTable(sheet.getTables().get(0).getCTTable(), title, 1);
         return new CellReference(sheet.getSheetName(), 0, 1, true, true);
+    }
+
+    /**
+     * this method update column header of sheet into table
+     *
+     * @param ctTable xssf table object
+     * @param title title of column
+     * @param index index of column
+     */
+    private void updateSheetTable(CTTable ctTable, String title, int index) {
+        CTTableColumns tableColumnList = ctTable.getTableColumns();
+        CTTableColumn column = null;
+        if(tableColumnList.getCount() >= index)
+        {
+            column = tableColumnList.getTableColumnArray(index);
+        }
+        else
+        {
+            column =  tableColumnList.addNewTableColumn();
+            column.setId(index);
+        }
+        column.setName(title);
     }
 
     /**
@@ -596,22 +628,19 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
      * @since POI 4.0.0
      */
     private XSSFSheet getSheet() {
-        if (sheet == null) {
-            try {
-                sheet = getWorkbook().getSheetAt(0);
-            } catch (InvalidFormatException ife) {
-            } catch (IOException ioe) {
-            }
-            if (sheet == null) { // ??? only if there was no sheet on embedded workbook
-                sheet = workbook.createSheet();
-            }
+        if(sheet==null)
+        {
+            sheet = workbook.getSheetAt(0);
         }
         return sheet;
     }
 
     /**
      * this method is used to get worksheet part
+     * if call is from saveworkbook method then check isCommitted
+     * isCommitted variable shows that we are writing xssfworkbook object into output stream of embedded part
      *
+     * @param isCommitted if it's true then it shows that we are writing xssfworkbook object into output stream of embedded part
      * @return returns the packagepart of embedded file
      * @throws InvalidFormatException
      * @since POI 4.0.0
@@ -656,6 +685,29 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
             }
         }
         return workbook;
+    }
+
+    /**
+     * while reading chart from template file then we need to parse and store embedded excel
+     * file in chart object show that we can modify value according to use
+     *
+     * @param workbook workbook object which we read from chart embedded part
+     * @since POI 4.0.0
+     */
+    public void setWorkbook(XSSFWorkbook workbook) {
+        File file;
+        FileOutputStream fos;
+        try {
+            file = TempFile.createTempFile("TempEmbedded",".xlsx");
+            fos = new FileOutputStream(file);
+            workbook.write(fos);
+            fos.close();
+            this.workbook = new XSSFWorkbook(file);
+        } catch (IOException e) {
+           
+        } catch (InvalidFormatException e) {
+
+        }
     }
 
     /**
