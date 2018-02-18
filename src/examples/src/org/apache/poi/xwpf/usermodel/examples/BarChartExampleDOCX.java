@@ -80,8 +80,9 @@ public class BarChartExampleDOCX {
             Double[] values = listValues.toArray(new Double[listValues.size()]);
 
             try (XWPFDocument doc = new XWPFDocument(argIS)) {
-                XWPFChart chart = findChart(doc);
+                XWPFChart chart = doc.getCharts().get(0);
                 setBarData(chart, chartTitle, categories, values);
+                chart = doc.getCharts().get(1);
                 setColumnData(chart, "Column variant");
 
                 // save the result
@@ -101,12 +102,12 @@ public class BarChartExampleDOCX {
         final String categoryDataRange = chart.formatRange(new CellRangeAddress(1, numOfPoints, 0, 0));
         final String valuesDataRange = chart.formatRange(new CellRangeAddress(1, numOfPoints, 1, 1));
         final String valuesDataRange2 = chart.formatRange(new CellRangeAddress(1, numOfPoints, 2, 2));
-        final XDDFDataSource<?> categoriesData = XDDFDataSourcesFactory.fromArray(categories, categoryDataRange,0);
-        final XDDFNumericalDataSource<? extends Number> valuesData = XDDFDataSourcesFactory.fromArray(values, valuesDataRange,1);
+        final XDDFDataSource<?> categoriesData = XDDFDataSourcesFactory.fromArray(categories, categoryDataRange, 0);
+        final XDDFNumericalDataSource<? extends Number> valuesData = XDDFDataSourcesFactory.fromArray(values, valuesDataRange, 1);
         values[2] = 10.0;
-        final XDDFNumericalDataSource<? extends Number> valuesData2 = XDDFDataSourcesFactory.fromArray(values, valuesDataRange2,2);
-        bar.getSeries().get(0).replaceData(categoriesData, valuesData2);
-        bar.addSeries(categoriesData, valuesData);
+        final XDDFNumericalDataSource<? extends Number> valuesData2 = XDDFDataSourcesFactory.fromArray(values, valuesDataRange2, 2);
+        bar.getSeries().get(0).replaceData(categoriesData, valuesData);
+        bar.addSeries(categoriesData, valuesData2);
         bar.getSeries().get(0).setTitle(chartTitle, chart.setSheetTitle(chartTitle));
         chart.plot(bar);
     }
@@ -123,21 +124,6 @@ public class BarChartExampleDOCX {
         // additionally, you can adjust the axes
         bar.getCategoryAxis().setOrientation(AxisOrientation.MAX_MIN);
         bar.getValueAxes().get(0).setPosition(AxisPosition.TOP);
-    }
-
-    private static XWPFChart findChart(XWPFDocument document) {
-        XWPFChart chart=null;
-        for (POIXMLDocumentPart part : document.getRelations()) {
-            if (part instanceof XWPFChart) {
-                chart = (XWPFChart) part;
-                break;
-            }
-        }
-
-        if(chart == null) {
-            throw new IllegalStateException("chart not found in the template");
-        }
-        return chart;
     }
 }
 
