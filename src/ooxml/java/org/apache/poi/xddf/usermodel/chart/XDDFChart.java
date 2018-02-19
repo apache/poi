@@ -598,12 +598,10 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     private void updateSheetTable(CTTable ctTable, String title, int index) {
         CTTableColumns tableColumnList = ctTable.getTableColumns();
         CTTableColumn column = null;
-        if(tableColumnList.getCount() >= index)
-        {
+        if(tableColumnList.getCount() >= index) {
             column = tableColumnList.getTableColumnArray(index);
         }
-        else
-        {
+        else{
             column =  tableColumnList.addNewTableColumn();
             column.setId(index);
         }
