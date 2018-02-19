@@ -230,7 +230,7 @@ public class XDDFDataSourcesFactory {
         }
 
         public StringArrayDataSource(String[] elements, String dataRange, int col) {
-            super(elements, dataRange,col);
+            super(elements, dataRange, col);
         }
     }
 
