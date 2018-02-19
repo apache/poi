@@ -83,7 +83,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
      * Underlying workbook
      */
     private XSSFWorkbook workbook;
-    
+
     private int chartIndex = 0;
 
     private POIXMLDocumentPart documentPart = null;
