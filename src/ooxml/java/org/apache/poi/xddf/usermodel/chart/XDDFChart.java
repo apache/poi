@@ -601,7 +601,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
         if(tableColumnList.getCount() >= index) {
             column = tableColumnList.getTableColumnArray(index);
         }
-        else{
+        else {
             column =  tableColumnList.addNewTableColumn();
             column.setId(index);
         }
