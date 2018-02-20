@@ -1,0 +1,72 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://xmlobject/substgroup"
+    xmlns:tns="http://xmlobject/substgroup">
+
+    <xsd:complexType name="OrderItem">
+        <xsd:sequence>
+            <xsd:element ref="tns:item"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+
+
+    <xsd:element name="item" type="tns:ItemType"/>
+    <xsd:complexType name="ItemType">
+        <xsd:sequence>
+            <xsd:element name="sku" type="xsd:integer"/>
+            <xsd:element name="name" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:element name="beanBag" type="tns:BeanBagType"
+        substitutionGroup="tns:item"/>
+    <xsd:complexType name="BeanBagType">
+        <xsd:complexContent>
+            <xsd:extension base="tns:ItemType">
+                <xsd:sequence>
+                    <xsd:element name="size" type="tns:BeanBagSizeType"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:element name="chair" substitutionGroup="tns:item"/>
+    <xsd:element name="blockedchair" type="tns:ItemType" block="substitution"/>
+    <xsd:element name="blockedItem" substitutionGroup="tns:blockedchair" />
+
+    <xsd:element name="notachair" type="tns:ItemType"/>
+    <xsd:element name="footstool" type="xsd:string"/>
+
+    <xsd:complexType name="BeanBagSizeType">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute name="color" type="xsd:token"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+
+
+    <xs:element name="string" type="xs:string"/>
+    <xs:element name="stringSub" substitutionGroup="tns:string"/>
+    <xs:complexType name="info">
+        <xs:sequence>
+            <xs:element ref="tns:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="customer" type="tns:info"/>
+    <xs:element name="employee" substitutionGroup="tns:customer"/>
+
+
+    <xs:element name="blockedString" type="xs:string" block="substitution"/>
+    <xs:element name="blockedStringSub" substitutionGroup="tns:blockedString"/>
+    <xs:complexType name="blockedInfo">
+        <xs:sequence>
+            <xs:element ref="tns:blockedString"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element name="blockedCustomer" type="tns:blockedInfo" block="substitution"/>
+    <xs:element name="blockedEmployee" substitutionGroup="tns:blockedCustomer"/>
+
+</xsd:schema>
+

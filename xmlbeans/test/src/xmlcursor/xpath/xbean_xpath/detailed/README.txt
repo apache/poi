@@ -1,0 +1,1 @@
+Testing implementation of Eric's XPath engine: assumes no other XPath engine is present in classpath

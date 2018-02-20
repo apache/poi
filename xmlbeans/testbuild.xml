@@ -1,0 +1,1127 @@
+<!--
+    Copyright 2004 The Apache Software Foundation
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<project name="XBean_Test" default="usage" basedir=".">
+
+    <target name="java_version">
+        <echo message="${java.version}"/>
+    </target>
+
+    <target name="usage">
+      <echo message="See test/docs/BuildingAndRunningTests.txt"/>
+    </target>
+
+    <!-- =============================================================== -->
+    <!-- START: Properties Section                                       -->
+
+    <property environment="ENV"/>
+    <!-- This takes care of both Unix and Windows -->
+    <property name="ENV.HOSTNAME" value="${ENV.COMPUTERNAME}"/>
+    <property name="ant.home" value="${ENV.ANT_HOME}"/>
+    <!-- Define the properties -->
+    <!-- These properties will get written to testenv.properties file -->
+    <property name="xbeans.root" value="${basedir}"/>
+    <property name="xbeans.test.root" value="${basedir}/test"/>
+    <property name="xbeans.test.src" value="${xbeans.test.root}/src"/>
+    <property name="xbeans.external" value="${xbeans.root}/external"/>
+    <property name="xbeans.external.lib" value="${xbeans.external}/lib"/>
+    <property name="xbeans.external.lib.jaxb" value="${xbeans.external.lib}/jaxb-1.0"/>
+    <property name="xbeans.test.cases" value="${xbeans.test.root}/cases"/>
+    <!--property name="xbeans.test.cases.test" value="${xbeans.test.cases}"/-->
+    <property name="xbeans.test.cases.test.files" value="${xbeans.test.cases}"/>
+    <property name="build.dir" value="${xbeans.root}/build"/>
+
+    <property name="build.lib" value="${build.dir}/lib"/>
+    <property name="build.dir.test" value="${basedir}/build/test"/>
+    <property name="build.external.lib" value="${xbeans.test.root}/lib"/>
+    <property name="build.dir.test.lib" value="${build.dir.test}/lib"/>
+    <property name="build.dir.test.schemas" value="${build.dir.test}/schemas"/>
+    <property name="build.dir.test.schemas.lib" value="${build.dir.test.lib}/schemajars"/>
+    <property name="build.dir.test.schemas.src" value="${build.dir.test.schemas}/src"/>
+    <property name="build.dir.test.src" value="${build.dir.test}/classes"/>
+    <property name="build.dir.test.tools" value="${build.dir.test}/tools"/>
+    <property name="xbeans.test.tools" value="${xbeans.test.root}/tools"/>
+    <property name="xbeans.test.lib" value="${xbeans.test.root}/lib"/>
+    <property name="xbeans.test.tools.lib" value="${xbeans.test.tools}/lib"/>
+    <property name="xbeans.test.tools.src" value="${xbeans.test.tools}/src"/>
+
+    <property name="asserts" value="on"/>
+
+    <!-- End of testenv.properties -->
+    <!--
+    <target name="write.propertyfile">-->
+        <!-- Write out the properties file -->
+        <!--<echoproperties destfile="testenv.properties">
+            <propertyset>
+                <propertyref prefix="xbeans."/>
+                <propertyref prefix="build."/>
+            </propertyset>
+        </echoproperties>
+    </target>
+    -->
+    <!-- END: Properties Section                                         -->
+    <!-- =============================================================== -->
+
+    <!-- =============================================================== -->
+    <!-- START: Custom Taskdefs                                          -->
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+        <classpath>
+            <pathelement location="${xbeans.test.tools.lib}/ant-ext/ant-contrib-0.6.jar"/>
+        </classpath>
+    </taskdef>
+
+    <taskdef resource="antexts.properties">
+        <classpath>
+            <pathelement location="${xbeans.test.tools.lib}/ant-ext/antexts.jar"/>
+        </classpath>
+    </taskdef>
+    <!-- END: Custom Taskdefs                                            -->
+    <!-- =============================================================== -->
+
+    <!-- =============================================================== -->
+    <!-- START: CLEAN targets                                            -->
+    <!-- Does a full clean, including cleaning up the built xbean.jar -->
+    <target name="clean" description="Cleans test build folder">
+        <delete dir="${build.dir.test}" verbose="false" failonerror="false" includeEmptyDirs="true"/>
+    </target>
+
+    <target name="clean.tests" description="Deletes built tests, including testcases.jar">
+        <echo message="Cleaning Tests"/>
+        <delete dir="${build.dir.test.src}" verbose="false" failonerror="false" includeEmptyDirs="true"/>
+        <delete verbose="false" failonerror="false" file="${build.dir.test.lib}/testcases.jar"/>
+    </target>
+
+    <target name="clean.tools" description="Deletes built tools">
+        <echo message="Deleting ${build.dir.test.lib}/testtools.jar"/>
+        <delete dir="${build.dir.test.lib}/testtools.jar" verbose="false" failonerror="true" includeEmptyDirs="true"/>
+        <delete dir="${build.dir.test.tools}" verbose="false" failonerror="true" includeEmptyDirs="true"/>
+    </target>
+
+    <target name="clean.schemas" description="Deletes built schemas">
+        <echo message="Deleting ${build.dir.test.schemas.lib}"/>
+        <delete dir="${build.dir.test.schemas.lib}" verbose="false" failonerror="false" includeEmptyDirs="true"/>
+        <delete dir="${build.dir.test.schemas}" verbose="false" failonerror="false" includeEmptyDirs="true"/>
+        <delete file="${build.dir.test.lib}/xmlcases.jar" verbose="false" failonerror="false" includeEmptyDirs="true"/>
+        <delete file="${build.dir.test.lib}/xqcases.jar" verbose="false" failonerror="false" includeEmptyDirs="true"/>
+    </target>
+
+    <target name="clean.reports" description="Deletes generated report files">
+        <delete dir="reports" failonerror="false" includeEmptyDirs="true"/>
+    </target>
+
+    <!-- END: CLEAN targets                                              -->
+    <!-- =============================================================== -->
+
+    <!-- =============================================================== -->
+    <!-- START: init                                                     -->
+
+    <target name="dirs">
+        <mkdir dir="${build.dir.test.src}"/>
+        <mkdir dir="${build.dir.test.lib}"/>
+        <mkdir dir="${build.dir.test.schemas.lib}"/>
+        <mkdir dir="${build.dir.test.schemas}"/>
+        <mkdir dir="${build.dir.test.tools}"/>
+    </target>
+
+    <!-- Creates the build folders and checks if required variables are set -->
+    <target name="init">
+        <echo message="basedir: ${basedir}"/>
+        <!-- mkdir build/lib -->
+        <antcall target="dirs"/>
+        <!-- Any other init code goes here -->
+    </target>
+
+    <!-- END: init                                                       -->
+    <!-- =============================================================== -->
+
+    <!-- =============================================================== -->
+    <!-- START: Filesets and Paths                                       -->
+    <!-- Fileset that includes xbean.jar, jsr173.jar and others -->
+    <fileset id="xbeans.build.lib" dir="${build.dir}">
+        <include name="**/*.jar"/>
+        <exclude name="**/oldxbean.jar"/>
+        <exclude name="**/jaxen.jar"/>
+    </fileset>
+
+    <fileset id="xbeans.test.external.lib" dir="${build.dir}">
+        <include name="**/*.jar"/>
+        <exclude name="**/oldxbean.jar"/>
+        <exclude name="**/jaxen.jar"/>
+    </fileset>
+
+    <fileset id="external.lib" dir="${build.external.lib}">
+        <include name="**/*.jar"/>
+    </fileset>
+
+    <fileset id="schema.jars" dir="${build.dir.test.schemas.lib}">
+        <include name="**/*.jar"/>
+    </fileset>
+
+    <fileset id="tools.ext.lib" dir="${xbeans.test.tools.lib}">
+        <include name="**/*.jar"/>
+        <include name="**/*.jar"/>
+    </fileset>
+
+    <fileset id="tools.ext.lib" dir="${xbeans.test.tools.lib}">
+        <include name="**/*.jar"/>
+        <exclude name="**/xerces1.4.4.jar"/>
+    </fileset>
+
+    <fileset id="schema.files.copy" dir="${xbeans.test.cases.test.files}">
+        <include name="**/*.xsd"/>
+        <!--needed for scomp and redefine-->
+        <include name="**/*.xs"/>
+         <!--needed for xquery-->
+        <include name="**/*.xq"/>
+        <include name="**/*.xsddonotcompile"/>
+        <include name="**/*.xsd_"/>
+        <include name="**/*.jar"/>
+        <include name="**/*.txt"/>
+        <include name="**/*.xml"/>
+        <include name="**/*.xsdconfig"/>
+        <exclude name="**/*.bz2"/>
+        <exclude name="**/*.tar"/>
+        <exclude name="**/*.tar.bz2"/>
+    </fileset>
+
+    <path id="build.classpath">
+        <fileset refid="xbeans.build.lib"/>
+        <fileset refid="tools.ext.lib"/>
+        <!-- for building tools: TestlogMergeUtiltiy -->
+        <path location="${build.dir.test.lib}/TestReport.xsd.jar"/>
+        <!-- Axis v1.1 .jar -->
+        <pathelement path="${xbeans.test.tools.lib}/axis.jar"/>
+        <!-- needed for the DOM w3c suite -->
+        <fileset refid="external.lib"/>
+        <fileset refid="ant.lib"/>
+        <fileset refid="schema.jars"/>
+        <!--needed for JAM and extensions-->
+        <pathelement path="${ENV.JAVA_HOME}/lib/tools.jar"/>
+    </path>
+
+    <fileset id="ant.lib" dir="${ant.home}/lib">
+        <include name="**/*.jar"/>
+    </fileset>
+
+    <fileset id="test.build.jars" dir="${build.dir.test}/lib">
+        <include name="**/*.jar"/>
+    </fileset>
+
+    <path id="test.run.classpath">
+
+        <pathelement path="${build.dir.test.lib}/xmlcases.jar"/>
+        <pathelement path="${build.dir.test.lib}/testcases.jar"/>
+        <pathelement path="${build.dir.test.lib}/testtools.jar"/>
+        <pathelement path="${build.lib}/xbean_xpath.jar"/>
+        <pathelement path="${build.lib}/saxon9.jar"/>
+        <pathelement path="${build.lib}/saxon9-dom.jar"/>
+        <pathelement path="${ENV.XMLBEANS_EXTERNALS}/saxon9.jar"/>
+        <pathelement path="${ENV.XMLBEANS_EXTERNALS}/saxon9-dom.jar"/>
+        <path refid="build.classpath"/>
+        <fileset refid="test.build.jars"/>
+
+        <!--1.4 JDK compat:JDK Xerces missing DocumentRange-->
+
+        <pathelement path="${xbeans.test.tools.lib}/xerces1.4.4.jar"/>
+    </path>
+    <!-- END: Filesets and Paths                                         -->
+    <!-- =============================================================== -->
+
+
+
+    <!-- =============================================================== -->
+    <!-- START: Schema compile related targets                           -->
+    <!-- comma separated list of directories containing schemas -->
+    <property name="schema.dirs"
+        value="${build.dir.test.schemas}/xbean/simple/dumb,
+        ${build.dir.test.schemas}/xbean/simple/dupSchemaElements,
+        ${build.dir.test.schemas}/xbean/xmlcursor,
+        ${build.dir.test.schemas}/xbean/xmlcursor/xstypes,
+        ${build.dir.test.schemas}/xbean/dom,
+        ${build.dir.test.schemas}/xbean/misc,
+        ${build.dir.test.schemas}/xbean/compile/scomp/detailed,
+        ${build.dir.test.schemas}/xbean/xmlobject,
+        ${build.dir.test.schemas}/xbean/xmlobject/store,
+        ${build.dir.test.schemas}/xbean/xmltokensource,
+        ${build.dir.test.schemas}/xbean/ValidatingStream,
+        ${build.dir.test.schemas}/xbean/scomp,
+        ${build.dir.test.schemas}/xbean/usertype"/>
+    <!-- comma separated list of directories containing schemas that *must* be separately
+         compiled -->
+    <property name="schema.standalone"
+        value="${build.dir.test.schemas}/tranxml/Version4.0/schemas/StandAlone"/>
+    <property name="schema.standalone.files"
+        value="${schema.standalone}/CarLocationMessage_40_LX.xsd,
+        ${schema.standalone}/RailBillOfLading_V40_LX.xsd,
+        ${schema.standalone}/SimpleRailCarrierWaybillInterchange_V40_LX.xsd,
+        ${schema.standalone}/TerminalOperationsAndIntermodalRampActivity_V40_LX.xsd,"/>
+
+    <!--Schemas for bvts: Please keep this list up-to-date in order to minimize
+         the build time for checkintests-->
+    <property name="checkin.schema.dirs"
+        value="${build.dir.test.schemas}/xbean/simple/dumb,
+         ${build.dir.test.schemas}/xbean/xmlcursor,
+         ${build.dir.test.schemas}/xbean/xmlobject,
+         ${build.dir.test.schemas}/xbean/ValidatingStream,
+         ${build.dir.test.schemas}/xbean/dom
+       "/>
+    <property name="checkin.schema.standalone.files"
+        value="${schema.standalone}/CarLocationMessage_40_LX.xsd"/>
+
+
+    <property name="schema.compiler" value="org.apache.xmlbeans.impl.tool.SchemaCompiler"/>
+
+    <target name="build.xmlcases" description="Builds xmlcases.jar">
+        <jar destfile="${build.dir.test.lib}/xmlcases.jar"
+            basedir="${build.dir.test.schemas}" update="false"
+            includes="**/*.*"
+            excludes="**/*.xsd, xstc/**"
+            />
+    </target>
+
+    <target name="build.xqcases" description="Builds xqcases.jar">
+        <jar destfile="${build.dir.test.lib}/xqcases.jar"
+            basedir="${build.dir.test.schemas}" update="false"
+            includes="xbean/xmlcursor/xquery/*.xq"
+            />
+      <copy file="${xbeans.test.cases.test.files}/xbean/xmlcursor/xquery/xmlQuery.zip"
+          todir="${build.dir.test.lib}"/>
+       <!--copy file="${xbeans.test.cases.test.files}/xbean/xmlcursor/xquery/useCases.zip"
+          todir="${build.dir.test.lib}"/-->
+    </target>
+
+    <target name="build.xsdcases" description="Builds xmlcases.jar">
+        <jar destfile="${build.dir.test.lib}/xsdcases.jar"
+            basedir="${build.dir.test.schemas}" update="false"
+            includes="**/*.xsd"
+            excludes="xstc/**"/>
+    </target>
+    <!-- run scomp on all directories in ${schema.dirs} -->
+    <target name="build.schemas" depends="init, copy.schemas, uncompress"
+        description="Build test schemas.">
+        <echo message="basedir: ${basedir}"/>
+        <!-- scomp on Schema.dirs -->
+        <if>
+            <isset property="this.schema.dirs"/>
+            <then>
+                <foreach list="${this.schema.dirs}"
+                    target="scomp.dir"
+                    param="schemasrc" trim="true"
+                    inheritall="true" inheritrefs="true"/>
+            </then>
+            <else>
+                <foreach list="${schema.dirs}"
+                    target="scomp.dir"
+                    param="schemasrc" trim="true"
+                    inheritall="true" inheritrefs="true"/>
+            </else>
+
+        </if>
+
+        <!-- Check if uncompress is required -->
+        <if>
+            <isset property="this.schema.standalone.dirs"/>
+            <then>
+                <antcall target="uncompress"/>
+                <foreach list="${this.schema.standalone.dirs}"
+                    target="scomp.single"
+                    param="schemasrc" trim="true"
+                    inheritall="true" inheritrefs="true"/>
+            </then>
+            <else>
+                <foreach list="${schema.standalone.files}"
+                    target="scomp.single"
+                    param="schemasrc" trim="true"
+                    inheritall="true" inheritrefs="true"/>
+            </else>
+        </if>
+        <antcall target="build.xmlcases"/>
+        <antcall target="build.xsdcases"/>
+    </target>
+
+    <target name="copy.schemas">
+        <copy todir="${build.dir.test.schemas}">
+            <fileset refid="schema.files.copy"/>
+        </copy>
+    </target>
+
+
+    <!-- compile directory of .xsd files -->
+    <target name="scomp.dir">
+        <basename path="${schemasrc}" property="jarname"/>
+        <property name="jar.file" value="${build.dir.test.schemas.lib}/${jarname}.jar"/>
+        <!-- Check if scomp is required -->
+        <if>
+            <uptodate targetfile="${jar.file}">
+                <srcfiles dir="${schemasrc}" includes="**/*.xsd"/>
+            </uptodate>
+            <then>
+                <echo message="Jar uptodate for ${schemasrc}"/>
+            </then>
+            <else>
+                <antcall target="scomp"/>
+            </else>
+        </if>
+    </target>
+
+    <!-- compile a .xsd file -->
+    <target name="scomp.single">
+        <basename path="${schemasrc}" property="jarname"/>
+        <property name="jar.file" value="${build.dir.test.schemas.lib}/${jarname}.jar"/>
+        <!-- Check if scomp is required -->
+        <if>
+            <uptodate srcfile="${schemasrc}" targetfile="${jar.file}"/>
+            <then>
+                <echo message="Jar uptodate for ${schemasrc}"/>
+            </then>
+            <else>
+                <antcall target="scomp"/>
+            </else>
+        </if>
+    </target>
+
+    <target name="scomp" unless="jar.uptodate">
+        <echo message="Compiling ${schemasrc} using compiler from: ${schema.compiler}"/>
+        <!--
+        Lets make this target easy to call as a standalone. To call it standalone
+        ant scomp -Dschemasrc=file|schema dir
+            Optional parameters
+            -Dmn = Initial memory size
+            -Dmx = Maximum memory size
+            -Djar.file = Destination jar file
+        -->
+        <property name="mn" value="8m"/>
+        <property name="mx" value="512m"/>
+        <!-- Default jar file -->
+        <property name="jar.file"
+            value="${build.dir.test.schemas.lib}/schemas.jar"/>
+
+        <java classname="${schema.compiler}"
+            classpathref="build.classpath"
+            fork="true">
+            <arg line="-out ${jar.file} -src ${build.dir.test.schemas.src} ${schemasrc} -ms ${mn} -mx ${mx}"/>
+        </java>
+
+        <!--
+        <scomp schema="${schemasrc}"
+               classpathref="build.classpath"
+               memoryInitialSize="${mn}"
+               memoryMaximumSize="${mx}"
+               failonerror="true"
+               destfile="${jar.file}">
+        </scomp>
+        -->
+        <echo message="jar.file: ${jar.file}"/>
+    </target>
+
+    <!-- END: Schema compile related targets                             -->
+    <!-- =============================================================== -->
+
+    <!-- =============================================================== -->
+    <!-- START: Archive uncompress targets                               -->
+    <!-- uncompress and copy all schema files that will be used durign testing -->
+    <target name="uncompress">
+        <foreach target="uncompress.helper" param="archivefile">
+            <path>
+                <fileset dir="${xbeans.test.cases.test.files}">
+                    <include name="**/*.tar.bz2"/>
+                </fileset>
+            </path>
+        </foreach>
+    </target>
+    <!-- helper target -->
+    <target name="uncompress.helper" depends="uncompress.uptodate,do.uncompress"/>
+
+    <!-- if archive is name 'foo.tar.bz2', root directory should be 'foo' -->
+    <target name="uncompress.uptodate">
+        <basename path="${archivefile}" property="dir.name" suffix=".tar.bz2"/>
+        <!-- FIXME: it's not sufficient to just check if dir exists -->
+        <condition property="uncompress.uptodate">
+            <available file="${build.dir.test.schemas}/${dir.name}" type="dir"/>
+        </condition>
+        <echo message="uncompress.uptodate for ${archivefile}: ${uncompress.uptodate}"/>
+    </target>
+
+    <!-- perform the uncompress -->
+    <target name="do.uncompress" unless="uncompress.uptodate">
+        <untar src="${archivefile}" dest="${build.dir.test.schemas}"
+            compression="bzip2" overwrite="false"/>
+    </target>
+    <!-- END: Archive uncompress targets                                 -->
+    <!-- =============================================================== -->
+
+    <!-- =============================================================== -->
+    <!-- START: Tests and Tools build                                    -->
+    <target name="check.xbean.jar">
+        <if>
+            <not>
+                <available file="${build.lib}/xbean.jar"/>
+            </not>
+            <then>
+                <ant target="default"/>
+            </then>
+        </if>
+    </target>
+    <target name="build" depends="check.xbean.jar" description="Build the tests. Params: -Dtest.area">
+        <!-- Lets test conditional compile -->
+        <if>
+            <or>
+                <isset property="build.area"/>
+                <isset property="test.area"/>
+            </or>
+            <then>
+                <echo message="build.area is set"/>
+                <foreachloop list="${area.names}" param="curval">
+                    <loop>
+                        <foreachloop list="${test.area}" param="test.area.curval">
+                            <loop>
+                                <if>
+                                    <equals arg1="${test.area.curval}" arg2="${curval}" trim="true"/>
+                                    <then>
+                                        <echo message="MATCH: ${curval} == ${test.area.curval}"/>
+                                        <property name="matchfound" value="true"/>
+                                        <antcall target="build.area.${test.area.curval}"/>
+                                    </then>
+                                </if>
+                            </loop>
+                        </foreachloop>
+                    </loop>
+                </foreachloop>
+                <fail unless="matchfound"
+                    message="build.area did not match any area from: ${area.names}"/>
+            </then>
+            <else>
+                <echo message="test.area is not set"/>
+
+                <antcall target="build.schemas"/>
+                <antcall target="build.tests"/>
+
+            </else>
+        </if>
+        <antcall target="build.xqcases"/>
+    </target>
+
+    <!-- Bea-xmlbeans has already been built and in the right location -->
+    <target name="clean.and.build"
+        description="Do a full clean and build">
+        <antcall target="clean"/>
+        <antcall target="build"/>
+    </target>
+
+    <target name="build.test.tools" depends="init, testreport.xsd.jar"
+        description="Build the tools required for tests">
+        <javac srcdir="${xbeans.test.tools.src}"
+            destdir="${build.dir.test.tools}"
+            classpathref="build.classpath"
+            fork="false"
+            debug="on"
+            optimize="on"
+            verbose="false"
+            failonerror="true">
+            <!--compilerarg line="-Xlint:deprecation"/--><!--ruins Java1.4 compat-->
+        </javac>
+
+        <jar destfile="${build.dir.test.lib}/testtools.jar"
+            basedir="${build.dir.test.tools}" update="false"
+            excludes="**/*.java"/>
+    </target>
+
+    <target name="check.testreport">
+        <condition property="check.testreport.exists">
+            <available file="${build.dir.test.lib}/TestReport.xsd.jar"/>
+        </condition>
+    </target>
+
+    <target name="testreport.xsd.jar" depends="check.testreport"
+        unless="check.testreport.exists">
+
+       <java classname="${schema.compiler}"
+          classpathref="build.classpath"
+          fork="true">
+          <arg line="-out ${build.dir.test.lib}/TestReport.xsd.jar ${xbeans.test.tools.lib}/xsl/TestReport.xsd "/>
+       </java>
+    </target>
+
+    <target name="build.xpath">
+        <condition property="xbean_xpath.jar.exists">
+            <available file="${build.lib}/xbean_xpath.jar"/>
+        </condition>
+        <if>
+            <not>
+                <isset property="xbean_xpath.jar.exists"/>
+            </not>
+            <then>
+                <ant target="xbean_xpath.jar"/>
+            </then>
+        </if>
+    </target>
+
+    <!-- Builds the tests -->
+    <!-- NOTE: This target depends on build.schemas, but we do not
+               explicitly put it on the depends list. -->
+
+    <target name="build.tests" depends="init, build.test.tools, build.xpath,extensions.build,usertype.build"
+        description="Build the tests">
+
+        <javac srcdir="${xbeans.test.src}"
+            excludes="**/drt/**"
+            destdir="${build.dir.test.src}"
+            classpathref="test.run.classpath"
+            debug="on"
+            source="1.4"
+            optimize="on"
+            verbose="false"
+            failonerror="true">
+        </javac>
+        <jar destfile="${build.dir.test.lib}/testcases.jar"
+            basedir="${build.dir.test.src}" update="true"
+            excludes="**/*.java"/>
+
+    </target>
+    <!-- END: Tests and Tools build                                      -->
+    <!-- =============================================================== -->
+
+    <!-- =============================================================== -->
+    <!-- START: Incremental build targets                                -->
+
+    <property name="area.names" value="compile, dom, misc, random,
+                                       ValidatingXSRTests,xmlcursor, xmlobject,
+                                       xmltokensource, checkin,
+                                       scomp, tools"/>
+
+    <target name="list.areas" description="List areas for -Dtest.area param">
+        <echo message="${area.names}"/>
+    </target>
+    <target name="unit.build" depends="init, copy.schemas, build.test.tools">
+        <!--
+        Properties that need to be set for this target to work
+             * includes.for.compile - includes spec for javac
+
+        Optional:
+             * this.schema.dirs - list of folders for scomp
+             * this.schema.standalone.dirs - list of individual schemas for scomp
+             * testcasesjar.update - set to true if testcases.jar should be
+                                     updated instead of overwriting
+        -->
+        <fail message="Property includes.for.compile is not set. Cannot proceed!"
+            unless="includes.for.compile"/>
+
+        <!-- If this property gets set before this line is reached, then the
+             value does *NOT* get overwritten by this line
+             Very useful for specifying default values. -->
+        <property name="testcasesjar.update" value="false"/>
+        <!-- scomp on Schema.dirs -->
+        <if>
+            <isset property="this.schema.dirs"/>
+            <then>
+                <foreach list="${this.schema.dirs}"
+                    target="scomp.dir"
+                    param="schemasrc" trim="true"/>
+            </then>
+        </if>
+        <!-- Check if uncompress is required -->
+        <if>
+            <isset property="this.schema.standalone.dirs"/>
+            <then>
+                <antcall target="uncompress"/>
+                <foreach list="${this.schema.standalone.dirs}"
+                    target="scomp.single"
+                    param="schemasrc" trim="true"/>
+            </then>
+        </if>
+        <if>
+            <isset property="compile.extensions"/>
+            <then>
+                <antcall target="extensions.build"/>
+            </then>
+        </if>
+        <if>
+            <isset property="compile.usertype"/>
+            <then>
+                <antcall target="usertype.build"/>
+            </then>
+        </if>
+        <antcall target="build.xmlcases"/>
+        <antcall target="build.xsdcases"/>
+
+        <javac srcdir="${xbeans.test.src}"
+            destdir="${build.dir.test.src}"
+            includes="${includes.for.compile}"
+            excludes="${excludes}"
+            classpathref="test.run.classpath"
+            optimize="on"
+            source="1.4"
+            debug="on"
+            verbose="false"
+            failonerror="true"/>
+        <jar destfile="${build.dir.test.lib}/testcases.jar"
+            basedir="${build.dir.test.src}"
+            excludes="**/*.java"
+            update="${testcasesjar.update}"/>
+    </target>
+    <!--Extensions feature: a bit tricky to build -->
+    <target name="extensions.build" depends="init">
+        <echo message="Building extensions"/>
+        <foreachloop
+            param="feature" trim="true">
+            <path>
+                <dirset dir="${xbeans.test.src}/xmlobject/extensions/">
+                    <include name="*"/>
+                </dirset>
+            </path>
+            <loop>
+
+                <foreachloop param="case" trim="true">
+                    <path>
+                        <dirset dir="${feature}">
+                            <include name="*"/>
+                        </dirset>
+                    </path>
+                    <loop>
+                        <basename property="testcase" path="${case}"/>
+                        <basename property="feature.basename" path="${feature}"/>
+
+                        <available file="${build.dir.test.schemas.lib}/${feature.basename}_${testcase}.jar" property="jar.exists"/>
+                        <!--  uptodate srcfile= targetfile="${jarname}" property="jar.exists"/-->
+                        <echo message="JAR ${build.dir.test.schemas.lib}/${feature.basename}_${testcase}.jar, Exists: ${jar.exists}"/>
+                        <if>
+                            <isfalse value="${jar.exists}"/>
+                            <then>
+                                <java classname="${schema.compiler}"
+                                    classpathref="build.classpath"
+                                    fork="true">
+                                    <arg line="-out ${build.dir.test.schemas.lib}/${feature.basename}_${testcase}.jar
+                                     ${case}/existing
+                                     ${xbeans.test.cases}/xbean/extensions/${feature.basename}/${testcase}"
+                                        />
+                                </java>
+                            </then>
+                        </if>
+                    </loop>
+                </foreachloop>
+            </loop>
+
+        </foreachloop>
+    </target>
+    <!--User type feature-->
+    <target name="usertype.build" depends="init">
+        <echo message="Building user types"/>
+        <foreachloop
+            param="case" trim="true">
+            <path>
+                <dirset dir="${xbeans.test.src}/xmlobject/usertype/">
+                    <include name="*"/>
+                </dirset>
+            </path>
+            <loop>
+                <basename property="testcase" path="${case}"/>
+                
+                <available file="${build.dir.test.schemas.lib}/usertype_${testcase}.jar" property="usertypejar.exists"/>
+                <echo message="JAR ${build.dir.test.schemas.lib}/usertype_${testcase}.jar, Exists: ${usertypejar.exists}"/>
+                <if>
+                    <isfalse value="${usertypejar.exists}"/>
+                    <then>
+                        <java classname="${schema.compiler}"
+                            classpathref="build.classpath"
+                            fork="true">
+                            <arg line="-out ${build.dir.test.schemas.lib}/usertype_${testcase}.jar
+                            ${case}/existing
+                            ${xbeans.test.cases}/xbean/usertype/${testcase}"
+                                />
+                        </java>
+                    </then>
+                </if>
+            </loop>
+        </foreachloop>
+    </target>
+
+    <!--test xmlbeans task-->
+    <target name="xmlbean-test" depends="init">
+        <taskdef name="xmlbean" classname="org.apache.xmlbeans.impl.tool.XMLBean" classpath="${build.lib}/xbean.jar"/>
+         <xmlbean
+                   classpathref="test.run.classpath"
+                   srcgendir="${build.dir.test.schemas}/generated"
+                   classgendir="${build.dir.test.schemas}"
+                   destfile="${build.dir.test.schemas.lib}/XMLBeanTask.jar" >
+             <fileset dir="${xbeans.test.src}/xmlobject" includes="**/existing/**"/>
+             <fileset dir="${xbeans.test.cases}/xbean/extensions/interfaceFeature/averageCase" includes="*"/>
+         </xmlbean>
+    </target>
+
+    <target name="build.area.xmlobject" depends="extensions.build">
+        <property name="this.schema.dirs"
+            value="${build.dir.test.schemas}/xbean/xmlobject,
+                  ${build.dir.test.schemas}/xbean/xmlcursor,
+                  ${build.dir.test.schemas}/xbean/simple"/>
+        <property name="this.schema.standalone.dirs"
+            value="${schema.standalone}/CarLocationMessage_40_LX.xsd,
+            ${schema.standalone}/RailBillOfLading_V40_LX.xsd,
+            ${schema.standalone}/SimpleRailCarrierWaybillInterchange_V40_LX.xsd,
+            ${schema.standalone}/TerminalOperationsAndIntermodalRampActivity_V40_LX.xsd,"/>
+        <property name="compile.extensions" value="true"/>
+        <property name="compile.usertype" value="true"/>
+
+        <property name="includes.for.compile"
+            value="**/xmlobject/**/*.java"/>
+
+        <property name="testcasejar.update" value="true"/>
+        <antcall target="unit.build"/>
+
+    </target>
+
+
+    <target name="build.area.misc">
+        <property name="this.schema.dirs"
+            value="${build.dir.test.schemas}/xbean/misc"/>
+        <property name="includes.for.compile"
+            value="**/misc/**/*.java"/>
+        <property name="testcasejar.update" value="true"/>
+        <antcall target="unit.build"/>
+    </target>
+
+    <target name="build.area.compile">
+        <property name="this.schema.dirs"
+            value="${build.dir.test.schemas}/xbean/compile"/>
+        <property name="includes.for.compile"
+            value="**/compile/**/*.java"/>
+        <property name="testcasejar.update" value="true"/>
+        <antcall target="unit.build"/>
+    </target>
+
+    <target name="build.area.xmltokensource">
+        <property name="this.schema.dirs"
+            value="${build.dir.test.schemas}/xbean/xmltokensource"/>
+        <property name="includes.for.compile"
+            value="**/xmltokensource/**/*.java"/>
+        <property name="testcasejar.update" value="true"/>
+        <antcall target="unit.build"/>
+    </target>
+
+    <target name="build.area.xmlcursor">
+        <property name="this.schema.dirs"
+            value="${build.dir.test.schemas}/xbean/xmlcursor"/>
+        <property name="this.schema.standalone.dirs"
+            value="${schema.standalone}/CarLocationMessage_40_LX.xsd"/>
+        <property name="includes.for.compile"
+            value="**/xmlcursor/**/*.java"/>
+        <property name="testcasejar.update" value="true"/>
+        <echo message="SCHEMAS: ${this.schema.dirs}"/>
+        <antcall target="unit.build"/>
+        <antcall target="build.xqcases"/>
+    </target>
+
+    <target name="build.area.dom">
+        <property name="includes.for.compile"
+            value="**/dom/**/*.java,**/dom/detailed/**/*.java"/>
+        <property name="testcasejar.update" value="true"/>
+        <antcall target="unit.build"/>
+    </target>
+
+
+    <!--call make dir in case there was a clean before building this area-->
+    <target name="build.area.xpath">
+        <property name="includes.for.compile"
+            value="**/xmlcursor/xpath/**/*.java,
+            **/xmlcursor/xpath/xbean_xpath/**/*.java"/>
+        <property name="testcasejar.update" value="true"/>
+        <antcall target="unit.build"/>
+    </target>
+
+
+    <target name="build.area.ValidatingXSRTests">
+
+        <property name="this.schema.dirs"
+            value="${build.dir.test.schemas}/xbean/ValidatingStream,
+                   ${build.dir.test.schemas}/xbean/xmlobject"/>
+        <property name="includes.for.compile"
+            value="**/ValidatingXSRTests/**/*.java"/>
+        <property name="this.schema.standalone.dirs"
+            value="${schema.standalone}/CarLocationMessage_40_LX.xsd"/>
+        <property name="testcasejar.update" value="true"/>
+        <antcall target="unit.build"/>
+    </target>
+
+    <target name="build.area.scomp" depends="clean.tests">
+        <property name="includes.for.compile"
+            value="scomp/**/*.java"/>
+        <property name="this.schema.dirs"
+            value="${build.dir.test.schemas}/xbean/scomp"/>
+        <property name="testcasejar.update" value="true"/>
+        <antcall target="unit.build"/>
+    </target>
+    <target name="build.area.tools">
+        <property name="includes.for.compile"
+            value="**/tools/**/*.java"/>
+        <property name="testcasejar.update" value="true"/>
+        <antcall target="unit.build"/>
+    </target>
+
+    <!-- FREQ Target -->
+    <target name="build.area.checkin" depends="clean.tests,extensions.build,usertype.build">
+        <property name="includes.for.compile"
+            value="**/checkin/**/*.java,
+                   **/common/**/*.java"/>
+        <!--<property name="excludes.from.compile"
+            value="**/extensions/**"/>-->
+        <property name="this.schema.dirs"
+            value="${checkin.schema.dirs}"/>
+        <property name="this.schema.standalone.dirs"
+            value="${schema.standalone}/CarLocationMessage_40_LX.xsd"/>
+        <property name="testcasejar.update" value="true"/>
+        <antcall target="unit.build"/>
+    </target>
+
+    <!-- END: Incremental build targets                                  -->
+    <!-- =============================================================== -->
+
+
+    <!-- =============================================================== -->
+    <!-- START: JUNIT Tests                                              -->
+    <target name="checkin">
+        <property name="test.area" value="checkin"/>
+        <property name="excludes"
+            value="**/compile/scomp/checkin/**,**/tools/inst2xsd/checkin/**"/>
+        <antcall target="build"/>
+        <antcall target="run.junit"/>
+        <antcall target="-compile.run.excluded"/>
+    </target>
+
+    <!-- convenience target for just running compile tests -->
+    <target name="compile.run">
+        <property name="excludes"
+            value="**/compile/scomp/checkin/**,**/tools/inst2xsd/checkin/**"/>
+        <antcall target="-compile.run.excluded"/>
+    </target>
+    <!-- This test, for some reason, upon compilation,
+    affects other tests under Win jdk1.4-->
+    <target name="-compile.run.excluded" depends="check.asserts">
+        <delete file="${build.dir.test}/output/compile/scomp/j2ee/j2eeconfigxml.jar" description="Workaround failing test."/>
+        <javac srcdir="${xbeans.test.src}"
+            destdir="${build.dir.test.src}"
+            includes="${excludes}"
+            classpathref="test.run.classpath"
+            optimize="on"
+            debug="on"
+            source="1.4"
+            verbose="false"
+            failonerror="true"/>
+        <property name="test.area.run" value="${excludes}"/>
+        <property name="report.dir" value="${build.dir.test}/reports"/>
+        <property name="report.log.file"
+            value="${report.dir}/TestLog_CompilationTests.xml"/>
+        <property name="report.file"
+            value="${report.dir}/TestReport_CompilationTests.html"/>
+
+        <taskdef name="junitX" classname="tools.JUnit.JUnitXTask"
+            classpathref="test.run.classpath"/>
+
+        <jar destfile="${build.dir.test.lib}/testcases.jar"
+            basedir="${build.dir.test.src}"
+            excludes="**/*.java"
+            update="false"/>
+
+        <echo message="Running ${test.area.run} "/>
+        <property name="showoutput" value="false"/>
+        <junitX classpathref="test.run.classpath"
+            formatter="tools.JUnit.XmlResultFormatterImpl"
+            showOutput="${showoutput}"
+            reportFile="${report.log.file}"
+            classes="${test.area.run}"
+            fork="true"
+            resultproperty="junit.failcount"
+            failonerror="false">
+            <classpath>
+                <path refid="test.run.classpath"/>
+            </classpath>
+
+            <jvmarg value="-Xmx256m"/>
+            <jvmarg value="${asserts.value}"/>
+
+            <!-- For tests that need to access case files directly -->
+            <sysproperty key="cases.location" path="${xbeans.test.cases.test.files}"/>
+            <sysproperty key="xbean.rootdir" path="${xbeans.root}"/>
+
+            <!-- This will pick up all files that match and end in .java
+                 and try to run the corresponding test class -->
+
+            <fileset dir="${build.dir.test.src}"
+                includes="${test.area.run}"
+                excludes="**/common/**"/>
+        </junitX>
+        <antcall target="generate.html.report"/>
+    </target>
+
+    <target name="detailed">
+        <property name="test.area.run" value="**/detailed/**"/>
+        <antcall target="build"/>
+        <antcall target="run.junit"/>
+    </target>
+
+    <target name="check.asserts">
+        <echo message="${asserts}"/>
+        <if>
+            <not>
+                <equals arg1="${asserts}" arg2="on"/>
+            </not>
+            <then>
+                <echo message=
+               "********************************************************"/>
+                <echo message=
+                "*Running w/ asserts off"/>
+                <echo message=
+              "********************************************************"/>
+                <property name="asserts.value" value=""/>
+            </then>
+            <else>
+                <echo message=
+                "********************************************************"/>
+                <echo message=
+                "*Running w/ asserts on. To disable pass -Dasserts='off'"/>
+                <echo message=
+              "********************************************************"/>
+                <property name="asserts.value" value="-ea"/>
+            </else>
+        </if>
+
+    </target>
+
+    <target name="run.junit" depends="clean.reports, check.asserts" description="Run the tests. Parameters: -Dtest.area, -Dtest.spec">
+        <!-- The default test spec. To run a different set of tests
+             set the property "test.area" before calling this target
+             or by specifying on the command line -Dtest.area -->
+        <taskdef name="junitX" classname="tools.JUnit.JUnitXTask"
+            classpathref="test.run.classpath"/>
+
+        <property name="report.dir" value="${build.dir.test}/reports"/>
+        <property name="report.log.file" value="${report.dir}/TestLog.xml"/>
+        <property name="report.file" value="${report.dir}/TestReport.html"/>
+
+        <mkdir dir="${report.dir}"/>
+        <if>
+            <isset property="test.spec"/>
+            <then>
+                <property name="test.area.run" value="${test.spec}"/>
+            </then>
+            <else>
+                <if>
+                    <isset property="test.area"/>
+                    <then>
+                        <expandfileset list="${test.area}" param="curval"/>
+                        <property name="test.area.run" value="${curval}"/>
+                    </then>
+                    <else>
+                        <property name="test.area.run" value="**/checkin/**"/>
+                    </else>
+                </if>
+            </else>
+        </if>
+        <echo message="Running ${test.area.run} "/>
+        <property name="showoutput" value="false"/>
+        <junitX classpathref="test.run.classpath"
+            formatter="tools.JUnit.XmlResultFormatterImpl"
+            showOutput="${showoutput}"
+            reportFile="${report.log.file}"
+            classes="${test.area.run}"
+            fork="true"
+            resultproperty="junit.failcount"
+            failonerror="false">
+            <classpath>
+                <path refid="test.run.classpath"/>
+            </classpath>
+
+            <jvmarg value="-Xmx256m"/>
+            <jvmarg value="${asserts.value}"/>
+
+            <!-- For tests that need to access case files directly -->
+            <sysproperty key="cases.location" path="${xbeans.test.cases.test.files}"/>
+            <sysproperty key="xbean.rootdir" path="${xbeans.root}"/>
+
+            <!-- This will pick up all files that match and end in .java
+                 and try to run the corresponding test class -->
+
+            <fileset dir="${build.dir.test.src}"
+                includes="${test.area.run}"
+                excludes="**/common/**,${excludes}"/>
+        </junitX>
+        <antcall target="generate.html.report"/>
+        <echo message=" Excluded ${excludes}"/>
+        <echo message="${junit.failcount}"/>
+        <if>
+            <not>
+                <equals arg1="${junit.failcount}" arg2="0"/>
+            </not>
+            <then>
+                <fail message="Test run had failures"/>
+            </then>
+        </if>
+
+    </target>
+
+    <target name="generate.html.report">
+        <loadfile property="css.file"
+            srcfile="${xbeans.test.tools.lib}/xsl/junit.css"
+            failonerror="true"/>
+        <xslt in="${report.log.file}"
+            out="${report.file}"
+            style="${xbeans.test.tools.lib}/xsl/TestReport.xsl">
+            <!-- Set up some params for the Stylesheet -->
+            <!-- TODO: Doc these params and usage of the Stylesheet -->
+            <param name="cssFile" expression="${css.file}"/>
+            <param name="showSuccessInErrorSummary" expression="0"/>
+            <param name="sections"
+                expression="result-summary,setup,result-detail,error-summary,error-detail"/>
+            <param name="navigationTools" expression="toolbar,top"/>
+            <param name="showTheFilters" expression="false"/>
+        </xslt>
+    </target>
+
+    <!-- END:                                                            -->
+    <!-- =============================================================== -->
+
+    <!-- ============================================================= -->
+    <!-- Miscellaneous -->
+    <!-- ============================================================= -->
+    <target name="JWhich" description="Probe the classpath">
+        <property name="JWhich.arg" value="-printclasspath"/>
+        <java classname="JWhich" classpathref="test.run.classpath" fork="true">
+            <classpath>
+                <pathelement location="${xbeans.test.tools.lib}/JWhich.jar"/>
+            </classpath>
+            <arg value="${JWhich.arg}"/>
+        </java>
+    </target>
+
+
+    <target name="dom-w3c">
+        <javac srcdir="${xbeans.test.src}/dom/detailed/w3c"
+            classpathref="build.classpath"
+           fork="false"
+            debug="on"
+            optimize="on"
+            verbose="false"
+            failonerror="true"/>
+         <jar destfile="${xbeans.test.lib}/w3c_domts.jar"
+            basedir="${xbeans.test.src}/dom/detailed/w3c"
+            update="false"/>
+          <antcall target="dom-w3c.clean"/>
+    </target>
+    <target name="dom-w3c.clean">
+        <delete>
+            <fileset dir="${xbeans.test.src}/dom/detailed/w3c" includes="**/*.class"/>
+        </delete>
+    </target>
+
+
+</project>

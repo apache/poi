@@ -1,0 +1,29 @@
+<xsd:schema
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://xbean/scomp/substGroup/Block"
+    targetNamespace="http://xbean/scomp/substGroup/Block"
+    xmlns:base="http://xbean/scomp/substGroup/Deep"
+    elementFormDefault="qualified"
+    >
+
+    <xsd:import namespace="http://xbean/scomp/substGroup/Deep"
+        schemaLocation="Deep.xsd"/>
+
+    <xsd:complexType name="beachUmbrellaT">
+        <xsd:complexContent>
+            <xsd:extension base="base:productType">
+                <xsd:attribute name="diameter" type="xsd:float"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+
+    <xsd:element name="businessShirt" type="base:businessShirtType" substitutionGroup="base:shirt" block="#all"/>
+    <xsd:element name="casualBShirt" type="base:businessCasualShirtType"
+        substitutionGroup="businessShirt"/>
+
+    <xsd:element name="umbrella" substitutionGroup="base:product" block="substitution"/>
+    <xsd:element name="beachumbrella" type="beachUmbrellaT" substitutionGroup="umbrella"/>
+
+ 
+</xsd:schema>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="nschoice" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="a">
+    <xs:complexType>
+      <xs:choice maxOccurs="unbounded" minOccurs="0">
+        <xs:element ref="cch:c" xmlns:cch="cChoice"/>
+        <xs:element ref="nsc:d" xmlns:nsc="nschoice"/>
+        <xs:element ref="nch:c" xmlns:nch="nChoice"/>
+        <xs:element ref="cch:x" xmlns:cch="cChoice"/>
+        <xs:element ref="nsc:c" xmlns:nsc="nschoice"/>
+        <xs:element ref="dch:d" xmlns:dch="dChoice"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="c" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+  <xs:element name="d" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+</xs:schema>

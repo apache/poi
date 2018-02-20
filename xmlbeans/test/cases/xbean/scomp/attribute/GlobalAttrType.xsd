@@ -1,0 +1,27 @@
+ <xsd:schema 
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns="http://xbean/scomp/attribute/GlobalAttrType"
+  targetNamespace="http://xbean/scomp/attribute/GlobalAttrType"
+  >
+
+  <xsd:attribute name="attSimple" type="xsd:string"/>
+  <xsd:attribute name="attAnonymous">
+      <xsd:simpleType>
+          <xsd:restriction base="xsd:integer">
+            <xsd:enumeration value="0"/>
+            <xsd:enumeration value="1"/>
+          </xsd:restriction>
+      </xsd:simpleType>
+
+  </xsd:attribute>
+  <xsd:attribute name="attAnyType"/>
+
+
+  <xsd:complexType name="GlobalAttrTypeT">
+      <xsd:attribute ref="attSimple" />
+      <xsd:attribute ref="attAnonymous" />
+      <xsd:attribute ref="attAnyType" />
+  </xsd:complexType>
+
+  <xsd:element name="GlobalAttrTypeDoc" type="GlobalAttrTypeT"/>
+</xsd:schema>

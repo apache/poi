@@ -1,0 +1,407 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!--
+/* Copyright 2002-2004 Apache Software Foundation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+	<TITLE></TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 1.1.1  (Linux)">
+	<META NAME="CREATED" CONTENT="20041121;23172400">
+	<META NAME="CHANGED" CONTENT="20041205;321800">
+	<STYLE>
+	<!--
+		@page { size: 8.5in 11in; margin-left: 1.25in; margin-right: 1.25in; margin-top: 1in; margin-bottom: 1in }
+		H1 { margin-bottom: 0.08in }
+		H1.western { font-family: "Bitstream Vera Sans", sans-serif; font-size: 16pt }
+		H1.cjk { font-family: "HG Mincho Light J", "MS Mincho", "HG Mincho J", "HG Mincho L", "HG Mincho", "Mincho", "MS PMincho", "HG Mincho Light J", "MS Gothic", "HG Gothic J", "HG Gothic B", "HG Gothic", "Gothic", "MS PGothic", "Andale Sans UI", "Arial Unicode MS", "Lucida Sans Unicode", "Tahoma"; font-size: 16pt }
+		H1.ctl { font-family: "Tahoma", "Lucidasans", "Lucida Sans", "Arial Unicode MS"; font-size: 16pt }
+		P { margin-bottom: 0.08in }
+		H2 { margin-bottom: 0.08in }
+		H2.western { font-family: "Bitstream Vera Sans", sans-serif; font-size: 14pt; font-style: italic }
+		H2.cjk { font-family: "HG Mincho Light J", "MS Mincho", "HG Mincho J", "HG Mincho L", "HG Mincho", "Mincho", "MS PMincho", "HG Mincho Light J", "MS Gothic", "HG Gothic J", "HG Gothic B", "HG Gothic", "Gothic", "MS PGothic", "Andale Sans UI", "Arial Unicode MS", "Lucida Sans Unicode", "Tahoma"; font-size: 14pt; font-style: italic }
+		H2.ctl { font-size: 14pt; font-style: italic }
+	-->
+	</STYLE>
+</HEAD>
+<BODY LANG="en-US" DIR="LTR">
+<P ALIGN=CENTER STYLE="margin-bottom: 0in"><FONT FACE="Times, serif"><FONT SIZE=4 STYLE="font-size: 16pt"><B>Creating
+a Jakarta Commons SQL datamodel using XmlBeans and Velocity</B></FONT></FONT></P>
+<P ALIGN=CENTER STYLE="margin-bottom: 0in"><FONT FACE="Times, serif"><FONT SIZE=3><I><B>Philip
+Mark Donaghy</B></I></FONT></FONT></P>
+<H1 CLASS="western">1 <FONT FACE="Times, serif">About Vxsdb</FONT></H1>
+<P><FONT SIZE=3><FONT FACE="Times, serif">Vxsdb is a sample XmlBeans
+application which derives a Jakarta Commons SQL data model from an
+xml schema. It was conceived from things I have learned from using
+XmlBeans and talking to people at the ASF conference.</FONT></FONT></P>
+<P><FONT FACE="Times, serif">Vxsdb uses Jakarta Velocity as its
+templating engine. At runtime a SchemaTypeSystem XmlBeans object is
+created from compiling an xml schema. This object is placed in a
+Velocity context. A template processes the objects global elements,
+global types and generates a Jakarta Commons SQL xml datamodel
+descriptor of tables and columns.</FONT></P>
+<H2 CLASS="western">1.1 Requirements</H2>
+<P><FONT FACE="Times, serif">Java 1.5</FONT></P>
+<H2 CLASS="western">1.2 Getting Started</H2>
+<P><FONT FACE="Times, serif">The basic utilization compiles the
+sample and produces a database schema for a given xml schema.</FONT></P>
+<P><FONT FACE="Times, serif">Execute the command “ant”</FONT></P>
+<P><FONT FACE="Times, serif">This compiles the sample.</FONT></P>
+<P><FONT FACE="Times, serif">Execute the command “ant -f run.xml”</FONT></P>
+<P><FONT FACE="Times, serif">This creates the Jakarta Commons SQL
+datamodel.xml and creates the create.sql ddl.</FONT></P>
+<H2 CLASS="western"><FONT FACE="Bitstream Vera Sans">1.3
+Configuration</FONT></H2>
+<P><FONT FACE="Times, serif">Vxsdb can be configured by modifying the
+command line parameters to specify another template, output or xml
+schema.</FONT></P>
+<P><FONT FACE="Times, serif">ant -f run.xml -Dtemplate=datamodel.vm
+-Doutput=database.xml -Dschema=easypo.xsd</FONT></P>
+<H2 CLASS="western">1.4 Generating database schema</H2>
+<P><FONT FACE="Times, serif">Included in the sample run.xml is an Ant
+target which generates the ddl used to create the database tables.
+The default database is PostgreSQL.</FONT></P>
+<P><FONT FACE="Times, serif">ant -f run.xml</FONT></P>
+<P><FONT FACE="Times, serif">To change the target database use,</FONT></P>
+<P><FONT FACE="Times, serif">ant -f run.xml -DtargetDatabase=oracle</FONT></P>
+<H2 CLASS="western">1.5 Determining Tables, Columns, and Table
+relationships</H2>
+<P><FONT FACE="Times, serif">Tables are created from all global
+elements and most global types.</FONT></P>
+<P><FONT FACE="Times, serif">For each schema property the sample
+application determines if it is a column, an exported key (foreign
+key to another table), or an imported foreign key (another entity
+who's table contains a foreign back to this entity).</FONT></P>
+<P><FONT FACE="Times, serif">If a schema property (attribute or
+element) is a simple type without restriction a column is created and
+one of the following Commons SQL values is assigned to the property.
+DATE, DECIMAL, FLOAT, INTEGER, TIME, TIMESTAMP, or VARCHAR.</FONT></P>
+<P><FONT FACE="Times, serif">If a schema property is a simple type
+with a restriction then a column is created and one of the above
+values is assigned in addition to a size attribute.</FONT></P>
+<P><FONT FACE="Times, serif">If a schema property is a complex type
+with no maxOccurs or minOccurs (meaning that it is required) then a
+foreign key column is entered into the database table descriptor and
+the required attribute is set to true.</FONT></P>
+<P><FONT FACE="Times, serif">If a schema property is a complex type
+with maxOccurs equal to one then a foreign key column is entered into
+the database table.</FONT></P>
+<P><FONT FACE="Times, serif">If a schema property is a complex type
+with maxOccurs greater than one or unbounded then a imported key
+(foreign key from this type's table) is required. This presents a
+problem. The Velocity template may have already encountered this
+complex type and created its table descriptor without even knowing
+about this relationship. This is known as the Imported Key Question.</FONT></P>
+<H2 CLASS="western">1.6 Solving the Imported Key Question</H2>
+<P><FONT FACE="Times, serif">Iterate the SchemaTypeSystem in the Java
+class to determine imported keys.</FONT></P>
+<P><FONT FACE="Times, serif">Cliff told me that ms has a solution to
+this which may be included in the xml schema.</FONT></P>
+<H2 CLASS="western">1.7 Additional ideas</H2>
+<P><FONT FACE="Times, serif"><FONT SIZE=3>Combining XmlBeans and
+Velocity templates can result in other interesting xml schema related
+technologies.</FONT></FONT></P>
+<P><FONT FACE="Times, serif">Using a similar approach to this sample
+XmlBeans and Velocity can harness the xml schema and generate
+documentation, a relational database model, or even data access
+objects.</FONT></P>
+<H2 CLASS="western">1.8 Sample datamodel.xml</H2>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;?xml
+version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;database
+name=&quot;sample&quot;&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;!--
+Global Elements --&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;table
+name=&quot;PURCHASE_ORDER&quot;&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;column
+name=&quot;PK&quot; type=&quot;INTEGER&quot; required=&quot;true&quot;
+primaryKey=&quot;true&quot;/&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;!--
+T=customer@http://openuri.org/easypo --&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;column
+name=&quot;FK_CUSTOMER&quot; required=&quot;true&quot; type=&quot;INTEGER&quot;
+/&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;foreign-key
+foreignTable=&quot;CUSTOMER&quot;&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;reference
+local=&quot;FK_CUSTOMER&quot; foreign=&quot;PK&quot;/&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;/foreign-key&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;!--
+T=dateTime@http://www.w3.org/2001/XMLSchema --&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;column
+name=&quot;DATE&quot; type=&quot;TIMESTAMP&quot; /&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;!--
+Foreign key imported from table named LINE_ITEM --&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;!--
+T=shipper@http://openuri.org/easypo --&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;column
+name=&quot;FK_SHIPPER&quot; type=&quot;INTEGER&quot; /&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;foreign-key
+foreignTable=&quot;SHIPPER&quot;&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;reference
+local=&quot;FK_SHIPPER&quot; foreign=&quot;PK&quot;/&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;/foreign-key&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;/table&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;!--
+Global Types --&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;table
+name=&quot;CUSTOMER&quot;&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;column
+name=&quot;PK&quot; type=&quot;INTEGER&quot; required=&quot;true&quot;
+primaryKey=&quot;true&quot;/&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;!--
+T=string@http://www.w3.org/2001/XMLSchema --&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;column
+name=&quot;NAME&quot; type=&quot;VARCHAR&quot; /&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;!--
+T=string@http://www.w3.org/2001/XMLSchema --&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;column
+name=&quot;ADDRESS&quot; type=&quot;VARCHAR&quot; /&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;!--
+T=int@http://www.w3.org/2001/XMLSchema --&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;column
+name=&quot;AGE&quot; type=&quot;TINYINT&quot; /&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;!--
+T=int@http://www.w3.org/2001/XMLSchema --&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;column
+name=&quot;MOO&quot; type=&quot;TINYINT&quot; /&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;!--
+T=int@http://www.w3.org/2001/XMLSchema --&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;column
+name=&quot;POO&quot; type=&quot;TINYINT&quot; /&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;/table&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;table
+name=&quot;LINE_ITEM&quot;&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;column
+name=&quot;PK&quot; type=&quot;INTEGER&quot; required=&quot;true&quot;
+primaryKey=&quot;true&quot;/&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;!--
+T=string@http://www.w3.org/2001/XMLSchema --&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;column
+name=&quot;DESCRIPTION&quot; type=&quot;VARCHAR&quot; /&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;!--
+T=decimal@http://www.w3.org/2001/XMLSchema --&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;column
+name=&quot;PER_UNIT_OUNCES&quot; type=&quot;DECIMAL&quot; /&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;!--
+T=decimal@http://www.w3.org/2001/XMLSchema --&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;column
+name=&quot;PRICE&quot; type=&quot;DECIMAL&quot; /&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;!--
+T=integer@http://www.w3.org/2001/XMLSchema --&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;column
+name=&quot;QUANTITY&quot; type=&quot;INTEGER&quot; /&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;!--
+Exported key --&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;column
+name=&quot;FK_PURCHASE_ORDER&quot; required=&quot;true&quot;
+type=&quot;INTEGER&quot; /&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;foreign-key
+foreignTable=&quot;PURCHASE_ORDER&quot;&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;reference
+local=&quot;FK_PURCHASE_ORDER&quot; foreign=&quot;PK&quot;/&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;/foreign-key&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;/table&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;table
+name=&quot;SHIPPER&quot;&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;column
+name=&quot;PK&quot; type=&quot;INTEGER&quot; required=&quot;true&quot;
+primaryKey=&quot;true&quot;/&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;!--
+T=string@http://www.w3.org/2001/XMLSchema --&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;column
+name=&quot;NAME&quot; type=&quot;VARCHAR&quot; /&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;!--
+T=decimal@http://www.w3.org/2001/XMLSchema --&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;column
+name=&quot;PER_OUNCE_RATE&quot; type=&quot;DECIMAL&quot; /&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;/table&gt;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>&lt;/database&gt;</FONT></FONT></P>
+<H2 CLASS="western">1.9 Sample create.sql</H2>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>drop
+table SHIPPER;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>drop
+table LINE_ITEM;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>drop
+table CUSTOMER;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>drop
+table PURCHASE_ORDER;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>--
+-----------------------------------------------------------------------</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>--
+PURCHASE_ORDER</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>--
+-----------------------------------------------------------------------</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>create
+table PURCHASE_ORDER</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>(</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>PK
+INTEGER NOT NULL ,</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>FK_CUSTOMER
+INTEGER NOT NULL ,</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>DATE
+TIMESTAMP NULL ,</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>FK_SHIPPER
+INTEGER NULL ,</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>PRIMARY
+KEY (PK)</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>);</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>ALTER
+TABLE PURCHASE_ORDER</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>ADD
+CONSTRAINT PURCHASE_ORDER_FK_1 FOREIGN KEY (FK_CUSTOMER)</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>REFERENCES
+CUSTOMER (PK)</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>ALTER
+TABLE PURCHASE_ORDER</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>ADD
+CONSTRAINT PURCHASE_ORDER_FK_2 FOREIGN KEY (FK_SHIPPER)</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>REFERENCES
+SHIPPER (PK)</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>--
+-----------------------------------------------------------------------</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>--
+CUSTOMER</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>--
+-----------------------------------------------------------------------</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>create
+table CUSTOMER</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>(</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>PK
+INTEGER NOT NULL ,</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>NAME
+VARCHAR NULL ,</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>ADDRESS
+VARCHAR NULL ,</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>AGE
+TINYINT NULL ,</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>MOO
+TINYINT NULL ,</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>POO
+TINYINT NULL ,</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>PRIMARY
+KEY (PK)</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>);</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>--
+-----------------------------------------------------------------------</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>--
+LINE_ITEM</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>--
+-----------------------------------------------------------------------</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>create
+table LINE_ITEM</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>(</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>PK
+INTEGER NOT NULL ,</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>DESCRIPTION
+VARCHAR NULL ,</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>PER_UNIT_OUNCES
+DECIMAL NULL ,</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>PRICE
+DECIMAL NULL ,</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>QUANTITY
+INTEGER NULL ,</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>FK_PURCHASE_ORDER
+INTEGER NOT NULL ,</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>PRIMARY
+KEY (PK)</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>);</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>ALTER
+TABLE LINE_ITEM</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>ADD
+CONSTRAINT LINE_ITEM_FK_1 FOREIGN KEY (FK_PURCHASE_ORDER)</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>REFERENCES
+PURCHASE_ORDER (PK)</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>;</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>--
+-----------------------------------------------------------------------</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>--
+SHIPPER</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>--
+-----------------------------------------------------------------------</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>create
+table SHIPPER</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>(</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>PK
+INTEGER NOT NULL ,</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>NAME
+VARCHAR NULL ,</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>PER_OUNCE_RATE
+DECIMAL NULL ,</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>PRIMARY
+KEY (PK)</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><FONT FACE="Monospace"><FONT SIZE=2>);</FONT></FONT></P>
+<P STYLE="margin-bottom: 0in"><BR>
+</P>
+<P><BR><BR>
+</P>
+</BODY>
+</HTML>

@@ -1,0 +1,52 @@
+<?xml version="1.0" ?>
+<!--
+/*   Copyright 2004 The Apache Software Foundation
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+-->
+
+
+
+<TestRootElem>
+    <SubGrpHeadElem SubGrpHeadAttr1="required Head Elem Attribute">
+        <SubGrpInnerElem1>This is a child of the Head Elem in the Substitution Group</SubGrpInnerElem1>
+        <SubGrpInnerElem2>10</SubGrpInnerElem2>
+    </SubGrpHeadElem>
+
+    <!-- add a Substitution Group Type here - should work just fine! -->
+    <SubGrpMemberElem1 SubGrpHeadAttr1="now this is required">
+        <SubGrpInnerElem1>This is a child of the Substituted Element </SubGrpInnerElem1>
+        <SubGrpInnerElem2>10</SubGrpInnerElem2>
+    </SubGrpMemberElem1>
+
+    <!-- substitution group with extended type from the head elem -->
+    <SubGrpMemberElem2 SubGrpHeadAttr1="now this is required">
+        <SubGrpInnerElem1>This is a child of the Substituted Element </SubGrpInnerElem1>
+        <SubGrpInnerElem2>10</SubGrpInnerElem2>
+        <SubGrpInnerElem3>Element Added by Extension</SubGrpInnerElem3>
+    </SubGrpMemberElem2>
+
+    <ModelGrpTypeElem>
+        <ModelGrpElem1> This is an element from a Named Model Group </ModelGrpElem1>
+        <ModelGrpElem2> This is also from NamedMode Group with Min Occurs = 1</ModelGrpElem2>
+        <ModelGrpTypeSubElem1> This elemen is part of the type definition for ModelGrpTypeElem</ModelGrpTypeSubElem1>
+    </ModelGrpTypeElem>
+
+    <AttrGrpTypeElem AttrGrpAttribute1="Attr From Attribute Group" AttrGrpAttribute2="This one too" AttrGrpTypeAttr1="And this is from the Element definition">
+        <AttrGrpTypeSubElem1> This is Child Elem of AttrGrpTypeElem</AttrGrpTypeSubElem1>
+    </AttrGrpTypeElem>
+
+</TestRootElem>
+
+

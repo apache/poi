@@ -1,0 +1,20 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="a:b:c"
+    xmlns:ns="a:b:c">
+    <xs:element name="person" type="ns:Person"/>
+    <xs:complexType name="Person">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="height" type="xs:double"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Employee">
+        <xs:complexContent>
+            <xs:extension base="ns:Person">
+                <xs:sequence>
+                    <xs:element name="jobDescription" type="xs:string"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+</xs:schema>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema 
+targetNamespace="http://test/xmlobject/test36510" 
+xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+xmlns:test36510="http://test/xmlobject/test36510"
+xmlns="http://www.w3.org/2001/XMLSchema"
+ elementFormDefault="qualified" 
+attributeFormDefault="unqualified">
+	
+	<element name="test36510-app" type="test36510:test36510-appType"/>
+
+        <complexType name="test36510-appType">
+		<sequence>
+		    <element name="testConstraint" type="test36510:testConstraint" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+
+         <complexType name="testConstraint">
+	
+		<sequence>
+			<element name="display-name" type="string" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="customConstraint" type="test36510:customConstraint" minOccurs="0"/>
+		</sequence>
+		<attribute name="id" type="string" use="optional"/>
+	</complexType>
+
+        	<simpleType name="enumType">
+			<restriction base="test36510:string">
+			<enumeration value="NONE"/>
+			<enumeration value="SPECIAL"/>
+			<enumeration value="BEST"/>
+		</restriction>
+	       </simpleType>
+
+
+        	<complexType name="customConstraint">
+	
+		<sequence>
+			<element name="description" type="string" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="options" type="test36510:enumType"/>
+		</sequence>
+		<attribute name="id" type="string" use="optional"/>
+	</complexType>
+
+        	<simpleType name="string">
+		<restriction base="string">
+			<whiteSpace value="collapse"/>
+		</restriction>
+	</simpleType>
+       
+       
+</schema>

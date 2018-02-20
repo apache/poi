@@ -1,0 +1,52 @@
+<xsd:schema
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns="http://xbean/scomp/substGroup/OneLevel"
+     targetNamespace="http://xbean/scomp/substGroup/OneLevel"
+    elementFormDefault="qualified"
+     >
+    <xsd:simpleType name="colorType">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="blue|purple"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:complexType name="ItemType">
+        <xsd:sequence>
+            <xsd:element ref="product" maxOccurs="4"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="productType">
+        <xsd:sequence>
+            <xsd:element name="number" type="xsd:token"/>
+            <xsd:element name="name" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="shirtType">
+       <xsd:complexContent>
+           <xsd:extension base="productType">
+              <xsd:sequence>
+                  <xsd:element name="size" type="xsd:positiveInteger"/>
+                  <xsd:element name="color" type="colorType"/>
+              </xsd:sequence>
+           </xsd:extension>
+       </xsd:complexContent>
+    </xsd:complexType>
+
+      <xsd:complexType name="hatType">
+       <xsd:complexContent>
+           <xsd:extension base="productType">
+              <xsd:sequence>
+                  <xsd:element name="size" type="xsd:positiveInteger"/>
+              </xsd:sequence>
+           </xsd:extension>
+       </xsd:complexContent>
+    </xsd:complexType>
+
+ <xsd:element name="umbrella" substitutionGroup="product"/>
+ <xsd:element name="shirt" type="shirtType" substitutionGroup="product"/>
+ <xsd:element name="hat" type="hatType" substitutionGroup="product"/>
+ <xsd:element name="product" type="productType"/>
+ <xsd:element name="items" type="ItemType"/>
+</xsd:schema>

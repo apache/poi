@@ -1,0 +1,6 @@
+<f:a xmlns:f="http://xmlbeans.apache.org/inst2xsd">
+    <f:b>abc</f:b>
+    <f:c>123</f:c>
+    <f:d></f:d>
+    <f:e />
+</f:a>

@@ -1,0 +1,471 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<!-- Copyright 2004 The Apache Software Foundation
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License. -->
+<html>
+<head>
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Java Types Generated from Schema</title>
+<!-- InstanceEndEditable -->
+
+<!--(Meta)==========================================================-->
+<meta http-equiv=Content-Type content="text/html; charset=$CHARSET;">
+
+
+<!-- InstanceBeginEditable name="metatags" -->
+
+<meta name="component" content="">
+<!-- In the description metatag, please provide a BRIEF description of the topic contents. -->
+<meta name="description" content="">
+<!-- In the component metatag, please list keywords that will help a user search for this topic. -->
+<meta name="keywords" content="">
+<!-- InstanceEndEditable -->
+
+<!--(Links)=========================================================-->
+<!-- InstanceBeginEditable name="head" -->
+
+<link href="../xmlbeans.css" rel="stylesheet" type="text/css">
+
+<!--(Meta)==========================================================-->
+
+
+
+<meta name="author" content="your name">
+<meta name="description" content="A description of the topic contents.">
+<meta name="keywords" content="keywords to help in searches">
+<meta name="date last modified" content="10/25/02">
+<!--(Links)=========================================================-->
+<!--(Body)==========================================================--><!-- InstanceEndEditable -->
+<link href="../xmlbeans.css" rel="stylesheet" type="text/css">
+<a href="../../../core/index.html" id="index"></a>
+<script language="JavaScript" src="../../../core/topicInfo.js"></script>
+<script language="JavaScript" src="../../../core/CookieClass.js"></script>
+<script language="JavaScript" src="../../../core/displayContent.js"></script>
+</head>
+
+<!--(Body)==========================================================-->
+<body>
+<script language="JavaScript">
+
+</script>
+<!-- InstanceBeginEditable name="body" -->
+<h1> Java Types Generated from User-Derived Schema Types</h1>
+<div id="topictext">
+  <p>When you compile XML schema, the resulting API is made up of two categories
+    of types: built-in types that mirror those in the schema specification and
+    others that are generated from user-derived schema types. This topic provides
+    an overview of the Java types generated for user-derived types, describing
+    the methods the Java types provide. For more information about built-in types,
+    see <a href="conXMLBeansSupportBuiltInSchemaTypes.html">XMLBeans Support for
+    Built-In Schema Types</a>. For specific information about the methods exposed
+    by generated types, see <a href="conMethodsForGeneratedJavaTypes.html">Methods
+    for Generated Java Types</a>.</p>
+  <p>In general, an API generated from schema is an intuitive means to access
+    XML instances based on the schema. You'll probably find that for most uses
+    it's unnecessary to know the rules for generating it in order to use it. However,
+    for those cases when it's unclear what's going on behind the scenes (or if
+    you're just curious), this topic describes the rules.</p>
+  <p class="notepara"><strong>Note:</strong> The XMLBeans API also provides a
+    way for you to get information <em>about </em>the type system itself &#8212;
+    in other words, about the API and the underlying schema. For more information,
+    see <a href="conIntroToTheSchemaTypeSystem.html">Introduction to Schema Type
+    Signatures</a>.</p>
+  <p>Each of the types generated when you compile a schema is designed specifically
+    for access to XML instances conforming to that part of the schema. Start by
+    taking a look at a simple XML and schema example. The following schema describes
+    an XML document to contain a stock price quote.</p>
+  <pre>&lt;xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"&gt;
+    &lt;xs:element name="price-quote"&gt;
+        &lt;xs:complexType&gt;
+            &lt;xs:sequence&gt;
+                &lt;xs:element name="stock-symbol" type="xs:string"/&gt;
+                &lt;xs:element name="stock-price" type="xs:float"/&gt;
+            &lt;/xs:sequence&gt;
+        &lt;/xs:complexType&gt;
+    &lt;/xs:element&gt;
+&lt;/xs:schema&gt;
+</pre>
+  <p>The following is an example of XML that conforms to this schema.</p>
+  <pre>&lt;price-quote&gt;
+    &lt;stock-symbol&gt;BEAS&lt;/stock-symbol&gt;
+    &lt;stock-price&gt;59.21&lt;/stock-price&gt;
+&lt;/price-quote&gt;</pre>
+  <p>When you compile this schema, you get two generated XMLBeans interfaces:
+    <span class="langinline"> PriceQuoteDocument</span> and <span class="langinline">PriceQuoteDocument.PriceQuote</span>.</p>
+  <p>From the schema point of view, the generated <span class="langinline">PriceQuote</span>
+    interface represents the <em>complex type</em> you see inside the schema's
+    <span class="langinline">price-quote</span> element declaration. Looking at
+    the XML instance, you can see that this complex type translates into a sequence
+    of two elements, <span class="langinline">stock-symbol</span> and <span class="langinline">stock-price</span>.
+    So it's not surprising that the <span class="langinline">PriceQuote</span>
+    interface exposes methods such as <span class="langinline">getStockPrice</span>
+    and <span class="langinline">setStockPrice</span> to set the value <span class="langinline">stock-price</span>
+    element.</p>
+  <p>The <span class="langinline">PriceQuoteDocument</span> interface, on the
+    other hand, represents the <span class="langinline">price-quote</span> <em>document</em>
+    that contains the root <span class="langinline">price-quote</span> element.
+    XMLBeans creates a special &quot;document&quot; type for global element types.
+    A document type provides a way for you to get and set the value of the underlying
+    type, here represented by <span class="langinline">PriceQuote</span>. The
+    <span class="langinline">price-quote</span> element is considered a <em>global</em>
+    element because it can be referenced from anywhere else in the schema. For
+    global elements, the XMLBeans schema compiler generates an interface whose
+    name ends with &quot;Document.&quot; This is because an XML schema has no
+    way of defining a &quot;root&quot; element; any global element can be the
+    root.</p>
+  <p>The following bit of Java code illustrates how you might use these interfaces
+    to get the stock price contained in the XML.</p>
+  <pre>
+public static float getStockPrice(java.io.File orderXML) throws Exception
+{
+    PriceQuoteDocument docXML = PriceQuoteDocument.Factory.parse(orderXML);
+    PriceQuote quoteXML = docXML.getPriceQuote();
+    float stockPrice = quoteXML.getStockPrice();
+    return stockPrice;
+}
+</pre>
+  <p>This code loads the XML from a <span class="langinline">File</span> object,
+    converting the <span class="langinline">parse</span> method's return value
+    to a <span class="langinline">PriceQuoteDocument</span> instance. It then
+    uses this instance to get an instance of <span class="langinline">PriceQuote</span>.
+    With <span class="langinline">PriceQuote</span>, the code extracts the stock
+    price. </p>
+</div>
+<div>
+  <div id="topictext">
+    <p>The XML schema specification provides a rich set of rules through which
+      you can derive new types. When you generate interfaces from your schema,
+      XMLBeans uses the schema's rules to determine how to generate interfaces.
+      The following describes some of the guidelines by which this is done.</p>
+    <h2>Names for Interfaces</h2>
+    <p>Interfaces are generated for schema types (both simple and complex). Anonymous
+      schema types result in inner interfaces inside the type interface in which
+      they are defined. Their name comes from the element or attribute in which
+      they is defined.</p>
+    <p>Names for schema types become Java-friendly names when the schema is compiled.
+      In other words, names such as "price-quote" become "PriceQuote." In addition,
+      a schema's XML namespace URIs become package names for XMLBean types generated
+      from the schema. The way this name translation is done is described by section
+      C of the Java API for XML Binding (JAXB) specification at <a href="http://java.sun.com/xml/downloads/jaxb.html" target="_blank">
+      http://java.sun.com/xml/jaxb.html.</a> </p>
+    <p>Here are a few examples:</p>
+    <table>
+      <tr>
+        <td><strong>Schema Target Namespace</strong></td>
+        <td width="155"><strong>XML Localname</strong></td>
+        <td><strong>Fully-Qualified XMLBean Type Name</strong></td>
+      </tr>
+      <tr>
+        <td>http://www.mycompany.com/2002/buyer</td>
+        <td width="155">purchase-order-4</td>
+        <td>com.mycompany.x2002.buyer.PurchaseOrder4</td>
+      </tr>
+      <tr>
+        <td>http://myco.com/sample.html</td>
+        <td width="155">SampleDocument</td>
+        <td>com.myco.sample.SampleDocument</td>
+      </tr>
+      <tr>
+        <td>http://openuri.org/test_case_1</td>
+        <td width="155">test_type</td>
+        <td>org.openuri.testCase1.TestType</td>
+      </tr>
+    </table>
+    <p>When there are name collisions, the generated types will have names with
+      numerals appended&nbsp;— for example, "TestType2".</p>
+    <h2>Global Elements and Attributes</h2>
+    <p>In schema, global element and attribute definitions are those that are
+      declared at the top level of the schema (that is, immediately within the
+      <span class="langinline">schema</span> root element). Because they are global,
+      they may be referenced from inside the schema by name. The <span class="langinline">creditReport</span>
+      (not the <span class="langinline">creditReportType</span> complex type)
+      element defined in the following schema is an example.</p>
+    <pre>
+&lt;xs:schema targetNamespace=&quot;http://openuri.org/samples/creditReport&quot;
+    xmlns:cr=&quot;http://openuri.org/samples/creditReport&quot;
+    xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;
+    elementFormDefault=&quot;qualified&quot;
+    attributeFormDefault=&quot;unqualified&quot;&gt;
+    &lt;xs:complexType name=&quot;creditReportType&quot;&gt;
+        &lt;xs:sequence&gt;
+            &lt;xs:element name=&quot;bankReport&quot; type=&quot;xs:string&quot;/&gt;
+            &lt;xs:element name=&quot;taxReport&quot; type=&quot;xs:string&quot;/&gt;
+        &lt;/xs:sequence&gt;
+    &lt;/xs:complexType&gt;
+    &lt;xs:element name=&quot;creditReport&quot; type=&quot;cr:creditReportType&quot;/&gt;
+&lt;/xs:schema&gt;</pre>
+    <p>XMLBeans generates a separate interface for each of these. Also, global
+      element and attribute types are somewhat unique in that the schema compiler
+      will create special types to hold the globally defined element or attribute.
+      The names of these types will be appended with &quot;Document&quot; (for
+      elements) or &quot;Attribute&quot; (for attributes). You can retrieve the
+      element or attribute itself (or create a new one) by calling the accessor
+      methods that the special types provide. The following example would create
+      a new instance of the creditReport element.</p>
+    <pre>
+// Create an instance of the special document type.
+CreditReportDocument reportDoc = CreditReportDocument.Factory.newInstance();
+/*
+ * Use the document type to add a new creditReport element to the XML instance.
+ * Note that the type returned by the addNewCreditReport method is the
+ * creditReportType complex type defined for it in schema.
+ */
+CreditReportType report = reportDoc.addNewCreditReport();
+</pre>
+    <h2>Global User-Derived Types</h2>
+    <p>A <em>user-derived</em> type is one defined with a <span class="langinline">complexType</span>
+      or <span class="langinline">simpleType</span> element in schema. User-derived
+      types at the top level of a schema are global. XMLBeans generates an interface
+      for each of these, as it does with global elements and attributes. These
+      interfaces include methods through which you can get and set the type's
+      values, including any nested derived types it may contain. The following
+      schema snippet defines a user-derived complex type called <span class="langinline">itemType</span>,
+      along with a <span class="langinline">priceType</span> that uses it as the
+      type for an <span class="langinline">item</span> child element.</p>
+    <pre>
+&lt;xs:complexType name=&quot;itemType&quot;&gt;
+    &lt;xs:sequence&gt;
+        &lt;xs:element name=&quot;name&quot; type=&quot;xs:string&quot;/&gt;
+        &lt;xs:element name=&quot;amount&quot; type=&quot;xs:int&quot;/&gt;
+        &lt;xs:element name=&quot;price&quot; type=&quot;xs:double&quot;/&gt;
+    &lt;/xs:sequence&gt;
+&lt;/xs:complexType&gt;
+&lt;xs:complexType name=&quot;priceType&quot;&gt;
+    &lt;xs:sequence&gt;
+        &lt;xs:element name=&quot;item&quot; type=&quot;ps:itemType&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt;
+    &lt;/xs:sequence&gt;
+&lt;/xs:complexType&gt;
+&lt;xs:element name=&quot;price&quot; type=&quot;ps:priceType&quot;/&gt;
+</pre>
+    <p>By default, the generated Java type for <span class="langinline">itemType</span>
+      would be an interface called <span class="langinline">ItemType</span>. With
+      this type, you would be able to get and set the values of its <span class="langinline">name</span>,
+      <span class="langinline">amount</span>, and <span class="langinline">price</span>
+      child elements. However, a user-derived type (as opposed to an element or
+      attribute) is always intended for use as the type to which an element or
+      attribute is bound. In other words, it's contained by an element or attribute.
+      While you can create a new instance of a user-derived type, the new instance's
+      underlying XML is a fragment. As the generated API would make clear, the
+      <span class="langinline">itemType</span> becomes the return type of a get
+      method, or the parameter of a set method.</p>
+    <pre>
+// Create a new price document.
+PriceDocument priceDoc = PriceDocument.Factory.newInstance();
+PriceType price = priceDoc.getPrice();
+
+/*
+ * Create a new instance of ItemType and set the values of its
+ * child elements.
+ */
+ItemType item = ItemType.Factory.newInstance();
+item.setName(&quot;bicycle&quot;);
+item.setAmount(12);
+item.setPrice(560.00);
+
+/*
+ * Use the new ItemType instance to set the value of the
+ * price element's first item child element. Notice that the set method
+ * here is an "Array" method. This is because the item element
+ * is defined with a maxOccurs="unbounded" attribute. It can occur
+ * many times as a child of price.
+ */
+price.setItemArray(0, item);
+</pre>
+    <h2>Nested Elements and Derived Types</h2>
+    <p>When your schema includes named types that are declared locally—within
+      the declaration of another element or type—the schema type's generated Java
+      interface will be an inner interface within the type it's nested in.</p>
+    <p>For example, the following schema snippet defines <span class="langinline">name</span>
+      and <span class="langinline">gender</span> elements nested within a <span class="langinline">person</span>
+      complex type. In particular, note that the gender element is defined as
+      deriving from the xs:NMTOKEN built-in type.</p>
+    <pre>
+&lt;xs:complexType name="person"&gt;
+    &lt;xs:sequence&gt;
+        &lt;xs:element name="name" type="xs:string"/&gt;
+        &lt;xs:element name="gender"&gt;
+            &lt;xs:simpleType&gt;
+                &lt;xs:restriction base="xs:NMTOKEN"&gt;
+                    &lt;xs:enumeration value="male"/&gt;
+                    &lt;xs:enumeration value="female"/&gt;
+                &lt;/xs:restriction&gt;
+            &lt;/xs:simpleType&gt;
+        &lt;/xs:element&gt;
+    &lt;/xs:sequence&gt;
+&lt;/xs:complexType&gt;
+</pre>
+    <p>The generated interfaces for person and gender would be organized in source
+      something like the following. Of course, you wouldn't see the source, but
+      you can see here that the Gender interface is nested with Person. Also,
+      notice that it extends XmlNMTOKEN, mirroring the schema.</p>
+    <pre>public interface Person extends XmlObject
+{
+    public interface Gender extends XmlNMTOKEN
+    {
+        // Methods omitted for this example
+    }
+    // Methods omitted for this example
+}
+</pre>
+    <p>You could create a new instance of the <span class="langinline">Gender</span>
+      type in this way (there are also various alternatives to this):</p>
+    <pre>
+// Create a new Person instance.
+Person person = Person.Factory.newInstance();
+/*
+ * Set the gender element's value using the
+ * enumeration generated from the schema.
+ */
+person.setGender(Gender.FEMALE);</pre>
+    <h2>User-Derived Simple Types</h2>
+    <p>In addition to the 46 built-in simple types in XML schema, a schema can
+      include its own custom simple types using <span class="langinline">xs:simpleType</span>
+      declarations. These user-derived simple types are always based on the built-in
+      XML schema types. The built-in types can be modified by <em>restricting</em>
+      them, taking <em>unions</em> of them, or making space-separated <em>lists</em>
+      of them. Each XML simple type is translated into a Java type that provides
+      access to the underlying data.</p>
+    <h3>Unions</h3>
+    <p>In schema, you can use <span class="langinline">xs:union</span> to specify
+      a simple type that is allowed to contain values of a number of other simple
+      types. XMLBeans generates a type for a union, just as it generates a type
+      for any other schema type. At run time, you can discover the underlying
+      type of an instance of a union type by calling the <span class="langinline">XmlObject</span>
+      interface's <span class="langinline">instanceType</span> method. Once you
+      have determined the type, you can cast an instance of a union type to the
+      actual underlying instance type.</p>
+    <pre>
+&lt;xs:simpleType name=&quot;intOrString&quot;&gt;
+    &lt;xs:union memberTypes=&quot;xs:int xs:string&quot;&gt;
+&lt;/xs:simpleType&gt;
+</pre>
+    <p>Given the preceding schema snippet, you could set the intOrString value
+      to, say, 6 or &quot;six&quot;. The union of <span class="langinline">xs:int</span>
+      and <span class="langinline">xs:string</span> makes both allowable.</p>
+    <pre>
+// Create a new instance of the type.
+IntOrString intOrString = IntOrString.Factory.newInstance();
+intOrString.set(&quot;5&quot;);
+// This code prints "XmlInt" to the console.
+System.out.println(intOrString.instanceType().getShortJavaName());
+</pre>
+    <h3>Restrictions</h3>
+    <p>XML schema restrictions on simple XMLBeans types are enforced. So, for
+      example, it is illegal to set a number outside its restricted range. </p>
+    <h4>Numeric Type Restrictions</h4>
+    <p>In schema, you can restrict numeric types to allow, for example, only a
+      particular range of values. For such a restriction, XMLBeans tailors the
+      resulting natural Java alternative. For example, suppose you have the following
+      element defined in schema:</p>
+    <pre>
+&lt;xs:element name="number"&gt;
+    &lt;xs:simpleType&gt;
+        &lt;xs:restriction base="xs:integer"&gt;
+            &lt;xs:minInclusive value="1"/&gt;
+            &lt;xs:maxInclusive value="1000000"/&gt;
+        &lt;/xs:restriction&gt;
+    &lt;/xs:simpleType&gt;
+&lt;/xs:element&gt;
+</pre>
+    <p>The type is restricted from <span class="langinline">xs:integer</span>,
+      but because the number's range is limited to between 1 and 1000000, it will
+      fit into a Java <span class="langinline">int</span>. A <span class="langinline">long</span>
+      or <span class="langinline">java.math.BigInteger</span> would be too big
+      for the need. In other words, the <span class="langinline">getNumber</span>
+      method generated for this type will return an <span class="langinline">int</span>,
+      rather than a <span class="langinline">BigInteger</span> or a <span class="langinline">long</span>.</p>
+    <p>By the same token, an long can be compiled to an int if the totalDigits
+      attribute is &lt;=9, or the min and max attribute values are within 32-bit
+      2s complement range.</p>
+    <p>The single primitive XML type xs:decimal can be restricted in several ways
+      that influence the resulting natural Java type. For example, it can be:</p>
+  </div>
+</div>
+<ul>
+  <li>
+    <div>
+      <div>Compiled to a <span class="langinline">BigInteger</span> if its <span class="langinline">fractionDigit</span>
+        attribute is set to 0. </div>
+    </div>
+  </li>
+  <li>
+    <div>
+      <div>Compiled to a <span class="langinline">long</span> if its totalDigits
+        attribute is &lt;=18, or the min and max are within 64-bit 2s complement
+        range.</div>
+    </div>
+  </li>
+</ul>
+<div>
+  <div>
+    <h3>Enumerations</h3>
+    <p>In schema, you can derive a new type by restricting a built-in type so
+      that only a finite set of values are allowable. Where schema does this by
+      restricting <span class="langinline">xs:string</span>, XMLBeans generates
+      a special <span class="langinline">Enum</span> type. With an <span class="langinline">Enum</span>,
+      you can select the enumerated value either by its <span class="langinline">String</span>
+      value or by a numeric index. The index's value is determined based on the
+      <span class="langinline">String</span> value's order in the schema. Having
+      an index can be useful in Java switch statements.</p>
+    <p>For example, suppose you had a document containing price elements whose
+      type was the priceType defined in the following schema snippet:</p>
+    <pre>&lt;xs:complexType name=&quot;priceType&quot;&gt;
+    &lt;xs:sequence&gt;
+        &lt;xs:element name=&quot;item&quot; type=&quot;ps:itemType&quot; minOccurs=&quot;0&quot;
+              maxOccurs=&quot;unbounded&quot;/&gt;
+    &lt;/xs:sequence&gt;
+    &lt;xs:attribute name=&quot;threshold&quot;&gt;
+        &lt;xs:simpleType&gt;
+            &lt;xs:restriction base=&quot;xs:string&quot;&gt;
+                &lt;xs:enumeration value=&quot;Below10Dollars&quot;/&gt;
+                &lt;xs:enumeration value=&quot;Between10And20Dollars&quot;/&gt;
+                &lt;xs:enumeration value=&quot;Above20Dollars&quot;/&gt;
+            &lt;/xs:restriction&gt;
+        &lt;/xs:simpleType&gt;
+    &lt;/xs:attribute&gt;
+&lt;/xs:complexType&gt;</pre>
+    <p>Using types generated from the schema, you would be able to write the following
+      Java code to &quot;switch&quot; on the threshold attribute's enumeration:</p>
+    <pre>
+/*
+ * Use the intValue method provided by the Enum type to determine the threshold
+ * attribute's current enumeration value.
+ */
+switch(priceElements[i].getThreshold().intValue())
+{
+    // Use the Threshold type's enumeration values to test for an attribute value.
+    case PriceType.Threshold.INT_BELOW_10_DOLLARS:
+        zeroBuffer.append(item.getTitle() + &quot;\n&quot;);
+        break;
+    case PriceType.Threshold.INT_BETWEEN_10_AND_20_DOLLARS:
+        tenBuffer.append(item.getTitle() + &quot;\n&quot;);
+        break;
+    case PriceType.Threshold.INT_ABOVE_20_DOLLARS:
+        twentyBuffer.append(item.getTitle() + &quot;\n&quot;);
+        break;
+    default:
+        System.out.println(&quot;Yo! Something unexpected happened!&quot;);
+        break;
+}</pre>
+  </div>
+  <p class="relatedtopics">Related Topics</p>
+  <p><a href="conXMLBeansSupportBuiltInSchemaTypes.html">XMLBeans Support for
+    Built-In Schema Types</a></p>
+</div>
+ <!-- InstanceEndEditable -->
+<script language="JavaScript">
+
+</script>
+</body>
+</html>

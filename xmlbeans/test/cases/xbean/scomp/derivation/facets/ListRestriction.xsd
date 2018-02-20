@@ -1,0 +1,65 @@
+<xsd:schema
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://xbean/scomp/derivation/facets/List"
+    targetNamespace="http://xbean/scomp/derivation/facets/List"
+    elementFormDefault="qualified"
+    xmlns:base="http://xbean/scomp/contentType/List"
+    xmlns:union="http://xbean/scomp/contentType/Union"
+    >
+    <xsd:simpleType name="LengthFacet">
+        <xsd:restriction base="base:ListAnonGlobalT">
+            <xsd:length value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="MaxLengthFacet">
+        <xsd:restriction base="base:ListAnonGlobalT">
+            <xsd:maxLength value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="MinLengthFacet">
+        <xsd:restriction base="base:ListAnonGlobalT">
+            <xsd:minLength value="3"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <!--list should have 1 of the 2 enum vals
+    <xsd:simpleType name="RestrictEnumItemType">
+        <xsd:restriction>
+            <xsd:simpleType>
+                <xsd:list itemType="base:ListAnonGlobalT"/>
+             </xsd:simpleType>
+                <xsd:enumeration value="lstsmall lstmedium"/>
+                <xsd:enumeration value="lstmedium lstlarge"/>
+
+        </xsd:restriction>
+    </xsd:simpleType>
+                 -->
+
+    <xsd:simpleType name="RestrictEnumListType">
+        <xsd:restriction>
+            <xsd:simpleType>
+                <xsd:list itemType="union:UnionAnonGlobalT"/>
+            </xsd:simpleType>
+            <xsd:enumeration value="small medium large"/>
+            <xsd:enumeration value="2 3 1"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+
+    <xsd:simpleType name="RestrictPattern">
+        <xsd:restriction>
+            <xsd:simpleType>
+                <xsd:list itemType="xsd:unsignedInt"/>
+            </xsd:simpleType>
+            <xsd:pattern value="(\d{3}\s?)*"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:element name="LengthElt" type="LengthFacet"/>
+    <xsd:element name="MaxLengthElt" type="MaxLengthFacet"/>
+    <xsd:element name="MinLengthElt" type="MinLengthFacet"/>
+    <xsd:element name="EnumElt" type="RestrictEnumListType"/>
+    <xsd:element name="PatternElt" type="RestrictPattern"/>
+</xsd:schema>

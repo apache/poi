@@ -1,0 +1,335 @@
+<!--
+Copyright 2004 The Apache Software Foundation
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+ -->
+<project name="XMLBeans Samples" default="build">
+
+    <!-- ========================== clean ==== -->
+
+    <target name="clean" depends="
+        clean-SampleTemplate,
+        clean-MixedContent,
+        clean-OrderMatters,
+        clean-vxsdb,
+        clean-SchemaEnum,
+        clean-AbstractTypes,
+        clean-SubstitutionGroup,
+        clean-DateTime,
+	clean-XsdConfig
+	">
+        <delete dir="build"/>
+    </target>
+
+    <target name="clean-SampleTemplate">
+        <ant dir="SampleTemplate" target="clean"/>
+    </target>
+
+    <target name="clean-MixedContent">
+        <ant dir="MixedContent" target="clean"/>
+    </target>
+
+    <target name="clean-OrderMatters">
+        <ant dir="OrderMatters" target="clean"/>
+    </target>
+
+    <target name="clean-vxsdb">
+        <ant dir="vxsdb" target="clean"/>
+    </target>
+
+    <target name="clean-SchemaEnum">
+        <ant dir="SchemaEnum" target="clean"/>
+    </target>
+
+    <target name="clean-AbstractTypes">
+        <ant dir="AbstractTypes" target="clean"/>
+    </target>
+
+    <target name="clean-SubstitutionGroup">
+        <ant dir="SubstitutionGroup" target="clean"/>
+    </target>
+
+    <target name="clean-DateTime">
+        <ant dir="DateTime" target="clean"/>
+    </target>
+
+    <target name="clean-XsdConfig">
+        <ant dir="XsdConfig" target="clean"/>
+    </target>
+
+    <!-- ========================== build ==== -->
+
+    <target name="build" depends="
+        build-SampleTemplate,
+        build-MixedContent,
+        build-OrderMatters,
+        build-vxsdb,
+        build-SchemaEnum,
+        build-AbstractTypes,
+        build-SubstitutionGroup,
+        build-DateTime,
+	build-XsdConfig
+	">
+    </target>
+
+    <target name="build-SampleTemplate">
+        <ant dir="SampleTemplate" target="build"/>
+    </target>
+
+    <target name="build-MixedContent">
+        <ant dir="MixedContent" target="build"/>
+    </target>
+
+    <target name="build-OrderMatters">
+        <ant dir="OrderMatters" target="build"/>
+    </target>
+
+    <target name="build-vxsdb">
+        <ant dir="vxsdb" target="build"/>
+    </target>
+
+    <target name="build-SchemaEnum">
+        <ant dir="SchemaEnum" target="build"/>
+    </target>
+
+    <target name="build-AbstractTypes">
+        <ant dir="AbstractTypes" target="build"/>
+    </target>
+
+    <target name="build-SubstitutionGroup">
+        <ant dir="SubstitutionGroup" target="build"/>
+    </target>
+
+    <target name="build-DateTime">
+        <ant dir="DateTime" target="build"/>
+    </target>
+    
+    <target name="build-XsdConfig">
+        <ant dir="XsdConfig" target="build"/>
+    </target>
+
+    <!-- ========================== test ==== -->
+    <!-- to ensure all samples build and run -->
+
+    <target name="test" depends="
+        test-SampleTemplate,
+        test-MixedContent,
+        test-OrderMatters,
+        test-vxsdb,
+        test-SchemaEnum,
+        test-AbstractTypes,
+        test-SubstitutionGroup,
+        test-DateTime,
+	test-XsdConfig
+	">
+    </target>
+
+    <target name="test-SampleTemplate">
+        <ant dir="SampleTemplate" target="test"/>
+    </target>
+
+    <target name="test-MixedContent">
+        <ant dir="MixedContent" target="test"/>
+    </target>
+
+    <target name="test-OrderMatters">
+        <ant dir="OrderMatters" target="test"/>
+    </target>
+
+    <target name="test-vxsdb">
+        <!--ant dir="vxsdb" target="test"/-->
+    </target>
+
+    <target name="test-SchemaEnum">
+        <ant dir="SchemaEnum" target="test"/>
+    </target>
+
+    <target name="test-AbstractTypes">
+        <ant dir="AbstractTypes" target="test"/>
+    </target>
+
+    <target name="test-SubstitutionGroup">
+        <ant dir="SubstitutionGroup" target="test"/>
+    </target>
+
+    <target name="test-DateTime">
+        <ant dir="DateTime" target="test"/>
+    </target>
+
+    <target name="test-XsdConfig">
+        <ant dir="XsdConfig" target="test"/>
+    </target>
+
+    <!-- ========================== dist ==== -->
+
+    <target name="dist" depends="
+        dist-SampleTemplate,
+        dist-MixedContent,
+        dist-OrderMatters,
+        dist-vxsdb,
+        dist-SchemaEnum,
+        dist-AbstractTypes,
+        dist-SubstitutionGroup,
+        dist-DateTime,
+	dist-XsdConfig
+	">
+        <zip destfile="build/samples.zip"
+            basedir=".."
+            includes="samples/**"
+            excludes="**/build/**"
+            />
+        <tar destfile="build/samples.tgz"
+            basedir=".."
+            includes="samples/**"
+            excludes="**/build/**"
+            compression="gzip"
+            />
+    </target>
+
+    <target name="dist-SampleTemplate">
+        <mkdir dir="build"/>
+        <zip destfile="build/SampleTemplate.zip"
+            basedir="."
+            includes="SampleTemplate/**"
+            excludes="SampleTemplate/build/**"
+            />
+        <tar destfile="build/SampleTemplate.tgz"
+            basedir="."
+            includes="SampleTemplate/**"
+            excludes="SampleTemplate/build/**"
+            compression="gzip"
+            />
+    </target>
+
+
+    <target name="dist-MixedContent">
+        <mkdir dir="build"/>
+        <zip destfile="build/MixedContent.zip"
+            basedir="."
+            includes="MixedContent/**"
+            excludes="MixedContent/build/**"
+            />
+        <tar destfile="build/MixedContent.tgz"
+            basedir="."
+            includes="MixedContent/**"
+            excludes="MixedContent/build/**"
+            compression="gzip"
+            />
+    </target>
+
+    <target name="dist-OrderMatters">
+        <mkdir dir="build"/>
+        <zip destfile="build/OrderMatters.zip"
+            basedir="."
+            includes="OrderMatters/**"
+            excludes="OrderMatters/build/**"
+            />
+        <tar destfile="build/OrderMatters.tgz"
+            basedir="."
+            includes="OrderMatters/**"
+            excludes="OrderMatters/build/**"
+            compression="gzip"
+            />
+    </target>
+
+    <target name="dist-vxsdb">
+        <mkdir dir="build"/>
+        <zip destfile="build/vxsdb.zip"
+            basedir="."
+            includes="vxsdb/**"
+            excludes="vxsdb/build/**"
+            />
+        <tar destfile="build/vxsdb.tgz"
+            basedir="."
+            includes="vxsdb/**"
+            excludes="vxsdb/build/**"
+            compression="gzip"
+            />
+    </target>
+
+    <target name="dist-SchemaEnum">
+        <mkdir dir="build"/>
+        <zip destfile="build/SchemaEnum.zip"
+            basedir="."
+            includes="SchemaEnum/**"
+            excludes="SchemaEnum/build/**"
+            />
+        <tar destfile="build/SchemaEnum.tgz"
+            basedir="."
+            includes="SchemaEnum/**"
+            excludes="SchemaEnum/build/**"
+            compression="gzip"
+            />
+    </target>
+
+    <target name="dist-AbstractTypes">
+        <mkdir dir="build"/>
+        <zip destfile="build/AbstractTypes.zip"
+            basedir="."
+            includes="AbstractTypes/**"
+            excludes="AbstractTypes/build/**"
+        />
+        <tar destfile="build/AbstractTypes.tgz"
+            basedir="."
+            includes="AbstractTypes/**"
+            excludes="AbstractTypes/build/**"
+            compression="gzip"
+        />
+    </target>
+
+    <target name="dist-SubstitutionGroup">
+        <mkdir dir="build"/>
+        <zip destfile="build/SubstitutionGroup.zip"
+            basedir="."
+            includes="SubstitutionGroup/**"
+            excludes="SubstitutionGroup/build/**"
+            />
+        <tar destfile="build/SubstitutionGroup.tgz"
+            basedir="."
+            includes="SubstitutionGroup/**"
+            excludes="SubstitutionGroup/build/**"
+            compression="gzip"
+            />
+    </target>
+
+    <target name="dist-DateTime">
+        <mkdir dir="build"/>
+        <zip destfile="build/DateTime.zip"
+            basedir="."
+            includes="DateTime/**"
+            excludes="DateTime/build/**"
+            />
+        <tar destfile="build/DateTime.tgz"
+            basedir="."
+            includes="DateTime/**"
+            excludes="DateTime/build/**"
+            compression="gzip"
+            />
+    </target>
+
+    <target name="dist-XsdConfig">
+        <mkdir dir="build"/>
+        <zip destfile="build/XsdConfig.zip"
+            basedir="."
+            includes="XsdConfig/**"
+            excludes="XsdConfig/build/**"
+            />
+        <tar destfile="build/XsdConfig.tgz"
+            basedir="."
+            includes="XsdConfig/**"
+            excludes="XsdConfig/build/**"
+            compression="gzip"
+            />
+    </target>
+
+</project>

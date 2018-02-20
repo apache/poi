@@ -1,0 +1,22 @@
+<xs:schema elementFormDefault="qualified"
+    attributeFormDefault="unqualified"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://xbean/scomp/substGroup/UserReported"
+    xmlns="http://xbean/scomp/substGroup/UserReported"
+    >
+
+
+    <xs:complexType name="T"/>
+
+    <xs:element name="a" type="T"/>
+
+    <xs:element name="b" type="T" substitutionGroup="a"/>
+
+    <xs:element name="Root">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="a" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

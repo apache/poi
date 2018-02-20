@@ -1,0 +1,8 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified"
+           targetNamespace="http://www.collision.org"
+           xmlns="http://www.interpo.org">
+    <xs:element name="City" type="xs:string"/>
+    <xs:element name="CITY" type="xs:long"/>
+    <xs:element name="CiTy" type="xs:float"/>
+</xs:schema>

@@ -1,0 +1,12 @@
+<a xmlns:foo="http://foo" xmlns:baz="http://baz">
+    <b>
+        <c>foo:baz</c>
+    </b>
+    <d>
+        <c>baz:foo</c>
+    </d>
+    <d>
+        <c>baz:foo this should not be a qName</c>
+    </d>
+
+</a>

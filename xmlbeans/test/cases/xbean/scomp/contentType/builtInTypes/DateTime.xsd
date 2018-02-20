@@ -1,0 +1,19 @@
+<xsd:schema
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://xbean/scomp/contentType/builtIn/Date"
+    targetNamespace="http://xbean/scomp/contentType/builtIn/Date"
+    elementFormDefault="qualified"
+    >
+
+    <xsd:element name="DateElt" type="xsd:date"/>
+    <xsd:element name="TimeElt" type="xsd:time"/>
+    <xsd:element name="DateTimeElt" type="xsd:dateTime"/>
+    <xsd:element name="gYearElt" type="xsd:gYear"/>
+    <xsd:element name="gYearMonthElt" type="xsd:gYearMonth"/>
+    <xsd:element name="gMonthElt" type="xsd:gMonth"/>
+    <xsd:element name="gMonthDayElt" type="xsd:gMonthDay"/>
+    <xsd:element name="gDayElt" type="xsd:gDay"/>
+    <xsd:element name="DurationElt" type="xsd:duration"/>
+
+
+</xsd:schema>
