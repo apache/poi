@@ -469,8 +469,21 @@ public class XSSFCellStyle implements CellStyle {
      * @see org.apache.poi.xssf.usermodel.XSSFWorkbook#getFontAt(short)
      */
     @Override
+    @Deprecated
     public short getFontIndex() {
         return (short) getFontId();
+    }
+
+    /**
+     * Gets the index of the font for this style
+     *
+     * @return short - font index
+     * @see org.apache.poi.xssf.usermodel.XSSFWorkbook#getFontAt(int)
+     * @since 4.0.0
+     */
+    @Override
+    public int getFontIntIndex() {
+        return getFontId();
     }
 
     /**

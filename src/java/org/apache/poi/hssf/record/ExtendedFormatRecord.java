@@ -1660,7 +1660,7 @@ public final class ExtendedFormatRecord
     @Override
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[EXTENDEDFORMAT]\n");
         if (getXFType() == XF_STYLE)

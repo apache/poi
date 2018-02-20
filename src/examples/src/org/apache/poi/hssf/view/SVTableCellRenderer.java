@@ -140,7 +140,7 @@ public class SVTableCellRenderer extends JLabel
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value,
                           boolean isSelected, boolean hasFocus, int row, int column) {
-	boolean isBorderSet = false;
+	    boolean isBorderSet = false;
 
         //If the JTables default cell renderer has been setup correctly the
         //value will be the HSSFCell that we are trying to render
@@ -148,7 +148,7 @@ public class SVTableCellRenderer extends JLabel
 
         if (c != null) {
           HSSFCellStyle s = c.getCellStyle();
-          HSSFFont f = wb.getFontAt(s.getFontIndex());
+          HSSFFont f = wb.getFontAt(s.getFontIntIndex());
           setFont(SVTableUtils.makeFont(f));
 
           if (s.getFillPattern() == FillPatternType.SOLID_FOREGROUND) {
