@@ -1017,7 +1017,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     @Test
     public void bug45338() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
-        assertEquals(4, wb.getNumberOfFonts());
+        assertEquals(4, wb.getNumberOfFontsAsInt());
 
         HSSFSheet s = wb.createSheet();
         s.createRow(0);
@@ -1025,7 +1025,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         s.getRow(0).createCell(0);
         s.getRow(1).createCell(0);
 
-        assertEquals(4, wb.getNumberOfFonts());
+        assertEquals(4, wb.getNumberOfFontsAsInt());
 
         HSSFFont f1 = wb.getFontAt((short) 0);
         assertFalse(f1.getBold());
@@ -1033,19 +1033,19 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         // Check that asking for the same font
         //  multiple times gives you the same thing.
         // Otherwise, our tests wouldn't work!
-        assertSame(wb.getFontAt((short) 0), wb.getFontAt((short) 0));
+        assertSame(wb.getFontAt(0), wb.getFontAt(0));
         assertEquals(
-                wb.getFontAt((short) 0),
-                wb.getFontAt((short) 0)
+                wb.getFontAt(0),
+                wb.getFontAt(0)
         );
         assertEquals(
-                wb.getFontAt((short) 2),
-                wb.getFontAt((short) 2)
+                wb.getFontAt(2),
+                wb.getFontAt(2)
         );
         assertTrue(
-                wb.getFontAt((short) 0)
+                wb.getFontAt(0)
                         !=
-                        wb.getFontAt((short) 2)
+                        wb.getFontAt(2)
         );
 
         // Look for a new font we have
@@ -1058,10 +1058,10 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         );
 
         HSSFFont nf = wb.createFont();
-        assertEquals(5, wb.getNumberOfFonts());
+        assertEquals(5, wb.getNumberOfFontsAsInt());
 
         assertEquals(5, nf.getIndex());
-        assertEquals(nf, wb.getFontAt((short) 5));
+        assertEquals(nf, wb.getFontAt(5));
 
         nf.setBold(false);
         nf.setColor((short) 123);
@@ -1072,8 +1072,8 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         nf.setTypeOffset((short) 2);
         nf.setUnderline((byte) 2);
 
-        assertEquals(5, wb.getNumberOfFonts());
-        assertEquals(nf, wb.getFontAt((short) 5));
+        assertEquals(5, wb.getNumberOfFontsAsInt());
+        assertEquals(nf, wb.getFontAt(5));
 
         // Find it now
         assertNotNull(
@@ -3130,20 +3130,20 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
             Cell cell = row.getCell(1);
             CellStyle style = cell.getCellStyle();
-            assertEquals(26, style.getFontIndex());
+            assertEquals(26, style.getFontIntIndex());
 
             row = sheet.getRow(3);
             cell = row.getCell(1);
             style = cell.getCellStyle();
-            assertEquals(28, style.getFontIndex());
+            assertEquals(28, style.getFontIntIndex());
 
             // check the two fonts
-            HSSFFont font = wb.getFontAt((short) 26);
+            HSSFFont font = wb.getFontAt(26);
             assertTrue(font.getBold());
             assertEquals(10, font.getFontHeightInPoints());
             assertEquals("\uFF2D\uFF33 \uFF30\u30B4\u30B7\u30C3\u30AF", font.getFontName());
 
-            font = wb.getFontAt((short) 28);
+            font = wb.getFontAt(28);
             assertTrue(font.getBold());
             assertEquals(10, font.getFontHeightInPoints());
             assertEquals("\uFF2D\uFF33 \uFF30\u30B4\u30B7\u30C3\u30AF", font.getFontName());
