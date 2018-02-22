@@ -346,7 +346,7 @@ public final class CellUtil {
         put(properties, FILL_PATTERN, style.getFillPattern());
         put(properties, FILL_FOREGROUND_COLOR, style.getFillForegroundColor());
         put(properties, FILL_BACKGROUND_COLOR, style.getFillBackgroundColor());
-        put(properties, FONT, style.getFontIndex());
+        put(properties, FONT, style.getFontIntIndex());
         put(properties, HIDDEN, style.getHidden());
         put(properties, INDENTION, style.getIndention());
         put(properties, LEFT_BORDER_COLOR, style.getLeftBorderColor());

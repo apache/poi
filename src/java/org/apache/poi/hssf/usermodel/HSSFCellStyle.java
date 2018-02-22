@@ -849,7 +849,7 @@ public final class HSSFCellStyle implements CellStyle {
             FontRecord fr = _workbook.createNewFont();
             fr.cloneStyleFrom(
                     source._workbook.getFontRecordAt(
-                            source.getFontIndex()
+                            source.getFontIntIndex()
                     )
             );
 
