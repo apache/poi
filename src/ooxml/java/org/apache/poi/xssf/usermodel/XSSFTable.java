@@ -350,6 +350,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      * Updates the reference for the cells of the table
      * (see Open Office XML Part 4: chapter 3.5.1.2, attribute ref)
      * and synchronizes any changes
+     * @param refs table range
      * 
      * @since 3.17 beta 1
      */
@@ -363,7 +364,18 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         // Update
         ctTable.setRef(ref);
         if (ctTable.isSetAutoFilter()) {
-            ctTable.getAutoFilter().setRef(ref);
+            String filterRef;
+            int totalsRowCount = getTotalsRowCount();
+            if (totalsRowCount == 0) {
+                filterRef = ref;
+            } else {
+                final CellReference start = new CellReference(refs.getFirstCell().getRow(), refs.getFirstCell().getCol());
+                // account for footer row(s) in auto-filter range, which doesn't include footers
+                final CellReference end = new CellReference(refs.getLastCell().getRow() - totalsRowCount, refs.getLastCell().getCol());
+                // this won't have sheet references because we built the cell references without them
+                filterRef = new AreaReference(start, end, SpreadsheetVersion.EXCEL2007).formatAsString();
+            }
+            ctTable.getAutoFilter().setRef(filterRef);
         }
         
         // Have everything recomputed
@@ -476,7 +488,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
 
         if (row != null && row.getCTRow().validate()) {
             int cellnum = firstHeaderColumn;
-            for (CTTableColumn col : getCTTable().getTableColumns().getTableColumnArray()) {
+            for (CTTableColumn col : getCTTable().getTableColumns().getTableColumnList()) {
                 XSSFCell cell = row.getCell(cellnum);
                 if (cell != null) {
                     col.setName(formatter.formatCellValue(cell));
