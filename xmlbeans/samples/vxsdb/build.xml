@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<!--
+/* Copyright 2002-2004 Apache Software Foundation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<project name="vxsdb-build" default="build">
+
+    <property environment="env" />
+    <property name="targetDatabase" value="postgresql" />
+
+    <description>
+            Sample integration of Velocity and XMLBeans that produces a Apache DB DddUtils datamodel.xml file from a xml schema.
+    </description>
+
+    <target name="build" depends="init,getdeps" description="Compile the sample code">
+        <javac srcdir="src/java" destdir="build">
+            <classpath>
+                <pathelement location="lib/ant-1.6.2.jar" />
+                <pathelement location="lib/commons-logging-1.0.3.jar" />
+                <pathelement location="lib/velocity-1.5.jar" />
+                <path refid="xmlbeans.path" />
+            </classpath>
+        </javac>
+        <echo>Execute 'ant -f run.xml' to run the sample xml schema generator</echo>
+    </target>
+
+    <target name="getdeps" unless="deps.exist" description="Download dependencies">
+        <!--get dest="lib/ant-1.6.2.jar" src="http://www.ibiblio.org/maven/ant/jars/ant-1.6.2.jar" verbose="true" usetimestamp="true" /-->
+        <get dest="lib/commons-beanutils-1.7.0.jar" src="http://www.ibiblio.org/maven/commons-beanutils/jars/commons-beanutils-1.7.0.jar" verbose="true" usetimestamp="true" />
+        <get dest="lib/commons-betwixt-0.8.jar" src="http://www.ibiblio.org/maven/commons-betwixt/jars/commons-betwixt-0.8.jar" verbose="true" usetimestamp="true" />
+        <get dest="lib/commons-collections-3.1.jar" src="http://www.ibiblio.org/maven/commons-collections/jars/commons-collections-3.1.jar" verbose="true" usetimestamp="true" />
+        <get dest="lib/commons-digester-1.5.jar" src="http://www.ibiblio.org/maven/commons-digester/jars/commons-digester-1.5.jar" verbose="true" usetimestamp="true" />
+        <get dest="lib/commons-logging-1.0.3.jar" src="http://www.ibiblio.org/maven/commons-logging/jars/commons-logging-1.0.3.jar" verbose="true" usetimestamp="true" />
+        <get dest="lib/commons-dbcp-1.2.1.jar" src="http://www.ibiblio.org/maven/commons-dbcp/jars/commons-dbcp-1.2.1.jar" verbose="true" usetimestamp="true" />
+        <get dest="lib/commons-pool-1.2.jar" src="http://www.ibiblio.org/maven/commons-pool/jars/commons-pool-1.2.jar" verbose="true" usetimestamp="true" />
+        <get dest="lib/commons-lang-2.1.jar" src="http://www.ibiblio.org/maven/commons-lang/jars/commons-lang-2.1.jar" verbose="true" usetimestamp="true" />
+        <!-- Update this, using a alternative location because it does not exist on ibiblio
+        <get dest="lib/DdlUtils-1.0-dev.jar" src="http://www.ibiblio.org/maven/ddlutils/jars/DdlUtils-1.0-dev.jar" verbose="true" usetimestamp="true" /> -->
+        <copy todir="lib" file="external/DdlUtils-1.0-RC1.jar" />
+        <get dest="lib/derby-10.1.1.0.jar" src="http://www.ibiblio.org/maven/org.apache.derby/jars/derby-10.1.1.0.jar" verbose="true" usetimestamp="true" />
+        <get dest="lib/dom4j-1.4.jar" src="http://www.ibiblio.org/maven/dom4j/jars/dom4j-1.4.jar" verbose="true" usetimestamp="true" />
+        <get dest="lib/log4j-1.2.8.jar" src="http://www.ibiblio.org/maven/log4j/jars/log4j-1.2.8.jar" verbose="true" usetimestamp="true" />
+        <get dest="lib/velocity-1.5.jar" src="http://www.ibiblio.org/maven/velocity/jars/velocity-1.5.jar" verbose="true" usetimestamp="true" />
+    </target>
+
+    <target name="init" description="Precompiler initialization">
+
+        <property name="xmlbeans.home" value="${env.XMLBEANS_HOME}" />
+        <echo message="xmlbeans.home: ${xmlbeans.home}" />
+
+        <!-- check for xbean.jar from binary distribution -->
+        <available property="xmlbeans.lib" value="${xmlbeans.home}/lib" file="${xmlbeans.home}/lib/xbean.jar" />
+
+        <!-- check for xbean.jar compiled from source -->
+        <available property="xmlbeans.lib" value="${xmlbeans.home}/build/lib" file="${xmlbeans.home}/build/lib/xbean.jar" />
+
+        <fail message="Set XMLBEANS_HOME in your enviornment." unless="xmlbeans.lib" />
+
+        <echo message="xmlbeans.lib: ${xmlbeans.lib}" />
+        <path id="xmlbeans.path">
+            <fileset dir="${xmlbeans.lib}" includes="*.jar" />
+        </path>
+
+        <mkdir dir="lib" />
+        <mkdir dir="build" />
+        <copy file="src/java/log4j.xml" todir="build" />
+    </target>
+
+    <target name="clean" description="Delete the compiled code">
+        <delete dir="build" />
+    </target>
+
+</project>

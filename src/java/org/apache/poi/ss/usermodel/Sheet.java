@@ -110,7 +110,7 @@ public interface Sheet extends Iterable<Row> {
      * method will include such rows and thus the returned value might be higher
      * than expected!
      *
-     * @return last row contained n this sheet (0-based)
+     * @return last row contained on this sheet (0-based)
      */
     int getLastRowNum();
 
@@ -118,7 +118,7 @@ public interface Sheet extends Iterable<Row> {
      * Get the visibility state for a given column
      *
      * @param columnIndex - the column to get (0-based)
-     * @param hidden - the visiblity state of the column
+     * @param hidden - the visibility state of the column
      */
     void setColumnHidden(int columnIndex, boolean hidden);
 
@@ -205,7 +205,7 @@ public interface Sheet extends Iterable<Row> {
      * <p>
      * Please note, that this method works correctly only for workbooks
      * with the default font size (Arial 10pt for .xls and Calibri 11pt for .xlsx).
-     * If the default font is changed the column width can be streched
+     * If the default font is changed the column width can be stretched
      * </p>
      *
      * @param columnIndex - the column to set (0-based)
@@ -384,7 +384,7 @@ public interface Sheet extends Iterable<Row> {
      *  evaluation in POI is not possible.
      *  </p>
      *
-     *  To force recalcuation of formulas in the entire workbook
+     *  To force recalculation of formulas in the entire workbook
      *  use {@link Workbook#setForceFormulaRecalculation(boolean)} instead.
      *
      * @param value true if the application will perform a full recalculation of
@@ -719,7 +719,7 @@ public interface Sheet extends Iterable<Row> {
      * <p>
      *     If both colSplit and rowSplit are zero then the existing freeze pane is removed
      * </p>
-     * @param colSplit      Horizonatal position of split.
+     * @param colSplit      Horizontal position of split.
      * @param rowSplit      Vertical position of split.
      * @param leftmostColumn   Left column visible in right pane.
      * @param topRow        Top row visible in bottom pane
@@ -731,14 +731,14 @@ public interface Sheet extends Iterable<Row> {
      * <p>
      *     If both colSplit and rowSplit are zero then the existing freeze pane is removed
      * </p>
-     * @param colSplit      Horizonatal position of split.
+     * @param colSplit      Horizontal position of split.
      * @param rowSplit      Vertical position of split.
      */
     void createFreezePane(int colSplit, int rowSplit);
 
     /**
      * Creates a split pane. Any existing freezepane or split pane is overwritten.
-     * @param xSplitPos      Horizonatal position of split (in 1/20th of a point).
+     * @param xSplitPos      Horizontal position of split (in 1/20th of a point).
      * @param ySplitPos      Vertical position of split (in 1/20th of a point).
      * @param topRow        Top row visible in bottom pane
      * @param leftmostColumn   Left column visible in right pane.
@@ -804,7 +804,7 @@ public interface Sheet extends Iterable<Row> {
      * Breaks occur above the specified row and left of the specified column inclusive.
      *
      * For example, <code>sheet.setColumnBreak(2);</code> breaks the sheet into two parts
-     * with columns A,B,C in the first and D,E,... in the second. Simuilar, <code>sheet.setRowBreak(2);</code>
+     * with columns A,B,C in the first and D,E,... in the second. Similar, <code>sheet.setRowBreak(2);</code>
      * breaks the sheet into two parts with first three rows (rownum=1...3) in the first part
      * and rows starting with rownum=4 in the second.
      *
@@ -842,7 +842,7 @@ public interface Sheet extends Iterable<Row> {
      * Breaks occur above the specified row and left of the specified column inclusive.
      *
      * For example, <code>sheet.setColumnBreak(2);</code> breaks the sheet into two parts
-     * with columns A,B,C in the first and D,E,... in the second. Simuilar, <code>sheet.setRowBreak(2);</code>
+     * with columns A,B,C in the first and D,E,... in the second. Similar, <code>sheet.setRowBreak(2);</code>
      * breaks the sheet into two parts with first three rows (rownum=1...3) in the first part
      * and rows starting with rownum=4 in the second.
      *

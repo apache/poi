@@ -1,0 +1,19 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+   xmlns="http://xbean.test/xmlcursor/XQueryInput"
+   targetNamespace="http://xbean.test/xmlcursor/XQueryInput"
+>
+	<xsd:element name="company">
+		<xsd:complexType>
+		   <xsd:sequence>
+			<xsd:element name="employee" type="EmpT"/>
+		 </xsd:sequence>
+	</xsd:complexType>	
+	</xsd:element>
+
+	<xsd:complexType name="EmpT">
+		 <xsd:sequence>
+			<xsd:element name="name" type="xsd:string"/>
+			<xsd:element name="ssn" type="xsd:positiveInteger"/>
+		 </xsd:sequence>
+	</xsd:complexType>	
+</xsd:schema>

@@ -58,7 +58,7 @@ public class TextPropCollection {
         // 0x200 - Undefined and MUST be ignored
         new TextProp(2, 0x400, "bullet.offset"), // indent
         new TextProp(2, 0x8000, "defaultTabSize"),
-        new TabStopPropCollection(), // tabstops size is variable!
+        new HSLFTabStopPropCollection(), // tabstops size is variable!
         new FontAlignmentProp(),
         new WrapFlagsTextProp(),
         new TextProp(2, 0x200000, "textDirection"),
@@ -130,12 +130,14 @@ public class TextPropCollection {
     }
 	
 	/** Fetch the TextProp with this name, or null if it isn't present */
-	public final TextProp findByName(String textPropName) {
-		return textProps.get(textPropName);
+	@SuppressWarnings("unchecked")
+    public final <T extends TextProp> T findByName(String textPropName) {
+		return (T)textProps.get(textPropName);
 	}
 
-	public final TextProp removeByName(String name) {
-	    return textProps.remove(name);
+    @SuppressWarnings("unchecked")
+	public final <T extends TextProp> T removeByName(String name) {
+	    return (T)textProps.remove(name);
 	}
 	
 	public final TextPropType getTextPropType() {
@@ -153,10 +155,11 @@ public class TextPropCollection {
 	 * @param name the property name
 	 * @return if found, the property template to copy from
 	 */
-	private TextProp validatePropName(String name) {
+    @SuppressWarnings("unchecked")
+	private <T extends TextProp> T validatePropName(final String name) {
        for (TextProp tp : getPotentialProperties()) {
             if (tp.getName().equals(name)) {
-                return tp;
+                return (T)tp;
             }
         }
        String errStr = 
@@ -166,13 +169,14 @@ public class TextPropCollection {
 	}
 	
     /** Add the TextProp with this name to the list */
-    public final TextProp addWithName(String name) {
+    @SuppressWarnings("unchecked")
+    public final <T extends TextProp> T addWithName(final String name) {
         // Find the base TextProp to base on
-        TextProp existing = findByName(name);
+        T existing = findByName(name);
         if (existing != null) return existing;
         
         // Add a copy of this property
-        TextProp textProp = validatePropName(name).clone();
+        T textProp = (T)validatePropName(name).clone();
         textProps.put(name,textProp);
         return textProp;
     }
@@ -218,11 +222,13 @@ public class TextPropCollection {
 				// Bingo, data contains this property
 				TextProp prop = tp.clone();
 				int val = 0;
-				if (prop.getSize() == 2) {
+				if (prop instanceof HSLFTabStopPropCollection) {
+                    ((HSLFTabStopPropCollection)prop).parseProperty(data, dataOffset+bytesPassed);
+                } else if (prop.getSize() == 2) {
 					val = LittleEndian.getShort(data,dataOffset+bytesPassed);
 				} else if(prop.getSize() == 4) {
 					val = LittleEndian.getInt(data,dataOffset+bytesPassed);
-				} else if (prop.getSize() == 0 && !(prop instanceof TabStopPropCollection)) {
+				} else if (prop.getSize() == 0) {
                     //remember "special" bits.
                     maskSpecial |= tp.getMask();
                     continue;
@@ -230,9 +236,7 @@ public class TextPropCollection {
 				
 				if (prop instanceof BitMaskTextProp) {
 				    ((BitMaskTextProp)prop).setValueWithMask(val, containsField);
-				} else if (prop instanceof TabStopPropCollection) {
-				    ((TabStopPropCollection)prop).parseProperty(data, dataOffset+bytesPassed);
-				} else {
+				} else if (!(prop instanceof HSLFTabStopPropCollection)) {
 				    prop.setValue(val);
 				}
 				bytesPassed += prop.getSize();
@@ -311,6 +315,8 @@ public class TextPropCollection {
                 StyleTextPropAtom.writeLittleEndian((short)val,o);
             } else if (textProp.getSize() == 4) {
                 StyleTextPropAtom.writeLittleEndian(val,o);
+            } else if (textProp instanceof HSLFTabStopPropCollection) {
+                ((HSLFTabStopPropCollection)textProp).writeProperty(o);
             }
 		}
 	}
@@ -359,8 +365,9 @@ public class TextPropCollection {
             out.append("  indent level: "+getIndentLevel()+"\n");
         }
         for(TextProp p : getTextPropList()) {
-            out.append("    " + p.getName() + " = " + p.getValue() );
-            out.append(" (0x" + HexDump.toHex(p.getValue()) + ")\n");
+            out.append("    ");
+            out.append(p.toString());
+            out.append("\n");
             if (p instanceof BitMaskTextProp) {
                 BitMaskTextProp bm = (BitMaskTextProp)p;
                 int i = 0;

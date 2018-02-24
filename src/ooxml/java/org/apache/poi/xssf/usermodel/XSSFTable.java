@@ -500,7 +500,18 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         // Update
         ctTable.setRef(ref);
         if (ctTable.isSetAutoFilter()) {
-            ctTable.getAutoFilter().setRef(ref);
+            String filterRef;
+            int totalsRowCount = getTotalsRowCount();
+            if (totalsRowCount == 0) {
+                filterRef = ref;
+            } else {
+                final CellReference start = new CellReference(refs.getFirstCell().getRow(), refs.getFirstCell().getCol());
+                // account for footer row(s) in auto-filter range, which doesn't include footers
+                final CellReference end = new CellReference(refs.getLastCell().getRow() - totalsRowCount, refs.getLastCell().getCol());
+                // this won't have sheet references because we built the cell references without them
+                filterRef = new AreaReference(start, end, SpreadsheetVersion.EXCEL2007).formatAsString();
+            }
+            ctTable.getAutoFilter().setRef(filterRef);
         }
         
         // Have everything recomputed

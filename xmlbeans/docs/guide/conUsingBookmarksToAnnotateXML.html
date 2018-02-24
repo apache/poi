@@ -1,0 +1,97 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<!-- Copyright 2004 The Apache Software Foundation
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License. -->
+<html>
+<head>
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Using Bookmarks to Annotate XML</title>
+<!-- InstanceEndEditable -->
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=Content-Type content="text/html; charset=$CHARSET;">
+
+
+<!-- InstanceBeginEditable name="metatags" -->
+
+<meta name="component" content="">
+<!-- In the description metatag, please provide a BRIEF description of the topic contents. -->
+<meta name="description" content="">
+<!-- In the component metatag, please list keywords that will help a user search for this topic. -->
+<meta name="keywords" content="">
+<!-- InstanceEndEditable -->
+
+<!--(Links)=========================================================-->
+<!-- InstanceBeginEditable name="head" -->
+<!-- InstanceEndEditable -->
+<link href="../xmlbeans.css" rel="stylesheet" type="text/css">
+<a href="../../../core/index.html" id="index"></a>
+<script language="JavaScript" src="../../../core/topicInfo.js"></script>
+<script language="JavaScript" src="../../../core/CookieClass.js"></script>
+<script language="JavaScript" src="../../../core/displayContent.js"></script>
+</head>
+
+<!--(Body)==========================================================-->
+<body>
+<script language="JavaScript">
+
+</script>
+<!-- InstanceBeginEditable name="body" -->
+<div id=topictitle>
+  <p class=Title>Using Bookmarks to Annotate XML</p>
+</div>
+<div id=topictext>
+  <p>You can use a cursor to insert bookmarks that annotate XML with markers containing
+    information you design. These bookmarks aren't written into the XML itself,
+    but in a sense "hang" from the location where it was inserted. In this way
+    you can associate arbitrary pieces of information with specific parts of the
+    XML.</p>
+  <P>You design your own bookmark classes by extending <span class="langinline"><a href="../reference/org/apache/xmlbeans/XmlCursor.XmlBookmark.html">XmlBookmark</a></span>,
+    a nested class of <span class="langinline"><a href="../reference/org/apache/xmlbeans/XmlCursor.html">XmlCursor</a></span>.
+    You can design your bookmark class to contain information specific to your
+    needs. </P>
+  <P>In the following example, <span class="langinline">OrderBookmark</span> is
+    an inner class that extends <span class="langinline">XmlCursor.XmlBookmark</span>.
+    It merely stores a piece of text.</P>
+  <PRE>
+/*
+ * The OrderBookmark class includes a constructor through which you will
+ * insert your bookmark's content. It also includes get and set methods
+ * you can use to retrieve and change the content.
+ */
+static class OrderBookmark extends XmlCursor.XmlBookmark {
+    public OrderBookmark (String text) { TEXT = text; }
+    public String TEXT;
+    public String getText() { return TEXT; }
+    public void setText(String newText) { TEXT = newText; }
+}
+</PRE>
+  <p>You can use instances of this class to store bookmarks at places in your
+    XML. The following excerpt of code creates a cursor and an instance of the
+    <span class="langinline">OrderBookmark</span> class. Then it uses the cursor
+    to insert the bookmark at the cursor's current location.</p>
+  <pre>
+    XmlCursor orderCursor = xmlDoc.newCursor();
+    OrderBookmark thisBookmark = new OrderBookmark("foo");
+    orderCursor.setBookmark(thisAnnotation);
+</pre>
+  <p class=relatedtopics>Related Topics</p>
+  <p><a href="conNavigatingXMLwithCursors.html">Navigating XML with Cursors</a></p>
+</div>
+<!-- InstanceEndEditable -->
+<script language="JavaScript">
+
+</script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<!--
+/*   Copyright 2004 The Apache Software Foundation
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+-->
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:simpleType name="orderTypeCodedType">
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="changeService"/>
+      <xs:enumeration value="changeOfService"/>
+      <xs:enumeration value="disconnectService"/>
+      <xs:enumeration value="moveService"/>
+      <xs:enumeration value="newConnect"/>
+      <xs:enumeration value="error"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="miscServicesType">
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="dueDate"/>
+      <xs:enumeration value="orderQuery"/>
+      <xs:enumeration value="orderModify"/>
+      <xs:enumeration value="tnAssignment"/>
+      <xs:enumeration value="saQuery"/>
+      <xs:enumeration value="creditScreenReq"/>
+      <xs:enumeration value="creditReplyReq"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="requestTypeType">
+    <xs:choice>
+      <xs:element name="orderTypeCoded" type="orderTypeCodedType" minOccurs="0"/>
+      <xs:element name="miscServices" type="miscServicesType" minOccurs="0"/>
+      <xs:element name="productVldtn" type="xs:string" minOccurs="0"/>
+      <xs:element name="custProfileQuery" minOccurs="0"/>
+      <xs:element name="banClosure" minOccurs="0"/>
+      <xs:element name="qualification" minOccurs="0"/>
+      <xs:element name="dataOrderList" minOccurs="0"/>
+      <xs:element name="serviceAddressQuery" minOccurs="0"/>
+    </xs:choice>
+  </xs:complexType>
+</xs:schema>

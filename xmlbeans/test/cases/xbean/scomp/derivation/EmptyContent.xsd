@@ -1,0 +1,44 @@
+<xsd:schema
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://xbean/scomp/derivation/Emtpy"
+    targetNamespace="http://xbean/scomp/derivation/Emtpy"
+    xmlns:base="http://xbean/scomp/contentType/ComplexTypeTest"
+    >
+
+    <xsd:import namespace="http://xbean/scomp/contentType/ComplexTypeTest"
+        schemaLocation="../contentType/ComplexTypeTest.xsd"/>
+
+    <xsd:complexType name="ExtendedEmptyT" mixed="true">
+        <xsd:complexContent>
+            <xsd:extension base="base:emptyT">
+                <xsd:sequence>
+                    <xsd:element name="extendedChild">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="subCh1" type="xsd:string"/>
+                                <xsd:element name="subCh2" type="xsd:float"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:sequence>
+                <xsd:attribute name="extendedAttr" type="xsd:string"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <!--restriction only applies to attrs-->
+    <xsd:complexType name="RestrictedEmptyT">
+       <xsd:complexContent>
+           <xsd:restriction base="base:emptyT">
+               <xsd:attribute name="emptyAttr" type="xsd:string" fixed="myval"/>
+           </xsd:restriction>
+       </xsd:complexContent>
+
+
+    </xsd:complexType>
+
+    <xsd:element name="ExtendedEmptyElt" type="ExtendedEmptyT"/>
+     <xsd:element name="RestrictedEmptyElt" type="RestrictedEmptyT"/>
+
+
+</xsd:schema>

@@ -55,9 +55,7 @@ public abstract class XDGFSection {
             _sectionTypes.put("Reviewer", 		GenericSection.class, SectionType.class, XDGFSheet.class);
             _sectionTypes.put("Annotation", 	GenericSection.class, SectionType.class, XDGFSheet.class);
             _sectionTypes.put("ActionTag", 		GenericSection.class, SectionType.class, XDGFSheet.class);
-        } catch (NoSuchMethodException e) {
-            throw new POIXMLException("Internal error");
-        } catch (SecurityException e) {
+        } catch (NoSuchMethodException | SecurityException e) {
             throw new POIXMLException("Internal error");
         }
 

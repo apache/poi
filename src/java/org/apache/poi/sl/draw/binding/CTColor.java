@@ -19,7 +19,6 @@ package org.apache.poi.sl.draw.binding;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -29,21 +28,21 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="CT_Color">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;group ref="{http://schemas.openxmlformats.org/drawingml/2006/main}EG_ColorChoice"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="CT_Color"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;group ref="{http://schemas.openxmlformats.org/drawingml/2006/main}EG_ColorChoice"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "CT_Color", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", propOrder = {
+@XmlType(name = "CT_Color", propOrder = {
     "scrgbClr",
     "srgbClr",
     "hslClr",
@@ -53,17 +52,11 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class CTColor {
 
-    @XmlElement(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main")
     protected CTScRgbColor scrgbClr;
-    @XmlElement(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main")
     protected CTSRgbColor srgbClr;
-    @XmlElement(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main")
     protected CTHslColor hslClr;
-    @XmlElement(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main")
     protected CTSystemColor sysClr;
-    @XmlElement(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main")
     protected CTSchemeColor schemeClr;
-    @XmlElement(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main")
     protected CTPresetColor prstClr;
 
     /**

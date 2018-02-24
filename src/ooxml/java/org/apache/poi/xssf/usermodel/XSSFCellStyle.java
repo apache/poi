@@ -118,7 +118,7 @@ public class XSSFCellStyle implements CellStyle {
      */
     public void verifyBelongsToStylesSource(StylesTable src) {
         if(this._stylesSource != src) {
-            throw new IllegalArgumentException("This Style does not belong to the supplied Workbook Styles Source. Are you trying to assign a style from one workbook to the cell of a differnt workbook?");
+            throw new IllegalArgumentException("This Style does not belong to the supplied Workbook Styles Source. Are you trying to assign a style from one workbook to the cell of a different workbook?");
         }
     }
 
@@ -469,8 +469,21 @@ public class XSSFCellStyle implements CellStyle {
      * @see org.apache.poi.xssf.usermodel.XSSFWorkbook#getFontAt(short)
      */
     @Override
+    @Deprecated
     public short getFontIndex() {
         return (short) getFontId();
+    }
+
+    /**
+     * Gets the index of the font for this style
+     *
+     * @return short - font index
+     * @see org.apache.poi.xssf.usermodel.XSSFWorkbook#getFontAt(int)
+     * @since 4.0.0
+     */
+    @Override
+    public int getFontIntIndex() {
+        return getFontId();
     }
 
     /**

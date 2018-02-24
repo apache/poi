@@ -1,0 +1,27 @@
+This document keeps track of issues with sql-commons, xmlbeans, or velocity 
+integration in this sample.
+
+The easypo.xsd file implies a foreign key in the table line-item. This can 
+be determined by the unbounded definition of the purchase order element. A 
+better mechanism would be to include database primary and foreign key 
+relationships in the xml schema itself.
+
+Problems running the sample. Java 1.5.0 seems to be the only runtime to 
+resolve the String method replace("-","_").
+
+The run target fails with the following error:
+
+BUILD FAILED: /home/phil/soft/work/vxsdb/run.xml:30: 
+org.apache.xmlbeans.XmlException: Thread main: The 0th supplied input is 
+not a schema or a config document: its type is N=
+
+Execute a script containing the java command below if Ant is not available.
+
+Unix:
+run
+
+Cygwin:
+runcygwin
+
+Windows:
+run

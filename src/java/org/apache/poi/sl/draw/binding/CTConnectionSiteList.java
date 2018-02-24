@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -31,26 +30,25 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="CT_ConnectionSiteList">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="cxn" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_ConnectionSite" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="CT_ConnectionSiteList"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="cxn" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_ConnectionSite" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "CT_ConnectionSiteList", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", propOrder = {
+@XmlType(name = "CT_ConnectionSiteList", propOrder = {
     "cxn"
 })
 public class CTConnectionSiteList {
 
-    @XmlElement(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main")
     protected List<CTConnectionSite> cxn;
 
     /**
@@ -77,7 +75,7 @@ public class CTConnectionSiteList {
      */
     public List<CTConnectionSite> getCxn() {
         if (cxn == null) {
-            cxn = new ArrayList<>();
+            cxn = new ArrayList<CTConnectionSite>();
         }
         return this.cxn;
     }

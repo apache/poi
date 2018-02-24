@@ -1,0 +1,26 @@
+<xsd:schema
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:pre="http://xbean/scomp/attribute/GlobalAttrDefault"
+    xmlns="http://xbean/scomp/derivation/AttributeExtension"
+    targetNamespace="http://xbean/scomp/derivation/AttributeExtension"
+
+    >
+    <xsd:import namespace="http://xbean/scomp/attribute/GlobalAttrDefault"
+        schemaLocation="../attribute/GlobalAttrDefault.xsd"/>
+    <!--element only-->
+    <xsd:complexType name="baseT">
+        <xsd:attribute ref="pre:testattributeInt"/>
+        <xsd:attribute ref="pre:testattribute"/>
+    </xsd:complexType>
+    <!--mixed-->
+    <xsd:complexType name="extendedT">
+        <xsd:complexContent>
+            <xsd:extension base="baseT">
+                <xsd:attribute name="testattribute" type="xsd:string"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+
+    <xsd:element name="ExtendedElement" type="extendedT"/>
+</xsd:schema>

@@ -1,0 +1,38 @@
+<!--this is schema company.xsd stripped down and modified to have a value restriction on the employees age-->
+
+<xsd:schema 
+targetNamespace="interfaceFeature/xbean/methodNameCollision/company" 
+xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+ xmlns:company="interfaceFeature/xbean/methodNameCollision/company">
+	<xsd:element name="company" type="company:CompanyType"/>
+	<xsd:complexType name="CompanyType">
+		<xsd:sequence>
+			<xsd:element name="departments" type="company:DepartmentType" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		
+		<xsd:anyAttribute namespace="http://www.omg.org/XMI" processContents="lax"/>
+	</xsd:complexType>
+	<xsd:element name="department" type="company:DepartmentType"/>
+	<xsd:complexType name="DepartmentType">
+		<xsd:sequence>
+			<xsd:element name="consultant" type="company:ConsultantType" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:anyAttribute namespace="http://www.omg.org/XMI" processContents="lax"/>
+	</xsd:complexType>
+	<xsd:complexType name="ConsultantType">
+		
+		<xsd:attribute name="name" type="xsd:string"/>
+	      <xsd:attribute name="age" type="company:age"/>
+		<xsd:anyAttribute namespace="http://www.omg.org/XMI" processContents="lax"/>
+	   
+	</xsd:complexType>
+
+	
+               <xsd:simpleType name="age">
+                  <xsd:restriction base="xsd:integer">
+                         <xsd:minInclusive value="0"/>
+                         <xsd:maxInclusive value="100"/>
+                  </xsd:restriction>
+               </xsd:simpleType>
+   
+</xsd:schema>

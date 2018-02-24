@@ -1,0 +1,15 @@
+<xsd:schema
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://xbean/scomp/namespace/ElementFormDefault"
+    targetNamespace="http://xbean/scomp/namespace/ElementFormDefault"
+   elementFormDefault="qualified"
+    >
+
+    <xsd:complexType name="ElementT">
+       <xsd:sequence>
+           <xsd:element name="childElt"/>
+       </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:element name="ElementFormDefaultElt" type="ElementT"/>
+</xsd:schema>

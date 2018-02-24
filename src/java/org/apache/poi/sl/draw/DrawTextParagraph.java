@@ -381,17 +381,18 @@ public class DrawTextParagraph implements Drawable {
         return getRenderableText(tr);
     }
 
-    String getRenderableText(TextRun tr) {
-        String txt = tr.getRawText();
-        txt = txt.replace("\t", tab2space(tr)).replace("\u000b", "\n");
+    private String getRenderableText(final TextRun tr) {
+        final String txtSpace = tr.getRawText().replace("\t", tab2space(tr)).replace('\u000b', '\n');
+        final Locale loc = LocaleUtil.getUserLocale();
 
         switch (tr.getTextCap()) {
-            case ALL: txt = txt.toUpperCase(LocaleUtil.getUserLocale()); break;
-            case SMALL: txt = txt.toLowerCase(LocaleUtil.getUserLocale()); break;
-            case NONE: break;
+            case ALL:
+                return txtSpace.toUpperCase(loc);
+            case SMALL:
+                return txtSpace.toLowerCase(loc);
+            default:
+                return txtSpace;
         }
-
-        return txt;
     }
 
     /**

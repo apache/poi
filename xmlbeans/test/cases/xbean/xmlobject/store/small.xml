@@ -1,0 +1,12 @@
+<?xml   
+
+   version
+=
+
+
+"
+"
+standalone='yes'   ?>
+<aaaa a="a_value" b:a = 'b_value'  xmlns:b="b_ns">	
+  <?pi	tab  tesxt rt?>
+</aaaa>

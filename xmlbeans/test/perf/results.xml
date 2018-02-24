@@ -1,0 +1,88 @@
+<!--
+    Copyright 2004 The Apache Software Foundation
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<!-- build file -->
+<project name="xmlbeans-perf" default="usage">
+
+	<target name="usage">
+		<echo>
+	This utility takes a flat file and emits an instance of perf-results.xsd.
+	The ant task extends the MatchingTask class, so many files may be processed
+	at a time. The format of a flat perf test result is like the following (all on one line):
+	
+	[delimeter] [testname] time [long time value] hash [int hash value] customparam=customparamvalue
+
+	or
+
+	[delimeter] [testname] memory [long memory value] hash [int hash value] customparam=customparamvalue
+
+	----------------------------------------------------
+	For example, a file call foo.log that contains this:
+
+	TEST: mytest time 100 hash -1234 color=blue type=invalid
+
+	could be processed like this:
+
+	ant generate.results -Ddelimeter="TEST:" -Dsrcdir="." -Dincludes="foo.log"
+
+	This would emit a file called foo.log.xml.
+
+	There are default values for all possible parameters. View contents of this file to see them.
+
+		</echo>
+	</target>
+
+	
+	<property environment="env"/>
+
+	<!-- root properties used for finding everything -->
+	<property name="xmlbeans.perf.root" value="${basedir}"/>
+	<property name="v2.xmlbeans.root" value="${env.XMLBEANS_HOME}"/>
+	<property name="build.dir" value="${xmlbeans.perf.root}/build"/>
+
+	<!-- default properties for results generation -->
+	<property name="srcdir" value="${xmlbeans.perf.root}/bin"/>
+	<property name="gendir" value="${xmlbeans.perf.root}/reports"/>
+	<property name="includes" value="*.log"/>
+	<property name="hostname" value="cg2kperf05.beanw.com"/>
+	<property name="cpuinfo" value="2 x 2.7Ghz"/>
+	<property name="sysmem" value="2G"/>
+	<property name="delimiter" value="TEST: "/>
+
+	<!-- lib directories -->
+	<property name="v2.lib.dir" value="${v2.xmlbeans.root}/build/lib"/>
+
+	<!-- util schema jar(s) -->
+	<property name="perf-results.jar" value="${xmlbeans.perf.root}/schema_build/perf-results.jar"/>
+
+	<!-- classpath(s) -->
+	<path id="result.classpath">
+		<fileset dir="${v2.lib.dir}" includes="*.jar"/>
+		<pathelement path="${build.dir}"/>
+		<pathelement path="${perf-results.jar}"/>
+		<pathelement path="${ant.jar}"/>
+	</path>
+
+
+	<taskdef name="perf-result" classname="org.apache.xmlbeans.test.tools.PerfResultTask" classpathref="result.classpath"/>
+	<target name="generate.results">
+		<perf-result srcdir="${srcdir}" 
+					 includes="${includes}"
+					 gendir="${gendir}"
+					 delimiter="${delimiter}"
+					 hostname="${hostname}"/>
+	</target>
+
+</project>

@@ -1,0 +1,95 @@
+<xsd:schema
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://xbean/scomp/idConstraint/Constraint"
+   xmlns:con="http://xbean/scomp/idConstraint/Constraint"
+    targetNamespace="http://xbean/scomp/idConstraint/Constraint"
+    elementFormDefault="qualified"
+    attributeFormDefault="qualified"
+    >
+
+
+    <xsd:complexType name="productType">
+        <xsd:sequence>
+            <xsd:element name="department" maxOccurs="2">
+                <xsd:complexType>
+                    <xsd:attribute name="name"/>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="id" type="xsd:token"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="OtherProductType">
+        <xsd:sequence>
+            <xsd:element name="department" minOccurs="0">
+                <xsd:complexType>
+                    <xsd:attribute name="name"/>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="id" type="xsd:token"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="ProductListType">
+        <xsd:sequence maxOccurs="unbounded">
+            <xsd:element name="product" type="productType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="OtherProductListType">
+        <xsd:sequence maxOccurs="unbounded">
+            <xsd:element name="product" type="productType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:element name="productList" type="ProductListType">
+        <xsd:unique name="deptProdUnique">
+            <xsd:selector xpath="con:product"/>
+            <xsd:field xpath="con:department/@con:name"/>
+            <xsd:field xpath="con:id"/>
+        </xsd:unique>
+    </xsd:element>
+
+    <xsd:element name="KeyProductList" type="OtherProductListType" />
+
+    <xsd:complexType name="OrderType">
+        <xsd:sequence>
+            <xsd:element name="customerName" type="xsd:string"/>
+            <xsd:sequence maxOccurs="unbounded">
+                <xsd:element name="item">
+                    <xsd:complexType>
+                        <xsd:attribute name="SKU" type="xsd:token"/>
+                        <xsd:attribute name="deptId"/>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:sequence>
+    </xsd:complexType>
+
+
+    <xsd:element name="CompanyDB">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="KeyProductList"/>
+                <xsd:sequence maxOccurs="unbounded">
+                    <xsd:element name="order" type="OrderType" />
+                </xsd:sequence>
+            </xsd:sequence>
+        </xsd:complexType>
+
+        <xsd:keyref name="ProdRef" refer="deptProdKey">
+            <xsd:selector xpath="con:order/con:item"/>
+            <xsd:field xpath="@con:deptId"/>
+            <xsd:field xpath="@con:SKU"/>
+        </xsd:keyref>
+
+        <xsd:key name="deptProdKey">
+            <xsd:selector xpath="con:KeyProductList/con:product"/>
+            <xsd:field xpath="con:department/@con:name"/>
+            <xsd:field xpath="con:id"/>
+        </xsd:key>
+
+    </xsd:element>
+
+
+</xsd:schema>

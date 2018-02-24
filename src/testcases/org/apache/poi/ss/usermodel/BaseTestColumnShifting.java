@@ -26,7 +26,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.apache.poi.ss.usermodel.helpers.ColumnShifter;
 
-public class BaseTestColumnShifting {
+public abstract class BaseTestColumnShifting {
     protected Workbook wb;
     protected Sheet sheet1;
     protected ColumnShifter columnShifter;

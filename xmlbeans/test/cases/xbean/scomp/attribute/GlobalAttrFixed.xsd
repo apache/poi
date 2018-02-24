@@ -1,0 +1,16 @@
+ <xsd:schema 
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns="http://xbean/scomp/attribute/GlobalAttrFixed"
+  targetNamespace="http://xbean/scomp/attribute/GlobalAttrFixed"
+  >
+
+  <xsd:attribute name="testattributeStr" type="xsd:string" fixed="XBeanAttrStr"/>
+  <xsd:attribute name="testattributeInt" type="xsd:integer" fixed="1"/>
+
+  <xsd:complexType name="GlobalAttrFixedT">
+      <xsd:attribute ref="testattributeStr" />
+      <xsd:attribute ref="testattributeInt" />
+  </xsd:complexType>
+
+  <xsd:element name="GlobalAttrFixedDoc" type="GlobalAttrFixedT"/>
+</xsd:schema>

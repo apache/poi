@@ -58,7 +58,7 @@ public abstract class BaseTestFont {
     @Test
     public final void testGetNumberOfFonts() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
-        int num0 = wb.getNumberOfFonts();
+        int num0 = wb.getNumberOfFontsAsInt();
 
         Font f1=wb.createFont();
         f1.setBold(true);
@@ -101,9 +101,9 @@ public abstract class BaseTestFont {
         font.setStrikeout(true);
         font.setColor(IndexedColors.YELLOW.getIndex());
         font.setFontName("Courier");
-        short font1Idx = font.getIndex();
+        int font1Idx = font.getIndexAsInt();
         wb1.createCellStyle().setFont(font);
-        assertEquals(num0 + 1, wb1.getNumberOfFonts());
+        assertEquals(num0 + 1, wb1.getNumberOfFontsAsInt());
 
         CellStyle cellStyleTitle=wb1.createCellStyle();
         cellStyleTitle.setFont(font);
@@ -114,8 +114,8 @@ public abstract class BaseTestFont {
         wb1.close();
         s1 = wb2.getSheetAt(0);
 
-        assertEquals(num0 + 1, wb2.getNumberOfFonts());
-        short idx = s1.getRow(0).getCell(0).getCellStyle().getFontIndex();
+        assertEquals(num0 + 1, wb2.getNumberOfFontsAsInt());
+        int idx = s1.getRow(0).getCell(0).getCellStyle().getFontIntIndex();
         Font fnt = wb2.getFontAt(idx);
         assertNotNull(fnt);
         assertEquals(IndexedColors.YELLOW.getIndex(), fnt.getColor());
@@ -125,9 +125,9 @@ public abstract class BaseTestFont {
         Font font2 = wb2.createFont();
         font2.setItalic(true);
         font2.setFontHeightInPoints((short)15);
-        short font2Idx = font2.getIndex();
+        int font2Idx = font2.getIndexAsInt();
         wb2.createCellStyle().setFont(font2);
-        assertEquals(num0 + 2, wb2.getNumberOfFonts());
+        assertEquals(num0 + 2, wb2.getNumberOfFontsAsInt());
 
         // Save and re-load
         Workbook wb3 = _testDataProvider.writeOutAndReadBack(wb2);
@@ -135,7 +135,7 @@ public abstract class BaseTestFont {
         s1 = wb3.getSheetAt(0);
         assertNotNull(s1);
 
-        assertEquals(num0 + 2, wb3.getNumberOfFonts());
+        assertEquals(num0 + 2, wb3.getNumberOfFontsAsInt());
         assertNotNull(wb3.getFontAt(font1Idx));
         assertNotNull(wb3.getFontAt(font2Idx));
 
@@ -150,7 +150,7 @@ public abstract class BaseTestFont {
     @Test
     public final void test45338() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
-        int num0 = wb.getNumberOfFonts();
+        int num0 = wb.getNumberOfFontsAsInt();
 
         Sheet s = wb.createSheet();
         s.createRow(0);
@@ -159,13 +159,13 @@ public abstract class BaseTestFont {
         s.getRow(1).createCell(0);
 
         //default font
-        Font f1 = wb.getFontAt((short)0);
+        Font f1 = wb.getFontAt(0);
         assertFalse(f1.getBold());
 
         // Check that asking for the same font
         //  multiple times gives you the same thing.
         // Otherwise, our tests wouldn't work!
-        assertSame(wb.getFontAt((short)0), wb.getFontAt((short)0));
+        assertSame(wb.getFontAt(0), wb.getFontAt(0));
 
         // Look for a new font we have
         //  yet to add
@@ -177,8 +177,8 @@ public abstract class BaseTestFont {
         );
 
         Font nf = wb.createFont();
-        short nfIdx = nf.getIndex();
-        assertEquals(num0 + 1, wb.getNumberOfFonts());
+        int nfIdx = nf.getIndexAsInt();
+        assertEquals(num0 + 1, wb.getNumberOfFontsAsInt());
 
         assertSame(nf, wb.getFontAt(nfIdx));
 
@@ -191,11 +191,11 @@ public abstract class BaseTestFont {
         nf.setTypeOffset((short)2);
         nf.setUnderline((byte)2);
 
-        assertEquals(num0 + 1, wb.getNumberOfFonts());
+        assertEquals(num0 + 1, wb.getNumberOfFontsAsInt());
         assertEquals(nf, wb.getFontAt(nfIdx));
 
         assertEquals(wb.getFontAt(nfIdx), wb.getFontAt(nfIdx));
-        assertTrue(wb.getFontAt((short)0) != wb.getFontAt(nfIdx));
+        assertTrue(wb.getFontAt(0) != wb.getFontAt(nfIdx));
 
         // Find it now
         assertNotNull(

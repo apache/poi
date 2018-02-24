@@ -1,0 +1,22 @@
+## Copyright 2002-2004 Apache Software Foundation
+##
+## Licensed under the Apache License, Version 2.0 (the "License");
+## you may not use this file except in compliance with the License.
+## You may obtain a copy of the License at
+##
+##     http://www.apache.org/licenses/LICENSE-2.0
+##
+## Unless required by applicable law or agreed to in writing, software
+## distributed under the License is distributed on an "AS IS" BASIS,
+## WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+## See the License for the specific language governing permissions and
+## limitations under the License.
+##
+## Type template used by the sample XmlBeans Velocity integration.
+## This template expoits the SchemaProperty XmlBeans object to determine
+## the data type for the given column. Type returns a SchemaType XmlBeans
+## object.
+##
+## See doc for constant values:
+## http://xmlbeans.apache.org/docs/v2/reference/constant-values.html
+#if($property.type.simpleVariety == 1)#if($property.type.primitiveType.name.localPart == "boolean")BOOLEAN#elseif($property.type.primitiveType.name.localPart == "dateTime")TIMESTAMP#elseif($property.type.primitiveType.name.localPart == "decimal")DECIMAL#elseif($property.type.primitiveType.name.localPart == "int")INTEGER#elseif($property.type.primitiveType.name.localPart == "integer")INTEGER#elseif($property.type.primitiveType.name.localPart == "long")INTEGER#elseif($property.type.primitiveType.name.localPart == "string")VARCHAR#elseif(true)OTHER#end#end

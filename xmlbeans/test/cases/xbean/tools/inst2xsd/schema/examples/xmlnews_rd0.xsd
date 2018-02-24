@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="nitf">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="head">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element type="xs:string" name="title" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="body">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="body.head">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="headline">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element type="xs:string" name="hl1" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="byline">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element type="xs:string" name="bytag" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="dateline">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element type="xs:string" name="location" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+                          <xs:element type="xs:string" name="story.date" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

@@ -20,7 +20,6 @@ package org.apache.poi.sl.draw.binding;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -30,54 +29,52 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="CT_Hyperlink">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="snd" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_EmbeddedWAVAudioFile" minOccurs="0"/>
- *         &lt;element name="extLst" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_OfficeArtExtensionList" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute ref="{http://schemas.openxmlformats.org/officeDocument/2006/relationships}id"/>
- *       &lt;attribute name="invalidUrl" type="{http://www.w3.org/2001/XMLSchema}string" default="" />
- *       &lt;attribute name="action" type="{http://www.w3.org/2001/XMLSchema}string" default="" />
- *       &lt;attribute name="tgtFrame" type="{http://www.w3.org/2001/XMLSchema}string" default="" />
- *       &lt;attribute name="tooltip" type="{http://www.w3.org/2001/XMLSchema}string" default="" />
- *       &lt;attribute name="history" type="{http://www.w3.org/2001/XMLSchema}boolean" default="true" />
- *       &lt;attribute name="highlightClick" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
- *       &lt;attribute name="endSnd" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="CT_Hyperlink"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="snd" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_EmbeddedWAVAudioFile" minOccurs="0"/&gt;
+ *         &lt;element name="extLst" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_OfficeArtExtensionList" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute ref="{http://schemas.openxmlformats.org/officeDocument/2006/relationships}id"/&gt;
+ *       &lt;attribute name="invalidUrl" type="{http://www.w3.org/2001/XMLSchema}string" default="" /&gt;
+ *       &lt;attribute name="action" type="{http://www.w3.org/2001/XMLSchema}string" default="" /&gt;
+ *       &lt;attribute name="tgtFrame" type="{http://www.w3.org/2001/XMLSchema}string" default="" /&gt;
+ *       &lt;attribute name="tooltip" type="{http://www.w3.org/2001/XMLSchema}string" default="" /&gt;
+ *       &lt;attribute name="history" type="{http://www.w3.org/2001/XMLSchema}boolean" default="true" /&gt;
+ *       &lt;attribute name="highlightClick" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt;
+ *       &lt;attribute name="endSnd" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "CT_Hyperlink", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", propOrder = {
+@XmlType(name = "CT_Hyperlink", propOrder = {
     "snd",
     "extLst"
 })
 public class CTHyperlink {
 
-    @XmlElement(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main")
     protected CTEmbeddedWAVAudioFile snd;
-    @XmlElement(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main")
     protected CTOfficeArtExtensionList extLst;
-    @XmlAttribute(namespace = "http://schemas.openxmlformats.org/officeDocument/2006/relationships")
+    @XmlAttribute(name = "id", namespace = "http://schemas.openxmlformats.org/officeDocument/2006/relationships")
     protected String id;
-    @XmlAttribute
+    @XmlAttribute(name = "invalidUrl")
     protected String invalidUrl;
-    @XmlAttribute
+    @XmlAttribute(name = "action")
     protected String action;
-    @XmlAttribute
+    @XmlAttribute(name = "tgtFrame")
     protected String tgtFrame;
-    @XmlAttribute
+    @XmlAttribute(name = "tooltip")
     protected String tooltip;
-    @XmlAttribute
+    @XmlAttribute(name = "history")
     protected Boolean history;
-    @XmlAttribute
+    @XmlAttribute(name = "highlightClick")
     protected Boolean highlightClick;
-    @XmlAttribute
+    @XmlAttribute(name = "endSnd")
     protected Boolean endSnd;
 
     /**

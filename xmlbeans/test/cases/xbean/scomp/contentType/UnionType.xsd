@@ -1,0 +1,59 @@
+<xsd:schema
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://xbean/scomp/contentType/Union"
+    targetNamespace="http://xbean/scomp/contentType/Union"
+    elementFormDefault="qualified"
+    xmlns:list="http://xbean/scomp/contentType/List"
+>
+    <xsd:simpleType name="GlobalSimpleT1">
+        <xsd:restriction base="xsd:integer">
+            <xsd:minInclusive value="1"/>
+            <xsd:maxInclusive value="3"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="GlobalSimpleT2">
+        <xsd:restriction base="xsd:negativeInteger">
+            <xsd:minInclusive value="-3"/>
+            <xsd:maxInclusive value="-1"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="UnionAnonGlobalT">
+        <xsd:union memberTypes="GlobalSimpleT1 GlobalSimpleT2">
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:token">
+                    <xsd:enumeration value="small"/>
+                    <xsd:enumeration value="medium"/>
+                    <xsd:enumeration value="large"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:union>
+    </xsd:simpleType>
+    <xsd:simpleType name="UnionT2">
+        <xsd:union>
+            <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+                <xsd:enumeration value="addVal1"/>
+                <xsd:enumeration value="addVal2"/>
+            </xsd:restriction>
+            </xsd:simpleType>
+            <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+                <xsd:enumeration value="addVal3"/>
+                <xsd:enumeration value="addVal4"/>
+            </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:union>
+    </xsd:simpleType>
+    <!--union of unions-->
+    <xsd:simpleType name="UnionOfUnionsT">
+        <xsd:union memberTypes="UnionT2 UnionAnonGlobalT"/>
+    </xsd:simpleType>
+    <!--union of lists-->
+    <xsd:simpleType name="UnionOfListsT">
+        <xsd:union memberTypes="list:ListOfUnions2T list:ListAnonGlobalT"/>
+    </xsd:simpleType>
+
+    <xsd:element name="UnionElt" type="UnionAnonGlobalT"/>
+    <xsd:element name="UnionOfUnions" type="UnionOfUnionsT"/>
+    <xsd:element name="UnionOfLists" type="UnionOfListsT"/>
+</xsd:schema>

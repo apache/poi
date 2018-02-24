@@ -1,0 +1,9 @@
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://xbean/scomp/element/Any"
+    targetNamespace="http://xbean/scomp/element/Any"
+    >
+
+    <xs:element name="AnySimple" type="xs:anySimpleType"/>
+    <xs:element name="AnyElt"/>
+</xs:schema>

@@ -169,7 +169,7 @@ public final class HSSFCellStyle implements CellStyle {
      * set the font for this style
      * @param font  a font object created or retrieved from the HSSFWorkbook object
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createFont()
-     * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getFontAt(short)
+     * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getFontAt(int)
      */
     @Override
     public void setFont(Font font) {
@@ -186,7 +186,19 @@ public final class HSSFCellStyle implements CellStyle {
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getFontAt(short)
      */
     @Override
+    @Deprecated
     public short getFontIndex()
+    {
+        return _format.getFontIndex();
+    }
+
+    /**
+     * gets the index of the font for this style
+     * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getFontAt(int)
+     * @since 4.0.0
+     */
+    @Override
+    public int getFontIntIndex()
     {
         return _format.getFontIndex();
     }
@@ -194,11 +206,11 @@ public final class HSSFCellStyle implements CellStyle {
     /**
      * gets the font for this style
      * @param parentWorkbook The HSSFWorkbook that this style belongs to
-     * @see org.apache.poi.hssf.usermodel.HSSFCellStyle#getFontIndex()
-     * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getFontAt(short)
+     * @see org.apache.poi.hssf.usermodel.HSSFCellStyle#getFontIntIndex()
+     * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getFontAt(int)
      */
     public HSSFFont getFont(org.apache.poi.ss.usermodel.Workbook parentWorkbook) {
-        return ((HSSFWorkbook) parentWorkbook).getFontAt(getFontIndex());
+        return ((HSSFWorkbook) parentWorkbook).getFontAt(getFontIntIndex());
     }
 
     /**
@@ -837,7 +849,7 @@ public final class HSSFCellStyle implements CellStyle {
             FontRecord fr = _workbook.createNewFont();
             fr.cloneStyleFrom(
                     source._workbook.getFontRecordAt(
-                            source.getFontIndex()
+                            source.getFontIntIndex()
                     )
             );
 

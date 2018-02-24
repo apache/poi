@@ -97,4 +97,30 @@ public final class TestLittleEndianStreams extends TestCase {
 			assertTrue(e.getMessage().contains("Buffer overrun"));
 		}
 	}
+
+	public void testBufferOverrunStartOffset() {
+		byte[] srcBuf = HexRead.readFromString("99 88 77 88 99");
+		LittleEndianInput lei = new LittleEndianByteArrayInputStream(srcBuf, 2);
+
+		// only one byte left, so this should fail
+		try {
+			lei.readFully(new byte[4]);
+			fail("Should catch exception here");
+		} catch (RuntimeException e) {
+			assertTrue(e.getMessage().contains("Buffer overrun"));
+		}
+	}
+
+	public void testBufferOverrunStartOffset2() {
+		byte[] srcBuf = HexRead.readFromString("99 88 77 88 99");
+		LittleEndianInput lei = new LittleEndianByteArrayInputStream(srcBuf, 2, 2);
+
+		// only one byte left, so this should fail
+		try {
+			lei.readFully(new byte[4]);
+			fail("Should catch exception here");
+		} catch (RuntimeException e) {
+			assertTrue(e.getMessage().contains("Buffer overrun"));
+		}
+	}
 }

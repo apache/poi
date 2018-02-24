@@ -1,0 +1,21 @@
+<p:Person
+    xmlns:p="http://contoso.com/People"
+    xmlns:v="http://contoso.com /Vehicles"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation=
+    "http://contoso.com/People
+    http://contoso.com/schemas/people.xsd
+    http://contoso.com/schemas/Vehicles
+    http://contoso.com/schemas/vehicles.xsd
+    http://contoso.com/schemas/People
+    http://contoso.com/schemas/people.xsd">
+    <name>John</name>
+    <age>28</age>
+    <height>59</height>
+    <v:Vehicle>
+        <color>Red</color>
+        <wheels>4</wheels>
+        <seats>2</seats>
+    </v:Vehicle>
+</p:Person>
+

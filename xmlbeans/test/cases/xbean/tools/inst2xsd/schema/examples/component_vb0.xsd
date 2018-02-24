@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="component" type="componentType"/>
+  <xs:complexType name="attachType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+        <xs:attribute type="xs:string" name="for" use="optional"/>
+        <xs:attribute type="xs:string" name="event" use="optional"/>
+        <xs:attribute type="xs:string" name="handler" use="optional"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="scriptType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+        <xs:attribute type="xs:string" name="type"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="componentType">
+    <xs:sequence>
+      <xs:element type="attachType" name="attach" maxOccurs="unbounded" minOccurs="0"/>
+      <xs:element type="scriptType" name="script"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
