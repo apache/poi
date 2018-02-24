@@ -18,6 +18,7 @@
 package org.apache.poi.xssf.usermodel;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 
@@ -27,9 +28,11 @@ import org.apache.poi.ss.usermodel.BaseTestXRow;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellCopyPolicy;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.XSSFITestDataProvider;
+import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.Test;
 
 /**
@@ -192,5 +195,25 @@ public final class TestXSSFRow extends BaseTestXRow {
         assertEquals("references to overwritten cells are unmodified", "Sheet1!A2", externObserverRow.getCell(0).getCellFormula());
         
         workbook.close();
+    }
+    
+    @Test
+    public void testMultipleEditWriteCycles() {
+        final XSSFWorkbook wb1 = new XSSFWorkbook();
+        final XSSFSheet sheet1 = wb1.createSheet("Sheet1");
+        final XSSFRow srcRow = sheet1.createRow(0);
+        srcRow.createCell(0).setCellValue("hello");
+        srcRow.createCell(3).setCellValue("world");
+        
+        // discard result
+        XSSFTestDataSamples.writeOutAndReadBack(wb1);
+        srcRow.createCell(1).setCellValue("cruel");
+        // discard result
+        XSSFTestDataSamples.writeOutAndReadBack(wb1);
+
+        srcRow.getCell(1).setCellValue((RichTextString) null);
+        
+        XSSFWorkbook wb3 = XSSFTestDataSamples.writeOutAndReadBack(wb1);
+        assertEquals("Cell not blank", CellType.BLANK, wb3.getSheet("Sheet1").getRow(0).getCell(1).getCellType());
     }
 }

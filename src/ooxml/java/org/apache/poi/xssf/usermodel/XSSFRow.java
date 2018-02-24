@@ -498,43 +498,21 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * @see org.apache.poi.xssf.usermodel.XSSFSheet#write(java.io.OutputStream) ()
      */
     protected void onDocumentWrite(){
-        // check if cells in the CTRow are ordered
-        boolean isOrdered = true;
-        CTCell[] cArray = _row.getCArray();
-        if (cArray.length != _cells.size()) {
-            isOrdered = false;
-        } else {
-            int i = 0;
-            for (XSSFCell cell : _cells.values()) {
-                CTCell c1 = cell.getCTCell();
-                CTCell c2 = cArray[i++];
-
-                String r1 = c1.getR();
-                String r2 = c2.getR();
-                if (!(r1==null ? r2==null : r1.equals(r2))){
-                    isOrdered = false;
-                    break;
-                }
-            }
+        CTCell[] cArray = new CTCell[_cells.size()];
+        int i = 0;
+        for (XSSFCell xssfCell : _cells.values()) {
+            cArray[i] = (CTCell) xssfCell.getCTCell().copy();
+            
+            // we have to copy and re-create the XSSFCell here because the 
+            // elements as otherwise setCArray below invalidates all the columns!
+            // see Bug 56170, XMLBeans seems to always release previous objects
+            // in the CArray, so we need to provide completely new ones here!
+            //_cells.put(entry.getKey(), new XSSFCell(this, cArray[i]));
+            xssfCell.setCTCell(cArray[i]);
+            i++;
         }
 
-        if(!isOrdered){
-            cArray = new CTCell[_cells.size()];
-            int i = 0;
-            for (XSSFCell xssfCell : _cells.values()) {
-                cArray[i] = (CTCell) xssfCell.getCTCell().copy();
-                
-                // we have to copy and re-create the XSSFCell here because the 
-                // elements as otherwise setCArray below invalidates all the columns!
-                // see Bug 56170, XMLBeans seems to always release previous objects
-                // in the CArray, so we need to provide completely new ones here!
-                //_cells.put(entry.getKey(), new XSSFCell(this, cArray[i]));
-                xssfCell.setCTCell(cArray[i]);
-                i++;
-            }
-
-            _row.setCArray(cArray);
-        }
+        _row.setCArray(cArray);
     }
 
     /**
