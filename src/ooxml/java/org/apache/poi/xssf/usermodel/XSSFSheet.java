@@ -80,6 +80,7 @@ import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.Removal;
 import org.apache.poi.util.Units;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.usermodel.XSSFPivotTable.PivotTableReferenceConfigurator;
@@ -4057,10 +4058,28 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     }
 
     /**
-     * Creates a new Table, and associates it with this Sheet
+     * Creates a new Table, and associates it with this Sheet. The table does
+     * not yet have an area defined and needs to be initialized by calling
+     * {@link XSSFTable#setArea(AreaReference)}.
+     * 
+     * @deprecated Use {@link #createTable(AreaReference))} instead
      */
+    @Deprecated
+    @Removal(version = "4.2.0")
     public XSSFTable createTable() {
-        if(! worksheet.isSetTableParts()) {
+        return createTable(null);
+    }
+    
+    /**
+     * Creates a new Table, and associates it with this Sheet.
+     *
+     * @param tableArea
+     *            the area that the table should cover, should not be {@null}
+     * @return the created table
+     * @since 4.0.0
+     */
+    public XSSFTable createTable(AreaReference tableArea) {
+        if (!worksheet.isSetTableParts()) {
             worksheet.addNewTableParts();
         }
 
@@ -4093,6 +4112,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
 
         tables.put(tbl.getId(), table);
 
+        if(tableArea != null) {
+            table.setArea(tableArea);
+        }
+        
         return table;
     }
 

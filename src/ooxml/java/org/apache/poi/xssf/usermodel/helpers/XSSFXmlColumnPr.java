@@ -17,6 +17,7 @@
 
 package org.apache.poi.xssf.usermodel.helpers;
 
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.Removal;
 import org.apache.poi.xssf.usermodel.XSSFTable;
 import org.apache.poi.xssf.usermodel.XSSFTableColumn;
@@ -47,6 +48,7 @@ public class XSSFXmlColumnPr {
      * @param ctXmlColumnPr
      *            the XML column properties xmlbean to wrap
      */
+    @Internal
     public XSSFXmlColumnPr(XSSFTableColumn tableColumn, CTXmlColumnPr ctXmlColumnPr) {
         this.table = tableColumn.getTable();
         this.tableColumn = tableColumn;
@@ -57,7 +59,7 @@ public class XSSFXmlColumnPr {
     @Removal(version="4.2")
     public XSSFXmlColumnPr(XSSFTable table, CTTableColumn ctTableColum, CTXmlColumnPr ctXmlColumnPr) {
         this.table = table;
-        this.tableColumn = table.getTableColumns().get(table.findColumnIndex(ctTableColum.getName()));
+        this.tableColumn = table.getColumns().get(table.findColumnIndex(ctTableColum.getName()));
         this.ctXmlColumnPr = ctXmlColumnPr;
     }
 

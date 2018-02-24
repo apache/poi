@@ -175,7 +175,7 @@ public class XSSFExportToXml implements Comparator<String>{
                 // Exports elements and attributes mapped with tables
                 if (table!=null) {
 
-                    List<XSSFTableColumn> tableColumns = table.getTableColumns();
+                    List<XSSFTableColumn> tableColumns = table.getColumns();
 
                     XSSFSheet sheet = table.getXSSFSheet();
 

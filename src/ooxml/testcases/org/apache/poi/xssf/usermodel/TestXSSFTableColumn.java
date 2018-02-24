@@ -35,7 +35,7 @@ public final class TestXSSFTableColumn {
                 .openSampleWorkbook("CustomXMLMappings-complex-type.xlsx")) {
             XSSFTable table = wb.getTable("Tabella2");
 
-            List<XSSFTableColumn> tableColumns = table.getTableColumns();
+            List<XSSFTableColumn> tableColumns = table.getColumns();
 
             assertEquals("ID", tableColumns.get(0).getName());
             assertEquals("Unmapped Column", tableColumns.get(1).getName());
@@ -51,7 +51,7 @@ public final class TestXSSFTableColumn {
                 .openSampleWorkbook("CustomXMLMappings-complex-type.xlsx")) {
             XSSFTable table = wb.getTable("Tabella2");
 
-            List<XSSFTableColumn> tableColumns = table.getTableColumns();
+            List<XSSFTableColumn> tableColumns = table.getColumns();
 
             assertEquals(0, tableColumns.get(0).getColumnIndex());
             assertEquals(1, tableColumns.get(1).getColumnIndex());
@@ -67,7 +67,7 @@ public final class TestXSSFTableColumn {
                 .openSampleWorkbook("CustomXMLMappings-complex-type.xlsx")) {
             XSSFTable table = wb.getTable("Tabella2");
 
-            List<XSSFTableColumn> tableColumns = table.getTableColumns();
+            List<XSSFTableColumn> tableColumns = table.getColumns();
 
             assertNotNull(tableColumns.get(0).getXmlColumnPr());
             assertNull(tableColumns.get(1).getXmlColumnPr()); // unmapped column
