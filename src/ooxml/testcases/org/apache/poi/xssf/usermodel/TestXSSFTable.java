@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
@@ -224,6 +225,14 @@ public final class TestXSSFTable {
     }
 
     @Test
+    public void getColumnCount() throws IOException {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("StructuredReferences.xlsx");
+        XSSFTable table = wb.getTable("\\_Prime.1");
+        assertEquals(3, table.getColumnCount());
+        wb.close(); 
+    }
+    
+    @Test
     public void getAndSetDisplayName() throws IOException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("StructuredReferences.xlsx");
         XSSFTable table = wb.getTable("\\_Prime.1");
@@ -291,7 +300,131 @@ public final class TestXSSFTable {
         
         IOUtils.closeQuietly(wb);
     }
+    
+    @Test
+    public void testGetDataRowCount() {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sh = wb.createSheet();
+        AreaReference tableArea = new AreaReference("B2:B6", wb.getSpreadsheetVersion());
+        XSSFTable table = sh.createTable(tableArea);
 
+        assertEquals(5, table.getRowCount()); // includes column header
+        assertEquals(4, table.getDataRowCount());
+        
+        table.setArea(new AreaReference("B2:B7", wb.getSpreadsheetVersion()));
+        
+        assertEquals(6, table.getRowCount());
+        assertEquals(5, table.getDataRowCount());
+        
+        IOUtils.closeQuietly(wb);
+    }
+    
+    @Test
+    public void testSetDataRowCount() throws IOException {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sh = wb.createSheet();
+        
+        // 1 header row + 1 data row 
+        AreaReference tableArea = new AreaReference("C10:C11", wb.getSpreadsheetVersion());
+        XSSFTable table = sh.createTable(tableArea); 
+            
+        assertEquals(2, table.getRowCount()); // includes all data and header/footer rows
+        
+        assertEquals(1, table.getHeaderRowCount());
+        assertEquals(1, table.getDataRowCount());
+        assertEquals(0, table.getTotalsRowCount());
+
+        table.setDataRowCount(5);
+        
+        assertEquals(6, table.getRowCount());
+        
+        assertEquals(1, table.getHeaderRowCount());
+        assertEquals(5, table.getDataRowCount());
+        assertEquals(0, table.getTotalsRowCount());
+        
+        assertEquals("C10:C15", table.getArea().formatAsString());
+        
+        
+        IOUtils.closeQuietly(wb);
+    }
+    
+    @Test
+    public void testSetArea() throws IOException {
+        XSSFWorkbook wb = new XSSFWorkbook();
+            XSSFSheet sh = wb.createSheet();
+            
+            AreaReference tableArea = new AreaReference("B10:D12", wb.getSpreadsheetVersion());
+            XSSFTable table = sh.createTable(tableArea);
+            
+            assertEquals(3, table.getColumnCount());
+            assertEquals(3, table.getRowCount());
+
+            // move table without resizing, shouldn't change row or column count
+            AreaReference tableArea2 = new AreaReference("B11:D13", wb.getSpreadsheetVersion());
+            table.setArea(tableArea2);
+
+            assertEquals(3, table.getColumnCount());
+            assertEquals(3, table.getRowCount());
+ 
+            // increase size by 1 row and 1 column
+            AreaReference tableArea3 = new AreaReference("B11:E14", wb.getSpreadsheetVersion());
+            table.setArea(tableArea3);
+            
+            assertEquals(4, table.getColumnCount());
+            assertEquals(4, table.getRowCount());
+
+            // reduce size by 2 rows and 2 columns
+            AreaReference tableArea4 = new AreaReference("C12:D13", wb.getSpreadsheetVersion());
+            table.setArea(tableArea4);
+
+            assertEquals(2, table.getColumnCount());
+            assertEquals(2, table.getRowCount());
+            
+            IOUtils.closeQuietly(wb);
+    }
+    
+    @Test
+    public void testCreateColumn() {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sh = wb.createSheet();
+        
+        AreaReference tableArea = new AreaReference("A2:A3", wb.getSpreadsheetVersion());
+        XSSFTable table = sh.createTable(tableArea);
+
+        assertEquals(1, table.getColumnCount());
+        assertEquals(2, table.getRowCount());
+
+        // add columns
+        table.createColumn("Column B");
+        table.createColumn("Column D");
+        table.createColumn("Column C", 2); // add between B and D
+        table.updateReferences();
+        table.updateHeaders();
+
+        assertEquals(4, table.getColumnCount());
+        assertEquals(2, table.getRowCount());
+
+        assertEquals("Column 1", table.getColumns().get(0).getName()); // generated name
+        assertEquals("Column B", table.getColumns().get(1).getName());
+        assertEquals("Column C", table.getColumns().get(2).getName());
+        assertEquals("Column D", table.getColumns().get(3).getName());
+
+        IOUtils.closeQuietly(wb);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCreateColumnInvalidIndex() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook();) {
+            XSSFSheet sh = wb.createSheet();
+            AreaReference tableArea = new AreaReference("D2:D3", wb.getSpreadsheetVersion());
+            XSSFTable table = sh.createTable(tableArea);
+
+            // add columns
+            table.createColumn("Column 2", 1);
+            table.createColumn("Column 3", 3); // out of bounds
+        }
+    }
+    
     @Test
     public void testDifferentHeaderTypes() throws IOException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("TablesWithDifferentHeaders.xlsx");
@@ -345,13 +478,13 @@ public final class TestXSSFTable {
         c5.setCellValue("CD");
         c6.setCellValue("EF");
 
-        // Setting up the CTTable
-        XSSFTable t = s.createTable();
+        // Setting up the table
+        XSSFTable t = s.createTable(new AreaReference("A1:C3", wb.getSpreadsheetVersion()));
         t.setName("TableTest");
         t.setDisplayName("CT_Table_Test");
-        t.addColumn();
-        t.addColumn();
-        t.addColumn();
+        t.createColumn("Column 1");
+        t.createColumn("Column 2");
+        t.createColumn("Column 3");
         t.setCellReferences(wb.getCreationHelper().createAreaReference(
                 new CellReference(c1), new CellReference(c6)
         ));

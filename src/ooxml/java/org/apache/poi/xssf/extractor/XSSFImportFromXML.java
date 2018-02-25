@@ -47,6 +47,7 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFMap;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFTable;
+import org.apache.poi.xssf.usermodel.XSSFTableColumn;
 import org.apache.poi.xssf.usermodel.helpers.XSSFSingleXmlCell;
 import org.apache.poi.xssf.usermodel.helpers.XSSFXmlColumnPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STXmlDataType;
@@ -124,25 +125,32 @@ public class XSSFImportFromXML {
 
             String commonXPath = table.getCommonXpath();
             NodeList result = (NodeList) xpath.evaluate(commonXPath, doc, XPathConstants.NODESET);
-            int rowOffset = table.getStartCellReference().getRow() + 1;// the first row contains the table header
-            int columnOffset = table.getStartCellReference().getCol() - 1;
+            int rowOffset = table.getStartCellReference().getRow() + table.getHeaderRowCount();
+            int columnOffset = table.getStartCellReference().getCol();
+
+            table.setDataRowCount(result.getLength());
 
             for (int i = 0; i < result.getLength(); i++) {
 
                 // TODO: implement support for denormalized XMLs (see
                 // OpenOffice part 4: chapter 3.5.1.7)
 
-            	Node singleNode = result.item(i).cloneNode(true);
-                for (XSSFXmlColumnPr xmlColumnPr : table.getXmlColumnPrs()) {
+                Node singleNode = result.item(i).cloneNode(true);
 
-                    int localColumnId = (int) xmlColumnPr.getId();
+                for (XSSFTableColumn tableColum : table.getColumns()) {
+
+                    XSSFXmlColumnPr xmlColumnPr = tableColum.getXmlColumnPr();
+                    if(xmlColumnPr == null) {
+                        continue;
+                    }
+
                     int rowId = rowOffset + i;
-                    int columnId = columnOffset + localColumnId;
+                    int columnId = columnOffset + tableColum.getColumnIndex();
                     String localXPath = xmlColumnPr.getLocalXPath();
-                    localXPath = localXPath.substring(localXPath.substring(1).indexOf('/') + 2);
+                    localXPath = localXPath.substring(localXPath.indexOf('/', 1) + 1);
 
                     // TODO: convert the data to the cell format
-					String value = (String) xpath.evaluate(localXPath, singleNode, XPathConstants.STRING);
+                    String value = (String) xpath.evaluate(localXPath, singleNode, XPathConstants.STRING);
                     logger.log(POILogger.DEBUG, "Extracting with xpath " + localXPath + " : value is '" + value + "'");
                     XSSFRow row = table.getXSSFSheet().getRow(rowId);
                     if (row == null) {
@@ -160,6 +168,8 @@ public class XSSFImportFromXML {
             }
         }
     }
+
+    
 
     private static enum DataType {
         BOOLEAN(STXmlDataType.BOOLEAN), //

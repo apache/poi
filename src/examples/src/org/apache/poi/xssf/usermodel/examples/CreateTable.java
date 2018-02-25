@@ -75,9 +75,9 @@ public class CreateTable {
                 }
             }
             // Create the columns
-            table.addColumn();
-            table.addColumn();
-            table.addColumn();
+            table.createColumn("Column 1");
+            table.createColumn("Column 2");
+            table.createColumn("Column 3");
 
             // Set which area the table should be placed in
             AreaReference reference = wb.getCreationHelper().createAreaReference(
