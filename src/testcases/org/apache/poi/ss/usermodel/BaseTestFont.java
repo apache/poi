@@ -115,7 +115,7 @@ public abstract class BaseTestFont {
         s1 = wb2.getSheetAt(0);
 
         assertEquals(num0 + 1, wb2.getNumberOfFontsAsInt());
-        int idx = s1.getRow(0).getCell(0).getCellStyle().getFontIntIndex();
+        int idx = s1.getRow(0).getCell(0).getCellStyle().getFontIndexAsInt();
         Font fnt = wb2.getFontAt(idx);
         assertNotNull(fnt);
         assertEquals(IndexedColors.YELLOW.getIndex(), fnt.getColor());

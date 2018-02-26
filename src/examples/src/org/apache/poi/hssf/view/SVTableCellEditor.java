@@ -138,7 +138,7 @@ public class SVTableCellEditor extends AbstractCellEditor implements TableCellEd
         HSSFCell cell = (HSSFCell) value;
         if (cell != null) {
             HSSFCellStyle style = cell.getCellStyle();
-            HSSFFont f = wb.getFontAt(style.getFontIntIndex());
+            HSSFFont f = wb.getFontAt(style.getFontIndexAsInt());
             boolean isbold = f.getBold();
             boolean isitalics = f.getItalic();
 

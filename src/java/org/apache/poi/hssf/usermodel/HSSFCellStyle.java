@@ -198,7 +198,7 @@ public final class HSSFCellStyle implements CellStyle {
      * @since 4.0.0
      */
     @Override
-    public int getFontIntIndex()
+    public int getFontIndexAsInt()
     {
         return _format.getFontIndex();
     }
@@ -206,11 +206,11 @@ public final class HSSFCellStyle implements CellStyle {
     /**
      * gets the font for this style
      * @param parentWorkbook The HSSFWorkbook that this style belongs to
-     * @see org.apache.poi.hssf.usermodel.HSSFCellStyle#getFontIntIndex()
+     * @see org.apache.poi.hssf.usermodel.HSSFCellStyle#getFontIndexAsInt()
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getFontAt(int)
      */
     public HSSFFont getFont(org.apache.poi.ss.usermodel.Workbook parentWorkbook) {
-        return ((HSSFWorkbook) parentWorkbook).getFontAt(getFontIntIndex());
+        return ((HSSFWorkbook) parentWorkbook).getFontAt(getFontIndexAsInt());
     }
 
     /**
@@ -849,7 +849,7 @@ public final class HSSFCellStyle implements CellStyle {
             FontRecord fr = _workbook.createNewFont();
             fr.cloneStyleFrom(
                     source._workbook.getFontRecordAt(
-                            source.getFontIntIndex()
+                            source.getFontIndexAsInt()
                     )
             );
 

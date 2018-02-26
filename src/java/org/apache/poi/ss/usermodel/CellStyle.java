@@ -56,7 +56,7 @@ public interface CellStyle {
     /**
      * gets the index of the font for this style
      * @see Workbook#getFontAt(short)
-     * @deprecated use <code>getFontIntIndex()</code> instead
+     * @deprecated use <code>getFontIndexAsInt()</code> instead
      */
     @Removal(version = "4.2")
     short getFontIndex();
@@ -66,7 +66,7 @@ public interface CellStyle {
      * @see Workbook#getFontAt(int)
      * @since 4.0.0
      */
-    int getFontIntIndex();
+    int getFontIndexAsInt();
 
     /**
      * set the cell's using this style to be hidden
