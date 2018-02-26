@@ -148,7 +148,7 @@ public class SVTableCellRenderer extends JLabel
 
         if (c != null) {
           HSSFCellStyle s = c.getCellStyle();
-          HSSFFont f = wb.getFontAt(s.getFontIntIndex());
+          HSSFFont f = wb.getFontAt(s.getFontIndexAsInt());
           setFont(SVTableUtils.makeFont(f));
 
           if (s.getFillPattern() == FillPatternType.SOLID_FOREGROUND) {

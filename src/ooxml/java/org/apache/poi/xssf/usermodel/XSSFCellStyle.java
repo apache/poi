@@ -482,7 +482,7 @@ public class XSSFCellStyle implements CellStyle {
      * @since 4.0.0
      */
     @Override
-    public int getFontIntIndex() {
+    public int getFontIndexAsInt() {
         return getFontId();
     }
 

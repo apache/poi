@@ -144,7 +144,7 @@ public class SheetUtil {
         if (cellType == CellType.FORMULA)
             cellType = cell.getCachedFormulaResultType();
 
-        Font font = wb.getFontAt(style.getFontIntIndex());
+        Font font = wb.getFontAt(style.getFontIndexAsInt());
 
         double width = -1;
         if (cellType == CellType.STRING) {
