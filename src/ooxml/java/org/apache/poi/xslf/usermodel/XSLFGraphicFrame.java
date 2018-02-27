@@ -189,7 +189,7 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
                 XSLFChart srcChart = (XSLFChart) src.getRelationById(id);
                 XSLFChart chartCopy = slide.getSlideShow().createChart(slide);
                 chartCopy.importContent(srcChart);
-                chartCopy.saveWorkbook(srcChart.getWorkbook());
+                chartCopy.setWorkbook(srcChart.getWorkbook());
                 c.setAttributeText(idQualifiedName, slide.getRelationId(chartCopy));
             } catch (InvalidFormatException e) {
                 throw new POIXMLException(e);
