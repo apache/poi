@@ -31,5 +31,7 @@ public interface XDDFDataSource<T> {
 
     boolean isNumeric();
 
+    int getColIndex();
+
     String getDataRangeReference();
 }
