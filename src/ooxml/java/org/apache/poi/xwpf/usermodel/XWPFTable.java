@@ -278,7 +278,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
     public void setWidth(int width) {
         CTTblPr tblPr = getTblPr();
         CTTblWidth tblWidth = tblPr.isSetTblW() ? tblPr.getTblW() : tblPr.addNewTblW();
-        tblWidth.setW(new BigInteger("" + width));
+        tblWidth.setW(new BigInteger(Integer.toString(width)));
     }
 
     /**
