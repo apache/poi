@@ -21,6 +21,8 @@ package org.apache.poi.xddf.usermodel.chart;
 
 import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -41,11 +43,14 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.NotOfficeXmlFileException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.TempFile;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
+import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -67,6 +72,9 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTSurface;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTValAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.ChartSpaceDocument;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumn;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumns;
 
 @Beta
 public abstract class XDDFChart extends POIXMLDocumentPart {
@@ -77,6 +85,8 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     private XSSFWorkbook workbook;
 
     private int chartIndex = 0;
+
+    private POIXMLDocumentPart documentPart = null;
 
     protected List<XDDFChartAxis> axes = new ArrayList<>();
 
@@ -412,8 +422,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
      * @since POI 4.0.0
      */
     public PackageRelationship createRelationshipInChart(POIXMLRelation chartRelation, POIXMLFactory chartFactory, int chartIndex) {
-        POIXMLDocumentPart documentPart = createRelationship(chartRelation, chartFactory, chartIndex, true).getDocumentPart();
-        documentPart.setCommited(true);
+        documentPart = createRelationship(chartRelation, chartFactory, chartIndex, true).getDocumentPart();
         return this.addRelation(null, chartRelation, documentPart).getRelationship();
     }
 
@@ -442,7 +451,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
      * @since POI 4.0.0
      */
     public void saveWorkbook(XSSFWorkbook workbook) throws IOException, InvalidFormatException {
-        PackagePart worksheetPart = getWorksheetPart(true);
+        PackagePart worksheetPart = getWorksheetPart();
         if (worksheetPart == null) {
             POIXMLRelation chartRelation = getChartRelation();
             POIXMLRelation chartWorkbookRelation = getChartWorkbookRelation();
@@ -454,6 +463,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
             }
         }
         try (OutputStream xlsOut = worksheetPart.getOutputStream()) {
+            setWorksheetPartCommitted();
             workbook.write(xlsOut);
         }
     }
@@ -490,9 +500,43 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     protected void fillSheet(XSSFSheet sheet, XDDFDataSource<?> categoryData, XDDFNumericalDataSource<?> valuesData) {
         int numOfPoints = categoryData.getPointCount();
         for (int i = 0; i < numOfPoints; i++) {
-            XSSFRow row = sheet.createRow(i + 1); // first row is for title
-            row.createCell(0).setCellValue(categoryData.getPointAt(i).toString());
-            row.createCell(1).setCellValue(valuesData.getPointAt(i).doubleValue());
+            XSSFRow row = this.getRow(sheet, i + 1); // first row is for title
+            this.getCell(row, categoryData.getColIndex()).setCellValue(categoryData.getPointAt(i).toString());
+            this.getCell(row, valuesData.getColIndex()).setCellValue(valuesData.getPointAt(i).doubleValue());
+        }
+    }
+
+    /**
+     * this method return row on given index
+     * if row is null then create new row
+     *
+     * @param sheet current sheet object
+     * @param index index of current row
+     * @return this method return sheet row on given index
+     * @since POI 4.0.0
+     */
+    private XSSFRow getRow(XSSFSheet sheet,int index){
+        if (sheet.getRow(index) != null) {
+            return sheet.getRow(index);
+        } else {
+            return sheet.createRow(index);
+        }
+    }
+
+    /**
+     * this method return cell on given index
+     * if cell is null then create new cell
+     *
+     * @param row current row object
+     * @param index index of current cell
+     * @return this method return sheet cell on given index
+     * @since POI 4.0.0
+     */
+    private XSSFCell getCell(XSSFRow row,int index){
+        if (row.getCell(index) != null) {
+            return row.getCell(index);
+        } else {
+            return row.createCell(index);
         }
     }
 
@@ -537,8 +581,31 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
      */
     public CellReference setSheetTitle(String title) {
         XSSFSheet sheet = getSheet();
-        sheet.createRow(0).createCell(1).setCellValue(title);
+        XSSFRow row = this.getRow(sheet, 0);
+        XSSFCell cell = this.getCell(row, 1);
+        cell.setCellValue(title);
+        this.updateSheetTable(sheet.getTables().get(0).getCTTable(), title, 1);
         return new CellReference(sheet.getSheetName(), 0, 1, true, true);
+    }
+
+    /**
+     * this method update column header of sheet into table
+     *
+     * @param ctTable xssf table object
+     * @param title title of column
+     * @param index index of column
+     */
+    private void updateSheetTable(CTTable ctTable, String title, int index) {
+        CTTableColumns tableColumnList = ctTable.getTableColumns();
+        CTTableColumn column = null;
+        if(tableColumnList.getCount() >= index) {
+            column = tableColumnList.getTableColumnArray(index);
+        }
+        else {
+            column =  tableColumnList.addNewTableColumn();
+            column.setId(index);
+        }
+        column.setName(title);
     }
 
     /**
@@ -567,17 +634,6 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     }
 
     /**
-     * default method for worksheet part
-     *
-     * @return return embedded worksheet part
-     * @throws InvalidFormatException
-     * @since POI 4.0.0
-     */
-    private PackagePart getWorksheetPart() throws InvalidFormatException {
-        return getWorksheetPart(false);
-    }
-
-    /**
      * this method is used to get worksheet part
      * if call is from saveworkbook method then check isCommitted
      * isCommitted variable shows that we are writing xssfworkbook object into output stream of embedded part
@@ -587,16 +643,22 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
      * @throws InvalidFormatException
      * @since POI 4.0.0
      */
-    private PackagePart getWorksheetPart(boolean isCommitted) throws InvalidFormatException {
+    private PackagePart getWorksheetPart() throws InvalidFormatException {
         for (RelationPart part : getRelationParts()) {
             if (POIXMLDocument.PACK_OBJECT_REL_TYPE.equals(part.getRelationship().getRelationshipType())) {
-                if (isCommitted) {
-                    part.getDocumentPart().setCommited(true);
-                }
                 return getTargetPart(part.getRelationship());
             }
         }
         return null;
+    }
+
+    private void setWorksheetPartCommitted() throws InvalidFormatException {
+        for (RelationPart part : getRelationParts()) {
+            if (POIXMLDocument.PACK_OBJECT_REL_TYPE.equals(part.getRelationship().getRelationshipType())) {
+                part.getDocumentPart().setCommited(true);
+                break;
+            }
+        }
     }
 
     /**
@@ -631,7 +693,19 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
      * @since POI 4.0.0
      */
     public void setWorkbook(XSSFWorkbook workbook) {
-        this.workbook = workbook;
+        File file;
+        FileOutputStream fos;
+        try {
+            file = TempFile.createTempFile("TempEmbedded",".xlsx");
+            fos = new FileOutputStream(file);
+            workbook.write(fos);
+            fos.close();
+            this.workbook = new XSSFWorkbook(file);
+        } catch (IOException e) {
+           
+        } catch (InvalidFormatException e) {
+
+        }
     }
 
     /**
