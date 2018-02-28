@@ -71,7 +71,7 @@ public class BarChartExampleDOCX {
 
             // set model
             String ln;
-            while((ln = modelReader.readLine()) != null){
+            while((ln = modelReader.readLine()) != null) {
                 String[] vals = ln.split("\\s+");
                 listCategories.add(vals[0]);
                 listValues.add(Double.valueOf(vals[1]));

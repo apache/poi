@@ -2046,46 +2046,46 @@ under the License.
     </target>
 
     <target name="rat-check" depends="init" description="Runs the Apache Creadur Rat check against the source code, to spot any files which are missing the correct license headers">
-       <mkdir dir="${rat.reportdir}" />
+        <mkdir dir="${rat.reportdir}" />
 
-       <typedef resource="org/apache/rat/anttasks/antlib.xml"
+        <typedef resource="org/apache/rat/anttasks/antlib.xml"
              uri="antlib:org.apache.rat.anttasks"
              classpath="${rat.jar}" />
-       <rat:report xmlns:rat="antlib:org.apache.rat.anttasks" reportFile="${rat.report}">
-           <fileset dir="src/">
-              <exclude name="documentation/*.txt" />
-              <exclude name="documentation/content/xdocs/dtd/" />
-              <exclude name="documentation/content/xdocs/entity/" />
-              <exclude name="scratchpad/testcases/dummy.txt" />
-              <exclude name="contrib/testcases/dummy.txt" />
-              <exclude name="examples/lib/dummy.txt" />
-              <exclude name="resources/ooxml/org/apache/poi/xslf/usermodel/notesMaster.xml" />
-              <exclude name="resources/ooxml/org/apache/poi/xslf/usermodel/empty.pptx" />
-              <exclude name="resources/main/org/apache/poi/sl/draw/geom/presetShapeDefinitions.xml" />
-                 <exclude name="resources/ooxml/org/apache/poi/xssf/usermodel/presetTableStyles.xml" />
-              <exclude name="ooxml/resources/org/apache/poi/xdgf/visio.xsd" />
-              <exclude name="examples/src/org/apache/poi/xslf/usermodel/*-chart-data.txt" />
-              <exclude name="**/*.iml" />
-              <exclude name="documentation/resources/images/pb-poi.cdr"/>
-                 <exclude name="scratchpad/models/poi-hdf.zargo"/>
-           </fileset>
-       </rat:report>
+        <rat:report xmlns:rat="antlib:org.apache.rat.anttasks" reportFile="${rat.report}">
+            <fileset dir="src/">
+                <exclude name="documentation/*.txt" />
+                <exclude name="documentation/content/xdocs/dtd/" />
+                <exclude name="documentation/content/xdocs/entity/" />
+                <exclude name="scratchpad/testcases/dummy.txt" />
+                <exclude name="contrib/testcases/dummy.txt" />
+                <exclude name="examples/lib/dummy.txt" />
+                <exclude name="examples/src/org/apache/poi/**/*-chart-data.txt" />
+                <exclude name="resources/ooxml/org/apache/poi/xslf/usermodel/notesMaster.xml" />
+                <exclude name="resources/ooxml/org/apache/poi/xslf/usermodel/empty.pptx" />
+                <exclude name="resources/main/org/apache/poi/sl/draw/geom/presetShapeDefinitions.xml" />
+                <exclude name="resources/ooxml/org/apache/poi/xssf/usermodel/presetTableStyles.xml" />
+                <exclude name="ooxml/resources/org/apache/poi/xdgf/visio.xsd" />
+                <exclude name="**/*.iml" />
+                <exclude name="documentation/resources/images/pb-poi.cdr"/>
+                <exclude name="scratchpad/models/poi-hdf.zargo"/>
+            </fileset>
+        </rat:report>
 
-       <!-- remove clutter to compact build output -->
-       <!-- replaceregexp doesn't work within loadfile ... -->
-       <replaceregexp file="${rat.report}" match="\s+Printing headers for files without AL header.++" replace="" flags="s"/>
+        <!-- remove clutter to compact build output -->
+        <!-- replaceregexp doesn't work within loadfile ... -->
+        <replaceregexp file="${rat.report}" match="\s+Printing headers for files without AL header.++" replace="" flags="s"/>
 
-       <loadfile property="rat.reportcontent" srcFile="${rat.report}">
+        <loadfile property="rat.reportcontent" srcFile="${rat.report}">
             <filterchain>
                 <linecontainsregexp negate="true">
                     <regexp pattern="^\s+(AL|B|N)\s+"/>
                 </linecontainsregexp>
             </filterchain>
-       </loadfile>
-       <echo>${rat.reportcontent}</echo>
+        </loadfile>
+        <echo>${rat.reportcontent}</echo>
 
-       <!-- fail the build if at least one note is in the report -->
-       <fail><condition><matches pattern="[1-9][0-9]* Unknown Licens" string="${rat.reportcontent}"/></condition></fail>
+        <!-- fail the build if at least one note is in the report -->
+        <fail><condition><matches pattern="[1-9][0-9]* Unknown Licens" string="${rat.reportcontent}"/></condition></fail>
     </target>
 
     <!-- Runs the Forbiddens APIs checker against the source code, to -->
