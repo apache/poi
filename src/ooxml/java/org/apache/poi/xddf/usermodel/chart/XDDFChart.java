@@ -634,7 +634,6 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
      * if call is from saveworkbook method then check isCommitted
      * isCommitted variable shows that we are writing xssfworkbook object into output stream of embedded part
      *
-     * @param isCommitted if it's true then it shows that we are writing xssfworkbook object into output stream of embedded part
      * @return returns the packagepart of embedded file
      * @throws InvalidFormatException
      * @since POI 4.0.0
