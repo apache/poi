@@ -21,8 +21,6 @@ package org.apache.poi.xddf.usermodel.chart;
 
 import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -43,12 +41,10 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.NotOfficeXmlFileException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.TempFile;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -693,19 +689,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
      * @since POI 4.0.0
      */
     public void setWorkbook(XSSFWorkbook workbook) {
-        File file;
-        FileOutputStream fos;
-        try {
-            file = TempFile.createTempFile("TempEmbedded",".xlsx");
-            fos = new FileOutputStream(file);
-            workbook.write(fos);
-            fos.close();
-            this.workbook = new XSSFWorkbook(file);
-        } catch (IOException e) {
-           
-        } catch (InvalidFormatException e) {
-
-        }
+        this.workbook = workbook;
     }
 
     /**
