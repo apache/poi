@@ -1,0 +1,40 @@
+<!-- Copyright 2004 The Apache Software Foundation
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<xs:schema
+   xmlns:xs="http://www.w3.org/2001/XMLSchema"
+   xmlns:i="http://www.bea.com/2003/01/xmlbean/xsdownload"
+   targetNamespace="http://www.bea.com/2003/01/xmlbean/xsdownload"
+   elementFormDefault="qualified">
+
+  <xs:element name="downloaded-schemas">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="entry" type="i:downloaded-schema-entry"/>
+      </xs:choice>
+    <xs:attribute name="defaultDirectory" type="xs:token"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name="downloaded-schema-entry">
+    <xs:sequence>
+      <xs:element name="filename" type="xs:token"/>
+      <xs:element name="sha1" type="xs:token"/>
+      <xs:element name="schemaLocation" type="xs:anyURI" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="namespace" type="xs:anyURI" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>
+

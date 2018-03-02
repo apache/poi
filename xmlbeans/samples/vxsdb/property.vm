@@ -1,0 +1,46 @@
+## Copyright 2002-2004 Apache Software Foundation
+##
+## Licensed under the Apache License, Version 2.0 (the "License");
+## you may not use this file except in compliance with the License.
+## You may obtain a copy of the License at
+##
+##     http://www.apache.org/licenses/LICENSE-2.0
+##
+## Unless required by applicable law or agreed to in writing, software
+## distributed under the License is distributed on an "AS IS" BASIS,
+## WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+## See the License for the specific language governing permissions and
+## limitations under the License.
+##
+## Property template used by the sample XmlBeans Velocity integration.
+## This template expoits the SchemaProperty XmlBeans object to determine
+## if the column is a data type or foreign key
+#if($property.type.simpleType)
+
+        <!-- $property.type -->
+        <column name="$property.name.localPart.toUpperCase()" type='#parse("type.vm")' />
+#elseif( $property.maxOccurs.intValue() == 1 && $property.minOccurs.intValue() == 0 )
+
+        <!-- $property.type -->
+        <column name="FK_$property.name.localPart.toUpperCase()" type="INTEGER" />
+        <foreign-key foreignTable='$property.name.localPart.toUpperCase()'>
+            <reference local='FK_$property.name.localPart.toUpperCase()' foreign="PK"/>
+        </foreign-key>
+#elseif( $property.maxOccurs.intValue() == 1 )
+
+        <!-- $property.type -->
+        <column name='FK_$property.name.localPart.toUpperCase()' required="true" type="INTEGER" />
+        <foreign-key foreignTable='$property.name.localPart.toUpperCase()'>
+            <reference local='FK_$property.name.localPart.toUpperCase()' foreign="PK"/>
+        </foreign-key>
+#elseif( $property.maxOccurs.intValue() > 1 || "$!property.maxOccurs" == "")## Greater than one or unbounded
+
+        <!-- Foreign key imported from table named $property.name.localPart.toUpperCase() -->
+#else
+
+        <!-- This is a debug line that provides information for properties -->
+        <!-- that are not handled in the property.vm template logic. -->
+        <!-- SimpleType:$property.type.simpleType -->
+        <!-- maxOccurs:"$property.maxOccurs" -->
+        <!-- column name='$property.name.localPart.toUpperCase()' type=""/ -->
+#end

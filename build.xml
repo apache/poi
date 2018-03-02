@@ -164,7 +164,15 @@ under the License.
 
     <property name="main.hamcrest.jar" location="${main.lib}/hamcrest-core-1.3.jar"/>
     <property name="main.hamcrest.url" value="${repository.m2}/maven2/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar"/>
+    <property name="main.mockito.jar" location="${main.lib}/mockito-core-2.13.0.jar"/>
+    <property name="main.mockito.url" value="${repository.m2}/maven2/org/mockito/mockito-core/2.13.0/mockito-core-2.13.0.jar"/>
+    <property name="main.byte-buddy.jar" location="${main.lib}/byte-buddy-1.7.9.jar"/>
+    <property name="main.byte-buddy.url" value="${repository.m2}/maven2/net/bytebuddy/byte-buddy/1.7.9/byte-buddy-1.7.9.jar"/>
+    <property name="main.byte-buddy-agent.jar" location="${main.lib}/byte-buddy-agent-1.7.9.jar"/>
+    <property name="main.byte-buddy-agent.url" value="${repository.m2}/maven2/net/bytebuddy/byte-buddy-agent/1.7.9/byte-buddy-agent-1.7.9.jar"/>
     <property name="main.ant.jar" location="${main.lib}/ant-1.10.1.jar"/>
+    <property name="main.objenesis.jar" location="${main.lib}/objenesis-2.6.jar"/>
+    <property name="main.objenesis.url" value="${repository.m2}/maven2/org/objenesis/objenesis/2.6/objenesis-2.6.jar"/>
     <property name="main.ant.url" value="${repository.m2}/maven2/org/apache/ant/ant/1.10.1/ant-1.10.1.jar"/>
     <property name="main.antlauncher.jar" location="${main.lib}/ant-launcher-1.10.1.jar"/>
     <property name="main.antlauncher.url" value="${repository.m2}/maven2/org/apache/ant/ant-launcher/1.10.1/ant-launcher-1.10.1.jar"/>
@@ -178,10 +186,10 @@ under the License.
     <!-- xml signature libs -->
     <property name="dsig.xmlsec.jar" location="${compile.lib}/xmlsec-2.1.0.jar"/>
     <property name="dsig.xmlsec.url" value="${repository.m2}/maven2/org/apache/santuario/xmlsec/2.1.0/xmlsec-2.1.0.jar"/>
-    <property name="dsig.bouncycastle-prov.jar" location="${compile.lib}/bcprov-ext-jdk15on-1.58.jar"/>
-    <property name="dsig.bouncycastle-prov.url" value="${repository.m2}/maven2/org/bouncycastle/bcprov-ext-jdk15on/1.58/bcprov-ext-jdk15on-1.58.jar"/>
-    <property name="dsig.bouncycastle-pkix.jar" location="${compile.lib}/bcpkix-jdk15on-1.58.jar"/>
-    <property name="dsig.bouncycastle-pkix.url" value="${repository.m2}/maven2/org/bouncycastle/bcpkix-jdk15on/1.58/bcpkix-jdk15on-1.58.jar"/>
+    <property name="dsig.bouncycastle-prov.jar" location="${compile.lib}/bcprov-ext-jdk15on-1.59.jar"/>
+    <property name="dsig.bouncycastle-prov.url" value="${repository.m2}/maven2/org/bouncycastle/bcprov-ext-jdk15on/1.59/bcprov-ext-jdk15on-1.59.jar"/>
+    <property name="dsig.bouncycastle-pkix.jar" location="${compile.lib}/bcpkix-jdk15on-1.59.jar"/>
+    <property name="dsig.bouncycastle-pkix.url" value="${repository.m2}/maven2/org/bouncycastle/bcpkix-jdk15on/1.59/bcpkix-jdk15on-1.59.jar"/>
     <property name="dsig.sl4j-api.jar" location="${compile.lib}/slf4j-api-1.7.25.jar"/>
     <property name="dsig.sl4j-api.url" value="${repository.m2}/maven2/org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar"/>
 
@@ -253,10 +261,10 @@ under the License.
     <property name="halt.on.test.failure" value="true"/>
 
     <!-- helper jars for pgp signing, building and nexus staging -->
-    <property name="dist.bouncycastle-prov.jar" location="${compile.lib}/bcprov-ext-jdk15on-1.58.jar"/>
-    <property name="dist.bouncycastle-prov.url" value="${repository.m2}/maven2/org/bouncycastle/bcprov-ext-jdk15on/1.58/bcprov-ext-jdk15on-1.58.jar"/>
-    <property name="dist.bouncycastle-bcpg.jar" location="${compile.lib}/bcpg-jdk15on-1.58.jar"/>
-    <property name="dist.bouncycastle-bcpg.url" value="${repository.m2}/maven2/org/bouncycastle/bcpg-jdk15on/1.58/bcpg-jdk15on-1.58.jar"/>
+    <property name="dist.bouncycastle-prov.jar" location="${compile.lib}/bcprov-ext-jdk15on-1.59.jar"/>
+    <property name="dist.bouncycastle-prov.url" value="${repository.m2}/maven2/org/bouncycastle/bcprov-ext-jdk15on/1.59/bcprov-ext-jdk15on-1.59.jar"/>
+    <property name="dist.bouncycastle-bcpg.jar" location="${compile.lib}/bcpg-jdk15on-1.59.jar"/>
+    <property name="dist.bouncycastle-bcpg.url" value="${repository.m2}/maven2/org/bouncycastle/bcpg-jdk15on/1.59/bcpg-jdk15on-1.59.jar"/>
     <property name="dist.commons-openpgp.jar" location="${compile.lib}/commons-openpgp-1.0-SNAPSHOT.jar"/>
     <property name="dist.commons-openpgp.url" value="https://repository.apache.org/snapshots/org/apache/commons/commons-openpgp/1.0-SNAPSHOT/commons-openpgp-1.0-20140717.171036-11.jar"/>
     <property name="dist.nexus-staging.jar" location="${compile.lib}/nexus-staging-ant-tasks-1.6.3-uber.jar"/>
@@ -317,6 +325,10 @@ under the License.
         <pathelement location="${main.jmh.jar}"/>
         <pathelement location="${main.jmhAnnotation.jar}"/>
         <pathelement location="${main.hamcrest.jar}"/>
+        <pathelement location="${main.mockito.jar}"/>
+        <pathelement location="${main.byte-buddy.jar}"/>
+        <pathelement location="${main.byte-buddy-agent.jar}"/>
+        <pathelement location="${main.objenesis.jar}"/>
     </path>
 
     <path id="scratchpad.classpath">
@@ -361,6 +373,7 @@ under the License.
 
     <path id="test.ooxml.classpath">
         <path refid="ooxml.classpath"/>
+        <path refid="ooxml.xmlsec.classpath"/>
         <path refid="test.jar.classpath"/>
         <pathelement location="${ooxml.output.dir}"/>
         <pathelement location="${ooxml.output.test.dir}"/>
@@ -601,12 +614,10 @@ under the License.
                 <include name="xmlsec-2.0.1.jar"/>
                 <include name="xmlsec-2.0.5.jar"/>
                 <include name="xmlsec-2.0.6.jar"/>
-                <include name="bcprov-ext-jdk15on-1.51.jar"/>
-                <include name="bcprov-ext-jdk15on-1.53.jar"/>
-                <include name="bcprov-ext-jdk15on-1.54.jar"/>
-                <include name="bcpkix-jdk15on-1.51.jar"/>
-                <include name="bcpkix-jdk15on-1.53.jar"/>
-                <include name="bcpkix-jdk15on-1.54.jar"/>
+                <include name="bc*jdk15on-1.51.jar"/>
+                <include name="bc*jdk15on-1.53.jar"/>
+                <include name="bc*jdk15on-1.54.jar"/>
+                <include name="bc*jdk15on-1.58.jar"/>
                 <include name="slf4j-api-1.7.7.jar"/>
                 <include name="slf4j-api-1.7.12.jar"/>
             </fileset>
@@ -622,6 +633,10 @@ under the License.
                     <available file="${main.jmh.jar}"/>
                     <available file="${main.jmhAnnotation.jar}"/>
                     <available file="${main.hamcrest.jar}"/>
+                    <available file="${main.mockito.jar}"/>
+                    <available file="${main.byte-buddy.jar}"/>
+                    <available file="${main.byte-buddy-agent.jar}"/>
+                    <available file="${main.objenesis.jar}"/>
                     <available file="${main.ant.jar}"/>
                     <available file="${main.antlauncher.jar}"/>
                     <available file="${asm.jar}"/>
@@ -653,6 +668,10 @@ under the License.
         <downloadfile src="${main.jmh.url}" dest="${main.jmh.jar}"/>
         <downloadfile src="${main.jmhAnnotation.url}" dest="${main.jmhAnnotation.jar}"/>
         <downloadfile src="${main.hamcrest.url}" dest="${main.hamcrest.jar}"/>
+        <downloadfile src="${main.mockito.url}" dest="${main.mockito.jar}"/>
+        <downloadfile src="${main.byte-buddy.url}" dest="${main.byte-buddy.jar}"/>
+        <downloadfile src="${main.byte-buddy-agent.url}" dest="${main.byte-buddy-agent.jar}"/>
+        <downloadfile src="${main.objenesis.url}" dest="${main.objenesis.jar}"/>
         <downloadfile src="${main.ant.url}" dest="${main.ant.jar}"/>
         <downloadfile src="${main.antlauncher.url}" dest="${main.antlauncher.jar}"/>
         <downloadfile src="${asm.url}" dest="${asm.jar}"/>
@@ -943,8 +962,6 @@ under the License.
 
     <target name="generate-geometry" depends="fetch-ooxml-xsds" if="ignoreme">
         <delete dir="${geometry.output.tmpdir}"/>
-        <!-- taskdef xjc -->
-        <!-- "D:\Program Files\Java\jdk1.6.0_45\bin\xjc" -p org.apache.poi.sl.model.geom.binding -readOnly -Xlocator -mark-generated ooxml-schemas\dml-shapeGeometry.xsd -->
         <unzip src="${ooxml.lib}/${ooxml.xsds.izip.1}" dest="${geometry.output.tmpdir}"/>
         <exec executable="${env.JAVA_HOME}/bin/xjc">
             <arg value="-p"/>
@@ -952,8 +969,8 @@ under the License.
             <arg value="-b"/>
             <arg file="src/types/definitions/dml-shapeGeometry.xjb"/>
             <arg value="-readOnly"/>
-            <arg value="-npa"/>
             <arg value="-no-header"/>
+            <!--arg value="-npa"/ -->
             <!--arg value="-mark-generated"/ -->
             <!--arg value="-Xlocator"/ -->
             <arg file="${geometry.output.tmpdir}/dml-shapeGeometry.xsd"/>
@@ -969,6 +986,9 @@ under the License.
             <fileset dir="${geometry.output.tmpdir}" includes="**/*.java"/>
              <filterchain>
                  <concatfilter prepend="${geometry.output.tmpdir}/apache-license.txt"/>
+         		 <!-- fix javadocs for java 8 doclint -->
+             	 <replaceregex pattern="&amp;lt;(.*)>" replace="&amp;lt;\1&amp;gt;" flags="g"/>
+             	 <fixcrlf eol="lf"/>
              </filterchain>
         </copy>
     </target>
@@ -2023,46 +2043,46 @@ under the License.
     </target>
 
     <target name="rat-check" depends="init" description="Runs the Apache Creadur Rat check against the source code, to spot any files which are missing the correct license headers">
-       <mkdir dir="${rat.reportdir}" />
+        <mkdir dir="${rat.reportdir}" />
 
-       <typedef resource="org/apache/rat/anttasks/antlib.xml"
+        <typedef resource="org/apache/rat/anttasks/antlib.xml"
              uri="antlib:org.apache.rat.anttasks"
              classpath="${rat.jar}" />
-       <rat:report xmlns:rat="antlib:org.apache.rat.anttasks" reportFile="${rat.report}">
-           <fileset dir="src/">
-              <exclude name="documentation/*.txt" />
-              <exclude name="documentation/content/xdocs/dtd/" />
-              <exclude name="documentation/content/xdocs/entity/" />
-              <exclude name="scratchpad/testcases/dummy.txt" />
-              <exclude name="contrib/testcases/dummy.txt" />
-              <exclude name="examples/lib/dummy.txt" />
-              <exclude name="resources/ooxml/org/apache/poi/xslf/usermodel/notesMaster.xml" />
-              <exclude name="resources/ooxml/org/apache/poi/xslf/usermodel/empty.pptx" />
-              <exclude name="resources/main/org/apache/poi/sl/draw/geom/presetShapeDefinitions.xml" />
-                 <exclude name="resources/ooxml/org/apache/poi/xssf/usermodel/presetTableStyles.xml" />
-              <exclude name="ooxml/resources/org/apache/poi/xdgf/visio.xsd" />
-              <exclude name="examples/src/org/apache/poi/xslf/usermodel/*-chart-data.txt" />
-              <exclude name="**/*.iml" />
-              <exclude name="documentation/resources/images/pb-poi.cdr"/>
-                 <exclude name="scratchpad/models/poi-hdf.zargo"/>
-           </fileset>
-       </rat:report>
+        <rat:report xmlns:rat="antlib:org.apache.rat.anttasks" reportFile="${rat.report}">
+            <fileset dir="src/">
+                <exclude name="documentation/*.txt" />
+                <exclude name="documentation/content/xdocs/dtd/" />
+                <exclude name="documentation/content/xdocs/entity/" />
+                <exclude name="scratchpad/testcases/dummy.txt" />
+                <exclude name="contrib/testcases/dummy.txt" />
+                <exclude name="examples/lib/dummy.txt" />
+                <exclude name="examples/src/org/apache/poi/**/*-chart-data.txt" />
+                <exclude name="resources/ooxml/org/apache/poi/xslf/usermodel/notesMaster.xml" />
+                <exclude name="resources/ooxml/org/apache/poi/xslf/usermodel/empty.pptx" />
+                <exclude name="resources/main/org/apache/poi/sl/draw/geom/presetShapeDefinitions.xml" />
+                <exclude name="resources/ooxml/org/apache/poi/xssf/usermodel/presetTableStyles.xml" />
+                <exclude name="ooxml/resources/org/apache/poi/xdgf/visio.xsd" />
+                <exclude name="**/*.iml" />
+                <exclude name="documentation/resources/images/pb-poi.cdr"/>
+                <exclude name="scratchpad/models/poi-hdf.zargo"/>
+            </fileset>
+        </rat:report>
 
-       <!-- remove clutter to compact build output -->
-       <!-- replaceregexp doesn't work within loadfile ... -->
-       <replaceregexp file="${rat.report}" match="\s+Printing headers for files without AL header.++" replace="" flags="s"/>
+        <!-- remove clutter to compact build output -->
+        <!-- replaceregexp doesn't work within loadfile ... -->
+        <replaceregexp file="${rat.report}" match="\s+Printing headers for files without AL header.++" replace="" flags="s"/>
 
-       <loadfile property="rat.reportcontent" srcFile="${rat.report}">
+        <loadfile property="rat.reportcontent" srcFile="${rat.report}">
             <filterchain>
                 <linecontainsregexp negate="true">
                     <regexp pattern="^\s+(AL|B|N)\s+"/>
                 </linecontainsregexp>
             </filterchain>
-       </loadfile>
-       <echo>${rat.reportcontent}</echo>
+        </loadfile>
+        <echo>${rat.reportcontent}</echo>
 
-       <!-- fail the build if at least one note is in the report -->
-       <fail><condition><matches pattern="[1-9][0-9]* Unknown Licens" string="${rat.reportcontent}"/></condition></fail>
+        <!-- fail the build if at least one note is in the report -->
+        <fail><condition><matches pattern="[1-9][0-9]* Unknown Licens" string="${rat.reportcontent}"/></condition></fail>
     </target>
 
     <!-- Runs the Forbiddens APIs checker against the source code, to -->

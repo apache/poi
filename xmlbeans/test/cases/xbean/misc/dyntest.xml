@@ -1,0 +1,8 @@
+<dt:wrappedinstance xmlns:dt="http://openuri.org/test/dyntest">
+  <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://openuri.org/test/quant">
+    <xs:element name="quantity" type="xs:int"/>
+  </xs:schema>
+  <qt:quantity xmlns:qt="http://openuri.org/test/quant">
+    42
+  </qt:quantity>
+</dt:wrappedinstance>

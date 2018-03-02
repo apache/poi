@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+  <SignedInfo>
+    <CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" />
+    <SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" />
+    <Reference URI="http://www.w3.org/TR/xml-stylesheet">
+      <DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <DigestValue>60NvZvtdTB+7UnlLp/H24p7h4bs=</DigestValue>
+    </Reference>
+  </SignedInfo>
+  <SignatureValue>
+    juS5RhJ884qoFR8flVXd/rbrSDVGn40CapgB7qeQiT+rr0NekEQ6BHhUA8dT3+BC
+    TBUQI0dBjlml9lwzENXvS83zRECjzXbMRTUtVZiPZG2pqKPnL2YU3A9645UCjTXU
+    +jgFumv7k78hieAGDzNci+PQ9KRmm//icT7JaYztgt4=
+  </SignatureValue>
+  <KeyInfo>
+    <KeyValue>
+      <RSAKeyValue>
+        <Modulus>
+          uCiukpgOaOmrq1fPUTH3CAXxuFmPjsmS4jnTKxrv0w1JKcXtJ2M3akaV1d/karvJ
+          lmeao20jNy9r+/vKwibjM77F+3bIkeMEGmAIUnFciJkR+ihO7b4cTuYnEi8xHtu4
+          iMn6GODBoEzqFQYdd8p4vrZBsvs44nTrS8qyyhba648=
+        </Modulus>
+        <Exponent>
+          AQAB
+        </Exponent>
+      </RSAKeyValue>
+    </KeyValue>
+    <X509Data>
+      <X509SubjectName>
+        CN=Merlin Hughes,O=Baltimore Technologies\, Ltd.,ST=Dublin,C=IE
+      </X509SubjectName>
+      <X509IssuerSerial>
+        <X509IssuerName>
+          CN=Test RSA CA,O=Baltimore Technologies\, Ltd.,ST=Dublin,C=IE
+        </X509IssuerName>
+        <X509SerialNumber>970849928</X509SerialNumber>
+      </X509IssuerSerial>
+      <X509Certificate>
+        MIICeDCCAeGgAwIBAgIEOd3+iDANBgkqhkiG9w0BAQQFADBbMQswCQYDVQQGEwJJ
+        RTEPMA0GA1UECBMGRHVibGluMSUwIwYDVQQKExxCYWx0aW1vcmUgVGVjaG5vbG9n
+        aWVzLCBMdGQuMRQwEgYDVQQDEwtUZXN0IFJTQSBDQTAeFw0wMDEwMDYxNjMyMDda
+        Fw0wMTEwMDYxNjMyMDRaMF0xCzAJBgNVBAYTAklFMQ8wDQYDVQQIEwZEdWJsaW4x
+        JTAjBgNVBAoTHEJhbHRpbW9yZSBUZWNobm9sb2dpZXMsIEx0ZC4xFjAUBgNVBAMT
+        DU1lcmxpbiBIdWdoZXMwgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBALgorpKY
+        Dmjpq6tXz1Ex9wgF8bhZj47JkuI50ysa79MNSSnF7SdjN2pGldXf5Gq7yZZnmqNt
+        Izcva/v7ysIm4zO+xft2yJHjBBpgCFJxXIiZEfooTu2+HE7mJxIvMR7buIjJ+hjg
+        waBM6hUGHXfKeL62QbL7OOJ060vKssoW2uuPAgMBAAGjRzBFMB4GA1UdEQQXMBWB
+        E21lcmxpbkBiYWx0aW1vcmUuaWUwDgYDVR0PAQH/BAQDAgeAMBMGA1UdIwQMMAqA
+        CEngrZIVgu03MA0GCSqGSIb3DQEBBAUAA4GBAHJu4JVq/WnXK2oqqfLWqes5vHOt
+        fX/ZhCjFyDMhzslI8am62gZedwZ9IIZIwlNRMvEDQB2zds/eEBnIAQPl/yRLCLOf
+        ZnbA8PXrbFP5igs3qQWScBUjZVjik748HU2sUVZOa90c0mJl2vJs/RwyLW7/uCAf
+        C/I/k9xGr7fneoIW
+      </X509Certificate>
+    </X509Data>
+  </KeyInfo>
+</Signature>
+

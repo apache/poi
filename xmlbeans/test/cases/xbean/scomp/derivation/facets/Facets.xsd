@@ -1,0 +1,93 @@
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://xbean/scomp/derivation/facets/Facets"
+    xmlns="http://xbean/scomp/derivation/facets/Facets"
+>
+
+    <xs:simpleType name="MinMaxInclusiveT">
+        <xs:restriction base="xs:integer">
+            <xs:minInclusive value="2"/>
+            <xs:maxInclusive value="10"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="MinMaxInclusiveDateT">
+            <xs:restriction base="xs:date">
+                <xs:minInclusive value="2003-12-10"/>
+                <xs:maxInclusive value="2003-12-25"/>
+            </xs:restriction>
+        </xs:simpleType>
+
+
+
+    <xs:simpleType name="MinMaxExclusiveT">
+        <xs:restriction base="xs:integer">
+            <xs:minExclusive value="2"/>
+            <xs:maxExclusive value="10"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+     <xs:simpleType name="MinMaxExclusiveDateT">
+        <xs:restriction base="xs:date">
+            <xs:minExclusive value="2003-12-10"/>
+            <xs:maxExclusive value="2003-12-25"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+
+    <xs:simpleType name="LengthT">
+           <xs:restriction base="xs:string">
+               <xs:length value="2"/>
+           </xs:restriction>
+       </xs:simpleType>
+
+    <xs:simpleType name="MinMaxLengthT">
+           <xs:restriction base="xs:string">
+               <xs:minLength value="2"/>
+               <xs:maxLength value="5"/>
+           </xs:restriction>
+       </xs:simpleType>
+
+    <xs:simpleType name="DigitsT">
+           <xs:restriction base="xs:decimal">
+               <xs:totalDigits value="4"/>
+               <xs:fractionDigits value="2"/>
+           </xs:restriction>
+       </xs:simpleType>
+
+    <xs:simpleType name="WSTPreserve">
+           <xs:restriction base="xs:string">
+               <xs:whiteSpace value="preserve"/>
+           </xs:restriction>
+       </xs:simpleType>
+
+     <xs:simpleType name="EnumT">
+           <xs:restriction base="xs:string">
+               <xs:enumeration value="a"/>
+               <xs:enumeration value="b"/>
+               <xs:enumeration value="c"/>
+           </xs:restriction>
+       </xs:simpleType>
+
+    <xs:simpleType name="PatternT">
+           <xs:restriction base="xs:string">
+               <xs:pattern value="(a[^bc]d){3}"/>
+           </xs:restriction>
+       </xs:simpleType>
+
+    <xs:element name="MinMaxInclusiveElt" type="MinMaxInclusiveT"/>
+     <xs:element name="MinMaxInclusiveDateElt" type="MinMaxInclusiveDateT"/>
+    <xs:element name="MinMaxExclusiveElt" type="MinMaxExclusiveT"/>
+    <xs:element name="MinMaxExclusiveDateElt" type="MinMaxExclusiveDateT"/>
+    <xs:element name="LengthElt" type="LengthT"/>
+    <xs:element name="MinMaxLengthElt" type="MinMaxLengthT"/>
+    <xs:element name="DigitsElt" type="DigitsT"/>
+    <xs:element name="WSPreserveElt" type="WSTPreserve"/>
+    <xs:element name="EnumElt" type="EnumT"/>
+    <xs:element name="PatternElt" type="PatternT"/>
+
+
+
+
+
+</xs:schema>

@@ -807,7 +807,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     @Override
     public void setFontSize(int size) {
-        BigInteger bint = new BigInteger("" + size);
+        BigInteger bint = new BigInteger(Integer.toString(size));
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
         CTHpsMeasure ctSize = pr.isSetSz() ? pr.getSz() : pr.addNewSz();
         ctSize.setVal(bint.multiply(new BigInteger("2")));
@@ -851,7 +851,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      *            values will lower it.
      */
     public void setTextPosition(int val) {
-        BigInteger bint = new BigInteger("" + val);
+        BigInteger bint = new BigInteger(Integer.toString(val));
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
         CTSignedHpsMeasure position = pr.isSetPosition() ? pr.getPosition() : pr.addNewPosition();
         position.setVal(bint);

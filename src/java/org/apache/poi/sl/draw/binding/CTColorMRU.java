@@ -32,32 +32,32 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="CT_ColorMRU">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;group ref="{http://schemas.openxmlformats.org/drawingml/2006/main}EG_ColorChoice" maxOccurs="10" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="CT_ColorMRU"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;group ref="{http://schemas.openxmlformats.org/drawingml/2006/main}EG_ColorChoice" maxOccurs="10" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "CT_ColorMRU", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", propOrder = {
+@XmlType(name = "CT_ColorMRU", propOrder = {
     "egColorChoice"
 })
 public class CTColorMRU {
 
     @XmlElements({
-        @XmlElement(name = "prstClr", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", type = CTPresetColor.class),
-        @XmlElement(name = "sysClr", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", type = CTSystemColor.class),
-        @XmlElement(name = "hslClr", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", type = CTHslColor.class),
-        @XmlElement(name = "srgbClr", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", type = CTSRgbColor.class),
-        @XmlElement(name = "scrgbClr", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", type = CTScRgbColor.class),
-        @XmlElement(name = "schemeClr", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", type = CTSchemeColor.class)
+        @XmlElement(name = "scrgbClr", type = CTScRgbColor.class),
+        @XmlElement(name = "srgbClr", type = CTSRgbColor.class),
+        @XmlElement(name = "hslClr", type = CTHslColor.class),
+        @XmlElement(name = "sysClr", type = CTSystemColor.class),
+        @XmlElement(name = "schemeClr", type = CTSchemeColor.class),
+        @XmlElement(name = "prstClr", type = CTPresetColor.class)
     })
     protected List<Object> egColorChoice;
 
@@ -79,18 +79,18 @@ public class CTColorMRU {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link CTPresetColor }
-     * {@link CTSystemColor }
-     * {@link CTHslColor }
-     * {@link CTSRgbColor }
      * {@link CTScRgbColor }
+     * {@link CTSRgbColor }
+     * {@link CTHslColor }
+     * {@link CTSystemColor }
      * {@link CTSchemeColor }
+     * {@link CTPresetColor }
      * 
      * 
      */
     public List<Object> getEGColorChoice() {
         if (egColorChoice == null) {
-            egColorChoice = new ArrayList<>();
+            egColorChoice = new ArrayList<Object>();
         }
         return this.egColorChoice;
     }

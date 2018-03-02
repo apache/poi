@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema targetNamespace="http://dufourrault"
+    xmlns:dr="http://dufourrault"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified">
+
+    <xs:element name="dummy">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="father" type="dr:father"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+        <xs:complexType name="father">
+            <xs:sequence>
+                <xs:element name="son" type="xs:string"/>
+            </xs:sequence>
+        </xs:complexType>
+</xs:schema>

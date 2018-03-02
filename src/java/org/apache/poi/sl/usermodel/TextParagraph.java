@@ -374,4 +374,34 @@ public interface TextParagraph<
      * @since POI 3.15-beta2
      */
     boolean isHeaderOrFooter();
+    
+    
+    /**
+     * Get the {@link TabStop TabStops} - the list can't be and it's entries shouldn't be modified.
+     * Opposed to other properties, this method is not cascading to the master sheet,
+     * if the property is not defined on the normal slide level, i.e. the tabstops on
+     * different levels aren't merged.
+     *
+     * @return the tabstop collection or {@code null} if no tabstops are defined
+     * 
+     * @since POI 4.0.0
+     */
+    List<? extends TabStop> getTabStops();
+
+    /**
+     * Set the {@link TabStop} collection
+     *
+     * @param tabStops the {@link TabStop} collection
+     * 
+     * @since POI 4.0.0
+     */
+    void addTabStops(double positionInPoints, TabStop.TabStopType tabStopType);
+
+    /**
+     * Removes the tabstops of this paragraphs.
+     * This doesn't affect inherited tabstops, e.g. inherited by the slide master
+     * 
+     * @since POI 4.0.0
+     */
+    void clearTabStops();
 }

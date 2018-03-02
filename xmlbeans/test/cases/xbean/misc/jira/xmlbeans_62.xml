@@ -1,0 +1,36 @@
+<definitions name="olderSchemaVersion"
+    targetNamespace="abc"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns="http://schemas.xmlsoap.org/wsdl/">
+    <types>
+        <schema targetNamespace="http://abc"
+            xmlns="http://www.w3.org/1999/XMLSchema">
+            <element name="Foo">
+                <complexType>
+                    <sequence>
+                        <element name="item1" type="int"/>
+                        <element name="item2" type="boolean"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="Baz">
+                <complexType>
+                    <all>
+                        <element name="endorsingBoarder" type="string"/>
+                    </all>
+                </complexType>
+            </element>
+            <element name="Bar">
+                <complexType>
+                    <all>
+                        <element name="errorMessage" type="float"/>
+                    </all>
+                </complexType>
+            </element>
+        </schema>
+    </types>
+    <message/>
+    <binding/>
+    <portType/>
+    <service/>
+</definitions>

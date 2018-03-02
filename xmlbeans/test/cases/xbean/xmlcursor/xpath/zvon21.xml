@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AAA>
+          <BBB>
+               <CCC/>
+               <ZZZ/>
+          </BBB>
+          <XXX>
+               <DDD>
+                    <EEE/>
+                    <FFF>
+                         <HHH/>
+                         <GGG>
+                              <JJJ>
+                                   <QQQ/>
+                              </JJJ>
+                              <JJJ/>
+                         </GGG>
+                         <HHH/>
+                    </FFF>
+               </DDD>
+          </XXX>
+          <CCC>
+               <DDD/>
+          </CCC>
+     </AAA>

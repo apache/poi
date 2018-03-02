@@ -264,7 +264,7 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
      *
      * @return the comment shape or <code>null</code>
      */
-    protected CTShape findCommentShape(int row, int col){
+    public CTShape findCommentShape(int row, int col){
         for(XmlObject itm : _items){
             if(itm instanceof CTShape){
                 CTShape sh = (CTShape)itm;

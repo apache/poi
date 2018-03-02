@@ -29,26 +29,26 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="CT_CustomGeometry2D">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="avLst" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_GeomGuideList" minOccurs="0"/>
- *         &lt;element name="gdLst" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_GeomGuideList" minOccurs="0"/>
- *         &lt;element name="ahLst" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_AdjustHandleList" minOccurs="0"/>
- *         &lt;element name="cxnLst" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_ConnectionSiteList" minOccurs="0"/>
- *         &lt;element name="rect" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_GeomRect" minOccurs="0"/>
- *         &lt;element name="pathLst" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_Path2DList"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="CT_CustomGeometry2D"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="avLst" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_GeomGuideList" minOccurs="0"/&gt;
+ *         &lt;element name="gdLst" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_GeomGuideList" minOccurs="0"/&gt;
+ *         &lt;element name="ahLst" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_AdjustHandleList" minOccurs="0"/&gt;
+ *         &lt;element name="cxnLst" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_ConnectionSiteList" minOccurs="0"/&gt;
+ *         &lt;element name="rect" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_GeomRect" minOccurs="0"/&gt;
+ *         &lt;element name="pathLst" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_Path2DList"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "CT_CustomGeometry2D", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", propOrder = {
+@XmlType(name = "CT_CustomGeometry2D", propOrder = {
     "avLst",
     "gdLst",
     "ahLst",
@@ -58,17 +58,12 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class CTCustomGeometry2D {
 
-    @XmlElement(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main")
     protected CTGeomGuideList avLst;
-    @XmlElement(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main")
     protected CTGeomGuideList gdLst;
-    @XmlElement(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main")
     protected CTAdjustHandleList ahLst;
-    @XmlElement(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main")
     protected CTConnectionSiteList cxnLst;
-    @XmlElement(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main")
     protected CTGeomRect rect;
-    @XmlElement(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", required = true)
+    @XmlElement(required = true)
     protected CTPath2DList pathLst;
 
     /**

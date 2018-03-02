@@ -20,12 +20,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.sl.usermodel.BaseTestSlideShow;
+import org.apache.poi.sl.usermodel.SlideShow;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -178,5 +182,26 @@ public class TestXMLSlideShow extends BaseTestSlideShow {
       
       xmlComments.close();
       xml.close();
+   }
+   
+   public SlideShow<?, ?> reopen(SlideShow<?, ?> show) {
+       return reopen((XMLSlideShow)show);
+   }
+
+   public static XMLSlideShow reopen(XMLSlideShow show) {
+       try {
+           BufAccessBAOS bos = new BufAccessBAOS();
+           show.write(bos);
+           return new XMLSlideShow(new ByteArrayInputStream(bos.getBuf()));
+       } catch (IOException e) {
+           fail(e.getMessage());
+           return null;
+       }
+   }
+
+   private static class BufAccessBAOS extends ByteArrayOutputStream {
+       public byte[] getBuf() {
+           return buf;
+       }
    }
 }

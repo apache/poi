@@ -3252,4 +3252,45 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
         wb.close();
     }
+    
+    /**
+     * Auto column sizing failed when there were loads of fonts with
+     *  errors like ArrayIndexOutOfBoundsException: -32765
+     * TODO Get this to actually reproduce the bug...
+     */
+    @Test
+    public void test62108() throws IOException {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sheet = wb.createSheet();
+        XSSFRow row = sheet.createRow(0);
+        
+        // Create lots of fonts
+        XSSFDataFormat formats = wb.createDataFormat();
+        XSSFFont[] fonts = new XSSFFont[50000];
+        for (int i=0; i<fonts.length; i++) {
+            XSSFFont font = wb.createFont();
+            font.setFontHeight(i);
+        }
+        
+        // Create a moderate number of columns, which use
+        //  fonts from the start and end of the font list
+        final int numCols = 125;
+        for (int i=0; i<numCols; i++) {
+            XSSFCellStyle cs = wb.createCellStyle();
+            cs.setDataFormat(formats.getFormat("'Test "+i+"' #,###"));
+            
+            XSSFFont font = fonts[i];
+            if (i%2==1) { font = fonts[fonts.length-i]; }
+            cs.setFont(font);
+            
+            XSSFCell c = row.createCell(i);
+            c.setCellValue(i);
+            c.setCellStyle(cs);
+        }
+        
+        // Do the auto-size
+        for (int i=0; i<numCols; i++) {
+            sheet.autoSizeColumn(i);
+        }
+    }
 }

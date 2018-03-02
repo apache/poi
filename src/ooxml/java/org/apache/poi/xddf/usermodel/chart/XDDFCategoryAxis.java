@@ -80,6 +80,36 @@ public class XDDFCategoryAxis extends XDDFChartAxis {
     }
 
     @Override
+    public boolean isSetMinorUnit() {
+        return false;
+    }
+
+    @Override
+    public void setMinorUnit(double minor) {
+        // nothing
+    }
+
+    @Override
+    public double getMinorUnit() {
+        return Double.NaN;
+    }
+
+    @Override
+    public boolean isSetMajorUnit() {
+        return false;
+    }
+
+    @Override
+    public void setMajorUnit(double major) {
+        // nothing
+    }
+
+    @Override
+    public double getMajorUnit() {
+        return Double.NaN;
+    }
+
+    @Override
     public void crossAxis(XDDFChartAxis axis) {
         ctCatAx.getCrossAx().setVal(axis.getId());
     }

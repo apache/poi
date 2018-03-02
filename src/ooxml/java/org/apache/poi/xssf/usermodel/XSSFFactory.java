@@ -27,8 +27,8 @@ import org.apache.poi.POIXMLRelation;
 /**
  * Instantiates sub-classes of POIXMLDocumentPart depending on their relationship type
  */
-public final class XSSFFactory extends POIXMLFactory  {
-    private XSSFFactory() {
+public class XSSFFactory extends POIXMLFactory {
+    protected XSSFFactory() {
     }
 
     private static final XSSFFactory inst = new XSSFFactory();
@@ -50,8 +50,8 @@ public final class XSSFFactory extends POIXMLFactory  {
      */
     @Override
     protected POIXMLDocumentPart createDocumentPart
-        (Class<? extends POIXMLDocumentPart> cls, Class<?>[] classes, Object[] values)
-    throws SecurityException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
+    (Class<? extends POIXMLDocumentPart> cls, Class<?>[] classes, Object[] values)
+            throws SecurityException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
         Constructor<? extends POIXMLDocumentPart> constructor = cls.getDeclaredConstructor(classes);
         return constructor.newInstance(values);
     }

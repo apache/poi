@@ -1,0 +1,23 @@
+<xsd:schema targetNamespace="http://openuri.org/test/SimType"
+            xmlns:tns="http://openuri.org/test/SimType"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            elementFormDefault="qualified">
+
+    <xsd:simpleType name="ageType">
+        <xsd:restriction base="xsd:integer">
+            <xsd:minInclusive value="1"/>
+            <xsd:maxInclusive value="100"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="qNameType"
+                    xmlns:my="http://openuri.org/test/My">
+        <xsd:restriction base="xsd:QName">
+            <xsd:enumeration value="my:foo"/>
+            <xsd:enumeration value="my:bar"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:element name="Age" type="tns:ageType"/>
+    <xsd:element name="QN" type="tns:qNameType"/>
+</xsd:schema>

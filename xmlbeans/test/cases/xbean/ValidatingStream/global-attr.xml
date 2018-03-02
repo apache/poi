@@ -1,0 +1,3 @@
+<xml-fragment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xmlns:test="http://openuri.org/testNumerals"
+              test:price="5"/>

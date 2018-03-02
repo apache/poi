@@ -472,6 +472,10 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
         return null;
     }
 
+    public XSLFSimpleShape getPlaceholder(Placeholder ph) {
+        return getPlaceholderByType(ph.ooxmlId);
+    }
+
     XSLFSimpleShape getPlaceholder(CTPlaceholder ph) {
         XSLFSimpleShape shape = null;
         if(ph.isSetIdx()) {

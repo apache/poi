@@ -1,0 +1,75 @@
+ <xsd:schema
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns="http://xbean/scomp/derivation/FinalBlockDefault"
+     targetNamespace="http://xbean/scomp/derivation/FinalBlockDefault"
+     xmlns:extT="http://xbean/scomp/derivation/Block"
+     blockDefault="#all"
+     finalDefault="#all"
+     >
+
+     <xsd:import namespace="http://xbean/scomp/derivation/Block"
+         schemaLocation="Block.xsd"/>
+
+
+  <!--overwrite finalDefault/block-->
+ <xsd:complexType name="blockEmptyT" block="" final="">
+        <xsd:sequence>
+            <xsd:element name="name" type="xsd:string"/>
+            <xsd:element name="age" type="extT:ageT"/>
+        </xsd:sequence>
+    </xsd:complexType>
+  <!--use finalDefault/block-->
+   <xsd:complexType name="blockNoneT" final="">
+        <xsd:sequence>
+            <xsd:element name="name" type="xsd:string"/>
+            <xsd:element name="age" type="extT:ageT"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+     <!--EXTENDED TYPES-->
+       <xsd:complexType name="extAllT">
+         <xsd:complexContent>
+             <xsd:extension base="blockEmptyT">
+                 <xsd:sequence>
+                 <xsd:element name="gender" type="extT:genderT"/>
+                 </xsd:sequence>
+             </xsd:extension>
+         </xsd:complexContent>
+     </xsd:complexType>
+
+     <xsd:complexType name="restAllT">
+         <xsd:complexContent>
+             <xsd:restriction base="blockEmptyT">
+                 <xsd:sequence>
+                     <xsd:element name="name" type="xsd:string"/>
+                     <xsd:element name="age" type="extT:restAgeT"/>
+                 </xsd:sequence>
+             </xsd:restriction>
+         </xsd:complexContent>
+     </xsd:complexType>
+
+      <xsd:complexType name="extNoneT">
+         <xsd:complexContent>
+             <xsd:extension base="blockNoneT">
+                 <xsd:sequence>
+                 <xsd:element name="gender" type="extT:genderT"/>
+                 </xsd:sequence>
+             </xsd:extension>
+         </xsd:complexContent>
+     </xsd:complexType>
+
+     <xsd:complexType name="restNoneT">
+         <xsd:complexContent>
+             <xsd:restriction base="blockNoneT">
+                 <xsd:sequence>
+                     <xsd:element name="name" type="xsd:string"/>
+                     <xsd:element name="age" type="extT:restAgeT"/>
+                 </xsd:sequence>
+             </xsd:restriction>
+         </xsd:complexContent>
+     </xsd:complexType>
+
+
+     <xsd:element name="EltDefaultBlock" type="blockNoneT"/>
+     <xsd:element name="EltNoBlock" type="blockEmptyT"/>
+</xsd:schema>

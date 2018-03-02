@@ -1,0 +1,16 @@
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://xmlbeans_46"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified">
+    <xs:element name="usPhoneNumber">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:pattern value="\d{3}\-\d{3}\-\d{4}"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+</xs:schema>
+
+
+

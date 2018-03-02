@@ -80,10 +80,12 @@ import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.Removal;
 import org.apache.poi.util.Units;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.usermodel.XSSFPivotTable.PivotTableReferenceConfigurator;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
+import org.apache.poi.xssf.usermodel.helpers.XSSFColumnShifter;
 import org.apache.poi.xssf.usermodel.helpers.XSSFIgnoredErrorHelper;
 import org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter;
 import org.apache.xmlbeans.XmlCursor;
@@ -2985,7 +2987,65 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     public void shiftRows(int startRow, int endRow, final int n, boolean copyRowHeight, boolean resetOriginalRowHeight) {
         XSSFVMLDrawing vml = getVMLDrawing(false);
 
-        // first remove all rows which will be overwritten
+        int sheetIndex = getWorkbook().getSheetIndex(this);
+        String sheetName = getWorkbook().getSheetName(sheetIndex);
+        FormulaShifter formulaShifter = FormulaShifter.createForRowShift(
+                                   sheetIndex, sheetName, startRow, endRow, n, SpreadsheetVersion.EXCEL2007);
+        removeOverwritten(vml, startRow, endRow, n);
+        shiftCommentsAndRows(vml, startRow, endRow, n);
+        
+        XSSFRowShifter rowShifter = new XSSFRowShifter(this);
+        rowShifter.shiftMergedRegions(startRow, endRow, n);
+        rowShifter.updateNamedRanges(formulaShifter);
+        rowShifter.updateFormulas(formulaShifter);
+        rowShifter.updateConditionalFormatting(formulaShifter);
+        rowShifter.updateHyperlinks(formulaShifter);
+
+        //rebuild the _rows map
+        Map<Integer, XSSFRow> map = new HashMap<>();
+        for(XSSFRow r : _rows.values()) {
+            // Performance optimization: explicit boxing is slightly faster than auto-unboxing, though may use more memory
+            final Integer rownumI = new Integer(r.getRowNum()); // NOSONAR
+            map.put(rownumI, r);
+        }
+        _rows.clear();
+        _rows.putAll(map);
+    }
+    
+    /**
+     * Shifts columns between startColumn and endColumn n number of columns.
+     * If you use a negative number, it will shift columns left.
+     * Code ensures that columns don't wrap around
+     *
+     * @param startColumn the column to start shifting
+     * @param endColumn the column to end shifting
+     * @param n length of the shifting step
+     */    
+    @Override
+    public void shiftColumns(int startColumn, int endColumn, final int n) {
+        XSSFVMLDrawing vml = getVMLDrawing(false);
+        shiftCommentsForColumns(vml, startColumn, endColumn, n);
+        FormulaShifter formulaShifter = FormulaShifter.createForColumnShift(this.getWorkbook().getSheetIndex(this), this.getSheetName(), startColumn, endColumn, n, SpreadsheetVersion.EXCEL2007);
+        XSSFColumnShifter columnShifter = new XSSFColumnShifter(this);
+        columnShifter.shiftColumns(startColumn, endColumn, n);
+        columnShifter.shiftMergedRegions(startColumn, startColumn, n);
+        columnShifter.updateFormulas(formulaShifter);
+        columnShifter.updateConditionalFormatting(formulaShifter);
+        columnShifter.updateHyperlinks(formulaShifter);
+        columnShifter.updateNamedRanges(formulaShifter);
+
+        //rebuild the _rows map
+        Map<Integer, XSSFRow> map = new HashMap<>();
+        for(XSSFRow r : _rows.values()) {
+            final Integer rownumI = new Integer(r.getRowNum()); // NOSONAR
+            map.put(rownumI, r);
+        }
+        _rows.clear();
+        _rows.putAll(map);
+    }
+    
+    // remove all rows which will be overwritten
+     private void removeOverwritten(XSSFVMLDrawing vml, int startRow, int endRow, final int n){
         for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
             XSSFRow row = (XSSFRow)it.next();
             int rownum = row.getRowNum();
@@ -3029,102 +3089,86 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             }
         }
 
-        // then do the actual moving and also adjust comments/rowHeight
-        // we need to sort it in a way so the shifting does not mess up the structures, 
-        // i.e. when shifting down, start from down and go up, when shifting up, vice-versa
-        SortedMap<XSSFComment, Integer> commentsToShift = new TreeMap<>(new Comparator<XSSFComment>() {
-            @Override
-            public int compare(XSSFComment o1, XSSFComment o2) {
-                int row1 = o1.getRow();
-                int row2 = o2.getRow();
-
-                if (row1 == row2) {
-                    // ordering is not important when row is equal, but don't return zero to still 
-                    // get multiple comments per row into the map
-                    return o1.hashCode() - o2.hashCode();
-                }
-
-                // when shifting down, sort higher row-values first
-                if (n > 0) {
-                    return row1 < row2 ? 1 : -1;
-                } else {
-                    // sort lower-row values first when shifting up
-                    return row1 > row2 ? 1 : -1;
-                }
-            }
-        });
-
-        
-        for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
-            XSSFRow row = (XSSFRow)it.next();
-            int rownum = row.getRowNum();
-
-            if(sheetComments != null){
-                // calculate the new rownum
-                int newrownum = shiftedRowNum(startRow, endRow, n, rownum);
-                
-                // is there a change necessary for the current row?
-                if(newrownum != rownum) {
-                    CTCommentList lst = sheetComments.getCTComments().getCommentList();
-                    for (CTComment comment : lst.getCommentArray()) {
-                        String oldRef = comment.getRef();
-                        CellReference ref = new CellReference(oldRef);
-                        
-                        // is this comment part of the current row?
-                        if(ref.getRow() == rownum) {
-                            XSSFComment xssfComment = new XSSFComment(sheetComments, comment,
-                                    vml == null ? null : vml.findCommentShape(rownum, ref.getCol()));
-                            
-                            // we should not perform the shifting right here as we would then find
-                            // already shifted comments and would shift them again...
-                            commentsToShift.put(xssfComment, newrownum);
-                        }
-                    }
-                }
-            }
-
-            if(rownum < startRow || rownum > endRow) {
-                continue;
-            }
-
-            if (!copyRowHeight) {
-                row.setHeight((short)-1);
-            }
-
-            row.shift(n);
-        }
-        
-        // adjust all the affected comment-structures now
-        // the Map is sorted and thus provides them in the order that we need here, 
-        // i.e. from down to up if shifting down, vice-versa otherwise
-        for(Map.Entry<XSSFComment, Integer> entry : commentsToShift.entrySet()) {
-            entry.getKey().setRow(entry.getValue());
-        }
-        
-        XSSFRowShifter rowShifter = new XSSFRowShifter(this);
-
-        int sheetIndex = getWorkbook().getSheetIndex(this);
-        String sheetName = getWorkbook().getSheetName(sheetIndex);
-        FormulaShifter shifter = FormulaShifter.createForRowShift(
-                                   sheetIndex, sheetName, startRow, endRow, n, SpreadsheetVersion.EXCEL2007);
-
-        rowShifter.updateNamedRanges(shifter);
-        rowShifter.updateFormulas(shifter);
-        rowShifter.shiftMergedRegions(startRow, endRow, n);
-        rowShifter.updateConditionalFormatting(shifter);
-        rowShifter.updateHyperlinks(shifter);
-
-        //rebuild the _rows map
-        Map<Integer, XSSFRow> map = new HashMap<>();
-        for(XSSFRow r : _rows.values()) {
-            // Performance optimization: explicit boxing is slightly faster than auto-unboxing, though may use more memory
-            final Integer rownumI = Integer.valueOf(r.getRowNum()); // NOSONAR
-            map.put(rownumI, r);
-        }
-        _rows.clear();
-        _rows.putAll(map);
     }
 
+    private void shiftCommentsAndRows(XSSFVMLDrawing vml, int startRow, int endRow, final int n){
+         // then do the actual moving and also adjust comments/rowHeight
+         // we need to sort it in a way so the shifting does not mess up the structures, 
+         // i.e. when shifting down, start from down and go up, when shifting up, vice-versa
+         SortedMap<XSSFComment, Integer> commentsToShift = new TreeMap<>(new Comparator<XSSFComment>() {
+             @Override
+             public int compare(XSSFComment o1, XSSFComment o2) {
+                 int row1 = o1.getRow();
+                 int row2 = o2.getRow();
+
+                 if (row1 == row2) {
+                     // ordering is not important when row is equal, but don't return zero to still 
+                     // get multiple comments per row into the map
+                     return o1.hashCode() - o2.hashCode();
+                 }
+
+                 // when shifting down, sort higher row-values first
+                 if (n > 0) {
+                     return row1 < row2 ? 1 : -1;
+                 } else {
+                     // sort lower-row values first when shifting up
+                     return row1 > row2 ? 1 : -1;
+                 }
+             }
+         });
+
+         
+         for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
+             XSSFRow row = (XSSFRow)it.next();
+             int rownum = row.getRowNum();
+
+             if(sheetComments != null){
+                 // calculate the new rownum
+                 int newrownum = shiftedRowNum(startRow, endRow, n, rownum);
+                 
+                 // is there a change necessary for the current row?
+                 if(newrownum != rownum) {
+                     CTCommentList lst = sheetComments.getCTComments().getCommentList();
+                     for (CTComment comment : lst.getCommentArray()) {
+                         String oldRef = comment.getRef();
+                         CellReference ref = new CellReference(oldRef);
+                         
+                         // is this comment part of the current row?
+                         if(ref.getRow() == rownum) {
+                             XSSFComment xssfComment = new XSSFComment(sheetComments, comment,
+                                     vml == null ? null : vml.findCommentShape(rownum, ref.getCol()));
+                             
+                             // we should not perform the shifting right here as we would then find
+                             // already shifted comments and would shift them again...
+                             commentsToShift.put(xssfComment, newrownum);
+                         }
+                     }
+                 }
+             }
+
+             if(rownum < startRow || rownum > endRow) {
+                 continue;
+             }
+             row.shift(n);
+         }
+         // adjust all the affected comment-structures now
+         // the Map is sorted and thus provides them in the order that we need here, 
+         // i.e. from down to up if shifting down, vice-versa otherwise
+         for(Map.Entry<XSSFComment, Integer> entry : commentsToShift.entrySet()) {
+             entry.getKey().setRow(entry.getValue());
+         }
+         
+         //rebuild the _rows map
+         Map<Integer, XSSFRow> map = new HashMap<>();
+         for(XSSFRow r : _rows.values()) {
+             // Performance optimization: explicit boxing is slightly faster than auto-unboxing, though may use more memory
+             final Integer rownumI = Integer.valueOf(r.getRowNum()); // NOSONAR
+             map.put(rownumI, r);
+         }
+         _rows.clear();
+         _rows.putAll(map);
+         
+    }
     private int shiftedRowNum(int startRow, int endRow, int n, int rownum) {
         // no change if before any affected row
         if(rownum < startRow && (n > 0 || (startRow - rownum) > n)) {
@@ -3150,6 +3194,66 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         
         // row is part of the shifted block
         return rownum + n;
+    }
+    private void shiftCommentsForColumns(XSSFVMLDrawing vml, int startColumnIndex, int endColumnIndex, final int n){
+        // then do the actual moving and also adjust comments/rowHeight
+        // we need to sort it in a way so the shifting does not mess up the structures, 
+        // i.e. when shifting down, start from down and go up, when shifting up, vice-versa
+        SortedMap<XSSFComment, Integer> commentsToShift = new TreeMap<>(new Comparator<XSSFComment>() {
+            @Override
+            public int compare(XSSFComment o1, XSSFComment o2) {
+                int column1 = o1.getColumn();
+                int column2 = o2.getColumn();
+
+                if (column1 == column2) {
+                    // ordering is not important when row is equal, but don't return zero to still 
+                    // get multiple comments per row into the map
+                    return o1.hashCode() - o2.hashCode();
+                }
+
+                // when shifting down, sort higher row-values first
+                if (n > 0) {
+                    return column1 < column2 ? 1 : -1;
+                } else {
+                    // sort lower-row values first when shifting up
+                    return column1 > column2 ? 1 : -1;
+                }
+            }
+        });
+
+        
+        if(sheetComments != null){
+            CTCommentList lst = sheetComments.getCTComments().getCommentList();
+            for (CTComment comment : lst.getCommentArray()) {
+                String oldRef = comment.getRef();
+                CellReference ref = new CellReference(oldRef);
+                
+                int columnIndex =ref.getCol(); 
+                int newColumnIndex = shiftedRowNum(startColumnIndex, endColumnIndex, n, columnIndex);
+                if(newColumnIndex != columnIndex){
+                    XSSFComment xssfComment = new XSSFComment(sheetComments, comment,
+                        vml == null ? null : vml.findCommentShape(ref.getRow(), columnIndex));
+                    commentsToShift.put(xssfComment, newColumnIndex);
+                }
+            }
+        }
+        // adjust all the affected comment-structures now
+        // the Map is sorted and thus provides them in the order that we need here, 
+        // i.e. from down to up if shifting down, vice-versa otherwise
+        for(Map.Entry<XSSFComment, Integer> entry : commentsToShift.entrySet()) {
+            entry.getKey().setColumn(entry.getValue());
+        }
+        
+        //rebuild the _rows map
+        Map<Integer, XSSFRow> map = new HashMap<>();
+        for(XSSFRow r : _rows.values()) {
+            // Performance optimization: explicit boxing is slightly faster than auto-unboxing, though may use more memory
+            final Integer rownumI = Integer.valueOf(r.getRowNum()); // NOSONAR
+            map.put(rownumI, r);
+        }
+        _rows.clear();
+        _rows.putAll(map);
+        
     }
 
     /**
@@ -3954,10 +4058,28 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     }
 
     /**
-     * Creates a new Table, and associates it with this Sheet
+     * Creates a new Table, and associates it with this Sheet. The table does
+     * not yet have an area defined and needs to be initialized by calling
+     * {@link XSSFTable#setArea(AreaReference)}.
+     * 
+     * @deprecated Use {@link #createTable(AreaReference))} instead
      */
+    @Deprecated
+    @Removal(version = "4.2.0")
     public XSSFTable createTable() {
-        if(! worksheet.isSetTableParts()) {
+        return createTable(null);
+    }
+    
+    /**
+     * Creates a new Table, and associates it with this Sheet.
+     *
+     * @param tableArea
+     *            the area that the table should cover, should not be {@null}
+     * @return the created table
+     * @since 4.0.0
+     */
+    public XSSFTable createTable(AreaReference tableArea) {
+        if (!worksheet.isSetTableParts()) {
             worksheet.addNewTableParts();
         }
 
@@ -3990,6 +4112,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
 
         tables.put(tbl.getId(), table);
 
+        if(tableArea != null) {
+            table.setArea(tableArea);
+        }
+        
         return table;
     }
 

@@ -234,7 +234,7 @@ public final class CellUtil {
     public static void setFont(Cell cell, Font font) {
         // Check if font belongs to workbook
         Workbook wb = cell.getSheet().getWorkbook();
-        final short fontIndex = font.getIndex();
+        final int fontIndex = font.getIndexAsInt();
         if (!wb.getFontAt(fontIndex).equals(font)) {
             throw new IllegalArgumentException("Font does not belong to this workbook");
         }
@@ -346,7 +346,7 @@ public final class CellUtil {
         put(properties, FILL_PATTERN, style.getFillPattern());
         put(properties, FILL_FOREGROUND_COLOR, style.getFillForegroundColor());
         put(properties, FILL_BACKGROUND_COLOR, style.getFillBackgroundColor());
-        put(properties, FONT, style.getFontIndex());
+        put(properties, FONT, style.getFontIndexAsInt());
         put(properties, HIDDEN, style.getHidden());
         put(properties, INDENTION, style.getIndention());
         put(properties, LEFT_BORDER_COLOR, style.getLeftBorderColor());
@@ -408,7 +408,7 @@ public final class CellUtil {
         style.setFillPattern(getFillPattern(properties, FILL_PATTERN));
         style.setFillForegroundColor(getShort(properties, FILL_FOREGROUND_COLOR));
         style.setFillBackgroundColor(getShort(properties, FILL_BACKGROUND_COLOR));
-        style.setFont(workbook.getFontAt(getShort(properties, FONT)));
+        style.setFont(workbook.getFontAt(getInt(properties, FONT)));
         style.setHidden(getBoolean(properties, HIDDEN));
         style.setIndention(getShort(properties, INDENTION));
         style.setLeftBorderColor(getShort(properties, LEFT_BORDER_COLOR));
@@ -429,8 +429,24 @@ public final class CellUtil {
      */
     private static short getShort(Map<String, Object> properties, String name) {
         Object value = properties.get(name);
-        if (value instanceof Short) {
-            return ((Short) value).shortValue();
+        if (value instanceof Number) {
+            return ((Number) value).shortValue();
+        }
+        return 0;
+    }
+
+    /**
+     * Utility method that returns the named int value form the given map.
+     *
+     * @param properties map of named properties (String -> Object)
+     * @param name property name
+     * @return zero if the property does not exist, or is not a {@link Integer}
+     *         otherwise the property value
+     */
+    private static int getInt(Map<String, Object> properties, String name) {
+        Object value = properties.get(name);
+        if (value instanceof Number) {
+            return ((Number) value).intValue();
         }
         return 0;
     }

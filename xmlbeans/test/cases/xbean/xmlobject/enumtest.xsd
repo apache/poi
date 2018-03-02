@@ -1,0 +1,67 @@
+<xs:schema
+   xmlns:xs="http://www.w3.org/2001/XMLSchema"
+   xmlns:et="http://openuri.org/enumtest"
+   targetNamespace="http://openuri.org/enumtest"
+   elementFormDefault="qualified">
+
+  <xs:simpleType name="quantity">
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="all"/>
+      <xs:enumeration value="most"/>
+      <xs:enumeration value="some"/>
+      <xs:enumeration value="few"/>
+      <xs:enumeration value="none"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="allOrNone">
+    <xs:restriction base="et:quantity">
+      <xs:enumeration value="all"/>
+      <xs:enumeration value="none"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="data">
+    <xs:simpleContent>
+      <xs:extension base="et:quantity">
+        <xs:attribute name="name" type="xs:string"/>
+        <xs:attribute name="target" type="et:allOrNone"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:element name="statusreport">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="status" type="et:data" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="salesreport">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="unit" minOccurs="0" maxOccurs="unbounded">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:enumeration value="one"/>
+              <xs:enumeration value="two"/>
+              <!-- skip a few -->
+              <xs:enumeration value="ninety-nine"/>
+              <xs:enumeration value="one-hundred"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- bug CR128906: gen'd java code must qualify java.lang.* types -->
+  <xs:simpleType name="object">
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="abc"/>
+      <xs:enumeration value="def"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+</xs:schema>

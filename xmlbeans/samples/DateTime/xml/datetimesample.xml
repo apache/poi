@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright 2004 The Apache Software Foundation
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+ -->
+<datetime xmlns="http://xmlbeans.apache.org/samples/datetime">
+  <important-date>
+    <holiday>2004-11-02</holiday>
+    <fun-begin-time>18:00:00</fun-begin-time>
+    <fun-end-time>23:00:00</fun-end-time>
+    <job-duration>P1Y1DT20H25M30S</job-duration>
+    <birthdatetime>2001-04-16T15:23:15</birthdatetime>
+    <payday>---15</payday>
+    <description>2nd-Nov-2004, 6:00PM, 11:00PM, 1Yr and a day - 20hours, 16th Apr 2001 3:23 and 15 seconds</description>
+  </important-date>
+  <important-date>
+    <holiday>2004-07-04</holiday>
+    <fun-begin-time>10:30:35</fun-begin-time>
+    <fun-end-time>12:40:12</fun-end-time>
+    <job-duration>P2Y4M5DT10H12M15S</job-duration>
+    <birthdatetime>1977-11-29T10:10:12</birthdatetime>
+    <payday>---30</payday>
+    <description>Description</description>
+  </important-date>   
+</datetime>
+<!-- Professional XML pgno.201  =  duration = 11Y0M1DT20:25:30 -->

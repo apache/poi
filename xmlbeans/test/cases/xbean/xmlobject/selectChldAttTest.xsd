@@ -1,0 +1,67 @@
+<xs:schema
+   xmlns:xs='http://www.w3.org/2001/XMLSchema'
+   xmlns='http://xml.apache.org/test/selectChldAtt'
+   targetNamespace='http://xml.apache.org/test/selectChldAtt'
+   elementFormDefault='qualified'>
+
+  <xs:element name='doc'>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:choice minOccurs='0' maxOccurs='unbounded'>
+          <xs:element name='int' type='xs:int' />
+          <xs:element name='string' type='xs:string' />
+          <xs:element name='elemA' type='typeA' />
+          <xs:element name='elemB' type='typeB' />
+          <xs:element name='elemC' type='typeC' />
+        </xs:choice>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name="typeA">
+    <xs:sequence>
+      <xs:any namespace="##any" processContents="lax" minOccurs='0' maxOccurs='unbounded' />
+    </xs:sequence>
+    <xs:anyAttribute namespace="##any" processContents="lax" />
+  </xs:complexType>
+
+  <xs:complexType name="typeB">
+    <xs:sequence>
+      <xs:element name="someElement" type='xs:int' />
+
+      <xs:any namespace="##other" processContents="lax" minOccurs='0' maxOccurs='unbounded' />
+    </xs:sequence>
+
+	<xs:attribute name='att1' type='xs:string' />
+
+    <xs:anyAttribute namespace="##other" processContents="lax" />
+  </xs:complexType>
+
+  <xs:complexType name="typeC">
+    <xs:sequence>
+      <xs:element name="someElement" type='xs:string' />
+
+      <xs:any namespace="##other" processContents="lax" minOccurs='0' maxOccurs='unbounded'  />
+    </xs:sequence>
+	<xs:attribute name='att1' type='xs:string' />
+
+    <xs:anyAttribute namespace="##other" processContents="lax" />
+  </xs:complexType>
+
+  <xs:complexType name="typeExtendedC">
+    <xs:complexContent>
+      <xs:extension base='typeC'>
+        <xs:sequence>
+          <xs:element name="aditionalElement" type='xs:string' />
+        </xs:sequence>
+        <xs:attribute name='aditionalAtt' type='xs:string' />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name='topLevelElement' type='xs:string' />
+
+  <xs:attribute name='price' type='xs:float' />
+  <xs:attribute name='quant' type='xs:byte' />
+
+</xs:schema>

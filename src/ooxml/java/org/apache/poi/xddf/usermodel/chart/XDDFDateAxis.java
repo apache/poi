@@ -83,6 +83,64 @@ public class XDDFDateAxis extends XDDFChartAxis {
     }
 
     @Override
+    public boolean isSetMinorUnit() {
+        return ctDateAx.isSetMinorUnit();
+    }
+
+    @Override
+    public void setMinorUnit(double minor) {
+        if (Double.isNaN(minor)) {
+            if (ctDateAx.isSetMinorUnit()) {
+                ctDateAx.unsetMinorUnit();
+            }
+        } else {
+            if (ctDateAx.isSetMinorUnit()) {
+                ctDateAx.getMinorUnit().setVal(minor);
+            } else {
+                ctDateAx.addNewMinorUnit().setVal(minor);
+            }
+        }
+    }
+
+    @Override
+    public double getMinorUnit() {
+        if (ctDateAx.isSetMinorUnit()) {
+            return ctDateAx.getMinorUnit().getVal();
+        } else {
+            return Double.NaN;
+        }
+    }
+
+    @Override
+    public boolean isSetMajorUnit() {
+        return ctDateAx.isSetMajorUnit();
+    }
+
+    @Override
+    public void setMajorUnit(double major) {
+        if (Double.isNaN(major)) {
+            if (ctDateAx.isSetMajorUnit()) {
+                ctDateAx.unsetMajorUnit();
+            }
+        } else {
+            if (ctDateAx.isSetMajorUnit()) {
+                ctDateAx.getMajorUnit().setVal(major);
+            } else {
+                ctDateAx.addNewMajorUnit().setVal(major);
+            }
+        }
+    }
+
+    @Override
+    public double getMajorUnit() {
+        if (ctDateAx.isSetMajorUnit()) {
+            return ctDateAx.getMajorUnit().getVal();
+        } else {
+            return Double.NaN;
+        }
+    }
+
+    @Override
     public void crossAxis(XDDFChartAxis axis) {
         ctDateAx.getCrossAx().setVal(axis.getId());
     }

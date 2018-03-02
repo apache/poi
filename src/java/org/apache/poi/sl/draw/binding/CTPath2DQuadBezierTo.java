@@ -31,26 +31,26 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="CT_Path2DQuadBezierTo">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="pt" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_AdjPoint2D" maxOccurs="2" minOccurs="2"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="CT_Path2DQuadBezierTo"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="pt" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_AdjPoint2D" maxOccurs="2" minOccurs="2"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "CT_Path2DQuadBezierTo", namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", propOrder = {
+@XmlType(name = "CT_Path2DQuadBezierTo", propOrder = {
     "pt"
 })
 public class CTPath2DQuadBezierTo {
 
-    @XmlElement(namespace = "http://schemas.openxmlformats.org/drawingml/2006/main", required = true)
+    @XmlElement(required = true)
     protected List<CTAdjPoint2D> pt;
 
     /**
@@ -77,7 +77,7 @@ public class CTPath2DQuadBezierTo {
      */
     public List<CTAdjPoint2D> getPt() {
         if (pt == null) {
-            pt = new ArrayList<>();
+            pt = new ArrayList<CTAdjPoint2D>();
         }
         return this.pt;
     }

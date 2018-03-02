@@ -30,10 +30,9 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
-import org.apache.poi.xssf.model.CalculationChain;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
@@ -227,7 +226,6 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         _cells.put(colI, xcell);
         return xcell;
     }
-
     /**
      * Returns the cell at the given (0 based) index,
      *  with the {@link org.apache.poi.ss.usermodel.Row.MissingCellPolicy} from the parent Workbook.
@@ -500,43 +498,21 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      * @see org.apache.poi.xssf.usermodel.XSSFSheet#write(java.io.OutputStream) ()
      */
     protected void onDocumentWrite(){
-        // check if cells in the CTRow are ordered
-        boolean isOrdered = true;
-        CTCell[] cArray = _row.getCArray();
-        if (cArray.length != _cells.size()) {
-            isOrdered = false;
-        } else {
-            int i = 0;
-            for (XSSFCell cell : _cells.values()) {
-                CTCell c1 = cell.getCTCell();
-                CTCell c2 = cArray[i++];
-
-                String r1 = c1.getR();
-                String r2 = c2.getR();
-                if (!(r1==null ? r2==null : r1.equals(r2))){
-                    isOrdered = false;
-                    break;
-                }
-            }
+        CTCell[] cArray = new CTCell[_cells.size()];
+        int i = 0;
+        for (XSSFCell xssfCell : _cells.values()) {
+            cArray[i] = (CTCell) xssfCell.getCTCell().copy();
+            
+            // we have to copy and re-create the XSSFCell here because the 
+            // elements as otherwise setCArray below invalidates all the columns!
+            // see Bug 56170, XMLBeans seems to always release previous objects
+            // in the CArray, so we need to provide completely new ones here!
+            //_cells.put(entry.getKey(), new XSSFCell(this, cArray[i]));
+            xssfCell.setCTCell(cArray[i]);
+            i++;
         }
 
-        if(!isOrdered){
-            cArray = new CTCell[_cells.size()];
-            int i = 0;
-            for (XSSFCell xssfCell : _cells.values()) {
-                cArray[i] = (CTCell) xssfCell.getCTCell().copy();
-                
-                // we have to copy and re-create the XSSFCell here because the 
-                // elements as otherwise setCArray below invalidates all the columns!
-                // see Bug 56170, XMLBeans seems to always release previous objects
-                // in the CArray, so we need to provide completely new ones here!
-                //_cells.put(entry.getKey(), new XSSFCell(this, cArray[i]));
-                xssfCell.setCTCell(cArray[i]);
-                i++;
-            }
-
-            _row.setCArray(cArray);
-        }
+        _row.setCArray(cArray);
     }
 
     /**
@@ -554,23 +530,11 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      */
     protected void shift(int n) {
         int rownum = getRowNum() + n;
-        CalculationChain calcChain = _sheet.getWorkbook().getCalculationChain();
-        int sheetId = (int)_sheet.sheet.getSheetId();
-        String msg = "Row[rownum="+getRowNum()+"] contains cell(s) included in a multi-cell array formula. " +
+        String msg = "Row[rownum=" + getRowNum() + "] contains cell(s) included in a multi-cell array formula. " +
                 "You cannot change part of an array.";
         for(Cell c : this){
-            XSSFCell cell = (XSSFCell)c;
-            if(cell.isPartOfArrayFormulaGroup()){
-                cell.notifyArrayFormulaChanging(msg);
-            }
-
-            //remove the reference in the calculation chain
-            if(calcChain != null) calcChain.removeItem(sheetId, cell.getReference());
-
-            CTCell ctCell = cell.getCTCell();
-            String r = new CellReference(rownum, cell.getColumnIndex()).formatAsString();
-            ctCell.setR(r);
-        }
+            ((XSSFCell)c).updateCellReferencesForShifting(msg);
+          }
         setRowNum(rownum);
     }
     
@@ -620,13 +584,14 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
                 destCell.copyCellFrom(srcCell, policy);
             }
 
-            final XSSFRowShifter rowShifter = new XSSFRowShifter(_sheet);
             final int sheetIndex = _sheet.getWorkbook().getSheetIndex(_sheet);
             final String sheetName = _sheet.getWorkbook().getSheetName(sheetIndex);
             final int srcRowNum = srcRow.getRowNum();
             final int destRowNum = getRowNum();
             final int rowDifference = destRowNum - srcRowNum;
+            
             final FormulaShifter formulaShifter = FormulaShifter.createForRowCopy(sheetIndex, sheetName, srcRowNum, srcRowNum, rowDifference, SpreadsheetVersion.EXCEL2007);
+            final XSSFRowShifter rowShifter = new XSSFRowShifter(_sheet);
             rowShifter.updateRowFormulas(this, formulaShifter);
 
             // Copy merged regions that are fully contained on the row
@@ -651,5 +616,71 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
     @Override
     public int getOutlineLevel() {
         return _row.getOutlineLevel();
+    }
+    
+    /**
+     * Shifts column range [firstShiftColumnIndex-lastShiftColumnIndex] step places to the right.
+     * @param firstShiftColumnIndex the column to start shifting
+     * @param lastShiftColumnIndex the column to end shifting
+     * @param step length of the shifting step
+     */
+    @Override
+    public void shiftCellsRight(int firstShiftColumnIndex, int lastShiftColumnIndex, int step) {
+        if(step < 0)
+            throw new IllegalArgumentException("Shifting step may not be negative ");
+        if(firstShiftColumnIndex > lastShiftColumnIndex)
+            throw new IllegalArgumentException(String.format(LocaleUtil.getUserLocale(),
+                    "Incorrect shifting range : %d-%d", firstShiftColumnIndex, lastShiftColumnIndex));
+        for (int columnIndex = lastShiftColumnIndex; columnIndex >= firstShiftColumnIndex; columnIndex--){ // process cells backwards, because of shifting 
+            shiftCell(columnIndex, step);
+        }
+        for (int columnIndex = firstShiftColumnIndex; columnIndex <= firstShiftColumnIndex+step-1; columnIndex++)
+        {
+            _cells.remove(columnIndex);
+            XSSFCell targetCell = getCell(columnIndex);
+            if(targetCell != null)
+                targetCell.getCTCell().set(CTCell.Factory.newInstance());
+        }
+    }
+    /**
+     * Shifts column range [firstShiftColumnIndex-lastShiftColumnIndex] step places to the left.
+     * @param firstShiftColumnIndex the column to start shifting
+     * @param lastShiftColumnIndex the column to end shifting
+     * @param step length of the shifting step
+     */
+    @Override
+    public void shiftCellsLeft(int firstShiftColumnIndex, int lastShiftColumnIndex, int step) {
+        if(step < 0)
+            throw new IllegalArgumentException("Shifting step may not be negative ");
+        if(firstShiftColumnIndex > lastShiftColumnIndex)
+            throw new IllegalArgumentException(String.format(LocaleUtil.getUserLocale(),
+                    "Incorrect shifting range : %d-%d", firstShiftColumnIndex, lastShiftColumnIndex));
+        if(firstShiftColumnIndex - step < 0) 
+            throw new IllegalStateException("Column index less than zero : " + (Integer.valueOf(firstShiftColumnIndex + step)).toString());
+        for (int columnIndex = firstShiftColumnIndex; columnIndex <= lastShiftColumnIndex; columnIndex++){ 
+            shiftCell(columnIndex, -step);
+        }
+        for (int columnIndex = lastShiftColumnIndex-step+1; columnIndex <= lastShiftColumnIndex; columnIndex++){
+            _cells.remove(columnIndex);
+            XSSFCell targetCell = getCell(columnIndex);
+            if(targetCell != null)
+                targetCell.getCTCell().set(CTCell.Factory.newInstance());
+        }
+    }
+    private void shiftCell(int columnIndex, int step/*pass negative value for left shift*/){
+        if(columnIndex + step < 0) // only for shifting left
+            throw new IllegalStateException("Column index less than zero : " + (Integer.valueOf(columnIndex + step)).toString());
+        
+        XSSFCell currentCell = getCell(columnIndex);
+        if(currentCell != null){
+            currentCell.setCellNum(columnIndex+step);
+            _cells.put(columnIndex+step, currentCell);
+        }
+        else {
+            _cells.remove(columnIndex+step);
+            XSSFCell targetCell = getCell(columnIndex+step);
+            if(targetCell != null)
+                targetCell.getCTCell().set(CTCell.Factory.newInstance());
+        }
     }
 }

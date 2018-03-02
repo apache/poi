@@ -118,7 +118,7 @@ public class XSSFCellStyle implements CellStyle {
      */
     public void verifyBelongsToStylesSource(StylesTable src) {
         if(this._stylesSource != src) {
-            throw new IllegalArgumentException("This Style does not belong to the supplied Workbook Stlyes Source. Are you trying to assign a style from one workbook to the cell of a differnt workbook?");
+            throw new IllegalArgumentException("This Style does not belong to the supplied Workbook Styles Source. Are you trying to assign a style from one workbook to the cell of a different workbook?");
         }
     }
 
@@ -210,7 +210,7 @@ public class XSSFCellStyle implements CellStyle {
         _cellXf.setFillId(idx);
         _cellXf.setApplyFill(true);
     }
-    
+
     private void addBorder(CTBorder border) {
         int idx = _stylesSource.putBorder(new XSSFCellBorder(border, _theme,_stylesSource.getIndexedColors()));
 
@@ -469,8 +469,21 @@ public class XSSFCellStyle implements CellStyle {
      * @see org.apache.poi.xssf.usermodel.XSSFWorkbook#getFontAt(short)
      */
     @Override
+    @Deprecated
     public short getFontIndex() {
         return (short) getFontId();
+    }
+
+    /**
+     * Gets the index of the font for this style
+     *
+     * @return short - font index
+     * @see org.apache.poi.xssf.usermodel.XSSFWorkbook#getFontAt(int)
+     * @since 4.0.0
+     */
+    @Override
+    public int getFontIndexAsInt() {
+        return getFontId();
     }
 
     /**
@@ -559,7 +572,7 @@ public class XSSFCellStyle implements CellStyle {
     public boolean getQuotePrefixed() {
         return _cellXf.getQuotePrefix();
     }
-    
+
     /**
      * Get the color to use for the right border
      *
@@ -922,7 +935,7 @@ public class XSSFCellStyle implements CellStyle {
         }
         return ct;
     }
-    
+
     /**
      * Set reading order for the cell
      *
@@ -1064,7 +1077,7 @@ public class XSSFCellStyle implements CellStyle {
          }
         _cellXf.getProtection().setLocked(locked);
     }
-    
+
     /**
      * Turn on or off "Quote Prefix" or "123 Prefix" for the style,
      *  which is used to tell Excel that the thing which looks like
@@ -1119,8 +1132,8 @@ public class XSSFCellStyle implements CellStyle {
      * <code>[degrees below horizon] = 90 - textRotation.</code>
      * </p>
      *
-     * Note: HSSF uses values from -90 to 90 degrees, whereas XSSF 
-     * uses values from 0 to 180 degrees. The implementations of this method will map between these two value-ranges 
+     * Note: HSSF uses values from -90 to 90 degrees, whereas XSSF
+     * uses values from 0 to 180 degrees. The implementations of this method will map between these two value-ranges
      * accordingly, however the corresponding getter is returning values in the range mandated by the current type
      * of Excel file-format that this CellStyle is applied to.
      *

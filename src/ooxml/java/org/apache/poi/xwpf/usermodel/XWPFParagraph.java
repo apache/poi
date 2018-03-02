@@ -902,7 +902,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     public void setSpacingAfter(int spaces) {
         CTSpacing spacing = getCTSpacing(true);
         if (spacing != null) {
-            BigInteger bi = new BigInteger("" + spaces);
+            BigInteger bi = new BigInteger(Integer.toString(spaces));
             spacing.setAfter(bi);
         }
 
@@ -939,7 +939,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     public void setSpacingAfterLines(int spaces) {
         CTSpacing spacing = getCTSpacing(true);
-        BigInteger bi = new BigInteger("" + spaces);
+        BigInteger bi = new BigInteger(Integer.toString(spaces));
         spacing.setAfterLines(bi);
     }
 
@@ -967,7 +967,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     public void setSpacingBefore(int spaces) {
         CTSpacing spacing = getCTSpacing(true);
-        BigInteger bi = new BigInteger("" + spaces);
+        BigInteger bi = new BigInteger(Integer.toString(spaces));
         spacing.setBefore(bi);
     }
 
@@ -998,7 +998,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     public void setSpacingBeforeLines(int spaces) {
         CTSpacing spacing = getCTSpacing(true);
-        BigInteger bi = new BigInteger("" + spaces);
+        BigInteger bi = new BigInteger(Integer.toString(spaces));
         spacing.setBeforeLines(bi);
     }
 
@@ -1119,7 +1119,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     public void setIndentationLeft(int indentation) {
         CTInd indent = getCTInd(true);
-        BigInteger bi = new BigInteger("" + indentation);
+        BigInteger bi = new BigInteger(Integer.toString(indentation));
         indent.setLeft(bi);
     }
 
@@ -1158,7 +1158,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     public void setIndentationRight(int indentation) {
         CTInd indent = getCTInd(true);
-        BigInteger bi = new BigInteger("" + indentation);
+        BigInteger bi = new BigInteger(Integer.toString(indentation));
         indent.setRight(bi);
     }
 
@@ -1196,7 +1196,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
 
     public void setIndentationHanging(int indentation) {
         CTInd indent = getCTInd(true);
-        BigInteger bi = new BigInteger("" + indentation);
+        BigInteger bi = new BigInteger(Integer.toString(indentation));
         indent.setHanging(bi);
     }
 
@@ -1237,7 +1237,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     public void setIndentationFirstLine(int indentation) {
         CTInd indent = getCTInd(true);
-        BigInteger bi = new BigInteger("" + indentation);
+        BigInteger bi = new BigInteger(Integer.toString(indentation));
         indent.setFirstLine(bi);
     }
 

@@ -102,7 +102,7 @@ public class XDGFCell {
     }
 
     /**
-     * @param cell
+     * @param cell The type of the cell
      * @return A value converted to inches
      */
     public static Double parseVLength(CellType cell) {

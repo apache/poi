@@ -1,0 +1,40 @@
+<xsd:schema
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://xbean/scomp/derivation/ComplexExtension"
+    targetNamespace="http://xbean/scomp/derivation/ComplexExtension"
+    xmlns:base="http://xbean/scomp/contentType/ModelGroup"
+    >
+
+    <xsd:import namespace="http://xbean/scomp/contentType/ModelGroup"
+    schemaLocation="../contentType/Group.xsd"/>
+    <!--element only-->
+    <xsd:complexType name="ChoiceExtensionT">
+        <xsd:complexContent>
+            <xsd:extension base="base:ChoiceT">
+                <xsd:choice maxOccurs="2">
+                    <xsd:element name="extraEltStr" type="xsd:string"/>
+                    <xsd:element name="extraEltInt" type="xsd:int"/>
+                </xsd:choice>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="SequenceExtensionT">
+        <xsd:complexContent>
+            <xsd:extension base="base:SequenceT">
+                <xsd:choice maxOccurs="2">
+                    <xsd:element name="extraEltStr" type="xsd:string"/>
+                    <xsd:element name="extraEltInt" type="xsd:int"/>
+                </xsd:choice>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <!--Extension does not work for "all" groups: they need to be@top of content model
+        Walmsley p 308-->
+    
+
+    <xsd:element name="ChoiceExtensionElt" type="ChoiceExtensionT"/>
+    <xsd:element name="SequenceExtensionElt" type="SequenceExtensionT"/>
+
+</xsd:schema>

@@ -2119,4 +2119,10 @@ public class SXSSFSheet implements Sheet
         color.setIndexed(colorIndex);
         pr.setTabColor(color);
     }
+    
+    @NotImplemented 
+    @Override 
+    public void shiftColumns(int startColumn, int endColumn, int n){ 
+      throw new UnsupportedOperationException("NotImplemented"); 
+    }
 }

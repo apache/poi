@@ -1,0 +1,177 @@
+ <xsd:schema
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns="http://xbean/scomp/derivation/Block"
+     targetNamespace="http://xbean/scomp/derivation/Block"
+     >
+     <xsd:simpleType name="ageT">
+         <xsd:restriction base="xsd:positiveInteger">
+             <xsd:minInclusive value="15"/>
+         </xsd:restriction>
+     </xsd:simpleType>
+
+     <xsd:simpleType name="genderT">
+         <xsd:restriction base="xsd:string">
+             <xsd:pattern value="M|F|m|f"/>
+         </xsd:restriction>
+     </xsd:simpleType>
+
+     <xsd:simpleType name="restAgeT">
+         <xsd:restriction base="ageT">
+             <xsd:minInclusive value="15"/>
+             <xsd:maxInclusive value="30"/>
+         </xsd:restriction>
+     </xsd:simpleType>
+
+     <xsd:complexType name="blockAllT" block="#all">
+         <xsd:sequence>
+             <xsd:element name="name" type="xsd:string"/>
+             <xsd:element name="age" type="ageT"/>
+         </xsd:sequence>
+     </xsd:complexType>
+
+     <xsd:complexType name="blockExtT" block="extension">
+         <xsd:sequence>
+             <xsd:element name="name" type="xsd:string"/>
+             <xsd:element name="age" type="ageT"/>
+         </xsd:sequence>
+     </xsd:complexType>
+
+     <xsd:complexType name="blockRestT" block="restriction">
+         <xsd:sequence>
+             <xsd:element name="name" type="xsd:string"/>
+             <xsd:element name="age" type="ageT"/>
+         </xsd:sequence>
+     </xsd:complexType>
+
+     <xsd:complexType name="blockERT" block="extension restriction">
+         <xsd:sequence>
+             <xsd:element name="name" type="xsd:string"/>
+             <xsd:element name="age" type="ageT"/>
+         </xsd:sequence>
+     </xsd:complexType>
+
+     <xsd:complexType name="blockRET" block="restriction extension">
+         <xsd:sequence>
+             <xsd:element name="name" type="xsd:string"/>
+             <xsd:element name="age" type="ageT"/>
+         </xsd:sequence>
+     </xsd:complexType>
+
+     <!--======================Extended/Derived types =======================-->
+     <xsd:complexType name="extAllT">
+         <xsd:complexContent>
+             <xsd:extension base="blockAllT">
+                 <xsd:sequence>
+                     <xsd:element name="gender" type="genderT"/>
+                 </xsd:sequence>
+             </xsd:extension>
+         </xsd:complexContent>
+     </xsd:complexType>
+
+     <xsd:complexType name="restAllT">
+         <xsd:complexContent>
+             <xsd:restriction base="blockAllT">
+                 <xsd:sequence>
+                     <xsd:element name="name" type="xsd:string"/>
+                     <xsd:element name="age" type="restAgeT"/>
+                 </xsd:sequence>
+             </xsd:restriction>
+         </xsd:complexContent>
+     </xsd:complexType>
+     <!--subst. fails-->
+     <xsd:complexType name="extET">
+         <xsd:complexContent>
+             <xsd:extension base="blockExtT">
+                 <xsd:sequence>
+                     <xsd:element name="gender" type="genderT"/>
+                 </xsd:sequence>
+             </xsd:extension>
+         </xsd:complexContent>
+     </xsd:complexType>
+     <!--subst. OK-->
+     <xsd:complexType name="restET">
+         <xsd:complexContent>
+             <xsd:restriction base="blockExtT">
+                 <xsd:sequence>
+                     <xsd:element name="name" type="xsd:string"/>
+                     <xsd:element name="age" type="restAgeT"/>
+                 </xsd:sequence>
+             </xsd:restriction>
+         </xsd:complexContent>
+     </xsd:complexType>
+
+     <!--subst. OK-->
+     <xsd:complexType name="extRT">
+         <xsd:complexContent>
+             <xsd:extension base="blockRestT">
+                 <xsd:sequence>
+                     <xsd:element name="gender" type="genderT"/>
+                 </xsd:sequence>
+             </xsd:extension>
+         </xsd:complexContent>
+     </xsd:complexType>
+
+     <!--subst. fails-->
+     <xsd:complexType name="restRT">
+         <xsd:complexContent>
+             <xsd:restriction base="blockRestT">
+                 <xsd:sequence>
+                     <xsd:element name="name" type="xsd:string"/>
+                     <xsd:element name="age" type="restAgeT"/>
+                 </xsd:sequence>
+             </xsd:restriction>
+         </xsd:complexContent>
+     </xsd:complexType>
+
+     <!--subst. fails-->
+     <xsd:complexType name="restERT">
+         <xsd:complexContent>
+             <xsd:restriction base="blockERT">
+                 <xsd:sequence>
+                     <xsd:element name="name" type="xsd:string"/>
+                     <xsd:element name="age" type="restAgeT"/>
+                 </xsd:sequence>
+             </xsd:restriction>
+         </xsd:complexContent>
+     </xsd:complexType>
+
+     <xsd:complexType name="restRET">
+         <xsd:complexContent>
+             <xsd:restriction base="blockRET">
+                 <xsd:sequence>
+                     <xsd:element name="name" type="xsd:string"/>
+                     <xsd:element name="age" type="restAgeT"/>
+                 </xsd:sequence>
+             </xsd:restriction>
+         </xsd:complexContent>
+     </xsd:complexType>
+
+     <xsd:complexType name="extRET">
+         <xsd:complexContent>
+             <xsd:extension base="blockRET">
+                 <xsd:sequence>
+                     <xsd:element name="gender" type="genderT"/>
+                 </xsd:sequence>
+             </xsd:extension>
+         </xsd:complexContent>
+     </xsd:complexType>
+
+     <xsd:complexType name="extERT">
+         <xsd:complexContent>
+             <xsd:extension base="blockERT">
+                 <xsd:sequence>
+                     <xsd:element name="gender" type="genderT"/>
+                 </xsd:sequence>
+             </xsd:extension>
+         </xsd:complexContent>
+     </xsd:complexType>
+
+     <xsd:element name="EltAllBase" type="blockAllT"/>
+
+     <xsd:element name="EltEBase" type="blockExtT"/>
+
+     <xsd:element name="EltRBase" type="blockRestT"/>
+
+     <xsd:element name="EltERBase" type="blockERT"/>
+     <xsd:element name="EltREBase" type="blockRET"/>
+ </xsd:schema>

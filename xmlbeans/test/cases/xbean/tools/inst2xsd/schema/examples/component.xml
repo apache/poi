@@ -1,0 +1,17 @@
+<component>
+    <attach for="element" event="onmouseover"
+        handler="hig_lite"/>
+    <attach for="element" event="onmouseout"
+        handler="low_lite"/>
+
+    <script type="text/javascript">
+        function hig_lite()
+        {
+        element.style.color=255
+        }
+        function low_lite()
+        {
+        element.style.color=0
+        }
+    </script>
+</component>

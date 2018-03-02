@@ -144,7 +144,7 @@ public class SheetUtil {
         if (cellType == CellType.FORMULA)
             cellType = cell.getCachedFormulaResultType();
 
-        Font font = wb.getFontAt(style.getFontIndex());
+        Font font = wb.getFontAt(style.getFontIndexAsInt());
 
         double width = -1;
         if (cellType == CellType.STRING) {
@@ -266,7 +266,7 @@ public class SheetUtil {
      */
     @Internal
     public static int getDefaultCharWidth(final Workbook wb) {
-        Font defaultFont = wb.getFontAt((short) 0);
+        Font defaultFont = wb.getFontAt( 0);
 
         AttributedString str = new AttributedString(String.valueOf(defaultChar));
         copyAttributes(defaultFont, str, 0, 1);

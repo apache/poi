@@ -1,0 +1,26 @@
+<xsd:schema
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns="http://xbean/scomp/element/LocalEltMinMaxOccurs"
+     targetNamespace="http://xbean/scomp/element/LocalEltMinMaxOccurs"
+     >
+
+     <xsd:element name="minOccursZero" type="xsd:int"/>
+     <xsd:element name="maxOccursZero" type="xsd:int"/>
+     <xsd:element name="minOccursOne" type="xsd:int"/>
+     <xsd:element name="maxOccursOne" type="xsd:int"/>
+     <xsd:element name="minOccursGTMaxOccurs" type="xsd:int"/>
+     <xsd:element name="twoToFour" type="xsd:int"/>
+
+     <xsd:complexType name="OccursT">
+         <xsd:sequence>
+             <xsd:element ref="minOccursZero"  minOccurs="0"/>
+             <xsd:element ref="minOccursOne"  minOccurs="1"/>
+             <xsd:element ref="maxOccursOne"  maxOccurs="1"/>
+             <xsd:element ref="twoToFour" minOccurs="2" maxOccurs="4"/>
+         </xsd:sequence>
+
+     </xsd:complexType>
+
+     <xsd:element name="MinMaxOccursDoc" type="OccursT" nillable="true"/>
+
+ </xsd:schema>
