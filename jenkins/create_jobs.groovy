@@ -419,15 +419,21 @@ Unfortunately we often see builds break because of changes/new machines...'''
 
                 'JDK 1.9 (latest)',
                 'JDK 9 b181',
-                'JDK 9 b181 (unlimited security)'
+                'JDK 9 b181 (unlimited security)',
+
+                'JDK 10 b36 (early access build)',
+                'JDK 10 b37 (early access build) (Windows Only)'
         )
         label('Nodes',
                 'beam1','beam2','beam3','beam4','beam5','beam6','beam7','beam8',
                 'freebsd1',
-                'H0','H1','H10','H11','H12','H13','H14','H15','H16','H17','H18','H19','H2','H20','H21','H22','H23','H24','H25','H26','H27','H3','H4','H5','H6','H7','H8','H9',
+                'H0','H1','H10','H11','H12','H13','H14','H15','H16','H17','H18','H19',
+                'H2','H20','H21','H22','H23','H24','H25','H26','H27','H28','H29',
+                'H3','H30','H31','H32','H33','H34','H35',
+                'H4','H5','H6','H7','H8','H9',
                 'qnode1','qnode2','qnode3',
-                'ubuntu-1','ubuntu-2','ubuntu-4','ubuntu-5','ubuntu-6','ubuntu-eu2','ubuntu-eu3','ubuntu-ppc64le','ubuntu-us1',
-                'windows-2012-1','windows-2012-2','windows-2012-3'
+                'ubuntu-1','ubuntu-2','ubuntu-4','ubuntu-6','ubuntu-eu2','ubuntu-eu3','ubuntu-ppc64le','ubuntu-us1',
+                'windows-2012-1','windows-2012-2','windows-2012-3','windows-2016-1'
         )
     }
     steps {
