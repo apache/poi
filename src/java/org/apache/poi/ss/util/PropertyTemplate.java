@@ -958,8 +958,8 @@ public final class PropertyTemplate {
      * @return short value, or 0 if not a short
      */
     private static short getShort(Object value) {
-        if (value instanceof Short) {
-            return ((Short) value).shortValue();
+        if (value instanceof Number) {
+            return ((Number) value).shortValue();
         }
         return 0;
     }

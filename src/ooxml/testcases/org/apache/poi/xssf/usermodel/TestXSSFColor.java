@@ -35,7 +35,7 @@ public final class TestXSSFColor {
       XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("48779.xlsx");
 
       // Check the CTColor is as expected
-      XSSFColor indexed = wb.getCellStyleAt((short)1).getFillBackgroundXSSFColor();
+      XSSFColor indexed = wb.getCellStyleAt(1).getFillBackgroundXSSFColor();
       assertEquals(true, indexed.getCTColor().isSetIndexed());
       assertEquals(64, indexed.getCTColor().getIndexed());
       assertEquals(false, indexed.getCTColor().isSetRgb());
