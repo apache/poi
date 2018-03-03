@@ -876,7 +876,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         font1.setColor((short) 20);
         Font font2 = wb1.createFont();
         font2.setColor(Font.COLOR_RED);
-        Font font3 = wb1.getFontAt((short) 0);
+        Font font3 = wb1.getFontAt(0);
 
         XSSFRow row = sheet.createRow(2);
         XSSFCell cell = row.createCell(2);
@@ -1750,9 +1750,9 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         // run some method on the font to verify if it is "disconnected" already
         //for(short i = 0;i < 256;i++)
         {
-            Font font = wb.getFontAt((short) 0);
+            Font font = wb.getFontAt(0);
             if (font instanceof XSSFFont) {
-                XSSFFont xfont = (XSSFFont) wb.getFontAt((short) 0);
+                XSSFFont xfont = (XSSFFont) wb.getFontAt(0);
                 CTFontImpl ctFont = (CTFontImpl) xfont.getCTFont();
                 assertEquals(0, ctFont.sizeOfBArray());
             }

@@ -138,7 +138,7 @@ public class XSSFFontFormatting implements FontFormatting {
         if(_font.sizeOfSzArray() == 0) return -1;
 
         CTFontSize sz = _font.getSzArray(0);
-        return (short)(20*sz.getVal());
+        return (int)(20*sz.getVal());
     }
 
     /**

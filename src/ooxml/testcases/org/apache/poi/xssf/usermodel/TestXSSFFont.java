@@ -323,7 +323,7 @@ public final class TestXSSFFont extends BaseTestFont{
         Workbook wb = new XSSFWorkbook();
 
         // cannot check on result because on some machines we get back false here!
-        SheetUtil.canComputeColumnWidth(wb.getFontAt((short)0));
+        SheetUtil.canComputeColumnWidth(wb.getFontAt(0));
 
         wb.close();        
     }
@@ -354,16 +354,16 @@ public final class TestXSSFFont extends BaseTestFont{
 
 		assertEquals(1, wb.getNumberOfFonts());
 
-		XSSFFont f1 = wb.getFontAt((short) 0);
+		XSSFFont f1 = wb.getFontAt(0);
 		assertFalse(f1.getBold());
 
 		// Check that asking for the same font
 		//  multiple times gives you the same thing.
 		// Otherwise, our tests wouldn't work!
-		assertSame(wb.getFontAt((short) 0), wb.getFontAt((short) 0));
+		assertSame(wb.getFontAt(0), wb.getFontAt(0));
 		assertEquals(
-				wb.getFontAt((short) 0),
-				wb.getFontAt((short) 0)
+				wb.getFontAt(0),
+				wb.getFontAt(0)
 		);
 
 		// Look for a new font we have
@@ -384,8 +384,8 @@ public final class TestXSSFFont extends BaseTestFont{
 		XSSFFont nf = wb.createFont();
 		assertEquals(2, wb.getNumberOfFonts());
 
-		assertEquals(1, nf.getIndex());
-		assertEquals(nf, wb.getFontAt((short) 1));
+		assertEquals(1, nf.getIndexAsInt());
+		assertEquals(nf, wb.getFontAt(1));
 
 		nf.setBold(false);
 		nf.setColor(IndexedColors.INDIGO.getIndex());
@@ -397,12 +397,12 @@ public final class TestXSSFFont extends BaseTestFont{
 		nf.setUnderline((byte) 2);
 
 		assertEquals(2, wb.getNumberOfFonts());
-		assertEquals(nf, wb.getFontAt((short) 1));
+		assertEquals(nf, wb.getFontAt(1));
 
 		assertTrue(
-				wb.getFontAt((short) 0)
+				wb.getFontAt(0)
 						!=
-						wb.getFontAt((short) 1)
+						wb.getFontAt(1)
 		);
 
 		// Find it now
@@ -426,7 +426,7 @@ public final class TestXSSFFont extends BaseTestFont{
 		assertNotNull(font);
 		assertEquals(
 				1,
-				font.getIndex()
+				font.getIndexAsInt()
 		);
 		assertEquals(nf,
 				wb.findFont(

@@ -613,7 +613,7 @@ public class SXSSFCell implements Cell {
     {
         if(_style == null){
             SXSSFWorkbook wb = (SXSSFWorkbook)getRow().getSheet().getWorkbook();
-            return wb.getCellStyleAt((short)0);
+            return wb.getCellStyleAt(0);
         } else {
             return _style;
         }
