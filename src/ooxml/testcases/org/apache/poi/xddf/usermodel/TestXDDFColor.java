@@ -18,6 +18,7 @@
 package org.apache.poi.xddf.usermodel;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import java.io.IOException;
 
@@ -31,26 +32,34 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTSystemColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.STPresetColorVal;
 import org.openxmlformats.schemas.drawingml.x2006.main.STSchemeColorVal;
 import org.openxmlformats.schemas.drawingml.x2006.main.STSystemColorVal;
+import org.xmlunit.builder.DiffBuilder;
+import org.xmlunit.builder.Input;
+import org.xmlunit.diff.Diff;
 
 public class TestXDDFColor {
     private static final String XMLNS = "xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\"/>";
 
     @Test
     public void testSchemeColor() throws IOException {
-        XMLSlideShow ppt = new XMLSlideShow();
-        XSLFTheme theme = ppt.createSlide().getTheme();
+        try (XMLSlideShow ppt = new XMLSlideShow()) {
+            XSLFTheme theme = ppt.createSlide().getTheme();
 
-        XDDFColor color = XDDFColor.forColorContainer(getThemeColor(theme, STSchemeColorVal.ACCENT_2));
-        // accent2 in theme1.xml is <a:srgbClr val="C0504D"/>
-        assertEquals("<a:srgbClr val=\"C0504D\" " + XMLNS, color.getColorContainer().toString());
+            XDDFColor color = XDDFColor.forColorContainer(getThemeColor(theme, STSchemeColorVal.ACCENT_2));
+            // accent2 in theme1.xml is <a:srgbClr val="C0504D"/>
+            Diff d1 = DiffBuilder.compare(Input.fromString("<a:srgbClr val=\"C0504D\" " + XMLNS))
+                    .withTest(color.getColorContainer().toString()).build();
+            assertFalse(d1.toString(), d1.hasDifferences());
 
-        color = XDDFColor.forColorContainer(getThemeColor(theme, STSchemeColorVal.LT_1));
-        assertEquals("<a:sysClr lastClr=\"FFFFFF\" val=\"window\" " + XMLNS, color.getColorContainer().toString());
+            color = XDDFColor.forColorContainer(getThemeColor(theme, STSchemeColorVal.LT_1));
+            Diff d2 = DiffBuilder.compare(Input.fromString("<a:sysClr lastClr=\"FFFFFF\" val=\"window\" " + XMLNS))
+                    .withTest(color.getColorContainer().toString()).build();
+            assertFalse(d2.toString(), d2.hasDifferences());
 
-        color = XDDFColor.forColorContainer(getThemeColor(theme, STSchemeColorVal.DK_1));
-        assertEquals("<a:sysClr lastClr=\"000000\" val=\"windowText\" " + XMLNS, color.getColorContainer().toString());
-
-        ppt.close();
+            color = XDDFColor.forColorContainer(getThemeColor(theme, STSchemeColorVal.DK_1));
+            Diff d3 = DiffBuilder.compare(Input.fromString("<a:sysClr lastClr=\"000000\" val=\"windowText\" " + XMLNS))
+                    .withTest(color.getColorContainer().toString()).build();
+            assertFalse(d3.toString(), d3.hasDifferences());
+        }
     }
 
     private CTColor getThemeColor(XSLFTheme theme, STSchemeColorVal.Enum value) {
