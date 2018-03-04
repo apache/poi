@@ -109,7 +109,7 @@ public final class TestEscherGraphics2d {
 
 	@Test
     public void testSetFont() {
-		Font f = new Font("Helvetica", 0, 12);
+		Font f = new Font("Helvetica", Font.PLAIN, 12);
 		graphics.setFont(f);
 		assertEquals(f, graphics.getFont());
 	}
@@ -133,7 +133,7 @@ public final class TestEscherGraphics2d {
 
 	private boolean isDialogPresent() {
 		String fontDebugStr = graphics.getFont().toString();
-		return fontDebugStr.indexOf("dialog") != -1 || fontDebugStr.indexOf("Dialog") != -1;
+		return fontDebugStr.contains("dialog") || fontDebugStr.contains("Dialog");
 	}
 
 	@Test

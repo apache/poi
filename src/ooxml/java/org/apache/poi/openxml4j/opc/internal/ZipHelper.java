@@ -31,7 +31,6 @@ import java.util.zip.ZipInputStream;
 
 import org.apache.poi.openxml4j.exceptions.NotOfficeXmlFileException;
 import org.apache.poi.openxml4j.exceptions.OLE2NotOfficeXmlFileException;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.ZipPackage;
@@ -39,7 +38,6 @@ import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.openxml4j.util.ZipSecureFile.ThresholdInputStream;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.Removal;
 
 @Internal
 public final class ZipHelper {
@@ -59,8 +57,9 @@ public final class ZipHelper {
     /**
      * Retrieve the zip entry of the core properties part.
      *
-     * @throws OpenXML4JException
-     *             Throws if internal error occurs.
+     * @throws IllegalArgumentException If the relationship for
+     *      core properties cannot be read or an invalid name is
+     *      specified in the properties.
      */
     public static ZipEntry getCorePropertiesZipEntry(ZipPackage pkg) {
         PackageRelationship corePropsRel = pkg.getRelationshipsByType(
@@ -221,11 +220,8 @@ public final class ZipHelper {
         }
         
         // Peek at the first few bytes to sanity check
-        FileInputStream input = new FileInputStream(file);
-        try {
+        try (FileInputStream input = new FileInputStream(file)) {
             verifyZipHeader(input);
-        } finally {
-            input.close();
         }
 
         // Open as a proper zip file
