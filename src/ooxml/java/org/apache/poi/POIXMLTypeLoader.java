@@ -97,26 +97,6 @@ public class POIXMLTypeLoader {
     private static XmlOptions getXmlOptions(XmlOptions options) {
         return options == null ? DEFAULT_XML_OPTIONS : options;
     }
-
-    /**
-     * Sets the {@link ClassLoader} which is used, when XmlBeans are dynamically instantiated -
-     * opposed to being loaded by the factory class which is accompanied by each generated XmlBeans interface.
-     * <p>
-     * This is especially necessary in a context which doesn't guarantee that the current (thread) context
-     * classloader has access to all XmlBeans schema definitions (*.xsb) - which is typically in OSGI the case.
-     * <p>
-     * The classloader will be only set for the current thread in a {@link ThreadLocal}. Although the
-     * ThreadLocal is implemented via a {@link WeakReference}, it's good style to {@code null} the classloader
-     * when the user code is finalized.
-     * 
-     * @param cl the classloader to be used when XmlBeans classes and definitions are looked up
-     * @deprecated in POI 3.17 - setting a classloader from the outside is now obsolete,
-     *  the classloader of the SchemaType will be used
-     */
-    @Deprecated
-    @Removal(version="4.0")
-    public static void setClassLoader(ClassLoader cl) {
-    }
     
     private static SchemaTypeLoader getTypeLoader(SchemaType type) {
         SchemaTypeLoader tl = typeLoader.get();

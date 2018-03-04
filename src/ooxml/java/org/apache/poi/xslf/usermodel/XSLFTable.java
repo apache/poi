@@ -71,8 +71,7 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
                 String errStr =
                     "Schemas (*.xsb) for CTTable can't be loaded - usually this happens when OSGI " +
                     "loading is used and the thread context classloader has no reference to " +
-                    "the xmlbeans classes - use POIXMLTypeLoader.setClassLoader() to set the loader, " +
-                    "e.g. with CTTable.class.getClassLoader()"
+                    "the xmlbeans classes"
                 ;
                 throw new IllegalStateException(errStr);
             }
