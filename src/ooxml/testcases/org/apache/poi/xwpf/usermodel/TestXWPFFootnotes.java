@@ -56,7 +56,7 @@ public class TestXWPFFootnotes extends TestCase {
             for (IBodyElement e : fn.getBodyElements()) {
                 if (e instanceof XWPFParagraph) {
                     String txt = ((XWPFParagraph) e).getText();
-                    if (txt.indexOf("Footnote_sdt") > -1) {
+                    if (txt.contains("Footnote_sdt")) {
                         hits++;
                     }
                 }
