@@ -31,7 +31,6 @@ import java.util.Set;
 
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -84,7 +83,6 @@ public class XSSFImportFromXML {
      * @param xmlInputString the XML to import
      * @throws SAXException if error occurs during XML parsing
      * @throws XPathExpressionException if error occurs during XML navigation
-     * @throws ParserConfigurationException if there are problems with XML parser configuration
      * @throws IOException  if there are problems reading the input string
      */
     public void importFromXML(String xmlInputString) throws SAXException, XPathExpressionException, IOException {
@@ -137,15 +135,15 @@ public class XSSFImportFromXML {
 
                 Node singleNode = result.item(i).cloneNode(true);
 
-                for (XSSFTableColumn tableColum : table.getColumns()) {
+                for (XSSFTableColumn tableColumn : table.getColumns()) {
 
-                    XSSFXmlColumnPr xmlColumnPr = tableColum.getXmlColumnPr();
+                    XSSFXmlColumnPr xmlColumnPr = tableColumn.getXmlColumnPr();
                     if(xmlColumnPr == null) {
                         continue;
                     }
 
                     int rowId = rowOffset + i;
-                    int columnId = columnOffset + tableColum.getColumnIndex();
+                    int columnId = columnOffset + tableColumn.getColumnIndex();
                     String localXPath = xmlColumnPr.getLocalXPath();
                     localXPath = localXPath.substring(localXPath.indexOf('/', 1) + 1);
 
@@ -224,10 +222,7 @@ public class XSSFImportFromXML {
                     break;
                 }
             }
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(String.format(LocaleUtil.getUserLocale(), "Unable to format value '%s' as %s for cell %s", value,
-                    type, new CellReference(cell).formatAsString()));
-        } catch (ParseException e) {
+        } catch (IllegalArgumentException | ParseException e) {
             throw new IllegalArgumentException(String.format(LocaleUtil.getUserLocale(), "Unable to format value '%s' as %s for cell %s", value,
                     type, new CellReference(cell).formatAsString()));
         }
@@ -300,7 +295,7 @@ public class XSSFImportFromXML {
 
         // Dummy implementation - not used!
         @Override
-        public Iterator<?> getPrefixes(String val) {
+        public Iterator<String> getPrefixes(String val) {
             return null;
         }
 
