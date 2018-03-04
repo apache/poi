@@ -37,6 +37,18 @@ def poijobs = [
                        '-Djava.locale.providers=JRE,CLDR'],
           skipcigame: true
         ],
+        [ name: 'POI-DSL-1.10', jdk: '1.10', trigger: triggerSundays,
+          properties: ['-Djava9addmods=--add-modules=java.xml.bind',
+                       '-Djavadoc9addmods=--add-modules=java.xml.bind',
+                       '-Djava9addmodsvalue=-Dsun.reflect.debugModuleAccessChecks=true',
+                       '-Djava9addopens1=--add-opens=java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED',
+                       '-Djava9addopens2=--add-opens=java.base/java.io=ALL-UNNAMED',
+                       '-Djava9addopens3=--add-opens=java.base/java.nio=ALL-UNNAMED',
+                       '-Djava9addopens4=--add-opens=java.base/java.lang=ALL-UNNAMED',
+                       '-Djava9addopens5=--add-opens=java.base/jdk.internal.ref=ALL-UNNAMED',
+                       '-Djava.locale.providers=JRE,CLDR'],
+          skipcigame: true
+        ],
         [ name: 'POI-DSL-IBM-JDK', jdk: 'IBMJDK', trigger: triggerSundays,
           // some OOXML tests fail with strange XML parsing errors and missing JCE unlimited strength requirements
           disabled: true, skipcigame: true
@@ -78,6 +90,7 @@ def defaultSlaves = 'ubuntu&&!cloud-slave&&!H15&&!H17&&!H18&&!H24&&!ubuntu-4&&!H
 def jdkMapping = [
         '1.8': 'JDK 1.8 (latest)',
         '1.9': 'JDK 1.9 (latest)',
+        '1.10': 'JDK 10 b36 (early access build)',
         'OpenJDK': 'OpenJDK 8 (on Ubuntu only) ',   // blank is required here until the name in the Jenkins instance is fixed!
         'IBMJDK': 'IBM 1.8 64-bit (on Ubuntu only)',
 ]
