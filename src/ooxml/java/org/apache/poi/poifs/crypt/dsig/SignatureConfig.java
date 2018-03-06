@@ -186,7 +186,9 @@ public class SignatureConfig {
             namespacePrefixes.put(XADES_132_NS, "xd");
         }
         
-        if (onlyValidation) return;
+        if (onlyValidation) {
+            return;
+        }
 
         if (signatureMarshalListener == null) {
             signatureMarshalListener = new SignatureMarshalListener();
@@ -712,55 +714,6 @@ public class SignatureConfig {
     }
 
     /**
-     * Each digest method has its own IV (initial vector)
-     *
-     * @return the IV depending on the main digest method
-     */
-    public byte[] getHashMagic() {
-        // see https://www.ietf.org/rfc/rfc3110.txt
-        // RSA/SHA1 SIG Resource Records
-        byte result[];
-        switch (getDigestAlgo()) {
-        case sha1: result = new byte[]
-            { 0x30, 0x1f, 0x30, 0x07, 0x06, 0x05, 0x2b, 0x0e
-            , 0x03, 0x02, 0x1a, 0x04, 0x14 };
-            break;
-        case sha224: result = new byte[] 
-            { 0x30, 0x2b, 0x30, 0x0b, 0x06, 0x09, 0x60, (byte) 0x86
-            , 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x04, 0x04, 0x1c };
-            break;
-        case sha256: result = new byte[]
-            { 0x30, 0x2f, 0x30, 0x0b, 0x06, 0x09, 0x60, (byte) 0x86
-            , 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x01, 0x04, 0x20 };
-            break;
-        case sha384: result = new byte[]
-            { 0x30, 0x3f, 0x30, 0x0b, 0x06, 0x09, 0x60, (byte) 0x86
-            , 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x02, 0x04, 0x30 };
-            break;
-        case sha512: result  = new byte[]
-            { 0x30, 0x4f, 0x30, 0x0b, 0x06, 0x09, 0x60, (byte) 0x86
-            , 0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x03, 0x04, 0x40 };
-            break;
-        case ripemd128: result = new byte[]
-            { 0x30, 0x1b, 0x30, 0x07, 0x06, 0x05, 0x2b, 0x24
-            , 0x03, 0x02, 0x02, 0x04, 0x10 };
-            break;
-        case ripemd160: result = new byte[]
-            { 0x30, 0x1f, 0x30, 0x07, 0x06, 0x05, 0x2b, 0x24
-            , 0x03, 0x02, 0x01, 0x04, 0x14 };
-            break;
-        // case ripemd256: result = new byte[]
-        //    { 0x30, 0x2b, 0x30, 0x07, 0x06, 0x05, 0x2b, 0x24
-        //    , 0x03, 0x02, 0x03, 0x04, 0x20 };
-        //    break;
-        default: throw new EncryptedDocumentException("Hash algorithm "
-            +getDigestAlgo()+" not supported for signing.");
-        }
-        
-        return result;
-    }
-
-    /**
      * @return the uri for the signature method, i.e. currently only rsa is
      * supported, so it's the rsa variant of the main digest
      */
@@ -785,7 +738,10 @@ public class SignatureConfig {
     }
     
     /**
-     * @param digestAlgo the digest algo, currently only sha* and ripemd160 is supported 
+     * Sets the digest algorithm - currently only sha* and ripemd160 is supported.
+     * MS Office only supports sha1, sha256, sha384, sha512. 
+     * 
+     * @param digestAlgo the digest algorithm  
      * @return the uri for the given digest
      */
     public static String getDigestMethodUri(HashAlgorithm digestAlgo) {
@@ -857,11 +813,15 @@ public class SignatureConfig {
         if (prov == null) {
             String dsigProviderNames[] = {
                 System.getProperty("jsr105Provider"),
-                "org.apache.jcp.xml.dsig.internal.dom.XMLDSigRI", // Santuario xmlsec
-                "org.jcp.xml.dsig.internal.dom.XMLDSigRI"         // JDK xmlsec
+                // Santuario xmlsec
+                "org.apache.jcp.xml.dsig.internal.dom.XMLDSigRI",
+                // JDK xmlsec
+                "org.jcp.xml.dsig.internal.dom.XMLDSigRI"         
             };
             for (String pn : dsigProviderNames) {
-                if (pn == null) continue;
+                if (pn == null) {
+                    continue;
+                }
                 try {
                     prov = (Provider)Class.forName(pn).newInstance();
                     break;
