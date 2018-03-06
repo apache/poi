@@ -56,15 +56,17 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.xml.crypto.dsig.dom.DOMSignContext;
+
+import org.apache.jcp.xml.dsig.internal.dom.DOMSignedInfo;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POITestCase;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
-import org.apache.poi.poifs.crypt.dsig.DigestInfo;
 import org.apache.poi.poifs.crypt.dsig.SignatureConfig;
 import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
-import org.apache.poi.poifs.crypt.dsig.SignatureInfo.SignaturePart;
+import org.apache.poi.poifs.crypt.dsig.SignaturePart;
 import org.apache.poi.poifs.crypt.dsig.facets.EnvelopedSignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.facets.KeyInfoSignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.facets.XAdESSignatureFacet;
@@ -120,8 +122,6 @@ public class TestSignatureInfo {
         
         cal = LocaleUtil.getLocaleCalendar(LocaleUtil.TIMEZONE_UTC);
         assertNotNull(cal);
-//        cal.set(2014, 7, 6, 21, 42, 12);
-//        cal.clear(Calendar.MILLISECOND);
 
         // don't run this test when we are using older Xerces as it triggers an XML Parser backwards compatibility issue 
         // in the xmlsec jar file
@@ -129,6 +129,11 @@ public class TestSignatureInfo {
         //System.out.println("Having: " + additionalJar);
         Assume.assumeTrue("Not running TestSignatureInfo because we are testing with additionaljar set to " + additionalJar, 
                 additionalJar == null || additionalJar.trim().length() == 0);
+        
+        System.setProperty("org.apache.xml.security.ignoreLineBreaks", "true");
+        
+        // Set line.separator for bug61182
+        // System.setProperty("line.separator", "\n");
     }
 
     @Ignore("This test is very sensitive, it breaks with every little change to the produced XML")
@@ -198,18 +203,18 @@ public class TestSignatureInfo {
         if (sep == null || "\n".equals(sep)) {
             // Unix
             signExp =
-                "HDdvgXblLMiE6gZSoRSQUof6+aedrhK9i51we1n+4Q/ioqrQCeh5UkfQ8lD63nV4ZDbM4/pIVFi6VpMpN/HMnA"+
-                "UHeVdVUCVTgpn3Iz21Ymcd9/aerNov2BjHLhS8X3oUE+XTu2TbJLNmms0I9G4lfg6HWP9t7ZCXBXy6vyCMArc=";
+                "QkqTFQZjXagjRAoOWKpAGa8AR0rKqkSfBtfSWqtjBmTgyjarn+t2POHkpySIpheHAbg+90GKSH88ACMtPHbG7q"+
+                "FL4gtgAD9Kjew6j16j0IRBwy145UlPrSLFMfF7YF7UlU1k1LBkIlRJ6Fv4MAJl6XspuzZOZIUmHZrWrdxycUQ=";
         } else if ("\r\n".equals(sep)){
             // Windows
             signExp =
-                "jVW6EPMywZ8jr4+I4alDosXzqrVuDG4wTdrr+la8QVbXfLm6HOh9AUFlo5yUZuWo/1gXrrkc34UTYNzuslyrOx"+
-                "KqadPOIRKUssJzdCh/hKeTxs/YtyWkpGHggrUjrF/vUUIeIXRHo+1DCAh6ptoicviH/I/Dtoa5NgkEHVuOHk8=";
+                "GmAlL7+bT1r3FsMHJOp3pKg8betblYieZTjhMIrPZPRBbSzjO7KsYRGNtr0aOE3qr8xzyYJN6/8QdF5X7pUEUc"+
+                "2m8ctrm7s5o2vZTkAqk9ENJGDjBPXX7TnuVOiVeL1cJdtjHC2QpjtRwkFR+B54G6b1OXLOFuQpP3vqR3+/XXE=";
         } else {
             // Mac
             signExp =
-                "GSaOQp2eVRkQl2GJgWxoxFdCadJJnmmKeoQtIwGrP3zzk+BnLeytGLN3bqmwCTjvtG7DyxENS+92e2xq/MiC9b"+
-                "CtNUfXfCdM0M8fzAny/Ewn9HckIsxjBztmsryt/OZQaKu52VU0ohQu7bG+cGPzcM+qTEss+GUbD0sVAoC34HM=";
+                "NZedY/LNTYU4nAUEUhIOg5+fKdgVtzRXKmdD3v+47E7Mb84oeiUGv9cCEE91DU3StF/JFIhjOJqavOzKnCsNcz"+
+                "NJ4j/inggUl1OJUsicqIGQnA7E8vzWnN1kf5lINgJLv+0PyrrX9sQZbItzxUpgqyOFYcD0trid+31nRt4wtaA=";
         }
         
         String signAct = si.getSignatureParts().iterator().next().
@@ -721,24 +726,21 @@ public class TestSignatureInfo {
         SignatureInfo si = new SignatureInfo();
         si.setSignatureConfig(signatureConfig);
 
-        Document document = DocumentHelper.createDocument();
+        final Document document = DocumentHelper.createDocument();
+        final DOMSignContext xmlSignContext = si.createXMLSignContext(document);
 
         // operate
-        DigestInfo digestInfo = si.preSign(document, null);
+        final DOMSignedInfo signedInfo = si.preSign(xmlSignContext);
 
         // verify
-        assertNotNull(digestInfo);
-        LOG.log(POILogger.DEBUG, "digest algo: " + digestInfo.hashAlgo);
-        LOG.log(POILogger.DEBUG, "digest description: " + digestInfo.description);
-        assertEquals("Office OpenXML Document", digestInfo.description);
-        assertNotNull(digestInfo.hashAlgo);
-        assertNotNull(digestInfo.digestValue);
+        assertNotNull(signedInfo);
+        assertEquals("Office OpenXML Document", signatureConfig.getSignatureDescription());
 
         // setup: key material, signature value
-        byte[] signatureValue = si.signDigest(digestInfo.digestValue);
+        final String signatureValue = si.signDigest(xmlSignContext, signedInfo);
         
         // operate: postSign
-        si.postSign(document, signatureValue);
+        si.postSign(xmlSignContext, signatureValue);
 
         // verify: signature
         si.getSignatureConfig().setOpcPackage(pkgCopy);

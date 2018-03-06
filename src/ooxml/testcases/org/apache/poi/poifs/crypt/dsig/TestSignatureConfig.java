@@ -16,20 +16,46 @@
 ==================================================================== */
 package org.apache.poi.poifs.crypt.dsig;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
+
+import javax.xml.bind.DatatypeConverter;
+
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-
 public class TestSignatureConfig {
     
-    @Ignore("failing in automated builds, due to issues loading security classes")
     @Test
+    @Ignore("failing in automated builds, due to issues loading security classes")
     public void testDigestAlgo() throws Exception {
         SignatureConfig sc = new SignatureConfig();
         assertEquals(HashAlgorithm.sha256, sc.getDigestAlgo());
         sc.setDigestAlgo(HashAlgorithm.sha1);
         assertEquals(HashAlgorithm.sha1, sc.getDigestAlgo());
+    }
+    
+    @Test
+    public void testHashOids() throws IOException {
+        final String[][] checks = {
+            { "sha1", "MCEwCQYFKw4DAhoFAAQU" },
+            { "sha224", "MC0wDQYJYIZIAWUDBAIEBQAEHA==" },
+            { "sha256", "MDEwDQYJYIZIAWUDBAIBBQAEIA==" },
+            { "sha384", "MEEwDQYJYIZIAWUDBAICBQAEMA==" },
+            { "sha512", "MFEwDQYJYIZIAWUDBAIDBQAEQA==" },
+            { "ripemd128", "MB0wCQYFKyQDAgIFAAQQ" },
+            { "ripemd160", "MCEwCQYFKyQDAgEFAAQU" },
+            { "ripemd256", "MC0wCQYFKyQDAgMFAAQg" },
+        };
+
+        for (final String[] check : checks) {
+            final HashAlgorithm ha = HashAlgorithm.valueOf(check[0]);
+            try (final DigestOutputStream dos = new DigestOutputStream(ha, null)) {
+                final String magic = DatatypeConverter.printBase64Binary(dos.getHashMagic());
+                assertEquals("hash digest magic mismatches", check[1], magic);
+            }
+        }
     }
 }
