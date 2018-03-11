@@ -16,16 +16,6 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.math.BigInteger;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.Units;
 import org.apache.poi.wp.usermodel.HeaderFooterType;
@@ -38,17 +28,24 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLang;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLanguage;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBrClear;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHighlightColor;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STLang;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STUnderline;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalAlignRun;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.util.Iterator;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * Tests for XWPF Run
@@ -294,8 +291,6 @@ public class TestXWPFRun {
     /**
      * Test that on an existing document, we do the
      * right thing with it
-     *
-     * @throws IOException
      */
     @Test
     public void testExisting() throws IOException {
@@ -458,7 +453,7 @@ public class TestXWPFRun {
     }
     
     @Test
-    public void testSetGetLang() throws IOException {
+    public void testSetGetLang() {
         XWPFRun run = p.createRun();
         assertNull(run.getLang());
 
@@ -473,7 +468,7 @@ public class TestXWPFRun {
     }
 
     @Test
-    public void testSetGetHighlight() throws IOException {
+    public void testSetGetHighlight() {
         XWPFRun run = p.createRun();
         assertEquals(false, run.isHighlighted());
         
@@ -652,6 +647,30 @@ public class TestXWPFRun {
         run.setTextPosition(-1);
         assertEquals(-1, run.getTextPosition());
         
+        document.close();
+    }
+
+    @Test
+    public void testSetters() throws IOException {
+        XWPFDocument document = new XWPFDocument();
+        final XWPFRun run = document.createParagraph().createRun();
+
+        // at least trigger some of the setters to ensure classes are included in
+        // the poi-ooxml-schemas
+        run.setBold(true);
+        run.setCapitalized(true);
+        run.setCharacterSpacing(2);
+        assertEquals(2, run.getCharacterSpacing());
+        run.setColor("000000");
+        run.setDoubleStrikethrough(true);
+        run.setEmbossed(true);
+        run.setFontFamily("Calibri");
+        assertEquals("Calibri", run.getFontFamily());
+        run.setFontSize(10);
+        assertEquals(10, run.getFontSize());
+        run.setImprinted(true);
+        run.setItalic(true);
+
         document.close();
     }
 }
