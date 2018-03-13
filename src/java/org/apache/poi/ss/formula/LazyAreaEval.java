@@ -27,7 +27,7 @@ import org.apache.poi.ss.util.CellReference;
 /**
  * Provides Lazy Evaluation to 3D Ranges
  */
-final class LazyAreaEval extends AreaEvalBase {
+public final class LazyAreaEval extends AreaEvalBase {
 	private final SheetRangeEvaluator _evaluator;
 
 	LazyAreaEval(AreaI ptg, SheetRangeEvaluator evaluator) {

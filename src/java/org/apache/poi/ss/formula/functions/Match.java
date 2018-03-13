@@ -17,6 +17,13 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.attackt.logivisual.model.newfunctions.SourceNodeType;
+import com.attackt.logivisual.model.newfunctions.SourceValueType;
+import com.attackt.logivisual.mysql.OperationUtils;
+import com.attackt.logivisual.utils.ThreadUtil;
+import org.apache.poi.ss.formula.LazyAreaEval;
 import org.apache.poi.ss.formula.TwoDEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
@@ -29,6 +36,9 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.LookupUtils.CompareResult;
 import org.apache.poi.ss.formula.functions.LookupUtils.LookupValueComparer;
 import org.apache.poi.ss.formula.functions.LookupUtils.ValueVector;
+import org.apache.poi.ss.util.CellReference;
+
+import java.util.Map;
 
 /**
  * Implementation for the MATCH() Excel function.<p>
@@ -95,7 +105,48 @@ public final class Match extends Var2or3ArgFunction {
 			ValueEval lookupValue = OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);
 			ValueVector lookupRange = evaluateLookupRange(arg1);
 			int index = findIndexOfValue(lookupValue, lookupRange, matchExact, findLargestLessThanOrEqual);
-			return new NumberEval(index + 1); // +1 to convert to 1-based
+			//-------处理数据开始---------
+			LazyAreaEval lazyAreaEval = (LazyAreaEval) arg1;
+			int newRowIndex = lazyAreaEval.getFirstRow();
+			int newColumnIndex = lazyAreaEval.getFirstColumn();
+			NumberEval numberEval = new NumberEval(index + 1);
+			if(lazyAreaEval.isRow()){
+				newColumnIndex = newColumnIndex + index;
+			}
+			if(lazyAreaEval.isColumn()) {
+				newRowIndex = newRowIndex + index;
+			}
+			String excelId = new ThreadUtil().getExcelUid();
+			CellReference cellReference = new CellReference(newRowIndex,newColumnIndex);
+			int funcValueType = Integer.parseInt(SourceValueType.valueOf(numberEval.getClass().getSimpleName()).toString());
+			String funcValue = String.valueOf(numberEval.getNumberValue());
+			// 查找对应的记录
+			OperationUtils operationUtils = new OperationUtils();
+			Map<String, Object> map = operationUtils.findData(excelId);
+			if(map.size()>0)
+			{
+				String text = map.get("content").toString();
+				Integer recordId = Integer.valueOf(map.get("id").toString());
+				//
+				JSONArray jsonArray = JSONArray.parseArray(text);
+				JSONObject jsonObject = jsonArray.getJSONObject(0);
+				jsonObject.put("funcValueType",funcValueType);
+				jsonObject.put("funcValue",funcValue);
+				// 添加新的
+				JSONObject newJsonObject = new JSONObject();
+				newJsonObject.put("nodeType",Integer.parseInt(SourceNodeType.valueOf("RefPtg").toString()));
+				newJsonObject.put("nodeAttr", cellReference.formatAsString());
+				newJsonObject.put("numArgs", 0);
+				newJsonObject.put("sheetIndex", lazyAreaEval.getFirstSheetIndex());
+				// 连接旧的
+				JSONArray jsonArray1 = new JSONArray();
+				jsonArray1.add(newJsonObject);
+				jsonObject.put("para_info",jsonArray1);
+				// 更改有效性数据
+				operationUtils.updateData(recordId,jsonArray.toJSONString());
+			}
+			//-------处理数据结束---------
+			return numberEval; // +1 to convert to 1-based
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
 		}

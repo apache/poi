@@ -299,7 +299,7 @@ public final class OperationEvaluationContext {
     private static NameType classifyCellReference(String str, SpreadsheetVersion ssVersion) {
         int len = str.length();
         if (len < 1) {
-            return CellReference.NameType.BAD_CELL_OR_NAMED_RANGE;
+            return NameType.BAD_CELL_OR_NAMED_RANGE;
         }
         return CellReference.classifyCellReference(str, ssVersion);
     }

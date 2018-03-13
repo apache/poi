@@ -17,12 +17,20 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import org.apache.poi.ss.formula.eval.BoolEval;
-import org.apache.poi.ss.formula.eval.EvaluationException;
-import org.apache.poi.ss.formula.eval.OperandResolver;
-import org.apache.poi.ss.formula.eval.ValueEval;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.attackt.logivisual.model.newfunctions.SourceNodeType;
+import com.attackt.logivisual.model.newfunctions.SourceValueType;
+import com.attackt.logivisual.mysql.OperationUtils;
+import com.attackt.logivisual.utils.ThreadUtil;
+import org.apache.poi.ss.formula.LazyAreaEval;
+import org.apache.poi.ss.formula.eval.*;
 import org.apache.poi.ss.formula.functions.LookupUtils.ValueVector;
 import org.apache.poi.ss.formula.TwoDEval;
+import org.apache.poi.ss.util.CellReference;
+
+import java.util.Map;
+
 /**
  * Implementation of the HLOOKUP() function.<p>
  *
@@ -58,7 +66,65 @@ public final class Hlookup extends Var3or4ArgFunction  {
 			int colIndex = LookupUtils.lookupIndexOfValue(lookupValue, LookupUtils.createRowVector(tableArray, 0), isRangeLookup);
 			int rowIndex = LookupUtils.resolveRowOrColIndexArg(arg2, srcRowIndex, srcColumnIndex);
 			ValueVector resultCol = createResultColumnVector(tableArray, rowIndex);
-			return resultCol.getItem(colIndex);
+			ValueEval valueEval = resultCol.getItem(colIndex);
+			//-------处理数据开始---------
+			if(arg1 instanceof LazyAreaEval)
+			{
+				try {
+					LazyAreaEval lazyAreaEval = (LazyAreaEval) arg1;
+					String excelId = new ThreadUtil().getExcelUid();
+					int newRowIndex = lazyAreaEval.getFirstRow()+rowIndex;
+					int newColumnIndex = lazyAreaEval.getFirstColumn()+colIndex;
+					CellReference cellReference = new CellReference(newRowIndex,newColumnIndex);
+					int funcValueType = Integer.parseInt(SourceValueType.valueOf(valueEval.getClass().getSimpleName()).toString());
+					String funcValue = "";
+					if (valueEval instanceof NumberEval) {
+						NumberEval ne = (NumberEval) valueEval;
+						funcValue = String.valueOf(ne.getNumberValue());
+					}
+					if (valueEval instanceof BoolEval) {
+						BoolEval be = (BoolEval) valueEval;
+						funcValue = String.valueOf(be.getBooleanValue());
+					}
+					if (valueEval instanceof StringEval) {
+						StringEval ne = (StringEval) valueEval;
+						funcValue = String.valueOf(ne.getStringValue());
+					}
+					if (valueEval instanceof ErrorEval) {
+						funcValue = String.valueOf(((ErrorEval)valueEval).getErrorCode());
+					}
+					// 查找对应的记录
+					OperationUtils operationUtils = new OperationUtils();
+					Map<String, Object> map = operationUtils.findData(excelId);
+					if(map.size()>0)
+					{
+						String text = map.get("content").toString();
+						Integer recordId = Integer.valueOf(map.get("id").toString());
+						//
+						JSONArray jsonArray = JSONArray.parseArray(text);
+						JSONObject jsonObject = jsonArray.getJSONObject(0);
+						jsonObject.put("funcValueType",funcValueType);
+						jsonObject.put("funcValue",funcValue);
+						// 添加新的
+						JSONObject newJsonObject = new JSONObject();
+						newJsonObject.put("nodeType",Integer.parseInt(SourceNodeType.valueOf("RefPtg").toString()));
+						newJsonObject.put("nodeAttr", cellReference.formatAsString());
+						newJsonObject.put("numArgs", 0);
+						newJsonObject.put("sheetIndex", ((LazyAreaEval) arg1).getFirstSheetIndex());
+						// 连接旧的
+						JSONArray jsonArray1 = new JSONArray();
+						jsonArray1.add(newJsonObject);
+						jsonObject.put("para_info",jsonArray1);
+						// 更改有效性数据
+						operationUtils.updateData(recordId,jsonArray.toJSONString());
+					}
+				}catch (Exception e)
+				{
+					System.out.println("函数内部重算出错"+e);
+				}
+			}
+			//-------处理数据结束---------
+			return valueEval;
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
 		}
