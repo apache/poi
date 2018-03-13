@@ -85,11 +85,12 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
     /**
      * Attempt to create a directory, including any necessary parent directories.
      * Does nothing if directory already exists.
+     * The method is synchronized to ensure that multiple threads don't try to create the directory at the same time.
      *
      * @param directory  the directory to create
      * @throws IOException if unable to create temporary directory or it is not a directory
      */
-    private void createTempDirectory(File directory) throws IOException {
+    private synchronized void createTempDirectory(File directory) throws IOException {
         // create directory if it doesn't exist
         final boolean dirExists = (directory.exists() || directory.mkdirs());
         
