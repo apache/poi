@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://contoso.com /Vehicles" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="Vehicle" type="veh:VehicleType" xmlns:veh="http://contoso.com /Vehicles"/>
+  <xs:complexType name="VehicleType">
+    <xs:sequence>
+      <xs:element ref="color"/>
+      <xs:element ref="wheels"/>
+      <xs:element ref="seats"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

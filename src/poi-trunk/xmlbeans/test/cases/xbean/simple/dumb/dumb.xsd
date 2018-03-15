@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!-- XMLBEANS-57: colon at end of targetNamespace -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        xmlns:bar="barNS"
+        xmlns="dumbNS:::"
+        targetNamespace="dumbNS:::"
+        elementFormDefault="qualified">
+
+    <xs:import namespace="barNS" schemaLocation="sub/bar.xsd" />
+
+    <xs:attribute name="a" type="xs:integer" />
+    <xs:attribute name="b" type="xs:integer" />
+    <xs:attribute name="c" type="xs:integer" />
+
+    <xs:element name="root">
+        <xs:complexType>
+            <xs:attribute ref="b"/>
+            <xs:attribute ref="bar:b"/>
+        </xs:complexType>
+    </xs:element>
+
+</xs:schema>

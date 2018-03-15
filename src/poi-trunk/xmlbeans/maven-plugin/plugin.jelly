@@ -1,0 +1,104 @@
+<?xml version="1.0"?>
+<!--
+
+    Copyright 2004-2005 The Apache Software Foundation
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+
+<!-- ================================================================== -->
+<!-- xmlbeans v2 maven plugin                                           -->
+<!-- ================================================================== -->
+<project xmlns:j="jelly:core"
+    xmlns:u="jelly:util"
+    xmlns:ant="jelly:ant"
+    xmlns:maven="jelly:maven"
+    xmlns:define="jelly:define"
+    xmlns:xmlbeans="xmlbeans2:maven"
+    >
+
+    <define:taglib uri="xmlbeans2:maven">
+        <define:jellybean
+            name="SchemaCompilerWrapper"
+            className="org.apache.xmlbeans.maven.SchemaCompilerWrapper"
+            method="compileSchemas"/>
+
+
+        <define:tag name="schema2java" xmlns="jelly:ant">
+
+            <j:if test="${context.getVariable('maven.xmlbeans2.targetdir') == null}">
+                <fail>Missing required attribute: maven.xmlbeans2.targetdir</fail>
+            </j:if>
+            <j:if test="${context.getVariable('maven.xmlbeans2.sourcedir') == null}">
+                <fail>Missing required attribute: maven.xmlbeans2.sourcedir</fail>
+            </j:if>
+            <j:if test="${context.getVariable('maven.xmlbeans2.sourceschema') == null}">
+                <fail>Missing required attribute: maven.xmlbeans2.sourceschema</fail>
+            </j:if>
+            <j:if test="${context.getVariable('maven.xmlbeans2.xmlconfigs') == null}">
+                <fail>Missing required attribute: maven.xmlbeans2.xmlconfigs</fail>
+            </j:if>
+            <!-- set up classpath for already-compiled schemas -->
+            <j:forEach var="artifact" items="${pom.artifacts}">
+                <j:set var="dependency" value="${artifact.dependency}"/>
+                <j:if test="${dependency.getProperty('xmlbeans') == 'true'}">
+                    <j:set var="xmlbeans.classpath" value="${xmlbeans.classpath},${artifact.path}"/>
+                </j:if>
+            </j:forEach>
+
+            <j:jelly xmlns="jelly:ant">
+
+                <j:set var="uptodatePropName" value="xmlbeans.uptodate"/>
+                <j:expr value="${context.setVariable(uptodatePropName, null)}"/>
+                <j:set var="uptodateFile" value="${maven.xmlbeans2.targetdir}/tstamp"/>
+
+                <uptodate property="${uptodatePropName}"
+                    targetfile="${uptodateFile}">
+                    <srcfiles dir="${maven.xmlbeans2.sourcedir}"
+                        includes="${maven.xmlbeans2.sourceschema}"/>
+                </uptodate>
+
+
+                <xmlbeans:SchemaCompilerWrapper
+                    sourceDir="${maven.xmlbeans2.sourcedir}"
+                    sourceSchemas="${maven.xmlbeans2.sourceschema}"
+                    xmlConfigs="${maven.xmlbeans2.xmlconfigs}"
+                    javaTargetDir="${maven.xmlbeans2.targetdir}"
+                    classTargetDir="${maven.build.dest}"
+                    catalogLocation="${maven.xmlbeans2.cataloglocation}"
+                    classPath="${xmlbeans.classpath}"
+                    resources="${pom.build.resources}"
+                    buildSchemas="${context.getVariable(uptodatePropName) == null}"
+                    baseSchemaLocation="${maven.xmlbeans2.baseSchemaLocation}"
+                    />
+                <j:if test="${context.getVariable(uptodatePropName) == null}">
+                    <touch file="${uptodateFile}"/>
+                </j:if>
+
+                <path id="maven.xmlbeans.compile.src.set"
+                    location="${maven.xmlbeans2.targetdir}"/>
+                <j:if test="${context.antProject.getReference('maven.compile.src.set') != null}">
+                    <maven:addPath id="maven.compile.src.set"
+                        refid="maven.xmlbeans.compile.src.set"/>
+                </j:if>
+                <j:if test="${context.antProject.getReference('maven.compile.src.set') == null}">
+                    <echo message="Maven cannot find the generated sources unless you provide a dummy source directory in project.xml"/>
+                </j:if>
+
+            </j:jelly>
+        </define:tag>
+
+
+    </define:taglib>
+
+</project>

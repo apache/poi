@@ -1,0 +1,38 @@
+\u001B[1mSYNOPSIS\u001B[0m
+    ${project.description}
+
+    Original Maven URLs:
+        \u001B[33mmvn:${pkgGroupId}/poi/${pkgVersion}\u001B[0m
+        \u001B[33mmvn:${pkgGroupId}/poi-ooxml/${pkgVersion}\u001B[0m
+        \u001B[33mmvn:${pkgGroupId}/poi-scratchpad/${pkgVersion}\u001B[0m
+
+\u001B[1mDESCRIPTION\u001B[0m
+    The Apache POI Project's mission is to create and maintain Java APIs for manipulating various file formats based
+    upon the Office Open XML standards (OOXML) and Microsoft's OLE 2 Compound Document format (OLE2). In short, you can
+    read and write MS Excel files using Java. In addition, you can read and write MS Word and MS PowerPoint files using
+    Java. Apache POI is your Java Excel solution (for Excel 97-2008). We have a complete API for porting other OOXML and
+    OLE2 formats and welcome others to participate.
+
+    OLE2 files include most Microsoft Office files such as XLS, DOC, and PPT as well as MFC serialization API based file
+    formats. The project provides APIs for the OLE2 Filesystem (POIFS) and OLE2 Document Properties (HPSF).
+
+    Office OpenXML Format is the new standards based XML file format found in Microsoft Office 2007 and 2008. This
+    includes XLSX, DOCX and PPTX. The project provides a low level API to support the Open Packaging Conventions using
+    openxml4j.
+
+    For each MS Office application there exists a component module that attempts to provide a common high level Java api
+    to both OLE2 and OOXML document formats. This is most developed for Excel workbooks (SS=HSSF+XSSF). Work is
+    progressing for Word documents (HWPF+XWPF) and PowerPoint presentations (HSLF+XSLF).
+
+    The project has recently added support for Outlook (HSMF). Microsoft opened the specifications to this format in
+    October 2007. We would welcome contributions.
+
+    There are also projects for Visio (HDGF), TNEF (HMEF), and Publisher (HPBF).
+
+    As a general policy we collaborate as much as possible with other projects to provide this functionality.
+    Examples include: Cocoon for which there are serializers for HSSF; Open Office.org with whom we collaborate in
+    documenting the XLS format; and Tika / Lucene, for which we provide format interpretors.
+    When practical, we donate components directly to those projects for POI-enabling them.
+
+\u001B[1mSEE ALSO\u001B[0m
+    \u001B[36mhttp://poi.apache.org/\u001B[0m

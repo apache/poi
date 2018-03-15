@@ -1,0 +1,33 @@
+<xsd:schema
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://xbean/scomp/derivation/AttributeRestriction"
+    targetNamespace="http://xbean/scomp/derivation/AttributeRestriction"
+    >
+    <!--Walmsley p.320-->
+    <xsd:complexType name="baseT">
+        <xsd:attribute name="a" type="xsd:integer"/>
+        <xsd:attribute name="b" type="xsd:string"/>
+        <xsd:attribute name="c" type="xsd:string" default="c"/>
+        <xsd:attribute name="d" type="xsd:string"/>
+        <xsd:attribute name="e" type="xsd:string" fixed="e"/>
+        <xsd:attribute name="f" type="xsd:string"/>
+        <xsd:attribute name="g" type="xsd:string"/>
+        <xsd:attribute name="x" type="xsd:string"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="RestrictedAttrT">
+        <xsd:complexContent>
+            <xsd:restriction base="baseT">
+                <xsd:attribute name="a" type="xsd:positiveInteger"/>
+                <xsd:attribute name="b" type="xsd:string" default="b"/>
+                <xsd:attribute name="c" type="xsd:string" default="c2"/>
+                <xsd:attribute name="d" type="xsd:string" fixed="d"/>
+                <xsd:attribute name="e" type="xsd:string" fixed="e"/>
+                <xsd:attribute name="f" type="xsd:string" use="required"/>
+                <xsd:attribute name="g" type="xsd:string" use="prohibited"/>
+            </xsd:restriction>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:element name="AttrElt" type="RestrictedAttrT"/>
+</xsd:schema>

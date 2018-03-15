@@ -1,0 +1,89 @@
+<xsd:schema
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://xbean/scomp/namespace/AttributeWC"
+    targetNamespace="http://xbean/scomp/namespace/AttributeWC"
+    attributeFormDefault="qualified"
+    >
+
+    <xsd:complexType name="AnyLaxT">
+       <xsd:anyAttribute namespace="##any" processContents="lax" />
+    </xsd:complexType>
+
+    <xsd:complexType name="AnySkipT">
+       <xsd:anyAttribute namespace="##any" processContents="skip" />
+    </xsd:complexType>
+     <!--default-->
+     <xsd:complexType name="AnyStrictT">
+         <xsd:anyAttribute/>
+    </xsd:complexType>
+
+     <xsd:complexType name="OtherLaxT">
+      <xsd:anyAttribute namespace="##other" processContents="lax" />
+    </xsd:complexType>
+
+     <xsd:complexType name="OtherSkipT">
+       <xsd:anyAttribute namespace="##other" processContents="skip" />
+    </xsd:complexType>
+
+    <xsd:complexType name="OtherStrictT">
+         <xsd:anyAttribute namespace="##other" processContents="strict" />
+        </xsd:complexType>
+
+    <xsd:complexType name="UriListLaxT">
+            <xsd:anyAttribute namespace="http://apache.org http://w3c.org" processContents="lax" />
+        </xsd:complexType>
+
+    <xsd:complexType name="UriListSkipT">
+           <xsd:anyAttribute namespace="http://apache.org http://xbean/scomp/attribute/GlobalAttrDefault" processContents="skip" />
+        </xsd:complexType>
+
+    <xsd:complexType name="UriListStrictT">
+           <xsd:anyAttribute namespace="http://apache.org http://xbean/scomp/attribute/GlobalAttrDefault" processContents="strict" />
+        </xsd:complexType>
+
+    <xsd:complexType name="targetNSLaxT">
+            <xsd:anyAttribute namespace="##targetNamespace" processContents="lax" />
+        </xsd:complexType>
+
+     <xsd:complexType name="targetNSSkipT">
+            <xsd:anyAttribute namespace="##targetNamespace" processContents="skip" />
+        </xsd:complexType>
+
+     <xsd:complexType name="targetNSStrictT">
+          <xsd:anyAttribute namespace="##targetNamespace"/>
+        </xsd:complexType>
+
+    <xsd:complexType name="LocalLaxT">
+           <xsd:anyAttribute namespace="##local" processContents="lax"/>
+        </xsd:complexType>
+
+     <xsd:complexType name="LocalSkipT">
+           <xsd:anyAttribute namespace="##local" processContents="skip"/>
+        </xsd:complexType>
+     <xsd:complexType name="LocalStrictT">
+           <xsd:anyAttribute namespace="##local"/>
+        </xsd:complexType>
+
+    <xsd:element name="AnyLax" type="AnyLaxT"/>
+    <xsd:element name="AnySkip" type="AnySkipT"/>
+    <xsd:element name="AnyStrict" type="AnyStrictT"/>
+
+      <xsd:element name="OtherLax" type="OtherLaxT"/>
+    <xsd:element name="OtherSkip" type="OtherSkipT"/>
+    <xsd:element name="OtherStrict" type="OtherStrictT"/>
+
+    <xsd:element name="ListLax" type="UriListLaxT"/>
+    <xsd:element name="ListSkip" type="UriListSkipT"/>
+    <xsd:element name="ListStrict" type="UriListStrictT"/>
+
+     <xsd:element name="TargetLax" type="targetNSLaxT"/>
+    <xsd:element name="TargetSkip" type="targetNSSkipT"/>
+    <xsd:element name="TargetStrict" type="targetNSStrictT"/>
+
+     <xsd:element name="LocalLax" type="LocalLaxT"/>
+    <xsd:element name="LocalSkip" type="LocalSkipT"/>
+    <xsd:element name="LocalStrict" type="LocalStrictT"/>
+
+    <xsd:attribute name="LocalAttr" type="xsd:int"/>
+
+</xsd:schema>

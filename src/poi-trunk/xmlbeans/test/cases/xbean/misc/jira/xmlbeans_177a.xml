@@ -1,0 +1,7 @@
+<jira:testListA xmlns:jira="http://jira/xmlbeans_177a">
+  <test a="This is a greater than sign: &gt;"/>
+  <test a="This is a less than sign: &lt;"/>
+  <test a="This is a single quote: &apos;"/>
+  <test a="This is a double quote: &quot;"/>
+  <test a="W.L.Gore &amp; Associates"/>
+</jira:testListA>

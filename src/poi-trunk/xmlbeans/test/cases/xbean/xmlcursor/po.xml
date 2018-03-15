@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<po:purchaseOrder xmlns:po="http://xbean.test/xmlcursor/PurchaseOrder" orderDate="1999-10-20">
+    <po:shipTo country="US">
+        <po:name>Alice Smith</po:name>
+        <po:street>123 Maple Street</po:street>
+        <po:city>Mill Valley</po:city>
+        <po:state>CA</po:state>
+        <po:zip>90952</po:zip>
+    </po:shipTo>
+    <po:billTo country="US">
+        <po:name>Robert Smith</po:name>
+        <po:street>8 Oak Avenue</po:street>
+        <po:city>Old Town</po:city>
+        <po:state>PA</po:state>
+        <po:zip>95819</po:zip>
+    </po:billTo>
+    <po:comment>Hurry, my lawn is going wild!</po:comment>
+    <po:items>
+        <po:item partNum="872-AA">
+            <po:productName>Lawnmower</po:productName>
+            <po:quantity>1</po:quantity>
+            <po:USPrice>148.95</po:USPrice>
+            <po:comment>Confirm this is electric</po:comment>
+        </po:item>
+        <po:item partNum="926-AA">
+            <po:productName>Baby Monitor</po:productName>
+            <po:quantity>1</po:quantity>
+            <po:USPrice>39.98</po:USPrice>
+            <po:shipDate>1999-05-21</po:shipDate>
+        </po:item>
+    </po:items>
+</po:purchaseOrder>

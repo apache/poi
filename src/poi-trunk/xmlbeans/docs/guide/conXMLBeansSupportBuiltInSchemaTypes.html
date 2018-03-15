@@ -1,0 +1,343 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<!-- Copyright 2004 The Apache Software Foundation
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License. -->
+<html>
+<head>
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Java Types for XML Schema</title>
+<!-- InstanceEndEditable -->
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=Content-Type content="text/html; charset=$CHARSET;">
+
+
+<!-- InstanceBeginEditable name="metatags" -->
+
+<meta name="author" content="your name">
+<meta name="description" content="A description of the topic contents.">
+<meta name="keywords" content="keywords to help in searches">
+<meta name="date last modified" content="10/25/02">
+<!-- InstanceEndEditable -->
+
+<!--(Links)=========================================================-->
+<!-- InstanceBeginEditable name="head" -->
+<link href="../xmlbeans.css" rel="stylesheet" type="text/css">
+<!-- InstanceEndEditable -->
+<link href="../xmlbeans.css" rel="stylesheet" type="text/css">
+<a href="../../../core/index.html" id="index"></a>
+<script language="JavaScript" src="../../../core/topicInfo.js"></script>
+<script language="JavaScript" src="../../../core/CookieClass.js"></script>
+<script language="JavaScript" src="../../../core/displayContent.js"></script>
+</head>
+
+<!--(Body)==========================================================-->
+<body>
+<script language="JavaScript">
+
+</script>
+<!-- InstanceBeginEditable name="body" -->
+<h1> XMLBeans Support for Built-In Schema Types</h1>
+<p>Just as with types in XML schema, the XMLBeans types based on schema are arranged
+  in a hierarchy. In general, the hierarchy of XMLBean types mirrors the hierarchy
+  of the schema types themselves. XML schema types all inherit from <span class="langinline">xs:anyType</span>
+  (which is at the root of the hierarchy); XMLBeans types inherit from <span class="langinline">XmlObject</span>.</p>
+<p>In XML schema, <span class="langinline">xs:anyType</span> is the root type
+  for two type categories: built-in and user-derived. Built-in schema types are
+  common types defined by the XML schema specification. User-derived types are
+  those you define in your schema. This topic lists the built-in types provided
+  with XMLBeans. For information about user-derived types and the Java types generated
+  from them, see <a href="conJavaTypesGeneratedFromUserDerived.html">Java Types Generated
+  from User-Derived Schema Types</a>.</p>
+<p>The following figure illustrates the hierarchy of types, showing both built-in
+  schema types and their XMLBeans parallels. Notice, too, that nearly all of the
+  built-in types are also available as natural Java types.</p>
+<p><img src="../images/conXMLTypeHierarchy.gif" width="865" height="887"> </p>
+<h1>Java Types Representing Built-In Schema Types</h1>
+<p>As you can see from the figure above, all 46 built-in schema types are represented
+  by an XMLBean type provided with XMLBeans. When using built-in XMLBean types,
+  keep in mind that:</p>
+<ul>
+  <li> Since <span class="langinline">XmlObject</span> corresponds to the <span class="langinline">xs:anyType</span>,
+    all Java XMLBean types inherit from <span class="langinline">XmlObject</span>.
+    Therefore all XMLBean types share the <span class="langinline">XmlObject</span>
+    interface’s ability to create an <span class="langinline">XmlCursor</span>
+    at the position of the object. They can also render the XML as strings or
+    streams.
+  <li>
+    <div>Where there is a corresponding natural Java type, the XMLBeans type provides
+      a way to get the underlying XML's value as the natural type. See the table
+      in this topic for information on how natural Java types map to XMLBeans
+      types. </div>
+
+  <li> Values assigned to built-in XMLBeans types are validated in keeping with
+    the rules of the schema type they represent. So, for example, an attempt to
+    assign a negative integer value to an <span class="langinline">XmlPositiveInteger</span>
+    will throw an <span class="langinline">XmlValueOutOfRange</span> exception.</li>
+</ul>
+<div>
+  <p>The following table lists the built-in schema types, along with their XMLBeans
+    and natural Java parallels. Unless otherwise noted, natural Java types are
+    in the <span class="langinline">java.lang</span> package; XMLBean types are
+    in the <span class="langinline">org.apache.xmlbeans</span> package.</p>
+</div>
+<div id="topictext">
+  <table>
+    <tr>
+      <td width="30%"><strong>Built-In Schema Type</strong></td>
+      <td width="31%"><strong>XMLBean Type</strong></td>
+      <td width="39%"><strong>Natural Java Type</strong></td>
+    </tr>
+    <tr>
+      <td>xs:anyType</td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlObject.html">XmlObject</a></td>
+      <td> <a href="../reference/org/apache/xmlbeans/XmlObject.html">org.apache.xmlbeans.XmlObject</a></td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#dt-anySimpleType" target="_blank">xs:anySimpleType</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlAnySimpleType.html">XmlAnySimpleType</a></td>
+      <td> <a href="http://java.sun.com/j2se/1.4.1/docs/api/java/lang/String.html" target="_blank">String</a></td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#anyURI" target="_blank">xs:anyURI</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlAnyURI.html">XmlAnyURI</a></td>
+      <td><a href="http://java.sun.com/j2se/1.4.1/docs/api/java/lang/String.html" target="_blank">String</a></td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#base64Binary" target="_blank">xs:base64Binary</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlBase64Binary.html">XmlBase64Binary</a></td>
+      <td>byte[]</td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#boolean" target="_blank">xs:boolean</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlBoolean.html">XmlBoolean</a></td>
+      <td>boolean</td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#byte" target="_blank">xs:byte</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlByte.html">XmlByte</a></td>
+      <td>byte</td>
+    </tr>
+    <tr>
+      <td height="17"><a href="http://www.w3.org/TR/xmlschema-2/#date" target="_blank">xs:date</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlDate.html">XmlDate</a></td>
+      <td><a href="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Calendar.html" target="_blank">java.util.Calendar</a></td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#dateTime" target="_blank">xs:dateTime</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlDateTime.html">XmlDateTime</a></td>
+      <td><a href="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Calendar.html" target="_blank">java.util.Calendar</a></td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#decimal" target="_blank">xs:decimal</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlDecimal.html">XmlDecimal</a></td>
+      <td><a href="http://java.sun.com/j2se/1.4.2/docs/api/java/math/BigDecimal.html" target="_blank">java.math.BigDecimal</a></td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#double" target="_blank">xs:double</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlDouble.html">XmlDouble</a></td>
+      <td>double</td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#duration" target="_blank">xs:duration</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlDuration.html">XmlDuration</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/GDuration.html">org.apache.xmlbeans.GDuration</a></td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#ENTITIES" target="_blank">xs:ENTITIES</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlENTITIES.html">XmlENTITIES</a></td>
+      <td><a href="http://java.sun.com/j2se/1.4.1/docs/api/java/lang/String.html" target="_blank">String</a></td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#ENTITY" target="_blank">xs:ENTITY</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlENTITY.html">XmlENTITY</a></td>
+      <td><a href="http://java.sun.com/j2se/1.4.1/docs/api/java/lang/String.html" target="_blank">String</a></td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#float" target="_blank">xs:float</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlFloat.html">XmlFloat</a></td>
+      <td>float</td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#gDay" target="_blank">xs:gDay</a></td>
+      <td><p><a href="../reference/org/apache/xmlbeans/XmlGDay.html">XmlGDay</a></p></td>
+      <td><a href="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Calendar.html" target="_blank">java.util.Calendar</a></td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#gMonth" target="_blank">xs:gMonth</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlGMonth.html">XmlGMonth</a></td>
+      <td><a href="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Calendar.html" target="_blank">java.util.Calendar</a></td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#gMonthDay" target="_blank">xs:gMonthDay</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlGMonthDay.html">XmlGMonthDay</a></td>
+      <td><a href="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Calendar.html" target="_blank">java.util.Calendar</a></td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#gYear" target="_blank">xs:gYear</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlGYear.html">XmlGYear</a></td>
+      <td><a href="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Calendar.html" target="_blank">java.util.Calendar</a></td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#gYearMonth" target="_blank">xs:gYearMonth</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlGYearMonth.html">XmlGYearMonth</a></td>
+      <td><a href="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Calendar.html" target="_blank">java.util.Calendar</a></td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#hexBinary" target="_blank">xs:hexBinary</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlHexBinary.html">XmlHexBinary</a></td>
+      <td>byte[]</td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#ID" target="_blank">xs:ID</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlID.html">XmlID</a></td>
+      <td><a href="http://java.sun.com/j2se/1.4.1/docs/api/java/lang/String.html" target="_blank">String</a></td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#IDREF" target="_blank">xs:IDREF</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlIDREF.html">XmlIDREF</a></td>
+      <td><a href="http://java.sun.com/j2se/1.4.1/docs/api/java/lang/String.html" target="_blank">String</a></td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#IDREFS" target="_blank">xs:IDREFS</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlIDREFS.html">XmlIDREFS</a></td>
+      <td><a href="http://java.sun.com/j2se/1.4.1/docs/api/java/lang/String.html" target="_blank">String</a></td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#int" target="_blank">xs:int</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlInt.html">XmlInt</a></td>
+      <td>int</td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#integer" target="_blank">xs:integer</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlInteger.html">XmlInteger</a></td>
+      <td><a href="http://java.sun.com/j2se/1.4.2/docs/api/java/math/BigInteger.html" target="_blank">java.math.BigInteger</a></td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#language" target="_blank">xs:language</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlLanguage.html">XmlLanguage</a></td>
+      <td><a href="http://java.sun.com/j2se/1.4.1/docs/api/java/lang/String.html" target="_blank">String</a></td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#long" target="_blank">xs:long</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlLong.html">XmlLong</a></td>
+      <td>long</td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#Name" target="_blank">xs:Name</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlName.html">XmlName</a></td>
+      <td><a href="http://java.sun.com/j2se/1.4.1/docs/api/java/lang/String.html" target="_blank">String</a></td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#NCName" target="_blank">xs:NCName</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlNCName.html">XmlNCNAME</a></td>
+      <td><a href="http://java.sun.com/j2se/1.4.1/docs/api/java/lang/String.html" target="_blank">String</a></td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#negativeInteger" target="_blank">xs:negativeInteger</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlNegativeInteger.html">XmlNegativeInteger</a></td>
+      <td><a href="http://java.sun.com/j2se/1.4.2/docs/api/java/math/BigInteger.html" target="_blank">java.math.BigInteger</a></td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#NMTOKEN" target="_blank">xs:NMTOKEN</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlNMTOKEN.html">XmlNMTOKEN</a></td>
+      <td><a href="http://java.sun.com/j2se/1.4.1/docs/api/java/lang/String.html" target="_blank">String</a></td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#NMTOKENS" target="_blank">xs:NMTOKENS</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlNMTOKENS.html">XmlNMTOKENS</a></td>
+      <td><a href="http://java.sun.com/j2se/1.4.1/docs/api/java/lang/String.html" target="_blank">String</a></td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#nonNegativeInteger" target="_blank">xs:nonNegativeInteger</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlNonNegativeInteger.html">XmlNonNegativeInteger</a></td>
+      <td><a href="http://java.sun.com/j2se/1.4.2/docs/api/java/math/BigInteger.html" target="_blank">java.math.BigInteger</a></td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#nonPositiveInteger" target="_blank">xs:nonPositiveInteger</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlNonPositiveInteger.html">XmlNonPositiveInteger</a></td>
+      <td><a href="http://java.sun.com/j2se/1.4.2/docs/api/java/math/BigInteger.html" target="_blank">java.math.BigInteger</a></td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#normalizedString" target="_blank">xs:normalizedString</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlNormalizedString.html">XmlNormalizedString</a></td>
+      <td><a href="http://java.sun.com/j2se/1.4.1/docs/api/java/lang/String.html" target="_blank">String</a></td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#NOTATION" target="_blank">xs:NOTATION</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlNOTATION.html">XmlNOTATION</a></td>
+      <td> Not supported</td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#positiveInteger" target="_blank">xs:positiveInteger</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlPositiveInteger.html">XmlPositiveInteger</a></td>
+      <td><a href="http://java.sun.com/j2se/1.4.2/docs/api/java/math/BigInteger.html" target="_blank">java.math.BigInteger</a></td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#QName" target="_blank">xs:QName</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlQName.html">XmlQName</a></td>
+      <td><a href="http://java.sun.com/j2ee/1.4/docs/api/javax/xml/namespace/QName.html" target="_blank">javax.xml.namespace.QName</a></td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#short" target="_blank">xs:short</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlShort.html">XmlShort</a></td>
+      <td>short</td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#string" target="_blank">xs:string</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlString.html">XmlString</a></td>
+      <td><a href="http://java.sun.com/j2se/1.4.1/docs/api/java/lang/String.html" target="_blank">String</a></td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#time" target="_blank">xs:time</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlTime.html">XmlTime</a></td>
+      <td><a href="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Calendar.html" target="_blank">java.util.Calendar</a></td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#token" target="_blank">xs:token</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlToken.html">XmlToken</a></td>
+      <td><a href="http://java.sun.com/j2se/1.4.1/docs/api/java/lang/String.html" target="_blank">String</a></td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#unsignedByte" target="_blank">xs:unsignedByte</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlUnsignedByte.html">XmlUnsignedByte</a></td>
+      <td>short</td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#unsignedInt" target="_blank">xs:unsignedInt</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlUnsignedInt.html">XmlUnsignedInt</a></td>
+      <td>long</td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#unsignedLong" target="_blank">xs:unsignedLong</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlUnsignedLong.html">XmlUnsignedLong</a></td>
+      <td><a href="http://java.sun.com/j2se/1.4.2/docs/api/java/math/BigInteger.html" target="_blank">java.math.BigInteger</a></td>
+    </tr>
+    <tr>
+      <td><a href="http://www.w3.org/TR/xmlschema-2/#unsignedShort" target="_blank">xs:unsignedShort</a></td>
+      <td><a href="../reference/org/apache/xmlbeans/XmlUnsignedShort.html">XmlUnsignedShort</a></td>
+      <td>int</td>
+    </tr>
+  </table>
+</div>
+<div>
+  <p class="relatedtopics">Related Topics</p>
+  <p><a href="conGettingStartedwithXMLBeans.html">Getting Started with XMLBeans</a></p>
+</div>
+<!-- InstanceEndEditable -->
+<script language="JavaScript">
+
+</script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+<a xmlns="comments" xmlns:this="comments" xmlns:foo="http://fooz"><!-- this is a comment 1 -->
+    <b /><!-- this is a comment 2 -->
+    <c>123456</c>
+    <!-- this is a comment 4 -->
+    <d><!-- this is a comment 5 -->asdsa</d>
+    <e >12323<!-- this is a comment 6 --></e>
+	    <!-- this is a comment 7 -->
+	    <f> <!-- this is a comment 8 --> </f>
+	    <!-- final comment -->
+</a>

@@ -1,0 +1,25 @@
+<xsd:schema targetNamespace="http://openuri.org/test/MixedContent"
+            xmlns:tns="http://openuri.org/test/MixedContent"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            elementFormDefault="qualified">
+
+    <xsd:element name="Letter" type="tns:letterType"/>
+
+    <xsd:complexType name="letterType" mixed="true">
+        <xsd:sequence>
+            <xsd:element name="name" type="xsd:string"/>
+            <xsd:element name="orderid" type="xsd:positiveInteger"/>
+            <xsd:element name="shipdate" type="xsd:date"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:element name="NoMixed" type="tns:letterTypeNoMixed"/>
+    
+    <xsd:complexType name="letterTypeNoMixed" mixed="false">
+        <xsd:sequence>
+            <xsd:element name="name" type="xsd:string"/>
+            <xsd:element name="orderid" type="xsd:positiveInteger"/>
+            <xsd:element name="shipdate" type="xsd:date"/>
+        </xsd:sequence>
+    </xsd:complexType>
+</xsd:schema>

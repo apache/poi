@@ -5,9 +5,7 @@
    The ASF licenses this file to You under the Apache License, Version 2.0
    (the "License"); you may not use this file except in compliance with
    the License.  You may obtain a copy of the License at
-
        http://www.apache.org/licenses/LICENSE-2.0
-
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,154 +15,299 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import org.apache.poi.ss.formula.eval.BlankEval;
-import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.formula.eval.EvaluationException;
-import org.apache.poi.ss.formula.eval.MissingArgEval;
-import org.apache.poi.ss.formula.eval.OperandResolver;
-import org.apache.poi.ss.formula.eval.RefEval;
-import org.apache.poi.ss.formula.eval.ValueEval;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.attackt.logivisual.model.newfunctions.SourceNodeType;
+import com.attackt.logivisual.model.newfunctions.SourceValueType;
+import com.attackt.logivisual.mysql.OperationUtils;
+import com.attackt.logivisual.utils.ThreadUtil;
+import org.apache.poi.ss.formula.LazyAreaEval;
+import org.apache.poi.ss.formula.eval.*;
 import org.apache.poi.ss.formula.TwoDEval;
+import org.apache.poi.ss.util.CellReference;
+
+import java.util.Map;
 
 /**
  * Implementation for the Excel function INDEX
  * <p>
- *
+ * <p>
  * Syntax : <br>
- *  INDEX ( reference, row_num[, column_num [, area_num]])</br>
- *  INDEX ( array, row_num[, column_num])
- *    <table border="0" cellpadding="1" cellspacing="0" summary="Parameter descriptions">
- *      <tr><th>reference</th><td>typically an area reference, possibly a union of areas</td></tr>
- *      <tr><th>array</th><td>a literal array value (currently not supported)</td></tr>
- *      <tr><th>row_num</th><td>selects the row within the array or area reference</td></tr>
- *      <tr><th>column_num</th><td>selects column within the array or area reference. default is 1</td></tr>
- *      <tr><th>area_num</th><td>used when reference is a union of areas</td></tr>
- *    </table>
+ * INDEX ( reference, row_num[, column_num [, area_num]])</br>
+ * INDEX ( array, row_num[, column_num])
+ * <table border="0" cellpadding="1" cellspacing="0" summary="Parameter descriptions">
+ * <tr><th>reference</th><td>typically an area reference, possibly a union of areas</td></tr>
+ * <tr><th>array</th><td>a literal array value (currently not supported)</td></tr>
+ * <tr><th>row_num</th><td>selects the row within the array or area reference</td></tr>
+ * <tr><th>column_num</th><td>selects column within the array or area reference. default is 1</td></tr>
+ * <tr><th>area_num</th><td>used when reference is a union of areas</td></tr>
+ * </table>
  * </p>
  *
  * @author Josh Micich
  */
-public final class Index implements Function2Arg, Function3Arg, Function4Arg, ArrayMode {
+public final class Index implements Function2Arg, Function3Arg, Function4Arg {
 
-	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
-		TwoDEval reference = convertFirstArg(arg0);
+    public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
+        TwoDEval reference = convertFirstArg(arg0);
 
-		int columnIx = 0;
-		try {
-			int rowIx = resolveIndexArg(arg1, srcRowIndex, srcColumnIndex);
+        int columnIx = 0;
+        try {
+            int rowIx = resolveIndexArg(arg1, srcRowIndex, srcColumnIndex);
 
-			if (!reference.isColumn()) {
-				if (!reference.isRow()) {
-					// always an error with 2-D area refs
-					// Note - the type of error changes if the pRowArg is negative
-					return ErrorEval.REF_INVALID;
-				}
-				// When the two-arg version of INDEX() has been invoked and the reference
-				// is a single column ref, the row arg seems to get used as the column index
-				columnIx = rowIx;
-				rowIx = 0;
-			}
+            if (!reference.isColumn()) {
+                if (!reference.isRow()) {
+                    // always an error with 2-D area refs
+                    // Note - the type of error changes if the pRowArg is negative
+                    return ErrorEval.REF_INVALID;
+                }
+                // When the two-arg version of INDEX() has been invoked and the reference
+                // is a single column ref, the row arg seems to get used as the column index
+                columnIx = rowIx;
+                rowIx = 0;
+            }
 
-			return getValueFromArea(reference, rowIx, columnIx);
-		} catch (EvaluationException e) {
-			return e.getErrorEval();
-		}
-	}
-	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
-			ValueEval arg2) {
-		TwoDEval reference = convertFirstArg(arg0);
+            ValueEval valueEval1 = getValueFromArea(reference, rowIx, columnIx);
+            //-------处理数据开始---------
+            try {
+                if (valueEval1 instanceof LazyAreaEval) {
+                    LazyAreaEval lazyAreaEval= (LazyAreaEval) valueEval1;
+                    ValueEval valueEval;
+                    if(lazyAreaEval.getWidth() == 1 && lazyAreaEval.getHeight() == 1) {
+                        valueEval = OperandResolver.getSingleValue(lazyAreaEval, srcRowIndex, srcColumnIndex);
+                    }else{
+                        valueEval= lazyAreaEval;
+                    }
+                    String excelId = new ThreadUtil().getExcelUid();
+                    int funcValueType = Integer.parseInt(SourceValueType.valueOf(valueEval.getClass().getSimpleName()).toString());
+                    int firstRow = lazyAreaEval.getFirstRow();
+                    int firstColumn = lazyAreaEval.getFirstColumn();
+                    int lastRow = lazyAreaEval.getLastRow();
+                    int lastColumn = lazyAreaEval.getLastColumn();
+                    String funcValue = "";
+                    if (valueEval instanceof NumberEval) {
+                        NumberEval ne = (NumberEval) valueEval;
+                        funcValue = String.valueOf(ne.getNumberValue());
+                    } else if (valueEval instanceof BoolEval) {
+                        BoolEval be = (BoolEval) valueEval;
+                        funcValue = String.valueOf(be.getBooleanValue());
+                    } else if (valueEval instanceof StringEval) {
+                        StringEval ne = (StringEval) valueEval;
+                        funcValue = String.valueOf(ne.getStringValue());
+                    } else if (valueEval instanceof ErrorEval) {
+                        funcValue = String.valueOf(((ErrorEval) valueEval).getErrorCode());
+                    } else if (valueEval instanceof LazyAreaEval) {
+                        LazyAreaEval lazyAreaEval1 = (LazyAreaEval) valueEval;
+                        CellReference crA = new CellReference(lazyAreaEval1.getFirstRow(), lazyAreaEval1.getFirstColumn());
+                        CellReference crB = new CellReference(lazyAreaEval1.getLastRow(), lazyAreaEval1.getLastColumn());
+                        funcValue = crA.formatAsString() + ":" + crB.formatAsString();
+                    }
+                    // 查找对应的记录
+                    OperationUtils operationUtils = new OperationUtils();
+                    Map<String, Object> map = operationUtils.findData(excelId);
+                    if (map.size() > 0) {
+                        String text = map.get("content").toString();
+                        Integer recordId = Integer.valueOf(map.get("id").toString());
+                        //
+                        JSONArray jsonArray = JSONArray.parseArray(text);
+                        JSONObject jsonObject = jsonArray.getJSONObject(0);
+                        jsonObject.put("funcValueType", funcValueType);
+                        jsonObject.put("funcValue", funcValue);
+                        JSONArray jsonArray1 = new JSONArray();
+                        for (int rowIndex = firstRow; rowIndex <= lastRow; rowIndex++) {
+                            for (int columnIndex = firstColumn; columnIndex <= lastColumn; columnIndex++) {
+                                CellReference cellReference = new CellReference(rowIndex, columnIndex);
+                                // 添加新的
+                                JSONObject newJsonObject = new JSONObject();
+                                newJsonObject.put("nodeType", Integer.parseInt(SourceNodeType.valueOf("RefPtg").toString()));
+                                newJsonObject.put("nodeAttr", cellReference.formatAsString());
+                                newJsonObject.put("numArgs", 0);
+                                newJsonObject.put("sheetIndex", lazyAreaEval.getFirstSheetIndex());
+                                // 连接旧的
+                                jsonArray1.add(newJsonObject);
+                            }
+                        }
+                        jsonObject.put("para_info", jsonArray1);
+                        // 更改有效性数据
+                        operationUtils.updateData(recordId, jsonArray.toJSONString());
+                    }
+                }
+            } catch (Exception e) {
+                System.out.println("函数内部重算出错" + e);
+            }
+            //-------处理数据结束---------
+            return valueEval1;
+        } catch (EvaluationException e) {
+            return e.getErrorEval();
+        }
+    }
 
-		try {
-			int columnIx = resolveIndexArg(arg2, srcRowIndex, srcColumnIndex);
-			int rowIx = resolveIndexArg(arg1, srcRowIndex, srcColumnIndex);
-			return getValueFromArea(reference, rowIx, columnIx);
-		} catch (EvaluationException e) {
-			return e.getErrorEval();
-		}
-	}
-	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
-			ValueEval arg2, ValueEval arg3) {
-		throw new RuntimeException("Incomplete code"
-				+ " - don't know how to support the 'area_num' parameter yet)");
-		// Excel expression might look like this "INDEX( (A1:B4, C3:D6, D2:E5 ), 1, 2, 3)
-		// In this example, the 3rd area would be used i.e. D2:E5, and the overall result would be E2
-		// Token array might be encoded like this: MemAreaPtg, AreaPtg, AreaPtg, UnionPtg, UnionPtg, ParenthesesPtg
-		// The formula parser doesn't seem to support this yet. Not sure if the evaluator does either
-	}
+    public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
+                              ValueEval arg2) {
+        TwoDEval reference = convertFirstArg(arg0);
 
-	private static TwoDEval convertFirstArg(ValueEval arg0) {
-        if (arg0 instanceof RefEval) {
-			// convert to area ref for simpler code in getValueFromArea()
-			return ((RefEval) arg0).offset(0, 0, 0, 0);
-		}
-		if((arg0 instanceof TwoDEval)) {
-			return (TwoDEval) arg0;
-		}
-		// else the other variation of this function takes an array as the first argument
-		// it seems like interface 'ArrayEval' does not even exist yet
-		throw new RuntimeException("Incomplete code - cannot handle first arg of type ("
-				+ arg0.getClass().getName() + ")");
+        try {
+            int columnIx = resolveIndexArg(arg2, srcRowIndex, srcColumnIndex);
+            int rowIx = resolveIndexArg(arg1, srcRowIndex, srcColumnIndex);
+            ValueEval valueEval1 = getValueFromArea(reference, rowIx, columnIx);
+            //-------处理数据开始---------
+            try {
+                if (valueEval1 instanceof LazyAreaEval) {
+                    LazyAreaEval lazyAreaEval= (LazyAreaEval) valueEval1;
+                    ValueEval valueEval;
+                    if(lazyAreaEval.getWidth() == 1 && lazyAreaEval.getHeight() == 1) {
+                        valueEval = OperandResolver.getSingleValue(lazyAreaEval, srcRowIndex, srcColumnIndex);
+                    }else{
+                        valueEval= lazyAreaEval;
+                    }
+                    String excelId = new ThreadUtil().getExcelUid();
+                    int funcValueType = Integer.parseInt(SourceValueType.valueOf(valueEval.getClass().getSimpleName()).toString());
+                    int firstRow = lazyAreaEval.getFirstRow();
+                    int firstColumn = lazyAreaEval.getFirstColumn();
+                    int lastRow = lazyAreaEval.getLastRow();
+                    int lastColumn = lazyAreaEval.getLastColumn();
+                    String funcValue = "";
+                    if (valueEval instanceof NumberEval) {
+                        NumberEval ne = (NumberEval) valueEval;
+                        funcValue = String.valueOf(ne.getNumberValue());
+                    } else if (valueEval instanceof BoolEval) {
+                        BoolEval be = (BoolEval) valueEval;
+                        funcValue = String.valueOf(be.getBooleanValue());
+                    } else if (valueEval instanceof StringEval) {
+                        StringEval ne = (StringEval) valueEval;
+                        funcValue = String.valueOf(ne.getStringValue());
+                    } else if (valueEval instanceof ErrorEval) {
+                        funcValue = String.valueOf(((ErrorEval) valueEval).getErrorCode());
+                    } else if (valueEval instanceof LazyAreaEval) {
+                        LazyAreaEval lazyAreaEval1 = (LazyAreaEval) valueEval;
+                        CellReference crA = new CellReference(lazyAreaEval1.getFirstRow(), lazyAreaEval1.getFirstColumn());
+                        CellReference crB = new CellReference(lazyAreaEval1.getLastRow(), lazyAreaEval1.getLastColumn());
+                        funcValue = crA.formatAsString() + ":" + crB.formatAsString();
+                    }
+                    // 查找对应的记录
+                    OperationUtils operationUtils = new OperationUtils();
+                    Map<String, Object> map = operationUtils.findData(excelId);
+                    if (map.size() > 0) {
+                        String text = map.get("content").toString();
+                        Integer recordId = Integer.valueOf(map.get("id").toString());
+                        //
+                        JSONArray jsonArray = JSONArray.parseArray(text);
+                        JSONObject jsonObject = jsonArray.getJSONObject(0);
+                        jsonObject.put("funcValueType", funcValueType);
+                        jsonObject.put("funcValue", funcValue);
+                        JSONArray jsonArray1 = new JSONArray();
+                        for (int rowIndex = firstRow; rowIndex <= lastRow; rowIndex++) {
+                            for (int columnIndex = firstColumn; columnIndex <= lastColumn; columnIndex++) {
+                                CellReference cellReference = new CellReference(rowIndex, columnIndex);
+                                // 添加新的
+                                JSONObject newJsonObject = new JSONObject();
+                                newJsonObject.put("nodeType", Integer.parseInt(SourceNodeType.valueOf("RefPtg").toString()));
+                                newJsonObject.put("nodeAttr", cellReference.formatAsString());
+                                newJsonObject.put("numArgs", 0);
+                                newJsonObject.put("sheetIndex", lazyAreaEval.getFirstSheetIndex());
+                                // 连接旧的
+                                jsonArray1.add(newJsonObject);
+                            }
+                        }
+                        jsonObject.put("para_info", jsonArray1);
+                        // 更改有效性数据
+                        operationUtils.updateData(recordId, jsonArray.toJSONString());
+                    }
+                }
+            } catch (Exception e) {
+                System.out.println("函数内部重算出错" + e);
+            }
+            //-------处理数据结束---------
+            return valueEval1;
+        } catch (EvaluationException e) {
+            return e.getErrorEval();
+        }
+    }
 
-	}
+    public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
+                              ValueEval arg2, ValueEval arg3) {
+        throw new RuntimeException("Incomplete code"
+                + " - don't know how to support the 'area_num' parameter yet)");
+        // Excel expression might look like this "INDEX( (A1:B4, C3:D6, D2:E5 ), 1, 2, 3)
+        // In this example, the 3rd area would be used i.e. D2:E5, and the overall result would be E2
+        // Token array might be encoded like this: MemAreaPtg, AreaPtg, AreaPtg, UnionPtg, UnionPtg, ParenthesesPtg
+        // The formula parser doesn't seem to support this yet. Not sure if the evaluator does either
+    }
 
-	public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
-		switch (args.length) {
-			case 2:
-				return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1]);
-			case 3:
-				return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2]);
-			case 4:
-				return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2], args[3]);
-		}
-		return ErrorEval.VALUE_INVALID;
-	}
+    private static TwoDEval convertFirstArg(ValueEval arg0) {
+        ValueEval firstArg = arg0;
+        if (firstArg instanceof RefEval) {
+            // convert to area ref for simpler code in getValueFromArea()
+            return ((RefEval) firstArg).offset(0, 0, 0, 0);
+        }
+        if ((firstArg instanceof TwoDEval)) {
+            return (TwoDEval) firstArg;
+        }
+        // else the other variation of this function takes an array as the first argument
+        // it seems like interface 'ArrayEval' does not even exist yet
+        throw new RuntimeException("Incomplete code - cannot handle first arg of type ("
+                + firstArg.getClass().getName() + ")");
 
-	private static ValueEval getValueFromArea(TwoDEval ae, int pRowIx, int pColumnIx)
-			throws EvaluationException {
-		assert pRowIx >= 0;
-		assert pColumnIx >= 0;
+    }
 
-		TwoDEval result = ae;
+    public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
+        switch (args.length) {
+            case 2:
+                return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1]);
+            case 3:
+                return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2]);
+            case 4:
+                return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2], args[3]);
+        }
+        return ErrorEval.VALUE_INVALID;
+    }
 
-		if (pRowIx != 0) {
-			// Slightly irregular logic for bounds checking errors
-			if (pRowIx > ae.getHeight()) {
-				// high bounds check fail gives #REF! if arg was explicitly passed
-				throw new EvaluationException(ErrorEval.REF_INVALID);
-			}
-			result = result.getRow(pRowIx-1);
-		}
+    private static ValueEval getValueFromArea(TwoDEval ae, int pRowIx, int pColumnIx)
+            throws EvaluationException {
+        assert pRowIx >= 0;
+        assert pColumnIx >= 0;
 
-		if (pColumnIx != 0) {
-			// Slightly irregular logic for bounds checking errors
-			if (pColumnIx > ae.getWidth()) {
-				// high bounds check fail gives #REF! if arg was explicitly passed
-				throw new EvaluationException(ErrorEval.REF_INVALID);
-			}
-			result = result.getColumn(pColumnIx-1);
-		}
-		return result;
-	}
+        TwoDEval result = ae;
+
+        if (pRowIx != 0) {
+            // Slightly irregular logic for bounds checking errors
+            if (pRowIx > ae.getHeight()) {
+                // high bounds check fail gives #REF! if arg was explicitly passed
+                throw new EvaluationException(ErrorEval.REF_INVALID);
+            }
+            result = result.getRow(pRowIx - 1);
+        }
+
+        if (pColumnIx != 0) {
+            // Slightly irregular logic for bounds checking errors
+            if (pColumnIx > ae.getWidth()) {
+                // high bounds check fail gives #REF! if arg was explicitly passed
+                throw new EvaluationException(ErrorEval.REF_INVALID);
+            }
+            result = result.getColumn(pColumnIx - 1);
+        }
+        return result;
+    }
 
 
-	/**
-	 * @param arg a 1-based index.
-	 * @return the resolved 1-based index. Zero if the arg was missing or blank
-	 * @throws EvaluationException if the arg is an error value evaluates to a negative numeric value
-	 */
-	private static int resolveIndexArg(ValueEval arg, int srcCellRow, int srcCellCol) throws EvaluationException {
+    /**
+     * @param arg a 1-based index.
+     * @return the resolved 1-based index. Zero if the arg was missing or blank
+     * @throws EvaluationException if the arg is an error value evaluates to a negative numeric value
+     */
+    private static int resolveIndexArg(ValueEval arg, int srcCellRow, int srcCellCol) throws EvaluationException {
 
-		ValueEval ev = OperandResolver.getSingleValue(arg, srcCellRow, srcCellCol);
-		if (ev == MissingArgEval.instance) {
-			return 0;
-		}
-		if (ev == BlankEval.instance) {
-			return 0;
-		}
-		int result = OperandResolver.coerceValueToInt(ev);
-		if (result < 0) {
-			throw new EvaluationException(ErrorEval.VALUE_INVALID);
-		}
-		return result;
-	}
+        ValueEval ev = OperandResolver.getSingleValue(arg, srcCellRow, srcCellCol);
+        if (ev == MissingArgEval.instance) {
+            return 0;
+        }
+        if (ev == BlankEval.instance) {
+            return 0;
+        }
+        int result = OperandResolver.coerceValueToInt(ev);
+        if (result < 0) {
+            throw new EvaluationException(ErrorEval.VALUE_INVALID);
+        }
+        return result;
+    }
 }

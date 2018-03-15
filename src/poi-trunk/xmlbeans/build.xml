@@ -1,0 +1,1089 @@
+<!--
+    Copyright 2004 The Apache Software Foundation
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<project name="Xbean" default="default" basedir=".">
+
+    <property name="build.compiler" value="javac1.6"/>
+    <property name="javac.source" value="1.6"/>
+    <property name="javac.target" value="1.6"/>
+
+    <property name="version.base" value="2.6.4"/>
+    <property name="version.rc" value=""/>
+
+    <!-- manifest entries -->
+    <property name="manifest.name" value="org/apache/xmlbeans/"/>
+    <property name="manifest.title" value="org.apache.xmlbeans"/>
+    <property name="manifest.vendor" value="Apache Software Foundation"/>
+    <property name="manifest.url" value="http://xmlbeans.apache.org/"/>
+
+    <target name="usage">
+        <echo message="The following ant targets are defined:"/>
+        <echo/>
+        <echo message="usage       - this help text"/>
+        <echo message="deploy      - builds our implementation jar (xbean.jar)"/>
+        <echo message="clean       - cleans out the xbeans directories"/>
+        <echo message="clean.jars  - cleans out any downloaded jars"/>
+        <echo message="docs        - builds the JavaDoc documentation in ./build/docs"/>
+        <echo message="xmlpublic.jar-builds xmlpublic.jar, containing just the public code"/>
+        <echo message="sources     - zips up the XmlBeans source code"/>
+        <echo/>
+        <echo message="testbuild   - builds, but does not run, the xbean drt"/>
+        <echo message="checkintest - runs the xbean tests"/>
+    </target>
+
+    <target name="java_version">
+        <echo message="${java.version}"/>
+    </target>
+
+    <target name="clean">
+        <delete dir="build"/>
+    </target>
+
+    <target name="clean.jars" description="Delete any downloaded jars and accompanying licenses">
+        <delete>
+            <fileset dir="external/lib">
+                <include name="saxonb9-0-0-4j.zip"/>
+                <include name="saxonb8-8j.zip"/>
+                <include name="saxonb8-7-3j.zip"/>
+                <include name="saxonb8-6-1.zip"/>
+                <include name="saxonb8-2.zip"/>
+                <include name="saxonb8-1.zip"/>
+                <include name="jsr173_1.0_api_bundle.jar"/>
+                <include name="jsr173_1.0_api.jar"/>
+                <include name="saxon9.jar"/>
+                <include name="saxon9-dom.jar"/>
+                <include name="saxon8.jar"/>
+                <include name="saxon8-dom.jar"/>
+                <include name="xcresolver.zip"/>
+                <!-- the entries below are to delete the previous versions of the jsr173 jars -->
+                <include name="jsr173.jar"/>
+                <include name="jsr173_api.jar"/>
+                <include name="jsr173_ri.jar"/>
+                <include name="jsr173_1.0_api-mini-bundle.jar"/>
+                <include name="jsr173_1.0_ri.jar"/>
+                <include name="BEA Binary RI License (JSR 173).1(Clean).txt"/>
+                <include name="README(jsr_173 api and ri).txt"/>
+            </fileset>
+        </delete>
+    </target>
+
+    <target name="deploy" depends="xbean"/>
+
+    <target name="sources" depends="dirs">
+        <zip destfile="build/ar/xbeansrc.zip"
+          basedir="."
+          excludes="build/**, test/perf/**, mytest/**"/>
+    </target>
+
+    <property environment="env"/>
+    <target name="saxon.find1" if="env.XMLBEANS_EXTERNALS">
+      <property name="saxon_jar" value="${env.XMLBEANS_EXTERNALS}/saxon9.jar"/>
+      <property name="saxon_dom_jar" value="${env.XMLBEANS_EXTERNALS}/saxon9-dom.jar"/>
+    </target>
+    <target name="saxon.find2">
+      <property name="saxon_jar" value="build/lib/saxon9.jar"/>
+      <property name="saxon_dom_jar" value="build/lib/saxon9-dom.jar"/>
+    </target>
+
+    <target name="check.saxon9.jar" depends="saxon.find1,saxon.find2">
+      <condition property="saxon9.jar.exists">
+        <or>
+          <available file="build/lib/saxon9.jar"/>
+          <available file="${env.XMLBEANS_EXTERNALS}/saxon9.jar"/>
+        </or>
+      </condition>
+    </target>
+
+    <target name="saxon9.jar" depends="check.saxon9.jar, dirs"
+        unless="saxon9.jar.exists">
+        <!-- other saxon urls
+            http://voxel.dl.sourceforge.net/sourceforge/saxon/saxonb8-1.zip
+            http://easynews.dl.sourceforge.net/sourceforge/saxon/saxonb8-7-3j.zip
+            http://easynews.dl.sourceforge.net/sourceforge/saxon/saxonb8-8j.zip
+        -->
+        <get dest="external/lib/saxonb9-0-0-4j.zip"
+            src="http://prdownloads.sourceforge.net/saxon/saxonb9-0-0-4j.zip"
+            verbose="true" usetimestamp="true" ignoreerrors="true"/>
+        <unzip src="external/lib/saxonb9-0-0-4j.zip" dest="external/lib/">
+            <patternset>
+                <include name="saxon9.jar"/>
+                <include name="saxon9-dom.jar"/>
+            </patternset>
+        </unzip>
+
+        <copy file="external/lib/saxon9.jar" tofile="build/lib/saxon9.jar"/>
+        <!-- saxon9-dom.jar is used to register DOMObjectModel -->
+        <copy file="external/lib/saxon9-dom.jar" tofile="build/lib/saxon9-dom.jar"/>
+    </target>
+
+    <!-- get resolver.jar -->
+    <target name="check.xcresolver.zip">
+        <condition property="xcresolver.zip.exists">
+            <available file="external/lib/xcresolver.zip"/>
+        </condition>
+    </target>
+
+    <target name="xcresolver.zip" depends="check.xcresolver.zip, dirs" unless="xcresolver.zip.exists">
+        <get dest="external/lib/xcresolver.zip"
+            src="http://archive.apache.org/dist/xml/commons/binaries/xml-commons-resolver-1.1.zip"
+            verbose="true" usetimestamp="true" ignoreerrors="true"/>
+    </target>
+
+    <target name="check.resolver.jar">
+        <condition property="resolver.jar.exists">
+            <available file="build/lib/resolver.jar"/>
+        </condition>
+    </target>
+
+    <target name="resolver.jar" depends="xcresolver.zip, check.resolver.jar" unless="resolver.jar.exists">
+        <unzip src="external/lib/xcresolver.zip" dest="external/lib/">
+            <patternset>
+                <include name="*/resolver.jar"/>
+            </patternset>
+        </unzip>
+        <copy file="external/lib/xml-commons-resolver-1.1/resolver.jar" tofile="build/lib/resolver.jar"/>
+        <delete dir="external/lib/xml-commons-resolver-1.1"/>
+    </target>
+
+
+    <target name="xbean" depends="xbean.jar,xmlpublic.jar">
+        <copy file="build/lib/xbean.jar" tofile="build/ar/xbean.jar"/>
+    </target>
+
+    <target name="dirs">
+        <mkdir dir="build"/>
+        <mkdir dir="build/classes"/>
+        <mkdir dir="build/lib"/>
+        <mkdir dir="build/ar"/>
+        <mkdir dir="build/src"/>
+        <mkdir dir="build/private"/>
+        <mkdir dir="build/private/classes"/>
+        <mkdir dir="build/private/lib"/>
+        <mkdir dir="build/test/output"/>
+    </target>
+
+    <target name="version">
+        <!-- svn must be on the path -->
+        <echo message="Trying to get revision number from Subversion..."/>
+        <exec executable="svn" output="build/private/svninfo.properties" failifexecutionfails="false">
+            <arg line="info ${basedir}"/>
+        </exec>
+        <replaceregexp file="build/private/svninfo.properties"
+            match="Last Changed Rev: (.*)"
+            replace="svn.last.rev=r\1"
+            byline="true"/>
+        <property file="build/private/svninfo.properties"/>
+
+        <!-- just in case svn info or regexp failed -->
+        <condition property="svn.last.rev" value="unknown">
+            <not><isset property="svn.last.rev"/></not>
+        </condition>
+
+        <property name="version.full" value="${version.base}-${svn.last.rev}"/>
+        <property name="manifest.comment" value="Apache XmlBeans version ${version.full}"/>
+
+        <echo message="${manifest.comment}"/>
+    </target>
+
+
+    <target name="default" depends="deploy"/>
+    <target name="redeploy" depends="clean, deploy"/>
+
+    <!-- oldxbean.jar target =========================================== -->
+
+    <target name="oldxbean.jar">
+        <copy file="external/lib/oldxbean.jar" tofile="build/private/lib/oldxbean.jar"/>
+    </target>
+
+    <!-- bootstrap target ============================================== -->
+
+    <target name="bootstrap" depends="xbean">
+        <subant target="bootstrappass" inheritAll="true" buildpath="." failonerror="false"/>
+        <subant target="bootstrappass" inheritAll="true" buildpath="." failonerror="true"/>
+    </target>
+
+    <target name="bootstrappass" depends="xbean">
+        <!-- after xbean.jar is built, move it out of the way and clean the project -->
+        <tempfile property="bootstrap.jarfile" prefix="oldxbean" suffix=".jar"/>
+        <move file="build/ar/xbean.jar" tofile="${bootstrap.jarfile}"/>
+        <antcall target="clean" inheritAll="false"/>
+
+        <!-- then move it back into place as oldxbean.jar and do another build -->
+        <move file="${bootstrap.jarfile}" tofile="build/private/lib/oldxbean.jar"/>
+        <antcall target="xbean" inheritAll="false"/>
+
+        <!-- compare the contents of the first jar to the contents of the second jar -->
+        <antcall target="zipcompare.classes" inheritAll="false"/>
+        <java classname="zipcompare.ZipCompare"
+            classpath="build/private/classes/zipcompare"
+            fork="true"
+            failonerror="true">
+            <arg line="build/ar/xbean.jar build/private/lib/oldxbean.jar"/>
+        </java>
+
+        <!-- when everything succeeds, check out oldxbean.jar from perforce -->
+        <echo message="==================================="/>
+        <echo message="Results match! Bootstrap succeeded."/>
+        <echo message="==================================="/>
+        <echo message="Attempting to copy oldxbean.jar"/>
+        <echo message="If the copy fails, you must check out oldxbean.jar"/>
+        <!-- copy oldxbean.jar whether or not perforce succeeded -->
+        <echo message="overwriting old external/lib/oldxbean.jar"/>
+        <copy file="build/private/lib/oldxbean.jar" tofile="external/lib/oldxbean.jar"/>
+    </target>
+
+    <target name="quickbootstrap">
+        <echo message="=========================================================="/>
+        <echo message="Bootstrapping currently built xbean.jar without verifying."/>
+        <echo message="=========================================================="/>
+        <copy file="build/ar/xbean.jar" tofile="external/lib/oldxbean.jar"/>
+    </target>
+
+
+    <!-- zipcompare (for checking bootstrap) ============================ -->
+
+    <target name="zipcompare.classes">
+        <mkdir dir="build/private/classes/zipcompare"/>
+        <javac srcdir="src/zipcompare"
+            source="${javac.source}" target="${javac.target}"
+            destdir="build/private/classes/zipcompare"
+            debug="on"/>
+    </target>
+
+    <!-- javadocs ====================================================== -->
+
+    <!-- All docs to build/docs, including guide and javadocs. -->
+
+    <target name="docs" depends="xbean">
+        <property name="docs.dir" value="build/docs"/>
+        <delete dir="${docs.dir}"/>
+        <mkdir dir="${docs.dir}"/>
+        <javadoc packagenames="*" sourcepath="src/xmlpublic"
+            classpath="${javadoc.path}" destdir="${docs.dir}/reference"
+            windowtitle="XMLBeans ${version.base} Documentation" source="${javac.source}" stylesheetfile="docs/stylesheet.css">
+            <link href="http://xmlbeans.apache.org/${version.base}/docs/reference/index.html"/>
+            <link href="http://java.sun.com/j2se/1.4.2/docs/api/"/>
+            <link href="http://java.sun.com/j2ee/1.4/docs/api/"/>
+            <link href="http://xml.apache.org/xerces-j/apiDocs/"/>
+            <classpath>
+                <pathelement location="build/ar/xbean.jar"/>
+            </classpath>
+        </javadoc>
+        <copy file="docs/xmlbeans.css" tofile="${docs.dir}/xmlbeans.css"/>
+        <copy todir="${docs.dir}/guide">
+            <fileset dir="docs/guide"/>
+        </copy>
+        <copy todir="${docs.dir}/images">
+            <fileset dir="docs/images"/>
+        </copy>
+    </target>
+
+
+    <target name="dist" depends="dist-src, dist-bin">
+    </target>
+
+    <target name="dist-bin" depends="xbean, docs">
+        <delete dir="build/private/xmlbeans-${version.base}"/>
+        <delete file="build/private/xmlbeans-${version.base}${version.rc}.zip"/>
+        <delete file="build/private/xmlbeans-${version.base}${version.rc}.tgz"/>
+
+        <mkdir dir="build/private/xmlbeans-${version.base}"/>
+        <copy todir="build/private/xmlbeans-${version.base}">
+            <fileset dir="xkit"/>
+            <fileset dir="." includes="bin/**"/>
+            <fileset file="LICENSE.txt"/>
+            <fileset file="NOTICE.txt"/>
+        </copy>
+        <copy todir="build/private/xmlbeans-${version.base}/schemas/s4s">
+            <fileset dir="src/xsdschema/schema" includes="XMLSchema.xsd"/>
+            <fileset dir="src/xmlschema/schema" includes="XML.xsd"/>
+        </copy>
+        <copy todir="build/private/xmlbeans-${version.base}/schemas">
+            <fileset dir="test/cases/xbean/xmlobject"
+                includes="easypo.xsd,easypo.xsdconfig,numerals.xsd,nameworld.xsd"/>
+        </copy>
+
+        <mkdir dir="build/private/xmlbeans-${version.base}/lib"/>
+        <copy todir="build/private/xmlbeans-${version.base}/lib">
+            <fileset dir="build/lib">
+                <include name="xbean.jar"/>
+                <include name="xmlpublic.jar"/>
+                <include name="xbean_xpath.jar"/>
+                <include name="resolver.jar"/>
+            </fileset>
+        </copy>
+
+        <mkdir dir="build/private/xmlbeans-${version.base}/docs"/>
+        <copy todir="build/private/xmlbeans-${version.base}/docs">
+            <fileset dir="build/docs"/>
+        </copy>
+
+        <mkdir dir="build/private/xmlbeans-${version.base}/samples"/>
+        <copy todir="build/private/xmlbeans-${version.base}/samples">
+            <fileset dir="samples">
+                <include name="MixedContent/**/*"/>
+                <include name="OrderMatters/**/*"/>
+                <include name="Any/**/*"/>
+                <include name="XQueryXPath/**/*"/>
+                <include name="DateTime/**/*"/>
+                <include name="SchemaEnum/**/*"/>
+                <include name="Validation/**/*"/>
+                <include name="XsdConfig/**/*"/>
+                <exclude name="**/build/**"/>
+            </fileset>
+        </copy>
+
+        <zip destfile="build/private/xmlbeans-${version.base}${version.rc}.zip"
+            basedir="build/private"
+            includes="xmlbeans-${version.base}/**"/>
+        <tar destfile="build/private/xmlbeans-${version.base}${version.rc}.tgz"
+            basedir="build/private"
+            includes="xmlbeans-${version.base}/**"
+            excludes="xmlbeans-${version.base}/bin/*"
+            compression="gzip">
+            <tarfileset dir="build/private">
+                <include name="xmlbeans-${version.base}/bin/*.cmd"/>
+            </tarfileset>
+            <tarfileset dir="build/private" mode="754">
+                <include name="xmlbeans-${version.base}/bin/*"/>
+                <exclude name="xmlbeans-${version.base}/bin/*.cmd"/>
+            </tarfileset>
+        </tar>
+    </target>
+
+    <target name="dist-src" depends="clean, dirs, version">
+        <delete file="build/private/xmlbeans-${version.base}${version.rc}-src.zip"/>
+        <delete file="build/private/xmlbeans-${version.base}${version.rc}-src.tgz"/>
+        <delete file="build/private/xmlbeans-${version.base}${version.rc}-source.jar"/>
+
+        <zip destfile="build/private/xmlbeans-${version.base}${version.rc}-src.zip">
+            <zipfileset dir="." prefix="xmlbeans-${version.base}">
+                <patternset id="src.dist.content.dirs"
+                    includes="docs/** external/** samples/** src/**"/>
+                <patternset id="src.dist.content.dirs.bin"
+                    includes="bin/**"/>
+                <patternset id="src.dist.content.files"
+                    includes="build.xml README.txt xbeanenv.cmd xbeanenv.sh LICENSE.txt NOTICE.txt"/>
+                <patternset id="src.dist.content.tests"
+                    includes=""/><!-- don't have tests part of the distribution yet -->
+            </zipfileset>
+        </zip>
+        <tar destfile="build/private/xmlbeans-${version.base}${version.rc}-src.tgz"
+            compression="gzip">
+            <tarfileset dir="." prefix="xmlbeans-${version.base}">
+                <patternset refid="src.dist.content.dirs"/>
+                <patternset refid="src.dist.content.files"/>
+                <patternset refid="src.dist.content.tests"/>
+                <patternset includes="bin/*.cmd"/>
+            </tarfileset>
+            <tarfileset dir="." prefix="xmlbeans-${version.base}" mode="754">
+                <include name="bin/*"/>
+                <exclude name="bin/*.cmd"/>
+            </tarfileset>
+        </tar>
+        <jar jarfile="build/private/xmlbeans-${version.base}${version.rc}-sources.jar" index="false">
+            <fileset dir="src/common" includes="**/*.java"/>
+            <fileset dir="src/configschema" includes="**/*.java"/>
+            <fileset dir="src/jamsupport" includes="**/*.java"/>
+            <fileset dir="src/marshal" includes="**/*.java"/>
+            <fileset dir="src/repackage" includes="**/*.java"/>
+            <fileset dir="src/saaj_api" includes="**/*.java"/>
+            <fileset dir="src/store" includes="**/*.java"/>
+            <fileset dir="src/tools" includes="**/*.java"/>
+            <fileset dir="src/toolschema" includes="**/*.java"/>
+            <fileset dir="src/typeholder" includes="**/*.java"/>
+            <fileset dir="src/typeimpl" includes="**/*.java"/>
+            <fileset dir="src/typestore" includes="**/*.java"/>
+            <fileset dir="src/xmlcomp" includes="**/*.java"/>
+            <fileset dir="src/xmlconfig" includes="**/*.java"/>
+            <fileset dir="src/xmlinputstream" includes="**/*.java"/>
+            <fileset dir="src/xmlpublic" includes="**/*.java"/>
+            <fileset dir="src/xmlschema" includes="**/*.java"/>
+            <fileset dir="src/xpath" includes="**/*.java"/>
+            <fileset dir="src/xpath_xquery" includes="**/*.java"/>
+            <fileset dir="src/xsdschema" includes="**/*.java"/>
+            <fileset dir="src/zipcompare" includes="**/*.java"/>
+            <fileset dir="maven-plugin/src/java" includes="**/*.java"/>
+            <manifest>
+                <section name="${manifest.name}">
+                    <attribute name="Comment" value="${manifest.comment}"/>
+                    <attribute name="Implementation-Title" value="${manifest.title}"/>
+                    <attribute name="Implementation-Version" value="${version.full}"/>
+                    <attribute name="Implementation-Vendor" value="${manifest.vendor}"/>
+                    <attribute name="Implementation-URL" value="${manifest.url}"/>
+                </section>
+            </manifest>	    
+        </jar>
+    </target>
+
+    <target name="enum-support.jar"
+        depends="dirs, xmlpublic.classes, typeimpl.classes">
+        <jar jarfile="build/lib/enum-support.jar" index="false">
+            <fileset dir="build/classes/typeimpl/">
+                <include name="org/apache/xmlbeans/impl/values/XmlListImpl.class"/>
+                <include name="org/apache/xmlbeans/impl/values/XmlObjectBase.class"/>
+                <include name="org/apache/xmlbeans/impl/util/XsTypeConverter.class"/>
+            </fileset>
+            <fileset dir="build/classes/xmlpublic/">
+                <include name="org/apache/xmlbeans/XmlCalendar.class"/>
+            </fileset>
+        </jar>
+    </target>
+
+    <!-- previously in xbean.xml -->
+
+    <target name="xbean.jar"
+        depends="dirs, version, xmlpublic.classes,
+                 typeholder.template, typestore.classes, common.classes,
+                 typeimpl.classes, xmlcomp.classes,
+                 store.classes, saaj_api.classes,
+                 marshal.classes, xpath.classes, oldxbean.jar, xsdschema.classes,
+                 xmlinputstream.classes, resolver.jar, xbean_xpath.jar,
+                 tools.classes, jamsupport.classes">
+        <jar jarfile="build/lib/xbean.jar" index="true">
+            <fileset dir="build/classes/xmlpublic"
+                excludes="javax/**"/>
+            <fileset dir="build/classes/typeholder"/>
+            <fileset dir="build/classes/typestore"/>
+            <fileset dir="build/classes/common"/>
+            <fileset dir="build/classes/typeimpl"/>
+            <fileset dir="build/classes/xmlcomp"/>
+            <fileset dir="build/classes/configschema"/>
+            <fileset dir="build/classes/toolschema"/>
+            <fileset dir="build/classes/xsdschema"/>
+            <fileset dir="build/classes/xmlschema"/>
+            <fileset dir="build/classes/store">
+                <exclude name="org/w3c/dom/**" />
+            </fileset>
+            <fileset dir="build/classes/saaj_api"/>
+            <fileset dir="build/classes/xmlinputstream"/>
+            <fileset dir="build/classes/marshal"/>
+            <fileset dir="build/classes/repackage"/>
+            <fileset dir="build/classes/jam"/>
+            <fileset dir="build/classes/tools"/>
+            <fileset file="LICENSE.txt"/>
+            <fileset file="NOTICE.txt"/>
+            <manifest>
+                <section name="${manifest.name}">
+                    <attribute name="Comment" value="${manifest.comment}"/>
+                    <attribute name="Implementation-Title" value="${manifest.title}"/>
+                    <attribute name="Implementation-Version" value="${version.full}"/>
+                    <attribute name="Implementation-Vendor" value="${manifest.vendor}"/>
+                    <attribute name="Implementation-URL" value="${manifest.url}"/>
+                </section>
+            </manifest>
+        </jar>
+    </target>
+
+    <!-- build XMLInputStream interface ============================================= -->
+
+    <target name="xmlinputstream.classes" depends="dirs">
+        <mkdir dir="build/classes/xmlinputstream"/>
+        <javac srcdir="src/xmlinputstream"
+            source="${javac.source}" target="${javac.target}"
+            destdir="build/classes/xmlinputstream"
+            debug="on">
+            <classpath>
+                <pathelement location="build/classes/common"/>
+            </classpath>
+        </javac>
+    </target>
+
+    <!-- xmlpublic target ============================================== -->
+
+    <target name="xmlpublic.classes" depends="dirs">
+        <mkdir dir="build/classes/xmlpublic"/>
+        <javac srcdir="src/xmlpublic" sourcepath="src/xmlinputstream" destdir="build/classes/xmlpublic" source="${javac.source}" target="${javac.target}" debug="on">
+            <classpath/>
+        </javac>
+
+        <!-- Need properties files for XmlError -->
+        <copy
+            todir="build/classes/xmlpublic">
+            <fileset dir="src/xmlpublic">
+                <include name="**/*.properties"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="xmlpublic.jar" depends="dirs,xmlinputstream.classes, xmlpublic.classes, xmlschema.classes, xsdschema.classes">
+        <jar jarfile="build/lib/xmlpublic.jar" index="true">
+            <fileset dir="build/classes/xmlpublic"
+                excludes="javax/**"/>
+            <fileset dir="build/classes/xmlschema"/>
+            <fileset dir="build/classes/xsdschema"/>
+            <manifest>
+                <section name="${manifest.name}">
+                    <attribute name="Comment" value="${manifest.comment}"/>
+                    <attribute name="Implementation-Title" value="${manifest.title}"/>
+                    <attribute name="Implementation-Version" value="${version.full}"/>
+                    <attribute name="Implementation-Vendor" value="${manifest.vendor}"/>
+                    <attribute name="Implementation-URL" value="${manifest.url}"/>
+                </section>
+            </manifest>
+        </jar>
+    </target>
+
+    <!-- typestore target ============================================== -->
+
+    <target name="typestore.classes" depends="dirs, xmlpublic.classes, common.classes, xmlinputstream.classes">
+        <mkdir dir="build/classes/typestore"/>
+        <javac srcdir="src/typestore" destdir="build/classes/typestore" source="${javac.source}" target="${javac.target}" debug="on">
+            <classpath>
+                <pathelement location="build/classes/xmlinputstream"/>
+                <pathelement location="build/classes/xmlpublic"/>
+                <pathelement location="build/classes/common"/>
+            </classpath>
+        </javac>
+
+    </target>
+
+    <!-- common target ============================================= -->
+
+    <target name="common.classes" depends="dirs, xmlpublic.classes, xmlinputstream.classes">
+        <mkdir dir="build/classes/common"/>
+        <javac srcdir="src/common" destdir="build/classes/common" source="${javac.source}" target="${javac.target}" debug="on">
+            <classpath>
+                <pathelement location="build/classes/xmlinputstream"/>
+                <pathelement location="build/classes/xmlpublic"/>
+            </classpath>
+        </javac>
+
+    </target>
+
+    <!-- typeholder target ================================================ -->
+
+    <property name="typeholder.name" value="org/apache/xmlbeans/impl/schema/TypeSystemHolder"/>
+
+    <target name="typeholder.check">
+        <condition property="typeholder.notRequired">
+            <uptodate property="typeholder.notRequired"
+                targetfile="build/classes/typeholder/${typeholder.name}.template">
+                <srcfiles dir="src/typeholder" includes="${typeholder.name}.java"/>
+            </uptodate>
+        </condition>
+    </target>
+
+    <target name="typeholder.template" depends="typeholder.check, xmlpublic.classes" unless="typeholder.notRequired">
+        <mkdir dir="build/classes/typeholder"/>
+        <javac destdir="build/classes/typeholder" source="${javac.source}" target="${javac.target}" debug="off">
+            <classpath>
+                <pathelement location="build/classes/xmlpublic"/>
+            </classpath>
+            <src location="src/typeholder"/>
+        </javac>
+        <move
+            file="build/classes/typeholder/${typeholder.name}.class"
+            tofile="build/classes/typeholder/${typeholder.name}.template"/>
+    </target>
+
+    <!-- typeimpl target ============================================== -->
+
+    <target name="typeimpl.classes" depends="dirs, store.classes,
+        repackage.classes, xmlpublic.classes, typeholder.template, typestore.classes, xsdschema.classes,
+        configschema.classes, toolschema.classes, jam.classes">
+        <mkdir dir="build/classes/typeimpl"/>
+        <javac destdir="build/classes/typeimpl" source="${javac.source}" target="${javac.target}" debug="on">
+            <classpath>
+                <pathelement location="build/classes/store"/>
+                <pathelement location="build/classes/xmlinputstream"/>
+                <pathelement location="build/classes/common"/>
+                <pathelement location="build/classes/repackage"/>
+                <pathelement location="build/classes/typestore"/>
+                <pathelement location="build/classes/xmlpublic"/>
+                <pathelement location="build/classes/xmlconfig"/>
+                <pathelement location="build/classes/configschema"/>
+                <pathelement location="build/classes/xsdschema"/>
+                <pathelement location="build/classes/xmlschema"/>
+                <pathelement location="build/classes/toolschema"/>
+                <pathelement location="build/classes/jam"/>
+            </classpath>
+
+            <src path="src/typeimpl"/>
+            <src path="build/src/xmlschema"/>
+            <src path="build/src/xsdschema"/>
+            <src path="build/src/configschema"/>
+            <src path="build/src/toolschema"/>
+            <src path="src/xmlconfig"/>
+        </javac>
+
+        <!-- Need properties files for regex -->
+        <copy
+            todir="build/classes/typeimpl">
+            <fileset dir="src/typeimpl">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <!-- xmlcomp target =============================================== -->
+
+    <target name="xmlcomp.classes" depends="dirs, repackage.classes, typeimpl.classes, xmlpublic.classes, typestore.classes">
+        <mkdir dir="build/classes/xmlcomp"/>
+        <javac srcdir="src/xmlcomp" destdir="build/classes/xmlcomp" source="${javac.source}" target="${javac.target}" debug="on">
+            <classpath>
+                <pathelement location="build/classes/xmlinputstream"/>
+                <pathelement location="build/classes/xmlpublic"/>
+                <pathelement location="build/classes/common"/>
+                <pathelement location="build/classes/repackage"/>
+                <pathelement location="build/classes/typeimpl"/>
+                <pathelement location="build/classes/xmlconfig"/>
+                <pathelement location="build/classes/configschema"/>
+                <pathelement location="build/classes/toolschema"/>
+                <pathelement location="build/classes/xsdschema"/>
+                <pathelement location="build/classes/typestore"/>
+            </classpath>
+        </javac>
+    </target>
+
+    <!-- marshal target =============================================== -->
+
+    <target name="marshal.classes" depends="dirs, typeimpl.classes, xmlpublic.classes">
+        <mkdir dir="build/classes/marshal"/>
+        <javac srcdir="src/marshal" destdir="build/classes/marshal" source="${javac.source}" target="${javac.target}" debug="on">
+            <classpath>
+                <pathelement location="build/classes/configschema"/>
+                <pathelement location="build/classes/xmlinputstream"/>
+                <pathelement location="build/classes/xmlpublic"/>
+                <pathelement location="build/classes/common"/>
+                <pathelement location="build/classes/typeimpl"/>
+                <pathelement location="build/classes/store"/>
+            </classpath>
+        </javac>
+    </target>
+
+
+    <!-- support for running JAM under JDK1.5 ========================= -->
+
+    <target name="jamsupport.classes" depends="dirs,jam.classes">
+        <javac srcdir="src/jamsupport" destdir="build/classes/jam" source="${javac.source}" target="${javac.target}" debug="on">
+            <classpath id="jamsupport.compile.path">
+                <pathelement location="build/classes/jam"/>
+            </classpath>
+        </javac>
+    </target>
+
+    <!-- saaj_api target ============================================== -->
+
+    <target name="saaj_api.classes" depends="dirs">
+        <mkdir dir="build/classes/saaj_api"/>
+        <javac srcdir="src/saaj_api" destdir="build/classes/saaj_api" source="${javac.source}" target="${javac.target}" debug="on">
+            <classpath id="saaj_api.compile.path">
+                <pathelement location="build/classes/common"/>
+                <pathelement location="build/classes/xmlpublic"/>
+            </classpath>
+        </javac>
+    </target>
+
+    <!-- store target ============================================== -->
+
+    <target name="store.classes"
+        depends="dirs, common.classes, xmlpublic.classes, typestore.classes, saaj_api.classes">
+        <mkdir dir="build/classes/store"/>
+        <javac srcdir="src/store" destdir="build/classes/store" source="${javac.source}" target="${javac.target}" debug="on">
+            <classpath id="store.compile.path">
+                <pathelement location="build/classes/typestore"/>
+                <pathelement location="build/classes/xmlinputstream"/>
+                <pathelement location="build/classes/xmlpublic"/>
+                <pathelement location="build/classes/common"/>
+                <pathelement location="build/classes/saaj_api"/>
+            </classpath>
+        </javac>
+    </target>
+
+    <!-- tools target ============================================== -->
+
+    <target name="tools.classes"
+        depends="dirs, common.classes, xmlpublic.classes, typestore.classes, saaj_api.classes,
+        typeimpl.classes, xmlcomp.classes">
+        <mkdir dir="build/classes/tools"/>
+        <javac srcdir="src/tools" destdir="build/classes/tools" source="${javac.source}" target="${javac.target}" debug="on">
+            <classpath id="tools.compile.path">
+                <pathelement location="build/classes/typestore"/>
+                <pathelement location="build/classes/xmlinputstream"/>
+                <pathelement location="build/classes/xmlpublic"/>
+                <pathelement location="build/classes/common"/>
+                <pathelement location="build/classes/saaj_api"/>
+                <pathelement location="build/classes/typeimpl"/>
+                <pathelement location="build/classes/xmlcomp"/>
+            </classpath>
+        </javac>
+    </target>
+
+    <!-- bootstrap schema target support ================================ -->
+
+
+    <!-- xsdschema target =============================================== -->
+
+    <!-- Note that this is a tricky target because it bootstraps xbeans on itself. -->
+    <!-- The basic strategy is to rely on the oldxbeans.jar checked into external/lib -->
+
+    <path id="bootstrap.run.path">
+        <pathelement location="build/private/lib/oldxbean.jar"/>
+        <pathelement location="build/classes/xmlpublic"/>
+    </path>
+
+    <path id="bootstrap.compile.path">
+        <pathelement location="build/classes/xmlpublic"/>
+    </path>
+
+    <property name="bootstrap.compile.path" refid="bootstrap.compile.path"/>
+
+    <path id="xsdschema.compile.path">
+        <pathelement location="build/classes/xmlschema"/>
+        <pathelement location="build/classes/xmlpublic"/>
+    </path>
+
+    <property name="xsdschema.compile.path" refid="xsdschema.compile.path"/>
+
+    <target name="xsdschema.check">
+        <condition property="xsdschema.notRequired">
+            <uptodate property="xsdschema.notRequired" targetfile="build/classes/xsdschema">
+                <srcfiles dir="src/xsdschema" includes="**/*.xsd*"/>
+            </uptodate>
+        </condition>
+    </target>
+
+    <target name="xsdschema.classes" depends="xsdschema.check, xmlschema.classes, xmlpublic.classes, oldxbean.jar" unless="xsdschema.notRequired">
+        <delete dir="build/classes/xsdschema"/>
+        <delete dir="build/src/xsdschema"/>
+        <java classname="${bootstrap_schema_compiler}" classpathref="bootstrap.run.path" fork="true" failonerror="true">
+            <jvmarg value="-ea"/>
+            <arg line="${repackage_arg} -name sXMLSCHEMA  -srconly -d build/classes/xsdschema -noann -src build/src/xsdschema src/xsdschema/schema"/>
+        </java>
+    </target>
+
+    <!-- xmlschema target ============================================= -->
+
+    <!-- Note that this is a tricky target because it bootstraps xbeans on itself. -->
+    <!-- The basic strategy is to rely on the oldxbeans.jar checked into external/lib -->
+
+    <!-- This doesn't really work anymore, because the "schema" part now needs the package name and the
+         ant "replace" mechanism is too difficult to use to be worth it -->
+    <target name="xmlschema.check">
+        <condition property="xmlschema.notRequired">
+            <uptodate property="xmlschema.notRequired" targetfile="build/classes/xmlschema">
+                <srcfiles dir="src/xmlschema" includes="**/*.xsd*"/>
+            </uptodate>
+        </condition>
+    </target>
+
+    <target name="xmlschema.classes" depends="xmlschema.check, xmlpublic.classes, oldxbean.jar" unless="xmlschema.notRequired">
+        <delete dir="build/classes/xmlschema"/>
+        <delete dir="build/src/xmlschema"/>
+        <java classname="${bootstrap_schema_compiler}" classpathref="bootstrap.run.path" fork="true" failonerror="true">
+            <jvmarg value="-ea"/>
+            <arg line="${repackage_arg} -name sXMLLANG -noann -d build/classes/xmlschema -src build/src/xmlschema -srconly src/xmlschema/schema"/>
+        </java>
+    </target>
+
+    <!-- xmlconfig target =============================================== -->
+
+    <target name="xmlconfig.classes" depends="dirs, xmlpublic.classes, configschema.classes">
+        <mkdir dir="build/classes/xmlconfig"/>
+        <javac srcdir="src/xmlconfig" destdir="build/classes/xmlconfig" source="${javac.source}" target="${javac.target}" debug="on">
+            <classpath>
+                <pathelement location="build/classes/xmlpublic"/>
+                <pathelement location="build/classes/configschema"/>
+            </classpath>
+        </javac>
+    </target>
+
+    <!-- configschema target ============================================= -->
+
+    <!-- Note that this is a tricky target because it bootstraps xbeans on itself. -->
+    <!-- The basic strategy is to rely on the oldxbeans.jar checked into external/lib -->
+
+    <property name="bootstrap.compile.path" refid="bootstrap.compile.path"/>
+
+    <target name="configschema.check">
+        <uptodate property="configschema.notRequired" targetfile="build/classes/configschema">
+            <srcfiles dir="src/configschema" includes="**/*.xsd"/>
+        </uptodate>
+    </target>
+
+    <target name="configschema.classes" depends="configschema.check, xmlpublic.classes, oldxbean.jar" unless="configschema.notRequired">
+        <delete dir="build/classes/configschema"/>
+        <java classname="${bootstrap_schema_compiler}" classpathref="bootstrap.run.path" fork="true" failonerror="true">
+            <jvmarg value="-ea"/>
+            <arg line="${repackage_arg} -name sXMLCONFIG -srconly -noann -src build/src/configschema -d build/classes/configschema src/configschema/schema"/>
+        </java>
+    </target>
+
+    <!-- toolschema target ============================================= -->
+
+    <!-- Note that this is a tricky target because it bootstraps xbeans on itself. -->
+    <!-- The basic strategy is to rely on the oldxbeans.jar checked into external/lib -->
+
+    <property name="bootstrap.compile.path" refid="bootstrap.compile.path"/>
+
+    <target name="toolschema.check">
+        <uptodate property="toolschema.notRequired" targetfile="build/classes/toolschema">
+            <srcfiles dir="src/toolschema" includes="**/*.xsd"/>
+        </uptodate>
+    </target>
+
+    <target name="toolschema.classes" depends="toolschema.check, xmlpublic.classes, oldxbean.jar" unless="toolschema.notRequired">
+        <delete dir="build/classes/toolschema"/>
+        <mkdir dir="build/src/toolschema"/>
+        <java classname="${bootstrap_schema_compiler}" classpathref="bootstrap.run.path" fork="true" failonerror="true">
+            <jvmarg value="-ea"/>
+            <arg line="${repackage_arg} -name sXMLTOOLS -srconly -noann -src build/src/toolschema -d build/classes/toolschema src/toolschema"/>
+        </java>
+    </target>
+
+
+    <!-- =========================== -->
+    <!-- =====   Repackaging  ====== -->
+    <!-- =========================== -->
+
+    <target name="edit_build_script">
+        <echo message="editing repackage build file: ${token} --> ${replacement}"/>
+
+        <java classname="repackage.EditBuildScript" failonerror="true">
+            <arg value="${rp_target_dir}/build.xml"/>
+            <arg value="${token}"/>
+            <arg value="${replacement}"/>
+            <classpath>
+                <pathelement location="build/classes/repackage"/>
+            </classpath>
+        </java>
+    </target>
+
+    <property name="repackage_arg" value=""/>
+    <property name="schema_compiler" value="org.apache.xmlbeans.impl.tool.SchemaCompiler"/>
+    <property name="bootstrap_schema_compiler" value="org.apache.xmlbeans.impl.tool.SchemaCompiler"/>
+    <property name="jam_package_name" value="org.apache.xmlbeans.impl.jam"/>
+
+    <!--
+        Params to repackage are:
+
+            repackage_spec:
+
+                Of the form from_pkg_1:to_pkg_1;from_pkg_2:to_pkg_2 which specifies which packages
+                are to be converted which which which other packages.  Right now, there are two.
+                org.apache.xmlbeans and apache.xmlbeans.impl, the public and implementation
+                packages.
+
+            rp_source_dir
+
+                From where the sources come...
+
+            rp_target_dir
+
+                To where the repackaged sources are built
+    -->
+
+
+    <target name="repackage" depends="repackage.classes">
+
+        <echo message="Re-packaging XmlBeans"/>
+	<echo message="   from: ${rp_source_dir}"/>
+	<echo message="   to:   ${rp_target_dir}"/>
+
+        <property
+            name="new_repackage_arg"
+            value="-repackage ${repackage_spec}"/>
+
+        <java classname="repackage.Repackage" fork="true" failonerror="true">
+            <classpath>
+                <pathelement location="build/classes/repackage"/>
+            </classpath>
+            <arg line="${new_repackage_arg} -f ${rp_source_dir} -t ${rp_target_dir}"/>
+        </java>
+
+        <echo message="Build XmlBeans in ${rp_target_dir}"/>
+
+        <ant dir="${rp_target_dir}" target="xbean" inheritAll="false">
+            <property name="repackage_arg" value="${new_repackage_arg}"/>
+            <property name="bootstrap_schema_compiler" value="${bootstrap_schema_compiler}"/>
+        </ant>
+
+        <ant dir="${rp_target_dir}" target="quickbootstrap" inheritAll="false"/>
+
+    </target>
+
+    <target name="repackage.classes">
+        <mkdir dir="build/classes/repackage"/>
+        <javac srcdir="src/repackage" destdir="build/classes/repackage" source="${javac.source}" target="${javac.target}" debug="on"/>
+    </target>
+
+    <!-- xpath target ============================================= -->
+
+    <target name="xpath.classes" depends="dirs, xmlpublic.classes, store.classes, saxon9.jar">
+        <mkdir dir="build/classes/xpath_xquery"/>
+        <mkdir dir="build/classes/xpath_xquery/META-INF"/>
+        <mkdir dir="build/classes/xpath_xquery/META-INF/services"/>
+        <copy
+            file="src/xpath_xquery/SelectPathInterface.g"
+            tofile="build/classes/xpath_xquery/META-INF/services/org.apache.xmlbeans.impl.store.PathDelegate.SelectPathInterface"/>
+        <copy
+            file="src/xpath_xquery/QueryInterface.g"
+            tofile="build/classes/xpath_xquery/META-INF/services/org.apache.xmlbeans.impl.store.QueryDelegate.QueryInterface"/>
+        <javac
+            destdir="build/classes/xpath_xquery"
+            classpathref="xpath.compile.path"
+            source="${javac.source}" target="${javac.target}"
+            debug="on">
+            <src path="src/xpath_xquery"/>
+            <classpath id="xpath.compile.path">
+                <pathelement location="build/classes/xmlpublic"/>
+                <pathelement location="build/classes/store"/>
+                <pathelement location="${saxon_jar}"/>
+                <pathelement location="${saxon_dom_jar}"/>
+            </classpath>
+        </javac>
+    </target>
+
+    <target name="xbean_xpath.jar" depends="dirs, xpath.classes">
+        <jar jarfile="build/lib/xbean_xpath.jar" basedir="build/classes/xpath_xquery"/>
+    </target>
+
+    <!-- TEST Targets ===================================================== -->
+    <!-- All targets hook up into testbuild.xml -->
+    <property name="testbuild.file" value="testbuild.xml"/>
+
+    <target name="testbuild">
+        <ant antfile="${testbuild.file}" target="build"/>
+    </target>
+
+    <target name="build.tools">
+        <ant antfile="${testbuild.file}" target="build.test.tools"/>
+    </target>
+
+    <target name="build.schemas">
+        <ant antfile="${testbuild.file}" target="build.schemas"/>
+    </target>
+
+    <target name="build.tests">
+        <ant antfile="${testbuild.file}" target="build.tests"/>
+    </target>
+
+    <target name="testclean">
+        <ant antfile="${testbuild.file}" target="clean"/>
+    </target>
+
+    <target name="clean.schemas">
+        <ant antfile="${testbuild.file}" target="clean.schemas"/>
+    </target>
+
+    <target name="clean.tests">
+        <ant antfile="${testbuild.file}" target="clean.tests"/>
+    </target>
+
+    <target name="clean.cc">
+        <ant antfile="${testbuild.file}" target="clean.cc"/>
+    </target>
+
+    <target name="run.junit">
+        <ant antfile="${testbuild.file}" target="run.junit"/>
+    </target>
+
+    <target name="checkintest">
+        <ant antfile="${testbuild.file}" target="checkin"/>
+    </target>
+
+    <target name="detailed">
+        <ant antfile="${testbuild.file}" target="detailed"/>
+    </target>
+
+    <target name="compile.run">
+        <ant antfile="${testbuild.file}" target="compile.run"/>
+    </target>
+
+    <path id="test.compile.path">
+        <pathelement location="build/classes/marshal"/>
+        <pathelement location="build/classes/common"/>
+        <pathelement location="external/lib/junit.jar"/>
+        <pathelement location="build/ar/xbean.jar"/>
+        <pathelement location="build/classes/xmlinputstream"/>
+    </path>
+
+    <path id="test.run.path">
+        <pathelement location="build/ar/xbean.jar"/>
+        <pathelement location="external/lib/junit.jar"/>
+    </path>
+
+
+    <target name="drt.classes" depends="dirs">
+        <mkdir dir="build/private/classes/drt"/>
+        <javac
+            destdir="build/private/classes/drt"
+            classpathref="test.compile.path"
+            source="${javac.source}" target="${javac.target}"
+            debug="on">
+            <src path="test/src/drt"/>
+        </javac>
+    </target>
+
+    <target name="drt.jar" depends="drt.classes">
+        <jar jarfile="build/private/lib/drt.jar" basedir="build/private/classes/drt"/>
+    </target>
+
+
+    <!-- stsschema (for testing) target ================================ -->
+
+    <path id="scomp.run.path">
+        <pathelement location="build/lib/xbean.jar"/>
+    </path>
+
+    <target name="stsschema.check">
+        <uptodate property="stsschema.notRequired" targetfile="build/private/lib/stsschema.jar">
+            <srcfiles dir="test/src/stsschema" includes="**/*.xsd"/>
+            <srcfiles dir="build/ar" includes="xbean.jar"/>
+        </uptodate>
+    </target>
+
+    <target name="stsschema.jar" depends="stsschema.check, dirs, xbean" unless="stsschema.notRequired">
+        <java classname="${schema_compiler}" classpathref="scomp.run.path" fork="true" failonerror="true">
+            <jvmarg value="-ea"/>
+            <arg line="-out build/private/lib/stsschema.jar test/src/stsschema"/>
+        </java>
+    </target>
+
+    <!-- JAM deployment -->
+    <target name="jam.classes.check">
+        <uptodate property="jam.classes.notRequired"
+            targetfile="build/ar/xbean.jar">
+            <srcfiles dir="external/lib" includes="jam*-src.jar"/>
+        </uptodate>
+    </target>
+
+    <target name="jam.classes" depends="jam.classes.check, dirs, repackage.classes" unless="jam.classes.notRequired">
+        <delete dir="build/private/jam"/>
+        <mkdir dir="build/private/jam"/>
+        <unjar src="external/lib/jam-0.1.0-src.jar" dest="build/private/jam"/>
+
+        <echo message="Re-packaging JAM"/>
+
+        <java classname="repackage.Repackage" fork="true" failonerror="true">
+            <classpath>
+                <pathelement location="build/classes/repackage"/>
+            </classpath>
+            <arg line="-repackage org.codehaus.jam:${jam_package_name} -f build/private/jam/src -t build/private/jam/src_repackage"/>
+        </java>
+        <!--copy file="build/private/jam/src/java.g" todir="build/private/jam/src_repackage"/-->
+
+        <delete dir="build/classes/jam"/>
+        <mkdir dir="build/classes/jam"/>
+        <javac
+            destdir="build/classes/jam"
+            source="1.4" target="1.4"
+            debug="on">
+            <src path="build/private/jam/src_repackage"/>
+            <classpath/>
+        </javac>
+    </target>
+</project>

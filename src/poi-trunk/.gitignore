@@ -1,0 +1,48 @@
+classes
+workbook.xls
+bak
+build.number
+*.el
+scripts
+untitled1.jpx
+log*.*
+*.log
+
+forrest.properties
+compile-lib/
+ooxml-lib/
+
+# Eclipse
+/bin
+.settings
+
+# Tests
+junit*.properties
+TEST-org.apache.poi*.xml
+
+# Sonar
+.sonar
+sonar/main/src/
+sonar/ooxml/src/
+sonar/scratchpad/src/
+sonar/ooxml-schema-security/src/
+sonar/examples/src/
+sonar/excelant/src/
+sonar/target
+sonar/*/target
+
+# IntelliJ
+/out/
+.idea
+*.iml
+*.iws
+*.ipr
+
+# Gradle
+.gradle
+
+# Ant
+.ant-targets-build.xml
+build
+dist
+lib/

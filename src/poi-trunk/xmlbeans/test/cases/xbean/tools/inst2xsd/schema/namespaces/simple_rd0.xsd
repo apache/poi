@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://xmlbeans.apache.org/inst2xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="a">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element type="xs:string" name="b" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+        <xs:element type="xs:byte" name="c" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+        <xs:element type="xs:string" name="d" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+        <xs:element type="xs:string" name="e" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

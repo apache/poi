@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="CATALOG" type="CATALOGType"/>
+  <xs:complexType name="CDType">
+    <xs:sequence>
+      <xs:element type="xs:string" name="TITLE" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+      <xs:element type="xs:string" name="ARTIST" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+      <xs:element type="xs:string" name="COUNTRY" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+      <xs:element type="xs:string" name="COMPANY" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+      <xs:element type="xs:float" name="PRICE" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+      <xs:element type="xs:short" name="YEAR" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="CATALOGType">
+    <xs:sequence>
+      <xs:element type="CDType" name="CD" maxOccurs="unbounded" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

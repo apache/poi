@@ -1,0 +1,27 @@
+<xsd:schema
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://xbean/scomp/derivation/facets/Union"
+    targetNamespace="http://xbean/scomp/derivation/facets/Union"
+    elementFormDefault="qualified"
+    xmlns:base="http://xbean/scomp/contentType/Union"
+>
+    <xsd:simpleType name="SmallEnumUnion">
+        <xsd:restriction base="base:UnionAnonGlobalT">
+            <xsd:enumeration value="1"/>
+            <xsd:enumeration value="-1"/>
+            <xsd:enumeration value="small"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="SmallPatternUnion">
+        <xsd:restriction base="base:UnionAnonGlobalT">
+            <xsd:pattern value="small|[1-2]"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+<xsd:element name="UnionEnumElt" type="SmallEnumUnion" />
+<xsd:element name="UnionPatternElt" type="SmallPatternUnion" />
+
+
+
+</xsd:schema>

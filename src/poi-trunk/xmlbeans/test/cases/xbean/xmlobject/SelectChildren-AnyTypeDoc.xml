@@ -1,0 +1,14 @@
+<sc:ElemWithAny xmlns:sc='http://openuri.org/test/selectChildren'
+                xmlns:abc='http://abc'
+                xmlns:def='http://def'
+                xmlns:xyz='http://xyz'>
+    <sc:simple>Simple String</sc:simple>
+    <!-- Adding any types -->
+    <abc:someElem1>ABC Namespace</abc:someElem1>
+    <def:someElem2>DEF Namespace</def:someElem2>
+    <xyz:someElem3>XYX Namespace</xyz:someElem3>
+    <!-- Same local name, different namespace -->
+    <abc:sameElem>ABC-SameElem</abc:sameElem>
+    <def:sameElem>DEF-SameElem</def:sameElem>
+    <xyz:sameElem>XYZ-SameElem</xyz:sameElem>
+</sc:ElemWithAny>

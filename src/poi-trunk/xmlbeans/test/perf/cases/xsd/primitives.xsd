@@ -1,0 +1,44 @@
+<!--
+    Copyright 2004 The Apache Software Foundation
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<xs:schema targetNamespace="http://openuri.org/primitives"
+    xmlns:pri="http://openuri.org/primitives"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified">
+		<xs:element name="primitives">
+			<xs:complexType>
+				<xs:sequence>
+					<xs:element name="numerics" type="pri:numerics" maxOccurs="unbounded"/>
+					<xs:element name="misc" type="pri:misc"/>
+				</xs:sequence>
+			</xs:complexType>
+		</xs:element>
+   	<xs:complexType name="numerics">
+   	  <xs:sequence>
+   		  <xs:element name="mybyte" type="xs:byte"/>
+   	    <xs:element name="myint" type="xs:int"/>
+   	    <xs:element name="mylong" type="xs:long"/>
+   	    <xs:element name="myshort" type="xs:short"/>
+				<xs:element name="myhexbin" type="xs:hexBinary"/>
+				<xs:element name="mydouble" type="xs:double"/>
+				<xs:element name="myfloat" type="xs:float"/>
+   	 </xs:sequence>
+ 	 </xs:complexType>
+ 	 <xs:complexType name="misc">
+		<xs:sequence>
+				<xs:element name="mybool" type="xs:boolean"/>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

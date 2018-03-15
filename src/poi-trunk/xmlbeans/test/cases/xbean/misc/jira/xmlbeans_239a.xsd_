@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema 
+  targetNamespace="http://www.test.bmecat.org" 
+  xmlns="http://www.test.bmecat.org" 
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+  elementFormDefault="qualified">
+
+  <xsd:complexType name="dtMLSTRING">
+    <xsd:simpleContent>
+      <xsd:extension base="dtSTRING">
+        <xsd:attribute name="lang" type="xsd:string" use="optional"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:simpleType name="dtSTRING">
+    <xsd:restriction base="xsd:string"/>
+  </xsd:simpleType>
+
+  <xsd:element name="ARTICLE_STATUS">
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="dtMLSTRING">
+          <xsd:attribute name="type" use="required">
+            <xsd:simpleType>
+              <xsd:restriction base="dtSTRING">
+                <xsd:minLength value="1"/>
+                <xsd:maxLength value="20"/>
+                <xsd:enumeration value="bargain"/>
+                <xsd:enumeration value="core_product"/>
+                <xsd:enumeration value="new"/>
+                <xsd:enumeration value="new_product"/>
+                <xsd:enumeration value="old_product"/>
+                <xsd:enumeration value="refurbished"/>
+                <xsd:enumeration value="used"/>
+                <xsd:enumeration value="others"/>
+              </xsd:restriction>
+            </xsd:simpleType>
+          </xsd:attribute>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+
+</xsd:schema>
