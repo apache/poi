@@ -22,6 +22,7 @@ import java.util.Calendar;
 
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.hsmf.datatypes.Types.MAPIType;
 
 /**
  * An instance of a {@link MAPIProperty} inside a {@link PropertiesChunk}. Where
@@ -32,13 +33,21 @@ import org.apache.poi.util.LocaleUtil;
  */
 public class PropertyValue {
     private MAPIProperty property;
+    private MAPIType actualType;
     private long flags;
     protected byte[] data;
 
     public PropertyValue(MAPIProperty property, long flags, byte[] data) {
+      this.property = property;
+      this.flags = flags;
+      this.data = data;
+      this.actualType = property.usualType;
+    }
+    public PropertyValue(MAPIProperty property, long flags, byte[] data, MAPIType actualType) {
         this.property = property;
         this.flags = flags;
         this.data = data;
+        this.actualType = actualType;
     }
 
     public MAPIProperty getProperty() {
@@ -54,6 +63,14 @@ public class PropertyValue {
 
     public Object getValue() {
         return data;
+    }
+
+    public byte[] getRawValue() {
+      return data;
+    }
+
+    public MAPIType getActualType() {
+      return actualType;
     }
 
     public void setRawValue(byte[] value) {
@@ -78,7 +95,7 @@ public class PropertyValue {
     public static class NullPropertyValue extends PropertyValue {
         public NullPropertyValue(MAPIProperty property, long flags,
                 byte[] data) {
-            super(property, flags, data);
+            super(property, flags, data, org.apache.poi.hsmf.datatypes.Types.NULL);
         }
 
         @Override
@@ -90,7 +107,7 @@ public class PropertyValue {
     public static class BooleanPropertyValue extends PropertyValue {
         public BooleanPropertyValue(MAPIProperty property, long flags,
                 byte[] data) {
-            super(property, flags, data);
+            super(property, flags, data, org.apache.poi.hsmf.datatypes.Types.BOOLEAN);
         }
 
         @Override
@@ -112,7 +129,7 @@ public class PropertyValue {
     public static class ShortPropertyValue extends PropertyValue {
         public ShortPropertyValue(MAPIProperty property, long flags,
                 byte[] data) {
-            super(property, flags, data);
+            super(property, flags, data, org.apache.poi.hsmf.datatypes.Types.SHORT);
         }
 
         @Override
@@ -130,7 +147,7 @@ public class PropertyValue {
 
     public static class LongPropertyValue extends PropertyValue {
         public LongPropertyValue(MAPIProperty property, long flags, byte[] data) {
-            super(property, flags, data);
+            super(property, flags, data, org.apache.poi.hsmf.datatypes.Types.LONG);
         }
 
         @Override
@@ -149,7 +166,7 @@ public class PropertyValue {
     public static class LongLongPropertyValue extends PropertyValue {
         public LongLongPropertyValue(MAPIProperty property, long flags,
                 byte[] data) {
-            super(property, flags, data);
+            super(property, flags, data, org.apache.poi.hsmf.datatypes.Types.LONG_LONG);
         }
 
         @Override
@@ -168,7 +185,7 @@ public class PropertyValue {
     public static class FloatPropertyValue extends PropertyValue {
         public FloatPropertyValue(MAPIProperty property, long flags,
                 byte[] data) {
-            super(property, flags, data);
+            super(property, flags, data, org.apache.poi.hsmf.datatypes.Types.FLOAT);
         }
 
         @Override
@@ -186,7 +203,7 @@ public class PropertyValue {
 
     public static class DoublePropertyValue extends PropertyValue {
         public DoublePropertyValue(MAPIProperty property, long flags, byte[] data) {
-            super(property, flags, data);
+            super(property, flags, data, org.apache.poi.hsmf.datatypes.Types.DOUBLE);
         }
 
         @Override
@@ -210,7 +227,7 @@ public class PropertyValue {
         private static final BigInteger SHIFT = BigInteger.valueOf(10000);
 
         public CurrencyPropertyValue(MAPIProperty property, long flags, byte[] data) {
-            super(property, flags, data);
+            super(property, flags, data, org.apache.poi.hsmf.datatypes.Types.CURRENCY);
         }
 
         @Override
@@ -236,7 +253,7 @@ public class PropertyValue {
                 * (365L * 369L + 89L);
 
         public TimePropertyValue(MAPIProperty property, long flags, byte[] data) {
-            super(property, flags, data);
+            super(property, flags, data, org.apache.poi.hsmf.datatypes.Types.TIME);
         }
 
         @Override
