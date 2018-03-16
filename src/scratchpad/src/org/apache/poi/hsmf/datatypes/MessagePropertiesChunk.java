@@ -122,7 +122,7 @@ public class MessagePropertiesChunk extends PropertiesChunk {
         return super.writeProperties(stream);
     }
 
-	@Override
+    @Override
     public void writeValue(OutputStream stream) throws IOException {
         // write properties without variable length properties
         writeProperties(stream);
