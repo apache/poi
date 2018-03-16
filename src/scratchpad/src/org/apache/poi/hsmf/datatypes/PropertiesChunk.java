@@ -122,7 +122,7 @@ public abstract class PropertiesChunk extends Chunk {
      * Defines a property. Multi-valued properties are not yet supported.
      */
     public void setProperty(PropertyValue value) {
-      properties.put(value.getProperty(), value);
+        properties.put(value.getProperty(), value);
     }
 
     /**
@@ -296,48 +296,44 @@ public abstract class PropertiesChunk extends Chunk {
         }
     }
 
-    protected void writeProperties(OutputStream out) throws IOException {
-        // TODO
-    }
-
     /**
      * Writes this chunk in the specified {@code DirectoryEntry}.
      * 
      * @param directory
-     *          The directory.
+     *        The directory.
      * @throws IOException
-     *           If an I/O error occurs.
+     *         If an I/O error occurs.
      */
-    public void writeTo(DirectoryEntry directory) throws IOException {
-      ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      List<PropertyValue> values = writeHeaderData(baos);
-      baos.close();
+    public void writeProperties(DirectoryEntry directory) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        List<PropertyValue> values = writeProperties(baos);
+        baos.close();
 
-      // write the header data with the properties declaration
-      directory.createDocument(org.apache.poi.hsmf.datatypes.PropertiesChunk.NAME,
-          new ByteArrayInputStream(baos.toByteArray()));
+        // write the header data with the properties declaration
+        directory.createDocument(org.apache.poi.hsmf.datatypes.PropertiesChunk.NAME,
+            new ByteArrayInputStream(baos.toByteArray()));
 
-      // write the property values
-      writeNodeData(directory, values);
+        // write the property values
+        writeNodeData(directory, values);
     }
     
     /**
      * Write the nodes for variable-length data. Those properties are returned by
-     * {@link #writeHeaderData(java.io.OutputStream)}.
+     * {@link #writeProperties(java.io.OutputStream)}.
      * 
      * @param directory
-     *          The directory.
+     *        The directory.
      * @param values
-     *          The values.
+     *        The values.
      * @throws IOException
-     *           If an I/O error occurs.
+     *         If an I/O error occurs.
      */
     protected void writeNodeData(DirectoryEntry directory, List<PropertyValue> values) throws IOException {
-      for (PropertyValue value : values) {
-        byte[] bytes = value.getRawValue();
-        String nodeName = VARIABLE_LENGTH_PROPERTY_PREFIX + getFileName(value.getProperty(), value.getActualType());
-        directory.createDocument(nodeName, new ByteArrayInputStream(bytes));
-      }
+        for (PropertyValue value : values) {
+            byte[] bytes = value.getRawValue();
+            String nodeName = VARIABLE_LENGTH_PROPERTY_PREFIX + getFileName(value.getProperty(), value.getActualType());
+            directory.createDocument(nodeName, new ByteArrayInputStream(bytes));
+        }
     }
 
     /**
@@ -350,81 +346,80 @@ public abstract class PropertiesChunk extends Chunk {
      * @throws IOException
      *           If an I/O error occurs.
      */
-    protected List<PropertyValue> writeHeaderData(OutputStream out) throws IOException {
-      List<PropertyValue> variableLengthProperties = new ArrayList<>();
-      for (Entry<MAPIProperty, PropertyValue> entry : properties.entrySet()) {
-        MAPIProperty property = entry.getKey();
-        PropertyValue value = entry.getValue();
-        if (value == null) {
-          continue;
-        }
-        if (property.id < 0) {
-          continue;
-        }
-        // generic header
-        // page 23, point 2.4.2
-		// tag is the property id and its type
-        long tag = Long.parseLong(getFileName(property, value.getActualType()), 16);
-        LittleEndian.putUInt(tag, out);
-        LittleEndian.putUInt(value.getFlags(), out); // readable + writable
+    protected List<PropertyValue> writeProperties(OutputStream out) throws IOException {
+        List<PropertyValue> variableLengthProperties = new ArrayList<>();
+        for (Entry<MAPIProperty, PropertyValue> entry : properties.entrySet()) {
+            MAPIProperty property = entry.getKey();
+            PropertyValue value = entry.getValue();
+            if (value == null) {
+                continue;
+            }
+            if (property.id < 0) {
+                continue;
+            }
+            // generic header
+            // page 23, point 2.4.2
+  	        // tag is the property id and its type
+            long tag = Long.parseLong(getFileName(property, value.getActualType()), 16);
+            LittleEndian.putUInt(tag, out);
+            LittleEndian.putUInt(value.getFlags(), out); // readable + writable
 
-        MAPIType type = getTypeMapping(value.getActualType());
-        if (type.isFixedLength()) {
-          // page 11, point 2.1.2
-          writeFixedLengthValueHeader(out, property, type, value);
-        } else {
-          // page 12, point 2.1.3
-          writeVariableLengthValueHeader(out, property, type, value);
-          variableLengthProperties.add(value);
+            MAPIType type = getTypeMapping(value.getActualType());
+            if (type.isFixedLength()) {
+                // page 11, point 2.1.2
+                writeFixedLengthValueHeader(out, property, type, value);
+            } else {
+                // page 12, point 2.1.3
+                writeVariableLengthValueHeader(out, property, type, value);
+                variableLengthProperties.add(value);
+            }
         }
-      }
-      return variableLengthProperties;
+        return variableLengthProperties;
     }
 
-    private void writeFixedLengthValueHeader(OutputStream out, MAPIProperty property, MAPIType type, PropertyValue value)
-        throws IOException {
-      // fixed type header
-      // page 24, point 2.4.2.1.1
-      byte[] bytes = value.getRawValue();
-      int length = bytes != null ? bytes.length : 0;
-      if (bytes != null) {
-        // Little endian.
-        byte[] reversed = new byte[bytes.length];
-        for (int i = 0; i < bytes.length; ++i) {
-          reversed[bytes.length - i - 1] = bytes[i];
+    private void writeFixedLengthValueHeader(OutputStream out, MAPIProperty property, MAPIType type, PropertyValue value) throws IOException {
+        // fixed type header
+        // page 24, point 2.4.2.1.1
+        byte[] bytes = value.getRawValue();
+        int length = bytes != null ? bytes.length : 0;
+        if (bytes != null) {
+            // Little endian.
+            byte[] reversed = new byte[bytes.length];
+            for (int i = 0; i < bytes.length; ++i) {
+                reversed[bytes.length - i - 1] = bytes[i];
+            }
+            out.write(reversed);
         }
-        out.write(reversed);
-      }
-      out.write(new byte[8 - length]);
+        out.write(new byte[8 - length]);
     }
 
     private void writeVariableLengthValueHeader(OutputStream out, MAPIProperty propertyEx, MAPIType type,
         PropertyValue value) throws IOException {
-      // variable length header
-      // page 24, point 2.4.2.2
-      byte[] bytes = value.getRawValue();
-      int length = bytes != null ? bytes.length : 0;
-      // alter the length, as specified in page 25
-      if (type == Types.UNICODE_STRING) {
-        length += 2;
-      } else if (type == Types.ASCII_STRING) {
-        length += 1;
-      }
-      LittleEndian.putUInt(length, out);
-      // specified in page 25
-      LittleEndian.putUInt(0, out);
+        // variable length header
+        // page 24, point 2.4.2.2
+        byte[] bytes = value.getRawValue();
+        int length = bytes != null ? bytes.length : 0;
+        // alter the length, as specified in page 25
+        if (type == Types.UNICODE_STRING) {
+            length += 2;
+        } else if (type == Types.ASCII_STRING) {
+            length += 1;
+        }
+        LittleEndian.putUInt(length, out);
+        // specified in page 25
+        LittleEndian.putUInt(0, out);
     }
 
     private String getFileName(MAPIProperty property, MAPIType actualType) {
-      String str = Integer.toHexString(property.id).toUpperCase(Locale.ROOT);
-      while (str.length() < 4) {
-        str = "0" + str;
-      }
-      MAPIType type = getTypeMapping(actualType);
-      return str + type.asFileEnding();
+        String str = Integer.toHexString(property.id).toUpperCase(Locale.ROOT);
+        while (str.length() < 4) {
+            str = "0" + str;
+        }
+        MAPIType type = getTypeMapping(actualType);
+        return str + type.asFileEnding();
     }
 
     private MAPIType getTypeMapping(MAPIType type) {
-      return type == Types.ASCII_STRING ? Types.UNICODE_STRING : type;
+        return type == Types.ASCII_STRING ? Types.UNICODE_STRING : type;
     }
 }

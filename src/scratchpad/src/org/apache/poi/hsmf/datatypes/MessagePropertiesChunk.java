@@ -40,8 +40,8 @@ public class MessagePropertiesChunk extends PropertiesChunk {
     }
 
     public MessagePropertiesChunk(ChunkGroup parentGroup, boolean isEmbedded) {
-      super(parentGroup);
-      this.isEmbedded = isEmbedded;
+        super(parentGroup);
+        this.isEmbedded = isEmbedded;
     }
 
     public long getNextRecipientId() {
@@ -77,7 +77,7 @@ public class MessagePropertiesChunk extends PropertiesChunk {
     }
 
     @Override
-    public void readValue(InputStream stream) throws IOException {
+    protected void readProperties(InputStream stream) throws IOException {
         // 8 bytes of reserved zeros
         LittleEndian.readLong(stream);
 
@@ -93,28 +93,38 @@ public class MessagePropertiesChunk extends PropertiesChunk {
         }
 
         // Now properties
-        readProperties(stream);
+        super.readProperties(stream);
     }
 
     @Override
-    protected List<PropertyValue> writeHeaderData(OutputStream out) throws IOException
+    public void readValue(InputStream value) throws IOException {
+        readProperties(value);
+    }
+
+    @Override
+    protected List<PropertyValue> writeProperties(OutputStream stream) throws IOException
     {
-      // 8 bytes of reserved zeros
-      out.write(new byte[8]);
-      // Nexts and counts
-      LittleEndian.putUInt(nextRecipientId, out);
-      LittleEndian.putUInt(nextAttachmentId, out);
-      LittleEndian.putUInt(recipientCount, out);
-      LittleEndian.putUInt(attachmentCount, out);
-      // 8 bytes of reserved zeros
-      if (!isEmbedded) {
-        out.write(new byte[8]);
-      }
-      // Now properties.
-      return super.writeHeaderData(out);
+        // 8 bytes of reserved zeros
+        LittleEndian.putLong(0, stream);
+
+        // Nexts and counts
+        LittleEndian.putUInt(nextRecipientId, stream);
+        LittleEndian.putUInt(nextAttachmentId, stream);
+        LittleEndian.putUInt(recipientCount, stream);
+        LittleEndian.putUInt(attachmentCount, stream);
+
+        if (!isEmbedded) {
+          // 8 bytes of reserved zeros (top level properties stream only)
+          LittleEndian.putLong(0, stream);
+        }
+
+        // Now properties.
+        return super.writeProperties(stream);
     }
 
-    @Override
-    public void writeValue(OutputStream out) throws IOException {
+	@Override
+    public void writeValue(OutputStream stream) throws IOException {
+        // write properties without variable length properties
+        writeProperties(stream);
     }
 }

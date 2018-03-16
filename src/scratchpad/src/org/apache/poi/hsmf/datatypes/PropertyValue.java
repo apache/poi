@@ -38,10 +38,7 @@ public class PropertyValue {
     protected byte[] data;
 
     public PropertyValue(MAPIProperty property, long flags, byte[] data) {
-      this.property = property;
-      this.flags = flags;
-      this.data = data;
-      this.actualType = property.usualType;
+        this(property, flags, data, property.usualType);
     }
     public PropertyValue(MAPIProperty property, long flags, byte[] data, MAPIType actualType) {
         this.property = property;
