@@ -7,6 +7,7 @@ import com.attackt.logivisual.model.newfunctions.SourceNodeType;
 import com.attackt.logivisual.mysql.OperationUtils;
 import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.ptg.*;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Name;
@@ -55,7 +56,7 @@ public class Util {
 	public Cell getFormulaCell(Workbook workbook, String name) {
 		int namedCellIdx = workbook.getNameIndex(name);
 		Name aNamedCell = workbook.getNameAt(namedCellIdx);
-		AreaReference[] arefs = AreaReference.generateContiguous(aNamedCell.getRefersToFormula());
+		AreaReference[] arefs = AreaReference.generateContiguous(SpreadsheetVersion.EXCEL2007,aNamedCell.getRefersToFormula());
 		for (int i = 0; i < arefs.length; i++) {
 			CellReference[] crefs = arefs[i].getAllReferencedCells();
 			for (int j = 0; j < crefs.length; j++) {

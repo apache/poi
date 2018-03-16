@@ -401,58 +401,57 @@ public class FormulaUtil {
                     int funcValueType = 0;
                     String funcValue = null;
                     Map<String, Object> map = null;
-                    switch (cell.getCellType()) {
-                        case Cell.CELL_TYPE_NUMERIC:
-                            excelId = new ThreadUtil().getExcelUid();
-                            funcValueType = Integer.parseInt(SourceValueType.valueOf(NumberEval.class.getSimpleName()).toString());
-                            funcValue = String.valueOf(cell.getNumericCellValue());
-                            // 查找对应的记录
-                            map = operationUtils.findData(excelId);
-                            if (map.size() > 0) {
-                                String text = map.get("content").toString();
-                                Integer recordId = Integer.valueOf(map.get("id").toString());
-                                JSONArray jsonArray = JSONArray.parseArray(text);
-                                JSONObject jsonObject = jsonArray.getJSONObject(0);
-                                jsonObject.put("funcValueType", funcValueType);
-                                jsonObject.put("funcValue", funcValue);
-                                // 更改有效性数据
-                                operationUtils.updateData(recordId, jsonArray.toJSONString());
-                            }
-                            break;
-                        case Cell.CELL_TYPE_STRING:
-                            excelId = new ThreadUtil().getExcelUid();
-                            funcValueType = Integer.parseInt(SourceValueType.valueOf(StringEval.class.getSimpleName()).toString());
-                            funcValue = cell.getStringCellValue();
-                            // 查找对应的记录
-                            map = operationUtils.findData(excelId);
-                            if (map.size() > 0) {
-                                String text = map.get("content").toString();
-                                Integer recordId = Integer.valueOf(map.get("id").toString());
-                                JSONArray jsonArray = JSONArray.parseArray(text);
-                                JSONObject jsonObject = jsonArray.getJSONObject(0);
-                                jsonObject.put("funcValueType", funcValueType);
-                                jsonObject.put("funcValue", funcValue);
-                                // 更改有效性数据
-                                operationUtils.updateData(recordId, jsonArray.toJSONString());
-                            }
-                            break;
-                        case Cell.CELL_TYPE_BOOLEAN:
-                            excelId = new ThreadUtil().getExcelUid();
-                            funcValueType = Integer.parseInt(SourceValueType.valueOf(BoolEval.class.getSimpleName()).toString());
-                            funcValue = String.valueOf(cell.getBooleanCellValue());
-                            // 查找对应的记录
-                            map = operationUtils.findData(excelId);
-                            if (map.size() > 0) {
-                                String text = map.get("content").toString();
-                                Integer recordId = Integer.valueOf(map.get("id").toString());
-                                JSONArray jsonArray = JSONArray.parseArray(text);
-                                JSONObject jsonObject = jsonArray.getJSONObject(0);
-                                jsonObject.put("funcValueType", funcValueType);
-                                jsonObject.put("funcValue", funcValue);
-                                // 更改有效性数据
-                                operationUtils.updateData(recordId, jsonArray.toJSONString());
-                            }
-                            break;
+                    if(cell.getCellType().getCode() == CellType.NUMERIC.getCode())
+                    {
+                        excelId = new ThreadUtil().getExcelUid();
+                        funcValueType = Integer.parseInt(SourceValueType.valueOf(NumberEval.class.getSimpleName()).toString());
+                        funcValue = String.valueOf(cell.getNumericCellValue());
+                        // 查找对应的记录
+                        map = operationUtils.findData(excelId);
+                        if (map.size() > 0) {
+                            String text = map.get("content").toString();
+                            Integer recordId = Integer.valueOf(map.get("id").toString());
+                            JSONArray jsonArray = JSONArray.parseArray(text);
+                            JSONObject jsonObject = jsonArray.getJSONObject(0);
+                            jsonObject.put("funcValueType", funcValueType);
+                            jsonObject.put("funcValue", funcValue);
+                            // 更改有效性数据
+                            operationUtils.updateData(recordId, jsonArray.toJSONString());
+                        }
+                    }else if(cell.getCellType().getCode() == CellType.STRING.getCode())
+                    {
+                        excelId = new ThreadUtil().getExcelUid();
+                        funcValueType = Integer.parseInt(SourceValueType.valueOf(StringEval.class.getSimpleName()).toString());
+                        funcValue = cell.getStringCellValue();
+                        // 查找对应的记录
+                        map = operationUtils.findData(excelId);
+                        if (map.size() > 0) {
+                            String text = map.get("content").toString();
+                            Integer recordId = Integer.valueOf(map.get("id").toString());
+                            JSONArray jsonArray = JSONArray.parseArray(text);
+                            JSONObject jsonObject = jsonArray.getJSONObject(0);
+                            jsonObject.put("funcValueType", funcValueType);
+                            jsonObject.put("funcValue", funcValue);
+                            // 更改有效性数据
+                            operationUtils.updateData(recordId, jsonArray.toJSONString());
+                        }
+                    }else if(cell.getCellType().getCode() == CellType.BOOLEAN.getCode())
+                    {
+                        excelId = new ThreadUtil().getExcelUid();
+                        funcValueType = Integer.parseInt(SourceValueType.valueOf(BoolEval.class.getSimpleName()).toString());
+                        funcValue = String.valueOf(cell.getBooleanCellValue());
+                        // 查找对应的记录
+                        map = operationUtils.findData(excelId);
+                        if (map.size() > 0) {
+                            String text = map.get("content").toString();
+                            Integer recordId = Integer.valueOf(map.get("id").toString());
+                            JSONArray jsonArray = JSONArray.parseArray(text);
+                            JSONObject jsonObject = jsonArray.getJSONObject(0);
+                            jsonObject.put("funcValueType", funcValueType);
+                            jsonObject.put("funcValue", funcValue);
+                            // 更改有效性数据
+                            operationUtils.updateData(recordId, jsonArray.toJSONString());
+                        }
                     }
                 } catch (Exception e) {
                     System.out.println(e);

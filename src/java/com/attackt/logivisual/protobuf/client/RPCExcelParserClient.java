@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  * RPC发送文件地址实现类
  */
 public class RPCExcelParserClient {
-    private final Logger logger = Logger.getLogger(RPCExcelQuoteParseClient.class.getName());
+    private final Logger logger = Logger.getLogger(RPCExcelParserClient.class.getName());
 
     private final ManagedChannel channel;
     private final ExcelParserGrpc.ExcelParserBlockingStub blockingStub;

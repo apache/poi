@@ -76,7 +76,7 @@ subprojects {
 		options.encoding = 'UTF-8'
 	}
 
-	sourceCompatibility = 1.6
+	sourceCompatibility = 1.8
 
 	repositories {
 		mavenCentral()
