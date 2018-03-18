@@ -106,7 +106,7 @@ public abstract class TwoOperandNumericOperation extends Fixed2ArgFunction imple
 	};
 	public static final Function PowerEval = new TwoOperandNumericOperation() {
 		protected double evaluate(double d0, double d1) {
-			if(d0 < 0) {
+			if(d0 < 0 && Math.abs(d1) > 0.0 && Math.abs(d1) < 1.0) {
 				return -1 * Math.pow(d0 * -1, d1);
 			}
 			return Math.pow(d0, d1);

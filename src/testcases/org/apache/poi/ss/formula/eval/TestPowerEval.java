@@ -43,6 +43,7 @@ public final class TestPowerEval extends TestCase {
     public void testNegativeValues() {
         confirm(-1, -1, 1);
         confirm(1, 1, -1);
+        confirm(1, -10, 0);
         confirm((1.0/3), 3, -1);
     }
 
@@ -52,6 +53,10 @@ public final class TestPowerEval extends TestCase {
 
     public void testNegativeDecimalValues() {
         confirm(-3, -27, (1/3.0));
+    }
+
+    public void testErrorValues() {
+        confirmError(-1.00001, 1.1);
     }
 
 	public void testInSpreadSheet() {
@@ -74,6 +79,12 @@ public final class TestPowerEval extends TestCase {
         NumberEval result = (NumberEval) evaluate(EvalInstances.Power, a, b);
 
         assertEquals(expected, result.getNumberValue());
+    }
+
+    private void confirmError(double a, double b) {
+        ErrorEval result = (ErrorEval) evaluate(EvalInstances.Power, a, b);
+
+        assertEquals("#NUM!", result.getErrorString());
     }
 
     private static ValueEval evaluate(Function instance, double... dArgs) {
