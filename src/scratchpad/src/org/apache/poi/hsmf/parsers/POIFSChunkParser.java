@@ -129,7 +129,8 @@ public final class POIFSChunkParser {
       if (entryName.equals(PropertiesChunk.NAME)) {
          if (grouping instanceof Chunks) {
             // These should be the properties for the message itself
-            chunk = new MessagePropertiesChunk(grouping);
+            chunk = new MessagePropertiesChunk(grouping,
+              entry.getParent() != null && entry.getParent().getParent() != null);
          } else {
             // Will be properties on an attachment or recipient
             chunk = new StoragePropertiesChunk(grouping);

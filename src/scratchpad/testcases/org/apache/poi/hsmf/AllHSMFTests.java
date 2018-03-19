@@ -38,7 +38,8 @@ import org.junit.runners.Suite;
     TestOutlookTextExtractor.class,
     TestPOIFSChunkParser.class,
     TestMessageSubmissionChunkY2KRead.class,
-    TestMessageSubmissionChunk.class
+    TestMessageSubmissionChunk.class,
+    TestExtractEmbeddedMSG.class
 })
 public class AllHSMFTests {
 }
