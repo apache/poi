@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Calendar;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hsmf.datatypes.AttachmentChunks;
@@ -86,7 +87,8 @@ public class TestExtractEmbeddedMSG {
         Calendar messageDate = msg.getMessageDate();
         assertNotNull(messageDate);
         Calendar expectedMessageDate = Calendar.getInstance();
-        expectedMessageDate.set(2010, 05, 18, 1, 52, 19); // 2010/06/18 01:52:19
+        expectedMessageDate.set(2010, 05, 17, 23, 52, 19); // 2010/06/17 23:52:19 GMT
+        expectedMessageDate.setTimeZone(TimeZone.getTimeZone("GMT"));
         expectedMessageDate.set(Calendar.MILLISECOND, 0);
         assertEquals(expectedMessageDate.getTimeInMillis(), messageDate.getTimeInMillis());
         // test variable length property
