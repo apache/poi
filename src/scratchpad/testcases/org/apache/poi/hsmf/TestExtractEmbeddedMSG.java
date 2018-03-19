@@ -1,3 +1,20 @@
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
+
 package org.apache.poi.hsmf;
 
 import static org.junit.Assert.assertEquals;
@@ -62,21 +79,19 @@ public class TestExtractEmbeddedMSG {
     public void testEmbeddedMSGProperties() throws IOException, ChunkNotFoundException {
         AttachmentChunks[] attachments = pdfMsgAttachments.getAttachmentFiles();
         assertEquals(2, attachments.length);
-        if (attachments.length == 2) {
-            MAPIMessage attachedMsg = attachments[0].getEmbeddedMessage();
-            assertNotNull(attachedMsg);
-            // test properties of embedded message
-            testFixedAndVariableLengthPropertiesOfAttachedMSG(attachedMsg);
-            // rebuild top level message from embedded message
-            try (POIFSFileSystem extractedAttachedMsg = rebuildFromAttached(attachedMsg)) {
-                try (ByteArrayOutputStream extractedAttachedMsgOut = new ByteArrayOutputStream()) {
-                    extractedAttachedMsg.writeFilesystem(extractedAttachedMsgOut);
-                    byte[] extratedAttachedMsgRaw = extractedAttachedMsgOut.toByteArray();
-                    MAPIMessage extractedMsgTopLevel = new MAPIMessage(
-                            new ByteArrayInputStream(extratedAttachedMsgRaw));
-                    // test properties of rebuilt embedded message
-                    testFixedAndVariableLengthPropertiesOfAttachedMSG(extractedMsgTopLevel);
-                }
+        MAPIMessage attachedMsg = attachments[0].getEmbeddedMessage();
+        assertNotNull(attachedMsg);
+        // test properties of embedded message
+        testFixedAndVariableLengthPropertiesOfAttachedMSG(attachedMsg);
+        // rebuild top level message from embedded message
+        try (POIFSFileSystem extractedAttachedMsg = rebuildFromAttached(attachedMsg)) {
+            try (ByteArrayOutputStream extractedAttachedMsgOut = new ByteArrayOutputStream()) {
+                extractedAttachedMsg.writeFilesystem(extractedAttachedMsgOut);
+                byte[] extratedAttachedMsgRaw = extractedAttachedMsgOut.toByteArray();
+                MAPIMessage extractedMsgTopLevel = new MAPIMessage(
+                        new ByteArrayInputStream(extratedAttachedMsgRaw));
+                // test properties of rebuilt embedded message
+                testFixedAndVariableLengthPropertiesOfAttachedMSG(extractedMsgTopLevel);
             }
         }
     }
@@ -100,17 +115,17 @@ public class TestExtractEmbeddedMSG {
         POIFSFileSystem newDoc = new POIFSFileSystem();
         MessagePropertiesChunk topLevelChunk = new MessagePropertiesChunk(null);
         // Copy attachments and recipients.
-        int recipientscount = 0;
-        int attachmentscount = 0;
+        int recipientsCount = 0;
+        int attachmentsCount = 0;
         for (Entry entry : attachedMsg.getDirectory()) {
             if (entry.getName().startsWith(RecipientChunks.PREFIX)) {
-                recipientscount++;
+                recipientsCount++;
                 DirectoryEntry newDir = newDoc.createDirectory(entry.getName());
                 for (Entry e : ((DirectoryEntry) entry)) {
                     EntryUtils.copyNodeRecursively(e, newDir);
                 }
             } else if (entry.getName().startsWith(AttachmentChunks.PREFIX)) {
-                attachmentscount++;
+                attachmentsCount++;
                 DirectoryEntry newDir = newDoc.createDirectory(entry.getName());
                 for (Entry e : ((DirectoryEntry) entry)) {
                     EntryUtils.copyNodeRecursively(e, newDir);
@@ -145,17 +160,17 @@ public class TestExtractEmbeddedMSG {
         nameid.createDocument(PropertiesChunk.DEFAULT_NAME_PREFIX + "00040102", new ByteArrayInputStream(new byte[0]));
         // Base properties.
         // Attachment/Recipient counter.
-        topLevelChunk.setAttachmentCount(attachmentscount);
-        topLevelChunk.setRecipientCount(recipientscount);
-        topLevelChunk.setNextAttachmentId(attachmentscount);
-        topLevelChunk.setNextRecipientId(recipientscount);
+        topLevelChunk.setAttachmentCount(attachmentsCount);
+        topLevelChunk.setRecipientCount(recipientsCount);
+        topLevelChunk.setNextAttachmentId(attachmentsCount);
+        topLevelChunk.setNextRecipientId(recipientsCount);
         // Unicode string format.
         topLevelChunk.setProperty(new PropertyValue(MAPIProperty.STORE_SUPPORT_MASK,
                 MessagePropertiesChunk.PROPERTIES_FLAG_READABLE | MessagePropertiesChunk.PROPERTIES_FLAG_WRITEABLE,
                 ByteBuffer.allocate(4).putInt(0x00040000).array()));
         topLevelChunk.setProperty(new PropertyValue(MAPIProperty.HASATTACH,
                 MessagePropertiesChunk.PROPERTIES_FLAG_READABLE | MessagePropertiesChunk.PROPERTIES_FLAG_WRITEABLE,
-                attachmentscount == 0 ? new byte[] { 0 } : new byte[] { 1 }));
+                attachmentsCount == 0 ? new byte[] { 0 } : new byte[] { 1 }));
         // Copy properties from MSG file system.
         for (Chunk chunk : attachedMsg.getMainChunks().getChunks()) {
             if (!(chunk instanceof MessagePropertiesChunk)) {

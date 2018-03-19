@@ -114,8 +114,8 @@ public class MessagePropertiesChunk extends PropertiesChunk {
         LittleEndian.putUInt(attachmentCount, stream);
 
         if (!isEmbedded) {
-          // 8 bytes of reserved zeros (top level properties stream only)
-          LittleEndian.putLong(0, stream);
+            // 8 bytes of reserved zeros (top level properties stream only)
+            LittleEndian.putLong(0, stream);
         }
 
         // Now properties.
