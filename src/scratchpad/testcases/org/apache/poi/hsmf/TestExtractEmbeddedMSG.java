@@ -122,13 +122,6 @@ public class TestExtractEmbeddedMSG {
         for (Map.Entry<MAPIProperty, PropertyValue> p : mpc.getRawProperties().entrySet()) {
             PropertyValue val = p.getValue();
             if (!(val instanceof ChunkBasedPropertyValue)) {
-                // Reverse data.
-                byte[] bytes = val.getRawValue();
-                for (int idx = 0; idx < bytes.length / 2; idx++) {
-                    byte xchg = bytes[bytes.length - 1 - idx];
-                    bytes[bytes.length - 1 - idx] = bytes[idx];
-                    bytes[idx] = xchg;
-                }
                 MAPIType type = val.getActualType();
                 if (type != null && type != Types.UNKNOWN) {
                     topLevelChunk.setProperty(val);
@@ -150,9 +143,12 @@ public class TestExtractEmbeddedMSG {
         topLevelChunk.setNextAttachmentId(attachmentscount);
         topLevelChunk.setNextRecipientId(recipientscount);
         // Unicode string format.
-        topLevelChunk.setProperty(new PropertyValue(MAPIProperty.STORE_SUPPORT_MASK,
+        byte[] storeSupportMaskData = new byte[4];
+        PropertyValue.LongPropertyValue storeSupportPropertyValue = new PropertyValue.LongPropertyValue(MAPIProperty.STORE_SUPPORT_MASK,
                 MessagePropertiesChunk.PROPERTIES_FLAG_READABLE | MessagePropertiesChunk.PROPERTIES_FLAG_WRITEABLE,
-                ByteBuffer.allocate(4).putInt(0x00040000).array()));
+                storeSupportMaskData);
+        storeSupportPropertyValue.setValue(0x00040000);
+        topLevelChunk.setProperty(storeSupportPropertyValue);
         topLevelChunk.setProperty(new PropertyValue(MAPIProperty.HASATTACH,
                 MessagePropertiesChunk.PROPERTIES_FLAG_READABLE | MessagePropertiesChunk.PROPERTIES_FLAG_WRITEABLE,
                 attachmentscount == 0 ? new byte[] { 0 } : new byte[] { 1 }));
