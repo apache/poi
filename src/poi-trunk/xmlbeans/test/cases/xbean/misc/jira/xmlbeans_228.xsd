@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    xmlns:sub="http://jira/xmlbeans_228/substitution" 
+    targetNamespace="http://jira/xmlbeans_228/substitution" 
+    elementFormDefault="qualified">
+    <xs:annotation>
+        <xs:documentation>
+            <xs:documentation>Wrong element order after substitution.</xs:documentation>
+            <creationdate>14.11.05 11:11</creationdate>
+        </xs:documentation>
+    </xs:annotation>
+    <xs:element name="Person">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="FirstName" type="xs:string"/>
+                <xs:element name="LastName" type="xs:string"/>
+                <xs:element ref="sub:Comment" minOccurs="0"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Comment" type="sub:CommentType"/>
+    <xs:complexType name="CommentType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string"/>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:element name="FirstCommentElement" type="sub:FirstCommentType" substitutionGroup="sub:Comment"/>
+    <xs:complexType name="FirstCommentType">
+        <xs:simpleContent>
+            <xs:extension base="sub:CommentType"/>
+        </xs:simpleContent>
+    </xs:complexType>
+</xs:schema>

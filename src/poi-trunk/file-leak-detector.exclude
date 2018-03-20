@@ -1,0 +1,55 @@
+# JaCoCo Agent
+sun.instrument.InstrumentationImpl.loadClassAndStartAgent
+org.jacoco.agent.rt.internal_14f7ee5.output.FileOutput.openFile
+
+# Ant Junit
+org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter.getDocumentBuilder
+
+# JVM
+sun.security.jca.ProviderConfig.doLoadProvider
+javax.xml.parsers.FactoryFinder.findJarServiceProvider
+com.sun.org.apache.xerces.internal.utils.SecuritySupport.getResourceBundle
+
+# Codepage support loads classes
+java.nio.charset.Charset.lookupViaProviders
+
+# Ant
+org.apache.tools.ant.Main.getAntVersion
+javax.xml.parsers.FactoryFinder.findJarServiceProvider
+org.apache.tools.ant.taskdefs.Antlib.createAntlib
+
+# XML Parser
+com.sun.org.apache.xerces.internal.utils.SecuritySupport.getResourceBundle
+com.sun.org.apache.xml.internal.serializer.OutputPropertiesFactory.loadPropertiesFile
+com.sun.xml.internal.bind.v2.runtime.property.ArrayElementNodeProperty.<init>
+com.sun.xml.internal.bind.v2.runtime.property.AttributeProperty.<init>
+com.sun.xml.internal.bind.v2.runtime.property.SingleElementNodeProperty.<init>
+javax.xml.stream.FactoryFinder.findJarServiceProvider
+
+# XMLBeans
+org.apache.xmlbeans.impl.regex.RegexParser.setLocale
+org.apache.xmlbeans.impl.schema.SchemaTypeSystemImpl$XsbReader.getLoaderStream
+
+# JCA
+sun.security.jca.ProviderConfig.getProvider
+javax.crypto.JceSecurity.setupJurisdictionPolicies
+javax.crypto.Cipher.getMaxAllowedKeyLength
+
+# IntelliJ
+com.intellij.junit4.JUnit4TestRunnerUtil.<clinit>
+
+# Java
+sun.util.resources.LocaleData.getBundle
+sun.util.LocaleServiceProviderPool.<init>
+sun.util.calendar.LocalGregorianCalendar.getLocalGregorianCalendar
+sun.net.www.protocol.jar.JarURLConnection.getInputStream
+sun.text.normalizer.ICUData.getStream
+sun.font.T2KFontScaler.initNativeScaler
+sun.font.SunFontManager.loadFonts
+sun.font.FontManagerFactory.getInstance
+sun.font.TrueTypeFont.open
+sun.reflect.misc.MethodUtil.<clinit>
+java.util.logging.Logger.findSystemResourceBundle
+java.text.BreakIterator.getBundle
+sun.java2d.SunGraphicsEnvironment.<init>
+org.kohsuke.file_leak_detector.AgentMain.runHttpServer

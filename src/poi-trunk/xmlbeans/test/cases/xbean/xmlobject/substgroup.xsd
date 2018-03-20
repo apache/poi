@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    targetNamespace="http://openuri.org/sgs" xmlns:sg="http://openuri.org/sgs">
+    <xsd:element name="C" type="xsd:token" substitutionGroup="sg:B"/>
+    <xsd:element name="A" type="xsd:string"/>
+    <xsd:element name="B" type="xsd:normalizedString" substitutionGroup="sg:A"/>
+
+    <xsd:element name="Z" type="sg:Ext" substitutionGroup="sg:Y" />
+    <xsd:element name="Y" substitutionGroup="sg:X" />
+    <xsd:element name="X" type="sg:Base"/>
+
+    <xsd:element name="AnyType"/>
+    <xsd:element name="AnyTypeTail" substitutionGroup="sg:AnyType"/>
+
+    <xsd:element name="AnonSimple">
+        <xsd:simpleType>
+            <xsd:restriction base="xsd:int">
+                <xsd:maxExclusive value="100"/>
+            </xsd:restriction>
+        </xsd:simpleType>
+    </xsd:element>
+
+    <xsd:element name="AnonSimpleTail" substitutionGroup="sg:AnonSimple"/>
+
+    <xsd:element name="AnonComplex">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="foo" type="xsd:int"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="AnonComplexTail" substitutionGroup="sg:AnonComplex"/>
+
+    <xsd:element name="root">
+        <xsd:complexType>
+            <xsd:sequence maxOccurs="unbounded">
+                <xsd:element ref="sg:A"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:complexType name="Base">
+        <xsd:sequence>
+            <xsd:element name="str" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="Unrelated">
+        <xsd:sequence>
+            <xsd:element name="str" type="xsd:string"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="Ext">
+        <xsd:complexContent>
+            <xsd:extension base="sg:Base">
+                <xsd:sequence>
+                    <xsd:element name="int" type="xsd:int"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+	<xsd:element name="abstractTest">
+		<xsd:complexType>
+			<xsd:all>
+				<xsd:element ref="sg:abstract"/>
+			</xsd:all>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="abstract" type="xsd:string" abstract="true"/>
+    <xsd:element name="concrete" substitutionGroup="sg:abstract"/>
+
+	<xsd:element name="blockTest">
+		<xsd:complexType>
+			<xsd:all>
+				<xsd:element ref="sg:block"/>
+			</xsd:all>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="block" type="xsd:string" block="substitution"/>
+    <xsd:element name="subblock" substitutionGroup="sg:block"/>
+
+</xsd:schema>

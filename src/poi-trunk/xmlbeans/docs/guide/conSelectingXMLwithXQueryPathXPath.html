@@ -1,0 +1,340 @@
+<!doctype HTML public "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<!-- Copyright 2004 The Apache Software Foundation
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License. -->
+<html>
+<head>
+<!-- InstanceBeginEditable name="doctitle" -->
+<title>Selecting XML with XQuery and XPath</title>
+<!-- InstanceEndEditable -->
+<!--(Meta)==========================================================-->
+
+<meta http-equiv=Content-Type content="text/html; charset=$CHARSET;">
+
+
+<!-- InstanceBeginEditable name="metatags" -->
+
+<meta content="your name" name="author">
+<meta content="A description of the topic contents." name="description">
+<meta content="keywords to help in searches" name="keywords">
+<meta content="10/25/02" name="date last modified">
+<!-- InstanceEndEditable -->
+
+<!--(Links)=========================================================-->
+<!-- InstanceBeginEditable name="head" -->
+<link href="../xmlbeans.css" rel="stylesheet" type="text/css">
+<!-- InstanceEndEditable -->
+<link href="../xmlbeans.css" rel="stylesheet" type="text/css">
+<a href="../../../core/index.html" id="index"></a>
+<script language="JavaScript" src="../../../core/topicInfo.js"></script>
+<script language="JavaScript" src="../../../core/CookieClass.js"></script>
+<script language="JavaScript" src="../../../core/displayContent.js"></script>
+</head>
+
+<!--(Body)==========================================================-->
+<body>
+<script language="JavaScript">
+
+</script>
+<!-- InstanceBeginEditable name="body" -->
+<h1> Selecting XML with XQuery and XPath</h1>
+<div id="topictext">
+    <p>You can use XPath and XQuery to retrieve specific pieces of XML as you might
+        retrieve data from a database. XQuery and XPath provide a syntax for specifying
+        which elements and attributes you're interested in. The XMLBeans API provides
+        two methods for executing XQuery and XPath expressions, and two ways to use them. The methods are <span class="langinline">selectPath</span>
+        for XPath and <span class="langinline">execQuery</span> for XQuery. </p>
+    <p>You can call them from and <a href="../reference/org/apache/xmlbeans/XmlObject.html"><span class="langinline"> XmlObject</span></a> instance (or a generated type inheriting from it) or an <a href="../reference/org/apache/xmlbeans/XmlCursor.html"><span class="langinline">XmlCursor</span></a> instance.
+            As noted below, each of the four methods works slightly differently; be sure to keep these differences in mind when choosing your approach.</p>
+    <p class="notepara"><strong>Note:</strong> Both XQuery and complex XPath expressions require additional classes on the class path, as noted in the sections that follow. Also, be sure to see the XMLBeans <a href="../../../documentation/conInstallGuide.html">installation instructions</a>. </p>
+    <h2><a name="xpath_selectpath"></a>Using XPath with the selectPath Method</h2>
+</div>
+<div>
+  <p>You can execute XPath expressions use the <span class="langinline">selectPath</span> method. When you use XPath with the <span class="langinline">selectPath</span>
+    method, the value returned is view of values from the <em>current document</em> &#8212; not a copy of those values. In other words, changes your code makes to XML returned by the selectPath method change the XML in the document queried against. In contrast, with XQuery executed using the <span class="langinline">execQuery</span> method, the value returned is a <em>copy of values in the XML queried against</em>.</p>
+    <p> Note that XPath itself does not provide syntax for declaring prefix to URI bindings. For user convenience, we allow XQuery syntax to be used for such purposes. You can consult the latest XQuery draft when using syntax for declaring namespaces.</p>
+    <blockquote>
+        <p><strong>Note:</strong> By default, XMLBeans supports only very simple XPath expressions. To execute complex expressions &#8212; such as those with predicates, function calls, and the like &#8212; you will need xbean_xpath.jar and the Saxon jars (see <a href="#saxon_jars">below</a>) on your class path. xbean_xpath.jar is among those created when you build XMLBeans from source. You may need to download the Saxon jars yourself.</p>
+    </blockquote>
+    <h3>Calling XmlObject.selectPath</h3>
+  <p>When called from <span class="langinline">XmlObject</span> (or a type that
+    inherits from it), the <code>selectPath</code> method returns an array of objects. If the expression
+    is executed against types generated from schema, then the type for the returned
+    array is one of the Java types corresponding to the schema, and you can cast it accordingly. </p>
+  <p>For example, imagine you have the following XML containing employee information.
+    You've compiled the schema describing this XML and the types generated from
+    schema are available to your code.</p>
+<pre>
+&lt;xq:employees xmlns:xq=&quot;http://xmlbeans.apache.org/samples/xquery/employees&quot;&gt;
+    &lt;xq:employee&gt;
+        &lt;xq:name&gt;Fred Jones&lt;/xq:name&gt;
+        &lt;xq:address location=&quot;home&quot;&gt;
+            &lt;xq:street&gt;900 Aurora Ave.&lt;/xq:street&gt;
+            &lt;xq:city&gt;Seattle&lt;/xq:city&gt;
+            &lt;xq:state&gt;WA&lt;/xq:state&gt;
+            &lt;xq:zip&gt;98115&lt;/xq:zip&gt;
+        &lt;/xq:address&gt;
+        &lt;xq:address location=&quot;work&quot;&gt;
+            &lt;xq:street&gt;2011 152nd Avenue NE&lt;/xq:street&gt;
+            &lt;xq:city&gt;Redmond&lt;/xq:city&gt;
+            &lt;xq:state&gt;WA&lt;/xq:state&gt;
+            &lt;xq:zip&gt;98052&lt;/xq:zip&gt;
+        &lt;/xq:address&gt;
+        &lt;xq:phone location=&quot;work&quot;&gt;(425)555-5665&lt;/xq:phone&gt;
+        &lt;xq:phone location=&quot;home&quot;&gt;(206)555-5555&lt;/xq:phone&gt;
+        &lt;xq:phone location=&quot;mobile&quot;&gt;(206)555-4321&lt;/xq:phone&gt;
+    &lt;/xq:employee&gt;
+&lt;/xq:employees&gt;
+</pre>
+  If you wanted to find the phone numbers whose area code was 206, you could capture
+  the XPath expression in this way:
+  <pre>
+String queryExpression =
+    &quot;declare namespace xq='http://xmlbeans.apache.org/samples/xquery/employees';&quot; +
+    &quot;$this/xq:employees/xq:employee/xq:phone[contains(., '(206)')]&quot;;
+</pre>
+  <p>Notice in the query expression that the variable <span class="langinline">$this</span>
+    represents the current context node (the <span class="langinline">XmlObject</span>
+    that you are querying from). In this example you are querying from the document
+    level <span class="langinline">XmlObject</span>.</p>
+  <p>You could then print the results with code such as the following:</p>
+  <pre>// Retrieve the matching phone elements and assign the results to the corresponding
+// generated type.
+PhoneType[] phones = (PhoneType[])empDoc.selectPath(queryExpression);
+
+// Loop through the results, printing the value of the phone element.
+for (int i = 0; i < phones.length; i++)
+{
+    System.out.println(phones[i].stringValue());
+}</pre>
+
+  <h3>Calling XmlCursor.selectPath</h3>
+  <p>When called from an <span class="langinline">XmlCursor</span> instance, the
+    <span class="langinline">selectPath</span> method retrieves a list of <em>selections</em>,
+    or locations in the XML. The selections are remembered by the cursor instance.
+    You can use methods such as <span class="langinline">toNextSelection</span>
+    to navigate among them.</p>
+  <div>
+    <p>The <span class="langinline">selectPath</span> method takes an XPath expression.
+      If the expression returns any results, each of those results is added as
+      a selection to the cursor's list of selections. You can move through these
+      selections in the way you might use <span class="langinline">java.util.Iterator</span>
+      methods to move through a collection.</p>
+    <p> For example, for a path such as <span class="langinline">$this/employees/employee</span>,
+      the cursor instance from which you called <code>selectPath</code> would include a selection for each employee element found by
+      the expression. Note that the variable <span class="langinline">$this</span>
+      is always bound to the current context node, which in this example is the
+      document. After calling the <span class="langinline">selectPath</span> method,
+      you would use various &quot;selection&quot;-related methods to work with
+      the results. These methods include:</p>
+  </div>
+  <ul>
+    <li>
+      <div><span class="langinline">getSelectionCount() </span>to retrieve the
+        number of selections resulting from the query.</div>
+    </li>
+    <li>
+      <div> <span class="langinline">toNextSelection()</span> to move the cursor
+        to the next selection in the list (such as to the one pointing at the
+        next employee element found).</div>
+    </li>
+    <li>
+      <div> <span class="langinline">toSelection(int)</span> to move the cursor
+        to the selection at the specified index (such as to the third employee
+        element in the selection).</div>
+    </li>
+    <li>
+      <div> <span class="langinline">hasNextSelection()</span> to find out if
+        there are more selections after the cursor's current position.</div>
+    </li>
+    <li>
+      <div><span class="langinline"> clearSelections()</span> clears the selections
+        from the current cursor. This doesn't modify the document (in other words,
+        it doesn't delete the selected XML); it merely clears the selection list
+        so that the cursor is no longer keeping track of those positions.</div>
+    </li>
+  </ul>
+  <div>
+    <p>The following example shows how you might use <span class="langinline">selectPath</span>,
+      in combination with the <span class="langinline">push</span> and <span class="langinline">pop</span>
+      methods, to maneuver through XML, retrieving specific values. </p>
+    <pre>
+public void printZipsAndWorkPhones(XmlObject xml)
+{
+    // Declare the namespace that will be used.
+    String xqNamespace =
+        &quot;declare namespace xq='http://xmlbeans.apache.org/samples/xquery/employees';&quot;;
+
+    // Insert a cursor and move it to the first element.
+    XmlCursor cursor = xml.newCursor();
+    cursor.toFirstChild();
+
+    // Save the cursor's current location by pushing it
+    // onto a stack of saved locations.
+    cursor.push();
+    // Query for zip elements.
+    cursor.selectPath(xqNamespace + &quot;$this//xq:zip&quot;);
+
+    // Loop through the list of selections, getting the value of
+    // each element.
+    while (cursor.toNextSelection())
+    {
+        System.out.println(cursor.getTextValue());
+    }
+    // Pop the saved location off the stack.
+    cursor.pop();
+    // Query again from the top, this time for work phone numbers.
+    cursor.selectPath(xqNamespace + &quot;$this//xq:phone[@location='work']&quot;);
+
+    // Move the cursor to the first selection, then print that element's
+    // value.
+    cursor.toNextSelection();
+    System.out.println(cursor.getTextValue());
+    // Dispose of the cursor.
+    cursor.dispose();
+}
+</pre>
+    <p>Using selections is somewhat like tracking the locations of multiple cursors
+      with a single cursor. This becomes especially clear when you remove the
+      XML associated with a selection. When you do so the selection itself remains
+      at the location where the removed XML was, but now the selection's location
+      is immediately before the XML that was after the XML you removed. In other
+      words, removing XML created a kind of vacuum that was filled by the XML
+      after it, which shifted up into the space &#8212; up into position immediately
+      after the selection location. This is exactly the same as if the selection
+      had been another cursor.</p>
+    <p>Finally, when using selections keep in mind that the list of selections
+      is in a sense &quot;live&quot;. The cursor you're working with is keeping
+      track of the selections in the list. In other words, be sure to call the
+      <span class="langinline">clearSelections</span> method when you're finished
+      with the selections, just as you should call the <span class="langinline">XmlCursor.dispose()</span>
+      method when you're finished using the cursor.</p>
+  </div>
+  <h2><a name="xquery_execquery"></a>Using XQuery with the execQuery Method</h2>
+  <p>You use the <span class="langinline">execQuery</span> method to execute XQuery
+    expressions. With XQuery expressions, XML returned is a copy of XML in the document queried against. In other words, changes your code makes to the values returned by <code>execQuery</code> are not reflected in the document queried against.</p>
+  <blockquote>
+      <p><a name="saxon_jars"></a><strong>Note:</strong> To execute XQuery expressions, you must have the SaxonB 8.6.1 versions of the saxon8.jar and saxon8-dom.jar files on your classpath. These are two of the jars from inside the zip file saxonb8-6-1.zip
+      which can be downloaded from the <a href="http://sourceforge.net/project/showfiles.php?group_id=29872&package_id=21888">Saxon web site</a>.
+      If you build XMLBeans from source then the saxonb8-6-1.zip file and the two Saxon jar files are available in the external/lib directory.</p>
+  </blockquote>
+  <h3>Calling XmlObject.execQuery</h3>
+  <p>As with <span class="langinline">selectPath</span>, calling <span class="langinline">execQuery</span>
+    from an <span class="langinline">XmlObject</span> instance will return an
+    <span class="langinline">XmlObject</span> array.</p>
+  <p> The following example retrieves work <code>&lt;zip&gt;</code> elements from the incoming XML, adding the elements as children to a new <code>&lt;zip-list&gt;</code> element.</p>
+   <pre>public boolean collectZips(XmlObject empDoc)
+{
+    String namespaceDeclaration =
+        "declare namespace xq='http://xmlbeans.apache.org/samples/xquery/employees';";
+    // The query is designed to return results, so return
+    // true if it does.
+    boolean hasResults = false;
+
+    // The expression: Get the &lt;zip> elements and return them as children
+    // of a new &lt;zip-list> element.
+    String queryExpression =
+        "let $e := $this/xq:employees " +
+        "return " +
+        "&lt;zip-list> " +
+            "{for $z in $e/xq:employee/xq:address/xq:zip " +
+            "return $z} " +
+        "&lt;/zip-list>";
+
+    // Execute the query. Results will be copies of the XML queried against,
+    // stored as members of an XmlObject array.
+    XmlObject[] results =
+        empDoc.execQuery(namespaceDeclaration + queryExpression);
+
+    // Print the results.
+    if (results.length > 0)
+    {
+        hasResults = true;
+        System.out.println("The query results: \n");
+        System.out.println(results[0].toString() + "\n");
+    }
+    return hasResults;
+}</pre>
+  <h3>Calling  XmlCursor.execQuery</h3>
+</div>
+
+<div>
+  <p>Unlike the <code>selectPath</code> method called from a cursor, the <span class="langinline">execQuery</span> method doesn't return <code>void</code>. Instead it returns an <span class="langinline">XmlCursor</span> instance positioned at the beginning of a new XML document representing
+    the query results. Rather than accessing results as selections, you use the cursor to move through the results in typical cursor fashion (for more information, see <a href="conNavigatingXMLwithCursors.html">Navigating
+    XML with Cursors</a>). The models are very different.</p>
+  <p>As always, you can cast the results to a type generated from schema if you know that the results conform to that type.</p>
+  <p>The following example retrieves work <code>&lt;phone&gt;</code> elements from the incoming XML, then changes the number in the results.</p>
+   <pre>public boolean updateWorkPhone(XmlObject empDoc)
+{
+    boolean hasResults = false;
+
+    // A cursor instance to query with.
+    XmlCursor empCursor = empDoc.newCursor();
+    empCursor.toNextToken();
+
+    // The expression: Get the <employee> elements with <state> elements whose
+    // value is "WA".
+    String queryExpression =
+        "for $e in $this/xq:employees/xq:employee " +
+        "let $s := $e/xq:address/xq:state " +
+        "where $s = 'WA' " +
+        "return $e//xq:phone[@location='work']";
+
+    // Execute the query. Results, if any, will be available at
+    // the position of the resultCursor in a new XML document.
+    XmlCursor resultCursor =
+        empCursor.execQuery(namespaceDeclaration + queryExpression);
+
+    System.out.println("The query results, element copies made " +
+		"from the received document: \n");
+    System.out.println(resultCursor.getObject().toString() + "\n");
+
+    // If there are results, the results will be children of the fragment root
+    // where the new cursor is positioned. This statement tests for children
+    // and moves the cursor if to the first if it exists.
+    if (resultCursor.toFirstChild())
+    {
+        hasResults = true;
+        // Use the cursor to loop through the results, printing each sibling
+        // <employee>element returned by the query.
+        int i = 0;
+	    do
+	    {
+	        // Change the phone numbers.
+            XmlCursor editCursor = resultCursor.newCursor();
+	        editCursor.toLastAttribute();
+	        editCursor.toNextToken();
+	        editCursor.removeXml();
+	        editCursor.insertChars("(206)555-1234");
+	    } while (resultCursor.toNextSibling());
+
+	    resultCursor.toStartDoc();
+	    System.out.println("The query results after changes: \n");
+	    System.out.println(resultCursor.getObject().toString() + "\n");
+
+    	System.out.println("The received document -- note that it is unchanged. " +
+            "Changes were made to the copy created by the execQuery method. \n");
+    	System.out.println(empDoc + "\n");
+    }
+    return hasResults;
+}</pre>
+   <h2>Related Topics</h2>
+</div>
+<p><a href="conGettingStartedwithXMLBeans.html">Getting Started with XMLBeans</a></p>
+<!-- InstanceEndEditable -->
+<script language="JavaScript">
+
+</script>
+</body>
+</html>

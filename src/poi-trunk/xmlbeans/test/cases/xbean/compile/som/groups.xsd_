@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--
+/*   Copyright 2004 The Apache Software Foundation
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+-->
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <!-- elements -->
+    <xsd:element name="TestRootElem">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="SubGrpHeadElem" maxOccurs="unbounded" />
+                <xsd:element ref="ModelGrpTypeElem" minOccurs="1"/>
+                <xsd:element ref="AttrGrpTypeElem" minOccurs="1" />
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="SubGrpHeadElem" type="SubGrpHeadElemType" />
+    <xsd:element name="SubGrpHeadElem2" type="SubGrpHeadElemType2" />
+    <xsd:element name="SubGrpMemberElem1" substitutionGroup="SubGrpHeadElem" />
+    <xsd:element name="SubGrpMemberElem2" type="ExtensionSubGrpHeadElemType" substitutionGroup="SubGrpHeadElem"/>
+
+    <xsd:element name="ModelGrpTypeElem" type="ModelGrpType" />
+    <xsd:element name="AttrGrpTypeElem"  type="AttrGrpType" />
+
+
+    <!-- types -->
+
+    <!-- commented out head elem type def for testing
+    <xsd:complexType name="SubGrpHeadElemType">
+        <xsd:sequence>
+            <xsd:element name="SubGrpInnerElem1" type="xsd:string" />
+            <xsd:element name="SubGrpInnerElem2" type="xsd:integer" />
+        </xsd:sequence>
+        <xsd:attribute name="SubGrpHeadAttr1" type="xsd:string" use="required" />
+    </xsd:complexType>
+    -->
+
+    <xsd:complexType name="ExtensionSubGrpHeadElemType">
+        <xsd:complexContent>
+            <xsd:extension base="SubGrpHeadElemType">
+                <xsd:sequence>
+                    <xsd:element name="SubGrpInnerElem3" type="xsd:string"  />
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="SubGrpHeadElemType2">
+        <xsd:sequence>
+            <xsd:element name="SubGrpInnerElem3" type="xsd:token" />
+        </xsd:sequence>
+        <xsd:attribute name="SubGrpHeadAttr1" type="xsd:string" use="required" />
+    </xsd:complexType>
+
+    <!-- reusable group definitions here -->
+    <!-- Named Model Groups -->
+
+    <xsd:group name="NamedModelGroup">
+        <xsd:sequence>
+            <xsd:element name="ModelGrpElem1" type="xsd:string" />
+            <xsd:element name="ModelGrpElem2" type="xsd:string" minOccurs="1" />
+        </xsd:sequence>
+    </xsd:group>
+
+    <xsd:complexType name="ModelGrpType">
+        <xsd:sequence>
+            <xsd:group ref="NamedModelGroup" minOccurs="1" />
+            <xsd:element name="ModelGrpTypeSubElem1" type="xsd:string" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <!-- attribute groups -->
+    <xsd:attributeGroup name="AttributeGroup">
+        <xsd:attribute name="AttrGrpAttribute1" type="xsd:string" use="required"/>
+        <xsd:attribute name="AttrGrpAttribute2" type="xsd:string" use="required"/>
+    </xsd:attributeGroup>
+
+    <xsd:complexType name="AttrGrpType">
+        <xsd:sequence>
+            <xsd:element name="AttrGrpTypeSubElem1" type="xsd:string" />
+        </xsd:sequence>
+        <xsd:attributeGroup ref="AttributeGroup"/>
+        <xsd:attribute name="AttrGrpTypeAttr1" type="xsd:string" use="required" />
+    </xsd:complexType>
+
+</xsd:schema>

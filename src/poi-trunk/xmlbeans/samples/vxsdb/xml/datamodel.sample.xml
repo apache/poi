@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/* Copyright 2002-2004 Apache Software Foundation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+
+<database name="sample">
+
+    <!-- Global Elements -->
+
+    <table name="PURCHASE-ORDER">
+
+        <column name="PK" type="INTEGER" required="true" primaryKey="true"/>
+            
+        
+        <!-- T=customer@http://openuri.org/easypo -->
+        <column name="FK_CUSTOMER" required="true" type="INTEGER" />
+        <foreign-key foreignTable="CUSTOMER">
+            <reference local="FK_CUSTOMER" foreign="PK"/>
+        </foreign-key>
+            
+        
+        <!-- T=dateTime@http://www.w3.org/2001/XMLSchema -->
+        <column name="DATE" type="TIMESTAMP" />
+            
+        
+        <!-- Foreign key imported from table named LINE_ITEM -->
+            
+        
+        <!-- T=shipper@http://openuri.org/easypo -->
+        <column name="FK_SHIPPER" type="INTEGER" />
+        <foreign-key foreignTable="SHIPPER">
+            <reference local="FK_SHIPPER" foreign="PK"/>
+        </foreign-key>
+    
+    
+    </table>
+
+    <!-- Global Types -->
+
+    <table name="CUSTOMER">
+
+        <column name="PK" type="INTEGER" required="true" primaryKey="true"/>
+            
+        
+        <!-- T=string@http://www.w3.org/2001/XMLSchema -->
+        <column name="NAME" type="VARCHAR" />
+            
+        
+        <!-- T=string@http://www.w3.org/2001/XMLSchema -->
+        <column name="ADDRESS" type="VARCHAR" />
+            
+        
+        <!-- T=int@http://www.w3.org/2001/XMLSchema -->
+        <column name="AGE" type="TINYINT" />
+            
+        
+        <!-- T=int@http://www.w3.org/2001/XMLSchema -->
+        <column name="MOO" type="TINYINT" />
+            
+        
+        <!-- T=int@http://www.w3.org/2001/XMLSchema -->
+        <column name="POO" type="TINYINT" />
+    
+    
+    </table>
+
+    <table name="LINE_ITEM">
+
+        <column name="PK" type="INTEGER" required="true" primaryKey="true"/>
+            
+        
+        <!-- T=string@http://www.w3.org/2001/XMLSchema -->
+        <column name="DESCRIPTION" type="VARCHAR" />
+            
+        
+        <!-- T=decimal@http://www.w3.org/2001/XMLSchema -->
+        <column name="PER_UNIT_OUNCES" type="DECIMAL" />
+            
+        
+        <!-- T=decimal@http://www.w3.org/2001/XMLSchema -->
+        <column name="PRICE" type="DECIMAL" />
+            
+        
+        <!-- T=integer@http://www.w3.org/2001/XMLSchema -->
+        <column name="QUANTITY" type="INTEGER" />
+    
+    
+    </table>
+
+    <table name="SHIPPER">
+
+        <column name="PK" type="INTEGER" required="true" primaryKey="true"/>
+            
+        
+        <!-- T=string@http://www.w3.org/2001/XMLSchema -->
+        <column name="NAME" type="VARCHAR" />
+            
+        
+        <!-- T=decimal@http://www.w3.org/2001/XMLSchema -->
+        <column name="PER_OUNCE_RATE" type="DECIMAL" />
+    
+    
+    </table>
+
+</database>

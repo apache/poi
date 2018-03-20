@@ -1,0 +1,22 @@
+<xsd:schema
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://xbean/scomp/namespace/AttributeFormDefault"
+    targetNamespace="http://xbean/scomp/namespace/AttributeFormDefault"
+    attributeFormDefault="qualified"
+    >
+
+    <xsd:complexType name="ElementT">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:token">
+                <xsd:attribute name="localAttr"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+
+    <xsd:element name="AttributeFormDefaultElt" type="ElementT"/>
+    <xsd:element name="AttributeUnqualified">
+        <xsd:complexType>
+            <xsd:attribute name="LocalAttribute" form="unqualified"/>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="comments" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="e" type="xs:short"/>
+  <xs:element name="a">
+    <xs:annotation>
+      <xs:documentation>final comment</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="com:b" xmlns:com="comments">
+          <xs:annotation>
+            <xs:documentation>this is a comment 1</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element ref="com:c" xmlns:com="comments">
+          <xs:annotation>
+            <xs:documentation>this is a comment 2</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element ref="com:d" xmlns:com="comments">
+          <xs:annotation>
+            <xs:documentation>this is a comment 4  this is a comment 5</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element ref="com:e" xmlns:com="comments">
+          <xs:annotation>
+            <xs:documentation>this is a comment 6</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element ref="com:f" xmlns:com="comments">
+          <xs:annotation>
+            <xs:documentation>this is a comment 7  this is a comment 8</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="d" type="xs:string"/>
+  <xs:element name="c" type="xs:int"/>
+  <xs:element name="f" type="xs:string"/>
+  <xs:element name="b" type="xs:string"/>
+</xs:schema>

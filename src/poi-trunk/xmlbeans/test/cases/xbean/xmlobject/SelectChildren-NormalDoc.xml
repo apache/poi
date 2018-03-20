@@ -1,0 +1,7 @@
+<sc:Normal xmlns:sc='http://openuri.org/test/selectChildren'>
+    <sc:first>first element</sc:first>
+    <sc:second>second element</sc:second>
+    <sc:numbers>10</sc:numbers>
+    <sc:numbers>11</sc:numbers>
+    <sc:numbers>12</sc:numbers>
+</sc:Normal>

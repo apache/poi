@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<!--
+    ====================================================================
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements. See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License. You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+    ====================================================================
+-->
+<record fromfile="true" name="PICF" package="org.apache.poi.hwpf.model.types">
+    <suffix>AbstractType</suffix>
+    <description>The PICF structure specifies the type of a picture, as well as the size of the
+        picture and information about its border. &lt;p&gt;Class and fields descriptions are quoted
+        from Microsoft Office Word 97-2007
+        Binary File Format and [MS-DOC] - v20110608 Word (.doc)
+        Binary File Format
+    </description>
+    <author>Sergey Vladimirov; according to Microsoft Office Word 97-2007 Binary File Format
+        Specification [*.doc] and [MS-DOC] - v20110608 Word (.doc) Binary File Format
+    </author>
+    <fields>
+        <field type="int" size="4" name="lcb"
+            description="A signed integer that specifies the size, in bytes, of this PICF structure and the subsequent data"/>
+        <field type="int" size="2" name="cbHeader"
+            description="An unsigned integer that specifies the size, in bytes, of this PICF structure. This value MUST be 0x44"/>
+
+        <!-- mfpf (8 bytes) -->
+        <field type="short" size="2" name="mm"
+            description="A signed integer that specifies the format of the picture data"/>
+        <field type="short" size="2" name="xExt" description="This field is unused and MUST be ignored"/>
+        <field type="short" size="2" name="yExt" description="This field is unused and MUST be ignored"/>
+        <field type="short" size="2" name="swHMF" description="This field is unused and MUST be ignored"/>
+
+        <!-- innerHeader (14 bytes) -->
+        <field type="int" size="4" name="grf" description="This field MUST be ignored"/>
+        <field type="int" size="4" name="padding" description="This value MUST be zero and MUST be ignored"/>
+        <field type="int" size="2" name="mmPM" description="This field MUST be ignored"/>
+        <field type="int" size="4" name="padding2" description="This value MUST be zero and MUST be ignored"/>
+
+        <!-- picmid (38 bytes): A PICMID structure that specifies the size and border information of
+            the picture. -->
+        <field type="short" size="2" name="dxaGoal"/>
+        <field type="short" size="2" name="dyaGoal"/>
+        <field type="int" size="2" name="mx"/>
+        <field type="int" size="2" name="my"/>
+        <field type="short" size="2" name="dxaReserved1"/>
+        <field type="short" size="2" name="dyaReserved1"/>
+        <field type="short" size="2" name="dxaReserved2"/>
+        <field type="short" size="2" name="dyaReserved2"/>
+        <field type="byte" size="1" name="fReserved"/>
+        <field type="byte" size="1" name="bpp"/>
+        <field type="byte[]" size="4" name="brcTop80"/>
+        <field type="byte[]" size="4" name="brcLeft80"/>
+        <field type="byte[]" size="4" name="brcBottom80"/>
+        <field type="byte[]" size="4" name="brcRight80"/>
+        <field type="short" size="2" name="dxaReserved3"/>
+        <field type="short" size="2" name="dyaReserved3"/>
+
+        <field type="short" size="2" name="cProps" description="This value MUST be 0 and MUST be ignored"/>
+    </fields>
+</record>

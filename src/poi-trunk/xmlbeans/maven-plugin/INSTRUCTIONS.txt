@@ -1,0 +1,68 @@
+Some brief instructions for using the maven xmlbeans2 plugin
+
+1. Include something like this in your maven.xml:
+namespace declaration:
+
+    xmlns:xmlbeans="xmlbeans:maven"
+
+    <preGoal name="java:compile">
+        <xmlbeans:schema2java
+            sourcedir="${basedir}/src"
+            sourceschema="j2ee_1_4schema/application_1_4.xsd,j2ee_1_4schema/j2ee_jaxrpc_mapping_1_1.xsd,j2ee_1_3schema/connector_1_0.xsd"
+            xmlconfigs="${basedir}/src/conf/xmlconfig.xml"
+            targetdir="${basedir}/target/xmlbeans"
+            cataloglocation="${basedir}/src/catalog/resolver-catalog.xml"/>
+    </preGoal>
+
+where 
+
+sourcedir is a base directory for the list in sourceschema
+sourceschema is a comma-delimited list of all the schemas you want to compile
+xmlconfigs points to your xmlconfig.xml file
+targetdir is where you want generated java source to appear
+cataloglocation is the location of an entity resolver catalog to use for resolving namespace to schema locations.
+
+The generated binary files, both .xsd and the TypeHolder class, will end up in the target/classes directory.
+
+In addition, you can add precompiled schemas to the "schema classpath" by including them as
+dependencies in project.xml with a properties tag like this:
+
+        <dependency>
+            <groupId>geronimo</groupId>
+            <artifactId>geronimo-naming-builder</artifactId>
+            <version>${pom.currentVersion}</version>
+            <properties>
+                <xmlbeans>true</xmlbeans>
+            </properties>
+        </dependency>
+
+You will probably also want to add a dependency on the plugin to your project.xml file and the other dependencies if you use xmlbeans in unit tests:
+
+        <dependency>
+            <groupId>xmlbeans</groupId>
+            <artifactId>xmlbeans-maven-plugin</artifactId>
+            <version>2.0-beta1</version>
+            <type>plugin</type>
+        </dependency>
+
+        <!-- needed for xmlbeans runtime-->
+        <dependency>
+            <groupId>xmlbeans</groupId>
+            <artifactId>xbean</artifactId>
+            <version>${xmlbeans_version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>stax</groupId>
+            <artifactId>stax</artifactId>
+            <version>${stax_version}</version>
+        </dependency>
+    
+        <dependency>
+            <groupId>stax</groupId>
+            <artifactId>stax-api</artifactId>
+            <version>${stax_api_version}</version>
+        </dependency>
+    
+
+

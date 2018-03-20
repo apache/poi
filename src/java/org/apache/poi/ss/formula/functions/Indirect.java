@@ -17,18 +17,19 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import org.apache.poi.ss.formula.FormulaParseException;
-import org.apache.poi.ss.formula.FormulaParser;
-import org.apache.poi.ss.formula.FormulaParsingWorkbook;
-import org.apache.poi.ss.formula.OperationEvaluationContext;
-import org.apache.poi.ss.formula.eval.BlankEval;
-import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.formula.eval.EvaluationException;
-import org.apache.poi.ss.formula.eval.MissingArgEval;
-import org.apache.poi.ss.formula.eval.OperandResolver;
-import org.apache.poi.ss.formula.eval.ValueEval;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.attackt.logivisual.model.newfunctions.SourceNodeType;
+import com.attackt.logivisual.model.newfunctions.SourceValueType;
+import com.attackt.logivisual.mysql.OperationUtils;
+import com.attackt.logivisual.utils.ThreadUtil;
+import org.apache.poi.ss.formula.*;
+import org.apache.poi.ss.formula.eval.*;
 import org.apache.poi.ss.formula.ptg.Area3DPxg;
 import org.apache.poi.ss.usermodel.Table;
+import org.apache.poi.ss.util.CellReference;
+
+import java.util.Map;
 
 /**
  * Implementation for Excel function INDIRECT<p>
@@ -77,8 +78,65 @@ public final class Indirect implements FreeRefFunction {
         } catch (EvaluationException e) {
             return e.getErrorEval();
         }
-
-        return evaluateIndirect(ec, text, isA1style);
+        ValueEval valueEval1 = evaluateIndirect(ec, text, isA1style);
+        //-------处理数据开始---------
+        try {
+            ValueEval valueEval;
+            if (ec.isSingleValue()) {
+                valueEval = OperandResolver.getSingleValue(valueEval1, ec.getRowIndex(), ec.getColumnIndex());
+            } else {
+                valueEval = valueEval1;
+            }
+            CellReference cellReference = new CellReference(text);
+            String excelId = new ThreadUtil().getExcelUid();
+            int funcValueType = Integer.parseInt(SourceValueType.valueOf(valueEval.getClass().getSimpleName()).toString());
+            String funcValue = "";
+            if (valueEval instanceof NumberEval) {
+                NumberEval ne = (NumberEval) valueEval;
+                funcValue = String.valueOf(ne.getNumberValue());
+            }
+            if (valueEval instanceof BoolEval) {
+                BoolEval be = (BoolEval) valueEval;
+                funcValue = String.valueOf(be.getBooleanValue());
+            }
+            if (valueEval instanceof StringEval) {
+                StringEval ne = (StringEval) valueEval;
+                funcValue = String.valueOf(ne.getStringValue());
+            }
+            if (valueEval instanceof ErrorEval) {
+                funcValue = String.valueOf(((ErrorEval)valueEval).getErrorCode());
+            }
+            // 查找对应的记录
+            OperationUtils operationUtils = new OperationUtils();
+            Map<String, Object> map = operationUtils.findData(excelId);
+            if(map.size()>0)
+            {
+                String text1 = map.get("content").toString();
+                Integer recordId = Integer.valueOf(map.get("id").toString());
+                //
+                JSONArray jsonArray = JSONArray.parseArray(text1);
+                JSONObject jsonObject = jsonArray.getJSONObject(0);
+                jsonObject.put("funcValueType",funcValueType);
+                jsonObject.put("funcValue",funcValue);
+                // 添加新的
+                JSONObject newJsonObject = new JSONObject();
+                newJsonObject.put("nodeType",Integer.parseInt(SourceNodeType.valueOf("RefPtg").toString()));
+                newJsonObject.put("nodeAttr", cellReference.formatAsString());
+                newJsonObject.put("numArgs", 0);
+                newJsonObject.put("sheetIndex",((LazyRefEval)valueEval1).getFirstSheetIndex());
+                // 连接旧的
+                JSONArray jsonArray1 = new JSONArray();
+                jsonArray1.add(newJsonObject);
+                jsonObject.put("para_info",jsonArray1);
+                // 更改有效性数据
+                operationUtils.updateData(recordId,jsonArray.toJSONString());
+            }
+        }catch (Exception e)
+        {
+            System.out.println("函数内部重算出错"+e);
+        }
+        //-------处理数据结束---------
+        return valueEval1;
     }
 
     private static boolean evaluateBooleanArg(ValueEval arg, OperationEvaluationContext ec)

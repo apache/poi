@@ -1,0 +1,35 @@
+<xsd:schema
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns="http://xbean/scomp/derivation/Abstract"
+     targetNamespace="http://xbean/scomp/derivation/Abstract"
+     xmlns:extT="http://xbean/scomp/derivation/Block"
+     >
+
+     <xsd:import namespace="http://xbean/scomp/derivation/Block"
+         schemaLocation="Block.xsd"/>
+
+
+  <!--overwrite finalDefault/block-->
+ <xsd:complexType name="abstractT" abstract="true">
+        <xsd:sequence>
+            <xsd:element name="name" type="xsd:string"/>
+            <xsd:element name="age" type="extT:ageT"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+
+     <!--EXTENDED TYPES-->
+       <xsd:complexType name="abstractImplT">
+         <xsd:complexContent>
+             <xsd:extension base="abstractT">
+                 <xsd:sequence>
+                 <xsd:element name="gender" type="extT:genderT"/>
+                 </xsd:sequence>
+             </xsd:extension>
+         </xsd:complexContent>
+     </xsd:complexType>
+
+
+     <xsd:element name="EltAbstract" type="abstractT"/>
+     <xsd:element name="EltConcrete" type="abstractImplT"/>
+</xsd:schema>

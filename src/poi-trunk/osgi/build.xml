@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<!-- 
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<!-- POI OSGi Bundle System -->
+<project name="POI OSGi Bundle" default="bundle" basedir=".." xmlns:mvn="antlib:org.apache.maven.artifact.ant">
+    <description>The Apache POI OSGi Bundle System.</description>
+
+    <property name="bundle.lib" location="osgi/lib"/>
+
+    <!-- TODO Import these from the parent build file -->
+    <property name="repository.m2" value="http://repo1.maven.org"/>
+    <property name="version.id" value="4.0.0-SNAPSHOT"/>
+    <property name="dist.dir" value="build/dist"/>
+
+    <!-- jars in the /lib directory, see the fetch-bundle-jars target-->
+    <property name="bundle.bnd.jar" location="${bundle.lib}/bnd-1.50.0.jar"/>
+    <property name="bundle.bnd.url" value="${repository.m2}/maven2/biz/aQute/bnd/1.50.0/bnd-1.50.0.jar"/>
+    <import file="../build.xml"/>
+
+    <target name="check-bundle-jars">
+       <condition property="jars.bundle.present">
+           <available file="${bundle.bnd.jar}"/>
+       </condition>
+    </target>
+
+    <target name="fetch-bundle-jars" unless="jars.bundle.present">
+        <mkdir dir="${bundle.lib}"/>
+        <antcall target="downloadfile">
+            <param name="sourcefile" value="${bundle.bnd.url}"/>
+            <param name="destfile" value="${bundle.bnd.jar}"/>
+        </antcall>
+    </target>
+
+<!--
+    <target name="bundle" depends="init, check-bundle-jars, fetch-bundle-jars, jar">
+-->
+    <target name="bundle" depends="init, check-bundle-jars, fetch-bundle-jars">
+        <taskdef resource="aQute/bnd/ant/taskdef.properties" classpath="${bundle.bnd.jar}"/>
+        <mkdir dir="build/osgi"/>
+        <bnd 
+           classpath="${dist.dir}/poi-${version.id}-${DSTAMP}.jar,${dist.dir}/poi-scratchpad-${version.id}-${DSTAMP}.jar,${dist.dir}/poi-ooxml-${version.id}-${DSTAMP}.jar"
+           eclipse="false" 
+           failok="false" 
+           exceptions="true" 
+           output="build/osgi"
+           files="test.bnd"/> 
+        <!-- TODO Include the settings from http://svn.apache.org/repos/asf/servicemix/smx4/bundles/trunk/poi-3.9/pom.xml -->
+        <!-- TODO Make this actually spit out an OSGi Jar -->
+    </target>
+</project>

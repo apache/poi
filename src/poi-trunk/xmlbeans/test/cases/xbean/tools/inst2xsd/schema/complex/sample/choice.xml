@@ -1,0 +1,7 @@
+<a xmlns="choiceInstance" xmlns:ns="baz">
+    <b n="123" ns:n="123"><c x="abc" ns:x="123">123</c><d/></b>
+    <e ns:x="123" ns:n="abc" x="abc"><c ns:n="123" ns:x="abc" n="123">abc</c><d>123</d></e>
+    <f><c>abc</c><d ns:n="abc" ns:x="123" x="abc">123</d><o ns:n="abc" ns:x="123" n="123">abc</o></f>
+    <b><x/></b>
+</a>
+

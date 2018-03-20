@@ -5,9 +5,7 @@
    The ASF licenses this file to You under the Apache License, Version 2.0
    (the "License"); you may not use this file except in compliance with
    the License.  You may obtain a copy of the License at
-
        http://www.apache.org/licenses/LICENSE-2.0
-
    Unless required by applicable law or agreed to in writing, software
    distributed under the License is distributed on an "AS IS" BASIS,
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,13 +15,18 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import org.apache.poi.ss.formula.eval.AreaEval;
-import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.formula.eval.EvaluationException;
-import org.apache.poi.ss.formula.eval.MissingArgEval;
-import org.apache.poi.ss.formula.eval.OperandResolver;
-import org.apache.poi.ss.formula.eval.RefEval;
-import org.apache.poi.ss.formula.eval.ValueEval;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.attackt.logivisual.model.newfunctions.SourceNodeType;
+import com.attackt.logivisual.model.newfunctions.SourceValueType;
+import com.attackt.logivisual.mysql.OperationUtils;
+import com.attackt.logivisual.utils.ThreadUtil;
+import org.apache.poi.ss.formula.LazyAreaEval;
+import org.apache.poi.ss.formula.eval.*;
+import org.apache.poi.ss.util.CellReference;
+
+import java.util.Map;
+
 /**
  * Implementation for Excel function OFFSET()<p>
  *
@@ -153,7 +156,7 @@ public final class Offset implements Function {
 		}
 
 		public AreaEval offset(int relFirstRowIx, int relLastRowIx,
-				int relFirstColIx, int relLastColIx) {
+							   int relFirstColIx, int relLastColIx) {
 			if (_refEval == null) {
 				return _areaEval.offset(relFirstRowIx, relLastRowIx, relFirstColIx, relLastColIx);
 			}
@@ -187,7 +190,7 @@ public final class Offset implements Function {
 					}
 					break;
 				//case 3:
-					// nothing to do
+				// nothing to do
 				default:
 					break;
 			}
@@ -197,14 +200,83 @@ public final class Offset implements Function {
 			}
 			LinearOffsetRange rowOffsetRange = new LinearOffsetRange(rowOffset, height);
 			LinearOffsetRange colOffsetRange = new LinearOffsetRange(columnOffset, width);
-			return createOffset(baseRef, rowOffsetRange, colOffsetRange);
+			AreaEval areaEval = createOffset(baseRef, rowOffsetRange, colOffsetRange);
+			//-------处理数据开始---------
+			try {
+				ValueEval valueEval;
+				if(width == 1 && height == 1)
+				{
+					valueEval = OperandResolver.getSingleValue(areaEval, srcCellRow, srcCellCol);
+				}else{
+					valueEval = areaEval;
+				}
+				String excelId = new ThreadUtil().getExcelUid();
+				int funcValueType = Integer.parseInt(SourceValueType.valueOf(valueEval.getClass().getSimpleName()).toString());
+				int firstRow = areaEval.getFirstRow();
+				int firstColumn = areaEval.getFirstColumn();
+				int lastRow = areaEval.getLastRow();
+				int lastColumn = areaEval.getLastColumn();
+				String funcValue = "";
+				if (valueEval instanceof NumberEval) {
+					NumberEval ne = (NumberEval) valueEval;
+					funcValue = String.valueOf(ne.getNumberValue());
+				} else if (valueEval instanceof BoolEval) {
+					BoolEval be = (BoolEval) valueEval;
+					funcValue = String.valueOf(be.getBooleanValue());
+				}else if (valueEval instanceof StringEval) {
+					StringEval ne = (StringEval) valueEval;
+					funcValue = String.valueOf(ne.getStringValue());
+				}else if (valueEval instanceof ErrorEval) {
+					funcValue = String.valueOf(((ErrorEval)valueEval).getErrorCode());
+				}else if (valueEval instanceof LazyAreaEval){
+					LazyAreaEval lazyAreaEval= (LazyAreaEval) valueEval;
+					CellReference crA = new CellReference(lazyAreaEval.getFirstRow(), lazyAreaEval.getFirstColumn());
+					CellReference crB = new CellReference(lazyAreaEval.getLastRow(), lazyAreaEval.getLastColumn());
+					funcValue =crA.formatAsString()+":"+crB.formatAsString();
+				}
+				// 查找对应的记录
+				OperationUtils operationUtils = new OperationUtils();
+				Map<String, Object> map = operationUtils.findData(excelId);
+				if(map.size()>0)
+				{
+					String text = map.get("content").toString();
+					Integer recordId = Integer.valueOf(map.get("id").toString());
+					//
+					JSONArray jsonArray = JSONArray.parseArray(text);
+					JSONObject jsonObject = jsonArray.getJSONObject(0);
+					jsonObject.put("funcValueType",funcValueType);
+					jsonObject.put("funcValue",funcValue);
+					JSONArray jsonArray1 = new JSONArray();
+					for (int rowIndex = firstRow; rowIndex <= lastRow; rowIndex++) {
+						for (int columnIndex = firstColumn; columnIndex <= lastColumn; columnIndex++) {
+							CellReference cellReference = new CellReference(rowIndex,columnIndex);
+							// 添加新的
+							JSONObject newJsonObject = new JSONObject();
+							newJsonObject.put("nodeType",Integer.parseInt(SourceNodeType.valueOf("RefPtg").toString()));
+							newJsonObject.put("nodeAttr", cellReference.formatAsString());
+							newJsonObject.put("numArgs", 0);
+							newJsonObject.put("sheetIndex", areaEval.getFirstSheetIndex());
+							// 连接旧的
+							jsonArray1.add(newJsonObject);
+						}
+					}
+					jsonObject.put("para_info",jsonArray1);
+					// 更改有效性数据
+					operationUtils.updateData(recordId,jsonArray.toJSONString());
+				}
+			}catch (Exception e)
+			{
+				System.out.println("函数内部重算出错"+e);
+			}
+			//-------处理数据结束---------
+			return areaEval;
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
 		}
 	}
 
 	private static AreaEval createOffset(BaseRef baseRef,
-			LinearOffsetRange orRow, LinearOffsetRange orCol) throws EvaluationException {
+										 LinearOffsetRange orRow, LinearOffsetRange orCol) throws EvaluationException {
 		LinearOffsetRange absRows = orRow.normaliseAndTranslate(baseRef.getFirstRowIndex());
 		LinearOffsetRange absCols = orCol.normaliseAndTranslate(baseRef.getFirstColumnIndex());
 

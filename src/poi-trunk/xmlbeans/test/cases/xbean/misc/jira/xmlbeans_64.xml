@@ -1,0 +1,915 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ses:recorderSession xmlns:ses="http://beehive.apache.org/netui/tools/testrecorder/2004/session">
+   <ses:sessionName>XhtmlCheckBox</ses:sessionName>
+   <ses:tester>ekoneil</ses:tester>
+   <ses:startDate>08 Jul 2004, 01:42:30.362 PM MDT</ses:startDate>
+   <ses:description>ekoneil</ses:description>
+   <ses:tests>
+      <ses:test>
+         <ses:testNumber>1</ses:testNumber>
+         <ses:request>
+            <ses:protocol>HTTP</ses:protocol>
+            <ses:protocolVersion>1.1</ses:protocolVersion>
+            <ses:host>localhost</ses:host>
+            <ses:port>8080</ses:port>
+            <ses:uri>/coreWeb/xhtml/goCheckboxTest.do</ses:uri>
+            <ses:method>GET</ses:method>
+            <ses:parameters/>
+            <ses:cookies/>
+            <ses:headers>
+               <ses:header>
+                  <ses:name>accept</ses:name>
+                  <ses:value>image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, application/x-shockwave-flash, application/vnd.ms-excel, application/vnd.ms-powerpoint, application/msword, */*</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>accept-encoding</ses:name>
+                  <ses:value>gzip, deflate, x-gzip, compress, x-compress</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>accept-language</ses:name>
+                  <ses:value>en-us</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>connection</ses:name>
+                  <ses:value>Keep-Alive, TE</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>cookie2</ses:name>
+                  <ses:value>$Version="1"</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>host</ses:name>
+                  <ses:value>localhost:8080</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>te</ses:name>
+                  <ses:value>trailers, deflate, gzip, compress</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>testrecorder.playback.testid</ses:name>
+                  <ses:value>5322191f:fd9ffc1336:-5a22</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>testrecorder.playback.testnumber</ses:name>
+                  <ses:value>1</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>user-agent</ses:name>
+                  <ses:value>Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322) RPT-HTTPClient/0.3-3E RPT-HTTPClient/0.3-3E</ses:value>
+               </ses:header>
+            </ses:headers>
+         </ses:request>
+         <ses:response>
+            <ses:statusCode>200</ses:statusCode>
+            <ses:reason/>
+            <ses:responseBody>&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+&lt;html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+&lt;head>
+        &lt;title>Input Test Page&lt;/title>
+        &lt;style type="text/css">
+        .normal {color: #000099;font-family:Verdana; font-size:8pt;margin:0,0,0,0;}
+        .normal2 {color: #cc0099;font-family:Verdana; font-size:8pt;margin:0,0,0,0;}
+        .normal3 {color: #00cc99;font-family:Verdana; font-size:8pt;margin:0,0,0,0;}
+        .normalBold {color: #000099;font-family:Verdana; font-size:8pt; font-weight: bold;margin:0,0,0,0;}
+        li {color: #000099;font-family:Verdana; font-size:8pt;margin:0,0,0,0;}
+        .normalError {color: #ff0033;font-family:Verdana; font-size:8pt;margin:0,0,0,0;}
+        .normalHead {color: #000099;font-family:Verdana; font-size:8pt;font-weight: strong;margin:0,0,0,0;}
+        .title {color: #000099;font-family:Verdana; font-size:12pt;margin:2,0,5,0;}
+        .resultDiv {border: thin solid;margin:5,5,5,5;}
+        &lt;/style>
+    &lt;/head>        
+  &lt;body>
+    &lt;h1 class="normalHead">CheckBox and CheckBox Group tests&lt;/h1>
+    &lt;a href="/coreWeb/xhtml/begin.do" class="normal" rel="contents" rev="chapter">Home&lt;/a>
+    &lt;div class="resultDiv">
+        &lt;p class="normal">CheckBox and CheckBox Group tests&lt;/p>
+        &lt;form id="checkboxTests" action="/coreWeb/xhtml/postCheckForm.do" method="post">
+            &lt;table>
+                &lt;tr valign="top">
+                    &lt;td class="normalBold" align="right">CheckBox Group&lt;/td>
+                    &lt;td>
+                    &lt;input type="hidden" name="wlw-checkbox_group_key:{actionForm.cbg}OldValue" value="true" />
+                            &lt;input type="checkbox" name="wlw-checkbox_group_key:{actionForm.cbg}" value="CheckBox Option 1" disabled="disabled" lang="en" title="Title Text" alt="Alt Text" dir="ltr" />&lt;span class="normal">Text CB Option One&lt;/span>
+                            &lt;input type="checkbox" name="wlw-checkbox_group_key:{actionForm.cbg}" value="CheckBox Option 2" checked="checked" />&lt;span class="normal">Text CB Option Two&lt;/span>
+                    
+                    &lt;/td>
+                &lt;/tr>
+                &lt;tr valign="top" >
+                    &lt;td class="normalBold" align="right">Repeating CheckBox Group&lt;/td>
+                    &lt;td>
+                    &lt;table>
+                    
+                            &lt;tr>&lt;td align="right" class="normal2">
+                            &lt;span>CBG Option 1&lt;/span>
+                            &lt;/td>&lt;td>
+                            &lt;input type="checkbox" name="wlw-checkbox_group_key:{actionForm.optCbg}" value="CBG Option 1" />&lt;input type="hidden" name="wlw-checkbox_group_key:{actionForm.optCbg}OldValue" value="true" />
+                            &lt;/td>&lt;/tr>
+                    
+                            &lt;tr>&lt;td align="right" class="normal2">
+                            &lt;span>CBG Option 2&lt;/span>
+                            &lt;/td>&lt;td>
+                            &lt;input type="checkbox" name="wlw-checkbox_group_key:{actionForm.optCbg}" value="CBG Option 2" checked="checked" />
+                            &lt;/td>&lt;/tr>
+                    
+                            &lt;tr>&lt;td align="right" class="normal2">
+                            &lt;span>CBG Option 3&lt;/span>
+                            &lt;/td>&lt;td>
+                            &lt;input type="checkbox" name="wlw-checkbox_group_key:{actionForm.optCbg}" value="CBG Option 3" />
+                            &lt;/td>&lt;/tr>
+                    
+                    &lt;/table>
+                    &lt;/td>
+                &lt;/tr>
+                &lt;tr valign="top">
+                    &lt;td class="normalBold" align="right">CheckBox 1&lt;/td>
+                    &lt;td>
+                    &lt;input type="hidden" name="wlw-checkbox_key:{actionForm.check1}OldValue" value="false" />&lt;input type="checkbox" name="wlw-checkbox_key:{actionForm.check1}" lang="en" dir="ltr" />
+                    &lt;/td>
+                &lt;/tr>
+                &lt;tr valign="top">
+                    &lt;td class="normalBold" align="right">CheckBox 2&lt;/td>
+                    &lt;td>
+                    &lt;input type="hidden" name="wlw-checkbox_key:{actionForm.check2}OldValue" value="false" />&lt;input type="checkbox" name="wlw-checkbox_key:{actionForm.check2}" checked="checked" />
+                    &lt;/td>
+                &lt;/tr>
+                &lt;tr valign="top">
+                    &lt;td colspan="2" align="center">
+                        &lt;table cellspacing="0" border="1">
+                        &lt;tr>&lt;th class="normalBold" valign="top" align="center">Complex Repeater&lt;/th>&lt;td>
+                        
+                            &lt;input type="checkbox" name="wlw-checkbox_group_key:{actionForm.optCbgMap}" value="opt-1" checked="checked" />&lt;input type="hidden" name="wlw-checkbox_group_key:{actionForm.optCbgMap}OldValue" value="true" />
+                                &lt;span class="normal">Option One&lt;/span>&lt;br/>
+                        
+                        
+                            &lt;input type="checkbox" name="wlw-checkbox_group_key:{actionForm.optCbgMap}" value="opt-2" />
+                                &lt;span class="normal2">Option Two&lt;/span>&lt;br/>
+                        
+                        
+                            &lt;input type="checkbox" name="wlw-checkbox_group_key:{actionForm.optCbgMap}" value="opt-3" />
+                                &lt;span class="normal3">Option Three&lt;/span>&lt;br/>
+                        
+                        
+                        &lt;/td>&lt;/tr>&lt;/table>
+                    &lt;/td>
+                &lt;/tr>                        
+            &lt;/table>
+            &lt;br />
+            &lt;input type="submit" class="normal" value="Post To Results One" title="Post to Results One" lang="en" alt="Post to Results One" dir="ltr" />
+            &lt;input type="submit" name="actionOverride:postCheckFormTwo" class="normal" value="Post To Results Two" />
+        &lt;/form>
+    &lt;/div>
+    &lt;/body>
+&lt;/html></ses:responseBody>
+         </ses:response>
+         <ses:testResults>
+            <ses:testStatus>fail</ses:testStatus>
+         </ses:testResults>
+      </ses:test>
+      <ses:test>
+         <ses:testNumber>2</ses:testNumber>
+         <ses:request>
+            <ses:protocol>HTTP</ses:protocol>
+            <ses:protocolVersion>1.1</ses:protocolVersion>
+            <ses:host>localhost</ses:host>
+            <ses:port>8080</ses:port>
+            <ses:uri>/coreWeb/xhtml/postCheckForm.do</ses:uri>
+            <ses:method>POST</ses:method>
+            <ses:parameters>
+               <ses:parameter>
+                  <ses:name>wlw-checkbox_group_key:${actionForm.cbg}</ses:name>
+                  <ses:value>CheckBox Option 2</ses:value>
+               </ses:parameter>
+               <ses:parameter>
+                  <ses:name>wlw-checkbox_group_key:${actionForm.cbg}OldValue</ses:name>
+                  <ses:value>true</ses:value>
+               </ses:parameter>
+               <ses:parameter>
+                  <ses:name>wlw-checkbox_group_key:${actionForm.optCbgMap}</ses:name>
+                  <ses:value>opt-1</ses:value>
+               </ses:parameter>
+               <ses:parameter>
+                  <ses:name>wlw-checkbox_group_key:${actionForm.optCbgMap}</ses:name>
+                  <ses:value>opt-2</ses:value>
+               </ses:parameter>
+               <ses:parameter>
+                  <ses:name>wlw-checkbox_group_key:${actionForm.optCbgMap}</ses:name>
+                  <ses:value>opt-3</ses:value>
+               </ses:parameter>
+               <ses:parameter>
+                  <ses:name>wlw-checkbox_group_key:${actionForm.optCbgMap}OldValue</ses:name>
+                  <ses:value>true</ses:value>
+               </ses:parameter>
+               <ses:parameter>
+                  <ses:name>wlw-checkbox_group_key:${actionForm.optCbg}</ses:name>
+                  <ses:value>CBG Option 1</ses:value>
+               </ses:parameter>
+               <ses:parameter>
+                  <ses:name>wlw-checkbox_group_key:${actionForm.optCbg}</ses:name>
+                  <ses:value>CBG Option 2</ses:value>
+               </ses:parameter>
+               <ses:parameter>
+                  <ses:name>wlw-checkbox_group_key:${actionForm.optCbg}</ses:name>
+                  <ses:value>CBG Option 3</ses:value>
+               </ses:parameter>
+               <ses:parameter>
+                  <ses:name>wlw-checkbox_group_key:${actionForm.optCbg}OldValue</ses:name>
+                  <ses:value>true</ses:value>
+               </ses:parameter>
+               <ses:parameter>
+                  <ses:name>wlw-checkbox_key:${actionForm.check1}</ses:name>
+                  <ses:value>on</ses:value>
+               </ses:parameter>
+               <ses:parameter>
+                  <ses:name>wlw-checkbox_key:${actionForm.check1}OldValue</ses:name>
+                  <ses:value>false</ses:value>
+               </ses:parameter>
+               <ses:parameter>
+                  <ses:name>wlw-checkbox_key:${actionForm.check2}</ses:name>
+                  <ses:value>on</ses:value>
+               </ses:parameter>
+               <ses:parameter>
+                  <ses:name>wlw-checkbox_key:${actionForm.check2}OldValue</ses:name>
+                  <ses:value>false</ses:value>
+               </ses:parameter>
+            </ses:parameters>
+            <ses:cookies>
+               <ses:cookie>
+                  <ses:name>JSESSIONID</ses:name>
+                  <ses:value>1BFFDA13ECA66F0BFC1745BD8BAB49DE</ses:value>
+               </ses:cookie>
+            </ses:cookies>
+            <ses:headers>
+               <ses:header>
+                  <ses:name>accept</ses:name>
+                  <ses:value>image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, application/x-shockwave-flash, application/vnd.ms-excel, application/vnd.ms-powerpoint, application/msword, */*</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>accept-encoding</ses:name>
+                  <ses:value>gzip, deflate, x-gzip, compress, x-compress</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>accept-language</ses:name>
+                  <ses:value>en-us</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>cache-control</ses:name>
+                  <ses:value>no-cache</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>connection</ses:name>
+                  <ses:value>Keep-Alive, TE</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>content-length</ses:name>
+                  <ses:value>857</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>content-type</ses:name>
+                  <ses:value>application/x-www-form-urlencoded</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>cookie</ses:name>
+                  <ses:value>$Version=0; JSESSIONID=1BFFDA13ECA66F0BFC1745BD8BAB49DE; $Path=/coreWeb</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>cookie2</ses:name>
+                  <ses:value>$Version="1"</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>host</ses:name>
+                  <ses:value>localhost:8080</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>te</ses:name>
+                  <ses:value>trailers, deflate, gzip, compress</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>testrecorder.playback.testid</ses:name>
+                  <ses:value>5322191f:fd9ffc1336:-5a22</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>testrecorder.playback.testnumber</ses:name>
+                  <ses:value>2</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>user-agent</ses:name>
+                  <ses:value>Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322) RPT-HTTPClient/0.3-3E RPT-HTTPClient/0.3-3E</ses:value>
+               </ses:header>
+            </ses:headers>
+         </ses:request>
+         <ses:response>
+            <ses:statusCode>200</ses:statusCode>
+            <ses:reason/>
+            <ses:responseBody><![CDATA[<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+        <title>Checkbox Results</title>
+        <style type="text/css">
+        .normal {color: #000099;font-family:Verdana; font-size:8pt;margin:0,0,0,0;}
+        p {color: #000099;font-family:Verdana; font-size:8pt;margin:0,0,0,0;}
+        .normalError {color: #ff0033;font-family:Verdana; font-size:8pt;margin:0,0,0,0;}
+        .normalHead {color: #000099;font-family:Verdana; font-size:8pt;font-weight: strong;margin:0,0,0,0;}
+        .title {color: #000099;font-family:Verdana; font-size:12pt;margin:2,0,5,0;}
+        .resultDiv {border: thin solid;height: 400px;}
+        </style>
+    </head>        
+  <body>
+    <a id="top" name="top"></a>
+    <table width="400pt"><tr><td align="left"><h1 class="normalHead">Checkbox Results</h1></td>
+        <td align="right"><a href="/coreWeb/xhtml/goCheckboxTest.do" class="normal">Input Tests</a></td>
+    </tr></table>
+    <p>
+        Action: <span>postFormOne</span> 
+    </p>
+        <table border="1" cellspacing="0">
+        <tr class="tablehead" valign="top">
+            <th class="normal">CheckBox Group</th>
+            <th class="normal">Repeating CheckBox Group</th>
+            <th class="normal">Check One</th>
+            <th class="normal">Check Two</th>
+            <th class="normal">Complex Repeater</th>
+        </tr>
+        <tr valign="top">
+            <td>
+            <table class="tablebody" border="0">
+                    <tr valign="top">
+                        <td><span class="normal">CheckBox Option 2</span></td>
+                    </tr>
+                </table>
+            </td>
+             <td>
+            <table class="tablebody" border="0">
+                    <tr valign="top">
+                        <td><span class="normal">CBG Option 2</span></td>
+                    </tr>
+                </table>
+            </td>
+            <td><span class="normal">false</span></td>
+            <td><span class="normal">true</span></td>
+            <td>
+            <table class="tablebody" border="0">
+                    <tr valign="top">
+                        <td><span class="normal">opt-1</span></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        </table>
+  </body>
+</html>]]></ses:responseBody>
+         </ses:response>
+         <ses:testResults>
+            <ses:testStatus>pass</ses:testStatus>
+         </ses:testResults>
+      </ses:test>
+      <ses:test>
+         <ses:testNumber>3</ses:testNumber>
+         <ses:request>
+            <ses:protocol>HTTP</ses:protocol>
+            <ses:protocolVersion>1.1</ses:protocolVersion>
+            <ses:host>localhost</ses:host>
+            <ses:port>8080</ses:port>
+            <ses:uri>/coreWeb/xhtml/goCheckboxTest.do</ses:uri>
+            <ses:method>GET</ses:method>
+            <ses:parameters/>
+            <ses:cookies>
+               <ses:cookie>
+                  <ses:name>JSESSIONID</ses:name>
+                  <ses:value>1BFFDA13ECA66F0BFC1745BD8BAB49DE</ses:value>
+               </ses:cookie>
+            </ses:cookies>
+            <ses:headers>
+               <ses:header>
+                  <ses:name>accept</ses:name>
+                  <ses:value>image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, application/x-shockwave-flash, application/vnd.ms-excel, application/vnd.ms-powerpoint, application/msword, */*</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>accept-encoding</ses:name>
+                  <ses:value>gzip, deflate, x-gzip, compress, x-compress</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>accept-language</ses:name>
+                  <ses:value>en-us</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>connection</ses:name>
+                  <ses:value>Keep-Alive, TE</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>cookie</ses:name>
+                  <ses:value>$Version=0; JSESSIONID=1BFFDA13ECA66F0BFC1745BD8BAB49DE; $Path=/coreWeb</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>cookie2</ses:name>
+                  <ses:value>$Version="1"</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>host</ses:name>
+                  <ses:value>localhost:8080</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>te</ses:name>
+                  <ses:value>trailers, deflate, gzip, compress</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>testrecorder.playback.testid</ses:name>
+                  <ses:value>5322191f:fd9ffc1336:-5a22</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>testrecorder.playback.testnumber</ses:name>
+                  <ses:value>3</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>user-agent</ses:name>
+                  <ses:value>Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322) RPT-HTTPClient/0.3-3E RPT-HTTPClient/0.3-3E</ses:value>
+               </ses:header>
+            </ses:headers>
+         </ses:request>
+         <ses:response>
+            <ses:statusCode>200</ses:statusCode>
+            <ses:reason/>
+            <ses:responseBody>&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+&lt;html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+&lt;head>
+        &lt;title>Input Test Page&lt;/title>
+        &lt;style type="text/css">
+        .normal {color: #000099;font-family:Verdana; font-size:8pt;margin:0,0,0,0;}
+        .normal2 {color: #cc0099;font-family:Verdana; font-size:8pt;margin:0,0,0,0;}
+        .normal3 {color: #00cc99;font-family:Verdana; font-size:8pt;margin:0,0,0,0;}
+        .normalBold {color: #000099;font-family:Verdana; font-size:8pt; font-weight: bold;margin:0,0,0,0;}
+        li {color: #000099;font-family:Verdana; font-size:8pt;margin:0,0,0,0;}
+        .normalError {color: #ff0033;font-family:Verdana; font-size:8pt;margin:0,0,0,0;}
+        .normalHead {color: #000099;font-family:Verdana; font-size:8pt;font-weight: strong;margin:0,0,0,0;}
+        .title {color: #000099;font-family:Verdana; font-size:12pt;margin:2,0,5,0;}
+        .resultDiv {border: thin solid;margin:5,5,5,5;}
+        &lt;/style>
+    &lt;/head>        
+  &lt;body>
+    &lt;h1 class="normalHead">CheckBox and CheckBox Group tests&lt;/h1>
+    &lt;a href="/coreWeb/xhtml/begin.do" class="normal" rel="contents" rev="chapter">Home&lt;/a>
+    &lt;div class="resultDiv">
+        &lt;p class="normal">CheckBox and CheckBox Group tests&lt;/p>
+        &lt;form id="checkboxTests" action="/coreWeb/xhtml/postCheckForm.do" method="post">
+            &lt;table>
+                &lt;tr valign="top">
+                    &lt;td class="normalBold" align="right">CheckBox Group&lt;/td>
+                    &lt;td>
+                    &lt;input type="hidden" name="wlw-checkbox_group_key:{actionForm.cbg}OldValue" value="true" />
+                            &lt;input type="checkbox" name="wlw-checkbox_group_key:{actionForm.cbg}" value="CheckBox Option 1" disabled="disabled" lang="en" title="Title Text" alt="Alt Text" dir="ltr" />&lt;span class="normal">Text CB Option One&lt;/span>
+                            &lt;input type="checkbox" name="wlw-checkbox_group_key:{actionForm.cbg}" value="CheckBox Option 2" checked="checked" />&lt;span class="normal">Text CB Option Two&lt;/span>
+                    
+                    &lt;/td>
+                &lt;/tr>
+                &lt;tr valign="top" >
+                    &lt;td class="normalBold" align="right">Repeating CheckBox Group&lt;/td>
+                    &lt;td>
+                    &lt;table>
+                    
+                            &lt;tr>&lt;td align="right" class="normal2">
+                            &lt;span>CBG Option 1&lt;/span>
+                            &lt;/td>&lt;td>
+                            &lt;input type="checkbox" name="wlw-checkbox_group_key:{actionForm.optCbg}" value="CBG Option 1" />&lt;input type="hidden" name="wlw-checkbox_group_key:{actionForm.optCbg}OldValue" value="true" />
+                            &lt;/td>&lt;/tr>
+                    
+                            &lt;tr>&lt;td align="right" class="normal2">
+                            &lt;span>CBG Option 2&lt;/span>
+                            &lt;/td>&lt;td>
+                            &lt;input type="checkbox" name="wlw-checkbox_group_key:{actionForm.optCbg}" value="CBG Option 2" checked="checked" />
+                            &lt;/td>&lt;/tr>
+                    
+                            &lt;tr>&lt;td align="right" class="normal2">
+                            &lt;span>CBG Option 3&lt;/span>
+                            &lt;/td>&lt;td>
+                            &lt;input type="checkbox" name="wlw-checkbox_group_key:{actionForm.optCbg}" value="CBG Option 3" />
+                            &lt;/td>&lt;/tr>
+                    
+                    &lt;/table>
+                    &lt;/td>
+                &lt;/tr>
+                &lt;tr valign="top">
+                    &lt;td class="normalBold" align="right">CheckBox 1&lt;/td>
+                    &lt;td>
+                    &lt;input type="hidden" name="wlw-checkbox_key:{actionForm.check1}OldValue" value="false" />&lt;input type="checkbox" name="wlw-checkbox_key:{actionForm.check1}" lang="en" dir="ltr" />
+                    &lt;/td>
+                &lt;/tr>
+                &lt;tr valign="top">
+                    &lt;td class="normalBold" align="right">CheckBox 2&lt;/td>
+                    &lt;td>
+                    &lt;input type="hidden" name="wlw-checkbox_key:{actionForm.check2}OldValue" value="false" />&lt;input type="checkbox" name="wlw-checkbox_key:{actionForm.check2}" checked="checked" />
+                    &lt;/td>
+                &lt;/tr>
+                &lt;tr valign="top">
+                    &lt;td colspan="2" align="center">
+                        &lt;table cellspacing="0" border="1">
+                        &lt;tr>&lt;th class="normalBold" valign="top" align="center">Complex Repeater&lt;/th>&lt;td>
+                        
+                            &lt;input type="checkbox" name="wlw-checkbox_group_key:{actionForm.optCbgMap}" value="opt-1" checked="checked" />&lt;input type="hidden" name="wlw-checkbox_group_key:{actionForm.optCbgMap}OldValue" value="true" />
+                                &lt;span class="normal">Option One&lt;/span>&lt;br/>
+                        
+                        
+                            &lt;input type="checkbox" name="wlw-checkbox_group_key:{actionForm.optCbgMap}" value="opt-2" />
+                                &lt;span class="normal2">Option Two&lt;/span>&lt;br/>
+                        
+                        
+                            &lt;input type="checkbox" name="wlw-checkbox_group_key:{actionForm.optCbgMap}" value="opt-3" />
+                                &lt;span class="normal3">Option Three&lt;/span>&lt;br/>
+                        
+                        
+                        &lt;/td>&lt;/tr>&lt;/table>
+                    &lt;/td>
+                &lt;/tr>                        
+            &lt;/table>
+            &lt;br />
+            &lt;input type="submit" class="normal" value="Post To Results One" title="Post to Results One" lang="en" alt="Post to Results One" dir="ltr" />
+            &lt;input type="submit" name="actionOverride:postCheckFormTwo" class="normal" value="Post To Results Two" />
+        &lt;/form>
+    &lt;/div>
+    &lt;/body>
+&lt;/html></ses:responseBody>
+         </ses:response>
+         <ses:testResults>
+            <ses:testStatus>fail</ses:testStatus>
+         </ses:testResults>
+      </ses:test>
+      <ses:test>
+         <ses:testNumber>4</ses:testNumber>
+         <ses:request>
+            <ses:protocol>HTTP</ses:protocol>
+            <ses:protocolVersion>1.1</ses:protocolVersion>
+            <ses:host>localhost</ses:host>
+            <ses:port>8080</ses:port>
+            <ses:uri>/coreWeb/xhtml/postCheckForm.do</ses:uri>
+            <ses:method>POST</ses:method>
+            <ses:parameters>
+               <ses:parameter>
+                  <ses:name>actionOverride:postCheckFormTwo</ses:name>
+                  <ses:value>Post To Results Two</ses:value>
+               </ses:parameter>
+               <ses:parameter>
+                  <ses:name>wlw-checkbox_group_key:${actionForm.cbg}</ses:name>
+                  <ses:value>CheckBox Option 2</ses:value>
+               </ses:parameter>
+               <ses:parameter>
+                  <ses:name>wlw-checkbox_group_key:${actionForm.cbg}OldValue</ses:name>
+                  <ses:value>true</ses:value>
+               </ses:parameter>
+               <ses:parameter>
+                  <ses:name>wlw-checkbox_group_key:${actionForm.optCbgMap}</ses:name>
+                  <ses:value>opt-1</ses:value>
+               </ses:parameter>
+               <ses:parameter>
+                  <ses:name>wlw-checkbox_group_key:${actionForm.optCbgMap}</ses:name>
+                  <ses:value>opt-2</ses:value>
+               </ses:parameter>
+               <ses:parameter>
+                  <ses:name>wlw-checkbox_group_key:${actionForm.optCbgMap}</ses:name>
+                  <ses:value>opt-3</ses:value>
+               </ses:parameter>
+               <ses:parameter>
+                  <ses:name>wlw-checkbox_group_key:${actionForm.optCbgMap}OldValue</ses:name>
+                  <ses:value>true</ses:value>
+               </ses:parameter>
+               <ses:parameter>
+                  <ses:name>wlw-checkbox_group_key:${actionForm.optCbg}</ses:name>
+                  <ses:value>CBG Option 1</ses:value>
+               </ses:parameter>
+               <ses:parameter>
+                  <ses:name>wlw-checkbox_group_key:${actionForm.optCbg}</ses:name>
+                  <ses:value>CBG Option 2</ses:value>
+               </ses:parameter>
+               <ses:parameter>
+                  <ses:name>wlw-checkbox_group_key:${actionForm.optCbg}</ses:name>
+                  <ses:value>CBG Option 3</ses:value>
+               </ses:parameter>
+               <ses:parameter>
+                  <ses:name>wlw-checkbox_group_key:${actionForm.optCbg}OldValue</ses:name>
+                  <ses:value>true</ses:value>
+               </ses:parameter>
+               <ses:parameter>
+                  <ses:name>wlw-checkbox_key:${actionForm.check1}</ses:name>
+                  <ses:value>on</ses:value>
+               </ses:parameter>
+               <ses:parameter>
+                  <ses:name>wlw-checkbox_key:${actionForm.check1}OldValue</ses:name>
+                  <ses:value>false</ses:value>
+               </ses:parameter>
+               <ses:parameter>
+                  <ses:name>wlw-checkbox_key:${actionForm.check2}</ses:name>
+                  <ses:value>on</ses:value>
+               </ses:parameter>
+               <ses:parameter>
+                  <ses:name>wlw-checkbox_key:${actionForm.check2}OldValue</ses:name>
+                  <ses:value>false</ses:value>
+               </ses:parameter>
+            </ses:parameters>
+            <ses:cookies>
+               <ses:cookie>
+                  <ses:name>JSESSIONID</ses:name>
+                  <ses:value>1BFFDA13ECA66F0BFC1745BD8BAB49DE</ses:value>
+               </ses:cookie>
+            </ses:cookies>
+            <ses:headers>
+               <ses:header>
+                  <ses:name>accept</ses:name>
+                  <ses:value>image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, application/x-shockwave-flash, application/vnd.ms-excel, application/vnd.ms-powerpoint, application/msword, */*</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>accept-encoding</ses:name>
+                  <ses:value>gzip, deflate, x-gzip, compress, x-compress</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>accept-language</ses:name>
+                  <ses:value>en-us</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>cache-control</ses:name>
+                  <ses:value>no-cache</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>connection</ses:name>
+                  <ses:value>Keep-Alive, TE</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>content-length</ses:name>
+                  <ses:value>911</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>content-type</ses:name>
+                  <ses:value>application/x-www-form-urlencoded</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>cookie</ses:name>
+                  <ses:value>$Version=0; JSESSIONID=1BFFDA13ECA66F0BFC1745BD8BAB49DE; $Path=/coreWeb</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>cookie2</ses:name>
+                  <ses:value>$Version="1"</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>host</ses:name>
+                  <ses:value>localhost:8080</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>te</ses:name>
+                  <ses:value>trailers, deflate, gzip, compress</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>testrecorder.playback.testid</ses:name>
+                  <ses:value>5322191f:fd9ffc1336:-5a22</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>testrecorder.playback.testnumber</ses:name>
+                  <ses:value>4</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>user-agent</ses:name>
+                  <ses:value>Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322) RPT-HTTPClient/0.3-3E RPT-HTTPClient/0.3-3E</ses:value>
+               </ses:header>
+            </ses:headers>
+         </ses:request>
+         <ses:response>
+            <ses:statusCode>200</ses:statusCode>
+            <ses:reason/>
+            <ses:responseBody><![CDATA[<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+        <title>Checkbox Results</title>
+        <style type="text/css">
+        .normal {color: #000099;font-family:Verdana; font-size:8pt;margin:0,0,0,0;}
+        p {color: #000099;font-family:Verdana; font-size:8pt;margin:0,0,0,0;}
+        .normalError {color: #ff0033;font-family:Verdana; font-size:8pt;margin:0,0,0,0;}
+        .normalHead {color: #000099;font-family:Verdana; font-size:8pt;font-weight: strong;margin:0,0,0,0;}
+        .title {color: #000099;font-family:Verdana; font-size:12pt;margin:2,0,5,0;}
+        .resultDiv {border: thin solid;height: 400px;}
+        </style>
+    </head>        
+  <body>
+    <a id="top" name="top"></a>
+    <table width="400pt"><tr><td align="left"><h1 class="normalHead">Checkbox Results</h1></td>
+        <td align="right"><a href="/coreWeb/xhtml/goCheckboxTest.do" class="normal">Input Tests</a></td>
+    </tr></table>
+    <p>
+        Action: <span>postFormTwo</span> 
+    </p>
+        <table border="1" cellspacing="0">
+        <tr class="tablehead" valign="top">
+            <th class="normal">CheckBox Group</th>
+            <th class="normal">Repeating CheckBox Group</th>
+            <th class="normal">Check One</th>
+            <th class="normal">Check Two</th>
+            <th class="normal">Complex Repeater</th>
+        </tr>
+        <tr valign="top">
+            <td>
+            <table class="tablebody" border="0">
+                    <tr valign="top">
+                        <td><span class="normal">CheckBox Option 2</span></td>
+                    </tr>
+                </table>
+            </td>
+             <td>
+            <table class="tablebody" border="0">
+                    <tr valign="top">
+                        <td><span class="normal">CBG Option 2</span></td>
+                    </tr>
+                </table>
+            </td>
+            <td><span class="normal">false</span></td>
+            <td><span class="normal">true</span></td>
+            <td>
+            <table class="tablebody" border="0">
+                    <tr valign="top">
+                        <td><span class="normal">opt-1</span></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        </table>
+  </body>
+</html>]]></ses:responseBody>
+         </ses:response>
+         <ses:testResults>
+            <ses:testStatus>pass</ses:testStatus>
+         </ses:testResults>
+      </ses:test>
+      <ses:test>
+         <ses:testNumber>5</ses:testNumber>
+         <ses:request>
+            <ses:protocol>HTTP</ses:protocol>
+            <ses:protocolVersion>1.1</ses:protocolVersion>
+            <ses:host>localhost</ses:host>
+            <ses:port>8080</ses:port>
+            <ses:uri>/coreWeb/xhtml/goCheckboxTest.do</ses:uri>
+            <ses:method>GET</ses:method>
+            <ses:parameters/>
+            <ses:cookies>
+               <ses:cookie>
+                  <ses:name>JSESSIONID</ses:name>
+                  <ses:value>1BFFDA13ECA66F0BFC1745BD8BAB49DE</ses:value>
+               </ses:cookie>
+            </ses:cookies>
+            <ses:headers>
+               <ses:header>
+                  <ses:name>accept</ses:name>
+                  <ses:value>image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, application/x-shockwave-flash, application/vnd.ms-excel, application/vnd.ms-powerpoint, application/msword, */*</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>accept-encoding</ses:name>
+                  <ses:value>gzip, deflate, x-gzip, compress, x-compress</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>accept-language</ses:name>
+                  <ses:value>en-us</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>connection</ses:name>
+                  <ses:value>Keep-Alive, TE</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>cookie</ses:name>
+                  <ses:value>$Version=0; JSESSIONID=1BFFDA13ECA66F0BFC1745BD8BAB49DE; $Path=/coreWeb</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>cookie2</ses:name>
+                  <ses:value>$Version="1"</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>host</ses:name>
+                  <ses:value>localhost:8080</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>te</ses:name>
+                  <ses:value>trailers, deflate, gzip, compress</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>testrecorder.playback.testid</ses:name>
+                  <ses:value>5322191f:fd9ffc1336:-5a22</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>testrecorder.playback.testnumber</ses:name>
+                  <ses:value>5</ses:value>
+               </ses:header>
+               <ses:header>
+                  <ses:name>user-agent</ses:name>
+                  <ses:value>Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322) RPT-HTTPClient/0.3-3E RPT-HTTPClient/0.3-3E</ses:value>
+               </ses:header>
+            </ses:headers>
+         </ses:request>
+         <ses:response>
+            <ses:statusCode>200</ses:statusCode>
+            <ses:reason/>
+            <ses:responseBody>&lt;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+&lt;html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+&lt;head>
+        &lt;title>Input Test Page&lt;/title>
+        &lt;style type="text/css">
+        .normal {color: #000099;font-family:Verdana; font-size:8pt;margin:0,0,0,0;}
+        .normal2 {color: #cc0099;font-family:Verdana; font-size:8pt;margin:0,0,0,0;}
+        .normal3 {color: #00cc99;font-family:Verdana; font-size:8pt;margin:0,0,0,0;}
+        .normalBold {color: #000099;font-family:Verdana; font-size:8pt; font-weight: bold;margin:0,0,0,0;}
+        li {color: #000099;font-family:Verdana; font-size:8pt;margin:0,0,0,0;}
+        .normalError {color: #ff0033;font-family:Verdana; font-size:8pt;margin:0,0,0,0;}
+        .normalHead {color: #000099;font-family:Verdana; font-size:8pt;font-weight: strong;margin:0,0,0,0;}
+        .title {color: #000099;font-family:Verdana; font-size:12pt;margin:2,0,5,0;}
+        .resultDiv {border: thin solid;margin:5,5,5,5;}
+        &lt;/style>
+    &lt;/head>        
+  &lt;body>
+    &lt;h1 class="normalHead">CheckBox and CheckBox Group tests&lt;/h1>
+    &lt;a href="/coreWeb/xhtml/begin.do" class="normal" rel="contents" rev="chapter">Home&lt;/a>
+    &lt;div class="resultDiv">
+        &lt;p class="normal">CheckBox and CheckBox Group tests&lt;/p>
+        &lt;form id="checkboxTests" action="/coreWeb/xhtml/postCheckForm.do" method="post">
+            &lt;table>
+                &lt;tr valign="top">
+                    &lt;td class="normalBold" align="right">CheckBox Group&lt;/td>
+                    &lt;td>
+                    &lt;input type="hidden" name="wlw-checkbox_group_key:{actionForm.cbg}OldValue" value="true" />
+                            &lt;input type="checkbox" name="wlw-checkbox_group_key:{actionForm.cbg}" value="CheckBox Option 1" disabled="disabled" lang="en" title="Title Text" alt="Alt Text" dir="ltr" />&lt;span class="normal">Text CB Option One&lt;/span>
+                            &lt;input type="checkbox" name="wlw-checkbox_group_key:{actionForm.cbg}" value="CheckBox Option 2" checked="checked" />&lt;span class="normal">Text CB Option Two&lt;/span>
+                    
+                    &lt;/td>
+                &lt;/tr>
+                &lt;tr valign="top" >
+                    &lt;td class="normalBold" align="right">Repeating CheckBox Group&lt;/td>
+                    &lt;td>
+                    &lt;table>
+                    
+                            &lt;tr>&lt;td align="right" class="normal2">
+                            &lt;span>CBG Option 1&lt;/span>
+                            &lt;/td>&lt;td>
+                            &lt;input type="checkbox" name="wlw-checkbox_group_key:{actionForm.optCbg}" value="CBG Option 1" />&lt;input type="hidden" name="wlw-checkbox_group_key:{actionForm.optCbg}OldValue" value="true" />
+                            &lt;/td>&lt;/tr>
+                    
+                            &lt;tr>&lt;td align="right" class="normal2">
+                            &lt;span>CBG Option 2&lt;/span>
+                            &lt;/td>&lt;td>
+                            &lt;input type="checkbox" name="wlw-checkbox_group_key:{actionForm.optCbg}" value="CBG Option 2" checked="checked" />
+                            &lt;/td>&lt;/tr>
+                    
+                            &lt;tr>&lt;td align="right" class="normal2">
+                            &lt;span>CBG Option 3&lt;/span>
+                            &lt;/td>&lt;td>
+                            &lt;input type="checkbox" name="wlw-checkbox_group_key:{actionForm.optCbg}" value="CBG Option 3" />
+                            &lt;/td>&lt;/tr>
+                    
+                    &lt;/table>
+                    &lt;/td>
+                &lt;/tr>
+                &lt;tr valign="top">
+                    &lt;td class="normalBold" align="right">CheckBox 1&lt;/td>
+                    &lt;td>
+                    &lt;input type="hidden" name="wlw-checkbox_key:{actionForm.check1}OldValue" value="false" />&lt;input type="checkbox" name="wlw-checkbox_key:{actionForm.check1}" lang="en" dir="ltr" />
+                    &lt;/td>
+                &lt;/tr>
+                &lt;tr valign="top">
+                    &lt;td class="normalBold" align="right">CheckBox 2&lt;/td>
+                    &lt;td>
+                    &lt;input type="hidden" name="wlw-checkbox_key:{actionForm.check2}OldValue" value="false" />&lt;input type="checkbox" name="wlw-checkbox_key:{actionForm.check2}" checked="checked" />
+                    &lt;/td>
+                &lt;/tr>
+                &lt;tr valign="top">
+                    &lt;td colspan="2" align="center">
+                        &lt;table cellspacing="0" border="1">
+                        &lt;tr>&lt;th class="normalBold" valign="top" align="center">Complex Repeater&lt;/th>&lt;td>
+                        
+                            &lt;input type="checkbox" name="wlw-checkbox_group_key:{actionForm.optCbgMap}" value="opt-1" checked="checked" />&lt;input type="hidden" name="wlw-checkbox_group_key:{actionForm.optCbgMap}OldValue" value="true" />
+                                &lt;span class="normal">Option One&lt;/span>&lt;br/>
+                        
+                        
+                            &lt;input type="checkbox" name="wlw-checkbox_group_key:{actionForm.optCbgMap}" value="opt-2" />
+                                &lt;span class="normal2">Option Two&lt;/span>&lt;br/>
+                        
+                        
+                            &lt;input type="checkbox" name="wlw-checkbox_group_key:{actionForm.optCbgMap}" value="opt-3" />
+                                &lt;span class="normal3">Option Three&lt;/span>&lt;br/>
+                        
+                        
+                        &lt;/td>&lt;/tr>&lt;/table>
+                    &lt;/td>
+                &lt;/tr>                        
+            &lt;/table>
+            &lt;br />
+            &lt;input type="submit" class="normal" value="Post To Results One" title="Post to Results One" lang="en" alt="Post to Results One" dir="ltr" />
+            &lt;input type="submit" name="actionOverride:postCheckFormTwo" class="normal" value="Post To Results Two" />
+        &lt;/form>
+    &lt;/div>
+    &lt;/body>
+&lt;/html></ses:responseBody>
+         </ses:response>
+         <ses:testResults>
+            <ses:testStatus>fail</ses:testStatus>
+         </ses:testResults>
+      </ses:test>
+   </ses:tests>
+   <ses:endDate>08 Jul 2004, 01:42:34.377 PM MDT</ses:endDate>
+   <ses:sessionStatus>fail</ses:sessionStatus>
+   <ses:testCount>5</ses:testCount>
+   <ses:passedCount>2</ses:passedCount>
+   <ses:failedCount>3</ses:failedCount>
+</ses:recorderSession>

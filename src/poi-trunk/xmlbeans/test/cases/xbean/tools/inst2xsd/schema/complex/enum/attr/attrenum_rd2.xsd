@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="a">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="b">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="c">
+                <xs:complexType>
+                  <xs:simpleContent>
+                    <xs:extension base="xs:QName" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+                      <xs:attribute ref="foo:n" xmlns:foo="http://foo"/>
+                      <xs:attribute ref="baz:a" xmlns:baz="http://baz"/>
+                    </xs:extension>
+                  </xs:simpleContent>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="d" maxOccurs="unbounded" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="c">
+                <xs:complexType>
+                  <xs:simpleContent>
+                    <xs:extension base="xs:QName" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+                      <xs:attribute ref="foo:r" xmlns:foo="http://foo"/>
+                      <xs:attribute ref="baz:b" xmlns:baz="http://baz"/>
+                      <xs:attribute ref="foo:n" xmlns:foo="http://foo"/>
+                      <xs:attribute ref="baz:a" xmlns:baz="http://baz"/>
+                    </xs:extension>
+                  </xs:simpleContent>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute ref="baz:a" xmlns:baz="http://baz"/>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

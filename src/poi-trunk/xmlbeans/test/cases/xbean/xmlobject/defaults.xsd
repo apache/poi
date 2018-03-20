@@ -1,0 +1,17 @@
+<xs:schema
+   xmlns:xs="http://www.w3.org/2001/XMLSchema"
+   xmlns:tns="http://openuri.org/def"
+   targetNamespace="http://openuri.org/def"
+   elementFormDefault="qualified">
+
+  <xs:element name="defaults">
+    <xs:complexType>
+      <xs:sequence>
+      </xs:sequence>
+      <xs:attribute ref="tns:cool"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:attribute name="cool" type="xs:int" default="783"/>
+
+</xs:schema>

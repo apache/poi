@@ -1,0 +1,63 @@
+<!--
+Copyright 2004 The Apache Software Foundation
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+ -->
+<xs:schema targetNamespace="http://xmlbeans.apache.org/samples/enumeration/schemaenum/pricesummary"
+    xmlns:ps="http://xmlbeans.apache.org/samples/enumeration/schemaenum/pricesummary"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    elementFormDefault="qualified">
+
+    <!-- Define an item type that specifies information about an item.
+        item elements are children of the price element. -->
+    <xs:complexType name="itemType">
+        <xs:sequence>
+            <xs:element name="title" type="xs:string"/>
+            <xs:element name="amount" type="xs:double"/>
+            <xs:element name="quantity" type="xs:integer"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Define a price type that specifies price information. A price may
+        contain multiple item elements (of type "itemType"), and has a single
+        threshold attribute whose value may be "Below10Dollars", "Between10And20Dollars",
+        or "Above20Dollars". These values are enumerated, and may be accessed as
+        enumerations through XMLBeans. -->
+    <xs:complexType name="priceType">
+        <xs:sequence>
+            <xs:element name="item" type="ps:itemType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="threshold">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="Below10Dollars"/>
+                    <xs:enumeration value="Between10And20Dollars"/>
+                    <xs:enumeration value="Above20Dollars"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+
+    <!-- Define a price type that specifies price information. A price may
+        contain multiple item elements (of type "itemType"), and has a single
+        threshold attribute whose value may be "Below10Dollars", "Between10And20Dollars",
+        or "Above20Dollars". These values are enumerated, and may be accessed as
+        enumerations through XMLBeans. -->
+    <xs:element name="price-summary">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="price" type="ps:priceType" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

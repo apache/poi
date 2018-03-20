@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="baseNamespace" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="c">
+    <xs:simpleType>
+      <xs:restriction base="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+        <xs:enumeration value="123"/>
+        <xs:enumeration value="abc"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="a">
+    <xs:complexType mixed="true">
+      <xs:sequence>
+        <xs:element ref="bas:b" xmlns:bas="baseNamespace"/>
+        <xs:element ref="bas:e" xmlns:bas="baseNamespace"/>
+        <xs:element ref="bas:f" xmlns:bas="baseNamespace"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="e">
+    <xs:complexType mixed="true">
+      <xs:sequence>
+        <xs:element ref="bas:c" xmlns:bas="baseNamespace"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="b">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="bas:c" xmlns:bas="baseNamespace"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="f">
+    <xs:complexType mixed="true">
+      <xs:sequence>
+        <xs:element ref="bas:c" xmlns:bas="baseNamespace"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

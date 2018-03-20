@@ -1,0 +1,28 @@
+ <xsd:schema
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns="http://xbean/scomp/attribute/GlobalAttrId"
+     targetNamespace="http://xbean/scomp/attribute/GlobalAttrId"
+     >
+
+     <xsd:attribute name="id1" type="xsd:ID"/>
+     <xsd:attribute name="id2" type="xsd:ID"/>
+
+     <xsd:complexType name="GlobalAttrIdT">
+         <xsd:attribute ref="id1"/>
+     </xsd:complexType>
+
+     <xsd:complexType name="IDRefT">
+         <xsd:attribute name="idref1" type="xsd:IDREF"/>
+     </xsd:complexType>
+
+     <xsd:element name="GlobalAttrId">
+         <xsd:complexType>
+             <xsd:sequence>
+                 <xsd:element name="IDElement" type="GlobalAttrIdT"/>
+                 <xsd:element name="IDRefElement" type="IDRefT"/>
+             </xsd:sequence>
+         </xsd:complexType>
+     </xsd:element>
+
+
+ </xsd:schema>

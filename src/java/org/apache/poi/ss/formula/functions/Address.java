@@ -16,9 +16,17 @@
 ==================================================================== */
 package org.apache.poi.ss.formula.functions;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.attackt.logivisual.model.newfunctions.SourceNodeType;
+import com.attackt.logivisual.model.newfunctions.SourceValueType;
+import com.attackt.logivisual.mysql.OperationUtils;
+import com.attackt.logivisual.utils.ThreadUtil;
 import org.apache.poi.ss.formula.SheetNameFormatter;
 import org.apache.poi.ss.formula.eval.*;
 import org.apache.poi.ss.util.CellReference;
+
+import java.util.Map;
 
 /**
  * Creates a text reference as text, given specified row and column numbers.
@@ -93,8 +101,53 @@ public class Address implements Function {
                 sb.append('!');
             }
             sb.append(ref.formatAsString());
+            StringEval stringEval = new StringEval(sb.toString());
+            //-------处理数据开始---------
+            try {
+                CellReference cellReference = new CellReference(row-1,col-1,pAbsRow, pAbsCol);
+                String excelId = new ThreadUtil().getExcelUid();
+                int funcValueType = Integer.parseInt(SourceValueType.valueOf(stringEval.getClass().getSimpleName()).toString());
+                String funcValue = String.valueOf(stringEval.getStringValue());
+                // 查找对应的记录
+                OperationUtils operationUtils = new OperationUtils();
+                Map<String, Object> map = operationUtils.findData(excelId);
+                if(map.size()>0)
+                {
+                    String text = map.get("content").toString();
+                    Integer recordId = Integer.valueOf(map.get("id").toString());
+                    String sheetNamesText = map.get("sheet_names").toString();
+                    JSONArray sheetNameArray = JSONArray.parseArray(sheetNamesText);
+                    Integer sheetIndex = 0;
+                    JSONArray jsonArray = JSONArray.parseArray(text);
+                    JSONObject jsonObject = jsonArray.getJSONObject(0);
+                    jsonObject.put("funcValueType",funcValueType);
+                    jsonObject.put("funcValue",funcValue);
+                    // 找到对应的sheetIndex
+                    if(args.length == 5){
+                        sheetIndex = sheetNameArray.indexOf(sheetName);
+                    }else{
+                        sheetIndex = jsonObject.getIntValue("sourceSheetIndex");
+                    }
+                    // 添加新的
+                    JSONObject newJsonObject = new JSONObject();
+                    newJsonObject.put("nodeType",Integer.parseInt(SourceNodeType.valueOf("RefPtg").toString()));
+                    newJsonObject.put("nodeAttr", cellReference.formatAsString());
+                    newJsonObject.put("numArgs", 0);
 
-            return new StringEval(sb.toString());
+                    newJsonObject.put("sheetIndex",sheetIndex);
+                    // 连接旧的
+                    JSONArray jsonArray1 = new JSONArray();
+                    jsonArray1.add(newJsonObject);
+                    jsonObject.put("para_info",jsonArray1);
+                    // 更改有效性数据
+                    operationUtils.updateData(recordId,jsonArray.toJSONString());
+                }
+            }catch (Exception e)
+            {
+                System.out.println("函数内部重算出错"+e);
+            }
+            //-------处理数据结束---------
+            return stringEval;
 
         } catch (EvaluationException e){
             return e.getErrorEval();

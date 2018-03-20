@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+/*   Copyright 2004 The Apache Software Foundation
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+-->
+<xs:schema xmlns="urn:ehd/001" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:ehd/001" elementFormDefault="qualified" attributeFormDefault="unqualified" blockDefault="substitution">
+	<xs:include schemaLocation="xmlbeans_184_ehd_header_V1.30.xsd_"/>
+	<xs:complexType name="vdx_organization_typ">
+		<xs:complexContent>
+			<xs:restriction base="organization_typ">
+				<xs:sequence>
+					<xs:element name="id" type="vdx_organization_id_typ"/>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="vdx_provider_typ">
+		<xs:complexContent>
+			<xs:restriction base="provider_typ">
+				<xs:sequence>
+					<xs:element name="organization" type="vdx_organization_typ"/>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- Schema -->
+	<xs:complexType name="vdx_header_typ">
+		<xs:complexContent>
+			<xs:restriction base="ehd_header_typ">
+				<xs:sequence>
+					<xs:element name="id" type="vdx_header_id_typ"/>
+					<xs:element name="document_type_cd" type="vdx_document_type_cd_typ"/>
+					<xs:element ref="service_tmr"/>
+					<!-- Abrechnungsquartal_im_Header-->
+					<xs:element name="origination_dttm" type="origination_dttm_typ"/>
+					<xs:element name="provider" type="vdx_provider_typ" maxOccurs="unbounded"/>
+					<xs:element name="interface" type="vdx_interface_typ"/>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- ************************ vdx_document_type_cd_typ ********************************* -->
+	<xs:complexType name="vdx_document_type_cd_typ">
+		<xs:complexContent>
+			<xs:restriction base="document_type_cd_typ">
+				<xs:attribute name="V" use="required">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:pattern value="D\d\d"/>
+							<!-- Das große "D" steht für die Schnittstelle vdx_data. Für die der KBV zu übermittelnde Datei ist hier die Datenart D06 einzutragen -->
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- ************************ vdx_interface_typ ********************************* -->
+	<xs:complexType name="vdx_interface_typ">
+		<xs:complexContent>
+			<xs:restriction base="interface_typ">
+				<xs:sequence>
+					<xs:element name="id">
+						<xs:complexType>
+							<xs:complexContent>
+								<xs:restriction base="interface_id_typ">
+									<xs:attribute name="EX" type="xs:string" use="required" fixed="VDX_DATA"/>
+								</xs:restriction>
+							</xs:complexContent>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="interface.nm">
+						<xs:complexType>
+							<xs:complexContent>
+								<xs:restriction base="interface_nm_typ">
+									<xs:attribute name="V" type="xs:string" use="required" fixed="VDX_DATA"/>
+								</xs:restriction>
+							</xs:complexContent>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="version">
+						<xs:complexType>
+							<xs:complexContent>
+								<xs:restriction base="interface_version_typ">
+									<xs:attribute name="V" type="xs:string" use="required" fixed="1.04"/>
+								</xs:restriction>
+							</xs:complexContent>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="vdx_originator_typ">
+		<xs:complexContent>
+			<xs:restriction base="originator_typ">
+				<xs:sequence>
+					<xs:element name="originator.type_cd" type="originator.type_cd_typ"/>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="vdx_header_id_typ">
+		<xs:annotation>
+			<xs:documentation>id wird im Teillieferungskonzept verwendet</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:restriction base="id_typ">
+				<xs:attribute name="EX" use="required">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:minLength value="9"/>
+							<xs:maxLength value="128"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
+				<xs:attribute name="RT" use="required">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:length value="2"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
+				<xs:attribute name="RTV" type="xs:string" use="prohibited"/>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="vdx_organization_id_typ">
+		<xs:annotation>
+			<xs:documentation>EX-Attribut beinhaltet die 2stellige zahlungsfordernde KV-Stelle und im RT-Attribut die OID der Schluesseltabelle S_VDX_KV</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:restriction base="id_typ">
+				<xs:attribute name="EX" use="required">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:length value="2"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
+				<xs:attribute name="RT" use="required">
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:enumeration value="1.2.276.0.76.3.1.1.5.1.12"/>
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:attribute>
+				<xs:attribute name="RTV" type="xs:string" use="prohibited"/>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

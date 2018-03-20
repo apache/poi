@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://contoso.com/People" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="Person" type="peop:PersonType" xmlns:peop="http://contoso.com/People"/>
+  <xs:complexType name="PersonType">
+    <xs:sequence>
+      <xs:element ref="name"/>
+      <xs:element ref="age"/>
+      <xs:element ref="height"/>
+      <xs:element ref="veh:Vehicle" xmlns:veh="http://contoso.com /Vehicles"/>
+    </xs:sequence>
+    <xs:attribute ref="xsi:schemaLocation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+  </xs:complexType>
+</xs:schema>

@@ -1,0 +1,5 @@
+<dt:wrappedwildcard xmlns:dt="http://openuri.org/test/dyntest">
+  <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://openuri.org/test/quant">
+    <xs:element name="quantity" type="xs:int"/>
+  </xs:schema>
+</dt:wrappedwildcard>

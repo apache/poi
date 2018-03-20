@@ -1,0 +1,40 @@
+<xsd:schema targetNamespace="http://xbean.usertype/multipleItems/company"
+       xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:company="http://xbean.usertype/multipleItems/company">
+       <xsd:element name="company" type="company:CompanyType" />
+       <xsd:complexType name="CompanyType">
+               <xsd:sequence>
+                       <xsd:element name="departments" type="company:DepartmentType"
+                               maxOccurs="unbounded" />
+               </xsd:sequence>
+
+               <xsd:anyAttribute namespace="http://www.omg.org/XMI"
+                       processContents="lax" />
+       </xsd:complexType>
+       <xsd:element name="department" type="company:DepartmentType" />
+       <xsd:complexType name="DepartmentType">
+               <xsd:sequence>
+                       <xsd:element name="consultant" type="company:ConsultantType"
+                               maxOccurs="unbounded" />
+               </xsd:sequence>
+               <xsd:anyAttribute namespace="http://www.omg.org/XMI"
+                       processContents="lax" />
+       </xsd:complexType>
+       <xsd:complexType name="ConsultantType">
+               <xsd:sequence>
+                       <xsd:element name="room" type="company:Room" maxOccurs="unbounded" />
+               </xsd:sequence>
+               <xsd:attribute name="name" type="xsd:string" />
+               <xsd:attribute name="age" type="xsd:integer" />
+               <xsd:anyAttribute namespace="http://www.omg.org/XMI"
+                       processContents="lax" />
+
+
+       </xsd:complexType>
+
+
+       <xsd:simpleType name="Room">
+               <xsd:restriction base="xsd:string">
+                       <xsd:pattern value="\d{3}-[A-Z]{2}" />
+               </xsd:restriction>
+       </xsd:simpleType>
+</xsd:schema>

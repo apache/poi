@@ -1,0 +1,38 @@
+<xs:schema
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://xbean/scomp/element/NillTest"
+    targetNamespace="http://xbean/scomp/element/NillTest"
+    >
+
+
+    <xs:complexType name="Contact">
+        <xs:sequence>
+            <xs:element name="firstName" type="xs:string" minOccurs="0"/>
+            <xs:element name="lastName" type="xs:string" minOccurs="0"/>
+            <xs:element name="LocalNillableElem" type="xs:string" nillable="true"/>
+            <xs:element name="address" type="AddressInfo" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="AddressInfo">
+        <xs:sequence>
+             <xs:element ref="GlobalEltNotNillable" minOccurs="0"/>
+            <xs:element ref="cityName" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:element name="cityName">
+        <xs:simpleType>
+            <xs:restriction base="xs:string">
+                <xs:maxLength value="35"/>
+            </xs:restriction>
+        </xs:simpleType>
+    </xs:element>
+
+    <xs:element name="GlobalEltNotNillable" type="xs:string"/>
+    <xs:element name="GlobalEltNillable" type="xs:string" nillable="true"/>
+    <xs:element name="GlobalEltDefault" type="xs:integer" default="10"/>
+    <xs:element name="GlobalEltFixed" type="xs:integer" fixed="7"  />
+
+
+</xs:schema>
+

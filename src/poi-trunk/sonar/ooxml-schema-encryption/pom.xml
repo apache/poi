@@ -1,0 +1,55 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.apache.poi</groupId>
+        <artifactId>poi-parent</artifactId>
+        <version>4.0.0-SNAPSHOT</version>
+        <relativePath>..</relativePath>
+    </parent>
+    <artifactId>poi-ooxml-schema-encryption</artifactId>
+    <packaging>jar</packaging>
+
+    <name>Apache POI - Openxmlformats Encryption Schema package</name>
+
+	<properties>
+		<!-- see http://docs.codehaus.org/display/SONAR/Narrowing+the+Focus for details of this property -->
+		<sonar.exclusions>target/generated-sources/*</sonar.exclusions>
+	</properties>
+  
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>${maven.plugin.antrun.version}</version>
+				<executions>
+					<execution>
+						<id>unzip-schema</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<copy todir="target/schemas">
+									<fileset dir="../../src/ooxml/resources/org/apache/poi/poifs/crypt" includes="encryption*.*"/>
+								</copy>
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.xmlbeans</groupId>
+			<artifactId>xmlbeans</artifactId>
+			<version>${xmlbeans.version}</version>
+		</dependency>
+    </dependencies>
+</project>
