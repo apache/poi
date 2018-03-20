@@ -1,6 +1,7 @@
 package com.attackt.logivisual.model;
 
 import java.util.List;
+
 /**
  * 单元格对象
  * 

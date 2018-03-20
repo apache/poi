@@ -71,7 +71,7 @@ public enum FormulaTypeB1 {
      */
     public static boolean isContainStr(String str)
     {
-        for (FormulaTypeB1 temp:FormulaTypeB1.values()) {
+        for (FormulaTypeB1 temp: FormulaTypeB1.values()) {
             if(temp.name().equals(str.toUpperCase()))
             {
                 return true;

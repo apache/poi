@@ -32,7 +32,7 @@ public enum FormulaTypeSearch {
      */
     public static boolean isContainStr(String str)
     {
-        for (FormulaTypeSearch temp:FormulaTypeSearch.values()) {
+        for (FormulaTypeSearch temp: FormulaTypeSearch.values()) {
             if(temp.name().equals(str.toUpperCase()))
             {
                 return true;
