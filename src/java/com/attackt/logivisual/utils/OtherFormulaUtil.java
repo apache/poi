@@ -1,11 +1,10 @@
 package com.attackt.logivisual.utils;
 
+import com.attackt.logivisual.model.retry.KeyValueFormula;
 import com.attackt.logivisual.model.newfunctions.CellIndex;
 import com.attackt.logivisual.model.newfunctions.KeyValueEntity;
-import com.attackt.logivisual.model.retry.KeyValueFormula;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
-import org.apache.poi.ss.formula.LazyAreaEval;
 import org.apache.poi.ss.formula.ptg.*;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Workbook;

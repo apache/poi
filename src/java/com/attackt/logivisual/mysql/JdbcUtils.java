@@ -1,8 +1,6 @@
 package com.attackt.logivisual.mysql;
 
 
-import java.beans.PropertyVetoException;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;

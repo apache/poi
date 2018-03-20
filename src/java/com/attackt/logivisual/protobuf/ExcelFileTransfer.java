@@ -103,14 +103,14 @@ public final class ExcelFileTransfer {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
     getDescriptor() {
-      return com.attackt.logivisual.protobuf.ExcelFileTransfer.internal_static_UID_descriptor;
+      return ExcelFileTransfer.internal_static_UID_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
     internalGetFieldAccessorTable() {
-      return com.attackt.logivisual.protobuf.ExcelFileTransfer.internal_static_UID_fieldAccessorTable
+      return ExcelFileTransfer.internal_static_UID_fieldAccessorTable
               .ensureFieldAccessorsInitialized(
-                      com.attackt.logivisual.protobuf.ExcelFileTransfer.UID.class, com.attackt.logivisual.protobuf.ExcelFileTransfer.UID.Builder.class);
+                      ExcelFileTransfer.UID.class, ExcelFileTransfer.UID.Builder.class);
     }
 
     public static final int UID_FIELD_NUMBER = 1;
@@ -191,10 +191,10 @@ public final class ExcelFileTransfer {
       if (obj == this) {
         return true;
       }
-      if (!(obj instanceof com.attackt.logivisual.protobuf.ExcelFileTransfer.UID)) {
+      if (!(obj instanceof ExcelFileTransfer.UID)) {
         return super.equals(obj);
       }
-      com.attackt.logivisual.protobuf.ExcelFileTransfer.UID other = (com.attackt.logivisual.protobuf.ExcelFileTransfer.UID) obj;
+      ExcelFileTransfer.UID other = (ExcelFileTransfer.UID) obj;
 
       boolean result = true;
       result = result && getUid()
@@ -217,69 +217,69 @@ public final class ExcelFileTransfer {
       return hash;
     }
 
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.UID parseFrom(
+    public static ExcelFileTransfer.UID parseFrom(
             java.nio.ByteBuffer data)
             throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.UID parseFrom(
+    public static ExcelFileTransfer.UID parseFrom(
             java.nio.ByteBuffer data,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.UID parseFrom(
+    public static ExcelFileTransfer.UID parseFrom(
             com.google.protobuf.ByteString data)
             throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.UID parseFrom(
+    public static ExcelFileTransfer.UID parseFrom(
             com.google.protobuf.ByteString data,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.UID parseFrom(byte[] data)
+    public static ExcelFileTransfer.UID parseFrom(byte[] data)
             throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.UID parseFrom(
+    public static ExcelFileTransfer.UID parseFrom(
             byte[] data,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.UID parseFrom(java.io.InputStream input)
+    public static ExcelFileTransfer.UID parseFrom(java.io.InputStream input)
             throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
               .parseWithIOException(PARSER, input);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.UID parseFrom(
+    public static ExcelFileTransfer.UID parseFrom(
             java.io.InputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
               .parseWithIOException(PARSER, input, extensionRegistry);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.UID parseDelimitedFrom(java.io.InputStream input)
+    public static ExcelFileTransfer.UID parseDelimitedFrom(java.io.InputStream input)
             throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
               .parseDelimitedWithIOException(PARSER, input);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.UID parseDelimitedFrom(
+    public static ExcelFileTransfer.UID parseDelimitedFrom(
             java.io.InputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
               .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.UID parseFrom(
+    public static ExcelFileTransfer.UID parseFrom(
             com.google.protobuf.CodedInputStream input)
             throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
               .parseWithIOException(PARSER, input);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.UID parseFrom(
+    public static ExcelFileTransfer.UID parseFrom(
             com.google.protobuf.CodedInputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws java.io.IOException {
@@ -291,7 +291,7 @@ public final class ExcelFileTransfer {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(com.attackt.logivisual.protobuf.ExcelFileTransfer.UID prototype) {
+    public static Builder newBuilder(ExcelFileTransfer.UID prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     public Builder toBuilder() {
@@ -311,20 +311,20 @@ public final class ExcelFileTransfer {
     public static final class Builder extends
             com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
             // @@protoc_insertion_point(builder_implements:UID)
-            com.attackt.logivisual.protobuf.ExcelFileTransfer.UIDOrBuilder {
+            ExcelFileTransfer.UIDOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-        return com.attackt.logivisual.protobuf.ExcelFileTransfer.internal_static_UID_descriptor;
+        return ExcelFileTransfer.internal_static_UID_descriptor;
       }
 
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
-        return com.attackt.logivisual.protobuf.ExcelFileTransfer.internal_static_UID_fieldAccessorTable
+        return ExcelFileTransfer.internal_static_UID_fieldAccessorTable
                 .ensureFieldAccessorsInitialized(
-                        com.attackt.logivisual.protobuf.ExcelFileTransfer.UID.class, com.attackt.logivisual.protobuf.ExcelFileTransfer.UID.Builder.class);
+                        ExcelFileTransfer.UID.class, ExcelFileTransfer.UID.Builder.class);
       }
 
-      // Construct using com.attackt.logivisual.protobuf.ExcelFileTransfer.UID.newBuilder()
+      // Construct using ExcelFileTransfer.UID.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -348,23 +348,23 @@ public final class ExcelFileTransfer {
 
       public com.google.protobuf.Descriptors.Descriptor
       getDescriptorForType() {
-        return com.attackt.logivisual.protobuf.ExcelFileTransfer.internal_static_UID_descriptor;
+        return ExcelFileTransfer.internal_static_UID_descriptor;
       }
 
-      public com.attackt.logivisual.protobuf.ExcelFileTransfer.UID getDefaultInstanceForType() {
-        return com.attackt.logivisual.protobuf.ExcelFileTransfer.UID.getDefaultInstance();
+      public ExcelFileTransfer.UID getDefaultInstanceForType() {
+        return ExcelFileTransfer.UID.getDefaultInstance();
       }
 
-      public com.attackt.logivisual.protobuf.ExcelFileTransfer.UID build() {
-        com.attackt.logivisual.protobuf.ExcelFileTransfer.UID result = buildPartial();
+      public ExcelFileTransfer.UID build() {
+        ExcelFileTransfer.UID result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return result;
       }
 
-      public com.attackt.logivisual.protobuf.ExcelFileTransfer.UID buildPartial() {
-        com.attackt.logivisual.protobuf.ExcelFileTransfer.UID result = new com.attackt.logivisual.protobuf.ExcelFileTransfer.UID(this);
+      public ExcelFileTransfer.UID buildPartial() {
+        ExcelFileTransfer.UID result = new ExcelFileTransfer.UID(this);
         result.uid_ = uid_;
         onBuilt();
         return result;
@@ -397,16 +397,16 @@ public final class ExcelFileTransfer {
         return (Builder) super.addRepeatedField(field, value);
       }
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof com.attackt.logivisual.protobuf.ExcelFileTransfer.UID) {
-          return mergeFrom((com.attackt.logivisual.protobuf.ExcelFileTransfer.UID)other);
+        if (other instanceof ExcelFileTransfer.UID) {
+          return mergeFrom((ExcelFileTransfer.UID)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(com.attackt.logivisual.protobuf.ExcelFileTransfer.UID other) {
-        if (other == com.attackt.logivisual.protobuf.ExcelFileTransfer.UID.getDefaultInstance()) return this;
+      public Builder mergeFrom(ExcelFileTransfer.UID other) {
+        if (other == ExcelFileTransfer.UID.getDefaultInstance()) return this;
         if (!other.getUid().isEmpty()) {
           uid_ = other.uid_;
           onChanged();
@@ -424,11 +424,11 @@ public final class ExcelFileTransfer {
               com.google.protobuf.CodedInputStream input,
               com.google.protobuf.ExtensionRegistryLite extensionRegistry)
               throws java.io.IOException {
-        com.attackt.logivisual.protobuf.ExcelFileTransfer.UID parsedMessage = null;
+        ExcelFileTransfer.UID parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (com.attackt.logivisual.protobuf.ExcelFileTransfer.UID) e.getUnfinishedMessage();
+          parsedMessage = (ExcelFileTransfer.UID) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
@@ -541,12 +541,12 @@ public final class ExcelFileTransfer {
     }
 
     // @@protoc_insertion_point(class_scope:UID)
-    private static final com.attackt.logivisual.protobuf.ExcelFileTransfer.UID DEFAULT_INSTANCE;
+    private static final ExcelFileTransfer.UID DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new com.attackt.logivisual.protobuf.ExcelFileTransfer.UID();
+      DEFAULT_INSTANCE = new ExcelFileTransfer.UID();
     }
 
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.UID getDefaultInstance() {
+    public static ExcelFileTransfer.UID getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -569,7 +569,7 @@ public final class ExcelFileTransfer {
       return PARSER;
     }
 
-    public com.attackt.logivisual.protobuf.ExcelFileTransfer.UID getDefaultInstanceForType() {
+    public ExcelFileTransfer.UID getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -729,14 +729,14 @@ public final class ExcelFileTransfer {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
     getDescriptor() {
-      return com.attackt.logivisual.protobuf.ExcelFileTransfer.internal_static_ParseRequest_descriptor;
+      return ExcelFileTransfer.internal_static_ParseRequest_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
     internalGetFieldAccessorTable() {
-      return com.attackt.logivisual.protobuf.ExcelFileTransfer.internal_static_ParseRequest_fieldAccessorTable
+      return ExcelFileTransfer.internal_static_ParseRequest_fieldAccessorTable
               .ensureFieldAccessorsInitialized(
-                      com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest.class, com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest.Builder.class);
+                      ExcelFileTransfer.ParseRequest.class, ExcelFileTransfer.ParseRequest.Builder.class);
     }
 
     public static final int UID_FIELD_NUMBER = 1;
@@ -933,10 +933,10 @@ public final class ExcelFileTransfer {
       if (obj == this) {
         return true;
       }
-      if (!(obj instanceof com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest)) {
+      if (!(obj instanceof ExcelFileTransfer.ParseRequest)) {
         return super.equals(obj);
       }
-      com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest other = (com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest) obj;
+      ExcelFileTransfer.ParseRequest other = (ExcelFileTransfer.ParseRequest) obj;
 
       boolean result = true;
       result = result && getUid()
@@ -971,69 +971,69 @@ public final class ExcelFileTransfer {
       return hash;
     }
 
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest parseFrom(
+    public static ExcelFileTransfer.ParseRequest parseFrom(
             java.nio.ByteBuffer data)
             throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest parseFrom(
+    public static ExcelFileTransfer.ParseRequest parseFrom(
             java.nio.ByteBuffer data,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest parseFrom(
+    public static ExcelFileTransfer.ParseRequest parseFrom(
             com.google.protobuf.ByteString data)
             throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest parseFrom(
+    public static ExcelFileTransfer.ParseRequest parseFrom(
             com.google.protobuf.ByteString data,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest parseFrom(byte[] data)
+    public static ExcelFileTransfer.ParseRequest parseFrom(byte[] data)
             throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest parseFrom(
+    public static ExcelFileTransfer.ParseRequest parseFrom(
             byte[] data,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest parseFrom(java.io.InputStream input)
+    public static ExcelFileTransfer.ParseRequest parseFrom(java.io.InputStream input)
             throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
               .parseWithIOException(PARSER, input);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest parseFrom(
+    public static ExcelFileTransfer.ParseRequest parseFrom(
             java.io.InputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
               .parseWithIOException(PARSER, input, extensionRegistry);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest parseDelimitedFrom(java.io.InputStream input)
+    public static ExcelFileTransfer.ParseRequest parseDelimitedFrom(java.io.InputStream input)
             throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
               .parseDelimitedWithIOException(PARSER, input);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest parseDelimitedFrom(
+    public static ExcelFileTransfer.ParseRequest parseDelimitedFrom(
             java.io.InputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
               .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest parseFrom(
+    public static ExcelFileTransfer.ParseRequest parseFrom(
             com.google.protobuf.CodedInputStream input)
             throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
               .parseWithIOException(PARSER, input);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest parseFrom(
+    public static ExcelFileTransfer.ParseRequest parseFrom(
             com.google.protobuf.CodedInputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws java.io.IOException {
@@ -1045,7 +1045,7 @@ public final class ExcelFileTransfer {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest prototype) {
+    public static Builder newBuilder(ExcelFileTransfer.ParseRequest prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     public Builder toBuilder() {
@@ -1065,20 +1065,20 @@ public final class ExcelFileTransfer {
     public static final class Builder extends
             com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
             // @@protoc_insertion_point(builder_implements:ParseRequest)
-            com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequestOrBuilder {
+            ExcelFileTransfer.ParseRequestOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-        return com.attackt.logivisual.protobuf.ExcelFileTransfer.internal_static_ParseRequest_descriptor;
+        return ExcelFileTransfer.internal_static_ParseRequest_descriptor;
       }
 
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
-        return com.attackt.logivisual.protobuf.ExcelFileTransfer.internal_static_ParseRequest_fieldAccessorTable
+        return ExcelFileTransfer.internal_static_ParseRequest_fieldAccessorTable
                 .ensureFieldAccessorsInitialized(
-                        com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest.class, com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest.Builder.class);
+                        ExcelFileTransfer.ParseRequest.class, ExcelFileTransfer.ParseRequest.Builder.class);
       }
 
-      // Construct using com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest.newBuilder()
+      // Construct using ExcelFileTransfer.ParseRequest.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -1108,23 +1108,23 @@ public final class ExcelFileTransfer {
 
       public com.google.protobuf.Descriptors.Descriptor
       getDescriptorForType() {
-        return com.attackt.logivisual.protobuf.ExcelFileTransfer.internal_static_ParseRequest_descriptor;
+        return ExcelFileTransfer.internal_static_ParseRequest_descriptor;
       }
 
-      public com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest getDefaultInstanceForType() {
-        return com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest.getDefaultInstance();
+      public ExcelFileTransfer.ParseRequest getDefaultInstanceForType() {
+        return ExcelFileTransfer.ParseRequest.getDefaultInstance();
       }
 
-      public com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest build() {
-        com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest result = buildPartial();
+      public ExcelFileTransfer.ParseRequest build() {
+        ExcelFileTransfer.ParseRequest result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return result;
       }
 
-      public com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest buildPartial() {
-        com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest result = new com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest(this);
+      public ExcelFileTransfer.ParseRequest buildPartial() {
+        ExcelFileTransfer.ParseRequest result = new ExcelFileTransfer.ParseRequest(this);
         result.uid_ = uid_;
         result.path_ = path_;
         result.password_ = password_;
@@ -1160,16 +1160,16 @@ public final class ExcelFileTransfer {
         return (Builder) super.addRepeatedField(field, value);
       }
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest) {
-          return mergeFrom((com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest)other);
+        if (other instanceof ExcelFileTransfer.ParseRequest) {
+          return mergeFrom((ExcelFileTransfer.ParseRequest)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest other) {
-        if (other == com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest.getDefaultInstance()) return this;
+      public Builder mergeFrom(ExcelFileTransfer.ParseRequest other) {
+        if (other == ExcelFileTransfer.ParseRequest.getDefaultInstance()) return this;
         if (!other.getUid().isEmpty()) {
           uid_ = other.uid_;
           onChanged();
@@ -1198,11 +1198,11 @@ public final class ExcelFileTransfer {
               com.google.protobuf.CodedInputStream input,
               com.google.protobuf.ExtensionRegistryLite extensionRegistry)
               throws java.io.IOException {
-        com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest parsedMessage = null;
+        ExcelFileTransfer.ParseRequest parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest) e.getUnfinishedMessage();
+          parsedMessage = (ExcelFileTransfer.ParseRequest) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
@@ -1531,12 +1531,12 @@ public final class ExcelFileTransfer {
     }
 
     // @@protoc_insertion_point(class_scope:ParseRequest)
-    private static final com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest DEFAULT_INSTANCE;
+    private static final ExcelFileTransfer.ParseRequest DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest();
+      DEFAULT_INSTANCE = new ExcelFileTransfer.ParseRequest();
     }
 
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest getDefaultInstance() {
+    public static ExcelFileTransfer.ParseRequest getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -1559,7 +1559,7 @@ public final class ExcelFileTransfer {
       return PARSER;
     }
 
-    public com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest getDefaultInstanceForType() {
+    public ExcelFileTransfer.ParseRequest getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -1694,14 +1694,14 @@ public final class ExcelFileTransfer {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
     getDescriptor() {
-      return com.attackt.logivisual.protobuf.ExcelFileTransfer.internal_static_ParseResult_descriptor;
+      return ExcelFileTransfer.internal_static_ParseResult_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
     internalGetFieldAccessorTable() {
-      return com.attackt.logivisual.protobuf.ExcelFileTransfer.internal_static_ParseResult_fieldAccessorTable
+      return ExcelFileTransfer.internal_static_ParseResult_fieldAccessorTable
               .ensureFieldAccessorsInitialized(
-                      com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult.class, com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult.Builder.class);
+                      ExcelFileTransfer.ParseResult.class, ExcelFileTransfer.ParseResult.Builder.class);
     }
 
     public static final int UID_FIELD_NUMBER = 1;
@@ -1850,10 +1850,10 @@ public final class ExcelFileTransfer {
       if (obj == this) {
         return true;
       }
-      if (!(obj instanceof com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult)) {
+      if (!(obj instanceof ExcelFileTransfer.ParseResult)) {
         return super.equals(obj);
       }
-      com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult other = (com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult) obj;
+      ExcelFileTransfer.ParseResult other = (ExcelFileTransfer.ParseResult) obj;
 
       boolean result = true;
       result = result && getUid()
@@ -1884,69 +1884,69 @@ public final class ExcelFileTransfer {
       return hash;
     }
 
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult parseFrom(
+    public static ExcelFileTransfer.ParseResult parseFrom(
             java.nio.ByteBuffer data)
             throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult parseFrom(
+    public static ExcelFileTransfer.ParseResult parseFrom(
             java.nio.ByteBuffer data,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult parseFrom(
+    public static ExcelFileTransfer.ParseResult parseFrom(
             com.google.protobuf.ByteString data)
             throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult parseFrom(
+    public static ExcelFileTransfer.ParseResult parseFrom(
             com.google.protobuf.ByteString data,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult parseFrom(byte[] data)
+    public static ExcelFileTransfer.ParseResult parseFrom(byte[] data)
             throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult parseFrom(
+    public static ExcelFileTransfer.ParseResult parseFrom(
             byte[] data,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult parseFrom(java.io.InputStream input)
+    public static ExcelFileTransfer.ParseResult parseFrom(java.io.InputStream input)
             throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
               .parseWithIOException(PARSER, input);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult parseFrom(
+    public static ExcelFileTransfer.ParseResult parseFrom(
             java.io.InputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
               .parseWithIOException(PARSER, input, extensionRegistry);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult parseDelimitedFrom(java.io.InputStream input)
+    public static ExcelFileTransfer.ParseResult parseDelimitedFrom(java.io.InputStream input)
             throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
               .parseDelimitedWithIOException(PARSER, input);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult parseDelimitedFrom(
+    public static ExcelFileTransfer.ParseResult parseDelimitedFrom(
             java.io.InputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
               .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult parseFrom(
+    public static ExcelFileTransfer.ParseResult parseFrom(
             com.google.protobuf.CodedInputStream input)
             throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
               .parseWithIOException(PARSER, input);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult parseFrom(
+    public static ExcelFileTransfer.ParseResult parseFrom(
             com.google.protobuf.CodedInputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws java.io.IOException {
@@ -1958,7 +1958,7 @@ public final class ExcelFileTransfer {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult prototype) {
+    public static Builder newBuilder(ExcelFileTransfer.ParseResult prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     public Builder toBuilder() {
@@ -1978,20 +1978,20 @@ public final class ExcelFileTransfer {
     public static final class Builder extends
             com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
             // @@protoc_insertion_point(builder_implements:ParseResult)
-            com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResultOrBuilder {
+            ExcelFileTransfer.ParseResultOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-        return com.attackt.logivisual.protobuf.ExcelFileTransfer.internal_static_ParseResult_descriptor;
+        return ExcelFileTransfer.internal_static_ParseResult_descriptor;
       }
 
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
-        return com.attackt.logivisual.protobuf.ExcelFileTransfer.internal_static_ParseResult_fieldAccessorTable
+        return ExcelFileTransfer.internal_static_ParseResult_fieldAccessorTable
                 .ensureFieldAccessorsInitialized(
-                        com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult.class, com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult.Builder.class);
+                        ExcelFileTransfer.ParseResult.class, ExcelFileTransfer.ParseResult.Builder.class);
       }
 
-      // Construct using com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult.newBuilder()
+      // Construct using ExcelFileTransfer.ParseResult.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -2019,23 +2019,23 @@ public final class ExcelFileTransfer {
 
       public com.google.protobuf.Descriptors.Descriptor
       getDescriptorForType() {
-        return com.attackt.logivisual.protobuf.ExcelFileTransfer.internal_static_ParseResult_descriptor;
+        return ExcelFileTransfer.internal_static_ParseResult_descriptor;
       }
 
-      public com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult getDefaultInstanceForType() {
-        return com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult.getDefaultInstance();
+      public ExcelFileTransfer.ParseResult getDefaultInstanceForType() {
+        return ExcelFileTransfer.ParseResult.getDefaultInstance();
       }
 
-      public com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult build() {
-        com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult result = buildPartial();
+      public ExcelFileTransfer.ParseResult build() {
+        ExcelFileTransfer.ParseResult result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return result;
       }
 
-      public com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult buildPartial() {
-        com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult result = new com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult(this);
+      public ExcelFileTransfer.ParseResult buildPartial() {
+        ExcelFileTransfer.ParseResult result = new ExcelFileTransfer.ParseResult(this);
         result.uid_ = uid_;
         result.path_ = path_;
         result.access_ = access_;
@@ -2070,16 +2070,16 @@ public final class ExcelFileTransfer {
         return (Builder) super.addRepeatedField(field, value);
       }
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult) {
-          return mergeFrom((com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult)other);
+        if (other instanceof ExcelFileTransfer.ParseResult) {
+          return mergeFrom((ExcelFileTransfer.ParseResult)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult other) {
-        if (other == com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult.getDefaultInstance()) return this;
+      public Builder mergeFrom(ExcelFileTransfer.ParseResult other) {
+        if (other == ExcelFileTransfer.ParseResult.getDefaultInstance()) return this;
         if (!other.getUid().isEmpty()) {
           uid_ = other.uid_;
           onChanged();
@@ -2104,11 +2104,11 @@ public final class ExcelFileTransfer {
               com.google.protobuf.CodedInputStream input,
               com.google.protobuf.ExtensionRegistryLite extensionRegistry)
               throws java.io.IOException {
-        com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult parsedMessage = null;
+        ExcelFileTransfer.ParseResult parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult) e.getUnfinishedMessage();
+          parsedMessage = (ExcelFileTransfer.ParseResult) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
@@ -2348,12 +2348,12 @@ public final class ExcelFileTransfer {
     }
 
     // @@protoc_insertion_point(class_scope:ParseResult)
-    private static final com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult DEFAULT_INSTANCE;
+    private static final ExcelFileTransfer.ParseResult DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult();
+      DEFAULT_INSTANCE = new ExcelFileTransfer.ParseResult();
     }
 
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult getDefaultInstance() {
+    public static ExcelFileTransfer.ParseResult getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -2376,7 +2376,7 @@ public final class ExcelFileTransfer {
       return PARSER;
     }
 
-    public com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult getDefaultInstanceForType() {
+    public ExcelFileTransfer.ParseResult getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -2461,14 +2461,14 @@ public final class ExcelFileTransfer {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
     getDescriptor() {
-      return com.attackt.logivisual.protobuf.ExcelFileTransfer.internal_static_Roger_descriptor;
+      return ExcelFileTransfer.internal_static_Roger_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
     internalGetFieldAccessorTable() {
-      return com.attackt.logivisual.protobuf.ExcelFileTransfer.internal_static_Roger_fieldAccessorTable
+      return ExcelFileTransfer.internal_static_Roger_fieldAccessorTable
               .ensureFieldAccessorsInitialized(
-                      com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger.class, com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger.Builder.class);
+                      ExcelFileTransfer.Roger.class, ExcelFileTransfer.Roger.Builder.class);
     }
 
     public static final int MSG_FIELD_NUMBER = 1;
@@ -2521,10 +2521,10 @@ public final class ExcelFileTransfer {
       if (obj == this) {
         return true;
       }
-      if (!(obj instanceof com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger)) {
+      if (!(obj instanceof ExcelFileTransfer.Roger)) {
         return super.equals(obj);
       }
-      com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger other = (com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger) obj;
+      ExcelFileTransfer.Roger other = (ExcelFileTransfer.Roger) obj;
 
       boolean result = true;
       result = result && (getMsg()
@@ -2547,69 +2547,69 @@ public final class ExcelFileTransfer {
       return hash;
     }
 
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger parseFrom(
+    public static ExcelFileTransfer.Roger parseFrom(
             java.nio.ByteBuffer data)
             throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger parseFrom(
+    public static ExcelFileTransfer.Roger parseFrom(
             java.nio.ByteBuffer data,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger parseFrom(
+    public static ExcelFileTransfer.Roger parseFrom(
             com.google.protobuf.ByteString data)
             throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger parseFrom(
+    public static ExcelFileTransfer.Roger parseFrom(
             com.google.protobuf.ByteString data,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger parseFrom(byte[] data)
+    public static ExcelFileTransfer.Roger parseFrom(byte[] data)
             throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger parseFrom(
+    public static ExcelFileTransfer.Roger parseFrom(
             byte[] data,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger parseFrom(java.io.InputStream input)
+    public static ExcelFileTransfer.Roger parseFrom(java.io.InputStream input)
             throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
               .parseWithIOException(PARSER, input);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger parseFrom(
+    public static ExcelFileTransfer.Roger parseFrom(
             java.io.InputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
               .parseWithIOException(PARSER, input, extensionRegistry);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger parseDelimitedFrom(java.io.InputStream input)
+    public static ExcelFileTransfer.Roger parseDelimitedFrom(java.io.InputStream input)
             throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
               .parseDelimitedWithIOException(PARSER, input);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger parseDelimitedFrom(
+    public static ExcelFileTransfer.Roger parseDelimitedFrom(
             java.io.InputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
               .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger parseFrom(
+    public static ExcelFileTransfer.Roger parseFrom(
             com.google.protobuf.CodedInputStream input)
             throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
               .parseWithIOException(PARSER, input);
     }
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger parseFrom(
+    public static ExcelFileTransfer.Roger parseFrom(
             com.google.protobuf.CodedInputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws java.io.IOException {
@@ -2621,7 +2621,7 @@ public final class ExcelFileTransfer {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger prototype) {
+    public static Builder newBuilder(ExcelFileTransfer.Roger prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     public Builder toBuilder() {
@@ -2641,20 +2641,20 @@ public final class ExcelFileTransfer {
     public static final class Builder extends
             com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
             // @@protoc_insertion_point(builder_implements:Roger)
-            com.attackt.logivisual.protobuf.ExcelFileTransfer.RogerOrBuilder {
+            ExcelFileTransfer.RogerOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
       getDescriptor() {
-        return com.attackt.logivisual.protobuf.ExcelFileTransfer.internal_static_Roger_descriptor;
+        return ExcelFileTransfer.internal_static_Roger_descriptor;
       }
 
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internalGetFieldAccessorTable() {
-        return com.attackt.logivisual.protobuf.ExcelFileTransfer.internal_static_Roger_fieldAccessorTable
+        return ExcelFileTransfer.internal_static_Roger_fieldAccessorTable
                 .ensureFieldAccessorsInitialized(
-                        com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger.class, com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger.Builder.class);
+                        ExcelFileTransfer.Roger.class, ExcelFileTransfer.Roger.Builder.class);
       }
 
-      // Construct using com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger.newBuilder()
+      // Construct using ExcelFileTransfer.Roger.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -2678,23 +2678,23 @@ public final class ExcelFileTransfer {
 
       public com.google.protobuf.Descriptors.Descriptor
       getDescriptorForType() {
-        return com.attackt.logivisual.protobuf.ExcelFileTransfer.internal_static_Roger_descriptor;
+        return ExcelFileTransfer.internal_static_Roger_descriptor;
       }
 
-      public com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger getDefaultInstanceForType() {
-        return com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger.getDefaultInstance();
+      public ExcelFileTransfer.Roger getDefaultInstanceForType() {
+        return ExcelFileTransfer.Roger.getDefaultInstance();
       }
 
-      public com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger build() {
-        com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger result = buildPartial();
+      public ExcelFileTransfer.Roger build() {
+        ExcelFileTransfer.Roger result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return result;
       }
 
-      public com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger buildPartial() {
-        com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger result = new com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger(this);
+      public ExcelFileTransfer.Roger buildPartial() {
+        ExcelFileTransfer.Roger result = new ExcelFileTransfer.Roger(this);
         result.msg_ = msg_;
         onBuilt();
         return result;
@@ -2727,16 +2727,16 @@ public final class ExcelFileTransfer {
         return (Builder) super.addRepeatedField(field, value);
       }
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger) {
-          return mergeFrom((com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger)other);
+        if (other instanceof ExcelFileTransfer.Roger) {
+          return mergeFrom((ExcelFileTransfer.Roger)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger other) {
-        if (other == com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger.getDefaultInstance()) return this;
+      public Builder mergeFrom(ExcelFileTransfer.Roger other) {
+        if (other == ExcelFileTransfer.Roger.getDefaultInstance()) return this;
         if (other.getMsg() != 0) {
           setMsg(other.getMsg());
         }
@@ -2753,11 +2753,11 @@ public final class ExcelFileTransfer {
               com.google.protobuf.CodedInputStream input,
               com.google.protobuf.ExtensionRegistryLite extensionRegistry)
               throws java.io.IOException {
-        com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger parsedMessage = null;
+        ExcelFileTransfer.Roger parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger) e.getUnfinishedMessage();
+          parsedMessage = (ExcelFileTransfer.Roger) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
@@ -2819,12 +2819,12 @@ public final class ExcelFileTransfer {
     }
 
     // @@protoc_insertion_point(class_scope:Roger)
-    private static final com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger DEFAULT_INSTANCE;
+    private static final ExcelFileTransfer.Roger DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger();
+      DEFAULT_INSTANCE = new ExcelFileTransfer.Roger();
     }
 
-    public static com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger getDefaultInstance() {
+    public static ExcelFileTransfer.Roger getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -2847,7 +2847,7 @@ public final class ExcelFileTransfer {
       return PARSER;
     }
 
-    public com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger getDefaultInstanceForType() {
+    public ExcelFileTransfer.Roger getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 

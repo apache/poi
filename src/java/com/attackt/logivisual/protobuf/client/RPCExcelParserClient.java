@@ -2,7 +2,6 @@ package com.attackt.logivisual.protobuf.client;
 
 import com.attackt.logivisual.protobuf.ExcelFileTransfer;
 import com.attackt.logivisual.protobuf.ExcelParserGrpc;
-import com.attackt.logivisual.protobuf.ExcelQuoteParseGrpc;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;

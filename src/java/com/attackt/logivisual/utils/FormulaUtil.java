@@ -3,9 +3,9 @@ package com.attackt.logivisual.utils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.attackt.logivisual.model.FormulaSplitInfo;
-import com.attackt.logivisual.model.newfunctions.*;
 import com.attackt.logivisual.model.retry.KeyValueFormula;
 import com.attackt.logivisual.model.service.SheetIndirectData;
+import com.attackt.logivisual.model.newfunctions.*;
 import com.attackt.logivisual.mysql.OperationUtils;
 import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -654,7 +654,7 @@ public class FormulaUtil {
      * @param otherFomulaUtil 数组搜索对象
      * @return 拆分的结果
      */
-    public LinkedList<KeyValueFormula> getFormula(Cell cell,OtherFormulaUtil otherFomulaUtil){
+    public LinkedList<KeyValueFormula> getFormula(Cell cell, OtherFormulaUtil otherFomulaUtil){
         Ptg[] arrPtg = this.getPtgs(cell);
         // 改为list
         List<Ptg> listPtg = new ArrayList<>();

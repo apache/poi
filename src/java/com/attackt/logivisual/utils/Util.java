@@ -1,10 +1,7 @@
 package com.attackt.logivisual.utils;
 
-import com.alibaba.fastjson.JSON;
-import com.attackt.logivisual.model.newfunctions.CellJsonObject;
 import com.attackt.logivisual.model.newfunctions.SourceExcelInfo;
 import com.attackt.logivisual.model.newfunctions.SourceNodeType;
-import com.attackt.logivisual.mysql.OperationUtils;
 import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.SpreadsheetVersion;
@@ -19,8 +16,6 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -116,7 +111,7 @@ public class Util {
 	 * @param operatorStack
 	 * @param elementStack
 	 */
-	public void dataMachining(Workbook workbook,SourceExcelInfo sourceExcelInfo, Ptg[] arr_ptg, Stack<String> operatorStack, Stack<String> elementStack)
+	public void dataMachining(Workbook workbook, SourceExcelInfo sourceExcelInfo, Ptg[] arr_ptg, Stack<String> operatorStack, Stack<String> elementStack)
 	{
 		for (int index = 0; index < arr_ptg.length; index++) {
 			Ptg ptg = arr_ptg[index];

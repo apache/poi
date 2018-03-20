@@ -1,18 +1,11 @@
 package com.attackt.logivisual.protobuf;
 
 import static io.grpc.MethodDescriptor.generateFullMethodName;
-import static io.grpc.stub.ClientCalls.asyncBidiStreamingCall;
-import static io.grpc.stub.ClientCalls.asyncClientStreamingCall;
-import static io.grpc.stub.ClientCalls.asyncServerStreamingCall;
 import static io.grpc.stub.ClientCalls.asyncUnaryCall;
 import static io.grpc.stub.ClientCalls.blockingServerStreamingCall;
 import static io.grpc.stub.ClientCalls.blockingUnaryCall;
 import static io.grpc.stub.ClientCalls.futureUnaryCall;
-import static io.grpc.stub.ServerCalls.asyncBidiStreamingCall;
-import static io.grpc.stub.ServerCalls.asyncClientStreamingCall;
-import static io.grpc.stub.ServerCalls.asyncServerStreamingCall;
 import static io.grpc.stub.ServerCalls.asyncUnaryCall;
-import static io.grpc.stub.ServerCalls.asyncUnimplementedStreamingCall;
 import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
 
 /**
@@ -29,29 +22,29 @@ public final class ExcelParserGrpc {
   // Static method descriptors that strictly reflect the proto.
   @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
   @java.lang.Deprecated // Use {@link #getParseMethod()} instead.
-  public static final io.grpc.MethodDescriptor<com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest,
-          com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger> METHOD_PARSE = getParseMethod();
+  public static final io.grpc.MethodDescriptor<ExcelFileTransfer.ParseRequest,
+          ExcelFileTransfer.Roger> METHOD_PARSE = getParseMethod();
 
-  private static volatile io.grpc.MethodDescriptor<com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest,
-          com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger> getParseMethod;
+  private static volatile io.grpc.MethodDescriptor<ExcelFileTransfer.ParseRequest,
+          ExcelFileTransfer.Roger> getParseMethod;
 
   @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
-  public static io.grpc.MethodDescriptor<com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest,
-          com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger> getParseMethod() {
-    io.grpc.MethodDescriptor<com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest, com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger> getParseMethod;
+  public static io.grpc.MethodDescriptor<ExcelFileTransfer.ParseRequest,
+          ExcelFileTransfer.Roger> getParseMethod() {
+    io.grpc.MethodDescriptor<ExcelFileTransfer.ParseRequest, ExcelFileTransfer.Roger> getParseMethod;
     if ((getParseMethod = ExcelParserGrpc.getParseMethod) == null) {
       synchronized (ExcelParserGrpc.class) {
         if ((getParseMethod = ExcelParserGrpc.getParseMethod) == null) {
           ExcelParserGrpc.getParseMethod = getParseMethod =
-                  io.grpc.MethodDescriptor.<com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest, com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger>newBuilder()
+                  io.grpc.MethodDescriptor.<ExcelFileTransfer.ParseRequest, ExcelFileTransfer.Roger>newBuilder()
                           .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
                           .setFullMethodName(generateFullMethodName(
                                   "ExcelParser", "Parse"))
                           .setSampledToLocalTracing(true)
                           .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                                  com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest.getDefaultInstance()))
+                                  ExcelFileTransfer.ParseRequest.getDefaultInstance()))
                           .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                                  com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger.getDefaultInstance()))
+                                  ExcelFileTransfer.Roger.getDefaultInstance()))
                           .setSchemaDescriptor(new ExcelParserMethodDescriptorSupplier("Parse"))
                           .build();
         }
@@ -61,29 +54,29 @@ public final class ExcelParserGrpc {
   }
   @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
   @java.lang.Deprecated // Use {@link #getAddQuoteResultMethod()} instead.
-  public static final io.grpc.MethodDescriptor<com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult,
-          com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger> METHOD_ADD_QUOTE_RESULT = getAddQuoteResultMethod();
+  public static final io.grpc.MethodDescriptor<ExcelFileTransfer.ParseResult,
+          ExcelFileTransfer.Roger> METHOD_ADD_QUOTE_RESULT = getAddQuoteResultMethod();
 
-  private static volatile io.grpc.MethodDescriptor<com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult,
-          com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger> getAddQuoteResultMethod;
+  private static volatile io.grpc.MethodDescriptor<ExcelFileTransfer.ParseResult,
+          ExcelFileTransfer.Roger> getAddQuoteResultMethod;
 
   @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
-  public static io.grpc.MethodDescriptor<com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult,
-          com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger> getAddQuoteResultMethod() {
-    io.grpc.MethodDescriptor<com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult, com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger> getAddQuoteResultMethod;
+  public static io.grpc.MethodDescriptor<ExcelFileTransfer.ParseResult,
+          ExcelFileTransfer.Roger> getAddQuoteResultMethod() {
+    io.grpc.MethodDescriptor<ExcelFileTransfer.ParseResult, ExcelFileTransfer.Roger> getAddQuoteResultMethod;
     if ((getAddQuoteResultMethod = ExcelParserGrpc.getAddQuoteResultMethod) == null) {
       synchronized (ExcelParserGrpc.class) {
         if ((getAddQuoteResultMethod = ExcelParserGrpc.getAddQuoteResultMethod) == null) {
           ExcelParserGrpc.getAddQuoteResultMethod = getAddQuoteResultMethod =
-                  io.grpc.MethodDescriptor.<com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult, com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger>newBuilder()
+                  io.grpc.MethodDescriptor.<ExcelFileTransfer.ParseResult, ExcelFileTransfer.Roger>newBuilder()
                           .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
                           .setFullMethodName(generateFullMethodName(
                                   "ExcelParser", "AddQuoteResult"))
                           .setSampledToLocalTracing(true)
                           .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                                  com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult.getDefaultInstance()))
+                                  ExcelFileTransfer.ParseResult.getDefaultInstance()))
                           .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                                  com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger.getDefaultInstance()))
+                                  ExcelFileTransfer.Roger.getDefaultInstance()))
                           .setSchemaDescriptor(new ExcelParserMethodDescriptorSupplier("AddQuoteResult"))
                           .build();
         }
@@ -93,29 +86,29 @@ public final class ExcelParserGrpc {
   }
   @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
   @java.lang.Deprecated // Use {@link #getGetQuoteResultMethod()} instead.
-  public static final io.grpc.MethodDescriptor<com.attackt.logivisual.protobuf.ExcelFileTransfer.UID,
-          com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult> METHOD_GET_QUOTE_RESULT = getGetQuoteResultMethod();
+  public static final io.grpc.MethodDescriptor<ExcelFileTransfer.UID,
+          ExcelFileTransfer.ParseResult> METHOD_GET_QUOTE_RESULT = getGetQuoteResultMethod();
 
-  private static volatile io.grpc.MethodDescriptor<com.attackt.logivisual.protobuf.ExcelFileTransfer.UID,
-          com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult> getGetQuoteResultMethod;
+  private static volatile io.grpc.MethodDescriptor<ExcelFileTransfer.UID,
+          ExcelFileTransfer.ParseResult> getGetQuoteResultMethod;
 
   @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
-  public static io.grpc.MethodDescriptor<com.attackt.logivisual.protobuf.ExcelFileTransfer.UID,
-          com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult> getGetQuoteResultMethod() {
-    io.grpc.MethodDescriptor<com.attackt.logivisual.protobuf.ExcelFileTransfer.UID, com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult> getGetQuoteResultMethod;
+  public static io.grpc.MethodDescriptor<ExcelFileTransfer.UID,
+          ExcelFileTransfer.ParseResult> getGetQuoteResultMethod() {
+    io.grpc.MethodDescriptor<ExcelFileTransfer.UID, ExcelFileTransfer.ParseResult> getGetQuoteResultMethod;
     if ((getGetQuoteResultMethod = ExcelParserGrpc.getGetQuoteResultMethod) == null) {
       synchronized (ExcelParserGrpc.class) {
         if ((getGetQuoteResultMethod = ExcelParserGrpc.getGetQuoteResultMethod) == null) {
           ExcelParserGrpc.getGetQuoteResultMethod = getGetQuoteResultMethod =
-                  io.grpc.MethodDescriptor.<com.attackt.logivisual.protobuf.ExcelFileTransfer.UID, com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult>newBuilder()
+                  io.grpc.MethodDescriptor.<ExcelFileTransfer.UID, ExcelFileTransfer.ParseResult>newBuilder()
                           .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
                           .setFullMethodName(generateFullMethodName(
                                   "ExcelParser", "GetQuoteResult"))
                           .setSampledToLocalTracing(true)
                           .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                                  com.attackt.logivisual.protobuf.ExcelFileTransfer.UID.getDefaultInstance()))
+                                  ExcelFileTransfer.UID.getDefaultInstance()))
                           .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                                  com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult.getDefaultInstance()))
+                                  ExcelFileTransfer.ParseResult.getDefaultInstance()))
                           .setSchemaDescriptor(new ExcelParserMethodDescriptorSupplier("GetQuoteResult"))
                           .build();
         }
@@ -125,29 +118,29 @@ public final class ExcelParserGrpc {
   }
   @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
   @java.lang.Deprecated // Use {@link #getAddResultMethod()} instead.
-  public static final io.grpc.MethodDescriptor<com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult,
-          com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger> METHOD_ADD_RESULT = getAddResultMethod();
+  public static final io.grpc.MethodDescriptor<ExcelFileTransfer.ParseResult,
+          ExcelFileTransfer.Roger> METHOD_ADD_RESULT = getAddResultMethod();
 
-  private static volatile io.grpc.MethodDescriptor<com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult,
-          com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger> getAddResultMethod;
+  private static volatile io.grpc.MethodDescriptor<ExcelFileTransfer.ParseResult,
+          ExcelFileTransfer.Roger> getAddResultMethod;
 
   @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
-  public static io.grpc.MethodDescriptor<com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult,
-          com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger> getAddResultMethod() {
-    io.grpc.MethodDescriptor<com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult, com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger> getAddResultMethod;
+  public static io.grpc.MethodDescriptor<ExcelFileTransfer.ParseResult,
+          ExcelFileTransfer.Roger> getAddResultMethod() {
+    io.grpc.MethodDescriptor<ExcelFileTransfer.ParseResult, ExcelFileTransfer.Roger> getAddResultMethod;
     if ((getAddResultMethod = ExcelParserGrpc.getAddResultMethod) == null) {
       synchronized (ExcelParserGrpc.class) {
         if ((getAddResultMethod = ExcelParserGrpc.getAddResultMethod) == null) {
           ExcelParserGrpc.getAddResultMethod = getAddResultMethod =
-                  io.grpc.MethodDescriptor.<com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult, com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger>newBuilder()
+                  io.grpc.MethodDescriptor.<ExcelFileTransfer.ParseResult, ExcelFileTransfer.Roger>newBuilder()
                           .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
                           .setFullMethodName(generateFullMethodName(
                                   "ExcelParser", "AddResult"))
                           .setSampledToLocalTracing(true)
                           .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                                  com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult.getDefaultInstance()))
+                                  ExcelFileTransfer.ParseResult.getDefaultInstance()))
                           .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                                  com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger.getDefaultInstance()))
+                                  ExcelFileTransfer.Roger.getDefaultInstance()))
                           .setSchemaDescriptor(new ExcelParserMethodDescriptorSupplier("AddResult"))
                           .build();
         }
@@ -157,29 +150,29 @@ public final class ExcelParserGrpc {
   }
   @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
   @java.lang.Deprecated // Use {@link #getGetResultMethod()} instead.
-  public static final io.grpc.MethodDescriptor<com.attackt.logivisual.protobuf.ExcelFileTransfer.UID,
-          com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult> METHOD_GET_RESULT = getGetResultMethod();
+  public static final io.grpc.MethodDescriptor<ExcelFileTransfer.UID,
+          ExcelFileTransfer.ParseResult> METHOD_GET_RESULT = getGetResultMethod();
 
-  private static volatile io.grpc.MethodDescriptor<com.attackt.logivisual.protobuf.ExcelFileTransfer.UID,
-          com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult> getGetResultMethod;
+  private static volatile io.grpc.MethodDescriptor<ExcelFileTransfer.UID,
+          ExcelFileTransfer.ParseResult> getGetResultMethod;
 
   @io.grpc.ExperimentalApi("https://github.com/grpc/grpc-java/issues/1901")
-  public static io.grpc.MethodDescriptor<com.attackt.logivisual.protobuf.ExcelFileTransfer.UID,
-          com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult> getGetResultMethod() {
-    io.grpc.MethodDescriptor<com.attackt.logivisual.protobuf.ExcelFileTransfer.UID, com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult> getGetResultMethod;
+  public static io.grpc.MethodDescriptor<ExcelFileTransfer.UID,
+          ExcelFileTransfer.ParseResult> getGetResultMethod() {
+    io.grpc.MethodDescriptor<ExcelFileTransfer.UID, ExcelFileTransfer.ParseResult> getGetResultMethod;
     if ((getGetResultMethod = ExcelParserGrpc.getGetResultMethod) == null) {
       synchronized (ExcelParserGrpc.class) {
         if ((getGetResultMethod = ExcelParserGrpc.getGetResultMethod) == null) {
           ExcelParserGrpc.getGetResultMethod = getGetResultMethod =
-                  io.grpc.MethodDescriptor.<com.attackt.logivisual.protobuf.ExcelFileTransfer.UID, com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult>newBuilder()
+                  io.grpc.MethodDescriptor.<ExcelFileTransfer.UID, ExcelFileTransfer.ParseResult>newBuilder()
                           .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
                           .setFullMethodName(generateFullMethodName(
                                   "ExcelParser", "GetResult"))
                           .setSampledToLocalTracing(true)
                           .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                                  com.attackt.logivisual.protobuf.ExcelFileTransfer.UID.getDefaultInstance()))
+                                  ExcelFileTransfer.UID.getDefaultInstance()))
                           .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                                  com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult.getDefaultInstance()))
+                                  ExcelFileTransfer.ParseResult.getDefaultInstance()))
                           .setSchemaDescriptor(new ExcelParserMethodDescriptorSupplier("GetResult"))
                           .build();
         }
@@ -220,36 +213,36 @@ public final class ExcelParserGrpc {
      * Python
      * </pre>
      */
-    public void parse(com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest request,
-                      io.grpc.stub.StreamObserver<com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger> responseObserver) {
+    public void parse(ExcelFileTransfer.ParseRequest request,
+                      io.grpc.stub.StreamObserver<ExcelFileTransfer.Roger> responseObserver) {
       asyncUnimplementedUnaryCall(getParseMethod(), responseObserver);
     }
 
     /**
      */
-    public void addQuoteResult(com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult request,
-                               io.grpc.stub.StreamObserver<com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger> responseObserver) {
+    public void addQuoteResult(ExcelFileTransfer.ParseResult request,
+                               io.grpc.stub.StreamObserver<ExcelFileTransfer.Roger> responseObserver) {
       asyncUnimplementedUnaryCall(getAddQuoteResultMethod(), responseObserver);
     }
 
     /**
      */
-    public void getQuoteResult(com.attackt.logivisual.protobuf.ExcelFileTransfer.UID request,
-                               io.grpc.stub.StreamObserver<com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult> responseObserver) {
+    public void getQuoteResult(ExcelFileTransfer.UID request,
+                               io.grpc.stub.StreamObserver<ExcelFileTransfer.ParseResult> responseObserver) {
       asyncUnimplementedUnaryCall(getGetQuoteResultMethod(), responseObserver);
     }
 
     /**
      */
-    public void addResult(com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult request,
-                          io.grpc.stub.StreamObserver<com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger> responseObserver) {
+    public void addResult(ExcelFileTransfer.ParseResult request,
+                          io.grpc.stub.StreamObserver<ExcelFileTransfer.Roger> responseObserver) {
       asyncUnimplementedUnaryCall(getAddResultMethod(), responseObserver);
     }
 
     /**
      */
-    public void getResult(com.attackt.logivisual.protobuf.ExcelFileTransfer.UID request,
-                          io.grpc.stub.StreamObserver<com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult> responseObserver) {
+    public void getResult(ExcelFileTransfer.UID request,
+                          io.grpc.stub.StreamObserver<ExcelFileTransfer.ParseResult> responseObserver) {
       asyncUnimplementedUnaryCall(getGetResultMethod(), responseObserver);
     }
 
@@ -259,36 +252,36 @@ public final class ExcelParserGrpc {
                       getParseMethod(),
                       asyncUnaryCall(
                               new MethodHandlers<
-                                      com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest,
-                                      com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger>(
+                                      ExcelFileTransfer.ParseRequest,
+                                      ExcelFileTransfer.Roger>(
                                       this, METHODID_PARSE)))
               .addMethod(
                       getAddQuoteResultMethod(),
                       asyncUnaryCall(
                               new MethodHandlers<
-                                      com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult,
-                                      com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger>(
+                                      ExcelFileTransfer.ParseResult,
+                                      ExcelFileTransfer.Roger>(
                                       this, METHODID_ADD_QUOTE_RESULT)))
               .addMethod(
                       getGetQuoteResultMethod(),
                       asyncUnaryCall(
                               new MethodHandlers<
-                                      com.attackt.logivisual.protobuf.ExcelFileTransfer.UID,
-                                      com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult>(
+                                      ExcelFileTransfer.UID,
+                                      ExcelFileTransfer.ParseResult>(
                                       this, METHODID_GET_QUOTE_RESULT)))
               .addMethod(
                       getAddResultMethod(),
                       asyncUnaryCall(
                               new MethodHandlers<
-                                      com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult,
-                                      com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger>(
+                                      ExcelFileTransfer.ParseResult,
+                                      ExcelFileTransfer.Roger>(
                                       this, METHODID_ADD_RESULT)))
               .addMethod(
                       getGetResultMethod(),
                       asyncUnaryCall(
                               new MethodHandlers<
-                                      com.attackt.logivisual.protobuf.ExcelFileTransfer.UID,
-                                      com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult>(
+                                      ExcelFileTransfer.UID,
+                                      ExcelFileTransfer.ParseResult>(
                                       this, METHODID_GET_RESULT)))
               .build();
     }
@@ -317,40 +310,40 @@ public final class ExcelParserGrpc {
      * Python
      * </pre>
      */
-    public void parse(com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest request,
-                      io.grpc.stub.StreamObserver<com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger> responseObserver) {
+    public void parse(ExcelFileTransfer.ParseRequest request,
+                      io.grpc.stub.StreamObserver<ExcelFileTransfer.Roger> responseObserver) {
       asyncUnaryCall(
               getChannel().newCall(getParseMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
      */
-    public void addQuoteResult(com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult request,
-                               io.grpc.stub.StreamObserver<com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger> responseObserver) {
+    public void addQuoteResult(ExcelFileTransfer.ParseResult request,
+                               io.grpc.stub.StreamObserver<ExcelFileTransfer.Roger> responseObserver) {
       asyncUnaryCall(
               getChannel().newCall(getAddQuoteResultMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
      */
-    public void getQuoteResult(com.attackt.logivisual.protobuf.ExcelFileTransfer.UID request,
-                               io.grpc.stub.StreamObserver<com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult> responseObserver) {
+    public void getQuoteResult(ExcelFileTransfer.UID request,
+                               io.grpc.stub.StreamObserver<ExcelFileTransfer.ParseResult> responseObserver) {
       asyncUnaryCall(
               getChannel().newCall(getGetQuoteResultMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
      */
-    public void addResult(com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult request,
-                          io.grpc.stub.StreamObserver<com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger> responseObserver) {
+    public void addResult(ExcelFileTransfer.ParseResult request,
+                          io.grpc.stub.StreamObserver<ExcelFileTransfer.Roger> responseObserver) {
       asyncUnaryCall(
               getChannel().newCall(getAddResultMethod(), getCallOptions()), request, responseObserver);
     }
 
     /**
      */
-    public void getResult(com.attackt.logivisual.protobuf.ExcelFileTransfer.UID request,
-                          io.grpc.stub.StreamObserver<com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult> responseObserver) {
+    public void getResult(ExcelFileTransfer.UID request,
+                          io.grpc.stub.StreamObserver<ExcelFileTransfer.ParseResult> responseObserver) {
       asyncUnaryCall(
               getChannel().newCall(getGetResultMethod(), getCallOptions()), request, responseObserver);
     }
@@ -379,35 +372,35 @@ public final class ExcelParserGrpc {
      * Python
      * </pre>
      */
-    public com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger parse(com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest request) {
+    public ExcelFileTransfer.Roger parse(ExcelFileTransfer.ParseRequest request) {
       return blockingUnaryCall(
               getChannel(), getParseMethod(), getCallOptions(), request);
     }
 
     /**
      */
-    public com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger addQuoteResult(com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult request) {
+    public ExcelFileTransfer.Roger addQuoteResult(ExcelFileTransfer.ParseResult request) {
       return blockingUnaryCall(
               getChannel(), getAddQuoteResultMethod(), getCallOptions(), request);
     }
 
     /**
      */
-    public com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult getQuoteResult(com.attackt.logivisual.protobuf.ExcelFileTransfer.UID request) {
+    public ExcelFileTransfer.ParseResult getQuoteResult(ExcelFileTransfer.UID request) {
       return blockingUnaryCall(
               getChannel(), getGetQuoteResultMethod(), getCallOptions(), request);
     }
 
     /**
      */
-    public com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger addResult(com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult request) {
+    public ExcelFileTransfer.Roger addResult(ExcelFileTransfer.ParseResult request) {
       return blockingUnaryCall(
               getChannel(), getAddResultMethod(), getCallOptions(), request);
     }
 
     /**
      */
-    public com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult getResult(com.attackt.logivisual.protobuf.ExcelFileTransfer.UID request) {
+    public ExcelFileTransfer.ParseResult getResult(ExcelFileTransfer.UID request) {
       return blockingUnaryCall(
               getChannel(), getGetResultMethod(), getCallOptions(), request);
     }
@@ -436,40 +429,40 @@ public final class ExcelParserGrpc {
      * Python
      * </pre>
      */
-    public com.google.common.util.concurrent.ListenableFuture<com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger> parse(
-            com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<ExcelFileTransfer.Roger> parse(
+            ExcelFileTransfer.ParseRequest request) {
       return futureUnaryCall(
               getChannel().newCall(getParseMethod(), getCallOptions()), request);
     }
 
     /**
      */
-    public com.google.common.util.concurrent.ListenableFuture<com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger> addQuoteResult(
-            com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult request) {
+    public com.google.common.util.concurrent.ListenableFuture<ExcelFileTransfer.Roger> addQuoteResult(
+            ExcelFileTransfer.ParseResult request) {
       return futureUnaryCall(
               getChannel().newCall(getAddQuoteResultMethod(), getCallOptions()), request);
     }
 
     /**
      */
-    public com.google.common.util.concurrent.ListenableFuture<com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult> getQuoteResult(
-            com.attackt.logivisual.protobuf.ExcelFileTransfer.UID request) {
+    public com.google.common.util.concurrent.ListenableFuture<ExcelFileTransfer.ParseResult> getQuoteResult(
+            ExcelFileTransfer.UID request) {
       return futureUnaryCall(
               getChannel().newCall(getGetQuoteResultMethod(), getCallOptions()), request);
     }
 
     /**
      */
-    public com.google.common.util.concurrent.ListenableFuture<com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger> addResult(
-            com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult request) {
+    public com.google.common.util.concurrent.ListenableFuture<ExcelFileTransfer.Roger> addResult(
+            ExcelFileTransfer.ParseResult request) {
       return futureUnaryCall(
               getChannel().newCall(getAddResultMethod(), getCallOptions()), request);
     }
 
     /**
      */
-    public com.google.common.util.concurrent.ListenableFuture<com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult> getResult(
-            com.attackt.logivisual.protobuf.ExcelFileTransfer.UID request) {
+    public com.google.common.util.concurrent.ListenableFuture<ExcelFileTransfer.ParseResult> getResult(
+            ExcelFileTransfer.UID request) {
       return futureUnaryCall(
               getChannel().newCall(getGetResultMethod(), getCallOptions()), request);
     }
@@ -499,24 +492,24 @@ public final class ExcelParserGrpc {
     public void invoke(Req request, io.grpc.stub.StreamObserver<Resp> responseObserver) {
       switch (methodId) {
         case METHODID_PARSE:
-          serviceImpl.parse((com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseRequest) request,
-                  (io.grpc.stub.StreamObserver<com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger>) responseObserver);
+          serviceImpl.parse((ExcelFileTransfer.ParseRequest) request,
+                  (io.grpc.stub.StreamObserver<ExcelFileTransfer.Roger>) responseObserver);
           break;
         case METHODID_ADD_QUOTE_RESULT:
-          serviceImpl.addQuoteResult((com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult) request,
-                  (io.grpc.stub.StreamObserver<com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger>) responseObserver);
+          serviceImpl.addQuoteResult((ExcelFileTransfer.ParseResult) request,
+                  (io.grpc.stub.StreamObserver<ExcelFileTransfer.Roger>) responseObserver);
           break;
         case METHODID_GET_QUOTE_RESULT:
-          serviceImpl.getQuoteResult((com.attackt.logivisual.protobuf.ExcelFileTransfer.UID) request,
-                  (io.grpc.stub.StreamObserver<com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult>) responseObserver);
+          serviceImpl.getQuoteResult((ExcelFileTransfer.UID) request,
+                  (io.grpc.stub.StreamObserver<ExcelFileTransfer.ParseResult>) responseObserver);
           break;
         case METHODID_ADD_RESULT:
-          serviceImpl.addResult((com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult) request,
-                  (io.grpc.stub.StreamObserver<com.attackt.logivisual.protobuf.ExcelFileTransfer.Roger>) responseObserver);
+          serviceImpl.addResult((ExcelFileTransfer.ParseResult) request,
+                  (io.grpc.stub.StreamObserver<ExcelFileTransfer.Roger>) responseObserver);
           break;
         case METHODID_GET_RESULT:
-          serviceImpl.getResult((com.attackt.logivisual.protobuf.ExcelFileTransfer.UID) request,
-                  (io.grpc.stub.StreamObserver<com.attackt.logivisual.protobuf.ExcelFileTransfer.ParseResult>) responseObserver);
+          serviceImpl.getResult((ExcelFileTransfer.UID) request,
+                  (io.grpc.stub.StreamObserver<ExcelFileTransfer.ParseResult>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -540,7 +533,7 @@ public final class ExcelParserGrpc {
 
     @java.lang.Override
     public com.google.protobuf.Descriptors.FileDescriptor getFileDescriptor() {
-      return com.attackt.logivisual.protobuf.ExcelFileTransfer.getDescriptor();
+      return ExcelFileTransfer.getDescriptor();
     }
 
     @java.lang.Override
