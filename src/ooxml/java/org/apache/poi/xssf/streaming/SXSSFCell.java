@@ -511,7 +511,7 @@ public class SXSSFCell implements Cell {
             // populate the value
             ((ErrorFormulaValue) _value).setPreEvaluatedValue(value);
         } else {
-            ensureType(CellType.ERROR);
+            ensureTypeOrFormulaType(CellType.ERROR);
             ((ErrorValue) _value).setValue(value);
         }
     }
