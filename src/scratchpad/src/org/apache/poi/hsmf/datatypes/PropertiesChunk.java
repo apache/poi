@@ -383,12 +383,7 @@ public abstract class PropertiesChunk extends Chunk {
         byte[] bytes = value.getRawValue();
         int length = bytes != null ? bytes.length : 0;
         if (bytes != null) {
-            // Little endian.
-            byte[] reversed = new byte[bytes.length];
-            for (int i = 0; i < bytes.length; ++i) {
-                reversed[bytes.length - i - 1] = bytes[i];
-            }
-            out.write(reversed);
+            out.write(bytes);
         }
         out.write(new byte[8 - length]);
     }
