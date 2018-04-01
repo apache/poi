@@ -23,7 +23,6 @@ import static org.junit.Assert.assertNotNull;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.Calendar;
 import java.util.Map;
 import java.util.TimeZone;
@@ -79,19 +78,21 @@ public class TestExtractEmbeddedMSG {
     public void testEmbeddedMSGProperties() throws IOException, ChunkNotFoundException {
         AttachmentChunks[] attachments = pdfMsgAttachments.getAttachmentFiles();
         assertEquals(2, attachments.length);
-        MAPIMessage attachedMsg = attachments[0].getEmbeddedMessage();
-        assertNotNull(attachedMsg);
-        // test properties of embedded message
-        testFixedAndVariableLengthPropertiesOfAttachedMSG(attachedMsg);
-        // rebuild top level message from embedded message
-        try (POIFSFileSystem extractedAttachedMsg = rebuildFromAttached(attachedMsg)) {
-            try (ByteArrayOutputStream extractedAttachedMsgOut = new ByteArrayOutputStream()) {
-                extractedAttachedMsg.writeFilesystem(extractedAttachedMsgOut);
-                byte[] extratedAttachedMsgRaw = extractedAttachedMsgOut.toByteArray();
-                MAPIMessage extractedMsgTopLevel = new MAPIMessage(
-                        new ByteArrayInputStream(extratedAttachedMsgRaw));
-                // test properties of rebuilt embedded message
-                testFixedAndVariableLengthPropertiesOfAttachedMSG(extractedMsgTopLevel);
+        if (attachments.length == 2) {
+            MAPIMessage attachedMsg = attachments[0].getEmbeddedMessage();
+            assertNotNull(attachedMsg);
+            // test properties of embedded message
+            testFixedAndVariableLengthPropertiesOfAttachedMSG(attachedMsg);
+            // rebuild top level message from embedded message
+            try (POIFSFileSystem extractedAttachedMsg = rebuildFromAttached(attachedMsg)) {
+                try (ByteArrayOutputStream extractedAttachedMsgOut = new ByteArrayOutputStream()) {
+                    extractedAttachedMsg.writeFilesystem(extractedAttachedMsgOut);
+                    byte[] extratedAttachedMsgRaw = extractedAttachedMsgOut.toByteArray();
+                    MAPIMessage extractedMsgTopLevel = new MAPIMessage(
+                            new ByteArrayInputStream(extratedAttachedMsgRaw));
+                    // test properties of rebuilt embedded message
+                    testFixedAndVariableLengthPropertiesOfAttachedMSG(extractedMsgTopLevel);
+                }
             }
         }
     }
@@ -115,17 +116,17 @@ public class TestExtractEmbeddedMSG {
         POIFSFileSystem newDoc = new POIFSFileSystem();
         MessagePropertiesChunk topLevelChunk = new MessagePropertiesChunk(null);
         // Copy attachments and recipients.
-        int recipientsCount = 0;
-        int attachmentsCount = 0;
+        int recipientscount = 0;
+        int attachmentscount = 0;
         for (Entry entry : attachedMsg.getDirectory()) {
             if (entry.getName().startsWith(RecipientChunks.PREFIX)) {
-                recipientsCount++;
+                recipientscount++;
                 DirectoryEntry newDir = newDoc.createDirectory(entry.getName());
                 for (Entry e : ((DirectoryEntry) entry)) {
                     EntryUtils.copyNodeRecursively(e, newDir);
                 }
             } else if (entry.getName().startsWith(AttachmentChunks.PREFIX)) {
-                attachmentsCount++;
+                attachmentscount++;
                 DirectoryEntry newDir = newDoc.createDirectory(entry.getName());
                 for (Entry e : ((DirectoryEntry) entry)) {
                     EntryUtils.copyNodeRecursively(e, newDir);
@@ -137,13 +138,6 @@ public class TestExtractEmbeddedMSG {
         for (Map.Entry<MAPIProperty, PropertyValue> p : mpc.getRawProperties().entrySet()) {
             PropertyValue val = p.getValue();
             if (!(val instanceof ChunkBasedPropertyValue)) {
-                // Reverse data.
-                byte[] bytes = val.getRawValue();
-                for (int idx = 0; idx < bytes.length / 2; idx++) {
-                    byte xchg = bytes[bytes.length - 1 - idx];
-                    bytes[bytes.length - 1 - idx] = bytes[idx];
-                    bytes[idx] = xchg;
-                }
                 MAPIType type = val.getActualType();
                 if (type != null && type != Types.UNKNOWN) {
                     topLevelChunk.setProperty(val);
@@ -160,17 +154,20 @@ public class TestExtractEmbeddedMSG {
         nameid.createDocument(PropertiesChunk.DEFAULT_NAME_PREFIX + "00040102", new ByteArrayInputStream(new byte[0]));
         // Base properties.
         // Attachment/Recipient counter.
-        topLevelChunk.setAttachmentCount(attachmentsCount);
-        topLevelChunk.setRecipientCount(recipientsCount);
-        topLevelChunk.setNextAttachmentId(attachmentsCount);
-        topLevelChunk.setNextRecipientId(recipientsCount);
+        topLevelChunk.setAttachmentCount(attachmentscount);
+        topLevelChunk.setRecipientCount(recipientscount);
+        topLevelChunk.setNextAttachmentId(attachmentscount);
+        topLevelChunk.setNextRecipientId(recipientscount);
         // Unicode string format.
-        topLevelChunk.setProperty(new PropertyValue(MAPIProperty.STORE_SUPPORT_MASK,
+        byte[] storeSupportMaskData = new byte[4];
+        PropertyValue.LongPropertyValue storeSupportPropertyValue = new PropertyValue.LongPropertyValue(MAPIProperty.STORE_SUPPORT_MASK,
                 MessagePropertiesChunk.PROPERTIES_FLAG_READABLE | MessagePropertiesChunk.PROPERTIES_FLAG_WRITEABLE,
-                ByteBuffer.allocate(4).putInt(0x00040000).array()));
+                storeSupportMaskData);
+        storeSupportPropertyValue.setValue(0x00040000);
+        topLevelChunk.setProperty(storeSupportPropertyValue);
         topLevelChunk.setProperty(new PropertyValue(MAPIProperty.HASATTACH,
                 MessagePropertiesChunk.PROPERTIES_FLAG_READABLE | MessagePropertiesChunk.PROPERTIES_FLAG_WRITEABLE,
-                attachmentsCount == 0 ? new byte[] { 0 } : new byte[] { 1 }));
+                attachmentscount == 0 ? new byte[] { 0 } : new byte[] { 1 }));
         // Copy properties from MSG file system.
         for (Chunk chunk : attachedMsg.getMainChunks().getChunks()) {
             if (!(chunk instanceof MessagePropertiesChunk)) {
