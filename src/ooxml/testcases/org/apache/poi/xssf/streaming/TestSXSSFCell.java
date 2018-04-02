@@ -28,6 +28,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.poi.ss.usermodel.BaseTestXCell;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -61,7 +62,7 @@ public class TestSXSSFCell extends BaseTestXCell {
                 "\nPOI",
                 "\n\nPOI \n",
         };
-        for(String str : samplesWithSpaces){
+        for (String str : samplesWithSpaces) {
             Workbook swb = _testDataProvider.createWorkbook();
             Cell sCell = swb.createSheet().createRow(0).createCell(0);
             sCell.setCellValue(str);
@@ -80,6 +81,18 @@ public class TestSXSSFCell extends BaseTestXCell {
             assertEquals("expected xml:spaces=\"preserve\" \"" + str + "\"", "preserve", t);
             xwb.close();
             swb.close();
+        }
+    }
+
+    @Test
+    public void test62216() throws IOException {
+        try (SXSSFWorkbook wb = new SXSSFWorkbook()) {
+            Cell instance = wb.createSheet().createRow(0).createCell(0);
+            String formula = "2";
+            instance.setCellFormula(formula);
+            instance.setCellErrorValue(FormulaError.NAME.getCode());
+
+            assertEquals(formula, instance.getCellFormula());
         }
     }
 }
