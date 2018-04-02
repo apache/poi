@@ -302,6 +302,8 @@ public class TestAllFiles {
         "spreadsheet/poc-xmlbomb.xlsx",  // contains xml-entity-expansion
         "spreadsheet/poc-xmlbomb-empty.xlsx",  // contains xml-entity-expansion
         "spreadsheet/poc-shared-strings.xlsx",  // contains shared-string-entity-expansion
+        "document/61612a.docx",
+        "document/word2.doc",
 
         // old Excel files, which we only support simple text extraction of
         "spreadsheet/testEXCEL_2.xls",

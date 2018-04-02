@@ -77,10 +77,11 @@ public enum FileMagic {
     PDF("%PDF"),
     /** Some different HTML documents */
     HTML("<!DOCTYP".getBytes(UTF_8), "<html".getBytes(UTF_8)),
+    WORD2(new byte[]{ (byte)0xdb, (byte)0xa5, 0x2d, 0x00}),
     // keep UNKNOWN always as last enum!
     /** UNKNOWN magic */
     UNKNOWN(new byte[0]);
-    
+
     final byte[][] magic;
     
     FileMagic(long magic) {

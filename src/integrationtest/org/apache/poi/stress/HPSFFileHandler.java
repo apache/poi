@@ -54,7 +54,8 @@ public class HPSFFileHandler extends POIFSFileHandler {
         "spreadsheet/55982.xls",
         "spreadsheet/testEXCEL_3.xls",
         "spreadsheet/testEXCEL_4.xls",
-        "hpsf/Test_Humor-Generation.ppt"
+        "hpsf/Test_Humor-Generation.ppt",
+        "document/word2.doc"
     );
     
     static final Set<String> EXCLUDES_HANDLE_FILE = unmodifiableHashSet(

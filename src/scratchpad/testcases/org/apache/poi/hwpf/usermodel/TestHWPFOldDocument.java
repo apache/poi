@@ -44,7 +44,7 @@ public final class TestHWPFOldDocument extends HWPFTestCase {
         // Can't open as HWPFDocument
         HWPFTestDataSamples.openSampleFile("Word6.doc");
     }
-    
+
     @Test
     public void testWord6hwpfOld() throws IOException {
         // Open
@@ -60,8 +60,21 @@ public final class TestHWPFOldDocument extends HWPFTestCase {
         doc.close();
     }
 
-    
-    
+    /**
+     * Test a simple Word 2 document
+     */
+    @Test(expected=IllegalArgumentException.class)
+    public void testWord2hwpf() throws IOException {
+        // Can't open as HWPFDocument
+        HWPFTestDataSamples.openSampleFile("word2.doc");
+    }
+
+    @Test(expected=RuntimeException.class)
+    public void testWord2hwpfOld() throws IOException {
+        // Open
+        HWPFTestDataSamples.openOldSampleFile("word2.doc");
+    }
+
     /**
      * Test a simple Word 95 document
      */

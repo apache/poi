@@ -136,6 +136,9 @@ public final class HeaderBlock implements HeaderBlockConstants {
 	   case MSWRITE:
            throw new NotOLE2FileException("The supplied data appears to be in the old MS Write format. "
                + "Apache POI doesn't currently support this format");
+	   case WORD2:
+		   throw new NotOLE2FileException("The supplied data appears to be an old Word version 2 file. "
+			   + "Apache POI doesn't currently support this format");
        case BIFF2:
        case BIFF3:
        case BIFF4:
