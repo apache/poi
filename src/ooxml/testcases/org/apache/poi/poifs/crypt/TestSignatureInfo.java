@@ -113,7 +113,7 @@ public class TestSignatureInfo {
     }
     
     @BeforeClass
-    public static void initBouncy() throws IOException {
+    public static void initBouncy() {
         CryptoFunctions.registerBouncyCastle();
 
         // Set cal to now ... only set to fixed date for debugging ...
@@ -164,7 +164,7 @@ public class TestSignatureInfo {
         Calendar cal = LocaleUtil.getLocaleCalendar(LocaleUtil.TIMEZONE_UTC);
         cal.clear();
         cal.setTimeZone(LocaleUtil.TIMEZONE_UTC);
-        cal.set(2017, 6, 1);
+        cal.set(2017, Calendar.JULY, 1);
         
         SignatureConfig signatureConfig = prepareConfig("test", "CN=Test", pfxInput);
         signatureConfig.setExecutionTime(cal.getTime());
@@ -440,7 +440,7 @@ public class TestSignatureInfo {
         if (mockTsp) {
             TimeStampService tspService = new TimeStampService(){
                 @Override
-                public byte[] timeStamp(byte[] data, RevocationData revocationData) throws Exception {
+                public byte[] timeStamp(byte[] data, RevocationData revocationData) {
                     revocationData.addCRL(crl);
                     return "time-stamp-token".getBytes(LocaleUtil.CHARSET_1252);                
                 }
@@ -451,14 +451,10 @@ public class TestSignatureInfo {
             };
             signatureConfig.setTspService(tspService);
         } else {
-            TimeStampServiceValidator tspValidator = new TimeStampServiceValidator() {
-                @Override
-                public void validate(List<X509Certificate> validateChain,
-                RevocationData revocationData) throws Exception {
-                    for (X509Certificate certificate : validateChain) {
-                        LOG.log(POILogger.DEBUG, "certificate: " + certificate.getSubjectX500Principal());
-                        LOG.log(POILogger.DEBUG, "validity: " + certificate.getNotBefore() + " - " + certificate.getNotAfter());
-                    }
+            TimeStampServiceValidator tspValidator = (validateChain, revocationData) -> {
+                for (X509Certificate certificate : validateChain) {
+                    LOG.log(POILogger.DEBUG, "certificate: " + certificate.getSubjectX500Principal());
+                    LOG.log(POILogger.DEBUG, "validity: " + certificate.getNotBefore() + " - " + certificate.getNotAfter());
                 }
             };
             signatureConfig.setTspValidator(tspValidator);
@@ -471,12 +467,7 @@ public class TestSignatureInfo {
                 x509, x509, keyPair.getPrivate(), "SHA1withRSA", cal.getTimeInMillis());
         revocationData.addOCSP(ocspResp.getEncoded());
 
-        RevocationDataService revocationDataService = new RevocationDataService(){
-            @Override
-            public RevocationData getRevocationData(List<X509Certificate> revocationChain) {
-                return revocationData;
-            }
-        };
+        RevocationDataService revocationDataService = revocationChain -> revocationData;
         signatureConfig.setRevocationDataService(revocationDataService);
 
         // operate

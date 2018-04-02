@@ -113,8 +113,8 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
         writeWorkbook(new XSSFWorkbook(), XSSFITestDataProvider.instance);
 
         // does not work
-        try {
-            writeWorkbook(new SXSSFWorkbook(), SXSSFITestDataProvider.instance);
+        try (SXSSFWorkbook wb = new SXSSFWorkbook()) {
+            writeWorkbook(wb, SXSSFITestDataProvider.instance);
             fail("Should catch exception here");
         } catch (RuntimeException e) {
             // this is not implemented yet
