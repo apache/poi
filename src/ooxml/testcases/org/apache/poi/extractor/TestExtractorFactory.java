@@ -806,6 +806,7 @@ public class TestExtractorFactory {
                 ExtractorFactory.createExtractor(xlsEmb);
         embeds = ExtractorFactory.getEmbededDocsTextExtractors(ext);
         assertNotNull(embeds);
+        ext.close();
 
         // Excel
         ext = (POIOLE2TextExtractor)

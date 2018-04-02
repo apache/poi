@@ -124,48 +124,53 @@ public class TSPTimeStampService implements TimeStampService {
             int port = proxyUrl.getPort();
             proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(InetAddress.getByName(host), (port == -1 ? 80 : port)));
         }
-        
+
+        ByteArrayOutputStream bos;
+        String contentType;
         HttpURLConnection huc = (HttpURLConnection)new URL(signatureConfig.getTspUrl()).openConnection(proxy);
-        
-        if (signatureConfig.getTspUser() != null) {
-            String userPassword = signatureConfig.getTspUser() + ":" + signatureConfig.getTspPass();
-            String encoding = DatatypeConverter.printBase64Binary(userPassword.getBytes(StandardCharsets.ISO_8859_1));
-            huc.setRequestProperty("Authorization", "Basic " + encoding);
+        try {
+            if (signatureConfig.getTspUser() != null) {
+                String userPassword = signatureConfig.getTspUser() + ":" + signatureConfig.getTspPass();
+                String encoding = DatatypeConverter.printBase64Binary(userPassword.getBytes(StandardCharsets.ISO_8859_1));
+                huc.setRequestProperty("Authorization", "Basic " + encoding);
+            }
+
+            huc.setRequestMethod("POST");
+            huc.setConnectTimeout(20000);
+            huc.setReadTimeout(20000);
+            huc.setDoOutput(true); // also sets method to POST.
+            huc.setRequestProperty("User-Agent", signatureConfig.getUserAgent());
+            huc.setRequestProperty("Content-Type", signatureConfig.isTspOldProtocol()
+                    ? "application/timestamp-request"
+                    : "application/timestamp-query"); // "; charset=ISO-8859-1");
+
+            OutputStream hucOut = huc.getOutputStream();
+            hucOut.write(encodedRequest);
+
+            // invoke TSP service
+            huc.connect();
+
+            int statusCode = huc.getResponseCode();
+            if (statusCode != 200) {
+                LOG.log(POILogger.ERROR, "Error contacting TSP server ", signatureConfig.getTspUrl() +
+                        ", had status code " + statusCode + "/" + huc.getResponseMessage());
+                throw new IOException("Error contacting TSP server " + signatureConfig.getTspUrl() +
+                        ", had status code " + statusCode + "/" + huc.getResponseMessage());
+            }
+
+            // HTTP input validation
+            contentType = huc.getHeaderField("Content-Type");
+            if (null == contentType) {
+                throw new RuntimeException("missing Content-Type header");
+            }
+
+            bos = new ByteArrayOutputStream();
+            IOUtils.copy(huc.getInputStream(), bos);
+            LOG.log(POILogger.DEBUG, "response content: ", HexDump.dump(bos.toByteArray(), 0, 0));
+        } finally {
+            huc.disconnect();
         }
 
-        huc.setRequestMethod("POST");
-        huc.setConnectTimeout(20000);
-        huc.setReadTimeout(20000);
-        huc.setDoOutput(true); // also sets method to POST.
-        huc.setRequestProperty("User-Agent", signatureConfig.getUserAgent());
-        huc.setRequestProperty("Content-Type", signatureConfig.isTspOldProtocol()
-            ? "application/timestamp-request"
-            : "application/timestamp-query"); // "; charset=ISO-8859-1");
-        
-        OutputStream hucOut = huc.getOutputStream();
-        hucOut.write(encodedRequest);
-        
-        // invoke TSP service
-        huc.connect();
-        
-        int statusCode = huc.getResponseCode();
-        if (statusCode != 200) {
-            LOG.log(POILogger.ERROR, "Error contacting TSP server ", signatureConfig.getTspUrl() +
-                    ", had status code " + statusCode + "/" + huc.getResponseMessage());
-            throw new IOException("Error contacting TSP server " + signatureConfig.getTspUrl() +
-                    ", had status code " + statusCode + "/" + huc.getResponseMessage());
-        }
-
-        // HTTP input validation
-        String contentType = huc.getHeaderField("Content-Type");
-        if (null == contentType) {
-            throw new RuntimeException("missing Content-Type header");
-        }
-        
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        IOUtils.copy(huc.getInputStream(), bos);
-        LOG.log(POILogger.DEBUG, "response content: ", HexDump.dump(bos.toByteArray(), 0, 0));
-        
         if (!contentType.startsWith(signatureConfig.isTspOldProtocol() 
             ? "application/timestamp-response"
             : "application/timestamp-reply"
