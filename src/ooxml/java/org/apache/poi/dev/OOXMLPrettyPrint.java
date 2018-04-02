@@ -84,25 +84,19 @@ public class OOXMLPrettyPrint {
 	}
 
     private static void handleFile(File file, File outFile) throws ZipException,
-            IOException, TransformerException, ParserConfigurationException {
+            IOException, ParserConfigurationException {
         System.out.println("Reading zip-file " + file + " and writing pretty-printed XML to " + outFile);
 
-        ZipFile zipFile = ZipHelper.openZipFile(file);
-		try {
-		    ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(outFile)));
-		    try {
-		        new OOXMLPrettyPrint().handle(zipFile, out);
-		    } finally {
-		        out.close();
-		    }
+		try (ZipFile zipFile = ZipHelper.openZipFile(file)) {
+			try (ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(outFile)))) {
+				new OOXMLPrettyPrint().handle(zipFile, out);
+			}
 		} finally {
-		    zipFile.close();
-
-		    System.out.println();
+			System.out.println();
 		}
     }
 
-	private void handle(ZipFile file, ZipOutputStream out) throws IOException, TransformerException {
+	private void handle(ZipFile file, ZipOutputStream out) throws IOException {
         Enumeration<? extends ZipEntry> entries = file.entries();
         while(entries.hasMoreElements()) {
             ZipEntry entry = entries.nextElement();
