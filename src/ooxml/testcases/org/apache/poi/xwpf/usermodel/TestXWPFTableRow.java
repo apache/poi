@@ -25,6 +25,7 @@ import java.io.IOException;
 
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.junit.Test;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHeightRule;
 
 public class TestXWPFTableRow {
 
@@ -136,5 +137,18 @@ public class TestXWPFTableRow {
         tr = table.getRow(2);
         isCantSplit = tr.isCantSplitRow();
         assertTrue(isCantSplit);
+    }
+
+    @Test
+    public void testBug62174() throws IOException {
+        try (XWPFDocument doc = XWPFTestDataSamples
+                .openSampleDocument("Bug60337.docx")) {
+            XWPFTable table = doc.getTables().get(0);
+            XWPFTableRow tr = table.getRow(0);
+
+            int twipsPerInch =  1440;
+            tr.setHeight(twipsPerInch/10);
+            tr.getCtRow().getTrPr().getTrHeightArray(0).setHRule(STHeightRule.EXACT);
+        }
     }
 }
