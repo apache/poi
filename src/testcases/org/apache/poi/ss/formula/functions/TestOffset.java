@@ -17,12 +17,18 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import java.io.IOException;
+
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.functions.Offset.LinearOffsetRange;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Workbook;
 
 /**
  * Tests for OFFSET function implementation
@@ -95,5 +101,21 @@ public final class TestOffset extends TestCase {
 		lor = lor.normaliseAndTranslate(16300);
 		assertTrue(lor.isOutOfBounds(0, 16383));
 		assertFalse(lor.isOutOfBounds(0, 65535));
+	}
+
+	public void testOffsetWithEmpty23Arguments() throws IOException {
+		try (Workbook workbook = new HSSFWorkbook()) {
+			Cell cell = workbook.createSheet().createRow(0).createCell(0);
+			cell.setCellFormula("OFFSET(B1,,)");
+
+			String value = "EXPECTED_VALUE";
+			Cell valueCell = cell.getRow().createCell(1);
+			valueCell.setCellValue(value);
+
+			workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
+
+			assertEquals(CellType.STRING, cell.getCachedFormulaResultType());
+			assertEquals(value, cell.getStringCellValue());
+		}
 	}
 }

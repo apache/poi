@@ -163,18 +163,20 @@ public final class Offset implements Function {
 
 	@SuppressWarnings("fallthrough")
 	public ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
-		if(args.length < 3 || args.length > 5) {
+		if(args.length < 1 || args.length > 5) {
 			return ErrorEval.VALUE_INVALID;
 		}
 
 		try {
 			BaseRef baseRef = evaluateBaseRef(args[0]);
-			int rowOffset = evaluateIntArg(args[1], srcCellRow, srcCellCol);
-			int columnOffset = evaluateIntArg(args[2], srcCellRow, srcCellCol);
+			// optional arguments
+			// If offsets are omitted, it is assumed to be 0.
+			int rowOffset = (args[1] instanceof MissingArgEval) ? 0 : evaluateIntArg(args[1], srcCellRow, srcCellCol);
+			int columnOffset = (args[2] instanceof MissingArgEval) ? 0 : evaluateIntArg(args[2], srcCellRow, srcCellCol);
 			int height = baseRef.getHeight();
 			int width = baseRef.getWidth();
 			// optional arguments
-			// If height or width is omitted, it is assumed to be the same height or width as reference.
+			// If height or width are omitted, it is assumed to be the same height or width as reference.
 			switch(args.length) {
 				case 5:
 					if(!(args[4] instanceof MissingArgEval)) {
