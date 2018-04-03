@@ -784,7 +784,7 @@ public class CellNumberFormatter extends CellFormatter {
             followWithGroupingSeparator = showGroupingSeparator && digit > 0 && digit % 3 == 0;
             boolean zeroStrip = false;
             if (resultCh != '0' || s.ch == '0' || s.ch == '?' || pos >= strip) {
-                zeroStrip = s.ch == '?' && pos < strip;
+                zeroStrip = s.ch == '?' && pos <= strip && resultCh == '0';
                 output.setCharAt(s.pos, (zeroStrip ? ' ' : resultCh));
                 lastOutputIntegerDigit = s;
             }

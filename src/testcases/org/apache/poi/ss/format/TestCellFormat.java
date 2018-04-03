@@ -919,6 +919,19 @@ public class TestCellFormat {
             cell.setCellValue(123456.6);
             //System.out.println(cf1.apply(cell).text);
             assertEquals("123456 3/5", cf1.apply(cell).text);
+            
+            cell.setCellValue(123456);
+            cf1 = CellFormat.getInstance("# ?/?");
+            assertEquals("123456    ", cf1.apply(cell).text);
+
+            // TODO expected:[ 3/5 ], actual:[ 3/ 5]  
+            //cell.setCellValue(123456.6);
+            //cf1 = CellFormat.getInstance("# ??/??");
+            //assertEquals("123456  3/5 ", cf1.apply(cell).text);
+
+            cell.setCellValue(123456.16);
+            cf1 = CellFormat.getInstance("# ??/??");
+            assertEquals("123456  4/25", cf1.apply(cell).text);
         } finally {
             wb.close();
         }
@@ -971,9 +984,8 @@ public class TestCellFormat {
         assertEquals(" $   - ", cfDft.apply(Double.valueOf(0)).text);
         // TODO Fix the exception this incorrectly triggers
         //assertEquals(" $   - ",  cfUS.apply(Double.valueOf(0)).text);
-        // TODO Fix these to not have an incorrect bonus 0 on the end 
-        //assertEquals(" "+pound+"   -  ", cfUK.apply(Double.valueOf(0)).text);
-        //assertEquals(" -    "+euro+"  ", cfFR.apply(Double.valueOf(0)).text);
+        assertEquals(" "+pound+"   -   ", cfUK.apply(Double.valueOf(0)).text);
+        assertEquals(" -     "+euro+"  ", cfFR.apply(Double.valueOf(0)).text);
     }
 
     @Test
