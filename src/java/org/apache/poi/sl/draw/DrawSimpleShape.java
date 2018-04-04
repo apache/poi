@@ -405,6 +405,9 @@ public class DrawSimpleShape extends DrawShape {
         }
 
         Rectangle2D anchor = getAnchor(graphics, sh);
+        if(anchor == null) {
+            return lst;
+        }
         for (Path p : geom) {
 
             double w = p.getW(), h = p.getH(), scaleX = Units.toPoints(1), scaleY = scaleX;

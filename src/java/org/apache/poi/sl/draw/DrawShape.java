@@ -66,7 +66,15 @@ public class DrawShape implements Drawable {
         if (tx == null) {
             tx = new AffineTransform();
         }
-        final Rectangle2D anchor = tx.createTransformedShape(ps.getAnchor()).getBounds2D();
+
+        // we saw one document failing here, probably the format is slightly broken, but
+        // maybe better to try to handle it more gracefully
+        java.awt.Shape transformedShape = tx.createTransformedShape(ps.getAnchor());
+        if(transformedShape == null) {
+            return;
+        }
+
+        final Rectangle2D anchor = transformedShape.getBounds2D();
 
         char cmds[] = isHSLF ? new char[]{ 'h','v','r' } : new char[]{ 'r','h','v' };
         for (char ch : cmds) {
@@ -184,7 +192,7 @@ public class DrawShape implements Drawable {
         }
 
         AffineTransform tx = (AffineTransform)graphics.getRenderingHint(Drawable.GROUP_TRANSFORM);
-        if(tx != null && !tx.isIdentity()) {
+        if(tx != null && !tx.isIdentity() && tx.createTransformedShape(anchor) != null) {
             anchor = tx.createTransformedShape(anchor).getBounds2D();
         }
         return anchor;
