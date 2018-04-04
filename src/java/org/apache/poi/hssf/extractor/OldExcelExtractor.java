@@ -114,8 +114,14 @@ public class OldExcelExtractor implements Closeable {
             : new BufferedInputStream(biffStream, 8);
 
         if (FileMagic.valueOf(bis) == FileMagic.OLE2) {
-            try (NPOIFSFileSystem poifs = new NPOIFSFileSystem(bis)) {
+            NPOIFSFileSystem poifs = new NPOIFSFileSystem(bis);
+            try {
                 open(poifs);
+                toClose = poifs; // Fixed by GR, we should not close it here
+            } finally {
+                if (toClose == null) {
+                    poifs.close();
+                }
             }
         } else {
             ris = new RecordInputStream(bis);

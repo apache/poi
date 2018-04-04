@@ -218,6 +218,22 @@ public final class TestOldExcelExtractor {
         }
     }
 
+    @Test
+    public void testFromInputStream() throws IOException {
+        for (String ver : new String[] {"4", "5", "95"}) {
+            String filename = "testEXCEL_"+ver+".xls";
+            File f = HSSFTestDataSamples.getSampleFile(filename);
+
+            try (InputStream stream = new FileInputStream(f)) {
+                OldExcelExtractor extractor = new OldExcelExtractor(stream);
+                String text = extractor.getText();
+                assertNotNull(text);
+                assertTrue(text.length() > 100);
+                extractor.close();
+            }
+        }
+    }
+
     @Test(expected=OfficeXmlFileException.class)
     public void testOpenInvalidFile1() throws IOException {
         // a file that exists, but is a different format
@@ -234,11 +250,8 @@ public final class TestOldExcelExtractor {
     @Test(expected=FileNotFoundException.class)
     public void testOpenInvalidFile3() throws IOException {
         // a POIFS file which is not a Workbook
-        InputStream is = POIDataSamples.getDocumentInstance().openResourceAsStream("47304.doc");
-        try {
+        try (InputStream is = POIDataSamples.getDocumentInstance().openResourceAsStream("47304.doc")) {
             new OldExcelExtractor(is).close();
-        } finally {
-            is.close();
         }
     }
 
@@ -252,65 +265,50 @@ public final class TestOldExcelExtractor {
     @Test
     public void testInputStream() throws IOException {
         File file = HSSFTestDataSamples.getSampleFile("testEXCEL_3.xls");
-        InputStream stream = new FileInputStream(file);
-        try {
+        try (InputStream stream = new FileInputStream(file)) {
             OldExcelExtractor extractor = new OldExcelExtractor(stream);
             String text = extractor.getText();
             assertNotNull(text);
             extractor.close();
-        } finally {
-            stream.close();
         }
     }
 
     @Test
     public void testInputStreamNPOIHeader() throws IOException {
         File file = HSSFTestDataSamples.getSampleFile("FormulaRefs.xls");
-        InputStream stream = new FileInputStream(file);
-        try {
+        try (InputStream stream = new FileInputStream(file)) {
             OldExcelExtractor extractor = new OldExcelExtractor(stream);
             extractor.close();
-        } finally {
-            stream.close();
         }
     }
 
     @Test
     public void testNPOIFSFileSystem() throws IOException {
         File file = HSSFTestDataSamples.getSampleFile("FormulaRefs.xls");
-        NPOIFSFileSystem fs = new NPOIFSFileSystem(file);
-        try {
+        try (NPOIFSFileSystem fs = new NPOIFSFileSystem(file)) {
             OldExcelExtractor extractor = new OldExcelExtractor(fs);
             extractor.close();
-        } finally {
-            fs.close();
         }
     }
 
     @Test
     public void testDirectoryNode() throws IOException {
         File file = HSSFTestDataSamples.getSampleFile("FormulaRefs.xls");
-        NPOIFSFileSystem fs = new NPOIFSFileSystem(file);
-        try {
+        try (NPOIFSFileSystem fs = new NPOIFSFileSystem(file)) {
             OldExcelExtractor extractor = new OldExcelExtractor(fs.getRoot());
             extractor.close();
-        } finally {
-            fs.close();
         }
     }
 
     @Test
     public void testDirectoryNodeInvalidFile() throws IOException {
         File file = POIDataSamples.getDocumentInstance().getFile("test.doc");
-        NPOIFSFileSystem fs = new NPOIFSFileSystem(file);
-        try {
+        try (NPOIFSFileSystem fs = new NPOIFSFileSystem(file)) {
             OldExcelExtractor extractor = new OldExcelExtractor(fs.getRoot());
             extractor.close();
             fail("Should catch exception here");
         } catch (FileNotFoundException e) {
             // expected here
-        } finally {
-            fs.close();
         }
     }
 
@@ -319,13 +317,10 @@ public final class TestOldExcelExtractor {
     public void testMainUsage() throws IOException {
         PrintStream save = System.err;
         try {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            try {
+            try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
                 PrintStream str = new PrintStream(out, false, "UTF-8");
                 System.setErr(str);
-                OldExcelExtractor.main(new String[] {});
-            } finally {
-                out.close();
+                OldExcelExtractor.main(new String[]{});
             }
         } finally {
             System.setErr(save);
