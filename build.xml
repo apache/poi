@@ -1193,6 +1193,10 @@ under the License.
     <target name="testcoveragereport" depends="jacocotask" description="create test-report" xmlns:jacoco="antlib:org.jacoco.ant" if="coverage.enabled">
         <delete dir="${coverage.dir}"/>
         <mkdir dir="${coverage.dir}"/>
+        <mkdir dir="${main.output.dir}"/>
+        <mkdir dir="${scratchpad.output.dir}"/>
+        <mkdir dir="${ooxml.output.dir}"/>
+        <mkdir dir="${excelant.output.dir}"/>
 
         <jacoco:report>
             <executiondata>
