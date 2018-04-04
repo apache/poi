@@ -132,7 +132,7 @@ public class ExtractorFactory {
         try {
             fs = new NPOIFSFileSystem(f);
             if (fs.getRoot().hasEntry(Decryptor.DEFAULT_POIFS_ENTRY)) {
-                return createEncyptedOOXMLExtractor(fs);
+                return createEncryptedOOXMLExtractor(fs);
             }
             POIOLE2TextExtractor extractor = createExtractor(fs);
             extractor.setFilesystem(fs);
@@ -161,7 +161,7 @@ public class ExtractorFactory {
         case OLE2:
             NPOIFSFileSystem fs = new NPOIFSFileSystem(is);
             boolean isEncrypted = fs.getRoot().hasEntry(Decryptor.DEFAULT_POIFS_ENTRY); 
-            return isEncrypted ? createEncyptedOOXMLExtractor(fs) : createExtractor(fs);
+            return isEncrypted ? createEncryptedOOXMLExtractor(fs) : createExtractor(fs);
         case OOXML:
             return createExtractor(OPCPackage.open(is));
         default:
@@ -403,7 +403,7 @@ public class ExtractorFactory {
         throw new IllegalStateException("Not yet supported");
     }
     
-    private static POIXMLTextExtractor createEncyptedOOXMLExtractor(NPOIFSFileSystem fs)
+    private static POIXMLTextExtractor createEncryptedOOXMLExtractor(NPOIFSFileSystem fs)
     throws IOException {
         String pass = Biff8EncryptionKey.getCurrentUserPassword();
         if (pass == null) {
@@ -425,6 +425,10 @@ public class ExtractorFactory {
             throw new EncryptedDocumentException(e);
         } finally {
             IOUtils.closeQuietly(is);
+
+            // also close the NPOIFSFileSystem here as we read all the data
+            // while decrypting
+            fs.close();
         }
     }
 }
