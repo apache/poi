@@ -66,7 +66,7 @@ public class XSLFFileHandler extends SlideShowHandler {
 	@Override
     @Test
 	public void test() throws Exception {
-        File file = new File("test-data/slideshow/ae.ac.uaeu.faculty_nafaachbili_GeomLec1.pptx");
+        File file = new File("test-data/slideshow/ca.ubc.cs.people_~emhill_presentations_HowWeRefactor.pptx");
 		try (InputStream stream = new FileInputStream(file)) {
 			handleFile(stream, file.getPath());
 		}

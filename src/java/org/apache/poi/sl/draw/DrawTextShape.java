@@ -45,6 +45,10 @@ public class DrawTextShape extends DrawSimpleShape {
         TextShape<?,?> s = getShape();
         
         Rectangle2D anchor = DrawShape.getAnchor(graphics, s);
+        if(anchor == null) {
+            return;
+        }
+
         Insets2D insets = s.getInsets();
         double x = anchor.getX() + insets.left;
         double y = anchor.getY();
