@@ -156,7 +156,7 @@ public class TestCellFormatPart extends CellFormatTestBase {
         Matcher m = NUMBER_EXTRACT_FMT.matcher(str);
         if (!m.find())
             throw new IllegalArgumentException(
-                    "Cannot find numer in \"" + str + "\"");
+                    "Cannot find number in \"" + str + "\"");
 
         StringBuilder sb = new StringBuilder();
         // The groups in the pattern are the parts of the number
