@@ -139,6 +139,7 @@ public final class FunctionEval {
         retval[73] = CalendarFieldFunction.SECOND;
         retval[74] = new Now();
         // 75: AREAS
+        retval[75] = new Areas();
         retval[76] = new Rows();
         retval[77] = new Columns();
         retval[FunctionID.OFFSET] = new Offset(); //nominally 78
