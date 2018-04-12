@@ -57,6 +57,7 @@ import org.junit.runners.Suite;
     TestValue.class,
     TestXYNumericFunction.class,
     TestAddress.class,
+    TestAreas.class,
     TestClean.class
 })
 public class AllIndividualFunctionEvaluationTests {
