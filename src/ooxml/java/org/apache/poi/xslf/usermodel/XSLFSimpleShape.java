@@ -36,7 +36,6 @@ import org.apache.poi.sl.usermodel.LineDecoration.DecorationShape;
 import org.apache.poi.sl.usermodel.LineDecoration.DecorationSize;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
-import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.sl.usermodel.SimpleShape;
 import org.apache.poi.sl.usermodel.StrokeStyle;
@@ -980,11 +979,6 @@ public abstract class XSLFSimpleShape extends XSLFShape
         return ds; 
     }
 
-    public boolean isPlaceholder() {
-        CTPlaceholder ph = getCTPlaceholder();
-        return ph != null;
-    }
-
     @Override
     public Guide getAdjustValue(String name) {
         XSLFGeometryProperties gp = XSLFPropertiesDelegate.getGeometryDelegate(getShapeProperties());
@@ -1103,11 +1097,6 @@ public abstract class XSLFSimpleShape extends XSLFShape
                 setLineColor((Color)st);
             }
         }
-    }
-    
-    @Override
-    public void setPlaceholder(Placeholder placeholder) {
-        super.setPlaceholder(placeholder);
     }
     
     @Override

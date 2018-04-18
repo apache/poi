@@ -275,4 +275,11 @@ public final class HeadersFooters {
     private void setFlag(int type, boolean flag) {
         _container.getHeadersFootersAtom().setFlag(type, flag);
     }
+
+    /**
+     * @return true, if this is a ppt 2007 document and header/footer are stored as placeholder shapes
+     */
+    public boolean isPpt2007() {
+        return _ppt2007;
+    }
 }

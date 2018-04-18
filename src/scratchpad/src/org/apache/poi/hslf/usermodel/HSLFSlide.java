@@ -26,12 +26,12 @@ import org.apache.poi.ddf.EscherDgRecord;
 import org.apache.poi.ddf.EscherDggRecord;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.hslf.exceptions.HSLFException;
-import org.apache.poi.hslf.model.Comment;
 import org.apache.poi.hslf.model.HeadersFooters;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
 import org.apache.poi.hslf.record.Comment2000;
 import org.apache.poi.hslf.record.EscherTextboxWrapper;
 import org.apache.poi.hslf.record.HeadersFootersContainer;
+import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordContainer;
 import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.hslf.record.SSSlideInfoAtom;
@@ -87,8 +87,6 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
 	        if (_paragraphs.isEmpty()) {
 	            throw new HSLFException("No text records found for slide");
 	        }
-		} else {
-			// No text on the slide, must just be pictures
 		}
 
 		// Grab text from slide's PPDrawing
@@ -366,8 +364,9 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
      */
      @Override
     public HSLFBackground getBackground() {
-        if(getFollowMasterBackground()) {
-            return getMasterSheet().getBackground();
+        if (getFollowMasterBackground()) {
+            final HSLFMasterSheet ms = getMasterSheet();
+            return (ms == null) ? null : ms.getBackground();
         }
         return super.getBackground();
     }
@@ -377,10 +376,19 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
      */
     @Override
     public ColorSchemeAtom getColorScheme() {
-        if(getFollowMasterScheme()){
-            return getMasterSheet().getColorScheme();
+        if (getFollowMasterScheme()) {
+            final HSLFMasterSheet ms = getMasterSheet();
+            return (ms == null) ? null : ms.getColorScheme();
         }
         return super.getColorScheme();
+    }
+
+    private static RecordContainer selectContainer(final RecordContainer root, final int index, final RecordTypes... path) {
+        if (root == null || index >= path.length) {
+            return root;
+        }
+        final RecordContainer newRoot = (RecordContainer) root.findFirstOfType(path[index].typeID);
+        return selectContainer(newRoot, index+1, path);
     }
 
     /**
@@ -389,51 +397,23 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
      *  PPT 2003 files. Doesn't work for PPT 97
      *  ones, as they do their comments oddly.
      */
-    public Comment[] getComments() {
+    public List<HSLFComment> getComments() {
+        final List<HSLFComment> comments = new ArrayList<>();
     	// If there are any, they're in
     	//  ProgTags -> ProgBinaryTag -> BinaryTagData
-    	RecordContainer progTags = (RecordContainer)
-    			getSheetContainer().findFirstOfType(
-    						RecordTypes.ProgTags.typeID
-    	);
-    	if(progTags != null) {
-    		RecordContainer progBinaryTag = (RecordContainer)
-    			progTags.findFirstOfType(
-    					RecordTypes.ProgBinaryTag.typeID
-    		);
-    		if(progBinaryTag != null) {
-    			RecordContainer binaryTags = (RecordContainer)
-    				progBinaryTag.findFirstOfType(
-    						RecordTypes.BinaryTagData.typeID
-    			);
-    			if(binaryTags != null) {
-    				// This is where they'll be
-    				int count = 0;
-    				for(int i=0; i<binaryTags.getChildRecords().length; i++) {
-    					if(binaryTags.getChildRecords()[i] instanceof Comment2000) {
-    						count++;
-    					}
-    				}
+        final RecordContainer binaryTags =
+                selectContainer(getSheetContainer(), 0,
+                        RecordTypes.ProgTags, RecordTypes.ProgBinaryTag, RecordTypes.BinaryTagData);
 
-    				// Now build
-    				Comment[] comments = new Comment[count];
-    				count = 0;
-    				for(int i=0; i<binaryTags.getChildRecords().length; i++) {
-    					if(binaryTags.getChildRecords()[i] instanceof Comment2000) {
-    						comments[i] = new Comment(
-    								(Comment2000)binaryTags.getChildRecords()[i]
-    						);
-    						count++;
-    					}
-    				}
+        if (binaryTags != null) {
+            for (final Record record : binaryTags.getChildRecords()) {
+                if (record instanceof Comment2000) {
+                    comments.add(new HSLFComment((Comment2000)record));
+                }
+            }
+        }
 
-    				return comments;
-    			}
-    		}
-    	}
-
-    	// None found
-    	return new Comment[0];
+    	return comments;
     }
 
     /**
@@ -478,9 +458,7 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
 	public boolean isHidden() {
 		SSSlideInfoAtom slideInfo =
 			(SSSlideInfoAtom)getSlideRecord().findFirstOfType(RecordTypes.SSSlideInfoAtom.typeID);
-		return (slideInfo == null)
-			? false
-			: slideInfo.getEffectTransitionFlagByBit(SSSlideInfoAtom.HIDDEN_BIT);
+		return (slideInfo != null) && slideInfo.getEffectTransitionFlagByBit(SSSlideInfoAtom.HIDDEN_BIT);
 	}
 
     @Override
@@ -505,25 +483,22 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
     }
 
     @Override
-    public boolean getDisplayPlaceholder(Placeholder placeholder) {
-        HeadersFooters hf = getHeadersFooters();
-        SlideLayoutType slt =  getSlideRecord().getSlideAtom().getSSlideLayoutAtom().getGeometryType();
-        boolean isTitle =
+    public boolean getDisplayPlaceholder(final Placeholder placeholder) {
+        final HeadersFooters hf = getHeadersFooters();
+        final SlideLayoutType slt = getSlideRecord().getSlideAtom().getSSlideLayoutAtom().getGeometryType();
+        final boolean isTitle =
             (slt == SlideLayoutType.TITLE_SLIDE || slt == SlideLayoutType.TITLE_ONLY || slt == SlideLayoutType.MASTER_TITLE);
-        if (hf != null) {
-            switch (placeholder) {
-            case DATETIME:
-                return hf.isDateTimeVisible() && !isTitle;
-            case SLIDE_NUMBER:
-                return hf.isSlideNumberVisible() && !isTitle;
-            case HEADER:
-                return hf.isHeaderVisible() && !isTitle;
-            case FOOTER:
-                return hf.isFooterVisible() && !isTitle;
-            default:
-                break;    
-            }
+        switch (placeholder) {
+        case DATETIME:
+            return hf.isDateTimeVisible() && !isTitle;
+        case SLIDE_NUMBER:
+            return hf.isSlideNumberVisible() && !isTitle;
+        case HEADER:
+            return hf.isHeaderVisible() && !isTitle;
+        case FOOTER:
+            return hf.isFooterVisible() && !isTitle;
+        default:
+            return false;
         }
-        return false;
     }
 }

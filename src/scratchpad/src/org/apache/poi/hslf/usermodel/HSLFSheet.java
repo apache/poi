@@ -28,8 +28,10 @@ import org.apache.poi.ddf.EscherDgRecord;
 import org.apache.poi.ddf.EscherDggRecord;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.hslf.exceptions.HSLFException;
+import org.apache.poi.hslf.model.HeadersFooters;
 import org.apache.poi.hslf.record.CString;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
+import org.apache.poi.hslf.record.HeadersFootersContainer;
 import org.apache.poi.hslf.record.PPDrawing;
 import org.apache.poi.hslf.record.RecordContainer;
 import org.apache.poi.hslf.record.RecordTypes;
@@ -452,5 +454,21 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
         s.setAnchor(new Rectangle2D.Double(0, 0, 100, 100));
         addShape(s);
         return s;
+    }
+    
+    /**
+     * Header / Footer settings for this slide.
+     *
+     * @return Header / Footer settings for this slide
+     */
+    public HeadersFooters getHeadersFooters() {
+        return new HeadersFooters(this, HeadersFootersContainer.SlideHeadersFootersContainer);
+    }
+
+
+    @Override
+    public HSLFPlaceholderDetails getPlaceholderDetails(Placeholder placeholder) {
+        final HSLFSimpleShape ph = getPlaceholder(placeholder);
+        return (ph == null) ? null : new HSLFShapePlaceholderDetails(ph);
     }
 }

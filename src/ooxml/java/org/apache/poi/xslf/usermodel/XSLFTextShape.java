@@ -590,13 +590,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
     }
 
     public Placeholder getTextType(){
-        CTPlaceholder ph = getCTPlaceholder();
-        if (ph == null) {
-            return null;
-        }
-
-        int val = ph.getType().intValue();
-        return Placeholder.lookupOoxml(val);
+        return getPlaceholder();
     }
 
     @Override

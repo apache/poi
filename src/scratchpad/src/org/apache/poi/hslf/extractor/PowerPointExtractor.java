@@ -20,47 +20,36 @@ package org.apache.poi.hslf.extractor;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.poi.POIOLE2TextExtractor;
-import org.apache.poi.hslf.model.Comment;
-import org.apache.poi.hslf.model.HSLFMetroShape;
-import org.apache.poi.hslf.model.HeadersFooters;
-import org.apache.poi.hslf.usermodel.HSLFMasterSheet;
-import org.apache.poi.hslf.usermodel.HSLFNotes;
+import org.apache.poi.hslf.usermodel.HSLFObjectShape;
 import org.apache.poi.hslf.usermodel.HSLFShape;
-import org.apache.poi.hslf.usermodel.HSLFSlide;
-import org.apache.poi.hslf.usermodel.HSLFSlideMaster;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
-import org.apache.poi.hslf.usermodel.HSLFTable;
-import org.apache.poi.hslf.usermodel.HSLFTableCell;
 import org.apache.poi.hslf.usermodel.HSLFTextParagraph;
-import org.apache.poi.hslf.usermodel.HSLFTextShape;
-import org.apache.poi.hslf.usermodel.HSLFObjectShape;
+import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.apache.poi.sl.extractor.SlideShowExtractor;
+import org.apache.poi.sl.usermodel.SlideShowFactory;
 
 /**
  * This class can be used to extract text from a PowerPoint file. Can optionally
  * also get the notes from one.
+ *
+ * @deprecated in POI 4.0.0, use {@link SlideShowExtractor} instead
  */
+@SuppressWarnings("WeakerAccess")
+@Deprecated
 public final class PowerPointExtractor extends POIOLE2TextExtractor {
-   private static final POILogger LOG = POILogFactory.getLogger(PowerPointExtractor.class);
-    
-   private final HSLFSlideShow _show;
-   private final List<HSLFSlide> _slides;
+   	private final SlideShowExtractor<HSLFShape,HSLFTextParagraph> delegate;
 
-   private boolean _slidesByDefault = true;
-   private boolean _notesByDefault;
-   private boolean _commentsByDefault;
-   private boolean _masterByDefault;
+	private boolean slidesByDefault = true;
+	private boolean notesByDefault;
+	private boolean commentsByDefault;
+	private boolean masterByDefault;
 
 	/**
 	 * Basic extractor. Returns all the text, and optionally all the notes
@@ -92,13 +81,19 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 		ppe.close();
 	}
 
+	public PowerPointExtractor(final HSLFSlideShow slideShow) {
+		super(slideShow.getSlideShowImpl());
+		setFilesystem(slideShow);
+		delegate = new SlideShowExtractor<>(slideShow);
+	}
+
 	/**
 	 * Creates a PowerPointExtractor, from a file
 	 *
 	 * @param fileName The name of the file to extract from
 	 */
 	public PowerPointExtractor(String fileName) throws IOException {
-		this(new NPOIFSFileSystem(new File(fileName)));
+		this((HSLFSlideShow)SlideShowFactory.create(new File(fileName), Biff8EncryptionKey.getCurrentUserPassword(), true));
 	}
 
 	/**
@@ -107,7 +102,7 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 	 * @param iStream The input stream containing the PowerPoint document
 	 */
 	public PowerPointExtractor(InputStream iStream) throws IOException {
-		this(new POIFSFileSystem(iStream));
+		this((HSLFSlideShow)SlideShowFactory.create(iStream, Biff8EncryptionKey.getCurrentUserPassword()));
 	}
 
 	/**
@@ -116,7 +111,7 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 	 * @param fs the POIFSFileSystem containing the PowerPoint document
 	 */
 	public PowerPointExtractor(POIFSFileSystem fs) throws IOException {
-		this(fs.getRoot());
+		this((HSLFSlideShow)SlideShowFactory.create(fs, Biff8EncryptionKey.getCurrentUserPassword()));
 	}
 
    /**
@@ -125,8 +120,7 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
     * @param fs the NPOIFSFileSystem containing the PowerPoint document
     */
    public PowerPointExtractor(NPOIFSFileSystem fs) throws IOException {
-      this(fs.getRoot());
-      setFilesystem(fs);
+	   this((HSLFSlideShow)SlideShowFactory.create(fs, Biff8EncryptionKey.getCurrentUserPassword()));
    }
 
    /**
@@ -136,7 +130,7 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
     * @param dir the POIFS Directory containing the PowerPoint document
     */
    public PowerPointExtractor(DirectoryNode dir) throws IOException {
-      this(new HSLFSlideShowImpl(dir));
+      this(new HSLFSlideShow(dir));
    }
 
 	/**
@@ -145,37 +139,39 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 	 * @param ss the HSLFSlideShow to extract text from
 	 */
 	public PowerPointExtractor(HSLFSlideShowImpl ss) {
-		super(ss);
-		_show = new HSLFSlideShow(ss);
-		_slides = _show.getSlides();
+		this(new HSLFSlideShow(ss));
 	}
 
 	/**
 	 * Should a call to getText() return slide text? Default is yes
 	 */
-	public void setSlidesByDefault(boolean slidesByDefault) {
-		this._slidesByDefault = slidesByDefault;
+	public void setSlidesByDefault(final boolean slidesByDefault) {
+		this.slidesByDefault = slidesByDefault;
+		delegate.setSlidesByDefault(slidesByDefault);
 	}
 
 	/**
 	 * Should a call to getText() return notes text? Default is no
 	 */
-	public void setNotesByDefault(boolean notesByDefault) {
-		this._notesByDefault = notesByDefault;
+	public void setNotesByDefault(final boolean notesByDefault) {
+		this.notesByDefault = notesByDefault;
+		delegate.setNotesByDefault(notesByDefault);
 	}
 
 	/**
 	 * Should a call to getText() return comments text? Default is no
 	 */
-	public void setCommentsByDefault(boolean commentsByDefault) {
-		this._commentsByDefault = commentsByDefault;
+	public void setCommentsByDefault(final boolean commentsByDefault) {
+		this.commentsByDefault = commentsByDefault;
+		delegate.setCommentsByDefault(commentsByDefault);
 	}
 
     /**
      * Should a call to getText() return text from master? Default is no
      */
-    public void setMasterByDefault(boolean masterByDefault) {
-        this._masterByDefault = masterByDefault;
+    public void setMasterByDefault(final boolean masterByDefault) {
+    	this.masterByDefault = masterByDefault;
+    	delegate.setMasterByDefault(masterByDefault);
     }
 
 	/**
@@ -184,28 +180,7 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 	 */
 	@Override
     public String getText() {
-		return getText(_slidesByDefault, _notesByDefault, _commentsByDefault, _masterByDefault);
-	}
-
-	/**
-	 * Fetches all the notes text from the slideshow, but not the slide text
-	 */
-	public String getNotes() {
-		return getText(false, true);
-	}
-
-	public List<HSLFObjectShape> getOLEShapes() {
-		List<HSLFObjectShape> list = new ArrayList<>();
-
-		for (HSLFSlide slide : _slides) {
-			for (HSLFShape shape : slide.getShapes()) {
-				if (shape instanceof HSLFObjectShape) {
-					list.add((HSLFObjectShape) shape);
-				}
-			}
-		}
-
-		return list;
+		return delegate.getText();
 	}
 
 	/**
@@ -217,159 +192,33 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 	 * @param getNoteText fetch note text
 	 */
 	public String getText(boolean getSlideText, boolean getNoteText) {
-		return getText(getSlideText, getNoteText, _commentsByDefault, _masterByDefault);
+		return getText(getSlideText,getNoteText,commentsByDefault,masterByDefault);
 	}
 
 	public String getText(boolean getSlideText, boolean getNoteText, boolean getCommentText, boolean getMasterText) {
-		StringBuffer ret = new StringBuffer();
-
-		if (getSlideText) {
-            if (getMasterText) {
-                for (HSLFSlideMaster master : _show.getSlideMasters()) {
-                    for(HSLFShape sh : master.getShapes()){
-                        if(sh instanceof HSLFTextShape){
-                            HSLFTextShape hsh = (HSLFTextShape)sh;
-                            final String text = hsh.getText();
-                            if (text == null || text.isEmpty() || "*".equals(text)) {
-                                continue;
-                            }
-                            
-                            if (HSLFMasterSheet.isPlaceholder(sh)) {
-                                // check for metro shape of complex placeholder
-                                boolean isMetro = new HSLFMetroShape<HSLFShape>(sh).hasMetroBlob();
-                                
-                                if (!isMetro) {
-                                    // don't bother about boiler plate text on master sheets
-                                    LOG.log(POILogger.INFO, "Ignoring boiler plate (placeholder) text on slide master:", text);
-                                    continue;
-                                }
-                            }
-                            
-                            ret.append(text);
-                            if (!text.endsWith("\n")) {
-                                ret.append("\n");
-                            }
-                        }
-                    }
-                }
-            }
-
-            for (HSLFSlide slide : _slides) {
-                String headerText = "";
-                String footerText = "";
-                HeadersFooters hf = slide.getHeadersFooters();
-                if (hf != null) {
-                    if (hf.isHeaderVisible()) {
-                        headerText = safeLine(hf.getHeaderText());
-                    }
-                    if (hf.isFooterVisible()) {
-                        footerText = safeLine(hf.getFooterText());
-                    }
-                }
-                
-                // Slide header, if set
-                ret.append(headerText);
-
-                // Slide text
-                textRunsToText(ret, slide.getTextParagraphs());
-
-                // Table text
-                for (HSLFShape shape : slide.getShapes()){
-                    if (shape instanceof HSLFTable){
-                        extractTableText(ret, (HSLFTable)shape);
-                    }
-                }
-                // Slide footer, if set
-                ret.append(footerText);
-
-				// Comments, if requested and present
-				if (getCommentText) {
-					for (Comment comment : slide.getComments()) {
-						ret.append(comment.getAuthor() + " - " + comment.getText() + "\n");
-					}
-				}
-			}
-			if (getNoteText) {
-				ret.append('\n');
-			}
+		delegate.setSlidesByDefault(getSlideText);
+		delegate.setNotesByDefault(getNoteText);
+		delegate.setCommentsByDefault(getCommentText);
+		delegate.setMasterByDefault(getMasterText);
+		try {
+			return delegate.getText();
+		} finally {
+			delegate.setSlidesByDefault(slidesByDefault);
+			delegate.setNotesByDefault(notesByDefault);
+			delegate.setCommentsByDefault(commentsByDefault);
+			delegate.setMasterByDefault(masterByDefault);
 		}
-
-		if (getNoteText) {
-			// Not currently using _notes, as that can have the notes of
-			// master sheets in. Grab Slide list, then work from there,
-			// but ensure no duplicates
-			Set<Integer> seenNotes = new HashSet<>();
-            String headerText = "";
-            String footerText = "";
-			HeadersFooters hf = _show.getNotesHeadersFooters();
-			if (hf != null) {
-			    if (hf.isHeaderVisible()) {
-			        headerText = safeLine(hf.getHeaderText());
-			    }
-			    if (hf.isFooterVisible()) {
-                    footerText = safeLine(hf.getFooterText());
-			    }
-			}
-			
-
-			for (HSLFSlide slide : _slides) {
-				HSLFNotes notes = slide.getNotes();
-				if (notes == null) {
-					continue;
-				}
-				Integer id = Integer.valueOf(notes._getSheetNumber());
-				if (seenNotes.contains(id)) {
-					continue;
-				}
-				seenNotes.add(id);
-
-				// Repeat the Notes header, if set
-				ret.append(headerText);
-
-				// Notes text
-				textRunsToText(ret, notes.getTextParagraphs());
-
-				// Repeat the notes footer, if set
-				ret.append(footerText);
-			}
-		}
-
-		return ret.toString();
-	}
-	
-	private static String safeLine(String text) {
-	    return (text == null) ? "" : (text+'\n');
 	}
 
-    private void extractTableText(StringBuffer ret, HSLFTable table) {
-        final int nrows = table.getNumberOfRows();
-        final int ncols = table.getNumberOfColumns();
-        for (int row = 0; row < nrows; row++){
-            for (int col = 0; col < ncols; col++){
-                HSLFTableCell cell = table.getCell(row, col);
-                //defensive null checks; don't know if they're necessary
-                if (cell != null){
-                    String txt = cell.getText();
-                    txt = (txt == null) ? "" : txt;
-                    ret.append(txt);
-                    if (col < ncols-1){
-                        ret.append('\t');
-                    }
-                }
-            }
-            ret.append('\n');
-        }
-    }
-    private void textRunsToText(StringBuffer ret, List<List<HSLFTextParagraph>> paragraphs) {
-        if (paragraphs==null) {
-            return;
-        }
+	/**
+	 * Fetches all the notes text from the slideshow, but not the slide text
+	 */
+	public String getNotes() {
+		return getText(false, true, false, false);
+	}
 
-        for (List<HSLFTextParagraph> lp : paragraphs) {
-            ret.append(HSLFTextParagraph.getText(lp));
-            if (ret.length() > 0 && ret.charAt(ret.length()-1) != '\n') {
-                ret.append('\n');
-            }
-        }
-    }
+	@SuppressWarnings("unchecked")
+	public List<HSLFObjectShape> getOLEShapes() {
+		return (List<HSLFObjectShape>)delegate.getOLEShapes();
+	}
 }

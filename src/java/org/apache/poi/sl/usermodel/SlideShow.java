@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
+import org.apache.poi.POITextExtractor;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 
 public interface SlideShow<
@@ -118,4 +119,11 @@ public interface SlideShow<
      *             OutputStream
      */
     void write(OutputStream out) throws IOException;
+
+    /**
+     * @return an extractor for the slideshow metadata
+     * 
+     * @since POI 4.0.0
+     */
+    POITextExtractor getMetadataTextExtractor();
 }

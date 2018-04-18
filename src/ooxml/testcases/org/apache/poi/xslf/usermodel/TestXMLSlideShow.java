@@ -19,6 +19,7 @@ package org.apache.poi.xslf.usermodel;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -51,7 +52,7 @@ public class TestXMLSlideShow extends BaseTestSlideShow {
    }
    
    @After
-   public void tearDown() throws IOException {
+   public void tearDown() {
        pack.revert();
    }
 
@@ -149,7 +150,7 @@ public class TestXMLSlideShow extends BaseTestSlideShow {
       assertEquals(null, xml.getCommentAuthors());
       
       for (XSLFSlide slide : xml.getSlides()) {
-         assertEquals(null, slide.getComments());
+         assertTrue(slide.getComments().isEmpty());
       }
       
       // Try another with comments
@@ -166,17 +167,18 @@ public class TestXMLSlideShow extends BaseTestSlideShow {
          i++;
          
          if(i == 0) {
-            assertNotNull(slide.getComments());
-            assertEquals(1, slide.getComments().getNumberOfComments());
-            assertEquals("testdoc", slide.getComments().getCommentAt(0).getText());
-            assertEquals(0, slide.getComments().getCommentAt(0).getAuthorId());
+            assertNotNull(slide.getCommentsPart());
+            assertEquals(1, slide.getCommentsPart().getNumberOfComments());
+            assertEquals("testdoc", slide.getCommentsPart().getCommentAt(0).getText());
+            assertEquals(0, slide.getCommentsPart().getCommentAt(0).getAuthorId());
          } else if (i == 1) {
             assertNotNull(slide.getComments());
-            assertEquals(1, slide.getComments().getNumberOfComments());
-            assertEquals("test phrase", slide.getComments().getCommentAt(0).getText());
-            assertEquals(0, slide.getComments().getCommentAt(0).getAuthorId());
+            assertEquals(1, slide.getCommentsPart().getNumberOfComments());
+            assertEquals("test phrase", slide.getCommentsPart().getCommentAt(0).getText());
+            assertEquals(0, slide.getCommentsPart().getCommentAt(0).getAuthorId());
          } else {
-            assertEquals(null, slide.getComments());
+            assertNull(slide.getCommentsPart());
+            assertTrue(slide.getComments().isEmpty());
          }
       }
       
@@ -188,7 +190,7 @@ public class TestXMLSlideShow extends BaseTestSlideShow {
        return reopen((XMLSlideShow)show);
    }
 
-   public static XMLSlideShow reopen(XMLSlideShow show) {
+   private static XMLSlideShow reopen(XMLSlideShow show) {
        try {
            BufAccessBAOS bos = new BufAccessBAOS();
            show.write(bos);
@@ -200,7 +202,7 @@ public class TestXMLSlideShow extends BaseTestSlideShow {
    }
 
    private static class BufAccessBAOS extends ByteArrayOutputStream {
-       public byte[] getBuf() {
+       byte[] getBuf() {
            return buf;
        }
    }

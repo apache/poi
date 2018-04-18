@@ -18,9 +18,9 @@
 package org.apache.poi.hslf.record;
 
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Tests that RecordTypes returns the right records and classes when asked
@@ -42,20 +42,15 @@ public final class TestRecordTypes {
 
     @Test
 	public void testPPTClassLookups() {
-		assertEquals(Slide.class, RecordTypes.Slide.handlingClass);
-		assertEquals(TextCharsAtom.class, RecordTypes.TextCharsAtom.handlingClass);
-		assertEquals(TextBytesAtom.class, RecordTypes.TextBytesAtom.handlingClass);
-		assertEquals(SlideListWithText.class, RecordTypes.SlideListWithText.handlingClass);
-
 		// If this record is ever implemented, change to one that isn't!
 		// This is checking the "unhandled default" stuff works
-		assertEquals(UnknownRecordPlaceholder.class, RecordTypes.forTypeID(-10).handlingClass);
+		assertEquals(RecordTypes.UnknownRecordPlaceholder, RecordTypes.forTypeID(-10));
 	}
 
     @Test
     public void testEscherClassLookups() {
 		// Should all come back with null, as DDF handles them
-		assertEquals(null, RecordTypes.EscherDggContainer.handlingClass);
-		assertEquals(null, RecordTypes.EscherBStoreContainer.handlingClass);
+		assertEquals(null, RecordTypes.EscherDggContainer.recordConstructor);
+		assertEquals(null, RecordTypes.EscherBStoreContainer.recordConstructor);
 	}
 }

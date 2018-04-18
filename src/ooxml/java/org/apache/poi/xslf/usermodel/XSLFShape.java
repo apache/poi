@@ -38,7 +38,9 @@ import org.apache.poi.sl.usermodel.PaintStyle.GradientPaint;
 import org.apache.poi.sl.usermodel.PaintStyle.TexturePaint;
 import org.apache.poi.sl.usermodel.PlaceableShape;
 import org.apache.poi.sl.usermodel.Placeholder;
+import org.apache.poi.sl.usermodel.PlaceholderDetails;
 import org.apache.poi.sl.usermodel.Shape;
+import org.apache.poi.sl.usermodel.SimpleShape;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xslf.model.PropertyFetcher;
@@ -58,7 +60,6 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillPropertie
 import org.openxmlformats.schemas.drawingml.x2006.main.CTStyleMatrix;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTStyleMatrixReference;
 import org.openxmlformats.schemas.drawingml.x2006.main.STPathShadeType;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTApplicationNonVisualDrawingProps;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTBackgroundProperties;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
@@ -69,7 +70,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
  */
 @Beta
 public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
-    protected static final String PML_NS = "http://schemas.openxmlformats.org/presentationml/2006/main";
+    static final String PML_NS = "http://schemas.openxmlformats.org/presentationml/2006/main";
     
     private final XmlObject _shape;
     private final XSLFSheet _sheet;
@@ -77,7 +78,6 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
 
     private CTShapeStyle _spStyle;
     private CTNonVisualDrawingProps _nvPr;
-    private CTPlaceholder _ph;
 
     protected XSLFShape(XmlObject shape, XSLFSheet sheet) {
         _shape = shape;
@@ -238,45 +238,32 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
         cur.dispose();
         return child;
     }
-    
-    protected CTPlaceholder getCTPlaceholder() {
-        if (_ph == null) {
-            String xquery = "declare namespace p='"+PML_NS+"' .//*/p:nvPr/p:ph";
-            _ph = selectProperty(CTPlaceholder.class, xquery);
-        }
-        return _ph;
+
+    public boolean isPlaceholder() {
+        return getPlaceholderDetails().getCTPlaceholder(false) != null;
     }
 
+    /**
+     * @see PlaceholderDetails#getPlaceholder()
+     */
     public Placeholder getPlaceholder() {
-        CTPlaceholder ph = getCTPlaceholder();
-        if (ph == null || !(ph.isSetType() || ph.isSetIdx())) {
-            return null;
-        }
-        return Placeholder.lookupOoxml(ph.getType().intValue());
+        return getPlaceholderDetails().getPlaceholder();
     }
     
     /**
-     * Specifies that the corresponding shape should be represented by the generating application
-     * as a placeholder. When a shape is considered a placeholder by the generating application
-     * it can have special properties to alert the user that they may enter content into the shape.
-     * Different types of placeholders are allowed and can be specified by using the placeholder
-     * type attribute for this element
-     *
-     * @param placeholder The shape to use as placeholder or null if no placeholder should be set.
+     * @see PlaceholderDetails#setPlaceholder(Placeholder)
      */
-    protected void setPlaceholder(Placeholder placeholder) {
-        String xquery = "declare namespace p='"+PML_NS+"' .//*/p:nvPr";
-        CTApplicationNonVisualDrawingProps nv = selectProperty(CTApplicationNonVisualDrawingProps.class, xquery);
-        if (nv == null) return;
-        if(placeholder == null) {
-            if (nv.isSetPh()) nv.unsetPh();
-            _ph = null;
-        } else {
-            nv.addNewPh().setType(STPlaceholderType.Enum.forInt(placeholder.ooxmlId));
-        }
+    public void setPlaceholder(final Placeholder placeholder) {
+        getPlaceholderDetails().setPlaceholder(placeholder);
     }
-    
-    
+
+    /**
+     * @see SimpleShape#getPlaceholderDetails()
+     */
+    public XSLFPlaceholderDetails getPlaceholderDetails() {
+        return new XSLFPlaceholderDetails(this);
+    }
+
     /**
      * As there's no xmlbeans hierarchy, but XSLF works with subclassing, not all
      * child classes work with a {@link CTShape} object, but often contain the same
@@ -315,7 +302,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
             return true;
         }
 
-        CTPlaceholder ph = getCTPlaceholder();
+        final CTPlaceholder ph = getPlaceholderDetails().getCTPlaceholder(false);
         if (ph == null) {
             return false;
         }

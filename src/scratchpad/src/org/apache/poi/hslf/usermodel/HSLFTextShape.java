@@ -272,7 +272,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
         }
 
         final String text = ((tba != null) ? tba.getText() : tca.getText());
-        
+
         StyleTextPropAtom sta = (StyleTextPropAtom)_txtbox.findFirstOfType(StyleTextPropAtom._type);
         TextPropCollection paraStyle = null, charStyle = null;
         if (sta == null) {
@@ -305,7 +305,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
             htp.setParagraphStyle(paraStyle);
             htp.setParentShape(this);
             _paragraphs.add(htp);
-    
+
             HSLFTextRun htr = new HSLFTextRun(htp);
             htr.setCharacterStyle(charStyle);
             htr.setText(text);
@@ -317,7 +317,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
     public Rectangle2D resizeToFitText() {
         return resizeToFitText(null);
     }
-    
+
     @Override
     public Rectangle2D resizeToFitText(Graphics2D graphics) {
         Rectangle2D anchor = getAnchor();
@@ -649,7 +649,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
             } else {
                 _paragraphs = pList;
             }
-        
+
             if (_paragraphs.isEmpty()) {
                 LOG.log(POILogger.WARN, "TextRecord didn't contained any text lines");
             }
@@ -701,18 +701,13 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
 
     @Override
     public boolean isPlaceholder() {
-        OEPlaceholderAtom oep = getPlaceholderAtom();
-        if (oep != null) {
-            return true;
-        }
-
-        //special case for files saved in Office 2007
-        RoundTripHFPlaceholder12 hldr = getHFPlaceholderAtom();
-        if (hldr != null) {
-            return true;
-        }
-
-        return false;
+        return
+            ((getPlaceholderAtom() != null) ||
+            //special case for files saved in Office 2007
+            (getHFPlaceholderAtom() != null)) &&
+            // check for metro shape of complex placeholder
+            (!new HSLFMetroShape<HSLFShape>(this).hasMetroBlob())
+        ;
     }
 
 
@@ -738,7 +733,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
     public double getTextHeight() {
         return getTextHeight(null);
     }
-    
+
     @Override
     public double getTextHeight(Graphics2D graphics) {
         DrawFactory drawFact = DrawFactory.getInstance(graphics);

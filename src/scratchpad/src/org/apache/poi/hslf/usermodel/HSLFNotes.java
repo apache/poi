@@ -20,7 +20,10 @@ package org.apache.poi.hslf.usermodel;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.hslf.model.HeadersFooters;
+import org.apache.poi.hslf.record.HeadersFootersContainer;
 import org.apache.poi.sl.usermodel.Notes;
+import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -71,5 +74,29 @@ public final class HSLFNotes extends HSLFSheet implements Notes<HSLFShape,HSLFTe
      */
     public HSLFMasterSheet getMasterSheet() {
         return null;
+    }
+
+    /**
+     * Header / Footer settings for this slide.
+     *
+     * @return Header / Footer settings for this slide
+     */
+    @Override
+    public HeadersFooters getHeadersFooters() {
+        return new HeadersFooters(this, HeadersFootersContainer.NotesHeadersFootersContainer);
+    }
+
+
+    @Override
+    public HSLFPlaceholderDetails getPlaceholderDetails(Placeholder placeholder) {
+        if (placeholder == null) {
+            return null;
+        }
+
+        if (placeholder == Placeholder.HEADER || placeholder == Placeholder.FOOTER) {
+            return new HSLFPlaceholderDetails(this, placeholder);
+        } else {
+            return super.getPlaceholderDetails(placeholder);
+        }
     }
 }

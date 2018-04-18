@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 import org.apache.poi.hslf.exceptions.HSLFException;
+import org.apache.poi.hslf.record.RecordTypes.RecordConstructor;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -122,15 +123,13 @@ public abstract class Record
 
 			// Abort if first record is of type 0000 and length FFFF,
 			//  as that's a sign of a screwed up record
-			if(pos == 0 && type == 0l && rleni == 0xffff) {
+			if(pos == 0 && type == 0L && rleni == 0xffff) {
 				throw new CorruptPowerPointFileException("Corrupt document - starts with record of type 0000 and length 0xFFFF");
 			}
 
 			Record r = createRecordForType(type,b,pos,8+rleni);
 			if(r != null) {
 				children.add(r);
-			} else {
-				// Record was horribly corrupt
 			}
 			pos += 8;
 			pos += rleni;
@@ -150,43 +149,32 @@ public abstract class Record
 	 *  passing in corrected lengths
 	 */
 	public static Record createRecordForType(long type, byte[] b, int start, int len) {
-		Record toReturn = null;
-
-		// Handle case of a corrupt last record, whose claimed length
-		//  would take us passed the end of the file
-		if(start + len > b.length) {
-			logger.log(POILogger.WARN, "Warning: Skipping record of type " + type + " at position " + start + " which claims to be longer than the file! (" + len + " vs " + (b.length-start) + ")");
-			return null;
-		}
-
 		// We use the RecordTypes class to provide us with the right
 		//  class to use for a given type
 		// A spot of reflection gets us the (byte[],int,int) constructor
 		// From there, we instanciate the class
 		// Any special record handling occurs once we have the class
-		Class<? extends Record> c = null;
+		RecordConstructor c = RecordTypes.forTypeID((short)type).recordConstructor;
+		if (c == null) {
+			// How odd. RecordTypes normally substitutes in
+			//  a default handler class if it has heard of the record
+			//  type but there's no support for it. Explicitly request
+			//  that now
+			c = RecordTypes.UnknownRecordPlaceholder.recordConstructor;
+		}
+
+		final Record toReturn;
 		try {
-			c = RecordTypes.forTypeID((short)type).handlingClass;
-			if(c == null) {
-				// How odd. RecordTypes normally substitutes in
-				//  a default handler class if it has heard of the record
-				//  type but there's no support for it. Explicitly request
-				//  that now
-				c = RecordTypes.UnknownRecordPlaceholder.handlingClass;
+			toReturn = c.apply(b, start, len);
+		} catch(RuntimeException e) {
+			// Handle case of a corrupt last record, whose claimed length
+			//  would take us passed the end of the file
+			if(start + len > b.length ) {
+				logger.log(POILogger.WARN, "Warning: Skipping record of type " + type + " at position " + start + " which claims to be longer than the file! (" + len + " vs " + (b.length-start) + ")");
+				return null;
 			}
 
-			// Grab the right constructor
-			java.lang.reflect.Constructor<? extends Record> con = c.getDeclaredConstructor(new Class[] { byte[].class, Integer.TYPE, Integer.TYPE });
-			// Instantiate
-			toReturn = con.newInstance(new Object[] { b, start, len });
-		} catch(InstantiationException ie) {
-			throw new HSLFException("Couldn't instantiate the class for type with id " + type + " on class " + c + " : " + ie, ie);
-		} catch(java.lang.reflect.InvocationTargetException ite) {
-			throw new HSLFException("Couldn't instantiate the class for type with id " + type + " on class " + c + " : " + ite + "\nCause was : " + ite.getCause(), ite);
-		} catch(IllegalAccessException iae) {
-			throw new HSLFException("Couldn't access the constructor for type with id " + type + " on class " + c + " : " + iae, iae);
-		} catch(NoSuchMethodException nsme) {
-			throw new HSLFException("Couldn't access the constructor for type with id " + type + " on class " + c + " : " + nsme, nsme);
+			throw new HSLFException("Couldn't instantiate the class for type with id " + type + " on class " + c + " : " + e, e);
 		}
 
 		// Handling for special kinds of records follow

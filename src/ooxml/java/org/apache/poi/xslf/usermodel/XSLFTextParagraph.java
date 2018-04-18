@@ -20,6 +20,9 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.AutoNumberingScheme;
@@ -49,6 +52,12 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
     private final List<XSLFTextRun> _runs;
     private final XSLFTextShape _shape;
 
+    @FunctionalInterface
+    private interface Procedure {
+        void accept();
+    }
+
+
     XSLFTextParagraph(CTTextParagraph p, XSLFTextShape shape){
         _p = p;
         _runs = new ArrayList<>();
@@ -75,14 +84,6 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
         StringBuilder out = new StringBuilder();
         for (XSLFTextRun r : _runs) {
             out.append(r.getRawText());
-        }
-        return out.toString();
-    }
-
-    String getRenderableText(){
-        StringBuilder out = new StringBuilder();
-        for (XSLFTextRun r : _runs) {
-            out.append(r.getRenderableText());
         }
         return out.toString();
     }
@@ -125,6 +126,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
      *
      * @return text run representing this line break ('\n')
      */
+    @SuppressWarnings("WeakerAccess")
     public XSLFTextRun addLineBreak(){
         XSLFLineBreak run = new XSLFLineBreak(_p.addNewBr(), this);
         CTTextCharacterProperties brProps = run.getRPr(true);
@@ -200,6 +202,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
     /**
      * @return the font to be used on bullet characters within a given paragraph
      */
+    @SuppressWarnings("WeakerAccess")
     public String getBulletFont(){
         ParagraphPropertyFetcher<String> fetcher = new ParagraphPropertyFetcher<String>(getIndentLevel()){
             public boolean fetch(CTTextParagraphProperties props){
@@ -214,6 +217,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
         return fetcher.getValue();
     }
 
+    @SuppressWarnings("WeakerAccess")
     public void setBulletFont(String typeface){
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
         CTTextFont font = pr.isSetBuFont() ? pr.getBuFont() : pr.addNewBuFont();
@@ -223,6 +227,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
     /**
      * @return the character to be used in place of the standard bullet point
      */
+    @SuppressWarnings("WeakerAccess")
     public String getBulletCharacter(){
         ParagraphPropertyFetcher<String> fetcher = new ParagraphPropertyFetcher<String>(getIndentLevel()){
             public boolean fetch(CTTextParagraphProperties props){
@@ -237,6 +242,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
         return fetcher.getValue();
     }
 
+    @SuppressWarnings("WeakerAccess")
     public void setBulletCharacter(String str){
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
         CTTextCharBullet c = pr.isSetBuChar() ? pr.getBuChar() : pr.addNewBuChar();
@@ -248,6 +254,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
      * @return the color of bullet characters within a given paragraph.
      * A <code>null</code> value means to use the text font color.
      */
+    @SuppressWarnings("WeakerAccess")
     public PaintStyle getBulletFontColor(){
         final XSLFTheme theme = getParentShape().getSheet().getTheme();
         ParagraphPropertyFetcher<Color> fetcher = new ParagraphPropertyFetcher<Color>(getIndentLevel()){
@@ -265,6 +272,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
         return (col == null) ? null : DrawPaint.createSolidPaint(col);
     }
 
+    @SuppressWarnings("WeakerAccess")
     public void setBulletFontColor(Color color) {
         setBulletFontColor(DrawPaint.createSolidPaint(color));
     }
@@ -275,6 +283,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
      *
      * @param color the bullet color
      */
+    @SuppressWarnings("WeakerAccess")
     public void setBulletFontColor(PaintStyle color) {
         if (!(color instanceof SolidPaint)) {
             throw new IllegalArgumentException("Currently XSLF only supports SolidPaint");
@@ -300,6 +309,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
      *
      * @return the bullet size
      */
+    @SuppressWarnings("WeakerAccess")
     public Double getBulletFontSize(){
         ParagraphPropertyFetcher<Double> fetcher = new ParagraphPropertyFetcher<Double>(getIndentLevel()){
             public boolean fetch(CTTextParagraphProperties props){
@@ -326,6 +336,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
      * If bulletSize < 0, then it specifies the size in points
      * </p>
      */
+    @SuppressWarnings("WeakerAccess")
     public void setBulletFontSize(double bulletSize){
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
 
@@ -343,6 +354,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
     /**
      * @return the auto numbering scheme, or null if not defined
      */
+    @SuppressWarnings("WeakerAccess")
     public AutoNumberingScheme getAutoNumberingScheme() {
         ParagraphPropertyFetcher<AutoNumberingScheme> fetcher = new ParagraphPropertyFetcher<AutoNumberingScheme>(getIndentLevel()) {
             public boolean fetch(CTTextParagraphProperties props) {
@@ -363,6 +375,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
     /**
      * @return the auto numbering starting number, or null if not defined
      */
+    @SuppressWarnings("WeakerAccess")
     public Integer getAutoNumberingStartAt() {
         ParagraphPropertyFetcher<Integer> fetcher = new ParagraphPropertyFetcher<Integer>(getIndentLevel()) {
             public boolean fetch(CTTextParagraphProperties props) {
@@ -487,10 +500,11 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
         return fetcher.getValue();
     }
 
-    public double getTabStop(final int idx){
+    @SuppressWarnings("WeakerAccess")
+    public double getTabStop(final int idx) {
         ParagraphPropertyFetcher<Double> fetcher = new ParagraphPropertyFetcher<Double>(getIndentLevel()){
             public boolean fetch(CTTextParagraphProperties props){
-                if(props.isSetTabLst()){
+                if (props.isSetTabLst()) {
                     CTTextTabStopList tabStops = props.getTabLst();
                     if(idx < tabStops.sizeOfTabArray() ) {
                         CTTextTabStop ts = tabStops.getTabArray(idx);
@@ -506,6 +520,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
         return fetcher.getValue() == null ? 0. : fetcher.getValue();
     }
 
+    @SuppressWarnings("WeakerAccess")
     public void addTabStop(double value){
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
         CTTextTabStopList tabStops = pr.isSetTabLst() ? pr.getTabLst() : pr.addNewTabLst();
@@ -514,45 +529,18 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
 
     @Override
     public void setLineSpacing(Double lineSpacing){
-        if (lineSpacing == null && !_p.isSetPPr()) return;
-        CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
-        if(lineSpacing == null) {
-            if (pr.isSetLnSpc()) pr.unsetLnSpc();
-        } else {
-            CTTextSpacing spc = (pr.isSetLnSpc()) ? pr.getLnSpc() : pr.addNewLnSpc();
-            if (lineSpacing >= 0) {
-                (spc.isSetSpcPct() ? spc.getSpcPct() : spc.addNewSpcPct()).setVal((int)(lineSpacing*1000));
-                if (spc.isSetSpcPts()) spc.unsetSpcPts();
-            } else {
-                (spc.isSetSpcPts() ? spc.getSpcPts() : spc.addNewSpcPts()).setVal((int)(-lineSpacing*100));
-                if (spc.isSetSpcPct()) spc.unsetSpcPct();
-            }
-        }
+        setSpacing(lineSpacing, props -> props::getLnSpc, props -> props::addNewLnSpc, props -> props::unsetLnSpc);
     }
 
     @Override
     public Double getLineSpacing(){
-        ParagraphPropertyFetcher<Double> fetcher = new ParagraphPropertyFetcher<Double>(getIndentLevel()){
-            public boolean fetch(CTTextParagraphProperties props){
-                if(props.isSetLnSpc()){
-                    CTTextSpacing spc = props.getLnSpc();
-
-                    if(spc.isSetSpcPct()) setValue( spc.getSpcPct().getVal()*0.001 );
-                    else if (spc.isSetSpcPts()) setValue( -spc.getSpcPts().getVal()*0.01 );
-                    return true;
-                }
-                return false;
-            }
-        };
-        fetchParagraphProperty(fetcher);
-
-        Double lnSpc = fetcher.getValue();
+        final Double lnSpc = getSpacing(props -> props::getLnSpc);
         if (lnSpc != null && lnSpc > 0) {
             // check if the percentage value is scaled
-            CTTextNormalAutofit normAutofit = getParentShape().getTextBodyPr().getNormAutofit();
-            if(normAutofit != null) {
-                double scale = 1 - (double)normAutofit.getLnSpcReduction() / 100000;
-                lnSpc *= scale;
+            final CTTextNormalAutofit normAutofit = getParentShape().getTextBodyPr().getNormAutofit();
+            if (normAutofit != null) {
+                final double scale = 1 - (double)normAutofit.getLnSpcReduction() / 100000;
+                return lnSpc * scale;
             }
         }
         
@@ -561,84 +549,82 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
 
     @Override
     public void setSpaceBefore(Double spaceBefore){
-        if (spaceBefore == null && !_p.isSetPPr()) {
-            return;
-        }
-
-        // unset the space before on null input
-        if (spaceBefore == null) {
-            if(_p.getPPr().isSetSpcBef()) {
-                _p.getPPr().unsetSpcBef();
-            }
-            return;
-        }
-
-        CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
-        CTTextSpacing spc = CTTextSpacing.Factory.newInstance();
-
-        if(spaceBefore >= 0) {
-            spc.addNewSpcPct().setVal((int)(spaceBefore*1000));
-        } else {
-            spc.addNewSpcPts().setVal((int)(-spaceBefore*100));
-        }
-        pr.setSpcBef(spc);
+        setSpacing(spaceBefore, props -> props::getSpcBef, props -> props::addNewSpcBef, props -> props::unsetSpcBef);
     }
 
     @Override
     public Double getSpaceBefore(){
-        ParagraphPropertyFetcher<Double> fetcher = new ParagraphPropertyFetcher<Double>(getIndentLevel()){
-            public boolean fetch(CTTextParagraphProperties props){
-                if(props.isSetSpcBef()){
-                    CTTextSpacing spc = props.getSpcBef();
-
-                    if(spc.isSetSpcPct()) setValue( spc.getSpcPct().getVal()*0.001 );
-                    else if (spc.isSetSpcPts()) setValue( -spc.getSpcPts().getVal()*0.01 );
-                    return true;
-                }
-                return false;
-            }
-        };
-        fetchParagraphProperty(fetcher);
-
-        return fetcher.getValue();
+        return getSpacing(props -> props::getSpcBef);
     }
 
     @Override
     public void setSpaceAfter(Double spaceAfter){
-        if (spaceAfter == null && !_p.isSetPPr()) {
+        setSpacing(spaceAfter, props -> props::getSpcAft, props -> props::addNewSpcAft, props -> props::unsetSpcAft);
+    }
+
+    @Override
+    public Double getSpaceAfter() {
+        return getSpacing(props -> props::getSpcAft);
+    }
+
+    private void setSpacing(final Double space,
+        final Function<CTTextParagraphProperties,Supplier<CTTextSpacing>> getSpc,
+        final Function<CTTextParagraphProperties,Supplier<CTTextSpacing>> addSpc,
+        final Function<CTTextParagraphProperties,Procedure> unsetSpc
+    ) {
+        final CTTextParagraphProperties pPr = (space == null || _p.isSetPPr()) ?  _p.getPPr() : _p.addNewPPr();
+        if (pPr == null) {
             return;
         }
 
-        // unset the space before on null input
-        if (spaceAfter == null) {
-            if(_p.getPPr().isSetSpcAft()) {
-                _p.getPPr().unsetSpcAft();
+        CTTextSpacing spc = getSpc.apply(pPr).get();
+
+        if (space == null) {
+            if (spc != null) {
+                // unset the space before on null input
+                unsetSpc.apply(pPr).accept();
             }
             return;
         }
 
-        CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
-        CTTextSpacing spc = CTTextSpacing.Factory.newInstance();
-
-        if(spaceAfter >= 0) {
-            spc.addNewSpcPct().setVal((int)(spaceAfter*1000));
-        } else {
-            spc.addNewSpcPts().setVal((int)(-spaceAfter*100));
+        if (spc == null) {
+            spc = addSpc.apply(pPr).get();
         }
-        pr.setSpcAft(spc);
+
+        if (space >= 0) {
+            if (spc.isSetSpcPts()) {
+                spc.unsetSpcPts();
+            }
+            final CTTextSpacingPercent pct = spc.isSetSpcPct() ? spc.getSpcPct() : spc.addNewSpcPct();
+            pct.setVal((int)(space*1000));
+        } else {
+            if (spc.isSetSpcPct()) {
+                spc.unsetSpcPct();
+            }
+            final CTTextSpacingPoint pts = spc.isSetSpcPts() ? spc.getSpcPts() : spc.addNewSpcPts();
+            pts.setVal((int)(-space*100));
+        }
     }
 
-    @Override
-    public Double getSpaceAfter(){
-        ParagraphPropertyFetcher<Double> fetcher = new ParagraphPropertyFetcher<Double>(getIndentLevel()){
-            public boolean fetch(CTTextParagraphProperties props){
-                if(props.isSetSpcAft()){
-                    CTTextSpacing spc = props.getSpcAft();
+    private Double getSpacing(final Function<CTTextParagraphProperties,Supplier<CTTextSpacing>> getSpc) {
+        final ParagraphPropertyFetcher<Double> fetcher = new ParagraphPropertyFetcher<Double>(getIndentLevel()){
+            public boolean fetch(final CTTextParagraphProperties props){
+                final CTTextSpacing spc = getSpc.apply(props).get();
 
-                    if(spc.isSetSpcPct()) setValue( spc.getSpcPct().getVal()*0.001 );
-                    else if (spc.isSetSpcPts()) setValue( -spc.getSpcPts().getVal()*0.01 );
+                if (spc == null) {
+                    return false;
+                }
+
+                if (spc.isSetSpcPct()) {
+                    setValue( spc.getSpcPct().getVal()*0.001 );
                     return true;
                 }
+
+                if (spc.isSetSpcPts()) {
+                    setValue( -spc.getSpcPts().getVal()*0.01 );
+                    return true;
+                }
+
                 return false;
             }
         };
@@ -713,6 +699,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
      * @param startAt the number that will start number for a given sequence of automatically
     numbered bullets (1-based).
      */
+    @SuppressWarnings("WeakerAccess")
     public void setBulletAutoNumber(AutoNumberingScheme scheme, int startAt) {
         if(startAt < 1) throw new IllegalArgumentException("Start Number must be greater or equal that 1") ;
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
@@ -732,7 +719,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
      * there are no master slides or the master slides do not contain a text paragraph
      */
     /* package */ CTTextParagraphProperties getDefaultMasterStyle(){
-        CTPlaceholder ph = _shape.getCTPlaceholder();
+        CTPlaceholder ph = _shape.getPlaceholderDetails().getCTPlaceholder(false);
         String defaultStyleSelector;  
         switch(ph == null ? -1 : ph.getType().intValue()) {
             case STPlaceholderType.INT_TITLE:
@@ -780,37 +767,46 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
         return null;
     }
 
-    private <T> boolean fetchParagraphProperty(ParagraphPropertyFetcher<T> visitor){
-        boolean ok = false;
+    private void fetchParagraphProperty(final ParagraphPropertyFetcher<?> visitor){
         final XSLFTextShape shape = getParentShape();
         final XSLFSheet sheet = shape.getSheet();
         
         if (!(sheet instanceof XSLFSlideMaster)) {
-            if(_p.isSetPPr()) ok = visitor.fetch(_p.getPPr());
-            if (ok) return true;
-    
-            ok = shape.fetchShapeProperty(visitor);
-            if (ok) return true;
-                    
-            
-            CTPlaceholder ph = shape.getCTPlaceholder();
-            if(ph == null){
-                // if it is a plain text box then take defaults from presentation.xml
-                @SuppressWarnings("resource")
-                XMLSlideShow ppt = sheet.getSlideShow();
-                CTTextParagraphProperties themeProps = ppt.getDefaultParagraphStyle(getIndentLevel());
-                if (themeProps != null) ok = visitor.fetch(themeProps);
+            if (_p.isSetPPr() && visitor.fetch(_p.getPPr())) {
+                return;
             }
-            if (ok) return true;
+    
+            if (shape.fetchShapeProperty(visitor)) {
+                return;
+            }
+
+            if (fetchThemeProperty(visitor)) {
+                return;
+            }
         }
 
-        // defaults for placeholders are defined in the slide master
-        CTTextParagraphProperties defaultProps = getDefaultMasterStyle();
-        // TODO: determine master shape
-        if(defaultProps != null) ok = visitor.fetch(defaultProps);
-        if (ok) return true;
+        fetchMasterProperty(visitor);
+    }
 
-        return false;
+    boolean fetchMasterProperty(final ParagraphPropertyFetcher<?> visitor) {
+        // defaults for placeholders are defined in the slide master
+        final CTTextParagraphProperties defaultProps = getDefaultMasterStyle();
+        // TODO: determine master shape
+        return defaultProps != null && visitor.fetch(defaultProps);
+    }
+
+    boolean fetchThemeProperty(final ParagraphPropertyFetcher<?> visitor) {
+        final XSLFTextShape shape = getParentShape();
+
+        if (shape.isPlaceholder()) {
+            return false;
+        }
+
+        // if it is a plain text box then take defaults from presentation.xml
+        @SuppressWarnings("resource")
+        final XMLSlideShow ppt = shape.getSheet().getSlideShow();
+        final CTTextParagraphProperties themeProps = ppt.getDefaultParagraphStyle(getIndentLevel());
+        return themeProps != null && visitor.fetch(themeProps);
     }
 
     void copy(XSLFTextParagraph other){
@@ -873,40 +869,40 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
                     setBulletFontColor(buColor);
                 }
                 Double buSize = other.getBulletFontSize();
-                if(!doubleEquals(buSize, getBulletFontSize())){
+                if(doubleNotEquals(buSize, getBulletFontSize())){
                     setBulletFontSize(buSize);
                 }
             }
         }
 
         Double leftMargin = other.getLeftMargin();
-        if (!doubleEquals(leftMargin, getLeftMargin())){
+        if (doubleNotEquals(leftMargin, getLeftMargin())){
             setLeftMargin(leftMargin);
         }
 
         Double indent = other.getIndent();
-        if (!doubleEquals(indent, getIndent())) {
+        if (doubleNotEquals(indent, getIndent())) {
             setIndent(indent);
         }
 
         Double spaceAfter = other.getSpaceAfter();
-        if (!doubleEquals(spaceAfter, getSpaceAfter())) {
+        if (doubleNotEquals(spaceAfter, getSpaceAfter())) {
             setSpaceAfter(spaceAfter);
         }
         
         Double spaceBefore = other.getSpaceBefore();
-        if (!doubleEquals(spaceBefore, getSpaceBefore())) {
+        if (doubleNotEquals(spaceBefore, getSpaceBefore())) {
             setSpaceBefore(spaceBefore);
         }
         
         Double lineSpacing = other.getLineSpacing();
-        if (!doubleEquals(lineSpacing, getLineSpacing())) {
+        if (doubleNotEquals(lineSpacing, getLineSpacing())) {
             setLineSpacing(lineSpacing);
         }
     }
 
-    private static boolean doubleEquals(Double d1, Double d2) {
-        return (d1 == d2 || (d1 != null && d1.equals(d2)));
+    private static boolean doubleNotEquals(Double d1, Double d2) {
+        return !Objects.equals(d1, d2);
     }
     
     @Override
@@ -1072,7 +1068,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
 
     @Override
     public boolean isHeaderOrFooter() {
-        CTPlaceholder ph = _shape.getCTPlaceholder();
+        CTPlaceholder ph = _shape.getPlaceholderDetails().getCTPlaceholder(false);
         int phId = (ph == null ? -1 : ph.getType().intValue());
         switch (phId) {
             case STPlaceholderType.INT_SLD_NUM:

@@ -38,6 +38,7 @@ import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherOptRecord;
 import org.apache.poi.hpsf.ClassID;
 import org.apache.poi.hpsf.ClassIDPredefined;
+import org.apache.poi.hpsf.extractor.HPSFPropertiesExtractor;
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.model.HeadersFooters;
@@ -1047,6 +1048,11 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 		return objectId;
 	}
 
+	@Override
+    public HPSFPropertiesExtractor getMetadataTextExtractor() {
+        return new HPSFPropertiesExtractor(getSlideShowImpl());
+    }
+	
 	protected int addToObjListAtom(RecordContainer exObj) {
 		ExObjList lst = getDocumentRecord().getExObjList(true);
 		ExObjListAtom objAtom = lst.getExObjListAtom();

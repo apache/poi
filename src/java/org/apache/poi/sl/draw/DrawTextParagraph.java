@@ -52,6 +52,7 @@ import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.sl.usermodel.TextRun.FieldType;
 import org.apache.poi.sl.usermodel.TextShape;
 import org.apache.poi.sl.usermodel.TextShape.TextDirection;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -381,7 +382,8 @@ public class DrawTextParagraph implements Drawable {
         return getRenderableText(tr);
     }
 
-    private String getRenderableText(final TextRun tr) {
+    @Internal
+    public String getRenderableText(final TextRun tr) {
         final String txtSpace = tr.getRawText().replace("\t", tab2space(tr)).replace('\u000b', '\n');
         final Locale loc = LocaleUtil.getUserLocale();
 
