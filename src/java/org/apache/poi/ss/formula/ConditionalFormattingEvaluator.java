@@ -26,6 +26,7 @@ import java.util.Map;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.ConditionalFormatting;
 import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
@@ -142,6 +143,11 @@ public class ConditionalFormattingEvaluator {
      * Note that to properly apply conditional rules, care must be taken to offset the base 
      * formula by the relative position of the current cell, or the wrong value is checked.
      * This is handled by {@link WorkbookEvaluator#evaluate(String, CellReference, CellRangeAddressBase)}.
+     * <p>
+     * If the cell exists and is a formula cell, its cached value may be used for rule evaluation, so
+     * make sure it is up to date.  If values have changed, it is best to call 
+     * {@link FormulaEvaluator#evaluateFormulaCell(Cell)} or {@link FormulaEvaluator#evaluateAll()} first,
+     * or the wrong conditional results may be returned. 
      * 
      * @param cellRef NOTE: if no sheet name is specified, this uses the workbook active sheet
      * @return Unmodifiable List of {@link EvaluationConditionalFormatRule}s that apply to the current cell value,
@@ -198,6 +204,11 @@ public class ConditionalFormattingEvaluator {
      * Note that to properly apply conditional rules, care must be taken to offset the base 
      * formula by the relative position of the current cell, or the wrong value is checked.
      * This is handled by {@link WorkbookEvaluator#evaluate(String, CellReference, CellRangeAddressBase)}.
+     * <p>
+     * If the cell exists and is a formula cell, its cached value may be used for rule evaluation, so
+     * make sure it is up to date.  If values have changed, it is best to call 
+     * {@link FormulaEvaluator#evaluateFormulaCell(Cell)} or {@link FormulaEvaluator#evaluateAll()} first,
+     * or the wrong conditional results may be returned. 
      * 
      * @param cell The cell to look for
      * @return Unmodifiable List of {@link EvaluationConditionalFormatRule}s that apply to the current cell value,
