@@ -83,7 +83,7 @@ public class TestXSLFTextShape {
         assertEquals("Title Slide",layout.getName());
 
         XSLFTextShape shape1 = (XSLFTextShape)shapes.get(0);
-        CTPlaceholder ph1 = shape1.getCTPlaceholder();
+        CTPlaceholder ph1 = shape1.getPlaceholderDetails().getCTPlaceholder(false);
         assertEquals(STPlaceholderType.CTR_TITLE, ph1.getType());
         // anchor is not defined in the shape
         assertNull(getSpPr(shape1).getXfrm());
@@ -113,7 +113,7 @@ public class TestXSLFTextShape {
         assertTrue(sameColor(Color.black, r1.getFontColor()));
 
         XSLFTextShape shape2 = (XSLFTextShape)shapes.get(1);
-        CTPlaceholder ph2 = shape2.getCTPlaceholder();
+        CTPlaceholder ph2 = shape2.getPlaceholderDetails().getCTPlaceholder(false);
         assertEquals(STPlaceholderType.SUB_TITLE, ph2.getType());
         // anchor is not defined in the shape
         assertNull(getSpPr(shape2).getXfrm());
@@ -149,7 +149,7 @@ public class TestXSLFTextShape {
         assertEquals("Title and Content",layout.getName());
 
         XSLFTextShape shape1 = (XSLFTextShape)shapes.get(0);
-        CTPlaceholder ph1 = shape1.getCTPlaceholder();
+        CTPlaceholder ph1 = shape1.getPlaceholderDetails().getCTPlaceholder(false);
         assertEquals(STPlaceholderType.TITLE, ph1.getType());
         // anchor is not defined in the shape
         assertNull(getSpPr(shape1).getXfrm());
@@ -182,7 +182,7 @@ public class TestXSLFTextShape {
         assertTrue(sameColor(Color.black, r1.getFontColor()));
 
         XSLFTextShape shape2 = (XSLFTextShape)shapes.get(1);
-        CTPlaceholder ph2 = shape2.getCTPlaceholder();
+        CTPlaceholder ph2 = shape2.getPlaceholderDetails().getCTPlaceholder(false);
         assertFalse(ph2.isSetType()); // <p:ph idx="1"/>
         assertTrue(ph2.isSetIdx());
         assertEquals(1, ph2.getIdx());
@@ -262,7 +262,7 @@ public class TestXSLFTextShape {
         assertEquals("Section Header",layout.getName());
 
         XSLFTextShape shape1 = (XSLFTextShape)shapes.get(0);
-        CTPlaceholder ph1 = shape1.getCTPlaceholder();
+        CTPlaceholder ph1 = shape1.getPlaceholderDetails().getCTPlaceholder(false);
         assertEquals(STPlaceholderType.TITLE, ph1.getType());
         // anchor is not defined in the shape
         assertNull(getSpPr(shape1).getXfrm());
@@ -296,7 +296,7 @@ public class TestXSLFTextShape {
         assertFalse(r1.isUnderlined());
 
         XSLFTextShape shape2 = (XSLFTextShape)shapes.get(1);
-        CTPlaceholder ph2 = shape2.getCTPlaceholder();
+        CTPlaceholder ph2 = shape2.getPlaceholderDetails().getCTPlaceholder(false);
         assertEquals(STPlaceholderType.BODY, ph2.getType());
         // anchor is not defined in the shape
         assertNull(getSpPr(shape2).getXfrm());
@@ -333,7 +333,7 @@ public class TestXSLFTextShape {
         assertEquals("Two Content",layout.getName());
 
         XSLFTextShape shape1 = (XSLFTextShape)shapes.get(0);
-        CTPlaceholder ph1 = shape1.getCTPlaceholder();
+        CTPlaceholder ph1 = shape1.getPlaceholderDetails().getCTPlaceholder(false);
         assertEquals(STPlaceholderType.TITLE, ph1.getType());
         // anchor is not defined in the shape
         assertNull(getSpPr(shape1).getXfrm());
@@ -367,7 +367,7 @@ public class TestXSLFTextShape {
         assertTrue(sameColor(Color.black, r1.getFontColor()));
 
         XSLFTextShape shape2 = (XSLFTextShape)shapes.get(1);
-        CTPlaceholder ph2 = shape2.getCTPlaceholder();
+        CTPlaceholder ph2 = shape2.getPlaceholderDetails().getCTPlaceholder(false);
         assertFalse(ph2.isSetType());
         assertTrue(ph2.isSetIdx());
         assertEquals(1, ph2.getIdx());  //<p:ph sz="half" idx="1"/>
@@ -448,7 +448,7 @@ public class TestXSLFTextShape {
         assertEquals("Blank",layout.getName());
 
         XSLFTextShape shape1 = (XSLFTextShape)shapes.get(0);
-        CTPlaceholder ph1 = shape1.getCTPlaceholder();
+        CTPlaceholder ph1 = shape1.getPlaceholderDetails().getCTPlaceholder(false);
         assertEquals(STPlaceholderType.TITLE, ph1.getType());
         // anchor is not defined in the shape
         assertNull(getSpPr(shape1).getXfrm());
@@ -516,7 +516,7 @@ public class TestXSLFTextShape {
         assertEquals("Content with Caption",layout.getName());
 
         XSLFTextShape shape1 = (XSLFTextShape)shapes.get(0);
-        CTPlaceholder ph1 = shape1.getCTPlaceholder();
+        CTPlaceholder ph1 = shape1.getPlaceholderDetails().getCTPlaceholder(false);
         assertEquals(STPlaceholderType.TITLE, ph1.getType());
         // anchor is not defined in the shape
         assertNull(getSpPr(shape1).getXfrm());
@@ -549,7 +549,7 @@ public class TestXSLFTextShape {
         assertTrue(r1.isBold());
 
         XSLFTextShape shape2 = (XSLFTextShape)shapes.get(1);
-        CTPlaceholder ph2 = shape2.getCTPlaceholder();
+        CTPlaceholder ph2 = shape2.getPlaceholderDetails().getCTPlaceholder(false);
         assertFalse(ph2.isSetType());
         assertTrue(ph2.isSetIdx());
         assertEquals(1, ph2.getIdx());

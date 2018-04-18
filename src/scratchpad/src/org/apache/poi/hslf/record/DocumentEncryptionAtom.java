@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
 
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.poifs.crypt.CipherAlgorithm;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.crypt.EncryptionMode;
@@ -46,15 +47,17 @@ public final class DocumentEncryptionAtom extends PositionDependentRecordAtom {
 	/**
 	 * For the Document Encryption Atom
 	 */
-	protected DocumentEncryptionAtom(byte[] source, int start, int len) throws IOException {
+	protected DocumentEncryptionAtom(byte[] source, int start, int len) {
 		// Get the header
 		_header = new byte[8];
 		System.arraycopy(source,start,_header,0,8);
 
 		ByteArrayInputStream bis = new ByteArrayInputStream(source, start+8, len-8);
-		LittleEndianInputStream leis = new LittleEndianInputStream(bis);
-		ei = new EncryptionInfo(leis, EncryptionMode.cryptoAPI);
-		leis.close();
+		try (LittleEndianInputStream leis = new LittleEndianInputStream(bis)) {
+			ei = new EncryptionInfo(leis, EncryptionMode.cryptoAPI);
+		} catch (IOException e) {
+			throw new EncryptedDocumentException(e);
+		}
 	}
 
 	public DocumentEncryptionAtom() {

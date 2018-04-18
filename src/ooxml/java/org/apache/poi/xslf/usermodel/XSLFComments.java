@@ -31,42 +31,37 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CmLstDocument;
 
 @Beta
 public class XSLFComments extends POIXMLDocumentPart {
-    private final CTCommentList _comments;
-    
+    private final CmLstDocument doc;
+
     /**
      * Create a new set of slide comments
      */
     XSLFComments() {
-       super();
-       CmLstDocument doc = CmLstDocument.Factory.newInstance();
-       _comments = doc.addNewCmLst();
+        doc = CmLstDocument.Factory.newInstance();
     }
 
     /**
      * Construct a SpreadsheetML slide comments from a package part
      *
      * @param part the package part holding the comments data,
-     * the content type must be <code>application/vnd.openxmlformats-officedocument.comments+xml</code>
-     * 
+     *             the content type must be <code>application/vnd.openxmlformats-officedocument.comments+xml</code>
      * @since POI 3.14-Beta1
      */
     XSLFComments(PackagePart part) throws IOException, XmlException {
         super(part);
 
-        CmLstDocument doc =
-           CmLstDocument.Factory.parse(getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
-        _comments = doc.getCmLst();
+        doc = CmLstDocument.Factory.parse(getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
     }
 
     public CTCommentList getCTCommentsList() {
-       return _comments;
+        return doc.getCmLst();
     }
-    
+
     public int getNumberOfComments() {
-       return _comments.sizeOfCmArray();
+        return doc.getCmLst().sizeOfCmArray();
     }
-    
+
     public CTComment getCommentAt(int pos) {
-       return _comments.getCmArray(pos);
+        return doc.getCmLst().getCmArray(pos);
     }
 }

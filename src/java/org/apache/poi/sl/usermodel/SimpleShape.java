@@ -65,6 +65,24 @@ public interface SimpleShape<
      */
     void setPlaceholder(Placeholder placeholder);
 
+    /**
+     * @return an accessor for placeholder details
+     *
+     * @since POI 4.0.0
+     */
+    PlaceholderDetails getPlaceholderDetails();
+
+    /**
+     * Checks if the shape is a placeholder.
+     * (placeholders aren't normal shapes, they are visible only in the Edit Master mode)
+     *
+     * @return {@code true} if the shape is a placeholder
+     * 
+     * @since POI 4.0.0
+     */
+    boolean isPlaceholder();
+    
+    
 	Shadow<S,P> getShadow();
 
     /**

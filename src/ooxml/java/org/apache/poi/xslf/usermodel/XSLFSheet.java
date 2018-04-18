@@ -18,6 +18,7 @@ package org.apache.poi.xslf.usermodel;
 
 import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
+import javax.xml.namespace.QName;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.io.IOException;
@@ -28,8 +29,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import javax.xml.namespace.QName;
+import java.util.Optional;
 
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.POIXMLException;
@@ -56,6 +56,7 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTColorMapping;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTConnector;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFrame;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
@@ -72,6 +73,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
     private XSLFDrawing _drawing;
     private List<XSLFShape> _shapes;
     private CTGroupShape _spTree;
+    private XSLFTheme _theme;
 
     private List<XSLFTextShape>_placeholders;
     private Map<Integer, XSLFSimpleShape> _placeholderByIdMap;
@@ -456,7 +458,36 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
      *  Sheets that support the notion of themes (slides, masters, layouts, etc.) should override this
      *  method and return the corresponding package part.
      */
-    XSLFTheme getTheme(){
+    public XSLFTheme getTheme() {
+        if (_theme != null || !isSupportTheme()) {
+            return _theme;
+        }
+
+        final Optional<XSLFTheme> t =
+                getRelations().stream().filter((p) -> p instanceof XSLFTheme).map((p) -> (XSLFTheme) p).findAny();
+        if (t.isPresent()) {
+            _theme = t.get();
+            final CTColorMapping cmap = getColorMapping();
+            if (cmap != null) {
+                _theme.initColorMap(cmap);
+            }
+        }
+        return _theme;
+    }
+
+
+
+    /**
+     * @return {@code true} if this class supports themes
+     */
+    boolean isSupportTheme() {
+        return false;
+    }
+
+    /**
+     * @return the color mapping for this slide type
+     */
+    CTColorMapping getColorMapping() {
         return null;
     }
 
@@ -488,16 +519,16 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
         return shape;
     }
 
-    void initPlaceholders() {
+    private void initPlaceholders() {
         if(_placeholders == null) {
             _placeholders = new ArrayList<>();
             _placeholderByIdMap = new HashMap<>();
             _placeholderByTypeMap = new HashMap<>();
 
-            for(XSLFShape sh : getShapes()){
+            for(final XSLFShape sh : getShapes()){
                 if(sh instanceof XSLFTextShape){
-                    XSLFTextShape sShape = (XSLFTextShape)sh;
-                    CTPlaceholder ph = sShape.getCTPlaceholder();
+                    final XSLFTextShape sShape = (XSLFTextShape)sh;
+                    final CTPlaceholder ph = sShape.getPlaceholderDetails().getCTPlaceholder(false);
                     if(ph != null) {
                         _placeholders.add(sShape);
                         if(ph.isSetIdx()) {
@@ -513,7 +544,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
         }
     }
 
-    XSLFSimpleShape getPlaceholderById(int id) {
+    private XSLFSimpleShape getPlaceholderById(int id) {
         initPlaceholders();
         return _placeholderByIdMap.get(id);
     }
@@ -574,7 +605,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
     /**
      * Render this sheet into the supplied graphics object
      *
-     * @param graphics
+     * @param graphics the graphics context to draw to
      */
     @Override
     public void draw(Graphics2D graphics){
@@ -645,4 +676,12 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
     void removePictureRelation(XSLFPictureShape pictureShape) {
         removeRelation(pictureShape.getBlipId());
     }
+
+
+    @Override
+    public XSLFPlaceholderDetails getPlaceholderDetails(Placeholder placeholder) {
+        final XSLFSimpleShape ph = getPlaceholder(placeholder);
+        return (ph == null) ? null : new XSLFPlaceholderDetails(ph);
+    }
+
 }

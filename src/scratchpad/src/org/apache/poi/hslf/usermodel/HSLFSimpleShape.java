@@ -18,7 +18,6 @@
 package org.apache.poi.hslf.usermodel;
 
 import java.awt.Color;
-import java.util.List;
 
 import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherChildAnchorRecord;
@@ -31,10 +30,6 @@ import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.hslf.exceptions.HSLFException;
-import org.apache.poi.hslf.record.HSLFEscherClientDataRecord;
-import org.apache.poi.hslf.record.OEPlaceholderAtom;
-import org.apache.poi.hslf.record.Record;
-import org.apache.poi.hslf.record.RoundTripHFPlaceholder12;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.draw.geom.CustomGeometry;
 import org.apache.poi.sl.draw.geom.Guide;
@@ -42,7 +37,6 @@ import org.apache.poi.sl.draw.geom.PresetGeometries;
 import org.apache.poi.sl.usermodel.LineDecoration;
 import org.apache.poi.sl.usermodel.LineDecoration.DecorationShape;
 import org.apache.poi.sl.usermodel.LineDecoration.DecorationSize;
-import org.apache.poi.sl.usermodel.MasterSheet;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.Placeholder;
@@ -541,144 +535,19 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
     }
 
     @Override
+    public HSLFShapePlaceholderDetails getPlaceholderDetails() {
+        return new HSLFShapePlaceholderDetails(this);
+    }
+    
+    
+    @Override
     public Placeholder getPlaceholder() {
-        List<? extends Record> clRecords = getClientRecords();
-        if (clRecords == null) {
-            return null;
-        }
-        int phSource;
-        HSLFSheet sheet = getSheet();
-        if (sheet instanceof HSLFSlideMaster) {
-            phSource = 1;
-        } else if (sheet instanceof HSLFNotes) {
-            phSource = 2;
-        } else if (sheet instanceof MasterSheet) {
-            // notes master aren't yet supported ...
-            phSource = 3;
-        } else {
-            phSource = 0;
-        }
-        
-        for (Record r : clRecords) {
-            int phId;
-            if (r instanceof OEPlaceholderAtom) {
-                phId = ((OEPlaceholderAtom)r).getPlaceholderId();
-            } else if (r instanceof RoundTripHFPlaceholder12) {
-                //special case for files saved in Office 2007
-                phId = ((RoundTripHFPlaceholder12)r).getPlaceholderId();
-            } else {
-                continue;
-            }
-
-            switch (phSource) {
-            case 0:
-                return Placeholder.lookupNativeSlide(phId);
-            default:
-            case 1:
-                return Placeholder.lookupNativeSlideMaster(phId);
-            case 2:
-                return Placeholder.lookupNativeNotes(phId);
-            case 3:
-                return Placeholder.lookupNativeNotesMaster(phId);
-            }
-        }
-
-        return null;
+        return getPlaceholderDetails().getPlaceholder();
     }
 
     @Override
     public void setPlaceholder(Placeholder placeholder) {
-        EscherSpRecord spRecord = getEscherChild(EscherSpRecord.RECORD_ID);
-        int flags = spRecord.getFlags();
-        if (placeholder == null) {
-            flags ^= EscherSpRecord.FLAG_HAVEMASTER;
-        } else {
-            flags |= EscherSpRecord.FLAG_HAVEANCHOR | EscherSpRecord.FLAG_HAVEMASTER;
-        }
-        spRecord.setFlags(flags);
-
-        // Placeholders can't be grouped
-        setEscherProperty(EscherProperties.PROTECTION__LOCKAGAINSTGROUPING, (placeholder == null ? -1 : 262144));
-
-        HSLFEscherClientDataRecord clientData = getClientData(false);
-        if (placeholder == null) {
-            if (clientData != null) {
-                clientData.removeChild(OEPlaceholderAtom.class);
-                clientData.removeChild(RoundTripHFPlaceholder12.class);
-                // remove client data if the placeholder was the only child to be carried
-                if (clientData.getChildRecords().isEmpty()) {
-                    getSpContainer().removeChildRecord(clientData);
-                }
-            }
-            return;
-        }
-
-        if (clientData == null) {
-            clientData = getClientData(true);
-        }
-
-        // OEPlaceholderAtom tells powerpoint that this shape is a placeholder
-        OEPlaceholderAtom oep = null;
-        RoundTripHFPlaceholder12 rtp = null;
-        for (Record r : clientData.getHSLFChildRecords()) {
-            if (r instanceof OEPlaceholderAtom) {
-                oep = (OEPlaceholderAtom)r;
-                break;
-            }
-            if (r instanceof RoundTripHFPlaceholder12) {
-                rtp = (RoundTripHFPlaceholder12)r;
-                break;
-            }
-        }
-
-        /**
-         * Extract from MSDN:
-         *
-         * There is a special case when the placeholder does not have a position in the layout.
-         * This occurs when the user has moved the placeholder from its original position.
-         * In this case the placeholder ID is -1.
-         */
-        byte phId;
-        HSLFSheet sheet = getSheet();
-        // TODO: implement/switch NotesMaster
-        if (sheet instanceof HSLFSlideMaster) {
-            phId = (byte)placeholder.nativeSlideMasterId;
-        } else if (sheet instanceof HSLFNotes) {
-            phId = (byte)placeholder.nativeNotesId;
-        } else {
-            phId = (byte)placeholder.nativeSlideId;
-        }
-
-        if (phId == -2) {
-            throw new HSLFException("Placeholder "+placeholder.name()+" not supported for this sheet type ("+sheet.getClass()+")");
-        }
-
-        switch (placeholder) {
-            case HEADER:
-            case FOOTER:
-                if (rtp == null) {
-                    rtp = new RoundTripHFPlaceholder12();
-                    rtp.setPlaceholderId(phId);
-                    clientData.addChild(rtp);
-                }
-                if (oep != null) {
-                    clientData.removeChild(OEPlaceholderAtom.class);
-                }
-                break;
-            default:
-                if (rtp != null) {
-                    clientData.removeChild(RoundTripHFPlaceholder12.class);
-                }
-                if (oep == null) {
-                    oep = new OEPlaceholderAtom();
-                    oep.setPlaceholderSize((byte)OEPlaceholderAtom.PLACEHOLDER_FULLSIZE);
-                    // TODO: placement id only "SHOULD" be unique ... check other placeholders on sheet for unique id
-                    oep.setPlacementId(-1);
-                    oep.setPlaceholderId(phId);
-                    clientData.addChild(oep);
-                }
-                break;
-        }
+        getPlaceholderDetails().setPlaceholder(placeholder);
     }
 
 
@@ -726,5 +595,11 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
      */
     protected void setHyperlink(HSLFHyperlink link) {
         _hyperlink = link;
+    }
+    
+    @Override
+    public boolean isPlaceholder() {
+        // currently we only identify TextShapes as placeholders
+        return false;
     }
 }

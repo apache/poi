@@ -33,9 +33,9 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.usermodel.HSLFObjectShape;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
-import org.apache.poi.hslf.usermodel.HSLFObjectShape;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
@@ -89,12 +89,12 @@ public final class TestExtractor {
     public void testReadSheetText() throws IOException {
         // Basic 2 page example
         PowerPointExtractor ppe = openExtractor("basic_test_ppt_file.ppt");
-        ensureTwoStringsTheSame(expectText, ppe.getText());
+        assertEquals(expectText, ppe.getText());
         ppe.close();
 
         // 1 page example with text boxes
         PowerPointExtractor ppe2 = openExtractor("with_textbox.ppt");
-        ensureTwoStringsTheSame(expectText2, ppe2.getText());
+        assertEquals(expectText2, ppe2.getText());
         ppe2.close();
     }
 
@@ -103,15 +103,15 @@ public final class TestExtractor {
         // Basic 2 page example
         PowerPointExtractor ppe = openExtractor("basic_test_ppt_file.ppt");
         String notesText = ppe.getNotes();
-        String expText = "These are the notes for page 1\nThese are the notes on page two, again lacking formatting\n";
-        ensureTwoStringsTheSame(expText, notesText);
+        String expText = "\nThese are the notes for page 1\n\nThese are the notes on page two, again lacking formatting\n";
+        assertEquals(expText, notesText);
         ppe.close();
 
         // Other one doesn't have notes
         PowerPointExtractor ppe2 = openExtractor("with_textbox.ppt");
         notesText = ppe2.getNotes();
         expText = "";
-        ensureTwoStringsTheSame(expText, notesText);
+        assertEquals(expText, notesText);
         ppe2.close();
     }
 
@@ -122,8 +122,8 @@ public final class TestExtractor {
                 "This is the title on page 2\nThis is page two\nIt has several blocks of text\nNone of them have formatting\n"
         };
         String[] ntText = new String[]{
-                "These are the notes for page 1\n",
-                "These are the notes on page two, again lacking formatting\n"
+                "\nThese are the notes for page 1\n",
+                "\nThese are the notes on page two, again lacking formatting\n"
         };
 
         PowerPointExtractor ppe = openExtractor("basic_test_ppt_file.ppt");
@@ -137,7 +137,7 @@ public final class TestExtractor {
 
         ppe.setSlidesByDefault(true);
         ppe.setNotesByDefault(true);
-        assertEquals(slText[0] + slText[1] + "\n" + ntText[0] + ntText[1], ppe.getText());
+        assertEquals(slText[0] + ntText[0] + slText[1] + ntText[1], ppe.getText());
         ppe.close();
     }
 
@@ -164,16 +164,6 @@ public final class TestExtractor {
         assertContains(text, "Using Disease Surveillance and Response");
         
         ppe.close();
-    }
-
-    private void ensureTwoStringsTheSame(String exp, String act) {
-        assertEquals(exp.length(), act.length());
-        char[] expC = exp.toCharArray();
-        char[] actC = act.toCharArray();
-        for (int i = 0; i < expC.length; i++) {
-            assertEquals("Char " + i, expC[i], actC[i]);
-        }
-        assertEquals(exp, act);
     }
 
     @Test
@@ -453,5 +443,39 @@ public final class TestExtractor {
         String text = ppe.getText();
         assertContains(text, "Prague");
         ppe.close();
+    }
+
+    @Test
+    public void testExtractGroupedShapeText() throws Exception {
+        try (final PowerPointExtractor ppe = openExtractor("bug62092.ppt")) {
+            final String text = ppe.getText();
+
+            //this tests that we're ignoring text shapes at depth=0
+            //i.e. POI has already included them in the slide's getTextParagraphs()
+            assertContains(text, "Text box1");
+            assertEquals(1, countMatches(text,"Text box1"));
+
+
+            //the WordArt and text box count tests will fail
+            //if this content is available via getTextParagraphs() of the slide in POI
+            //i.e. when POI is fixed, these tests will fail, and
+            //we'll have to remove the workaround in HSLFExtractor's extractGroupText(...)
+            assertEquals(1, countMatches(text,"WordArt1"));
+            assertEquals(1, countMatches(text,"WordArt2"));
+            assertEquals(1, countMatches(text,"Ungrouped text box"));//should only be 1
+            assertContains(text, "Text box2");
+            assertContains(text, "Text box3");
+            assertContains(text, "Text box4");
+            assertContains(text, "Text box5");
+
+            //see below -- need to extract hyperlinks
+            assertContains(text, "tika");
+            assertContains(text, "MyTitle");
+
+        }
+    }
+
+    private static int countMatches(final String base, final String find) {
+        return base.split(find).length-1;
     }
 }

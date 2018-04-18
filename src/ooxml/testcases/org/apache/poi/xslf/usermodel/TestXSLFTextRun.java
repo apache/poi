@@ -28,6 +28,7 @@ import static org.mockito.Mockito.when;
 import java.awt.Color;
 import java.io.IOException;
 
+import org.apache.poi.sl.draw.DrawTextParagraph;
 import org.junit.Test;
 
 /**
@@ -65,17 +66,17 @@ public class TestXSLFTextRun {
         r.setFontSize(13.0);
         assertEquals(13.0, r.getFontSize(), 0);
 
-        assertEquals(false, r.isSuperscript());
+        assertFalse(r.isSuperscript());
         r.setSuperscript(true);
-        assertEquals(true, r.isSuperscript());
+        assertTrue(r.isSuperscript());
         r.setSuperscript(false);
-        assertEquals(false, r.isSuperscript());
+        assertFalse(r.isSuperscript());
 
-        assertEquals(false, r.isSubscript());
+        assertFalse(r.isSubscript());
         r.setSubscript(true);
-        assertEquals(true, r.isSubscript());
+        assertTrue(r.isSubscript());
         r.setSubscript(false);
-        assertEquals(false, r.isSubscript());
+        assertFalse(r.isSubscript());
         
         ppt.close();
     }
@@ -94,8 +95,11 @@ public class TestXSLFTextRun {
         try (XMLSlideShow ppt = new XMLSlideShow()) {
             XSLFSlide slide = ppt.createSlide();
             XSLFTextShape sh = slide.createAutoShape();
-            XSLFTextRun r = sh.addNewTextParagraph().addNewTextRun();
-            assertEquals(unicodeSurrogates, r.getRenderableText(unicodeSurrogates));
+            XSLFTextParagraph p = sh.addNewTextParagraph();
+            XSLFTextRun r = p.addNewTextRun();
+            r.setText(unicodeSurrogates);
+
+            assertEquals(unicodeSurrogates, new DrawTextParagraph(p).getRenderableText(r));
         }
     }
 
