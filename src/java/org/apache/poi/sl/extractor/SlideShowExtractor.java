@@ -152,7 +152,7 @@ public class SlideShowExtractor<
                 }
                 final TextShape<S, P> ts = (TextShape<S, P>) s;
                 final PlaceholderDetails pd = ts.getPlaceholderDetails();
-                if (pd == null || !pd.isVisible()) {
+                if (pd == null || !pd.isVisible() || pd.getPlaceholder() == null) {
                     continue;
                 }
                 switch (pd.getPlaceholder()) {
