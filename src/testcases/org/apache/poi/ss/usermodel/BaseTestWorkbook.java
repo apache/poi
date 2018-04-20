@@ -331,7 +331,8 @@ public abstract class BaseTestWorkbook {
     public void testSetActiveCell() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet("new sheet");
-            assertEquals(new CellAddress("A1"), sheet.getActiveCell());
+            final CellAddress initialActiveCell = sheet.getActiveCell();
+            assertTrue(initialActiveCell == null || new CellAddress("A1").equals(initialActiveCell));
             sheet.setActiveCell(new CellAddress("E11"));
             assertEquals(new CellAddress("E11"), sheet.getActiveCell());
 
