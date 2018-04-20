@@ -73,6 +73,7 @@ import org.apache.poi.poifs.macros.VBAMacroReader;
 import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.draw.DrawTextParagraph;
+import org.apache.poi.sl.extractor.SlideShowExtractor;
 import org.apache.poi.sl.usermodel.ColorStyle;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
@@ -800,18 +801,18 @@ public final class TestBugs {
         String files[] = { "bug58718_008524.ppt","bug58718_008558.ppt","bug58718_349008.ppt","bug58718_008495.ppt",  }; 
         for (String f : files) {
             File sample = HSLFTestDataSamples.getSampleFile(f);
-            PowerPointExtractor ex = new PowerPointExtractor(sample.getAbsolutePath());
-            assertNotNull(ex.getText());
-            ex.close();
+            try (SlideShowExtractor ex = new SlideShowExtractor(SlideShowFactory.create(sample))) {
+                 assertNotNull(ex.getText());
+             }
         }
     }
 
     @Test
     public void bug58733() throws IOException {
         File sample = HSLFTestDataSamples.getSampleFile("bug58733_671884.ppt");
-        PowerPointExtractor ex = new PowerPointExtractor(sample.getAbsolutePath());
-        assertNotNull(ex.getText());
-        ex.close();
+        try (SlideShowExtractor ex = new SlideShowExtractor(SlideShowFactory.create(sample))) {
+            assertNotNull(ex.getText());
+        }
     }
 
     @Test

@@ -34,6 +34,7 @@ import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.sl.extractor.SlideShowExtractor;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
+import org.apache.poi.util.Removal;
 
 /**
  * This class can be used to extract text from a PowerPoint file. Can optionally
@@ -43,6 +44,7 @@ import org.apache.poi.sl.usermodel.SlideShowFactory;
  */
 @SuppressWarnings("WeakerAccess")
 @Deprecated
+@Removal(version="5.0.0")
 public final class PowerPointExtractor extends POIOLE2TextExtractor {
    	private final SlideShowExtractor<HSLFShape,HSLFTextParagraph> delegate;
 

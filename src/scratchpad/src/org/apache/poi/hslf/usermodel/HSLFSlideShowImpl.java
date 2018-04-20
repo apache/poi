@@ -846,9 +846,13 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
 
     @Override
     public void close() throws IOException {
-        NPOIFSFileSystem fs = getDirectory().getFileSystem();
-        if (fs != null) {
-            fs.close();
+        // only close the filesystem, if we are based on the root node.
+        // embedded documents/slideshows shouldn't close the parent container
+        if (getDirectory().getParent() == null) {
+            NPOIFSFileSystem fs = getDirectory().getFileSystem();
+            if (fs != null) {
+                fs.close();
+            }
         }
     }
 

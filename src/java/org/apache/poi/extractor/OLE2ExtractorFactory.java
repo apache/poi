@@ -115,26 +115,23 @@ public class OLE2ExtractorFactory {
         return threadPreferEventExtractors.get();
     }
 
-    public static POIOLE2TextExtractor createExtractor(POIFSFileSystem fs) throws IOException {
-        // Only ever an OLE2 one from the root of the FS
-        return (POIOLE2TextExtractor)createExtractor(fs.getRoot());
+    public static <T extends POITextExtractor> T createExtractor(POIFSFileSystem fs) throws IOException {
+        return (T)createExtractor(fs.getRoot());
     }
-    public static POIOLE2TextExtractor createExtractor(NPOIFSFileSystem fs) throws IOException {
-        // Only ever an OLE2 one from the root of the FS
-        return (POIOLE2TextExtractor)createExtractor(fs.getRoot());
+    public static <T extends POITextExtractor> T createExtractor(NPOIFSFileSystem fs) throws IOException {
+        return (T)createExtractor(fs.getRoot());
     }
-    public static POIOLE2TextExtractor createExtractor(OPOIFSFileSystem fs) throws IOException {
-        // Only ever an OLE2 one from the root of the FS
-        return (POIOLE2TextExtractor)createExtractor(fs.getRoot());
+    public static <T extends POITextExtractor> T createExtractor(OPOIFSFileSystem fs) throws IOException {
+        return (T)createExtractor(fs.getRoot());
     }
 
-    public static POITextExtractor createExtractor(InputStream input) throws IOException {
+    public static <T extends POITextExtractor> T createExtractor(InputStream input) throws IOException {
         Class<?> cls = getOOXMLClass();
         if (cls != null) {
             // Use Reflection to get us the full OOXML-enabled version
             try {
                 Method m = cls.getDeclaredMethod("createExtractor", InputStream.class);
-                return (POITextExtractor)m.invoke(null, input);
+                return (T)m.invoke(null, input);
             } catch (IllegalArgumentException iae) {
                 throw iae;
             } catch (Exception e) {

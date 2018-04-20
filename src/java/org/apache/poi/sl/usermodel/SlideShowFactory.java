@@ -60,13 +60,40 @@ public class SlideShowFactory {
      * @throws IOException if an error occurs while reading the data
      */
     public static SlideShow<?,?> create(final NPOIFSFileSystem fs, String password) throws IOException {
-        DirectoryNode root = fs.getRoot();
+        return create(fs.getRoot(), password);
+    }
 
+    /**
+     * Creates a SlideShow from the given NPOIFSFileSystem.
+     *
+     * @param root The {@link DirectoryNode} to start reading the document from
+     *
+     * @return The created SlideShow
+     *
+     * @throws IOException if an error occurs while reading the data
+     */
+    public static SlideShow<?,?> create(final DirectoryNode root) throws IOException {
+        return create(root, null);
+    }
+
+
+    /**
+     * Creates a SlideShow from the given NPOIFSFileSystem, which may
+     * be password protected
+     *
+     * @param root The {@link DirectoryNode} to start reading the document from
+     * @param password The password that should be used or null if no password is necessary.
+     *
+     * @return The created SlideShow
+     *
+     * @throws IOException if an error occurs while reading the data
+     */
+    public static SlideShow<?,?> create(final DirectoryNode root, String password) throws IOException {
         // Encrypted OOXML files go inside OLE2 containers, is this one?
         if (root.hasEntry(Decryptor.DEFAULT_POIFS_ENTRY)) {
             InputStream stream = null;
             try {
-                stream = DocumentFactoryHelper.getDecryptedStream(fs, password);
+                stream = DocumentFactoryHelper.getDecryptedStream(root, password);
 
                 return createXSLFSlideShow(stream);
             } finally {
@@ -82,7 +109,7 @@ public class SlideShowFactory {
             passwordSet = true;
         }
         try {
-            return createHSLFSlideShow(fs);
+            return createHSLFSlideShow(root);
         } finally {
             if (passwordSet) {
                 Biff8EncryptionKey.setCurrentUserPassword(null);

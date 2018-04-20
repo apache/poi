@@ -1139,4 +1139,9 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
     public void close() throws IOException {
         _hslfSlideShow.close();
     }
+
+	@Override
+	public Object getPersistDocument() {
+		return getSlideShowImpl();
+	}
 }

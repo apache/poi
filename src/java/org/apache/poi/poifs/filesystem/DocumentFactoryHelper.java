@@ -44,8 +44,30 @@ public class DocumentFactoryHelper {
      * @throws IOException If an error occurs while decrypting or if the password does not match
      */
     public static InputStream getDecryptedStream(final NPOIFSFileSystem fs, String password)
+    throws IOException {
+        // wrap the stream in a FilterInputStream to close the NPOIFSFileSystem
+        // as well when the resulting OPCPackage is closed
+        return new FilterInputStream(getDecryptedStream(fs.getRoot(), password)) {
+            @Override
+            public void close() throws IOException {
+                fs.close();
+                super.close();
+            }
+        };
+    }
+
+    /**
+     * Wrap the OLE2 data of the DirectoryNode into a decrypted stream by using
+     * the given password.
+     *
+     * @param root The OLE2 directory node for the document
+     * @param password The password, null if the default password should be used
+     * @return A stream for reading the decrypted data
+     * @throws IOException If an error occurs while decrypting or if the password does not match
+     */
+    public static InputStream getDecryptedStream(final DirectoryNode root, String password)
             throws IOException {
-        EncryptionInfo info = new EncryptionInfo(fs);
+        EncryptionInfo info = new EncryptionInfo(root);
         Decryptor d = Decryptor.getInstance(info);
 
         try {
@@ -58,21 +80,11 @@ public class DocumentFactoryHelper {
             }
 
             if (passwordCorrect) {
-                // wrap the stream in a FilterInputStream to close the NPOIFSFileSystem
-                // as well when the resulting OPCPackage is closed
-                return new FilterInputStream(d.getDataStream(fs.getRoot())) {
-                    @Override
-                    public void close() throws IOException {
-                        fs.close();
-
-                        super.close();
-                    }
-                };
+                return d.getDataStream(root);
+            } else if (password != null) {
+                throw new EncryptedDocumentException("Password incorrect");
             } else {
-                if (password != null)
-                    throw new EncryptedDocumentException("Password incorrect");
-                else
-                    throw new EncryptedDocumentException("The supplied spreadsheet is protected, but no password was supplied");
+                throw new EncryptedDocumentException("The supplied spreadsheet is protected, but no password was supplied");
             }
         } catch (GeneralSecurityException e) {
             throw new IOException(e);

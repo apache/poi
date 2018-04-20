@@ -126,4 +126,13 @@ public interface SlideShow<
      * @since POI 4.0.0
      */
     POITextExtractor getMetadataTextExtractor();
+
+    /**
+     * @return the instance which handles the persisting of the slideshow,
+     * which is either a subclass of {@link org.apache.poi.POIDocument}
+     * or {@link org.apache.poi.POIXMLDocument}
+     *
+     * @since POI 4.0.0
+     */
+    Object getPersistDocument();
 }

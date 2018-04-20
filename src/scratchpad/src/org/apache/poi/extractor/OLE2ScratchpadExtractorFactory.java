@@ -38,6 +38,8 @@ import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.Entry;
+import org.apache.poi.sl.extractor.SlideShowExtractor;
+import org.apache.poi.sl.usermodel.SlideShowFactory;
 
 /**
  * Scratchpad-specific logic for {@link OLE2ExtractorFactory} and
@@ -65,7 +67,7 @@ public class OLE2ScratchpadExtractorFactory {
         }
 
         if (poifsDir.hasEntry(HSLFSlideShow.POWERPOINT_DOCUMENT)) {
-            return new PowerPointExtractor(poifsDir);
+            return new SlideShowExtractor(SlideShowFactory.create(poifsDir));
         }
 
         if (poifsDir.hasEntry("VisioDocument")) {

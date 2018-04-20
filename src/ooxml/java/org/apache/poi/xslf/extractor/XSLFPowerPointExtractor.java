@@ -37,7 +37,7 @@ import org.apache.xmlbeans.XmlException;
  * @deprecated use {@link SlideShowExtractor}
  */
 @Deprecated
-@Removal(version="4.2.0")
+@Removal(version="5.0.0")
 public class XSLFPowerPointExtractor extends POIXMLTextExtractor {
     public static final XSLFRelation[] SUPPORTED_TYPES = new XSLFRelation[]{
             XSLFRelation.MAIN, XSLFRelation.MACRO, XSLFRelation.MACRO_TEMPLATE,
