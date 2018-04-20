@@ -105,6 +105,7 @@ public abstract class POIOLE2TextExtractor extends POITextExtractor {
      *
      * @return the underlying POIDocument
      */
+    @Override
     public POIDocument getDocument() {
         return document;
     }

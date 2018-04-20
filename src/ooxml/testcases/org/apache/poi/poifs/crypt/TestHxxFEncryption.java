@@ -120,10 +120,10 @@ public class TestHxxFEncryption {
     public void newPassword(String newPass) throws IOException, OpenXML4JException, XmlException {
         Biff8EncryptionKey.setCurrentUserPassword(password);
         File f = sampleDir.getFile(file);
-        POIOLE2TextExtractor te1 = (POIOLE2TextExtractor)ExtractorFactory.createExtractor(f);
+        POITextExtractor te1 = ExtractorFactory.createExtractor(f);
         Biff8EncryptionKey.setCurrentUserPassword(newPass);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        POIDocument doc = te1.getDocument();
+        POIDocument doc = (POIDocument)te1.getDocument();
         doc.write(bos);
         doc.close();
         te1.close();
@@ -140,25 +140,25 @@ public class TestHxxFEncryption {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         Biff8EncryptionKey.setCurrentUserPassword(password);
         File f = sampleDir.getFile(file);
-        POIOLE2TextExtractor te1 = (POIOLE2TextExtractor)ExtractorFactory.createExtractor(f);
+        POITextExtractor te1 = ExtractorFactory.createExtractor(f);
         // first remove encryption
         Biff8EncryptionKey.setCurrentUserPassword(null);
-        POIDocument doc = te1.getDocument();
+        POIDocument doc = (POIDocument)te1.getDocument();
         doc.write(bos);
         doc.close();
         te1.close();
         // then use default setting, which is cryptoapi
         String newPass = "newPass";
-        POIOLE2TextExtractor te2 = (POIOLE2TextExtractor)ExtractorFactory.createExtractor(new ByteArrayInputStream(bos.toByteArray()));
+        POITextExtractor te2 = ExtractorFactory.createExtractor(new ByteArrayInputStream(bos.toByteArray()));
         Biff8EncryptionKey.setCurrentUserPassword(newPass);
-        doc = te2.getDocument();
+        doc = (POIDocument)te2.getDocument();
         bos.reset();
         doc.write(bos);
         doc.close();
         te2.close();
         // and finally update cryptoapi setting
-        POIOLE2TextExtractor te3 = (POIOLE2TextExtractor)ExtractorFactory.createExtractor(new ByteArrayInputStream(bos.toByteArray()));
-        doc = te3.getDocument();
+        POITextExtractor te3 = ExtractorFactory.createExtractor(new ByteArrayInputStream(bos.toByteArray()));
+        doc = (POIDocument)te3.getDocument();
         // need to cache data (i.e. read all data) before changing the key size
         if (doc instanceof HSLFSlideShowImpl) {
             HSLFSlideShowImpl hss = (HSLFSlideShowImpl)doc;
@@ -175,8 +175,8 @@ public class TestHxxFEncryption {
         doc.close();
         te3.close();
         // check the setting
-        POIOLE2TextExtractor te4 = (POIOLE2TextExtractor)ExtractorFactory.createExtractor(new ByteArrayInputStream(bos.toByteArray()));
-        doc = te4.getDocument();
+        POITextExtractor te4 = ExtractorFactory.createExtractor(new ByteArrayInputStream(bos.toByteArray()));
+        doc = (POIDocument)te4.getDocument();
         ei = doc.getEncryptionInfo();
         assertNotNull(ei);
         assertTrue(ei.getHeader() instanceof CryptoAPIEncryptionHeader);

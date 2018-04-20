@@ -182,7 +182,15 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
      */
     public XSLFCommentAuthors getCommentAuthorsPart() {
         if(_commentAuthors == null) {
+            // first scan the slide relations
             for (POIXMLDocumentPart p : getRelations()) {
+                if (p instanceof XSLFCommentAuthors) {
+                    _commentAuthors = (XSLFCommentAuthors)p;
+                    return _commentAuthors;
+                }
+            }
+            // then scan the presentation relations
+            for (POIXMLDocumentPart p : getSlideShow().getRelations()) {
                 if (p instanceof XSLFCommentAuthors) {
                     _commentAuthors = (XSLFCommentAuthors)p;
                     return _commentAuthors;

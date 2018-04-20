@@ -631,4 +631,9 @@ public class XMLSlideShow extends POIXMLDocument
     public POIXMLPropertiesTextExtractor getMetadataTextExtractor() {
         return new POIXMLPropertiesTextExtractor(this);
     }
+
+    @Override
+    public Object getPersistDocument() {
+        return this;
+    }
 }

@@ -19,8 +19,8 @@ package org.apache.poi.hslf.usermodel;
 
 import java.io.IOException;
 
+import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
-import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.util.Internal;
 
@@ -31,12 +31,20 @@ import org.apache.poi.util.Internal;
 @Internal
 public class HSLFSlideShowFactory extends SlideShowFactory {
     /**
-     * Creates a HSLFSlideShow from the given NPOIFSFileSystem
-     * <p>Note that in order to properly release resources the
-     *  SlideShow should be closed after use.
+     * Creates a HSLFSlideShow from the given NPOIFSFileSystem<p>
+     * Note that in order to properly release resources the
+     * SlideShow should be closed after use.
      */
-    public static SlideShow<?,?> createSlideShow(NPOIFSFileSystem fs) throws IOException {
+    public static HSLFSlideShow createSlideShow(final NPOIFSFileSystem fs) throws IOException {
         return new HSLFSlideShow(fs);
     }
 
+    /**
+     * Creates a HSLFSlideShow from the given DirectoryNode<p>
+     * Note that in order to properly release resources the
+     * SlideShow should be closed after use.
+     */
+    public static HSLFSlideShow createSlideShow(final DirectoryNode root) throws IOException {
+        return new HSLFSlideShow(root);
+    }
 }

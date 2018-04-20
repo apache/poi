@@ -50,6 +50,7 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.sl.draw.DrawPaint;
+import org.apache.poi.sl.extractor.SlideShowExtractor;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.PaintStyle.TexturePaint;
@@ -221,28 +222,27 @@ public class TestXSLFBugs {
      *  rID2 -> slide3.xml
      */
     @Test
-    public void bug54916() throws Exception {
-        XMLSlideShow ss = XSLFTestDataSamples.openSampleDocument("OverlappingRelations.pptx");
-        XSLFSlide slide;
+    public void bug54916() throws IOException {
+        try (XMLSlideShow ss = XSLFTestDataSamples.openSampleDocument("OverlappingRelations.pptx")) {
+            XSLFSlide slide;
 
-        // Should find 4 slides
-        assertEquals(4, ss.getSlides().size());
+            // Should find 4 slides
+            assertEquals(4, ss.getSlides().size());
 
-        // Check the text, to see we got them in order
-        slide = ss.getSlides().get(0);
-        assertContains(getSlideText(slide), "POI cannot read this");
+            // Check the text, to see we got them in order
+            slide = ss.getSlides().get(0);
+            assertContains(getSlideText(ss, slide), "POI cannot read this");
 
-        slide = ss.getSlides().get(1);
-        assertContains(getSlideText(slide), "POI can read this");
-        assertContains(getSlideText(slide), "Has a relationship to another slide");
+            slide = ss.getSlides().get(1);
+            assertContains(getSlideText(ss, slide), "POI can read this");
+            assertContains(getSlideText(ss, slide), "Has a relationship to another slide");
 
-        slide = ss.getSlides().get(2);
-        assertContains(getSlideText(slide), "POI can read this");
+            slide = ss.getSlides().get(2);
+            assertContains(getSlideText(ss, slide), "POI can read this");
 
-        slide = ss.getSlides().get(3);
-        assertContains(getSlideText(slide), "POI can read this");
-
-        ss.close();
+            slide = ss.getSlides().get(3);
+            assertContains(getSlideText(ss, slide), "POI can read this");
+        }
     }
 
     /**
@@ -311,8 +311,15 @@ public class TestXSLFBugs {
         ss.close();
     }
 
-    protected String getSlideText(XSLFSlide slide) {
-        return XSLFPowerPointExtractor.getText(slide, true, false, false);
+    protected String getSlideText(XMLSlideShow ppt, XSLFSlide slide) throws IOException {
+        try (SlideShowExtractor extr = new SlideShowExtractor(ppt)) {
+            // do not auto-close the slideshow
+            extr.setFilesystem(null);
+            extr.setSlidesByDefault(true);
+            extr.setNotesByDefault(false);
+            extr.setMasterByDefault(false);
+            return extr.getText(slide);
+        }
     }
 
     @Test
@@ -458,7 +465,7 @@ public class TestXSLFBugs {
 
         for (int i = 0; i < slideTexts.length; i++) {
             XSLFSlide slide = ss.getSlides().get(i);
-            assertContains(getSlideText(slide), slideTexts[i]);
+            assertContains(getSlideText(ss, slide), slideTexts[i]);
         }
     }
 

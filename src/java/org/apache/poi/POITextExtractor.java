@@ -74,4 +74,9 @@ public abstract class POITextExtractor implements Closeable {
 		    fsToClose.close();
 		}
 	}
+
+	/**
+	 * @return the processed document
+	 */
+	public abstract Object getDocument();
 }

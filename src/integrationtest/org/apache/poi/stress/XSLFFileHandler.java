@@ -24,6 +24,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 
 import org.apache.poi.extractor.ExtractorFactory;
+import org.apache.poi.sl.extractor.SlideShowExtractor;
 import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFSlideShow;
@@ -53,12 +54,19 @@ public class XSLFFileHandler extends SlideShowHandler {
         
         // additionally try the other getText() methods
 
-		try (XSLFPowerPointExtractor extractor = (XSLFPowerPointExtractor) ExtractorFactory.createExtractor(file)) {
+		try (SlideShowExtractor extractor = ExtractorFactory.createExtractor(file)) {
 			assertNotNull(extractor);
+			extractor.setSlidesByDefault(true);
+			extractor.setNotesByDefault(true);
+			extractor.setMasterByDefault(true);
 
-			assertNotNull(extractor.getText(true, true, true));
-			assertEquals("With all options disabled we should not get text",
-					"", extractor.getText(false, false, false));
+			assertNotNull(extractor.getText());
+
+			extractor.setSlidesByDefault(false);
+			extractor.setNotesByDefault(false);
+			extractor.setMasterByDefault(false);
+
+			assertEquals("With all options disabled we should not get text", "", extractor.getText());
 		}
     }
 
