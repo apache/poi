@@ -652,4 +652,76 @@ public class StringUtil {
         }
         return count;
     }
+
+
+    /**
+     * Given a byte array of 16-bit unicode characters in Little Endian
+     * format (most important byte last), return a Java String representation
+     * of it.
+     *
+     * Scans the byte array for two continous 0 bytes and returns the string before.
+     * <p>
+     *
+     * #61881: there seem to be programs out there, which write the 0-termination also
+     * at the beginning of the string. Check if the next two bytes contain a valid ascii char
+     * and correct the _recdata with a '?' char
+     *
+     *
+     * @param string the byte array to be converted
+     * @param offset the initial offset into the
+     *               byte array. it is assumed that string[ offset ] and string[ offset +
+     *               1 ] contain the first 16-bit unicode character
+     * @param len    the max. length of the final string
+     * @return the converted string, never <code>null</code>.
+     * @throws ArrayIndexOutOfBoundsException if offset is out of bounds for
+     *                                        the byte array (i.e., is negative or is greater than or equal to
+     *                                        string.length)
+     * @throws IllegalArgumentException       if len is too large (i.e.,
+     *                                        there is not enough data in string to create a String of that
+     *                                        length)
+     */
+    public static String getFromUnicodeLE0Terminated(
+            final byte[] string,
+            final int offset,
+            final int len)
+            throws ArrayIndexOutOfBoundsException, IllegalArgumentException {
+        if ((offset < 0) || (offset >= string.length)) {
+            throw new ArrayIndexOutOfBoundsException("Illegal offset " + offset + " (String data is of length " + string.length + ")");
+        }
+
+        if ((len < 0) || (((string.length - offset) / 2) < len)) {
+            throw new IllegalArgumentException("Illegal length " + len);
+        }
+
+        final int newOffset;
+        final int newMaxLen;
+        final String prefix;
+
+        // #61881 - for now we only check the first char
+        if (len > 0 && string[offset] == 0 && string[offset+1] == 0) {
+            newOffset = offset+2;
+            prefix = "?";
+
+            // check if the next char is garbage and limit the len if necessary
+            final int cp = (len > 1) ? LittleEndian.getShort(string, offset+2) : 0;
+            newMaxLen = Character.isJavaIdentifierPart(cp) ? len-1 : 0;
+        } else {
+            newOffset = offset;
+            prefix = "";
+            newMaxLen = len;
+        }
+
+        int newLen = 0;
+
+        // loop until we find a null-terminated end
+        for(; newLen < newMaxLen; newLen++) {
+            if (string[newOffset + newLen * 2] == 0 && string[newOffset + newLen * 2 + 1] == 0) {
+                break;
+            }
+        }
+        newLen = Math.min(newLen, newMaxLen);
+
+        return prefix + ((newLen == 0) ? "" : new String(string, newOffset, newLen * 2, UTF16LE));
+    }
+
 }
