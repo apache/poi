@@ -97,9 +97,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
         return _sheet;
     }
     
-    /**
-     * @return human-readable name of this shape, e.g. "Rectange 3"
-     */
+    @Override
     public String getShapeName(){
         return getCNvPr().getName();
     }

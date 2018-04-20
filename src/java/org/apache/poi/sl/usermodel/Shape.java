@@ -38,7 +38,14 @@ public interface Shape<
     * @return the anchor of this shape
     */
    Rectangle2D getAnchor();
-   
+
+   /**
+    * @return human-readable name of this shape, e.g. "Rectange 3"
+    *
+    * @since POI 4.0.0
+    */
+   String getShapeName();
+
    /**
     * Convenience method to draw a single shape
     *

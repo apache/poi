@@ -25,7 +25,6 @@ import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
-import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.util.Internal;
 
@@ -45,7 +44,7 @@ public class XSLFSlideShowFactory extends SlideShowFactory {
      *  @throws IOException if an error occurs while reading the data
      * @throws InvalidFormatException 
      */
-    public static SlideShow<?,?> createSlideShow(OPCPackage pkg) throws IOException {
+    public static XMLSlideShow createSlideShow(OPCPackage pkg) throws IOException {
         try {
             return new XMLSlideShow(pkg);
         } catch (IllegalArgumentException ioe) {
@@ -72,7 +71,7 @@ public class XSLFSlideShowFactory extends SlideShowFactory {
      *  @throws EncryptedDocumentException If the wrong password is given for a protected file
      */
     @SuppressWarnings("resource")
-    public static SlideShow<?,?> createSlideShow(File file, boolean readOnly)
+    public static XMLSlideShow createSlideShow(File file, boolean readOnly)
     throws IOException, InvalidFormatException {
         OPCPackage pkg = OPCPackage.open(file, readOnly ? PackageAccess.READ : PackageAccess.READ_WRITE);
         return createSlideShow(pkg);
@@ -92,7 +91,7 @@ public class XSLFSlideShowFactory extends SlideShowFactory {
      * @throws InvalidFormatException 
      */
     @SuppressWarnings("resource")
-    public static SlideShow<?,?> createSlideShow(InputStream stream) throws IOException, InvalidFormatException {
+    public static XMLSlideShow createSlideShow(InputStream stream) throws IOException, InvalidFormatException {
         OPCPackage pkg = OPCPackage.open(stream);
         return createSlideShow(pkg);
     }
