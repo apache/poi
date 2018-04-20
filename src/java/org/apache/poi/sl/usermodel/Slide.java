@@ -76,4 +76,11 @@ public interface Slide<
      * @return the comment(s) for this slide
      */
     List<? extends Comment> getComments();
+
+    /**
+     * @return the assigned slide layout
+     *
+     * @since POI 4.0.0
+     */
+    MasterSheet getSlideLayout();
 }

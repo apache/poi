@@ -501,4 +501,12 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
             return false;
         }
     }
+
+    @Override
+    public HSLFMasterSheet getSlideLayout(){
+        // TODO: find out how we can find the mastersheet base on the slide layout type, i.e.
+        // getSlideRecord().getSlideAtom().getSSlideLayoutAtom().getGeometryType()
+        return getMasterSheet();
+    }
+
 }
