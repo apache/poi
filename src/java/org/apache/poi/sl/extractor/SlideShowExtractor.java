@@ -116,30 +116,6 @@ public class SlideShowExtractor<
     public String getText() {
         final StringBuilder sb = new StringBuilder();
         
-        if (masterByDefault) {
-            for (final MasterSheet<S,P> master : slideshow.getSlideMasters()) {
-                for (final Shape<S,P> shape : master) {
-                    if (shape instanceof TextShape) {
-                        final TextShape<S,P> ts = (TextShape<S,P>)shape;
-                        final String text = ts.getText();
-                        if (text == null || text.isEmpty() || "*".equals(text)) {
-                            continue;
-                        }
-                        if (ts.isPlaceholder()) {
-                            // don't bother about boiler plate text on master sheets
-                            LOG.log(POILogger.INFO, "Ignoring boiler plate (placeholder) text on slide master:", text);
-                            continue;
-                        }
-                        sb.append(text);
-                        if (!text.endsWith("\n")) {
-                            sb.append("\n");
-                        }
-
-                    }
-                }
-            }
-        }
-
         for (final Slide<S, P> slide : slideshow.getSlides()) {
             sb.append(getText(slide));
         }
@@ -154,6 +130,17 @@ public class SlideShowExtractor<
             printShapeText(slide, sb);
         }
 
+        if (masterByDefault) {
+            final MasterSheet<S,P> ms = slide.getMasterSheet();
+            printSlideMaster(ms, sb);
+
+            // only print slide layout, if it's a different instance
+            final MasterSheet<S,P> sl = slide.getSlideLayout();
+            if (sl != ms) {
+                printSlideMaster(sl, sb);
+            }
+        }
+
         if (commentsByDefault) {
             printComments(slide, sb);
         }
@@ -163,6 +150,31 @@ public class SlideShowExtractor<
         }
 
         return sb.toString();
+    }
+
+    private void printSlideMaster(final MasterSheet<S,P> master, final StringBuilder sb) {
+        if (master == null) {
+            return;
+        }
+        for (final Shape<S,P> shape : master) {
+            if (shape instanceof TextShape) {
+                final TextShape<S,P> ts = (TextShape<S,P>)shape;
+                final String text = ts.getText();
+                if (text == null || text.isEmpty() || "*".equals(text)) {
+                    continue;
+                }
+                if (ts.isPlaceholder()) {
+                    // don't bother about boiler plate text on master sheets
+                    LOG.log(POILogger.INFO, "Ignoring boiler plate (placeholder) text on slide master:", text);
+                    continue;
+                }
+                sb.append(text);
+                if (!text.endsWith("\n")) {
+                    sb.append("\n");
+                }
+
+            }
+        }
     }
 
     private String printHeaderReturnFooter(final Sheet<S,P> sheet, final StringBuilder sb) {

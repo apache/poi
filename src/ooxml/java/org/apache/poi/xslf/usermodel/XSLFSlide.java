@@ -141,6 +141,7 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
         return getSlideLayout();
     }
 
+    @Override
     public XSLFSlideLayout getSlideLayout(){
         if(_layout == null){
             for (POIXMLDocumentPart p : getRelations()) {

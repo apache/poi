@@ -177,7 +177,6 @@ public class TestXSLFPowerPointExtractor {
     }
 
     @Test
-    @Ignore("currently slidelayouts aren't yet supported")
 	public void testGetMasterText() throws Exception {
 	    try (XMLSlideShow xml = openPPTX("WithMaster.pptx");
             SlideShowExtractor extractor = new SlideShowExtractor(xml)) {
@@ -205,13 +204,10 @@ public class TestXSLFPowerPointExtractor {
             String wholeText =
                 "First page title\n" +
                 "First page subtitle\n" +
-                "This is the Master Title\n" +
                 "This text comes from the Master Slide\n" +
                 "\n" +
-                // TODO Detect we didn't have a title, and include the master one
                 "2nd page subtitle\n" +
                 "Footer from the master slide\n" +
-                "This is the Master Title\n" +
                 "This text comes from the Master Slide\n";
             assertEquals(wholeText, text);
         }
