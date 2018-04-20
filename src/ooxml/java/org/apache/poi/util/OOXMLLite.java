@@ -29,8 +29,10 @@ import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -165,18 +167,23 @@ public final class OOXMLLite {
         //run tests
         JUnitCore jUnitCore = new JUnitCore();
         jUnitCore.addListener(new TextListener(System.out) {
+            private final Set<String> classes = new HashSet<>();
             private int count;
+
             @Override
             public void testStarted(Description description) {
+                // count how many test-classes we already saw
+                classes.add(description.getClassName());
                 count++;
                 if(count % 100 == 0) {
                     System.out.println();
-                    System.out.println(count + "/" + lst.size() + ": " + description.getDisplayName());
+                    System.out.println(classes.size() + "/" + lst.size() + ": " + description.getDisplayName());
                 }
+
                 super.testStarted(description);
             }
         });
-        Result result = jUnitCore.run(lst.toArray(new Class<?>[lst.size()]));
+        Result result = jUnitCore.run(lst.toArray(new Class<?>[0]));
         if (!result.wasSuccessful()) {
             throw new RuntimeException("Tests did not succeed, cannot build ooxml-lite jar");
         }
