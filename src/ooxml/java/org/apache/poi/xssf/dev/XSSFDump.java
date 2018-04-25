@@ -24,9 +24,9 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import org.apache.poi.openxml4j.opc.internal.ZipHelper;
+import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.util.DocumentHelper;
 import org.apache.poi.util.IOUtils;
 import org.apache.xmlbeans.XmlException;
@@ -41,14 +41,13 @@ import org.w3c.dom.Document;
  */
 public final class XSSFDump {
 
+    private XSSFDump() {}
+
     public static void main(String[] args) throws Exception {
-        for (int i = 0; i < args.length; i++) {
-            System.out.println("Dumping " + args[i]);
-            ZipFile zip = ZipHelper.openZipFile(args[i]);
-            try {
+        for (String arg : args) {
+            System.out.println("Dumping " + arg);
+            try (ZipSecureFile zip = ZipHelper.openZipFile(arg)) {
                 dump(zip);
-            } finally {
-                zip.close();
             }
         }
     }
@@ -72,7 +71,7 @@ public final class XSSFDump {
     }
     
 
-    public static void dump(ZipFile zip) throws Exception {
+    public static void dump(ZipSecureFile zip) throws Exception {
         String zipname = zip.getName();
         int sep = zipname.lastIndexOf('.');
         File root = new File(zipname.substring(0, sep));
@@ -90,8 +89,7 @@ public final class XSSFDump {
             }
 
             File f = new File(root, entry.getName());
-            OutputStream out = new FileOutputStream(f);
-            try {
+            try (final OutputStream out = new FileOutputStream(f)) {
                 if (entry.getName().endsWith(".xml") || entry.getName().endsWith(".vml") || entry.getName().endsWith(".rels")) {
                     try {
                         Document doc = DocumentHelper.readDocument(zip.getInputStream(entry));
@@ -106,8 +104,6 @@ public final class XSSFDump {
                 } else {
                     IOUtils.copy(zip.getInputStream(entry), out);
                 }
-            } finally {
-                out.close();
             }
         }
     }

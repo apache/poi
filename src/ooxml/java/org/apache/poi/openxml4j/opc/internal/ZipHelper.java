@@ -24,9 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Enumeration;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import org.apache.poi.openxml4j.exceptions.NotOfficeXmlFileException;
@@ -34,8 +32,8 @@ import org.apache.poi.openxml4j.exceptions.OLE2NotOfficeXmlFileException;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.ZipPackage;
+import org.apache.poi.openxml4j.util.ZipArchiveThresholdInputStream;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
-import org.apache.poi.openxml4j.util.ZipSecureFile.ThresholdInputStream;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.util.Internal;
 
@@ -70,24 +68,6 @@ public final class ZipHelper {
         }
 
         return new ZipEntry(corePropsRel.getTargetURI().getPath());
-    }
-
-    /**
-     * Retrieve the Zip entry of the content types part.
-     */
-    public static ZipEntry getContentTypeZipEntry(ZipPackage pkg) {
-        Enumeration<? extends ZipEntry> entries = pkg.getZipArchive().getEntries();
-
-        // Enumerate through the Zip entries until we find the one named
-        // '[Content_Types].xml'.
-        while (entries.hasMoreElements()) {
-            ZipEntry entry = entries.nextElement();
-            if (entry.getName().equals(
-                    ContentTypeManager.CONTENT_TYPES_PART_NAME)) {
-                return entry;
-            }
-        }
-        return null;
     }
 
     /**
@@ -158,7 +138,7 @@ public final class ZipHelper {
      * Warning - this will consume the first few bytes of the stream,
      *  you should push-back or reset the stream after use!
      */
-    public static void verifyZipHeader(InputStream stream) throws NotOfficeXmlFileException, IOException {
+    private static void verifyZipHeader(InputStream stream) throws NotOfficeXmlFileException, IOException {
         InputStream is = FileMagic.prepareToCheckMagic(stream);
         FileMagic fm = FileMagic.valueOf(is);
 
@@ -191,14 +171,14 @@ public final class ZipHelper {
      * @return The zip stream freshly open.
      */
     @SuppressWarnings("resource")
-    public static ThresholdInputStream openZipStream(InputStream stream) throws IOException {
+    public static ZipArchiveThresholdInputStream openZipStream(InputStream stream) throws IOException {
         // Peek at the first few bytes to sanity check
         InputStream checkedStream = FileMagic.prepareToCheckMagic(stream);
         verifyZipHeader(checkedStream);
         
         // Open as a proper zip stream
         InputStream zis = new ZipInputStream(checkedStream);
-        return ZipSecureFile.addThreshold(zis);
+        return new ZipArchiveThresholdInputStream(zis);
     }
 
     /**
@@ -211,7 +191,7 @@ public final class ZipHelper {
      * @throws IOException if the zip file cannot be opened or closed to read the header signature
      * @throws NotOfficeXmlFileException if stream does not start with zip header signature
      */
-    public static ZipFile openZipFile(File file) throws IOException, NotOfficeXmlFileException {
+    public static ZipSecureFile openZipFile(File file) throws IOException, NotOfficeXmlFileException {
         if (!file.exists()) {
             throw new FileNotFoundException("File does not exist");
         }
@@ -235,7 +215,7 @@ public final class ZipHelper {
      *            The file path.
      * @return The zip archive freshly open.
      */
-    public static ZipFile openZipFile(String path) throws IOException {
+    public static ZipSecureFile openZipFile(String path) throws IOException {
         return openZipFile(new File(path));
     }
 }

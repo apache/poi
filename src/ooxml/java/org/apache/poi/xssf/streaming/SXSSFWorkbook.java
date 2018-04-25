@@ -36,6 +36,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.util.ZipArchiveThresholdInputStream;
 import org.apache.poi.openxml4j.util.ZipEntrySource;
 import org.apache.poi.openxml4j.util.ZipFileZipEntrySource;
 import org.apache.poi.ss.SpreadsheetVersion;
@@ -50,7 +51,13 @@ import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.SheetVisibility;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.util.*;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.Internal;
+import org.apache.poi.util.NotImplemented;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.Removal;
+import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFChartSheet;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -369,13 +376,17 @@ public class SXSSFWorkbook implements Workbook {
     }
 
     protected void injectData(ZipEntrySource zipEntrySource, OutputStream out) throws IOException {
-        try {
-            try (ZipOutputStream zos = new ZipOutputStream(out)) {
-                Enumeration<? extends ZipEntry> en = zipEntrySource.getEntries();
-                while (en.hasMoreElements()) {
-                    ZipEntry ze = en.nextElement();
-                    zos.putNextEntry(new ZipEntry(ze.getName()));
-                    InputStream is = zipEntrySource.getInputStream(ze);
+        try (ZipOutputStream zos = new ZipOutputStream(out)) {
+            Enumeration<? extends ZipEntry> en = zipEntrySource.getEntries();
+            while (en.hasMoreElements()) {
+                ZipEntry ze = en.nextElement();
+                zos.putNextEntry(new ZipEntry(ze.getName()));
+                try (final InputStream is = zipEntrySource.getInputStream(ze)) {
+                    if (is instanceof ZipArchiveThresholdInputStream) {
+                        // #59743 - disable Threshold handling for SXSSF copy
+                        // as users tend to put too much repetitive data in when using SXSSF :)
+                        ((ZipArchiveThresholdInputStream)is).setGuardState(false);
+                    }
                     XSSFSheet xSheet = getSheetFromZipEntryName(ze.getName());
                     // See bug 56557, we should not inject data into the special ChartSheets
                     if (xSheet != null && !(xSheet instanceof XSSFChartSheet)) {
@@ -386,7 +397,6 @@ public class SXSSFWorkbook implements Workbook {
                     } else {
                         IOUtils.copy(is, zos);
                     }
-                    is.close();
                 }
             }
         } finally {

@@ -76,12 +76,12 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	/**
 	 * Package access.
 	 */
-	private PackageAccess packageAccess;
+	private final PackageAccess packageAccess;
 
 	/**
 	 * Package parts collection.
 	 */
-	protected PackagePartCollection partList;
+	private PackagePartCollection partList;
 
 	/**
 	 * Package relationships.
@@ -91,17 +91,17 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	/**
 	 * Part marshallers by content type.
 	 */
-	protected Map<ContentType, PartMarshaller> partMarshallers;
+	protected final Map<ContentType, PartMarshaller> partMarshallers = new HashMap<>(5);
 
 	/**
 	 * Default part marshaller.
 	 */
-	protected PartMarshaller defaultPartMarshaller;
+	protected final PartMarshaller defaultPartMarshaller = new DefaultMarshaller();
 
 	/**
 	 * Part unmarshallers by content type.
 	 */
-	protected Map<ContentType, PartUnmarshaller> partUnmarshallers;
+	protected final Map<ContentType, PartUnmarshaller> partUnmarshallers = new HashMap<>(2);
 
 	/**
 	 * Core package properties.
@@ -138,40 +138,26 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 		if (getClass() != ZipPackage.class) {
 			throw new IllegalArgumentException("PackageBase may not be subclassed");
 		}
-		init();
 		this.packageAccess = access;
+
+		final ContentType contentType = newCorePropertiesPart();
+		// TODO Delocalize specialized marshallers
+		this.partUnmarshallers.put(contentType, new PackagePropertiesUnmarshaller());
+		this.partMarshallers.put(contentType, new ZipPackagePropertiesMarshaller());
 	}
 
-	/**
-	 * Initialize the package instance.
-	 */
-	private void init() {
-		this.partMarshallers = new HashMap<>(5);
-		this.partUnmarshallers = new HashMap<>(2);
-
+	private static ContentType newCorePropertiesPart() {
 		try {
-			// Add 'default' unmarshaller
-			this.partUnmarshallers.put(new ContentType(
-					ContentTypes.CORE_PROPERTIES_PART),
-					new PackagePropertiesUnmarshaller());
-
-			// Add default marshaller
-			this.defaultPartMarshaller = new DefaultMarshaller();
-			// TODO Delocalize specialized marshallers
-			this.partMarshallers.put(new ContentType(
-					ContentTypes.CORE_PROPERTIES_PART),
-					new ZipPackagePropertiesMarshaller());
+			return new ContentType(ContentTypes.CORE_PROPERTIES_PART);
 		} catch (InvalidFormatException e) {
 			// Should never happen
 			throw new OpenXML4JRuntimeException(
-					"Package.init() : this exception should never happen, " +
-					"if you read this message please send a mail to the developers team. : " +
-					e.getMessage(),
-					e
+				"Package.init() : this exception should never happen, " +
+				"if you read this message please send a mail to the developers team. : " +
+				e.getMessage(), e
 			);
 		}
 	}
-
 
 	/**
 	 * Open a package with read/write permission.
@@ -625,7 +611,8 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 				return null;
 			}
 		}
-		return getPartImpl(partName);
+
+		return partList.get(partName);
 	}
 
 	/**
@@ -737,25 +724,16 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 
 			// Check rule M4.1 -> A format consumer shall consider more than
 			// one core properties relationship for a package to be an error
-		   // (We just log it and move on, as real files break this!)
+		    // (We just log it and move on, as real files break this!)
 			boolean hasCorePropertiesPart = false;
 			boolean needCorePropertiesPart = true;
 
-			PackagePart[] parts = this.getPartsImpl();
-			this.partList = new PackagePartCollection();
-			for (PackagePart part : parts) {
-				if (partList.containsKey(part._partName)) {
-					throw new InvalidFormatException(
-							"A part with the name '" +
-							part._partName +
-						        "' already exist : Packages shall not contain equivalent " +
-						        "part names and package implementers shall neither create " +
-					        	"nor recognize packages with equivalent part names. [M1.12]");
-				}
+			partList = getPartsImpl();
+			for (PackagePart part : new ArrayList<>(partList.sortedValues())) {
+			    part.loadRelationships();
 
 				// Check OPC compliance rule M4.1
-				if (part.getContentType().equals(
-						ContentTypes.CORE_PROPERTIES_PART)) {
+				if (ContentTypes.CORE_PROPERTIES_PART.equals(part.getContentType())) {
 					if (!hasCorePropertiesPart) {
 						hasCorePropertiesPart = true;
 					} else {
@@ -768,11 +746,10 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 				PartUnmarshaller partUnmarshaller = partUnmarshallers.get(part._contentType);
 
 				if (partUnmarshaller != null) {
-					UnmarshallContext context = new UnmarshallContext(this,
-							part._partName);
+					UnmarshallContext context = new UnmarshallContext(this, part._partName);
 					try {
-						PackagePart unmarshallPart = partUnmarshaller
-								.unmarshall(context, part.getInputStream());
+						PackagePart unmarshallPart = partUnmarshaller.unmarshall(context, part.getInputStream());
+						partList.remove(part.getPartName());
 						partList.put(unmarshallPart._partName, unmarshallPart);
 
 						// Core properties case-- use first CoreProperties part we come across
@@ -789,12 +766,6 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 						continue;
 					} catch (InvalidOperationException invoe) {
 						throw new InvalidFormatException(invoe.getMessage(), invoe);
-					}
-				} else {
-					try {
-						partList.put(part._partName, part);
-					} catch (InvalidOperationException e) {
-						throw new InvalidFormatException(e.getMessage(), e);
 					}
 				}
 			}
@@ -1457,6 +1428,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
         }
 	}
 
+
 	/* Accesseurs */
 
 	/**
@@ -1576,20 +1548,11 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 			throws IOException;
 
 	/**
-	 * Get the package part mapped to the specified URI.
-	 *
-	 * @param partName
-	 *            The URI of the part to retrieve.
-	 * @return The package part located by the specified URI, else <b>null</b>.
-	 */
-	protected abstract PackagePart getPartImpl(PackagePartName partName);
-
-	/**
 	 * Get all parts link to the package.
 	 *
 	 * @return A list of the part owned by the package.
 	 */
-	protected abstract PackagePart[] getPartsImpl()
+	protected abstract PackagePartCollection getPartsImpl()
 			throws InvalidFormatException;
 
     /**

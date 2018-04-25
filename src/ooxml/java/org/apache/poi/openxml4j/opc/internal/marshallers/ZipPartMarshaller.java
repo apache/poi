@@ -36,6 +36,7 @@ import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.openxml4j.opc.internal.PartMarshaller;
 import org.apache.poi.openxml4j.opc.internal.ZipHelper;
 import org.apache.poi.util.DocumentHelper;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
@@ -47,7 +48,6 @@ import org.w3c.dom.Element;
  */
 public final class ZipPartMarshaller implements PartMarshaller {
 	private final static POILogger logger = POILogFactory.getLogger(ZipPartMarshaller.class);
-	private final static int READ_WRITE_FILE_BUFFER_SIZE = 8192;
 
 	/**
 	 * Save the specified part.
@@ -80,17 +80,11 @@ public final class ZipPartMarshaller implements PartMarshaller {
 			zos.putNextEntry(partEntry);
 
 			// Saving data in the ZIP file
-			InputStream ins = part.getInputStream();
-			byte[] buff = new byte[READ_WRITE_FILE_BUFFER_SIZE];
-			while (ins.available() > 0) {
-				int resultRead = ins.read(buff);
-				if (resultRead == -1) {
-					// End of file reached
-					break;
-				}
-				zos.write(buff, 0, resultRead);
+			try (final InputStream ins = part.getInputStream()) {
+				IOUtils.copy(ins, zos);
+			} finally {
+				zos.closeEntry();
 			}
-			zos.closeEntry();
 		} catch (IOException ioe) {
 			logger.log(POILogger.ERROR,"Cannot write: " + part.getPartName() + ": in ZIP",
 					ioe);
@@ -178,14 +172,14 @@ public final class ZipPartMarshaller implements PartMarshaller {
 				relPartName.getURI().toASCIIString()).getPath());
 		try {
 			zos.putNextEntry(ctEntry);
-			if (!StreamHelper.saveXmlInStream(xmlOutDoc, zos)) {
-				return false;
+			try {
+				return StreamHelper.saveXmlInStream(xmlOutDoc, zos);
+			} finally {
+				zos.closeEntry();
 			}
-			zos.closeEntry();
 		} catch (IOException e) {
 			logger.log(POILogger.ERROR,"Cannot create zip entry " + relPartName, e);
 			return false;
 		}
-		return true; // success
 	}
 }
