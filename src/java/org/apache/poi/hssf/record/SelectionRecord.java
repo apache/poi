@@ -79,6 +79,7 @@ public final class SelectionRecord extends StandardRecord {
      */
     public void setActiveCellRow(int row) {
         field_2_row_active_cell = row;
+        resetField6();
     }
 
     /**
@@ -87,6 +88,14 @@ public final class SelectionRecord extends StandardRecord {
      */
     public void setActiveCellCol(short col) {
         field_3_col_active_cell = col;
+        resetField6();
+    }
+
+    private void resetField6() {
+        // this is necessary in Excel to actually make Workbook.setActiveCell() take effect
+        field_6_refs = new CellRangeAddress8Bit[] {
+                new CellRangeAddress8Bit(field_2_row_active_cell, field_2_row_active_cell, field_3_col_active_cell, field_3_col_active_cell),
+        };
     }
 
     /**
@@ -130,17 +139,15 @@ public final class SelectionRecord extends StandardRecord {
 
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer();
-
-        sb.append("[SELECTION]\n");
-        sb.append("    .pane            = ").append(HexDump.byteToHex(getPane())).append("\n");
-        sb.append("    .activecellrow   = ").append(HexDump.shortToHex(getActiveCellRow())).append("\n");
-        sb.append("    .activecellcol   = ").append(HexDump.shortToHex(getActiveCellCol())).append("\n");
-        sb.append("    .activecellref   = ").append(HexDump.shortToHex(getActiveCellRef())).append("\n");
-        sb.append("    .numrefs         = ").append(HexDump.shortToHex(field_6_refs.length)).append("\n");
-        sb.append("[/SELECTION]\n");
-        return sb.toString();
+        return "[SELECTION]\n" +
+                "    .pane            = " + HexDump.byteToHex(getPane()) + "\n" +
+                "    .activecellrow   = " + HexDump.shortToHex(getActiveCellRow()) + "\n" +
+                "    .activecellcol   = " + HexDump.shortToHex(getActiveCellCol()) + "\n" +
+                "    .activecellref   = " + HexDump.shortToHex(getActiveCellRef()) + "\n" +
+                "    .numrefs         = " + HexDump.shortToHex(field_6_refs.length) + "\n" +
+                "[/SELECTION]\n";
     }
+
     @Override
     protected int getDataSize() {
         return 9 // 1 byte + 4 shorts

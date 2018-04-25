@@ -50,6 +50,7 @@ import org.apache.poi.POIXMLDocumentPart.RelationPart;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.POIXMLProperties;
 import org.apache.poi.common.usermodel.HyperlinkType;
+import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -64,6 +65,7 @@ import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.ConditionalFormattingEvaluator;
 import org.apache.poi.ss.formula.EvaluationConditionalFormatRule;
@@ -79,6 +81,7 @@ import org.apache.poi.ss.formula.functions.Function;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.CellUtil;
@@ -3292,5 +3295,32 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         for (int i=0; i<numCols; i++) {
             sheet.autoSizeColumn(i);
         }
+    }
+
+    @Test
+    public void test61905xlsx() throws IOException {
+        Workbook wb = new XSSFWorkbook();
+        checkActiveSheet(wb, XSSFITestDataProvider.instance);
+        wb.close();
+    }
+
+    @Test
+    public void test61905xls() throws IOException {
+        Workbook wb = new HSSFWorkbook();
+        checkActiveSheet(wb, HSSFITestDataProvider.instance);
+        wb.close();
+    }
+
+    private void checkActiveSheet(Workbook wb, ITestDataProvider instance) throws IOException {
+        Sheet sheet = wb.createSheet("new sheet");
+        sheet.setActiveCell(new CellAddress("E11"));
+        assertEquals("E11", sheet.getActiveCell().formatAsString());
+
+        Workbook wbBack = instance.writeOutAndReadBack(wb);
+        sheet = wbBack.getSheetAt(0);
+        assertEquals("E11", sheet.getActiveCell().formatAsString());
+        wbBack.close();
+
+        //wb.write(new FileOutputStream("c:/temp/61905." + instance.getStandardFileNameExtension()));
     }
 }
