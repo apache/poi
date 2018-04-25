@@ -24,6 +24,7 @@ import static org.apache.poi.POITestCase.assertEndsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -245,7 +246,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
         SXSSFWorkbook wb = new SXSSFWorkbook();
         SXSSFSheet sh = wb.createSheet();
         SheetDataWriter wr = sh.getSheetDataWriter();
-        assertTrue(wr.getClass() == SheetDataWriter.class);
+        assertSame(wr.getClass(), SheetDataWriter.class);
         File tmp = wr.getTempFile();
         assertStartsWith(tmp.getName(), "poi-sxssf-sheet");
         assertEndsWith(tmp.getName(), ".xml");
@@ -256,7 +257,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
         wb.setCompressTempFiles(true);
         sh = wb.createSheet();
         wr = sh.getSheetDataWriter();
-        assertTrue(wr.getClass() == GZIPSheetDataWriter.class);
+        assertSame(wr.getClass(), GZIPSheetDataWriter.class);
         tmp = wr.getTempFile();
         assertStartsWith(tmp.getName(), "poi-sxssf-sheet-xml");
         assertEndsWith(tmp.getName(), ".gz");
@@ -279,22 +280,10 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
     public void gzipSheetdataWriter() throws IOException {
         SXSSFWorkbook wb = new SXSSFWorkbook();
         wb.setCompressTempFiles(true);
-        int rowNum = 1000;
-        int sheetNum = 5;
-        for(int i = 0; i < sheetNum; i++){
-            Sheet sh = wb.createSheet("sheet" + i);
-            for(int j = 0; j < rowNum; j++){
-                Row row = sh.createRow(j);
-                Cell cell1 = row.createCell(0);
-                cell1.setCellValue(new CellReference(cell1).formatAsString());
 
-                Cell cell2 = row.createCell(1);
-                cell2.setCellValue(i);
-
-                Cell cell3 = row.createCell(2);
-                cell3.setCellValue(j);
-            }
-        }
+        final int rowNum = 1000;
+        final int sheetNum = 5;
+        populateData(wb, 1000, 5);
 
         XSSFWorkbook xwb = SXSSFITestDataProvider.instance.writeOutAndReadBack(wb);
         for(int i = 0; i < sheetNum; i++){
@@ -319,10 +308,24 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
         wb.close();
     }
 
-    protected static void assertWorkbookDispose(SXSSFWorkbook wb)
+    private static void assertWorkbookDispose(SXSSFWorkbook wb)
     {
-        int rowNum = 1000;
-        int sheetNum = 5;
+        populateData(wb, 1000, 5);
+
+        for (Sheet sheet : wb) {
+            SXSSFSheet sxSheet = (SXSSFSheet) sheet;
+            assertTrue(sxSheet.getSheetDataWriter().getTempFile().exists());
+        }
+
+        assertTrue(wb.dispose());
+
+        for (Sheet sheet : wb) {
+            SXSSFSheet sxSheet = (SXSSFSheet) sheet;
+            assertFalse(sxSheet.getSheetDataWriter().getTempFile().exists());
+        }
+    }
+
+    private static void populateData(Workbook wb, final int rowNum, final int sheetNum) {
         for(int i = 0; i < sheetNum; i++){
             Sheet sh = wb.createSheet("sheet" + i);
             for(int j = 0; j < rowNum; j++){
@@ -336,18 +339,6 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
                 Cell cell3 = row.createCell(2);
                 cell3.setCellValue(j);
             }
-        }
-
-        for (Sheet sheet : wb) {
-            SXSSFSheet sxSheet = (SXSSFSheet) sheet;
-            assertTrue(sxSheet.getSheetDataWriter().getTempFile().exists());
-        }
-
-        assertTrue(wb.dispose());
-
-        for (Sheet sheet : wb) {
-            SXSSFSheet sxSheet = (SXSSFSheet) sheet;
-            assertFalse(sxSheet.getSheetDataWriter().getTempFile().exists());
         }
     }
 
@@ -440,43 +431,11 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
         }
     }
 
-    @Ignore("Just a local test for http://stackoverflow.com/questions/33627329/apache-poi-streaming-api-using-xssf-template")
     @Test
-    public void testTemplateFile() throws IOException {
-        XSSFWorkbook workBook = XSSFTestDataSamples.openSampleWorkbook("sample.xlsx");
-        SXSSFWorkbook streamingWorkBook = new SXSSFWorkbook(workBook,10);
-        Sheet sheet = streamingWorkBook.getSheet("Sheet1");
-        for(int rowNum = 10;rowNum < 1000000;rowNum++) {
-            Row row = sheet.createRow(rowNum);
-            for(int cellNum = 0;cellNum < 700;cellNum++) {
-                Cell cell = row.createCell(cellNum);
-                cell.setCellValue("somevalue");
-            }
-            
-            if(rowNum % 100 == 0) {
-                System.out.print(".");
-                if(rowNum % 10000 == 0) {
-                    System.out.println(rowNum);
-                }
-            }
-        }
-
-        FileOutputStream fos = new FileOutputStream("C:\\temp\\streaming.xlsx");
-        streamingWorkBook.write(fos);
-        fos.close();
-        
-        streamingWorkBook.close();
-        workBook.close();
-    }
-    
-
-    @Test
-    public void closeDoesNotModifyWorkbook() throws IOException, InvalidFormatException {
+    public void closeDoesNotModifyWorkbook() throws IOException {
         final String filename = "SampleSS.xlsx";
         final File file = POIDataSamples.getSpreadSheetInstance().getFile(filename);
-        SXSSFWorkbook wb = null;
-        XSSFWorkbook xwb = null;
-        
+
         // Some tests commented out because close() modifies the file
         // See bug 58779
         
@@ -489,19 +448,11 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
         //assertCloseDoesNotModifyFile(filename, wb);
         
         // InputStream
-        FileInputStream fis = new FileInputStream(file);
-        try {
-            xwb = new XSSFWorkbook(fis);
-            wb = new SXSSFWorkbook(xwb);
+
+        try (FileInputStream fis = new FileInputStream(file);
+             XSSFWorkbook xwb = new XSSFWorkbook(fis);
+             SXSSFWorkbook wb = new SXSSFWorkbook(xwb)) {
             assertCloseDoesNotModifyFile(filename, wb);
-        } finally {
-            if (xwb != null) {
-                xwb.close();
-            }
-            if (wb != null) {
-                wb.close();
-            }
-            fis.close();
         }
         
         // OPCPackage
@@ -531,7 +482,6 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
                 System.arraycopy(prefix, 0, useless, 0, prefix.length);
                 String ul = new String(useless);
                 r.createCell(col, CellType.STRING).setCellValue(ul);
-                ul = null;
             }
         }
         
@@ -573,12 +523,12 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
         xssf = new XSSFWorkbook(new ByteArrayInputStream(bos.toByteArray()));
         s = xssf.getSheet(sheetName);
         assertEquals(10, s.getLastRowNum());
-        assertEquals(true, s.getRow(0).getCell(0).getBooleanCellValue());
+        assertTrue(s.getRow(0).getCell(0).getBooleanCellValue());
         assertEquals("Test Row 9", s.getRow(9).getCell(2).getStringCellValue());
     }
 
     @Test
-    public void test56557() throws IOException, InvalidFormatException {
+    public void test56557() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56557.xlsx");
 
         // Using streaming XSSFWorkbook makes the output file invalid

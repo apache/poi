@@ -74,12 +74,11 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * </p>
  * See <a "http://poi.apache.org/spreadsheet/how-to.html#sxssf">
  *     http://poi.apache.org/spreadsheet/how-to.html#sxssf</a>.
-
- *
- * @author Yegor Kozlov
  */
-public class BigGridDemo {
+public final class BigGridDemo {
     private static final String XML_ENCODING = "UTF-8";
+
+    private BigGridDemo() {}
     
     public static void main(String[] args) throws Exception {
 
@@ -229,17 +228,17 @@ public class BigGridDemo {
         private final Writer _out;
         private int _rownum;
 
-        public SpreadsheetWriter(Writer out){
+        SpreadsheetWriter(Writer out){
             _out = out;
         }
 
-        public void beginSheet() throws IOException {
+        void beginSheet() throws IOException {
             _out.write("<?xml version=\"1.0\" encoding=\""+XML_ENCODING+"\"?>" +
                     "<worksheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\">" );
             _out.write("<sheetData>\n");
         }
 
-        public void endSheet() throws IOException {
+        void endSheet() throws IOException {
             _out.write("</sheetData>");
             _out.write("</worksheet>");
         }
@@ -249,7 +248,7 @@ public class BigGridDemo {
          *
          * @param rownum 0-based row number
          */
-        public void insertRow(int rownum) throws IOException {
+        void insertRow(int rownum) throws IOException {
             _out.write("<row r=\""+(rownum+1)+"\">\n");
             this._rownum = rownum;
         }
@@ -257,7 +256,7 @@ public class BigGridDemo {
         /**
          * Insert row end marker
          */
-        public void endRow() throws IOException {
+        void endRow() throws IOException {
             _out.write("</row>\n");
         }
 

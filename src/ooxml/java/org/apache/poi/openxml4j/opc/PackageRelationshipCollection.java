@@ -45,12 +45,12 @@ public final class PackageRelationshipCollection implements
     /**
      * Package relationships ordered by ID.
      */
-    private TreeMap<String, PackageRelationship> relationshipsByID;
+    private final TreeMap<String, PackageRelationship> relationshipsByID = new TreeMap<>();
 
     /**
      * Package relationships ordered by type.
      */
-    private TreeMap<String, PackageRelationship> relationshipsByType;
+    private final TreeMap<String, PackageRelationship> relationshipsByType = new TreeMap<>();
 
     /**
      * A lookup of internal relationships to avoid
@@ -88,8 +88,6 @@ public final class PackageRelationshipCollection implements
      * Constructor.
      */
     PackageRelationshipCollection() {
-        relationshipsByID = new TreeMap<>();
-        relationshipsByType = new TreeMap<>();
     }
 
     /**
@@ -149,8 +147,6 @@ public final class PackageRelationshipCollection implements
      */
     public PackageRelationshipCollection(OPCPackage container, PackagePart part)
             throws InvalidFormatException {
-        this();
-
         if (container == null)
             throw new IllegalArgumentException("container needs to be specified");
 

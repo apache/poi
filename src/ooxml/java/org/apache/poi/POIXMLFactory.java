@@ -60,7 +60,7 @@ public abstract class POIXMLFactory {
                 return createDocumentPart(cls, ORPHAN_PART, new Object[]{part});
             }
         } catch (Exception e) {
-            throw new POIXMLException(e);
+            throw new POIXMLException((e.getCause() != null ? e.getCause() : e).getMessage(), e);
         }
     }
     

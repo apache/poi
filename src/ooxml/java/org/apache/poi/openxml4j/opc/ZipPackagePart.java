@@ -25,6 +25,7 @@ import java.util.zip.ZipEntry;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
+import org.apache.poi.openxml4j.opc.internal.ContentType;
 import org.apache.poi.openxml4j.opc.internal.marshallers.ZipPartMarshaller;
 import org.apache.poi.util.NotImplemented;
 
@@ -48,11 +49,11 @@ public class ZipPackagePart extends PackagePart {
 	 * @param container
 	 *            The container package.
 	 * @param partName
-	 *            Part name.
+	 *            The part name.
 	 * @param contentType
 	 *            Content type.
 	 * @throws InvalidFormatException
-	 *             Throws if the content of this part invalid.
+	 *             Throws if the content of this part is invalid.
 	 */
 	public ZipPackagePart(OPCPackage container, PackagePartName partName,
 			String contentType) throws InvalidFormatException {
@@ -73,10 +74,10 @@ public class ZipPackagePart extends PackagePart {
 	 * @throws InvalidFormatException
 	 *             Throws if the content of this part is invalid.
 	 */
-	public ZipPackagePart(OPCPackage container, ZipEntry zipEntry,
-			PackagePartName partName, String contentType)
+	/* package */ ZipPackagePart(OPCPackage container, ZipEntry zipEntry,
+						  PackagePartName partName, String contentType, boolean loadRelationships)
 			throws InvalidFormatException {
-		super(container, partName, contentType);
+		super(container, partName, new ContentType(contentType), loadRelationships);
 		this.zipEntry = zipEntry;
 	}
 

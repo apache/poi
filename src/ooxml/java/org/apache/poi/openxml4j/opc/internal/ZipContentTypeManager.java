@@ -57,26 +57,23 @@ public class ZipContentTypeManager extends ContentTypeManager {
 	@SuppressWarnings("resource")
     @Override
 	public boolean saveImpl(Document content, OutputStream out) {
-		ZipOutputStream zos = null;
-		if (out instanceof ZipOutputStream)
-			zos = (ZipOutputStream) out;
-		else
-			zos = new ZipOutputStream(out);
+		final ZipOutputStream zos = (out instanceof ZipOutputStream)
+				? (ZipOutputStream) out : new ZipOutputStream(out);
 
 		ZipEntry partEntry = new ZipEntry(CONTENT_TYPES_PART_NAME);
 		try {
 			// Referenced in ZIP
 			zos.putNextEntry(partEntry);
-			// Saving data in the ZIP file
-			if (!StreamHelper.saveXmlInStream(content, zos)) {
-			    return false;
+			try {
+				// Saving data in the ZIP file
+				return StreamHelper.saveXmlInStream(content, zos);
+			} finally {
+				zos.closeEntry();
 			}
-			zos.closeEntry();
 		} catch (IOException ioe) {
 			logger.log(POILogger.ERROR, "Cannot write: " + CONTENT_TYPES_PART_NAME
 					+ " in Zip !", ioe);
 			return false;
 		}
-		return true;
 	}
 }

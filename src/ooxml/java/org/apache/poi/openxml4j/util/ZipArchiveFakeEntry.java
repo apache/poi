@@ -14,51 +14,40 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.openxml4j.util;
 
-import java.io.Closeable;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 
+import org.apache.poi.util.IOUtils;
+
+
 /**
- * An Interface to make getting the different bits
- *  of a Zip File easy.
- * Allows you to get at the ZipEntries, without
- *  needing to worry about ZipFile vs ZipInputStream
- *  being annoyingly very different.
+ * So we can close the real zip entry and still
+ *  effectively work with it.
+ * Holds the (decompressed!) data in memory, so
+ *  close this as soon as you can!
  */
-public interface ZipEntrySource extends Closeable {
-	/**
-	 * Returns an Enumeration of all the Entries
-	 */
-	Enumeration<? extends ZipEntry> getEntries();
+/* package */ class ZipArchiveFakeEntry extends ZipEntry {
+    private final byte[] data;
 
-	/**
-	 * Return an entry by its path
-	 * @param path the path in unix-notation
-	 * @return the entry or {@code null} if not found
-	 *
-	 * @since POI 4.0.0
-	 */
-	ZipEntry getEntry(String path);
+    ZipArchiveFakeEntry(ZipEntry entry, InputStream inp) throws IOException {
+        super(entry.getName());
 
-	/**
-	 * Returns an InputStream of the decompressed 
-	 *  data that makes up the entry
-	 */
-	InputStream getInputStream(ZipEntry entry) throws IOException;
-	
-	/**
-	 * Indicates we are done with reading, and 
-	 *  resources may be freed
-	 */
-	@Override
-	void close() throws IOException;
-	
-	/**
-	 * Has close been called already?
-	 */
-	boolean isClosed();
+        final long entrySize = entry.getSize();
+
+        if (entrySize < -1 || entrySize>=Integer.MAX_VALUE) {
+            throw new IOException("ZIP entry size is too large or invalid");
+        }
+
+        // Grab the de-compressed contents for later
+        data = (entrySize == -1) ? IOUtils.toByteArray(inp) : IOUtils.toByteArray(inp, (int)entrySize);
+    }
+
+    public InputStream getInputStream() {
+        return new ByteArrayInputStream(data);
+    }
 }

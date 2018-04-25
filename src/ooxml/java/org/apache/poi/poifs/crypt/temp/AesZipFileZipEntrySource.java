@@ -53,15 +53,17 @@ import org.apache.poi.util.TempFile;
  * sensitive data is not stored in raw format on disk.
  */
 @Beta
-public class AesZipFileZipEntrySource implements ZipEntrySource {
+public final class AesZipFileZipEntrySource implements ZipEntrySource {
     private static final POILogger LOG = POILogFactory.getLogger(AesZipFileZipEntrySource.class);
+
+    private static final String PADDING = "PKCS5Padding";
     
     private final File tmpFile;
     private final ZipFile zipFile;
     private final Cipher ci;
     private boolean closed;
     
-    public AesZipFileZipEntrySource(File tmpFile, Cipher ci) throws IOException {
+    private AesZipFileZipEntrySource(File tmpFile, Cipher ci) throws IOException {
         this.tmpFile = tmpFile;
         this.zipFile = new ZipFile(tmpFile);
         this.ci = ci;
@@ -76,7 +78,12 @@ public class AesZipFileZipEntrySource implements ZipEntrySource {
     public Enumeration<? extends ZipEntry> getEntries() {
         return zipFile.entries();
     }
-    
+
+    @Override
+    public ZipEntry getEntry(String path) {
+        return zipFile.getEntry(path);
+    }
+
     @Override
     public InputStream getInputStream(ZipEntry entry) throws IOException {
         InputStream is = zipFile.getInputStream(entry);
@@ -106,14 +113,14 @@ public class AesZipFileZipEntrySource implements ZipEntrySource {
         sr.nextBytes(ivBytes);
         sr.nextBytes(keyBytes);
         final File tmpFile = TempFile.createTempFile("protectedXlsx", ".zip");
-        copyToFile(is, tmpFile, CipherAlgorithm.aes128, keyBytes, ivBytes);
+        copyToFile(is, tmpFile, keyBytes, ivBytes);
         IOUtils.closeQuietly(is);
-        return fileToSource(tmpFile, CipherAlgorithm.aes128, keyBytes, ivBytes);
+        return fileToSource(tmpFile, keyBytes, ivBytes);
     }
 
-    private static void copyToFile(InputStream is, File tmpFile, CipherAlgorithm cipherAlgorithm, byte keyBytes[], byte ivBytes[]) throws IOException, GeneralSecurityException {
-        SecretKeySpec skeySpec = new SecretKeySpec(keyBytes, cipherAlgorithm.jceId);
-        Cipher ciEnc = CryptoFunctions.getCipher(skeySpec, cipherAlgorithm, ChainingMode.cbc, ivBytes, Cipher.ENCRYPT_MODE, "PKCS5Padding");
+    private static void copyToFile(InputStream is, File tmpFile, byte keyBytes[], byte ivBytes[]) throws IOException, GeneralSecurityException {
+        SecretKeySpec skeySpec = new SecretKeySpec(keyBytes, CipherAlgorithm.aes128.jceId);
+        Cipher ciEnc = CryptoFunctions.getCipher(skeySpec, CipherAlgorithm.aes128, ChainingMode.cbc, ivBytes, Cipher.ENCRYPT_MODE, PADDING);
         
         ZipInputStream zis = new ZipInputStream(is);
         FileOutputStream fos = new FileOutputStream(tmpFile);
@@ -146,9 +153,9 @@ public class AesZipFileZipEntrySource implements ZipEntrySource {
         zis.close();
     }
 
-    private static AesZipFileZipEntrySource fileToSource(File tmpFile, CipherAlgorithm cipherAlgorithm, byte keyBytes[], byte ivBytes[]) throws ZipException, IOException {
-        SecretKeySpec skeySpec = new SecretKeySpec(keyBytes, cipherAlgorithm.jceId);
-        Cipher ciDec = CryptoFunctions.getCipher(skeySpec, cipherAlgorithm, ChainingMode.cbc, ivBytes, Cipher.DECRYPT_MODE, "PKCS5Padding");
+    private static AesZipFileZipEntrySource fileToSource(File tmpFile, byte keyBytes[], byte ivBytes[]) throws ZipException, IOException {
+        SecretKeySpec skeySpec = new SecretKeySpec(keyBytes, CipherAlgorithm.aes128.jceId);
+        Cipher ciDec = CryptoFunctions.getCipher(skeySpec, CipherAlgorithm.aes128, ChainingMode.cbc, ivBytes, Cipher.DECRYPT_MODE, PADDING);
         return new AesZipFileZipEntrySource(tmpFile, ciDec);
     }
     

@@ -49,15 +49,15 @@ public final class ZipPackagePropertiesMarshaller extends PackagePropertiesMarsh
 		try {
 			// Save in ZIP
 			zos.putNextEntry(ctEntry); // Add entry in ZIP
-			super.marshall(part, out); // Marshall the properties inside a XML
-			// Document
-			if (!StreamHelper.saveXmlInStream(xmlDoc, out)) {
-				return false;
+			try {
+				super.marshall(part, out); // Marshall the properties inside a XML
+				// Document
+				return StreamHelper.saveXmlInStream(xmlDoc, out);
+			} finally {
+				zos.closeEntry();
 			}
-			zos.closeEntry();
 		} catch (IOException e) {
 			throw new OpenXML4JException(e.getLocalizedMessage(), e);
 		}
-		return true;
 	}
 }

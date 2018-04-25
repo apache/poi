@@ -17,6 +17,7 @@
 
 package org.apache.poi.openxml4j.opc;
 
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -34,13 +35,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PushbackInputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
+import java.util.function.BiConsumer;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -53,7 +55,6 @@ import org.apache.poi.POITextExtractor;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.UnsupportedFileFormatException;
 import org.apache.poi.extractor.ExtractorFactory;
-import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
@@ -66,6 +67,8 @@ import org.apache.poi.openxml4j.opc.internal.FileHelper;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.apache.poi.openxml4j.opc.internal.ZipHelper;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
+import org.apache.poi.sl.usermodel.SlideShow;
+import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.util.DocumentHelper;
@@ -74,16 +77,25 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.xwpf.usermodel.XWPFRelation;
 import org.apache.xmlbeans.XmlException;
+import org.hamcrest.Description;
+import org.hamcrest.TypeSafeMatcher;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 public final class TestPackage {
     private static final POILogger logger = POILogFactory.getLogger(TestPackage.class);
+
+	@Rule
+	public ExpectedException expectedEx = ExpectedException.none();
 
 	/**
 	 * Test that just opening and closing the file doesn't alter the document.
@@ -114,7 +126,7 @@ public final class TestPackage {
 	 */
     @Test
 	public void createGetsContentTypes()
-    throws IOException, InvalidFormatException, SecurityException, IllegalArgumentException, NoSuchFieldException, IllegalAccessException {
+    throws IOException, InvalidFormatException, SecurityException, IllegalArgumentException {
 		File targetFile = OpenXML4JTestDataSamples.getOutputFile("TestCreatePackageTMP.docx");
 
 		// Zap the target file, in case of an earlier run
@@ -596,7 +608,7 @@ public final class TestPackage {
 	}
 
     @Test
-    public void getPartsByName() throws IOException, InvalidFormatException {
+    public void getPartsByName() throws InvalidFormatException {
         String filepath =  OpenXML4JTestDataSamples.getSampleFileName("sample.docx");
 
         @SuppressWarnings("resource")
@@ -653,7 +665,7 @@ public final class TestPackage {
 
     @Test
     public void replaceContentType()
-    throws IOException, InvalidFormatException, SecurityException, IllegalArgumentException, NoSuchFieldException, IllegalAccessException {
+    throws IOException, InvalidFormatException, SecurityException, IllegalArgumentException {
         InputStream is = OpenXML4JTestDataSamples.openSampleStream("sample.xlsx");
         @SuppressWarnings("resource")
         OPCPackage p = OPCPackage.open(is);
@@ -760,173 +772,181 @@ public final class TestPackage {
         }
     }
 
-    @Test(expected=IOException.class)
+	/**
+	 * Zip bomb handling test
+	 *
+	 * see bug #50090 / #56865
+	 */
+    @Test
     public void zipBombCreateAndHandle()
     throws IOException, EncryptedDocumentException, InvalidFormatException {
-        // #50090 / #56865
-        ZipFile zipFile = ZipHelper.openZipFile(OpenXML4JTestDataSamples.getSampleFile("sample.xlsx"));
-		assertNotNull(zipFile);
-
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(2500000);
-		ZipOutputStream append = new ZipOutputStream(bos);
-		// first, copy contents from existing war
-        Enumeration<? extends ZipEntry> entries = zipFile.entries();
-        while (entries.hasMoreElements()) {
-            ZipEntry e2 = entries.nextElement();
-            ZipEntry e = new ZipEntry(e2.getName());
-            e.setTime(e2.getTime());
-            e.setComment(e2.getComment());
-            e.setSize(e2.getSize());
-            
-            append.putNextEntry(e);
-            if (!e.isDirectory()) {
-                InputStream is = zipFile.getInputStream(e);
-                if (e.getName().equals("[Content_Types].xml")) {
-                    ByteArrayOutputStream bos2 = new ByteArrayOutputStream();
-                    IOUtils.copy(is, bos2);
-                    long size = bos2.size()-"</Types>".length();
-                    append.write(bos2.toByteArray(), 0, (int)size);
-                    byte spam[] = new byte[0x7FFF];
-                    for (int i=0; i<spam.length; i++) spam[i] = ' ';
-                    // 0x7FFF0000 is the maximum for 32-bit zips, but less still works
-                    while (size < 0x7FFF00) {
-                        append.write(spam);
-                        size += spam.length;
-                    }
-                    append.write("</Types>".getBytes("UTF-8"));
-                    size += 8;
-                    e.setSize(size);
-                } else {
-                    IOUtils.copy(is, append);
-                }
-                is.close();
-            }
-            append.closeEntry();
-        }
-        
-        append.close();
-        zipFile.close();
 
-        byte buf[] = bos.toByteArray();
-		//noinspection UnusedAssignment
-		bos = null;
-        
-        Workbook wb = WorkbookFactory.create(new ByteArrayInputStream(buf));
-        wb.getSheetAt(0);
-        wb.close();
-        zipFile.close();
+        try (ZipFile zipFile = ZipHelper.openZipFile(OpenXML4JTestDataSamples.getSampleFile("sample.xlsx"));
+			 ZipOutputStream append = new ZipOutputStream(bos)) {
+			assertNotNull(zipFile);
+
+			// first, copy contents from existing war
+			Enumeration<? extends ZipEntry> entries = zipFile.entries();
+			while (entries.hasMoreElements()) {
+				final ZipEntry eIn = entries.nextElement();
+				final ZipEntry eOut = new ZipEntry(eIn.getName());
+				eOut.setTime(eIn.getTime());
+				eOut.setComment(eIn.getComment());
+				eOut.setSize(eIn.getSize());
+
+				append.putNextEntry(eOut);
+				if (!eOut.isDirectory()) {
+					try (InputStream is = zipFile.getInputStream(eIn)) {
+						if (eOut.getName().equals("[Content_Types].xml")) {
+							ByteArrayOutputStream bos2 = new ByteArrayOutputStream();
+							IOUtils.copy(is, bos2);
+							long size = bos2.size() - "</Types>".length();
+							append.write(bos2.toByteArray(), 0, (int) size);
+							byte spam[] = new byte[0x7FFF];
+							Arrays.fill(spam, (byte) ' ');
+							// 0x7FFF0000 is the maximum for 32-bit zips, but less still works
+							while (size < 0x7FFF00) {
+								append.write(spam);
+								size += spam.length;
+							}
+							append.write("</Types>".getBytes("UTF-8"));
+							size += 8;
+							eOut.setSize(size);
+						} else {
+							IOUtils.copy(is, append);
+						}
+					}
+				}
+				append.closeEntry();
+			}
+		}
+
+		expectedEx.expect(IOException.class);
+		expectedEx.expectMessage("Zip bomb detected!");
+
+		try (Workbook wb = WorkbookFactory.create(new ByteArrayInputStream(bos.toByteArray()))) {
+			wb.getSheetAt(0);
+		}
     }
 
-    @Test
-	public void zipBombSampleFiles() throws IOException, OpenXML4JException, XmlException {
-    	openZipBombFile("poc-shared-strings.xlsx");
-    	openZipBombFile("poc-xmlbomb.xlsx");
-    	openZipBombFile("poc-xmlbomb-empty.xlsx");
+	@Test
+	public void testZipEntityExpansionTerminates() throws IOException, OpenXML4JException, XmlException {
+		expectedEx.expect(IllegalStateException.class);
+		expectedEx.expectMessage("The text would exceed the max allowed overall size of extracted text.");
+		openXmlBombFile("poc-shared-strings.xlsx");
 	}
 
-	private void openZipBombFile(String file) throws IOException, OpenXML4JException, XmlException {
-    	try {
-			Workbook wb = XSSFTestDataSamples.openSampleWorkbook(file);
-			wb.close();
-
-			try (POITextExtractor extractor = ExtractorFactory.createExtractor(HSSFTestDataSamples.getSampleFile("poc-shared-strings.xlsx"))) {
-				assertNotNull(extractor);
-				extractor.getText();
-			}
-
-			fail("Should catch an exception because of a ZipBomb");
-		} catch (IllegalStateException e) {
-    		if(!e.getMessage().contains("The text would exceed the max allowed overall size of extracted text.")) {
-				throw e;
-			}
-		} catch (POIXMLException e) {
-    		checkForZipBombException(e);
+	@Test
+	public void testZipEntityExpansionSharedStringTableEvents() throws IOException, OpenXML4JException, XmlException {
+		boolean before = ExtractorFactory.getThreadPrefersEventExtractors();
+		ExtractorFactory.setThreadPrefersEventExtractors(true);
+		try {
+			expectedEx.expect(IllegalStateException.class);
+			expectedEx.expectMessage("The text would exceed the max allowed overall size of extracted text.");
+			openXmlBombFile("poc-shared-strings.xlsx");
+		} finally {
+			ExtractorFactory.setThreadPrefersEventExtractors(before);
 		}
 	}
-    
-    @Test
-    public void zipBombCheckSizes() throws IOException, EncryptedDocumentException, InvalidFormatException {
-        File file = OpenXML4JTestDataSamples.getSampleFile("sample.xlsx");
 
-        try {
-            double min_ratio = Double.MAX_VALUE;
-            long max_size = 0;
-            ZipFile zf = ZipHelper.openZipFile(file);
-			assertNotNull(zf);
-            Enumeration<? extends ZipEntry> entries = zf.entries();
-            while (entries.hasMoreElements()) {
-                ZipEntry ze = entries.nextElement();
-                double ratio = (double)ze.getCompressedSize() / (double)ze.getSize();
-                min_ratio = Math.min(min_ratio, ratio);
-                max_size = Math.max(max_size, ze.getSize());
-            }
-            zf.close();
-    
-            // use values close to, but within the limits 
-            ZipSecureFile.setMinInflateRatio(min_ratio-0.002);
-			assertEquals(min_ratio-0.002, ZipSecureFile.getMinInflateRatio(), 0.00001);
-            ZipSecureFile.setMaxEntrySize(max_size+1);
-			assertEquals(max_size+1, ZipSecureFile.getMaxEntrySize());
-			
-            WorkbookFactory.create(file, null, true).close();
-    
-            // check ratio out of bounds
-            ZipSecureFile.setMinInflateRatio(min_ratio+0.002);
-            try {
-                WorkbookFactory.create(file, null, true).close();
-                // this is a bit strange, as there will be different exceptions thrown
-                // depending if this executed via "ant test" or within eclipse
-                // maybe a difference in JDK ...
-            } catch (InvalidFormatException | POIXMLException e) {
-                checkForZipBombException(e);
-            }
 
-			// check max entry size ouf of bounds
-            ZipSecureFile.setMinInflateRatio(min_ratio-0.002);
-            ZipSecureFile.setMaxEntrySize(max_size-1);
-            try {
-                WorkbookFactory.create(file, null, true).close();
-            } catch (InvalidFormatException | POIXMLException e) {
-                checkForZipBombException(e);
-            }
+	@Test
+	public void testZipEntityExpansionExceedsMemory() throws IOException, OpenXML4JException, XmlException {
+		expectedEx.expect(POIXMLException.class);
+		expectedEx.expectMessage("Unable to parse xml bean");
+		expectedEx.expectCause(getCauseMatcher(SAXParseException.class, "The parser has encountered more than"));
+		openXmlBombFile("poc-xmlbomb.xlsx");
+	}
+
+	@Test
+	public void testZipEntityExpansionExceedsMemory2() throws IOException, OpenXML4JException, XmlException {
+		expectedEx.expect(POIXMLException.class);
+		expectedEx.expectMessage("Unable to parse xml bean");
+		expectedEx.expectCause(getCauseMatcher(SAXParseException.class, "The parser has encountered more than"));
+    	openXmlBombFile("poc-xmlbomb-empty.xlsx");
+	}
+
+	private void openXmlBombFile(String file) throws IOException, OpenXML4JException, XmlException {
+		final double minInf = ZipSecureFile.getMinInflateRatio();
+		ZipSecureFile.setMinInflateRatio(0.002);
+		try (POITextExtractor extractor = ExtractorFactory.createExtractor(XSSFTestDataSamples.getSampleFile(file))) {
+			assertNotNull(extractor);
+			extractor.getText();
 		} finally {
-            // reset otherwise a lot of ooxml tests will fail
-            ZipSecureFile.setMinInflateRatio(0.01d);
-            ZipSecureFile.setMaxEntrySize(0xFFFFFFFFL);
-        }
-    }
+			ZipSecureFile.setMinInflateRatio(minInf);
+		}
+	}
 
-    private void checkForZipBombException(Throwable e) {
-    	// unwrap InvocationTargetException as they usually contain the nested exception in the "target" member
-        if(e instanceof InvocationTargetException) {
-			e = ((InvocationTargetException)e).getTargetException();
-        }
-        
-        String msg = e.getMessage();
-        if(msg != null && (msg.startsWith("Zip bomb detected!") ||
-				msg.contains("The parser has encountered more than \"4,096\" entity expansions in this document;") ||
-				msg.contains("The parser has encountered more than \"4096\" entity expansions in this document;"))) {
-            return;
-        }
-        
-        // recursively check the causes for the message as it can be nested further down in the exception-tree
-        if(e.getCause() != null && e.getCause() != e) {
-            checkForZipBombException(e.getCause());
-            return;
-        }
+    @Test
+    public void zipBombCheckSizesWithinLimits() throws IOException, EncryptedDocumentException, InvalidFormatException {
+		getZipStatsAndConsume((max_size, min_ratio) -> {
+			// use values close to, but within the limits
+			ZipSecureFile.setMinInflateRatio(min_ratio - 0.002);
+			assertEquals(min_ratio - 0.002, ZipSecureFile.getMinInflateRatio(), 0.00001);
+			ZipSecureFile.setMaxEntrySize(max_size + 1);
+			assertEquals(max_size + 1, ZipSecureFile.getMaxEntrySize());
+		});
+	}
 
-        throw new IllegalStateException("Expected to catch an Exception because of a detected Zip Bomb, but did not find the related error message in the exception", e);        
-    }
+	@Test
+	public void zipBombCheckSizesRatioTooSmall() throws IOException, EncryptedDocumentException, InvalidFormatException {
+		expectedEx.expect(POIXMLException.class);
+		expectedEx.expectMessage("You can adjust this limit via ZipSecureFile.setMinInflateRatio()");
+		getZipStatsAndConsume((max_size, min_ratio) -> {
+			// check ratio out of bounds
+			ZipSecureFile.setMinInflateRatio(min_ratio+0.002);
+		});
+	}
+
+	@Test
+	public void zipBombCheckSizesSizeTooBig() throws IOException, EncryptedDocumentException, InvalidFormatException {
+		expectedEx.expect(POIXMLException.class);
+		expectedEx.expectMessage("You can adjust this limit via ZipSecureFile.setMaxEntrySize()");
+		getZipStatsAndConsume((max_size, min_ratio) -> {
+			// check max entry size ouf of bounds
+			ZipSecureFile.setMinInflateRatio(min_ratio-0.002);
+			ZipSecureFile.setMaxEntrySize(max_size-100);
+		});
+	}
+
+	private void getZipStatsAndConsume(BiConsumer<Long,Double> ratioCon) throws IOException, InvalidFormatException {
+    	// use a test file with a xml file bigger than 100k (ZipArchiveThresholdInputStream.GRACE_ENTRY_SIZE)
+		final File file = XSSFTestDataSamples.getSampleFile("poc-shared-strings.xlsx");
+
+		double min_ratio = Double.MAX_VALUE;
+		long max_size = 0;
+		try (ZipFile zf = ZipHelper.openZipFile(file)) {
+			assertNotNull(zf);
+			Enumeration<? extends ZipEntry> entries = zf.entries();
+			while (entries.hasMoreElements()) {
+				ZipEntry ze = entries.nextElement();
+				if (ze.getSize() == 0) {
+					continue;
+				}
+				// add zip entry header ~ 30 bytes
+				long size = ze.getSize()+30;
+				double ratio = ze.getCompressedSize() / (double)size;
+				min_ratio = Math.min(min_ratio, ratio);
+				max_size = Math.max(max_size, size);
+			}
+		}
+		ratioCon.accept(max_size, min_ratio);
+
+		//noinspection EmptyTryBlock,unused
+		try (Workbook wb = WorkbookFactory.create(file, null, true)) {
+		} finally {
+			// reset otherwise a lot of ooxml tests will fail
+			ZipSecureFile.setMinInflateRatio(0.01d);
+			ZipSecureFile.setMaxEntrySize(0xFFFFFFFFL);
+		}
+	}
 
     @Test
     public void testConstructors() throws IOException {
         // verify the various ways to construct a ZipSecureFile
         File file = OpenXML4JTestDataSamples.getSampleFile("sample.xlsx");
         ZipSecureFile zipFile = new ZipSecureFile(file);
-        assertNotNull(zipFile.getName());
-        zipFile.close();
-
-        zipFile = new ZipSecureFile(file, ZipFile.OPEN_READ);
         assertNotNull(zipFile.getName());
         zipFile.close();
 
@@ -948,7 +968,7 @@ public final class TestPackage {
     
     // bug 60128
     @Test(expected=NotOfficeXmlFileException.class)
-    public void testCorruptFile() throws IOException, InvalidFormatException {
+    public void testCorruptFile() throws InvalidFormatException {
         File file = OpenXML4JTestDataSamples.getSampleFile("invalid.xlsx");
         OPCPackage.open(file, PackageAccess.READ);
     }
@@ -976,4 +996,148 @@ public final class TestPackage {
             }
         }
     }
+
+	@Test
+	public void testBug56479() throws Exception {
+		InputStream is = OpenXML4JTestDataSamples.openSampleStream("dcterms_bug_56479.zip");
+		OPCPackage p = OPCPackage.open(is);
+
+		// Check we found the contents of it
+		boolean foundCoreProps = false, foundDocument = false, foundTheme1 = false;
+		for (final PackagePart part : p.getParts()) {
+			final String partName = part.getPartName().toString();
+			final String contentType = part.getContentType();
+			if ("/docProps/core.xml".equals(partName)) {
+				assertEquals(ContentTypes.CORE_PROPERTIES_PART, contentType);
+				foundCoreProps = true;
+			}
+			if ("/word/document.xml".equals(partName)) {
+				assertEquals(XWPFRelation.DOCUMENT.getContentType(), contentType);
+				foundDocument = true;
+			}
+			if ("/word/theme/theme1.xml".equals(partName)) {
+				assertEquals(XWPFRelation.THEME.getContentType(), contentType);
+				foundTheme1 = true;
+			}
+		}
+		assertTrue("Core not found in " + p.getParts(), foundCoreProps);
+		assertFalse("Document should not be found in " + p.getParts(), foundDocument);
+		assertFalse("Theme1 should not found in " + p.getParts(), foundTheme1);
+		p.close();
+		is.close();
+	}
+
+	@Test
+	public void unparseableCentralDirectory() throws IOException {
+		File f = OpenXML4JTestDataSamples.getSampleFile("at.pzp.www_uploads_media_PP_Scheinecker-jdk6error.pptx");
+		SlideShow<?,?> ppt = SlideShowFactory.create(f, null, true);
+		ppt.close();
+	}
+
+	@Test
+	public void testClosingStreamOnException() throws IOException {
+		InputStream is = OpenXML4JTestDataSamples.openSampleStream("dcterms_bug_56479.zip");
+		File tmp = File.createTempFile("poi-test-truncated-zip", "");
+		// create a corrupted zip file by truncating a valid zip file to the first 100 bytes
+		OutputStream os = new FileOutputStream(tmp);
+		for (int i = 0; i < 100; i++) {
+			os.write(is.read());
+		}
+		os.flush();
+		os.close();
+		is.close();
+
+		// feed the corrupted zip file to OPCPackage
+		try {
+			OPCPackage.open(tmp, PackageAccess.READ);
+		} catch (Exception e) {
+			// expected: the zip file is invalid
+			// this test does not care if open() throws an exception or not.
+		}
+		// If the stream is not closed on exception, it will keep a file descriptor to tmp,
+		// and requests to the OS to delete the file will fail.
+		assertTrue("Can't delete tmp file", tmp.delete());
+	}
+
+	/**
+	 * If ZipPackage is passed an invalid file, a call to close
+	 *  (eg from the OPCPackage open method) should tidy up the
+	 *  stream / file the broken file is being read from.
+	 * See bug #60128 for more
+	 */
+	@Test(expected = NotOfficeXmlFileException.class)
+	public void testTidyStreamOnInvalidFile1() throws Exception {
+		openInvalidFile("SampleSS.ods", false);
+	}
+
+	@Test(expected = NotOfficeXmlFileException.class)
+	public void testTidyStreamOnInvalidFile2() throws Exception {
+		openInvalidFile("SampleSS.ods", true);
+	}
+
+	@Test(expected = NotOfficeXmlFileException.class)
+	public void testTidyStreamOnInvalidFile3() throws Exception {
+		openInvalidFile("SampleSS.txt", false);
+	}
+
+	@Test(expected = NotOfficeXmlFileException.class)
+	public void testTidyStreamOnInvalidFile4() throws Exception {
+		openInvalidFile("SampleSS.txt", true);
+	}
+
+	private static void openInvalidFile(final String name, final boolean useStream) throws IOException, InvalidFormatException {
+		// Spreadsheet has a good mix of alternate file types
+		final POIDataSamples files = POIDataSamples.getSpreadSheetInstance();
+		ZipPackage pkgTest = null;
+		try (final InputStream is = (useStream) ? files.openResourceAsStream(name) : null) {
+			try (final ZipPackage pkg = (useStream) ? new ZipPackage(is, PackageAccess.READ) : new ZipPackage(files.getFile(name), PackageAccess.READ)) {
+				pkgTest = pkg;
+				assertNotNull(pkg.getZipArchive());
+//				assertFalse(pkg.getZipArchive().isClosed());
+				pkg.getParts();
+				fail("Shouldn't work");
+			}
+		} finally {
+			if (pkgTest != null) {
+				assertNotNull(pkgTest.getZipArchive());
+				assertTrue(pkgTest.getZipArchive().isClosed());
+			}
+		}
+	}
+
+	@SuppressWarnings("SameParameterValue")
+	private static <T extends Throwable> AnyCauseMatcher<T> getCauseMatcher(Class<T> cause, String message) {
+    	// junit is only using hamcrest-core, so instead of adding hamcrest-beans, we provide the throwable
+		// search with the basics...
+		// see https://stackoverflow.com/a/47703937/2066598
+		return new AnyCauseMatcher<>(cause, message);
+	}
+
+	private static class AnyCauseMatcher<T extends Throwable> extends TypeSafeMatcher<T> {
+		private final Class<T> expectedType;
+		private final String expectedMessage;
+
+		AnyCauseMatcher(Class<T> expectedType, String expectedMessage) {
+			this.expectedType = expectedType;
+			this.expectedMessage = expectedMessage;
+		}
+
+		@Override
+		protected boolean matchesSafely(final Throwable root) {
+			for (Throwable t = root; t != null; t = t.getCause()) {
+				if (t.getClass().isAssignableFrom(expectedType) && t.getMessage().contains(expectedMessage)) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		@Override
+		public void describeTo(Description description) {
+			description.appendText("expects type ")
+					.appendValue(expectedType)
+					.appendText(" and a message ")
+					.appendValue(expectedMessage);
+		}
+	}
 }
