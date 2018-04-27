@@ -21,6 +21,7 @@ import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -570,8 +571,8 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         HSSFWorkbook wb = openSample("35564.xls");
 
         HSSFSheet sheet = wb.getSheetAt(0);
-        assertEquals(false, sheet.isGridsPrinted());
-        assertEquals(false, sheet.getProtect());
+        assertFalse(sheet.isGridsPrinted());
+        assertFalse(sheet.getProtect());
 
         writeOutAndReadBack(wb).close();
 
@@ -1042,11 +1043,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
                 wb.getFontAt(2),
                 wb.getFontAt(2)
         );
-        assertTrue(
-                wb.getFontAt(0)
-                        !=
-                        wb.getFontAt(2)
-        );
+        assertNotSame(wb.getFontAt(0), wb.getFontAt(2));
 
         // Look for a new font we have
         //  yet to add
@@ -1727,10 +1724,10 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         UnicodeString withoutExt = wb1.getWorkbook().getSSTString(31);
 
         assertEquals("O:Alloc:Qty", withExt.getString());
-        assertTrue((withExt.getOptionFlags() & 0x0004) == 0x0004);
+        assertEquals(0x0004, (withExt.getOptionFlags() & 0x0004));
 
         assertEquals("RT", withoutExt.getString());
-        assertTrue((withoutExt.getOptionFlags() & 0x0004) == 0x0000);
+        assertEquals(0x0000, (withoutExt.getOptionFlags() & 0x0004));
 
         // Something about continues...
 
@@ -1745,10 +1742,10 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         withoutExt = wb2.getWorkbook().getSSTString(31);
 
         assertEquals("O:Alloc:Qty", withExt.getString());
-        assertTrue((withExt.getOptionFlags() & 0x0004) == 0x0004);
+        assertEquals(0x0004, (withExt.getOptionFlags() & 0x0004));
 
         assertEquals("RT", withoutExt.getString());
-        assertTrue((withoutExt.getOptionFlags() & 0x0004) == 0x0000);
+        assertEquals(0x0000, (withoutExt.getOptionFlags() & 0x0004));
         wb2.close();
     }
 
@@ -2215,7 +2212,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         HSSFWorkbook wb1 = openSample("50833.xls");
         HSSFSheet s = wb1.getSheetAt(0);
         assertEquals("Sheet1", s.getSheetName());
-        assertEquals(false, s.getProtect());
+        assertFalse(s.getProtect());
 
         HSSFCell c = s.getRow(0).getCell(0);
         assertEquals("test cell value", c.getRichStringCellValue().getString());
