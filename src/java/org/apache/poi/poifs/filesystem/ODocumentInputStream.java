@@ -138,7 +138,7 @@ public final class ODocumentInputStream extends DocumentInputStream {
 		if (atEOD()) {
 			return EOF;
 		}
-		int limit = Math.min(available(), len);
+		int limit = Math.min(_document_size - _current_offset, len);
 		readFully(b, off, limit);
 		return limit;
 	}

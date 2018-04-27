@@ -30,6 +30,7 @@ import java.util.Date;
 
 import org.apache.poi.POIXMLProperties.CoreProperties;
 import org.apache.poi.openxml4j.util.Nullable;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -249,20 +250,18 @@ public final class TestPOIXMLProperties {
 
         // Adding / changing
         ByteArrayInputStream imageData = new ByteArrayInputStream(new byte[1]);
-        assertEquals(1, imageData.available());
         noThumbProps.setThumbnail("Testing.png", imageData);
         assertNotNull(noThumbProps.getThumbnailPart());
         assertEquals("/Testing.png", noThumbProps.getThumbnailFilename());
         assertNotNull(noThumbProps.getThumbnailImage());
-        assertEquals(1, noThumbProps.getThumbnailImage().available());
+        assertEquals(1, IOUtils.toByteArray(noThumbProps.getThumbnailImage()).length);
 
         imageData = new ByteArrayInputStream(new byte[2]);
-        assertEquals(2, imageData.available());
         noThumbProps.setThumbnail("Testing2.png", imageData);
         assertNotNull(noThumbProps.getThumbnailPart());
         assertEquals("/Testing.png", noThumbProps.getThumbnailFilename());
         assertNotNull(noThumbProps.getThumbnailImage());
-        assertEquals(2, noThumbProps.getThumbnailImage().available());
+        assertEquals(2, IOUtils.toByteArray(noThumbProps.getThumbnailImage()).length);
     }
 
     private static String zeroPad(long i) {

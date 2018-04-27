@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.openxml4j.util;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.Test;
 
@@ -39,8 +40,9 @@ public class TestZipSecureFile {
                 while (entries.hasMoreElements()) {
                     ZipEntry entry = entries.nextElement();
 
-                    InputStream inputStream = secureFile.getInputStream(entry);
-                    assertTrue(inputStream.available() > 0);
+                    try (InputStream inputStream = secureFile.getInputStream(entry)) {
+                        assertTrue(IOUtils.toByteArray(inputStream).length > 0);
+                    }
                 }
             }
         }

@@ -17,22 +17,28 @@
 
 package org.apache.poi.poifs.filesystem;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
-
-import junit.framework.TestCase;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.poifs.property.DirectoryProperty;
 import org.apache.poi.poifs.storage.RawDataBlock;
+import org.apache.poi.util.SuppressForbidden;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Class to test DocumentInputStream functionality
  */
-public final class TestDocumentInputStream extends TestCase {
+public final class TestDocumentInputStream {
    private DocumentNode     _workbook_n;
    private DocumentNode     _workbook_o;
    private byte[]           _workbook_data;
@@ -42,8 +48,8 @@ public final class TestDocumentInputStream extends TestCase {
    // any block size
    private static final int _buffer_size   = 6;
 
-	@Override
-    protected void setUp() throws Exception {
+   @Before
+   public void setUp() throws Exception {
         int blocks = (_workbook_size + 511) / 512;
 
         _workbook_data = new byte[ 512 * blocks ];
@@ -92,6 +98,7 @@ public final class TestDocumentInputStream extends TestCase {
 	/**
      * test constructor
      */
+    @Test
     public void testConstructor() throws IOException {
         DocumentInputStream ostream = new ODocumentInputStream(_workbook_o);
         DocumentInputStream nstream = new NDocumentInputStream(_workbook_n);
@@ -99,8 +106,8 @@ public final class TestDocumentInputStream extends TestCase {
         assertEquals(_workbook_size, _workbook_o.getSize());
         assertEquals(_workbook_size, _workbook_n.getSize());
 
-        assertEquals(_workbook_size, ostream.available());
-        assertEquals(_workbook_size, nstream.available());
+        assertEquals(_workbook_size, available(ostream));
+        assertEquals(_workbook_size, available(nstream));
         
         ostream.close();
         nstream.close();
@@ -109,23 +116,24 @@ public final class TestDocumentInputStream extends TestCase {
     /**
      * test available() behavior
      */
+    @Test
     public void testAvailable() throws IOException {
         DocumentInputStream ostream = new DocumentInputStream(_workbook_o);
         DocumentInputStream nstream = new NDocumentInputStream(_workbook_n);
 
-        assertEquals(_workbook_size, ostream.available());
-        assertEquals(_workbook_size, nstream.available());
+        assertEquals(_workbook_size, available(ostream));
+        assertEquals(_workbook_size, available(nstream));
         ostream.close();
         nstream.close();
         
         try {
-           ostream.available();
+           available(ostream);
            fail("Should have caught IOException");
         } catch (IllegalStateException ignored) {
            // as expected
         }
         try {
-           nstream.available();
+           available(nstream);
            fail("Should have caught IOException");
        } catch (IllegalStateException ignored) {
            // as expected
@@ -135,6 +143,7 @@ public final class TestDocumentInputStream extends TestCase {
     /**
      * test mark/reset/markSupported.
      */
+    @Test
     public void testMarkFunctions() throws IOException {
         byte[] buffer = new byte[ _workbook_size / 5 ];
         byte[] small_buffer = new byte[212];
@@ -152,12 +161,12 @@ public final class TestDocumentInputStream extends TestCase {
                     _workbook_data[ j ], buffer[ j ]
               );
            }
-           assertEquals(_workbook_size - buffer.length, stream.available());
+           assertEquals(_workbook_size - buffer.length, available(stream));
            
            // Reset, and check the available goes back to being the
            //  whole of the stream
            stream.reset();
-           assertEquals(_workbook_size, stream.available());
+           assertEquals(_workbook_size, available(stream));
            
            
            // Read part of a block
@@ -168,7 +177,7 @@ public final class TestDocumentInputStream extends TestCase {
                     _workbook_data[ j ], small_buffer[ j ]
               );
            }
-           assertEquals(_workbook_size - small_buffer.length, stream.available());
+           assertEquals(_workbook_size - small_buffer.length, available(stream));
            stream.mark(0);
            
            // Read the next part
@@ -179,11 +188,11 @@ public final class TestDocumentInputStream extends TestCase {
                     _workbook_data[ j+small_buffer.length ], small_buffer[ j ]
               );
            }
-           assertEquals(_workbook_size - 2*small_buffer.length, stream.available());
+           assertEquals(_workbook_size - 2*small_buffer.length, available(stream));
            
            // Reset, check it goes back to where it was
            stream.reset();
-           assertEquals(_workbook_size - small_buffer.length, stream.available());
+           assertEquals(_workbook_size - small_buffer.length, available(stream));
            
            // Read 
            stream.read(small_buffer);
@@ -193,7 +202,7 @@ public final class TestDocumentInputStream extends TestCase {
                     _workbook_data[ j+small_buffer.length ], small_buffer[ j ]
               );
            }
-           assertEquals(_workbook_size - 2*small_buffer.length, stream.available());
+           assertEquals(_workbook_size - 2*small_buffer.length, available(stream));
            
            
            // Now read at various points
@@ -236,11 +245,11 @@ public final class TestDocumentInputStream extends TestCase {
                     _workbook_data[ j ], buffer[ j ]
               );
            }
-           assertEquals(_workbook_size - buffer.length, stream.available());
+           assertEquals(_workbook_size - buffer.length, available(stream));
            
            // Read all of it again, check it began at the start again
            stream.reset();
-           assertEquals(_workbook_size, stream.available());
+           assertEquals(_workbook_size, available(stream));
            
            stream.read(buffer);
            for (int j = 0; j < buffer.length; j++) {
@@ -254,7 +263,7 @@ public final class TestDocumentInputStream extends TestCase {
            stream.mark(12);
            stream.read(buffer);
            assertEquals(_workbook_size - (2 * buffer.length),
-                 stream.available());
+                 available(stream));
            for (int j = buffer.length; j < (2 * buffer.length); j++)
            {
               assertEquals("checking byte " + j, _workbook_data[ j ],
@@ -263,12 +272,12 @@ public final class TestDocumentInputStream extends TestCase {
            
            // Reset, should go back to only one buffer full read
            stream.reset();
-           assertEquals(_workbook_size - buffer.length, stream.available());
+           assertEquals(_workbook_size - buffer.length, available(stream));
            
            // Read the buffer again
            stream.read(buffer);
            assertEquals(_workbook_size - (2 * buffer.length),
-                 stream.available());
+                 available(stream));
            for (int j = buffer.length; j < (2 * buffer.length); j++)
            {
               assertEquals("checking byte " + j, _workbook_data[ j ],
@@ -281,6 +290,7 @@ public final class TestDocumentInputStream extends TestCase {
     /**
      * test simple read method
      */
+    @Test
     public void testReadSingleByte() throws IOException {
        DocumentInputStream[] streams = new DocumentInputStream[] {
              new DocumentInputStream(_workbook_o),
@@ -297,7 +307,7 @@ public final class TestDocumentInputStream extends TestCase {
                    ( byte ) b);
              remaining--;
              assertEquals("checking remaining after reading byte " + j,
-                   remaining, stream.available());
+                   remaining, available(stream));
           }
           
           // Ensure we fell off the end
@@ -317,6 +327,7 @@ public final class TestDocumentInputStream extends TestCase {
     /**
      * Test buffered read
      */
+    @Test
     public void testBufferRead() throws IOException {
        DocumentInputStream[] streams = new DocumentInputStream[] {
              new DocumentInputStream(_workbook_o),
@@ -333,22 +344,22 @@ public final class TestDocumentInputStream extends TestCase {
 
           // test reading zero length buffer
           assertEquals(0, stream.read(new byte[ 0 ]));
-          assertEquals(_workbook_size, stream.available());
+          assertEquals(_workbook_size, available(stream));
           byte[] buffer = new byte[ _buffer_size ];
           int    offset = 0;
 
-          while (stream.available() >= buffer.length)
+          while (available(stream) >= buffer.length)
           {
              assertEquals(_buffer_size, stream.read(buffer));
-             for (byte data : buffer) {
+             for (byte element : buffer) {
                 assertEquals("in main loop, byte " + offset,
-                      _workbook_data[ offset ], data);
+                      _workbook_data[ offset ], element);
                 offset++;
              }
              assertEquals("offset " + offset, _workbook_size - offset,
-                   stream.available());
+                   available(stream));
           }
-          assertEquals(_workbook_size % _buffer_size, stream.available());
+          assertEquals(_workbook_size % _buffer_size, available(stream));
           Arrays.fill(buffer, ( byte ) 0);
           int count = stream.read(buffer);
 
@@ -378,6 +389,7 @@ public final class TestDocumentInputStream extends TestCase {
     /**
      * Test complex buffered read
      */
+    @Test
     public void testComplexBufferRead() throws IOException {
        DocumentInputStream[] streams = new DocumentInputStream[] {
              new DocumentInputStream(_workbook_o),
@@ -413,11 +425,11 @@ public final class TestDocumentInputStream extends TestCase {
 
           // test reading zero
           assertEquals(0, stream.read(new byte[ 5 ], 0, 0));
-          assertEquals(_workbook_size, stream.available());
+          assertEquals(_workbook_size, available(stream));
           byte[] buffer = new byte[ _workbook_size ];
           int    offset = 0;
 
-          while (stream.available() >= _buffer_size)
+          while (available(stream) >= _buffer_size)
           {
              Arrays.fill(buffer, ( byte ) 0);
              assertEquals(_buffer_size,
@@ -437,9 +449,9 @@ public final class TestDocumentInputStream extends TestCase {
              }
              offset += _buffer_size;
              assertEquals("offset " + offset, _workbook_size - offset,
-                   stream.available());
+                   available(stream));
           }
-          assertEquals(_workbook_size % _buffer_size, stream.available());
+          assertEquals(_workbook_size % _buffer_size, available(stream));
           Arrays.fill(buffer, ( byte ) 0);
           int count = stream.read(buffer, offset,
                 _workbook_size % _buffer_size);
@@ -474,38 +486,40 @@ public final class TestDocumentInputStream extends TestCase {
     /**
      * Tests that we can skip within the stream
      */
+    @Test
     public void testSkip() throws IOException {
        DocumentInputStream[] streams = new DocumentInputStream[] {
              new DocumentInputStream(_workbook_o),
              new NDocumentInputStream(_workbook_n)
        };
        for(DocumentInputStream stream : streams) {
-          assertEquals(_workbook_size, stream.available());
-          int count = stream.available();
+          assertEquals(_workbook_size, available(stream));
+          int count = available(stream);
 
-          while (stream.available() >= _buffer_size) {
+          while (available(stream) >= _buffer_size) {
              assertEquals(_buffer_size, stream.skip(_buffer_size));
              count -= _buffer_size;
-             assertEquals(count, stream.available());
+             assertEquals(count, available(stream));
           }
           assertEquals(_workbook_size % _buffer_size,
                 stream.skip(_buffer_size));
-          assertEquals(0, stream.available());
+          assertEquals(0, available(stream));
           stream.reset();
-          assertEquals(_workbook_size, stream.available());
+          assertEquals(_workbook_size, available(stream));
           assertEquals(_workbook_size, stream.skip(_workbook_size * 2));
-          assertEquals(0, stream.available());
+          assertEquals(0, available(stream));
           stream.reset();
-          assertEquals(_workbook_size, stream.available());
+          assertEquals(_workbook_size, available(stream));
           assertEquals(_workbook_size,
                 stream.skip(2 + ( long ) Integer.MAX_VALUE));
-          assertEquals(0, stream.available());
+          assertEquals(0, available(stream));
        }
     }
     
     /**
      * Test that we can read files at multiple levels down the tree
      */
+    @Test
     public void testReadMultipleTreeLevels() throws Exception {
        final POIDataSamples _samples = POIDataSamples.getPublisherInstance();
        File sample = _samples.getFile("Sample.pub");
@@ -550,5 +564,10 @@ public final class TestDocumentInputStream extends TestCase {
        } finally {
            npoifs.close();
        }
+    }
+
+    @SuppressForbidden("just for testing")
+    private static int available(InputStream is) throws IOException {
+        return is.available();
     }
 }

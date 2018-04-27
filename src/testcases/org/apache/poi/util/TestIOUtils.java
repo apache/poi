@@ -172,6 +172,29 @@ public final class TestIOUtils {
         }
     }
 
+    @Test(expected = RecordFormatException.class)
+    public void testMaxLengthTooLong() throws IOException {
+        try (InputStream is = new FileInputStream(TMP)) {
+            IOUtils.toByteArray(is, Integer.MAX_VALUE, 100);
+        }
+    }
+
+    @Test
+    public void testMaxLengthIgnored() throws IOException {
+        try (InputStream is = new FileInputStream(TMP)) {
+            IOUtils.toByteArray(is, 90, Integer.MAX_VALUE);
+            IOUtils.toByteArray(is, 90, 100);
+            IOUtils.toByteArray(is, Integer.MAX_VALUE, Integer.MAX_VALUE);
+        }
+    }
+
+    @Test(expected = RecordFormatException.class)
+    public void testMaxLengthInvalid() throws IOException {
+        try (InputStream is = new FileInputStream(TMP)) {
+            IOUtils.toByteArray(is, 90, 80);
+        }
+    }
+
     @Test
     public void testWonkyInputStream() throws IOException {
         long skipped = IOUtils.skipFully(new WonkyInputStream(), 10000);

@@ -17,14 +17,13 @@
         
 package org.apache.poi.hssf.record;
 
-import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
-import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.RecordFormatException;
 
 /**
@@ -85,8 +84,7 @@ public final class ObjRecord extends Record implements Cloneable {
         */
 
 		subrecords = new ArrayList<>();
-		ByteArrayInputStream bais = new ByteArrayInputStream(subRecordData);
-		LittleEndianInputStream subRecStream = new LittleEndianInputStream(bais);
+		LittleEndianByteArrayInputStream subRecStream = new LittleEndianByteArrayInputStream(subRecordData);
 		CommonObjectDataSubRecord cmo = (CommonObjectDataSubRecord)SubRecord.createSubRecord(subRecStream, 0);
         subrecords.add(cmo);
         while (true) {
@@ -96,7 +94,7 @@ public final class ObjRecord extends Record implements Cloneable {
 				break;
 			}
 		}
-		int nRemainingBytes = bais.available();
+		final int nRemainingBytes = subRecordData.length-subRecStream.getReadIndex();
 		if (nRemainingBytes > 0) {
 			// At present (Oct-2008), most unit test samples have (subRecordData.length % 2 == 0)
 			_isPaddedToQuadByteMultiple = subRecordData.length % MAX_PAD_ALIGNMENT == 0;

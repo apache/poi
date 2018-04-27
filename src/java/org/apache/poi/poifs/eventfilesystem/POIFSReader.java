@@ -184,15 +184,15 @@ public class POIFSReader
     /**
      * Activates the notification of empty directories.<p>
      * If this flag is activated, the {@link POIFSReaderListener listener} receives
-     * {@link POIFSReaderEvent POIFSReaderEvents} with nulled {@code name} and {@code stream} 
+     * {@link POIFSReaderEvent POIFSReaderEvents} with nulled {@code name} and {@code stream}
      *
      * @param notifyEmptyDirectories
      */
     public void setNotifyEmptyDirectories(boolean notifyEmptyDirectories) {
         this.notifyEmptyDirectories = notifyEmptyDirectories;
     }
-    
-    
+
+
     /**
      * read in files
      *
@@ -239,7 +239,7 @@ public class POIFSReader
             }
             return;
         }
-        
+
         while (properties.hasNext())
         {
             Property property = properties.next();
@@ -273,11 +273,9 @@ public class POIFSReader
                     while (listeners.hasNext())
                     {
                         POIFSReaderListener listener = listeners.next();
-
-                        listener.processPOIFSReaderEvent(
-                            new POIFSReaderEvent(
-                                new DocumentInputStream(document), path,
-                                name));
+                        try (DocumentInputStream dis = new DocumentInputStream(document)) {
+                            listener.processPOIFSReaderEvent(new POIFSReaderEvent(dis, path, name));
+                        }
                     }
                 }
                 else

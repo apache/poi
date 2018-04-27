@@ -28,6 +28,7 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
@@ -39,6 +40,7 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -69,20 +71,24 @@ public class BitmapImageRenderer implements ImageRenderer {
      * @return the bufferedImage or null, if there was no image reader for this content type
      * @throws IOException thrown if there was an error while processing the image
      */
-    private static BufferedImage readImage(InputStream data, String contentType) throws IOException {
+    private static BufferedImage readImage(final InputStream data, final String contentType) throws IOException {
         IOException lastException = null;
         BufferedImage img = null;
-        if (data.markSupported()) {
-            data.mark(data.available());
+
+        final ByteArrayInputStream bis;
+        if (data instanceof ByteArrayInputStream) {
+            bis = (ByteArrayInputStream)data;
+        } else {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream(0x3FFFF);
+            IOUtils.copy(data, bos);
+            bis = new ByteArrayInputStream(bos.toByteArray());
         }
-        
+
+
         // currently don't use FileCacheImageInputStream,
         // because of the risk of filling the file handles (see #59166)
-        ImageInputStream iis = new MemoryCacheImageInputStream(data);
+        ImageInputStream iis = new MemoryCacheImageInputStream(bis);
         try {
-            iis = new MemoryCacheImageInputStream(data);
-            iis.mark();
-            
             Iterator<ImageReader> iter = ImageIO.getImageReaders(iis);
             while (img==null && iter.hasNext()) {
                 ImageReader reader = iter.next();
@@ -90,21 +96,11 @@ public class BitmapImageRenderer implements ImageRenderer {
                 // 0:default mode, 1:fallback mode
                 for (int mode=0; img==null && mode<3; mode++) {
                     lastException = null;
-                    try {
-                        iis.reset();
-                    } catch (IOException e) {
-                        if (data.markSupported()) {
-                            data.reset();
-                            data.mark(data.available());
-                            iis.close();
-                            iis = new MemoryCacheImageInputStream(data);
-                        } else {
-                            // can't restore the input stream, so we need to stop processing here
-                            lastException = e;
-                            break;
-                        }
+                    if (mode > 0) {
+                        bis.reset();
+                        iis.close();
+                        iis = new MemoryCacheImageInputStream(bis);
                     }
-                    iis.mark();
 
                     try {
                     
