@@ -175,10 +175,12 @@ public class VariantSupport extends Variant {
         try {
             typedPropertyValue.readValue(lei);
         } catch ( UnsupportedOperationException exc ) {
-            int propLength = Math.min( length, lei.available() );
-            final byte[] v = IOUtils.safelyAllocate(propLength, MAX_RECORD_LENGTH);
-            lei.readFully(v, 0, propLength);
-            throw new ReadingNotSupportedException( type, v );
+            try {
+                final byte[] v = IOUtils.toByteArray(lei, length, MAX_RECORD_LENGTH);
+                throw new ReadingNotSupportedException( type, v );
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         switch ( (int) type ) {

@@ -119,6 +119,9 @@ java.lang.Object#notifyAll()
 @defaultMessage Don't interrupt threads use FutureUtils#cancel(Future<T>) instead
 java.util.concurrent.Future#cancel(boolean)
 
+@defaultMessage Don't use ...InputStream.available() as it gives wrong result for certain streams - use IOUtils.toByteArray to read the stream fully and then count the available bytes 
+java.io.InputStream#available() 
+
 @defaultMessage Unnecessary, inefficient, and confusing conversion of String.toString
 java.lang.String#toString()
 

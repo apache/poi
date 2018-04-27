@@ -17,15 +17,17 @@
 
 package org.apache.poi.poifs.poibrowser;
 
-import java.io.*;
-import org.apache.poi.poifs.filesystem.*;
+import java.io.IOException;
+
+import org.apache.poi.poifs.filesystem.DocumentInputStream;
+import org.apache.poi.poifs.filesystem.POIFSDocumentPath;
 import org.apache.poi.util.IOUtils;
 
 /**
  * <p>Describes the most important (whatever that is) features of a
  * {@link POIFSDocumentPath}.</p>
  */
-public class DocumentDescriptor
+class DocumentDescriptor
 {
 
     //arbitrarily selected; may need to increase
@@ -54,26 +56,20 @@ public class DocumentDescriptor
     public DocumentDescriptor(final String name,
                               final POIFSDocumentPath path,
                               final DocumentInputStream stream,
-                              final int nrOfBytes)
-    {
+                              final int nrOfBytes) {
         this.name = name;
         this.path = path;
         this.stream = stream;
-        try
-        {
-            size = stream.available();
-            if (stream.markSupported())
-            {
+        try {
+            if (stream.markSupported()) {
                 stream.mark(nrOfBytes);
-                final byte[] b = IOUtils.safelyAllocate(nrOfBytes, MAX_RECORD_LENGTH);
-                final int read = stream.read(b, 0, Math.min(size, b.length));
-                bytes = new byte[read];
-                System.arraycopy(b, 0, bytes, 0, read);
+                bytes = IOUtils.toByteArray(stream, nrOfBytes, MAX_RECORD_LENGTH);
                 stream.reset();
+            } else {
+                bytes = new byte[0];
             }
-        }
-        catch (IOException ex)
-        {
+            size = bytes.length + stream.available();
+        } catch (IOException ex) {
             System.out.println(ex);
         }
     }

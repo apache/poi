@@ -32,6 +32,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilterInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.List;
@@ -57,32 +58,30 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 public class TestHwmfParsing {
+
+    private static final POIDataSamples samples = POIDataSamples.getSlideShowInstance();
+
+
     @Test
     public void parse() throws IOException {
-        File f = POIDataSamples.getSlideShowInstance().getFile("santa.wmf");
-        FileInputStream fis = new FileInputStream(f);
-        HwmfPicture wmf = new HwmfPicture(fis);
-        fis.close();
-        List<HwmfRecord> records = wmf.getRecords();
-        assertEquals(581, records.size());
+        try (InputStream fis = samples.openResourceAsStream("santa.wmf")) {
+            HwmfPicture wmf = new HwmfPicture(fis);
+            List<HwmfRecord> records = wmf.getRecords();
+            assertEquals(581, records.size());
+        }
     }
 
     @Test(expected = RecordFormatException.class)
     public void testInfiniteLoop() throws Exception {
-        File f = POIDataSamples.getSlideShowInstance().getFile("61338.wmf");
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(f);
-            HwmfPicture wmf = new HwmfPicture(fis);
-        } finally {
-            fis.close();
+        try (InputStream is = samples.openResourceAsStream("61338.wmf")) {
+            new HwmfPicture(is);
         }
     }
 
     @Test
     @Ignore("This is work-in-progress and not a real unit test ...")
     public void paint() throws IOException {
-        File f = POIDataSamples.getSlideShowInstance().getFile("santa.wmf");
+        File f = samples.getFile("santa.wmf");
         // File f = new File("bla.wmf");
         FileInputStream fis = new FileInputStream(f);
         HwmfPicture wmf = new HwmfPicture(fis);

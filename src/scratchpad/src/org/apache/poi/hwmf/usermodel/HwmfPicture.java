@@ -50,52 +50,59 @@ public class HwmfPicture {
     final HwmfHeader header;
     
     public HwmfPicture(InputStream inputStream) throws IOException {
-        BufferedInputStream bis = new BufferedInputStream(inputStream, 10000);
-        LittleEndianInputStream leis = new LittleEndianInputStream(bis);
-        placeableHeader = HwmfPlaceableHeader.readHeader(leis);
-        header = new HwmfHeader(leis);
-        
-        for (;;) {
-            if (leis.available() < 6) {
-                logger.log(POILogger.ERROR, "unexpected eof - wmf file was truncated");
-                break;
-            }
-            // recordSize in DWORDs
-            long recordSizeLong = leis.readUInt()*2;
-            if (recordSizeLong > Integer.MAX_VALUE) {
-                throw new RecordFormatException("record size can't be > "+Integer.MAX_VALUE);
-            } else if (recordSizeLong < 0L) {
-                throw new RecordFormatException("record size can't be < 0");
-            }
-            int recordSize = (int)recordSizeLong;
-            int recordFunction = leis.readShort();
-            // 4 bytes (recordSize) + 2 bytes (recordFunction)
-            int consumedSize = 6;
-            HwmfRecordType wrt = HwmfRecordType.getById(recordFunction);
-            if (wrt == null) {
-                throw new IOException("unexpected record type: "+recordFunction);
-            }
-            if (wrt == HwmfRecordType.eof) break;
-            if (wrt.clazz == null) {
-                throw new IOException("unsupported record type: "+recordFunction);
-            }
-            
-            HwmfRecord wr;
-            try {
-                wr = wrt.clazz.newInstance();
-                records.add(wr);
-            } catch (Exception e) {
-                throw (IOException)new IOException("can't create wmf record").initCause(e);
-            }
-            
-            consumedSize += wr.init(leis, recordSize, recordFunction);
-            int remainingSize = recordSize - consumedSize;
-            if (remainingSize < 0) {
-                throw new RecordFormatException("read too many bytes. record size: "+recordSize + "; comsumed size: "+consumedSize);
-            } else if(remainingSize > 0) {
-                long skipped = IOUtils.skipFully(leis, remainingSize);
-                if (skipped != (long)remainingSize) {
-                    throw new RecordFormatException("Tried to skip "+remainingSize + " but skipped: "+skipped);
+
+        try (BufferedInputStream bis = new BufferedInputStream(inputStream, 10000);
+             LittleEndianInputStream leis = new LittleEndianInputStream(bis)) {
+            placeableHeader = HwmfPlaceableHeader.readHeader(leis);
+            header = new HwmfHeader(leis);
+
+            for (;;) {
+                long recordSize;
+                int recordFunction;
+                try {
+                    // recordSize in DWORDs
+                    long recordSizeLong = leis.readUInt()*2;
+                    if (recordSizeLong > Integer.MAX_VALUE) {
+                        throw new RecordFormatException("record size can't be > "+Integer.MAX_VALUE);
+                    } else if (recordSizeLong < 0L) {
+                        throw new RecordFormatException("record size can't be < 0");
+                    }
+                    recordSize = (int)recordSizeLong;
+                    recordFunction = leis.readShort();
+                } catch (Exception e) {
+                    logger.log(POILogger.ERROR, "unexpected eof - wmf file was truncated");
+                    break;
+                }
+                // 4 bytes (recordSize) + 2 bytes (recordFunction)
+                int consumedSize = 6;
+                HwmfRecordType wrt = HwmfRecordType.getById(recordFunction);
+                if (wrt == null) {
+                    throw new IOException("unexpected record type: "+recordFunction);
+                }
+                if (wrt == HwmfRecordType.eof) {
+                    break;
+                }
+                if (wrt.clazz == null) {
+                    throw new IOException("unsupported record type: "+recordFunction);
+                }
+
+                HwmfRecord wr;
+                try {
+                    wr = wrt.clazz.newInstance();
+                    records.add(wr);
+                } catch (Exception e) {
+                    throw (IOException)new IOException("can't create wmf record").initCause(e);
+                }
+
+                consumedSize += wr.init(leis, recordSize, recordFunction);
+                int remainingSize = (int)(recordSize - consumedSize);
+                if (remainingSize < 0) {
+                    throw new RecordFormatException("read too many bytes. record size: "+recordSize + "; comsumed size: "+consumedSize);
+                } else if(remainingSize > 0) {
+                    long skipped = IOUtils.skipFully(leis, remainingSize);
+                    if (skipped != (long)remainingSize) {
+                        throw new RecordFormatException("Tried to skip "+remainingSize + " but skipped: "+skipped);
+                    }
                 }
             }
         }

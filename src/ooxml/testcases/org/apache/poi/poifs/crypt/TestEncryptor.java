@@ -36,18 +36,20 @@ import javax.crypto.Cipher;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.opc.ContentTypes;
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.poifs.crypt.agile.AgileDecryptor;
 import org.apache.poi.poifs.crypt.agile.AgileEncryptionHeader;
 import org.apache.poi.poifs.crypt.agile.AgileEncryptionVerifier;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentNode;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.util.BoundedInputStream;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.junit.Assume;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -59,35 +61,37 @@ public class TestEncryptor {
         // ... at least the output can be opened in Excel Viewer 
         String password = "pass";
 
-        InputStream is = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("SimpleMultiCell.xlsx");
-        ByteArrayOutputStream payloadExpected = new ByteArrayOutputStream();
-        IOUtils.copy(is, payloadExpected);
-        is.close();
-        
-        POIFSFileSystem fs = new POIFSFileSystem();
-        EncryptionInfo ei = new EncryptionInfo(EncryptionMode.binaryRC4);
-        Encryptor enc = ei.getEncryptor();
-        enc.confirmPassword(password);
-        
-        OutputStream os = enc.getDataStream(fs.getRoot());
-        payloadExpected.writeTo(os);
-        os.close();
-        
+        final byte[] payloadExpected;
+        try (InputStream is = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("SimpleMultiCell.xlsx")) {
+            payloadExpected = IOUtils.toByteArray(is);
+        }
+
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        fs.writeFilesystem(bos);
+        try (POIFSFileSystem fs = new POIFSFileSystem()) {
+            EncryptionInfo ei = new EncryptionInfo(EncryptionMode.binaryRC4);
+            Encryptor enc = ei.getEncryptor();
+            enc.confirmPassword(password);
+
+            try (OutputStream os = enc.getDataStream(fs.getRoot())) {
+                os.write(payloadExpected);
+            }
+
+            fs.writeFilesystem(bos);
+        }
+
+        final byte[] payloadActual;
+        try (POIFSFileSystem fs = new POIFSFileSystem(new ByteArrayInputStream(bos.toByteArray()))) {
+            EncryptionInfo ei = new EncryptionInfo(fs);
+            Decryptor dec = ei.getDecryptor();
+            boolean b = dec.verifyPassword(password);
+            assertTrue(b);
+
+            try (InputStream is = dec.getDataStream(fs.getRoot())) {
+                payloadActual = IOUtils.toByteArray(is);
+            }
+        }
         
-        fs = new POIFSFileSystem(new ByteArrayInputStream(bos.toByteArray()));
-        ei = new EncryptionInfo(fs);
-        Decryptor dec = ei.getDecryptor();
-        boolean b = dec.verifyPassword(password);
-        assertTrue(b);
-        
-        ByteArrayOutputStream payloadActual = new ByteArrayOutputStream();
-        is = dec.getDataStream(fs.getRoot());
-        IOUtils.copy(is,payloadActual);
-        is.close();
-        
-        assertArrayEquals(payloadExpected.toByteArray(), payloadActual.toByteArray());
+        assertArrayEquals(payloadExpected, payloadActual);
     }
 
     @Test
@@ -97,83 +101,89 @@ public class TestEncryptor {
 
         File file = POIDataSamples.getDocumentInstance().getFile("bug53475-password-is-pass.docx");
         String pass = "pass";
-        NPOIFSFileSystem nfs = new NPOIFSFileSystem(file);
 
-        // Check the encryption details
-        EncryptionInfo infoExpected = new EncryptionInfo(nfs);
-        Decryptor decExpected = Decryptor.getInstance(infoExpected);
-        boolean passed = decExpected.verifyPassword(pass);
-        assertTrue("Unable to process: document is encrypted", passed);
-        
-        // extract the payload
-        InputStream is = decExpected.getDataStream(nfs);
-        byte payloadExpected[] = IOUtils.toByteArray(is);
-        is.close();
+        final byte[] payloadExpected, encPackExpected;
+        final long decPackLenExpected;
+        final EncryptionInfo infoExpected;
+        final Decryptor decExpected;
 
-        long decPackLenExpected = decExpected.getLength();
-        assertEquals(decPackLenExpected, payloadExpected.length);
+        try (NPOIFSFileSystem nfs = new NPOIFSFileSystem(file, true)) {
 
-        is = nfs.getRoot().createDocumentInputStream(Decryptor.DEFAULT_POIFS_ENTRY);
-        is = new BoundedInputStream(is, is.available()-16); // ignore padding block
-        byte encPackExpected[] = IOUtils.toByteArray(is);
-        is.close();
-        
-        // listDir(nfs.getRoot(), "orig", "");
-        
-        nfs.close();
+            // Check the encryption details
+            infoExpected = new EncryptionInfo(nfs);
+            decExpected = Decryptor.getInstance(infoExpected);
+            boolean passed = decExpected.verifyPassword(pass);
+            assertTrue("Unable to process: document is encrypted", passed);
+
+            // extract the payload
+            try (InputStream is = decExpected.getDataStream(nfs)) {
+                payloadExpected = IOUtils.toByteArray(is);
+            }
+
+            decPackLenExpected = decExpected.getLength();
+            assertEquals(decPackLenExpected, payloadExpected.length);
+
+            final DirectoryNode root = nfs.getRoot();
+            final DocumentEntry entry = (DocumentEntry)root.getEntry(Decryptor.DEFAULT_POIFS_ENTRY);
+            try (InputStream is = root.createDocumentInputStream(entry)) {
+                // ignore padding block
+                encPackExpected = IOUtils.toByteArray(is, entry.getSize()-16);
+            }
+        }
 
         // check that same verifier/salt lead to same hashes
-        byte verifierSaltExpected[] = infoExpected.getVerifier().getSalt();
-        byte verifierExpected[] = decExpected.getVerifier();
-        byte keySalt[] = infoExpected.getHeader().getKeySalt();
-        byte keySpec[] = decExpected.getSecretKey().getEncoded();
-        byte integritySalt[] = decExpected.getIntegrityHmacKey();
+        final byte verifierSaltExpected[] = infoExpected.getVerifier().getSalt();
+        final byte verifierExpected[] = decExpected.getVerifier();
+        final byte keySalt[] = infoExpected.getHeader().getKeySalt();
+        final byte keySpec[] = decExpected.getSecretKey().getEncoded();
+        final byte integritySalt[] = decExpected.getIntegrityHmacKey();
         // the hmacs of the file always differ, as we use PKCS5-padding to pad the bytes
         // whereas office just uses random bytes
         // byte integrityHash[] = d.getIntegrityHmacValue();
         
-        POIFSFileSystem fs = new POIFSFileSystem();
-        EncryptionInfo infoActual = new EncryptionInfo(
+        final EncryptionInfo infoActual = new EncryptionInfo(
               EncryptionMode.agile
             , infoExpected.getVerifier().getCipherAlgorithm()
             , infoExpected.getVerifier().getHashAlgorithm()
             , infoExpected.getHeader().getKeySize()
             , infoExpected.getHeader().getBlockSize()
             , infoExpected.getVerifier().getChainingMode()
-        );        
+        );
 
         Encryptor e = Encryptor.getInstance(infoActual);
         e.confirmPassword(pass, keySpec, keySalt, verifierExpected, verifierSaltExpected, integritySalt);
-    
-        OutputStream os = e.getDataStream(fs);
-        IOUtils.copy(new ByteArrayInputStream(payloadExpected), os);
-        os.close();
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream(); 
-        fs.writeFilesystem(bos);
-        fs.close();
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        try (POIFSFileSystem fs = new POIFSFileSystem()) {
+            try (OutputStream os = e.getDataStream(fs)) {
+                os.write(payloadExpected);
+            }
+            fs.writeFilesystem(bos);
+        }
 
-        nfs = new NPOIFSFileSystem(new ByteArrayInputStream(bos.toByteArray()));
-        infoActual = new EncryptionInfo(nfs.getRoot());
-        Decryptor decActual = Decryptor.getInstance(infoActual);
-        passed = decActual.verifyPassword(pass);        
-        assertTrue("Unable to process: document is encrypted", passed);
-        
-        // extract the payload
-        is = decActual.getDataStream(nfs);
-        byte payloadActual[] = IOUtils.toByteArray(is);
-        is.close();
-        
-        long decPackLenActual = decActual.getLength();
-        
-        is = nfs.getRoot().createDocumentInputStream(Decryptor.DEFAULT_POIFS_ENTRY);
-        is = new BoundedInputStream(is, is.available()-16); // ignore padding block
-        byte encPackActual[] = IOUtils.toByteArray(is);
-        is.close();
-        
-        // listDir(nfs.getRoot(), "copy", "");
-        
-        nfs.close();
+        final EncryptionInfo infoActual2;
+        final byte[] payloadActual, encPackActual;
+        final long decPackLenActual;
+        try (NPOIFSFileSystem nfs = new NPOIFSFileSystem(new ByteArrayInputStream(bos.toByteArray()))) {
+            infoActual2 = new EncryptionInfo(nfs.getRoot());
+            Decryptor decActual = Decryptor.getInstance(infoActual2);
+            boolean passed = decActual.verifyPassword(pass);
+            assertTrue("Unable to process: document is encrypted", passed);
+
+            // extract the payload
+            try (InputStream is = decActual.getDataStream(nfs)) {
+                payloadActual = IOUtils.toByteArray(is);
+            }
+
+            decPackLenActual = decActual.getLength();
+
+            final DirectoryNode root = nfs.getRoot();
+            final DocumentEntry entry = (DocumentEntry)root.getEntry(Decryptor.DEFAULT_POIFS_ENTRY);
+            try (InputStream is = root.createDocumentInputStream(entry)) {
+                // ignore padding block
+                encPackActual = IOUtils.toByteArray(is, entry.getSize()-16);
+            }
+        }
         
         AgileEncryptionHeader aehExpected = (AgileEncryptionHeader)infoExpected.getHeader();
         AgileEncryptionHeader aehActual = (AgileEncryptionHeader)infoActual.getHeader();
@@ -186,32 +196,33 @@ public class TestEncryptor {
     @Test
     public void standardEncryption() throws Exception {
         File file = POIDataSamples.getDocumentInstance().getFile("bug53475-password-is-solrcell.docx");
-        String pass = "solrcell";
-        
-        NPOIFSFileSystem nfs = new NPOIFSFileSystem(file);
+        final String pass = "solrcell";
 
-        // Check the encryption details
-        EncryptionInfo infoExpected = new EncryptionInfo(nfs);
-        Decryptor d = Decryptor.getInstance(infoExpected);
-        boolean passed = d.verifyPassword(pass);
-        assertTrue("Unable to process: document is encrypted", passed);
+        final byte[] payloadExpected;
+        final EncryptionInfo infoExpected;
+        final Decryptor d;
+        try (NPOIFSFileSystem nfs = new NPOIFSFileSystem(file, true)) {
 
-        // extract the payload
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        InputStream is = d.getDataStream(nfs);
-        IOUtils.copy(is, bos);
-        is.close();
-        nfs.close();
-        byte payloadExpected[] = bos.toByteArray();
-        
+            // Check the encryption details
+            infoExpected = new EncryptionInfo(nfs);
+            d = Decryptor.getInstance(infoExpected);
+            boolean passed = d.verifyPassword(pass);
+            assertTrue("Unable to process: document is encrypted", passed);
+
+            // extract the payload
+            try (InputStream is = d.getDataStream(nfs)) {
+                payloadExpected = IOUtils.toByteArray(is);
+            }
+        }
+
         // check that same verifier/salt lead to same hashes
-        byte verifierSaltExpected[] = infoExpected.getVerifier().getSalt();
-        byte verifierExpected[] = d.getVerifier();
-        byte keySpec[] = d.getSecretKey().getEncoded();
-        byte keySalt[] = infoExpected.getHeader().getKeySalt();
+        final byte verifierSaltExpected[] = infoExpected.getVerifier().getSalt();
+        final byte verifierExpected[] = d.getVerifier();
+        final byte keySpec[] = d.getSecretKey().getEncoded();
+        final byte keySalt[] = infoExpected.getHeader().getKeySalt();
         
         
-        EncryptionInfo infoActual = new EncryptionInfo(
+        final EncryptionInfo infoActual = new EncryptionInfo(
               EncryptionMode.standard
             , infoExpected.getVerifier().getCipherAlgorithm()
             , infoExpected.getVerifier().getHashAlgorithm()
@@ -220,55 +231,50 @@ public class TestEncryptor {
             , infoExpected.getVerifier().getChainingMode()
         );
         
-        Encryptor e = Encryptor.getInstance(infoActual);
+        final Encryptor e = Encryptor.getInstance(infoActual);
         e.confirmPassword(pass, keySpec, keySalt, verifierExpected, verifierSaltExpected, null);
-        
+
         assertArrayEquals(infoExpected.getVerifier().getEncryptedVerifier(), infoActual.getVerifier().getEncryptedVerifier());
         assertArrayEquals(infoExpected.getVerifier().getEncryptedVerifierHash(), infoActual.getVerifier().getEncryptedVerifierHash());
 
         // now we use a newly generated salt/verifier and check
-        // if the file content is still the same 
+        // if the file content is still the same
 
-        infoActual = new EncryptionInfo(
-              EncryptionMode.standard
-            , infoExpected.getVerifier().getCipherAlgorithm()
-            , infoExpected.getVerifier().getHashAlgorithm()
-            , infoExpected.getHeader().getKeySize()
-            , infoExpected.getHeader().getBlockSize()
-            , infoExpected.getVerifier().getChainingMode()
-        );
-        
-        e = Encryptor.getInstance(infoActual);
-        e.confirmPassword(pass);
+        final byte[] encBytes;
+        try (POIFSFileSystem fs = new POIFSFileSystem()) {
 
-        POIFSFileSystem fs = new POIFSFileSystem();
-        OutputStream os = e.getDataStream(fs);
-        IOUtils.copy(new ByteArrayInputStream(payloadExpected), os);
-        os.close();
-        
-        bos.reset();
-        fs.writeFilesystem(bos);
+            final EncryptionInfo infoActual2 = new EncryptionInfo(
+                    EncryptionMode.standard
+                    , infoExpected.getVerifier().getCipherAlgorithm()
+                    , infoExpected.getVerifier().getHashAlgorithm()
+                    , infoExpected.getHeader().getKeySize()
+                    , infoExpected.getHeader().getBlockSize()
+                    , infoExpected.getVerifier().getChainingMode()
+            );
 
-        ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
-        
-        // FileOutputStream fos = new FileOutputStream("encrypted.docx");
-        // IOUtils.copy(bis, fos);
-        // fos.close();
-        // bis.reset();
-        
-        nfs = new NPOIFSFileSystem(bis);
-        infoExpected = new EncryptionInfo(nfs);
-        d = Decryptor.getInstance(infoExpected);
-        passed = d.verifyPassword(pass);
-        assertTrue("Unable to process: document is encrypted", passed);
+            final Encryptor e2 = Encryptor.getInstance(infoActual2);
+            e2.confirmPassword(pass);
 
-        bos.reset();
-        is = d.getDataStream(nfs);
-        IOUtils.copy(is, bos);
-        is.close();
-        nfs.close();
-        byte payloadActual[] = bos.toByteArray();        
-        
+            try (OutputStream os = e2.getDataStream(fs)) {
+                os.write(payloadExpected);
+            }
+
+            final ByteArrayOutputStream bos = new ByteArrayOutputStream(50000);
+            fs.writeFilesystem(bos);
+            encBytes = bos.toByteArray();
+        }
+
+        final byte[] payloadActual;
+        try (NPOIFSFileSystem nfs = new NPOIFSFileSystem(new ByteArrayInputStream(encBytes))) {
+            final EncryptionInfo ei = new EncryptionInfo(nfs);
+            Decryptor d2 = Decryptor.getInstance(ei);
+            assertTrue("Unable to process: document is encrypted", d2.verifyPassword(pass));
+
+            try (InputStream is = d2.getDataStream(nfs)) {
+                payloadActual = IOUtils.toByteArray(is);
+            }
+        }
+
         assertArrayEquals(payloadExpected, payloadActual);
     }
     
@@ -281,85 +287,87 @@ public class TestEncryptor {
     @Test
     public void encryptPackageWithoutCoreProperties() throws Exception {
         // Open our file without core properties
-        File inp = POIDataSamples.getOpenXML4JInstance().getFile("OPCCompliance_NoCoreProperties.xlsx");
-        OPCPackage pkg = OPCPackage.open(inp.getPath());
-        
-        // It doesn't have any core properties yet
-        assertEquals(0, pkg.getPartsByContentType(ContentTypes.CORE_PROPERTIES_PART).size());
-        assertNotNull(pkg.getPackageProperties());
-        assertNotNull(pkg.getPackageProperties().getLanguageProperty());
-        assertNull(pkg.getPackageProperties().getLanguageProperty().getValue());
-        
-        // Encrypt it
-        EncryptionInfo info = new EncryptionInfo(EncryptionMode.agile);
-        NPOIFSFileSystem fs = new NPOIFSFileSystem();
-        
-        Encryptor enc = info.getEncryptor();
-        enc.confirmPassword("password");
-        OutputStream os = enc.getDataStream(fs);
-        pkg.save(os);
-        os.close();
-        pkg.revert();
-        
-        // Save the resulting OLE2 document, and re-open it
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        fs.writeFilesystem(baos);
-        fs.close();
-        
-        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        NPOIFSFileSystem inpFS = new NPOIFSFileSystem(bais);
-        
-        // Check we can decrypt it
-        info = new EncryptionInfo(inpFS);
-        Decryptor d = Decryptor.getInstance(info);
-        assertEquals(true, d.verifyPassword("password"));
-        
-        OPCPackage inpPkg = OPCPackage.open(d.getDataStream(inpFS));
-        
-        // Check it now has empty core properties
-        assertEquals(1, inpPkg.getPartsByContentType(ContentTypes.CORE_PROPERTIES_PART).size());
-        assertNotNull(inpPkg.getPackageProperties());
-        assertNotNull(inpPkg.getPackageProperties().getLanguageProperty());
-        assertNull(inpPkg.getPackageProperties().getLanguageProperty().getValue());
+        final byte[] encBytes;
+        try (InputStream is = POIDataSamples.getOpenXML4JInstance().openResourceAsStream("OPCCompliance_NoCoreProperties.xlsx");
+            OPCPackage pkg = OPCPackage.open(is)) {
 
-        inpPkg.close();
-        inpFS.close();
+            // It doesn't have any core properties yet
+            assertEquals(0, pkg.getPartsByContentType(ContentTypes.CORE_PROPERTIES_PART).size());
+            assertNotNull(pkg.getPackageProperties());
+            assertNotNull(pkg.getPackageProperties().getLanguageProperty());
+            assertNull(pkg.getPackageProperties().getLanguageProperty().getValue());
+
+            // Encrypt it
+            EncryptionInfo info = new EncryptionInfo(EncryptionMode.agile);
+            Encryptor enc = info.getEncryptor();
+            enc.confirmPassword("password");
+
+            try (NPOIFSFileSystem fs = new NPOIFSFileSystem()) {
+
+                try (OutputStream os = enc.getDataStream(fs)) {
+                    pkg.save(os);
+                }
+
+                // Save the resulting OLE2 document, and re-open it
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                fs.writeFilesystem(baos);
+                encBytes = baos.toByteArray();
+            }
+        }
+        
+
+        try (NPOIFSFileSystem inpFS = new NPOIFSFileSystem(new ByteArrayInputStream(encBytes))) {
+            // Check we can decrypt it
+            EncryptionInfo info = new EncryptionInfo(inpFS);
+            Decryptor d = Decryptor.getInstance(info);
+            assertEquals(true, d.verifyPassword("password"));
+
+            try (OPCPackage inpPkg = OPCPackage.open(d.getDataStream(inpFS))) {
+                // Check it now has empty core properties
+                assertEquals(1, inpPkg.getPartsByContentType(ContentTypes.CORE_PROPERTIES_PART).size());
+                assertNotNull(inpPkg.getPackageProperties());
+                assertNotNull(inpPkg.getPackageProperties().getLanguageProperty());
+                assertNull(inpPkg.getPackageProperties().getLanguageProperty().getValue());
+
+            }
+        }
     }
     
     @Test
     @Ignore
     public void inPlaceRewrite() throws Exception {
         File f = TempFile.createTempFile("protected_agile", ".docx");
-        // File f = new File("protected_agile.docx");
-        FileOutputStream fos = new FileOutputStream(f);
-        InputStream fis = POIDataSamples.getPOIFSInstance().openResourceAsStream("protected_agile.docx");
-        IOUtils.copy(fis, fos);
-        fis.close();
-        fos.close();
+
+        try (FileOutputStream fos = new FileOutputStream(f);
+             InputStream fis = POIDataSamples.getPOIFSInstance().openResourceAsStream("protected_agile.docx")) {
+            IOUtils.copy(fis, fos);
+        }
         
-        NPOIFSFileSystem fs = new NPOIFSFileSystem(f, false);
+        try (NPOIFSFileSystem fs = new NPOIFSFileSystem(f, false)) {
 
-        // decrypt the protected file - in this case it was encrypted with the default password
-        EncryptionInfo encInfo = new EncryptionInfo(fs);
-        Decryptor d = encInfo.getDecryptor();
-        boolean b = d.verifyPassword(Decryptor.DEFAULT_PASSWORD);
-        assertTrue(b);
+            // decrypt the protected file - in this case it was encrypted with the default password
+            EncryptionInfo encInfo = new EncryptionInfo(fs);
+            Decryptor d = encInfo.getDecryptor();
+            boolean b = d.verifyPassword(Decryptor.DEFAULT_PASSWORD);
+            assertTrue(b);
 
-        // do some strange things with it ;)
-        InputStream docIS = d.getDataStream(fs);
-        XWPFDocument docx = new XWPFDocument(docIS);
-        docx.getParagraphArray(0).insertNewRun(0).setText("POI was here! All your base are belong to us!");
-        docx.getParagraphArray(0).insertNewRun(1).addBreak();
+            try (InputStream docIS = d.getDataStream(fs);
+                 XWPFDocument docx = new XWPFDocument(docIS)) {
 
-        // and encrypt it again
-        Encryptor e = encInfo.getEncryptor();
-        e.confirmPassword("AYBABTU");
-        docx.write(e.getDataStream(fs));
-        docx.close();
-        docIS.close();
-        
-        docx.close();
-        fs.close();
+                // do some strange things with it ;)
+                XWPFParagraph p = docx.getParagraphArray(0);
+                p.insertNewRun(0).setText("POI was here! All your base are belong to us!");
+                p.insertNewRun(1).addBreak();
+
+                // and encrypt it again
+                Encryptor e = encInfo.getEncryptor();
+                e.confirmPassword("AYBABTU");
+
+                try (OutputStream os = e.getDataStream(fs)) {
+                    docx.write(os);
+                }
+            }
+        }
     }
     
     
@@ -437,22 +445,24 @@ public class TestEncryptor {
         //              existing = getCipher(skey, header.getCipherAlgorithm(), header.getChainingMode(), header.getKeySalt(), encryptionMode, padding);
         //          }
 
-        InputStream is = POIDataSamples.getPOIFSInstance().openResourceAsStream("60320-protected.xlsx");
-        POIFSFileSystem fsOrig = new POIFSFileSystem(is);
-        is.close();
-        EncryptionInfo infoOrig = new EncryptionInfo(fsOrig);
-        Decryptor decOrig = infoOrig.getDecryptor();
-        boolean b = decOrig.verifyPassword("Test001!!");
-        assertTrue(b);
-        InputStream decIn = decOrig.getDataStream(fsOrig);
-        byte[] zipInput = IOUtils.toByteArray(decIn);
-        decIn.close();
+        final EncryptionInfo infoOrig;
+        final byte[] zipInput, epOrigBytes;
+        try (InputStream is = POIDataSamples.getPOIFSInstance().openResourceAsStream("60320-protected.xlsx");
+            POIFSFileSystem fsOrig = new POIFSFileSystem(is)) {
+            infoOrig = new EncryptionInfo(fsOrig);
+            Decryptor decOrig = infoOrig.getDecryptor();
+            boolean b = decOrig.verifyPassword("Test001!!");
+            assertTrue(b);
+            try (InputStream decIn = decOrig.getDataStream(fsOrig)) {
+                zipInput = IOUtils.toByteArray(decIn);
+            }
 
-        InputStream epOrig = fsOrig.getRoot().createDocumentInputStream("EncryptedPackage");
-        // ignore the 16 padding bytes
-        byte[] epOrigBytes = IOUtils.toByteArray(epOrig, 9400);
-        epOrig.close();
-        
+            try (InputStream epOrig = fsOrig.getRoot().createDocumentInputStream("EncryptedPackage")) {
+                // ignore the 16 padding bytes
+                epOrigBytes = IOUtils.toByteArray(epOrig, 9400);
+            }
+        }
+
         EncryptionInfo eiNew = new EncryptionInfo(EncryptionMode.agile);
         AgileEncryptionHeader aehHeader = (AgileEncryptionHeader)eiNew.getHeader();
         aehHeader.setCipherAlgorithm(CipherAlgorithm.aes128);
@@ -472,26 +482,29 @@ public class TestEncryptor {
             infoOrig.getVerifier().getSalt(),
             infoOrig.getDecryptor().getIntegrityHmacKey()
         );
-        NPOIFSFileSystem fsNew = new NPOIFSFileSystem();
-        OutputStream os = enc.getDataStream(fsNew);
-        os.write(zipInput);
-        os.close();
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        fsNew.writeFilesystem(bos);
-        fsNew.close();
-        
-        NPOIFSFileSystem fsReload = new NPOIFSFileSystem(new ByteArrayInputStream(bos.toByteArray()));
-        InputStream epReload = fsReload.getRoot().createDocumentInputStream("EncryptedPackage");
-        byte[] epNewBytes = IOUtils.toByteArray(epReload, 9400);
-        epReload.close();
-        
+        final byte[] epNewBytes;
+        final EncryptionInfo infoReload;
+        try (NPOIFSFileSystem fsNew = new NPOIFSFileSystem()) {
+            try (OutputStream os = enc.getDataStream(fsNew)) {
+                os.write(zipInput);
+            }
+
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            fsNew.writeFilesystem(bos);
+
+            try (NPOIFSFileSystem fsReload = new NPOIFSFileSystem(new ByteArrayInputStream(bos.toByteArray()))) {
+                infoReload = new EncryptionInfo(fsReload);
+                try (InputStream epReload = fsReload.getRoot().createDocumentInputStream("EncryptedPackage")) {
+                    epNewBytes = IOUtils.toByteArray(epReload, 9400);
+                }
+            }
+        }
+
         assertArrayEquals(epOrigBytes, epNewBytes);
         
-        EncryptionInfo infoReload = new EncryptionInfo(fsOrig);
         Decryptor decReload = infoReload.getDecryptor();
-        b = decReload.verifyPassword("Test001!!");
-        assertTrue(b);
+        assertTrue(decReload.verifyPassword("Test001!!"));
         
         AgileEncryptionHeader aehOrig = (AgileEncryptionHeader)infoOrig.getHeader();
         AgileEncryptionHeader aehReload = (AgileEncryptionHeader)infoReload.getHeader();
@@ -529,7 +542,5 @@ public class TestEncryptor {
         // assertArrayEquals(adOrig.getIntegrityHmacValue(), adReload.getIntegrityHmacValue());
         assertArrayEquals(adOrig.getSecretKey().getEncoded(), adReload.getSecretKey().getEncoded());
         assertArrayEquals(adOrig.getVerifier(), adReload.getVerifier());
-
-        fsReload.close();
     }
 }

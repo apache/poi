@@ -97,7 +97,7 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
     private int read(byte[] b, int off, int len, boolean readPlain) throws IOException {
         int total = 0;
 
-        if (available() <= 0) {
+        if (remainingBytes() <= 0) {
             return -1;
         }
 
@@ -112,7 +112,7 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
                 }
             }
             int count = (int)(chunk.length - (pos & chunkMask));
-            int avail = available();
+            int avail = remainingBytes();
             if (avail == 0) {
                 return total;
             }
@@ -133,7 +133,7 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
     }
 
     @Override
-    public long skip(final long n) throws IOException {
+    public long skip(final long n) {
         long start = pos;
         long skip = Math.min(remainingBytes(), n);
 
@@ -169,7 +169,7 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
     }
 
     @Override
-    public synchronized void reset() throws IOException {
+    public synchronized void reset() {
         throw new UnsupportedOperationException();
     }
 
@@ -193,7 +193,7 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
         }
 
         final int todo = (int)Math.min(size, chunk.length);
-        int readBytes = 0, totalBytes = 0;
+        int readBytes, totalBytes = 0;
         do {
             readBytes = super.read(plain, totalBytes, todo-totalBytes);
             totalBytes += Math.max(0, readBytes);
@@ -211,10 +211,6 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
     /**
      * Helper function for overriding the cipher invocation, i.e. XOR doesn't use a cipher
      * and uses it's own implementation
-     *
-     * @throws BadPaddingException
-     * @throws IllegalBlockSizeException
-     * @throws ShortBufferException
      */
     protected int invokeCipher(int totalBytes, boolean doFinal) throws GeneralSecurityException {
         if (doFinal) {

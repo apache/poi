@@ -171,7 +171,7 @@ public final class TextSpecInfoAtom extends RecordAtom {
     public TextSpecInfoRun[] getTextSpecInfoRuns(){
         LittleEndianByteArrayInputStream bis = new LittleEndianByteArrayInputStream(_data); // NOSONAR
         List<TextSpecInfoRun> lst = new ArrayList<>();
-        while (bis.available() > 0) {
+        while (bis.getReadIndex() < _data.length) {
             lst.add(new TextSpecInfoRun(bis));
         }
         return lst.toArray(new TextSpecInfoRun[lst.size()]);
