@@ -47,6 +47,7 @@ import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -57,6 +58,11 @@ import org.junit.Test;
  */
 public final class TestPicture {
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
+
+    @BeforeClass
+    public static void disableImageIOCache() {
+        ImageIO.setUseCache(false);
+    }
 
     /**
      * Test that the reference count of a blip is incremented every time the picture is inserted.
