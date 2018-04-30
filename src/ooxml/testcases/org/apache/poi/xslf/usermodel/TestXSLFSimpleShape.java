@@ -65,9 +65,9 @@ public class TestXSLFSimpleShape {
         assertFalse(getSpPr(shape).isSetLn());
 
         assertEquals(0., shape.getLineWidth(), 0);
-        assertEquals(null, shape.getLineColor());
-        assertEquals(null, shape.getLineDash());
-        assertEquals(null, shape.getLineCap());
+        assertNull(shape.getLineColor());
+        assertNull(shape.getLineDash());
+        assertNull(shape.getLineCap());
 
         shape.setLineWidth(0);
         shape.setLineColor(null);
@@ -125,7 +125,7 @@ public class TestXSLFSimpleShape {
         assertEquals(Color.BLUE, shape.getLineColor());
         assertTrue(getSpPr(shape).getLn().isSetSolidFill());
         shape.setLineColor(null);
-        assertEquals(null, shape.getLineColor());
+        assertNull(shape.getLineColor());
         // setting dash width to null unsets the SolidFill element
         assertFalse(getSpPr(shape).getLn().isSetSolidFill());
 
@@ -139,9 +139,9 @@ public class TestXSLFSimpleShape {
         ln3.setLineWidth(1.);
         assertEquals(1., ln3.getLineWidth(), 0);
         ln3.setLineDash(null);
-        assertEquals(null, ln3.getLineDash());
+        assertNull(ln3.getLineDash());
         ln3.setLineCap(null);
-        assertEquals(null, ln3.getLineDash());
+        assertNull(ln3.getLineDash());
         
         ppt.close();
     }
