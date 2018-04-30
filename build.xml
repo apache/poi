@@ -204,8 +204,8 @@ under the License.
               value="${repository.m2}/maven2/org/apache/xmlbeans/xmlbeans/2.6.0/xmlbeans-2.6.0.jar"/>
 
     <!-- coverage libs -->
-    <property name="jacoco.zip" location="${main.lib}/jacoco-0.7.9.zip"/>
-    <property name="jacoco.url" value="${repository.m2}/maven2/org/jacoco/jacoco/0.7.9/jacoco-0.7.9.zip"/>
+    <property name="jacoco.zip" location="${main.lib}/jacoco-0.8.1.zip"/>
+    <property name="jacoco.url" value="${repository.m2}/maven2/org/jacoco/jacoco/0.8.1/jacoco-0.8.1.zip"/>
     <property name="asm.jar" location="${main.lib}/asm-all-5.2.jar"/>
     <property name="asm.url" value="${repository.m2}/maven2/org/ow2/asm/asm-all/5.2/asm-all-5.2.jar"/>
 
@@ -575,6 +575,7 @@ under the License.
                 <include name="jacoco-0.7.6*"/>
                 <include name="jacoco-0.7.7*"/>
                 <include name="jacoco-0.7.8*"/>
+                <include name="jacoco-0.7.9*"/>
                 <include name="jmh-core-1.15*"/>
                 <include name="jmh-generator-annprocess-1.15*"/>
                 <include name="log4j-1.2.13*"/>
@@ -586,6 +587,7 @@ under the License.
                 <include name="org.jacoco.*-0.7.6*"/>
                 <include name="org.jacoco.*-0.7.7*"/>
                 <include name="org.jacoco.*-0.7.8*"/>
+                <include name="org.jacoco.*-0.7.9*"/>
                 <include name="dom4j*"/>
                 <include name="apache-rat-0.10*"/>
                 <include name="xercesImpl-*.jar"/>
