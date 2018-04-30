@@ -34,6 +34,7 @@ def poijobs = [
                        '-Djava9addopens3=--add-opens=java.base/java.nio=ALL-UNNAMED',
                        '-Djava9addopens4=--add-opens=java.base/java.lang=ALL-UNNAMED',
                        '-Djava9addopens5=--add-opens=java.base/jdk.internal.ref=ALL-UNNAMED',
+                       '-Djava9addopens6=--add-opens=java.base/java.lang=java.xml.bind',
                        '-Djava.locale.providers=JRE,CLDR'],
           skipcigame: true
         ],
@@ -46,6 +47,7 @@ def poijobs = [
                        '-Djava9addopens3=--add-opens=java.base/java.nio=ALL-UNNAMED',
                        '-Djava9addopens4=--add-opens=java.base/java.lang=ALL-UNNAMED',
                        '-Djava9addopens5=--add-opens=java.base/jdk.internal.ref=ALL-UNNAMED',
+                       '-Djava9addopens6=--add-opens=java.base/java.lang=java.xml.bind',
                        '-Djava.locale.providers=JRE,CLDR'],
           skipcigame: true
         ],
@@ -90,7 +92,8 @@ def defaultSlaves = 'ubuntu&&!cloud-slave&&!H15&&!H17&&!H18&&!H24&&!ubuntu-4&&!H
 def jdkMapping = [
         '1.8': 'JDK 1.8 (latest)',
         '1.9': 'JDK 1.9 (latest)',
-        '1.10': 'JDK 10 b36 (early access build)',
+        '1.10': 'JDK 10 (latest)',
+        '1.11': 'JDK 11 b8 (early access build)',
         'OpenJDK': 'OpenJDK 8 (on Ubuntu only) ',   // blank is required here until the name in the Jenkins instance is fixed!
         'IBMJDK': 'IBM 1.8 64-bit (on Ubuntu only)',
 ]
@@ -434,8 +437,10 @@ Unfortunately we often see builds break because of changes/new machines...'''
                 'JDK 9 b181',
                 'JDK 9 b181 (unlimited security)',
 
-                'JDK 10 b36 (early access build)',
-                'JDK 10 b37 (early access build) (Windows Only)'
+                'JDK 10 (latest)',
+                'JDK 10 b46 (Windows Only)',
+
+                'JDK 11 b8 (early access build)'
         )
         label('Nodes',
                 'beam1','beam2','beam3','beam4','beam5','beam6','beam7','beam8',
