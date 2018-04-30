@@ -206,8 +206,12 @@ under the License.
     <!-- coverage libs -->
     <property name="jacoco.zip" location="${main.lib}/jacoco-0.8.1.zip"/>
     <property name="jacoco.url" value="${repository.m2}/maven2/org/jacoco/jacoco/0.8.1/jacoco-0.8.1.zip"/>
-    <property name="asm.jar" location="${main.lib}/asm-all-5.2.jar"/>
-    <property name="asm.url" value="${repository.m2}/maven2/org/ow2/asm/asm-all/5.2/asm-all-5.2.jar"/>
+    <property name="asm.jar" location="${main.lib}/asm-6.0.jar"/>
+    <property name="asm.url" value="${repository.m2}/maven2/org/ow2/asm/asm/6.0/asm-6.0.jar"/>
+    <property name="asmcommons.jar" location="${main.lib}/asm-commons-6.0.jar"/>
+    <property name="asmcommons.url" value="${repository.m2}/maven2/org/ow2/asm/asm-commons/6.0/asm-commons-6.0.jar"/>
+    <property name="asmtree.jar" location="${main.lib}/asm-tree-6.0.jar"/>
+    <property name="asmtree.url" value="${repository.m2}/maven2/org/ow2/asm/asm-tree/6.0/asm-tree-6.0.jar"/>
 
     <!-- license and api checks -->
     <property name="rat.jar" location="${main.lib}/apache-rat-0.12.jar"/>
@@ -456,7 +460,7 @@ under the License.
     <path id="lib.jacoco">
         <fileset dir="lib">
             <include name="org.jacoco*.jar" />
-            <include name="asm-all-*.jar" />
+            <include name="asm-*.jar" />
         </fileset>
     </path>
 
@@ -562,6 +566,7 @@ under the License.
                 <include name="ant-launcher-1.9.4*"/>
                 <include name="asm-all-4*"/>
                 <include name="asm-all-5.0.3*"/>
+                <include name="asm-all-5.2*"/>
                 <include name="commons-codec-1.5*"/>
                 <include name="commons-codec-1.9*"/>
                 <include name="commons-codec-1.10*"/>
@@ -646,6 +651,8 @@ under the License.
                     <available file="${main.ant.jar}"/>
                     <available file="${main.antlauncher.jar}"/>
                     <available file="${asm.jar}"/>
+                    <available file="${asmcommons.jar}"/>
+                    <available file="${asmtree.jar}"/>
                     <available file="${jacoco.zip}"/>
                     <available file="${rat.jar}"/>
                     <available file="${forbidden.jar}"/>
@@ -682,6 +689,8 @@ under the License.
         <downloadfile src="${main.ant.url}" dest="${main.ant.jar}"/>
         <downloadfile src="${main.antlauncher.url}" dest="${main.antlauncher.jar}"/>
         <downloadfile src="${asm.url}" dest="${asm.jar}"/>
+        <downloadfile src="${asmcommons.url}" dest="${asmcommons.jar}"/>
+        <downloadfile src="${asmtree.url}" dest="${asmtree.jar}"/>
         <downloadfile src="${jacoco.url}" dest="${jacoco.zip}"/>
         <downloadfile src="${main.commons-collections4.url}" dest="${main.commons-collections4.jar}"/>
         <downloadfile src="${main.commons-math3.url}" dest="${main.commons-math3.jar}"/>
