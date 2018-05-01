@@ -43,7 +43,7 @@ public class TestUnicode {
 
     static final String POI_FS = "TestUnicode.xls";
     static final String[] POI_FILES =  {
-        "\005DocumentSummaryInformation",
+        DocumentSummaryInformation.DEFAULT_STREAM_NAME,
     };
     File data;
     POIFile[] poiFiles;

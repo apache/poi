@@ -102,12 +102,6 @@ import org.junit.Test;
  * define the test in the base class {@link BaseTestBugzillaIssues}</b>
  */
 public final class TestBugs extends BaseTestBugzillaIssues {
-    // to not affect other tests running in the same JVM
-    @After
-    public void resetPassword() {
-        Biff8EncryptionKey.setCurrentUserPassword(null);
-    }
-
     public TestBugs() {
         super(HSSFITestDataProvider.instance);
     }
@@ -2207,8 +2201,6 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      */
     @Test
     public void bug50833() throws Exception {
-        Biff8EncryptionKey.setCurrentUserPassword(null);
-
         HSSFWorkbook wb1 = openSample("50833.xls");
         HSSFSheet s = wb1.getSheetAt(0);
         assertEquals("Sheet1", s.getSheetName());
@@ -2602,8 +2594,8 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     @Test(expected = EncryptedDocumentException.class)
     public void bug35897() throws Exception {
         // password is abc
+        Biff8EncryptionKey.setCurrentUserPassword("abc");
         try {
-            Biff8EncryptionKey.setCurrentUserPassword("abc");
             openSample("xor-encryption-abc.xls").close();
         } finally {
             Biff8EncryptionKey.setCurrentUserPassword(null);

@@ -56,7 +56,7 @@ public final class TestEmptyProperties {
 
 	private static final String[] POI_FILES = {
         "PerfectOffice_MAIN",
-        "\005SummaryInformation",
+        SummaryInformation.DEFAULT_STREAM_NAME,
         "Main"
     };
 

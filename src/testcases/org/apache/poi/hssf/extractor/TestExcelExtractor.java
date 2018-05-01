@@ -41,12 +41,6 @@ import org.junit.Test;
  *
  */
 public final class TestExcelExtractor {
-    // to not affect other tests running in the same JVM
-    @After
-    public void resetPassword() {
-        Biff8EncryptionKey.setCurrentUserPassword(null);
-    }
-
     private static ExcelExtractor createExtractor(String sampleFileName) throws IOException {
 		File file = HSSFTestDataSamples.getSampleFile(sampleFileName);
         POIFSFileSystem fs = new POIFSFileSystem(file);
@@ -355,9 +349,10 @@ public final class TestExcelExtractor {
 		Biff8EncryptionKey.setCurrentUserPassword("password");
 		try (ExcelExtractor extractor = createExtractor("password.xls")) {
 			String text = extractor.getText();
+			assertContains(text, "ZIP");
+		} finally {
 			Biff8EncryptionKey.setCurrentUserPassword(null);
 
-			assertContains(text, "ZIP");
 		}
 	}
 

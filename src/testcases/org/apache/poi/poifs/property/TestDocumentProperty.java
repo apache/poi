@@ -20,6 +20,8 @@ package org.apache.poi.poifs.property;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.apache.poi.hpsf.DocumentSummaryInformation;
+import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.poifs.storage.RawDataUtil;
 import org.apache.poi.util.LocaleUtil;
 
@@ -68,8 +70,8 @@ public final class TestDocumentProperty extends TestCase {
         byte[] input = RawDataUtil.decode(hexData);
 
         verifyReadingProperty(1, input, 128, "Workbook");
-        verifyReadingProperty(2, input, 256, "\005SummaryInformation");
-        verifyReadingProperty(3, input, 384, "\005DocumentSummaryInformation");
+        verifyReadingProperty(2, input, 256, SummaryInformation.DEFAULT_STREAM_NAME);
+        verifyReadingProperty(3, input, 384, DocumentSummaryInformation.DEFAULT_STREAM_NAME);
     }
 
     private void verifyReadingProperty(int index, byte[] input, int offset, String name)

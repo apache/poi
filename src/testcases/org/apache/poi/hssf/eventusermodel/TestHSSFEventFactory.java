@@ -46,12 +46,6 @@ public final class TestHSSFEventFactory extends TestCase {
         return HSSFTestDataSamples.openSampleFileStream(sampleFileName);
     }
 
-    // to not affect other tests running in the same JVM
-    @After
-    public void resetPassword() {
-        Biff8EncryptionKey.setCurrentUserPassword(null);
-    }
-
     public void testWithMissingRecords() throws Exception {
 
         HSSFRequest req = new HSSFRequest();
@@ -156,7 +150,6 @@ public final class TestHSSFEventFactory extends TestCase {
         req.addListenerForAllRecords(mockListen);
 
         // Without a password, can't be read
-        Biff8EncryptionKey.setCurrentUserPassword(null);
         POIFSFileSystem fs = new POIFSFileSystem(openSample("xor-encryption-abc.xls"));
 
         HSSFEventFactory factory = new HSSFEventFactory();
@@ -168,44 +161,47 @@ public final class TestHSSFEventFactory extends TestCase {
 
         // With the password, is properly processed
         Biff8EncryptionKey.setCurrentUserPassword("abc");
+        try {
+            req = new HSSFRequest();
+            mockListen = new MockHSSFListener();
+            req.addListenerForAllRecords(mockListen);
+            factory.processWorkbookEvents(req, fs);
 
-        req = new HSSFRequest();
-        mockListen = new MockHSSFListener();
-        req.addListenerForAllRecords(mockListen);
-        factory.processWorkbookEvents(req, fs);
+            // Check we got the sheet and the contents
+            Record[] recs = mockListen.getRecords();
+            assertTrue(recs.length > 50);
 
-        // Check we got the sheet and the contents
-        Record[] recs = mockListen.getRecords();
-        assertTrue( recs.length > 50 );
-
-        // Has one sheet, with values 1,2,3 in column A rows 1-3
-        boolean hasSheet=false, hasA1=false, hasA2=false, hasA3=false;
-        for (Record r : recs) {
-            if (r instanceof BoundSheetRecord) {
-                BoundSheetRecord bsr = (BoundSheetRecord)r;
-                assertEquals("Sheet1", bsr.getSheetname());
-                hasSheet = true;
+            // Has one sheet, with values 1,2,3 in column A rows 1-3
+            boolean hasSheet = false, hasA1 = false, hasA2 = false, hasA3 = false;
+            for (Record r : recs) {
+                if (r instanceof BoundSheetRecord) {
+                    BoundSheetRecord bsr = (BoundSheetRecord) r;
+                    assertEquals("Sheet1", bsr.getSheetname());
+                    hasSheet = true;
+                }
+                if (r instanceof NumberRecord) {
+                    NumberRecord nr = (NumberRecord) r;
+                    if (nr.getColumn() == 0 && nr.getRow() == 0) {
+                        assertEquals(1, (int) nr.getValue());
+                        hasA1 = true;
+                    }
+                    if (nr.getColumn() == 0 && nr.getRow() == 1) {
+                        assertEquals(2, (int) nr.getValue());
+                        hasA2 = true;
+                    }
+                    if (nr.getColumn() == 0 && nr.getRow() == 2) {
+                        assertEquals(3, (int) nr.getValue());
+                        hasA3 = true;
+                    }
+                }
             }
-            if (r instanceof NumberRecord) {
-                NumberRecord nr = (NumberRecord)r;
-                if (nr.getColumn() == 0 && nr.getRow() == 0) {
-                    assertEquals(1, (int)nr.getValue());
-                    hasA1 = true;
-                }
-                if (nr.getColumn() == 0 && nr.getRow() == 1) {
-                    assertEquals(2, (int)nr.getValue());
-                    hasA2 = true;
-                }
-                if (nr.getColumn() == 0 && nr.getRow() == 2) {
-                    assertEquals(3, (int)nr.getValue());
-                    hasA3 = true;
-                }
-            }
+
+            assertTrue("Sheet record not found", hasSheet);
+            assertTrue("Numeric record for A1 not found", hasA1);
+            assertTrue("Numeric record for A2 not found", hasA2);
+            assertTrue("Numeric record for A3 not found", hasA3);
+        } finally {
+            Biff8EncryptionKey.setCurrentUserPassword(null);
         }
-
-        assertTrue("Sheet record not found", hasSheet);
-        assertTrue("Numeric record for A1 not found", hasA1);
-        assertTrue("Numeric record for A2 not found", hasA2);
-        assertTrue("Numeric record for A3 not found", hasA3);
     }
 }	

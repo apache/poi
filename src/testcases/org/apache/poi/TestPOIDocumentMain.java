@@ -25,7 +25,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.HPSFPropertiesOnlyDocument;
+import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
@@ -89,10 +91,10 @@ public final class TestPOIDocumentMain {
 
         // Should now hold them
         assertNotNull(
-                outFS.createDocumentInputStream("\005SummaryInformation")
+                outFS.createDocumentInputStream(SummaryInformation.DEFAULT_STREAM_NAME)
         );
         assertNotNull(
-                outFS.createDocumentInputStream("\005DocumentSummaryInformation")
+                outFS.createDocumentInputStream(DocumentSummaryInformation.DEFAULT_STREAM_NAME)
         );
     }
 
