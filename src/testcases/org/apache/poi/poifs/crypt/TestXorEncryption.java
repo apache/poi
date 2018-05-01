@@ -21,6 +21,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
@@ -36,12 +37,6 @@ public class TestXorEncryption {
     
     private static final HSSFTestDataSamples samples = new HSSFTestDataSamples();
     
-    // to not affect other tests running in the same JVM
-    @After
-    public void resetPassword() {
-        Biff8EncryptionKey.setCurrentUserPassword(null);
-    }
-
     @Test
     public void testXorEncryption() throws IOException {
         // Xor-Password: abc
@@ -61,15 +56,16 @@ public class TestXorEncryption {
     @SuppressWarnings("static-access")
     @Test
     public void testUserFile() throws IOException {
+        File f = samples.getSampleFile("xor-encryption-abc.xls");
         Biff8EncryptionKey.setCurrentUserPassword("abc");
-        NPOIFSFileSystem fs = new NPOIFSFileSystem(samples.getSampleFile("xor-encryption-abc.xls"), true);
-        HSSFWorkbook hwb = new HSSFWorkbook(fs.getRoot(), true);
-        
-        HSSFSheet sh = hwb.getSheetAt(0);
-        assertEquals(1.0, sh.getRow(0).getCell(0).getNumericCellValue(), 0.0);
-        assertEquals(2.0, sh.getRow(1).getCell(0).getNumericCellValue(), 0.0);
-        assertEquals(3.0, sh.getRow(2).getCell(0).getNumericCellValue(), 0.0);
-        hwb.close();
-        fs.close();
+        try (NPOIFSFileSystem fs = new NPOIFSFileSystem(f, true);
+             HSSFWorkbook hwb = new HSSFWorkbook(fs.getRoot(), true)) {
+            HSSFSheet sh = hwb.getSheetAt(0);
+            assertEquals(1.0, sh.getRow(0).getCell(0).getNumericCellValue(), 0.0);
+            assertEquals(2.0, sh.getRow(1).getCell(0).getNumericCellValue(), 0.0);
+            assertEquals(3.0, sh.getRow(2).getCell(0).getNumericCellValue(), 0.0);
+        } finally {
+            Biff8EncryptionKey.setCurrentUserPassword(null);
+        }
     }
 }

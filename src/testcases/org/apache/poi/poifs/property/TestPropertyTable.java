@@ -25,6 +25,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.apache.poi.hpsf.DocumentSummaryInformation;
+import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.storage.BlockAllocationTableReader;
 import org.apache.poi.poifs.storage.HeaderBlock;
@@ -79,11 +81,10 @@ public final class TestPropertyTable {
 		DocumentProperty workbook = new DocumentProperty("Workbook", 0x00046777);
 
 		workbook.setStartBlock(0);
-		DocumentProperty summary1 = new DocumentProperty("\005SummaryInformation", 0x00001000);
+		DocumentProperty summary1 = new DocumentProperty(SummaryInformation.DEFAULT_STREAM_NAME, 0x00001000);
 
 		summary1.setStartBlock(0x00000234);
-		DocumentProperty summary2 = new DocumentProperty("\005DocumentSummaryInformation",
-				0x00001000);
+		DocumentProperty summary2 = new DocumentProperty(DocumentSummaryInformation.DEFAULT_STREAM_NAME, 0x00001000);
 
 		summary2.setStartBlock(0x0000023C);
 		table.addProperty(workbook);

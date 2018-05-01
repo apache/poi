@@ -36,12 +36,6 @@ import org.junit.rules.ExpectedException;
  * @author Josh Micich
  */
 public final class TestRecordFactoryInputStream {
-    // to not affect other tests running in the same JVM
-    @After
-    public void resetPassword() {
-        Biff8EncryptionKey.setCurrentUserPassword(null);
-    }
-
 	/**
 	 * Hex dump of a BOF record and most of a FILEPASS record.
 	 * A 16 byte saltHash should be added to complete the second record
@@ -82,7 +76,6 @@ public final class TestRecordFactoryInputStream {
 				+ SAMPLE_WINDOW1_ENCR1
 		);
 
-        Biff8EncryptionKey.setCurrentUserPassword(null);
 	    expectedEx.expect(EncryptedDocumentException.class);
 	    expectedEx.expectMessage("Default password is invalid for salt/verifier/verifierHash");
 		createRFIS(dataWrongDefault);
@@ -100,7 +93,6 @@ public final class TestRecordFactoryInputStream {
                 + SAMPLE_WINDOW1_ENCR1
         );
 
-        Biff8EncryptionKey.setCurrentUserPassword(null);
         RecordFactoryInputStream rfis = createRFIS(dataCorrectDefault);
         confirmReadInitialRecords(rfis);
     }
@@ -121,12 +113,15 @@ public final class TestRecordFactoryInputStream {
 				+ SAMPLE_WINDOW1_ENCR2
 		);
 
+		expectedEx.expect(EncryptedDocumentException.class);
+		expectedEx.expectMessage("Supplied password is invalid for salt/verifier/verifierHash");
 
 		Biff8EncryptionKey.setCurrentUserPassword("passw0rd");
-
-        expectedEx.expect(EncryptedDocumentException.class);
-        expectedEx.expectMessage("Supplied password is invalid for salt/verifier/verifierHash");
-        createRFIS(dataWrongDefault);
+		try {
+			createRFIS(dataWrongDefault);
+		} finally {
+			Biff8EncryptionKey.setCurrentUserPassword(null);
+		}
 	}
 
     @Test
@@ -135,18 +130,19 @@ public final class TestRecordFactoryInputStream {
         final String SAMPLE_WINDOW1_ENCR2 = "3D 00 12 00"
             + "45, B9, 90, FE, B6, C6, EC, 73, EE, 3F, 52, 45, 97, DB, E3, C1, D6, FE";
 
-        Biff8EncryptionKey.setCurrentUserPassword("passw0rd");
-
         byte[] dataCorrectDefault = HexRead.readFromString(""
                 + COMMON_HEX_DATA
                 + "C728659A C38E35E0 568A338F C3FC9D70" // correct saltHash for supplied password (and docId/saltHash)
                 + SAMPLE_WINDOW1_ENCR2
         );
 
-        RecordFactoryInputStream rfis = createRFIS(dataCorrectDefault);
-        Biff8EncryptionKey.setCurrentUserPassword(null);
-
-        confirmReadInitialRecords(rfis);
+		Biff8EncryptionKey.setCurrentUserPassword("passw0rd");
+		try {
+			RecordFactoryInputStream rfis = createRFIS(dataCorrectDefault);
+			confirmReadInitialRecords(rfis);
+		} finally {
+			Biff8EncryptionKey.setCurrentUserPassword(null);
+		}
     }
 	
 	

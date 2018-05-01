@@ -28,7 +28,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.HPSFPropertiesOnlyDocument;
+import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
@@ -91,8 +93,8 @@ public final class TestPOIDocumentScratchpad {
 		doc.writeProperties(outFS);
 
 		// Should now hold them
-		assertNotNull(outFS.createDocumentInputStream("\005SummaryInformation"));
-		assertNotNull(outFS.createDocumentInputStream("\005DocumentSummaryInformation"));
+		assertNotNull(outFS.createDocumentInputStream(SummaryInformation.DEFAULT_STREAM_NAME));
+		assertNotNull(outFS.createDocumentInputStream(DocumentSummaryInformation.DEFAULT_STREAM_NAME));
 		outFS.close();
 	}
 

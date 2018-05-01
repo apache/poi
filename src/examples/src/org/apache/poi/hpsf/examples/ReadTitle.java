@@ -46,8 +46,7 @@ public class ReadTitle
     {
         final String filename = args[0];
         POIFSReader r = new POIFSReader();
-        r.registerListener(new MyPOIFSReaderListener(),
-                           "\005SummaryInformation");
+        r.registerListener(new MyPOIFSReaderListener(), SummaryInformation.DEFAULT_STREAM_NAME);
         r.read(new FileInputStream(filename));
     }
 
