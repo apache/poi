@@ -18,8 +18,12 @@
 package org.apache.poi.poifs.filesystem;
 
 import static org.apache.poi.POITestCase.assertContains;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -27,105 +31,109 @@ import java.util.Arrays;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 
 import junit.framework.TestCase;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 /**
  * Class to test that POIFS complains when given an Office 2003 XML
- *  of Office Open XML (OOXML, 2007+) document
+ * of Office Open XML (OOXML, 2007+) document
  */
-public class TestOfficeXMLException extends TestCase {
+public class TestOfficeXMLException {
 
-	private static InputStream openSampleStream(String sampleFileName) {
-		return HSSFTestDataSamples.openSampleFileStream(sampleFileName);
-	}
-	public void testOOXMLException() throws IOException
-	{
-		InputStream in = openSampleStream("sample.xlsx");
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
-		try {
-			new POIFSFileSystem(in).close();
-			fail("expected exception was not thrown");
-		} catch(OfficeXmlFileException e) {
-			// expected during successful test
-			assertContains(e.getMessage(), "The supplied data appears to be in the Office 2007+ XML");
-			assertContains(e.getMessage(), "You are calling the part of POI that deals with OLE2 Office Documents");
-		}
-	}
 
-    public void test2003XMLException() throws IOException {
-        InputStream in = openSampleStream("SampleSS.xml");
+    private static InputStream openSampleStream(String sampleFileName) {
+        return HSSFTestDataSamples.openSampleFileStream(sampleFileName);
+    }
 
-        try {
-            new POIFSFileSystem(in).close();
-            fail("expected exception was not thrown");
-        } catch(NotOLE2FileException e) {
-            // expected during successful test
-            assertContains(e.getMessage(), "The supplied data appears to be a raw XML file");
-            assertContains(e.getMessage(), "Formats such as Office 2003 XML");
+    @Test
+    public void testOOXMLException() throws IOException {
+        thrown.expect(OfficeXmlFileException.class);
+        thrown.expectMessage("You are calling the part of POI that deals with OLE2 Office Documents");
+
+        try (InputStream in = openSampleStream("sample.xlsx");
+             POIFSFileSystem fs = new POIFSFileSystem(in)) {
+
         }
     }
-	
-	public void testDetectAsPOIFS() throws IOException {
-		// ooxml file isn't
-		confirmIsPOIFS("SampleSS.xlsx", false);
-		
-        // 2003 xml file isn't
-        confirmIsPOIFS("SampleSS.xml", false);
-        
-		// xls file is
-		confirmIsPOIFS("SampleSS.xls", true);
-		
-		// older biff formats aren't
-        confirmIsPOIFS("testEXCEL_3.xls", false);
-        confirmIsPOIFS("testEXCEL_4.xls", false);
-        
-        // newer excel formats are
-        confirmIsPOIFS("testEXCEL_5.xls", true);
-        confirmIsPOIFS("testEXCEL_95.xls", true);
-		
-		// text file isn't
-		confirmIsPOIFS("SampleSS.txt", false);
-	}
-	
-	private void confirmIsPOIFS(String sampleFileName, boolean expectedResult) throws IOException {
-        try (InputStream in = FileMagic.prepareToCheckMagic(openSampleStream(sampleFileName))) {
-            assertEquals(expectedResult, FileMagic.valueOf(in) == FileMagic.OLE2);
+
+    @Test
+    public void test2003XMLException() throws IOException {
+        thrown.expect(NotOLE2FileException.class);
+        thrown.expectMessage("The supplied data appears to be a raw XML file");
+
+        try (InputStream in = openSampleStream("SampleSS.xml");
+             POIFSFileSystem fs = new POIFSFileSystem(in)) {
         }
-	}
-    
+    }
+
+    @Test
+    public void testDetectAsPOIFS() throws IOException {
+        // ooxml file isn't
+        confirmIsPOIFS("SampleSS.xlsx", FileMagic.OOXML);
+
+        // 2003 xml file isn't
+        confirmIsPOIFS("SampleSS.xml", FileMagic.XML);
+
+        // xls file is
+        confirmIsPOIFS("SampleSS.xls", FileMagic.OLE2);
+
+        // older biff formats aren't
+        confirmIsPOIFS("testEXCEL_3.xls", FileMagic.BIFF3);
+        confirmIsPOIFS("testEXCEL_4.xls", FileMagic.BIFF4);
+
+        // newer excel formats are
+        confirmIsPOIFS("testEXCEL_5.xls", FileMagic.OLE2);
+        confirmIsPOIFS("testEXCEL_95.xls", FileMagic.OLE2);
+
+        // text file isn't
+        confirmIsPOIFS("SampleSS.txt", FileMagic.UNKNOWN);
+    }
+
+    private void confirmIsPOIFS(String sampleFileName, FileMagic expected) throws IOException {
+        final File file = HSSFTestDataSamples.getSampleFile(sampleFileName);
+        assertEquals(expected, FileMagic.valueOf(file));
+    }
+
+    @Test
     public void testFileCorruption() throws Exception {
-        
+
         // create test InputStream
-        byte[] testData = { (byte)1, (byte)2, (byte)3 };
+        byte[] testData = {1, 2, 3};
         InputStream testInput = new ByteArrayInputStream(testData);
-        
+
         // detect header
         InputStream in = FileMagic.prepareToCheckMagic(testInput);
 
-        assertFalse(FileMagic.valueOf(in) == FileMagic.OLE2);
-        
+        assertNotEquals(FileMagic.OLE2, FileMagic.valueOf(in));
+
         // check if InputStream is still intact
         byte[] test = new byte[3];
         assertEquals(3, in.read(test));
-        assertTrue(Arrays.equals(testData, test));
+        assertArrayEquals(testData, test);
         assertEquals(-1, in.read());
     }
 
 
+    @Test
     public void testFileCorruptionOPOIFS() throws Exception {
-        
+
         // create test InputStream
-        byte[] testData = { (byte)1, (byte)2, (byte)3 };
+        byte[] testData = {(byte) 1, (byte) 2, (byte) 3};
         InputStream testInput = new ByteArrayInputStream(testData);
-        
+
         // detect header
         InputStream in = FileMagic.prepareToCheckMagic(testInput);
-        assertFalse(FileMagic.valueOf(in) == FileMagic.OLE2);
+        assertNotEquals(FileMagic.OLE2, FileMagic.valueOf(in));
         assertEquals(FileMagic.UNKNOWN, FileMagic.valueOf(in));
 
         // check if InputStream is still intact
         byte[] test = new byte[3];
         assertEquals(3, in.read(test));
-        assertTrue(Arrays.equals(testData, test));
+        assertArrayEquals(testData, test);
         assertEquals(-1, in.read());
     }
 }
