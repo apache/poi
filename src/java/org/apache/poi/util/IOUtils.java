@@ -166,7 +166,7 @@ public final class IOUtils {
         }
 
         if (len != Integer.MAX_VALUE && totalBytes < len) {
-            throw new EOFException("unexpected EOF");
+            throw new EOFException("unexpected EOF - expected len: "+len+" - actual len: "+totalBytes);
         }
 
         return baos.toByteArray();
