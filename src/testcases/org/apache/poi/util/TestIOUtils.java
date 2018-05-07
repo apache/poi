@@ -44,7 +44,7 @@ import org.junit.Test;
 public final class TestIOUtils {
 
     static File TMP;
-    static final long LENGTH = new Random().nextInt(10000);
+    static final long LENGTH = 300+new Random().nextInt(9000);
 
     @BeforeClass
     public static void setUp() throws IOException {
