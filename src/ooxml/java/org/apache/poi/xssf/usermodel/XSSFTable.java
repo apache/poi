@@ -32,7 +32,6 @@ import java.util.Locale;
 import org.apache.poi.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Table;
@@ -951,15 +950,15 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      * @see org.apache.poi.ss.usermodel.Table#contains(org.apache.poi.ss.usermodel.Cell)
      * @since 3.17 beta 1
      */
-    public boolean contains(Cell cell) {
+    public boolean contains(CellReference cell) {
         if (cell == null) return false;
         // check if cell is on the same sheet as the table
-        if ( ! getSheetName().equals(cell.getSheet().getSheetName())) return false;
+        if ( ! getSheetName().equals(cell.getSheetName())) return false;
         // check if the cell is inside the table
-        if (cell.getRowIndex() >= getStartRowIndex()
-            && cell.getRowIndex() <= getEndRowIndex()
-            && cell.getColumnIndex() >= getStartColIndex()
-            && cell.getColumnIndex() <= getEndColIndex()) {
+        if (cell.getRow() >= getStartRowIndex()
+            && cell.getRow() <= getEndRowIndex()
+            && cell.getCol() >= getStartColIndex()
+            && cell.getCol() <= getEndColIndex()) {
             return true;
         }
         return false;
