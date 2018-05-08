@@ -19,6 +19,7 @@ package org.apache.poi.ss.usermodel;
 
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressBase;
+import org.apache.poi.ss.util.CellReference;
 
 /**
  * Ordered list of table style elements, for both data tables and pivot tables.
@@ -38,7 +39,7 @@ import org.apache.poi.ss.util.CellRangeAddressBase;
 public enum TableStyleType {
     /***/
     wholeTable {
-        CellRangeAddressBase getRange(Table table, Cell cell) {
+        public CellRangeAddressBase getRange(Table table, CellReference cell) {
             return new CellRangeAddress(table.getStartRowIndex(), table.getEndRowIndex(), table.getStartColIndex(), table.getEndColIndex());
         }
     },
@@ -48,7 +49,7 @@ public enum TableStyleType {
     pageFieldValues, // pivot only
     /***/
     firstColumnStripe{
-        CellRangeAddressBase getRange(Table table, Cell cell) {
+        public CellRangeAddressBase getRange(Table table, CellReference cell) {
             TableStyleInfo info = table.getStyle();
             if (! info.isShowColumnStripes()) return null;
             DifferentialStyleProvider c1Style = info.getStyle().getStyle(firstColumnStripe);
@@ -58,7 +59,7 @@ public enum TableStyleType {
             
             int firstStart = table.getStartColIndex();
             int secondStart = firstStart + c1Stripe;
-            int c = cell.getColumnIndex();
+            int c = cell.getCol();
             
             // look for the stripe containing c, accounting for the style element stripe size
             // could do fancy math, but tables can't be that wide, a simple loop is fine
@@ -74,7 +75,7 @@ public enum TableStyleType {
     },
     /***/
     secondColumnStripe{
-        CellRangeAddressBase getRange(Table table, Cell cell) {
+        public CellRangeAddressBase getRange(Table table, CellReference cell) {
             TableStyleInfo info = table.getStyle();
             if (! info.isShowColumnStripes()) return null;
             
@@ -85,7 +86,7 @@ public enum TableStyleType {
 
             int firstStart = table.getStartColIndex();
             int secondStart = firstStart + c1Stripe;
-            int c = cell.getColumnIndex();
+            int c = cell.getCol();
             
             // look for the stripe containing c, accounting for the style element stripe size
             // could do fancy math, but tables can't be that wide, a simple loop is fine
@@ -101,7 +102,7 @@ public enum TableStyleType {
     },
     /***/
     firstRowStripe {
-        CellRangeAddressBase getRange(Table table, Cell cell) {
+        public CellRangeAddressBase getRange(Table table, CellReference cell) {
             TableStyleInfo info = table.getStyle();
             if (! info.isShowRowStripes()) return null;
             
@@ -112,7 +113,7 @@ public enum TableStyleType {
 
             int firstStart = table.getStartRowIndex() + table.getHeaderRowCount();
             int secondStart = firstStart + c1Stripe;
-            int c = cell.getRowIndex();
+            int c = cell.getRow();
             
             // look for the stripe containing c, accounting for the style element stripe size
             // could do fancy math, but tables can't be that wide, a simple loop is fine
@@ -128,7 +129,7 @@ public enum TableStyleType {
     },
     /***/
     secondRowStripe{
-        CellRangeAddressBase getRange(Table table, Cell cell) {
+        public CellRangeAddressBase getRange(Table table, CellReference cell) {
             TableStyleInfo info = table.getStyle();
             if (! info.isShowRowStripes()) return null;
             
@@ -139,7 +140,7 @@ public enum TableStyleType {
 
             int firstStart = table.getStartRowIndex() + table.getHeaderRowCount();
             int secondStart = firstStart + c1Stripe;
-            int c = cell.getRowIndex();
+            int c = cell.getRow();
             
             // look for the stripe containing c, accounting for the style element stripe size
             // could do fancy math, but tables can't be that wide, a simple loop is fine
@@ -155,56 +156,56 @@ public enum TableStyleType {
     },
     /***/
     lastColumn {
-        CellRangeAddressBase getRange(Table table, Cell cell) {
+        public CellRangeAddressBase getRange(Table table, CellReference cell) {
             if (! table.getStyle().isShowLastColumn()) return null;
             return new CellRangeAddress(table.getStartRowIndex(), table.getEndRowIndex(), table.getEndColIndex(), table.getEndColIndex());
         }
     },
     /***/
     firstColumn {
-        CellRangeAddressBase getRange(Table table, Cell cell) {
+        public CellRangeAddressBase getRange(Table table, CellReference cell) {
             if (! table.getStyle().isShowFirstColumn()) return null;
             return new CellRangeAddress(table.getStartRowIndex(), table.getEndRowIndex(), table.getStartColIndex(), table.getStartColIndex());
         }
     },
     /***/
     headerRow {
-        CellRangeAddressBase getRange(Table table, Cell cell) {
+        public CellRangeAddressBase getRange(Table table, CellReference cell) {
             if (table.getHeaderRowCount() < 1) return null;
             return new CellRangeAddress(table.getStartRowIndex(), table.getStartRowIndex() + table.getHeaderRowCount() -1, table.getStartColIndex(), table.getEndColIndex());
         }
     },
     /***/
     totalRow {
-        CellRangeAddressBase getRange(Table table, Cell cell) {
+        public CellRangeAddressBase getRange(Table table, CellReference cell) {
             if (table.getTotalsRowCount() < 1) return null;
             return new CellRangeAddress(table.getEndRowIndex() - table.getTotalsRowCount() +1, table.getEndRowIndex(), table.getStartColIndex(), table.getEndColIndex());
         }
     },
     /***/
     firstHeaderCell {
-        CellRangeAddressBase getRange(Table table, Cell cell) {
+        public CellRangeAddressBase getRange(Table table, CellReference cell) {
             if (table.getHeaderRowCount() < 1) return null;
             return new CellRangeAddress(table.getStartRowIndex(), table.getStartRowIndex(), table.getStartColIndex(), table.getStartColIndex());
         }
     },
     /***/
     lastHeaderCell {
-        CellRangeAddressBase getRange(Table table, Cell cell) {
+        public CellRangeAddressBase getRange(Table table, CellReference cell) {
             if (table.getHeaderRowCount() < 1) return null;
             return new CellRangeAddress(table.getStartRowIndex(), table.getStartRowIndex(), table.getEndColIndex(), table.getEndColIndex());
         }
     },
     /***/
     firstTotalCell {
-        CellRangeAddressBase getRange(Table table, Cell cell) {
+        public CellRangeAddressBase getRange(Table table, CellReference cell) {
             if (table.getTotalsRowCount() < 1) return null;
             return new CellRangeAddress(table.getEndRowIndex() - table.getTotalsRowCount() +1, table.getEndRowIndex(), table.getStartColIndex(), table.getStartColIndex());
         }
     },
     /***/
     lastTotalCell {
-        CellRangeAddressBase getRange(Table table, Cell cell) {
+        public CellRangeAddressBase getRange(Table table, CellReference cell) {
             if (table.getTotalsRowCount() < 1) return null;
             return new CellRangeAddress(table.getEndRowIndex() - table.getTotalsRowCount() +1, table.getEndRowIndex(), table.getEndColIndex(), table.getEndColIndex());
         }
@@ -257,22 +258,58 @@ public enum TableStyleType {
      * Stripe style types return only the stripe range containing the given cell, or null.
      */
     public CellRangeAddressBase appliesTo(Table table, Cell cell) {
+        if (cell == null) return null;
+        return appliesTo(table, new CellReference(cell.getSheet().getSheetName(), cell.getRowIndex(), cell.getColumnIndex(), true, true));
+    }
+    
+    /**
+     * A range is returned only for the part of the table matching this enum instance and containing the given cell reference.
+     * Null is returned for all other cases, such as:
+     * <ul>
+     * <li>Cell on a different sheet than the table
+     * <li>Cell outside the table
+     * <li>this Enum part is not included in the table (i.e. no header/totals row)
+     * <li>this Enum is for a table part not yet implemented in POI, such as pivot table elements
+     * </ul>
+     * The returned range can be used to determine how style options may or may not apply to this cell.
+     * For example, {@link #wholeTable} borders only apply to the outer boundary of a table, while the
+     * rest of the styling, such as font and color, could apply to all the interior cells as well.
+     * 
+     * @param table table to evaluate
+     * @param cell CellReference to evaluate 
+     * @return range in the table representing this class of cells, if it contains the given cell, or null if not applicable.
+     * Stripe style types return only the stripe range containing the given cell, or null.
+     */
+    public CellRangeAddressBase appliesTo(Table table, CellReference cell) {
         if (table == null || cell == null) return null;
-        if ( ! cell.getSheet().getSheetName().equals(table.getSheetName())) return null;
+        if ( ! cell.getSheetName().equals(table.getSheetName())) return null;
         if ( ! table.contains(cell)) return null;
         
         final CellRangeAddressBase range = getRange(table, cell);
-        if (range != null && range.isInRange(cell.getRowIndex(), cell.getColumnIndex())) return range;
+        if (range != null && range.isInRange(cell.getRow(), cell.getCol())) return range;
         // else
         return null;
     }
 
     /**
+     * Calls {@link #getRange(Table, CellReference)}.  Use that instead for performance.
+     * @param table
+     * @param cell
+     * @return default is unimplemented/null
+     * @see #getRange(Table, CellReference)
+     */
+    public final CellRangeAddressBase getRange(Table table, Cell cell) {
+        if (cell == null) return null;
+        return getRange(table, new CellReference(cell.getSheet().getSheetName(), cell.getRowIndex(), cell.getColumnIndex(), true, true));
+    }
+    
+    /**
+     *
      * @param table
      * @param cell
      * @return default is unimplemented/null
      */
-    CellRangeAddressBase getRange(Table table, Cell cell) {
+    public CellRangeAddressBase getRange(Table table, CellReference cell) {
         return null;
     }
 }
