@@ -138,7 +138,6 @@ public final class FunctionEval {
         retval[72] = CalendarFieldFunction.MINUTE;
         retval[73] = CalendarFieldFunction.SECOND;
         retval[74] = new Now();
-        // 75: AREAS
         retval[75] = new Areas();
         retval[76] = new Rows();
         retval[77] = new Columns();
@@ -173,12 +172,19 @@ public final class FunctionEval {
         retval[121] = new Code();
 
         retval[124] = TextFunction.FIND;
+        // 125: CELL
 
         retval[126] = LogicalFunction.ISERR;
         retval[127] = LogicalFunction.ISTEXT;
         retval[128] = LogicalFunction.ISNUMBER;
         retval[129] = LogicalFunction.ISBLANK;
         retval[130] = new T();
+        // 131: N
+        // 140: DATEVALUE
+        // 141: TIMEVALUE
+        // 142: SLN
+        // 143: SYD
+        // 144: DDB
 
         retval[FunctionID.INDIRECT] = null; // Indirect.evaluate has different signature
 
@@ -195,12 +201,15 @@ public final class FunctionEval {
         retval[183] = AggregateFunction.PRODUCT;
         retval[184] = NumericFunction.FACT;
 
+        // 189: DPRODUCT
         retval[190] = LogicalFunction.ISNONTEXT;
 
         retval[194] = AggregateFunction.VARP;
-
+        // 195: DSTDEVP
+        // 196: DVARP
         retval[197] = NumericFunction.TRUNC;
         retval[198] = LogicalFunction.ISLOGICAL;
+        // 199: DCOUNTA
 
         //204: USDOLLAR (YEN in BIFF3)
         //205: FINDB
@@ -233,6 +242,7 @@ public final class FunctionEval {
         // 244: INFO
 
         // 247: DB
+        // 252: FEQUENCY
         
         retval[FunctionID.EXTERNAL_FUNC] = null; // ExternalFunction is a FreeRefFunction, nominally 255
 
