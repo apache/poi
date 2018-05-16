@@ -159,16 +159,20 @@ public abstract class BaseTestSlideShow {
     }
 
     @Test
-    public void shapeName() throws IOException {
+    public void shapeAndSlideName() throws IOException {
         final String file = "SampleShow.ppt"+(getClass().getSimpleName().contains("XML")?"x":"");
-        try (final InputStream is = slTests.openResourceAsStream(file)) {
-            try (final SlideShow<? extends Shape, ?> ppt = SlideShowFactory.create(is)) {
-                final List<? extends Shape> shapes1 = ppt.getSlides().get(0).getShapes();
-                assertEquals("The Title", shapes1.get(0).getShapeName());
-                assertEquals("Another Subtitle", shapes1.get(1).getShapeName());
-                final List<? extends Shape> shapes2 = ppt.getSlides().get(1).getShapes();
-                assertEquals("Title 1", shapes2.get(0).getShapeName());
-                assertEquals("Content Placeholder 2", shapes2.get(1).getShapeName());
+        try (final InputStream is = slTests.openResourceAsStream(file);
+             final SlideShow<? extends Shape, ?> ppt = SlideShowFactory.create(is)) {
+            final List<? extends Shape> shapes1 = ppt.getSlides().get(0).getShapes();
+            assertEquals("The Title", shapes1.get(0).getShapeName());
+            assertEquals("Another Subtitle", shapes1.get(1).getShapeName());
+            final List<? extends Shape> shapes2 = ppt.getSlides().get(1).getShapes();
+            assertEquals("Title 1", shapes2.get(0).getShapeName());
+            assertEquals("Content Placeholder 2", shapes2.get(1).getShapeName());
+
+            for (final Slide<?,?> slide : ppt.getSlides()) {
+                final String expected = slide.getSlideNumber()==1 ? "FirstSlide" : "Slide2";
+                assertEquals(expected, slide.getSlideName());
             }
         }
     }

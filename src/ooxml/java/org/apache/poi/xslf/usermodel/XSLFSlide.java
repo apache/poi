@@ -390,5 +390,11 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
     public boolean isHidden() {
         CTSlide sld = getXmlObject();
         return sld.isSetShow() && !sld.getShow();
-    }    
+    }
+
+    @Override
+    public String getSlideName() {
+        final CTCommonSlideData cSld = getXmlObject().getCSld();
+        return cSld.isSetName() ? cSld.getName() : "Slide"+getSlideNumber();
+    }
 }
