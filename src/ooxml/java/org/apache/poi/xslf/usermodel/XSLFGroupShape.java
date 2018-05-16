@@ -65,7 +65,7 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
 
     protected XSLFGroupShape(CTGroupShape shape, XSLFSheet sheet){
         super(shape,sheet);
-        _shapes = XSLFSheet.buildShapes(shape, sheet);
+        _shapes = XSLFSheet.buildShapes(shape, this);
         _grpSpPr = shape.getGrpSpPr();
     }
 

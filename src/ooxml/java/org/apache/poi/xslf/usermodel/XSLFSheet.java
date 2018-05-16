@@ -105,7 +105,9 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
         throw new IllegalStateException("SlideShow was not found");
     }
 
-    protected static List<XSLFShape> buildShapes(CTGroupShape spTree, XSLFSheet sheet){
+    protected static List<XSLFShape> buildShapes(CTGroupShape spTree, XSLFShapeContainer parent){
+        final XSLFSheet sheet = (parent instanceof XSLFSheet) ? (XSLFSheet)parent : ((XSLFShape)parent).getSheet();
+
         List<XSLFShape> shapes = new ArrayList<>();
         XmlCursor cur = spTree.newCursor();
         try {
@@ -133,7 +135,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
                     if (cur.toChild(PackageNamespaces.MARKUP_COMPATIBILITY, "Choice") && cur.toFirstChild()) {
                         try {
                             CTGroupShape grp = CTGroupShape.Factory.parse(cur.newXMLStreamReader());
-                            shapes.addAll(buildShapes(grp, sheet));
+                            shapes.addAll(buildShapes(grp, parent));
                         } catch (XmlException e) {
                             LOG.log(POILogger.DEBUG, "unparsable alternate content", e);
                         }
@@ -143,6 +145,10 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
             }
         } finally {
             cur.dispose();
+        }
+
+        for (final XSLFShape s : shapes) {
+            s.setParent(parent);
         }
 
         return shapes;
