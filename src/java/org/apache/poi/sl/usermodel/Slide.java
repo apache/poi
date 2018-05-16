@@ -83,4 +83,11 @@ public interface Slide<
      * @since POI 4.0.0
      */
     MasterSheet getSlideLayout();
+
+    /**
+     * @return the slide name, defaults to "Slide[slideNumber]"
+     *
+     * @since POI 4.0.0
+     */
+    String getSlideName();
 }

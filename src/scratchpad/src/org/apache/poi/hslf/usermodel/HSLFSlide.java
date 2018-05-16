@@ -27,6 +27,7 @@ import org.apache.poi.ddf.EscherDggRecord;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.model.HeadersFooters;
+import org.apache.poi.hslf.record.CString;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
 import org.apache.poi.hslf.record.Comment2000;
 import org.apache.poi.hslf.record.EscherTextboxWrapper;
@@ -231,7 +232,12 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
 		return null;
 	}
 
-	// Simple Accesser methods follow
+    @Override
+	public String getSlideName() {
+        final CString name = (CString)getSlideRecord().findFirstOfType(RecordTypes.CString.typeID);
+        return name != null ? name.getText() : "Slide"+getSlideNumber();
+    }
+
 
 	/**
 	 * Returns an array of all the TextRuns found
