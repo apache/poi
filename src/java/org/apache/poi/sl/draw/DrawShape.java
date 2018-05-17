@@ -65,15 +65,6 @@ public class DrawShape implements Drawable {
 
         final Rectangle2D anchor = getAnchor(graphics, ps);
 
-        if (shape.getShapeName().startsWith("rotate")) {
-            System.out.println(String.format("%s x: %.3f y: %.3f cx: %.3f cy: %.3f / x: %.3f y: %.3f cx: %.3f cy: %.3f ",
-                shape.getShapeName(), shape.getAnchor().getX(), shape.getAnchor().getY(),
-                shape.getAnchor().getWidth(), shape.getAnchor().getHeight(),
-                    anchor.getX(), anchor.getY(), anchor.getWidth(), anchor.getHeight()
-            ));
-        }
-
-
         char cmds[] = isHSLF ? new char[]{ 'h','v','r' } : new char[]{ 'r','h','v' };
         for (char ch : cmds) {
             switch (ch) {
