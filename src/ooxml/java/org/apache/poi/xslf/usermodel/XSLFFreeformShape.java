@@ -26,7 +26,10 @@ import java.awt.geom.Rectangle2D;
 
 import org.apache.poi.sl.usermodel.FreeformShape;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
+import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTAdjPoint2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTCustomGeometry2D;
@@ -39,6 +42,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTPath2DLineTo;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPath2DMoveTo;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPath2DQuadBezierTo;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShapeNonVisual;
 
@@ -50,67 +54,56 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTShapeNonVisual;
 public class XSLFFreeformShape extends XSLFAutoShape
     implements FreeformShape<XSLFShape,XSLFTextParagraph> {
 
+    private static final POILogger LOG = POILogFactory.getLogger(XSLFFreeformShape.class);
+
     /*package*/ XSLFFreeformShape(CTShape shape, XSLFSheet sheet) {
         super(shape, sheet);
     }
 
     @Override
-    public int setPath(Path2D.Double path) {
-        CTPath2D ctPath = CTPath2D.Factory.newInstance();
+    public int setPath(final Path2D.Double path) {
+        final CTPath2D ctPath = CTPath2D.Factory.newInstance();
 
-        Rectangle2D bounds = path.getBounds2D();
-        int x0 = Units.toEMU(bounds.getX());
-        int y0 = Units.toEMU(bounds.getY());
-        PathIterator it = path.getPathIterator(new AffineTransform());
+        final Rectangle2D bounds = path.getBounds2D();
+        final int x0 = Units.toEMU(bounds.getX());
+        final int y0 = Units.toEMU(bounds.getY());
+        final PathIterator it = path.getPathIterator(new AffineTransform());
         int numPoints = 0;
         ctPath.setH(Units.toEMU(bounds.getHeight()));
         ctPath.setW(Units.toEMU(bounds.getWidth()));
+
+        final double[] vals = new double[6];
         while (!it.isDone()) {
-            double[] vals = new double[6];
-            int type = it.currentSegment(vals);
+            final int type = it.currentSegment(vals);
+            final CTAdjPoint2D[] points;
             switch (type) {
                 case PathIterator.SEG_MOVETO:
-                    CTAdjPoint2D mv = ctPath.addNewMoveTo().addNewPt();
-                    mv.setX(Units.toEMU(vals[0]) - x0);
-                    mv.setY(Units.toEMU(vals[1]) - y0);
-                    numPoints++;
+                    points = addMoveTo(ctPath);
                     break;
                 case PathIterator.SEG_LINETO:
-                    CTAdjPoint2D ln = ctPath.addNewLnTo().addNewPt();
-                    ln.setX(Units.toEMU(vals[0]) - x0);
-                    ln.setY(Units.toEMU(vals[1]) - y0);
-                    numPoints++;
+                    points = addLineTo(ctPath);
                     break;
                 case PathIterator.SEG_QUADTO:
-                    CTPath2DQuadBezierTo qbez = ctPath.addNewQuadBezTo();
-                    CTAdjPoint2D qp1 = qbez.addNewPt();
-                    qp1.setX(Units.toEMU(vals[0]) - x0);
-                    qp1.setY(Units.toEMU(vals[1]) - y0);
-                    CTAdjPoint2D qp2 = qbez.addNewPt();
-                    qp2.setX(Units.toEMU(vals[2]) - x0);
-                    qp2.setY(Units.toEMU(vals[3]) - y0);
-                    numPoints += 2;
+                    points = addQuadBezierTo(ctPath);
                     break;
                 case PathIterator.SEG_CUBICTO:
-                    CTPath2DCubicBezierTo bez = ctPath.addNewCubicBezTo();
-                    CTAdjPoint2D p1 = bez.addNewPt();
-                    p1.setX(Units.toEMU(vals[0]) - x0);
-                    p1.setY(Units.toEMU(vals[1]) - y0);
-                    CTAdjPoint2D p2 = bez.addNewPt();
-                    p2.setX(Units.toEMU(vals[2]) - x0);
-                    p2.setY(Units.toEMU(vals[3]) - y0);
-                    CTAdjPoint2D p3 = bez.addNewPt();
-                    p3.setX(Units.toEMU(vals[4]) - x0);
-                    p3.setY(Units.toEMU(vals[5]) - y0);
-                    numPoints += 3;
+                    points = addCubicBezierTo(ctPath);
                     break;
                 case PathIterator.SEG_CLOSE:
-                    numPoints++;
-                    ctPath.addNewClose();
+                    points = addClosePath(ctPath);
                     break;
-                default:
+                default: {
                     throw new IllegalStateException("Unrecognized path segment type: " + type);
+                }
             }
+
+            int i=0;
+            for (final CTAdjPoint2D point : points) {
+                point.setX(Units.toEMU(vals[i++])-x0);
+                point.setY(Units.toEMU(vals[i++])-y0);
+            }
+
+            numPoints += Math.max(points.length, 1);
             it.next();
         }
         
@@ -124,63 +117,113 @@ public class XSLFFreeformShape extends XSLFAutoShape
         return numPoints;
     }
 
+
     @Override
     public Path2D.Double getPath() {
-        Path2D.Double path = new Path2D.Double();
-        Rectangle2D bounds = getAnchor();
+        final Path2D.Double path = new Path2D.Double();
 
-        XmlObject xo = getShapeProperties();
+        final XmlObject xo = getShapeProperties();
         if (!(xo instanceof CTShapeProperties)) {
             return null;
         }
         
-        CTCustomGeometry2D geom = ((CTShapeProperties)xo).getCustGeom();
+        final CTCustomGeometry2D geom = ((CTShapeProperties)xo).getCustGeom();
+        //noinspection deprecation
         for(CTPath2D spPath : geom.getPathLst().getPathArray()){
-            double scaleW = bounds.getWidth() / Units.toPoints(spPath.getW());
-            double scaleH = bounds.getHeight() / Units.toPoints(spPath.getH());
-            for(XmlObject ch : spPath.selectPath("*")){
-                if(ch instanceof CTPath2DMoveTo){
-                    CTAdjPoint2D pt = ((CTPath2DMoveTo)ch).getPt();
-                    path.moveTo(
-                            (float) (Units.toPoints((Long) pt.getX()) * scaleW),
-                            (float) (Units.toPoints((Long) pt.getY()) * scaleH));
-                } else if (ch instanceof CTPath2DLineTo){
-                    CTAdjPoint2D pt = ((CTPath2DLineTo)ch).getPt();
-                    path.lineTo((float)Units.toPoints((Long)pt.getX()),
-                                (float)Units.toPoints((Long)pt.getY()));
-                } else if (ch instanceof CTPath2DQuadBezierTo){
-                    CTPath2DQuadBezierTo bez = ((CTPath2DQuadBezierTo)ch);
-                    CTAdjPoint2D pt1 = bez.getPtArray(0);
-                    CTAdjPoint2D pt2 = bez.getPtArray(1);
-                    path.quadTo(
-                            (float) (Units.toPoints((Long) pt1.getX()) * scaleW),
-                            (float) (Units.toPoints((Long) pt1.getY()) * scaleH),
-                            (float) (Units.toPoints((Long) pt2.getX()) * scaleW),
-                            (float) (Units.toPoints((Long) pt2.getY()) * scaleH));
-                } else if (ch instanceof CTPath2DCubicBezierTo){
-                    CTPath2DCubicBezierTo bez = ((CTPath2DCubicBezierTo)ch);
-                    CTAdjPoint2D pt1 = bez.getPtArray(0);
-                    CTAdjPoint2D pt2 = bez.getPtArray(1);
-                    CTAdjPoint2D pt3 = bez.getPtArray(2);
-                    path.curveTo(
-                            (float) (Units.toPoints((Long) pt1.getX()) * scaleW),
-                            (float) (Units.toPoints((Long) pt1.getY()) * scaleH),
-                            (float) (Units.toPoints((Long) pt2.getX()) * scaleW),
-                            (float) (Units.toPoints((Long) pt2.getY()) * scaleH),
-                            (float) (Units.toPoints((Long) pt3.getX()) * scaleW),
-                            (float) (Units.toPoints((Long) pt3.getY()) * scaleH));
-                } else if (ch instanceof CTPath2DClose){
-                    path.closePath();
+            XmlCursor cursor = spPath.newCursor();
+            try {
+                if (cursor.toFirstChild()) {
+                    do {
+                        final XmlObject ch = cursor.getObject();
+                        if (ch instanceof CTPath2DMoveTo) {
+                            addMoveTo(path, (CTPath2DMoveTo)ch);
+                        } else if (ch instanceof CTPath2DLineTo) {
+                            addLineTo(path, (CTPath2DLineTo)ch);
+                        } else if (ch instanceof CTPath2DQuadBezierTo) {
+                            addQuadBezierTo(path, (CTPath2DQuadBezierTo)ch);
+                        } else if (ch instanceof CTPath2DCubicBezierTo) {
+                            addCubicBezierTo(path, (CTPath2DCubicBezierTo)ch);
+                        } else if (ch instanceof CTPath2DClose) {
+                            addClosePath(path);
+                        } else {
+                            LOG.log(POILogger.WARN, "can't handle path of type "+xo.getClass());
+                        }
+                    } while (cursor.toNextSibling());
                 }
+            } finally {
+                cursor.dispose();
             }
         }
 
         // the created path starts at (x=0, y=0).
-        // The returned path should fit in the bounding rectangle
-        AffineTransform at = new AffineTransform();
-        at.translate(bounds.getX(), bounds.getY());
+        // this used to scale each path element to the path bounding box,
+        // but now the dimensions/relations are kept as-is
+        final AffineTransform at = new AffineTransform();
+
+        final CTTransform2D xfrm = getXfrm(false);
+        final Rectangle2D xfrm2d = new Rectangle2D.Double
+                (xfrm.getOff().getX(), xfrm.getOff().getY(), xfrm.getExt().getCx(), xfrm.getExt().getCy());
+
+        final Rectangle2D bounds = getAnchor();
+        at.translate(bounds.getX()+bounds.getCenterX(), bounds.getY()+bounds.getCenterY());
+        at.scale(1./Units.EMU_PER_POINT, 1./Units.EMU_PER_POINT);
+        at.translate(-xfrm2d.getCenterX(), -xfrm2d.getCenterY());
         return new Path2D.Double(at.createTransformedShape(path));
     }
+
+    private static CTAdjPoint2D[] addMoveTo(final CTPath2D path) {
+        return new CTAdjPoint2D[]{path.addNewMoveTo().addNewPt()};
+    }
+
+    private static void addMoveTo(final Path2D path, final CTPath2DMoveTo xo) {
+        final CTAdjPoint2D pt = xo.getPt();
+        path.moveTo((Long)pt.getX(), (Long)pt.getY());
+    }
+
+    private static CTAdjPoint2D[] addLineTo(final CTPath2D path) {
+        return new CTAdjPoint2D[]{path.addNewLnTo().addNewPt()};
+    }
+
+    private static void addLineTo(final Path2D path, final CTPath2DLineTo xo) {
+        final CTAdjPoint2D pt = xo.getPt();
+        path.lineTo((Long)pt.getX(), (Long)pt.getY());
+    }
+
+    private static CTAdjPoint2D[] addQuadBezierTo(final CTPath2D path) {
+        final CTPath2DQuadBezierTo bez = path.addNewQuadBezTo();
+        return new CTAdjPoint2D[]{ bez.addNewPt(), bez.addNewPt() };
+    }
+
+    private static void addQuadBezierTo(final Path2D path, final CTPath2DQuadBezierTo xo) {
+        final CTAdjPoint2D pt1 = xo.getPtArray(0);
+        final CTAdjPoint2D pt2 = xo.getPtArray(1);
+        path.quadTo((Long)pt1.getX(), (Long)pt1.getY(),
+                (Long)pt2.getX(), (Long)pt2.getY());
+    }
+
+    private static CTAdjPoint2D[] addCubicBezierTo(final CTPath2D path) {
+        final CTPath2DCubicBezierTo bez = path.addNewCubicBezTo();
+        return new CTAdjPoint2D[]{ bez.addNewPt(), bez.addNewPt(), bez.addNewPt() };
+    }
+
+    private static void addCubicBezierTo(final Path2D path, final CTPath2DCubicBezierTo xo) {
+        final CTAdjPoint2D pt1 = xo.getPtArray(0);
+        final CTAdjPoint2D pt2 = xo.getPtArray(1);
+        final CTAdjPoint2D pt3 = xo.getPtArray(2);
+        path.curveTo((Long)pt1.getX(), (Long)pt1.getY(),
+                (Long)pt2.getX(), (Long)pt2.getY(),
+                (Long)pt3.getX(), (Long)pt3.getY());
+    }
+
+    private static CTAdjPoint2D[] addClosePath(final CTPath2D path) {
+        path.addNewClose();
+        return new CTAdjPoint2D[0];
+    }
+
+    private static void addClosePath(final Path2D path) {
+        path.closePath();
+    }
+
     /**
      * @param shapeId 1-based shapeId
      */
