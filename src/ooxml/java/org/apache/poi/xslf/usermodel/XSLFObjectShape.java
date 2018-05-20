@@ -268,8 +268,8 @@ public class XSLFObjectShape extends XSLFGraphicFrame implements ObjectShape<XSL
         CTNonVisualDrawingProps cnv = nvGr.addNewCNvPr();
         // usually the shape name has its index based on the n-th embeding, but having
         // the prototype separate from the actual updating of the object, we use the shape id
-        cnv.setName("Object " + (shapeId + 1));
-        cnv.setId(shapeId + 1);
+        cnv.setName("Object " + shapeId);
+        cnv.setId(shapeId);
 
         // add empty property elements otherwise Powerpoint doesn't load the file ...
         nvGr.addNewCNvGraphicFramePr();

@@ -94,7 +94,7 @@ public class TestXSLFTable {
         assertNotNull(tbl.getCTTable().getTblGrid());
         assertNotNull(tbl.getCTTable().getTblPr());
         assertTrue(tbl.getXmlObject() instanceof CTGraphicalObjectFrame);
-        assertEquals("Table 1", tbl.getShapeName());
+        assertEquals("Table 2", tbl.getShapeName());
         assertEquals(2, tbl.getShapeId());
         assertEquals(0, tbl.getRows().size());
         assertEquals(0, tbl.getCTTable().sizeOfTrArray());

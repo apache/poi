@@ -102,17 +102,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
         return getCNvPr().getName();
     }
 
-    /**
-     * Returns a unique identifier for this shape within the current document.
-     * This ID may be used to assist in uniquely identifying this object so that it can
-     * be referred to by other parts of the document.
-     * <p>
-     * If multiple objects within the same document share the same id attribute value,
-     * then the document shall be considered non-conformant.
-     * </p>
-     *
-     * @return unique id of this shape
-     */
+    @Override
     public int getShapeId() {
         return (int)getCNvPr().getId();
     }

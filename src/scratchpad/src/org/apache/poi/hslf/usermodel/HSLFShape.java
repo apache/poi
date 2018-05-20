@@ -538,9 +538,7 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
         return new Color(r, g, b);
     }
 
-    /**
-     * @return id for the shape.
-     */
+    @Override
     public int getShapeId(){
         EscherSpRecord spRecord = getEscherChild(EscherSpRecord.RECORD_ID);
         return spRecord == null ? 0 : spRecord.getShapeId();

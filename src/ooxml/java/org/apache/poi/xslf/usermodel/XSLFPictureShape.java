@@ -68,7 +68,7 @@ public class XSLFPictureShape extends XSLFSimpleShape
         CTPictureNonVisual nvSpPr = ct.addNewNvPicPr();
         CTNonVisualDrawingProps cnv = nvSpPr.addNewCNvPr();
         cnv.setName("Picture " + shapeId);
-        cnv.setId(shapeId + 1);
+        cnv.setId(shapeId);
         nvSpPr.addNewCNvPicPr().addNewPicLocks().setNoChangeAspect(true);
         nvSpPr.addNewNvPr();
 

@@ -174,9 +174,12 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
     public boolean removeShape(XSLFShape xShape) {
         XmlObject obj = xShape.getXmlObject();
         CTGroupShape grpSp = (CTGroupShape)getXmlObject();
+        getSheet().deregisterShapeId(xShape.getShapeId());
         if(obj instanceof CTShape){
             grpSp.getSpList().remove(obj);
         } else if (obj instanceof CTGroupShape){
+            XSLFGroupShape gs = (XSLFGroupShape)xShape;
+            new ArrayList<>(gs.getShapes()).forEach(gs::removeShape);
             grpSp.getGrpSpList().remove(obj);
         } else if (obj instanceof CTConnector){
             grpSp.getCxnSpList().remove(obj);
@@ -203,7 +206,7 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
         CTGroupShapeNonVisual nvSpPr = ct.addNewNvGrpSpPr();
         CTNonVisualDrawingProps cnv = nvSpPr.addNewCNvPr();
         cnv.setName("Group " + shapeId);
-        cnv.setId(shapeId + 1);
+        cnv.setId(shapeId);
 
         nvSpPr.addNewCNvGrpSpPr();
         nvSpPr.addNewNvPr();

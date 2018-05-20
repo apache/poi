@@ -67,7 +67,7 @@ public class XSLFAutoShape extends XSLFTextShape
         CTShapeNonVisual nvSpPr = ct.addNewNvSpPr();
         CTNonVisualDrawingProps cnv = nvSpPr.addNewCNvPr();
         cnv.setName("AutoShape " + shapeId);
-        cnv.setId(shapeId + 1);
+        cnv.setId(shapeId);
         nvSpPr.addNewCNvSpPr();
         nvSpPr.addNewNvPr();
         CTShapeProperties spPr = ct.addNewSpPr();

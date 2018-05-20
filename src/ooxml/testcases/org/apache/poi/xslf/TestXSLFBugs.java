@@ -36,8 +36,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
@@ -56,10 +59,10 @@ import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.PaintStyle.TexturePaint;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
+import org.apache.poi.sl.usermodel.Shape;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFAutoShape;
 import org.apache.poi.xslf.usermodel.XSLFGroupShape;
@@ -693,13 +696,6 @@ public class TestXSLFBugs {
             assertNotNull(notesSlide);
         }
 
-        /*OutputStream stream = new FileOutputStream("/tmp/test.pptx");
-        try {
-            ppt.write(stream);
-        } finally {
-            stream.close();
-        }*/
-
         ppt.close();
     }
 
@@ -726,5 +722,33 @@ public class TestXSLFBugs {
             fail("Could not read back saved presentation.");
         }
         ppt.close();
+    }
+
+    @Test
+    public void bug62051() throws IOException {
+        final Function<List<XSLFShape>, int[]> ids = (shapes) ->
+            shapes.stream().mapToInt(Shape::getShapeId).toArray();
+
+        try (final XMLSlideShow ppt = new XMLSlideShow()) {
+            final XSLFSlide slide = ppt.createSlide();
+            final List<XSLFShape> shapes = new ArrayList<>();
+            shapes.add(slide.createAutoShape());
+            final XSLFGroupShape g1 = slide.createGroup();
+            shapes.add(g1);
+            final XSLFGroupShape g2 = g1.createGroup();
+            shapes.add(g2);
+            shapes.add(g2.createAutoShape());
+            shapes.add(slide.createAutoShape());
+            shapes.add(g2.createAutoShape());
+            shapes.add(g1.createAutoShape());
+            assertArrayEquals(new int[]{ 2,3,4,5,6,7,8 }, ids.apply(shapes));
+            g1.removeShape(g2);
+            shapes.remove(5);
+            shapes.remove(3);
+            shapes.remove(2);
+            shapes.add(g1.createAutoShape());
+            assertArrayEquals(new int[]{ 2,3,6,8,4 }, ids.apply(shapes));
+
+        }
     }
 }
