@@ -79,7 +79,7 @@ public class TestFonts {
             348, // Windows 10, 15.6" 3840x2160
             362, // Windows 10, 13.3" 1080p high-dpi
             372, // Ubuntu Xenial, 15", 1680x1050
-            377, 398, 399, // Mac
+            377, 391, 398, 399, // Mac
             406  // Ubuntu Xenial, 15", 1680x1050
     };
 
