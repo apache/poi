@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -79,6 +80,8 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
     private Map<Integer, XSLFSimpleShape> _placeholderByIdMap;
     private Map<Integer, XSLFSimpleShape> _placeholderByTypeMap;
 
+    private final BitSet shapeIds = new BitSet();
+
     public XSLFSheet() {
         super();
     }
@@ -103,6 +106,26 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
             p = p.getParent();
         }
         throw new IllegalStateException("SlideShow was not found");
+    }
+
+    protected int allocateShapeId() {
+        final int nextId = shapeIds.nextClearBit(1);
+        shapeIds.set(nextId);
+        return nextId;
+    }
+
+    protected void registerShapeId(final int shapeId) {
+        if (shapeIds.get(shapeId)) {
+            LOG.log(POILogger.WARN, "shape id "+shapeId+" has been already used.");
+        }
+        shapeIds.set(shapeId);
+    }
+
+    protected void deregisterShapeId(final int shapeId) {
+        if (!shapeIds.get(shapeId)) {
+            LOG.log(POILogger.WARN, "shape id "+shapeId+" hasn't been registered.");
+        }
+        shapeIds.clear(shapeId);
     }
 
     protected static List<XSLFShape> buildShapes(CTGroupShape spTree, XSLFShapeContainer parent){
@@ -328,9 +351,12 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
     public boolean removeShape(XSLFShape xShape) {
         XmlObject obj = xShape.getXmlObject();
         CTGroupShape spTree = getSpTree();
+        deregisterShapeId(xShape.getShapeId());
         if(obj instanceof CTShape){
             spTree.getSpList().remove(obj);
         } else if (obj instanceof CTGroupShape) {
+            XSLFGroupShape gs = (XSLFGroupShape)xShape;
+            new ArrayList<>(gs.getShapes()).forEach(gs::removeShape);
             spTree.getGrpSpList().remove(obj);
         } else if (obj instanceof CTConnector) {
             spTree.getCxnSpList().remove(obj);

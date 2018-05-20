@@ -232,7 +232,7 @@ public class XSLFFreeformShape extends XSLFAutoShape
         CTShapeNonVisual nvSpPr = ct.addNewNvSpPr();
         CTNonVisualDrawingProps cnv = nvSpPr.addNewCNvPr();
         cnv.setName("Freeform " + shapeId);
-        cnv.setId(shapeId + 1);
+        cnv.setId(shapeId);
         nvSpPr.addNewCNvSpPr();
         nvSpPr.addNewNvPr();
         CTShapeProperties spPr = ct.addNewSpPr();

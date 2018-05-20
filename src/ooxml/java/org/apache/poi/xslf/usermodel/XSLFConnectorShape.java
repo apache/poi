@@ -51,7 +51,7 @@ public class XSLFConnectorShape extends XSLFSimpleShape
         CTConnectorNonVisual nvSpPr = ct.addNewNvCxnSpPr();
         CTNonVisualDrawingProps cnv = nvSpPr.addNewCNvPr();
         cnv.setName("Connector " + shapeId);
-        cnv.setId(shapeId + 1);
+        cnv.setId(shapeId);
         nvSpPr.addNewCNvCxnSpPr();
         nvSpPr.addNewNvPr();
         CTShapeProperties spPr = ct.addNewSpPr();

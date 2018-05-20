@@ -46,7 +46,7 @@ public class XSLFTextBox extends XSLFAutoShape
         CTShapeNonVisual nvSpPr = ct.addNewNvSpPr();
         CTNonVisualDrawingProps cnv = nvSpPr.addNewCNvPr();
         cnv.setName("TextBox " + shapeId);
-        cnv.setId(shapeId + 1);
+        cnv.setId(shapeId);
         nvSpPr.addNewCNvSpPr().setTxBox(true);
         nvSpPr.addNewNvPr();
         CTShapeProperties spPr = ct.addNewSpPr();

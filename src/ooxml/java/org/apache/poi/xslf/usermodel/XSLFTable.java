@@ -166,7 +166,7 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
 
         CTNonVisualDrawingProps cnv = nvGr.addNewCNvPr();
         cnv.setName("Table " + shapeId);
-        cnv.setId(shapeId + 1);
+        cnv.setId(shapeId);
         nvGr.addNewCNvGraphicFramePr().addNewGraphicFrameLocks().setNoGrp(true);
         nvGr.addNewNvPr();
 
