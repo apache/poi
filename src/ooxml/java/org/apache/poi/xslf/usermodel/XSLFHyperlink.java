@@ -50,14 +50,18 @@ public class XSLFHyperlink implements Hyperlink<XSLFShape,XSLFTextParagraph> {
 
     @Override
     public String getAddress() {
-        String id = _link.getId();
+        final String id = _link.getId();
         if (id == null || id.isEmpty()) {
             return _link.getAction();
         }
 
-        URI targetURI = _sheet.getPackagePart().getRelationship(id).getTargetURI();
-        
-        return targetURI.toASCIIString();
+        final PackageRelationship rel = _sheet.getPackagePart().getRelationship(id);
+        if (rel == null) {
+            return null;
+        }
+
+        final URI targetURI = rel.getTargetURI();
+        return (targetURI == null) ? null : targetURI.toASCIIString();
     }
 
     @Override
