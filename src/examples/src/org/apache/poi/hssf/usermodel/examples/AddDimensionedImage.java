@@ -279,14 +279,19 @@ public class AddDimensionedImage {
         // The first two parameters are not used currently but could be if the
         // need arose to extend the functionality of this code by adding the
         // ability to specify that a clear 'border' be placed around the image.
-        anchor = new HSSFClientAnchor(0,
-                                      0,
-                                      colClientAnchorDetail.getInset(),
-                                      rowClientAnchorDetail.getInset(),
-                                      (short)colClientAnchorDetail.getFromIndex(),
-                                      rowClientAnchorDetail.getFromIndex(),
-                                      (short)colClientAnchorDetail.getToIndex(),
-                                      rowClientAnchorDetail.getToIndex());
+        int dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0;
+        short col1 = 0, col2 = 0, row1 = 0, row2 = 0;
+        if (colClientAnchorDetail != null) {
+            dx2 = colClientAnchorDetail.getInset();
+            col1 = (short)colClientAnchorDetail.getFromIndex();
+            col2 = (short)colClientAnchorDetail.getToIndex();
+        }
+        if (rowClientAnchorDetail != null) {
+            dy2 = rowClientAnchorDetail.getInset();
+            row1 = (short)rowClientAnchorDetail.getFromIndex();
+            row2 = (short)rowClientAnchorDetail.getToIndex();
+        }
+        anchor = new HSSFClientAnchor(dx1, dy1, dx2, dy2, col1, row1, col2, row2);
 
         // For now, set the anchor type to do not move or resize the
         // image as the size of the row/column is adjusted. This could easilly

@@ -1377,7 +1377,9 @@ public final class InternalSheet {
             windowTwo.setFreezePanes(false);
             windowTwo.setFreezePanesNoSplit(false);
             SelectionRecord sel = (SelectionRecord) findFirstRecordBySid(SelectionRecord.sid);
-            sel.setPane(PaneInformation.PANE_UPPER_LEFT);
+            if (sel != null) {
+                sel.setPane(PaneInformation.PANE_UPPER_LEFT);
+            }
             return;
         }
 
@@ -1402,8 +1404,9 @@ public final class InternalSheet {
         windowTwo.setFreezePanesNoSplit(true);
 
         SelectionRecord sel = (SelectionRecord) findFirstRecordBySid(SelectionRecord.sid);
-        sel.setPane((byte)pane.getActivePane());
-
+        if (sel != null) {
+            sel.setPane((byte) pane.getActivePane());
+        }
     }
 
     /**
@@ -1437,7 +1440,9 @@ public final class InternalSheet {
         windowTwo.setFreezePanesNoSplit(false);
 
         SelectionRecord sel = (SelectionRecord) findFirstRecordBySid(SelectionRecord.sid);
-        sel.setPane(PANE_LOWER_RIGHT);
+        if (sel != null) {
+            sel.setPane(PANE_LOWER_RIGHT);
+        }
 
     }
 

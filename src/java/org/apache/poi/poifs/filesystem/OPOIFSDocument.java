@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
 
 import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.common.POIFSConstants;
@@ -228,43 +229,7 @@ public final class OPOIFSDocument implements BATManaged, BlockWritable, POIFSVie
 	 * This method is currently (Oct 2008) only used by test code. Perhaps it can be deleted
 	 */
 	void read(byte[] buffer, int offset) {
-		int len = buffer.length;
-
-		DataInputBlock currentBlock = getDataInputBlock(offset);
-
-		int blockAvailable = currentBlock.available();
-		if (blockAvailable > len) {
-			currentBlock.readFully(buffer, 0, len);
-			return;
-		}
-		// else read big amount in chunks
-		int remaining = len;
-		int writePos = 0;
-		int currentOffset = offset;
-		while (remaining > 0) {
-			boolean blockIsExpiring = remaining >= blockAvailable;
-			int reqSize;
-			if (blockIsExpiring) {
-				reqSize = blockAvailable;
-			} else {
-				reqSize = remaining;
-			}
-			currentBlock.readFully(buffer, writePos, reqSize);
-			remaining-=reqSize;
-			writePos+=reqSize;
-			currentOffset += reqSize;
-			if (blockIsExpiring) {
-				if (currentOffset == _size) {
-					if (remaining > 0) {
-						throw new IllegalStateException("reached end of document stream unexpectedly");
-					}
-					currentBlock = null;
-					break;
-				}
-				currentBlock = getDataInputBlock(currentOffset);
-				blockAvailable = currentBlock.available();
-			}
-		}
+		ODocumentInputStream.readFullyInternal(buffer, 0, buffer.length, offset, _size, this::getDataInputBlock);
 	}
 
 	/**

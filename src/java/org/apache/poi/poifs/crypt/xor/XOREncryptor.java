@@ -164,8 +164,12 @@ public class XOREncryptor extends Encryptor implements Cloneable {
                 chunk[i] = value;
             }
 
-            for (int i = plainBytes.nextSetBit(start); i >= 0 && i < posInChunk; i = plainBytes.nextSetBit(i+1)) {
-                chunk[i] = plain[i];
+            if (plain != null) {
+                int i = plainBytes.nextSetBit(start);
+                while (i >= 0 && i < posInChunk) {
+                    chunk[i] = plain[i];
+                    i = plainBytes.nextSetBit(i + 1);
+                }
             }
 
             return posInChunk;
