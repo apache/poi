@@ -18,6 +18,7 @@
 package org.apache.poi.poifs.filesystem;
 
 import java.io.IOException;
+import java.util.function.Function;
 
 import org.apache.poi.poifs.storage.DataInputBlock;
 import org.apache.poi.util.RecordFormatException;
@@ -214,40 +215,57 @@ public final class ODocumentInputStream extends DocumentInputStream {
    @Override
 	public void readFully(byte[] buf, int off, int len) {
 		checkAvaliable(len);
-		int blockAvailable = _currentBlock.available();
+
+		Function<Integer,DataInputBlock> nextDataInputBlock = (offset) -> {
+			if (offset >= _document_size) {
+				_currentBlock = null;
+			} else if (offset != _current_offset) {
+				_currentBlock = getDataInputBlock(offset);
+			}
+			return _currentBlock;
+		};
+
+		_current_offset = readFullyInternal(buf, off, len, _current_offset, _document_size, nextDataInputBlock);
+	}
+
+	/* package */ static int readFullyInternal(byte[] buf, int off, int len, int currentOffset, int maxSize, Function<Integer,DataInputBlock> nextDataInputBlock) {
+		DataInputBlock currentBlock = nextDataInputBlock.apply(currentOffset);
+		if (currentBlock == null) {
+			throw new IllegalStateException("reached end of document stream unexpectedly");
+		}
+		int blockAvailable = currentBlock.available();
 		if (blockAvailable > len) {
-			_currentBlock.readFully(buf, off, len);
-			_current_offset += len;
-			return;
+			currentBlock.readFully(buf, off, len);
+			return currentOffset + len;
 		}
 		// else read big amount in chunks
 		int remaining = len;
 		int writePos = off;
+		int offset = currentOffset;
 		while (remaining > 0) {
-			boolean blockIsExpiring = remaining >= blockAvailable;
-			int reqSize;
-			if (blockIsExpiring) {
-				reqSize = blockAvailable;
-			} else {
-				reqSize = remaining;
-			}
-			_currentBlock.readFully(buf, writePos, reqSize);
+			final boolean blockIsExpiring = remaining >= blockAvailable;
+			final int reqSize = (blockIsExpiring) ? blockAvailable : remaining;
+			currentBlock.readFully(buf, writePos, reqSize);
 			remaining -= reqSize;
 			writePos += reqSize;
-			_current_offset += reqSize;
+			offset += reqSize;
 			if (blockIsExpiring) {
-				if (_current_offset == _document_size) {
+				if (offset >= maxSize) {
 					if (remaining > 0) {
 						throw new IllegalStateException(
 								"reached end of document stream unexpectedly");
 					}
-					_currentBlock = null;
 					break;
 				}
-				_currentBlock = getDataInputBlock(_current_offset);
-				blockAvailable = _currentBlock.available();
+				currentBlock = nextDataInputBlock.apply(offset);
+				if (currentBlock == null) {
+					throw new IllegalStateException(
+							"reached end of document stream unexpectedly");
+				}
+				blockAvailable = currentBlock.available();
 			}
 		}
+		return offset;
 	}
 
    @Override

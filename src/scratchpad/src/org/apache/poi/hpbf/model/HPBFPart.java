@@ -64,6 +64,9 @@ public abstract class HPBFPart {
 
 	public void writeOut(DirectoryNode baseDir) throws IOException {
 		String[] path = getPath();
+		if (path == null) {
+			return;
+		}
 
 		// Ensure that all parent directories exist
 		DirectoryNode dir = baseDir;

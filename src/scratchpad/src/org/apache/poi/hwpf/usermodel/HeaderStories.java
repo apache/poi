@@ -208,15 +208,17 @@ public final class HeaderStories {
 		// First page header is optional, only return
 		//  if it's set
 		if(pageNumber == 1) {
-			if(getFirstHeader().length() > 0) {
-				return getFirstHeader();
+            final String fh = getFirstHeader();
+			if(fh != null && !fh.isEmpty()) {
+				return fh;
 			}
 		}
 		// Even page header is optional, only return
 		//  if it's set
 		if(pageNumber % 2 == 0) {
-			if(getEvenHeader().length() > 0) {
-				return getEvenHeader();
+            final String eh = getEvenHeader();
+			if(eh != null && !eh.isEmpty()) {
+				return eh;
 			}
 		}
 		// Odd is the default
@@ -274,15 +276,17 @@ public final class HeaderStories {
 		// First page footer is optional, only return
 		//  if it's set
 		if(pageNumber == 1) {
-			if(getFirstFooter().length() > 0) {
-				return getFirstFooter();
+		    final String ff = getFirstFooter();
+			if(ff != null && !ff.isEmpty()) {
+				return ff;
 			}
 		}
 		// Even page footer is optional, only return
 		//  if it's set
 		if(pageNumber % 2 == 0) {
-			if(getEvenFooter().length() > 0) {
-				return getEvenFooter();
+		    final String ef = getEvenFooter();
+			if(ef != null && !ef.isEmpty()) {
+				return ef;
 			}
 		}
 		// Odd is the default

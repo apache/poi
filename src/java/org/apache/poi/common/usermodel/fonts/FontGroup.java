@@ -110,8 +110,11 @@ public enum FontGroup {
      * @param runText the text which font groups are to be analyzed
      * @return the FontGroup
      */
-    public static List<FontGroupRange> getFontGroupRanges(String runText) {
+    public static List<FontGroupRange> getFontGroupRanges(final String runText) {
         List<FontGroupRange> ttrList = new ArrayList<>();
+        if (runText == null || runText.isEmpty()) {
+            return ttrList;
+        }
         FontGroupRange ttrLast = null;
         final int rlen = (runText != null) ? runText.length() : 0;
         for(int cp, i = 0, charCount; i < rlen; i += charCount) {

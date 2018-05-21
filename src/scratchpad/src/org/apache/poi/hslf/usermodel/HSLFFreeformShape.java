@@ -301,44 +301,46 @@ public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformSh
         while (vertIter.hasNext() && segIter.hasNext()) {
             byte[] segElem = segIter.next();
             PathInfo pi = getPathInfo(segElem);
-            switch (pi) {
-                case escape: {
-                    // handleEscapeInfo(path, segElem, vertIter);
-                    break;
-                }
-                case moveTo: {
-                    fillPoint(vertIter.next(), xyPoints);
-                    double x = xyPoints[0];
-                    double y = xyPoints[1];
-                    path.moveTo(x,y);
-                    break;
-                }
-                case curveTo: {
-                    fillPoint(vertIter.next(), xyPoints);
-                    double x1 = xyPoints[0];
-                    double y1 = xyPoints[1];
-                    fillPoint(vertIter.next(), xyPoints);
-                    double x2 = xyPoints[0];
-                    double y2 = xyPoints[1];
-                    fillPoint(vertIter.next(), xyPoints);
-                    double x3 = xyPoints[0];
-                    double y3 = xyPoints[1];
-                    path.curveTo(x1,y1,x2,y2,x3,y3);
-                    break;
-                }
-                case lineTo:
-                    if (vertIter.hasNext()) {
+            if (pi != null) {
+                switch (pi) {
+                    case escape: {
+                        // handleEscapeInfo(path, segElem, vertIter);
+                        break;
+                    }
+                    case moveTo: {
                         fillPoint(vertIter.next(), xyPoints);
                         double x = xyPoints[0];
                         double y = xyPoints[1];
-                        path.lineTo(x,y);
+                        path.moveTo(x, y);
+                        break;
                     }
-                    break;
-                case close:
-                    path.closePath();
-                    break;
-                default:
-                    break;
+                    case curveTo: {
+                        fillPoint(vertIter.next(), xyPoints);
+                        double x1 = xyPoints[0];
+                        double y1 = xyPoints[1];
+                        fillPoint(vertIter.next(), xyPoints);
+                        double x2 = xyPoints[0];
+                        double y2 = xyPoints[1];
+                        fillPoint(vertIter.next(), xyPoints);
+                        double x3 = xyPoints[0];
+                        double y3 = xyPoints[1];
+                        path.curveTo(x1, y1, x2, y2, x3, y3);
+                        break;
+                    }
+                    case lineTo:
+                        if (vertIter.hasNext()) {
+                            fillPoint(vertIter.next(), xyPoints);
+                            double x = xyPoints[0];
+                            double y = xyPoints[1];
+                            path.lineTo(x, y);
+                        }
+                        break;
+                    case close:
+                        path.closePath();
+                        break;
+                    default:
+                        break;
+                }
             }
         }
 
