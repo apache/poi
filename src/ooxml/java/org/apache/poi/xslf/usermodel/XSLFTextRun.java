@@ -30,6 +30,8 @@ import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.xslf.model.CharacterPropertyFetcher;
 import org.apache.poi.xslf.usermodel.XSLFPropertiesDelegate.XSLFFillProperties;
 import org.apache.xmlbeans.XmlObject;
@@ -40,6 +42,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeStyle;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBodyProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextField;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextFont;
@@ -54,6 +57,8 @@ import org.openxmlformats.schemas.drawingml.x2006.main.STTextUnderlineType;
  */
 @Beta
 public class XSLFTextRun implements TextRun {
+    private static final POILogger LOG = POILogFactory.getLogger(XSLFTextRun.class);
+
     private final XmlObject _r;
     private final XSLFTextParagraph _p;
 
@@ -107,7 +112,8 @@ public class XSLFTextRun implements TextRun {
     @Override
     public void setFontColor(PaintStyle color) {
         if (!(color instanceof SolidPaint)) {
-            throw new IllegalArgumentException("Currently only SolidPaint is supported!");
+            LOG.log(POILogger.WARN, "Currently only SolidPaint is supported!");
+            return;
         }
         SolidPaint sp = (SolidPaint)color;
         Color c = DrawPaint.applyColorTransform(sp.getSolidColor());
@@ -173,12 +179,18 @@ public class XSLFTextRun implements TextRun {
     @Override
     public Double getFontSize(){
         double scale = 1;
-        CTTextNormalAutofit afit = getParentParagraph().getParentShape().getTextBodyPr().getNormAutofit();
-        if(afit != null) {
-            scale = (double)afit.getFontScale() / 100000;
+        final XSLFTextShape ps = getParentParagraph().getParentShape();
+        if (ps != null) {
+            final CTTextBodyProperties tbp = ps.getTextBodyPr();
+            if (tbp != null) {
+                CTTextNormalAutofit afit = tbp.getNormAutofit();
+                if (afit != null && afit.isSetFontScale()) {
+                    scale = afit.getFontScale() / 100000.;
+                }
+            }
         }
 
-        CharacterPropertyFetcher<Double> fetcher = new CharacterPropertyFetcher<Double>(_p.getIndentLevel()){
+        final CharacterPropertyFetcher<Double> fetcher = new CharacterPropertyFetcher<Double>(_p.getIndentLevel()){
             @Override
             public boolean fetch(CTTextCharacterProperties props){
                 if (props != null && props.isSetSz()) {

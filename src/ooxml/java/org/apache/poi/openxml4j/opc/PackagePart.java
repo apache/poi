@@ -458,7 +458,7 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
 	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#isRelationshipExists(org.apache.poi.openxml4j.opc.PackageRelationship)
 	 */
 	public boolean isRelationshipExists(PackageRelationship rel) {
-		return _relationships.getRelationshipByID(rel.getId()) != null;
+		return rel != null && _relationships.getRelationshipByID(rel.getId()) != null;
 	}
 
    /**
