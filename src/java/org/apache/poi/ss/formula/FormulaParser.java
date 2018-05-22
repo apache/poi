@@ -1711,10 +1711,11 @@ public final class FormulaParser {
 
     private int parseErrorLiteral() {
         Match('#');
-        String part1 = parseUnquotedIdentifier().toUpperCase(Locale.ROOT);
+        String part1 = parseUnquotedIdentifier();
         if (part1 == null) {
             throw expected("remainder of error constant literal");
         }
+        part1 = part1.toUpperCase(Locale.ROOT);
 
         switch(part1.charAt(0)) {
             case 'V': {

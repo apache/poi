@@ -56,7 +56,7 @@ public class DrawShape implements Drawable {
      */
     @Override
     public void applyTransform(Graphics2D graphics) {
-        if (!(shape instanceof PlaceableShape)) {
+        if (!(shape instanceof PlaceableShape) || graphics == null) {
             return;
         }
 
