@@ -365,12 +365,16 @@ public class AddDimensionedImage {
 
         anchor.setDx1(0);
         anchor.setDy1(0);
-        anchor.setDx2(colClientAnchorDetail.getInset());
-        anchor.setDy2(rowClientAnchorDetail.getInset());
-        anchor.setCol1(colClientAnchorDetail.getFromIndex());
-        anchor.setRow1(rowClientAnchorDetail.getFromIndex());
-        anchor.setCol2(colClientAnchorDetail.getToIndex());
-        anchor.setRow2(rowClientAnchorDetail.getToIndex());
+        if (colClientAnchorDetail != null) {
+            anchor.setDx2(colClientAnchorDetail.getInset());
+            anchor.setCol1(colClientAnchorDetail.getFromIndex());
+            anchor.setCol2(colClientAnchorDetail.getToIndex());
+        }
+        if (rowClientAnchorDetail != null) {
+            anchor.setDy2(rowClientAnchorDetail.getInset());
+            anchor.setRow1(rowClientAnchorDetail.getFromIndex());
+            anchor.setRow2(rowClientAnchorDetail.getToIndex());
+        }
 
         // For now, set the anchor type to do not move or resize the
         // image as the size of the row/column is adjusted. This could easily
