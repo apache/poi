@@ -87,7 +87,8 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
 
 
     static XSLFGraphicFrame create(CTGraphicalObjectFrame shape, XSLFSheet sheet){
-        switch (getUri(shape)) {
+        final String uri = getUri(shape);
+        switch (uri == null ? "" : uri) {
         case XSLFTable.TABLE_URI:
             return new XSLFTable(shape, sheet);
         case XSLFObjectShape.OLE_URI:

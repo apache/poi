@@ -258,12 +258,19 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
 
     @Override
     public void setBorderWidth(BorderEdge edge, double width) {
-        CTLineProperties ln = getCTLine(edge, true);
+        final CTLineProperties ln = getCTLine(edge, true);
+        if (ln == null) {
+            return;
+        }
         ln.setW(Units.toEMU(width));
     }
 
     private CTLineProperties setBorderDefaults(BorderEdge edge) {
-        CTLineProperties ln = getCTLine(edge, true);
+        final CTLineProperties ln = getCTLine(edge, true);
+        if (ln == null) {
+            return null;
+        }
+
         if (ln.isSetNoFill()) {
             ln.unsetNoFill();
         }

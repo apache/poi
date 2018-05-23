@@ -74,7 +74,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumns;
 
 @Beta
 public abstract class XDDFChart extends POIXMLDocumentPart {
-
     /**
      * Underlying workbook
      */
@@ -456,6 +455,8 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
                 && chartWorkbookRelation != null
                 && chartFactory != null) {
                 worksheetPart = createWorksheetPart(chartRelation, chartWorkbookRelation, chartFactory);
+            } else {
+                throw new InvalidFormatException("unable to determine chart relations");
             }
         }
         try (OutputStream xlsOut = worksheetPart.getOutputStream()) {
@@ -610,7 +611,8 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
      * @since POI 4.0.0
      */
     public String formatRange(CellRangeAddress range) {
-        return range.formatAsString(getSheet().getSheetName(), true);
+        final XSSFSheet sheet = getSheet();
+        return (sheet == null) ? null : range.formatAsString(sheet.getSheetName(), true);
     }
 
     /**
