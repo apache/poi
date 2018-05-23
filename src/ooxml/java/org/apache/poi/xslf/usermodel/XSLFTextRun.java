@@ -605,6 +605,9 @@ public class XSLFTextRun implements TextRun {
 
         void copyFrom(FontInfo fontInfo) {
             CTTextFont tf = getXmlObject(true);
+            if (tf == null) {
+                return;
+            }
             setTypeface(fontInfo.getTypeface());
             setCharset(fontInfo.getCharset());
             FontPitch pitch = fontInfo.getPitch();
@@ -638,7 +641,10 @@ public class XSLFTextRun implements TextRun {
         @Override
         public void setTypeface(String typeface) {
             if (typeface != null) {
-                getXmlObject(true).setTypeface(typeface);
+                final CTTextFont tf = getXmlObject(true);
+                if (tf != null) {
+                    tf.setTypeface(typeface);
+                }
                 return;
             }
             
@@ -681,6 +687,9 @@ public class XSLFTextRun implements TextRun {
         @Override
         public void setCharset(FontCharset charset) {
             CTTextFont tf = getXmlObject(true);
+            if (tf == null) {
+                return;
+            }
             if (charset != null) {
                 tf.setCharset((byte)charset.getNativeId());
             } else {
@@ -699,7 +708,7 @@ public class XSLFTextRun implements TextRun {
         @Override
         public void setFamily(FontFamily family) {
             CTTextFont tf = getXmlObject(true);
-            if (family == null && !tf.isSetPitchFamily()) {
+            if (tf == null || (family == null && !tf.isSetPitchFamily())) {
                 return;
             }
             FontPitch pitch = (tf.isSetPitchFamily())
@@ -718,7 +727,7 @@ public class XSLFTextRun implements TextRun {
         @Override
         public void setPitch(FontPitch pitch) {
             CTTextFont tf = getXmlObject(true);
-            if (pitch == null && !tf.isSetPitchFamily()) {
+            if (tf == null || (pitch == null && !tf.isSetPitchFamily())) {
                 return;
             }
             FontFamily family = (tf.isSetPitchFamily())
