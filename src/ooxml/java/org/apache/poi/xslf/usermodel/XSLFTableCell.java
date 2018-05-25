@@ -268,7 +268,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
     private CTLineProperties setBorderDefaults(BorderEdge edge) {
         final CTLineProperties ln = getCTLine(edge, true);
         if (ln == null) {
-            return null;
+            throw new IllegalStateException("CTLineProperties couldn't be initialized");
         }
 
         if (ln.isSetNoFill()) {
@@ -366,6 +366,9 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
         }
 
         CTLineProperties ln = setBorderDefaults(edge);
+        if (!ln.isSetPrstDash()) {
+            ln.addNewPrstDash();
+        }
         ln.getPrstDash().setVal(STPresetLineDashVal.Enum.forInt(dash.ooxmlId));
     }
 
