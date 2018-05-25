@@ -1,9 +1,0 @@
-<xsd:schema
-    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-   >
-    <xsd:attribute name="NoNSAttr" type="xsd:int"/>
-    <xsd:element name="NoNSElt" type="xsd:int"/>
-
-
-
-   </xsd:schema>

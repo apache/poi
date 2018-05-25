@@ -1,6 +1,0 @@
-<a xmlns="baseNamespace">
-    <b><c>123</c><d/></b>
-    <e><c>abc</c><d>123</d></e>
-    <f><c>abc</c><d>123</d><o>abc</o></f>
-</a>
-

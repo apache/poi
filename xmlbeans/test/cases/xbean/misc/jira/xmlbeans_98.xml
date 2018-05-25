@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<s:a-root v:schemaLocation="http://www.orthogony.net/xml/sample/structure xmlbeans_98.xsd" xmlns:s="http://www.orthogony.net/xml/sample/structure" xmlns:v="http://www.w3.org/2001/XMLSchema-instance">
-  <s:a-child qualified-data="data:IAmQualified" xmlns:data="http://www.orthogony.net/xml/sample/data"/>
-</s:a-root>

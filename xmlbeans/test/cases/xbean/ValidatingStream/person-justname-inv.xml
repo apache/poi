@@ -1,6 +1,0 @@
-<per:Name xmlns:per="http://openuri.org/test/Person"
-          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <per:First>Person</per:First>
-    <per:Last>Two</per:Last>
-    <per:Middle>M</per:Middle>
-</per:Name>

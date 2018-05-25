@@ -1,3 +1,0 @@
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="ids">
-    <xs:attribute name="id" type="xs:string"/>
-</xs:schema>

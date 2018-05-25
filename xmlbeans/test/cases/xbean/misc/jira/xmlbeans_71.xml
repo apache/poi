@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<BazResponse xmlns="http://abc">
-<Status>SUCCESS</Status> 
-<ErrorMsg/> 
-<SQLStatus>0</SQLStatus> 
-<ErrorCode>0</ErrorCode> 
-</BazResponse>

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<mix:Letter xmlns:mix="http://openuri.org/test/MixedContent"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    Your Order is being Shipped.
-    <mix:name>John Doe</mix:name>
-    <mix:orderid>1000</mix:orderid>
-    Your expected Ship-date is: <mix:shipdate>2004-12-12</mix:shipdate>
-    Thank you for your order
-</mix:Letter>

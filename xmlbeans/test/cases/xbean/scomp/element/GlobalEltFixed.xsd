@@ -1,9 +1,0 @@
-<xsd:schema
-  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-  xmlns="http://xbean/scomp/element/GlobalEltFixed"
-  targetNamespace="http://xbean/scomp/element/GlobalEltFixed"
-  >
-
-  <xsd:element name="GlobalEltFixedInt" type="xsd:int" fixed="1"/>
-  <xsd:element name="GlobalEltFixedStr" type="xsd:string" fixed="XBean"/>
-</xsd:schema>

@@ -1,5 +1,0 @@
-<a p:attExample="1" xmlns:p="http://baz" xmlns="bar">
-<b p:attExample="1"/>
-<c/>
-<d p:attExample="1"/>
-</a>
