@@ -1,7 +1,0 @@
-<a xmlns:foo="http://foo" xmlns="http://baz" xmlns:tns="http://baz">
-    <tns:c x="2" tns:a="1"/>
-    <foo:d foo:a="1"/>
-    <foo:c tns:b="1"/>
-    <d foo:b="1"/>
-    <c n="4" a="1"/>
-</a>

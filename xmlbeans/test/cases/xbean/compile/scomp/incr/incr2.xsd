@@ -1,9 +1,0 @@
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="tnsrecord" xmlns:p="tnsperson">
-    <xs:import namespace="tnsperson" schemaLocation="incr1.xsd"/>
-    <xs:complexType name="record">
-        <xs:sequence>
-            <xs:element name="person" type="p:person"/>
-            <xs:element name="info" type="xs:string"/>
-        </xs:sequence>
-    </xs:complexType>
-</xs:schema>

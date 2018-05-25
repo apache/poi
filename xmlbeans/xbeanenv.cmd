@@ -1,1 +1,0 @@
-SET XMLBEANS_HOME=%~dp0.
