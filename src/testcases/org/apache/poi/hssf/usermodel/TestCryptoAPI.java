@@ -30,11 +30,6 @@ import org.junit.Test;
 public class TestCryptoAPI {
     final HSSFITestDataProvider ssTests = HSSFITestDataProvider.instance;
 
-    @AfterClass
-    public static void resetPW() {
-        Biff8EncryptionKey.setCurrentUserPassword(null);
-    }
-
     @Test
     public void bug59857() throws IOException {
         // XOR-Obfuscation
@@ -52,19 +47,17 @@ public class TestCryptoAPI {
     
     private void validateContent(String wbFile, String password, String textExpected) throws IOException {
         Biff8EncryptionKey.setCurrentUserPassword(password);
-        HSSFWorkbook wb = ssTests.openSampleWorkbook(wbFile);
-        ExcelExtractor ee1 = new ExcelExtractor(wb);
-        String textActual = ee1.getText();
-        assertContains(textActual, textExpected);
-
-        Biff8EncryptionKey.setCurrentUserPassword("bla");
-        HSSFWorkbook wbBla = ssTests.writeOutAndReadBack(wb);
-        ExcelExtractor ee2 = new ExcelExtractor(wbBla);
-        textActual = ee2.getText();
-        assertContains(textActual, textExpected);
-        ee2.close();
-        ee1.close();
-        wbBla.close();
-        wb.close();
+        try (HSSFWorkbook wb = ssTests.openSampleWorkbook(wbFile);
+             ExcelExtractor ee1 = new ExcelExtractor(wb)
+        ) {
+            Biff8EncryptionKey.setCurrentUserPassword("bla");
+            try (HSSFWorkbook wbBla = ssTests.writeOutAndReadBack(wb);
+                 ExcelExtractor ee2 = new ExcelExtractor(wbBla)) {
+                assertContains(ee1.getText(), textExpected);
+                assertContains(ee2.getText(), textExpected);
+            }
+        } finally {
+            Biff8EncryptionKey.setCurrentUserPassword(null);
+        }
     }
 }

@@ -302,6 +302,8 @@ public class TestAllFiles {
         "spreadsheet/poc-xmlbomb.xlsx",  // contains xml-entity-expansion
         "spreadsheet/poc-xmlbomb-empty.xlsx",  // contains xml-entity-expansion
         "spreadsheet/poc-shared-strings.xlsx",  // contains shared-string-entity-expansion
+        "document/61612a.docx",
+        "document/word2.doc",
 
         // old Excel files, which we only support simple text extraction of
         "spreadsheet/testEXCEL_2.xls",
@@ -328,8 +330,6 @@ public class TestAllFiles {
     );
 
     private static final Set<String> IGNORED = unmodifiableHashSet(
-        // need JDK8+ - https://bugs.openjdk.java.net/browse/JDK-8038081
-        "slideshow/42474-2.ppt",
         // OPC handler works / XSSF handler fails
         "spreadsheet/57181.xlsm",
         "spreadsheet/61300.xls"//intentionally fuzzed -- used to cause infinite loop

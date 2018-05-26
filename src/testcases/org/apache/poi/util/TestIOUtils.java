@@ -44,7 +44,7 @@ import org.junit.Test;
 public final class TestIOUtils {
 
     static File TMP;
-    static final long LENGTH = new Random().nextInt(10000);
+    static final long LENGTH = 300+new Random().nextInt(9000);
 
     @BeforeClass
     public static void setUp() throws IOException {
@@ -169,6 +169,29 @@ public final class TestIOUtils {
     public void testSkipNegative() throws IOException {
         try (InputStream is =  new FileInputStream(TMP)) {
             IOUtils.skipFully(is, -1);
+        }
+    }
+
+    @Test(expected = RecordFormatException.class)
+    public void testMaxLengthTooLong() throws IOException {
+        try (InputStream is = new FileInputStream(TMP)) {
+            IOUtils.toByteArray(is, Integer.MAX_VALUE, 100);
+        }
+    }
+
+    @Test
+    public void testMaxLengthIgnored() throws IOException {
+        try (InputStream is = new FileInputStream(TMP)) {
+            IOUtils.toByteArray(is, 90, Integer.MAX_VALUE);
+            IOUtils.toByteArray(is, 90, 100);
+            IOUtils.toByteArray(is, Integer.MAX_VALUE, Integer.MAX_VALUE);
+        }
+    }
+
+    @Test(expected = RecordFormatException.class)
+    public void testMaxLengthInvalid() throws IOException {
+        try (InputStream is = new FileInputStream(TMP)) {
+            IOUtils.toByteArray(is, 90, 80);
         }
     }
 

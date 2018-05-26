@@ -90,9 +90,6 @@ public abstract class BaseXLSIteratingTest {
     
 	@Test
 	public void testMain() throws Exception {
-	    // we had intermittent problems when this was set differently somehow, let's try to set it here so it always is set correctly for these tests
-	    Biff8EncryptionKey.setCurrentUserPassword(null);
-
 	    String fileName = file.getName();
 	    if (EXCLUDED.containsKey(fileName)) {
 	        thrown.expect(EXCLUDED.get(fileName));

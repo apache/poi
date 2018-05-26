@@ -36,6 +36,7 @@ import java.util.Iterator;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
+import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.NullOutputStream;
 import org.apache.poi.util.TempFile;
@@ -279,53 +280,67 @@ public abstract class BaseTestWorkbook {
 
     @Test
     public void removeSheetAt() throws IOException {
-        Workbook workbook = _testDataProvider.createWorkbook();
-        try {
+        try (Workbook workbook = _testDataProvider.createWorkbook()) {
             workbook.createSheet("sheet1");
             workbook.createSheet("sheet2");
             workbook.createSheet("sheet3");
             assertEquals(3, workbook.getNumberOfSheets());
-    
+
             assertEquals(0, workbook.getActiveSheetIndex());
-    
+
             workbook.removeSheetAt(1);
             assertEquals(2, workbook.getNumberOfSheets());
             assertEquals("sheet3", workbook.getSheetName(1));
             assertEquals(0, workbook.getActiveSheetIndex());
-    
+
             workbook.removeSheetAt(0);
             assertEquals(1, workbook.getNumberOfSheets());
             assertEquals("sheet3", workbook.getSheetName(0));
             assertEquals(0, workbook.getActiveSheetIndex());
-    
+
             workbook.removeSheetAt(0);
             assertEquals(0, workbook.getNumberOfSheets());
             assertEquals(0, workbook.getActiveSheetIndex());
-    
+
             //re-create the sheets
             workbook.createSheet("sheet1");
             workbook.createSheet("sheet2");
             workbook.createSheet("sheet3");
             workbook.createSheet("sheet4");
             assertEquals(4, workbook.getNumberOfSheets());
-    
+
             assertEquals(0, workbook.getActiveSheetIndex());
             workbook.setActiveSheet(2);
             assertEquals(2, workbook.getActiveSheetIndex());
-    
+
             workbook.removeSheetAt(2);
             assertEquals(2, workbook.getActiveSheetIndex());
-    
+
             workbook.removeSheetAt(1);
             assertEquals(1, workbook.getActiveSheetIndex());
-    
+
             workbook.removeSheetAt(0);
             assertEquals(0, workbook.getActiveSheetIndex());
-    
+
             workbook.removeSheetAt(0);
             assertEquals(0, workbook.getActiveSheetIndex());
-        } finally {
-            workbook.close();
+        }
+    }
+
+    @Test
+    public void testSetActiveCell() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet sheet = wb.createSheet("new sheet");
+            final CellAddress initialActiveCell = sheet.getActiveCell();
+            assertTrue(initialActiveCell == null || new CellAddress("A1").equals(initialActiveCell));
+            sheet.setActiveCell(new CellAddress("E11"));
+            assertEquals(new CellAddress("E11"), sheet.getActiveCell());
+
+            Workbook wbr = _testDataProvider.writeOutAndReadBack(wb);
+            sheet = wbr.getSheet("new sheet");
+            assertEquals(new CellAddress("E11"), sheet.getActiveCell());
+
+            //wbr.write(new FileOutputStream("c:/temp/yyy." + _testDataProvider.getStandardFileNameExtension()));
         }
     }
 
@@ -619,7 +634,7 @@ public abstract class BaseTestWorkbook {
         wb2.close();
     }
 
-    private Workbook newSetSheetNameTestingWorkbook() throws IOException {
+    private Workbook newSetSheetNameTestingWorkbook() {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sh1 = wb.createSheet("Worksheet");
         Sheet sh2 = wb.createSheet("Testing 47100");
@@ -797,11 +812,8 @@ public abstract class BaseTestWorkbook {
             c.setCellStyle(cs);
             c.setCellValue("AAA");                
         }
-        OutputStream os = new NullOutputStream();
-        try {
+        try (OutputStream os = new NullOutputStream()) {
             workbook.write(os);
-        } finally {
-            os.close();
         }
         //workbook.dispose();
         workbook.close();

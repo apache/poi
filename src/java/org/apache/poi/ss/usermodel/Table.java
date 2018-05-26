@@ -19,6 +19,8 @@ package org.apache.poi.ss.usermodel;
 
 import java.util.regex.Pattern;
 
+import org.apache.poi.ss.util.CellReference;
+
 /**
  * XSSF Only!
  * High level abstraction of table in a workbook.
@@ -116,6 +118,18 @@ public interface Table {
      * @param cell
      * @return true if the table and cell are on the same sheet and the cell is within the table range.
      * @since 3.17 beta 1
+     * @see #contains(CellReference) (prefered, faster execution and handles undefined cells)
      */
-    boolean contains(Cell cell);
+    default boolean contains(Cell cell) {
+        if (cell == null) return false;
+        return contains(new CellReference(cell.getSheet().getSheetName(), cell.getRowIndex(), cell.getColumnIndex(), true, true));
+    }
+    
+    /**
+     * checks if the given cell is part of the table.  Includes checking that they are on the same sheet.
+     * @param cell reference to a possibly undefined cell location
+     * @return true if the table and cell are on the same sheet and the cell is within the table range.
+     * @since 3.17 beta 1
+     */
+    boolean contains(CellReference cell);
 }

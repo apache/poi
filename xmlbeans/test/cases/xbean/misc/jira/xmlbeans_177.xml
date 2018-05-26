@@ -1,9 +1,0 @@
-<jira:testList xmlns:jira="http://jira/xmlbeans_177">
-  <test>This is a greater than sign: &gt;</test>
-  <test>This is a less than sign: &lt;</test>
-  <test>This is a single quote: &apos;</test>
-  <test>This is a double quote: &quot;</test>
-  <test>W.L.Gore &amp; Associates</test>
-  <test>Character data may not contain the three-character sequence ]]&gt; with the > unescaped.</test>
-  <test>In particular, <![CDATA[character data in a CDATA section may not contain the three-character sequence ]]&gt;]]> with the &gt; unescaped.</test>
-</jira:testList>

@@ -52,11 +52,6 @@ import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
 public class TestHxxFEncryption {
-    @AfterClass
-    public static void clearPass() {
-        Biff8EncryptionKey.setCurrentUserPassword(null);
-    }
-
     @Parameter(value = 0)
     public POIDataSamples sampleDir;
 
@@ -99,12 +94,14 @@ public class TestHxxFEncryption {
     
     @Test
     public void extract() throws IOException, OpenXML4JException, XmlException {
-        Biff8EncryptionKey.setCurrentUserPassword(password);
         File f = sampleDir.getFile(file);
-        POITextExtractor te = ExtractorFactory.createExtractor(f);
-        String actual = te.getText().trim();
-        assertEquals(expected, actual);
-        te.close();
+        Biff8EncryptionKey.setCurrentUserPassword(password);
+        try (POITextExtractor te = ExtractorFactory.createExtractor(f)) {
+            String actual = te.getText().trim();
+            assertEquals(expected, actual);
+        } finally {
+            Biff8EncryptionKey.setCurrentUserPassword(null);
+        }
     }
     
     @Test
@@ -118,70 +115,72 @@ public class TestHxxFEncryption {
     }
     
     public void newPassword(String newPass) throws IOException, OpenXML4JException, XmlException {
-        Biff8EncryptionKey.setCurrentUserPassword(password);
         File f = sampleDir.getFile(file);
-        POIOLE2TextExtractor te1 = (POIOLE2TextExtractor)ExtractorFactory.createExtractor(f);
-        Biff8EncryptionKey.setCurrentUserPassword(newPass);
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        POIDocument doc = te1.getDocument();
-        doc.write(bos);
-        doc.close();
-        te1.close();
-        ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
-        POITextExtractor te2 = ExtractorFactory.createExtractor(bis);
-        String actual = te2.getText().trim();
-        assertEquals(expected, actual);
-        te2.close();
+        Biff8EncryptionKey.setCurrentUserPassword(password);
+        try (POITextExtractor te1 = ExtractorFactory.createExtractor(f)) {
+            Biff8EncryptionKey.setCurrentUserPassword(newPass);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            try (POIDocument doc = (POIDocument) te1.getDocument()) {
+                doc.write(bos);
+            }
+            ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+            try (POITextExtractor te2 = ExtractorFactory.createExtractor(bis)) {
+                String actual = te2.getText().trim();
+                assertEquals(expected, actual);
+            }
+        } finally {
+            Biff8EncryptionKey.setCurrentUserPassword(null);
+        }
     }
 
     /** changing the encryption mode and key size in poor mans style - see comments below */
     @Test
     public void changeEncryption() throws IOException, OpenXML4JException, XmlException {
+        File f = sampleDir.getFile(file);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         Biff8EncryptionKey.setCurrentUserPassword(password);
-        File f = sampleDir.getFile(file);
-        POIOLE2TextExtractor te1 = (POIOLE2TextExtractor)ExtractorFactory.createExtractor(f);
-        // first remove encryption
-        Biff8EncryptionKey.setCurrentUserPassword(null);
-        POIDocument doc = te1.getDocument();
-        doc.write(bos);
-        doc.close();
-        te1.close();
-        // then use default setting, which is cryptoapi
-        String newPass = "newPass";
-        POIOLE2TextExtractor te2 = (POIOLE2TextExtractor)ExtractorFactory.createExtractor(new ByteArrayInputStream(bos.toByteArray()));
-        Biff8EncryptionKey.setCurrentUserPassword(newPass);
-        doc = te2.getDocument();
-        bos.reset();
-        doc.write(bos);
-        doc.close();
-        te2.close();
-        // and finally update cryptoapi setting
-        POIOLE2TextExtractor te3 = (POIOLE2TextExtractor)ExtractorFactory.createExtractor(new ByteArrayInputStream(bos.toByteArray()));
-        doc = te3.getDocument();
-        // need to cache data (i.e. read all data) before changing the key size
-        if (doc instanceof HSLFSlideShowImpl) {
-            HSLFSlideShowImpl hss = (HSLFSlideShowImpl)doc;
-            hss.getPictureData();
-            hss.getDocumentSummaryInformation();
+        try (POITextExtractor te1 = ExtractorFactory.createExtractor(f)) {
+            // first remove encryption
+            Biff8EncryptionKey.setCurrentUserPassword(null);
+            try (POIDocument doc = (POIDocument) te1.getDocument()) {
+                doc.write(bos);
+            }
+            // then use default setting, which is cryptoapi
+            String newPass = "newPass";
+            try (POITextExtractor te2 = ExtractorFactory.createExtractor(new ByteArrayInputStream(bos.toByteArray()))) {
+                Biff8EncryptionKey.setCurrentUserPassword(newPass);
+                try (POIDocument doc = (POIDocument) te2.getDocument()) {
+                    bos.reset();
+                    doc.write(bos);
+                }
+            }
+            // and finally update cryptoapi setting
+            try (POITextExtractor te3 = ExtractorFactory.createExtractor(new ByteArrayInputStream(bos.toByteArray()));
+                 POIDocument doc = (POIDocument) te3.getDocument()) {
+                // need to cache data (i.e. read all data) before changing the key size
+                if (doc instanceof HSLFSlideShowImpl) {
+                    HSLFSlideShowImpl hss = (HSLFSlideShowImpl) doc;
+                    hss.getPictureData();
+                    hss.getDocumentSummaryInformation();
+                }
+                EncryptionInfo ei = doc.getEncryptionInfo();
+                assertNotNull(ei);
+                assertTrue(ei.getHeader() instanceof CryptoAPIEncryptionHeader);
+                assertEquals(0x28, ei.getHeader().getKeySize());
+                ei.getHeader().setKeySize(0x78);
+                bos.reset();
+                doc.write(bos);
+            }
+            // check the setting
+            try (POITextExtractor te4 = ExtractorFactory.createExtractor(new ByteArrayInputStream(bos.toByteArray()));
+                 POIDocument doc = (POIDocument) te4.getDocument()) {
+                EncryptionInfo ei = doc.getEncryptionInfo();
+                assertNotNull(ei);
+                assertTrue(ei.getHeader() instanceof CryptoAPIEncryptionHeader);
+                assertEquals(0x78, ei.getHeader().getKeySize());
+            }
+        } finally {
+            Biff8EncryptionKey.setCurrentUserPassword(null);
         }
-        EncryptionInfo ei = doc.getEncryptionInfo();
-        assertNotNull(ei);
-        assertTrue(ei.getHeader() instanceof CryptoAPIEncryptionHeader);
-        assertEquals(0x28, ei.getHeader().getKeySize());
-        ei.getHeader().setKeySize(0x78);
-        bos.reset();
-        doc.write(bos);
-        doc.close();
-        te3.close();
-        // check the setting
-        POIOLE2TextExtractor te4 = (POIOLE2TextExtractor)ExtractorFactory.createExtractor(new ByteArrayInputStream(bos.toByteArray()));
-        doc = te4.getDocument();
-        ei = doc.getEncryptionInfo();
-        assertNotNull(ei);
-        assertTrue(ei.getHeader() instanceof CryptoAPIEncryptionHeader);
-        assertEquals(0x78, ei.getHeader().getKeySize());
-        doc.close();
-        te4.close();
     }
 }

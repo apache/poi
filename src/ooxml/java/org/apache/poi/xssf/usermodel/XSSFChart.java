@@ -301,17 +301,6 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
 		return new XSSFRichTextString(text.toString());
 	}
 
-	/**
-	 * Sets the title text as a static string.
-	 * @param newTitle to use
-	 * @deprecated POI 3.16, use {@link #setTitleText(String)} instead.
-	 */
-    @Deprecated
-    @Removal(version = "4.0")
-    public void setTitle(String newTitle) {
-
-    }
-
     /**
      * Sets the title text as a static string.
      *
@@ -342,8 +331,7 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
             rich = tx.getRich();
         } else {
             rich = tx.addNewRich();
-            rich.addNewBodyPr(); // body properties must exist (but can be
-                                 // empty)
+            rich.addNewBodyPr(); // body properties must exist (but can be empty)
         }
 
         CTTextParagraph para;

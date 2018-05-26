@@ -1,8 +1,0 @@
-<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <xsd:simpleType name="DressSizeType" >
-      <xsd:restriction base="xsd:integer" />
-  </xsd:simpleType>
-
-    <xsd:element name="size" type="DressSizeType" />
-    <xsd:element name="color" type="xsd:string" />
-</xsd:schema>

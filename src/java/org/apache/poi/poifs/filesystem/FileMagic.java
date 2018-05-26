@@ -22,6 +22,8 @@ import static org.apache.poi.poifs.common.POIFSConstants.RAW_XML_FILE_HEADER;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -77,10 +79,11 @@ public enum FileMagic {
     PDF("%PDF"),
     /** Some different HTML documents */
     HTML("<!DOCTYP".getBytes(UTF_8), "<html".getBytes(UTF_8)),
+    WORD2(new byte[]{ (byte)0xdb, (byte)0xa5, 0x2d, 0x00}),
     // keep UNKNOWN always as last enum!
     /** UNKNOWN magic */
     UNKNOWN(new byte[0]);
-    
+
     final byte[][] magic;
     
     FileMagic(long magic) {
@@ -115,6 +118,23 @@ public enum FileMagic {
         }
         return UNKNOWN;
     }
+
+
+    /**
+     * Get the file magic of the supplied {@link File}<p>
+     *
+     * Even if this method returns {@link FileMagic#UNKNOWN} it could potentially mean,
+     *  that the ZIP stream has leading junk bytes
+     *
+     * @param inp a file to be identified
+     */
+    public static FileMagic valueOf(final File inp) throws IOException {
+        try (FileInputStream fis = new FileInputStream(inp)) {
+            final byte[] data = IOUtils.toByteArray(fis, 8);
+            return FileMagic.valueOf(data);
+        }
+    }
+
 
     /**
      * Get the file magic of the supplied InputStream (which MUST

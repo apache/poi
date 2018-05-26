@@ -82,7 +82,8 @@ implements Notes<XSLFShape,XSLFTextParagraph> {
 
     @Override
     public XSLFTheme getTheme(){
-    	return getMasterSheet().getTheme();
+        final XSLFNotesMaster m = getMasterSheet();
+    	return (m != null) ? m.getTheme() : null;
     }
 
     @Override

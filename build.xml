@@ -164,6 +164,8 @@ under the License.
 
     <property name="main.hamcrest.jar" location="${main.lib}/hamcrest-core-1.3.jar"/>
     <property name="main.hamcrest.url" value="${repository.m2}/maven2/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar"/>
+    <property name="main.xmlunit.jar" location="${main.lib}/xmlunit-core-2.5.1.jar"/>
+    <property name="main.xmlunit.url" value="${repository.m2}/maven2/org/xmlunit/xmlunit-core/2.5.1/xmlunit-core-2.5.1.jar"/>
     <property name="main.mockito.jar" location="${main.lib}/mockito-core-2.13.0.jar"/>
     <property name="main.mockito.url" value="${repository.m2}/maven2/org/mockito/mockito-core/2.13.0/mockito-core-2.13.0.jar"/>
     <property name="main.byte-buddy.jar" location="${main.lib}/byte-buddy-1.7.9.jar"/>
@@ -202,16 +204,20 @@ under the License.
               value="${repository.m2}/maven2/com/github/pjfanning/xmlbeans/2.6.4/xmlbeans-2.6.4.jar"/>
 
     <!-- coverage libs -->
-    <property name="jacoco.zip" location="${main.lib}/jacoco-0.7.9.zip"/>
-    <property name="jacoco.url" value="${repository.m2}/maven2/org/jacoco/jacoco/0.7.9/jacoco-0.7.9.zip"/>
-    <property name="asm.jar" location="${main.lib}/asm-all-5.2.jar"/>
-    <property name="asm.url" value="${repository.m2}/maven2/org/ow2/asm/asm-all/5.2/asm-all-5.2.jar"/>
+    <property name="jacoco.zip" location="${main.lib}/jacoco-0.8.1.zip"/>
+    <property name="jacoco.url" value="${repository.m2}/maven2/org/jacoco/jacoco/0.8.1/jacoco-0.8.1.zip"/>
+    <property name="asm.jar" location="${main.lib}/asm-6.0.jar"/>
+    <property name="asm.url" value="${repository.m2}/maven2/org/ow2/asm/asm/6.0/asm-6.0.jar"/>
+    <property name="asmcommons.jar" location="${main.lib}/asm-commons-6.0.jar"/>
+    <property name="asmcommons.url" value="${repository.m2}/maven2/org/ow2/asm/asm-commons/6.0/asm-commons-6.0.jar"/>
+    <property name="asmtree.jar" location="${main.lib}/asm-tree-6.0.jar"/>
+    <property name="asmtree.url" value="${repository.m2}/maven2/org/ow2/asm/asm-tree/6.0/asm-tree-6.0.jar"/>
 
     <!-- license and api checks -->
     <property name="rat.jar" location="${main.lib}/apache-rat-0.12.jar"/>
     <property name="rat.url" value="${repository.m2}/maven2/org/apache/rat/apache-rat/0.12/apache-rat-0.12.jar"/>
-    <property name="forbidden.jar" location="${main.lib}/forbiddenapis-2.3.jar"/>
-    <property name="forbidden.url" value="${repository.m2}/maven2/de/thetaphi/forbiddenapis/2.3/forbiddenapis-2.3.jar"/>
+    <property name="forbidden.jar" location="${main.lib}/forbiddenapis-2.5.jar"/>
+    <property name="forbidden.url" value="${repository.m2}/maven2/de/thetaphi/forbiddenapis/2.5/forbiddenapis-2.5.jar"/>
 
     <property name="maven.ooxml.xsds.version.id" value="1.4"/>
 	
@@ -311,6 +317,7 @@ under the License.
     <property name="java9addopens3" value="-Dthis.is.a.dummy=true"/>
     <property name="java9addopens4" value="-Dthis.is.a.dummy=true"/>
     <property name="java9addopens5" value="-Dthis.is.a.dummy=true"/>
+    <property name="java9addopens6" value="-Dthis.is.a.dummy=true"/>
 
     <path id="main.classpath">
         <pathelement location="${main.commons-logging.jar}"/>
@@ -325,6 +332,7 @@ under the License.
         <pathelement location="${main.jmh.jar}"/>
         <pathelement location="${main.jmhAnnotation.jar}"/>
         <pathelement location="${main.hamcrest.jar}"/>
+        <pathelement location="${main.xmlunit.jar}"/>
         <pathelement location="${main.mockito.jar}"/>
         <pathelement location="${main.byte-buddy.jar}"/>
         <pathelement location="${main.byte-buddy-agent.jar}"/>
@@ -453,7 +461,7 @@ under the License.
     <path id="lib.jacoco">
         <fileset dir="lib">
             <include name="org.jacoco*.jar" />
-            <include name="asm-all-*.jar" />
+            <include name="asm-*.jar" />
         </fileset>
     </path>
 
@@ -559,6 +567,7 @@ under the License.
                 <include name="ant-launcher-1.9.4*"/>
                 <include name="asm-all-4*"/>
                 <include name="asm-all-5.0.3*"/>
+                <include name="asm-all-5.2*"/>
                 <include name="commons-codec-1.5*"/>
                 <include name="commons-codec-1.9*"/>
                 <include name="commons-codec-1.10*"/>
@@ -572,6 +581,7 @@ under the License.
                 <include name="jacoco-0.7.6*"/>
                 <include name="jacoco-0.7.7*"/>
                 <include name="jacoco-0.7.8*"/>
+                <include name="jacoco-0.7.9*"/>
                 <include name="jmh-core-1.15*"/>
                 <include name="jmh-generator-annprocess-1.15*"/>
                 <include name="log4j-1.2.13*"/>
@@ -583,6 +593,7 @@ under the License.
                 <include name="org.jacoco.*-0.7.6*"/>
                 <include name="org.jacoco.*-0.7.7*"/>
                 <include name="org.jacoco.*-0.7.8*"/>
+                <include name="org.jacoco.*-0.7.9*"/>
                 <include name="dom4j*"/>
                 <include name="apache-rat-0.10*"/>
                 <include name="xercesImpl-*.jar"/>
@@ -591,6 +602,7 @@ under the License.
                 <include name="forbiddenapis-1.*.jar"/>
                 <include name="forbiddenapis-2.0.jar"/>
                 <include name="forbiddenapis-2.1.jar"/>
+                <include name="forbiddenapis-2.3.jar"/>
                 <include name="apache-rat-0.11.jar"/>
             </fileset>
             <fileset dir="${ooxml.lib}">
@@ -633,6 +645,7 @@ under the License.
                     <available file="${main.jmh.jar}"/>
                     <available file="${main.jmhAnnotation.jar}"/>
                     <available file="${main.hamcrest.jar}"/>
+                    <available file="${main.xmlunit.jar}"/>
                     <available file="${main.mockito.jar}"/>
                     <available file="${main.byte-buddy.jar}"/>
                     <available file="${main.byte-buddy-agent.jar}"/>
@@ -640,6 +653,8 @@ under the License.
                     <available file="${main.ant.jar}"/>
                     <available file="${main.antlauncher.jar}"/>
                     <available file="${asm.jar}"/>
+                    <available file="${asmcommons.jar}"/>
+                    <available file="${asmtree.jar}"/>
                     <available file="${jacoco.zip}"/>
                     <available file="${rat.jar}"/>
                     <available file="${forbidden.jar}"/>
@@ -668,6 +683,7 @@ under the License.
         <downloadfile src="${main.jmh.url}" dest="${main.jmh.jar}"/>
         <downloadfile src="${main.jmhAnnotation.url}" dest="${main.jmhAnnotation.jar}"/>
         <downloadfile src="${main.hamcrest.url}" dest="${main.hamcrest.jar}"/>
+        <downloadfile src="${main.xmlunit.url}" dest="${main.xmlunit.jar}"/>
         <downloadfile src="${main.mockito.url}" dest="${main.mockito.jar}"/>
         <downloadfile src="${main.byte-buddy.url}" dest="${main.byte-buddy.jar}"/>
         <downloadfile src="${main.byte-buddy-agent.url}" dest="${main.byte-buddy-agent.jar}"/>
@@ -675,6 +691,8 @@ under the License.
         <downloadfile src="${main.ant.url}" dest="${main.ant.jar}"/>
         <downloadfile src="${main.antlauncher.url}" dest="${main.antlauncher.jar}"/>
         <downloadfile src="${asm.url}" dest="${asm.jar}"/>
+        <downloadfile src="${asmcommons.url}" dest="${asmcommons.jar}"/>
+        <downloadfile src="${asmtree.url}" dest="${asmtree.jar}"/>
         <downloadfile src="${jacoco.url}" dest="${jacoco.zip}"/>
         <downloadfile src="${main.commons-collections4.url}" dest="${main.commons-collections4.jar}"/>
         <downloadfile src="${main.commons-math3.url}" dest="${main.commons-math3.jar}"/>
@@ -1185,6 +1203,10 @@ under the License.
     <target name="testcoveragereport" depends="jacocotask" description="create test-report" xmlns:jacoco="antlib:org.jacoco.ant" if="coverage.enabled">
         <delete dir="${coverage.dir}"/>
         <mkdir dir="${coverage.dir}"/>
+        <mkdir dir="${main.output.dir}"/>
+        <mkdir dir="${scratchpad.output.dir}"/>
+        <mkdir dir="${ooxml.output.dir}"/>
+        <mkdir dir="${excelant.output.dir}"/>
 
         <jacoco:report>
             <executiondata>
@@ -1284,6 +1306,7 @@ under the License.
                 <jvmarg value="${java9addopens3}" />
                 <jvmarg value="${java9addopens4}" />
                 <jvmarg value="${java9addopens5}" />
+                <jvmarg value="${java9addopens6}" />
                 <jvmarg value="${file.leak.detector}" />
                 <formatter type="plain"/>
                 <formatter type="xml"/>
@@ -1356,6 +1379,7 @@ under the License.
                 <jvmarg value="${java9addopens3}" />
                 <jvmarg value="${java9addopens4}" />
                 <jvmarg value="${java9addopens5}" />
+                <jvmarg value="${java9addopens6}" />
                 <formatter type="plain"/>
                 <formatter type="xml"/>
                 <batchtest todir="${scratchpad.reports.test}">
@@ -1406,6 +1430,7 @@ under the License.
                   <jvmarg value="${java9addopens3}" />
                   <jvmarg value="${java9addopens4}" />
                   <jvmarg value="${java9addopens5}" />
+                  <jvmarg value="${java9addopens6}" />
                   <!-- jvmarg value="-Duser.timezone=UTC"/ -->
                   <jvmarg value="${file.leak.detector}" />
                   <formatter type="plain"/>
@@ -1441,6 +1466,7 @@ under the License.
                   <jvmarg value="${java9addopens3}" />
                   <jvmarg value="${java9addopens4}" />
                   <jvmarg value="${java9addopens5}" />
+                  <jvmarg value="${java9addopens6}" />
                   <formatter type="plain"/>
                   <formatter type="xml"/>
                   <batchtest todir="${ooxml.reports.test}">
@@ -1490,6 +1516,7 @@ under the License.
                 <jvmarg value="${java9addopens3}" />
                 <jvmarg value="${java9addopens4}" />
                 <jvmarg value="${java9addopens5}" />
+                <jvmarg value="${java9addopens6}" />
                 <formatter type="plain"/>
                 <formatter type="xml"/>
                 <batchtest todir="${integration.reports.test}">
@@ -1549,6 +1576,7 @@ under the License.
             <jvmarg value="${java9addopens3}" />
             <jvmarg value="${java9addopens4}" />
             <jvmarg value="${java9addopens5}" />
+            <jvmarg value="${java9addopens6}" />
             <jvmarg value="${file.leak.detector}" />
             <arg value="-ooxml"/>
             <arg value="${ooxml.lite-merged.dir}/ooxml-lite-merged.jar"/>
@@ -1595,6 +1623,7 @@ under the License.
                 <jvmarg value="${java9addopens3}" />
                 <jvmarg value="${java9addopens4}" />
                 <jvmarg value="${java9addopens5}" />
+                <jvmarg value="${java9addopens6}" />
                 <jvmarg value="${file.leak.detector}" />
                 <formatter type="plain"/>
                 <formatter type="xml"/>

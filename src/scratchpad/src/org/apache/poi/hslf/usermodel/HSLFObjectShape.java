@@ -212,7 +212,10 @@ public final class HSLFObjectShape extends HSLFPictureShape implements ObjectSha
     }
 
     public void setFullName(final String fullName) {
-        getExEmbed(true).setClipboardName(fullName);
+        final ExEmbed ex = getExEmbed(true);
+        if (ex != null) {
+            ex.setClipboardName(fullName);
+        }
     }
 
     @Override
@@ -222,7 +225,10 @@ public final class HSLFObjectShape extends HSLFPictureShape implements ObjectSha
     }
 
     public void setProgId(final String progId) {
-        getExEmbed(true).setProgId(progId);
+        final ExEmbed ex = getExEmbed(true);
+        if (ex != null) {
+            ex.setProgId(progId);
+        }
     }
 
     public OutputStream updateObjectData(final Application application, final ObjectMetaData metaData) throws IOException {
@@ -246,16 +252,18 @@ public final class HSLFObjectShape extends HSLFPictureShape implements ObjectSha
 
                     poifs.getRoot().setStorageClsid(md.getClassID());
 
-
                     int oid = getObjectID();
                     if (oid == 0) {
                         // assign new embedding
                         oid = ppt.addEmbed(poifs);
                         setObjectID(oid);
                     } else {
-                        ByteArrayOutputStream bos = new ByteArrayOutputStream(this.size()+1000);
-                        poifs.writeFilesystem(bos);
-                        getObjectData().setData(bos.toByteArray());
+                        final HSLFObjectData od = getObjectData();
+                        if (od != null) {
+                            ByteArrayOutputStream bos = new ByteArrayOutputStream(this.size()+1000);
+                            poifs.writeFilesystem(bos);
+                            od.setData(bos.toByteArray());
+                        }
                     }
 
                     setProgId(md.getProgId());

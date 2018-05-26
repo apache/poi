@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="euc-jp" ?>
-<spec xmlns:foo="foo" xmlns:この草="foo">
-<header>
-<foo:この草>TEST</foo:この草>
-<この草:title>拡張可能なmarkup;言語 (XML)</この草:title>
-<version>第1.0version;</version>
-<w3c-designation>\u65e5\u672C\u8A9E</w3c-designation>
-</header>
-</spec>

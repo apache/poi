@@ -33,23 +33,32 @@ public interface ZipEntrySource extends Closeable {
 	/**
 	 * Returns an Enumeration of all the Entries
 	 */
-	public Enumeration<? extends ZipEntry> getEntries();
-	
+	Enumeration<? extends ZipEntry> getEntries();
+
+	/**
+	 * Return an entry by its path
+	 * @param path the path in unix-notation
+	 * @return the entry or {@code null} if not found
+	 *
+	 * @since POI 4.0.0
+	 */
+	ZipEntry getEntry(String path);
+
 	/**
 	 * Returns an InputStream of the decompressed 
 	 *  data that makes up the entry
 	 */
-	public InputStream getInputStream(ZipEntry entry) throws IOException;
+	InputStream getInputStream(ZipEntry entry) throws IOException;
 	
 	/**
 	 * Indicates we are done with reading, and 
 	 *  resources may be freed
 	 */
 	@Override
-	public void close() throws IOException;
+	void close() throws IOException;
 	
 	/**
 	 * Has close been called already?
 	 */
-	public boolean isClosed();
+	boolean isClosed();
 }

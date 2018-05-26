@@ -27,16 +27,15 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Locale;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POIOLE2TextExtractor;
 import org.apache.poi.POITextExtractor;
-import org.apache.poi.POIXMLException;
 import org.apache.poi.POIXMLTextExtractor;
 import org.apache.poi.UnsupportedFileFormatException;
 import org.apache.poi.hdgf.extractor.VisioTextExtractor;
 import org.apache.poi.hpbf.extractor.PublisherTextExtractor;
-import org.apache.poi.hslf.extractor.PowerPointExtractor;
 import org.apache.poi.hsmf.extractor.OutlookTextExtactor;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.OldExcelFormatException;
@@ -44,18 +43,20 @@ import org.apache.poi.hssf.extractor.EventBasedExcelExtractor;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.hwpf.extractor.Word6Extractor;
 import org.apache.poi.hwpf.extractor.WordExtractor;
+import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.sl.extractor.SlideShowExtractor;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.xdgf.extractor.XDGFVisioExtractor;
-import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
+import org.apache.poi.xssf.extractor.XSSFBEventBasedExcelExtractor;
 import org.apache.poi.xssf.extractor.XSSFEventBasedExcelExtractor;
 import org.apache.poi.xssf.extractor.XSSFExcelExtractor;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
-import org.junit.BeforeClass;
+import org.apache.xmlbeans.XmlException;
 import org.junit.Test;
 
 /**
@@ -65,34 +66,39 @@ public class TestExtractorFactory {
 
     private static final POILogger LOG = POILogFactory.getLogger(TestExtractorFactory.class);
 
-    private static File txt;
+    private static final POIDataSamples ssTests = POIDataSamples.getSpreadSheetInstance();
+    private static final File xls = getFileAndCheck(ssTests, "SampleSS.xls");
+    private static final File xlsx = getFileAndCheck(ssTests, "SampleSS.xlsx");
+    private static final File xlsxStrict = getFileAndCheck(ssTests, "SampleSS.strict.xlsx");
+    private static final File xltx = getFileAndCheck(ssTests, "test.xltx");
+    private static final File xlsEmb = getFileAndCheck(ssTests, "excel_with_embeded.xls");
+    private static final File xlsb = getFileAndCheck(ssTests, "testVarious.xlsb");
 
-    private static File xls;
-    private static File xlsx;
-    private static File xlsxStrict;
-    private static File xltx;
-    private static File xlsEmb;
-    private static File xlsb;
+    private static final POIDataSamples wpTests = POIDataSamples.getDocumentInstance();
+    private static final File doc = getFileAndCheck(wpTests, "SampleDoc.doc");
+    private static final File doc6 = getFileAndCheck(wpTests, "Word6.doc");
+    private static final File doc95 = getFileAndCheck(wpTests, "Word95.doc");
+    private static final File docx = getFileAndCheck(wpTests, "SampleDoc.docx");
+    private static final File dotx = getFileAndCheck(wpTests, "test.dotx");
+    private static final File docEmb = getFileAndCheck(wpTests, "word_with_embeded.doc");
+    private static final File docEmbOOXML = getFileAndCheck(wpTests, "word_with_embeded_ooxml.doc");
 
-    private static File doc;
-    private static File doc6;
-    private static File doc95;
-    private static File docx;
-    private static File dotx;
-    private static File docEmb;
-    private static File docEmbOOXML;
+    private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+    private static final File ppt = getFileAndCheck(slTests, "SampleShow.ppt");
+    private static final File pptx = getFileAndCheck(slTests, "SampleShow.pptx");
+    private static final File txt = getFileAndCheck(slTests, "SampleShow.txt");
 
-    private static File ppt;
-    private static File pptx;
+    private static final POIDataSamples olTests = POIDataSamples.getHSMFInstance();
+    private static final File msg = getFileAndCheck(olTests, "quick.msg");
+    private static final File msgEmb = getFileAndCheck(olTests, "attachment_test_msg.msg");
+    private static final File msgEmbMsg = getFileAndCheck(olTests, "attachment_msg_pdf.msg");
 
-    private static File msg;
-    private static File msgEmb;
-    private static File msgEmbMsg;
+    private static final POIDataSamples dgTests = POIDataSamples.getDiagramInstance();
+    private static final File vsd = getFileAndCheck(dgTests, "Test_Visio-Some_Random_Text.vsd");
+    private static final File vsdx = getFileAndCheck(dgTests, "test.vsdx");
 
-    private static File vsd;
-    private static File vsdx;
-
-    private static File pub;
+    private static POIDataSamples pubTests = POIDataSamples.getPublisherInstance();
+    private static File pub = getFileAndCheck(pubTests, "Simple.pub");
 
     private static File getFileAndCheck(POIDataSamples samples, String name) {
         File file = samples.getFile(name);
@@ -104,595 +110,133 @@ public class TestExtractorFactory {
         return file;
     }
 
-    @BeforeClass
-    public static void setUp() throws Exception {
+    private static final Object[] TEST_SET = {
+        "Excel", xls, ExcelExtractor.class, 200,
+        "Excel - xlsx", xlsx, XSSFExcelExtractor.class, 200,
+        "Excel - xltx", xltx, XSSFExcelExtractor.class, -1,
+        "Excel - xlsb", xlsb, XSSFBEventBasedExcelExtractor.class, -1,
+        "Word", doc, WordExtractor.class, 120,
+        "Word - docx", docx, XWPFWordExtractor.class, 120,
+        "Word - dotx", dotx, XWPFWordExtractor.class, -1,
+        "Word 6", doc6, Word6Extractor.class, 20,
+        "Word 95", doc95, Word6Extractor.class, 120,
+        "PowerPoint", ppt, SlideShowExtractor.class, 120,
+        "PowerPoint - pptx", pptx, SlideShowExtractor.class, 120,
+        "Visio", vsd, VisioTextExtractor.class, 50,
+        "Visio - vsdx", vsdx, XDGFVisioExtractor.class, 20,
+        "Publisher", pub, PublisherTextExtractor.class, 50,
+        "Outlook msg", msg, OutlookTextExtactor.class, 50,
 
-        POIDataSamples ssTests = POIDataSamples.getSpreadSheetInstance();
-        xls = getFileAndCheck(ssTests, "SampleSS.xls");
-        xlsx = getFileAndCheck(ssTests, "SampleSS.xlsx");
-        xlsxStrict = getFileAndCheck(ssTests, "SampleSS.strict.xlsx");
-        xltx = getFileAndCheck(ssTests, "test.xltx");
-        xlsEmb = getFileAndCheck(ssTests, "excel_with_embeded.xls");
-        xlsb = getFileAndCheck(ssTests, "testVarious.xlsb");
+        // TODO Support OOXML-Strict, see bug #57699
+        // xlsxStrict
+    };
 
-        POIDataSamples wpTests = POIDataSamples.getDocumentInstance();
-        doc = getFileAndCheck(wpTests, "SampleDoc.doc");
-        doc6 = getFileAndCheck(wpTests, "Word6.doc");
-        doc95 = getFileAndCheck(wpTests, "Word95.doc");
-        docx = getFileAndCheck(wpTests, "SampleDoc.docx");
-        dotx = getFileAndCheck(wpTests, "test.dotx");
-        docEmb = getFileAndCheck(wpTests, "word_with_embeded.doc");
-        docEmbOOXML = getFileAndCheck(wpTests, "word_with_embeded_ooxml.doc");
-
-        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
-        ppt = getFileAndCheck(slTests, "SampleShow.ppt");
-        pptx = getFileAndCheck(slTests, "SampleShow.pptx");
-        txt = getFileAndCheck(slTests, "SampleShow.txt");
-
-        POIDataSamples dgTests = POIDataSamples.getDiagramInstance();
-        vsd = getFileAndCheck(dgTests, "Test_Visio-Some_Random_Text.vsd");
-        vsdx = getFileAndCheck(dgTests, "test.vsdx");
-
-        POIDataSamples pubTests = POIDataSamples.getPublisherInstance();
-        pub = getFileAndCheck(pubTests, "Simple.pub");
-
-        POIDataSamples olTests = POIDataSamples.getHSMFInstance();
-        msg = getFileAndCheck(olTests, "quick.msg");
-        msgEmb = getFileAndCheck(olTests, "attachment_test_msg.msg");
-        msgEmbMsg = getFileAndCheck(olTests, "attachment_msg_pdf.msg");
+    @FunctionalInterface
+    interface FunctionEx<T, R> {
+        R apply(T t) throws IOException, OpenXML4JException, XmlException;
     }
+
 
     @Test
     public void testFile() throws Exception {
-        // Excel
-        POITextExtractor xlsExtractor = ExtractorFactory.createExtractor(xls);
-        assertNotNull("Had empty extractor for " + xls, xlsExtractor);
-        assertTrue("Expected instanceof ExcelExtractor, but had: " + xlsExtractor.getClass(), 
-                xlsExtractor
-                instanceof ExcelExtractor
-        );
-        assertTrue(
-                xlsExtractor.getText().length() > 200
-        );
-        xlsExtractor.close();
-
-        POITextExtractor extractor = ExtractorFactory.createExtractor(xlsx);
-        assertTrue(
-                extractor.getClass().getName(),
-                extractor
-                instanceof XSSFExcelExtractor
-        );
-        extractor.close();
-
-        extractor = ExtractorFactory.createExtractor(xlsx);
-        assertTrue(
-                extractor.getText().length() > 200
-        );
-        extractor.close();
-
-        extractor = ExtractorFactory.createExtractor(xltx);
-        assertTrue(
-                extractor.getClass().getName(),
-                extractor
-                instanceof XSSFExcelExtractor
-        );
-        extractor.close();
-
-        extractor = ExtractorFactory.createExtractor(xlsb);
-        assertContains(extractor.getText(), "test");
-        extractor.close();
-
-
-        extractor = ExtractorFactory.createExtractor(xltx);
-        assertContains(extractor.getText(), "test");
-        extractor.close();
-
-        // TODO Support OOXML-Strict, see bug #57699
-        try {
-            /*extractor =*/ ExtractorFactory.createExtractor(xlsxStrict);
-            fail("OOXML-Strict isn't yet supported");
-        } catch (POIXMLException e) {
-            // Expected, for now
+        for (int i = 0; i < TEST_SET.length; i += 4) {
+            try (POITextExtractor ext = ExtractorFactory.createExtractor((File) TEST_SET[i + 1])) {
+                testExtractor(ext, (String) TEST_SET[i], (Class) TEST_SET[i + 2], (Integer) TEST_SET[i + 3]);
+            }
         }
-//        extractor = ExtractorFactory.createExtractor(xlsxStrict);
-//        assertTrue(
-//                extractor
-//                instanceof XSSFExcelExtractor
-//        );
-//        extractor.close();
-//
-//        extractor = ExtractorFactory.createExtractor(xlsxStrict);
-//        assertTrue(
-//                extractor.getText().contains("test")
-//        );
-//        extractor.close();
+    }
 
-
-        // Word
-        extractor = ExtractorFactory.createExtractor(doc);
-        assertTrue(
-                extractor
-                instanceof WordExtractor
-        );
-        assertTrue(
-                extractor.getText().length() > 120
-        );
-        extractor.close();
-
-        extractor = ExtractorFactory.createExtractor(doc6);
-        assertTrue(
-                extractor
-                instanceof Word6Extractor
-        );
-        assertTrue(
-                extractor.getText().length() > 20
-        );
-        extractor.close();
-
-        extractor = ExtractorFactory.createExtractor(doc95);
-        assertTrue(
-                extractor
-                instanceof Word6Extractor
-        );
-        assertTrue(
-                extractor.getText().length() > 120
-        );
-        extractor.close();
-
-        extractor = ExtractorFactory.createExtractor(docx);
-        assertTrue(
-                extractor instanceof XWPFWordExtractor
-        );
-        extractor.close();
-
-        extractor = ExtractorFactory.createExtractor(docx);
-        assertTrue(
-                extractor.getText().length() > 120
-        );
-        extractor.close();
-
-        extractor = ExtractorFactory.createExtractor(dotx);
-        assertTrue(
-                extractor instanceof XWPFWordExtractor
-        );
-        extractor.close();
-
-        extractor = ExtractorFactory.createExtractor(dotx);
-        assertContains(extractor.getText(), "Test");
-        extractor.close();
-
-        // PowerPoint (PPT)
-        extractor = ExtractorFactory.createExtractor(ppt);
-        assertTrue(
-                extractor
-                instanceof PowerPointExtractor
-        );
-        assertTrue(
-                extractor.getText().length() > 120
-        );
-        extractor.close();
-
-        // PowerPoint (PPTX)
-        extractor = ExtractorFactory.createExtractor(pptx);
-        assertTrue(
-                extractor
-                instanceof XSLFPowerPointExtractor
-        );
-        assertTrue(
-                extractor.getText().length() > 120
-        );
-        extractor.close();
-
-        // Visio - binary
-        extractor = ExtractorFactory.createExtractor(vsd);
-        assertTrue(
-                extractor
-                instanceof VisioTextExtractor
-        );
-        assertTrue(
-                extractor.getText().length() > 50
-        );
-        extractor.close();
-
-        // Visio - vsdx
-        extractor = ExtractorFactory.createExtractor(vsdx);
-        assertTrue(
-                extractor
-                instanceof XDGFVisioExtractor
-        );
-        assertTrue(
-                extractor.getText().length() > 20
-        );
-        extractor.close();
-
-        // Publisher
-        extractor = ExtractorFactory.createExtractor(pub);
-        assertTrue(
-                extractor
-                instanceof PublisherTextExtractor
-        );
-        assertTrue(
-                extractor.getText().length() > 50
-        );
-        extractor.close();
-
-        // Outlook msg
-        extractor = ExtractorFactory.createExtractor(msg);
-        assertTrue(
-                extractor
-                instanceof OutlookTextExtactor
-        );
-        assertTrue(
-                extractor.getText().length() > 50
-        );
-        extractor.close();
-
+    @Test(expected = IllegalArgumentException.class)
+    public void testFileInvalid() throws Exception {
         // Text
-        try {
-            ExtractorFactory.createExtractor(txt);
-            fail("expected IllegalArgumentException");
-        } catch(IllegalArgumentException e) {
-            // Good
-        }
+        try (POITextExtractor te = ExtractorFactory.createExtractor(txt)) {}
     }
 
     @Test
     public void testInputStream() throws Exception {
-        // Excel
-        POITextExtractor extractor = ExtractorFactory.createExtractor(new FileInputStream(xls));
-        assertTrue(
-                extractor
-                instanceof ExcelExtractor
-        );
-        assertTrue(
-                extractor.getText().length() > 200
-        );
-        extractor.close();
+        testStream((f) -> ExtractorFactory.createExtractor(f), true);
+    }
 
-        extractor = ExtractorFactory.createExtractor(new FileInputStream(xlsx));
-        assertTrue(
-                extractor.getClass().getName(),
-                extractor
-                instanceof XSSFExcelExtractor
-        );
-        assertTrue(
-                extractor.getText().length() > 200
-        );
-        // TODO Support OOXML-Strict, see bug #57699
-//        assertTrue(
-//                ExtractorFactory.createExtractor(new FileInputStream(xlsxStrict))
-//                instanceof XSSFExcelExtractor
-//        );
-//        assertTrue(
-//                ExtractorFactory.createExtractor(new FileInputStream(xlsxStrict)).getText().length() > 200
-//        );
-        extractor.close();
-
-        // Word
-        extractor = ExtractorFactory.createExtractor(new FileInputStream(doc));
-        assertTrue(
-                extractor.getClass().getName(),
-                extractor
-                instanceof WordExtractor
-        );
-        assertTrue(
-                extractor.getText().length() > 120
-        );
-        extractor.close();
-
-        extractor = ExtractorFactory.createExtractor(new FileInputStream(doc6));
-        assertTrue(
-                extractor.getClass().getName(),
-                extractor
-                instanceof Word6Extractor
-        );
-        assertTrue(
-                extractor.getText().length() > 20
-        );
-        extractor.close();
-
-        extractor = ExtractorFactory.createExtractor(new FileInputStream(doc95));
-        assertTrue(
-                extractor.getClass().getName(),
-                extractor
-                instanceof Word6Extractor
-        );
-        assertTrue(
-                extractor.getText().length() > 120
-        );
-        extractor.close();
-
-        extractor = ExtractorFactory.createExtractor(new FileInputStream(docx));
-        assertTrue(
-                extractor
-                instanceof XWPFWordExtractor
-        );
-        assertTrue(
-                extractor.getText().length() > 120
-        );
-        extractor.close();
-
-        // PowerPoint
-        extractor = ExtractorFactory.createExtractor(new FileInputStream(ppt));
-        assertTrue(
-                extractor
-                instanceof PowerPointExtractor
-        );
-        assertTrue(
-                extractor.getText().length() > 120
-        );
-        extractor.close();
-
-        extractor = ExtractorFactory.createExtractor(new FileInputStream(pptx));
-        assertTrue(
-                extractor
-                instanceof XSLFPowerPointExtractor
-        );
-        assertTrue(
-                extractor.getText().length() > 120
-        );
-        extractor.close();
-
-        // Visio
-        extractor = ExtractorFactory.createExtractor(new FileInputStream(vsd));
-        assertTrue(
-                extractor
-                instanceof VisioTextExtractor
-        );
-        assertTrue(
-                extractor.getText().length() > 50
-        );
-        extractor.close();
-
-        // Visio - vsdx
-        extractor = ExtractorFactory.createExtractor(new FileInputStream(vsdx));
-        assertTrue(
-                extractor
-                instanceof XDGFVisioExtractor
-        );
-        assertTrue(
-                extractor.getText().length() > 20
-        );
-        extractor.close();
-        
-        // Publisher
-        extractor = ExtractorFactory.createExtractor(new FileInputStream(pub));
-        assertTrue(
-                extractor
-                instanceof PublisherTextExtractor
-        );
-        assertTrue(
-                extractor.getText().length() > 50
-        );
-        extractor.close();
-
-        // Outlook msg
-        extractor = ExtractorFactory.createExtractor(new FileInputStream(msg));
-        assertTrue(
-                extractor
-                instanceof OutlookTextExtactor
-        );
-        assertTrue(
-                extractor.getText().length() > 50
-        );
-        extractor.close();
-
-        // Text
-        try (FileInputStream stream = new FileInputStream(txt)) {
-            ExtractorFactory.createExtractor(stream);
-            fail("expected IllegalArgumentException");
-        } catch(IllegalArgumentException e) {
-            // Good
-        }
+    @Test(expected = IllegalArgumentException.class)
+    public void testInputStreamInvalid() throws Exception {
+        testInvalid((f) -> ExtractorFactory.createExtractor(f));
     }
 
     @Test
     public void testPOIFS() throws Exception {
-        // Excel
-        assertTrue(
-                ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(xls)))
-                instanceof ExcelExtractor
-        );
-        assertTrue(
-                ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(xls))).getText().length() > 200
-        );
-
-        // Word
-        assertTrue(
-                ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(doc)))
-                instanceof WordExtractor
-        );
-        assertTrue(
-                ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(doc))).getText().length() > 120
-        );
-
-        assertTrue(
-                ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(doc6)))
-                instanceof Word6Extractor
-        );
-        assertTrue(
-                ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(doc6))).getText().length() > 20
-        );
-
-        assertTrue(
-                ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(doc95)))
-                instanceof Word6Extractor
-        );
-        assertTrue(
-                ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(doc95))).getText().length() > 120
-        );
-
-        // PowerPoint
-        assertTrue(
-                ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(ppt)))
-                instanceof PowerPointExtractor
-        );
-        assertTrue(
-                ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(ppt))).getText().length() > 120
-        );
-
-        // Visio
-        assertTrue(
-                ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(vsd)))
-                instanceof VisioTextExtractor
-        );
-        assertTrue(
-                ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(vsd))).getText().length() > 50
-        );
-
-        // Publisher
-        assertTrue(
-                ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(pub)))
-                instanceof PublisherTextExtractor
-        );
-        assertTrue(
-                ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(pub))).getText().length() > 50
-        );
-
-        // Outlook msg
-        assertTrue(
-                ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(msg)))
-                instanceof OutlookTextExtactor
-        );
-        assertTrue(
-                ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(msg))).getText().length() > 50
-        );
-
-        // Text
-        try {
-            ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(txt)));
-            fail("expected IllegalArgumentException");
-        } catch(IOException e) {
-            // Good
-        }
+        testStream((f) -> ExtractorFactory.createExtractor(new POIFSFileSystem(f)), false);
     }
 
+    @Test(expected = IOException.class)
+    public void testPOIFSInvalid() throws Exception {
+        testInvalid((f) -> ExtractorFactory.createExtractor(new POIFSFileSystem(f)));
+    }
 
     @Test
     public void testOPOIFS() throws Exception {
-        // Excel
-        assertTrue(
-                ExtractorFactory.createExtractor(new OPOIFSFileSystem(new FileInputStream(xls)))
-                        instanceof ExcelExtractor
-        );
-        assertTrue(
-                ExtractorFactory.createExtractor(new OPOIFSFileSystem(new FileInputStream(xls))).getText().length() > 200
-        );
+        testStream((f) -> ExtractorFactory.createExtractor(new OPOIFSFileSystem(f)), false);
+    }
 
-        // Word
-        assertTrue(
-                ExtractorFactory.createExtractor(new OPOIFSFileSystem(new FileInputStream(doc)))
-                        instanceof WordExtractor
-        );
-        assertTrue(
-                ExtractorFactory.createExtractor(new OPOIFSFileSystem(new FileInputStream(doc))).getText().length() > 120
-        );
+    @Test(expected = IOException.class)
+    public void testOPOIFSInvalid() throws Exception {
+        testInvalid((f) -> ExtractorFactory.createExtractor(new OPOIFSFileSystem(f)));
+    }
 
-        assertTrue(
-                ExtractorFactory.createExtractor(new OPOIFSFileSystem(new FileInputStream(doc6)))
-                        instanceof Word6Extractor
-        );
-        assertTrue(
-                ExtractorFactory.createExtractor(new OPOIFSFileSystem(new FileInputStream(doc6))).getText().length() > 20
-        );
 
-        assertTrue(
-                ExtractorFactory.createExtractor(new OPOIFSFileSystem(new FileInputStream(doc95)))
-                        instanceof Word6Extractor
-        );
-        assertTrue(
-                ExtractorFactory.createExtractor(new OPOIFSFileSystem(new FileInputStream(doc95))).getText().length() > 120
-        );
+    private void testStream(final FunctionEx<FileInputStream, POITextExtractor> poifsIS, final boolean loadOOXML)
+    throws IOException, OpenXML4JException, XmlException {
+        for (int i = 0; i < TEST_SET.length; i += 4) {
+            File testFile = (File) TEST_SET[i + 1];
+            if (!loadOOXML && (testFile.getName().endsWith("x") || testFile.getName().endsWith("xlsb"))) {
+                continue;
+            }
+            try (FileInputStream fis = new FileInputStream(testFile);
+                 POITextExtractor ext = poifsIS.apply(fis)) {
+                testExtractor(ext, (String) TEST_SET[i], (Class) TEST_SET[i + 2], (Integer) TEST_SET[i + 3]);
+            } catch (IllegalArgumentException e) {
+                fail("failed to process "+testFile);
+            }
+        }
+    }
 
-        // PowerPoint
-        assertTrue(
-                ExtractorFactory.createExtractor(new OPOIFSFileSystem(new FileInputStream(ppt)))
-                        instanceof PowerPointExtractor
-        );
-        assertTrue(
-                ExtractorFactory.createExtractor(new OPOIFSFileSystem(new FileInputStream(ppt))).getText().length() > 120
-        );
+    private void testExtractor(final POITextExtractor ext, final String testcase, final Class extrClass, final Integer minLength) {
+        assertTrue("invalid extractor for " + testcase, extrClass.isInstance(ext));
+        final String actual = ext.getText();
+        if (minLength == -1) {
+            assertContains(actual.toLowerCase(Locale.ROOT), "test");
+        } else {
+            assertTrue("extracted content too short for " + testcase, actual.length() > minLength);
+        }
+    }
 
-        // Visio
-        assertTrue(
-                ExtractorFactory.createExtractor(new OPOIFSFileSystem(new FileInputStream(vsd)))
-                        instanceof VisioTextExtractor
-        );
-        assertTrue(
-                ExtractorFactory.createExtractor(new OPOIFSFileSystem(new FileInputStream(vsd))).getText().length() > 50
-        );
-
-        // Publisher
-        assertTrue(
-                ExtractorFactory.createExtractor(new OPOIFSFileSystem(new FileInputStream(pub)))
-                        instanceof PublisherTextExtractor
-        );
-        assertTrue(
-                ExtractorFactory.createExtractor(new OPOIFSFileSystem(new FileInputStream(pub))).getText().length() > 50
-        );
-
-        // Outlook msg
-        assertTrue(
-                ExtractorFactory.createExtractor(new OPOIFSFileSystem(new FileInputStream(msg)))
-                        instanceof OutlookTextExtactor
-        );
-        assertTrue(
-                ExtractorFactory.createExtractor(new OPOIFSFileSystem(new FileInputStream(msg))).getText().length() > 50
-        );
-
+    private void testInvalid(FunctionEx<FileInputStream, POITextExtractor> poifs) throws IOException, OpenXML4JException, XmlException {
         // Text
-        try {
-            ExtractorFactory.createExtractor(new OPOIFSFileSystem(new FileInputStream(txt)));
-            fail("expected IllegalArgumentException");
-        } catch(IOException e) {
-            // Good
+        try (FileInputStream fis = new FileInputStream(txt);
+             POITextExtractor te = poifs.apply(fis)) {
         }
     }
 
     @Test
     public void testPackage() throws Exception {
-        // Excel
-        POIXMLTextExtractor extractor = ExtractorFactory.createExtractor(OPCPackage.open(xlsx.toString(), PackageAccess.READ));
-        assertTrue(extractor instanceof XSSFExcelExtractor);
-        extractor.close();
-        extractor = ExtractorFactory.createExtractor(OPCPackage.open(xlsx.toString()));
-        assertTrue(extractor.getText().length() > 200);
-        extractor.close();
+        for (int i = 0; i < TEST_SET.length; i += 4) {
+            final File testFile = (File) TEST_SET[i + 1];
+            if (!testFile.getName().endsWith("x")) {
+                continue;
+            }
 
-        // Word
-        extractor = ExtractorFactory.createExtractor(OPCPackage.open(docx.toString()));
-        assertTrue(extractor instanceof XWPFWordExtractor);
-        extractor.close();
-
-        extractor = ExtractorFactory.createExtractor(OPCPackage.open(docx.toString()));
-        assertTrue(extractor.getText().length() > 120);
-        extractor.close();
-
-        // PowerPoint
-        extractor = ExtractorFactory.createExtractor(OPCPackage.open(pptx.toString()));
-        assertTrue(extractor instanceof XSLFPowerPointExtractor);
-        extractor.close();
-
-        extractor = ExtractorFactory.createExtractor(OPCPackage.open(pptx.toString()));
-        assertTrue(extractor.getText().length() > 120);
-        extractor.close();
-        
-        // Visio
-        extractor = ExtractorFactory.createExtractor(OPCPackage.open(vsdx.toString()));
-        assertTrue(extractor instanceof XDGFVisioExtractor);
-        assertTrue(extractor.getText().length() > 20);
-        extractor.close();
-
-        // Text
-        try {
-            ExtractorFactory.createExtractor(OPCPackage.open(txt.toString()));
-            fail("TestExtractorFactory.testPackage() failed on " + txt);
-        } catch(UnsupportedFileFormatException e) {
-            // Good
-        } catch (Exception e) {
-            LOG.log(POILogger.WARN, "TestExtractorFactory.testPackage() failed on " + txt);
-            throw e;
+            try (final OPCPackage pkg = OPCPackage.open(testFile, PackageAccess.READ);
+                 final POITextExtractor ext = ExtractorFactory.createExtractor(pkg)) {
+                testExtractor(ext, (String) TEST_SET[i], (Class) TEST_SET[i + 2], (Integer) TEST_SET[i + 3]);
+                pkg.revert();
+            }
         }
+    }
+
+    @Test(expected = UnsupportedFileFormatException.class)
+    public void testPackageInvalid() throws Exception {
+        // Text
+        try (final OPCPackage pkg = OPCPackage.open(txt, PackageAccess.READ);
+             final POITextExtractor te = ExtractorFactory.createExtractor(pkg)) {}
     }
 
     @Test
@@ -781,141 +325,49 @@ public class TestExtractorFactory {
      *  does poifs embedded, but will do ooxml ones
      *  at some point.
      */
-    @SuppressWarnings("deprecation")
     @Test
     public void testEmbedded() throws Exception {
-        POIOLE2TextExtractor ext;
-        POITextExtractor[] embeds;
+        final Object[] testObj = {
+            "No embeddings", xls, "0-0-0-0-0-0",
+            "Excel", xlsEmb, "6-2-2-2-0-0",
+            "Word", docEmb, "4-1-2-1-0-0",
+            "Word which contains an OOXML file", docEmbOOXML, "3-0-1-1-0-1",
+            "Outlook", msgEmb, "1-1-0-0-0-0",
+            "Outlook with another outlook file in it", msgEmbMsg, "1-0-0-0-1-0",
+        };
 
-        // No embeddings
-        ext = (POIOLE2TextExtractor)
-                ExtractorFactory.createExtractor(xls);
-        embeds = ExtractorFactory.getEmbededDocsTextExtractors(ext);
-        assertEquals(0, embeds.length);
-        ext.close();
+        for (int i=0; i<testObj.length; i+=3) {
+            try (final POIOLE2TextExtractor ext = ExtractorFactory.createExtractor((File)testObj[i+1])) {
+                final POITextExtractor[] embeds = ExtractorFactory.getEmbeddedDocsTextExtractors(ext);
 
-        // No embeddings
-        ext = (POIOLE2TextExtractor)
-                ExtractorFactory.createExtractor(xls);
-        embeds = ExtractorFactory.getEmbeddedDocsTextExtractors(ext);
-        assertEquals(0, embeds.length);
-        ext.close();
+                int numWord = 0, numXls = 0, numPpt = 0, numMsg = 0, numWordX = 0;
+                for (POITextExtractor embed : embeds) {
+                    assertTrue(embed.getText().length() > 20);
+                    if (embed instanceof SlideShowExtractor) {
+                        numPpt++;
+                    } else if (embed instanceof ExcelExtractor) {
+                        numXls++;
+                    } else if (embed instanceof WordExtractor) {
+                        numWord++;
+                    } else if (embed instanceof OutlookTextExtactor) {
+                        numMsg++;
+                    } else if (embed instanceof XWPFWordExtractor) {
+                        numWordX++;
+                    }
+                }
 
-        // Excel
-        ext = (POIOLE2TextExtractor)
-                ExtractorFactory.createExtractor(xlsEmb);
-        embeds = ExtractorFactory.getEmbededDocsTextExtractors(ext);
-        assertNotNull(embeds);
-
-        // Excel
-        ext = (POIOLE2TextExtractor)
-                ExtractorFactory.createExtractor(xlsEmb);
-        embeds = ExtractorFactory.getEmbeddedDocsTextExtractors(ext);
-
-        assertEquals(6, embeds.length);
-        int numWord = 0, numXls = 0, numPpt = 0, numMsg = 0, numWordX;
-        for (POITextExtractor embed : embeds) {
-            assertTrue(embed.getText().length() > 20);
-
-            if (embed instanceof PowerPointExtractor) numPpt++;
-            else if (embed instanceof ExcelExtractor) numXls++;
-            else if (embed instanceof WordExtractor) numWord++;
-            else if (embed instanceof OutlookTextExtactor) numMsg++;
+                final String actual = embeds.length+"-"+numWord+"-"+numXls+"-"+numPpt+"-"+numMsg+"-"+numWordX;
+                final String expected = (String)testObj[i+2];
+                assertEquals("invalid number of embeddings - "+testObj[i], expected, actual);
+            }
         }
-        assertEquals(2, numPpt);
-        assertEquals(2, numXls);
-        assertEquals(2, numWord);
-        assertEquals(0, numMsg);
-        ext.close();
-
-        // Word
-        ext = (POIOLE2TextExtractor)
-                ExtractorFactory.createExtractor(docEmb);
-        embeds = ExtractorFactory.getEmbededDocsTextExtractors(ext);
-
-        numWord = 0; numXls = 0; numPpt = 0; numMsg = 0;
-        assertEquals(4, embeds.length);
-        for (POITextExtractor embed : embeds) {
-            assertTrue(embed.getText().length() > 20);
-            if (embed instanceof PowerPointExtractor) numPpt++;
-            else if (embed instanceof ExcelExtractor) numXls++;
-            else if (embed instanceof WordExtractor) numWord++;
-            else if (embed instanceof OutlookTextExtactor) numMsg++;
-        }
-        assertEquals(1, numPpt);
-        assertEquals(2, numXls);
-        assertEquals(1, numWord);
-        assertEquals(0, numMsg);
-        ext.close();
-
-        // Word which contains an OOXML file
-        ext = (POIOLE2TextExtractor)
-                ExtractorFactory.createExtractor(docEmbOOXML);
-        embeds = ExtractorFactory.getEmbededDocsTextExtractors(ext);
-
-        numWord = 0; numXls = 0; numPpt = 0; numMsg = 0; numWordX = 0;
-        assertEquals(3, embeds.length);
-        for (POITextExtractor embed : embeds) {
-            assertTrue(embed.getText().length() > 20);
-            if (embed instanceof PowerPointExtractor) numPpt++;
-            else if (embed instanceof ExcelExtractor) numXls++;
-            else if (embed instanceof WordExtractor) numWord++;
-            else if (embed instanceof OutlookTextExtactor) numMsg++;
-            else if (embed instanceof XWPFWordExtractor) numWordX++;
-        }
-        assertEquals(1, numPpt);
-        assertEquals(1, numXls);
-        assertEquals(0, numWord);
-        assertEquals(1, numWordX);
-        assertEquals(0, numMsg);
-        ext.close();
-
-        // Outlook
-        ext = (OutlookTextExtactor)
-                ExtractorFactory.createExtractor(msgEmb);
-        embeds = ExtractorFactory.getEmbededDocsTextExtractors(ext);
-
-        numWord = 0; numXls = 0; numPpt = 0; numMsg = 0;
-        assertEquals(1, embeds.length);
-        for (POITextExtractor embed : embeds) {
-            assertTrue(embed.getText().length() > 20);
-            if (embed instanceof PowerPointExtractor) numPpt++;
-            else if (embed instanceof ExcelExtractor) numXls++;
-            else if (embed instanceof WordExtractor) numWord++;
-            else if (embed instanceof OutlookTextExtactor) numMsg++;
-        }
-        assertEquals(0, numPpt);
-        assertEquals(0, numXls);
-        assertEquals(1, numWord);
-        assertEquals(0, numMsg);
-        ext.close();
-
-        // Outlook with another outlook file in it
-        ext = (OutlookTextExtactor)
-                ExtractorFactory.createExtractor(msgEmbMsg);
-        embeds = ExtractorFactory.getEmbededDocsTextExtractors(ext);
-
-        numWord = 0; numXls = 0; numPpt = 0; numMsg = 0;
-        assertEquals(1, embeds.length);
-        for (POITextExtractor embed : embeds) {
-            assertTrue(embed.getText().length() > 20);
-            if (embed instanceof PowerPointExtractor) numPpt++;
-            else if (embed instanceof ExcelExtractor) numXls++;
-            else if (embed instanceof WordExtractor) numWord++;
-            else if (embed instanceof OutlookTextExtactor) numMsg++;
-        }
-        assertEquals(0, numPpt);
-        assertEquals(0, numXls);
-        assertEquals(0, numWord);
-        assertEquals(1, numMsg);
-        ext.close();
 
         // TODO - PowerPoint
         // TODO - Publisher
         // TODO - Visio
     }
 
-    private static final String[] EXPECTED_FAILURES = new String[] {
+    private static final String[] EXPECTED_FAILURES = {
         // password protected files
         "spreadsheet/password.xls",
         "spreadsheet/protected_passtika.xlsx",
@@ -1017,37 +469,26 @@ public class TestExtractorFactory {
      *  #59074 - Excel 95 files should give a helpful message, not just 
      *   "No supported documents found in the OLE2 stream"
      */
-    @Test
+    @Test(expected = OldExcelFormatException.class)
     public void bug59074() throws Exception {
-        try {
-            ExtractorFactory.createExtractor(
-                    POIDataSamples.getSpreadSheetInstance().getFile("59074.xls"));
-            fail("Old excel formats not supported via ExtractorFactory");
-        } catch (OldExcelFormatException e) {
-            // expected here
-        }
+        ExtractorFactory.createExtractor(
+                POIDataSamples.getSpreadSheetInstance().getFile("59074.xls"));
     }
 
     @SuppressWarnings("deprecation")
-    @Test
-    public void testGetEmbeddedFromXMLExtractor() {
-        try {
-            // currently not implemented
-            ExtractorFactory.getEmbededDocsTextExtractors((POIXMLTextExtractor)null);
-            fail("Unsupported currently");
-        } catch (IllegalStateException e) {
-            // expected here
-        }
-
-        try {
-            // currently not implemented
-            ExtractorFactory.getEmbeddedDocsTextExtractors((POIXMLTextExtractor)null);
-            fail("Unsupported currently");
-        } catch (IllegalStateException e) {
-            // expected here
-        }
+    @Test(expected = IllegalStateException.class)
+    public void testGetEmbedFromXMLExtractor() {
+        // currently not implemented
+        ExtractorFactory.getEmbededDocsTextExtractors((POIXMLTextExtractor) null);
     }
-    
+
+    @SuppressWarnings("deprecation")
+    @Test(expected = IllegalStateException.class)
+    public void testGetEmbeddedFromXMLExtractor() {
+        // currently not implemented
+        ExtractorFactory.getEmbeddedDocsTextExtractors((POIXMLTextExtractor)null);
+    }
+
     // This bug is currently open. This test will fail with "expected error not thrown" when the bug has been fixed.
     // When this happens, change this from @Test(expected=...) to @Test
     // bug 45565: text within TextBoxes is extracted by ExcelExtractor and WordExtractor

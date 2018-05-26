@@ -1,7 +1,0 @@
-<xb:config xmlns:xb="http://xml.apache.org/xmlbeans/2004/02/xbean/config">
-
-  <xb:namespace uriprefix="http://openuri.org/enum">
-    <xb:package>com.enumtest</xb:package>
-  </xb:namespace>
-
-</xb:config>

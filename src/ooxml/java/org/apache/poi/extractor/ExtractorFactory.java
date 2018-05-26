@@ -51,6 +51,7 @@ import org.apache.poi.poifs.filesystem.NotOLE2FileException;
 import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.sl.extractor.SlideShowExtractor;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.POILogFactory;
@@ -58,6 +59,7 @@ import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Removal;
 import org.apache.poi.xdgf.extractor.XDGFVisioExtractor;
 import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
+import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFRelation;
 import org.apache.poi.xslf.usermodel.XSLFSlideShow;
 import org.apache.poi.xssf.extractor.XSSFBEventBasedExcelExtractor;
@@ -127,20 +129,20 @@ public class ExtractorFactory {
          return OLE2ExtractorFactory.getPreferEventExtractor();
     }
 
-    public static POITextExtractor createExtractor(File f) throws IOException, OpenXML4JException, XmlException {
+    public static <T extends POITextExtractor> T createExtractor(File f) throws IOException, OpenXML4JException, XmlException {
         NPOIFSFileSystem fs = null;
         try {
             fs = new NPOIFSFileSystem(f);
             if (fs.getRoot().hasEntry(Decryptor.DEFAULT_POIFS_ENTRY)) {
-                return createEncyptedOOXMLExtractor(fs);
+                return (T)createEncryptedOOXMLExtractor(fs);
             }
-            POIOLE2TextExtractor extractor = createExtractor(fs);
+            POITextExtractor extractor = createExtractor(fs);
             extractor.setFilesystem(fs);
-            return extractor;
+            return (T)extractor;
         } catch (OfficeXmlFileException e) {
             // ensure file-handle release
             IOUtils.closeQuietly(fs);
-            return createExtractor(OPCPackage.open(f.toString(), PackageAccess.READ));
+            return (T)createExtractor(OPCPackage.open(f.toString(), PackageAccess.READ));
         } catch (NotOLE2FileException ne) {
             // ensure file-handle release
             IOUtils.closeQuietly(fs);
@@ -161,7 +163,7 @@ public class ExtractorFactory {
         case OLE2:
             NPOIFSFileSystem fs = new NPOIFSFileSystem(is);
             boolean isEncrypted = fs.getRoot().hasEntry(Decryptor.DEFAULT_POIFS_ENTRY); 
-            return isEncrypted ? createEncyptedOOXMLExtractor(fs) : createExtractor(fs);
+            return isEncrypted ? createEncryptedOOXMLExtractor(fs) : createExtractor(fs);
         case OOXML:
             return createExtractor(OPCPackage.open(is));
         default:
@@ -179,7 +181,7 @@ public class ExtractorFactory {
      * @throws XmlException If an XML parsing error occurs.
      * @throws IllegalArgumentException If no matching file type could be found.
      */
-    public static POIXMLTextExtractor createExtractor(OPCPackage pkg) throws IOException, OpenXML4JException, XmlException {
+    public static POITextExtractor createExtractor(OPCPackage pkg) throws IOException, OpenXML4JException, XmlException {
         try {
             // Check for the normal Office core document
             PackageRelationshipCollection core;
@@ -226,13 +228,13 @@ public class ExtractorFactory {
             // Is it XSLF?
             for (XSLFRelation rel : XSLFPowerPointExtractor.SUPPORTED_TYPES) {
                 if ( rel.getContentType().equals( contentType ) ) {
-                    return new XSLFPowerPointExtractor(pkg);
+                    return new SlideShowExtractor(new XMLSlideShow(pkg));
                 }
             }
      
             // special handling for SlideShow-Theme-files, 
             if (XSLFRelation.THEME_MANAGER.getContentType().equals(contentType)) {
-                return new XSLFPowerPointExtractor(new XSLFSlideShow(pkg));
+                return new SlideShowExtractor(new XMLSlideShow(pkg));
             }
 
             // How about xlsb?
@@ -252,28 +254,28 @@ public class ExtractorFactory {
         }
     }
 
-    public static POIOLE2TextExtractor createExtractor(POIFSFileSystem fs) throws IOException, OpenXML4JException, XmlException {
-        return OLE2ExtractorFactory.createExtractor(fs);
+    public static <T extends POITextExtractor> T createExtractor(POIFSFileSystem fs) throws IOException, OpenXML4JException, XmlException {
+        return createExtractor(fs.getRoot());
     }
-    public static POIOLE2TextExtractor createExtractor(NPOIFSFileSystem fs) throws IOException, OpenXML4JException, XmlException {
-        return OLE2ExtractorFactory.createExtractor(fs);
+    public static <T extends POITextExtractor> T createExtractor(NPOIFSFileSystem fs) throws IOException, OpenXML4JException, XmlException {
+        return createExtractor(fs.getRoot());
     }
-    public static POIOLE2TextExtractor createExtractor(OPOIFSFileSystem fs) throws IOException, OpenXML4JException, XmlException {
-        return OLE2ExtractorFactory.createExtractor(fs);
+    public static <T extends POITextExtractor> T createExtractor(OPOIFSFileSystem fs) throws IOException, OpenXML4JException, XmlException {
+        return createExtractor(fs.getRoot());
     }
 
-    public static POITextExtractor createExtractor(DirectoryNode poifsDir) throws IOException, OpenXML4JException, XmlException
+    public static <T extends POITextExtractor> T createExtractor(DirectoryNode poifsDir) throws IOException, OpenXML4JException, XmlException
     {
         // First, check for OOXML
         for (String entryName : poifsDir.getEntryNames()) {
             if (entryName.equals("Package")) {
                 OPCPackage pkg = OPCPackage.open(poifsDir.createDocumentInputStream("Package"));
-                return createExtractor(pkg);
+                return (T)createExtractor(pkg);
             }
         }
 
         // If not, ask the OLE2 code to check, with Scratchpad if possible
-        return OLE2ExtractorFactory.createExtractor(poifsDir);
+        return (T)OLE2ExtractorFactory.createExtractor(poifsDir);
     }
 
     /**
@@ -403,7 +405,7 @@ public class ExtractorFactory {
         throw new IllegalStateException("Not yet supported");
     }
     
-    private static POIXMLTextExtractor createEncyptedOOXMLExtractor(NPOIFSFileSystem fs)
+    private static POITextExtractor createEncryptedOOXMLExtractor(NPOIFSFileSystem fs)
     throws IOException {
         String pass = Biff8EncryptionKey.getCurrentUserPassword();
         if (pass == null) {
@@ -425,6 +427,10 @@ public class ExtractorFactory {
             throw new EncryptedDocumentException(e);
         } finally {
             IOUtils.closeQuietly(is);
+
+            // also close the NPOIFSFileSystem here as we read all the data
+            // while decrypting
+            fs.close();
         }
     }
 }

@@ -26,4 +26,8 @@ public class NotOfficeXmlFileException extends UnsupportedFileFormatException {
     public NotOfficeXmlFileException(String message) {
         super(message);
     }
+
+    public NotOfficeXmlFileException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

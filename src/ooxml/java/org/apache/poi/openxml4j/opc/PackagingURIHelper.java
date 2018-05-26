@@ -236,7 +236,7 @@ public final class PackagingURIHelper {
 	 * @return the combined URI
 	 */
 	public static URI combine(URI prefix, URI suffix) {
-		URI retUri = null;
+		URI retUri;
 		try {
 			retUri = new URI(combine(prefix.getPath(), suffix.getPath()));
 		} catch (URISyntaxException e) {
@@ -694,7 +694,7 @@ public final class PackagingURIHelper {
      */
     public static URI toURI(String value) throws URISyntaxException  {
         //5. Convert all back slashes to forward slashes
-        if (value.indexOf("\\") != -1) {
+        if (value.contains("\\")) {
              value = value.replace('\\', '/');
         }
 

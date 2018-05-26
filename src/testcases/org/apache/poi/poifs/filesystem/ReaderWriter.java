@@ -29,6 +29,7 @@ import java.util.Map;
 import org.apache.poi.poifs.eventfilesystem.POIFSReader;
 import org.apache.poi.poifs.eventfilesystem.POIFSReaderEvent;
 import org.apache.poi.poifs.eventfilesystem.POIFSReaderListener;
+import org.apache.poi.util.IOUtils;
 
 /**
  * Test (Proof of concept) program that employs the
@@ -110,16 +111,15 @@ public class ReaderWriter
     @Override
     public void processPOIFSReaderEvent(final POIFSReaderEvent event)
     {
+        @SuppressWarnings("resource")
         DocumentInputStream istream = event.getStream();
         POIFSDocumentPath   path    = event.getPath();
         String              name    = event.getName();
 
-        try
-        {
-            int    size = istream.available();
-            byte[] data = new byte[ istream.available() ];
+        try {
+            byte[] data = IOUtils.toByteArray(istream);
+            int    size = data.length;
 
-            istream.read(data);
             DocumentDescriptor descriptor = new DocumentDescriptor(path,
                                                 name);
 

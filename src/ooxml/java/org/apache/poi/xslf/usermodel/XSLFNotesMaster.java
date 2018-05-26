@@ -51,7 +51,6 @@ import org.openxmlformats.schemas.presentationml.x2006.main.NotesMasterDocument;
  public class XSLFNotesMaster extends XSLFSheet
      implements MasterSheet<XSLFShape,XSLFTextParagraph> {
 	 private CTNotesMaster _slide;
-     private XSLFTheme _theme;
 
     XSLFNotesMaster() {
         super();
@@ -100,21 +99,15 @@ import org.openxmlformats.schemas.presentationml.x2006.main.NotesMasterDocument;
     public MasterSheet<XSLFShape,XSLFTextParagraph> getMasterSheet() {
         return null;
     }
-    
+
+
     @Override
-    public XSLFTheme getTheme() {
-        if (_theme == null) {
-            for (POIXMLDocumentPart p : getRelations()) {
-                if (p instanceof XSLFTheme) {
-                    _theme = (XSLFTheme) p;
-                    CTColorMapping cmap = _slide.getClrMap();
-                    if (cmap != null) {
-                        _theme.initColorMap(cmap);
-                    }
-                    break;
-                }
-            }
-        }
-        return _theme;
-    }    
+    boolean isSupportTheme() {
+        return true;
+    }
+
+    @Override
+    CTColorMapping getColorMapping() {
+        return _slide.getClrMap();
+    }
 }

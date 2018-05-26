@@ -17,7 +17,6 @@
 package org.apache.poi.xslf.usermodel;
 
 import java.awt.Color;
-import java.util.Locale;
 
 import org.apache.poi.common.usermodel.fonts.FontCharset;
 import org.apache.poi.common.usermodel.fonts.FontFamily;
@@ -31,7 +30,8 @@ import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.util.Beta;
-import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.xslf.model.CharacterPropertyFetcher;
 import org.apache.poi.xslf.usermodel.XSLFPropertiesDelegate.XSLFFillProperties;
 import org.apache.xmlbeans.XmlObject;
@@ -42,15 +42,14 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeStyle;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBodyProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextField;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextFont;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextLineBreak;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextNormalAutofit;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextStrikeType;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextUnderlineType;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 
 /**
  * Represents a run of text within the containing text body. The run element is the
@@ -58,6 +57,8 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
  */
 @Beta
 public class XSLFTextRun implements TextRun {
+    private static final POILogger LOG = POILogFactory.getLogger(XSLFTextRun.class);
+
     private final XmlObject _r;
     private final XSLFTextParagraph _p;
 
@@ -81,36 +82,6 @@ public class XSLFTextRun implements TextRun {
             return "\n";
         }
         return ((CTRegularTextRun)_r).getT();
-    }
-
-    String getRenderableText(){
-        if (_r instanceof CTTextField) {
-            CTTextField tf = (CTTextField)_r;
-            XSLFSheet sheet = _p.getParentShape().getSheet();
-            if ("slidenum".equals(tf.getType()) && sheet instanceof XSLFSlide) {
-                return Integer.toString(((XSLFSlide)sheet).getSlideNumber());
-            }
-            return tf.getT();
-        } else if (_r instanceof CTTextLineBreak) {
-            return "\n";
-        }
-
-        return getRenderableText(((CTRegularTextRun)_r).getT());
-    }
-
-    /* package */ String getRenderableText(final String txt){
-        // TODO: finish support for tabs
-        final String txtSpace = txt.replace("\t", "  ");
-        final Locale loc = LocaleUtil.getUserLocale();
-
-        switch (getTextCap()) {
-            case ALL:
-                return txtSpace.toUpperCase(loc);
-            case SMALL:
-                return txtSpace.toLowerCase(loc);
-            default:
-                return txtSpace;
-        }
     }
 
     @Override
@@ -141,7 +112,8 @@ public class XSLFTextRun implements TextRun {
     @Override
     public void setFontColor(PaintStyle color) {
         if (!(color instanceof SolidPaint)) {
-            throw new IllegalArgumentException("Currently only SolidPaint is supported!");
+            LOG.log(POILogger.WARN, "Currently only SolidPaint is supported!");
+            return;
         }
         SolidPaint sp = (SolidPaint)color;
         Color c = DrawPaint.applyColorTransform(sp.getSolidColor());
@@ -207,12 +179,18 @@ public class XSLFTextRun implements TextRun {
     @Override
     public Double getFontSize(){
         double scale = 1;
-        CTTextNormalAutofit afit = getParentParagraph().getParentShape().getTextBodyPr().getNormAutofit();
-        if(afit != null) {
-            scale = (double)afit.getFontScale() / 100000;
+        final XSLFTextShape ps = getParentParagraph().getParentShape();
+        if (ps != null) {
+            final CTTextBodyProperties tbp = ps.getTextBodyPr();
+            if (tbp != null) {
+                CTTextNormalAutofit afit = tbp.getNormAutofit();
+                if (afit != null && afit.isSetFontScale()) {
+                    scale = afit.getFontScale() / 100000.;
+                }
+            }
         }
 
-        CharacterPropertyFetcher<Double> fetcher = new CharacterPropertyFetcher<Double>(_p.getIndentLevel()){
+        final CharacterPropertyFetcher<Double> fetcher = new CharacterPropertyFetcher<Double>(_p.getIndentLevel()){
             @Override
             public boolean fetch(CTTextCharacterProperties props){
                 if (props != null && props.isSetSz()) {
@@ -230,6 +208,7 @@ public class XSLFTextRun implements TextRun {
      * @return the spacing between characters within a text run,
      * If this attribute is omitted than a value of 0 or no adjustment is assumed.
      */
+    @SuppressWarnings("WeakerAccess")
     public double getCharacterSpacing(){
 
         CharacterPropertyFetcher<Double> fetcher = new CharacterPropertyFetcher<Double>(_p.getIndentLevel()){
@@ -255,6 +234,7 @@ public class XSLFTextRun implements TextRun {
      *
      * @param spc  character spacing in points.
      */
+    @SuppressWarnings("WeakerAccess")
     public void setCharacterSpacing(double spc){
         CTTextCharacterProperties rPr = getRPr(true);
         if(spc == 0.0) {
@@ -357,9 +337,8 @@ public class XSLFTextRun implements TextRun {
      *     The size is specified using a percentage.
      *     Positive values indicate superscript, negative values indicate subscript.
      *  </p>
-     *
-     * @param baselineOffset
      */
+    @SuppressWarnings("WeakerAccess")
     public void setBaselineOffset(double baselineOffset){
        getRPr(true).setBaseline((int) baselineOffset * 1000);
     }
@@ -370,6 +349,7 @@ public class XSLFTextRun implements TextRun {
      *
      * @see #setBaselineOffset(double)
      */
+    @SuppressWarnings("WeakerAccess")
     public void setSuperscript(boolean flag){
         setBaselineOffset(flag ? 30. : 0.);
     }
@@ -380,6 +360,7 @@ public class XSLFTextRun implements TextRun {
      *
      * @see #setBaselineOffset(double)
      */
+    @SuppressWarnings("WeakerAccess")
     public void setSubscript(boolean flag){
         setBaselineOffset(flag ? -25.0 : 0.);
     }
@@ -544,38 +525,23 @@ public class XSLFTextRun implements TextRun {
         return new XSLFHyperlink(hl, _p.getParentShape().getSheet());
     }
 
-    private boolean fetchCharacterProperty(CharacterPropertyFetcher<?> fetcher){
+    private void fetchCharacterProperty(final CharacterPropertyFetcher<?> visitor){
         XSLFTextShape shape = _p.getParentShape();
-        XSLFSheet sheet = shape.getSheet();
 
         CTTextCharacterProperties rPr = getRPr(false);
-        if (rPr != null && fetcher.fetch(rPr)) {
-            return true;
+        if (rPr != null && visitor.fetch(rPr)) {
+            return;
         }
 
-        if (shape.fetchShapeProperty(fetcher)) {
-            return true;
+        if (shape.fetchShapeProperty(visitor)) {
+            return;
         }
 
-        CTPlaceholder ph = shape.getCTPlaceholder();
-        if (ph == null){
-            // if it is a plain text box then take defaults from presentation.xml
-            @SuppressWarnings("resource")
-            XMLSlideShow ppt = sheet.getSlideShow();
-            // TODO: determine master shape
-            CTTextParagraphProperties themeProps = ppt.getDefaultParagraphStyle(_p.getIndentLevel());
-            if (themeProps != null && fetcher.fetch(themeProps)) {
-                return true;
-            }
+        if (_p.fetchThemeProperty(visitor)) {
+            return;
         }
 
-        // TODO: determine master shape
-        CTTextParagraphProperties defaultProps =  _p.getDefaultMasterStyle();
-        if(defaultProps != null && fetcher.fetch(defaultProps)) {
-            return true;
-        }
-
-        return false;
+        _p.fetchMasterProperty(visitor);
     }
 
     void copy(XSLFTextRun r){
@@ -630,15 +596,18 @@ public class XSLFTextRun implements TextRun {
     }
 
 
-    private class XSLFFontInfo implements FontInfo {
+    private final class XSLFFontInfo implements FontInfo {
         private final FontGroup fontGroup;
 
         private XSLFFontInfo(FontGroup fontGroup) {
             this.fontGroup = (fontGroup != null) ? fontGroup : FontGroup.getFontGroupFirst(getRawText());
         }
 
-        public void copyFrom(FontInfo fontInfo) {
+        void copyFrom(FontInfo fontInfo) {
             CTTextFont tf = getXmlObject(true);
+            if (tf == null) {
+                return;
+            }
             setTypeface(fontInfo.getTypeface());
             setCharset(fontInfo.getCharset());
             FontPitch pitch = fontInfo.getPitch();
@@ -672,7 +641,10 @@ public class XSLFTextRun implements TextRun {
         @Override
         public void setTypeface(String typeface) {
             if (typeface != null) {
-                getXmlObject(true).setTypeface(typeface);
+                final CTTextFont tf = getXmlObject(true);
+                if (tf != null) {
+                    tf.setTypeface(typeface);
+                }
                 return;
             }
             
@@ -715,6 +687,9 @@ public class XSLFTextRun implements TextRun {
         @Override
         public void setCharset(FontCharset charset) {
             CTTextFont tf = getXmlObject(true);
+            if (tf == null) {
+                return;
+            }
             if (charset != null) {
                 tf.setCharset((byte)charset.getNativeId());
             } else {
@@ -733,7 +708,7 @@ public class XSLFTextRun implements TextRun {
         @Override
         public void setFamily(FontFamily family) {
             CTTextFont tf = getXmlObject(true);
-            if (family == null && !tf.isSetPitchFamily()) {
+            if (tf == null || (family == null && !tf.isSetPitchFamily())) {
                 return;
             }
             FontPitch pitch = (tf.isSetPitchFamily())
@@ -752,7 +727,7 @@ public class XSLFTextRun implements TextRun {
         @Override
         public void setPitch(FontPitch pitch) {
             CTTextFont tf = getXmlObject(true);
-            if (pitch == null && !tf.isSetPitchFamily()) {
+            if (tf == null || (pitch == null && !tf.isSetPitchFamily())) {
                 return;
             }
             FontFamily family = (tf.isSetPitchFamily())

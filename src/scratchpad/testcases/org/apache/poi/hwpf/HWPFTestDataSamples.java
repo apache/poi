@@ -37,7 +37,12 @@ public class HWPFTestDataSamples {
     public static HWPFDocument openSampleFile(String sampleFileName) {
         try {
             InputStream is = POIDataSamples.getDocumentInstance().openResourceAsStream(sampleFileName);
-            return new HWPFDocument(is);
+            try {
+                return new HWPFDocument(is);
+            } catch (Throwable e) {
+                is.close();
+                throw e;
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -48,41 +53,32 @@ public class HWPFTestDataSamples {
         final long start = System.currentTimeMillis();
         try
         {
-            ZipInputStream is = new ZipInputStream( POIDataSamples
+            try (ZipInputStream is = new ZipInputStream(POIDataSamples
                     .getDocumentInstance()
-                    .openResourceAsStream( sampleFileName ) );
-            try
-            {
+                    .openResourceAsStream(sampleFileName))) {
                 is.getNextEntry();
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                try
-                {
-                    IOUtils.copy( is, baos );
-                }
-                finally
-                {
+                try {
+                    IOUtils.copy(is, baos);
+                } finally {
                     baos.close();
                 }
 
                 final long endUnzip = System.currentTimeMillis();
                 byte[] byteArray = baos.toByteArray();
 
-                logger.log( POILogger.DEBUG, "Unzipped in ",
-                        Long.valueOf( endUnzip - start ), " ms -- ",
-                        Long.valueOf( byteArray.length ), " byte(s)" );
+                logger.log(POILogger.DEBUG, "Unzipped in ",
+                        Long.valueOf(endUnzip - start), " ms -- ",
+                        Long.valueOf(byteArray.length), " byte(s)");
 
-                ByteArrayInputStream bais = new ByteArrayInputStream( byteArray );
-                HWPFDocument doc = new HWPFDocument( bais );
+                ByteArrayInputStream bais = new ByteArrayInputStream(byteArray);
+                HWPFDocument doc = new HWPFDocument(bais);
                 final long endParse = System.currentTimeMillis();
 
-                logger.log( POILogger.DEBUG, "Parsed in ",
-                        Long.valueOf( endParse - start ), " ms" );
+                logger.log(POILogger.DEBUG, "Parsed in ",
+                        Long.valueOf(endParse - start), " ms");
 
                 return doc;
-            }
-            finally
-            {
-                is.close();
             }
         }
         catch ( IOException e )
@@ -105,38 +101,29 @@ public class HWPFTestDataSamples {
         {
 			logger.log(POILogger.DEBUG, "Downloading ", sampleFileUrl, " ...");
 
-            InputStream is = new URL( sampleFileUrl ).openStream();
-            try
-            {
+            try (InputStream is = new URL(sampleFileUrl).openStream()) {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                try
-                {
-                    IOUtils.copy( is, baos );
-                }
-                finally
-                {
+                try {
+                    IOUtils.copy(is, baos);
+                } finally {
                     baos.close();
                 }
 
                 final long endDownload = System.currentTimeMillis();
                 byte[] byteArray = baos.toByteArray();
 
-                logger.log( POILogger.DEBUG, "Downloaded in ",
-                        Long.valueOf( endDownload - start ), " ms -- ",
-                        Long.valueOf( byteArray.length ), " byte(s)" );
+                logger.log(POILogger.DEBUG, "Downloaded in ",
+                        Long.valueOf(endDownload - start), " ms -- ",
+                        Long.valueOf(byteArray.length), " byte(s)");
 
-                ByteArrayInputStream bais = new ByteArrayInputStream( byteArray );
-                HWPFDocument doc = new HWPFDocument( bais );
+                ByteArrayInputStream bais = new ByteArrayInputStream(byteArray);
+                HWPFDocument doc = new HWPFDocument(bais);
                 final long endParse = System.currentTimeMillis();
 
-                logger.log( POILogger.DEBUG, "Parsed in ",
-                        Long.valueOf( endParse - start ), " ms" );
+                logger.log(POILogger.DEBUG, "Parsed in ",
+                        Long.valueOf(endParse - start), " ms");
 
                 return doc;
-            }
-            finally
-            {
-                is.close();
             }
         }
         catch ( IOException e )

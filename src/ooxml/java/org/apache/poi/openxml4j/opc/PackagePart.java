@@ -106,8 +106,9 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
 		_isRelationshipPart = this._partName.isRelationshipPartURI();
 
 		// Load relationships if any
-		if (loadRelationships)
+		if (loadRelationships) {
 			loadRelationships();
+		}
 	}
 
 	/**
@@ -457,7 +458,7 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
 	 * @see org.apache.poi.openxml4j.opc.RelationshipSource#isRelationshipExists(org.apache.poi.openxml4j.opc.PackageRelationship)
 	 */
 	public boolean isRelationshipExists(PackageRelationship rel) {
-		return _relationships.getRelationshipByID(rel.getId()) != null;
+		return rel != null && _relationships.getRelationshipByID(rel.getId()) != null;
 	}
 
    /**
@@ -558,7 +559,7 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
 	 * @throws InvalidFormatException
 	 *             Throws if
 	 */
-	private void loadRelationships() throws InvalidFormatException {
+	/* package */ void loadRelationships() throws InvalidFormatException {
 		if (this._relationships == null && !this._isRelationshipPart) {
 			this.throwExceptionIfRelationship();
 			_relationships = new PackageRelationshipCollection(this);

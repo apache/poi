@@ -30,6 +30,7 @@ import org.apache.poi.ddf.EscherClientDataRecord;
 import org.apache.poi.ddf.EscherColorRef;
 import org.apache.poi.ddf.EscherColorRef.SysIndexProcedure;
 import org.apache.poi.ddf.EscherColorRef.SysIndexSource;
+import org.apache.poi.ddf.EscherComplexProperty;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.ddf.EscherProperty;
@@ -49,6 +50,7 @@ import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.Units;
 
 /**
@@ -123,8 +125,15 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
     /**
      * @return name of the shape.
      */
+    @Override
     public String getShapeName(){
-        return getShapeType().nativeName;
+        final EscherComplexProperty ep = getEscherProperty(getEscherOptRecord(), EscherProperties.GROUPSHAPE__SHAPENAME);
+        if (ep != null) {
+            final byte[] cd = ep.getComplexData();
+            return StringUtil.getFromUnicodeLE0Terminated(cd, 0, cd.length/2);
+        } else {
+            return getShapeType().nativeName+" "+getShapeId();
+        }
     }
 
     public ShapeType getShapeType(){
@@ -529,9 +538,7 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
         return new Color(r, g, b);
     }
 
-    /**
-     * @return id for the shape.
-     */
+    @Override
     public int getShapeId(){
         EscherSpRecord spRecord = getEscherChild(EscherSpRecord.RECORD_ID);
         return spRecord == null ? 0 : spRecord.getShapeId();

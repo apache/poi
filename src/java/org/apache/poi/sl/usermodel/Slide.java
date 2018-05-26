@@ -17,6 +17,8 @@
 
 package org.apache.poi.sl.usermodel;
 
+import java.util.List;
+
 public interface Slide<
     S extends Shape<S,P>,
     P extends TextParagraph<S,P,? extends TextRun>
@@ -48,7 +50,7 @@ public interface Slide<
      * whereas in HSLF they are activated via a HeadersFooter configuration.
      * This method is used to generalize that handling.
      *
-     * @param placeholder
+     * @param placeholder the placeholder type
      * @return {@code true} if the placeholder should be displayed/rendered
      * @since POI 3.16-beta2
      */
@@ -69,4 +71,23 @@ public interface Slide<
      * @since POI 4.0.0
      */
     boolean isHidden();
+
+    /**
+     * @return the comment(s) for this slide
+     */
+    List<? extends Comment> getComments();
+
+    /**
+     * @return the assigned slide layout
+     *
+     * @since POI 4.0.0
+     */
+    MasterSheet getSlideLayout();
+
+    /**
+     * @return the slide name, defaults to "Slide[slideNumber]"
+     *
+     * @since POI 4.0.0
+     */
+    String getSlideName();
 }

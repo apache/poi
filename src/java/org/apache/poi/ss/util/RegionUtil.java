@@ -42,7 +42,7 @@ public final class RegionUtil {
 
         public CellPropertySetter(String propertyName, int value) {
             _propertyName = propertyName;
-            _propertyValue = Short.valueOf((short) value);
+            _propertyValue = Integer.valueOf(value);
         }
         public CellPropertySetter(String propertyName, BorderStyle value) {
             _propertyName = propertyName;

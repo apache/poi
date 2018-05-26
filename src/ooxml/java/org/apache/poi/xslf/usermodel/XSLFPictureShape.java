@@ -30,6 +30,8 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.sl.usermodel.PictureShape;
 import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -52,6 +54,8 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTPictureNonVisual;
 @Beta
 public class XSLFPictureShape extends XSLFSimpleShape
     implements PictureShape<XSLFShape,XSLFTextParagraph> {
+    private static final POILogger LOG = POILogFactory.getLogger(XSLFPictureShape.class);
+
     private XSLFPictureData _data;
 
     /*package*/ XSLFPictureShape(CTPicture shape, XSLFSheet sheet) {
@@ -68,7 +72,7 @@ public class XSLFPictureShape extends XSLFSimpleShape
         CTPictureNonVisual nvSpPr = ct.addNewNvPicPr();
         CTNonVisualDrawingProps cnv = nvSpPr.addNewCNvPr();
         cnv.setName("Picture " + shapeId);
-        cnv.setId(shapeId + 1);
+        cnv.setId(shapeId);
         nvSpPr.addNewCNvPicPr().addNewPicLocks().setNoChangeAspect(true);
         nvSpPr.addNewNvPr();
 
@@ -201,6 +205,11 @@ public class XSLFPictureShape extends XSLFSimpleShape
 
         XSLFPictureShape p = (XSLFPictureShape)sh;
         String blipId = p.getBlipId();
+        if (blipId == null) {
+            LOG.log(POILogger.WARN, "unable to copy invalid picture shape");
+            return;
+        }
+
         String relId = getSheet().importBlip(blipId, p.getSheet().getPackagePart());
 
         CTPicture ct = (CTPicture)getXmlObject();

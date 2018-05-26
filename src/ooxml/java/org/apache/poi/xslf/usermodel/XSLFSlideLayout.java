@@ -28,20 +28,14 @@ import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTBackground;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideLayout;
 import org.openxmlformats.schemas.presentationml.x2006.main.SldLayoutDocument;
 
 @Beta
 public class XSLFSlideLayout extends XSLFSheet
 implements MasterSheet<XSLFShape,XSLFTextParagraph> {
-    private CTSlideLayout _layout;
+    private final CTSlideLayout _layout;
     private XSLFSlideMaster _master;
-
-    XSLFSlideLayout() {
-        super();
-        _layout = CTSlideLayout.Factory.newInstance();
-    }
 
     /**
      * @since POI 3.14-Beta1
@@ -111,14 +105,7 @@ implements MasterSheet<XSLFShape,XSLFTextParagraph> {
      */
     @Override
     protected boolean canDraw(XSLFShape shape) {
-        if (shape instanceof XSLFSimpleShape) {
-            XSLFSimpleShape txt = (XSLFSimpleShape) shape;
-            CTPlaceholder ph = txt.getCTPlaceholder();
-            if (ph != null) {
-                return false;
-            }
-        }
-        return true;
+        return !(shape instanceof XSLFSimpleShape) || !shape.isPlaceholder();
     }
 
 

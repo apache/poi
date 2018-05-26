@@ -20,6 +20,7 @@ package org.apache.poi.xssf.usermodel;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -50,6 +51,7 @@ import org.apache.poi.POIXMLDocumentPart.RelationPart;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.POIXMLProperties;
 import org.apache.poi.common.usermodel.HyperlinkType;
+import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -64,6 +66,7 @@ import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.ConditionalFormattingEvaluator;
 import org.apache.poi.ss.formula.EvaluationConditionalFormatRule;
@@ -79,6 +82,7 @@ import org.apache.poi.ss.formula.functions.Function;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.CellUtil;
@@ -346,7 +350,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         // Look at the low level xml elements
         assertEquals(2, cs.getCoreXf().getFillId());
         assertEquals(0, cs.getCoreXf().getXfId());
-        assertEquals(true, cs.getCoreXf().getApplyFill());
+        assertTrue(cs.getCoreXf().getApplyFill());
 
         XSSFCellFill fg = wb.getStylesSource().getFillAt(2);
         assertNotNull(fg.getFillForegroundColor());
@@ -363,8 +367,8 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertEquals("FFFF0000", cs.getFillForegroundColorColor().getARGBHex());
 
         assertEquals(64, cs.getFillBackgroundColor());
-        assertEquals(null, cs.getFillBackgroundXSSFColor().getARGBHex());
-        assertEquals(null, cs.getFillBackgroundColorColor().getARGBHex());
+        assertNull(cs.getFillBackgroundXSSFColor().getARGBHex());
+        assertNull(cs.getFillBackgroundColorColor().getARGBHex());
 
         wb.close();
     }
@@ -468,7 +472,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         );
         assertEquals(" with spaces ", c.getRichStringCellValue().toString());
         assertEquals(0, c.getRichStringCellValue().getCTRst().sizeOfRArray());
-        assertEquals(true, c.getRichStringCellValue().getCTRst().isSetT());
+        assertTrue(c.getRichStringCellValue().getCTRst().isSetT());
         // Should have the preserve set
         assertEquals(
                 1,
@@ -487,7 +491,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         c = r.getCell(0);
         assertEquals(" with spaces ", c.getRichStringCellValue().toString());
         assertEquals(0, c.getRichStringCellValue().getCTRst().sizeOfRArray());
-        assertEquals(true, c.getRichStringCellValue().getCTRst().isSetT());
+        assertTrue(c.getRichStringCellValue().getCTRst().isSetT());
 
         // Change the string
         c.setCellValue(
@@ -876,7 +880,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         font1.setColor((short) 20);
         Font font2 = wb1.createFont();
         font2.setColor(Font.COLOR_RED);
-        Font font3 = wb1.getFontAt((short) 0);
+        Font font3 = wb1.getFontAt(0);
 
         XSSFRow row = sheet.createRow(2);
         XSSFCell cell = row.createCell(2);
@@ -1066,36 +1070,36 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
         // No print settings before repeating
         XSSFSheet s1 = wb1.createSheet();
-        assertEquals(false, s1.getCTWorksheet().isSetPageSetup());
-        assertEquals(true, s1.getCTWorksheet().isSetPageMargins());
+        assertFalse(s1.getCTWorksheet().isSetPageSetup());
+        assertTrue(s1.getCTWorksheet().isSetPageMargins());
         s1.setRepeatingColumns(cra);
         s1.setRepeatingRows(cra);
 
-        assertEquals(true, s1.getCTWorksheet().isSetPageSetup());
-        assertEquals(true, s1.getCTWorksheet().isSetPageMargins());
+        assertTrue(s1.getCTWorksheet().isSetPageSetup());
+        assertTrue(s1.getCTWorksheet().isSetPageMargins());
 
         PrintSetup ps1 = s1.getPrintSetup();
-        assertEquals(false, ps1.getValidSettings());
-        assertEquals(false, ps1.getLandscape());
+        assertFalse(ps1.getValidSettings());
+        assertFalse(ps1.getLandscape());
 
 
         // Had valid print settings before repeating
         XSSFSheet s2 = wb2.createSheet();
         PrintSetup ps2 = s2.getPrintSetup();
-        assertEquals(true, s2.getCTWorksheet().isSetPageSetup());
-        assertEquals(true, s2.getCTWorksheet().isSetPageMargins());
+        assertTrue(s2.getCTWorksheet().isSetPageSetup());
+        assertTrue(s2.getCTWorksheet().isSetPageMargins());
 
         ps2.setLandscape(false);
-        assertEquals(true, ps2.getValidSettings());
-        assertEquals(false, ps2.getLandscape());
+        assertTrue(ps2.getValidSettings());
+        assertFalse(ps2.getLandscape());
         s2.setRepeatingColumns(cra);
         s2.setRepeatingRows(cra);
 
         ps2 = s2.getPrintSetup();
-        assertEquals(true, s2.getCTWorksheet().isSetPageSetup());
-        assertEquals(true, s2.getCTWorksheet().isSetPageMargins());
-        assertEquals(true, ps2.getValidSettings());
-        assertEquals(false, ps2.getLandscape());
+        assertTrue(s2.getCTWorksheet().isSetPageSetup());
+        assertTrue(s2.getCTWorksheet().isSetPageMargins());
+        assertTrue(ps2.getValidSettings());
+        assertFalse(ps2.getLandscape());
 
         wb1.close();
         wb2.close();
@@ -1750,9 +1754,9 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         // run some method on the font to verify if it is "disconnected" already
         //for(short i = 0;i < 256;i++)
         {
-            Font font = wb.getFontAt((short) 0);
+            Font font = wb.getFontAt(0);
             if (font instanceof XSSFFont) {
-                XSSFFont xfont = (XSSFFont) wb.getFontAt((short) 0);
+                XSSFFont xfont = (XSSFFont) wb.getFontAt(0);
                 CTFontImpl ctFont = (CTFontImpl) xfont.getCTFont();
                 assertEquals(0, ctFont.sizeOfBArray());
             }
@@ -1884,9 +1888,9 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         // Check the core properties - will be found but empty, due
         //  to the expansion being too much to be considered valid
         POIXMLProperties props = new POIXMLProperties(pkg);
-        assertEquals(null, props.getCoreProperties().getTitle());
-        assertEquals(null, props.getCoreProperties().getSubject());
-        assertEquals(null, props.getCoreProperties().getDescription());
+        assertNull(props.getCoreProperties().getTitle());
+        assertNull(props.getCoreProperties().getSubject());
+        assertNull(props.getCoreProperties().getDescription());
 
         // Now check the spreadsheet itself
         try {
@@ -2543,11 +2547,11 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     private void checkCellsAreGone(CalculationChain chain) {
         for (CTCalcCell calc : chain.getCTCalcChain().getCList()) {
             // A2 to A6 should be gone
-            assertFalse(calc.getR().equals("A2"));
-            assertFalse(calc.getR().equals("A3"));
-            assertFalse(calc.getR().equals("A4"));
-            assertFalse(calc.getR().equals("A5"));
-            assertFalse(calc.getR().equals("A6"));
+            assertNotEquals("A2", calc.getR());
+            assertNotEquals("A3", calc.getR());
+            assertNotEquals("A4", calc.getR());
+            assertNotEquals("A5", calc.getR());
+            assertNotEquals("A6", calc.getR());
         }
     }
 
@@ -2827,7 +2831,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
                     Cell cell = row.getCell(cellNum);
                     String fmtCellValue = formatter.formatCellValue(cell);
                     assertNotNull(fmtCellValue);
-                    assertFalse(fmtCellValue.equals("0"));
+                    assertNotEquals("0", fmtCellValue);
                 }
             }
         }
@@ -2998,14 +3002,14 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertTrue("Last row num: " + sheet.getLastRowNum(), sheet.getLastRowNum() > 20);
         assertEquals("Checked", sheet.getRow(0).getCell(0).getStringCellValue());
         assertEquals("Checked", sheet.getRow(9).getCell(2).getStringCellValue());
-        assertEquals(false, sheet.getRow(70).getCell(8).getBooleanCellValue());
+        assertFalse(sheet.getRow(70).getCell(8).getBooleanCellValue());
         assertEquals(71, sheet.getPhysicalNumberOfRows());
         assertEquals(70, sheet.getLastRowNum());
         assertEquals(70, sheet.getRow(sheet.getLastRowNum()).getRowNum());
     }
 
     @Test
-    public void testWorkdayFunction() throws IOException {
+    public void testWorkdayFunction() {
         XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("59106.xlsx");
         XSSFSheet sheet = workbook.getSheet("Test");
         Row row = sheet.getRow(1);
@@ -3060,7 +3064,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      * part with a part number)
      */
     @Test
-    public void drawingNumbersAlreadyTaken_60255() throws Exception {
+    public void drawingNumbersAlreadyTaken_60255() {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("60255_extra_drawingparts.xlsx");
         assertEquals(4, wb.getNumberOfSheets());
 
@@ -3259,7 +3263,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      * TODO Get this to actually reproduce the bug...
      */
     @Test
-    public void test62108() throws IOException {
+    public void test62108() {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
         XSSFRow row = sheet.createRow(0);
@@ -3292,5 +3296,32 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         for (int i=0; i<numCols; i++) {
             sheet.autoSizeColumn(i);
         }
+    }
+
+    @Test
+    public void test61905xlsx() throws IOException {
+        Workbook wb = new XSSFWorkbook();
+        checkActiveSheet(wb, XSSFITestDataProvider.instance);
+        wb.close();
+    }
+
+    @Test
+    public void test61905xls() throws IOException {
+        Workbook wb = new HSSFWorkbook();
+        checkActiveSheet(wb, HSSFITestDataProvider.instance);
+        wb.close();
+    }
+
+    private void checkActiveSheet(Workbook wb, ITestDataProvider instance) throws IOException {
+        Sheet sheet = wb.createSheet("new sheet");
+        sheet.setActiveCell(new CellAddress("E11"));
+        assertEquals("E11", sheet.getActiveCell().formatAsString());
+
+        Workbook wbBack = instance.writeOutAndReadBack(wb);
+        sheet = wbBack.getSheetAt(0);
+        assertEquals("E11", sheet.getActiveCell().formatAsString());
+        wbBack.close();
+
+        //wb.write(new FileOutputStream("c:/temp/61905." + instance.getStandardFileNameExtension()));
     }
 }

@@ -38,7 +38,14 @@ public interface Shape<
     * @return the anchor of this shape
     */
    Rectangle2D getAnchor();
-   
+
+   /**
+    * @return human-readable name of this shape, e.g. "Rectange 3"
+    *
+    * @since POI 4.0.0
+    */
+   String getShapeName();
+
    /**
     * Convenience method to draw a single shape
     *
@@ -47,4 +54,18 @@ public interface Shape<
     *   if null, the bounds of the shape are used.
     */
    void draw(Graphics2D graphics, Rectangle2D bounds);
+
+
+   /**
+    * Returns a unique identifier for this shape within the current slide.
+    * This ID may be used to assist in uniquely identifying this object so that it can
+    * be referred to by other parts of the document.
+    * <p>
+    * If multiple objects within the same slide share the same id attribute value,
+    * then the document shall be considered non-conformant.
+    * </p>
+    *
+    * @return unique id of this shape
+    */
+   int getShapeId();
 }

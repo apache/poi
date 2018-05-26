@@ -29,8 +29,10 @@ import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -40,6 +42,7 @@ import junit.framework.TestCase;
 
 import org.junit.Test;
 import org.junit.internal.TextListener;
+import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 
@@ -73,7 +76,14 @@ public final class OOXMLLite {
         _ooxmlJar = new File(ooxmlJar);
     }
 
-    public static void main(String[] args) throws IOException, ClassNotFoundException {
+    public static void main(String[] args) throws IOException {
+        System.out.println("Free memory (bytes): " + 
+                Runtime.getRuntime().freeMemory());
+        long maxMemory = Runtime.getRuntime().maxMemory();
+        System.out.println("Maximum memory (bytes): " + 
+        (maxMemory == Long.MAX_VALUE ? "no limit" : maxMemory));
+        System.out.println("Total memory (bytes): " + 
+                Runtime.getRuntime().totalMemory());
 
         String dest = null, test = null, ooxml = null;
 
@@ -94,7 +104,7 @@ public final class OOXMLLite {
         builder.build();
     }
 
-    void build() throws IOException, ClassNotFoundException {
+    void build() throws IOException {
         List<Class<?>> lst = new ArrayList<>();
         //collect unit tests
         String exclude = StringUtil.join("|",
@@ -137,16 +147,43 @@ public final class OOXMLLite {
                 "TestMultiSheetFormulaEvaluatorOnXSSF\\$1",
                 "TestZipPackagePropertiesMarshaller\\$1",
                 "SLCommonUtils",
-                "TestPPTX2PNG\\$1"
+                "TestPPTX2PNG\\$1",
+                "TestMatrixFormulasFromXMLSpreadsheet\\$1",
+                "TestMatrixFormulasFromXMLSpreadsheet\\$Navigator",
+                "TestPOIXMLDocument\\$UncaughtHandler",
+                "TestOleShape\\$Api",
+                "TestOleShape\\$1",
+                "TestPOIXMLDocument\\$1",
+                "TestXMLSlideShow\\$1",
+                "TestXMLSlideShow\\$BufAccessBAOS",
+                "TestXDDFChart\\$1",
+                "TestOOXMLLister\\$1",
+                "TestOOXMLPrettyPrint\\$1"
         );
         System.out.println("Collecting unit tests from " + _testDir);
         collectTests(_testDir, _testDir, lst, ".+.class$", ".+(" + exclude + ").class");
         System.out.println("Found " + lst.size() + " classes");
-        
+
         //run tests
         JUnitCore jUnitCore = new JUnitCore();
-        jUnitCore.addListener(new TextListener(System.out));
-        Result result = jUnitCore.run(lst.toArray(new Class<?>[lst.size()]));
+        jUnitCore.addListener(new TextListener(System.out) {
+            private final Set<String> classes = new HashSet<>();
+            private int count;
+
+            @Override
+            public void testStarted(Description description) {
+                // count how many test-classes we already saw
+                classes.add(description.getClassName());
+                count++;
+                if(count % 100 == 0) {
+                    System.out.println();
+                    System.out.println(classes.size() + "/" + lst.size() + ": " + description.getDisplayName());
+                }
+
+                super.testStarted(description);
+            }
+        });
+        Result result = jUnitCore.run(lst.toArray(new Class<?>[0]));
         if (!result.wasSuccessful()) {
             throw new RuntimeException("Tests did not succeed, cannot build ooxml-lite jar");
         }
@@ -216,8 +253,7 @@ public final class OOXMLLite {
      * @param out   output
      * @param ptrn  the pattern (regexp) to filter found files
      */
-    private static void collectTests(File root, File arg, List<Class<?>> out, String ptrn, String exclude)
-    throws ClassNotFoundException {
+    private static void collectTests(File root, File arg, List<Class<?>> out, String ptrn, String exclude) {
         if (arg.isDirectory()) {
             File files[] = arg.listFiles();
             if (files != null) {

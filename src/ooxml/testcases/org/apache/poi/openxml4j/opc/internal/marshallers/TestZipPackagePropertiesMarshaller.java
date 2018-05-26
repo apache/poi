@@ -17,11 +17,8 @@
 
 package org.apache.poi.openxml4j.opc.internal.marshallers;
 
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
-import org.apache.poi.openxml4j.opc.PackagingURIHelper;
-import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
-import org.apache.poi.openxml4j.opc.internal.PartMarshaller;
-import org.junit.Test;
+import static org.apache.poi.openxml4j.opc.PackagingURIHelper.PACKAGE_RELATIONSHIPS_ROOT_URI;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -29,8 +26,11 @@ import java.io.OutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import static org.apache.poi.openxml4j.opc.PackagingURIHelper.PACKAGE_RELATIONSHIPS_ROOT_URI;
-import static org.junit.Assert.assertTrue;
+import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
+import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
+import org.apache.poi.openxml4j.opc.internal.PartMarshaller;
+import org.junit.Test;
 
 public class TestZipPackagePropertiesMarshaller {
     private PartMarshaller marshaller = new ZipPackagePropertiesMarshaller();
@@ -58,7 +58,7 @@ public class TestZipPackagePropertiesMarshaller {
         marshaller.marshall(new PackagePropertiesPart(null, PackagingURIHelper.createPartName(PACKAGE_RELATIONSHIPS_ROOT_URI)),
                 new ZipOutputStream(new ByteArrayOutputStream()) {
                     @Override
-                    public void putNextEntry(ZipEntry e) throws IOException {
+                    public void putNextEntry(final ZipEntry archiveEntry) throws IOException {
                         throw new IOException("TestException");
                     }
                 });

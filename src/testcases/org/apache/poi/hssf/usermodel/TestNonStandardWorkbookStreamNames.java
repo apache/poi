@@ -23,8 +23,12 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.Entry;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -49,7 +53,7 @@ public final class TestNonStandardWorkbookStreamNames {
 
 		// Ensure that we have a WORKBOOK entry and a summary
 		assertTrue(root.hasEntry("WORKBOOK"));
-		assertTrue(root.hasEntry("\005SummaryInformation"));
+		assertTrue(root.hasEntry(SummaryInformation.DEFAULT_STREAM_NAME));
 
 		// But not a Workbook one
 		assertFalse(root.hasEntry("Workbook"));
@@ -73,7 +77,7 @@ public final class TestNonStandardWorkbookStreamNames {
 
       // But not a Workbook one and not a Summary one
       assertFalse(root.hasEntry("Workbook"));
-      assertFalse(root.hasEntry("\\005SummaryInformation"));
+      assertFalse(root.hasEntry(SummaryInformation.DEFAULT_STREAM_NAME));
       
       wb.close();
    }
@@ -127,7 +131,7 @@ public final class TestNonStandardWorkbookStreamNames {
         assertFalse(root.hasEntry("WORKBOOK"));
 
         // As we preserved, should also have a few other streams
-        assertTrue(root.hasEntry("\005SummaryInformation"));
+        assertTrue(root.hasEntry(SummaryInformation.DEFAULT_STREAM_NAME));
         wb2.close();
 	}
 }

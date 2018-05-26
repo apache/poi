@@ -218,9 +218,13 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
         int ciLen = (doFinal)
             ? cipher.doFinal(chunk, 0, posInChunk, chunk)
             : cipher.update(chunk, 0, posInChunk, chunk);
-        
-        for (int i = plainByteFlags.nextSetBit(0); i >= 0 && i < posInChunk; i = plainByteFlags.nextSetBit(i+1)) {
-            chunk[i] = plain[i];
+
+        if (plain != null) {
+            int i = plainByteFlags.nextSetBit(0);
+            while (i >= 0 && i < posInChunk) {
+                chunk[i] = plain[i];
+                i = plainByteFlags.nextSetBit(i+1);
+            }
         }
         
         return ciLen;

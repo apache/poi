@@ -68,6 +68,7 @@ public abstract class POIXMLTextExtractor extends POITextExtractor {
 	 * 
 	 * @return the opened document
 	 */
+	@Override
 	public final POIXMLDocument getDocument() {
 		return _document;
 	}

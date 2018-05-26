@@ -24,6 +24,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 
 import org.apache.poi.extractor.ExtractorFactory;
+import org.apache.poi.sl.extractor.SlideShowExtractor;
 import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFSlideShow;
@@ -53,12 +54,19 @@ public class XSLFFileHandler extends SlideShowHandler {
         
         // additionally try the other getText() methods
 
-		try (XSLFPowerPointExtractor extractor = (XSLFPowerPointExtractor) ExtractorFactory.createExtractor(file)) {
+		try (SlideShowExtractor extractor = ExtractorFactory.createExtractor(file)) {
 			assertNotNull(extractor);
+			extractor.setSlidesByDefault(true);
+			extractor.setNotesByDefault(true);
+			extractor.setMasterByDefault(true);
 
-			assertNotNull(extractor.getText(true, true, true));
-			assertEquals("With all options disabled we should not get text",
-					"", extractor.getText(false, false, false));
+			assertNotNull(extractor.getText());
+
+			extractor.setSlidesByDefault(false);
+			extractor.setNotesByDefault(false);
+			extractor.setMasterByDefault(false);
+
+			assertEquals("With all options disabled we should not get text", "", extractor.getText());
 		}
     }
 
@@ -66,7 +74,7 @@ public class XSLFFileHandler extends SlideShowHandler {
 	@Override
     @Test
 	public void test() throws Exception {
-        File file = new File("test-data/slideshow/ae.ac.uaeu.faculty_nafaachbili_GeomLec1.pptx");
+        File file = new File("test-data/slideshow/ca.ubc.cs.people_~emhill_presentations_HowWeRefactor.pptx");
 		try (InputStream stream = new FileInputStream(file)) {
 			handleFile(stream, file.getPath());
 		}

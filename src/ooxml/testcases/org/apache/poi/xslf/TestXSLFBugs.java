@@ -36,8 +36,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
@@ -50,15 +53,16 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.sl.draw.DrawPaint;
+import org.apache.poi.sl.extractor.SlideShowExtractor;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.PaintStyle.TexturePaint;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
+import org.apache.poi.sl.usermodel.Shape;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFAutoShape;
 import org.apache.poi.xslf.usermodel.XSLFGroupShape;
@@ -221,28 +225,27 @@ public class TestXSLFBugs {
      *  rID2 -> slide3.xml
      */
     @Test
-    public void bug54916() throws Exception {
-        XMLSlideShow ss = XSLFTestDataSamples.openSampleDocument("OverlappingRelations.pptx");
-        XSLFSlide slide;
+    public void bug54916() throws IOException {
+        try (XMLSlideShow ss = XSLFTestDataSamples.openSampleDocument("OverlappingRelations.pptx")) {
+            XSLFSlide slide;
 
-        // Should find 4 slides
-        assertEquals(4, ss.getSlides().size());
+            // Should find 4 slides
+            assertEquals(4, ss.getSlides().size());
 
-        // Check the text, to see we got them in order
-        slide = ss.getSlides().get(0);
-        assertContains(getSlideText(slide), "POI cannot read this");
+            // Check the text, to see we got them in order
+            slide = ss.getSlides().get(0);
+            assertContains(getSlideText(ss, slide), "POI cannot read this");
 
-        slide = ss.getSlides().get(1);
-        assertContains(getSlideText(slide), "POI can read this");
-        assertContains(getSlideText(slide), "Has a relationship to another slide");
+            slide = ss.getSlides().get(1);
+            assertContains(getSlideText(ss, slide), "POI can read this");
+            assertContains(getSlideText(ss, slide), "Has a relationship to another slide");
 
-        slide = ss.getSlides().get(2);
-        assertContains(getSlideText(slide), "POI can read this");
+            slide = ss.getSlides().get(2);
+            assertContains(getSlideText(ss, slide), "POI can read this");
 
-        slide = ss.getSlides().get(3);
-        assertContains(getSlideText(slide), "POI can read this");
-
-        ss.close();
+            slide = ss.getSlides().get(3);
+            assertContains(getSlideText(ss, slide), "POI can read this");
+        }
     }
 
     /**
@@ -311,8 +314,15 @@ public class TestXSLFBugs {
         ss.close();
     }
 
-    protected String getSlideText(XSLFSlide slide) {
-        return XSLFPowerPointExtractor.getText(slide, true, false, false);
+    protected String getSlideText(XMLSlideShow ppt, XSLFSlide slide) throws IOException {
+        try (SlideShowExtractor extr = new SlideShowExtractor(ppt)) {
+            // do not auto-close the slideshow
+            extr.setFilesystem(null);
+            extr.setSlidesByDefault(true);
+            extr.setNotesByDefault(false);
+            extr.setMasterByDefault(false);
+            return extr.getText(slide);
+        }
     }
 
     @Test
@@ -458,7 +468,7 @@ public class TestXSLFBugs {
 
         for (int i = 0; i < slideTexts.length; i++) {
             XSLFSlide slide = ss.getSlides().get(i);
-            assertContains(getSlideText(slide), slideTexts[i]);
+            assertContains(getSlideText(ss, slide), slideTexts[i]);
         }
     }
 
@@ -686,13 +696,6 @@ public class TestXSLFBugs {
             assertNotNull(notesSlide);
         }
 
-        /*OutputStream stream = new FileOutputStream("/tmp/test.pptx");
-        try {
-            ppt.write(stream);
-        } finally {
-            stream.close();
-        }*/
-
         ppt.close();
     }
 
@@ -719,5 +722,33 @@ public class TestXSLFBugs {
             fail("Could not read back saved presentation.");
         }
         ppt.close();
+    }
+
+    @Test
+    public void bug62051() throws IOException {
+        final Function<List<XSLFShape>, int[]> ids = (shapes) ->
+            shapes.stream().mapToInt(Shape::getShapeId).toArray();
+
+        try (final XMLSlideShow ppt = new XMLSlideShow()) {
+            final XSLFSlide slide = ppt.createSlide();
+            final List<XSLFShape> shapes = new ArrayList<>();
+            shapes.add(slide.createAutoShape());
+            final XSLFGroupShape g1 = slide.createGroup();
+            shapes.add(g1);
+            final XSLFGroupShape g2 = g1.createGroup();
+            shapes.add(g2);
+            shapes.add(g2.createAutoShape());
+            shapes.add(slide.createAutoShape());
+            shapes.add(g2.createAutoShape());
+            shapes.add(g1.createAutoShape());
+            assertArrayEquals(new int[]{ 2,3,4,5,6,7,8 }, ids.apply(shapes));
+            g1.removeShape(g2);
+            shapes.remove(5);
+            shapes.remove(3);
+            shapes.remove(2);
+            shapes.add(g1.createAutoShape());
+            assertArrayEquals(new int[]{ 2,3,6,8,4 }, ids.apply(shapes));
+
+        }
     }
 }

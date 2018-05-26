@@ -18,6 +18,7 @@
 package org.apache.poi.openxml4j.opc;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -31,20 +32,26 @@ import java.util.TreeMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import org.junit.Assert;
-
 import junit.framework.AssertionFailedError;
+import org.apache.poi.util.IOUtils;
+import org.junit.Assert;
+import org.xmlunit.builder.DiffBuilder;
+import org.xmlunit.builder.Input;
+import org.xmlunit.diff.Comparison;
+import org.xmlunit.diff.ComparisonResult;
+import org.xmlunit.diff.DefaultNodeMatcher;
+import org.xmlunit.diff.Diff;
+import org.xmlunit.diff.DifferenceEvaluator;
+import org.xmlunit.diff.ElementSelectors;
 
 /**
  * Compare the contents of 2 zip files.
  */
-public class ZipFileAssert {
+public final class ZipFileAssert {
 	private ZipFileAssert() {
 	}
 
-	static final int BUFFER_SIZE = 2048;
-
-	protected static void equals(
+	private static void equals(
 			TreeMap<String, ByteArrayOutputStream> file1,
 			TreeMap<String, ByteArrayOutputStream> file2) {
 		Set<String> listFile1 = file1.keySet();
@@ -52,32 +59,37 @@ public class ZipFileAssert {
 		
 		for (String fileName : listFile1) {
 			// extract the contents for both
-			ByteArrayOutputStream contain2 = file2.get(fileName);
 			ByteArrayOutputStream contain1 = file1.get(fileName);
+			ByteArrayOutputStream contain2 = file2.get(fileName);
 
 			assertNotNull(fileName + " not found in 2nd zip", contain2);
 			// no need to check for contain1. The key come from it
 
-			if ((fileName.endsWith(".xml")) || fileName.endsWith(".rels")) {
+			if (fileName.matches(".*\\.(xml|rels)$")) {
 				// we have a xml file
-                // TODO
-                // YK: the original OpenXML4J version attempted to compare xml using xmlunit (http://xmlunit.sourceforge.net),
-                // but POI does not depend on this library
+				final Diff diff = DiffBuilder.
+						compare(Input.fromByteArray(contain1.toByteArray())).
+						withTest(Input.fromByteArray(contain2.toByteArray())).
+						ignoreWhitespace().
+						checkForSimilar().
+						withDifferenceEvaluator(new IgnoreXMLDeclEvaluator()).
+						withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byNameAndAllAttributes, ElementSelectors.byNameAndText)).
+						build();
+				assertFalse(fileName+": "+diff.toString(), diff.hasDifferences());
             } else {
 				// not xml, may be an image or other binary format
-                Assert.assertEquals(fileName + " does not have the same size in both zip:", contain2.size(), contain1.size());
+                Assert.assertEquals(fileName + " does not have the same size in both zip:", contain1.size(), contain2.size());
 				assertArrayEquals("contents differ", contain1.toByteArray(), contain2.toByteArray());
 			}
 		}
 	}
 
-	protected static TreeMap<String, ByteArrayOutputStream> decompress(
+	private static TreeMap<String, ByteArrayOutputStream> decompress(
 			File filename) throws IOException {
 		// store the zip content in memory
 		// let s assume it is not Go ;-)
 		TreeMap<String, ByteArrayOutputStream> zipContent = new TreeMap<>();
 
-		byte data[] = new byte[BUFFER_SIZE];
 		/* Open file to decompress */
 		FileInputStream file_decompress = new FileInputStream(filename);
 
@@ -89,20 +101,12 @@ public class ZipFileAssert {
 
 		/* Processing entries of the zip file */
 		ZipEntry entree;
-		int count;
 		while ((entree = zis.getNextEntry()) != null) {
 
 			/* Create a array for the current entry */
 			ByteArrayOutputStream byteArray = new ByteArrayOutputStream();
+			IOUtils.copy(zis, byteArray);
 			zipContent.put(entree.getName(), byteArray);
-
-			/* copy in memory */
-			while ((count = zis.read(data, 0, BUFFER_SIZE)) != -1) {
-				byteArray.write(data, 0, count);
-			}
-			/* Flush the buffer */
-			byteArray.flush();
-			byteArray.close();
 		}
 
 		zis.close();
@@ -134,6 +138,31 @@ public class ZipFileAssert {
 			equals(file1, file2);
 		} catch (IOException e) {
 			throw new AssertionFailedError(e.toString());
+		}
+	}
+
+	private static class IgnoreXMLDeclEvaluator implements DifferenceEvaluator {
+		public ComparisonResult evaluate(final Comparison comparison, final ComparisonResult outcome) {
+			if (outcome != ComparisonResult.EQUAL) {
+				// only evaluate differences
+				switch (comparison.getType()) {
+					case CHILD_NODELIST_SEQUENCE:
+					case XML_STANDALONE:
+					case NAMESPACE_PREFIX:
+						return ComparisonResult.SIMILAR;
+					case TEXT_VALUE:
+						switch (comparison.getControlDetails().getTarget().getParentNode().getNodeName()) {
+						case "dcterms:created":
+						case "dc:creator":
+							return ComparisonResult.SIMILAR;
+						}
+						break;
+					default:
+						break;
+				}
+			}
+
+			return outcome;
 		}
 	}
 }

@@ -379,7 +379,8 @@ public final class EscherGraphics2d extends Graphics2D {
     public Rectangle getClipBounds()
     {
         if(getDeviceclip() != null) {
-            return getClip().getBounds();
+            final Shape clip = getClip();
+            return clip != null ? clip.getBounds() : null;
         }
         return null;
     }

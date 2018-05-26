@@ -16,16 +16,14 @@
 ==================================================================== */
 package org.apache.poi.openxml4j.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Iterator;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 
-import org.apache.poi.openxml4j.util.ZipSecureFile.ThresholdInputStream;
+import org.apache.commons.collections4.IteratorUtils;
 
 /**
  * Provides a way to get at all the ZipEntries
@@ -36,7 +34,7 @@ import org.apache.poi.openxml4j.util.ZipSecureFile.ThresholdInputStream;
  *  done, to free up that memory!
  */
 public class ZipInputStreamZipEntrySource implements ZipEntrySource {
-	private ArrayList<FakeZipEntry> zipEntries;
+	private final Map<String, ZipArchiveFakeEntry> zipEntries = new HashMap<>();
 	
 	/**
 	 * Reads all the entries from the ZipInputStream 
@@ -44,100 +42,53 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
 	 * We'll then eat lots of memory, but be able to
 	 *  work with the entries at-will.
 	 */
-	public ZipInputStreamZipEntrySource(ThresholdInputStream inp) throws IOException {
-		zipEntries = new ArrayList<>();
-		
-		boolean going = true;
-		while(going) {
-			ZipEntry zipEntry = inp.getNextEntry();
-			if(zipEntry == null) {
-				going = false;
-			} else {
-				FakeZipEntry entry = new FakeZipEntry(zipEntry, inp);
-				inp.closeEntry();
-				
-				zipEntries.add(entry);
+	public ZipInputStreamZipEntrySource(ZipArchiveThresholdInputStream inp) throws IOException {
+		for (;;) {
+			final ZipEntry zipEntry = inp.getNextEntry();
+			if (zipEntry == null) {
+				break;
 			}
+			zipEntries.put(zipEntry.getName(), new ZipArchiveFakeEntry(zipEntry, inp));
 		}
 		inp.close();
 	}
 
+	@Override
 	public Enumeration<? extends ZipEntry> getEntries() {
-		return new EntryEnumerator();
+		return IteratorUtils.asEnumeration(zipEntries.values().iterator());
 	}
-	
+
+	@Override
 	public InputStream getInputStream(ZipEntry zipEntry) {
-	    assert (zipEntry instanceof FakeZipEntry);
-		FakeZipEntry entry = (FakeZipEntry)zipEntry;
-		return entry.getInputStream();
+	    assert (zipEntry instanceof ZipArchiveFakeEntry);
+		return ((ZipArchiveFakeEntry)zipEntry).getInputStream();
 	}
-	
+
+	@Override
 	public void close() {
 		// Free the memory
-		zipEntries = null;
+		zipEntries.clear();
 	}
+
+	@Override
 	public boolean isClosed() {
-	    return (zipEntries == null);
-	}
-	
-	/**
-	 * Why oh why oh why are Iterator and Enumeration
-	 *  still not compatible?
-	 */
-	private class EntryEnumerator implements Enumeration<ZipEntry> {
-		private Iterator<? extends ZipEntry> iterator;
-		
-		private EntryEnumerator() {
-			iterator = zipEntries.iterator();
-		}
-		
-		public boolean hasMoreElements() {
-			return iterator.hasNext();
-		}
-
-		public ZipEntry nextElement() {
-			return iterator.next();
-		}
+	    return zipEntries.isEmpty();
 	}
 
-	/**
-	 * So we can close the real zip entry and still
-	 *  effectively work with it.
-	 * Holds the (decompressed!) data in memory, so
-	 *  close this as soon as you can! 
-	 */
-	public static class FakeZipEntry extends ZipEntry {
-		private byte[] data;
-		
-		public FakeZipEntry(ZipEntry entry, InputStream inp) throws IOException {
-			super(entry.getName());
-			
-			// Grab the de-compressed contents for later
-            ByteArrayOutputStream baos;
+	@Override
+	public ZipEntry getEntry(final String path) {
+		final String normalizedPath = path.replace('\\', '/');
+		final ZipEntry ze = zipEntries.get(normalizedPath);
+		if (ze != null) {
+			return ze;
+		}
 
-            long entrySize = entry.getSize();
-
-            if (entrySize !=-1) {
-                if (entrySize>=Integer.MAX_VALUE) {
-                    throw new IOException("ZIP entry size is too large");
-                }
-
-                baos = new ByteArrayOutputStream((int) entrySize);
-            } else {
-    			baos = new ByteArrayOutputStream();
-            }
-
-			byte[] buffer = new byte[4096];
-			int read = 0;
-			while( (read = inp.read(buffer)) != -1 ) {
-				baos.write(buffer, 0, read);
+		for (final Map.Entry<String, ZipArchiveFakeEntry> fze : zipEntries.entrySet()) {
+			if (normalizedPath.equalsIgnoreCase(fze.getKey())) {
+				return fze.getValue();
 			}
-			
-			data = baos.toByteArray();
 		}
-		
-		public InputStream getInputStream() {
-			return new ByteArrayInputStream(data);
-		}
+
+		return null;
 	}
 }

@@ -34,6 +34,20 @@ def poijobs = [
                        '-Djava9addopens3=--add-opens=java.base/java.nio=ALL-UNNAMED',
                        '-Djava9addopens4=--add-opens=java.base/java.lang=ALL-UNNAMED',
                        '-Djava9addopens5=--add-opens=java.base/jdk.internal.ref=ALL-UNNAMED',
+                       '-Djava9addopens6=--add-opens=java.base/java.lang=java.xml.bind',
+                       '-Djava.locale.providers=JRE,CLDR'],
+          skipcigame: true
+        ],
+        [ name: 'POI-DSL-1.10', jdk: '1.10', trigger: triggerSundays,
+          properties: ['-Djava9addmods=--add-modules=java.xml.bind',
+                       '-Djavadoc9addmods=--add-modules=java.xml.bind',
+                       '-Djava9addmodsvalue=-Dsun.reflect.debugModuleAccessChecks=true',
+                       '-Djava9addopens1=--add-opens=java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED',
+                       '-Djava9addopens2=--add-opens=java.base/java.io=ALL-UNNAMED',
+                       '-Djava9addopens3=--add-opens=java.base/java.nio=ALL-UNNAMED',
+                       '-Djava9addopens4=--add-opens=java.base/java.lang=ALL-UNNAMED',
+                       '-Djava9addopens5=--add-opens=java.base/jdk.internal.ref=ALL-UNNAMED',
+                       '-Djava9addopens6=--add-opens=java.base/java.lang=java.xml.bind',
                        '-Djava.locale.providers=JRE,CLDR'],
           skipcigame: true
         ],
@@ -78,6 +92,8 @@ def defaultSlaves = 'ubuntu&&!cloud-slave&&!H15&&!H17&&!H18&&!H24&&!ubuntu-4&&!H
 def jdkMapping = [
         '1.8': 'JDK 1.8 (latest)',
         '1.9': 'JDK 1.9 (latest)',
+        '1.10': 'JDK 10 (latest)',
+        '1.11': 'JDK 11 b8 (early access build)',
         'OpenJDK': 'OpenJDK 8 (on Ubuntu only) ',   // blank is required here until the name in the Jenkins instance is fixed!
         'IBMJDK': 'IBM 1.8 64-bit (on Ubuntu only)',
 ]
@@ -419,15 +435,23 @@ Unfortunately we often see builds break because of changes/new machines...'''
 
                 'JDK 1.9 (latest)',
                 'JDK 9 b181',
-                'JDK 9 b181 (unlimited security)'
+                'JDK 9 b181 (unlimited security)',
+
+                'JDK 10 (latest)',
+                'JDK 10 b46 (Windows Only)',
+
+                'JDK 11 b8 (early access build)'
         )
         label('Nodes',
                 'beam1','beam2','beam3','beam4','beam5','beam6','beam7','beam8',
                 'freebsd1',
-                'H0','H1','H10','H11','H12','H13','H14','H15','H16','H17','H18','H19','H2','H20','H21','H22','H23','H24','H25','H26','H27','H3','H4','H5','H6','H7','H8','H9',
+                'H0','H1','H10','H11','H12','H13','H14','H15','H16','H17','H18','H19',
+                'H2','H20','H21','H22','H23','H24','H25','H26','H27','H28','H29',
+                'H3','H30','H31','H32','H33','H34','H35',
+                'H4','H5','H6','H7','H8','H9',
                 'qnode1','qnode2','qnode3',
-                'ubuntu-1','ubuntu-2','ubuntu-4','ubuntu-5','ubuntu-6','ubuntu-eu2','ubuntu-eu3','ubuntu-ppc64le','ubuntu-us1',
-                'windows-2012-1','windows-2012-2','windows-2012-3'
+                'ubuntu-1','ubuntu-2','ubuntu-4','ubuntu-6','ubuntu-eu2','ubuntu-eu3','ubuntu-ppc64le','ubuntu-us1',
+                'windows-2012-1','windows-2012-2','windows-2012-3','windows-2016-1'
         )
     }
     steps {

@@ -33,6 +33,7 @@ import org.apache.poi.poifs.storage.BATBlock;
 import org.apache.poi.poifs.storage.BlockAllocationTableReader;
 import org.apache.poi.poifs.storage.HeaderBlock;
 import org.apache.poi.poifs.storage.RawDataBlockList;
+import org.apache.poi.util.IOUtils;
 
 /**
  * Tests for the older OPOIFS-based POIFSFileSystem
@@ -285,13 +286,8 @@ public final class TestPOIFSFileSystem extends TestCase {
 	         checkAllDirectoryContents((DirectoryEntry)entry);
 	      } else {
 	         DocumentNode doc = (DocumentNode) entry;
-	         DocumentInputStream dis = new DocumentInputStream(doc);
-	         try {
-    	         int numBytes = dis.available();
-    	         byte[] data = new byte [numBytes];
-                dis.read(data);
-	         } finally {
-	             dis.close();
+	         try (DocumentInputStream dis = new DocumentInputStream(doc)) {
+    	         IOUtils.toByteArray(dis);
 	         }
 	      }
 	   }

@@ -72,7 +72,7 @@ public class TestMissingWorkbook extends TestCase {
 			evaluator.evaluateFormulaCell(lA1Cell);
 			fail("Missing external workbook reference exception expected!");
 		}catch(RuntimeException re) {
-			assertTrue("Unexpected exception: " + re, re.getMessage().indexOf(SOURCE_DUMMY_WORKBOOK_FILENAME) != -1);
+			assertTrue("Unexpected exception: " + re, re.getMessage().contains(SOURCE_DUMMY_WORKBOOK_FILENAME));
 		}
 	}
 	

@@ -17,15 +17,17 @@
 package org.apache.poi.poifs.crypt;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
+import java.util.stream.IntStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -36,107 +38,92 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.Assume;
 import org.junit.Test;
 
 public class TestDecryptor {
+    private static final POIDataSamples samples = POIDataSamples.getPOIFSInstance();
+
     @Test
     public void passwordVerification() throws IOException, GeneralSecurityException {
-        POIFSFileSystem fs = new POIFSFileSystem(POIDataSamples.getPOIFSInstance().openResourceAsStream("protect.xlsx"));
-
-        EncryptionInfo info = new EncryptionInfo(fs);
-
-        Decryptor d = Decryptor.getInstance(info);
-
-        assertTrue(d.verifyPassword(Decryptor.DEFAULT_PASSWORD));
-
-        fs.close();
+        try (InputStream is = samples.openResourceAsStream("protect.xlsx");
+            POIFSFileSystem fs = new POIFSFileSystem(is)) {
+            EncryptionInfo info = new EncryptionInfo(fs);
+            Decryptor d = Decryptor.getInstance(info);
+            assertTrue(d.verifyPassword(Decryptor.DEFAULT_PASSWORD));
+        }
     }
 
     @Test
     public void decrypt() throws IOException, GeneralSecurityException {
-        POIFSFileSystem fs = new POIFSFileSystem(POIDataSamples.getPOIFSInstance().openResourceAsStream("protect.xlsx"));
-
-        EncryptionInfo info = new EncryptionInfo(fs);
-
-        Decryptor d = Decryptor.getInstance(info);
-
-        d.verifyPassword(Decryptor.DEFAULT_PASSWORD);
-
-        zipOk(fs.getRoot(), d);
-
-        fs.close();
+        try (InputStream is = samples.openResourceAsStream("protect.xlsx");
+             POIFSFileSystem fs = new POIFSFileSystem(is)) {
+            EncryptionInfo info = new EncryptionInfo(fs);
+            Decryptor d = Decryptor.getInstance(info);
+            d.verifyPassword(Decryptor.DEFAULT_PASSWORD);
+            zipOk(fs.getRoot(), d);
+        }
     }
 
     @Test
     public void agile() throws IOException, GeneralSecurityException {
-        POIFSFileSystem fs = new POIFSFileSystem(POIDataSamples.getPOIFSInstance().openResourceAsStream("protected_agile.docx"));
-
-        EncryptionInfo info = new EncryptionInfo(fs);
-
-        assertTrue(info.getVersionMajor() == 4 && info.getVersionMinor() == 4);
-
-        Decryptor d = Decryptor.getInstance(info);
-
-        assertTrue(d.verifyPassword(Decryptor.DEFAULT_PASSWORD));
-
-        zipOk(fs.getRoot(), d);
-
-        fs.close();
+        try (InputStream is = samples.openResourceAsStream("protected_agile.docx");
+            POIFSFileSystem fs = new POIFSFileSystem(is)) {
+            EncryptionInfo info = new EncryptionInfo(fs);
+            assertTrue(info.getVersionMajor() == 4 && info.getVersionMinor() == 4);
+            Decryptor d = Decryptor.getInstance(info);
+            assertTrue(d.verifyPassword(Decryptor.DEFAULT_PASSWORD));
+            zipOk(fs.getRoot(), d);
+        }
     }
 
     private void zipOk(DirectoryNode root, Decryptor d) throws IOException, GeneralSecurityException {
-        ZipInputStream zin = new ZipInputStream(d.getDataStream(root));
+        try (ZipInputStream zin = new ZipInputStream(d.getDataStream(root))) {
 
-        while (true) {
-            ZipEntry entry = zin.getNextEntry();
-            if (entry==null) {
-                break;
+            while (true) {
+                ZipEntry entry = zin.getNextEntry();
+                if (entry == null) {
+                    break;
+                }
+                // crc32 is checked within zip-stream
+                if (entry.isDirectory()) {
+                    continue;
+                }
+                assertEquals(entry.getSize() - 1, zin.skip(entry.getSize() - 1));
+                byte buf[] = new byte[10];
+                int readBytes = zin.read(buf);
+                // zin.available() doesn't work for entries
+                assertEquals("size failed for " + entry.getName(), 1, readBytes);
             }
-            // crc32 is checked within zip-stream
-            if (entry.isDirectory()) {
-                continue;
-            }
-            zin.skip(entry.getSize());
-            byte buf[] = new byte[10];
-            int readBytes = zin.read(buf);
-            // zin.available() doesn't work for entries
-            assertEquals("size failed for "+entry.getName(), -1, readBytes);
         }
-        
-        zin.close();
     }
 
     @Test
     public void dataLength() throws Exception {
-        POIFSFileSystem fs = new POIFSFileSystem(POIDataSamples.getPOIFSInstance().openResourceAsStream("protected_agile.docx"));
+        try (InputStream fsIs = samples.openResourceAsStream("protected_agile.docx");
+            POIFSFileSystem fs = new POIFSFileSystem(fsIs)) {
+            EncryptionInfo info = new EncryptionInfo(fs);
+            Decryptor d = Decryptor.getInstance(info);
+            d.verifyPassword(Decryptor.DEFAULT_PASSWORD);
 
-        EncryptionInfo info = new EncryptionInfo(fs);
+            try (InputStream is = d.getDataStream(fs)) {
 
-        Decryptor d = Decryptor.getInstance(info);
+                long len = d.getLength();
+                assertEquals(12810, len);
 
-        d.verifyPassword(Decryptor.DEFAULT_PASSWORD);
+                byte[] buf = new byte[(int) len];
+                assertEquals(12810, is.read(buf));
 
-        InputStream is = d.getDataStream(fs);
+                ZipInputStream zin = new ZipInputStream(new ByteArrayInputStream(buf));
 
-        long len = d.getLength();
-        assertEquals(12810, len);
+                while (true) {
+                    ZipEntry entry = zin.getNextEntry();
+                    if (entry == null) {
+                        break;
+                    }
 
-        byte[] buf = new byte[(int)len];
-
-        is.read(buf);
-
-        ZipInputStream zin = new ZipInputStream(new ByteArrayInputStream(buf));
-
-        while (true) {
-            ZipEntry entry = zin.getNextEntry();
-            if (entry==null) {
-                break;
-            }
-
-            while (zin.available()>0) {
-                zin.skip(zin.available());
+                    IOUtils.toByteArray(zin);
+                }
             }
         }
     }
@@ -144,35 +131,39 @@ public class TestDecryptor {
     @Test
     public void bug57080() throws Exception {
         // the test file contains a wrong ole entry size, produced by extenxls
-        // the fix limits the available size and tries to read all entries 
-        File f = POIDataSamples.getPOIFSInstance().getFile("extenxls_pwd123.xlsx");
-        NPOIFSFileSystem fs = new NPOIFSFileSystem(f, true);
-        EncryptionInfo info = new EncryptionInfo(fs);
-        Decryptor d = Decryptor.getInstance(info);
-        d.verifyPassword("pwd123");
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ZipInputStream zis = new ZipInputStream(d.getDataStream(fs));
-        ZipEntry ze;
-        while ((ze = zis.getNextEntry()) != null) {
-            bos.reset();
-            IOUtils.copy(zis, bos);
-            assertEquals(ze.getSize(), bos.size());
+        // the fix limits the available size and tries to read all entries
+        File f = samples.getFile("extenxls_pwd123.xlsx");
+
+        try (NPOIFSFileSystem fs = new NPOIFSFileSystem(f, true)) {
+            EncryptionInfo info = new EncryptionInfo(fs);
+            Decryptor d = Decryptor.getInstance(info);
+            d.verifyPassword("pwd123");
+
+            final ByteArrayOutputStream bos = new ByteArrayOutputStream(10000);
+            try (final ZipInputStream zis = new ZipInputStream(d.getDataStream(fs))) {
+                IntStream.of(3711, 1155, 445, 9376, 450, 588, 1337, 2593, 304, 7910).forEach(size -> {
+                    try {
+                        final ZipEntry ze = zis.getNextEntry();
+                        assertNotNull(ze);
+                        IOUtils.copy(zis, bos);
+                        assertEquals(size, bos.size());
+                        bos.reset();
+                    } catch (IOException e) {
+                        fail(e.getMessage());
+                    }
+                });
+            }
         }
-        
-        zis.close();
-        fs.close();
     }
 
     @Test
     public void test58616() throws IOException, GeneralSecurityException {
-        FileInputStream fis = new FileInputStream(XSSFTestDataSamples.getSampleFile("58616.xlsx"));                
-        POIFSFileSystem pfs = new POIFSFileSystem(fis);                
-        EncryptionInfo info = new EncryptionInfo(pfs);             
-        Decryptor dec = Decryptor.getInstance(info);   
-        //dec.verifyPassword(null);
-        dec.getDataStream(pfs);
-        pfs.close();
-        fis.close();
+        try (InputStream is = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("58616.xlsx");
+            POIFSFileSystem pfs = new POIFSFileSystem(is)) {
+            EncryptionInfo info = new EncryptionInfo(pfs);
+            Decryptor dec = Decryptor.getInstance(info);
+            dec.getDataStream(pfs).close();
+        }
     }
 
     @Test
@@ -180,19 +171,12 @@ public class TestDecryptor {
         int maxKeyLen = Cipher.getMaxAllowedKeyLength("AES");
         Assume.assumeTrue("Please install JCE Unlimited Strength Jurisdiction Policy files for AES 256", maxKeyLen == 2147483647);
 
-        InputStream is = POIDataSamples.getPOIFSInstance().openResourceAsStream("60320-protected.xlsx");
-        POIFSFileSystem fs = new POIFSFileSystem(is);
-        is.close();
-
-        EncryptionInfo info = new EncryptionInfo(fs);
-
-        Decryptor d = Decryptor.getInstance(info);
-
-        boolean b = d.verifyPassword("Test001!!");
-        assertTrue(b);
-
-        zipOk(fs.getRoot(), d);
-        
-        fs.close();
+        try (InputStream is = samples.openResourceAsStream("60320-protected.xlsx");
+            POIFSFileSystem fs = new POIFSFileSystem(is)) {
+            EncryptionInfo info = new EncryptionInfo(fs);
+            Decryptor d = Decryptor.getInstance(info);
+            assertTrue(d.verifyPassword("Test001!!"));
+            zipOk(fs.getRoot(), d);
+        }
     }    
 }
