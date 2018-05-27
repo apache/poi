@@ -1504,14 +1504,14 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                                     if (candCharPos + 1 < searched.length()) {
                                         candCharPos++;
                                     } else if (newList) {
-                                        TextSegment segement = new TextSegment();
-                                        segement.setBeginRun(beginRunPos);
-                                        segement.setBeginText(beginTextPos);
-                                        segement.setBeginChar(beginCharPos);
-                                        segement.setEndRun(runPos);
-                                        segement.setEndText(textPos);
-                                        segement.setEndChar(charPos);
-                                        return segement;
+                                        TextSegment segment = new TextSegment();
+                                        segment.setBeginRun(beginRunPos);
+                                        segment.setBeginText(beginTextPos);
+                                        segment.setBeginChar(beginCharPos);
+                                        segment.setEndRun(runPos);
+                                        segment.setEndText(textPos);
+                                        segment.setEndChar(charPos);
+                                        return segment;
                                     }
                                 } else {
                                     candCharPos = 0;
