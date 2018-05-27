@@ -191,7 +191,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
     protected void outputCharacters( Element pElement,
             CharacterRun characterRun, String text )
     {
-        Element span = htmlDocumentFacade.document.createElement( "span" );
+        Element span = htmlDocumentFacade.getDocument().createElement( "span" );
         pElement.appendChild( span );
 
         StringBuilder style = new StringBuilder();
@@ -416,7 +416,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
             boolean inlined, Picture picture )
     {
         // no default implementation -- skip
-        currentBlock.appendChild( htmlDocumentFacade.document
+        currentBlock.appendChild( htmlDocumentFacade.getDocument()
                 .createComment( "Image link to '"
                         + picture.suggestFullFileName() + "' can be here" ) );
     }
@@ -598,7 +598,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
     {
         Element div = htmlDocumentFacade.createBlock();
         htmlDocumentFacade.addStyleClass( div, "d", getSectionStyle( section ) );
-        htmlDocumentFacade.body.appendChild( div );
+        htmlDocumentFacade.getBody().appendChild( div );
 
         processParagraphes( wordDocument, div, section, Integer.MIN_VALUE );
     }
@@ -607,10 +607,10 @@ public class WordToHtmlConverter extends AbstractWordConverter
     protected void processSingleSection( HWPFDocumentCore wordDocument,
             Section section )
     {
-        htmlDocumentFacade.addStyleClass( htmlDocumentFacade.body, "b",
+        htmlDocumentFacade.addStyleClass( htmlDocumentFacade.getBody(), "b",
                 getSectionStyle( section ) );
 
-        processParagraphes( wordDocument, htmlDocumentFacade.body, section,
+        processParagraphes( wordDocument, htmlDocumentFacade.getBody(), section,
                 Integer.MIN_VALUE );
     }
 

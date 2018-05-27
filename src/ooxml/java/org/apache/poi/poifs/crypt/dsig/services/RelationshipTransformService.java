@@ -24,7 +24,7 @@
 
 package org.apache.poi.poifs.crypt.dsig.services;
 
-import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet.OO_DIGSIG_NS;
 import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet.XML_NS;
 
@@ -49,7 +49,7 @@ import javax.xml.crypto.dsig.TransformService;
 import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 
 import org.apache.jcp.xml.dsig.internal.dom.ApacheNodeSetData;
-import org.apache.poi.util.DocumentHelper;
+import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.xml.security.signature.XMLSignatureInput;

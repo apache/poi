@@ -20,8 +20,9 @@ import static org.apache.poi.POITestCase.assertContains;
 
 import junit.framework.TestCase;
 
+import org.apache.poi.ooxml.extractor.POIXMLPropertiesTextExtractor;
 import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.util.PackageHelper;
+import org.apache.poi.ooxml.util.PackageHelper;
 import org.apache.poi.xslf.usermodel.XSLFSlideShow;
 import org.apache.poi.xssf.extractor.XSSFExcelExtractor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;

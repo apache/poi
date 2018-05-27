@@ -20,6 +20,7 @@
 ==================================================================== */
 package org.apache.poi.dev;
 
+import org.apache.poi.ooxml.dev.OOXMLPrettyPrint;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.AfterClass;

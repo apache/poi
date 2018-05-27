@@ -21,7 +21,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.poi.POIOLE2TextExtractor;
+import org.apache.poi.extractor.POIOLE2TextExtractor;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.converter.WordToTextConverter;
 import org.apache.poi.hwpf.usermodel.HeaderStories;

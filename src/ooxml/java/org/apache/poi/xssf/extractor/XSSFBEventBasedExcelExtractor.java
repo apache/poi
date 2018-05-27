@@ -19,7 +19,7 @@ package org.apache.poi.xssf.extractor;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.poi.POIXMLTextExtractor;
+import org.apache.poi.ooxml.extractor.POIXMLTextExtractor;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.DataFormatter;

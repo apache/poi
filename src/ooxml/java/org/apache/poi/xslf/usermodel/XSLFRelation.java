@@ -19,9 +19,9 @@ package org.apache.poi.xslf.usermodel;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.poi.POIXMLDocument;
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.POIXMLRelation;
+import org.apache.poi.ooxml.POIXMLDocument;
+import org.apache.poi.ooxml.POIXMLDocumentPart;
+import org.apache.poi.ooxml.POIXMLRelation;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.util.Beta;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;

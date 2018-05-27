@@ -30,8 +30,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.POIXMLProperties;
+import org.apache.poi.ooxml.POIXMLDocumentPart;
+import org.apache.poi.ooxml.POIXMLProperties;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;

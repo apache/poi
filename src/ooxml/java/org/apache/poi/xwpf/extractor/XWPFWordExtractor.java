@@ -19,8 +19,8 @@ package org.apache.poi.xwpf.extractor;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.poi.POIXMLDocument;
-import org.apache.poi.POIXMLTextExtractor;
+import org.apache.poi.ooxml.POIXMLDocument;
+import org.apache.poi.ooxml.extractor.POIXMLTextExtractor;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xwpf.model.XWPFCommentsDecorator;

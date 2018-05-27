@@ -17,6 +17,7 @@
 package org.apache.poi.util;
 
 import junit.framework.TestCase;
+import org.apache.poi.ooxml.util.IdentifierManager;
 
 public class TestIdentifierManager extends TestCase
 {

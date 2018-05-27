@@ -16,7 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
-import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.wp.usermodel.Paragraph;
 
 /**

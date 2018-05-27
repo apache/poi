@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.POIDocument;
-import org.apache.poi.POIOLE2TextExtractor;
+import org.apache.poi.extractor.POIOLE2TextExtractor;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hssf.eventusermodel.FormatTrackingHSSFListener;

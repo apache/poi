@@ -20,9 +20,9 @@ package org.apache.poi.xwpf.usermodel;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.poi.POIXMLException;
-import org.apache.poi.POIXMLFactory;
-import org.apache.poi.POIXMLRelation;
+import org.apache.poi.ooxml.POIXMLException;
+import org.apache.poi.ooxml.POIXMLFactory;
+import org.apache.poi.ooxml.POIXMLRelation;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.util.Beta;

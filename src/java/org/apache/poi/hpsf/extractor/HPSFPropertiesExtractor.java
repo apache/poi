@@ -21,8 +21,8 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.poi.POIDocument;
-import org.apache.poi.POIOLE2TextExtractor;
-import org.apache.poi.POITextExtractor;
+import org.apache.poi.extractor.POIOLE2TextExtractor;
+import org.apache.poi.extractor.POITextExtractor;
 import org.apache.poi.hpsf.CustomProperties;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.HPSFPropertiesOnlyDocument;

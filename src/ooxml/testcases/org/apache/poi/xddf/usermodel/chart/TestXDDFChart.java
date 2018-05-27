@@ -18,8 +18,8 @@
  */
 package org.apache.poi.xddf.usermodel.chart;
 
-import org.apache.poi.POIXMLFactory;
-import org.apache.poi.POIXMLRelation;
+import org.apache.poi.ooxml.POIXMLFactory;
+import org.apache.poi.ooxml.POIXMLRelation;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;

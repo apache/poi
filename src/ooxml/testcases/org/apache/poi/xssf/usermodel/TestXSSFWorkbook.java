@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.zip.CRC32;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.POIXMLProperties;
+import org.apache.poi.ooxml.POIXMLProperties;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.ContentTypes;

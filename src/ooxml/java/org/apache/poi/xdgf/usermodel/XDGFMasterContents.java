@@ -19,7 +19,7 @@ package org.apache.poi.xdgf.usermodel;
 
 import java.io.IOException;
 
-import org.apache.poi.POIXMLException;
+import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.xdgf.exceptions.XDGFException;
 import org.apache.xmlbeans.XmlException;

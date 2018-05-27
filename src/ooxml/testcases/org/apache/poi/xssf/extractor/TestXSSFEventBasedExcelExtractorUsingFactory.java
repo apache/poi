@@ -16,7 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xssf.extractor;
 
-import org.apache.poi.extractor.ExtractorFactory;
+import org.apache.poi.ooxml.extractor.ExtractorFactory;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.junit.After;
 

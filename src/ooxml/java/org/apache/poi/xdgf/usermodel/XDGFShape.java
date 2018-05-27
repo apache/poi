@@ -28,7 +28,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.apache.poi.POIXMLException;
+import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xdgf.exceptions.XDGFException;
 import org.apache.poi.xdgf.usermodel.section.CombinedIterable;

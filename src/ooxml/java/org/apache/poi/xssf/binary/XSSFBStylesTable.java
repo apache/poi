@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.apache.poi.POIXMLException;
+import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.util.Internal;
 

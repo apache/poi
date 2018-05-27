@@ -373,7 +373,7 @@ public class WordToFoConverter extends AbstractWordConverter
             boolean inlined, Picture picture )
     {
         // no default implementation -- skip
-        currentBlock.appendChild( foDocumentFacade.document
+        currentBlock.appendChild( foDocumentFacade.getDocument()
                 .createComment( "Image link to '"
                         + picture.suggestFullFileName() + "' can be here" ) );
     }

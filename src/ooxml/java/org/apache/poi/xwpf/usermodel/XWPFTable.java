@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Collections;
 
-import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.Removal;

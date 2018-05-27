@@ -26,7 +26,7 @@ import java.util.Map;
 import org.apache.poi.ss.usermodel.DifferentialStyleProvider;
 import org.apache.poi.ss.usermodel.TableStyle;
 import org.apache.poi.ss.usermodel.TableStyleType;
-import org.apache.poi.util.DocumentHelper;
+import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.model.StylesTable;
 import org.w3c.dom.Document;

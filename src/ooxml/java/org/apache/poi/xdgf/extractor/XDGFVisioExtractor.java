@@ -18,8 +18,8 @@ package org.apache.poi.xdgf.extractor;
 
 import java.io.IOException;
 
-import org.apache.poi.POIXMLDocument;
-import org.apache.poi.POIXMLTextExtractor;
+import org.apache.poi.ooxml.POIXMLDocument;
+import org.apache.poi.ooxml.extractor.POIXMLTextExtractor;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xdgf.usermodel.XDGFPage;
 import org.apache.poi.xdgf.usermodel.XmlVisioDocument;

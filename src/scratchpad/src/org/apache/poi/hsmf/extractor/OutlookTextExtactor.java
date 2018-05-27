@@ -24,14 +24,13 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-import org.apache.poi.POIOLE2TextExtractor;
+import org.apache.poi.extractor.POIOLE2TextExtractor;
 import org.apache.poi.hsmf.MAPIMessage;
 import org.apache.poi.hsmf.datatypes.AttachmentChunks;
 import org.apache.poi.hsmf.datatypes.StringChunk;
 import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.StringUtil.StringsIterator;
 

@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.apache.poi.POIXMLException;
+import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.xdgf.exceptions.XDGFException;
 import org.apache.poi.xdgf.usermodel.section.CharacterSection;
 import org.apache.poi.xdgf.usermodel.section.GeometrySection;

@@ -20,7 +20,7 @@ package org.apache.poi.xdgf.usermodel;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
-import org.apache.poi.POIXMLException;
+import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xdgf.geom.Dimension2dDouble;
 

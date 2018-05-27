@@ -18,7 +18,7 @@
 package org.apache.poi.hwpf.extractor;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.POITextExtractor;
+import org.apache.poi.extractor.POITextExtractor;
 import org.apache.poi.extractor.OLE2ExtractorFactory;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.junit.Test;

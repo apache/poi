@@ -17,8 +17,8 @@
 
 package org.apache.poi.xdgf.exceptions;
 
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.POIXMLException;
+import org.apache.poi.ooxml.POIXMLDocumentPart;
+import org.apache.poi.ooxml.POIXMLException;
 
 public class XDGFException {
 

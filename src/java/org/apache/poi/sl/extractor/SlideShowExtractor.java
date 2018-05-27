@@ -20,7 +20,7 @@ package org.apache.poi.sl.extractor;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.POITextExtractor;
+import org.apache.poi.extractor.POITextExtractor;
 import org.apache.poi.sl.usermodel.Comment;
 import org.apache.poi.sl.usermodel.MasterSheet;
 import org.apache.poi.sl.usermodel.Notes;

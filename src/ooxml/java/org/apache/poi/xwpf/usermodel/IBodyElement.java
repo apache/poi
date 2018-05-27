@@ -17,7 +17,7 @@
 
 package org.apache.poi.xwpf.usermodel;
 
-import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.ooxml.POIXMLDocumentPart;
 
 /**
  * 9 Jan 2010
