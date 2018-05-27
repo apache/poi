@@ -189,7 +189,7 @@ public class SlideShowFactory {
         case OOXML:
             return createXSLFSlideShow(is);
         default:
-            throw new IllegalArgumentException("Your InputStream was neither an OLE2 stream, nor an OOXML stream");
+            throw new IOException("Your InputStream was neither an OLE2 stream, nor an OOXML stream");
         }
     }
 
@@ -314,6 +314,8 @@ public class SlideShowFactory {
                 throw (EncryptedDocumentException)t;
             } else if (t instanceof OldFileFormatException) {
                 throw (OldFileFormatException)t;
+            } else if (t instanceof RuntimeException) {
+                throw (RuntimeException)t;
             } else {
                 throw new IOException(t);
             }

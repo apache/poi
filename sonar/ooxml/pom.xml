@@ -155,11 +155,11 @@
 			<version>1.05</version>
 		</dependency>
   
-		<!-- non-test dependency for OOXMLLite -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
+			<scope>test</scope>
         </dependency>
 
         <dependency>

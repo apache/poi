@@ -39,6 +39,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
+import org.apache.poi.xssf.usermodel.XSSFWorkbookFactory;
 import org.junit.Test;
 
 public final class TestWorkbookFactory {
@@ -107,7 +108,7 @@ public final class TestWorkbookFactory {
         assertCloseDoesNotModifyFile(xls, wb);
 
         // Package -> xssf
-        wb = WorkbookFactory.create(
+        wb = XSSFWorkbookFactory.create(
                 OPCPackage.open(
                         HSSFTestDataSamples.openSampleFileStream(xlsx))
         );
@@ -182,7 +183,7 @@ public final class TestWorkbookFactory {
                 stream.close();
             }
             fail();
-        } catch(InvalidFormatException e) {
+        } catch(IOException e) {
             // Good
         }
         final byte[] after = HSSFTestDataSamples.getTestDataFileContent(txt);

@@ -261,7 +261,7 @@
                   <target>
                     <replace dir="${basedir}/target/generated-sources/xmlbeans" includes="**/*.java" excludes="**/impl/**">
                         <replacetoken>org.apache.xmlbeans.XmlBeans.getContextTypeLoader()</replacetoken>
-                        <replacevalue>org.apache.poi.POIXMLTypeLoader</replacevalue>
+                        <replacevalue>org.apache.poi.ooxml.POIXMLTypeLoader</replacevalue>
                     </replace>                    
                   </target>
                 </configuration>

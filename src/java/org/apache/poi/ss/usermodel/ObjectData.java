@@ -62,4 +62,8 @@ public interface ObjectData extends SimpleShape {
      * @return the preview picture
      */
     PictureData getPictureData();
+
+    default String getContentType() {
+        return "binary/octet-stream";
+    }
 }

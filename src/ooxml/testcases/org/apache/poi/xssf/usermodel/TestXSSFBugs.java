@@ -46,10 +46,10 @@ import java.util.TreeMap;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.POIXMLDocumentPart.RelationPart;
-import org.apache.poi.POIXMLException;
-import org.apache.poi.POIXMLProperties;
+import org.apache.poi.ooxml.POIXMLDocumentPart;
+import org.apache.poi.ooxml.POIXMLDocumentPart.RelationPart;
+import org.apache.poi.ooxml.POIXMLException;
+import org.apache.poi.ooxml.POIXMLProperties;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
@@ -1459,10 +1459,10 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     /**
-     * Password Protected .xlsx files should give a helpful
-     * error message when called via WorkbookFactory with no password
+     * Password Protected .xlsx files are now (as of 4.0.0) tested for the default password
+     * when opened via WorkbookFactory, so there's no EncryptedDocumentException thrown anymore
      */
-    @Test(expected = EncryptedDocumentException.class)
+    @Test
     public void bug55692_poifs() throws IOException {
         // Via a POIFSFileSystem
         try (POIFSFileSystem fsP = new POIFSFileSystem(
@@ -1951,7 +1951,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
         // Workbook Factory gives helpful error on package
         try {
-            WorkbookFactory.create(pkg).close();
+            XSSFWorkbookFactory.create(pkg).close();
             fail(".xlsb files not supported");
         } catch (XLSBUnsupportedException e) {
             // Good, detected and warned
