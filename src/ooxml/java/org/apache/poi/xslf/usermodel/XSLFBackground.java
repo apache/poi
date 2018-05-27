@@ -21,7 +21,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
 
-import org.apache.poi.POIXMLException;
+import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.sl.usermodel.Background;
 import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.xmlbeans.XmlObject;

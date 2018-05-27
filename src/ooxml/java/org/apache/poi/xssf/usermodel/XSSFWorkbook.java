@@ -17,7 +17,7 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 import static org.apache.poi.xssf.usermodel.helpers.XSSFPasswordHelper.setPassword;
 import static org.apache.poi.xssf.usermodel.helpers.XSSFPasswordHelper.validatePassword;
 
@@ -43,10 +43,10 @@ import javax.xml.namespace.QName;
 
 import org.apache.commons.collections4.ListValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
-import org.apache.poi.POIXMLDocument;
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.POIXMLException;
-import org.apache.poi.POIXMLProperties;
+import org.apache.poi.ooxml.POIXMLDocument;
+import org.apache.poi.ooxml.POIXMLDocumentPart;
+import org.apache.poi.ooxml.POIXMLException;
+import org.apache.poi.ooxml.POIXMLProperties;
 import org.apache.poi.hpsf.ClassIDPredefined;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
@@ -81,7 +81,7 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.PackageHelper;
+import org.apache.poi.ooxml.util.PackageHelper;
 import org.apache.poi.util.Removal;
 import org.apache.poi.util.Units;
 import org.apache.poi.xssf.XLSBUnsupportedException;

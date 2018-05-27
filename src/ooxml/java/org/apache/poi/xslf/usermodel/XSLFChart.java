@@ -21,8 +21,8 @@ package org.apache.poi.xslf.usermodel;
 
 import java.io.IOException;
 
-import org.apache.poi.POIXMLFactory;
-import org.apache.poi.POIXMLRelation;
+import org.apache.poi.ooxml.POIXMLFactory;
+import org.apache.poi.ooxml.POIXMLRelation;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.util.Beta;
 import org.apache.poi.xddf.usermodel.chart.XDDFChart;

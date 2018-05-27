@@ -16,7 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xdgf.xml;
 
-import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.xdgf.usermodel.XDGFDocument;
 

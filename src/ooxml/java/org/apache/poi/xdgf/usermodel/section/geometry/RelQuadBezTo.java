@@ -17,7 +17,7 @@
 
 package org.apache.poi.xdgf.usermodel.section.geometry;
 
-import org.apache.poi.POIXMLException;
+import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.xdgf.usermodel.XDGFCell;
 import org.apache.poi.xdgf.usermodel.XDGFShape;
 

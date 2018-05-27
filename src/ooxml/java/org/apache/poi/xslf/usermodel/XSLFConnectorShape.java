@@ -19,7 +19,7 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import org.apache.poi.POIXMLException;
+import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.sl.usermodel.ConnectorShape;
 import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.util.Beta;

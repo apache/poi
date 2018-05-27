@@ -29,9 +29,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.poi.EncryptedDocumentException;
-import org.apache.poi.POIOLE2TextExtractor;
-import org.apache.poi.POITextExtractor;
-import org.apache.poi.extractor.ExtractorFactory;
+import org.apache.poi.extractor.POIOLE2TextExtractor;
+import org.apache.poi.extractor.POITextExtractor;
+import org.apache.poi.ooxml.extractor.ExtractorFactory;
 import org.apache.poi.hpsf.extractor.HPSFPropertiesExtractor;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.util.IOUtils;

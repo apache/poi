@@ -19,6 +19,7 @@
 
 package org.apache.poi;
 
+import org.apache.poi.ooxml.POIXMLDocument;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xslf.usermodel.XSLFSlideShow;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;

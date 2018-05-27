@@ -16,7 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
-import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTString;
 

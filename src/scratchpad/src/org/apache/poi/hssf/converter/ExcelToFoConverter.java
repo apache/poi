@@ -110,7 +110,7 @@ public class ExcelToFoConverter extends AbstractExcelConverter
      */
     public static Document process( File xlsFile ) throws Exception
     {
-        final HSSFWorkbook workbook = ExcelToFoUtils.loadXls( xlsFile );
+        final HSSFWorkbook workbook = AbstractExcelUtils.loadXls( xlsFile );
         try {
             ExcelToFoConverter excelToHtmlConverter = new ExcelToFoConverter(
                     XMLHelper.getDocumentBuilderFactory().newDocumentBuilder()
@@ -336,8 +336,8 @@ public class ExcelToFoConverter extends AbstractExcelConverter
     {
         blockTarget.setAttribute( "white-space-collapse", "false" );
         {
-            String textAlign = ExcelToFoUtils.getAlign( cellStyle.getAlignment() );
-            if ( ExcelToFoUtils.isNotEmpty( textAlign ) )
+            String textAlign = AbstractExcelUtils.getAlign( cellStyle.getAlignment() );
+            if ( AbstractExcelUtils.isNotEmpty( textAlign ) )
                 blockTarget.setAttribute( "text-align", textAlign );
         }
 
@@ -351,7 +351,7 @@ public class ExcelToFoConverter extends AbstractExcelConverter
                     .getFillForegroundColorColor();
             if ( foregroundColor != null )
                 cellTarget.setAttribute( "background-color",
-                        ExcelToFoUtils.getColor( foregroundColor ) );
+                        AbstractExcelUtils.getColor( foregroundColor ) );
         }
         else
         {
@@ -501,16 +501,16 @@ public class ExcelToFoConverter extends AbstractExcelConverter
     protected void processDocumentInformation(
             SummaryInformation summaryInformation )
     {
-        if ( ExcelToFoUtils.isNotEmpty( summaryInformation.getTitle() ) )
+        if ( AbstractExcelUtils.isNotEmpty( summaryInformation.getTitle() ) )
             foDocumentFacade.setTitle( summaryInformation.getTitle() );
 
-        if ( ExcelToFoUtils.isNotEmpty( summaryInformation.getAuthor() ) )
+        if ( AbstractExcelUtils.isNotEmpty( summaryInformation.getAuthor() ) )
             foDocumentFacade.setCreator( summaryInformation.getAuthor() );
 
-        if ( ExcelToFoUtils.isNotEmpty( summaryInformation.getKeywords() ) )
+        if ( AbstractExcelUtils.isNotEmpty( summaryInformation.getKeywords() ) )
             foDocumentFacade.setKeywords( summaryInformation.getKeywords() );
 
-        if ( ExcelToFoUtils.isNotEmpty( summaryInformation.getComments() ) )
+        if ( AbstractExcelUtils.isNotEmpty( summaryInformation.getComments() ) )
             foDocumentFacade.setDescription( summaryInformation.getComments() );
     }
 
@@ -793,7 +793,7 @@ public class ExcelToFoConverter extends AbstractExcelConverter
         if ( triplet.italic )
             textBlock.setAttribute( "font-style", "italic" );
 
-        if ( ExcelToFoUtils.isNotEmpty( triplet.fontName ) )
+        if ( AbstractExcelUtils.isNotEmpty( triplet.fontName ) )
             textBlock.setAttribute( "font-family", triplet.fontName );
     }
 

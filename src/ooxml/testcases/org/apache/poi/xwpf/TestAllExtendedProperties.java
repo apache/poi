@@ -20,7 +20,7 @@ package org.apache.poi.xwpf;
 import java.io.IOException;
 
 import junit.framework.TestCase;
-import org.apache.poi.POIXMLProperties.CoreProperties;
+import org.apache.poi.ooxml.POIXMLProperties.CoreProperties;
 import org.apache.poi.openxml4j.opc.PackageProperties;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTDigSigBlob;

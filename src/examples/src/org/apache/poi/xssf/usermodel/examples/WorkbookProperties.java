@@ -20,7 +20,7 @@ package org.apache.poi.xssf.usermodel.examples;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import org.apache.poi.POIXMLProperties;
+import org.apache.poi.ooxml.POIXMLProperties;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**

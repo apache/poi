@@ -20,7 +20,7 @@ package org.apache.poi.xdgf.usermodel;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.poi.POIXMLRelation;
+import org.apache.poi.ooxml.POIXMLRelation;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.xdgf.xml.XDGFXMLDocumentPart;
 

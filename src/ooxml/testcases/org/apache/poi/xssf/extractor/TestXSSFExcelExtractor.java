@@ -30,7 +30,7 @@ import java.util.Map.Entry;
 import java.util.HashMap;
 
 import junit.framework.TestCase;
-import org.apache.poi.POITextExtractor;
+import org.apache.poi.extractor.POITextExtractor;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.xssf.XSSFTestDataSamples;

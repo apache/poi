@@ -24,7 +24,7 @@ import java.awt.Dimension;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.xslf.XSLFTestDataSamples;
 import org.junit.Test;
 

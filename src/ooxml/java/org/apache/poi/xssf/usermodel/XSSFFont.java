@@ -16,7 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.POIXMLException;
+import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.util.Internal;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FontCharset;

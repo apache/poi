@@ -46,8 +46,8 @@ import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.POIXMLDocumentPart.RelationPart;
+import org.apache.poi.ooxml.POIXMLDocumentPart;
+import org.apache.poi.ooxml.POIXMLDocumentPart.RelationPart;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePartName;

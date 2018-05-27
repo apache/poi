@@ -23,7 +23,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.POIOLE2TextExtractor;
+import org.apache.poi.extractor.POIOLE2TextExtractor;
 import org.apache.poi.hdgf.HDGFDiagram;
 import org.apache.poi.hdgf.chunks.Chunk;
 import org.apache.poi.hdgf.chunks.Chunk.Command;

@@ -16,8 +16,8 @@
 ==================================================================== */
 package org.apache.poi.xwpf.model;
 
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.POIXMLDocumentPart.RelationPart;
+import org.apache.poi.ooxml.POIXMLDocumentPart;
+import org.apache.poi.ooxml.POIXMLDocumentPart.RelationPart;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFFactory;
 import org.apache.poi.xwpf.usermodel.XWPFFooter;

@@ -188,7 +188,7 @@ public abstract class AbstractWordConverter
         // by default no such actions needed
     }
 
-    protected Triplet getCharacterRunTriplet( CharacterRun characterRun )
+    protected Triplet getCharacterRunTriplet(CharacterRun characterRun )
     {
         Triplet original = new Triplet();
         original.bold = characterRun.isBold();

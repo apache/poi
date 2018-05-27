@@ -25,7 +25,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
-import org.apache.poi.POITextExtractor;
+import org.apache.poi.extractor.POITextExtractor;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 
 public interface SlideShow<
