@@ -20,7 +20,7 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 
 @Internal
-class Decimal {
+public class Decimal {
     /**
      * Findbugs: UNR_UNREAD_FIELD
      */
@@ -30,9 +30,7 @@ class Decimal {
     private int field_4_hi32;
     private long field_5_lo64;
 
-    Decimal() {}
-    
-    void read( LittleEndianByteArrayInputStream lei ) {
+    public void read( LittleEndianByteArrayInputStream lei ) {
         field_1_wReserved = lei.readShort();
         field_2_scale = lei.readByte();
         field_3_sign = lei.readByte();

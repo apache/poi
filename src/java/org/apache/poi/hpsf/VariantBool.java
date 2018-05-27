@@ -22,16 +22,14 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
 @Internal
-class VariantBool {
+public class VariantBool {
     private final static POILogger LOG = POILogFactory.getLogger( VariantBool.class );
 
     static final int SIZE = 2;
 
     private boolean _value;
 
-    VariantBool() {}
-    
-    void read( LittleEndianByteArrayInputStream lei ) {
+    public void read( LittleEndianByteArrayInputStream lei ) {
         short value = lei.readShort();
         switch (value) {
             case 0:
@@ -47,11 +45,11 @@ class VariantBool {
         }
     }
 
-    boolean getValue() {
+    public boolean getValue() {
         return _value;
     }
 
-    void setValue( boolean value ) {
+    public void setValue( boolean value ) {
         this._value = value;
     }
 }

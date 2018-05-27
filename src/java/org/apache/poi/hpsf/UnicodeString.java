@@ -31,16 +31,14 @@ import org.apache.poi.util.POILogger;
 import org.apache.poi.util.StringUtil;
 
 @Internal
-class UnicodeString {
+public class UnicodeString {
     private static final POILogger LOG = POILogFactory.getLogger( UnicodeString.class );
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
 
     private byte[] _value;
-    
-    UnicodeString() {}
 
-    void read(LittleEndianByteArrayInputStream lei) {
+    public void read(LittleEndianByteArrayInputStream lei) {
         final int length = lei.readInt();
         final int unicodeBytes = length*2;
         _value = IOUtils.safelyAllocate(unicodeBytes, MAX_RECORD_LENGTH);
@@ -66,11 +64,11 @@ class UnicodeString {
         TypedPropertyValue.skipPadding(lei);
     }
     
-    byte[] getValue() {
+    public byte[] getValue() {
         return _value;
     }
 
-    String toJavaString() {
+    public String toJavaString() {
         if ( _value.length == 0 ) {
             return null;
         }
@@ -95,11 +93,11 @@ class UnicodeString {
         return result.substring( 0, terminator );
     }
 
-    void setJavaValue( String string ) throws UnsupportedEncodingException {
+    public void setJavaValue( String string ) throws UnsupportedEncodingException {
         _value = CodePageUtil.getBytesInCodePage(string + "\0", CodePageUtil.CP_UNICODE);
     }
 
-    int write( OutputStream out ) throws IOException {
+    public int write( OutputStream out ) throws IOException {
         LittleEndian.putUInt( _value.length / 2, out );
         out.write( _value );
         return LittleEndianConsts.INT_SIZE + _value.length;
