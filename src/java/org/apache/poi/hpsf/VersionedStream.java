@@ -22,14 +22,14 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 
 @Internal
-class VersionedStream
+public class VersionedStream
 {
     private final GUID _versionGuid = new GUID();
     private final IndirectPropertyName _streamName = new IndirectPropertyName();
-    
-    VersionedStream() {}
 
-    void read( LittleEndianByteArrayInputStream lei ) {
+    public VersionedStream() {}
+
+    public void read( LittleEndianByteArrayInputStream lei ) {
         _versionGuid.read(lei);
         _streamName.read(lei);
     }

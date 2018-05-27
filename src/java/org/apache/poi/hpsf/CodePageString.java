@@ -30,18 +30,16 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
 @Internal
-class CodePageString {
+public class CodePageString {
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
 
     private final static POILogger LOG = POILogFactory.getLogger( CodePageString.class );
 
     private byte[] _value;
-    
-    
-    CodePageString() {}
 
-    void read( LittleEndianByteArrayInputStream lei ) {
+
+    public void read( LittleEndianByteArrayInputStream lei ) {
         int offset = lei.getReadIndex();
         int size = lei.readInt();
         _value = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH);
@@ -70,7 +68,7 @@ class CodePageString {
         TypedPropertyValue.skipPadding(lei);
     }
 
-    String getJavaValue( int codepage ) throws UnsupportedEncodingException {
+    public String getJavaValue( int codepage ) throws UnsupportedEncodingException {
         int cp = ( codepage == -1 ) ? Property.DEFAULT_CODEPAGE : codepage;
         String result = CodePageUtil.getStringFromCodePage(_value, cp);
 
@@ -92,16 +90,16 @@ class CodePageString {
         return result.substring( 0, terminator );
     }
 
-    int getSize() {
+    public int getSize() {
         return LittleEndianConsts.INT_SIZE + _value.length;
     }
 
-    void setJavaValue( String string, int codepage ) throws UnsupportedEncodingException {
+    public void setJavaValue( String string, int codepage ) throws UnsupportedEncodingException {
         int cp = ( codepage == -1 ) ? Property.DEFAULT_CODEPAGE : codepage;
         _value = CodePageUtil.getBytesInCodePage(string + "\0", cp);
     }
 
-    int write( OutputStream out ) throws IOException {
+    public int write( OutputStream out ) throws IOException {
         LittleEndian.putUInt( _value.length, out );
         out.write( _value );
         return LittleEndianConsts.INT_SIZE + _value.length;

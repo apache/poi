@@ -20,14 +20,12 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 
 @Internal
-class Currency {
+public class Currency {
     private static final int SIZE = 8;
 
     private final byte[] _value = new byte[SIZE];
-    
-    Currency() {}
 
-    void read( LittleEndianByteArrayInputStream lei ) {
+    public void read( LittleEndianByteArrayInputStream lei ) {
         lei.readFully(_value);
     }
 }

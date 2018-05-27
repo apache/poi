@@ -20,10 +20,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
 
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianConsts;
 
+@Internal
 public class Filetime {
     /**
      * The difference between the Windows epoch (1601-01-01
@@ -39,47 +41,47 @@ public class Filetime {
     private int _dwHighDateTime;
     private int _dwLowDateTime;
 
-    Filetime() {}
-    
-    Filetime( int low, int high ) {
+    public Filetime() {}
+
+    public Filetime( int low, int high ) {
         _dwLowDateTime = low;
         _dwHighDateTime = high;
     }
 
-    Filetime( Date date ) {
+    public Filetime( Date date ) {
         long filetime = Filetime.dateToFileTime(date);
         _dwHighDateTime = (int) ((filetime >>> 32) & UINT_MASK);
         _dwLowDateTime = (int) (filetime & UINT_MASK);
     }
     
 
-    void read( LittleEndianByteArrayInputStream lei ) {
+    public void read( LittleEndianByteArrayInputStream lei ) {
         _dwLowDateTime = lei.readInt();
         _dwHighDateTime = lei.readInt();
     }
 
-    long getHigh() {
+    public long getHigh() {
         return _dwHighDateTime;
     }
 
-    long getLow() {
+    public long getLow() {
         return _dwLowDateTime;
     }
 
-    byte[] toByteArray() {
+    public byte[] toByteArray() {
         byte[] result = new byte[SIZE];
         LittleEndian.putInt( result, 0 * LittleEndianConsts.INT_SIZE, _dwLowDateTime );
         LittleEndian.putInt( result, 1 * LittleEndianConsts.INT_SIZE, _dwHighDateTime );
         return result;
     }
 
-    int write( OutputStream out ) throws IOException {
+    public int write( OutputStream out ) throws IOException {
         LittleEndian.putInt( _dwLowDateTime, out );
         LittleEndian.putInt( _dwHighDateTime, out );
         return SIZE;
     }
 
-    Date getJavaValue() {
+    public Date getJavaValue() {
         long l = (((long)_dwHighDateTime) << 32) | (_dwLowDateTime & UINT_MASK);
         return filetimeToDate( l );
     }

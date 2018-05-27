@@ -27,22 +27,22 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
 @Internal
-class TypedPropertyValue {
+public class TypedPropertyValue {
     private static final POILogger LOG = POILogFactory.getLogger( TypedPropertyValue.class );
 
     private int _type;
     private Object _value;
 
-    TypedPropertyValue( int type, Object value ) {
+    public TypedPropertyValue( int type, Object value ) {
         _type = type;
         _value = value;
     }
 
-    Object getValue() {
+    public Object getValue() {
         return _value;
     }
 
-    void read( LittleEndianByteArrayInputStream lei ) {
+    public void read( LittleEndianByteArrayInputStream lei ) {
         _type = lei.readShort();
         short padding = lei.readShort();
         if ( padding != 0 ) {
@@ -52,7 +52,7 @@ class TypedPropertyValue {
         readValue( lei );
     }
 
-    void readValue( LittleEndianByteArrayInputStream lei ) {
+    public void readValue( LittleEndianByteArrayInputStream lei ) {
         switch ( _type ) {
         case Variant.VT_EMPTY:
         case Variant.VT_NULL:

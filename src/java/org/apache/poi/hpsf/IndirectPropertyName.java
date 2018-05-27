@@ -19,6 +19,6 @@ package org.apache.poi.hpsf;
 import org.apache.poi.util.Internal;
 
 @Internal
-class IndirectPropertyName extends CodePageString {
+public class IndirectPropertyName extends CodePageString {
     IndirectPropertyName() {}
 }

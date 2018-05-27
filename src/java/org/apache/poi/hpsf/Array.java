@@ -20,7 +20,7 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 
 @Internal
-class Array
+public class Array
 {
     static class ArrayDimension {
         private long _size;
@@ -74,9 +74,7 @@ class Array
     private final ArrayHeader _header = new ArrayHeader();
     private TypedPropertyValue[] _values;
 
-    Array() {}
-
-    void read( LittleEndianByteArrayInputStream lei ) {
+    public void read( LittleEndianByteArrayInputStream lei ) {
         _header.read(lei);
 
         long numberOfScalarsLong = _header.getNumberOfScalarValues();
@@ -99,8 +97,8 @@ class Array
             }
         }
     }
-    
-    TypedPropertyValue[] getValues(){
+
+    public TypedPropertyValue[] getValues(){
         return _values;
     }
 }
