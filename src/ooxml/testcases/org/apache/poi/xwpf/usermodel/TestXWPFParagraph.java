@@ -559,7 +559,7 @@ public final class TestXWPFParagraph {
 
         XWPFParagraph p = ps.get(0);
 
-        TextSegement segment = p.searchText("sample word document", new PositionInParagraph());
+        TextSegment segment = p.searchText("sample word document", new PositionInParagraph());
         assertNotNull(segment);
 
         assertEquals("sample word document", p.getText(segment));
