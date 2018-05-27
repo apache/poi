@@ -23,8 +23,8 @@ import java.io.InputStream;
 
 import javax.xml.namespace.QName;
 
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.POIXMLException;
+import org.apache.poi.ooxml.POIXMLDocumentPart;
+import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
@@ -201,5 +201,10 @@ public class XSSFObjectData extends XSSFSimpleShape implements ObjectData {
         } finally {
             cur.dispose();
         }
+    }
+
+    @Override
+    public String getContentType() {
+        return getObjectPart().getContentType();
     }
 }

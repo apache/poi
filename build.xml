@@ -869,7 +869,7 @@ under the License.
 
             <replace dir="${xmlbean.sources.dir}" includes="**/*.java" excludes="**/impl/**">
                 <replacetoken>org.apache.xmlbeans.XmlBeans.getContextTypeLoader()</replacetoken>
-                <replacevalue>org.apache.poi.POIXMLTypeLoader</replacevalue>
+                <replacevalue>org.apache.poi.ooxml.POIXMLTypeLoader</replacevalue>
             </replace>
 
             <!-- remove deprecated warnings, as we prefer the array methods - see #56854 -->
@@ -880,9 +880,9 @@ under the License.
 
             <copy todir="${xmlbean.sources.dir}">
                 <fileset dir="${ooxml.src}">
-                    <include name="org/apache/poi/POIXMLTypeLoader.java"/>
-                    <include name="org/apache/poi/util/DocumentHelper.java"/>
-                    <include name="org/apache/poi/util/SAXHelper.java"/>
+                    <include name="org/apache/poi/ooxml/POIXMLTypeLoader.java"/>
+                    <include name="org/apache/poi/ooxml/util/DocumentHelper.java"/>
+                    <include name="org/apache/poi/ooxml/util/SAXHelper.java"/>
                     <include name="org/apache/poi/openxml4j/opc/PackageNamespaces.java"/>
                 </fileset>
                 <fileset dir="${main.src}">
@@ -907,10 +907,6 @@ under the License.
                    includeantruntime="false">
                    <!-- debug="${compile.debug}" -->
                 <classpath refid="ooxml.classpath"/>
-
-                <!-- unfortunately JUnit is required here for OOXMLLite, we should rather move OOXMLLite
-                to test or a separate folder to clean up dependencies -->
-                <classpath location="${main.junit.jar}"/>
             </javac>
 
             <jar basedir="${xmlbean.classes.dir}" destfile="@{classes-jar}" excludes="org/apache/**" level="9" />
@@ -1081,10 +1077,6 @@ under the License.
             <classpath>
                 <path refid="ooxml.classpath"/>
                 <path refid="ooxml.xmlsec.classpath"/>
-
-                <!-- unfortunately JUnit is required here for OOXMLLite, we should rather move OOXMLLite
-                to test or a separate folder to clean up dependencies -->
-                <pathelement location="${main.junit.jar}"/>
             </classpath>
         </javac>
         <!-- compile the tests -->
@@ -1562,7 +1554,7 @@ under the License.
             <zipfileset includes="**/*" src="${ooxml.security.jar}"/>
         </jar>
 
-        <java classname="org.apache.poi.util.OOXMLLite" fork="yes"
+        <java classname="org.apache.poi.ooxml.util.OOXMLLite" fork="yes"
             failonerror="true">
             <classpath>
                 <pathelement path="${ooxml.lite-merged.dir}/ooxml-lite-merged.jar"/>
