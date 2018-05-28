@@ -205,12 +205,14 @@ poijobs.each { poijob ->
             }
         }
         wrappers {
-            /* Plugin seems to be missing: Warning: (create_jobs.groovy, line 202) version 1.13 or later of plugin 'build-timeout' needs to be installed
             timeout {
                 absolute(180)
                 abortBuild()
                 writeDescription('Build was aborted due to timeout')
-            }*/
+            }
+            preBuildCleanup {
+                includePattern('**/ooxml-lib/ooxml*.jar')
+            }
             if(poijob.sonar) {
                 configure { project ->
                     project / buildWrappers << 'hudson.plugins.sonar.SonarBuildWrapper' {}
