@@ -234,9 +234,9 @@
                   <target>
                     <copy todir="${basedir}/target/generated-sources/xmlbeans">
                       <fileset dir="${basedir}/../../src/ooxml/java">
-                        <include name="org/apache/poi/POIXMLTypeLoader.java"/>
-                        <include name="org/apache/poi/util/DocumentHelper.java"/>
-                        <include name="org/apache/poi/util/SAXHelper.java"/>
+                        <include name="org/apache/poi/ooxml/POIXMLTypeLoader.java"/>
+                        <include name="org/apache/poi/ooxml/util/DocumentHelper.java"/>
+                        <include name="org/apache/poi/ooxml/util/SAXHelper.java"/>
                         <include name="org/apache/poi/openxml4j/opc/PackageNamespaces.java"/>
                       </fileset>
                       <fileset dir="${basedir}/../../src/java">
