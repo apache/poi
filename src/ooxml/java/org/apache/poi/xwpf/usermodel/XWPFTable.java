@@ -22,6 +22,9 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Collections;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.util.Internal;
@@ -48,10 +51,24 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTblWidth;
  * <p>Specifies the contents of a table present in the document. A table is a set
  * of paragraphs (and other block-level content) arranged in rows and columns.</p>
  */
+@SuppressWarnings("WeakerAccess")
 public class XWPFTable implements IBodyElement, ISDTContents {
-    private static EnumMap<XWPFBorderType, STBorder.Enum> xwpfBorderTypeMap;
+
+    // Create a map from this XWPF-level enum to the STBorder.Enum values
+    public enum XWPFBorderType {
+        NIL, NONE, SINGLE, THICK, DOUBLE, DOTTED, DASHED, DOT_DASH, DOT_DOT_DASH, TRIPLE,
+        THIN_THICK_SMALL_GAP, THICK_THIN_SMALL_GAP, THIN_THICK_THIN_SMALL_GAP,
+        THIN_THICK_MEDIUM_GAP, THICK_THIN_MEDIUM_GAP, THIN_THICK_THIN_MEDIUM_GAP,
+        THIN_THICK_LARGE_GAP, THICK_THIN_LARGE_GAP, THIN_THICK_THIN_LARGE_GAP,
+        WAVE, DOUBLE_WAVE, DASH_SMALL_GAP, DASH_DOT_STROKED, THREE_D_EMBOSS, THREE_D_ENGRAVE,
+        OUTSET, INSET;
+    }
+
+    private enum Border { INSIDE_V, INSIDE_H, LEFT, TOP, BOTTOM, RIGHT }
+
+    private static final EnumMap<XWPFBorderType, STBorder.Enum> xwpfBorderTypeMap;
     // Create a map from the STBorder.Enum values to the XWPF-level enums
-    private static HashMap<Integer, XWPFBorderType> stBorderTypeMap;
+    private static final HashMap<Integer, XWPFBorderType> stBorderTypeMap;
 
     static {
         // populate enum maps
@@ -303,7 +320,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * @param force - force creation of CTTblPr element if necessary
      */
     private CTTblPr getTblPr(boolean force) {
-        return (ctTbl.getTblPr() != null) ? ctTbl.getTblPr() 
+        return (ctTbl.getTblPr() != null) ? ctTbl.getTblPr()
                 : (force ? ctTbl.addNewTblPr() : null);
     }
 
@@ -321,97 +338,61 @@ public class XWPFTable implements IBodyElement, ISDTContents {
                : force ? tblPr.addNewTblBorders()
                : null;
     }
-    
-    /**
-     * Return CTBorder object for Inside Vertical border. If force parameter is true,
-     * will create the element if necessary. If force parameter is false, returns 
-     * null when Inside Vertical border is missing.
-     *
-     * @param force - force creation of Inside Vertical border if necessary.
-     */
-    private CTBorder getTblInsideVBorder(boolean force) {
-        CTTblBorders ctb = getTblBorders(force);
-        return ctb == null ? null
-               : ctb.isSetInsideV() ? ctb.getInsideV() 
-               : force ? ctb.addNewInsideV() 
-               : null;
-    }
+
 
     /**
-     * Return CTBorder object for Inside Horizontal border. If force parameter is true,
-     * will create the element if necessary. If force parameter is false, returns 
-     * null when Inside Horizontal border is missing.
+     * Return CTBorder object for given border. If force parameter is true,
+     * will create the element if necessary. If force parameter is false, returns
+     * null when the border element is missing.
      *
-     * @param force - force creation of Inside Horizontal border if necessary.
+     * @param force - force creation of border if necessary.
      */
-    private CTBorder getTblInsideHBorder(boolean force) {
+    private CTBorder getTblBorder(boolean force, Border border) {
+        final Function<CTTblBorders,Boolean> isSet;
+        final Function<CTTblBorders,CTBorder> get;
+        final Function<CTTblBorders,CTBorder> addNew;
+        switch (border) {
+            case INSIDE_V:
+                isSet = CTTblBorders::isSetInsideV;
+                get = CTTblBorders::getInsideV;
+                addNew = CTTblBorders::addNewInsideV;
+                break;
+            case INSIDE_H:
+                isSet = CTTblBorders::isSetInsideH;
+                get = CTTblBorders::getInsideH;
+                addNew = CTTblBorders::addNewInsideH;
+                break;
+            case LEFT:
+                isSet = CTTblBorders::isSetLeft;
+                get = CTTblBorders::getLeft;
+                addNew = CTTblBorders::addNewLeft;
+                break;
+            case TOP:
+                isSet = CTTblBorders::isSetTop;
+                get = CTTblBorders::getTop;
+                addNew = CTTblBorders::addNewTop;
+                break;
+            case RIGHT:
+                isSet = CTTblBorders::isSetRight;
+                get = CTTblBorders::getRight;
+                addNew = CTTblBorders::addNewRight;
+                break;
+            case BOTTOM:
+                isSet = CTTblBorders::isSetBottom;
+                get = CTTblBorders::getBottom;
+                addNew = CTTblBorders::addNewBottom;
+                break;
+            default:
+                return null;
+        }
+
         CTTblBorders ctb = getTblBorders(force);
         return ctb == null ? null
-               : ctb.isSetInsideH() ? ctb.getInsideH() 
-               : force ? ctb.addNewInsideH() 
-               : null;
+                : isSet.apply(ctb) ? get.apply(ctb)
+                : force ? addNew.apply(ctb)
+                : null;
     }
 
-    /**
-     * Return CTBorder object for Top border. If force parameter is true,
-     * will create the element if necessary. If force parameter is false, returns 
-     * null when Top border is missing.
-     *
-     * @param force - force creation of Top border if necessary.
-     */
-    private CTBorder getTblTopBorder(boolean force) {
-        CTTblBorders ctb = getTblBorders(force);
-        return ctb == null ? null
-               : ctb.isSetTop() ? ctb.getTop() 
-               : force ? ctb.addNewTop() 
-               : null;
-    }
-
-    /**
-     * Return CTBorder object for Bottom border. If force parameter is true,
-     * will create the element if necessary. If force parameter is false, returns 
-     * null when Bottom border is missing.
-     *
-     * @param force - force creation of Bottom border if necessary.
-     */
-    private CTBorder getTblBottomBorder(boolean force) {
-        CTTblBorders ctb = getTblBorders(force);
-        return ctb == null ? null
-               : ctb.isSetBottom() ? ctb.getBottom() 
-               : force ? ctb.addNewBottom() 
-               : null;
-    }
-
-    /**
-     * Return CTBorder object for Left border. If force parameter is true,
-     * will create the element if necessary. If force parameter is false, returns 
-     * null when Left border is missing.
-     *
-     * @param force - force creation of Left border if necessary.
-     */
-    private CTBorder getTblLeftBorder(boolean force) {
-        CTTblBorders ctb = getTblBorders(force);
-        return ctb == null ? null
-               : ctb.isSetLeft() ? ctb.getLeft() 
-               : force ? ctb.addNewLeft() 
-               : null;
-    }
-
-    /**
-     * Return CTBorder object for Right border. If force parameter is true,
-     * will create the element if necessary. If force parameter is false, returns 
-     * null when Right border is missing.
-     *
-     * @param force - force creation of Right border if necessary.
-     */
-    private CTBorder getTblRightBorder(boolean force) {
-        CTTblBorders ctb = getTblBorders(force);
-        return ctb == null ? null
-               : ctb.isSetRight() ? ctb.getRight() 
-               : force ? ctb.addNewRight() 
-               : null;
-    }
-    
     /**
      * Returns the current table alignment or NULL
      *
@@ -491,8 +472,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * @return {@link XWPFBorderType} of the inside horizontal borders or null if missing
      */
     public XWPFBorderType getInsideHBorderType() {
-        CTBorder b = getTblInsideHBorder(false);
-        return (b != null) ? stBorderTypeMap.get(b.getVal().intValue()) : null;
+        return getBorderType(Border.INSIDE_H);
     }
 
     /**
@@ -502,10 +482,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * -1 if missing.
      */
     public int getInsideHBorderSize() {
-        CTBorder b = getTblInsideHBorder(false);
-        return (b != null) 
-                ? (b.isSetSz() ? b.getSz().intValue() : -1)
-                        : -1;        
+        return getBorderSize(Border.INSIDE_H);
     }
 
     /**
@@ -515,10 +492,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * -1 if missing.
      */
     public int getInsideHBorderSpace() {
-        CTBorder b = getTblInsideHBorder(false);
-        return (b != null) 
-                ? (b.isSetSpace() ? b.getSpace().intValue() : -1)
-                        : -1;        
+        return getBorderSpace(Border.INSIDE_H);
     }
 
     /**
@@ -527,10 +501,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * @return The color of the Inside Horizontal borders, null if missing.
      */
     public String getInsideHBorderColor() {
-        CTBorder b = getTblInsideHBorder(false);
-        return (b != null) 
-                ? (b.isSetColor() ? b.xgetColor().getStringValue() : null)
-                        : null;        
+        return getBorderColor(Border.INSIDE_H);
     }
 
     /**
@@ -539,8 +510,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * @return {@link XWPFBorderType} of the inside vertical borders or null if missing
      */
     public XWPFBorderType getInsideVBorderType() {
-        CTBorder b = getTblInsideVBorder(false);
-        return (b != null) ? stBorderTypeMap.get(b.getVal().intValue()) : null;
+        return getBorderType(Border.INSIDE_V);
     }
 
     /**
@@ -550,10 +520,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * -1 if missing.
      */
     public int getInsideVBorderSize() {
-        CTBorder b = getTblInsideVBorder(false);
-        return (b != null) 
-                ? (b.isSetSz() ? b.getSz().intValue() : -1)
-                        : -1;        
+        return getBorderSize(Border.INSIDE_V);
     }
 
     /**
@@ -563,10 +530,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * -1 if missing.
      */
     public int getInsideVBorderSpace() {
-        CTBorder b = getTblInsideVBorder(false);
-        return (b != null) 
-                ? (b.isSetSpace() ? b.getSpace().intValue() : -1)
-                        : -1;        
+        return getBorderSpace(Border.INSIDE_V);
     }
 
     /**
@@ -575,10 +539,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * @return The color of the Inside vertical borders, null if missing.
      */
     public String getInsideVBorderColor() {
-        CTBorder b = getTblInsideVBorder(false);
-        return (b != null) 
-                ? (b.isSetColor() ? b.xgetColor().getStringValue() : null)
-                        : null;        
+        return getBorderColor(Border.INSIDE_V);
     }
 
     /**
@@ -587,8 +548,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * @return {@link XWPFBorderType} of the top borders or null if missing
      */
     public XWPFBorderType getTopBorderType() {
-        CTBorder b = getTblTopBorder(false);
-        return (b != null) ? stBorderTypeMap.get(b.getVal().intValue()) : null;
+        return getBorderType(Border.TOP);
     }
 
     /**
@@ -598,10 +558,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * -1 if missing.
      */
     public int getTopBorderSize() {
-        CTBorder b = getTblTopBorder(false);
-        return (b != null) 
-                ? (b.isSetSz() ? b.getSz().intValue() : -1)
-                        : -1;        
+        return getBorderSize(Border.TOP);
     }
 
     /**
@@ -611,10 +568,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * -1 if missing.
      */
     public int getTopBorderSpace() {
-        CTBorder b = getTblTopBorder(false);
-        return (b != null) 
-                ? (b.isSetSpace() ? b.getSpace().intValue() : -1)
-                        : -1;        
+        return getBorderSpace(Border.TOP);
     }
 
     /**
@@ -623,10 +577,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * @return The color of the top borders, null if missing.
      */
     public String getTopBorderColor() {
-        CTBorder b = getTblTopBorder(false);
-        return (b != null) 
-                ? (b.isSetColor() ? b.xgetColor().getStringValue() : null)
-                        : null;        
+        return getBorderColor(Border.TOP);
     }
 
     /**
@@ -635,8 +586,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * @return {@link XWPFBorderType} of the bottom borders or null if missing
      */
     public XWPFBorderType getBottomBorderType() {
-        CTBorder b = getTblBottomBorder(false);
-        return (b != null) ? stBorderTypeMap.get(b.getVal().intValue()) : null;
+        return getBorderType(Border.BOTTOM);
     }
 
     /**
@@ -646,10 +596,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * -1 if missing.
      */
     public int getBottomBorderSize() {
-        CTBorder b = getTblBottomBorder(false);
-        return (b != null) 
-                ? (b.isSetSz() ? b.getSz().intValue() : -1)
-                        : -1;        
+        return getBorderSize(Border.BOTTOM);
     }
 
     /**
@@ -659,10 +606,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * -1 if missing.
      */
     public int getBottomBorderSpace() {
-        CTBorder b = getTblBottomBorder(false);
-        return (b != null) 
-                ? (b.isSetSpace() ? b.getSpace().intValue() : -1)
-                        : -1;        
+        return getBorderSpace(Border.BOTTOM);
     }
 
     /**
@@ -671,10 +615,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * @return The color of the bottom borders, null if missing.
      */
     public String getBottomBorderColor() {
-        CTBorder b = getTblBottomBorder(false);
-        return (b != null) 
-                ? (b.isSetColor() ? b.xgetColor().getStringValue() : null)
-                        : null;        
+        return getBorderColor(Border.BOTTOM);
     }
 
     /**
@@ -683,8 +624,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * @return {@link XWPFBorderType} of the Left borders or null if missing
      */
     public XWPFBorderType getLeftBorderType() {
-        CTBorder b = getTblLeftBorder(false);
-        return (b != null) ? stBorderTypeMap.get(b.getVal().intValue()) : null;
+        return getBorderType(Border.LEFT);
     }
 
     /**
@@ -694,10 +634,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * -1 if missing.
      */
     public int getLeftBorderSize() {
-        CTBorder b = getTblLeftBorder(false);
-        return (b != null) 
-                ? (b.isSetSz() ? b.getSz().intValue() : -1)
-                        : -1;        
+        return getBorderSize(Border.LEFT);
     }
 
     /**
@@ -707,10 +644,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * -1 if missing.
      */
     public int getLeftBorderSpace() {
-        CTBorder b = getTblLeftBorder(false);
-        return (b != null) 
-                ? (b.isSetSpace() ? b.getSpace().intValue() : -1)
-                        : -1;        
+        return getBorderSpace(Border.LEFT);
     }
 
     /**
@@ -719,10 +653,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * @return The color of the Left borders, null if missing.
      */
     public String getLeftBorderColor() {
-        CTBorder b = getTblLeftBorder(false);
-        return (b != null) 
-                ? (b.isSetColor() ? b.xgetColor().getStringValue() : null)
-                        : null;        
+        return getBorderColor(Border.LEFT);
     }
 
     /**
@@ -731,8 +662,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * @return {@link XWPFBorderType} of the Right borders or null if missing
      */
     public XWPFBorderType getRightBorderType() {
-        CTBorder b = getTblRightBorder(false);
-        return (b != null) ? stBorderTypeMap.get(b.getVal().intValue()) : null;
+        return getBorderType(Border.RIGHT);
     }
 
     /**
@@ -742,10 +672,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * -1 if missing.
      */
     public int getRightBorderSize() {
-        CTBorder b = getTblRightBorder(false);
-        return (b != null) 
-                ? (b.isSetSz() ? b.getSz().intValue() : -1)
-                        : -1;        
+        return getBorderSize(Border.RIGHT);
     }
 
     /**
@@ -755,10 +682,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * -1 if missing.
      */
     public int getRightBorderSpace() {
-        CTBorder b = getTblRightBorder(false);
-        return (b != null) 
-                ? (b.isSetSpace() ? b.getSpace().intValue() : -1)
-                        : -1;        
+        return getBorderSpace(Border.RIGHT);
     }
 
     /**
@@ -767,10 +691,33 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      * @return The color of the Right borders, null if missing.
      */
     public String getRightBorderColor() {
-        CTBorder b = getTblRightBorder(false);
-        return (b != null) 
+        return getBorderColor(Border.RIGHT);
+    }
+
+    private XWPFBorderType getBorderType(Border border) {
+        final CTBorder b = getTblBorder(false, border);
+        return (b != null) ? stBorderTypeMap.get(b.getVal().intValue()) : null;
+    }
+
+    private int getBorderSize(Border border) {
+        final CTBorder b = getTblBorder(false, border);
+        return (b != null)
+                ? (b.isSetSz() ? b.getSz().intValue() : -1)
+                : -1;
+    }
+
+    private int getBorderSpace(Border border) {
+        final CTBorder b = getTblBorder(false, border);
+        return (b != null)
+                ? (b.isSetSpace() ? b.getSpace().intValue() : -1)
+                : -1;
+    }
+
+    private String getBorderColor(Border border) {
+        final CTBorder b = getTblBorder(false, border);
+        return (b != null)
                 ? (b.isSetColor() ? b.xgetColor().getStringValue() : null)
-                        : null;        
+                : null;
     }
 
     public int getRowBandSize() {
@@ -818,11 +765,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      *      or auto to allow a consumer to automatically determine the border color as appropriate.
      */
     public void setInsideHBorder(XWPFBorderType type, int size, int space, String rgbColor) {
-        CTBorder b = getTblInsideHBorder(true);
-        b.setVal(xwpfBorderTypeMap.get(type));
-        b.setSz(BigInteger.valueOf(size));
-        b.setSpace(BigInteger.valueOf(space));
-        b.setColor(rgbColor);
+        setBorder(Border.INSIDE_H, type, size, space, rgbColor);
     }
 
     /**
@@ -838,11 +781,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      *      or auto to allow a consumer to automatically determine the border color as appropriate.
      */
     public void setInsideVBorder(XWPFBorderType type, int size, int space, String rgbColor) {
-        CTBorder b = getTblInsideVBorder(true);
-        b.setVal(xwpfBorderTypeMap.get(type));
-        b.setSz(BigInteger.valueOf(size));
-        b.setSpace(BigInteger.valueOf(space));
-        b.setColor(rgbColor);
+        setBorder(Border.INSIDE_V, type, size, space, rgbColor);
     }
 
     /**
@@ -858,11 +797,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      *      or auto to allow a consumer to automatically determine the border color as appropriate.
      */
     public void setTopBorder(XWPFBorderType type, int size, int space, String rgbColor) {
-        CTBorder b = getTblTopBorder(true);
-        b.setVal(xwpfBorderTypeMap.get(type));
-        b.setSz(BigInteger.valueOf(size));
-        b.setSpace(BigInteger.valueOf(space));
-        b.setColor(rgbColor);
+        setBorder(Border.TOP, type, size, space, rgbColor);
     }
 
     /**
@@ -878,11 +813,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      *      or auto to allow a consumer to automatically determine the border color as appropriate.
      */
     public void setBottomBorder(XWPFBorderType type, int size, int space, String rgbColor) {
-        CTBorder b = getTblBottomBorder(true);
-        b.setVal(xwpfBorderTypeMap.get(type));
-        b.setSz(BigInteger.valueOf(size));
-        b.setSpace(BigInteger.valueOf(space));
-        b.setColor(rgbColor);
+        setBorder(Border.BOTTOM, type, size, space, rgbColor);
     }
 
     /**
@@ -898,11 +829,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      *      or auto to allow a consumer to automatically determine the border color as appropriate.
      */
     public void setLeftBorder(XWPFBorderType type, int size, int space, String rgbColor) {
-        CTBorder b = getTblLeftBorder(true);
-        b.setVal(xwpfBorderTypeMap.get(type));
-        b.setSz(BigInteger.valueOf(size));
-        b.setSpace(BigInteger.valueOf(space));
-        b.setColor(rgbColor);
+        setBorder(Border.LEFT, type, size, space, rgbColor);
     }
 
     /**
@@ -918,178 +845,177 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      *      or auto to allow a consumer to automatically determine the border color as appropriate.
      */
     public void setRightBorder(XWPFBorderType type, int size, int space, String rgbColor) {
-        CTBorder b = getTblRightBorder(true);
+        setBorder(Border.RIGHT, type, size, space, rgbColor);
+    }
+
+    private void setBorder(Border border, XWPFBorderType type, int size, int space, String rgbColor) {
+        final CTBorder b = getTblBorder(true, border);
+        assert(b != null);
         b.setVal(xwpfBorderTypeMap.get(type));
         b.setSz(BigInteger.valueOf(size));
         b.setSpace(BigInteger.valueOf(space));
         b.setColor(rgbColor);
     }
-    
+
     /**
      * Remove inside horizontal borders for table
      */
     public void removeInsideHBorder() {
-        CTBorder b = getTblInsideHBorder(false);
-        if (b != null) {
-            getTblBorders(false).unsetInsideH();
-            cleanupTblBorders();
-        }
+        removeBorder(Border.INSIDE_H);
     }
     
     /**
      * Remove inside vertical borders for table
      */
     public void removeInsideVBorder() {
-        CTBorder b = getTblInsideVBorder(false);
-        if (b != null) {
-            getTblBorders(false).unsetInsideV();
-            cleanupTblBorders();
-        }
+        removeBorder(Border.INSIDE_V);
     }
     
     /**
      * Remove top borders for table
      */
     public void removeTopBorder() {
-        CTBorder b = getTblTopBorder(false);
-        if (b != null) {
-            getTblBorders(false).unsetTop();
-            cleanupTblBorders();
-        }
+        removeBorder(Border.TOP);
     }
-    
+
     /**
      * Remove bottom borders for table
      */
     public void removeBottomBorder() {
-        CTBorder b = getTblBottomBorder(false);
-        if (b != null) {
-            getTblBorders(false).unsetBottom();
-            cleanupTblBorders();
-        }
+        removeBorder(Border.BOTTOM);
     }
     
     /**
      * Remove left borders for table
      */
     public void removeLeftBorder() {
-        CTBorder b = getTblLeftBorder(false);
-        if (b != null) {
-            getTblBorders(false).unsetLeft();
-            cleanupTblBorders();
-        }
+        removeBorder(Border.LEFT);
     }
     
     /**
      * Remove right borders for table
      */
     public void removeRightBorder() {
-        CTBorder b = getTblRightBorder(false);
-        if (b != null) {
-            getTblBorders(false).unsetRight();
-            cleanupTblBorders();
-        }
+        removeBorder(Border.RIGHT);
     }
     
     /**
      * Remove all borders from table
      */
     public void removeBorders() {
-        CTTblBorders b = getTblBorders(false);
-        if (b != null) {
-            getTblPr(false).unsetTblBorders();
+        final CTTblPr pr = getTblPr(false);
+        if (pr != null && pr.isSetTblBorders()) {
+            pr.unsetTblBorders();
         }
     }
-    
+
+    private void removeBorder(final Border border) {
+        final Function<CTTblBorders,Boolean> isSet;
+        final Consumer<CTTblBorders> unSet;
+        switch (border) {
+            case INSIDE_H:
+                isSet = CTTblBorders::isSetInsideH;
+                unSet = CTTblBorders::unsetInsideH;
+                break;
+            case INSIDE_V:
+                isSet = CTTblBorders::isSetInsideV;
+                unSet = CTTblBorders::unsetInsideV;
+                break;
+            case LEFT:
+                isSet = CTTblBorders::isSetLeft;
+                unSet = CTTblBorders::unsetLeft;
+                break;
+            case TOP:
+                isSet = CTTblBorders::isSetTop;
+                unSet = CTTblBorders::unsetTop;
+                break;
+            case RIGHT:
+                isSet = CTTblBorders::isSetRight;
+                unSet = CTTblBorders::unsetRight;
+                break;
+            case BOTTOM:
+                isSet = CTTblBorders::isSetBottom;
+                unSet = CTTblBorders::unsetBottom;
+                break;
+            default:
+                return;
+        }
+
+        final CTTblBorders tbl = getTblBorders(false);
+        if (tbl != null && isSet.apply(tbl)) {
+            unSet.accept(tbl);
+            cleanupTblBorders();
+        }
+
+    }
+
     /**
      * removes the Borders node from Table properties if there are 
      * no border elements
      */
     private void cleanupTblBorders() {
-        CTTblBorders b = getTblBorders(false);
-        if (b != null) {
-            if (b.getInsideH() == null &&
-                    b.getInsideV() == null &&
-                    b.getTop() == null &&
-                    b.getBottom() == null &&
-                    b.getLeft() == null &&
-                    b.getRight() == null) {
-                getTblPr(false).unsetTblBorders();
+        final CTTblPr pr = getTblPr(false);
+        if (pr != null && pr.isSetTblBorders()) {
+            final CTTblBorders b = pr.getTblBorders();
+            if (!(b.isSetInsideH() ||
+                b.isSetInsideV() ||
+                b.isSetTop() ||
+                b.isSetBottom() ||
+                b.isSetLeft() ||
+                b.isSetRight())) {
+                pr.unsetTblBorders();
             }
         }
     }
     
     public int getCellMarginTop() {
-        int margin = 0;
-        CTTblPr tblPr = getTblPr();
-        CTTblCellMar tcm = tblPr.getTblCellMar();
-        if (tcm != null) {
-            CTTblWidth tw = tcm.getTop();
-            if (tw != null) {
-                margin = tw.getW().intValue();
-            }
-        }
-        return margin;
+        return getCellMargin(CTTblCellMar::getTop);
     }
 
     public int getCellMarginLeft() {
-        int margin = 0;
-        CTTblPr tblPr = getTblPr();
-        CTTblCellMar tcm = tblPr.getTblCellMar();
-        if (tcm != null) {
-            CTTblWidth tw = tcm.getLeft();
-            if (tw != null) {
-                margin = tw.getW().intValue();
-            }
-        }
-        return margin;
+        return getCellMargin(CTTblCellMar::getLeft);
     }
 
     public int getCellMarginBottom() {
-        int margin = 0;
-        CTTblPr tblPr = getTblPr();
-        CTTblCellMar tcm = tblPr.getTblCellMar();
-        if (tcm != null) {
-            CTTblWidth tw = tcm.getBottom();
-            if (tw != null) {
-                margin = tw.getW().intValue();
-            }
-        }
-        return margin;
+        return getCellMargin(CTTblCellMar::getBottom);
     }
 
     public int getCellMarginRight() {
-        int margin = 0;
+        return getCellMargin(CTTblCellMar::getRight);
+    }
+
+    private int getCellMargin(Function<CTTblCellMar,CTTblWidth> margin) {
         CTTblPr tblPr = getTblPr();
         CTTblCellMar tcm = tblPr.getTblCellMar();
         if (tcm != null) {
-            CTTblWidth tw = tcm.getRight();
+            CTTblWidth tw = margin.apply(tcm);
             if (tw != null) {
-                margin = tw.getW().intValue();
+                return tw.getW().intValue();
             }
         }
-        return margin;
+        return 0;
     }
 
     public void setCellMargins(int top, int left, int bottom, int right) {
         CTTblPr tblPr = getTblPr();
         CTTblCellMar tcm = tblPr.isSetTblCellMar() ? tblPr.getTblCellMar() : tblPr.addNewTblCellMar();
 
-        CTTblWidth tw = tcm.isSetLeft() ? tcm.getLeft() : tcm.addNewLeft();
-        tw.setType(STTblWidth.DXA);
-        tw.setW(BigInteger.valueOf(left));
+        setCellMargin(tcm, CTTblCellMar::isSetTop, CTTblCellMar::getTop, CTTblCellMar::addNewTop, CTTblCellMar::unsetTop, top);
+        setCellMargin(tcm, CTTblCellMar::isSetLeft, CTTblCellMar::getLeft, CTTblCellMar::addNewLeft, CTTblCellMar::unsetLeft, left);
+        setCellMargin(tcm, CTTblCellMar::isSetBottom, CTTblCellMar::getBottom, CTTblCellMar::addNewBottom, CTTblCellMar::unsetBottom, bottom);
+        setCellMargin(tcm, CTTblCellMar::isSetRight, CTTblCellMar::getRight, CTTblCellMar::addNewRight, CTTblCellMar::unsetRight, right);
+    }
 
-        tw = tcm.isSetTop() ? tcm.getTop() : tcm.addNewTop();
-        tw.setType(STTblWidth.DXA);
-        tw.setW(BigInteger.valueOf(top));
-
-        tw = tcm.isSetBottom() ? tcm.getBottom() : tcm.addNewBottom();
-        tw.setType(STTblWidth.DXA);
-        tw.setW(BigInteger.valueOf(bottom));
-
-        tw = tcm.isSetRight() ? tcm.getRight() : tcm.addNewRight();
-        tw.setType(STTblWidth.DXA);
-        tw.setW(BigInteger.valueOf(right));
+    private void setCellMargin(CTTblCellMar tcm, Function<CTTblCellMar,Boolean> isSet, Function<CTTblCellMar,CTTblWidth> get, Function<CTTblCellMar,CTTblWidth> addNew, Consumer<CTTblCellMar> unSet, int margin) {
+        if (margin == 0) {
+            if (isSet.apply(tcm)) {
+                unSet.accept(tcm);
+            }
+        } else {
+            CTTblWidth tw = (isSet.apply(tcm) ? get : addNew).apply(tcm);
+            tw.setType(STTblWidth.DXA);
+            tw.setW(BigInteger.valueOf(margin));
+        }
     }
 
     /**
@@ -1198,15 +1124,5 @@ public class XWPFTable implements IBodyElement, ISDTContents {
             if (getRows().get(i).getCtRow() == row) return getRow(i);
         }
         return null;
-    }
-
-    // Create a map from this XWPF-level enum to the STBorder.Enum values
-    public static enum XWPFBorderType {
-        NIL, NONE, SINGLE, THICK, DOUBLE, DOTTED, DASHED, DOT_DASH, DOT_DOT_DASH, TRIPLE,
-        THIN_THICK_SMALL_GAP, THICK_THIN_SMALL_GAP, THIN_THICK_THIN_SMALL_GAP, 
-        THIN_THICK_MEDIUM_GAP, THICK_THIN_MEDIUM_GAP, THIN_THICK_THIN_MEDIUM_GAP,
-        THIN_THICK_LARGE_GAP, THICK_THIN_LARGE_GAP, THIN_THICK_THIN_LARGE_GAP,
-        WAVE, DOUBLE_WAVE, DASH_SMALL_GAP, DASH_DOT_STROKED, THREE_D_EMBOSS, THREE_D_ENGRAVE,
-        OUTSET, INSET;
     }
 }
