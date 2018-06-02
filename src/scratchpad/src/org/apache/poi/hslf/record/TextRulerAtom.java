@@ -29,6 +29,7 @@ import java.util.List;
 import org.apache.poi.hslf.model.textproperties.HSLFTabStop;
 import org.apache.poi.hslf.model.textproperties.HSLFTabStopPropCollection;
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianOutputStream;
@@ -89,7 +90,7 @@ public final class TextRulerAtom extends RecordAtom {
 
         try {
             // Get the header.
-            leis.read(_header);
+            IOUtils.readFully(leis, _header);
 
             // Get the record data.
             read(leis);

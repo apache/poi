@@ -68,7 +68,7 @@ public final class SAXHelper {
             saxFactory = SAXParserFactory.newInstance();
             saxFactory.setValidating(false);
             saxFactory.setNamespaceAware(true);
-        } catch (RuntimeException | Error re) {
+        } catch (RuntimeException | Error re) { // NOSONAR
             // this also catches NoClassDefFoundError, which may be due to a local class path issue
             // This may occur if the code is run inside a web container
             // or a restricted JVM
