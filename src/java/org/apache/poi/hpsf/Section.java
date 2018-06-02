@@ -844,10 +844,10 @@ public class Section {
                 if (cp == CodePageUtil.CP_UNICODE) {
                     pad = 2+((4 - ((nrBytes+2) & 0x3)) & 0x3);
                 }
-                leis.skip(pad);
+                IOUtils.skipFully(leis, pad);
 
                 dic.put(id, str);
-            } catch (RuntimeException ex) {
+            } catch (RuntimeException|IOException ex) {
                 LOG.log(POILogger.WARN, errMsg, ex);
                 isCorrupted = true;
                 break;

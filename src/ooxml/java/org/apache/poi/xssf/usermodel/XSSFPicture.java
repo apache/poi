@@ -176,8 +176,11 @@ public final class XSSFPicture extends XSSFShape implements Picture {
      */
     public void resize(double scaleX, double scaleY){
         XSSFClientAnchor anchor = getClientAnchor();
-
         XSSFClientAnchor pref = getPreferredSize(scaleX,scaleY);
+        if (anchor == null || pref == null) {
+            logger.log(POILogger.WARN, "picture is not anchored via client anchor - ignoring resize call");
+            return;
+        }
 
         int row2 = anchor.getRow1() + (pref.getRow2() - pref.getRow1());
         int col2 = anchor.getCol1() + (pref.getCol2() - pref.getCol1());

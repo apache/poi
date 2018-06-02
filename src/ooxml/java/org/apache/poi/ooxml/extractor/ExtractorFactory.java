@@ -146,7 +146,7 @@ public class ExtractorFactory {
             // ensure file-handle release
             IOUtils.closeQuietly(fs);
             throw new IllegalArgumentException("Your File was neither an OLE2 file, nor an OOXML file");
-        } catch (OpenXML4JException | Error | RuntimeException | IOException | XmlException e) {
+        } catch (OpenXML4JException | Error | RuntimeException | IOException | XmlException e) { // NOSONAR
             // ensure file-handle release
             IOUtils.closeQuietly(fs);
             throw e;
@@ -245,7 +245,7 @@ public class ExtractorFactory {
 
             throw new IllegalArgumentException("No supported documents found in the OOXML package (found "+contentType+")");
 
-        } catch (IOException | Error | RuntimeException | XmlException | OpenXML4JException e) {
+        } catch (IOException | Error | RuntimeException | XmlException | OpenXML4JException e) { // NOSONAR
             // ensure that we close the package again if there is an error opening it, however
             // we need to revert the package to not re-write the file via close(), which is very likely not wanted for a TextExtractor!
             pkg.revert();
