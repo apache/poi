@@ -17,6 +17,8 @@
 
 package org.apache.poi;
 
+import static org.apache.poi.hpsf.PropertySetFactory.newDocumentSummaryInformation;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
@@ -141,7 +143,7 @@ public abstract class POIDocument implements Closeable {
             sInf = PropertySetFactory.newSummaryInformation();
         }
         if (dsInf == null) {
-            dsInf = PropertySetFactory.newDocumentSummaryInformation();
+            dsInf = newDocumentSummaryInformation();
         }
     }
 
@@ -277,47 +279,47 @@ public abstract class POIDocument implements Closeable {
      *      {@link NPOIFSFileSystem} occurs
      */
     protected void writeProperties(NPOIFSFileSystem outFS, List<String> writtenEntries) throws IOException {
-        EncryptionInfo ei = getEncryptionInfo();
+        final EncryptionInfo ei = getEncryptionInfo();
         final boolean encryptProps = (ei != null && ei.isDocPropsEncrypted());
-        NPOIFSFileSystem fs = (encryptProps) ? new NPOIFSFileSystem() : outFS;
-        
-        SummaryInformation si = getSummaryInformation();
-        if (si != null) {
-            writePropertySet(SummaryInformation.DEFAULT_STREAM_NAME, si, fs);
-            if(writtenEntries != null) {
-                writtenEntries.add(SummaryInformation.DEFAULT_STREAM_NAME);
-            }
-        }
-        DocumentSummaryInformation dsi = getDocumentSummaryInformation();
-        if (dsi != null) {
-            writePropertySet(DocumentSummaryInformation.DEFAULT_STREAM_NAME, dsi, fs);
-            if(writtenEntries != null) {
-                writtenEntries.add(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
-            }
-        }
+        try (NPOIFSFileSystem tmpFS = new NPOIFSFileSystem()) {
+            final NPOIFSFileSystem fs = (encryptProps) ? tmpFS : outFS;
 
-        if (!encryptProps) {
+            writePropertySet(SummaryInformation.DEFAULT_STREAM_NAME, getSummaryInformation(), fs, writtenEntries);
+            writePropertySet(DocumentSummaryInformation.DEFAULT_STREAM_NAME, getDocumentSummaryInformation(), fs, writtenEntries);
+
+            if (!encryptProps) {
+                return;
+            }
+
+            // create empty document summary
+            writePropertySet(DocumentSummaryInformation.DEFAULT_STREAM_NAME, newDocumentSummaryInformation(), outFS);
+
+            // remove summary, if previously available
+            if (outFS.getRoot().hasEntry(SummaryInformation.DEFAULT_STREAM_NAME)) {
+                outFS.getRoot().getEntry(SummaryInformation.DEFAULT_STREAM_NAME).delete();
+            }
+            Encryptor encGen = ei.getEncryptor();
+            if (!(encGen instanceof CryptoAPIEncryptor)) {
+                throw new EncryptedDocumentException(
+                    "Using " + ei.getEncryptionMode() + " encryption. Only CryptoAPI encryption supports encrypted property sets!");
+            }
+            CryptoAPIEncryptor enc = (CryptoAPIEncryptor) encGen;
+            try {
+                enc.setSummaryEntries(outFS.getRoot(), getEncryptedPropertyStreamName(), fs);
+            } catch (GeneralSecurityException e) {
+                throw new IOException(e);
+            }
+        }
+    }
+
+    private void writePropertySet(String name, PropertySet ps, NPOIFSFileSystem outFS, List<String> writtenEntries)
+    throws IOException {
+        if (ps == null) {
             return;
         }
-
-        // create empty document summary
-        dsi = PropertySetFactory.newDocumentSummaryInformation();
-        writePropertySet(DocumentSummaryInformation.DEFAULT_STREAM_NAME, dsi, outFS);
-        // remove summary, if previously available
-        if (outFS.getRoot().hasEntry(SummaryInformation.DEFAULT_STREAM_NAME)) {
-            outFS.getRoot().getEntry(SummaryInformation.DEFAULT_STREAM_NAME).delete();
-        }
-        Encryptor encGen = ei.getEncryptor();
-        if (!(encGen instanceof CryptoAPIEncryptor)) {
-            throw new EncryptedDocumentException("Using "+ei.getEncryptionMode()+" encryption. Only CryptoAPI encryption supports encrypted property sets!");
-        }
-        CryptoAPIEncryptor enc = (CryptoAPIEncryptor)encGen;
-        try {
-            enc.setSummaryEntries(outFS.getRoot(), getEncryptedPropertyStreamName(), fs);
-        } catch (GeneralSecurityException e) {
-            throw new IOException(e);
-        } finally {
-            fs.close();
+        writePropertySet(name, ps, outFS);
+        if (writtenEntries != null) {
+            writtenEntries.add(name);
         }
     }
 	

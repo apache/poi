@@ -24,6 +24,7 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -163,12 +164,12 @@ public class WordToHtmlConverter extends AbstractWordConverter
 
     static Document process( File docFile ) throws IOException, ParserConfigurationException
     {
-        final HWPFDocumentCore wordDocument = AbstractWordUtils.loadDoc( docFile );
-        WordToHtmlConverter wordToHtmlConverter = new WordToHtmlConverter(
-                XMLHelper.getDocumentBuilderFactory().newDocumentBuilder()
-                        .newDocument() );
-        wordToHtmlConverter.processDocument( wordDocument );
-        return wordToHtmlConverter.getDocument();
+        final DocumentBuilder docBuild = XMLHelper.getDocumentBuilderFactory().newDocumentBuilder();
+        try (final HWPFDocumentCore wordDocument = AbstractWordUtils.loadDoc( docFile )) {
+            WordToHtmlConverter wordToHtmlConverter = new WordToHtmlConverter(docBuild.newDocument());
+            wordToHtmlConverter.processDocument(wordDocument);
+            return wordToHtmlConverter.getDocument();
+        }
     }
 
     @Override

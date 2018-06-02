@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -95,12 +96,12 @@ public class WordToFoConverter extends AbstractWordConverter
 
     static Document process( File docFile ) throws Exception
     {
-        final HWPFDocumentCore hwpfDocument = WordToFoUtils.loadDoc( docFile );
-        WordToFoConverter wordToFoConverter = new WordToFoConverter(
-                XMLHelper.getDocumentBuilderFactory().newDocumentBuilder()
-                        .newDocument() );
-        wordToFoConverter.processDocument( hwpfDocument );
-        return wordToFoConverter.getDocument();
+        final DocumentBuilder docBuild = XMLHelper.getDocumentBuilderFactory().newDocumentBuilder();
+        try (final HWPFDocumentCore hwpfDocument = WordToFoUtils.loadDoc( docFile )) {
+            WordToFoConverter wordToFoConverter = new WordToFoConverter(docBuild.newDocument());
+            wordToFoConverter.processDocument(hwpfDocument);
+            return wordToFoConverter.getDocument();
+        }
     }
 
     private List<Element> endnotes = new ArrayList<>(0);

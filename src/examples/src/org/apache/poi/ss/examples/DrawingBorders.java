@@ -45,68 +45,60 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class DrawingBorders {
 
     public static void main(String[] args) throws IOException {
-        Workbook wb;
+        try (Workbook wb = (args.length > 0 && args[0].equals("-xls"))
+            ? new HSSFWorkbook() : new XSSFWorkbook()) {
+            // add a sheet, and put some values into it
+            Sheet sh1 = wb.createSheet("Sheet1");
+            Row r = sh1.createRow(0);
+            Cell c = r.createCell(1);
+            c.setCellValue("All Borders Medium Width");
+            r = sh1.createRow(4);
+            c = r.createCell(1);
+            c.setCellValue("Medium Outside / Thin Inside Borders");
+            r = sh1.createRow(8);
+            c = r.createCell(1);
+            c.setCellValue("Colored Borders");
 
-        if (args.length > 0 && args[0].equals("-xls")) {
-            wb = new HSSFWorkbook();
-        } else {
-            wb = new XSSFWorkbook();
+            // draw borders (three 3x3 grids)
+            PropertyTemplate pt = new PropertyTemplate();
+            // #1) these borders will all be medium in default color
+            pt.drawBorders(new CellRangeAddress(1, 3, 1, 3),
+                    BorderStyle.MEDIUM, BorderExtent.ALL);
+            // #2) these cells will have medium outside borders and thin inside borders
+            pt.drawBorders(new CellRangeAddress(5, 7, 1, 3),
+                    BorderStyle.MEDIUM, BorderExtent.OUTSIDE);
+            pt.drawBorders(new CellRangeAddress(5, 7, 1, 3), BorderStyle.THIN,
+                    BorderExtent.INSIDE);
+            // #3) these cells will all be medium weight with different colors for the
+            //     outside, inside horizontal, and inside vertical borders. The center
+            //     cell will have no borders.
+            pt.drawBorders(new CellRangeAddress(9, 11, 1, 3),
+                    BorderStyle.MEDIUM, IndexedColors.RED.getIndex(),
+                    BorderExtent.OUTSIDE);
+            pt.drawBorders(new CellRangeAddress(9, 11, 1, 3),
+                    BorderStyle.MEDIUM, IndexedColors.BLUE.getIndex(),
+                    BorderExtent.INSIDE_VERTICAL);
+            pt.drawBorders(new CellRangeAddress(9, 11, 1, 3),
+                    BorderStyle.MEDIUM, IndexedColors.GREEN.getIndex(),
+                    BorderExtent.INSIDE_HORIZONTAL);
+            pt.drawBorders(new CellRangeAddress(10, 10, 2, 2),
+                    BorderStyle.NONE,
+                    BorderExtent.ALL);
+
+            // apply borders to sheet
+            pt.applyBorders(sh1);
+
+            // add another sheet and apply the borders to it
+            Sheet sh2 = wb.createSheet("Sheet2");
+            pt.applyBorders(sh2);
+
+            // Write the output to a file
+            String file = "db-poi.xls" + (wb instanceof XSSFWorkbook ? "x" : "");
+            try (FileOutputStream out = new FileOutputStream(file)) {
+                wb.write(out);
+            }
+            System.out.println("Generated: " + file);
         }
-
-        // add a sheet, and put some values into it
-        Sheet sh1 = wb.createSheet("Sheet1");
-        Row r = sh1.createRow(0);
-        Cell c = r.createCell(1);
-        c.setCellValue("All Borders Medium Width");
-        r = sh1.createRow(4);
-        c = r.createCell(1);
-        c.setCellValue("Medium Outside / Thin Inside Borders");
-        r = sh1.createRow(8);
-        c = r.createCell(1);
-        c.setCellValue("Colored Borders");
-
-        // draw borders (three 3x3 grids)
-        PropertyTemplate pt = new PropertyTemplate();
-        // #1) these borders will all be medium in default color
-        pt.drawBorders(new CellRangeAddress(1, 3, 1, 3),
-                BorderStyle.MEDIUM, BorderExtent.ALL);
-        // #2) these cells will have medium outside borders and thin inside borders
-        pt.drawBorders(new CellRangeAddress(5, 7, 1, 3),
-                BorderStyle.MEDIUM, BorderExtent.OUTSIDE);
-        pt.drawBorders(new CellRangeAddress(5, 7, 1, 3), BorderStyle.THIN,
-                BorderExtent.INSIDE);
-        // #3) these cells will all be medium weight with different colors for the
-        //     outside, inside horizontal, and inside vertical borders. The center
-        //     cell will have no borders.
-        pt.drawBorders(new CellRangeAddress(9, 11, 1, 3),
-                BorderStyle.MEDIUM, IndexedColors.RED.getIndex(),
-                BorderExtent.OUTSIDE);
-        pt.drawBorders(new CellRangeAddress(9, 11, 1, 3),
-                BorderStyle.MEDIUM, IndexedColors.BLUE.getIndex(),
-                BorderExtent.INSIDE_VERTICAL);
-        pt.drawBorders(new CellRangeAddress(9, 11, 1, 3),
-                BorderStyle.MEDIUM, IndexedColors.GREEN.getIndex(),
-                BorderExtent.INSIDE_HORIZONTAL);
-        pt.drawBorders(new CellRangeAddress(10, 10, 2, 2),
-                BorderStyle.NONE, 
-                BorderExtent.ALL);
-
-        // apply borders to sheet
-        pt.applyBorders(sh1);
-        
-        // add another sheet and apply the borders to it
-        Sheet sh2 = wb.createSheet("Sheet2");
-        pt.applyBorders(sh2);
-
-        // Write the output to a file
-        String file = "db-poi.xls";
-        if (wb instanceof XSSFWorkbook)
-            file += "x";
-        FileOutputStream out = new FileOutputStream(file);
-        wb.write(out);
-        out.close();
-        wb.close();
-        System.out.println("Generated: " + file);
     }
 
 }

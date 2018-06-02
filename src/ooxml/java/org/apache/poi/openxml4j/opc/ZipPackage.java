@@ -483,9 +483,10 @@ public final class ZipPackage extends OPCPackage {
 		// Check that the document was open in write mode
 		throwExceptionIfReadOnly();
 
-		try (final ZipOutputStream zos = (outputStream instanceof ZipOutputStream)
-                ? (ZipOutputStream) outputStream : new ZipOutputStream(outputStream)) {
+		final ZipOutputStream zos = (outputStream instanceof ZipOutputStream)
+            ? (ZipOutputStream) outputStream : new ZipOutputStream(outputStream);
 
+		try {
 			// If the core properties part does not exist in the part list,
 			// we save it as well
 			if (this.getPartsByRelationshipType(PackageRelationshipTypes.CORE_PROPERTIES).size() == 0 &&
@@ -537,6 +538,8 @@ public final class ZipPackage extends OPCPackage {
                     throw new OpenXML4JException(errMsg + pm);
                 }
 			}
+
+            zos.finish();
 		} catch (OpenXML4JRuntimeException e) {
 			// no need to wrap this type of Exception
 			throw e;
@@ -544,7 +547,7 @@ public final class ZipPackage extends OPCPackage {
             throw new OpenXML4JRuntimeException(
                 "Fail to save: an error occurs while saving the package : "
 				+ e.getMessage(), e);
-		}
+        }
     }
 
     /**

@@ -27,10 +27,6 @@ import org.apache.poi.hssf.usermodel.*;
 
 /**
  * This class presents the sheets to the user.
- *
- *
- * @author Andrew C. Oliver
- * @author Jason Height
  */
 public class SViewerPanel extends JPanel {
   /** This field is the magic number to convert from a Character width to a
@@ -264,15 +260,13 @@ public void paint(Graphics g) {
   }
 
   /**Main method*/
-  public static void main(String[] args) {
-    if(args.length < 1) {
+  public static void main(String[] args) throws IOException {
+    if (args.length < 1) {
       throw new IllegalArgumentException("A filename to view must be supplied as the first argument, but none was given");
     }
-    try {
-      FileInputStream in = new FileInputStream(args[0]);
-      HSSFWorkbook wb = new HSSFWorkbook(in);
-      in.close();
 
+    try (FileInputStream in = new FileInputStream(args[0]);
+         HSSFWorkbook wb = new HSSFWorkbook(in)) {
       SViewerPanel p = new SViewerPanel(wb, true);
       JFrame frame;
       frame = new JFrame() {
@@ -283,6 +277,7 @@ public void paint(Graphics g) {
             System.exit(0);
           }
         }
+
         @Override
         public synchronized void setTitle(String title) {
           super.setTitle(title);
@@ -291,13 +286,10 @@ public void paint(Graphics g) {
       };
       frame.setTitle("Viewer Frame");
       frame.getContentPane().add(p, BorderLayout.CENTER);
-      frame.setSize(800,640);
+      frame.setSize(800, 640);
       Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
       frame.setLocation((d.width - frame.getSize().width) / 2, (d.height - frame.getSize().height) / 2);
       frame.setVisible(true);
-    } catch (IOException ex) {
-      ex.printStackTrace();
-      System.exit(1);
     }
   }
 }

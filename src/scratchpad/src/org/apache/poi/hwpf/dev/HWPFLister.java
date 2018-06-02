@@ -79,22 +79,15 @@ public final class HWPFLister
 {
     private static HWPFDocumentCore loadDoc( File docFile ) throws IOException
     {
-        final FileInputStream istream = new FileInputStream( docFile );
-        try
-        {
+        try (final FileInputStream istream = new FileInputStream( docFile )) {
             return loadDoc( istream );
-        }
-        finally
-        {
-            IOUtils.closeQuietly( istream );
         }
     }
 
     private static HWPFDocumentCore loadDoc( InputStream inputStream )
             throws IOException
     {
-        final POIFSFileSystem poifsFileSystem = HWPFDocumentCore
-                .verifyAndBuildPOIFS( inputStream );
+        final POIFSFileSystem poifsFileSystem = HWPFDocumentCore.verifyAndBuildPOIFS( inputStream );
         try
         {
             return new HWPFDocument( poifsFileSystem );

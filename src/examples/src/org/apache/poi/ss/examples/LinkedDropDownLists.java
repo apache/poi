@@ -69,48 +69,43 @@ public class LinkedDropDownLists {
         // Using the ss.usermodel allows this class to support both binary
         // and xml based workbooks. The choice of which one to create is
         // made by checking the file extension.
-        Workbook workbook;
-        if (workbookName.endsWith(".xlsx")) {
-            workbook = new XSSFWorkbook();
-        } else {
-            workbook = new HSSFWorkbook();
-        }
-        
-        // Build the sheet that will hold the data for the validations. This
-        // must be done first as it will create names that are referenced 
-        // later.
-        Sheet sheet = workbook.createSheet("Linked Validations");
-        LinkedDropDownLists.buildDataSheet(sheet);
+        try (Workbook workbook = workbookName.endsWith(".xlsx") ? new XSSFWorkbook() : new HSSFWorkbook()) {
 
-        // Build the first data validation to occupy cell A1. Note
-        // that it retrieves it's data from the named area or region called
-        // CHOICES. Further information about this can be found in the
-        // static buildDataSheet() method below.
-        CellRangeAddressList addressList = new CellRangeAddressList(0, 0, 0, 0);
-        DataValidationHelper dvHelper = sheet.getDataValidationHelper();
-        DataValidationConstraint dvConstraint = dvHelper.createFormulaListConstraint("CHOICES");
-        DataValidation validation = dvHelper.createValidation(dvConstraint, addressList);
-        sheet.addValidationData(validation);
-        
-        // Now, build the linked or dependent drop down list that will
-        // occupy cell B1. The key to the whole process is the use of the
-        // INDIRECT() function. In the buildDataSheet(0 method, a series of
-        // named regions are created and the names of three of them mirror
-        // the options available to the user in the first drop down list
-        // (in cell A1). Using the INDIRECT() function makes it possible
-        // to convert the selection the user makes in that first drop down
-        // into the addresses of a named region of cells and then to use
-        // those cells to populate the second drop down list.
-        addressList = new CellRangeAddressList(0, 0, 1, 1);
-        dvConstraint = dvHelper.createFormulaListConstraint(
-                "INDIRECT(UPPER($A$1))");
-        validation = dvHelper.createValidation(dvConstraint, addressList);
-        sheet.addValidationData(validation);
-        
-        FileOutputStream fos = new FileOutputStream(workbookName);
-        workbook.write(fos);
-        fos.close();
-        workbook.close();
+            // Build the sheet that will hold the data for the validations. This
+            // must be done first as it will create names that are referenced
+            // later.
+            Sheet sheet = workbook.createSheet("Linked Validations");
+            LinkedDropDownLists.buildDataSheet(sheet);
+
+            // Build the first data validation to occupy cell A1. Note
+            // that it retrieves it's data from the named area or region called
+            // CHOICES. Further information about this can be found in the
+            // static buildDataSheet() method below.
+            CellRangeAddressList addressList = new CellRangeAddressList(0, 0, 0, 0);
+            DataValidationHelper dvHelper = sheet.getDataValidationHelper();
+            DataValidationConstraint dvConstraint = dvHelper.createFormulaListConstraint("CHOICES");
+            DataValidation validation = dvHelper.createValidation(dvConstraint, addressList);
+            sheet.addValidationData(validation);
+
+            // Now, build the linked or dependent drop down list that will
+            // occupy cell B1. The key to the whole process is the use of the
+            // INDIRECT() function. In the buildDataSheet(0 method, a series of
+            // named regions are created and the names of three of them mirror
+            // the options available to the user in the first drop down list
+            // (in cell A1). Using the INDIRECT() function makes it possible
+            // to convert the selection the user makes in that first drop down
+            // into the addresses of a named region of cells and then to use
+            // those cells to populate the second drop down list.
+            addressList = new CellRangeAddressList(0, 0, 1, 1);
+            dvConstraint = dvHelper.createFormulaListConstraint(
+                    "INDIRECT(UPPER($A$1))");
+            validation = dvHelper.createValidation(dvConstraint, addressList);
+            sheet.addValidationData(validation);
+
+            try (FileOutputStream fos = new FileOutputStream(workbookName)) {
+                workbook.write(fos);
+            }
+        }
     }
 
     /**
