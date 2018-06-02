@@ -244,13 +244,11 @@ public final class PackageRelationshipCollection implements
      *            The relationship ID to remove.
      */
     public void removeRelationship(String id) {
-        if (relationshipsByID != null && relationshipsByType != null) {
-            PackageRelationship rel = relationshipsByID.get(id);
-            if (rel != null) {
-                relationshipsByID.remove(rel.getId());
-                relationshipsByType.values().remove(rel);
-                internalRelationshipsByTargetName.values().remove(rel);
-            }
+        PackageRelationship rel = relationshipsByID.get(id);
+        if (rel != null) {
+            relationshipsByID.remove(rel.getId());
+            relationshipsByType.values().remove(rel);
+            internalRelationshipsByTargetName.values().remove(rel);
         }
     }
 
@@ -413,28 +411,23 @@ public final class PackageRelationshipCollection implements
 
     @Override
     public String toString() {
-        String str;
-        if (relationshipsByID == null) {
-            str = "relationshipsByID=null";
-        } else {
-            str = relationshipsByID.size() + " relationship(s) = [";
-        }
+        String str = relationshipsByID.size() + " relationship(s) = [";
         if ((relationshipPart != null) && (relationshipPart._partName != null)) {
-            str = str + "," + relationshipPart._partName;
+            str += relationshipPart._partName;
         } else {
-            str = str + ",relationshipPart=null";
+            str += "relationshipPart=null";
         }
 
         // Source of this relationship
         if ((sourcePart != null) && (sourcePart._partName != null)) {
-            str = str + "," + sourcePart._partName;
+            str += "," + sourcePart._partName;
         } else {
-            str = str + ",sourcePart=null";
+            str += ",sourcePart=null";
         }
         if (partName != null) {
-            str = str + "," + partName;
+            str += "," + partName;
         } else {
-            str = str + ",uri=null)";
+            str += ",uri=null)";
         }
         return str + "]";
     }

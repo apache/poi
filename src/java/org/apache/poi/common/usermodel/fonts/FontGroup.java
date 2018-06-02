@@ -111,18 +111,18 @@ public enum FontGroup {
      * @return the FontGroup
      */
     public static List<FontGroupRange> getFontGroupRanges(final String runText) {
-        List<FontGroupRange> ttrList = new ArrayList<>();
+        final List<FontGroupRange> ttrList = new ArrayList<>();
         if (runText == null || runText.isEmpty()) {
             return ttrList;
         }
         FontGroupRange ttrLast = null;
-        final int rlen = (runText != null) ? runText.length() : 0;
+        final int rlen = runText.length();
         for(int cp, i = 0, charCount; i < rlen; i += charCount) {
             cp = runText.codePointAt(i);
             charCount = Character.charCount(cp);
 
             // don't switch the font group for a few default characters supposedly available in all fonts
-            FontGroup tt;
+            final FontGroup tt;
             if (ttrLast != null && " \n\r".indexOf(cp) > -1) {
                 tt = ttrLast.fontGroup;
             } else {

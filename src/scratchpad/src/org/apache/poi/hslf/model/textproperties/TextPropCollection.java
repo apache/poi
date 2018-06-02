@@ -338,7 +338,7 @@ public class TextPropCollection {
         result = prime * result + charactersCovered;
         result = prime * result + maskSpecial;
         result = prime * result + indentLevel;
-        result = prime * result + ((textProps == null) ? 0 : textProps.hashCode());
+        result = prime * result + textProps.hashCode();
         return result;
     }
     /**

@@ -193,9 +193,6 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     private void supplySheet(HSLFSheet sheet) {
         this._sheet = sheet;
 
-        if (_runs == null) {
-            return;
-        }
         for (HSLFTextRun rt : _runs) {
             rt.updateSheet();
         }

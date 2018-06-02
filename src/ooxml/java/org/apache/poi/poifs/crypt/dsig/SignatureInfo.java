@@ -316,7 +316,7 @@ public class SignatureInfo implements SignatureConfigurable {
                             } catch (InvalidFormatException e) {
                                 LOG.log(POILogger.WARN, "Reference to signature is invalid.", e);
                             }
-                        } while (sigPart == null);
+                        } while (sigRelPart == null);
                         return new SignaturePart(sigRelPart, signatureConfig);
                     }
 
