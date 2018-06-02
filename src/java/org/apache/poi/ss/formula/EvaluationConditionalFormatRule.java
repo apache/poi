@@ -632,7 +632,7 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
             for (int c = region.getFirstColumn(); c <= region.getLastColumn(); c++) {
                 Cell cell = row.getCell(c);
                 final ValueAndFormat cv = getCellValue(cell);
-                if (cv != null && (withText || cv.isNumber()) ) {
+                if (withText || cv.isNumber()) {
                     allValues.add(cv);
                 }
             }
@@ -646,13 +646,19 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
 
     private ValueAndFormat getCellValue(Cell cell) {
         if (cell != null) {
-            final CellType type = cell.getCellType();
-            if (type == CellType.NUMERIC || (type == CellType.FORMULA && cell.getCachedFormulaResultType() == CellType.NUMERIC) ) {
-                return new ValueAndFormat(Double.valueOf(cell.getNumericCellValue()), cell.getCellStyle().getDataFormatString(), decimalTextFormat);
-            } else if (type == CellType.STRING || (type == CellType.FORMULA && cell.getCachedFormulaResultType() == CellType.STRING) ) {
-                return new ValueAndFormat(cell.getStringCellValue(), cell.getCellStyle().getDataFormatString());
-            } else if (type == CellType.BOOLEAN || (type == CellType.FORMULA && cell.getCachedFormulaResultType() == CellType.BOOLEAN) ) {
-                return new ValueAndFormat(cell.getStringCellValue(), cell.getCellStyle().getDataFormatString());
+            final String format = cell.getCellStyle().getDataFormatString();
+            CellType type = cell.getCellType();
+            if (type == CellType.FORMULA) {
+                type = cell.getCachedFormulaResultType();
+            }
+            switch (type) {
+                case NUMERIC:
+                    return new ValueAndFormat(Double.valueOf(cell.getNumericCellValue()), format, decimalTextFormat);
+                case STRING:
+                case BOOLEAN:
+                    return new ValueAndFormat(cell.getStringCellValue(), format);
+                default:
+                    break;
             }
         }
         return new ValueAndFormat("", "");

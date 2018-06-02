@@ -27,9 +27,6 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
-/**
- * @author Ryan Ackley
- */
 @Internal
 public final class ListTables
 {
@@ -169,10 +166,8 @@ public final class ListTables
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result
-                + ( ( _listMap == null ) ? 0 : _listMap.hashCode() );
-        result = prime * result
-                + ( ( _plfLfo == null ) ? 0 : _plfLfo.hashCode() );
+        result = prime * result + _listMap.hashCode();
+        result = prime * result + ( ( _plfLfo == null ) ? 0 : _plfLfo.hashCode() );
         return result;
     }
 
@@ -186,12 +181,7 @@ public final class ListTables
         if ( getClass() != obj.getClass() )
             return false;
         ListTables other = (ListTables) obj;
-        if ( _listMap == null )
-        {
-            if ( other._listMap != null )
-                return false;
-        }
-        else if ( !_listMap.equals( other._listMap ) )
+        if ( !_listMap.equals( other._listMap ) )
             return false;
         if ( _plfLfo == null )
         {
