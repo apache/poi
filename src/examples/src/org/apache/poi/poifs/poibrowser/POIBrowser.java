@@ -85,12 +85,10 @@ public class POIBrowser extends JFrame
         /* Add the POI filesystems to the tree. */
         int displayedFiles = 0;
         for (final String filename : args) {
-            try {
-                FileInputStream fis = new FileInputStream(filename);
+            try (FileInputStream fis = new FileInputStream(filename)) {
                 POIFSReader r = new POIFSReader();
                 r.registerListener(new TreeReaderListener(filename, rootNode));
                 r.read(fis);
-                fis.close();
                 displayedFiles++;
             } catch (IOException ex) {
                 System.err.println(filename + ": " + ex);

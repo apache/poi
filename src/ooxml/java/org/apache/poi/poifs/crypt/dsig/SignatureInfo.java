@@ -247,16 +247,7 @@ public class SignatureInfo implements SignatureConfigurable {
                 "system properties.");
         }
         
-        try {
-            final DigestOutputStream dos;
-            switch (algo) {
-                case md2: case md5: case sha1: case sha256: case sha384: case sha512:
-                    dos = new SignatureOutputStream(algo, key);
-                    break;
-                default:
-                    dos = new DigestOutputStream(algo, key);
-                    break;
-            }
+        try (final DigestOutputStream dos = getDigestStream(algo, key)) {
             dos.init();
 
             final Document document = (Document)xmlSignContext.getParent();
@@ -267,6 +258,15 @@ public class SignatureInfo implements SignatureConfigurable {
             return DatatypeConverter.printBase64Binary(dos.sign());
         } catch (GeneralSecurityException|IOException|TransformException e) {
             throw new EncryptedDocumentException(e);
+        }
+    }
+
+    private static DigestOutputStream getDigestStream(final HashAlgorithm algo, final PrivateKey key) {
+        switch (algo) {
+            case md2: case md5: case sha1: case sha256: case sha384: case sha512:
+                return new SignatureOutputStream(algo, key);
+            default:
+                return new DigestOutputStream(algo, key);
         }
     }
 

@@ -79,82 +79,76 @@ public class ModifyDocumentSummaryInformation {
         File summaryFile = new File(args[0]);
 
         /* Open the POI filesystem. */
-        NPOIFSFileSystem poifs = new NPOIFSFileSystem(summaryFile, false);
+        try (NPOIFSFileSystem poifs = new NPOIFSFileSystem(summaryFile, false)) {
 
-        /* Read the summary information. */
-        DirectoryEntry dir = poifs.getRoot();
-        SummaryInformation si;
-        try
-        {
-            si = (SummaryInformation)PropertySetFactory.create(
-                    dir, SummaryInformation.DEFAULT_STREAM_NAME);
+            /* Read the summary information. */
+            DirectoryEntry dir = poifs.getRoot();
+            SummaryInformation si;
+            try {
+                si = (SummaryInformation) PropertySetFactory.create(
+                        dir, SummaryInformation.DEFAULT_STREAM_NAME);
+            } catch (FileNotFoundException ex) {
+                // There is no summary information yet. We have to create a new one
+                si = PropertySetFactory.newSummaryInformation();
+            }
+
+            /* Change the author to "Rainer Klute". Any former author value will
+             * be lost. If there has been no author yet, it will be created. */
+            si.setAuthor("Rainer Klute");
+            System.out.println("Author changed to " + si.getAuthor() + ".");
+
+
+            /* Handling the document summary information is analogous to handling
+             * the summary information. An additional feature, however, are the
+             * custom properties. */
+
+            /* Read the document summary information. */
+            DocumentSummaryInformation dsi;
+            try {
+                dsi = (DocumentSummaryInformation) PropertySetFactory.create(
+                        dir, DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+            } catch (FileNotFoundException ex) {
+                /* There is no document summary information yet. We have to create a
+                 * new one. */
+                dsi = PropertySetFactory.newDocumentSummaryInformation();
+            }
+
+            /* Change the category to "POI example". Any former category value will
+             * be lost. If there has been no category yet, it will be created. */
+            dsi.setCategory("POI example");
+            System.out.println("Category changed to " + dsi.getCategory() + ".");
+
+            /* Read the custom properties. If there are no custom properties yet,
+             * the application has to create a new CustomProperties object. It will
+             * serve as a container for custom properties. */
+            CustomProperties customProperties = dsi.getCustomProperties();
+            if (customProperties == null)
+                customProperties = new CustomProperties();
+
+            /* Insert some custom properties into the container. */
+            customProperties.put("Key 1", "Value 1");
+            customProperties.put("Schl\u00fcssel 2", "Wert 2");
+            customProperties.put("Sample Number", new Integer(12345));
+            customProperties.put("Sample Boolean", Boolean.TRUE);
+            customProperties.put("Sample Date", new Date());
+
+            /* Read a custom property. */
+            Object value = customProperties.get("Sample Number");
+            System.out.println("Custom Sample Number is now " + value);
+
+            /* Write the custom properties back to the document summary
+             * information. */
+            dsi.setCustomProperties(customProperties);
+
+            /* Write the summary information and the document summary information
+             * to the POI filesystem. */
+            si.write(dir, SummaryInformation.DEFAULT_STREAM_NAME);
+            dsi.write(dir, DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+
+            /* Write the POI filesystem back to the original file. Please note that
+             * in production code you should take care when write directly to the
+             * origin, to make sure you don't loose things on error */
+            poifs.writeFilesystem();
         }
-        catch (FileNotFoundException ex)
-        {
-            // There is no summary information yet. We have to create a new one
-            si = PropertySetFactory.newSummaryInformation();
-        }
-
-        /* Change the author to "Rainer Klute". Any former author value will
-         * be lost. If there has been no author yet, it will be created. */
-        si.setAuthor("Rainer Klute");
-        System.out.println("Author changed to " + si.getAuthor() + ".");
-
-
-        /* Handling the document summary information is analogous to handling
-         * the summary information. An additional feature, however, are the
-         * custom properties. */
-
-        /* Read the document summary information. */
-        DocumentSummaryInformation dsi;
-        try
-        {
-            dsi = (DocumentSummaryInformation)PropertySetFactory.create(
-                    dir, DocumentSummaryInformation.DEFAULT_STREAM_NAME);
-        }
-        catch (FileNotFoundException ex)
-        {
-            /* There is no document summary information yet. We have to create a
-             * new one. */
-            dsi = PropertySetFactory.newDocumentSummaryInformation();
-        }
-
-        /* Change the category to "POI example". Any former category value will
-         * be lost. If there has been no category yet, it will be created. */
-        dsi.setCategory("POI example");
-        System.out.println("Category changed to " + dsi.getCategory() + ".");
-
-        /* Read the custom properties. If there are no custom properties yet,
-         * the application has to create a new CustomProperties object. It will
-         * serve as a container for custom properties. */
-        CustomProperties customProperties = dsi.getCustomProperties();
-        if (customProperties == null)
-            customProperties = new CustomProperties();
-
-        /* Insert some custom properties into the container. */
-        customProperties.put("Key 1", "Value 1");
-        customProperties.put("Schl\u00fcssel 2", "Wert 2");
-        customProperties.put("Sample Number", new Integer(12345));
-        customProperties.put("Sample Boolean", Boolean.TRUE);
-        customProperties.put("Sample Date", new Date());
-
-        /* Read a custom property. */
-        Object value = customProperties.get("Sample Number");
-        System.out.println("Custom Sample Number is now " + value);
-
-        /* Write the custom properties back to the document summary
-         * information. */
-        dsi.setCustomProperties(customProperties);
-
-        /* Write the summary information and the document summary information
-         * to the POI filesystem. */
-        si.write(dir, SummaryInformation.DEFAULT_STREAM_NAME);
-        dsi.write(dir, DocumentSummaryInformation.DEFAULT_STREAM_NAME);
-
-        /* Write the POI filesystem back to the original file. Please note that
-         * in production code you should take care when write directly to the 
-         * origin, to make sure you don't loose things on error */
-        poifs.writeFilesystem();
-        poifs.close();
     }
 }

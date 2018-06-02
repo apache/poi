@@ -30,15 +30,12 @@ public final class MergePresentations {
     public static void main(String args[]) throws Exception {
         try (XMLSlideShow ppt = new XMLSlideShow()) {
             for (String arg : args) {
-                FileInputStream is = new FileInputStream(arg);
-                XMLSlideShow src = new XMLSlideShow(is);
-                is.close();
-
-                for (XSLFSlide srcSlide : src.getSlides()) {
-                    ppt.createSlide().importContent(srcSlide);
+                try (FileInputStream is = new FileInputStream(arg);
+                     XMLSlideShow src = new XMLSlideShow(is)) {
+                    for (XSLFSlide srcSlide : src.getSlides()) {
+                        ppt.createSlide().importContent(srcSlide);
+                    }
                 }
-
-                src.close();
             }
 
             try (FileOutputStream out = new FileOutputStream("merged.pptx")) {
