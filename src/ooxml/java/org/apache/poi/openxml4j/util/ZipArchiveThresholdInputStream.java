@@ -23,22 +23,17 @@ import static org.apache.poi.openxml4j.util.ZipSecureFile.MIN_INFLATE_RATIO;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PushbackInputStream;
-import java.lang.reflect.Field;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.Locale;
-import java.util.zip.InflaterInputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+import java.util.zip.ZipException;
 
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.SuppressForbidden;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
+import org.apache.commons.compress.utils.InputStreamStatistics;
+import org.apache.poi.openxml4j.exceptions.NotOfficeXmlFileException;
+import org.apache.poi.util.Internal;
 
-public class ZipArchiveThresholdInputStream extends PushbackInputStream {
-    private static final POILogger LOG = POILogFactory.getLogger(ZipArchiveThresholdInputStream.class);
-
+@Internal
+public class ZipArchiveThresholdInputStream extends FilterInputStream {
     // don't alert for expanded sizes smaller than 100k
     private static final long GRACE_ENTRY_SIZE = 100*1024L;
 
@@ -46,91 +41,54 @@ public class ZipArchiveThresholdInputStream extends PushbackInputStream {
         "Zip bomb detected! The file would exceed the max size of the expanded data in the zip-file.\n" +
         "This may indicates that the file is used to inflate memory usage and thus could pose a security risk.\n" +
         "You can adjust this limit via ZipSecureFile.setMaxEntrySize() if you need to work with files which are very large.\n" +
-        "Counter: %d, cis.counter: %d\n" +
+        "Uncompressed size: %d, Raw/compressed size: %d\n" +
         "Limits: MAX_ENTRY_SIZE: %d, Entry: %s";
 
     private static final String MIN_INFLATE_RATIO_MSG =
         "Zip bomb detected! The file would exceed the max. ratio of compressed file size to the size of the expanded data.\n" +
         "This may indicate that the file is used to inflate memory usage and thus could pose a security risk.\n" +
         "You can adjust this limit via ZipSecureFile.setMinInflateRatio() if you need to work with files which exceed this limit.\n" +
-        "Counter: %d, cis.counter: %d, ratio: %f\n" +
+        "Uncompressed size: %d, Raw/compressed size: %d, ratio: %f\n" +
         "Limits: MIN_INFLATE_RATIO: %f, Entry: %s";
-
-    private static final String SECURITY_BLOCKED =
-        "SecurityManager doesn't allow manipulation via reflection for zipbomb detection - continue with original input stream";
 
     /**
      * the reference to the current entry is only used for a more detailed log message in case of an error
      */
-    private ZipEntry entry;
-
-    private long counter;
-    private long markPos;
-    private final ZipArchiveThresholdInputStream cis;
+    private ZipArchiveEntry entry;
     private boolean guardState = true;
 
-
-    public ZipArchiveThresholdInputStream(final InputStream zipIS) throws IOException {
-        super(zipIS);
-        if (zipIS instanceof InflaterInputStream) {
-            cis = AccessController.doPrivileged(inject(zipIS));
-        } else {
-            // the inner stream is a ZipFileInputStream, i.e. the data wasn't compressed
-            cis = null;
-        }
-    }
-
-    private ZipArchiveThresholdInputStream(InputStream is, ZipArchiveThresholdInputStream cis) {
+    public ZipArchiveThresholdInputStream(InputStream is) {
         super(is);
-        this.cis = cis;
-    }
-
-    @SuppressForbidden
-    private static PrivilegedAction<ZipArchiveThresholdInputStream> inject(final InputStream zipIS) {
-        return () -> {
-            try {
-                final Field f = FilterInputStream.class.getDeclaredField("in");
-                f.setAccessible(true);
-                final InputStream oldInner = (InputStream)f.get(zipIS);
-                final ZipArchiveThresholdInputStream inner = new ZipArchiveThresholdInputStream(oldInner, null);
-                f.set(zipIS, inner);
-                return inner;
-            } catch (Exception ex) {
-                LOG.log(POILogger.WARN, SECURITY_BLOCKED, ex);
-            }
-            return null;
-        };
+        if (!(is instanceof InputStreamStatistics)) {
+            throw new IllegalArgumentException("InputStream of class "+is.getClass()+" is not implementing InputStreamStatistics.");
+        }
     }
 
     @Override
     public int read() throws IOException {
-        int b = in.read();
+        int b = super.read();
         if (b > -1) {
-            advance(1);
+            checkThreshold();
         }
         return b;
     }
 
     @Override
     public int read(byte b[], int off, int len) throws IOException {
-        int cnt = in.read(b, off, len);
+        int cnt = super.read(b, off, len);
         if (cnt > -1) {
-            advance(cnt);
+            checkThreshold();
         }
         return cnt;
     }
 
     @Override
     public long skip(long n) throws IOException {
-        long s = in.skip(n);
-        counter += s;
-        return s;
-    }
-
-    @Override
-    public synchronized void reset() throws IOException {
-        counter = markPos;
-        super.reset();
+        long cnt = super.skip(n);
+        if (cnt > 0) {
+            checkThreshold();
+        }
+       return cnt;
     }
 
     /**
@@ -143,101 +101,57 @@ public class ZipArchiveThresholdInputStream extends PushbackInputStream {
         this.guardState = guardState;
     }
 
-    public void advance(int advance) throws IOException {
-        counter += advance;
-
+    private void checkThreshold() throws IOException {
         if (!guardState) {
             return;
         }
 
+        final InputStreamStatistics stats = (InputStreamStatistics)in;
+        final long payloadSize = stats.getUncompressedCount();
+        final long rawSize = stats.getCompressedCount();
         final String entryName = entry == null ? "not set" : entry.getName();
-        final long cisCount = (cis == null ? 0 : cis.counter);
 
         // check the file size first, in case we are working on uncompressed streams
-        if(counter > MAX_ENTRY_SIZE) {
-            throw new IOException(String.format(Locale.ROOT, MAX_ENTRY_SIZE_MSG, counter, cisCount, MAX_ENTRY_SIZE, entryName));
-        }
-
-        // no expanded size?
-        if (cis == null) {
-            return;
+        if(payloadSize > MAX_ENTRY_SIZE) {
+            throw new IOException(String.format(Locale.ROOT, MAX_ENTRY_SIZE_MSG, payloadSize, rawSize, MAX_ENTRY_SIZE, entryName));
         }
 
         // don't alert for small expanded size
-        if (counter <= GRACE_ENTRY_SIZE) {
+        if (payloadSize <= GRACE_ENTRY_SIZE) {
             return;
         }
 
-        double ratio = (double)cis.counter/(double)counter;
+        double ratio = rawSize / (double)payloadSize;
         if (ratio >= MIN_INFLATE_RATIO) {
             return;
         }
 
         // one of the limits was reached, report it
-        throw new IOException(String.format(Locale.ROOT, MIN_INFLATE_RATIO_MSG, counter, cisCount, ratio, MIN_INFLATE_RATIO, entryName));
+        throw new IOException(String.format(Locale.ROOT, MIN_INFLATE_RATIO_MSG, payloadSize, rawSize, ratio, MIN_INFLATE_RATIO, entryName));
     }
 
-    public ZipEntry getNextEntry() throws IOException {
-        if (!(in instanceof ZipInputStream)) {
-            throw new UnsupportedOperationException("underlying stream is not a ZipInputStream");
+    ZipArchiveEntry getNextEntry() throws IOException {
+        if (!(in instanceof ZipArchiveInputStream)) {
+            throw new IllegalStateException("getNextEntry() is only allowed for stream based zip processing.");
         }
-        counter = 0;
-        return ((ZipInputStream)in).getNextEntry();
-    }
 
-    public void closeEntry() throws IOException {
-        if (!(in instanceof ZipInputStream)) {
-            throw new UnsupportedOperationException("underlying stream is not a ZipInputStream");
+        try {
+            entry = ((ZipArchiveInputStream) in).getNextZipEntry();
+            return entry;
+        } catch (ZipException ze) {
+            if (ze.getMessage().startsWith("Unexpected record signature")) {
+                throw new NotOfficeXmlFileException(
+                        "No valid entries or contents found, this is not a valid OOXML (Office Open XML) file", ze);
+            }
+            throw ze;
         }
-        counter = 0;
-        ((ZipInputStream)in).closeEntry();
-    }
-
-    @Override
-    public void unread(int b) throws IOException {
-        if (!(in instanceof PushbackInputStream)) {
-            throw new UnsupportedOperationException("underlying stream is not a PushbackInputStream");
-        }
-        if (--counter < 0) {
-            counter = 0;
-        }
-        ((PushbackInputStream)in).unread(b);
-    }
-
-    @Override
-    public void unread(byte[] b, int off, int len) throws IOException {
-        if (!(in instanceof PushbackInputStream)) {
-            throw new UnsupportedOperationException("underlying stream is not a PushbackInputStream");
-        }
-        counter -= len;
-        if (--counter < 0) {
-            counter = 0;
-        }
-        ((PushbackInputStream)in).unread(b, off, len);
-    }
-
-    @Override
-    @SuppressForbidden("just delegating")
-    public int available() throws IOException {
-        return in.available();
-    }
-
-    @Override
-    public boolean markSupported() {
-        return in.markSupported();
-    }
-
-    @Override
-    public synchronized void mark(int readlimit) {
-        markPos = counter;
-        in.mark(readlimit);
     }
 
     /**
      * Sets the zip entry for a detailed logging
      * @param entry the entry
      */
-    void setEntry(ZipEntry entry) {
+    void setEntry(ZipArchiveEntry entry) {
         this.entry = entry;
     }
 }

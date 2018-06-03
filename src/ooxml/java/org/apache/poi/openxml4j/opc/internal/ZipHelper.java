@@ -24,9 +24,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.poi.openxml4j.exceptions.NotOfficeXmlFileException;
 import org.apache.poi.openxml4j.exceptions.OLE2NotOfficeXmlFileException;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
@@ -59,7 +59,7 @@ public final class ZipHelper {
      *      core properties cannot be read or an invalid name is
      *      specified in the properties.
      */
-    public static ZipEntry getCorePropertiesZipEntry(ZipPackage pkg) {
+    public static ZipArchiveEntry getCorePropertiesZipEntry(ZipPackage pkg) {
         PackageRelationship corePropsRel = pkg.getRelationshipsByType(
                 PackageRelationshipTypes.CORE_PROPERTIES).getRelationship(0);
 
@@ -67,7 +67,7 @@ public final class ZipHelper {
             return null;
         }
 
-        return new ZipEntry(corePropsRel.getTargetURI().getPath());
+        return new ZipArchiveEntry(corePropsRel.getTargetURI().getPath());
     }
 
     /**
@@ -177,8 +177,7 @@ public final class ZipHelper {
         verifyZipHeader(checkedStream);
         
         // Open as a proper zip stream
-        InputStream zis = new ZipInputStream(checkedStream);
-        return new ZipArchiveThresholdInputStream(zis);
+        return new ZipArchiveThresholdInputStream(new ZipArchiveInputStream(checkedStream));
     }
 
     /**

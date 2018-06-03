@@ -150,6 +150,11 @@
 			<version>2.1.0</version>
 		</dependency>
 		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-compress</artifactId>
+			<version>1.17</version>
+		</dependency>
+		<dependency>
 			<groupId>com.github.virtuald</groupId>
 			<artifactId>curvesapi</artifactId>
 			<version>1.05</version>

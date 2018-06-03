@@ -21,9 +21,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.PackageNamespaces;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -58,7 +58,7 @@ public final class ZipPartMarshaller implements PartMarshaller {
 	@Override
 	public boolean marshall(PackagePart part, OutputStream os)
 			throws OpenXML4JException {
-		if (!(os instanceof ZipOutputStream)) {
+		if (!(os instanceof ZipArchiveOutputStream)) {
 			logger.log(POILogger.ERROR,"Unexpected class " + os.getClass().getName());
 			throw new OpenXML4JException("ZipOutputStream expected !");
 			// Normally should happen only in developement phase, so just throw
@@ -71,19 +71,19 @@ public final class ZipPartMarshaller implements PartMarshaller {
 		    return true;
 		}
 
-		ZipOutputStream zos = (ZipOutputStream) os;
-		ZipEntry partEntry = new ZipEntry(ZipHelper
+		ZipArchiveOutputStream zos = (ZipArchiveOutputStream) os;
+		ZipArchiveEntry partEntry = new ZipArchiveEntry(ZipHelper
 				.getZipItemNameFromOPCName(part.getPartName().getURI()
 						.getPath()));
 		try {
 			// Create next zip entry
-			zos.putNextEntry(partEntry);
+			zos.putArchiveEntry(partEntry);
 
 			// Saving data in the ZIP file
 			try (final InputStream ins = part.getInputStream()) {
 				IOUtils.copy(ins, zos);
 			} finally {
-				zos.closeEntry();
+				zos.closeArchiveEntry();
 			}
 		} catch (IOException ioe) {
 			logger.log(POILogger.ERROR,"Cannot write: " + part.getPartName() + ": in ZIP",
@@ -116,7 +116,7 @@ public final class ZipPartMarshaller implements PartMarshaller {
 	 */
 	public static boolean marshallRelationshipPart(
 			PackageRelationshipCollection rels, PackagePartName relPartName,
-			ZipOutputStream zos) {
+			ZipArchiveOutputStream zos) {
 		// Building xml
 		Document xmlOutDoc = DocumentHelper.createDocument();
 		// make something like <Relationships
@@ -168,14 +168,14 @@ public final class ZipPartMarshaller implements PartMarshaller {
 		// File.separator + "opc-relationships.xsd";
 
 		// Save part in zip
-		ZipEntry ctEntry = new ZipEntry(ZipHelper.getZipURIFromOPCName(
+		ZipArchiveEntry ctEntry = new ZipArchiveEntry(ZipHelper.getZipURIFromOPCName(
 				relPartName.getURI().toASCIIString()).getPath());
 		try {
-			zos.putNextEntry(ctEntry);
+			zos.putArchiveEntry(ctEntry);
 			try {
 				return StreamHelper.saveXmlInStream(xmlOutDoc, zos);
 			} finally {
-				zos.closeEntry();
+				zos.closeArchiveEntry();
 			}
 		} catch (IOException e) {
 			logger.log(POILogger.ERROR,"Cannot create zip entry " + relPartName, e);

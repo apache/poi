@@ -17,8 +17,7 @@
 
 package org.apache.poi.openxml4j.opc.internal.unmarshallers;
 
-import java.util.zip.ZipEntry;
-
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 
@@ -34,7 +33,7 @@ public final class UnmarshallContext {
 
 	private PackagePartName partName;
 
-	private ZipEntry zipEntry;
+	private ZipArchiveEntry zipEntry;
 
 	/**
 	 * Constructor.
@@ -82,7 +81,7 @@ public final class UnmarshallContext {
 	/**
 	 * @return the zipEntry
 	 */
-	ZipEntry getZipEntry() {
+	ZipArchiveEntry getZipEntry() {
 		return zipEntry;
 	}
 
@@ -90,7 +89,7 @@ public final class UnmarshallContext {
 	 * @param zipEntry
 	 *            the zipEntry to set
 	 */
-	public void setZipEntry(ZipEntry zipEntry) {
+	public void setZipEntry(ZipArchiveEntry zipEntry) {
 		this.zipEntry = zipEntry;
 	}
 }

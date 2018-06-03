@@ -30,10 +30,10 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.poi.openxml4j.opc.internal.ZipHelper;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FillPatternType;
@@ -193,21 +193,23 @@ public final class BigGridDemo {
      */
     private static void substitute(File zipfile, File tmpfile, String entry, OutputStream out) throws IOException {
         try (ZipFile zip = ZipHelper.openZipFile(zipfile)) {
-            try (ZipOutputStream zos = new ZipOutputStream(out)) {
-                Enumeration<? extends ZipEntry> en = zip.entries();
+            try (ZipArchiveOutputStream zos = new ZipArchiveOutputStream(out)) {
+                Enumeration<? extends ZipArchiveEntry> en = zip.getEntries();
                 while (en.hasMoreElements()) {
-                    ZipEntry ze = en.nextElement();
+                    ZipArchiveEntry ze = en.nextElement();
                     if (!ze.getName().equals(entry)) {
-                        zos.putNextEntry(new ZipEntry(ze.getName()));
+                        zos.putArchiveEntry(new ZipArchiveEntry(ze.getName()));
                         try (InputStream is = zip.getInputStream(ze)) {
                             copyStream(is, zos);
                         }
+                        zos.closeArchiveEntry();
                     }
                 }
-                zos.putNextEntry(new ZipEntry(entry));
+                zos.putArchiveEntry(new ZipArchiveEntry(entry));
                 try (InputStream is = new FileInputStream(tmpfile)) {
                     copyStream(is, zos);
                 }
+                zos.closeArchiveEntry();
             }
         }
     }

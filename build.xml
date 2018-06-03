@@ -202,6 +202,9 @@ under the License.
     <property name="ooxml.xmlbeans26.jar" location="${ooxml.lib}/xmlbeans-2.6.0.jar"/>
     <property name="ooxml.xmlbeans26.url"
               value="${repository.m2}/maven2/org/apache/xmlbeans/xmlbeans/2.6.0/xmlbeans-2.6.0.jar"/>
+    <property name="ooxml.commons-compress.jar" location="${main.lib}/commons-compress-1.17.jar"/>
+    <property name="ooxml.commons-compress.url"
+              value="${repository.m2}/maven2/org/apache/commons/commons-compress/1.17/commons-compress-1.17.jar"/>
 
     <!-- coverage libs -->
     <property name="jacoco.zip" location="${main.lib}/jacoco-0.8.1.zip"/>
@@ -354,6 +357,7 @@ under the License.
     <path id="ooxml.classpath">
         <pathelement location="${ooxml.curvesapi.jar}"/>
         <pathelement location="${ooxml.xmlbeans26.jar}"/>
+        <pathelement location="${ooxml.commons-compress.jar}"/>
         <pathelement location="${ooxml.xsds.jar}"/>
         <path refid="main.classpath"/>
         <pathelement location="${main.output.dir}"/>
@@ -403,6 +407,7 @@ under the License.
     <path id="ooxml-lite.classpath">
         <pathelement location="${ooxml.curvesapi.jar}"/>
         <pathelement location="${ooxml.xmlbeans26.jar}"/>
+        <pathelement location="${ooxml.commons-compress.jar}"/>
         <pathelement location="${ooxml.lite.output.dir}"/> <!-- instead of ooxml-xsds.jar use the filtered classes-->
         <path refid="main.classpath"/>
         <pathelement location="${main.output.dir}"/>
@@ -714,6 +719,7 @@ under the License.
                 <and>
                     <available file="${ooxml.curvesapi.jar}"/>
                     <available file="${ooxml.xmlbeans26.jar}"/>
+                    <available file="${ooxml.commons-compress.jar}"/>
                 </and>
                 <isset property="disconnected"/>
             </or>
@@ -723,6 +729,7 @@ under the License.
         <mkdir dir="${ooxml.lib}"/>
         <downloadfile src="${ooxml.curvesapi.url}" dest="${ooxml.curvesapi.jar}"/>
         <downloadfile src="${ooxml.xmlbeans26.url}" dest="${ooxml.xmlbeans26.jar}.orig"/>
+        <downloadfile src="${ooxml.commons-compress.url}" dest="${ooxml.commons-compress.jar}"/>
         <!-- remove piccolo parser, so we don't use unsafe calls to it instead of using jaxp -->
         <zip destfile="${ooxml.xmlbeans26.jar}">
             <zipfileset src="${ooxml.xmlbeans26.jar}.orig" excludes="org/apache/xmlbeans/impl/piccolo/**"/>
@@ -2203,6 +2210,7 @@ under the License.
             <auxClasspath path="${ooxml.security.jar}" />
             <auxClasspath path="${ooxml.curvesapi.jar}" />
             <auxClasspath path="${ooxml.xmlbeans26.jar}" />
+            <auxClasspath path="${ooxml.commons-compress.jar}" />
             <auxClasspath path="${main.commons-collections4.jar}" />
             <auxClasspath path="${main.commons-math3.jar}" />
             <auxClasspath path="${main.commons-codec.jar}" />

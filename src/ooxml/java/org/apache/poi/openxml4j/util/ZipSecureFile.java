@@ -19,9 +19,9 @@ package org.apache.poi.openxml4j.util;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipFile;
 
 /**
  * This class wraps a {@link ZipFile} in order to check the
@@ -39,7 +39,7 @@ public class ZipSecureFile extends ZipFile {
     private static long MAX_TEXT_SIZE = 10*1024*1024L;
 
     private final String fileName;
-    
+
     /**
      * Sets the ratio between de- and inflated bytes to detect zipbomb.
      * It defaults to 1% (= 0.01d), i.e. when the compression is better than
@@ -143,7 +143,7 @@ public class ZipSecureFile extends ZipFile {
      */
     @Override
     @SuppressWarnings("resource")
-    public ZipArchiveThresholdInputStream getInputStream(ZipEntry entry) throws IOException {
+    public ZipArchiveThresholdInputStream getInputStream(ZipArchiveEntry entry) throws IOException {
         ZipArchiveThresholdInputStream zatis = new ZipArchiveThresholdInputStream(super.getInputStream(entry));
         zatis.setEntry(entry);
         return zatis;

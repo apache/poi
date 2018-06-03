@@ -22,8 +22,9 @@ import static org.apache.commons.collections4.IteratorUtils.asIterator;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipFile;
 
 /**
  * A ZipEntrySource wrapper around a ZipFile.
@@ -50,15 +51,15 @@ public class ZipFileZipEntrySource implements ZipEntrySource {
    }
 
    @Override
-   public Enumeration<? extends ZipEntry> getEntries() {
+   public Enumeration<? extends ZipArchiveEntry> getEntries() {
       if (zipArchive == null)
          throw new IllegalStateException("Zip File is closed");
       
-      return zipArchive.entries();
+      return zipArchive.getEntries();
    }
 
    @Override
-   public InputStream getInputStream(ZipEntry entry) throws IOException {
+   public InputStream getInputStream(ZipArchiveEntry entry) throws IOException {
       if (zipArchive == null)
          throw new IllegalStateException("Zip File is closed");
       
@@ -66,16 +67,16 @@ public class ZipFileZipEntrySource implements ZipEntrySource {
    }
 
    @Override
-   public ZipEntry getEntry(final String path) {
+   public ZipArchiveEntry getEntry(final String path) {
       String normalizedPath = path.replace('\\', '/');
 
-      final ZipEntry entry = zipArchive.getEntry(normalizedPath);
+      final ZipArchiveEntry entry = zipArchive.getEntry(normalizedPath);
       if (entry != null) {
          return entry;
       }
 
       // the opc spec allows case-insensitive filename matching (see #49609)
-      for (final ZipEntry ze : asIterable(asIterator(zipArchive.entries()))) {
+      for (final ZipArchiveEntry ze : asIterable(asIterator(zipArchive.getEntries()))) {
          if (normalizedPath.equalsIgnoreCase(ze.getName().replace('\\','/'))) {
             return ze;
          }
