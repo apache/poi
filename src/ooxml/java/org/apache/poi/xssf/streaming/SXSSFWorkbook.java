@@ -31,14 +31,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.util.ZipArchiveThresholdInputStream;
 import org.apache.poi.openxml4j.util.ZipEntrySource;
 import org.apache.poi.openxml4j.util.ZipFileZipEntrySource;
+import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -376,11 +376,11 @@ public class SXSSFWorkbook implements Workbook {
     }
 
     protected void injectData(ZipEntrySource zipEntrySource, OutputStream out) throws IOException {
-        try (ZipOutputStream zos = new ZipOutputStream(out)) {
-            Enumeration<? extends ZipEntry> en = zipEntrySource.getEntries();
+        try (ZipArchiveOutputStream zos = new ZipArchiveOutputStream(out)) {
+            Enumeration<? extends ZipArchiveEntry> en = zipEntrySource.getEntries();
             while (en.hasMoreElements()) {
-                ZipEntry ze = en.nextElement();
-                zos.putNextEntry(new ZipEntry(ze.getName()));
+                ZipArchiveEntry ze = en.nextElement();
+                zos.putArchiveEntry(new ZipArchiveEntry(ze.getName()));
                 try (final InputStream is = zipEntrySource.getInputStream(ze)) {
                     if (is instanceof ZipArchiveThresholdInputStream) {
                         // #59743 - disable Threshold handling for SXSSF copy
@@ -397,6 +397,8 @@ public class SXSSFWorkbook implements Workbook {
                     } else {
                         IOUtils.copy(is, zos);
                     }
+                } finally {
+                    zos.closeArchiveEntry();
                 }
             }
         } finally {
@@ -928,7 +930,7 @@ public class SXSSFWorkbook implements Workbook {
             }
 
             //Substitute the template entries with the generated sheet data files
-            final ZipEntrySource source = new ZipFileZipEntrySource(new ZipFile(tmplFile));
+            final ZipEntrySource source = new ZipFileZipEntrySource(new ZipSecureFile(tmplFile));
             injectData(source, stream);
         } finally {
             deleted = tmplFile.delete();

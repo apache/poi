@@ -70,9 +70,14 @@
       <version>@VERSION@</version>
     </dependency>
     <dependency>
-    	<groupId>com.github.virtuald</groupId>
-    	<artifactId>curvesapi</artifactId>
-    	<version>1.04</version>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-compress</artifactId>
+      <version>1.17</version>
+    </dependency>
+    <dependency>
+      <groupId>com.github.virtuald</groupId>
+      <artifactId>curvesapi</artifactId>
+      <version>1.04</version>
     </dependency>
   </dependencies>
 </project>

@@ -22,10 +22,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Enumeration;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipOutputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -39,6 +35,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.poi.openxml4j.opc.internal.ZipHelper;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.util.IOUtils;
@@ -83,12 +82,12 @@ public class OOXMLPrettyPrint {
 		System.out.println("Done.");
 	}
 
-    private static void handleFile(File file, File outFile) throws ZipException,
-            IOException, ParserConfigurationException {
+    private static void handleFile(File file, File outFile) throws
+            IOException, TransformerException, ParserConfigurationException {
         System.out.println("Reading zip-file " + file + " and writing pretty-printed XML to " + outFile);
 
-		try (ZipFile zipFile = ZipHelper.openZipFile(file)) {
-			try (ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(outFile)))) {
+		try (ZipSecureFile zipFile = ZipHelper.openZipFile(file)) {
+			try (ZipArchiveOutputStream out = new ZipArchiveOutputStream(new BufferedOutputStream(new FileOutputStream(outFile)))) {
 				new OOXMLPrettyPrint().handle(zipFile, out);
 			}
 		} finally {
@@ -96,13 +95,13 @@ public class OOXMLPrettyPrint {
 		}
     }
 
-	private void handle(ZipFile file, ZipOutputStream out) throws IOException {
-        Enumeration<? extends ZipEntry> entries = file.entries();
+	private void handle(ZipFile file, ZipArchiveOutputStream out) throws IOException, TransformerException {
+        Enumeration<? extends ZipArchiveEntry> entries = file.getEntries();
         while(entries.hasMoreElements()) {
-            ZipEntry entry = entries.nextElement();
+            ZipArchiveEntry entry = entries.nextElement();
 
             String name = entry.getName();
-            out.putNextEntry(new ZipEntry(name));
+            out.putArchiveEntry(new ZipArchiveEntry(name));
             try {
                 if(name.endsWith(".xml") || name.endsWith(".rels")) {
                     Document document = documentBuilder.parse(new InputSource(file.getInputStream(entry)));
@@ -115,7 +114,7 @@ public class OOXMLPrettyPrint {
             } catch (Exception e) {
                 throw new IOException("While handling entry " + name, e);
             } finally {
-                out.closeEntry();
+                out.closeArchiveEntry();
             }
             System.out.print(".");
         }

@@ -20,8 +20,8 @@ package org.apache.poi.openxml4j.util;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.zip.ZipEntry;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.poi.util.IOUtils;
 
 
@@ -31,10 +31,10 @@ import org.apache.poi.util.IOUtils;
  * Holds the (decompressed!) data in memory, so
  *  close this as soon as you can!
  */
-/* package */ class ZipArchiveFakeEntry extends ZipEntry {
+/* package */ class ZipArchiveFakeEntry extends ZipArchiveEntry {
     private final byte[] data;
 
-    ZipArchiveFakeEntry(ZipEntry entry, InputStream inp) throws IOException {
+    ZipArchiveFakeEntry(ZipArchiveEntry entry, InputStream inp) throws IOException {
         super(entry.getName());
 
         final long entrySize = entry.getSize();

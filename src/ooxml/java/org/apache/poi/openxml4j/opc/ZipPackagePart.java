@@ -20,8 +20,8 @@ package org.apache.poi.openxml4j.opc;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.zip.ZipEntry;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
@@ -41,13 +41,15 @@ public class ZipPackagePart extends PackagePart {
 	/**
 	 * The zip entry corresponding to this part.
 	 */
-	private ZipEntry zipEntry;
+	private ZipArchiveEntry zipEntry;
 
 	/**
 	 * Constructor.
 	 *
 	 * @param container
 	 *            The container package.
+	 * @param zipEntry
+	 *            The zip entry corresponding to this part.
 	 * @param partName
 	 *            The part name.
 	 * @param contentType
@@ -55,9 +57,10 @@ public class ZipPackagePart extends PackagePart {
 	 * @throws InvalidFormatException
 	 *             Throws if the content of this part is invalid.
 	 */
-	public ZipPackagePart(OPCPackage container, PackagePartName partName,
-			String contentType) throws InvalidFormatException {
-		super(container, partName, contentType);
+	public ZipPackagePart(OPCPackage container, ZipArchiveEntry zipEntry,
+			PackagePartName partName, String contentType)
+			throws InvalidFormatException {
+		this(container, zipEntry, partName, contentType, true);
 	}
 
 	/**
@@ -74,7 +77,7 @@ public class ZipPackagePart extends PackagePart {
 	 * @throws InvalidFormatException
 	 *             Throws if the content of this part is invalid.
 	 */
-	/* package */ ZipPackagePart(OPCPackage container, ZipEntry zipEntry,
+	/* package */ ZipPackagePart(OPCPackage container, ZipArchiveEntry zipEntry,
 						  PackagePartName partName, String contentType, boolean loadRelationships)
 			throws InvalidFormatException {
 		super(container, partName, new ContentType(contentType), loadRelationships);
@@ -86,7 +89,7 @@ public class ZipPackagePart extends PackagePart {
 	 *
 	 * @return The zip entry in the zip structure coresponding to this part.
 	 */
-	public ZipEntry getZipArchive() {
+	public ZipArchiveEntry getZipArchive() {
 		return zipEntry;
 	}
 

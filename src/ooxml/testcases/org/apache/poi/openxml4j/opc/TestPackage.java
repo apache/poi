@@ -44,10 +44,10 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.function.BiConsumer;
 import java.util.regex.Pattern;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POITestCase;
@@ -783,19 +783,19 @@ public final class TestPackage {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(2500000);
 
         try (ZipFile zipFile = ZipHelper.openZipFile(OpenXML4JTestDataSamples.getSampleFile("sample.xlsx"));
-			 ZipOutputStream append = new ZipOutputStream(bos)) {
+			 ZipArchiveOutputStream append = new ZipArchiveOutputStream(bos)) {
 			assertNotNull(zipFile);
 
 			// first, copy contents from existing war
-			Enumeration<? extends ZipEntry> entries = zipFile.entries();
+			Enumeration<? extends ZipArchiveEntry> entries = zipFile.getEntries();
 			while (entries.hasMoreElements()) {
-				final ZipEntry eIn = entries.nextElement();
-				final ZipEntry eOut = new ZipEntry(eIn.getName());
+				final ZipArchiveEntry eIn = entries.nextElement();
+				final ZipArchiveEntry eOut = new ZipArchiveEntry(eIn.getName());
 				eOut.setTime(eIn.getTime());
 				eOut.setComment(eIn.getComment());
 				eOut.setSize(eIn.getSize());
 
-				append.putNextEntry(eOut);
+				append.putArchiveEntry(eOut);
 				if (!eOut.isDirectory()) {
 					try (InputStream is = zipFile.getInputStream(eIn)) {
 						if (eOut.getName().equals("[Content_Types].xml")) {
@@ -818,7 +818,7 @@ public final class TestPackage {
 						}
 					}
 				}
-				append.closeEntry();
+				append.closeArchiveEntry();
 			}
 		}
 
@@ -918,9 +918,9 @@ public final class TestPackage {
 		long max_size = 0;
 		try (ZipFile zf = ZipHelper.openZipFile(file)) {
 			assertNotNull(zf);
-			Enumeration<? extends ZipEntry> entries = zf.entries();
+			Enumeration<? extends ZipArchiveEntry> entries = zf.getEntries();
 			while (entries.hasMoreElements()) {
-				ZipEntry ze = entries.nextElement();
+				ZipArchiveEntry ze = entries.nextElement();
 				if (ze.getSize() == 0) {
 					continue;
 				}
@@ -1093,7 +1093,7 @@ public final class TestPackage {
 			try (final ZipPackage pkg = (useStream) ? new ZipPackage(is, PackageAccess.READ) : new ZipPackage(files.getFile(name), PackageAccess.READ)) {
 				pkgTest = pkg;
 				assertNotNull(pkg.getZipArchive());
-//				assertFalse(pkg.getZipArchive().isClosed());
+				assertFalse(pkg.getZipArchive().isClosed());
 				pkg.getParts();
 				fail("Shouldn't work");
 			}
