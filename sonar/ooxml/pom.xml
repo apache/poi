@@ -129,7 +129,7 @@
 		</dependency>
 
 		<dependency>
-		  <groupId>org.apache.xmlbeans</groupId>
+		  <groupId>com.github.pjfanning</groupId>
 		  <artifactId>xmlbeans</artifactId>
 		  <version>${xmlbeans.version}</version>
 		</dependency>
