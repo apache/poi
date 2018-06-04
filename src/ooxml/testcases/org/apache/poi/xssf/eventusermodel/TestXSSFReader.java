@@ -28,7 +28,7 @@ import java.util.Set;
 import java.util.HashSet;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.POIXMLException;
+import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Workbook;

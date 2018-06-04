@@ -111,7 +111,7 @@ public class ToHtml {
     }
 
     /**
-     * Creates a new converter to HTML for the given workbook.
+     * Creates a new examples to HTML for the given workbook.
      *
      * @param wb     The workbook.
      * @param output Where the HTML output will be written.
@@ -123,7 +123,7 @@ public class ToHtml {
     }
 
     /**
-     * Creates a new converter to HTML for the given workbook.  If the path ends
+     * Creates a new examples to HTML for the given workbook.  If the path ends
      * with "<tt>.xlsx</tt>" an {@link XSSFWorkbook} will be used; otherwise
      * this will use an {@link HSSFWorkbook}.
      *
@@ -138,7 +138,7 @@ public class ToHtml {
     }
 
     /**
-     * Creates a new converter to HTML for the given workbook.  This attempts to
+     * Creates a new examples to HTML for the given workbook.  This attempts to
      * detect whether the input is XML (so it should create an {@link
      * XSSFWorkbook} or not (so it should create an {@link HSSFWorkbook}).
      *
@@ -149,12 +149,8 @@ public class ToHtml {
      */
     public static ToHtml create(InputStream in, Appendable output)
             throws IOException {
-        try {
-            Workbook wb = WorkbookFactory.create(in);
-            return create(wb, output);
-        } catch (InvalidFormatException e){
-            throw new IllegalArgumentException("Cannot create workbook from stream", e);
-        }
+        Workbook wb = WorkbookFactory.create(in);
+        return create(wb, output);
     }
 
     private ToHtml(Workbook wb, Appendable output) {

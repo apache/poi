@@ -59,14 +59,15 @@ public enum TableStyleType {
             
             int firstStart = table.getStartColIndex();
             int secondStart = firstStart + c1Stripe;
-            int c = cell.getCol();
+            final int c = cell.getCol();
             
             // look for the stripe containing c, accounting for the style element stripe size
             // could do fancy math, but tables can't be that wide, a simple loop is fine
             // if not in this type of stripe, return null
-            while (true) {
-                if (firstStart > c) break;
-                if (c >= firstStart && c <= secondStart -1) return new CellRangeAddress(table.getStartRowIndex(), table.getEndRowIndex(), firstStart, secondStart - 1);
+            while (firstStart <= c) {
+                if (c >= firstStart && c <= secondStart -1) {
+                    return new CellRangeAddress(table.getStartRowIndex(), table.getEndRowIndex(), firstStart, secondStart - 1);
+                }
                 firstStart = secondStart + c2Stripe;
                 secondStart = firstStart + c1Stripe;
             }
@@ -86,14 +87,15 @@ public enum TableStyleType {
 
             int firstStart = table.getStartColIndex();
             int secondStart = firstStart + c1Stripe;
-            int c = cell.getCol();
+            final int c = cell.getCol();
             
             // look for the stripe containing c, accounting for the style element stripe size
             // could do fancy math, but tables can't be that wide, a simple loop is fine
             // if not in this type of stripe, return null
-            while (true) {
-                if (firstStart > c) break;
-                if (c >= secondStart && c <= secondStart + c2Stripe -1) return new CellRangeAddress(table.getStartRowIndex(), table.getEndRowIndex(), secondStart, secondStart + c2Stripe - 1);
+            while (firstStart <= c) {
+                if (c >= secondStart && c <= secondStart + c2Stripe -1) {
+                    return new CellRangeAddress(table.getStartRowIndex(), table.getEndRowIndex(), secondStart, secondStart + c2Stripe - 1);
+                }
                 firstStart = secondStart + c2Stripe;
                 secondStart = firstStart + c1Stripe;
             }
@@ -113,14 +115,15 @@ public enum TableStyleType {
 
             int firstStart = table.getStartRowIndex() + table.getHeaderRowCount();
             int secondStart = firstStart + c1Stripe;
-            int c = cell.getRow();
+            final int c = cell.getRow();
             
             // look for the stripe containing c, accounting for the style element stripe size
             // could do fancy math, but tables can't be that wide, a simple loop is fine
             // if not in this type of stripe, return null
-            while (true) {
-                if (firstStart > c) break;
-                if (c >= firstStart && c <= secondStart -1) return new CellRangeAddress(firstStart, secondStart - 1, table.getStartColIndex(), table.getEndColIndex());
+            while (firstStart <= c) {
+                if (c >= firstStart && c <= secondStart -1) {
+                    return new CellRangeAddress(firstStart, secondStart - 1, table.getStartColIndex(), table.getEndColIndex());
+                }
                 firstStart = secondStart + c2Stripe;
                 secondStart = firstStart + c1Stripe;
             }
@@ -140,14 +143,15 @@ public enum TableStyleType {
 
             int firstStart = table.getStartRowIndex() + table.getHeaderRowCount();
             int secondStart = firstStart + c1Stripe;
-            int c = cell.getRow();
+            final int c = cell.getRow();
             
             // look for the stripe containing c, accounting for the style element stripe size
             // could do fancy math, but tables can't be that wide, a simple loop is fine
             // if not in this type of stripe, return null
-            while (true) {
-                if (firstStart > c) break;
-                if (c >= secondStart && c <= secondStart +c2Stripe -1) return new CellRangeAddress(secondStart, secondStart + c2Stripe - 1, table.getStartColIndex(), table.getEndColIndex());
+            while (firstStart <= c) {
+                if (c >= secondStart && c <= secondStart +c2Stripe -1) {
+                    return new CellRangeAddress(secondStart, secondStart + c2Stripe - 1, table.getStartColIndex(), table.getEndColIndex());
+                }
                 firstStart = secondStart + c2Stripe;
                 secondStart = firstStart + c1Stripe;
             }

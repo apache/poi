@@ -27,8 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.EncryptedDocumentException;
-import org.apache.poi.POIOLE2TextExtractor;
-import org.apache.poi.POITextExtractor;
 import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.extractor.EventBasedExcelExtractor;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
@@ -108,7 +106,7 @@ public class OLE2ExtractorFactory {
      * Should this thread use event based extractors is available?
      * Checks the all-threads one first, then thread specific.
      */
-    protected static boolean getPreferEventExtractor() {
+    public static boolean getPreferEventExtractor() {
         if(allPreferEventExtractors != null) {
             return allPreferEventExtractors;
         }
@@ -156,7 +154,7 @@ public class OLE2ExtractorFactory {
     private static Class<?> getScratchpadClass() {
         try {
             return OLE2ExtractorFactory.class.getClassLoader().loadClass(
-                    "org.apache.poi.extractor.OLE2ScratchpadExtractorFactory"
+                    "org.apache.poi.extractor.ole2.OLE2ScratchpadExtractorFactory"
             );
         } catch (ClassNotFoundException e) {
             LOGGER.log(POILogger.ERROR, "POI Scratchpad jar missing");

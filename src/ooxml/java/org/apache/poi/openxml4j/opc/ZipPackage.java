@@ -29,10 +29,10 @@ import java.io.OutputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.poi.UnsupportedFileFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
@@ -247,7 +247,7 @@ public final class ZipPackage extends OPCPackage {
         }
 
         // First we need to parse the content type part
-        final ZipEntry contentTypeEntry =
+        final ZipArchiveEntry contentTypeEntry =
                 zipArchive.getEntry(CONTENT_TYPES_PART_NAME);
         if (contentTypeEntry != null) {
             try {
@@ -294,11 +294,11 @@ public final class ZipPackage extends OPCPackage {
     }
 
     private class EntryTriple implements Comparable<EntryTriple> {
-        final ZipEntry zipArchiveEntry;
+        final ZipArchiveEntry zipArchiveEntry;
         final PackagePartName partName;
         final String contentType;
 
-        EntryTriple(final ZipEntry zipArchiveEntry, final ContentTypeManager contentTypeManager) {
+        EntryTriple(final ZipArchiveEntry zipArchiveEntry, final ContentTypeManager contentTypeManager) {
             this.zipArchiveEntry = zipArchiveEntry;
 
             final String entryName = zipArchiveEntry.getName();
@@ -483,9 +483,10 @@ public final class ZipPackage extends OPCPackage {
 		// Check that the document was open in write mode
 		throwExceptionIfReadOnly();
 
-		try (final ZipOutputStream zos = (outputStream instanceof ZipOutputStream)
-                ? (ZipOutputStream) outputStream : new ZipOutputStream(outputStream)) {
+		final ZipArchiveOutputStream zos = (outputStream instanceof ZipArchiveOutputStream)
+            ? (ZipArchiveOutputStream) outputStream : new ZipArchiveOutputStream(outputStream);
 
+		try {
 			// If the core properties part does not exist in the part list,
 			// we save it as well
 			if (this.getPartsByRelationshipType(PackageRelationshipTypes.CORE_PROPERTIES).size() == 0 &&
@@ -537,6 +538,8 @@ public final class ZipPackage extends OPCPackage {
                     throw new OpenXML4JException(errMsg + pm);
                 }
 			}
+
+            zos.finish();
 		} catch (OpenXML4JRuntimeException e) {
 			// no need to wrap this type of Exception
 			throw e;
@@ -544,7 +547,7 @@ public final class ZipPackage extends OPCPackage {
             throw new OpenXML4JRuntimeException(
                 "Fail to save: an error occurs while saving the package : "
 				+ e.getMessage(), e);
-		}
+        }
     }
 
     /**

@@ -79,7 +79,7 @@ public class TestXDGFVisioExtractor {
     /**
      * Some confusion on PolylineTo vs PolyLineTo, both should be handled.
      * Previously failed with:
-     * org.apache.poi.POIXMLException: Invalid 'Row_Type' name 'PolylineTo'
+     * org.apache.poi.ooxml.POIXMLException: Invalid 'Row_Type' name 'PolylineTo'
      *  at org.apache.poi.xdgf.util.ObjectFactory.load
      *  at org.apache.poi.xdgf.usermodel.section.geometry.GeometryRowFactory.load
      */

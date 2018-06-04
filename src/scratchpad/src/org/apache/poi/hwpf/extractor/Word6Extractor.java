@@ -22,7 +22,7 @@ import java.io.InputStream;
 
 import org.apache.poi.hwpf.converter.WordToTextConverter;
 
-import org.apache.poi.POIOLE2TextExtractor;
+import org.apache.poi.extractor.POIOLE2TextExtractor;
 import org.apache.poi.hwpf.HWPFOldDocument;
 import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.poifs.filesystem.DirectoryNode;

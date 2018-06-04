@@ -17,7 +17,7 @@
 
 package org.apache.poi.xssf.dev;
 
-import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -25,9 +25,10 @@ import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.poi.openxml4j.opc.internal.ZipHelper;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
-import org.apache.poi.util.DocumentHelper;
+import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.util.IOUtils;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -78,9 +79,9 @@ public final class XSSFDump {
         createDirIfMissing(root);
         System.out.println("Dumping to directory " + root);
 
-        Enumeration<? extends ZipEntry> en = zip.entries();
+        Enumeration<? extends ZipArchiveEntry> en = zip.getEntries();
         while (en.hasMoreElements()) {
-            ZipEntry entry = en.nextElement();
+            ZipArchiveEntry entry = en.nextElement();
             String name = entry.getName();
             int idx = name.lastIndexOf('/');
             if (idx != -1) {

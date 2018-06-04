@@ -19,10 +19,10 @@ package org.apache.poi.openxml4j.opc.internal.unmarshallers;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.zip.ZipEntry;
 
 import javax.xml.XMLConstants;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackageNamespaces;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -31,7 +31,7 @@ import org.apache.poi.openxml4j.opc.ZipPackage;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.apache.poi.openxml4j.opc.internal.PartUnmarshaller;
 import org.apache.poi.openxml4j.opc.internal.ZipHelper;
-import org.apache.poi.util.DocumentHelper;
+import org.apache.poi.ooxml.util.DocumentHelper;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -93,7 +93,7 @@ public final class PackagePropertiesUnmarshaller implements PartUnmarshaller {
 						.getInputStream(context.getZipEntry());
 			} else if (context.getPackage() != null) {
 				// Try to retrieve the part inputstream from the URI
-				ZipEntry zipEntry = ZipHelper
+				ZipArchiveEntry zipEntry = ZipHelper
 						.getCorePropertiesZipEntry((ZipPackage) context
 								.getPackage());
 				in = ((ZipPackage) context.getPackage()).getZipArchive()

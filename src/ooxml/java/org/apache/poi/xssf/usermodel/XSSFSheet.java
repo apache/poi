@@ -17,7 +17,7 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 import static org.apache.poi.xssf.usermodel.helpers.XSSFPasswordHelper.setPassword;
 import static org.apache.poi.xssf.usermodel.helpers.XSSFPasswordHelper.validatePassword;
 
@@ -42,8 +42,8 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.POIXMLException;
+import org.apache.poi.ooxml.POIXMLDocumentPart;
+import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.PartAlreadyExistsException;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -692,52 +692,51 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      */
     @Override
     public void createFreezePane(int colSplit, int rowSplit, int leftmostColumn, int topRow) {
-        CTSheetView ctView = getDefaultSheetView();
+        final boolean removeSplit = colSplit == 0 && rowSplit == 0;
+        final CTSheetView ctView = getDefaultSheetView(!removeSplit);
+
+        if (ctView != null) {
+            ctView.setSelectionArray(null);
+        }
 
         // If both colSplit and rowSplit are zero then the existing freeze pane is removed
-        if(colSplit == 0 && rowSplit == 0){
-            if(ctView.isSetPane()) {
+        if (removeSplit) {
+            if (ctView != null && ctView.isSetPane()) {
                 ctView.unsetPane();
             }
-            ctView.setSelectionArray(null);
             return;
         }
 
-        if (!ctView.isSetPane()) {
-            ctView.addNewPane();
-        }
-        CTPane pane = ctView.getPane();
+        assert(ctView != null);
+        final CTPane pane = (ctView.isSetPane()) ? ctView.getPane() : ctView.addNewPane();
+        assert(pane != null);
 
         if (colSplit > 0) {
            pane.setXSplit(colSplit);
-        } else {
-           if(pane.isSetXSplit()) {
-               pane.unsetXSplit();
-           }
+        } else if (pane.isSetXSplit()) {
+           pane.unsetXSplit();
         }
         if (rowSplit > 0) {
            pane.setYSplit(rowSplit);
-        } else {
-           if(pane.isSetYSplit()) {
-               pane.unsetYSplit();
-           }
+        } else if(pane.isSetYSplit()) {
+           pane.unsetYSplit();
+        }
+
+        STPane.Enum activePane = STPane.BOTTOM_RIGHT;
+        int pRow = topRow, pCol = leftmostColumn;
+        if (rowSplit == 0) {
+            pRow = 0;
+            activePane = STPane.TOP_RIGHT;
+        } else if (colSplit == 0) {
+            pCol = 0;
+            activePane = STPane.BOTTOM_LEFT;
         }
 
         pane.setState(STPaneState.FROZEN);
-        if (rowSplit == 0) {
-            pane.setTopLeftCell(new CellReference(0, leftmostColumn).formatAsString());
-            pane.setActivePane(STPane.TOP_RIGHT);
-        } else if (colSplit == 0) {
-            pane.setTopLeftCell(new CellReference(topRow, 0).formatAsString());
-            pane.setActivePane(STPane.BOTTOM_LEFT);
-        } else {
-            pane.setTopLeftCell(new CellReference(topRow, leftmostColumn).formatAsString());
-            pane.setActivePane(STPane.BOTTOM_RIGHT);
-        }
+        pane.setTopLeftCell(new CellReference(pRow, pCol).formatAsString());
+        pane.setActivePane(activePane);
 
-        ctView.setSelectionArray(null);
-        CTSelection sel = ctView.addNewSelection();
-        sel.setPane(pane.getActivePane());
+        ctView.addNewSelection().setPane(activePane);
     }
 
     /**
@@ -801,8 +800,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     @Override
     public void createSplitPane(int xSplitPos, int ySplitPos, int leftmostColumn, int topRow, int activePane) {
         createFreezePane(xSplitPos, ySplitPos, leftmostColumn, topRow);
-        getPane().setState(STPaneState.SPLIT);
-        getPane().setActivePane(STPane.Enum.forInt(activePane));
+        if (xSplitPos > 0 || ySplitPos > 0) {
+            final CTPane pane = getPane(true);
+            pane.setState(STPaneState.SPLIT);
+            pane.setActivePane(STPane.Enum.forInt(activePane));
+        }
     }
     
     /**
@@ -1011,8 +1013,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      */
     @Override
     public void setRightToLeft(boolean value) {
-       CTSheetView view = getDefaultSheetView();
-       view.setRightToLeft(value);
+        final CTSheetView dsv = getDefaultSheetView(true);
+        assert(dsv != null);
+        dsv.setRightToLeft(value);
     }
 
     /**
@@ -1022,8 +1025,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      */
     @Override
     public boolean isRightToLeft() {
-       CTSheetView view = getDefaultSheetView();
-       return view != null && view.getRightToLeft();
+        final CTSheetView dsv = getDefaultSheetView(false);
+        return (dsv != null && dsv.getRightToLeft());
     }
 
     /**
@@ -1055,12 +1058,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * Gets the flag indicating whether the window should show 0 (zero) in cells containing zero value.
      * When false, cells with zero value appear blank instead of showing the number zero.
      *
-     * @return whether all zero values on the worksheet are displayed
+     * @return whether all zero values on the worksheet are displayed (defaults to true)
      */
     @Override
     public boolean isDisplayZeros(){
-        CTSheetView view = getDefaultSheetView();
-        return view == null || view.getShowZeros();
+        final CTSheetView dsv = getDefaultSheetView(false);
+        return (dsv != null) ? dsv.getShowZeros() : true;
     }
 
     /**
@@ -1071,7 +1074,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      */
     @Override
     public void setDisplayZeros(boolean value){
-        CTSheetView view = getSheetTypeSheetView();
+        final CTSheetView view = getDefaultSheetView(true);
+        assert(view != null);
         view.setShowZeros(value);
     }
 
@@ -1352,16 +1356,25 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      */
     @Override
     public PaneInformation getPaneInformation() {
-        CTPane pane = getDefaultSheetView().getPane();
+        final CTPane pane = getPane(false);
         // no pane configured
         if(pane == null) {
             return null;
         }
 
-        CellReference cellRef = pane.isSetTopLeftCell() ? new CellReference(pane.getTopLeftCell()) : null;
-        return new PaneInformation((short)pane.getXSplit(), (short)pane.getYSplit(),
-                (short)(cellRef == null ? 0 : cellRef.getRow()),(cellRef == null ? 0 : cellRef.getCol()),
-                (byte)(pane.getActivePane().intValue() - 1), pane.getState() == STPaneState.FROZEN);
+        short row = 0, col = 0;
+        if (pane.isSetTopLeftCell()) {
+            final CellReference cellRef = new CellReference(pane.getTopLeftCell());
+            row = (short)cellRef.getRow();
+            col = (short)cellRef.getCol();
+        }
+
+        final short x = (short)pane.getXSplit();
+        final short y = (short)pane.getYSplit();
+        final byte active = (byte)(pane.getActivePane().intValue() - 1);
+        final boolean frozen = pane.getState() == STPaneState.FROZEN;
+
+        return new PaneInformation(x, y, row, col, active, frozen);
     }
 
     /**
@@ -1606,12 +1619,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      */
     @Override
     public short getTopRow() {
-        String cellRef = getSheetTypeSheetView().getTopLeftCell();
+        final CTSheetView dsv = getDefaultSheetView(false);
+        final String cellRef = (dsv == null) ? null : dsv.getTopLeftCell();
         if(cellRef == null) {
             return 0;
         }
-        CellReference cellReference = new CellReference(cellRef);
-        return (short) cellReference.getRow();
+        return (short) new CellReference(cellRef).getRow();
     }
 
     /**
@@ -1745,19 +1758,21 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      */
     @Override
     public boolean isDisplayFormulas() {
-        return getSheetTypeSheetView().getShowFormulas();
+        final CTSheetView dsv = getDefaultSheetView(false);
+        return (dsv != null) ? dsv.getShowFormulas() : false;
     }
 
     /**
      * Gets the flag indicating whether this sheet displays the lines
      * between rows and columns to make editing and reading easier.
      *
-     * @return <code>true</code> if this sheet displays gridlines.
+     * @return <code>true</code> (default) if this sheet displays gridlines.
      * @see #isPrintGridlines() to check if printing of gridlines is turned on or off
      */
     @Override
     public boolean isDisplayGridlines() {
-        return getSheetTypeSheetView().getShowGridLines();
+        final CTSheetView dsv = getDefaultSheetView(false);
+        return (dsv != null) ? dsv.getShowGridLines() : true;
     }
 
     /**
@@ -1771,7 +1786,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      */
     @Override
     public void setDisplayGridlines(boolean show) {
-        getSheetTypeSheetView().setShowGridLines(show);
+        final CTSheetView dsv = getDefaultSheetView(true);
+        assert(dsv != null);
+        dsv.setShowGridLines(show);
     }
 
     /**
@@ -1783,11 +1800,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * Column heading are the letters or numbers that appear above the columns of the sheet
      * </p>
      *
-     * @return <code>true</code> if this sheet should display row and column headings.
+     * @return <code>true</code> (default) if this sheet should display row and column headings.
      */
     @Override
     public boolean isDisplayRowColHeadings() {
-        return getSheetTypeSheetView().getShowRowColHeaders();
+        final CTSheetView dsv = getDefaultSheetView(false);
+        return (dsv != null) ? dsv.getShowRowColHeaders() : true;
     }
 
     /**
@@ -1803,7 +1821,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      */
     @Override
     public void setDisplayRowColHeadings(boolean show) {
-        getSheetTypeSheetView().setShowRowColHeaders(show);
+        final CTSheetView dsv = getDefaultSheetView(true);
+        assert(dsv != null);
+        dsv.setShowRowColHeaders(show);
     }
 
     /**
@@ -2579,14 +2599,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      */
     @Override
     public void setDisplayFormulas(boolean show) {
-        getSheetTypeSheetView().setShowFormulas(show);
-    }
-
-    private CTSheetView getSheetTypeSheetView() {
-        if (getDefaultSheetView() == null) {
-            getSheetTypeSheetViews().setSheetViewArray(0, CTSheetView.Factory.newInstance());
-        }
-        return getDefaultSheetView();
+        final CTSheetView dsv = getDefaultSheetView(true);
+        assert(dsv != null);
+        dsv.setShowFormulas(show);
     }
 
     /**
@@ -2833,7 +2848,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         if (scale < 10 || scale > 400) {
             throw new IllegalArgumentException("Valid scale values range from 10 to 400");
         }
-        getSheetTypeSheetView().setZoomScale(scale);
+        final CTSheetView dsv = getDefaultSheetView(true);
+        assert(dsv != null);
+        dsv.setZoomScale(scale);
     }
 
 
@@ -3265,9 +3282,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      */
     @Override
     public void showInPane(int toprow, int leftcol) {
-        CellReference cellReference = new CellReference(toprow, leftcol);
-        String cellRef = cellReference.formatAsString();
-        getPane().setTopLeftCell(cellRef);
+        final CellReference cellReference = new CellReference(toprow, leftcol);
+        final String cellRef = cellReference.formatAsString();
+        final CTPane pane = getPane(true);
+        assert(pane != null);
+        pane.setTopLeftCell(cellRef);
     }
 
     @Override
@@ -3323,12 +3342,17 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         getSheetTypeSheetFormatPr().setOutlineLevelCol(maxLevelCol);
     }
 
-    private CTSheetViews getSheetTypeSheetViews() {
-        if (worksheet.getSheetViews() == null) {
-            worksheet.setSheetViews(CTSheetViews.Factory.newInstance());
-            worksheet.getSheetViews().addNewSheetView();
+    protected CTSheetViews getSheetTypeSheetViews(final boolean create) {
+        final CTSheetViews views = (worksheet.isSetSheetViews() || !create)
+                ? worksheet.getSheetViews() : worksheet.addNewSheetViews();
+        assert(views != null || !create);
+        if (views == null) {
+            return null;
         }
-        return worksheet.getSheetViews();
+        if (views.sizeOfSheetViewArray() == 0 && create) {
+            views.addNewSheetView();
+        }
+        return views;
     }
 
     /**
@@ -3343,8 +3367,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      */
     @Override
     public boolean isSelected() {
-        CTSheetView view = getDefaultSheetView();
-        return view != null && view.getTabSelected();
+        final CTSheetView dsv = getDefaultSheetView(false);
+        return (dsv != null) ? dsv.getTabSelected() : false;
     }
 
     /**
@@ -3360,7 +3384,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      */
     @Override
     public void setSelected(boolean value) {
-        CTSheetViews views = getSheetTypeSheetViews();
+        final CTSheetViews views = getSheetTypeSheetViews(true);
+        assert(views != null);
         for (CTSheetView view : views.getSheetViewArray()) {
             view.setTabSelected(value);
         }
@@ -3404,11 +3429,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      */
     @Override
     public CellAddress getActiveCell() {
-        String address = getSheetTypeSelection().getActiveCell();
-        if (address == null) {
-            return null;
-        }
-        return new CellAddress(address);
+        final CTSelection sts = getSheetTypeSelection(false);
+        final String address = (sts != null) ? sts.getActiveCell() : null;
+        return (address != null) ? new CellAddress(address) : null;
     }
 
     /**
@@ -3416,8 +3439,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      */
     @Override
     public void setActiveCell(CellAddress address) {
+        final CTSelection ctsel = getSheetTypeSelection(true);
+        assert(ctsel != null);
         String ref = address.formatAsString();
-        CTSelection ctsel = getSheetTypeSelection();
         ctsel.setActiveCell(ref);
         ctsel.setSqref(Collections.singletonList(ref));
     }
@@ -3434,11 +3458,17 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         return sheetComments == null ? 0 : sheetComments.getNumberOfComments();
     }
 
-    private CTSelection getSheetTypeSelection() {
-        if (getSheetTypeSheetView().sizeOfSelectionArray() == 0) {
-            getSheetTypeSheetView().insertNewSelection(0);
+    private CTSelection getSheetTypeSelection(final boolean create) {
+        final CTSheetView dsv = getDefaultSheetView(create);
+        assert(dsv != null || !create);
+        if (dsv == null) {
+            return null;
         }
-        return getSheetTypeSheetView().getSelectionArray(0);
+        final int sz = dsv.sizeOfSelectionArray();
+        if (sz == 0) {
+            return create ? dsv.addNewSelection() : null;
+        }
+        return dsv.getSelectionArray(sz - 1);
     }
 
     /**
@@ -3450,12 +3480,14 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * When multiple windows are viewing the same sheet, multiple sheetView elements (with corresponding
      * workbookView entries) are saved."
      */
-    private CTSheetView getDefaultSheetView() {
-        CTSheetViews views = getSheetTypeSheetViews();
+    private CTSheetView getDefaultSheetView(final boolean create) {
+        final CTSheetViews views = getSheetTypeSheetViews(create);
+        assert(views != null || !create);
         if (views == null) {
             return null;
         }
-        int sz = views.sizeOfSheetViewArray();
+        final int sz = views.sizeOfSheetViewArray();
+        assert(sz > 0 || !create);
         return (sz == 0) ? null : views.getSheetViewArray(sz - 1);
     }
 
@@ -3502,11 +3534,13 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         return false;
     }
 
-    private CTPane getPane() {
-        if (getDefaultSheetView().getPane() == null) {
-            getDefaultSheetView().addNewPane();
+    private CTPane getPane(final boolean create) {
+        final CTSheetView dsv = getDefaultSheetView(create);
+        assert(dsv != null || !create);
+        if (dsv == null) {
+            return null;
         }
-        return getDefaultSheetView().getPane();
+        return (dsv.isSetPane() || !create) ? dsv.getPane() : dsv.addNewPane();
     }
 
     /**

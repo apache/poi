@@ -21,7 +21,6 @@ package org.apache.poi.poifs.crypt.temp;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.security.GeneralSecurityException;
 
 import org.apache.poi.openxml4j.util.ZipEntrySource;
 import org.apache.poi.util.Beta;
@@ -52,8 +51,6 @@ public class SXSSFWorkbookWithCustomZipEntrySource extends SXSSFWorkbook {
             // provide ZipEntrySource to poi which decrypts on the fly
             source = AesZipFileZipEntrySource.createZipEntrySource(tempData.getInputStream());
             injectData(source, stream);
-        } catch (GeneralSecurityException e) {
-            throw new IOException(e);
         } finally {
             tempData.dispose();
             IOUtils.closeQuietly(source);

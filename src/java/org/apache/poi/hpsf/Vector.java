@@ -26,16 +26,16 @@ import org.apache.poi.util.LittleEndianByteArrayInputStream;
  * Holder for vector-type properties
  */
 @Internal
-class Vector {
+public class Vector {
     private final short _type;
 
     private TypedPropertyValue[] _values;
 
-    Vector( short type ) {
+    public Vector( short type ) {
         this._type = type;
     }
 
-    void read( LittleEndianByteArrayInputStream lei ) {
+    public void read( LittleEndianByteArrayInputStream lei ) {
         final long longLength = lei.readUInt();
 
         if ( longLength > Integer.MAX_VALUE ) {
@@ -61,7 +61,7 @@ class Vector {
         _values = values.toArray(new TypedPropertyValue[values.size()]);
     }
 
-    TypedPropertyValue[] getValues(){
+    public TypedPropertyValue[] getValues(){
         return _values;
     }
 }

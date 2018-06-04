@@ -30,7 +30,7 @@ import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.util.SAXHelper;
+import org.apache.poi.ooxml.util.SAXHelper;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler.SheetContentsHandler;
 import org.apache.poi.xssf.extractor.XSSFEventBasedExcelExtractor;
 import org.apache.poi.xssf.model.StylesTable;
@@ -153,7 +153,7 @@ public class XLSX2CSV {
     private final PrintStream output;
 
     /**
-     * Creates a new XLSX -> CSV converter
+     * Creates a new XLSX -> CSV examples
      *
      * @param pkg        The XLSX package to process
      * @param output     The PrintStream to output the CSV to

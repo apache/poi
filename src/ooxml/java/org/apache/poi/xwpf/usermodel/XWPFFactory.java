@@ -20,9 +20,9 @@ package org.apache.poi.xwpf.usermodel;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.POIXMLFactory;
-import org.apache.poi.POIXMLRelation;
+import org.apache.poi.ooxml.POIXMLDocumentPart;
+import org.apache.poi.ooxml.POIXMLFactory;
+import org.apache.poi.ooxml.POIXMLRelation;
 
 /**
  * Instantiates sub-classes of POIXMLDocumentPart depending on their relationship type

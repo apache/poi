@@ -16,14 +16,14 @@
 ==================================================================== */
 package org.apache.poi.openxml4j.util;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.Test;
 
 import java.io.InputStream;
 import java.util.Enumeration;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import static org.junit.Assert.assertTrue;
 
@@ -36,9 +36,9 @@ public class TestZipSecureFile {
 
         try (ZipFile thresholdInputStream = new ZipFile(XSSFTestDataSamples.getSampleFile("template.xlsx"))) {
             try (ZipSecureFile secureFile = new ZipSecureFile(XSSFTestDataSamples.getSampleFile("template.xlsx"))) {
-                Enumeration<? extends ZipEntry> entries = thresholdInputStream.entries();
+                Enumeration<? extends ZipArchiveEntry> entries = thresholdInputStream.getEntries();
                 while (entries.hasMoreElements()) {
-                    ZipEntry entry = entries.nextElement();
+                    ZipArchiveEntry entry = entries.nextElement();
 
                     try (InputStream inputStream = secureFile.getInputStream(entry)) {
                         assertTrue(IOUtils.toByteArray(inputStream).length > 0);

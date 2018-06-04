@@ -24,7 +24,7 @@
 
 package org.apache.poi.poifs.crypt.dsig;
 
-import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet.XML_DIGSIG_NS;
 
 import java.io.IOException;
@@ -73,7 +73,7 @@ import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.dsig.SignatureConfig.SignatureConfigurable;
 import org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.services.RelationshipTransformService;
-import org.apache.poi.util.DocumentHelper;
+import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.xml.security.Init;
@@ -247,16 +247,7 @@ public class SignatureInfo implements SignatureConfigurable {
                 "system properties.");
         }
         
-        try {
-            final DigestOutputStream dos;
-            switch (algo) {
-                case md2: case md5: case sha1: case sha256: case sha384: case sha512:
-                    dos = new SignatureOutputStream(algo, key);
-                    break;
-                default:
-                    dos = new DigestOutputStream(algo, key);
-                    break;
-            }
+        try (final DigestOutputStream dos = getDigestStream(algo, key)) {
             dos.init();
 
             final Document document = (Document)xmlSignContext.getParent();
@@ -267,6 +258,15 @@ public class SignatureInfo implements SignatureConfigurable {
             return DatatypeConverter.printBase64Binary(dos.sign());
         } catch (GeneralSecurityException|IOException|TransformException e) {
             throw new EncryptedDocumentException(e);
+        }
+    }
+
+    private static DigestOutputStream getDigestStream(final HashAlgorithm algo, final PrivateKey key) {
+        switch (algo) {
+            case md2: case md5: case sha1: case sha256: case sha384: case sha512:
+                return new SignatureOutputStream(algo, key);
+            default:
+                return new DigestOutputStream(algo, key);
         }
     }
 
@@ -316,7 +316,7 @@ public class SignatureInfo implements SignatureConfigurable {
                             } catch (InvalidFormatException e) {
                                 LOG.log(POILogger.WARN, "Reference to signature is invalid.", e);
                             }
-                        } while (sigPart == null);
+                        } while (sigRelPart == null);
                         return new SignaturePart(sigRelPart, signatureConfig);
                     }
 

@@ -27,7 +27,7 @@ import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.POIXMLProperties.CoreProperties;
+import org.apache.poi.ooxml.POIXMLProperties.CoreProperties;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;

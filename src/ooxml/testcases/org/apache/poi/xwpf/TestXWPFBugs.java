@@ -23,11 +23,11 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import javax.crypto.Cipher;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.poifs.crypt.CipherAlgorithm;
@@ -118,7 +118,7 @@ public class TestXWPFBugs {
         String files[] = { "bug57031.docx", "bug59058.docx" };
         for (String f : files) {
             ZipFile zf = new ZipFile(POIDataSamples.getDocumentInstance().getFile(f));
-            ZipEntry entry = zf.getEntry("word/document.xml");
+            ZipArchiveEntry entry = zf.getEntry("word/document.xml");
             DocumentDocument document = DocumentDocument.Factory.parse(zf.getInputStream(entry));
             assertNotNull(document);
             zf.close();

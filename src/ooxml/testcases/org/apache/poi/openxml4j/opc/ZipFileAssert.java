@@ -29,10 +29,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import junit.framework.AssertionFailedError;
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.poi.util.IOUtils;
 import org.junit.Assert;
 import org.xmlunit.builder.DiffBuilder;
@@ -97,10 +97,10 @@ public final class ZipFileAssert {
 		BufferedInputStream buffi = new BufferedInputStream(file_decompress);
 
 		/* Open the file with the buffer */
-		ZipInputStream zis = new ZipInputStream(buffi);
+		ZipArchiveInputStream zis = new ZipArchiveInputStream(buffi);
 
 		/* Processing entries of the zip file */
-		ZipEntry entree;
+		ArchiveEntry entree;
 		while ((entree = zis.getNextEntry()) != null) {
 
 			/* Create a array for the current entry */

@@ -19,7 +19,7 @@ package org.apache.poi.xdgf.usermodel;
 
 import java.util.Map;
 
-import org.apache.poi.POIXMLException;
+import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.util.Internal;
 
 import com.microsoft.schemas.office.visio.x2012.main.CellType;

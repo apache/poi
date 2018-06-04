@@ -817,27 +817,22 @@ public class AddDimensionedImage {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws IOException {
-    	String imageFile;
-    	String outputFile;
-        FileOutputStream fos;
-        Workbook workbook;
-        Sheet sheet;
-
         if(args.length < 2){
     		System.err.println("Usage: AddDimensionedImage imageFile outputFile");
     		return;
     	}
-    	workbook = new HSSFWorkbook();   // OR XSSFWorkbook
-    	sheet = workbook.createSheet("Picture Test");
-       	imageFile = args[0];
-    	outputFile = args[1];
-    	new AddDimensionedImage().addImageToSheet("B5", sheet, sheet.createDrawingPatriarch(),
-    		new File(imageFile).toURI().toURL(), 100, 40,
-    		AddDimensionedImage.EXPAND_ROW_AND_COLUMN);
-  		fos = new FileOutputStream(outputFile);
-        workbook.write(fos);
-        fos.close();
-        workbook.close();
+
+        final String imageFile = args[0];
+        final String outputFile = args[1];
+
+        try (final Workbook workbook = new HSSFWorkbook();
+             final FileOutputStream fos = new FileOutputStream(outputFile)) {   // OR XSSFWorkbook
+            Sheet sheet = workbook.createSheet("Picture Test");
+            new AddDimensionedImage().addImageToSheet("B5", sheet, sheet.createDrawingPatriarch(),
+                    new File(imageFile).toURI().toURL(), 100, 40,
+                    AddDimensionedImage.EXPAND_ROW_AND_COLUMN);
+            workbook.write(fos);
+        }
     }
 
     /**

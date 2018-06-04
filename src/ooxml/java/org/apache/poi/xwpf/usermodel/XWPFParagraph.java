@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.poi.POIXMLDocumentPart;
+import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.util.Internal;
 import org.apache.poi.wp.usermodel.Paragraph;
 import org.apache.xmlbeans.XmlCursor;
@@ -1468,7 +1468,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * @param searched
      * @param startPos
      */
-    public TextSegement searchText(String searched, PositionInParagraph startPos) {
+    public TextSegment searchText(String searched, PositionInParagraph startPos) {
         int startRun = startPos.getRun(),
             startText = startPos.getText(),
             startChar = startPos.getChar();
@@ -1504,14 +1504,14 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                                     if (candCharPos + 1 < searched.length()) {
                                         candCharPos++;
                                     } else if (newList) {
-                                        TextSegement segement = new TextSegement();
-                                        segement.setBeginRun(beginRunPos);
-                                        segement.setBeginText(beginTextPos);
-                                        segement.setBeginChar(beginCharPos);
-                                        segement.setEndRun(runPos);
-                                        segement.setEndText(textPos);
-                                        segement.setEndChar(charPos);
-                                        return segement;
+                                        TextSegment segment = new TextSegment();
+                                        segment.setBeginRun(beginRunPos);
+                                        segment.setBeginText(beginTextPos);
+                                        segment.setBeginChar(beginCharPos);
+                                        segment.setEndRun(runPos);
+                                        segment.setEndText(textPos);
+                                        segment.setEndChar(charPos);
+                                        return segment;
                                     }
                                 } else {
                                     candCharPos = 0;
@@ -1539,7 +1539,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      *
      * @param segment
      */
-    public String getText(TextSegement segment) {
+    public String getText(TextSegment segment) {
         int runBegin = segment.getBeginRun();
         int textBegin = segment.getBeginText();
         int charBegin = segment.getBeginChar();

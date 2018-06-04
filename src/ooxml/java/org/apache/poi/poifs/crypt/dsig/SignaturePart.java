@@ -17,7 +17,7 @@
 
 package org.apache.poi.poifs.crypt.dsig;
 
-import static org.apache.poi.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
 import java.io.IOException;
 import java.security.cert.X509Certificate;
@@ -35,7 +35,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.util.DocumentHelper;
+import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.xmlbeans.XmlException;

@@ -28,11 +28,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.util.stream.IntStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import javax.crypto.Cipher;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
@@ -78,10 +78,10 @@ public class TestDecryptor {
     }
 
     private void zipOk(DirectoryNode root, Decryptor d) throws IOException, GeneralSecurityException {
-        try (ZipInputStream zin = new ZipInputStream(d.getDataStream(root))) {
+        try (ZipArchiveInputStream zin = new ZipArchiveInputStream(d.getDataStream(root))) {
 
             while (true) {
-                ZipEntry entry = zin.getNextEntry();
+                ZipArchiveEntry entry = zin.getNextZipEntry();
                 if (entry == null) {
                     break;
                 }
@@ -114,13 +114,13 @@ public class TestDecryptor {
                 byte[] buf = new byte[(int) len];
                 assertEquals(12810, is.read(buf));
 
-                ZipInputStream zin = new ZipInputStream(new ByteArrayInputStream(buf));
+        ZipArchiveInputStream zin = new ZipArchiveInputStream(new ByteArrayInputStream(buf));
 
-                while (true) {
-                    ZipEntry entry = zin.getNextEntry();
-                    if (entry == null) {
-                        break;
-                    }
+        while (true) {
+            ZipArchiveEntry entry = zin.getNextZipEntry();
+            if (entry==null) {
+                break;
+            }
 
                     IOUtils.toByteArray(zin);
                 }
@@ -140,10 +140,10 @@ public class TestDecryptor {
             d.verifyPassword("pwd123");
 
             final ByteArrayOutputStream bos = new ByteArrayOutputStream(10000);
-            try (final ZipInputStream zis = new ZipInputStream(d.getDataStream(fs))) {
+            try (final ZipArchiveInputStream zis = new ZipArchiveInputStream(d.getDataStream(fs))) {
                 IntStream.of(3711, 1155, 445, 9376, 450, 588, 1337, 2593, 304, 7910).forEach(size -> {
                     try {
-                        final ZipEntry ze = zis.getNextEntry();
+                        final ZipArchiveEntry ze = zis.getNextZipEntry();
                         assertNotNull(ze);
                         IOUtils.copy(zis, bos);
                         assertEquals(size, bos.size());

@@ -20,8 +20,8 @@ package org.apache.poi.xssf.usermodel;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.POIXMLDocumentPart;
-import org.apache.poi.POIXMLDocumentPart.RelationPart;
+import org.apache.poi.ooxml.POIXMLDocumentPart;
+import org.apache.poi.ooxml.POIXMLDocumentPart.RelationPart;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.model.MapInfo;

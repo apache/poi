@@ -48,12 +48,8 @@ public abstract class SpreadsheetHandler extends AbstractFileHandler {
 		ByteArrayOutputStream out = writeToArray(wb);
 
 		// read in the written file
-		Workbook read;
-		try {
-			read = WorkbookFactory.create(new ByteArrayInputStream(out.toByteArray()));
-		} catch (InvalidFormatException e) {
-			throw new IllegalStateException(e);
-		}
+		Workbook read = WorkbookFactory.create(new ByteArrayInputStream(out.toByteArray()));
+
 		assertNotNull(read);
 		
 		readContent(read);

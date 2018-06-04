@@ -812,6 +812,9 @@ public class DataFormatter implements Observer {
      * @return Formatted value
      */
     private String getFormattedDateString(Cell cell, ConditionalFormattingEvaluator cfEvaluator) {
+        if (cell == null) {
+            return null;
+        }
         Format dateFormat = getFormat(cell, cfEvaluator);
         if(dateFormat instanceof ExcelStyleDateFormatter) {
            // Hint about the raw excel value
@@ -837,7 +840,9 @@ public class DataFormatter implements Observer {
      * @return a formatted number string
      */
     private String getFormattedNumberString(Cell cell, ConditionalFormattingEvaluator cfEvaluator) {
-
+        if (cell == null) {
+            return null;
+        }
         Format numberFormat = getFormat(cell, cfEvaluator);
         double d = cell.getNumericCellValue();
         if (numberFormat == null) {

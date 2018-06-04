@@ -21,9 +21,9 @@ import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.zip.ZipEntry;
 
 import org.apache.commons.collections4.IteratorUtils;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 
 /**
  * Provides a way to get at all the ZipEntries
@@ -44,7 +44,7 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
 	 */
 	public ZipInputStreamZipEntrySource(ZipArchiveThresholdInputStream inp) throws IOException {
 		for (;;) {
-			final ZipEntry zipEntry = inp.getNextEntry();
+			final ZipArchiveEntry zipEntry = inp.getNextEntry();
 			if (zipEntry == null) {
 				break;
 			}
@@ -54,12 +54,12 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
 	}
 
 	@Override
-	public Enumeration<? extends ZipEntry> getEntries() {
+	public Enumeration<? extends ZipArchiveEntry> getEntries() {
 		return IteratorUtils.asEnumeration(zipEntries.values().iterator());
 	}
 
 	@Override
-	public InputStream getInputStream(ZipEntry zipEntry) {
+	public InputStream getInputStream(ZipArchiveEntry zipEntry) {
 	    assert (zipEntry instanceof ZipArchiveFakeEntry);
 		return ((ZipArchiveFakeEntry)zipEntry).getInputStream();
 	}
@@ -76,9 +76,9 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
 	}
 
 	@Override
-	public ZipEntry getEntry(final String path) {
+	public ZipArchiveEntry getEntry(final String path) {
 		final String normalizedPath = path.replace('\\', '/');
-		final ZipEntry ze = zipEntries.get(normalizedPath);
+		final ZipArchiveEntry ze = zipEntries.get(normalizedPath);
 		if (ze != null) {
 			return ze;
 		}

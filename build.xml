@@ -202,6 +202,9 @@ under the License.
     <property name="ooxml.xmlbeans26.jar" location="${ooxml.lib}/xmlbeans-2.6.5.jar"/>
     <property name="ooxml.xmlbeans26.url"
               value="${repository.m2}/maven2/com/github/pjfanning/xmlbeans/2.6.5/xmlbeans-2.6.5.jar"/>
+    <property name="ooxml.commons-compress.jar" location="${main.lib}/commons-compress-1.17.jar"/>
+    <property name="ooxml.commons-compress.url"
+              value="${repository.m2}/maven2/org/apache/commons/commons-compress/1.17/commons-compress-1.17.jar"/>
 
     <!-- coverage libs -->
     <property name="jacoco.zip" location="${main.lib}/jacoco-0.8.1.zip"/>
@@ -354,6 +357,7 @@ under the License.
     <path id="ooxml.classpath">
         <pathelement location="${ooxml.curvesapi.jar}"/>
         <pathelement location="${ooxml.xmlbeans26.jar}"/>
+        <pathelement location="${ooxml.commons-compress.jar}"/>
         <pathelement location="${ooxml.xsds.jar}"/>
         <path refid="main.classpath"/>
         <pathelement location="${main.output.dir}"/>
@@ -403,6 +407,7 @@ under the License.
     <path id="ooxml-lite.classpath">
         <pathelement location="${ooxml.curvesapi.jar}"/>
         <pathelement location="${ooxml.xmlbeans26.jar}"/>
+        <pathelement location="${ooxml.commons-compress.jar}"/>
         <pathelement location="${ooxml.lite.output.dir}"/> <!-- instead of ooxml-xsds.jar use the filtered classes-->
         <path refid="main.classpath"/>
         <pathelement location="${main.output.dir}"/>
@@ -715,6 +720,7 @@ under the License.
                 <and>
                     <available file="${ooxml.curvesapi.jar}"/>
                     <available file="${ooxml.xmlbeans26.jar}"/>
+                    <available file="${ooxml.commons-compress.jar}"/>
                 </and>
                 <isset property="disconnected"/>
             </or>
@@ -723,7 +729,16 @@ under the License.
     <target name="fetch-ooxml-jars" depends="check-ooxml-jars" unless="ooxml.jars.present">
         <mkdir dir="${ooxml.lib}"/>
         <downloadfile src="${ooxml.curvesapi.url}" dest="${ooxml.curvesapi.jar}"/>
+<<<<<<< HEAD
         <downloadfile src="${ooxml.xmlbeans26.url}" dest="${ooxml.xmlbeans26.jar}"/>
+=======
+        <downloadfile src="${ooxml.xmlbeans26.url}" dest="${ooxml.xmlbeans26.jar}.orig"/>
+        <downloadfile src="${ooxml.commons-compress.url}" dest="${ooxml.commons-compress.jar}"/>
+        <!-- remove piccolo parser, so we don't use unsafe calls to it instead of using jaxp -->
+        <zip destfile="${ooxml.xmlbeans26.jar}">
+            <zipfileset src="${ooxml.xmlbeans26.jar}.orig" excludes="org/apache/xmlbeans/impl/piccolo/**"/>
+        </zip>
+>>>>>>> trunk
     </target>
     <target name="check-svn-jars">
         <condition property="svn.jars.present">
@@ -866,7 +881,7 @@ under the License.
 
             <replace dir="${xmlbean.sources.dir}" includes="**/*.java" excludes="**/impl/**">
                 <replacetoken>org.apache.xmlbeans.XmlBeans.getContextTypeLoader()</replacetoken>
-                <replacevalue>org.apache.poi.POIXMLTypeLoader</replacevalue>
+                <replacevalue>org.apache.poi.ooxml.POIXMLTypeLoader</replacevalue>
             </replace>
 
             <!-- remove deprecated warnings, as we prefer the array methods - see #56854 -->
@@ -877,9 +892,9 @@ under the License.
 
             <copy todir="${xmlbean.sources.dir}">
                 <fileset dir="${ooxml.src}">
-                    <include name="org/apache/poi/POIXMLTypeLoader.java"/>
-                    <include name="org/apache/poi/util/DocumentHelper.java"/>
-                    <include name="org/apache/poi/util/SAXHelper.java"/>
+                    <include name="org/apache/poi/ooxml/POIXMLTypeLoader.java"/>
+                    <include name="org/apache/poi/ooxml/util/DocumentHelper.java"/>
+                    <include name="org/apache/poi/ooxml/util/SAXHelper.java"/>
                     <include name="org/apache/poi/openxml4j/opc/PackageNamespaces.java"/>
                 </fileset>
                 <fileset dir="${main.src}">
@@ -904,10 +919,6 @@ under the License.
                    includeantruntime="false">
                    <!-- debug="${compile.debug}" -->
                 <classpath refid="ooxml.classpath"/>
-
-                <!-- unfortunately JUnit is required here for OOXMLLite, we should rather move OOXMLLite
-                to test or a separate folder to clean up dependencies -->
-                <classpath location="${main.junit.jar}"/>
             </javac>
 
             <jar basedir="${xmlbean.classes.dir}" destfile="@{classes-jar}" excludes="org/apache/**" level="9" />
@@ -1078,10 +1089,6 @@ under the License.
             <classpath>
                 <path refid="ooxml.classpath"/>
                 <path refid="ooxml.xmlsec.classpath"/>
-
-                <!-- unfortunately JUnit is required here for OOXMLLite, we should rather move OOXMLLite
-                to test or a separate folder to clean up dependencies -->
-                <pathelement location="${main.junit.jar}"/>
             </classpath>
         </javac>
         <!-- compile the tests -->
@@ -1559,7 +1566,7 @@ under the License.
             <zipfileset includes="**/*" src="${ooxml.security.jar}"/>
         </jar>
 
-        <java classname="org.apache.poi.util.OOXMLLite" fork="yes"
+        <java classname="org.apache.poi.ooxml.util.OOXMLLite" fork="yes"
             failonerror="true">
             <classpath>
                 <pathelement path="${ooxml.lite-merged.dir}/ooxml-lite-merged.jar"/>
@@ -2208,6 +2215,7 @@ under the License.
             <auxClasspath path="${ooxml.security.jar}" />
             <auxClasspath path="${ooxml.curvesapi.jar}" />
             <auxClasspath path="${ooxml.xmlbeans26.jar}" />
+            <auxClasspath path="${ooxml.commons-compress.jar}" />
             <auxClasspath path="${main.commons-collections4.jar}" />
             <auxClasspath path="${main.commons-math3.jar}" />
             <auxClasspath path="${main.commons-codec.jar}" />

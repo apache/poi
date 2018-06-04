@@ -25,7 +25,7 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
 @Internal
-class ClipboardData {
+public class ClipboardData {
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000_000;
 
@@ -33,10 +33,8 @@ class ClipboardData {
 
     private int _format;
     private byte[] _value;
-    
-    ClipboardData() {}
 
-    void read( LittleEndianByteArrayInputStream lei ) {
+    public void read( LittleEndianByteArrayInputStream lei ) {
         int offset = lei.getReadIndex();
         int size = lei.readInt();
 
@@ -55,11 +53,11 @@ class ClipboardData {
         lei.readFully(_value);
     }
 
-    byte[] getValue() {
+    public byte[] getValue() {
         return _value;
     }
 
-    byte[] toByteArray() {
+    public byte[] toByteArray() {
         byte[] result = new byte[LittleEndianConsts.INT_SIZE*2+_value.length];
         LittleEndianByteArrayOutputStream bos = new LittleEndianByteArrayOutputStream(result,0);
         try {
@@ -71,8 +69,8 @@ class ClipboardData {
             IOUtils.closeQuietly(bos);
         }
     }
-    
-    void setValue( byte[] value ) {
+
+    public void setValue( byte[] value ) {
         _value = value.clone();
     }
 }

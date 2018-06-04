@@ -20,7 +20,7 @@ package org.apache.poi.xdgf.usermodel.section;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.poi.POIXMLException;
+import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xdgf.usermodel.XDGFCell;
 import org.apache.poi.xdgf.usermodel.XDGFSheet;

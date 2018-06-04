@@ -19,7 +19,7 @@ package org.apache.poi.xdgf.usermodel.section.geometry;
 
 import java.awt.geom.Point2D;
 
-import org.apache.poi.POIXMLException;
+import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.xdgf.geom.SplineRenderer;
 import org.apache.poi.xdgf.usermodel.XDGFCell;
 import org.apache.poi.xdgf.usermodel.XDGFShape;

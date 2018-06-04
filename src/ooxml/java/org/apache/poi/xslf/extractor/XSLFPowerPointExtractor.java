@@ -18,7 +18,7 @@ package org.apache.poi.xslf.extractor;
 
 import java.io.IOException;
 
-import org.apache.poi.POIXMLTextExtractor;
+import org.apache.poi.ooxml.extractor.POIXMLTextExtractor;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.sl.extractor.SlideShowExtractor;

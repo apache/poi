@@ -106,12 +106,11 @@ public final class SXSSFPicture implements Picture {
     @Override
     public void resize(double scale){
         XSSFClientAnchor anchor = getClientAnchor();
-        if (anchor == null) {
+        XSSFClientAnchor pref = getPreferredSize(scale);
+        if (anchor == null || pref == null) {
             logger.log(POILogger.WARN, "picture is not anchored via client anchor - ignoring resize call");
             return;
         }
-
-        XSSFClientAnchor pref = getPreferredSize(scale);
 
         int row2 = anchor.getRow1() + (pref.getRow2() - pref.getRow1());
         int col2 = anchor.getCol1() + (pref.getCol2() - pref.getCol1());

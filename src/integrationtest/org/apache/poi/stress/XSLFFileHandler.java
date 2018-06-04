@@ -23,9 +23,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-import org.apache.poi.extractor.ExtractorFactory;
+import org.apache.poi.ooxml.extractor.ExtractorFactory;
 import org.apache.poi.sl.extractor.SlideShowExtractor;
-import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFSlideShow;
 import org.junit.Test;

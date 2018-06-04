@@ -32,6 +32,33 @@ import org.apache.poi.util.Internal;
 public class XSLFSlideShowFactory extends SlideShowFactory {
 
     /**
+     * Creates a XMLSlideShow from the given OOXML Package.
+     * This is a convenience method to go along the create-methods of the super class.
+     *
+     * <p>Note that in order to properly release resources the
+     *  SlideShow should be closed after use.</p>
+     *
+     *  @param pkg The {@link OPCPackage} opened for reading data.
+     *
+     *  @return The created SlideShow
+     *
+     *  @throws IOException if an error occurs while reading the data
+     * @throws InvalidFormatException
+     */
+    public static XMLSlideShow create(OPCPackage pkg) throws IOException {
+        try {
+            return new XMLSlideShow(pkg);
+        } catch (IllegalArgumentException ioe) {
+            // ensure that file handles are closed (use revert() to not re-write the file)
+            pkg.revert();
+            //pkg.close();
+
+            // rethrow exception
+            throw ioe;
+        }
+    }
+
+    /**
      * Creates a XMLSlideShow from the given OOXML Package
      *
      * <p>Note that in order to properly release resources the

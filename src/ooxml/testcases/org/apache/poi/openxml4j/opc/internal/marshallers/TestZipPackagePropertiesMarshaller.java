@@ -23,9 +23,9 @@ import static org.junit.Assert.assertTrue;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
@@ -44,21 +44,21 @@ public class TestZipPackagePropertiesMarshaller {
     @Test
     public void withZipOutputStream() throws Exception {
         assertTrue(marshaller.marshall(new PackagePropertiesPart(null, PackagingURIHelper.createPartName(PACKAGE_RELATIONSHIPS_ROOT_URI)),
-                new ZipOutputStream(new ByteArrayOutputStream())));
+                new ZipArchiveOutputStream(new ByteArrayOutputStream())));
     }
 
     @Test
     public void writingFails() throws Exception {
         assertTrue(marshaller.marshall(new PackagePropertiesPart(null, PackagingURIHelper.createPartName(PACKAGE_RELATIONSHIPS_ROOT_URI)),
-                new ZipOutputStream(new ByteArrayOutputStream())));
+                new ZipArchiveOutputStream(new ByteArrayOutputStream())));
     }
 
     @Test(expected=OpenXML4JException.class)
     public void ioException() throws Exception {
         marshaller.marshall(new PackagePropertiesPart(null, PackagingURIHelper.createPartName(PACKAGE_RELATIONSHIPS_ROOT_URI)),
-                new ZipOutputStream(new ByteArrayOutputStream()) {
+                new ZipArchiveOutputStream(new ByteArrayOutputStream()) {
                     @Override
-                    public void putNextEntry(final ZipEntry archiveEntry) throws IOException {
+                    public void putArchiveEntry(final ArchiveEntry archiveEntry) throws IOException {
                         throw new IOException("TestException");
                     }
                 });
