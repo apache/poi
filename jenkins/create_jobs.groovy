@@ -87,7 +87,7 @@ def defaultTrigger = 'H/15 * * * *'     // check SCM every 60/15 = 4 minutes
 def defaultEmail = 'dev@poi.apache.org'
 def defaultAnt = 'Ant 1.9.9'
 // currently a lot of H?? slaves don't have Ant installed ... H21 seems to have a SVN problem
-def defaultSlaves = 'ubuntu&&!cloud-slave&&!H15&&!H17&&!H18&&!H24&&!ubuntu-4&&!H21'
+def defaultSlaves = 'ubuntu&&beam&&!cloud-slave&&!H15&&!H17&&!H18&&!H24&&!ubuntu-4&&!H21'
 
 def jdkMapping = [
         '1.8': 'JDK 1.8 (latest)',
