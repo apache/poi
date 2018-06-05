@@ -46,6 +46,11 @@ public class HDGFLZW extends LZWDecompresser {
    /**
     * Compress the given input stream, returning the array of bytes
     *  of the compressed input
+    *
+    * @param src the compression source byte
+    * @return the compressed stream as bytes
+    *
+    * @throws IOException when the InputStream can't be read
     */
    public byte[] compress(InputStream src) throws IOException {
       ByteArrayOutputStream res = new ByteArrayOutputStream();
@@ -76,6 +81,12 @@ public class HDGFLZW extends LZWDecompresser {
 
    /**
     * Performs the Visio compatible streaming LZW compression.
+    *
+    * @param src the input bytes for the compression
+    * @param res the OutputStream which receives the compressed bytes
+    *
+    * @throws IOException when the InputStream can't be read
+    *    or the OutputStream can't be written to
     */
    public void compress(InputStream src, OutputStream res) throws IOException {
       HDGFLZWCompressor c = new HDGFLZWCompressor();

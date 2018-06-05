@@ -55,6 +55,11 @@ public class OLE2ScratchpadExtractorFactory {
      * out what format is desired
      * Note - doesn't check for core-supported formats!
      * Note - doesn't check for OOXML-supported formats
+     *
+     * @param poifsDir the directory node to be inspected
+     * @return the format specific text extractor
+     *
+     * @throws IOException when the format specific extraction fails because of invalid entires
      */
     public static POITextExtractor createExtractor(DirectoryNode poifsDir) throws IOException {
         if (poifsDir.hasEntry("WordDocument")) {
@@ -106,6 +111,12 @@ public class OLE2ScratchpadExtractorFactory {
      * If there are no embedded documents, you'll get back an
      *  empty array. Otherwise, you'll get one open
      *  {@link POITextExtractor} for each embedded file.
+     *
+     * @param ext the extractor holding the directory to start parsing
+     * @param dirs a list to be filled with directory references holding embedded
+     * @param nonPOIFS a list to be filled with streams which aren't based on POIFS entries
+     *
+     * @throws IOException when the format specific extraction fails because of invalid entires
      */
     public static void identifyEmbeddedResources(POIOLE2TextExtractor ext, List<Entry> dirs, List<InputStream> nonPOIFS) throws IOException {
         // Find all the embedded directories

@@ -33,6 +33,11 @@ public abstract class ChunkHeader {
 	/**
 	 * Creates the appropriate ChunkHeader for the Chunk Header at
 	 *  the given location, for the given document version.
+	 *
+	 * @param documentVersion the documentVersion - 4 and higher is supported
+	 * @param data the chunk data
+	 * @param offset the start offset in the chunk data
+	 * @return the ChunkHeader
 	 */
 	public static ChunkHeader createChunkHeader(int documentVersion, byte[] data, int offset) {
 		if(documentVersion >= 6) {
@@ -68,6 +73,10 @@ public abstract class ChunkHeader {
 
 	/**
 	 * Returns the size of a chunk header for the given document version.
+	 *
+	 * @param documentVersion the documentVersion - 4 and higher is supported
+	 *
+	 * @return the header size
 	 */
 	public static int getHeaderSize(int documentVersion) {
 		if(documentVersion > 6) {
@@ -85,7 +94,7 @@ public abstract class ChunkHeader {
 	public abstract Charset getChunkCharset();
 
 	/**
-	 * Returns the ID/IX of the chunk
+	 * @return the ID/IX of the chunk
 	 */
 	public int getId() {
 		return id;
@@ -94,6 +103,8 @@ public abstract class ChunkHeader {
 	/**
 	 * Returns the length of the trunk, excluding the length
 	 *  of the header, trailer or separator.
+	 *
+	 * @return the length of the trunk
 	 */
 	public int getLength() {
 		return length;
@@ -102,6 +113,8 @@ public abstract class ChunkHeader {
 	/**
 	 * Returns the type of the chunk, which affects the
 	 *  mandatory information
+	 *
+	 * @return the type of the chunk
 	 */
 	public int getType() {
 		return type;
