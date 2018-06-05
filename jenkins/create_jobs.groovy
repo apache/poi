@@ -87,7 +87,7 @@ def defaultTrigger = 'H/15 * * * *'     // check SCM every 60/15 = 4 minutes
 def defaultEmail = 'dev@poi.apache.org'
 def defaultAnt = 'Ant 1.9.9'
 // currently a lot of H?? slaves don't have Ant installed ... H21 seems to have a SVN problem
-def defaultSlaves = 'ubuntu&&beam&&!cloud-slave&&!H15&&!H17&&!H18&&!H24&&!ubuntu-4&&!H21'
+def defaultSlaves = '(ubuntu||beam)&&!cloud-slave&&!H15&&!H17&&!H18&&!H24&&!ubuntu-4&&!H21'
 
 def jdkMapping = [
         '1.8': 'JDK 1.8 (latest)',
@@ -445,13 +445,12 @@ Unfortunately we often see builds break because of changes/new machines...'''
                 'JDK 11 b8 (early access build)'
         )
         label('Nodes',
-                'beam1','beam2','beam3','beam4','beam5','beam6','beam7','beam8',
-                'freebsd1',
+                'beam1','beam2','beam3','beam4','beam5','beam6','beam7','beam8','beam9',
+                'beam10','beam11','beam12','beam13','beam14','beam15','beam16',
                 'H0','H1','H10','H11','H12','H13','H14','H15','H16','H17','H18','H19',
                 'H2','H20','H21','H22','H23','H24','H25','H26','H27','H28','H29',
                 'H3','H30','H31','H32','H33','H34','H35',
                 'H4','H5','H6','H7','H8','H9',
-                'qnode1','qnode2','qnode3',
                 'ubuntu-1','ubuntu-2','ubuntu-4','ubuntu-6','ubuntu-eu2','ubuntu-eu3','ubuntu-ppc64le','ubuntu-us1',
                 'windows-2012-1','windows-2012-2','windows-2012-3','windows-2016-1'
         )
