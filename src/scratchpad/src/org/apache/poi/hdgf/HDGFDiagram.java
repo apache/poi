@@ -101,13 +101,19 @@ public final class HDGFDiagram extends POIReadOnlyDocument {
 	/**
 	 * Returns the TrailerStream, which is at the root of the
 	 *  tree of Streams.
+	 *
+	 * @return the TrailerStream
 	 */
 	public TrailerStream getTrailerStream() { return trailer; }
+
 	/**
 	 * Returns all the top level streams, which are the streams
 	 *  pointed to by the TrailerStream.
+	 *
+	 * @return the top level streams
 	 */
 	public Stream[] getTopLevelStreams() { return trailer.getPointedToStreams(); }
+
 	public long getDocumentSize() { return docSize; }
 
 	/**
@@ -153,16 +159,5 @@ public final class HDGFDiagram extends POIReadOnlyDocument {
 				System.err.println("\t\t" + ss._getContentsLength());
 			}
 		}
-	}
-
-	/**
-	 * For testing only
-	 */
-	public static void main(String args[]) throws Exception {
-		NPOIFSFileSystem pfs = new NPOIFSFileSystem(new File(args[0]));
-		HDGFDiagram hdgf = new HDGFDiagram(pfs);
-		hdgf.debug();
-		hdgf.close();
-		pfs.close();
 	}
 }

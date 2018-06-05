@@ -60,29 +60,47 @@ public final class Chunk {
 	public byte[] _getContents() {
 		return contents;
 	}
+
 	public ChunkHeader getHeader() {
 		return header;
 	}
-	/** Gets the separator between this chunk and the next, if it exists */
+
+	/**
+	 * Gets the separator between this chunk and the next, if it exists
+	 *
+	 * @return the separator
+	 */
 	public ChunkSeparator getSeparator() {
 		return separator;
 	}
-	/** Gets the trailer for this chunk, if it exists */
+
+	/**
+	 * Gets the trailer for this chunk, if it exists
+	 *
+	 * @return the trailer
+	 */
 	public ChunkTrailer getTrailer() {
 		return trailer;
 	}
+
 	/**
 	 * Gets the command definitions, which define and describe much
 	 *  of the data held by the chunk.
+	 *
+	 * @return the command definitions
 	 */
 	public CommandDefinition[] getCommandDefinitions() {
 		return commandDefinitions;
 	}
+
 	public Command[] getCommands() {
 		return commands;
 	}
+
 	/**
 	 * Get the name of the chunk, as found from the CommandDefinitions
+	 *
+	 * @return the name of the chunk
 	 */
 	public String getName() {
 		return name;
@@ -91,6 +109,8 @@ public final class Chunk {
 	/**
 	 * Returns the size of the chunk, including any
 	 *  headers, trailers and separators.
+	 *
+	 * @return the size of the chunk
 	 */
 	public int getOnDiskSize() {
 		int size = header.getSizeInBytes() + contents.length;
