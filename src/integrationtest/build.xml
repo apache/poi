@@ -115,6 +115,7 @@ Before running this, you should execute the "assemble" target in the main build.
         <path id="libs">
             <fileset dir="../../lib">
                 <include name="junit*.jar"/>
+                <include name="commons-compress*.jar"/>
             </fileset>
             <fileset dir="../../ooxml-lib">
                 <include name="ooxml-schemas-*.jar"/>
