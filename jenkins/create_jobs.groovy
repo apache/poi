@@ -199,7 +199,7 @@ poijobs.each { poijob ->
         label(slaves)
         environmentVariables {
             env('LANG', 'en_US.UTF-8')
-            if(jdkKey == '1.9') {
+            if(jdkKey == '1.9' || jdkKey == '1.10' || jdkKey == '1.11') {
                 // when using JDK 9 for running Ant, we need to provide more packages for the forbidden-api-checks task
                 env('ANT_OPTS', '--add-modules=java.xml.bind --add-opens=java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED')
             }
