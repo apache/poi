@@ -28,7 +28,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 public final class POIXMLDocumentHandler {
 	protected void handlePOIXMLDocument(POIXMLDocument doc) throws Exception {
-		assertNotNull(doc.getAllEmbeds());
+		assertNotNull(doc.getAllEmbeddedParts());
 		assertNotNull(doc.getPackage());
 		assertNotNull(doc.getPackagePart());
 		assertNotNull(doc.getProperties());
