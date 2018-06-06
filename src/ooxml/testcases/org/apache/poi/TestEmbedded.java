@@ -33,7 +33,7 @@ import junit.framework.TestCase;
  * Class to test that we handle embeded bits in
  *  OOXML files properly
  */
-public class TestEmbeded extends TestCase
+public class TestEmbedded extends TestCase
 {
 	public void testExcel() throws Exception {
 		POIXMLDocument doc = new XSSFWorkbook(
