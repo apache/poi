@@ -109,7 +109,7 @@ public class XmlVisioDocument extends POIXMLDocument {
      * Not currently implemented
      */
     @Override
-    public List<PackagePart> getAllEmbedds() {
+    public List<PackagePart> getAllEmbeddedParts() {
         return new ArrayList<>();
     }
 

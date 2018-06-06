@@ -558,7 +558,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * Get the document's embedded files.
      */
     @Override
-    public List<PackagePart> getAllEmbedds() throws OpenXML4JException {
+    public List<PackagePart> getAllEmbeddedParts() throws OpenXML4JException {
         List<PackagePart> embedds = new LinkedList<>();
 
         // Get the embeddings for the workbook

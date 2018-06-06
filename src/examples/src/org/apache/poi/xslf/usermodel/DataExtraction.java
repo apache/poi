@@ -47,7 +47,7 @@ public final class DataExtraction {
             is.close();
 
             // Get the document's embedded files.
-            for (PackagePart p : ppt.getAllEmbedds()) {
+            for (PackagePart p : ppt.getAllEmbeddedParts()) {
                 String type = p.getContentType();
                 // typically file name
                 String name = p.getPartName().getName();

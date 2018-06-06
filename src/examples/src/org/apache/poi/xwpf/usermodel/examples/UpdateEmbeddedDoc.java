@@ -99,7 +99,7 @@ public class UpdateEmbeddedDoc {
      *                             file system.
      */
     public void updateEmbeddedDoc() throws OpenXML4JException, IOException {
-        List<PackagePart> embeddedDocs = this.doc.getAllEmbedds();
+        List<PackagePart> embeddedDocs = this.doc.getAllEmbeddedParts();
         for (PackagePart pPart : embeddedDocs) {
             String ext = pPart.getPartName().getExtension();
             if (BINARY_EXTENSION.equals(ext) || OPENXML_EXTENSION.equals(ext)) {
@@ -153,7 +153,7 @@ public class UpdateEmbeddedDoc {
      *                             file system.
      */
     public void checkUpdatedDoc() throws OpenXML4JException, IOException {
-        for (PackagePart pPart : this.doc.getAllEmbedds()) {
+        for (PackagePart pPart : this.doc.getAllEmbeddedParts()) {
             String ext = pPart.getPartName().getExtension();
             if (BINARY_EXTENSION.equals(ext) || OPENXML_EXTENSION.equals(ext)) {
                 try (InputStream is = pPart.getInputStream();

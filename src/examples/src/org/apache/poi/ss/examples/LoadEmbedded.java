@@ -94,7 +94,7 @@ public class LoadEmbedded {
    }
    
    public static void loadEmbedded(XSSFWorkbook workbook) throws IOException, InvalidFormatException, OpenXML4JException, XmlException {
-       for (PackagePart pPart : workbook.getAllEmbedds()) {
+       for (PackagePart pPart : workbook.getAllEmbeddedParts()) {
            String contentType = pPart.getContentType();
            if (contentType.equals("application/vnd.ms-excel")) {
                // Excel Workbook - either binary or OpenXML

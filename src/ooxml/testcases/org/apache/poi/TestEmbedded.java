@@ -57,11 +57,11 @@ public class TestEmbedded extends TestCase
 	}
 	
 	private void test(POIXMLDocument doc, int expectedCount) throws Exception {
-		assertNotNull(doc.getAllEmbedds());
-		assertEquals(expectedCount, doc.getAllEmbedds().size());
+		assertNotNull(doc.getAllEmbeddedParts());
+		assertEquals(expectedCount, doc.getAllEmbeddedParts().size());
 
-		for(int i=0; i<doc.getAllEmbedds().size(); i++) {
-			PackagePart pp = doc.getAllEmbedds().get(i);
+		for(int i=0; i<doc.getAllEmbeddedParts().size(); i++) {
+			PackagePart pp = doc.getAllEmbeddedParts().get(i);
 			assertNotNull(pp);
 			
 			byte[] b = IOUtils.toByteArray(pp.getInputStream());
