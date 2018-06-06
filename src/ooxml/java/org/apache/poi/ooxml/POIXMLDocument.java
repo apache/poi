@@ -34,6 +34,7 @@ import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
+import org.apache.poi.util.Removal;
 import org.apache.xmlbeans.impl.common.SystemCache;
 
 /**
@@ -153,10 +154,25 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart implements Close
      * Get the document's embedded files.
      * 
      * @return the document's embedded files
-     * 
+     *
      * @throws OpenXML4JException if the embedded parts can't be determined
+     * @deprecated use <code>getAllEmbeddedParts</code> instead
      */
-    public abstract List<PackagePart> getAllEmbedds() throws OpenXML4JException;
+    @Deprecated
+    @Removal(version = "4.2")
+    public List<PackagePart> getAllEmbedds() throws OpenXML4JException {
+        return getAllEmbeddedParts();
+    }
+
+    /**
+     * Get the document's embedded files.
+     *
+     * @return the document's embedded files
+     *
+     * @throws OpenXML4JException if the embedded parts can't be determined
+     * @since POI 4.0.0
+     */
+    public abstract List<PackagePart> getAllEmbeddedParts() throws OpenXML4JException;
 
     protected final void load(POIXMLFactory factory) throws IOException {
         Map<PackagePart, POIXMLDocumentPart> context = new HashMap<>();

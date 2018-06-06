@@ -33,7 +33,7 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 public class EmbeddedObjects {
     public static void main(String[] args) throws Exception {
         try (XSSFWorkbook workbook = new XSSFWorkbook(args[0])) {
-            for (PackagePart pPart : workbook.getAllEmbedds()) {
+            for (PackagePart pPart : workbook.getAllEmbeddedParts()) {
                 String contentType = pPart.getContentType();
                 try (InputStream is = pPart.getInputStream()) {
                     Closeable document;

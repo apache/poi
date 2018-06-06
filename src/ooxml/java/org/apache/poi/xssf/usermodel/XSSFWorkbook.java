@@ -1864,7 +1864,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      * Get the document's embedded files.
      */
     @Override
-    public List<PackagePart> getAllEmbedds() throws OpenXML4JException {
+    public List<PackagePart> getAllEmbeddedParts() throws OpenXML4JException {
         List<PackagePart> embedds = new LinkedList<>();
 
         for(XSSFSheet sheet : sheets){

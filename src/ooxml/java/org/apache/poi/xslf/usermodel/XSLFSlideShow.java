@@ -256,7 +256,7 @@ public class XSLFSlideShow extends POIXMLDocument {
 	 * Get the document's embedded files.
 	 */
 	@Override
-	public List<PackagePart> getAllEmbedds() throws OpenXML4JException {
+	public List<PackagePart> getAllEmbeddedParts() throws OpenXML4JException {
 		return embedds;
 	}
 

@@ -67,7 +67,7 @@ public final class TestPOIXMLDocument {
         }
 
         @Override
-        public List<PackagePart> getAllEmbedds() {
+        public List<PackagePart> getAllEmbeddedParts() {
             throw new RuntimeException("not supported");
         }
 
