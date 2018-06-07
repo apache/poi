@@ -81,7 +81,7 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
         }
 
         _rows = new ArrayList<>(_table.sizeOfTrArray());
-        for(CTTableRow row : _table.getTrArray()) {
+        for(CTTableRow row : _table.getTrList()) {
             _rows.add(new XSLFTableRow(row, this));
         }
         updateRowColIndexes();
