@@ -83,24 +83,24 @@ public class VBAMacroReader implements Closeable {
     }
     
     private void openOOXML(InputStream zipFile) throws IOException {
-        ZipInputStream zis = new ZipInputStream(zipFile);
-        ZipEntry zipEntry;
-        while ((zipEntry = zis.getNextEntry()) != null) {
-            if (endsWithIgnoreCase(zipEntry.getName(), VBA_PROJECT_OOXML)) {
-                try {
-                    // Make a NPOIFS from the contents, and close the stream
-                    this.fs = new NPOIFSFileSystem(zis);
-                    return;
-                } catch (IOException e) {
-                    // Tidy up
-                    zis.close();
-                    
-                    // Pass on
-                    throw e;
+        try(ZipInputStream zis = new ZipInputStream(zipFile)) {
+            ZipEntry zipEntry;
+            while ((zipEntry = zis.getNextEntry()) != null) {
+                if (endsWithIgnoreCase(zipEntry.getName(), VBA_PROJECT_OOXML)) {
+                    try {
+                        // Make a NPOIFS from the contents, and close the stream
+                        this.fs = new NPOIFSFileSystem(zis);
+                        return;
+                    } catch (IOException e) {
+                        // Tidy up
+                        zis.close();
+
+                        // Pass on
+                        throw e;
+                    }
                 }
             }
         }
-        zis.close();
         throw new IllegalArgumentException("No VBA project found");
     }
     
