@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
+import java.util.Optional;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
@@ -35,7 +36,6 @@ import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.StreamHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
-import org.apache.poi.openxml4j.util.Nullable;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperty;
 
@@ -241,61 +241,59 @@ public class POIXMLProperties {
             this.part = part;
         }
 
-        public String getCategory() {
-            return part.getCategoryProperty().getValue();
-        }
+        public String getCategory() { return part.getCategoryProperty().orElse(null); }
         public void setCategory(String category) {
             part.setCategoryProperty(category);
         }
         public String getContentStatus() {
-            return part.getContentStatusProperty().getValue();
+            return part.getContentStatusProperty().orElse(null);
         }
         public void setContentStatus(String contentStatus) {
             part.setContentStatusProperty(contentStatus);
         }
         public String getContentType() {
-            return part.getContentTypeProperty().getValue();
+            return part.getContentTypeProperty().orElse(null);
         }
         public void setContentType(String contentType) {
             part.setContentTypeProperty(contentType);
         }
         public Date getCreated() {
-            return part.getCreatedProperty().getValue();
+            return part.getCreatedProperty().orElse(null);
         }
-        public void setCreated(Nullable<Date> date) {
+        public void setCreated(Optional<Date> date) {
             part.setCreatedProperty(date);
         }
         public void setCreated(String date) {
             part.setCreatedProperty(date);
         }
         public String getCreator() {
-            return part.getCreatorProperty().getValue();
+            return part.getCreatorProperty().orElse(null);
         }
         public void setCreator(String creator) {
             part.setCreatorProperty(creator);
         }
         public String getDescription() {
-            return part.getDescriptionProperty().getValue();
+            return part.getDescriptionProperty().orElse(null);
         }
         public void setDescription(String description) {
             part.setDescriptionProperty(description);
         }
         public String getIdentifier() {
-            return part.getIdentifierProperty().getValue();
+            return part.getIdentifierProperty().orElse(null);
         }
         public void setIdentifier(String identifier) {
             part.setIdentifierProperty(identifier);
         }
         public String getKeywords() {
-            return part.getKeywordsProperty().getValue();
+            return part.getKeywordsProperty().orElse(null);
         }
         public void setKeywords(String keywords) {
             part.setKeywordsProperty(keywords);
         }
         public Date getLastPrinted() {
-            return part.getLastPrintedProperty().getValue();
+            return part.getLastPrintedProperty().orElse(null);
         }
-        public void setLastPrinted(Nullable<Date> date) {
+        public void setLastPrinted(Optional<Date> date) {
             part.setLastPrintedProperty(date);
         }
         public void setLastPrinted(String date) {
@@ -303,23 +301,23 @@ public class POIXMLProperties {
         }
         /** @since POI 3.15 beta 3 */
         public String getLastModifiedByUser() {
-            return part.getLastModifiedByProperty().getValue();
+            return part.getLastModifiedByProperty().orElse(null);
         }
         /** @since POI 3.15 beta 3 */
         public void setLastModifiedByUser(String user) {
             part.setLastModifiedByProperty(user);
         }
         public Date getModified() {
-            return part.getModifiedProperty().getValue();
+            return part.getModifiedProperty().orElse(null);
         }
-        public void setModified(Nullable<Date> date) {
+        public void setModified(Optional<Date> date) {
             part.setModifiedProperty(date);
         }
         public void setModified(String date) {
             part.setModifiedProperty(date);
         }
         public String getSubject() {
-            return part.getSubjectProperty().getValue();
+            return part.getSubjectProperty().orElse(null);
         }
         public void setSubjectProperty(String subject) {
             part.setSubjectProperty(subject);
@@ -328,10 +326,10 @@ public class POIXMLProperties {
             part.setTitleProperty(title);
         }
         public String getTitle() {
-            return part.getTitleProperty().getValue();
+            return part.getTitleProperty().orElse(null);
         }
         public String getRevision() {
-            return part.getRevisionProperty().getValue();
+            return part.getRevisionProperty().orElse(null);
         }
         public void setRevision(String revision) {
             try {

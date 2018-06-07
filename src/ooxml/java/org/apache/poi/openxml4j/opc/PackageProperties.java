@@ -18,8 +18,7 @@
 package org.apache.poi.openxml4j.opc;
 
 import java.util.Date;
-
-import org.apache.poi.openxml4j.util.Nullable;
+import java.util.Optional;
 
 /**
  * Represents the core properties of an OPC package.
@@ -45,7 +44,7 @@ public interface PackageProperties {
 	/**
 	 * Set the category of the content of this package.
 	 */
-	Nullable<String> getCategoryProperty();
+	Optional<String> getCategoryProperty();
 
 	/**
 	 * Set the category of the content of this package.
@@ -55,7 +54,7 @@ public interface PackageProperties {
 	/**
 	 * Set the status of the content.
 	 */
-	Nullable<String> getContentStatusProperty();
+	Optional<String> getContentStatusProperty();
 
 	/**
 	 * Get the status of the content.
@@ -66,7 +65,7 @@ public interface PackageProperties {
 	 * Get the type of content represented, generally defined by a specific use
 	 * and intended audience.
 	 */
-	Nullable<String> getContentTypeProperty();
+	Optional<String> getContentTypeProperty();
 
 	/**
 	 * Set the type of content represented, generally defined by a specific use
@@ -77,7 +76,7 @@ public interface PackageProperties {
 	/**
 	 * Get the date of creation of the resource.
 	 */
-	Nullable<Date> getCreatedProperty();
+	Optional<Date> getCreatedProperty();
 
 	/**
 	 * Set the date of creation of the resource.
@@ -87,13 +86,13 @@ public interface PackageProperties {
 	/**
 	 * Set the date of creation of the resource.
 	 */
-	void setCreatedProperty(Nullable<Date> created);
+	void setCreatedProperty(Optional<Date> created);
 
 	/**
 	 * Get the entity primarily responsible for making the content of the
 	 * resource.
 	 */
-	Nullable<String> getCreatorProperty();
+	Optional<String> getCreatorProperty();
 
 	/**
 	 * Set the entity primarily responsible for making the content of the
@@ -104,7 +103,7 @@ public interface PackageProperties {
 	/**
 	 * Get the explanation of the content of the resource.
 	 */
-	Nullable<String> getDescriptionProperty();
+	Optional<String> getDescriptionProperty();
 
 	/**
 	 * Set the explanation of the content of the resource.
@@ -114,7 +113,7 @@ public interface PackageProperties {
 	/**
 	 * Get an unambiguous reference to the resource within a given context.
 	 */
-	Nullable<String> getIdentifierProperty();
+	Optional<String> getIdentifierProperty();
 
 	/**
 	 * Set an unambiguous reference to the resource within a given context.
@@ -126,7 +125,7 @@ public interface PackageProperties {
 	 * is typically a list of terms that are not available elsewhere in the
 	 * properties
 	 */
-	Nullable<String> getKeywordsProperty();
+	Optional<String> getKeywordsProperty();
 
 	/**
 	 * Set a delimited set of keywords to support searching and indexing. This
@@ -138,7 +137,7 @@ public interface PackageProperties {
 	/**
 	 * Get the language of the intellectual content of the resource.
 	 */
-	Nullable<String> getLanguageProperty();
+	Optional<String> getLanguageProperty();
 
 	/**
 	 * Set the language of the intellectual content of the resource.
@@ -148,7 +147,7 @@ public interface PackageProperties {
 	/**
 	 * Get the user who performed the last modification.
 	 */
-	Nullable<String> getLastModifiedByProperty();
+	Optional<String> getLastModifiedByProperty();
 
 	/**
 	 * Set the user who performed the last modification.
@@ -158,7 +157,7 @@ public interface PackageProperties {
 	/**
 	 * Get the date and time of the last printing.
 	 */
-	Nullable<Date> getLastPrintedProperty();
+	Optional<Date> getLastPrintedProperty();
 
 	/**
 	 * Set the date and time of the last printing.
@@ -168,12 +167,12 @@ public interface PackageProperties {
 	/**
 	 * Set the date and time of the last printing.
 	 */
-	void setLastPrintedProperty(Nullable<Date> lastPrinted);
+	void setLastPrintedProperty(Optional<Date> lastPrinted);
 
 	/**
 	 * Get the date on which the resource was changed.
 	 */
-	Nullable<Date> getModifiedProperty();
+	Optional<Date> getModifiedProperty();
 
 	/**
 	 * Set the date on which the resource was changed.
@@ -183,12 +182,12 @@ public interface PackageProperties {
 	/**
 	 * Set the date on which the resource was changed.
 	 */
-	void setModifiedProperty(Nullable<Date> modified);
+	void setModifiedProperty(Optional<Date> modified);
 
 	/**
 	 * Get the revision number.
 	 */
-	Nullable<String> getRevisionProperty();
+	Optional<String> getRevisionProperty();
 
 	/**
 	 * Set the revision number.
@@ -198,7 +197,7 @@ public interface PackageProperties {
 	/**
 	 * Get the topic of the content of the resource.
 	 */
-	Nullable<String> getSubjectProperty();
+	Optional<String> getSubjectProperty();
 
 	/**
 	 * Set the topic of the content of the resource.
@@ -208,7 +207,7 @@ public interface PackageProperties {
 	/**
 	 * Get the name given to the resource.
 	 */
-	Nullable<String> getTitleProperty();
+	Optional<String> getTitleProperty();
 
 	/**
 	 * Set the name given to the resource.
@@ -218,7 +217,7 @@ public interface PackageProperties {
 	/**
 	 * Get the version number.
 	 */
-	Nullable<String> getVersionProperty();
+	Optional<String> getVersionProperty();
 
 	/**
 	 * Set the version number.

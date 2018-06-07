@@ -17,12 +17,6 @@
 
 package org.apache.poi.openxml4j.opc.compliance;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -46,6 +40,8 @@ import org.apache.poi.util.TempFile;
 import org.junit.Test;
 
 import junit.framework.AssertionFailedError;
+
+import static org.junit.Assert.*;
 
 /**
  * Test core properties Open Packaging Convention compliance.
@@ -254,7 +250,7 @@ public final class TestOPCComplianceCoreProperties {
         assertEquals(0, pkg.getPartsByContentType(ContentTypes.CORE_PROPERTIES_PART).size());
         assertNotNull(pkg.getPackageProperties());
         assertNotNull(pkg.getPackageProperties().getLanguageProperty());
-        assertNull(pkg.getPackageProperties().getLanguageProperty().getValue());
+        assertFalse(pkg.getPackageProperties().getLanguageProperty().isPresent());
 
         // Save and re-load
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -268,7 +264,7 @@ public final class TestOPCComplianceCoreProperties {
         assertEquals(1, pkg.getPartsByContentType(ContentTypes.CORE_PROPERTIES_PART).size());
         assertNotNull(pkg.getPackageProperties());
         assertNotNull(pkg.getPackageProperties().getLanguageProperty());
-        assertNull(pkg.getPackageProperties().getLanguageProperty().getValue());
+        assertFalse(pkg.getPackageProperties().getLanguageProperty().isPresent());
         pkg.close();
         
         // Open a new copy of it
@@ -286,7 +282,7 @@ public final class TestOPCComplianceCoreProperties {
         assertEquals(1, pkg.getPartsByContentType(ContentTypes.CORE_PROPERTIES_PART).size());
         assertNotNull(pkg.getPackageProperties());
         assertNotNull(pkg.getPackageProperties().getLanguageProperty());
-        assertNull(pkg.getPackageProperties().getLanguageProperty().getValue());
+        assertFalse(pkg.getPackageProperties().getLanguageProperty().isPresent());
     }
 
     /**
@@ -314,7 +310,7 @@ public final class TestOPCComplianceCoreProperties {
         assertEquals(0, pkg.getPartsByContentType(ContentTypes.CORE_PROPERTIES_PART).size());
         assertNotNull(pkg.getPackageProperties());
         assertNotNull(pkg.getPackageProperties().getLanguageProperty());
-        assertNull(pkg.getPackageProperties().getLanguageProperty().getValue());
+        assertFalse(pkg.getPackageProperties().getLanguageProperty().isPresent());
 
         // Save and close
         pkg.close();
@@ -326,7 +322,7 @@ public final class TestOPCComplianceCoreProperties {
         assertEquals(1, pkg.getPartsByContentType(ContentTypes.CORE_PROPERTIES_PART).size());
         assertNotNull(pkg.getPackageProperties());
         assertNotNull(pkg.getPackageProperties().getLanguageProperty());
-        assertNull(pkg.getPackageProperties().getLanguageProperty().getValue());
+        assertFalse(pkg.getPackageProperties().getLanguageProperty().isPresent());
 
         // Finish and tidy
         pkg.revert();

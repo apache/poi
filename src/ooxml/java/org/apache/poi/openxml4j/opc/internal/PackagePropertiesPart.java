@@ -23,6 +23,7 @@ import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,7 +35,6 @@ import org.apache.poi.openxml4j.opc.PackageNamespaces;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageProperties;
-import org.apache.poi.openxml4j.util.Nullable;
 import org.apache.poi.util.LocaleUtil;
 
 /**
@@ -95,7 +95,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 	 * value might be used by an application's user interface to facilitate
 	 * navigation of a large set of documents. end example]
 	 */
-	protected Nullable<String> category = new Nullable<>();
+	protected Optional<String> category = Optional.empty();
 
 	/**
 	 * The status of the content.
@@ -103,7 +103,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 	 * [Example: Values might include "Draft", "Reviewed", and "Final". end
 	 * example]
 	 */
-	protected Nullable<String> contentStatus = new Nullable<>();
+	protected Optional<String> contentStatus = Optional.empty();
 
 	/**
 	 * The type of content represented, generally defined by a specific use and
@@ -113,17 +113,17 @@ public final class PackagePropertiesPart extends PackagePart implements
 	 * "Exam". end example] [Note: This property is distinct from MIME content
 	 * types as defined in RFC 2616. end note]
 	 */
-	protected Nullable<String> contentType = new Nullable<>();
+	protected Optional<String> contentType = Optional.empty();
 
 	/**
 	 * Date of creation of the resource.
 	 */
-	protected Nullable<Date> created = new Nullable<>();
+	protected Optional<Date> created = Optional.empty();
 
 	/**
 	 * An entity primarily responsible for making the content of the resource.
 	 */
-	protected Nullable<String> creator = new Nullable<>();
+	protected Optional<String> creator = Optional.empty();
 
 	/**
 	 * An explanation of the content of the resource.
@@ -132,19 +132,19 @@ public final class PackagePropertiesPart extends PackagePart implements
 	 * to a graphical representation of content, and a free-text account of the
 	 * content. end example]
 	 */
-	protected Nullable<String> description = new Nullable<>();
+	protected Optional<String> description = Optional.empty();
 
 	/**
 	 * An unambiguous reference to the resource within a given context.
 	 */
-	protected Nullable<String> identifier = new Nullable<>();
+	protected Optional<String> identifier = Optional.empty();
 
 	/**
 	 * A delimited set of keywords to support searching and indexing. This is
 	 * typically a list of terms that are not available elsewhere in the
 	 * properties.
 	 */
-	protected Nullable<String> keywords = new Nullable<>();
+	protected Optional<String> keywords = Optional.empty();
 
 	/**
 	 * The language of the intellectual content of the resource.
@@ -152,7 +152,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 	 * [Note: IETF RFC 3066 provides guidance on encoding to represent
 	 * languages. end note]
 	 */
-	protected Nullable<String> language = new Nullable<>();
+	protected Optional<String> language = Optional.empty();
 
 	/**
 	 * The user who performed the last modification. The identification is
@@ -161,17 +161,17 @@ public final class PackagePropertiesPart extends PackagePart implements
 	 * [Example: A name, email address, or employee ID. end example] It is
 	 * recommended that this value be as concise as possible.
 	 */
-	protected Nullable<String> lastModifiedBy = new Nullable<>();
+	protected Optional<String> lastModifiedBy = Optional.empty();
 
 	/**
 	 * The date and time of the last printing.
 	 */
-	protected Nullable<Date> lastPrinted = new Nullable<>();
+	protected Optional<Date> lastPrinted = Optional.empty();
 
 	/**
 	 * Date on which the resource was changed.
 	 */
-	protected Nullable<Date> modified = new Nullable<>();
+	protected Optional<Date> modified = Optional.empty();
 
 	/**
 	 * The revision number.
@@ -179,22 +179,22 @@ public final class PackagePropertiesPart extends PackagePart implements
 	 * [Example: This value might indicate the number of saves or revisions,
 	 * provided the application updates it after each revision. end example]
 	 */
-	protected Nullable<String> revision = new Nullable<>();
+	protected Optional<String> revision = Optional.empty();
 
 	/**
 	 * The topic of the content of the resource.
 	 */
-	protected Nullable<String> subject = new Nullable<>();
+	protected Optional<String> subject = Optional.empty();
 
 	/**
 	 * The name given to the resource.
 	 */
-	protected Nullable<String> title = new Nullable<>();
+	protected Optional<String> title = Optional.empty();
 
 	/**
 	 * The version number. This value is set by the user or by the application.
 	 */
-	protected Nullable<String> version = new Nullable<>();
+	protected Optional<String> version = Optional.empty();
 
 	/*
 	 * Getters and setters
@@ -205,7 +205,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 	 *
 	 * @see org.apache.poi.openxml4j.opc.PackageProperties#getCategoryProperty()
 	 */
-	public Nullable<String> getCategoryProperty() {
+	public Optional<String> getCategoryProperty() {
 		return category;
 	}
 
@@ -214,7 +214,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 	 *
 	 * @see org.apache.poi.openxml4j.opc.PackageProperties#getContentStatusProperty()
 	 */
-	public Nullable<String> getContentStatusProperty() {
+	public Optional<String> getContentStatusProperty() {
 		return contentStatus;
 	}
 
@@ -223,7 +223,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 	 *
 	 * @see org.apache.poi.openxml4j.opc.PackageProperties#getContentTypeProperty()
 	 */
-	public Nullable<String> getContentTypeProperty() {
+	public Optional<String> getContentTypeProperty() {
 		return contentType;
 	}
 
@@ -232,7 +232,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 	 *
 	 * @see org.apache.poi.openxml4j.opc.PackageProperties#getCreatedProperty()
 	 */
-	public Nullable<Date> getCreatedProperty() {
+	public Optional<Date> getCreatedProperty() {
 		return created;
 	}
 
@@ -250,7 +250,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 	 *
 	 * @see org.apache.poi.openxml4j.opc.PackageProperties#getCreatorProperty()
 	 */
-	public Nullable<String> getCreatorProperty() {
+	public Optional<String> getCreatorProperty() {
 		return creator;
 	}
 
@@ -259,7 +259,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 	 *
 	 * @see org.apache.poi.openxml4j.opc.PackageProperties#getDescriptionProperty()
 	 */
-	public Nullable<String> getDescriptionProperty() {
+	public Optional<String> getDescriptionProperty() {
 		return description;
 	}
 
@@ -268,7 +268,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 	 *
 	 * @see org.apache.poi.openxml4j.opc.PackageProperties#getIdentifierProperty()
 	 */
-	public Nullable<String> getIdentifierProperty() {
+	public Optional<String> getIdentifierProperty() {
 		return identifier;
 	}
 
@@ -277,7 +277,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 	 *
 	 * @see org.apache.poi.openxml4j.opc.PackageProperties#getKeywordsProperty()
 	 */
-	public Nullable<String> getKeywordsProperty() {
+	public Optional<String> getKeywordsProperty() {
 		return keywords;
 	}
 
@@ -286,7 +286,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 	 *
 	 * @see org.apache.poi.openxml4j.opc.PackageProperties#getLanguageProperty()
 	 */
-	public Nullable<String> getLanguageProperty() {
+	public Optional<String> getLanguageProperty() {
 		return language;
 	}
 
@@ -295,7 +295,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 	 *
 	 * @see org.apache.poi.openxml4j.opc.PackageProperties#getLastModifiedByProperty()
 	 */
-	public Nullable<String> getLastModifiedByProperty() {
+	public Optional<String> getLastModifiedByProperty() {
 		return lastModifiedBy;
 	}
 
@@ -304,7 +304,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 	 *
 	 * @see org.apache.poi.openxml4j.opc.PackageProperties#getLastPrintedProperty()
 	 */
-	public Nullable<Date> getLastPrintedProperty() {
+	public Optional<Date> getLastPrintedProperty() {
 		return lastPrinted;
 	}
 
@@ -322,7 +322,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 	 *
 	 * @see org.apache.poi.openxml4j.opc.PackageProperties#getModifiedProperty()
 	 */
-	public Nullable<Date> getModifiedProperty() {
+	public Optional<Date> getModifiedProperty() {
 		return modified;
 	}
 
@@ -332,10 +332,10 @@ public final class PackagePropertiesPart extends PackagePart implements
 	 * @return A string representation of the modified date.
 	 */
 	public String getModifiedPropertyString() {
-		if (modified.hasValue()) {
+		if (modified.isPresent()) {
 			return getDateValue(modified);
 		}
-		return getDateValue(new Nullable<>(new Date()));
+		return getDateValue(Optional.of(new Date()));
 	}
 
 	/**
@@ -343,7 +343,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 	 *
 	 * @see org.apache.poi.openxml4j.opc.PackageProperties#getRevisionProperty()
 	 */
-	public Nullable<String> getRevisionProperty() {
+	public Optional<String> getRevisionProperty() {
 		return revision;
 	}
 
@@ -352,7 +352,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 	 *
 	 * @see org.apache.poi.openxml4j.opc.PackageProperties#getSubjectProperty()
 	 */
-	public Nullable<String> getSubjectProperty() {
+	public Optional<String> getSubjectProperty() {
 		return subject;
 	}
 
@@ -361,7 +361,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 	 *
 	 * @see org.apache.poi.openxml4j.opc.PackageProperties#getTitleProperty()
 	 */
-	public Nullable<String> getTitleProperty() {
+	public Optional<String> getTitleProperty() {
 		return title;
 	}
 
@@ -370,7 +370,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 	 *
 	 * @see org.apache.poi.openxml4j.opc.PackageProperties#getVersionProperty()
 	 */
-	public Nullable<String> getVersionProperty() {
+	public Optional<String> getVersionProperty() {
 		return version;
 	}
 
@@ -404,7 +404,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 	/**
 	 * Set the created date.
 	 *
-	 * @see org.apache.poi.openxml4j.opc.PackageProperties#setCreatedProperty(org.apache.poi.openxml4j.util.Nullable)
+	 * @see org.apache.poi.openxml4j.opc.PackageProperties#setCreatedProperty(java.util.Optional)
 	 */
 	public void setCreatedProperty(String created) {
 		try {
@@ -417,10 +417,10 @@ public final class PackagePropertiesPart extends PackagePart implements
 	/**
 	 * Set the created date.
 	 *
-	 * @see org.apache.poi.openxml4j.opc.PackageProperties#setCreatedProperty(org.apache.poi.openxml4j.util.Nullable)
+	 * @see org.apache.poi.openxml4j.opc.PackageProperties#setCreatedProperty(java.util.Optional)
 	 */
-	public void setCreatedProperty(Nullable<Date> created) {
-		if (created.hasValue())
+	public void setCreatedProperty(Optional<Date> created) {
+		if (created.isPresent())
 			this.created = created;
 	}
 
@@ -481,7 +481,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 	/**
 	 * Set last printed date.
 	 *
-	 * @see org.apache.poi.openxml4j.opc.PackageProperties#setLastPrintedProperty(org.apache.poi.openxml4j.util.Nullable)
+	 * @see org.apache.poi.openxml4j.opc.PackageProperties#setLastPrintedProperty(java.util.Optional)
 	 */
 	public void setLastPrintedProperty(String lastPrinted) {
 		try {
@@ -495,17 +495,17 @@ public final class PackagePropertiesPart extends PackagePart implements
 	/**
 	 * Set last printed date.
 	 *
-	 * @see org.apache.poi.openxml4j.opc.PackageProperties#setLastPrintedProperty(org.apache.poi.openxml4j.util.Nullable)
+	 * @see org.apache.poi.openxml4j.opc.PackageProperties#setLastPrintedProperty(java.util.Optional)
 	 */
-	public void setLastPrintedProperty(Nullable<Date> lastPrinted) {
-		if (lastPrinted.hasValue())
+	public void setLastPrintedProperty(Optional<Date> lastPrinted) {
+		if (lastPrinted.isPresent())
 			this.lastPrinted = lastPrinted;
 	}
 
 	/**
 	 * Set last modification date.
 	 *
-	 * @see org.apache.poi.openxml4j.opc.PackageProperties#setModifiedProperty(org.apache.poi.openxml4j.util.Nullable)
+	 * @see org.apache.poi.openxml4j.opc.PackageProperties#setModifiedProperty(java.util.Optional)
 	 */
 	public void setModifiedProperty(String modified) {
 		try {
@@ -519,10 +519,10 @@ public final class PackagePropertiesPart extends PackagePart implements
 	/**
 	 * Set last modification date.
 	 *
-	 * @see org.apache.poi.openxml4j.opc.PackageProperties#setModifiedProperty(org.apache.poi.openxml4j.util.Nullable)
+	 * @see org.apache.poi.openxml4j.opc.PackageProperties#setModifiedProperty(java.util.Optional)
 	 */
-	public void setModifiedProperty(Nullable<Date> modified) {
-		if (modified.hasValue())
+	public void setModifiedProperty(Optional<Date> modified) {
+		if (modified.isPresent())
 			this.modified = modified;
 	}
 
@@ -563,24 +563,24 @@ public final class PackagePropertiesPart extends PackagePart implements
 	}
 
 	/**
-	 * Convert a strig value into a Nullable<String>
+	 * Convert a string value into a Optional<String>
 	 */
-	private Nullable<String> setStringValue(String s) {
+	private Optional<String> setStringValue(String s) {
 		if (s == null || s.isEmpty()) {
-			return new Nullable<>();
+			return Optional.empty();
 		}
-		return new Nullable<>(s);
+		return Optional.of(s);
 	}
 
 	/**
-	 * Convert a string value represented a date into a Nullable<Date>.
+	 * Convert a string value represented a date into a Optional<Date>.
 	 *
 	 * @throws InvalidFormatException
 	 *             Throws if the date format isnot valid.
 	 */
-	private Nullable<Date> setDateValue(String dateStr) throws InvalidFormatException {
+	private Optional<Date> setDateValue(String dateStr) throws InvalidFormatException {
 		if (dateStr == null || dateStr.isEmpty()) {
-			return new Nullable<>();
+			return Optional.empty();
 		}
 
 		Matcher m = TIME_ZONE_PAT.matcher(dateStr);
@@ -592,7 +592,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 				df.setTimeZone(LocaleUtil.TIMEZONE_UTC);
 				Date d = df.parse(dateTzStr, new ParsePosition(0));
 				if (d != null) {
-					return new Nullable<>(d);
+					return Optional.of(d);
 				}
 			}
 		}
@@ -602,7 +602,7 @@ public final class PackagePropertiesPart extends PackagePart implements
 			df.setTimeZone(LocaleUtil.TIMEZONE_UTC);
 			Date d = df.parse(dateTzStr, new ParsePosition(0));
 			if (d != null) {
-				return new Nullable<>(d);
+				return Optional.of(d);
 			}
 		}
 		//if you're here, no pattern matched, throw exception
@@ -622,25 +622,20 @@ public final class PackagePropertiesPart extends PackagePart implements
 	}
 
 	/**
-	 * Convert a Nullable<Date> into a String.
+	 * Convert a Optional<Date> into a String.
 	 *
 	 * @param d
 	 *            The Date to convert.
 	 * @return The formated date or null.
 	 * @see java.text.SimpleDateFormat
 	 */
-	private String getDateValue(Nullable<Date> d) {
-		if (d == null) {
+	private String getDateValue(Optional<Date> d) {
+		if (d == null || !d.isPresent()) {
 			return "";
 		}
-		Date date = d.getValue();
-		if (date == null) {
-		   return "";
-		}
-
 		SimpleDateFormat df = new SimpleDateFormat(DEFAULT_DATEFORMAT, Locale.ROOT);
 		df.setTimeZone(LocaleUtil.TIMEZONE_UTC);
-		return df.format(date);
+		return df.format(d.get());
 	}
 
 	@Override

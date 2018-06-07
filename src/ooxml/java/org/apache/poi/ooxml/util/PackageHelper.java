@@ -100,9 +100,6 @@ public final class PackageHelper {
             p = pkg.getPart(relName);
             part_tgt.addRelationship(p.getPartName(), rel.getTargetMode(), rel.getRelationshipType(), rel.getId());
 
-
-
-
             PackagePart dest;
             if(!tgt.containPart(p.getPartName())){
                 dest = tgt.createPart(p.getPartName(), p.getContentType());
@@ -121,17 +118,17 @@ public final class PackageHelper {
      * @param tgt target properties
      */
     private static void copyProperties(PackageProperties src, PackageProperties tgt){
-        tgt.setCategoryProperty(src.getCategoryProperty().getValue());
-        tgt.setContentStatusProperty(src.getContentStatusProperty().getValue());
-        tgt.setContentTypeProperty(src.getContentTypeProperty().getValue());
-        tgt.setCreatorProperty(src.getCreatorProperty().getValue());
-        tgt.setDescriptionProperty(src.getDescriptionProperty().getValue());
-        tgt.setIdentifierProperty(src.getIdentifierProperty().getValue());
-        tgt.setKeywordsProperty(src.getKeywordsProperty().getValue());
-        tgt.setLanguageProperty(src.getLanguageProperty().getValue());
-        tgt.setRevisionProperty(src.getRevisionProperty().getValue());
-        tgt.setSubjectProperty(src.getSubjectProperty().getValue());
-        tgt.setTitleProperty(src.getTitleProperty().getValue());
-        tgt.setVersionProperty(src.getVersionProperty().getValue());
+        tgt.setCategoryProperty(src.getCategoryProperty().orElse(null));
+        tgt.setContentStatusProperty(src.getContentStatusProperty().orElse(null));
+        tgt.setContentTypeProperty(src.getContentTypeProperty().orElse(null));
+        tgt.setCreatorProperty(src.getCreatorProperty().orElse(null));
+        tgt.setDescriptionProperty(src.getDescriptionProperty().orElse(null));
+        tgt.setIdentifierProperty(src.getIdentifierProperty().orElse(null));
+        tgt.setKeywordsProperty(src.getKeywordsProperty().orElse(null));
+        tgt.setLanguageProperty(src.getLanguageProperty().orElse(null));
+        tgt.setRevisionProperty(src.getRevisionProperty().orElse(null));
+        tgt.setSubjectProperty(src.getSubjectProperty().orElse(null));
+        tgt.setTitleProperty(src.getTitleProperty().orElse(null));
+        tgt.setVersionProperty(src.getVersionProperty().orElse(null));
     }
 }
