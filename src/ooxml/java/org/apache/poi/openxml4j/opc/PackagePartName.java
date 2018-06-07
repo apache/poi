@@ -489,6 +489,11 @@ public final class PackagePartName implements Comparable<PackagePartName> {
      * case-insensitive ASCII strings. Packages shall not contain equivalent
      * part names and package implementers shall neither create nor recognize
      * packages with equivalent part names. [M1.12]
+	 *
+	 * @param obj1 first {@code PackagePartName} to compare
+	 * @param obj2 second {@code PackagePartName} to compare
+	 * @return a negative integer, zero, or a positive integer as the first argument is less than,
+     *         equal to, or greater than the second.
      */
     public static int compare(PackagePartName obj1, PackagePartName obj2) {
         return compare (
@@ -506,6 +511,11 @@ public final class PackagePartName implements Comparable<PackagePartName> {
      * For example, this sorts "file10.png" after "file2.png" (comparing the
      * numerical portion), but sorts "File10.png" before "file2.png"
      * (lexigraphical sort)
+     *
+     * @param str1 first string to compare
+     * @param str1 second string to compare
+     * @return a negative integer, zero, or a positive integer as the first argument is less than,
+     *         equal to, or greater than the second.
      */
     public static int compare(final String str1, final String str2)
     {

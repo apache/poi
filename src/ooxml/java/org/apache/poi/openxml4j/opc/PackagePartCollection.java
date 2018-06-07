@@ -53,6 +53,10 @@ public final class PackagePartCollection implements Serializable {
 	 * recognize a part with a part name derived from another part name by
 	 * appending segments to it.
 	 *
+	 * @param partName name of part
+	 * @param part part to put
+     * @return the previous value associated with {@code partName}, or
+     *         {@code null} if there was no mapping for {@code partName}.
 	 * @exception InvalidOperationException
 	 *                Throws if you try to add a part with a name derived from
 	 *                another part name.
@@ -89,6 +93,7 @@ public final class PackagePartCollection implements Serializable {
 	/**
 	 * The values themselves should be returned in sorted order. Doing it here
 	 * avoids paying the high cost of Natural Ordering per insertion.
+     * @return unmodifiable collection of parts
 	 */
 	public Collection<PackagePart> sortedValues() {
 	    return Collections.unmodifiableCollection(packagePartLookup.values());
