@@ -838,7 +838,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
         
         List<XSLFTextRun> otherRs = other.getTextRuns();
         int i=0;
-        for(CTRegularTextRun rtr : thisP.getRArray()) {
+        for(CTRegularTextRun rtr : thisP.getRList()) {
             XSLFTextRun run = newTextRun(rtr);
             run.copy(otherRs.get(i++));
             _runs.add(run);
