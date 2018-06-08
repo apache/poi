@@ -43,6 +43,7 @@ public interface PackageProperties {
 
 	/**
 	 * Set the category of the content of this package.
+	 * @return property value
 	 */
 	Optional<String> getCategoryProperty();
 
@@ -51,8 +52,14 @@ public interface PackageProperties {
 	 */
 	void setCategoryProperty(String category);
 
-	/**
+    /**
+     * Set the category of the content of this package.
+     */
+    void setCategoryProperty(Optional<String> category);
+
+    /**
 	 * Set the status of the content.
+     * @return property value
 	 */
 	Optional<String> getContentStatusProperty();
 
@@ -61,9 +68,15 @@ public interface PackageProperties {
 	 */
 	void setContentStatusProperty(String contentStatus);
 
-	/**
+    /**
+     * Get the status of the content.
+     */
+    void setContentStatusProperty(Optional<String> contentStatus);
+
+    /**
 	 * Get the type of content represented, generally defined by a specific use
 	 * and intended audience.
+     * @return property value
 	 */
 	Optional<String> getContentTypeProperty();
 
@@ -73,8 +86,15 @@ public interface PackageProperties {
 	 */
 	void setContentTypeProperty(String contentType);
 
+    /**
+     * Set the type of content represented, generally defined by a specific use
+     * and intended audience.
+     */
+    void setContentTypeProperty(Optional<String> contentType);
+
 	/**
 	 * Get the date of creation of the resource.
+     * @return property value
 	 */
 	Optional<Date> getCreatedProperty();
 
@@ -91,6 +111,7 @@ public interface PackageProperties {
 	/**
 	 * Get the entity primarily responsible for making the content of the
 	 * resource.
+     * @return property value
 	 */
 	Optional<String> getCreatorProperty();
 
@@ -100,7 +121,13 @@ public interface PackageProperties {
 	 */
 	void setCreatorProperty(String creator);
 
-	/**
+    /**
+     * Set the entity primarily responsible for making the content of the
+     * resource.
+     */
+    void setCreatorProperty(Optional<String> creator);
+
+    /**
 	 * Get the explanation of the content of the resource.
 	 */
 	Optional<String> getDescriptionProperty();
@@ -110,8 +137,14 @@ public interface PackageProperties {
 	 */
 	void setDescriptionProperty(String description);
 
+    /**
+     * Set the explanation of the content of the resource.
+     */
+    void setDescriptionProperty(Optional<String> description);
+
 	/**
 	 * Get an unambiguous reference to the resource within a given context.
+     * @return property value
 	 */
 	Optional<String> getIdentifierProperty();
 
@@ -120,10 +153,16 @@ public interface PackageProperties {
 	 */
 	void setIdentifierProperty(String identifier);
 
-	/**
+    /**
+     * Set an unambiguous reference to the resource within a given context.
+     */
+    void setIdentifierProperty(Optional<String> identifier);
+
+    /**
 	 * Get a delimited set of keywords to support searching and indexing. This
 	 * is typically a list of terms that are not available elsewhere in the
 	 * properties
+     * @return property value
 	 */
 	Optional<String> getKeywordsProperty();
 
@@ -134,8 +173,16 @@ public interface PackageProperties {
 	 */
 	void setKeywordsProperty(String keywords);
 
+    /**
+     * Set a delimited set of keywords to support searching and indexing. This
+     * is typically a list of terms that are not available elsewhere in the
+     * properties
+     */
+    void setKeywordsProperty(Optional<String> keywords);
+
 	/**
 	 * Get the language of the intellectual content of the resource.
+     * @return property value
 	 */
 	Optional<String> getLanguageProperty();
 
@@ -144,7 +191,12 @@ public interface PackageProperties {
 	 */
 	void setLanguageProperty(String language);
 
-	/**
+    /**
+     * Set the language of the intellectual content of the resource.
+     */
+    void setLanguageProperty(Optional<String> language);
+
+    /**
 	 * Get the user who performed the last modification.
 	 */
 	Optional<String> getLastModifiedByProperty();
@@ -154,9 +206,15 @@ public interface PackageProperties {
 	 */
 	void setLastModifiedByProperty(String lastModifiedBy);
 
-	/**
+    /**
+     * Set the user who performed the last modification.
+     */
+    void setLastModifiedByProperty(Optional<String> lastModifiedBy);
+
+    /**
 	 * Get the date and time of the last printing.
-	 */
+     * @return property value
+     */
 	Optional<Date> getLastPrintedProperty();
 
 	/**
@@ -171,6 +229,7 @@ public interface PackageProperties {
 
 	/**
 	 * Get the date on which the resource was changed.
+     * @return property value
 	 */
 	Optional<Date> getModifiedProperty();
 
@@ -184,8 +243,9 @@ public interface PackageProperties {
 	 */
 	void setModifiedProperty(Optional<Date> modified);
 
-	/**
+    /**
 	 * Get the revision number.
+     * @return property value
 	 */
 	Optional<String> getRevisionProperty();
 
@@ -194,8 +254,14 @@ public interface PackageProperties {
 	 */
 	void setRevisionProperty(String revision);
 
-	/**
+    /**
+     * Set the revision number.
+     */
+    void setRevisionProperty(Optional<String> revision);
+
+    /**
 	 * Get the topic of the content of the resource.
+     * @return property value
 	 */
 	Optional<String> getSubjectProperty();
 
@@ -204,23 +270,40 @@ public interface PackageProperties {
 	 */
 	void setSubjectProperty(String subject);
 
-	/**
+    /**
+     * Set the topic of the content of the resource.
+     */
+    void setSubjectProperty(Optional<String> subject);
+
+    /**
 	 * Get the name given to the resource.
+     * @return property value
 	 */
 	Optional<String> getTitleProperty();
 
-	/**
+    /**
+     * Set the name given to the resource.
+     */
+    void setTitleProperty(String title);
+
+    /**
 	 * Set the name given to the resource.
 	 */
-	void setTitleProperty(String title);
+	void setTitleProperty(Optional<String> title);
 
-	/**
+    /**
 	 * Get the version number.
+     * @return property value
 	 */
 	Optional<String> getVersionProperty();
 
-	/**
-	 * Set the version number.
-	 */
-	void setVersionProperty(String version);
+    /**
+     * Set the version number.
+     */
+    void setVersionProperty(String version);
+
+    /**
+     * Set the version number.
+     */
+    void setVersionProperty(Optional<String> version);
 }

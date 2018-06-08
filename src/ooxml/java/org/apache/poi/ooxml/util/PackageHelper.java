@@ -117,18 +117,18 @@ public final class PackageHelper {
      * @param src source properties
      * @param tgt target properties
      */
-    private static void copyProperties(PackageProperties src, PackageProperties tgt){
-        tgt.setCategoryProperty(src.getCategoryProperty().orElse(null));
-        tgt.setContentStatusProperty(src.getContentStatusProperty().orElse(null));
-        tgt.setContentTypeProperty(src.getContentTypeProperty().orElse(null));
-        tgt.setCreatorProperty(src.getCreatorProperty().orElse(null));
-        tgt.setDescriptionProperty(src.getDescriptionProperty().orElse(null));
-        tgt.setIdentifierProperty(src.getIdentifierProperty().orElse(null));
-        tgt.setKeywordsProperty(src.getKeywordsProperty().orElse(null));
-        tgt.setLanguageProperty(src.getLanguageProperty().orElse(null));
-        tgt.setRevisionProperty(src.getRevisionProperty().orElse(null));
-        tgt.setSubjectProperty(src.getSubjectProperty().orElse(null));
-        tgt.setTitleProperty(src.getTitleProperty().orElse(null));
-        tgt.setVersionProperty(src.getVersionProperty().orElse(null));
+    private static void copyProperties(PackageProperties src, PackageProperties tgt) {
+        tgt.setCategoryProperty(src.getCategoryProperty());
+        tgt.setContentStatusProperty(src.getContentStatusProperty());
+        tgt.setContentTypeProperty(src.getContentTypeProperty());
+        tgt.setCreatorProperty(src.getCreatorProperty());
+        tgt.setDescriptionProperty(src.getDescriptionProperty());
+        tgt.setIdentifierProperty(src.getIdentifierProperty());
+        tgt.setKeywordsProperty(src.getKeywordsProperty());
+        tgt.setLanguageProperty(src.getLanguageProperty());
+        tgt.setRevisionProperty(src.getRevisionProperty());
+        tgt.setSubjectProperty(src.getSubjectProperty());
+        tgt.setTitleProperty(src.getTitleProperty());
+        tgt.setVersionProperty(src.getVersionProperty());
     }
 }
