@@ -53,8 +53,7 @@ public class ColumnHelper {
         int i = 0;
         for (i = 0; i < colsArray.length; i++) {
             CTCols cols = colsArray[i];
-            CTCol[] colArray = cols.getColArray();
-            for (CTCol col : colArray) {
+            for (CTCol col : cols.getColList()) {
                 addCleanColIntoCols(newCols, col, trackedCols);
             }
         }
@@ -310,7 +309,7 @@ public class ColumnHelper {
     }
 
     private boolean columnExists(CTCols cols, long min, long max) {
-        for (CTCol col : cols.getColArray()) {
+        for (CTCol col : cols.getColList()) {
             if (col.getMin() == min && col.getMax() == max) {
                 return true;
             }
@@ -321,7 +320,7 @@ public class ColumnHelper {
     public int getIndexOfColumn(CTCols cols, CTCol searchCol) {
         if (cols == null || searchCol == null) return -1;
         int i = 0;
-        for (CTCol col : cols.getColArray()) {
+        for (CTCol col : cols.getColList()) {
             if (col.getMin() == searchCol.getMin() && col.getMax() == searchCol.getMax()) {
                 return i;
             }
