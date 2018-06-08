@@ -84,7 +84,7 @@ public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
         text.append(thing);
         text.append(" = ");
         text.append(value);
-        text.append("\n");
+        text.append('\n');
     }
 
     /**
@@ -178,7 +178,7 @@ public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
         org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperties
                 props = document.getProperties().getCustomProperties().getUnderlyingProperties();
 
-        for (CTProperty property : props.getPropertyArray()) {
+        for (CTProperty property : props.getPropertyList()) {
             String val = "(not implemented!)";
 
             if (property.isSetLpwstr()) {
