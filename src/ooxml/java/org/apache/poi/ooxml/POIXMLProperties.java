@@ -241,7 +241,9 @@ public class POIXMLProperties {
             this.part = part;
         }
 
-        public String getCategory() { return part.getCategoryProperty().orElse(null); }
+        public String getCategory() {
+            return part.getCategoryProperty().orElse(null);
+        }
         public void setCategory(String category) {
             part.setCategoryProperty(category);
         }
