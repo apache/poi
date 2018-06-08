@@ -54,6 +54,7 @@ public interface PackageProperties {
 
     /**
      * Set the category of the content of this package.
+	 * @since 4.0.0
      */
     void setCategoryProperty(Optional<String> category);
 
@@ -70,6 +71,7 @@ public interface PackageProperties {
 
     /**
      * Get the status of the content.
+     * @since 4.0.0
      */
     void setContentStatusProperty(Optional<String> contentStatus);
 
@@ -89,6 +91,7 @@ public interface PackageProperties {
     /**
      * Set the type of content represented, generally defined by a specific use
      * and intended audience.
+     * @since 4.0.0
      */
     void setContentTypeProperty(Optional<String> contentType);
 
@@ -124,6 +127,7 @@ public interface PackageProperties {
     /**
      * Set the entity primarily responsible for making the content of the
      * resource.
+     * @since 4.0.0
      */
     void setCreatorProperty(Optional<String> creator);
 
@@ -139,6 +143,7 @@ public interface PackageProperties {
 
     /**
      * Set the explanation of the content of the resource.
+     * @since 4.0.0
      */
     void setDescriptionProperty(Optional<String> description);
 
@@ -155,6 +160,7 @@ public interface PackageProperties {
 
     /**
      * Set an unambiguous reference to the resource within a given context.
+     * @since 4.0.0
      */
     void setIdentifierProperty(Optional<String> identifier);
 
@@ -177,6 +183,7 @@ public interface PackageProperties {
      * Set a delimited set of keywords to support searching and indexing. This
      * is typically a list of terms that are not available elsewhere in the
      * properties
+     * @since 4.0.0
      */
     void setKeywordsProperty(Optional<String> keywords);
 
@@ -193,6 +200,7 @@ public interface PackageProperties {
 
     /**
      * Set the language of the intellectual content of the resource.
+     * @since 4.0.0
      */
     void setLanguageProperty(Optional<String> language);
 
@@ -208,6 +216,7 @@ public interface PackageProperties {
 
     /**
      * Set the user who performed the last modification.
+     * @since 4.0.0
      */
     void setLastModifiedByProperty(Optional<String> lastModifiedBy);
 
@@ -256,6 +265,7 @@ public interface PackageProperties {
 
     /**
      * Set the revision number.
+     * @since 4.0.0
      */
     void setRevisionProperty(Optional<String> revision);
 
@@ -272,6 +282,7 @@ public interface PackageProperties {
 
     /**
      * Set the topic of the content of the resource.
+     * @since 4.0.0
      */
     void setSubjectProperty(Optional<String> subject);
 
@@ -288,6 +299,7 @@ public interface PackageProperties {
 
     /**
 	 * Set the name given to the resource.
+     * @since 4.0.0
 	 */
 	void setTitleProperty(Optional<String> title);
 
@@ -304,6 +316,7 @@ public interface PackageProperties {
 
     /**
      * Set the version number.
+     * @since 4.0.0
      */
     void setVersionProperty(Optional<String> version);
 }
