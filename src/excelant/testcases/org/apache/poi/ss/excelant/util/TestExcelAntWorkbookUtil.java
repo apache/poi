@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.examples.formula.CalculateMortgageFunction;
 import org.apache.poi.ss.excelant.BuildFileTest;
 import org.apache.poi.ss.formula.udf.UDFFinder;
@@ -56,15 +55,14 @@ public class TestExcelAntWorkbookUtil extends TestCase {
 
 	public void testLoadNotExistingFile() {
 		try {
-			assertNotNull(new ExcelAntWorkbookUtilTestHelper(
-				                                  "notexistingFile" ));
+			new ExcelAntWorkbookUtilTestHelper("notexistingFile");
 			fail("Should catch exception here");
 		} catch (BuildException e) {
 			assertTrue(e.getMessage().contains("notexistingFile"));			
 		}
 	}
 	
-	public void testWorkbookConstructor() throws InvalidFormatException, IOException {
+	public void testWorkbookConstructor() throws IOException {
         File workbookFile = new File(mortgageCalculatorFileName);
         FileInputStream fis = new FileInputStream(workbookFile);
         Workbook workbook = WorkbookFactory.create(fis);
@@ -300,7 +298,6 @@ public class TestExcelAntWorkbookUtil extends TestCase {
         
         double value = fixture.getCellAsDouble(cell);
         
-        assertNotNull(value);
         assertEquals(0.0, value);
     }
     
@@ -330,7 +327,6 @@ public class TestExcelAntWorkbookUtil extends TestCase {
 		
 		double value = fixture.getCellAsDouble(cell);
 		
-		assertNotNull(value);
 		assertEquals(DateUtil.getExcelDate(cellValue, false), value);
 	}
 
