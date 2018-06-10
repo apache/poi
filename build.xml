@@ -576,6 +576,7 @@ under the License.
                 <include name="commons-codec-1.5*"/>
                 <include name="commons-codec-1.9*"/>
                 <include name="commons-codec-1.10*"/>
+                <include name="commons-compress-1.16*"/>
                 <include name="commons-logging-1.1*.jar"/>
                 <include name="findbugs-noUpdateChecks-2.0.3*"/>
                 <include name="jacoco-0.6*"/>
@@ -623,7 +624,7 @@ under the License.
                 <include name="ooxml-security-1.0.jar"/>
                 <include name="curvesapi-1.03.jar"/>
                 <include name="curvesapi-1.04.jar"/>
-                <include name="xmlbeans-2.3.0.jar"/>
+                <include name="xmlbeans-2.3.0.jar*"/>
             </fileset>
             <fileset dir="${compile.lib}">
                 <include name="xercesImpl-*.jar"/>
