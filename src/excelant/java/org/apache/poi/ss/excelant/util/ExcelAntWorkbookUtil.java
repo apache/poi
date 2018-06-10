@@ -95,11 +95,8 @@ public class ExcelAntWorkbookUtil extends Typedef {
         }
 
         try {
-            FileInputStream fis = new FileInputStream(excelFileName);
-            try {
-            	workbook = WorkbookFactory.create(fis);
-            } finally {
-            	fis.close();
+            try (FileInputStream fis = new FileInputStream(excelFileName)) {
+                workbook = WorkbookFactory.create(fis);
             }
         } catch(Exception e) {
             throw new BuildException("Cannot load file " + excelFileName
@@ -111,11 +108,11 @@ public class ExcelAntWorkbookUtil extends Typedef {
 
     /**
      * Used to add a UDF to the evaluator.
-     * @param name
-     * @param clazzName
-     * @throws ClassNotFoundException
-     * @throws InstantiationException
-     * @throws IllegalAccessException
+     * @param name The name of the function to add
+     * @param clazzName The class which implements this function
+     * @throws ClassNotFoundException if the class cannot be found
+     * @throws InstantiationException if the class cannot be constructed
+     * @throws IllegalAccessException if the constructor or the class is not accessible
      */
     public void addFunction(String name, String clazzName) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         Class<?> clazzInst = Class.forName(clazzName);
@@ -130,8 +127,8 @@ public class ExcelAntWorkbookUtil extends Typedef {
      * Updates the internal HashMap of functions with instance and alias passed
      * in.
      *
-     * @param name
-     * @param func
+     * @param name the name of the function to replace
+     * @param func the function to use
      */
     protected void addFunction(String name, FreeRefFunction func) {
         xlsMacroList.put(name, func);
@@ -140,7 +137,8 @@ public class ExcelAntWorkbookUtil extends Typedef {
     /**
      * returns a UDFFinder that contains all of the functions added.
      *
-     * @return
+     * @return An instance of {@link UDFFinder} which can be used to
+     *      lookup functions
      */
     protected UDFFinder getFunctions() {
 
@@ -163,8 +161,9 @@ public class ExcelAntWorkbookUtil extends Typedef {
      * Returns a formula evaluator that is loaded with the functions that
      * have been supplied.
      *
-     * @param fileName
-     * @return
+     * @param fileName Specifies if XSSF or HSSF should be used for
+     *                 the evaluator
+     * @return A {@link FormulaEvaluator} constructed accordingly
      */
     protected FormulaEvaluator getEvaluator(String fileName) {
         FormulaEvaluator evaluator;
