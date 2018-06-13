@@ -324,14 +324,14 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
             assertNotNull(opcProps);
 
             opcProps.setTitleProperty("Testing Bugzilla #47460");
-            assertEquals("Apache POI", opcProps.getCreatorProperty().getValue());
+            assertEquals("Apache POI", opcProps.getCreatorProperty().get());
             opcProps.setCreatorProperty("poi-dev@poi.apache.org");
 
             XSSFWorkbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(workbook);
             assertEquals("Apache POI", wbBack.getProperties().getExtendedProperties().getUnderlyingProperties().getApplication());
             opcProps = wbBack.getProperties().getCoreProperties().getUnderlyingProperties();
-            assertEquals("Testing Bugzilla #47460", opcProps.getTitleProperty().getValue());
-            assertEquals("poi-dev@poi.apache.org", opcProps.getCreatorProperty().getValue());
+            assertEquals("Testing Bugzilla #47460", opcProps.getTitleProperty().get());
+            assertEquals("poi-dev@poi.apache.org", opcProps.getCreatorProperty().get());
             wbBack.close();
         }
     }

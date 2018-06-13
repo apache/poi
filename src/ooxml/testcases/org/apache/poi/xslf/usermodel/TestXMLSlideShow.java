@@ -137,7 +137,7 @@ public class TestXMLSlideShow extends BaseTestSlideShow {
       assertEquals(0, xml.getProperties().getExtendedProperties().getUnderlyingProperties().getLines());
 
       assertEquals(null, xml.getProperties().getCoreProperties().getTitle());
-      assertEquals(null, xml.getProperties().getCoreProperties().getUnderlyingProperties().getSubjectProperty().getValue());
+      assertFalse(xml.getProperties().getCoreProperties().getUnderlyingProperties().getSubjectProperty().isPresent());
       
       xml.close();
    }

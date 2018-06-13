@@ -27,9 +27,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Optional;
 
 import org.apache.poi.ooxml.POIXMLProperties.CoreProperties;
-import org.apache.poi.openxml4j.util.Nullable;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.XSSFTestDataSamples;
@@ -189,7 +189,7 @@ public final class TestPOIXMLProperties {
 
 
         Date dateCreated = LocaleUtil.getLocaleCalendar(2010, 6, 15, 10, 0, 0).getTime();
-        cp.setCreated(new Nullable<>(dateCreated));
+        cp.setCreated(Optional.of(dateCreated));
         assertEquals(dateCreated, cp.getCreated());
 
         XWPFDocument doc2 = XWPFTestDataSamples.writeOutAndReadBack(doc);

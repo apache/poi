@@ -18,6 +18,7 @@
 package org.apache.poi.openxml4j.opc.internal.marshallers;
 
 import java.io.OutputStream;
+import java.util.Optional;
 
 import javax.xml.XMLConstants;
 import javax.xml.stream.XMLEventFactory;
@@ -27,7 +28,6 @@ import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.apache.poi.openxml4j.opc.internal.PartMarshaller;
-import org.apache.poi.openxml4j.util.Nullable;
 import org.apache.poi.ooxml.util.DocumentHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -126,16 +126,16 @@ public class PackagePropertiesMarshaller implements PartMarshaller {
     /**
      * Sets the given element's text content, creating it if necessary.
      */
-    private Element setElementTextContent(String localName, Namespace namespace, Nullable<String> property) {
-        return setElementTextContent(localName, namespace, property, property.getValue());
+    private Element setElementTextContent(String localName, Namespace namespace, Optional<String> property) {
+        return setElementTextContent(localName, namespace, property, property.orElse(null));
     }
     
     private String getQName(String localName, Namespace namespace) {
         return namespace.getPrefix().isEmpty() ? localName : namespace.getPrefix() + ':' + localName;
     }
 
-    private Element setElementTextContent(String localName, Namespace namespace, Nullable<?> property, String propertyValue) {
-        if (!property.hasValue())
+    private Element setElementTextContent(String localName, Namespace namespace, Optional<?> property, String propertyValue) {
+        if (!property.isPresent())
             return null;
 
         Element root = xmlDoc.getDocumentElement();
@@ -149,7 +149,7 @@ public class PackagePropertiesMarshaller implements PartMarshaller {
         return elem;
     }
 
-    private Element setElementTextContent(String localName, Namespace namespace, Nullable<?> property, String propertyValue, String xsiType) {
+    private Element setElementTextContent(String localName, Namespace namespace, Optional<?> property, String propertyValue, String xsiType) {
         Element element = setElementTextContent(localName, namespace, property, propertyValue);
         if (element != null) {
             element.setAttributeNS(namespaceXSI.getNamespaceURI(), getQName("type", namespaceXSI), xsiType);

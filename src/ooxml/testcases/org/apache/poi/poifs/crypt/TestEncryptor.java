@@ -16,12 +16,6 @@
 ==================================================================== */
 package org.apache.poi.poifs.crypt;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -36,7 +30,6 @@ import javax.crypto.Cipher;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.opc.ContentTypes;
 import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.poifs.crypt.agile.AgileDecryptor;
 import org.apache.poi.poifs.crypt.agile.AgileEncryptionHeader;
 import org.apache.poi.poifs.crypt.agile.AgileEncryptionVerifier;
@@ -53,6 +46,8 @@ import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.junit.Assume;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 public class TestEncryptor {
     @Test
@@ -295,7 +290,7 @@ public class TestEncryptor {
             assertEquals(0, pkg.getPartsByContentType(ContentTypes.CORE_PROPERTIES_PART).size());
             assertNotNull(pkg.getPackageProperties());
             assertNotNull(pkg.getPackageProperties().getLanguageProperty());
-            assertNull(pkg.getPackageProperties().getLanguageProperty().getValue());
+            assertFalse(pkg.getPackageProperties().getLanguageProperty().isPresent());
 
             // Encrypt it
             EncryptionInfo info = new EncryptionInfo(EncryptionMode.agile);
@@ -327,7 +322,7 @@ public class TestEncryptor {
                 assertEquals(1, inpPkg.getPartsByContentType(ContentTypes.CORE_PROPERTIES_PART).size());
                 assertNotNull(inpPkg.getPackageProperties());
                 assertNotNull(inpPkg.getPackageProperties().getLanguageProperty());
-                assertNull(inpPkg.getPackageProperties().getLanguageProperty().getValue());
+                assertFalse(inpPkg.getPackageProperties().getLanguageProperty().isPresent());
 
             }
         }

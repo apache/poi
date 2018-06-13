@@ -71,34 +71,34 @@ public final class TestXWPFDocument {
     @Test
     public void testOpen() throws Exception {
         // Simple file
-        XWPFDocument xml1 = XWPFTestDataSamples.openSampleDocument("sample.docx");
-        // Check it has key parts
-        assertNotNull(xml1.getDocument());
-        assertNotNull(xml1.getDocument().getBody());
-        assertNotNull(xml1.getStyle());
-        xml1.close();
+        try (XWPFDocument xml1 = XWPFTestDataSamples.openSampleDocument("sample.docx")) {
+            // Check it has key parts
+            assertNotNull(xml1.getDocument());
+            assertNotNull(xml1.getDocument().getBody());
+            assertNotNull(xml1.getStyle());
+        }
 
         // Complex file
-        XWPFDocument xml2 = XWPFTestDataSamples.openSampleDocument("IllustrativeCases.docx");
-        assertNotNull(xml2.getDocument());
-        assertNotNull(xml2.getDocument().getBody());
-        assertNotNull(xml2.getStyle());
-        xml2.close();
+        try (XWPFDocument xml2 = XWPFTestDataSamples.openSampleDocument("IllustrativeCases.docx")) {
+            assertNotNull(xml2.getDocument());
+            assertNotNull(xml2.getDocument().getBody());
+            assertNotNull(xml2.getStyle());
+        }
     }
 
     @Test
     public void testMetadataBasics() throws IOException {
-        XWPFDocument xml = XWPFTestDataSamples.openSampleDocument("sample.docx");
-        assertNotNull(xml.getProperties().getCoreProperties());
-        assertNotNull(xml.getProperties().getExtendedProperties());
+        try (XWPFDocument xml = XWPFTestDataSamples.openSampleDocument("sample.docx")) {
+            assertNotNull(xml.getProperties().getCoreProperties());
+            assertNotNull(xml.getProperties().getExtendedProperties());
 
-        assertEquals("Microsoft Office Word", xml.getProperties().getExtendedProperties().getUnderlyingProperties().getApplication());
-        assertEquals(1315, xml.getProperties().getExtendedProperties().getUnderlyingProperties().getCharacters());
-        assertEquals(10, xml.getProperties().getExtendedProperties().getUnderlyingProperties().getLines());
+            assertEquals("Microsoft Office Word", xml.getProperties().getExtendedProperties().getUnderlyingProperties().getApplication());
+            assertEquals(1315, xml.getProperties().getExtendedProperties().getUnderlyingProperties().getCharacters());
+            assertEquals(10, xml.getProperties().getExtendedProperties().getUnderlyingProperties().getLines());
 
-        assertEquals(null, xml.getProperties().getCoreProperties().getTitle());
-        assertEquals(null, xml.getProperties().getCoreProperties().getUnderlyingProperties().getSubjectProperty().getValue());
-        xml.close();
+            assertEquals(null, xml.getProperties().getCoreProperties().getTitle());
+            assertFalse(xml.getProperties().getCoreProperties().getUnderlyingProperties().getSubjectProperty().isPresent());
+        }
     }
 
     @Test
@@ -112,7 +112,7 @@ public final class TestXWPFDocument {
         assertEquals(0, xml.getProperties().getExtendedProperties().getUnderlyingProperties().getLines());
 
         assertEquals(" ", xml.getProperties().getCoreProperties().getTitle());
-        assertEquals(" ", xml.getProperties().getCoreProperties().getUnderlyingProperties().getSubjectProperty().getValue());
+        assertEquals(" ", xml.getProperties().getCoreProperties().getUnderlyingProperties().getSubjectProperty().get());
         xml.close();
     }
 

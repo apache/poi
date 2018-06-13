@@ -17,11 +17,6 @@
 
 package org.apache.poi.openxml4j.opc;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -30,16 +25,18 @@ import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Optional;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
-import org.apache.poi.openxml4j.util.Nullable;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Test;
 import org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperty;
+
+import static org.junit.Assert.*;
 
 public final class TestPackageCoreProperties {
 	/**
@@ -77,28 +74,28 @@ public final class TestPackageCoreProperties {
 
         //test various date formats
         props.setCreatedProperty("2007-05-12T08:00:00Z");
-        assertEquals(dateToInsert, props.getCreatedProperty().getValue());
+        assertEquals(dateToInsert, props.getCreatedProperty().get());
 
         props.setCreatedProperty("2007-05-12T08:00:00"); //no Z, assume Z
-        assertEquals(dateToInsert, props.getCreatedProperty().getValue());
+        assertEquals(dateToInsert, props.getCreatedProperty().get());
 
         props.setCreatedProperty("2007-05-12T08:00:00.123Z");//millis
-        assertEquals(msdf.parse("2007-05-12T08:00:00.123Z"), props.getCreatedProperty().getValue());
+        assertEquals(msdf.parse("2007-05-12T08:00:00.123Z"), props.getCreatedProperty().get());
 
         props.setCreatedProperty("2007-05-12T10:00:00+0200");
-        assertEquals(dateToInsert, props.getCreatedProperty().getValue());
+        assertEquals(dateToInsert, props.getCreatedProperty().get());
 
         props.setCreatedProperty("2007-05-12T10:00:00+02:00");//colon in tz
-        assertEquals(dateToInsert, props.getCreatedProperty().getValue());
+        assertEquals(dateToInsert, props.getCreatedProperty().get());
 
         props.setCreatedProperty("2007-05-12T06:00:00-0200");
-        assertEquals(dateToInsert, props.getCreatedProperty().getValue());
+        assertEquals(dateToInsert, props.getCreatedProperty().get());
 
         props.setCreatedProperty("2015-07-27");
-        assertEquals(msdf.parse("2015-07-27T00:00:00.000Z"), props.getCreatedProperty().getValue());
+        assertEquals(msdf.parse("2015-07-27T00:00:00.000Z"), props.getCreatedProperty().get());
 
         props.setCreatedProperty("2007-05-12T10:00:00.123+0200");
-        assertEquals(msdf.parse("2007-05-12T08:00:00.123Z"), props.getCreatedProperty().getValue());
+        assertEquals(msdf.parse("2007-05-12T08:00:00.123Z"), props.getCreatedProperty().get());
 
         props.setCategoryProperty("MyCategory");
 		props.setContentStatusProperty("MyContentStatus");
@@ -109,8 +106,8 @@ public final class TestPackageCoreProperties {
 		props.setKeywordsProperty("MyKeywords");
 		props.setLanguageProperty("MyLanguage");
 		props.setLastModifiedByProperty("Julien Chable");
-		props.setLastPrintedProperty(new Nullable<>(dateToInsert));
-		props.setModifiedProperty(new Nullable<>(dateToInsert));
+		props.setLastPrintedProperty(Optional.of(dateToInsert));
+		props.setModifiedProperty(Optional.of(dateToInsert));
 		props.setRevisionProperty("2");
 		props.setTitleProperty("MyTitle");
 		props.setSubjectProperty("MySubject");
@@ -134,22 +131,22 @@ public final class TestPackageCoreProperties {
 
 		// Gets the core properties
 		PackageProperties props = p.getPackageProperties();
-		assertEquals("MyCategory", props.getCategoryProperty().getValue());
-		assertEquals("MyContentStatus", props.getContentStatusProperty().getValue());
-		assertEquals("MyContentType", props.getContentTypeProperty().getValue());
-		assertEquals(expectedDate, props.getCreatedProperty().getValue());
-		assertEquals("MyCreator", props.getCreatorProperty().getValue());
-		assertEquals("MyDescription", props.getDescriptionProperty().getValue());
-		assertEquals("MyIdentifier", props.getIdentifierProperty().getValue());
-		assertEquals("MyKeywords", props.getKeywordsProperty().getValue());
-		assertEquals("MyLanguage", props.getLanguageProperty().getValue());
-		assertEquals("Julien Chable", props.getLastModifiedByProperty().getValue());
-		assertEquals(expectedDate, props.getLastPrintedProperty().getValue());
-		assertEquals(expectedDate, props.getModifiedProperty().getValue());
-		assertEquals("2", props.getRevisionProperty().getValue());
-		assertEquals("MySubject", props.getSubjectProperty().getValue());
-		assertEquals("MyTitle", props.getTitleProperty().getValue());
-		assertEquals("2", props.getVersionProperty().getValue());
+		assertEquals("MyCategory", props.getCategoryProperty().get());
+		assertEquals("MyContentStatus", props.getContentStatusProperty().get());
+		assertEquals("MyContentType", props.getContentTypeProperty().get());
+		assertEquals(expectedDate, props.getCreatedProperty().get());
+		assertEquals("MyCreator", props.getCreatorProperty().get());
+		assertEquals("MyDescription", props.getDescriptionProperty().get());
+		assertEquals("MyIdentifier", props.getIdentifierProperty().get());
+		assertEquals("MyKeywords", props.getKeywordsProperty().get());
+		assertEquals("MyLanguage", props.getLanguageProperty().get());
+		assertEquals("Julien Chable", props.getLastModifiedByProperty().get());
+		assertEquals(expectedDate, props.getLastPrintedProperty().get());
+		assertEquals(expectedDate, props.getModifiedProperty().get());
+		assertEquals("2", props.getRevisionProperty().get());
+		assertEquals("MySubject", props.getSubjectProperty().get());
+		assertEquals("MyTitle", props.getTitleProperty().get());
+		assertEquals("2", props.getVersionProperty().get());
 	}
 
 	@Test
@@ -164,48 +161,48 @@ public final class TestPackageCoreProperties {
 
         // created
         assertEquals("", props.getCreatedPropertyString());
-        assertNull(props.getCreatedProperty().getValue());
+        assertFalse(props.getCreatedProperty().isPresent());
         props.setCreatedProperty((String)null);
         assertEquals("", props.getCreatedPropertyString());
-        assertNull(props.getCreatedProperty().getValue());
-        props.setCreatedProperty(new Nullable<>());
+        assertFalse(props.getCreatedProperty().isPresent());
+        props.setCreatedProperty(Optional.empty());
         assertEquals("", props.getCreatedPropertyString());
-        assertNull(props.getCreatedProperty().getValue());
-        props.setCreatedProperty(new Nullable<>(date));
+        assertFalse(props.getCreatedProperty().isPresent());
+        props.setCreatedProperty(Optional.of(date));
         assertEquals(strDate, props.getCreatedPropertyString());
-        assertEquals(date, props.getCreatedProperty().getValue());
+        assertEquals(date, props.getCreatedProperty().get());
         props.setCreatedProperty(strDate);
         assertEquals(strDate, props.getCreatedPropertyString());
-        assertEquals(date, props.getCreatedProperty().getValue());
+        assertEquals(date, props.getCreatedProperty().get());
 
         // lastPrinted
         assertEquals("", props.getLastPrintedPropertyString());
-        assertNull(props.getLastPrintedProperty().getValue());
+        assertFalse(props.getLastPrintedProperty().isPresent());
         props.setLastPrintedProperty((String)null);
         assertEquals("", props.getLastPrintedPropertyString());
-        assertNull(props.getLastPrintedProperty().getValue());
-        props.setLastPrintedProperty(new Nullable<>());
+        assertFalse(props.getLastPrintedProperty().isPresent());
+        props.setLastPrintedProperty(Optional.empty());
         assertEquals("", props.getLastPrintedPropertyString());
-        assertNull(props.getLastPrintedProperty().getValue());
-        props.setLastPrintedProperty(new Nullable<>(date));
+        assertFalse(props.getLastPrintedProperty().isPresent());
+        props.setLastPrintedProperty(Optional.of(date));
         assertEquals(strDate, props.getLastPrintedPropertyString());
-        assertEquals(date, props.getLastPrintedProperty().getValue());
+        assertEquals(date, props.getLastPrintedProperty().get());
         props.setLastPrintedProperty(strDate);
         assertEquals(strDate, props.getLastPrintedPropertyString());
-        assertEquals(date, props.getLastPrintedProperty().getValue());
+        assertEquals(date, props.getLastPrintedProperty().get());
 
         // modified
-        assertNull(props.getModifiedProperty().getValue());
+        assertFalse(props.getModifiedProperty().isPresent());
         props.setModifiedProperty((String)null);
-        assertNull(props.getModifiedProperty().getValue());
-        props.setModifiedProperty(new Nullable<>());
-        assertNull(props.getModifiedProperty().getValue());
-        props.setModifiedProperty(new Nullable<>(date));
+        assertFalse(props.getModifiedProperty().isPresent());
+        props.setModifiedProperty(Optional.empty());
+        assertFalse(props.getModifiedProperty().isPresent());
+        props.setModifiedProperty(Optional.of(date));
         assertEquals(strDate, props.getModifiedPropertyString());
-        assertEquals(date, props.getModifiedProperty().getValue());
+        assertEquals(date, props.getModifiedProperty().get());
         props.setModifiedProperty(strDate);
         assertEquals(strDate, props.getModifiedPropertyString());
-        assertEquals(date, props.getModifiedProperty().getValue());
+        assertEquals(date, props.getModifiedProperty().get());
         
         // Tidy
         pkg.close();
@@ -216,7 +213,7 @@ public final class TestPackageCoreProperties {
         // Open the package
         OPCPackage pkg1 = OPCPackage.open(OpenXML4JTestDataSamples.openSampleStream("51444.xlsx"));
         PackageProperties props1 = pkg1.getPackageProperties();
-        assertEquals(null, props1.getTitleProperty().getValue());
+        assertFalse(props1.getTitleProperty().isPresent());
         props1.setTitleProperty("Bug 51444 fixed");
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         pkg1.save(out);
@@ -253,7 +250,7 @@ public final class TestPackageCoreProperties {
         PackagePropertiesPart props = (PackagePropertiesPart)p.getPackageProperties();
         
         // Check
-        assertEquals("Stefan Kopf", props.getCreatorProperty().getValue());
+        assertEquals("Stefan Kopf", props.getCreatorProperty().get());
         
         p.close();
     }
@@ -287,20 +284,20 @@ public final class TestPackageCoreProperties {
         df.setTimeZone(LocaleUtil.TIMEZONE_UTC);
 
         // Check text properties first
-        assertEquals("Lorem Ipsum", props.getTitleProperty().getValue());
-        assertEquals("Apache POI", props.getCreatorProperty().getValue());
+        assertEquals("Lorem Ipsum", props.getTitleProperty().get());
+        assertEquals("Apache POI", props.getCreatorProperty().get());
         
         // Created at has a +3 timezone and milliseconds
         //   2006-10-13T18:06:00.123+03:00
         // = 2006-10-13T15:06:00.123+00:00
         assertEquals("2006-10-13T15:06:00Z", props.getCreatedPropertyString());
-        assertEquals("2006-10-13T15:06:00.123Z", df.format(props.getCreatedProperty().getValue()));
+        assertEquals("2006-10-13T15:06:00.123Z", df.format(props.getCreatedProperty().get()));
         
         // Modified at has a -13 timezone but no milliseconds
         //   2007-06-20T07:59:00-13:00
         // = 2007-06-20T20:59:00-13:00
         assertEquals("2007-06-20T20:59:00Z", props.getModifiedPropertyString());
-        assertEquals("2007-06-20T20:59:00.000Z", df.format(props.getModifiedProperty().getValue()));
+        assertEquals("2007-06-20T20:59:00.000Z", df.format(props.getModifiedProperty().get()));
         
         
         // Ensure we can change them with other timezones and still read back OK
@@ -312,16 +309,16 @@ public final class TestPackageCoreProperties {
         pkg = OPCPackage.open(new ByteArrayInputStream(baos.toByteArray()));
         
         // Check text properties first - should be unchanged
-        assertEquals("Lorem Ipsum", props.getTitleProperty().getValue());
-        assertEquals("Apache POI", props.getCreatorProperty().getValue());
+        assertEquals("Lorem Ipsum", props.getTitleProperty().get());
+        assertEquals("Apache POI", props.getCreatorProperty().get());
         
         // Check the updated times
         //   2007-06-20T20:57:00+13:00
         // = 2007-06-20T07:57:00Z
-        assertEquals("2007-06-20T07:57:00.000Z", df.format(props.getCreatedProperty().getValue()));
+        assertEquals("2007-06-20T07:57:00.000Z", df.format(props.getCreatedProperty().get()));
         
         //   2007-06-20T20:59:00.123-13:00
         // = 2007-06-21T09:59:00.123Z
-        assertEquals("2007-06-21T09:59:00.123Z", df.format(props.getModifiedProperty().getValue()));
+        assertEquals("2007-06-21T09:59:00.123Z", df.format(props.getModifiedProperty().get()));
 	}
 }
