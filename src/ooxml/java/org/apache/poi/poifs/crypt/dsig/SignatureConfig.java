@@ -23,10 +23,14 @@ import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet.XADES_132_NS
 import java.security.PrivateKey;
 import java.security.Provider;
 import java.security.cert.X509Certificate;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -49,6 +53,7 @@ import org.apache.poi.poifs.crypt.dsig.services.SignaturePolicyService;
 import org.apache.poi.poifs.crypt.dsig.services.TSPTimeStampService;
 import org.apache.poi.poifs.crypt.dsig.services.TimeStampService;
 import org.apache.poi.poifs.crypt.dsig.services.TimeStampServiceValidator;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.xml.security.signature.XMLSignature;
@@ -60,10 +65,16 @@ import org.w3c.dom.events.EventListener;
  * Apart of the thread local members (e.g. opc-package) most values will probably be constant, so
  * it might be configured centrally (e.g. by spring) 
  */
+@SuppressWarnings({"unused","WeakerAccess"})
 public class SignatureConfig {
 
+    public static final String SIGNATURE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+
     private static final POILogger LOG = POILogFactory.getLogger(SignatureConfig.class);
-    
+    private static final String DigestMethod_SHA224 = "http://www.w3.org/2001/04/xmldsig-more#sha224";
+    private static final String DigestMethod_SHA384 = "http://www.w3.org/2001/04/xmldsig-more#sha384";
+
+
     public interface SignatureConfigurable {
         void setSignatureConfig(SignatureConfig signatureConfig);        
     }
@@ -150,14 +161,20 @@ public class SignatureConfig {
      * with certain namespaces, so this EventListener is used to interfere
      * with the marshalling process.
      */
-    EventListener signatureMarshalListener;
+    private EventListener signatureMarshalListener;
 
     /**
      * Map of namespace uris to prefix
      * If a mapping is specified, the corresponding elements will be prefixed
      */
-    Map<String,String> namespacePrefixes = new HashMap<>();
-    
+    private final Map<String,String> namespacePrefixes = new HashMap<>();
+
+    /**
+     * if true, the signature config is updated based on the validated document
+     */
+    private boolean updateConfigOnValidate = false;
+
+
     /**
      * Inits and checks the config object.
      * If not set previously, complex configuration properties also get 
@@ -308,7 +325,36 @@ public class SignatureConfig {
     public void setExecutionTime(Date executionTime) {
         this.executionTime = executionTime;
     }
-    
+
+    /**
+     * @return the formatted execution time ({@link #SIGNATURE_TIME_FORMAT})
+     *
+     * @since POI 4.0.0
+     */
+    public String formatExecutionTime() {
+        final DateFormat fmt = new SimpleDateFormat(SIGNATURE_TIME_FORMAT, Locale.ROOT);
+        fmt.setTimeZone(LocaleUtil.TIMEZONE_UTC);
+        return fmt.format(getExecutionTime());
+    }
+
+    /**
+     * Sets the executionTime which is in standard format ({@link #SIGNATURE_TIME_FORMAT})
+     * @param executionTime the execution time
+     *
+     * @since POI 4.0.0
+     */
+    public void setExecutionTime(String executionTime) {
+        if (executionTime != null && !"".equals(executionTime)){
+            final DateFormat fmt = new SimpleDateFormat(SIGNATURE_TIME_FORMAT, Locale.ROOT);
+            fmt.setTimeZone(LocaleUtil.TIMEZONE_UTC);
+            try {
+                this.executionTime = fmt.parse(executionTime);
+            } catch (ParseException e) {
+                LOG.log(POILogger.WARN, "Illegal execution time: "+executionTime);
+            }
+        }
+    }
+
     /**
      * @return the service to be used for XAdES-EPES properties. There's no default implementation
      */
@@ -364,7 +410,24 @@ public class SignatureConfig {
      * @param canonicalizationMethod the default canonicalization method
      */
     public void setCanonicalizationMethod(String canonicalizationMethod) {
-        this.canonicalizationMethod = canonicalizationMethod;
+        this.canonicalizationMethod = verifyCanonicalizationMethod(canonicalizationMethod, CanonicalizationMethod.INCLUSIVE);
+    }
+
+    private static String verifyCanonicalizationMethod(String canonicalizationMethod, String defaultMethod) {
+        if (canonicalizationMethod == null || canonicalizationMethod.isEmpty()) {
+            return defaultMethod;
+        }
+
+        switch (canonicalizationMethod) {
+            case CanonicalizationMethod.INCLUSIVE:
+            case CanonicalizationMethod.INCLUSIVE_WITH_COMMENTS:
+            case CanonicalizationMethod.ENVELOPED:
+            case CanonicalizationMethod.EXCLUSIVE:
+            case CanonicalizationMethod.EXCLUSIVE_WITH_COMMENTS:
+                return canonicalizationMethod;
+        }
+
+        throw new EncryptedDocumentException("Unknown CanonicalizationMethod: "+canonicalizationMethod);
     }
 
     /**
@@ -530,6 +593,16 @@ public class SignatureConfig {
      */
     public void setXadesDigestAlgo(HashAlgorithm xadesDigestAlgo) {
         this.xadesDigestAlgo = xadesDigestAlgo;
+    }
+
+    /**
+     * @param xadesDigestAlgo hash algorithm used for XAdES.
+     * When <code>null</code>, defaults to {@link #getDigestAlgo()}
+     *
+     * @since POI 4.0.0
+     */
+    public void setXadesDigestAlgo(String xadesDigestAlgo) {
+        this.xadesDigestAlgo = getDigestMethodAlgo(xadesDigestAlgo);
     }
 
     /**
@@ -700,16 +773,17 @@ public class SignatureConfig {
      * @param namespacePrefixes the map of namespace uri (key) to prefix (value)
      */
     public void setNamespacePrefixes(Map<String, String> namespacePrefixes) {
-        this.namespacePrefixes = namespacePrefixes;
+        this.namespacePrefixes.clear();
+        this.namespacePrefixes.putAll(namespacePrefixes);
     }
 
     /**
      * helper method for null/default value handling
-     * @param value
-     * @param defaultValue
+     * @param value the value to be tested
+     * @param defaultValue the default value
      * @return if value is not null, return value otherwise defaultValue
      */
-    protected static <T> T nvl(T value, T defaultValue)  {
+    private static <T> T nvl(T value, T defaultValue)  {
         return value == null ? defaultValue : value;
     }
 
@@ -729,34 +803,92 @@ public class SignatureConfig {
             +getDigestAlgo()+" not supported for signing.");
         }
     }
-    
+
     /**
      * @return the uri for the main digest
      */
     public String getDigestMethodUri() {
         return getDigestMethodUri(getDigestAlgo());
     }
-    
+
     /**
-     * Sets the digest algorithm - currently only sha* and ripemd160 is supported.
+     * Converts the digest algorithm - currently only sha* and ripemd160 is supported.
      * MS Office only supports sha1, sha256, sha384, sha512. 
      * 
-     * @param digestAlgo the digest algorithm  
+     * @param digestAlgo the digest algorithm
      * @return the uri for the given digest
      */
     public static String getDigestMethodUri(HashAlgorithm digestAlgo) {
         switch (digestAlgo) {
         case sha1:   return DigestMethod.SHA1;
-        case sha224: return "http://www.w3.org/2001/04/xmldsig-more#sha224";
+        case sha224: return DigestMethod_SHA224;
         case sha256: return DigestMethod.SHA256;
-        case sha384: return "http://www.w3.org/2001/04/xmldsig-more#sha384";
+        case sha384: return DigestMethod_SHA384;
         case sha512: return DigestMethod.SHA512;
         case ripemd160: return DigestMethod.RIPEMD160;
         default: throw new EncryptedDocumentException("Hash algorithm "
             +digestAlgo+" not supported for signing.");
         }
     }
-    
+
+    /**
+     * Converts the digest algorithm ur - currently only sha* and ripemd160 is supported.
+     * MS Office only supports sha1, sha256, sha384, sha512.
+     *
+     * @param digestAlgo the digest algorithm uri
+     * @return the hash algorithm for the given digest
+     */
+    private static HashAlgorithm getDigestMethodAlgo(String digestMethodUri) {
+        if (digestMethodUri == null || digestMethodUri.isEmpty()) {
+            return null;
+        }
+        switch (digestMethodUri) {
+            case DigestMethod.SHA1:   return HashAlgorithm.sha1;
+            case DigestMethod_SHA224: return HashAlgorithm.sha224;
+            case DigestMethod.SHA256: return HashAlgorithm.sha256;
+            case DigestMethod_SHA384: return HashAlgorithm.sha384;
+            case DigestMethod.SHA512: return HashAlgorithm.sha512;
+            case DigestMethod.RIPEMD160: return HashAlgorithm.ripemd160;
+            default: throw new EncryptedDocumentException("Hash algorithm "
+                    +digestMethodUri+" not supported for signing.");
+        }
+    }
+
+    /**
+     * Set the digest algorithm based on the method uri.
+     * This is used when a signature was successful validated and the signature
+     * configuration is updated
+     *
+     * @param signatureMethodUri the method uri
+     *
+     * @since POI 4.0.0
+     */
+    public void setSignatureMethodFromUri(final String signatureMethodUri) {
+        switch (signatureMethodUri) {
+            case XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA1:
+                setDigestAlgo(HashAlgorithm.sha1);
+                break;
+            case XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA224:
+                setDigestAlgo(HashAlgorithm.sha224);
+                break;
+            case XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA256:
+                setDigestAlgo(HashAlgorithm.sha256);
+                break;
+            case XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA384:
+                setDigestAlgo(HashAlgorithm.sha384);
+                break;
+            case XMLSignature.ALGO_ID_SIGNATURE_RSA_SHA512:
+                setDigestAlgo(HashAlgorithm.sha512);
+                break;
+            case XMLSignature.ALGO_ID_SIGNATURE_RSA_RIPEMD160:
+                setDigestAlgo(HashAlgorithm.ripemd160);
+                break;
+            default: throw new EncryptedDocumentException("Hash algorithm "
+                    +signatureMethodUri+" not supported.");
+        }
+    }
+
+
     /**
      * @param signatureFactory the xml signature factory, saved as thread-local
      */
@@ -852,6 +984,28 @@ public class SignatureConfig {
      * @see <a href="http://docs.oracle.com/javase/7/docs/api/javax/xml/crypto/dsig/CanonicalizationMethod.html">javax.xml.crypto.dsig.CanonicalizationMethod</a>
      */
     public void setXadesCanonicalizationMethod(String xadesCanonicalizationMethod) {
-        this.xadesCanonicalizationMethod = xadesCanonicalizationMethod;
+        this.xadesCanonicalizationMethod = verifyCanonicalizationMethod(xadesCanonicalizationMethod, CanonicalizationMethod.EXCLUSIVE);
+    }
+
+    /**
+     * @return true, if the signature config is to be updated based on the successful validated document
+     *
+     * @since POI 4.0.0
+     */
+    public boolean isUpdateConfigOnValidate() {
+        return updateConfigOnValidate;
+    }
+
+    /**
+     * The signature config can be updated if a document is succesful validated.
+     * This flag is used for activating this modifications.
+     * Defaults to {@code false}<p>
+     *
+     * @param updateConfigOnValidate if true, update config on validate
+     *
+     * @since POI 4.0.0
+     */
+    public void setUpdateConfigOnValidate(boolean updateConfigOnValidate) {
+        this.updateConfigOnValidate = updateConfigOnValidate;
     }
 }
