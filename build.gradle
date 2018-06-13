@@ -45,7 +45,7 @@ allprojects {
     apply plugin: 'eclipse'
 
     task wrapper(type: Wrapper) {
-        gradleVersion = '3.4.1'
+        gradleVersion = '4.6'
     }
 
     task adjustWrapperPropertiesFile {

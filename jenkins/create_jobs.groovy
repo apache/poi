@@ -64,7 +64,7 @@ def poijobs = [
         ],
         [ name: 'POI-DSL-regenerate-javadoc', trigger: triggerSundays, javadoc: true
         ],
-        [ name: 'POI-DSL-API-Check', trigger: '@daily', apicheck: true
+        [ name: 'POI-DSL-API-Check', trigger: '@daily', apicheck: true, disabled: true
         ],
         [ name: 'POI-DSL-Gradle', trigger: triggerSundays, email: 'centic@apache.org', gradle: true,
           // Gradle will not run any tests if the code is up-to-date, therefore manually mark the files as updated

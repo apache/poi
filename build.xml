@@ -199,8 +199,8 @@ under the License.
     <property name="ooxml.curvesapi.jar" location="${ooxml.lib}/curvesapi-1.05.jar"/>
     <property name="ooxml.curvesapi.url"
               value="${repository.m2}/maven2/com/github/virtuald/curvesapi/1.05/curvesapi-1.05.jar"/>
-    <property name="ooxml.xmlbeans26.jar" location="${ooxml.lib}/xmlbeans-2.6.0.jar"/>
-    <property name="ooxml.xmlbeans26.url"
+    <property name="ooxml.xmlbeans.jar" location="${ooxml.lib}/xmlbeans-2.6.0.jar"/>
+    <property name="ooxml.xmlbeans.url"
               value="${repository.m2}/maven2/org/apache/xmlbeans/xmlbeans/2.6.0/xmlbeans-2.6.0.jar"/>
     <property name="ooxml.commons-compress.jar" location="${main.lib}/commons-compress-1.17.jar"/>
     <property name="ooxml.commons-compress.url"
@@ -356,7 +356,7 @@ under the License.
 
     <path id="ooxml.classpath">
         <pathelement location="${ooxml.curvesapi.jar}"/>
-        <pathelement location="${ooxml.xmlbeans26.jar}"/>
+        <pathelement location="${ooxml.xmlbeans.jar}"/>
         <pathelement location="${ooxml.commons-compress.jar}"/>
         <pathelement location="${ooxml.xsds.jar}"/>
         <path refid="main.classpath"/>
@@ -406,7 +406,7 @@ under the License.
 
     <path id="ooxml-lite.classpath">
         <pathelement location="${ooxml.curvesapi.jar}"/>
-        <pathelement location="${ooxml.xmlbeans26.jar}"/>
+        <pathelement location="${ooxml.xmlbeans.jar}"/>
         <pathelement location="${ooxml.commons-compress.jar}"/>
         <pathelement location="${ooxml.lite.output.dir}"/> <!-- instead of ooxml-xsds.jar use the filtered classes-->
         <path refid="main.classpath"/>
@@ -576,6 +576,7 @@ under the License.
                 <include name="commons-codec-1.5*"/>
                 <include name="commons-codec-1.9*"/>
                 <include name="commons-codec-1.10*"/>
+                <include name="commons-compress-1.16*"/>
                 <include name="commons-logging-1.1*.jar"/>
                 <include name="findbugs-noUpdateChecks-2.0.3*"/>
                 <include name="jacoco-0.6*"/>
@@ -623,7 +624,7 @@ under the License.
                 <include name="ooxml-security-1.0.jar"/>
                 <include name="curvesapi-1.03.jar"/>
                 <include name="curvesapi-1.04.jar"/>
-                <include name="xmlbeans-2.3.0.jar"/>
+                <include name="xmlbeans-2.3.0.jar*"/>
             </fileset>
             <fileset dir="${compile.lib}">
                 <include name="xercesImpl-*.jar"/>
@@ -718,7 +719,7 @@ under the License.
             <or>
                 <and>
                     <available file="${ooxml.curvesapi.jar}"/>
-                    <available file="${ooxml.xmlbeans26.jar}"/>
+                    <available file="${ooxml.xmlbeans.jar}"/>
                     <available file="${ooxml.commons-compress.jar}"/>
                 </and>
                 <isset property="disconnected"/>
@@ -728,11 +729,11 @@ under the License.
     <target name="fetch-ooxml-jars" depends="check-ooxml-jars" unless="ooxml.jars.present">
         <mkdir dir="${ooxml.lib}"/>
         <downloadfile src="${ooxml.curvesapi.url}" dest="${ooxml.curvesapi.jar}"/>
-        <downloadfile src="${ooxml.xmlbeans26.url}" dest="${ooxml.xmlbeans26.jar}.orig"/>
+        <downloadfile src="${ooxml.xmlbeans.url}" dest="${ooxml.xmlbeans.jar}.orig"/>
         <downloadfile src="${ooxml.commons-compress.url}" dest="${ooxml.commons-compress.jar}"/>
         <!-- remove piccolo parser, so we don't use unsafe calls to it instead of using jaxp -->
-        <zip destfile="${ooxml.xmlbeans26.jar}">
-            <zipfileset src="${ooxml.xmlbeans26.jar}.orig" excludes="org/apache/xmlbeans/impl/piccolo/**"/>
+        <zip destfile="${ooxml.xmlbeans.jar}">
+            <zipfileset src="${ooxml.xmlbeans.jar}.orig" excludes="org/apache/xmlbeans/impl/piccolo/**"/>
         </zip>
     </target>
     <target name="check-svn-jars">
@@ -839,7 +840,7 @@ under the License.
 
             <taskdef name="xmlbean"
                      classname="org.apache.xmlbeans.impl.tool.XMLBean"
-                     classpath="${ooxml.xmlbeans26.jar}.orig"/>
+                     classpath="${ooxml.xmlbeans.jar}.orig"/>
 
             <property name="xmlbean.xsds.dir" location="build/xmlbean-xsds"/>
             <property name="xmlbean.sources.dir" location="build/xmlbean-sources"/>
@@ -870,7 +871,7 @@ under the License.
                     nopvr="@{nopvr}"
                     >
                 <classpath>
-                    <path location="${ooxml.xmlbeans26.jar}.orig"/>
+                    <path location="${ooxml.xmlbeans.jar}.orig"/>
                 </classpath>
             </xmlbean>
 
@@ -2209,7 +2210,7 @@ under the License.
             <auxClasspath path="${ooxml.xsds.jar}" />
             <auxClasspath path="${ooxml.security.jar}" />
             <auxClasspath path="${ooxml.curvesapi.jar}" />
-            <auxClasspath path="${ooxml.xmlbeans26.jar}" />
+            <auxClasspath path="${ooxml.xmlbeans.jar}" />
             <auxClasspath path="${ooxml.commons-compress.jar}" />
             <auxClasspath path="${main.commons-collections4.jar}" />
             <auxClasspath path="${main.commons-math3.jar}" />
