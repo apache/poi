@@ -18,8 +18,7 @@
 package org.apache.poi.openxml4j.opc;
 
 import java.util.Date;
-
-import org.apache.poi.openxml4j.util.Nullable;
+import java.util.Optional;
 
 /**
  * Represents the core properties of an OPC package.
@@ -29,199 +28,295 @@ import org.apache.poi.openxml4j.util.Nullable;
  * @see org.apache.poi.openxml4j.opc.OPCPackage
  */
 public interface PackageProperties {
-	
-	/**
-	 * Dublin Core Terms URI.
-	 */
-	String NAMESPACE_DCTERMS = "http://purl.org/dc/terms/";
-	
-	/**
-	 * Dublin Core namespace URI.
-	 */
-	String NAMESPACE_DC = "http://purl.org/dc/elements/1.1/";
 
-	/* Getters and setters */
+    /**
+     * Dublin Core Terms URI.
+     */
+    String NAMESPACE_DCTERMS = "http://purl.org/dc/terms/";
 
-	/**
-	 * Set the category of the content of this package.
-	 */
-	Nullable<String> getCategoryProperty();
+    /**
+     * Dublin Core namespace URI.
+     */
+    String NAMESPACE_DC = "http://purl.org/dc/elements/1.1/";
 
-	/**
-	 * Set the category of the content of this package.
-	 */
-	void setCategoryProperty(String category);
+    /* Getters and setters */
 
-	/**
-	 * Set the status of the content.
-	 */
-	Nullable<String> getContentStatusProperty();
+    /**
+     * Set the category of the content of this package.
+     * @return property value
+     */
+    Optional<String> getCategoryProperty();
 
-	/**
-	 * Get the status of the content.
-	 */
-	void setContentStatusProperty(String contentStatus);
+    /**
+     * Set the category of the content of this package.
+     */
+    void setCategoryProperty(String category);
 
-	/**
-	 * Get the type of content represented, generally defined by a specific use
-	 * and intended audience.
-	 */
-	Nullable<String> getContentTypeProperty();
+    /**
+     * Set the category of the content of this package.
+     * @since 4.0.0
+     */
+    void setCategoryProperty(Optional<String> category);
 
-	/**
-	 * Set the type of content represented, generally defined by a specific use
-	 * and intended audience.
-	 */
-	void setContentTypeProperty(String contentType);
+    /**
+     * Set the status of the content.
+     * @return property value
+     */
+    Optional<String> getContentStatusProperty();
 
-	/**
-	 * Get the date of creation of the resource.
-	 */
-	Nullable<Date> getCreatedProperty();
+    /**
+     * Get the status of the content.
+     */
+    void setContentStatusProperty(String contentStatus);
 
-	/**
-	 * Set the date of creation of the resource.
-	 */
-	void setCreatedProperty(String created);
-	
-	/**
-	 * Set the date of creation of the resource.
-	 */
-	void setCreatedProperty(Nullable<Date> created);
+    /**
+     * Get the status of the content.
+     * @since 4.0.0
+     */
+    void setContentStatusProperty(Optional<String> contentStatus);
 
-	/**
-	 * Get the entity primarily responsible for making the content of the
-	 * resource.
-	 */
-	Nullable<String> getCreatorProperty();
+    /**
+     * Get the type of content represented, generally defined by a specific use
+     * and intended audience.
+     * @return property value
+     */
+    Optional<String> getContentTypeProperty();
 
-	/**
-	 * Set the entity primarily responsible for making the content of the
-	 * resource.
-	 */
-	void setCreatorProperty(String creator);
+    /**
+     * Set the type of content represented, generally defined by a specific use
+     * and intended audience.
+     */
+    void setContentTypeProperty(String contentType);
 
-	/**
-	 * Get the explanation of the content of the resource.
-	 */
-	Nullable<String> getDescriptionProperty();
+    /**
+     * Set the type of content represented, generally defined by a specific use
+     * and intended audience.
+     * @since 4.0.0
+     */
+    void setContentTypeProperty(Optional<String> contentType);
 
-	/**
-	 * Set the explanation of the content of the resource.
-	 */
-	void setDescriptionProperty(String description);
+    /**
+     * Get the date of creation of the resource.
+     * @return property value
+     */
+    Optional<Date> getCreatedProperty();
 
-	/**
-	 * Get an unambiguous reference to the resource within a given context.
-	 */
-	Nullable<String> getIdentifierProperty();
+    /**
+     * Set the date of creation of the resource.
+     */
+    void setCreatedProperty(String created);
 
-	/**
-	 * Set an unambiguous reference to the resource within a given context.
-	 */
-	void setIdentifierProperty(String identifier);
+    /**
+     * Set the date of creation of the resource.
+     */
+    void setCreatedProperty(Optional<Date> created);
 
-	/**
-	 * Get a delimited set of keywords to support searching and indexing. This
-	 * is typically a list of terms that are not available elsewhere in the
-	 * properties
-	 */
-	Nullable<String> getKeywordsProperty();
+    /**
+     * Get the entity primarily responsible for making the content of the
+     * resource.
+     * @return property value
+     */
+    Optional<String> getCreatorProperty();
 
-	/**
-	 * Set a delimited set of keywords to support searching and indexing. This
-	 * is typically a list of terms that are not available elsewhere in the
-	 * properties
-	 */
-	void setKeywordsProperty(String keywords);
+    /**
+     * Set the entity primarily responsible for making the content of the
+     * resource.
+     */
+    void setCreatorProperty(String creator);
 
-	/**
-	 * Get the language of the intellectual content of the resource.
-	 */
-	Nullable<String> getLanguageProperty();
+    /**
+     * Set the entity primarily responsible for making the content of the
+     * resource.
+     * @since 4.0.0
+     */
+    void setCreatorProperty(Optional<String> creator);
 
-	/**
-	 * Set the language of the intellectual content of the resource.
-	 */
-	void setLanguageProperty(String language);
+    /**
+     * Get the explanation of the content of the resource.
+     */
+    Optional<String> getDescriptionProperty();
 
-	/**
-	 * Get the user who performed the last modification.
-	 */
-	Nullable<String> getLastModifiedByProperty();
+    /**
+     * Set the explanation of the content of the resource.
+     */
+    void setDescriptionProperty(String description);
 
-	/**
-	 * Set the user who performed the last modification.
-	 */
-	void setLastModifiedByProperty(String lastModifiedBy);
+    /**
+     * Set the explanation of the content of the resource.
+     * @since 4.0.0
+     */
+    void setDescriptionProperty(Optional<String> description);
 
-	/**
-	 * Get the date and time of the last printing.
-	 */
-	Nullable<Date> getLastPrintedProperty();
+    /**
+     * Get an unambiguous reference to the resource within a given context.
+     * @return property value
+     */
+    Optional<String> getIdentifierProperty();
 
-	/**
-	 * Set the date and time of the last printing.
-	 */
-	void setLastPrintedProperty(String lastPrinted);
-	
-	/**
-	 * Set the date and time of the last printing.
-	 */
-	void setLastPrintedProperty(Nullable<Date> lastPrinted);
+    /**
+     * Set an unambiguous reference to the resource within a given context.
+     */
+    void setIdentifierProperty(String identifier);
 
-	/**
-	 * Get the date on which the resource was changed.
-	 */
-	Nullable<Date> getModifiedProperty();
+    /**
+     * Set an unambiguous reference to the resource within a given context.
+     * @since 4.0.0
+     */
+    void setIdentifierProperty(Optional<String> identifier);
 
-	/**
-	 * Set the date on which the resource was changed.
-	 */
-	void setModifiedProperty(String modified);
-	
-	/**
-	 * Set the date on which the resource was changed.
-	 */
-	void setModifiedProperty(Nullable<Date> modified);
+    /**
+     * Get a delimited set of keywords to support searching and indexing. This
+     * is typically a list of terms that are not available elsewhere in the
+     * properties
+     * @return property value
+     */
+    Optional<String> getKeywordsProperty();
 
-	/**
-	 * Get the revision number.
-	 */
-	Nullable<String> getRevisionProperty();
+    /**
+     * Set a delimited set of keywords to support searching and indexing. This
+     * is typically a list of terms that are not available elsewhere in the
+     * properties
+     */
+    void setKeywordsProperty(String keywords);
 
-	/**
-	 * Set the revision number.
-	 */
-	void setRevisionProperty(String revision);
+    /**
+     * Set a delimited set of keywords to support searching and indexing. This
+     * is typically a list of terms that are not available elsewhere in the
+     * properties
+     * @since 4.0.0
+     */
+    void setKeywordsProperty(Optional<String> keywords);
 
-	/**
-	 * Get the topic of the content of the resource.
-	 */
-	Nullable<String> getSubjectProperty();
+    /**
+     * Get the language of the intellectual content of the resource.
+     * @return property value
+     */
+    Optional<String> getLanguageProperty();
 
-	/**
-	 * Set the topic of the content of the resource.
-	 */
-	void setSubjectProperty(String subject);
+    /**
+     * Set the language of the intellectual content of the resource.
+     */
+    void setLanguageProperty(String language);
 
-	/**
-	 * Get the name given to the resource.
-	 */
-	Nullable<String> getTitleProperty();
+    /**
+     * Set the language of the intellectual content of the resource.
+     * @since 4.0.0
+     */
+    void setLanguageProperty(Optional<String> language);
 
-	/**
-	 * Set the name given to the resource.
-	 */
-	void setTitleProperty(String title);
+    /**
+     * Get the user who performed the last modification.
+     */
+    Optional<String> getLastModifiedByProperty();
 
-	/**
-	 * Get the version number.
-	 */
-	Nullable<String> getVersionProperty();
+    /**
+     * Set the user who performed the last modification.
+     */
+    void setLastModifiedByProperty(String lastModifiedBy);
 
-	/**
-	 * Set the version number.
-	 */
-	void setVersionProperty(String version);
+    /**
+     * Set the user who performed the last modification.
+     * @since 4.0.0
+     */
+    void setLastModifiedByProperty(Optional<String> lastModifiedBy);
+
+    /**
+     * Get the date and time of the last printing.
+     * @return property value
+     */
+    Optional<Date> getLastPrintedProperty();
+
+    /**
+     * Set the date and time of the last printing.
+     */
+    void setLastPrintedProperty(String lastPrinted);
+
+    /**
+     * Set the date and time of the last printing.
+     */
+    void setLastPrintedProperty(Optional<Date> lastPrinted);
+
+    /**
+     * Get the date on which the resource was changed.
+     * @return property value
+     */
+    Optional<Date> getModifiedProperty();
+
+    /**
+     * Set the date on which the resource was changed.
+     */
+    void setModifiedProperty(String modified);
+
+    /**
+     * Set the date on which the resource was changed.
+     */
+    void setModifiedProperty(Optional<Date> modified);
+
+    /**
+     * Get the revision number.
+     * @return property value
+     */
+    Optional<String> getRevisionProperty();
+
+    /**
+     * Set the revision number.
+     */
+    void setRevisionProperty(String revision);
+
+    /**
+     * Set the revision number.
+     * @since 4.0.0
+     */
+    void setRevisionProperty(Optional<String> revision);
+
+    /**
+     * Get the topic of the content of the resource.
+     * @return property value
+     */
+    Optional<String> getSubjectProperty();
+
+    /**
+     * Set the topic of the content of the resource.
+     */
+    void setSubjectProperty(String subject);
+
+    /**
+     * Set the topic of the content of the resource.
+     * @since 4.0.0
+     */
+    void setSubjectProperty(Optional<String> subject);
+
+    /**
+     * Get the name given to the resource.
+     * @return property value
+     */
+    Optional<String> getTitleProperty();
+
+    /**
+     * Set the name given to the resource.
+     */
+    void setTitleProperty(String title);
+
+    /**
+     * Set the name given to the resource.
+     * @since 4.0.0
+     */
+    void setTitleProperty(Optional<String> title);
+
+    /**
+     * Get the version number.
+     * @return property value
+     */
+    Optional<String> getVersionProperty();
+
+    /**
+     * Set the version number.
+     */
+    void setVersionProperty(String version);
+
+    /**
+     * Set the version number.
+     * @since 4.0.0
+     */
+    void setVersionProperty(Optional<String> version);
 }

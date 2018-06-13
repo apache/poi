@@ -23,6 +23,7 @@ import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Optional;
 
 import org.apache.poi.extractor.POITextExtractor;
 import org.apache.poi.ooxml.POIXMLDocument;
@@ -70,11 +71,18 @@ public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
         appendIfPresent(text, thing, Integer.toString(value));
     }
 
-    private void appendIfPresent(StringBuilder text, String thing, Date value) {
-        if (value == null) {
+    private void appendDateIfPresent(StringBuilder text, String thing, Optional<Date> value) {
+        if (!value.isPresent()) {
             return;
         }
-        appendIfPresent(text, thing, dateFormat.format(value));
+        appendIfPresent(text, thing, dateFormat.format(value.get()));
+    }
+
+    private void appendIfPresent(StringBuilder text, String thing, Optional<String> value) {
+        if (!value.isPresent()) {
+            return;
+        }
+        appendIfPresent(text, thing, value.get());
     }
 
     private void appendIfPresent(StringBuilder text, String thing, String value) {
@@ -103,26 +111,26 @@ public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
         PackagePropertiesPart props =
                 document.getProperties().getCoreProperties().getUnderlyingProperties();
 
-        appendIfPresent(text, "Category", props.getCategoryProperty().getValue());
-        appendIfPresent(text, "Category", props.getCategoryProperty().getValue());
-        appendIfPresent(text, "ContentStatus", props.getContentStatusProperty().getValue());
-        appendIfPresent(text, "ContentType", props.getContentTypeProperty().getValue());
-        appendIfPresent(text, "Created", props.getCreatedProperty().getValue());
+        appendIfPresent(text, "Category", props.getCategoryProperty());
+        appendIfPresent(text, "Category", props.getCategoryProperty());
+        appendIfPresent(text, "ContentStatus", props.getContentStatusProperty());
+        appendIfPresent(text, "ContentType", props.getContentTypeProperty());
+        appendDateIfPresent(text, "Created", props.getCreatedProperty());
         appendIfPresent(text, "CreatedString", props.getCreatedPropertyString());
-        appendIfPresent(text, "Creator", props.getCreatorProperty().getValue());
-        appendIfPresent(text, "Description", props.getDescriptionProperty().getValue());
-        appendIfPresent(text, "Identifier", props.getIdentifierProperty().getValue());
-        appendIfPresent(text, "Keywords", props.getKeywordsProperty().getValue());
-        appendIfPresent(text, "Language", props.getLanguageProperty().getValue());
-        appendIfPresent(text, "LastModifiedBy", props.getLastModifiedByProperty().getValue());
-        appendIfPresent(text, "LastPrinted", props.getLastPrintedProperty().getValue());
+        appendIfPresent(text, "Creator", props.getCreatorProperty());
+        appendIfPresent(text, "Description", props.getDescriptionProperty());
+        appendIfPresent(text, "Identifier", props.getIdentifierProperty());
+        appendIfPresent(text, "Keywords", props.getKeywordsProperty());
+        appendIfPresent(text, "Language", props.getLanguageProperty());
+        appendIfPresent(text, "LastModifiedBy", props.getLastModifiedByProperty());
+        appendDateIfPresent(text, "LastPrinted", props.getLastPrintedProperty());
         appendIfPresent(text, "LastPrintedString", props.getLastPrintedPropertyString());
-        appendIfPresent(text, "Modified", props.getModifiedProperty().getValue());
+        appendDateIfPresent(text, "Modified", props.getModifiedProperty());
         appendIfPresent(text, "ModifiedString", props.getModifiedPropertyString());
-        appendIfPresent(text, "Revision", props.getRevisionProperty().getValue());
-        appendIfPresent(text, "Subject", props.getSubjectProperty().getValue());
-        appendIfPresent(text, "Title", props.getTitleProperty().getValue());
-        appendIfPresent(text, "Version", props.getVersionProperty().getValue());
+        appendIfPresent(text, "Revision", props.getRevisionProperty());
+        appendIfPresent(text, "Subject", props.getSubjectProperty());
+        appendIfPresent(text, "Title", props.getTitleProperty());
+        appendIfPresent(text, "Version", props.getVersionProperty());
 
         return text.toString();
     }
