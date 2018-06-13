@@ -16,12 +16,6 @@
 ==================================================================== */
 package org.apache.poi.xslf;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
@@ -44,6 +38,8 @@ import org.junit.Test;
 import org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTProperties;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdListEntry;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMasterIdListEntry;
+
+import static org.junit.Assert.*;
 
 public class TestXSLFSlideShow {
     private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
@@ -130,7 +126,7 @@ public class TestXSLFSlideShow {
 		
 		CoreProperties cprops = xml.getProperties().getCoreProperties();
 		assertNull(cprops.getTitle());
-		assertNull(cprops.getUnderlyingProperties().getSubjectProperty().getValue());
+		assertFalse(cprops.getUnderlyingProperties().getSubjectProperty().isPresent());
 		
 		xml.close();
 	}

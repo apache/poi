@@ -100,9 +100,6 @@ public final class PackageHelper {
             p = pkg.getPart(relName);
             part_tgt.addRelationship(p.getPartName(), rel.getTargetMode(), rel.getRelationshipType(), rel.getId());
 
-
-
-
             PackagePart dest;
             if(!tgt.containPart(p.getPartName())){
                 dest = tgt.createPart(p.getPartName(), p.getContentType());
@@ -120,18 +117,18 @@ public final class PackageHelper {
      * @param src source properties
      * @param tgt target properties
      */
-    private static void copyProperties(PackageProperties src, PackageProperties tgt){
-        tgt.setCategoryProperty(src.getCategoryProperty().getValue());
-        tgt.setContentStatusProperty(src.getContentStatusProperty().getValue());
-        tgt.setContentTypeProperty(src.getContentTypeProperty().getValue());
-        tgt.setCreatorProperty(src.getCreatorProperty().getValue());
-        tgt.setDescriptionProperty(src.getDescriptionProperty().getValue());
-        tgt.setIdentifierProperty(src.getIdentifierProperty().getValue());
-        tgt.setKeywordsProperty(src.getKeywordsProperty().getValue());
-        tgt.setLanguageProperty(src.getLanguageProperty().getValue());
-        tgt.setRevisionProperty(src.getRevisionProperty().getValue());
-        tgt.setSubjectProperty(src.getSubjectProperty().getValue());
-        tgt.setTitleProperty(src.getTitleProperty().getValue());
-        tgt.setVersionProperty(src.getVersionProperty().getValue());
+    private static void copyProperties(PackageProperties src, PackageProperties tgt) {
+        tgt.setCategoryProperty(src.getCategoryProperty());
+        tgt.setContentStatusProperty(src.getContentStatusProperty());
+        tgt.setContentTypeProperty(src.getContentTypeProperty());
+        tgt.setCreatorProperty(src.getCreatorProperty());
+        tgt.setDescriptionProperty(src.getDescriptionProperty());
+        tgt.setIdentifierProperty(src.getIdentifierProperty());
+        tgt.setKeywordsProperty(src.getKeywordsProperty());
+        tgt.setLanguageProperty(src.getLanguageProperty());
+        tgt.setRevisionProperty(src.getRevisionProperty());
+        tgt.setSubjectProperty(src.getSubjectProperty());
+        tgt.setTitleProperty(src.getTitleProperty());
+        tgt.setVersionProperty(src.getVersionProperty());
     }
 }

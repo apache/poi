@@ -97,7 +97,7 @@ public final class TestXWPFDocument {
         assertEquals(10, xml.getProperties().getExtendedProperties().getUnderlyingProperties().getLines());
 
         assertEquals(null, xml.getProperties().getCoreProperties().getTitle());
-        assertEquals(null, xml.getProperties().getCoreProperties().getUnderlyingProperties().getSubjectProperty().getValue());
+        assertEquals(null, xml.getProperties().getCoreProperties().getUnderlyingProperties().getSubjectProperty().get());
         xml.close();
     }
 
@@ -112,7 +112,7 @@ public final class TestXWPFDocument {
         assertEquals(0, xml.getProperties().getExtendedProperties().getUnderlyingProperties().getLines());
 
         assertEquals(" ", xml.getProperties().getCoreProperties().getTitle());
-        assertEquals(" ", xml.getProperties().getCoreProperties().getUnderlyingProperties().getSubjectProperty().getValue());
+        assertEquals(" ", xml.getProperties().getCoreProperties().getUnderlyingProperties().getSubjectProperty().get());
         xml.close();
     }
 
