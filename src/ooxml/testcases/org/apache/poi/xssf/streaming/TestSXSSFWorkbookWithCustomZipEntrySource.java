@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
 import java.util.List;
@@ -86,21 +87,23 @@ public final class TestSXSSFWorkbookWithCustomZipEntrySource {
         SXSSFCell cell1 = row1.createCell(1);
         cell1.setCellValue(cellValue);
         EncryptedTempData tempData = new EncryptedTempData();
-        workbook.write(tempData.getOutputStream());
+        try (OutputStream os = tempData.getOutputStream()) {
+            workbook.write(os);
+        }
         workbook.close();
         workbook.dispose();
-        ZipEntrySource zipEntrySource = AesZipFileZipEntrySource.createZipEntrySource(tempData.getInputStream());
-        tempData.dispose();
-        OPCPackage opc = OPCPackage.open(zipEntrySource);
-        XSSFWorkbook xwb = new XSSFWorkbook(opc);
-        zipEntrySource.close();
-        XSSFSheet xs1 = xwb.getSheetAt(0);
-        assertEquals(sheetName, xs1.getSheetName());
-        XSSFRow xr1 = xs1.getRow(1);
-        XSSFCell xc1 = xr1.getCell(1);
-        assertEquals(cellValue, xc1.getStringCellValue());
-        xwb.close();
-        opc.close();
+        try (InputStream is = tempData.getInputStream();
+             ZipEntrySource zipEntrySource = AesZipFileZipEntrySource.createZipEntrySource(is)) {
+            tempData.dispose();
+            try (OPCPackage opc = OPCPackage.open(zipEntrySource);
+                XSSFWorkbook xwb = new XSSFWorkbook(opc)) {
+                XSSFSheet xs1 = xwb.getSheetAt(0);
+                assertEquals(sheetName, xs1.getSheetName());
+                XSSFRow xr1 = xs1.getRow(1);
+                XSSFCell xc1 = xr1.getCell(1);
+                assertEquals(cellValue, xc1.getStringCellValue());
+            }
+        }
     }
     
     @Test

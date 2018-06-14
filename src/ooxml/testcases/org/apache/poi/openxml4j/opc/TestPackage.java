@@ -17,6 +17,8 @@
 
 package org.apache.poi.openxml4j.opc;
 
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -77,6 +79,8 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.usermodel.XWPFRelation;
 import org.apache.xmlbeans.XmlException;
 import org.hamcrest.Description;
@@ -85,6 +89,7 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.Mockito;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -1084,6 +1089,24 @@ public final class TestPackage {
 	public void testTidyStreamOnInvalidFile4() throws Exception {
 		openInvalidFile("SampleSS.txt", true);
 	}
+
+	@Test
+	public void testDoNotCloseStream() throws IOException {
+		OutputStream os = Mockito.mock(OutputStream.class);
+		try (XSSFWorkbook wb = new XSSFWorkbook()) {
+			wb.createSheet();
+			wb.write(os);
+		}
+		verify(os, never()).close();
+
+		try (SXSSFWorkbook wb = new SXSSFWorkbook()) {
+			wb.createSheet();
+			wb.write(os);
+		}
+		verify(os, never()).close();
+	}
+
+
 
 	private static void openInvalidFile(final String name, final boolean useStream) throws IOException, InvalidFormatException {
 		// Spreadsheet has a good mix of alternate file types

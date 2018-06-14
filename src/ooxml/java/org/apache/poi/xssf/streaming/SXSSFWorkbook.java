@@ -376,7 +376,8 @@ public class SXSSFWorkbook implements Workbook {
     }
 
     protected void injectData(ZipEntrySource zipEntrySource, OutputStream out) throws IOException {
-        try (ZipArchiveOutputStream zos = new ZipArchiveOutputStream(out)) {
+        ZipArchiveOutputStream zos = new ZipArchiveOutputStream(out);
+        try {
             Enumeration<? extends ZipArchiveEntry> en = zipEntrySource.getEntries();
             while (en.hasMoreElements()) {
                 ZipArchiveEntry ze = en.nextElement();
@@ -402,6 +403,7 @@ public class SXSSFWorkbook implements Workbook {
                 }
             }
         } finally {
+            zos.finish();
             zipEntrySource.close();
         }
     }
