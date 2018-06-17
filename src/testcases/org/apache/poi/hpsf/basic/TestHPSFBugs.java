@@ -170,4 +170,21 @@ public final class TestHPSFBugs {
 
        fs.close();
    }
+
+    @Test
+    public void bug62451() throws IOException {
+        final long millis = 920355314183864L;
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            wb.createSheet().createRow(0).createCell(0).setCellValue("foo");
+            wb.createInformationProperties();
+            SummaryInformation si = wb.getSummaryInformation();
+            si.setLastPrinted(new Date(millis));
+            try (HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                SummaryInformation si2 = wb2.getSummaryInformation();
+                Date d = si.getLastPrinted();
+                assertNotNull(d);
+                assertEquals(millis, d.getTime());
+            }
+        }
+    }
 }
