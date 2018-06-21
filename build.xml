@@ -729,12 +729,8 @@ under the License.
     <target name="fetch-ooxml-jars" depends="check-ooxml-jars" unless="ooxml.jars.present">
         <mkdir dir="${ooxml.lib}"/>
         <downloadfile src="${ooxml.curvesapi.url}" dest="${ooxml.curvesapi.jar}"/>
-        <downloadfile src="${ooxml.xmlbeans.url}" dest="${ooxml.xmlbeans.jar}.orig"/>
+        <downloadfile src="${ooxml.xmlbeans.url}" dest="${ooxml.xmlbeans.jar}"/>
         <downloadfile src="${ooxml.commons-compress.url}" dest="${ooxml.commons-compress.jar}"/>
-        <!-- remove piccolo parser, so we don't use unsafe calls to it instead of using jaxp -->
-        <zip destfile="${ooxml.xmlbeans.jar}">
-            <zipfileset src="${ooxml.xmlbeans.jar}.orig" excludes="org/apache/xmlbeans/impl/piccolo/**"/>
-        </zip>
     </target>
     <target name="check-svn-jars">
         <condition property="svn.jars.present">
@@ -840,7 +836,7 @@ under the License.
 
             <taskdef name="xmlbean"
                      classname="org.apache.xmlbeans.impl.tool.XMLBean"
-                     classpath="${ooxml.xmlbeans.jar}.orig"/>
+                     classpath="${ooxml.xmlbeans.jar}"/>
 
             <property name="xmlbean.xsds.dir" location="build/xmlbean-xsds"/>
             <property name="xmlbean.sources.dir" location="build/xmlbean-sources"/>
@@ -871,7 +867,7 @@ under the License.
                     nopvr="@{nopvr}"
                     >
                 <classpath>
-                    <path location="${ooxml.xmlbeans.jar}.orig"/>
+                    <path location="${ooxml.xmlbeans.jar}"/>
                 </classpath>
             </xmlbean>
 
@@ -1954,7 +1950,7 @@ under the License.
                 <globmapper from="*" to="${zipdir}/lib/*"/>
             </mappedresources>
             <mappedresources cache="true">
-                <fileset dir="${ooxml.lib}" includes="xmlbeans-3.0.0.jar.orig,curvesapi-*.jar"/>
+                <fileset dir="${ooxml.lib}" includes="xmlbeans-3.0.0.jar,curvesapi-*.jar"/>
                 <regexpmapper from="^(.*\.jar)(\.orig)?$$" to="${zipdir}/ooxml-lib/\1"/>
             </mappedresources>
             <mappedresources cache="true">
