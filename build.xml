@@ -624,7 +624,7 @@ under the License.
                 <include name="ooxml-security-1.0.jar"/>
                 <include name="curvesapi-1.03.jar"/>
                 <include name="curvesapi-1.04.jar"/>
-                <include name="xmlbeans-2.*.jar*"/>
+                <include name="xmlbeans-*.jar*"/>
             </fileset>
             <fileset dir="${compile.lib}">
                 <include name="xercesImpl-*.jar"/>
