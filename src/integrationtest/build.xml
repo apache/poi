@@ -119,8 +119,8 @@ Before running this, you should execute the "assemble" target in the main build.
             </fileset>
             <fileset dir="../../ooxml-lib">
                 <include name="ooxml-schemas-*.jar"/>
-                <include name="xmlbeans-*.jar"/>
-                <exclude name="xmlbeans-2.3.*.jar"/>
+                <include name="xmlbeans-3.*.jar"/>
+                <exclude name="xmlbeans-2.*.jar"/>
             </fileset>
         </path>
 
