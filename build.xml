@@ -871,9 +871,16 @@ under the License.
                 </classpath>
             </xmlbean>
 
+            <replaceregexp byline="true"
+                match="(\s*)public static ([^ ]+) newInstance\(\) \{"
+                replace="\1private static org.apache.xmlbeans.SchemaTypeLoader getTypeLoader() { return org.apache.xmlbeans.XmlBeans.typeLoaderForClassLoader(\2.class.getClassLoader()); }${line.separator}${line.separator}\1public static \2 newInstance\(\) \{"
+            >
+                <fileset dir="${xmlbean.sources.dir}" includes="**/*.java" excludes="**/impl/**"/>
+            </replaceregexp>
+
             <replace dir="${xmlbean.sources.dir}" includes="**/*.java" excludes="**/impl/**">
-                <replacetoken>org.apache.xmlbeans.XmlBeans.getContextTypeLoader()</replacetoken>
-                <replacevalue>org.apache.poi.ooxml.POIXMLTypeLoader</replacevalue>
+                <replacetoken>org.apache.xmlbeans.XmlBeans.getContextTypeLoader</replacetoken>
+                <replacevalue>getTypeLoader</replacevalue>
             </replace>
 
             <!-- remove deprecated warnings, as we prefer the array methods - see #56854 -->
@@ -881,22 +888,6 @@ under the License.
                 <replacetoken><![CDATA[     * @deprecated
 ]]></replacetoken>
             </replace>
-
-            <copy todir="${xmlbean.sources.dir}">
-                <fileset dir="${ooxml.src}">
-                    <include name="org/apache/poi/ooxml/POIXMLTypeLoader.java"/>
-                    <include name="org/apache/poi/ooxml/util/DocumentHelper.java"/>
-                    <include name="org/apache/poi/ooxml/util/SAXHelper.java"/>
-                    <include name="org/apache/poi/openxml4j/opc/PackageNamespaces.java"/>
-                </fileset>
-                <fileset dir="${main.src}">
-                    <include name="org/apache/poi/util/POILogFactory.java"/>
-                    <include name="org/apache/poi/util/POILogger.java"/>
-                    <include name="org/apache/poi/util/NullLogger.java"/>
-                    <include name="org/apache/poi/util/Internal.java"/>
-                	<include name="org/apache/poi/util/Removal.java"/>
-                </fileset>
-            </copy>
 
             <echo>Forking javac with max heap size ${ooxml.memory}</echo>
 

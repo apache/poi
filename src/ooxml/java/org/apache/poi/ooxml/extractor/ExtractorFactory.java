@@ -141,7 +141,10 @@ public class ExtractorFactory {
         } catch (OfficeXmlFileException e) {
             // ensure file-handle release
             IOUtils.closeQuietly(fs);
-            return (T)createExtractor(OPCPackage.open(f.toString(), PackageAccess.READ));
+            OPCPackage pkg = OPCPackage.open(f.toString(), PackageAccess.READ);
+            T t = (T)createExtractor(pkg);
+            t.setFilesystem(pkg);
+            return t;
         } catch (NotOLE2FileException ne) {
             // ensure file-handle release
             IOUtils.closeQuietly(fs);

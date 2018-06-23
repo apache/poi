@@ -17,38 +17,14 @@
 
 package org.apache.poi.ooxml;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.io.StringReader;
-import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.stream.XMLStreamReader;
-
 import org.apache.poi.openxml4j.opc.PackageNamespaces;
-import org.apache.poi.ooxml.util.DocumentHelper;
-import org.apache.xmlbeans.SchemaType;
-import org.apache.xmlbeans.SchemaTypeLoader;
-import org.apache.xmlbeans.XmlBeans;
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
-import org.apache.xmlbeans.xml.stream.XMLInputStream;
-import org.apache.xmlbeans.xml.stream.XMLStreamException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
-@SuppressWarnings("deprecation")
 public class POIXMLTypeLoader {
-
-    private static ThreadLocal<SchemaTypeLoader> typeLoader = new ThreadLocal<>();
 
     // TODO: Do these have a good home like o.a.p.openxml4j.opc.PackageNamespaces and PackageRelationshipTypes?
     // These constants should be common to all of POI and easy to use by other applications such as Tika
@@ -90,77 +66,5 @@ public class POIXMLTypeLoader {
         map.put(MS_WORD_URN, "w10");
         map.put(MS_VML_URN, "v");
         DEFAULT_XML_OPTIONS.setSaveSuggestedPrefixes(Collections.unmodifiableMap(map));
-    }
-    
-    private static XmlOptions getXmlOptions(XmlOptions options) {
-        return options == null ? DEFAULT_XML_OPTIONS : options;
-    }
-    
-    private static SchemaTypeLoader getTypeLoader(SchemaType type) {
-        SchemaTypeLoader tl = typeLoader.get();
-        if (tl == null) {
-            ClassLoader cl = type.getClass().getClassLoader();
-            tl = XmlBeans.typeLoaderForClassLoader(cl);
-            typeLoader.set(tl);
-        }
-        return tl;
-    }
-    
-    public static XmlObject newInstance(SchemaType type, XmlOptions options) {
-        return getTypeLoader(type).newInstance(type, getXmlOptions(options));
-    }
-
-    public static XmlObject parse(String xmlText, SchemaType type, XmlOptions options) throws XmlException {
-        try {
-            return parse(new StringReader(xmlText), type, options);
-        } catch (IOException e) {
-            throw new XmlException("Unable to parse xml bean", e);
-        }
-    }
-
-    public static XmlObject parse(File file, SchemaType type, XmlOptions options) throws XmlException, IOException {
-        try (InputStream is = new FileInputStream(file)) {
-            return parse(is, type, options);
-        }
-    }
-
-    public static XmlObject parse(URL file, SchemaType type, XmlOptions options) throws XmlException, IOException {
-        try (InputStream is = file.openStream()) {
-            return parse(is, type, options);
-        }
-    }
-
-    public static XmlObject parse(InputStream jiois, SchemaType type, XmlOptions options) throws XmlException, IOException {
-        try {
-            Document doc = DocumentHelper.readDocument(jiois);
-            return getTypeLoader(type).parse(doc.getDocumentElement(), type, getXmlOptions(options));
-        } catch (SAXException e) {
-            throw new IOException("Unable to parse xml bean", e);
-        }
-    }
-
-    public static XmlObject parse(XMLStreamReader xsr, SchemaType type, XmlOptions options) throws XmlException {
-        return getTypeLoader(type).parse(xsr, type, getXmlOptions(options));
-    }
-
-    public static XmlObject parse(Reader jior, SchemaType type, XmlOptions options) throws XmlException, IOException {
-        try {
-            Document doc = DocumentHelper.readDocument(new InputSource(jior));
-            return getTypeLoader(type).parse(doc.getDocumentElement(), type, getXmlOptions(options));
-        } catch (SAXException e) {
-            throw new XmlException("Unable to parse xml bean", e);
-        }
-    }
-
-    public static XmlObject parse(Node node, SchemaType type, XmlOptions options) throws XmlException {
-        return getTypeLoader(type).parse(node, type, getXmlOptions(options));
-    }
-
-    public static XmlObject parse(XMLInputStream xis, SchemaType type, XmlOptions options) throws XmlException, XMLStreamException {
-        return getTypeLoader(type).parse(xis, type, getXmlOptions(options));
-    }
-    
-    public static XMLInputStream newValidatingXMLInputStream ( XMLInputStream xis, SchemaType type, XmlOptions options ) throws XmlException, XMLStreamException {
-        return getTypeLoader(type).newValidatingXMLInputStream(xis, type, getXmlOptions(options));
     }
 }
