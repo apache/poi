@@ -859,7 +859,7 @@ public final class TestPackage {
 	@Test
 	public void testZipEntityExpansionExceedsMemory() throws IOException, OpenXML4JException, XmlException {
 		expectedEx.expect(POIXMLException.class);
-		expectedEx.expectMessage("Unable to parse xml bean");
+		expectedEx.expectMessage("unable to parse shared strings table");
 		expectedEx.expectCause(getCauseMatcher(SAXParseException.class, "The parser has encountered more than"));
 		openXmlBombFile("poc-xmlbomb.xlsx");
 	}
@@ -867,7 +867,7 @@ public final class TestPackage {
 	@Test
 	public void testZipEntityExpansionExceedsMemory2() throws IOException, OpenXML4JException, XmlException {
 		expectedEx.expect(POIXMLException.class);
-		expectedEx.expectMessage("Unable to parse xml bean");
+		expectedEx.expectMessage("unable to parse shared strings table");
 		expectedEx.expectCause(getCauseMatcher(SAXParseException.class, "The parser has encountered more than"));
     	openXmlBombFile("poc-xmlbomb-empty.xlsx");
 	}

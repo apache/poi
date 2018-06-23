@@ -81,7 +81,7 @@ public class XSSFWorkbookFactory extends WorkbookFactory {
     public static XSSFWorkbook createWorkbook(OPCPackage pkg) throws IOException {
         try {
             return new XSSFWorkbook(pkg);
-        } catch (IllegalArgumentException ioe) {
+        } catch (RuntimeException ioe) {
             // ensure that file handles are closed (use revert() to not re-write the file)
             pkg.revert();
             //pkg.close();
