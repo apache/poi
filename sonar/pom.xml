@@ -46,6 +46,14 @@
 		<url>http://svn.apache.org/viewvc/poi</url>
 	</scm>
 	
+	  <repositories>
+		<repository>
+			<id>xmlbeans-snapshot-repo</id>
+			<name>xmlbeans snapshot repo</name>
+			<url>https://repository.apache.org/content/repositories/staging</url>
+		</repository>  
+	</repositories>
+
 	<modules>
 		<module>main</module>
 		<module>ooxml-schema</module>
