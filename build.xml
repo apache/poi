@@ -871,10 +871,22 @@ under the License.
                 </classpath>
             </xmlbean>
 
-            <replaceregexp byline="true"
-                match="(\s*)public static ([^ ]+) newInstance\(\) \{"
-                replace="\1private static org.apache.xmlbeans.SchemaTypeLoader getTypeLoader() { return org.apache.xmlbeans.XmlBeans.typeLoaderForClassLoader(\2.class.getClassLoader()); }${line.separator}${line.separator}\1public static \2 newInstance\(\) \{"
-            >
+            <local name="loaderMethod"/>
+            <property name="loaderMethod"><![CDATA[
+        private static java.lang.ref.SoftReference<org.apache.xmlbeans.SchemaTypeLoader> typeLoader;
+
+        private static synchronized org.apache.xmlbeans.SchemaTypeLoader getTypeLoader() {
+            org.apache.xmlbeans.SchemaTypeLoader stl = (typeLoader == null) ? null : typeLoader.get();
+            if (stl == null) {
+                stl = org.apache.xmlbeans.XmlBeans.typeLoaderForClassLoader(\2.class.getClassLoader());
+                typeLoader = new java.lang.ref.SoftReference(stl);
+            }
+            return stl;
+        }
+
+        public static \2 newInstance\(\) \{]]></property>
+
+            <replaceregexp byline="true" match="(\s*)public static ([^ ]+) newInstance\(\) \{" replace="${loaderMethod}">
                 <fileset dir="${xmlbean.sources.dir}" includes="**/*.java" excludes="**/impl/**"/>
             </replaceregexp>
 
