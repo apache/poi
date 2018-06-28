@@ -25,12 +25,6 @@ buildscript {
     }
 }
 
-repositories {
-    maven { url "https://repository.apache.org/content/repositories/staging" }
-    mavenCentral()
-}
-
-
 // Only add the plugin for Sonar if enabled
 if (project.hasProperty('enableSonar')) {
     println 'Enabling Sonar support'
