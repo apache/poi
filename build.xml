@@ -201,7 +201,7 @@ under the License.
               value="${repository.m2}/maven2/com/github/virtuald/curvesapi/1.05/curvesapi-1.05.jar"/>
     <property name="ooxml.xmlbeans.jar" location="${ooxml.lib}/xmlbeans-3.0.0.jar"/>
     <property name="ooxml.xmlbeans.url"
-              value="https://repository.apache.org/content/repositories/staging/org/apache/xmlbeans/xmlbeans/3.0.0/xmlbeans-3.0.0.jar"/>
+              value="https://repository.apache.org/content/repositories/releases/org/apache/xmlbeans/xmlbeans/3.0.0/xmlbeans-3.0.0.jar"/>
     <property name="ooxml.commons-compress.jar" location="${main.lib}/commons-compress-1.17.jar"/>
     <property name="ooxml.commons-compress.url"
               value="${repository.m2}/maven2/org/apache/commons/commons-compress/1.17/commons-compress-1.17.jar"/>
