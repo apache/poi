@@ -18,7 +18,6 @@ package org.apache.poi.hwpf.converter;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.hwpf.usermodel.PictureType;
 import org.apache.poi.util.XMLHelper;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -52,16 +51,7 @@ public class TestWordToHtmlConverter {
 
         if (emulatePictureStorage)
         {
-            wordToHtmlConverter.setPicturesManager(new PicturesManager()
-            {
-                @Override
-                public String savePicture(byte[] content,
-                        PictureType pictureType, String suggestedName,
-                        float widthInches, float heightInches)
-                {
-                    return suggestedName;
-                }
-            });
+            wordToHtmlConverter.setPicturesManager((content, pictureType, suggestedName, widthInches, heightInches) -> suggestedName);
         }
 
         wordToHtmlConverter.processDocument(hwpfDocument);
@@ -81,15 +71,13 @@ public class TestWordToHtmlConverter {
     }
 
     @Test
-    public void testAIOOBTap() throws Exception
-    {
+    public void testAIOOBTap() throws Exception {
         String result = getHtmlText("AIOOB-Tap.doc");
-        assertContains(result.substring(0, 6000), "<table class=\"t1\">");
+        assertContains(result, "<table class=\"t1\">");
     }
 
     @Test
-    public void testBug33519() throws Exception
-    {
+    public void testBug33519() throws Exception {
         String result = getHtmlText("Bug33519.doc");
         assertContains(
                 result,
@@ -99,8 +87,7 @@ public class TestWordToHtmlConverter {
     }
 
     @Test
-    public void testBug46610_2() throws Exception
-    {
+    public void testBug46610_2() throws Exception {
         String result = getHtmlText("Bug46610_2.doc");
         assertContains(
                 result,
@@ -108,16 +95,14 @@ public class TestWordToHtmlConverter {
     }
 
     @Test
-    public void testBug46817() throws Exception
-    {
+    public void testBug46817() throws Exception {
         String result = getHtmlText("Bug46817.doc");
         final String substring = "<table class=\"t1\">";
         assertContains(result, substring);
     }
 
     @Test
-    public void testBug47286() throws Exception
-    {
+    public void testBug47286() throws Exception {
         String result = getHtmlText("Bug47286.doc");
 
         assertFalse(result.contains("FORMTEXT"));
@@ -128,14 +113,12 @@ public class TestWordToHtmlConverter {
     }
 
     @Test
-    public void testBug48075() throws Exception
-    {
+    public void testBug48075() throws Exception {
         getHtmlText("Bug48075.doc");
     }
 
     @Test
-    public void testBug52583() throws Exception
-    {
+    public void testBug52583() throws Exception {
         String result = getHtmlText("Bug52583.doc");
         assertContains(
                 result,
@@ -143,15 +126,13 @@ public class TestWordToHtmlConverter {
     }
 
     @Test
-    public void testBug53182() throws Exception
-    {
+    public void testBug53182() throws Exception {
         String result = getHtmlText("Bug53182.doc");
         assertFalse(result.contains("italic"));
     }
 
     @Test
-    public void testDocumentProperties() throws Exception
-    {
+    public void testDocumentProperties() throws Exception {
         String result = getHtmlText("documentProperties.doc");
 
         assertContains(result, "<title>This is document title</title>");
@@ -160,16 +141,14 @@ public class TestWordToHtmlConverter {
     }
 
     @Test
-    public void testEmailhyperlink() throws Exception
-    {
+    public void testEmailhyperlink() throws Exception {
         String result = getHtmlText("Bug47286.doc");
         final String substring = "provisastpet@mfa.gov.cy";
         assertContains(result, substring);
     }
 
     @Test
-    public void testEndnote() throws Exception
-    {
+    public void testEndnote() throws Exception {
         String result = getHtmlText("endingnote.doc");
 
         assertContains(
@@ -183,16 +162,14 @@ public class TestWordToHtmlConverter {
     }
 
     @Test
-    public void testEquation() throws Exception
-    {
+    public void testEquation() throws Exception {
         String result = getHtmlText("equation.doc");
 
         assertContains(result, "<!--Image link to '0.emf' can be here-->");
     }
 
     @Test
-    public void testHyperlink() throws Exception
-    {
+    public void testHyperlink() throws Exception {
         String result = getHtmlText("hyperlink.doc");
 
         assertContains(result, "<span>Before text; </span><a ");
@@ -202,14 +179,12 @@ public class TestWordToHtmlConverter {
     }
 
     @Test
-    public void testInnerTable() throws Exception
-    {
+    public void testInnerTable() throws Exception {
         getHtmlText("innertable.doc");
     }
 
     @Test
-    public void testListsMargins() throws Exception
-    {
+    public void testListsMargins() throws Exception {
         String result = getHtmlText("lists-margins.doc");
 
         assertContains(result,
@@ -225,14 +200,12 @@ public class TestWordToHtmlConverter {
     }
 
     @Test
-    public void testO_kurs_doc() throws Exception
-    {
+    public void testO_kurs_doc() throws Exception {
         getHtmlText("o_kurs.doc");
     }
 
     @Test
-    public void testPageref() throws Exception
-    {
+    public void testPageref() throws Exception {
         String result = getHtmlText("pageref.doc");
 
         assertContains(result, "<a href=\"#userref\">");
@@ -241,8 +214,7 @@ public class TestWordToHtmlConverter {
     }
 
     @Test
-    public void testPicture() throws Exception
-    {
+    public void testPicture() throws Exception {
         String result = getHtmlText("picture.doc", true);
 
         // picture
@@ -256,16 +228,14 @@ public class TestWordToHtmlConverter {
     }
 
     @Test
-    public void testPicturesEscher() throws Exception
-    {
+    public void testPicturesEscher() throws Exception {
         String result = getHtmlText("pictures_escher.doc", true);
         assertContains(result, "<img src=\"s0.PNG\">");
         assertContains(result, "<img src=\"s808.PNG\">");
     }
 
     @Test
-    public void testTableMerges() throws Exception
-    {
+    public void testTableMerges() throws Exception {
         String result = getHtmlText("table-merges.doc");
 
         assertContains(result, "<td class=\"td1\" colspan=\"3\">");
