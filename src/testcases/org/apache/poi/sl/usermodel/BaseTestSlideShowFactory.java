@@ -75,18 +75,16 @@ public class BaseTestSlideShowFactory {
 
     @SuppressWarnings("resource")
     protected static void testFactoryFromProtectedFile(String protectedFile, String password) throws Exception {
-        SlideShow<?,?> ss;
-        // from protected file 
-        ss = SlideShowFactory.create(fromFile(protectedFile), password);
+        // from protected file
+        SlideShow<?,?> ss = SlideShowFactory.create(fromFile(protectedFile), password);
         assertNotNull(ss);
         assertCloseDoesNotModifyFile(protectedFile, ss);
     }
 
     @SuppressWarnings("resource")
     protected static void testFactoryFromProtectedStream(String protectedFile, String password) throws Exception {
-        SlideShow<?,?> ss;
         // from protected stream
-        ss = SlideShowFactory.create(fromStream(protectedFile), password);
+        SlideShow<?,?> ss = SlideShowFactory.create(fromStream(protectedFile), password);
         assertNotNull(ss);
         assertCloseDoesNotModifyFile(protectedFile, ss);
     }
@@ -163,7 +161,6 @@ public class BaseTestSlideShowFactory {
      *
      * @param filename the sample filename or full path of the slideshow to check before and after closing
      * @param ss the slideshow to close or revert
-     * @throws IOException
      */
     private static void assertCloseDoesNotModifyFile(String filename, SlideShow<?,?> ss) throws IOException {
         final byte[] before = readFile(filename);
@@ -177,11 +174,8 @@ public class BaseTestSlideShowFactory {
             // if the file after closing is different, then re-set 
             // the file to the state before in order to not have a dirty SCM 
             // working tree when running this test
-            FileOutputStream str = new FileOutputStream(_slTests.getFile(filename));
-            try {
+            try (FileOutputStream str = new FileOutputStream(_slTests.getFile(filename))) {
                 str.write(before);
-            } finally {
-                str.close();
             }
             
             throw e;

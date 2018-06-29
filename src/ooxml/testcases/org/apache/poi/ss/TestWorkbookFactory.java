@@ -36,7 +36,6 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.xssf.usermodel.XSSFWorkbookFactory;
@@ -57,7 +56,6 @@ public final class TestWorkbookFactory {
      *
      * @param filename the sample workbook to read in
      * @param wb the workbook to close
-     * @throws IOException
      */
     private static void assertCloseDoesNotModifyFile(String filename, Workbook wb) throws IOException {
         final byte[] before = HSSFTestDataSamples.getTestDataFileContent(filename);
@@ -113,6 +111,7 @@ public final class TestWorkbookFactory {
                         HSSFTestDataSamples.openSampleFileStream(xlsx))
         );
         assertNotNull(wb);
+        //noinspection ConstantConditions
         assertTrue(wb instanceof XSSFWorkbook);
         assertCloseDoesNotModifyFile(xlsx, wb);
     }
@@ -176,11 +175,9 @@ public final class TestWorkbookFactory {
         // Invalid type -> exception
         final byte[] before = HSSFTestDataSamples.getTestDataFileContent(txt);
         try {
-            InputStream stream = HSSFTestDataSamples.openSampleFileStream(txt);
-            try {
+            try (InputStream stream = HSSFTestDataSamples.openSampleFileStream(txt)) {
                 wb = WorkbookFactory.create(stream);
-            } finally {
-                stream.close();
+                assertNotNull(wb);
             }
             fail();
         } catch(IOException e) {
@@ -254,7 +251,9 @@ public final class TestWorkbookFactory {
             );
             assertCloseDoesNotModifyFile(xls_prot[0], wb);
             fail("Shouldn't be able to open with the wrong password");
-        } catch (EncryptedDocumentException e) {}
+        } catch (EncryptedDocumentException e) {
+            // expected here
+        }
 
         try {
             wb = WorkbookFactory.create(
@@ -262,7 +261,9 @@ public final class TestWorkbookFactory {
             );
             assertCloseDoesNotModifyFile(xlsx_prot[0], wb);
             fail("Shouldn't be able to open with the wrong password");
-        } catch (EncryptedDocumentException e) {}
+        } catch (EncryptedDocumentException e) {
+            // expected here
+        }
     }
 
     /**
@@ -363,21 +364,24 @@ public final class TestWorkbookFactory {
         try {
             WorkbookFactory.create(emptyFile);
             fail("Shouldn't be able to create for an empty file");
-        } catch (final EmptyFileException expected) {}
-        emptyFile.delete();
+        } catch (final EmptyFileException expected) {
+            // expected here
+        }
+
+        assertTrue(emptyFile.delete());
     }
 
     /**
       * Check that a helpful exception is raised on a non-existing file
       */
     @Test
-    public void testNonExistantFile() throws Exception {
-        File nonExistantFile = new File("notExistantFile");
-        assertFalse(nonExistantFile.exists());
+    public void testNonExistingFile() throws Exception {
+        File nonExistingFile = new File("notExistingFile");
+        assertFalse(nonExistingFile.exists());
 
         try {
-            WorkbookFactory.create(nonExistantFile, "password", true);
-            fail("Should not be able to create for a non-existant file");
+            WorkbookFactory.create(nonExistingFile, "password", true);
+            fail("Should not be able to create for a non-existing file");
         } catch (final FileNotFoundException e) {
             // expected
         }
