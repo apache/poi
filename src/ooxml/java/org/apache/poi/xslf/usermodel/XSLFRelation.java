@@ -139,6 +139,8 @@ public class XSLFRelation extends POIXMLRelation {
             null
     );
 
+    // this is not the same as in XSSFRelation.WORKBOOK, as it is usually used by embedded charts
+    // referencing the original embedded excel workbook
     public static final XSLFRelation WORKBOOK = new XSLFRelation(
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             POIXMLDocument.PACK_OBJECT_REL_TYPE,

@@ -323,7 +323,18 @@ public final class TestPOIXMLDocument {
             open.close();
         }
     }
-    
+
+    @Test
+    public void dontParseEmbeddedDocuments() throws IOException {
+        // bug #62513
+        POIDataSamples pds = POIDataSamples.getSlideShowInstance();
+        try (InputStream is = pds.openResourceAsStream("bug62513.pptx");
+            XMLSlideShow ppt = new XMLSlideShow(is)) {
+            POIXMLDocumentPart doc = ppt.getSlides().get(12).getRelationById("rId3");
+            assertEquals(POIXMLDocumentPart.class, doc.getClass());
+        }
+    }
+
     @Test
     public void testOSGIClassLoading() {
         // the schema type loader is cached per thread in POIXMLTypeLoader.
