@@ -25,6 +25,11 @@ buildscript {
     }
 }
 
+repositories {
+    mavenCentral()
+}
+
+
 // Only add the plugin for Sonar if enabled
 if (project.hasProperty('enableSonar')) {
     println 'Enabling Sonar support'
