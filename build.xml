@@ -294,7 +294,7 @@ under the License.
     <property name="dist.sequence-library.jar" location="${compile.lib}/svnant/sequence-library-1.0.3.jar"/>
     <property name="dist.sequence-library.url" value="${repository.m2}/maven2/de/regnis/q/sequence/sequence-library/1.0.3/sequence-library-1.0.3.jar"/>
 
-    <property name="findbugs.url" value="http://downloads.sourceforge.net/project/findbugs/findbugs/3.0.1/findbugs-noUpdateChecks-3.0.1.zip?download="/>
+    <property name="findbugs.url" value="https://downloads.sourceforge.net/project/findbugs/findbugs/3.0.1/findbugs-noUpdateChecks-3.0.1.zip?download="/>
     <property name="findbugs.jar" location="${main.lib}/findbugs-noUpdateChecks-3.0.1.zip"/>
 
     <propertyset id="junit.properties">

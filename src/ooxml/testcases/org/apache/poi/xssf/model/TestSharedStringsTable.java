@@ -30,6 +30,7 @@ import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPhoneticRun;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRElt;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRPrElt;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
@@ -199,6 +200,9 @@ public final class TestSharedStringsTable extends TestCase {
             CTRst st1 = items1.get(i);
             CTRst st2 = items2.get(i);
             assertEquals(st1.toString(), st2.toString());
+            // ensure that CTPhoneticRun is loaded by the ooxml test suite so that it is included in poi-ooxml-schemas
+            List<CTPhoneticRun> phList = st1.getRPhList();
+            assertEquals(phList, st2.getRPhList());
         }
 
         XSSFWorkbook wb3 = XSSFTestDataSamples.writeOutAndReadBack(wb2);
