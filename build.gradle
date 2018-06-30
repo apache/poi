@@ -34,6 +34,20 @@ if (project.hasProperty('enableSonar')) {
 // For help converting an Ant build to a Gradle build, see
 // https://docs.gradle.org/current/userguide/ant.html
 
+configurations {
+    antLibs
+}
+
+dependencies {
+    antLibs("junit:junit:4.12")
+    antLibs("org.apache.ant:ant-junit:1.10.4")
+    antLibs("org.apache.ant:ant-junit4:1.10.4")
+}
+
+ant.taskdef(name: "junit",
+        classname: "org.apache.tools.ant.taskdefs.optional.junit.JUnitTask",
+        classpath: configurations.antLibs.asPath)
+
 ant.importBuild 'build.xml'
 
 /**
@@ -241,7 +255,7 @@ project('excelant') {
     sourceSets.test.java.srcDirs = ['../../src/excelant/testcases']
 
     dependencies {
-        compile 'org.apache.ant:ant:1.10.1'
+        compile 'org.apache.ant:ant:1.10.4'
 
         compile project(':main')
         compile project(':ooxml')
@@ -265,7 +279,7 @@ project('integrationtest') {
     sourceSets.test.java.srcDirs = ['../../src/integrationtest']
 
     dependencies {
-        compile 'org.apache.ant:ant:1.10.1'
+        compile 'org.apache.ant:ant:1.10.4'
 
         compile project(':main')
         compile project(':ooxml')
