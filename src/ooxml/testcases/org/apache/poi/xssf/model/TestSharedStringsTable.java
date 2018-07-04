@@ -203,6 +203,10 @@ public final class TestSharedStringsTable extends TestCase {
             // ensure that CTPhoneticRun is loaded by the ooxml test suite so that it is included in poi-ooxml-schemas
             List<CTPhoneticRun> phList = st1.getRPhList();
             assertEquals(phList, st2.getRPhList());
+            // this code is required to make sure all the necessary classes are loaded
+            CTPhoneticRun run = CTPhoneticRun.Factory.newInstance();
+            run.setEb(12);
+            assertEquals(12, run.getEb());
         }
 
         XSSFWorkbook wb3 = XSSFTestDataSamples.writeOutAndReadBack(wb2);
