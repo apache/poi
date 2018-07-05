@@ -168,6 +168,12 @@ project('main') {
         testCompile 'junit:junit:4.12'
     }
 
+    jar {
+        manifest {
+            attributes 'Automatic-Module-Name': 'org.apache.poi.main'
+        }
+    }
+
     // Create a separate jar for test-code to depend on it in other projects
     // See http://stackoverflow.com/questions/5144325/gradle-test-dependency
     task testJar(type: Jar, dependsOn: testClasses) {
@@ -232,6 +238,12 @@ project('ooxml') {
         testCompile 'org.openjdk.jmh:jmh-generator-annprocess:1.19'
     }
 
+    jar {
+        manifest {
+            attributes 'Automatic-Module-Name': 'org.apache.poi.ooxml'
+        }
+    }
+
     // TODO: we should not duplicate this task in each project, but I did not figure out how to inject the artifactId for each project
     task japicmp(type: me.champeau.gradle.ArtifactJapicmpTask, dependsOn: jar) {
         baseline = 'org.apache.poi:poi-ooxml:' + japicmpversion + '@jar'
@@ -268,6 +280,12 @@ project('excelant') {
         testCompile project(path: ':main', configuration: 'tests')
     }
 
+	jar {
+		manifest {
+			attributes 'Automatic-Module-Name': 'org.apache.poi.excelant'
+		}
+	}
+
     // TOOD: we should not duplicate this task in each project, but I did not figure out how to inject the artifactId for each project
     task japicmp(type: me.champeau.gradle.ArtifactJapicmpTask, dependsOn: jar) {
         baseline = 'org.apache.poi:poi-excelant:' + japicmpversion + '@jar'
@@ -294,7 +312,13 @@ project('integrationtest') {
         testCompile 'junit:junit:4.12'
     }
 
-    test {
+	jar {
+		manifest {
+			attributes 'Automatic-Module-Name': 'org.apache.poi.integrationtest'
+		}
+	}
+
+	test {
         // exclude these from the normal test-run
         exclude '**/TestAllFiles.class'
         exclude '**/*FileHandler.class'
@@ -320,6 +344,12 @@ project('scratchpad') {
         testCompile 'junit:junit:4.12'
         testCompile project(path: ':main', configuration: 'tests')
     }
+
+	jar {
+		manifest {
+			attributes 'Automatic-Module-Name': 'org.apache.poi.scratchpad'
+		}
+	}
 
     // TOOD: we should not duplicate this task in each project, but I did not figure out how to inject the artifactId for each project
     task japicmp(type: me.champeau.gradle.ArtifactJapicmpTask, dependsOn: jar) {
