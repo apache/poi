@@ -64,6 +64,7 @@ def poijobs = [
         ],
         [ name: 'POI-DSL-regenerate-javadoc', trigger: triggerSundays, javadoc: true
         ],
+        // disabled for 4.0.0 because we break compatibility on-purpose in a few places, e.g. for Java 9 compatibility
         [ name: 'POI-DSL-API-Check', trigger: '@daily', apicheck: true, disabled: true
         ],
         [ name: 'POI-DSL-Gradle', trigger: triggerSundays, email: 'centic@apache.org', gradle: true,
