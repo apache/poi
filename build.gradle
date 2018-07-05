@@ -152,6 +152,17 @@ subprojects {
             }
         }
     }
+
+    // japicmp will fail with "Could not load" because we moved some classes out of the root-package
+    // for Java 9 compatibility in 4.0.0
+    task(japicmp, type: me.champeau.gradle.ArtifactJapicmpTask, dependsOn: jar) {
+        to = jar.archivePath
+        onlyModified = true
+        onlyBinaryIncompatibleModified = true
+        failOnModification = false
+        txtOutputFile = file("$buildDir/reports/japi.txt")
+        htmlOutputFile = file("$buildDir/reports/japi.html")
+    }
 }
 
 project('main') {
@@ -189,16 +200,7 @@ project('main') {
         tests testJar
     }
 
-    // TOOD: we should not duplicate this task in each project, but I did not figure out how to inject the artifactId for each project
-    task japicmp(type: me.champeau.gradle.ArtifactJapicmpTask, dependsOn: jar) {
-        baseline = 'org.apache.poi:poi:' + japicmpversion + '@jar'
-        to = jar.archivePath
-        onlyModified = true
-        onlyBinaryIncompatibleModified = true
-        failOnModification = false
-        txtOutputFile = file("$buildDir/reports/japi.txt")
-        htmlOutputFile = file("$buildDir/reports/japi.html")
-    }
+    japicmp.baseline = 'org.apache.poi:poi:' + japicmpversion + '@jar'
 }
 
 project('ooxml') {
@@ -244,16 +246,7 @@ project('ooxml') {
         }
     }
 
-    // TODO: we should not duplicate this task in each project, but I did not figure out how to inject the artifactId for each project
-    task japicmp(type: me.champeau.gradle.ArtifactJapicmpTask, dependsOn: jar) {
-        baseline = 'org.apache.poi:poi-ooxml:' + japicmpversion + '@jar'
-        to = jar.archivePath
-        onlyModified = true
-        onlyBinaryIncompatibleModified = true
-        failOnModification = false
-        txtOutputFile = file("$buildDir/reports/japi.txt")
-        htmlOutputFile = file("$buildDir/reports/japi.html")
-    }
+    japicmp.baseline = 'org.apache.poi:poi-ooxml:' + japicmpversion + '@jar'
 }
 
 project('examples') {
@@ -263,6 +256,8 @@ project('examples') {
         compile project(':main')
         compile project(':ooxml')
     }
+
+    japicmp.enabled = false
 }
 
 
@@ -286,16 +281,7 @@ project('excelant') {
 		}
 	}
 
-    // TOOD: we should not duplicate this task in each project, but I did not figure out how to inject the artifactId for each project
-    task japicmp(type: me.champeau.gradle.ArtifactJapicmpTask, dependsOn: jar) {
-        baseline = 'org.apache.poi:poi-excelant:' + japicmpversion + '@jar'
-        to = jar.archivePath
-        onlyModified = true
-        onlyBinaryIncompatibleModified = true
-        failOnModification = false
-        txtOutputFile = file("$buildDir/reports/japi.txt")
-        htmlOutputFile = file("$buildDir/reports/japi.html")
-    }
+    japicmp.baseline = 'org.apache.poi:poi-excelant:' + japicmpversion + '@jar'
 }
 
 project('integrationtest') {
@@ -330,6 +316,8 @@ project('integrationtest') {
         exclude '**/*FileHandler.class'
         exclude '**/RecordStresser.class'
     }
+
+    japicmp.enabled = false
 }
 
 project('scratchpad') {
@@ -351,14 +339,5 @@ project('scratchpad') {
 		}
 	}
 
-    // TOOD: we should not duplicate this task in each project, but I did not figure out how to inject the artifactId for each project
-    task japicmp(type: me.champeau.gradle.ArtifactJapicmpTask, dependsOn: jar) {
-        baseline = 'org.apache.poi:poi-scratchpad:' + japicmpversion + '@jar'
-        to = jar.archivePath
-        onlyModified = true
-        onlyBinaryIncompatibleModified = true
-        failOnModification = false
-        txtOutputFile = file("$buildDir/reports/japi.txt")
-        htmlOutputFile = file("$buildDir/reports/japi.html")
-    }
+    japicmp.baseline = 'org.apache.poi:poi-scratchpad:' + japicmpversion + '@jar'
 }
