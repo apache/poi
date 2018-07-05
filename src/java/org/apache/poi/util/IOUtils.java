@@ -140,13 +140,7 @@ public final class IOUtils {
         if (length > (long)Integer.MAX_VALUE) {
             throw new RecordFormatException("Can't allocate an array > "+Integer.MAX_VALUE);
         }
-        if (BYTE_ARRAY_MAX_OVERRIDE > 0) {
-            if (length > BYTE_ARRAY_MAX_OVERRIDE) {
-                throwRFE(length, BYTE_ARRAY_MAX_OVERRIDE);
-            }
-        } else if (length > maxLength) {
-            throwRFE(length, maxLength);
-        }
+        checkLength(length, maxLength);
 
         final int len = Math.min((int)length, maxLength);
         ByteArrayOutputStream baos = new ByteArrayOutputStream(len == Integer.MAX_VALUE ? 4096 : len);
@@ -172,7 +166,17 @@ public final class IOUtils {
         return baos.toByteArray();
     }
 
-    
+    private static void checkLength(long length, int maxLength) {
+        if (BYTE_ARRAY_MAX_OVERRIDE > 0) {
+            if (length > BYTE_ARRAY_MAX_OVERRIDE) {
+                throwRFE(length, BYTE_ARRAY_MAX_OVERRIDE);
+            }
+        } else if (length > maxLength) {
+            throwRFE(length, maxLength);
+        }
+    }
+
+
     /**
      * Returns an array (that shouldn't be written to!) of the
      *  ByteBuffer. Will be of the requested length, or possibly
@@ -540,13 +544,7 @@ public final class IOUtils {
         if (length > (long)Integer.MAX_VALUE) {
             throw new RecordFormatException("Can't allocate an array > "+Integer.MAX_VALUE);
         }
-        if (BYTE_ARRAY_MAX_OVERRIDE > 0) {
-            if (length > BYTE_ARRAY_MAX_OVERRIDE) {
-                throwRFE(length, BYTE_ARRAY_MAX_OVERRIDE);
-            }
-        } else if (length > maxLength) {
-            throwRFE(length, maxLength);
-        }
+        checkLength(length, maxLength);
         return new byte[(int)length];
     }
 
