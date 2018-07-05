@@ -59,7 +59,7 @@ public final class TestIOUtils {
     }
 
     @AfterClass
-    public static void tearDown() throws IOException {
+    public static void tearDown() {
         assertTrue(TMP.delete());
     }
 
@@ -99,13 +99,13 @@ public final class TestIOUtils {
     }
 
     @Test
-    public void testToByteArrayByteBuffer() throws Exception {
+    public void testToByteArrayByteBuffer() {
         assertArrayEquals(new byte[] { 1, 2, 3},
                 IOUtils.toByteArray(ByteBuffer.wrap(new byte[]{1, 2, 3}), 10));
     }
 
     @Test
-    public void testToByteArrayByteBufferToSmall() throws Exception {
+    public void testToByteArrayByteBufferToSmall() {
         assertArrayEquals(new byte[] { 1, 2, 3, 4, 5, 6, 7},
                 IOUtils.toByteArray(ByteBuffer.wrap(new byte[]{1, 2, 3, 4, 5, 6, 7}), 3));
     }
@@ -210,19 +210,19 @@ public final class TestIOUtils {
         int readCalled;
 
         @Override
-        public int read() throws IOException {
+        public int read() {
             readCalled++;
             return 0;
         }
 
         @Override
-        public int read(byte[] arr, int offset, int len) throws IOException {
+        public int read(byte[] arr, int offset, int len) {
             readCalled++;
             return len;
         }
 
         @Override
-        public long skip(long len) throws IOException {
+        public long skip(long len) {
             skipCalled++;
             if (skipCalled == 1) {
                 return 0;

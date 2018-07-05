@@ -369,10 +369,10 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      * @param nameIndex position of the named range (0-based)
      * @return the defined name at the specified index
      * @throws IllegalArgumentException if the supplied index is invalid
-     * @deprecated 3.18. New projects should avoid accessing named ranges by index.
+     * @deprecated 4.0.0. New projects should avoid accessing named ranges by index.
      */
     @Deprecated
-    @Removal(version="3.20")
+    @Removal(version="5.0.0")
     Name getNameAt(int nameIndex);
 
     /**
