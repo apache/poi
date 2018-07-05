@@ -33,6 +33,8 @@ import org.apache.poi.ooxml.extractor.ExtractorFactory;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.sl.extractor.SlideShowExtractor;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFShape;
+import org.apache.poi.xslf.usermodel.XSLFTextParagraph;
 import org.apache.xmlbeans.XmlException;
 import org.junit.Test;
 
@@ -48,7 +50,7 @@ public class TestXSLFPowerPointExtractor {
     @Test
     public void testGetSimpleText() throws IOException {
         try (XMLSlideShow xmlA = openPPTX("sample.pptx");
-             SlideShowExtractor extractor = new SlideShowExtractor(xmlA)) {
+             SlideShowExtractor<XSLFShape, XSLFTextParagraph> extractor = new SlideShowExtractor<>(xmlA)) {
 
             extractor.getText();
 
@@ -160,7 +162,7 @@ public class TestXSLFPowerPointExtractor {
     @Test
     public void testGetComments() throws IOException {
         try (XMLSlideShow xml = openPPTX("45545_Comment.pptx");
-            SlideShowExtractor extractor = new SlideShowExtractor(xml)) {
+             SlideShowExtractor<XSLFShape, XSLFTextParagraph> extractor = new SlideShowExtractor<>(xml)) {
             extractor.setCommentsByDefault(true);
 
             String text = extractor.getText();
@@ -178,7 +180,7 @@ public class TestXSLFPowerPointExtractor {
     @Test
 	public void testGetMasterText() throws Exception {
 	    try (XMLSlideShow xml = openPPTX("WithMaster.pptx");
-            SlideShowExtractor extractor = new SlideShowExtractor(xml)) {
+             SlideShowExtractor<XSLFShape, XSLFTextParagraph> extractor = new SlideShowExtractor<>(xml)) {
             extractor.setSlidesByDefault(true);
             extractor.setNotesByDefault(false);
             extractor.setMasterByDefault(true);
@@ -215,7 +217,7 @@ public class TestXSLFPowerPointExtractor {
 	@Test
 	public void testTable() throws Exception {
         try (XMLSlideShow xml = openPPTX("present1.pptx");
-            SlideShowExtractor extractor = new SlideShowExtractor(xml)) {
+             SlideShowExtractor<XSLFShape, XSLFTextParagraph> extractor = new SlideShowExtractor<>(xml)) {
 
             String text = extractor.getText();
             assertTrue(text.length() > 0);
@@ -240,7 +242,7 @@ public class TestXSLFPowerPointExtractor {
             String filename = "testPPT." + extension;
 
             try (XMLSlideShow xml = openPPTX(filename);
-                SlideShowExtractor extractor = new SlideShowExtractor(xml)) {
+                 SlideShowExtractor<XSLFShape, XSLFTextParagraph> extractor = new SlideShowExtractor<>(xml)) {
 
                 String text = extractor.getText();
                 if (extension.equals("thmx")) {
@@ -299,7 +301,7 @@ public class TestXSLFPowerPointExtractor {
     @Test
     public void bug54570() throws IOException {
         try (XMLSlideShow xml = openPPTX("bug54570.pptx");
-            SlideShowExtractor extractor = new SlideShowExtractor(xml)) {
+             SlideShowExtractor<XSLFShape, XSLFTextParagraph> extractor = new SlideShowExtractor<>(xml)) {
             String text = extractor.getText();
             assertNotNull(text);
         }
@@ -308,6 +310,19 @@ public class TestXSLFPowerPointExtractor {
     private XMLSlideShow openPPTX(String file) throws IOException {
         try (InputStream is = slTests.openResourceAsStream(file)) {
             return new XMLSlideShow(is);
+        }
+    }
+
+    @Test
+    public void setSlTests() throws IOException {
+        try (XMLSlideShow xml = openPPTX("aascu.org_hbcu_leadershipsummit_cooper_.pptx")) {
+            SlideShowExtractor<XSLFShape, XSLFTextParagraph> extractor = new SlideShowExtractor<>(xml);
+            assertNotNull(extractor);
+            extractor.setSlidesByDefault(true);
+            extractor.setNotesByDefault(true);
+            extractor.setMasterByDefault(true);
+
+            assertNotNull(extractor.getText());
         }
     }
 }
