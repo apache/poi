@@ -3171,17 +3171,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             entry.getKey().setRow(entry.getValue());
         }
 
-        //rebuild the _rows map
-        Map<Integer, XSSFRow> map = new HashMap<>();
-        for(XSSFRow r : _rows.values()) {
-            // Performance optimization: explicit boxing is slightly faster than auto-unboxing, though may use more memory
-            final Integer rownumI = Integer.valueOf(r.getRowNum()); // NOSONAR
-            map.put(rownumI, r);
-        }
-        _rows.clear();
-        _rows.putAll(map);
-
+        rebuildRows();
     }
+
     private int shiftedRowNum(int startRow, int endRow, int n, int rownum) {
         // no change if before any affected row
         if(rownum < startRow && (n > 0 || (startRow - rownum) > n)) {
@@ -3208,6 +3200,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         // row is part of the shifted block
         return rownum + n;
     }
+
     private void shiftCommentsForColumns(XSSFVMLDrawing vml, int startColumnIndex, int endColumnIndex, final int n){
         // then do the actual moving and also adjust comments/rowHeight
         // we need to sort it in a way so the shifting does not mess up the structures, 
@@ -3257,16 +3250,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             entry.getKey().setColumn(entry.getValue());
         }
 
-        //rebuild the _rows map
-        Map<Integer, XSSFRow> map = new HashMap<>();
-        for(XSSFRow r : _rows.values()) {
-            // Performance optimization: explicit boxing is slightly faster than auto-unboxing, though may use more memory
-            final Integer rownumI = Integer.valueOf(r.getRowNum()); // NOSONAR
-            map.put(rownumI, r);
-        }
-        _rows.clear();
-        _rows.putAll(map);
-
+        rebuildRows();
     }
 
     /**
@@ -3631,8 +3615,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             }*/
         }
 
-        int minCell=Integer.MAX_VALUE, maxCell=Integer.MIN_VALUE;
-        for(XSSFRow row : _rows.values()){
+        int minCell = Integer.MAX_VALUE, maxCell = Integer.MIN_VALUE;
+        for(Map.Entry<Integer, XSSFRow> entry : _rows.entrySet()) {
+            XSSFRow row = entry.getValue();
+
             // first perform the normal write actions for the row
             row.onDocumentWrite();
 
