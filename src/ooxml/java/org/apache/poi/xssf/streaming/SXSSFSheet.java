@@ -66,7 +66,7 @@ public class SXSSFSheet implements Sheet
 {
     /*package*/ final XSSFSheet _sh;
     private final SXSSFWorkbook _workbook;
-    private final TreeMap<Integer,SXSSFRow> _rows= new TreeMap<>();
+    private final TreeMap<Integer,SXSSFRow> _rows = new TreeMap<>();
     private final SheetDataWriter _writer;
     private int _randomAccessWindowSize = SXSSFWorkbook.DEFAULT_WINDOW_SIZE;
     private final AutoSizeColumnTracker _autoSizeColumnTracker;
@@ -138,17 +138,13 @@ public class SXSSFSheet implements Sheet
                             "in the range [0," + _sh.getLastRowNum() + "] that is already written to disk.");
         }
 
-        SXSSFRow newRow=new SXSSFRow(this);
-        _rows.put(rownum,newRow);
+        SXSSFRow newRow = new SXSSFRow(this);
+        _rows.put(rownum, newRow);
         allFlushed = false;
-        if(_randomAccessWindowSize>=0&&_rows.size()>_randomAccessWindowSize)
-        {
-            try
-            {
+        if(_randomAccessWindowSize >= 0 && _rows.size() > _randomAccessWindowSize) {
+            try {
                flushRows(_randomAccessWindowSize);
-            }
-            catch (IOException ioe)
-            {
+            } catch (IOException ioe) {
                 throw new RuntimeException(ioe);
             }
         }
@@ -167,11 +163,9 @@ public class SXSSFSheet implements Sheet
             throw new IllegalArgumentException("Specified row does not belong to this sheet");
         }
 
-        for(Iterator<Map.Entry<Integer,SXSSFRow>> iter=_rows.entrySet().iterator();iter.hasNext();)
-        {
-            Map.Entry<Integer,SXSSFRow> entry=iter.next();
-            if(entry.getValue()==row)
-            {
+        for(Iterator<Map.Entry<Integer, SXSSFRow>> iter = _rows.entrySet().iterator(); iter.hasNext();) {
+            Map.Entry<Integer, SXSSFRow> entry = iter.next();
+            if(entry.getValue() == row) {
                 iter.remove();
                 return;
             }
@@ -199,7 +193,7 @@ public class SXSSFSheet implements Sheet
     @Override
     public int getPhysicalNumberOfRows()
     {
-        return _rows.size()+_writer.getNumberOfFlushedRows();
+        return _rows.size() + _writer.getNumberOfFlushedRows();
     }
 
     /**
@@ -208,8 +202,7 @@ public class SXSSFSheet implements Sheet
      * @return the number of the first logical row on the sheet (0-based)
      */
     @Override
-    public int getFirstRowNum()
-    {
+    public int getFirstRowNum() {
         if(_writer.getNumberOfFlushedRows() > 0) {
             return _writer.getLowestIndexOfFlushedRows();
         }
@@ -971,7 +964,7 @@ public class SXSSFSheet implements Sheet
     @NotImplemented
     @Override
     public void shiftRows(int startRow, int endRow, int n) {
-        throw new RuntimeException("NotImplemented");
+        throw new RuntimeException("Not Implemented");
     }
 
     /**
@@ -996,7 +989,7 @@ public class SXSSFSheet implements Sheet
     @Override
     public void shiftRows(int startRow, int endRow, int n, boolean copyRowHeight, boolean resetOriginalRowHeight)
     {
-        throw new RuntimeException("NotImplemented");
+        throw new RuntimeException("Not Implemented");
     }
 
     /**
@@ -1734,7 +1727,7 @@ public class SXSSFSheet implements Sheet
         // corrupted .xlsx files as rows appear multiple times in the resulting sheetX.xml files
         // return _sh.setArrayFormula(formula, range);
 
-        throw new RuntimeException("NotImplemented");
+        throw new RuntimeException("Not Implemented");
     }
 
     /**
@@ -1749,7 +1742,7 @@ public class SXSSFSheet implements Sheet
         // corrupted .xlsx files as rows appear multiple times in the resulting sheetX.xml files
         // return _sh.removeArrayFormula(cell);
 
-        throw new RuntimeException("NotImplemented");
+        throw new RuntimeException("Not Implemented");
     }
     
     @Override
@@ -1831,7 +1824,7 @@ public class SXSSFSheet implements Sheet
          if(value == 0 || value < -1) {
              throw new IllegalArgumentException("RandomAccessWindowSize must be either -1 or a positive integer");
          }
-         _randomAccessWindowSize=value;
+         _randomAccessWindowSize = value;
     }
     
     /**
@@ -2123,6 +2116,6 @@ public class SXSSFSheet implements Sheet
     @NotImplemented 
     @Override 
     public void shiftColumns(int startColumn, int endColumn, int n){ 
-      throw new UnsupportedOperationException("NotImplemented"); 
+      throw new UnsupportedOperationException("Not Implemented"); 
     }
 }

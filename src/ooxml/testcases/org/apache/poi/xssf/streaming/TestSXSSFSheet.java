@@ -59,7 +59,7 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
     @Test
     public void cloneSheet() throws IOException {
         thrown.expect(RuntimeException.class);
-        thrown.expectMessage("NotImplemented");
+        thrown.expectMessage("Not Implemented");
         super.cloneSheet();
     }
 
@@ -67,7 +67,7 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
     @Test
     public void cloneSheetMultipleTimes() throws IOException {
         thrown.expect(RuntimeException.class);
-        thrown.expectMessage("NotImplemented");
+        thrown.expectMessage("Not Implemented");
         super.cloneSheetMultipleTimes();
     }
     
@@ -78,7 +78,7 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
     @Test
     public void shiftMerged() throws IOException {
         thrown.expect(RuntimeException.class);
-        thrown.expectMessage("NotImplemented");
+        thrown.expectMessage("Not Implemented");
         super.shiftMerged();
     }
 
@@ -91,7 +91,7 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
     @Test
     public void bug35084() throws IOException {
         thrown.expect(RuntimeException.class);
-        thrown.expectMessage("NotImplemented");
+        thrown.expectMessage("Not Implemented");
         super.bug35084();
     }
 
