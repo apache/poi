@@ -80,7 +80,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
             super.cloneSheet();
             fail("expected exception");
         } catch (RuntimeException e){
-            assertEquals("NotImplemented", e.getMessage());
+            assertEquals("Not Implemented", e.getMessage());
         }
     }
 
@@ -94,7 +94,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
             super.sheetClone();
             fail("expected exception");
         } catch (RuntimeException e){
-            assertEquals("NotImplemented", e.getMessage());
+            assertEquals("Not Implemented", e.getMessage());
         }
     }
 

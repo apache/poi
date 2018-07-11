@@ -691,9 +691,8 @@ public class SXSSFWorkbook implements Workbook {
      */
     @Override
     @NotImplemented
-    public Sheet cloneSheet(int sheetNum)
-    {
-        throw new RuntimeException("NotImplemented");
+    public Sheet cloneSheet(int sheetNum) {
+        throw new RuntimeException("Not Implemented");
     }
 
 
@@ -1291,7 +1290,7 @@ public class SXSSFWorkbook implements Workbook {
     @Override
     @NotImplemented
     public int linkExternalWorkbook(String name, Workbook workbook) {
-        throw new RuntimeException("NotImplemented");
+        throw new RuntimeException("Not Implemented");
     }
     
     /**
