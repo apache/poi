@@ -69,8 +69,24 @@ public class TestNecessaryOOXMLClasses {
         Assert.assertNotNull(ctTableStyleTextStyle);
         CTHeaderFooter ctHeaderFooter = CTHeaderFooter.Factory.newInstance();
         Assert.assertNotNull(ctHeaderFooter);
+        CTMarkerSize ctMarkerSize = CTMarkerSize.Factory.newInstance();
+        Assert.assertNotNull(ctMarkerSize);
+        CTDLbls ctdLbls = CTDLbls.Factory.newInstance();
+        Assert.assertNotNull(ctdLbls);
         CTMarker ctMarker = CTMarker.Factory.newInstance();
         Assert.assertNotNull(ctMarker);
+        STMarkerStyle stMarkerStyle = STMarkerStyle.Factory.newInstance();
+        Assert.assertNotNull(stMarkerStyle);
+        CTMarkerStyle ctMarkerStyle = CTMarkerStyle.Factory.newInstance();
+        Assert.assertNotNull(ctMarkerStyle);
+        CTExternalData ctExternalData = CTExternalData.Factory.newInstance();
+        Assert.assertNotNull(ctExternalData);
+        CTAxisUnit ctAxisUnit = CTAxisUnit.Factory.newInstance();
+        Assert.assertNotNull(ctAxisUnit);
+        CTLblAlgn ctLblAlgn = CTLblAlgn.Factory.newInstance();
+        Assert.assertNotNull(ctLblAlgn);
+        CTDashStopList ctDashStopList = CTDashStopList.Factory.newInstance();
+        Assert.assertNotNull(ctDashStopList);
 
         STLblAlgn.Enum e1 = STLblAlgn.Enum.forString("ctr");
         Assert.assertNotNull(e1);
