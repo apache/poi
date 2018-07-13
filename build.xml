@@ -1119,7 +1119,13 @@ under the License.
         </copy>
     </target>
 
-    <target name="retest-ooxml" depends="compile-main,compile-scratchpad,jar">
+    <target name="retest-ooxml" depends="jar">
+        <delete dir="${ooxml.reports.test}"/>
+        <delete dir="${ooxml.output.test}"/>
+        <delete dir="${ooxml.output.test.dir}"/>
+        <mkdir dir="${ooxml.reports.test}"/>
+        <mkdir dir="${ooxml.output.test}"/>
+        <mkdir dir="${ooxml.output.test.dir}"/> 
         <!-- compile the sources -->
         <javac target="${jdk.version.class}"
                source="${jdk.version.source}"
