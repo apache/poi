@@ -354,11 +354,10 @@ under the License.
         <pathelement location="${dsig.sl4j-api.jar}"/>
     </path>
 
-    <path id="ooxml.classpath">
+    <path id="ooxml.base.classpath">
         <pathelement location="${ooxml.curvesapi.jar}"/>
         <pathelement location="${ooxml.xmlbeans.jar}"/>
         <pathelement location="${ooxml.commons-compress.jar}"/>
-        <pathelement location="${ooxml.xsds.jar}"/>
         <path refid="main.classpath"/>
         <pathelement location="${main.output.dir}"/>
         <pathelement location="${ooxml.security.jar}"/>
@@ -366,6 +365,24 @@ under the License.
         <!--path refid="ooxml.xmlsec.classpath"/-->
         <!-- Used only for ExtractorFactory, see #57963 -->
         <pathelement location="${scratchpad.output.dir}" unless:true="${scratchpad.ignore}"/>
+    </path>
+
+    <path id="ooxml-lite.classpath">
+        <path refid="ooxml.base.classpath"/>
+        <pathelement location="${ooxml.lite.output.dir}"/> <!-- instead of ooxml-xsds.jar use the filtered classes-->
+        <pathelement location="${ooxml.output.dir}"/>
+        <pathelement location="${ooxml.output.test.dir}"/>
+        <pathelement location="${main.output.test.dir}"/>
+    </path>
+
+    <path id="ooxml.classpath">
+        <pathelement location="${ooxml.xsds.jar}"/>
+        <path refid="ooxml.base.classpath"/>
+    </path>
+
+    <path id="ooxml.lite.verify.classpath">
+        <pathelement location="build/dist/maven/poi-ooxml-schemas/poi-ooxml-schemas-${version.id}.jar"/>
+        <path refid="ooxml.base.classpath"/>
     </path>
 
     <path id="test.classpath">
@@ -393,6 +410,16 @@ under the License.
         <pathelement location="${additionaljar}"/>
     </path>
 
+    <path id="test.ooxml.lite.verify.classpath">
+        <path refid="ooxml.lite.verify.classpath"/>
+        <path refid="ooxml.xmlsec.classpath"/>
+        <path refid="test.jar.classpath"/>
+        <pathelement location="${ooxml.output.dir}"/>
+        <pathelement location="${ooxml.output.test.dir}"/>
+        <pathelement location="${main.output.test.dir}"/>
+        <pathelement location="${additionaljar}"/>
+    </path>
+
     <path id="test.integration.classpath">
         <pathelement location="${integration.src.test}"/>
         <path refid="scratchpad.classpath"/>
@@ -403,22 +430,6 @@ under the License.
         <pathelement location="${integration.output.test.dir}"/>
         <pathelement location="${examples.output.dir}"/>
     </path>
-
-    <path id="ooxml-lite.classpath">
-        <pathelement location="${ooxml.curvesapi.jar}"/>
-        <pathelement location="${ooxml.xmlbeans.jar}"/>
-        <pathelement location="${ooxml.commons-compress.jar}"/>
-        <pathelement location="${ooxml.lite.output.dir}"/> <!-- instead of ooxml-xsds.jar use the filtered classes-->
-        <path refid="main.classpath"/>
-        <pathelement location="${main.output.dir}"/>
-        <pathelement location="${scratchpad.output.dir}" unless:true="${scratchpad.ignore}"/>
-        <!--path refid="ooxml.classpath"/-->
-        <pathelement location="${ooxml.output.dir}"/>
-        <pathelement location="${ooxml.output.test.dir}"/>
-        <pathelement location="${main.output.test.dir}"/>
-        <pathelement location="${ooxml.security.jar}"/>
-    </path>
-
 
     <path id="examples.classpath">
         <path refid="main.classpath"/>
@@ -1106,6 +1117,76 @@ under the License.
         <copy todir="${ooxml.output.dir}">
             <fileset dir="${ooxml.resource1.dir}"/>
         </copy>
+    </target>
+
+    <target name="retest-ooxml" depends="compile-main,compile-scratchpad,jar">
+        <!-- compile the sources -->
+        <javac target="${jdk.version.class}"
+               source="${jdk.version.source}"
+               destdir="${ooxml.output.dir}"
+               srcdir="${ooxml.src}"
+               debug="${compile.debug}"
+               encoding="${java.source.encoding}"
+               fork="yes"
+               includeantruntime="false">
+            <classpath>
+                <path refid="ooxml.lite.verify.classpath"/>
+                <path refid="ooxml.xmlsec.classpath"/>
+            </classpath>
+        </javac>
+        <!-- compile the tests -->
+        <javac target="${jdk.version.class}"
+               source="${jdk.version.source}"
+               destdir="${ooxml.output.test.dir}"
+               srcdir="${ooxml.src.test}"
+               debug="${compile.debug}"
+               encoding="${java.source.encoding}"
+               fork="yes"
+               includeantruntime="false">
+            <classpath>
+                <path refid="ooxml.classpath"/>
+                <path refid="ooxml.xmlsec.classpath"/>
+                <path refid="test.ooxml.lite.verify.classpath"/>
+                <pathelement path="${ooxml.output.dir}"/>
+                <pathelement path="${main.output.test.dir}"/>
+            </classpath>
+        </javac>
+        <copy todir="${ooxml.output.dir}">
+            <fileset dir="${ooxml.resource1.dir}"/>
+        </copy>
+        <junit printsummary="yes" fork="yes" forkmode="once" haltonfailure="${halt.on.test.failure}"
+               failureproperty="ooxml.test.failed">
+            <classpath>
+                <path refid="test.ooxml.lite.verify.classpath"/>
+                <path refid="test.jar.classpath"/>
+            </classpath>
+            <syspropertyset refid="junit.properties"/>
+            <sysproperty key="java.io.tmpdir" value="${tempdir}"/>
+            <jvmarg value="-Xmx768M"/>
+            <jvmarg value="-ea"/>
+            <jvmarg value="${java9addmods}" />
+            <jvmarg value="${java9addmodsvalue}" />
+            <jvmarg value="${java9addopens1}" />
+            <jvmarg value="${java9addopens2}" />
+            <jvmarg value="${java9addopens3}" />
+            <jvmarg value="${java9addopens4}" />
+            <jvmarg value="${java9addopens5}" />
+            <jvmarg value="${java9addopens6}" />
+            <!-- jvmarg value="-Duser.timezone=UTC"/ -->
+            <jvmarg value="${file.leak.detector}" />
+            <formatter type="plain"/>
+            <formatter type="xml"/>
+            <batchtest todir="${ooxml.reports.test}">
+                <fileset dir="${ooxml.src.test}">
+                     <include name="**/${testpattern}.java"/>
+                     <exclude name="**/TestUnfixedBugs.java"/>
+                     <exclude name="**/All*Tests.java"/>
+                     <exclude name="**/TestSignatureInfo.java"/>
+                     <exclude name="**/${testexcludepattern}.java"/>
+                     <patternset refid="exclude-scratchpad-test" if:true="${scratchpad.ignore}"/>
+                </fileset>
+            </batchtest>
+        </junit>
     </target>
 
     <target name="compile-excelant" depends="compile-main,compile-ooxml">
