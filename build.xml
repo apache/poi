@@ -178,9 +178,9 @@ under the License.
     <property name="main.ant.url" value="${repository.m2}/maven2/org/apache/ant/ant/1.10.1/ant-1.10.1.jar"/>
     <property name="main.antlauncher.jar" location="${main.lib}/ant-launcher-1.10.1.jar"/>
     <property name="main.antlauncher.url" value="${repository.m2}/maven2/org/apache/ant/ant-launcher/1.10.1/ant-launcher-1.10.1.jar"/>
-    <property name="main.commons-collections4.jar" location="${main.lib}/commons-collections4-4.1.jar"/>
+    <property name="main.commons-collections4.jar" location="${main.lib}/commons-collections4-4.2.jar"/>
     <property name="main.commons-collections4.url"
-              value="${repository.m2}/maven2/org/apache/commons/commons-collections4/4.1/commons-collections4-4.1.jar"/>
+              value="${repository.m2}/maven2/org/apache/commons/commons-collections4/4.2/commons-collections4-4.2.jar"/>
     <property name="main.commons-math3.jar" location="${main.lib}/commons-math3-3.6.1.jar"/>
     <property name="main.commons-math3.url"
               value="${repository.m2}/maven2/org/apache/commons/commons-math3/3.6.1/commons-math3-3.6.1.jar"/>
@@ -588,6 +588,7 @@ under the License.
                 <include name="commons-codec-1.9*"/>
                 <include name="commons-codec-1.10*"/>
                 <include name="commons-compress-1.16*"/>
+                <include name="commons-collections4-4.1*"/>
                 <include name="commons-logging-1.1*.jar"/>
                 <include name="findbugs-noUpdateChecks-2.0.3*"/>
                 <include name="jacoco-0.6*"/>
