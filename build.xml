@@ -21,8 +21,12 @@ under the License.
     This build was tested with ant 1.9.4 although it will probably work with
     other versions, however at least 1.8.0 is required.
 
+
+    updated to forrest 0.9:
     To build the documentation you will need to install forrest and set
-    the FORREST_HOME environment variable.  Forrest 0.5.1 required.
+    the FORREST_HOME environment variable.  Forrest 0.9 required.
+    check https://forrest.apache.org/docs_0_90/your-project.html#invoking_from_ant
+    TODO: cp forrest/lib/core/xml-commons-resolver-*.jar $ANT_HOME/lib
 
     Since POI 4.0 you will need JDK 1.8 or newer to build and run POI.
 
@@ -51,7 +55,13 @@ under the License.
     <property name="main.lib" location="lib"/>
     <property name="ooxml.lib" location="ooxml-lib"/>
     <property name="compile.lib" location="compile-lib"/>
-    <property name="forrest.home" value="${env.FORREST_HOME}"/>
+
+    <!-- apache forrest settings -->
+    <property name="forrest.home" location="${env.FORREST_HOME}"/>
+    <property name="project.home" location="."/>
+    <!--<property name="project.build-dir" location="build"/>-->
+    <!--<property name="project.site" value="tmp/site"/>-->
+    <import file="${env.FORREST_HOME}/main/forrest.build.xml"/>
 
     <!-- compiler options options -->
     <property name="jdk.version.source" value="1.8" description="JDK version of source code"/>
@@ -263,9 +273,8 @@ under the License.
 
     <!-- build and distro settings -->
     <property name="jar.name" value="poi"/>
-    <property name="build.site" location="build/tmp/site/build/site"/>
-    <property name="build.site.src" location="build/tmp/site"/>
-    <property name="apidocs.report.dir" location="${build.site}/apidocs"/>
+    <property name="build.site" location="build/site"/>
+    <property name="javadocs.report.dir" location="${build.site}/apidocs"/>
     <property name="dist.dir" location="build/dist"/>
     <property name="halt.on.test.failure" value="true"/>
 
@@ -1748,25 +1757,11 @@ under the License.
         <fail message="Apache Forrest is not installed."/>
     </target>
 
-    <target name="docs" depends="init, -check-forrest-installed, -check-docs"
+    <target name="docs" depends="init, -check-forrest-installed, -check-docs, check-java-version, init-props, init-skins, init-plugins, site, javadocs"
             unless="main.docs.notRequired" description="Builds the POI website">
 
-        <mkdir dir="${build.site.src}/${main.documentation}"/>
-        <copy todir="${build.site.src}/${main.documentation}">
-            <fileset dir="${main.documentation}"/>
-        </copy>
-        <copy file="forrest.properties" tofile="${build.site.src}/forrest.properties"/>
-
-        <move
-                file="${build.site.src}/src/documentation/content/xdocs/status.xml"
-                tofile="${build.site.src}/status.xml"/>
-
-        <ant antfile="${env.FORREST_HOME}/forrest.antproxy.xml" target="site">
-            <property name="project.home" location="${build.site.src}"/>
-        </ant>
-
         <echo>Broken links:</echo>
-        <echo file="${build.site}/../tmp/brokenlinks.txt"/>
+        <echo file="${build.site}/../tmp/brokenlinks.xml"/>
 
         <fixcrlf srcdir="${build.site}" includes="**/*.html,**/*.css" eol="unix" eof="remove" />
 
@@ -1778,7 +1773,7 @@ under the License.
     <!-- Generates the API documentation. -->
     <target name="javadocs"
             description="Generates the API documentation">
-        <javadoc verbose="false" author="true" destdir="${apidocs.report.dir}"
+        <javadoc verbose="false" author="true" destdir="${javadocs.report.dir}"
                  windowtitle="POI API Documentation" use="true" version="true"
                  maxmemory="384M" additionalparam="-notimestamp" locale="en_US"
                  classpathref="javadoc.classpath">
@@ -1870,11 +1865,6 @@ under the License.
     </target>
 
 
-    <!-- Generates documentation and reports -->
-    <target name="site" depends="docs,javadocs"
-            description="Generates POI's website's contents"/>
-
-
     <target name="maven-poms"
             description="Builds the POM files for a maven distribution, and copies these and the jars to the appropriate locations">
 
@@ -1961,7 +1951,7 @@ under the License.
 
     <target name="-do-jar-check-javadocs-package-list">
         <condition property="javadocs.package-list.present">
-            <available file="build/tmp/site/build/site/apidocs/package-list"/>
+            <available file="${javadocs.report.dir}/package-list"/>
         </condition>
     </target>
 
@@ -1998,7 +1988,7 @@ under the License.
                 <packageset dir="@{src}" defaultexcludes="yes">
                     <include name="org/apache/poi/**"/>
                 </packageset>
-                <link offline="true" href="https://poi.apache.org/apidocs" packagelistLoc="build/tmp/site/build/site/apidocs"/>
+                <link offline="true" href="https://poi.apache.org/apidocs" packagelistLoc="${javadocs.report.dir}"/>
             </javadoc>
             <jar destfile="${dist.dir}/maven/@{dest}/@{dest}-${version.id}-javadoc.jar"
                  manifest="build/poi-manifest.mf">
@@ -2431,7 +2421,7 @@ under the License.
     <lastUpdated>${lastUpdated}</lastUpdated>
   </versioning>
 </metadata>]]></echo>
-            <fixcrlf srcdir="${metadir}" includes="maven-metadata.xml" eol="unix" eof="remove" />                    <!-- add sha-512 when nexus rules are updated -->
+            <fixcrlf srcdir="${metadir}" includes="maven-metadata.xml" eol="unix" eof="remove" />
             <!-- add sha-512 when nexus rules are updated (2/2) -->
             <!--checksum algorithm="SHA-512" fileext=".sha512" format="MD5SUM">
                 <fileset dir="${metadir}" includes="maven-metadata.xml"/>
