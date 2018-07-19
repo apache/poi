@@ -289,7 +289,7 @@ poijobs.each { poijob ->
                     //properties(poijob.properties ?: '')
                     antInstallation(antRT)
                 }
-                shellEx(delegate, 'zip -r build/javadocs.zip build/tmp/site/build/site/apidocs', poijob)
+                shellEx(delegate, 'zip -r build/javadocs.zip build/site/apidocs', poijob)
             }
             publishers {
                 if (!poijob.skipcigame) {
