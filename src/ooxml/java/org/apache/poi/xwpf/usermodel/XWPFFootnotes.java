@@ -22,6 +22,7 @@ import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,10 +36,14 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFootnotes;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFtnEdn;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.FootnotesDocument;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STFtnEdn;
 
 /**
- * Looks after the collection of Footnotes for a document
+ * Looks after the collection of Footnotes for a document.
+ * Manages both bottom-of-the-page footnotes and end notes.
  */
 public class XWPFFootnotes extends POIXMLDocumentPart {
     protected XWPFDocument document;
@@ -156,5 +161,40 @@ public class XWPFFootnotes extends POIXMLDocumentPart {
 
     public void setXWPFDocument(XWPFDocument doc) {
         document = doc;
+    }
+
+    /**
+     * Create a new footnote and add it to the document. 
+     * <p>The new note will have one paragraph with the style "FootnoteText"
+     * and one run containing the required footnote reference with the 
+     * style "FootnoteReference".
+     * </p>
+     * @return New XWPFFootnote
+     */
+    public XWPFFootnote createFootnote() {
+        CTFtnEdn newNote = CTFtnEdn.Factory.newInstance(); 
+        newNote.setType(STFtnEdn.NORMAL);
+
+        XWPFFootnote footnote = addFootnote(newNote);
+        int id = ctFootnotes.sizeOfFootnoteArray();
+        footnote.getCTFtnEdn().setId(BigInteger.valueOf(id));
+        return footnote;
+        
+    }
+
+    /**
+     * Remove the specified footnote if present.
+     *
+     * @param pos 
+     * @return True if the footnote was removed.
+     */
+    public boolean removeFootnote(int pos) {
+        if (ctFootnotes.sizeOfFootnoteArray() >= pos - 1) {
+            ctFootnotes.removeFootnote(pos);
+            listFootnote.remove(pos);
+            return true;
+        } else {
+            return false;
+        }
     }
 }
