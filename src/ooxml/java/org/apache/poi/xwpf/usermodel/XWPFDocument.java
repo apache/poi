@@ -41,6 +41,8 @@ import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.ooxml.POIXMLProperties;
 import org.apache.poi.ooxml.POIXMLRelation;
+import org.apache.poi.ooxml.util.IdentifierManager;
+import org.apache.poi.ooxml.util.PackageHelper;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -84,6 +86,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STDocProtect;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHdrFtr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.StylesDocument;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 
 /**
  * <p>High(ish) level class for working with .docx files.</p>
@@ -1652,5 +1655,34 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         //add chart object to chart list
         charts.add(xwpfChart);
         return xwpfChart;
+    }
+
+    /**
+     * Create a new footnote and add it to the document. 
+     * <p>The new note will have one paragraph with the style "FootnoteText"
+     * and one run containing the required footnote reference with the 
+     * style "FootnoteReference".
+     *
+     * @return New XWPFFootnote.
+     */
+    public XWPFFootnote createFootnote() {
+        XWPFFootnotes footnotes = this.createFootnotes();
+        
+        XWPFFootnote footnote = footnotes.createFootnote();
+        return footnote;
+    }
+
+    /**
+     * Remove the specified footnote if present.
+     *
+     * @param pos 
+     * @return True if the footnote was removed.
+     */
+    public boolean removeFootnote(int pos) {
+        if (null != footnotes) {
+            return footnotes.removeFootnote(pos);
+        } else {
+            return false;
+        }
     }
 }

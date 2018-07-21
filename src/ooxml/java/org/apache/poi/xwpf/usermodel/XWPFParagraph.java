@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart;
+import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.util.Internal;
 import org.apache.poi.wp.usermodel.Paragraph;
 import org.apache.xmlbeans.XmlCursor;
@@ -1666,5 +1667,18 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
             }
         }
         return null;
+    }
+
+    /**
+     * Add a new run with a reference to the specified footnote.
+     * The footnote reference run will have the style name "FootnoteReference".
+     *
+     * @param footnote Footnote to which to add a reference.
+     */
+    public void addFootnoteReference(XWPFFootnote footnote) {
+        XWPFRun run = createRun();
+        CTR ctRun = run.getCTR();
+        ctRun.addNewRPr().addNewRStyle().setVal("FootnoteReference");
+        ctRun.addNewFootnoteReference().setId(footnote.getId());      
     }
 }
