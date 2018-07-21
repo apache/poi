@@ -21,28 +21,42 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
 
-import junit.framework.TestCase;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFtnEdn;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STFtnEdn;
 
+import junit.framework.TestCase;
+
 public class TestXWPFFootnotes extends TestCase {
+    
+    public void testCreateFootnotes() throws IOException{
+        XWPFDocument docOut = new XWPFDocument();
+
+        XWPFFootnotes footnotes = docOut.createFootnotes();
+        
+        assertNotNull(footnotes);
+        
+        XWPFFootnotes secondFootnotes = docOut.createFootnotes();
+        
+        assertSame(footnotes, secondFootnotes);
+        
+        docOut.close();
+    }
 
     public void testAddFootnotesToDocument() throws IOException {
         XWPFDocument docOut = new XWPFDocument();
 
-        BigInteger noteId = BigInteger.valueOf(1);
-
-        XWPFFootnotes footnotes = docOut.createFootnotes();
-        CTFtnEdn ctNote = CTFtnEdn.Factory.newInstance();
-        ctNote.setId(noteId);
-        ctNote.setType(STFtnEdn.NORMAL);
-        footnotes.addFootnote(ctNote);
+        // NOTE: XWPFDocument.createFootnote() delegates directly
+        //       to XWPFFootnotes.createFootnote() so this tests
+        //       both creation of new XWPFFootnotes in document
+        //       and XWPFFootnotes.createFootnote();
+        XWPFFootnote footnote = docOut.createFootnote();
+        BigInteger noteId = footnote.getId();
 
         XWPFDocument docIn = XWPFTestDataSamples.writeOutAndReadBack(docOut);
 
         XWPFFootnote note = docIn.getFootnoteByID(noteId.intValue());
-        assertEquals(note.getCTFtnEdn().getType(), STFtnEdn.NORMAL);
+        assertNotNull(note);
+        assertEquals(STFtnEdn.NORMAL, note.getCTFtnEdn().getType());
     }
 
     /**
