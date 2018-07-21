@@ -24,9 +24,7 @@ under the License.
 
     updated to forrest 0.9:
     To build the documentation you will need to install forrest and set
-    the FORREST_HOME environment variable.  Forrest 0.9 required.
-    check https://forrest.apache.org/docs_0_90/your-project.html#invoking_from_ant
-    TODO: cp forrest/lib/core/xml-commons-resolver-*.jar $ANT_HOME/lib
+    the FORREST_HOME environment variable.
 
     Since POI 4.0 you will need JDK 1.8 or newer to build and run POI.
 
@@ -55,13 +53,6 @@ under the License.
     <property name="main.lib" location="lib"/>
     <property name="ooxml.lib" location="ooxml-lib"/>
     <property name="compile.lib" location="compile-lib"/>
-
-    <!-- apache forrest settings -->
-    <property name="forrest.home" location="${env.FORREST_HOME}"/>
-    <property name="project.home" location="."/>
-    <!--<property name="project.build-dir" location="build"/>-->
-    <!--<property name="project.site" value="tmp/site"/>-->
-    <import file="${env.FORREST_HOME}/main/forrest.build.xml"/>
 
     <!-- compiler options options -->
     <property name="jdk.version.source" value="1.8" description="JDK version of source code"/>
@@ -1757,8 +1748,10 @@ under the License.
         <fail message="Apache Forrest is not installed."/>
     </target>
 
-    <target name="docs" depends="init, -check-forrest-installed, -check-docs, check-java-version, init-props, init-skins, init-plugins, site, javadocs"
+    <target name="docs" depends="init, -check-forrest-installed, -check-docs, javadocs"
             unless="main.docs.notRequired" description="Builds the POI website">
+
+        <exec executable="${env.FORREST_HOME}/bin/forrest"/>
 
         <echo>Broken links:</echo>
         <echo file="${build.site}/../tmp/brokenlinks.xml"/>
@@ -2111,7 +2104,7 @@ under the License.
        </mvn:mvn>
     </target>
 
-    <target name="dist" depends="clean, compile-all, test-all, rat-check, forbidden-apis-check, site, jar, release-notes, assemble"
+    <target name="dist" depends="clean, compile-all, test-all, rat-check, forbidden-apis-check, docs, jar, release-notes, assemble"
             description="Creates the entire distribution into build/dist, from scratch">
     </target>
 
