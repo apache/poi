@@ -40,5 +40,6 @@
 	<classpathentry kind="lib" path="lib/byte-buddy-1.7.9.jar"/>
 	<classpathentry kind="lib" path="lib/byte-buddy-agent-1.7.9.jar"/>
 	<classpathentry kind="lib" path="lib/objenesis-2.6.jar"/>
+	<classpathentry kind="lib" path="lib/commons-compress-1.17.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
