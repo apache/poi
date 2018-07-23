@@ -1,19 +1,3 @@
-/* ====================================================================
-   Licensed to the Apache Software Foundation (ASF) under one or more
-   contributor license agreements.  See the NOTICE file distributed with
-   this work for additional information regarding copyright ownership.
-   The ASF licenses this file to You under the Apache License, Version 2.0
-   (the "License"); you may not use this file except in compliance with
-   the License.  You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
-==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFtnEdn;
@@ -21,9 +5,11 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFtnEdnRef;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 
 /**
- * Represents a bottom-of-the-page footnote.
- * <p>Create a new footnote using {@link XWPFDocument#createFootnote()} or
- * {@link XWPFFootnotes#createFootnote()}.</p>
+ * Represents an end note footnote.
+ * <p>End notes are collected at the end of a document or section rather than
+ * at the bottom of a page.</p>
+ * <p>Create a new footnote using {@link XWPFDocument#createEndnote()} or
+ * {@link XWPFEndnotes#createFootnote()}.</p>
  * <p>The first body element of a footnote should (or possibly must) be a paragraph
  * with the first run containing a CTFtnEdnRef object. The {@link XWPFFootnote#createParagraph()}
  * and {@link XWPFFootnote#createTable()} methods do this for you.</p>
@@ -33,23 +19,28 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
  * with a CTFtnEdnRef that specifies the ID of the target paragraph. 
  * The {@link XWPFParagraph#addFootnoteReference(AbstractXWPFFootnoteEndnote)}
  * method does this for you.</p>
+ * @since 4.0.0
  */
-public class XWPFFootnote extends AbstractXWPFFootnoteEndnote {
-    
-    public XWPFFootnote(CTFtnEdn note, AbstractXWPFFootnotesEndnotes xFootnotes) {
-        super(note, xFootnotes);
+public class XWPFEndnote extends AbstractXWPFFootnoteEndnote {
+
+    public XWPFEndnote() {
+        // TODO Auto-generated constructor stub
     }
 
-    public XWPFFootnote(XWPFDocument document, CTFtnEdn body) {
+    public XWPFEndnote(XWPFDocument document, CTFtnEdn body) {
         super(document, body);
     }
-    
+
+    public XWPFEndnote(CTFtnEdn note, AbstractXWPFFootnotesEndnotes footnotes) {
+        super(note, footnotes);
+    }
+
     /**
      * Ensure that the specified paragraph has a reference marker for this
-     * footnote by adding a footnote reference if one is not found.
+     * end note by adding a footnote reference if one is not found.
      * <p>This method is for the first paragraph in the footnote, not 
      * paragraphs that will refer to the footnote. For references to
-     * the footnote, use {@link XWPFParagraph#addFootnoteReference(XWPFFootnote)}.
+     * the footnote, use {@link XWPFParagraph#addFootnoteReference(AbstractXWPFFootnoteEndnote))}.
      * </p>
      * <p>The first run of the first paragraph in a footnote should
      * contain a {@link CTFtnEdnRef} object.</p>
@@ -68,7 +59,7 @@ public class XWPFFootnote extends AbstractXWPFFootnoteEndnote {
         }
         CTR ctr = r.getCTR();
         boolean foundRef = false;
-        for (CTFtnEdnRef ref : ctr.getFootnoteReferenceList()) {
+        for (CTFtnEdnRef ref : ctr.getEndnoteReferenceList()) {
             if (getId().equals(ref.getId())) {
                 foundRef = true;
                 break;
@@ -76,8 +67,9 @@ public class XWPFFootnote extends AbstractXWPFFootnoteEndnote {
         }
         if (!foundRef) {
             ctr.addNewRPr().addNewRStyle().setVal("FootnoteReference");
-            ctr.addNewFootnoteRef();
+            ctr.addNewEndnoteRef();
         }
         
     }
+
 }

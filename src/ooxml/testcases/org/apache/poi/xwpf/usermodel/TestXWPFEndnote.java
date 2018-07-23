@@ -28,13 +28,13 @@ import org.junit.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFtnEdnRef;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 
-public class TestXWPFFootnote {
+public class TestXWPFEndnote {
     
     private XWPFDocument docOut;
     private String p1Text;
     private String p2Text;
-    private BigInteger footnoteId;
-    private XWPFFootnote footnote;
+    private BigInteger endnoteId;
+    private XWPFEndnote endnote;
 
     @Before
     public void setUp() {
@@ -42,15 +42,15 @@ public class TestXWPFFootnote {
         p1Text = "First paragraph in footnote";
         p2Text = "Second paragraph in footnote";
 
-        // NOTE: XWPFDocument.createFootnote() delegates directly
-        //       to XWPFFootnotes.createFootnote() so this tests
-        //       both creation of new XWPFFootnotes in document
-        //       and XWPFFootnotes.createFootnote();
+        // NOTE: XWPFDocument.createEndnote() delegates directly
+        //       to XWPFEndnotes.createEndnote() so this tests
+        //       both creation of new XWPFEndnotes in document
+        //       and XWPFEndnotes.createEndnote();
         
-        // NOTE: Creating the footnote does not automatically
+        // NOTE: Creating the endnote does not automatically
         //       create a first paragraph.
-        footnote = docOut.createFootnote();
-        footnoteId = footnote.getId();
+        endnote = docOut.createEndnote();
+        endnoteId = endnote.getId();
         
     }
 
@@ -59,25 +59,25 @@ public class TestXWPFFootnote {
 
         // Add a run to the first paragraph:    
         
-        XWPFParagraph p1 = footnote.createParagraph();
+        XWPFParagraph p1 = endnote.createParagraph();
         p1.createRun().setText(p1Text);
         
         // Create a second paragraph:
         
-        XWPFParagraph p = footnote.createParagraph();
+        XWPFParagraph p = endnote.createParagraph();
         assertNotNull("Paragraph is null", p);
         p.createRun().setText(p2Text);
 
         XWPFDocument docIn = XWPFTestDataSamples.writeOutAndReadBack(docOut);
         
-        XWPFFootnote testFootnote = docIn.getFootnoteByID(footnoteId.intValue());
-        assertNotNull(testFootnote);
+        XWPFEndnote testEndnote = docIn.getEndnoteByID(endnoteId.intValue());
+        assertNotNull(testEndnote);
         
-        assertEquals(2, testFootnote.getParagraphs().size());
-        XWPFParagraph testP1 = testFootnote.getParagraphs().get(0);
+        assertEquals(2, testEndnote.getParagraphs().size());
+        XWPFParagraph testP1 = testEndnote.getParagraphs().get(0);
         assertEquals(p1Text, testP1.getText());
 
-        XWPFParagraph testP2 = testFootnote.getParagraphs().get(1);
+        XWPFParagraph testP2 = testEndnote.getParagraphs().get(1);
         assertEquals(p2Text, testP2.getText());        
         
         // The first paragraph added using createParagraph() should
@@ -89,27 +89,27 @@ public class TestXWPFFootnote {
         
         XWPFRun r1 = testP1.getRuns().get(0);
         assertNotNull(r1);
-        assertTrue("No footnote reference in testP1", r1.getCTR().getFootnoteRefList().size() > 0);
-        assertNotNull("No footnote reference in testP1", r1.getCTR().getFootnoteRefArray(0));
+        assertTrue("No endnote reference in testP1", r1.getCTR().getEndnoteRefList().size() > 0);
+        assertNotNull("No endnote reference in testP1", r1.getCTR().getEndnoteRefArray(0));
 
         XWPFRun r2 = testP2.getRuns().get(0);
         assertNotNull("Expected a run in testP2", r2);
-        assertTrue("Found a footnote reference in testP2", r2.getCTR().getFootnoteRefList().size() == 0);
+        assertTrue("Found an endnote reference in testP2", r2.getCTR().getEndnoteRefList().size() == 0);
         
     }
     
     @Test
     public void testAddTableToFootnote() throws IOException {
-        XWPFTable table = footnote.createTable();
+        XWPFTable table = endnote.createTable();
         assertNotNull(table);
         
         XWPFDocument docIn = XWPFTestDataSamples.writeOutAndReadBack(docOut);
         
-        XWPFFootnote testFootnote = docIn.getFootnoteByID(footnoteId.intValue());
+        XWPFEndnote testFootnote = docIn.getEndnoteByID(endnoteId.intValue());
         XWPFTable testTable = testFootnote.getTableArray(0);
         assertNotNull(testTable);
         
-        table = footnote.createTable(2, 3);
+        table = endnote.createTable(2, 3);
         assertEquals(2, table.getNumberOfRows());
         assertEquals(3, table.getRow(0).getTableCells().size());
         
@@ -117,26 +117,26 @@ public class TestXWPFFootnote {
         // a paragraph with the footnote reference should have been
         // added automatically.
         
-        assertEquals("Expected 3 body elements", 3, footnote.getBodyElements().size());
-        IBodyElement testP1 = footnote.getBodyElements().get(0);
+        assertEquals("Expected 3 body elements", 3, endnote.getBodyElements().size());
+        IBodyElement testP1 = endnote.getBodyElements().get(0);
         assertTrue("Expected a paragraph, got " + testP1.getClass().getSimpleName() , testP1 instanceof XWPFParagraph);
         XWPFRun r1 = ((XWPFParagraph)testP1).getRuns().get(0);
         assertNotNull(r1);
-        assertTrue("No footnote reference in testP1", r1.getCTR().getFootnoteRefList().size() > 0);
-        assertNotNull("No footnote reference in testP1", r1.getCTR().getFootnoteRefArray(0));
+        assertTrue("No footnote reference in testP1", r1.getCTR().getEndnoteRefList().size() > 0);
+        assertNotNull("No footnote reference in testP1", r1.getCTR().getEndnoteRefArray(0));
 
     }
     
     @Test
-    public void testRemoveFootnote() {
-        // NOTE: XWPFDocument.removeFootnote() delegates directly to 
-        //       XWPFFootnotes.
-        docOut.createFootnote();
-        assertEquals("Expected 2 footnotes", 2, docOut.getFootnotes().size());
-        assertNotNull("Didn't get second footnote", docOut.getFootnotes().get(1));
-        boolean result = docOut.removeFootnote(0);
-        assertTrue("Remove footnote did not return true", result);
-        assertEquals("Expected 1 footnote after removal", 1, docOut.getFootnotes().size());
+    public void testRemoveEndnote() {
+        // NOTE: XWPFDocument.removeEndnote() delegates directly to 
+        //       XWPFEndnotes.
+        docOut.createEndnote();
+        assertEquals("Expected 2 endnotes", 2, docOut.getEndnotes().size());
+        assertNotNull("Didn't get second endnote", docOut.getEndnotes().get(1));
+        boolean result = docOut.removeEndnote(0);
+        assertTrue("Remove endnote did not return true", result);
+        assertEquals("Expected 1 endnote after removal", 1, docOut.getEndnotes().size());
     }
 
     @Test
@@ -144,15 +144,15 @@ public class TestXWPFFootnote {
         XWPFParagraph p = docOut.createParagraph();
         List<XWPFRun> runs = p.getRuns();
         assertEquals("Expected no runs in new paragraph", 0, runs.size());
-        p.addFootnoteReference(footnote);
+        p.addFootnoteReference(endnote);
         XWPFRun run = p.getRuns().get(0);
         CTR ctr = run.getCTR();
         assertNotNull("Expected a run", run);
-        CTFtnEdnRef ref = ctr.getFootnoteReferenceList().get(0);
+        List<CTFtnEdnRef> endnoteRefList = ctr.getEndnoteReferenceList();
+        assertNotNull(endnoteRefList);
+        CTFtnEdnRef ref = endnoteRefList.get(0);
         assertNotNull(ref);
-        // FIXME: Verify that the footnote reference is w:endnoteReference, not w:footnoteReference
-        assertEquals("Footnote ID and reference ID did not match", footnote.getId(), ref.getId());
-        
+        assertEquals("Endnote ID and reference ID did not match", endnote.getId(), ref.getId());
         
         
     }

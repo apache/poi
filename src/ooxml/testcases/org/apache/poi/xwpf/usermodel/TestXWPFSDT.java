@@ -17,17 +17,15 @@
 
 package org.apache.poi.xwpf.usermodel;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.apache.poi.POITestCase.assertContains;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.poi.xwpf.XWPFTestDataSamples;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public final class TestXWPFSDT {
@@ -168,8 +166,8 @@ public final class TestXWPFSDT {
         for (XWPFFootnote footnote : doc.getFootnotes()) {
             sdts.addAll(extractSDTsFromBodyElements(footnote.getBodyElements()));
         }
-        for (Map.Entry<Integer, XWPFFootnote> e : doc.endnotes.entrySet()) {
-            sdts.addAll(extractSDTsFromBodyElements(e.getValue().getBodyElements()));
+        for (XWPFEndnote footnote : doc.getEndnotes()) {
+            sdts.addAll(extractSDTsFromBodyElements(footnote.getBodyElements()));
         }
         return sdts;
     }
