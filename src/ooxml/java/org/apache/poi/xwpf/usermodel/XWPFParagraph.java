@@ -76,21 +76,24 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                 if (o instanceof CTFtnEdnRef) {
                     CTFtnEdnRef ftn = (CTFtnEdnRef) o;
                     footnoteText.append(" [").append(ftn.getId()).append(": ");
-                    XWPFFootnote footnote =
+                    AbstractXWPFFootnoteEndnote footnote =
                             ftn.getDomNode().getLocalName().equals("footnoteReference") ?
                                     document.getFootnoteByID(ftn.getId().intValue()) :
                                     document.getEndnoteByID(ftn.getId().intValue());
-
-                    boolean first = true;
-                    for (XWPFParagraph p : footnote.getParagraphs()) {
-                        if (!first) {
-                            footnoteText.append("\n");
+                    if (null != footnote) {
+                        boolean first = true;
+                        for (XWPFParagraph p : footnote.getParagraphs()) {
+                            if (!first) {
+                                footnoteText.append("\n");
+                            }
+                            first = false;
+                            footnoteText.append(p.getText());
                         }
-                        first = false;
-                        footnoteText.append(p.getText());
+                    } else {
+                        footnoteText.append("!!! End note with ID \"" + ftn.getId() + "\" not found in document.");
                     }
-
                     footnoteText.append("] ");
+
                 }
             }
             c.dispose();
@@ -1674,11 +1677,16 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * The footnote reference run will have the style name "FootnoteReference".
      *
      * @param footnote Footnote to which to add a reference.
+     * @since 4.0.0
      */
-    public void addFootnoteReference(XWPFFootnote footnote) {
+    public void addFootnoteReference(AbstractXWPFFootnoteEndnote footnote) {
         XWPFRun run = createRun();
         CTR ctRun = run.getCTR();
         ctRun.addNewRPr().addNewRStyle().setVal("FootnoteReference");
-        ctRun.addNewFootnoteReference().setId(footnote.getId());      
+        if (footnote instanceof XWPFEndnote) {
+            ctRun.addNewEndnoteReference().setId(footnote.getId());
+        } else {
+            ctRun.addNewFootnoteReference().setId(footnote.getId());
+        }
     }
 }

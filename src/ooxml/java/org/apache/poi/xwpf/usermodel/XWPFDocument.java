@@ -54,11 +54,9 @@ import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.ooxml.util.IdentifierManager;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.ooxml.util.PackageHelper;
 import org.apache.poi.wp.usermodel.HeaderFooterType;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 import org.apache.xmlbeans.XmlCursor;
@@ -100,6 +98,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
  * http://www.ecma-international.org/publications/standards/Ecma-376.htm
  * at some point in your use.</p>
  */
+@SuppressWarnings("unused")
 public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     private static final POILogger LOG = POILogFactory.getLogger(XWPFDocument.class);
 
@@ -113,7 +112,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     protected List<IBodyElement> bodyElements = new ArrayList<>();
     protected List<XWPFPictureData> pictures = new ArrayList<>();
     protected Map<Long, List<XWPFPictureData>> packagePictures = new HashMap<>();
-    protected Map<Integer, XWPFFootnote> endnotes = new HashMap<>();
+    protected XWPFEndnotes endnotes;
     protected XWPFNumbering numbering;
     protected XWPFStyles styles;
     protected XWPFFootnotes footnotes;
@@ -124,6 +123,9 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * Keeps track on all id-values used in this document and included parts, like headers, footers, etc.
      */
     private IdentifierManager drawingIdManager = new IdentifierManager(0L, 4294967295L);
+    
+    private FootnoteEndnoteIdManager footnoteIdManager = new FootnoteEndnoteIdManager(this);
+    
     /**
      * Handles the joy of different headers/footers for different pages
      */
@@ -286,12 +288,11 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
             if (relation.equals(XWPFRelation.FOOTNOTE.getRelation())) {
                 this.footnotes = (XWPFFootnotes) p;
                 this.footnotes.onDocumentRead();
+                this.footnotes.setIdManager(footnoteIdManager);
             } else if (relation.equals(XWPFRelation.ENDNOTE.getRelation())) {
-                EndnotesDocument endnotesDocument = EndnotesDocument.Factory.parse(p.getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
-
-                for (CTFtnEdn ctFtnEdn : endnotesDocument.getEndnotes().getEndnoteArray()) {
-                    endnotes.put(ctFtnEdn.getId().intValue(), new XWPFFootnote(this, ctFtnEdn));
-                }
+                this.endnotes = (XWPFEndnotes) p;
+                this.endnotes.onDocumentRead();
+                this.endnotes.setIdManager(footnoteIdManager);
             }
         }
     }
@@ -416,14 +417,14 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         if (footnotes == null) {
             return null;
         }
-        return footnotes.getFootnoteById(id);
+        return (XWPFFootnote)footnotes.getFootnoteById(id);
     }
 
-    public XWPFFootnote getEndnoteByID(int id) {
+    public XWPFEndnote getEndnoteByID(int id) {
         if (endnotes == null) {
             return null;
         }
-        return endnotes.get(id);
+        return endnotes.getFootnoteById(id);
     }
 
     public List<XWPFFootnote> getFootnotes() {
@@ -898,19 +899,32 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
 
             XWPFFootnotes wrapper = (XWPFFootnotes) createRelationship(relation, XWPFFactory.getInstance(), i);
             wrapper.setFootnotes(footnotesDoc.addNewFootnotes());
+            wrapper.setIdManager(this.footnoteIdManager);
             footnotes = wrapper;
         }
 
         return footnotes;
     }
 
+    /**
+     * Add a CTFtnEdn footnote to the document.
+     *
+     * @param note CTFtnEnd to be added.
+     * @return New {@link XWPFFootnote}
+     */
     public XWPFFootnote addFootnote(CTFtnEdn note) {
         return footnotes.addFootnote(note);
     }
 
-    public XWPFFootnote addEndnote(CTFtnEdn note) {
-        XWPFFootnote endnote = new XWPFFootnote(this, note);
-        endnotes.put(note.getId().intValue(), endnote);
+    /**
+     * Add a CTFtnEdn endnote to the document.
+     *
+     * @param note CTFtnEnd to be added.
+     * @return New {@link XWPFEndnote}
+     */
+    public XWPFEndnote addEndnote(CTFtnEdn note) {
+        XWPFEndnote endnote = new XWPFEndnote(this, note);
+        endnotes.addEndnote(note);
         return endnote;
     }
 
@@ -1332,7 +1346,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     public void insertTable(int pos, XWPFTable table) {
         bodyElements.add(pos, table);
         int i = 0;
-        for (CTTbl tbl : ctDocument.getBody().getTblArray()) {
+        for (CTTbl tbl : ctDocument.getBody().getTblList()) {
             if (tbl == table.getCTTbl()) {
                 break;
             }
@@ -1658,12 +1672,10 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     /**
-     * Create a new footnote and add it to the document. 
-     * <p>The new note will have one paragraph with the style "FootnoteText"
-     * and one run containing the required footnote reference with the 
-     * style "FootnoteReference".
+     * Create a new footnote and add it to the document.
      *
      * @return New XWPFFootnote.
+     * @since 4.0.0
      */
     public XWPFFootnote createFootnote() {
         XWPFFootnotes footnotes = this.createFootnotes();
@@ -1675,12 +1687,71 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     /**
      * Remove the specified footnote if present.
      *
-     * @param pos 
+     * @param pos Array position of the footnote to be removed.
      * @return True if the footnote was removed.
+     * @since 4.0.0
      */
     public boolean removeFootnote(int pos) {
         if (null != footnotes) {
             return footnotes.removeFootnote(pos);
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Create a new end note and add it to the document.
+     *
+     * @return New {@link XWPFEndnote}.
+     * @since 4.0.0
+     */
+    public XWPFEndnote createEndnote() {
+        XWPFEndnotes endnotes = this.createEndnotes();
+        
+        XWPFEndnote endnote = endnotes.createEndnote();
+        return endnote;
+
+    }
+
+    public XWPFEndnotes createEndnotes() {
+        if (endnotes == null) {
+            EndnotesDocument endnotesDoc = EndnotesDocument.Factory.newInstance();
+
+            XWPFRelation relation = XWPFRelation.ENDNOTE;
+            int i = getRelationIndex(relation);
+
+            XWPFEndnotes wrapper = (XWPFEndnotes) createRelationship(relation, XWPFFactory.getInstance(), i);
+            wrapper.setEndnotes(endnotesDoc.addNewEndnotes());
+            wrapper.setIdManager(footnoteIdManager);
+            endnotes = wrapper;
+        }
+
+        return endnotes;
+        
+    }
+
+    /**
+     * Gets the list of end notes for the document.
+     *
+     * @return List, possibly empty, of {@link XWPFEndnote}s.
+     */
+    public List<XWPFEndnote> getEndnotes() {
+        if (endnotes == null) {
+            return Collections.emptyList();
+        }
+        return endnotes.getEndnotesList();
+    }
+
+    /**
+     * Remove the specified end note if present.
+     *
+     * @param pos Array position of the end note to be removed.
+     * @return True if the end note was removed.
+     * @since 4.0.0
+     */
+    public boolean removeEndnote(int pos) {
+        if (null != endnotes) {
+            return endnotes.removeEndnote(pos);
         } else {
             return false;
         }
