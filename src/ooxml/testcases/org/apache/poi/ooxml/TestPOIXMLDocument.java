@@ -356,8 +356,7 @@ public final class TestPOIXMLDocument {
             }
         };
 
-        Thread thread = Thread.currentThread();
-        ClassLoader cl = thread.getContextClassLoader();
+        ClassLoader cl = getClass().getClassLoader();
         UncaughtHandler uh = new UncaughtHandler();
         
         // check schema type loading and check if we could run in an OOM

@@ -217,7 +217,7 @@ public class EncryptionInfo implements Cloneable {
      */
     protected static EncryptionInfoBuilder getBuilder(EncryptionMode encryptionMode)
     throws ClassNotFoundException, IllegalAccessException, InstantiationException {
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        ClassLoader cl = EncryptionInfo.class.getClassLoader();
         EncryptionInfoBuilder eib;
         eib = (EncryptionInfoBuilder)cl.loadClass(encryptionMode.builder).newInstance();
         return eib;

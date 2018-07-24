@@ -79,8 +79,9 @@ java.net.InetAddress#getCanonicalHostName()
 
 java.net.InetSocketAddress#getHostName() @ Use getHostString() instead, which avoids a DNS lookup
 
-@defaultMessage this method needs special permission
-java.lang.Thread#getAllStackTraces()
+
+java.lang.Thread#getAllStackTraces() @ this method needs special permission
+java.lang.Thread#getContextClassLoader() @ use getClass().getClassLoader() instead of getContextClassLoader() (see https://stackoverflow.com/a/36228195/2066598)
 
 @defaultMessage Avoid unchecked warnings by using Collections#empty(List|Map|Set) methods
 java.util.Collections#EMPTY_LIST
