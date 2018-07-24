@@ -292,7 +292,7 @@ public class SlideShowFactory {
         P extends TextParagraph<S,P,? extends TextRun>
     > SlideShow<S,P> createSlideShow(String factoryClass, Object args[]) throws IOException, EncryptedDocumentException {
         try {
-            Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(factoryClass);
+            Class<?> clazz = SlideShowFactory.class.getClassLoader().loadClass(factoryClass);
             Class<?> argsClz[] = new Class<?>[args.length];
             int i=0;
             for (Object o : args) {

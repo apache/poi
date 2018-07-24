@@ -294,7 +294,7 @@ public class WorkbookFactory {
 
     private static Workbook createWorkbook(String factoryClass, Object args[]) throws IOException, EncryptedDocumentException {
         try {
-            Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(factoryClass);
+            Class<?> clazz = WorkbookFactory.class.getClassLoader().loadClass(factoryClass);
             Class<?> argsClz[] = new Class<?>[args.length];
             int i=0;
             for (Object o : args) {
