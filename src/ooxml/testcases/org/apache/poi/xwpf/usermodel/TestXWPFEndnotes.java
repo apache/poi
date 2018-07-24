@@ -19,64 +19,44 @@ package org.apache.poi.xwpf.usermodel;
 
 import java.io.IOException;
 import java.math.BigInteger;
-import java.util.List;
 
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STFtnEdn;
 
 import junit.framework.TestCase;
 
-public class TestXWPFFootnotes extends TestCase {
+public class TestXWPFEndnotes extends TestCase {
     
-    public void testCreateFootnotes() throws IOException{
+    public void testCreateEndnotes() throws IOException{
         XWPFDocument docOut = new XWPFDocument();
 
-        AbstractXWPFFootnotesEndnotes footnotes = docOut.createFootnotes();
+        XWPFEndnotes footnotes = docOut.createEndnotes();
         
         assertNotNull(footnotes);
         
-        AbstractXWPFFootnotesEndnotes secondFootnotes = docOut.createFootnotes();
+        XWPFEndnotes secondFootnotes = docOut.createEndnotes();
         
         assertSame(footnotes, secondFootnotes);
         
         docOut.close();
     }
 
-    public void testAddFootnotesToDocument() throws IOException {
+    public void testAddEndnotesToDocument() throws IOException {
         XWPFDocument docOut = new XWPFDocument();
 
-        // NOTE: XWPFDocument.createFootnote() delegates directly
-        //       to XWPFFootnotes.createFootnote() so this tests
+        // NOTE: XWPFDocument.createEndnote() delegates directly
+        //       to XWPFFootnotes.createEndnote() so this tests
         //       both creation of new XWPFFootnotes in document
-        //       and XWPFFootnotes.createFootnote();
-        XWPFFootnote footnote = docOut.createFootnote();
-        BigInteger noteId = footnote.getId();
+        //       and XWPFFootnotes.createEndnote();
+        XWPFEndnote endnote = docOut.createEndnote();
+        BigInteger noteId = endnote.getId();
 
         XWPFDocument docIn = XWPFTestDataSamples.writeOutAndReadBack(docOut);
 
-        XWPFFootnote note = docIn.getFootnoteByID(noteId.intValue());
+        XWPFEndnote note = docIn.getEndnoteByID(noteId.intValue());
         assertNotNull(note);
         assertEquals(STFtnEdn.NORMAL, note.getCTFtnEdn().getType());
     }
 
-    /**
-     * Bug 55066 - avoid double loading the footnotes
-     */
-    public void testLoadFootnotesOnce() throws IOException {
-        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug54849.docx");
-        List<XWPFFootnote> footnotes = doc.getFootnotes();
-        int hits = 0;
-        for (XWPFFootnote fn : footnotes) {
-            for (IBodyElement e : fn.getBodyElements()) {
-                if (e instanceof XWPFParagraph) {
-                    String txt = ((XWPFParagraph) e).getText();
-                    if (txt.contains("Footnote_sdt")) {
-                        hits++;
-                    }
-                }
-            }
-        }
-        assertEquals("Load footnotes once", 1, hits);
-    }
 }
 
