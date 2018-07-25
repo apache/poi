@@ -323,4 +323,21 @@ public class XWPFStyles extends POIXMLDocumentPart {
     public XWPFLatentStyles getLatentStyles() {
         return latentStyles;
     }
+
+    /**
+     * Get the style with the specified name, if any.
+     *
+     * @param styleName The name of the style to get, e.g., "Heading 1"
+     * @return {@link XWPFStyle} with the specified name, or null if not found.
+     */
+    public XWPFStyle getStyleWithName(String styleName) {
+        XWPFStyle style = null;
+        for (XWPFStyle cand : listStyle) {
+            if (styleName.equals(cand.getName())) {
+                style = cand;
+                break;
+            }
+        }
+        return style;
+    }
 }

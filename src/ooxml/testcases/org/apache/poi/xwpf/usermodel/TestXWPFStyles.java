@@ -219,4 +219,16 @@ public final class TestXWPFStyles {
 
         doc.close();
     }
+    
+    @Test
+    public void testGetStyleByName() throws IOException {
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("SampleDoc.docx");
+        XWPFStyles styles = doc.getStyles();
+        assertNotNull(styles);
+
+        String styleName = "Normal Table";
+        XWPFStyle style = styles.getStyleWithName(styleName);
+        assertNotNull("Expected to find style \"" + styleName + "\"", style);
+        assertEquals(styleName, style.getName());
+    }
 }
