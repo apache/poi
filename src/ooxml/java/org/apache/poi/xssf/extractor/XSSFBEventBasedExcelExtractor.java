@@ -32,6 +32,7 @@ import org.apache.poi.xssf.binary.XSSFBSheetHandler;
 import org.apache.poi.xssf.binary.XSSFBStylesTable;
 import org.apache.poi.xssf.eventusermodel.XSSFBReader;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler.SheetContentsHandler;
+import org.apache.poi.xssf.model.SharedStrings;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.xmlbeans.XmlException;
 import org.xml.sax.SAXException;
@@ -94,7 +95,7 @@ public class XSSFBEventBasedExcelExtractor extends XSSFEventBasedExcelExtractor
             SheetContentsHandler sheetContentsExtractor,
             XSSFBStylesTable styles,
             XSSFBCommentsTable comments,
-            XSSFBSharedStringsTable strings,
+            SharedStrings strings,
             InputStream sheetInputStream)
             throws IOException, SAXException {
 

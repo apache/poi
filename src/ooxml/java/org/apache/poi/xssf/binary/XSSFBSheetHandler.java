@@ -23,12 +23,13 @@ import java.util.Queue;
 
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler;
+import org.apache.poi.xssf.model.SharedStrings;
 import org.apache.poi.xssf.usermodel.XSSFComment;
-import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 
 /**
  * @since 3.16-beta3
@@ -38,7 +39,7 @@ public class XSSFBSheetHandler extends XSSFBParser {
 
     private static final int CHECK_ALL_ROWS = -1;
 
-    private final XSSFBSharedStringsTable stringsTable;
+    private final SharedStrings stringsTable;
     private final XSSFSheetXMLHandler.SheetContentsHandler handler;
     private final XSSFBStylesTable styles;
     private final XSSFBCommentsTable comments;
@@ -56,7 +57,7 @@ public class XSSFBSheetHandler extends XSSFBParser {
     public XSSFBSheetHandler(InputStream is,
                              XSSFBStylesTable styles,
                              XSSFBCommentsTable comments,
-                             XSSFBSharedStringsTable strings,
+                             SharedStrings strings,
                              XSSFSheetXMLHandler.SheetContentsHandler sheetContentsHandler,
                              DataFormatter dataFormatter,
                              boolean formulasNotResults) {
@@ -208,7 +209,7 @@ public class XSSFBSheetHandler extends XSSFBParser {
     private void handleBrtCellIsst(byte[] data) {
         beforeCellValue(data);
         int idx = XSSFBUtils.castToInt(LittleEndian.getUInt(data, XSSFBCellHeader.length));
-        XSSFRichTextString rtss = new XSSFRichTextString(stringsTable.getEntryAt(idx));
+        RichTextString rtss = stringsTable.getItemAt(idx);
         handleCellValue(rtss.getString());
     }
 
