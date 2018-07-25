@@ -40,6 +40,7 @@ import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler.SheetContentsHandler;
 import org.apache.poi.xssf.model.CommentsTable;
+import org.apache.poi.xssf.model.SharedStrings;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.apache.poi.xssf.usermodel.XSSFShape;
@@ -232,7 +233,7 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
             SheetContentsHandler sheetContentsExtractor,
             StylesTable styles,
             CommentsTable comments,
-            ReadOnlySharedStringsTable strings,
+            SharedStrings strings,
             InputStream sheetInputStream)
             throws IOException, SAXException {
 
@@ -255,12 +256,17 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
         }
     }
 
+    protected SharedStrings createSharedStringsTable(OPCPackage container, boolean concatenatePhoneticRuns)
+            throws IOException, SAXException {
+        return new ReadOnlySharedStringsTable(container, concatenatePhoneticRuns);
+    }
+
     /**
      * Processes the file and returns the text
      */
     public String getText() {
         try {
-            ReadOnlySharedStringsTable strings = new ReadOnlySharedStringsTable(container, concatenatePhoneticRuns);
+            SharedStrings strings = createSharedStringsTable(container, concatenatePhoneticRuns);
             XSSFReader xssfReader = new XSSFReader(container);
             StylesTable styles = xssfReader.getStylesTable();
             XSSFReader.SheetIterator iter = (XSSFReader.SheetIterator) xssfReader.getSheetsData();

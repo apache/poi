@@ -23,10 +23,12 @@ import java.util.Queue;
 
 import org.apache.poi.ss.usermodel.BuiltinFormats;
 import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.model.CommentsTable;
+import org.apache.poi.xssf.model.SharedStrings;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFComment;
@@ -72,7 +74,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
     * Read only access to the shared strings table, for looking
     *  up (most) string cell's contents
     */
-   private ReadOnlySharedStringsTable sharedStringsTable;
+   private SharedStrings sharedStringsTable;
 
    /**
     * Where our text is going
@@ -117,7 +119,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
    public XSSFSheetXMLHandler(
            StylesTable styles,
            CommentsTable comments,
-           ReadOnlySharedStringsTable strings,
+           SharedStrings strings,
            SheetContentsHandler sheetContentsHandler,
            DataFormatter dataFormatter,
            boolean formulasNotResults) {
@@ -139,7 +141,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
     */
    public XSSFSheetXMLHandler(
            StylesTable styles,
-           ReadOnlySharedStringsTable strings,
+           SharedStrings strings,
            SheetContentsHandler sheetContentsHandler,
            DataFormatter dataFormatter,
            boolean formulasNotResults) {
@@ -154,7 +156,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
     */
    public XSSFSheetXMLHandler(
            StylesTable styles,
-           ReadOnlySharedStringsTable strings,
+           SharedStrings strings,
            SheetContentsHandler sheetContentsHandler,
            boolean formulasNotResults) {
        this(styles, strings, sheetContentsHandler, new DataFormatter(), formulasNotResults);
@@ -351,7 +353,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
                    String sstIndex = value.toString();
                    try {
                        int idx = Integer.parseInt(sstIndex);
-                       XSSFRichTextString rtss = new XSSFRichTextString(sharedStringsTable.getEntryAt(idx));
+                       RichTextString rtss = sharedStringsTable.getItemAt(idx);
                        thisStr = rtss.toString();
                    }
                    catch (NumberFormatException ex) {

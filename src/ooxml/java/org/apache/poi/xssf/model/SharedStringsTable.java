@@ -62,7 +62,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.SstDocument;
  * properties, and phonetic properties (for East Asian languages).
  * </p>
  */
-public class SharedStringsTable extends POIXMLDocumentPart implements Closeable {
+public class SharedStringsTable extends POIXMLDocumentPart implements SharedStrings, Closeable {
 
     /**
      *  Array of individual string items in the Shared String table.
@@ -157,6 +157,7 @@ public class SharedStringsTable extends POIXMLDocumentPart implements Closeable 
      * @param idx index of item to return.
      * @return the item at the specified position in this Shared String table.
      */
+    @Override
     public RichTextString getItemAt(int idx) {
         return new XSSFRichTextString(strings.get(idx));
     }
@@ -167,6 +168,7 @@ public class SharedStringsTable extends POIXMLDocumentPart implements Closeable 
      *
      * @return the total count of strings in the workbook
      */
+    @Override
     public int getCount(){
         return count;
     }
@@ -178,6 +180,7 @@ public class SharedStringsTable extends POIXMLDocumentPart implements Closeable 
      *
      * @return the total count of unique strings in the workbook
      */
+    @Override
     public int getUniqueCount(){
         return uniqueCount;
     }

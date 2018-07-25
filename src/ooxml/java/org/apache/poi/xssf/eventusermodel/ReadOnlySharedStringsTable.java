@@ -28,7 +28,11 @@ import java.util.List;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ooxml.util.SAXHelper;
+import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.util.Removal;
+import org.apache.poi.xssf.model.SharedStrings;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -75,7 +79,7 @@ import org.xml.sax.helpers.DefaultHandler;
 * </pre>
  *
  */
-public class ReadOnlySharedStringsTable extends DefaultHandler {
+public class ReadOnlySharedStringsTable extends DefaultHandler implements SharedStrings {
 
     protected final boolean includePhoneticRuns;
 
@@ -205,13 +209,30 @@ public class ReadOnlySharedStringsTable extends DefaultHandler {
      *
      * @param idx index of item to return.
      * @return the item at the specified position in this Shared String table.
+     * @deprecated use <code>getItemAt</code> instead
      */
+    @Removal(version = "4.2")
+    @Deprecated
     public String getEntryAt(int idx) {
         return strings.get(idx);
     }
 
+    /**
+     * Returns all the strings.
+     * Formatting is ignored.
+     *
+     * @return a list with all the strings
+     * @deprecated use <code>getItemAt</code> instead
+     */
+    @Removal(version = "4.2")
+    @Deprecated
     public List<String> getItems() {
         return strings;
+    }
+
+    @Override
+    public RichTextString getItemAt(int idx) {
+        return new XSSFRichTextString(getEntryAt(idx));
     }
 
     //// ContentHandler methods ////

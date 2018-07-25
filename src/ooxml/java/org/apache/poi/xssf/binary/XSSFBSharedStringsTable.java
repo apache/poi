@@ -24,15 +24,19 @@ import java.util.List;
 
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.Removal;
+import org.apache.poi.xssf.model.SharedStrings;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.xml.sax.SAXException;
 
 /**
  * @since 3.16-beta3
  */
 @Internal
-public class XSSFBSharedStringsTable {
+public class XSSFBSharedStringsTable implements SharedStrings {
 
     /**
      * An integer representing the total count of strings in the workbook. This count does not
@@ -83,17 +87,37 @@ public class XSSFBSharedStringsTable {
     }
 
     /**
+     * Return all the strings.
+     * Formatting is ignored.
      *
-     * @return a defensive copy of strings
+     * @return a list with all the shared strings.
+     * @deprecated use <code>getItemAt</code> instead
      */
+    @Removal(version = "4.2")
+    @Deprecated
     public List<String> getItems() {
         List<String> ret = new ArrayList<>(strings.size());
         ret.addAll(strings);
         return ret;
     }
 
-    public String getEntryAt(int i) {
-        return strings.get(i);
+    /**
+     * Return the string at a given index.
+     * Formatting is ignored.
+     *
+     * @param idx index of item to return.
+     * @return the item at the specified position in this Shared String table.
+     * @deprecated use <code>getItemAt</code> instead
+     */
+    @Removal(version = "4.2")
+    @Deprecated
+    public String getEntryAt(int idx) {
+        return strings.get(idx);
+    }
+
+    @Override
+    public RichTextString getItemAt(int idx) {
+        return new XSSFRichTextString(getEntryAt(idx));
     }
 
     /**
@@ -102,6 +126,7 @@ public class XSSFBSharedStringsTable {
      *
      * @return the total count of strings in the workbook
      */
+    @Override
     public int getCount() {
         return this.count;
     }
@@ -113,6 +138,7 @@ public class XSSFBSharedStringsTable {
      *
      * @return the total count of unique strings in the workbook
      */
+    @Override
     public int getUniqueCount() {
         return this.uniqueCount;
     }

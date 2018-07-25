@@ -33,6 +33,7 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ooxml.util.SAXHelper;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler.SheetContentsHandler;
 import org.apache.poi.xssf.extractor.XSSFEventBasedExcelExtractor;
+import org.apache.poi.xssf.model.SharedStrings;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.xml.sax.ContentHandler;
@@ -180,7 +181,7 @@ public class XLSX2CSV {
      */
     public void processSheet(
             StylesTable styles,
-            ReadOnlySharedStringsTable strings,
+            SharedStrings strings,
             SheetContentsHandler sheetHandler, 
             InputStream sheetInputStream) throws IOException, SAXException {
         DataFormatter formatter = new DataFormatter();
