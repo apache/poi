@@ -56,33 +56,7 @@ import org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
 import org.openxmlformats.schemas.drawingml.x2006.picture.CTPictureNonVisual;
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.CTAnchor;
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.CTInline;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTColor;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDrawing;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTEmpty;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFFCheckBox;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFldChar;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFtnEdnRef;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHpsMeasure;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPTab;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRuby;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRubyContent;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSignedHpsMeasure;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSignedTwipsMeasure;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTUnderline;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTVerticalAlignRun;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBrClear;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBrType;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STFldCharType;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHighlightColor;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STUnderline;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalAlignRun;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.xml.sax.InputSource;
@@ -1121,6 +1095,22 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     public List<XWPFPicture> getEmbeddedPictures() {
         return pictures;
     }
+    
+    /**
+     * Set the style ID for the run.
+     *
+     * @param styleId ID (not name) of the style to set for the run, e.g. "BoldItalic" (not "Bold Italic").
+     */
+    public void setStyle(String styleId) {
+        CTRPr pr = getCTR().getRPr();
+        if (null == pr) {
+           pr = getCTR().addNewRPr();
+        }
+        CTString style = pr.getRStyle() != null ? pr.getRStyle() : pr.addNewRStyle();
+        style.setVal(styleId);
+    }
+
+    
 
     /**
      * Returns the string version of the text and the phonetic string

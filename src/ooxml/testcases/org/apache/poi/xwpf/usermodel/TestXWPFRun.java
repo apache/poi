@@ -673,4 +673,18 @@ public class TestXWPFRun {
 
         document.close();
     }
+    
+    @Test
+    public void testSetStyleId() throws IOException {
+        XWPFDocument document = XWPFTestDataSamples.openSampleDocument("SampleDoc.docx");
+        final XWPFRun run = document.createParagraph().createRun();
+        
+        String styleId = "bolditalic";
+        run.setStyle(styleId);
+        String candStyleId = run.getCTR().getRPr().getRStyle().getVal();
+        assertNotNull("Expected to find a run style ID", candStyleId);
+        assertEquals(styleId, candStyleId);
+        
+    }
+
 }

@@ -1333,15 +1333,14 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     }
 
     /**
-     * This method provides a style to the paragraph
-     * This is useful when, e.g. an Heading style has to be assigned
+     * Set the style ID for the paragraph
      *
-     * @param newStyle
+     * @param styleId ID (not name) of the style to set for the paragraph, e.g. "Heading1" (not "Heading 1").
      */
-    public void setStyle(String newStyle) {
+    public void setStyle(String styleId) {
         CTPPr pr = getCTPPr();
         CTString style = pr.getPStyle() != null ? pr.getPStyle() : pr.addNewPStyle();
-        style.setVal(newStyle);
+        style.setVal(styleId);
     }
 
     /**
