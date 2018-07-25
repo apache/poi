@@ -23,9 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -79,30 +77,25 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class ReadOnlySharedStringsTable extends DefaultHandler {
 
-    private final boolean includePhoneticRuns;
+    protected final boolean includePhoneticRuns;
+
     /**
      * An integer representing the total count of strings in the workbook. This count does not
      * include any numbers, it counts only the total of text strings in the workbook.
      */
-    private int count;
+    protected int count;
 
     /**
      * An integer representing the total count of unique strings in the Shared String Table.
      * A string is unique even if it is a copy of another string, but has different formatting applied
      * at the character level.
      */
-    private int uniqueCount;
+    protected int uniqueCount;
 
     /**
      * The shared strings table.
      */
     private List<String> strings;
-
-    /**
-     * Map of phonetic strings (if they exist) indexed
-     * with the integer matching the index in strings
-     */
-    private Map<Integer, String> phoneticStrings;
 
     /**
      * Calls {{@link #ReadOnlySharedStringsTable(OPCPackage, boolean)}} with
@@ -240,7 +233,6 @@ public class ReadOnlySharedStringsTable extends DefaultHandler {
             if(uniqueCount != null) this.uniqueCount = Integer.parseInt(uniqueCount);
 
             this.strings = new ArrayList<>(this.uniqueCount);
-            this.phoneticStrings = new HashMap<>();
             characters = new StringBuilder(64);
         } else if ("si".equals(localName)) {
             characters.setLength(0);
@@ -255,8 +247,7 @@ public class ReadOnlySharedStringsTable extends DefaultHandler {
         }
     }
 
-    public void endElement(String uri, String localName, String name)
-            throws SAXException {
+    public void endElement(String uri, String localName, String name) throws SAXException {
         if (uri != null && ! uri.equals(NS_SPREADSHEETML)) {
             return;
         }
@@ -273,8 +264,7 @@ public class ReadOnlySharedStringsTable extends DefaultHandler {
     /**
      * Captures characters only if a t(ext) element is open.
      */
-    public void characters(char[] ch, int start, int length)
-            throws SAXException {
+    public void characters(char[] ch, int start, int length) throws SAXException {
         if (tIsOpen) {
             if (inRPh && includePhoneticRuns) {
                 characters.append(ch, start, length);
