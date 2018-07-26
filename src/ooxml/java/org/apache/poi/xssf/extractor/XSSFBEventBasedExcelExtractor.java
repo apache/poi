@@ -97,7 +97,7 @@ public class XSSFBEventBasedExcelExtractor extends XSSFEventBasedExcelExtractor
             XSSFBCommentsTable comments,
             SharedStrings strings,
             InputStream sheetInputStream)
-            throws IOException, SAXException {
+            throws IOException {
 
         DataFormatter formatter;
         if (getLocale() == null) {
