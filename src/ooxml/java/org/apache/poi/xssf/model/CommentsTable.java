@@ -38,9 +38,11 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CommentsDocument;
 
 @Internal
-public class CommentsTable extends POIXMLDocumentPart {
+public class CommentsTable extends POIXMLDocumentPart implements Comments {
+
     public static final String DEFAULT_AUTHOR = "";
     public static final int DEFAULT_AUTHOR_ID = 0;
+
     /**
      * Underlying XML Beans CTComment list.
      */
@@ -75,6 +77,7 @@ public class CommentsTable extends POIXMLDocumentPart {
             throw new IOException(e.getLocalizedMessage());
         }
     }
+
     public void writeTo(OutputStream out) throws IOException {
         CommentsDocument doc = CommentsDocument.Factory.newInstance();
         doc.setComments(comments);
@@ -102,18 +105,22 @@ public class CommentsTable extends POIXMLDocumentPart {
        }
     }
 
+    @Override
     public int getNumberOfComments() {
         return comments.getCommentList().sizeOfCommentArray();
     }
 
+    @Override
     public int getNumberOfAuthors() {
         return comments.getAuthors().sizeOfAuthorArray();
     }
 
+    @Override
     public String getAuthor(long authorId) {
         return comments.getAuthors().getAuthorArray((int)authorId);
     }
 
+    @Override
     public int findAuthor(String author) {
         String[] authorArray = comments.getAuthors().getAuthorArray();
         for (int i = 0 ; i < authorArray.length; i++) {
@@ -130,6 +137,7 @@ public class CommentsTable extends POIXMLDocumentPart {
      * @param cellAddress the address of the cell to find a comment
      * @return cell comment if one exists, otherwise returns null
      */
+    @Override
     public XSSFComment findCellComment(CellAddress cellAddress) {
         CTComment ct = getCTComment(cellAddress);
         return ct == null ? null : new XSSFComment(this, ct, null);
@@ -205,6 +213,7 @@ public class CommentsTable extends POIXMLDocumentPart {
      * @param cellRef the location of the comment to remove
      * @return returns true if a comment was removed
      */
+    @Override
     public boolean removeComment(CellAddress cellRef) {
         final String stringRef = cellRef.formatAsString();
         CTCommentList lst = comments.getCommentList();

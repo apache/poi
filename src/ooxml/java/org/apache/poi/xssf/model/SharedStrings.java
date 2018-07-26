@@ -48,7 +48,7 @@ public interface SharedStrings {
      * @param idx index of item to return.
      * @return the item at the specified position in this Shared String table.
      */
-    public RichTextString getItemAt(int idx);
+    RichTextString getItemAt(int idx);
 
     /**
      * Return an integer representing the total count of strings in the workbook. This count does not
@@ -56,7 +56,7 @@ public interface SharedStrings {
      *
      * @return the total count of strings in the workbook
      */
-    public int getCount();
+    int getCount();
 
     /**
      * Returns an integer representing the total count of unique strings in the Shared String Table.
@@ -65,5 +65,5 @@ public interface SharedStrings {
      *
      * @return the total count of unique strings in the workbook
      */
-    public int getUniqueCount();
+    int getUniqueCount();
 }

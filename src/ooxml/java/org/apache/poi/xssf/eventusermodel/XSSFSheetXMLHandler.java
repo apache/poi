@@ -27,6 +27,7 @@ import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.xssf.model.Comments;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.SharedStrings;
 import org.apache.poi.xssf.model.StylesTable;
@@ -68,7 +69,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
    /**
     * Table with cell comments
     */
-   private CommentsTable commentsTable;
+   private Comments comments;
 
    /**
     * Read only access to the shared strings table, for looking
@@ -124,13 +125,13 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
            DataFormatter dataFormatter,
            boolean formulasNotResults) {
        this.stylesTable = styles;
-       this.commentsTable = comments;
+       this.comments = comments;
        this.sharedStringsTable = strings;
        this.output = sheetContentsHandler;
        this.formulasNotResults = formulasNotResults;
        this.nextDataType = xssfDataType.NUMBER;
        this.formatter = dataFormatter;
-       init();
+       init(comments);
    }
    
    /**
@@ -162,7 +163,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
        this(styles, strings, sheetContentsHandler, new DataFormatter(), formulasNotResults);
    }
    
-   private void init() {
+   private void init(CommentsTable commentsTable) {
        if (commentsTable != null) {
            commentCellRefs = new LinkedList<>();
            //noinspection deprecation
@@ -376,7 +377,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
            
            // Do we have a comment for this cell?
            checkForEmptyCellComments(EmptyCellCommentsCheckType.CELL);
-           XSSFComment comment = commentsTable != null ? commentsTable.findCellComment(new CellAddress(cellRef)) : null;
+           XSSFComment comment = comments != null ? comments.findCellComment(new CellAddress(cellRef)) : null;
            
            // Output
            output.cell(cellRef, thisStr, comment);
@@ -490,7 +491,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
     * Output an empty-cell comment.
     */
    private void outputEmptyCellComment(CellAddress cellRef) {
-       XSSFComment comment = commentsTable.findCellComment(cellRef);
+       XSSFComment comment = comments.findCellComment(cellRef);
        output.cell(cellRef.formatAsString(), null, comment);
    }
    
@@ -506,10 +507,10 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
     */
    public interface SheetContentsHandler {
       /** A row with the (zero based) row number has started */
-      public void startRow(int rowNum);
+      void startRow(int rowNum);
 
       /** A row with the (zero based) row number has ended */
-      public void endRow(int rowNum);
+      void endRow(int rowNum);
 
       /**
        * A cell, with the given formatted value (may be null), 
@@ -520,12 +521,12 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
        * <code>src/examples/src/org/apache/poi/xssf/eventusermodel/XLSX2CSV.java</code>
        * for an example of how to handle this scenario.
        */
-      public void cell(String cellReference, String formattedValue, XSSFComment comment);
+      void cell(String cellReference, String formattedValue, XSSFComment comment);
 
       /** A header or footer has been encountered */
-      public default void headerFooter(String text, boolean isHeader, String tagName) {}
+      default void headerFooter(String text, boolean isHeader, String tagName) {}
 
       /** Signal that the end of a sheet was been reached */
-      public default void endSheet() {}
+      default void endSheet() {}
    }
 }
