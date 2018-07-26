@@ -166,11 +166,10 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
    private void init(CommentsTable commentsTable) {
        if (commentsTable != null) {
            commentCellRefs = new LinkedList<>();
-           //noinspection deprecation
-           for (CTComment comment : commentsTable.getCTComments().getCommentList().getCommentArray()) {
-               commentCellRefs.add(new CellAddress(comment.getRef()));
+           for (CellAddress cellAddress : commentsTable.getCellComments().keySet()) {
+               commentCellRefs.add(cellAddress);
            }
-       }   
+       }
    }
 
    private boolean isTextTag(String name) {
