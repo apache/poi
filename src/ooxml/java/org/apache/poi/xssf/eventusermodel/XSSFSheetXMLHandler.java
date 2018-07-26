@@ -27,10 +27,7 @@ import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.xssf.model.Comments;
-import org.apache.poi.xssf.model.CommentsTable;
-import org.apache.poi.xssf.model.SharedStrings;
-import org.apache.poi.xssf.model.StylesTable;
+import org.apache.poi.xssf.model.*;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
@@ -63,7 +60,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
    /**
     * Table with the styles used for formatting
     */
-   private StylesTable stylesTable;
+   private Styles stylesTable;
 
    /**
     * Table with cell comments
@@ -117,7 +114,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
     * @param strings Table of shared strings
     */
    public XSSFSheetXMLHandler(
-           StylesTable styles,
+           Styles styles,
            CommentsTable comments,
            SharedStrings strings,
            SheetContentsHandler sheetContentsHandler,
@@ -140,7 +137,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
     * @param strings Table of shared strings
     */
    public XSSFSheetXMLHandler(
-           StylesTable styles,
+           Styles styles,
            SharedStrings strings,
            SheetContentsHandler sheetContentsHandler,
            DataFormatter dataFormatter,
@@ -155,7 +152,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
     * @param strings Table of shared strings
     */
    public XSSFSheetXMLHandler(
-           StylesTable styles,
+           Styles styles,
            SharedStrings strings,
            SheetContentsHandler sheetContentsHandler,
            boolean formulasNotResults) {

@@ -56,7 +56,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 /**
  * Table of styles shared across all sheets in a workbook.
  */
-public class StylesTable extends POIXMLDocumentPart {
+public class StylesTable extends POIXMLDocumentPart implements Styles {
     private final SortedMap<Short, String> numberFormats = new TreeMap<>();
     private final List<XSSFFont> fonts = new ArrayList<>();
     private final List<XSSFCellFill> fills = new ArrayList<>();
@@ -261,6 +261,7 @@ public class StylesTable extends POIXMLDocumentPart {
      * @param fmtId number format id
      * @return number format code
      */
+    @Override
     public String getNumberFormatAt(short fmtId) {
         return numberFormats.get(fmtId);
     }
@@ -285,6 +286,7 @@ public class StylesTable extends POIXMLDocumentPart {
      * @throws IllegalStateException if adding the number format to the styles table
      * would exceed the {@link #MAXIMUM_NUMBER_OF_DATA_FORMATS} allowed.
      */
+    @Override
     public int putNumberFormat(String fmt) {
         // Check if number format already exists
         if (numberFormats.containsValue(fmt)) {
@@ -334,6 +336,7 @@ public class StylesTable extends POIXMLDocumentPart {
      * @param index the number format ID
      * @param fmt the number format code
      */
+    @Override
     public void putNumberFormat(short index, String fmt) {
         numberFormats.put(index, fmt);
     }
@@ -345,6 +348,7 @@ public class StylesTable extends POIXMLDocumentPart {
      * @param index the number format id to remove
      * @return true if the number format was removed
      */
+    @Override
     public boolean removeNumberFormat(short index) {
         String fmt = numberFormats.remove(index);
         boolean removed = (fmt != null);
@@ -366,11 +370,13 @@ public class StylesTable extends POIXMLDocumentPart {
      * @param fmt the number format to remove
      * @return true if the number format was removed
      */
+    @Override
     public boolean removeNumberFormat(String fmt) {
         short id = getNumberFormatId(fmt);
         return removeNumberFormat(id);
     }
 
+    @Override
     public XSSFFont getFontAt(int idx) {
         return fonts.get(idx);
     }
@@ -385,6 +391,7 @@ public class StylesTable extends POIXMLDocumentPart {
      * Note - End Users probably want to call
      *  {@link XSSFFont#registerTo(StylesTable)}
      */
+    @Override
     public int putFont(XSSFFont font, boolean forceRegistration) {
         int idx = -1;
         if(!forceRegistration) {
@@ -399,6 +406,8 @@ public class StylesTable extends POIXMLDocumentPart {
         fonts.add(font);
         return idx;
     }
+
+    @Override
     public int putFont(XSSFFont font) {
         return putFont(font, false);
     }
@@ -408,6 +417,7 @@ public class StylesTable extends POIXMLDocumentPart {
      * @param idx style index
      * @return XSSFCellStyle or null if idx is out of bounds for xfs array
      */
+    @Override
     public XSSFCellStyle getStyleAt(int idx) {
         int styleXfId = 0;
 
@@ -422,6 +432,8 @@ public class StylesTable extends POIXMLDocumentPart {
 
         return new XSSFCellStyle(idx, styleXfId, this, theme);
     }
+
+    @Override
     public int putStyle(XSSFCellStyle style) {
         CTXf mainXF = style.getCoreXf();
 
@@ -431,6 +443,7 @@ public class StylesTable extends POIXMLDocumentPart {
         return xfs.indexOf(mainXF);
     }
 
+    @Override
     public XSSFCellBorder getBorderAt(int idx) {
         return borders.get(idx);
     }
@@ -442,6 +455,7 @@ public class StylesTable extends POIXMLDocumentPart {
      * @param border border to add
      * @return the index of the added border
      */
+    @Override
     public int putBorder(XSSFCellBorder border) {
         int idx = borders.indexOf(border);
         if (idx != -1) {
@@ -452,6 +466,7 @@ public class StylesTable extends POIXMLDocumentPart {
         return borders.size() - 1;
     }
 
+    @Override
     public XSSFCellFill getFillAt(int idx) {
         return fills.get(idx);
     }
@@ -479,6 +494,7 @@ public class StylesTable extends POIXMLDocumentPart {
      * @param fill fill to add
      * @return the index of the added fill
      */
+    @Override
     public int putFill(XSSFCellFill fill) {
         int idx = fills.indexOf(fill);
         if (idx != -1) {
@@ -543,7 +559,8 @@ public class StylesTable extends POIXMLDocumentPart {
     /**
      * get the size of cell styles
      */
-    public int getNumCellStyles(){
+    @Override
+    public int getNumCellStyles() {
         // Each cell style has a unique xfs entry
         // Several might share the same styleXfs entry
         return xfs.size();
@@ -552,6 +569,7 @@ public class StylesTable extends POIXMLDocumentPart {
     /**
      * @return number of data formats in the styles table
      */
+    @Override
     public int getNumDataFormats() {
         return numberFormats.size();
     }
