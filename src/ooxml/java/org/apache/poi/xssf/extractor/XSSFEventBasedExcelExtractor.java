@@ -58,16 +58,16 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
 
     private static final POILogger LOGGER = POILogFactory.getLogger(XSSFEventBasedExcelExtractor.class);
 
-    private OPCPackage container;
-    private POIXMLProperties properties;
+    protected OPCPackage container;
+    protected POIXMLProperties properties;
 
-    private Locale locale;
-    private boolean includeTextBoxes = true;
-    private boolean includeSheetNames = true;
-    private boolean includeCellComments;
-    private boolean includeHeadersFooters = true;
-    private boolean formulasNotResults;
-    private boolean concatenatePhoneticRuns = true;
+    protected Locale locale;
+    protected boolean includeTextBoxes = true;
+    protected boolean includeSheetNames = true;
+    protected boolean includeCellComments;
+    protected boolean includeHeadersFooters = true;
+    protected boolean formulasNotResults;
+    protected boolean concatenatePhoneticRuns = true;
 
     public XSSFEventBasedExcelExtractor(String path) throws XmlException, OpenXML4JException, IOException {
         this(OPCPackage.open(path));
@@ -254,7 +254,7 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
         }
     }
 
-    protected SharedStrings createSharedStringsTable(OPCPackage container, boolean concatenatePhoneticRuns)
+    protected SharedStrings createSharedStringsTable(XSSFReader xssfReader, OPCPackage container)
             throws IOException, SAXException {
         return new ReadOnlySharedStringsTable(container, concatenatePhoneticRuns);
     }
@@ -264,8 +264,8 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
      */
     public String getText() {
         try {
-            SharedStrings strings = createSharedStringsTable(container, concatenatePhoneticRuns);
             XSSFReader xssfReader = new XSSFReader(container);
+            SharedStrings strings = createSharedStringsTable(xssfReader, container);
             StylesTable styles = xssfReader.getStylesTable();
             XSSFReader.SheetIterator iter = (XSSFReader.SheetIterator) xssfReader.getSheetsData();
             StringBuilder text = new StringBuilder(64);
