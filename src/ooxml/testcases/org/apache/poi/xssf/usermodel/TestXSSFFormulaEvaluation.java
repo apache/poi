@@ -437,16 +437,17 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
         assertEquals("D 0,068", evaluator.evaluate(wb.getSheetAt(0).getRow(1).getCell(1)));
     }
 
+    @Test
     public void testBug62275() throws IOException {
         try (Workbook wb = new XSSFWorkbook()) {
             Sheet sheet = wb.createSheet();
             Row row = sheet.createRow(0);
 
             Cell cell = row.createCell(0);
-            cell.setCellFormula("vlookup(A2,B1:B5,2,)");
+            cell.setCellFormula("vlookup(A2,B1:B5,2,true)");
 
-            CreationHelper crateHelper = wb.getCreationHelper();
-            FormulaEvaluator eval = crateHelper.createFormulaEvaluator();
+            CreationHelper createHelper = wb.getCreationHelper();
+            FormulaEvaluator eval = createHelper.createFormulaEvaluator();
             eval.evaluate(cell);
         }
     }
