@@ -24,13 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.ss.usermodel.BaseTestFormulaEvaluator;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellValue;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
@@ -441,5 +435,19 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
         assertEquals("D 67.10", value.getStringValue());
         
         assertEquals("D 0,068", evaluator.evaluate(wb.getSheetAt(0).getRow(1).getCell(1)));
+    }
+
+    public void testBug62275() throws IOException {
+        try (Workbook wb = new XSSFWorkbook()) {
+            Sheet sheet = wb.createSheet();
+            Row row = sheet.createRow(0);
+
+            Cell cell = row.createCell(0);
+            cell.setCellFormula("vlookup(A2,B1:B5,2,)");
+
+            CreationHelper crateHelper = wb.getCreationHelper();
+            FormulaEvaluator eval = crateHelper.createFormulaEvaluator();
+            eval.evaluate(cell);
+        }
     }
 }
