@@ -52,7 +52,12 @@ public final class Vlookup extends Var3or4ArgFunction {
 			// lookup_value , table_array, range_lookup, find lookup value, col_index, fetch result
 			ValueEval lookupValue = OperandResolver.getSingleValue(lookup_value, srcRowIndex, srcColumnIndex);
 			TwoDEval tableArray = LookupUtils.resolveTableArrayArg(table_array);
-			boolean isRangeLookup = LookupUtils.resolveRangeLookupArg(range_lookup, srcRowIndex, srcColumnIndex);
+			boolean isRangeLookup;
+			try {
+                isRangeLookup = LookupUtils.resolveRangeLookupArg(range_lookup, srcRowIndex, srcColumnIndex);
+            } catch(RuntimeException e) {
+                isRangeLookup = true;
+            }
 			int rowIndex = LookupUtils.lookupIndexOfValue(lookupValue, LookupUtils.createColumnVector(tableArray, 0), isRangeLookup);
 			int colIndex = LookupUtils.resolveRowOrColIndexArg(col_index, srcRowIndex, srcColumnIndex);
 			ValueVector resultCol = createResultColumnVector(tableArray, colIndex);
