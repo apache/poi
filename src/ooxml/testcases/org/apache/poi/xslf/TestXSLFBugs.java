@@ -724,6 +724,17 @@ public class TestXSLFBugs {
         ppt.close();
     }
 
+    @Test
+    public void testAptia() throws IOException {
+        XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("aptia.pptx");
+        try {
+            XMLSlideShow saved = XSLFTestDataSamples.writeOutAndReadBack(ppt);
+        } catch (IOException e) {
+            fail("Could not read back saved presentation.");
+        }
+        ppt.close();
+    }
+
     @Ignore
     @Test
     public void testDivinoRevelado() throws IOException {
