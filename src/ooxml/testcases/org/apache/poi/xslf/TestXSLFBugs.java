@@ -724,6 +724,18 @@ public class TestXSLFBugs {
         ppt.close();
     }
 
+    @Ignore
+    @Test
+    public void testDivinoRevelado() throws IOException {
+        XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("Divino_Revelado.pptx");
+        try {
+            XMLSlideShow saved = XSLFTestDataSamples.writeOutAndReadBack(ppt);
+        } catch (IOException e) {
+            fail("Could not read back saved presentation.");
+        }
+        ppt.close();
+    }
+
     @Test
     public void bug62051() throws IOException {
         final Function<List<XSLFShape>, int[]> ids = (shapes) ->

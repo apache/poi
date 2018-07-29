@@ -68,17 +68,20 @@ public class POIXMLProperties {
         this.pkg = docPackage;
 
         // Core properties
-        core = new CoreProperties((PackagePropertiesPart)pkg.getPackageProperties() );
+        core = new CoreProperties((PackagePropertiesPart)pkg.getPackageProperties());
 
         // Extended properties
         PackageRelationshipCollection extRel =
                 pkg.getRelationshipsByType(PackageRelationshipTypes.EXTENDED_PROPERTIES);
         if(extRel.size() == 1) {
-            extPart = pkg.getPart( extRel.getRelationship(0));
-            org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument props = org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument.Factory.parse(
-                    extPart.getInputStream(), DEFAULT_XML_OPTIONS
-            );
-            ext = new ExtendedProperties(props);
+            extPart = pkg.getPart(extRel.getRelationship(0));
+            if (extPart == null) {
+                ext = new ExtendedProperties((org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument)NEW_EXT_INSTANCE.copy());
+            } else {
+                org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument props = org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument.Factory.parse(
+                        extPart.getInputStream(), DEFAULT_XML_OPTIONS);
+                ext = new ExtendedProperties(props);
+            }
         } else {
             extPart = null;
             ext = new ExtendedProperties((org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument)NEW_EXT_INSTANCE.copy());
@@ -88,11 +91,14 @@ public class POIXMLProperties {
         PackageRelationshipCollection custRel =
                 pkg.getRelationshipsByType(PackageRelationshipTypes.CUSTOM_PROPERTIES);
         if(custRel.size() == 1) {
-            custPart = pkg.getPart( custRel.getRelationship(0));
-            org.openxmlformats.schemas.officeDocument.x2006.customProperties.PropertiesDocument props = org.openxmlformats.schemas.officeDocument.x2006.customProperties.PropertiesDocument.Factory.parse(
-                    custPart.getInputStream(), DEFAULT_XML_OPTIONS
-            );
-            cust = new CustomProperties(props);
+            custPart = pkg.getPart(custRel.getRelationship(0));
+            if (custPart == null) {
+                cust = new CustomProperties((org.openxmlformats.schemas.officeDocument.x2006.customProperties.PropertiesDocument)NEW_CUST_INSTANCE.copy());
+            } else {
+                org.openxmlformats.schemas.officeDocument.x2006.customProperties.PropertiesDocument props = org.openxmlformats.schemas.officeDocument.x2006.customProperties.PropertiesDocument.Factory.parse(
+                        custPart.getInputStream(), DEFAULT_XML_OPTIONS);
+                cust = new CustomProperties(props);
+            }
         } else {
             custPart = null;
             cust = new CustomProperties((org.openxmlformats.schemas.officeDocument.x2006.customProperties.PropertiesDocument)NEW_CUST_INSTANCE.copy());
@@ -197,9 +203,9 @@ public class POIXMLProperties {
      * @throws IOException if the properties can't be saved
      * @throws POIXMLException if the properties are erroneous
      */
-    public void commit() throws IOException{
+    public void commit() throws IOException {
 
-        if(extPart == null && !NEW_EXT_INSTANCE.toString().equals(ext.props.toString())){
+        if(extPart == null && ext != null && ext.props != null && !NEW_EXT_INSTANCE.toString().equals(ext.props.toString())){
             try {
                 PackagePartName prtname = PackagingURIHelper.createPartName("/docProps/app.xml");
                 pkg.addRelationship(prtname, TargetMode.INTERNAL, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties");
@@ -208,7 +214,7 @@ public class POIXMLProperties {
                 throw new POIXMLException(e);
             }
         }
-        if(custPart == null && !NEW_CUST_INSTANCE.toString().equals(cust.props.toString())){
+        if(custPart == null && cust != null && cust.props != null && !NEW_CUST_INSTANCE.toString().equals(cust.props.toString())){
             try {
                 PackagePartName prtname = PackagingURIHelper.createPartName("/docProps/custom.xml");
                 pkg.addRelationship(prtname, TargetMode.INTERNAL, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/custom-properties");
@@ -218,17 +224,17 @@ public class POIXMLProperties {
             }
         }
         if(extPart != null){
-            OutputStream out = extPart.getOutputStream();
-            if (extPart.getSize() > 0) {
-                extPart.clear();
+            try (OutputStream out = extPart.getOutputStream()) {
+                if (extPart.getSize() > 0) {
+                    extPart.clear();
+                }
+                ext.props.save(out, DEFAULT_XML_OPTIONS);
             }
-            ext.props.save(out, DEFAULT_XML_OPTIONS);
-            out.close();
         }
         if(custPart != null){
-            OutputStream out = custPart.getOutputStream();
-            cust.props.save(out, DEFAULT_XML_OPTIONS);
-            out.close();
+            try (OutputStream out = custPart.getOutputStream()) {
+                cust.props.save(out, DEFAULT_XML_OPTIONS);
+            }
         }
     }
 
