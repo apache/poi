@@ -402,6 +402,14 @@ public final class TestXWPFDocument {
         assertEquals(100, settings.getZoomPercent());
         settings.setZoomPercent(50);
         assertEquals(50, settings.getZoomPercent());
+        
+        assertEquals(false, settings.getEvenAndOddHeadings());
+        settings.setEvenAndOddHeadings(true);
+        assertEquals(true, settings.getEvenAndOddHeadings());
+
+        assertEquals(false, settings.getMirrorMargins());
+        settings.setMirrorMargins(true);
+        assertEquals(true, settings.getMirrorMargins());
 
         XWPFDocument doc = new XWPFDocument();
         assertEquals(100, doc.getZoomPercent());
@@ -411,6 +419,14 @@ public final class TestXWPFDocument {
 
         doc.setZoomPercent(200);
         assertEquals(200, doc.getZoomPercent());
+
+        assertEquals(false, doc.getEvenAndOddHeadings());
+        doc.setEvenAndOddHeadings(true);
+        assertEquals(true, doc.getEvenAndOddHeadings());
+
+        assertEquals(false, doc.getMirrorMargins());
+        doc.setMirrorMargins(true);
+        assertEquals(true, doc.getMirrorMargins());
 
         XWPFDocument back = XWPFTestDataSamples.writeOutAndReadBack(doc);
         assertEquals(200, back.getZoomPercent());
