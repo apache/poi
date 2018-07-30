@@ -1339,6 +1339,40 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     /**
+     * Returns the even-and-odd-headings setting
+     *
+     * @return True or false indicating whether or not separate even and odd headings is turned on.
+     */
+    public boolean getEvenAndOddHeadings() {
+        return settings.getEvenAndOddHeadings();
+    }
+    
+    /**
+     * Sets the even-and-odd-headings setting
+     * @param enable Set to true to turn on separate even and odd headings.
+     */
+    public void setEvenAndOddHeadings(boolean enable) {
+        settings.setEvenAndOddHeadings(enable);
+    }
+    
+    /**
+     * Returns the mirror margins setting
+     *
+     * @return True or false indicating whether or not mirror margins is turned on.
+     */
+    public boolean getMirrorMargins() {
+        return settings.getMirrorMargins();
+    }
+    
+    /**
+     * Sets the mirror margins setting
+     * @param enable Set to true to turn on mirror margins.
+     */
+    public void setMirrorMargins(boolean enable) {
+        settings.setMirrorMargins(enable);
+    }
+    
+    /**
      * inserts an existing XWPFTable to the arrays bodyElements and tables
      *
      * @param pos
@@ -1758,4 +1792,5 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
             return false;
         }
     }
+
 }
