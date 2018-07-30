@@ -843,7 +843,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         if (sheetComments == null) {
             return Collections.emptyMap();
         }
-        return sheetComments.getCellComments();
+        // the cell comments in sheetComments.getCellComments() do not have the client anchors set
+        Map<CellAddress, XSSFComment> map = new HashMap<>();
+        for(CellAddress address : sheetComments.getCellComments().keySet()) {
+            map.put(address, getCellComment(address));
+        }
+        return map;
     }
 
     /**
