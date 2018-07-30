@@ -109,7 +109,7 @@ public class XSSFComment implements Comment {
     @Override
     public boolean isVisible() {
         boolean visible = false;
-        if(_vmlShape != null){
+        if(_vmlShape != null) {
             String style = _vmlShape.getStyle();
             visible = style != null && style.contains("visibility:visible");
         }
@@ -217,6 +217,9 @@ public class XSSFComment implements Comment {
 
     @Override
     public ClientAnchor getClientAnchor() {
+        if(_vmlShape == null) {
+            return null;
+        }
         String position = _vmlShape.getClientDataArray(0).getAnchorArray(0);
         int[] pos = new int[8];
         int i = 0;
