@@ -845,7 +845,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         }
         // the cell comments in sheetComments.getCellComments() do not have the client anchors set
         Map<CellAddress, XSSFComment> map = new HashMap<>();
-        for(CellAddress address : sheetComments.getCellComments().keySet()) {
+        for(Iterator<CellAddress> iter = sheetComments.getCellAddresses(); iter.hasNext(); ) {
+            CellAddress address = iter.next();
             map.put(address, getCellComment(address));
         }
         return map;

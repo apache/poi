@@ -230,7 +230,7 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
     public void processSheet(
             SheetContentsHandler sheetContentsExtractor,
             Styles styles,
-            CommentsTable comments,
+            Comments comments,
             SharedStrings strings,
             InputStream sheetInputStream)
             throws IOException, SAXException {
@@ -277,7 +277,7 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
                     text.append(iter.getSheetName());
                     text.append('\n');
                 }
-                CommentsTable comments = includeCellComments ? iter.getSheetComments() : null;
+                Comments comments = includeCellComments ? iter.getSheetComments() : null;
                 processSheet(sheetExtractor, styles, comments, strings, stream);
                 if (includeHeadersFooters) {
                     sheetExtractor.appendHeaderText(text);
