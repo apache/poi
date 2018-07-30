@@ -19,6 +19,8 @@ package org.apache.poi.xssf.model;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.xssf.usermodel.XSSFComment;
 
+import java.util.Iterator;
+
 /**
  * An interface exposing useful functions for dealing with Excel Workbook Comments.
  * It is intended that this interface should support low level access and not expose
@@ -49,4 +51,11 @@ public interface Comments {
      * @return returns true if a comment was removed
      */
     boolean removeComment(CellAddress cellRef);
+
+    /**
+     * Returns all cell addresses that have comments.
+     * @return An iterator to traverse all cell addresses that have comments.
+     * @since 4.0.0
+     */
+    Iterator<CellAddress> getCellAddresses();
 }

@@ -18,6 +18,7 @@ package org.apache.poi.xssf.eventusermodel;
 
 import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_SPREADSHEETML;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -115,7 +116,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
     */
    public XSSFSheetXMLHandler(
            Styles styles,
-           CommentsTable comments,
+           Comments comments,
            SharedStrings strings,
            SheetContentsHandler sheetContentsHandler,
            DataFormatter dataFormatter,
@@ -159,11 +160,11 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
        this(styles, strings, sheetContentsHandler, new DataFormatter(), formulasNotResults);
    }
    
-   private void init(CommentsTable commentsTable) {
+   private void init(Comments commentsTable) {
        if (commentsTable != null) {
            commentCellRefs = new LinkedList<>();
-           for (CellAddress cellAddress : commentsTable.getCellComments().keySet()) {
-               commentCellRefs.add(cellAddress);
+           for (Iterator<CellAddress> iter = commentsTable.getCellAddresses(); iter.hasNext(); ) {
+               commentCellRefs.add(iter.next());
            }
        }
    }
