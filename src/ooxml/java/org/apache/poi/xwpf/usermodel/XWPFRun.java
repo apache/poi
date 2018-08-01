@@ -409,8 +409,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
 
     /**
      * Specifies that the contents of this run should be displayed along with an
-     * underline appearing directly below the character heigh
-     * <p>
+     * underline appearing directly below the character height.
      * <p>
      * If this element is not present, the default value is to leave the
      * formatting applied at previous level in the style hierarchy. If this
@@ -578,7 +577,8 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * altering the font size of the run properties.
      *
      * @return VerticalAlign
-     * @see VerticalAlign all possible value that could be applyed to this run
+     * @see {@link VerticalAlign} all possible value that could be applyed to this run
+     * @deprecated use {@link XWPFRun.getVerticalAlignment}
      */
     public VerticalAlign getSubscript() {
         CTRPr pr = run.getRPr();
@@ -629,7 +629,8 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         if (pr == null || !pr.isSetHighlight()) {
             return false;
         }
-        if (pr.getHighlight().getVal() == STHighlightColor.NONE) {
+        STHighlightColor.Enum val = pr.getHighlight().getVal();
+        if (val == null || val == STHighlightColor.NONE) {
             return false;
         }
         return true;
@@ -1278,4 +1279,162 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         eastAsia /* east asia */,
         hAnsi /* high ansi */
     }
+
+    /**
+     * Set the text expand/collapse scale value.
+     *
+     * @param percentage The percentage to expand or compress the text
+     */
+    public void setTextScale(int percentage) {
+        CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
+        CTTextScale scale = pr.isSetW() ? pr.getW() : pr.addNewW();
+        scale.setVal(percentage);        
+    }
+
+    /**
+     * Gets the current text scale value.
+     *
+     * @return Value is an integer percentage
+     */
+    public int getTextScale() {
+        CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
+        CTTextScale scale = pr.isSetW() ? pr.getW() : pr.addNewW();
+        int value = scale.getVal();
+        if (value == 0) {
+            value = 100; // 100% scaling, that is, no change. See 17.3.2.43 w (Expanded/Compressed Text)
+        }
+        return value;
+    }
+
+    /**
+     * Set the highlight color for the run. Silently does nothing of colorName is not a recognized value.
+     *
+     * @param colorName The name of the color as defined in the ST_HighlightColor simple type ({@link STHightlightColor})
+     */
+    public void setTextHighlightColor(String colorName) {
+        CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
+        CTHighlight highlight = pr.isSetHighlight() ? pr.getHighlight() : pr.addNewHighlight();
+        STHighlightColor color = highlight.xgetVal();
+        if (color == null) {
+            color = STHighlightColor.Factory.newInstance();            
+        }
+        STHighlightColor.Enum val = STHighlightColor.Enum.forString(colorName);
+        if (val != null) {
+            color.setStringValue(val.toString());
+            highlight.xsetVal(color);
+        }
+         
+    }
+
+    /**
+     * Gets the highlight color for the run
+     *
+     * @return {@link STHighlightColor} for the run.
+     */
+    public STHighlightColor.Enum getTextHightlightColor() {
+        CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
+        CTHighlight highlight = pr.isSetHighlight() ? pr.getHighlight() : pr.addNewHighlight();
+        STHighlightColor color = highlight.xgetVal();
+        if (color == null) {
+            color = STHighlightColor.Factory.newInstance();
+            color.set(STHighlightColor.NONE);
+        }
+        return (STHighlightColor.Enum)(color.enumValue());
+    }
+
+    /**
+     * Get the vanish (hidden text) value
+     *
+     * @return True if the run is hidden text.
+     */
+    public boolean isVanish() {
+        CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
+        return pr != null && pr.isSetVanish() && isCTOnOff(pr.getVanish());
+    }
+
+    /**
+     * The vanish (hidden text) property for the run. 
+     *
+     * @param value Set to true to make the run hidden text.
+     */
+    public void setVanish(boolean value) {
+        CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
+        CTOnOff vanish = pr.isSetVanish() ? pr.getVanish() : pr.addNewVanish();
+        vanish.setVal(value ? STOnOff.TRUE : STOnOff.FALSE);
+    }
+
+    /**
+     * Get the vertical alignment value
+     *
+     * @return {@link STVerticalAlignRun.Enum} value (see 22.9.2.17 ST_VerticalAlignRun (Vertical Positioning Location))
+     */
+    public STVerticalAlignRun.Enum getVerticalAlignment() {
+        CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
+        CTVerticalAlignRun vertAlign = pr.isSetVertAlign() ? pr.getVertAlign() : pr.addNewVertAlign();
+        STVerticalAlignRun.Enum val = vertAlign.getVal();
+        if (val == null) {
+            val = STVerticalAlignRun.BASELINE;
+        }
+        return val;
+    }
+
+    /**
+     * Set the vertical alignment of the run.
+     *
+     * @param verticalAlignment Vertical alignment value, one of "baseline", "superscript", or "subscript".
+     */
+    public void setVerticalAlignment(String verticalAlignment) {
+        CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
+        CTVerticalAlignRun vertAlign = pr.getVertAlign();
+        STVerticalAlignRun align = vertAlign.xgetVal();
+        if (align == null) {
+            align = STVerticalAlignRun.Factory.newInstance();            
+        }
+        STVerticalAlignRun.Enum val = STVerticalAlignRun.Enum.forString(verticalAlignment);
+        if (val != null) {
+            align.setStringValue(val.toString());
+            vertAlign.xsetVal(align);
+        }
+        
+        
+    }
+
+    /**
+     * Get the emphasis mark value for the run.
+     *
+     * @return {@link STEm.Enum} emphasis mark type enumeration. See 17.18.24 ST_Em (Emphasis Mark Type).
+     */
+    public STEm.Enum getEmphasisMark() {
+        CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
+        CTEm emphasis = pr.isSetEm() ? pr.getEm() : pr.addNewEm();
+        
+        STEm.Enum val = emphasis.getVal();
+        if (val == null) {
+            val = STEm.NONE;
+        }
+        return val;
+    }
+
+    /**
+     * Set the emphasis mark for the run. The emphasis mark goes above or below the run
+     * text.
+     *
+     * @param markType Emphasis mark type name, e.g., "dot" or "none". See 17.18.24 ST_Em (Emphasis Mark Type)
+     */
+    public void setEmphasisMark(String markType) {
+        CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
+        CTEm emphasisMark = pr.getEm();
+        STEm mark = emphasisMark.xgetVal();
+        if (mark == null) {
+            mark = STEm.Factory.newInstance();            
+        }
+        STEm.Enum val = STEm.Enum.forString(markType);
+        if (val != null) {
+            mark.setStringValue(val.toString());
+            emphasisMark.xsetVal(mark);
+        }
+
+        
+    }
+
 }
