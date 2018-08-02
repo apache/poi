@@ -43,7 +43,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STFtnEdn;
  * Looks after the collection of Footnotes for a document.
  * Manages bottom-of-the-page footnotes ({@link XWPFFootnote}).
  */
-public class XWPFFootnotes extends AbstractXWPFFootnotesEndnotes {
+public class XWPFFootnotes extends XWPFAbstractFootnotesEndnotes {
     protected CTFootnotes ctFootnotes;
 
     /**
@@ -173,7 +173,7 @@ public class XWPFFootnotes extends AbstractXWPFFootnotesEndnotes {
      */
     public List<XWPFFootnote> getFootnotesList() {
         List<XWPFFootnote> resultList = new ArrayList<XWPFFootnote>();
-        for (AbstractXWPFFootnoteEndnote note : listFootnote) {
+        for (XWPFAbstractFootnoteEndnote note : listFootnote) {
             resultList.add((XWPFFootnote)note);
         }
         return resultList;

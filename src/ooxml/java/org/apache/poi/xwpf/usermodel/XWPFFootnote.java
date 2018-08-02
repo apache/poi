@@ -32,13 +32,13 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
  * the footnote ID to create a reference to a footnote from within a paragraph.</p>
  * <p>To create a reference to a footnote within a paragraph you create a run
  * with a CTFtnEdnRef that specifies the ID of the target paragraph. 
- * The {@link XWPFParagraph#addFootnoteReference(AbstractXWPFFootnoteEndnote)}
+ * The {@link XWPFParagraph#addFootnoteReference(XWPFAbstractFootnoteEndnote)}
  * method does this for you.</p>
  */
-public class XWPFFootnote extends AbstractXWPFFootnoteEndnote {
+public class XWPFFootnote extends XWPFAbstractFootnoteEndnote {
     
     @Internal
-    public XWPFFootnote(CTFtnEdn note, AbstractXWPFFootnotesEndnotes xFootnotes) {
+    public XWPFFootnote(CTFtnEdn note, XWPFAbstractFootnotesEndnotes xFootnotes) {
         super(note, xFootnotes);
     }
 
