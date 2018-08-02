@@ -45,6 +45,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBrClear;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STEm;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHighlightColor;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STThemeColor;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STUnderline;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalAlignRun;
 
@@ -729,6 +730,19 @@ public class TestXWPFRun {
         assertEquals(colorRgb.toUpperCase(), run.getUnderlineColor());
         run.setUnderlineColor("auto");
         assertEquals("auto", run.getUnderlineColor());
+        document.close();
+    }
+    
+    @Test
+    public void testSetGetUnderlineThemeColor() throws IOException {
+        XWPFDocument document = new XWPFDocument();
+        final XWPFRun run = document.createParagraph().createRun();
+        assertEquals(STThemeColor.NONE, run.getUnderlineThemeColor());
+        String colorName = "accent4";
+        run.setUnderlineThemeColor(colorName);
+        assertEquals(STThemeColor.Enum.forString(colorName), run.getUnderlineThemeColor());
+        run.setUnderlineThemeColor("none");
+        assertEquals(STThemeColor.NONE, run.getUnderlineThemeColor());
         document.close();
     }
     
