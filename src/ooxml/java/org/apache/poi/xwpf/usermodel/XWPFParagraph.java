@@ -76,7 +76,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                 if (o instanceof CTFtnEdnRef) {
                     CTFtnEdnRef ftn = (CTFtnEdnRef) o;
                     footnoteText.append(" [").append(ftn.getId()).append(": ");
-                    AbstractXWPFFootnoteEndnote footnote =
+                    XWPFAbstractFootnoteEndnote footnote =
                             ftn.getDomNode().getLocalName().equals("footnoteReference") ?
                                     document.getFootnoteByID(ftn.getId().intValue()) :
                                     document.getEndnoteByID(ftn.getId().intValue());
@@ -1678,7 +1678,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * @param footnote Footnote to which to add a reference.
      * @since 4.0.0
      */
-    public void addFootnoteReference(AbstractXWPFFootnoteEndnote footnote) {
+    public void addFootnoteReference(XWPFAbstractFootnoteEndnote footnote) {
         XWPFRun run = createRun();
         CTR ctRun = run.getCTR();
         ctRun.addNewRPr().addNewRStyle().setVal("FootnoteReference");

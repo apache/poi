@@ -41,10 +41,10 @@ public class FootnoteEndnoteIdManager {
     public BigInteger nextId() {
         
         List<BigInteger> ids = new ArrayList<BigInteger>();
-        for (AbstractXWPFFootnoteEndnote note : document.getFootnotes()) {
+        for (XWPFAbstractFootnoteEndnote note : document.getFootnotes()) {
             ids.add(note.getId());
         }
-        for (AbstractXWPFFootnoteEndnote note : document.getEndnotes()) {
+        for (XWPFAbstractFootnoteEndnote note : document.getEndnotes()) {
             ids.add(note.getId());
         }
         int cand = ids.size();
