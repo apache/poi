@@ -31,11 +31,11 @@ public class TestXWPFFootnotes extends TestCase {
     public void testCreateFootnotes() throws IOException{
         XWPFDocument docOut = new XWPFDocument();
 
-        AbstractXWPFFootnotesEndnotes footnotes = docOut.createFootnotes();
+        XWPFAbstractFootnotesEndnotes footnotes = docOut.createFootnotes();
         
         assertNotNull(footnotes);
         
-        AbstractXWPFFootnotesEndnotes secondFootnotes = docOut.createFootnotes();
+        XWPFAbstractFootnotesEndnotes secondFootnotes = docOut.createFootnotes();
         
         assertSame(footnotes, secondFootnotes);
         

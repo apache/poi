@@ -42,29 +42,29 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
  * {@link XWPFFootnotes} and end notes are managed by the Endnotes part {@link XWPFEndnotes}.</p>
  * @since 4.0.0
  */
-public abstract class AbstractXWPFFootnoteEndnote  implements Iterable<XWPFParagraph>, IBody {
+public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParagraph>, IBody {
 
     private List<XWPFParagraph> paragraphs = new ArrayList<>();
     private List<XWPFTable> tables = new ArrayList<>();
     private List<XWPFPictureData> pictures = new ArrayList<>();
     private List<IBodyElement> bodyElements = new ArrayList<>();
     protected CTFtnEdn ctFtnEdn;
-    protected AbstractXWPFFootnotesEndnotes footnotes;
+    protected XWPFAbstractFootnotesEndnotes footnotes;
     protected XWPFDocument document;
 
-    public AbstractXWPFFootnoteEndnote() {
+    public XWPFAbstractFootnoteEndnote() {
         super();
     }
 
     @Internal
-    protected AbstractXWPFFootnoteEndnote(XWPFDocument document, CTFtnEdn body) {
+    protected XWPFAbstractFootnoteEndnote(XWPFDocument document, CTFtnEdn body) {
         ctFtnEdn = body;
         this.document = document;
         init();
     }
 
     @Internal
-    protected AbstractXWPFFootnoteEndnote(CTFtnEdn note, AbstractXWPFFootnotesEndnotes footnotes) {
+    protected XWPFAbstractFootnoteEndnote(CTFtnEdn note, XWPFAbstractFootnotesEndnotes footnotes) {
         this.footnotes = footnotes;
         ctFtnEdn = note;
         document = footnotes.getXWPFDocument();

@@ -27,36 +27,36 @@ import org.apache.poi.openxml4j.opc.PackagePart;
  * Base class for the Footnotes and Endnotes part implementations.
  * @since 4.0.0
  */
-public abstract class AbstractXWPFFootnotesEndnotes extends POIXMLDocumentPart {
+public abstract class XWPFAbstractFootnotesEndnotes extends POIXMLDocumentPart {
 
     protected XWPFDocument document;
-    protected List<AbstractXWPFFootnoteEndnote> listFootnote = new ArrayList<>();
+    protected List<XWPFAbstractFootnoteEndnote> listFootnote = new ArrayList<>();
     private FootnoteEndnoteIdManager idManager;
     
-    public AbstractXWPFFootnotesEndnotes(OPCPackage pkg) {
+    public XWPFAbstractFootnotesEndnotes(OPCPackage pkg) {
         super(pkg);
     }
 
-    public AbstractXWPFFootnotesEndnotes(OPCPackage pkg,
+    public XWPFAbstractFootnotesEndnotes(OPCPackage pkg,
             String coreDocumentRel) {
         super(pkg, coreDocumentRel);
     }
 
-    public AbstractXWPFFootnotesEndnotes() {
+    public XWPFAbstractFootnotesEndnotes() {
         super();
     }
 
-    public AbstractXWPFFootnotesEndnotes(PackagePart part) {
+    public XWPFAbstractFootnotesEndnotes(PackagePart part) {
         super(part);
     }
 
-    public AbstractXWPFFootnotesEndnotes(POIXMLDocumentPart parent, PackagePart part) {
+    public XWPFAbstractFootnotesEndnotes(POIXMLDocumentPart parent, PackagePart part) {
         super(parent, part);
     }
 
 
-    public AbstractXWPFFootnoteEndnote getFootnoteById(int id) {
-        for (AbstractXWPFFootnoteEndnote note : listFootnote) {
+    public XWPFAbstractFootnoteEndnote getFootnoteById(int id) {
+        for (XWPFAbstractFootnoteEndnote note : listFootnote) {
             if (note.getCTFtnEdn().getId().intValue() == id)
                 return note;
         }

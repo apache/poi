@@ -44,7 +44,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STFtnEdn;
  * Managed end notes ({@link XWPFEndnote}).
  * @since 4.0.0
  */
-public class XWPFEndnotes extends AbstractXWPFFootnotesEndnotes {
+public class XWPFEndnotes extends XWPFAbstractFootnotesEndnotes {
 
     protected CTEndnotes ctEndnotes;
 
@@ -183,7 +183,7 @@ public class XWPFEndnotes extends AbstractXWPFFootnotesEndnotes {
      */
     public List<XWPFEndnote> getEndnotesList() {
         List<XWPFEndnote> resultList = new ArrayList<XWPFEndnote>();
-        for (AbstractXWPFFootnoteEndnote note : listFootnote) {
+        for (XWPFAbstractFootnoteEndnote note : listFootnote) {
             resultList.add((XWPFEndnote)note);
         }
         return resultList;
