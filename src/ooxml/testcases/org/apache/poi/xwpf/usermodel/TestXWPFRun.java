@@ -719,6 +719,19 @@ public class TestXWPFRun {
         document.close();
     }
     
+    @Test
+    public void testSetGetUnderlineColor() throws IOException {
+        XWPFDocument document = new XWPFDocument();
+        final XWPFRun run = document.createParagraph().createRun();
+        assertEquals("auto", run.getUnderlineColor());
+        String colorRgb = "C0F1a2";
+        run.setUnderlineColor(colorRgb);
+        assertEquals(colorRgb.toUpperCase(), run.getUnderlineColor());
+        run.setUnderlineColor("auto");
+        assertEquals("auto", run.getUnderlineColor());
+        document.close();
+    }
+    
 
     @Test
     public void testSetStyleId() throws IOException {

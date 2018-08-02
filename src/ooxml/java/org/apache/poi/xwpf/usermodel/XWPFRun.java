@@ -31,9 +31,11 @@ import javax.xml.namespace.QName;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ooxml.util.DocumentHelper;
+import org.apache.poi.util.HexDump;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Removal;
 import org.apache.poi.wp.usermodel.CharacterRun;
+import org.apache.xmlbeans.SimpleValue;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -431,13 +433,13 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * Set the underline color for the run's underline, if any.
      *
      * @param color An RGB color value (e.g, "a0C6F3") or "auto". 
+     * @since 4.0.0
      */
     public void setUnderlineColor(String color) {
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
-        CTUnderline underline = (pr.getU() == null) ? pr.addNewU() :
-pr.getU();
+        CTUnderline underline = (pr.getU() == null) ? pr.addNewU() : pr.getU();
         SimpleValue svColor = null;
-        if (color.equals("string")) {
+        if (color.equals("auto")) {
             STHexColorAuto hexColor = STHexColorAuto.Factory.newInstance();
             hexColor.set(STHexColorAuto.Enum.forString(color));
             svColor = (SimpleValue) hexColor;
@@ -447,6 +449,28 @@ pr.getU();
             svColor = (SimpleValue) rgbColor;
         }
         underline.setColor(svColor);
+    }
+    
+    /**
+     * Get the underline color for the run's underline, if any.
+     *
+     * @return The RGB color value as as a string of hexadecimal digits (e.g., "A0B2F1") or "auto".
+     * @since 4.0.0
+     */
+    public String getUnderlineColor() {
+        CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
+        CTUnderline underline = (pr.getU() == null) ? pr.addNewU() : pr.getU();
+        String colorName = "auto";
+        Object rawValue = underline.getColor();
+        if (rawValue != null) {
+            if (rawValue instanceof String) {
+                colorName = (String)rawValue;
+            } else {
+                byte[] rgbColor = (byte[])rawValue;
+                colorName = HexDump.toHex(rgbColor[0]) + HexDump.toHex(rgbColor[1]) + HexDump.toHex(rgbColor[2]);
+            }
+        }
+        return colorName;
     }
     
     /**
