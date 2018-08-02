@@ -214,7 +214,7 @@ public class TestXWPFRun {
         XWPFRun run = new XWPFRun(ctRun, irb);
         run.setColor("0F0F0F");
         String clr = run.getColor();
-        assertEquals("0F0F0F", clr);        
+        assertEquals("0F0F0F", clr);
     }
 
     @Test
@@ -729,8 +729,7 @@ public class TestXWPFRun {
         run.setStyle(styleId);
         String candStyleId = run.getCTR().getRPr().getRStyle().getVal();
         assertNotNull("Expected to find a run style ID", candStyleId);
-        assertEquals(styleId, candStyleId);
-        
+        assertEquals(styleId, candStyleId);        
     }
 
 }

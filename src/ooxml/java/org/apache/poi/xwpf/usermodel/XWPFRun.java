@@ -32,6 +32,7 @@ import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 import org.apache.poi.wp.usermodel.CharacterRun;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
@@ -394,11 +395,10 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     }
 
     /**
-     * Specifies that the contents of this run should be displayed along with an
-     * underline appearing directly below the character heigh
+     * Get the underline setting for the run.
      *
-     * @return the Underline pattern applyed to this run
-     * @see UnderlinePatterns
+     * @return the Underline pattern applied to this run
+     * @see (@link UnderlinePatterns}
      */
     public UnderlinePatterns getUnderline() {
         CTRPr pr = run.getRPr();
@@ -419,7 +419,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      *
      * @param value -
      *              underline type
-     * @see UnderlinePatterns : all possible patterns that could be applied
+     * @see {@link UnderlinePatterns} : all possible patterns that could be applied
      */
     public void setUnderline(UnderlinePatterns value) {
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
@@ -427,6 +427,28 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         underline.setVal(STUnderline.Enum.forInt(value.getValue()));
     }
 
+    /**
+     * Set the underline color for the run's underline, if any.
+     *
+     * @param color An RGB color value (e.g, "a0C6F3") or "auto". 
+     */
+    public void setUnderlineColor(String color) {
+        CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
+        CTUnderline underline = (pr.getU() == null) ? pr.addNewU() :
+pr.getU();
+        SimpleValue svColor = null;
+        if (color.equals("string")) {
+            STHexColorAuto hexColor = STHexColorAuto.Factory.newInstance();
+            hexColor.set(STHexColorAuto.Enum.forString(color));
+            svColor = (SimpleValue) hexColor;
+        } else {
+            STHexColorRGB rgbColor = STHexColorRGB.Factory.newInstance();
+            rgbColor.setStringValue(color);
+            svColor = (SimpleValue) rgbColor;
+        }
+        underline.setColor(svColor);
+    }
+    
     /**
      * Specifies that the contents of this run shall be displayed with a single
      * horizontal line through the center of the line.
@@ -580,6 +602,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * @see {@link VerticalAlign} all possible value that could be applyed to this run
      * @deprecated use {@link XWPFRun.getVerticalAlignment}
      */
+    @Removal(version = "4.2")
     public VerticalAlign getSubscript() {
         CTRPr pr = run.getRPr();
         return (pr != null && pr.isSetVertAlign()) ? VerticalAlign.valueOf(pr.getVertAlign().getVal().intValue()) : VerticalAlign.BASELINE;
@@ -1284,6 +1307,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * Set the text expand/collapse scale value.
      *
      * @param percentage The percentage to expand or compress the text
+     * @since 4.0.0
      */
     public void setTextScale(int percentage) {
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
@@ -1295,6 +1319,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * Gets the current text scale value.
      *
      * @return Value is an integer percentage
+     * @since 4.0.0
      */
     public int getTextScale() {
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
@@ -1310,6 +1335,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * Set the highlight color for the run. Silently does nothing of colorName is not a recognized value.
      *
      * @param colorName The name of the color as defined in the ST_HighlightColor simple type ({@link STHightlightColor})
+     * @since 4.0.0
      */
     public void setTextHighlightColor(String colorName) {
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
@@ -1330,6 +1356,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * Gets the highlight color for the run
      *
      * @return {@link STHighlightColor} for the run.
+     * @since 4.0.0
      */
     public STHighlightColor.Enum getTextHightlightColor() {
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
@@ -1346,6 +1373,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * Get the vanish (hidden text) value
      *
      * @return True if the run is hidden text.
+     * @since 4.0.0
      */
     public boolean isVanish() {
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
@@ -1356,6 +1384,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * The vanish (hidden text) property for the run. 
      *
      * @param value Set to true to make the run hidden text.
+     * @since 4.0.0
      */
     public void setVanish(boolean value) {
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
@@ -1367,6 +1396,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * Get the vertical alignment value
      *
      * @return {@link STVerticalAlignRun.Enum} value (see 22.9.2.17 ST_VerticalAlignRun (Vertical Positioning Location))
+     * @since 4.0.0
      */
     public STVerticalAlignRun.Enum getVerticalAlignment() {
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
@@ -1382,6 +1412,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * Set the vertical alignment of the run.
      *
      * @param verticalAlignment Vertical alignment value, one of "baseline", "superscript", or "subscript".
+     * @since 4.0.0
      */
     public void setVerticalAlignment(String verticalAlignment) {
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
@@ -1403,6 +1434,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * Get the emphasis mark value for the run.
      *
      * @return {@link STEm.Enum} emphasis mark type enumeration. See 17.18.24 ST_Em (Emphasis Mark Type).
+     * @since 4.0.0
      */
     public STEm.Enum getEmphasisMark() {
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
@@ -1420,6 +1452,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * text.
      *
      * @param markType Emphasis mark type name, e.g., "dot" or "none". See 17.18.24 ST_Em (Emphasis Mark Type)
+     * @since 4.0.0
      */
     public void setEmphasisMark(String markType) {
         CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
