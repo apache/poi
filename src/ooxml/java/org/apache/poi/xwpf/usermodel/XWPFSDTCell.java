@@ -27,7 +27,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtCell;
  * <p>
  * WARNING - APIs expected to change rapidly
  */
-public class XWPFSDTCell extends AbstractXWPFSDT implements ICell {
+public class XWPFSDTCell extends XWPFAbstractSDT implements ICell {
     private final XWPFSDTContentCell cellContent;
 
     public XWPFSDTCell(CTSdtCell sdtCell, XWPFTableRow xwpfTableRow, IBody part) {
