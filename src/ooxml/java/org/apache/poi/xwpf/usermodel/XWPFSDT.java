@@ -25,7 +25,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtRun;
  * <p>
  * WARNING - APIs expected to change rapidly
  */
-public class XWPFSDT extends AbstractXWPFSDT
+public class XWPFSDT extends XWPFAbstractSDT
         implements IBodyElement, IRunBody, ISDTContents, IRunElement {
     private final ISDTContent content;
 

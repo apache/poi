@@ -34,11 +34,11 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
  * the footnote ID to create a reference to a footnote from within a paragraph.</p>
  * <p>To create a reference to a footnote within a paragraph you create a run
  * with a CTFtnEdnRef that specifies the ID of the target paragraph. 
- * The {@link XWPFParagraph#addFootnoteReference(AbstractXWPFFootnoteEndnote)}
+ * The {@link XWPFParagraph#addFootnoteReference(XWPFAbstractFootnoteEndnote)}
  * method does this for you.</p>
  * @since 4.0.0
  */
-public class XWPFEndnote extends AbstractXWPFFootnoteEndnote {
+public class XWPFEndnote extends XWPFAbstractFootnoteEndnote {
 
     public XWPFEndnote() {}
 
@@ -48,7 +48,7 @@ public class XWPFEndnote extends AbstractXWPFFootnoteEndnote {
     }
 
     @Internal
-    public XWPFEndnote(CTFtnEdn note, AbstractXWPFFootnotesEndnotes footnotes) {
+    public XWPFEndnote(CTFtnEdn note, XWPFAbstractFootnotesEndnotes footnotes) {
         super(note, footnotes);
     }
 
@@ -57,7 +57,7 @@ public class XWPFEndnote extends AbstractXWPFFootnoteEndnote {
      * end note by adding a footnote reference if one is not found.
      * <p>This method is for the first paragraph in the footnote, not 
      * paragraphs that will refer to the footnote. For references to
-     * the footnote, use {@link XWPFParagraph#addFootnoteReference(AbstractXWPFFootnoteEndnote))}.
+     * the footnote, use {@link XWPFParagraph#addFootnoteReference(XWPFAbstractFootnoteEndnote))}.
      * </p>
      * <p>The first run of the first paragraph in a footnote should
      * contain a {@link CTFtnEdnRef} object.</p>
