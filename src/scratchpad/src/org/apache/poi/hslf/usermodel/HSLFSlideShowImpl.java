@@ -66,7 +66,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     public static final int UNSET_OFFSET = -1;
 
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 10_000_000;
+    private static final int MAX_RECORD_LENGTH = 200_000_000;
 
     // For logging
     private POILogger logger = POILogFactory.getLogger(this.getClass());

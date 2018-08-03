@@ -36,7 +36,7 @@ import org.apache.poi.util.LittleEndian;
 public class ExOleObjStg extends PositionDependentRecordAtom implements PersistRecord {
 
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 1_000_000;
+    private static final int MAX_RECORD_LENGTH = 20_000_000;
 
     private int _persistId; // Found from PersistPtrHolder
 
