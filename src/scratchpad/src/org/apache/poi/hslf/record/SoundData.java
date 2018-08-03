@@ -32,7 +32,7 @@ public final class SoundData extends RecordAtom {
 
 
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 10_485_760;
+    private static final int MAX_RECORD_LENGTH = 100_000_000;
 
     /**
      * Record header.
