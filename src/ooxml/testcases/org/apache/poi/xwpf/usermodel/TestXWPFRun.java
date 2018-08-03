@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.Units;
 import org.apache.poi.wp.usermodel.HeaderFooterType;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
@@ -727,7 +728,7 @@ public class TestXWPFRun {
         assertEquals("auto", run.getUnderlineColor());
         String colorRgb = "C0F1a2";
         run.setUnderlineColor(colorRgb);
-        assertEquals(colorRgb.toUpperCase(), run.getUnderlineColor());
+        assertEquals(colorRgb.toUpperCase(LocaleUtil.getUserLocale()), run.getUnderlineColor());
         run.setUnderlineColor("auto");
         assertEquals("auto", run.getUnderlineColor());
         document.close();
