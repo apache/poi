@@ -591,9 +591,11 @@ public class VBAMacroReader implements Closeable {
         for (String line : properties.split("\r\n|\n\r")) {
             if (!line.startsWith("[")) {
                 String[] tokens = line.split("=");
-                if (tokens.length > 1 && tokens[1].length() > 1 && tokens[1].startsWith("\"")) {
-                    // Remove any double qouates
-                    tokens[1] = tokens[1].substring(1, tokens[1].length() - 2);
+                if (tokens.length > 1 && tokens[1].length() > 1
+                        && tokens[1].startsWith("\"") && tokens[1].endsWith("\"")) {
+                    // Remove any double quotes
+                    tokens[1] = tokens[1].substring(1, tokens[1].length() - 1);
+
                 }
                 if ("Document".equals(tokens[0])) {
                     String mn = tokens[1].substring(0, tokens[1].indexOf("/&H"));
