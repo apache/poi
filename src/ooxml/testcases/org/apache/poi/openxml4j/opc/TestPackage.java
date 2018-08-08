@@ -1090,6 +1090,21 @@ public final class TestPackage {
 		openInvalidFile("SampleSS.txt", true);
 	}
 
+	@Test(expected = InvalidFormatException.class)
+	public void testBug62592() throws Exception {
+		InputStream is = OpenXML4JTestDataSamples.openSampleStream("62592.thmx");
+		OPCPackage p = OPCPackage.open(is);
+	}
+
+	@Test
+	public void testBug62592SequentialCallsToGetParts() throws Exception {
+		//make absolutely certain that sequential calls don't throw InvalidFormatExceptions
+		String originalFile = OpenXML4JTestDataSamples.getSampleFileName("TestPackageCommon.docx");
+		OPCPackage p2 = OPCPackage.open(originalFile, PackageAccess.READ);
+		p2.getParts();
+		p2.getParts();
+	}
+
 	@Test
 	public void testDoNotCloseStream() throws IOException {
 		OutputStream os = Mockito.mock(OutputStream.class);
