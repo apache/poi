@@ -296,6 +296,7 @@ public class TestAllFiles {
         "openxml4j/OPCCompliance_CoreProperties_UnauthorizedXMLLangAttributeFAIL.docx",
         "openxml4j/OPCCompliance_DerivedPartNameFAIL.docx",
         "openxml4j/invalid.xlsx",
+        "openxml4j/62592.thmx",
         "spreadsheet/54764-2.xlsx",   // see TestXSSFBugs.bug54764()
         "spreadsheet/54764.xlsx",     // see TestXSSFBugs.bug54764()
         "poifs/unknown_properties.msg", // POIFS properties corrupted
