@@ -309,7 +309,6 @@ public final class TestExtractor {
         }
     }
 
-    @SuppressWarnings("unused")
     @Test
     public void testSlideMasterText() throws IOException {
         String masterTitleText = "This is the Master Title";
@@ -320,7 +319,25 @@ public final class TestExtractor {
 
             String text = ppe.getText();
             assertContains(text, masterRandomText);
-            assertContains(text, masterFooterText);
+            assertNotContained(text, masterTitleText);
+
+            //make sure that the footer only appears once
+            int masterFooters = 0;
+            int offset = text.indexOf(masterFooterText);
+            while (offset > -1) {
+                masterFooters++;
+                offset = text.indexOf(masterFooterText, offset+1);
+            }
+            assertEquals(1, masterFooters);
+        }
+    }
+
+    @Test
+    public void testSlideMasterText2() throws IOException {
+        try (final SlideShowExtractor ppe = openExtractor("bug62591.ppt")) {
+            ppe.setMasterByDefault(true);
+            String text = ppe.getText();
+            assertNotContained(text, "Titelmasterformat");
         }
     }
 
