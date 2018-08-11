@@ -95,11 +95,14 @@ public final class DocumentHelper {
         }
     }
 
-    private static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+    static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
     static {
         documentBuilderFactory.setNamespaceAware(true);
         documentBuilderFactory.setValidating(false);
+
         trySetSAXFeature(documentBuilderFactory, XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        trySetSAXFeature(documentBuilderFactory, POIXMLConstants.FEATURE_LOAD_DTD_GRAMMAR, false);
+        trySetSAXFeature(documentBuilderFactory, POIXMLConstants.FEATURE_LOAD_EXTERNAL_DTD, false);
         trySetXercesSecurityManager(documentBuilderFactory);
     }
 
@@ -123,7 +126,7 @@ public final class DocumentHelper {
                 Object mgr = Class.forName(securityManagerClassName).newInstance();
                 Method setLimit = mgr.getClass().getMethod("setEntityExpansionLimit", Integer.TYPE);
                 setLimit.invoke(mgr, 4096);
-                dbf.setAttribute("http://apache.org/xml/properties/security-manager", mgr);
+                dbf.setAttribute(POIXMLConstants.PROPERTY_SECURITY_MANAGER, mgr);
                 // Stop once one can be setup without error
                 return;
             } catch (ClassNotFoundException e) {
@@ -134,7 +137,7 @@ public final class DocumentHelper {
         }
 
         // separate old version of Xerces not found => use the builtin way of setting the property
-        dbf.setAttribute("http://www.oracle.com/xml/jaxp/properties/entityExpansionLimit", 4096);
+        dbf.setAttribute(POIXMLConstants.PROPERTY_ENTITY_EXPANSION_LIMIT, 4096);
     }
 
     /**

@@ -16,10 +16,7 @@
 ==================================================================== */
 package org.apache.poi.ooxml.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 
@@ -35,10 +32,12 @@ public class TestSAXHelper {
         XMLReader reader = SAXHelper.newXMLReader();
         assertNotSame(reader, SAXHelper.newXMLReader());
         assertTrue(reader.getFeature(XMLConstants.FEATURE_SECURE_PROCESSING));
+        assertFalse(reader.getFeature(POIXMLConstants.FEATURE_LOAD_DTD_GRAMMAR));
+        assertFalse(reader.getFeature(POIXMLConstants.FEATURE_LOAD_EXTERNAL_DTD));
         assertEquals(SAXHelper.IGNORING_ENTITY_RESOLVER, reader.getEntityResolver());
-        assertNotNull(reader.getProperty("http://www.oracle.com/xml/jaxp/properties/entityExpansionLimit"));
-        assertEquals("4096", reader.getProperty("http://www.oracle.com/xml/jaxp/properties/entityExpansionLimit"));
-        assertNotNull(reader.getProperty("http://apache.org/xml/properties/security-manager"));
+        assertNotNull(reader.getProperty(POIXMLConstants.PROPERTY_ENTITY_EXPANSION_LIMIT));
+        assertEquals("4096", reader.getProperty(POIXMLConstants.PROPERTY_ENTITY_EXPANSION_LIMIT));
+        assertNotNull(reader.getProperty(POIXMLConstants.PROPERTY_SECURITY_MANAGER));
 
         reader.parse(new InputSource(new ByteArrayInputStream("<xml></xml>".getBytes("UTF-8"))));
     }
