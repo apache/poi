@@ -68,6 +68,9 @@ public final class SAXHelper {
             saxFactory = SAXParserFactory.newInstance();
             saxFactory.setValidating(false);
             saxFactory.setNamespaceAware(true);
+            trySetSAXFeature(saxFactory, XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            trySetSAXFeature(saxFactory, POIXMLConstants.FEATURE_LOAD_DTD_GRAMMAR, false);
+            trySetSAXFeature(saxFactory, POIXMLConstants.FEATURE_LOAD_EXTERNAL_DTD, false);
         } catch (RuntimeException | Error re) { // NOSONAR
             // this also catches NoClassDefFoundError, which may be due to a local class path issue
             // This may occur if the code is run inside a web container
@@ -81,6 +84,16 @@ public final class SAXHelper {
         }
     }
             
+    private static void trySetSAXFeature(SAXParserFactory spf, String feature, boolean flag) {
+        try {
+            spf.setFeature(feature, flag);
+        } catch (Exception e) {
+            logger.log(POILogger.WARN, "SAX Feature unsupported", feature, e);
+        } catch (AbstractMethodError ame) {
+            logger.log(POILogger.WARN, "Cannot set SAX feature because outdated XML parser in classpath", feature, ame);
+        }
+    }
+
     private static void trySetSAXFeature(XMLReader xmlReader, String feature) {
         try {
             xmlReader.setFeature(feature, true);
@@ -101,7 +114,7 @@ public final class SAXHelper {
                 Object mgr = Class.forName(securityManagerClassName).newInstance();
                 Method setLimit = mgr.getClass().getMethod("setEntityExpansionLimit", Integer.TYPE);
                 setLimit.invoke(mgr, 4096);
-                xmlReader.setProperty("http://apache.org/xml/properties/security-manager", mgr);
+                xmlReader.setProperty(POIXMLConstants.PROPERTY_SECURITY_MANAGER, mgr);
                 // Stop once one can be setup without error
                 return;
             } catch (ClassNotFoundException e) {
@@ -117,7 +130,7 @@ public final class SAXHelper {
 
         // separate old version of Xerces not found => use the builtin way of setting the property
         try {
-            xmlReader.setProperty("http://www.oracle.com/xml/jaxp/properties/entityExpansionLimit", 4096);
+            xmlReader.setProperty(POIXMLConstants.PROPERTY_ENTITY_EXPANSION_LIMIT, 4096);
         } catch (SAXException e) {     // NOSONAR - also catch things like NoClassDefError here
             // throttle the log somewhat as it can spam the log otherwise
             if(System.currentTimeMillis() > lastLog + TimeUnit.MINUTES.toMillis(5)) {
