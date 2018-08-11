@@ -32,6 +32,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -59,8 +60,10 @@ import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.PaintStyle.TexturePaint;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
+import org.apache.poi.sl.usermodel.PictureShape;
 import org.apache.poi.sl.usermodel.Shape;
 import org.apache.poi.sl.usermodel.ShapeType;
+import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
@@ -88,6 +91,57 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 
 public class TestXSLFBugs {
     private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+
+    @Test
+    public void bug62587() throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        try (XMLSlideShow ppt = new XMLSlideShow()) {
+            Slide slide = ppt.createSlide();
+            XSLFPictureData pd = ppt.addPicture(slTests.getFile("wrench.emf"), PictureType.EMF);
+            PictureShape ps = slide.createPicture(pd);
+            ps.setAnchor(new Rectangle2D.Double(100,100,100,100));
+            ppt.write(bos);
+        }
+
+        Object[][] pics = {
+            {"santa.wmf", PictureType.WMF, XSLFRelation.IMAGE_WMF},
+            {"tomcat.png",PictureType.PNG, XSLFRelation.IMAGE_PNG},
+            {"clock.jpg", PictureType.JPEG, XSLFRelation.IMAGE_JPEG}
+        };
+
+        try (XMLSlideShow ppt = new XMLSlideShow(new ByteArrayInputStream(bos.toByteArray()))) {
+            XSLFSlide s1 = ppt.getSlides().get(0);
+
+            for (Object[] p : pics) {
+                XSLFSlide s2 = ppt.createSlide();
+                s2.importContent(s1);
+
+                XSLFPictureData pd = ppt.addPicture(slTests.getFile((String)p[0]), (PictureType)p[1]);
+                XSLFPictureShape ps = (XSLFPictureShape) s2.getShapes().get(0);
+                Rectangle2D anchor = ps.getAnchor();
+                s2.removeShape(ps);
+                ps = s2.createPicture(pd);
+                ps.setAnchor(anchor);
+            }
+
+            bos.reset();
+            ppt.write(bos);
+        }
+
+        try (XMLSlideShow ppt = new XMLSlideShow(new ByteArrayInputStream(bos.toByteArray()))) {
+            for (XSLFSlide sl : ppt.getSlides()) {
+                List<RelationPart> rels = sl.getRelationParts();
+                assertEquals(2, rels.size());
+                RelationPart rel0 = rels.get(0);
+                assertEquals("rId1", rel0.getRelationship().getId());
+                assertEquals(XSLFRelation.SLIDE_LAYOUT.getRelation(), rel0.getRelationship().getRelationshipType());
+                RelationPart rel1 = rels.get(1);
+                assertEquals("rId2", rel1.getRelationship().getId());
+                assertEquals(XSLFRelation.IMAGES.getRelation(), rel1.getRelationship().getRelationshipType());
+            }
+        }
+    }
+
 
     @Test
     public void bug60499() throws IOException, InvalidFormatException {
@@ -314,8 +368,8 @@ public class TestXSLFBugs {
         ss.close();
     }
 
-    protected String getSlideText(XMLSlideShow ppt, XSLFSlide slide) throws IOException {
-        try (SlideShowExtractor extr = new SlideShowExtractor(ppt)) {
+    private String getSlideText(XMLSlideShow ppt, XSLFSlide slide) throws IOException {
+        try (SlideShowExtractor<XSLFShape,XSLFTextParagraph> extr = new SlideShowExtractor<>(ppt)) {
             // do not auto-close the slideshow
             extr.setFilesystem(null);
             extr.setSlidesByDefault(true);
@@ -369,7 +423,12 @@ public class TestXSLFBugs {
         assertEquals(1, slide.getShapes().size());
 
         assertEquals(1, slide.getRelations().size());
-        assertRelationEquals(XSLFRelation.SLIDE_LAYOUT, slide.getRelations().get(0));
+
+        final XSLFRelation expected = XSLFRelation.SLIDE_LAYOUT;
+        final POIXMLDocumentPart relation = slide.getRelations().get(0);
+
+        assertEquals(expected.getContentType(), relation.getPackagePart().getContentType());
+        assertEquals(expected.getFileName(expected.getFileNameIndex(relation)), relation.getPackagePart().getPartName().getName());
 
         // Some dummy pictures
         byte[][] pics = new byte[15][3];
@@ -470,11 +529,6 @@ public class TestXSLFBugs {
             XSLFSlide slide = ss.getSlides().get(i);
             assertContains(getSlideText(ss, slide), slideTexts[i]);
         }
-    }
-
-    private void assertRelationEquals(XSLFRelation expected, POIXMLDocumentPart relation) {
-        assertEquals(expected.getContentType(), relation.getPackagePart().getContentType());
-        assertEquals(expected.getFileName(expected.getFileNameIndex(relation)), relation.getPackagePart().getPartName().getName());
     }
 
     @Test
@@ -726,25 +780,19 @@ public class TestXSLFBugs {
 
     @Test
     public void testAptia() throws IOException {
-        XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("aptia.pptx");
-        try {
-            XMLSlideShow saved = XSLFTestDataSamples.writeOutAndReadBack(ppt);
-        } catch (IOException e) {
-            fail("Could not read back saved presentation.");
+        try (XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("aptia.pptx");
+             XMLSlideShow saved = XSLFTestDataSamples.writeOutAndReadBack(ppt)) {
+            assertEquals(ppt.getSlides().size(), saved.getSlides().size());
         }
-        ppt.close();
     }
 
     @Ignore
     @Test
     public void testDivinoRevelado() throws IOException {
-        XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("Divino_Revelado.pptx");
-        try {
-            XMLSlideShow saved = XSLFTestDataSamples.writeOutAndReadBack(ppt);
-        } catch (IOException e) {
-            fail("Could not read back saved presentation.");
+        try (XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("Divino_Revelado.pptx");
+             XMLSlideShow saved = XSLFTestDataSamples.writeOutAndReadBack(ppt)){
+            assertEquals(ppt.getSlides().size(), saved.getSlides().size());
         }
-        ppt.close();
     }
 
     @Test

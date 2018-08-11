@@ -70,6 +70,7 @@ implements MasterSheet<XSLFShape,XSLFTextParagraph> {
      * @return slide master. Never null.
      * @throws IllegalStateException if slide master was not found
      */
+    @SuppressWarnings("WeakerAccess")
     public XSLFSlideMaster getSlideMaster() {
         if (_master == null) {
             for (POIXMLDocumentPart p : getRelations()) {
@@ -100,15 +101,6 @@ implements MasterSheet<XSLFShape,XSLFTextParagraph> {
         return _layout.getShowMasterSp();
     }
 
-    /**
-     * Render this sheet into the supplied graphics object
-     */
-    @Override
-    protected boolean canDraw(XSLFShape shape) {
-        return !(shape instanceof XSLFSimpleShape) || !shape.isPlaceholder();
-    }
-
-
     @Override
     public XSLFBackground getBackground() {
         CTBackground bg = _layout.getCSld().getBg();
@@ -124,6 +116,7 @@ implements MasterSheet<XSLFShape,XSLFTextParagraph> {
      *
      * @param slide destination slide
      */
+    @SuppressWarnings("WeakerAccess")
     public void copyLayout(XSLFSlide slide) {
         for (XSLFShape sh : getShapes()) {
             if (sh instanceof XSLFTextShape) {

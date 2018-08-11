@@ -153,15 +153,6 @@ import org.openxmlformats.schemas.presentationml.x2006.main.SldMasterDocument;
         return props;
     }
 
-    /**
-     * Render this sheet into the supplied graphics object
-     *
-     */
-    @Override
-    protected boolean canDraw(XSLFShape shape) {
-        return !(shape instanceof XSLFSimpleShape) || !shape.isPlaceholder();
-    }
-
     @Override
     public XSLFBackground getBackground() {
         CTBackground bg = _slide.getCSld().getBg();

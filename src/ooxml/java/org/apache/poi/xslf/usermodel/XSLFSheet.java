@@ -18,7 +18,6 @@ package org.apache.poi.xslf.usermodel;
 
 import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
-import javax.xml.namespace.QName;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.io.IOException;
@@ -32,9 +31,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.xml.namespace.QName;
+
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLException;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageNamespaces;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -82,14 +82,14 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
 
     private final BitSet shapeIds = new BitSet();
 
-    public XSLFSheet() {
+    protected XSLFSheet() {
         super();
     }
 
     /**
      * @since POI 3.14-Beta1
      */
-    public XSLFSheet(PackagePart part) {
+    protected XSLFSheet(PackagePart part) {
         super(part);
     }
 
@@ -108,12 +108,14 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
         throw new IllegalStateException("SlideShow was not found");
     }
 
+    @SuppressWarnings("WeakerAccess")
     protected int allocateShapeId() {
         final int nextId = shapeIds.nextClearBit(1);
         shapeIds.set(nextId);
         return nextId;
     }
 
+    @SuppressWarnings("WeakerAccess")
     protected void registerShapeId(final int shapeId) {
         if (shapeIds.get(shapeId)) {
             LOG.log(POILogger.WARN, "shape id "+shapeId+" has been already used.");
@@ -121,6 +123,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
         shapeIds.set(shapeId);
     }
 
+    @SuppressWarnings("WeakerAccess")
     protected void deregisterShapeId(final int shapeId) {
         if (!shapeIds.get(shapeId)) {
             LOG.log(POILogger.WARN, "shape id "+shapeId+" hasn't been registered.");
@@ -128,6 +131,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
         shapeIds.clear(shapeId);
     }
 
+    @SuppressWarnings("WeakerAccess")
     protected static List<XSLFShape> buildShapes(CTGroupShape spTree, XSLFShapeContainer parent){
         final XSLFSheet sheet = (parent instanceof XSLFSheet) ? (XSLFSheet)parent : ((XSLFShape)parent).getSheet();
 
@@ -261,10 +265,8 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
         if (!(pictureData instanceof XSLFPictureData)) {
             throw new IllegalArgumentException("pictureData needs to be of type XSLFPictureData");
         }
-        XSLFPictureData xPictureData = (XSLFPictureData)pictureData;
-        PackagePart pic = xPictureData.getPackagePart();
 
-        RelationPart rp = addRelation(null, XSLFRelation.IMAGES, new XSLFPictureData(pic));
+        RelationPart rp = addRelation(null, XSLFRelation.IMAGES, (XSLFPictureData)pictureData);
 
         XSLFPictureShape sh = getDrawing().createPicture(rp.getRelationship().getId());
         new DrawPictureShape(sh).resize();
@@ -303,10 +305,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
         if (!(pictureData instanceof XSLFPictureData)) {
             throw new IllegalArgumentException("pictureData needs to be of type XSLFPictureData");
         }
-        XSLFPictureData xPictureData = (XSLFPictureData)pictureData;
-        PackagePart pic = xPictureData.getPackagePart();
-
-        RelationPart rp = addRelation(null, XSLFRelation.IMAGES, new XSLFPictureData(pic));
+        RelationPart rp = addRelation(null, XSLFRelation.IMAGES, (XSLFPictureData)pictureData);
         
         XSLFObjectShape sh = getDrawing().createOleShape(rp.getRelationship().getId());
         CTOleObject oleObj = sh.getCTOleObject();
@@ -386,6 +385,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
 
     protected abstract String getRootElementName();
 
+    @SuppressWarnings("WeakerAccess")
     protected CTGroupShape getSpTree(){
         if(_spTree == null) {
             XmlObject root = getXmlObject();
@@ -460,6 +460,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
      * @param src the source sheet
      * @return modified <code>this</code>.
      */
+    @SuppressWarnings("unused")
     public XSLFSheet appendContent(XSLFSheet src){
         int numShapes = getShapes().size();
         CTGroupShape spTree = getSpTree();
@@ -523,6 +524,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
         return null;
     }
 
+    @SuppressWarnings("WeakerAccess")
     protected XSLFTextShape getTextShapeByType(Placeholder type){
         for(XSLFShape shape : this.getShapes()){
             if(shape instanceof XSLFTextShape) {
@@ -535,6 +537,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
         return null;
     }
 
+    @SuppressWarnings("WeakerAccess")
     public XSLFSimpleShape getPlaceholder(Placeholder ph) {
         return getPlaceholderByType(ph.ooxmlId);
     }
@@ -600,19 +603,10 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
      *
      * @return all placeholder shapes in this sheet
      */
+    @SuppressWarnings("WeakerAccess")
     public XSLFTextShape[] getPlaceholders() {
         initPlaceholders();
-        return _placeholders.toArray(new XSLFTextShape[_placeholders.size()]);
-    }
-
-    /**
-     * Checks if this <code>sheet</code> displays the specified shape.
-     *
-     * Subclasses can override it and skip certain shapes from drawings,
-     * for instance, slide masters and layouts don't display placeholders
-     */
-    protected boolean canDraw(XSLFShape shape){
-        return true;
+        return _placeholders.toArray(new XSLFTextShape[0]);
     }
 
     /**
@@ -650,39 +644,35 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
      * Import a picture data from another document.
      *
      * @param blipId        ID of the package relationship to retrieve.
-     * @param packagePart   package part containing the data to import
+     * @param parent        parent document containing the data to import
      * @return ID of the created relationship
      */
-    String importBlip(String blipId, PackagePart packagePart) {
-        PackageRelationship blipRel = packagePart.getRelationship(blipId);
-        PackagePart blipPart;
-        try {
-            blipPart = packagePart.getRelatedPart(blipRel);
-        } catch (Exception e){
-            throw new POIXMLException(e);
+    String importBlip(String blipId, POIXMLDocumentPart parent) {
+        final XSLFPictureData parData = parent.getRelationPartById(blipId).getDocumentPart();
+        final XSLFPictureData pictureData;
+        if (getPackagePart().getPackage() == parent.getPackagePart().getPackage()) {
+            // handle ref counter correct, if the parent document is the same as this
+            pictureData = parData;
+        } else {
+            XMLSlideShow ppt = getSlideShow();
+            pictureData = ppt.addPicture(parData.getData(), parData.getType());
         }
-        XSLFPictureData data = new XSLFPictureData(blipPart);
 
-        XMLSlideShow ppt = getSlideShow();
-        XSLFPictureData pictureData = ppt.addPicture(data.getData(), data.getType());
-        PackagePart pic = pictureData.getPackagePart();
-
-        RelationPart rp = addRelation(blipId, XSLFRelation.IMAGES, new XSLFPictureData(pic));
-
+        RelationPart rp = addRelation(blipId, XSLFRelation.IMAGES, pictureData);
         return rp.getRelationship().getId();
     }
 
     /**
      * Import a package part into this sheet.
      */
-    PackagePart importPart(PackageRelationship srcRel, PackagePart srcPafrt) {
+    void importPart(PackageRelationship srcRel, PackagePart srcPafrt) {
         PackagePart destPP = getPackagePart();
         PackagePartName srcPPName = srcPafrt.getPartName();
 
         OPCPackage pkg = destPP.getPackage();
         if(pkg.containPart(srcPPName)){
             // already exists
-            return pkg.getPart(srcPPName);
+            return;
         }
 
         destPP.addRelationship(srcPPName, TargetMode.INTERNAL, srcRel.getRelationshipType());
@@ -697,7 +687,6 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
         } catch (IOException e){
             throw new POIXMLException(e);
         }
-        return part;
     }
 
     /**

@@ -19,10 +19,9 @@ package org.apache.poi.xslf.usermodel;
 import java.net.URI;
 
 import org.apache.poi.common.usermodel.HyperlinkType;
+import org.apache.poi.ooxml.POIXMLDocumentPart.RelationPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.sl.usermodel.Hyperlink;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.util.Internal;
@@ -30,8 +29,8 @@ import org.apache.poi.util.Removal;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTHyperlink;
 
 public class XSLFHyperlink implements Hyperlink<XSLFShape,XSLFTextParagraph> {
-    final XSLFSheet _sheet;
-    final CTHyperlink _link;
+    private final XSLFSheet _sheet;
+    private final CTHyperlink _link;
 
     XSLFHyperlink(CTHyperlink link, XSLFSheet sheet){
         _sheet = sheet;
@@ -128,14 +127,12 @@ public class XSLFHyperlink implements Hyperlink<XSLFShape,XSLFTextParagraph> {
 
     @Override
     public void linkToSlide(Slide<XSLFShape,XSLFTextParagraph> slide) {
-        PackagePart thisPP = _sheet.getPackagePart();
-        PackagePartName otherPPN = ((XSLFSheet)slide).getPackagePart().getPartName();
         if (_link.isSetId() && !_link.getId().isEmpty()) {
-            thisPP.removeRelationship(_link.getId());
+            _sheet.getPackagePart().removeRelationship(_link.getId());
         }
-        PackageRelationship rel =
-            thisPP.addRelationship(otherPPN, TargetMode.INTERNAL, XSLFRelation.SLIDE.getRelation());
-        _link.setId(rel.getId());
+
+        RelationPart rp = _sheet.addRelation(null, XSLFRelation.SLIDE, (XSLFSheet) slide);
+        _link.setId(rp.getRelationship().getId());
         _link.setAction("ppaction://hlinksldjump");
     }
 
