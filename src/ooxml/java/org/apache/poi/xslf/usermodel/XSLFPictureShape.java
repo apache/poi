@@ -24,7 +24,6 @@ import java.net.URI;
 
 import javax.xml.namespace.QName;
 
-import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.sl.usermodel.PictureShape;
@@ -95,10 +94,7 @@ public class XSLFPictureShape extends XSLFSimpleShape
      *  (image lives outside)?
      */
     public boolean isExternalLinkedPicture() {
-        if (getBlipId() == null && getBlipLink() != null) {
-            return true;
-        }
-        return false;
+        return getBlipId() == null && getBlipLink() != null;
     }
 
     /**
@@ -108,19 +104,10 @@ public class XSLFPictureShape extends XSLFSimpleShape
     public XSLFPictureData getPictureData() {
         if(_data == null){
             String blipId = getBlipId();
-            if (blipId == null) return null;
-
-            PackagePart p = getSheet().getPackagePart();
-            PackageRelationship rel = p.getRelationship(blipId);
-            if (rel != null) {
-                try {
-                    PackagePart imgPart = p.getRelatedPart(rel);
-                    _data = new XSLFPictureData(imgPart);
-                }
-                catch (Exception e) {
-                    throw new POIXMLException(e);
-                }
+            if (blipId == null) {
+                return null;
             }
+            _data = (XSLFPictureData)getSheet().getRelationById(blipId);
         }
         return _data;
     }
@@ -181,12 +168,14 @@ public class XSLFPictureShape extends XSLFSimpleShape
         return getBlipFill().getBlip();
     }
     
+    @SuppressWarnings("WeakerAccess")
     protected String getBlipLink(){
         String link = getBlip().getLink();
         if (link.isEmpty()) return null;
         return link;
     }
-    
+
+    @SuppressWarnings("WeakerAccess")
     protected String getBlipId(){
         String id = getBlip().getEmbed();
         if (id.isEmpty()) return null;
@@ -210,7 +199,7 @@ public class XSLFPictureShape extends XSLFSimpleShape
             return;
         }
 
-        String relId = getSheet().importBlip(blipId, p.getSheet().getPackagePart());
+        String relId = getSheet().importBlip(blipId, p.getSheet());
 
         CTPicture ct = (CTPicture)getXmlObject();
         CTBlip blip = getBlipFill().getBlip();
@@ -224,13 +213,14 @@ public class XSLFPictureShape extends XSLFSimpleShape
         if(blip.isSetExtLst()) {
 
             CTOfficeArtExtensionList extLst = blip.getExtLst();
+            //noinspection deprecation
             for(CTOfficeArtExtension ext : extLst.getExtArray()){
                 String xpath = "declare namespace a14='http://schemas.microsoft.com/office/drawing/2010/main' $this//a14:imgProps/a14:imgLayer";
                 XmlObject[] obj = ext.selectPath(xpath);
                 if(obj != null && obj.length == 1){
                     XmlCursor c = obj[0].newCursor();
                     String id = c.getAttributeText(new QName("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "embed"));//selectPath("declare namespace r='http://schemas.openxmlformats.org/officeDocument/2006/relationships' $this//[@embed]");
-                    String newId = getSheet().importBlip(id, p.getSheet().getPackagePart());
+                    String newId = getSheet().importBlip(id, p.getSheet());
                     c.setAttributeText(new QName("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "embed"), newId);
                     c.dispose();
                 }

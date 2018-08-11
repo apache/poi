@@ -25,9 +25,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.openxml4j.opc.TargetMode;
+import org.apache.poi.ooxml.POIXMLDocumentPart.RelationPart;
 import org.apache.poi.sl.draw.DrawPictureShape;
 import org.apache.poi.sl.usermodel.GroupShape;
 import org.apache.poi.sl.usermodel.PictureData;
@@ -74,7 +72,7 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
         return _grpSpPr;
     }
     
-    protected CTGroupTransform2D getSafeXfrm() {
+    private CTGroupTransform2D getSafeXfrm() {
         CTGroupTransform2D xfrm = getXfrm();
         return (xfrm == null ? getGrpSpPr().addNewXfrm() : xfrm);
     }
@@ -267,13 +265,9 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
         if (!(pictureData instanceof XSLFPictureData)) {
             throw new IllegalArgumentException("pictureData needs to be of type XSLFPictureData");
         }
-        XSLFPictureData xPictureData = (XSLFPictureData)pictureData;
-        PackagePart pic = xPictureData.getPackagePart();
+        RelationPart rp = getSheet().addRelation(null, XSLFRelation.IMAGES, (XSLFPictureData)pictureData);
 
-        PackageRelationship rel = getSheet().getPackagePart().addRelationship(
-                pic.getPartName(), TargetMode.INTERNAL, XSLFRelation.IMAGES.getRelation());
-
-        XSLFPictureShape sh = getDrawing().createPicture(rel.getId());
+        XSLFPictureShape sh = getDrawing().createPicture(rp.getRelationship().getId());
         new DrawPictureShape(sh).resize();
         _shapes.add(sh);
         sh.setParent(this);
@@ -285,13 +279,10 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
         if (!(pictureData instanceof XSLFPictureData)) {
             throw new IllegalArgumentException("pictureData needs to be of type XSLFPictureData");
         }
-        XSLFPictureData xPictureData = (XSLFPictureData)pictureData;
-        PackagePart pic = xPictureData.getPackagePart();
 
-        PackageRelationship rel = getSheet().getPackagePart().addRelationship(
-                pic.getPartName(), TargetMode.INTERNAL, XSLFRelation.IMAGES.getRelation());
-        
-        XSLFObjectShape sh = getDrawing().createOleShape(rel.getId());
+        RelationPart rp = getSheet().addRelation(null, XSLFRelation.IMAGES, (XSLFPictureData)pictureData);
+
+        XSLFObjectShape sh = getDrawing().createOleShape(rp.getRelationship().getId());
         CTOleObject oleObj = sh.getCTOleObject();
         Dimension dim = pictureData.getImageDimension();
         oleObj.setImgW(Units.toEMU(dim.getWidth()));

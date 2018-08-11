@@ -216,13 +216,13 @@ public abstract class XSLFSimpleShape extends XSLFShape
     @Override
     public boolean getFlipHorizontal() {
         CTTransform2D xfrm = getXfrm(false);
-        return (xfrm == null || !xfrm.isSetFlipH()) ? false : xfrm.getFlipH();
+        return (xfrm != null && xfrm.isSetFlipH()) && xfrm.getFlipH();
     }
 
     @Override
     public boolean getFlipVertical() {
         CTTransform2D xfrm = getXfrm(false);
-        return (xfrm == null || !xfrm.isSetFlipV()) ? false : xfrm.getFlipV();
+        return (xfrm != null && xfrm.isSetFlipV()) && xfrm.getFlipV();
     }
 
 
@@ -232,7 +232,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
      *
      * @return line properties from the theme of null
      */
-    CTLineProperties getDefaultLineProperties() {
+    private CTLineProperties getDefaultLineProperties() {
         CTShapeStyle style = getSpStyle();
         if (style == null) {
             return null;
@@ -302,6 +302,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
      * @return the color of the shape outline or <code>null</code>
      * if outline is turned off
      */
+    @SuppressWarnings("WeakerAccess")
     public Color getLineColor() {
         PaintStyle ps = getLinePaint();
         if (ps instanceof SolidPaint) {
@@ -310,6 +311,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
         return null;
     }
 
+    @SuppressWarnings("WeakerAccess")
     protected PaintStyle getLinePaint() {
         XSLFSheet sheet = getSheet();
         final XSLFTheme theme = sheet.getTheme();
@@ -377,6 +379,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
      *
      * @param width line width in points. <code>0</code> means no line
      */
+    @SuppressWarnings("WeakerAccess")
     public void setLineWidth(double width) {
         CTLineProperties lnPr = getLn(this, true);
         if (lnPr == null) {
@@ -411,6 +414,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
     /**
      * @return line width in points. <code>0</code> means no line.
      */
+    @SuppressWarnings("WeakerAccess")
     public double getLineWidth() {
         PropertyFetcher<Double> fetcher = new PropertyFetcher<Double>() {
             @Override
@@ -451,6 +455,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
     /**
      * @param compound set the line compound style
      */
+    @SuppressWarnings("WeakerAccess")
     public void setLineCompound(LineCompound compound) {
         CTLineProperties ln = getLn(this, true);
         if (ln == null) {
@@ -487,6 +492,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
     /**
      * @return the line compound
      */
+    @SuppressWarnings("WeakerAccess")
     public LineCompound getLineCompound() {
         PropertyFetcher<Integer> fetcher = new PropertyFetcher<Integer>() {
             @Override
@@ -531,6 +537,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
      *
      * @param dash a preset line dashing scheme to stroke thr shape outline
      */
+    @SuppressWarnings("WeakerAccess")
     public void setLineDash(LineDash dash) {
         CTLineProperties ln = getLn(this, true);
         if (ln == null) {
@@ -549,6 +556,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
     /**
      * @return  a preset line dashing scheme to stroke the shape outline
      */
+    @SuppressWarnings("WeakerAccess")
     public LineDash getLineDash() {
 
         PropertyFetcher<LineDash> fetcher = new PropertyFetcher<LineDash>() {
@@ -579,6 +587,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
      *
      * @param cap the line end cap style
      */
+    @SuppressWarnings("WeakerAccess")
     public void setLineCap(LineCap cap) {
         CTLineProperties ln = getLn(this, true);
         if (ln == null) {
@@ -598,6 +607,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
      *
      * @return the line end cap style
      */
+    @SuppressWarnings("WeakerAccess")
     public LineCap getLineCap() {
         PropertyFetcher<LineCap> fetcher = new PropertyFetcher<LineCap>() {
             @Override
@@ -758,7 +768,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
             CTBlip blip = fp.getBlipFill().getBlip();
             String blipId = blip.getEmbed();
 
-            String relId = getSheet().importBlip(blipId, s.getSheet().getPackagePart());
+            String relId = getSheet().importBlip(blipId, s.getSheet());
             blip.setEmbed(relId);
         }
 
@@ -793,6 +803,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
      * 
      * @param style the line end docoration style
      */
+    @SuppressWarnings("WeakerAccess")
     public void setLineHeadDecoration(DecorationShape style) {
         CTLineProperties ln = getLn(this, true);
         if (ln == null) {
@@ -811,6 +822,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
     /**
      * @return the line end decoration shape
      */
+    @SuppressWarnings("WeakerAccess")
     public DecorationShape getLineHeadDecoration() {
         CTLineProperties ln = getLn(this, false);
         DecorationShape ds = DecorationShape.NONE;
@@ -825,6 +837,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
      * 
      * @param style the decoration width 
      */
+    @SuppressWarnings("WeakerAccess")
     public void setLineHeadWidth(DecorationSize style) {
         CTLineProperties ln = getLn(this, true);
         if (ln == null) {
@@ -843,6 +856,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
     /**
      * @return the line end decoration width
      */
+    @SuppressWarnings("WeakerAccess")
     public DecorationSize getLineHeadWidth() {
         CTLineProperties ln = getLn(this, false);
         DecorationSize ds = DecorationSize.MEDIUM;
@@ -855,6 +869,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
     /**
      * Specifies the line end width in relation to the line width.
      */
+    @SuppressWarnings("WeakerAccess")
     public void setLineHeadLength(DecorationSize style) {
         CTLineProperties ln = getLn(this, true);
         if (ln == null) {
@@ -874,6 +889,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
     /**
      * @return the line end decoration length
      */
+    @SuppressWarnings("WeakerAccess")
     public DecorationSize getLineHeadLength() {
         CTLineProperties ln = getLn(this, false);
         
@@ -887,6 +903,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
     /**
      * Specifies the line end decoration, such as a triangle or arrowhead.
      */
+    @SuppressWarnings("WeakerAccess")
     public void setLineTailDecoration(DecorationShape style) {
         CTLineProperties ln = getLn(this, true);
         if (ln == null) {
@@ -906,6 +923,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
     /**
      * @return the line end decoration shape
      */
+    @SuppressWarnings("WeakerAccess")
     public DecorationShape getLineTailDecoration() {
         CTLineProperties ln = getLn(this, false);
         
@@ -919,6 +937,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
     /**
      * specifies decorations which can be added to the tail of a line.
      */
+    @SuppressWarnings("WeakerAccess")
     public void setLineTailWidth(DecorationSize style) {
         CTLineProperties ln = getLn(this, true);
         if (ln == null) {
@@ -938,6 +957,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
     /**
      * @return the line end decoration width
      */
+    @SuppressWarnings("WeakerAccess")
     public DecorationSize getLineTailWidth() {
         CTLineProperties ln = getLn(this, false);
         DecorationSize ds = DecorationSize.MEDIUM;
@@ -950,6 +970,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
     /**
      * Specifies the line end width in relation to the line width.
      */
+    @SuppressWarnings("WeakerAccess")
     public void setLineTailLength(DecorationSize style) {
         CTLineProperties ln = getLn(this, true);
         if (ln == null) {
@@ -969,6 +990,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
     /**
      * @return the line end decoration length
      */
+    @SuppressWarnings("WeakerAccess")
     public DecorationSize getLineTailLength() {
         CTLineProperties ln = getLn(this, false);
         
@@ -984,6 +1006,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
         XSLFGeometryProperties gp = XSLFPropertiesDelegate.getGeometryDelegate(getShapeProperties());
         
         if (gp != null && gp.isSetPrstGeom() && gp.getPrstGeom().isSetAvLst()) {
+            //noinspection deprecation
             for (CTGeomGuide g : gp.getPrstGeom().getAvLst().getGdArray()) {
                 if (g.getName().equals(name)) {
                     return new Guide(g.getName(), g.getFmla());
@@ -1036,12 +1059,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
      */
     @Override
     public FillStyle getFillStyle() {
-        return new FillStyle() {
-            @Override
-            public PaintStyle getPaint() {
-                return XSLFSimpleShape.this.getFillPaint();
-            }
-        };
+        return XSLFSimpleShape.this::getFillPaint;
     }
 
     @Override
