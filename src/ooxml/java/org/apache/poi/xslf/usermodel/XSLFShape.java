@@ -24,7 +24,6 @@ import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
-import java.util.Comparator;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -178,10 +177,12 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
         return fetcher.getValue();
     }
 
+    @SuppressWarnings("unused")
     protected CTBackgroundProperties getBgPr() {
         return getChild(CTBackgroundProperties.class, PML_NS, "bgPr");
     }
     
+    @SuppressWarnings("unused")
     protected CTStyleMatrixReference getBgRef() {
         return getChild(CTStyleMatrixReference.class, PML_NS, "bgRef");
     }
@@ -198,6 +199,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
         return _nvPr;
     }
 
+    @SuppressWarnings("WeakerAccess")
     protected CTShapeStyle getSpStyle() {
         if (_spStyle == null) {
             _spStyle = getChild(CTShapeStyle.class, PML_NS, "style");
@@ -213,14 +215,14 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
      * @param nodename the node name, without prefix
      * @return the properties object or null if it can't be found
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "WeakerAccess", "unused", "SameParameterValue"})
     protected <T extends XmlObject> T getChild(Class<T> childClass, String namespace, String nodename) {
         XmlCursor cur = getXmlObject().newCursor();
         T child = null;
         if (cur.toChild(namespace, nodename)) {
             child = (T)cur.getObject();
         }
-        if (cur.toChild("http://schemas.openxmlformats.org/drawingml/2006/main", nodename)) {
+        if (cur.toChild(XSLFRelation.NS_DRAWINGML, nodename)) {
             child = (T)cur.getObject();
         }
         cur.dispose();
@@ -248,6 +250,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
     /**
      * @see SimpleShape#getPlaceholderDetails()
      */
+    @SuppressWarnings("WeakerAccess")
     public XSLFPlaceholderDetails getPlaceholderDetails() {
         return new XSLFPlaceholderDetails(this);
     }
@@ -262,7 +265,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
      * @param xquery the simple (xmlbean) xpath expression to the property
      * @return the xml object at the xpath location, or null if not found
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "WeakerAccess"})
     protected <T extends XmlObject> T selectProperty(Class<T> resultClass, String xquery) {
         XmlObject[] rs = getXmlObject().selectPath(xquery);
         if (rs.length == 0) return null;
@@ -284,6 +287,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
      * @param visitor the object that collects the desired property
      * @return true if the property was fetched
      */
+    @SuppressWarnings("WeakerAccess")
     protected boolean fetchShapeProperty(PropertyFetcher<?> visitor) {
         // try shape properties in slide
         if (visitor.fetch(this)) {
@@ -311,9 +315,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
             XSLFSlideMaster master = (XSLFSlideMaster)sm;
             int textType = getPlaceholderType(ph);
             XSLFSimpleShape masterShape = master.getPlaceholderByType(textType);
-            if (masterShape != null && visitor.fetch(masterShape)) {
-                return true;
-            }
+            return masterShape != null && visitor.fetch(masterShape);
         }
         
         return false;
@@ -348,6 +350,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
      *
      * @return  the applied Paint or null if none was applied
      */
+    @SuppressWarnings("WeakerAccess")
     protected static PaintStyle selectPaint(XSLFFillProperties fp, final CTSchemeColor phClr, final PackagePart parentPart, final XSLFTheme theme, boolean hasPlaceholder) {
         if (fp == null || fp.isSetNoFill()) {
             return null;
@@ -364,6 +367,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
         }
     }
 
+    @SuppressWarnings("WeakerAccess")
     protected static PaintStyle selectPaint(CTSolidColorFillProperties solidFill, CTSchemeColor phClr, final XSLFTheme theme) {
         if (solidFill.isSetSchemeClr()) {
         	// if there's a reference to the placeholder color,
@@ -379,7 +383,8 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
         final XSLFColor c = new XSLFColor(solidFill, theme, phClr);
         return DrawPaint.createSolidPaint(c.getColorStyle());
     }
-    
+
+    @SuppressWarnings("WeakerAccess")
     protected static PaintStyle selectPaint(final CTBlipFillProperties blipFill, final PackagePart parentPart) {
         final CTBlip blip = blipFill.getBlip();
         return new TexturePaint() {
@@ -413,17 +418,17 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
             }
         };        
     }
-    
+
+    @SuppressWarnings("WeakerAccess")
     protected static PaintStyle selectPaint(final CTGradientFillProperties gradFill, CTSchemeColor phClr, final XSLFTheme theme) {
 
+        @SuppressWarnings("deprecation")
         final CTGradientStop[] gs = gradFill.getGsLst().getGsArray();
 
-        Arrays.sort(gs, new Comparator<CTGradientStop>() {
-            public int compare(CTGradientStop o1, CTGradientStop o2) {
-                Integer pos1 = o1.getPos();
-                Integer pos2 = o2.getPos();
-                return pos1.compareTo(pos2);
-            }
+        Arrays.sort(gs, (o1, o2) -> {
+            Integer pos1 = o1.getPos();
+            Integer pos2 = o2.getPos();
+            return pos1.compareTo(pos2);
         });
 
         final ColorStyle cs[] = new ColorStyle[gs.length];
@@ -480,6 +485,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
         };        
     }
     
+    @SuppressWarnings("WeakerAccess")
     protected static PaintStyle selectPaint(CTStyleMatrixReference fillRef, final XSLFTheme theme, boolean isLineStyle, boolean hasPlaceholder) {
         if (fillRef == null) return null;
         

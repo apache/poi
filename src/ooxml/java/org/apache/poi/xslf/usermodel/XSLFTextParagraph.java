@@ -134,6 +134,13 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
             // by default line break has the font size of the last text run
             CTTextCharacterProperties prevRun = _runs.get(_runs.size() - 1).getRPr(true);
             brProps.set(prevRun);
+            // don't copy hlink properties
+            if (brProps.isSetHlinkClick()) {
+                brProps.unsetHlinkClick();
+            }
+            if (brProps.isSetHlinkMouseOver()) {
+                brProps.unsetHlinkMouseOver();
+            }
         }
         _runs.add(run);
         return run;
@@ -188,6 +195,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
      *
      * @param align font align
      */
+    @SuppressWarnings("unused")
     public void setFontAlign(FontAlign align){
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
         if(align == null) {
@@ -718,7 +726,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
      * @return master style text paragraph properties, or <code>null</code> if 
      * there are no master slides or the master slides do not contain a text paragraph
      */
-    /* package */ CTTextParagraphProperties getDefaultMasterStyle(){
+    private CTTextParagraphProperties getDefaultMasterStyle(){
         CTPlaceholder ph = _shape.getPlaceholderDetails().getCTPlaceholder(false);
         String defaultStyleSelector;  
         switch(ph == null ? -1 : ph.getType().intValue()) {
@@ -740,7 +748,6 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
 
         // wind up and find the root master sheet which must be slide master
         final String nsPML = "http://schemas.openxmlformats.org/presentationml/2006/main";
-        final String nsDML = "http://schemas.openxmlformats.org/drawingml/2006/main";
         XSLFSheet masterSheet = _shape.getSheet();
         for (XSLFSheet m = masterSheet; m != null; m = (XSLFSheet)m.getMasterSheet()) {
             masterSheet = m;
@@ -752,7 +759,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
             		(cur.pop() && cur.toChild(nsPML, "notesStyle"))) {
                     while (level >= 0) {
                         cur.push();
-                    	if (cur.toChild(nsDML, "lvl" +(level+1)+ "pPr")) {
+                    	if (cur.toChild(XSLFRelation.NS_DRAWINGML, "lvl" +(level+1)+ "pPr")) {
                     		return (CTTextParagraphProperties)cur.getObject();
                     	}
                     	cur.pop();
@@ -788,11 +795,13 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
         fetchMasterProperty(visitor);
     }
 
-    boolean fetchMasterProperty(final ParagraphPropertyFetcher<?> visitor) {
+    void fetchMasterProperty(final ParagraphPropertyFetcher<?> visitor) {
         // defaults for placeholders are defined in the slide master
         final CTTextParagraphProperties defaultProps = getDefaultMasterStyle();
         // TODO: determine master shape
-        return defaultProps != null && visitor.fetch(defaultProps);
+        if (defaultProps != null) {
+            visitor.fetch(defaultProps);
+        }
     }
 
     boolean fetchThemeProperty(final ParagraphPropertyFetcher<?> visitor) {
@@ -836,15 +845,15 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
         otherC.dispose();
         thisC.dispose();
         
-        List<XSLFTextRun> otherRs = other.getTextRuns();
-        int i=0;
-        for(CTRegularTextRun rtr : thisP.getRList()) {
-            XSLFTextRun run = newTextRun(rtr);
-            run.copy(otherRs.get(i++));
+        for (XSLFTextRun tr : other.getTextRuns()) {
+            XmlObject xo = tr.getXmlObject();
+            XSLFTextRun run = (xo instanceof CTTextLineBreak)
+                ? newTextRun((CTTextLineBreak)xo)
+                : newTextRun(xo);
+            run.copy(tr);
             _runs.add(run);
         }
-        
-        
+
         // set properties again, in case we are based on a different
         // template
         TextAlign srcAlign = other.getTextAlign();
@@ -998,6 +1007,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
             public boolean fetch(CTTextParagraphProperties props) {
                 if (props.isSetTabLst()) {
                     final List<XSLFTabStop> list = new ArrayList<>();
+                    //noinspection deprecation
                     for (final CTTextTabStop ta : props.getTabLst().getTabArray()) {
                         list.add(new XSLFTabStop(ta));
                     }
@@ -1020,6 +1030,10 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
         } else {
             final CTTextParagraph xo = getXmlObject();
             tpp = (xo.isSetPPr()) ? xo.getPPr() : xo.addNewPPr();
+        }
+
+        if (tpp == null) {
+            return;
         }
         final CTTextTabStopList stl = (tpp.isSetTabLst()) ? tpp.getTabLst() : tpp.addNewTabLst();
         XSLFTabStop tab = new XSLFTabStop(stl.addNewTab());
@@ -1090,7 +1104,12 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
      * 
      * @since POI 3.15-beta2
      */
-    protected XSLFTextRun newTextRun(CTRegularTextRun r) {
+    protected XSLFTextRun newTextRun(XmlObject r) {
         return new XSLFTextRun(r, this);
+    }
+
+    @SuppressWarnings("WeakerAccess")
+    protected XSLFTextRun newTextRun(CTTextLineBreak r) {
+        return new XSLFLineBreak(r, this);
     }
 }
