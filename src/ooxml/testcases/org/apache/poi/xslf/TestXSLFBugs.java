@@ -81,6 +81,7 @@ import org.apache.poi.xslf.usermodel.XSLFSlideMaster;
 import org.apache.poi.xslf.usermodel.XSLFTable;
 import org.apache.poi.xslf.usermodel.XSLFTableCell;
 import org.apache.poi.xslf.usermodel.XSLFTableRow;
+import org.apache.poi.xslf.usermodel.XSLFTextBox;
 import org.apache.poi.xslf.usermodel.XSLFTextParagraph;
 import org.apache.poi.xslf.usermodel.XSLFTextRun;
 import org.junit.Ignore;
@@ -91,6 +92,54 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 
 public class TestXSLFBugs {
     private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+
+
+    @Test
+    public void bug61589() throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        try (XMLSlideShow src = new XMLSlideShow();
+             XMLSlideShow dest = new XMLSlideShow()) {
+            XSLFSlide slide = src.createSlide();
+            XSLFSlide slide2 = src.createSlide();
+
+            XSLFTextBox shape = slide.createTextBox();
+            shape.setAnchor(new Rectangle2D.Double(100,100,400,100));
+            XSLFTextParagraph p = shape.addNewTextParagraph();
+
+            XSLFTextRun r = p.addNewTextRun();
+            p.addLineBreak();
+            r.setText("Apache POI");
+            r.createHyperlink().setAddress("http://poi.apache.org");
+            // create hyperlink pointing to a page, which isn't available at the time of importing the content
+            r = p.addNewTextRun();
+            r.setText("Slide 2");
+            r.createHyperlink().linkToSlide(slide2);
+
+            shape = slide2.createTextBox();
+            shape.setAnchor(new Rectangle2D.Double(100,100,400,100));
+            shape.setText("slide 2");
+
+            dest.createSlide().importContent(slide);
+            dest.createSlide().importContent(slide2);
+
+            dest.write(bos);
+        }
+
+        try (XMLSlideShow ppt = new XMLSlideShow(new ByteArrayInputStream(bos.toByteArray()))) {
+            XSLFSlide slide = ppt.getSlides().get(0);
+            XSLFTextBox shape = (XSLFTextBox)slide.getShapes().get(0);
+            XSLFTextParagraph p = shape.getTextParagraphs().get(1);
+            XSLFHyperlink h1 = p.getTextRuns().get(0).getHyperlink();
+            assertNotNull(h1);
+            assertEquals("http://poi.apache.org", h1.getAddress());
+            XSLFHyperlink h2 = p.getTextRuns().get(2).getHyperlink();
+            assertNotNull(h2);
+            // relative url will be resolved to an absolute url, therefore this doesn't equals to "slide2.xml"
+            assertEquals("/ppt/slides/slide2.xml", h2.getAddress());
+            RelationPart sldRef = slide.getRelationPartById(h2.getXmlObject().getId());
+            assertTrue(sldRef.getDocumentPart() instanceof XSLFSlide);
+        }
+    }
 
     @Test
     public void bug62587() throws IOException {

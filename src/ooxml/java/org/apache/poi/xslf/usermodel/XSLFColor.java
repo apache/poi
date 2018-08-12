@@ -21,6 +21,7 @@ package org.apache.poi.xslf.usermodel;
 import java.awt.Color;
 
 import org.apache.poi.sl.draw.DrawPaint;
+import org.apache.poi.sl.usermodel.AbstractColorStyle;
 import org.apache.poi.sl.usermodel.ColorStyle;
 import org.apache.poi.sl.usermodel.PresetColor;
 import org.apache.poi.util.Beta;
@@ -52,6 +53,7 @@ public class XSLFColor {
     private Color _color;
     private CTSchemeColor _phClr;
 
+    @SuppressWarnings("WeakerAccess")
     public XSLFColor(XmlObject obj, XSLFTheme theme, CTSchemeColor phClr) {
         _xmlObject = obj;
         _phClr = phClr;
@@ -72,8 +74,9 @@ public class XSLFColor {
         return DrawPaint.applyColorTransform(getColorStyle());
     }
 
+    @SuppressWarnings("WeakerAccess")
     public ColorStyle getColorStyle() {
-        return new ColorStyle() {
+        return new AbstractColorStyle() {
             @Override
             public Color getColor() {
                 return _color;
@@ -126,7 +129,7 @@ public class XSLFColor {
         };
     }
     
-    Color toColor(XmlObject obj, XSLFTheme theme) {
+    private Color toColor(XmlObject obj, XSLFTheme theme) {
         Color color = null;
         for (XmlObject ch : obj.selectPath("*")) {
             if (ch instanceof CTHslColor) {
@@ -178,10 +181,7 @@ public class XSLFColor {
                         color = Color.black;
                     }
                 }
-            } else if (ch instanceof CTFontReference) {
-                // try next ...
-                continue;
-            } else {
+            } else if (!(ch instanceof CTFontReference)) {
                 throw new IllegalArgumentException("Unexpected color choice: " + ch.getClass());
             }
         }
@@ -298,11 +298,6 @@ public class XSLFColor {
         return (val == -1) ? val : (val / 1000);
     }
 
-    private int getAngleValue(String elem){
-        int val = getRawValue(elem);
-        return (val == -1) ? val : (val / 60000);
-    }
-
     /**
      * the opacity as expressed by a percentage value
      *
@@ -336,14 +331,18 @@ public class XSLFColor {
     }
 
 
+    @SuppressWarnings("unused")
     int getHue(){
-        return getAngleValue("hue");
+        int val = getRawValue("hue");
+        return (val == -1) ? val : (val / 60000);
     }
 
+    @SuppressWarnings("unused")
     int getHueMod(){
         return getPercentageValue("hueMod");
     }
 
+    @SuppressWarnings("unused")
     int getHueOff(){
         return getPercentageValue("hueOff");
     }
@@ -355,6 +354,7 @@ public class XSLFColor {
      * @return  luminance in percents in the range [0..100]
      * or -1 if the value is not set
      */
+    @SuppressWarnings("unused")
     int getLum(){
         return getPercentageValue("lum");
     }
@@ -422,10 +422,12 @@ public class XSLFColor {
         return getPercentageValue("red");
     }
 
+    @SuppressWarnings("unused")
     int getRedMod(){
         return getPercentageValue("redMod");
     }
 
+    @SuppressWarnings("unused")
     int getRedOff(){
         return getPercentageValue("redOff");
     }
@@ -442,10 +444,12 @@ public class XSLFColor {
         return getPercentageValue("green");
     }
 
+    @SuppressWarnings("unused")
     int getGreenMod(){
         return getPercentageValue("greenMod");
     }
 
+    @SuppressWarnings("unused")
     int getGreenOff(){
         return getPercentageValue("greenOff");
     }
@@ -462,10 +466,12 @@ public class XSLFColor {
         return getPercentageValue("blue");
     }
 
+    @SuppressWarnings("unused")
     int getBlueMod(){
         return getPercentageValue("blueMod");
     }
 
+    @SuppressWarnings("unused")
     int getBlueOff(){
         return getPercentageValue("blueOff");
     }
@@ -478,6 +484,7 @@ public class XSLFColor {
      * percentage with 0% indicating minimal shade and 100% indicating maximum
      * or -1 if the value is not set
      */
+    @SuppressWarnings("WeakerAccess")
     public int getShade(){
         return getPercentageValue("shade");
     }

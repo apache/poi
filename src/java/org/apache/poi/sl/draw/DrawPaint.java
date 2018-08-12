@@ -29,7 +29,9 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
 
+import org.apache.poi.sl.usermodel.AbstractColorStyle;
 import org.apache.poi.sl.usermodel.ColorStyle;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.GradientPaint;
@@ -66,7 +68,7 @@ public class DrawPaint {
             if (color == null) {
                 throw new NullPointerException("Color needs to be specified");
             }
-            this.solidColor = new ColorStyle(){
+            this.solidColor = new AbstractColorStyle(){
                     @Override
                     public Color getColor() {
                         return new Color(color.getRed(), color.getGreen(), color.getBlue());
@@ -89,6 +91,8 @@ public class DrawPaint {
                     public int getShade() { return -1; }
                     @Override
                     public int getTint() { return -1; }
+
+
                 };
         }
 
@@ -102,6 +106,22 @@ public class DrawPaint {
         @Override
         public ColorStyle getSolidColor() {
             return solidColor;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof SolidPaint)) {
+                return false;
+            }
+            return Objects.equals(getSolidColor(), ((SolidPaint) o).getSolidColor());
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(solidColor);
         }
     }
 
@@ -131,9 +151,10 @@ public class DrawPaint {
         return null;
     }
 
+    @SuppressWarnings({"WeakerAccess", "unused"})
     protected Paint getSolidPaint(SolidPaint fill, Graphics2D graphics, final PaintModifier modifier) {
         final ColorStyle orig = fill.getSolidColor();
-        ColorStyle cs = new ColorStyle() {
+        ColorStyle cs = new AbstractColorStyle() {
             @Override
             public Color getColor() {
                 return orig.getColor();
@@ -204,6 +225,7 @@ public class DrawPaint {
         return applyColorTransform(cs);
     }
 
+    @SuppressWarnings("WeakerAccess")
     protected Paint getGradientPaint(GradientPaint fill, Graphics2D graphics) {
         switch (fill.getGradientType()) {
         case linear:
@@ -217,6 +239,7 @@ public class DrawPaint {
         }
     }
 
+    @SuppressWarnings("WeakerAccess")
     protected Paint getTexturePaint(TexturePaint fill, Graphics2D graphics) {
         InputStream is = fill.getImageData();
         if (is == null) {
@@ -320,8 +343,6 @@ public class DrawPaint {
      * @param hslPart the hsl part to modify [0..2]
      * @param mod the modulation adjustment
      * @param off the offset adjustment
-     * @return the modified hsl value
-     *
      */
     private static void applyHslModOff(double hsl[], int hslPart, int mod, int off) {
         if (mod == -1) {
@@ -370,6 +391,7 @@ public class DrawPaint {
         hsl[2] = hsl[2]*(1.-tintPct) + (100.-100.*(1.-tintPct));
     }
 
+    @SuppressWarnings("WeakerAccess")
     protected Paint createLinearGradientPaint(GradientPaint fill, Graphics2D graphics) {
         // TODO: we need to find the two points for gradient - the problem is, which point at the outline
         // do you take? My solution would be to apply the gradient rotation to the shape in reverse
@@ -412,6 +434,7 @@ public class DrawPaint {
         return new LinearGradientPaint(p1, p2, fractions, colors);
     }
 
+    @SuppressWarnings("WeakerAccess")
     protected Paint createRadialGradientPaint(GradientPaint fill, Graphics2D graphics) {
         Rectangle2D anchor = DrawShape.getAnchor(graphics, shape);
 
@@ -431,6 +454,7 @@ public class DrawPaint {
         return new RadialGradientPaint(pCenter, radius, fractions, colors);
     }
 
+    @SuppressWarnings({"WeakerAccess", "unused"})
     protected Paint createPathGradientPaint(GradientPaint fill, Graphics2D graphics) {
         // currently we ignore an eventually center setting
 
@@ -443,20 +467,6 @@ public class DrawPaint {
         }
 
         return new PathGradientPaint(colors, fractions);
-    }
-
-    protected void snapToAnchor(Point2D p, Rectangle2D anchor) {
-        if (p.getX() < anchor.getX()) {
-            p.setLocation(anchor.getX(), p.getY());
-        } else if (p.getX() > (anchor.getX() + anchor.getWidth())) {
-            p.setLocation(anchor.getX() + anchor.getWidth(), p.getY());
-        }
-
-        if (p.getY() < anchor.getY()) {
-            p.setLocation(p.getX(), anchor.getY());
-        } else if (p.getY() > (anchor.getY() + anchor.getHeight())) {
-            p.setLocation(p.getX(), anchor.getY() + anchor.getHeight());
-        }
     }
 
     /**
@@ -568,7 +578,7 @@ public class DrawPaint {
 
         //  Calculate the Saturation
 
-        double s = 0;
+        final double s;
 
         if (max == min) {
             s = 0;

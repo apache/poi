@@ -581,6 +581,12 @@ public class XSLFTextRun implements TextRun {
         if(strike != isStrikethrough()) {
             setStrikethrough(strike);
         }
+
+        XSLFHyperlink hyperSrc = r.getHyperlink();
+        if (hyperSrc != null) {
+            XSLFHyperlink hyperDst = getHyperlink();
+            hyperDst.copy(hyperSrc);
+        }
     }
 
 

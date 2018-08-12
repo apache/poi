@@ -39,6 +39,7 @@ public class XSLFTableRow implements Iterable<XSLFTableCell> {
     /*package*/ XSLFTableRow(CTTableRow row, XSLFTable table){
         _row = row;
         _table = table;
+        @SuppressWarnings("deprecation")
         CTTableCell[] tcArray = _row.getTcArray();
         _cells = new ArrayList<>(tcArray.length);
         for(CTTableCell cell : tcArray) {
@@ -86,6 +87,7 @@ public class XSLFTableRow implements Iterable<XSLFTableCell> {
      * @param firstCol 0-based index of first column to merge, inclusive
      * @param lastCol 0-based index of last column to merge, inclusive
      */
+    @SuppressWarnings("WeakerAccess")
     public void mergeCells(int firstCol, int lastCol)
     {
         if (firstCol >= lastCol) {
@@ -99,7 +101,7 @@ public class XSLFTableRow implements Iterable<XSLFTableCell> {
 
         _cells.get(firstCol).setGridSpan(colSpan);
         for (final XSLFTableCell cell : _cells.subList(firstCol+1, lastCol+1)) {
-            cell.setHMerge(true);
+            cell.setHMerge();
         }
     }
 

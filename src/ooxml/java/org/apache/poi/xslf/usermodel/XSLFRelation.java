@@ -26,8 +26,10 @@ import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.util.Beta;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+@SuppressWarnings({"unused", "WeakerAccess"})
 @Beta
-public class XSLFRelation extends POIXMLRelation {
+public final class XSLFRelation extends POIXMLRelation {
+    /* package */ static final String NS_DRAWINGML = "http://schemas.openxmlformats.org/drawingml/2006/main";
 
     /**
      * A map to lookup POIXMLRelation by its relation type

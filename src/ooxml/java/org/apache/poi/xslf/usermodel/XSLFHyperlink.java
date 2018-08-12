@@ -19,6 +19,7 @@ package org.apache.poi.xslf.usermodel;
 import java.net.URI;
 
 import org.apache.poi.common.usermodel.HyperlinkType;
+import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLDocumentPart.RelationPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
@@ -155,13 +156,45 @@ public class XSLFHyperlink implements Hyperlink<XSLFShape,XSLFTextParagraph> {
     public void linkToLastSlide() {
         linkToRelativeSlide("lastslide");
     }
-    
+
+    void copy(XSLFHyperlink src) {
+        switch (src.getType()) {
+            case EMAIL:
+            case URL:
+                linkToExternal(src.getAddress());
+                break;
+            case DOCUMENT:
+                final String idSrc = src._link.getId();
+                if (idSrc == null || idSrc.isEmpty()) {
+                    // link to slide - relative reference
+                    linkToRelativeSlide(src.getAddress());
+                } else {
+                    // link to slide . absolute reference
+                    // this is kind of a hack, as we might link to pages not yet imported,
+                    // but the underlying implementation is based only on package part names,
+                    // so this actually works ...
+                    POIXMLDocumentPart pp = src._sheet.getRelationById(idSrc);
+                    if (pp != null) {
+                        RelationPart rp = _sheet.addRelation(null, XSLFRelation.SLIDE, pp);
+                        _link.setId(rp.getRelationship().getId());
+                        _link.setAction(src._link.getAction());
+                    }
+                }
+                break;
+            default:
+            case FILE:
+            case NONE:
+                return;
+        }
+        setLabel(src.getLabel());
+    }
+
     private void linkToRelativeSlide(String jump) {
         PackagePart thisPP = _sheet.getPackagePart();
         if (_link.isSetId() && !_link.getId().isEmpty()) {
             thisPP.removeRelationship(_link.getId());
         }
         _link.setId("");
-        _link.setAction("ppaction://hlinkshowjump?jump="+jump);
+        _link.setAction((jump.startsWith("ppaction") ? "" : "ppaction://hlinkshowjump?jump=") + jump);
     }
 }

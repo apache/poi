@@ -41,7 +41,6 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTLineEndProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTLineProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTable;
@@ -104,6 +103,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
         return cell;
     }
 
+    @SuppressWarnings("WeakerAccess")
     protected CTTableCellProperties getCellProperties(boolean create) {
         if (_tcPr == null) {
             CTTableCell cell = getCell();
@@ -251,6 +251,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
         setBorderWidth(edge, width);
     }
 
+    @SuppressWarnings("WeakerAccess")
     public Double getBorderWidth(BorderEdge edge) {
         CTLineProperties ln = getCTLine(edge, false);
         return (ln == null || !ln.isSetW()) ? null : Units.toPoints(ln.getW());
@@ -320,6 +321,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
         c.setColor(color);
     }
 
+    @SuppressWarnings("WeakerAccess")
     public Color getBorderColor(BorderEdge edge) {
         CTLineProperties ln = getCTLine(edge, false);
         if (ln == null || ln.isSetNoFill() || !ln.isSetSolidFill()) {
@@ -331,6 +333,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
         return c.getColor();
     }
 
+    @SuppressWarnings("WeakerAccess")
     public LineCompound getBorderCompound(BorderEdge edge) {
         CTLineProperties ln = getCTLine(edge, false);
         if (ln == null || ln.isSetNoFill() || !ln.isSetSolidFill() || !ln.isSetCmpd()) {
@@ -350,6 +353,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
         ln.setCmpd(STCompoundLine.Enum.forInt(compound.ooxmlId));
     }
 
+    @SuppressWarnings("WeakerAccess")
     public LineDash getBorderDash(BorderEdge edge) {
         CTLineProperties ln = getCTLine(edge, false);
         if (ln == null || ln.isSetNoFill() || !ln.isSetSolidFill() || !ln.isSetPrstDash()) {
@@ -372,6 +376,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
         ln.getPrstDash().setVal(STPresetLineDashVal.Enum.forInt(dash.ooxmlId));
     }
 
+    @SuppressWarnings("WeakerAccess")
     public LineCap getBorderCap(BorderEdge edge) {
         CTLineProperties ln = getCTLine(edge, false);
         if (ln == null || ln.isSetNoFill() || !ln.isSetSolidFill() || !ln.isSetCap()) {
@@ -381,6 +386,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
         return LineCap.fromOoxmlId(ln.getCap().intValue());
     }
 
+    @SuppressWarnings("WeakerAccess")
     public void setBorderCap(BorderEdge edge, LineCap cap) {
         if (cap == null) {
             throw new IllegalArgumentException("LineCap need to be specified.");
@@ -544,12 +550,12 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
         return (c.isSetRowSpan()) ? c.getRowSpan() : 1;
     }
 
-    void setHMerge(boolean merge_) {
-        getCell().setHMerge(merge_);
+    void setHMerge() {
+        getCell().setHMerge(true);
     }
 
-    void setVMerge(boolean merge_) {
-        getCell().setVMerge(merge_);
+    void setVMerge() {
+        getCell().setVMerge(true);
     }
 
     @Override
@@ -715,13 +721,13 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
     /**
      * @since POI 3.15-beta2
      */
-    private class XSLFCellTextParagraph extends XSLFTextParagraph {
-        protected XSLFCellTextParagraph(CTTextParagraph p, XSLFTextShape shape) {
+    private final class XSLFCellTextParagraph extends XSLFTextParagraph {
+        private XSLFCellTextParagraph(CTTextParagraph p, XSLFTextShape shape) {
             super(p, shape);
         }
 
         @Override
-        protected XSLFCellTextRun newTextRun(CTRegularTextRun r) {
+        protected XSLFCellTextRun newTextRun(XmlObject r) {
             return new XSLFCellTextRun(r, this);
         }
     }
@@ -729,8 +735,8 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
     /**
      * @since POI 3.15-beta2
      */
-    private class XSLFCellTextRun extends XSLFTextRun {
-        protected XSLFCellTextRun(CTRegularTextRun r, XSLFTextParagraph p) {
+    private final class XSLFCellTextRun extends XSLFTextRun {
+        private XSLFCellTextRun(XmlObject r, XSLFTextParagraph p) {
             super(r, p);
         }
 
