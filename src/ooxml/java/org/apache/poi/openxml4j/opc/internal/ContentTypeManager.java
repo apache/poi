@@ -26,11 +26,15 @@ import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JRuntimeException;
-import org.apache.poi.openxml4j.opc.*;
-import org.apache.poi.ooxml.util.DocumentHelper;
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackageNamespaces;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackagePartName;
+import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -150,10 +154,11 @@ public abstract class ContentTypeManager {
         boolean defaultCTExists = this.defaultContentType.containsValue(contentType);
         String extension = partName.getExtension().toLowerCase(Locale.ROOT);
         if ((extension.length() == 0)
-                || (this.defaultContentType.containsKey(extension) && !defaultCTExists))
+                || (this.defaultContentType.containsKey(extension) && !defaultCTExists)) {
             this.addOverrideContentType(partName, contentType);
-        else if (!defaultCTExists)
+        } else if (!defaultCTExists) {
             this.addDefaultContentType(extension, contentType);
+        }
     }
 
     /**
@@ -166,8 +171,9 @@ public abstract class ContentTypeManager {
      */
     private void addOverrideContentType(PackagePartName partName,
             String contentType) {
-        if (overrideContentType == null)
+        if (overrideContentType == null) {
             overrideContentType = new TreeMap<>();
+        }
         overrideContentType.put(partName, contentType);
     }
 
@@ -206,8 +212,9 @@ public abstract class ContentTypeManager {
      */
     public void removeContentType(PackagePartName partName)
             throws InvalidOperationException {
-        if (partName == null)
+        if (partName == null) {
             throw new IllegalArgumentException("partName");
+        }
 
         /* Override content type */
         if (this.overrideContentType != null
@@ -251,10 +258,11 @@ public abstract class ContentTypeManager {
             try {
                 for (PackagePart part : this.container.getParts()) {
                     if (!part.getPartName().equals(partName)
-                            && this.getContentType(part.getPartName()) == null)
+                            && this.getContentType(part.getPartName()) == null) {
                         throw new InvalidOperationException(
                                 "Rule M2.4 is not respected: Nor a default element or override element is associated with the part: "
                                         + part.getPartName().getName());
+                    }
                 }
             } catch (InvalidFormatException e) {
                 throw new InvalidOperationException(e.getMessage());
@@ -271,8 +279,9 @@ public abstract class ContentTypeManager {
      *         register, then <code>false</code>.
      */
     public boolean isContentTypeRegister(String contentType) {
-        if (contentType == null)
+        if (contentType == null) {
             throw new IllegalArgumentException("contentType");
+        }
 
         return (this.defaultContentType.values().contains(contentType) || (this.overrideContentType != null && this.overrideContentType
                 .values().contains(contentType)));
@@ -318,16 +327,19 @@ public abstract class ContentTypeManager {
      *                content from an existing part.
      */
     public String getContentType(PackagePartName partName) {
-        if (partName == null)
+        if (partName == null) {
             throw new IllegalArgumentException("partName");
+        }
 
         if ((this.overrideContentType != null)
-                && this.overrideContentType.containsKey(partName))
+                && this.overrideContentType.containsKey(partName)) {
             return this.overrideContentType.get(partName);
+        }
 
         String extension = partName.getExtension().toLowerCase(Locale.ROOT);
-        if (this.defaultContentType.containsKey(extension))
+        if (this.defaultContentType.containsKey(extension)) {
             return this.defaultContentType.get(extension);
+        }
 
         /*
          * [M2.4] : The package implementer shall require that the Content Types
@@ -338,8 +350,11 @@ public abstract class ContentTypeManager {
          */
         if (this.container != null && this.container.getPart(partName) != null) {
             throw new OpenXML4JRuntimeException(
-                    "Rule M2.4 exception : Part \'" + partName +
-                            "\' not found - this error should NEVER happen! If you can provide the triggering file, then please raise a bug at https://bz.apache.org/bugzilla/enter_bug.cgi?product=POI and attach the file that triggers it, thanks!");
+                "Rule M2.4 exception : Part \'"
+                + partName
+                + "\' not found - this error should NEVER happen!\n"
+                + "Check that your code is closing the open resources in the correct order prior to filing a bug report.\n"
+                + "If you can provide the triggering file, then please raise a bug at https://bz.apache.org/bugzilla/enter_bug.cgi?product=POI and attach the file that triggers it, thanks!");
         }
         return null;
     }
@@ -349,8 +364,9 @@ public abstract class ContentTypeManager {
      */
     public void clearAll() {
         this.defaultContentType.clear();
-        if (this.overrideContentType != null)
+        if (this.overrideContentType != null) {
             this.overrideContentType.clear();
+        }
     }
 
     /**
@@ -358,8 +374,9 @@ public abstract class ContentTypeManager {
      *
      */
     public void clearOverrideContentTypes() {
-        if (this.overrideContentType != null)
+        if (this.overrideContentType != null) {
             this.overrideContentType.clear();
+        }
     }
 
     /**
