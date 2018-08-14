@@ -113,7 +113,7 @@ public final class SAXHelper {
             try {
                 Object mgr = Class.forName(securityManagerClassName).newInstance();
                 Method setLimit = mgr.getClass().getMethod("setEntityExpansionLimit", Integer.TYPE);
-                setLimit.invoke(mgr, 4096);
+                setLimit.invoke(mgr, 0);
                 xmlReader.setProperty(POIXMLConstants.PROPERTY_SECURITY_MANAGER, mgr);
                 // Stop once one can be setup without error
                 return;
