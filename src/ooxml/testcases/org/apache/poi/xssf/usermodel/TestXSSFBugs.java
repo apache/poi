@@ -44,7 +44,8 @@ import java.util.Set;
 import java.util.TimeZone;
 import java.util.TreeMap;
 
-import org.apache.poi.EncryptedDocumentException;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLDocumentPart.RelationPart;
@@ -55,6 +56,8 @@ import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ooxml.util.DocumentHelper;
+import org.apache.poi.ooxml.util.SAXHelper;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
@@ -104,6 +107,9 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedNames;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTFontImpl;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.XMLReader;
 
 public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     public TestXSSFBugs() {
@@ -1913,6 +1919,36 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("sample.xlsx");
         assertEquals(3, wb.getNumberOfSheets());
         wb.close();
+    }
+
+    @Test
+    public void test54764WithSAXHelper() throws Exception {
+        File testFile = XSSFTestDataSamples.getSampleFile("54764.xlsx");
+        ZipFile zip = new ZipFile(testFile);
+        ZipArchiveEntry ze = zip.getEntry("xl/sharedStrings.xml");
+        XMLReader reader = SAXHelper.newXMLReader();
+        try {
+            reader.parse(new InputSource(zip.getInputStream(ze)));
+            fail("should have thrown SAXParseException");
+        } catch (SAXParseException e) {
+            assertNotNull(e.getMessage());
+            assertTrue(e.getMessage().contains("more than \"1\" entity"));
+        }
+    }
+
+    @Test
+    public void test54764WithDocumentHelper() throws Exception {
+        File testFile = XSSFTestDataSamples.getSampleFile("54764.xlsx");
+        ZipFile zip = new ZipFile(testFile);
+        ZipArchiveEntry ze = zip.getEntry("xl/sharedStrings.xml");
+        try {
+            DocumentHelper.readDocument(zip.getInputStream(ze));
+            fail("should have thrown SAXParseException");
+        } catch (SAXParseException e) {
+            assertNotNull(e.getMessage());
+            e.printStackTrace();
+            assertTrue(e.getMessage().contains("more than \"1\" entity"));
+        }
     }
 
     /**
