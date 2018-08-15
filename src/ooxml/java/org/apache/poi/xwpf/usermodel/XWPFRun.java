@@ -1485,7 +1485,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public void setVerticalAlignment(String verticalAlignment) {
         CTRPr pr = getRunProperties(true);
-        CTVerticalAlignRun vertAlign = pr.getVertAlign();
+        CTVerticalAlignRun vertAlign = pr.isSetVertAlign() ? pr.getVertAlign() : pr.addNewVertAlign();
         STVerticalAlignRun align = vertAlign.xgetVal();
         if (align == null) {
             align = STVerticalAlignRun.Factory.newInstance();            
@@ -1525,7 +1525,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public void setEmphasisMark(String markType) {
         CTRPr pr = getRunProperties(true);
-        CTEm emphasisMark = pr.getEm();
+        CTEm emphasisMark = pr.isSetEm() ? pr.getEm() : pr.addNewEm();
         STEm mark = emphasisMark.xgetVal();
         if (mark == null) {
             mark = STEm.Factory.newInstance();            
