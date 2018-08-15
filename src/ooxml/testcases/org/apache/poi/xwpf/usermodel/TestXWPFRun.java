@@ -689,8 +689,10 @@ public class TestXWPFRun {
     @Test
     public void testSetGetVerticalAlignment() throws IOException {
         XWPFDocument document = new XWPFDocument();
-        final XWPFRun run = document.createParagraph().createRun();
+        XWPFRun run = document.createParagraph().createRun();
         assertEquals(STVerticalAlignRun.BASELINE, run.getVerticalAlignment());
+        // Reset to a fresh run so we test case of run not having vertical alignment at all
+        run = document.createParagraph().createRun();
         run.setVerticalAlignment("subscript");
         assertEquals(STVerticalAlignRun.SUBSCRIPT, run.getVerticalAlignment());
         run.setVerticalAlignment("superscript");
@@ -714,8 +716,10 @@ public class TestXWPFRun {
     @Test
     public void testSetGetEmphasisMark() throws IOException {
         XWPFDocument document = new XWPFDocument();
-        final XWPFRun run = document.createParagraph().createRun();
+        XWPFRun run = document.createParagraph().createRun();
         assertEquals(STEm.NONE, run.getEmphasisMark());
+        // Reset to a fresh run so we test case of run not having property at all
+        run = document.createParagraph().createRun();
         run.setEmphasisMark("dot");
         assertEquals(STEm.DOT, run.getEmphasisMark());
         document.close();
@@ -724,8 +728,10 @@ public class TestXWPFRun {
     @Test
     public void testSetGetUnderlineColor() throws IOException {
         XWPFDocument document = new XWPFDocument();
-        final XWPFRun run = document.createParagraph().createRun();
+        XWPFRun run = document.createParagraph().createRun();
         assertEquals("auto", run.getUnderlineColor());
+        // Reset to a fresh run so we test case of run not having property at all
+        run = document.createParagraph().createRun();
         String colorRgb = "C0F1a2";
         run.setUnderlineColor(colorRgb);
         assertEquals(colorRgb.toUpperCase(LocaleUtil.getUserLocale()), run.getUnderlineColor());
@@ -737,8 +743,10 @@ public class TestXWPFRun {
     @Test
     public void testSetGetUnderlineThemeColor() throws IOException {
         XWPFDocument document = new XWPFDocument();
-        final XWPFRun run = document.createParagraph().createRun();
+        XWPFRun run = document.createParagraph().createRun();
         assertEquals(STThemeColor.NONE, run.getUnderlineThemeColor());
+        // Reset to a fresh run so we test case of run not having property at all
+        run = document.createParagraph().createRun();
         String colorName = "accent4";
         run.setUnderlineThemeColor(colorName);
         assertEquals(STThemeColor.Enum.forString(colorName), run.getUnderlineThemeColor());
