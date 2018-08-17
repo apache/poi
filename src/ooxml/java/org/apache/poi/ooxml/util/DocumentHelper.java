@@ -99,7 +99,9 @@ public final class DocumentHelper {
     static {
         documentBuilderFactory.setNamespaceAware(true);
         documentBuilderFactory.setValidating(false);
-
+        //this doesn't appear to work, and we still need to limit
+        //entity expansions to 1 in trySetXercesSecurityManager
+        documentBuilderFactory.setExpandEntityReferences(false);
         trySetSAXFeature(documentBuilderFactory, XMLConstants.FEATURE_SECURE_PROCESSING, true);
         trySetSAXFeature(documentBuilderFactory, POIXMLConstants.FEATURE_LOAD_DTD_GRAMMAR, false);
         trySetSAXFeature(documentBuilderFactory, POIXMLConstants.FEATURE_LOAD_EXTERNAL_DTD, false);
@@ -125,7 +127,7 @@ public final class DocumentHelper {
             try {
                 Object mgr = Class.forName(securityManagerClassName).newInstance();
                 Method setLimit = mgr.getClass().getMethod("setEntityExpansionLimit", Integer.TYPE);
-                setLimit.invoke(mgr, 4096);
+                setLimit.invoke(mgr, 1);
                 dbf.setAttribute(POIXMLConstants.PROPERTY_SECURITY_MANAGER, mgr);
                 // Stop once one can be setup without error
                 return;
@@ -137,7 +139,8 @@ public final class DocumentHelper {
         }
 
         // separate old version of Xerces not found => use the builtin way of setting the property
-        dbf.setAttribute(POIXMLConstants.PROPERTY_ENTITY_EXPANSION_LIMIT, 4096);
+        // Note: when entity_expansion_limit==0, there is no limit!
+        dbf.setAttribute(POIXMLConstants.PROPERTY_ENTITY_EXPANSION_LIMIT, 1);
     }
 
     /**

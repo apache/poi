@@ -113,7 +113,7 @@ public final class SAXHelper {
             try {
                 Object mgr = Class.forName(securityManagerClassName).newInstance();
                 Method setLimit = mgr.getClass().getMethod("setEntityExpansionLimit", Integer.TYPE);
-                setLimit.invoke(mgr, 0);
+                setLimit.invoke(mgr, 1);
                 xmlReader.setProperty(POIXMLConstants.PROPERTY_SECURITY_MANAGER, mgr);
                 // Stop once one can be setup without error
                 return;
@@ -130,7 +130,7 @@ public final class SAXHelper {
 
         // separate old version of Xerces not found => use the builtin way of setting the property
         try {
-            xmlReader.setProperty(POIXMLConstants.PROPERTY_ENTITY_EXPANSION_LIMIT, 4096);
+            xmlReader.setProperty(POIXMLConstants.PROPERTY_ENTITY_EXPANSION_LIMIT, 1);
         } catch (SAXException e) {     // NOSONAR - also catch things like NoClassDefError here
             // throttle the log somewhat as it can spam the log otherwise
             if(System.currentTimeMillis() > lastLog + TimeUnit.MINUTES.toMillis(5)) {

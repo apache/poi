@@ -36,7 +36,7 @@ public class TestSAXHelper {
         assertFalse(reader.getFeature(POIXMLConstants.FEATURE_LOAD_EXTERNAL_DTD));
         assertEquals(SAXHelper.IGNORING_ENTITY_RESOLVER, reader.getEntityResolver());
         assertNotNull(reader.getProperty(POIXMLConstants.PROPERTY_ENTITY_EXPANSION_LIMIT));
-        assertEquals("4096", reader.getProperty(POIXMLConstants.PROPERTY_ENTITY_EXPANSION_LIMIT));
+        assertEquals("1", reader.getProperty(POIXMLConstants.PROPERTY_ENTITY_EXPANSION_LIMIT));
         assertNotNull(reader.getProperty(POIXMLConstants.PROPERTY_SECURITY_MANAGER));
 
         reader.parse(new InputSource(new ByteArrayInputStream("<xml></xml>".getBytes("UTF-8"))));
