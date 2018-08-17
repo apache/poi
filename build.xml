@@ -205,7 +205,7 @@ under the License.
               value="https://repository.apache.org/content/repositories/releases/org/apache/xmlbeans/xmlbeans/3.0.0/xmlbeans-3.0.0.jar"/>
     <property name="ooxml.commons-compress.jar" location="${main.lib}/commons-compress-1.18.jar"/>
     <property name="ooxml.commons-compress.url"
-              value="${repository.m2}/maven2/org/apache/commons/commons-compress/1.18/commons-compress-1.17.jar"/>
+              value="${repository.m2}/maven2/org/apache/commons/commons-compress/1.18/commons-compress-1.18.jar"/>
 
     <!-- coverage libs -->
     <property name="jacoco.zip" location="${main.lib}/jacoco-0.8.1.zip"/>
