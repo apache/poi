@@ -109,7 +109,7 @@ def jdkMapping = [
         '1.8': 'JDK 1.8 (latest)',
         '1.9': 'JDK 1.9 (latest)',
         '1.10': 'JDK 10 (latest)',
-        '1.11': 'JDK 11 b8 (early access build)',
+        '1.11': 'JDK 11 (latest)',
         'OpenJDK': 'OpenJDK 8 (on Ubuntu only) ',   // blank is required here until the name in the Jenkins instance is fixed!
         'IBMJDK': 'IBM 1.8 64-bit (on Ubuntu only)',
 ]
@@ -453,15 +453,16 @@ Unfortunately we often see builds break because of changes/new machines...'''
                 'IBM 1.8 64-bit (on Ubuntu only)',
 
                 'JDK 1.9 (latest)',
-                'JDK 9 b181',
-                'JDK 9 b181 (unlimited security)',
 
                 'JDK 10 (latest)',
                 'JDK 10 b46 (Windows Only)',
+                'OpenJDK 10.0.2 (on Ubuntu only)',
 
-                'JDK 11 b8 (early access build)'
+                'JDK 11 (latest)',
+                'JDK 11 b23 (early access build) (Windows Only)'
         )
         label('Nodes',
+				'arm1',
                 'beam1','beam2','beam3','beam4','beam5','beam6','beam7','beam8','beam9',
                 'beam10','beam11','beam12','beam13','beam14','beam15','beam16',
                 'H0','H1','H10','H11','H12','H13','H14','H15','H16','H17','H18','H19',
@@ -469,7 +470,7 @@ Unfortunately we often see builds break because of changes/new machines...'''
                 'H3','H30','H31','H32','H33','H34','H35',
                 'H4','H5','H6','H7','H8','H9',
                 'ubuntu-1','ubuntu-2','ubuntu-4','ubuntu-6','ubuntu-eu2','ubuntu-eu3','ubuntu-ppc64le','ubuntu-us1',
-                'windows-2012-1','windows-2012-2','windows-2012-3','windows-2016-1'
+                'windows-2012-1','windows-2012-2','windows-2012-3','windows-2016-1','windows-2016-2','windows-2016-3'
         )
     }
     steps {
