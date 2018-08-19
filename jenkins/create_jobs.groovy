@@ -51,6 +51,21 @@ def poijobs = [
                        '-Djava.locale.providers=JRE,CLDR'],
           skipcigame: true
         ],
+        [ name: 'POI-DSL-1.11', jdk: '1.11', trigger: '''
+# do not run this via a schedule for now
+''',
+          properties: ['-Djava9addmods=-Dthis.is.a.dummy=true',
+                       '-Djavadoc9addmods=-Dthis.is.a.dummy=true',
+                       '-Djava9addmodsvalue=-Dsun.reflect.debugModuleAccessChecks=true',
+                       '-Djava9addopens1=--add-opens=java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED',
+                       '-Djava9addopens2=--add-opens=java.base/java.io=ALL-UNNAMED',
+                       '-Djava9addopens3=--add-opens=java.base/java.nio=ALL-UNNAMED',
+                       '-Djava9addopens4=--add-opens=java.base/java.lang=ALL-UNNAMED',
+                       '-Djava9addopens5=--add-opens=java.base/jdk.internal.ref=ALL-UNNAMED',
+                       '-Djava9addopens6=--add-opens=java.base/java.lang=java.xml.bind',
+                       '-Djava.locale.providers=JRE,CLDR'],
+          skipcigame: true
+        ],
         [ name: 'POI-DSL-IBM-JDK', jdk: 'IBMJDK', trigger: triggerSundays,
           // some OOXML tests fail with strange XML parsing errors and missing JCE unlimited strength requirements
           disabled: true, skipcigame: true
