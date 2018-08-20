@@ -267,7 +267,7 @@ public class DataFormatter implements Observer {
      * @param  localeIsAdapting (true only if locale is not user-specified)
      * @param  emulateCSV whether to emulate CSV output.
      */
-    private DataFormatter(Locale locale, boolean localeIsAdapting, boolean emulateCSV) {
+    public DataFormatter(Locale locale, boolean localeIsAdapting, boolean emulateCSV) {
         this.localeIsAdapting = true;
         localeChangedObservable.addObserver(this);
         // localeIsAdapting must be true prior to this first checkForLocaleChange call.

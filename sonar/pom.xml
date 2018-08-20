@@ -53,6 +53,11 @@
             <name>apache releases repo</name>
             <url>https://repository.apache.org/content/repositories/releases</url>
         </repository>
+        <repository>
+            <id>apache-staging-repo</id>
+            <name>apache staging repo</name>
+            <url>https://repository.apache.org/content/repositories/staging</url>
+        </repository>
     </repositories>
 
     <modules>
@@ -72,7 +77,7 @@
         <sonar.scm.disabled>true</sonar.scm.disabled>
 
         <!-- define some of the third-party or plugin-versions globally to use the same in all modules -->
-        <xmlbeans.version>3.0.0</xmlbeans.version>
+        <xmlbeans.version>3.0.1</xmlbeans.version>
         <junit.version>4.12</junit.version>
         <xmlunit.version>2.5.1</xmlunit.version>
         <mockito.version>2.13.0</mockito.version>

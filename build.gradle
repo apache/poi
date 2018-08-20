@@ -26,9 +26,9 @@ buildscript {
 }
 
 repositories {
+    maven { url "https://repository.apache.org/content/repositories/staging" }
     mavenCentral()
 }
-
 
 // Only add the plugin for Sonar if enabled
 if (project.hasProperty('enableSonar')) {
@@ -216,7 +216,7 @@ project('ooxml') {
     compileJava.dependsOn 'ant-compile-ooxml-xsds'
 
     dependencies {
-        compile 'org.apache.xmlbeans:xmlbeans:3.0.0'
+        compile 'org.apache.xmlbeans:xmlbeans:3.0.1'
         compile 'org.apache.commons:commons-collections4:4.2'
         compile 'org.apache.commons:commons-math3:3.6.1'
         compile 'org.apache.commons:commons-compress:1.18'
