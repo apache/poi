@@ -18,13 +18,12 @@ package org.apache.poi.xwpf.usermodel;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Collections;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.util.Internal;
@@ -53,6 +52,11 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTblWidth;
  */
 @SuppressWarnings("WeakerAccess")
 public class XWPFTable implements IBodyElement, ISDTContents {
+
+    public static final String REGEX_PERCENTAGE = "[0-9]+(\\.[0-9]+)?%";
+    public static final String DEFAULT_PERCENTAGE_WIDTH = "100%";
+    static final String NS_OOXML_WP_MAIN = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+    public static final String REGEX_WIDTH_VALUE = "auto|[0-9]+|" + REGEX_PERCENTAGE;
 
     // Create a map from this XWPF-level enum to the STBorder.Enum values
     public enum XWPFBorderType {
@@ -282,7 +286,10 @@ public class XWPFTable implements IBodyElement, ISDTContents {
     }
 
     /**
-     * @return width value
+     * Get the width value as an integer.
+     * <p>If the width type is AUTO, DXA, or NIL, the value is 20ths of a point. If
+     * the width type is PCT, the value is the percentage times 50 (e.g., 2500 for 50%).</p> 
+     * @return width value as an integer
      */
     public int getWidth() {
         CTTblPr tblPr = getTblPr();
@@ -290,12 +297,14 @@ public class XWPFTable implements IBodyElement, ISDTContents {
     }
 
     /**
-     * @param width
+     * Set the width in 20ths of a point (twips).
+     * @param width Width value (20ths of a point)
      */
     public void setWidth(int width) {
         CTTblPr tblPr = getTblPr();
         CTTblWidth tblWidth = tblPr.isSetTblW() ? tblPr.getTblW() : tblPr.addNewTblW();
         tblWidth.setW(new BigInteger(Integer.toString(width)));
+        tblWidth.setType(STTblWidth.DXA);
     }
 
     /**
@@ -1124,5 +1133,169 @@ public class XWPFTable implements IBodyElement, ISDTContents {
             if (getRows().get(i).getCtRow() == row) return getRow(i);
         }
         return null;
+    }
+    
+    /**
+     * Get the table width as a decimal value.
+     * <p>If the width type is DXA or AUTO, then the value will always have
+     * a fractional part of zero (because these values are really integers).
+     * If the with type is percentage, then value may have a non-zero fractional
+     * part.
+     *
+     * @return Width value as a double-precision decimal.
+     * @since 4.0.0
+     */
+    public double getWidthDecimal() {
+        return getWidthDecimal(getTblPr().getTblW());
+    }
+
+    /**
+     * Get the width as a decimal value.
+     * <p>This method is also used by table cells.
+     * @param ctWidth Width value to evaluate.
+     * @return Width value as a decimal
+     * @since 4.0.0
+     */
+    protected static double getWidthDecimal(CTTblWidth ctWidth) {
+        double result = 0.0;
+        STTblWidth.Enum typeValue = ctWidth.getType();
+        if (typeValue == STTblWidth.DXA 
+                || typeValue == STTblWidth.AUTO 
+                || typeValue == STTblWidth.NIL) {
+            result = 0.0 + ctWidth.getW().intValue();
+        } else if (typeValue == STTblWidth.PCT) {
+            // Percentage values are stored as integers that are 50 times
+            // percentage.
+            result = ctWidth.getW().intValue() / 50.0;                    
+        } else {
+            // Should never get here
+        }
+        return result;
+    }
+
+    /**
+     * Get the width type for the table, as an {@link STTblWidth.Enum} value.
+     * A table width can be specified as an absolute measurement (an integer
+     * number of twips), a percentage, or the value "AUTO".
+     *
+     * @return The width type.
+     * @since 4.0.0
+     */
+    public TableWidthType getWidthType() {
+        return getWidthType(getTblPr().getTblW());
+    }
+
+    /**
+     * Get the width type from the width value
+     * @param ctWidth CTTblWidth to evalute
+     * @return The table width type
+     * @since 4.0.0
+     */
+    protected static TableWidthType getWidthType(CTTblWidth ctWidth) {
+        STTblWidth.Enum typeValue = ctWidth.getType();
+        if (typeValue == null) {
+            typeValue = STTblWidth.NIL;
+            ctWidth.setType(typeValue);
+        }
+        switch (typeValue.intValue()) {
+        case STTblWidth.INT_NIL:
+            return TableWidthType.NIL;
+        case STTblWidth.INT_AUTO:
+            return TableWidthType.AUTO;
+        case STTblWidth.INT_DXA:
+            return TableWidthType.DXA;
+        case STTblWidth.INT_PCT:
+            return TableWidthType.PCT;
+        default:
+            // Should never get here
+            return TableWidthType.AUTO;
+        }
+    }
+
+    /**
+     * Set the width to the value "auto", an integer value (20ths of a point), or a percentage ("nn.nn%").
+     *
+     * @param widthValue String matching one of "auto", [0-9]+, or [0-9]+(\.[0-9]+)%.
+     * @since 4.0.0
+     */
+    public void setWidth(String widthValue) {
+        setWidthValue(widthValue, getTblPr().getTblW());
+    }
+
+    /**
+     * Set the width value from a string
+     * @param widthValue The width value string
+     * @param ctWidth CTTblWidth to set the value on.
+     */
+    protected static void setWidthValue(String widthValue, CTTblWidth ctWidth) {
+        if (!widthValue.matches(REGEX_WIDTH_VALUE)) {
+            throw new RuntimeException("Table width value \"" + widthValue + "\" "
+                    + "must match regular expression \"" + REGEX_WIDTH_VALUE + "\"."); 
+        }
+        if (widthValue.matches("auto")) {
+            ctWidth.setType(STTblWidth.AUTO);
+            ctWidth.setW(BigInteger.ZERO);
+        } else if (widthValue.matches(REGEX_PERCENTAGE)) {
+            setWidthPercentage(ctWidth, widthValue);
+        } else {
+            // Must be an integer
+            ctWidth.setW(new BigInteger(widthValue));
+            ctWidth.setType(STTblWidth.DXA);            
+        }
+    }
+
+    /**
+     * Set the underlying table width value to a percentage value.
+     * @param ctWidth The CTTblWidth to set the value on 
+     * @param widthValue String width value in form "33.3%" or an integer that is 50 times desired percentage value (e.g,
+     * 2500 for 50%)
+     * @since 4.0.0
+     */
+    protected static void setWidthPercentage(CTTblWidth ctWidth, String widthValue) {
+        ctWidth.setType(STTblWidth.PCT);
+        if (widthValue.matches(REGEX_PERCENTAGE)) {
+            String numberPart = widthValue.substring(0,  widthValue.length() - 1);
+            double percentage = Double.parseDouble(numberPart) * 50;
+            long intValue = Math.round(percentage);
+            ctWidth.setW(BigInteger.valueOf(intValue));            
+        } else if (widthValue.matches("[0-9]+")) {
+            ctWidth.setW(new BigInteger(widthValue));
+        } else {
+            throw new RuntimeException("setWidthPercentage(): Width value must be a percentage (\"33.3%\" or an integer, was \"" + widthValue + "\"");
+        }
+    }
+
+    /**
+     * Set the width value type for the table.
+     * <p>If the width type is changed from the current type and the currently-set value
+     * is not consistent with the new width type, the value is reset to the default value
+     * for the specified width type.</p>
+     *
+     * @param widthType Width type
+     * @since 4.0.0
+     */
+    public void setWidthType(TableWidthType widthType) {
+        setWidthType(widthType, getTblPr().getTblW());        
+    }
+
+    /**
+     * Set the width type if different from current width type
+     * @param widthType The new width type
+     * @param ctWidth CTTblWidth to set the type on
+     * @since 4.0.0
+     */
+    protected static void setWidthType(TableWidthType widthType, CTTblWidth ctWidth) {
+        TableWidthType currentType = getWidthType(ctWidth);
+        if (!currentType.equals(widthType)) {
+            STTblWidth.Enum stWidthType = widthType.getSTWidthType();
+            ctWidth.setType(stWidthType);
+            switch (stWidthType.intValue()) {
+            case STTblWidth.INT_PCT:
+                setWidthPercentage(ctWidth, DEFAULT_PERCENTAGE_WIDTH);
+                break;
+            default:
+                ctWidth.setW(BigInteger.ZERO);
+            }
+        }
     }
 }

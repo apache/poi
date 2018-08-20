@@ -146,15 +146,63 @@ public class TestXWPFTable {
     public void testSetGetWidth() {
         XWPFDocument doc = new XWPFDocument();
 
-        CTTbl table = CTTbl.Factory.newInstance();
-        table.addNewTblPr().addNewTblW().setW(new BigInteger("1000"));
+        XWPFTable xtab = doc.createTable();
 
-        XWPFTable xtab = new XWPFTable(table, doc);
-
+        assertEquals(0, xtab.getWidth());
+        assertEquals(TableWidthType.AUTO, xtab.getWidthType());
+        
+        xtab.setWidth(1000);
+        assertEquals(TableWidthType.DXA, xtab.getWidthType());
         assertEquals(1000, xtab.getWidth());
+        
+        xtab.setWidth("auto");
+        assertEquals(TableWidthType.AUTO, xtab.getWidthType());
+        assertEquals(0, xtab.getWidth());
+        assertEquals(0.0, xtab.getWidthDecimal(), 0.01);
+        
+        xtab.setWidth("999");
+        assertEquals(TableWidthType.DXA, xtab.getWidthType());                
+        assertEquals(999, xtab.getWidth());
+        
+        xtab.setWidth("50.5%");
+        assertEquals(TableWidthType.PCT, xtab.getWidthType());        
+        assertEquals(50.5, xtab.getWidthDecimal(), 0.01);
+        
+        // Test effect of setting width type to a new value
+        
+        // From PCT to NIL:
+        xtab.setWidthType(TableWidthType.NIL);
+        assertEquals(TableWidthType.NIL, xtab.getWidthType());   
+        assertEquals(0, xtab.getWidth());
 
-        xtab.setWidth(100);
-        assertEquals(100, table.getTblPr().getTblW().getW().intValue());
+        xtab.setWidth("999"); // Sets type to DXA 
+        assertEquals(TableWidthType.DXA, xtab.getWidthType());
+        
+        // From DXA to AUTO:
+        xtab.setWidthType(TableWidthType.AUTO);
+        assertEquals(TableWidthType.AUTO, xtab.getWidthType());   
+        assertEquals(0, xtab.getWidth());
+        
+        xtab.setWidthType(TableWidthType.PCT);
+        assertEquals(TableWidthType.PCT, xtab.getWidthType());   
+        
+        // From PCT to DXA:
+        xtab.setWidth("33.3%");
+        xtab.setWidthType(TableWidthType.DXA);
+        assertEquals(TableWidthType.DXA, xtab.getWidthType());   
+        assertEquals(0, xtab.getWidth());
+
+        // From DXA to DXA: (value should be unchanged)
+        xtab.setWidth("999");
+        xtab.setWidthType(TableWidthType.DXA);
+        assertEquals(TableWidthType.DXA, xtab.getWidthType());   
+        assertEquals(999, xtab.getWidth());
+
+        // From DXA to PCT:
+        xtab.setWidthType(TableWidthType.PCT);
+        assertEquals(TableWidthType.PCT, xtab.getWidthType());   
+        assertEquals(100.0, xtab.getWidthDecimal(), 0.0);        
+
         try {
             doc.close();
         } catch (IOException e) {
