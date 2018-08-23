@@ -1753,7 +1753,11 @@ under the License.
     <target name="docs" depends="init, -check-forrest-installed, -check-docs, javadocs"
             unless="main.docs.notRequired" description="Builds the POI website">
 
-        <exec executable="${env.FORREST_HOME}/bin/forrest"/>
+        <exec executable="${env.FORREST_HOME}/bin/forrest" osfamily="unix"/>
+        <exec executable="cmd" osfamily="windows">
+            <arg value="/c"/>
+            <arg value="${env.FORREST_HOME}/bin/forrest.bat"/>
+        </exec>
 
         <echo>Broken links:</echo>
         <echo file="${build.site}/../tmp/brokenlinks.xml"/>
