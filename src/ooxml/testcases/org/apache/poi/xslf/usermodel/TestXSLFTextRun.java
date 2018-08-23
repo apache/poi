@@ -22,14 +22,15 @@ import static org.apache.poi.sl.TestCommonSL.sameColor;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.awt.Color;
 import java.io.IOException;
 
 import org.apache.poi.sl.draw.DrawTextParagraph;
 import org.junit.Test;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextLineBreak;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 
 /**
  * @author Yegor Kozlov
@@ -104,14 +105,16 @@ public class TestXSLFTextRun {
     }
 
     @Test
-    public void testCopyNullFontSize() throws IOException {
+    public void testCopyNullFontSize() {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
         XSLFTextShape sh = slide.createAutoShape();
 
         XSLFTextRun r = sh.addNewTextParagraph().addNewTextRun();
-        XSLFTextRun s = mock(XSLFTextRun.class);
-        when(s.getFontSize()).thenReturn(null);
+
+        XSLFTextRun s = new XSLFTextRun(CTTextLineBreak.Factory.newInstance(),
+                new XSLFTextParagraph(CTTextParagraph.Factory.newInstance(),
+                        new XSLFTextBox(CTShape.Factory.newInstance(), slide)));
 
         r.copy(s);
     }
