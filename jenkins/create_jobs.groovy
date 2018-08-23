@@ -62,7 +62,7 @@ def poijobs = [
                        '-Djava9addopens3=--add-opens=java.base/java.nio=ALL-UNNAMED',
                        '-Djava9addopens4=--add-opens=java.base/java.lang=ALL-UNNAMED',
                        '-Djava9addopens5=--add-opens=java.base/jdk.internal.ref=ALL-UNNAMED',
-                       '-Djava9addopens6=--add-opens=java.base/java.lang=java.xml.bind',
+                       '-Djava9addopens6=-Dthis.is.a.dummy=true',
                        '-Djava.locale.providers=JRE,CLDR'],
           skipcigame: true
         ],
@@ -215,8 +215,9 @@ poijobs.each { poijob ->
         label(slaves)
         environmentVariables {
             env('LANG', 'en_US.UTF-8')
-            if(jdkKey == '1.9' || jdkKey == '1.10' || jdkKey == '1.11') {
-                // when using JDK 9 for running Ant, we need to provide more packages for the forbidden-api-checks task
+            if(jdkKey == '1.9' || jdkKey == '1.10') {
+                // when using JDK 9/10 for running Ant, we need to provide more modules for the forbidden-api-checks task
+                // on JDK 11 there is no such module any more, so do not add it here
                 env('ANT_OPTS', '--add-modules=java.xml.bind --add-opens=java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED')
             }
             env('FORREST_HOME', poijob.windows ? 'f:\\jenkins\\tools\\forrest\\latest' : '/home/jenkins/tools/forrest/latest')
