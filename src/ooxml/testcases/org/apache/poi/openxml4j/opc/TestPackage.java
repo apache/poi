@@ -17,15 +17,53 @@
 
 package org.apache.poi.openxml4j.opc;
 
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.compress.archivers.zip.ZipFile;
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.POITestCase;
+import org.apache.poi.UnsupportedFileFormatException;
+import org.apache.poi.extractor.POITextExtractor;
+import org.apache.poi.ooxml.POIXMLException;
+import org.apache.poi.ooxml.extractor.ExtractorFactory;
+import org.apache.poi.ooxml.util.DocumentHelper;
+import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
+import org.apache.poi.openxml4j.exceptions.NotOfficeXmlFileException;
+import org.apache.poi.openxml4j.exceptions.ODFNotOfficeXmlFileException;
+import org.apache.poi.openxml4j.exceptions.OLE2NotOfficeXmlFileException;
+import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
+import org.apache.poi.openxml4j.opc.internal.ContentTypeManager;
+import org.apache.poi.openxml4j.opc.internal.FileHelper;
+import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
+import org.apache.poi.openxml4j.opc.internal.ZipHelper;
+import org.apache.poi.openxml4j.util.ZipSecureFile;
+import org.apache.poi.sl.usermodel.SlideShow;
+import org.apache.poi.sl.usermodel.SlideShowFactory;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.TempFile;
+import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xwpf.usermodel.XWPFRelation;
+import org.apache.xmlbeans.XmlException;
+import org.hamcrest.Description;
+import org.hamcrest.TypeSafeMatcher;
+import org.junit.Ignore;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -47,54 +85,12 @@ import java.util.TreeMap;
 import java.util.function.BiConsumer;
 import java.util.regex.Pattern;
 
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
-import org.apache.commons.compress.archivers.zip.ZipFile;
-import org.apache.poi.EncryptedDocumentException;
-import org.apache.poi.POIDataSamples;
-import org.apache.poi.POITestCase;
-import org.apache.poi.extractor.POITextExtractor;
-import org.apache.poi.ooxml.POIXMLException;
-import org.apache.poi.UnsupportedFileFormatException;
-import org.apache.poi.ooxml.extractor.ExtractorFactory;
-import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
-import org.apache.poi.openxml4j.exceptions.NotOfficeXmlFileException;
-import org.apache.poi.openxml4j.exceptions.ODFNotOfficeXmlFileException;
-import org.apache.poi.openxml4j.exceptions.OLE2NotOfficeXmlFileException;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
-import org.apache.poi.openxml4j.opc.internal.ContentTypeManager;
-import org.apache.poi.openxml4j.opc.internal.FileHelper;
-import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
-import org.apache.poi.openxml4j.opc.internal.ZipHelper;
-import org.apache.poi.openxml4j.util.ZipSecureFile;
-import org.apache.poi.sl.usermodel.SlideShow;
-import org.apache.poi.sl.usermodel.SlideShowFactory;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.ooxml.util.DocumentHelper;
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.TempFile;
-import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.xwpf.usermodel.XWPFRelation;
-import org.apache.xmlbeans.XmlException;
-import org.hamcrest.Description;
-import org.hamcrest.TypeSafeMatcher;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.mockito.Mockito;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public final class TestPackage {
     private static final POILogger logger = POILogFactory.getLogger(TestPackage.class);
@@ -784,7 +780,7 @@ public final class TestPackage {
 	 */
     @Test
     public void zipBombCreateAndHandle()
-    throws IOException, EncryptedDocumentException, InvalidFormatException {
+    throws IOException, EncryptedDocumentException {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(2500000);
 
         try (ZipFile zipFile = ZipHelper.openZipFile(OpenXML4JTestDataSamples.getSampleFile("sample.xlsx"));
@@ -884,7 +880,7 @@ public final class TestPackage {
 	}
 
     @Test
-    public void zipBombCheckSizesWithinLimits() throws IOException, EncryptedDocumentException, InvalidFormatException {
+    public void zipBombCheckSizesWithinLimits() throws IOException, EncryptedDocumentException {
 		getZipStatsAndConsume((max_size, min_ratio) -> {
 			// use values close to, but within the limits
 			ZipSecureFile.setMinInflateRatio(min_ratio - 0.002);
@@ -895,7 +891,7 @@ public final class TestPackage {
 	}
 
 	@Test
-	public void zipBombCheckSizesRatioTooSmall() throws IOException, EncryptedDocumentException, InvalidFormatException {
+	public void zipBombCheckSizesRatioTooSmall() throws IOException, EncryptedDocumentException {
 		expectedEx.expect(POIXMLException.class);
 		expectedEx.expectMessage("You can adjust this limit via ZipSecureFile.setMinInflateRatio()");
 		getZipStatsAndConsume((max_size, min_ratio) -> {
@@ -905,7 +901,7 @@ public final class TestPackage {
 	}
 
 	@Test
-	public void zipBombCheckSizesSizeTooBig() throws IOException, EncryptedDocumentException, InvalidFormatException {
+	public void zipBombCheckSizesSizeTooBig() throws IOException, EncryptedDocumentException {
 		expectedEx.expect(POIXMLException.class);
 		expectedEx.expectMessage("You can adjust this limit via ZipSecureFile.setMaxEntrySize()");
 		getZipStatsAndConsume((max_size, min_ratio) -> {
@@ -915,7 +911,7 @@ public final class TestPackage {
 		});
 	}
 
-	private void getZipStatsAndConsume(BiConsumer<Long,Double> ratioCon) throws IOException, InvalidFormatException {
+	private void getZipStatsAndConsume(BiConsumer<Long,Double> ratioCon) throws IOException {
     	// use a test file with a xml file bigger than 100k (ZipArchiveThresholdInputStream.GRACE_ENTRY_SIZE)
 		final File file = XSSFTestDataSamples.getSampleFile("poc-shared-strings.xlsx");
 
@@ -980,7 +976,7 @@ public final class TestPackage {
 
     // bug 61381
     @Test
-    public void testTooShortFilterStreams() throws IOException, InvalidFormatException {
+    public void testTooShortFilterStreams() throws IOException {
         File xssf = OpenXML4JTestDataSamples.getSampleFile("sample.xlsx");
         File hssf = POIDataSamples.getSpreadSheetInstance().getFile("SampleSS.xls");
         
@@ -1093,7 +1089,7 @@ public final class TestPackage {
 	@Test(expected = InvalidFormatException.class)
 	public void testBug62592() throws Exception {
 		InputStream is = OpenXML4JTestDataSamples.openSampleStream("62592.thmx");
-		OPCPackage p = OPCPackage.open(is);
+		/*OPCPackage p =*/ OPCPackage.open(is);
 	}
 
 	@Test
@@ -1107,18 +1103,29 @@ public final class TestPackage {
 
 	@Test
 	public void testDoNotCloseStream() throws IOException {
-		OutputStream os = Mockito.mock(OutputStream.class);
+		// up to JDK 10 we did use Mockito here, but OutputStream is
+		// an abstract class and fails mocking with some changes in JDK 11
+		// so we use a simple empty output stream implementation instead
+		OutputStream os = new OutputStream() {
+			@Override
+			public void write(int b) {
+			}
+
+			@Override
+			public void close() {
+				throw new IllegalStateException("close should not be called here");
+			}
+		};
+
 		try (XSSFWorkbook wb = new XSSFWorkbook()) {
 			wb.createSheet();
 			wb.write(os);
 		}
-		verify(os, never()).close();
 
 		try (SXSSFWorkbook wb = new SXSSFWorkbook()) {
 			wb.createSheet();
 			wb.write(os);
 		}
-		verify(os, never()).close();
 	}
 
 

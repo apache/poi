@@ -185,6 +185,18 @@ under the License.
     <property name="main.commons-math3.jar" location="${main.lib}/commons-math3-3.6.1.jar"/>
     <property name="main.commons-math3.url"
               value="${repository.m2}/maven2/org/apache/commons/commons-math3/3.6.1/commons-math3-3.6.1.jar"/>
+    <property name="main.xmlbind.jar" location="${main.lib}/jaxb-api-2.3.0.jar"/>
+    <property name="main.xmlbind.url"
+              value="${repository.m2}/maven2/javax/xml/bind/jaxb-api/2.3.0/jaxb-api-2.3.0.jar"/>
+    <property name="main.xmlbind-impl.jar" location="${main.lib}/jaxb-impl-2.3.0.1.jar"/>
+    <property name="main.xmlbind-impl.url"
+              value="${repository.m2}/maven2/com/sun/xml/bind/jaxb-impl/2.3.0.1/jaxb-impl-2.3.0.1.jar"/>
+    <property name="main.xmlbind-core.jar" location="${main.lib}/jaxb-core-2.3.0.1.jar"/>
+    <property name="main.xmlbind-core.url"
+              value="${repository.m2}/maven2/com/sun/xml/bind/jaxb-core/2.3.0.1/jaxb-core-2.3.0.1.jar"/>
+    <property name="main.activation.jar" location="${main.lib}/activation-1.1.1.jar"/>
+    <property name="main.activation.url"
+              value="${repository.m2}/maven2/javax/activation/activation/1.1.1/activation-1.1.1.jar"/>
 
     <!-- xml signature libs -->
     <property name="dsig.xmlsec.jar" location="${compile.lib}/xmlsec-2.1.0.jar"/>
@@ -327,6 +339,10 @@ under the License.
         <pathelement location="${main.commons-codec.jar}"/>
         <pathelement location="${main.commons-collections4.jar}"/>
         <pathelement location="${main.commons-math3.jar}"/>
+        <pathelement location="${main.xmlbind.jar}"/>
+        <pathelement location="${main.xmlbind-impl.jar}"/>
+        <pathelement location="${main.xmlbind-core.jar}"/>
+        <pathelement location="${main.activation.jar}"/>
     </path>
 
     <!-- some libraries should only be required for compiling/running tests -->
@@ -684,6 +700,10 @@ under the License.
                     <available file="${dsig.sl4j-api.jar}"/>
                     <available file="${main.commons-collections4.jar}"/>
                     <available file="${main.commons-math3.jar}"/>
+                    <available file="${main.xmlbind.jar}"/>
+                    <available file="${main.xmlbind-impl.jar}"/>
+                    <available file="${main.xmlbind-core.jar}"/>
+                    <available file="${main.activation.jar}"/>
 
                     <!-- we had some CI failures when the extracted files for JaCoCo were missing somehow... -->
                     <available file="${main.lib}/jacocoagent.jar"/>
@@ -716,6 +736,10 @@ under the License.
         <downloadfile src="${jacoco.url}" dest="${jacoco.zip}"/>
         <downloadfile src="${main.commons-collections4.url}" dest="${main.commons-collections4.jar}"/>
         <downloadfile src="${main.commons-math3.url}" dest="${main.commons-math3.jar}"/>
+        <downloadfile src="${main.xmlbind.url}" dest="${main.xmlbind.jar}"/>
+        <downloadfile src="${main.xmlbind-impl.url}" dest="${main.xmlbind-impl.jar}"/>
+        <downloadfile src="${main.xmlbind-core.url}" dest="${main.xmlbind-core.jar}"/>
+        <downloadfile src="${main.activation.url}" dest="${main.activation.jar}"/>
         <unzip src="${jacoco.zip}" dest=".">
             <patternset>
                 <include name="lib/*.jar"/>
@@ -2025,6 +2049,10 @@ under the License.
                     <include name="commons-logging-*.jar"/>
                     <include name="commons-collections4-*.jar"/>
                     <include name="commons-math3-*.jar"/>
+                    <include name="jaxb-api-*.jar"/>
+                    <include name="jaxb-impl-*.jar"/>
+                    <include name="jaxb-core-*.jar"/>
+                    <include name="activation-*.jar"/>
                     <include name="junit-*.jar"/>
                     <include name="log4j-*.jar"/>
                 </fileset>
@@ -2297,6 +2325,10 @@ under the License.
             <auxClasspath path="${main.jmh.jar}"/>
             <auxClasspath path="${main.jmhAnnotation.jar}"/>
             <auxClasspath path="${main.ant.jar}" />
+            <auxClasspath path="${main.xmlbind.jar}" />
+            <auxClasspath path="${main.xmlbind-impl.jar}" />
+            <auxClasspath path="${main.xmlbind-core.jar}" />
+            <auxClasspath path="${main.activation.jar}" />
             <sourcePath path="src/java" />
             <sourcePath path="src/ooxml/java" />
             <sourcePath path="src/scratchpad/src" />
