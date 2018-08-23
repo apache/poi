@@ -54,6 +54,8 @@ def poijobs = [
         [ name: 'POI-DSL-1.11', jdk: '1.11', trigger: '''
 # do not run this via a schedule for now
 ''',
+          // Nodes beam* do not yet have JDK 11 installed
+          slaveAdd: '&&!beam1&&!beam2&&!beam3&&!beam4&&!beam6&&!beam7&&!beam8&&!beam9&&!beam10&&!beam11&&!beam12&&!beam13&&!beam14&&!beam15&&!beam16',
           properties: ['-Djava9addmods=-Dthis.is.a.dummy=true',
                        '-Djavadoc9addmods=-Dthis.is.a.dummy=true',
                        '-Djava9addmodsvalue=-Dsun.reflect.debugModuleAccessChecks=true',
