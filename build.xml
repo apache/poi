@@ -167,8 +167,8 @@ under the License.
     <property name="main.hamcrest.url" value="${repository.m2}/maven2/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar"/>
     <property name="main.xmlunit.jar" location="${main.lib}/xmlunit-core-2.5.1.jar"/>
     <property name="main.xmlunit.url" value="${repository.m2}/maven2/org/xmlunit/xmlunit-core/2.5.1/xmlunit-core-2.5.1.jar"/>
-    <property name="main.mockito.jar" location="${main.lib}/mockito-core-2.13.0.jar"/>
-    <property name="main.mockito.url" value="${repository.m2}/maven2/org/mockito/mockito-core/2.13.0/mockito-core-2.13.0.jar"/>
+    <property name="main.mockito.jar" location="${main.lib}/mockito-core-2.21.0.jar"/>
+    <property name="main.mockito.url" value="${repository.m2}/maven2/org/mockito/mockito-core/2.21.0/mockito-core-2.21.0.jar"/>
     <property name="main.byte-buddy.jar" location="${main.lib}/byte-buddy-1.7.9.jar"/>
     <property name="main.byte-buddy.url" value="${repository.m2}/maven2/net/bytebuddy/byte-buddy/1.7.9/byte-buddy-1.7.9.jar"/>
     <property name="main.byte-buddy-agent.jar" location="${main.lib}/byte-buddy-agent-1.7.9.jar"/>
@@ -623,6 +623,7 @@ under the License.
                 <include name="forbiddenapis-2.1.jar"/>
                 <include name="forbiddenapis-2.3.jar"/>
                 <include name="apache-rat-0.11.jar"/>
+                <include name="mockito-core-2.13.0.jar"/>
             </fileset>
             <fileset dir="${ooxml.lib}">
                 <!-- remove jars from previous versions, but not the current version -->
