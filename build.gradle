@@ -121,6 +121,10 @@ subprojects {
         exclude '**/TestUnfixedBugs.class'
         exclude '**/TestOneFile.class'
 
+        // Exclude Test Suites
+        exclude '**/All*Tests.class'
+        exclude '**/HSSFTests.class'
+
         // set heap size for the test JVM(s)
         minHeapSize = "128m"
         maxHeapSize = "768m"
