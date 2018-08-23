@@ -46,12 +46,12 @@ public abstract class XDDFChartData {
     private List<XDDFValueAxis> valueAxes;
 
     protected XDDFChartData() {
-        this.series = new ArrayList<Series>();
+        this.series = new ArrayList<>();
     }
 
     protected void defineAxes(CTUnsignedInt[] axes, Map<Long, XDDFChartAxis> categories,
             Map<Long, XDDFValueAxis> values) {
-        List<XDDFValueAxis> list = new ArrayList<XDDFValueAxis>(axes.length);
+        List<XDDFValueAxis> list = new ArrayList<>(axes.length);
         for (CTUnsignedInt axe : axes) {
             Long axisId = axe.getVal();
             XDDFChartAxis category = categories.get(axisId);

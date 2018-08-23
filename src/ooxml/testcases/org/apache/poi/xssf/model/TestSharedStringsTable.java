@@ -182,6 +182,7 @@ public final class TestSharedStringsTable extends TestCase {
         assertEquals("Second string", sst.getItemAt(2).toString());
     }
 
+    @SuppressWarnings("deprecation")
     public void testReadWrite() throws IOException {
         XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("sample.xlsx");
         SharedStringsTable sst1 = wb1.getSharedStringSource();
