@@ -222,12 +222,12 @@ under the License.
     <!-- coverage libs -->
     <property name="jacoco.zip" location="${main.lib}/jacoco-0.8.2.zip"/>
     <property name="jacoco.url" value="${repository.m2}/maven2/org/jacoco/jacoco/0.8.2/jacoco-0.8.2.zip"/>
-    <property name="asm.jar" location="${main.lib}/asm-6.0.jar"/>
-    <property name="asm.url" value="${repository.m2}/maven2/org/ow2/asm/asm/6.0/asm-6.0.jar"/>
-    <property name="asmcommons.jar" location="${main.lib}/asm-commons-6.0.jar"/>
-    <property name="asmcommons.url" value="${repository.m2}/maven2/org/ow2/asm/asm-commons/6.0/asm-commons-6.0.jar"/>
-    <property name="asmtree.jar" location="${main.lib}/asm-tree-6.0.jar"/>
-    <property name="asmtree.url" value="${repository.m2}/maven2/org/ow2/asm/asm-tree/6.0/asm-tree-6.0.jar"/>
+    <property name="asm.jar" location="${main.lib}/asm-6.2.1.jar"/>
+    <property name="asm.url" value="${repository.m2}/maven2/org/ow2/asm/asm/6.2.1/asm-6.2.1.jar"/>
+    <property name="asmcommons.jar" location="${main.lib}/asm-commons-6.2.1.jar"/>
+    <property name="asmcommons.url" value="${repository.m2}/maven2/org/ow2/asm/asm-commons/6.2.1/asm-commons-6.2.1.jar"/>
+    <property name="asmtree.jar" location="${main.lib}/asm-tree-6.2.1.jar"/>
+    <property name="asmtree.url" value="${repository.m2}/maven2/org/ow2/asm/asm-tree/6.2.1/asm-tree-6.2.1.jar"/>
 
     <!-- license and api checks -->
     <property name="rat.jar" location="${main.lib}/apache-rat-0.12.jar"/>
@@ -600,6 +600,7 @@ under the License.
                 <include name="asm-all-4*"/>
                 <include name="asm-all-5.0.3*"/>
                 <include name="asm-all-5.2*"/>
+                <include name="asm*-6.0*"/>
                 <include name="commons-codec-1.5*"/>
                 <include name="commons-codec-1.9*"/>
                 <include name="commons-codec-1.10*"/>
@@ -1319,7 +1320,7 @@ under the License.
     <target name="test-all" depends="test,test-ooxml-lite,testcoveragereport"
             description="Tests main, scratchpad, ooxml, ooxml-lite, and coveragereport"/>
 
-    <target name="testcoveragereport" depends="jacocotask" description="create test-report" xmlns:jacoco="antlib:org.jacoco.ant" if="coverage.enabled">
+    <target name="testcoveragereport" depends="init,jacocotask" description="create test-report" xmlns:jacoco="antlib:org.jacoco.ant" if="coverage.enabled">
         <delete dir="${coverage.dir}"/>
         <mkdir dir="${coverage.dir}"/>
         <mkdir dir="${main.output.dir}"/>
