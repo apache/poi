@@ -26,7 +26,6 @@ buildscript {
 }
 
 repositories {
-    maven { url "https://repository.apache.org/content/repositories/staging" }
     mavenCentral()
 }
 
