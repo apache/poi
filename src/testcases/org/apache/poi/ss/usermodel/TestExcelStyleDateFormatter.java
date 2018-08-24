@@ -90,7 +90,7 @@ public class TestExcelStyleDateFormatter {
         testMap.put(austrianLocale,        austrianResultList);
         testMap.put(englishLocale,        englishResultList);
         testMap.put(frenchLocale,        frenchResultList);
-        //testMap.put(chineseLocale,        chineseResultList);
+        testMap.put(chineseLocale,        chineseResultList);
         testMap.put(turkishLocale,        turkishResultList);
         testMap.put(hungarianLocale,    hungarianResultList);
         testMap.put(indianLocale,        indianResultList);
