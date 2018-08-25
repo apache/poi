@@ -34,7 +34,7 @@ public class XDDFPatternFillProperties implements XDDFFillProperties {
     }
 
     @Internal
-    protected CTPatternFillProperties getXmlObject() {
+    public CTPatternFillProperties getXmlObject() {
         return props;
     }
 

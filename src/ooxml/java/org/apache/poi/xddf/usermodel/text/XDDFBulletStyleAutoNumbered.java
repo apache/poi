@@ -15,26 +15,49 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xddf.usermodel;
+package org.apache.poi.xddf.usermodel.text;
 
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupFillProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextAutonumberBullet;
 
 @Beta
-public class XDDFGroupFillProperties implements XDDFFillProperties {
-    private CTGroupFillProperties props;
+public class XDDFBulletStyleAutoNumbered implements XDDFBulletStyle {
+    private CTTextAutonumberBullet style;
 
-    public XDDFGroupFillProperties() {
-        this(CTGroupFillProperties.Factory.newInstance());
-    }
-
-    protected XDDFGroupFillProperties(CTGroupFillProperties properties) {
-        this.props = properties;
+    @Internal
+    protected XDDFBulletStyleAutoNumbered(CTTextAutonumberBullet style) {
+        this.style = style;
     }
 
     @Internal
-    public CTGroupFillProperties getXmlObject() {
-        return props;
+    protected CTTextAutonumberBullet getXmlObject() {
+        return style;
+    }
+
+    public AutonumberScheme getType() {
+        return AutonumberScheme.valueOf(style.getType());
+    }
+
+    public void setType(AutonumberScheme scheme) {
+        style.setType(scheme.underlying);
+    }
+
+    public int getStartAt() {
+        if (style.isSetStartAt()) {
+            return style.getStartAt();
+        } else {
+            return 1;
+        }
+    }
+
+    public void setStartAt(Integer value) {
+        if (value == null) {
+            if (style.isSetStartAt()) {
+                style.unsetStartAt();
+            }
+        } else {
+            style.setStartAt(value);
+        }
     }
 }

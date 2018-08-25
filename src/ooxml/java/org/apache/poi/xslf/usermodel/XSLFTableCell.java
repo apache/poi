@@ -33,6 +33,7 @@ import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
 import org.apache.poi.sl.usermodel.TableCell;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.util.Units;
+import org.apache.poi.xddf.usermodel.text.XDDFTextBody;
 import org.apache.poi.xslf.usermodel.XSLFPropertiesDelegate.XSLFFillProperties;
 import org.apache.poi.xslf.usermodel.XSLFTableStyle.TablePartStyle;
 import org.apache.xmlbeans.XmlObject;
@@ -67,7 +68,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.STTextVerticalType;
 /**
  * Represents a cell of a table in a .pptx presentation
  */
-public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,XSLFTextParagraph> {
+public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape, XSLFTextParagraph> {
     private CTTableCellProperties _tcPr;
     private final XSLFTable table;
     private int row, col;
@@ -77,18 +78,20 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
      */
     private Rectangle2D anchor;
 
-    /*package*/ XSLFTableCell(CTTableCell cell, XSLFTable table){
+    /* package */ XSLFTableCell(CTTableCell cell, XSLFTable table) {
         super(cell, table.getSheet());
         this.table = table;
     }
 
     @Override
-    protected CTTextBody getTextBody(boolean create){
+    protected CTTextBody getTextBody(boolean create) {
         CTTableCell cell = getCell();
         CTTextBody txBody = cell.getTxBody();
         if (txBody == null && create) {
-            txBody = cell.addNewTxBody();
-            XSLFAutoShape.initTextBody(txBody);
+            XDDFTextBody body = new XDDFTextBody(this);
+            initTextBody(body);
+            cell.setTxBody(body.getXmlObject());
+            txBody = cell.getTxBody();
         }
         return txBody;
     }
@@ -116,25 +119,25 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
     }
 
     @Override
-    public void setLeftInset(double margin){
+    public void setLeftInset(double margin) {
         CTTableCellProperties pr = getCellProperties(true);
         pr.setMarL(Units.toEMU(margin));
     }
 
     @Override
-    public void setRightInset(double margin){
+    public void setRightInset(double margin) {
         CTTableCellProperties pr = getCellProperties(true);
         pr.setMarR(Units.toEMU(margin));
     }
 
     @Override
-    public void setTopInset(double margin){
+    public void setTopInset(double margin) {
         CTTableCellProperties pr = getCellProperties(true);
         pr.setMarT(Units.toEMU(margin));
     }
 
     @Override
-    public void setBottomInset(double margin){
+    public void setBottomInset(double margin) {
         CTTableCellProperties pr = getCellProperties(true);
         pr.setMarB(Units.toEMU(margin));
     }
@@ -150,16 +153,16 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
         }
 
         switch (edge) {
-            case bottom:
-                return (pr.isSetLnB()) ? pr.getLnB() : (create ? pr.addNewLnB() : null);
-            case left:
-                return (pr.isSetLnL()) ? pr.getLnL() : (create ? pr.addNewLnL() : null);
-            case top:
-                return (pr.isSetLnT()) ? pr.getLnT() : (create ? pr.addNewLnT() : null);
-            case right:
-                return (pr.isSetLnR()) ? pr.getLnR() : (create ? pr.addNewLnR() : null);
-            default:
-                return null;
+        case bottom:
+            return (pr.isSetLnB()) ? pr.getLnB() : (create ? pr.addNewLnB() : null);
+        case left:
+            return (pr.isSetLnL()) ? pr.getLnL() : (create ? pr.addNewLnL() : null);
+        case top:
+            return (pr.isSetLnT()) ? pr.getLnT() : (create ? pr.addNewLnT() : null);
+        case right:
+            return (pr.isSetLnR()) ? pr.getLnR() : (create ? pr.addNewLnR() : null);
+        default:
+            return null;
         }
     }
 
@@ -170,28 +173,28 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
             return;
         }
         switch (edge) {
-            case bottom:
-                if (pr.isSetLnB()) {
-                    pr.unsetLnB();
-                }
-                break;
-            case left:
-                if (pr.isSetLnL()) {
-                    pr.unsetLnL();
-                }
-                break;
-            case top:
-                if (pr.isSetLnT()) {
-                    pr.unsetLnT();
-                }
-                break;
-            case right:
-                if (pr.isSetLnR()) {
-                    pr.unsetLnB();
-                }
-                break;
-            default:
-                throw new IllegalArgumentException();
+        case bottom:
+            if (pr.isSetLnB()) {
+                pr.unsetLnB();
+            }
+            break;
+        case left:
+            if (pr.isSetLnL()) {
+                pr.unsetLnL();
+            }
+            break;
+        case top:
+            if (pr.isSetLnT()) {
+                pr.unsetLnT();
+            }
+            break;
+        case right:
+            if (pr.isSetLnR()) {
+                pr.unsetLnB();
+            }
+            break;
+        default:
+            throw new IllegalArgumentException();
         }
     }
 
@@ -276,7 +279,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
             ln.unsetNoFill();
         }
 
-        if(!ln.isSetPrstDash()) {
+        if (!ln.isSetPrstDash()) {
             ln.addNewPrstDash().setVal(STPresetLineDashVal.SOLID);
         }
         if (!ln.isSetCmpd()) {
@@ -396,19 +399,19 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
         ln.setCap(STLineCap.Enum.forInt(cap.ooxmlId));
     }
 
-
-
     /**
-     * Specifies a solid color fill. The shape is filled entirely with the specified color.
+     * Specifies a solid color fill. The shape is filled entirely with the
+     * specified color.
      *
-     * @param color the solid color fill.
-     * The value of <code>null</code> unsets the solidFIll attribute from the underlying xml
+     * @param color
+     *            the solid color fill. The value of <code>null</code> unsets
+     *            the solidFIll attribute from the underlying xml
      */
     @Override
     public void setFillColor(Color color) {
         CTTableCellProperties spPr = getCellProperties(true);
         if (color == null) {
-            if(spPr.isSetSolidFill()) {
+            if (spPr.isSetSolidFill()) {
                 spPr.unsetSolidFill();
             }
         } else {
@@ -423,13 +426,13 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
      * @return solid fill color of null if not set
      */
     @Override
-    public Color getFillColor(){
+    public Color getFillColor() {
         PaintStyle ps = getFillPaint();
         if (ps instanceof SolidPaint) {
-            ColorStyle cs = ((SolidPaint)ps).getSolidColor();
+            ColorStyle cs = ((SolidPaint) ps).getSolidColor();
             return DrawPaint.applyColorTransform(cs);
         }
-        
+
         return null;
     }
 
@@ -465,23 +468,24 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
         } else {
             return null;
         }
-        
+
         fp = XSLFPropertiesDelegate.getFillDelegate(props);
-        if (fp != null)  {
+        if (fp != null) {
             PaintStyle paint = XSLFShape.selectPaint(fp, null, slideShow.getPackagePart(), theme, hasPlaceholder);
             if (paint != null) {
                 return paint;
             }
         }
-        
+
         return null;
     }
 
     /**
      * Retrieves the part style depending on the location of this cell
      *
-     * @param tablePartStyle the part to be returned, usually this is null
-     *  and only set when used as a helper method
+     * @param tablePartStyle
+     *            the part to be returned, usually this is null and only set
+     *            when used as a helper method
      * @return the table part style
      */
     private CTTablePartStyle getTablePartStyle(TablePartStyle tablePartStyle) {
@@ -503,11 +507,11 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
             tps = tablePartStyle;
         } else if (row == 0 && firstRow) {
             tps = TablePartStyle.firstRow;
-        } else if (row == table.getNumberOfRows()-1 && lastRow) {
+        } else if (row == table.getNumberOfRows() - 1 && lastRow) {
             tps = TablePartStyle.lastRow;
         } else if (col == 0 && firstCol) {
             tps = TablePartStyle.firstCol;
-        } else if (col == table.getNumberOfColumns()-1 && lastCol) {
+        } else if (col == table.getNumberOfColumns() - 1 && lastCol) {
             tps = TablePartStyle.lastCol;
         } else {
             tps = TablePartStyle.wholeTbl;
@@ -559,28 +563,28 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
     }
 
     @Override
-    public void setVerticalAlignment(VerticalAlignment anchor){
-    	CTTableCellProperties cellProps = getCellProperties(true);
-		if(anchor == null) {
-			if(cellProps.isSetAnchor()) {
-				cellProps.unsetAnchor();
-			}
-		} else {
-			cellProps.setAnchor(STTextAnchoringType.Enum.forInt(anchor.ordinal() + 1));
-		}
+    public void setVerticalAlignment(VerticalAlignment anchor) {
+        CTTableCellProperties cellProps = getCellProperties(true);
+        if (anchor == null) {
+            if (cellProps.isSetAnchor()) {
+                cellProps.unsetAnchor();
+            }
+        } else {
+            cellProps.setAnchor(STTextAnchoringType.Enum.forInt(anchor.ordinal() + 1));
+        }
     }
 
     @Override
-    public VerticalAlignment getVerticalAlignment(){
+    public VerticalAlignment getVerticalAlignment() {
         CTTableCellProperties cellProps = getCellProperties(false);
 
         VerticalAlignment align = VerticalAlignment.TOP;
-        if(cellProps != null && cellProps.isSetAnchor()) {
+        if (cellProps != null && cellProps.isSetAnchor()) {
             int ival = cellProps.getAnchor().intValue();
             align = VerticalAlignment.values()[ival - 1];
         }
         return align;
-     }
+    }
 
     /**
      * @since POI 3.15-beta2
@@ -588,7 +592,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
     @Override
     public void setTextDirection(TextDirection orientation) {
         CTTableCellProperties cellProps = getCellProperties(true);
-        if(orientation == null) {
+        if (orientation == null) {
             if (cellProps.isSetVert()) {
                 cellProps.unsetVert();
             }
@@ -629,23 +633,23 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
         }
 
         switch (orientation.intValue()) {
-            default:
-            case STTextVerticalType.INT_HORZ:
-                return TextDirection.HORIZONTAL;
-            case STTextVerticalType.INT_VERT:
-            case STTextVerticalType.INT_EA_VERT:
-            case STTextVerticalType.INT_MONGOLIAN_VERT:
-                return TextDirection.VERTICAL;
-            case STTextVerticalType.INT_VERT_270:
-                return TextDirection.VERTICAL_270;
-            case STTextVerticalType.INT_WORD_ART_VERT:
-            case STTextVerticalType.INT_WORD_ART_VERT_RTL:
-                return TextDirection.STACKED;
+        default:
+        case STTextVerticalType.INT_HORZ:
+            return TextDirection.HORIZONTAL;
+        case STTextVerticalType.INT_VERT:
+        case STTextVerticalType.INT_EA_VERT:
+        case STTextVerticalType.INT_MONGOLIAN_VERT:
+            return TextDirection.VERTICAL;
+        case STTextVerticalType.INT_VERT_270:
+            return TextDirection.VERTICAL_270;
+        case STTextVerticalType.INT_WORD_ART_VERT:
+        case STTextVerticalType.INT_WORD_ART_VERT_RTL:
+            return TextDirection.STACKED;
         }
     }
 
     private CTTableCell getCell() {
-        return (CTTableCell)getXmlObject();
+        return (CTTableCell) getXmlObject();
     }
 
     /* package */ void setRowColIndex(int row, int col) {
@@ -669,15 +673,16 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
     }
 
     /**
-     * There's no real anchor for table cells - this method is used to temporarily store the location
-     * of the cell for a later retrieval, e.g. for rendering
+     * There's no real anchor for table cells - this method is used to
+     * temporarily store the location of the cell for a later retrieval, e.g.
+     * for rendering
      *
      * @since POI 3.15-beta2
      */
     @Override
     public void setAnchor(Rectangle2D anchor) {
         if (this.anchor == null) {
-            this.anchor = (Rectangle2D)anchor.clone();
+            this.anchor = (Rectangle2D) anchor.clone();
         } else {
             this.anchor.setRect(anchor);
         }
@@ -692,7 +697,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
             table.updateCellAnchor();
         }
         // anchor should be set, after updateCellAnchor is through
-        assert(anchor != null);
+        assert (anchor != null);
         return anchor;
     }
 
@@ -717,7 +722,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
     protected XmlObject getShapeProperties() {
         return getCellProperties(false);
     }
-    
+
     /**
      * @since POI 3.15-beta2
      */
@@ -741,7 +746,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
         }
 
         @Override
-        public PaintStyle getFontColor(){
+        public PaintStyle getFontColor() {
             CTTableStyleTextStyle txStyle = getTextStyle();
             if (txStyle == null) {
                 return super.getFontColor();
@@ -752,7 +757,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
             if (fontRef != null) {
                 phClr = fontRef.getSchemeClr();
             }
-            
+
             XSLFTheme theme = getSheet().getTheme();
             final XSLFColor c = new XSLFColor(txStyle, theme, phClr);
             return DrawPaint.createSolidPaint(c.getColorStyle());
@@ -777,7 +782,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
                 return txStyle.isSetI() && txStyle.getI().intValue() == STOnOffStyleType.INT_ON;
             }
         }
- 
+
         private CTTableStyleTextStyle getTextStyle() {
             CTTablePartStyle tps = getTablePartStyle(null);
             if (tps == null || !tps.isSetTcTxStyle()) {

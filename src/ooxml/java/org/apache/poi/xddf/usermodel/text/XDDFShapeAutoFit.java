@@ -15,26 +15,37 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xddf.usermodel;
+package org.apache.poi.xddf.usermodel.text;
 
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupFillProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextShapeAutofit;
 
 @Beta
-public class XDDFGroupFillProperties implements XDDFFillProperties {
-    private CTGroupFillProperties props;
+public class XDDFShapeAutoFit implements XDDFAutoFit {
+    private CTTextShapeAutofit autofit;
 
-    public XDDFGroupFillProperties() {
-        this(CTGroupFillProperties.Factory.newInstance());
-    }
-
-    protected XDDFGroupFillProperties(CTGroupFillProperties properties) {
-        this.props = properties;
+    public XDDFShapeAutoFit() {
+        this(CTTextShapeAutofit.Factory.newInstance());
     }
 
     @Internal
-    public CTGroupFillProperties getXmlObject() {
-        return props;
+    protected XDDFShapeAutoFit(CTTextShapeAutofit autofit) {
+        this.autofit = autofit;
+    }
+
+    @Internal
+    protected CTTextShapeAutofit getXmlObject() {
+        return autofit;
+    }
+
+    @Override
+    public int getFontScale() {
+        return 100_000;
+    }
+
+    @Override
+    public int getLineSpaceReduction() {
+        return 0;
     }
 }

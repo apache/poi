@@ -15,26 +15,31 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xddf.usermodel;
+package org.apache.poi.xddf.usermodel.text;
 
-import org.apache.poi.util.Beta;
-import org.apache.poi.util.Internal;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupFillProperties;
+import java.util.HashMap;
 
-@Beta
-public class XDDFGroupFillProperties implements XDDFFillProperties {
-    private CTGroupFillProperties props;
+import org.openxmlformats.schemas.drawingml.x2006.main.STTextCapsType;
 
-    public XDDFGroupFillProperties() {
-        this(CTGroupFillProperties.Factory.newInstance());
+public enum CapsType {
+    ALL(STTextCapsType.ALL),
+    NONE(STTextCapsType.NONE),
+    SMALL(STTextCapsType.SMALL);
+
+    final STTextCapsType.Enum underlying;
+
+    CapsType(STTextCapsType.Enum caps) {
+        this.underlying = caps;
     }
 
-    protected XDDFGroupFillProperties(CTGroupFillProperties properties) {
-        this.props = properties;
+    private final static HashMap<STTextCapsType.Enum, CapsType> reverse = new HashMap<STTextCapsType.Enum, CapsType>();
+    static {
+        for (CapsType value : values()) {
+            reverse.put(value.underlying, value);
+        }
     }
 
-    @Internal
-    public CTGroupFillProperties getXmlObject() {
-        return props;
+    static CapsType valueOf(STTextCapsType.Enum caps) {
+        return reverse.get(caps);
     }
 }
