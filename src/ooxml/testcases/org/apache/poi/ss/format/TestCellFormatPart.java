@@ -55,7 +55,7 @@ public class TestCellFormatPart extends CellFormatTestBase {
     }
 
     @Test
-    public void testGeneralFormat() throws Exception {
+    public void testGeneralFormat() {
         runFormatTests("GeneralFormatTests.xlsx", new CellValue() {
             @Override
             public Object getValue(Cell cell) {
@@ -71,7 +71,8 @@ public class TestCellFormatPart extends CellFormatTestBase {
         });
     }
 
-    public void testNumberFormat() throws Exception {
+    @Test
+    public void testNumberFormat() {
         runFormatTests("NumberFormatTests.xlsx", new CellValue() {
             @Override
             public Object getValue(Cell cell) {
@@ -81,7 +82,7 @@ public class TestCellFormatPart extends CellFormatTestBase {
     }
 
     @Test
-    public void testNumberApproxFormat() throws Exception {
+    public void testNumberApproxFormat() {
         runFormatTests("NumberFormatApproxTests.xlsx", new CellValue() {
             @Override
             public Object getValue(Cell cell) {
@@ -102,7 +103,7 @@ public class TestCellFormatPart extends CellFormatTestBase {
     }
 
     @Test
-    public void testDateFormat() throws Exception {
+    public void testDateFormat() {
         TimeZone tz = LocaleUtil.getUserTimeZone();
         LocaleUtil.setUserTimeZone(TimeZone.getTimeZone("CET"));
         try {
@@ -118,7 +119,7 @@ public class TestCellFormatPart extends CellFormatTestBase {
     }
 
     @Test
-    public void testElapsedFormat() throws Exception {
+    public void testElapsedFormat() {
         runFormatTests("ElapsedFormatTests.xlsx", new CellValue() {
             @Override
             public Object getValue(Cell cell) {
@@ -128,7 +129,7 @@ public class TestCellFormatPart extends CellFormatTestBase {
     }
 
     @Test
-    public void testTextFormat() throws Exception {
+    public void testTextFormat() {
         runFormatTests("TextFormatTests.xlsx", new CellValue() {
             @Override
             public Object getValue(Cell cell) {
@@ -143,7 +144,7 @@ public class TestCellFormatPart extends CellFormatTestBase {
     }
 
     @Test
-    public void testConditions() throws Exception {
+    public void testConditions() {
         runFormatTests("FormatConditionTests.xlsx", new CellValue() {
             @Override
             Object getValue(Cell cell) {

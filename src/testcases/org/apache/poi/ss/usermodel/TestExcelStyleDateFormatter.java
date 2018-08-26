@@ -18,7 +18,6 @@
 package org.apache.poi.ss.usermodel;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 import java.text.DateFormatSymbols;
 import java.text.FieldPosition;
@@ -42,6 +41,41 @@ public class TestExcelStyleDateFormatter {
      */
     @Test
     public void test60369() throws ParseException {
+        Map<Locale, List<String>> testMap = initializeLocales();
+
+        // We have to set up dates as well.
+        SimpleDateFormat testDateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.ROOT);
+        List<Date> testDates = Arrays.asList(
+                testDateFormat.parse("12.01.1980"),
+                testDateFormat.parse("11.02.1995"),
+                testDateFormat.parse("10.03.2045"),
+                testDateFormat.parse("09.04.2016"),
+                testDateFormat.parse("08.05.2017"),
+                testDateFormat.parse("07.06.1945"),
+                testDateFormat.parse("06.07.1998"),
+                testDateFormat.parse("05.08.2099"),
+                testDateFormat.parse("04.09.1988"),
+                testDateFormat.parse("03.10.2023"),
+                testDateFormat.parse("02.11.1978"),
+                testDateFormat.parse("01.12.1890"));
+
+        // Let's iterate over the test setup.
+        for (Locale locale : testMap.keySet()) {
+            ExcelStyleDateFormatter formatter = new ExcelStyleDateFormatter(EXCEL_DATE_FORMAT, new DateFormatSymbols(locale));
+            for (int i = 0; i < testDates.size(); i++) {
+                // Call the method to be tested!
+                String result =
+                        formatter.format(testDates.get(i),
+                                new StringBuffer(),
+                                new FieldPosition(java.text.DateFormat.MONTH_FIELD)).toString();
+                //System.err.println(result +  " - " + getUnicode(result.charAt(0)));
+                assertEquals("Failed for locale " + locale + " and date " + testDates.get(i) + ", having: " + result,
+                        getUnicode(testMap.get(locale).get(i).charAt(0)), getUnicode(result.charAt(0)));
+            }
+        }
+    }
+
+    private Map<Locale, List<String>> initializeLocales() {
         // Setting up the locale to be tested together with a list of asserted unicode-formatted results and put them in a map.
         Locale germanLocale = Locale.GERMAN;
         List<String> germanResultList = Arrays.asList("\u004a", "\u0046", "\u004d", "\u0041", "\u004d",
@@ -96,37 +130,7 @@ public class TestExcelStyleDateFormatter {
         testMap.put(indianLocale,        indianResultList);
         testMap.put(indonesianLocale,    indonesianResultList);
 
-        // We have to set up dates as well.
-        SimpleDateFormat testDateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.ROOT);
-        List<Date> testDates = Arrays.asList(
-                testDateFormat.parse("12.01.1980"),
-                testDateFormat.parse("11.02.1995"),
-                testDateFormat.parse("10.03.2045"),
-                testDateFormat.parse("09.04.2016"),
-                testDateFormat.parse("08.05.2017"),
-                testDateFormat.parse("07.06.1945"),
-                testDateFormat.parse("06.07.1998"),
-                testDateFormat.parse("05.08.2099"),
-                testDateFormat.parse("04.09.1988"),
-                testDateFormat.parse("03.10.2023"),
-                testDateFormat.parse("02.11.1978"),
-                testDateFormat.parse("01.12.1890"));
-
-        // Let's iterate over the test setup.
-        for (Locale locale : testMap.keySet()) {
-            //System.err.println("Locale: " + locale);
-            ExcelStyleDateFormatter formatter = new ExcelStyleDateFormatter(EXCEL_DATE_FORMAT, new DateFormatSymbols(locale));
-            for (int i = 0; i < 12; i++) {
-                // Call the method to be tested!
-                String result =
-                        formatter.format(testDates.get(i),
-                                new StringBuffer(),
-                                new FieldPosition(java.text.DateFormat.MONTH_FIELD)).toString();
-                //System.err.println(result +  " - " + getUnicode(result.charAt(0)));
-                assertEquals("testing locale " + locale,
-                        getUnicode(testMap.get(locale).get(i).charAt(0)), getUnicode(result.charAt(0)));
-            }
-        }
+        return testMap;
     }
 
     private String getUnicode(char c) {
@@ -135,8 +139,8 @@ public class TestExcelStyleDateFormatter {
 
     @Test
     public void testConstruct() {
-        assertNotNull(new ExcelStyleDateFormatter(EXCEL_DATE_FORMAT, LocaleUtil.getUserLocale()));
-        assertNotNull(new ExcelStyleDateFormatter(EXCEL_DATE_FORMAT));
+        new ExcelStyleDateFormatter(EXCEL_DATE_FORMAT, LocaleUtil.getUserLocale());
+        new ExcelStyleDateFormatter(EXCEL_DATE_FORMAT);
     }
 
     @Test
