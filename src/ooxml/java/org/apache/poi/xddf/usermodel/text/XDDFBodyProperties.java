@@ -19,6 +19,7 @@ package org.apache.poi.xddf.usermodel.text;
 
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Units;
 import org.apache.poi.xddf.usermodel.XDDFExtensionList;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBodyProperties;
 
@@ -73,6 +74,70 @@ public class XDDFBodyProperties {
             props.unsetExtLst();
         } else {
             props.setExtLst(list.getXmlObject());
+        }
+    }
+
+    public Double getBottomInset() {
+        if (props.isSetBIns()) {
+            return Units.toPoints(props.getBIns());
+        } else {
+            return null;
+        }
+    }
+
+    public void setBottomInset(Double points) {
+        if (points == null || Double.isNaN(points)) {
+            props.unsetBIns();
+        } else {
+            props.setBIns(Units.toEMU(points));
+        }
+    }
+
+    public Double getLeftInset() {
+        if (props.isSetLIns()) {
+            return Units.toPoints(props.getLIns());
+        } else {
+            return null;
+        }
+    }
+
+    public void setLeftInset(Double points) {
+        if (points == null || Double.isNaN(points)) {
+            props.unsetLIns();
+        } else {
+            props.setLIns(Units.toEMU(points));
+        }
+    }
+
+    public Double getRightInset() {
+        if (props.isSetRIns()) {
+            return Units.toPoints(props.getRIns());
+        } else {
+            return null;
+        }
+    }
+
+    public void setRightInset(Double points) {
+        if (points == null || Double.isNaN(points)) {
+            props.unsetRIns();
+        } else {
+            props.setRIns(Units.toEMU(points));
+        }
+    }
+
+    public Double getTopInset() {
+        if (props.isSetTIns()) {
+            return Units.toPoints(props.getTIns());
+        } else {
+            return null;
+        }
+    }
+
+    public void setTopInset(Double points) {
+        if (points == null || Double.isNaN(points)) {
+            props.unsetTIns();
+        } else {
+            props.setTIns(Units.toEMU(points));
         }
     }
 }
