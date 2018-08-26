@@ -51,10 +51,25 @@ def poijobs = [
                        '-Djava.locale.providers=JRE,CLDR'],
           skipcigame: true
         ],
-        [ name: 'POI-DSL-1.11', jdk: '1.11', trigger: '''
+        [ name: 'POI-DSL-1.11', jdk: '1.11', trigger: triggerSundays,
+          // Nodes beam* do not yet have JDK 11 installed
+          slaveAdd: '&&!beam1&&!beam2&&!beam3&&!beam4&&!beam6&&!beam7&&!beam8&&!beam9&&!beam10&&!beam11&&!beam12&&!beam13&&!beam14&&!beam15&&!beam16',
+          properties: ['-Djava9addmods=-Dthis.is.a.dummy=true',
+                       '-Djavadoc9addmods=-Dthis.is.a.dummy=true',
+                       '-Djava9addmodsvalue=-Dsun.reflect.debugModuleAccessChecks=true',
+                       '-Djava9addopens1=--add-opens=java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED',
+                       '-Djava9addopens2=--add-opens=java.base/java.io=ALL-UNNAMED',
+                       '-Djava9addopens3=--add-opens=java.base/java.nio=ALL-UNNAMED',
+                       '-Djava9addopens4=--add-opens=java.base/java.lang=ALL-UNNAMED',
+                       '-Djava9addopens5=--add-opens=java.base/jdk.internal.ref=ALL-UNNAMED',
+                       '-Djava9addopens6=-Dthis.is.a.dummy=true',
+                       '-Djava.locale.providers=JRE,CLDR'],
+          skipcigame: true
+        ],
+        [ name: 'POI-DSL-1.12', jdk: '1.12', trigger: '''
 # do not run this via a schedule for now
 ''',
-          // Nodes beam* do not yet have JDK 11 installed
+          // Nodes beam* do not yet have JDK 12 installed
           slaveAdd: '&&!beam1&&!beam2&&!beam3&&!beam4&&!beam6&&!beam7&&!beam8&&!beam9&&!beam10&&!beam11&&!beam12&&!beam13&&!beam14&&!beam15&&!beam16',
           properties: ['-Djava9addmods=-Dthis.is.a.dummy=true',
                        '-Djavadoc9addmods=-Dthis.is.a.dummy=true',
@@ -112,6 +127,7 @@ def jdkMapping = [
         '1.9': 'JDK 1.9 (latest)',
         '1.10': 'JDK 10 (latest)',
         '1.11': 'JDK 11 (latest)',
+        '1.12': 'JDK 12 (latest)',
         'OpenJDK': 'OpenJDK 8 (on Ubuntu only) ',   // blank is required here until the name in the Jenkins instance is fixed!
         'IBMJDK': 'IBM 1.8 64-bit (on Ubuntu only)',
 ]
@@ -219,7 +235,7 @@ poijobs.each { poijob ->
             env('LANG', 'en_US.UTF-8')
             if(jdkKey == '1.9' || jdkKey == '1.10') {
                 // when using JDK 9/10 for running Ant, we need to provide more modules for the forbidden-api-checks task
-                // on JDK 11 there is no such module any more, so do not add it here
+                // on JDK 11 and newer there is no such module any more, so do not add it here
                 env('ANT_OPTS', '--add-modules=java.xml.bind --add-opens=java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED')
             }
             env('FORREST_HOME', poijob.windows ? 'f:\\jenkins\\tools\\forrest\\latest' : '/home/jenkins/tools/forrest/latest')
@@ -462,7 +478,10 @@ Unfortunately we often see builds break because of changes/new machines...'''
                 'OpenJDK 10.0.2 (on Ubuntu only)',
 
                 'JDK 11 (latest)',
-                'JDK 11 b23 (early access build) (Windows Only)'
+                'JDK 11 b23 (early access build) (Windows Only)',
+
+                'JDK 12 (latest)',
+                'JDK 12 b8 (early access build) (Windows Only)'
         )
         label('Nodes',
 				'arm1',
