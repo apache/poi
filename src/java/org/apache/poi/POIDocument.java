@@ -231,13 +231,10 @@ public abstract class POIDocument implements Closeable {
     
             // Find the entry, and get an input stream for it
             step = "getting";
-            DocumentInputStream dis = dirNode.createDocumentInputStream( dirNode.getEntry(setName) );
-            try {
+            try (DocumentInputStream dis = dirNode.createDocumentInputStream(dirNode.getEntry(setName))) {
                 // Create the Property Set
                 step = "creating";
                 return PropertySetFactory.create(dis);
-            } finally {
-                dis.close();
             }
         } catch (IOException e) {
             throw e;
@@ -424,7 +421,7 @@ public abstract class POIDocument implements Closeable {
      * Closes the underlying {@link NPOIFSFileSystem} from which
      *  the document was read, if any. Has no effect on documents
      *  opened from an InputStream, or newly created ones.
-     * <p>Once {@link #close()} has been called, no further operations
+     * <p>Once close() has been called, no further operations
      *  should be called on the document.
      */
     @Override
