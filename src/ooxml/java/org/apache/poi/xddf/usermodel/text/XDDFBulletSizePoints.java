@@ -15,26 +15,41 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xddf.usermodel;
+package org.apache.poi.xddf.usermodel.text;
 
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupFillProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBulletSizePoint;
 
 @Beta
-public class XDDFGroupFillProperties implements XDDFFillProperties {
-    private CTGroupFillProperties props;
+public class XDDFBulletSizePoints extends XDDFBulletSize {
+    private CTTextBulletSizePoint points;
 
-    public XDDFGroupFillProperties() {
-        this(CTGroupFillProperties.Factory.newInstance());
-    }
-
-    protected XDDFGroupFillProperties(CTGroupFillProperties properties) {
-        this.props = properties;
+    public XDDFBulletSizePoints(double value) {
+        this(CTTextBulletSizePoint.Factory.newInstance());
+        setPoints(value);
     }
 
     @Internal
-    public CTGroupFillProperties getXmlObject() {
-        return props;
+    protected XDDFBulletSizePoints(CTTextBulletSizePoint points) {
+        this.points = points;
+    }
+
+    @Internal
+    protected CTTextBulletSizePoint getXmlObject() {
+        return points;
+    }
+
+    @Override
+    public Kind getType() {
+        return Kind.POINTS;
+    }
+
+    public double getPoints() {
+        return points.getVal() * 0.01;
+    }
+
+    public void setPoints(double value) {
+        points.setVal((int)(100 * value));
     }
 }

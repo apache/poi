@@ -40,12 +40,13 @@ public class XDDFSolidFillProperties implements XDDFFillProperties {
         setColor(color);
     }
 
-    protected XDDFSolidFillProperties(CTSolidColorFillProperties properties) {
+    @Internal
+    public XDDFSolidFillProperties(CTSolidColorFillProperties properties) {
         this.props = properties;
     }
 
     @Internal
-    protected CTSolidColorFillProperties getXmlObject() {
+    public CTSolidColorFillProperties getXmlObject() {
         return props;
     }
 

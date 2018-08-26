@@ -15,26 +15,32 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xddf.usermodel;
+package org.apache.poi.xddf.usermodel.text;
 
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupFillProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBulletSizeFollowText;
 
 @Beta
-public class XDDFGroupFillProperties implements XDDFFillProperties {
-    private CTGroupFillProperties props;
+public class XDDFBulletSizeFollowText extends XDDFBulletSize {
+    private CTTextBulletSizeFollowText follow;
 
-    public XDDFGroupFillProperties() {
-        this(CTGroupFillProperties.Factory.newInstance());
-    }
-
-    protected XDDFGroupFillProperties(CTGroupFillProperties properties) {
-        this.props = properties;
+    public XDDFBulletSizeFollowText() {
+        this(CTTextBulletSizeFollowText.Factory.newInstance());
     }
 
     @Internal
-    public CTGroupFillProperties getXmlObject() {
-        return props;
+    protected XDDFBulletSizeFollowText(CTTextBulletSizeFollowText follow) {
+        this.follow = follow;
+    }
+
+    @Internal
+    protected CTTextBulletSizeFollowText getXmlObject() {
+        return follow;
+    }
+
+    @Override
+    public Kind getType() {
+        return Kind.TEXT;
     }
 }

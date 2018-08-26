@@ -15,26 +15,33 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xddf.usermodel;
+package org.apache.poi.xddf.usermodel.text;
 
-import org.apache.poi.util.Beta;
-import org.apache.poi.util.Internal;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupFillProperties;
+import java.util.HashMap;
 
-@Beta
-public class XDDFGroupFillProperties implements XDDFFillProperties {
-    private CTGroupFillProperties props;
+import org.openxmlformats.schemas.drawingml.x2006.main.STTextFontAlignType;
 
-    public XDDFGroupFillProperties() {
-        this(CTGroupFillProperties.Factory.newInstance());
+public enum FontAlignment {
+    AUTOMATIC(STTextFontAlignType.AUTO),
+    BOTTOM(STTextFontAlignType.B),
+    BASELINE(STTextFontAlignType.BASE),
+    CENTER(STTextFontAlignType.CTR),
+    TOP(STTextFontAlignType.T);
+
+    final STTextFontAlignType.Enum underlying;
+
+    FontAlignment(STTextFontAlignType.Enum align) {
+        this.underlying = align;
     }
 
-    protected XDDFGroupFillProperties(CTGroupFillProperties properties) {
-        this.props = properties;
+    private final static HashMap<STTextFontAlignType.Enum, FontAlignment> reverse = new HashMap<STTextFontAlignType.Enum, FontAlignment>();
+    static {
+        for (FontAlignment value : values()) {
+            reverse.put(value.underlying, value);
+        }
     }
 
-    @Internal
-    public CTGroupFillProperties getXmlObject() {
-        return props;
+    static FontAlignment valueOf(STTextFontAlignType.Enum align) {
+        return reverse.get(align);
     }
 }

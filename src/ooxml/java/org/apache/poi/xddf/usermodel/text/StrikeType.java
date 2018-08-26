@@ -15,26 +15,31 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xddf.usermodel;
+package org.apache.poi.xddf.usermodel.text;
 
-import org.apache.poi.util.Beta;
-import org.apache.poi.util.Internal;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupFillProperties;
+import java.util.HashMap;
 
-@Beta
-public class XDDFGroupFillProperties implements XDDFFillProperties {
-    private CTGroupFillProperties props;
+import org.openxmlformats.schemas.drawingml.x2006.main.STTextStrikeType;
 
-    public XDDFGroupFillProperties() {
-        this(CTGroupFillProperties.Factory.newInstance());
+public enum StrikeType {
+    DOUBLE_STRIKE(STTextStrikeType.DBL_STRIKE),
+    NO_STRIKE(STTextStrikeType.NO_STRIKE),
+    SINGLE_STRIKE(STTextStrikeType.SNG_STRIKE);
+
+    final STTextStrikeType.Enum underlying;
+
+    StrikeType(STTextStrikeType.Enum strike) {
+        this.underlying = strike;
     }
 
-    protected XDDFGroupFillProperties(CTGroupFillProperties properties) {
-        this.props = properties;
+    private final static HashMap<STTextStrikeType.Enum, StrikeType> reverse = new HashMap<STTextStrikeType.Enum, StrikeType>();
+    static {
+        for (StrikeType value : values()) {
+            reverse.put(value.underlying, value);
+        }
     }
 
-    @Internal
-    public CTGroupFillProperties getXmlObject() {
-        return props;
+    static StrikeType valueOf(STTextStrikeType.Enum strike) {
+        return reverse.get(strike);
     }
 }
