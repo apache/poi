@@ -69,7 +69,8 @@ public class TestExcelStyleDateFormatter {
                                 new StringBuffer(),
                                 new FieldPosition(java.text.DateFormat.MONTH_FIELD)).toString();
                 //System.err.println(result +  " - " + getUnicode(result.charAt(0)));
-                assertEquals("Failed for locale " + locale + " and date " + testDates.get(i) + ", having: " + result,
+                assertEquals("Failed for locale " + locale + ", provider: " + System.getProperty("java.locale.providers") +
+                        " and date " + testDates.get(i) + ", having: " + result,
                         getUnicode(testMap.get(locale).get(i).charAt(0)), getUnicode(result.charAt(0)));
             }
         }
