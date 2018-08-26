@@ -15,26 +15,23 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xddf.usermodel;
+package org.apache.poi.xddf.usermodel.text;
 
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupFillProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextNoBullet;
 
 @Beta
-public class XDDFGroupFillProperties implements XDDFFillProperties {
-    private CTGroupFillProperties props;
+public class XDDFBulletStyleNone extends XDDFBulletStyle {
+    private CTTextNoBullet style;
 
-    public XDDFGroupFillProperties() {
-        this(CTGroupFillProperties.Factory.newInstance());
-    }
-
-    protected XDDFGroupFillProperties(CTGroupFillProperties properties) {
-        this.props = properties;
+    @Internal
+    protected XDDFBulletStyleNone(CTTextNoBullet style) {
+        this.style = style;
     }
 
     @Internal
-    public CTGroupFillProperties getXmlObject() {
-        return props;
+    protected CTTextNoBullet getXmlObject() {
+        return style;
     }
 }

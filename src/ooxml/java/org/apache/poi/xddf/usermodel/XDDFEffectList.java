@@ -26,7 +26,7 @@ public class XDDFEffectList {
     private CTEffectList list;
 
     @Internal
-    protected XDDFEffectList(CTEffectList list) {
+    public XDDFEffectList(CTEffectList list) {
         this.list = list;
     }
 

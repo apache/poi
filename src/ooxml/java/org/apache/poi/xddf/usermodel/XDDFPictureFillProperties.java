@@ -19,7 +19,6 @@ package org.apache.poi.xddf.usermodel;
 
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
 
 @Beta
@@ -35,27 +34,23 @@ public class XDDFPictureFillProperties implements XDDFFillProperties {
     }
 
     @Internal
-    protected CTBlipFillProperties getXmlObject() {
+    public CTBlipFillProperties getXmlObject() {
         return props;
     }
 
-    @Internal
-    public CTBlip getCTBlip() {
+    public XDDFPicture getPicture() {
         if (props.isSetBlip()) {
-            return props.getBlip();
+            return new XDDFPicture(props.getBlip());
         } else {
             return null;
         }
     }
 
-    @Internal
-    public void setBlip(CTBlip blip) {
-        if (blip == null) {
-            if (props.isSetBlip()) {
-                props.unsetBlip();
-            }
+    public void setPicture(XDDFPicture picture) {
+        if (picture == null) {
+            props.unsetBlip();
         } else {
-            props.setBlip(blip);
+            props.setBlip(picture.getXmlObject());
         }
     }
 

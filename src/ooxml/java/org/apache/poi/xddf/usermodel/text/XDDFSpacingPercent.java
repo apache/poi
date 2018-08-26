@@ -15,26 +15,42 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xddf.usermodel;
+package org.apache.poi.xddf.usermodel.text;
 
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupFillProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextSpacing;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextSpacingPercent;
 
 @Beta
-public class XDDFGroupFillProperties implements XDDFFillProperties {
-    private CTGroupFillProperties props;
+public class XDDFSpacingPercent extends XDDFSpacing {
+    private CTTextSpacingPercent percent;
+    private Double scale;
 
-    public XDDFGroupFillProperties() {
-        this(CTGroupFillProperties.Factory.newInstance());
-    }
-
-    protected XDDFGroupFillProperties(CTGroupFillProperties properties) {
-        this.props = properties;
+    public XDDFSpacingPercent(double value) {
+        this(CTTextSpacing.Factory.newInstance(), CTTextSpacingPercent.Factory.newInstance(), null);
+        spacing.unsetSpcPts();
+        spacing.setSpcPct(percent);
+        setPercent(value);
     }
 
     @Internal
-    public CTGroupFillProperties getXmlObject() {
-        return props;
+    protected XDDFSpacingPercent(CTTextSpacing parent, CTTextSpacingPercent percent, Double scale) {
+        super(parent);
+        this.percent = percent;
+        this.scale = (scale == null) ? 0.001 : scale * 0.001;
+    }
+
+    @Override
+    public Kind getType() {
+        return Kind.PERCENT;
+    }
+
+    public double getPercent() {
+        return percent.getVal() * scale;
+    }
+
+    public void setPercent(double value) {
+        percent.setVal((int)(1000 * value));
     }
 }

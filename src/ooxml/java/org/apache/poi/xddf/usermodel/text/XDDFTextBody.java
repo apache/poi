@@ -17,25 +17,350 @@
 
 package org.apache.poi.xddf.usermodel.text;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextListStyle;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties;
 
 @Beta
 public class XDDFTextBody {
-    private CTTextBody body;
+    private CTTextBody _body;
+    private TextContainer _parent;
 
-    public XDDFTextBody() {
-        this(CTTextBody.Factory.newInstance());
+    public XDDFTextBody(TextContainer parent) {
+        this(parent, CTTextBody.Factory.newInstance());
+        this._body.addNewBodyPr();
     }
 
     @Internal
-    public XDDFTextBody(CTTextBody body) {
-        this.body = body;
+    public XDDFTextBody(TextContainer parent, CTTextBody body) {
+        this._parent = parent;
+        this._body = body;
     }
 
     @Internal
     public CTTextBody getXmlObject() {
-        return body;
+        return _body;
+    }
+
+    public TextContainer getParentShape() {
+        return _parent;
+    }
+
+    public XDDFTextParagraph addNewParagraph() {
+        return new XDDFTextParagraph(_body.addNewP(), this);
+    }
+
+    public XDDFTextParagraph insertNewParagraph(int index) {
+        return new XDDFTextParagraph(_body.insertNewP(index), this);
+    }
+
+    public void removeParagraph(int index) {
+        _body.removeP(index);
+    }
+
+    public XDDFTextParagraph getParagraph(int index) {
+        return new XDDFTextParagraph(_body.getPArray(index), this);
+    }
+
+    public List<XDDFTextParagraph> getParagraphs() {
+        return Collections.unmodifiableList(_body
+            .getPList()
+            .stream()
+            .map(ds -> new XDDFTextParagraph(ds, this))
+            .collect(Collectors.toList()));
+    }
+
+    public XDDFBodyProperties getBodyProperties() {
+        return new XDDFBodyProperties(_body.getBodyPr());
+    }
+
+    public void setBodyProperties(XDDFBodyProperties properties) {
+        if (properties == null) {
+            _body.addNewBodyPr();
+        } else {
+            _body.setBodyPr(properties.getXmlObject());
+        }
+    }
+
+    public XDDFParagraphProperties getDefaultProperties() {
+        if (_body.isSetLstStyle() && _body.getLstStyle().isSetDefPPr()) {
+            return new XDDFParagraphProperties(_body.getLstStyle().getDefPPr());
+        } else {
+            return null;
+        }
+    }
+
+    public void setDefaultProperties(XDDFParagraphProperties properties) {
+        if (properties == null) {
+            if (_body.isSetLstStyle()) {
+                _body.getLstStyle().unsetDefPPr();
+            }
+        } else {
+            CTTextListStyle style = _body.isSetLstStyle() ? _body.getLstStyle() : _body.addNewLstStyle();
+            style.setDefPPr(properties.getXmlObject());
+        }
+    }
+
+    public XDDFParagraphProperties getLevel1Properties() {
+        if (_body.isSetLstStyle() && _body.getLstStyle().isSetLvl1PPr()) {
+            return new XDDFParagraphProperties(_body.getLstStyle().getLvl1PPr());
+        } else {
+            return null;
+        }
+    }
+
+    public void setLevel1Properties(XDDFParagraphProperties properties) {
+        if (properties == null) {
+            if (_body.isSetLstStyle()) {
+                _body.getLstStyle().unsetLvl1PPr();
+            }
+        } else {
+            CTTextListStyle style = _body.isSetLstStyle() ? _body.getLstStyle() : _body.addNewLstStyle();
+            style.setLvl1PPr(properties.getXmlObject());
+        }
+    }
+
+    public XDDFParagraphProperties getLevel2Properties() {
+        if (_body.isSetLstStyle() && _body.getLstStyle().isSetLvl2PPr()) {
+            return new XDDFParagraphProperties(_body.getLstStyle().getLvl2PPr());
+        } else {
+            return null;
+        }
+    }
+
+    public void setLevel2Properties(XDDFParagraphProperties properties) {
+        if (properties == null) {
+            if (_body.isSetLstStyle()) {
+                _body.getLstStyle().unsetLvl2PPr();
+            }
+        } else {
+            CTTextListStyle style = _body.isSetLstStyle() ? _body.getLstStyle() : _body.addNewLstStyle();
+            style.setLvl2PPr(properties.getXmlObject());
+        }
+    }
+
+    public XDDFParagraphProperties getLevel3Properties() {
+        if (_body.isSetLstStyle() && _body.getLstStyle().isSetLvl3PPr()) {
+            return new XDDFParagraphProperties(_body.getLstStyle().getLvl3PPr());
+        } else {
+            return null;
+        }
+    }
+
+    public void setLevel3Properties(XDDFParagraphProperties properties) {
+        if (properties == null) {
+            if (_body.isSetLstStyle()) {
+                _body.getLstStyle().unsetLvl3PPr();
+            }
+        } else {
+            CTTextListStyle style = _body.isSetLstStyle() ? _body.getLstStyle() : _body.addNewLstStyle();
+            style.setLvl3PPr(properties.getXmlObject());
+        }
+    }
+
+    public XDDFParagraphProperties getLevel4Properties() {
+        if (_body.isSetLstStyle() && _body.getLstStyle().isSetLvl4PPr()) {
+            return new XDDFParagraphProperties(_body.getLstStyle().getLvl4PPr());
+        } else {
+            return null;
+        }
+    }
+
+    public void setLevel4Properties(XDDFParagraphProperties properties) {
+        if (properties == null) {
+            if (_body.isSetLstStyle()) {
+                _body.getLstStyle().unsetLvl4PPr();
+            }
+        } else {
+            CTTextListStyle style = _body.isSetLstStyle() ? _body.getLstStyle() : _body.addNewLstStyle();
+            style.setLvl4PPr(properties.getXmlObject());
+        }
+    }
+
+    public XDDFParagraphProperties getLevel5Properties() {
+        if (_body.isSetLstStyle() && _body.getLstStyle().isSetLvl5PPr()) {
+            return new XDDFParagraphProperties(_body.getLstStyle().getLvl5PPr());
+        } else {
+            return null;
+        }
+    }
+
+    public void setLevel5Properties(XDDFParagraphProperties properties) {
+        if (properties == null) {
+            if (_body.isSetLstStyle()) {
+                _body.getLstStyle().unsetLvl5PPr();
+            }
+        } else {
+            CTTextListStyle style = _body.isSetLstStyle() ? _body.getLstStyle() : _body.addNewLstStyle();
+            style.setLvl5PPr(properties.getXmlObject());
+        }
+    }
+
+    public XDDFParagraphProperties getLevel6Properties() {
+        if (_body.isSetLstStyle() && _body.getLstStyle().isSetLvl6PPr()) {
+            return new XDDFParagraphProperties(_body.getLstStyle().getLvl6PPr());
+        } else {
+            return null;
+        }
+    }
+
+    public void setLevel6Properties(XDDFParagraphProperties properties) {
+        if (properties == null) {
+            if (_body.isSetLstStyle()) {
+                _body.getLstStyle().unsetLvl6PPr();
+            }
+        } else {
+            CTTextListStyle style = _body.isSetLstStyle() ? _body.getLstStyle() : _body.addNewLstStyle();
+            style.setLvl6PPr(properties.getXmlObject());
+        }
+    }
+
+    public XDDFParagraphProperties getLevel7Properties() {
+        if (_body.isSetLstStyle() && _body.getLstStyle().isSetLvl7PPr()) {
+            return new XDDFParagraphProperties(_body.getLstStyle().getLvl7PPr());
+        } else {
+            return null;
+        }
+    }
+
+    public void setLevel7Properties(XDDFParagraphProperties properties) {
+        if (properties == null) {
+            if (_body.isSetLstStyle()) {
+                _body.getLstStyle().unsetLvl7PPr();
+            }
+        } else {
+            CTTextListStyle style = _body.isSetLstStyle() ? _body.getLstStyle() : _body.addNewLstStyle();
+            style.setLvl7PPr(properties.getXmlObject());
+        }
+    }
+
+    public XDDFParagraphProperties getLevel8Properties() {
+        if (_body.isSetLstStyle() && _body.getLstStyle().isSetLvl8PPr()) {
+            return new XDDFParagraphProperties(_body.getLstStyle().getLvl8PPr());
+        } else {
+            return null;
+        }
+    }
+
+    public void setLevel8Properties(XDDFParagraphProperties properties) {
+        if (properties == null) {
+            if (_body.isSetLstStyle()) {
+                _body.getLstStyle().unsetLvl8PPr();
+            }
+        } else {
+            CTTextListStyle style = _body.isSetLstStyle() ? _body.getLstStyle() : _body.addNewLstStyle();
+            style.setLvl8PPr(properties.getXmlObject());
+        }
+    }
+
+    public XDDFParagraphProperties getLevel9Properties() {
+        if (_body.isSetLstStyle() && _body.getLstStyle().isSetLvl9PPr()) {
+            return new XDDFParagraphProperties(_body.getLstStyle().getLvl9PPr());
+        } else {
+            return null;
+        }
+    }
+
+    public void setLevel9Properties(XDDFParagraphProperties properties) {
+        if (properties == null) {
+            if (_body.isSetLstStyle()) {
+                _body.getLstStyle().unsetLvl9PPr();
+            }
+        } else {
+            CTTextListStyle style = _body.isSetLstStyle() ? _body.getLstStyle() : _body.addNewLstStyle();
+            style.setLvl9PPr(properties.getXmlObject());
+        }
+    }
+
+    @Internal
+    protected <R> Optional<R> findDefinedParagraphProperty(Function<CTTextParagraphProperties, Boolean> isSet,
+        Function<CTTextParagraphProperties, R> getter, int level) {
+        if (_body.isSetLstStyle() && level >= 0) {
+            CTTextListStyle list = _body.getLstStyle();
+            CTTextParagraphProperties props = level == 0 ? list.getDefPPr() : retrieveProperties(list, level);
+            if (props != null && isSet.apply(props)) {
+                return Optional.of(getter.apply(props));
+            } else {
+                return findDefinedParagraphProperty(isSet, getter, level - 1);
+            }
+        } else {
+            return _parent.findDefinedParagraphProperty(isSet, getter);
+        }
+    }
+
+    @Internal
+    protected <R> Optional<R> findDefinedRunProperty(Function<CTTextCharacterProperties, Boolean> isSet,
+        Function<CTTextCharacterProperties, R> getter, int level) {
+        if (_body.isSetLstStyle() && level >= 0) {
+            CTTextListStyle list = _body.getLstStyle();
+            CTTextParagraphProperties props = level == 0 ? list.getDefPPr() : retrieveProperties(list, level);
+            if (props != null && props.isSetDefRPr() && isSet.apply(props.getDefRPr())) {
+                return Optional.of(getter.apply(props.getDefRPr()));
+            } else {
+                return findDefinedRunProperty(isSet, getter, level - 1);
+            }
+        } else {
+            return _parent.findDefinedRunProperty(isSet, getter);
+        }
+    }
+
+    private CTTextParagraphProperties retrieveProperties(CTTextListStyle list, int level) {
+        switch(level) {
+        case 1: if (list.isSetLvl1PPr()) {
+            return list.getLvl1PPr();
+        } else {
+            return null;
+        }
+        case 2: if (list.isSetLvl2PPr()) {
+            return list.getLvl2PPr();
+        } else {
+            return null;
+        }
+        case 3: if (list.isSetLvl3PPr()) {
+            return list.getLvl3PPr();
+        } else {
+            return null;
+        }
+        case 4: if (list.isSetLvl4PPr()) {
+            return list.getLvl4PPr();
+        } else {
+            return null;
+        }
+        case 5: if (list.isSetLvl5PPr()) {
+            return list.getLvl5PPr();
+        } else {
+            return null;
+        }
+        case 6: if (list.isSetLvl6PPr()) {
+            return list.getLvl6PPr();
+        } else {
+            return null;
+        }
+        case 7: if (list.isSetLvl7PPr()) {
+            return list.getLvl7PPr();
+        } else {
+            return null;
+        }
+        case 8: if (list.isSetLvl8PPr()) {
+            return list.getLvl8PPr();
+        } else {
+            return null;
+        }
+        case 9: if (list.isSetLvl9PPr()) {
+            return list.getLvl9PPr();
+        } else {
+            return null;
+        }
+        default: return null;
+        }
     }
 }

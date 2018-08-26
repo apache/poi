@@ -19,22 +19,19 @@ package org.apache.poi.xddf.usermodel;
 
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupFillProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
 
 @Beta
-public class XDDFGroupFillProperties implements XDDFFillProperties {
-    private CTGroupFillProperties props;
+public class XDDFPicture {
+    private CTBlip blip;
 
-    public XDDFGroupFillProperties() {
-        this(CTGroupFillProperties.Factory.newInstance());
-    }
-
-    protected XDDFGroupFillProperties(CTGroupFillProperties properties) {
-        this.props = properties;
+    @Internal
+    public XDDFPicture(CTBlip blip) {
+        this.blip = blip;
     }
 
     @Internal
-    public CTGroupFillProperties getXmlObject() {
-        return props;
+    public CTBlip getXmlObject() {
+        return blip;
     }
 }
