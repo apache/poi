@@ -103,7 +103,7 @@ public final class XSSFShapeGroup extends XSSFShape implements ShapeContainer<XS
         XSSFTextBox shape = new XSSFTextBox(getDrawing(), ctShape);
         shape.parent = this;
         shape.anchor = anchor;
-        shape.getCTShape().getSpPr().setXfrm(anchor.getCTTransform2D());
+        shape.setXfrm(anchor.getCTTransform2D());
         return shape;
 
     }
@@ -122,7 +122,7 @@ public final class XSSFShapeGroup extends XSSFShape implements ShapeContainer<XS
         XSSFSimpleShape shape = new XSSFSimpleShape(getDrawing(), ctShape);
         shape.parent = this;
         shape.anchor = anchor;
-        shape.getCTShape().getSpPr().setXfrm(anchor.getCTTransform2D());
+        shape.setXfrm(anchor.getCTTransform2D());
         return shape;
     }
 
@@ -179,9 +179,9 @@ public final class XSSFShapeGroup extends XSSFShape implements ShapeContainer<XS
         XSSFShapeGroup shape = new XSSFShapeGroup(getDrawing(), ctShape);
         shape.parent = this;
         shape.anchor = anchor;
-        
+
         // TODO: calculate bounding rectangle on anchor and set off/ext correctly
-        
+
         CTGroupTransform2D xfrm = shape.getCTGroupShape().getGrpSpPr().getXfrm();
         CTTransform2D t2 = anchor.getCTTransform2D();
         xfrm.setOff(t2.getOff());
@@ -190,7 +190,7 @@ public final class XSSFShapeGroup extends XSSFShape implements ShapeContainer<XS
         xfrm.setChExt(t2.getExt());
         xfrm.setFlipH(t2.getFlipH());
         xfrm.setFlipV(t2.getFlipV());
-        
+
         return shape;
     }
 
@@ -220,6 +220,7 @@ public final class XSSFShapeGroup extends XSSFShape implements ShapeContainer<XS
         chExt.setCy(y2);
     }
 
+    @Override
     protected CTShapeProperties getShapeProperties() {
         throw new IllegalStateException("Not supported for shape group");
     }
