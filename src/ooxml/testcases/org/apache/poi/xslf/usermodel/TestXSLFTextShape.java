@@ -30,6 +30,7 @@ import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.usermodel.HSLFTextShape;
@@ -38,6 +39,8 @@ import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
+import org.apache.poi.xddf.usermodel.text.XDDFBodyProperties;
+import org.apache.poi.xddf.usermodel.text.XDDFTextBody;
 import org.apache.poi.xslf.XSLFTestDataSamples;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -83,6 +86,8 @@ public class TestXSLFTextShape {
         assertEquals("Title Slide",layout.getName());
 
         XSLFTextShape shape1 = (XSLFTextShape)shapes.get(0);
+        XDDFTextBody tb1 = shape1.getTextBody();
+        XDDFBodyProperties tbp1 = tb1.getBodyProperties();
         CTPlaceholder ph1 = shape1.getPlaceholderDetails().getCTPlaceholder(false);
         assertEquals(STPlaceholderType.CTR_TITLE, ph1.getType());
         // anchor is not defined in the shape
@@ -104,15 +109,24 @@ public class TestXSLFTextShape {
         assertEquals(3.6, shape1.getTopInset(), 0);  // 0.05"
         assertEquals(3.6, shape1.getBottomInset(), 0); // 0.05"
         assertEquals(VerticalAlignment.MIDDLE, shape1.getVerticalAlignment());
+        assertNull(tbp1.getLeftInset());
+        assertNull(tbp1.getRightInset());
+        assertNull(tbp1.getBottomInset());
+        assertNull(tbp1.getTopInset());
+        assertNull(tbp1.getAnchoring());
 
         // now check text properties
         assertEquals("Centered Title", shape1.getText());
+        assertEquals("Centered Title",
+            tb1.getParagraphs().stream().map(p -> p.getText()).collect(Collectors.joining("\n")));
         XSLFTextRun r1 = shape1.getTextParagraphs().get(0).getTextRuns().get(0);
         assertEquals("Calibri", r1.getFontFamily());
         assertEquals(44.0, r1.getFontSize(), 0);
         assertTrue(sameColor(Color.black, r1.getFontColor()));
 
         XSLFTextShape shape2 = (XSLFTextShape)shapes.get(1);
+        XDDFTextBody tb2 = shape2.getTextBody();
+        XDDFBodyProperties tbp2 = tb2.getBodyProperties();
         CTPlaceholder ph2 = shape2.getPlaceholderDetails().getCTPlaceholder(false);
         assertEquals(STPlaceholderType.SUB_TITLE, ph2.getType());
         // anchor is not defined in the shape
@@ -134,8 +148,14 @@ public class TestXSLFTextShape {
         assertEquals(3.6, shape2.getTopInset(), 0);  // 0.05"
         assertEquals(3.6, shape2.getBottomInset(), 0); // 0.05"
         assertEquals(VerticalAlignment.TOP, shape2.getVerticalAlignment());
+        assertNull(tbp2.getLeftInset());
+        assertNull(tbp2.getRightInset());
+        assertNull(tbp2.getBottomInset());
+        assertNull(tbp2.getTopInset());
+        assertNull(tbp2.getAnchoring());
 
         assertEquals("subtitle", shape2.getText());
+        assertEquals("subtitle", tb2.getParagraphs().stream().map(p -> p.getText()).collect(Collectors.joining("\n")));
         XSLFTextRun r2 = shape2.getTextParagraphs().get(0).getTextRuns().get(0);
         assertEquals("Calibri", r2.getFontFamily());
         assertEquals(32.0, r2.getFontSize(), 0);

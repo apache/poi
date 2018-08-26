@@ -24,6 +24,8 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
 
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.sl.draw.DrawFactory;
@@ -34,6 +36,9 @@ import org.apache.poi.sl.usermodel.TextShape;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Units;
+import org.apache.poi.xddf.usermodel.text.TextContainer;
+import org.apache.poi.xddf.usermodel.text.XDDFTextBody;
+import org.apache.poi.xddf.usermodel.text.XDDFTextParagraph;
 import org.apache.poi.xslf.model.PropertyFetcher;
 import org.apache.poi.xslf.model.TextBodyPropertyFetcher;
 import org.apache.xmlbeans.XmlObject;
@@ -52,10 +57,10 @@ import org.openxmlformats.schemas.drawingml.x2006.main.STTextWrappingType;
  */
 @Beta
 public abstract class XSLFTextShape extends XSLFSimpleShape
-    implements TextShape<XSLFShape,XSLFTextParagraph> {
+    implements TextContainer, TextShape<XSLFShape, XSLFTextParagraph> {
     private final List<XSLFTextParagraph> _paragraphs;
 
-    /*package*/ XSLFTextShape(XmlObject shape, XSLFSheet sheet) {
+    /* package */ XSLFTextShape(XmlObject shape, XSLFSheet sheet) {
         super(shape, sheet);
 
         _paragraphs = new ArrayList<>();
@@ -67,8 +72,22 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
         }
     }
 
+    protected static void initTextBody(XDDFTextBody body) {
+        XDDFTextParagraph p = body.getParagraph(0);
+        p.appendRegularRun("");
+    }
+
+    @Beta
+    public XDDFTextBody getTextBody() {
+        CTTextBody txBody = getTextBody(false);
+        if (txBody == null) {
+            return null;
+        }
+        return new XDDFTextBody(this, txBody);
+    }
+
     @Override
-    public Iterator<XSLFTextParagraph> iterator(){
+    public Iterator<XSLFTextParagraph> iterator() {
         return getTextParagraphs().iterator();
     }
 
@@ -87,7 +106,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
     /**
      * unset text from this shape
      */
-    public void clearText(){
+    public void clearText() {
         _paragraphs.clear();
         CTTextBody txBody = getTextBody(true);
         txBody.setPArray(null); // remove any existing paragraphs
@@ -95,13 +114,14 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
 
     @Override
     public XSLFTextRun setText(String text) {
-        // calling clearText or setting to a new Array leads to a XmlValueDisconnectedException
+        // calling clearText or setting to a new Array leads to a
+        // XmlValueDisconnectedException
         if (!_paragraphs.isEmpty()) {
             CTTextBody txBody = getTextBody(false);
             int cntPs = txBody.sizeOfPArray();
             for (int i = cntPs; i > 1; i--) {
-                txBody.removeP(i-1);
-                _paragraphs.remove(i-1);
+                txBody.removeP(i - 1);
+                _paragraphs.remove(i - 1);
             }
 
             _paragraphs.get(0).clearButKeepProperties();
@@ -127,18 +147,19 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
             para = null;
         } else {
             firstPara = !newParagraph;
-            para = _paragraphs.get(_paragraphs.size()-1);
+            para = _paragraphs.get(_paragraphs.size() - 1);
             CTTextParagraph ctp = para.getXmlObject();
             otherPPr = ctp.getPPr();
             List<XSLFTextRun> runs = para.getTextRuns();
             if (!runs.isEmpty()) {
-                XSLFTextRun r0 = runs.get(runs.size()-1);
+                XSLFTextRun r0 = runs.get(runs.size() - 1);
                 otherRPr = r0.getRPr(false);
                 if (otherRPr == null) {
                     otherRPr = ctp.getEndParaRPr();
                 }
             }
-            // don't copy endParaRPr to the run in case there aren't any other runs
+            // don't copy endParaRPr to the run in case there aren't any other
+            // runs
             // this is the case when setText() was called initially
             // otherwise the master style will be overridden/ignored
         }
@@ -173,7 +194,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
             firstPara = false;
         }
 
-        assert(run != null);
+        assert (run != null);
         return run;
     }
 
@@ -203,11 +224,11 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
     }
 
     @Override
-    public void setVerticalAlignment(VerticalAlignment anchor){
+    public void setVerticalAlignment(VerticalAlignment anchor) {
         CTTextBodyProperties bodyPr = getTextBodyPr(true);
         if (bodyPr != null) {
-             if(anchor == null) {
-                if(bodyPr.isSetAnchor()) {
+            if (anchor == null) {
+                if (bodyPr.isSetAnchor()) {
                     bodyPr.unsetAnchor();
                 }
             } else {
@@ -217,11 +238,11 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
     }
 
     @Override
-    public VerticalAlignment getVerticalAlignment(){
-        PropertyFetcher<VerticalAlignment> fetcher = new TextBodyPropertyFetcher<VerticalAlignment>(){
+    public VerticalAlignment getVerticalAlignment() {
+        PropertyFetcher<VerticalAlignment> fetcher = new TextBodyPropertyFetcher<VerticalAlignment>() {
             @Override
-            public boolean fetch(CTTextBodyProperties props){
-                if(props.isSetAnchor()){
+            public boolean fetch(CTTextBodyProperties props) {
+                if (props.isSetAnchor()) {
                     int val = props.getAnchor().intValue();
                     setValue(VerticalAlignment.values()[val - 1]);
                     return true;
@@ -234,10 +255,10 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
     }
 
     @Override
-    public void setHorizontalCentered(Boolean isCentered){
+    public void setHorizontalCentered(Boolean isCentered) {
         CTTextBodyProperties bodyPr = getTextBodyPr(true);
         if (bodyPr != null) {
-             if (isCentered == null) {
+            if (isCentered == null) {
                 if (bodyPr.isSetAnchorCtr()) {
                     bodyPr.unsetAnchorCtr();
                 }
@@ -248,11 +269,11 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
     }
 
     @Override
-    public boolean isHorizontalCentered(){
-        PropertyFetcher<Boolean> fetcher = new TextBodyPropertyFetcher<Boolean>(){
+    public boolean isHorizontalCentered() {
+        PropertyFetcher<Boolean> fetcher = new TextBodyPropertyFetcher<Boolean>() {
             @Override
-            public boolean fetch(CTTextBodyProperties props){
-                if(props.isSetAnchorCtr()){
+            public boolean fetch(CTTextBodyProperties props) {
+                if (props.isSetAnchorCtr()) {
                     setValue(props.getAnchorCtr());
                     return true;
                 }
@@ -264,11 +285,11 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
     }
 
     @Override
-    public void setTextDirection(TextDirection orientation){
+    public void setTextDirection(TextDirection orientation) {
         CTTextBodyProperties bodyPr = getTextBodyPr(true);
         if (bodyPr != null) {
-            if(orientation == null) {
-                if(bodyPr.isSetVert()) {
+            if (orientation == null) {
+                if (bodyPr.isSetVert()) {
                     bodyPr.unsetVert();
                 }
             } else {
@@ -278,24 +299,24 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
     }
 
     @Override
-    public TextDirection getTextDirection(){
+    public TextDirection getTextDirection() {
         CTTextBodyProperties bodyPr = getTextBodyPr();
         if (bodyPr != null) {
             STTextVerticalType.Enum val = bodyPr.getVert();
-            if(val != null) {
+            if (val != null) {
                 switch (val.intValue()) {
-                    default:
-                    case STTextVerticalType.INT_HORZ:
-                        return TextDirection.HORIZONTAL;
-                    case STTextVerticalType.INT_EA_VERT:
-                    case STTextVerticalType.INT_MONGOLIAN_VERT:
-                    case STTextVerticalType.INT_VERT:
-                        return TextDirection.VERTICAL;
-                    case STTextVerticalType.INT_VERT_270:
-                        return TextDirection.VERTICAL_270;
-                    case STTextVerticalType.INT_WORD_ART_VERT_RTL:
-                    case STTextVerticalType.INT_WORD_ART_VERT:
-                        return TextDirection.STACKED;
+                default:
+                case STTextVerticalType.INT_HORZ:
+                    return TextDirection.HORIZONTAL;
+                case STTextVerticalType.INT_EA_VERT:
+                case STTextVerticalType.INT_MONGOLIAN_VERT:
+                case STTextVerticalType.INT_VERT:
+                    return TextDirection.VERTICAL;
+                case STTextVerticalType.INT_VERT_270:
+                    return TextDirection.VERTICAL_270;
+                case STTextVerticalType.INT_WORD_ART_VERT_RTL:
+                case STTextVerticalType.INT_WORD_ART_VERT:
+                    return TextDirection.STACKED;
                 }
             }
         }
@@ -315,22 +336,22 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
     public void setTextRotation(Double rotation) {
         CTTextBodyProperties bodyPr = getTextBodyPr(true);
         if (bodyPr != null) {
-            bodyPr.setRot((int)(rotation * 60000.));
+            bodyPr.setRot((int) (rotation * 60000.));
         }
     }
 
-
     /**
-     * Returns the distance (in points) between the bottom of the text frame
-     * and the bottom of the inscribed rectangle of the shape that contains the text.
+     * Returns the distance (in points) between the bottom of the text frame and
+     * the bottom of the inscribed rectangle of the shape that contains the
+     * text.
      *
      * @return the bottom inset in points
      */
-    public double getBottomInset(){
-        PropertyFetcher<Double> fetcher = new TextBodyPropertyFetcher<Double>(){
+    public double getBottomInset() {
+        PropertyFetcher<Double> fetcher = new TextBodyPropertyFetcher<Double>() {
             @Override
-            public boolean fetch(CTTextBodyProperties props){
-                if(props.isSetBIns()){
+            public boolean fetch(CTTextBodyProperties props) {
+                if (props.isSetBIns()) {
                     double val = Units.toPoints(props.getBIns());
                     setValue(val);
                     return true;
@@ -344,17 +365,17 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
     }
 
     /**
-     *  Returns the distance (in points) between the left edge of the text frame
-     *  and the left edge of the inscribed rectangle of the shape that contains
-     *  the text.
+     * Returns the distance (in points) between the left edge of the text frame
+     * and the left edge of the inscribed rectangle of the shape that contains
+     * the text.
      *
      * @return the left inset in points
      */
-    public double getLeftInset(){
-        PropertyFetcher<Double> fetcher = new TextBodyPropertyFetcher<Double>(){
+    public double getLeftInset() {
+        PropertyFetcher<Double> fetcher = new TextBodyPropertyFetcher<Double>() {
             @Override
-            public boolean fetch(CTTextBodyProperties props){
-                if(props.isSetLIns()){
+            public boolean fetch(CTTextBodyProperties props) {
+                if (props.isSetLIns()) {
                     double val = Units.toPoints(props.getLIns());
                     setValue(val);
                     return true;
@@ -368,17 +389,17 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
     }
 
     /**
-     *  Returns the distance (in points) between the right edge of the
-     *  text frame and the right edge of the inscribed rectangle of the shape
-     *  that contains the text.
+     * Returns the distance (in points) between the right edge of the text frame
+     * and the right edge of the inscribed rectangle of the shape that contains
+     * the text.
      *
      * @return the right inset in points
      */
-    public double getRightInset(){
-        PropertyFetcher<Double> fetcher = new TextBodyPropertyFetcher<Double>(){
+    public double getRightInset() {
+        PropertyFetcher<Double> fetcher = new TextBodyPropertyFetcher<Double>() {
             @Override
-            public boolean fetch(CTTextBodyProperties props){
-                if(props.isSetRIns()){
+            public boolean fetch(CTTextBodyProperties props) {
+                if (props.isSetRIns()) {
                     double val = Units.toPoints(props.getRIns());
                     setValue(val);
                     return true;
@@ -392,16 +413,16 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
     }
 
     /**
-     *  Returns the distance (in points) between the top of the text frame
-     *  and the top of the inscribed rectangle of the shape that contains the text.
+     * Returns the distance (in points) between the top of the text frame and
+     * the top of the inscribed rectangle of the shape that contains the text.
      *
      * @return the top inset in points
      */
-    public double getTopInset(){
-        PropertyFetcher<Double> fetcher = new TextBodyPropertyFetcher<Double>(){
+    public double getTopInset() {
+        PropertyFetcher<Double> fetcher = new TextBodyPropertyFetcher<Double>() {
             @Override
-            public boolean fetch(CTTextBodyProperties props){
-                if(props.isSetTIns()){
+            public boolean fetch(CTTextBodyProperties props) {
+                if (props.isSetTIns()) {
                     double val = Units.toPoints(props.getTIns());
                     setValue(val);
                     return true;
@@ -416,14 +437,16 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
 
     /**
      * Sets the bottom margin.
+     *
      * @see #getBottomInset()
      *
-     * @param margin    the bottom margin
+     * @param margin
+     *            the bottom margin
      */
-    public void setBottomInset(double margin){
+    public void setBottomInset(double margin) {
         CTTextBodyProperties bodyPr = getTextBodyPr(true);
         if (bodyPr != null) {
-            if(margin == -1) {
+            if (margin == -1) {
                 bodyPr.unsetBIns();
             } else {
                 bodyPr.setBIns(Units.toEMU(margin));
@@ -433,14 +456,16 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
 
     /**
      * Sets the left margin.
+     *
      * @see #getLeftInset()
      *
-     * @param margin    the left margin
+     * @param margin
+     *            the left margin
      */
-    public void setLeftInset(double margin){
+    public void setLeftInset(double margin) {
         CTTextBodyProperties bodyPr = getTextBodyPr(true);
         if (bodyPr != null) {
-            if(margin == -1) {
+            if (margin == -1) {
                 bodyPr.unsetLIns();
             } else {
                 bodyPr.setLIns(Units.toEMU(margin));
@@ -450,14 +475,16 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
 
     /**
      * Sets the right margin.
+     *
      * @see #getRightInset()
      *
-     * @param margin    the right margin
+     * @param margin
+     *            the right margin
      */
-    public void setRightInset(double margin){
+    public void setRightInset(double margin) {
         CTTextBodyProperties bodyPr = getTextBodyPr(true);
         if (bodyPr != null) {
-            if(margin == -1) {
+            if (margin == -1) {
                 bodyPr.unsetRIns();
             } else {
                 bodyPr.setRIns(Units.toEMU(margin));
@@ -467,14 +494,16 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
 
     /**
      * Sets the top margin.
+     *
      * @see #getTopInset()
      *
-     * @param margin    the top margin
+     * @param margin
+     *            the top margin
      */
-    public void setTopInset(double margin){
+    public void setTopInset(double margin) {
         CTTextBodyProperties bodyPr = getTextBodyPr(true);
         if (bodyPr != null) {
-            if(margin == -1) {
+            if (margin == -1) {
                 bodyPr.unsetTIns();
             } else {
                 bodyPr.setTIns(Units.toEMU(margin));
@@ -496,11 +525,11 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
     }
 
     @Override
-    public boolean getWordWrap(){
-        PropertyFetcher<Boolean> fetcher = new TextBodyPropertyFetcher<Boolean>(){
+    public boolean getWordWrap() {
+        PropertyFetcher<Boolean> fetcher = new TextBodyPropertyFetcher<Boolean>() {
             @Override
-            public boolean fetch(CTTextBodyProperties props){
-               if(props.isSetWrap()){
+            public boolean fetch(CTTextBodyProperties props) {
+                if (props.isSetWrap()) {
                     setValue(props.getWrap() == STTextWrappingType.SQUARE);
                     return true;
                 }
@@ -512,7 +541,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
     }
 
     @Override
-    public void setWordWrap(boolean wrap){
+    public void setWordWrap(boolean wrap) {
         CTTextBodyProperties bodyPr = getTextBodyPr(true);
         if (bodyPr != null) {
             bodyPr.setWrap(wrap ? STTextWrappingType.SQUARE : STTextWrappingType.NONE);
@@ -521,28 +550,36 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
 
     /**
      *
-     * Specifies that a shape should be auto-fit to fully contain the text described within it.
-     * Auto-fitting is when text within a shape is scaled in order to contain all the text inside
+     * Specifies that a shape should be auto-fit to fully contain the text
+     * described within it. Auto-fitting is when text within a shape is scaled
+     * in order to contain all the text inside
      *
-     * @param value type of autofit
+     * @param value
+     *            type of autofit
      */
-    public void setTextAutofit(TextAutofit value){
+    public void setTextAutofit(TextAutofit value) {
         CTTextBodyProperties bodyPr = getTextBodyPr(true);
         if (bodyPr != null) {
-            if(bodyPr.isSetSpAutoFit()) {
+            if (bodyPr.isSetSpAutoFit()) {
                 bodyPr.unsetSpAutoFit();
             }
-            if(bodyPr.isSetNoAutofit()) {
+            if (bodyPr.isSetNoAutofit()) {
                 bodyPr.unsetNoAutofit();
             }
-            if(bodyPr.isSetNormAutofit()) {
+            if (bodyPr.isSetNormAutofit()) {
                 bodyPr.unsetNormAutofit();
             }
 
-            switch(value){
-                case NONE: bodyPr.addNewNoAutofit(); break;
-                case NORMAL: bodyPr.addNewNormAutofit(); break;
-                case SHAPE: bodyPr.addNewSpAutoFit(); break;
+            switch (value) {
+            case NONE:
+                bodyPr.addNewNoAutofit();
+                break;
+            case NORMAL:
+                bodyPr.addNewNormAutofit();
+                break;
+            case SHAPE:
+                bodyPr.addNewSpAutoFit();
+                break;
             }
         }
     }
@@ -551,10 +588,10 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
      *
      * @return type of autofit
      */
-    public TextAutofit getTextAutofit(){
+    public TextAutofit getTextAutofit() {
         CTTextBodyProperties bodyPr = getTextBodyPr();
         if (bodyPr != null) {
-            if(bodyPr.isSetNoAutofit()) {
+            if (bodyPr.isSetNoAutofit()) {
                 return TextAutofit.NONE;
             } else if (bodyPr.isSetNormAutofit()) {
                 return TextAutofit.NORMAL;
@@ -565,7 +602,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
         return TextAutofit.NORMAL;
     }
 
-    protected CTTextBodyProperties getTextBodyPr(){
+    protected CTTextBodyProperties getTextBodyPr() {
         return getTextBodyPr(false);
     }
 
@@ -588,89 +625,88 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
         super.setPlaceholder(placeholder);
     }
 
-    public Placeholder getTextType(){
+    public Placeholder getTextType() {
         return getPlaceholder();
     }
 
     @Override
-    public double getTextHeight(){
+    public double getTextHeight() {
         return getTextHeight(null);
     }
-    
+
     @Override
-    public double getTextHeight(Graphics2D graphics){
+    public double getTextHeight(Graphics2D graphics) {
         DrawFactory drawFact = DrawFactory.getInstance(graphics);
         DrawTextShape dts = drawFact.getDrawable(this);
         return dts.getTextHeight(graphics);
     }
 
     @Override
-    public Rectangle2D resizeToFitText(){
+    public Rectangle2D resizeToFitText() {
         return resizeToFitText(null);
     }
-    
+
     @Override
     public Rectangle2D resizeToFitText(Graphics2D graphics) {
         Rectangle2D anchor = getAnchor();
 
-        if(anchor.getWidth() == 0.) {
+        if (anchor.getWidth() == 0.) {
             throw new POIXMLException("Anchor of the shape was not set.");
         }
         double height = getTextHeight(graphics);
         height += 1; // add a pixel to compensate rounding errors
 
         Insets2D insets = getInsets();
-        anchor.setRect(anchor.getX(), anchor.getY(), anchor.getWidth(), height+insets.top+insets.bottom);
+        anchor.setRect(anchor.getX(), anchor.getY(), anchor.getWidth(), height + insets.top + insets.bottom);
         setAnchor(anchor);
 
         return anchor;
     }
 
-
     @Override
-    void copy(XSLFShape other){
+    void copy(XSLFShape other) {
         super.copy(other);
 
-        XSLFTextShape otherTS = (XSLFTextShape)other;
+        XSLFTextShape otherTS = (XSLFTextShape) other;
         CTTextBody otherTB = otherTS.getTextBody(false);
         CTTextBody thisTB = getTextBody(true);
         if (otherTB == null) {
             return;
         }
 
-        thisTB.setBodyPr((CTTextBodyProperties)otherTB.getBodyPr().copy());
+        thisTB.setBodyPr((CTTextBodyProperties) otherTB.getBodyPr().copy());
 
         if (thisTB.isSetLstStyle()) {
             thisTB.unsetLstStyle();
         }
         if (otherTB.isSetLstStyle()) {
-            thisTB.setLstStyle((CTTextListStyle)otherTB.getLstStyle().copy());
+            thisTB.setLstStyle((CTTextListStyle) otherTB.getLstStyle().copy());
         }
 
         boolean srcWordWrap = otherTS.getWordWrap();
-        if(srcWordWrap != getWordWrap()){
+        if (srcWordWrap != getWordWrap()) {
             setWordWrap(srcWordWrap);
         }
 
         double leftInset = otherTS.getLeftInset();
-        if(leftInset != getLeftInset()) {
+        if (leftInset != getLeftInset()) {
             setLeftInset(leftInset);
         }
         double rightInset = otherTS.getRightInset();
-        if(rightInset != getRightInset()) {
+        if (rightInset != getRightInset()) {
             setRightInset(rightInset);
         }
         double topInset = otherTS.getTopInset();
-        if(topInset != getTopInset()) {
+        if (topInset != getTopInset()) {
             setTopInset(topInset);
         }
         double bottomInset = otherTS.getBottomInset();
-        if(bottomInset != getBottomInset()) {
+        if (bottomInset != getBottomInset()) {
             setBottomInset(bottomInset);
         }
 
         VerticalAlignment vAlign = otherTS.getVerticalAlignment();
-        if(vAlign != getVerticalAlignment()) {
+        if (vAlign != getVerticalAlignment()) {
             setVerticalAlignment(vAlign);
         }
 
@@ -685,26 +721,26 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
     @Override
     public void setTextPlaceholder(TextPlaceholder placeholder) {
         switch (placeholder) {
-            default:
-            case NOTES:
-            case HALF_BODY:
-            case QUARTER_BODY:
-            case BODY:
-                setPlaceholder(Placeholder.BODY);
-                break;
-            case TITLE:
-                setPlaceholder(Placeholder.TITLE);
-                break;
-            case CENTER_BODY:
-                setPlaceholder(Placeholder.BODY);
-                setHorizontalCentered(true);
-                break;
-            case CENTER_TITLE:
-                setPlaceholder(Placeholder.CENTERED_TITLE);
-                break;
-            case OTHER:
-                setPlaceholder(Placeholder.CONTENT);
-                break;
+        default:
+        case NOTES:
+        case HALF_BODY:
+        case QUARTER_BODY:
+        case BODY:
+            setPlaceholder(Placeholder.BODY);
+            break;
+        case TITLE:
+            setPlaceholder(Placeholder.TITLE);
+            break;
+        case CENTER_BODY:
+            setPlaceholder(Placeholder.BODY);
+            setHorizontalCentered(true);
+            break;
+        case CENTER_TITLE:
+            setPlaceholder(Placeholder.CENTERED_TITLE);
+            break;
+        case OTHER:
+            setPlaceholder(Placeholder.CONTENT);
+            break;
         }
     }
 
@@ -715,18 +751,23 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
             return TextPlaceholder.BODY;
         }
         switch (ph) {
-        case BODY: return TextPlaceholder.BODY;
-        case TITLE: return TextPlaceholder.TITLE;
-        case CENTERED_TITLE: return TextPlaceholder.CENTER_TITLE;
+        case BODY:
+            return TextPlaceholder.BODY;
+        case TITLE:
+            return TextPlaceholder.TITLE;
+        case CENTERED_TITLE:
+            return TextPlaceholder.CENTER_TITLE;
         default:
-        case CONTENT: return TextPlaceholder.OTHER;
+        case CONTENT:
+            return TextPlaceholder.OTHER;
         }
     }
 
     /**
      * Helper method to allow subclasses to provide their own text paragraph
      *
-     * @param p the xml reference
+     * @param p
+     *            the xml reference
      *
      * @return a new text paragraph
      *
@@ -735,4 +776,19 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
     protected XSLFTextParagraph newTextParagraph(CTTextParagraph p) {
         return new XSLFTextParagraph(p, this);
     }
+
+    @Override
+    public <R> Optional<R> findDefinedParagraphProperty(Function<CTTextParagraphProperties, Boolean> isSet,
+        Function<CTTextParagraphProperties, R> getter) {
+        // TODO Auto-generated method stub
+        return Optional.empty();
+    }
+
+    @Override
+    public <R> Optional<R> findDefinedRunProperty(Function<CTTextCharacterProperties, Boolean> isSet,
+        Function<CTTextCharacterProperties, R> getter) {
+        // TODO Auto-generated method stub
+        return Optional.empty();
+    }
+
 }

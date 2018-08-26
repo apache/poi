@@ -21,19 +21,14 @@ package org.apache.poi.xslf.usermodel;
 
 import org.apache.poi.sl.usermodel.AutoShape;
 import org.apache.poi.util.Beta;
+import org.apache.poi.xddf.usermodel.text.XDDFTextBody;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetGeometry2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBodyProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
 import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
-import org.openxmlformats.schemas.drawingml.x2006.main.STTextAlignType;
-import org.openxmlformats.schemas.drawingml.x2006.main.STTextAnchoringType;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShapeNonVisual;
-
 
 /**
  * Represents a shape with a preset geometry.
@@ -41,14 +36,13 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTShapeNonVisual;
  * @author Yegor Kozlov
  */
 @Beta
-public class XSLFAutoShape extends XSLFTextShape
-    implements AutoShape<XSLFShape,XSLFTextParagraph> {
+public class XSLFAutoShape extends XSLFTextShape implements AutoShape<XSLFShape, XSLFTextParagraph> {
 
-    /*package*/ XSLFAutoShape(CTShape shape, XSLFSheet sheet) {
+    /* package */ XSLFAutoShape(CTShape shape, XSLFSheet sheet) {
         super(shape, sheet);
     }
 
-    /*package*/
+    /* package */
     static XSLFAutoShape create(CTShape shape, XSLFSheet sheet) {
         if (shape.getSpPr().isSetCustGeom()) {
             return new XSLFFreeformShape(shape, sheet);
@@ -60,7 +54,8 @@ public class XSLFAutoShape extends XSLFTextShape
     }
 
     /**
-     * @param shapeId 1-based shapeId
+     * @param shapeId
+     *            1-based shapeId
      */
     static CTShape prototype(int shapeId) {
         CTShape ct = CTShape.Factory.newInstance();
@@ -76,22 +71,10 @@ public class XSLFAutoShape extends XSLFTextShape
         prst.addNewAvLst();
         return ct;
     }
-    
-    protected static void initTextBody(CTTextBody txBody) {
-        CTTextBodyProperties bodypr = txBody.addNewBodyPr();
-        bodypr.setAnchor(STTextAnchoringType.T);
-        bodypr.setRtlCol(false);
-        CTTextParagraph p = txBody.addNewP();
-        p.addNewPPr().setAlgn(STTextAlignType.L);
-        CTTextCharacterProperties endPr = p.addNewEndParaRPr();
-        endPr.setLang("en-US");
-        endPr.setSz(1100);   
-        p.addNewR().setT("");
-        txBody.addNewLstStyle();
-    }
 
-    protected CTTextBody getTextBody(boolean create){
-        CTShape shape = (CTShape)getXmlObject();
+    @Override
+    protected CTTextBody getTextBody(boolean create) {
+        CTShape shape = (CTShape) getXmlObject();
         CTTextBody txBody = shape.getTxBody();
         if (txBody == null && create) {
             txBody = shape.addNewTxBody();
@@ -101,7 +84,7 @@ public class XSLFAutoShape extends XSLFTextShape
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return "[" + getClass().getSimpleName() + "] " + getShapeName();
     }
 
