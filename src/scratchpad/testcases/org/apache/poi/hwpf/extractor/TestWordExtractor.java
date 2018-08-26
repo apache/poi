@@ -24,7 +24,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -36,7 +35,6 @@ import org.apache.poi.hwpf.OldWordFileFormatException;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
-import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.StringUtil;
 import org.junit.Test;
@@ -48,7 +46,7 @@ public final class TestWordExtractor {
 
     private static POIDataSamples docTests = POIDataSamples.getDocumentInstance();
     
-    public static void assertEqualsTrim( String expected, String actual )
+    private static void assertEqualsTrim( String expected, String actual )
     {
         String newExpected = expected.replaceAll( "\r\n", "\n" )
                 .replaceAll( "\r", "\n" ).trim();
@@ -188,7 +186,8 @@ public final class TestWordExtractor {
 		HWPFDocument doc1 = HWPFTestDataSamples.openSampleFile("ThreeColHeadFoot.doc");
 		WordExtractor extractor1 = new WordExtractor(doc1);
 
-		assertEquals("First header column!\tMid header Right header!\n", extractor1.getHeaderText());
+        //noinspection deprecation
+        assertEquals("First header column!\tMid header Right header!\n", extractor1.getHeaderText());
 		assertContains(extractor1.getText(), "First header column!");
 		extractor1.close();
 		doc1.close();
@@ -197,7 +196,8 @@ public final class TestWordExtractor {
 		HWPFDocument doc2 = HWPFTestDataSamples.openSampleFile("HeaderFooterUnicode.doc");
 		WordExtractor extractor2 = new WordExtractor(doc2);
 
-		assertEquals("This is a simple header, with a \u20ac euro symbol in it.\n\n", extractor2.getHeaderText());
+        //noinspection deprecation
+        assertEquals("This is a simple header, with a \u20ac euro symbol in it.\n\n", extractor2.getHeaderText());
 		assertContains(extractor2.getText(), "This is a simple header");
 		extractor2.close();
 		doc2.close();
@@ -209,7 +209,8 @@ public final class TestWordExtractor {
 		HWPFDocument doc1 = HWPFTestDataSamples.openSampleFile("ThreeColHeadFoot.doc");
 		WordExtractor extractor1 = new WordExtractor(doc1);
 
-		assertEquals("Footer Left\tFooter Middle Footer Right\n", extractor1.getFooterText());
+        //noinspection deprecation
+        assertEquals("Footer Left\tFooter Middle Footer Right\n", extractor1.getFooterText());
 		assertContains(extractor1.getText(), "Footer Left");
         extractor1.close();
         doc1.close();
@@ -218,7 +219,8 @@ public final class TestWordExtractor {
 		HWPFDocument doc2 = HWPFTestDataSamples.openSampleFile("HeaderFooterUnicode.doc");
 		WordExtractor extractor2 = new WordExtractor(doc2);
 
-		assertEquals("The footer, with Moli\u00e8re, has Unicode in it.\n", extractor2.getFooterText());
+        //noinspection deprecation
+        assertEquals("The footer, with Moli\u00e8re, has Unicode in it.\n", extractor2.getFooterText());
 		assertContains(extractor2.getText(), "The footer, with");
         extractor2.close();
         doc2.close();
@@ -279,6 +281,7 @@ public final class TestWordExtractor {
         assertContains(text, "Paragraph 3. Has some RED text and some BLUE BOLD text in it");
         assertContains(text, "Last (4th) paragraph");
         
+        @SuppressWarnings("deprecation")
         String[] tp = w6e.getParagraphText();
         assertEquals(7, tp.length);
         assertEquals("The quick brown fox jumps over the lazy dog\r\n", tp[0]);
@@ -299,17 +302,17 @@ public final class TestWordExtractor {
     
     @Test
     public void testWord6() throws Exception {
-        InputStream is = docTests.openResourceAsStream("Word6.doc");
-        Word6Extractor w6e = new Word6Extractor(is);
-        is.close();
-        String text = w6e.getText();
-        
-        assertContains(text, "The quick brown fox jumps over the lazy dog");
-        
-        String[] tp = w6e.getParagraphText();
-        assertEquals(1, tp.length);
-        assertEquals("The quick brown fox jumps over the lazy dog\r\n", tp[0]);
-        w6e.close();
+        try (InputStream is = docTests.openResourceAsStream("Word6.doc");
+            Word6Extractor w6e = new Word6Extractor(is)) {
+            String text = w6e.getText();
+
+            assertContains(text, "The quick brown fox jumps over the lazy dog");
+
+            @SuppressWarnings("deprecation")
+            String[] tp = w6e.getParagraphText();
+            assertEquals(1, tp.length);
+            assertEquals("The quick brown fox jumps over the lazy dog\r\n", tp[0]);
+        }
     }
 
     @Test
@@ -341,30 +344,23 @@ public final class TestWordExtractor {
     public void testDifferentPOIFS() throws Exception {
        // Open the two filesystems
        File file = docTests.getFile("test2.doc");
-       InputStream is = new FileInputStream(file);
-       OPOIFSFileSystem opoifs = new OPOIFSFileSystem(is);
-       is.close();
-       NPOIFSFileSystem npoifs = new NPOIFSFileSystem(file);
-       
-       DirectoryNode[] files = { opoifs.getRoot(), npoifs.getRoot() };
-       
-       // Open directly 
-       for(DirectoryNode dir : files) {
-          @SuppressWarnings("resource")
-          WordExtractor extractor = new WordExtractor(dir);
-          assertEqualsTrim(p_text1_block, extractor.getText());
-          // extractor.close();
-       }
+       try (NPOIFSFileSystem npoifs = new NPOIFSFileSystem(file, true)) {
 
-       // Open via a HWPFDocument
-       for(DirectoryNode dir : files) {
-          HWPFDocument doc = new HWPFDocument(dir);
-          WordExtractor extractor = new WordExtractor(doc);
-          assertEqualsTrim(p_text1_block, extractor.getText());
-          extractor.close();
+           DirectoryNode dir = npoifs.getRoot();
+
+           // Open directly
+           @SuppressWarnings("resource")
+           WordExtractor extractor1 = new WordExtractor(dir);
+           assertEqualsTrim(p_text1_block, extractor1.getText());
+           // extractor.close();
+
+           // Open via a HWPFDocument
+           try (HWPFDocument doc = new HWPFDocument(dir);
+                WordExtractor extractor2 = new WordExtractor(doc)) {
+               assertEqualsTrim(p_text1_block, extractor2.getText());
+           }
+
        }
-       
-       npoifs.close();
     }
 
     /**
@@ -381,11 +377,8 @@ public final class TestWordExtractor {
 
         for (Entry entry : fs.getRoot()) {
             if ("WordDocument".equals(entry.getName())) {
-                WordExtractor ex = new WordExtractor(fs);
-                try {
+                try (WordExtractor ex = new WordExtractor(fs)) {
                     text = ex.getText();
-                } finally {
-                    ex.close();
                 }
             }
         }
@@ -396,35 +389,22 @@ public final class TestWordExtractor {
 
     @Test
     public void testExtractorFromWord6Extractor() throws Exception {
-        InputStream is = POIDataSamples.getHPSFInstance().openResourceAsStream("TestMickey.doc");
-        POIFSFileSystem fs = new POIFSFileSystem(is);
-        is.close();
-        Word6Extractor wExt = new Word6Extractor(fs);
-        try {
-            POITextExtractor ext = wExt.getMetadataTextExtractor();
-            try {
-                // Now overall
-                String text = ext.getText();
-                assertContains(text, "TEMPLATE = Normal");
-                assertContains(text, "SUBJECT = sample subject");
-                assertContains(text, "MANAGER = sample manager");
-                assertContains(text, "COMPANY = sample company");
-            } finally {
-                ext.close();
-            }
-        } finally {
-            wExt.close();
-            fs.close();
+        try (InputStream is = POIDataSamples.getHPSFInstance().openResourceAsStream("TestMickey.doc");
+             POIFSFileSystem fs = new POIFSFileSystem(is);
+             Word6Extractor wExt = new Word6Extractor(fs);
+             POITextExtractor ext = wExt.getMetadataTextExtractor()) {
+            // Now overall
+            String text = ext.getText();
+            assertContains(text, "TEMPLATE = Normal");
+            assertContains(text, "SUBJECT = sample subject");
+            assertContains(text, "MANAGER = sample manager");
+            assertContains(text, "COMPANY = sample company");
         }
     }
     
     private WordExtractor openExtractor(String fileName) throws IOException {
-        InputStream is = docTests.openResourceAsStream(fileName);
-        try {
+        try (InputStream is = docTests.openResourceAsStream(fileName)) {
             return new WordExtractor(is);
-        } finally {
-            is.close();
         }
-        
     }
 }

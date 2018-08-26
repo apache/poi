@@ -1,6 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!--
-   ====================================================================
+/* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
    this work for additional information regarding copyright ownership.
@@ -15,23 +13,9 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-   ====================================================================
--->
-<html>
-<head>
-</head>
-<body bgcolor="white">
+==================================================================== */
 
-The eventfilesystem is an efficient method for reading OLE 2 CDF files.  It is to OLE 2 CDF what SAX is to XML.
-
-<h2>Related Documentation</h2>
-
-For overviews, tutorials, examples, guides, and tool documentation, please see:
-<ul>
-<li><a href="http://poi.apache.org">Apache POI Project</a>
-</ul>
-
-<!-- Put @see and @since tags down here. -->
-@see org.apache.poi.poifs.filesystem
-</body>
-</html>
+/**
+ * common package contains constants and other classes shared across all POIFS subpackages
+ */
+package org.apache.poi.poifs.common;

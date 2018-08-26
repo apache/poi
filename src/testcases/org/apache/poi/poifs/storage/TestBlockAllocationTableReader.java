@@ -17,196 +17,58 @@
 
 package org.apache.poi.poifs.storage;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
 import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
-
 import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.HexRead;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
+import org.junit.Test;
 
 /**
  * Class to test BlockAllocationTableReader functionality
- *
- * @author Marc Johnson
  */
-public final class TestBlockAllocationTableReader extends TestCase {
+public class TestBlockAllocationTableReader {
 
 	/**
 	 * Test small block allocation table constructor
 	 */
+	@Test
 	public void testSmallBATConstructor() throws IOException {
 
 		// need to create an array of raw blocks containing the SBAT,
 		// and a small document block list
-		String[] sbat_data = {
-			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
-			"FF FF FF FF FF FF FF FF FE FF FF FF FE FF FF FF FE FF FF FF FE FF FF FF FE FF FF FF FE FF FF FF",
-			"FE FF FF FF FE FF FF FF FE FF FF FF FE FF FF FF FE FF FF FF FE FF FF FF FE FF FF FF FE FF FF FF",
-			"FE FF FF FF FE FF FF FF FE FF FF FF FE FF FF FF FE FF FF FF FE FF FF FF FE FF FF FF FE FF FF FF",
-			"FE FF FF FF 22 00 00 00 FE FF FF FF FE FF FF FF FE FF FF FF FE FF FF FF FE FF FF FF FE FF FF FF",
-			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
-			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
-			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
-			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
-			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
-			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
-			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
-			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
-			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
-			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
-			"FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
-		};
+		final String sbat_data = "H4sIAAAAAAAAAPv/nzjwj4ZYiYGBAZfcKKAtAAC/sexrAAIAAA==";
 
-		RawDataBlock[] sbats = { new RawDataBlock(makeDataStream(sbat_data)) };
+		RawDataBlock[] sbats = { new RawDataBlock(new ByteArrayInputStream(RawDataUtil.decompress(sbat_data))) };
 
-		String[] sbt_data = {
-			"08 00 28 00 6A 61 6D 65 73 2D 55 37 37 32 37 39 32 2D 28 31 36 2D 4F 63 74 2D 32 30 30 31 40 31",
-			"36 2D 34 31 2D 33 33 29 2E 5A 44 46 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"07 00 00 00 00 00 80 27 E2 40 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"07 00 00 00 00 00 80 27 E2 40 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"07 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"02 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"0B 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"03 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"08 00 02 00 20 31 08 00 05 00 53 61 76 65 64 08 00 17 00 53 2E 48 55 53 53 41 49 4E 20 41 20 44",
-			"45 56 20 4F 46 46 52 20 55 4B 08 00 0B 00 31 36 2D 4F 63 74 2D 32 30 30 31 08 00 05 00 35 2E 33",
-			"2E 32 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"08 00 05 00 6A 61 6D 65 73 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"08 00 03 00 47 42 50 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"08 00 1D 00 28 41 29 31 36 2D 4F 63 74 2D 32 30 30 31 20 74 6F 20 31 36 2D 4F 63 74 2D 32 30 30",
-			"31 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"08 00 01 00 31 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"02 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"02 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"02 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"02 00 18 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"02 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"02 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"02 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"02 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"02 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"02 00 00 00 08 00 00 00 02 00 00 00 08 00 00 00 02 00 00 00 08 00 00 00 02 00 00 00 08 00 00 00",
-			"02 00 00 00 08 00 00 00 02 00 00 00 08 00 00 00 02 00 00 00 08 00 00 00 02 00 00 00 08 00 00 00",
-			"02 00 00 00 08 00 00 00 02 00 00 00 08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"08 00 03 00 47 42 50 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"02 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"08 00 17 00 53 2E 48 55 53 53 41 49 4E 20 41 20 44 45 56 20 4F 46 46 52 20 55 4B 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"08 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"02 00 00 00 02 00 00 00 02 00 00 00 02 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"03 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-			"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00",
-		};
+		final String sbt_data =
+			"H4sIAAAAAAAAAONg0GDISsxNLdYNNTc3Mrc00tUwNNP1Ty7RNTIwMHQAsk0MdY2NNfWiXNwYsAB2MNmg/sgBmyxhQB395AMm" +
+			"BkaK9HNQaD83hfqZKXY/E4OCIQcDK0NwYllqCgeDOEOwnkdocLCjp5+Co4KLa5iCv5tbkEKoNwfQrUhJA6TFVM9Yz4gy94OM" +
+			"Aac/svVTaj8zg7tTAAX6ZRk0HDWRAkahJF8BiUtQPyMDITX4ABMFegeDfsrjjzLAxCBBoX7KwED7n/LwG2j7KSv/Bt79A2s/" +
+			"NdzPQUWaVDDQ/h/o+meop5+hrx9ng4ku9jOhYVIBM4X2j4KhDQAtwD4rAA4AAA==";
 
-		RawDataBlock[] sbts = new RawDataBlock[7];
-		InputStream sbt_input = makeDataStream(sbt_data);
+		InputStream sbt_input = new ByteArrayInputStream(RawDataUtil.decompress(sbt_data));
 
-		for (int j = 0; j < 7; j++) {
-			sbts[j] = new RawDataBlock(sbt_input);
+		BlockListImpl small_blocks = new RawDataBlockList(sbt_input, POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
+		int blockCount = small_blocks.blockCount();
+		ListManagedBlock[] lmb = new ListManagedBlock[7*blockCount];
+		for (int i=0; i<lmb.length; i++) {
+			lmb[i] = small_blocks.get(i % blockCount);
 		}
-		SmallDocumentBlockList small_blocks = new SmallDocumentBlockList(SmallDocumentBlock
-				.extract(POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, sbts));
+		small_blocks.setBlocks(lmb);
+
 		BlockAllocationTableReader sbat = new BlockAllocationTableReader(
 		      POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS, sbats, small_blocks);
-		boolean[] isUsed = {
-			false, false, false, false, false, false, false, false, false,
-			false, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, true, true,
-			true, true, true, true, true, true, true, true, true, false,
-			false, false, false, false, false, false, false, false, false,
-			false, false, false, false, false, false, false, false, false,
-			false, false, false, false, false, false, false, false, false,
-			false, false, false, false, false, false, false, false, false,
-			false, false, false, false, false, false, false, false, false,
-			false, false, false, false, false, false, false, false, false,
-			false, false, false, false, false, false, false, false, false,
-			false, false, false, false, false, false, false, false, false,
-			false, false, false, false, false, false, false, false, false,
-			false, false, false, false, false, false
-		};
 		int[] nextIndex = {
 			-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -2, -2, -2, -2, -2, -2,
 			-2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2,
@@ -219,13 +81,13 @@ public final class TestBlockAllocationTableReader extends TestCase {
 		};
 
 		for (int j = 0; j < 128; j++) {
-			if (isUsed[j]) {
-				assertTrue("checking usage of block " + j, sbat.isUsed(j));
-				assertEquals("checking usage of block " + j, nextIndex[j], sbat
-						.getNextBlockIndex(j));
+			final boolean isUsed = nextIndex[j] != -1;
+			assertEquals("checking usage of block " + j, isUsed, sbat.isUsed(j));
+
+			if (isUsed) {
+				assertEquals("checking usage of block " + j, nextIndex[j], sbat.getNextBlockIndex(j));
 				small_blocks.remove(j);
 			} else {
-				assertTrue("checking usage of block " + j, !sbat.isUsed(j));
 				try {
 					small_blocks.remove(j);
 					fail("removing block " + j + " should have failed");
@@ -236,10 +98,7 @@ public final class TestBlockAllocationTableReader extends TestCase {
 		}
 	}
 
-	private static InputStream makeDataStream(String[] hexDataLines) {
-		return new ByteArrayInputStream(RawDataUtil.decode(hexDataLines));
-	}
-
+	@Test
 	public void testReadingConstructor() throws IOException {
 
 		// create a document, minus the header block, and use that to
@@ -288,6 +147,7 @@ public final class TestBlockAllocationTableReader extends TestCase {
 		}
 	}
 
+	@Test
 	public void testFetchBlocks() throws IOException {
 
 		// strategy:
@@ -372,10 +232,8 @@ public final class TestBlockAllocationTableReader extends TestCase {
 					assertEquals(expected_length[j], dataBlocks.length);
 				}
 			} catch (IOException e) {
-				if (expected_length[j] == -1) {
-
-					// no problem, we expected a failure here
-				} else {
+				if (expected_length[j] != -1) {
+					// -1 would be a expected failure here, anything else not
 					throw e;
 				}
 			}
@@ -386,6 +244,7 @@ public final class TestBlockAllocationTableReader extends TestCase {
 	 * Bugzilla 48085 describes an error where a corrupted Excel file causes POI to throw an
 	 * {@link OutOfMemoryError}.
 	 */
+	@Test
 	public void testBadSectorAllocationTableSize_bug48085() {
 		int BLOCK_SIZE = 512;
 		POIFSBigBlockSize bigBlockSize = POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS;

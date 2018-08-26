@@ -17,13 +17,15 @@
 
 package org.apache.poi.poifs.filesystem;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-
-import junit.framework.TestCase;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.HSSFTestDataSamples;
@@ -34,18 +36,21 @@ import org.apache.poi.poifs.storage.BlockAllocationTableReader;
 import org.apache.poi.poifs.storage.HeaderBlock;
 import org.apache.poi.poifs.storage.RawDataBlockList;
 import org.apache.poi.util.IOUtils;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 /**
  * Tests for the older OPOIFS-based POIFSFileSystem
  */
-public final class TestPOIFSFileSystem extends TestCase {
+public final class TestPOIFSFileSystem {
    private final POIDataSamples _samples = POIDataSamples.getPOIFSInstance();
 
 	/**
 	 * Mock exception used to ensure correct error handling
 	 */
 	private static final class MyEx extends RuntimeException {
-		public MyEx() {
+		MyEx() {
 			// no fields to initialise
 		}
 	}
@@ -60,7 +65,7 @@ public final class TestPOIFSFileSystem extends TestCase {
 		private int _currentIx;
 		private boolean _isClosed;
 
-		public TestIS(InputStream is, int failIndex) {
+		TestIS(InputStream is, int failIndex) {
 			_is = is;
 			_failIndex = failIndex;
 			_currentIx = 0;
@@ -93,7 +98,7 @@ public final class TestPOIFSFileSystem extends TestCase {
 			_isClosed = true;
 			_is.close();
 		}
-		public boolean isClosed() {
+		boolean isClosed() {
 			return _isClosed;
 		}
 	}
@@ -102,29 +107,26 @@ public final class TestPOIFSFileSystem extends TestCase {
 	 * Test for undesired behaviour observable as of svn revision 618865 (5-Feb-2008).
 	 * POIFSFileSystem was not closing the input stream.
 	 */
-	public void testAlwaysClose() {
+	@Test
+	public void testAlwaysClose() throws IOException {
 		TestIS testIS;
 
 		// Normal case - read until EOF and close
 		testIS = new TestIS(openSampleStream("13224.xls"), -1);
-		try {
-			new OPOIFSFileSystem(testIS);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
+		try (NPOIFSFileSystem ignored = new NPOIFSFileSystem(testIS)){
+			assertTrue("input stream was not closed", testIS.isClosed());
 		}
-		assertTrue("input stream was not closed", testIS.isClosed());
 
 		// intended to crash after reading 10000 bytes
 		testIS = new TestIS(openSampleStream("13224.xls"), 10000);
-		try {
-			new OPOIFSFileSystem(testIS);
+		try (NPOIFSFileSystem ignored = new NPOIFSFileSystem(testIS)){
 			fail("ex should have been thrown");
-		} catch (IOException e) {
-			throw new RuntimeException(e);
 		} catch (MyEx e) {
 			// expected
+			assertTrue("input stream was not closed", testIS.isClosed()); // but still should close
+		} catch (Exception e) {
+			fail("MyEx is expected to be thrown");
 		}
-		assertTrue("input stream was not closed", testIS.isClosed()); // but still should close
 	}
 
 	/**
@@ -138,6 +140,7 @@ public final class TestPOIFSFileSystem extends TestCase {
 	 * The other is to fix the handling of the last block in
 	 *  POIFS, since it seems to be slight wrong
 	 */
+	@Test
 	public void testShortLastBlock() throws Exception {
 		String[] files = new String[] {
 			"ShortLastBlock.qwp", "ShortLastBlock.wps"
@@ -145,7 +148,7 @@ public final class TestPOIFSFileSystem extends TestCase {
 
 		for (String file : files) {
 			// Open the file up
-			OPOIFSFileSystem fs = new OPOIFSFileSystem(
+			NPOIFSFileSystem fs = new NPOIFSFileSystem(
 			    _samples.openResourceAsStream(file)
 			);
 
@@ -156,26 +159,24 @@ public final class TestPOIFSFileSystem extends TestCase {
 			// Check sizes
 		}
 	}
-	
+
+	@Rule
+	public ExpectedException expectedEx = ExpectedException.none();
+
 	/**
 	 * Check that we do the right thing when the list of which
 	 *  sectors are BAT blocks points off the list of
 	 *  sectors that exist in the file.
 	 */
+	@Test
 	public void testFATandDIFATsectors() throws Exception {
         // Open the file up
-        try {
-            InputStream stream = _samples.openResourceAsStream("ReferencesInvalidSectors.mpp");
-            try {
-                new OPOIFSFileSystem(stream);
-                fail("File is corrupt and shouldn't have been opened");
-            } finally {
-                stream.close();
-            }
-        } catch (IOException e) {
-            String msg = e.getMessage();
-            assertTrue(msg.startsWith("Your file contains 695 sectors"));
-        }
+		expectedEx.expect(IndexOutOfBoundsException.class);
+		expectedEx.expectMessage("Block 1148 not found");
+		try (InputStream stream = _samples.openResourceAsStream("ReferencesInvalidSectors.mpp")) {
+			new NPOIFSFileSystem(stream);
+			fail("File is corrupt and shouldn't have been opened");
+		}
 	}
 	
 	/**
@@ -184,9 +185,10 @@ public final class TestPOIFSFileSystem extends TestCase {
 	 * However, because a file needs to be at least 6.875mb big
 	 *  to have an XBAT in it, we don't have a test one. So, generate it.
 	 */
+	@Test
 	public void testBATandXBAT() throws Exception {
 	   byte[] hugeStream = new byte[8*1024*1024];
-	   OPOIFSFileSystem fs = new OPOIFSFileSystem();
+	   NPOIFSFileSystem fs = new NPOIFSFileSystem();
 	   fs.getRoot().createDocument(
 	         "BIG", new ByteArrayInputStream(hugeStream)
 	   );
@@ -229,8 +231,7 @@ public final class TestPOIFSFileSystem extends TestCase {
       assertEquals(fsData.length / 512, blockList.blockCount() + 1); // Header not counted
       
 	   // Now load it and check
-	   fs = null;
-	   fs = new OPOIFSFileSystem(
+	   fs = new NPOIFSFileSystem(
 	         new ByteArrayInputStream(fsData)
 	   );
 	   
@@ -244,41 +245,39 @@ public final class TestPOIFSFileSystem extends TestCase {
 	 * Most OLE2 files use 512byte blocks. However, a small number
 	 *  use 4k blocks. Check that we can open these.
 	 */
+	@Test
 	public void test4KBlocks() throws Exception {
         POIDataSamples _samples = POIDataSamples.getPOIFSInstance();
-        InputStream inp = _samples.openResourceAsStream("BlockSize4096.zvi");
-        try {
-            // First up, check that we can process the header properly
-            HeaderBlock header_block = new HeaderBlock(inp);
-            POIFSBigBlockSize bigBlockSize = header_block.getBigBlockSize();
-            assertEquals(4096, bigBlockSize.getBigBlockSize());
+		try (InputStream inp = _samples.openResourceAsStream("BlockSize4096.zvi")) {
+			// First up, check that we can process the header properly
+			HeaderBlock header_block = new HeaderBlock(inp);
+			POIFSBigBlockSize bigBlockSize = header_block.getBigBlockSize();
+			assertEquals(4096, bigBlockSize.getBigBlockSize());
 
-            // Check the fat info looks sane
-            assertEquals(1, header_block.getBATArray().length);
-            assertEquals(1, header_block.getBATCount());
-            assertEquals(0, header_block.getXBATCount());
+			// Check the fat info looks sane
+			assertEquals(1, header_block.getBATArray().length);
+			assertEquals(1, header_block.getBATCount());
+			assertEquals(0, header_block.getXBATCount());
 
-            // Now check we can get the basic fat
-            RawDataBlockList data_blocks = new RawDataBlockList(inp,
-                    bigBlockSize);
-            assertEquals(15, data_blocks.blockCount());
+			// Now check we can get the basic fat
+			RawDataBlockList data_blocks = new RawDataBlockList(inp,
+					bigBlockSize);
+			assertEquals(15, data_blocks.blockCount());
 
-            // Now try and open properly
-            OPOIFSFileSystem fs = new OPOIFSFileSystem(
-                    _samples.openResourceAsStream("BlockSize4096.zvi"));
-            assertTrue(fs.getRoot().getEntryCount() > 3);
+			// Now try and open properly
+			NPOIFSFileSystem fs = new NPOIFSFileSystem(
+					_samples.openResourceAsStream("BlockSize4096.zvi"));
+			assertTrue(fs.getRoot().getEntryCount() > 3);
 
-            // Check we can get at all the contents
-            checkAllDirectoryContents(fs.getRoot());
+			// Check we can get at all the contents
+			checkAllDirectoryContents(fs.getRoot());
 
-            // Finally, check we can do a similar 512byte one too
-            fs = new OPOIFSFileSystem(
-                    _samples.openResourceAsStream("BlockSize512.zvi"));
-            assertTrue(fs.getRoot().getEntryCount() > 3);
-            checkAllDirectoryContents(fs.getRoot());
-        } finally {
-            inp.close();
-        }
+			// Finally, check we can do a similar 512byte one too
+			fs = new NPOIFSFileSystem(
+					_samples.openResourceAsStream("BlockSize512.zvi"));
+			assertTrue(fs.getRoot().getEntryCount() > 3);
+			checkAllDirectoryContents(fs.getRoot());
+		}
 	}
 	private void checkAllDirectoryContents(DirectoryEntry dir) throws IOException {
 	   for(Entry entry : dir) {
@@ -293,6 +292,7 @@ public final class TestPOIFSFileSystem extends TestCase {
 	   }
 	}
 
+	@SuppressWarnings("SameParameterValue")
 	private static InputStream openSampleStream(String sampleFileName) {
 		return HSSFTestDataSamples.openSampleFileStream(sampleFileName);
 	}

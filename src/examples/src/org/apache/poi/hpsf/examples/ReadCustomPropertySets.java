@@ -17,7 +17,7 @@
 
 package org.apache.poi.hpsf.examples;
 
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -37,8 +37,9 @@ import org.apache.poi.util.HexDump;
  *
  * <p>Explanations can be found in the HPSF HOW-TO.</p>
  */
-public class ReadCustomPropertySets
-{
+public final class ReadCustomPropertySets {
+
+    private ReadCustomPropertySets() {}
 
     /**
      * <p>Runs the example program.</p>
@@ -54,7 +55,7 @@ public class ReadCustomPropertySets
 
         /* Register a listener for *all* documents. */
         r.registerListener(new MyPOIFSReaderListener());
-        r.read(new FileInputStream(filename));
+        r.read(new File(filename));
     }
 
 
@@ -117,12 +118,12 @@ public class ReadCustomPropertySets
         }
     }
 
-    static void out(final String msg)
+    private static void out(final String msg)
     {
         System.out.println(msg);
     }
 
-    static String hex(final byte[] bytes)
+    private static String hex(final byte[] bytes)
     {
         return HexDump.dump(bytes, 0L, 0);
     }

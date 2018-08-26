@@ -34,8 +34,11 @@ import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.util.CodePageUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianConsts;
+import org.apache.poi.util.LittleEndianOutputStream;
 import org.apache.poi.util.NotImplemented;
+import org.apache.poi.util.Removal;
 
 /**
  * Represents a property set in the Horrible Property Set Format
@@ -175,8 +178,6 @@ public class PropertySet {
      *
      * @param stream Holds the data making out the property set
      * stream.
-     * @throws MarkUnsupportedException
-     *    if the stream does not support the {@link InputStream#markSupported} method.
      * @throws IOException
      *    if the {@link InputStream} cannot be accessed as needed.
      * @exception NoPropertySetStreamException
@@ -185,8 +186,7 @@ public class PropertySet {
      *    if a character encoding is not supported.
      */
     public PropertySet(final InputStream stream)
-    throws NoPropertySetStreamException, MarkUnsupportedException,
-               IOException, UnsupportedEncodingException {
+    throws NoPropertySetStreamException, IOException {
         if (!isPropertySetStream(stream)) {
             throw new NoPropertySetStreamException();
         }
@@ -266,6 +266,7 @@ public class PropertySet {
      *
      * @param byteOrder The property set stream's low-level "byte order" field.
      */
+    @SuppressWarnings("WeakerAccess")
     public void setByteOrder(int byteOrder) {
         this.byteOrder = byteOrder;
     }
@@ -298,6 +299,7 @@ public class PropertySet {
      *
      * @param osVersion The property set stream's low-level "OS version" field.
      */
+    @SuppressWarnings("WeakerAccess")
     public void setOSVersion(int osVersion) {
         this.osVersion = osVersion;
     }
@@ -315,6 +317,7 @@ public class PropertySet {
      *
      * @param classID The property set stream's low-level "class ID" field.
      */
+    @SuppressWarnings("WeakerAccess")
     public void setClassID(ClassID classID) {
         this.classID = classID;
     }
@@ -374,12 +377,10 @@ public class PropertySet {
      * {@link InputStream#mark} method.
      * @return {@code true} if the stream is a property set
      * stream, else {@code false}.
-     * @throws MarkUnsupportedException if the {@link InputStream}
-     * does not support the {@link InputStream#mark} method.
      * @exception IOException if an I/O error occurs
      */
     public static boolean isPropertySetStream(final InputStream stream)
-    throws MarkUnsupportedException, IOException {
+    throws IOException {
         /*
          * Read at most this many bytes.
          */
@@ -408,30 +409,34 @@ public class PropertySet {
      * @return {@code true} if the byte array is a property set
      * stream, {@code false} if not.
      */
+    @SuppressWarnings({"unused", "WeakerAccess"})
     public static boolean isPropertySetStream(final byte[] src, final int offset, final int length) {
-        /* FIXME (3): Ensure that at most "length" bytes are read. */
+        LittleEndianByteArrayInputStream leis = new LittleEndianByteArrayInputStream(src, offset, length);
 
         /*
          * Read the header fields of the stream. They must always be
          * there.
          */
-        int o = offset;
-        final int byteOrder = LittleEndian.getUShort(src, o);
-        o += LittleEndianConsts.SHORT_SIZE;
-        if (byteOrder != BYTE_ORDER_ASSERTION) {
+        try {
+            final int byteOrder = leis.readUShort();
+            if (byteOrder != BYTE_ORDER_ASSERTION) {
+                return false;
+            }
+            final int format = leis.readUShort();
+            if (format != FORMAT_ASSERTION) {
+                return false;
+            }
+            final long osVersion = leis.readUInt();
+            byte[] clsBuf = new byte[ClassID.LENGTH];
+            leis.readFully(clsBuf);
+
+            final ClassID classID = new ClassID(clsBuf, 0);
+
+            final long sectionCount = leis.readUInt();
+            return (sectionCount >= 0);
+        } catch (RuntimeException e) {
             return false;
         }
-        final int format = LittleEndian.getUShort(src, o);
-        o += LittleEndianConsts.SHORT_SIZE;
-        if (format != FORMAT_ASSERTION) {
-            return false;
-        }
-        // final long osVersion = LittleEndian.getUInt(src, offset);
-        o += LittleEndianConsts.INT_SIZE;
-        // final ClassID classID = new ClassID(src, offset);
-        o += ClassID.LENGTH;
-        final long sectionCount = LittleEndian.getUInt(src, o);
-        return (sectionCount >= 0);
     }
 
 
@@ -452,7 +457,7 @@ public class PropertySet {
     private void init(final byte[] src, final int offset, final int length)
     throws UnsupportedEncodingException {
         /* FIXME (3): Ensure that at most "length" bytes are read. */
-        
+
         /*
          * Read the stream's header fields.
          */
@@ -504,50 +509,60 @@ public class PropertySet {
      * @exception WritingNotSupportedException if HPSF does not yet support
      * writing a property's variant type.
      */
-    public void write(final OutputStream out)
-    throws WritingNotSupportedException, IOException {
+    public void write(final OutputStream out) throws IOException, WritingNotSupportedException {
+
+        out.write(toBytes());
+
+        /* Indicate that we're done */
+        out.close();
+    }
+
+    private byte[] toBytes() throws WritingNotSupportedException, IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        LittleEndianOutputStream leos = new LittleEndianOutputStream(bos);
+
         /* Write the number of sections in this property set stream. */
         final int nrSections = getSectionCount();
 
         /* Write the property set's header. */
-        LittleEndian.putShort(out, (short) getByteOrder());
-        LittleEndian.putShort(out, (short) getFormat());
-        LittleEndian.putInt(getOSVersion(), out);
-        putClassId(out, getClassID());
-        LittleEndian.putInt(nrSections, out);
-        int offset = OFFSET_HEADER;
+        leos.writeShort(getByteOrder());
+        leos.writeShort(getFormat());
+        leos.writeInt(getOSVersion());
+        putClassId(bos, getClassID());
+        leos.writeInt(nrSections);
+
+        assert(bos.size() == OFFSET_HEADER);
+
+        final int[][] offsets = new int[getSectionCount()][2];
 
         /* Write the section list, i.e. the references to the sections. Each
          * entry in the section list consist of the section's class ID and the
          * section's offset relative to the beginning of the stream. */
-        offset += nrSections * (ClassID.LENGTH + LittleEndianConsts.INT_SIZE);
-        final int sectionsBegin = offset;
+        int secCnt = 0;
         for (final Section section : getSections()) {
             final ClassID formatID = section.getFormatID();
             if (formatID == null) {
                 throw new NoFormatIDException();
             }
-            putClassId(out, formatID);
-            LittleEndian.putUInt(offset, out);
-            try {
-                offset += section.getSize();
-            } catch (HPSFRuntimeException ex) {
-                final Throwable cause = ex.getReason();
-                if (cause instanceof UnsupportedEncodingException) {
-                    throw new IllegalPropertySetDataException(cause);
-                }
-                throw ex;
-            }
+            putClassId(bos, formatID);
+            offsets[secCnt++][0] = bos.size();
+            // offset dummy - filled later
+            leos.writeInt(-1);
         }
 
         /* Write the sections themselves. */
-        offset = sectionsBegin;
+        secCnt = 0;
         for (final Section section : getSections()) {
-            offset += section.write(out);
+            offsets[secCnt++][1] = bos.size();
+            section.write(bos);
         }
-        
-        /* Indicate that we're done */
-        out.close();
+
+        byte[] result = bos.toByteArray();
+        for (int[] off : offsets) {
+            LittleEndian.putInt(result, off[0], off[1]);
+        }
+
+        return result;
     }
 
     /**
@@ -586,15 +601,8 @@ public class PropertySet {
      * of a property's variant type.
      * @throws IOException if an I/O exception occurs.
      */
-    public InputStream toInputStream() throws IOException, WritingNotSupportedException {
-        final ByteArrayOutputStream psStream = new ByteArrayOutputStream();
-        try {
-            write(psStream);
-        } finally {
-            psStream.close();
-        }
-        final byte[] streamData = psStream.toByteArray();
-        return new ByteArrayInputStream(streamData);
+    public InputStream toInputStream() throws WritingNotSupportedException, IOException {
+        return new ByteArrayInputStream(toBytes());
     }
 
     /**
@@ -605,7 +613,7 @@ public class PropertySet {
      *  
      * @return The property as a String, or null if unavailable
      */
-    protected String getPropertyStringValue(final int propertyId) {
+    String getPropertyStringValue(final int propertyId) {
         Object propertyValue = getProperty(propertyId);
         return getPropertyStringValue(propertyValue);
     }
@@ -724,7 +732,7 @@ public class PropertySet {
      * @throws NoSingleSectionException if the {@link PropertySet} has
      * more or less than one {@link Section}.
      */
-    protected boolean getPropertyBooleanValue(final int id) throws NoSingleSectionException {
+    boolean getPropertyBooleanValue(final int id) throws NoSingleSectionException {
         return getFirstSection().getPropertyBooleanValue(id);
     }
 
@@ -742,7 +750,7 @@ public class PropertySet {
      * @throws NoSingleSectionException if the {@link PropertySet} has
      * more or less than one {@link Section}.
      */
-    protected int getPropertyIntValue(final int id) throws NoSingleSectionException {
+    int getPropertyIntValue(final int id) throws NoSingleSectionException {
         return getFirstSection().getPropertyIntValue(id);
     }
 
@@ -774,6 +782,7 @@ public class PropertySet {
      *
      * @return The {@link PropertySet}'s first section.
      */
+    @SuppressWarnings("WeakerAccess")
     public Section getFirstSection() {
         if (sections.isEmpty()) {
             throw new MissingSectionException("Property set does not contain any sections.");
@@ -787,7 +796,11 @@ public class PropertySet {
      * If the {@link PropertySet} has only a single section this method returns it.
      *
      * @return The singleSection value
+     *
+     * @deprecated superfluous convenience method
      */
+    @Deprecated
+    @Removal(version="5.0.0")
     public Section getSingleSection() {
         final int sectionCount = getSectionCount();
         if (sectionCount != 1) {
@@ -809,7 +822,7 @@ public class PropertySet {
      */
     @Override
     public boolean equals(final Object o) {
-        if (o == null || !(o instanceof PropertySet)) {
+        if (!(o instanceof PropertySet)) {
             return false;
         }
         final PropertySet ps = (PropertySet) o;
@@ -877,27 +890,28 @@ public class PropertySet {
     }
     
 
-    protected void remove1stProperty(long id) {
+    void remove1stProperty(long id) {
         getFirstSection().removeProperty(id);
     }
 
-    protected void set1stProperty(long id, String value) {
+    void set1stProperty(long id, String value) {
         getFirstSection().setProperty((int)id, value);
     }
     
-    protected void set1stProperty(long id, int value) {
+    void set1stProperty(long id, int value) {
         getFirstSection().setProperty((int)id, value);
     }
     
-    protected void set1stProperty(long id, boolean value) {
+    void set1stProperty(long id, boolean value) {
         getFirstSection().setProperty((int)id, value);
     }
     
-    protected void set1stProperty(long id, byte[] value) {
+    @SuppressWarnings("SameParameterValue")
+    void set1stProperty(long id, byte[] value) {
         getFirstSection().setProperty((int)id, value);
     }
     
-    private static void putClassId(final OutputStream out, final ClassID n) throws IOException {
+    private static void putClassId(final ByteArrayOutputStream out, final ClassID n) {
         byte[] b = new byte[16];
         n.write(b, 0);
         out.write(b, 0, b.length);

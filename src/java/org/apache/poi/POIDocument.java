@@ -40,7 +40,6 @@ import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIEncryptor;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
-import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
@@ -75,14 +74,6 @@ public abstract class POIDocument implements Closeable {
     	this.directory = dir;
     }
 
-    /**
-     * Constructs from an old-style OPOIFS
-     * 
-     * @param fs the filesystem the document is read from
-     */
-    protected POIDocument(OPOIFSFileSystem fs) {
-       this(fs.getRoot());
-    }
     /**
      * Constructs from an old-style OPOIFS
      * 
@@ -195,6 +186,7 @@ public abstract class POIDocument implements Closeable {
      *  @param setName The property to read
      *  @return The value of the given property or null if it wasn't found.
      */
+    @SuppressWarnings("WeakerAccess")
     protected PropertySet getPropertySet(String setName) throws IOException {
         return getPropertySet(setName, getEncryptionInfo());
     }
@@ -207,6 +199,7 @@ public abstract class POIDocument implements Closeable {
      *  @param encryptionInfo the encryption descriptor in case of cryptoAPI encryption
      *  @return The value of the given property or null if it wasn't found.
      */
+    @SuppressWarnings("WeakerAccess")
     protected PropertySet getPropertySet(String setName, EncryptionInfo encryptionInfo) throws IOException {
         DirectoryNode dirNode = directory;
         
@@ -329,7 +322,7 @@ public abstract class POIDocument implements Closeable {
      * @throws IOException if an error when writing to the 
      *      {@link NPOIFSFileSystem} occurs
      */
-    protected void writePropertySet(String name, PropertySet set, NPOIFSFileSystem outFS) throws IOException {
+    private void writePropertySet(String name, PropertySet set, NPOIFSFileSystem outFS) throws IOException {
         try {
             PropertySet mSet = new PropertySet(set);
             ByteArrayOutputStream bOut = new ByteArrayOutputStream();
@@ -420,8 +413,9 @@ public abstract class POIDocument implements Closeable {
     /**
      * Closes the underlying {@link NPOIFSFileSystem} from which
      *  the document was read, if any. Has no effect on documents
-     *  opened from an InputStream, or newly created ones.
-     * <p>Once close() has been called, no further operations
+     *  opened from an InputStream, or newly created ones.<p>
+     *
+     * Once {@code close()} has been called, no further operations
      *  should be called on the document.
      */
     @Override
@@ -468,13 +462,10 @@ public abstract class POIDocument implements Closeable {
      * to a new POIFSFileSystem
      *
      * @param newDirectory the new directory
-     * @return the old/previous directory
      */
     @Internal
-    protected DirectoryNode replaceDirectory(DirectoryNode newDirectory) {
-        DirectoryNode dn = directory;
+    protected void replaceDirectory(DirectoryNode newDirectory) {
         directory = newDirectory;
-        return dn;
     }
 
     /**

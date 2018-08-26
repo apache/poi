@@ -20,7 +20,6 @@ package org.apache.poi.poifs.filesystem;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.SuppressForbidden;
 
@@ -34,10 +33,6 @@ public class DocumentInputStream extends InputStream implements LittleEndianInpu
 	/** returned by read operations if we're at end of document */
 	protected static final int EOF = -1;
 
-	protected static final int SIZE_SHORT = 2;
-	protected static final int SIZE_INT = 4;
-	protected static final int SIZE_LONG = 8;
-	
 	private DocumentInputStream delegate;
 	
 	/** For use by downstream implementations */
@@ -55,27 +50,7 @@ public class DocumentInputStream extends InputStream implements LittleEndianInpu
 	   if (!(document instanceof DocumentNode)) {
 	      throw new IOException("Cannot open internal document storage");
 	   }
-	   DocumentNode documentNode = (DocumentNode)document;
-	   DirectoryNode parentNode = (DirectoryNode)document.getParent();
-
-	   if(documentNode.getDocument() != null) {
-	      delegate = new ODocumentInputStream(document);
-	   } else if(parentNode.getOFileSystem() != null) {
-	      delegate = new ODocumentInputStream(document);
-	   } else if(parentNode.getNFileSystem() != null) {
-	      delegate = new NDocumentInputStream(document);
-	   } else {
-	      throw new IOException("No FileSystem bound on the parent, can't read contents");
-	   }
-	}
-
-	/**
-	 * Create an InputStream from the specified Document
-	 * 
-	 * @param document the Document to be read
-	 */
-	public DocumentInputStream(OPOIFSDocument document) {
-	   delegate = new ODocumentInputStream(document);
+	   delegate = new NDocumentInputStream(document);
 	}
 
    /**

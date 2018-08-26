@@ -26,7 +26,6 @@ import org.apache.poi.POIDocument;
 import org.apache.poi.poifs.filesystem.EntryUtils;
 import org.apache.poi.poifs.filesystem.FilteringDirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
-import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
@@ -38,9 +37,6 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 public class HPSFPropertiesOnlyDocument extends POIDocument {
     public HPSFPropertiesOnlyDocument(NPOIFSFileSystem fs) {
         super(fs.getRoot());
-    }
-    public HPSFPropertiesOnlyDocument(OPOIFSFileSystem fs) {
-        super(fs);
     }
     public HPSFPropertiesOnlyDocument(POIFSFileSystem fs) {
         super(fs);
@@ -60,24 +56,18 @@ public class HPSFPropertiesOnlyDocument extends POIDocument {
      * Write out, with any properties changes, but nothing else
      */
     public void write(File newFile) throws IOException {
-        POIFSFileSystem fs = POIFSFileSystem.create(newFile);
-        try {
+        try (POIFSFileSystem fs = POIFSFileSystem.create(newFile)) {
             write(fs);
             fs.writeFilesystem();
-        } finally {
-            fs.close();
         }
     }
     /**
      * Write out, with any properties changes, but nothing else
      */
     public void write(OutputStream out) throws IOException {
-        NPOIFSFileSystem fs = new NPOIFSFileSystem();
-        try {
+        try (NPOIFSFileSystem fs = new NPOIFSFileSystem()) {
             write(fs);
             fs.writeFilesystem(out);
-        } finally {
-            fs.close();
         }
     }
     

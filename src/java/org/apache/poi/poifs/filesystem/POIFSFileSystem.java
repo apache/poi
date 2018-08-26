@@ -141,6 +141,6 @@ public class POIFSFileSystem
      *             arg[ 1 ] is the output file
      */
     public static void main(String args[]) throws IOException {
-        OPOIFSFileSystem.main(args);
+        NPOIFSFileSystem.main(args);
     }
 }

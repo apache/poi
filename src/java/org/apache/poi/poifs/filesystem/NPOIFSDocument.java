@@ -17,6 +17,8 @@
 
 package org.apache.poi.poifs.filesystem;
 
+import static java.util.Collections.emptyList;
+
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,7 +27,6 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.dev.POIFSViewable;
@@ -37,7 +38,7 @@ import org.apache.poi.util.IOUtils;
  * This class manages a document in the NIO POIFS filesystem.
  * This is the {@link NPOIFSFileSystem} version.
  */
-public final class NPOIFSDocument implements POIFSViewable {
+public final class NPOIFSDocument implements POIFSViewable, Iterable<ByteBuffer> {
 
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
@@ -51,7 +52,7 @@ public final class NPOIFSDocument implements POIFSViewable {
    /**
     * Constructor for an existing Document 
     */
-   public NPOIFSDocument(DocumentNode document) throws IOException {
+   public NPOIFSDocument(DocumentNode document) {
        this((DocumentProperty)document.getProperty(), 
             ((DirectoryNode)document.getParent()).getNFileSystem());
    }
@@ -59,9 +60,7 @@ public final class NPOIFSDocument implements POIFSViewable {
    /**
     * Constructor for an existing Document 
     */
-   public NPOIFSDocument(DocumentProperty property, NPOIFSFileSystem filesystem) 
-      throws IOException
-   {
+   public NPOIFSDocument(DocumentProperty property, NPOIFSFileSystem filesystem) {
       this._property = property;
       this._filesystem = filesystem;
 
@@ -90,7 +89,8 @@ public final class NPOIFSDocument implements POIFSViewable {
 
       // Build the property for it
       this._property = new DocumentProperty(name, length);
-      _property.setStartBlock(_stream.getStartBlock());     
+      _property.setStartBlock(_stream.getStartBlock());
+      _property.setDocument(this);
    }
    
    public NPOIFSDocument(String name, int size, NPOIFSFileSystem filesystem, POIFSWriterListener writer) 
@@ -116,7 +116,8 @@ public final class NPOIFSDocument implements POIFSViewable {
 
        // And build the property for it
        this._property = new DocumentProperty(name, size);
-       _property.setStartBlock(_stream.getStartBlock());     
+       _property.setStartBlock(_stream.getStartBlock());
+       _property.setDocument(this);
    }
    
    /**
@@ -128,7 +129,8 @@ public final class NPOIFSDocument implements POIFSViewable {
        bis.mark(bigBlockSize);
 
        // Do we need to store as a mini stream or a full one?
-       if(bis.skip(bigBlockSize) < bigBlockSize) {
+       long streamBlockSize = IOUtils.skipFully(bis, bigBlockSize);
+       if (streamBlockSize < bigBlockSize) {
           _stream = new NPOIFSStream(_filesystem.getMiniStore());
           _block_size = _filesystem.getMiniStore().getBlockStoreBlockSize();
        } else {
@@ -140,26 +142,21 @@ public final class NPOIFSDocument implements POIFSViewable {
        bis.reset();
        
        // Store it
-       OutputStream os = _stream.getOutputStream();
-       byte buf[] = new byte[1024];
-       int length = 0;
-       
-       for (int readBytes; (readBytes = bis.read(buf)) != -1; length += readBytes) {
-           os.write(buf, 0, readBytes);
+       final long length;
+       try (OutputStream os = _stream.getOutputStream()) {
+           length = IOUtils.copy(bis, os);
+
+           // Pad to the end of the block with -1s
+           int usedInBlock = (int) (length % _block_size);
+           if (usedInBlock != 0 && usedInBlock != _block_size) {
+               int toBlockEnd = _block_size - usedInBlock;
+               byte[] padding = IOUtils.safelyAllocate(toBlockEnd, MAX_RECORD_LENGTH);
+               Arrays.fill(padding, (byte) 0xFF);
+               os.write(padding);
+           }
        }
-       
-       // Pad to the end of the block with -1s
-       int usedInBlock = length % _block_size;
-       if (usedInBlock != 0 && usedInBlock != _block_size) {
-           int toBlockEnd = _block_size - usedInBlock;
-           byte[] padding = IOUtils.safelyAllocate(toBlockEnd, MAX_RECORD_LENGTH);
-           Arrays.fill(padding, (byte)0xFF);
-           os.write(padding);
-       }
-       
-       // Tidy and return the length
-       os.close();
-       return length;
+
+       return (int)length;
    }
    
    /**
@@ -178,15 +175,15 @@ public final class NPOIFSDocument implements POIFSViewable {
    int getDocumentBlockSize() {
       return _block_size;
    }
-   
-   Iterator<ByteBuffer> getBlockIterator() {
-      if(getSize() > 0) {
-         return _stream.getBlockIterator();
-      } else {
-         List<ByteBuffer> empty = Collections.emptyList();
-         return empty.iterator();
-      }
-   }
+
+    @Override
+    public Iterator<ByteBuffer> iterator() {
+        return getBlockIterator();
+    }
+
+    Iterator<ByteBuffer> getBlockIterator() {
+       return (getSize() > 0 ? _stream : Collections.<ByteBuffer>emptyList()).iterator();
+    }
 
    /**
     * @return size of the document
@@ -240,7 +237,7 @@ public final class NPOIFSDocument implements POIFSViewable {
     *		 store
     */
    public Iterator<Object> getViewableIterator() {
-      return Collections.emptyList().iterator();
+      return emptyList().iterator();
    }
 
    /**
@@ -261,10 +258,7 @@ public final class NPOIFSDocument implements POIFSViewable {
     * @return short description
     */
    public String getShortDescription() {
-      StringBuffer buffer = new StringBuffer();
 
-      buffer.append("Document: \"").append(_property.getName()).append("\"");
-      buffer.append(" size = ").append(getSize());
-      return buffer.toString();
+       return "Document: \"" + _property.getName() + "\" size = " + getSize();
    }
 }

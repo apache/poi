@@ -17,7 +17,7 @@
 
 package org.apache.poi.hpsf.examples;
 
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.IOException;
 
 import org.apache.poi.hpsf.PropertySetFactory;
@@ -33,8 +33,10 @@ import org.apache.poi.poifs.eventfilesystem.POIFSReaderListener;
  *
  * <p>Explanations can be found in the HPSF HOW-TO.</p>
  */
-public class ReadTitle
+public final class ReadTitle
 {
+    private ReadTitle() {}
+
     /**
      * <p>Runs the example program.</p>
      *
@@ -47,7 +49,7 @@ public class ReadTitle
         final String filename = args[0];
         POIFSReader r = new POIFSReader();
         r.registerListener(new MyPOIFSReaderListener(), SummaryInformation.DEFAULT_STREAM_NAME);
-        r.read(new FileInputStream(filename));
+        r.read(new File(filename));
     }
 
 

@@ -27,7 +27,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -35,12 +34,10 @@ import java.util.List;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.usermodel.HSLFObjectShape;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
-import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
-import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.sl.extractor.SlideShowExtractor;
 import org.apache.poi.sl.usermodel.ObjectShape;
@@ -68,18 +65,7 @@ public final class TestExtractor {
      */
     private static POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 
-//    @Before
-//    public void setUp() throws Exception {
-//        ppe = new PowerPointExtractor(slTests.getFile("basic_test_ppt_file.ppt").getCanonicalPath());
-//        ppe2 = new PowerPointExtractor(slTests.getFile("with_textbox.ppt").getCanonicalPath());
-//    }
-
-//    @After
-//    public void closeResources() throws Exception {
-//        ppe2.close();
-//        ppe.close();
-//    }
-
+    @SuppressWarnings("unchecked")
     private SlideShowExtractor<?,?> openExtractor(String fileName) throws IOException {
         try (InputStream is = slTests.openResourceAsStream(fileName)) {
             return new SlideShowExtractor(SlideShowFactory.create(is));
@@ -151,8 +137,6 @@ public final class TestExtractor {
     /**
      * Test that when presented with a PPT file missing the odd
      * core record, we can still get the rest of the text out
-     *
-     * @throws Exception
      */
     @Test
     public void testMissingCoreRecords() throws IOException {
@@ -191,7 +175,7 @@ public final class TestExtractor {
                 assertTrue(dir.hasEntry(HSLFSlideShow.POWERPOINT_DOCUMENT));
 
                 try (final SlideShow<?,?> ppt = SlideShowFactory.create(dir);
-                     final SlideShowExtractor<?,?> ppe = new SlideShowExtractor(ppt)) {
+                     final SlideShowExtractor<?,?> ppe = new SlideShowExtractor<>(ppt)) {
                     assertEquals(TEST_SET[i+1], ppe.getText());
                 }
             }
@@ -297,7 +281,7 @@ public final class TestExtractor {
     }
 
     private void testHeaderFooterInner(final HSLFSlideShow ppt) throws IOException {
-        try (final SlideShowExtractor<?,?> ppe = new SlideShowExtractor(ppt)) {
+        try (final SlideShowExtractor<?,?> ppe = new SlideShowExtractor<>(ppt)) {
             String text = ppe.getText();
             assertFalse("Header shouldn't be there by default\n" + text, text.contains("testdoc"));
             assertFalse("Header shouldn't be there by default\n" + text, text.contains("test phrase"));
@@ -399,19 +383,11 @@ public final class TestExtractor {
     public void testDifferentPOIFS() throws IOException {
         // Open the two filesystems
         File pptFile = slTests.getFile("basic_test_ppt_file.ppt");
-        try (final InputStream is1 = new FileInputStream(pptFile);
-            final NPOIFSFileSystem npoifs = new NPOIFSFileSystem(pptFile)) {
-
-            final OPOIFSFileSystem opoifs = new OPOIFSFileSystem(is1);
-
-            DirectoryNode[] files = {opoifs.getRoot(), npoifs.getRoot()};
-
+        try (final NPOIFSFileSystem npoifs = new NPOIFSFileSystem(pptFile, true)) {
             // Open directly
-            for (DirectoryNode dir : files) {
-                try (SlideShow<?,?> ppt = SlideShowFactory.create(dir);
-                    SlideShowExtractor<?,?> extractor = new SlideShowExtractor(ppt)) {
-                    assertEquals(expectText, extractor.getText());
-                }
+            try (SlideShow<?,?> ppt = SlideShowFactory.create(npoifs.getRoot());
+                SlideShowExtractor<?,?> extractor = new SlideShowExtractor<>(ppt)) {
+                assertEquals(expectText, extractor.getText());
             }
         }
     }

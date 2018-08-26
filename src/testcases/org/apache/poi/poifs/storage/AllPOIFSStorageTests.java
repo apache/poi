@@ -20,7 +20,7 @@ package org.apache.poi.poifs.storage;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 /**
- * Tests for org.apache.poi.poifs.storage<br>
+ * Tests for org.apache.poi.poifs.storage
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
@@ -33,11 +33,7 @@ import org.junit.runners.Suite;
     TestHeaderBlockWriting.class,
     TestPropertyBlock.class,
     TestRawDataBlock.class,
-    TestRawDataBlockList.class,
-    TestSmallBlockTableReader.class,
-    TestSmallBlockTableWriter.class,
-    TestSmallDocumentBlock.class,
-    TestSmallDocumentBlockList.class
+    TestRawDataBlockList.class
 })
 public class AllPOIFSStorageTests {
 }
