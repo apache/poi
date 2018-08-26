@@ -2062,7 +2062,7 @@ under the License.
                 <globmapper from="*" to="${zipdir}/lib/*"/>
             </mappedresources>
             <mappedresources cache="true">
-                <fileset dir="${ooxml.lib}" includes="xmlbeans-3.0.1.jar,curvesapi-*.jar"/>
+                <fileset dir="${ooxml.lib}" includes="xmlbeans-*.jar,curvesapi-*.jar"/>
                 <regexpmapper from="^(.*\.jar)$$" to="${zipdir}/ooxml-lib/\1"/>
             </mappedresources>
             <mappedresources cache="true">
