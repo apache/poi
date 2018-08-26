@@ -138,6 +138,9 @@ subprojects {
         systemProperties['user.dir'] = workingDir
         
         systemProperties['POI.testdata.path'] = '../../test-data'
+        
+        // this is necessary for JDK 9+ to keep formatting dates the same way as in previous JDK-versions
+        systemProperties['java.locale.providers'] = 'JRE,CLDR'
     }
 
     jacoco {
