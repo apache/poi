@@ -110,6 +110,10 @@ public class WorkbookFactory {
                 return createXSSFWorkbook(stream);
             } finally {
                 IOUtils.closeQuietly(stream);
+
+                // as we processed the full stream already, we can close the filesystem here
+                // otherwise file handles are leaked
+                root.getFileSystem().close();
             }
         }
 
@@ -137,7 +141,7 @@ public class WorkbookFactory {
      * <p>Note that in order to properly release resources the
      *  Workbook should be closed after use.</p>
      *
-     *  @param pkg The {@link OPCPackage} opened for reading data.
+     *  @param pkg The {@link org.apache.poi.openxml4j.opc.OPCPackage} opened for reading data.
      *
      *  @return The created Workbook
      *
