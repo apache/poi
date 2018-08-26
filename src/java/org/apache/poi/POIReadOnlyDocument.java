@@ -21,8 +21,6 @@ import java.io.OutputStream;
 
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
-import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 
 /**
@@ -32,16 +30,10 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  *  @since POI 3.15 beta 3
  */
 public abstract class POIReadOnlyDocument extends POIDocument {
-    public POIReadOnlyDocument(DirectoryNode dir) {
+    protected POIReadOnlyDocument(DirectoryNode dir) {
         super(dir);
     }
-    public POIReadOnlyDocument(NPOIFSFileSystem fs) {
-        super(fs);
-    }
-    public POIReadOnlyDocument(OPOIFSFileSystem fs) {
-        super(fs);
-    }
-    public POIReadOnlyDocument(POIFSFileSystem fs) {
+    protected POIReadOnlyDocument(NPOIFSFileSystem fs) {
         super(fs);
     }
 

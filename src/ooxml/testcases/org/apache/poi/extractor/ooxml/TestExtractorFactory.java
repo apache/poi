@@ -30,10 +30,9 @@ import java.io.IOException;
 import java.util.Locale;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.UnsupportedFileFormatException;
 import org.apache.poi.extractor.POIOLE2TextExtractor;
 import org.apache.poi.extractor.POITextExtractor;
-import org.apache.poi.ooxml.extractor.POIXMLTextExtractor;
-import org.apache.poi.UnsupportedFileFormatException;
 import org.apache.poi.hdgf.extractor.VisioTextExtractor;
 import org.apache.poi.hpbf.extractor.PublisherTextExtractor;
 import org.apache.poi.hsmf.extractor.OutlookTextExtactor;
@@ -44,14 +43,12 @@ import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.hwpf.extractor.Word6Extractor;
 import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.ooxml.extractor.ExtractorFactory;
+import org.apache.poi.ooxml.extractor.POIXMLTextExtractor;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
-import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.sl.extractor.SlideShowExtractor;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.xdgf.extractor.XDGFVisioExtractor;
 import org.apache.poi.xssf.extractor.XSSFBEventBasedExcelExtractor;
 import org.apache.poi.xssf.extractor.XSSFEventBasedExcelExtractor;
@@ -65,11 +62,10 @@ import org.junit.Test;
  */
 public class TestExtractorFactory {
 
-    private static final POILogger LOG = POILogFactory.getLogger(TestExtractorFactory.class);
-
     private static final POIDataSamples ssTests = POIDataSamples.getSpreadSheetInstance();
     private static final File xls = getFileAndCheck(ssTests, "SampleSS.xls");
     private static final File xlsx = getFileAndCheck(ssTests, "SampleSS.xlsx");
+    @SuppressWarnings("unused")
     private static final File xlsxStrict = getFileAndCheck(ssTests, "SampleSS.strict.xlsx");
     private static final File xltx = getFileAndCheck(ssTests, "test.xltx");
     private static final File xlsEmb = getFileAndCheck(ssTests, "excel_with_embeded.xls");
@@ -150,17 +146,19 @@ public class TestExtractorFactory {
     @Test(expected = IllegalArgumentException.class)
     public void testFileInvalid() throws Exception {
         // Text
-        try (POITextExtractor te = ExtractorFactory.createExtractor(txt)) {}
+        try (POITextExtractor ignored = ExtractorFactory.createExtractor(txt)) {
+            fail("extracting from invalid package");
+        }
     }
 
     @Test
     public void testInputStream() throws Exception {
-        testStream((f) -> ExtractorFactory.createExtractor(f), true);
+        testStream(ExtractorFactory::createExtractor, true);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testInputStreamInvalid() throws Exception {
-        testInvalid((f) -> ExtractorFactory.createExtractor(f));
+        testInvalid(ExtractorFactory::createExtractor);
     }
 
     @Test
@@ -172,17 +170,6 @@ public class TestExtractorFactory {
     public void testPOIFSInvalid() throws Exception {
         testInvalid((f) -> ExtractorFactory.createExtractor(new POIFSFileSystem(f)));
     }
-
-    @Test
-    public void testOPOIFS() throws Exception {
-        testStream((f) -> ExtractorFactory.createExtractor(new OPOIFSFileSystem(f)), false);
-    }
-
-    @Test(expected = IOException.class)
-    public void testOPOIFSInvalid() throws Exception {
-        testInvalid((f) -> ExtractorFactory.createExtractor(new OPOIFSFileSystem(f)));
-    }
-
 
     private void testStream(final FunctionEx<FileInputStream, POITextExtractor> poifsIS, final boolean loadOOXML)
     throws IOException, OpenXML4JException, XmlException {
@@ -213,7 +200,8 @@ public class TestExtractorFactory {
     private void testInvalid(FunctionEx<FileInputStream, POITextExtractor> poifs) throws IOException, OpenXML4JException, XmlException {
         // Text
         try (FileInputStream fis = new FileInputStream(txt);
-             POITextExtractor te = poifs.apply(fis)) {
+             POITextExtractor ignored = poifs.apply(fis)) {
+            fail("extracting from invalid package");
         }
     }
 
@@ -237,7 +225,9 @@ public class TestExtractorFactory {
     public void testPackageInvalid() throws Exception {
         // Text
         try (final OPCPackage pkg = OPCPackage.open(txt, PackageAccess.READ);
-             final POITextExtractor te = ExtractorFactory.createExtractor(pkg)) {}
+             final POITextExtractor ignored = ExtractorFactory.createExtractor(pkg)) {
+            fail("extracting from invalid package");
+        }
     }
 
     @Test
@@ -452,7 +442,7 @@ public class TestExtractorFactory {
     };
     
     @Test
-    public void testFileLeak() throws Exception {
+    public void testFileLeak() {
         // run a number of files that might fail in order to catch 
         // leaked file resources when using file-leak-detector while
         // running the test

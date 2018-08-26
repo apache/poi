@@ -17,218 +17,131 @@
 
 package org.apache.poi.poifs.filesystem;
 
+import static org.apache.poi.poifs.common.POIFSConstants.LARGER_BIG_BLOCK_SIZE;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.stream.IntStream;
 
 import org.apache.poi.poifs.property.DocumentProperty;
-import org.apache.poi.poifs.storage.RawDataBlock;
-
-import junit.framework.TestCase;
+import org.apache.poi.poifs.storage.RawDataUtil;
+import org.apache.poi.util.IOUtils;
+import org.junit.Test;
 
 /**
- * Class to test OPOIFSDocument functionality
+ * Class to test POIFSDocument functionality
  */
-public final class TestDocument extends TestCase {
+public class TestDocument {
 
     /**
      * Integration test -- really about all we can do
      */
-    public void testOPOIFSDocument() throws IOException {
+    @Test
+    public void testNPOIFSDocument() throws IOException {
 
-        // verify correct number of blocks get created for document
-        // that is exact multituple of block size
-        OPOIFSDocument document;
-        byte[]        array = new byte[ 4096 ];
+        try (NPOIFSFileSystem poifs = new NPOIFSFileSystem()) {
 
-        for (int j = 0; j < array.length; j++)
-        {
-            array[ j ] = ( byte ) j;
-        }
-        document = new OPOIFSDocument("foo", new SlowInputStream(new ByteArrayInputStream(array)));
-        checkDocument(document, array);
+            // verify correct number of blocks get created for document
+            // that is exact multiple of block size
+            checkDocument(poifs, LARGER_BIG_BLOCK_SIZE);
 
-        // verify correct number of blocks get created for document
-        // that is not an exact multiple of block size
-        array = new byte[ 4097 ];
-        for (int j = 0; j < array.length; j++)
-        {
-            array[ j ] = ( byte ) j;
-        }
-        document = new OPOIFSDocument("bar", new ByteArrayInputStream(array));
-        checkDocument(document, array);
+            // verify correct number of blocks get created for document
+            // that is not an exact multiple of block size
+            checkDocument(poifs, LARGER_BIG_BLOCK_SIZE + 1);
 
-        // verify correct number of blocks get created for document
-        // that is small
-        array = new byte[ 4095 ];
-        for (int j = 0; j < array.length; j++)
-        {
-            array[ j ] = ( byte ) j;
-        }
-        document = new OPOIFSDocument("_bar", new ByteArrayInputStream(array));
-        checkDocument(document, array);
+            // verify correct number of blocks get created for document
+            // that is small
+            checkDocument(poifs, LARGER_BIG_BLOCK_SIZE - 1);
 
-        // verify correct number of blocks get created for document
-        // that is rather small
-        array = new byte[ 199 ];
-        for (int j = 0; j < array.length; j++)
-        {
-            array[ j ] = ( byte ) j;
-        }
-        document = new OPOIFSDocument("_bar2",
-                                     new ByteArrayInputStream(array));
-        checkDocument(document, array);
+            // verify correct number of blocks get created for document
+            // that is rather small
+            checkDocument(poifs, 199);
 
-        // verify that output is correct
-        array = new byte[ 4097 ];
-        for (int j = 0; j < array.length; j++)
-        {
-            array[ j ] = ( byte ) j;
-        }
-        document = new OPOIFSDocument("foobar",
-                                     new ByteArrayInputStream(array));
-        checkDocument(document, array);
-        document.setStartBlock(0x12345678);   // what a big file!!
-        DocumentProperty      property = document.getDocumentProperty();
-        ByteArrayOutputStream stream   = new ByteArrayOutputStream();
 
-        property.writeData(stream);
-        byte[] output = stream.toByteArray();
-        byte[] array2 =
-        {
-            ( byte ) 'f', ( byte ) 0, ( byte ) 'o', ( byte ) 0, ( byte ) 'o',
-            ( byte ) 0, ( byte ) 'b', ( byte ) 0, ( byte ) 'a', ( byte ) 0,
-            ( byte ) 'r', ( byte ) 0, ( byte ) 0, ( byte ) 0, ( byte ) 0,
-            ( byte ) 0, ( byte ) 0, ( byte ) 0, ( byte ) 0, ( byte ) 0,
-            ( byte ) 0, ( byte ) 0, ( byte ) 0, ( byte ) 0, ( byte ) 0,
-            ( byte ) 0, ( byte ) 0, ( byte ) 0, ( byte ) 0, ( byte ) 0,
-            ( byte ) 0, ( byte ) 0, ( byte ) 0, ( byte ) 0, ( byte ) 0,
-            ( byte ) 0, ( byte ) 0, ( byte ) 0, ( byte ) 0, ( byte ) 0,
-            ( byte ) 0, ( byte ) 0, ( byte ) 0, ( byte ) 0, ( byte ) 0,
-            ( byte ) 0, ( byte ) 0, ( byte ) 0, ( byte ) 0, ( byte ) 0,
-            ( byte ) 0, ( byte ) 0, ( byte ) 0, ( byte ) 0, ( byte ) 0,
-            ( byte ) 0, ( byte ) 0, ( byte ) 0, ( byte ) 0, ( byte ) 0,
-            ( byte ) 0, ( byte ) 0, ( byte ) 0, ( byte ) 0, ( byte ) 14,
-            ( byte ) 0, ( byte ) 2, ( byte ) 1, ( byte ) -1, ( byte ) -1,
-            ( byte ) -1, ( byte ) -1, ( byte ) -1, ( byte ) -1, ( byte ) -1,
-            ( byte ) -1, ( byte ) -1, ( byte ) -1, ( byte ) -1, ( byte ) -1,
-            ( byte ) 0, ( byte ) 0, ( byte ) 0, ( byte ) 0, ( byte ) 0,
-            ( byte ) 0, ( byte ) 0, ( byte ) 0, ( byte ) 0, ( byte ) 0,
-            ( byte ) 0, ( byte ) 0, ( byte ) 0, ( byte ) 0, ( byte ) 0,
-            ( byte ) 0, ( byte ) 0, ( byte ) 0, ( byte ) 0, ( byte ) 0,
-            ( byte ) 0, ( byte ) 0, ( byte ) 0, ( byte ) 0, ( byte ) 0,
-            ( byte ) 0, ( byte ) 0, ( byte ) 0, ( byte ) 0, ( byte ) 0,
-            ( byte ) 0, ( byte ) 0, ( byte ) 0, ( byte ) 0, ( byte ) 0,
-            ( byte ) 0, ( byte ) 0x78, ( byte ) 0x56, ( byte ) 0x34,
-            ( byte ) 0x12, ( byte ) 1, ( byte ) 16, ( byte ) 0, ( byte ) 0,
-            ( byte ) 0, ( byte ) 0, ( byte ) 0, ( byte ) 0
-        };
+            // verify that output is correct
+            NPOIFSDocument document = checkDocument(poifs, LARGER_BIG_BLOCK_SIZE + 1);
+            DocumentProperty property = document.getDocumentProperty();
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
-        assertEquals(array2.length, output.length);
-        for (int j = 0; j < output.length; j++)
-        {
-            assertEquals("Checking property offset " + j, array2[ j ],
-                         output[ j ]);
+            property.writeData(stream);
+            byte[] output = stream.toByteArray();
+            byte[] array2 = RawDataUtil.decompress("H4sIAAAAAAAAAEtlyGMoYShiqGSwYCAH8DEwMf5HAsToMQdiRgEIGwCDyzEQgAAAAA==");
+
+            assertArrayEquals(array2, output);
         }
     }
 
-    private static OPOIFSDocument makeCopy(OPOIFSDocument document, byte[] input, byte[] data)
-            throws IOException {
-        OPOIFSDocument copy = null;
+    private static NPOIFSDocument checkDocument(final NPOIFSFileSystem poifs, final int size) throws IOException {
+        final byte[] input = new byte[size];
+        IntStream.range(0, size).forEach(i -> input[i] = (byte)i);
 
-        if (input.length >= 4096)
-        {
-            RawDataBlock[]       blocks =
-                new RawDataBlock[ (input.length + 511) / 512 ];
-            ByteArrayInputStream stream = new ByteArrayInputStream(data);
-            int                  index  = 0;
+        NPOIFSDocument document = ((DocumentNode)poifs.createDocument(
+            new SlowInputStream(new ByteArrayInputStream(input)),
+        "entry"+poifs.getRoot().getEntryCount())).getDocument();
 
-            while (true)
-            {
-                RawDataBlock block = new RawDataBlock(stream);
+        final int blockSize = (size >= 4096) ? 512 : 64;
+        final int blockCount = (size + (blockSize-1)) / blockSize;
 
-                if (block.eof())
-                {
-                    break;
-                }
-                blocks[ index++ ] = block;
-            }
-            copy = new OPOIFSDocument("test" + input.length, blocks,
-                                     input.length);
-        }
-        else
-        {
-            copy = new OPOIFSDocument("test"+input.length, document.getSmallBlocks(), input.length);
-        }
-        return copy;
+        final byte[] bytCpy = checkValues(blockCount, document, input);
+        final NPOIFSDocument copied = makeCopy(document,bytCpy);
+
+        checkValues(blockCount, copied, input);
+
+        return document;
     }
 
-    private static void checkDocument(final OPOIFSDocument document, final byte[] input)
-            throws IOException {
-        int big_blocks   = 0;
-        int small_blocks = 0;
-        int total_output = 0;
-
-        if (input.length >= 4096)
-        {
-            big_blocks   = (input.length + 511) / 512;
-            total_output = big_blocks * 512;
+    private static NPOIFSDocument makeCopy(NPOIFSDocument document, byte[] input) throws IOException {
+        NPOIFSFileSystem poifs = document.getFileSystem();
+        String name = "test" + input.length;
+        DirectoryNode root = poifs.getRoot();
+        if (root.hasEntry(name)) {
+            root.deleteEntry((EntryNode)root.getEntry(name));
         }
-        else
-        {
-            small_blocks = (input.length + 63) / 64;
-            total_output = 0;
-        }
-        checkValues(
-            big_blocks, small_blocks, total_output,
-            makeCopy(
-            document, input,
-            checkValues(
-                big_blocks, small_blocks, total_output, document,
-                input)), input);
+        return ((DocumentNode)root
+            .createDocument(name, new ByteArrayInputStream(input)))
+            .getDocument();
     }
 
-    private static byte[] checkValues(int big_blocks, int small_blocks, int total_output,
-            OPOIFSDocument document, byte[] input) throws IOException {
+    private static byte[] checkValues(final int blockCountExp, NPOIFSDocument document, byte[] input) throws IOException {
+        assertNotNull(document);
+        assertNotNull(document.getDocumentProperty().getDocument());
         assertEquals(document, document.getDocumentProperty().getDocument());
-        int increment = ( int ) Math.sqrt(input.length);
 
-        for (int j = 1; j <= input.length; j += increment)
-        {
-            byte[] buffer = new byte[ j ];
-            int    offset = 0;
+        ByteArrayInputStream bis = new ByteArrayInputStream(input);
 
-            for (int k = 0; k < (input.length / j); k++)
-            {
-                document.read(buffer, offset);
-                for (int n = 0; n < buffer.length; n++)
-                {
-                    assertEquals("checking byte " + (k * j) + n,
-                                 input[ (k * j) + n ], buffer[ n ]);
-                }
-                offset += j;
-            }
+        int blockCountAct = 0, bytesRemaining = input.length;
+        for (ByteBuffer bb : document) {
+            assertTrue(bytesRemaining > 0);
+            int bytesAct = Math.min(bb.remaining(), bytesRemaining);
+            assertTrue(bytesAct <= document.getDocumentBlockSize());
+            byte[] bufAct = new byte[bytesAct];
+            bb.get(bufAct);
+
+            byte[] bufExp = new byte[bytesAct];
+            int bytesExp = bis.read(bufExp, 0, bytesAct);
+            assertEquals(bytesExp, bytesAct);
+
+            assertArrayEquals(bufExp, bufAct);
+            blockCountAct++;
+            bytesRemaining -= bytesAct;
         }
-        assertEquals(big_blocks, document.countBlocks());
-        assertEquals(small_blocks, document.getSmallBlocks().length);
+
+        assertEquals(blockCountExp, blockCountAct);
+
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        try (DocumentInputStream dis = document.getFileSystem().createDocumentInputStream(
+                document.getDocumentProperty().getName())) {
+            IOUtils.copy(dis, stream);
+        }
 
-        document.writeBlocks(stream);
         byte[] output = stream.toByteArray();
-
-        assertEquals(total_output, output.length);
-        int limit = Math.min(total_output, input.length);
-
-        for (int j = 0; j < limit; j++)
-        {
-            assertEquals("Checking document offset " + j, input[ j ],
-                         output[ j ]);
-        }
-        for (int j = limit; j < output.length; j++)
-        {
-            assertEquals("Checking document offset " + j, ( byte ) -1,
-                         output[ j ]);
-        }
+        assertArrayEquals(input, stream.toByteArray());
         return output;
     }
 }

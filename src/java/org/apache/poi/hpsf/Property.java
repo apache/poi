@@ -345,9 +345,13 @@ public class Property {
      * @return the truncated size with a maximum of 4 bytes shorter (3 bytes + trailing 0 of strings)
      */
     private static int unpaddedLength(byte[] buf) {
-        int len;
-        for (len = buf.length; len > 0 && len > buf.length-4 && buf[len-1] == 0; len--);
-        return len;
+        final int end = (buf.length-(buf.length+3)%4);
+        for (int i = buf.length; i>end; i--) {
+            if (buf[i-1] != 0) {
+                return i;
+            }
+        }
+        return end;
     }
 
 

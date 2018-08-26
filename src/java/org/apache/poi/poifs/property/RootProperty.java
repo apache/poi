@@ -18,7 +18,6 @@
 package org.apache.poi.poifs.property;
 
 import org.apache.poi.poifs.common.POIFSConstants;
-import org.apache.poi.poifs.storage.SmallDocumentBlock;
 
 /**
  * Root property
@@ -43,9 +42,7 @@ public final class RootProperty extends DirectoryProperty {
      * @param array byte data
      * @param offset offset into byte data
      */
-    protected RootProperty(final int index, final byte [] array,
-                           final int offset)
-    {
+    RootProperty(final int index, final byte [] array, final int offset) {
         super(index, array, offset);
     }
 
@@ -56,7 +53,9 @@ public final class RootProperty extends DirectoryProperty {
      */
     public void setSize(int size)
     {
-        super.setSize(SmallDocumentBlock.calcSize(size));
+        final int BLOCK_SHIFT = 6;
+        final int _block_size = 1 << BLOCK_SHIFT;
+        super.setSize(size * _block_size);
     }
 
     /**

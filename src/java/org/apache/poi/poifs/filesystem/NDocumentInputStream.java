@@ -17,6 +17,10 @@
 
 package org.apache.poi.poifs.filesystem;
 
+import static org.apache.poi.util.LittleEndianConsts.INT_SIZE;
+import static org.apache.poi.util.LittleEndianConsts.LONG_SIZE;
+import static org.apache.poi.util.LittleEndianConsts.SHORT_SIZE;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
@@ -71,9 +75,9 @@ public final class NDocumentInputStream extends DocumentInputStream {
         _document_size = document.getSize();
         _closed = false;
 
-        if (_document_size < 0) {
-            //throw new RecordFormatException("Document size can't be < 0");
-        }
+        // can't be asserted ... see bug 61300
+        // assert (_document_size >= 0) : "Document size can't be < 0";
+
         DocumentNode doc = (DocumentNode)document;
         DocumentProperty property = (DocumentProperty)doc.getProperty();
         _document = new NPOIFSDocument(
@@ -284,33 +288,33 @@ public final class NDocumentInputStream extends DocumentInputStream {
 
    @Override
 	public long readLong() {
-		checkAvaliable(SIZE_LONG);
-		byte[] data = new byte[SIZE_LONG];
-		readFully(data, 0, SIZE_LONG);
+		checkAvaliable(LONG_SIZE);
+		byte[] data = new byte[LONG_SIZE];
+		readFully(data, 0, LONG_SIZE);
 		return LittleEndian.getLong(data, 0);
 	}
 
    @Override
    public short readShort() {
-      checkAvaliable(SIZE_SHORT);
-      byte[] data = new byte[SIZE_SHORT];
-      readFully(data, 0, SIZE_SHORT);
+      checkAvaliable(SHORT_SIZE);
+      byte[] data = new byte[SHORT_SIZE];
+      readFully(data, 0, SHORT_SIZE);
       return LittleEndian.getShort(data);
    }
 
    @Override
 	public int readInt() {
-		checkAvaliable(SIZE_INT);
-      byte[] data = new byte[SIZE_INT];
-      readFully(data, 0, SIZE_INT);
+		checkAvaliable(INT_SIZE);
+      byte[] data = new byte[INT_SIZE];
+      readFully(data, 0, INT_SIZE);
       return LittleEndian.getInt(data);
 	}
 
    @Override
 	public int readUShort() {
-		checkAvaliable(SIZE_SHORT);
-      byte[] data = new byte[SIZE_SHORT];
-      readFully(data, 0, SIZE_SHORT);
+		checkAvaliable(SHORT_SIZE);
+      byte[] data = new byte[SHORT_SIZE];
+      readFully(data, 0, SHORT_SIZE);
       return LittleEndian.getUShort(data);
 	}
 

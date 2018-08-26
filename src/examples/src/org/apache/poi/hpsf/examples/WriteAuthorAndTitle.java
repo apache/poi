@@ -19,8 +19,7 @@ package org.apache.poi.hpsf.examples;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,7 +27,15 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.poi.hpsf.*;
+import org.apache.poi.hpsf.HPSFRuntimeException;
+import org.apache.poi.hpsf.MarkUnsupportedException;
+import org.apache.poi.hpsf.NoPropertySetStreamException;
+import org.apache.poi.hpsf.PropertySet;
+import org.apache.poi.hpsf.PropertySetFactory;
+import org.apache.poi.hpsf.Section;
+import org.apache.poi.hpsf.SummaryInformation;
+import org.apache.poi.hpsf.Variant;
+import org.apache.poi.hpsf.WritingNotSupportedException;
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
 import org.apache.poi.poifs.eventfilesystem.POIFSReader;
 import org.apache.poi.poifs.eventfilesystem.POIFSReaderEvent;
@@ -72,8 +79,9 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * 
  * <p>Further explanations can be found in the HPSF HOW-TO.</p>
  */
-public class WriteAuthorAndTitle
-{
+public final class WriteAuthorAndTitle {
+    private WriteAuthorAndTitle() {}
+
     /**
      * <p>Runs the example program.</p>
      *
@@ -101,10 +109,8 @@ public class WriteAuthorAndTitle
         final POIFSReader r = new POIFSReader();
         final ModifySICopyTheRest msrl = new ModifySICopyTheRest(dstName);
         r.registerListener(msrl);
-        FileInputStream fis = new FileInputStream(srcName);
-        r.read(fis);
-        fis.close();
-        
+        r.read(new File(srcName));
+
         /* Write the new POIFS to disk. */
         msrl.close();
     }
@@ -127,14 +133,14 @@ public class WriteAuthorAndTitle
 
 
         /**
-         * <p>The constructor of a {@link ModifySICopyTheRest} instance creates
+         * The constructor of a {@link ModifySICopyTheRest} instance creates
          * the target POIFS. It also stores the name of the file the POIFS will
-         * be written to once it is complete.</p>
+         * be written to once it is complete.
          * 
          * @param dstName The name of the disk file the destination POIFS is to
          * be written to.
          */
-        public ModifySICopyTheRest(final String dstName)
+        ModifySICopyTheRest(final String dstName)
         {
             this.dstName = dstName;
             poiFs = new POIFSFileSystem();
@@ -142,8 +148,8 @@ public class WriteAuthorAndTitle
 
 
         /**
-         * <p>The method is called by POI's eventing API for each file in the
-         * origin POIFS.</p>
+         * The method is called by POI's eventing API for each file in the
+         * origin POIFS.
          */
         @Override
         public void processPOIFSReaderEvent(final POIFSReaderEvent event)
@@ -213,7 +219,7 @@ public class WriteAuthorAndTitle
          * @param si The property set. It should be a summary information
          * property set.
          */
-        public void editSI(final POIFSFileSystem poiFs,
+        void editSI(final POIFSFileSystem poiFs,
                            final POIFSDocumentPath path,
                            final String name,
                            final PropertySet si)
@@ -297,9 +303,9 @@ public class WriteAuthorAndTitle
 
 
         /**
-         * <p>Writes the POI file system to a disk file.</p>
+         * Writes the POI file system to a disk file.
          */
-        public void close() throws FileNotFoundException, IOException
+        public void close() throws IOException
         {
             out = new FileOutputStream(dstName);
             poiFs.writeFilesystem(out);

@@ -30,7 +30,7 @@ import java.util.Set;
 /**
  * Directory property
  */
-public class DirectoryProperty extends Property implements Parent, Iterable<Property> { // TODO - fix instantiable superclass
+public class DirectoryProperty extends Property implements Parent, Iterable<Property> {
 
     /** List of Property instances */
     private List<Property> _children;

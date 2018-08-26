@@ -36,6 +36,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianConsts;
+import org.apache.poi.util.LittleEndianOutputStream;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -81,7 +82,7 @@ public class Section {
      * #getPropertyIntValue} or {@link #getProperty} tried to access a
      * property that was not available, else {@code false}.
      */
-    private boolean wasNull;
+    private transient boolean wasNull;
 
     /**
      * Creates an empty {@link Section}.
@@ -292,6 +293,7 @@ public class Section {
      * @param formatID The section's format ID as a byte array. It components
      * are in big-endian format.
      */
+    @SuppressWarnings("WeakerAccess")
     public void setFormatID(final byte[] formatID) {
         ClassID fid = getFormatID();
         if (fid == null) {
@@ -325,7 +327,7 @@ public class Section {
      * @return This section's properties.
      */
     public Property[] getProperties() {
-        return properties.values().toArray(new Property[properties.size()]);
+        return properties.values().toArray(new Property[0]);
     }
 
     /**
@@ -375,7 +377,7 @@ public class Section {
      * @see #getProperty
      */
     public void setProperty(final int id, final int value) {
-        setProperty(id, Variant.VT_I4, Integer.valueOf(value));
+        setProperty(id, Variant.VT_I4, value);
     }
 
 
@@ -390,7 +392,7 @@ public class Section {
      * @see #getProperty
      */
     public void setProperty(final int id, final long value) {
-        setProperty(id, Variant.VT_I8, Long.valueOf(value));
+        setProperty(id, Variant.VT_I8, value);
     }
 
 
@@ -405,7 +407,7 @@ public class Section {
      * @see #getProperty
      */
     public void setProperty(final int id, final boolean value) {
-        setProperty(id, Variant.VT_BOOL, Boolean.valueOf(value));
+        setProperty(id, Variant.VT_BOOL, value);
     }
 
 
@@ -487,7 +489,7 @@ public class Section {
      *
      * @return The property's value
      */
-    protected int getPropertyIntValue(final long id) {
+    int getPropertyIntValue(final long id) {
         final Number i;
         final Object o = getProperty(id);
         if (o == null) {
@@ -513,9 +515,9 @@ public class Section {
      *
      * @return The property's value
      */
-    protected boolean getPropertyBooleanValue(final int id) {
+    boolean getPropertyBooleanValue(final int id) {
         final Boolean b = (Boolean) getProperty(id);
-        return b != null && b.booleanValue();
+        return b != null && b;
     }
 
     /**
@@ -529,8 +531,9 @@ public class Section {
      * @see #getProperty
      * @see Variant
      */
+    @SuppressWarnings("unused")
     protected void setPropertyBooleanValue(final int id, final boolean value) {
-        setProperty(id, Variant.VT_BOOL, Boolean.valueOf(value));
+        setProperty(id, Variant.VT_BOOL, value);
     }
 
     /**
@@ -588,6 +591,7 @@ public class Section {
      * #getPropertyIntValue} or {@link #getProperty} tried to access a
      * property that was not available, else {@code false}.
      */
+    @SuppressWarnings("WeakerAccess")
     public boolean wasNull() {
         return wasNull;
     }
@@ -674,7 +678,7 @@ public class Section {
         for (Long id : propIds) {
             Property p1 = properties.get(id);
             Property p2 = s.properties.get(id);
-            if (p1 == null || p2 == null || !p1.equals(p2)) {
+            if (p1 == null || !p1.equals(p2)) {
                 return false;
             }
         }
@@ -683,7 +687,7 @@ public class Section {
         Map<Long,String> d1 = getDictionary();
         Map<Long,String> d2 = s.getDictionary();
 
-        return (d1 == null && d2 == null) || (d1 != null && d2 != null && d1.equals(d2));
+        return (d1 == null && d2 == null) || (d1 != null && d1.equals(d2));
     }
 
     /**
@@ -691,6 +695,7 @@ public class Section {
      *
      * @param id The ID of the property to be removed
      */
+    @SuppressWarnings("WeakerAccess")
     public void removeProperty(final long id) {
         if (properties.remove(id) != null) {
             sectionBytes.reset();
@@ -731,60 +736,54 @@ public class Section {
             codepage = Property.DEFAULT_CODEPAGE;
         }
 
-        /* The properties are written to this stream. */
-        final ByteArrayOutputStream propertyStream = new ByteArrayOutputStream();
+        final int[][] offsets = new int[properties.size()][2];
+        final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        final LittleEndianOutputStream leos = new LittleEndianOutputStream(bos);
 
-        /* The property list is established here. After each property that has
-         * been written to "propertyStream", a property list entry is written to
-         * "propertyListStream". */
-        final ByteArrayOutputStream propertyListStream = new ByteArrayOutputStream();
+        /* Write the section's length - dummy value, fixed later */
+        leos.writeInt(-1);
 
-        /* Maintain the current position in the list. */
-        int position = 0;
+        /* Write the section's number of properties: */
+        leos.writeInt(properties.size());
 
-        /* Increase the position variable by the size of the property list so
-         * that it points behind the property list and to the beginning of the
-         * properties themselves. */
-        position += 2 * LittleEndianConsts.INT_SIZE + getPropertyCount() * 2 * LittleEndianConsts.INT_SIZE;
+        int propCnt = 0;
+        for (Property p : properties.values()) {
+            /* Write the property list entry. */
+            leos.writeUInt(p.getID());
+            // dummy offset to be fixed later
+            offsets[propCnt++][0] = bos.size();
+            leos.writeInt(-1);
+        }
+
 
         /* Write the properties and the property list into their respective
          * streams: */
+        propCnt = 0;
         for (Property p : properties.values()) {
-            final long id = p.getID();
-
-            /* Write the property list entry. */
-            LittleEndian.putUInt(id, propertyListStream);
-            LittleEndian.putUInt(position, propertyListStream);
-
+            offsets[propCnt++][1] = bos.size();
             /* If the property ID is not equal 0 we write the property and all
              * is fine. However, if it equals 0 we have to write the section's
              * dictionary which has an implicit type only and an explicit
              * value. */
-            if (id != 0) {
+            if (p.getID() != 0) {
                 /* Write the property and update the position to the next
                  * property. */
-                position += p.write(propertyStream, codepage);
+                p.write(bos, codepage);
             } else {
-                position += writeDictionary(propertyStream, codepage);
+                writeDictionary(bos, codepage);
             }
         }
 
-        /* Write the section: */
-        int streamLength = LittleEndianConsts.INT_SIZE * 2 + propertyListStream.size() + propertyStream.size();
+        byte[] result = bos.toByteArray();
+        LittleEndian.putInt(result, 0, bos.size());
 
-        /* Write the section's length: */
-        LittleEndian.putInt(streamLength, out);
+        for (int[] off : offsets) {
+            LittleEndian.putUInt(result, off[0], off[1]);
+        }
 
-        /* Write the section's number of properties: */
-        LittleEndian.putInt(getPropertyCount(), out);
+        out.write(result);
 
-        /* Write the property list: */
-        propertyListStream.writeTo(out);
-
-        /* Write the properties: */
-        propertyStream.writeTo(out);
-
-        return streamLength;
+        return bos.size();
     }
 
     /**
@@ -795,12 +794,8 @@ public class Section {
      * @param codepage The codepage of the string values.
      *
      * @return {@code true} if dictionary was read successful, {@code false} otherwise
-     *
-     * @throws UnsupportedEncodingException if the dictionary's codepage is not
-     *         (yet) supported.
      */
-    private boolean readDictionary(LittleEndianByteArrayInputStream leis, final int length, final int codepage)
-    throws UnsupportedEncodingException {
+    private boolean readDictionary(LittleEndianByteArrayInputStream leis, final int length, final int codepage) {
         Map<Long,String> dic = new HashMap<>();
 
         /*
@@ -863,13 +858,12 @@ public class Section {
      *
      * @param out The output stream to write to.
      * @param codepage The codepage to be used to write the dictionary items.
-     * @return The number of bytes written
      * @exception IOException if an I/O exception occurs.
      */
-    private int writeDictionary(final OutputStream out, final int codepage)
+    private void writeDictionary(final OutputStream out, final int codepage)
     throws IOException {
         final byte padding[] = new byte[4];
-        Map<Long,String> dic = getDictionary();
+        final Map<Long,String> dic = getDictionary();
 
         LittleEndian.putUInt(dic.size(), out);
         int length = LittleEndianConsts.INT_SIZE;
@@ -878,26 +872,23 @@ public class Section {
             LittleEndian.putUInt(ls.getKey(), out);
             length += LittleEndianConsts.INT_SIZE;
 
-            String value = ls.getValue()+"\0";
-            LittleEndian.putUInt( value.length(), out );
+            final String value = ls.getValue()+"\0";
+            final byte bytes[] = CodePageUtil.getBytesInCodePage(value, codepage);
+            final int len = (codepage == CodePageUtil.CP_UNICODE) ? value.length() : bytes.length;
+
+            LittleEndian.putUInt( len, out );
             length += LittleEndianConsts.INT_SIZE;
 
-            byte bytes[] = CodePageUtil.getBytesInCodePage(value, codepage);
             out.write(bytes);
             length += bytes.length;
 
-            if (codepage == CodePageUtil.CP_UNICODE) {
-                int pad = (4 - (length & 0x3)) & 0x3;
-                out.write(padding, 0, pad);
-                length += pad;
-            }
+            final int pad = (codepage == CodePageUtil.CP_UNICODE) ? ((4 - (length & 0x3)) & 0x3) : 0;
+            out.write(padding, 0, pad);
+            length += pad;
         }
 
-        int pad = (4 - (length & 0x3)) & 0x3;
+        final int pad = (4 - (length & 0x3)) & 0x3;
         out.write(padding, 0, pad);
-        length += pad;
-
-        return length;
     }
 
     /**

@@ -29,7 +29,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,7 +37,6 @@ import java.util.Collection;
 import java.util.List;
 
 import junit.framework.AssertionFailedError;
-
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.hpsf.ClassID;
@@ -56,7 +54,6 @@ import org.apache.poi.hssf.record.WindowOneRecord;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
-import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.usermodel.BaseTestWorkbook;
@@ -95,7 +92,6 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 
     /**
      * Tests for {@link HSSFWorkbook#isHidden()} etc
-     * @throws IOException
      */
     @Test
     public void hidden() throws IOException {
@@ -103,23 +99,23 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 
         WindowOneRecord w1 = wb.getWorkbook().getWindowOne();
 
-        assertEquals(false, wb.isHidden());
-        assertEquals(false, w1.getHidden());
+        assertFalse(wb.isHidden());
+        assertFalse(w1.getHidden());
 
         wb.setHidden(true);
-        assertEquals(true, wb.isHidden());
-        assertEquals(true, w1.getHidden());
+        assertTrue(wb.isHidden());
+        assertTrue(w1.getHidden());
 
         HSSFWorkbook wbBack = HSSFTestDataSamples.writeOutAndReadBack(wb);
         w1 = wbBack.getWorkbook().getWindowOne();
 
         wbBack.setHidden(true);
-        assertEquals(true, wbBack.isHidden());
-        assertEquals(true, w1.getHidden());
+        assertTrue(wbBack.isHidden());
+        assertTrue(w1.getHidden());
 
         wbBack.setHidden(false);
-        assertEquals(false, wbBack.isHidden());
-        assertEquals(false, w1.getHidden());
+        assertFalse(wbBack.isHidden());
+        assertFalse(w1.getHidden());
 
         wbBack.close();
         wb.close();
@@ -257,30 +253,30 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         wb.setSelectedTabs(selected);
 
         assertCollectionsEquals(selected, wb.getSelectedTabs());
-        assertEquals(true, sheet0.isSelected());
-        assertEquals(false, sheet1.isSelected());
-        assertEquals(true, sheet2.isSelected());
-        assertEquals(true, sheet3.isSelected());
-        assertEquals(false, sheet4.isSelected());
-        assertEquals(false, sheet5.isSelected());
+        assertTrue(sheet0.isSelected());
+        assertFalse(sheet1.isSelected());
+        assertTrue(sheet2.isSelected());
+        assertTrue(sheet3.isSelected());
+        assertFalse(sheet4.isSelected());
+        assertFalse(sheet5.isSelected());
 
         selected = arrayToList(new int[] { 1, 3, 5 });
         wb.setSelectedTabs(selected);
 
         // previous selection should be cleared
         assertCollectionsEquals(selected, wb.getSelectedTabs());
-        assertEquals(false, sheet0.isSelected());
-        assertEquals(true, sheet1.isSelected());
-        assertEquals(false, sheet2.isSelected());
-        assertEquals(true, sheet3.isSelected());
-        assertEquals(false, sheet4.isSelected());
-        assertEquals(true, sheet5.isSelected());
+        assertFalse(sheet0.isSelected());
+        assertTrue(sheet1.isSelected());
+        assertFalse(sheet2.isSelected());
+        assertTrue(sheet3.isSelected());
+        assertFalse(sheet4.isSelected());
+        assertTrue(sheet5.isSelected());
 
-        assertEquals(true, sheet0.isActive());
-        assertEquals(false, sheet2.isActive());
+        assertTrue(sheet0.isActive());
+        assertFalse(sheet2.isActive());
         wb.setActiveSheet(2);
-        assertEquals(false, sheet0.isActive());
-        assertEquals(true, sheet2.isActive());
+        assertFalse(sheet0.isActive());
+        assertTrue(sheet2.isActive());
 
         /*{ // helpful if viewing this workbook in excel:
             sheet0.createRow(0).createCell(0).setCellValue(new HSSFRichTextString("Sheet0"));
@@ -383,7 +379,6 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
      * records to be written with invalid offset indexes.  Excel does not like this, and such
      * errors are particularly hard to track down.  This test ensures that HSSFWorkbook throws
      * a specific exception as soon as the situation is detected. See bugzilla 45066
-     * @throws IOException 
      */
     @Test
     public void sheetSerializeSizeMismatch_bug45066() throws IOException {
@@ -496,7 +491,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
      * result returned by getRecordSize() differs from result returned by serialize()
      */
     private static final class BadlyBehavedRecord extends Record {
-        public BadlyBehavedRecord() {
+        BadlyBehavedRecord() {
             //
         }
         @Override
@@ -576,7 +571,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         POIFSFileSystem fs2 = new POIFSFileSystem(new ByteArrayInputStream(bytes));
         ClassID clsid2 = fs2.getRoot().getStorageClsid();
 
-        assertTrue(clsid1.equals(clsid2));
+        assertEquals(clsid1, clsid2);
         
         fs2.close();
         wb.close();
@@ -625,108 +620,89 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     public void differentPOIFS() throws Exception {
        // Open the two filesystems
        DirectoryNode[] files = new DirectoryNode[2];
-       POIFSFileSystem poifsFileSystem = new POIFSFileSystem(HSSFTestDataSamples.openSampleFileStream("Simple.xls"));
-       try {
-           files[0] = poifsFileSystem.getRoot();
-           NPOIFSFileSystem npoifsFileSystem = new NPOIFSFileSystem(HSSFTestDataSamples.getSampleFile("Simple.xls"));
-           try {
-               files[1] = npoifsFileSystem.getRoot();
-               
-               // Open without preserving nodes 
-               for(DirectoryNode dir : files) {
-                  HSSFWorkbook workbook = new HSSFWorkbook(dir, false);
-                  HSSFSheet sheet = workbook.getSheetAt(0);
-                  HSSFCell cell = sheet.getRow(0).getCell(0);
-                  assertEquals("replaceMe", cell .getRichStringCellValue().getString());
-                  
-                  workbook.close();
-               }
-        
-               // Now re-check with preserving
-               for(DirectoryNode dir : files) {
-                  HSSFWorkbook workbook = new HSSFWorkbook(dir, true);
-                  HSSFSheet sheet = workbook.getSheetAt(0);
-                  HSSFCell cell = sheet.getRow(0).getCell(0);
-                  assertEquals("replaceMe", cell .getRichStringCellValue().getString());
-                  
-                  workbook.close();
-               }
-           } finally {
-               npoifsFileSystem.close();
-           }
-       } finally {
-           poifsFileSystem.close();
-       }
+        try (POIFSFileSystem poifsFileSystem = new POIFSFileSystem(HSSFTestDataSamples.openSampleFileStream("Simple.xls"))) {
+            files[0] = poifsFileSystem.getRoot();
+            try (NPOIFSFileSystem npoifsFileSystem = new NPOIFSFileSystem(HSSFTestDataSamples.getSampleFile("Simple.xls"))) {
+                files[1] = npoifsFileSystem.getRoot();
+
+                // Open without preserving nodes
+                for (DirectoryNode dir : files) {
+                    HSSFWorkbook workbook = new HSSFWorkbook(dir, false);
+                    HSSFSheet sheet = workbook.getSheetAt(0);
+                    HSSFCell cell = sheet.getRow(0).getCell(0);
+                    assertEquals("replaceMe", cell.getRichStringCellValue().getString());
+
+                    workbook.close();
+                }
+
+                // Now re-check with preserving
+                for (DirectoryNode dir : files) {
+                    HSSFWorkbook workbook = new HSSFWorkbook(dir, true);
+                    HSSFSheet sheet = workbook.getSheetAt(0);
+                    HSSFCell cell = sheet.getRow(0).getCell(0);
+                    assertEquals("replaceMe", cell.getRichStringCellValue().getString());
+
+                    workbook.close();
+                }
+            }
+        }
     }
 
     @Test
     public void wordDocEmbeddedInXls() throws IOException {
        // Open the two filesystems
        DirectoryNode[] files = new DirectoryNode[2];
-       POIFSFileSystem poifsFileSystem = new POIFSFileSystem(HSSFTestDataSamples.openSampleFileStream("WithEmbeddedObjects.xls"));
-       try {
-           files[0] = poifsFileSystem.getRoot();
-           NPOIFSFileSystem npoifsFileSystem = new NPOIFSFileSystem(HSSFTestDataSamples.getSampleFile("WithEmbeddedObjects.xls"));
-           try {
-               files[1] = npoifsFileSystem.getRoot();
-               
-               // Check the embedded parts
-               for(DirectoryNode root : files) {
-                  HSSFWorkbook hw = new HSSFWorkbook(root, true);
-                  List<HSSFObjectData> objects = hw.getAllEmbeddedObjects();
-                  boolean found = false;
-                   for (HSSFObjectData embeddedObject : objects) {
-                       if (embeddedObject.hasDirectoryEntry()) {
-                           DirectoryEntry dir = embeddedObject.getDirectory();
-                           if (dir instanceof DirectoryNode) {
-                               DirectoryNode dNode = (DirectoryNode) dir;
-                               if (hasEntry(dNode, "WordDocument")) {
-                                   found = true;
-                               }
-                           }
-                       }
-                   }
-                  assertTrue(found);
-                  
-                  hw.close();
-               }
-           } finally {
-               npoifsFileSystem.close();
-           }
-       } finally {
-           poifsFileSystem.close();
-       }
+        try (POIFSFileSystem poifsFileSystem = new POIFSFileSystem(HSSFTestDataSamples.openSampleFileStream("WithEmbeddedObjects.xls"))) {
+            files[0] = poifsFileSystem.getRoot();
+            try (NPOIFSFileSystem npoifsFileSystem = new NPOIFSFileSystem(HSSFTestDataSamples.getSampleFile("WithEmbeddedObjects.xls"))) {
+                files[1] = npoifsFileSystem.getRoot();
+
+                // Check the embedded parts
+                for (DirectoryNode root : files) {
+                    HSSFWorkbook hw = new HSSFWorkbook(root, true);
+                    List<HSSFObjectData> objects = hw.getAllEmbeddedObjects();
+                    boolean found = false;
+                    for (HSSFObjectData embeddedObject : objects) {
+                        if (embeddedObject.hasDirectoryEntry()) {
+                            DirectoryEntry dir = embeddedObject.getDirectory();
+                            if (dir instanceof DirectoryNode) {
+                                DirectoryNode dNode = (DirectoryNode) dir;
+                                if (dNode.hasEntry("WordDocument")) {
+                                    found = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    assertTrue(found);
+
+                    hw.close();
+                }
+            }
+        }
     }
 
     /**
      * Checks that we can open a workbook with NPOIFS, and write it out
      *  again (via POIFS) and have it be valid
-     * @throws IOException
      */
     @Test
     public void writeWorkbookFromNPOIFS() throws IOException {
-       InputStream is = HSSFTestDataSamples.openSampleFileStream("WithEmbeddedObjects.xls");
-       try {
-           NPOIFSFileSystem fs = new NPOIFSFileSystem(is);
-           try {
-               // Start as NPOIFS
-               HSSFWorkbook wb = new HSSFWorkbook(fs.getRoot(), true);
-               assertEquals(3, wb.getNumberOfSheets());
-               assertEquals("Root xls", wb.getSheetAt(0).getRow(0).getCell(0).getStringCellValue());
+        try (InputStream is = HSSFTestDataSamples.openSampleFileStream("WithEmbeddedObjects.xls");
+             NPOIFSFileSystem fs = new NPOIFSFileSystem(is)) {
+            // Start as NPOIFS
+            HSSFWorkbook wb = new HSSFWorkbook(fs.getRoot(), true);
+            assertEquals(3, wb.getNumberOfSheets());
+            assertEquals("Root xls", wb.getSheetAt(0).getRow(0).getCell(0).getStringCellValue());
 
-               // Will switch to POIFS
-               HSSFWorkbook wbBack = HSSFTestDataSamples.writeOutAndReadBack(wb);
-               assertEquals(3, wbBack.getNumberOfSheets());
-               assertEquals("Root xls", wbBack.getSheetAt(0).getRow(0).getCell(0).getStringCellValue());
-               wbBack.close();
-               
-               wb.close();
-           } finally {
-        	   fs.close();
-           }
-       } finally {
-    	   is.close();
-       }
+            // Will switch to POIFS
+            HSSFWorkbook wbBack = HSSFTestDataSamples.writeOutAndReadBack(wb);
+            assertEquals(3, wbBack.getNumberOfSheets());
+            assertEquals("Root xls", wbBack.getSheetAt(0).getRow(0).getCell(0).getStringCellValue());
+            wbBack.close();
+
+            wb.close();
+        }
     }
 
     @Test
@@ -795,7 +771,9 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         wb.setSheetOrder("other sheet", 0);
 
         // names
+        //noinspection ConstantConditions
         assertEquals("'first sheet'!D1", wb.getName("name1").getRefersToFormula());
+        //noinspection ConstantConditions
         assertEquals("'other sheet'!C1", wb.getName("name2").getRefersToFormula());
 
         // cells
@@ -810,15 +788,6 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 
         wb.close();
     }
-
-    private boolean hasEntry(DirectoryNode dirNode, String entryName) {
-       try {
-           dirNode.getEntry(entryName);
-           return true;
-       } catch (FileNotFoundException e) {
-           return false;
-       }
-   }
 
     @Test
     public void clonePictures() throws IOException {
@@ -854,11 +823,8 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     // Should throw exception about invalid POIFSFileSystem
     @Test(expected=IllegalArgumentException.class)
     public void emptyDirectoryNode() throws IOException {
-        POIFSFileSystem fs = new POIFSFileSystem();
-        try {
+        try (POIFSFileSystem fs = new POIFSFileSystem()) {
             new HSSFWorkbook(fs).close();
-        } finally {
-            fs.close();
         }
     }
 
@@ -1093,7 +1059,8 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 		wb.close();
 	}
 
-	private void expectName(HSSFWorkbook wb, String name, String expect) {
+	@SuppressWarnings("SameParameterValue")
+    private void expectName(HSSFWorkbook wb, String name, String expect) {
         final HSSFName hssfName = wb.getName(name);
         assertNotNull(hssfName);
         assertEquals(expect, hssfName.getRefersToFormula());
@@ -1149,16 +1116,13 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     
             // edit the workbook
             {
-                NPOIFSFileSystem fs = new NPOIFSFileSystem(file, false);
-                try {
+                try (NPOIFSFileSystem fs = new NPOIFSFileSystem(file, false)) {
                     DirectoryNode root = fs.getRoot();
                     final Workbook workbook = new HSSFWorkbook(root, true);
                     final Sheet sheet = workbook.getSheet("foo");
                     sheet.getRow(1).createCell(2).setCellValue("baz");
-                    
+
                     writeAndCloseWorkbook(workbook, file);
-                } finally {
-                    fs.close();
                 }
             }
         } finally {
@@ -1239,18 +1203,6 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         }
         wb.close();
         
-        // Can't work for OPOIFS
-        OPOIFSFileSystem ofs = new OPOIFSFileSystem(
-                POIDataSamples.getSpreadSheetInstance().openResourceAsStream("SampleSS.xls"));
-        wb = new HSSFWorkbook(ofs.getRoot(), true);
-        try {
-            wb.write();
-            fail("Shouldn't work for OPOIFSFileSystem");
-        } catch (IllegalStateException e) {
-            // expected here
-        }
-        wb.close();
-        
         // Can't work for Read-Only files
         NPOIFSFileSystem fs = new NPOIFSFileSystem(
                 POIDataSamples.getSpreadSheetInstance().getFile("SampleSS.xls"), true);
@@ -1268,16 +1220,9 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     public void inPlaceWrite() throws Exception {
         // Setup as a copy of a known-good file
         final File file = TempFile.createTempFile("TestHSSFWorkbook", ".xls");
-        InputStream inputStream = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("SampleSS.xls");
-        try {
-            FileOutputStream outputStream = new FileOutputStream(file);
-            try {
-                IOUtils.copy(inputStream, outputStream);
-            } finally {
-                outputStream.close();
-            }
-        } finally {
-            inputStream.close();
+        try (InputStream inputStream = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("SampleSS.xls");
+             FileOutputStream outputStream = new FileOutputStream(file)) {
+            IOUtils.copy(inputStream, outputStream);
         }
         
         // Open from the temp file in read-write mode

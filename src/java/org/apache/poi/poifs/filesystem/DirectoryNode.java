@@ -44,33 +44,16 @@ public class DirectoryNode
 {
 
     // Map of Entry instances, keyed by their names
-    private Map<String,Entry> _byname;
-    // Our list of entries, kept sorted to preserve order
-    private ArrayList<Entry> _entries;
+    private final Map<String,Entry> _byname = new HashMap<>();
 
-    // Only one of these two will exist
-    // the OPOIFSFileSystem we belong to
-    private OPOIFSFileSystem   _ofilesystem;
+    // Our list of entries, kept sorted to preserve order
+    private final ArrayList<Entry> _entries = new ArrayList<>();
+
     // the NPOIFSFileSytem we belong to
-    private NPOIFSFileSystem  _nfilesystem;
+    private final NPOIFSFileSystem  _nfilesystem;
 
     // the path described by this document
-    private POIFSDocumentPath _path;
-
-    /**
-     * create a DirectoryNode. This method is not public by design; it
-     * is intended strictly for the internal use of this package
-     *
-     * @param property the DirectoryProperty for this DirectoryEntry
-     * @param filesystem the OPOIFSFileSystem we belong to
-     * @param parent the parent of this entry
-     */
-    DirectoryNode(final DirectoryProperty property,
-                  final OPOIFSFileSystem filesystem,
-                  final DirectoryNode parent)
-    {
-       this(property, parent, filesystem, null);
-    }
+    private final POIFSDocumentPath _path;
 
     /**
      * create a DirectoryNode. This method is not public by design; it
@@ -84,16 +67,7 @@ public class DirectoryNode
                   final NPOIFSFileSystem nfilesystem,
                   final DirectoryNode parent)
     {
-       this(property, parent, null, nfilesystem);
-    }
-
-    private DirectoryNode(final DirectoryProperty property,
-                          final DirectoryNode parent,
-                          final OPOIFSFileSystem ofilesystem,
-                          final NPOIFSFileSystem nfilesystem)
-    {
         super(property, parent);
-        this._ofilesystem = ofilesystem;
         this._nfilesystem = nfilesystem;
 
         if (parent == null)
@@ -103,12 +77,10 @@ public class DirectoryNode
         else
         {
             _path = new POIFSDocumentPath(parent._path, new String[]
-            {
-                property.getName()
-            });
+                    {
+                            property.getName()
+                    });
         }
-        _byname     = new HashMap<>();
-        _entries    = new ArrayList<>();
         Iterator<Property> iter = property.getChildren();
 
         while (iter.hasNext())
@@ -119,11 +91,7 @@ public class DirectoryNode
             if (child.isDirectory())
             {
                 DirectoryProperty childDir = (DirectoryProperty) child;
-                if(_ofilesystem != null) {
-                   childNode = new DirectoryNode(childDir, _ofilesystem, this);
-                } else {
-                   childNode = new DirectoryNode(childDir, _nfilesystem, this);
-                }
+                childNode = new DirectoryNode(childDir, _nfilesystem, this);
             }
             else
             {
@@ -151,15 +119,6 @@ public class DirectoryNode
         return _nfilesystem;
     }
 
-    /**
-     * If this is OPOIFS based, return the NPOIFSFileSystem
-     *  that this belong to, otherwise Null if NPOIFS based
-     * @return the filesystem that this belongs to
-     */
-    public OPOIFSFileSystem getOFileSystem()
-    {
-        return _ofilesystem;
-    }
 
     /**
      * If this is NPOIFS based, return the NPOIFSFileSystem
@@ -218,30 +177,7 @@ public class DirectoryNode
      *
      * @return the new DocumentEntry
      *
-     * @exception IOException
-     */
-    DocumentEntry createDocument(final OPOIFSDocument document)
-        throws IOException
-    {
-        DocumentProperty property = document.getDocumentProperty();
-        DocumentNode     rval     = new DocumentNode(property, this);
-
-        (( DirectoryProperty ) getProperty()).addChild(property);
-        _ofilesystem.addDocument(document);
-
-        _entries.add(rval);
-        _byname.put(property.getName(), rval);
-        return rval;
-    }
-
-    /**
-     * create a new DocumentEntry
-     *
-     * @param document the new document
-     *
-     * @return the new DocumentEntry
-     *
-     * @exception IOException
+     * @exception IOException if the document can't be created
      */
     DocumentEntry createDocument(final NPOIFSDocument document)
         throws IOException
@@ -302,14 +238,11 @@ public class DirectoryNode
             _entries.remove(entry);
             _byname.remove(entry.getName());
 
-            if(_ofilesystem != null) {
-                _ofilesystem.remove(entry);
-            } else {
-                try {
-                    _nfilesystem.remove(entry);
-                } catch (IOException e) {
-                    // TODO Work out how to report this, given we can't change the method signature...
-                }
+            try {
+                _nfilesystem.remove(entry);
+            } catch (IOException e) {
+                // TODO Work out how to report this, given we can't change the method signature...
+                throw new RuntimeException(e);
             }
         }
         return rval;
@@ -411,18 +344,14 @@ public class DirectoryNode
      *
      * @return the new DocumentEntry
      *
-     * @exception IOException
+     * @exception IOException if the document can't be created
      */
 
     public DocumentEntry createDocument(final String name,
                                         final InputStream stream)
         throws IOException
     {
-        if(_nfilesystem != null) {
-           return createDocument(new NPOIFSDocument(name, _nfilesystem, stream));
-        } else {
-           return createDocument(new OPOIFSDocument(name, stream));
-        }
+        return createDocument(new NPOIFSDocument(name, _nfilesystem, stream));
     }
 
     /**
@@ -434,18 +363,14 @@ public class DirectoryNode
      *
      * @return the new DocumentEntry
      *
-     * @exception IOException
+     * @exception IOException if the document can't be created
      */
 
     public DocumentEntry createDocument(final String name, final int size,
                                         final POIFSWriterListener writer)
         throws IOException
     {
-        if(_nfilesystem != null) {
-            return createDocument(new NPOIFSDocument(name, size, _nfilesystem, writer));
-         } else {
-            return createDocument(new OPOIFSDocument(name, size, _path, writer));
-         }
+        return createDocument(new NPOIFSDocument(name, size, _nfilesystem, writer));
     }
 
     /**
@@ -455,22 +380,16 @@ public class DirectoryNode
      *
      * @return the new DirectoryEntry
      *
-     * @exception IOException
+     * @exception IOException if the directory can't be created
      */
 
     public DirectoryEntry createDirectory(final String name)
         throws IOException
     {
-        DirectoryNode rval;
         DirectoryProperty property = new DirectoryProperty(name);
 
-        if(_ofilesystem != null) {
-           rval = new DirectoryNode(property, _ofilesystem, this);
-           _ofilesystem.addDirectory(property);
-        } else {
-           rval = new DirectoryNode(property, _nfilesystem, this);
-           _nfilesystem.addDirectory(property);
-        }
+        DirectoryNode rval = new DirectoryNode(property, _nfilesystem, this);
+       _nfilesystem.addDirectory(property);
 
         (( DirectoryProperty ) getProperty()).addChild(property);
         _entries.add(rval);
@@ -487,9 +406,9 @@ public class DirectoryNode
      *
      * @return the new or updated DocumentEntry
      *
-     * @exception IOException
+     * @exception IOException if the document can't be created or its content be replaced
      */
-
+    @SuppressWarnings("WeakerAccess")
     public DocumentEntry createOrUpdateDocument(final String name,
                                                 final InputStream stream)
         throws IOException
@@ -498,15 +417,9 @@ public class DirectoryNode
             return createDocument(name, stream);
         } else {
             DocumentNode existing = (DocumentNode)getEntry(name);
-            if (_nfilesystem != null) {
-                NPOIFSDocument nDoc = new NPOIFSDocument(existing);
-                nDoc.replaceContents(stream);
-                return existing;
-            } else {
-                // Do it the hard way for Old POIFS...
-                deleteEntry(existing);
-                return createDocument(name, stream);
-            }
+            NPOIFSDocument nDoc = new NPOIFSDocument(existing);
+            nDoc.replaceContents(stream);
+            return existing;
         }
     }
     

@@ -1,6 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!--
-   ====================================================================
+/* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
    this work for additional information regarding copyright ownership.
@@ -15,22 +13,11 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-   ====================================================================
--->
-<html>
-<head>
-</head>
-<body bgcolor="white">
+==================================================================== */
 
-storage package contains low level binary structures for POIFS's implementation of the OLE 2
-Compound Document Format.
-
-<h2>Related Documentation</h2>
-
-For overviews, tutorials, examples, guides, and tool documentation, please see:
-<ul>
-<li><a href="http://poi.apache.org">Apache POI Project</a>
-</ul>
-
-</body>
-</html>
+/**
+ * The eventfilesystem is an efficient method for reading OLE 2 CDF files.  It is to OLE 2 CDF what SAX is to XML.
+ *
+ * @see org.apache.poi.poifs.filesystem
+ */
+package org.apache.poi.poifs.eventfilesystem;

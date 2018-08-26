@@ -48,7 +48,6 @@ import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.NotOLE2FileException;
-import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.sl.extractor.SlideShowExtractor;
@@ -79,12 +78,15 @@ import org.apache.xmlbeans.XmlException;
  *  off switching to <a href="http://tika.apache.org">Apache Tika</a> instead!</p>
  */
 @SuppressWarnings("WeakerAccess")
-public class ExtractorFactory {
+public final class ExtractorFactory {
     private static final POILogger logger = POILogFactory.getLogger(ExtractorFactory.class);
     
     public static final String CORE_DOCUMENT_REL = PackageRelationshipTypes.CORE_DOCUMENT;
-    protected static final String VISIO_DOCUMENT_REL = PackageRelationshipTypes.VISIO_CORE_DOCUMENT;
-    protected static final String STRICT_DOCUMENT_REL = PackageRelationshipTypes.STRICT_CORE_DOCUMENT;
+    private static final String VISIO_DOCUMENT_REL = PackageRelationshipTypes.VISIO_CORE_DOCUMENT;
+    private static final String STRICT_DOCUMENT_REL = PackageRelationshipTypes.STRICT_CORE_DOCUMENT;
+
+    private ExtractorFactory() {
+    }
 
     /**
      * Should this thread prefer event based over usermodel based extractors?
@@ -128,6 +130,7 @@ public class ExtractorFactory {
          return OLE2ExtractorFactory.getPreferEventExtractor();
     }
 
+    @SuppressWarnings("unchecked")
     public static <T extends POITextExtractor> T createExtractor(File f) throws IOException, OpenXML4JException, XmlException {
         NPOIFSFileSystem fs = null;
         try {
@@ -230,13 +233,13 @@ public class ExtractorFactory {
             // Is it XSLF?
             for (XSLFRelation rel : XSLFPowerPointExtractor.SUPPORTED_TYPES) {
                 if ( rel.getContentType().equals( contentType ) ) {
-                    return new SlideShowExtractor(new XMLSlideShow(pkg));
+                    return new SlideShowExtractor<>(new XMLSlideShow(pkg));
                 }
             }
      
             // special handling for SlideShow-Theme-files, 
             if (XSLFRelation.THEME_MANAGER.getContentType().equals(contentType)) {
-                return new SlideShowExtractor(new XMLSlideShow(pkg));
+                return new SlideShowExtractor<>(new XMLSlideShow(pkg));
             }
 
             // How about xlsb?
@@ -262,10 +265,8 @@ public class ExtractorFactory {
     public static <T extends POITextExtractor> T createExtractor(NPOIFSFileSystem fs) throws IOException, OpenXML4JException, XmlException {
         return createExtractor(fs.getRoot());
     }
-    public static <T extends POITextExtractor> T createExtractor(OPOIFSFileSystem fs) throws IOException, OpenXML4JException, XmlException {
-        return createExtractor(fs.getRoot());
-    }
 
+    @SuppressWarnings("unchecked")
     public static <T extends POITextExtractor> T createExtractor(DirectoryNode poifsDir) throws IOException, OpenXML4JException, XmlException
     {
         // First, check for OOXML
@@ -374,7 +375,7 @@ public class ExtractorFactory {
                 throw new IOException(e.getMessage(), e);
             }
         }
-        return textExtractors.toArray(new POITextExtractor[textExtractors.size()]);
+        return textExtractors.toArray(new POITextExtractor[0]);
     }
 
     /**

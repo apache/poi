@@ -27,7 +27,6 @@ import javax.crypto.spec.SecretKeySpec;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
-import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 public abstract class Decryptor implements Cloneable {
@@ -87,7 +86,7 @@ public abstract class Decryptor implements Cloneable {
      * @param cipher may be null, otherwise the given instance is reset to the new block index
      * @param block the block index, e.g. the persist/slide id (hslf)
      * @return a new cipher object, if cipher was null, otherwise the reinitialized cipher
-     * @throws GeneralSecurityException
+     * @throws GeneralSecurityException if the cipher can't be initialized
      */
     public Cipher initCipherForBlock(Cipher cipher, int block)
     throws GeneralSecurityException {
@@ -126,10 +125,6 @@ public abstract class Decryptor implements Cloneable {
         return getDataStream(fs.getRoot());
     }
 
-    public InputStream getDataStream(OPOIFSFileSystem fs) throws IOException, GeneralSecurityException {
-        return getDataStream(fs.getRoot());
-    }
-
     public InputStream getDataStream(POIFSFileSystem fs) throws IOException, GeneralSecurityException {
         return getDataStream(fs.getRoot());
     }
@@ -147,6 +142,7 @@ public abstract class Decryptor implements Cloneable {
         return integrityHmacKey;
     }
 
+    @SuppressWarnings("unused")
     public byte[] getIntegrityHmacValue() {
         return integrityHmacValue;
     }
@@ -167,6 +163,7 @@ public abstract class Decryptor implements Cloneable {
         this.integrityHmacValue = (integrityHmacValue == null) ? null : integrityHmacValue.clone();
     }
 
+    @SuppressWarnings("unused")
     protected int getBlockSizeInBytes() {
         return encryptionInfo.getHeader().getBlockSize();
     }

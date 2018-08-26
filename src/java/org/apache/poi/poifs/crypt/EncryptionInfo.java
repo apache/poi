@@ -27,7 +27,6 @@ import java.io.IOException;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
-import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
@@ -59,12 +58,14 @@ public class EncryptionInfo implements Cloneable {
      * A value that MUST be 0 if document properties are encrypted.
      * The encryption of document properties is specified in section 2.3.5.4.
      */
+    @SuppressWarnings("WeakerAccess")
     public static final BitField flagDocProps = BitFieldFactory.getInstance(0x08);
     
     /**
      * A value that MUST be 1 if extensible encryption is used. If this value is 1,
      * the value of every other field in this structure MUST be 0.
      */
+    @SuppressWarnings("WeakerAccess")
     public static final BitField flagExternal = BitFieldFactory.getInstance(0x10);
     
     /**
@@ -78,13 +79,6 @@ public class EncryptionInfo implements Cloneable {
      * Opens for decryption
      */
     public EncryptionInfo(POIFSFileSystem fs) throws IOException {
-       this(fs.getRoot());
-    }
-    
-    /**
-     * Opens for decryption
-     */
-    public EncryptionInfo(OPOIFSFileSystem fs) throws IOException {
        this(fs.getRoot());
     }
     
@@ -167,11 +161,11 @@ public class EncryptionInfo implements Cloneable {
      *
      * @param encryptionMode see {@link EncryptionMode} for values, {@link EncryptionMode#cryptoAPI} is for
      *   internal use only, as it's record based
-     * @param cipherAlgorithm
-     * @param hashAlgorithm
-     * @param keyBits
-     * @param blockSize
-     * @param chainingMode
+     * @param cipherAlgorithm the cipher algorithm
+     * @param hashAlgorithm the hash algorithm
+     * @param keyBits the bit count of the key
+     * @param blockSize the size of a cipher block
+     * @param chainingMode the chaining mode
      * 
      * @throws EncryptedDocumentException if the given parameters mismatch, e.g. only certain combinations
      *   of keyBits, blockSize are allowed for a given {@link CipherAlgorithm}
@@ -211,10 +205,11 @@ public class EncryptionInfo implements Cloneable {
      *
      * @param encryptionMode the encryption mode
      * @return an encryption info builder
-     * @throws ClassNotFoundException
-     * @throws IllegalAccessException
-     * @throws InstantiationException
+     * @throws ClassNotFoundException if the builder class is not on the classpath
+     * @throws IllegalAccessException if the builder class can't be loaded
+     * @throws InstantiationException if the builder class can't be loaded
      */
+    @SuppressWarnings("WeakerAccess")
     protected static EncryptionInfoBuilder getBuilder(EncryptionMode encryptionMode)
     throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         ClassLoader cl = EncryptionInfo.class.getClassLoader();

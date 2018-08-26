@@ -19,7 +19,7 @@ package org.apache.poi.poifs.poibrowser;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.IOException;
 
 import javax.swing.JFrame;
@@ -42,12 +42,6 @@ import org.apache.poi.poifs.eventfilesystem.POIFSReader;
 public class POIBrowser extends JFrame
 {
 
-    /**
-     * <p>The tree's root node must be visible to all methods.</p>
-     */
-    protected MutableTreeNode rootNode;
-
-
 
     /**
      * <p>Takes a bunch of file names as command line parameters,
@@ -58,8 +52,6 @@ public class POIBrowser extends JFrame
     {
         new POIBrowser().run(args);
     }
-
-
 
     protected void run(String[] args)
     {
@@ -74,8 +66,11 @@ public class POIBrowser extends JFrame
 
         /* Create the tree model with a root node. The latter is
          * invisible but it must be present because a tree model
-         * always needs a root. */
-        rootNode = new DefaultMutableTreeNode("POI Filesystems");
+         * always needs a root.
+         *
+         * The tree's root node must be visible to all methods.
+         */
+        MutableTreeNode rootNode = new DefaultMutableTreeNode("POI Filesystems");
         DefaultTreeModel treeModel = new DefaultTreeModel(rootNode);
 
         /* Create the tree UI element. */
@@ -85,10 +80,10 @@ public class POIBrowser extends JFrame
         /* Add the POI filesystems to the tree. */
         int displayedFiles = 0;
         for (final String filename : args) {
-            try (FileInputStream fis = new FileInputStream(filename)) {
+            try {
                 POIFSReader r = new POIFSReader();
                 r.registerListener(new TreeReaderListener(filename, rootNode));
-                r.read(fis);
+                r.read(new File(filename));
                 displayedFiles++;
             } catch (IOException ex) {
                 System.err.println(filename + ": " + ex);

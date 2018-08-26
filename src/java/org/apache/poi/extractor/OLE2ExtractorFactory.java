@@ -26,20 +26,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.extractor.EventBasedExcelExtractor;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
-import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
-import org.apache.poi.poifs.crypt.Decryptor;
-import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
-import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -50,23 +44,23 @@ import org.apache.poi.util.POILogger;
  * <p>Note 1 - will fail for many file formats if the POI Scratchpad jar is
  *  not present on the runtime classpath</p>
  * <p>Note 2 - for text extractor creation across all formats, use
- *  {@link org.apache.poi.extractor.ExtractorFactory} contained within
+ *  {@link org.apache.poi.ooxml.extractor.ExtractorFactory} contained within
  *  the OOXML jar.</p>
  * <p>Note 3 - rather than using this, for most cases you would be better
  *  off switching to <a href="http://tika.apache.org">Apache Tika</a> instead!</p>
  */
 @SuppressWarnings("WeakerAccess")
-public class OLE2ExtractorFactory {
+public final class OLE2ExtractorFactory {
     private static final POILogger LOGGER = POILogFactory.getLogger(OLE2ExtractorFactory.class); 
     
     /** Should this thread prefer event based over usermodel based extractors? */
-    private static final ThreadLocal<Boolean> threadPreferEventExtractors = new ThreadLocal<Boolean>() {
-        @Override
-        protected Boolean initialValue() { return Boolean.FALSE; }
-    };
+    private static final ThreadLocal<Boolean> threadPreferEventExtractors = ThreadLocal.withInitial(() -> Boolean.FALSE);
 
     /** Should all threads prefer event based over usermodel based extractors? */
     private static Boolean allPreferEventExtractors;
+
+    private OLE2ExtractorFactory() {
+    }
 
     /**
      * Should this thread prefer event based over usermodel based extractors?
@@ -113,16 +107,16 @@ public class OLE2ExtractorFactory {
         return threadPreferEventExtractors.get();
     }
 
+    @SuppressWarnings("unchecked")
     public static <T extends POITextExtractor> T createExtractor(POIFSFileSystem fs) throws IOException {
         return (T)createExtractor(fs.getRoot());
     }
+    @SuppressWarnings("unchecked")
     public static <T extends POITextExtractor> T createExtractor(NPOIFSFileSystem fs) throws IOException {
         return (T)createExtractor(fs.getRoot());
     }
-    public static <T extends POITextExtractor> T createExtractor(OPOIFSFileSystem fs) throws IOException {
-        return (T)createExtractor(fs.getRoot());
-    }
 
+    @SuppressWarnings("unchecked")
     public static <T extends POITextExtractor> T createExtractor(InputStream input) throws IOException {
         Class<?> cls = getOOXMLClass();
         if (cls != null) {
@@ -165,7 +159,7 @@ public class OLE2ExtractorFactory {
     /**
      * Create the Extractor, if possible. Generally needs the Scratchpad jar.
      * Note that this won't check for embedded OOXML resources either, use
-     *  {@link org.apache.poi.extractor.ExtractorFactory} for that.
+     *  {@link org.apache.poi.ooxml.extractor.ExtractorFactory} for that.
      */
     public static POITextExtractor createExtractor(DirectoryNode poifsDir) throws IOException {
         // Look for certain entries in the stream, to figure it
@@ -205,6 +199,7 @@ public class OLE2ExtractorFactory {
      *  empty array. Otherwise, you'll get one open
      *  {@link POITextExtractor} for each embedded file.
      */
+    @SuppressWarnings("unused")
     public static POITextExtractor[] getEmbededDocsTextExtractors(POIOLE2TextExtractor ext)
             throws IOException
     {
@@ -254,40 +249,11 @@ public class OLE2ExtractorFactory {
         for (InputStream nonPOIF : nonPOIFS) {
             try {
                 e.add(createExtractor(nonPOIF));
-            } catch (IllegalArgumentException ie) {
-                // Ignore, just means it didn't contain
-                //  a format we support as yet
-                LOGGER.log(POILogger.WARN, ie);
             } catch (Exception xe) {
                 // Ignore, invalid format
                 LOGGER.log(POILogger.WARN, xe);
             }
         }
-        return e.toArray(new POITextExtractor[e.size()]);
-    }
-
-    private static POITextExtractor createEncyptedOOXMLExtractor(DirectoryNode poifsDir)
-    throws IOException {
-        String pass = Biff8EncryptionKey.getCurrentUserPassword();
-        if (pass == null) {
-            pass = Decryptor.DEFAULT_PASSWORD;
-        }
-        
-        EncryptionInfo ei = new EncryptionInfo(poifsDir);
-        Decryptor dec = ei.getDecryptor();
-        InputStream is = null;
-        try {
-            if (!dec.verifyPassword(pass)) {
-                throw new EncryptedDocumentException("Invalid password specified - use Biff8EncryptionKey.setCurrentUserPassword() before calling extractor");
-            }
-            is = dec.getDataStream(poifsDir);
-            return createExtractor(is);
-        } catch (IOException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new IOException(e);
-        } finally {
-            IOUtils.closeQuietly(is);
-        }
+        return e.toArray(new POITextExtractor[0]);
     }
 }

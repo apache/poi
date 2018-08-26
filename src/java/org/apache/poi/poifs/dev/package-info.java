@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,27 +14,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
-package org.apache.poi.poifs.storage;
-
-import java.util.*;
 
 /**
- * A list of SmallDocumentBlocks instances, and methods to manage the list
+ * DEV package serves two purposes.
+ *
+ * <ol>
+ *    <li>Examples for how to use POIFS</li>
+ *    <li>tools for developing and validating POIFS</li>
+ * </ol>
  */
-public class SmallDocumentBlockList
-    extends BlockListImpl
-{
-    /**
-     * Constructor SmallDocumentBlockList
-     *
-     * @param blocks a list of SmallDocumentBlock instances
-     */
-
-    public SmallDocumentBlockList(final List<SmallDocumentBlock> blocks)
-    {
-        setBlocks(blocks.toArray(new SmallDocumentBlock[blocks.size()]));
-    }
-}
-
+package org.apache.poi.poifs.dev;
