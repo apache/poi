@@ -57,7 +57,9 @@ public class XDDFParagraphProperties {
 
     public void setLevel(Integer level) {
         if (level == null) {
-            props.unsetLvl();
+            if (props.isSetLvl()) {
+                props.unsetLvl();
+            }
         } else if (level < 1 || 9 < level) {
             throw new IllegalArgumentException("Minimum inclusive: 1. Maximum inclusive: 9.");
         } else {
@@ -75,7 +77,9 @@ public class XDDFParagraphProperties {
 
     public void setDefaultRunProperties(XDDFRunProperties properties) {
         if (properties == null) {
-            props.unsetDefRPr();
+            if (props.isSetDefRPr()) {
+                props.unsetDefRPr();
+            }
         } else {
             props.setDefRPr(properties.getXmlObject());
         }
@@ -83,7 +87,9 @@ public class XDDFParagraphProperties {
 
     public void setEastAsianLineBreak(Boolean value) {
         if (value == null) {
-            props.unsetEaLnBrk();
+            if (props.isSetEaLnBrk()) {
+                props.unsetEaLnBrk();
+            }
         } else {
             props.setEaLnBrk(value);
         }
@@ -91,7 +97,9 @@ public class XDDFParagraphProperties {
 
     public void setLatinLineBreak(Boolean value) {
         if (value == null) {
-            props.unsetLatinLnBrk();
+            if (props.isSetLatinLnBrk()) {
+                props.unsetLatinLnBrk();
+            }
         } else {
             props.setLatinLnBrk(value);
         }
@@ -99,7 +107,9 @@ public class XDDFParagraphProperties {
 
     public void setHangingPunctuation(Boolean value) {
         if (value == null) {
-            props.unsetHangingPunct();
+            if (props.isSetHangingPunct()) {
+                props.unsetHangingPunct();
+            }
         } else {
             props.setHangingPunct(value);
         }
@@ -107,7 +117,9 @@ public class XDDFParagraphProperties {
 
     public void setRightToLeft(Boolean value) {
         if (value == null) {
-            props.unsetRtl();
+            if (props.isSetRtl()) {
+                props.unsetRtl();
+            }
         } else {
             props.setRtl(value);
         }
@@ -115,7 +127,9 @@ public class XDDFParagraphProperties {
 
     public void setFontAlignment(FontAlignment align) {
         if (align == null) {
-            props.unsetFontAlgn();
+            if (props.isSetFontAlgn()) {
+                props.unsetFontAlgn();
+            }
         } else {
             props.setFontAlgn(align.underlying);
         }
@@ -123,7 +137,9 @@ public class XDDFParagraphProperties {
 
     public void setTextAlignment(TextAlignment align) {
         if (align == null) {
-            props.unsetAlgn();
+            if (props.isSetAlgn()) {
+                props.unsetAlgn();
+            }
         } else {
             props.setAlgn(align.underlying);
         }
@@ -131,7 +147,9 @@ public class XDDFParagraphProperties {
 
     public void setDefaultTabSize(Double points) {
         if (points == null) {
-            props.unsetDefTabSz();
+            if (props.isSetDefTabSz()) {
+                props.unsetDefTabSz();
+            }
         } else {
             props.setDefTabSz(Units.toEMU(points));
         }
@@ -139,7 +157,9 @@ public class XDDFParagraphProperties {
 
     public void setIndentation(Double points) {
         if (points == null) {
-            props.unsetIndent();
+            if (props.isSetIndent()) {
+                props.unsetIndent();
+            }
         } else if (points < -4032 || 4032 < points) {
             throw new IllegalArgumentException("Minimum inclusive = -4032. Maximum inclusive = 4032.");
         } else {
@@ -149,7 +169,9 @@ public class XDDFParagraphProperties {
 
     public void setMarginLeft(Double points) {
         if (points == null) {
-            props.unsetMarL();
+            if (props.isSetMarL()) {
+                props.unsetMarL();
+            }
         } else if (points < 0 || 4032 < points) {
             throw new IllegalArgumentException("Minimum inclusive = 0. Maximum inclusive = 4032.");
         } else {
@@ -159,7 +181,9 @@ public class XDDFParagraphProperties {
 
     public void setMarginRight(Double points) {
         if (points == null) {
-            props.unsetMarR();
+            if (props.isSetMarR()) {
+                props.unsetMarR();
+            }
         } else if (points < 0 || 4032 < points) {
             throw new IllegalArgumentException("Minimum inclusive = 0. Maximum inclusive = 4032.");
         } else {
@@ -169,7 +193,9 @@ public class XDDFParagraphProperties {
 
     public void setLineSpacing(XDDFSpacing spacing) {
         if (spacing == null) {
-            props.unsetLnSpc();
+            if (props.isSetLnSpc()) {
+                props.unsetLnSpc();
+            }
         } else {
             props.setLnSpc(spacing.getXmlObject());
         }
@@ -177,7 +203,9 @@ public class XDDFParagraphProperties {
 
     public void setSpaceAfter(XDDFSpacing spacing) {
         if (spacing == null) {
-            props.unsetSpcAft();
+            if (props.isSetSpcAft()) {
+                props.unsetSpcAft();
+            }
         } else {
             props.setSpcAft(spacing.getXmlObject());
         }
@@ -185,7 +213,9 @@ public class XDDFParagraphProperties {
 
     public void setSpaceBefore(XDDFSpacing spacing) {
         if (spacing == null) {
-            props.unsetSpcBef();
+            if (props.isSetSpcBef()) {
+                props.unsetSpcBef();
+            }
         } else {
             props.setSpcBef(spacing.getXmlObject());
         }
@@ -250,7 +280,9 @@ public class XDDFParagraphProperties {
 
     public void setExtensionList(XDDFExtensionList list) {
         if (list == null) {
-            props.unsetExtLst();
+            if (props.isSetExtLst()) {
+                props.unsetExtLst();
+            }
         } else {
             props.setExtLst(list.getXmlObject());
         }

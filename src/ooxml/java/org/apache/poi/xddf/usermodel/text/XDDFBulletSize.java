@@ -18,19 +18,7 @@
 package org.apache.poi.xddf.usermodel.text;
 
 import org.apache.poi.util.Beta;
-import org.apache.poi.util.Internal;
 
 @Beta
-public abstract class XDDFBulletSize {
-    public static enum Kind {
-        PERCENT,
-        POINTS,
-        TEXT;
-    }
-
-    @Internal
-    protected XDDFBulletSize() {
-    }
-
-    public abstract Kind getType();
+public interface XDDFBulletSize {
 }

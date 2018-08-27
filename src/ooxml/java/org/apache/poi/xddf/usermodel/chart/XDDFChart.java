@@ -29,6 +29,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 
 import javax.xml.namespace.QName;
 
@@ -46,6 +48,8 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
+import org.apache.poi.xddf.usermodel.text.TextContainer;
+import org.apache.poi.xddf.usermodel.text.XDDFTextBody;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -65,15 +69,19 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTRadarChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTScatterChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTSerAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTSurface;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTTitle;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTTx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTValAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.ChartSpaceDocument;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumn;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumns;
 
 @Beta
-public abstract class XDDFChart extends POIXMLDocumentPart {
+public abstract class XDDFChart extends POIXMLDocumentPart implements TextContainer {
     /**
      * Underlying workbook
      */
@@ -109,8 +117,10 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     /**
      * Construct a DrawingML chart from a package part.
      *
-     * @param part the package part holding the chart data,
-     *             the content type must be <code>application/vnd.openxmlformats-officedocument.drawingml.chart+xml</code>
+     * @param part
+     *            the package part holding the chart data, the content type must
+     *            be
+     *            <code>application/vnd.openxmlformats-officedocument.drawingml.chart+xml</code>
      * @since POI 3.14-Beta1
      */
     protected XDDFChart(PackagePart part) throws IOException, XmlException {
@@ -121,7 +131,8 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     }
 
     /**
-     * Return the underlying CTChartSpace bean, the root element of the Chart part.
+     * Return the underlying CTChartSpace bean, the root element of the Chart
+     * part.
      *
      * @return the underlying CTChartSpace bean
      */
@@ -152,8 +163,8 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     }
 
     /**
-     * @return true if only visible cells will be present on the chart,
-     * false otherwise
+     * @return true if only visible cells will be present on the chart, false
+     *         otherwise
      */
     public boolean isPlotOnlyVisibleCells() {
         if (chart.isSetPlotVisOnly()) {
@@ -164,8 +175,9 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     }
 
     /**
-     * @param only a flag specifying if only visible cells should be
-     *             present on the chart
+     * @param only
+     *            a flag specifying if only visible cells should be present on
+     *            the chart
      */
     public void setPlotOnlyVisibleCells(boolean only) {
         if (!chart.isSetPlotVisOnly()) {
@@ -200,6 +212,42 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
             chart.setAutoTitleDeleted(CTBoolean.Factory.newInstance());
         }
         chart.getAutoTitleDeleted().setVal(deleted);
+    }
+
+    /**
+     * Get the chart title body if there is one, i.e. title is set and is not a
+     * formula.
+     *
+     * @return text body or null, if title is a formula or no title is set.
+     */
+    @Beta
+    public XDDFTextBody getFormattedTitle() {
+        if (!chart.isSetTitle()) {
+            return null;
+        }
+        CTTitle title = chart.getTitle();
+        if (!title.isSetTx()) {
+            return null;
+        }
+        CTTx tx = title.getTx();
+        if (!tx.isSetRich()) {
+            return null;
+        }
+        return new XDDFTextBody(this, tx.getRich());
+    }
+
+    @Override
+    public <R> Optional<R> findDefinedParagraphProperty(Function<CTTextParagraphProperties, Boolean> isSet,
+        Function<CTTextParagraphProperties, R> getter) {
+        // TODO Auto-generated method stub
+        return Optional.empty();
+    }
+
+    @Override
+    public <R> Optional<R> findDefinedRunProperty(Function<CTTextCharacterProperties, Boolean> isSet,
+        Function<CTTextCharacterProperties, R> getter) {
+        // TODO Auto-generated method stub
+        return Optional.empty();
     }
 
     public XDDFShapeProperties getOrAddShapeProperties() {
@@ -336,18 +384,18 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
         Map<Long, XDDFValueAxis> mapValues = Collections.singletonMap(values.getId(), values);
         final CTPlotArea plotArea = getCTPlotArea();
         switch (type) {
-            case BAR:
-                return new XDDFBarChartData(plotArea.addNewBarChart(), categories, mapValues);
-            case LINE:
-                return new XDDFLineChartData(plotArea.addNewLineChart(), categories, mapValues);
-            case PIE:
-                return new XDDFPieChartData(plotArea.addNewPieChart());
-            case RADAR:
-                return new XDDFRadarChartData(plotArea.addNewRadarChart(), categories, mapValues);
-            case SCATTER:
-                return new XDDFScatterChartData(plotArea.addNewScatterChart(), categories, mapValues);
-            default:
-                return null;
+        case BAR:
+            return new XDDFBarChartData(plotArea.addNewBarChart(), categories, mapValues);
+        case LINE:
+            return new XDDFLineChartData(plotArea.addNewLineChart(), categories, mapValues);
+        case PIE:
+            return new XDDFPieChartData(plotArea.addNewPieChart());
+        case RADAR:
+            return new XDDFRadarChartData(plotArea.addNewRadarChart(), categories, mapValues);
+        case SCATTER:
+            return new XDDFScatterChartData(plotArea.addNewScatterChart(), categories, mapValues);
+        default:
+            return null;
         }
     }
 
@@ -360,7 +408,8 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
 
     private boolean hasAxes() {
         CTPlotArea ctPlotArea = chart.getPlotArea();
-        int totalAxisCount = ctPlotArea.sizeOfValAxArray() + ctPlotArea.sizeOfCatAxArray() + ctPlotArea.sizeOfDateAxArray() + ctPlotArea.sizeOfSerAxArray();
+        int totalAxisCount = ctPlotArea.sizeOfValAxArray() + ctPlotArea.sizeOfCatAxArray() + ctPlotArea
+            .sizeOfDateAxArray() + ctPlotArea.sizeOfSerAxArray();
         return totalAxisCount > 0;
     }
 
@@ -381,11 +430,17 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
 
     /**
      * Set value range (basic Axis Options)
-     * @param axisIndex 0 - primary axis, 1 - secondary axis
-     * @param minimum minimum value; Double.NaN - automatic; null - no change
-     * @param maximum maximum value; Double.NaN - automatic; null - no change
-     * @param majorUnit major unit value; Double.NaN - automatic; null - no change
-     * @param minorUnit minor unit value; Double.NaN - automatic; null - no change
+     *
+     * @param axisIndex
+     *            0 - primary axis, 1 - secondary axis
+     * @param minimum
+     *            minimum value; Double.NaN - automatic; null - no change
+     * @param maximum
+     *            maximum value; Double.NaN - automatic; null - no change
+     * @param majorUnit
+     *            major unit value; Double.NaN - automatic; null - no change
+     * @param minorUnit
+     *            minor unit value; Double.NaN - automatic; null - no change
      */
     public void setValueRange(int axisIndex, Double minimum, Double maximum, Double majorUnit, Double minorUnit) {
         XDDFChartAxis axis = getAxes().get(axisIndex);
@@ -407,16 +462,21 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     }
 
     /**
-     * method to create relationship with embedded part
-     * for example writing xlsx file stream into output stream
+     * method to create relationship with embedded part for example writing xlsx
+     * file stream into output stream
      *
-     * @param chartRelation relationship object
-     * @param chartFactory  ChartFactory object
-     * @param chartIndex    index used to suffix on file
-     * @return return relation part which used to write relation in .rels file and get relation id
+     * @param chartRelation
+     *            relationship object
+     * @param chartFactory
+     *            ChartFactory object
+     * @param chartIndex
+     *            index used to suffix on file
+     * @return return relation part which used to write relation in .rels file
+     *         and get relation id
      * @since POI 4.0.0
      */
-    public PackageRelationship createRelationshipInChart(POIXMLRelation chartRelation, POIXMLFactory chartFactory, int chartIndex) {
+    public PackageRelationship createRelationshipInChart(POIXMLRelation chartRelation, POIXMLFactory chartFactory,
+        int chartIndex) {
         documentPart = createRelationship(chartRelation, chartFactory, chartIndex, true).getDocumentPart();
         return this.addRelation(null, chartRelation, documentPart).getRelationship();
     }
@@ -424,14 +484,18 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     /**
      * if embedded part was null then create new part
      *
-     * @param chartRelation         chart relation object
-     * @param chartWorkbookRelation chart workbook relation object
-     * @param chartFactory          factory object of POIXMLFactory (XWPFFactory/XSLFFactory)
+     * @param chartRelation
+     *            chart relation object
+     * @param chartWorkbookRelation
+     *            chart workbook relation object
+     * @param chartFactory
+     *            factory object of POIXMLFactory (XWPFFactory/XSLFFactory)
      * @return return the new package part
      * @throws InvalidFormatException
      * @since POI 4.0.0
      */
-    private PackagePart createWorksheetPart(POIXMLRelation chartRelation, POIXMLRelation chartWorkbookRelation, POIXMLFactory chartFactory) throws InvalidFormatException {
+    private PackagePart createWorksheetPart(POIXMLRelation chartRelation, POIXMLRelation chartWorkbookRelation,
+        POIXMLFactory chartFactory) throws InvalidFormatException {
         PackageRelationship xlsx = createRelationshipInChart(chartWorkbookRelation, chartFactory, chartIndex);
         this.setExternalId(xlsx.getId());
         return getTargetPart(xlsx);
@@ -440,7 +504,8 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     /**
      * this method write the XSSFWorkbook object data into embedded excel file
      *
-     * @param workbook XSSFworkbook object
+     * @param workbook
+     *            XSSFworkbook object
      * @throws IOException
      * @throws InvalidFormatException
      * @since POI 4.0.0
@@ -451,9 +516,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
             POIXMLRelation chartRelation = getChartRelation();
             POIXMLRelation chartWorkbookRelation = getChartWorkbookRelation();
             POIXMLFactory chartFactory = getChartFactory();
-            if (chartRelation != null
-                && chartWorkbookRelation != null
-                && chartFactory != null) {
+            if (chartRelation != null && chartWorkbookRelation != null && chartFactory != null) {
                 worksheetPart = createWorksheetPart(chartRelation, chartWorkbookRelation, chartFactory);
             } else {
                 throw new InvalidFormatException("unable to determine chart relations");
@@ -489,9 +552,12 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     /**
      * this method writes the data into sheet
      *
-     * @param sheet        sheet of embedded excel
-     * @param categoryData category values
-     * @param valuesData   data values
+     * @param sheet
+     *            sheet of embedded excel
+     * @param categoryData
+     *            category values
+     * @param valuesData
+     *            data values
      * @since POI 4.0.0
      */
     protected void fillSheet(XSSFSheet sheet, XDDFDataSource<?> categoryData, XDDFNumericalDataSource<?> valuesData) {
@@ -504,15 +570,16 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     }
 
     /**
-     * this method return row on given index
-     * if row is null then create new row
+     * this method return row on given index if row is null then create new row
      *
-     * @param sheet current sheet object
-     * @param index index of current row
+     * @param sheet
+     *            current sheet object
+     * @param index
+     *            index of current row
      * @return this method return sheet row on given index
      * @since POI 4.0.0
      */
-    private XSSFRow getRow(XSSFSheet sheet,int index){
+    private XSSFRow getRow(XSSFSheet sheet, int index) {
         if (sheet.getRow(index) != null) {
             return sheet.getRow(index);
         } else {
@@ -521,15 +588,17 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     }
 
     /**
-     * this method return cell on given index
-     * if cell is null then create new cell
+     * this method return cell on given index if cell is null then create new
+     * cell
      *
-     * @param row current row object
-     * @param index index of current cell
+     * @param row
+     *            current row object
+     * @param index
+     *            index of current cell
      * @return this method return sheet cell on given index
      * @since POI 4.0.0
      */
-    private XSSFCell getCell(XSSFRow row,int index){
+    private XSSFCell getCell(XSSFRow row, int index) {
         if (row.getCell(index) != null) {
             return row.getCell(index);
         } else {
@@ -540,7 +609,8 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     /**
      * import content from other chart to created chart
      *
-     * @param other chart object
+     * @param other
+     *            chart object
      * @since POI 4.0.0
      */
     public void importContent(XDDFChart other) {
@@ -553,7 +623,8 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     @Override
     protected void commit() throws IOException {
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
-        xmlOptions.setSaveSyntheticDocumentElement(new QName(CTChartSpace.type.getName().getNamespaceURI(), "chartSpace", "c"));
+        xmlOptions.setSaveSyntheticDocumentElement(
+            new QName(CTChartSpace.type.getName().getNamespaceURI(), "chartSpace", "c"));
 
         if (workbook != null) {
             try {
@@ -572,7 +643,8 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     /**
      * set sheet time in excel file
      *
-     * @param title title of sheet
+     * @param title
+     *            title of sheet
      * @return return cell reference
      * @since POI 4.0.0
      */
@@ -588,18 +660,20 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     /**
      * this method update column header of sheet into table
      *
-     * @param ctTable xssf table object
-     * @param title title of column
-     * @param index index of column
+     * @param ctTable
+     *            xssf table object
+     * @param title
+     *            title of column
+     * @param index
+     *            index of column
      */
     private void updateSheetTable(CTTable ctTable, String title, int index) {
         CTTableColumns tableColumnList = ctTable.getTableColumns();
         CTTableColumn column = null;
-        if(tableColumnList.getCount() >= index) {
+        if (tableColumnList.getCount() >= index) {
             column = tableColumnList.getTableColumnArray(index);
-        }
-        else {
-            column =  tableColumnList.addNewTableColumn();
+        } else {
+            column = tableColumnList.addNewTableColumn();
             column.setId(index);
         }
         column.setName(title);
@@ -632,9 +706,9 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     }
 
     /**
-     * this method is used to get worksheet part
-     * if call is from saveworkbook method then check isCommitted
-     * isCommitted variable shows that we are writing xssfworkbook object into output stream of embedded part
+     * this method is used to get worksheet part if call is from saveworkbook
+     * method then check isCommitted isCommitted variable shows that we are
+     * writing xssfworkbook object into output stream of embedded part
      *
      * @return returns the packagepart of embedded file
      * @throws InvalidFormatException
@@ -683,10 +757,12 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     }
 
     /**
-     * while reading chart from template file then we need to parse and store embedded excel
-     * file in chart object show that we can modify value according to use
+     * while reading chart from template file then we need to parse and store
+     * embedded excel file in chart object show that we can modify value
+     * according to use
      *
-     * @param workbook workbook object which we read from chart embedded part
+     * @param workbook
+     *            workbook object which we read from chart embedded part
      * @since POI 4.0.0
      */
     public void setWorkbook(XSSFWorkbook workbook) {
@@ -694,9 +770,12 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     }
 
     /**
-     * set the relation id of embedded excel relation id into external data relation tag
+     * set the relation id of embedded excel relation id into external data
+     * relation tag
      *
-     * @param id relation id of embedded excel relation id into external data relation tag
+     * @param id
+     *            relation id of embedded excel relation id into external data
+     *            relation tag
      * @since POI 4.0.0
      */
     public void setExternalId(String id) {
@@ -714,7 +793,8 @@ public abstract class XDDFChart extends POIXMLDocumentPart {
     /**
      * set chart index which can be use for relation part
      *
-     * @param chartIndex chart index which can be use for relation part
+     * @param chartIndex
+     *            chart index which can be use for relation part
      */
     public void setChartIndex(int chartIndex) {
         this.chartIndex = chartIndex;

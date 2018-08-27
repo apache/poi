@@ -22,7 +22,7 @@ import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBulletSizePercent;
 
 @Beta
-public class XDDFBulletSizePercent extends XDDFBulletSize {
+public class XDDFBulletSizePercent implements XDDFBulletSize {
     private CTTextBulletSizePercent percent;
     private Double scale;
 
@@ -42,16 +42,11 @@ public class XDDFBulletSizePercent extends XDDFBulletSize {
         return percent;
     }
 
-    @Override
-    public Kind getType() {
-        return Kind.PERCENT;
-    }
-
     public double getPercent() {
         return percent.getVal() * scale;
     }
 
     public void setPercent(double value) {
-        percent.setVal((int)(1000 * value));
+        percent.setVal((int) (1000 * value));
     }
 }

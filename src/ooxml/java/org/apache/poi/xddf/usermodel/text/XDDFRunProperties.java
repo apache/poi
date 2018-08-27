@@ -56,7 +56,9 @@ public class XDDFRunProperties {
 
     public void setBaseline(Integer value) {
         if (value == null) {
-            props.unsetBaseline();
+            if (props.isSetBaseline()) {
+                props.unsetBaseline();
+            }
         } else {
             props.setBaseline(value);
         }
@@ -64,7 +66,9 @@ public class XDDFRunProperties {
 
     public void setDirty(Boolean dirty) {
         if (dirty == null) {
-            props.unsetDirty();
+            if (props.isSetDirty()) {
+                props.unsetDirty();
+            }
         } else {
             props.setDirty(dirty);
         }
@@ -72,7 +76,9 @@ public class XDDFRunProperties {
 
     public void setSpellError(Boolean error) {
         if (error == null) {
-            props.unsetErr();
+            if (props.isSetErr()) {
+                props.unsetErr();
+            }
         } else {
             props.setErr(error);
         }
@@ -80,7 +86,9 @@ public class XDDFRunProperties {
 
     public void setNoProof(Boolean noproof) {
         if (noproof == null) {
-            props.unsetNoProof();
+            if (props.isSetNoProof()) {
+                props.unsetNoProof();
+            }
         } else {
             props.setNoProof(noproof);
         }
@@ -88,7 +96,9 @@ public class XDDFRunProperties {
 
     public void setNormalizeHeights(Boolean normalize) {
         if (normalize == null) {
-            props.unsetNormalizeH();
+            if (props.isSetNormalizeH()) {
+                props.unsetNormalizeH();
+            }
         } else {
             props.setNormalizeH(normalize);
         }
@@ -96,7 +106,9 @@ public class XDDFRunProperties {
 
     public void setKumimoji(Boolean kumimoji) {
         if (kumimoji == null) {
-            props.unsetKumimoji();
+            if (props.isSetKumimoji()) {
+                props.unsetKumimoji();
+            }
         } else {
             props.setKumimoji(kumimoji);
         }
@@ -104,7 +116,9 @@ public class XDDFRunProperties {
 
     public void setBold(Boolean bold) {
         if (bold == null) {
-            props.unsetB();
+            if (props.isSetB()) {
+                props.unsetB();
+            }
         } else {
             props.setB(bold);
         }
@@ -112,7 +126,9 @@ public class XDDFRunProperties {
 
     public void setItalic(Boolean italic) {
         if (italic == null) {
-            props.unsetI();
+            if (props.isSetI()) {
+                props.unsetI();
+            }
         } else {
             props.setI(italic);
         }
@@ -120,21 +136,35 @@ public class XDDFRunProperties {
 
     public void setFontSize(Double size) {
         if (size == null) {
-            props.unsetSz();
+            if (props.isSetSz()) {
+                props.unsetSz();
+            }
         } else if (size < 1 || 400 < size) {
             throw new IllegalArgumentException("Minimum inclusive = 1. Maximum inclusive = 400.");
         } else {
-            props.setSz((int)(100 * size));
+            props.setSz((int) (100 * size));
         }
     }
 
     public void setFillProperties(XDDFFillProperties properties) {
-        props.unsetBlipFill();
-        props.unsetGradFill();
-        props.unsetGrpFill();
-        props.unsetNoFill();
-        props.unsetPattFill();
-        props.unsetSolidFill();
+        if (props.isSetBlipFill()) {
+            props.unsetBlipFill();
+        }
+        if (props.isSetGradFill()) {
+            props.unsetGradFill();
+        }
+        if (props.isSetGrpFill()) {
+            props.unsetGrpFill();
+        }
+        if (props.isSetNoFill()) {
+            props.unsetNoFill();
+        }
+        if (props.isSetPattFill()) {
+            props.unsetPattFill();
+        }
+        if (props.isSetSolidFill()) {
+            props.unsetSolidFill();
+        }
         if (properties == null) {
             return;
         }
@@ -155,49 +185,61 @@ public class XDDFRunProperties {
 
     public void setCharacterKerning(Double kerning) {
         if (kerning == null) {
-            props.unsetKern();
+            if (props.isSetKern()) {
+                props.unsetKern();
+            }
         } else if (kerning < 0 || 4000 < kerning) {
             throw new IllegalArgumentException("Minimum inclusive = 0. Maximum inclusive = 4000.");
         } else {
-            props.setKern((int)(100*kerning));
+            props.setKern((int) (100 * kerning));
         }
     }
 
     public void setCharacterSpacing(Double spacing) {
         if (spacing == null) {
-            props.unsetSpc();
+            if (props.isSetSpc()) {
+                props.unsetSpc();
+            }
         } else if (spacing < -4000 || 4000 < spacing) {
             throw new IllegalArgumentException("Minimum inclusive = -4000. Maximum inclusive = 4000.");
         } else {
-            props.setSpc((int)(100*spacing));
+            props.setSpc((int) (100 * spacing));
         }
     }
 
     public void setFonts(XDDFFont[] fonts) {
-        for (XDDFFont font: fonts) {
+        for (XDDFFont font : fonts) {
             CTTextFont xml = font.getXmlObject();
             switch (font.getGroup()) {
             case COMPLEX_SCRIPT:
                 if (xml == null) {
-                    props.unsetCs();
+                    if (props.isSetCs()) {
+                        props.unsetCs();
+                    }
                 } else {
                     props.setCs(xml);
                 }
             case EAST_ASIAN:
                 if (xml == null) {
-                    props.unsetEa();
+                    if (props.isSetEa()) {
+                        props.unsetEa();
+                    }
                 } else {
                     props.setEa(xml);
                 }
             case LATIN:
                 if (xml == null) {
-                    props.unsetLatin();
+                    if (props.isSetLatin()) {
+                        props.unsetLatin();
+                    }
                 } else {
                     props.setLatin(xml);
                 }
             case SYMBOL:
                 if (xml == null) {
-                    props.unsetSym();
+                    if (props.isSetSym()) {
+                        props.unsetSym();
+                    }
                 } else {
                     props.setSym(xml);
                 }
@@ -207,7 +249,9 @@ public class XDDFRunProperties {
 
     public void setUnderline(UnderlineType underline) {
         if (underline == null) {
-            props.unsetU();
+            if (props.isSetU()) {
+                props.unsetU();
+            }
         } else {
             props.setU(underline.underlying);
         }
@@ -215,7 +259,9 @@ public class XDDFRunProperties {
 
     public void setStrikeThrough(StrikeType strike) {
         if (strike == null) {
-            props.unsetStrike();
+            if (props.isSetStrike()) {
+                props.unsetStrike();
+            }
         } else {
             props.setStrike(strike.underlying);
         }
@@ -223,7 +269,9 @@ public class XDDFRunProperties {
 
     public void setCapitals(CapsType caps) {
         if (caps == null) {
-            props.unsetCap();
+            if (props.isSetCap()) {
+                props.unsetCap();
+            }
         } else {
             props.setCap(caps.underlying);
         }
@@ -231,7 +279,9 @@ public class XDDFRunProperties {
 
     public void setHyperlink(XDDFHyperlink link) {
         if (link == null) {
-            props.unsetHlinkClick();
+            if (props.isSetHlinkClick()) {
+                props.unsetHlinkClick();
+            }
         } else {
             props.setHlinkClick(link.getXmlObject());
         }
@@ -239,7 +289,9 @@ public class XDDFRunProperties {
 
     public void setMouseOver(XDDFHyperlink link) {
         if (link == null) {
-            props.unsetHlinkMouseOver();
+            if (props.isSetHlinkMouseOver()) {
+                props.unsetHlinkMouseOver();
+            }
         } else {
             props.setHlinkMouseOver(link.getXmlObject());
         }
@@ -247,7 +299,9 @@ public class XDDFRunProperties {
 
     public void setLanguage(Locale lang) {
         if (lang == null) {
-            props.unsetLang();
+            if (props.isSetLang()) {
+                props.unsetLang();
+            }
         } else {
             props.setLang(lang.toLanguageTag());
         }
@@ -255,7 +309,9 @@ public class XDDFRunProperties {
 
     public void setAlternativeLanguage(Locale lang) {
         if (lang == null) {
-            props.unsetAltLang();
+            if (props.isSetAltLang()) {
+                props.unsetAltLang();
+            }
         } else {
             props.setAltLang(lang.toLanguageTag());
         }
@@ -263,7 +319,9 @@ public class XDDFRunProperties {
 
     public void setHighlight(XDDFColor color) {
         if (color == null) {
-            props.unsetHighlight();
+            if (props.isSetHighlight()) {
+                props.unsetHighlight();
+            }
         } else {
             props.setHighlight(color.getColorContainer());
         }
@@ -271,7 +329,9 @@ public class XDDFRunProperties {
 
     public void setLineProperties(XDDFLineProperties properties) {
         if (properties == null) {
-            props.unsetLn();
+            if (props.isSetLn()) {
+                props.unsetLn();
+            }
         } else {
             props.setLn(properties.getXmlObject());
         }
@@ -279,7 +339,9 @@ public class XDDFRunProperties {
 
     public void setBookmark(String bookmark) {
         if (bookmark == null) {
-            props.unsetBmk();
+            if (props.isSetBmk()) {
+                props.unsetBmk();
+            }
         } else {
             props.setBmk(bookmark);
         }
@@ -295,7 +357,9 @@ public class XDDFRunProperties {
 
     public void setExtensionList(XDDFExtensionList list) {
         if (list == null) {
-            props.unsetExtLst();
+            if (props.isSetExtLst()) {
+                props.unsetExtLst();
+            }
         } else {
             props.setExtLst(list.getXmlObject());
         }
@@ -311,7 +375,9 @@ public class XDDFRunProperties {
 
     public void setEffectContainer(XDDFEffectContainer container) {
         if (container == null) {
-            props.unsetEffectDag();
+            if (props.isSetEffectDag()) {
+                props.unsetEffectDag();
+            }
         } else {
             props.setEffectDag(container.getXmlObject());
         }
@@ -327,7 +393,9 @@ public class XDDFRunProperties {
 
     public void setEffectList(XDDFEffectList list) {
         if (list == null) {
-            props.unsetEffectLst();
+            if (props.isSetEffectLst()) {
+                props.unsetEffectLst();
+            }
         } else {
             props.setEffectLst(list.getXmlObject());
         }

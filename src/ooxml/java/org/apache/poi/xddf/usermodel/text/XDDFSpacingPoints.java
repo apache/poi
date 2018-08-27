@@ -28,7 +28,9 @@ public class XDDFSpacingPoints extends XDDFSpacing {
 
     public XDDFSpacingPoints(double value) {
         this(CTTextSpacing.Factory.newInstance(), CTTextSpacingPoint.Factory.newInstance());
-        spacing.unsetSpcPct();
+        if (spacing.isSetSpcPct()) {
+            spacing.unsetSpcPct();
+        }
         spacing.setSpcPts(points);
         setPoints(value);
     }

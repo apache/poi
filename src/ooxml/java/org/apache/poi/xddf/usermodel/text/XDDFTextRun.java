@@ -22,8 +22,8 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Function;
 
-import org.apache.poi.POIXMLRelation;
 import org.apache.poi.common.usermodel.fonts.FontGroup;
+import org.apache.poi.ooxml.POIXMLRelation;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
@@ -88,9 +88,9 @@ public class XDDFTextRun {
     public String getText() {
         if (isLineBreak()) {
             return "\n";
-        } else  if (isField()) {
+        } else if (isField()) {
             return _tf.getT();
-        } else  {
+        } else {
             return _rtr.getT();
         }
     }
@@ -151,7 +151,8 @@ public class XDDFTextRun {
     /**
      * Specifies whether this run of text will be formatted as bold text.
      *
-     * @param bold whether this run of text will be formatted as bold text.
+     * @param bold
+     *            whether this run of text will be formatted as bold text.
      */
     public void setBold(Boolean bold) {
         getOrCreateProperties().setBold(bold);
@@ -166,7 +167,8 @@ public class XDDFTextRun {
     }
 
     /**
-     * @param italic whether this run of text is formatted as italic text.
+     * @param italic
+     *            whether this run of text is formatted as italic text.
      */
     public void setItalic(Boolean italic) {
         getOrCreateProperties().setItalic(italic);
@@ -181,7 +183,8 @@ public class XDDFTextRun {
     }
 
     /**
-     * @param strike which strike style this run of text is formatted with.
+     * @param strike
+     *            which strike style this run of text is formatted with.
      */
     public void setStrikeThrough(StrikeType strike) {
         getOrCreateProperties().setStrikeThrough(strike);
@@ -206,7 +209,8 @@ public class XDDFTextRun {
     }
 
     /**
-     * @param underline which underline style this run of text is formatted with.
+     * @param underline
+     *            which underline style this run of text is formatted with.
      */
     public void setUnderline(UnderlineType underline) {
         getOrCreateProperties().setUnderline(underline);
@@ -231,7 +235,8 @@ public class XDDFTextRun {
     }
 
     /**
-     * @param caps which caps style this run of text is formatted with.
+     * @param caps
+     *            which caps style this run of text is formatted with.
      */
     public void setCapitals(CapsType caps) {
         getOrCreateProperties().setCapitals(caps);
@@ -256,7 +261,8 @@ public class XDDFTextRun {
     }
 
     /**
-     * @return whether a run of text will be formatted as a subscript text. Default is false.
+     * @return whether a run of text will be formatted as a subscript text.
+     *         Default is false.
      */
     public boolean isSubscript() {
         return findDefinedProperty(props -> props.isSetBaseline(), props -> props.getBaseline())
@@ -265,7 +271,8 @@ public class XDDFTextRun {
     }
 
     /**
-     * @return whether a run of text will be formatted as a superscript text. Default is false.
+     * @return whether a run of text will be formatted as a superscript text.
+     *         Default is false.
      */
     public boolean isSuperscript() {
         return findDefinedProperty(props -> props.isSetBaseline(), props -> props.getBaseline())
@@ -282,31 +289,35 @@ public class XDDFTextRun {
      *
      * @param offset
      */
-    public void setBaseline(Double offset){
-        getOrCreateProperties().setBaseline((int)(offset * 1000));
+    public void setBaseline(Double offset) {
+        if (offset == null) {
+            getOrCreateProperties().setBaseline(null);
+        } else {
+            getOrCreateProperties().setBaseline((int) (offset * 1000));
+        }
     }
 
     /**
      * Set whether the text in this run is formatted as superscript.
-     *  <p>
-     *     The size is specified using a percentage.
-     *  </p>
+     * <p>
+     * The size is specified using a percentage.
+     * </p>
      *
      * @param offset
      */
-    public void setSuperscript(Double offset){
+    public void setSuperscript(Double offset) {
         setBaseline(offset == null ? null : Math.abs(offset));
     }
 
     /**
      * Set whether the text in this run is formatted as subscript.
-     *  <p>
-     *     The size is specified using a percentage.
-     *  </p>
+     * <p>
+     * The size is specified using a percentage.
+     * </p>
      *
      * @param offset
      */
-    public void setSubscript(Double offset){
+    public void setSubscript(Double offset) {
         setBaseline(offset == null ? null : -Math.abs(offset));
     }
 
@@ -331,7 +342,8 @@ public class XDDFTextRun {
      * <em>Note</em>: In order to get fonts to unset the property for a given font family use
      * {@link XDDFFont#unsetFontForGroup(FontGroup)}
      *
-     * @param fonts to set or unset on the run.
+     * @param fonts
+     *            to set or unset on the run.
      */
     public void setFonts(XDDFFont[] fonts) {
         getOrCreateProperties().setFonts(fonts);
@@ -357,12 +369,14 @@ public class XDDFTextRun {
     }
 
     /**
-     * @param size  font size in points.
-     * The value <code>null</code> unsets the size for this run.
-     * <dl>
-     * <dt>Minimum inclusive =</dt><dd>1</dd>
-     * <dt>Maximum inclusive =</dt><dd>400</dd>
-     * </dt>
+     * @param size
+     *            font size in points. The value <code>null</code> unsets the
+     *            size for this run.
+     *            <dl>
+     *            <dt>Minimum inclusive =</dt>
+     *            <dd>1</dd>
+     *            <dt>Maximum inclusive =</dt>
+     *            <dd>400</dd></dt>
      *
      */
     public void setFontSize(Double size) {
@@ -371,7 +385,7 @@ public class XDDFTextRun {
 
     public Double getFontSize() {
         Integer size = findDefinedProperty(props -> props.isSetSz(), props -> props.getSz())
-            .orElse(100 * XSSFFont.DEFAULT_FONT_SIZE);   // default font size
+            .orElse(100 * XSSFFont.DEFAULT_FONT_SIZE); // default font size
         double scale = _parent.getParentBody().getBodyProperties().getAutoFit().getFontScale() / 10_000_000.0;
         return size * scale;
     }
@@ -382,13 +396,15 @@ public class XDDFTextRun {
      * The value <code>null</code> unsets the kerning for this run.
      * </p>
      *
-     * @param kerning  character kerning in points.
-     * <dl>
-     * <dt>Minimum inclusive =</dt><dd>0</dd>
-     * <dt>Maximum inclusive =</dt><dd>4000</dd>
-     * </dt>
+     * @param kerning
+     *            character kerning in points.
+     *            <dl>
+     *            <dt>Minimum inclusive =</dt>
+     *            <dd>0</dd>
+     *            <dt>Maximum inclusive =</dt>
+     *            <dd>4000</dd></dt>
      */
-    public void setCharacterKerning(Double kerning){
+    public void setCharacterKerning(Double kerning) {
         getOrCreateProperties().setCharacterKerning(kerning);
     }
 
@@ -413,13 +429,15 @@ public class XDDFTextRun {
      * The value <code>null</code> unsets the spacing for this run.
      * </p>
      *
-     * @param spacing  character spacing in points.
-     * <dl>
-     * <dt>Minimum inclusive =</dt><dd>-4000</dd>
-     * <dt>Maximum inclusive =</dt><dd>4000</dd>
-     * </dt>
+     * @param spacing
+     *            character spacing in points.
+     *            <dl>
+     *            <dt>Minimum inclusive =</dt>
+     *            <dd>-4000</dd>
+     *            <dt>Maximum inclusive =</dt>
+     *            <dd>4000</dd></dt>
      */
-    public void setCharacterSpacing(Double spacing){
+    public void setCharacterSpacing(Double spacing) {
         getOrCreateProperties().setCharacterSpacing(spacing);
     }
 

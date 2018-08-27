@@ -23,7 +23,7 @@ import org.apache.poi.xddf.usermodel.XDDFPicture;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBlipBullet;
 
 @Beta
-public class XDDFBulletStylePicture extends XDDFBulletStyle {
+public class XDDFBulletStylePicture implements XDDFBulletStyle {
     private CTTextBlipBullet style;
 
     @Internal

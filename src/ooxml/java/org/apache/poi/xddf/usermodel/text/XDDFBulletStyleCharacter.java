@@ -22,7 +22,7 @@ import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharBullet;
 
 @Beta
-public class XDDFBulletStyleCharacter extends XDDFBulletStyle {
+public class XDDFBulletStyleCharacter implements XDDFBulletStyle {
     private CTTextCharBullet style;
 
     @Internal
