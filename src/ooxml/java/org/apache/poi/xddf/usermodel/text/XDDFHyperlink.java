@@ -28,7 +28,7 @@ public class XDDFHyperlink {
 
     public XDDFHyperlink(String id) {
         this(CTHyperlink.Factory.newInstance());
-        this.link.setId(id);;
+        this.link.setId(id);
     }
 
     public XDDFHyperlink(String id, String action) {
@@ -72,7 +72,9 @@ public class XDDFHyperlink {
 
     public void setEndSound(Boolean ends) {
         if (ends == null) {
-            link.unsetEndSnd();
+            if (link.isSetEndSnd()) {
+                link.unsetEndSnd();
+            }
         } else {
             link.setEndSnd(ends);
         }
@@ -88,11 +90,14 @@ public class XDDFHyperlink {
 
     public void setHighlightClick(Boolean highlights) {
         if (highlights == null) {
-            link.unsetHighlightClick();
+            if (link.isSetHighlightClick()) {
+                link.unsetHighlightClick();
+            }
         } else {
             link.setHighlightClick(highlights);
         }
     }
+
     public Boolean getHistory() {
         if (link.isSetHistory()) {
             return link.getHistory();
@@ -103,12 +108,13 @@ public class XDDFHyperlink {
 
     public void setHistory(Boolean history) {
         if (history == null) {
-            link.unsetHistory();
+            if (link.isSetHistory()) {
+                link.unsetHistory();
+            }
         } else {
             link.setHistory(history);
         }
     }
-
 
     public String getInvalidURL() {
         if (link.isSetInvalidUrl()) {
@@ -120,7 +126,9 @@ public class XDDFHyperlink {
 
     public void setInvalidURL(String invalid) {
         if (invalid == null) {
-            link.unsetInvalidUrl();
+            if (link.isSetInvalidUrl()) {
+                link.unsetInvalidUrl();
+            }
         } else {
             link.setInvalidUrl(invalid);
         }
@@ -136,7 +144,9 @@ public class XDDFHyperlink {
 
     public void setTargetFrame(String frame) {
         if (frame == null) {
-            link.unsetTgtFrame();
+            if (link.isSetTgtFrame()) {
+                link.unsetTgtFrame();
+            }
         } else {
             link.setTgtFrame(frame);
         }
@@ -152,7 +162,9 @@ public class XDDFHyperlink {
 
     public void setTooltip(String tooltip) {
         if (tooltip == null) {
-            link.unsetTooltip();
+            if (link.isSetTooltip()) {
+                link.unsetTooltip();
+            }
         } else {
             link.setTooltip(tooltip);
         }
@@ -168,7 +180,9 @@ public class XDDFHyperlink {
 
     public void setExtensionList(XDDFExtensionList list) {
         if (list == null) {
-            link.unsetExtLst();
+            if (link.isSetExtLst()) {
+                link.unsetExtLst();
+            }
         } else {
             link.setExtLst(list.getXmlObject());
         }

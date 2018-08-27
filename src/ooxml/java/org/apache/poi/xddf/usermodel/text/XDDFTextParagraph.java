@@ -40,8 +40,8 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextSpacing;
 
 /**
- * Represents a paragraph of text within the containing text body.
- * The paragraph is the highest level text separation mechanism.
+ * Represents a paragraph of text within the containing text body. The paragraph
+ * is the highest level text separation mechanism.
  */
 @Beta
 public class XDDFTextParagraph {
@@ -55,9 +55,7 @@ public class XDDFTextParagraph {
         this._p = paragraph;
         this._parent = parent;
 
-        final int count = paragraph.sizeOfBrArray()
-            + paragraph.sizeOfFldArray()
-            + paragraph.sizeOfRArray();
+        final int count = paragraph.sizeOfBrArray() + paragraph.sizeOfFldArray() + paragraph.sizeOfRArray();
         this._runs = new ArrayList<>(count);
 
         for (XmlObject xo : _p.selectChildren(QNameSet.ALL)) {
@@ -83,11 +81,11 @@ public class XDDFTextParagraph {
         return _parent;
     }
 
-    public List<XDDFTextRun> getTextRuns(){
+    public List<XDDFTextRun> getTextRuns() {
         return _runs;
     }
 
-    public Iterator<XDDFTextRun> iterator(){
+    public Iterator<XDDFTextRun> iterator() {
         return _runs.iterator();
     }
 
@@ -96,10 +94,10 @@ public class XDDFTextParagraph {
      *
      * @return text run representing this line break ('\n').
      */
-    public XDDFTextRun appendLineBreak(){
+    public XDDFTextRun appendLineBreak() {
         CTTextLineBreak br = _p.addNewBr();
         // by default, line break has the font properties of the last text run
-        for (int i = _runs.size() - 1; i <= 0; i--){
+        for (int i = _runs.size() - 1; i <= 0; i--) {
             CTTextCharacterProperties prevProps = _runs.get(i).getProperties();
             // let's find one that is not undefined
             if (prevProps != null) {
@@ -117,7 +115,7 @@ public class XDDFTextParagraph {
      *
      * @return the new text field.
      */
-    public XDDFTextRun appendField(String id, String type, String text){
+    public XDDFTextRun appendField(String id, String type, String text) {
         CTTextField f = _p.addNewFld();
         f.setId(id);
         f.setType(type);
@@ -134,7 +132,7 @@ public class XDDFTextParagraph {
      *
      * @return the new run of text.
      */
-    public XDDFTextRun appendRegularRun(String text){
+    public XDDFTextRun appendRegularRun(String text) {
         CTRegularTextRun r = _p.addNewR();
         r.setT(text);
         CTTextCharacterProperties rPr = r.addNewRPr();
@@ -148,19 +146,20 @@ public class XDDFTextParagraph {
      * Returns the alignment that is applied to the paragraph.
      *
      * If this attribute is omitted, then a value of left is implied.
+     *
      * @return alignment that is applied to the paragraph
      */
     public TextAlignment getTextAlignment() {
         return findDefinedParagraphProperty(props -> props.isSetAlgn(), props -> props.getAlgn())
-            .map(align -> TextAlignment.valueOf(align))
-            .orElse(null);
+            .map(align -> TextAlignment.valueOf(align)).orElse(null);
     }
 
     /**
-     * Specifies the alignment that is to be applied to the paragraph.
-     * Possible values for this include left, right, centered, justified and distributed,
+     * Specifies the alignment that is to be applied to the paragraph. Possible
+     * values for this include left, right, centered, justified and distributed,
      *
-     * @param align text alignment
+     * @param align
+     *            text alignment
      */
     public void setTextAlignment(TextAlignment align) {
         if (align != null || _p.isSetPPr()) {
@@ -169,25 +168,27 @@ public class XDDFTextParagraph {
     }
 
     /**
-     * Returns where vertically on a line of text the actual words are positioned. This deals
-     * with vertical placement of the characters with respect to the baselines.
+     * Returns where vertically on a line of text the actual words are
+     * positioned. This deals with vertical placement of the characters with
+     * respect to the baselines.
      *
      * If this attribute is omitted, then a value of baseline is implied.
+     *
      * @return alignment that is applied to the paragraph
      */
     public FontAlignment getFontAlignment() {
         return findDefinedParagraphProperty(props -> props.isSetFontAlgn(), props -> props.getFontAlgn())
-            .map(align -> FontAlignment.valueOf(align))
-            .orElse(null);
+            .map(align -> FontAlignment.valueOf(align)).orElse(null);
     }
 
     /**
-     * Determines where vertically on a line of text the actual words are positioned. This deals
-     * with vertical placement of the characters with respect to the baselines. For instance
-     * having text anchored to the top baseline, anchored to the bottom baseline, centered in
-     * between, etc.
+     * Determines where vertically on a line of text the actual words are
+     * positioned. This deals with vertical placement of the characters with
+     * respect to the baselines. For instance having text anchored to the top
+     * baseline, anchored to the bottom baseline, centered in between, etc.
      *
-     * @param align text font alignment
+     * @param align
+     *            text font alignment
      */
     public void setFontAlignment(FontAlignment align) {
         if (align != null || _p.isSetPPr()) {
@@ -197,27 +198,31 @@ public class XDDFTextParagraph {
 
     /**
      *
-     * @return the indentation, in points, applied to the first line of text in the paragraph.
+     * @return the indentation, in points, applied to the first line of text in
+     *         the paragraph.
      */
     public Double getIndentation() {
         return findDefinedParagraphProperty(props -> props.isSetIndent(), props -> props.getIndent())
-            .map(emu -> Units.toPoints(emu))
-            .orElse(null);
+            .map(emu -> Units.toPoints(emu)).orElse(null);
     }
 
     /**
-     * Specifies the indentation size that will be applied to the first line of text in the paragraph.
+     * Specifies the indentation size that will be applied to the first line of
+     * text in the paragraph.
      *
-     * @param points the indentation in points.
-     * The value <code>null</code> unsets the indentation for this paragraph.
-     * <dl>
-     * <dt>Minimum inclusive =</dt><dd>-4032</dd>
-     * <dt>Maximum inclusive =</dt><dd>4032</dd>
-     * </dt>
+     * @param points
+     *            the indentation in points. The value <code>null</code> unsets
+     *            the indentation for this paragraph.
+     *            <dl>
+     *            <dt>Minimum inclusive =</dt>
+     *            <dd>-4032</dd>
+     *            <dt>Maximum inclusive =</dt>
+     *            <dd>4032</dd></dt>
      */
     public void setIndentation(Double points) {
         if (points != null || _p.isSetPPr()) {
-            getOrCreateProperties().setIndentation(points);;
+            getOrCreateProperties().setIndentation(points);
+            ;
         }
     }
 
@@ -227,21 +232,23 @@ public class XDDFTextParagraph {
      */
     public Double getMarginLeft() {
         return findDefinedParagraphProperty(props -> props.isSetMarL(), props -> props.getMarL())
-            .map(emu -> Units.toPoints(emu))
-            .orElse(null);
+            .map(emu -> Units.toPoints(emu)).orElse(null);
     }
 
     /**
-     * Specifies the left margin of the paragraph. This is specified in addition to the text body
-     * inset and applies only to this text paragraph. That is the text body inset and the LeftMargin
-     * attributes are additive with respect to the text position.
+     * Specifies the left margin of the paragraph. This is specified in addition
+     * to the text body inset and applies only to this text paragraph. That is
+     * the text body inset and the LeftMargin attributes are additive with
+     * respect to the text position.
      *
-     * @param points the margin in points.
-     * The value <code>null</code> unsets the left margin for this paragraph.
-     * <dl>
-     * <dt>Minimum inclusive =</dt><dd>0</dd>
-     * <dt>Maximum inclusive =</dt><dd>4032</dd>
-     * </dt>
+     * @param points
+     *            the margin in points. The value <code>null</code> unsets the
+     *            left margin for this paragraph.
+     *            <dl>
+     *            <dt>Minimum inclusive =</dt>
+     *            <dd>0</dd>
+     *            <dt>Maximum inclusive =</dt>
+     *            <dd>4032</dd></dt>
      */
     public void setMarginLeft(Double points) {
         if (points != null || _p.isSetPPr()) {
@@ -255,21 +262,23 @@ public class XDDFTextParagraph {
      */
     public Double getMarginRight() {
         return findDefinedParagraphProperty(props -> props.isSetMarR(), props -> props.getMarR())
-            .map(emu -> Units.toPoints(emu))
-            .orElse(null);
+            .map(emu -> Units.toPoints(emu)).orElse(null);
     }
 
     /**
-     * Specifies the right margin of the paragraph. This is specified in addition to the text body
-     * inset and applies only to this text paragraph. That is the text body inset and the RightMargin
-     * attributes are additive with respect to the text position.
+     * Specifies the right margin of the paragraph. This is specified in
+     * addition to the text body inset and applies only to this text paragraph.
+     * That is the text body inset and the RightMargin attributes are additive
+     * with respect to the text position.
      *
-     * @param points the margin in points.
-     * The value <code>null</code> unsets the right margin for this paragraph.
-     * <dl>
-     * <dt>Minimum inclusive =</dt><dd>0</dd>
-     * <dt>Maximum inclusive =</dt><dd>4032</dd>
-     * </dt>
+     * @param points
+     *            the margin in points. The value <code>null</code> unsets the
+     *            right margin for this paragraph.
+     *            <dl>
+     *            <dt>Minimum inclusive =</dt>
+     *            <dd>0</dd>
+     *            <dt>Maximum inclusive =</dt>
+     *            <dd>4032</dd></dt>
      */
     public void setMarginRight(Double points) {
         if (points != null || _p.isSetPPr()) {
@@ -279,19 +288,20 @@ public class XDDFTextParagraph {
 
     /**
      *
-     * @return the default size for a tab character within this paragraph in points.
+     * @return the default size for a tab character within this paragraph in
+     *         points.
      */
     public Double getDefaultTabSize() {
         return findDefinedParagraphProperty(props -> props.isSetDefTabSz(), props -> props.getDefTabSz())
-            .map(emu -> Units.toPoints(emu))
-            .orElse(null);
+            .map(emu -> Units.toPoints(emu)).orElse(null);
     }
 
     /**
      * Specifies the default size for a tab character within this paragraph.
      *
-     * @param points the default tab size in points.
-     * The value <code>null</code> unsets the default tab size for this paragraph.
+     * @param points
+     *            the default tab size in points. The value <code>null</code>
+     *            unsets the default tab size for this paragraph.
      */
     public void setDefaultTabSize(Double points) {
         if (points != null || _p.isSetPPr()) {
@@ -301,30 +311,35 @@ public class XDDFTextParagraph {
 
     /**
      * Returns the vertical line spacing that is to be used within a paragraph.
-     * This may be specified in two different ways, percentage spacing or font points spacing:
+     * This may be specified in two different ways, percentage spacing or font
+     * points spacing:
      * <p>
-     * If line spacing is a percentage of normal line height, result is instance of XDDFSpacingPercent.
-     * If line spacing is expressed in points, result is instance of XDDFSpacingPoints.
+     * If line spacing is a percentage of normal line height, result is instance
+     * of XDDFSpacingPercent. If line spacing is expressed in points, result is
+     * instance of XDDFSpacingPoints.
      * </p>
      *
      * @return the vertical line spacing.
      */
     public XDDFSpacing getLineSpacing() {
         return findDefinedParagraphProperty(props -> props.isSetLnSpc(), props -> props.getLnSpc())
-            .map(spacing -> extractSpacing(spacing))
-            .orElse(null);
+            .map(spacing -> extractSpacing(spacing)).orElse(null);
 
     }
 
     /**
-     * This element specifies the vertical line spacing that is to be used within a paragraph.
-     * This may be specified in two different ways, percentage spacing or font points spacing:
+     * This element specifies the vertical line spacing that is to be used
+     * within a paragraph. This may be specified in two different ways,
+     * percentage spacing or font points spacing:
      * <p>
-     * If spacing is instance of XDDFSpacingPercent, then line spacing is a percentage of normal line height.
-     * If spacing is instance of XDDFSpacingPoints, then line spacing is expressed in points.
+     * If spacing is instance of XDDFSpacingPercent, then line spacing is a
+     * percentage of normal line height. If spacing is instance of
+     * XDDFSpacingPoints, then line spacing is expressed in points.
      * </p>
      * Examples:
-     * <pre><code>
+     *
+     * <pre>
+     * <code>
      *      // spacing will be 120% of the size of the largest text on each line
      *      paragraph.setLineSpacing(new XDDFSpacingPercent(120));
      *
@@ -333,9 +348,11 @@ public class XDDFTextParagraph {
      *
      *      // spacing will be 48 points
      *      paragraph.setLineSpacing(new XDDFSpacingPoints(48.0));
-     * </code></pre>
+     * </code>
+     * </pre>
      *
-     * @param linespacing the vertical line spacing
+     * @param linespacing
+     *            the vertical line spacing
      */
     public void setLineSpacing(XDDFSpacing linespacing) {
         if (linespacing != null || _p.isSetPPr()) {
@@ -344,39 +361,46 @@ public class XDDFTextParagraph {
     }
 
     /**
-     * The amount of vertical white space before the paragraph.
-     * This may be specified in two different ways, percentage spacing or font points spacing:
+     * The amount of vertical white space before the paragraph. This may be
+     * specified in two different ways, percentage spacing or font points
+     * spacing:
      * <p>
-     * If spacing is a percentage of normal line height, result is instance of XDDFSpacingPercent.
-     * If spacing is expressed in points, result is instance of XDDFSpacingPoints.
+     * If spacing is a percentage of normal line height, result is instance of
+     * XDDFSpacingPercent. If spacing is expressed in points, result is instance
+     * of XDDFSpacingPoints.
      * </p>
      *
      * @return the vertical white space before the paragraph.
      */
     public XDDFSpacing getSpaceBefore() {
         return findDefinedParagraphProperty(props -> props.isSetSpcBef(), props -> props.getSpcBef())
-            .map(spacing -> extractSpacing(spacing))
-            .orElse(null);
+            .map(spacing -> extractSpacing(spacing)).orElse(null);
     }
 
     /**
-     * Set the amount of vertical white space that will be present before the paragraph.
-     * This may be specified in two different ways, percentage spacing or font points spacing:
+     * Set the amount of vertical white space that will be present before the
+     * paragraph. This may be specified in two different ways, percentage
+     * spacing or font points spacing:
      * <p>
-     * If spacing is instance of XDDFSpacingPercent, then spacing is a percentage of normal line height.
-     * If spacing is instance of XDDFSpacingPoints, then spacing is expressed in points.
+     * If spacing is instance of XDDFSpacingPercent, then spacing is a
+     * percentage of normal line height. If spacing is instance of
+     * XDDFSpacingPoints, then spacing is expressed in points.
      * </p>
      * Examples:
-     * <pre><code>
+     *
+     * <pre>
+     * <code>
      *      // The paragraph will be formatted to have a spacing before the paragraph text.
      *      // The spacing will be 200% of the size of the largest text on each line
      *      paragraph.setSpaceBefore(new XDDFSpacingPercent(200));
      *
      *      // The spacing will be a size of 48 points
      *      paragraph.setSpaceBefore(new XDDFSpacingPoints(48.0));
-     * </code></pre>
+     * </code>
+     * </pre>
      *
-     * @param spaceBefore the vertical white space before the paragraph.
+     * @param spaceBefore
+     *            the vertical white space before the paragraph.
      */
     public void setSpaceBefore(XDDFSpacing spaceBefore) {
         if (spaceBefore != null || _p.isSetPPr()) {
@@ -385,39 +409,46 @@ public class XDDFTextParagraph {
     }
 
     /**
-     * The amount of vertical white space after the paragraph.
-     * This may be specified in two different ways, percentage spacing or font points spacing:
+     * The amount of vertical white space after the paragraph. This may be
+     * specified in two different ways, percentage spacing or font points
+     * spacing:
      * <p>
-     * If spacing is a percentage of normal line height, result is instance of XDDFSpacingPercent.
-     * If spacing is expressed in points, result is instance of XDDFSpacingPoints.
+     * If spacing is a percentage of normal line height, result is instance of
+     * XDDFSpacingPercent. If spacing is expressed in points, result is instance
+     * of XDDFSpacingPoints.
      * </p>
      *
      * @return the vertical white space after the paragraph.
      */
     public XDDFSpacing getSpaceAfter() {
         return findDefinedParagraphProperty(props -> props.isSetSpcAft(), props -> props.getSpcAft())
-            .map(spacing -> extractSpacing(spacing))
-            .orElse(null);
+            .map(spacing -> extractSpacing(spacing)).orElse(null);
     }
 
     /**
-     * Set the amount of vertical white space that will be present after the paragraph.
-     * This may be specified in two different ways, percentage spacing or font points spacing:
+     * Set the amount of vertical white space that will be present after the
+     * paragraph. This may be specified in two different ways, percentage
+     * spacing or font points spacing:
      * <p>
-     * If spacing is instance of XDDFSpacingPercent, then spacing is a percentage of normal line height.
-     * If spacing is instance of XDDFSpacingPoints, then spacing is expressed in points.
+     * If spacing is instance of XDDFSpacingPercent, then spacing is a
+     * percentage of normal line height. If spacing is instance of
+     * XDDFSpacingPoints, then spacing is expressed in points.
      * </p>
      * Examples:
-     * <pre><code>
+     *
+     * <pre>
+     * <code>
      *      // The paragraph will be formatted to have a spacing after the paragraph text.
      *      // The spacing will be 200% of the size of the largest text on each line
      *      paragraph.setSpaceAfter(new XDDFSpacingPercent(200));
      *
      *      // The spacing will be a size of 48 points
      *      paragraph.setSpaceAfter(new XDDFSpacingPoints(48.0));
-     * </code></pre>
+     * </code>
+     * </pre>
      *
-     * @param spaceAfter the vertical white space after the paragraph.
+     * @param spaceAfter
+     *            the vertical white space after the paragraph.
      */
     public void setSpaceAfter(XDDFSpacing spaceAfter) {
         if (spaceAfter != null || _p.isSetPPr()) {
@@ -427,20 +458,19 @@ public class XDDFTextParagraph {
 
     /**
      *
-     * @return the color of bullet characters within a given paragraph.
-     * A <code>null</code> value means to use the text font color.
+     * @return the color of bullet characters within a given paragraph. A
+     *         <code>null</code> value means to use the text font color.
      */
-    public XDDFColor getBulletColor(){
-        return findDefinedParagraphProperty(
-                props -> props.isSetBuClr() || props.isSetBuClrTx(),
-                props -> new XDDFParagraphBulletProperties(props).getBulletColor()
-            ).orElse(null);
+    public XDDFColor getBulletColor() {
+        return findDefinedParagraphProperty(props -> props.isSetBuClr() || props.isSetBuClrTx(),
+            props -> new XDDFParagraphBulletProperties(props).getBulletColor()).orElse(null);
     }
 
     /**
      * Set the color to be used on bullet characters within a given paragraph.
      *
-     * @param color the bullet color
+     * @param color
+     *            the bullet color
      */
     public void setBulletColor(XDDFColor color) {
         if (color != null || _p.isSetPPr()) {
@@ -449,7 +479,8 @@ public class XDDFTextParagraph {
     }
 
     /**
-     * Specifies the color to be used on bullet characters has to follow text color within a given paragraph.
+     * Specifies the color to be used on bullet characters has to follow text
+     * color within a given paragraph.
      */
     public void setBulletColorFollowText() {
         getOrCreateBulletProperties().setBulletColorFollowText();
@@ -457,20 +488,19 @@ public class XDDFTextParagraph {
 
     /**
      *
-     * @return the font of bullet characters within a given paragraph.
-     * A <code>null</code> value means to use the text font font.
+     * @return the font of bullet characters within a given paragraph. A
+     *         <code>null</code> value means to use the text font font.
      */
-    public XDDFFont getBulletFont(){
-        return findDefinedParagraphProperty(
-                props -> props.isSetBuFont() || props.isSetBuFontTx(),
-                props -> new XDDFParagraphBulletProperties(props).getBulletFont()
-            ).orElse(null);
+    public XDDFFont getBulletFont() {
+        return findDefinedParagraphProperty(props -> props.isSetBuFont() || props.isSetBuFontTx(),
+            props -> new XDDFParagraphBulletProperties(props).getBulletFont()).orElse(null);
     }
 
     /**
      * Set the font to be used on bullet characters within a given paragraph.
      *
-     * @param font the bullet font
+     * @param font
+     *            the bullet font
      */
     public void setBulletFont(XDDFFont font) {
         if (font != null || _p.isSetPPr()) {
@@ -479,40 +509,46 @@ public class XDDFTextParagraph {
     }
 
     /**
-     * Specifies the font to be used on bullet characters has to follow text font within a given paragraph.
+     * Specifies the font to be used on bullet characters has to follow text
+     * font within a given paragraph.
      */
     public void setBulletFontFollowText() {
         getOrCreateBulletProperties().setBulletFontFollowText();
     }
 
     /**
-     * Returns the bullet size that is to be used within a paragraph.
-     * This may be specified in three different ways, follows text size, percentage size and font points size:
+     * Returns the bullet size that is to be used within a paragraph. This may
+     * be specified in three different ways, follows text size, percentage size
+     * and font points size:
      * <p>
-     * If returned value is instance of XDDFBulletSizeFollowText, then bullet size is text size;
-     * If returned value is instance of XDDFBulletSizePercent, then bullet size is a percentage of the font size;
-     * If returned value is instance of XDDFBulletSizePoints, then bullet size is specified in points.
+     * If returned value is instance of XDDFBulletSizeFollowText, then bullet
+     * size is text size; If returned value is instance of
+     * XDDFBulletSizePercent, then bullet size is a percentage of the font size;
+     * If returned value is instance of XDDFBulletSizePoints, then bullet size
+     * is specified in points.
      * </p>
      *
      * @return the bullet size
      */
-    public XDDFBulletSize getBulletSize(){
+    public XDDFBulletSize getBulletSize() {
         return findDefinedParagraphProperty(
-                props -> props.isSetBuSzPct() || props.isSetBuSzPts() || props.isSetBuSzTx(),
-                props -> new XDDFParagraphBulletProperties(props).getBulletSize()
-            ).orElse(null);
+            props -> props.isSetBuSzPct() || props.isSetBuSzPts() || props.isSetBuSzTx(),
+            props -> new XDDFParagraphBulletProperties(props).getBulletSize()).orElse(null);
     }
 
     /**
-     * Sets the bullet size that is to be used within a paragraph.
-     * This may be specified in three different ways, follows text size, percentage size and font points size:
+     * Sets the bullet size that is to be used within a paragraph. This may be
+     * specified in three different ways, follows text size, percentage size and
+     * font points size:
      * <p>
-     * If given value is instance of XDDFBulletSizeFollowText, then bullet size is text size;
-     * If given value is instance of XDDFBulletSizePercent, then bullet size is a percentage of the font size;
-     * If given value is instance of XDDFBulletSizePoints, then bullet size is specified in points.
+     * If given value is instance of XDDFBulletSizeFollowText, then bullet size
+     * is text size; If given value is instance of XDDFBulletSizePercent, then
+     * bullet size is a percentage of the font size; If given value is instance
+     * of XDDFBulletSizePoints, then bullet size is specified in points.
      * </p>
      *
-     * @param size the bullet size specification
+     * @param size
+     *            the bullet size specification
      */
     public void setBulletSize(XDDFBulletSize size) {
         if (size != null || _p.isSetPPr()) {
@@ -520,11 +556,10 @@ public class XDDFTextParagraph {
         }
     }
 
-    public XDDFBulletStyle getBulletStyle(){
+    public XDDFBulletStyle getBulletStyle() {
         return findDefinedParagraphProperty(
-                props -> props.isSetBuAutoNum() || props.isSetBuBlip() || props.isSetBuChar() || props.isSetBuNone(),
-                props -> new XDDFParagraphBulletProperties(props).getBulletStyle()
-            ).orElse(null);
+            props -> props.isSetBuAutoNum() || props.isSetBuBlip() || props.isSetBuChar() || props.isSetBuNone(),
+            props -> new XDDFParagraphBulletProperties(props).getBulletStyle()).orElse(null);
     }
 
     public void setBulletStyle(XDDFBulletStyle style) {
@@ -534,8 +569,7 @@ public class XDDFTextParagraph {
     }
 
     public boolean hasEastAsianLineBreak() {
-        return findDefinedParagraphProperty(props -> props.isSetEaLnBrk(), props -> props.getEaLnBrk())
-            .orElse(false);
+        return findDefinedParagraphProperty(props -> props.isSetEaLnBrk(), props -> props.getEaLnBrk()).orElse(false);
     }
 
     public void setEastAsianLineBreak(Boolean value) {
@@ -567,8 +601,7 @@ public class XDDFTextParagraph {
     }
 
     public boolean isRightToLeft() {
-        return findDefinedParagraphProperty(props -> props.isSetRtl(), props -> props.getRtl())
-            .orElse(false);
+        return findDefinedParagraphProperty(props -> props.isSetRtl(), props -> props.getRtl()).orElse(false);
     }
 
     public void setRightToLeft(Boolean value) {
@@ -641,6 +674,13 @@ public class XDDFTextParagraph {
         }
     }
 
+    public XDDFRunProperties addAfterLastRunProperties() {
+        if (!_p.isSetEndParaRPr()) {
+            _p.addNewEndParaRPr();
+        }
+        return getAfterLastRunProperties();
+    }
+
     public XDDFRunProperties getAfterLastRunProperties() {
         if (_p.isSetEndParaRPr()) {
             return new XDDFRunProperties(_p.getEndParaRPr());
@@ -651,7 +691,9 @@ public class XDDFTextParagraph {
 
     public void setAfterLastRunProperties(XDDFRunProperties properties) {
         if (properties == null) {
-            _p.unsetEndParaRPr();
+            if (_p.isSetEndParaRPr()) {
+                _p.unsetEndParaRPr();
+            }
         } else {
             _p.setEndParaRPr(properties.getXmlObject());
         }

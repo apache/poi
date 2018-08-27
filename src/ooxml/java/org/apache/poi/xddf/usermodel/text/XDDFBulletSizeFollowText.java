@@ -22,7 +22,7 @@ import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBulletSizeFollowText;
 
 @Beta
-public class XDDFBulletSizeFollowText extends XDDFBulletSize {
+public class XDDFBulletSizeFollowText implements XDDFBulletSize {
     private CTTextBulletSizeFollowText follow;
 
     public XDDFBulletSizeFollowText() {
@@ -37,10 +37,5 @@ public class XDDFBulletSizeFollowText extends XDDFBulletSize {
     @Internal
     protected CTTextBulletSizeFollowText getXmlObject() {
         return follow;
-    }
-
-    @Override
-    public Kind getType() {
-        return Kind.TEXT;
     }
 }

@@ -19,6 +19,7 @@ package org.apache.poi.xddf.usermodel.text;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -37,7 +38,7 @@ public class XDDFTextBody {
 
     public XDDFTextBody(TextContainer parent) {
         this(parent, CTTextBody.Factory.newInstance());
-        this._body.addNewBodyPr();
+        initialize();
     }
 
     @Internal
@@ -53,6 +54,20 @@ public class XDDFTextBody {
 
     public TextContainer getParentShape() {
         return _parent;
+    }
+
+    public XDDFTextParagraph initialize() {
+        _body.addNewLstStyle();
+        _body.addNewBodyPr();
+        XDDFBodyProperties bp = getBodyProperties();
+        bp.setAnchoring(AnchorType.TOP);
+        bp.setRightToLeft(false);
+        XDDFTextParagraph p = addNewParagraph();
+        p.setTextAlignment(TextAlignment.LEFT);
+        XDDFRunProperties end = p.addAfterLastRunProperties();
+        end.setLanguage(Locale.US);
+        end.setFontSize(11.0);
+        return p;
     }
 
     public XDDFTextParagraph addNewParagraph() {
@@ -72,11 +87,8 @@ public class XDDFTextBody {
     }
 
     public List<XDDFTextParagraph> getParagraphs() {
-        return Collections.unmodifiableList(_body
-            .getPList()
-            .stream()
-            .map(ds -> new XDDFTextParagraph(ds, this))
-            .collect(Collectors.toList()));
+        return Collections.unmodifiableList(
+            _body.getPList().stream().map(ds -> new XDDFTextParagraph(ds, this)).collect(Collectors.toList()));
     }
 
     public XDDFBodyProperties getBodyProperties() {
@@ -102,7 +114,10 @@ public class XDDFTextBody {
     public void setDefaultProperties(XDDFParagraphProperties properties) {
         if (properties == null) {
             if (_body.isSetLstStyle()) {
-                _body.getLstStyle().unsetDefPPr();
+                CTTextListStyle style = _body.getLstStyle();
+                if (style.isSetDefPPr()) {
+                    style.unsetDefPPr();
+                }
             }
         } else {
             CTTextListStyle style = _body.isSetLstStyle() ? _body.getLstStyle() : _body.addNewLstStyle();
@@ -121,7 +136,10 @@ public class XDDFTextBody {
     public void setLevel1Properties(XDDFParagraphProperties properties) {
         if (properties == null) {
             if (_body.isSetLstStyle()) {
-                _body.getLstStyle().unsetLvl1PPr();
+                CTTextListStyle style = _body.getLstStyle();
+                if (style.isSetLvl1PPr()) {
+                    style.unsetLvl1PPr();
+                }
             }
         } else {
             CTTextListStyle style = _body.isSetLstStyle() ? _body.getLstStyle() : _body.addNewLstStyle();
@@ -140,7 +158,10 @@ public class XDDFTextBody {
     public void setLevel2Properties(XDDFParagraphProperties properties) {
         if (properties == null) {
             if (_body.isSetLstStyle()) {
-                _body.getLstStyle().unsetLvl2PPr();
+                CTTextListStyle style = _body.getLstStyle();
+                if (style.isSetLvl2PPr()) {
+                    style.unsetLvl2PPr();
+                }
             }
         } else {
             CTTextListStyle style = _body.isSetLstStyle() ? _body.getLstStyle() : _body.addNewLstStyle();
@@ -159,7 +180,10 @@ public class XDDFTextBody {
     public void setLevel3Properties(XDDFParagraphProperties properties) {
         if (properties == null) {
             if (_body.isSetLstStyle()) {
-                _body.getLstStyle().unsetLvl3PPr();
+                CTTextListStyle style = _body.getLstStyle();
+                if (style.isSetLvl3PPr()) {
+                    style.unsetLvl3PPr();
+                }
             }
         } else {
             CTTextListStyle style = _body.isSetLstStyle() ? _body.getLstStyle() : _body.addNewLstStyle();
@@ -178,7 +202,10 @@ public class XDDFTextBody {
     public void setLevel4Properties(XDDFParagraphProperties properties) {
         if (properties == null) {
             if (_body.isSetLstStyle()) {
-                _body.getLstStyle().unsetLvl4PPr();
+                CTTextListStyle style = _body.getLstStyle();
+                if (style.isSetLvl4PPr()) {
+                    style.unsetLvl4PPr();
+                }
             }
         } else {
             CTTextListStyle style = _body.isSetLstStyle() ? _body.getLstStyle() : _body.addNewLstStyle();
@@ -197,7 +224,10 @@ public class XDDFTextBody {
     public void setLevel5Properties(XDDFParagraphProperties properties) {
         if (properties == null) {
             if (_body.isSetLstStyle()) {
-                _body.getLstStyle().unsetLvl5PPr();
+                CTTextListStyle style = _body.getLstStyle();
+                if (style.isSetLvl5PPr()) {
+                    style.unsetLvl5PPr();
+                }
             }
         } else {
             CTTextListStyle style = _body.isSetLstStyle() ? _body.getLstStyle() : _body.addNewLstStyle();
@@ -216,7 +246,10 @@ public class XDDFTextBody {
     public void setLevel6Properties(XDDFParagraphProperties properties) {
         if (properties == null) {
             if (_body.isSetLstStyle()) {
-                _body.getLstStyle().unsetLvl6PPr();
+                CTTextListStyle style = _body.getLstStyle();
+                if (style.isSetLvl6PPr()) {
+                    style.unsetLvl6PPr();
+                }
             }
         } else {
             CTTextListStyle style = _body.isSetLstStyle() ? _body.getLstStyle() : _body.addNewLstStyle();
@@ -235,7 +268,10 @@ public class XDDFTextBody {
     public void setLevel7Properties(XDDFParagraphProperties properties) {
         if (properties == null) {
             if (_body.isSetLstStyle()) {
-                _body.getLstStyle().unsetLvl7PPr();
+                CTTextListStyle style = _body.getLstStyle();
+                if (style.isSetLvl7PPr()) {
+                    style.unsetLvl7PPr();
+                }
             }
         } else {
             CTTextListStyle style = _body.isSetLstStyle() ? _body.getLstStyle() : _body.addNewLstStyle();
@@ -254,7 +290,10 @@ public class XDDFTextBody {
     public void setLevel8Properties(XDDFParagraphProperties properties) {
         if (properties == null) {
             if (_body.isSetLstStyle()) {
-                _body.getLstStyle().unsetLvl8PPr();
+                CTTextListStyle style = _body.getLstStyle();
+                if (style.isSetLvl8PPr()) {
+                    style.unsetLvl8PPr();
+                }
             }
         } else {
             CTTextListStyle style = _body.isSetLstStyle() ? _body.getLstStyle() : _body.addNewLstStyle();
@@ -273,7 +312,10 @@ public class XDDFTextBody {
     public void setLevel9Properties(XDDFParagraphProperties properties) {
         if (properties == null) {
             if (_body.isSetLstStyle()) {
-                _body.getLstStyle().unsetLvl9PPr();
+                CTTextListStyle style = _body.getLstStyle();
+                if (style.isSetLvl9PPr()) {
+                    style.unsetLvl9PPr();
+                }
             }
         } else {
             CTTextListStyle style = _body.isSetLstStyle() ? _body.getLstStyle() : _body.addNewLstStyle();
@@ -292,8 +334,10 @@ public class XDDFTextBody {
             } else {
                 return findDefinedParagraphProperty(isSet, getter, level - 1);
             }
-        } else {
+        } else if (_parent != null) {
             return _parent.findDefinedParagraphProperty(isSet, getter);
+        } else {
+            return Optional.empty();
         }
     }
 
@@ -308,59 +352,71 @@ public class XDDFTextBody {
             } else {
                 return findDefinedRunProperty(isSet, getter, level - 1);
             }
-        } else {
+        } else if (_parent != null) {
             return _parent.findDefinedRunProperty(isSet, getter);
+        } else {
+            return Optional.empty();
         }
     }
 
     private CTTextParagraphProperties retrieveProperties(CTTextListStyle list, int level) {
-        switch(level) {
-        case 1: if (list.isSetLvl1PPr()) {
-            return list.getLvl1PPr();
-        } else {
+        switch (level) {
+        case 1:
+            if (list.isSetLvl1PPr()) {
+                return list.getLvl1PPr();
+            } else {
+                return null;
+            }
+        case 2:
+            if (list.isSetLvl2PPr()) {
+                return list.getLvl2PPr();
+            } else {
+                return null;
+            }
+        case 3:
+            if (list.isSetLvl3PPr()) {
+                return list.getLvl3PPr();
+            } else {
+                return null;
+            }
+        case 4:
+            if (list.isSetLvl4PPr()) {
+                return list.getLvl4PPr();
+            } else {
+                return null;
+            }
+        case 5:
+            if (list.isSetLvl5PPr()) {
+                return list.getLvl5PPr();
+            } else {
+                return null;
+            }
+        case 6:
+            if (list.isSetLvl6PPr()) {
+                return list.getLvl6PPr();
+            } else {
+                return null;
+            }
+        case 7:
+            if (list.isSetLvl7PPr()) {
+                return list.getLvl7PPr();
+            } else {
+                return null;
+            }
+        case 8:
+            if (list.isSetLvl8PPr()) {
+                return list.getLvl8PPr();
+            } else {
+                return null;
+            }
+        case 9:
+            if (list.isSetLvl9PPr()) {
+                return list.getLvl9PPr();
+            } else {
+                return null;
+            }
+        default:
             return null;
-        }
-        case 2: if (list.isSetLvl2PPr()) {
-            return list.getLvl2PPr();
-        } else {
-            return null;
-        }
-        case 3: if (list.isSetLvl3PPr()) {
-            return list.getLvl3PPr();
-        } else {
-            return null;
-        }
-        case 4: if (list.isSetLvl4PPr()) {
-            return list.getLvl4PPr();
-        } else {
-            return null;
-        }
-        case 5: if (list.isSetLvl5PPr()) {
-            return list.getLvl5PPr();
-        } else {
-            return null;
-        }
-        case 6: if (list.isSetLvl6PPr()) {
-            return list.getLvl6PPr();
-        } else {
-            return null;
-        }
-        case 7: if (list.isSetLvl7PPr()) {
-            return list.getLvl7PPr();
-        } else {
-            return null;
-        }
-        case 8: if (list.isSetLvl8PPr()) {
-            return list.getLvl8PPr();
-        } else {
-            return null;
-        }
-        case 9: if (list.isSetLvl9PPr()) {
-            return list.getLvl9PPr();
-        } else {
-            return null;
-        }
-        default: return null;
         }
     }
 }

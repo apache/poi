@@ -22,7 +22,7 @@ import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBulletSizePoint;
 
 @Beta
-public class XDDFBulletSizePoints extends XDDFBulletSize {
+public class XDDFBulletSizePoints implements XDDFBulletSize {
     private CTTextBulletSizePoint points;
 
     public XDDFBulletSizePoints(double value) {
@@ -40,16 +40,11 @@ public class XDDFBulletSizePoints extends XDDFBulletSize {
         return points;
     }
 
-    @Override
-    public Kind getType() {
-        return Kind.POINTS;
-    }
-
     public double getPoints() {
         return points.getVal() * 0.01;
     }
 
     public void setPoints(double value) {
-        points.setVal((int)(100 * value));
+        points.setVal((int) (100 * value));
     }
 }

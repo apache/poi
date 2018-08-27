@@ -22,7 +22,7 @@ import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextNoBullet;
 
 @Beta
-public class XDDFBulletStyleNone extends XDDFBulletStyle {
+public class XDDFBulletStyleNone implements XDDFBulletStyle {
     private CTTextNoBullet style;
 
     @Internal

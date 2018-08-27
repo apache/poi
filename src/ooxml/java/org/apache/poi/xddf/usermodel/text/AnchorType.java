@@ -17,8 +17,31 @@
 
 package org.apache.poi.xddf.usermodel.text;
 
-import org.apache.poi.util.Beta;
+import java.util.HashMap;
 
-@Beta
-public interface XDDFBulletStyle {
+import org.openxmlformats.schemas.drawingml.x2006.main.STTextAnchoringType;
+
+public enum AnchorType {
+    BOTTOM(STTextAnchoringType.B),
+    CENTER(STTextAnchoringType.CTR),
+    DISTRIBUTED(STTextAnchoringType.DIST),
+    JUSTIFIED(STTextAnchoringType.JUST),
+    TOP(STTextAnchoringType.T);
+
+    final STTextAnchoringType.Enum underlying;
+
+    AnchorType(STTextAnchoringType.Enum caps) {
+        this.underlying = caps;
+    }
+
+    private final static HashMap<STTextAnchoringType.Enum, AnchorType> reverse = new HashMap<STTextAnchoringType.Enum, AnchorType>();
+    static {
+        for (AnchorType value : values()) {
+            reverse.put(value.underlying, value);
+        }
+    }
+
+    static AnchorType valueOf(STTextAnchoringType.Enum caps) {
+        return reverse.get(caps);
+    }
 }

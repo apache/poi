@@ -29,7 +29,9 @@ public class XDDFSpacingPercent extends XDDFSpacing {
 
     public XDDFSpacingPercent(double value) {
         this(CTTextSpacing.Factory.newInstance(), CTTextSpacingPercent.Factory.newInstance(), null);
-        spacing.unsetSpcPts();
+        if (spacing.isSetSpcPts()) {
+            spacing.unsetSpcPts();
+        }
         spacing.setSpcPct(percent);
         setPercent(value);
     }

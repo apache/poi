@@ -37,6 +37,42 @@ public class XDDFBodyProperties {
         return props;
     }
 
+    public AnchorType getAnchoring() {
+        if (props.isSetAnchor()) {
+            return AnchorType.valueOf(props.getAnchor());
+        } else {
+            return null;
+        }
+    }
+
+    public void setAnchoring(AnchorType anchor) {
+        if (anchor == null) {
+            if (props.isSetAnchor()) {
+                props.unsetAnchor();
+            }
+        } else {
+            props.setAnchor(anchor.underlying);
+        }
+    }
+
+    public Boolean isAnchorCentered() {
+        if (props.isSetAnchorCtr()) {
+            return props.getAnchorCtr();
+        } else {
+            return null;
+        }
+    }
+
+    public void setAnchorCentered(Boolean centered) {
+        if (centered == null) {
+            if (props.isSetAnchorCtr()) {
+                props.unsetAnchorCtr();
+            }
+        } else {
+            props.setAnchorCtr(centered);
+        }
+    }
+
     public XDDFAutoFit getAutoFit() {
         if (props.isSetNoAutofit()) {
             return new XDDFNoAutoFit(props.getNoAutofit());
@@ -45,13 +81,19 @@ public class XDDFBodyProperties {
         } else if (props.isSetSpAutoFit()) {
             return new XDDFShapeAutoFit(props.getSpAutoFit());
         }
-        return new XDDFNoAutoFit();
+        return new XDDFNormalAutoFit();
     }
 
     public void setAutoFit(XDDFAutoFit autofit) {
-        props.unsetNoAutofit();
-        props.unsetNormAutofit();
-        props.unsetSpAutoFit();
+        if (props.isSetNoAutofit()) {
+            props.unsetNoAutofit();
+        }
+        if (props.isSetNormAutofit()) {
+            props.unsetNormAutofit();
+        }
+        if (props.isSetSpAutoFit()) {
+            props.unsetSpAutoFit();
+        }
         if (autofit instanceof XDDFNoAutoFit) {
             props.setNoAutofit(((XDDFNoAutoFit) autofit).getXmlObject());
         } else if (autofit instanceof XDDFNormalAutoFit) {
@@ -71,7 +113,9 @@ public class XDDFBodyProperties {
 
     public void setExtensionList(XDDFExtensionList list) {
         if (list == null) {
-            props.unsetExtLst();
+            if (props.isSetExtLst()) {
+                props.unsetExtLst();
+            }
         } else {
             props.setExtLst(list.getXmlObject());
         }
@@ -87,7 +131,9 @@ public class XDDFBodyProperties {
 
     public void setBottomInset(Double points) {
         if (points == null || Double.isNaN(points)) {
-            props.unsetBIns();
+            if (props.isSetBIns()) {
+                props.unsetBIns();
+            }
         } else {
             props.setBIns(Units.toEMU(points));
         }
@@ -103,7 +149,9 @@ public class XDDFBodyProperties {
 
     public void setLeftInset(Double points) {
         if (points == null || Double.isNaN(points)) {
-            props.unsetLIns();
+            if (props.isSetLIns()) {
+                props.unsetLIns();
+            }
         } else {
             props.setLIns(Units.toEMU(points));
         }
@@ -119,7 +167,9 @@ public class XDDFBodyProperties {
 
     public void setRightInset(Double points) {
         if (points == null || Double.isNaN(points)) {
-            props.unsetRIns();
+            if (props.isSetRIns()) {
+                props.unsetRIns();
+            }
         } else {
             props.setRIns(Units.toEMU(points));
         }
@@ -135,9 +185,47 @@ public class XDDFBodyProperties {
 
     public void setTopInset(Double points) {
         if (points == null || Double.isNaN(points)) {
-            props.unsetTIns();
+            if (props.isSetTIns()) {
+                props.unsetTIns();
+            }
         } else {
             props.setTIns(Units.toEMU(points));
+        }
+    }
+
+    public Boolean hasParagraphSpacing() {
+        if (props.isSetSpcFirstLastPara()) {
+            return props.getSpcFirstLastPara();
+        } else {
+            return null;
+        }
+    }
+
+    public void setParagraphSpacing(Boolean spacing) {
+        if (spacing == null) {
+            if (props.isSetSpcFirstLastPara()) {
+                props.unsetSpcFirstLastPara();
+            }
+        } else {
+            props.setSpcFirstLastPara(spacing);
+        }
+    }
+
+    public Boolean isRightToLeft() {
+        if (props.isSetRtlCol()) {
+            return props.getRtlCol();
+        } else {
+            return null;
+        }
+    }
+
+    public void setRightToLeft(Boolean rightToLeft) {
+        if (rightToLeft == null) {
+            if (props.isSetRtlCol()) {
+                props.unsetRtlCol();
+            }
+        } else {
+            props.setRtlCol(rightToLeft);
         }
     }
 }

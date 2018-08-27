@@ -46,7 +46,9 @@ public class XDDFTabStop {
 
     public void setAlignment(TabAlignment align) {
         if (align == null) {
-            stop.unsetAlgn();
+            if (stop.isSetAlgn()) {
+                stop.unsetAlgn();
+            }
         } else {
             stop.setAlgn(align.underlying);
         }
@@ -62,7 +64,9 @@ public class XDDFTabStop {
 
     public void setPosition(Double position) {
         if (position == null) {
-            stop.unsetPos();
+            if (stop.isSetPos()) {
+                stop.unsetPos();
+            }
         } else {
             stop.setPos(Units.toEMU(position));
         }

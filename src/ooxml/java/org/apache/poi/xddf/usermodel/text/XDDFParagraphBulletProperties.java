@@ -47,10 +47,18 @@ public class XDDFParagraphBulletProperties {
     }
 
     public void setBulletStyle(XDDFBulletStyle style) {
-        props.unsetBuAutoNum();
-        props.unsetBuBlip();
-        props.unsetBuChar();
-        props.unsetBuNone();
+        if (props.isSetBuAutoNum()) {
+            props.unsetBuAutoNum();
+        }
+        if (props.isSetBuBlip()) {
+            props.unsetBuBlip();
+        }
+        if (props.isSetBuChar()) {
+            props.unsetBuChar();
+        }
+        if (props.isSetBuNone()) {
+            props.unsetBuNone();
+        }
         if (style != null) {
             if (style instanceof XDDFBulletStyleAutoNumbered) {
                 props.setBuAutoNum(((XDDFBulletStyleAutoNumbered) style).getXmlObject());
@@ -73,16 +81,22 @@ public class XDDFParagraphBulletProperties {
     }
 
     public void setBulletColor(XDDFColor color) {
-        props.unsetBuClrTx();
+        if (props.isSetBuClrTx()) {
+            props.unsetBuClrTx();
+        }
         if (color == null) {
-            props.unsetBuClr();
+            if (props.isSetBuClr()) {
+                props.unsetBuClr();
+            }
         } else {
             props.setBuClr(color.getColorContainer());
         }
     }
 
     public void setBulletColorFollowText() {
-        props.unsetBuClr();
+        if (props.isSetBuClr()) {
+            props.unsetBuClr();
+        }
         if (props.isSetBuClrTx()) {
             // nothing to do: already set
         } else {
@@ -99,16 +113,22 @@ public class XDDFParagraphBulletProperties {
     }
 
     public void setBulletFont(XDDFFont font) {
-        props.unsetBuFontTx();
+        if (props.isSetBuFontTx()) {
+            props.unsetBuFontTx();
+        }
         if (font == null) {
-            props.unsetBuFont();
+            if (props.isSetBuFont()) {
+                props.unsetBuFont();
+            }
         } else {
             props.setBuFont(font.getXmlObject());
         }
     }
 
     public void setBulletFontFollowText() {
-        props.unsetBuFont();
+        if (props.isSetBuFont()) {
+            props.unsetBuFont();
+        }
         if (props.isSetBuFontTx()) {
             // nothing to do: already set
         } else {
@@ -129,9 +149,15 @@ public class XDDFParagraphBulletProperties {
     }
 
     public void setBulletSize(XDDFBulletSize size) {
-        props.unsetBuSzPct();
-        props.unsetBuSzPts();
-        props.unsetBuSzTx();
+        if (props.isSetBuSzPct()) {
+            props.unsetBuSzPct();
+        }
+        if (props.isSetBuSzPts()) {
+            props.unsetBuSzPts();
+        }
+        if (props.isSetBuSzTx()) {
+            props.unsetBuSzTx();
+        }
         if (size != null) {
             if (size instanceof XDDFBulletSizeFollowText) {
                 props.setBuSzTx(((XDDFBulletSizeFollowText) size).getXmlObject());
@@ -144,16 +170,38 @@ public class XDDFParagraphBulletProperties {
     }
 
     public void clearAll() {
-        props.unsetBuAutoNum();
-        props.unsetBuBlip();
-        props.unsetBuChar();
-        props.unsetBuNone();
-        props.unsetBuClr();
-        props.unsetBuClrTx();
-        props.unsetBuFont();
-        props.unsetBuFontTx();
-        props.unsetBuSzPct();
-        props.unsetBuSzPts();
-        props.unsetBuSzTx();
+        if (props.isSetBuAutoNum()) {
+            props.unsetBuAutoNum();
+        }
+        if (props.isSetBuBlip()) {
+            props.unsetBuBlip();
+        }
+        if (props.isSetBuChar()) {
+            props.unsetBuChar();
+        }
+        if (props.isSetBuNone()) {
+            props.unsetBuNone();
+        }
+        if (props.isSetBuClr()) {
+            props.unsetBuClr();
+        }
+        if (props.isSetBuClrTx()) {
+            props.unsetBuClrTx();
+        }
+        if (props.isSetBuFont()) {
+            props.unsetBuFont();
+        }
+        if (props.isSetBuFontTx()) {
+            props.unsetBuFontTx();
+        }
+        if (props.isSetBuSzPct()) {
+            props.unsetBuSzPct();
+        }
+        if (props.isSetBuSzPts()) {
+            props.unsetBuSzPts();
+        }
+        if (props.isSetBuSzTx()) {
+            props.unsetBuSzTx();
+        }
     }
 }

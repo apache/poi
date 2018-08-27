@@ -50,7 +50,9 @@ public class XDDFNormalAutoFit implements XDDFAutoFit {
 
     public void setFontScale(Integer value) {
         if (value == null) {
-            autofit.unsetFontScale();
+            if (autofit.isSetFontScale()) {
+                autofit.unsetFontScale();
+            }
         } else {
             autofit.setFontScale(value);
         }
@@ -67,7 +69,9 @@ public class XDDFNormalAutoFit implements XDDFAutoFit {
 
     public void setLineSpaceReduction(Integer value) {
         if (value == null) {
-            autofit.unsetLnSpcReduction();
+            if (autofit.isSetLnSpcReduction()) {
+                autofit.unsetLnSpcReduction();
+            }
         } else {
             autofit.setLnSpcReduction(value);
         }

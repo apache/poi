@@ -22,12 +22,12 @@ import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextAutonumberBullet;
 
 @Beta
-public class XDDFBulletStyleAutoNumbered extends XDDFBulletStyle {
+public class XDDFBulletStyleAutoNumbered implements XDDFBulletStyle {
     private CTTextAutonumberBullet style;
 
     @Internal
     protected XDDFBulletStyleAutoNumbered(CTTextAutonumberBullet style) {
-        this.style =style;
+        this.style = style;
     }
 
     @Internal
@@ -53,7 +53,9 @@ public class XDDFBulletStyleAutoNumbered extends XDDFBulletStyle {
 
     public void setStartAt(Integer value) {
         if (value == null) {
-            style.unsetStartAt();
+            if (style.isSetStartAt()) {
+                style.unsetStartAt();
+            }
         } else {
             style.setStartAt(value);
         }

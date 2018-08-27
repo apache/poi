@@ -34,22 +34,30 @@ public class XDDFFont {
     public XDDFFont(FontGroup group, String typeface, Byte charset, Byte pitch, byte[] panose) {
         this(group, CTTextFont.Factory.newInstance());
         if (typeface == null) {
-            font.unsetTypeface();
+            if (font.isSetTypeface()) {
+                font.unsetTypeface();
+            }
         } else {
             font.setTypeface(typeface);
         }
         if (charset == null) {
-            font.unsetCharset();
+            if (font.isSetCharset()) {
+                font.unsetCharset();
+            }
         } else {
             font.setCharset(charset);
         }
         if (pitch == null) {
-            font.unsetPitchFamily();
+            if (font.isSetPitchFamily()) {
+                font.unsetPitchFamily();
+            }
         } else {
             font.setPitchFamily(pitch);
         }
         if (panose == null || panose.length == 0) {
-            font.unsetPanose();
+            if (font.isSetPanose()) {
+                font.unsetPanose();
+            }
         } else {
             font.setPanose(panose);
         }
