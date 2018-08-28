@@ -1946,7 +1946,6 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             fail("should have thrown SAXParseException");
         } catch (SAXParseException e) {
             assertNotNull(e.getMessage());
-            e.printStackTrace();
             assertTrue(e.getMessage().contains("more than \"1\" entity"));
         }
     }
