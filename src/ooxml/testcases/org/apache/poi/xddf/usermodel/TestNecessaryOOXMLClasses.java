@@ -100,6 +100,15 @@ public class TestNecessaryOOXMLClasses {
         Assert.assertNotNull(e5);
         STMarkerStyle.Enum e6 = STMarkerStyle.Enum.forString("circle");
         Assert.assertNotNull(e6);
+
+        CTTextBulletTypefaceFollowText ctTextBulletTypefaceFollowText = CTTextBulletTypefaceFollowText.Factory.newInstance();
+        Assert.assertNotNull(ctTextBulletTypefaceFollowText);
+        CTTextBulletSizeFollowText ctTextBulletSizeFollowText = CTTextBulletSizeFollowText.Factory.newInstance();
+        Assert.assertNotNull(ctTextBulletSizeFollowText);
+        CTTextBulletColorFollowText ctTextBulletColorFollowText = CTTextBulletColorFollowText.Factory.newInstance();
+        Assert.assertNotNull(ctTextBulletColorFollowText);
+        CTTextBlipBullet ctTextBlipBullet = CTTextBlipBullet.Factory.newInstance();
+        Assert.assertNotNull(ctTextBlipBullet);
     }
 
 }
