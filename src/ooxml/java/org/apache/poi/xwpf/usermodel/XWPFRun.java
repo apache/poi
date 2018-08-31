@@ -292,7 +292,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         String color = null;
         if (run.isSetRPr()) {
             CTRPr pr = getRunProperties(false);
-            if (pr.isSetColor()) {
+            if (pr != null && pr.isSetColor()) {
                 CTColor clr = pr.getColor();
                 color = clr.xgetVal().getStringValue();
             }

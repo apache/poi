@@ -931,8 +931,10 @@ public class SXSSFWorkbook implements Workbook {
             }
 
             //Substitute the template entries with the generated sheet data files
-            final ZipEntrySource source = new ZipFileZipEntrySource(new ZipSecureFile(tmplFile));
-            injectData(source, stream);
+            try (ZipSecureFile zf = new ZipSecureFile(tmplFile);
+                 ZipFileZipEntrySource source = new ZipFileZipEntrySource(zf)) {
+                injectData(source, stream);
+            }
         } finally {
             deleted = tmplFile.delete();
         }

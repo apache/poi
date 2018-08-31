@@ -159,6 +159,11 @@ public final class EntryUtils {
         }
 
         @Override
+        public int hashCode() {
+            return dir.getName().hashCode();
+        }
+
+        @Override
         public boolean equals(Object other) {
             if (!(other instanceof DirectoryDelegate)) {
                 return false;
@@ -189,6 +194,11 @@ public final class EntryUtils {
 
         DocumentDelegate(DocumentEntry doc) {
             this.doc = doc;
+        }
+
+        @Override
+        public int hashCode() {
+            return doc.getName().hashCode();
         }
 
         @Override

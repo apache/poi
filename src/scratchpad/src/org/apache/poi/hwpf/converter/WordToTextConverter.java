@@ -17,6 +17,7 @@
 package org.apache.poi.hwpf.converter;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -114,14 +115,13 @@ public class WordToTextConverter extends AbstractWordConverter
         serializer.transform( domSource, streamResult );
     }
 
-    static Document process( File docFile ) throws Exception
-    {
-        final HWPFDocumentCore wordDocument = AbstractWordUtils
-                .loadDoc( docFile );
-        WordToTextConverter wordToTextConverter = new WordToTextConverter(
-                XMLHelper.getDocumentBuilderFactory().newDocumentBuilder().newDocument() );
-        wordToTextConverter.processDocument( wordDocument );
-        return wordToTextConverter.getDocument();
+    private static Document process( File docFile ) throws IOException, ParserConfigurationException {
+        try (final HWPFDocumentCore wordDocument = AbstractWordUtils.loadDoc( docFile )) {
+            WordToTextConverter wordToTextConverter = new WordToTextConverter(
+                    XMLHelper.getDocumentBuilderFactory().newDocumentBuilder().newDocument());
+            wordToTextConverter.processDocument(wordDocument);
+            return wordToTextConverter.getDocument();
+        }
     }
 
     private AtomicInteger noteCounters = new AtomicInteger( 1 );
@@ -153,12 +153,14 @@ public class WordToTextConverter extends AbstractWordConverter
      * @param document
      *            XML DOM Document used as storage for text pieces
      */
-    public WordToTextConverter( Document document )
+    @SuppressWarnings("WeakerAccess")
+    public WordToTextConverter(Document document )
     {
         this.textDocumentFacade = new TextDocumentFacade( document );
     }
 
-    public WordToTextConverter( TextDocumentFacade textDocumentFacade )
+    @SuppressWarnings("unused")
+    public WordToTextConverter(TextDocumentFacade textDocumentFacade )
     {
         this.textDocumentFacade = textDocumentFacade;
     }
@@ -192,6 +194,7 @@ public class WordToTextConverter extends AbstractWordConverter
         return stringWriter.toString();
     }
 
+    @SuppressWarnings("WeakerAccess")
     public boolean isOutputSummaryInformation()
     {
         return outputSummaryInformation;
@@ -275,7 +278,7 @@ public class WordToTextConverter extends AbstractWordConverter
 
         currentBlock.appendChild( textDocumentFacade.createText( " ("
                 + UNICODECHAR_ZERO_WIDTH_SPACE
-                + hyperlink.replaceAll( "\\/", UNICODECHAR_ZERO_WIDTH_SPACE
+                + hyperlink.replaceAll( "/", UNICODECHAR_ZERO_WIDTH_SPACE
                         + "\\/" + UNICODECHAR_ZERO_WIDTH_SPACE )
                 + UNICODECHAR_ZERO_WIDTH_SPACE + ")" ) );
     }
@@ -307,9 +310,7 @@ public class WordToTextConverter extends AbstractWordConverter
         block.appendChild( textDocumentFacade.createText( "\n" ) );
     }
 
-    protected void processNote( HWPFDocument wordDocument, Element block,
-            Range noteTextRange )
-    {
+    private void processNote( HWPFDocument wordDocument, Element block, Range noteTextRange ) {
         final int noteIndex = noteCounters.getAndIncrement();
         block.appendChild( textDocumentFacade
                 .createText( UNICODECHAR_ZERO_WIDTH_SPACE + "[" + noteIndex
@@ -457,7 +458,8 @@ public class WordToTextConverter extends AbstractWordConverter
         }
     }
 
-    public void setOutputSummaryInformation( boolean outputDocumentInformation )
+    @SuppressWarnings("unused")
+    public void setOutputSummaryInformation(boolean outputDocumentInformation )
     {
         this.outputSummaryInformation = outputDocumentInformation;
     }
