@@ -543,9 +543,8 @@ public class XSSFFont implements Font {
      */
     public long registerTo(StylesTable styles) {
         this._themes = styles.getTheme();
-        short idx = (short)styles.putFont(this, true);
-        this._index = idx;
-        return idx;
+        this._index = styles.putFont(this, true);
+        return this._index;
     }
     /**
      * Records the Themes Table that is associated with
