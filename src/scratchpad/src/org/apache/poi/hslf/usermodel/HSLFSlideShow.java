@@ -46,8 +46,8 @@ import org.apache.poi.hslf.model.MovieShape;
 import org.apache.poi.hslf.record.*;
 import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.filesystem.Ole10Native;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.sl.usermodel.MasterSheet;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.Resources;
@@ -595,6 +595,9 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 		// The order of slides is defined by the order of slide atom sets in the
 		// SlideListWithText container.
 		SlideListWithText slwt = _documentRecord.getSlideSlideListWithText();
+		if (slwt == null) {
+			throw new IllegalStateException("Slide record not defined.");
+		}
 		SlideAtomsSet[] sas = slwt.getSlideAtomsSets();
 
 		SlideAtomsSet tmp = sas[oldSlideNumber - 1];
@@ -635,6 +638,9 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 		}
 
 		SlideListWithText slwt = _documentRecord.getSlideSlideListWithText();
+		if (slwt == null) {
+			throw new IllegalStateException("Slide record not defined.");
+		}
 		SlideAtomsSet[] sas = slwt.getSlideAtomsSets();
 
 		List<Record> records = new ArrayList<>();
@@ -678,12 +684,14 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 						records.addAll(Arrays.asList(ns.getSlideRecords()));
 					}
 				}
+
+				if (!na.isEmpty()) {
+					nslwt.setSlideAtomsSets(na.toArray(new SlideAtomsSet[0]));
+					nslwt.setChildRecord(records.toArray(new Record[0]));
+				}
 			}
 			if (na.isEmpty()) {
 				_documentRecord.removeSlideListWithText(nslwt);
-			} else {
-				nslwt.setSlideAtomsSets(na.toArray(new SlideAtomsSet[0]));
-				nslwt.setChildRecord(records.toArray(new Record[0]));
 			}
 		}
 
@@ -1113,7 +1121,7 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
     }
 
     @Override
-    public MasterSheet<HSLFShape,HSLFTextParagraph> createMasterSheet() throws IOException {
+    public MasterSheet<HSLFShape,HSLFTextParagraph> createMasterSheet() {
 		// TODO implement or throw exception if not supported
         return null;
     }

@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
+import org.apache.commons.collections4.iterators.IteratorIterable;
+import org.apache.commons.collections4.iterators.ReverseListIterator;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LocaleUtil;
@@ -97,8 +99,8 @@ public class XDDFTextParagraph {
     public XDDFTextRun appendLineBreak() {
         CTTextLineBreak br = _p.addNewBr();
         // by default, line break has the font properties of the last text run
-        for (int i = _runs.size() - 1; i <= 0; i--) {
-            CTTextCharacterProperties prevProps = _runs.get(i).getProperties();
+        for (XDDFTextRun tr : new IteratorIterable<>(new ReverseListIterator<>(_runs))) {
+            CTTextCharacterProperties prevProps = tr.getProperties();
             // let's find one that is not undefined
             if (prevProps != null) {
                 br.setRPr((CTTextCharacterProperties) prevProps.copy());

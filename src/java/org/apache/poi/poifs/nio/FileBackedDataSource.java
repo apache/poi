@@ -127,9 +127,10 @@ public class FileBackedDataSource extends DataSource {
    @Override
    public void copyTo(OutputStream stream) throws IOException {
       // Wrap the OutputSteam as a channel
-      WritableByteChannel out = Channels.newChannel(stream);
-      // Now do the transfer
-      channel.transferTo(0, channel.size(), out);
+      try (WritableByteChannel out = Channels.newChannel(stream)) {
+          // Now do the transfer
+          channel.transferTo(0, channel.size(), out);
+      }
    }
 
    @Override

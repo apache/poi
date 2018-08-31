@@ -101,7 +101,7 @@ public final class ZipPackage extends OPCPackage {
      */
     ZipPackage(InputStream in, PackageAccess access) throws IOException {
         super(access);
-        ZipArchiveThresholdInputStream zis = ZipHelper.openZipStream(in);
+        ZipArchiveThresholdInputStream zis = ZipHelper.openZipStream(in); // NOSONAR
         try {
             this.zipArchive = new ZipInputStreamZipEntrySource(zis);
         } catch (final IOException e) {

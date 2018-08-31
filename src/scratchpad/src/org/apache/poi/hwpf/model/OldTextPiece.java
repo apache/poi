@@ -18,6 +18,8 @@
 package org.apache.poi.hwpf.model;
 
 
+import java.util.Arrays;
+
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.NotImplemented;
 
@@ -100,6 +102,12 @@ public class OldTextPiece extends TextPiece {
     public int hashCode() {
         assert false : "hashCode not designed";
         return 42; // any arbitrary constant will do
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return other instanceof OldTextPiece &&
+            Arrays.equals(rawBytes, ((OldTextPiece)other).rawBytes);
     }
 
     public String toString() {
