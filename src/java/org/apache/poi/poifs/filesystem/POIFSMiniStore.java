@@ -28,36 +28,35 @@ import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.property.RootProperty;
 import org.apache.poi.poifs.storage.BATBlock;
 import org.apache.poi.poifs.storage.BATBlock.BATBlockAndIndex;
-import org.apache.poi.poifs.storage.BlockAllocationTableWriter;
 import org.apache.poi.poifs.storage.HeaderBlock;
 
 /**
  * This class handles the MiniStream (small block store)
- *  in the NIO case for {@link NPOIFSFileSystem}
+ *  in the NIO case for {@link POIFSFileSystem}
  */
-public class NPOIFSMiniStore extends BlockStore
+public class POIFSMiniStore extends BlockStore
 {
-    private NPOIFSFileSystem _filesystem;
-    private NPOIFSStream     _mini_stream;
+    private POIFSFileSystem _filesystem;
+    private POIFSStream _mini_stream;
     private List<BATBlock>   _sbat_blocks;
     private HeaderBlock      _header;
     private RootProperty     _root;
 
-    protected NPOIFSMiniStore(NPOIFSFileSystem filesystem, RootProperty root,
-         List<BATBlock> sbats, HeaderBlock header)
+    POIFSMiniStore(POIFSFileSystem filesystem, RootProperty root,
+                             List<BATBlock> sbats, HeaderBlock header)
     {
        this._filesystem = filesystem;
        this._sbat_blocks = sbats;
        this._header = header;
        this._root = root;
        
-       this._mini_stream = new NPOIFSStream(filesystem, root.getStartBlock());
+       this._mini_stream = new POIFSStream(filesystem, root.getStartBlock());
     }
     
     /**
      * Load the block at the given offset.
      */
-    protected ByteBuffer getBlockAt(final int offset) throws IOException {
+    protected ByteBuffer getBlockAt(final int offset) {
        // Which big block is this?
        int byteOffset = offset * POIFSConstants.SMALL_BLOCK_SIZE;
        int bigBlockNumber = byteOffset / _filesystem.getBigBlockSize();
@@ -109,7 +108,7 @@ public class NPOIFSMiniStore extends BlockStore
        // If we are the first block to be allocated, initialise the stream
        if (firstInStore) {
            _filesystem._get_property_table().getRoot().setStartBlock(newBigBlock);
-           _mini_stream = new NPOIFSStream(_filesystem, newBigBlock);
+           _mini_stream = new POIFSStream(_filesystem, newBigBlock);
        } else {
            // Tack it onto the end of our chain
            ChainLoopDetector loopDetector = _filesystem.getChainLoopDetector();
@@ -232,7 +231,7 @@ public class NPOIFSMiniStore extends BlockStore
     }
     
     @Override
-    protected ChainLoopDetector getChainLoopDetector() throws IOException {
+    protected ChainLoopDetector getChainLoopDetector() {
       return new ChainLoopDetector( _root.getSize() );
     }
 
@@ -245,12 +244,12 @@ public class NPOIFSMiniStore extends BlockStore
      *  the mini-stream size in the properties. Stream size is
      *  based on full blocks used, not the data within the streams
      */
-    protected void syncWithDataSource() throws IOException {
+    void syncWithDataSource() throws IOException {
        int blocksUsed = 0;
        for (BATBlock sbat : _sbat_blocks) {
           ByteBuffer block = _filesystem.getBlockAt(sbat.getOurBlockIndex());
-          BlockAllocationTableWriter.writeBlock(sbat, block);
-          
+          sbat.writeData(block);
+
           if (!sbat.hasFreeSectors()) {
               blocksUsed += _filesystem.getBigBlockSizeDetails().getBATEntriesPerBlock();
           } else {

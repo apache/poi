@@ -25,7 +25,6 @@ import java.util.Iterator;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentNode;
 import org.apache.poi.poifs.filesystem.Entry;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
@@ -47,23 +46,23 @@ public class POIFSLister {
 
       boolean withSizes = false;
       boolean newPOIFS = true;
-      for (int j = 0; j < args.length; j++) {
-         if (args[j].equalsIgnoreCase("-size") || args[j].equalsIgnoreCase("-sizes")) {
+      for (String arg : args) {
+         if (arg.equalsIgnoreCase("-size") || arg.equalsIgnoreCase("-sizes")) {
             withSizes = true;
-         } else if (args[j].equalsIgnoreCase("-old") || args[j].equalsIgnoreCase("-old-poifs")) {
+         } else if (arg.equalsIgnoreCase("-old") || arg.equalsIgnoreCase("-old-poifs")) {
             newPOIFS = false;
          } else {
-            if(newPOIFS) {
-               viewFile(args[j], withSizes);
+            if (newPOIFS) {
+               viewFile(arg, withSizes);
             } else {
-               viewFileOld(args[j], withSizes);
+               viewFileOld(arg, withSizes);
             }
          }
       }
    }
 
    public static void viewFile(final String filename, boolean withSizes) throws IOException {
-      NPOIFSFileSystem fs = new NPOIFSFileSystem(new File(filename));
+      POIFSFileSystem fs = new POIFSFileSystem(new File(filename));
       displayDirectory(fs.getRoot(), "", withSizes);
       fs.close();
    }

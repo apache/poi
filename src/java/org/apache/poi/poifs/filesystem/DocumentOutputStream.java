@@ -17,147 +17,157 @@
 
 package org.apache.poi.poifs.filesystem;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
-import java.util.*;
+import org.apache.poi.poifs.common.POIFSConstants;
+import org.apache.poi.poifs.property.DocumentProperty;
 
 /**
- * This class provides a wrapper over an OutputStream so that Document
- * writers can't accidently go over their size limits
- *
- * @author Marc Johnson (mjohnson at apache dot org)
+ * This class provides methods to write a DocumentEntry managed by a
+ * {@link POIFSFileSystem} instance.
  */
-
 public final class DocumentOutputStream extends OutputStream {
-    private final OutputStream _stream;
-    private final int          _limit;
-    private int          _written;
+	/** the Document's size, i.e. the size of the big block data - mini block data is cached and not counted */
+	private int _document_size = 0;
+
+    /** have we been closed? */
+	private boolean _closed = false;
+
+	/** the actual Document */
+	private POIFSDocument _document;
+	/** and its Property */
+	private DocumentProperty _property;
+	
+	/** our buffer, when null we're into normal blocks */
+	private ByteArrayOutputStream _buffer = 
+	        new ByteArrayOutputStream(POIFSConstants.BIG_BLOCK_MINIMUM_DOCUMENT_SIZE);
+	
+	/** our main block stream, when we're into normal blocks */
+	private POIFSStream _stream;
+	private OutputStream _stream_output;
+
+    /** a write limit or -1 if unlimited */
+    private final long _limit;
+
+
+	/**
+	 * Create an OutputStream from the specified DocumentEntry.
+	 * The specified entry will be emptied.
+	 * 
+	 * @param document the DocumentEntry to be written
+	 */
+	public DocumentOutputStream(DocumentEntry document) throws IOException {
+	    this(document, -1);
+	}
+
+    /**
+	 * Create an OutputStream to create the specified new Entry
+	 * 
+	 * @param parent Where to create the Entry
+	 * @param name Name of the new entry
+	 */
+	public DocumentOutputStream(DirectoryEntry parent, String name) throws IOException {
+	    this(createDocument(parent, name), -1);
+	}
 
     /**
      * Create a DocumentOutputStream
      *
-     * @param stream the OutputStream to which the data is actually
-     *               read
+     * @param document the DocumentEntry to which the data is actually written
      * @param limit the maximum number of bytes that can be written
      */
-    DocumentOutputStream(OutputStream stream, int limit) {
-        _stream  = stream;
+    DocumentOutputStream(DocumentEntry document, long limit) throws IOException {
+        this(getDocument(document), limit);
+    }
+
+    DocumentOutputStream(POIFSDocument document, long limit) throws IOException {
+        _document = document;
+        _document.free();
+
+        _property = document.getDocumentProperty();
+
         _limit   = limit;
-        _written = 0;
     }
 
-    /**
-     * Writes the specified byte to this output stream. The general
-     * contract for write is that one byte is written to the output
-     * stream. The byte to be written is the eight low-order bits of
-     * the argument b. The 24 high-order bits of b are ignored.
-     *
-     * @param b the byte.
-     * @exception IOException if an I/O error occurs. In particular,
-     *                        an IOException may be thrown if the
-     *                        output stream has been closed, or if the
-     *                        writer tries to write too much data.
-     */
-    public void write(int b)
-        throws IOException
-    {
-        limitCheck(1);
-        _stream.write(b);
+    private static POIFSDocument getDocument(DocumentEntry document) throws IOException {
+        if (!(document instanceof DocumentNode)) {
+            throw new IOException("Cannot open internal document storage, " + document + " not a Document Node");
+        }
+        return new POIFSDocument((DocumentNode)document);
     }
 
-    /**
-     * Writes b.length bytes from the specified byte array
-     * to this output stream.
-     *
-     * @param b the data.
-     * @exception IOException if an I/O error occurs.
-     */
-    public void write(byte b[])
-        throws IOException
-    {
-        write(b, 0, b.length);
+    private static DocumentEntry createDocument(DirectoryEntry parent, String name) throws IOException {
+        if (!(parent instanceof DirectoryNode)) {
+            throw new IOException("Cannot open internal directory storage, " + parent + " not a Directory Node");
+        }
+
+        // Have an empty one created for now
+        return parent.createDocument(name, new ByteArrayInputStream(new byte[0]));
     }
 
-    /**
-     * Writes len bytes from the specified byte array starting at
-     * offset off to this output stream.  The general contract for
-     * write(b, off, len) is that some of the bytes in the array b are
-     * written to the output stream in order; element b[off] is the
-     * first byte written and b[off+len-1] is the last byte written by
-     * this operation.<p>
-     * If b is null, a NullPointerException is thrown.<p>
-     * If off is negative, or len is negative, or off+len is greater
-     * than the length of the array b, then an
-     * IndexOutOfBoundsException is thrown.
-     *
-     * @param b the data.
-     * @param off the start offset in the data.
-     * @param len the number of bytes to write.
-     * @exception IOException if an I/O error occurs. In particular,
-     *                        an IOException</code> is thrown if the
-     *                        output stream is closed or if the writer
-     *                        tries to write too many bytes.
-     */
-    public void write(byte b[], int off, int len)
-        throws IOException
-    {
-        limitCheck(len);
-        _stream.write(b, off, len);
-    }
-
-    /**
-     * Flushes this output stream and forces any buffered output bytes
-     * to be written out.
-     *
-     * @exception IOException if an I/O error occurs.
-     */
-    public void flush()
-        throws IOException
-    {
-        _stream.flush();
-    }
-
-    /**
-     * Closes this output stream and releases any system resources
-     * associated with this stream. The general contract of close is
-     * that it closes the output stream. A closed stream cannot
-     * perform output operations and cannot be reopened.
-     *
-     * @exception IOException if an I/O error occurs.
-     */
-    public void close() {
-
-        // ignore this call
-    }
-
-    /**
-     * write the rest of the document's data (fill in at the end)
-     *
-     * @param totalLimit the actual number of bytes the corresponding
-     *                   document must fill
-     * @param fill the byte to fill remaining space with
-     *
-     * @exception IOException on I/O error
-     */
-    void writeFiller(int totalLimit, byte fill)
-        throws IOException
-    {
-        if (totalLimit > _written)
-        {
-            byte[] filler = new byte[ totalLimit - _written ];
-
-            Arrays.fill(filler, fill);
-            _stream.write(filler);
+    private void checkBufferSize() throws IOException {
+        // Have we gone over the mini stream limit yet?
+        if (_buffer.size() > POIFSConstants.BIG_BLOCK_MINIMUM_DOCUMENT_SIZE) {
+            // Will need to be in the main stream
+            byte[] data = _buffer.toByteArray();
+            _buffer = null;
+            write(data, 0, data.length);
+        } else {
+            // So far, mini stream will work, keep going
         }
     }
 
-    private void limitCheck(int toBeWritten)
-        throws IOException
-    {
-        if ((_written + toBeWritten) > _limit)
-        {
+    public void write(int b) throws IOException {
+        write(new byte[] { (byte)b }, 0, 1);
+    }
+
+    @Override
+    public void write(byte[] b, int off, int len) throws IOException {
+        if (_closed) {
+            throw new IOException("cannot perform requested operation on a closed stream");
+        }
+        if (_limit > -1 && (size() + len) > _limit) {
             throw new IOException("tried to write too much data");
         }
-        _written += toBeWritten;
+
+        if (_buffer != null) {
+            _buffer.write(b, off, len);
+            checkBufferSize();
+        } else {
+            if (_stream == null) {
+                _stream = new POIFSStream(_document.getFileSystem());
+                _stream_output = _stream.getOutputStream();
+            }
+            _stream_output.write(b, off, len);
+            _document_size += len;
+        }
+    }
+
+    public void close() throws IOException {
+        // Do we have a pending buffer for the mini stream?
+        if (_buffer != null) {
+            // It's not much data, so ask POIFSDocument to do it for us
+            _document.replaceContents(new ByteArrayInputStream(_buffer.toByteArray()));
+        }
+        else {
+            // We've been writing to the stream as we've gone along
+            // Update the details on the property now
+            _stream_output.close();
+            _property.updateSize(_document_size);
+            _property.setStartBlock(_stream.getStartBlock());
+        }
+        
+        // No more!
+        _closed = true;
+    }
+
+    /**
+     * @return the amount of written bytes
+     */
+    public long size() {
+	    return _document_size + (_buffer == null ? 0 : _buffer.size());
     }
 }

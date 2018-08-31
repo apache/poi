@@ -74,9 +74,9 @@ public class OldExcelExtractor implements Closeable {
     }
 
     public OldExcelExtractor(File f) throws IOException {
-        NPOIFSFileSystem poifs = null;
+        POIFSFileSystem poifs = null;
         try {
-            poifs = new NPOIFSFileSystem(f);
+            poifs = new POIFSFileSystem(f);
             open(poifs);
             toClose = poifs;
             return;
@@ -100,7 +100,7 @@ public class OldExcelExtractor implements Closeable {
         }
     }
 
-    public OldExcelExtractor(NPOIFSFileSystem fs) throws IOException {
+    public OldExcelExtractor(POIFSFileSystem fs) throws IOException {
         open(fs);
     }
 
@@ -114,7 +114,7 @@ public class OldExcelExtractor implements Closeable {
             : new BufferedInputStream(biffStream, 8);
 
         if (FileMagic.valueOf(bis) == FileMagic.OLE2) {
-            NPOIFSFileSystem poifs = new NPOIFSFileSystem(bis);
+            POIFSFileSystem poifs = new POIFSFileSystem(bis);
             try {
                 open(poifs);
                 toClose = poifs; // Fixed by GR, we should not close it here
@@ -130,7 +130,7 @@ public class OldExcelExtractor implements Closeable {
         }
     }
 
-    private void open(NPOIFSFileSystem fs) throws IOException {
+    private void open(POIFSFileSystem fs) throws IOException {
         open(fs.getRoot());
     }
 

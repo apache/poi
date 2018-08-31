@@ -19,12 +19,9 @@
 
 package org.apache.poi.poifs.property;
 
-import java.io.IOException;
-
-import java.util.*;
+import java.util.List;
 
 import org.apache.poi.poifs.common.POIFSConstants;
-import org.apache.poi.poifs.storage.ListManagedBlock;
 
 /**
  * Factory for turning an array of RawDataBlock instances containing
@@ -38,37 +35,13 @@ import org.apache.poi.poifs.storage.ListManagedBlock;
  * @author Marc Johnson (mjohnson at apache dot org)
  */
 
-class PropertyFactory {
+final class PropertyFactory {
     // no need for an accessible constructor
     private PropertyFactory()
     {
     }
 
-    /**
-     * Convert raw data blocks to an array of Property's
-     *
-     * @param blocks to be converted
-     *
-     * @return the converted List of Property objects. May contain
-     *         nulls, but will not be null
-     *
-     * @exception IOException if any of the blocks are empty
-     */
-    static List<Property> convertToProperties(ListManagedBlock [] blocks)
-        throws IOException
-    {
-        List<Property> properties = new ArrayList<>();
-
-        for (ListManagedBlock block : blocks) {
-            byte[] data = block.getData();
-            convertToProperties(data, properties);
-        }
-        return properties;
-    }
-    
-    static void convertToProperties(byte[] data, List<Property> properties)
-        throws IOException
-    {
+    static void convertToProperties(byte[] data, List<Property> properties) {
        int property_count = data.length / POIFSConstants.PROPERTY_SIZE;
        int offset         = 0;
 

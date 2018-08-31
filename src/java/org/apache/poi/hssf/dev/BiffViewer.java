@@ -19,7 +19,6 @@ package org.apache.poi.hssf.dev;
 
 import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,7 +41,7 @@ import org.apache.poi.hssf.record.pivottable.ViewDefinitionRecord;
 import org.apache.poi.hssf.record.pivottable.ViewFieldsRecord;
 import org.apache.poi.hssf.record.pivottable.ViewSourceRecord;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
@@ -71,13 +70,10 @@ public final class BiffViewer {
      * @param recListener the record listener to notify about read records
      * @param dumpInterpretedRecords if {@code true}, the read records will be written to the PrintWriter
      *
-     * @return an array of Records created from the InputStream
      * @exception  org.apache.poi.util.RecordFormatException  on error processing the InputStream
      */
-    public static Record[] createRecords(InputStream is, PrintWriter ps, BiffRecordListener recListener, boolean dumpInterpretedRecords)
+    private static void createRecords(InputStream is, PrintWriter ps, BiffRecordListener recListener, boolean dumpInterpretedRecords)
             throws org.apache.poi.util.RecordFormatException {
-        List<Record> temp = new ArrayList<>();
-
         RecordInputStream recStream = new RecordInputStream(is);
         while (true) {
             boolean hasNext;
@@ -101,7 +97,6 @@ public final class BiffViewer {
                 if (record.getSid() == ContinueRecord.sid) {
                     continue;
                 }
-                temp.add(record);
 
                 for (String header : recListener.getRecentHeaders()) {
                     ps.println(header);
@@ -112,9 +107,6 @@ public final class BiffViewer {
             }
             ps.println();
         }
-        Record[] result = new Record[temp.size()];
-        temp.toArray(result);
-        return result;
     }
 
 
@@ -349,19 +341,19 @@ public final class BiffViewer {
             }
             return new CommandArgs(biffhex, noint, out, rawhex, noheader, file);
         }
-        public boolean shouldDumpBiffHex() {
+        boolean shouldDumpBiffHex() {
             return _biffhex;
         }
-        public boolean shouldDumpRecordInterpretations() {
+        boolean shouldDumpRecordInterpretations() {
             return !_noint;
         }
-        public boolean shouldOutputToFile() {
+        boolean shouldOutputToFile() {
             return _out;
         }
-        public boolean shouldOutputRawHexOnly() {
+        boolean shouldOutputRawHexOnly() {
             return _rawhex;
         }
-        public boolean suppressHeader() {
+        boolean suppressHeader() {
             return _noHeader;
         }
         public File getFile() {
@@ -369,7 +361,7 @@ public final class BiffViewer {
         }
     }
     private static final class CommandParseException extends Exception {
-        public CommandParseException(String msg) {
+        CommandParseException(String msg) {
             super(msg);
         }
     }
@@ -410,10 +402,10 @@ public final class BiffViewer {
 			pw = new PrintWriter(new OutputStreamWriter(System.out, Charset.defaultCharset()));
 		}
 
-		NPOIFSFileSystem fs = null;
+		POIFSFileSystem fs = null;
 		InputStream is = null;
         try {
-            fs = new NPOIFSFileSystem(cmdArgs.getFile(), true);
+            fs = new POIFSFileSystem(cmdArgs.getFile(), true);
             is = getPOIFSInputStream(fs);
 
             if (cmdArgs.shouldOutputRawHexOnly()) {
@@ -432,13 +424,12 @@ public final class BiffViewer {
         }
 	}
 
-	protected static InputStream getPOIFSInputStream(NPOIFSFileSystem fs)
-			throws IOException, FileNotFoundException {
+	static InputStream getPOIFSInputStream(POIFSFileSystem fs) throws IOException {
 		String workbookName = HSSFWorkbook.getWorkbookDirEntryName(fs.getRoot());
 		return fs.createDocumentInputStream(workbookName);
 	}
 
-	protected static void runBiffViewer(PrintWriter pw, InputStream is,
+	static void runBiffViewer(PrintWriter pw, InputStream is,
 			boolean dumpInterpretedRecords, boolean dumpHex, boolean zeroAlignHexDump,
 			boolean suppressHeader) {
 		BiffRecordListener recListener = new BiffRecordListener(dumpHex ? pw : null, zeroAlignHexDump, suppressHeader);
@@ -451,7 +442,7 @@ public final class BiffViewer {
 		private List<String> _headers;
 		private final boolean _zeroAlignEachRecord;
 		private final boolean _noHeader;
-		public BiffRecordListener(Writer hexDumpWriter, boolean zeroAlignEachRecord, boolean noHeader) {
+		private BiffRecordListener(Writer hexDumpWriter, boolean zeroAlignEachRecord, boolean noHeader) {
 			_hexDumpWriter = hexDumpWriter;
 			_zeroAlignEachRecord = zeroAlignEachRecord;
 			_noHeader = noHeader;
@@ -477,7 +468,7 @@ public final class BiffViewer {
 				}
 			}
 		}
-		public List<String> getRecentHeaders() {
+		private List<String> getRecentHeaders() {
 		    List<String> result = _headers;
 		    _headers = new ArrayList<>();
 		    return result;
@@ -510,7 +501,7 @@ public final class BiffViewer {
 		private int _currentSize;
 		private boolean _innerHasReachedEOF;
 
-		public BiffDumpingStream(InputStream is, IBiffRecordListener listener) {
+		private BiffDumpingStream(InputStream is, IBiffRecordListener listener) {
 			_is = new DataInputStream(is);
 			_listener = listener;
 			_data = new byte[RecordInputStream.MAX_RECORD_DATA_SIZE + 4];
@@ -601,7 +592,7 @@ public final class BiffViewer {
 	 * @param globalOffset (somewhat arbitrary) used to calculate the addresses printed at the
 	 * start of each line
 	 */
-	static void hexDumpAligned(Writer w, byte[] data, int dumpLen, int globalOffset,
+	private static void hexDumpAligned(Writer w, byte[] data, int dumpLen, int globalOffset,
 			boolean zeroAlignEachRecord) {
 		int baseDataOffset = 0;
 
@@ -712,7 +703,7 @@ public final class BiffViewer {
 		return ib;
 	}
 
-	private static void writeHex(char buf[], int startInBuf, int value, int nDigits) throws IOException {
+	private static void writeHex(char buf[], int startInBuf, int value, int nDigits) {
 		int acc = value;
 		for(int i=nDigits-1; i>=0; i--) {
 			int digit = acc & 0x0F;

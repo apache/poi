@@ -37,7 +37,6 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.hpsf.CustomProperties;
 import org.apache.poi.hpsf.CustomProperty;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
-import org.apache.poi.hpsf.MarkUnsupportedException;
 import org.apache.poi.hpsf.NoPropertySetStreamException;
 import org.apache.poi.hpsf.Property;
 import org.apache.poi.hpsf.PropertySet;
@@ -47,9 +46,8 @@ import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hpsf.UnexpectedPropertySetTypeException;
 import org.apache.poi.hpsf.Variant;
 import org.apache.poi.hpsf.VariantSupport;
-import org.apache.poi.hpsf.WritingNotSupportedException;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.TempFile;
@@ -69,55 +67,55 @@ public class TestWriteWellKnown {
         VariantSupport.setLogUnsupportedTypes(false);
     }
 
-    static final String P_APPLICATION_NAME = "ApplicationName";
-    static final String P_AUTHOR = "Author";
-    static final int    P_CHAR_COUNT = 4712;
-    static final String P_COMMENTS = "Comments";
-    static final Date   P_CREATE_DATE_TIME;
-    static final long   P_EDIT_TIME = 4713 * 1000 * 10;
-    static final String P_KEYWORDS = "Keywords";
-    static final String P_LAST_AUTHOR = "LastAuthor";
-    static final Date   P_LAST_PRINTED;
-    static final Date   P_LAST_SAVE_DATE_TIME;
-    static final int    P_PAGE_COUNT = 4714;
-    static final String P_REV_NUMBER = "RevNumber";
-    static final int    P_SECURITY = 1;
-    static final String P_SUBJECT = "Subject";
-    static final String P_TEMPLATE = "Template";
+    private static final String P_APPLICATION_NAME = "ApplicationName";
+    private static final String P_AUTHOR = "Author";
+    private static final int    P_CHAR_COUNT = 4712;
+    private static final String P_COMMENTS = "Comments";
+    private static final Date   P_CREATE_DATE_TIME;
+    private static final long   P_EDIT_TIME = 4713 * 1000 * 10;
+    private static final String P_KEYWORDS = "Keywords";
+    private static final String P_LAST_AUTHOR = "LastAuthor";
+    private static final Date   P_LAST_PRINTED;
+    private static final Date   P_LAST_SAVE_DATE_TIME;
+    private static final int    P_PAGE_COUNT = 4714;
+    private static final String P_REV_NUMBER = "RevNumber";
+    private static final int    P_SECURITY = 1;
+    private static final String P_SUBJECT = "Subject";
+    private static final String P_TEMPLATE = "Template";
     // FIXME (byte array properties not yet implemented): static final byte[] P_THUMBNAIL = new byte[123];
-    static final String P_TITLE = "Title";
-    static final int    P_WORD_COUNT = 4715;
+    private static final String P_TITLE = "Title";
+    private static final int    P_WORD_COUNT = 4715;
 
-    static final int     P_BYTE_COUNT = 4716;
-    static final String  P_CATEGORY = "Category";
-    static final String  P_COMPANY = "Company";
+    private static final int     P_BYTE_COUNT = 4716;
+    private static final String  P_CATEGORY = "Category";
+    private static final String  P_COMPANY = "Company";
     // FIXME (byte array properties not yet implemented): static final byte[]  P_DOCPARTS = new byte[123];
     // FIXME (byte array properties not yet implemented): static final byte[]  P_HEADING_PAIR = new byte[123];
-    static final int     P_HIDDEN_COUNT = 4717;
-    static final int     P_LINE_COUNT = 4718;
-    static final boolean P_LINKS_DIRTY = true;
-    static final String  P_MANAGER = "Manager";
-    static final int     P_MM_CLIP_COUNT = 4719;
-    static final int     P_NOTE_COUNT = 4720;
-    static final int     P_PAR_COUNT = 4721;
-    static final String  P_PRESENTATION_FORMAT = "PresentationFormat";
-    static final boolean P_SCALE = false;
-    static final int     P_SLIDE_COUNT = 4722;
-    static final Date    now = new Date();
+    private static final int     P_HIDDEN_COUNT = 4717;
+    private static final int     P_LINE_COUNT = 4718;
+    private static final boolean P_LINKS_DIRTY = true;
+    private static final String  P_MANAGER = "Manager";
+    private static final int     P_MM_CLIP_COUNT = 4719;
+    private static final int     P_NOTE_COUNT = 4720;
+    private static final int     P_PAR_COUNT = 4721;
+    private static final String  P_PRESENTATION_FORMAT = "PresentationFormat";
+    private static final boolean P_SCALE = false;
+    private static final int     P_SLIDE_COUNT = 4722;
+    private static final Date    now = new Date();
 
-    static final Integer POSITIVE_INTEGER = new Integer(2222);
-    static final Long POSITIVE_LONG = new  Long(3333);
-    static final Double POSITIVE_DOUBLE = new  Double(4444);
-    static final Integer NEGATIVE_INTEGER = new Integer(2222);
-    static final Long NEGATIVE_LONG = new  Long(3333);
-    static final Double NEGATIVE_DOUBLE = new  Double(4444);
+    private static final Integer POSITIVE_INTEGER = 2222;
+    private static final Long POSITIVE_LONG = 3333L;
+    private static final Double POSITIVE_DOUBLE = 4444d;
+    private static final Integer NEGATIVE_INTEGER = 2222;
+    private static final Long NEGATIVE_LONG = 3333L;
+    private static final Double NEGATIVE_DOUBLE = 4444d;
 
-    static final Integer MAX_INTEGER = new Integer(Integer.MAX_VALUE);
-    static final Integer MIN_INTEGER = new Integer(Integer.MIN_VALUE);
-    static final Long MAX_LONG = new Long(Long.MAX_VALUE);
-    static final Long MIN_LONG = new Long(Long.MIN_VALUE);
-    static final Double MAX_DOUBLE = new Double(Double.MAX_VALUE);
-    static final Double MIN_DOUBLE = new Double(Double.MIN_VALUE);
+    private static final Integer MAX_INTEGER = Integer.MAX_VALUE;
+    private static final Integer MIN_INTEGER = Integer.MIN_VALUE;
+    private static final Long MAX_LONG = Long.MAX_VALUE;
+    private static final Long MIN_LONG = Long.MIN_VALUE;
+    private static final Double MAX_DOUBLE = Double.MAX_VALUE;
+    private static final Double MIN_DOUBLE = Double.MIN_VALUE;
 
     static {
         Calendar cal = LocaleUtil.getLocaleCalendar(2000, 6, 6, 6, 6, 6);
@@ -170,10 +168,6 @@ public class TestWriteWellKnown {
      * be found in the property streams of <em>doc3</em>.</p></li> </ol>
      *
      * @throws IOException if some I/O error occurred.
-     * @throws MarkUnsupportedException
-     * @throws NoPropertySetStreamException
-     * @throws UnexpectedPropertySetTypeException
-     * @throws WritingNotSupportedException
      */
     @Test
     public void testWriteWellKnown() throws Exception {
@@ -191,7 +185,7 @@ public class TestWriteWellKnown {
         
         CustomProperties cps1 = write1stFile(doc1, doc2);
         CustomProperties cps2 = write2ndFile(doc2, doc3);
-        write3rdFile(doc3, null);
+        write3rdFile(doc3);
         
         assertEquals(cps1, cps2);
     }
@@ -203,7 +197,7 @@ public class TestWriteWellKnown {
      */
     private static CustomProperties write1stFile(File fileIn, File fileOut) throws Exception {
         /* Read a test document <em>doc1</em> into a POI filesystem. */
-        NPOIFSFileSystem poifs = new NPOIFSFileSystem(fileIn, false);
+        POIFSFileSystem poifs = new POIFSFileSystem(fileIn, false);
 
         /*
          * Read the summary information stream and the document summary
@@ -315,7 +309,7 @@ public class TestWriteWellKnown {
      * values.
      */
     private static CustomProperties write2ndFile(File fileIn, File fileOut) throws Exception {
-        NPOIFSFileSystem poifs = new NPOIFSFileSystem(fileIn, false);
+        POIFSFileSystem poifs = new POIFSFileSystem(fileIn, false);
         SummaryInformation si = getSummaryInformation(poifs);
         DocumentSummaryInformation dsi = getDocumentSummaryInformation(poifs);
 
@@ -434,8 +428,8 @@ public class TestWriteWellKnown {
      * and document summary information. All properties removed before must not
      * be found in the property streams of {@code doc3}.
      */
-    private static CustomProperties write3rdFile(File fileIn, File fileOut) throws Exception {
-        NPOIFSFileSystem poifs = new NPOIFSFileSystem(fileIn, false);
+    private static void write3rdFile(File fileIn) throws Exception {
+        POIFSFileSystem poifs = new POIFSFileSystem(fileIn, false);
         SummaryInformation si = getSummaryInformation(poifs);
         DocumentSummaryInformation dsi = getDocumentSummaryInformation(poifs);
 
@@ -488,11 +482,9 @@ public class TestWriteWellKnown {
         assertEquals(0, dsi.getSlideCount());
         assertTrue(dsi.wasNull());
         poifs.close();
-        
-        return dsi.getCustomProperties();
     }
 
-    private static SummaryInformation getSummaryInformation(NPOIFSFileSystem poifs) throws Exception {
+    private static SummaryInformation getSummaryInformation(POIFSFileSystem poifs) throws Exception {
         DocumentInputStream dis = poifs.createDocumentInputStream(SummaryInformation.DEFAULT_STREAM_NAME);
         PropertySet ps = new PropertySet(dis);
         SummaryInformation si = new SummaryInformation(ps);
@@ -500,8 +492,8 @@ public class TestWriteWellKnown {
         return si;
     }
     
-    static DocumentSummaryInformation getDocumentSummaryInformation(NPOIFSFileSystem poifs)
-    throws IOException, NoPropertySetStreamException, UnexpectedPropertySetTypeException, MarkUnsupportedException  {
+    static DocumentSummaryInformation getDocumentSummaryInformation(POIFSFileSystem poifs)
+    throws IOException, NoPropertySetStreamException, UnexpectedPropertySetTypeException {
         if (!poifs.getRoot().hasEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME)) {
             return null;
         }
@@ -586,7 +578,7 @@ public class TestWriteWellKnown {
         p.setType(Variant.VT_LPWSTR);
         p.setValue(VALUE_1);
         s.setProperty(p);
-        dictionary.put(Long.valueOf(ID_1), NAME_1);
+        dictionary.put((long) ID_1, NAME_1);
         s.setDictionary(dictionary);
         cps = dsi.getCustomProperties();
         assertEquals(1, cps.size());
@@ -594,7 +586,7 @@ public class TestWriteWellKnown {
 
         /* Add another custom property. */
         s.setProperty(ID_2, Variant.VT_LPWSTR, VALUE_1);
-        dictionary.put(Long.valueOf(ID_2), NAME_1);
+        dictionary.put((long) ID_2, NAME_1);
         s.setDictionary(dictionary);
         cps = dsi.getCustomProperties();
         assertEquals(1, cps.size());

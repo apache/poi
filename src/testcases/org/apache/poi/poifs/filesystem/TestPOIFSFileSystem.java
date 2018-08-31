@@ -32,9 +32,7 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.storage.BATBlock;
-import org.apache.poi.poifs.storage.BlockAllocationTableReader;
 import org.apache.poi.poifs.storage.HeaderBlock;
-import org.apache.poi.poifs.storage.RawDataBlockList;
 import org.apache.poi.util.IOUtils;
 import org.junit.Rule;
 import org.junit.Test;
@@ -113,13 +111,13 @@ public final class TestPOIFSFileSystem {
 
 		// Normal case - read until EOF and close
 		testIS = new TestIS(openSampleStream("13224.xls"), -1);
-		try (NPOIFSFileSystem ignored = new NPOIFSFileSystem(testIS)){
+		try (POIFSFileSystem ignored = new POIFSFileSystem(testIS)){
 			assertTrue("input stream was not closed", testIS.isClosed());
 		}
 
 		// intended to crash after reading 10000 bytes
 		testIS = new TestIS(openSampleStream("13224.xls"), 10000);
-		try (NPOIFSFileSystem ignored = new NPOIFSFileSystem(testIS)){
+		try (POIFSFileSystem ignored = new POIFSFileSystem(testIS)){
 			fail("ex should have been thrown");
 		} catch (MyEx e) {
 			// expected
@@ -148,7 +146,7 @@ public final class TestPOIFSFileSystem {
 
 		for (String file : files) {
 			// Open the file up
-			NPOIFSFileSystem fs = new NPOIFSFileSystem(
+			POIFSFileSystem fs = new POIFSFileSystem(
 			    _samples.openResourceAsStream(file)
 			);
 
@@ -174,7 +172,7 @@ public final class TestPOIFSFileSystem {
 		expectedEx.expect(IndexOutOfBoundsException.class);
 		expectedEx.expectMessage("Block 1148 not found");
 		try (InputStream stream = _samples.openResourceAsStream("ReferencesInvalidSectors.mpp")) {
-			new NPOIFSFileSystem(stream);
+			new POIFSFileSystem(stream);
 			fail("File is corrupt and shouldn't have been opened");
 		}
 	}
@@ -188,7 +186,7 @@ public final class TestPOIFSFileSystem {
 	@Test
 	public void testBATandXBAT() throws Exception {
 	   byte[] hugeStream = new byte[8*1024*1024];
-	   NPOIFSFileSystem fs = new NPOIFSFileSystem();
+	   POIFSFileSystem fs = new POIFSFileSystem();
 	   fs.getRoot().createDocument(
 	         "BIG", new ByteArrayInputStream(hugeStream)
 	   );
@@ -219,19 +217,8 @@ public final class TestPOIFSFileSystem {
 	   assertEquals(POIFSConstants.END_OF_CHAIN, xbat.getValueAt(127));
 	   
 	   
-	   // Load the blocks and check with that
-	   RawDataBlockList blockList = new RawDataBlockList(inp, POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS);
-	   assertEquals(fsData.length / 512, blockList.blockCount() + 1); // Header not counted
-	   new BlockAllocationTableReader(header.getBigBlockSize(),
-            header.getBATCount(),
-            header.getBATArray(),
-            header.getXBATCount(),
-            header.getXBATIndex(),
-            blockList);
-      assertEquals(fsData.length / 512, blockList.blockCount() + 1); // Header not counted
-      
 	   // Now load it and check
-	   fs = new NPOIFSFileSystem(
+	   fs = new POIFSFileSystem(
 	         new ByteArrayInputStream(fsData)
 	   );
 	   
@@ -259,13 +246,8 @@ public final class TestPOIFSFileSystem {
 			assertEquals(1, header_block.getBATCount());
 			assertEquals(0, header_block.getXBATCount());
 
-			// Now check we can get the basic fat
-			RawDataBlockList data_blocks = new RawDataBlockList(inp,
-					bigBlockSize);
-			assertEquals(15, data_blocks.blockCount());
-
 			// Now try and open properly
-			NPOIFSFileSystem fs = new NPOIFSFileSystem(
+			POIFSFileSystem fs = new POIFSFileSystem(
 					_samples.openResourceAsStream("BlockSize4096.zvi"));
 			assertTrue(fs.getRoot().getEntryCount() > 3);
 
@@ -273,7 +255,7 @@ public final class TestPOIFSFileSystem {
 			checkAllDirectoryContents(fs.getRoot());
 
 			// Finally, check we can do a similar 512byte one too
-			fs = new NPOIFSFileSystem(
+			fs = new POIFSFileSystem(
 					_samples.openResourceAsStream("BlockSize512.zvi"));
 			assertTrue(fs.getRoot().getEntryCount() > 3);
 			checkAllDirectoryContents(fs.getRoot());

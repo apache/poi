@@ -48,7 +48,7 @@ import org.apache.poi.hsmf.datatypes.Types;
 import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
 import org.apache.poi.hsmf.parsers.POIFSChunkParser;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.CodePageUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -92,7 +92,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
     */
    public MAPIMessage() {
       // TODO - make writing possible
-      super(new NPOIFSFileSystem());
+      super(new POIFSFileSystem());
    }
 
 
@@ -112,7 +112,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
     * @exception IOException on errors reading, or invalid data
     */
    public MAPIMessage(File file) throws IOException {
-      this(new NPOIFSFileSystem(file));
+      this(new POIFSFileSystem(file));
    }
 
    /**
@@ -125,7 +125,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
     * @exception IOException on errors reading, or invalid data
     */
    public MAPIMessage(InputStream in) throws IOException {
-      this(new NPOIFSFileSystem(in));
+      this(new POIFSFileSystem(in));
    }
    /**
     * Constructor for reading MSG Files from a POIFS filesystem
@@ -133,7 +133,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
     * @param fs Open POIFS FileSystem containing the message
     * @exception IOException on errors reading, or invalid data
     */
-   public MAPIMessage(NPOIFSFileSystem fs) throws IOException {
+   public MAPIMessage(POIFSFileSystem fs) throws IOException {
       this(fs.getRoot());
    }
    /**

@@ -59,7 +59,7 @@ public final class TestDocumentInputStream {
         byte[] _workbook_data_only = new byte[_workbook_size];
         System.arraycopy(_workbook_data, 0, _workbook_data_only, 0, _workbook_size);
 
-        NPOIFSFileSystem npoifs = new NPOIFSFileSystem();
+        POIFSFileSystem npoifs = new POIFSFileSystem();
         // Make it easy when debugging to see what isn't the doc
         byte[] minus1 = new byte[512];
         Arrays.fill(minus1, (byte) -1);
@@ -79,7 +79,7 @@ public final class TestDocumentInputStream {
      */
     @Test
     public void testConstructor() throws IOException {
-        try (DocumentInputStream nstream = new NDocumentInputStream(_workbook_n)) {
+        try (DocumentInputStream nstream = new DocumentInputStream(_workbook_n)) {
             assertEquals(_workbook_size, _workbook_n.getSize());
             assertEquals(_workbook_size, available(nstream));
         }
@@ -90,7 +90,7 @@ public final class TestDocumentInputStream {
      */
     @Test(expected = IllegalStateException.class)
     public void testAvailable() throws IOException {
-        DocumentInputStream nstream = new NDocumentInputStream(_workbook_n);
+        DocumentInputStream nstream = new DocumentInputStream(_workbook_n);
         assertEquals(_workbook_size, available(nstream));
         nstream.close();
 
@@ -106,7 +106,7 @@ public final class TestDocumentInputStream {
         byte[] buffer = new byte[_workbook_size / 5];
         byte[] small_buffer = new byte[212];
 
-        DocumentInputStream stream = new NDocumentInputStream(_workbook_n);
+        DocumentInputStream stream = new DocumentInputStream(_workbook_n);
         // Read a fifth of it, and check all's correct
         stream.read(buffer);
         for (int j = 0; j < buffer.length; j++) {
@@ -184,7 +184,7 @@ public final class TestDocumentInputStream {
         }
 
         // Now repeat it with spanning multiple blocks
-        stream = new NDocumentInputStream(_workbook_n);
+        stream = new DocumentInputStream(_workbook_n);
         // Read several blocks work
         buffer = new byte[_workbook_size / 5];
         stream.read(buffer);
@@ -239,7 +239,7 @@ public final class TestDocumentInputStream {
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @Test(expected = IOException.class)
     public void testReadSingleByte() throws IOException {
-        DocumentInputStream stream = new NDocumentInputStream(_workbook_n);
+        DocumentInputStream stream = new DocumentInputStream(_workbook_n);
         int remaining = _workbook_size;
 
         // Try and read each byte in turn
@@ -267,7 +267,7 @@ public final class TestDocumentInputStream {
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @Test
     public void testBufferRead() throws IOException {
-        DocumentInputStream stream = new NDocumentInputStream(_workbook_n);
+        DocumentInputStream stream = new DocumentInputStream(_workbook_n);
         // Need to give a byte array to read
         try {
             stream.read(null);
@@ -322,7 +322,7 @@ public final class TestDocumentInputStream {
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @Test
     public void testComplexBufferRead() throws IOException {
-        DocumentInputStream stream = new NDocumentInputStream(_workbook_n);
+        DocumentInputStream stream = new DocumentInputStream(_workbook_n);
         try {
             stream.read(null, 0, 1);
             fail("Should have caught NullPointerException");
@@ -407,7 +407,7 @@ public final class TestDocumentInputStream {
      */
     @Test
     public void testSkip() throws IOException {
-        DocumentInputStream stream = new NDocumentInputStream(_workbook_n);
+        DocumentInputStream stream = new DocumentInputStream(_workbook_n);
         assertEquals(_workbook_size, available(stream));
         int count = available(stream);
 
@@ -440,7 +440,7 @@ public final class TestDocumentInputStream {
 
         DocumentInputStream stream;
 
-        try (NPOIFSFileSystem npoifs = new NPOIFSFileSystem(sample)) {
+        try (POIFSFileSystem npoifs = new POIFSFileSystem(sample)) {
             // Ensure we have what we expect on the root
             assertEquals(npoifs, npoifs.getRoot().getNFileSystem());
             assertEquals(npoifs, npoifs.getRoot().getFileSystem());

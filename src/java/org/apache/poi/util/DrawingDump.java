@@ -26,18 +26,20 @@ import java.nio.charset.Charset;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Sheet;
 
 /**
  * Dump out the aggregated escher records
  */
-public class DrawingDump
-{
+public final class DrawingDump {
+    private DrawingDump() {
+    }
+
     public static void main( String[] args ) throws IOException {
         OutputStreamWriter osw = new OutputStreamWriter(System.out, Charset.defaultCharset());
         PrintWriter pw = new PrintWriter(osw);
-        NPOIFSFileSystem fs = new NPOIFSFileSystem(new File(args[0]));
+        POIFSFileSystem fs = new POIFSFileSystem(new File(args[0]));
         HSSFWorkbook wb = new HSSFWorkbook(fs);
         try {
             pw.println( "Drawing group:" );

@@ -67,7 +67,6 @@ import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.formula.ptg.DeletedArea3DPtg;
@@ -1625,7 +1624,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
             ));
         }
         try {
-            try (NPOIFSFileSystem fs = new NPOIFSFileSystem(
+            try (POIFSFileSystem fs = new POIFSFileSystem(
                     HSSFITestDataProvider.instance.openWorkbookStream("46904.xls"))) {
                 new HSSFWorkbook(fs.getRoot(), false).close();
                 fail("Should catch exception here");
@@ -2340,7 +2339,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
         HSSFWorkbook wbPOIFS = new HSSFWorkbook(new POIFSFileSystem(
                 new ByteArrayInputStream(data)).getRoot(), false);
-        HSSFWorkbook wbNPOIFS = new HSSFWorkbook(new NPOIFSFileSystem(
+        HSSFWorkbook wbNPOIFS = new HSSFWorkbook(new POIFSFileSystem(
                 new ByteArrayInputStream(data)).getRoot(), false);
 
         assertEquals(2, wbPOIFS.getNumberOfSheets());
@@ -2357,7 +2356,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
         HSSFWorkbook wbPOIFS = new HSSFWorkbook(new POIFSFileSystem(
                 new ByteArrayInputStream(data)).getRoot(), false);
-        HSSFWorkbook wbNPOIFS = new HSSFWorkbook(new NPOIFSFileSystem(
+        HSSFWorkbook wbNPOIFS = new HSSFWorkbook(new POIFSFileSystem(
                 new ByteArrayInputStream(data)).getRoot(), false);
 
         for (HSSFWorkbook wb : new HSSFWorkbook[]{wbPOIFS, wbNPOIFS}) {
@@ -3100,7 +3099,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
     @Test(expected = RuntimeException.class)
     public void test61300() throws Exception {
-        NPOIFSFileSystem npoifs = new NPOIFSFileSystem(HSSFTestDataSamples.openSampleFileStream("61300.xls"));
+        POIFSFileSystem npoifs = new POIFSFileSystem(HSSFTestDataSamples.openSampleFileStream("61300.xls"));
 
         DocumentEntry entry =
                 (DocumentEntry) npoifs.getRoot().getEntry(SummaryInformation.DEFAULT_STREAM_NAME);

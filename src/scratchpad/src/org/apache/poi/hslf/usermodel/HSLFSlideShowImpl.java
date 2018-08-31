@@ -49,7 +49,6 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.EntryUtils;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.util.IOUtils;
@@ -63,7 +62,7 @@ import org.apache.poi.util.POILogger;
  * "reader". It is only a very basic class for now
  */
 public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
-    public static final int UNSET_OFFSET = -1;
+    static final int UNSET_OFFSET = -1;
 
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 200_000_000;
@@ -119,17 +118,6 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
      * @throws IOException if there is a problem while parsing the document.
      */
     public HSLFSlideShowImpl(POIFSFileSystem filesystem) throws IOException {
-        this(filesystem.getRoot());
-    }
-
-    /**
-     * Constructs a Powerpoint document from a POIFS Filesystem. Parses the
-     * document and places all the important stuff into data structures.
-     *
-     * @param filesystem the POIFS FileSystem to read from
-     * @throws IOException if there is a problem while parsing the document.
-     */
-    public HSLFSlideShowImpl(NPOIFSFileSystem filesystem) throws IOException {
         this(filesystem.getRoot());
     }
 
@@ -192,7 +180,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
      * Extracts the main PowerPoint document stream from the
      * POI file, ready to be passed
      *
-     * @throws IOException
+     * @throws IOException when the powerpoint can't be read
      */
     private void readPowerPointStream() throws IOException {
         // Get the main document stream
@@ -201,11 +189,8 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
 
         // Grab the document stream
         int len = docProps.getSize();
-        InputStream is = getDirectory().createDocumentInputStream(HSLFSlideShow.POWERPOINT_DOCUMENT);
-        try {
+        try (InputStream is = getDirectory().createDocumentInputStream(HSLFSlideShow.POWERPOINT_DOCUMENT)) {
             _docstream = IOUtils.toByteArray(is, len);
-        } finally {
-            is.close();
         }
     }
 
@@ -276,7 +261,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         }
 
         decryptData.close();
-        return records.values().toArray(new Record[records.size()]);
+        return records.values().toArray(new Record[0]);
     }
 
     private void initRecordOffsets(byte[] docstream, int usrOffset, NavigableMap<Integer, Record> recordMap, Map<Integer, Integer> offset2id) {
@@ -362,16 +347,15 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         byte[] pictstream = IOUtils.toByteArray(is, entry.getSize());
         is.close();
 
-        HSLFSlideShowEncrypted decryptData = new HSLFSlideShowEncrypted(getDocumentEncryptionAtom());
-        try {
-    
+        try (HSLFSlideShowEncrypted decryptData = new HSLFSlideShowEncrypted(getDocumentEncryptionAtom())) {
+
             int pos = 0;
             // An empty picture record (length 0) will take up 8 bytes
             while (pos <= (pictstream.length - 8)) {
                 int offset = pos;
-    
+
                 decryptData.decryptPicture(pictstream, offset);
-    
+
                 // Image signature
                 int signature = LittleEndian.getUShort(pictstream, pos);
                 pos += LittleEndianConsts.SHORT_SIZE;
@@ -381,20 +365,20 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
                 // Image size (excluding the 8 byte header)
                 int imgsize = LittleEndian.getInt(pictstream, pos);
                 pos += LittleEndianConsts.INT_SIZE;
-    
+
                 // When parsing the BStoreDelay stream, [MS-ODRAW] says that we
                 //  should terminate if the type isn't 0xf007 or 0xf018->0xf117
                 if (!((type == 0xf007) || (type >= 0xf018 && type <= 0xf117))) {
                     break;
                 }
-    
+
                 // The image size must be 0 or greater
                 // (0 is allowed, but odd, since we do wind on by the header each
                 //  time, so we won't get stuck)
                 if (imgsize < 0) {
                     throw new CorruptPowerPointFileException("The file contains a picture, at position " + _pictures.size() + ", which has a negatively sized data length, so we can't trust any of the picture data");
                 }
-    
+
                 // If they type (including the bonus 0xF018) is 0, skip it
                 PictureType pt = PictureType.forNativeID(type - 0xF018);
                 if (pt == null) {
@@ -404,7 +388,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
                     //The pictstream can be truncated halfway through a picture.
                     //This is not a problem if the pictstream contains extra pictures
                     //that are not used in any slide -- BUG-60305
-                    if (pos+imgsize > pictstream.length) {
+                    if (pos + imgsize > pictstream.length) {
                         logger.log(POILogger.WARN, "\"Pictures\" stream may have ended early. In some circumstances, this is not a problem; " +
                                 "in others, this could indicate a corrupt file");
                         break;
@@ -413,12 +397,12 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
                     try {
                         HSLFPictureData pict = HSLFPictureData.create(pt);
                         pict.setSignature(signature);
-    
+
                         // Copy the data, ready to pass to PictureData
                         byte[] imgdata = IOUtils.safelyAllocate(imgsize, MAX_RECORD_LENGTH);
                         System.arraycopy(pictstream, pos, imgdata, 0, imgdata.length);
                         pict.setRawData(imgdata);
-    
+
                         pict.setOffset(offset);
                         pict.setIndex(_pictures.size());
                         _pictures.add(pict);
@@ -426,11 +410,9 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
                         logger.log(POILogger.ERROR, "Problem reading picture: " + e + "\nYou document will probably become corrupted if you save it!");
                     }
                 }
-    
+
                 pos += imgsize;
             }
-        } finally {
-            decryptData.close();
         }
     }
 
@@ -456,8 +438,8 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
      * @param interestingRecords a map of interesting records (PersistPtrHolder and UserEditAtom)
      *                           referenced by their RecordType. Only the very last of each type will be saved to the map.
      *                           May be null, if not needed.
-     * @throws IOException
      */
+    @SuppressWarnings("WeakerAccess")
     public void updateAndWriteDependantRecords(OutputStream os, Map<RecordTypes, PositionDependentRecord> interestingRecords)
             throws IOException {
         // For position dependent records, hold where they were and now are
@@ -602,16 +584,13 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
      */
     public void write(File newFile, boolean preserveNodes) throws IOException {
         // Get a new FileSystem to write into
-        POIFSFileSystem outFS = POIFSFileSystem.create(newFile);
 
-        try {
+        try (POIFSFileSystem outFS = POIFSFileSystem.create(newFile)) {
             // Write into the new FileSystem
             write(outFS, preserveNodes);
 
             // Send the POIFSFileSystem object out to the underlying stream
             outFS.writeFilesystem();
-        } finally {
-            outFS.close();
         }
     }
 
@@ -645,20 +624,17 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
      */
     public void write(OutputStream out, boolean preserveNodes) throws IOException {
         // Get a new FileSystem to write into
-        POIFSFileSystem outFS = new POIFSFileSystem();
 
-        try {
+        try (POIFSFileSystem outFS = new POIFSFileSystem()) {
             // Write into the new FileSystem
             write(outFS, preserveNodes);
 
             // Send the POIFSFileSystem object out to the underlying stream
             outFS.writeFilesystem(out);
-        } finally {
-            outFS.close();
         }
     }
 
-    private void write(NPOIFSFileSystem outFS, boolean copyAllOtherNodes) throws IOException {
+    private void write(POIFSFileSystem outFS, boolean copyAllOtherNodes) throws IOException {
         // read properties and pictures, with old encryption settings where appropriate 
         if (_pictures == null) {
             readPictures();
@@ -721,7 +697,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
 
 
     @Override
-    public EncryptionInfo getEncryptionInfo() throws IOException {
+    public EncryptionInfo getEncryptionInfo() {
         DocumentEncryptionAtom dea = getDocumentEncryptionAtom();
         return (dea != null) ? dea.getEncryptionInfo() : null;
     }
@@ -735,6 +711,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
      * Adds a new root level record, at the end, but before the last
      * PersistPtrIncrementalBlock.
      */
+    @SuppressWarnings({"UnusedReturnValue", "WeakerAccess"})
     public synchronized int appendRootLevelRecord(Record newRecord) {
         int addedAt = -1;
         Record[] r = new Record[_records.length + 1];
@@ -839,7 +816,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
                     objects.add(new HSLFObjectData((ExOleObjStg) r));
                 }
             }
-            _objects = objects.toArray(new HSLFObjectData[objects.size()]);
+            _objects = objects.toArray(new HSLFObjectData[0]);
         }
         return _objects;
     }
@@ -849,7 +826,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         // only close the filesystem, if we are based on the root node.
         // embedded documents/slideshows shouldn't close the parent container
         if (getDirectory().getParent() == null) {
-            NPOIFSFileSystem fs = getDirectory().getFileSystem();
+            POIFSFileSystem fs = getDirectory().getFileSystem();
             if (fs != null) {
                 fs.close();
             }

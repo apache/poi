@@ -20,7 +20,7 @@ package org.apache.poi.hslf.usermodel;
 import java.io.IOException;
 
 import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.util.Internal;
 
@@ -28,6 +28,7 @@ import org.apache.poi.util.Internal;
  * Helper class which is instantiated by reflection from
  * {@link SlideShowFactory#create(java.io.File)} and similar
  */
+@SuppressWarnings("unused")
 @Internal
 public class HSLFSlideShowFactory extends SlideShowFactory {
     /**
@@ -35,7 +36,7 @@ public class HSLFSlideShowFactory extends SlideShowFactory {
      * Note that in order to properly release resources the
      * SlideShow should be closed after use.
      */
-    public static HSLFSlideShow createSlideShow(final NPOIFSFileSystem fs) throws IOException {
+    public static HSLFSlideShow createSlideShow(final POIFSFileSystem fs) throws IOException {
         return new HSLFSlideShow(fs);
     }
 

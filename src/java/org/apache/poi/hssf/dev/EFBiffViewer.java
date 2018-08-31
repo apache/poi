@@ -22,10 +22,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.poi.hssf.eventusermodel.HSSFEventFactory;
-import org.apache.poi.hssf.eventusermodel.HSSFListener;
 import org.apache.poi.hssf.eventusermodel.HSSFRequest;
-import org.apache.poi.hssf.record.Record;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  *
@@ -38,32 +36,19 @@ public class EFBiffViewer
 
     /** Creates a new instance of EFBiffViewer */
 
-    public EFBiffViewer()
-    {
+    @SuppressWarnings("WeakerAccess")
+    public EFBiffViewer() {
     }
 
     public void run() throws IOException {
-        NPOIFSFileSystem fs   = new NPOIFSFileSystem(new File(file), true);
-        try {
-            InputStream     din   = BiffViewer.getPOIFSInputStream(fs);
-            try {
-                HSSFRequest     req   = new HSSFRequest();
-        
-                req.addListenerForAllRecords(new HSSFListener()
-                {
-                    public void processRecord(Record rec)
-                    {
-                        System.out.println(rec);
-                    }
-                });
-                HSSFEventFactory factory = new HSSFEventFactory();
-        
-                factory.processEvents(req, din);
-            } finally {
-                din.close();
-            }
-        } finally {
-            fs.close();
+        try (POIFSFileSystem fs = new POIFSFileSystem(new File(file), true);
+         InputStream din = BiffViewer.getPOIFSInputStream(fs)) {
+            HSSFRequest req = new HSSFRequest();
+
+            req.addListenerForAllRecords(System.out::println);
+            HSSFEventFactory factory = new HSSFEventFactory();
+
+            factory.processEvents(req, din);
         }
     }
 

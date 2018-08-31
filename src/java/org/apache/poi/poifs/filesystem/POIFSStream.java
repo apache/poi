@@ -31,7 +31,7 @@ import org.apache.poi.poifs.storage.HeaderBlock;
 
 /**
  * This handles reading and writing a stream within a
- *  {@link NPOIFSFileSystem}. It can supply an iterator
+ *  {@link POIFSFileSystem}. It can supply an iterator
  *  to read blocks, and way to write out to existing and
  *  new blocks.
  * Most users will want a higher level version of this, 
@@ -44,7 +44,7 @@ import org.apache.poi.poifs.storage.HeaderBlock;
  * TODO Implement a streaming write method, and append
  */
 
-public class NPOIFSStream implements Iterable<ByteBuffer>
+public class POIFSStream implements Iterable<ByteBuffer>
 {
 	private BlockStore blockStore;
 	private int startBlock;
@@ -55,7 +55,7 @@ public class NPOIFSStream implements Iterable<ByteBuffer>
 	 *  to know how to get the start block (eg from a 
 	 *  {@link HeaderBlock} or a {@link Property}) 
 	 */
-	public NPOIFSStream(BlockStore blockStore, int startBlock) {
+	public POIFSStream(BlockStore blockStore, int startBlock) {
 	   this.blockStore = blockStore;
 	   this.startBlock = startBlock;
 	}
@@ -64,7 +64,7 @@ public class NPOIFSStream implements Iterable<ByteBuffer>
 	 * Constructor for a new stream. A start block won't
 	 *  be allocated until you begin writing to it.
 	 */
-	public NPOIFSStream(BlockStore blockStore) {
+	public POIFSStream(BlockStore blockStore) {
       this.blockStore = blockStore;
 	   this.startBlock = POIFSConstants.END_OF_CHAIN;
 	}
@@ -86,7 +86,7 @@ public class NPOIFSStream implements Iterable<ByteBuffer>
       return getBlockIterator();
    }
 	
-   public Iterator<ByteBuffer> getBlockIterator() {
+   Iterator<ByteBuffer> getBlockIterator() {
       if(startBlock == POIFSConstants.END_OF_CHAIN) {
          throw new IllegalStateException(
                "Can't read from a new stream before it has been written to"
@@ -101,7 +101,7 @@ public class NPOIFSStream implements Iterable<ByteBuffer>
     * Note - if this is property based, you'll still
     *  need to update the size in the property yourself
     */
-   public void updateContents(byte[] contents) throws IOException {
+   void updateContents(byte[] contents) throws IOException {
        OutputStream os = getOutputStream();
        os.write(contents);
        os.close();
@@ -143,7 +143,7 @@ public class NPOIFSStream implements Iterable<ByteBuffer>
       private ChainLoopDetector loopDetector;
       private int nextBlock;
       
-      protected StreamBlockByteBufferIterator(int firstBlock) {
+      StreamBlockByteBufferIterator(int firstBlock) {
          this.nextBlock = firstBlock;
          try {
             this.loopDetector = blockStore.getChainLoopDetector();
@@ -153,10 +153,7 @@ public class NPOIFSStream implements Iterable<ByteBuffer>
       }
 
       public boolean hasNext() {
-         if(nextBlock == POIFSConstants.END_OF_CHAIN) {
-            return false;
-         }
-         return true;
+          return nextBlock != POIFSConstants.END_OF_CHAIN;
       }
 
       public ByteBuffer next() {
@@ -187,13 +184,13 @@ public class NPOIFSStream implements Iterable<ByteBuffer>
        ChainLoopDetector loopDetector;
        int prevBlock, nextBlock;
 
-       protected StreamBlockByteBuffer() throws IOException {
+       StreamBlockByteBuffer() throws IOException {
            loopDetector = blockStore.getChainLoopDetector();
            prevBlock = POIFSConstants.END_OF_CHAIN;
            nextBlock = startBlock;
        }
 
-       protected void createBlockIfNeeded() throws IOException {
+       void createBlockIfNeeded() throws IOException {
            if (buffer != null && buffer.hasRemaining()) return;
            
            int thisBlock = nextBlock;
@@ -228,12 +225,14 @@ public class NPOIFSStream implements Iterable<ByteBuffer>
            // Update pointers
            prevBlock = thisBlock;
        }
-       
+
+       @Override
        public void write(int b) throws IOException {
             oneByte[0] = (byte)(b & 0xFF);
             write(oneByte);
        }
-    
+
+       @Override
         public void write(byte[] b, int off, int len) throws IOException {
             if ((off < 0) || (off > b.length) || (len < 0) ||
                     ((off + len) > b.length) || ((off + len) < 0)) {
@@ -253,7 +252,7 @@ public class NPOIFSStream implements Iterable<ByteBuffer>
     
         public void close() throws IOException {
             // If we're overwriting, free any remaining blocks
-            NPOIFSStream toFree = new NPOIFSStream(blockStore, nextBlock);
+            POIFSStream toFree = new POIFSStream(blockStore, nextBlock);
             toFree.free(loopDetector);
             
             // Mark the end of the stream, if we have any data

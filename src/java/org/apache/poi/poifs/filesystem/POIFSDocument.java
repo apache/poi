@@ -36,23 +36,23 @@ import org.apache.poi.util.IOUtils;
 
 /**
  * This class manages a document in the NIO POIFS filesystem.
- * This is the {@link NPOIFSFileSystem} version.
+ * This is the {@link POIFSFileSystem} version.
  */
-public final class NPOIFSDocument implements POIFSViewable, Iterable<ByteBuffer> {
+public final class POIFSDocument implements POIFSViewable, Iterable<ByteBuffer> {
 
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
 
     private DocumentProperty _property;
 
-   private NPOIFSFileSystem _filesystem;
-   private NPOIFSStream _stream;
+   private POIFSFileSystem _filesystem;
+   private POIFSStream _stream;
    private int _block_size;
 	
    /**
     * Constructor for an existing Document 
     */
-   public NPOIFSDocument(DocumentNode document) {
+   public POIFSDocument(DocumentNode document) {
        this((DocumentProperty)document.getProperty(), 
             ((DirectoryNode)document.getParent()).getNFileSystem());
    }
@@ -60,15 +60,15 @@ public final class NPOIFSDocument implements POIFSViewable, Iterable<ByteBuffer>
    /**
     * Constructor for an existing Document 
     */
-   public NPOIFSDocument(DocumentProperty property, NPOIFSFileSystem filesystem) {
+   public POIFSDocument(DocumentProperty property, POIFSFileSystem filesystem) {
       this._property = property;
       this._filesystem = filesystem;
 
       if(property.getSize() < POIFSConstants.BIG_BLOCK_MINIMUM_DOCUMENT_SIZE) {
-         _stream = new NPOIFSStream(_filesystem.getMiniStore(), property.getStartBlock());
+         _stream = new POIFSStream(_filesystem.getMiniStore(), property.getStartBlock());
          _block_size = _filesystem.getMiniStore().getBlockStoreBlockSize();
       } else {
-         _stream = new NPOIFSStream(_filesystem, property.getStartBlock());
+         _stream = new POIFSStream(_filesystem, property.getStartBlock());
          _block_size = _filesystem.getBlockStoreBlockSize();
       }
    }
@@ -79,7 +79,7 @@ public final class NPOIFSDocument implements POIFSViewable, Iterable<ByteBuffer>
     * @param name the name of the POIFSDocument
     * @param stream the InputStream we read data from
     */
-   public NPOIFSDocument(String name, NPOIFSFileSystem filesystem, InputStream stream) 
+   public POIFSDocument(String name, POIFSFileSystem filesystem, InputStream stream)
       throws IOException 
    {
       this._filesystem = filesystem;
@@ -93,31 +93,29 @@ public final class NPOIFSDocument implements POIFSViewable, Iterable<ByteBuffer>
       _property.setDocument(this);
    }
    
-   public NPOIFSDocument(String name, int size, NPOIFSFileSystem filesystem, POIFSWriterListener writer) 
+   public POIFSDocument(String name, final int size, POIFSFileSystem filesystem, POIFSWriterListener writer)
       throws IOException 
    {
        this._filesystem = filesystem;
 
        if (size < POIFSConstants.BIG_BLOCK_MINIMUM_DOCUMENT_SIZE) {
-           _stream = new NPOIFSStream(filesystem.getMiniStore());
+           _stream = new POIFSStream(filesystem.getMiniStore());
            _block_size = _filesystem.getMiniStore().getBlockStoreBlockSize();
        } else {
-           _stream = new NPOIFSStream(filesystem);
+           _stream = new POIFSStream(filesystem);
            _block_size = _filesystem.getBlockStoreBlockSize();
        }
        
-       OutputStream innerOs = _stream.getOutputStream();
-       DocumentOutputStream os = new DocumentOutputStream(innerOs, size);
-       POIFSDocumentPath path = new POIFSDocumentPath(name.split("\\\\"));
-       String docName = path.getComponent(path.length()-1);
-       POIFSWriterEvent event = new POIFSWriterEvent(os, path, docName, size);
-       writer.processPOIFSWriterEvent(event);
-       innerOs.close();
-
-       // And build the property for it
        this._property = new DocumentProperty(name, size);
        _property.setStartBlock(_stream.getStartBlock());
        _property.setDocument(this);
+
+       try (DocumentOutputStream os = new DocumentOutputStream(this, size)) {
+           POIFSDocumentPath path = new POIFSDocumentPath(name.split("\\\\"));
+           String docName = path.getComponent(path.length() - 1);
+           POIFSWriterEvent event = new POIFSWriterEvent(os, path, docName, size);
+           writer.processPOIFSWriterEvent(event);
+       }
    }
    
    /**
@@ -131,10 +129,10 @@ public final class NPOIFSDocument implements POIFSViewable, Iterable<ByteBuffer>
        // Do we need to store as a mini stream or a full one?
        long streamBlockSize = IOUtils.skipFully(bis, bigBlockSize);
        if (streamBlockSize < bigBlockSize) {
-          _stream = new NPOIFSStream(_filesystem.getMiniStore());
+          _stream = new POIFSStream(_filesystem.getMiniStore());
           _block_size = _filesystem.getMiniStore().getBlockStoreBlockSize();
        } else {
-          _stream = new NPOIFSStream(_filesystem);
+          _stream = new POIFSStream(_filesystem);
           _block_size = _filesystem.getBlockStoreBlockSize();
        }
 
@@ -167,7 +165,7 @@ public final class NPOIFSDocument implements POIFSViewable, Iterable<ByteBuffer>
        _property.setStartBlock(POIFSConstants.END_OF_CHAIN);
    }
    
-   NPOIFSFileSystem getFileSystem()
+   POIFSFileSystem getFileSystem()
    {
        return _filesystem;
    }

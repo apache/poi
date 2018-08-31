@@ -37,7 +37,7 @@ import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.junit.Test;
 
 /**
@@ -114,7 +114,7 @@ public final class TestHPSFBugs {
    @Test
    public void test54233() throws IOException, NoPropertySetStreamException, MarkUnsupportedException {
        InputStream is = _samples.openResourceAsStream("TestNon4ByteBoundary.doc");
-       NPOIFSFileSystem fs = new NPOIFSFileSystem(is);
+       POIFSFileSystem fs = new POIFSFileSystem(is);
        is.close();
 
        SummaryInformation si = (SummaryInformation)
@@ -134,7 +134,7 @@ public final class TestHPSFBugs {
        ByteArrayOutputStream baos = new ByteArrayOutputStream();
        doc.write(baos);
        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-       doc = new HPSFPropertiesOnlyDocument(new NPOIFSFileSystem(bais));
+       doc = new HPSFPropertiesOnlyDocument(new POIFSFileSystem(bais));
 
        // Check properties are still there
        assertEquals("Microsoft Word 10.0", si.getApplicationName());
@@ -152,7 +152,7 @@ public final class TestHPSFBugs {
    @Test
    public void test56138() throws IOException, NoPropertySetStreamException {
        InputStream is = _samples.openResourceAsStream("TestZeroLengthCodePage.mpp");
-       NPOIFSFileSystem fs = new NPOIFSFileSystem(is);
+       POIFSFileSystem fs = new POIFSFileSystem(is);
        is.close();
 
        SummaryInformation si = (SummaryInformation)
@@ -181,7 +181,7 @@ public final class TestHPSFBugs {
             si.setLastPrinted(new Date(millis));
             try (HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb)) {
                 SummaryInformation si2 = wb2.getSummaryInformation();
-                Date d = si.getLastPrinted();
+                Date d = si2.getLastPrinted();
                 assertNotNull(d);
                 assertEquals(millis, d.getTime());
             }

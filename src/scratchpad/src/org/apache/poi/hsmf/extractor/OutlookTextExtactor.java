@@ -30,7 +30,7 @@ import org.apache.poi.hsmf.datatypes.AttachmentChunks;
 import org.apache.poi.hsmf.datatypes.StringChunk;
 import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.StringUtil.StringsIterator;
 
@@ -45,7 +45,7 @@ public class OutlookTextExtactor extends POIOLE2TextExtractor {
    public OutlookTextExtactor(DirectoryNode poifsDir) throws IOException {
       this(new MAPIMessage(poifsDir));
    }
-   public OutlookTextExtactor(NPOIFSFileSystem fs) throws IOException {
+   public OutlookTextExtactor(POIFSFileSystem fs) throws IOException {
       this(new MAPIMessage(fs));
    }
    public OutlookTextExtactor(InputStream inp) throws IOException {
@@ -54,15 +54,9 @@ public class OutlookTextExtactor extends POIOLE2TextExtractor {
    
    public static void main(String[] args) throws Exception {
       for(String filename : args) {
-         NPOIFSFileSystem poifs = null;
-         OutlookTextExtactor extractor = null;
-         try {
-             poifs = new NPOIFSFileSystem(new File(filename));
-             extractor = new OutlookTextExtactor(poifs);
-             System.out.println( extractor.getText() );
-         } finally {
-             if (extractor != null) extractor.close();
-             if (poifs != null) poifs.close();
+         try (POIFSFileSystem poifs = new POIFSFileSystem(new File(filename));
+              OutlookTextExtactor extractor = new OutlookTextExtactor(poifs)) {
+            System.out.println(extractor.getText());
          }
       }
    }
@@ -118,18 +112,14 @@ public class OutlookTextExtactor extends POIOLE2TextExtractor {
          // First try via the proper chunk
          SimpleDateFormat f = new SimpleDateFormat("E, d MMM yyyy HH:mm:ss Z", Locale.ROOT);
          f.setTimeZone(LocaleUtil.getUserTimeZone());
-         s.append("Date: " + f.format(msg.getMessageDate().getTime()) + "\n");
+         s.append("Date: ").append(f.format(msg.getMessageDate().getTime())).append("\n");
       } catch(ChunkNotFoundException e) {
          try {
             // Failing that try via the raw headers 
             String[] headers = msg.getHeaders();
             for(String header: headers) {
                if(startsWithIgnoreCase(header, "date:")) {
-                  s.append(
-                        "Date:" + 
-                        header.substring(header.indexOf(':')+1) +
-                        "\n"
-                  );
+                  s.append("Date:").append(header, header.indexOf(':')+1, header.length()).append("\n");
                   break;
                }
             }
@@ -139,7 +129,7 @@ public class OutlookTextExtactor extends POIOLE2TextExtractor {
       }
       
       try {
-         s.append("Subject: " + msg.getSubject() + "\n");
+         s.append("Subject: ").append(msg.getSubject()).append("\n");
       } catch(ChunkNotFoundException e) {}
       
       // Display attachment names
@@ -153,11 +143,11 @@ public class OutlookTextExtactor extends POIOLE2TextExtractor {
                att.getAttachMimeTag().getValue() != null) {
              attName = att.getAttachMimeTag().getValue() + " = " + attName; 
          }
-         s.append("Attachment: " + attName + "\n");
+         s.append("Attachment: ").append(attName).append("\n");
       }
       
       try {
-         s.append("\n" + msg.getTextBody() + "\n");
+         s.append("\n").append(msg.getTextBody()).append("\n");
       } catch(ChunkNotFoundException e) {}
       
       return s.toString();
@@ -176,7 +166,7 @@ public class OutlookTextExtactor extends POIOLE2TextExtractor {
       String[] names = displayText.split(";\\s*");
       boolean first = true;
       
-      s.append(type + ": ");
+      s.append(type).append(": ");
       for(String name : names) {
          if(first) {
             first = false;
@@ -190,7 +180,7 @@ public class OutlookTextExtactor extends POIOLE2TextExtractor {
             // Append the email address in <>, assuming
             //  the name wasn't already the email address
             if(! email.equals(name)) {
-               s.append( " <" + email + ">");
+               s.append(" <").append(email).append(">");
             }
          }
       }

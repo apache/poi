@@ -18,7 +18,7 @@
 package org.apache.poi.poifs.macros;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.StringUtil;
 import org.junit.Ignore;
@@ -40,7 +40,7 @@ import java.util.Map;
 public class TestVBAMacroReader {
     private static final Map<POIDataSamples, String> expectedMacroContents;
 
-    protected static String readVBA(POIDataSamples poiDataSamples) {
+    private static String readVBA(POIDataSamples poiDataSamples) {
         File macro = poiDataSamples.getFile("SimpleMacro.vba");
         final byte[] bytes;
         try {
@@ -168,14 +168,14 @@ public class TestVBAMacroReader {
         fromNPOIFS(POIDataSamples.getDiagramInstance(), "SimpleMacro.vsd");
     }
 
-    protected void fromFile(POIDataSamples dataSamples, String filename) throws IOException {
+    private void fromFile(POIDataSamples dataSamples, String filename) throws IOException {
         File f = dataSamples.getFile(filename);
         try (VBAMacroReader r = new VBAMacroReader(f)) {
             assertMacroContents(dataSamples, r);
         }
     }
 
-    protected void fromStream(POIDataSamples dataSamples, String filename) throws IOException {
+    private void fromStream(POIDataSamples dataSamples, String filename) throws IOException {
         try (InputStream fis = dataSamples.openResourceAsStream(filename)) {
             try (VBAMacroReader r = new VBAMacroReader(fis)) {
                 assertMacroContents(dataSamples, r);
@@ -183,16 +183,16 @@ public class TestVBAMacroReader {
         }
     }
 
-    protected void fromNPOIFS(POIDataSamples dataSamples, String filename) throws IOException {
+    private void fromNPOIFS(POIDataSamples dataSamples, String filename) throws IOException {
         File f = dataSamples.getFile(filename);
-        try (NPOIFSFileSystem fs = new NPOIFSFileSystem(f)) {
+        try (POIFSFileSystem fs = new POIFSFileSystem(f)) {
             try (VBAMacroReader r = new VBAMacroReader(fs)) {
                 assertMacroContents(dataSamples, r);
             }
         }
     }
     
-    protected void assertMacroContents(POIDataSamples samples, VBAMacroReader r) throws IOException {
+    private void assertMacroContents(POIDataSamples samples, VBAMacroReader r) throws IOException {
         assertNotNull(r);
         Map<String,Module> contents = r.readMacroModules();
         assertNotNull(contents);

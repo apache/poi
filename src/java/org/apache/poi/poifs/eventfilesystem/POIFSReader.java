@@ -24,12 +24,12 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
-import org.apache.poi.poifs.filesystem.NPOIFSDocument;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSDocument;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSDocumentPath;
 import org.apache.poi.poifs.property.DirectoryProperty;
 import org.apache.poi.poifs.property.DocumentProperty;
-import org.apache.poi.poifs.property.NPropertyTable;
+import org.apache.poi.poifs.property.PropertyTable;
 import org.apache.poi.poifs.property.Property;
 import org.apache.poi.poifs.property.RootProperty;
 import org.apache.poi.util.IOUtils;
@@ -59,7 +59,7 @@ public class POIFSReader
      */
 
     public void read(final InputStream stream) throws IOException {
-        try (NPOIFSFileSystem poifs = new NPOIFSFileSystem(stream)) {
+        try (POIFSFileSystem poifs = new POIFSFileSystem(stream)) {
             read(poifs);
         }
     }
@@ -72,7 +72,7 @@ public class POIFSReader
      * @exception IOException on errors reading, or on invalid data
      */
     public void read(final File poifsFile) throws IOException {
-        try (NPOIFSFileSystem poifs = new NPOIFSFileSystem(poifsFile, true)) {
+        try (POIFSFileSystem poifs = new POIFSFileSystem(poifsFile, true)) {
             read(poifs);
         }
     }
@@ -84,11 +84,11 @@ public class POIFSReader
      *
      * @exception IOException on errors reading, or on invalid data
      */
-    public void read(final NPOIFSFileSystem poifs) throws IOException {
+    public void read(final POIFSFileSystem poifs) throws IOException {
         registryClosed = true;
 
         // get property table from the document
-        NPropertyTable properties = poifs.getPropertyTable();
+        PropertyTable properties = poifs.getPropertyTable();
 
         // process documents
         RootProperty root = properties.getRoot();
@@ -212,7 +212,7 @@ public class POIFSReader
         }
     }
 
-    private void processProperties(final NPOIFSFileSystem poifs, DirectoryProperty dir, final POIFSDocumentPath path) {
+    private void processProperties(final POIFSFileSystem poifs, DirectoryProperty dir, final POIFSDocumentPath path) {
         boolean hasChildren = false;
         for (final Property property : dir) {
             hasChildren = true;
@@ -222,10 +222,10 @@ public class POIFSReader
                 POIFSDocumentPath new_path = new POIFSDocumentPath(path,new String[]{name});
                 processProperties(poifs, (DirectoryProperty) property, new_path);
             } else {
-                NPOIFSDocument document = null;
+                POIFSDocument document = null;
                 for (POIFSReaderListener rl : registry.getListeners(path, name)) {
                     if (document == null) {
-                        document = new NPOIFSDocument((DocumentProperty)property, poifs);
+                        document = new POIFSDocument((DocumentProperty)property, poifs);
                     }
                     try (DocumentInputStream dis = new DocumentInputStream(document)) {
                         POIFSReaderEvent pe = new POIFSReaderEvent(dis, path, name);

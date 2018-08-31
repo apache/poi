@@ -81,7 +81,7 @@ public final class EntryUtils {
      * @param target
      *            is the target POIFS to copy to
      */
-    public static void copyNodes( NPOIFSFileSystem source, NPOIFSFileSystem target )
+    public static void copyNodes(POIFSFileSystem source, POIFSFileSystem target )
     throws IOException {
         copyNodes( source.getRoot(), target.getRoot() );
     }
@@ -96,7 +96,7 @@ public final class EntryUtils {
      * @param target is the target POIFS to copy to
      * @param excepts is a list of Entry Names to be excluded from the copy
      */
-    public static void copyNodes( NPOIFSFileSystem source, NPOIFSFileSystem target, List<String> excepts )
+    public static void copyNodes(POIFSFileSystem source, POIFSFileSystem target, List<String> excepts )
     throws IOException {
         copyNodes(
               new FilteringDirectoryNode(source.getRoot(), excepts),

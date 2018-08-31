@@ -285,24 +285,19 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
         @Override
         public void processPOIFSWriterEvent(POIFSWriterEvent event) {
             try {
-                OutputStream os = event.getStream();
+                try (OutputStream os = event.getStream();
+                     FileInputStream fis = new FileInputStream(fileOut)) {
 
-                // StreamSize (8 bytes): An unsigned integer that specifies the number of bytes used by data
-                // encrypted within the EncryptedData field, not including the size of the StreamSize field.
-                // Note that the actual size of the \EncryptedPackage stream (1) can be larger than this
-                // value, depending on the block size of the chosen encryption algorithm
-                byte buf[] = new byte[LittleEndianConsts.LONG_SIZE];
-                LittleEndian.putLong(buf, 0, pos);
-                os.write(buf);
+                    // StreamSize (8 bytes): An unsigned integer that specifies the number of bytes used by data
+                    // encrypted within the EncryptedData field, not including the size of the StreamSize field.
+                    // Note that the actual size of the \EncryptedPackage stream (1) can be larger than this
+                    // value, depending on the block size of the chosen encryption algorithm
+                    byte buf[] = new byte[LittleEndianConsts.LONG_SIZE];
+                    LittleEndian.putLong(buf, 0, pos);
+                    os.write(buf);
 
-                FileInputStream fis = new FileInputStream(fileOut);
-                try {
                     IOUtils.copy(fis, os);
-                } finally {
-                    fis.close();
                 }
-
-                os.close();
 
                 if (!fileOut.delete()) {
                     LOG.log(POILogger.ERROR, "Can't delete temporary encryption file: "+fileOut);

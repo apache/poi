@@ -35,7 +35,6 @@ import org.junit.runners.Suite;
     , TestOfficeXMLException.class
     , TestPOIFSDocumentPath.class
     , TestPOIFSFileSystem.class
-    , TestNPOIFSFileSystem.class
     , TestPropertySorter.class
     , TestOle10Native.class
 })

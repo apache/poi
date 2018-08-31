@@ -26,7 +26,7 @@ import java.io.InputStream;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hpbf.HPBFDocument;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.junit.Test;
 
 public final class TestPublisherTextExtractor {
@@ -97,7 +97,7 @@ public final class TestPublisherTextExtractor {
 
         // And with NPOIFS
         sample = _samples.openResourceAsStream("Sample.pub");
-        NPOIFSFileSystem fs = new NPOIFSFileSystem(sample);
+        POIFSFileSystem fs = new POIFSFileSystem(sample);
         HPBFDocument docNPOIFS = new HPBFDocument(fs);
         ext = new PublisherTextExtractor(docNPOIFS);
         assertEquals(SAMPLE_TEXT, ext.getText());
@@ -116,8 +116,6 @@ public final class TestPublisherTextExtractor {
     /**
      * We have the same file saved for Publisher 98, Publisher 2000 and
      * Publisher 2007. Check they all agree.
-     * 
-     * @throws Exception
      */
     @Test
     public void testMultipleVersions() throws Exception {

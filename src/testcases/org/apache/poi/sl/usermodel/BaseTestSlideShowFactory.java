@@ -29,9 +29,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
-public class BaseTestSlideShowFactory {
+public abstract class BaseTestSlideShowFactory {
     private static final POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
     @SuppressWarnings("resource")
@@ -57,7 +57,7 @@ public class BaseTestSlideShowFactory {
         SlideShow<?,?> ss;
         // from NPOIFS
         if (file.endsWith(".ppt")) {
-            NPOIFSFileSystem npoifs = new NPOIFSFileSystem(fromFile(file));
+            POIFSFileSystem npoifs = new POIFSFileSystem(fromFile(file));
             ss = SlideShowFactory.create(npoifs);
             assertNotNull(ss);
             npoifs.close();
@@ -97,7 +97,7 @@ public class BaseTestSlideShowFactory {
 
         // from protected NPOIFS
         if (protectedFile.endsWith(".ppt") || protectedFile.endsWith(".pptx")) {
-            NPOIFSFileSystem npoifs = new NPOIFSFileSystem(fromFile(protectedFile));
+            POIFSFileSystem npoifs = new POIFSFileSystem(fromFile(protectedFile));
             ss = SlideShowFactory.create(npoifs, password);
             assertNotNull(ss);
             npoifs.close();
@@ -108,7 +108,8 @@ public class BaseTestSlideShowFactory {
         }
     }
 
-    public static void testFactory(String file, String protectedFile, String password)
+    @SuppressWarnings("SameParameterValue")
+    protected static void testFactory(String file, String protectedFile, String password)
     throws Exception {
         testFactoryFromFile(file);
         testFactoryFromStream(file);

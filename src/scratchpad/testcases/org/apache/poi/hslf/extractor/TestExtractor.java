@@ -37,7 +37,6 @@ import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.sl.extractor.SlideShowExtractor;
 import org.apache.poi.sl.usermodel.ObjectShape;
@@ -376,14 +375,14 @@ public final class TestExtractor {
 
     /**
      * Tests that we can work with both {@link POIFSFileSystem}
-     * and {@link NPOIFSFileSystem}
+     * and {@link POIFSFileSystem}
      */
     @SuppressWarnings("resource")
     @Test
     public void testDifferentPOIFS() throws IOException {
         // Open the two filesystems
         File pptFile = slTests.getFile("basic_test_ppt_file.ppt");
-        try (final NPOIFSFileSystem npoifs = new NPOIFSFileSystem(pptFile, true)) {
+        try (final POIFSFileSystem npoifs = new POIFSFileSystem(pptFile, true)) {
             // Open directly
             try (SlideShow<?,?> ppt = SlideShowFactory.create(npoifs.getRoot());
                 SlideShowExtractor<?,?> extractor = new SlideShowExtractor<>(ppt)) {

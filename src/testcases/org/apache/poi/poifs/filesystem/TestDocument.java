@@ -45,7 +45,7 @@ public class TestDocument {
     @Test
     public void testNPOIFSDocument() throws IOException {
 
-        try (NPOIFSFileSystem poifs = new NPOIFSFileSystem()) {
+        try (POIFSFileSystem poifs = new POIFSFileSystem()) {
 
             // verify correct number of blocks get created for document
             // that is exact multiple of block size
@@ -65,7 +65,7 @@ public class TestDocument {
 
 
             // verify that output is correct
-            NPOIFSDocument document = checkDocument(poifs, LARGER_BIG_BLOCK_SIZE + 1);
+            POIFSDocument document = checkDocument(poifs, LARGER_BIG_BLOCK_SIZE + 1);
             DocumentProperty property = document.getDocumentProperty();
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
@@ -77,11 +77,11 @@ public class TestDocument {
         }
     }
 
-    private static NPOIFSDocument checkDocument(final NPOIFSFileSystem poifs, final int size) throws IOException {
+    private static POIFSDocument checkDocument(final POIFSFileSystem poifs, final int size) throws IOException {
         final byte[] input = new byte[size];
         IntStream.range(0, size).forEach(i -> input[i] = (byte)i);
 
-        NPOIFSDocument document = ((DocumentNode)poifs.createDocument(
+        POIFSDocument document = ((DocumentNode)poifs.createDocument(
             new SlowInputStream(new ByteArrayInputStream(input)),
         "entry"+poifs.getRoot().getEntryCount())).getDocument();
 
@@ -89,15 +89,15 @@ public class TestDocument {
         final int blockCount = (size + (blockSize-1)) / blockSize;
 
         final byte[] bytCpy = checkValues(blockCount, document, input);
-        final NPOIFSDocument copied = makeCopy(document,bytCpy);
+        final POIFSDocument copied = makeCopy(document,bytCpy);
 
         checkValues(blockCount, copied, input);
 
         return document;
     }
 
-    private static NPOIFSDocument makeCopy(NPOIFSDocument document, byte[] input) throws IOException {
-        NPOIFSFileSystem poifs = document.getFileSystem();
+    private static POIFSDocument makeCopy(POIFSDocument document, byte[] input) throws IOException {
+        POIFSFileSystem poifs = document.getFileSystem();
         String name = "test" + input.length;
         DirectoryNode root = poifs.getRoot();
         if (root.hasEntry(name)) {
@@ -108,7 +108,7 @@ public class TestDocument {
             .getDocument();
     }
 
-    private static byte[] checkValues(final int blockCountExp, NPOIFSDocument document, byte[] input) throws IOException {
+    private static byte[] checkValues(final int blockCountExp, POIFSDocument document, byte[] input) throws IOException {
         assertNotNull(document);
         assertNotNull(document.getDocumentProperty().getDocument());
         assertEquals(document, document.getDocumentProperty().getDocument());

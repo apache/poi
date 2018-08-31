@@ -53,7 +53,6 @@ import org.apache.poi.hssf.record.RecordBase;
 import org.apache.poi.hssf.record.WindowOneRecord;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.usermodel.BaseTestWorkbook;
@@ -614,7 +613,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 
     /**
      * Tests that we can work with both {@link POIFSFileSystem}
-     *  and {@link NPOIFSFileSystem}
+     *  and {@link POIFSFileSystem}
      */
     @Test
     public void differentPOIFS() throws Exception {
@@ -622,7 +621,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
        DirectoryNode[] files = new DirectoryNode[2];
         try (POIFSFileSystem poifsFileSystem = new POIFSFileSystem(HSSFTestDataSamples.openSampleFileStream("Simple.xls"))) {
             files[0] = poifsFileSystem.getRoot();
-            try (NPOIFSFileSystem npoifsFileSystem = new NPOIFSFileSystem(HSSFTestDataSamples.getSampleFile("Simple.xls"))) {
+            try (POIFSFileSystem npoifsFileSystem = new POIFSFileSystem(HSSFTestDataSamples.getSampleFile("Simple.xls"))) {
                 files[1] = npoifsFileSystem.getRoot();
 
                 // Open without preserving nodes
@@ -654,7 +653,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
        DirectoryNode[] files = new DirectoryNode[2];
         try (POIFSFileSystem poifsFileSystem = new POIFSFileSystem(HSSFTestDataSamples.openSampleFileStream("WithEmbeddedObjects.xls"))) {
             files[0] = poifsFileSystem.getRoot();
-            try (NPOIFSFileSystem npoifsFileSystem = new NPOIFSFileSystem(HSSFTestDataSamples.getSampleFile("WithEmbeddedObjects.xls"))) {
+            try (POIFSFileSystem npoifsFileSystem = new POIFSFileSystem(HSSFTestDataSamples.getSampleFile("WithEmbeddedObjects.xls"))) {
                 files[1] = npoifsFileSystem.getRoot();
 
                 // Check the embedded parts
@@ -689,7 +688,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     @Test
     public void writeWorkbookFromNPOIFS() throws IOException {
         try (InputStream is = HSSFTestDataSamples.openSampleFileStream("WithEmbeddedObjects.xls");
-             NPOIFSFileSystem fs = new NPOIFSFileSystem(is)) {
+             POIFSFileSystem fs = new POIFSFileSystem(is)) {
             // Start as NPOIFS
             HSSFWorkbook wb = new HSSFWorkbook(fs.getRoot(), true);
             assertEquals(3, wb.getNumberOfSheets());
@@ -1116,7 +1115,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     
             // edit the workbook
             {
-                try (NPOIFSFileSystem fs = new NPOIFSFileSystem(file, false)) {
+                try (POIFSFileSystem fs = new POIFSFileSystem(file, false)) {
                     DirectoryNode root = fs.getRoot();
                     final Workbook workbook = new HSSFWorkbook(root, true);
                     final Sheet sheet = workbook.getSheet("foo");
@@ -1157,7 +1156,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         assertCloseDoesNotModifyFile(filename, wb);
         
         // File via NPOIFileStream (java.nio)
-        wb = new HSSFWorkbook(new NPOIFSFileSystem(file));
+        wb = new HSSFWorkbook(new POIFSFileSystem(file));
         assertCloseDoesNotModifyFile(filename, wb);
         
         // InputStream
@@ -1204,7 +1203,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         wb.close();
         
         // Can't work for Read-Only files
-        NPOIFSFileSystem fs = new NPOIFSFileSystem(
+        POIFSFileSystem fs = new POIFSFileSystem(
                 POIDataSamples.getSpreadSheetInstance().getFile("SampleSS.xls"), true);
         wb = new HSSFWorkbook(fs);
         try {
@@ -1226,7 +1225,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         }
         
         // Open from the temp file in read-write mode
-        HSSFWorkbook wb = new HSSFWorkbook(new NPOIFSFileSystem(file, false));
+        HSSFWorkbook wb = new HSSFWorkbook(new POIFSFileSystem(file, false));
         assertEquals(3, wb.getNumberOfSheets());
         
         // Change
@@ -1238,7 +1237,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         wb.write();
         wb.close();
         
-        wb = new HSSFWorkbook(new NPOIFSFileSystem(file));
+        wb = new HSSFWorkbook(new POIFSFileSystem(file));
         assertEquals(1, wb.getNumberOfSheets());
         assertEquals("Changed!", wb.getSheetAt(0).getRow(0).getCell(0).toString());
 
@@ -1257,7 +1256,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         wb.close();
         
         // Read and check
-        wb = new HSSFWorkbook(new NPOIFSFileSystem(file));
+        wb = new HSSFWorkbook(new POIFSFileSystem(file));
         assertEquals(3, wb.getNumberOfSheets());
         wb.close();
     }

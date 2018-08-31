@@ -29,19 +29,20 @@ import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.DocumentNode;
 import org.apache.poi.poifs.filesystem.Entry;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
-import org.apache.poi.poifs.filesystem.NPOIFSStream;
-import org.apache.poi.poifs.property.NPropertyTable;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSStream;
+import org.apache.poi.poifs.property.PropertyTable;
 import org.apache.poi.poifs.storage.HeaderBlock;
 import org.apache.poi.util.IOUtils;
 
 /**
  * Dump internal structure of a OLE2 file into file system
  */
-public class POIFSDump {
-
+public final class POIFSDump {
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
+
+    private POIFSDump() {}
 
     public static void main(String[] args) throws IOException {
         if (args.length == 0) {
@@ -66,14 +67,8 @@ public class POIFSDump {
             }
 
             System.out.println("Dumping " + filename);
-            FileInputStream is = new FileInputStream(filename);
-            NPOIFSFileSystem fs;
-            try {
-                fs = new NPOIFSFileSystem(is);
-            } finally {
-                is.close();
-            }
-            try {
+            try (FileInputStream is = new FileInputStream(filename);
+                 POIFSFileSystem fs = new POIFSFileSystem(is)) {
                 DirectoryEntry root = fs.getRoot();
                 String filenameWithoutPath = new File(filename).getName();
                 File dumpDir = new File(filenameWithoutPath + "_dump");
@@ -89,7 +84,7 @@ public class POIFSDump {
                     dump(fs, header.getPropertyStart(), "properties", file);
                 }
                 if (dumpMini) {
-                    NPropertyTable props = fs.getPropertyTable();
+                    PropertyTable props = fs.getPropertyTable();
                     int startBlock = props.getRoot().getStartBlock();
                     if (startBlock == POIFSConstants.END_OF_CHAIN) {
                         System.err.println("No Mini Stream in file");
@@ -97,8 +92,6 @@ public class POIFSDump {
                         dump(fs, startBlock, "mini-stream", file);
                     }
                 }
-            } finally {
-                fs.close();
             }
         }
     }
@@ -112,11 +105,8 @@ public class POIFSDump {
                 byte[] bytes = IOUtils.toByteArray(is);
                 is.close();
 
-                OutputStream out = new FileOutputStream(new File(parent, node.getName().trim()));
-                try {
-                	out.write(bytes);
-                } finally {
-                	out.close();
+                try (OutputStream out = new FileOutputStream(new File(parent, node.getName().trim()))) {
+                    out.write(bytes);
                 }
             } else if (entry instanceof DirectoryEntry){
                 DirectoryEntry dir = (DirectoryEntry)entry;
@@ -130,11 +120,10 @@ public class POIFSDump {
             }
         }
     }
-    public static void dump(NPOIFSFileSystem fs, int startBlock, String name, File parent) throws IOException {
+    public static void dump(POIFSFileSystem fs, int startBlock, String name, File parent) throws IOException {
         File file = new File(parent, name);
-        FileOutputStream out = new FileOutputStream(file);
-        try {
-            NPOIFSStream stream = new NPOIFSStream(fs, startBlock);
+        try (FileOutputStream out = new FileOutputStream(file)) {
+            POIFSStream stream = new POIFSStream(fs, startBlock);
 
             byte[] b = IOUtils.safelyAllocate(fs.getBigBlockSize(), MAX_RECORD_LENGTH);
             for (ByteBuffer bb : stream) {
@@ -142,8 +131,6 @@ public class POIFSDump {
                 bb.get(b);
                 out.write(b, 0, len);
             }
-        } finally {
-            out.close();
         }
     }
 }

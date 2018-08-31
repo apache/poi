@@ -30,7 +30,7 @@ import java.nio.charset.StandardCharsets;
 import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
@@ -54,7 +54,7 @@ public final class PPTXMLDump {
     private boolean hexHeader = true;
 
     public PPTXMLDump(File ppt) throws IOException {
-        NPOIFSFileSystem fs = new NPOIFSFileSystem(ppt, true);
+        POIFSFileSystem fs = new POIFSFileSystem(ppt, true);
         try {
             docstream = readEntry(fs, HSLFSlideShow.POWERPOINT_DOCUMENT);
             pictstream = readEntry(fs, PICTURES_ENTRY);
@@ -63,7 +63,7 @@ public final class PPTXMLDump {
         }
     }
 
-    private static byte[] readEntry(NPOIFSFileSystem fs, String entry)
+    private static byte[] readEntry(POIFSFileSystem fs, String entry)
     throws IOException {
         DirectoryNode dn = fs.getRoot();
         if (!dn.hasEntry(entry)) {
@@ -198,19 +198,19 @@ public final class PPTXMLDump {
             return;
         }
         boolean outFile = false;
-        for (int i = 0; i < args.length; i++){
+        for (String arg : args) {
 
-            if (args[i].startsWith("-")) {
-                if ("-f".equals(args[i])){
+            if (arg.startsWith("-")) {
+                if ("-f".equals(arg)) {
                     //write ouput to a file
                     outFile = true;
                 }
             } else {
-                File ppt = new File(args[i]);
+                File ppt = new File(arg);
                 PPTXMLDump dump = new PPTXMLDump(ppt);
-                System.out.println("Dumping " + args[i]);
+                System.out.println("Dumping " + arg);
 
-                if (outFile){
+                if (outFile) {
                     FileOutputStream fos = new FileOutputStream(ppt.getName() + ".xml");
                     OutputStreamWriter out = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
                     dump.dump(out);
