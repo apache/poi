@@ -2558,19 +2558,19 @@ under the License.
             <regexp pattern="&lt;release.*date=&quot;.*\?\?&quot;&gt;"/>
             <substitution expression="&lt;!-- release version=&quot;${rel_next}&quot; date=&quot;${tstamp_next}-??&quot;&gt;&#10;    &lt;/release --&gt;&#10;&#10;    &lt;release version=&quot;${version.id}&quot; date=&quot;${tstamp_rel}&quot;&gt;"/>
             <fileset dir="src/documentation/content/xdocs">
-              <include name="status.xml"/>
+              <include name="changes.xml"/>
             </fileset>
         </replaceregexp>
 
-        <fixcrlf srcdir="." includes="src/documentation/content/xdocs/status.xml" eol="unix" eof="remove" />
+        <fixcrlf srcdir="." includes="src/documentation/content/xdocs/changes.xml" eol="unix" eof="remove" />
 
         <!-- can't combine updating and pinning of the documentation ... so we need two commits -->
         <!-- (revision)properties can't be set and read within one svn block -->
-        <echo message="updating build.xml and status.xml"/>
-        <exec command="svn ci --username ${settings.apache-id.username} --password ${settings.apache-id.password} -m 'release prepare for ${version.id} - updating build.xml and status.xml' build.xml src/documentation/content/xdocs/status.xml"/>
+        <echo message="updating build.xml and changes.xml"/>
+        <exec command="svn ci --username ${settings.apache-id.username} --password ${settings.apache-id.password} -m 'release prepare for ${version.id} - updating build.xml and changes.xml' build.xml src/documentation/content/xdocs/changes.xml"/>
         <svn refid="svn.settings">
-            <!--<commit message="release prepare for ${version.id} - updating build.xml and status.xml" recurse="false">
-                <fileset dir="." includes="build.xml,src/documentation/content/xdocs/status.xml"/>
+            <!--<commit message="release prepare for ${version.id} - updating build.xml and changes.xml" recurse="false">
+                <fileset dir="." includes="build.xml,src/documentation/content/xdocs/changes.xml"/>
             </commit>-->
             <update dir="." recurse="true"/>
             <status path="." revisionProperty="svn_version1"/>
@@ -2738,7 +2738,7 @@ under the License.
     </macrodef>
 
     <!-- TODO: currently this only saves a copy and paste snipplet to a file ...
-         would be nice if it really changes status.xml and download.xml
+         would be nice if it really changes changes.xml and download.xml
          Doesn't work with Java6 - the https urls can't be accessed via loadChecksum
      -->
     <target name="update-download">
