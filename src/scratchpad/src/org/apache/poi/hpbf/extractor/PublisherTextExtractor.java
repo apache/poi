@@ -27,7 +27,6 @@ import org.apache.poi.hpbf.model.qcbits.QCBit;
 import org.apache.poi.hpbf.model.qcbits.QCTextBit;
 import org.apache.poi.hpbf.model.qcbits.QCPLCBit.Type12;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
@@ -45,9 +44,6 @@ public final class PublisherTextExtractor extends POIOLE2TextExtractor {
       this(new HPBFDocument(dir));
    }
    public PublisherTextExtractor(POIFSFileSystem fs) throws IOException {
-      this(new HPBFDocument(fs));
-   }
-   public PublisherTextExtractor(NPOIFSFileSystem fs) throws IOException {
       this(new HPBFDocument(fs));
    }
    public PublisherTextExtractor(InputStream is) throws IOException {
@@ -69,10 +65,10 @@ public final class PublisherTextExtractor extends POIOLE2TextExtractor {
 
 		// Get the text from the Quill Contents
 		QCBit[] bits = doc.getQuillContents().getBits();
-		for(int i=0; i<bits.length; i++) {
-			if(bits[i] != null && bits[i] instanceof QCTextBit) {
-				QCTextBit t = (QCTextBit)bits[i];
-				text.append( t.getText().replace('\r', '\n') );
+		for (QCBit bit1 : bits) {
+			if (bit1 != null && bit1 instanceof QCTextBit) {
+				QCTextBit t = (QCTextBit) bit1;
+				text.append(t.getText().replace('\r', '\n'));
 			}
 		}
 
@@ -82,10 +78,10 @@ public final class PublisherTextExtractor extends POIOLE2TextExtractor {
 		//  hyperlink is in, and we have yet to figure out
 		//  how to tie that together.
 		if(hyperlinksByDefault) {
-			for(int i=0; i<bits.length; i++) {
-				if(bits[i] != null && bits[i] instanceof Type12) {
-					Type12 hyperlinks = (Type12)bits[i];
-					for(int j=0; j<hyperlinks.getNumberOfHyperlinks(); j++) {
+			for (QCBit bit : bits) {
+				if (bit != null && bit instanceof Type12) {
+					Type12 hyperlinks = (Type12) bit;
+					for (int j = 0; j < hyperlinks.getNumberOfHyperlinks(); j++) {
 						text.append("<");
 						text.append(hyperlinks.getHyperlink(j));
 						text.append(">\n");
@@ -107,15 +103,12 @@ public final class PublisherTextExtractor extends POIOLE2TextExtractor {
 			System.err.println("  PublisherTextExtractor <file.pub>");
 		}
 
-		for(int i=0; i<args.length; i++) {
-		    FileInputStream fis = new FileInputStream(args[i]);
-		    try {
-		        PublisherTextExtractor te = new PublisherTextExtractor(fis);
-		        System.out.println(te.getText());
-		        te.close();
-		    } finally {
-		        fis.close();
-		    }
+		for (String arg : args) {
+			try (FileInputStream fis = new FileInputStream(arg)) {
+				PublisherTextExtractor te = new PublisherTextExtractor(fis);
+				System.out.println(te.getText());
+				te.close();
+			}
 		}
 	}
 }

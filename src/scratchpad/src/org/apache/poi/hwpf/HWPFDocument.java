@@ -70,7 +70,6 @@ import org.apache.poi.poifs.crypt.standard.EncryptionRecord;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.EntryUtils;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
@@ -90,26 +89,26 @@ public final class HWPFDocument extends HWPFDocumentCore {
     private static final String STREAM_DATA = "Data";
 
     /** table stream buffer*/
-    protected byte[] _tableStream;
+    private byte[] _tableStream;
 
     /** data stream buffer*/
-    protected byte[] _dataStream;
+    private byte[] _dataStream;
 
     /** Document wide Properties*/
-    protected DocumentProperties _dop;
+    private DocumentProperties _dop;
 
     /** Contains text of the document wrapped in a obfuscated Word data
      * structure*/
-    protected ComplexFileTable _cft;
+    private ComplexFileTable _cft;
 
     /** Contains text buffer linked directly to single-piece document text piece */
-    protected StringBuilder _text;
+    private StringBuilder _text;
 
     /** Holds the save history for this document. */
-    protected SavedByTable _sbt;
+    private SavedByTable _sbt;
 
     /** Holds the revision mark authors for this document. */
-    protected RevisionMarkAuthorTable _rmat;
+    private RevisionMarkAuthorTable _rmat;
 
     /** Holds FSBA (shape) information */
     private FSPATable _fspaHeaders;
@@ -118,46 +117,40 @@ public final class HWPFDocument extends HWPFDocumentCore {
     private FSPATable _fspaMain;
 
     /** Escher Drawing Group information */
-    protected EscherRecordHolder _escherRecordHolder;
+    private EscherRecordHolder _escherRecordHolder;
 
     /** Holds pictures table */
-    protected PicturesTable _pictures;
+    private PicturesTable _pictures;
 
     /** Holds Office Art objects */
-    protected OfficeDrawingsImpl _officeDrawingsHeaders;
+    private OfficeDrawingsImpl _officeDrawingsHeaders;
 
     /** Holds Office Art objects */
-    protected OfficeDrawingsImpl _officeDrawingsMain;
+    private OfficeDrawingsImpl _officeDrawingsMain;
 
     /** Holds the bookmarks tables */
-    protected BookmarksTables _bookmarksTables;
+    private BookmarksTables _bookmarksTables;
 
     /** Holds the bookmarks */
-    protected Bookmarks _bookmarks;
+    private Bookmarks _bookmarks;
 
     /** Holds the ending notes tables */
-    protected NotesTables _endnotesTables = new NotesTables( NoteType.ENDNOTE );
+    private NotesTables _endnotesTables = new NotesTables( NoteType.ENDNOTE );
 
     /** Holds the footnotes */
-    protected Notes _endnotes = new NotesImpl( _endnotesTables );
+    private Notes _endnotes = new NotesImpl( _endnotesTables );
 
     /** Holds the footnotes tables */
-    protected NotesTables _footnotesTables = new NotesTables( NoteType.FOOTNOTE );
+    private NotesTables _footnotesTables = new NotesTables( NoteType.FOOTNOTE );
 
     /** Holds the footnotes */
-    protected Notes _footnotes = new NotesImpl( _footnotesTables );
+    private Notes _footnotes = new NotesImpl( _footnotesTables );
 
     /** Holds the fields PLCFs */
-    protected FieldsTables _fieldsTables;
+    private FieldsTables _fieldsTables;
 
     /** Holds the fields */
-    protected Fields _fields;
-
-    protected HWPFDocument()
-    {
-        super();
-        this._text = new StringBuilder("\r");
-    }
+    private Fields _fields;
 
     /**
      * This constructor loads a Word document from an InputStream.
@@ -599,7 +592,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
      */
     @Override
     public void write(File newFile) throws IOException {
-        NPOIFSFileSystem pfs = POIFSFileSystem.create(newFile);
+        POIFSFileSystem pfs = POIFSFileSystem.create(newFile);
         write(pfs, true);
         pfs.writeFilesystem();
     }
@@ -618,12 +611,12 @@ public final class HWPFDocument extends HWPFDocumentCore {
      */
     @Override
     public void write(OutputStream out) throws IOException {
-        NPOIFSFileSystem pfs = new NPOIFSFileSystem();
+        POIFSFileSystem pfs = new POIFSFileSystem();
         write(pfs, true);
         pfs.writeFilesystem( out );
     }
 
-    private void write(NPOIFSFileSystem pfs, boolean copyOtherEntries) throws IOException {
+    private void write(POIFSFileSystem pfs, boolean copyOtherEntries) throws IOException {
         // clear the offsets and sizes in our FileInformationBlock.
         _fib.clearOffsetsSizes();
 
@@ -999,7 +992,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
         return bos.toByteArray();
     }
     
-    private static void write(NPOIFSFileSystem pfs, byte[] data, String name) throws IOException {
+    private static void write(POIFSFileSystem pfs, byte[] data, String name) throws IOException {
         pfs.createOrUpdateDocument(new ByteArrayInputStream(data), name);
     }
 

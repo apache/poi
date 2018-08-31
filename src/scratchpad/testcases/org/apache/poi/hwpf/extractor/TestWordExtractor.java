@@ -34,7 +34,6 @@ import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.hwpf.OldWordFileFormatException;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.Entry;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.StringUtil;
 import org.junit.Test;
@@ -338,13 +337,13 @@ public final class TestWordExtractor {
     
     /**
      * Tests that we can work with both {@link POIFSFileSystem}
-     *  and {@link NPOIFSFileSystem}
+     *  and {@link POIFSFileSystem}
      */
     @Test
     public void testDifferentPOIFS() throws Exception {
        // Open the two filesystems
        File file = docTests.getFile("test2.doc");
-       try (NPOIFSFileSystem npoifs = new NPOIFSFileSystem(file, true)) {
+       try (POIFSFileSystem npoifs = new POIFSFileSystem(file, true)) {
 
            DirectoryNode dir = npoifs.getRoot();
 

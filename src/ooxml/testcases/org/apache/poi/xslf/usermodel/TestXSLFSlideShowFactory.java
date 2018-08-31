@@ -28,7 +28,7 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.crypt.EncryptionMode;
 import org.apache.poi.poifs.crypt.Encryptor;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.sl.usermodel.BaseTestSlideShowFactory;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
@@ -93,27 +93,20 @@ public final class TestXSLFSlideShowFactory extends BaseTestSlideShowFactory {
     }
 
     private static File createProtected() throws IOException, GeneralSecurityException {
-        return createProtected(filename, password);
-    }
+        try (POIFSFileSystem fs = new POIFSFileSystem()) {
+            EncryptionInfo info = new EncryptionInfo(EncryptionMode.agile);
+            Encryptor enc = info.getEncryptor();
+            enc.confirmPassword(password);
+            try (InputStream fis = _slTests.openResourceAsStream(filename);
+                 OutputStream os = enc.getDataStream(fs)) {
+                IOUtils.copy(fis, os);
+            }
 
-    private static File createProtected(String basefile, String password)
-    throws IOException, GeneralSecurityException {
-        NPOIFSFileSystem fs = new NPOIFSFileSystem();
-        EncryptionInfo info = new EncryptionInfo(EncryptionMode.agile);
-        Encryptor enc = info.getEncryptor();
-        enc.confirmPassword(password);
-        InputStream fis = _slTests.openResourceAsStream(basefile);
-        OutputStream os = enc.getDataStream(fs);
-        IOUtils.copy(fis, os);
-        os.close();
-        fis.close();
-        
-        File tf = TempFile.createTempFile("test-xslf-slidefactory", ".pptx");
-        FileOutputStream fos = new FileOutputStream(tf);
-        fs.writeFilesystem(fos);
-        fos.close();
-        fs.close();
-
-        return tf;
+            File tf = TempFile.createTempFile("test-xslf-slidefactory", ".pptx");
+            try (FileOutputStream fos = new FileOutputStream(tf)) {
+                fs.writeFilesystem(fos);
+            }
+            return tf;
+        }
     }
 }

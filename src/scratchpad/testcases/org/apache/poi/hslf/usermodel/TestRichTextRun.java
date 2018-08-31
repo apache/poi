@@ -33,7 +33,7 @@ import java.util.List;
 import org.apache.poi.hslf.HSLFTestDataSamples;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.SlideListWithText;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -396,7 +396,7 @@ public final class TestRichTextRun {
 	 */
 	private static void assertMatchesFileC(HSLFSlideShow s) throws IOException {
 		// Grab the bytes of the file
-	    NPOIFSFileSystem fs = new NPOIFSFileSystem(HSLFTestDataSamples.openSampleFileStream(filenameC));
+	    POIFSFileSystem fs = new POIFSFileSystem(HSLFTestDataSamples.openSampleFileStream(filenameC));
 	    InputStream is = fs.createDocumentInputStream(HSLFSlideShow.POWERPOINT_DOCUMENT);
 	    byte[] raw_file = IOUtils.toByteArray(is);
 	    is.close();
@@ -405,7 +405,7 @@ public final class TestRichTextRun {
 		// Now write out the slideshow
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		s.write(baos);
-		fs = new NPOIFSFileSystem(new ByteArrayInputStream(baos.toByteArray()));
+		fs = new POIFSFileSystem(new ByteArrayInputStream(baos.toByteArray()));
 		is = fs.createDocumentInputStream(HSLFSlideShow.POWERPOINT_DOCUMENT);
 		byte[] raw_ss = IOUtils.toByteArray(is);
         is.close();
@@ -515,7 +515,7 @@ public final class TestRichTextRun {
 		slide.addShape(shape);
 
 		assertEquals(42.0, tr.getFontSize(), 0);
-		assertEquals(true, rt.isBullet());
+		assertTrue(rt.isBullet());
 		assertEquals(50.0, rt.getLeftMargin(), 0);
 		assertEquals(0, rt.getIndent(), 0);
 		assertEquals('\u263A', (char)rt.getBulletChar());
@@ -530,7 +530,7 @@ public final class TestRichTextRun {
 		rt = shape.getTextParagraphs().get(0);
 		tr = rt.getTextRuns().get(0);
 		assertEquals(42.0, tr.getFontSize(), 0);
-		assertEquals(true, rt.isBullet());
+		assertTrue(rt.isBullet());
 		assertEquals(50.0, rt.getLeftMargin(), 0);
 		assertEquals(0, rt.getIndent(), 0);
 		assertEquals('\u263A', (char)rt.getBulletChar());
@@ -615,7 +615,7 @@ public final class TestRichTextRun {
 	}
 	
     @Test
-	public void testChineseParagraphs() throws Exception {
+	public void testChineseParagraphs() {
       List<HSLFTextRun> rts;
       HSLFTextRun rt;
       List<List<HSLFTextParagraph>> txt;

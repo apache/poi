@@ -30,7 +30,7 @@ import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentFactoryHelper;
 import org.apache.poi.poifs.filesystem.FileMagic;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.util.IOUtils;
 
@@ -38,7 +38,7 @@ public class SlideShowFactory {
     /**
      * Creates a SlideShow from the given NPOIFSFileSystem.
      *
-     * @param fs The {@link NPOIFSFileSystem} to read the document from
+     * @param fs The {@link POIFSFileSystem} to read the document from
      *
      * @return The created SlideShow
      *
@@ -47,7 +47,7 @@ public class SlideShowFactory {
     public static <
         S extends Shape<S,P>,
         P extends TextParagraph<S,P,? extends TextRun>
-    > SlideShow<S,P> create(NPOIFSFileSystem fs) throws IOException {
+    > SlideShow<S,P> create(POIFSFileSystem fs) throws IOException {
         return create(fs, null);
     }
 
@@ -55,7 +55,7 @@ public class SlideShowFactory {
      * Creates a SlideShow from the given NPOIFSFileSystem, which may
      * be password protected
      *
-     * @param fs The {@link NPOIFSFileSystem} to read the document from
+     * @param fs The {@link POIFSFileSystem} to read the document from
      * @param password The password that should be used or null if no password is necessary.
      *
      * @return The created SlideShow
@@ -65,7 +65,7 @@ public class SlideShowFactory {
     public static <
         S extends Shape<S,P>,
         P extends TextParagraph<S,P,? extends TextRun>
-    > SlideShow<S,P> create(final NPOIFSFileSystem fs, String password) throws IOException {
+    > SlideShow<S,P> create(final POIFSFileSystem fs, String password) throws IOException {
         return create(fs.getRoot(), password);
     }
 
@@ -188,7 +188,7 @@ public class SlideShowFactory {
         
         switch (fm) {
         case OLE2:
-            NPOIFSFileSystem fs = new NPOIFSFileSystem(is);
+            POIFSFileSystem fs = new POIFSFileSystem(is);
             return create(fs, password);
         case OOXML:
             return createXSLFSlideShow(is);
@@ -264,9 +264,9 @@ public class SlideShowFactory {
             throw new FileNotFoundException(file.toString());
         }
 
-        NPOIFSFileSystem fs = null;
+        POIFSFileSystem fs = null;
         try {
-            fs = new NPOIFSFileSystem(file, readOnly);
+            fs = new POIFSFileSystem(file, readOnly);
             return create(fs, password);
         } catch(OfficeXmlFileException e) {
             IOUtils.closeQuietly(fs);

@@ -26,7 +26,6 @@ import java.io.IOException;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
@@ -79,13 +78,6 @@ public class EncryptionInfo implements Cloneable {
      * Opens for decryption
      */
     public EncryptionInfo(POIFSFileSystem fs) throws IOException {
-       this(fs.getRoot());
-    }
-    
-    /**
-     * Opens for decryption
-     */
-    public EncryptionInfo(NPOIFSFileSystem fs) throws IOException {
        this(fs.getRoot());
     }
     
@@ -209,7 +201,7 @@ public class EncryptionInfo implements Cloneable {
      * @throws IllegalAccessException if the builder class can't be loaded
      * @throws InstantiationException if the builder class can't be loaded
      */
-    @SuppressWarnings("WeakerAccess")
+    @SuppressWarnings({"WeakerAccess", "JavadocReference"})
     protected static EncryptionInfoBuilder getBuilder(EncryptionMode encryptionMode)
     throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         ClassLoader cl = EncryptionInfo.class.getClassLoader();

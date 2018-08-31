@@ -30,7 +30,7 @@ import org.apache.poi.ddf.EscherTextboxRecord;
 import org.apache.poi.hslf.record.HSLFEscherRecordFactory;
 import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
@@ -77,7 +77,7 @@ public final class SlideShowDumper {
 		filename = args[1];
 	}
 
-	NPOIFSFileSystem poifs = new NPOIFSFileSystem(new File(filename));
+	POIFSFileSystem poifs = new POIFSFileSystem(new File(filename));
 	SlideShowDumper foo = new SlideShowDumper(poifs, System.out);
     poifs.close();
 
@@ -99,7 +99,7 @@ public final class SlideShowDumper {
    * @param filesystem the POIFS FileSystem to read from
    * @throws IOException if there is a problem while parsing the document.
    */
-  public SlideShowDumper(NPOIFSFileSystem filesystem, PrintStream out) throws IOException {
+  public SlideShowDumper(POIFSFileSystem filesystem, PrintStream out) throws IOException {
 	// Grab the document stream
 	InputStream is = filesystem.createDocumentInputStream(HSLFSlideShow.POWERPOINT_DOCUMENT);
 	docstream = IOUtils.toByteArray(is);

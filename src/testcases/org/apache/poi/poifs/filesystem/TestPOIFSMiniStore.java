@@ -19,6 +19,8 @@ package org.apache.poi.poifs.filesystem;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
@@ -33,7 +35,8 @@ import org.junit.Test;
 /**
  * Tests for the Mini Store in the NIO POIFS
  */
-public final class TestNPOIFSMiniStore {
+@SuppressWarnings("CatchMayIgnoreException")
+public final class TestPOIFSMiniStore {
    private static final POIDataSamples _inst = POIDataSamples.getPOIFSInstance();
    
    /**
@@ -43,12 +46,12 @@ public final class TestNPOIFSMiniStore {
    @Test
    public void testNextBlock() throws Exception {
       // It's the same on 512 byte and 4096 byte block files!
-      NPOIFSFileSystem fsA = new NPOIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
-      NPOIFSFileSystem fsB = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
-      NPOIFSFileSystem fsC = new NPOIFSFileSystem(_inst.getFile("BlockSize4096.zvi"));
-      NPOIFSFileSystem fsD = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize4096.zvi"));
-      for(NPOIFSFileSystem fs : new NPOIFSFileSystem[] {fsA,fsB,fsC,fsD}) {
-         NPOIFSMiniStore ministore = fs.getMiniStore();
+      POIFSFileSystem fsA = new POIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
+      POIFSFileSystem fsB = new POIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
+      POIFSFileSystem fsC = new POIFSFileSystem(_inst.getFile("BlockSize4096.zvi"));
+      POIFSFileSystem fsD = new POIFSFileSystem(_inst.openResourceAsStream("BlockSize4096.zvi"));
+      for(POIFSFileSystem fs : new POIFSFileSystem[] {fsA,fsB,fsC,fsD}) {
+         POIFSMiniStore ministore = fs.getMiniStore();
          
          // 0 -> 51 is one stream
          for(int i=0; i<50; i++) {
@@ -121,16 +124,16 @@ public final class TestNPOIFSMiniStore {
    @Test
    public void testGetBlock() throws Exception {
       // It's the same on 512 byte and 4096 byte block files!
-      NPOIFSFileSystem fsA = new NPOIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
-      NPOIFSFileSystem fsB = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
-      NPOIFSFileSystem fsC = new NPOIFSFileSystem(_inst.getFile("BlockSize4096.zvi"));
-      NPOIFSFileSystem fsD = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize4096.zvi"));
-      for(NPOIFSFileSystem fs : new NPOIFSFileSystem[] {fsA,fsB,fsC,fsD}) {
+      POIFSFileSystem fsA = new POIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
+      POIFSFileSystem fsB = new POIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
+      POIFSFileSystem fsC = new POIFSFileSystem(_inst.getFile("BlockSize4096.zvi"));
+      POIFSFileSystem fsD = new POIFSFileSystem(_inst.openResourceAsStream("BlockSize4096.zvi"));
+      for(POIFSFileSystem fs : new POIFSFileSystem[] {fsA,fsB,fsC,fsD}) {
          // Mini stream should be at big block zero
          assertEquals(0, fs._get_property_table().getRoot().getStartBlock());
          
          // Grab the ministore
-         NPOIFSMiniStore ministore = fs.getMiniStore();
+         POIFSMiniStore ministore = fs.getMiniStore();
          ByteBuffer b;
          
          // Runs from the start of the data section in 64 byte chungs
@@ -191,12 +194,12 @@ public final class TestNPOIFSMiniStore {
     */
    @Test
    public void testGetFreeBlockWithSpare() throws Exception {
-      NPOIFSFileSystem fs = new NPOIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
-      NPOIFSMiniStore ministore = fs.getMiniStore();
+      POIFSFileSystem fs = new POIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
+      POIFSMiniStore ministore = fs.getMiniStore();
       
       // Our 2nd SBAT block has spares
-      assertEquals(false, ministore.getBATBlockAndIndex(0).getBlock().hasFreeSectors());
-      assertEquals(true,  ministore.getBATBlockAndIndex(128).getBlock().hasFreeSectors());
+      assertFalse(ministore.getBATBlockAndIndex(0).getBlock().hasFreeSectors());
+      assertTrue(ministore.getBATBlockAndIndex(128).getBlock().hasFreeSectors());
       
       // First free one at 181
       assertEquals(POIFSConstants.UNUSED_BLOCK, ministore.getNextBlock(181));
@@ -223,8 +226,8 @@ public final class TestNPOIFSMiniStore {
     */
    @Test
    public void testGetFreeBlockWithNoneSpare() throws Exception {
-      NPOIFSFileSystem fs = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
-      NPOIFSMiniStore ministore = fs.getMiniStore();
+      POIFSFileSystem fs = new POIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
+      POIFSMiniStore ministore = fs.getMiniStore();
       
       // We've spare ones from 181 to 255
       for(int i=181; i<256; i++) {
@@ -232,8 +235,8 @@ public final class TestNPOIFSMiniStore {
       }
       
       // Check our SBAT free stuff is correct
-      assertEquals(false, ministore.getBATBlockAndIndex(0).getBlock().hasFreeSectors());
-      assertEquals(true,  ministore.getBATBlockAndIndex(128).getBlock().hasFreeSectors());
+      assertFalse(ministore.getBATBlockAndIndex(0).getBlock().hasFreeSectors());
+      assertTrue(ministore.getBATBlockAndIndex(128).getBlock().hasFreeSectors());
       
       // Allocate all the spare ones
       for(int i=181; i<256; i++) {
@@ -241,19 +244,19 @@ public final class TestNPOIFSMiniStore {
       }
       
       // SBAT are now full, but there's only the two
-      assertEquals(false, ministore.getBATBlockAndIndex(0).getBlock().hasFreeSectors());
-      assertEquals(false, ministore.getBATBlockAndIndex(128).getBlock().hasFreeSectors());
+      assertFalse(ministore.getBATBlockAndIndex(0).getBlock().hasFreeSectors());
+      assertFalse(ministore.getBATBlockAndIndex(128).getBlock().hasFreeSectors());
       try {
-         assertEquals(false, ministore.getBATBlockAndIndex(256).getBlock().hasFreeSectors());
+         assertFalse(ministore.getBATBlockAndIndex(256).getBlock().hasFreeSectors());
          fail("Should only be two SBATs");
       } catch(IndexOutOfBoundsException e) {}
       
       // Now ask for a free one, will need to extend the SBAT chain
       assertEquals(256, ministore.getFreeBlock());
-      
-      assertEquals(false, ministore.getBATBlockAndIndex(0).getBlock().hasFreeSectors());
-      assertEquals(false, ministore.getBATBlockAndIndex(128).getBlock().hasFreeSectors());
-      assertEquals(true, ministore.getBATBlockAndIndex(256).getBlock().hasFreeSectors());
+
+      assertFalse(ministore.getBATBlockAndIndex(0).getBlock().hasFreeSectors());
+      assertFalse(ministore.getBATBlockAndIndex(128).getBlock().hasFreeSectors());
+      assertTrue(ministore.getBATBlockAndIndex(256).getBlock().hasFreeSectors());
       assertEquals(POIFSConstants.END_OF_CHAIN, ministore.getNextBlock(254)); // 2nd SBAT 
       assertEquals(POIFSConstants.END_OF_CHAIN, ministore.getNextBlock(255)); // 2nd SBAT
       assertEquals(POIFSConstants.UNUSED_BLOCK, ministore.getNextBlock(256)); // 3rd SBAT
@@ -268,8 +271,8 @@ public final class TestNPOIFSMiniStore {
     */
    @Test
    public void testCreateBlockIfNeeded() throws Exception {
-      NPOIFSFileSystem fs = new NPOIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
-      NPOIFSMiniStore ministore = fs.getMiniStore();
+      POIFSFileSystem fs = new POIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
+      POIFSMiniStore ministore = fs.getMiniStore();
       
       // 178 -> 179 -> 180, 181+ is free
       assertEquals(179                        , ministore.getNextBlock(178));
@@ -289,7 +292,7 @@ public final class TestNPOIFSMiniStore {
       } catch(IndexOutOfBoundsException e) {}
       
       // The ministore itself is made up of 23 big blocks
-      Iterator<ByteBuffer> it = new NPOIFSStream(fs, fs.getRoot().getProperty().getStartBlock()).getBlockIterator();
+      Iterator<ByteBuffer> it = new POIFSStream(fs, fs.getRoot().getProperty().getStartBlock()).getBlockIterator();
       int count = 0;
       while(it.hasNext()) {
          count++;
@@ -301,7 +304,7 @@ public final class TestNPOIFSMiniStore {
       ministore.createBlockIfNeeded(184);
       
       // The ministore should be one big block bigger now
-      it = new NPOIFSStream(fs, fs.getRoot().getProperty().getStartBlock()).getBlockIterator();
+      it = new POIFSStream(fs, fs.getRoot().getProperty().getStartBlock()).getBlockIterator();
       count = 0;
       while(it.hasNext()) {
          count++;
@@ -321,7 +324,7 @@ public final class TestNPOIFSMiniStore {
       
       // Now try writing through to 192, check that the SBAT and blocks are there
       byte[] data = new byte[15*64];
-      NPOIFSStream stream = new NPOIFSStream(ministore, 178);
+      POIFSStream stream = new POIFSStream(ministore, 178);
       stream.updateContents(data);
       
       // Check now
@@ -349,8 +352,8 @@ public final class TestNPOIFSMiniStore {
    
    @Test
    public void testCreateMiniStoreFirst() throws Exception {
-       NPOIFSFileSystem fs = new NPOIFSFileSystem();
-       NPOIFSMiniStore ministore = fs.getMiniStore();
+       POIFSFileSystem fs = new POIFSFileSystem();
+       POIFSMiniStore ministore = fs.getMiniStore();
        DocumentInputStream dis;
        DocumentEntry entry;
 
@@ -426,8 +429,7 @@ public final class TestNPOIFSMiniStore {
        }
        
        // New filesystem and store to use
-       NPOIFSFileSystem fs = new NPOIFSFileSystem();
-       NPOIFSMiniStore ministore = fs.getMiniStore();
+       POIFSFileSystem fs = new POIFSFileSystem();
 
        // Initially has Properties + BAT but nothing else
        assertEquals(POIFSConstants.END_OF_CHAIN,     fs.getNextBlock(0));
@@ -436,7 +438,7 @@ public final class TestNPOIFSMiniStore {
        
        // Store the 2 block one, should use 2 mini blocks, and request
        // the use of 2 big blocks
-       ministore = fs.getMiniStore();
+       POIFSMiniStore ministore = fs.getMiniStore();
        fs.getRoot().createDocument("mini2", new ByteArrayInputStream(data2B));
        
        // Check

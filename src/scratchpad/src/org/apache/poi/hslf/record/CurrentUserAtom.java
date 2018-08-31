@@ -30,7 +30,7 @@ import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 import org.apache.poi.hslf.exceptions.OldPowerPointFormatException;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
@@ -49,13 +49,13 @@ public class CurrentUserAtom
 	private static final int MAX_RECORD_LENGTH = 1_000_000;
 
 	/** Standard Atom header */
-	public static final byte[] atomHeader = new byte[] { 0, 0, -10, 15 };
+	private static final byte[] atomHeader = new byte[] { 0, 0, -10, 15 };
 	/** The PowerPoint magic number for a non-encrypted file */
-	public static final byte[] headerToken = new byte[] { 95, -64, -111, -29 };
-	/** The PowerPoint magic number for an encrypted file */ 
-	public static final byte[] encHeaderToken = new byte[] { -33, -60, -47, -13 };
-	/** The Powerpoint 97 version, major and minor numbers */
-	public static final byte[] ppt97FileVer = new byte[] { 8, 00, -13, 03, 03, 00 };
+	private static final byte[] headerToken = new byte[] { 95, -64, -111, -29 };
+	/** The PowerPoint magic number for an encrypted file */
+	private static final byte[] encHeaderToken = new byte[] { -33, -60, -47, -13 };
+	// The Powerpoint 97 version, major and minor numbers
+	// byte[] ppt97FileVer = new byte[] { 8, 00, -13, 03, 03, 00 };
 
 	/** The version, major and minor numbers */
 	private int docFinalVersion;
@@ -274,7 +274,7 @@ public class CurrentUserAtom
 	/**
 	 * Writes ourselves back out to a filesystem
 	 */
-	public void writeToFS(NPOIFSFileSystem fs) throws IOException {
+	public void writeToFS(POIFSFileSystem fs) throws IOException {
 		// Grab contents
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		writeOut(baos);

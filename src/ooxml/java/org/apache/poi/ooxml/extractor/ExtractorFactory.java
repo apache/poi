@@ -46,10 +46,9 @@ import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.FileMagic;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.filesystem.NotOLE2FileException;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.sl.extractor.SlideShowExtractor;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.NotImplemented;
@@ -132,9 +131,9 @@ public final class ExtractorFactory {
 
     @SuppressWarnings("unchecked")
     public static <T extends POITextExtractor> T createExtractor(File f) throws IOException, OpenXML4JException, XmlException {
-        NPOIFSFileSystem fs = null;
+        POIFSFileSystem fs = null;
         try {
-            fs = new NPOIFSFileSystem(f);
+            fs = new POIFSFileSystem(f);
             if (fs.getRoot().hasEntry(Decryptor.DEFAULT_POIFS_ENTRY)) {
                 return (T)createEncryptedOOXMLExtractor(fs);
             }
@@ -166,7 +165,7 @@ public final class ExtractorFactory {
         
         switch (fm) {
         case OLE2:
-            NPOIFSFileSystem fs = new NPOIFSFileSystem(is);
+            POIFSFileSystem fs = new POIFSFileSystem(is);
             boolean isEncrypted = fs.getRoot().hasEntry(Decryptor.DEFAULT_POIFS_ENTRY); 
             return isEncrypted ? createEncryptedOOXMLExtractor(fs) : createExtractor(fs);
         case OOXML:
@@ -260,9 +259,6 @@ public final class ExtractorFactory {
     }
 
     public static <T extends POITextExtractor> T createExtractor(POIFSFileSystem fs) throws IOException, OpenXML4JException, XmlException {
-        return createExtractor(fs.getRoot());
-    }
-    public static <T extends POITextExtractor> T createExtractor(NPOIFSFileSystem fs) throws IOException, OpenXML4JException, XmlException {
         return createExtractor(fs.getRoot());
     }
 
@@ -408,7 +404,7 @@ public final class ExtractorFactory {
         throw new IllegalStateException("Not yet supported");
     }
     
-    private static POITextExtractor createEncryptedOOXMLExtractor(NPOIFSFileSystem fs)
+    private static POITextExtractor createEncryptedOOXMLExtractor(POIFSFileSystem fs)
     throws IOException {
         String pass = Biff8EncryptionKey.getCurrentUserPassword();
         if (pass == null) {

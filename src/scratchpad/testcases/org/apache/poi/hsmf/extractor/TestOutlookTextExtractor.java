@@ -29,7 +29,7 @@ import java.util.TimeZone;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hsmf.MAPIMessage;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -56,7 +56,7 @@ public final class TestOutlookTextExtractor {
    
    @Test
    public void testQuick() throws Exception {
-      NPOIFSFileSystem poifs = new NPOIFSFileSystem(samples.getFile("quick.msg"), true);
+      POIFSFileSystem poifs = new POIFSFileSystem(samples.getFile("quick.msg"), true);
       MAPIMessage msg = new MAPIMessage(poifs);
       
       OutlookTextExtactor ext = new OutlookTextExtactor(msg);
@@ -81,7 +81,7 @@ public final class TestOutlookTextExtractor {
    
    @Test
    public void testSimple() throws Exception {
-      NPOIFSFileSystem poifs = new NPOIFSFileSystem(samples.getFile("simple_test_msg.msg"), true);
+      POIFSFileSystem poifs = new POIFSFileSystem(samples.getFile("simple_test_msg.msg"), true);
       MAPIMessage msg = new MAPIMessage(poifs);
       
       OutlookTextExtactor ext = new OutlookTextExtactor(msg);
@@ -107,7 +107,7 @@ public final class TestOutlookTextExtractor {
         ext.close();
         fis.close();
 
-        NPOIFSFileSystem poifs = new NPOIFSFileSystem(samples.getFile("simple_test_msg.msg"), true);
+        POIFSFileSystem poifs = new POIFSFileSystem(samples.getFile("simple_test_msg.msg"), true);
         ext = new OutlookTextExtactor(poifs);
         String poifsTxt = ext.getText();
         ext.close();
@@ -141,7 +141,7 @@ public final class TestOutlookTextExtractor {
             "example_sent_regular.msg", "example_sent_unicode.msg"
       };
       for(String file : files) {
-         NPOIFSFileSystem poifs = new NPOIFSFileSystem(samples.getFile(file), true);
+         POIFSFileSystem poifs = new POIFSFileSystem(samples.getFile(file), true);
          MAPIMessage msg = new MAPIMessage(poifs);
          
          OutlookTextExtactor ext = new OutlookTextExtactor(msg);
@@ -181,7 +181,7 @@ public final class TestOutlookTextExtractor {
             "example_received_regular.msg", "example_received_unicode.msg"
       };
       for(String file : files) {
-          NPOIFSFileSystem poifs = new NPOIFSFileSystem(samples.getFile(file), true);
+          POIFSFileSystem poifs = new POIFSFileSystem(samples.getFile(file), true);
           MAPIMessage msg = new MAPIMessage(poifs);
 
          
@@ -204,10 +204,12 @@ public final class TestOutlookTextExtractor {
    }
    
    /**
-    * See also {@link org.apache.poi.extractor.TestExtractorFactory#testEmbeded()}
+    * See also {@link org.apache.poi.extractor.ooxml.TestExtractorFactory#testEmbeded()}
     */
+   @SuppressWarnings("JavadocReference")
+   @Test
    public void testWithAttachments() throws Exception {
-      NPOIFSFileSystem poifs = new NPOIFSFileSystem(samples.getFile("attachment_test_msg.msg"), true);
+      POIFSFileSystem poifs = new POIFSFileSystem(samples.getFile("attachment_test_msg.msg"), true);
       MAPIMessage msg = new MAPIMessage(poifs);
       OutlookTextExtactor ext = new OutlookTextExtactor(msg);
       
@@ -230,9 +232,10 @@ public final class TestOutlookTextExtractor {
       ext.close();
       poifs.close();
    }
-   
+
+    @Test
    public void testWithAttachedMessage() throws Exception {
-       NPOIFSFileSystem poifs = new NPOIFSFileSystem(samples.getFile("58214_with_attachment.msg"), true);
+       POIFSFileSystem poifs = new POIFSFileSystem(samples.getFile("58214_with_attachment.msg"), true);
          MAPIMessage msg = new MAPIMessage(poifs);
          OutlookTextExtactor ext = new OutlookTextExtactor(msg);
          String text = ext.getText();
@@ -248,9 +251,10 @@ public final class TestOutlookTextExtractor {
          ext.close();
          poifs.close();
    }
-   
+
+    @Test
    public void testEncodings() throws Exception {
-      NPOIFSFileSystem poifs = new NPOIFSFileSystem(samples.getFile("chinese-traditional.msg"), true);
+      POIFSFileSystem poifs = new POIFSFileSystem(samples.getFile("chinese-traditional.msg"), true);
       MAPIMessage msg = new MAPIMessage(poifs);
       OutlookTextExtactor ext = new OutlookTextExtactor(msg);
       String text = ext.getText();

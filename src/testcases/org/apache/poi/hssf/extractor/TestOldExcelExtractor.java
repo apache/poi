@@ -35,7 +35,7 @@ import org.apache.poi.EmptyFileException;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.util.RecordFormatException;
 import org.junit.Ignore;
@@ -285,7 +285,7 @@ public final class TestOldExcelExtractor {
     @Test
     public void testNPOIFSFileSystem() throws IOException {
         File file = HSSFTestDataSamples.getSampleFile("FormulaRefs.xls");
-        try (NPOIFSFileSystem fs = new NPOIFSFileSystem(file)) {
+        try (POIFSFileSystem fs = new POIFSFileSystem(file)) {
             OldExcelExtractor extractor = new OldExcelExtractor(fs);
             extractor.close();
         }
@@ -294,7 +294,7 @@ public final class TestOldExcelExtractor {
     @Test
     public void testDirectoryNode() throws IOException {
         File file = HSSFTestDataSamples.getSampleFile("FormulaRefs.xls");
-        try (NPOIFSFileSystem fs = new NPOIFSFileSystem(file)) {
+        try (POIFSFileSystem fs = new POIFSFileSystem(file)) {
             OldExcelExtractor extractor = new OldExcelExtractor(fs.getRoot());
             extractor.close();
         }
@@ -303,7 +303,7 @@ public final class TestOldExcelExtractor {
     @Test
     public void testDirectoryNodeInvalidFile() throws IOException {
         File file = POIDataSamples.getDocumentInstance().getFile("test.doc");
-        try (NPOIFSFileSystem fs = new NPOIFSFileSystem(file)) {
+        try (POIFSFileSystem fs = new POIFSFileSystem(file)) {
             OldExcelExtractor extractor = new OldExcelExtractor(fs.getRoot());
             extractor.close();
             fail("Should catch exception here");

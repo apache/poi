@@ -33,7 +33,6 @@ import org.apache.poi.hpsf.HPSFPropertiesOnlyDocument;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.junit.Before;
 import org.junit.Test;
@@ -89,7 +88,7 @@ public final class TestPOIDocumentScratchpad {
 	@Test
 	public void testWriteProperties() throws IOException {
 		// Just check we can write them back out into a filesystem
-		NPOIFSFileSystem outFS = new NPOIFSFileSystem();
+		POIFSFileSystem outFS = new POIFSFileSystem();
 		doc.writeProperties(outFS);
 
 		// Should now hold them
@@ -103,7 +102,7 @@ public final class TestPOIDocumentScratchpad {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
     	// Write them out
-    	NPOIFSFileSystem outFS = new NPOIFSFileSystem();
+    	POIFSFileSystem outFS = new POIFSFileSystem();
     	doc.writeProperties(outFS);
     	outFS.writeFilesystem(baos);
 

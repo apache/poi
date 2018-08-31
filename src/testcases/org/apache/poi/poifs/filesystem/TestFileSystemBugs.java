@@ -40,12 +40,12 @@ public final class TestFileSystemBugs {
     private static POIDataSamples _samples = POIDataSamples.getPOIFSInstance();
     private static POIDataSamples _ssSamples = POIDataSamples.getSpreadSheetInstance();
 
-    private List<NPOIFSFileSystem> openedFSs;
+    private List<POIFSFileSystem> openedFSs;
 
     @After
     public void tearDown() {
         if (openedFSs != null && !openedFSs.isEmpty()) {
-            for (NPOIFSFileSystem fs : openedFSs) {
+            for (POIFSFileSystem fs : openedFSs) {
                 try {
                     fs.close();
                 } catch (Exception e) {
@@ -70,7 +70,7 @@ public final class TestFileSystemBugs {
     }
 
     private DirectoryNode openSample(InputStream inps) throws Exception {
-        NPOIFSFileSystem nfs = new NPOIFSFileSystem(inps);
+        POIFSFileSystem nfs = new POIFSFileSystem(inps);
         if (openedFSs == null) {
             openedFSs = new ArrayList<>();
         }
@@ -135,7 +135,7 @@ public final class TestFileSystemBugs {
         fetchSizes("/", root, entries);
 
         // Prepare to copy
-        DirectoryNode dest = new NPOIFSFileSystem().getRoot();
+        DirectoryNode dest = new POIFSFileSystem().getRoot();
 
         // Copy over
         EntryUtils.copyNodes(root, dest);
@@ -144,7 +144,7 @@ public final class TestFileSystemBugs {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         root.getNFileSystem().writeFilesystem(baos);
 
-        NPOIFSFileSystem read = new NPOIFSFileSystem(
+        POIFSFileSystem read = new POIFSFileSystem(
                 new ByteArrayInputStream(baos.toByteArray()));
 
         // Check the structure matches

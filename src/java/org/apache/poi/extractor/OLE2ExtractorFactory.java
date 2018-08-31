@@ -32,7 +32,6 @@ import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.Entry;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -49,7 +48,7 @@ import org.apache.poi.util.POILogger;
  * <p>Note 3 - rather than using this, for most cases you would be better
  *  off switching to <a href="http://tika.apache.org">Apache Tika</a> instead!</p>
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({"WeakerAccess", "JavadocReference"})
 public final class OLE2ExtractorFactory {
     private static final POILogger LOGGER = POILogFactory.getLogger(OLE2ExtractorFactory.class); 
     
@@ -111,10 +110,6 @@ public final class OLE2ExtractorFactory {
     public static <T extends POITextExtractor> T createExtractor(POIFSFileSystem fs) throws IOException {
         return (T)createExtractor(fs.getRoot());
     }
-    @SuppressWarnings("unchecked")
-    public static <T extends POITextExtractor> T createExtractor(NPOIFSFileSystem fs) throws IOException {
-        return (T)createExtractor(fs.getRoot());
-    }
 
     @SuppressWarnings("unchecked")
     public static <T extends POITextExtractor> T createExtractor(InputStream input) throws IOException {
@@ -131,7 +126,7 @@ public final class OLE2ExtractorFactory {
             }
         } else {
             // Best hope it's OLE2....
-            return createExtractor(new NPOIFSFileSystem(input));
+            return createExtractor(new POIFSFileSystem(input));
         }
     }
 

@@ -31,7 +31,6 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestCase;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
@@ -104,7 +103,7 @@ public final class TestHWPFWrite extends HWPFTestCase {
         }
 
         // Open from the temp file in read-write mode
-        NPOIFSFileSystem poifs = new NPOIFSFileSystem(file, false);
+        POIFSFileSystem poifs = new POIFSFileSystem(file, false);
         HWPFDocument doc = new HWPFDocument(poifs.getRoot());
         Range r = doc.getRange();
         assertEquals("I am a test document\r", r.getParagraph(0).text());
@@ -117,7 +116,7 @@ public final class TestHWPFWrite extends HWPFTestCase {
         doc.close();
         poifs.close();
 
-        poifs = new NPOIFSFileSystem(file);
+        poifs = new POIFSFileSystem(file);
         doc = new HWPFDocument(poifs.getRoot());
         r = doc.getRange();
         assertEquals("X XX a test document\r", r.getParagraph(0).text());
@@ -138,7 +137,7 @@ public final class TestHWPFWrite extends HWPFTestCase {
     @Test(expected=IllegalStateException.class)
     public void testInvalidInPlaceWriteNPOIFS() throws Exception {
         // Can't work for Read-Only files
-        NPOIFSFileSystem fs = new NPOIFSFileSystem(SAMPLES.getFile("SampleDoc.doc"), true);
+        POIFSFileSystem fs = new POIFSFileSystem(SAMPLES.getFile("SampleDoc.doc"), true);
         HWPFDocument doc = new HWPFDocument(fs.getRoot());
         try {
             doc.write();

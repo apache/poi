@@ -1002,7 +1002,7 @@ public class XSSFCellStyle implements CellStyle {
     @Override
     public void setFont(Font font) {
         if(font != null){
-            long index = font.getIndex();
+            long index = font.getIndexAsInt();
             this._cellXf.setFontId(index);
             this._cellXf.setApplyFont(true);
         } else {

@@ -34,26 +34,23 @@ import javax.crypto.SecretKey;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.poifs.crypt.ChunkedCipherOutputStream;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
-import org.apache.poi.poifs.crypt.DataSpaceMapUtils;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.crypt.Encryptor;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIDecryptor.StreamDescriptorEntry;
-import org.apache.poi.poifs.crypt.standard.EncryptionRecord;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.Entry;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.StringUtil;
 
 public class CryptoAPIEncryptor extends Encryptor implements Cloneable {
     
     private int chunkSize = 512;
     
-    protected CryptoAPIEncryptor() {
+    CryptoAPIEncryptor() {
     }
 
     @Override
@@ -96,7 +93,7 @@ public class CryptoAPIEncryptor extends Encryptor implements Cloneable {
      * @param cipher may be null, otherwise the given instance is reset to the new block index
      * @param block the block index, e.g. the persist/slide id (hslf)
      * @return a new cipher object, if cipher was null, otherwise the reinitialized cipher
-     * @throws GeneralSecurityException
+     * @throws GeneralSecurityException when the cipher can't be initialized
      */
     public Cipher initCipherForBlock(Cipher cipher, int block)
     throws GeneralSecurityException {
@@ -104,8 +101,7 @@ public class CryptoAPIEncryptor extends Encryptor implements Cloneable {
     }    
 
     @Override
-    public ChunkedCipherOutputStream getDataStream(DirectoryNode dir)
-    throws IOException, GeneralSecurityException {
+    public ChunkedCipherOutputStream getDataStream(DirectoryNode dir) throws IOException {
         throw new IOException("not supported");
     }
     
@@ -122,7 +118,7 @@ public class CryptoAPIEncryptor extends Encryptor implements Cloneable {
      * 
      * @see <a href="http://msdn.microsoft.com/en-us/library/dd943321(v=office.12).aspx">2.3.5.4 RC4 CryptoAPI Encrypted Summary Stream</a>
      */
-    public void setSummaryEntries(DirectoryNode dir, String encryptedStream, NPOIFSFileSystem entries)
+    public void setSummaryEntries(DirectoryNode dir, String encryptedStream, POIFSFileSystem entries)
     throws IOException, GeneralSecurityException {
         CryptoAPIDocumentOutputStream bos = new CryptoAPIDocumentOutputStream(this); // NOSONAR
         byte buf[] = new byte[8];
@@ -191,33 +187,15 @@ public class CryptoAPIEncryptor extends Encryptor implements Cloneable {
         dir.createDocument(encryptedStream, new ByteArrayInputStream(bos.getBuf(), 0, savedSize));
     }
 
-    protected int getKeySizeInBytes() {
-        return getEncryptionInfo().getHeader().getKeySize() / 8;
-    }
+//    protected int getKeySizeInBytes() {
+//        return getEncryptionInfo().getHeader().getKeySize() / 8;
+//    }
 
     @Override
     public void setChunkSize(int chunkSize) {
         this.chunkSize = chunkSize;
     }
     
-    protected void createEncryptionInfoEntry(DirectoryNode dir) throws IOException {
-        DataSpaceMapUtils.addDefaultDataSpace(dir);
-        final EncryptionInfo info = getEncryptionInfo();
-        final CryptoAPIEncryptionHeader header = (CryptoAPIEncryptionHeader)getEncryptionInfo().getHeader();
-        final CryptoAPIEncryptionVerifier verifier = (CryptoAPIEncryptionVerifier)getEncryptionInfo().getVerifier();
-        EncryptionRecord er = new EncryptionRecord() {
-            @Override
-            public void write(LittleEndianByteArrayOutputStream bos) {
-                bos.writeShort(info.getVersionMajor());
-                bos.writeShort(info.getVersionMinor());
-                header.write(bos);
-                verifier.write(bos);
-            }
-        };
-        DataSpaceMapUtils.createEncryptionEntry(dir, "EncryptionInfo", er);
-    }
-
-
     @Override
     public CryptoAPIEncryptor clone() throws CloneNotSupportedException {
         return (CryptoAPIEncryptor)super.clone();
@@ -239,12 +217,11 @@ public class CryptoAPIEncryptor extends Encryptor implements Cloneable {
         }
 
         @Override
-        protected void createEncryptionInfoEntry(DirectoryNode dir, File tmpFile)
-        throws IOException, GeneralSecurityException {
+        protected void createEncryptionInfoEntry(DirectoryNode dir, File tmpFile) {
             throw new EncryptedDocumentException("createEncryptionInfoEntry not supported");
         }
 
-        public CryptoAPICipherOutputStream(OutputStream stream)
+        CryptoAPICipherOutputStream(OutputStream stream)
         throws IOException, GeneralSecurityException {
             super(stream, CryptoAPIEncryptor.this.chunkSize);
         }

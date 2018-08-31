@@ -29,14 +29,14 @@ import org.apache.poi.hssf.eventusermodel.HSSFListener;
 import org.apache.poi.hssf.eventusermodel.HSSFRequest;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.junit.Test;
 
 public final class TestChartTitleFormatRecord {
 
 	@Test
     public void testRecord() throws Exception {
-		NPOIFSFileSystem fs = new NPOIFSFileSystem(
+		POIFSFileSystem fs = new POIFSFileSystem(
 				HSSFTestDataSamples.getSampleFile("WithFormattedGraphTitle.xls"));
 		
 		// Check we can open the file via usermodel
@@ -66,7 +66,7 @@ public final class TestChartTitleFormatRecord {
 	private static final class ChartTitleFormatRecordGrabber implements HSSFListener {
 		private final List<ChartTitleFormatRecord> chartTitleFormatRecords;
 		
-		public ChartTitleFormatRecordGrabber() {
+		ChartTitleFormatRecordGrabber() {
 			chartTitleFormatRecords = new ArrayList<>();
 		}
 

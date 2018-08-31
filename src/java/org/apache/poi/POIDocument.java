@@ -39,7 +39,6 @@ import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIDecryptor;
 import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIEncryptor;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
@@ -74,14 +73,6 @@ public abstract class POIDocument implements Closeable {
     	this.directory = dir;
     }
 
-    /**
-     * Constructs from an old-style OPOIFS
-     * 
-     * @param fs the filesystem the document is read from
-     */
-    protected POIDocument(NPOIFSFileSystem fs) {
-       this(fs.getRoot());
-    }
     /**
      * Constructs from the default POIFS
      * 
@@ -203,7 +194,7 @@ public abstract class POIDocument implements Closeable {
     protected PropertySet getPropertySet(String setName, EncryptionInfo encryptionInfo) throws IOException {
         DirectoryNode dirNode = directory;
         
-        NPOIFSFileSystem encPoifs = null;
+        POIFSFileSystem encPoifs = null;
         String step = "getting";
         try {
             if (encryptionInfo != null && encryptionInfo.isDocPropsEncrypted()) {
@@ -243,7 +234,7 @@ public abstract class POIDocument implements Closeable {
      *  into the currently open NPOIFSFileSystem
      * 
      * @throws IOException if an error when writing to the open
-     *      {@link NPOIFSFileSystem} occurs
+     *      {@link POIFSFileSystem} occurs
      */
     protected void writeProperties() throws IOException {
         validateInPlaceWritePossible();
@@ -255,9 +246,9 @@ public abstract class POIDocument implements Closeable {
      * @param outFS the POIFSFileSystem to write the properties into
      * 
      * @throws IOException if an error when writing to the 
-     *      {@link NPOIFSFileSystem} occurs
+     *      {@link POIFSFileSystem} occurs
      */
-    protected void writeProperties(NPOIFSFileSystem outFS) throws IOException {
+    protected void writeProperties(POIFSFileSystem outFS) throws IOException {
         writeProperties(outFS, null);
     }
     /**
@@ -266,13 +257,13 @@ public abstract class POIDocument implements Closeable {
      * @param writtenEntries a list of POIFS entries to add the property names too
      * 
      * @throws IOException if an error when writing to the 
-     *      {@link NPOIFSFileSystem} occurs
+     *      {@link POIFSFileSystem} occurs
      */
-    protected void writeProperties(NPOIFSFileSystem outFS, List<String> writtenEntries) throws IOException {
+    protected void writeProperties(POIFSFileSystem outFS, List<String> writtenEntries) throws IOException {
         final EncryptionInfo ei = getEncryptionInfo();
         final boolean encryptProps = (ei != null && ei.isDocPropsEncrypted());
-        try (NPOIFSFileSystem tmpFS = new NPOIFSFileSystem()) {
-            final NPOIFSFileSystem fs = (encryptProps) ? tmpFS : outFS;
+        try (POIFSFileSystem tmpFS = new POIFSFileSystem()) {
+            final POIFSFileSystem fs = (encryptProps) ? tmpFS : outFS;
 
             writePropertySet(SummaryInformation.DEFAULT_STREAM_NAME, getSummaryInformation(), fs, writtenEntries);
             writePropertySet(DocumentSummaryInformation.DEFAULT_STREAM_NAME, getDocumentSummaryInformation(), fs, writtenEntries);
@@ -302,7 +293,7 @@ public abstract class POIDocument implements Closeable {
         }
     }
 
-    private void writePropertySet(String name, PropertySet ps, NPOIFSFileSystem outFS, List<String> writtenEntries)
+    private void writePropertySet(String name, PropertySet ps, POIFSFileSystem outFS, List<String> writtenEntries)
     throws IOException {
         if (ps == null) {
             return;
@@ -320,9 +311,9 @@ public abstract class POIDocument implements Closeable {
      * @param outFS the NPOIFSFileSystem to write the property into
      * 
      * @throws IOException if an error when writing to the 
-     *      {@link NPOIFSFileSystem} occurs
+     *      {@link POIFSFileSystem} occurs
      */
-    private void writePropertySet(String name, PropertySet set, NPOIFSFileSystem outFS) throws IOException {
+    private void writePropertySet(String name, PropertySet set, POIFSFileSystem outFS) throws IOException {
         try {
             PropertySet mSet = new PropertySet(set);
             ByteArrayOutputStream bOut = new ByteArrayOutputStream();
@@ -411,7 +402,7 @@ public abstract class POIDocument implements Closeable {
     public abstract void write(OutputStream out) throws IOException;
 
     /**
-     * Closes the underlying {@link NPOIFSFileSystem} from which
+     * Closes the underlying {@link POIFSFileSystem} from which
      *  the document was read, if any. Has no effect on documents
      *  opened from an InputStream, or newly created ones.<p>
      *
@@ -451,7 +442,7 @@ public abstract class POIDocument implements Closeable {
     @Internal
     protected boolean initDirectory() {
         if (directory == null) {
-            directory = new NPOIFSFileSystem().getRoot(); // NOSONAR
+            directory = new POIFSFileSystem().getRoot(); // NOSONAR
             return true;
         }
         return false;

@@ -26,7 +26,6 @@ import org.apache.poi.hpbf.model.EscherStm;
 import org.apache.poi.hpbf.model.MainContents;
 import org.apache.poi.hpbf.model.QuillContents;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
@@ -46,11 +45,9 @@ public final class HPBFDocument extends POIReadOnlyDocument {
 	public HPBFDocument(POIFSFileSystem fs) throws IOException {
 	   this(fs.getRoot());
 	}
-	public HPBFDocument(NPOIFSFileSystem fs) throws IOException {
-	   this(fs.getRoot());
-	}
+
 	public HPBFDocument(InputStream inp) throws IOException {
-	   this(new NPOIFSFileSystem(inp));
+	   this(new POIFSFileSystem(inp));
 	}
 
 	/**

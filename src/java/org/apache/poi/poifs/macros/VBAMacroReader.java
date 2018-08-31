@@ -32,7 +32,7 @@ import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.DocumentNode;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.FileMagic;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.poifs.macros.Module.ModuleType;
 import org.apache.poi.util.CodePageUtil;
@@ -59,13 +59,13 @@ public class VBAMacroReader implements Closeable {
     protected static final String VBA_PROJECT_OOXML = "vbaProject.bin";
     protected static final String VBA_PROJECT_POIFS = "VBA";
 
-    private NPOIFSFileSystem fs;
+    private POIFSFileSystem fs;
     
     public VBAMacroReader(InputStream rstream) throws IOException {
         InputStream is = FileMagic.prepareToCheckMagic(rstream);
         FileMagic fm = FileMagic.valueOf(is);
         if (fm == FileMagic.OLE2) {
-            fs = new NPOIFSFileSystem(is);
+            fs = new POIFSFileSystem(is);
         } else {
             openOOXML(is);
         }
@@ -73,12 +73,12 @@ public class VBAMacroReader implements Closeable {
     
     public VBAMacroReader(File file) throws IOException {
         try {
-            this.fs = new NPOIFSFileSystem(file);
+            this.fs = new POIFSFileSystem(file);
         } catch (OfficeXmlFileException e) {
             openOOXML(new FileInputStream(file));
         }
     }
-    public VBAMacroReader(NPOIFSFileSystem fs) {
+    public VBAMacroReader(POIFSFileSystem fs) {
         this.fs = fs;
     }
     
@@ -89,7 +89,7 @@ public class VBAMacroReader implements Closeable {
                 if (endsWithIgnoreCase(zipEntry.getName(), VBA_PROJECT_OOXML)) {
                     try {
                         // Make a NPOIFS from the contents, and close the stream
-                        this.fs = new NPOIFSFileSystem(zis);
+                        this.fs = new POIFSFileSystem(zis);
                         return;
                     } catch (IOException e) {
                         // Tidy up

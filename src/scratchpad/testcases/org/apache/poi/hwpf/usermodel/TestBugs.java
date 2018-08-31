@@ -25,6 +25,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -39,7 +40,6 @@ import org.apache.poi.hwpf.converter.WordToTextConverter;
 import org.apache.poi.hwpf.extractor.Word6Extractor;
 import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.hwpf.model.*;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
@@ -56,8 +56,7 @@ public class TestBugs{
 
     private static final POILogger logger = POILogFactory.getLogger(TestBugs.class);
 
-    public static void assertEqualsIgnoreNewline(String expected, String actual )
-    {
+    private static void assertEqualsIgnoreNewline(String expected, String actual) {
         String newExpected = expected.replaceAll("\r\n", "\n" )
                 .replaceAll("\r", "\n").trim();
         String newActual = actual.replaceAll("\r\n", "\n" )
@@ -103,17 +102,6 @@ public class TestBugs{
     private String getText(String samplefile) throws IOException {
         HWPFDocument doc = HWPFTestDataSamples.openSampleFile(samplefile);
         WordExtractor extractor = new WordExtractor(doc);
-        try {
-            return extractor.getText();
-        } finally {
-            extractor.close();
-            doc.close();
-        }
-    }
-    
-    private String getTextOldFile(String samplefile) throws IOException {
-        HWPFOldDocument doc = HWPFTestDataSamples.openOldSampleFile(samplefile);
-        Word6Extractor extractor = new Word6Extractor(doc);
         try {
             return extractor.getText();
         } finally {
@@ -448,7 +436,7 @@ public class TestBugs{
         try (InputStream is = POIDataSamples.getDocumentInstance()
                 .openResourceAsStream("Bug47742-text.txt")) {
             byte[] expectedBytes = IOUtils.toByteArray(is);
-            String expectedText = new String(expectedBytes, "utf-8")
+            String expectedText = new String(expectedBytes, StandardCharsets.UTF_8)
                     .substring(1); // strip-off the unicode marker
 
             assertEqualsIgnoreNewline(expectedText, foundText);
@@ -486,11 +474,11 @@ public class TestBugs{
     }
 
     @Test
-    public void test49933() throws IOException
-    {
-        String text = getTextOldFile("Bug49933.doc");
-
-        assertContains(text, "best.wine.jump.ru");
+    public void test49933() throws IOException {
+        try (HWPFOldDocument doc = HWPFTestDataSamples.openOldSampleFile("Bug49933.doc");
+            Word6Extractor extractor = new Word6Extractor(doc)) {
+            assertContains(extractor.getText(), "best.wine.jump.ru");
+        }
     }
 
     /**
@@ -544,8 +532,7 @@ public class TestBugs{
      * release from download site )
      */
     @Test
-    public void test51604p2() throws Exception
-    {
+    public void test51604p2() {
         HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug51604.doc");
 
         Range range = doc.getRange();
@@ -627,7 +614,7 @@ public class TestBugs{
     {
         InputStream is = POIDataSamples.getDocumentInstance()
                 .openResourceAsStream("empty.doc");
-        try (NPOIFSFileSystem npoifsFileSystem = new NPOIFSFileSystem(is)) {
+        try (POIFSFileSystem npoifsFileSystem = new POIFSFileSystem(is)) {
             HWPFDocument hwpfDocument = new HWPFDocument(
                     npoifsFileSystem.getRoot());
             hwpfDocument.write(new ByteArrayOutputStream());
@@ -679,8 +666,7 @@ public class TestBugs{
      * corrupt document
      */
     @Test
-    public void testBug51834() throws Exception
-    {
+    public void testBug51834() {
         /*
          * we don't have Java test for this file - it should be checked using
          * Microsoft BFF Validator. But check read-write-read anyway. -- sergey
@@ -773,7 +759,7 @@ public class TestBugs{
      * Disabled pending a fix for the bug
      */
     @Test
-    public void test56880() throws Exception {
+    public void test56880() {
         HWPFDocument doc =
                 HWPFTestDataSamples.openSampleFile("56880.doc");
         assertEqualsIgnoreNewline("Check Request", doc.getRange().text());
@@ -787,20 +773,12 @@ public class TestBugs{
     {
         assertNotNull(getText("Bug61268.doc"));
     }
-    
-    // These are the values the are expected to be read when the file
-    // is checked.
-    private final int section1LeftMargin = 1440;
-    private final int section1RightMargin = 1440;
-    private final int section1TopMargin = 1440;
-    private final int section1BottomMargin = 1440;
-    private final int section1NumColumns = 1;
+
     private int section2LeftMargin = 1440;
     private int section2RightMargin = 1440;
     private int section2TopMargin = 1440;
     private int section2BottomMargin = 1440;
-    private final int section2NumColumns = 3;
-    
+
     @Test
     @SuppressWarnings("SuspiciousNameCombination")
     public void testHWPFSections() {
@@ -854,10 +832,17 @@ public class TestBugs{
 
     @SuppressWarnings("Duplicates")
     private void assertSection1Margin(Section section) {
+        int section1BottomMargin = 1440;
         assertEquals(section1BottomMargin, section.getMarginBottom());
+        // These are the values the are expected to be read when the file
+        // is checked.
+        int section1LeftMargin = 1440;
         assertEquals(section1LeftMargin, section.getMarginLeft());
+        int section1RightMargin = 1440;
         assertEquals(section1RightMargin, section.getMarginRight());
+        int section1TopMargin = 1440;
         assertEquals(section1TopMargin, section.getMarginTop());
+        int section1NumColumns = 1;
         assertEquals(section1NumColumns, section.getNumColumns());
     }
 
@@ -867,6 +852,7 @@ public class TestBugs{
         assertEquals(section2LeftMargin, section.getMarginLeft());
         assertEquals(section2RightMargin, section.getMarginRight());
         assertEquals(section2TopMargin, section.getMarginTop());
+        int section2NumColumns = 3;
         assertEquals(section2NumColumns, section.getNumColumns());
     }
 

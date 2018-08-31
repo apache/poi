@@ -26,7 +26,6 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 public abstract class Decryptor implements Cloneable {
@@ -121,14 +120,10 @@ public abstract class Decryptor implements Cloneable {
         return d;
     }
 
-    public InputStream getDataStream(NPOIFSFileSystem fs) throws IOException, GeneralSecurityException {
-        return getDataStream(fs.getRoot());
-    }
-
     public InputStream getDataStream(POIFSFileSystem fs) throws IOException, GeneralSecurityException {
         return getDataStream(fs.getRoot());
     }
-    
+
     // for tests
     public byte[] getVerifier() {
         return verifier;

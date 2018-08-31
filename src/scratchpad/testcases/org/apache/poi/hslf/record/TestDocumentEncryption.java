@@ -47,17 +47,14 @@ import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIDecryptor;
 import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIEncryptionHeader;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 /**
  * Tests that DocumentEncryption works properly.
  */
 public class TestDocumentEncryption {
-    POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+    private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 
     @Test
     public void cryptoAPIDecryptionOther() throws Exception {
@@ -70,7 +67,7 @@ public class TestDocumentEncryption {
         Biff8EncryptionKey.setCurrentUserPassword("hello");
         try {
             for (String pptFile : encPpts) {
-                try (NPOIFSFileSystem fs = new NPOIFSFileSystem(slTests.getFile(pptFile), true);
+                try (POIFSFileSystem fs = new POIFSFileSystem(slTests.getFile(pptFile), true);
                      HSLFSlideShow ppt = new HSLFSlideShow(fs)) {
                     assertTrue(ppt.getSlides().size() > 0);
                 } catch (EncryptedPowerPointFileException e) {
@@ -86,7 +83,7 @@ public class TestDocumentEncryption {
     public void cryptoAPIChangeKeySize() throws Exception {
         String pptFile = "cryptoapi-proc2356.ppt";
         Biff8EncryptionKey.setCurrentUserPassword("crypto");
-        try (NPOIFSFileSystem fs = new NPOIFSFileSystem(slTests.getFile(pptFile), true);
+        try (POIFSFileSystem fs = new POIFSFileSystem(slTests.getFile(pptFile), true);
              HSLFSlideShowImpl hss = new HSLFSlideShowImpl(fs)) {
             // need to cache data (i.e. read all data) before changing the key size
             List<HSLFPictureData> picsExpected = hss.getPictureData();
@@ -99,7 +96,7 @@ public class TestDocumentEncryption {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             hss.write(bos);
 
-            try (NPOIFSFileSystem fs2 = new NPOIFSFileSystem(new ByteArrayInputStream(bos.toByteArray()));
+            try (POIFSFileSystem fs2 = new POIFSFileSystem(new ByteArrayInputStream(bos.toByteArray()));
                  HSLFSlideShowImpl hss2 = new HSLFSlideShowImpl(fs2)) {
                 List<HSLFPictureData> picsActual = hss2.getPictureData();
 
@@ -121,7 +118,7 @@ public class TestDocumentEncryption {
         ByteArrayOutputStream expected = new ByteArrayOutputStream();
         ByteArrayOutputStream actual = new ByteArrayOutputStream();
         try {
-            try (NPOIFSFileSystem fs = new NPOIFSFileSystem(slTests.getFile(pptFile), true);
+            try (POIFSFileSystem fs = new POIFSFileSystem(slTests.getFile(pptFile), true);
                  HSLFSlideShowImpl hss = new HSLFSlideShowImpl(fs)) {
                 hss.normalizeRecords();
 
@@ -135,7 +132,7 @@ public class TestDocumentEncryption {
 
             // decrypted
             ByteArrayInputStream bis = new ByteArrayInputStream(encrypted.toByteArray());
-            try (NPOIFSFileSystem fs = new NPOIFSFileSystem(bis);
+            try (POIFSFileSystem fs = new POIFSFileSystem(bis);
                  HSLFSlideShowImpl hss = new HSLFSlideShowImpl(fs)) {
                 Biff8EncryptionKey.setCurrentUserPassword(null);
                 hss.write(actual);
@@ -152,7 +149,7 @@ public class TestDocumentEncryption {
         // taken from a msdn blog:
         // http://blogs.msdn.com/b/openspecification/archive/2009/05/08/dominic-salemno.aspx
         Biff8EncryptionKey.setCurrentUserPassword("crypto");
-        try (NPOIFSFileSystem fs = new NPOIFSFileSystem(slTests.getFile("cryptoapi-proc2356.ppt"));
+        try (POIFSFileSystem fs = new POIFSFileSystem(slTests.getFile("cryptoapi-proc2356.ppt"));
              HSLFSlideShow ss = new HSLFSlideShow(fs)) {
 
             HSLFSlide slide = ss.getSlides().get(0);

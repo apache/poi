@@ -50,7 +50,7 @@ public class DirectoryNode
     private final ArrayList<Entry> _entries = new ArrayList<>();
 
     // the NPOIFSFileSytem we belong to
-    private final NPOIFSFileSystem  _nfilesystem;
+    private final POIFSFileSystem _nfilesystem;
 
     // the path described by this document
     private final POIFSDocumentPath _path;
@@ -64,7 +64,7 @@ public class DirectoryNode
      * @param parent the parent of this entry
      */
     DirectoryNode(final DirectoryProperty property,
-                  final NPOIFSFileSystem nfilesystem,
+                  final POIFSFileSystem nfilesystem,
                   final DirectoryNode parent)
     {
         super(property, parent);
@@ -114,7 +114,7 @@ public class DirectoryNode
     /**
      * @return the filesystem that this belongs to
      */
-    public NPOIFSFileSystem getFileSystem()
+    public POIFSFileSystem getFileSystem()
     {
         return _nfilesystem;
     }
@@ -125,7 +125,7 @@ public class DirectoryNode
      *  that this belong to, otherwise Null if OPOIFS based
      * @return the filesystem that this belongs to
      */
-    public NPOIFSFileSystem getNFileSystem()
+    public POIFSFileSystem getNFileSystem()
     {
         return _nfilesystem;
     }
@@ -152,7 +152,7 @@ public class DirectoryNode
      *
      * @param document the document to be opened
      *
-     * @return a newly opened DocumentInputStream or NDocumentInputStream
+     * @return a newly opened DocumentInputStream or DocumentInputStream
      *
      * @exception IOException if the document does not exist or the
      *            name is that of a DirectoryEntry
@@ -179,7 +179,7 @@ public class DirectoryNode
      *
      * @exception IOException if the document can't be created
      */
-    DocumentEntry createDocument(final NPOIFSDocument document)
+    DocumentEntry createDocument(final POIFSDocument document)
         throws IOException
     {
         DocumentProperty property = document.getDocumentProperty();
@@ -351,7 +351,7 @@ public class DirectoryNode
                                         final InputStream stream)
         throws IOException
     {
-        return createDocument(new NPOIFSDocument(name, _nfilesystem, stream));
+        return createDocument(new POIFSDocument(name, _nfilesystem, stream));
     }
 
     /**
@@ -370,7 +370,7 @@ public class DirectoryNode
                                         final POIFSWriterListener writer)
         throws IOException
     {
-        return createDocument(new NPOIFSDocument(name, size, _nfilesystem, writer));
+        return createDocument(new POIFSDocument(name, size, _nfilesystem, writer));
     }
 
     /**
@@ -417,7 +417,7 @@ public class DirectoryNode
             return createDocument(name, stream);
         } else {
             DocumentNode existing = (DocumentNode)getEntry(name);
-            NPOIFSDocument nDoc = new NPOIFSDocument(existing);
+            POIFSDocument nDoc = new POIFSDocument(existing);
             nDoc.replaceContents(stream);
             return existing;
         }
