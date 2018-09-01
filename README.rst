@@ -58,12 +58,12 @@ Source code:
 * Official `Apache git mirror`_ at apache.org
 * Unofficial `GitHub git mirror`_ at github.com
 
-Requires Java 1.6 or later.
+Requires Java 1.8 or later.
 
 Contributing
 ------------------
 
-* Download and install svn or git, Java JDK 1.6+, and Apache Ant 1.8+ or Gradle
+* Download and install svn or git, Java JDK 1.8+, and Apache Ant 1.8+ or Gradle
 
 * Check out the code from svn or git
 
