@@ -573,15 +573,6 @@ under the License.
         <attribute name="src"/>
         <attribute name="dest"/>
         <sequential>
-            <!--fail
-                message="Java version might be uncapable to download https URLs - see https://stackoverflow.com/questions/6851461/java-why-does-ssl-handshake-give-could-not-generate-dh-keypair-exception">
-                <condition>
-                    <and>
-                        <equals arg1="${ant.java.version}" arg2="1.6"/>
-                        <contains string="@{src}" substring="https"/>
-                    </and>
-                </condition>
-            </fail-->
             <get src="@{src}" dest="@{dest}" skipexisting="true"/>
         </sequential>
     </macrodef>
