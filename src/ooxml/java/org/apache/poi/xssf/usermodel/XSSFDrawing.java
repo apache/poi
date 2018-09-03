@@ -250,6 +250,27 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
 	}
 
     /**
+     * Imports the chart from the <code>srcChart</code> into this drawing.
+     *
+     * @param srcChart
+     *            the source chart to be cloned into this drawing.
+     * @return the newly created chart.
+     * @throws XmlException
+     * @throws IOException
+     */
+    public XSSFChart importChart(XSSFChart srcChart) throws IOException, XmlException {
+        CTTwoCellAnchor anchor = ((XSSFDrawing) srcChart.getParent()).getCTDrawing().getTwoCellAnchorArray(0);
+        CTMarker from = (CTMarker) anchor.getFrom().copy();
+        CTMarker to = (CTMarker) anchor.getTo().copy();
+        XSSFClientAnchor destAnchor = new XSSFClientAnchor(from, to);
+        destAnchor.setAnchorType(ClientAnchor.AnchorType.MOVE_AND_RESIZE);
+        XSSFChart destChart = createChart(destAnchor);
+        destChart.getCTChartSpace().set(srcChart.getCTChartSpace().copy());
+        destChart.getCTChart().set(srcChart.getCTChart().copy());
+        return destChart;
+    }
+
+    /**
      * Add the indexed picture to this drawing relations
      *
      * @param pictureIndex the index of the picture in the workbook collection of pictures,
