@@ -267,6 +267,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
      * @return the newly created chart.
      * @throws XmlException
      * @throws IOException
+     * @since 4.0.0
      */
     public XSSFChart importChart(XSSFChart srcChart) throws IOException, XmlException {
         CTTwoCellAnchor anchor = ((XSSFDrawing) srcChart.getParent()).getCTDrawing().getTwoCellAnchorArray(0);
