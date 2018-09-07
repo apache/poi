@@ -11,7 +11,7 @@ H H * * 0
 '''
 
 def xercesUrl = 'http://repo1.maven.org/maven2/xerces/xercesImpl/2.6.1/xercesImpl-2.6.1.jar'
-def xercesLib = 'compile-lib/xercesImpl-2.6.1.jar'
+def xercesLib = './xercesImpl-2.6.1.jar'
 
 def poijobs = [
         [ name: 'POI-DSL-1.8', trigger: 'H */12 * * *'
@@ -88,7 +88,7 @@ def poijobs = [
           disabled: true, skipcigame: true
         ],
         [ name: 'POI-DSL-old-Xerces', trigger: triggerSundays,
-          shell: "mkdir -p compile-lib && test -f ${xercesLib} || wget -O ${xercesLib} ${xercesUrl}\n",
+          shell: "test -f ${xercesLib} || wget -O ${xercesLib} ${xercesUrl}\n",
           // the property triggers using Xerces as XML Parser and previously showed some exception that can occur
           properties: ["-Dadditionaljar=${xercesLib}"]
         ],
