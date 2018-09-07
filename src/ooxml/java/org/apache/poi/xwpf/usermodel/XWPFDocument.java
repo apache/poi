@@ -84,7 +84,6 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STDocProtect;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHdrFtr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.StylesDocument;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 
 /**
  * <p>High(ish) level class for working with .docx files.</p>

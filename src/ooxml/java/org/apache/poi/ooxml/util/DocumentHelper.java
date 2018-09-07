@@ -20,6 +20,7 @@ package org.apache.poi.ooxml.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.util.concurrent.TimeUnit;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -38,6 +39,7 @@ import org.xml.sax.SAXParseException;
 
 public final class DocumentHelper {
     private static POILogger logger = POILogFactory.getLogger(DocumentHelper.class);
+    private static long lastLog;
 
     private DocumentHelper() {}
 
@@ -102,19 +104,19 @@ public final class DocumentHelper {
         //this doesn't appear to work, and we still need to limit
         //entity expansions to 1 in trySetXercesSecurityManager
         documentBuilderFactory.setExpandEntityReferences(false);
-        trySetSAXFeature(documentBuilderFactory, XMLConstants.FEATURE_SECURE_PROCESSING, true);
-        trySetSAXFeature(documentBuilderFactory, POIXMLConstants.FEATURE_LOAD_DTD_GRAMMAR, false);
-        trySetSAXFeature(documentBuilderFactory, POIXMLConstants.FEATURE_LOAD_EXTERNAL_DTD, false);
+        trySetFeature(documentBuilderFactory, XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        trySetFeature(documentBuilderFactory, POIXMLConstants.FEATURE_LOAD_DTD_GRAMMAR, false);
+        trySetFeature(documentBuilderFactory, POIXMLConstants.FEATURE_LOAD_EXTERNAL_DTD, false);
         trySetXercesSecurityManager(documentBuilderFactory);
     }
 
-    private static void trySetSAXFeature(DocumentBuilderFactory dbf, String feature, boolean enabled) {
+    private static void trySetFeature(DocumentBuilderFactory dbf, String feature, boolean enabled) {
         try {
             dbf.setFeature(feature, enabled);
         } catch (Exception e) {
-            logger.log(POILogger.WARN, "SAX Feature unsupported", feature, e);
+            logger.log(POILogger.WARN, "DocumentBuilderFactory Feature unsupported", feature, e);
         } catch (AbstractMethodError ame) {
-            logger.log(POILogger.WARN, "Cannot set SAX feature because outdated XML parser in classpath", feature, ame);
+            logger.log(POILogger.WARN, "Cannot set DocumentBuilderFactory feature because outdated XML parser in classpath", feature, ame);
         }
     }
     
@@ -134,13 +136,23 @@ public final class DocumentHelper {
             } catch (ClassNotFoundException e) {
                 // continue without log, this is expected in some setups
             } catch (Throwable e) {     // NOSONAR - also catch things like NoClassDefError here
-                logger.log(POILogger.WARN, "SAX Security Manager could not be setup", e);
+                if(System.currentTimeMillis() > lastLog + TimeUnit.MINUTES.toMillis(5)) {
+                    logger.log(POILogger.WARN, "DocumentBuilderFactory Security Manager could not be setup [log suppressed for 5 minutes]", e);
+                    lastLog = System.currentTimeMillis();
+                }
             }
         }
 
         // separate old version of Xerces not found => use the builtin way of setting the property
         // Note: when entity_expansion_limit==0, there is no limit!
-        dbf.setAttribute(POIXMLConstants.PROPERTY_ENTITY_EXPANSION_LIMIT, 1);
+        try {
+            dbf.setAttribute(POIXMLConstants.PROPERTY_ENTITY_EXPANSION_LIMIT, 1);
+        } catch (Throwable e) {
+            if(System.currentTimeMillis() > lastLog + TimeUnit.MINUTES.toMillis(5)) {
+                logger.log(POILogger.WARN, "DocumentBuilderFactory Entity Expansion Limit could not be setup [log suppressed for 5 minutes]", e);
+                lastLog = System.currentTimeMillis();
+            }
+        }
     }
 
     /**
