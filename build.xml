@@ -42,7 +42,7 @@ under the License.
 
     <description>The Apache POI project Ant build.</description>
 
-    <property name="version.id" value="4.0.1-beta1"/>
+    <property name="version.id" value="4.0.1-SNAPSHOT"/>
     <property name="release.rc" value="RC1"/>
 
     <property environment="env"/>
@@ -552,7 +552,6 @@ under the License.
 
         <scriptdef name="release_tag" language="javascript">
             var rel = ("REL_"+project.getProperty("version.id")).toUpperCase().replace(/\W/g,"_");
-            if (rel.search(/BETA/) == -1) rel += "_FINAL";
             project.setProperty("RELEASE_TAG", rel);
         </scriptdef>
         <release_tag/>
@@ -2545,7 +2544,6 @@ under the License.
         <scriptdef name="getnextrel" language="javascript">
             var relCurr = new String(project.getProperty("version.id"));
             var relNext = relCurr.replace(/[0-9]+$/, function(lastNum){ return new String(new Number(lastNum)+1); });
-            if (relNext.search(/beta/i) == -1) relNext += "-beta1";
             project.setProperty("rel_next", relNext);
         </scriptdef>
         <getnextrel/>
@@ -2591,7 +2589,7 @@ under the License.
                 message="tag r${svn_version2} as ${version.id}"/>
         </svn>
 
-        <!-- update build.xml to the next beta version -->
+        <!-- update build.xml to the next snapshot version -->
         <antcall target="-update-build.xml">
             <param name="version_id" value="${rel_next}"/>
         </antcall>
@@ -2605,7 +2603,7 @@ under the License.
             </fileset>
         </replaceregexp>
 
-        <!-- unpin documentation and commit next beta version -->
+        <!-- unpin documentation and commit next snapshot version -->
         <svn refid="svn.settings">
             <update dir="." recurse="true"/>
             <propset path="src" name="svn:externals" value="documentation https://svn.apache.org/repos/asf/poi/site/src/documentation"/>
@@ -2655,6 +2653,45 @@ under the License.
                 message="release candidate POI ${version.id}"/>
         </svn>
     </target>
+
+    <target name="release-finish" description="write the dist to the release candidate repo - needs Java7+">
+        <!--svn refid="svn.settings">
+            <update dir="." recurse="true"/>
+        </svn-->
+        <local name="rel_prev"/>
+        <local name="file_date"/>
+        <local name="file_date_iso"/>
+
+        <tstamp>
+            <!-- usually overwritten by a command line argument -->
+            <!-- for convience this is kept in the same format as in the release-prep call  -->
+            <format property="file_date" pattern="yyyyMMdd" locale="US"/>
+        </tstamp>
+
+
+        <scriptdef name="getnextrel" language="javascript">
+            var relPrev = new String(project.getProperty("version.id"))
+                .replace(/([0-9]+)[^0-9]*$/, function(all,lastNum){ return new String(new Number(lastNum)-1); });
+            project.setProperty("rel_prev", relPrev);
+            var fileDateIso = new String(project.getProperty("file_date"))
+                .replace(/([0-9]{4})([0-9]{2})([0-9]{2})/, "$1-$2-$3");
+            project.setProperty("file_date_iso", fileDateIso);
+        </scriptdef>
+        <getnextrel/>
+
+        <replaceregexp file="build.gradle" match="( +version += +)'[^']+'" replace="\1'${version.id}'"/>
+        <replaceregexp file="build.gradle" match="(japicmpversion += +)'[^']+'" replace="\1'${rel_prev}'"/>
+        <replaceregexp file="src/examples/groovy/build.gradle" match="( *compile 'org.apache.poi:[^0-9]+)([0-9.]+)'" replace="\1${rel_prev}'" byline="true"/>
+        <replaceregexp file="src/examples/scala/build.sbt" match='( *org.apache.poi.* ")[0-9.]+(.+)' replace="\1${rel_prev}\2" byline="true"/>
+        <replaceregexp file="osgi/build.xml" match='(name="version.id" value=")[^"]+' replace="\1${version.id}"/>
+        <replaceregexp file="doap_POI.rdf" match="&lt;release&gt;" replace="&lt;release&gt;&#10;      &lt;Version&gt;&#10;        &lt;name&gt;Apache POI ${rel_prev}&lt;/name&gt;&#10;        &lt;created&gt;${file_date_iso}&lt;/created&gt;&#10;        &lt;revision&gt;${rel_prev}&lt;/revision&gt;&#10;      &lt;/Version&gt;&#10;    &lt;/release&gt;&#10;    &lt;release&gt;"/>
+
+        <replaceregexp match="(&lt;version&gt;)[^&lt;]+" replace="\1${version.id}">
+            <fileset dir="sonar" includes="**/pom.xml"/>
+        </replaceregexp>
+    </target>
+
+
 
     <target name="-update-build.xml">
         <replaceregexp byline="true">
@@ -2758,21 +2795,15 @@ under the License.
             <format property="rel_date" pattern="dd MMMM yyyy" locale="US"/>
             <format property="file_date" pattern="yyyyMMdd" locale="US"/>
         </tstamp>
-        <!-- TODO: change reltype (dev/release), depending on BETA / FINAL -->
-        <property name="reltype" value="dev"/>
-        <property name="baseurl" value="https://www.apache.org/dist/poi/${reltype}"/>
+        <property name="baseurl" value="https://www.apache.org/dist/poi/release"/>
 
-        <loadChecksum property="bin-tar-md5" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.tar.gz.md5"/>
-        <loadChecksum property="bin-tar-sha1" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.tar.gz.sha1"/>
+        <loadChecksum property="bin-tar-sha256" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.tar.gz.sha256"/>
         <loadChecksum property="bin-tar-sha512" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.tar.gz.sha512"/>
-        <loadChecksum property="bin-zip-md5" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.zip.md5"/>
-        <loadChecksum property="bin-zip-sha1" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.zip.sha1"/>
+        <loadChecksum property="bin-zip-sha256" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.zip.sha256"/>
         <loadChecksum property="bin-zip-sha512" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.zip.sha512"/>
-        <loadChecksum property="src-tar-md5" url="${baseurl}/src/poi-src-${version.id}-${file_date}.tar.gz.md5"/>
-        <loadChecksum property="src-tar-sha1" url="${baseurl}/src/poi-src-${version.id}-${file_date}.tar.gz.sha1"/>
+        <loadChecksum property="src-tar-sha256" url="${baseurl}/src/poi-src-${version.id}-${file_date}.tar.gz.sha256"/>
         <loadChecksum property="src-tar-sha512" url="${baseurl}/src/poi-src-${version.id}-${file_date}.tar.gz.sha512"/>
-        <loadChecksum property="src-zip-md5" url="${baseurl}/src/poi-src-${version.id}-${file_date}.zip.md5"/>
-        <loadChecksum property="src-zip-sha1" url="${baseurl}/src/poi-src-${version.id}-${file_date}.zip.sha1"/>
+        <loadChecksum property="src-zip-sha256" url="${baseurl}/src/poi-src-${version.id}-${file_date}.zip.sha256"/>
         <loadChecksum property="src-zip-sha512" url="${baseurl}/src/poi-src-${version.id}-${file_date}.zip.sha512"/>
 
         <loadFilesize property="bin-tar-size" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.tar.gz"/>
@@ -2785,69 +2816,57 @@ under the License.
       <p>The Apache POI team is pleased to announce the release of ${version.id}.
          Featured are a handful of new areas of functionality and numerous bug fixes.</p>
       <p>A summary of changes is available in the
-        <link href="https://www.apache.org/dyn/closer.lua/poi/dev/RELEASE-NOTES-${version.id}.txt">Release Notes</link>.
-        A full list of changes is available in the <link href="changes.html">change log</link>.
-        People interested should also follow the <link href="mailinglists.html">dev list</link>
+        <a href="https://www.apache.org/dyn/closer.lua/poi/dev/RELEASE-NOTES-${version.id}.txt">Release Notes</a>.
+        A full list of changes is available in the <a href="site:changes">change log</a>.
+        People interested should also follow the <a href="site:mailinglists">dev list</a>
         to track progress.</p>
       <p>
         The POI source release as well as the pre-built binary deployment packages are listed below.
-        Pre-built versions of all <link href="overview.html#components">POI components</link>
+        Pre-built versions of all <a href="site:components">POI components</a>
         are available in the central Maven repository under Group ID "org.apache.poi" and Version
         "${version.id}".
       </p>
       <section id="POI-${version.id}-bin"><title>Binary Distribution</title>
       <ul>
-        <li><link href="https://www.apache.org/dyn/closer.lua/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.tar.gz">poi-bin-${version.id}-${file_date}.tar.gz</link>
-          (${bin-tar-size} MB, <link href="https://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.tar.gz.asc">signature (.asc)</link>)
+        <li><a href="https://www.apache.org/dyn/closer.lua/poi/release/bin/poi-bin-${version.id}-${file_date}.tar.gz">poi-bin-${version.id}-${file_date}.tar.gz</a>
+          (${bin-tar-size} MB, <a href="https://www.apache.org/dist/poi/release/bin/poi-bin-${version.id}-${file_date}.tar.gz.asc">signature (.asc)</a>)
           <br/>
-          MD5 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.tar.gz.md5">
-          ${bin-tar-md5}</link>
+          SHA256 checksum: <a href="https://www.apache.org/dist/poi/release/bin/poi-bin-${version.id}-${file_date}.tar.gz.sha256">
+          ${bin-tar-sha256}</a>
           <br/>
-          SHA1 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.tar.gz.sha1">
-          ${bin-tar-sha1}</link>
-          <br/>
-          SHA512 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.tar.gz.sha512">
-          ${bin-tar-sha512}</link>
+          SHA512 checksum: <a href="https://www.apache.org/dist/poi/release/bin/poi-bin-${version.id}-${file_date}.tar.gz.sha512">
+          ${bin-tar-sha512}</a>
         </li>
-        <li><link href="https://www.apache.org/dyn/closer.lua/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.zip">poi-bin-${version.id}-${file_date}.zip</link>
-          (${bin-zip-size} MB, <link href="https://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.zip.asc">signature (.asc)</link>)
+        <li><a href="https://www.apache.org/dyn/closer.lua/poi/release/bin/poi-bin-${version.id}-${file_date}.zip">poi-bin-${version.id}-${file_date}.zip</a>
+          (${bin-zip-size} MB, <a href="https://www.apache.org/dist/poi/release/bin/poi-bin-${version.id}-${file_date}.zip.asc">signature (.asc)</a>)
           <br/>
-          MD5 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.zip.md5">
-          ${bin-zip-md5}</link>
+          SHA256 checksum: <a href="https://www.apache.org/dist/poi/release/bin/poi-bin-${version.id}-${file_date}.zip.sha256">
+          ${bin-zip-sha256}</a>
           <br/>
-          SHA1 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.zip.sha1">
-          ${bin-zip-sha1}</link>
-          <br/>
-          SHA512 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.zip.sha512">
-          ${bin-zip-sha512}</link>
+          SHA512 checksum: <a href="https://www.apache.org/dist/poi/release/bin/poi-bin-${version.id}-${file_date}.zip.sha512">
+          ${bin-zip-sha512}</a>
         </li>
       </ul>
       </section>
       <section id="POI-${version.id}-src"><title>Source Distribution</title>
       <ul>
-        <li><link href="https://www.apache.org/dyn/closer.lua/poi/${reltype}/src/poi-src-${version.id}-${file_date}.tar.gz">poi-src-${version.id}-${file_date}.tar.gz</link>
-          (${src-tar-size} MB, <link href="https://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.tar.gz.asc">signature (.asc)</link>)
+        <li><a href="https://www.apache.org/dyn/closer.lua/poi/release/src/poi-src-${version.id}-${file_date}.tar.gz">poi-src-${version.id}-${file_date}.tar.gz</a>
+          (${src-tar-size} MB, <a href="https://www.apache.org/dist/poi/release/src/poi-src-${version.id}-${file_date}.tar.gz.asc">signature (.asc)</a>)
           <br/>
-          MD5 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.tar.gz.md5">
-          ${src-tar-md5}</link>
+          SHA256 checksum: <a href="https://www.apache.org/dist/poi/release/src/poi-src-${version.id}-${file_date}.tar.gz.sha256">
+          ${src-tar-sha256}</a>
           <br/>
-          SHA1 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.tar.gz.sha1">
-          ${src-tar-sha1}</link>
-          <br/>
-          SHA512 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.tar.gz.sha512">
-          ${src-tar-sha512}</link>
+          SHA512 checksum: <a href="https://www.apache.org/dist/poi/release/src/poi-src-${version.id}-${file_date}.tar.gz.sha512">
+          ${src-tar-sha512}</a>
         </li>
-        <li><link href="https://www.apache.org/dyn/closer.lua/poi/${reltype}/src/poi-src-${version.id}-${file_date}.zip">poi-src-${version.id}-${file_date}.zip</link>
-          (${src-zip-size} MB, <link href="https://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.zip.asc">signature (.asc)</link>)
+        <li><a href="https://www.apache.org/dyn/closer.lua/poi/release/src/poi-src-${version.id}-${file_date}.zip">poi-src-${version.id}-${file_date}.zip</a>
+          (${src-zip-size} MB, <a href="https://www.apache.org/dist/poi/release/src/poi-src-${version.id}-${file_date}.zip.asc">signature (.asc)</a>)
           <br/>
-          MD5 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.zip.md5">
-          ${src-zip-md5}</link>
+          SHA256 checksum: <a href="https://www.apache.org/dist/poi/release/src/poi-src-${version.id}-${file_date}.zip.sha256">
+          ${src-zip-sha256}</a>
           <br/>
-          SHA1 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.zip.sha1">
-          ${src-zip-sha1}</link>
-          <br/>
-          SHA512 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.zip.sha512">
-          ${src-zip-sha512}</link>
+          SHA512 checksum: <a href="https://www.apache.org/dist/poi/release/src/poi-src-${version.id}-${file_date}.zip.sha512">
+          ${src-zip-sha512}</a>
         </li>
       </ul>
       </section>

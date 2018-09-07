@@ -91,9 +91,9 @@ subprojects {
     // See https://github.com/melix/japicmp-gradle-plugin 
     apply plugin: 'me.champeau.gradle.japicmp'
         
-    version = '4.0.0-SNAPSHOT'
+    version = '4.0.1-SNAPSHOT'
     ext {
-        japicmpversion = '3.17'
+        japicmpversion = '4.0.0'
     }
 
     tasks.withType(JavaCompile) {
