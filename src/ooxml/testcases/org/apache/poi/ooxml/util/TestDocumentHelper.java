@@ -37,8 +37,12 @@ public class TestDocumentHelper {
 
     @Test
     public void testDocumentBuilderFactory() throws Exception {
-        assertTrue(DocumentHelper.documentBuilderFactory.getFeature(XMLConstants.FEATURE_SECURE_PROCESSING));
-        assertFalse(DocumentHelper.documentBuilderFactory.getFeature(POIXMLConstants.FEATURE_LOAD_DTD_GRAMMAR));
-        assertFalse(DocumentHelper.documentBuilderFactory.getFeature(POIXMLConstants.FEATURE_LOAD_EXTERNAL_DTD));
+        try {
+            assertTrue(DocumentHelper.documentBuilderFactory.getFeature(XMLConstants.FEATURE_SECURE_PROCESSING));
+            assertFalse(DocumentHelper.documentBuilderFactory.getFeature(POIXMLConstants.FEATURE_LOAD_DTD_GRAMMAR));
+            assertFalse(DocumentHelper.documentBuilderFactory.getFeature(POIXMLConstants.FEATURE_LOAD_EXTERNAL_DTD));
+        } catch(AbstractMethodError e) {
+            // ignore exceptions from old parsers that don't support this API (https://bz.apache.org/bugzilla/show_bug.cgi?id=62692)
+        }
     }
 }
