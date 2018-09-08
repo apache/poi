@@ -2753,13 +2753,20 @@ under the License.
         project.setProperty(attributes.get("property"), mega);
     </scriptdef>
 
-    <macrodef name="loadFilesize">
-        <attribute name="url"/>
-        <attribute name="property"/>
+    <macrodef name="download-line">
+        <attribute name="prop"/>
+        <attribute name="dist"/>
+        <attribute name="pack"/>
         <sequential>
+            <local name="baseurl"/>
+            <property name="baseurl" value="https://www.apache.org/dist/poi/release"/>
+
+            <local name="basedyn"/>
+            <property name="basedyn" value="https://www.apache.org/dyn/closer.lua/poi/release"/>
+
             <delete file="build/loadFilesize.txt"/>
             <record name="build/loadFilesize.txt" action="start" loglevel="verbose" append="false"/>
-            <http url="@{url}" method="HEAD" expected="200" printrequestheaders="false" printresponseheaders="false"/>
+            <http url="${baseurl}/@{dist}/poi-@{dist}-${version.id}-${file_date}.@{pack}" method="HEAD" expected="200" printrequestheaders="false" printresponseheaders="false"/>
             <record name="build/loadFilesize.txt" action="stop"/>
             <local name="fileSize"/>
             <loadfile property="fileSize" srcFile="build/loadFilesize.txt">
@@ -2770,7 +2777,16 @@ under the License.
                     </tokenfilter>
                 </filterchain>
             </loadfile>
-            <bytes2mega property="@{property}" bytes="${fileSize}"/>
+
+            <local name="fileSizeMb"/>
+            <bytes2mega property="fileSizeMb" bytes="${fileSize}"/>
+
+            <property name="@{prop}"><![CDATA[<li>
+          <a href="${basedyn}/@{dist}/poi-@{dist}-${version.id}-${file_date}.@{pack}">poi-@{dist}-${version.id}-${file_date}.@{pack}</a>
+          (${fileSizeMb} MB, <a href="${baseurl}/@{dist}/poi-@{dist}-${version.id}-${file_date}.@{pack}.asc">signature (.asc)</a>,
+          checksum: <a href="${baseurl}/@{dist}/poi-@{dist}-${version.id}-${file_date}.@{pack}.sha256">SHA-256</a>,
+          <a href="${baseurl}/@{dist}/poi-@{dist}-${version.id}-${file_date}.@{pack}.sha512">SHA-512</a>)
+        </li>]]></property>
         </sequential>
     </macrodef>
 
@@ -2795,23 +2811,17 @@ under the License.
             <format property="rel_date" pattern="dd MMMM yyyy" locale="US"/>
             <format property="file_date" pattern="yyyyMMdd" locale="US"/>
         </tstamp>
-        <property name="baseurl" value="https://www.apache.org/dist/poi/release"/>
 
-        <loadChecksum property="bin-tar-sha256" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.tar.gz.sha256"/>
-        <loadChecksum property="bin-tar-sha512" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.tar.gz.sha512"/>
-        <loadChecksum property="bin-zip-sha256" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.zip.sha256"/>
-        <loadChecksum property="bin-zip-sha512" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.zip.sha512"/>
-        <loadChecksum property="src-tar-sha256" url="${baseurl}/src/poi-src-${version.id}-${file_date}.tar.gz.sha256"/>
-        <loadChecksum property="src-tar-sha512" url="${baseurl}/src/poi-src-${version.id}-${file_date}.tar.gz.sha512"/>
-        <loadChecksum property="src-zip-sha256" url="${baseurl}/src/poi-src-${version.id}-${file_date}.zip.sha256"/>
-        <loadChecksum property="src-zip-sha512" url="${baseurl}/src/poi-src-${version.id}-${file_date}.zip.sha512"/>
+        <local name="li1"/>
+        <local name="li2"/>
+        <local name="li3"/>
+        <local name="li4"/>
+        <download-line prop="li1" dist="bin" pack="tar.gz"/>
+        <download-line prop="li2" dist="bin" pack="zip"/>
+        <download-line prop="li3" dist="src" pack="tar.gz"/>
+        <download-line prop="li4" dist="src" pack="zip"/>
 
-        <loadFilesize property="bin-tar-size" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.tar.gz"/>
-        <loadFilesize property="bin-zip-size" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.zip"/>
-        <loadFilesize property="src-tar-size" url="${baseurl}/src/poi-src-${version.id}-${file_date}.tar.gz"/>
-        <loadFilesize property="src-zip-size" url="${baseurl}/src/poi-src-${version.id}-${file_date}.zip"/>
-
-        <echo file="download-snipplet.xml"><![CDATA[
+<echo file="download-snipplet.xml"><![CDATA[
     <section id="POI-${version.id}"><title>${rel_date} - POI ${version.id} available</title>
       <p>The Apache POI team is pleased to announce the release of ${version.id}.
          Featured are a handful of new areas of functionality and numerous bug fixes.</p>
@@ -2828,46 +2838,14 @@ under the License.
       </p>
       <section id="POI-${version.id}-bin"><title>Binary Distribution</title>
       <ul>
-        <li><a href="https://www.apache.org/dyn/closer.lua/poi/release/bin/poi-bin-${version.id}-${file_date}.tar.gz">poi-bin-${version.id}-${file_date}.tar.gz</a>
-          (${bin-tar-size} MB, <a href="https://www.apache.org/dist/poi/release/bin/poi-bin-${version.id}-${file_date}.tar.gz.asc">signature (.asc)</a>)
-          <br/>
-          SHA256 checksum: <a href="https://www.apache.org/dist/poi/release/bin/poi-bin-${version.id}-${file_date}.tar.gz.sha256">
-          ${bin-tar-sha256}</a>
-          <br/>
-          SHA512 checksum: <a href="https://www.apache.org/dist/poi/release/bin/poi-bin-${version.id}-${file_date}.tar.gz.sha512">
-          ${bin-tar-sha512}</a>
-        </li>
-        <li><a href="https://www.apache.org/dyn/closer.lua/poi/release/bin/poi-bin-${version.id}-${file_date}.zip">poi-bin-${version.id}-${file_date}.zip</a>
-          (${bin-zip-size} MB, <a href="https://www.apache.org/dist/poi/release/bin/poi-bin-${version.id}-${file_date}.zip.asc">signature (.asc)</a>)
-          <br/>
-          SHA256 checksum: <a href="https://www.apache.org/dist/poi/release/bin/poi-bin-${version.id}-${file_date}.zip.sha256">
-          ${bin-zip-sha256}</a>
-          <br/>
-          SHA512 checksum: <a href="https://www.apache.org/dist/poi/release/bin/poi-bin-${version.id}-${file_date}.zip.sha512">
-          ${bin-zip-sha512}</a>
-        </li>
+        ${li1}
+        ${li2}
       </ul>
       </section>
       <section id="POI-${version.id}-src"><title>Source Distribution</title>
       <ul>
-        <li><a href="https://www.apache.org/dyn/closer.lua/poi/release/src/poi-src-${version.id}-${file_date}.tar.gz">poi-src-${version.id}-${file_date}.tar.gz</a>
-          (${src-tar-size} MB, <a href="https://www.apache.org/dist/poi/release/src/poi-src-${version.id}-${file_date}.tar.gz.asc">signature (.asc)</a>)
-          <br/>
-          SHA256 checksum: <a href="https://www.apache.org/dist/poi/release/src/poi-src-${version.id}-${file_date}.tar.gz.sha256">
-          ${src-tar-sha256}</a>
-          <br/>
-          SHA512 checksum: <a href="https://www.apache.org/dist/poi/release/src/poi-src-${version.id}-${file_date}.tar.gz.sha512">
-          ${src-tar-sha512}</a>
-        </li>
-        <li><a href="https://www.apache.org/dyn/closer.lua/poi/release/src/poi-src-${version.id}-${file_date}.zip">poi-src-${version.id}-${file_date}.zip</a>
-          (${src-zip-size} MB, <a href="https://www.apache.org/dist/poi/release/src/poi-src-${version.id}-${file_date}.zip.asc">signature (.asc)</a>)
-          <br/>
-          SHA256 checksum: <a href="https://www.apache.org/dist/poi/release/src/poi-src-${version.id}-${file_date}.zip.sha256">
-          ${src-zip-sha256}</a>
-          <br/>
-          SHA512 checksum: <a href="https://www.apache.org/dist/poi/release/src/poi-src-${version.id}-${file_date}.zip.sha512">
-          ${src-zip-sha512}</a>
-        </li>
+        ${li3}
+        ${li4}
       </ul>
       </section>
     </section>
