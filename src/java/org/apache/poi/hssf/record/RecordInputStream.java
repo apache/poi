@@ -105,8 +105,8 @@ public final class RecordInputStream implements LittleEndianInput {
 
 		private final LittleEndianInput _lei;
 
-		public SimpleHeaderInput(InputStream in) {
-			_lei = getLEI(in);
+		private SimpleHeaderInput(LittleEndianInput lei) {
+			_lei = lei;
 		}
 		@Override
         public int available() {
@@ -128,23 +128,18 @@ public final class RecordInputStream implements LittleEndianInput {
 
 	public RecordInputStream(InputStream in, EncryptionInfo key, int initialOffset) throws RecordFormatException {
 		if (key == null) {
-			_dataInput = getLEI(in);
-			_bhi = new SimpleHeaderInput(in);
+			_dataInput = (in instanceof LittleEndianInput)
+				// accessing directly is an optimisation
+				? (LittleEndianInput)in
+				// less optimal, but should work OK just the same. Often occurs in junit tests.
+				: new LittleEndianInputStream(in);
+			_bhi = new SimpleHeaderInput(_dataInput);
 		} else {
 			Biff8DecryptingStream bds = new Biff8DecryptingStream(in, initialOffset, key);
             _dataInput = bds;
 			_bhi = bds;
 		}
 		_nextSid = readNextSid();
-	}
-
-	static LittleEndianInput getLEI(InputStream is) {
-		if (is instanceof LittleEndianInput) {
-			// accessing directly is an optimisation
-			return (LittleEndianInput) is;
-		}
-		// less optimal, but should work OK just the same. Often occurs in junit tests.
-		return new LittleEndianInputStream(is);
 	}
 
 	/**
@@ -194,11 +189,9 @@ public final class RecordInputStream implements LittleEndianInput {
 	private int readNextSid() {
 		int nAvailable  = _bhi.available();
 		if (nAvailable < EOFRecord.ENCODED_SIZE) {
-			if (nAvailable > 0) {
-				// some scrap left over?
-				// ex45582-22397.xls has one extra byte after the last record
-				// Excel reads that file OK
-			}
+			// some scrap left over, if nAvailable > 0?
+			// ex45582-22397.xls has one extra byte after the last record
+			// Excel reads that file OK
 			return INVALID_SID_VALUE;
 		}
 		int result = _bhi.readRecordSID();
@@ -302,17 +295,13 @@ public final class RecordInputStream implements LittleEndianInput {
 		return _dataInput.readUShort();
 	}
 
+	/**
+	 *
+	 * @return a double - might return NaN
+	 */
 	@Override
     public double readDouble() {
-		long valueLongBits = readLong();
-		double result = Double.longBitsToDouble(valueLongBits);
-		if (Double.isNaN(result)) {
-            // YK: Excel doesn't write NaN but instead converts the cell type into {@link CellType#ERROR}.
-            // HSSF prior to version 3.7 had a bug: it could write Double.NaN but could not read such a file back.
-            // This behavior was fixed in POI-3.7.
-            //throw new RuntimeException("Did not expect to read NaN"); // (Because Excel typically doesn't write NaN)
-		}
-		return result;
+		return Double.longBitsToDouble(readLong());
 	}
 	
 	public void readPlain(byte[] buf, int off, int len) {
@@ -329,7 +318,7 @@ public final class RecordInputStream implements LittleEndianInput {
         readFully(buf, off, len, false);
     }
 	
-    protected void readFully(byte[] buf, int off, int len, boolean isPlain) {
+    private void readFully(byte[] buf, int off, int len, boolean isPlain) {
 	    int origLen = len;
 	    if (buf == null) {
 	        throw new NullPointerException();

@@ -527,20 +527,16 @@ public final class BiffViewer {
 		}
 		@Override
 		public int read(byte[] b, int off, int len) throws IOException {
+            if (b == null || off < 0 || len < 0  || b.length < off+len) {
+                throw new IllegalArgumentException();
+            }
 			if (_currentPos >= _currentSize) {
 				fillNextBuffer();
 			}
 			if (_currentPos >= _currentSize) {
 				return -1;
 			}
-			int availSize = _currentSize - _currentPos;
-			int result;
-			if (len > availSize) {
-				System.err.println("Unexpected request to read past end of current biff record");
-				result = availSize;
-			} else {
-				result = len;
-			}
+			final int result = Math.min(len, _currentSize - _currentPos);
 			System.arraycopy(_data, _currentPos, b, off, result);
 			_currentPos += result;
 			_overallStreamPos += result;
