@@ -43,32 +43,48 @@ public class HwmfDrawProperties {
     private final Rectangle2D window;
     private Rectangle2D viewport;
     private final Point2D location;
-    private HwmfMapMode mapMode = HwmfMapMode.MM_ANISOTROPIC;
-    private HwmfColorRef backgroundColor = new HwmfColorRef(Color.BLACK);
-    private HwmfBrushStyle brushStyle = HwmfBrushStyle.BS_SOLID;
-    private HwmfColorRef brushColor = new HwmfColorRef(Color.BLACK);
-    private HwmfHatchStyle brushHatch = HwmfHatchStyle.HS_HORIZONTAL;
+    private HwmfMapMode mapMode;
+    private HwmfColorRef backgroundColor;
+    private HwmfBrushStyle brushStyle;
+    private HwmfColorRef brushColor;
+    private HwmfHatchStyle brushHatch;
     private BufferedImage brushBitmap;
-    private double penWidth = 1;
-    private HwmfPenStyle penStyle = HwmfPenStyle.valueOf(0);
-    private HwmfColorRef penColor = new HwmfColorRef(Color.BLACK);
-    private double penMiterLimit = 10;
-    private HwmfBkMode bkMode = HwmfBkMode.OPAQUE;
-    private HwmfPolyfillMode polyfillMode = HwmfPolyfillMode.WINDING;
+    private double penWidth;
+    private HwmfPenStyle penStyle;
+    private HwmfColorRef penColor;
+    private double penMiterLimit;
+    private HwmfBkMode bkMode;
+    private HwmfPolyfillMode polyfillMode;
     private Shape region;
     private List<PaletteEntry> palette;
     private int paletteOffset;
     private HwmfFont font;
-    private HwmfColorRef textColor = new HwmfColorRef(Color.BLACK);
-    private HwmfTextAlignment textAlignLatin = HwmfTextAlignment.LEFT;
-    private HwmfTextVerticalAlignment textVAlignLatin = HwmfTextVerticalAlignment.TOP;
-    private HwmfTextAlignment textAlignAsian = HwmfTextAlignment.RIGHT;
-    private HwmfTextVerticalAlignment textVAlignAsian = HwmfTextVerticalAlignment.TOP;
+    private HwmfColorRef textColor;
+    private HwmfTextAlignment textAlignLatin;
+    private HwmfTextVerticalAlignment textVAlignLatin;
+    private HwmfTextAlignment textAlignAsian;
+    private HwmfTextVerticalAlignment textVAlignAsian;
 
     public HwmfDrawProperties() {
         window = new Rectangle2D.Double(0, 0, 1, 1);
         viewport = null;
         location = new Point2D.Double(0,0);
+        mapMode = HwmfMapMode.MM_ANISOTROPIC;
+        backgroundColor = new HwmfColorRef(Color.BLACK);
+        brushStyle = HwmfBrushStyle.BS_SOLID;
+        brushColor = new HwmfColorRef(Color.BLACK);
+        brushHatch = HwmfHatchStyle.HS_HORIZONTAL;
+        penWidth = 1;
+        penStyle = HwmfPenStyle.valueOf(0);
+        penColor = new HwmfColorRef(Color.BLACK);
+        penMiterLimit = 10;
+        bkMode = HwmfBkMode.OPAQUE;
+        polyfillMode = HwmfPolyfillMode.WINDING;
+        textColor = new HwmfColorRef(Color.BLACK);
+        textAlignLatin = HwmfTextAlignment.LEFT;
+        textVAlignLatin = HwmfTextVerticalAlignment.TOP;
+        textAlignAsian = HwmfTextAlignment.RIGHT;
+        textVAlignAsian = HwmfTextVerticalAlignment.TOP;
     }
     
     public HwmfDrawProperties(HwmfDrawProperties other) {
@@ -86,7 +102,7 @@ public class HwmfDrawProperties {
             WritableRaster raster = other.brushBitmap.copyData(null);
             this.brushBitmap = new BufferedImage(cm, raster, isAlphaPremultiplied, null);            
         }
-        this.penWidth = 1;
+        this.penWidth = other.penWidth;
         this.penStyle = (other.penStyle == null) ? null : other.penStyle.clone();
         this.penColor = (other.penColor == null) ? null : other.penColor.clone();
         this.penMiterLimit = other.penMiterLimit;
@@ -101,6 +117,10 @@ public class HwmfDrawProperties {
         this.paletteOffset = other.paletteOffset;
         this.font = other.font;
         this.textColor = (other.textColor == null) ? null : other.textColor.clone();
+        this.textAlignLatin = other.textAlignLatin;
+        this.textVAlignLatin = other.textVAlignLatin;
+        this.textAlignAsian = other.textAlignAsian;
+        this.textVAlignAsian = other.textVAlignAsian;
     }
     
     public void setViewportExt(double width, double height) {
@@ -147,6 +167,10 @@ public class HwmfDrawProperties {
 
     public void setLocation(double x, double y) {
         location.setLocation(x, y);
+    }
+
+    public void setLocation(Point2D point) {
+        location.setLocation(point);
     }
 
     public Point2D getLocation() {

@@ -22,7 +22,7 @@ import java.awt.geom.Rectangle2D;
 
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.util.Internal;
-import org.apache.poi.xdgf.geom.Dimension2dDouble;
+import org.apache.poi.util.Dimension2DDouble;
 
 import com.microsoft.schemas.office.visio.x2012.main.PageType;
 
@@ -75,14 +75,14 @@ public class XDGFPage {
     /**
      * @return width/height of page
      */
-    public Dimension2dDouble getPageSize() {
+    public Dimension2DDouble getPageSize() {
         XDGFCell w = _pageSheet.getCell("PageWidth");
         XDGFCell h = _pageSheet.getCell("PageHeight");
 
         if (w == null || h == null)
             throw new POIXMLException("Cannot determine page size");
 
-        return new Dimension2dDouble(Double.parseDouble(w.getValue()),
+        return new Dimension2DDouble(Double.parseDouble(w.getValue()),
                 Double.parseDouble(h.getValue()));
     }
 
@@ -109,7 +109,7 @@ public class XDGFPage {
      * @return bounding box of page
      */
     public Rectangle2D getBoundingBox() {
-        Dimension2dDouble sz = getPageSize();
+        Dimension2DDouble sz = getPageSize();
         Point2D.Double offset = getPageOffset();
 
         return new Rectangle2D.Double(-offset.getX(), -offset.getY(),

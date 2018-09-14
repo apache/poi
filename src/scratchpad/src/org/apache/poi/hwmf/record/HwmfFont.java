@@ -24,6 +24,8 @@ import org.apache.poi.common.usermodel.fonts.FontCharset;
 import org.apache.poi.common.usermodel.fonts.FontFamily;
 import org.apache.poi.common.usermodel.fonts.FontInfo;
 import org.apache.poi.common.usermodel.fonts.FontPitch;
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
@@ -90,7 +92,7 @@ public class HwmfFont implements FontInfo {
             this.flag = flag;
         }
 
-        static WmfOutPrecision valueOf(int flag) {
+        public static WmfOutPrecision valueOf(int flag) {
             for (WmfOutPrecision op : values()) {
                 if (op.flag == flag) {
                     return op;
@@ -104,22 +106,17 @@ public class HwmfFont implements FontInfo {
      * ClipPrecision Flags specify clipping precision, which defines how to clip characters that are
      * partially outside a clipping region. These flags can be combined to specify multiple options.
      */
-    public enum WmfClipPrecision {
+    public static class WmfClipPrecision {
 
-        /**
-         * Specifies that default clipping MUST be used.
-         */
-        CLIP_DEFAULT_PRECIS (0x00000000),
+        /** Specifies that default clipping MUST be used. */
+        private static final BitField CLIP_DEFAULT_PRECIS = BitFieldFactory.getInstance(0x0000);
 
-        /**
-         * This value SHOULD NOT be used.
-         */
-        CLIP_CHARACTER_PRECIS (0x00000001),
 
-        /**
-         * This value MAY be returned when enumerating rasterized, TrueType and vector fonts.
-         */
-        CLIP_STROKE_PRECIS (0x00000002),
+        /** This value SHOULD NOT be used. */
+        private static final BitField CLIP_CHARACTER_PRECIS = BitFieldFactory.getInstance(0x0001);
+
+        /** This value MAY be returned when enumerating rasterized, TrueType and vector fonts. */
+        private static final BitField CLIP_STROKE_PRECIS = BitFieldFactory.getInstance(0x0002);
 
         /**
          * This value is used to control font rotation, as follows:
@@ -129,37 +126,25 @@ public class HwmfFont implements FontInfo {
          * If clear, device fonts SHOULD rotate counterclockwise, but the rotation of other fonts
          * SHOULD be determined by the orientation of the coordinate system.
          */
-        CLIP_LH_ANGLES (0x00000010),
+        private static final BitField CLIP_LH_ANGLES = BitFieldFactory.getInstance(0x0010);
 
-        /**
-         * This value SHOULD NOT be used.
-         */
-        CLIP_TT_ALWAYS (0x00000020),
+        /** This value SHOULD NOT be used. */
+        private static final BitField CLIP_TT_ALWAYS = BitFieldFactory.getInstance(0x0020);
 
-        /**
-         * This value specifies that font association SHOULD< be turned off.
-         */
-        CLIP_DFA_DISABLE (0x00000040),
+        /** This value specifies that font association SHOULD< be turned off. */
+        private static final BitField CLIP_DFA_DISABLE = BitFieldFactory.getInstance(0x0040);
 
         /**
          * This value specifies that font embedding MUST be used to render document content;
          * embedded fonts are read-only.
          */
-        CLIP_EMBEDDED (0x00000080);
-
+        private static final BitField CLIP_EMBEDDED = BitFieldFactory.getInstance(0x0080);
 
         int flag;
-        WmfClipPrecision(int flag) {
-            this.flag = flag;
-        }
 
-        static WmfClipPrecision valueOf(int flag) {
-            for (WmfClipPrecision cp : values()) {
-                if (cp.flag == flag) {
-                    return cp;
-                }
-            }
-            return null;
+        public int init(LittleEndianInputStream leis) {
+            flag = leis.readUByte();
+            return LittleEndianConsts.BYTE_SIZE;
         }
     }
 
@@ -210,7 +195,7 @@ public class HwmfFont implements FontInfo {
             this.flag = flag;
         }
 
-        static WmfFontQuality valueOf(int flag) {
+        public static WmfFontQuality valueOf(int flag) {
             for (WmfFontQuality fq : values()) {
                 if (fq.flag == flag) {
                     return fq;
@@ -240,7 +225,7 @@ public class HwmfFont implements FontInfo {
      * For all height comparisons, the font mapper SHOULD find the largest physical
      * font that does not exceed the requested size.
      */
-    int height;
+    protected int height;
 
     /**
      * A 16-bit signed integer that defines the average width, in logical units, of
@@ -248,45 +233,45 @@ public class HwmfFont implements FontInfo {
      * against the digitization aspect ratio of the available fonts to find the closest match,
      * determined by the absolute value of the difference.
      */
-    int width;
+    protected int width;
 
     /**
      * A 16-bit signed integer that defines the angle, in tenths of degrees, between the
      * escapement vector and the x-axis of the device. The escapement vector is parallel
      * to the base line of a row of text.
      */
-    int escapement;
+    protected int escapement;
 
     /**
      * A 16-bit signed integer that defines the angle, in tenths of degrees,
      * between each character's base line and the x-axis of the device.
      */
-    int orientation;
+    protected int orientation;
 
     /**
      * A 16-bit signed integer that defines the weight of the font in the range 0
      * through 1000. For example, 400 is normal and 700 is bold. If this value is 0x0000,
      * a default weight SHOULD be used.
      */
-    int weight;
+    protected int weight;
 
     /**
      * A 8-bit Boolean value that specifies the italic attribute of the font.
      * 0 = not italic / 1 = italic.
      */
-    boolean italic;
+    protected boolean italic;
 
     /**
      * An 8-bit Boolean value that specifies the underline attribute of the font.
      * 0 = not underlined / 1 = underlined
      */
-    boolean underline;
+    protected boolean underline;
 
     /**
      * An 8-bit Boolean value that specifies the strike out attribute of the font.
      * 0 = not striked out / 1 = striked out
      */
-    boolean strikeOut;
+    protected boolean strikeOut;
 
     /**
      * An 8-bit unsigned integer that defines the character set.
@@ -299,12 +284,12 @@ public class HwmfFont implements FontInfo {
      * If a typeface name in the FaceName field is specified, the CharSet value MUST match the
      * character set of that typeface.
      */
-    FontCharset charSet;
+    protected FontCharset charSet;
 
     /**
      * An 8-bit unsigned integer that defines the output precision.
      */
-    WmfOutPrecision outPrecision;
+    protected WmfOutPrecision outPrecision;
 
     /**
      * An 8-bit unsigned integer that defines the clipping precision.
@@ -312,40 +297,40 @@ public class HwmfFont implements FontInfo {
      *
      * @see WmfClipPrecision
      */
-    WmfClipPrecision clipPrecision;
+    protected final WmfClipPrecision clipPrecision = new WmfClipPrecision();
 
     /**
      * An 8-bit unsigned integer that defines the output quality.
      */
-    WmfFontQuality quality;
+    protected WmfFontQuality quality;
 
     /**
      * A PitchAndFamily object that defines the pitch and the family of the font.
      * Font families specify the look of fonts in a general way and are intended for
      * specifying fonts when the exact typeface wanted is not available.
      */
-    int pitchAndFamily;
+    protected int pitchAndFamily;
     
     /**
      * Font families specify the look of fonts in a general way and are
      * intended for specifying fonts when the exact typeface wanted is not available.
      * (LSB 4 bits)
      */
-    FontFamily family;
+    protected FontFamily family;
     
     /**
      * A property of a font that describes the pitch (MSB 2 bits)
      */
-    FontPitch pitch;
+    protected FontPitch pitch;
 
     /**
      * A null-terminated string of 8-bit Latin-1 [ISO/IEC-8859-1] ANSI
      * characters that specifies the typeface name of the font. The length of this string MUST NOT
      * exceed 32 8-bit characters, including the terminating null.
      */
-    String facename;
+    protected String facename;
 
-    public int init(LittleEndianInputStream leis) throws IOException {
+    public int init(LittleEndianInputStream leis, long recordSize) throws IOException {
         height = leis.readShort();
         width = leis.readShort();
         escapement = leis.readShort();
@@ -356,21 +341,17 @@ public class HwmfFont implements FontInfo {
         strikeOut = leis.readByte() != 0;
         charSet = FontCharset.valueOf(leis.readUByte());
         outPrecision = WmfOutPrecision.valueOf(leis.readUByte());
-        clipPrecision = WmfClipPrecision.valueOf(leis.readUByte());
+        clipPrecision.init(leis);
         quality = WmfFontQuality.valueOf(leis.readUByte());
         pitchAndFamily = leis.readUByte();
-        
-        byte buf[] = new byte[32], b, readBytes = 0;
-        do {
-            if (readBytes == 32) {
-                throw new IOException("Font facename can't be determined.");
-            }
 
-            buf[readBytes++] = b = leis.readByte();
-        } while (b != 0 && b != -1 && readBytes <= 32);
-        
-        facename = new String(buf, 0, readBytes-1, StandardCharsets.ISO_8859_1);
-        
+        StringBuilder sb = new StringBuilder();
+        int readBytes = readString(leis, sb, 32);
+        if (readBytes == -1) {
+            throw new IOException("Font facename can't be determined.");
+        }
+        facename = sb.toString();
+
         return 5*LittleEndianConsts.SHORT_SIZE+8*LittleEndianConsts.BYTE_SIZE+readBytes;
     }
 
@@ -470,5 +451,20 @@ public class HwmfFont implements FontInfo {
     @Override
     public void setCharset(FontCharset charset) {
         throw new UnsupportedOperationException("setCharset not supported by HwmfFont.");
+    }
+
+    protected int readString(LittleEndianInputStream leis, StringBuilder sb, int limit) throws IOException {
+        byte buf[] = new byte[limit], b, readBytes = 0;
+        do {
+            if (readBytes == limit) {
+                return -1;
+            }
+
+            buf[readBytes++] = b = leis.readByte();
+        } while (b != 0 && b != -1 && readBytes <= limit);
+
+        sb.append(new String(buf, 0, readBytes-1, StandardCharsets.ISO_8859_1));
+
+        return readBytes;
     }
 }

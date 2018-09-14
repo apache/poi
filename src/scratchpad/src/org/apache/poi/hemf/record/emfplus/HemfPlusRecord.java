@@ -15,35 +15,34 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hemf.record;
+package org.apache.poi.hemf.record.emfplus;
 
 
 import java.io.IOException;
 
-import org.apache.poi.util.IOUtils;
+import org.apache.poi.hemf.record.emf.HemfRecordType;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianInputStream;
 
 @Internal
-public class UnimplementedHemfRecord implements HemfRecord {
+public interface HemfPlusRecord {
 
-    private long recordId;
-    public UnimplementedHemfRecord() {
+    HemfPlusRecordType getRecordType();
 
-    }
+    int getFlags();
 
-    @Override
-    public HemfRecordType getRecordType() {
-        return HemfRecordType.getById(recordId);
-    }
+    /**
+     * Init record from stream
+     *
+     * @param leis the little endian input stream
+     * @param dataSize the size limit for this record
+     * @param recordId the id of the {@link HemfPlusRecordType}
+     * @param flags the record flags
+     *
+     * @return count of processed bytes
+     *
+     * @throws IOException when the inputstream is malformed
+     */
+    long init(LittleEndianInputStream leis, long dataSize, long recordId, int flags) throws IOException;
 
-    @Override
-    public long init(LittleEndianInputStream leis, long recordId, long recordSize) throws IOException {
-        this.recordId = recordId;
-        long skipped = IOUtils.skipFully(leis, recordSize);
-        if (skipped < recordSize) {
-            throw new IOException("End of stream reached before record read");
-        }
-        return skipped;
-    }
 }

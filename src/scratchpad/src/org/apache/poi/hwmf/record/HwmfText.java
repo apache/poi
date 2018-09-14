@@ -17,8 +17,16 @@
 
 package org.apache.poi.hwmf.record;
 
+import static org.apache.poi.hwmf.record.HwmfDraw.readPointS;
+import static org.apache.poi.hwmf.record.HwmfDraw.readRectS;
+
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.io.ByteArrayInputStream;
+import java.io.EOFException;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.charset.Charset;
 
 import org.apache.poi.hwmf.draw.HwmfDrawProperties;
@@ -31,6 +39,7 @@ import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.RecordFormatException;
 
 public class HwmfText {
     private static final POILogger logger = POILogFactory.getLogger(HwmfText.class);
@@ -52,7 +61,7 @@ public class HwmfText {
         private int charExtra;
         
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.setTextCharExtra;
         }
         
@@ -76,7 +85,7 @@ public class HwmfText {
         private HwmfColorRef colorRef;
         
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.setTextColor;
         }
         
@@ -112,7 +121,7 @@ public class HwmfText {
         private int breakExtra;
         
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.setBkColor;
         }
         
@@ -159,7 +168,7 @@ public class HwmfText {
         private int xStart;  
         
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.textOut;
         }
         
@@ -195,39 +204,46 @@ public class HwmfText {
             return ret;
         }
     }
-    
-    /**
-     * The META_EXTTEXTOUT record outputs text by using the font, background color, and text color that
-     * are defined in the playback device context. Optionally, dimensions can be provided for clipping,
-     * opaquing, or both.
-     */
-    public static class WmfExtTextOut implements HwmfRecord {
 
+    public static class WmfExtTextOutOptions {
         /**
-         * Indicates that the background color that is defined in the playback device context 
+         * Indicates that the background color that is defined in the playback device context
          * SHOULD be used to fill the rectangle.
-         */ 
+         */
         private static final BitField ETO_OPAQUE = BitFieldFactory.getInstance(0x0002);
-        
+
         /**
          * Indicates that the text SHOULD be clipped to the rectangle.
          */
         private static final BitField ETO_CLIPPED = BitFieldFactory.getInstance(0x0004);
 
         /**
-         * Indicates that the string to be output SHOULD NOT require further processing 
-         * with respect to the placement of the characters, and an array of character 
-         * placement values SHOULD be provided. This character placement process is 
+         * Indicates that the string to be output SHOULD NOT require further processing
+         * with respect to the placement of the characters, and an array of character
+         * placement values SHOULD be provided. This character placement process is
          * useful for fonts in which diacritical characters affect character spacing.
          */
         private static final BitField ETO_GLYPH_INDEX = BitFieldFactory.getInstance(0x0010);
 
         /**
-         * Indicates that the text MUST be laid out in right-to-left reading order, instead of 
-         * the default left-to-right order. This SHOULD be applied only when the font that is 
+         * Indicates that the text MUST be laid out in right-to-left reading order, instead of
+         * the default left-to-right order. This SHOULD be applied only when the font that is
          * defined in the playback device context is either Hebrew or Arabic.
          */
         private static final BitField ETO_RTLREADING = BitFieldFactory.getInstance(0x0080);
+
+        /**
+         * This bit indicates that the record does not specify a bounding rectangle for the
+         * text output.
+         */
+        private static final BitField ETO_NO_RECT = BitFieldFactory.getInstance(0x0100);
+
+        /**
+         * This bit indicates that the codes for characters in an output text string are 8 bits,
+         * derived from the low bytes of 16-bit Unicode UTF16-LE character codes, in which
+         * the high byte is assumed to be 0.
+         */
+        private static final BitField ETO_SMALL_CHARS = BitFieldFactory.getInstance(0x0200);
 
         /**
          * Indicates that to display numbers, digits appropriate to the locale SHOULD be used.
@@ -240,32 +256,58 @@ public class HwmfText {
         private static final BitField ETO_NUMERICSLATIN = BitFieldFactory.getInstance(0x0800);
 
         /**
-         * Indicates that both horizontal and vertical character displacement values 
+         * This bit indicates that no special operating system processing for glyph placement
+         * should be performed on right-to-left strings; that is, all glyph positioning
+         * SHOULD be taken care of by drawing and state records in the metafile
+         */
+        private static final BitField ETO_IGNORELANGUAGE = BitFieldFactory.getInstance(0x1000);
+
+        /**
+         * Indicates that both horizontal and vertical character displacement values
          * SHOULD be provided.
          */
         private static final BitField ETO_PDY = BitFieldFactory.getInstance(0x2000);
 
+        /** This bit is reserved and SHOULD NOT be used. */
+        private static final BitField ETO_REVERSE_INDEX_MAP = BitFieldFactory.getInstance(0x10000);
+
+        protected int flag;
+
+        public int init(LittleEndianInputStream leis) {
+            flag = leis.readUShort();
+            return LittleEndianConsts.SHORT_SIZE;
+        }
+
+        public boolean isOpaque() {
+            return ETO_OPAQUE.isSet(flag);
+        }
+
+        public boolean isClipped() {
+            return ETO_CLIPPED.isSet(flag);
+        }
+    }
+
+    /**
+     * The META_EXTTEXTOUT record outputs text by using the font, background color, and text color that
+     * are defined in the playback device context. Optionally, dimensions can be provided for clipping,
+     * opaquing, or both.
+     */
+    public static class WmfExtTextOut implements HwmfRecord {
         /**
-         * A 16-bit signed integer that defines the y-coordinate, in logical units, where the 
-        text string is to be located.
+         * The location, in logical units, where the text string is to be placed.
          */
-        private int y;  
-        /**
-         * A 16-bit signed integer that defines the x-coordinate, in logical units, where the 
-        text string is to be located.
-         */
-        private int x;  
+        protected final Point2D reference = new Point2D.Double();
+
         /**
          * A 16-bit signed integer that defines the length of the string.
          */
-        private int stringLength;
-
-         /**
-          * A 16-bit unsigned integer that defines the use of the application-defined 
-          * rectangle. This member can be a combination of one or more values in the 
-          * ExtTextOutOptions Flags (ETO_*)
-          */
-        private int fwOpts;
+        protected int stringLength;
+        /**
+         * A 16-bit unsigned integer that defines the use of the application-defined
+         * rectangle. This member can be a combination of one or more values in the
+         * ExtTextOutOptions Flags (ETO_*)
+         */
+        protected final WmfExtTextOutOptions options;
         /**
          * An optional 8-byte Rect Object (section 2.2.2.18) that defines the 
          * dimensions, in logical coordinates, of a rectangle that is used for clipping, opaquing, or both.
@@ -274,14 +316,14 @@ public class HwmfText {
          * Each value is a 16-bit signed integer that defines the coordinate, in logical coordinates, of 
          * the upper-left corner of the rectangle
          */
-        private int left,top,right,bottom;
+        protected final Rectangle2D bounds = new Rectangle2D.Double();
         /**
          * A variable-length string that specifies the text to be drawn. The string does 
          * not need to be null-terminated, because StringLength specifies the length of the string. If 
          * the length is odd, an extra byte is placed after it so that the following member (optional Dx) is 
          * aligned on a 16-bit boundary.
          */
-        private byte[] rawTextBytes;
+        protected byte[] rawTextBytes;
         /**
          * An optional array of 16-bit signed integers that indicate the distance between 
          * origins of adjacent character cells. For example, Dx[i] logical units separate the origins of 
@@ -289,9 +331,17 @@ public class HwmfText {
          * number of values as there are characters in the string.
          */
         private int dx[];
-        
+
+        public WmfExtTextOut() {
+            this(new WmfExtTextOutOptions());
+        }
+
+        protected WmfExtTextOut(WmfExtTextOutOptions options) {
+            this.options = options;
+        }
+
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.extTextOut;
         }
         
@@ -299,22 +349,17 @@ public class HwmfText {
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             // -6 bytes of record function and length header
             final int remainingRecordSize = (int)(recordSize-6);
-            
-            y = leis.readShort();
-            x = leis.readShort();
+
+            int size = readPointS(leis, reference);
+
             stringLength = leis.readShort();
-            fwOpts = leis.readUShort();
-            
-            int size = 4*LittleEndianConsts.SHORT_SIZE;
-            
+            size += LittleEndianConsts.SHORT_SIZE;
+            size += options.init(leis);
+
             // Check if we have a rectangle
-            if ((ETO_OPAQUE.isSet(fwOpts) || ETO_CLIPPED.isSet(fwOpts)) && size+8<=remainingRecordSize) {
-                // the bounding rectangle is optional and only read when fwOpts are given
-                left = leis.readShort();
-                top = leis.readShort();
-                right = leis.readShort();
-                bottom = leis.readShort();
-                size += 4*LittleEndianConsts.SHORT_SIZE;
+            if ((options.isOpaque() || options.isClipped()) && size+8<=remainingRecordSize) {
+                // the bounding rectangle is optional and only read when options are given
+                size += readRectS(leis, bounds);
             }
             
             rawTextBytes = IOUtils.safelyAllocate(stringLength+(stringLength&1), MAX_RECORD_LENGTH);
@@ -342,12 +387,46 @@ public class HwmfText {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            Rectangle2D bounds = new Rectangle2D.Double(x, y, 0, 0);
+            Rectangle2D bounds = new Rectangle2D.Double(reference.getX(), reference.getY(), 0, 0);
             ctx.drawString(getTextBytes(), bounds, dx);
         }
 
-        public String getText(Charset charset) {
-            return new String(getTextBytes(), charset);
+
+        public String getText(Charset charset) throws IOException {
+            StringBuilder sb = new StringBuilder();
+            try (Reader r = new InputStreamReader(new ByteArrayInputStream(rawTextBytes), charset)) {
+                for (int i = 0; i < stringLength; i++) {
+                    sb.appendCodePoint(readCodePoint(r));
+                }
+            }
+            return sb.toString();
+        }
+
+        //TODO: move this to IOUtils?
+        private int readCodePoint(Reader r) throws IOException {
+            int c1 = r.read();
+            if (c1 == -1) {
+                throw new EOFException("Tried to read beyond byte array");
+            }
+            if (!Character.isHighSurrogate((char)c1)) {
+                return c1;
+            }
+            int c2 = r.read();
+            if (c2 == -1) {
+                throw new EOFException("Tried to read beyond byte array");
+            }
+            if (!Character.isLowSurrogate((char)c2)) {
+                throw new RecordFormatException("Expected low surrogate after high surrogate");
+            }
+            return Character.toCodePoint((char)c1, (char)c2);
+        }
+
+        public Point2D getReference() {
+            return reference;
+        }
+
+        public Rectangle2D getBounds() {
+            return bounds;
         }
 
         /**
@@ -482,10 +561,10 @@ public class HwmfText {
          * for text with a horizontal baseline, and VerticalTextAlignmentMode Flags
          * for text with a vertical baseline.
          */
-        private int textAlignmentMode;
+        protected int textAlignmentMode;
         
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.setTextAlign;
         }
         
@@ -533,17 +612,24 @@ public class HwmfText {
     }
     
     public static class WmfCreateFontIndirect implements HwmfRecord, HwmfObjectTableEntry {
-        private HwmfFont font;
-        
+        protected final HwmfFont font;
+
+        public WmfCreateFontIndirect() {
+            this(new HwmfFont());
+        }
+
+        protected WmfCreateFontIndirect(HwmfFont font) {
+            this.font = font;
+        }
+
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.createFontIndirect;
         }
         
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            font = new HwmfFont();
-            return font.init(leis);
+            return font.init(leis, recordSize);
         }
 
         @Override

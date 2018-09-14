@@ -39,7 +39,7 @@ public enum HwmfHatchStyle {
         this.flag = flag;
     }
 
-    static HwmfHatchStyle valueOf(int flag) {
+    public static HwmfHatchStyle valueOf(int flag) {
         for (HwmfHatchStyle hs : values()) {
             if (hs.flag == flag) return hs;
         }

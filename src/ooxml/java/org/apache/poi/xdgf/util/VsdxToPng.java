@@ -25,7 +25,7 @@ import java.io.*;
 
 import javax.imageio.ImageIO;
 
-import org.apache.poi.xdgf.geom.Dimension2dDouble;
+import org.apache.poi.util.Dimension2DDouble;
 import org.apache.poi.xdgf.usermodel.XDGFPage;
 import org.apache.poi.xdgf.usermodel.XmlVisioDocument;
 import org.apache.poi.xdgf.usermodel.shape.ShapeDebuggerRenderer;
@@ -58,7 +58,7 @@ public class VsdxToPng {
     public static void renderToPng(XDGFPage page, File outFile, double scale,
             ShapeRenderer renderer) throws IOException {
 
-        Dimension2dDouble sz = page.getPageSize();
+        Dimension2DDouble sz = page.getPageSize();
 
         int width = (int) (scale * sz.getWidth());
         int height = (int) (scale * sz.getHeight());

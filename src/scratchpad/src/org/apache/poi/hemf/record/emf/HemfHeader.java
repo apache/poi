@@ -15,14 +15,20 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hemf.record;
+package org.apache.poi.hemf.record.emf;
 
-import java.awt.Rectangle;
+import static org.apache.poi.hemf.record.emf.HemfDraw.readDimensionFloat;
+import static org.apache.poi.hemf.record.emf.HemfDraw.readDimensionInt;
+import static org.apache.poi.hemf.record.emf.HemfDraw.readRectL;
+
+import java.awt.geom.Dimension2D;
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 
-import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.Dimension2DDouble;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
 /**
@@ -35,8 +41,8 @@ public class HemfHeader implements HemfRecord {
     private static final int MAX_RECORD_LENGTH = 1_000_000;
 
 
-    private Rectangle boundsRectangle;
-    private Rectangle frameRectangle;
+    private final Rectangle2D boundsRectangle = new Rectangle2D.Double();
+    private final Rectangle2D frameRectangle = new Rectangle2D.Double();
     private long bytes;
     private long records;
     private int handles;
@@ -48,14 +54,16 @@ public class HemfHeader implements HemfRecord {
     private long offPixelFormat;
     private long bOpenGL;
     private boolean hasExtension2;
-    private long micrometersX;
-    private long micrometersY;
+    private final Dimension2D deviceDimension = new Dimension2DDouble();
+    private final Dimension2D milliDimension = new Dimension2DDouble();
+    private final Dimension2D microDimension = new Dimension2DDouble();
 
-    public Rectangle getBoundsRectangle() {
+
+    public Rectangle2D getBoundsRectangle() {
         return boundsRectangle;
     }
 
-    public Rectangle getFrameRectangle() {
+    public Rectangle2D getFrameRectangle() {
         return frameRectangle;
     }
 
@@ -104,11 +112,11 @@ public class HemfHeader implements HemfRecord {
     }
 
     public long getMicrometersX() {
-        return micrometersX;
+        return (long)microDimension.getWidth();
     }
 
     public long getMicrometersY() {
-        return micrometersY;
+        return (long)microDimension.getHeight();
     }
 
     @Override
@@ -127,75 +135,61 @@ public class HemfHeader implements HemfRecord {
                 ", offPixelFormat=" + offPixelFormat +
                 ", bOpenGL=" + bOpenGL +
                 ", hasExtension2=" + hasExtension2 +
-                ", micrometersX=" + micrometersX +
-                ", micrometersY=" + micrometersY +
+                ", micrometersX=" + getMicrometersX() +
+                ", micrometersY=" + getMicrometersY() +
                 '}';
     }
 
     @Override
-    public HemfRecordType getRecordType() {
+    public HemfRecordType getEmfRecordType() {
         return HemfRecordType.header;
     }
 
     @Override
-    public long init(LittleEndianInputStream leis, long recordId, long recordSize) throws IOException {
-        if (recordId != 1L) {
+    public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
+        if (recordId != HemfRecordType.header.id) {
             throw new IOException("Not a valid EMF header. Record type:"+recordId);
         }
-        //read the record--id and size (2 bytes) have already been read
-        byte[] data = IOUtils.safelyAllocate(recordSize, MAX_RECORD_LENGTH);
-        IOUtils.readFully(leis, data);
-
-        int offset = 0;
 
         //bounds
-        int boundsLeft = LittleEndian.getInt(data, offset); offset += LittleEndian.INT_SIZE;
-        int boundsTop = LittleEndian.getInt(data, offset); offset += LittleEndian.INT_SIZE;
-        int boundsRight = LittleEndian.getInt(data, offset); offset += LittleEndian.INT_SIZE;
-        int boundsBottom = LittleEndian.getInt(data, offset); offset += LittleEndian.INT_SIZE;
-        boundsRectangle = new Rectangle(boundsLeft, boundsTop,
-                boundsRight - boundsLeft, boundsBottom - boundsTop);
+        long size = readRectL(leis, boundsRectangle);
+        size += readRectL(leis, frameRectangle);
 
-        int frameLeft = LittleEndian.getInt(data, offset); offset += LittleEndian.INT_SIZE;
-        int frameTop = LittleEndian.getInt(data, offset); offset += LittleEndian.INT_SIZE;
-        int frameRight = LittleEndian.getInt(data, offset); offset += LittleEndian.INT_SIZE;
-        int frameBottom = LittleEndian.getInt(data, offset); offset += LittleEndian.INT_SIZE;
-        frameRectangle = new Rectangle(frameLeft, frameTop,
-                frameRight - frameLeft, frameBottom - frameTop);
-
-        long recordSignature = LittleEndian.getInt(data, offset); offset += LittleEndian.INT_SIZE;
+        int recordSignature = leis.readInt();
         if (recordSignature != 0x464D4520) {
             throw new IOException("bad record signature: " + recordSignature);
         }
 
-        long version = LittleEndian.getInt(data, offset); offset += LittleEndian.INT_SIZE;
+        long version = leis.readInt();
         //According to the spec, MSOffice doesn't pay attention to this value.
         //It _should_ be 0x00010000
-        bytes = LittleEndian.getUInt(data, offset); offset += LittleEndian.INT_SIZE;
-        records = LittleEndian.getUInt(data, offset); offset += LittleEndian.INT_SIZE;
-        handles = LittleEndian.getUShort(data, offset);offset += LittleEndian.SHORT_SIZE;
-        offset += LittleEndian.SHORT_SIZE;//reserved
-        nDescription = LittleEndian.getUInt(data, offset); offset += LittleEndian.INT_SIZE;
-        offDescription = LittleEndian.getUInt(data, offset); offset += LittleEndian.INT_SIZE;
-        nPalEntries = LittleEndian.getUInt(data, offset); offset += LittleEndian.INT_SIZE;
+        bytes = leis.readUInt();
+        records = leis.readUInt();
+        handles = leis.readUShort();
+        //reserved
+        leis.skipFully(LittleEndianConsts.SHORT_SIZE);
 
-        //should be skips
-        offset += 8;//device
-        offset += 8;//millimeters
+        nDescription = leis.readUInt();
+        offDescription = leis.readUInt();
+        nPalEntries = leis.readUInt();
 
+        size += 8*LittleEndianConsts.INT_SIZE;
 
-        if (recordSize+8 >= 100) {
+        size += readDimensionInt(leis, deviceDimension);
+        size += readDimensionInt(leis, milliDimension);
+
+        if (size+12 <= recordSize) {
             hasExtension1 = true;
-            cbPixelFormat = LittleEndian.getUInt(data, offset); offset += LittleEndian.INT_SIZE;
-            offPixelFormat = LittleEndian.getUInt(data, offset); offset += LittleEndian.INT_SIZE;
-            bOpenGL= LittleEndian.getUInt(data, offset); offset += LittleEndian.INT_SIZE;
+            cbPixelFormat =  leis.readUInt();
+            offPixelFormat = leis.readUInt();
+            bOpenGL = leis.readUInt();
+            size += 3*LittleEndianConsts.INT_SIZE;
         }
 
-        if (recordSize+8 >= 108) {
+        if (size+8 <= recordSize) {
             hasExtension2 = true;
-            micrometersX = LittleEndian.getUInt(data, offset); offset += LittleEndian.INT_SIZE;
-            micrometersY = LittleEndian.getUInt(data, offset); offset += LittleEndian.INT_SIZE;
+            size += readDimensionInt(leis, microDimension);
         }
-        return recordSize;
+        return size;
     }
 }

@@ -51,8 +51,7 @@ public class HwmfPicture {
     
     public HwmfPicture(InputStream inputStream) throws IOException {
 
-        try (BufferedInputStream bis = new BufferedInputStream(inputStream, 10000);
-             LittleEndianInputStream leis = new LittleEndianInputStream(bis)) {
+        try (LittleEndianInputStream leis = new LittleEndianInputStream(inputStream)) {
             placeableHeader = HwmfPlaceableHeader.readHeader(leis);
             header = new HwmfHeader(leis);
 
@@ -82,17 +81,12 @@ public class HwmfPicture {
                 if (wrt == HwmfRecordType.eof) {
                     break;
                 }
-                if (wrt.clazz == null) {
+                if (wrt.constructor == null) {
                     throw new IOException("unsupported record type: "+recordFunction);
                 }
 
-                HwmfRecord wr;
-                try {
-                    wr = wrt.clazz.newInstance();
-                    records.add(wr);
-                } catch (Exception e) {
-                    throw (IOException)new IOException("can't create wmf record").initCause(e);
-                }
+                final HwmfRecord wr = wrt.constructor.get();
+                records.add(wr);
 
                 consumedSize += wr.init(leis, recordSize, recordFunction);
                 int remainingSize = (int)(recordSize - consumedSize);

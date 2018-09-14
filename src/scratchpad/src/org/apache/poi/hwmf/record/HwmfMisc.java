@@ -17,6 +17,7 @@
 
 package org.apache.poi.hwmf.record;
 
+import java.awt.geom.Dimension2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -24,6 +25,7 @@ import org.apache.poi.hwmf.draw.HwmfDrawProperties;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.hwmf.record.HwmfFill.ColorUsage;
 import org.apache.poi.hwmf.record.HwmfFill.HwmfImageRecord;
+import org.apache.poi.util.Dimension2DDouble;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
@@ -34,7 +36,7 @@ public class HwmfMisc {
      */
     public static class WmfSaveDc implements HwmfRecord {
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.saveDc;
         }
 
@@ -53,7 +55,7 @@ public class HwmfMisc {
      * The META_SETRELABS record is reserved and not supported.
      */
     public static class WmfSetRelabs implements HwmfRecord {
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.setRelabs;
         }
 
@@ -81,7 +83,7 @@ public class HwmfMisc {
         private int nSavedDC;
 
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.restoreDc;
         }
 
@@ -106,7 +108,7 @@ public class HwmfMisc {
         private HwmfColorRef colorRef;
 
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.setBkColor;
         }
 
@@ -140,7 +142,7 @@ public class HwmfMisc {
                 this.flag = flag;
             }
 
-            static HwmfBkMode valueOf(int flag) {
+            public static HwmfBkMode valueOf(int flag) {
                 for (HwmfBkMode bs : values()) {
                     if (bs.flag == flag) return bs;
                 }
@@ -148,9 +150,9 @@ public class HwmfMisc {
             }
         }
 
-        private HwmfBkMode bkMode;
+        protected HwmfBkMode bkMode;
 
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.setBkMode;
         }
 
@@ -180,7 +182,7 @@ public class HwmfMisc {
         private int layout;
 
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.setLayout;
         }
 
@@ -205,10 +207,10 @@ public class HwmfMisc {
      */
     public static class WmfSetMapMode implements HwmfRecord {
 
-        private HwmfMapMode mapMode;
+        protected HwmfMapMode mapMode;
 
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.setMapMode;
         }
 
@@ -234,12 +236,13 @@ public class HwmfMisc {
         /**
          * A 32-bit unsigned integer that defines whether the font mapper should attempt to
          * match a font's aspect ratio to the current device's aspect ratio. If bit 0 is
-         * set, the mapper selects only matching fonts.
+         * set, the font mapper SHOULD select only fonts that match the aspect ratio of the
+         * output device, as it is currently defined in the playback device context.
          */
         private long mapperValues;
 
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.setMapperFlags;
         }
 
@@ -262,14 +265,11 @@ public class HwmfMisc {
      */
     public static class WmfSetRop2 implements HwmfRecord {
 
-        /**
-         * A 16-bit unsigned integer that defines the foreground binary raster
-         * operation mixing mode
-         */
-        private HwmfBinaryRasterOp drawMode;
+        /** An unsigned integer that defines the foreground binary raster operation mixing mode */
+        protected HwmfBinaryRasterOp drawMode;
 
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.setRop2;
         }
 
@@ -291,24 +291,63 @@ public class HwmfMisc {
      */
     public static class WmfSetStretchBltMode implements HwmfRecord {
 
-        /**
-         * A 16-bit unsigned integer that defines bitmap stretching mode.
-         * This MUST be one of the values:
-         * BLACKONWHITE = 0x0001,
-         * WHITEONBLACK = 0x0002,
-         * COLORONCOLOR = 0x0003,
-         * HALFTONE = 0x0004
-         */
-        private int setStretchBltMode;
+        public enum StretchBltMode {
+            /**
+             * Performs a Boolean AND operation by using the color values for the eliminated and existing pixels.
+             * If the bitmap is a monochrome bitmap, this mode preserves black pixels at the expense of white pixels.
+             *
+             * EMF name: STRETCH_ANDSCANS
+             */
+            BLACKONWHITE(0x0001),
+            /**
+             * Performs a Boolean OR operation by using the color values for the eliminated and existing pixels.
+             * If the bitmap is a monochrome bitmap, this mode preserves white pixels at the expense of black pixels.
+             *
+             * EMF name: STRETCH_ORSCANS
+             */
+            WHITEONBLACK(0x0002),
+            /**
+             * Deletes the pixels. This mode deletes all eliminated lines of pixels without trying
+             * to preserve their information.
+             *
+             * EMF name: STRETCH_DELETESCANS
+             */
+            COLORONCOLOR(0x0003),
+            /**
+             * Maps pixels from the source rectangle into blocks of pixels in the destination rectangle.
+             * The average color over the destination block of pixels approximates the color of the source
+             * pixels.
+             *
+             * After setting the HALFTONE stretching mode, the brush origin MUST be set to avoid misalignment
+             * artifacts - in EMF this is done via EmfSetBrushOrgEx
+             *
+             * EMF name: STRETCH_HALFTONE
+             */
+            HALFTONE(0x0004);
+
+            public final int flag;
+            StretchBltMode(int flag) {
+                this.flag = flag;
+            }
+
+            public static StretchBltMode valueOf(int flag) {
+                for (StretchBltMode bs : values()) {
+                    if (bs.flag == flag) return bs;
+                }
+                return null;
+            }
+        }
+
+        protected StretchBltMode stretchBltMode;
 
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.setStretchBltMode;
         }
 
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            setStretchBltMode = leis.readUShort();
+            stretchBltMode = StretchBltMode.valueOf(leis.readUShort());
             return LittleEndianConsts.SHORT_SIZE;
         }
 
@@ -341,7 +380,7 @@ public class HwmfMisc {
         private HwmfBitmap16 pattern16;
 
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.dibCreatePatternBrush;
         }
 
@@ -403,10 +442,10 @@ public class HwmfMisc {
          * A 16-bit unsigned integer used to index into the WMF Object Table to
          * get the object to be deleted.
          */
-        private int objectIndex;
+        protected int objectIndex;
 
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.deleteObject;
         }
 
@@ -418,6 +457,12 @@ public class HwmfMisc {
 
         @Override
         public void draw(HwmfGraphics ctx) {
+            /* TODO:
+             * The object specified by this record MUST be deleted from the EMF Object Table.
+             * If the deleted object is currently selected in the playback device context,
+             * the default object for that graphics property MUST be restored.
+             */
+
             ctx.unsetObjectTableEntry(objectIndex);
         }
     }
@@ -427,7 +472,7 @@ public class HwmfMisc {
         private HwmfBitmap16 pattern;
 
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.createPatternBrush;
         }
 
@@ -452,30 +497,28 @@ public class HwmfMisc {
 
     public static class WmfCreatePenIndirect implements HwmfRecord, HwmfObjectTableEntry {
 
-        private HwmfPenStyle penStyle;
-        /**
-         * A 32-bit PointS Object that specifies a point for the object dimensions.
-         * The x-coordinate is the pen width. The y-coordinate is ignored.
-         */
-        private int xWidth;
-        @SuppressWarnings("unused")
-        private int yWidth;
+        protected HwmfPenStyle penStyle;
+
+        protected final Dimension2D dimension = new Dimension2DDouble();
         /**
          * A 32-bit ColorRef Object that specifies the pen color value.
          */
-        private HwmfColorRef colorRef;
+        protected final HwmfColorRef colorRef = new HwmfColorRef();
 
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.createPenIndirect;
         }
 
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             penStyle = HwmfPenStyle.valueOf(leis.readUShort());
-            xWidth = leis.readShort();
-            yWidth = leis.readShort();
-            colorRef = new HwmfColorRef();
+            // A 32-bit PointS Object that specifies a point for the object dimensions.
+            // The x-coordinate is the pen width. The y-coordinate is ignored.
+            int xWidth = leis.readShort();
+            int yWidth = leis.readShort();
+            dimension.setSize(xWidth, yWidth);
+
             int size = colorRef.init(leis);
             return size+3*LittleEndianConsts.SHORT_SIZE;
         }
@@ -490,7 +533,7 @@ public class HwmfMisc {
             HwmfDrawProperties p = ctx.getProperties();
             p.setPenStyle(penStyle);
             p.setPenColor(colorRef);
-            p.setPenWidth(xWidth);
+            p.setPenWidth(dimension.getWidth());
         }
     }
 
@@ -540,19 +583,14 @@ public class HwmfMisc {
      * </table>
      */
     public static class WmfCreateBrushIndirect implements HwmfRecord, HwmfObjectTableEntry {
-        private HwmfBrushStyle brushStyle;
+        protected HwmfBrushStyle brushStyle;
 
-        private HwmfColorRef colorRef;
+        protected HwmfColorRef colorRef;
 
-        /**
-         * A 16-bit field that specifies the brush hatch type.
-         * Its interpretation depends on the value of BrushStyle.
-         *
-         */
-        private HwmfHatchStyle brushHatch;
+        protected HwmfHatchStyle brushHatch;
 
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.createBrushIndirect;
         }
 

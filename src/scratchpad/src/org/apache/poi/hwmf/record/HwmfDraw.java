@@ -41,31 +41,21 @@ public class HwmfDraw {
      */
     public static class WmfMoveTo implements HwmfRecord {
 
-        /**
-         * A 16-bit signed integer that defines the y-coordinate, in logical units.
-         */
-        private int y;
-
-        /**
-         * A 16-bit signed integer that defines the x-coordinate, in logical units.
-         */
-        private int x;
+        protected final Point2D point = new Point2D.Double();
 
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.moveTo;
         }
 
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            y = leis.readShort();
-            x = leis.readShort();
-            return 2*LittleEndianConsts.SHORT_SIZE;
+            return readPointS(leis, point);
         }
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            ctx.getProperties().setLocation(x, y);
+            ctx.getProperties().setLocation(point);
         }
     }
 
@@ -75,36 +65,24 @@ public class HwmfDraw {
      */
     public static class WmfLineTo implements HwmfRecord {
 
-        /**
-         * A 16-bit signed integer that defines the vertical component of the drawing
-         * destination position, in logical units.
-         */
-        private int y;
-
-        /**
-         * A 16-bit signed integer that defines the horizontal component of the drawing
-         * destination position, in logical units.
-         */
-        private int x;
+        protected final Point2D point = new Point2D.Double();
 
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.lineTo;
         }
 
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            y = leis.readShort();
-            x = leis.readShort();
-            return 2*LittleEndianConsts.SHORT_SIZE;
+            return readPointS(leis, point);
         }
 
         @Override
         public void draw(HwmfGraphics ctx) {
             Point2D start = ctx.getProperties().getLocation();
-            Line2D line = new Line2D.Double(start.getX(), start.getY(), x, y);
+            Line2D line = new Line2D.Double(start, point);
             ctx.draw(line);
-            ctx.getProperties().setLocation(x, y);
+            ctx.getProperties().setLocation(point);
         }
     }
 
@@ -115,10 +93,10 @@ public class HwmfDraw {
      */
     public static class WmfPolygon implements HwmfRecord {
 
-        private Path2D poly = new Path2D.Double();
+        protected Path2D poly = new Path2D.Double();
         
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.polygon;
         }
 
@@ -146,15 +124,25 @@ public class HwmfDraw {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            Path2D shape = getShape();
-//            shape.closePath();
-            Path2D p = (Path2D)shape.clone();
+            Path2D p = getShape(ctx);
+            // don't close the path
             p.setWindingRule(getWindingRule(ctx));
-            ctx.fill(p);
+            if (isFill()) {
+                ctx.fill(p);
+            } else {
+                ctx.draw(p);
+            }
         }
 
-        protected Path2D getShape() {
+        protected Path2D getShape(HwmfGraphics ctx) {
             return (Path2D)poly.clone();
+        }
+
+        /**
+         * @return true, if the shape should be filled
+         */
+        protected boolean isFill() {
+            return true;
         }
     }
 
@@ -165,16 +153,13 @@ public class HwmfDraw {
     public static class WmfPolyline extends WmfPolygon {
 
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.polyline;
         }
 
         @Override
-        public void draw(HwmfGraphics ctx) {
-            Path2D shape = getShape();
-            Path2D p = (Path2D)shape.clone();
-            p.setWindingRule(getWindingRule(ctx));
-            ctx.draw(p);
+        protected boolean isFill() {
+            return false;
         }
     }
 
@@ -184,48 +169,21 @@ public class HwmfDraw {
      * are defined in the playback device context.
      */
     public static class WmfEllipse implements HwmfRecord {
-        /**
-         * A 16-bit signed integer that defines the y-coordinate, in logical units, of
-         * the lower-right corner of the bounding rectangle.
-         */
-        private int bottomRect;
-        /**
-         * A 16-bit signed integer that defines the x-coordinate, in logical units, of
-         * the lower-right corner of the bounding rectangle.
-         */
-        private int rightRect;
-        /**
-         * A 16-bit signed integer that defines the y-coordinate, in logical units, of the
-         * upper-left corner of the bounding rectangle.
-         */
-        private int topRect;
-        /**
-         * A 16-bit signed integer that defines the x-coordinate, in logical units, of
-         * the upper-left corner of the bounding rectangle.
-         */
-        private int leftRect;
+        protected final Rectangle2D bounds = new Rectangle2D.Double();
 
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.ellipse;
         }
 
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            bottomRect = leis.readShort();
-            rightRect = leis.readShort();
-            topRect = leis.readShort();
-            leftRect = leis.readShort();
-            return 4*LittleEndianConsts.SHORT_SIZE;
+            return readBounds(leis, bounds);
         }
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            int x = Math.min(leftRect, rightRect);
-            int y = Math.min(topRect, bottomRect);
-            int w = Math.abs(leftRect - rightRect - 1);
-            int h = Math.abs(topRect - bottomRect - 1);
-            Shape s = new Ellipse2D.Double(x, y, w, h);
+            Shape s = new Ellipse2D.Double(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
             ctx.fill(s);
         }
     }
@@ -239,25 +197,25 @@ public class HwmfDraw {
          * A 16-bit unsigned integer used to index into the WMF Object Table to get
          * the region to be framed.
          */
-        private int regionIndex;
+        protected int regionIndex;
         /**
          * A 16-bit unsigned integer used to index into the WMF Object Table to get the
          * Brush to use for filling the region.
          */
-        private int brushIndex;
+        protected int brushIndex;
         /**
          * A 16-bit signed integer that defines the height, in logical units, of the
          * region frame.
          */
-        private int height;
+        protected int height;
         /**
          * A 16-bit signed integer that defines the width, in logical units, of the
          * region frame.
          */
-        private int width;
+        protected int width;
 
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.frameRegion;
         }
 
@@ -293,10 +251,10 @@ public class HwmfDraw {
      */
     public static class WmfPolyPolygon implements HwmfRecord {
 
-        private List<Path2D> polyList = new ArrayList<>();
+        protected List<Path2D> polyList = new ArrayList<>();
         
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.polyPolygon;
         }
 
@@ -361,7 +319,20 @@ public class HwmfDraw {
                     area.exclusiveOr(newArea);
                 }
             }
-            ctx.fill(area);
+
+            if (isFill()) {
+                ctx.fill(area);
+            } else {
+                ctx.draw(area);
+            }
+        }
+
+
+        /**
+         * @return true, if the shape should be filled
+         */
+        protected boolean isFill() {
+            return true;
         }
     }
 
@@ -370,92 +341,50 @@ public class HwmfDraw {
      * filled by using the brush that are defined in the playback device context.
      */
     public static class WmfRectangle implements HwmfRecord {
-        /**
-         * A 16-bit signed integer that defines the y-coordinate, in logical units, of
-         * the lower-right corner of the rectangle.
-         */
-        private int bottomRect;
-        /**
-         * A 16-bit signed integer that defines the x-coordinate, in logical units, of
-         * the lower-right corner of the rectangle.
-         */
-        private int rightRect;
-        /**
-         * A 16-bit signed integer that defines the y-coordinate, in logical units, of the
-         * upper-left corner of the rectangle.
-         */
-        private int topRect;
-        /**
-         * A 16-bit signed integer that defines the x-coordinate, in logical units, of
-         * the upper-left corner of the rectangle.
-         */
-        private int leftRect;
+        protected final Rectangle2D bounds = new Rectangle2D.Double();
 
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.frameRegion;
         }
 
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            bottomRect = leis.readShort();
-            rightRect = leis.readShort();
-            topRect = leis.readShort();
-            leftRect = leis.readShort();
-            return 4*LittleEndianConsts.SHORT_SIZE;
+            return readBounds(leis, bounds);
         }
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            int x = Math.min(leftRect, rightRect);
-            int y = Math.min(topRect, bottomRect);
-            int w = Math.abs(leftRect - rightRect - 1);
-            int h = Math.abs(topRect - bottomRect - 1);
-            Shape s = new Rectangle2D.Double(x, y, w, h);
-            ctx.fill(s);
+            ctx.fill(bounds);
         }
     }
 
     /**
-     * The META_RECTANGLE record paints a rectangle. The rectangle is outlined by using the pen and
-     * filled by using the brush that are defined in the playback device context.
+     * The META_SETPIXEL record sets the pixel at the specified coordinates to the specified color.
      */
     public static class WmfSetPixel implements HwmfRecord {
         /**
          * A ColorRef Object that defines the color value.
          */
-        HwmfColorRef colorRef;
+        protected final HwmfColorRef colorRef = new HwmfColorRef();
 
-        /**
-         * A 16-bit signed integer that defines the y-coordinate, in logical units, of the point
-         * to be set.
-         */
-        private int y;
-
-        /**
-         * A 16-bit signed integer that defines the x-coordinate, in logical units, of the point
-         * to be set.
-         */
-        private int x;
+        protected final Point2D point = new Point2D.Double();
 
 
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.setPixel;
         }
 
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            colorRef = new HwmfColorRef();
             int size = colorRef.init(leis);
-            y = leis.readShort();
-            x = leis.readShort();
-            return 2*LittleEndianConsts.SHORT_SIZE+size;
+            return size+ readPointS(leis, point);
         }
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            Shape s = new Rectangle2D.Double(x, y, 1, 1);
+            Shape s = new Rectangle2D.Double(point.getX(), point.getY(), 1, 1);
             ctx.fill(s);
         }
     }
@@ -469,41 +398,19 @@ public class HwmfDraw {
          * A 16-bit signed integer that defines the height, in logical coordinates, of the
          * ellipse used to draw the rounded corners.
          */
-        private int height;
+        protected int height;
 
         /**
          * A 16-bit signed integer that defines the width, in logical coordinates, of the
          * ellipse used to draw the rounded corners.
          */
-        private int width;
+        protected int width;
 
-        /**
-         * A 16-bit signed integer that defines the y-coordinate, in logical units, of
-         * the lower-right corner of the rectangle.
-         */
-        private int bottomRect;
-
-        /**
-         * A 16-bit signed integer that defines the x-coordinate, in logical units, of
-         * the lower-right corner of the rectangle.
-         */
-        private int rightRect;
-
-        /**
-         * A 16-bit signed integer that defines the y-coordinate, in logical units, of the
-         * upper-left corner of the rectangle.
-         */
-        private int topRect;
-
-        /**
-         * A 16-bit signed integer that defines the x-coordinate, in logical units, of
-         * the upper-left corner of the rectangle.
-         */
-        private int leftRect;
+        protected final Rectangle2D bounds = new Rectangle2D.Double();
 
 
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.roundRect;
         }
 
@@ -511,20 +418,12 @@ public class HwmfDraw {
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             height = leis.readShort();
             width = leis.readShort();
-            bottomRect = leis.readShort();
-            rightRect = leis.readShort();
-            topRect = leis.readShort();
-            leftRect = leis.readShort();
-            return 6*LittleEndianConsts.SHORT_SIZE;
+            return 2*LittleEndianConsts.SHORT_SIZE+readBounds(leis, bounds);
         }
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            int x = Math.min(leftRect, rightRect);
-            int y = Math.min(topRect, bottomRect);
-            int w = Math.abs(leftRect - rightRect - 1);
-            int h = Math.abs(topRect - bottomRect - 1);
-            Shape s = new RoundRectangle2D.Double(x, y, w, h, width, height);
+            Shape s = new RoundRectangle2D.Double(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight(), width, height);
             ctx.fill(s);
         }
     }
@@ -534,73 +433,34 @@ public class HwmfDraw {
      * The META_ARC record draws an elliptical arc.
      */
     public static class WmfArc implements HwmfRecord {
-        /**
-         * A 16-bit signed integer that defines the y-coordinate, in logical units, of
-         * the ending point of the radial line defining the ending point of the arc.
-         */
-        private int yEndArc;
-        /**
-         * A 16-bit signed integer that defines the x-coordinate, in logical units, of
-         * the ending point of the radial line defining the ending point of the arc.
-         */
-        private int xEndArc;
-        /**
-         * A 16-bit signed integer that defines the y-coordinate, in logical units, of
-         * the ending point of the radial line defining the starting point of the arc.
-         */
-        private int yStartArc;
-        /**
-         * A 16-bit signed integer that defines the x-coordinate, in logical units, of
-         * the ending point of the radial line defining the starting point of the arc.
-         */
-        private int xStartArc;
-        /**
-         * A 16-bit signed integer that defines the y-coordinate, in logical units, of
-         * the lower-right corner of the bounding rectangle.
-         */
-        private int bottomRect;
-        /**
-         * A 16-bit signed integer that defines the x-coordinate, in logical units, of
-         * the lower-right corner of the bounding rectangle.
-         */
-        private int rightRect;
-        /**
-         * A 16-bit signed integer that defines the y-coordinate, in logical units, of the
-         * upper-left corner of the bounding rectangle.
-         */
-        private int topRect;
-        /**
-         * A 16-bit signed integer that defines the x-coordinate, in logical units, of
-         * the upper-left corner of the bounding rectangle.
-         */
-        private int leftRect;
+        /** starting point of the arc */
+        protected final Point2D startPoint = new Point2D.Double();
+
+        /** ending point of the arc */
+        protected final Point2D endPoint = new Point2D.Double();
+
+        /** the bounding rectangle */
+        protected final Rectangle2D bounds = new Rectangle2D.Double();
+
 
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.arc;
         }
 
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            yEndArc = leis.readShort();
-            xEndArc = leis.readShort();
-            yStartArc = leis.readShort();
-            xStartArc = leis.readShort();
-            bottomRect = leis.readShort();
-            rightRect = leis.readShort();
-            topRect = leis.readShort();
-            leftRect = leis.readShort();
+            readPointS(leis, endPoint);
+            readPointS(leis, startPoint);
+            readBounds(leis, bounds);
+
             return 8*LittleEndianConsts.SHORT_SIZE;
         }
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            int x = Math.min(leftRect, rightRect);
-            int y = Math.min(topRect, bottomRect);
-            int w = Math.abs(leftRect - rightRect - 1);
-            int h = Math.abs(topRect - bottomRect - 1);
-            double startAngle = Math.toDegrees(Math.atan2(-(yStartArc - (topRect + h / 2.)), xStartArc - (leftRect + w / 2.)));
-            double endAngle =   Math.toDegrees(Math.atan2(-(yEndArc - (topRect + h / 2.)), xEndArc - (leftRect + w / 2.)));
+            double startAngle = Math.toDegrees(Math.atan2(-(startPoint.getY() - bounds.getCenterY()), startPoint.getX() - bounds.getCenterX()));
+            double endAngle =   Math.toDegrees(Math.atan2(-(endPoint.getY() - bounds.getCenterY()), endPoint.getX() - bounds.getCenterX()));
             double arcAngle = (endAngle - startAngle) + (endAngle - startAngle > 0 ? 0 : 360);
             if (startAngle < 0) {
                 startAngle += 360;
@@ -608,7 +468,7 @@ public class HwmfDraw {
 
             boolean fillShape;
             int arcClosure;
-            switch (getRecordType()) {
+            switch (getWmfRecordType()) {
                 default:
                 case arc:
                     arcClosure = Arc2D.OPEN;
@@ -624,7 +484,7 @@ public class HwmfDraw {
                     break;
             }
             
-            Shape s = new Arc2D.Double(x, y, w, h, startAngle, arcAngle, arcClosure);
+            Shape s = new Arc2D.Double(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight(), startAngle, arcAngle, arcClosure);
             if (fillShape) {
                 ctx.fill(s);
             } else {
@@ -641,7 +501,7 @@ public class HwmfDraw {
     public static class WmfPie extends WmfArc {
 
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.pie;
         }
     }
@@ -654,7 +514,7 @@ public class HwmfDraw {
     public static class WmfChord extends WmfArc {
 
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.chord;
         }
     }
@@ -673,10 +533,10 @@ public class HwmfDraw {
          * A 16-bit unsigned integer used to index into the WMF Object Table to
          * get the object to be selected.
          */
-        private int objectIndex;
+        protected int objectIndex;
 
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.selectObject;
         }
 
@@ -695,4 +555,50 @@ public class HwmfDraw {
     private static int getWindingRule(HwmfGraphics ctx) {
         return ctx.getProperties().getPolyfillMode().awtFlag;
     }
- }
+
+    static int readBounds(LittleEndianInputStream leis, Rectangle2D bounds) {
+        /**
+         * The 16-bit signed integers that defines the corners of the bounding rectangle.
+         */
+        int bottom = leis.readShort();
+        int right = leis.readShort();
+        int top = leis.readShort();
+        int left = leis.readShort();
+
+        int x = Math.min(left, right);
+        int y = Math.min(top, bottom);
+        int w = Math.abs(left - right - 1);
+        int h = Math.abs(top - bottom - 1);
+
+        bounds.setRect(x, y, w, h);
+
+        return 4 * LittleEndianConsts.SHORT_SIZE;
+    }
+
+    static int readRectS(LittleEndianInputStream leis, Rectangle2D bounds) {
+        /**
+         * The 16-bit signed integers that defines the corners of the bounding rectangle.
+         */
+        int left = leis.readShort();
+        int top = leis.readShort();
+        int right = leis.readShort();
+        int bottom = leis.readShort();
+
+        int x = Math.min(left, right);
+        int y = Math.min(top, bottom);
+        int w = Math.abs(left - right - 1);
+        int h = Math.abs(top - bottom - 1);
+
+        bounds.setRect(x, y, w, h);
+
+        return 4 * LittleEndianConsts.SHORT_SIZE;
+    }
+
+    static int readPointS(LittleEndianInputStream leis, Point2D point) {
+        /** a signed integer that defines the x/y-coordinate, in logical units. */
+        int y = leis.readShort();
+        int x = leis.readShort();
+        point.setLocation(x, y);
+        return 2*LittleEndianConsts.SHORT_SIZE;
+    }
+}

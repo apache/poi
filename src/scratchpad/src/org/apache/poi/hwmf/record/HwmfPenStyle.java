@@ -136,11 +136,12 @@ public class HwmfPenStyle implements Cloneable {
         }    
     }
     
-    private static final BitField SUBSECTION_DASH      = BitFieldFactory.getInstance(0x0007);
-    private static final BitField SUBSECTION_ALTERNATE = BitFieldFactory.getInstance(0x0008);
-    private static final BitField SUBSECTION_ENDCAP    = BitFieldFactory.getInstance(0x0300);
-    private static final BitField SUBSECTION_JOIN      = BitFieldFactory.getInstance(0x3000);
-    
+    private static final BitField SUBSECTION_DASH      = BitFieldFactory.getInstance(0x00007);
+    private static final BitField SUBSECTION_ALTERNATE = BitFieldFactory.getInstance(0x00008);
+    private static final BitField SUBSECTION_ENDCAP    = BitFieldFactory.getInstance(0x00300);
+    private static final BitField SUBSECTION_JOIN      = BitFieldFactory.getInstance(0x03000);
+    private static final BitField SUBSECTION_GEOMETRIC = BitFieldFactory.getInstance(0x10000);
+
     private int flag;
     
     public static HwmfPenStyle valueOf(int flag) {
@@ -167,6 +168,14 @@ public class HwmfPenStyle implements Cloneable {
      */
     public boolean isAlternateDash() {
         return SUBSECTION_ALTERNATE.isSet(flag);
+    }
+
+    /**
+     * A pen type that specifies a line with a width that is measured in logical units
+     * and a style that can contain any of the attributes of a brush.
+     */
+    public boolean isGeometric()  {
+        return SUBSECTION_GEOMETRIC.isSet(flag);
     }
 
 
