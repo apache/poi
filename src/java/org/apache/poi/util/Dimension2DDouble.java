@@ -15,21 +15,21 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.xdgf.geom;
+package org.apache.poi.util;
 
 import java.awt.geom.Dimension2D;
 
-public class Dimension2dDouble extends Dimension2D {
+public class Dimension2DDouble extends Dimension2D {
 
     double width;
     double height;
 
-    public Dimension2dDouble() {
+    public Dimension2DDouble() {
         width = 0d;
         height = 0d;
     }
 
-    public Dimension2dDouble(double width, double height) {
+    public Dimension2DDouble(double width, double height) {
         this.width = width;
         this.height = height;
     }
@@ -52,8 +52,8 @@ public class Dimension2dDouble extends Dimension2D {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Dimension2dDouble) {
-            Dimension2dDouble other = (Dimension2dDouble) obj;
+        if (obj instanceof Dimension2DDouble) {
+            Dimension2DDouble other = (Dimension2DDouble) obj;
             return width == other.width && height == other.height;
         }
 
@@ -68,6 +68,6 @@ public class Dimension2dDouble extends Dimension2D {
 
     @Override
     public String toString() {
-        return "Dimension2dDouble[" + width + ", " + height + "]";
+        return "Dimension2DDouble[" + width + ", " + height + "]";
     }
 }

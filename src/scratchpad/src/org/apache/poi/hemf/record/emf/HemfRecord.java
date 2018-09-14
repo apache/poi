@@ -15,17 +15,32 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hemf.record;
+package org.apache.poi.hemf.record.emf;
 
+
+import java.io.IOException;
+
+import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.LittleEndianInputStream;
 
-/**
- * Not yet implemented
- */
 @Internal
-public class HemfCommentEMFSpool extends AbstractHemfComment {
+public interface HemfRecord {
 
-    public HemfCommentEMFSpool(byte[] rawBytes) {
-        super(rawBytes);
-    }
+    HemfRecordType getEmfRecordType();
+
+    /**
+     * Init record from stream
+     *
+     * @param leis the little endian input stream
+     * @param recordSize the size limit for this record
+     * @param recordId the id of the {@link HemfRecordType}
+     *
+     * @return count of processed bytes
+     *
+     * @throws IOException when the inputstream is malformed
+     */
+    long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException;
+
+    default void draw(HemfGraphics ctx) {}
 }

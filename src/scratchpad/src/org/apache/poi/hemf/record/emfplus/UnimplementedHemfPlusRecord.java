@@ -15,30 +15,45 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hemf.hemfplus.record;
+package org.apache.poi.hemf.record.emfplus;
 
 
 import java.io.IOException;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.LittleEndianInputStream;
 
 @Internal
-public interface HemfPlusRecord {
+public class UnimplementedHemfPlusRecord implements HemfPlusRecord {
 
-    HemfPlusRecordType getRecordType();
+    private static final int MAX_RECORD_LENGTH = 1_000_000;
 
-    int getFlags();
+    private long recordId;
+    private int flags;
+    private byte[] recordBytes;
 
-    /**
-     *
-     * @param dataBytes these are the bytes that start after the id, flags, record size
-     *                    and go to the end of the record; they do not include any required padding
-     *                    at the end.
-     * @param recordId record type id
-     * @param flags flags
-     * @throws IOException, RecordFormatException
-     */
-    void init(byte[] dataBytes, int recordId, int flags) throws IOException;
+    @Override
+    public HemfPlusRecordType getRecordType() {
+        return HemfPlusRecordType.getById(recordId);
+    }
 
+    @Override
+    public int getFlags() {
+        return flags;
+    }
 
+    @Override
+    public long init(LittleEndianInputStream leis, long dataSize, long recordId, int flags) throws IOException {
+        this.recordId = recordId;
+        this.flags = flags;
+        recordBytes = IOUtils.safelyAllocate(dataSize, MAX_RECORD_LENGTH);
+        leis.readFully(recordBytes);
+        return recordBytes.length;
+    }
+
+    public byte[] getRecordBytes() {
+        //should probably defensively return a copy.
+        return recordBytes;
+    }
 }

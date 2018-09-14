@@ -15,25 +15,16 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hemf.record;
+package org.apache.poi.hemf.draw;
 
-import org.apache.poi.util.Internal;
+import org.apache.poi.hwmf.draw.HwmfDrawProperties;
 
-/**
- * Syntactic utility to allow for four different
- * comment classes
- */
-@Internal
-public abstract class AbstractHemfComment {
+public class HemfDrawProperties extends HwmfDrawProperties {
 
-    private final byte[] rawBytes;
-
-    public AbstractHemfComment(byte[] rawBytes) {
-        this.rawBytes = rawBytes;
+    public HemfDrawProperties() {
     }
 
-    public byte[] getRawBytes() {
-        return rawBytes;
+    public HemfDrawProperties(HemfDrawProperties other) {
+        super(other);
     }
-
 }

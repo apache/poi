@@ -33,18 +33,14 @@ public class HwmfWindowing {
      */
     public static class WmfSetViewportOrg implements HwmfRecord {
 
-        /**
-         * A 16-bit signed integer that defines the vertical offset, in device units.
-         */
-        private int y;
+        /** A signed integer that defines the vertical offset, in device units. */
+        protected int y;
 
-        /**
-         * A 16-bit signed integer that defines the horizontal offset, in device units.
-         */
-        private int x;
+        /** A signed integer that defines the horizontal offset, in device units. */
+        protected int x;
 
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.setViewportOrg;
         }
 
@@ -67,20 +63,14 @@ public class HwmfWindowing {
      */
     public static class WmfSetViewportExt implements HwmfRecord {
 
-        /**
-         * A 16-bit signed integer that defines the vertical extent
-         * of the viewport in device units.
-         */
-        private int height;
+        /** A signed integer that defines the vertical extent of the viewport in device units. */
+        protected int height;
 
-        /**
-         * A 16-bit signed integer that defines the horizontal extent
-         * of the viewport in device units.
-         */
-        private int width;
+        /** A signed integer that defines the horizontal extent of the viewport in device units. */
+        protected int width;
 
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.setViewportExt;
         }
 
@@ -114,7 +104,7 @@ public class HwmfWindowing {
         private int xOffset;
 
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.offsetViewportOrg;
         }
 
@@ -139,18 +129,14 @@ public class HwmfWindowing {
      */
     public static class WmfSetWindowOrg implements HwmfRecord {
 
-        /**
-         * A 16-bit signed integer that defines the y-coordinate, in logical units.
-         */
-        private int y;
+        /** A signed integer that defines the y-coordinate, in logical units. */
+        protected int y;
 
-        /**
-         * A 16-bit signed integer that defines the x-coordinate, in logical units.
-         */
-        private int x;
+        /** A signed integer that defines the x-coordinate, in logical units. */
+        protected int x;
 
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.setWindowOrg;
         }
 
@@ -182,20 +168,14 @@ public class HwmfWindowing {
      */
     public static class WmfSetWindowExt implements HwmfRecord {
 
-        /**
-         * A 16-bit signed integer that defines the vertical extent of
-         * the window in logical units.
-         */
-        private int height;
+        /** A signed integer that defines the vertical extent of the window in logical units. */
+        protected int height;
 
-        /**
-         * A 16-bit signed integer that defines the horizontal extent of
-         * the window in logical units.
-         */
-        private int width;
+        /** A signed integer that defines the horizontal extent of the window in logical units. */
+        protected int width;
 
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.setWindowExt;
         }
 
@@ -238,7 +218,7 @@ public class HwmfWindowing {
         private int xOffset;
 
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.offsetWindowOrg;
         }
 
@@ -264,31 +244,31 @@ public class HwmfWindowing {
     public static class WmfScaleWindowExt implements HwmfRecord {
 
         /**
-         * A 16-bit signed integer that defines the amount by which to divide the
+         * A signed integer that defines the amount by which to divide the
          * result of multiplying the current y-extent by the value of the yNum member.
          */
-        private int yDenom;
+        protected int yDenom;
 
         /**
-         * A 16-bit signed integer that defines the amount by which to multiply the
+         * A signed integer that defines the amount by which to multiply the
          * current y-extent.
          */
-        private int yNum;
+        protected int yNum;
 
         /**
-         * A 16-bit signed integer that defines the amount by which to divide the
+         * A signed integer that defines the amount by which to divide the
          * result of multiplying the current x-extent by the value of the xNum member.
          */
-        private int xDenom;
+        protected int xDenom;
 
         /**
-         * A 16-bit signed integer that defines the amount by which to multiply the
+         * A signed integer that defines the amount by which to multiply the
          * current x-extent.
          */
-        private int xNum;
+        protected int xNum;
 
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.scaleWindowExt;
         }
 
@@ -320,31 +300,31 @@ public class HwmfWindowing {
     public static class WmfScaleViewportExt implements HwmfRecord {
 
         /**
-         * A 16-bit signed integer that defines the amount by which to divide the
+         * A signed integer that defines the amount by which to divide the
          * result of multiplying the current y-extent by the value of the yNum member.
          */
-        private int yDenom;
+        protected int yDenom;
 
         /**
-         * A 16-bit signed integer that defines the amount by which to multiply the
+         * A signed integer that defines the amount by which to multiply the
          * current y-extent.
          */
-        private int yNum;
+        protected int yNum;
 
         /**
-         * A 16-bit signed integer that defines the amount by which to divide the
+         * A signed integer that defines the amount by which to divide the
          * result of multiplying the current x-extent by the value of the xNum member.
          */
-        private int xDenom;
+        protected int xDenom;
 
         /**
-         * A 16-bit signed integer that defines the amount by which to multiply the
+         * A signed integer that defines the amount by which to multiply the
          * current x-extent.
          */
-        private int xNum;
+        protected int xNum;
 
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.scaleViewportExt;
         }
 
@@ -376,17 +356,17 @@ public class HwmfWindowing {
     public static class WmfOffsetClipRgn implements HwmfRecord, HwmfObjectTableEntry {
 
         /**
-         * A 16-bit signed integer that defines the number of logical units to move up or down.
+         * A signed integer that defines the number of logical units to move up or down.
          */
-        private int yOffset;
+        protected int yOffset;
 
         /**
-         * A 16-bit signed integer that defines the number of logical units to move left or right.
+         * A signed integer that defines the number of logical units to move left or right.
          */
-        private int xOffset;
+        protected int xOffset;
 
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.offsetClipRgn;
         }
 
@@ -413,41 +393,29 @@ public class HwmfWindowing {
      */
     public static class WmfExcludeClipRect implements HwmfRecord, HwmfObjectTableEntry {
 
-        /**
-         * A 16-bit signed integer that defines the y-coordinate, in logical units, of the
-         * lower-right corner of the rectangle.
-         */
-        private int bottom;
-
-        /**
-         * A 16-bit signed integer that defines the x-coordinate, in logical units, of the
-         * lower-right corner of the rectangle.
-         */
-        private int right;
-
-        /**
-         * A 16-bit signed integer that defines the y-coordinate, in logical units, of the
-         * upper-left corner of the rectangle.
-         */
-        private int top;
-
-        /**
-         * A 16-bit signed integer that defines the x-coordinate, in logical units, of the
-         * upper-left corner of the rectangle.
-         */
-        private int left;
+        /** a rectangle in logical units */
+        protected final Rectangle2D bounds = new Rectangle2D.Double();
 
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.excludeClipRect;
         }
 
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            bottom = leis.readShort();
-            right = leis.readShort();
-            top = leis.readShort();
-            left = leis.readShort();
+            // A 16-bit signed integer that defines the y-coordinate, in logical units, of the
+            // lower-right corner of the rectangle.
+            final int bottom = leis.readShort();
+            // A 16-bit signed integer that defines the x-coordinate, in logical units, of the
+            // lower-right corner of the rectangle.
+            final int right = leis.readShort();
+            // A 16-bit signed integer that defines the y-coordinate, in logical units, of the
+            // upper-left corner of the rectangle.
+            final int top = leis.readShort();
+            // A 16-bit signed integer that defines the x-coordinate, in logical units, of the
+            // upper-left corner of the rectangle.
+            final int left = leis.readShort();
+            bounds.setRect(left, top, right-left, bottom-top);
             return 4*LittleEndianConsts.SHORT_SIZE;
         }
 
@@ -468,41 +436,29 @@ public class HwmfWindowing {
      */
     public static class WmfIntersectClipRect implements HwmfRecord, HwmfObjectTableEntry {
 
-        /**
-         * A 16-bit signed integer that defines the y-coordinate, in logical units, of the
-         * lower-right corner of the rectangle.
-         */
-        private int bottom;
-
-        /**
-         * A 16-bit signed integer that defines the x-coordinate, in logical units, of the
-         * lower-right corner of the rectangle.
-         */
-        private int right;
-
-        /**
-         * A 16-bit signed integer that defines the y-coordinate, in logical units, of the
-         * upper-left corner of the rectangle.
-         */
-        private int top;
-
-        /**
-         * A 16-bit signed integer that defines the x-coordinate, in logical units, of the
-         * upper-left corner of the rectangle.
-         */
-        private int left;
+        /** a rectangle in logical units */
+        protected final Rectangle2D bounds = new Rectangle2D.Double();
 
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.intersectClipRect;
         }
 
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            bottom = leis.readShort();
-            right = leis.readShort();
-            top = leis.readShort();
-            left = leis.readShort();
+            // A 16-bit signed integer that defines the y-coordinate, in logical units, of the
+            // lower-right corner of the rectangle.
+            final int bottom = leis.readShort();
+            // A 16-bit signed integer that defines the x-coordinate, in logical units, of the
+            // lower-right corner of the rectangle.
+            final int right = leis.readShort();
+            // A 16-bit signed integer that defines the y-coordinate, in logical units, of the
+            // upper-left corner of the rectangle.
+            final int top = leis.readShort();
+            // A 16-bit signed integer that defines the x-coordinate, in logical units, of the
+            // upper-left corner of the rectangle.
+            final int left = leis.readShort();
+            bounds.setRect(left, top, right-left, bottom-top);
             return 4*LittleEndianConsts.SHORT_SIZE;
         }
 
@@ -528,7 +484,7 @@ public class HwmfWindowing {
         private int region;
 
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.selectClipRegion;
         }
 
@@ -650,7 +606,7 @@ public class HwmfWindowing {
         private WmfScanObject scanObjects[];
 
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.createRegion;
         }
 

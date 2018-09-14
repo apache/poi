@@ -15,13 +15,14 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hemf.hemfplus.record;
+package org.apache.poi.hemf.record.emfplus;
 
 
 import java.io.IOException;
 
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
+import org.apache.poi.util.LittleEndianInputStream;
 
 @Internal
 public class HemfPlusHeader implements HemfPlusRecord {
@@ -42,15 +43,19 @@ public class HemfPlusHeader implements HemfPlusRecord {
     }
 
     @Override
-    public void init(byte[] dataBytes, int recordId, int flags) throws IOException {
-        //assert record id == header
+    public long init(LittleEndianInputStream leis, long dataSize, long recordId, int flags) throws IOException {
         this.flags = flags;
-        int offset = 0;
-        this.version = LittleEndian.getUInt(dataBytes, offset); offset += LittleEndian.INT_SIZE;
-        this.emfPlusFlags = LittleEndian.getUInt(dataBytes, offset); offset += LittleEndian.INT_SIZE;
-        this.logicalDpiX = LittleEndian.getUInt(dataBytes, offset); offset += LittleEndian.INT_SIZE;
-        this.logicalDpiY = LittleEndian.getUInt(dataBytes, offset);
+        version = leis.readUInt();
 
+        // verify MetafileSignature (20 bits) == 0xDBC01 and
+        // GraphicsVersion (12 bits) in (1 or 2)
+        assert((version & 0xFFFFFA00) == 0xDBC01000L && ((version & 0x3FF) == 1 || (version & 0x3FF) == 2));
+
+        emfPlusFlags = leis.readUInt();
+
+        logicalDpiX = leis.readUInt();
+        logicalDpiY = leis.readUInt();
+        return 4* LittleEndianConsts.INT_SIZE;
     }
 
     public long getVersion() {

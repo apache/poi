@@ -105,7 +105,7 @@ public enum HwmfMapMode {
         this.scale = scale;
     }
 
-    static HwmfMapMode valueOf(int flag) {
+    public static HwmfMapMode valueOf(int flag) {
         for (HwmfMapMode mm : values()) {
             if (mm.flag == flag) return mm;
         }

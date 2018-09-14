@@ -15,17 +15,15 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hemf.record;
+package org.apache.poi.hemf.draw;
 
-import org.apache.poi.util.Internal;
+import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
 
-/**
- * Contains arbitrary data
- */
-@Internal
-public class HemfComment extends  AbstractHemfComment {
+import org.apache.poi.hwmf.draw.HwmfGraphics;
 
-    public HemfComment(byte[] rawBytes) {
-        super(rawBytes);
+public class HemfGraphics extends HwmfGraphics {
+    public HemfGraphics(Graphics2D graphicsCtx, Rectangle2D bbox) {
+        super(graphicsCtx,bbox);
     }
 }

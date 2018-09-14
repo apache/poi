@@ -25,13 +25,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.hemf.extractor.HemfExtractor;
-import org.apache.poi.hemf.hemfplus.record.HemfPlusHeader;
-import org.apache.poi.hemf.hemfplus.record.HemfPlusRecord;
-import org.apache.poi.hemf.hemfplus.record.HemfPlusRecordType;
-import org.apache.poi.hemf.record.HemfCommentEMFPlus;
-import org.apache.poi.hemf.record.HemfCommentRecord;
-import org.apache.poi.hemf.record.HemfRecord;
+import org.apache.poi.hemf.record.emf.HemfComment.EmfComment;
+import org.apache.poi.hemf.record.emf.HemfComment.EmfCommentDataPlus;
+import org.apache.poi.hemf.record.emf.HemfRecord;
+import org.apache.poi.hemf.record.emfplus.HemfPlusHeader;
+import org.apache.poi.hemf.record.emfplus.HemfPlusRecord;
+import org.apache.poi.hemf.record.emfplus.HemfPlusRecordType;
+import org.apache.poi.hemf.usermodel.HemfPicture;
 import org.junit.Test;
 
 public class HemfPlusExtractorTest {
@@ -39,7 +39,7 @@ public class HemfPlusExtractorTest {
     @Test
     public void testBasic() throws Exception {
         //test header
-        HemfCommentEMFPlus emfPlus = getCommentRecord("SimpleEMF_windows.emf", 0);
+        EmfCommentDataPlus emfPlus = getCommentRecord("SimpleEMF_windows.emf", 0);
         List<HemfPlusRecord> records = emfPlus.getRecords();
         assertEquals(1, records.size());
         assertEquals(HemfPlusRecordType.header, records.get(0).getRecordType());
@@ -72,24 +72,20 @@ public class HemfPlusExtractorTest {
     }
 
 
-    private HemfCommentEMFPlus getCommentRecord(String testFileName, int recordIndex) throws Exception {
-        InputStream is = null;
-        HemfCommentEMFPlus returnRecord = null;
+    private EmfCommentDataPlus getCommentRecord(String testFileName, int recordIndex) throws Exception {
+        EmfCommentDataPlus returnRecord = null;
 
-        try {
-            is = POIDataSamples.getSpreadSheetInstance().openResourceAsStream(testFileName);
-            HemfExtractor ex = new HemfExtractor(is);
+        try (InputStream is = POIDataSamples.getSpreadSheetInstance().openResourceAsStream(testFileName)) {
+            HemfPicture ex = new HemfPicture(is);
             int i = 0;
             for (HemfRecord record : ex) {
                 if (i == recordIndex) {
-                    HemfCommentRecord commentRecord = ((HemfCommentRecord) record);
-                    returnRecord = (HemfCommentEMFPlus) commentRecord.getComment();
+                    EmfComment commentRecord = ((EmfComment) record);
+                    returnRecord = (EmfCommentDataPlus) commentRecord.getCommentData();
                     break;
                 }
                 i++;
             }
-        } finally {
-            is.close();
         }
         return returnRecord;
     }

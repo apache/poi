@@ -222,11 +222,11 @@ public class TestHwmfParsing {
         //this happens to work on this test file, but you need to
         //do what Graphics does by maintaining the stack, etc.!
         for (HwmfRecord r : wmf.getRecords()) {
-            if (r.getRecordType().equals(HwmfRecordType.createFontIndirect)) {
+            if (r.getWmfRecordType().equals(HwmfRecordType.createFontIndirect)) {
                 HwmfFont font = ((HwmfText.WmfCreateFontIndirect)r).getFont();
                 charset = (font.getCharset().getCharset() == null) ? LocaleUtil.CHARSET_1252 : font.getCharset().getCharset();
             }
-            if (r.getRecordType().equals(HwmfRecordType.extTextOut)) {
+            if (r.getWmfRecordType().equals(HwmfRecordType.extTextOut)) {
                 HwmfText.WmfExtTextOut textOut = (HwmfText.WmfExtTextOut)r;
                 sb.append(textOut.getText(charset)).append("\n");
             }
@@ -250,11 +250,11 @@ public class TestHwmfParsing {
         //this happens to work on this test file, but you need to
         //do what Graphics does by maintaining the stack, etc.!
         for (HwmfRecord r : wmf.getRecords()) {
-            if (r.getRecordType().equals(HwmfRecordType.createFontIndirect)) {
+            if (r.getWmfRecordType().equals(HwmfRecordType.createFontIndirect)) {
                 HwmfFont font = ((HwmfText.WmfCreateFontIndirect)r).getFont();
                 charset = (font.getCharset().getCharset() == null) ? LocaleUtil.CHARSET_1252 : font.getCharset().getCharset();
             }
-            if (r.getRecordType().equals(HwmfRecordType.extTextOut)) {
+            if (r.getWmfRecordType().equals(HwmfRecordType.extTextOut)) {
                 HwmfText.WmfExtTextOut textOut = (HwmfText.WmfExtTextOut)r;
                 sb.append(textOut.getText(charset)).append("\n");
             }
