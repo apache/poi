@@ -29,13 +29,13 @@ public class UnimplementedHemfPlusRecord implements HemfPlusRecord {
 
     private static final int MAX_RECORD_LENGTH = 1_000_000;
 
-    private long recordId;
+    private HemfPlusRecordType recordType;
     private int flags;
     private byte[] recordBytes;
 
     @Override
-    public HemfPlusRecordType getRecordType() {
-        return HemfPlusRecordType.getById(recordId);
+    public HemfPlusRecordType getEmfPlusRecordType() {
+        return recordType;
     }
 
     @Override
@@ -45,7 +45,7 @@ public class UnimplementedHemfPlusRecord implements HemfPlusRecord {
 
     @Override
     public long init(LittleEndianInputStream leis, long dataSize, long recordId, int flags) throws IOException {
-        this.recordId = recordId;
+        recordType = HemfPlusRecordType.getById(recordId);
         this.flags = flags;
         recordBytes = IOUtils.safelyAllocate(dataSize, MAX_RECORD_LENGTH);
         leis.readFully(recordBytes);

@@ -34,7 +34,7 @@ public class HemfPlusHeader implements HemfPlusRecord {
     private long logicalDpiY;
 
     @Override
-    public HemfPlusRecordType getRecordType() {
+    public HemfPlusRecordType getEmfPlusRecordType() {
         return HemfPlusRecordType.header;
     }
 

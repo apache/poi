@@ -27,19 +27,16 @@ import org.apache.poi.util.LittleEndianInputStream;
 @Internal
 public class UnimplementedHemfRecord implements HemfRecord {
 
-    private long recordId;
-    public UnimplementedHemfRecord() {
-
-    }
+    private HemfRecordType recordType;
 
     @Override
     public HemfRecordType getEmfRecordType() {
-        return HemfRecordType.getById(recordId);
+        return recordType;
     }
 
     @Override
     public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
-        this.recordId = recordId;
+        recordType = HemfRecordType.getById(recordId);
         long skipped = IOUtils.skipFully(leis, recordSize);
         if (skipped < recordSize) {
             throw new IOException("End of stream reached before record read");

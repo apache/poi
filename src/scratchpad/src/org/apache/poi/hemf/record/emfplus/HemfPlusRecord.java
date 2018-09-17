@@ -27,7 +27,7 @@ import org.apache.poi.util.LittleEndianInputStream;
 @Internal
 public interface HemfPlusRecord {
 
-    HemfPlusRecordType getRecordType();
+    HemfPlusRecordType getEmfPlusRecordType();
 
     int getFlags();
 

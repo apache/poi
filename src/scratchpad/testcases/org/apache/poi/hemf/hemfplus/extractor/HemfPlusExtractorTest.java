@@ -42,7 +42,7 @@ public class HemfPlusExtractorTest {
         EmfCommentDataPlus emfPlus = getCommentRecord("SimpleEMF_windows.emf", 0);
         List<HemfPlusRecord> records = emfPlus.getRecords();
         assertEquals(1, records.size());
-        assertEquals(HemfPlusRecordType.header, records.get(0).getRecordType());
+        assertEquals(HemfPlusRecordType.header, records.get(0).getEmfPlusRecordType());
 
         HemfPlusHeader header = (HemfPlusHeader)records.get(0);
         assertEquals(240, header.getLogicalDpiX());
@@ -67,7 +67,7 @@ public class HemfPlusExtractorTest {
         assertEquals(expected.size(), records.size());
 
         for (int i = 0; i < expected.size(); i++) {
-            assertEquals(expected.get(i), records.get(i).getRecordType());
+            assertEquals(expected.get(i), records.get(i).getEmfPlusRecordType());
         }
     }
 

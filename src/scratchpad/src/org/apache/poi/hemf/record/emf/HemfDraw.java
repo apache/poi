@@ -17,7 +17,10 @@
 
 package org.apache.poi.hemf.record.emf;
 
-import java.awt.geom.AffineTransform;
+import static org.apache.poi.hwmf.record.HwmfBrushStyle.BS_NULL;
+import static org.apache.poi.hwmf.record.HwmfBrushStyle.BS_SOLID;
+
+import java.awt.Color;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
@@ -25,10 +28,13 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 
+import org.apache.poi.hemf.draw.HemfDrawProperties;
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
+import org.apache.poi.hwmf.record.HwmfColorRef;
 import org.apache.poi.hwmf.record.HwmfDraw;
 import org.apache.poi.hwmf.record.HwmfDraw.WmfSelectObject;
+import org.apache.poi.hwmf.record.HwmfPenStyle;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
@@ -39,6 +45,12 @@ public class HemfDraw {
      * value from the StockObject enumeration.
      */
     public static class EmfSelectObject extends WmfSelectObject implements HemfRecord {
+
+        private static final HwmfColorRef WHITE = new HwmfColorRef(Color.WHITE);
+        private static final HwmfColorRef LTGRAY = new HwmfColorRef(new Color(0x00C0C0C0));
+        private static final HwmfColorRef GRAY = new HwmfColorRef(new Color(0x00808080));
+        private static final HwmfColorRef DKGRAY = new HwmfColorRef(new Color(0x00404040));
+        private static final HwmfColorRef BLACK = new HwmfColorRef(Color.BLACK);
 
         @Override
         public HemfRecordType getEmfRecordType() {
@@ -52,6 +64,125 @@ public class HemfDraw {
             objectIndex = leis.readInt();
             return LittleEndianConsts.INT_SIZE;
         }
+
+        @Override
+        public void draw(HemfGraphics ctx) {
+            if ((objectIndex & 0x80000000) != 0) {
+                selectStockObject(ctx);
+            } else {
+                super.draw(ctx);
+            }
+        }
+
+        private void selectStockObject(HemfGraphics ctx) {
+            final HemfDrawProperties prop = ctx.getProperties();
+            switch (objectIndex) {
+                case 0x80000000:
+                    // WHITE_BRUSH - A white, solid-color brush
+                    // BrushStyle: BS_SOLID
+                    // Color: 0x00FFFFFF
+                    prop.setBrushColor(WHITE);
+                    prop.setBrushStyle(BS_SOLID);
+                    break;
+                case 0x80000001:
+                    // LTGRAY_BRUSH - A light gray, solid-color brush
+                    // BrushStyle: BS_SOLID
+                    // Color: 0x00C0C0C0
+                    prop.setBrushColor(LTGRAY);
+                    prop.setBrushStyle(BS_SOLID);
+                    break;
+                case 0x80000002:
+                    // GRAY_BRUSH - A gray, solid-color brush
+                    // BrushStyle: BS_SOLID
+                    // Color: 0x00808080
+                    prop.setBrushColor(GRAY);
+                    prop.setBrushStyle(BS_SOLID);
+                    break;
+                case 0x80000003:
+                    // DKGRAY_BRUSH - A dark gray, solid color brush
+                    // BrushStyle: BS_SOLID
+                    // Color: 0x00404040
+                    prop.setBrushColor(DKGRAY);
+                    prop.setBrushStyle(BS_SOLID);
+                    break;
+                case 0x80000004:
+                    // BLACK_BRUSH - A black, solid color brush
+                    // BrushStyle: BS_SOLID
+                    // Color: 0x00000000
+                    prop.setBrushColor(BLACK);
+                    prop.setBrushStyle(BS_SOLID);
+                    break;
+                case 0x80000005:
+                    // NULL_BRUSH - A null brush
+                    // BrushStyle: BS_NULL
+                    prop.setBrushStyle(BS_NULL);
+                    break;
+                case 0x80000006:
+                    // WHITE_PEN - A white, solid-color pen
+                    // PenStyle: PS_COSMETIC + PS_SOLID
+                    // ColorRef: 0x00FFFFFF
+                    prop.setPenStyle(HwmfPenStyle.valueOf(0));
+                    prop.setPenWidth(1);
+                    prop.setPenColor(WHITE);
+                    break;
+                case 0x80000007:
+                    // BLACK_PEN - A black, solid-color pen
+                    // PenStyle: PS_COSMETIC + PS_SOLID
+                    // ColorRef: 0x00000000
+                    prop.setPenStyle(HwmfPenStyle.valueOf(0));
+                    prop.setPenWidth(1);
+                    prop.setPenColor(BLACK);
+                    break;
+                case 0x80000008:
+                    // NULL_PEN - A null pen
+                    // PenStyle: PS_NULL
+                    prop.setPenStyle(HwmfPenStyle.valueOf(HwmfPenStyle.HwmfLineDash.NULL.wmfFlag));
+                    break;
+                case 0x8000000A:
+                    // OEM_FIXED_FONT - A fixed-width, OEM character set
+                    // Charset: OEM_CHARSET
+                    // PitchAndFamily: FF_DONTCARE + FIXED_PITCH
+                    break;
+                case 0x8000000B:
+                    // ANSI_FIXED_FONT - A fixed-width font
+                    // Charset: ANSI_CHARSET
+                    // PitchAndFamily: FF_DONTCARE + FIXED_PITCH
+                    break;
+                case 0x8000000C:
+                    // ANSI_VAR_FONT - A variable-width font
+                    // Charset: ANSI_CHARSET
+                    // PitchAndFamily: FF_DONTCARE + VARIABLE_PITCH
+                    break;
+                case 0x8000000D:
+                    // SYSTEM_FONT - A font that is guaranteed to be available in the operating system
+                    break;
+                case 0x8000000E:
+                    // DEVICE_DEFAULT_FONT
+                    // The default font that is provided by the graphics device driver for the current output device
+                    break;
+                case 0x8000000F:
+                    // DEFAULT_PALETTE
+                    // The default palette that is defined for the current output device.
+                    break;
+                case 0x80000010:
+                    // SYSTEM_FIXED_FONT
+                    // A fixed-width font that is guaranteed to be available in the operating system.
+                    break;
+                case 0x80000011:
+                    // DEFAULT_GUI_FONT
+                    // The default font that is used for user interface objects such as menus and dialog boxes.
+                    break;
+                case 0x80000012:
+                    // DC_BRUSH
+                    // The solid-color brush that is currently selected in the playback device context.
+                    break;
+                case 0x80000013:
+                    // DC_PEN
+                    // The solid-color pen that is currently selected in the playback device context.
+                    break;
+            }
+        }
+
     }
 
 
@@ -717,8 +848,98 @@ public class HemfDraw {
         protected long readPoint(LittleEndianInputStream leis, Point2D point) {
             return readPointS(leis, point);
         }
-
     }
+
+    public static class EmfBeginPath implements HemfRecord {
+        @Override
+        public HemfRecordType getEmfRecordType() {
+            return HemfRecordType.beginPath;
+        }
+
+        @Override
+        public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
+            return 0;
+        }
+    }
+
+    public static class EmfEndPath implements HemfRecord {
+        @Override
+        public HemfRecordType getEmfRecordType() {
+            return HemfRecordType.endPath;
+        }
+
+        @Override
+        public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
+            return 0;
+        }
+    }
+
+    public static class EmfAbortPath implements HemfRecord {
+        @Override
+        public HemfRecordType getEmfRecordType() {
+            return HemfRecordType.abortPath;
+        }
+
+        @Override
+        public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
+            return 0;
+        }
+    }
+
+    public static class EmfCloseFigure implements HemfRecord {
+        @Override
+        public HemfRecordType getEmfRecordType() {
+            return HemfRecordType.closeFigure;
+        }
+
+        @Override
+        public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
+            return 0;
+        }
+    }
+
+    public static class EmfFlattenPath implements HemfRecord {
+        @Override
+        public HemfRecordType getEmfRecordType() {
+            return HemfRecordType.flattenPath;
+        }
+
+        @Override
+        public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
+            return 0;
+        }
+    }
+
+    public static class EmfWidenPath implements HemfRecord {
+        @Override
+        public HemfRecordType getEmfRecordType() {
+            return HemfRecordType.widenPath;
+        }
+
+        @Override
+        public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
+            return 0;
+        }
+    }
+
+    /**
+     * The EMR_STROKEPATH record renders the specified path by using the current pen.
+     */
+    public static class EmfStrokePath implements HemfRecord {
+        protected final Rectangle2D bounds = new Rectangle2D.Double();
+
+        @Override
+        public HemfRecordType getEmfRecordType() {
+            return HemfRecordType.strokePath;
+        }
+
+        @Override
+        public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
+            // A 128-bit WMF RectL object, which specifies bounding rectangle, in device units
+            return readRectL(leis, bounds);
+        }
+    }
+
     static long readRectL(LittleEndianInputStream leis, Rectangle2D bounds) {
         /* A 32-bit signed integer that defines the x coordinate, in logical coordinates,
          * of the ... corner of the rectangle.
