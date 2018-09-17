@@ -57,7 +57,7 @@ public class HemfPlusRecordIterator implements Iterator<HemfPlusRecord> {
     }
 
     private HemfPlusRecord _next() {
-        if (currentRecord != null && HemfPlusRecordType.eof == currentRecord.getRecordType()) {
+        if (currentRecord != null && HemfPlusRecordType.eof == currentRecord.getEmfPlusRecordType()) {
             return null;
         }
         // A 16-bit unsigned integer that identifies this record type

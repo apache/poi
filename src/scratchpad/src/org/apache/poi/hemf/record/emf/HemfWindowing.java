@@ -19,6 +19,7 @@ package org.apache.poi.hemf.record.emf;
 
 import java.io.IOException;
 
+import org.apache.poi.hemf.record.emf.HemfFill.HemfRegionMode;
 import org.apache.poi.hwmf.record.HwmfWindowing;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
@@ -197,4 +198,27 @@ public class HemfWindowing {
             return 4*LittleEndianConsts.INT_SIZE;
         }
     }
+
+    /**
+     * The EMR_SELECTCLIPPATH record specifies the current path as a clipping region for a playback
+     * device context, combining the new region with any existing clipping region using the specified mode.
+     */
+    public static class EmfSelectClipPath implements HemfRecord {
+        protected HemfRegionMode regionMode;
+
+        @Override
+        public HemfRecordType getEmfRecordType() {
+            return HemfRecordType.selectClipPath;
+        }
+
+        @Override
+        public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
+            // A 32-bit unsigned integer that specifies the way to use the path.
+            // The value MUST be in the RegionMode enumeration
+            regionMode = HemfRegionMode.valueOf(leis.readInt());
+
+            return LittleEndianConsts.INT_SIZE;
+        }
+    }
+
 }

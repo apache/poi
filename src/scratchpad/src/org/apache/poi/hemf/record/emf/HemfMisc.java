@@ -17,10 +17,11 @@
 
 package org.apache.poi.hemf.record.emf;
 
-import static org.apache.poi.hemf.record.emf.HemfDraw.readDimensionInt;
+import static org.apache.poi.hemf.record.emf.HemfDraw.readPointL;
 import static org.apache.poi.hemf.record.emf.HemfFill.readBitmap;
 import static org.apache.poi.hemf.record.emf.HemfRecordIterator.HEADER_SIZE;
 
+import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +38,6 @@ import org.apache.poi.hwmf.record.HwmfMisc.WmfSetBkMode;
 import org.apache.poi.hwmf.record.HwmfPalette.PaletteEntry;
 import org.apache.poi.hwmf.record.HwmfPenStyle;
 import org.apache.poi.hwmf.record.HwmfPenStyle.HwmfLineDash;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
@@ -56,22 +56,22 @@ public class HemfMisc {
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
 
             // A 32-bit unsigned integer that specifies the number of palette entries.
-            int nPalEntries = (int)leis.readUInt();
+            int nPalEntries = (int) leis.readUInt();
             // A 32-bit unsigned integer that specifies the offset to the palette entries from the start of this record.
-            int offPalEntries = (int)leis.readUInt();
+            int offPalEntries = (int) leis.readUInt();
 
-            int size = 2*LittleEndianConsts.INT_SIZE;
-            int undefinedSpace1 = (int)(offPalEntries - size - HEADER_SIZE);
+            int size = 2 * LittleEndianConsts.INT_SIZE;
+            int undefinedSpace1 = (int) (offPalEntries - size - HEADER_SIZE);
             assert (undefinedSpace1 >= 0);
             leis.skipFully(undefinedSpace1);
             size += undefinedSpace1;
 
-            for (int i=0; i<nPalEntries; i++) {
+            for (int i = 0; i < nPalEntries; i++) {
                 PaletteEntry pe = new PaletteEntry();
                 size += pe.init(leis);
             }
 
-            int undefinedSpace2 = (int)(recordSize - size - LittleEndianConsts.INT_SIZE);
+            int undefinedSpace2 = (int) (recordSize - size - LittleEndianConsts.INT_SIZE);
             assert (undefinedSpace2 >= 0);
             leis.skipFully(undefinedSpace2);
             size += undefinedSpace2;
@@ -81,7 +81,7 @@ public class HemfMisc {
             // LogPaletteEntry objects, if they exist, MUST precede this field.
             long sizeLast = leis.readUInt();
             size += LittleEndianConsts.INT_SIZE;
-            assert ((sizeLast-HEADER_SIZE) == recordSize && recordSize == size);
+            assert ((sizeLast - HEADER_SIZE) == recordSize && recordSize == size);
 
             return size;
         }
@@ -179,7 +179,7 @@ public class HemfMisc {
              * A 32-bit unsigned integer that specifies the background mode
              * and MUST be in the BackgroundMode (section 2.1.4) enumeration
              */
-            bkMode = HwmfBkMode.valueOf((int)leis.readUInt());
+            bkMode = HwmfBkMode.valueOf((int) leis.readUInt());
             return LittleEndianConsts.INT_SIZE;
         }
     }
@@ -195,7 +195,7 @@ public class HemfMisc {
 
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
-            return super.init(leis, recordSize, (int)recordId);
+            return super.init(leis, recordSize, (int) recordId);
         }
     }
 
@@ -212,7 +212,7 @@ public class HemfMisc {
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             // A 32-bit unsigned integer whose definition MUST be in the MapMode enumeration
-            mapMode = HwmfMapMode.valueOf((int)leis.readUInt());
+            mapMode = HwmfMapMode.valueOf((int) leis.readUInt());
             return LittleEndianConsts.INT_SIZE;
         }
     }
@@ -230,7 +230,7 @@ public class HemfMisc {
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             // A 32-bit unsigned integer that specifies the raster operation mode and
             // MUST be in the WMF Binary Raster Op enumeration
-            drawMode = HwmfBinaryRasterOp.valueOf((int)leis.readUInt());
+            drawMode = HwmfBinaryRasterOp.valueOf((int) leis.readUInt());
             return LittleEndianConsts.INT_SIZE;
         }
     }
@@ -250,12 +250,14 @@ public class HemfMisc {
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             // A 32-bit unsigned integer that specifies the stretch mode and MAY be
             // in the StretchMode enumeration.
-            stretchBltMode = StretchBltMode.valueOf((int)leis.readUInt());
+            stretchBltMode = StretchBltMode.valueOf((int) leis.readUInt());
             return LittleEndianConsts.INT_SIZE;
         }
     }
 
-    /** The EMR_CREATEBRUSHINDIRECT record defines a logical brush for graphics operations. */
+    /**
+     * The EMR_CREATEBRUSHINDIRECT record defines a logical brush for graphics operations.
+     */
     public static class EmfCreateBrushIndirect extends HwmfMisc.WmfCreateBrushIndirect implements HemfRecord {
         /**
          * A 32-bit unsigned integer that specifies the index of the logical brush object in the
@@ -270,13 +272,13 @@ public class HemfMisc {
 
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
-            brushIdx = (int)leis.readUInt();
+            brushIdx = (int) leis.readUInt();
 
-            brushStyle = HwmfBrushStyle.valueOf((int)leis.readUInt());
+            brushStyle = HwmfBrushStyle.valueOf((int) leis.readUInt());
             colorRef = new HwmfColorRef();
             int size = colorRef.init(leis);
-            brushHatch = HwmfHatchStyle.valueOf((int)leis.readUInt());
-            return size+3*LittleEndianConsts.INT_SIZE;
+            brushHatch = HwmfHatchStyle.valueOf((int) leis.readUInt());
+            return size + 3 * LittleEndianConsts.INT_SIZE;
 
         }
     }
@@ -294,12 +296,14 @@ public class HemfMisc {
 
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
-            objectIndex = (int)leis.readUInt();
+            objectIndex = (int) leis.readUInt();
             return LittleEndianConsts.INT_SIZE;
         }
     }
 
-    /** The EMR_CREATEPEN record defines a logical pen for graphics operations. */
+    /**
+     * The EMR_CREATEPEN record defines a logical pen for graphics operations.
+     */
     public static class EmfCreatePen extends HwmfMisc.WmfCreatePenIndirect implements HemfRecord {
         /**
          * A 32-bit unsigned integer that specifies the index of the logical palette object
@@ -315,11 +319,11 @@ public class HemfMisc {
 
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
-            penIndex = (int)leis.readUInt();
+            penIndex = (int) leis.readUInt();
 
             // A 32-bit unsigned integer that specifies the PenStyle.
             // The value MUST be defined from the PenStyle enumeration table
-            penStyle = HwmfPenStyle.valueOf((int)leis.readUInt());
+            penStyle = HwmfPenStyle.valueOf((int) leis.readUInt());
 
             int widthX = leis.readInt();
             int widthY = leis.readInt();
@@ -327,7 +331,7 @@ public class HemfMisc {
 
             int size = colorRef.init(leis);
 
-            return size + 4*LittleEndianConsts.INT_SIZE;
+            return size + 4 * LittleEndianConsts.INT_SIZE;
         }
     }
 
@@ -349,27 +353,27 @@ public class HemfMisc {
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             final int startIdx = leis.getReadIndex();
 
-            penIndex = (int)leis.readUInt();
+            penIndex = (int) leis.readUInt();
 
             // A 32-bit unsigned integer that specifies the offset from the start of this
             // record to the DIB header, if the record contains a DIB.
-            int offBmi = (int)leis.readUInt();
+            int offBmi = (int) leis.readUInt();
 
             // A 32-bit unsigned integer that specifies the size of the DIB header, if the
             // record contains a DIB.
-            int cbBmi = (int)leis.readUInt();
+            int cbBmi = (int) leis.readUInt();
 
             // A 32-bit unsigned integer that specifies the offset from the start of this
             // record to the DIB bits, if the record contains a DIB.
-            int offBits = (int)leis.readUInt();
+            int offBits = (int) leis.readUInt();
 
             // A 32-bit unsigned integer that specifies the size of the DIB bits, if the record
             // contains a DIB.
-            int cbBits = (int)leis.readUInt();
+            int cbBits = (int) leis.readUInt();
 
             // A 32-bit unsigned integer that specifies the PenStyle.
             // The value MUST be defined from the PenStyle enumeration table
-            penStyle = HwmfPenStyle.valueOf((int)leis.readUInt());
+            penStyle = HwmfPenStyle.valueOf((int) leis.readUInt());
 
             // A 32-bit unsigned integer that specifies the width of the line drawn by the pen.
             // If the pen type in the PenStyle field is PS_GEOMETRIC, this value is the width in logical
@@ -383,7 +387,7 @@ public class HemfMisc {
             // If the pen type in the PenStyle field is PS_GEOMETRIC, this value MUST be either BS_SOLID or BS_HATCHED.
             // The value of this field can be BS_NULL, but only if the line style specified in PenStyle is PS_NULL.
             // The BS_NULL style SHOULD be used to specify a brush that has no effect
-            brushStyle = HwmfBrushStyle.valueOf((int)leis.readUInt());
+            brushStyle = HwmfBrushStyle.valueOf((int) leis.readUInt());
 
             int size = 8 * LittleEndianConsts.INT_SIZE;
 
@@ -393,10 +397,10 @@ public class HemfMisc {
 
             // The number of elements in the array specified in the StyleEntry
             // field. This value SHOULD be zero if PenStyle does not specify PS_USERSTYLE.
-            final int numStyleEntries = (int)leis.readUInt();
-            size += 2*LittleEndianConsts.INT_SIZE;
+            final int numStyleEntries = (int) leis.readUInt();
+            size += 2 * LittleEndianConsts.INT_SIZE;
 
-            assert(numStyleEntries == 0 || penStyle.getLineDash() == HwmfLineDash.USERSTYLE);
+            assert (numStyleEntries == 0 || penStyle.getLineDash() == HwmfLineDash.USERSTYLE);
 
             // An optional array of 32-bit unsigned integers that defines the lengths of
             // dashes and gaps in the line drawn by this pen, when the value of PenStyle is
@@ -409,8 +413,8 @@ public class HemfMisc {
 
             styleEntry = new int[numStyleEntries];
 
-            for (int i=0; i<numStyleEntries; i++) {
-                styleEntry[i] = (int)leis.readUInt();
+            for (int i = 0; i < numStyleEntries; i++) {
+                styleEntry[i] = (int) leis.readUInt();
             }
 
             size += numStyleEntries * LittleEndianConsts.INT_SIZE;
@@ -435,13 +439,28 @@ public class HemfMisc {
 
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
-            miterLimit = (int)leis.readUInt();
+            miterLimit = (int) leis.readUInt();
             return LittleEndianConsts.INT_SIZE;
         }
 
         @Override
         public void draw(HemfGraphics ctx) {
             ctx.getProperties().setPenMiterLimit(miterLimit);
+        }
+    }
+
+
+    public static class EmfSetBrushOrgEx implements HemfRecord {
+        protected final Point2D origin = new Point2D.Double();
+
+        @Override
+        public HemfRecordType getEmfRecordType() {
+            return HemfRecordType.setBrushOrgEx;
+        }
+
+        @Override
+        public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
+            return readPointL(leis, origin);
         }
     }
 }

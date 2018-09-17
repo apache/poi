@@ -617,4 +617,23 @@ public class HemfFill {
 
         return 6 * LittleEndian.INT_SIZE;
     }
+
+    /**
+     * The EMR_FILLPATH record closes any open figures in the current path and fills the path's interior by
+     * using the current brush and polygon-filling mode.
+     */
+    public static class EmfFillPath implements HemfRecord {
+        protected final Rectangle2D bounds = new Rectangle2D.Double();
+
+        @Override
+        public HemfRecordType getEmfRecordType() {
+            return HemfRecordType.fillPath;
+        }
+
+        @Override
+        public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
+            // A 128-bit WMF RectL object, which specifies bounding rectangle, in device units
+            return readRectL(leis, bounds);
+        }
+    }
 }

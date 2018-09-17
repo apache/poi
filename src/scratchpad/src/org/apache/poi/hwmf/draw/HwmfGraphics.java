@@ -52,11 +52,12 @@ import org.apache.poi.util.LocaleUtil;
 
 public class HwmfGraphics {
 
+    protected final List<HwmfDrawProperties> propStack = new LinkedList<>();
+    protected HwmfDrawProperties prop;
+
     private static final Charset DEFAULT_CHARSET = LocaleUtil.CHARSET_1252;
     private final Graphics2D graphicsCtx;
-    private final List<HwmfDrawProperties> propStack = new LinkedList<>();
-    private HwmfDrawProperties prop = new HwmfDrawProperties();
-    private List<HwmfObjectTableEntry> objectTable = new ArrayList<>();
+    private final List<HwmfObjectTableEntry> objectTable = new ArrayList<>();
     /** Bounding box from the placeable header */ 
     private final Rectangle2D bbox;
     private final AffineTransform initialAT;
@@ -75,11 +76,14 @@ public class HwmfGraphics {
     }
 
     public HwmfDrawProperties getProperties() {
+        if (prop == null) {
+            prop = new HwmfDrawProperties();
+        }
         return prop;
     }
 
     public void draw(Shape shape) {
-        HwmfLineDash lineDash = prop.getPenStyle().getLineDash();
+        HwmfLineDash lineDash = getProperties().getPenStyle().getLineDash();
         if (lineDash == HwmfLineDash.NULL) {
             // line is not drawn
             return;
@@ -89,22 +93,22 @@ public class HwmfGraphics {
 
         // first draw a solid background line (depending on bkmode)
         // only makes sense if the line is not solid
-        if (prop.getBkMode() == HwmfBkMode.OPAQUE && (lineDash != HwmfLineDash.SOLID && lineDash != HwmfLineDash.INSIDEFRAME)) {
+        if (getProperties().getBkMode() == HwmfBkMode.OPAQUE && (lineDash != HwmfLineDash.SOLID && lineDash != HwmfLineDash.INSIDEFRAME)) {
             graphicsCtx.setStroke(new BasicStroke(stroke.getLineWidth()));
-            graphicsCtx.setColor(prop.getBackgroundColor().getColor());
+            graphicsCtx.setColor(getProperties().getBackgroundColor().getColor());
             graphicsCtx.draw(shape);
         }
 
         // then draw the (dashed) line
         graphicsCtx.setStroke(stroke);
-        graphicsCtx.setColor(prop.getPenColor().getColor());
+        graphicsCtx.setColor(getProperties().getPenColor().getColor());
         graphicsCtx.draw(shape);
     }
 
     public void fill(Shape shape) {
-        if (prop.getBrushStyle() != HwmfBrushStyle.BS_NULL) {
+        if (getProperties().getBrushStyle() != HwmfBrushStyle.BS_NULL) {
 //            GeneralPath gp = new GeneralPath(shape);
-//            gp.setWindingRule(prop.getPolyfillMode().awtFlag);
+//            gp.setWindingRule(getProperties().getPolyfillMode().awtFlag);
             graphicsCtx.setPaint(getFill());
             graphicsCtx.fill(shape);
         }
@@ -114,14 +118,14 @@ public class HwmfGraphics {
 
     protected BasicStroke getStroke() {
         // TODO: fix line width calculation
-        float width = (float)prop.getPenWidth();
+        float width = (float)getProperties().getPenWidth();
         if (width == 0) {
             width = 1;
         }
-        HwmfPenStyle ps = prop.getPenStyle();
+        HwmfPenStyle ps = getProperties().getPenStyle();
         int cap = ps.getLineCap().awtFlag;
         int join = ps.getLineJoin().awtFlag;
-        float miterLimit = (float)prop.getPenMiterLimit();
+        float miterLimit = (float)getProperties().getPenMiterLimit();
         float dashes[] = ps.getLineDash().dashes;
         boolean dashAlt = ps.isAlternateDash();
         // This value is not an integer index into the dash pattern array.
@@ -132,7 +136,7 @@ public class HwmfGraphics {
     }
 
     protected Paint getFill() {
-        switch (prop.getBrushStyle()) {
+        switch (getProperties().getBrushStyle()) {
         default:
         case BS_INDEXED:
         case BS_PATTERN8X8:
@@ -148,20 +152,20 @@ public class HwmfGraphics {
     }
 
     protected Paint getSolidFill() {
-        return prop.getBrushColor().getColor();
+        return getProperties().getBrushColor().getColor();
     }
 
     protected Paint getHatchedFill() {
         int dim = 7, mid = 3;
         BufferedImage bi = new BufferedImage(dim, dim, BufferedImage.TYPE_4BYTE_ABGR);
         Graphics2D g = bi.createGraphics();
-        Color c = (prop.getBkMode() == HwmfBkMode.TRANSPARENT)
+        Color c = (getProperties().getBkMode() == HwmfBkMode.TRANSPARENT)
             ? new Color(0, true)
-            : prop.getBackgroundColor().getColor();
+            : getProperties().getBackgroundColor().getColor();
         g.setColor(c);
         g.fillRect(0, 0, dim, dim);
-        g.setColor(prop.getBrushColor().getColor());
-        HwmfHatchStyle h = prop.getBrushHatch();
+        g.setColor(getProperties().getBrushColor().getColor());
+        HwmfHatchStyle h = getProperties().getBrushHatch();
         if (h == HwmfHatchStyle.HS_HORIZONTAL || h == HwmfHatchStyle.HS_CROSS) {
             g.drawLine(0, mid, dim, mid);
         }
@@ -179,7 +183,7 @@ public class HwmfGraphics {
     }
 
     protected Paint getPatternPaint() {
-        BufferedImage bi = prop.getBrushBitmap();
+        BufferedImage bi = getProperties().getBrushBitmap();
         return (bi == null) ? null
             : new TexturePaint(bi, new Rectangle(0,0,bi.getWidth(),bi.getHeight()));
     }
@@ -244,8 +248,9 @@ public class HwmfGraphics {
      * Saves the current properties to the stack
      */
     public void saveProperties() {
+        assert(prop != null);
         propStack.add(prop);
-        prop = new HwmfDrawProperties(prop);  
+        prop = new HwmfDrawProperties(prop);
     }
     
     /**
@@ -260,7 +265,7 @@ public class HwmfGraphics {
         }
         int stackIndex = index;
         if (stackIndex < 0) {
-            int curIdx = propStack.indexOf(prop);
+            int curIdx = propStack.indexOf(getProperties());
             if (curIdx == -1) {
                 // the current element is not pushed to the stacked, i.e. it's the last
                 curIdx = propStack.size();
@@ -280,8 +285,8 @@ public class HwmfGraphics {
      * This methods gathers and sets the corresponding graphics transformations.
      */
     public void updateWindowMapMode() {
-        Rectangle2D win = prop.getWindow();
-        HwmfMapMode mapMode = prop.getMapMode();
+        Rectangle2D win = getProperties().getWindow();
+        HwmfMapMode mapMode = getProperties().getMapMode();
         graphicsCtx.setTransform(initialAT);
 
         switch (mapMode) {
@@ -320,7 +325,7 @@ public class HwmfGraphics {
     }
 
     public void drawString(byte[] text, Rectangle2D bounds, int dx[]) {
-        HwmfFont font = prop.getFont();
+        HwmfFont font = getProperties().getFont();
         if (font == null || text == null || text.length == 0) {
             return;
         }
@@ -386,12 +391,12 @@ public class HwmfGraphics {
         try {
             graphicsCtx.translate(bounds.getX(), bounds.getY()+fontH);
             graphicsCtx.rotate(angle);
-            if (prop.getBkMode() == HwmfBkMode.OPAQUE) {
+            if (getProperties().getBkMode() == HwmfBkMode.OPAQUE) {
                 // TODO: validate bounds
-                graphicsCtx.setBackground(prop.getBackgroundColor().getColor());
+                graphicsCtx.setBackground(getProperties().getBackgroundColor().getColor());
                 graphicsCtx.fill(new Rectangle2D.Double(0, 0, bounds.getWidth(), bounds.getHeight()));
             }
-            graphicsCtx.setColor(prop.getTextColor().getColor());
+            graphicsCtx.setColor(getProperties().getTextColor().getColor());
             graphicsCtx.drawString(as.getIterator(), 0, 0); // (float)bounds.getX(), (float)bounds.getY());
         } finally {
             graphicsCtx.setTransform(at);

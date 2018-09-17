@@ -20,10 +20,26 @@ package org.apache.poi.hemf.draw;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 
+import org.apache.poi.hwmf.draw.HwmfDrawProperties;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
 
 public class HemfGraphics extends HwmfGraphics {
     public HemfGraphics(Graphics2D graphicsCtx, Rectangle2D bbox) {
         super(graphicsCtx,bbox);
+    }
+
+    @Override
+    public HemfDrawProperties getProperties() {
+        if (prop == null) {
+            prop = new HemfDrawProperties();
+        }
+        return (HemfDrawProperties)prop;
+    }
+
+    @Override
+    public void saveProperties() {
+        assert(prop != null);
+        propStack.add(prop);
+        prop = new HemfDrawProperties((HemfDrawProperties)prop);
     }
 }
