@@ -17,6 +17,18 @@
 
 package org.apache.poi.ooxml.util;
 
+import junit.framework.TestCase;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.StringUtil;
+import org.apache.poi.util.SuppressForbidden;
+import org.apache.xmlbeans.StringEnumAbstractBase;
+import org.junit.Test;
+import org.junit.internal.TextListener;
+import org.junit.runner.Description;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
+import org.reflections.Reflections;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -26,29 +38,10 @@ import java.security.AccessController;
 import java.security.CodeSource;
 import java.security.PrivilegedAction;
 import java.security.ProtectionDomain;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
-
-import junit.framework.TestCase;
-
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.StringUtil;
-import org.apache.poi.util.SuppressForbidden;
-import org.junit.Test;
-import org.junit.internal.TextListener;
-import org.junit.runner.Description;
-import org.junit.runner.JUnitCore;
-import org.junit.runner.Result;
-import org.reflections.Reflections;
 
 /**
  * Build a 'lite' version of the ooxml-schemas.jar
@@ -194,25 +187,36 @@ public final class OOXMLLite {
 
         //see what classes from the ooxml-schemas.jar are loaded
         System.out.println("Copying classes to " + _destDest);
-        Map<String, Class<?>> classes = getLoadedClasses(_ooxmlJar.getName());
+        Set<Class<?>> classes = getLoadedClasses(_ooxmlJar.getName());
         Set<String> packages = new HashSet<>();
-        for (Class<?> cls : classes.values()) {
+        for (Class<?> cls : classes) {
             copyFile(cls);
             packages.add(cls.getPackage().getName());
 
-            if(cls.isInterface()){
+            if (cls.isInterface()) {
                 /// Copy classes and interfaces declared as members of this class
-                for(Class<?> fc : cls.getDeclaredClasses()){
+                for (Class<?> fc : cls.getDeclaredClasses()) {
                     copyFile(fc);
                 }
             }
         }
         for (String pkg : packages) {
             Reflections reflections = new Reflections(pkg);
-            for (Class listClass : reflections.getSubTypesOf(List.class)) {
-                for (Class<?> compare : classes.values()){
+            Set<Class<? extends List>> listClasses = reflections.getSubTypesOf(List.class);
+            listClasses.removeAll(classes);
+            for (Class listClass : listClasses) {
+                for (Class<?> compare : classes) {
                     if (listClass.getName().startsWith(compare.getName())) {
                         copyFile(listClass);
+                    }
+                }
+            }
+            Set<Class<? extends StringEnumAbstractBase>> enumClasses = reflections.getSubTypesOf(StringEnumAbstractBase.class);
+            listClasses.removeAll(classes);
+            for (Class enumClass : enumClasses) {
+                for (Class<?> compare : classes) {
+                    if (enumClass.getName().startsWith(compare.getName())) {
+                        copyFile(enumClass);
                     }
                 }
             }
@@ -307,10 +311,10 @@ public final class OOXMLLite {
     /**
      *
      * @param ptrn the pattern to filter output
-     * @return the classes loaded by the system class loader keyed by class name
+     * @return the classes loaded by the system class loader
      */
     @SuppressWarnings("unchecked")
-    private static Map<String, Class<?>> getLoadedClasses(String ptrn) {
+    private static Set<Class<?>> getLoadedClasses(String ptrn) {
         // make the field accessible, we defer this from static initialization to here to 
         // allow JDKs which do not have this field (e.g. IBM JDK) to at least load the class
         // without failing, see https://issues.apache.org/bugzilla/show_bug.cgi?id=56550
@@ -331,7 +335,7 @@ public final class OOXMLLite {
         ClassLoader appLoader = ClassLoader.getSystemClassLoader();
         try {
             Vector<Class<?>> classes = (Vector<Class<?>>) _classes.get(appLoader);
-            Map<String, Class<?>> map = new HashMap<>();
+            Set<Class<?>> set = new HashSet<>();
             for (Class<?> cls : classes) {
                 // e.g. proxy-classes, ...
                 ProtectionDomain pd = cls.getProtectionDomain();
@@ -340,13 +344,13 @@ public final class OOXMLLite {
                 if (cs == null) continue;
                 URL loc = cs.getLocation();
                 if (loc == null) continue;
-                
+
                 String jar = loc.toString();
                 if (jar.contains(ptrn)) {
-                    map.put(cls.getName(), cls);
+                    set.add(cls);
                 }
             }
-            return map;
+            return set;
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
