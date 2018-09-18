@@ -48,6 +48,7 @@ import org.junit.internal.TextListener;
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
+import org.reflections.Reflections;
 
 /**
  * Build a 'lite' version of the ooxml-schemas.jar
@@ -194,19 +195,25 @@ public final class OOXMLLite {
         //see what classes from the ooxml-schemas.jar are loaded
         System.out.println("Copying classes to " + _destDest);
         Map<String, Class<?>> classes = getLoadedClasses(_ooxmlJar.getName());
+        Set<String> packages = new HashSet<>();
         for (Class<?> cls : classes.values()) {
-            String className = cls.getName();
-            String classRef = className.replace('.', '/') + ".class";
-            File destFile = new File(_destDest, classRef);
-            IOUtils.copy(cls.getResourceAsStream('/' + classRef), destFile);
+            copyFile(cls);
+            packages.add(cls.getPackage().getName());
 
             if(cls.isInterface()){
                 /// Copy classes and interfaces declared as members of this class
                 for(Class<?> fc : cls.getDeclaredClasses()){
-                    className = fc.getName();
-                    classRef = className.replace('.', '/') + ".class";
-                    destFile = new File(_destDest, classRef);
-                    IOUtils.copy(fc.getResourceAsStream('/' + classRef), destFile);
+                    copyFile(fc);
+                }
+            }
+        }
+        for (String pkg : packages) {
+            Reflections reflections = new Reflections(pkg);
+            for (Class listClass : reflections.getSubTypesOf(List.class)) {
+                for (Class<?> compare : classes.values()){
+                    if (listClass.getName().startsWith(compare.getName())) {
+                        copyFile(listClass);
+                    }
                 }
             }
         }
@@ -222,6 +229,13 @@ public final class OOXMLLite {
                 }
             }
         }
+    }
+
+    private void copyFile(Class<?> cls) throws IOException {
+        String className = cls.getName();
+        String classRef = className.replace('.', '/') + ".class";
+        File destFile = new File(_destDest, classRef);
+        IOUtils.copy(cls.getResourceAsStream('/' + classRef), destFile);
     }
 
     private static boolean checkForTestAnnotation(Class<?> testclass) {

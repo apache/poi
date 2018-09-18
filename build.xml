@@ -52,6 +52,7 @@ under the License.
 
     <property name="main.lib" location="lib"/>
     <property name="ooxml.lib" location="ooxml-lib"/>
+    <property name="ooxml.test.lib" location="ooxml-testlib"/>
     <property name="compile.lib" location="compile-lib"/>
 
     <!-- compiler options options -->
@@ -208,7 +209,7 @@ under the License.
     <property name="dsig.sl4j-api.jar" location="${compile.lib}/slf4j-api-1.7.25.jar"/>
     <property name="dsig.sl4j-api.url" value="${repository.m2}/maven2/org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar"/>
 
-    <!-- jars in the lib-ooxml directory, see the fetch-ooxml-jars target-->
+    <!-- jars in the ooxml-lib directory, see the fetch-ooxml-jars target-->
     <property name="ooxml.curvesapi.jar" location="${ooxml.lib}/curvesapi-1.05.jar"/>
     <property name="ooxml.curvesapi.url"
               value="${repository.m2}/maven2/com/github/virtuald/curvesapi/1.05/curvesapi-1.05.jar"/>
@@ -218,6 +219,17 @@ under the License.
     <property name="ooxml.commons-compress.jar" location="${main.lib}/commons-compress-1.18.jar"/>
     <property name="ooxml.commons-compress.url"
               value="${repository.m2}/maven2/org/apache/commons/commons-compress/1.18/commons-compress-1.18.jar"/>
+
+    <!-- jars in the ooxml-test-lib directory, see the fetch-ooxml-jars target-->
+    <property name="ooxml.test.reflections.jar" location="${ooxml.test.lib}/reflections.jar"/>
+    <property name="ooxml.test.reflections.url"
+              value="${repository.m2}/maven2/org/reflections/reflections/0.9.11/reflections-0.9.11.jar"/>
+    <property name="ooxml.test.guava.jar" location="${ooxml.test.lib}/guava.jar"/>
+    <property name="ooxml.test.guava.url"
+              value="${repository.m2}/maven2/com/google/guava/guava/20.0/guava-20.0.jar"/>
+    <property name="ooxml.test.javassist.jar" location="${ooxml.test.lib}/javassist.jar"/>
+    <property name="ooxml.test.javassist.url"
+              value="${repository.m2}/maven2/org/javassist/javassist/3.21.0-GA/javassist-3.21.0-GA.jar"/>
 
     <!-- coverage libs -->
     <property name="jacoco.zip" location="${main.lib}/jacoco-0.8.2.zip"/>
@@ -420,6 +432,9 @@ under the License.
         <path refid="ooxml.classpath"/>
         <path refid="ooxml.xmlsec.classpath"/>
         <path refid="test.jar.classpath"/>
+        <pathelement location="${ooxml.test.reflections.jar}"/>
+        <pathelement location="${ooxml.test.guava.jar}"/>
+        <pathelement location="${ooxml.test.javassist.jar}"/>
         <pathelement location="${ooxml.output.dir}"/>
         <pathelement location="${ooxml.output.test.dir}"/>
         <pathelement location="${main.output.test.dir}"/>
@@ -582,6 +597,7 @@ under the License.
         <mkdir dir="${main.lib}"/>
         <mkdir dir="${compile.lib}"/>
         <mkdir dir="${ooxml.lib}"/>
+        <mkdir dir="${ooxml.test.lib}"/>
         <delete verbose="true">
             <fileset dir="${main.lib}">
                 <include name="ant-1.8*"/>
@@ -753,6 +769,9 @@ under the License.
                     <available file="${ooxml.curvesapi.jar}"/>
                     <available file="${ooxml.xmlbeans.jar}"/>
                     <available file="${ooxml.commons-compress.jar}"/>
+                    <available file="${ooxml.test.reflections.jar}"/>
+                    <available file="${ooxml.test.guava.jar}"/>
+                    <available file="${ooxml.test.javassist.jar}"/>
                 </and>
                 <isset property="disconnected"/>
             </or>
@@ -760,9 +779,13 @@ under the License.
     </target>
     <target name="fetch-ooxml-jars" depends="check-ooxml-jars" unless="ooxml.jars.present">
         <mkdir dir="${ooxml.lib}"/>
+        <mkdir dir="${ooxml.test.lib}"/>
         <downloadfile src="${ooxml.curvesapi.url}" dest="${ooxml.curvesapi.jar}"/>
         <downloadfile src="${ooxml.xmlbeans.url}" dest="${ooxml.xmlbeans.jar}"/>
         <downloadfile src="${ooxml.commons-compress.url}" dest="${ooxml.commons-compress.jar}"/>
+        <downloadfile src="${ooxml.test.reflections.url}" dest="${ooxml.test.reflections.jar}"/>
+        <downloadfile src="${ooxml.test.guava.url}" dest="${ooxml.test.guava.jar}"/>
+        <downloadfile src="${ooxml.test.javassist.url}" dest="${ooxml.test.javassist.jar}"/>
     </target>
     <target name="check-svn-jars">
         <condition property="svn.jars.present">
