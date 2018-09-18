@@ -187,6 +187,7 @@ project('main') {
         compile 'javax.activation:activation:1.1.1'
 
         testCompile 'junit:junit:4.12'
+        testCompile 'org.reflections:reflections:0.9.11'
     }
 
     jar {
