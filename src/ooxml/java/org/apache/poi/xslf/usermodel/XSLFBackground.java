@@ -77,7 +77,20 @@ public class XSLFBackground extends XSLFSimpleShape
     
     public void setFillColor(Color color) {
         CTBackgroundProperties bgPr = getBgPr(true);
-        
+
+        if (bgPr.isSetBlipFill()) {
+            bgPr.unsetBlipFill();
+        }
+        if (bgPr.isSetGradFill()) {
+            bgPr.unsetGradFill();
+        }
+        if (bgPr.isSetGrpFill()) {
+            bgPr.unsetGrpFill();
+        }
+        if (bgPr.isSetPattFill()) {
+            bgPr.unsetPattFill();
+        }
+
         if (color == null) {
             if (bgPr.isSetSolidFill()) {
                 bgPr.unsetSolidFill();
