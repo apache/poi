@@ -283,7 +283,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         }
         
         // check if name is unique and calculate unique column id 
-        long nextColumnId = 1; 
+        long nextColumnId = 0; 
         for (XSSFTableColumn tableColumn : getColumns()) {
             if (columnName != null && columnName.equalsIgnoreCase(tableColumn.getName())) {
                 throw new IllegalArgumentException("Column '" + columnName
@@ -291,6 +291,8 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
             }
             nextColumnId = Math.max(nextColumnId, tableColumn.getId());
         }
+        // Bug #62740, the logic was just re-using the existing max ID, not incrementing beyond it.
+        nextColumnId++;
         
         // Add the new Column
         CTTableColumn column = columns.insertNewTableColumn(columnIndex);

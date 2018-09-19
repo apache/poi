@@ -19,6 +19,7 @@ package org.apache.poi.xssf.usermodel;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -395,15 +396,21 @@ public final class TestXSSFTable {
         assertEquals(2, table.getRowCount());
 
         // add columns
-        table.createColumn("Column B");
-        table.createColumn("Column D");
-        table.createColumn("Column C", 2); // add between B and D
+        XSSFTableColumn c1 = table.getColumns().get(0);
+        XSSFTableColumn cB = table.createColumn("Column B");
+        XSSFTableColumn cD = table.createColumn("Column D");
+        XSSFTableColumn cC = table.createColumn("Column C", 2); // add between B and D
         table.updateReferences();
         table.updateHeaders();
 
         assertEquals(4, table.getColumnCount());
         assertEquals(2, table.getRowCount());
 
+        // column IDs start at 1, and increase in the order columns are added (see bug #62740)
+        assertEquals("Column c ID", 1, c1.getId());
+        assertTrue("Column B ID", c1.getId() < cB.getId());
+        assertTrue("Column D ID", cB.getId() < cD.getId());
+        assertTrue("Column C ID", cD.getId() < cC.getId());
         assertEquals("Column 1", table.getColumns().get(0).getName()); // generated name
         assertEquals("Column B", table.getColumns().get(1).getName());
         assertEquals("Column C", table.getColumns().get(2).getName());
