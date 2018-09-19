@@ -2073,6 +2073,7 @@ under the License.
                     <include name="commons-codec-*.jar"/>
                     <include name="commons-logging-*.jar"/>
                     <include name="commons-collections4-*.jar"/>
+                    <include name="commons-compress*.jar"/>
                     <include name="commons-math3-*.jar"/>
                     <include name="jaxb-api-*.jar"/>
                     <include name="jaxb-impl-*.jar"/>
