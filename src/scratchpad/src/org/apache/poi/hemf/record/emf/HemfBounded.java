@@ -17,35 +17,29 @@
 
 package org.apache.poi.hemf.record.emf;
 
-
-import java.io.IOException;
+import java.awt.geom.Rectangle2D;
 
 import org.apache.poi.hemf.draw.HemfGraphics;
-import org.apache.poi.hwmf.record.HwmfRecord;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.LittleEndianInputStream;
 
-@Internal
-public interface HemfRecord {
-
-    HemfRecordType getEmfRecordType();
+/**
+ * In EMF, shape records bring their own bounding.
+ * The record bounding is in the same space as the global drawing context,
+ * but the specified shape points can have a different space and therefore
+ * need to be translated/normalized
+ */
+public interface HemfBounded {
+    /**
+     * Getter for the outer bounds which are given in the record
+     *
+     * @return the bounds specified in the record
+     */
+    Rectangle2D getRecordBounds();
 
     /**
-     * Init record from stream
+     * Getter for the inner bounds which are calculated by the shape points
      *
-     * @param leis the little endian input stream
-     * @param recordSize the size limit for this record
-     * @param recordId the id of the {@link HemfRecordType}
-     *
-     * @return count of processed bytes
-     *
-     * @throws IOException when the inputstream is malformed
+     * @param ctx the graphics context
+     * @return the bounds of the shape points
      */
-    long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException;
-
-    default void draw(HemfGraphics ctx) {
-        if (this instanceof HwmfRecord) {
-            ((HwmfRecord) this).draw(ctx);
-        }
-    }
+    Rectangle2D getShapeBounds(HemfGraphics ctx);
 }

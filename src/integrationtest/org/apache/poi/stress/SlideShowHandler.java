@@ -105,7 +105,6 @@ public abstract class SlideShowHandler extends POIFSFileHandler {
         for (Slide<?,?> s : ss.getSlides()) {
             BufferedImage img = new BufferedImage(pgsize.width, pgsize.height, BufferedImage.TYPE_INT_ARGB);
             Graphics2D graphics = img.createGraphics();
-            DrawFactory.getInstance(graphics).fixFonts(graphics);
 
             // default rendering options
             graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);

@@ -111,12 +111,16 @@ public class HemfHeader implements HemfRecord {
         return hasExtension2;
     }
 
-    public long getMicrometersX() {
-        return (long)microDimension.getWidth();
+    public Dimension2D getDeviceDimension() {
+        return deviceDimension;
     }
 
-    public long getMicrometersY() {
-        return (long)microDimension.getHeight();
+    public Dimension2D getMilliDimension() {
+        return milliDimension;
+    }
+
+    public Dimension2D getMicroDimension() {
+        return microDimension;
     }
 
     @Override
@@ -135,8 +139,9 @@ public class HemfHeader implements HemfRecord {
                 ", offPixelFormat=" + offPixelFormat +
                 ", bOpenGL=" + bOpenGL +
                 ", hasExtension2=" + hasExtension2 +
-                ", micrometersX=" + getMicrometersX() +
-                ", micrometersY=" + getMicrometersY() +
+                ", deviceDimension=" + deviceDimension +
+                ", microDimension=" + microDimension +
+                ", milliDimension=" + milliDimension +
                 '}';
     }
 

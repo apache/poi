@@ -20,6 +20,7 @@ package org.apache.poi.hwmf.draw;
 import java.awt.Color;
 import java.awt.Shape;
 import java.awt.geom.Area;
+import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -88,7 +89,7 @@ public class HwmfDrawProperties {
     }
     
     public HwmfDrawProperties(HwmfDrawProperties other) {
-        this.window = (Rectangle2D)other.window.clone();
+        this.window = (other.window == null) ? null : (Rectangle2D)other.window.clone();
         this.viewport = (other.viewport == null) ? null : (Rectangle2D)other.viewport.clone();
         this.location = (Point2D)other.location.clone();
         this.mapMode = other.mapMode;
@@ -366,5 +367,12 @@ public class HwmfDrawProperties {
 
     public void setTextVAlignAsian(HwmfTextVerticalAlignment textVAlignAsian) {
         this.textVAlignAsian = textVAlignAsian;
+    }
+
+    /**
+     * @return the current active winding rule ({@link Path2D#WIND_EVEN_ODD} or {@link Path2D#WIND_NON_ZERO})
+     */
+    public int getWindingRule() {
+        return getPolyfillMode().awtFlag;
     }
 }

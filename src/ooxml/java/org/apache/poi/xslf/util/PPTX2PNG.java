@@ -139,7 +139,6 @@ public class PPTX2PNG {
 
                 BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
                 Graphics2D graphics = img.createGraphics();
-                DrawFactory.getInstance(graphics).fixFonts(graphics);
 
                 // default rendering options
                 graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);

@@ -22,19 +22,19 @@ import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
+import java.util.ServiceLoader;
 
 import org.apache.poi.sl.usermodel.PictureData;
-import org.apache.poi.sl.usermodel.PictureData.PictureType;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.sl.usermodel.PictureShape;
 import org.apache.poi.sl.usermodel.RectAlign;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 
 public class DrawPictureShape extends DrawSimpleShape {
     private static final POILogger LOG = POILogFactory.getLogger(DrawPictureShape.class);
-    private static final String WMF_IMAGE_RENDERER = "org.apache.poi.hwmf.draw.HwmfSLImageRenderer";
-    
+    private static final ServiceLoader<ImageRenderer> rendererLoader = ServiceLoader.load(ImageRenderer.class);
+
     public DrawPictureShape(PictureShape<?,?> shape) {
         super(shape);
     }
@@ -59,28 +59,26 @@ public class DrawPictureShape extends DrawSimpleShape {
     /**
      * Returns an ImageRenderer for the PictureData
      *
-     * @param graphics
+     * @param graphics the graphics context
      * @return the image renderer
      */
+    @SuppressWarnings("WeakerAccess")
     public static ImageRenderer getImageRenderer(Graphics2D graphics, String contentType) {
         ImageRenderer renderer = (ImageRenderer)graphics.getRenderingHint(Drawable.IMAGE_RENDERER);
         if (renderer != null) {
             return renderer;
         }
-        
-        if (PictureType.WMF.contentType.equals(contentType)) {
-            try {
-                @SuppressWarnings("unchecked")
-                Class<? extends ImageRenderer> irc = (Class<? extends ImageRenderer>)
-                        DrawPictureShape.class.getClassLoader().loadClass(WMF_IMAGE_RENDERER);
-                return irc.newInstance();
-            } catch (Exception e) {
-                // WMF image renderer is not on the classpath, continuing with BitmapRenderer
-                // although this doesn't make much sense ...
-                LOG.log(POILogger.ERROR, "WMF image renderer is not on the classpath - include poi-scratchpad jar!", e);
+
+        for (ImageRenderer ir : rendererLoader) {
+            if (ir.canRender(contentType)) {
+                return ir;
             }
         }
-        
+
+        LOG.log(POILogger.ERROR, "No suiteable image renderer found for content-type '"+
+                contentType+"' - include poi-scratchpad jar!");
+
+        // falling back to BitmapImageRenderer although this doesn't make much sense ...
         return new BitmapImageRenderer();
     }
     

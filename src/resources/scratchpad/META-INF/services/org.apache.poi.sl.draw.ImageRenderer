@@ -1,0 +1,2 @@
+org.apache.poi.hwmf.draw.HwmfImageRenderer
+org.apache.poi.hemf.draw.HemfImageRenderer

@@ -17,14 +17,29 @@
 
 package org.apache.poi.hemf.draw;
 
+import java.awt.geom.Path2D;
+
 import org.apache.poi.hwmf.draw.HwmfDrawProperties;
 
 public class HemfDrawProperties extends HwmfDrawProperties {
 
+    /** Path for path bracket operations */
+    protected final Path2D path;
+
+
     public HemfDrawProperties() {
+        path = new Path2D.Double();
     }
 
     public HemfDrawProperties(HemfDrawProperties other) {
         super(other);
+        path = (Path2D)other.path.clone();
+    }
+
+    /**
+     * @return the current path used for bracket operations
+     */
+    public Path2D getPath() {
+        return path;
     }
 }

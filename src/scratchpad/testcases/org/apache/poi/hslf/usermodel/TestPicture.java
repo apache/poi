@@ -210,7 +210,6 @@ public final class TestPicture {
                 } else {
                     BufferedImage img = new BufferedImage(pg.width, pg.height, BufferedImage.TYPE_INT_ARGB);
                     Graphics2D graphics = img.createGraphics();
-                    DrawFactory.getInstance(graphics).fixFonts(graphics);
                     slide.draw(graphics);
                     graphics.setColor(Color.BLACK);
                     graphics.setStroke(new BasicStroke(1));
