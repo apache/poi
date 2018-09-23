@@ -17,12 +17,13 @@
 
 package org.apache.poi.hemf.record.emf;
 
-import static org.apache.poi.hemf.record.emf.HemfDraw.readRectL;
 import static org.apache.poi.hemf.record.emf.HemfDraw.readPointL;
+import static org.apache.poi.hemf.record.emf.HemfDraw.readRectL;
 import static org.apache.poi.hemf.record.emf.HemfRecordIterator.HEADER_SIZE;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
+import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayInputStream;
@@ -31,8 +32,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.hemf.draw.HemfDrawProperties;
+import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.hwmf.record.HwmfBitmapDib;
+import org.apache.poi.hwmf.record.HwmfBrushStyle;
 import org.apache.poi.hwmf.record.HwmfColorRef;
 import org.apache.poi.hwmf.record.HwmfDraw;
 import org.apache.poi.hwmf.record.HwmfFill;
@@ -515,7 +519,7 @@ public class HemfFill {
     static long readBitmap(final LittleEndianInputStream leis, final HwmfBitmapDib bitmap,
             final int startIdx, final int offBmiSrc, final int cbBmiSrc, final int offBitsSrc, int cbBitsSrc)
     throws IOException {
-        final int offCurr = leis.getReadIndex()-(startIdx-HEADER_SIZE);
+        final int offCurr = leis.getReadIndex()-startIdx;
         final int undefinedSpace1 = offBmiSrc-offCurr;
         assert(undefinedSpace1 >= 0);
 
@@ -622,7 +626,7 @@ public class HemfFill {
      * The EMR_FILLPATH record closes any open figures in the current path and fills the path's interior by
      * using the current brush and polygon-filling mode.
      */
-    public static class EmfFillPath implements HemfRecord {
+    public static class EmfFillPath implements HemfRecord, HemfBounded {
         protected final Rectangle2D bounds = new Rectangle2D.Double();
 
         @Override
@@ -634,6 +638,30 @@ public class HemfFill {
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             // A 128-bit WMF RectL object, which specifies bounding rectangle, in device units
             return readRectL(leis, bounds);
+        }
+
+        @Override
+        public Rectangle2D getRecordBounds() {
+            return bounds;
+        }
+
+        @Override
+        public Rectangle2D getShapeBounds(HemfGraphics ctx) {
+            final HemfDrawProperties prop = ctx.getProperties();
+            final Path2D path = prop.getPath();
+            return path.getBounds2D();
+        }
+
+        @Override
+        public void draw(HemfGraphics ctx) {
+            final HemfDrawProperties prop = ctx.getProperties();
+            final Path2D path = (Path2D)prop.getPath().clone();
+            path.setWindingRule(ctx.getProperties().getWindingRule());
+            if (prop.getBrushStyle() == HwmfBrushStyle.BS_NULL) {
+                ctx.draw(path);
+            } else {
+                ctx.fill(path);
+            }
         }
     }
 }

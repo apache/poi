@@ -54,9 +54,9 @@ public class HwmfGraphics {
 
     protected final List<HwmfDrawProperties> propStack = new LinkedList<>();
     protected HwmfDrawProperties prop;
+    protected final Graphics2D graphicsCtx;
 
     private static final Charset DEFAULT_CHARSET = LocaleUtil.CHARSET_1252;
-    private final Graphics2D graphicsCtx;
     private final List<HwmfObjectTableEntry> objectTable = new ArrayList<>();
     /** Bounding box from the placeable header */ 
     private final Rectangle2D bbox;
@@ -72,7 +72,6 @@ public class HwmfGraphics {
         this.graphicsCtx = graphicsCtx;
         this.bbox = (Rectangle2D)bbox.clone();
         this.initialAT = graphicsCtx.getTransform();
-        DrawFactory.getInstance(graphicsCtx).fixFonts(graphicsCtx);
     }
 
     public HwmfDrawProperties getProperties() {
@@ -178,6 +177,7 @@ public class HwmfGraphics {
         if (h == HwmfHatchStyle.HS_BDIAGONAL || h == HwmfHatchStyle.HS_DIAGCROSS) {
             g.drawLine(0, dim, dim, 0);
         }
+        // TODO: handle new HS_* enumeration values
         g.dispose();
         return new TexturePaint(bi, new Rectangle(0,0,dim,dim));
     }
@@ -248,9 +248,10 @@ public class HwmfGraphics {
      * Saves the current properties to the stack
      */
     public void saveProperties() {
-        assert(prop != null);
-        propStack.add(prop);
-        prop = new HwmfDrawProperties(prop);
+        final HwmfDrawProperties p = getProperties();
+        assert(p != null);
+        propStack.add(p);
+        prop = new HwmfDrawProperties(p);
     }
     
     /**

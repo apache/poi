@@ -22,13 +22,23 @@ import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import javax.imageio.ImageIO;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hemf.record.emf.HemfComment;
@@ -41,22 +51,60 @@ import org.apache.poi.hemf.record.emf.HemfRecordType;
 import org.apache.poi.hemf.record.emf.HemfText;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.RecordFormatException;
+import org.apache.poi.util.Units;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class HemfPictureTest {
 
-    private POIDataSamples samples = POIDataSamples.getSpreadSheetInstance();
+    private static final POIDataSamples ss_samples = POIDataSamples.getSpreadSheetInstance();
+    private static final POIDataSamples sl_samples = POIDataSamples.getSlideShowInstance();
+
+    @Test
+    @Ignore("Only for manual tests")
+    public void paint() throws IOException {
+        File f = sl_samples.getFile("wrench.emf");
+        try (FileInputStream fis = new FileInputStream(f)) {
+            HemfPicture emf = new HemfPicture(fis);
+
+            Dimension2D dim = emf.getSize();
+            int width = Units.pointsToPixel(dim.getWidth());
+            // keep aspect ratio for height
+            int height = Units.pointsToPixel(dim.getHeight());
+            double max = Math.max(width, height);
+            if (max > 1500) {
+                width *= 1500 / max;
+                height *= 1500 / max;
+            }
+
+            BufferedImage bufImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = bufImg.createGraphics();
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+            g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+
+            emf.draw(g, new Rectangle2D.Double(0,0,width,height));
+
+            g.dispose();
+
+            ImageIO.write(bufImg, "PNG", new File("bla.png"));
+        }
+    }
+
+
+
 
     @Test
     public void testBasicWindows() throws Exception {
-        try (InputStream is = samples.openResourceAsStream("SimpleEMF_windows.emf")) {
+        try (InputStream is = ss_samples.openResourceAsStream("SimpleEMF_windows.emf")) {
             HemfPicture pic = new HemfPicture(is);
             HemfHeader header = pic.getHeader();
             assertEquals(27864, header.getBytes());
             assertEquals(31, header.getRecords());
             assertEquals(3, header.getHandles());
-            assertEquals(346000, header.getMicrometersX());
-            assertEquals(194000, header.getMicrometersY());
+            assertEquals(346000, header.getMicroDimension().getWidth());
+            assertEquals(194000, header.getMicroDimension().getHeight());
 
             List<HemfRecord> records = pic.getRecords();
 
@@ -66,7 +114,7 @@ public class HemfPictureTest {
 
     @Test
     public void testBasicMac() throws Exception {
-        try (InputStream is = samples.openResourceAsStream("SimpleEMF_mac.emf")) {
+        try (InputStream is = ss_samples.openResourceAsStream("SimpleEMF_mac.emf")) {
             HemfPicture pic = new HemfPicture(is);
             HemfHeader header = pic.getHeader();
 
@@ -102,7 +150,7 @@ public class HemfPictureTest {
 
     @Test
     public void testMacText() throws Exception {
-        try (InputStream is = samples.openResourceAsStream("SimpleEMF_mac.emf")) {
+        try (InputStream is = ss_samples.openResourceAsStream("SimpleEMF_mac.emf")) {
             HemfPicture pic = new HemfPicture(is);
 
             double lastY = -1;
@@ -134,7 +182,7 @@ public class HemfPictureTest {
 
     @Test
     public void testWindowsText() throws Exception {
-        try (InputStream is = samples.openResourceAsStream("SimpleEMF_windows.emf")) {
+        try (InputStream is = ss_samples.openResourceAsStream("SimpleEMF_windows.emf")) {
             HemfPicture pic = new HemfPicture(is);
             double lastY = -1;
             double lastX = -1;
@@ -173,7 +221,7 @@ public class HemfPictureTest {
 
     @Test(expected = RecordFormatException.class)
     public void testInfiniteLoopOnFile() throws Exception {
-        try (InputStream is = samples.openResourceAsStream("61294.emf")) {
+        try (InputStream is = ss_samples.openResourceAsStream("61294.emf")) {
             HemfPicture pic = new HemfPicture(is);
             for (HemfRecord record : pic) {
 
@@ -183,7 +231,7 @@ public class HemfPictureTest {
 
     @Test(expected = RecordFormatException.class)
     public void testInfiniteLoopOnByteArray() throws Exception {
-        try (InputStream is = samples.openResourceAsStream("61294.emf")) {
+        try (InputStream is = ss_samples.openResourceAsStream("61294.emf")) {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             IOUtils.copy(is, bos);
             is.close();

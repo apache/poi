@@ -40,6 +40,7 @@ import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 
+import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -48,9 +49,22 @@ import org.apache.poi.util.POILogger;
  * For now this class renders only images supported by the javax.imageio.ImageIO framework.
  **/
 public class BitmapImageRenderer implements ImageRenderer {
-    private final static POILogger LOG = POILogFactory.getLogger(ImageRenderer.class);
+    private final static POILogger LOG = POILogFactory.getLogger(BitmapImageRenderer.class);
 
     protected BufferedImage img;
+
+    @Override
+    public boolean canRender(String contentType) {
+        PictureType[] pts = {
+            PictureType.JPEG, PictureType.PNG, PictureType.BMP, PictureType.GIF
+        };
+        for (PictureType pt : pts) {
+            if (pt.contentType.equalsIgnoreCase(contentType)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     @Override
     public void loadImage(InputStream data, String contentType) throws IOException {

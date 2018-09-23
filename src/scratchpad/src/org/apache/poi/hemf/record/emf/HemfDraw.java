@@ -21,6 +21,8 @@ import static org.apache.poi.hwmf.record.HwmfBrushStyle.BS_NULL;
 import static org.apache.poi.hwmf.record.HwmfBrushStyle.BS_SOLID;
 
 import java.awt.Color;
+import java.awt.geom.Arc2D;
+import java.awt.geom.Area;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
@@ -30,7 +32,6 @@ import java.io.IOException;
 
 import org.apache.poi.hemf.draw.HemfDrawProperties;
 import org.apache.poi.hemf.draw.HemfGraphics;
-import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.hwmf.record.HwmfColorRef;
 import org.apache.poi.hwmf.record.HwmfDraw;
 import org.apache.poi.hwmf.record.HwmfDraw.WmfSelectObject;
@@ -187,7 +188,7 @@ public class HemfDraw {
 
 
     /** The EMR_POLYBEZIER record specifies one or more Bezier curves. */
-    public static class EmfPolyBezier extends HwmfDraw.WmfPolygon implements HemfRecord {
+    public static class EmfPolyBezier extends HwmfDraw.WmfPolygon implements HemfRecord, HemfBounded {
         private final Rectangle2D bounds = new Rectangle2D.Double();
 
         @Override
@@ -238,9 +239,13 @@ public class HemfDraw {
             for (int i=0; i+3<pointCnt; i+=3) {
                 // x (4 bytes): A 32-bit signed integer that defines the horizontal (x) coordinate of the point.
                 // y (4 bytes): A 32-bit signed integer that defines the vertical (y) coordinate of the point.
-                if (i==0 && hasStartPoint()) {
-                    size += readPoint(leis, pnt[0]);
-                    poly.moveTo(pnt[0].getX(),pnt[0].getY());
+                if (i==0) {
+                    if (hasStartPoint()) {
+                        size += readPoint(leis, pnt[0]);
+                        poly.moveTo(pnt[0].getX(), pnt[0].getY());
+                    } else {
+                        poly.moveTo(0, 0);
+                    }
                 }
 
                 size += readPoint(leis, pnt[0]);
@@ -255,6 +260,19 @@ public class HemfDraw {
             }
 
             return size;
+        }
+
+        @Override
+        public Rectangle2D getRecordBounds() {
+            return bounds;
+        }
+
+        @Override
+        public Rectangle2D getShapeBounds(HemfGraphics ctx) {
+            if (!hasStartPoint()) {
+                throw new IllegalStateException("shape bounds not valid for path bracket based record: "+getClass().getName());
+            }
+            return poly.getBounds2D();
         }
 
         /**
@@ -285,7 +303,7 @@ public class HemfDraw {
      * The EMR_POLYGON record specifies a polygon consisting of two or more vertexes connected by
      * straight lines.
      */
-    public static class EmfPolygon extends HwmfDraw.WmfPolygon implements HemfRecord {
+    public static class EmfPolygon extends HwmfDraw.WmfPolygon implements HemfRecord, HemfBounded {
         private final Rectangle2D bounds = new Rectangle2D.Double();
 
         @Override
@@ -310,19 +328,32 @@ public class HemfDraw {
             for (int i=0; i<points; i++) {
                 size += readPoint(leis, pnt);
                 if (i==0) {
-                    poly.moveTo(pnt.getX(), pnt.getY());
-
                     if (hasStartPoint()) {
-                        continue;
+                        poly.moveTo(pnt.getX(), pnt.getY());
+                    } else {
+                        // if this path is connected to the current position (= has no start point)
+                        // the first entry is a dummy entry and will be skipped later
+                        poly.moveTo(0,0);
                     }
-
-                    // if this path is connected to the current position (= has no start point)
-                    // the first entry is a dummy entry and will be skipped later
+                } else {
+                    poly.lineTo(pnt.getX(), pnt.getY());
                 }
-                poly.lineTo(pnt.getX(), pnt.getY());
             }
 
             return size;
+        }
+
+        @Override
+        public Rectangle2D getRecordBounds() {
+            return bounds;
+        }
+
+        @Override
+        public Rectangle2D getShapeBounds(HemfGraphics ctx) {
+            if (!hasStartPoint()) {
+                throw new IllegalStateException("shape bounds not valid for path bracket based record: "+getClass().getName());
+            }
+            return poly.getBounds2D();
         }
 
         /**
@@ -398,8 +429,15 @@ public class HemfDraw {
         }
 
         @Override
-        protected Path2D getShape(HwmfGraphics ctx) {
-            return polyTo(ctx, poly);
+        public void draw(HemfGraphics ctx) {
+            polyTo(ctx, poly);
+        }
+
+        @Override
+        public Rectangle2D getShapeBounds(HemfGraphics ctx) {
+            // should be called in a beginPath/endPath bracket, so the shape bounds
+            // of this path segment are irrelevant
+            return null;
         }
     }
 
@@ -432,8 +470,15 @@ public class HemfDraw {
         }
 
         @Override
-        protected Path2D getShape(HwmfGraphics ctx) {
-            return polyTo(ctx, poly);
+        public void draw(HemfGraphics ctx) {
+            polyTo(ctx, poly);
+        }
+
+        @Override
+        public Rectangle2D getShapeBounds(HemfGraphics ctx) {
+            // should be called in a beginPath/endPath bracket, so the shape bounds
+            // of this path segment are irrelevant
+            return null;
         }
     }
 
@@ -458,7 +503,7 @@ public class HemfDraw {
     /**
      * The EMR_POLYPOLYGON record specifies a series of closed polygons.
      */
-    public static class EmfPolyPolygon extends HwmfDraw.WmfPolyPolygon implements HemfRecord {
+    public static class EmfPolyPolygon extends HwmfDraw.WmfPolyPolygon implements HemfRecord, HemfBounded {
         private final Rectangle2D bounds = new Rectangle2D.Double();
 
         @Override
@@ -518,6 +563,17 @@ public class HemfDraw {
          */
         protected boolean isClosed() {
             return true;
+        }
+
+        @Override
+        public Rectangle2D getRecordBounds() {
+            return bounds;
+        }
+
+        @Override
+        public Rectangle2D getShapeBounds(HemfGraphics ctx) {
+            Area area = getShape(ctx);
+            return area == null ? bounds : area.getBounds2D();
         }
     }
 
@@ -600,6 +656,14 @@ public class HemfDraw {
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             return readPointL(leis, point);
+        }
+
+        @Override
+        public void draw(HemfGraphics ctx) {
+            HemfDrawProperties prop = ctx.getProperties();
+            final Path2D path = prop.getPath();
+            path.moveTo(point.getX(), point.getY());
+            prop.setLocation(point);
         }
     }
 
@@ -736,6 +800,14 @@ public class HemfDraw {
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             return readPointL(leis, point);
         }
+
+        @Override
+        public void draw(HemfGraphics ctx) {
+            final HemfDrawProperties prop = ctx.getProperties();
+            final Path2D path = prop.getPath();
+            path.lineTo(point.getX(), point.getY());
+            prop.setLocation(point);
+        }
     }
 
     /**
@@ -758,13 +830,15 @@ public class HemfDraw {
 
         @Override
         public void draw(HemfGraphics ctx) {
-            super.draw(ctx);
+            final Path2D path = ctx.getProperties().getPath();
+            Arc2D arc = getShape();
+            path.append(arc, true);
             ctx.getProperties().setLocation(endPoint);
         }
     }
 
     /** The EMR_POLYDRAW record specifies a set of line segments and Bezier curves. */
-    public static class EmfPolyDraw extends HwmfDraw.WmfPolygon implements HemfRecord {
+    public static class EmfPolyDraw extends HwmfDraw.WmfPolygon implements HemfRecord, HemfBounded {
         private final Rectangle2D bounds = new Rectangle2D.Double();
 
         @Override
@@ -837,6 +911,16 @@ public class HemfDraw {
             size += count;
             return size;
         }
+
+        @Override
+        public Rectangle2D getRecordBounds() {
+            return bounds;
+        }
+
+        @Override
+        public Rectangle2D getShapeBounds(HemfGraphics ctx) {
+            return poly.getBounds2D();
+        }
     }
 
     public static class EmfPolyDraw16 extends EmfPolyDraw {
@@ -850,6 +934,16 @@ public class HemfDraw {
         }
     }
 
+    /**
+     * This record opens a path bracket in the current playback device context.
+     *
+     * After a path bracket is open, an application can begin processing records to define
+     * the points that lie in the path. An application MUST close an open path bracket by
+     * processing the EMR_ENDPATH record.
+     *
+     * When an application processes the EMR_BEGINPATH record, all previous paths
+     * MUST be discarded from the playback device context.
+     */
     public static class EmfBeginPath implements HemfRecord {
         @Override
         public HemfRecordType getEmfRecordType() {
@@ -860,8 +954,19 @@ public class HemfDraw {
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             return 0;
         }
+
+        @Override
+        public void draw(HemfGraphics ctx) {
+            final HemfDrawProperties prop = ctx.getProperties();
+            final Path2D path = prop.getPath();
+            path.reset();
+        }
     }
 
+    /**
+     * This record closes a path bracket and selects the path defined by the bracket into
+     * the playback device context.
+     */
     public static class EmfEndPath implements HemfRecord {
         @Override
         public HemfRecordType getEmfRecordType() {
@@ -874,6 +979,9 @@ public class HemfDraw {
         }
     }
 
+    /**
+     * This record aborts a path bracket or discards the path from a closed path bracket.
+     */
     public static class EmfAbortPath implements HemfRecord {
         @Override
         public HemfRecordType getEmfRecordType() {
@@ -884,8 +992,34 @@ public class HemfDraw {
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             return 0;
         }
+
+        @Override
+        public void draw(HemfGraphics ctx) {
+            final HemfDrawProperties prop = ctx.getProperties();
+            final Path2D path = prop.getPath();
+            path.reset();
+        }
     }
 
+    /**
+     * This record closes an open figure in a path.
+     *
+     * Processing the EMR_CLOSEFIGURE record MUST close the figure by drawing a line
+     * from the current position to the first point of the figure, and then it MUST connect
+     * the lines by using the line join style. If a figure is closed by processing the
+     * EMR_LINETO record instead of the EMR_CLOSEFIGURE record, end caps are
+     * used to create the corner instead of a join.
+     *
+     * The EMR_CLOSEFIGURE record SHOULD only be used if there is an open path
+     * bracket in the playback device context.
+     *
+     * A figure in a path is open unless it is explicitly closed by processing this record.
+     * Note: A figure can be open even if the current point and the starting point of the
+     * figure are the same.
+     *
+     * After processing the EMR_CLOSEFIGURE record, adding a line or curve to the path
+     * MUST start a new figure.
+     */
     public static class EmfCloseFigure implements HemfRecord {
         @Override
         public HemfRecordType getEmfRecordType() {
@@ -896,8 +1030,22 @@ public class HemfDraw {
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             return 0;
         }
+
+
+        @Override
+        public void draw(HemfGraphics ctx) {
+            final HemfDrawProperties prop = ctx.getProperties();
+            final Path2D path = prop.getPath();
+            path.closePath();
+            prop.setLocation(path.getCurrentPoint());
+
+        }
     }
 
+    /**
+     * This record transforms any curves in the selected path into the playback device
+     * context; each curve MUST be turned into a sequence of lines.
+     */
     public static class EmfFlattenPath implements HemfRecord {
         @Override
         public HemfRecordType getEmfRecordType() {
@@ -910,6 +1058,10 @@ public class HemfDraw {
         }
     }
 
+    /**
+     * This record redefines the current path as the area that would be painted if the path
+     * were drawn using the pen currently selected into the playback device context.
+     */
     public static class EmfWidenPath implements HemfRecord {
         @Override
         public HemfRecordType getEmfRecordType() {
@@ -988,16 +1140,15 @@ public class HemfDraw {
         return 2*LittleEndianConsts.INT_SIZE;
     }
 
-    private static Path2D polyTo(HwmfGraphics ctx, Path2D poly) {
-        Path2D polyCopy = new Path2D.Double();
-        Point2D start = ctx.getProperties().getLocation();
-        polyCopy.moveTo(start.getX(), start.getY());
-
-        PathIterator iter = poly.getPathIterator(null);
-        iter.next();
-
-        polyCopy.append(iter, true);
-        return polyCopy;
+    private static void polyTo(HemfGraphics ctx, Path2D poly) {
+        final HemfDrawProperties prop = ctx.getProperties();
+        final Path2D path = prop.getPath();
+        PathIterator pi = poly.getPathIterator(null);
+        // ignore dummy start point (moveTo)
+        pi.next();
+        assert(!pi.isDone());
+        path.append(pi, true);
+        prop.setLocation(path.getCurrentPoint());
     }
 
 

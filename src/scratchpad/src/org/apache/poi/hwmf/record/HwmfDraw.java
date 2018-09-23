@@ -124,18 +124,14 @@ public class HwmfDraw {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            Path2D p = getShape(ctx);
+            Path2D p = (Path2D)poly.clone();
             // don't close the path
-            p.setWindingRule(getWindingRule(ctx));
+            p.setWindingRule(ctx.getProperties().getWindingRule());
             if (isFill()) {
                 ctx.fill(p);
             } else {
                 ctx.draw(p);
             }
-        }
-
-        protected Path2D getShape(HwmfGraphics ctx) {
-            return (Path2D)poly.clone();
         }
 
         /**
@@ -303,11 +299,20 @@ public class HwmfDraw {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            if (polyList.isEmpty()) {
+            Area area = getShape(ctx);
+            if (area == null) {
                 return;
             }
             
-            int windingRule = getWindingRule(ctx);
+            if (isFill()) {
+                ctx.fill(area);
+            } else {
+                ctx.draw(area);
+            }
+        }
+
+        protected Area getShape(HwmfGraphics ctx) {
+            int windingRule = ctx.getProperties().getWindingRule();
             Area area = null;
             for (Path2D poly : polyList) {
                 Path2D p = (Path2D)poly.clone();
@@ -320,13 +325,8 @@ public class HwmfDraw {
                 }
             }
 
-            if (isFill()) {
-                ctx.fill(area);
-            } else {
-                ctx.draw(area);
-            }
+            return area;
         }
-
 
         /**
          * @return true, if the shape should be filled
@@ -459,6 +459,20 @@ public class HwmfDraw {
 
         @Override
         public void draw(HwmfGraphics ctx) {
+            Shape s = getShape();
+            switch (getWmfRecordType()) {
+                default:
+                case arc:
+                    ctx.draw(s);
+                    break;
+                case chord:
+                case pie:
+                    ctx.fill(s);
+                    break;
+            }
+        }
+
+        protected Arc2D getShape() {
             double startAngle = Math.toDegrees(Math.atan2(-(startPoint.getY() - bounds.getCenterY()), startPoint.getX() - bounds.getCenterX()));
             double endAngle =   Math.toDegrees(Math.atan2(-(endPoint.getY() - bounds.getCenterY()), endPoint.getX() - bounds.getCenterX()));
             double arcAngle = (endAngle - startAngle) + (endAngle - startAngle > 0 ? 0 : 360);
@@ -472,24 +486,16 @@ public class HwmfDraw {
                 default:
                 case arc:
                     arcClosure = Arc2D.OPEN;
-                    fillShape = false;
                     break;
                 case chord:
                     arcClosure = Arc2D.CHORD;
-                    fillShape = true;
                     break;
                 case pie:
                     arcClosure = Arc2D.PIE;
-                    fillShape = true;
                     break;
             }
-            
-            Shape s = new Arc2D.Double(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight(), startAngle, arcAngle, arcClosure);
-            if (fillShape) {
-                ctx.fill(s);
-            } else {
-                ctx.draw(s);
-            }
+
+            return new Arc2D.Double(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight(), startAngle, arcAngle, arcClosure);
         }
     }
 
@@ -552,10 +558,6 @@ public class HwmfDraw {
         }
     }
     
-    private static int getWindingRule(HwmfGraphics ctx) {
-        return ctx.getProperties().getPolyfillMode().awtFlag;
-    }
-
     static int readBounds(LittleEndianInputStream leis, Rectangle2D bounds) {
         /**
          * The 16-bit signed integers that defines the corners of the bounding rectangle.

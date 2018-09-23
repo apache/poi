@@ -18,6 +18,10 @@
 package org.apache.poi.hemf.usermodel;
 
 
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Dimension2D;
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -26,11 +30,14 @@ import java.util.List;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 
+import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.record.emf.HemfHeader;
 import org.apache.poi.hemf.record.emf.HemfRecord;
 import org.apache.poi.hemf.record.emf.HemfRecordIterator;
+import org.apache.poi.util.Dimension2DDouble;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianInputStream;
+import org.apache.poi.util.Units;
 
 /**
  * Read-only EMF extractor.  Lots remain
@@ -74,4 +81,42 @@ public class HemfPicture implements Iterable<HemfRecord> {
     public void forEach(Consumer<? super HemfRecord> action) {
         getRecords().forEach(action);
     }
+
+    /**
+     * Return the image size in points
+     *
+     * @return the image size in points
+     */
+    public Dimension2D getSize() {
+        HemfHeader header = (HemfHeader)getRecords().get(0);
+        Rectangle2D dim = header.getFrameRectangle();
+
+        double coeff = (double)Units.EMU_PER_CENTIMETER/Units.EMU_PER_POINT/10.;
+        return new Dimension2DDouble(dim.getWidth()*coeff, dim.getHeight()*coeff);
+    }
+
+    public void draw(Graphics2D ctx, Rectangle2D graphicsBounds) {
+        HemfHeader header = (HemfHeader)getRecords().get(0);
+
+        AffineTransform at = ctx.getTransform();
+        try {
+            Rectangle2D emfBounds = header.getBoundsRectangle();
+            ctx.translate(graphicsBounds.getCenterX()-emfBounds.getCenterX(), graphicsBounds.getCenterY()-emfBounds.getCenterY());
+
+            // scale output bounds to image bounds
+            ctx.translate(emfBounds.getCenterX(), emfBounds.getCenterY());
+            ctx.scale(graphicsBounds.getWidth()/emfBounds.getWidth(), graphicsBounds.getHeight()/emfBounds.getHeight());
+            ctx.translate(-emfBounds.getCenterX(), -emfBounds.getCenterY());
+
+
+
+            HemfGraphics g = new HemfGraphics(ctx, emfBounds);
+            for (HemfRecord r : getRecords()) {
+                g.draw(r);
+            }
+        } finally {
+            ctx.setTransform(at);
+        }
+    }
+
 }

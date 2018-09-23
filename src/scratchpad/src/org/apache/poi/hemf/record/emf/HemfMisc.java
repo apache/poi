@@ -19,8 +19,10 @@ package org.apache.poi.hemf.record.emf;
 
 import static org.apache.poi.hemf.record.emf.HemfDraw.readPointL;
 import static org.apache.poi.hemf.record.emf.HemfFill.readBitmap;
+import static org.apache.poi.hemf.record.emf.HemfFill.readXForm;
 import static org.apache.poi.hemf.record.emf.HemfRecordIterator.HEADER_SIZE;
 
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -54,34 +56,40 @@ public class HemfMisc {
 
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
+            final int startIdx = leis.getReadIndex();
 
             // A 32-bit unsigned integer that specifies the number of palette entries.
-            int nPalEntries = (int) leis.readUInt();
+            final int nPalEntries = (int) leis.readUInt();
             // A 32-bit unsigned integer that specifies the offset to the palette entries from the start of this record.
-            int offPalEntries = (int) leis.readUInt();
+            final int offPalEntries = (int) leis.readUInt();
 
             int size = 2 * LittleEndianConsts.INT_SIZE;
-            int undefinedSpace1 = (int) (offPalEntries - size - HEADER_SIZE);
-            assert (undefinedSpace1 >= 0);
-            leis.skipFully(undefinedSpace1);
-            size += undefinedSpace1;
 
-            for (int i = 0; i < nPalEntries; i++) {
-                PaletteEntry pe = new PaletteEntry();
-                size += pe.init(leis);
+            if (offPalEntries > 0) {
+                int undefinedSpace1 = (int) (offPalEntries - size - HEADER_SIZE);
+                assert (undefinedSpace1 >= 0);
+                leis.skipFully(undefinedSpace1);
+                size += undefinedSpace1;
+
+                for (int i = 0; i < nPalEntries; i++) {
+                    PaletteEntry pe = new PaletteEntry();
+                    size += pe.init(leis);
+                }
+
+                int undefinedSpace2 = (int) (recordSize - size - LittleEndianConsts.INT_SIZE);
+                assert (undefinedSpace2 >= 0);
+                leis.skipFully(undefinedSpace2);
+                size += undefinedSpace2;
             }
-
-            int undefinedSpace2 = (int) (recordSize - size - LittleEndianConsts.INT_SIZE);
-            assert (undefinedSpace2 >= 0);
-            leis.skipFully(undefinedSpace2);
-            size += undefinedSpace2;
 
             // A 32-bit unsigned integer that MUST be the same as Size and MUST be the
             // last field of the record and hence the metafile.
             // LogPaletteEntry objects, if they exist, MUST precede this field.
             long sizeLast = leis.readUInt();
             size += LittleEndianConsts.INT_SIZE;
-            assert ((sizeLast - HEADER_SIZE) == recordSize && recordSize == size);
+            // some files store the whole file size in sizeLast, other just the last record size
+            // assert (sizeLast == size+HEADER_SIZE);
+            assert (recordSize == size);
 
             return size;
         }
@@ -381,6 +389,7 @@ public class HemfMisc {
             // PS_COSMETIC, this value MUST be 0x00000001.
             long width = leis.readUInt();
             dimension.setSize(width, 0);
+            int size = 7 * LittleEndianConsts.INT_SIZE;
 
             // A 32-bit unsigned integer that specifies a brush style for the pen from the WMF BrushStyle enumeration
             //
@@ -389,16 +398,17 @@ public class HemfMisc {
             // The BS_NULL style SHOULD be used to specify a brush that has no effect
             brushStyle = HwmfBrushStyle.valueOf((int) leis.readUInt());
 
-            int size = 8 * LittleEndianConsts.INT_SIZE;
+            size += LittleEndianConsts.INT_SIZE;
 
             size += colorRef.init(leis);
 
             hatchStyle = HwmfHatchStyle.valueOf(leis.readInt());
+            size += LittleEndianConsts.INT_SIZE;
 
             // The number of elements in the array specified in the StyleEntry
             // field. This value SHOULD be zero if PenStyle does not specify PS_USERSTYLE.
             final int numStyleEntries = (int) leis.readUInt();
-            size += 2 * LittleEndianConsts.INT_SIZE;
+            size += LittleEndianConsts.INT_SIZE;
 
             assert (numStyleEntries == 0 || penStyle.getLineDash() == HwmfLineDash.USERSTYLE);
 
@@ -461,6 +471,44 @@ public class HemfMisc {
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             return readPointL(leis, origin);
+        }
+    }
+
+    public static class EmfSetWorldTransform implements HemfRecord {
+        protected final AffineTransform xForm = new AffineTransform();
+
+        @Override
+        public HemfRecordType getEmfRecordType() {
+            return HemfRecordType.setWorldTransform;
+        }
+
+        @Override
+        public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
+            return readXForm(leis, xForm);
+        }
+    }
+
+    public static class EmfModifyWorldTransform implements HemfRecord {
+        protected final AffineTransform xForm = new AffineTransform();
+        protected int modifyWorldTransformMode;
+
+        @Override
+        public HemfRecordType getEmfRecordType() {
+            return HemfRecordType.modifyWorldTransform;
+        }
+
+        @Override
+        public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
+            // An XForm object that defines a two-dimensional linear transform in logical units.
+            // This transform is used according to the ModifyWorldTransformMode to define a new value for
+            // the world-space to page-space transform in the playback device context.
+            int size = readXForm(leis, xForm);
+
+            // A 32-bit unsigned integer that specifies how the transform specified in Xform is used.
+            // This value MUST be in the ModifyWorldTransformMode enumeration
+            modifyWorldTransformMode = (int)leis.readUInt();
+
+            return size + LittleEndianConsts.INT_SIZE;
         }
     }
 }
