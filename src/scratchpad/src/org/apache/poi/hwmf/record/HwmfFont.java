@@ -146,6 +146,20 @@ public class HwmfFont implements FontInfo {
             flag = leis.readUByte();
             return LittleEndianConsts.BYTE_SIZE;
         }
+
+        @Override
+        public String toString() {
+            return
+                (((flag&0x3) == 0 ? "default " : " ")+
+                (CLIP_CHARACTER_PRECIS.isSet(flag) ? "char " : " ")+
+                (CLIP_STROKE_PRECIS.isSet(flag) ? "stroke " : " ")+
+                (CLIP_LH_ANGLES.isSet(flag) ? "angles " : " ")+
+                (CLIP_TT_ALWAYS.isSet(flag) ? "tt_always " : " ")+
+                (CLIP_DFA_DISABLE.isSet(flag) ? "dfa " : " ")+
+                (CLIP_EMBEDDED.isSet(flag) ? "embedded " : " ")
+                ).trim()
+            ;
+        }
     }
 
     /**
@@ -451,6 +465,25 @@ public class HwmfFont implements FontInfo {
     @Override
     public void setCharset(FontCharset charset) {
         throw new UnsupportedOperationException("setCharset not supported by HwmfFont.");
+    }
+
+    @Override
+    public String toString() {
+        return "{ height: "+height+
+                ", width: "+width+
+                ", escapment: "+escapement+
+                ", weight: "+weight+
+                ", italic: "+italic+
+                ", underline: "+underline+
+                ", strikeOut: "+strikeOut+
+                ", charset: '"+charSet+"'"+
+                ", outPrecision: '"+outPrecision+"'"+
+                ", clipPrecision: '"+clipPrecision+"'"+
+                ", qualtiy: '"+quality+"'"+
+                ", pitch: '"+getPitch()+"'"+
+                ", family: '"+getFamily()+"'"+
+                ", facename: '"+facename+"'"+
+                "}";
     }
 
     protected int readString(LittleEndianInputStream leis, StringBuilder sb, int limit) throws IOException {

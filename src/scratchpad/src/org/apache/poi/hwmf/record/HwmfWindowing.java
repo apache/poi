@@ -17,6 +17,8 @@
 
 package org.apache.poi.hwmf.record;
 
+import static org.apache.poi.hwmf.record.HwmfDraw.readBounds;
+
 import java.awt.Shape;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
@@ -446,20 +448,7 @@ public class HwmfWindowing {
 
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            // A 16-bit signed integer that defines the y-coordinate, in logical units, of the
-            // lower-right corner of the rectangle.
-            final int bottom = leis.readShort();
-            // A 16-bit signed integer that defines the x-coordinate, in logical units, of the
-            // lower-right corner of the rectangle.
-            final int right = leis.readShort();
-            // A 16-bit signed integer that defines the y-coordinate, in logical units, of the
-            // upper-left corner of the rectangle.
-            final int top = leis.readShort();
-            // A 16-bit signed integer that defines the x-coordinate, in logical units, of the
-            // upper-left corner of the rectangle.
-            final int left = leis.readShort();
-            bounds.setRect(left, top, right-left, bottom-top);
-            return 4*LittleEndianConsts.SHORT_SIZE;
+            return readBounds(leis, bounds);
         }
 
         @Override
@@ -469,6 +458,16 @@ public class HwmfWindowing {
         
         @Override
         public void applyObject(HwmfGraphics ctx) {
+        }
+
+        @Override
+        public String toString() {
+            return
+                "{ x: "+bounds.getX()+
+                ", y: "+bounds.getY()+
+                ", w: "+bounds.getWidth()+
+                ", h: "+bounds.getHeight()+
+                "}";
         }
     }
 

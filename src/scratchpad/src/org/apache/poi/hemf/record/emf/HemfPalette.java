@@ -19,6 +19,7 @@ package org.apache.poi.hemf.record.emf;
 
 import java.io.IOException;
 
+import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hwmf.record.HwmfPalette;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
@@ -67,6 +68,11 @@ public class HemfPalette {
             int size = readPaletteEntries(leis, -1);
             return size + LittleEndianConsts.INT_SIZE + LittleEndianConsts.SHORT_SIZE;
         }
+
+        @Override
+        public void draw(HemfGraphics ctx) {
+            ctx.addObjectTableEntry(this, paletteIndex);
+        }
     }
 
     /**
@@ -93,6 +99,11 @@ public class HemfPalette {
             int size = readPaletteEntries(leis, nbrOfEntries);
             return size + 3*LittleEndianConsts.INT_SIZE;
         }
+
+        @Override
+        public void draw(HemfGraphics ctx) {
+            ctx.addObjectTableEntry(this, paletteIndex);
+        }
     }
 
     /**
@@ -117,6 +128,11 @@ public class HemfPalette {
             numberOfEntries = (int)leis.readUInt();
 
             return 2*LittleEndianConsts.INT_SIZE;
+        }
+
+        @Override
+        public void draw(HemfGraphics ctx) {
+            ctx.addObjectTableEntry(this, paletteIndex);
         }
     }
 

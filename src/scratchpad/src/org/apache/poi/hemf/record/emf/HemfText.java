@@ -29,7 +29,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.poi.hwmf.record.HwmfColorRef;
+import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hwmf.record.HwmfText;
 import org.apache.poi.hwmf.record.HwmfText.WmfSetTextAlign;
 import org.apache.poi.util.Dimension2DDouble;
@@ -53,9 +53,9 @@ public class HemfText {
         GM_COMPATIBLE, GM_ADVANCED
     }
 
-    public static class ExtTextOutA implements HemfRecord {
+    public static class EmfExtTextOutA implements HemfRecord {
 
-        protected final Rectangle2D boundsIgnored = new Rectangle2D.Double();
+        protected final Rectangle2D bounds = new Rectangle2D.Double();
 
         protected EmfGraphicsMode graphicsMode;
 
@@ -67,11 +67,11 @@ public class HemfText {
 
         protected final EmrTextObject textObject;
 
-        public ExtTextOutA() {
+        public EmfExtTextOutA() {
             this(false);
         }
 
-        protected ExtTextOutA(boolean isUnicode) {
+        protected EmfExtTextOutA(boolean isUnicode) {
             textObject = new EmrTextObject(isUnicode);
         }
 
@@ -87,7 +87,7 @@ public class HemfText {
             }
 
             // A WMF RectL object. It is not used and MUST be ignored on receipt.
-            long size = readRectL(leis, boundsIgnored);
+            long size = readRectL(leis, bounds);
 
             // A 32-bit unsigned integer that specifies the graphics mode from the GraphicsMode enumeration
             graphicsMode = EmfGraphicsMode.values()[leis.readInt()-1];
@@ -104,10 +104,10 @@ public class HemfText {
         /**
          *
          * To be implemented!  We need to get the current character set
-         * from the current font for {@link ExtTextOutA},
+         * from the current font for {@link EmfExtTextOutA},
          * which has to be tracked in the playback device.
          *
-         * For {@link ExtTextOutW}, the charset is "UTF-16LE"
+         * For {@link EmfExtTextOutW}, the charset is "UTF-16LE"
          *
          * @param charset the charset to be used to decode the character bytes
          * @return text from this text element
@@ -132,11 +132,24 @@ public class HemfText {
         public Dimension2D getScale() {
             return scale;
         }
+
+        @Override
+        public String toString() {
+            return
+                "{ bounds: { x: "+bounds.getX()+
+                ", y: "+bounds.getY()+
+                ", w: "+bounds.getWidth()+
+                ", h: "+bounds.getHeight()+
+                "}, graphicsMode: '"+graphicsMode+"'"+
+                ", scale: { w: "+scale.getWidth()+", h: "+scale.getHeight()+" }"+
+                ", textObject: "+textObject+
+                "}";
+        }
     }
 
-    public static class ExtTextOutW extends ExtTextOutA {
+    public static class EmfExtTextOutW extends EmfExtTextOutA {
 
-        public ExtTextOutW() {
+        public EmfExtTextOutW() {
             super(true);
         }
 
@@ -175,10 +188,7 @@ public class HemfText {
     /**
      * The EMR_SETTEXTCOLOR record defines the current text color.
      */
-    public static class SetTextColor implements HemfRecord {
-        /** A WMF ColorRef object that specifies the text color value. */
-        private final HwmfColorRef colorRef = new HwmfColorRef();
-
+    public static class EmfSetTextColor extends HwmfText.WmfSetTextColor implements HemfRecord {
         @Override
         public HemfRecordType getEmfRecordType() {
             return HemfRecordType.setTextColor;
@@ -283,6 +293,16 @@ public class HemfText {
             fontIdx = (int)leis.readUInt();
             int size = font.init(leis, (int)(recordSize-LittleEndianConsts.INT_SIZE));
             return size+LittleEndianConsts.INT_SIZE;
+        }
+
+        @Override
+        public void draw(HemfGraphics ctx) {
+            ctx.addObjectTableEntry(this, fontIdx);
+        }
+
+        @Override
+        public String toString() {
+            return "{ index: "+fontIdx+", font: "+font+" } ";
         }
     }
 
