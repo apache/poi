@@ -32,6 +32,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.RecordFormatException;
 
 /**
@@ -96,6 +97,11 @@ public class HemfComment {
 
         public EmfCommentData getCommentData() {
             return data;
+        }
+
+        @Override
+        public String toString() {
+            return "{ data: "+data+" }";
         }
     }
 
@@ -207,6 +213,11 @@ public class HemfComment {
             privateData = IOUtils.safelyAllocate(dataSize, MAX_RECORD_LENGTH);
             leis.readFully(privateData);
             return privateData.length;
+        }
+
+        @Override
+        public String toString() {
+            return "\""+new String(privateData, LocaleUtil.CHARSET_1252)+"\"";
         }
     }
 

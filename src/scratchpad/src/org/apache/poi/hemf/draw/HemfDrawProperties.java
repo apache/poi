@@ -24,16 +24,15 @@ import org.apache.poi.hwmf.draw.HwmfDrawProperties;
 public class HemfDrawProperties extends HwmfDrawProperties {
 
     /** Path for path bracket operations */
-    protected final Path2D path;
+    protected Path2D path = null;
 
 
     public HemfDrawProperties() {
-        path = new Path2D.Double();
     }
 
     public HemfDrawProperties(HemfDrawProperties other) {
         super(other);
-        path = (Path2D)other.path.clone();
+        path = (other.path != null) ? (Path2D)other.path.clone() : null;
     }
 
     /**
@@ -41,5 +40,22 @@ public class HemfDrawProperties extends HwmfDrawProperties {
      */
     public Path2D getPath() {
         return path;
+    }
+
+    /**
+     * Un-/Sets the bracket path
+     * @param path the bracket path
+     */
+    public void setPath(Path2D path) {
+        this.path = path;
+    }
+
+    /**
+     * Use path (bracket) or graphics context for drawing operations
+     * @return {@code true}, if the drawing should go to the path bracket,
+     *      if {@code false} draw directly to the graphics context
+     */
+    public boolean usePathBracket() {
+        return path != null;
     }
 }

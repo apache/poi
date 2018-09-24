@@ -98,7 +98,7 @@ public class HemfMisc {
     /**
      * The EMF_SAVEDC record saves the playback device context for later retrieval.
      */
-    public static class EmfSaveDc implements HemfRecord {
+    public static class EmfSaveDc extends HwmfMisc.WmfSaveDc implements HemfRecord {
         @Override
         public HemfRecordType getEmfRecordType() {
             return HemfRecordType.saveDc;
@@ -108,25 +108,13 @@ public class HemfMisc {
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             return 0;
         }
-
-        @Override
-        public void draw(HemfGraphics ctx) {
-            ctx.saveProperties();
-        }
     }
 
     /**
      * The EMF_RESTOREDC record restores the playback device context from a previously saved device
      * context.
      */
-    public static class EmfRestoreDc implements HemfRecord {
-
-        /**
-         * SavedDC (4 bytes): A 32-bit signed integer that specifies the saved state to restore relative to
-         * the current state. This value MUST be negative; –1 represents the state that was most
-         * recently saved on the stack, –2 the one before that, etc.
-         */
-        private int nSavedDC;
+    public static class EmfRestoreDc extends HwmfMisc.WmfRestoreDc implements HemfRecord {
 
         @Override
         public HemfRecordType getEmfRecordType() {
@@ -135,13 +123,11 @@ public class HemfMisc {
 
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
+            // A 32-bit signed integer that specifies the saved state to restore relative to
+            // the current state. This value MUST be negative; –1 represents the state that was most
+            // recently saved on the stack, –2 the one before that, etc.
             nSavedDC = leis.readInt();
             return LittleEndianConsts.INT_SIZE;
-        }
-
-        @Override
-        public void draw(HemfGraphics ctx) {
-            ctx.restoreProperties(nSavedDC);
         }
     }
 
@@ -149,9 +135,7 @@ public class HemfMisc {
      * The META_SETBKCOLOR record sets the background color in the playback device context to a
      * specified color, or to the nearest physical color if the device cannot represent the specified color.
      */
-    public static class EmfSetBkColor implements HemfRecord {
-
-        private HwmfColorRef colorRef;
+    public static class EmfSetBkColor extends HwmfMisc.WmfSetBkColor implements HemfRecord {
 
         @Override
         public HemfRecordType getEmfRecordType() {
@@ -160,13 +144,7 @@ public class HemfMisc {
 
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
-            colorRef = new HwmfColorRef();
             return colorRef.init(leis);
-        }
-
-        @Override
-        public void draw(HemfGraphics ctx) {
-            ctx.getProperties().setBackgroundColor(colorRef);
         }
     }
 
@@ -287,8 +265,13 @@ public class HemfMisc {
             int size = colorRef.init(leis);
             brushHatch = HwmfHatchStyle.valueOf((int) leis.readUInt());
             return size + 3 * LittleEndianConsts.INT_SIZE;
-
         }
+
+        @Override
+        public void draw(HemfGraphics ctx) {
+            ctx.addObjectTableEntry(this, brushIdx);
+        }
+
     }
 
     /**
@@ -340,6 +323,11 @@ public class HemfMisc {
             int size = colorRef.init(leis);
 
             return size + 4 * LittleEndianConsts.INT_SIZE;
+        }
+
+        @Override
+        public void draw(HemfGraphics ctx) {
+            ctx.addObjectTableEntry(this, penIndex);
         }
     }
 

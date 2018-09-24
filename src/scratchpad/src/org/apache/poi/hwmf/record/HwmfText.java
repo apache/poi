@@ -82,7 +82,7 @@ public class HwmfText {
      */
     public static class WmfSetTextColor implements HwmfRecord {
         
-        private HwmfColorRef colorRef;
+        protected final HwmfColorRef colorRef = new HwmfColorRef();
         
         @Override
         public HwmfRecordType getWmfRecordType() {
@@ -91,13 +91,17 @@ public class HwmfText {
         
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            colorRef = new HwmfColorRef();
             return colorRef.init(leis);
         }
 
         @Override
         public void draw(HwmfGraphics ctx) {
             ctx.getProperties().setTextColor(colorRef);
+        }
+
+        @Override
+        public String toString() {
+            return "{ colorRef: "+colorRef+" }";
         }
     }
     
@@ -644,6 +648,11 @@ public class HwmfText {
 
         public HwmfFont getFont() {
             return font;
+        }
+
+        @Override
+        public String toString() {
+            return "{ font: "+font+" } ";
         }
     }
 }

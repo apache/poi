@@ -53,6 +53,28 @@ public class HemfDraw {
         private static final HwmfColorRef DKGRAY = new HwmfColorRef(new Color(0x00404040));
         private static final HwmfColorRef BLACK = new HwmfColorRef(Color.BLACK);
 
+        private static final String[] STOCK_IDS = {
+            "0x80000000 /* WHITE_BRUSH */",
+            "0x80000001 /* LTGRAY_BRUSH */",
+            "0x80000002 /* GRAY_BRUSH */",
+            "0x80000003 /* DKGRAY_BRUSH */",
+            "0x80000004 /* BLACK_BRUSH */",
+            "0x80000005 /* NULL_BRUSH */",
+            "0x80000006 /* WHITE_PEN */",
+            "0x80000007 /* BLACK_PEN */",
+            "0x80000008 /* NULL_PEN */",
+            "0x8000000A /* OEM_FIXED_FONT */",
+            "0x8000000B /* ANSI_FIXED_FONT */",
+            "0x8000000C /* ANSI_VAR_FONT */",
+            "0x8000000D /* SYSTEM_FONT */",
+            "0x8000000E /* DEVICE_DEFAULT_FONT */",
+            "0x8000000F /* DEFAULT_PALETTE */",
+            "0x80000010 /* SYSTEM_FIXED_FONT */",
+            "0x80000011 /* DEFAULT_GUI_FONT */",
+            "0x80000012 /* DC_BRUSH */",
+            "0x80000013 /* DC_PEN */"
+        };
+
         @Override
         public HemfRecordType getEmfRecordType() {
             return HemfRecordType.selectObject;
@@ -184,6 +206,14 @@ public class HemfDraw {
             }
         }
 
+        @Override
+        public String toString() {
+            return "{ index: "+
+                (((objectIndex & 0x80000000) != 0 && (objectIndex & 0x3FFFFFFF) <= 13 )
+                ? STOCK_IDS[objectIndex & 0x3FFFFFFF]
+                : objectIndex)+" }";
+        }
+
     }
 
 
@@ -220,7 +250,7 @@ public class HemfDraw {
             final int points = Math.min(count, 16384);
             size += LittleEndianConsts.INT_SIZE;
 
-            poly.reset();
+            poly = new Path2D.Double(Path2D.WIND_EVEN_ODD, points);
 
             /* Cubic Bezier curves are defined using the endpoints and control points
              * specified by the points field. The first curve is drawn from the first
@@ -323,6 +353,8 @@ public class HemfDraw {
             final int count = (int)leis.readUInt();
             final int points = Math.min(count, 16384);
             size += LittleEndianConsts.INT_SIZE;
+
+            poly = new Path2D.Double(Path2D.WIND_EVEN_ODD, points);
 
             Point2D pnt = new Point2D.Double();
             for (int i=0; i<points; i++) {
@@ -541,7 +573,7 @@ public class HemfDraw {
                  * An array of WMF PointL objects that specifies the points for all polygons in logical units.
                  * The number of points is specified by the Count field value.
                  */
-                Path2D poly = new Path2D.Double();
+                Path2D poly = new Path2D.Double(Path2D.WIND_EVEN_ODD, (int)nPoints);
                 for (int i=0; i<nPoints; i++) {
                     size += readPoint(leis, pnt);
                     if (i == 0) {
@@ -659,11 +691,8 @@ public class HemfDraw {
         }
 
         @Override
-        public void draw(HemfGraphics ctx) {
-            HemfDrawProperties prop = ctx.getProperties();
-            final Path2D path = prop.getPath();
-            path.moveTo(point.getX(), point.getY());
-            prop.setLocation(point);
+        public void draw(final HemfGraphics ctx) {
+            ctx.draw((path) -> path.moveTo(point.getX(), point.getY()));
         }
     }
 
@@ -802,11 +831,8 @@ public class HemfDraw {
         }
 
         @Override
-        public void draw(HemfGraphics ctx) {
-            final HemfDrawProperties prop = ctx.getProperties();
-            final Path2D path = prop.getPath();
-            path.lineTo(point.getX(), point.getY());
-            prop.setLocation(point);
+        public void draw(final HemfGraphics ctx) {
+            ctx.draw((path) -> path.lineTo(point.getX(), point.getY()));
         }
     }
 
@@ -829,11 +855,9 @@ public class HemfDraw {
         }
 
         @Override
-        public void draw(HemfGraphics ctx) {
-            final Path2D path = ctx.getProperties().getPath();
-            Arc2D arc = getShape();
-            path.append(arc, true);
-            ctx.getProperties().setLocation(endPoint);
+        public void draw(final HemfGraphics ctx) {
+            final Arc2D arc = getShape();
+            ctx.draw((path) -> path.append(arc, true));
         }
     }
 
@@ -860,7 +884,7 @@ public class HemfDraw {
                  size += readPoint(leis, points[i]);
             }
 
-            poly.reset();
+            poly = new Path2D.Double(Path2D.WIND_EVEN_ODD, count);
 
             for (int i=0; i<count; i++) {
                 int mode = leis.readUByte();
@@ -958,8 +982,7 @@ public class HemfDraw {
         @Override
         public void draw(HemfGraphics ctx) {
             final HemfDrawProperties prop = ctx.getProperties();
-            final Path2D path = prop.getPath();
-            path.reset();
+            prop.setPath(new Path2D.Double());
         }
     }
 
@@ -996,8 +1019,7 @@ public class HemfDraw {
         @Override
         public void draw(HemfGraphics ctx) {
             final HemfDrawProperties prop = ctx.getProperties();
-            final Path2D path = prop.getPath();
-            path.reset();
+            prop.setPath(null);
         }
     }
 
@@ -1036,8 +1058,10 @@ public class HemfDraw {
         public void draw(HemfGraphics ctx) {
             final HemfDrawProperties prop = ctx.getProperties();
             final Path2D path = prop.getPath();
-            path.closePath();
-            prop.setLocation(path.getCurrentPoint());
+            if (path != null) {
+                path.closePath();
+                prop.setLocation(path.getCurrentPoint());
+            }
 
         }
     }
@@ -1140,16 +1164,12 @@ public class HemfDraw {
         return 2*LittleEndianConsts.INT_SIZE;
     }
 
-    private static void polyTo(HemfGraphics ctx, Path2D poly) {
-        final HemfDrawProperties prop = ctx.getProperties();
-        final Path2D path = prop.getPath();
-        PathIterator pi = poly.getPathIterator(null);
+    private static void polyTo(final HemfGraphics ctx, final Path2D poly) {
+        final PathIterator pi = poly.getPathIterator(null);
         // ignore dummy start point (moveTo)
         pi.next();
-        assert(!pi.isDone());
-        path.append(pi, true);
-        prop.setLocation(path.getCurrentPoint());
+        assert (!pi.isDone());
+
+        ctx.draw((path) -> path.append(pi, true));
     }
-
-
 }

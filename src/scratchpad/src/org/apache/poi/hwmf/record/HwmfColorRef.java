@@ -69,4 +69,9 @@ public class HwmfColorRef implements Cloneable {
             throw new InternalError();
         }
     }
+
+    @Override
+    public String toString() {
+        return String.format("%#8X", colorRef.getRGB());
+    }
 }

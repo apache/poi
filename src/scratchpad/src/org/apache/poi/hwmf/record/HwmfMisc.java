@@ -49,6 +49,11 @@ public class HwmfMisc {
         public void draw(HwmfGraphics ctx) {
             ctx.saveProperties();
         }
+
+        @Override
+        public String toString() {
+            return "{}";
+        }
     }
 
     /**
@@ -80,7 +85,7 @@ public class HwmfMisc {
          * member is positive, nSavedDC represents a specific instance of the state to be restored. If
          * this member is negative, nSavedDC represents an instance relative to the current state.
          */
-        private int nSavedDC;
+        protected int nSavedDC;
 
         @Override
         public HwmfRecordType getWmfRecordType() {
@@ -97,6 +102,11 @@ public class HwmfMisc {
         public void draw(HwmfGraphics ctx) {
             ctx.restoreProperties(nSavedDC);
         }
+
+        @Override
+        public String toString() {
+            return "{ nSavedDC: "+nSavedDC+" }";
+        }
     }
 
     /**
@@ -105,7 +115,7 @@ public class HwmfMisc {
      */
     public static class WmfSetBkColor implements HwmfRecord {
 
-        private HwmfColorRef colorRef;
+        protected final HwmfColorRef colorRef = new HwmfColorRef();
 
         @Override
         public HwmfRecordType getWmfRecordType() {
@@ -114,13 +124,17 @@ public class HwmfMisc {
 
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            colorRef = new HwmfColorRef();
             return colorRef.init(leis);
         }
 
         @Override
         public void draw(HwmfGraphics ctx) {
             ctx.getProperties().setBackgroundColor(colorRef);
+        }
+
+        @Override
+        public String toString() {
+            return "{ colorRef: "+colorRef+" }";
         }
     }
 
@@ -464,6 +478,11 @@ public class HwmfMisc {
              */
 
             ctx.unsetObjectTableEntry(objectIndex);
+        }
+
+        @Override
+        public String toString() {
+            return "{ index: "+objectIndex+" }";
         }
     }
 

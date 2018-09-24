@@ -32,6 +32,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
@@ -63,7 +64,7 @@ public class HemfPictureTest {
     @Test
     @Ignore("Only for manual tests")
     public void paint() throws IOException {
-        File f = sl_samples.getFile("wrench.emf");
+        File f = new File("picture_14.emf"); // sl_samples.getFile("wrench.emf");
         try (FileInputStream fis = new FileInputStream(f)) {
             HemfPicture emf = new HemfPicture(fis);
 
@@ -83,6 +84,14 @@ public class HemfPictureTest {
             g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
             g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
             g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+
+            FileWriter fw = new FileWriter("record-list.txt");
+            int i=0;
+            for (HemfRecord r : emf.getRecords())  {
+                fw.write(i + " "+r.getEmfRecordType()+" "+r.toString()+"\n");
+                i++;
+            }
+            fw.close();
 
             emf.draw(g, new Rectangle2D.Double(0,0,width,height));
 
@@ -160,7 +169,7 @@ public class HemfPictureTest {
             StringBuilder sb = new StringBuilder();
             for (HemfRecord record : pic) {
                 if (record.getEmfRecordType().equals(HemfRecordType.exttextoutw)) {
-                    HemfText.ExtTextOutW extTextOutW = (HemfText.ExtTextOutW) record;
+                    HemfText.EmfExtTextOutW extTextOutW = (HemfText.EmfExtTextOutW) record;
                     Point2D reference = extTextOutW.getTextObject().getReference();
                     if (lastY > -1 && lastY != reference.getY()) {
                         sb.append("\n");
@@ -194,7 +203,7 @@ public class HemfPictureTest {
             int foundExpected = 0;
             for (HemfRecord record : pic) {
                 if (record.getEmfRecordType().equals(HemfRecordType.exttextoutw)) {
-                    HemfText.ExtTextOutW extTextOutW = (HemfText.ExtTextOutW) record;
+                    HemfText.EmfExtTextOutW extTextOutW = (HemfText.EmfExtTextOutW) record;
                     Point2D reference = extTextOutW.getTextObject().getReference();
                     if (lastY > -1 && lastY != reference.getY()) {
                         sb.append("\n");

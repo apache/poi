@@ -33,7 +33,10 @@ import org.apache.poi.util.POILogger;
 
 public class DrawPictureShape extends DrawSimpleShape {
     private static final POILogger LOG = POILogFactory.getLogger(DrawPictureShape.class);
-    private static final ServiceLoader<ImageRenderer> rendererLoader = ServiceLoader.load(ImageRenderer.class);
+    private static final String[] KNOWN_RENDERER = {
+        "org.apache.poi.hwmf.draw.HwmfImageRenderer",
+        "org.apache.poi.hemf.draw.HemfImageRenderer"
+    };
 
     public DrawPictureShape(PictureShape<?,?> shape) {
         super(shape);
@@ -62,24 +65,44 @@ public class DrawPictureShape extends DrawSimpleShape {
      * @param graphics the graphics context
      * @return the image renderer
      */
-    @SuppressWarnings("WeakerAccess")
+    @SuppressWarnings({"WeakerAccess", "unchecked"})
     public static ImageRenderer getImageRenderer(Graphics2D graphics, String contentType) {
-        ImageRenderer renderer = (ImageRenderer)graphics.getRenderingHint(Drawable.IMAGE_RENDERER);
-        if (renderer != null) {
+        final ImageRenderer renderer = (ImageRenderer)graphics.getRenderingHint(Drawable.IMAGE_RENDERER);
+        if (renderer != null && renderer.canRender(contentType)) {
             return renderer;
         }
 
-        for (ImageRenderer ir : rendererLoader) {
+        // first try with our default image renderer
+        final BitmapImageRenderer bir = new BitmapImageRenderer();
+        if (bir.canRender(contentType)) {
+            return bir;
+        }
+
+        // then iterate through the scratchpad renderers
+        //
+        // this could be nicely implemented via a j.u.ServiceLoader, but OSGi makes things complicated ...
+        // https://blog.osgi.org/2013/02/javautilserviceloader-in-osgi.html
+        // ... therefore falling back to classloading attempts
+        ClassLoader cl = ImageRenderer.class.getClassLoader();
+        for (String kr : KNOWN_RENDERER) {
+            final ImageRenderer ir;
+            try {
+                ir = ((Class<? extends ImageRenderer>)cl.loadClass(kr)).newInstance();
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+                // scratchpad was not on the path, ignore and continue
+                LOG.log(POILogger.INFO, "Known image renderer '"+kr+" not found/loaded - include poi-scratchpad jar!", e);
+                continue;
+            }
             if (ir.canRender(contentType)) {
                 return ir;
             }
         }
 
-        LOG.log(POILogger.ERROR, "No suiteable image renderer found for content-type '"+
+        LOG.log(POILogger.WARN, "No suiteable image renderer found for content-type '"+
                 contentType+"' - include poi-scratchpad jar!");
 
-        // falling back to BitmapImageRenderer although this doesn't make much sense ...
-        return new BitmapImageRenderer();
+        // falling back to BitmapImageRenderer, at least it gracefully handles invalid images
+        return bir;
     }
     
     @Override

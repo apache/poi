@@ -23,6 +23,7 @@ import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
+import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
@@ -57,6 +58,11 @@ public class HwmfDraw {
         public void draw(HwmfGraphics ctx) {
             ctx.getProperties().setLocation(point);
         }
+
+        @Override
+        public String toString() {
+            return "{ x: "+point.getX()+", y: "+point.getY()+" }";
+        }
     }
 
     /**
@@ -84,6 +90,11 @@ public class HwmfDraw {
             ctx.draw(line);
             ctx.getProperties().setLocation(point);
         }
+
+        @Override
+        public String toString() {
+            return "{ x: "+point.getX()+", y: "+point.getY()+" }";
+        }
     }
 
     /**
@@ -93,7 +104,7 @@ public class HwmfDraw {
      */
     public static class WmfPolygon implements HwmfRecord {
 
-        protected Path2D poly = new Path2D.Double();
+        protected Path2D poly;
         
         @Override
         public HwmfRecordType getWmfRecordType() {
@@ -107,6 +118,7 @@ public class HwmfDraw {
              */
             int numberofPoints = leis.readShort();
 
+            poly = new Path2D.Double(Path2D.WIND_EVEN_ODD, numberofPoints);
             for (int i=0; i<numberofPoints; i++) {
                 // A 16-bit signed integer that defines the horizontal (x) coordinate of the point.
                 int x = leis.readShort();
@@ -132,6 +144,11 @@ public class HwmfDraw {
             } else {
                 ctx.draw(p);
             }
+        }
+
+        @Override
+        public String toString() {
+            return "{ poly: "+polyToString(poly)+" }";
         }
 
         /**
@@ -279,7 +296,7 @@ public class HwmfDraw {
                  * An array of 16-bit signed integers that define the coordinates of the polygons.
                  * (Note: MS-WMF wrongly says unsigned integers ...)
                  */
-                Path2D poly = new Path2D.Double();
+                Path2D poly = new Path2D.Double(Path2D.WIND_EVEN_ODD, nPoints);
                 for (int i=0; i<nPoints; i++) {
                     int x = leis.readShort();
                     int y = leis.readShort();
@@ -556,6 +573,11 @@ public class HwmfDraw {
         public void draw(HwmfGraphics ctx) {
             ctx.applyObjectTableEntry(objectIndex);
         }
+
+        @Override
+        public String toString() {
+            return "{ index: "+objectIndex +" }";
+        }
     }
     
     static int readBounds(LittleEndianInputStream leis, Rectangle2D bounds) {
@@ -602,5 +624,35 @@ public class HwmfDraw {
         int x = leis.readShort();
         point.setLocation(x, y);
         return 2*LittleEndianConsts.SHORT_SIZE;
+    }
+
+    static String polyToString(Path2D poly) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        final PathIterator iter = poly.getPathIterator(null);
+        double[] pnts = new double[6];
+        while (!iter.isDone()) {
+            int segType = iter.currentSegment(pnts);
+            switch (segType) {
+                case PathIterator.SEG_MOVETO:
+                    sb.append("{ type: 'move', x: "+pnts[0]+", y: "+pnts[1]+" }, ");
+                    break;
+                case PathIterator.SEG_LINETO:
+                    sb.append("{ type: 'lineto', x: "+pnts[0]+", y: "+pnts[1]+" }, ");
+                    break;
+                case PathIterator.SEG_QUADTO:
+                    sb.append("{ type: 'quad', x1: "+pnts[0]+", y1: "+pnts[1]+", x2: "+pnts[2]+", y2: "+pnts[3]+" }, ");
+                    break;
+                case PathIterator.SEG_CUBICTO:
+                    sb.append("{ type: 'cubic', x1: "+pnts[0]+", y1: "+pnts[1]+", x2: "+pnts[2]+", y2: "+pnts[3]+", x3: "+pnts[4]+", y3: "+pnts[5]+" }, ");
+                    break;
+                case PathIterator.SEG_CLOSE:
+                    sb.append("{ type: 'close' }, ");
+                    break;
+            }
+            iter.next();
+        }
+        sb.append("]");
+        return sb.toString();
     }
 }

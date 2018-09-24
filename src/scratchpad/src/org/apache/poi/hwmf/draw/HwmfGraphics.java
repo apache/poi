@@ -55,10 +55,10 @@ public class HwmfGraphics {
     protected final List<HwmfDrawProperties> propStack = new LinkedList<>();
     protected HwmfDrawProperties prop;
     protected final Graphics2D graphicsCtx;
+    protected final List<HwmfObjectTableEntry> objectTable = new ArrayList<>();
 
     private static final Charset DEFAULT_CHARSET = LocaleUtil.CHARSET_1252;
-    private final List<HwmfObjectTableEntry> objectTable = new ArrayList<>();
-    /** Bounding box from the placeable header */ 
+    /** Bounding box from the placeable header */
     private final Rectangle2D bbox;
     private final AffineTransform initialAT;
 

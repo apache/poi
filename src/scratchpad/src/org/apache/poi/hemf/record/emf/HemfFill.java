@@ -655,6 +655,9 @@ public class HemfFill {
         @Override
         public void draw(HemfGraphics ctx) {
             final HemfDrawProperties prop = ctx.getProperties();
+            if (!prop.usePathBracket()) {
+                return;
+            }
             final Path2D path = (Path2D)prop.getPath().clone();
             path.setWindingRule(ctx.getProperties().getWindingRule());
             if (prop.getBrushStyle() == HwmfBrushStyle.BS_NULL) {
