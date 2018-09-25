@@ -476,14 +476,9 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      * this method does not create or remove any columns and does not change any
      * cell values.
      * 
-     * @deprecated Use {@link #setTableArea} instead, which will ensure that the
-     *             the amount of columns always matches table area always width.
-     * 
      * @see "Open Office XML Part 4: chapter 3.5.1.2, attribute ref"
      * @since 3.17 beta 1
      */
-    @Deprecated
-    @Removal(version="4.2.0")
     public void setCellReferences(AreaReference refs) {
         setCellRef(refs);
     }
@@ -527,7 +522,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      * Updating the area with this method will create new column as necessary to
      * the right side of the table but will not modify any cell values.
      * 
-     * @param refs
+     * @param tableArea
      *            the new area of the table
      * @throws IllegalArgumentException
      *             if the area is {@code null} or not
