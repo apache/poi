@@ -214,6 +214,28 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
         chart.getAutoTitleDeleted().setVal(deleted);
     }
 
+    public Boolean getTitleOverlay() {
+        if (chart.isSetTitle()) {
+            CTTitle title = chart.getTitle();
+            if (title.isSetOverlay()) {
+                return title.getOverlay().getVal();
+            }
+        }
+        return null;
+    }
+
+    public void setTitleOverlay(boolean overlay) {
+        if (!chart.isSetTitle()) {
+            chart.addNewTitle();
+        }
+        CTTitle title = chart.getTitle();
+        if (title.isSetOverlay()) {
+            title.getOverlay().setVal(overlay);
+        } else {
+            title.addNewOverlay().setVal(overlay);
+        }
+    }
+
     /**
      * Get the chart title body if there is one, i.e. title is set and is not a
      * formula.
@@ -327,7 +349,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
     private Map<Long, XDDFChartAxis> getCategoryAxes() {
         CTPlotArea plotArea = getCTPlotArea();
         int sizeOfArray = plotArea.sizeOfCatAxArray();
-        Map<Long, XDDFChartAxis> axes = new HashMap<Long, XDDFChartAxis>(sizeOfArray);
+        Map<Long, XDDFChartAxis> axes = new HashMap<>(sizeOfArray);
         for (int i = 0; i < sizeOfArray; i++) {
             CTCatAx category = plotArea.getCatAxArray(i);
             axes.put(category.getAxId().getVal(), new XDDFCategoryAxis(category));

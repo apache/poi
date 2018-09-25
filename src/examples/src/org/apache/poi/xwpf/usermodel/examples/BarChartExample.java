@@ -43,9 +43,9 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 /**
  * Build a bar chart from a template docx
  */
-public class BarChartExampleDOCX {
+public class BarChartExample {
     private static void usage(){
-        System.out.println("Usage: BarChartDemo <bar-chart-template.docx> <bar-chart-data.txt>");
+        System.out.println("Usage: BarChartExample <bar-chart-template.docx> <bar-chart-data.txt>");
         System.out.println("    bar-chart-template.docx     template with a bar chart");
         System.out.println("    bar-chart-data.txt          the model to set. First line is chart title, " +
                 "then go pairs {axis-label value}");
@@ -119,6 +119,9 @@ public class BarChartExampleDOCX {
 
         // in order to transform a bar chart into a column chart, you just need to change the bar direction
         bar.setBarDirection(BarDirection.COL);
+        
+        // looking for "Stacked Bar Chart"? uncomment the following line
+        // bar.setBarGrouping(BarGrouping.STACKED);
 
         // additionally, you can adjust the axes
         bar.getCategoryAxis().setOrientation(AxisOrientation.MAX_MIN);

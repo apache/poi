@@ -38,7 +38,19 @@ public class XDDFRadarChartData extends XDDFChartData {
         for (CTRadarSer series : chart.getSerList()) {
             this.series.add(new Series(series, series.getCat(), series.getVal()));
         }
-        defineAxes(chart.getAxIdArray(), categories, values);
+        defineAxes(categories, values);
+    }
+
+    private void defineAxes(Map<Long, XDDFChartAxis> categories, Map<Long, XDDFValueAxis> values) {
+    	if (chart.sizeOfAxIdArray() == 0) {
+    		for (Long id : categories.keySet()) {
+        		chart.addNewAxId().setVal(id);
+    		}
+    		for (Long id : values.keySet()) {
+        		chart.addNewAxId().setVal(id);
+    		}
+    	}
+    	super.defineAxes(chart.getAxIdArray(), categories, values);
     }
 
     @Override

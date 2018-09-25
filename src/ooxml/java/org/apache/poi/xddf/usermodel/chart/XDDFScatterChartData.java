@@ -38,7 +38,19 @@ public class XDDFScatterChartData extends XDDFChartData {
         for (CTScatterSer series : chart.getSerList()) {
             this.series.add(new Series(series, series.getXVal(), series.getYVal()));
         }
-        defineAxes(chart.getAxIdArray(), categories, values);
+        defineAxes(categories, values);
+    }
+
+    private void defineAxes(Map<Long, XDDFChartAxis> categories, Map<Long, XDDFValueAxis> values) {
+    	if (chart.sizeOfAxIdArray() == 0) {
+    		for (Long id : categories.keySet()) {
+        		chart.addNewAxId().setVal(id);
+    		}
+    		for (Long id : values.keySet()) {
+        		chart.addNewAxId().setVal(id);
+    		}
+    	}
+    	super.defineAxes(chart.getAxIdArray(), categories, values);
     }
 
     @Override
@@ -97,6 +109,22 @@ public class XDDFScatterChartData extends XDDFChartData {
         @Override
         protected CTSerTx getSeriesText() {
             return series.getTx();
+        }
+
+        public Boolean getSmooth() {
+            if (series.isSetSmooth()) {
+                return series.getSmooth().getVal();
+            } else {
+                return null;
+            }
+        }
+
+        public void setSmooth(boolean smooth) {
+            if (series.isSetSmooth()) {
+                series.getSmooth().setVal(smooth);
+            } else {
+                series.addNewSmooth().setVal(smooth);
+            }
         }
 
         @Override

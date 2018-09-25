@@ -28,8 +28,11 @@ import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
 import org.apache.poi.xddf.usermodel.XDDFSolidFillProperties;
 import org.apache.poi.xddf.usermodel.chart.AxisCrosses;
 import org.apache.poi.xddf.usermodel.chart.AxisPosition;
+import org.apache.poi.xddf.usermodel.chart.BarDirection;
+import org.apache.poi.xddf.usermodel.chart.BarGrouping;
 import org.apache.poi.xddf.usermodel.chart.ChartTypes;
 import org.apache.poi.xddf.usermodel.chart.LegendPosition;
+import org.apache.poi.xddf.usermodel.chart.XDDFBarChartData;
 import org.apache.poi.xddf.usermodel.chart.XDDFCategoryAxis;
 import org.apache.poi.xddf.usermodel.chart.XDDFChartData;
 import org.apache.poi.xddf.usermodel.chart.XDDFChartLegend;
@@ -85,15 +88,15 @@ public class BarChart {
             data.addSeries(xs, ys1);
             data.addSeries(xs, ys2);
             chart.plot(data);
+            
+            // in order to transform a bar chart into a column chart, you just need to change the bar direction
+            XDDFBarChartData bar = (XDDFBarChartData) data;
+            bar.setBarDirection(BarDirection.COL);
+            // looking for "Stacked Bar Chart"? uncomment the following line
+            // bar.setBarGrouping(BarGrouping.STACKED);
 
-            XDDFSolidFillProperties fill = new XDDFSolidFillProperties(XDDFColor.from(PresetColor.CHARTREUSE));
-            XDDFChartData.Series firstSeries = data.getSeries().get(0);
-            XDDFShapeProperties properties = firstSeries.getShapeProperties();
-            if (properties == null) {
-                properties = new XDDFShapeProperties();
-            }
-            properties.setFillProperties(fill);
-            firstSeries.setShapeProperties(properties);
+            solidFillSeries(data, 0, PresetColor.CHARTREUSE);
+            solidFillSeries(data, 1, PresetColor.TURQUOISE);
 
             // Write the output to a file
             try (FileOutputStream fileOut = new FileOutputStream("ooxml-bar-chart.xlsx")) {
@@ -101,4 +104,15 @@ public class BarChart {
             }
         }
     }
+
+	private static void solidFillSeries(XDDFChartData data, int index, PresetColor color) {
+		XDDFSolidFillProperties fill = new XDDFSolidFillProperties(XDDFColor.from(color));
+		XDDFChartData.Series firstSeries = data.getSeries().get(index);
+		XDDFShapeProperties properties = firstSeries.getShapeProperties();
+		if (properties == null) {
+		    properties = new XDDFShapeProperties();
+		}
+		properties.setFillProperties(fill);
+		firstSeries.setShapeProperties(properties);
+	}
 }

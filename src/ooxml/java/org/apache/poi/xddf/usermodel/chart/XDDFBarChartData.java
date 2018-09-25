@@ -23,6 +23,7 @@ import org.apache.poi.util.Beta;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBarChart;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTBarDir;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBarSer;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTSerTx;
@@ -34,12 +35,27 @@ public class XDDFBarChartData extends XDDFChartData {
     public XDDFBarChartData(CTBarChart chart, Map<Long, XDDFChartAxis> categories,
             Map<Long, XDDFValueAxis> values) {
         this.chart = chart;
+    	if (chart.getBarDir() == null) {
+    		chart.addNewBarDir().setVal(BarDirection.BAR.underlying);
+    	}
         for (CTBarSer series : chart.getSerList()) {
             this.series.add(new Series(series, series.getCat(), series.getVal()));
         }
-        defineAxes(chart.getAxIdArray(), categories, values);
+        defineAxes(categories, values);
     }
 
+    private void defineAxes(Map<Long, XDDFChartAxis> categories, Map<Long, XDDFValueAxis> values) {
+    	if (chart.sizeOfAxIdArray() == 0) {
+    		for (Long id : categories.keySet()) {
+        		chart.addNewAxId().setVal(id);
+    		}
+    		for (Long id : values.keySet()) {
+        		chart.addNewAxId().setVal(id);
+    		}
+    	}
+    	super.defineAxes(chart.getAxIdArray(), categories, values);
+    }
+    
     @Override
     public void setVaryColors(boolean varyColors) {
         if (chart.isSetVaryColors()) {
