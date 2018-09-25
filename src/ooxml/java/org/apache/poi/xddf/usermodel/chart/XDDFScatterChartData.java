@@ -42,15 +42,15 @@ public class XDDFScatterChartData extends XDDFChartData {
     }
 
     private void defineAxes(Map<Long, XDDFChartAxis> categories, Map<Long, XDDFValueAxis> values) {
-    	if (chart.sizeOfAxIdArray() == 0) {
-    		for (Long id : categories.keySet()) {
-        		chart.addNewAxId().setVal(id);
-    		}
-    		for (Long id : values.keySet()) {
-        		chart.addNewAxId().setVal(id);
-    		}
-    	}
-    	super.defineAxes(chart.getAxIdArray(), categories, values);
+        if (chart.sizeOfAxIdArray() == 0) {
+            for (Long id : categories.keySet()) {
+                chart.addNewAxId().setVal(id);
+            }
+            for (Long id : values.keySet()) {
+                chart.addNewAxId().setVal(id);
+            }
+        }
+        defineAxes(chart.getAxIdArray(), categories, values);
     }
 
     @Override
@@ -111,6 +111,9 @@ public class XDDFScatterChartData extends XDDFChartData {
             return series.getTx();
         }
 
+        /*
+         * @since 4.0.1
+         */
         public Boolean getSmooth() {
             if (series.isSetSmooth()) {
                 return series.getSmooth().getVal();
@@ -119,6 +122,9 @@ public class XDDFScatterChartData extends XDDFChartData {
             }
         }
 
+        /*
+         * @since 4.0.1
+         */
         public void setSmooth(boolean smooth) {
             if (series.isSetSmooth()) {
                 series.getSmooth().setVal(smooth);

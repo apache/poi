@@ -214,6 +214,9 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
         chart.getAutoTitleDeleted().setVal(deleted);
     }
 
+    /*
+     * @since 4.0.1
+     */
     public Boolean getTitleOverlay() {
         if (chart.isSetTitle()) {
             CTTitle title = chart.getTitle();
@@ -224,6 +227,9 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
         return null;
     }
 
+    /*
+     * @since 4.0.1
+     */
     public void setTitleOverlay(boolean overlay) {
         if (!chart.isSetTitle()) {
             chart.addNewTitle();

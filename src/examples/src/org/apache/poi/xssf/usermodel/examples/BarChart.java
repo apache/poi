@@ -29,7 +29,6 @@ import org.apache.poi.xddf.usermodel.XDDFSolidFillProperties;
 import org.apache.poi.xddf.usermodel.chart.AxisCrosses;
 import org.apache.poi.xddf.usermodel.chart.AxisPosition;
 import org.apache.poi.xddf.usermodel.chart.BarDirection;
-import org.apache.poi.xddf.usermodel.chart.BarGrouping;
 import org.apache.poi.xddf.usermodel.chart.ChartTypes;
 import org.apache.poi.xddf.usermodel.chart.LegendPosition;
 import org.apache.poi.xddf.usermodel.chart.XDDFBarChartData;
@@ -88,7 +87,7 @@ public class BarChart {
             data.addSeries(xs, ys1);
             data.addSeries(xs, ys2);
             chart.plot(data);
-            
+
             // in order to transform a bar chart into a column chart, you just need to change the bar direction
             XDDFBarChartData bar = (XDDFBarChartData) data;
             bar.setBarDirection(BarDirection.COL);
@@ -105,14 +104,14 @@ public class BarChart {
         }
     }
 
-	private static void solidFillSeries(XDDFChartData data, int index, PresetColor color) {
-		XDDFSolidFillProperties fill = new XDDFSolidFillProperties(XDDFColor.from(color));
-		XDDFChartData.Series firstSeries = data.getSeries().get(index);
-		XDDFShapeProperties properties = firstSeries.getShapeProperties();
-		if (properties == null) {
-		    properties = new XDDFShapeProperties();
-		}
-		properties.setFillProperties(fill);
-		firstSeries.setShapeProperties(properties);
-	}
+    private static void solidFillSeries(XDDFChartData data, int index, PresetColor color) {
+        XDDFSolidFillProperties fill = new XDDFSolidFillProperties(XDDFColor.from(color));
+        XDDFChartData.Series firstSeries = data.getSeries().get(index);
+        XDDFShapeProperties properties = firstSeries.getShapeProperties();
+        if (properties == null) {
+            properties = new XDDFShapeProperties();
+        }
+        properties.setFillProperties(fill);
+        firstSeries.setShapeProperties(properties);
+    }
 }

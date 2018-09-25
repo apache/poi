@@ -42,15 +42,15 @@ public class XDDFLineChartData extends XDDFChartData {
     }
 
     private void defineAxes(Map<Long, XDDFChartAxis> categories, Map<Long, XDDFValueAxis> values) {
-    	if (chart.sizeOfAxIdArray() == 0) {
-    		for (Long id : categories.keySet()) {
-        		chart.addNewAxId().setVal(id);
-    		}
-    		for (Long id : values.keySet()) {
-        		chart.addNewAxId().setVal(id);
-    		}
-    	}
-    	super.defineAxes(chart.getAxIdArray(), categories, values);
+        if (chart.sizeOfAxIdArray() == 0) {
+            for (Long id : categories.keySet()) {
+                chart.addNewAxId().setVal(id);
+            }
+            for (Long id : values.keySet()) {
+                chart.addNewAxId().setVal(id);
+            }
+        }
+        defineAxes(chart.getAxIdArray(), categories, values);
     }
 
     @Override
