@@ -38,6 +38,18 @@ public class XDDFLineChartData extends XDDFChartData {
         for (CTLineSer series : chart.getSerList()) {
             this.series.add(new Series(series, series.getCat(), series.getVal()));
         }
+        defineAxes(categories, values);
+    }
+
+    private void defineAxes(Map<Long, XDDFChartAxis> categories, Map<Long, XDDFValueAxis> values) {
+        if (chart.sizeOfAxIdArray() == 0) {
+            for (Long id : categories.keySet()) {
+                chart.addNewAxId().setVal(id);
+            }
+            for (Long id : values.keySet()) {
+                chart.addNewAxId().setVal(id);
+            }
+        }
         defineAxes(chart.getAxIdArray(), categories, values);
     }
 

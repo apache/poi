@@ -115,6 +115,9 @@ public class BarChartDemo {
         // in order to transform a bar chart into a column chart, you just need to change the bar direction
         bar.setBarDirection(BarDirection.COL);
 
+        // looking for "Stacked Bar Chart"? uncomment the following line
+        // bar.setBarGrouping(BarGrouping.STACKED);
+
         // additionally, you can adjust the axes
         bar.getCategoryAxis().setOrientation(AxisOrientation.MAX_MIN);
         bar.getValueAxes().get(0).setPosition(AxisPosition.TOP);
