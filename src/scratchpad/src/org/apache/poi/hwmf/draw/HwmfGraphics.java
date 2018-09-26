@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
+import org.apache.commons.codec.Charsets;
 import org.apache.poi.common.usermodel.fonts.FontInfo;
 import org.apache.poi.hwmf.record.HwmfBrushStyle;
 import org.apache.poi.hwmf.record.HwmfFont;
@@ -325,7 +326,12 @@ public class HwmfGraphics {
         drawString(text, bounds, null);
     }
 
-    public void drawString(byte[] text, Rectangle2D bounds, int dx[]) {
+    public void drawString(byte[] text, Rectangle2D bounds, List<Integer> dx) {
+        drawString(text, bounds, dx, false);
+    }
+
+    public void drawString(byte[] text, Rectangle2D bounds, List<Integer> dx, boolean isUnicode) {
+
         HwmfFont font = getProperties().getFont();
         if (font == null || text == null || text.length == 0) {
             return;
@@ -335,14 +341,21 @@ public class HwmfGraphics {
         // TODO: another approx. ...
         double fontW = fontH/1.8;
         
-        Charset charset = (font.getCharset().getCharset() == null)?
-                DEFAULT_CHARSET : font.getCharset().getCharset();
+        Charset charset;
+        if (isUnicode) {
+            charset = Charsets.UTF_16LE;
+        } else {
+            charset = font.getCharset().getCharset();
+            if (charset == null) {
+                charset = DEFAULT_CHARSET;
+            }
+        }
+
         String textString = new String(text, charset);
         AttributedString as = new AttributedString(textString);
-        if (dx == null || dx.length == 0) {
+        if (dx == null || dx.isEmpty()) {
             addAttributes(as, font);
         } else {
-            int[] dxNormed = dx;
             //for multi-byte encodings (e.g. Shift_JIS), the byte length
             //might not equal the string length().
             //The x information is stored in dx[], an array parallel to the
@@ -357,41 +370,41 @@ public class HwmfGraphics {
             // needs to be remapped as:
             //dxNormed[0] = 13 textString.get(0) = U+30D7
             //dxNormed[1] = 14 textString.get(1) = U+30ED
-            if (textString.length() != text.length) {
-                int codePoints = textString.codePointCount(0, textString.length());
-                dxNormed = new int[codePoints];
+
+            final List<Integer> dxNormed;
+            if (textString.length() == text.length) {
+                dxNormed = new ArrayList<>(dx);
+            } else {
+                dxNormed = new ArrayList<>(dx.size());
                 int dxPosition = 0;
+                int[] chars = {0};
                 for (int offset = 0; offset < textString.length(); ) {
-                    dxNormed[offset] = dx[dxPosition];
-                    int[] chars = new int[1];
-                    int cp = textString.codePointAt(offset);
-                    chars[0] = cp;
+                    dxNormed.add(dx.get(dxPosition));
+                    chars[0] = textString.codePointAt(offset);
                     //now figure out how many bytes it takes to encode that
                     //code point in the charset
                     int byteLength = new String(chars, 0, chars.length).getBytes(charset).length;
                     dxPosition += byteLength;
-                    offset += Character.charCount(cp);
+                    offset += Character.charCount(chars[0]);
                 }
             }
-            for (int i = 0; i < dxNormed.length; i++) {
+            for (int i = 0; i < dxNormed.size(); i++) {
                 addAttributes(as, font);
                 // Tracking works as a prefix/advance space on characters whereas
                 // dx[...] is the complete width of the current char
                 // therefore we need to add the additional/suffix width to the next char
-                if (i < dxNormed.length - 1) {
-                    as.addAttribute(TextAttribute.TRACKING, (dxNormed[i] - fontW) / fontH, i + 1, i + 2);
-                }
+                as.addAttribute(TextAttribute.TRACKING, (dxNormed.get(i) - fontW) / fontH, i + 1, i + 2);
             }
         }
         
         
         double angle = Math.toRadians(-font.getEscapement()/10.);
-        
-        
+
         final AffineTransform at = graphicsCtx.getTransform();
         try {
-            graphicsCtx.translate(bounds.getX(), bounds.getY()+fontH);
+            graphicsCtx.translate(bounds.getX(), bounds.getY());
             graphicsCtx.rotate(angle);
+            graphicsCtx.translate(0, fontH);
             if (getProperties().getBkMode() == HwmfBkMode.OPAQUE) {
                 // TODO: validate bounds
                 graphicsCtx.setBackground(getProperties().getBackgroundColor().getColor());

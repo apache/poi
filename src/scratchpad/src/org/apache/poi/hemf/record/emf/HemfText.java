@@ -18,18 +18,19 @@
 package org.apache.poi.hemf.record.emf;
 
 import static java.nio.charset.StandardCharsets.UTF_16LE;
-import static org.apache.poi.hemf.record.emf.HemfDraw.readRectL;
 import static org.apache.poi.hemf.record.emf.HemfDraw.readDimensionFloat;
 import static org.apache.poi.hemf.record.emf.HemfDraw.readPointL;
+import static org.apache.poi.hemf.record.emf.HemfDraw.readRectL;
+import static org.apache.poi.hemf.record.emf.HemfRecordIterator.HEADER_SIZE;
 
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
 
+import org.apache.commons.codec.Charsets;
 import org.apache.poi.hemf.draw.HemfGraphics;
+import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.hwmf.record.HwmfText;
 import org.apache.poi.hwmf.record.HwmfText.WmfSetTextAlign;
 import org.apache.poi.util.Dimension2DDouble;
@@ -37,6 +38,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.RecordFormatException;
 
 /**
@@ -53,9 +55,7 @@ public class HemfText {
         GM_COMPATIBLE, GM_ADVANCED
     }
 
-    public static class EmfExtTextOutA implements HemfRecord {
-
-        protected final Rectangle2D bounds = new Rectangle2D.Double();
+    public static class EmfExtTextOutA extends HwmfText.WmfExtTextOut implements HemfRecord {
 
         protected EmfGraphicsMode graphicsMode;
 
@@ -65,14 +65,8 @@ public class HemfText {
          */
         protected final Dimension2D scale = new Dimension2DDouble();
 
-        protected final EmrTextObject textObject;
-
         public EmfExtTextOutA() {
-            this(false);
-        }
-
-        protected EmfExtTextOutA(boolean isUnicode) {
-            textObject = new EmrTextObject(isUnicode);
+            super(new EmfExtTextOutOptions());
         }
 
         @Override
@@ -95,10 +89,68 @@ public class HemfText {
 
             size += readDimensionFloat(leis, scale);
 
-            // guarantee to read the rest of the EMRTextObjectRecord
-            size += textObject.init(leis, recordSize, (int)size);
+            // A WMF PointL object that specifies the coordinates of the reference point used to position the string.
+            // The reference point is defined by the last EMR_SETTEXTALIGN record.
+            // If no such record has been set, the default alignment is TA_LEFT,TA_TOP.
+            size += readPointL(leis, reference);
+            // A 32-bit unsigned integer that specifies the number of characters in the string.
+            stringLength = (int)leis.readUInt();
+            // A 32-bit unsigned integer that specifies the offset to the output string, in bytes,
+            // from the start of the record in which this object is contained.
+            // This value MUST be 8- or 16-bit aligned, according to the character format.
+            int offString = (int)leis.readUInt();
+            size += 2*LittleEndianConsts.INT_SIZE;
+
+            size += options.init(leis);
+            // An optional WMF RectL object that defines a clipping and/or opaquing rectangle in logical units.
+            // This rectangle is applied to the text output performed by the containing record.
+            if (options.isClipped() || options.isOpaque()) {
+                size += readRectL(leis, bounds);
+            }
+
+            // A 32-bit unsigned integer that specifies the offset to an intercharacter spacing array, in bytes,
+            // from the start of the record in which this object is contained. This value MUST be 32-bit aligned.
+            int offDx = (int)leis.readUInt();
+            size += LittleEndianConsts.INT_SIZE;
+
+            int undefinedSpace1 = (int)(offString - size - HEADER_SIZE);
+            assert (undefinedSpace1 >= 0);
+            leis.skipFully(undefinedSpace1);
+            size += undefinedSpace1;
+
+            rawTextBytes = IOUtils.safelyAllocate(stringLength*(isUnicode()?2:1), MAX_RECORD_LENGTH);
+            leis.readFully(rawTextBytes);
+            size += rawTextBytes.length;
+
+            dx.clear();
+            if (offDx > 0) {
+                int undefinedSpace2 = (int) (offDx - size - HEADER_SIZE);
+                assert (undefinedSpace2 >= 0);
+                leis.skipFully(undefinedSpace2);
+                size += undefinedSpace2;
+
+                // An array of 32-bit unsigned integers that specify the output spacing between the origins of adjacent
+                // character cells in logical units. The location of this field is specified by the value of offDx
+                // in bytes from the start of this record. If spacing is defined, this field contains the same number
+                // of values as characters in the output string.
+                //
+                // If the Options field of the EmrText object contains the ETO_PDY flag, then this buffer
+                // contains twice as many values as there are characters in the output string, one
+                // horizontal and one vertical offset for each, in that order.
+                //
+                // If ETO_RTLREADING is specified, characters are laid right to left instead of left to right.
+                // No other options affect the interpretation of this field.
+                while (size < recordSize) {
+                    dx.add((int) leis.readUInt());
+                    size += LittleEndianConsts.INT_SIZE;
+                }
+            }
 
             return size;
+        }
+
+        protected boolean isUnicode() {
+            return false;
         }
 
         /**
@@ -114,15 +166,7 @@ public class HemfText {
          * @throws IOException
          */
         public String getText(Charset charset) throws IOException {
-            return textObject.getText(charset);
-        }
-
-        /**
-         *
-         * @return the x offset for the EmrTextObject
-         */
-        public EmrTextObject getTextObject() {
-            return textObject;
+            return super.getText(charset);
         }
 
         public EmfGraphicsMode getGraphicsMode() {
@@ -134,7 +178,19 @@ public class HemfText {
         }
 
         @Override
+        public void draw(HwmfGraphics ctx) {
+            Rectangle2D bounds = new Rectangle2D.Double(reference.getX(), reference.getY(), 0, 0);
+            ctx.drawString(rawTextBytes, bounds, dx, isUnicode());
+        }
+
+        @Override
         public String toString() {
+            String text = "";
+            try {
+                text = getText(isUnicode() ? Charsets.UTF_16LE : LocaleUtil.CHARSET_1252);
+            } catch (IOException ignored) {
+            }
+
             return
                 "{ bounds: { x: "+bounds.getX()+
                 ", y: "+bounds.getY()+
@@ -142,16 +198,12 @@ public class HemfText {
                 ", h: "+bounds.getHeight()+
                 "}, graphicsMode: '"+graphicsMode+"'"+
                 ", scale: { w: "+scale.getWidth()+", h: "+scale.getHeight()+" }"+
-                ", textObject: "+textObject+
+                ", text: '"+text.replaceAll("\\p{Cntrl}",".")+"'"+
                 "}";
         }
     }
 
     public static class EmfExtTextOutW extends EmfExtTextOutA {
-
-        public EmfExtTextOutW() {
-            super(true);
-        }
 
         @Override
         public HemfRecordType getEmfRecordType() {
@@ -160,6 +212,10 @@ public class HemfText {
 
         public String getText() throws IOException {
             return getText(UTF_16LE);
+        }
+
+        protected boolean isUnicode() {
+            return true;
         }
     }
 
@@ -200,77 +256,6 @@ public class HemfText {
         }
     }
 
-    public static class EmrTextObject extends HwmfText.WmfExtTextOut {
-        protected final boolean isUnicode;
-        protected final List<Integer> outputDx = new ArrayList<>();
-
-        public EmrTextObject(boolean isUnicode) {
-            super(new EmfExtTextOutOptions());
-            this.isUnicode = isUnicode;
-        }
-
-        @Override
-        public int init(LittleEndianInputStream leis, final long recordSize, final int offset) throws IOException {
-            // A WMF PointL object that specifies the coordinates of the reference point used to position the string.
-            // The reference point is defined by the last EMR_SETTEXTALIGN record.
-            // If no such record has been set, the default alignment is TA_LEFT,TA_TOP.
-            long size = readPointL(leis, reference);
-            // A 32-bit unsigned integer that specifies the number of characters in the string.
-            stringLength = (int)leis.readUInt();
-            // A 32-bit unsigned integer that specifies the offset to the output string, in bytes,
-            // from the start of the record in which this object is contained.
-            // This value MUST be 8- or 16-bit aligned, according to the character format.
-            int offString = (int)leis.readUInt();
-            size += 2*LittleEndianConsts.INT_SIZE;
-
-            size += options.init(leis);
-            // An optional WMF RectL object that defines a clipping and/or opaquing rectangle in logical units.
-            // This rectangle is applied to the text output performed by the containing record.
-            if (options.isClipped() || options.isOpaque()) {
-                size += readRectL(leis, bounds);
-            }
-
-            // A 32-bit unsigned integer that specifies the offset to an intercharacter spacing array, in bytes,
-            // from the start of the record in which this object is contained. This value MUST be 32-bit aligned.
-            int offDx = (int)leis.readUInt();
-            size += LittleEndianConsts.INT_SIZE;
-
-            int undefinedSpace1 = (int)(offString-offset-size-2*LittleEndianConsts.INT_SIZE);
-            assert (undefinedSpace1 >= 0);
-            leis.skipFully(undefinedSpace1);
-            size += undefinedSpace1;
-
-            rawTextBytes = IOUtils.safelyAllocate(stringLength*(isUnicode?2:1), MAX_RECORD_LENGTH);
-            leis.readFully(rawTextBytes);
-            size += rawTextBytes.length;
-
-            outputDx.clear();
-            if (offDx > 0) {
-                int undefinedSpace2 = (int) (offDx - offset - size - 2 * LittleEndianConsts.INT_SIZE);
-                assert (undefinedSpace2 >= 0);
-                leis.skipFully(undefinedSpace2);
-                size += undefinedSpace2;
-
-                // An array of 32-bit unsigned integers that specify the output spacing between the origins of adjacent
-                // character cells in logical units. The location of this field is specified by the value of offDx
-                // in bytes from the start of this record. If spacing is defined, this field contains the same number
-                // of values as characters in the output string.
-                //
-                // If the Options field of the EmrText object contains the ETO_PDY flag, then this buffer
-                // contains twice as many values as there are characters in the output string, one
-                // horizontal and one vertical offset for each, in that order.
-                //
-                // If ETO_RTLREADING is specified, characters are laid right to left instead of left to right.
-                // No other options affect the interpretation of this field.
-                while (size < recordSize) {
-                    outputDx.add((int) leis.readUInt());
-                    size += LittleEndianConsts.INT_SIZE;
-                }
-            }
-
-            return (int)size;
-        }
-    }
 
 
     public static class ExtCreateFontIndirectW extends HwmfText.WmfCreateFontIndirect

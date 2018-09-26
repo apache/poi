@@ -554,6 +554,14 @@ public class HwmfMisc {
             p.setPenColor(colorRef);
             p.setPenWidth(dimension.getWidth());
         }
+
+        @Override
+        public String toString() {
+            return
+                "{ penStyle: "+penStyle+
+                ", dimension: { width: "+dimension.getWidth()+", height: "+dimension.getHeight()+" }"+
+                ", colorRef: "+colorRef+"}";
+        }
     }
 
     /**
@@ -633,6 +641,14 @@ public class HwmfMisc {
             p.setBrushStyle(brushStyle);
             p.setBrushColor(colorRef);
             p.setBrushHatch(brushHatch);
+        }
+
+        @Override
+        public String toString() {
+            return
+                "{ brushStyle: '"+brushStyle+"'"+
+                ", colorRef: "+colorRef+
+                ", brushHatch: '"+brushHatch+"' }";
         }
     }
 }

@@ -88,7 +88,9 @@ public class HemfPictureTest {
             FileWriter fw = new FileWriter("record-list.txt");
             int i=0;
             for (HemfRecord r : emf.getRecords())  {
-                fw.write(i + " "+r.getEmfRecordType()+" "+r.toString()+"\n");
+                if (r.getEmfRecordType() != HemfRecordType.comment) {
+                    fw.write(i + " " + r.getEmfRecordType() + " " + r.toString() + "\n");
+                }
                 i++;
             }
             fw.close();
@@ -170,7 +172,7 @@ public class HemfPictureTest {
             for (HemfRecord record : pic) {
                 if (record.getEmfRecordType().equals(HemfRecordType.exttextoutw)) {
                     HemfText.EmfExtTextOutW extTextOutW = (HemfText.EmfExtTextOutW) record;
-                    Point2D reference = extTextOutW.getTextObject().getReference();
+                    Point2D reference = extTextOutW.getReference();
                     if (lastY > -1 && lastY != reference.getY()) {
                         sb.append("\n");
                         lastX = -1;
@@ -204,7 +206,7 @@ public class HemfPictureTest {
             for (HemfRecord record : pic) {
                 if (record.getEmfRecordType().equals(HemfRecordType.exttextoutw)) {
                     HemfText.EmfExtTextOutW extTextOutW = (HemfText.EmfExtTextOutW) record;
-                    Point2D reference = extTextOutW.getTextObject().getReference();
+                    Point2D reference = extTextOutW.getReference();
                     if (lastY > -1 && lastY != reference.getY()) {
                         sb.append("\n");
                         lastX = -1;

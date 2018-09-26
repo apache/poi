@@ -104,7 +104,7 @@ public class HemfGraphics extends HwmfGraphics {
         prop.setLocation(path.getCurrentPoint());
         if (!useBracket) {
             // TODO: when to use draw vs. fill?
-            graphicsCtx.draw(path);
+            super.draw(path);
         }
 
     }
