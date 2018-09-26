@@ -93,6 +93,87 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 public class TestXSLFBugs {
     private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 
+    @Test
+    public void bug62736() throws Exception {
+        XMLSlideShow ss1 = XSLFTestDataSamples.openSampleDocument("bug62736.pptx");
+
+        assertEquals(1, ss1.getSlides().size());
+
+        XSLFSlide slide0 = ss1.getSlides().get(0);
+
+        assertEquals(slide0.getShapes().size(), 4);
+
+        assertRelation(slide0, "/ppt/slides/slide1.xml", null);
+        assertRelation(slide0, "/ppt/slideLayouts/slideLayout1.xml", "rId1");
+        assertRelation(slide0, "/ppt/media/image1.png", "rId2");
+        assertEquals(slide0.getRelations().size(), 2);
+
+        List<XSLFPictureShape> pictures = new ArrayList<>();
+        for (XSLFShape shape : slide0.getShapes()) {
+            if (shape instanceof XSLFPictureShape) {
+                pictures.add((XSLFPictureShape) shape);
+            }
+        }
+
+        assertEquals(pictures.size(), 2);
+        assertEquals(pictures.get(0).getPictureData().getFileName(), "image1.png");
+        assertEquals(pictures.get(1).getPictureData().getFileName(), "image1.png");
+        // blipId is rId2 of both pictures
+
+        // remove just the first picture
+        slide0.removeShape(pictures.get(0));
+
+        assertEquals(slide0.getShapes().size(), 3);
+
+        assertRelation(slide0, "/ppt/slides/slide1.xml", null);
+        assertRelation(slide0, "/ppt/slideLayouts/slideLayout1.xml", "rId1");
+        // the bug is that the following relation is gone
+        assertRelation(slide0, "/ppt/media/image1.png", "rId2");
+        assertEquals(slide0.getRelations().size(), 2);
+
+        // Save and re-load
+        XMLSlideShow ss2 = XSLFTestDataSamples.writeOutAndReadBack(ss1);
+        ss1.close();
+        assertEquals(1, ss2.getSlides().size());
+
+        slide0 = ss2.getSlides().get(0);
+
+        assertRelation(slide0, "/ppt/slides/slide1.xml", null);
+        assertRelation(slide0, "/ppt/slideLayouts/slideLayout1.xml", "rId1");
+        assertRelation(slide0, "/ppt/media/image1.png", "rId2");
+        assertEquals(slide0.getRelations().size(), 2);
+
+        pictures.clear();
+        for (XSLFShape shape : slide0.getShapes()) {
+            if (shape instanceof XSLFPictureShape) {
+                pictures.add((XSLFPictureShape) shape);
+            }
+        }
+
+        assertEquals(pictures.size(), 1);
+        assertEquals(pictures.get(0).getPictureData().getFileName(), "image1.png");
+
+        slide0.removeShape(pictures.get(0));
+
+        assertEquals(slide0.getShapes().size(), 2);
+
+        assertRelation(slide0, "/ppt/slides/slide1.xml", null);
+        assertRelation(slide0, "/ppt/slideLayouts/slideLayout1.xml", "rId1");
+        assertNull(slide0.getRelationById("rId2"));
+        assertEquals(slide0.getRelations().size(), 1);
+
+        // Save and re-load
+        XMLSlideShow ss3 = XSLFTestDataSamples.writeOutAndReadBack(ss2);
+        ss2.close();
+        assertEquals(1, ss3.getSlides().size());
+
+        slide0 = ss3.getSlides().get(0);
+
+        assertRelation(slide0, "/ppt/slides/slide1.xml", null);
+        assertRelation(slide0, "/ppt/slideLayouts/slideLayout1.xml", "rId1");
+        assertEquals(slide0.getShapes().size(), 2);
+        ss3.close();
+    }
 
     @Test
     public void bug61589() throws IOException {

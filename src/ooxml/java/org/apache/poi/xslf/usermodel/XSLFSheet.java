@@ -692,10 +692,23 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
     /**
      * Helper method for sheet and group shapes
      *
-     * @param pictureShape the picture shapes whose relation is to be removed
+     * @param pictureShape the picture shapes whose relation is to be removed,
+     *                     only if there are no more relations on its sheet to that picture
      */
     void removePictureRelation(XSLFPictureShape pictureShape) {
-        removeRelation(pictureShape.getBlipId());
+        int numberOfRelations = 0;
+        String targetBlipId = pictureShape.getBlipId();
+        for (XSLFShape shape : pictureShape.getSheet().getShapes()) {
+            if (shape instanceof XSLFPictureShape) {
+                XSLFPictureShape currentPictureShape = ((XSLFPictureShape) shape);
+                if (currentPictureShape.getBlipId().equals(targetBlipId)) {
+                    numberOfRelations++;
+                }
+            }
+        }
+        if (numberOfRelations <= 1) {
+            removeRelation(pictureShape.getBlipId());
+        }
     }
 
 
