@@ -351,7 +351,7 @@ public class HwmfGraphics {
             }
         }
 
-        String textString = new String(text, charset);
+        String textString = new String(text, charset).trim();
         AttributedString as = new AttributedString(textString);
         if (dx == null || dx.isEmpty()) {
             addAttributes(as, font);
@@ -388,7 +388,9 @@ public class HwmfGraphics {
                     offset += Character.charCount(chars[0]);
                 }
             }
-            for (int i = 0; i < dxNormed.size(); i++) {
+
+            int cps = textString.codePointCount(0, textString.length());
+            for (int i = 0; i < Math.min(dxNormed.size(),cps-1); i++) {
                 addAttributes(as, font);
                 // Tracking works as a prefix/advance space on characters whereas
                 // dx[...] is the complete width of the current char
