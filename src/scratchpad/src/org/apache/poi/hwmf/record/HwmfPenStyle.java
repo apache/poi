@@ -195,4 +195,15 @@ public class HwmfPenStyle implements Cloneable {
             throw new InternalError();
         }
     }
+
+    @Override
+    public String toString() {
+        return
+            "{ lineCap: '"+getLineCap()+"'"+
+            ", lineDash: '"+getLineDash()+"'"+
+            ", lineJoin: '"+getLineJoin()+"'"+
+            (isAlternateDash()?", alternateDash: true ":"")+
+            (isGeometric()?", geometric: true ":"")+
+            "}";
+    }
 }

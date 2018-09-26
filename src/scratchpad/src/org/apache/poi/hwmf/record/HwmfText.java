@@ -28,6 +28,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.poi.hwmf.draw.HwmfDrawProperties;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
@@ -334,7 +336,7 @@ public class HwmfText {
          * character cell i and character cell i + 1. If this field is present, there MUST be the same 
          * number of values as there are characters in the string.
          */
-        private int dx[];
+        protected final List<Integer> dx = new ArrayList<>();
 
         public WmfExtTextOut() {
             this(new WmfExtTextOutOptions());
@@ -380,9 +382,8 @@ public class HwmfText {
                 logger.log(POILogger.WARN, "META_EXTTEXTOUT tracking info doesn't cover all characters");
             }
 
-            dx = new int[stringLength]; 
             for (int i=0; i<dxLen; i++) {
-                dx[i] = leis.readShort();
+                dx.add((int)leis.readShort());
                 size += LittleEndianConsts.SHORT_SIZE;
             }
             
@@ -392,7 +393,7 @@ public class HwmfText {
         @Override
         public void draw(HwmfGraphics ctx) {
             Rectangle2D bounds = new Rectangle2D.Double(reference.getX(), reference.getY(), 0, 0);
-            ctx.drawString(getTextBytes(), bounds, dx);
+            ctx.drawString(rawTextBytes, bounds, dx);
         }
 
 
@@ -431,18 +432,6 @@ public class HwmfText {
 
         public Rectangle2D getBounds() {
             return bounds;
-        }
-
-        /**
-         *
-         * @return a copy of a trimmed byte array of rawTextBytes bytes.
-         * This includes only the bytes from 0..stringLength.
-         * This does not include the extra optional padding on the byte array.
-         */
-        private byte[] getTextBytes() {
-            byte[] ret = IOUtils.safelyAllocate(stringLength, MAX_RECORD_LENGTH);
-            System.arraycopy(rawTextBytes, 0, ret, 0, stringLength);
-            return ret;
         }
     }
     

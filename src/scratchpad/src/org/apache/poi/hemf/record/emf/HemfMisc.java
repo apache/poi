@@ -272,6 +272,15 @@ public class HemfMisc {
             ctx.addObjectTableEntry(this, brushIdx);
         }
 
+
+        @Override
+        public String toString() {
+            return
+                "{ brushIndex: "+brushIdx+
+                ", brushStyle: '"+brushStyle+"'"+
+                ", colorRef: "+colorRef+
+                ", brushHatch: '"+brushHatch+"' }";
+        }
     }
 
     /**
@@ -328,6 +337,11 @@ public class HemfMisc {
         @Override
         public void draw(HemfGraphics ctx) {
             ctx.addObjectTableEntry(this, penIndex);
+        }
+
+        @Override
+        public String toString() {
+            return super.toString().replaceFirst("\\{", "{ penIndex: "+penIndex+", ");
         }
     }
 
@@ -420,6 +434,13 @@ public class HemfMisc {
             size += readBitmap(leis, bitmap, startIdx, offBmi, cbBmi, offBits, cbBits);
 
             return size;
+        }
+
+        @Override
+        public String toString() {
+            // TODO: add style entries + bmp
+            return super.toString().replaceFirst("\\{",
+                "{ brushStyle: '"+brushStyle+"', hatchStyle: '"+hatchStyle+"', ");
         }
     }
 

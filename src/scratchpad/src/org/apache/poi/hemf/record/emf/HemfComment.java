@@ -217,7 +217,7 @@ public class HemfComment {
 
         @Override
         public String toString() {
-            return "\""+new String(privateData, LocaleUtil.CHARSET_1252)+"\"";
+            return "\""+new String(privateData, LocaleUtil.CHARSET_1252).replaceAll("\\p{Cntrl}", ".")+"\"";
         }
     }
 
