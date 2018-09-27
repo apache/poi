@@ -415,11 +415,13 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 * If your package is open read only, then you should call {@link #revert()}
 	 *  when finished with the package.
 	 *
+	 * This method is not thread-safe.
+	 *
 	 * @throws IOException
 	 *             If an IO exception occur during the saving process.
 	 */
 	@Override
-    public synchronized void close() throws IOException {
+    public void close() throws IOException {
 		if (this.packageAccess == PackageAccess.READ) {
 			logger.log(POILogger.WARN, 
 			        "The close() method is intended to SAVE a package. This package is open in READ ONLY mode, use the revert() method instead !");
