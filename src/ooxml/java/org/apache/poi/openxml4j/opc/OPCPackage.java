@@ -28,7 +28,6 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -420,7 +419,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 *             If an IO exception occur during the saving process.
 	 */
 	@Override
-    public void close() throws IOException {
+    public synchronized void close() throws IOException {
 		if (this.packageAccess == PackageAccess.READ) {
 			logger.log(POILogger.WARN, 
 			        "The close() method is intended to SAVE a package. This package is open in READ ONLY mode, use the revert() method instead !");
@@ -434,27 +433,20 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 		    return;
 		}
 
-		// Save the content
-		ReentrantReadWriteLock l = new ReentrantReadWriteLock();
-		try {
-			l.writeLock().lock();
-			if (this.originalPackagePath != null
-					&& !this.originalPackagePath.trim().isEmpty()) {
-				File targetFile = new File(this.originalPackagePath);
-				if (!targetFile.exists()
-						|| !(this.originalPackagePath
-								.equalsIgnoreCase(targetFile.getAbsolutePath()))) {
-					// Case of a package created from scratch
-					save(targetFile);
-				} else {
-					closeImpl();
-				}
-			} else if (this.output != null) {
-				save(this.output);
-				output.close();
+		if (this.originalPackagePath != null
+				&& !this.originalPackagePath.trim().isEmpty()) {
+			File targetFile = new File(this.originalPackagePath);
+			if (!targetFile.exists()
+					|| !(this.originalPackagePath
+							.equalsIgnoreCase(targetFile.getAbsolutePath()))) {
+				// Case of a package created from scratch
+				save(targetFile);
+			} else {
+				closeImpl();
 			}
-		} finally {
-			l.writeLock().unlock();
+		} else if (this.output != null) {
+			save(this.output);
+			output.close();
 		}
 
 		// Clear
