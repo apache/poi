@@ -491,10 +491,13 @@ public final class XSSFCell implements Cell {
                 return cell.getCellFormula(fpb);
             }
         }
-        if (f.getT() == STCellFormulaType.SHARED) {
+        if (f == null) {
+            return null;
+        } else if (f.getT() == STCellFormulaType.SHARED) {
             return convertSharedFormula((int)f.getSi(), fpb == null ? XSSFEvaluationWorkbook.create(getSheet().getWorkbook()) : fpb);
+        } else {
+            return f.getStringValue();
         }
-        return f.getStringValue();
     }
 
     /**
