@@ -159,8 +159,6 @@ subprojects {
         }
     }
 
-    // japicmp will fail with "Could not load" because we moved some classes out of the root-package
-    // for Java 9 compatibility in 4.0.0
     task(japicmp, type: me.champeau.gradle.ArtifactJapicmpTask, dependsOn: jar) {
         to = jar.archivePath
         onlyModified = true
