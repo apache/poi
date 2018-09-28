@@ -223,7 +223,7 @@ public class POIXMLProperties {
                 throw new POIXMLException(e);
             }
         }
-        if(extPart != null){
+        if(extPart != null && ext != null && ext.props != null){
             try (OutputStream out = extPart.getOutputStream()) {
                 if (extPart.getSize() > 0) {
                     extPart.clear();
@@ -231,7 +231,7 @@ public class POIXMLProperties {
                 ext.props.save(out, DEFAULT_XML_OPTIONS);
             }
         }
-        if(custPart != null){
+        if(custPart != null && cust != null && cust.props != null){
             try (OutputStream out = custPart.getOutputStream()) {
                 cust.props.save(out, DEFAULT_XML_OPTIONS);
             }
