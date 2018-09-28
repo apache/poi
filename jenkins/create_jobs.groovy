@@ -25,19 +25,6 @@ def poijobs = [
           // the JDK is missing on some slaves so builds are unstable
           skipcigame: true
         ],
-        [ name: 'POI-DSL-1.9', jdk: '1.9', trigger: triggerSundays,
-          properties: ['-Djava9addmods=--add-modules=java.xml.bind',
-                       '-Djavadoc9addmods=--add-modules=java.xml.bind',
-                       '-Djava9addmodsvalue=-Dsun.reflect.debugModuleAccessChecks=true',
-                       '-Djava9addopens1=--add-opens=java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED',
-                       '-Djava9addopens2=--add-opens=java.base/java.io=ALL-UNNAMED',
-                       '-Djava9addopens3=--add-opens=java.base/java.nio=ALL-UNNAMED',
-                       '-Djava9addopens4=--add-opens=java.base/java.lang=ALL-UNNAMED',
-                       '-Djava9addopens5=--add-opens=java.base/jdk.internal.ref=ALL-UNNAMED',
-                       '-Djava9addopens6=--add-opens=java.base/java.lang=java.xml.bind',
-                       '-Djava.locale.providers=JRE,CLDR'],
-          skipcigame: true
-        ],
         [ name: 'POI-DSL-1.10', jdk: '1.10', trigger: triggerSundays,
           properties: ['-Djava9addmods=--add-modules=java.xml.bind',
                        '-Djavadoc9addmods=--add-modules=java.xml.bind',
@@ -124,7 +111,6 @@ def defaultSlaves = '(ubuntu||beam)&&!cloud-slave&&!H15&&!H17&&!H18&&!H24&&!ubun
 
 def jdkMapping = [
         '1.8': 'JDK 1.8 (latest)',
-        '1.9': 'JDK 1.9 (latest)',
         '1.10': 'JDK 10 (latest)',
         '1.11': 'JDK 11 (latest)',
         '1.12': 'JDK 12 (latest)',
@@ -141,7 +127,7 @@ static def shellEx(def context, String cmd, def poijob) {
 }
 
 def defaultDesc = '''
-<img src="https://poi.apache.org/resources/images/project-logo.jpg" />
+<img src="https://poi.apache.org/images/project-header.png" />
 <p>
 Apache POI - the Java API for Microsoft Documents
 </p>
@@ -233,7 +219,7 @@ poijobs.each { poijob ->
         label(slaves)
         environmentVariables {
             env('LANG', 'en_US.UTF-8')
-            if(jdkKey == '1.9' || jdkKey == '1.10') {
+            if(jdkKey == '1.10') {
                 // when using JDK 9/10 for running Ant, we need to provide more modules for the forbidden-api-checks task
                 // on JDK 11 and newer there is no such module any more, so do not add it here
                 env('ANT_OPTS', '--add-modules=java.xml.bind --add-opens=java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED')
@@ -470,8 +456,6 @@ Unfortunately we often see builds break because of changes/new machines...'''
                 'JDK 1.8 (latest)',
                 'OpenJDK 8 (on Ubuntu only) ',   // blank is required here until the name in the Jenkins instance is fixed!
                 'IBM 1.8 64-bit (on Ubuntu only)',
-
-                'JDK 1.9 (latest)',
 
                 'JDK 10 (latest)',
                 'JDK 10 b46 (Windows Only)',
