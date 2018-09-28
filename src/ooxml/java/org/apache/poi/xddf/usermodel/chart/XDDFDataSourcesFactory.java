@@ -46,18 +46,13 @@ public class XDDFDataSourcesFactory {
                 private CTNumData category = (CTNumData) categoryDS.getNumRef().getNumCache().copy();
 
                 @Override
-                public String getFormula() {
-                    return categoryDS.getNumRef().getF();
-                }
-
-                @Override
                 public boolean isNumeric() {
                     return true;
                 }
 
                 @Override
-                public boolean isReference() {
-                    return true;
+                public String getFormula() {
+                    return categoryDS.getNumRef().getF();
                 }
 
                 @Override
@@ -68,16 +63,6 @@ public class XDDFDataSourcesFactory {
                 @Override
                 public String getPointAt(int index) {
                     return category.getPtArray(index).getV();
-                }
-
-                @Override
-                public String getDataRangeReference() {
-                    return categoryDS.getStrRef().getF();
-                }
-
-                @Override
-                public int getColIndex() {
-                    return 0;
                 }
             };
         } else {
@@ -90,16 +75,6 @@ public class XDDFDataSourcesFactory {
                 }
 
                 @Override
-                public boolean isNumeric() {
-                    return false;
-                }
-
-                @Override
-                public boolean isReference() {
-                    return true;
-                }
-
-                @Override
                 public int getPointCount() {
                     return (int) category.getPtCount().getVal();
                 }
@@ -107,16 +82,6 @@ public class XDDFDataSourcesFactory {
                 @Override
                 public String getPointAt(int index) {
                     return category.getPtArray(index).getV();
-                }
-
-                @Override
-                public String getDataRangeReference() {
-                    return categoryDS.getStrRef().getF();
-                }
-
-                @Override
-                public int getColIndex() {
-                    return 0;
                 }
             };
         }
