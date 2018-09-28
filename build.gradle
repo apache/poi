@@ -246,6 +246,7 @@ project('ooxml') {
         testCompile 'junit:junit:4.12'
         testCompile 'org.mockito:mockito-core:2.21.0'
         testCompile 'org.xmlunit:xmlunit-core:2.5.1'
+        testCompile 'org.reflections:reflections:0.9.11'
         testCompile project(path: ':main', configuration: 'tests')
         testCompile 'org.openjdk.jmh:jmh-core:1.19'
         testCompile 'org.openjdk.jmh:jmh-generator-annprocess:1.19'
