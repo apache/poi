@@ -77,10 +77,10 @@ public class PieChartDemo {
 	            XDDFPieChartData pie = (XDDFPieChartData) series.get(0);
 
 	            // Category Axis Data
-	            List<String> listCategories = new ArrayList<String>(3);
+	            List<String> listCategories = new ArrayList<>(3);
 
 	            // Values
-	            List<Double> listValues = new ArrayList<Double>(3);
+	            List<Double> listValues = new ArrayList<>(3);
 
 	            // set model
 	            String ln;
@@ -100,7 +100,7 @@ public class PieChartDemo {
 
 	            XDDFPieChartData.Series firstSeries = (XDDFPieChartData.Series) pie.getSeries().get(0);
 	            firstSeries.replaceData(categoriesData, valuesData);
-	            firstSeries.setTitle(chartTitle, chart.setSheetTitle(chartTitle));
+	            firstSeries.setTitle(chartTitle, chart.setSheetTitle(chartTitle, 0));
 	            firstSeries.setExplosion(25);
 	            chart.plot(pie);
 

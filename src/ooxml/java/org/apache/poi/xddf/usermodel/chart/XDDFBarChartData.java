@@ -109,6 +109,7 @@ public class XDDFBarChartData extends XDDFChartData {
             XDDFNumericalDataSource<? extends Number> values) {
         final int index = this.series.size();
         final CTBarSer ctSer = this.chart.addNewSer();
+        ctSer.addNewTx();
         ctSer.addNewCat();
         ctSer.addNewVal();
         ctSer.addNewIdx().setVal(index);

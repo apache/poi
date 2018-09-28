@@ -669,20 +669,22 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
     }
 
     /**
-     * set sheet time in excel file
+     * set sheet title in excel file
      *
      * @param title
      *            title of sheet
+     * @param column
+     *            column index
      * @return return cell reference
      * @since POI 4.0.0
      */
-    public CellReference setSheetTitle(String title) {
+    public CellReference setSheetTitle(String title, int column) {
         XSSFSheet sheet = getSheet();
         XSSFRow row = this.getRow(sheet, 0);
-        XSSFCell cell = this.getCell(row, 1);
+        XSSFCell cell = this.getCell(row, column);
         cell.setCellValue(title);
-        this.updateSheetTable(sheet.getTables().get(0).getCTTable(), title, 1);
-        return new CellReference(sheet.getSheetName(), 0, 1, true, true);
+        this.updateSheetTable(sheet.getTables().get(0).getCTTable(), title, column);
+        return new CellReference(sheet.getSheetName(), 0, column, true, true);
     }
 
     /**
@@ -698,12 +700,11 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
     private void updateSheetTable(CTTable ctTable, String title, int index) {
         CTTableColumns tableColumnList = ctTable.getTableColumns();
         CTTableColumn column = null;
-        if (tableColumnList.getCount() >= index) {
-            column = tableColumnList.getTableColumnArray(index);
-        } else {
+        for( int i = 0; tableColumnList.getCount() < index; i++) {
             column = tableColumnList.addNewTableColumn();
-            column.setId(index);
+            column.setId(i);
         }
+        column = tableColumnList.getTableColumnArray(index);
         column.setName(title);
     }
 
