@@ -348,14 +348,16 @@ public void paintBorder(Component c, Graphics g, int x, int y, int width,
 
                 // if there are borders on the west or east then
                 // the second line shouldn't cross them
-        if (westBorder)
-           leftx = x+3;
+        if (westBorder) {
+            leftx = x + 3;
+        }
 
-        if (eastBorder)
-           rightx = width-3;
+        if (eastBorder) {
+            rightx = width - 3;
+        }
 
-           g.drawLine(x,y,width,y);
-           g.drawLine(leftx,y+2,rightx,y+2);
+        g.drawLine(x,y,width,y);
+        g.drawLine(leftx,y+2,rightx,y+2);
       }
 
       if (eastBorder &&
@@ -370,11 +372,13 @@ public void paintBorder(Component c, Graphics g, int x, int y, int width,
         int topy=y;
         int bottomy=height;
 
-        if (northBorder)
-          topy=y+3;
+        if (northBorder) {
+            topy = y + 3;
+        }
 
-        if (southBorder)
-            bottomy=height-3;
+        if (southBorder) {
+            bottomy = height - 3;
+        }
 
         g.drawLine(width-1,y,width-1,height);
         g.drawLine(width-3,topy,width-3,bottomy);

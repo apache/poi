@@ -382,9 +382,6 @@ public final class FormulaParser {
         if (token instanceof OperandPtg) {
             return false;
         }
-        if (token instanceof OperationPtg) {
-            return true;
-        }
 
         return false;
     }
