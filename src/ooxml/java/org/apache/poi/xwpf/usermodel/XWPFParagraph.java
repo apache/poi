@@ -1475,12 +1475,13 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         int startRun = startPos.getRun(),
             startText = startPos.getText(),
             startChar = startPos.getChar();
-        int beginRunPos = 0, candCharPos = 0;
+        int beginRunPos = 0, beginTextPos = 0, beginCharPos = 0;
+        int candCharPos = 0;
         boolean newList = false;
         
         CTR[] rArray = paragraph.getRArray();
         for (int runPos = startRun; runPos < rArray.length; runPos++) {
-            int beginTextPos = 0, beginCharPos = 0, textPos = 0, charPos = 0;
+            int textPos = 0, charPos = 0;
             CTR ctRun = rArray[runPos];
             XmlCursor c = ctRun.newCursor();
             c.selectPath("./*");
