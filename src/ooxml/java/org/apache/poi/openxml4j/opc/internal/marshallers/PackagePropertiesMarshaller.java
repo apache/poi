@@ -29,6 +29,7 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.apache.poi.openxml4j.opc.internal.PartMarshaller;
 import org.apache.poi.ooxml.util.DocumentHelper;
+import org.apache.poi.util.StaxHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -38,7 +39,7 @@ import org.w3c.dom.Element;
 public class PackagePropertiesMarshaller implements PartMarshaller {
     private final static Namespace namespaceDC, namespaceCoreProperties, namespaceDcTerms, namespaceXSI;
 	static {
-	    final XMLEventFactory f = XMLEventFactory.newInstance();
+	    final XMLEventFactory f = StaxHelper.newXMLEventFactory();
 	    namespaceDC = f.createNamespace("dc", PackagePropertiesPart.NAMESPACE_DC_URI);
 	    namespaceCoreProperties = f.createNamespace("cp", PackagePropertiesPart.NAMESPACE_CP_URI);
 	    namespaceDcTerms = f.createNamespace("dcterms", PackagePropertiesPart.NAMESPACE_DCTERMS_URI);
