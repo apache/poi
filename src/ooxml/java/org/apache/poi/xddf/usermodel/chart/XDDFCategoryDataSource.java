@@ -23,4 +23,23 @@ import org.apache.poi.util.Beta;
 
 @Beta
 public interface XDDFCategoryDataSource extends XDDFDataSource<String> {
+    @Override
+    default int getColIndex() {
+        return 0;
+    }
+
+    @Override
+    default boolean isNumeric() {
+        return false;
+    }
+
+    @Override
+    default boolean isReference() {
+        return true;
+    }
+
+    @Override
+    default String getDataRangeReference() {
+        return getFormula();
+    }
 }
