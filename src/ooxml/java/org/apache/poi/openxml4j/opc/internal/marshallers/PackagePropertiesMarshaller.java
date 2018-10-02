@@ -42,7 +42,7 @@ public class PackagePropertiesMarshaller implements PartMarshaller {
             new NamespaceImpl("dcterms", PackagePropertiesPart.NAMESPACE_DCTERMS_URI);
     private final static NamespaceImpl namespaceXSI =
             new NamespaceImpl("xsi", XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);;
-            
+
     protected static final String KEYWORD_CATEGORY = "category";
 
     protected static final String KEYWORD_CONTENT_STATUS = "contentStatus";
