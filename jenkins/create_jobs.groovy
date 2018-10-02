@@ -483,7 +483,7 @@ xmlbeansjobs.each { xjob ->
             scm(trigger)
         }
 
-        def shellcmds = (xjob.windows ? shellCmdsWin : shellCmdsUnix).replace('JOBSHELL', xjob.shell ?: '')
+        def shellcmds = (xjob.windows ? shellCmdsWin : shellCmdsUnix).replace('POIJOBSHELL', xjob.shell ?: '')
 
         // Create steps and publishers depending on the type of Job that is selected
         steps {
