@@ -499,6 +499,10 @@ xmlbeansjobs.each { xjob ->
                 targets(['checkintest'])
                 antInstallation(antRT)
             }
+            ant {
+                targets(['dist'])
+                antInstallation(antRT)
+            }
         }
         publishers {
             archiveArtifacts('build/private/**')
