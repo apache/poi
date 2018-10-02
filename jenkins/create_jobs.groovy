@@ -506,11 +506,11 @@ xmlbeansjobs.each { xjob ->
         }
         publishers {
             archiveArtifacts('build/private/**')
-            archiveJunit('build/test/reports/*.xml') {
-                testDataPublishers {
-                    publishTestStabilityData()
-                }
-            }
+            //archiveJunit('build/test/reports/*.xml') {
+            //    testDataPublishers {
+            //        publishTestStabilityData()
+            //    }
+            //}
 
             if (!xjob.skipcigame) {
                 configure { project ->
