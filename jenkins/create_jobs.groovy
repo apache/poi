@@ -506,7 +506,7 @@ xmlbeansjobs.each { xjob ->
         }
         publishers {
             archiveArtifacts('build/private/**')
-            archiveJunit('build/ooxml-test-results/*.xml,build/scratchpad-test-results/*.xml,build/test-results/*.xml,build/excelant-test-results/*.xml,build/integration-test-results/*.xml,build/*/build/test-results/test/TEST-*.xml,build/*/build/test-results/TEST-*.xml') {
+            archiveJunit('build/test/reports/*.xml') {
                 testDataPublishers {
                     publishTestStabilityData()
                 }
