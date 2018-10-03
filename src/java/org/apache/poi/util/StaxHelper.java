@@ -55,7 +55,8 @@ public final class StaxHelper {
      * Creates a new StAX XMLEventFactory, with sensible defaults
      */
     public static XMLEventFactory newXMLEventFactory() {
-        return XMLEventFactory.newFactory();
+        // this method seems safer on Android than getFactory()
+        return XMLEventFactory.newInstance();
     }
             
     private static void trySetProperty(XMLInputFactory factory, String feature, boolean flag) {
