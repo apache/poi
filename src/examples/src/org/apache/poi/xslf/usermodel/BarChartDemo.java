@@ -107,10 +107,13 @@ public class BarChartDemo {
         final XDDFNumericalDataSource<? extends Number> valuesData = XDDFDataSourcesFactory.fromArray(values1, valuesDataRange, 1);
         values1[6] = 16.0; // if you ever want to change the underlying data
         final XDDFNumericalDataSource<? extends Number> valuesData2 = XDDFDataSourcesFactory.fromArray(values2, valuesDataRange2, 2);
-        bar.getSeries().get(0).replaceData(categoriesData, valuesData);
-        bar.addSeries(categoriesData, valuesData2);
-        bar.getSeries().get(0).setTitle(series[0], chart.setSheetTitle(series[0], 0));
-        bar.getSeries().get(1).setTitle(series[1], chart.setSheetTitle(series[1], 1));
+
+        XDDFChartData.Series series1 = bar.getSeries().get(0);
+        series1.replaceData(categoriesData, valuesData);
+        series1.setTitle(series[0], chart.setSheetTitle(series[0], 0));
+        XDDFChartData.Series series2 = bar.addSeries(categoriesData, valuesData2);
+        series2.setTitle(series[1], chart.setSheetTitle(series[1], 1));
+
         chart.plot(bar);
     }
 

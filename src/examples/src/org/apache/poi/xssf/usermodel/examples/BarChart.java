@@ -84,8 +84,10 @@ public class BarChart {
             XDDFNumericalDataSource<Double> ys2 = XDDFDataSourcesFactory.fromNumericCellRange(sheet, new CellRangeAddress(2, 2, 0, NUM_OF_COLUMNS - 1));
 
             XDDFChartData data = chart.createData(ChartTypes.BAR, bottomAxis, leftAxis);
-            data.addSeries(xs, ys1);
-            data.addSeries(xs, ys2);
+            XDDFChartData.Series series1 = data.addSeries(xs, ys1);
+            series1.setTitle("2x", null); // https://stackoverflow.com/questions/21855842
+            XDDFChartData.Series series2 = data.addSeries(xs, ys2);
+            series2.setTitle("3x", null);
             chart.plot(data);
 
             // in order to transform a bar chart into a column chart, you just need to change the bar direction
@@ -106,12 +108,12 @@ public class BarChart {
 
     private static void solidFillSeries(XDDFChartData data, int index, PresetColor color) {
         XDDFSolidFillProperties fill = new XDDFSolidFillProperties(XDDFColor.from(color));
-        XDDFChartData.Series firstSeries = data.getSeries().get(index);
-        XDDFShapeProperties properties = firstSeries.getShapeProperties();
+        XDDFChartData.Series series = data.getSeries().get(index);
+        XDDFShapeProperties properties = series.getShapeProperties();
         if (properties == null) {
             properties = new XDDFShapeProperties();
         }
         properties.setFillProperties(fill);
-        firstSeries.setShapeProperties(properties);
+        series.setShapeProperties(properties);
     }
 }

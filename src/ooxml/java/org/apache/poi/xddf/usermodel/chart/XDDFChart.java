@@ -216,6 +216,24 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
 
     /**
      * @since 4.0.1
+     *
+     */
+    public void displayBlanksAs(DisplayBlanks as) {
+        if (as == null){
+            if (chart.isSetDispBlanksAs()) {
+                chart.unsetDispBlanksAs();
+            }
+        } else {
+            if (chart.isSetDispBlanksAs()) {
+              chart.getDispBlanksAs().setVal(as.underlying);
+            } else {
+                chart.addNewDispBlanksAs().setVal(as.underlying);
+            }
+        }
+    }
+
+    /**
+     * @since 4.0.1
      */
     public Boolean getTitleOverlay() {
         if (chart.isSetTitle()) {
