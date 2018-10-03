@@ -17,12 +17,17 @@
 
 package org.apache.poi.openxml4j.util;
 
+import org.apache.poi.util.Removal;
+
 /**
  * An immutable object that could be defined as null.
  *
  * @author Julien Chable
  * @version 0.9
+ * @deprecated No longer used in POI code base, use {@link java.util.Optional} instead
  */
+@Removal(version = "4.2")
+@Deprecated
 public final class Nullable<E> {
 
 	private E value;
