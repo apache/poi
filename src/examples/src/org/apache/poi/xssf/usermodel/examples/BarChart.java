@@ -63,7 +63,7 @@ public class BarChart {
                 row = sheet.createRow((short) rowIndex);
                 for (int colIndex = 0; colIndex < NUM_OF_COLUMNS; colIndex++) {
                     cell = row.createCell((short) colIndex);
-                    cell.setCellValue(colIndex * (rowIndex + 1));
+                    cell.setCellValue(colIndex * (rowIndex + 1.0));
                 }
             }
 
