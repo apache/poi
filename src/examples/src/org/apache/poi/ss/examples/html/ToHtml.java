@@ -33,7 +33,6 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.format.CellFormat;
 import org.apache.poi.ss.format.CellFormatResult;
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -96,10 +95,10 @@ public class ToHtml {
             BorderStyle.SLANTED_DASH_DOT, "dashed 2pt",
             BorderStyle.THICK, "solid 3pt",
             BorderStyle.THIN, "dashed 1pt");
-    
+
     private static final int IDX_TABLE_WIDTH = -2;
     private static final int IDX_HEADER_COL_WIDTH = -1;
-    
+
 
     @SuppressWarnings({"unchecked"})
     private static <K, V> Map<K, V> mapFor(Object... mapping) {
@@ -189,9 +188,14 @@ public class ToHtml {
             return;
         }
 
-        ToHtml toHtml = create(args[0], new PrintWriter(new FileWriter(args[1])));
-        toHtml.setCompleteHTML(true);
-        toHtml.printPage();
+        try (
+                FileWriter fw = new FileWriter(args[1]);
+                PrintWriter pw = new PrintWriter(fw)
+            ) {
+            ToHtml toHtml = create(args[0], pw);
+            toHtml.setCompleteHTML(true);
+            toHtml.printPage();
+        }
     }
 
     public void setCompleteHTML(boolean completeHTML) {
@@ -350,32 +354,32 @@ public class ToHtml {
     public void printSheet(Sheet sheet) {
         ensureOut();
         Map<Integer, Integer> widths = computeWidths(sheet);
-        int tableWidth = widths.get(IDX_TABLE_WIDTH); 
+        int tableWidth = widths.get(IDX_TABLE_WIDTH);
         out.format("<table class=%s style=\"width:%dpx;\">%n", DEFAULTS_CLASS, tableWidth);
         printCols(widths);
         printSheetContent(sheet);
         out.format("</table>%n");
     }
-    
+
     /**
-     * computes the column widths, defined by the sheet. 
-     * 
+     * computes the column widths, defined by the sheet.
+     *
      * @param sheet The sheet for which to compute widths
      * @return Map with key: column index; value: column width in pixels
-     *     <br>special keys: 
+     *     <br>special keys:
      *     <br>{@link #IDX_HEADER_COL_WIDTH} - width of the header column
-     *     <br>{@link #IDX_TABLE_WIDTH} - width of the entire table 
+     *     <br>{@link #IDX_TABLE_WIDTH} - width of the entire table
      */
     private Map<Integer, Integer> computeWidths(Sheet sheet) {
         Map<Integer, Integer> ret = new TreeMap<>();
         int tableWidth = 0;
 
         ensureColumnBounds(sheet);
-        
+
         // compute width of the header column
         int lastRowNum = sheet.getLastRowNum();
         int headerCharCount = String.valueOf(lastRowNum).length();
-        int headerColWidth = widthToPixels((headerCharCount + 1) * 256);
+        int headerColWidth = widthToPixels((headerCharCount + 1) * 256.0);
         ret.put(IDX_HEADER_COL_WIDTH, headerColWidth);
         tableWidth += headerColWidth;
 
@@ -384,11 +388,11 @@ public class ToHtml {
             ret.put(i, colWidth);
             tableWidth += colWidth;
         }
-        
+
         ret.put(IDX_TABLE_WIDTH, tableWidth);
         return ret ;
     }
-    
+
     /**
      * Probably platform-specific, but appears to be a close approximation on some systems
      * @param widthUnits POI's native width unit (twips)

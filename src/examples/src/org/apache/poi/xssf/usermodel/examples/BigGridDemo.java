@@ -58,18 +58,18 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * <p>
  * If you really want to use this approach, which is also the one that SXSSF
  * does for you, it works as follows:
- * 
+ *
  * 1. create a template workbook, create sheets and global objects such as cell styles, number formats, etc.
  * 2. create an application that streams data in a text file
  * 3. Substitute the sheet in the template with the generated data
  *
  * <p>
- *  Since 3.8 POI provides a low-memory footprint SXSSF API, which implements 
+ *  Since 3.8 POI provides a low-memory footprint SXSSF API, which implements
  *  ths "BigGridDemo" strategy. SXSSF is an API-compatible streaming extension
- *  of XSSF to be used when very large spreadsheets have to be produced, and 
- *  heap space is limited. SXSSF achieves its low memory footprint by limiting 
- *  access to the rows that are within a sliding window, while XSSF gives access 
- *  to all rows in the document. Older rows that are no longer in the window 
+ *  of XSSF to be used when very large spreadsheets have to be produced, and
+ *  heap space is limited. SXSSF achieves its low memory footprint by limiting
+ *  access to the rows that are within a sliding window, while XSSF gives access
+ *  to all rows in the document. Older rows that are no longer in the window
  *  become inaccessible, as they are written to the disk.
  * </p>
  * See <a "http://poi.apache.org/spreadsheet/how-to.html#sxssf">
@@ -79,7 +79,7 @@ public final class BigGridDemo {
     private static final String XML_ENCODING = "UTF-8";
 
     private BigGridDemo() {}
-    
+
     public static void main(String[] args) throws Exception {
 
         // Step 1. Create a template file. Setup sheets and workbook-level objects such as
@@ -99,7 +99,10 @@ public final class BigGridDemo {
 
             //Step 2. Generate XML file.
             File tmp = File.createTempFile("sheet", ".xml");
-            try (Writer fw = new OutputStreamWriter(new FileOutputStream(tmp), XML_ENCODING)) {
+            try (
+                    FileOutputStream stream = new FileOutputStream(tmp);
+                    Writer fw = new OutputStreamWriter(stream, XML_ENCODING)
+                ) {
                 generate(fw, styles);
             }
 
@@ -265,7 +268,9 @@ public final class BigGridDemo {
         public void createCell(int columnIndex, String value, int styleIndex) throws IOException {
             String ref = new CellReference(_rownum, columnIndex).formatAsString();
             _out.write("<c r=\""+ref+"\" t=\"inlineStr\"");
-            if(styleIndex != -1) _out.write(" s=\""+styleIndex+"\"");
+            if(styleIndex != -1) {
+                _out.write(" s=\""+styleIndex+"\"");
+            }
             _out.write(">");
             _out.write("<is><t>"+value+"</t></is>");
             _out.write("</c>");
@@ -278,7 +283,9 @@ public final class BigGridDemo {
         public void createCell(int columnIndex, double value, int styleIndex) throws IOException {
             String ref = new CellReference(_rownum, columnIndex).formatAsString();
             _out.write("<c r=\""+ref+"\" t=\"n\"");
-            if(styleIndex != -1) _out.write(" s=\""+styleIndex+"\"");
+            if(styleIndex != -1) {
+                _out.write(" s=\""+styleIndex+"\"");
+            }
             _out.write(">");
             _out.write("<v>"+value+"</v>");
             _out.write("</c>");
