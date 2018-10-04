@@ -701,7 +701,8 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
         for (XSLFShape shape : pictureShape.getSheet().getShapes()) {
             if (shape instanceof XSLFPictureShape) {
                 XSLFPictureShape currentPictureShape = ((XSLFPictureShape) shape);
-                if (currentPictureShape.getBlipId().equals(targetBlipId)) {
+                String currentBlipId = currentPictureShape.getBlipId();
+                if (currentBlipId != null && currentBlipId.equals(targetBlipId)) {
                     numberOfRelations++;
                 }
             }
