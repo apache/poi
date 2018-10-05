@@ -67,6 +67,16 @@ public class XDDFParagraphProperties {
         }
     }
 
+    /**
+     * @since 4.0.1
+     */
+    public XDDFRunProperties addDefaultRunProperties() {
+        if (!props.isSetDefRPr()) {
+            props.addNewDefRPr();
+        }
+        return getDefaultRunProperties();
+    }
+
     public XDDFRunProperties getDefaultRunProperties() {
         if (props.isSetDefRPr()) {
             return new XDDFRunProperties(props.getDefRPr());

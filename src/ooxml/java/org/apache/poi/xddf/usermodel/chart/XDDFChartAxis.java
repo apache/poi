@@ -57,6 +57,11 @@ public abstract class XDDFChartAxis implements HasShapeProperties {
     public abstract XDDFShapeProperties getOrAddMinorGridProperties();
 
     /**
+     * @since 4.0.1
+     */
+    public abstract void setTitle(String text);
+
+    /**
      * @return true if minor unit value is defined, false otherwise
      */
     public abstract boolean isSetMinorUnit();

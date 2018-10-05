@@ -70,7 +70,6 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTScatterChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTSerAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTSurface;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTitle;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTTx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTValAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.ChartSpaceDocument;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
@@ -252,11 +251,27 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
         if (!chart.isSetTitle()) {
             chart.addNewTitle();
         }
-        CTTitle title = chart.getTitle();
-        if (title.isSetOverlay()) {
-            title.getOverlay().setVal(overlay);
+        new XDDFTitle(this, chart.getTitle()).setOverlay(overlay);
+    }
+
+    /**
+     * @since 4.0.1
+     */
+    public void setTitleText(String text) {
+        if (!chart.isSetTitle()) {
+            chart.addNewTitle();
+        }
+        new XDDFTitle(this, chart.getTitle()).setText(text);
+    }
+
+    /**
+     * @since 4.0.1
+     */
+    public XDDFTitle getTitle() {
+        if (chart.isSetTitle()) {
+            return new XDDFTitle(this, chart.getTitle());
         } else {
-            title.addNewOverlay().setVal(overlay);
+            return null;
         }
     }
 
@@ -271,15 +286,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
         if (!chart.isSetTitle()) {
             return null;
         }
-        CTTitle title = chart.getTitle();
-        if (!title.isSetTx()) {
-            return null;
-        }
-        CTTx tx = title.getTx();
-        if (!tx.isSetRich()) {
-            return null;
-        }
-        return new XDDFTextBody(this, tx.getRich());
+        return new XDDFTitle(this, chart.getTitle()).getBody();
     }
 
     @Override

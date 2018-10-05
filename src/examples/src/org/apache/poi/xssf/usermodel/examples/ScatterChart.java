@@ -77,7 +77,9 @@ public class ScatterChart {
             legend.setPosition(LegendPosition.TOP_RIGHT);
 
             XDDFValueAxis bottomAxis = chart.createValueAxis(AxisPosition.BOTTOM);
+            bottomAxis.setTitle("x"); // https://stackoverflow.com/questions/32010765
             XDDFValueAxis leftAxis = chart.createValueAxis(AxisPosition.LEFT);
+            leftAxis.setTitle("f(x)");
             leftAxis.setCrosses(AxisCrosses.AUTO_ZERO);
 
             XDDFDataSource<Double> xs = XDDFDataSourcesFactory.fromNumericCellRange(sheet, new CellRangeAddress(0, 0, 0, NUM_OF_COLUMNS - 1));
