@@ -907,7 +907,7 @@ public final class TestPackage {
 		getZipStatsAndConsume((max_size, min_ratio) -> {
 			// check max entry size ouf of bounds
 			ZipSecureFile.setMinInflateRatio(min_ratio-0.002);
-			ZipSecureFile.setMaxEntrySize(max_size-100);
+			ZipSecureFile.setMaxEntrySize(max_size-200);
 		});
 	}
 
