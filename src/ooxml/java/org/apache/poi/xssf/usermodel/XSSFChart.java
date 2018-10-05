@@ -262,19 +262,6 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
 
     /**
      * Returns the title static text, or null if none is set. Note that a title
-     * formula may be set instead.
-     *
-     * @return static title text, if set
-     * @deprecated POI 3.16, use {@link #getTitleText()} instead.
-     */
-    @Deprecated
-    @Removal(version = "4.0")
-    public XSSFRichTextString getTitle() {
-        return getTitleText();
-    }
-
-    /**
-     * Returns the title static text, or null if none is set. Note that a title
      * formula may be set instead. Empty text result is for backward
      * compatibility, and could mean the title text is empty or there is a
      * formula instead. Check for a formula first, falling back on text for
@@ -313,6 +300,7 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
      * @param newTitle
      *            to use
      */
+    @Override
     public void setTitleText(String newTitle) {
         CTTitle ctTitle;
         if (chart.isSetTitle()) {
