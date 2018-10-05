@@ -39,20 +39,17 @@ public class XDDFTitle {
     }
 
     public XDDFTextBody getBody() {
-        XDDFTextBody body;
-        if (title.isSetTxPr()) {
-            body = new XDDFTextBody(parent, title.getTxPr());
-        } else {
-            if (!title.isSetTx()) {
-                title.addNewTx();
-            }
-            CTTx tx = title.getTx();
-            if (!tx.isSetRich()) {
-                tx.addNewRich();
-            }
-            body = new XDDFTextBody(parent, tx.getRich());
+        if (!title.isSetTx()) {
+            title.addNewTx();
         }
-        return body;
+        CTTx tx = title.getTx();
+        if (tx.isSetStrRef()) {
+            tx.unsetStrRef();
+        }
+        if (!tx.isSetRich()) {
+            tx.addNewRich();
+        }
+        return new XDDFTextBody(parent, tx.getRich());
     }
 
     public void setText(String text) {

@@ -118,7 +118,7 @@ public class BarChartExample {
 
         chart.plot(bar);
         chart.setTitleText(chartTitle); // https://stackoverflow.com/questions/30532612
-        // chart.setTitleOverlay(overlay);
+        chart.setTitleOverlay(false);
     }
 
     private static void setColumnData(XWPFChart chart, String chartTitle) {

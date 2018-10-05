@@ -71,6 +71,8 @@ public class BarChart {
             XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 0, 5, 10, 15);
 
             XSSFChart chart = drawing.createChart(anchor);
+            chart.setTitleText("x = 2x and x = 3x");
+            chart.setTitleOverlay(false);
             XDDFChartLegend legend = chart.getOrAddLegend();
             legend.setPosition(LegendPosition.TOP_RIGHT);
 
