@@ -925,8 +925,8 @@ public final class TestPackage {
 				if (ze.getSize() == 0) {
 					continue;
 				}
-				// add zip entry header ~ 30 bytes
-				long size = ze.getSize()+30;
+				// add zip entry header ~ 128 bytes
+				long size = ze.getSize()+128;
 				double ratio = ze.getCompressedSize() / (double)size;
 				min_ratio = Math.min(min_ratio, ratio);
 				max_size = Math.max(max_size, size);
