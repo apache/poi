@@ -69,7 +69,7 @@ public final class XSLFChart extends XDDFChart {
         return XSLFFactory.getInstance();
     }
 
-    public XSLFTextShape getTitle() {
+    public XSLFTextShape getTitleShape() {
         if (!chart.isSetTitle()) {
             chart.addNewTitle();
         }
