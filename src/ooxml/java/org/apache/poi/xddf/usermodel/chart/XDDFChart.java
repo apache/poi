@@ -255,6 +255,10 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
     }
 
     /**
+     * Sets the title text as a static string.
+     *
+     * @param text
+     *            to use as new title
      * @since 4.0.1
      */
     public void setTitleText(String text) {

@@ -22,6 +22,7 @@ package org.apache.poi.xssf.usermodel.examples;
 import java.io.FileOutputStream;
 import java.util.Random;
 
+import org.apache.poi.common.usermodel.fonts.FontGroup;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xddf.usermodel.PresetColor;
@@ -33,6 +34,7 @@ import org.apache.poi.xddf.usermodel.chart.AxisCrosses;
 import org.apache.poi.xddf.usermodel.chart.AxisPosition;
 import org.apache.poi.xddf.usermodel.chart.BarDirection;
 import org.apache.poi.xddf.usermodel.chart.ChartTypes;
+import org.apache.poi.xddf.usermodel.chart.LayoutMode;
 import org.apache.poi.xddf.usermodel.chart.LegendPosition;
 import org.apache.poi.xddf.usermodel.chart.XDDFBarChartData;
 import org.apache.poi.xddf.usermodel.chart.XDDFCategoryAxis;
@@ -41,8 +43,13 @@ import org.apache.poi.xddf.usermodel.chart.XDDFChartData;
 import org.apache.poi.xddf.usermodel.chart.XDDFChartLegend;
 import org.apache.poi.xddf.usermodel.chart.XDDFDataSourcesFactory;
 import org.apache.poi.xddf.usermodel.chart.XDDFLineChartData;
+import org.apache.poi.xddf.usermodel.chart.XDDFManualLayout;
 import org.apache.poi.xddf.usermodel.chart.XDDFNumericalDataSource;
 import org.apache.poi.xddf.usermodel.chart.XDDFValueAxis;
+import org.apache.poi.xddf.usermodel.text.UnderlineType;
+import org.apache.poi.xddf.usermodel.text.XDDFFont;
+import org.apache.poi.xddf.usermodel.text.XDDFRunProperties;
+import org.apache.poi.xddf.usermodel.text.XDDFTextParagraph;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFChart;
 import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
@@ -51,6 +58,10 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+// original contributions by Axel Richter on https://stackoverflow.com/questions/47065690
+// additional title formatting from https://stackoverflow.com/questions/50418856
+// and legend positioning from https://stackoverflow.com/questions/49615379
+// this would probably be an answer for https://stackoverflow.com/questions/36447925 too
 public class BarAndLineChart {
     private static final int NUM_OF_ROWS = 7;
     private static final Random RNG = new Random();
@@ -79,6 +90,21 @@ public class BarAndLineChart {
             XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 4, 0, 11, 15);
 
             XSSFChart chart = drawing.createChart(anchor);
+            chart.setTitleText("This is my title");
+            chart.setTitleOverlay(true);
+            XDDFRunProperties properties = new XDDFRunProperties();
+            properties.setBold(true);
+            properties.setItalic(true);
+            properties.setUnderline(UnderlineType.DOT_DOT_DASH_HEAVY);
+            properties.setFontSize(22.5);
+            XDDFFont[] fonts = new XDDFFont[]{
+                    new XDDFFont(FontGroup.LATIN, "Calibri", null, null, null),
+                    new XDDFFont(FontGroup.COMPLEX_SCRIPT, "Liberation Sans", null, null, null)
+                    };
+            properties.setFonts(fonts);
+            properties.setLineProperties(solidLine(PresetColor.SIENNA));
+            XDDFTextParagraph paragraph = chart.getTitle().getBody().getParagraph(0);
+            paragraph.setDefaultRunProperties(properties);
 
             // the data sources
             XDDFCategoryDataSource xs = XDDFDataSourcesFactory.fromStringCellRange(sheet,
@@ -129,8 +155,13 @@ public class BarAndLineChart {
 
             // legend
             XDDFChartLegend legend = chart.getOrAddLegend();
-            legend.setPosition(LegendPosition.BOTTOM);
+            legend.setPosition(LegendPosition.LEFT);
             legend.setOverlay(false);
+            XDDFManualLayout layout = legend.getOrAddManualLayout();
+            layout.setXMode(LayoutMode.EDGE);
+            layout.setYMode(LayoutMode.EDGE);
+            layout.setX(0.00); //left edge of the chart
+            layout.setY(0.25); //25% of chart's height from top edge of the chart
 
             try (FileOutputStream fileOut = new FileOutputStream("BarAndLineChart.xlsx")) {
                 wb.write(fileOut);
@@ -150,9 +181,7 @@ public class BarAndLineChart {
     }
 
     private static void solidLineSeries(XDDFChartData data, int index, PresetColor color) {
-        XDDFSolidFillProperties fill = new XDDFSolidFillProperties(XDDFColor.from(color));
-        XDDFLineProperties line = new XDDFLineProperties();
-        line.setFillProperties(fill);
+        XDDFLineProperties line = solidLine(color);
         XDDFChartData.Series series = data.getSeries().get(index);
         XDDFShapeProperties properties = series.getShapeProperties();
         if (properties == null) {
@@ -160,5 +189,12 @@ public class BarAndLineChart {
         }
         properties.setLineProperties(line);
         series.setShapeProperties(properties);
+    }
+
+    private static XDDFLineProperties solidLine(PresetColor color) {
+        XDDFSolidFillProperties fill = new XDDFSolidFillProperties(XDDFColor.from(color));
+        XDDFLineProperties line = new XDDFLineProperties();
+        line.setFillProperties(fill);
+        return line;
     }
 }
