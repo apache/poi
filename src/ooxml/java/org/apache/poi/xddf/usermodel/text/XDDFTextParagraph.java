@@ -69,6 +69,24 @@ public class XDDFTextParagraph {
                 _runs.add(new XDDFTextRun((CTRegularTextRun) xo, this));
             }
         }
+
+        addDefaultRunProperties();
+        addAfterLastRunProperties();
+    }
+
+    public void setText(String text) {
+        // remove all runs
+        for (int i = _p.sizeOfBrArray() - 1; i >= 0; i--) {
+            _p.removeBr(i);
+        }
+        for (int i = _p.sizeOfFldArray() - 1; i >= 0; i--) {
+            _p.removeFld(i);
+        }
+        for (int i = _p.sizeOfRArray() - 1; i >= 0; i--) {
+            _p.removeR(i);
+        }
+        _runs.clear();
+        appendRegularRun(text);
     }
 
     public String getText() {
@@ -660,6 +678,13 @@ public class XDDFTextParagraph {
         } else {
             return null;
         }
+    }
+
+    /**
+     * @since 4.0.1
+     */
+    public XDDFRunProperties addDefaultRunProperties() {
+        return getOrCreateProperties().addDefaultRunProperties();
     }
 
     public XDDFRunProperties getDefaultRunProperties() {
