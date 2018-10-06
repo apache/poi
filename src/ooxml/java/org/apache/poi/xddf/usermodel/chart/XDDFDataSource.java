@@ -34,4 +34,6 @@ public interface XDDFDataSource<T> {
     int getColIndex();
 
     String getDataRangeReference();
+
+    String getFormula();
 }

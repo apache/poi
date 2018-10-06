@@ -336,7 +336,7 @@ public abstract class EscherRecord implements Cloneable {
                 String tagName = capitalizeAndTrim((String)attrs[0]);
                 boolean hasValue = false;
                 boolean lastChildComplex = false;
-                for (int i=0; i<attrs.length; i+=2) {
+                for (int i=0; i<attrs.length-1; i+=2) {
                     Object value = attrs[i+1];
                     if (value == null) {
                         // ignore null values
@@ -384,7 +384,7 @@ public abstract class EscherRecord implements Cloneable {
         if (attrList != null && attrList.length > 0) {
             String childTab = "  ";
             for (Object[] attrs : attrList) {
-                for (int i=0; i<attrs.length; i+=2) {
+                for (int i=0; i<attrs.length-1; i+=2) {
                     Object value = attrs[i+1];
                     if (value == null) {
                         // ignore null values

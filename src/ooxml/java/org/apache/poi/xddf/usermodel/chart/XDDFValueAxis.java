@@ -78,6 +78,19 @@ public class XDDFValueAxis extends XDDFChartAxis {
         return new XDDFShapeProperties(properties);
     }
 
+    /**
+     * @since 4.0.1
+     */
+    @Override
+    public void setTitle(String text) {
+        if (!ctValAx.isSetTitle()) {
+            ctValAx.addNewTitle();
+        }
+        XDDFTitle title = new XDDFTitle(null, ctValAx.getTitle());
+        title.setOverlay(false);
+        title.setText(text);
+    }
+
     @Override
     public boolean isSetMinorUnit() {
         return ctValAx.isSetMinorUnit();

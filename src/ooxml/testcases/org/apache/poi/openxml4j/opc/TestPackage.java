@@ -907,7 +907,7 @@ public final class TestPackage {
 		getZipStatsAndConsume((max_size, min_ratio) -> {
 			// check max entry size ouf of bounds
 			ZipSecureFile.setMinInflateRatio(min_ratio-0.002);
-			ZipSecureFile.setMaxEntrySize(max_size-100);
+			ZipSecureFile.setMaxEntrySize(max_size-200);
 		});
 	}
 
@@ -925,8 +925,8 @@ public final class TestPackage {
 				if (ze.getSize() == 0) {
 					continue;
 				}
-				// add zip entry header ~ 30 bytes
-				long size = ze.getSize()+30;
+				// add zip entry header ~ 128 bytes
+				long size = ze.getSize()+128;
 				double ratio = ze.getCompressedSize() / (double)size;
 				min_ratio = Math.min(min_ratio, ratio);
 				max_size = Math.max(max_size, size);

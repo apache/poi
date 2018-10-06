@@ -53,12 +53,6 @@ public class TestRandBetween extends TestCase {
 		formulaCell = row.createCell(2, CellType.FORMULA);
 	}
 	
-	@Override
-	protected void tearDown() throws Exception {
-		// TODO Auto-generated method stub
-		super.tearDown();
-	}
-	
 	/**
 	 * Check where values are the same
 	 */
@@ -73,6 +67,17 @@ public class TestRandBetween extends TestCase {
 		evaluator.evaluateFormulaCell(formulaCell);
 		assertEquals(-1, formulaCell.getNumericCellValue(), 0);
 
+	}
+
+	public void testRandBetweenLargeLongs() {
+        for (int i = 0; i < 100; i++) {
+            evaluator.clearAllCachedResultValues();
+            formulaCell.setCellFormula("RANDBETWEEN(0,9999999999)");
+            evaluator.evaluateFormulaCell(formulaCell);
+            double value = formulaCell.getNumericCellValue();
+            assertTrue("rand is greater than or equal to lowerbound", value >= 0.0);
+            assertTrue("rand is less than or equal to upperbound", value <= 9999999999.0);
+        }
 	}
 	
 	/**

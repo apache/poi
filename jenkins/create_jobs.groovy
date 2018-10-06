@@ -25,19 +25,6 @@ def poijobs = [
           // the JDK is missing on some slaves so builds are unstable
           skipcigame: true
         ],
-        [ name: 'POI-DSL-1.9', jdk: '1.9', trigger: triggerSundays,
-          properties: ['-Djava9addmods=--add-modules=java.xml.bind',
-                       '-Djavadoc9addmods=--add-modules=java.xml.bind',
-                       '-Djava9addmodsvalue=-Dsun.reflect.debugModuleAccessChecks=true',
-                       '-Djava9addopens1=--add-opens=java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED',
-                       '-Djava9addopens2=--add-opens=java.base/java.io=ALL-UNNAMED',
-                       '-Djava9addopens3=--add-opens=java.base/java.nio=ALL-UNNAMED',
-                       '-Djava9addopens4=--add-opens=java.base/java.lang=ALL-UNNAMED',
-                       '-Djava9addopens5=--add-opens=java.base/jdk.internal.ref=ALL-UNNAMED',
-                       '-Djava9addopens6=--add-opens=java.base/java.lang=java.xml.bind',
-                       '-Djava.locale.providers=JRE,CLDR'],
-          skipcigame: true
-        ],
         [ name: 'POI-DSL-1.10', jdk: '1.10', trigger: triggerSundays,
           properties: ['-Djava9addmods=--add-modules=java.xml.bind',
                        '-Djavadoc9addmods=--add-modules=java.xml.bind',
@@ -114,7 +101,14 @@ def poijobs = [
         ],
 ]
 
+def xmlbeansjobs = [
+        [ name: 'POI-XMLBeans-DSL-1.6', jdk: '1.6', trigger: 'H */12 * * *', skipcigame: true
+        ]
+]
+
 def svnBase = 'https://svn.apache.org/repos/asf/poi/trunk'
+def xmlbeansSvnBase = 'https://svn.apache.org/repos/asf/xmlbeans/trunk'
+
 def defaultJdk = '1.8'
 def defaultTrigger = 'H/15 * * * *'     // check SCM every 60/15 = 4 minutes
 def defaultEmail = 'dev@poi.apache.org'
@@ -123,8 +117,8 @@ def defaultAnt = 'Ant 1.9.9'
 def defaultSlaves = '(ubuntu||beam)&&!cloud-slave&&!H15&&!H17&&!H18&&!H24&&!ubuntu-4&&!H21'
 
 def jdkMapping = [
+        '1.6': 'JDK 1.6 (latest)',
         '1.8': 'JDK 1.8 (latest)',
-        '1.9': 'JDK 1.9 (latest)',
         '1.10': 'JDK 10 (latest)',
         '1.11': 'JDK 11 (latest)',
         '1.12': 'JDK 12 (latest)',
@@ -141,7 +135,7 @@ static def shellEx(def context, String cmd, def poijob) {
 }
 
 def defaultDesc = '''
-<img src="https://poi.apache.org/resources/images/project-logo.jpg" />
+<img src="https://poi.apache.org/images/project-header.png" />
 <p>
 Apache POI - the Java API for Microsoft Documents
 </p>
@@ -233,7 +227,7 @@ poijobs.each { poijob ->
         label(slaves)
         environmentVariables {
             env('LANG', 'en_US.UTF-8')
-            if(jdkKey == '1.9' || jdkKey == '1.10') {
+            if(jdkKey == '1.10') {
                 // when using JDK 9/10 for running Ant, we need to provide more modules for the forbidden-api-checks task
                 // on JDK 11 and newer there is no such module any more, so do not add it here
                 env('ANT_OPTS', '--add-modules=java.xml.bind --add-opens=java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED')
@@ -442,6 +436,92 @@ poijobs.each { poijob ->
     }
 }
 
+xmlbeansjobs.each { xjob ->
+    def jdkKey = xjob.jdk ?: defaultJdk
+    def trigger = xjob.trigger ?: defaultTrigger
+    def email = xjob.email ?: defaultEmail
+    def slaves = xjob.slaves ?: defaultSlaves + (xjob.slaveAdd ?: '')
+    def antRT = defaultAnt + (xjob.windows ? ' (Windows)' : '')
+
+    job(xjob.name) {
+        if (xjob.disabled) {
+            disabled()
+        }
+
+        description( defaultDesc + (xjob.apicheck ? apicheckDesc : sonarDesc) )
+        logRotator {
+            numToKeep(5)
+            artifactNumToKeep(1)
+        }
+        label(slaves)
+        environmentVariables {
+            env('LANG', 'en_US.UTF-8')
+            if(jdkKey == '1.10') {
+                // when using JDK 9/10 for running Ant, we need to provide more modules for the forbidden-api-checks task
+                // on JDK 11 and newer there is no such module any more, so do not add it here
+                env('ANT_OPTS', '--add-modules=java.xml.bind --add-opens=java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED')
+            }
+            env('FORREST_HOME', xjob.windows ? 'f:\\jenkins\\tools\\forrest\\latest' : '/home/jenkins/tools/forrest/latest')
+        }
+        wrappers {
+            timeout {
+                absolute(180)
+                abortBuild()
+                writeDescription('Build was aborted due to timeout')
+            }
+        }
+        jdk(jdkMapping.get(jdkKey))
+        scm {
+            svn(xmlbeansSvnBase) { svnNode ->
+                svnNode / browser(class: 'hudson.scm.browsers.ViewSVN') /
+                        url << 'http://svn.apache.org/viewcvs.cgi/?root=Apache-SVN'
+            }
+        }
+        checkoutRetryCount(3)
+
+        triggers {
+            scm(trigger)
+        }
+
+        def shellcmds = (xjob.windows ? shellCmdsWin : shellCmdsUnix).replace('POIJOBSHELL', xjob.shell ?: '')
+
+        // Create steps and publishers depending on the type of Job that is selected
+        steps {
+            shellEx(delegate, shellcmds, xjob)
+            if(xjob.addShell) {
+                shellEx(delegate, xjob.addShell, xjob)
+            }
+            ant {
+                targets(['clean'])
+                antInstallation(antRT)
+            }
+            ant {
+                targets(['checkintest'])
+                antInstallation(antRT)
+            }
+            ant {
+                targets(['dist'])
+                antInstallation(antRT)
+            }
+        }
+        publishers {
+            archiveArtifacts('build/private/**')
+            //archiveJunit('build/test/reports/*.xml') {
+            //    testDataPublishers {
+            //        publishTestStabilityData()
+            //    }
+            //}
+
+            if (!xjob.skipcigame) {
+                configure { project ->
+                    project / publishers << 'hudson.plugins.cigame.GamePublisher' {}
+                }
+            }
+            mailer(email, false, false)
+        }
+    }
+}
+
 /*
 Add a special job which spans a two-dimensional matrix of all JDKs that we want to use and
 all slaves that we would like to use and test if the java and ant binaries are available
@@ -470,8 +550,6 @@ Unfortunately we often see builds break because of changes/new machines...'''
                 'JDK 1.8 (latest)',
                 'OpenJDK 8 (on Ubuntu only) ',   // blank is required here until the name in the Jenkins instance is fixed!
                 'IBM 1.8 64-bit (on Ubuntu only)',
-
-                'JDK 1.9 (latest)',
 
                 'JDK 10 (latest)',
                 'JDK 10 b46 (Windows Only)',

@@ -153,7 +153,7 @@ public class XSLFColor {
                     colorRef = _phClr.getVal().toString();
                 }
                 // find referenced CTColor in the theme and convert it to java.awt.Color via a recursive call
-                CTColor ctColor = theme.getCTColor(colorRef);
+                CTColor ctColor = theme == null ? null : theme.getCTColor(colorRef);
                 if(ctColor != null) {
                     color = toColor(ctColor, null);
                 }

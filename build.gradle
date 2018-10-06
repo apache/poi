@@ -159,8 +159,6 @@ subprojects {
         }
     }
 
-    // japicmp will fail with "Could not load" because we moved some classes out of the root-package
-    // for Java 9 compatibility in 4.0.0
     task(japicmp, type: me.champeau.gradle.ArtifactJapicmpTask, dependsOn: jar) {
         to = jar.archivePath
         onlyModified = true
@@ -187,6 +185,7 @@ project('main') {
         compile 'javax.activation:activation:1.1.1'
 
         testCompile 'junit:junit:4.12'
+        testCompile 'org.reflections:reflections:0.9.11'
     }
 
     jar {
@@ -231,7 +230,7 @@ project('ooxml') {
         compile 'org.apache.commons:commons-math3:3.6.1'
         compile 'org.apache.commons:commons-compress:1.18'
         compile 'org.apache.santuario:xmlsec:2.1.0'
-        compile 'org.bouncycastle:bcpkix-jdk15on:1.59'
+        compile 'org.bouncycastle:bcpkix-jdk15on:1.60'
         compile 'com.github.virtuald:curvesapi:1.05'
 
         // for ooxml-lite, should we move this somewhere else?
@@ -245,6 +244,7 @@ project('ooxml') {
         testCompile 'junit:junit:4.12'
         testCompile 'org.mockito:mockito-core:2.21.0'
         testCompile 'org.xmlunit:xmlunit-core:2.5.1'
+        testCompile 'org.reflections:reflections:0.9.11'
         testCompile project(path: ':main', configuration: 'tests')
         testCompile 'org.openjdk.jmh:jmh-core:1.19'
         testCompile 'org.openjdk.jmh:jmh-generator-annprocess:1.19'

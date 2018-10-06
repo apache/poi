@@ -187,7 +187,7 @@ public class TextSpecInfoRun {
             smartTagFld, smartTagsBytes, "smart tags"
         };
         
-        for (int i=0; i<flds.length; i+=3) {
+        for (int i=0; i<flds.length-1; i+=3) {
             BitField fld = (BitField)flds[i+0];
             Object valO = flds[i+1];
             if (!fld.isSet(mask)) continue;
@@ -210,7 +210,8 @@ public class TextSpecInfoRun {
                 valid = false;
             }
             if (!valid) {
-                throw new IOException(flds[i+2]+" is activated, but its value is invalid");
+                Object fval = (i + 2) < flds.length ? flds[i + 2] : null;
+                throw new IOException(fval + " is activated, but its value is invalid");
             }
         }
     }        

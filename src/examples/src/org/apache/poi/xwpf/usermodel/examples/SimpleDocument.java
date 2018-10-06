@@ -111,16 +111,16 @@ public class SimpleDocument {
             r5.setTextPosition(-10);
             r5.setText("For in that sleep of death what dreams may come");
             r5.addCarriageReturn();
-            r5.setText("When we have shuffled off this mortal coil,"
-                    + "Must give us pause: there's the respect"
+            r5.setText("When we have shuffled off this mortal coil, "
+                    + "Must give us pause: there's the respect "
                     + "That makes calamity of so long life;");
             r5.addBreak();
-            r5.setText("For who would bear the whips and scorns of time,"
+            r5.setText("For who would bear the whips and scorns of time, "
                     + "The oppressor's wrong, the proud man's contumely,");
 
             r5.addBreak(BreakClear.ALL);
-            r5.setText("The pangs of despised love, the law's delay,"
-                    + "The insolence of office and the spurns" + ".......");
+            r5.setText("The pangs of despised love, the law's delay, "
+                    + "The insolence of office and the spurns " + ".......");
 
             try (FileOutputStream out = new FileOutputStream("simple.docx")) {
                 doc.write(out);

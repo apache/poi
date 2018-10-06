@@ -75,7 +75,11 @@ public class XDDFPieChartData extends XDDFChartData {
 
         @Override
         protected CTSerTx getSeriesText() {
-            return series.getTx();
+            if (series.isSetTx()) {
+                return series.getTx();
+            } else {
+                return series.addNewTx();
+            }
         }
 
         @Override

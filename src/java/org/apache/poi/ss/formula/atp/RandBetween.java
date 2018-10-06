@@ -77,7 +77,7 @@ final class RandBetween implements FreeRefFunction{
 			top = bottom;
 		}
 		
-		return new NumberEval((bottom + (int)(Math.random() * ((top - bottom) + 1))));
+		return new NumberEval((bottom + (long)(Math.random() * ((top - bottom) + 1))));
 		
 	}
 		

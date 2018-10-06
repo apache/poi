@@ -53,7 +53,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * Excel Conditional Formatting -- Examples
  *
  * <p>
- *   Partly based on the code snippets from 
+ *   Partly based on the code snippets from
  *   http://www.contextures.com/xlcondformat03.html
  * </p>
  */
@@ -89,7 +89,7 @@ public class ConditionalFormats {
 
         // print overlapping rule results
         evaluateRules(wb, "Overlapping");
-        
+
         // Write the output to a file
         String file = "cf-poi.xls";
         if(wb instanceof XSSFWorkbook) {
@@ -178,11 +178,11 @@ public class ConditionalFormats {
 
         sheet.getRow(2).createCell(4).setCellValue("<== Condition 1: Formula Is =$B2>75   (Blue Fill)");
     }
-    
+
     /**
      * Multiple conditional formatting rules can apply to
      *  one cell, some combining, some beating others.
-     * Done in order of the rules added to the 
+     * Done in order of the rules added to the
      *  SheetConditionalFormatting object
      */
     static void overlapping(Sheet sheet) {
@@ -210,39 +210,39 @@ public class ConditionalFormats {
         }
         sheet.autoSizeColumn(0);
         sheet.autoSizeColumn(1);
-        
+
         sheet.getRow(1).createCell(3).setCellValue("Even rows are blue");
         sheet.getRow(2).createCell(3).setCellValue("Multiples of 3 have a grey background");
         sheet.getRow(4).createCell(3).setCellValue("Multiples of 5 are bold");
         sheet.getRow(9).createCell(3).setCellValue("Multiples of 10 are red (beats even)");
-        
+
         SheetConditionalFormatting sheetCF = sheet.getSheetConditionalFormatting();
-        
+
         // Condition 1: Row divides by 10, red (will beat #1)
-        ConditionalFormattingRule rule1 = 
+        ConditionalFormattingRule rule1 =
                 sheetCF.createConditionalFormattingRule("MOD(ROW(),10)=0");
         FontFormatting font1 = rule1.createFontFormatting();
         font1.setFontColorIndex(IndexedColors.RED.index);
-        
+
         // Condition 2: Row is even, blue
-        ConditionalFormattingRule rule2 = 
+        ConditionalFormattingRule rule2 =
                 sheetCF.createConditionalFormattingRule("MOD(ROW(),2)=0");
         FontFormatting font2 = rule2.createFontFormatting();
         font2.setFontColorIndex(IndexedColors.BLUE.index);
-        
+
         // Condition 3: Row divides by 5, bold
-        ConditionalFormattingRule rule3 = 
+        ConditionalFormattingRule rule3 =
                 sheetCF.createConditionalFormattingRule("MOD(ROW(),5)=0");
         FontFormatting font3 = rule3.createFontFormatting();
         font3.setFontStyle(false, true);
-        
+
         // Condition 4: Row divides by 3, grey background
-        ConditionalFormattingRule rule4 = 
+        ConditionalFormattingRule rule4 =
                 sheetCF.createConditionalFormattingRule("MOD(ROW(),3)=0");
         PatternFormatting fill4 = rule4.createPatternFormatting();
         fill4.setFillBackgroundColor(IndexedColors.GREY_25_PERCENT.index);
         fill4.setFillPattern(PatternFormatting.SOLID_FOREGROUND);
-        
+
         // Apply
         CellRangeAddress[] regions = {
                 CellRangeAddress.valueOf("A1:F41")
@@ -441,7 +441,7 @@ public class ConditionalFormats {
     }
 
     /**
-     * You can use Excel conditional formatting to shade bands of rows on the worksheet. 
+     * You can use Excel conditional formatting to shade bands of rows on the worksheet.
      * In this example, 3 rows are shaded light grey, and 3 are left with no shading.
      * In the MOD function, the total number of rows in the set of banded rows (6) is entered.
      */
@@ -462,7 +462,7 @@ public class ConditionalFormats {
         sheet.createRow(0).createCell(1).setCellValue("Shade Bands of Rows");
         sheet.createRow(1).createCell(1).setCellValue("Condition: Formula Is  =MOD(ROW(),6)<2   (Light Grey Fill)");
     }
-    
+
     /**
      * Icon Sets / Multi-States allow you to have icons shown which vary
      *  based on the values, eg Red traffic light / Yellow traffic light /
@@ -487,7 +487,7 @@ public class ConditionalFormats {
         r.createCell(3).setCellValue(10);
 
         SheetConditionalFormatting sheetCF = sheet.getSheetConditionalFormatting();
-        
+
         CellRangeAddress[] regions = { CellRangeAddress.valueOf("B1:B4") };
         ConditionalFormattingRule rule1 =
                 sheetCF.createConditionalFormattingRule(IconSet.GYR_3_TRAFFIC_LIGHTS);
@@ -497,7 +497,7 @@ public class ConditionalFormats {
         im1.getThresholds()[1].setValue(33d);
         im1.getThresholds()[2].setRangeType(RangeType.MAX);
         sheetCF.addConditionalFormatting(regions, rule1);
-        
+
         regions = new CellRangeAddress[] { CellRangeAddress.valueOf("C1:C4") };
         ConditionalFormattingRule rule2 =
                 sheetCF.createConditionalFormattingRule(IconSet.GYR_3_FLAGS);
@@ -509,7 +509,7 @@ public class ConditionalFormats {
         im2.getThresholds()[2].setRangeType(RangeType.PERCENT);
         im2.getThresholds()[2].setValue(67d);
         sheetCF.addConditionalFormatting(regions, rule2);
-        
+
         regions = new CellRangeAddress[] { CellRangeAddress.valueOf("D1:D4") };
         ConditionalFormattingRule rule3 =
                 sheetCF.createConditionalFormattingRule(IconSet.GYR_3_SYMBOLS_CIRCLE);
@@ -522,7 +522,7 @@ public class ConditionalFormats {
         im3.getThresholds()[2].setValue(7d);
         sheetCF.addConditionalFormatting(regions, rule3);
     }
-    
+
     /**
      * Color Scales / Colour Scales / Colour Gradients allow you shade the
      *  background colour of the cell based on the values, eg from Red to
@@ -533,12 +533,12 @@ public class ConditionalFormats {
         Row r = sheet.createRow(1);
         r.createCell(0).setCellValue("Red-Yellow-Green");
         for (int i=1; i<=7; i++) {
-            r.createCell(i).setCellValue((i-1)*5);
+            r.createCell(i).setCellValue((i-1)*5.0);
         }
         r = sheet.createRow(2);
         r.createCell(0).setCellValue("Red-White-Blue");
         for (int i=1; i<=9; i++) {
-            r.createCell(i).setCellValue((i-1)*5);
+            r.createCell(i).setCellValue((i-1)*5.0);
         }
         r = sheet.createRow(3);
         r.createCell(0).setCellValue("Blue-Green");
@@ -546,9 +546,9 @@ public class ConditionalFormats {
             r.createCell(i).setCellValue((i-1));
         }
         sheet.setColumnWidth(0, 5000);
-        
+
         SheetConditionalFormatting sheetCF = sheet.getSheetConditionalFormatting();
-        
+
         CellRangeAddress[] regions = { CellRangeAddress.valueOf("B2:H2") };
         ConditionalFormattingRule rule1 =
                 sheetCF.createConditionalFormattingColorScaleRule();
@@ -561,7 +561,7 @@ public class ConditionalFormats {
         ((ExtendedColor)cs1.getColors()[1]).setARGBHex("FFFFEB84");
         ((ExtendedColor)cs1.getColors()[2]).setARGBHex("FF63BE7B");
         sheetCF.addConditionalFormatting(regions, rule1);
-        
+
         regions = new CellRangeAddress[] { CellRangeAddress.valueOf("B3:J3") };
         ConditionalFormattingRule rule2 =
                 sheetCF.createConditionalFormattingColorScaleRule();
@@ -574,7 +574,7 @@ public class ConditionalFormats {
         ((ExtendedColor)cs2.getColors()[1]).setARGBHex("FFFCFCFF");
         ((ExtendedColor)cs2.getColors()[2]).setARGBHex("FF5A8AC6");
         sheetCF.addConditionalFormatting(regions, rule2);
-        
+
         regions = new CellRangeAddress[] { CellRangeAddress.valueOf("B4:Q4") };
         ConditionalFormattingRule rule3=
                 sheetCF.createConditionalFormattingColorScaleRule();
@@ -586,7 +586,7 @@ public class ConditionalFormats {
         ((ExtendedColor)cs3.getColors()[1]).setARGBHex("FF63BE7B");
         sheetCF.addConditionalFormatting(regions, rule3);
     }
-    
+
     /**
      * DataBars / Data-Bars allow you to have bars shown vary
      *  based on the values, from full to empty
@@ -623,7 +623,7 @@ public class ConditionalFormats {
         sheet.setColumnWidth(3, 5000);
 
         SheetConditionalFormatting sheetCF = sheet.getSheetConditionalFormatting();
-        
+
         ExtendedColor color = sheet.getWorkbook().getCreationHelper().createExtendedColor();
         color.setARGBHex("FF63BE7B");
         CellRangeAddress[] regions = { CellRangeAddress.valueOf("B2:B7") };
@@ -632,7 +632,7 @@ public class ConditionalFormats {
         db1.getMinThreshold().setRangeType(RangeType.MIN);
         db1.getMaxThreshold().setRangeType(RangeType.MAX);
         sheetCF.addConditionalFormatting(regions, rule1);
-        
+
         color = sheet.getWorkbook().getCreationHelper().createExtendedColor();
         color.setARGBHex("FF5A8AC6");
         regions = new CellRangeAddress[] { CellRangeAddress.valueOf("C2:C7") };
@@ -641,7 +641,7 @@ public class ConditionalFormats {
         db2.getMinThreshold().setRangeType(RangeType.MIN);
         db2.getMaxThreshold().setRangeType(RangeType.MAX);
         sheetCF.addConditionalFormatting(regions, rule2);
-        
+
         color = sheet.getWorkbook().getCreationHelper().createExtendedColor();
         color.setARGBHex("FFF8696B");
         regions = new CellRangeAddress[] { CellRangeAddress.valueOf("D2:D7") };
@@ -651,7 +651,7 @@ public class ConditionalFormats {
         db3.getMaxThreshold().setRangeType(RangeType.MAX);
         sheetCF.addConditionalFormatting(regions, rule3);
     }
-    
+
     /**
      * Print out a summary of the conditional formatting rules applied to cells on the given sheet.
      * Only cells with a matching rule are printed, and for those, all matching rules are sumarized.
@@ -661,15 +661,19 @@ public class ConditionalFormats {
         final ConditionalFormattingEvaluator cfEval = new ConditionalFormattingEvaluator(wb, wbEvalProv);
         // if cell values have changed, clear cached format results
         cfEval.clearAllCachedValues();
-        
+
         final Sheet sheet = wb.getSheet(sheetName);
         for (Row r : sheet) {
             for (Cell c : r) {
                 final List<EvaluationConditionalFormatRule> rules = cfEval.getConditionalFormattingForCell(c);
                 // check rules list for null, although current implementation will return an empty list, not null, then do what you want with results
-                if (rules == null || rules.isEmpty()) continue;
+                if (rules == null || rules.isEmpty()) {
+                    continue;
+                }
                 final CellReference ref = ConditionalFormattingEvaluator.getRef(c);
-                if (rules.isEmpty()) continue;
+                if (rules.isEmpty()) {
+                    continue;
+                }
 
                 System.out.println("\n"
                   + ref.formatAsString()
@@ -682,7 +686,7 @@ public class ConditionalFormats {
                     b.append("\tRule ")
                      .append(rule.getFormattingIndex())
                      .append(": ");
-                    
+
                     // check for color scale
                     if (cf.getColorScaleFormatting() != null) {
                         b.append("\n\t\tcolor scale (caller must calculate bucket)");
@@ -709,13 +713,19 @@ public class ConditionalFormats {
                         b.append("\n\t\tfont format ")
                          .append("color index ")
                          .append(ff.getFontColorIndex());
-                        if (ff.isBold()) b.append(" bold");
-                        if (ff.isItalic()) b.append(" italic");
-                        if (ff.isStruckout()) b.append(" strikeout");
+                        if (ff.isBold()) {
+                            b.append(" bold");
+                        }
+                        if (ff.isItalic()) {
+                            b.append(" italic");
+                        }
+                        if (ff.isStruckout()) {
+                            b.append(" strikeout");
+                        }
                         b.append(" underline index ")
                          .append(ff.getUnderlineType());
                     }
-                    
+
                     System.out.println(b);
                 }
             }

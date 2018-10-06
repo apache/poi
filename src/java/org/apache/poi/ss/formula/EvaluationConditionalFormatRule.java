@@ -21,15 +21,7 @@ import java.text.CollationKey;
 import java.text.Collator;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.BoolEval;
@@ -900,9 +892,9 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
                 return false;
             }
             ValueAndFormat o = (ValueAndFormat) obj;
-            return ( value == o.value || value.equals(o.value))
-                    && ( format == o.format || format.equals(o.format))
-                    && (string == o.string || string.equals(o.string));
+            return (Objects.equals(value, o.value)
+                    && Objects.equals(format, o.format)
+                    && Objects.equals(string, o.string));
         }
         
         /**

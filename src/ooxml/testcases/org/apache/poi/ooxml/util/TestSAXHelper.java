@@ -24,6 +24,7 @@ import javax.xml.XMLConstants;
 
 import org.junit.Test;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.XMLReader;
 
 public class TestSAXHelper {
@@ -31,14 +32,18 @@ public class TestSAXHelper {
     public void testXMLReader() throws Exception {
         XMLReader reader = SAXHelper.newXMLReader();
         assertNotSame(reader, SAXHelper.newXMLReader());
-        assertTrue(reader.getFeature(XMLConstants.FEATURE_SECURE_PROCESSING));
-        assertFalse(reader.getFeature(POIXMLConstants.FEATURE_LOAD_DTD_GRAMMAR));
-        assertFalse(reader.getFeature(POIXMLConstants.FEATURE_LOAD_EXTERNAL_DTD));
-        assertEquals(SAXHelper.IGNORING_ENTITY_RESOLVER, reader.getEntityResolver());
-        assertNotNull(reader.getProperty(POIXMLConstants.PROPERTY_ENTITY_EXPANSION_LIMIT));
-        assertEquals("1", reader.getProperty(POIXMLConstants.PROPERTY_ENTITY_EXPANSION_LIMIT));
-        assertNotNull(reader.getProperty(POIXMLConstants.PROPERTY_SECURITY_MANAGER));
-
+        try {
+            assertTrue(reader.getFeature(XMLConstants.FEATURE_SECURE_PROCESSING));
+            assertFalse(reader.getFeature(POIXMLConstants.FEATURE_LOAD_DTD_GRAMMAR));
+            assertFalse(reader.getFeature(POIXMLConstants.FEATURE_LOAD_EXTERNAL_DTD));
+            assertEquals(SAXHelper.IGNORING_ENTITY_RESOLVER, reader.getEntityResolver());
+            assertNotNull(reader.getProperty(POIXMLConstants.PROPERTY_ENTITY_EXPANSION_LIMIT));
+            assertEquals("1", reader.getProperty(POIXMLConstants.PROPERTY_ENTITY_EXPANSION_LIMIT));
+            assertNotNull(reader.getProperty(POIXMLConstants.PROPERTY_SECURITY_MANAGER));
+        } catch(SAXNotRecognizedException e) {
+            // ignore exceptions from old parsers that don't support these features
+            // (https://bz.apache.org/bugzilla/show_bug.cgi?id=62692)
+        }
         reader.parse(new InputSource(new ByteArrayInputStream("<xml></xml>".getBytes("UTF-8"))));
     }
 }
