@@ -244,8 +244,8 @@ under the License.
     <!-- license and api checks -->
     <property name="rat.jar" location="${main.lib}/apache-rat-0.12.jar"/>
     <property name="rat.url" value="${repository.m2}/maven2/org/apache/rat/apache-rat/0.12/apache-rat-0.12.jar"/>
-    <property name="forbidden.jar" location="${main.lib}/forbiddenapis-2.5.jar"/>
-    <property name="forbidden.url" value="${repository.m2}/maven2/de/thetaphi/forbiddenapis/2.5/forbiddenapis-2.5.jar"/>
+    <property name="forbidden.jar" location="${main.lib}/forbiddenapis-2.6.jar"/>
+    <property name="forbidden.url" value="${repository.m2}/maven2/de/thetaphi/forbiddenapis/2.6/forbiddenapis-2.6.jar"/>
 
     <property name="maven.ooxml.xsds.version.id" value="1.4"/>
 	
@@ -652,6 +652,7 @@ under the License.
                 <include name="forbiddenapis-2.0.jar"/>
                 <include name="forbiddenapis-2.1.jar"/>
                 <include name="forbiddenapis-2.3.jar"/>
+                <include name="forbiddenapis-2.5.jar"/>
                 <include name="apache-rat-0.11.jar"/>
                 <include name="mockito-core-2.13.0.jar"/>
             </fileset>
