@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.poi.util.Beta;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTMarker;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTScatterChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTScatterSer;
@@ -37,6 +38,18 @@ public class XDDFScatterChartData extends XDDFChartData {
         this.chart = chart;
         for (CTScatterSer series : chart.getSerList()) {
             this.series.add(new Series(series, series.getXVal(), series.getYVal()));
+        }
+        defineAxes(categories, values);
+    }
+
+    private void defineAxes(Map<Long, XDDFChartAxis> categories, Map<Long, XDDFValueAxis> values) {
+        if (chart.sizeOfAxIdArray() == 0) {
+            for (Long id : categories.keySet()) {
+                chart.addNewAxId().setVal(id);
+            }
+            for (Long id : values.keySet()) {
+                chart.addNewAxId().setVal(id);
+            }
         }
         defineAxes(chart.getAxIdArray(), categories, values);
     }
@@ -96,7 +109,78 @@ public class XDDFScatterChartData extends XDDFChartData {
 
         @Override
         protected CTSerTx getSeriesText() {
-            return series.getTx();
+            if (series.isSetTx()) {
+                return series.getTx();
+            } else {
+                return series.addNewTx();
+            }
+        }
+
+        /**
+         * @since 4.0.1
+         */
+        public Boolean getSmooth() {
+            if (series.isSetSmooth()) {
+                return series.getSmooth().getVal();
+            } else {
+                return null;
+            }
+        }
+
+        /**
+         * @param smooth
+         *        whether or not to smooth lines, if <code>null</code> then reverts to default.
+         * @since 4.0.1
+         */
+        public void setSmooth(Boolean smooth) {
+            if (smooth == null) {
+                if (series.isSetSmooth()) {
+                    series.unsetSmooth();
+                }
+            } else {
+                if (series.isSetSmooth()) {
+                    series.getSmooth().setVal(smooth);
+                } else {
+                    series.addNewSmooth().setVal(smooth);
+                }
+            }
+        }
+
+        /**
+         * @param size
+         * <dl><dt>Minimum inclusive:</dt><dd>2</dd><dt>Maximum inclusive:</dt><dd>72</dd></dl>
+         * @since 4.0.1
+         */
+        public void setMarkerSize(short size) {
+            if (size < 2 || 72 < size) {
+                throw new IllegalArgumentException("Minimum inclusive: 2; Maximum inclusive: 72");
+            }
+            CTMarker marker = getMarker();
+            if (marker.isSetSize()) {
+                marker.getSize().setVal(size);
+            } else {
+                marker.addNewSize().setVal(size);
+            }
+        }
+
+        /**
+         * @since 4.0.1
+         */
+        public void setMarkerStyle(MarkerStyle style) {
+            CTMarker marker = getMarker();
+            if (marker.isSetSymbol()) {
+                marker.getSymbol().setVal(style.underlying);
+            } else {
+                marker.addNewSymbol().setVal(style.underlying);
+            }
+        }
+
+        private CTMarker getMarker() {
+            if (series.isSetMarker()) {
+                return series.getMarker();
+            } else {
+                return series.addNewMarker();
+            }
         }
 
         @Override

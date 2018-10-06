@@ -54,7 +54,7 @@ public class XSSFComment implements Comment {
 
         // we potentially need to adjust the column/row information in the shape
         // the same way as we do in setRow()/setColumn()
-        if(vmlShape != null && vmlShape.sizeOfClientDataArray() > 0) {
+        if(comment != null && vmlShape != null && vmlShape.sizeOfClientDataArray() > 0) {
             CellReference ref = new CellReference(comment.getRef());
             CTClientData clientData = vmlShape.getClientDataArray(0);
             clientData.setRowArray(0, new BigInteger(String.valueOf(ref.getRow())));
@@ -70,7 +70,7 @@ public class XSSFComment implements Comment {
      */
     @Override
     public String getAuthor() {
-        return _comments.getAuthor((int) _comment.getAuthorId());
+        return _comments.getAuthor(_comment.getAuthorId());
     }
 
     /**
@@ -80,9 +80,7 @@ public class XSSFComment implements Comment {
      */
     @Override
     public void setAuthor(String author) {
-        _comment.setAuthorId(
-                _comments.findAuthor(author)
-        );
+        _comment.setAuthorId(_comments.findAuthor(author));
     }
 
     /**

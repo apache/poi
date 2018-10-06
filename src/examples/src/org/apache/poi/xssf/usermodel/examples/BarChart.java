@@ -28,8 +28,10 @@ import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
 import org.apache.poi.xddf.usermodel.XDDFSolidFillProperties;
 import org.apache.poi.xddf.usermodel.chart.AxisCrosses;
 import org.apache.poi.xddf.usermodel.chart.AxisPosition;
+import org.apache.poi.xddf.usermodel.chart.BarDirection;
 import org.apache.poi.xddf.usermodel.chart.ChartTypes;
 import org.apache.poi.xddf.usermodel.chart.LegendPosition;
+import org.apache.poi.xddf.usermodel.chart.XDDFBarChartData;
 import org.apache.poi.xddf.usermodel.chart.XDDFCategoryAxis;
 import org.apache.poi.xddf.usermodel.chart.XDDFChartData;
 import org.apache.poi.xddf.usermodel.chart.XDDFChartLegend;
@@ -61,7 +63,7 @@ public class BarChart {
                 row = sheet.createRow((short) rowIndex);
                 for (int colIndex = 0; colIndex < NUM_OF_COLUMNS; colIndex++) {
                     cell = row.createCell((short) colIndex);
-                    cell.setCellValue(colIndex * (rowIndex + 1));
+                    cell.setCellValue(colIndex * (rowIndex + 1.0));
                 }
             }
 
@@ -69,12 +71,16 @@ public class BarChart {
             XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 0, 5, 10, 15);
 
             XSSFChart chart = drawing.createChart(anchor);
+            chart.setTitleText("x = 2x and x = 3x");
+            chart.setTitleOverlay(false);
             XDDFChartLegend legend = chart.getOrAddLegend();
             legend.setPosition(LegendPosition.TOP_RIGHT);
 
             // Use a category axis for the bottom axis.
             XDDFCategoryAxis bottomAxis = chart.createCategoryAxis(AxisPosition.BOTTOM);
+            bottomAxis.setTitle("x"); // https://stackoverflow.com/questions/32010765
             XDDFValueAxis leftAxis = chart.createValueAxis(AxisPosition.LEFT);
+            leftAxis.setTitle("f(x)");
             leftAxis.setCrosses(AxisCrosses.AUTO_ZERO);
 
             XDDFDataSource<Double> xs = XDDFDataSourcesFactory.fromNumericCellRange(sheet, new CellRangeAddress(0, 0, 0, NUM_OF_COLUMNS - 1));
@@ -82,23 +88,36 @@ public class BarChart {
             XDDFNumericalDataSource<Double> ys2 = XDDFDataSourcesFactory.fromNumericCellRange(sheet, new CellRangeAddress(2, 2, 0, NUM_OF_COLUMNS - 1));
 
             XDDFChartData data = chart.createData(ChartTypes.BAR, bottomAxis, leftAxis);
-            data.addSeries(xs, ys1);
-            data.addSeries(xs, ys2);
+            XDDFChartData.Series series1 = data.addSeries(xs, ys1);
+            series1.setTitle("2x", null); // https://stackoverflow.com/questions/21855842
+            XDDFChartData.Series series2 = data.addSeries(xs, ys2);
+            series2.setTitle("3x", null);
             chart.plot(data);
 
-            XDDFSolidFillProperties fill = new XDDFSolidFillProperties(XDDFColor.from(PresetColor.CHARTREUSE));
-            XDDFChartData.Series firstSeries = data.getSeries().get(0);
-            XDDFShapeProperties properties = firstSeries.getShapeProperties();
-            if (properties == null) {
-                properties = new XDDFShapeProperties();
-            }
-            properties.setFillProperties(fill);
-            firstSeries.setShapeProperties(properties);
+            // in order to transform a bar chart into a column chart, you just need to change the bar direction
+            XDDFBarChartData bar = (XDDFBarChartData) data;
+            bar.setBarDirection(BarDirection.COL);
+            // looking for "Stacked Bar Chart"? uncomment the following line
+            // bar.setBarGrouping(BarGrouping.STACKED);
+
+            solidFillSeries(data, 0, PresetColor.CHARTREUSE);
+            solidFillSeries(data, 1, PresetColor.TURQUOISE);
 
             // Write the output to a file
             try (FileOutputStream fileOut = new FileOutputStream("ooxml-bar-chart.xlsx")) {
                 wb.write(fileOut);
             }
         }
+    }
+
+    private static void solidFillSeries(XDDFChartData data, int index, PresetColor color) {
+        XDDFSolidFillProperties fill = new XDDFSolidFillProperties(XDDFColor.from(color));
+        XDDFChartData.Series series = data.getSeries().get(index);
+        XDDFShapeProperties properties = series.getShapeProperties();
+        if (properties == null) {
+            properties = new XDDFShapeProperties();
+        }
+        properties.setFillProperties(fill);
+        series.setShapeProperties(properties);
     }
 }

@@ -70,6 +70,19 @@ public class XDDFTextBody {
         return p;
     }
 
+    public void setText(String text) {
+        if (_body.sizeOfPArray() > 0) {
+            // remove all but first paragraph
+            for (int i = _body.sizeOfPArray() - 1; i > 0; i--) {
+                _body.removeP(i);
+            }
+            getParagraph(0).setText(text);
+        } else {
+            // as there were no paragraphs yet, initialize the text body
+            initialize().setText(text);
+        }
+    }
+
     public XDDFTextParagraph addNewParagraph() {
         return new XDDFTextParagraph(_body.addNewP(), this);
     }

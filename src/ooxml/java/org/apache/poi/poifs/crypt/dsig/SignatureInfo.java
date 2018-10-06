@@ -150,7 +150,7 @@ import org.w3c.dom.events.EventTarget;
  * <p>To use SignatureInfo and its sibling classes, you'll need to have the following libs
  * in the classpath:</p>
  * <ul>
- * <li>BouncyCastle bcpkix and bcprov (tested against 1.59)</li>
+ * <li>BouncyCastle bcpkix and bcprov (tested against 1.60)</li>
  * <li>Apache Santuario "xmlsec" (tested against 2.1.0)</li>
  * <li>and slf4j-api (tested against 1.7.25)</li>
  * </ul>

@@ -55,10 +55,6 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrRef;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTitle;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTValAx;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextField;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
@@ -262,19 +258,6 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
 
     /**
      * Returns the title static text, or null if none is set. Note that a title
-     * formula may be set instead.
-     *
-     * @return static title text, if set
-     * @deprecated POI 3.16, use {@link #getTitleText()} instead.
-     */
-    @Deprecated
-    @Removal(version = "4.0")
-    public XSSFRichTextString getTitle() {
-        return getTitleText();
-    }
-
-    /**
-     * Returns the title static text, or null if none is set. Note that a title
      * formula may be set instead. Empty text result is for backward
      * compatibility, and could mean the title text is empty or there is a
      * formula instead. Check for a formula first, falling back on text for
@@ -305,59 +288,6 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
         }
 
         return new XSSFRichTextString(text.toString());
-    }
-
-    /**
-     * Sets the title text as a static string.
-     *
-     * @param newTitle
-     *            to use
-     */
-    public void setTitleText(String newTitle) {
-        CTTitle ctTitle;
-        if (chart.isSetTitle()) {
-            ctTitle = chart.getTitle();
-        } else {
-            ctTitle = chart.addNewTitle();
-        }
-
-        CTTx tx;
-        if (ctTitle.isSetTx()) {
-            tx = ctTitle.getTx();
-        } else {
-            tx = ctTitle.addNewTx();
-        }
-
-        if (tx.isSetStrRef()) {
-            tx.unsetStrRef();
-        }
-
-        CTTextBody rich;
-        if (tx.isSetRich()) {
-            rich = tx.getRich();
-        } else {
-            rich = tx.addNewRich();
-            rich.addNewBodyPr(); // body properties must exist (but can be
-                                 // empty)
-        }
-
-        CTTextParagraph para;
-        if (rich.sizeOfPArray() > 0) {
-            para = rich.getPArray(0);
-        } else {
-            para = rich.addNewP();
-        }
-
-        if (para.sizeOfRArray() > 0) {
-            CTRegularTextRun run = para.getRArray(0);
-            run.setT(newTitle);
-        } else if (para.sizeOfFldArray() > 0) {
-            CTTextField fld = para.getFldArray(0);
-            fld.setT(newTitle);
-        } else {
-            CTRegularTextRun run = para.addNewR();
-            run.setT(newTitle);
-        }
     }
 
     /**

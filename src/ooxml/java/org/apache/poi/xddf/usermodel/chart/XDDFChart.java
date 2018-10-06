@@ -70,7 +70,6 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTScatterChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTSerAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTSurface;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTitle;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTTx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTValAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.ChartSpaceDocument;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
@@ -215,6 +214,72 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
     }
 
     /**
+     * @since 4.0.1
+     *
+     */
+    public void displayBlanksAs(DisplayBlanks as) {
+        if (as == null){
+            if (chart.isSetDispBlanksAs()) {
+                chart.unsetDispBlanksAs();
+            }
+        } else {
+            if (chart.isSetDispBlanksAs()) {
+              chart.getDispBlanksAs().setVal(as.underlying);
+            } else {
+                chart.addNewDispBlanksAs().setVal(as.underlying);
+            }
+        }
+    }
+
+    /**
+     * @since 4.0.1
+     */
+    public Boolean getTitleOverlay() {
+        if (chart.isSetTitle()) {
+            CTTitle title = chart.getTitle();
+            if (title.isSetOverlay()) {
+                return title.getOverlay().getVal();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @since 4.0.1
+     */
+    public void setTitleOverlay(boolean overlay) {
+        if (!chart.isSetTitle()) {
+            chart.addNewTitle();
+        }
+        new XDDFTitle(this, chart.getTitle()).setOverlay(overlay);
+    }
+
+    /**
+     * Sets the title text as a static string.
+     *
+     * @param text
+     *            to use as new title
+     * @since 4.0.1
+     */
+    public void setTitleText(String text) {
+        if (!chart.isSetTitle()) {
+            chart.addNewTitle();
+        }
+        new XDDFTitle(this, chart.getTitle()).setText(text);
+    }
+
+    /**
+     * @since 4.0.1
+     */
+    public XDDFTitle getTitle() {
+        if (chart.isSetTitle()) {
+            return new XDDFTitle(this, chart.getTitle());
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Get the chart title body if there is one, i.e. title is set and is not a
      * formula.
      *
@@ -225,15 +290,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
         if (!chart.isSetTitle()) {
             return null;
         }
-        CTTitle title = chart.getTitle();
-        if (!title.isSetTx()) {
-            return null;
-        }
-        CTTx tx = title.getTx();
-        if (!tx.isSetRich()) {
-            return null;
-        }
-        return new XDDFTextBody(this, tx.getRich());
+        return new XDDFTitle(this, chart.getTitle()).getBody();
     }
 
     @Override
@@ -327,7 +384,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
     private Map<Long, XDDFChartAxis> getCategoryAxes() {
         CTPlotArea plotArea = getCTPlotArea();
         int sizeOfArray = plotArea.sizeOfCatAxArray();
-        Map<Long, XDDFChartAxis> axes = new HashMap<Long, XDDFChartAxis>(sizeOfArray);
+        Map<Long, XDDFChartAxis> axes = new HashMap<>(sizeOfArray);
         for (int i = 0; i < sizeOfArray; i++) {
             CTCatAx category = plotArea.getCatAxArray(i);
             axes.put(category.getAxId().getVal(), new XDDFCategoryAxis(category));
@@ -641,20 +698,22 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
     }
 
     /**
-     * set sheet time in excel file
+     * set sheet title in excel file
      *
      * @param title
      *            title of sheet
+     * @param column
+     *            column index
      * @return return cell reference
      * @since POI 4.0.0
      */
-    public CellReference setSheetTitle(String title) {
+    public CellReference setSheetTitle(String title, int column) {
         XSSFSheet sheet = getSheet();
         XSSFRow row = this.getRow(sheet, 0);
-        XSSFCell cell = this.getCell(row, 1);
+        XSSFCell cell = this.getCell(row, column);
         cell.setCellValue(title);
-        this.updateSheetTable(sheet.getTables().get(0).getCTTable(), title, 1);
-        return new CellReference(sheet.getSheetName(), 0, 1, true, true);
+        this.updateSheetTable(sheet.getTables().get(0).getCTTable(), title, column);
+        return new CellReference(sheet.getSheetName(), 0, column, true, true);
     }
 
     /**
@@ -670,12 +729,11 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
     private void updateSheetTable(CTTable ctTable, String title, int index) {
         CTTableColumns tableColumnList = ctTable.getTableColumns();
         CTTableColumn column = null;
-        if (tableColumnList.getCount() >= index) {
-            column = tableColumnList.getTableColumnArray(index);
-        } else {
+        for( int i = 0; tableColumnList.getCount() < index; i++) {
             column = tableColumnList.addNewTableColumn();
-            column.setId(index);
+            column.setId(i);
         }
+        column = tableColumnList.getTableColumnArray(index);
         column.setName(title);
     }
 

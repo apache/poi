@@ -372,8 +372,8 @@ public class XMLSlideShow extends POIXMLDocument
         }
 
         if (!themeIndexList.isEmpty()) {
-            Boolean found = false;
-            for (Integer i = 1; i <= themeIndexList.size(); i++) {
+            boolean found = false;
+            for (int i = 1; i <= themeIndexList.size(); i++) {
                 if (!themeIndexList.contains(i)) {
                     found = true;
                     themeIndex = i;

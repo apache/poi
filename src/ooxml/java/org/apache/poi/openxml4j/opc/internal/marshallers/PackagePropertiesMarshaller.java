@@ -21,8 +21,6 @@ import java.io.OutputStream;
 import java.util.Optional;
 
 import javax.xml.XMLConstants;
-import javax.xml.stream.XMLEventFactory;
-import javax.xml.stream.events.Namespace;
 
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -36,105 +34,109 @@ import org.w3c.dom.Element;
  * Package properties marshaller.
  */
 public class PackagePropertiesMarshaller implements PartMarshaller {
-    private final static Namespace namespaceDC, namespaceCoreProperties, namespaceDcTerms, namespaceXSI;
-	static {
-	    final XMLEventFactory f = XMLEventFactory.newInstance();
-	    namespaceDC = f.createNamespace("dc", PackagePropertiesPart.NAMESPACE_DC_URI);
-	    namespaceCoreProperties = f.createNamespace("cp", PackagePropertiesPart.NAMESPACE_CP_URI);
-	    namespaceDcTerms = f.createNamespace("dcterms", PackagePropertiesPart.NAMESPACE_DCTERMS_URI);
-	    namespaceXSI = f.createNamespace("xsi", XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);
-	}
+    private final static NamespaceImpl namespaceDC =
+            new NamespaceImpl("dc", PackagePropertiesPart.NAMESPACE_DC_URI);
+    private final static NamespaceImpl namespaceCoreProperties =
+            new NamespaceImpl("cp", PackagePropertiesPart.NAMESPACE_CP_URI);;
+    private final static NamespaceImpl namespaceDcTerms =
+            new NamespaceImpl("dcterms", PackagePropertiesPart.NAMESPACE_DCTERMS_URI);
+    private final static NamespaceImpl namespaceXSI =
+            new NamespaceImpl("xsi", XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);;
 
-	protected static final String KEYWORD_CATEGORY = "category";
+    protected static final String KEYWORD_CATEGORY = "category";
 
-	protected static final String KEYWORD_CONTENT_STATUS = "contentStatus";
+    protected static final String KEYWORD_CONTENT_STATUS = "contentStatus";
 
-	protected static final String KEYWORD_CONTENT_TYPE = "contentType";
+    protected static final String KEYWORD_CONTENT_TYPE = "contentType";
 
-	protected static final String KEYWORD_CREATED = "created";
+    protected static final String KEYWORD_CREATED = "created";
 
-	protected static final String KEYWORD_CREATOR = "creator";
+    protected static final String KEYWORD_CREATOR = "creator";
 
-	protected static final String KEYWORD_DESCRIPTION = "description";
+    protected static final String KEYWORD_DESCRIPTION = "description";
 
-	protected static final String KEYWORD_IDENTIFIER = "identifier";
+    protected static final String KEYWORD_IDENTIFIER = "identifier";
 
-	protected static final String KEYWORD_KEYWORDS = "keywords";
+    protected static final String KEYWORD_KEYWORDS = "keywords";
 
-	protected static final String KEYWORD_LANGUAGE = "language";
+    protected static final String KEYWORD_LANGUAGE = "language";
 
-	protected static final String KEYWORD_LAST_MODIFIED_BY = "lastModifiedBy";
+    protected static final String KEYWORD_LAST_MODIFIED_BY = "lastModifiedBy";
 
-	protected static final String KEYWORD_LAST_PRINTED = "lastPrinted";
+    protected static final String KEYWORD_LAST_PRINTED = "lastPrinted";
 
-	protected static final String KEYWORD_MODIFIED = "modified";
+    protected static final String KEYWORD_MODIFIED = "modified";
 
-	protected static final String KEYWORD_REVISION = "revision";
+    protected static final String KEYWORD_REVISION = "revision";
 
-	protected static final String KEYWORD_SUBJECT = "subject";
+    protected static final String KEYWORD_SUBJECT = "subject";
 
-	protected static final String KEYWORD_TITLE = "title";
+    protected static final String KEYWORD_TITLE = "title";
 
-	protected static final String KEYWORD_VERSION = "version";
+    protected static final String KEYWORD_VERSION = "version";
 
-	PackagePropertiesPart propsPart;
+    PackagePropertiesPart propsPart;
 
-	// The document
-	Document xmlDoc;
+    // The document
+    Document xmlDoc;
 
-	/**
-	 * Marshall package core properties to an XML document. Always return
-	 * <code>true</code>.
-	 */
-	@Override
-	public boolean marshall(PackagePart part, OutputStream out)
-			throws OpenXML4JException {
-		if (!(part instanceof PackagePropertiesPart))
-			throw new IllegalArgumentException(
-					"'part' must be a PackagePropertiesPart instance.");
-		propsPart = (PackagePropertiesPart) part;
+    /**
+     * Marshall package core properties to an XML document. Always return
+     * <code>true</code>.
+     */
+    @Override
+    public boolean marshall(PackagePart part, OutputStream out)
+            throws OpenXML4JException {
+        if (!(part instanceof PackagePropertiesPart))
+            throw new IllegalArgumentException(
+                    "'part' must be a PackagePropertiesPart instance.");
+        propsPart = (PackagePropertiesPart) part;
 
-		// Configure the document
-		xmlDoc = DocumentHelper.createDocument();
+        // Configure the document
+        xmlDoc = DocumentHelper.createDocument();
         Element rootElem = xmlDoc.createElementNS(namespaceCoreProperties.getNamespaceURI(),
                 getQName("coreProperties", namespaceCoreProperties));
-        DocumentHelper.addNamespaceDeclaration(rootElem, namespaceCoreProperties);
-        DocumentHelper.addNamespaceDeclaration(rootElem, namespaceDC);
-        DocumentHelper.addNamespaceDeclaration(rootElem, namespaceDcTerms);
-        DocumentHelper.addNamespaceDeclaration(rootElem, namespaceXSI);
+        DocumentHelper.addNamespaceDeclaration(rootElem,
+                namespaceCoreProperties.getPrefix(), namespaceCoreProperties.getNamespaceURI());
+        DocumentHelper.addNamespaceDeclaration(rootElem,
+                namespaceDC.getPrefix(), namespaceDC.getNamespaceURI());
+        DocumentHelper.addNamespaceDeclaration(rootElem,
+                namespaceDcTerms.getPrefix(), namespaceDcTerms.getNamespaceURI());
+        DocumentHelper.addNamespaceDeclaration(rootElem,
+                namespaceXSI.getPrefix(), namespaceXSI.getNamespaceURI());
         xmlDoc.appendChild(rootElem);
 
-		addCategory();
-		addContentStatus();
-		addContentType();
-		addCreated();
-		addCreator();
-		addDescription();
-		addIdentifier();
-		addKeywords();
-		addLanguage();
-		addLastModifiedBy();
-		addLastPrinted();
-		addModified();
-		addRevision();
-		addSubject();
-		addTitle();
-		addVersion();
-		return true;
-	}
+        addCategory();
+        addContentStatus();
+        addContentType();
+        addCreated();
+        addCreator();
+        addDescription();
+        addIdentifier();
+        addKeywords();
+        addLanguage();
+        addLastModifiedBy();
+        addLastPrinted();
+        addModified();
+        addRevision();
+        addSubject();
+        addTitle();
+        addVersion();
+        return true;
+    }
 
     /**
      * Sets the given element's text content, creating it if necessary.
      */
-    private Element setElementTextContent(String localName, Namespace namespace, Optional<String> property) {
+    private Element setElementTextContent(String localName, NamespaceImpl namespace, Optional<String> property) {
         return setElementTextContent(localName, namespace, property, property.orElse(null));
     }
-    
-    private String getQName(String localName, Namespace namespace) {
+
+    private String getQName(String localName, NamespaceImpl namespace) {
         return namespace.getPrefix().isEmpty() ? localName : namespace.getPrefix() + ':' + localName;
     }
 
-    private Element setElementTextContent(String localName, Namespace namespace, Optional<?> property, String propertyValue) {
+    private Element setElementTextContent(String localName, NamespaceImpl namespace, Optional<?> property, String propertyValue) {
         if (!property.isPresent())
             return null;
 
@@ -149,7 +151,7 @@ public class PackagePropertiesMarshaller implements PartMarshaller {
         return elem;
     }
 
-    private Element setElementTextContent(String localName, Namespace namespace, Optional<?> property, String propertyValue, String xsiType) {
+    private Element setElementTextContent(String localName, NamespaceImpl namespace, Optional<?> property, String propertyValue, String xsiType) {
         Element element = setElementTextContent(localName, namespace, property, propertyValue);
         if (element != null) {
             element.setAttributeNS(namespaceXSI.getNamespaceURI(), getQName("type", namespaceXSI), xsiType);
@@ -159,114 +161,129 @@ public class PackagePropertiesMarshaller implements PartMarshaller {
 
 
     /**
-	 * Add category property element if needed.
-	 */
-	private void addCategory() {
+     * Add category property element if needed.
+     */
+    private void addCategory() {
         setElementTextContent(KEYWORD_CATEGORY, namespaceCoreProperties, propsPart.getCategoryProperty());
-	}
-
-	/**
-	 * Add content status property element if needed.
-	 */
-	private void addContentStatus() {
-        setElementTextContent(KEYWORD_CONTENT_STATUS, namespaceCoreProperties, propsPart.getContentStatusProperty());
-	}
-
-	/**
-	 * Add content type property element if needed.
-	 */
-	private void addContentType() {
-        setElementTextContent(KEYWORD_CONTENT_TYPE, namespaceCoreProperties, propsPart.getContentTypeProperty());
-	}
-
-	/**
-	 * Add created property element if needed.
-	 */
-	private void addCreated() {
-        setElementTextContent(KEYWORD_CREATED, namespaceDcTerms, propsPart.getCreatedProperty(),
-                propsPart.getCreatedPropertyString(), "dcterms:W3CDTF");
-	}
-
-	/**
-	 * Add creator property element if needed.
-	 */
-	private void addCreator() {
-        setElementTextContent(KEYWORD_CREATOR, namespaceDC, propsPart.getCreatorProperty());
-	}
-
-	/**
-	 * Add description property element if needed.
-	 */
-	private void addDescription() {
-        setElementTextContent(KEYWORD_DESCRIPTION, namespaceDC, propsPart.getDescriptionProperty());
-	}
-
-	/**
-	 * Add identifier property element if needed.
-	 */
-	private void addIdentifier() {
-        setElementTextContent(KEYWORD_IDENTIFIER, namespaceDC, propsPart.getIdentifierProperty());
-	}
+    }
 
     /**
-	 * Add keywords property element if needed.
-	 */
-	private void addKeywords() {
+     * Add content status property element if needed.
+     */
+    private void addContentStatus() {
+        setElementTextContent(KEYWORD_CONTENT_STATUS, namespaceCoreProperties, propsPart.getContentStatusProperty());
+    }
+
+    /**
+     * Add content type property element if needed.
+     */
+    private void addContentType() {
+        setElementTextContent(KEYWORD_CONTENT_TYPE, namespaceCoreProperties, propsPart.getContentTypeProperty());
+    }
+
+    /**
+     * Add created property element if needed.
+     */
+    private void addCreated() {
+        setElementTextContent(KEYWORD_CREATED, namespaceDcTerms, propsPart.getCreatedProperty(),
+                propsPart.getCreatedPropertyString(), "dcterms:W3CDTF");
+    }
+
+    /**
+     * Add creator property element if needed.
+     */
+    private void addCreator() {
+        setElementTextContent(KEYWORD_CREATOR, namespaceDC, propsPart.getCreatorProperty());
+    }
+
+    /**
+     * Add description property element if needed.
+     */
+    private void addDescription() {
+        setElementTextContent(KEYWORD_DESCRIPTION, namespaceDC, propsPart.getDescriptionProperty());
+    }
+
+    /**
+     * Add identifier property element if needed.
+     */
+    private void addIdentifier() {
+        setElementTextContent(KEYWORD_IDENTIFIER, namespaceDC, propsPart.getIdentifierProperty());
+    }
+
+    /**
+     * Add keywords property element if needed.
+     */
+    private void addKeywords() {
         setElementTextContent(KEYWORD_KEYWORDS, namespaceCoreProperties, propsPart.getKeywordsProperty());
-	}
+    }
 
-	/**
-	 * Add language property element if needed.
-	 */
-	private void addLanguage() {
+    /**
+     * Add language property element if needed.
+     */
+    private void addLanguage() {
         setElementTextContent(KEYWORD_LANGUAGE, namespaceDC, propsPart.getLanguageProperty());
-	}
+    }
 
-	/**
-	 * Add 'last modified by' property if needed.
-	 */
-	private void addLastModifiedBy() {
+    /**
+     * Add 'last modified by' property if needed.
+     */
+    private void addLastModifiedBy() {
         setElementTextContent(KEYWORD_LAST_MODIFIED_BY, namespaceCoreProperties, propsPart.getLastModifiedByProperty());
-	}
+    }
 
-	/**
-	 * Add 'last printed' property if needed.
-	 *
-	 */
-	private void addLastPrinted() {
+    /**
+     * Add 'last printed' property if needed.
+     */
+    private void addLastPrinted() {
         setElementTextContent(KEYWORD_LAST_PRINTED, namespaceCoreProperties, propsPart.getLastPrintedProperty(), propsPart.getLastPrintedPropertyString());
-	}
+    }
 
-	/**
-	 * Add modified property element if needed.
-	 */
-	private void addModified() {
+    /**
+     * Add modified property element if needed.
+     */
+    private void addModified() {
         setElementTextContent(KEYWORD_MODIFIED, namespaceDcTerms, propsPart.getModifiedProperty(),
                 propsPart.getModifiedPropertyString(), "dcterms:W3CDTF");
     }
 
-	/**
-	 * Add revision property if needed.
-	 */
-	private void addRevision() {
+    /**
+     * Add revision property if needed.
+     */
+    private void addRevision() {
         setElementTextContent(KEYWORD_REVISION, namespaceCoreProperties, propsPart.getRevisionProperty());
-	}
+    }
 
-	/**
-	 * Add subject property if needed.
-	 */
-	private void addSubject() {
+    /**
+     * Add subject property if needed.
+     */
+    private void addSubject() {
         setElementTextContent(KEYWORD_SUBJECT, namespaceDC, propsPart.getSubjectProperty());
-	}
+    }
 
-	/**
-	 * Add title property if needed.
-	 */
-	private void addTitle() {
+    /**
+     * Add title property if needed.
+     */
+    private void addTitle() {
         setElementTextContent(KEYWORD_TITLE, namespaceDC, propsPart.getTitleProperty());
-	}
+    }
 
-	private void addVersion() {
+    private void addVersion() {
         setElementTextContent(KEYWORD_VERSION, namespaceCoreProperties, propsPart.getVersionProperty());
-	}
+    }
+
+    private static class NamespaceImpl {
+        private final String prefix;
+        private final String namespaceURI;
+
+        NamespaceImpl(String prefix, String namespaceURI) {
+            this.prefix = prefix;
+            this.namespaceURI = namespaceURI;
+        }
+
+        public String getPrefix() { return prefix; }
+
+        public String getNamespaceURI() {
+            return namespaceURI;
+        }
+    }
 }

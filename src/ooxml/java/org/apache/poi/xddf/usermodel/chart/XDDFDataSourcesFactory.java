@@ -41,45 +41,61 @@ public class XDDFDataSourcesFactory {
     }
 
     public static XDDFCategoryDataSource fromDataSource(final CTAxDataSource categoryDS) {
-        return new XDDFCategoryDataSource() {
-            private CTStrData category = (CTStrData) categoryDS.getStrRef().getStrCache().copy();
+        if (categoryDS.getStrRef() == null) {
+            return new XDDFCategoryDataSource() {
+                private CTNumData category = (CTNumData) categoryDS.getNumRef().getNumCache().copy();
 
-            @Override
-            public boolean isNumeric() {
-                return false;
-            }
+                @Override
+                public boolean isNumeric() {
+                    return true;
+                }
 
-            @Override
-            public boolean isReference() {
-                return true;
-            }
+                @Override
+                public String getFormula() {
+                    return categoryDS.getNumRef().getF();
+                }
 
-            @Override
-            public int getPointCount() {
-                return (int) category.getPtCount().getVal();
-            }
+                @Override
+                public int getPointCount() {
+                    return (int) category.getPtCount().getVal();
+                }
 
-            @Override
-            public String getPointAt(int index) {
-                return category.getPtArray(index).getV();
-            }
+                @Override
+                public String getPointAt(int index) {
+                    return category.getPtArray(index).getV();
+                }
+            };
+        } else {
+            return new XDDFCategoryDataSource() {
+                private CTStrData category = (CTStrData) categoryDS.getStrRef().getStrCache().copy();
 
-            @Override
-            public String getDataRangeReference() {
-                return categoryDS.getStrRef().getF();
-            }
+                @Override
+                public String getFormula() {
+                    return categoryDS.getStrRef().getF();
+                }
 
-            @Override
-            public int getColIndex() {
-                return 0;
-            }
-        };
+                @Override
+                public int getPointCount() {
+                    return (int) category.getPtCount().getVal();
+                }
+
+                @Override
+                public String getPointAt(int index) {
+                    return category.getPtArray(index).getV();
+                }
+            };
+        }
     }
 
     public static XDDFNumericalDataSource<Double> fromDataSource(final CTNumDataSource valuesDS) {
         return new XDDFNumericalDataSource<Double>() {
             private CTNumData values = (CTNumData) valuesDS.getNumRef().getNumCache().copy();
             private String formatCode = values.isSetFormatCode() ? values.getFormatCode() : null;
+
+            @Override
+            public String getFormula() {
+                return valuesDS.getNumRef().getF();
+            }
 
             @Override
             public String getFormatCode() {
@@ -124,7 +140,7 @@ public class XDDFDataSourcesFactory {
     }
 
     public static <T extends Number> XDDFNumericalDataSource<T> fromArray(T[] elements, String dataRange) {
-        return new NumericalArrayDataSource<T>(elements, dataRange);
+        return new NumericalArrayDataSource<>(elements, dataRange);
     }
 
     public static XDDFCategoryDataSource fromArray(String[] elements, String dataRange) {
@@ -132,7 +148,7 @@ public class XDDFDataSourcesFactory {
     }
 
     public static <T extends Number> XDDFNumericalDataSource<T> fromArray(T[] elements, String dataRange, int col) {
-        return new NumericalArrayDataSource<T>(elements, dataRange, col);
+        return new NumericalArrayDataSource<>(elements, dataRange, col);
     }
 
     public static XDDFCategoryDataSource fromArray(String[] elements, String dataRange, int col) {
@@ -213,6 +229,11 @@ public class XDDFDataSourcesFactory {
         }
 
         @Override
+        public String getFormula() {
+            return getDataRangeReference();
+        }
+
+        @Override
         public String getFormatCode() {
             return formatCode;
         }
@@ -231,6 +252,11 @@ public class XDDFDataSourcesFactory {
 
         public StringArrayDataSource(String[] elements, String dataRange, int col) {
             super(elements, dataRange, col);
+        }
+
+        @Override
+        public String getFormula() {
+            return getDataRangeReference();
         }
     }
 
@@ -290,6 +316,11 @@ public class XDDFDataSourcesFactory {
             super(sheet, cellRangeAddress);
         }
 
+        @Override
+        public String getFormula() {
+            return getDataRangeReference();
+        }
+
         private String formatCode;
 
         @Override
@@ -322,6 +353,11 @@ public class XDDFDataSourcesFactory {
             implements XDDFCategoryDataSource {
         protected StringCellRangeDataSource(XSSFSheet sheet, CellRangeAddress cellRangeAddress) {
             super(sheet, cellRangeAddress);
+        }
+
+        @Override
+        public String getFormula() {
+            return getDataRangeReference();
         }
 
         @Override

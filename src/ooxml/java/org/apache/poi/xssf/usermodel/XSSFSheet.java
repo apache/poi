@@ -2262,8 +2262,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         }
     }
 
-    private void unsetCollapsed(boolean collapsed, CTCol ci) {
-        if (collapsed) {
+    private void unsetCollapsed(Boolean collapsed, CTCol ci) {
+        if (collapsed != null && collapsed.booleanValue()) {
             ci.setCollapsed(collapsed);
         } else {
             ci.unsetCollapsed();
@@ -2410,7 +2410,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         boolean endHidden = false;
         int endOfOutlineGroupIdx = findEndOfColumnOutlineGroup(idx);
         CTCol[] colArray = cols.getColArray();
-        if (endOfOutlineGroupIdx < colArray.length) {
+        if (endOfOutlineGroupIdx < (colArray.length - 1)) {
             CTCol nextInfo = colArray[endOfOutlineGroupIdx + 1];
             if (isAdjacentBefore(colArray[endOfOutlineGroupIdx], nextInfo)) {
                 endLevel = nextInfo.getOutlineLevel();
@@ -2900,7 +2900,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
                 //            "Got srcRows[" + (index-1) + "]=Row " + prevRow.getRowNum() + ", srcRows[" + index + "]=Row " + curRow.getRowNum() + ".");
                 // FIXME: assumes row objects belong to non-null sheets and sheets belong to non-null workbooks.
             } else if (srcStartRow.getSheet().getWorkbook() != curRow.getSheet().getWorkbook()) {
-                throw new IllegalArgumentException("All rows in srcRows must belong to the same sheet in the same workbook." +
+                throw new IllegalArgumentException("All rows in srcRows must belong to the same sheet in the same workbook. " +
                         "Expected all rows from same workbook (" + srcStartRow.getSheet().getWorkbook() + "). " +
                         "Got srcRows[" + index + "] from different workbook (" + curRow.getSheet().getWorkbook() + ").");
             } else if (srcStartRow.getSheet() != curRow.getSheet()) {

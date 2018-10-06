@@ -18,7 +18,6 @@
 package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.ss.usermodel.ClientAnchor;
-import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Units;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
@@ -154,12 +153,6 @@ public class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
 //        this.cell2 = calcCell(sheet, cell1, size.getCx(), size.getCy());
     }
     
-    /**
-     *
-     * @param sheet
-     * @param cell starting point and offsets (may be zeros)
-     * @param size dimensions to calculate relative to starting point
-     */
     private CTMarker calcCell(CTMarker cell, long w, long h) {
         CTMarker c2 = CTMarker.Factory.newInstance();
         

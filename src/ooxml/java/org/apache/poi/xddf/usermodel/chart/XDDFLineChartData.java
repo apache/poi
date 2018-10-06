@@ -38,6 +38,18 @@ public class XDDFLineChartData extends XDDFChartData {
         for (CTLineSer series : chart.getSerList()) {
             this.series.add(new Series(series, series.getCat(), series.getVal()));
         }
+        defineAxes(categories, values);
+    }
+
+    private void defineAxes(Map<Long, XDDFChartAxis> categories, Map<Long, XDDFValueAxis> values) {
+        if (chart.sizeOfAxIdArray() == 0) {
+            for (Long id : categories.keySet()) {
+                chart.addNewAxId().setVal(id);
+            }
+            for (Long id : values.keySet()) {
+                chart.addNewAxId().setVal(id);
+            }
+        }
         defineAxes(chart.getAxIdArray(), categories, values);
     }
 
@@ -88,7 +100,11 @@ public class XDDFLineChartData extends XDDFChartData {
 
         @Override
         protected CTSerTx getSeriesText() {
-            return series.getTx();
+            if (series.isSetTx()) {
+                return series.getTx();
+            } else {
+                return series.addNewTx();
+            }
         }
 
         @Override
@@ -127,7 +143,44 @@ public class XDDFLineChartData extends XDDFChartData {
             }
         }
 
+        /**
+         * @since 4.0.1
+         */
+        public Boolean getSmooth() {
+            if (series.isSetSmooth()) {
+                return series.getSmooth().getVal();
+            } else {
+                return null;
+            }
+        }
+
+        /**
+         * @param smooth
+         *        whether or not to smooth lines, if <code>null</code> then reverts to default.
+         * @since 4.0.1
+         */
+        public void setSmooth(Boolean smooth) {
+            if (smooth == null) {
+                if (series.isSetSmooth()) {
+                    series.unsetSmooth();
+                }
+            } else {
+                if (series.isSetSmooth()) {
+                    series.getSmooth().setVal(smooth);
+                } else {
+                    series.addNewSmooth().setVal(smooth);
+                }
+            }
+        }
+
+        /**
+         * @param size
+         * <dl><dt>Minimum inclusive:</dt><dd>2</dd><dt>Maximum inclusive:</dt><dd>72</dd></dl>
+         */
         public void setMarkerSize(short size) {
+            if (size < 2 || 72 < size) {
+                throw new IllegalArgumentException("Minimum inclusive: 2; Maximum inclusive: 72");
+            }
             CTMarker marker = getMarker();
             if (marker.isSetSize()) {
                 marker.getSize().setVal(size);

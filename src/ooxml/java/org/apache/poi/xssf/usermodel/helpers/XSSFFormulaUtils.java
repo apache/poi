@@ -19,6 +19,10 @@
 
 package org.apache.poi.xssf.usermodel.helpers;
 
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaRenderer;
 import org.apache.poi.ss.formula.FormulaType;
@@ -30,10 +34,14 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFChart;
+import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFName;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Utility to update formulas and named ranges when a sheet name was changed
@@ -50,7 +58,7 @@ public final class XSSFFormulaUtils {
     }
 
     /**
-     * Update sheet name in all formulas and named ranges.
+     * Update sheet name in all charts, formulas and named ranges.
      * Called from {@link XSSFWorkbook#setSheetName(int, String)}
      * <p>
      * <p>
@@ -81,6 +89,20 @@ public final class XSSFFormulaUtils {
                 }
             }
         }
+
+        // update charts
+        List<POIXMLDocumentPart> rels = _wb.getSheetAt(sheetIndex).getRelations();
+        for (POIXMLDocumentPart r : rels) {
+            if (r instanceof XSSFDrawing) {
+                XSSFDrawing dg = (XSSFDrawing) r;
+                Iterator<XSSFChart> it = dg.getCharts().iterator();
+                while (it.hasNext()) {
+                    XSSFChart chart = it.next();
+                    Node dom = chart.getCTChartSpace().getDomNode();
+                    updateDomSheetReference(dom, oldName, newName);
+                }
+            }
+        }
     }
 
     /**
@@ -99,7 +121,9 @@ public final class XSSFFormulaUtils {
                     updatePtg(ptg, oldName, newName);
                 }
                 String updatedFormula = FormulaRenderer.toFormulaString(_fpwb, ptgs);
-                if (!formula.equals(updatedFormula)) f.setStringValue(updatedFormula);
+                if (!formula.equals(updatedFormula)) {
+                    f.setStringValue(updatedFormula);
+                }
             }
         }
     }
@@ -119,10 +143,12 @@ public final class XSSFFormulaUtils {
                 updatePtg(ptg, oldName, newName);
             }
             String updatedFormula = FormulaRenderer.toFormulaString(_fpwb, ptgs);
-            if (!formula.equals(updatedFormula)) name.setRefersToFormula(updatedFormula);
+            if (!formula.equals(updatedFormula)) {
+                name.setRefersToFormula(updatedFormula);
+            }
         }
     }
-    
+
     private void updatePtg(Ptg ptg, String oldName, String newName) {
         if (ptg instanceof Pxg) {
             Pxg pxg = (Pxg)ptg;
@@ -141,4 +167,32 @@ public final class XSSFFormulaUtils {
             }
         }
     }
+
+
+    /**
+     * Parse the DOM tree recursively searching for text containing reference to the old sheet name and replacing it.
+     *
+     * @param dom the XML node in which to perform the replacement.
+     *
+     * Code extracted from: <a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=54470">Bug 54470</a>
+     */
+    private void updateDomSheetReference(Node dom, final String oldName, final String newName) {
+        String value = dom.getNodeValue();
+        if (value != null) {
+            // make sure the value contains the old sheet and not a similar sheet
+            // (ex: Valid: 'Sheet1'! or Sheet1! ; NotValid: 'Sheet1Test'! or Sheet1Test!)
+            if (value.contains(oldName+"!") || value.contains(oldName+"'!")) {
+                XSSFName temporary = _wb.createName();
+                temporary.setRefersToFormula(value);
+                updateName(temporary, oldName, newName);
+                dom.setNodeValue(temporary.getRefersToFormula());
+                _wb.removeName(temporary);
+            }
+        }
+        NodeList nl = dom.getChildNodes();
+        for (int i = 0; i < nl.getLength(); i++) {
+            updateDomSheetReference(nl.item(i), oldName, newName);
+        }
+    }
+
 }

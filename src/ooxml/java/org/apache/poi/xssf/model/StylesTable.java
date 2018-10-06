@@ -98,7 +98,7 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
             if (num < 0) {
                 throw new IllegalArgumentException("Maximum Number of Data Formats must be greater than or equal to 0");
             } else {
-                throw new IllegalStateException("Cannot set the maximum number of data formats less than the current quantity." +
+                throw new IllegalStateException("Cannot set the maximum number of data formats less than the current quantity. " +
                         "Data formats must be explicitly removed (via StylesTable.removeNumberFormat) before the limit can be decreased.");
             }
         }
@@ -316,7 +316,7 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
             short nextKey = (short) (numberFormats.lastKey() + 1);
             if (nextKey < 0) {
                 throw new IllegalStateException(
-                        "Cowardly avoiding creating a number format with a negative id." +
+                        "Cowardly avoiding creating a number format with a negative id. " +
                         "This is probably due to arithmetic overflow.");
             }
             formatIndex = (short) Math.max(nextKey, FIRST_USER_DEFINED_NUMBER_FORMAT_ID);
