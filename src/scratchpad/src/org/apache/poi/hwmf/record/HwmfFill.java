@@ -430,13 +430,13 @@ public class HwmfFill {
          * the playback device context, and the destination pixels are to be combined to
          * form the new image.
          */
-        private HwmfTernaryRasterOp rasterOperation;
+        protected HwmfTernaryRasterOp rasterOperation;
 
         /**
          * A 16-bit unsigned integer that defines whether the Colors field of the
          * DIB contains explicit RGB values or indexes into a palette.
          */
-        private ColorUsage colorUsage;
+        protected ColorUsage colorUsage;
 
         /** the source rectangle. */
         protected final Rectangle2D srcBounds = new Rectangle2D.Double();
@@ -448,7 +448,7 @@ public class HwmfFill {
          * A variable-sized DeviceIndependentBitmap Object (section 2.2.2.9) that is the 
          * source of the color data.
          */
-        private HwmfBitmapDib dib;
+        protected final HwmfBitmapDib dib = new HwmfBitmapDib();
         
         @Override
         public HwmfRecordType getWmfRecordType() {
@@ -471,7 +471,6 @@ public class HwmfFill {
             size += readBounds2(leis, srcBounds);
             size += readBounds2(leis, dstBounds);
 
-            dib = new HwmfBitmapDib();
             size += dib.init(leis, (int)(recordSize-6-size));
 
             return size;

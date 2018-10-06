@@ -104,7 +104,7 @@ public enum HemfRecordType {
     maskblt(0x0000004E, UnimplementedHemfRecord::new),
     plgblt(0x0000004F, UnimplementedHemfRecord::new),
     setDiBitsToDevice(0x00000050, HemfFill.EmfSetDiBitsToDevice::new),
-    stretchdibits(0x00000051, UnimplementedHemfRecord::new),
+    stretchDiBits(0x00000051, HemfFill.EmfStretchDiBits::new),
     extCreateFontIndirectW(0x00000052, HemfText.ExtCreateFontIndirectW::new),
     exttextouta(0x00000053, HemfText.EmfExtTextOutA::new),
     exttextoutw(0x00000054, HemfText.EmfExtTextOutW::new),

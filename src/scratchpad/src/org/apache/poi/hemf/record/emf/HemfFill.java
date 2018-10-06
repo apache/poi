@@ -19,7 +19,6 @@ package org.apache.poi.hemf.record.emf;
 
 import static org.apache.poi.hemf.record.emf.HemfDraw.readPointL;
 import static org.apache.poi.hemf.record.emf.HemfDraw.readRectL;
-import static org.apache.poi.hemf.record.emf.HemfRecordIterator.HEADER_SIZE;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
@@ -114,7 +113,7 @@ public class HemfFill {
      * optionally in combination with a brush pattern, according to a specified raster operation, stretching or
      * compressing the output to fit the dimensions of the destination, if necessary.
      */
-    public static class EmfStretchBlt extends HwmfFill.WmfBitBlt implements HemfRecord {
+    public static class EmfStretchBlt extends HwmfFill.WmfBitBlt implements HemfRecord, HemfBounded {
         protected final Rectangle2D bounds = new Rectangle2D.Double();
 
         /** An XForm object that specifies a world-space to page-space transform to apply to the source bitmap. */
@@ -129,11 +128,7 @@ public class HemfFill {
          */
         protected int usageSrc;
 
-        /** The source bitmap header. */
-        protected byte[] bmiSrc;
-
-        /** The source bitmap bits. */
-        protected byte[] bitsSrc;
+        protected final HwmfBitmapDib bitmap = new HwmfBitmapDib();
 
         @Override
         public HemfRecordType getEmfRecordType() {
@@ -142,6 +137,8 @@ public class HemfFill {
 
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
+            int startIdx = leis.getReadIndex();
+
             long size = readRectL(leis, bounds);
 
             size += readBounds2(leis, this.dstBounds);
@@ -190,30 +187,100 @@ public class HemfFill {
                 srcBounds.setRect(srcPnt.getX(), srcPnt.getY(), srcWidth, srcHeight);
             }
 
-            // size + type and size field
-            final int undefinedSpace1 = (int)(offBmiSrc - size - HEADER_SIZE);
-            assert(undefinedSpace1 >= 0);
-            leis.skipFully(undefinedSpace1);
-            size += undefinedSpace1;
-
-            bmiSrc = IOUtils.safelyAllocate(cbBmiSrc, MAX_RECORD_LENGTH);
-            leis.readFully(bmiSrc);
-            size += cbBmiSrc;
-
-            final int undefinedSpace2 = (int)(offBitsSrc - size - HEADER_SIZE);
-            assert(undefinedSpace2 >= 0);
-            leis.skipFully(undefinedSpace2);
-            size += undefinedSpace2;
-
-            bitsSrc = IOUtils.safelyAllocate(cbBitsSrc, MAX_RECORD_LENGTH);
-            leis.readFully(bitsSrc);
-            size += cbBitsSrc;
+            size += readBitmap(leis, bitmap, startIdx, offBmiSrc, cbBmiSrc, offBitsSrc, cbBitsSrc);
 
             return size;
         }
 
+        @Override
+        public Rectangle2D getRecordBounds() {
+            return bounds;
+        }
+
+        @Override
+        public Rectangle2D getShapeBounds(HemfGraphics ctx) {
+            return dstBounds;
+        }
+
         protected boolean srcEqualsDstDimension() {
             return false;
+        }
+    }
+
+    /**
+     * The EMR_STRETCHDIBITS record specifies a block transfer of pixels from a source bitmap to a
+     * destination rectangle, optionally in combination with a brush pattern, according to a specified raster
+     * operation, stretching or compressing the output to fit the dimensions of the destination, if necessary.
+     */
+    public static class EmfStretchDiBits extends HwmfFill.WmfStretchDib implements HemfRecord, HemfBounded {
+        protected final Rectangle2D bounds = new Rectangle2D.Double();
+
+        @Override
+        public HemfRecordType getEmfRecordType() {
+            return HemfRecordType.stretchDiBits;
+        }
+
+        @Override
+        public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
+            final int startIdx = leis.getReadIndex();
+
+            long size = readRectL(leis, bounds);
+
+            // A 32-bit signed integer that specifies the logical x-coordinate of the upper-left
+            // corner of the destination rectangle.
+            int xDest = leis.readInt();
+            int yDest = leis.readInt();
+            size += 2*LittleEndianConsts.INT_SIZE;
+
+            size += readBounds2(leis, srcBounds);
+
+            // A 32-bit unsigned integer that specifies the offset, in bytes from the start
+            // of this record to the source bitmap header.
+            int offBmiSrc = (int)leis.readUInt();
+
+            // A 32-bit unsigned integer that specifies the size, in bytes, of the source bitmap header.
+            int cbBmiSrc = (int)leis.readUInt();
+
+            // A 32-bit unsigned integer that specifies the offset, in bytes, from the
+            // start of this record to the source bitmap bits.
+            int offBitsSrc = (int)leis.readUInt();
+
+            // A 32-bit unsigned integer that specifies the size, in bytes, of the source bitmap bits.
+            int cbBitsSrc = (int)leis.readUInt();
+
+            // A 32-bit unsigned integer that specifies how to interpret values in the color table
+            // in the source bitmap header. This value MUST be in the DIBColors enumeration
+            colorUsage = ColorUsage.valueOf(leis.readInt());
+
+            // A 32-bit unsigned integer that specifies a raster operation code.
+            // These codes define how the color data of the source rectangle is to be combined with the color data
+            // of the destination rectangle and optionally a brush pattern, to achieve the final color.
+            // The value MUST be in the WMF Ternary Raster Operation enumeration
+            rasterOperation = HwmfTernaryRasterOp.valueOf(leis.readInt());
+
+            // A 32-bit signed integer that specifies the logical width of the destination rectangle.
+            int cxDest = leis.readInt();
+
+            // A 32-bit signed integer that specifies the logical height of the destination rectangle.
+            int cyDest = leis.readInt();
+
+            dstBounds.setRect(xDest, yDest, cxDest, cyDest);
+
+            size += 8*LittleEndianConsts.INT_SIZE;
+
+            size += readBitmap(leis, dib, startIdx, offBmiSrc, cbBmiSrc, offBitsSrc, cbBitsSrc);
+
+            return size;
+        }
+
+        @Override
+        public Rectangle2D getRecordBounds() {
+            return bounds;
+        }
+
+        @Override
+        public Rectangle2D getShapeBounds(HemfGraphics ctx) {
+            return dstBounds;
         }
     }
 
@@ -235,7 +302,7 @@ public class HemfFill {
 
 
     /** The EMR_FRAMERGN record draws a border around the specified region using the specified brush. */
-    public static class EmfFrameRgn extends HwmfDraw.WmfFrameRegion implements HemfRecord {
+    public static class EmfFrameRgn extends HwmfDraw.WmfFrameRegion implements HemfRecord, HemfBounded {
         private final Rectangle2D bounds = new Rectangle2D.Double();
         private final List<Rectangle2D> rgnRects = new ArrayList<>();
 
@@ -263,18 +330,23 @@ public class HemfFill {
         @Override
         public void draw(HwmfGraphics ctx) {
             ctx.applyObjectTableEntry(brushIndex);
+            ctx.fill(getShape());
+        }
 
-            Area frame = new Area();
-            for (Rectangle2D rct : rgnRects) {
-                frame.add(new Area(rct));
-            }
-            Rectangle2D frameBounds = frame.getBounds2D();
-            AffineTransform at = new AffineTransform();
-            at.translate(bounds.getX()-frameBounds.getX(), bounds.getY()-frameBounds.getY());
-            at.scale(bounds.getWidth()/frameBounds.getWidth(), bounds.getHeight()/frameBounds.getHeight());
-            frame.transform(at);
+        @Override
+        public Rectangle2D getRecordBounds() {
+            return bounds;
+        }
 
-            ctx.fill(frame);
+        @Override
+        public Rectangle2D getShapeBounds(HemfGraphics ctx) {
+            return getShape().getBounds2D();
+        }
+
+        protected Area getShape() {
+            final Area frame = new Area();
+            rgnRects.forEach((rct) -> frame.add(new Area(rct)));
+            return frame;
         }
     }
 
