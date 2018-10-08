@@ -190,7 +190,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
             break;
         case right:
             if (pr.isSetLnR()) {
-                pr.unsetLnB();
+                pr.unsetLnR();
             }
             break;
         default:
