@@ -113,7 +113,7 @@ public class HemfText {
             int offDx = (int)leis.readUInt();
             size += LittleEndianConsts.INT_SIZE;
 
-            int undefinedSpace1 = (int)(offString - size - HEADER_SIZE);
+            int undefinedSpace1 = (int)(offString - (size + HEADER_SIZE));
             assert (undefinedSpace1 >= 0);
             leis.skipFully(undefinedSpace1);
             size += undefinedSpace1;
@@ -124,7 +124,7 @@ public class HemfText {
 
             dx.clear();
             if (offDx > 0) {
-                int undefinedSpace2 = (int) (offDx - size - HEADER_SIZE);
+                int undefinedSpace2 = (int) (offDx - (size + HEADER_SIZE));
                 assert (undefinedSpace2 >= 0);
                 leis.skipFully(undefinedSpace2);
                 size += undefinedSpace2;
@@ -147,10 +147,6 @@ public class HemfText {
             }
 
             return size;
-        }
-
-        protected boolean isUnicode() {
-            return false;
         }
 
         /**
@@ -185,21 +181,10 @@ public class HemfText {
 
         @Override
         public String toString() {
-            String text = "";
-            try {
-                text = getText(isUnicode() ? Charsets.UTF_16LE : LocaleUtil.CHARSET_1252);
-            } catch (IOException ignored) {
-            }
-
             return
-                "{ bounds: { x: "+bounds.getX()+
-                ", y: "+bounds.getY()+
-                ", w: "+bounds.getWidth()+
-                ", h: "+bounds.getHeight()+
-                "}, graphicsMode: '"+graphicsMode+"'"+
-                ", scale: { w: "+scale.getWidth()+", h: "+scale.getHeight()+" }"+
-                ", text: '"+text.replaceAll("\\p{Cntrl}",".")+"'"+
-                "}";
+                "{ graphicsMode: '"+graphicsMode+"'"+
+                ", scale: { w: "+scale.getWidth()+", h: "+scale.getHeight()+" },"+
+                super.toString().substring(1);
         }
     }
 

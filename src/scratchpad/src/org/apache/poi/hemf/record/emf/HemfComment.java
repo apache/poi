@@ -40,7 +40,7 @@ import org.apache.poi.util.RecordFormatException;
  */
 @Internal
 public class HemfComment {
-    private static final int MAX_RECORD_LENGTH = 1_000_000;
+    private static final int MAX_RECORD_LENGTH = 2_000_000;
 
     public enum HemfCommentRecordType {
         emfGeneric(-1, EmfCommentDataGeneric::new, false),

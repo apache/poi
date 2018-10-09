@@ -108,11 +108,11 @@ public class HemfPicture implements Iterable<HemfRecord> {
             ctx.scale(graphicsBounds.getWidth()/emfBounds.getWidth(), graphicsBounds.getHeight()/emfBounds.getHeight());
             ctx.translate(-emfBounds.getCenterX(), -emfBounds.getCenterY());
 
-
-
+            int idx = 0;
             HemfGraphics g = new HemfGraphics(ctx, emfBounds);
             for (HemfRecord r : getRecords()) {
                 g.draw(r);
+                idx++;
             }
         } finally {
             ctx.setTransform(at);
