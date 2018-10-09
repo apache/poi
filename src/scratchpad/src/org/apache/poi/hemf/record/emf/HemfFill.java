@@ -19,6 +19,7 @@ package org.apache.poi.hemf.record.emf;
 
 import static org.apache.poi.hemf.record.emf.HemfDraw.readPointL;
 import static org.apache.poi.hemf.record.emf.HemfDraw.readRectL;
+import static org.apache.poi.hemf.record.emf.HemfRecordIterator.HEADER_SIZE;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
@@ -100,7 +101,7 @@ public class HemfFill {
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             long size = readPointL(leis, start);
-            size = colorRef.init(leis);
+            size += colorRef.init(leis);
             // A 32-bit unsigned integer that specifies how to use the Color value to determine the area for
             // the flood fill operation. The value MUST be in the FloodFill enumeration
             mode = (int)leis.readUInt();
@@ -117,7 +118,7 @@ public class HemfFill {
         protected final Rectangle2D bounds = new Rectangle2D.Double();
 
         /** An XForm object that specifies a world-space to page-space transform to apply to the source bitmap. */
-        protected final byte[] xformSrc = new byte[24];
+        protected final AffineTransform xFormSrc = new AffineTransform();
 
         /** A WMF ColorRef object that specifies the background color of the source bitmap. */
         protected final HwmfColorRef bkColorSrc = new HwmfColorRef();
@@ -155,8 +156,7 @@ public class HemfFill {
             final Point2D srcPnt = new Point2D.Double();
             size += readPointL(leis, srcPnt);
 
-            leis.readFully(xformSrc);
-            size += 24;
+            size += readXForm(leis, xFormSrc);
 
             size += bkColorSrc.init(leis);
 
@@ -168,6 +168,10 @@ public class HemfFill {
 
             // A 32-bit unsigned integer that specifies the size, in bytes, of the source bitmap header.
             final int cbBmiSrc = (int)leis.readUInt();
+            size += 3*LittleEndianConsts.INT_SIZE;
+            if (size <= recordSize) {
+                return size;
+            }
 
             // A 32-bit unsigned integer that specifies the offset, in bytes, from the
             // start of this record to the source bitmap bits in the BitmapBuffer field.
@@ -176,7 +180,7 @@ public class HemfFill {
             // A 32-bit unsigned integer that specifies the size, in bytes, of the source bitmap bits.
             final int cbBitsSrc = (int)leis.readUInt();
 
-            size += 5*LittleEndianConsts.INT_SIZE;
+            size += 2*LittleEndianConsts.INT_SIZE;
 
             if (srcEqualsDstDimension()) {
                 srcBounds.setRect(srcPnt.getX(), srcPnt.getY(), dstBounds.getWidth(), dstBounds.getHeight());
@@ -204,6 +208,16 @@ public class HemfFill {
 
         protected boolean srcEqualsDstDimension() {
             return false;
+        }
+
+        @Override
+        public String toString() {
+            return
+                "{ bounds: { x: "+bounds.getX()+", y: "+bounds.getY()+", w: "+bounds.getWidth()+", h: "+bounds.getHeight()+"}"+
+                ", xFormSrc: { scaleX: "+xFormSrc.getScaleX()+", shearX: "+xFormSrc.getShearX()+", transX: "+xFormSrc.getTranslateX()+", scaleY: "+xFormSrc.getScaleY()+", shearY: "+xFormSrc.getShearY()+", transY: "+xFormSrc.getTranslateY()+" }"+
+                ", bkColorSrc: "+bkColorSrc+
+                ", usageSrc: "+usageSrc+", "
+                + super.toString().substring(1);
         }
     }
 
@@ -589,18 +603,24 @@ public class HemfFill {
     }
 
     static long readBitmap(final LittleEndianInputStream leis, final HwmfBitmapDib bitmap,
-            final int startIdx, final int offBmiSrc, final int cbBmiSrc, final int offBitsSrc, int cbBitsSrc)
+            final int startIdx, final int offBmi, final int cbBmi, final int offBits, int cbBits)
     throws IOException {
-        final int offCurr = leis.getReadIndex()-startIdx;
-        final int undefinedSpace1 = offBmiSrc-offCurr;
-        assert(undefinedSpace1 >= 0);
+        if (offBmi == 0) {
+            return 0;
+        }
 
-        final int undefinedSpace2 = offBitsSrc-offCurr-cbBmiSrc-undefinedSpace1;
+        final int offCurr = leis.getReadIndex()-(startIdx-HEADER_SIZE);
+        final int undefinedSpace1 = offBmi-offCurr;
+        if (undefinedSpace1 < 0) {
+            return 0;
+        }
+
+        final int undefinedSpace2 = offBits-offCurr-cbBmi-undefinedSpace1;
         assert(undefinedSpace2 >= 0);
 
         leis.skipFully(undefinedSpace1);
 
-        if (cbBmiSrc == 0 || cbBitsSrc == 0) {
+        if (cbBmi == 0 || cbBits == 0) {
             return undefinedSpace1;
         }
 
@@ -608,18 +628,18 @@ public class HemfFill {
         if (undefinedSpace2 == 0) {
             leisDib = leis;
         } else {
-            final ByteArrayOutputStream bos = new ByteArrayOutputStream(cbBmiSrc+cbBitsSrc);
-            final long cbBmiSrcAct = IOUtils.copy(leis, bos, cbBmiSrc);
-            assert (cbBmiSrcAct == cbBmiSrc);
+            final ByteArrayOutputStream bos = new ByteArrayOutputStream(cbBmi+cbBits);
+            final long cbBmiSrcAct = IOUtils.copy(leis, bos, cbBmi);
+            assert (cbBmiSrcAct == cbBmi);
             leis.skipFully(undefinedSpace2);
-            final long cbBitsSrcAct = IOUtils.copy(leis, bos, cbBitsSrc);
-            assert (cbBitsSrcAct == cbBitsSrc);
+            final long cbBitsSrcAct = IOUtils.copy(leis, bos, cbBits);
+            assert (cbBitsSrcAct == cbBits);
             leisDib = new LittleEndianInputStream(new ByteArrayInputStream(bos.toByteArray()));
         }
-        final int dibSize = cbBmiSrc+cbBitsSrc;
+        final int dibSize = cbBmi+cbBits;
         final int dibSizeAct = bitmap.init(leisDib, dibSize);
         assert (dibSizeAct <= dibSize);
-        return undefinedSpace1 + cbBmiSrc + undefinedSpace2 + cbBitsSrc;
+        return undefinedSpace1 + cbBmi + undefinedSpace2 + cbBits;
     }
 
 

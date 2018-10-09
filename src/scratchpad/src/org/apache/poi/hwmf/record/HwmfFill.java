@@ -415,6 +415,15 @@ public class HwmfFill {
         public void draw(HwmfGraphics ctx) {
             
         }
+
+        @Override
+        public String toString() {
+            return
+                "{ rasterOperation: '"+rasterOperation+"'"+
+                ", srcBounds: { x: "+srcBounds.getX()+", y: "+srcBounds.getY()+", w: "+srcBounds.getWidth()+", h: "+srcBounds.getHeight()+" }"+
+                ", dstBounds: { x: "+dstBounds.getX()+", y: "+dstBounds.getY()+", w: "+dstBounds.getWidth()+", h: "+dstBounds.getHeight()+" }"+
+                "}";
+        }
     }
 
     /**

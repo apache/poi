@@ -31,6 +31,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.codec.Charsets;
 import org.apache.poi.hwmf.draw.HwmfDrawProperties;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.hwmf.record.HwmfMisc.WmfSetMapMode;
@@ -39,6 +40,7 @@ import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.RecordFormatException;
@@ -291,6 +293,10 @@ public class HwmfText {
         public boolean isClipped() {
             return ETO_CLIPPED.isSet(flag);
         }
+
+        public boolean isYDisplaced() {
+            return ETO_PDY.isSet(flag);
+        }
     }
 
     /**
@@ -393,37 +399,11 @@ public class HwmfText {
         @Override
         public void draw(HwmfGraphics ctx) {
             Rectangle2D bounds = new Rectangle2D.Double(reference.getX(), reference.getY(), 0, 0);
-            ctx.drawString(rawTextBytes, bounds, dx);
+            ctx.drawString(rawTextBytes, bounds, dx, false);
         }
-
 
         public String getText(Charset charset) throws IOException {
-            StringBuilder sb = new StringBuilder();
-            try (Reader r = new InputStreamReader(new ByteArrayInputStream(rawTextBytes), charset)) {
-                for (int i = 0; i < stringLength; i++) {
-                    sb.appendCodePoint(readCodePoint(r));
-                }
-            }
-            return sb.toString();
-        }
-
-        //TODO: move this to IOUtils?
-        private int readCodePoint(Reader r) throws IOException {
-            int c1 = r.read();
-            if (c1 == -1) {
-                throw new EOFException("Tried to read beyond byte array");
-            }
-            if (!Character.isHighSurrogate((char)c1)) {
-                return c1;
-            }
-            int c2 = r.read();
-            if (c2 == -1) {
-                throw new EOFException("Tried to read beyond byte array");
-            }
-            if (!Character.isLowSurrogate((char)c2)) {
-                throw new RecordFormatException("Expected low surrogate after high surrogate");
-            }
-            return Character.toCodePoint((char)c1, (char)c2);
+            return new String(rawTextBytes, charset);
         }
 
         public Point2D getReference() {
@@ -432,6 +412,25 @@ public class HwmfText {
 
         public Rectangle2D getBounds() {
             return bounds;
+        }
+
+        protected boolean isUnicode() {
+            return false;
+        }
+
+        @Override
+        public String toString() {
+            String text = "";
+            try {
+                text = getText(isUnicode() ? Charsets.UTF_16LE : LocaleUtil.CHARSET_1252);
+            } catch (IOException ignored) {
+            }
+
+            return
+                "{ reference: { x: "+reference.getX()+", y: "+reference.getY()+" }"+
+                ", bounds: { x: "+bounds.getX()+", y: "+bounds.getY()+", w: "+bounds.getWidth()+", h: "+bounds.getHeight()+"}"+
+                ", text: '"+text.replaceAll("\\p{Cntrl}",".")+"'"+
+                "}";
         }
     }
     

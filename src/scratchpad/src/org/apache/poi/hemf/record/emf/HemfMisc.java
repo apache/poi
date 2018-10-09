@@ -33,6 +33,7 @@ import org.apache.poi.hwmf.record.HwmfBinaryRasterOp;
 import org.apache.poi.hwmf.record.HwmfBitmapDib;
 import org.apache.poi.hwmf.record.HwmfBrushStyle;
 import org.apache.poi.hwmf.record.HwmfColorRef;
+import org.apache.poi.hwmf.record.HwmfFill;
 import org.apache.poi.hwmf.record.HwmfHatchStyle;
 import org.apache.poi.hwmf.record.HwmfMapMode;
 import org.apache.poi.hwmf.record.HwmfMisc;
@@ -65,8 +66,8 @@ public class HemfMisc {
 
             int size = 2 * LittleEndianConsts.INT_SIZE;
 
-            if (offPalEntries > 0) {
-                int undefinedSpace1 = (int) (offPalEntries - size - HEADER_SIZE);
+            if (nPalEntries > 0 && offPalEntries > 0) {
+                int undefinedSpace1 = (int) (offPalEntries - (size + HEADER_SIZE));
                 assert (undefinedSpace1 >= 0);
                 leis.skipFully(undefinedSpace1);
                 size += undefinedSpace1;
@@ -281,6 +282,59 @@ public class HemfMisc {
                 ", colorRef: "+colorRef+
                 ", brushHatch: '"+brushHatch+"' }";
         }
+    }
+
+    /**
+     * The EMR_CREATEDIBPATTERNBRUSHPT record defines a pattern brush for graphics operations.
+     * The pattern is specified by a DIB.
+     */
+    public static class EmfCreateDibPatternBrushPt extends HwmfMisc.WmfDibCreatePatternBrush implements HemfRecord {
+        protected int brushIdx;
+
+        @Override
+        public HemfRecordType getEmfRecordType() {
+            return HemfRecordType.createDibPatternBrushPt;
+        }
+
+        @Override
+        public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
+            final int startIdx = leis.getReadIndex();
+
+            style = HwmfBrushStyle.BS_DIBPATTERNPT;
+
+            // A 32-bit unsigned integer that specifies the index of the pattern brush
+            // object in the EMF Object Table
+            brushIdx = (int)leis.readUInt();
+
+            // A 32-bit unsigned integer that specifies how to interpret values in the color
+            // table in the DIB header. This value MUST be in the DIBColors enumeration
+            colorUsage = HwmfFill.ColorUsage.valueOf((int)leis.readUInt());
+
+            // A 32-bit unsigned integer that specifies the offset from the start of this
+            // record to the DIB header.
+            final int offBmi = leis.readInt();
+
+            // A 32-bit unsigned integer that specifies the size of the DIB header.
+            final int cbBmi = leis.readInt();
+
+            // A 32-bit unsigned integer that specifies the offset from the start of this record to the DIB bits.
+            final int offBits = leis.readInt();
+
+            // A 32-bit unsigned integer that specifies the size of the DIB bits.
+            final int cbBits = leis.readInt();
+
+            int size = 6*LittleEndianConsts.INT_SIZE;
+
+            patternDib = new HwmfBitmapDib();
+            size += readBitmap(leis, patternDib, startIdx, offBmi, cbBmi, offBits, cbBits);
+            return size;
+        }
+
+        @Override
+        public void draw(HemfGraphics ctx) {
+            ctx.addObjectTableEntry(this, brushIdx);
+        }
+
     }
 
     /**
@@ -518,6 +572,13 @@ public class HemfMisc {
             modifyWorldTransformMode = (int)leis.readUInt();
 
             return size + LittleEndianConsts.INT_SIZE;
+        }
+
+        @Override
+        public String toString() {
+            return
+                "{ xForm: { scaleX: "+xForm.getScaleX()+", shearX: "+xForm.getShearX()+", transX: "+xForm.getTranslateX()+", scaleY: "+xForm.getScaleY()+", shearY: "+xForm.getShearY()+", transY: "+xForm.getTranslateY()+" }"+
+                ", modifyWorldTransformMode: "+modifyWorldTransformMode+" }";
         }
     }
 }

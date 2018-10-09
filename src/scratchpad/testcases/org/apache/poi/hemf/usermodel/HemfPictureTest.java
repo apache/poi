@@ -38,6 +38,8 @@ import java.io.InputStream;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import javax.imageio.ImageIO;
 
@@ -64,42 +66,61 @@ public class HemfPictureTest {
     @Test
     @Ignore("Only for manual tests")
     public void paint() throws IOException {
-        File f = new File("picture_14.emf"); // sl_samples.getFile("wrench.emf");
-        try (FileInputStream fis = new FileInputStream(f)) {
-            HemfPicture emf = new HemfPicture(fis);
+//        File f = new File("picture_14.emf"); // sl_samples.getFile("wrench.emf");
+//        try (FileInputStream fis = new FileInputStream(f)) {
 
-            Dimension2D dim = emf.getSize();
-            int width = Units.pointsToPixel(dim.getWidth());
-            // keep aspect ratio for height
-            int height = Units.pointsToPixel(dim.getHeight());
-            double max = Math.max(width, height);
-            if (max > 1500) {
-                width *= 1500 / max;
-                height *= 1500 / max;
-            }
-
-            BufferedImage bufImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-            Graphics2D g = bufImg.createGraphics();
-            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-            g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-            g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-
-            FileWriter fw = new FileWriter("record-list.txt");
-            int i=0;
-            for (HemfRecord r : emf.getRecords())  {
-                if (r.getEmfRecordType() != HemfRecordType.comment) {
-                    fw.write(i + " " + r.getEmfRecordType() + " " + r.toString() + "\n");
+        try (ZipInputStream zis = new ZipInputStream(new FileInputStream("tmp/emf.zip"))) {
+            for (;;) {
+                ZipEntry ze = zis.getNextEntry();
+                if (ze == null) {
+                    break;
                 }
-                i++;
+                final File pngName = new File("build/tmp",ze.getName().replaceFirst( ".*/","").replace(".emf", ".png"));
+                if (pngName.exists()) {
+                    continue;
+                }
+
+
+                // 263/263282_000.emf
+//                if (!ze.getName().contains("298/298837_000.emf")) continue;
+                HemfPicture emf = new HemfPicture(zis);
+                System.out.println(ze.getName());
+
+                Dimension2D dim = emf.getSize();
+                int width = Units.pointsToPixel(dim.getWidth());
+                // keep aspect ratio for height
+                int height = Units.pointsToPixel(dim.getHeight());
+                double max = Math.max(width, height);
+                if (max > 1500) {
+                    width *= 1500 / max;
+                    height *= 1500 / max;
+                }
+
+                BufferedImage bufImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+                Graphics2D g = bufImg.createGraphics();
+                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+                g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+
+                FileWriter fw = new FileWriter("record-list.txt");
+                int i = 0;
+                for (HemfRecord r : emf.getRecords()) {
+                    if (r.getEmfRecordType() != HemfRecordType.comment) {
+                        fw.write(i + " " + r.getEmfRecordType() + " " + r.toString() + "\n");
+                    }
+                    i++;
+                }
+                fw.close();
+
+                emf.draw(g, new Rectangle2D.Double(0, 0, width, height));
+
+                g.dispose();
+
+                ImageIO.write(bufImg, "PNG", pngName);
+
+//                break;
             }
-            fw.close();
-
-            emf.draw(g, new Rectangle2D.Double(0,0,width,height));
-
-            g.dispose();
-
-            ImageIO.write(bufImg, "PNG", new File("bla.png"));
         }
     }
 

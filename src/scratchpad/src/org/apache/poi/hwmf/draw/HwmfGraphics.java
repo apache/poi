@@ -323,11 +323,7 @@ public class HwmfGraphics {
     }
 
     public void drawString(byte[] text, Rectangle2D bounds) {
-        drawString(text, bounds, null);
-    }
-
-    public void drawString(byte[] text, Rectangle2D bounds, List<Integer> dx) {
-        drawString(text, bounds, dx, false);
+        drawString(text, bounds, null, false);
     }
 
     public void drawString(byte[] text, Rectangle2D bounds, List<Integer> dx, boolean isUnicode) {
@@ -352,10 +348,12 @@ public class HwmfGraphics {
         }
 
         String textString = new String(text, charset).trim();
+        if (textString.isEmpty()) {
+            return;
+        }
         AttributedString as = new AttributedString(textString);
-        if (dx == null || dx.isEmpty()) {
-            addAttributes(as, font);
-        } else {
+        addAttributes(as, font);
+        if (dx != null && !dx.isEmpty()) {
             //for multi-byte encodings (e.g. Shift_JIS), the byte length
             //might not equal the string length().
             //The x information is stored in dx[], an array parallel to the
@@ -371,31 +369,21 @@ public class HwmfGraphics {
             //dxNormed[0] = 13 textString.get(0) = U+30D7
             //dxNormed[1] = 14 textString.get(1) = U+30ED
 
-            final List<Integer> dxNormed;
-            if (textString.length() == text.length) {
-                dxNormed = new ArrayList<>(dx);
-            } else {
-                dxNormed = new ArrayList<>(dx.size());
-                int dxPosition = 0;
-                int[] chars = {0};
-                for (int offset = 0; offset < textString.length(); ) {
-                    dxNormed.add(dx.get(dxPosition));
-                    chars[0] = textString.codePointAt(offset);
-                    //now figure out how many bytes it takes to encode that
-                    //code point in the charset
-                    int byteLength = new String(chars, 0, chars.length).getBytes(charset).length;
-                    dxPosition += byteLength;
-                    offset += Character.charCount(chars[0]);
+            final int cps = textString.codePointCount(0, textString.length());
+            final int unicodeSteps = Math.max(dx.size()/cps, 1);
+            int dxPosition = 0;
+            int beginIndex = 0;
+            int[] chars = {0};
+            while (beginIndex < textString.length() && dxPosition < dx.size()) {
+                int endIndex = textString.offsetByCodePoints(beginIndex, 1);
+                if (beginIndex > 0) {
+                    // Tracking works as a prefix/advance space on characters whereas
+                    // dx[...] is the complete width of the current char
+                    // therefore we need to add the additional/suffix width to the next char
+                    as.addAttribute(TextAttribute.TRACKING, (float)((dx.get(dxPosition) - fontW) / fontH), beginIndex, endIndex);
                 }
-            }
-
-            int cps = textString.codePointCount(0, textString.length());
-            for (int i = 0; i < Math.min(dxNormed.size(),cps-1); i++) {
-                addAttributes(as, font);
-                // Tracking works as a prefix/advance space on characters whereas
-                // dx[...] is the complete width of the current char
-                // therefore we need to add the additional/suffix width to the next char
-                as.addAttribute(TextAttribute.TRACKING, (dxNormed.get(i) - fontW) / fontH, i + 1, i + 2);
+                dxPosition += (isUnicode) ? unicodeSteps : (endIndex-beginIndex);
+                beginIndex = endIndex;
             }
         }
         
@@ -413,7 +401,7 @@ public class HwmfGraphics {
                 graphicsCtx.fill(new Rectangle2D.Double(0, 0, bounds.getWidth(), bounds.getHeight()));
             }
             graphicsCtx.setColor(getProperties().getTextColor().getColor());
-            graphicsCtx.drawString(as.getIterator(), 0, 0); // (float)bounds.getX(), (float)bounds.getY());
+            graphicsCtx.drawString(as.getIterator(), 0, 0);
         } finally {
             graphicsCtx.setTransform(at);
         }
@@ -425,7 +413,9 @@ public class HwmfGraphics {
         
         as.addAttribute(TextAttribute.FAMILY, fontInfo.getTypeface());
         as.addAttribute(TextAttribute.SIZE, getFontHeight(font));
-        as.addAttribute(TextAttribute.STRIKETHROUGH, font.isStrikeOut());
+        if (font.isStrikeOut()) {
+            as.addAttribute(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON);
+        }
         if (font.isUnderline()) {
             as.addAttribute(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
         }

@@ -377,7 +377,7 @@ public class HwmfMisc {
      */
     public static class WmfDibCreatePatternBrush implements HwmfRecord, HwmfImageRecord, HwmfObjectTableEntry {
 
-        private HwmfBrushStyle style;
+        protected HwmfBrushStyle style;
 
         /**
          * A 16-bit unsigned integer that defines whether the Colors field of a DIB
@@ -388,9 +388,9 @@ public class HwmfMisc {
          *
          * If the Style field specified anything but BS_PATTERN, this field MUST be one of the ColorUsage values.
          */
-        private ColorUsage colorUsage;
+        protected ColorUsage colorUsage;
 
-        private HwmfBitmapDib patternDib;
+        protected HwmfBitmapDib patternDib;
         private HwmfBitmap16 pattern16;
 
         @Override
