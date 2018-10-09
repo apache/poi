@@ -50,7 +50,6 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
 			}
 			zipEntries.put(zipEntry.getName(), new ZipArchiveFakeEntry(zipEntry, inp));
 		}
-		inp.close();
 	}
 
 	@Override
