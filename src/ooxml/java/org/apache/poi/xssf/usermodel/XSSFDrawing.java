@@ -446,7 +446,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
         XSSFSheet sheet = getSheet();
         XSSFWorkbook wb = sheet.getWorkbook();
         int sheetIndex = wb.getSheetIndex(sheet);
-        long shapeId = (sheetIndex + 1) * 1024 + newShapeId();
+        long shapeId = (sheetIndex + 1L) * 1024 + newShapeId();
 
         // add reference to OLE part
         PackagePartName olePN;
