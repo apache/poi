@@ -52,7 +52,7 @@ public class XDGFText {
         // is a mixed type)
         return ((TextTypeImpl) _text).getStringValue();
     }
-    
+
     /**
      * These are in the shape coordinate system
      *
@@ -82,8 +82,8 @@ public class XDGFText {
     public Path2D.Double getBoundsAsPath() {
 
         Rectangle2D.Double rect = getTextBounds();
-        Double w = rect.getWidth();
-        Double h = rect.getHeight();
+        double w = rect.getWidth();
+        double h = rect.getHeight();
 
         Path2D.Double bounds = new Path2D.Double();
         bounds.moveTo(0, 0);
@@ -94,7 +94,7 @@ public class XDGFText {
 
         return bounds;
     }
-    
+
     /**
      * @return Center of text in local coordinates
      */
@@ -110,8 +110,9 @@ public class XDGFText {
     public void draw(Graphics2D graphics) {
 
         String textContent = getTextContent();
-        if (textContent.length() == 0)
+        if (textContent.length() == 0) {
             return;
+        }
 
         Rectangle2D.Double bounds = getTextBounds();
 
@@ -140,22 +141,25 @@ public class XDGFText {
         }
 
         Double txtAngle = _parent.getTxtAngle();
-        if (txtAngle != null && Math.abs(txtAngle) > 0.01)
+        if (txtAngle != null && Math.abs(txtAngle) > 0.01) {
             graphics.rotate(txtAngle);
+        }
 
         float nextY = 0;
         for (String line : lines) {
 
-            if (line.length() == 0)
+            if (line.length() == 0) {
                 continue;
+            }
 
             TextLayout layout = new TextLayout(line, font, frc);
 
-            if (layout.isLeftToRight())
+            if (layout.isLeftToRight()) {
                 layout.draw(graphics, 0, nextY);
-            else
+            } else {
                 layout.draw(graphics,
                         (float) (bounds.width - layout.getAdvance()), nextY);
+            }
 
             nextY += layout.getAscent() + layout.getDescent()
                     + layout.getLeading();

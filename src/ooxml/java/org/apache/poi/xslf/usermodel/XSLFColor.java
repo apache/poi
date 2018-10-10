@@ -48,7 +48,7 @@ import org.w3c.dom.Node;
 @Internal
 public class XSLFColor {
     private final static POILogger LOGGER = POILogFactory.getLogger(XSLFColor.class);
-    
+
     private XmlObject _xmlObject;
     private Color _color;
     private CTSchemeColor _phClr;
@@ -128,7 +128,7 @@ public class XSLFColor {
             }
         };
     }
-    
+
     private Color toColor(XmlObject obj, XSLFTheme theme) {
         Color color = null;
         for (XmlObject ch : obj.selectPath("*")) {
@@ -207,19 +207,19 @@ public class XSLFColor {
         if (fill.isSetScrgbClr()) {
             fill.unsetScrgbClr();
         }
-        
+
         if (fill.isSetHslClr()) {
             fill.unsetHslClr();
         }
-        
+
         if (fill.isSetPrstClr()) {
             fill.unsetPrstClr();
         }
-        
+
         if (fill.isSetSchemeClr()) {
             fill.unsetSchemeClr();
         }
-        
+
         if (fill.isSetSysClr()) {
             fill.unsetSysClr();
         }
@@ -227,12 +227,12 @@ public class XSLFColor {
         float[] rgbaf = color.getRGBComponents(null);
         boolean addAlpha = (rgbaf.length == 4 && rgbaf[3] < 1f);
         CTPositiveFixedPercentage alphaPct;
-        
+
         // see office open xml part 4 - 5.1.2.2.30 and 5.1.2.2.32
         if (isInt(rgbaf[0]) && isInt(rgbaf[1]) && isInt(rgbaf[2])) {
             // sRGB has a gamma of 2.2
             CTSRgbColor rgb = fill.addNewSrgbClr();
-            
+
             byte rgbBytes[] = { (byte)color.getRed(), (byte)color.getGreen(), (byte)color.getBlue() };
             rgb.setVal(rgbBytes);
             alphaPct = (addAlpha) ? rgb.addNewAlpha() : null;
@@ -249,14 +249,14 @@ public class XSLFColor {
             alphaPct.setVal((int)(100000 * rgbaf[3]));
         }
     }
-    
+
     /**
      * @return true, if this is an integer color value
      */
     private static boolean isInt(float f) {
-        return Math.abs((f*255f) - Math.rint(f*255f)) < 0.00001f;
+        return Math.abs((f*255d) - Math.rint(f*255d)) < 0.00001;
     }
-    
+
     private int getRawValue(String elem) {
         String query = "declare namespace a='http://schemas.openxmlformats.org/drawingml/2006/main' $this//a:" + elem;
 
@@ -281,9 +281,9 @@ public class XSLFColor {
             }
         }
 
-        return -1;        
+        return -1;
     }
-    
+
     /**
      * Read a perecentage value from the supplied xml bean.
      * Example:
@@ -305,7 +305,7 @@ public class XSLFColor {
      * or -1 if the value is not set
      */
     int getAlpha(){
-        return getPercentageValue("alpha");        
+        return getPercentageValue("alpha");
     }
 
     /**
@@ -413,7 +413,7 @@ public class XSLFColor {
     /**
      * specifies the input color with the specific red component, but with the blue and green color
      * components unchanged
-     * 
+     *
      * @return the value of the red component specified as a
      * percentage with 0% indicating minimal blue and 100% indicating maximum
      * or -1 if the value is not set
@@ -479,7 +479,7 @@ public class XSLFColor {
     /**
      * specifies a darker version of its input color.
      * A 10% shade is 10% of the input color combined with 90% black.
-     * 
+     *
      * @return the value of the shade specified as a
      * percentage with 0% indicating minimal shade and 100% indicating maximum
      * or -1 if the value is not set
