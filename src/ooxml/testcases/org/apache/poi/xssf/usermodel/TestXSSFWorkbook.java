@@ -1044,8 +1044,10 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
         //assertCloseDoesNotModifyFile(filename, wb);
 
         // InputStream
-        wb = new XSSFWorkbook(new FileInputStream(file));
-        assertCloseDoesNotModifyFile(filename, wb);
+        try (FileInputStream is = new FileInputStream(file)) {
+            wb = new XSSFWorkbook(is);
+            assertCloseDoesNotModifyFile(filename, wb);
+        }
 
         // OPCPackage
         //wb = new XSSFWorkbook(OPCPackage.open(file));
