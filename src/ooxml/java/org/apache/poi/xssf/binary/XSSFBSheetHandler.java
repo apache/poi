@@ -302,9 +302,8 @@ public class XSSFBSheetHandler extends XSSFBParser {
     }
 
     private double rkNumber(byte[] data, int offset) {
-        //see 2.5.122 for this abomination
+        //see 2.5.122
         byte b0 = data[offset];
-        String s = Integer.toString(b0, 2);
         boolean numDivBy100 = ((b0 & 1) == 1); // else as is
         boolean floatingPoint = ((b0 >> 1 & 1) == 0); // else signed integer
 
@@ -320,7 +319,8 @@ public class XSSFBSheetHandler extends XSSFBParser {
         if (floatingPoint) {
             d = LittleEndian.getDouble(rkBuffer);
         } else {
-            d = LittleEndian.getInt(rkBuffer);
+            int rawInt = LittleEndian.getInt(rkBuffer, 4);
+            d = rawInt >> 2;//divide by 4/shift bits coz 30 bit int, not 32
         }
         d = (numDivBy100) ? d/100 : d;
         return d;

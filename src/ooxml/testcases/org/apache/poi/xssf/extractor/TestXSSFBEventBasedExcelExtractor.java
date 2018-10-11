@@ -26,6 +26,10 @@ import static org.junit.Assert.assertTrue;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.Test;
 
+import java.io.BufferedReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+
 /**
  * Tests for {@link XSSFBEventBasedExcelExtractor}
  */
@@ -108,6 +112,25 @@ public class TestXSSFBEventBasedExcelExtractor {
         String text = extractor.getText();
         assertContains(text,
                 "This is an example spreadsheet created with Microsoft Excel 2007 Beta 2.");
+    }
+
+    @Test
+    public void test62815() throws Exception {
+        //test file based on http://oss.sheetjs.com/test_files/RkNumber.xlsb
+        XSSFEventBasedExcelExtractor extractor = getExtractor("62815.xlsb");
+        extractor.setIncludeCellComments(true);
+        String[] rows = extractor.getText().split("[\r\n]+");
+        assertEquals(283, rows.length);
+        BufferedReader reader = Files.newBufferedReader(XSSFTestDataSamples.getSampleFile("62815.xlsb.txt").toPath(),
+                StandardCharsets.UTF_8);
+        String line = reader.readLine();
+        for (int i = 0; i < rows.length; i++) {
+            assertEquals(line, rows[i]);
+            line = reader.readLine();
+            while (line != null && line.startsWith("#")) {
+                line = reader.readLine();
+            }
+        }
     }
 
 }
