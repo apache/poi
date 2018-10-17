@@ -39,6 +39,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.xssf.usermodel.XSSFWorkbookFactory;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public final class TestWorkbookFactory {
@@ -387,4 +388,34 @@ public final class TestWorkbookFactory {
         }
     }
 
+    /**
+     * See Bugzilla bug #62831 - #WorkbookFactory.create(File) needs
+     *  to work for sub-classes of File too, eg JFileChooser
+     */
+    @Test
+    @Ignore
+    public void testFileSubclass() throws Exception {
+        Workbook wb;
+        
+        File normalXLS = HSSFTestDataSamples.getSampleFile(xls);
+        File normalXLSX = HSSFTestDataSamples.getSampleFile(xlsx);
+        File altXLS = new TestFile(normalXLS.getAbsolutePath());
+        File altXLSX = new TestFile(normalXLSX.getAbsolutePath());
+        assertTrue(altXLS.exists());
+        assertTrue(altXLSX.exists());
+        
+        wb = WorkbookFactory.create(altXLS);
+        assertNotNull(wb);
+        assertTrue(wb instanceof HSSFWorkbook);
+        
+        wb = WorkbookFactory.create(altXLSX);
+        assertNotNull(wb);
+        assertTrue(wb instanceof XSSFWorkbook);
+    }
+    
+    private static class TestFile extends File {
+        public TestFile(String file) {
+            super(file);
+        }
+    }
 }
