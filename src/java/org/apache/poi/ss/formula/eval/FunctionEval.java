@@ -243,7 +243,8 @@ public final class FunctionEval {
 
         // 247: DB
         // 252: FEQUENCY
-        
+        retval[252] = Frequency.instance;
+
         retval[FunctionID.EXTERNAL_FUNC] = null; // ExternalFunction is a FreeRefFunction, nominally 255
 
         retval[261] = new Errortype();
