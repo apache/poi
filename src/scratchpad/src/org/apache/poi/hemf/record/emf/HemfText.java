@@ -113,36 +113,53 @@ public class HemfText {
             int offDx = (int)leis.readUInt();
             size += LittleEndianConsts.INT_SIZE;
 
-            int undefinedSpace1 = (int)(offString - (size + HEADER_SIZE));
-            assert (undefinedSpace1 >= 0);
-            leis.skipFully(undefinedSpace1);
-            size += undefinedSpace1;
+            // handle dx before string and other way round
+            for (char op : ((offDx < offString) ? "ds" : "sd").toCharArray()) {
+                switch (op) {
+                    case 'd': {
+                        dx.clear();
+                        int undefinedSpace2 = (int) (offDx - (size + HEADER_SIZE));
+                        if (offDx > 0 && undefinedSpace2 >= 0 && offDx-HEADER_SIZE < recordSize) {
+                            leis.skipFully(undefinedSpace2);
+                            size += undefinedSpace2;
 
-            rawTextBytes = IOUtils.safelyAllocate(stringLength*(isUnicode()?2:1), MAX_RECORD_LENGTH);
-            leis.readFully(rawTextBytes);
-            size += rawTextBytes.length;
+                            // An array of 32-bit unsigned integers that specify the output spacing between the origins of adjacent
+                            // character cells in logical units. The location of this field is specified by the value of offDx
+                            // in bytes from the start of this record. If spacing is defined, this field contains the same number
+                            // of values as characters in the output string.
+                            //
+                            // If the Options field of the EmrText object contains the ETO_PDY flag, then this buffer
+                            // contains twice as many values as there are characters in the output string, one
+                            // horizontal and one vertical offset for each, in that order.
+                            //
+                            // If ETO_RTLREADING is specified, characters are laid right to left instead of left to right.
+                            // No other options affect the interpretation of this field.
+                            final int maxSize = (int)Math.min((offDx < offString) ? (offString-HEADER_SIZE) : recordSize, recordSize);
+                            while (size <= maxSize-LittleEndianConsts.INT_SIZE) {
+                                dx.add((int) leis.readUInt());
+                                size += LittleEndianConsts.INT_SIZE;
+                            }
+                        }
+                        if (dx.size() < stringLength) {
+                            // invalid dx array
+                            dx.clear();
+                        }
+                        break;
+                    }
+                    default:
+                    case 's': {
+                        int undefinedSpace1 = (int)(offString - (size + HEADER_SIZE));
+                        if (offString > 0 && undefinedSpace1 >= 0 && offString-HEADER_SIZE < recordSize) {
+                            leis.skipFully(undefinedSpace1);
+                            size += undefinedSpace1;
 
-            dx.clear();
-            if (offDx > 0) {
-                int undefinedSpace2 = (int) (offDx - (size + HEADER_SIZE));
-                assert (undefinedSpace2 >= 0);
-                leis.skipFully(undefinedSpace2);
-                size += undefinedSpace2;
-
-                // An array of 32-bit unsigned integers that specify the output spacing between the origins of adjacent
-                // character cells in logical units. The location of this field is specified by the value of offDx
-                // in bytes from the start of this record. If spacing is defined, this field contains the same number
-                // of values as characters in the output string.
-                //
-                // If the Options field of the EmrText object contains the ETO_PDY flag, then this buffer
-                // contains twice as many values as there are characters in the output string, one
-                // horizontal and one vertical offset for each, in that order.
-                //
-                // If ETO_RTLREADING is specified, characters are laid right to left instead of left to right.
-                // No other options affect the interpretation of this field.
-                while (size < recordSize) {
-                    dx.add((int) leis.readUInt());
-                    size += LittleEndianConsts.INT_SIZE;
+                            final int maxSize = (int)Math.min(recordSize-size, stringLength * (isUnicode() ? 2 : 1));
+                            rawTextBytes = IOUtils.safelyAllocate(maxSize, MAX_RECORD_LENGTH);
+                            leis.readFully(rawTextBytes);
+                            size += maxSize;
+                            break;
+                        }
+                    }
                 }
             }
 

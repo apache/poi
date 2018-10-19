@@ -179,6 +179,11 @@ public class HwmfMisc {
         public void draw(HwmfGraphics ctx) {
             ctx.getProperties().setBkMode(bkMode);
         }
+
+        @Override
+        public String toString() {
+            return "{ bkMode: '"+bkMode+"' }";
+        }
     }
 
     /**
@@ -436,7 +441,7 @@ public class HwmfMisc {
 
         @Override
         public BufferedImage getImage() {
-            if (patternDib != null) {
+            if (patternDib != null && patternDib.isValid()) {
                 return patternDib.getImage();
             } else if (pattern16 != null) {
                 return pattern16.getImage();

@@ -52,7 +52,7 @@ public class HemfGraphics extends HwmfGraphics {
     public HemfGraphics(Graphics2D graphicsCtx, Rectangle2D bbox) {
         super(graphicsCtx,bbox);
         // add dummy entry for object index 0, as emf is 1-based
-        addObjectTableEntry((ctx)->{});
+        objectIndexes.set(0);
     }
 
     @Override
@@ -105,6 +105,12 @@ public class HemfGraphics extends HwmfGraphics {
         final Path2D path;
         if (useBracket) {
             path = prop.getPath();
+            if (path.getCurrentPoint() == null) {
+                // workaround if a path has been started and no MoveTo command
+                // has been specified before the first lineTo/splineTo
+                final Point2D loc = prop.getLocation();
+                path.moveTo(loc.getX(), loc.getY());
+            }
         } else {
             path = new Path2D.Double();
             Point2D pnt = prop.getLocation();
@@ -135,19 +141,11 @@ public class HemfGraphics extends HwmfGraphics {
      */
     public void addObjectTableEntry(HwmfObjectTableEntry entry, int index) {
         if (index < 1) {
-            super.addObjectTableEntry(entry);
-            return;
+            throw new IndexOutOfBoundsException("Object table entry index in EMF must be > 0 - invalid index: "+index);
         }
 
-        if (index > objectTable.size()) {
-            throw new IllegalStateException("object table hasn't grown to this index yet");
-        }
-
-        if (index == objectTable.size()) {
-            objectTable.add(entry);
-        } else {
-            objectTable.set(index, entry);
-        }
+        objectIndexes.set(index);
+        objectTable.put(index, entry);
     }
 
     @Override

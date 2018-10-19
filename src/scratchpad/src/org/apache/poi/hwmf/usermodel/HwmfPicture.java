@@ -43,6 +43,9 @@ import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.Units;
 
 public class HwmfPicture {
+    /** Max. record length - processing longer records will throw an exception */
+    public static final int MAX_RECORD_LENGTH = 50_000_000;
+
     private static final POILogger logger = POILogFactory.getLogger(HwmfPicture.class);
     
     final List<HwmfRecord> records = new ArrayList<>();
@@ -156,7 +159,7 @@ public class HwmfPicture {
             if (wOrg == null || wExt == null) {
                 throw new RuntimeException("invalid wmf file - window records are incomplete.");
             }
-            return new Rectangle2D.Double(wOrg.getX(), wOrg.getY(), wExt.getWidth(), wExt.getHeight());
+            return new Rectangle2D.Double(wOrg.getX(), wOrg.getY(), wExt.getSize().getWidth(), wExt.getSize().getHeight());
         }        
     }
     

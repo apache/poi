@@ -31,11 +31,11 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.nio.charset.Charset;
 import java.text.AttributedString;
-import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.NoSuchElementException;
+import java.util.TreeMap;
 
 import org.apache.commons.codec.Charsets;
 import org.apache.poi.common.usermodel.fonts.FontInfo;
@@ -56,7 +56,8 @@ public class HwmfGraphics {
     protected final List<HwmfDrawProperties> propStack = new LinkedList<>();
     protected HwmfDrawProperties prop;
     protected final Graphics2D graphicsCtx;
-    protected final List<HwmfObjectTableEntry> objectTable = new ArrayList<>();
+    protected final BitSet objectIndexes = new BitSet();
+    protected final TreeMap<Integer,HwmfObjectTableEntry> objectTable = new TreeMap<>();
 
     private static final Charset DEFAULT_CHARSET = LocaleUtil.CHARSET_1252;
     /** Bounding box from the placeable header */
@@ -83,7 +84,11 @@ public class HwmfGraphics {
     }
 
     public void draw(Shape shape) {
-        HwmfLineDash lineDash = getProperties().getPenStyle().getLineDash();
+        HwmfPenStyle ps = getProperties().getPenStyle();
+        if (ps == null) {
+            return;
+        }
+        HwmfLineDash lineDash = ps.getLineDash();
         if (lineDash == HwmfLineDash.NULL) {
             // line is not drawn
             return;
@@ -201,15 +206,9 @@ public class HwmfGraphics {
      * @param entry
      */
     public void addObjectTableEntry(HwmfObjectTableEntry entry) {
-        ListIterator<HwmfObjectTableEntry> oIter = objectTable.listIterator();
-        while (oIter.hasNext()) {
-            HwmfObjectTableEntry tableEntry = oIter.next();
-            if (tableEntry == null) {
-                oIter.set(entry);
-                return;
-            }
-        }
-        objectTable.add(entry);
+        int objIdx = objectIndexes.nextClearBit(0);
+        objectIndexes.set(objIdx);
+        objectTable.put(objIdx, entry);
     }
 
     /**
@@ -242,7 +241,13 @@ public class HwmfGraphics {
      * @throws IndexOutOfBoundsException if the index is out of range
      */
     public void unsetObjectTableEntry(int index) {
-        objectTable.set(index, null);
+        if (index < 0) {
+            throw new IndexOutOfBoundsException("Invalid index: "+index);
+        }
+        // sometime emfs remove object table entries before they set them
+        // so ignore requests, if the table entry doesn't exist
+        objectTable.remove(index);
+        objectIndexes.clear(index);
     }
     
     /**
@@ -353,6 +358,9 @@ public class HwmfGraphics {
         }
         AttributedString as = new AttributedString(textString);
         addAttributes(as, font);
+
+        // disabled for the time being, as the results aren't promising
+        /*
         if (dx != null && !dx.isEmpty()) {
             //for multi-byte encodings (e.g. Shift_JIS), the byte length
             //might not equal the string length().
@@ -371,22 +379,23 @@ public class HwmfGraphics {
 
             final int cps = textString.codePointCount(0, textString.length());
             final int unicodeSteps = Math.max(dx.size()/cps, 1);
-            int dxPosition = 0;
+            int dxPosition = 0, lastDxPosition = 0;
             int beginIndex = 0;
-            int[] chars = {0};
             while (beginIndex < textString.length() && dxPosition < dx.size()) {
                 int endIndex = textString.offsetByCodePoints(beginIndex, 1);
                 if (beginIndex > 0) {
                     // Tracking works as a prefix/advance space on characters whereas
                     // dx[...] is the complete width of the current char
                     // therefore we need to add the additional/suffix width to the next char
-                    as.addAttribute(TextAttribute.TRACKING, (float)((dx.get(dxPosition) - fontW) / fontH), beginIndex, endIndex);
+
+                    as.addAttribute(TextAttribute.TRACKING, (float)((dx.get(lastDxPosition) - fontW) / fontH), beginIndex, endIndex);
                 }
+                lastDxPosition = dxPosition;
                 dxPosition += (isUnicode) ? unicodeSteps : (endIndex-beginIndex);
                 beginIndex = endIndex;
             }
         }
-        
+        */
         
         double angle = Math.toRadians(-font.getEscapement()/10.);
 
@@ -438,5 +447,21 @@ public class HwmfGraphics {
             // as an approximation we reduce the height by a static factor 
             return fontHeight*3/4;
         }
+    }
+
+    public void drawImage(BufferedImage img, Rectangle2D srcBounds, Rectangle2D dstBounds) {
+        // prop.getRasterOp();
+        graphicsCtx.drawImage(img,
+            (int)dstBounds.getX(),
+            (int)dstBounds.getY(),
+            (int)(dstBounds.getX()+dstBounds.getWidth()),
+            (int)(dstBounds.getY()+dstBounds.getHeight()),
+            (int)srcBounds.getX(),
+            (int)srcBounds.getY(),
+            (int)(srcBounds.getX()+srcBounds.getWidth()),
+            (int)(srcBounds.getY()+srcBounds.getHeight()),
+            null, // getProperties().getBackgroundColor().getColor(),
+            null
+        );
     }
 }

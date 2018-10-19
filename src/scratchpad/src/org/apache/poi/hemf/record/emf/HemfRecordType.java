@@ -116,7 +116,7 @@ public enum HemfRecordType {
     polyPolyline16(0x0000005A, HemfDraw.EmfPolyPolyline16::new),
     polyPolygon16(0x0000005B, HemfDraw.EmfPolyPolygon16::new),
     polyDraw16(0x0000005C, HemfDraw.EmfPolyDraw16::new),
-    createmonobrush16(0x0000005D, UnimplementedHemfRecord::new),
+    createMonoBrush16(0x0000005D, HemfMisc.EmfCreateMonoBrush16::new),
     createDibPatternBrushPt(0x0000005E, HemfMisc.EmfCreateDibPatternBrushPt::new),
     extCreatePen(0x0000005F, HemfMisc.EmfExtCreatePen::new),
     polytextouta(0x00000060, HemfText.PolyTextOutA::new),

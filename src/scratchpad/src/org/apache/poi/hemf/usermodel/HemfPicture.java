@@ -34,6 +34,7 @@ import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.record.emf.HemfHeader;
 import org.apache.poi.hemf.record.emf.HemfRecord;
 import org.apache.poi.hemf.record.emf.HemfRecordIterator;
+import org.apache.poi.hemf.record.emf.HemfWindowing;
 import org.apache.poi.util.Dimension2DDouble;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianInputStream;
@@ -47,6 +48,7 @@ public class HemfPicture implements Iterable<HemfRecord> {
 
     private final LittleEndianInputStream stream;
     private final List<HemfRecord> records = new ArrayList<>();
+    private boolean isParsed = false;
 
     public HemfPicture(InputStream is) throws IOException {
         this(new LittleEndianInputStream(is));
@@ -61,7 +63,10 @@ public class HemfPicture implements Iterable<HemfRecord> {
     }
 
     public List<HemfRecord> getRecords() {
-        if (records.isEmpty()) {
+        if (!isParsed) {
+            // in case the (first) parsing throws an exception, we can provide the
+            // records up to that point
+            isParsed = true;
             new HemfRecordIterator(stream).forEachRemaining(records::add);
         }
         return records;
@@ -89,10 +94,26 @@ public class HemfPicture implements Iterable<HemfRecord> {
      */
     public Dimension2D getSize() {
         HemfHeader header = (HemfHeader)getRecords().get(0);
+        final double coeff = (double) Units.EMU_PER_CENTIMETER / Units.EMU_PER_POINT / 10.;
         Rectangle2D dim = header.getFrameRectangle();
+        double width = dim.getWidth(), height = dim.getHeight();
+        if (dim.isEmpty() || Math.rint(width*coeff) == 0 || Math.rint(height*coeff) == 0) {
+            for (HemfRecord r : getRecords()) {
+                if (r instanceof HemfWindowing.EmfSetWindowExtEx) {
+                    Dimension2D d = ((HemfWindowing.EmfSetWindowExtEx)r).getSize();
+                    width = d.getWidth();
+                    height = d.getHeight();
+                    // keep searching - sometimes there's another record
+                }
+            }
+        }
 
-        double coeff = (double)Units.EMU_PER_CENTIMETER/Units.EMU_PER_POINT/10.;
-        return new Dimension2DDouble(dim.getWidth()*coeff, dim.getHeight()*coeff);
+        if (Math.rint(width*coeff) == 0 || Math.rint(height*coeff) == 0) {
+            width = 100;
+            height = 100;
+        }
+
+        return new Dimension2DDouble(width*coeff, height*coeff);
     }
 
     public void draw(Graphics2D ctx, Rectangle2D graphicsBounds) {

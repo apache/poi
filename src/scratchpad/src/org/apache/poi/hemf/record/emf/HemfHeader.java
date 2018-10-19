@@ -17,17 +17,17 @@
 
 package org.apache.poi.hemf.record.emf;
 
-import static org.apache.poi.hemf.record.emf.HemfDraw.readDimensionFloat;
 import static org.apache.poi.hemf.record.emf.HemfDraw.readDimensionInt;
 import static org.apache.poi.hemf.record.emf.HemfDraw.readRectL;
+import static org.apache.poi.hemf.record.emf.HemfRecordIterator.HEADER_SIZE;
 
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.poi.util.Dimension2DDouble;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
@@ -46,8 +46,7 @@ public class HemfHeader implements HemfRecord {
     private long bytes;
     private long records;
     private int handles;
-    private long nDescription;
-    private long offDescription;
+    private String description;
     private long nPalEntries;
     private boolean hasExtension1;
     private long cbPixelFormat;
@@ -79,13 +78,7 @@ public class HemfHeader implements HemfRecord {
         return handles;
     }
 
-    public long getnDescription() {
-        return nDescription;
-    }
-
-    public long getOffDescription() {
-        return offDescription;
-    }
+    public String getDescription() { return description; }
 
     public long getnPalEntries() {
         return nPalEntries;
@@ -131,8 +124,7 @@ public class HemfHeader implements HemfRecord {
                 ", bytes=" + bytes +
                 ", records=" + records +
                 ", handles=" + handles +
-                ", nDescription=" + nDescription +
-                ", offDescription=" + offDescription +
+                ", description=" + description +
                 ", nPalEntries=" + nPalEntries +
                 ", hasExtension1=" + hasExtension1 +
                 ", cbPixelFormat=" + cbPixelFormat +
@@ -156,6 +148,8 @@ public class HemfHeader implements HemfRecord {
             throw new IOException("Not a valid EMF header. Record type:"+recordId);
         }
 
+        int startIdx = leis.getReadIndex();
+
         //bounds
         long size = readRectL(leis, boundsRectangle);
         size += readRectL(leis, frameRectangle);
@@ -174,14 +168,24 @@ public class HemfHeader implements HemfRecord {
         //reserved
         leis.skipFully(LittleEndianConsts.SHORT_SIZE);
 
-        nDescription = leis.readUInt();
-        offDescription = leis.readUInt();
+        int nDescription = (int)leis.readUInt();
+        int offDescription = (int)leis.readUInt();
         nPalEntries = leis.readUInt();
 
         size += 8*LittleEndianConsts.INT_SIZE;
 
         size += readDimensionInt(leis, deviceDimension);
         size += readDimensionInt(leis, milliDimension);
+
+        if (nDescription > 0 && offDescription > 0) {
+            int skip = (int)(offDescription - (size + HEADER_SIZE));
+            leis.mark(skip+nDescription*2);
+            leis.skipFully(skip);
+            byte[] buf = new byte[(nDescription-1)*2];
+            leis.readFully(buf);
+            description = new String(buf, StandardCharsets.UTF_16LE).replace((char)0, ' ').trim();
+            leis.reset();
+        }
 
         if (size+12 <= recordSize) {
             hasExtension1 = true;
@@ -195,6 +199,7 @@ public class HemfHeader implements HemfRecord {
             hasExtension2 = true;
             size += readDimensionInt(leis, microDimension);
         }
+
         return size;
     }
 }

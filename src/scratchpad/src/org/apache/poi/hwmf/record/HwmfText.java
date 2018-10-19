@@ -601,6 +601,54 @@ public class HwmfText {
                 props.setTextVAlignAsian(HwmfTextVerticalAlignment.TOP);
             }
         }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append("{ align: '");
+
+            if (TA_CENTER.isSet(textAlignmentMode)) {
+                sb.append("center");
+            } else if (TA_RIGHT.isSet(textAlignmentMode)) {
+                sb.append("right");
+            } else {
+                sb.append("left");
+            }
+
+            sb.append("', align-asian: '");
+
+            if (VTA_CENTER.isSet(textAlignmentMode)) {
+                sb.append("center");
+            } else if (VTA_LEFT.isSet(textAlignmentMode)) {
+                sb.append("left");
+            } else {
+                sb.append("right");
+            }
+
+            sb.append("', valign: '");
+
+            if (TA_BASELINE.isSet(textAlignmentMode)) {
+                sb.append("baseline");
+            } else if (TA_BOTTOM.isSet(textAlignmentMode)) {
+                sb.append("bottom");
+            } else {
+                sb.append("top");
+            }
+
+            sb.append("', valign-asian: '");
+
+            if (VTA_BASELINE.isSet(textAlignmentMode)) {
+                sb.append("baseline");
+            } else if (VTA_BOTTOM.isSet(textAlignmentMode)) {
+                sb.append("bottom");
+            } else {
+                sb.append("top");
+            }
+
+            sb.append("' }");
+
+            return sb.toString();
+        }
     }
     
     public static class WmfCreateFontIndirect implements HwmfRecord, HwmfObjectTableEntry {

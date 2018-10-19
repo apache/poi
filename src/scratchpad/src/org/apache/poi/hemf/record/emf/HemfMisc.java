@@ -45,8 +45,6 @@ import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
 public class HemfMisc {
-    private static final int MAX_RECORD_LENGTH = 10_000_000;
-
     public static class EmfEof implements HemfRecord {
         protected final List<PaletteEntry> palette = new ArrayList<>();
 
@@ -535,6 +533,11 @@ public class HemfMisc {
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             return readPointL(leis, origin);
         }
+
+        @Override
+        public String toString() {
+            return "{ x: "+origin.getX()+", y: "+origin.getY()+" }";
+        }
     }
 
     public static class EmfSetWorldTransform implements HemfRecord {
@@ -579,6 +582,49 @@ public class HemfMisc {
             return
                 "{ xForm: { scaleX: "+xForm.getScaleX()+", shearX: "+xForm.getShearX()+", transX: "+xForm.getTranslateX()+", scaleY: "+xForm.getScaleY()+", shearY: "+xForm.getShearY()+", transY: "+xForm.getTranslateY()+" }"+
                 ", modifyWorldTransformMode: "+modifyWorldTransformMode+" }";
+        }
+    }
+
+    public static class EmfCreateMonoBrush16 extends EmfCreatePen {
+        protected HwmfFill.ColorUsage colorUsage;
+        protected final HwmfBitmapDib bitmap = new HwmfBitmapDib();
+
+        @Override
+        public HemfRecordType getEmfRecordType() {
+            return HemfRecordType.createMonoBrush16;
+        }
+
+        @Override
+        public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
+            final int startIdx = leis.getReadIndex();
+
+            penIndex = (int) leis.readUInt();
+
+            // A 32-bit unsigned integer that specifies how to interpret values in the color
+            // table in the DIB header. This value MUST be in the DIBColors enumeration
+            colorUsage = HwmfFill.ColorUsage.valueOf((int) leis.readUInt());
+
+            // A 32-bit unsigned integer that specifies the offset from the start of this
+            // record to the DIB header, if the record contains a DIB.
+            int offBmi = (int) leis.readUInt();
+
+            // A 32-bit unsigned integer that specifies the size of the DIB header, if the
+            // record contains a DIB.
+            int cbBmi = (int) leis.readUInt();
+
+            // A 32-bit unsigned integer that specifies the offset from the start of this
+            // record to the DIB bits, if the record contains a DIB.
+            int offBits = (int) leis.readUInt();
+
+            // A 32-bit unsigned integer that specifies the size of the DIB bits, if the record
+            // contains a DIB.
+            int cbBits = (int) leis.readUInt();
+
+            int size = 6 * LittleEndianConsts.INT_SIZE;
+
+            size += readBitmap(leis, bitmap, startIdx, offBmi, cbBmi, offBits, cbBits);
+
+            return size;
         }
     }
 }

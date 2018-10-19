@@ -934,7 +934,7 @@ public class HemfDraw {
         public void draw(HemfGraphics ctx) {
             final HemfDrawProperties prop = ctx.getProperties();
             final Path2D path = prop.getPath();
-            if (path != null) {
+            if (path != null && path.getCurrentPoint() != null) {
                 path.closePath();
                 prop.setLocation(path.getCurrentPoint());
             }
@@ -1041,15 +1041,16 @@ public class HemfDraw {
     }
 
     private static void polyTo(final HemfGraphics ctx, final Path2D poly) {
-        final PathIterator pi = poly.getPathIterator(null);
-        if (pi.isDone()) {
-            // ignore empty polys
+        if (poly.getCurrentPoint() == null) {
             return;
         }
 
-        // ignore dummy start point (moveTo)
+        final PathIterator pi = poly.getPathIterator(null);
+        // ignore empty polys and dummy start point (moveTo)
         pi.next();
-        assert (!pi.isDone());
+        if (pi.isDone()) {
+            return;
+        }
 
         ctx.draw((path) -> path.append(pi, true));
     }

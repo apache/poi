@@ -17,14 +17,21 @@
 
 package org.apache.poi.hwmf.record;
 
-import javax.imageio.ImageIO;
+import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.LinearGradientPaint;
+import java.awt.MultipleGradientPaint;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.imageio.ImageIO;
+
+import org.apache.poi.hwmf.usermodel.HwmfPicture;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
@@ -38,7 +45,7 @@ import org.apache.poi.util.RecordFormatException;
  */
 public class HwmfBitmapDib {
 
-    private static final int MAX_RECORD_LENGTH = 10000000;
+    private static final int MAX_RECORD_LENGTH = HwmfPicture.MAX_RECORD_LENGTH;
 
     public static enum BitCount {
         /**
@@ -225,14 +232,23 @@ public class HwmfBitmapDib {
         introSize += readColors(leis);
         assert(introSize < 10000);
 
-        int fileSize = (headerImageSize < headerSize) ? recordSize : (int)Math.min(introSize+headerImageSize,recordSize);
-        
         leis.reset();
-        imageData = IOUtils.toByteArray(leis, fileSize);
-        
+
         assert( headerSize != 0x0C || ((((headerWidth * headerPlanes * headerBitCount.flag + 31) & ~31) / 8) * Math.abs(headerHeight)) == headerImageSize);
 
-        return fileSize;
+        if (headerImageSize < headerSize) {
+            imageData = IOUtils.safelyAllocate(recordSize, MAX_RECORD_LENGTH);
+            leis.readFully(imageData);
+            return recordSize;
+        } else {
+            int fileSize = (int)Math.min(introSize+headerImageSize,recordSize);
+            imageData = IOUtils.safelyAllocate(fileSize, MAX_RECORD_LENGTH);
+            leis.readFully(imageData, 0, introSize);
+            leis.skipFully(recordSize-fileSize);
+            // emfs are sometimes truncated, read as much as possible
+            int readBytes = leis.read(imageData, introSize, fileSize-introSize);
+            return introSize+(recordSize-fileSize)+readBytes;
+        }
     }
 
     protected int readHeader(LittleEndianInputStream leis) throws IOException {
@@ -262,6 +278,9 @@ public class HwmfBitmapDib {
             headerBitCount = BitCount.valueOf(leis.readUShort());
             size += 4*LittleEndianConsts.SHORT_SIZE;
         } else {
+            // fix header size, sometimes this is invalid
+            headerSize = 40;
+
             // BitmapInfoHeader
             // A 32-bit signed integer that defines the width of the DIB, in pixels.
             // This value MUST be positive.
@@ -306,7 +325,6 @@ public class HwmfBitmapDib {
             headerColorImportant = leis.readUInt();
             size += 8*LittleEndianConsts.INT_SIZE+2*LittleEndianConsts.SHORT_SIZE;
         }
-        assert(size == headerSize);
         return size;
     }
 
@@ -374,6 +392,10 @@ public class HwmfBitmapDib {
         return size;
     }
 
+    public boolean isValid() {
+        return (imageData != null);
+    }
+
     public InputStream getBMPStream() {
         return new ByteArrayInputStream(getBMPData());
     }
@@ -407,14 +429,38 @@ public class HwmfBitmapDib {
     public BufferedImage getImage() {
         try {
             return ImageIO.read(getBMPStream());
-        } catch (IOException e) {
-            logger.log(POILogger.ERROR, "invalid bitmap data - returning black opaque image");
-            BufferedImage bi = new BufferedImage(headerWidth, headerHeight, BufferedImage.TYPE_INT_ARGB);
-            Graphics2D g = bi.createGraphics();
-            g.setPaint(Color.black);
-            g.fillRect(0, 0, headerWidth, headerHeight);
-            g.dispose();
-            return bi;
+        } catch (IOException|RuntimeException e) {
+            logger.log(POILogger.ERROR, "invalid bitmap data - returning placeholder image");
+            return getPlaceholder();
         }
+    }
+
+    protected BufferedImage getPlaceholder() {
+        BufferedImage bi = new BufferedImage(headerWidth, headerHeight, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = bi.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+
+        g.setComposite(AlphaComposite.Clear);
+        g.fillRect(0, 0, headerWidth, headerHeight);
+
+        final int arcs = Math.min(headerWidth, headerHeight) / 7;
+
+        Color bg = Color.LIGHT_GRAY;
+        Color fg = Color.GRAY;
+        LinearGradientPaint lgp = new LinearGradientPaint(0f, 0f, 5, 5,
+                new float[] {0,.1f,.1001f}, new Color[] {fg,fg,bg}, MultipleGradientPaint.CycleMethod.REFLECT);
+        g.setComposite(AlphaComposite.SrcOver.derive(0.4f));
+        g.setPaint(lgp);
+        g.fillRoundRect(0, 0, headerWidth-1, headerHeight-1, arcs, arcs);
+
+        g.setColor(Color.DARK_GRAY);
+        g.setComposite(AlphaComposite.Src);
+        g.setStroke(new BasicStroke(2));
+        g.drawRoundRect(0, 0, headerWidth-1, headerHeight-1, arcs, arcs);
+        g.dispose();
+        return bi;
     }
 }
