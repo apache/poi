@@ -4621,8 +4621,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
 
     /**
      *  when a cell with a 'master' shared formula is removed,  the next cell in the range becomes the master
+     * @param cell 
+     * @param evalWb BaseXSSFEvaluationWorkbook in use, if one exists
      */
-    protected void onDeleteFormula(XSSFCell cell){
+    protected void onDeleteFormula(XSSFCell cell, BaseXSSFEvaluationWorkbook evalWb){
 
         CTCellFormula f = cell.getCTCell().getF();
         if (f != null && f.getT() == STCellFormulaType.SHARED && f.isSetRef() && f.getStringValue() != null) {
@@ -4634,9 +4636,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
                     XSSFRow row = getRow(i);
                     if(row != null) for(int j = cell.getColumnIndex(); j <= ref.getLastColumn(); j++){
                         XSSFCell nextCell = row.getCell(j);
-                        if(nextCell != null && nextCell != cell){
+                        if(nextCell != null && nextCell != cell && nextCell.getCellType() == CellType.FORMULA){
                             CTCellFormula nextF = nextCell.getCTCell().getF();
-                            nextF.setStringValue(nextCell.getCellFormula());
+                            nextF.setStringValue(nextCell.getCellFormula(evalWb));
                             CellRangeAddress nextRef = new CellRangeAddress(
                                     nextCell.getRowIndex(), ref.getLastRow(),
                                     nextCell.getColumnIndex(), ref.getLastColumn());
