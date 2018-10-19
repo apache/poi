@@ -28,6 +28,7 @@ import java.util.function.Supplier;
 
 import org.apache.poi.hemf.record.emfplus.HemfPlusRecord;
 import org.apache.poi.hemf.record.emfplus.HemfPlusRecordIterator;
+import org.apache.poi.hwmf.usermodel.HwmfPicture;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianConsts;
@@ -40,7 +41,7 @@ import org.apache.poi.util.RecordFormatException;
  */
 @Internal
 public class HemfComment {
-    private static final int MAX_RECORD_LENGTH = 2_000_000;
+    private static final int MAX_RECORD_LENGTH = HwmfPicture.MAX_RECORD_LENGTH;
 
     public enum HemfCommentRecordType {
         emfGeneric(-1, EmfCommentDataGeneric::new, false),
@@ -145,7 +146,12 @@ public class HemfComment {
             } else {
                 // A 32-bit unsigned integer from the RecordType enumeration that identifies this record
                 // as a comment record. This value MUST be 0x00000046.
-                type = leis.readUInt();
+                try {
+                    type = leis.readUInt();
+                } catch (RuntimeException e) {
+                    // EOF
+                    return null;
+                }
                 assert(type == HemfRecordType.comment.id);
                 // A 32-bit unsigned integer that specifies the size in bytes of this record in the
                 // metafile. This value MUST be a multiple of 4 bytes.
@@ -327,8 +333,12 @@ public class HemfComment {
             for (EmfCommentDataFormat fmt : formats) {
                 int skip = fmt.offData-(leis.getReadIndex()-startIdx);
                 leis.skipFully(skip);
-                fmt.rawData = new byte[fmt.sizeData];
-                leis.readFully(fmt.rawData);
+                fmt.rawData = IOUtils.safelyAllocate(fmt.sizeData, MAX_RECORD_LENGTH);
+                int readBytes = leis.read(fmt.rawData);
+                if (readBytes < fmt.sizeData) {
+                    // EOF
+                    break;
+                }
             }
 
             return leis.getReadIndex()-startIdx;
@@ -405,8 +415,7 @@ public class HemfComment {
         }
 
         @Override
-        public long init(final LittleEndianInputStream leis, final long dataSize)
-                throws IOException {
+        public long init(final LittleEndianInputStream leis, final long dataSize) throws IOException {
             final int startIdx = leis.getReadIndex();
             final int commentIdentifier = (int)leis.readUInt();
             assert(commentIdentifier == HemfCommentRecordType.emfPublic.id);
@@ -431,7 +440,8 @@ public class HemfComment {
             int winMetafileSize = (int)leis.readUInt();
 
             byte[] winMetafile = IOUtils.safelyAllocate(winMetafileSize, MAX_RECORD_LENGTH);
-            leis.readFully(winMetafile);
+            // some emf comments are truncated, so we don't use readFully here
+            leis.read(winMetafile);
 
             return leis.getReadIndex()-startIdx;
         }

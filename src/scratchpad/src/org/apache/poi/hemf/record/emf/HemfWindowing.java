@@ -38,9 +38,10 @@ public class HemfWindowing {
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             // cx (4 bytes): A 32-bit unsigned integer that defines the x-coordinate of the point.
-            width = (int)leis.readUInt();
+            int width = (int)leis.readUInt();
             // cy (4 bytes): A 32-bit unsigned integer that defines the y-coordinate of the point.
-            height = (int)leis.readUInt();
+            int height = (int)leis.readUInt();
+            size.setSize(width, height);
 
             return 2*LittleEndianConsts.INT_SIZE;
         }

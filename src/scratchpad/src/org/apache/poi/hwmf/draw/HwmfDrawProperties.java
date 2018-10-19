@@ -37,6 +37,7 @@ import org.apache.poi.hwmf.record.HwmfMapMode;
 import org.apache.poi.hwmf.record.HwmfMisc.WmfSetBkMode.HwmfBkMode;
 import org.apache.poi.hwmf.record.HwmfPalette.PaletteEntry;
 import org.apache.poi.hwmf.record.HwmfPenStyle;
+import org.apache.poi.hwmf.record.HwmfTernaryRasterOp;
 import org.apache.poi.hwmf.record.HwmfText.HwmfTextAlignment;
 import org.apache.poi.hwmf.record.HwmfText.HwmfTextVerticalAlignment;
 
@@ -65,6 +66,7 @@ public class HwmfDrawProperties {
     private HwmfTextVerticalAlignment textVAlignLatin;
     private HwmfTextAlignment textAlignAsian;
     private HwmfTextVerticalAlignment textVAlignAsian;
+    private HwmfTernaryRasterOp rasterOp;
 
     public HwmfDrawProperties() {
         window = new Rectangle2D.Double(0, 0, 1, 1);
@@ -86,6 +88,7 @@ public class HwmfDrawProperties {
         textVAlignLatin = HwmfTextVerticalAlignment.TOP;
         textAlignAsian = HwmfTextAlignment.RIGHT;
         textVAlignAsian = HwmfTextVerticalAlignment.TOP;
+        rasterOp = HwmfTernaryRasterOp.PATCOPY;
     }
     
     public HwmfDrawProperties(HwmfDrawProperties other) {
@@ -122,6 +125,7 @@ public class HwmfDrawProperties {
         this.textVAlignLatin = other.textVAlignLatin;
         this.textAlignAsian = other.textAlignAsian;
         this.textVAlignAsian = other.textVAlignAsian;
+        this.rasterOp = other.rasterOp;
     }
     
     public void setViewportExt(double width, double height) {
@@ -374,5 +378,13 @@ public class HwmfDrawProperties {
      */
     public int getWindingRule() {
         return getPolyfillMode().awtFlag;
+    }
+
+    public HwmfTernaryRasterOp getRasterOp() {
+        return rasterOp;
+    }
+
+    public void setRasterOp(HwmfTernaryRasterOp rasterOp) {
+        this.rasterOp = rasterOp;
     }
 }

@@ -21,10 +21,12 @@ import static org.apache.poi.hwmf.record.HwmfDraw.readBounds;
 
 import java.awt.Shape;
 import java.awt.geom.Area;
+import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 
 import org.apache.poi.hwmf.draw.HwmfGraphics;
+import org.apache.poi.util.Dimension2DDouble;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
@@ -170,11 +172,7 @@ public class HwmfWindowing {
      */
     public static class WmfSetWindowExt implements HwmfRecord {
 
-        /** A signed integer that defines the vertical extent of the window in logical units. */
-        protected int height;
-
-        /** A signed integer that defines the horizontal extent of the window in logical units. */
-        protected int width;
+        protected final Dimension2D size = new Dimension2DDouble();
 
         @Override
         public HwmfRecordType getWmfRecordType() {
@@ -183,23 +181,22 @@ public class HwmfWindowing {
 
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            height = leis.readShort();
-            width = leis.readShort();
+            // A signed integer that defines the vertical extent of the window in logical units.
+            int height = leis.readShort();
+            // A signed integer that defines the horizontal extent of the window in logical units.
+            int width = leis.readShort();
+            size.setSize(width, height);
             return 2*LittleEndianConsts.SHORT_SIZE;
         }
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            ctx.getProperties().setWindowExt(width, height);
+            ctx.getProperties().setWindowExt(size.getWidth(), size.getHeight());
             ctx.updateWindowMapMode();
         }
 
-        public int getHeight() {
-            return height;
-        }
-
-        public int getWidth() {
-            return width;
+        public Dimension2D getSize() {
+            return size;
         }
     }
 

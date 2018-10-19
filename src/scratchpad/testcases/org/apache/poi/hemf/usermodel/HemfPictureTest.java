@@ -22,26 +22,22 @@ import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
-import javax.imageio.ImageIO;
+import java.util.stream.Stream;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hemf.record.emf.HemfComment;
@@ -54,8 +50,6 @@ import org.apache.poi.hemf.record.emf.HemfRecordType;
 import org.apache.poi.hemf.record.emf.HemfText;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.RecordFormatException;
-import org.apache.poi.util.Units;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class HemfPictureTest {
@@ -63,69 +57,130 @@ public class HemfPictureTest {
     private static final POIDataSamples ss_samples = POIDataSamples.getSpreadSheetInstance();
     private static final POIDataSamples sl_samples = POIDataSamples.getSlideShowInstance();
 
+    /*
     @Test
-    @Ignore("Only for manual tests")
+    @Ignore("Only for manual tests - need to add org.tukaani:xz:1.8 for this to work")
     public void paint() throws IOException {
-//        File f = new File("picture_14.emf"); // sl_samples.getFile("wrench.emf");
-//        try (FileInputStream fis = new FileInputStream(f)) {
+        byte buf[] = new byte[50_000_000];
 
-        try (ZipInputStream zis = new ZipInputStream(new FileInputStream("tmp/emf.zip"))) {
-            for (;;) {
-                ZipEntry ze = zis.getNextEntry();
-                if (ze == null) {
-                    break;
-                }
-                final File pngName = new File("build/tmp",ze.getName().replaceFirst( ".*/","").replace(".emf", ".png"));
-                if (pngName.exists()) {
-                    continue;
-                }
+        final boolean writeLog = true;
+        final boolean savePng = true;
 
+        Set<String> passed = new HashSet<>();
 
-                // 263/263282_000.emf
-//                if (!ze.getName().contains("298/298837_000.emf")) continue;
-                HemfPicture emf = new HemfPicture(zis);
-                System.out.println(ze.getName());
+        try (BufferedWriter sucWrite = parseEmfLog(passed, "emf-success.txt");
+             BufferedWriter parseError = parseEmfLog(passed, "emf-parse.txt");
+             BufferedWriter renderError = parseEmfLog(passed, "emf-render.txt");
+             SevenZFile sevenZFile = new SevenZFile(new File("tmp/render_emf.7z"))) {
+            for (int idx=0;;idx++) {
+                SevenZArchiveEntry entry = sevenZFile.getNextEntry();
+                if (entry == null) break;
+                final String etName = entry.getName();
 
-                Dimension2D dim = emf.getSize();
-                int width = Units.pointsToPixel(dim.getWidth());
-                // keep aspect ratio for height
-                int height = Units.pointsToPixel(dim.getHeight());
-                double max = Math.max(width, height);
-                if (max > 1500) {
-                    width *= 1500 / max;
-                    height *= 1500 / max;
-                }
+                if (entry.isDirectory() || !etName.endsWith(".emf") || passed.contains(etName)) continue;
 
-                BufferedImage bufImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-                Graphics2D g = bufImg.createGraphics();
-                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-                g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-                g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+                System.out.println(etName);
 
-                FileWriter fw = new FileWriter("record-list.txt");
-                int i = 0;
-                for (HemfRecord r : emf.getRecords()) {
-                    if (r.getEmfRecordType() != HemfRecordType.comment) {
-                        fw.write(i + " " + r.getEmfRecordType() + " " + r.toString() + "\n");
+                int size = sevenZFile.read(buf);
+
+                HemfPicture emf = null;
+                try {
+                    emf = new HemfPicture(new ByteArrayInputStream(buf, 0, size));
+
+                    // initialize parsing
+                    emf.getRecords();
+                } catch (Exception|AssertionError e) {
+                    if (writeLog) {
+                        parseError.write(etName+" "+hashException(e)+"\n");
+                        parseError.flush();
                     }
-                    i++;
+                    System.out.println("parse error");
+                    // continue with the read records up to the error anyway
+                    if (emf.getRecords().isEmpty()) {
+                        continue;
+                    }
                 }
-                fw.close();
 
-                emf.draw(g, new Rectangle2D.Double(0, 0, width, height));
+                Graphics2D g = null;
+                try {
+                    Dimension2D dim = emf.getSize();
+                    double width = Units.pointsToPixel(dim.getWidth());
+                    // keep aspect ratio for height
+                    double height = Units.pointsToPixel(dim.getHeight());
+                    double max = Math.max(width, height);
+                    if (max > 1500.) {
+                        width *= 1500. / max;
+                        height *= 1500. / max;
+                    }
 
-                g.dispose();
+                    BufferedImage bufImg = new BufferedImage((int)Math.ceil(width), (int)Math.ceil(height), BufferedImage.TYPE_INT_ARGB);
+                    g = bufImg.createGraphics();
+                    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                    g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+                    g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
 
-                ImageIO.write(bufImg, "PNG", pngName);
+                    emf.draw(g, new Rectangle2D.Double(0, 0, width, height));
 
-//                break;
+                    final File pngName = new File("build/tmp", etName.replaceFirst(".*"+"/", "").replace(".emf", ".png"));
+                    if (savePng) {
+                        ImageIO.write(bufImg, "PNG", pngName);
+                    }
+                } catch (Exception|AssertionError e) {
+                    System.out.println("render error");
+                    if (writeLog) {
+                        // dumpRecords(emf.getRecords());
+                        renderError.write(etName+" "+hashException(e)+"\n");
+                        renderError.flush();
+                    }
+                    continue;
+                } finally {
+                    if (g != null) g.dispose();
+                }
+
+                if (writeLog) {
+                    sucWrite.write(etName + "\n");
+                    sucWrite.flush();
+                }
             }
         }
+    } */
+
+    private static int hashException(Throwable e) {
+        StringBuilder sb = new StringBuilder();
+        for (StackTraceElement se : e.getStackTrace()) {
+            sb.append(se.getClassName()+":"+se.getLineNumber());
+        }
+        return sb.toString().hashCode();
     }
 
+    private static void dumpRecords(HemfPicture emf) throws IOException {
+        FileWriter fw = new FileWriter("record-list.txt");
+        int i = 0;
+        for (HemfRecord r : emf.getRecords()) {
+            if (r.getEmfRecordType() != HemfRecordType.comment) {
+                fw.write(i + " " + r.getEmfRecordType() + " " + r.toString() + "\n");
+            }
+            i++;
+        }
+        fw.close();
+    }
 
+    private static BufferedWriter parseEmfLog(Set<String> passed, String logFile) throws IOException {
+        Path log = Paths.get(logFile);
 
+        StandardOpenOption soo;
+        if (Files.exists(log)) {
+            soo = StandardOpenOption.APPEND;
+            try (Stream<String> stream = Files.lines(log)) {
+                stream.forEach((s) -> passed.add(s.split("\\s")[0]));
+            }
+        } else {
+            soo = StandardOpenOption.CREATE;
+        }
+
+        return Files.newBufferedWriter(log, StandardCharsets.UTF_8, soo);
+    }
 
     @Test
     public void testBasicWindows() throws Exception {

@@ -433,7 +433,7 @@ public class HwmfFill {
      * The source of the color data is a DIB, and the destination of the transfer is
      * the current output region in the playback device context.
      */
-    public static class WmfStretchDib implements HwmfRecord, HwmfImageRecord, HwmfObjectTableEntry {
+    public static class WmfStretchDib implements HwmfRecord, HwmfImageRecord {
         /**
          * A 32-bit unsigned integer that defines how the source pixels, the current brush in
          * the playback device context, and the destination pixels are to be combined to
@@ -487,12 +487,10 @@ public class HwmfFill {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            ctx.addObjectTableEntry(this);
-        }
-        
-        @Override
-        public void applyObject(HwmfGraphics ctx) {
-            
+            if (dib.isValid()) {
+                ctx.getProperties().setRasterOp(rasterOperation);
+                ctx.drawImage(getImage(), srcBounds, dstBounds);
+            }
         }
 
         @Override
@@ -720,7 +718,7 @@ public class HwmfFill {
 
         @Override
         public BufferedImage getImage() {
-            return (target == null) ? null : target.getImage();
+            return (target != null && target.isValid()) ? target.getImage() : null;
         }
     }
 

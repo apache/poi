@@ -624,19 +624,19 @@ public class HemfFill {
             return undefinedSpace1;
         }
 
-        final LittleEndianInputStream leisDib;
-        if (undefinedSpace2 == 0) {
-            leisDib = leis;
-        } else {
-            final ByteArrayOutputStream bos = new ByteArrayOutputStream(cbBmi+cbBits);
-            final long cbBmiSrcAct = IOUtils.copy(leis, bos, cbBmi);
-            assert (cbBmiSrcAct == cbBmi);
-            leis.skipFully(undefinedSpace2);
-            final long cbBitsSrcAct = IOUtils.copy(leis, bos, cbBits);
-            assert (cbBitsSrcAct == cbBits);
-            leisDib = new LittleEndianInputStream(new ByteArrayInputStream(bos.toByteArray()));
-        }
         final int dibSize = cbBmi+cbBits;
+        if (undefinedSpace2 == 0) {
+            return undefinedSpace1 + bitmap.init(leis, dibSize);
+        }
+
+        final ByteArrayOutputStream bos = new ByteArrayOutputStream(cbBmi+cbBits);
+        final long cbBmiSrcAct = IOUtils.copy(leis, bos, cbBmi);
+        assert (cbBmiSrcAct == cbBmi);
+        leis.skipFully(undefinedSpace2);
+        final long cbBitsSrcAct = IOUtils.copy(leis, bos, cbBits);
+        assert (cbBitsSrcAct == cbBits);
+
+        final LittleEndianInputStream leisDib = new LittleEndianInputStream(new ByteArrayInputStream(bos.toByteArray()));
         final int dibSizeAct = bitmap.init(leisDib, dibSize);
         assert (dibSizeAct <= dibSize);
         return undefinedSpace1 + cbBmi + undefinedSpace2 + cbBits;
@@ -646,8 +646,8 @@ public class HemfFill {
     static long readRgnData(final LittleEndianInputStream leis, final List<Rectangle2D> rgnRects) {
         // *** RegionDataHeader ***
         // A 32-bit unsigned integer that specifies the size of this object in bytes. This MUST be 0x00000020.
-        long rgnHdrSiez = leis.readUInt();
-        assert(rgnHdrSiez == 0x20);
+        long rgnHdrSize = leis.readUInt();
+        assert(rgnHdrSize == 0x20);
         // A 32-bit unsigned integer that specifies the region type. This SHOULD be RDH_RECTANGLES (0x00000001)
         long rgnHdrType = leis.readUInt();
         assert(rgnHdrType == 1);
@@ -729,7 +729,7 @@ public class HemfFill {
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             // A 128-bit WMF RectL object, which specifies bounding rectangle, in device units
-            return readRectL(leis, bounds);
+            return (recordSize == 0) ? 0 : readRectL(leis, bounds);
         }
 
         @Override

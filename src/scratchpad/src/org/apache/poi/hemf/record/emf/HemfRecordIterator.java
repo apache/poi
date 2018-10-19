@@ -53,8 +53,15 @@ public class HemfRecordIterator implements Iterator<HemfRecord> {
         if (currentRecord != null && HemfRecordType.eof == currentRecord.getEmfRecordType()) {
             return null;
         }
-        long recordId = stream.readUInt();
-        long recordSize = stream.readUInt();
+
+        final long recordId, recordSize;
+        try {
+            recordId = stream.readUInt();
+            recordSize = stream.readUInt();
+        } catch (RuntimeException e) {
+            // EOF
+            return null;
+        }
 
         HemfRecordType type = HemfRecordType.getById(recordId);
         if (type == null) {
