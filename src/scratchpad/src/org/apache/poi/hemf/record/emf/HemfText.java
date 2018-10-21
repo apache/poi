@@ -28,7 +28,6 @@ import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
-import org.apache.commons.codec.Charsets;
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.hwmf.record.HwmfText;
@@ -38,7 +37,6 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
-import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.RecordFormatException;
 
 /**
@@ -72,7 +70,7 @@ public class HemfText {
 
         @Override
         public HemfRecordType getEmfRecordType() {
-            return HemfRecordType.exttextouta;
+            return HemfRecordType.extTextOutA;
         }
 
         @Override
@@ -209,7 +207,7 @@ public class HemfText {
 
         @Override
         public HemfRecordType getEmfRecordType() {
-            return HemfRecordType.exttextoutw;
+            return HemfRecordType.extTextOutW;
         }
 
         public String getText() throws IOException {

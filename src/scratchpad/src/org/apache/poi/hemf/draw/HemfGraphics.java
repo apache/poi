@@ -106,19 +106,21 @@ public class HemfGraphics extends HwmfGraphics {
         final Path2D path;
         if (useBracket) {
             path = prop.getPath();
-            if (path.getCurrentPoint() == null) {
-                // workaround if a path has been started and no MoveTo command
-                // has been specified before the first lineTo/splineTo
-                final Point2D loc = prop.getLocation();
-                path.moveTo(loc.getX(), loc.getY());
-            }
         } else {
             path = new Path2D.Double();
             Point2D pnt = prop.getLocation();
             path.moveTo(pnt.getX(),pnt.getY());
         }
 
-        pathConsumer.accept(path);
+        try {
+            pathConsumer.accept(path);
+        } catch (Exception e) {
+            // workaround if a path has been started and no MoveTo command
+            // has been specified before the first lineTo/splineTo
+            final Point2D loc = prop.getLocation();
+            path.moveTo(loc.getX(), loc.getY());
+            pathConsumer.accept(path);
+        }
 
         prop.setLocation(path.getCurrentPoint());
         if (!useBracket) {
