@@ -17,10 +17,6 @@
 
 package org.apache.poi.hemf.record.emf;
 
-import static org.apache.poi.hwmf.record.HwmfBrushStyle.BS_NULL;
-import static org.apache.poi.hwmf.record.HwmfBrushStyle.BS_SOLID;
-
-import java.awt.Color;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Area;
 import java.awt.geom.Dimension2D;
@@ -32,10 +28,8 @@ import java.io.IOException;
 
 import org.apache.poi.hemf.draw.HemfDrawProperties;
 import org.apache.poi.hemf.draw.HemfGraphics;
-import org.apache.poi.hwmf.record.HwmfColorRef;
 import org.apache.poi.hwmf.record.HwmfDraw;
 import org.apache.poi.hwmf.record.HwmfDraw.WmfSelectObject;
-import org.apache.poi.hwmf.record.HwmfPenStyle;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
@@ -242,6 +236,7 @@ public class HemfDraw {
                         // if this path is connected to the current position (= has no start point)
                         // the first entry is a dummy entry and will be skipped later
                         poly.moveTo(0,0);
+                        poly.lineTo(pnt.getX(), pnt.getY());
                     }
                 } else {
                     poly.lineTo(pnt.getX(), pnt.getY());
@@ -952,7 +947,6 @@ public class HemfDraw {
                 path.closePath();
                 prop.setLocation(path.getCurrentPoint());
             }
-
         }
 
         @Override
