@@ -53,6 +53,7 @@ public class HemfGraphics extends HwmfGraphics {
         super(graphicsCtx,bbox);
         // add dummy entry for object index 0, as emf is 1-based
         objectIndexes.set(0);
+        saveTransform();
     }
 
     @Override
@@ -82,10 +83,10 @@ public class HemfGraphics extends HwmfGraphics {
             if (tgt != null && !tgt.isEmpty()) {
                 final Rectangle2D src = bounded.getShapeBounds(this);
                 if (src != null && !src.isEmpty()) {
-                    graphicsCtx.translate(tgt.getCenterX() - src.getCenterX(), tgt.getCenterY() - src.getCenterY());
-                    graphicsCtx.translate(src.getCenterX(), src.getCenterY());
-                    graphicsCtx.scale(tgt.getWidth() / src.getWidth(), tgt.getHeight() / src.getHeight());
-                    graphicsCtx.translate(-src.getCenterX(), -src.getCenterY());
+//                    graphicsCtx.translate(tgt.getCenterX() - src.getCenterX(), tgt.getCenterY() - src.getCenterY());
+//                    graphicsCtx.translate(src.getCenterX(), src.getCenterY());
+//                    graphicsCtx.scale(tgt.getWidth() / src.getWidth(), tgt.getHeight() / src.getHeight());
+//                    graphicsCtx.translate(-src.getCenterX(), -src.getCenterY());
                 }
             }
         }
@@ -266,7 +267,27 @@ public class HemfGraphics extends HwmfGraphics {
         }
     }
 
+    /**
+     * @return the initial AffineTransform, when this graphics context was created
+     */
+    public AffineTransform getInitTransform() {
+        return new AffineTransform(transforms.peekFirst());
+    }
 
+    /**
+     * @return the current AffineTransform
+     */
+    public AffineTransform getTransform() {
+        return new AffineTransform(graphicsCtx.getTransform());
+    }
+
+    /**
+     * Set the current AffineTransform
+     * @param tx the current AffineTransform
+     */
+    public void setTransform(AffineTransform tx) {
+        graphicsCtx.setTransform(tx);
+    }
 
     /** saves the current affine transform on the stack */
     private void saveTransform() {

@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.hemf.draw.HemfGraphics;
+import org.apache.poi.hwmf.draw.HwmfDrawProperties;
+import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.hwmf.record.HwmfBinaryRasterOp;
 import org.apache.poi.hwmf.record.HwmfBitmapDib;
 import org.apache.poi.hwmf.record.HwmfBrushStyle;
@@ -45,6 +47,44 @@ import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
 public class HemfMisc {
+
+    public enum HemfModifyWorldTransformMode {
+        /**
+         * Reset the current transform using the identity matrix.
+         * In this mode, the specified transform data is ignored.
+         */
+        MWT_IDENTITY(1),
+        /**
+         * Multiply the current transform. In this mode, the specified transform data is the left multiplicand,
+         * and the transform that is currently defined in the playback device context is the right multiplicand.
+         */
+        MWT_LEFTMULTIPLY(2),
+        /**
+         * Multiply the current transform. In this mode, the specified transform data is the right multiplicand,
+         * and the transform that is currently defined in the playback device context is the left multiplicand.
+         */
+        MWT_RIGHTMULTIPLY(3),
+        /**
+         * Perform the function of an EMR_SETWORLDTRANSFORM record
+         */
+        MWT_SET(4)
+        ;
+
+        public final int id;
+
+        HemfModifyWorldTransformMode(int id) {
+            this.id = id;
+        }
+
+        public static HemfModifyWorldTransformMode valueOf(int id) {
+            for (HemfModifyWorldTransformMode wrt : values()) {
+                if (wrt.id == id) return wrt;
+            }
+            return null;
+        }
+    }
+
+
     public static class EmfEof implements HemfRecord {
         protected final List<PaletteEntry> palette = new ArrayList<>();
 
@@ -518,6 +558,11 @@ public class HemfMisc {
         public void draw(HemfGraphics ctx) {
             ctx.getProperties().setPenMiterLimit(miterLimit);
         }
+
+        @Override
+        public String toString() {
+            return "{ miterLimit: "+miterLimit+" }";
+        }
     }
 
 
@@ -552,11 +597,30 @@ public class HemfMisc {
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             return readXForm(leis, xForm);
         }
+
+        @Override
+        public void draw(HemfGraphics ctx) {
+            AffineTransform tx = ctx.getInitTransform();
+            tx.concatenate(xForm);
+            ctx.setTransform(tx);
+        }
+
+        @Override
+        public String toString() {
+            return
+                "{ xForm: " +
+                "{ scaleX: "+xForm.getScaleX()+
+                ", shearX: "+xForm.getShearX()+
+                ", transX: "+xForm.getTranslateX()+
+                ", scaleY: "+xForm.getScaleY()+
+                ", shearY: "+xForm.getShearY()+
+                ", transY: "+xForm.getTranslateY()+" } }";
+        }
     }
 
     public static class EmfModifyWorldTransform implements HemfRecord {
         protected final AffineTransform xForm = new AffineTransform();
-        protected int modifyWorldTransformMode;
+        protected HemfModifyWorldTransformMode modifyWorldTransformMode;
 
         @Override
         public HemfRecordType getEmfRecordType() {
@@ -572,16 +636,54 @@ public class HemfMisc {
 
             // A 32-bit unsigned integer that specifies how the transform specified in Xform is used.
             // This value MUST be in the ModifyWorldTransformMode enumeration
-            modifyWorldTransformMode = (int)leis.readUInt();
+            modifyWorldTransformMode = HemfModifyWorldTransformMode.valueOf((int)leis.readUInt());
 
             return size + LittleEndianConsts.INT_SIZE;
         }
 
         @Override
+        public void draw(HemfGraphics ctx) {
+            if (modifyWorldTransformMode == null) {
+                return;
+            }
+
+            switch (modifyWorldTransformMode) {
+                case MWT_IDENTITY:
+                    ctx.setTransform(ctx.getInitTransform());
+                    break;
+                case MWT_LEFTMULTIPLY: {
+                    AffineTransform tx = new AffineTransform(xForm);
+                    tx.concatenate(ctx.getTransform());
+                    ctx.setTransform(tx);
+                    break;
+                }
+                case MWT_RIGHTMULTIPLY: {
+                    AffineTransform tx = new AffineTransform(xForm);
+                    tx.preConcatenate(ctx.getTransform());
+                    ctx.setTransform(tx);
+                    break;
+                }
+                default:
+                case MWT_SET: {
+                    AffineTransform tx = ctx.getInitTransform();
+                    tx.concatenate(xForm);
+                    ctx.setTransform(tx);
+                    break;
+                }
+            }
+        }
+
+        @Override
         public String toString() {
             return
-                "{ xForm: { scaleX: "+xForm.getScaleX()+", shearX: "+xForm.getShearX()+", transX: "+xForm.getTranslateX()+", scaleY: "+xForm.getScaleY()+", shearY: "+xForm.getShearY()+", transY: "+xForm.getTranslateY()+" }"+
-                ", modifyWorldTransformMode: "+modifyWorldTransformMode+" }";
+                "{ xForm: " +
+                "{ scaleX: "+xForm.getScaleX()+
+                ", shearX: "+xForm.getShearX()+
+                ", transX: "+xForm.getTranslateX()+
+                ", scaleY: "+xForm.getScaleY()+
+                ", shearY: "+xForm.getShearY()+
+                ", transY: "+xForm.getTranslateY()+" }"+
+                ", modifyWorldTransformMode: '"+modifyWorldTransformMode+"' }";
         }
     }
 
@@ -625,6 +727,14 @@ public class HemfMisc {
             size += readBitmap(leis, bitmap, startIdx, offBmi, cbBmi, offBits, cbBits);
 
             return size;
+        }
+
+        @Override
+        public void applyObject(HwmfGraphics ctx) {
+            super.applyObject(ctx);
+            HwmfDrawProperties props = ctx.getProperties();
+            props.setBrushStyle(HwmfBrushStyle.BS_PATTERN);
+            props.setBrushBitmap(bitmap.getImage());
         }
     }
 }

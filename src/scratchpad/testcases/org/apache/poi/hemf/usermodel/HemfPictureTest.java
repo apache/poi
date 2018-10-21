@@ -63,7 +63,8 @@ public class HemfPictureTest {
     public void paint() throws IOException {
         byte buf[] = new byte[50_000_000];
 
-        final boolean writeLog = true;
+        final boolean writeLog = false;
+        final boolean dumpRecords = false;
         final boolean savePng = true;
 
         Set<String> passed = new HashSet<>();
@@ -101,6 +102,10 @@ public class HemfPictureTest {
                     }
                 }
 
+                if (dumpRecords) {
+                    dumpRecords(emf);
+                }
+
                 Graphics2D g = null;
                 try {
                     Dimension2D dim = emf.getSize();
@@ -112,17 +117,23 @@ public class HemfPictureTest {
                         width *= 1500. / max;
                         height *= 1500. / max;
                     }
+                    width = Math.ceil(width);
+                    height = Math.ceil(height);
 
-                    BufferedImage bufImg = new BufferedImage((int)Math.ceil(width), (int)Math.ceil(height), BufferedImage.TYPE_INT_ARGB);
+                    BufferedImage bufImg = new BufferedImage((int)width, (int)height, BufferedImage.TYPE_INT_ARGB);
                     g = bufImg.createGraphics();
                     g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                     g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
                     g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
                     g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
 
+                    g.setComposite(AlphaComposite.Clear);
+                    g.fillRect(0, 0, (int)width, (int)height);
+                    g.setComposite(AlphaComposite.Src);
+
                     emf.draw(g, new Rectangle2D.Double(0, 0, width, height));
 
-                    final File pngName = new File("build/tmp", etName.replaceFirst(".*"+"/", "").replace(".emf", ".png"));
+                    final File pngName = new File("build/tmp", etName.replaceFirst(".+/", "").replace(".emf", ".png"));
                     if (savePng) {
                         ImageIO.write(bufImg, "PNG", pngName);
                     }

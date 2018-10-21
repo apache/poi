@@ -57,6 +57,7 @@ public class HemfText {
 
     public static class EmfExtTextOutA extends HwmfText.WmfExtTextOut implements HemfRecord {
 
+        protected Rectangle2D boundsIgnored = new Rectangle2D.Double();
         protected EmfGraphicsMode graphicsMode;
 
         /**
@@ -81,7 +82,7 @@ public class HemfText {
             }
 
             // A WMF RectL object. It is not used and MUST be ignored on receipt.
-            long size = readRectL(leis, bounds);
+            long size = readRectL(leis, boundsIgnored);
 
             // A 32-bit unsigned integer that specifies the graphics mode from the GraphicsMode enumeration
             graphicsMode = EmfGraphicsMode.values()[leis.readInt()-1];
@@ -192,8 +193,7 @@ public class HemfText {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            Rectangle2D bounds = new Rectangle2D.Double(reference.getX(), reference.getY(), 0, 0);
-            ctx.drawString(rawTextBytes, bounds, dx, isUnicode());
+            ctx.drawString(rawTextBytes, reference, bounds, dx, isUnicode());
         }
 
         @Override

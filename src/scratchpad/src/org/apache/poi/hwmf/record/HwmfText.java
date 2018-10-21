@@ -164,17 +164,9 @@ public class HwmfText {
          * The string is written at the location specified by the XStart and YStart fields.
          */
         private byte[] rawTextBytes;
-        /**
-         * A 16-bit signed integer that defines the vertical (y-axis) coordinate, in logical
-         * units, of the point where drawing is to start.
-         */
-        private int yStart;
-        /**
-         * A 16-bit signed integer that defines the horizontal (x-axis) coordinate, in
-         * logical units, of the point where drawing is to start.
-         */
-        private int xStart;  
-        
+
+        protected Point2D reference = new Point2D.Double();
+
         @Override
         public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.textOut;
@@ -185,15 +177,19 @@ public class HwmfText {
             stringLength = leis.readShort();
             rawTextBytes = IOUtils.safelyAllocate(stringLength+(stringLength&1), MAX_RECORD_LENGTH);
             leis.readFully(rawTextBytes);
-            yStart = leis.readShort();
-            xStart = leis.readShort();
+            // A 16-bit signed integer that defines the vertical (y-axis) coordinate, in logical
+            // units, of the point where drawing is to start.
+            int yStart = leis.readShort();
+            // A 16-bit signed integer that defines the horizontal (x-axis) coordinate, in
+            // logical units, of the point where drawing is to start.
+            int xStart = leis.readShort();
+            reference.setLocation(xStart, yStart);
             return 3*LittleEndianConsts.SHORT_SIZE+rawTextBytes.length;
         }
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            Rectangle2D bounds = new Rectangle2D.Double(xStart, yStart, 0, 0);
-            ctx.drawString(getTextBytes(), bounds);
+            ctx.drawString(getTextBytes(), reference, null);
         }
 
         public String getText(Charset charset) {
@@ -398,8 +394,7 @@ public class HwmfText {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            Rectangle2D bounds = new Rectangle2D.Double(reference.getX(), reference.getY(), 0, 0);
-            ctx.drawString(rawTextBytes, bounds, dx, false);
+            ctx.drawString(rawTextBytes, reference, bounds, dx, false);
         }
 
         public String getText(Charset charset) throws IOException {
