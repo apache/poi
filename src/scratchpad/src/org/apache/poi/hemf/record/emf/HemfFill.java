@@ -358,14 +358,12 @@ public class HemfFill {
         }
 
         protected Area getShape() {
-            final Area frame = new Area();
-            rgnRects.forEach((rct) -> frame.add(new Area(rct)));
-            return frame;
+            return getRgnShape(rgnRects);
         }
     }
 
     /** The EMR_INVERTRGN record inverts the colors in the specified region. */
-    public static class EmfInvertRgn implements HemfRecord {
+    public static class EmfInvertRgn implements HemfRecord, HemfBounded {
         protected final Rectangle2D bounds = new Rectangle2D.Double();
         protected final List<Rectangle2D> rgnRects = new ArrayList<>();
 
@@ -383,6 +381,20 @@ public class HemfFill {
             size += readRgnData(leis, rgnRects);
             return size;
         }
+
+        @Override
+        public Rectangle2D getRecordBounds() {
+            return bounds;
+        }
+
+        @Override
+        public Rectangle2D getShapeBounds(HemfGraphics ctx) {
+            return getShape().getBounds2D();
+        }
+
+        protected Area getShape() {
+            return getRgnShape(rgnRects);
+        }
     }
 
     /**
@@ -397,7 +409,7 @@ public class HemfFill {
     }
 
     /** The EMR_FILLRGN record fills the specified region by using the specified brush. */
-    public static class EmfFillRgn extends HwmfFill.WmfFillRegion implements HemfRecord {
+    public static class EmfFillRgn extends HwmfFill.WmfFillRegion implements HemfRecord, HemfBounded {
         protected final Rectangle2D bounds = new Rectangle2D.Double();
         protected final List<Rectangle2D> rgnRects = new ArrayList<>();
 
@@ -415,6 +427,20 @@ public class HemfFill {
             size += 2*LittleEndianConsts.INT_SIZE;
             size += readRgnData(leis, rgnRects);
             return size;
+        }
+
+        @Override
+        public Rectangle2D getRecordBounds() {
+            return bounds;
+        }
+
+        @Override
+        public Rectangle2D getShapeBounds(HemfGraphics ctx) {
+            return getShape().getBounds2D();
+        }
+
+        protected Area getShape() {
+            return getRgnShape(rgnRects);
         }
     }
 
@@ -442,9 +468,13 @@ public class HemfFill {
             }
             return size;
         }
+
+        protected Area getShape() {
+            return getRgnShape(rgnRects);
+        }
     }
 
-    public static class EmfAlphaBlend implements HemfRecord {
+    public static class EmfAlphaBlend implements HemfRecord, HemfBounded {
         /** the destination bounding rectangle in device units */
         protected final Rectangle2D bounds = new Rectangle2D.Double();
         /** the destination rectangle */
@@ -553,9 +583,24 @@ public class HemfFill {
 
             return size;
         }
+
+
+        @Override
+        public Rectangle2D getRecordBounds() {
+            return bounds;
+        }
+
+        @Override
+        public Rectangle2D getShapeBounds(HemfGraphics ctx) {
+            return destRect;
+        }
     }
 
-    public static class EmfSetDiBitsToDevice implements HemfRecord {
+    /**
+     * The EMR_SETDIBITSTODEVICE record specifies a block transfer of pixels from specified scanlines of
+     * a source bitmap to a destination rectangle.
+     */
+    public static class EmfSetDiBitsToDevice implements HemfRecord, HemfBounded {
         protected final Rectangle2D bounds = new Rectangle2D.Double();
         protected final Point2D dest = new Point2D.Double();
         protected final Rectangle2D src = new Rectangle2D.Double();
@@ -599,6 +644,16 @@ public class HemfFill {
             size += readBitmap(leis, bitmap, startIdx, offBmiSrc, cbBmiSrc, offBitsSrc, cbBitsSrc);
 
             return size;
+        }
+
+        @Override
+        public Rectangle2D getRecordBounds() {
+            return bounds;
+        }
+
+        @Override
+        public Rectangle2D getShapeBounds(HemfGraphics ctx) {
+            return new Rectangle2D.Double(dest.getX(), dest.getY(), src.getWidth(), src.getHeight());
         }
     }
 
@@ -758,5 +813,11 @@ public class HemfFill {
                 ctx.fill(path);
             }
         }
+    }
+
+    protected static Area getRgnShape(List<Rectangle2D> rgnRects) {
+        final Area frame = new Area();
+        rgnRects.forEach((rct) -> frame.add(new Area(rct)));
+        return frame;
     }
 }

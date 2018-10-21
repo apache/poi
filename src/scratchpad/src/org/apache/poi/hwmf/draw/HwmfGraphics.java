@@ -25,8 +25,11 @@ import java.awt.Paint;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.TexturePaint;
+import java.awt.font.FontRenderContext;
 import java.awt.font.TextAttribute;
+import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.nio.charset.Charset;
@@ -47,6 +50,7 @@ import org.apache.poi.hwmf.record.HwmfMisc.WmfSetBkMode.HwmfBkMode;
 import org.apache.poi.hwmf.record.HwmfObjectTableEntry;
 import org.apache.poi.hwmf.record.HwmfPenStyle;
 import org.apache.poi.hwmf.record.HwmfPenStyle.HwmfLineDash;
+import org.apache.poi.hwmf.record.HwmfText;
 import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.DrawFontManager;
 import org.apache.poi.util.LocaleUtil;
@@ -327,11 +331,11 @@ public class HwmfGraphics {
         }
     }
 
-    public void drawString(byte[] text, Rectangle2D bounds) {
-        drawString(text, bounds, null, false);
+    public void drawString(byte[] text, Point2D reference, Rectangle2D clip) {
+        drawString(text, reference, clip, null, false);
     }
 
-    public void drawString(byte[] text, Rectangle2D bounds, List<Integer> dx, boolean isUnicode) {
+    public void drawString(byte[] text, Point2D reference, Rectangle2D clip, List<Integer> dx, boolean isUnicode) {
 
         HwmfFont font = getProperties().getFont();
         if (font == null || text == null || text.length == 0) {
@@ -396,18 +400,55 @@ public class HwmfGraphics {
             }
         }
         */
-        
+
         double angle = Math.toRadians(-font.getEscapement()/10.);
 
+        final HwmfText.HwmfTextAlignment align = prop.getTextAlignLatin();
+        final HwmfText.HwmfTextVerticalAlignment valign = prop.getTextVAlignLatin();
+        final FontRenderContext frc = graphicsCtx.getFontRenderContext();
+        final TextLayout layout = new TextLayout(as.getIterator(), frc);
+
+        final Rectangle2D pixelBounds = layout.getBounds();
+
+        AffineTransform tx = new AffineTransform();
+        switch (align) {
+            default:
+            case LEFT:
+                break;
+            case CENTER:
+                tx.translate(-pixelBounds.getWidth() / 2., 0);
+                break;
+            case RIGHT:
+                tx.translate(-pixelBounds.getWidth(), 0);
+                break;
+        }
+
+        // TODO: check min/max orientation
+        switch (valign) {
+            case TOP:
+                tx.translate(0, layout.getAscent());
+            default:
+            case BASELINE:
+                break;
+            case BOTTOM:
+                tx.translate(0, pixelBounds.getHeight());
+                break;
+        }
+        tx.rotate(angle);
+        Point2D src = new Point2D.Double();
+        Point2D dst = new Point2D.Double();
+        tx.transform(src, dst);
+
+        // TODO: implement clipping on bounds
         final AffineTransform at = graphicsCtx.getTransform();
         try {
-            graphicsCtx.translate(bounds.getX(), bounds.getY());
+            graphicsCtx.translate(reference.getX(), reference.getY());
             graphicsCtx.rotate(angle);
-            graphicsCtx.translate(0, fontH);
-            if (getProperties().getBkMode() == HwmfBkMode.OPAQUE) {
+            graphicsCtx.translate(dst.getX(), dst.getY());
+            if (getProperties().getBkMode() == HwmfBkMode.OPAQUE && clip != null) {
                 // TODO: validate bounds
                 graphicsCtx.setBackground(getProperties().getBackgroundColor().getColor());
-                graphicsCtx.fill(new Rectangle2D.Double(0, 0, bounds.getWidth(), bounds.getHeight()));
+                graphicsCtx.fill(new Rectangle2D.Double(0, 0, clip.getWidth(), clip.getHeight()));
             }
             graphicsCtx.setColor(getProperties().getTextColor().getColor());
             graphicsCtx.drawString(as.getIterator(), 0, 0);
@@ -415,11 +456,11 @@ public class HwmfGraphics {
             graphicsCtx.setTransform(at);
         }
     }
-    
+
     private void addAttributes(AttributedString as, HwmfFont font) {
         DrawFontManager fontHandler = DrawFactory.getInstance(graphicsCtx).getFontManager(graphicsCtx);
         FontInfo fontInfo = fontHandler.getMappedFont(graphicsCtx, font);
-        
+
         as.addAttribute(TextAttribute.FAMILY, fontInfo.getTypeface());
         as.addAttribute(TextAttribute.SIZE, getFontHeight(font));
         if (font.isStrikeOut()) {

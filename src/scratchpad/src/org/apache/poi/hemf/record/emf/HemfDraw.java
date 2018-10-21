@@ -860,6 +860,11 @@ public class HemfDraw {
             final HemfDrawProperties prop = ctx.getProperties();
             prop.setPath(new Path2D.Double());
         }
+
+        @Override
+        public String toString() {
+            return "{}";
+        }
     }
 
     /**
@@ -875,6 +880,11 @@ public class HemfDraw {
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             return 0;
+        }
+
+        @Override
+        public String toString() {
+            return "{}";
         }
     }
 
@@ -896,6 +906,11 @@ public class HemfDraw {
         public void draw(HemfGraphics ctx) {
             final HemfDrawProperties prop = ctx.getProperties();
             prop.setPath(null);
+        }
+
+        @Override
+        public String toString() {
+            return "{}";
         }
     }
 
@@ -929,7 +944,6 @@ public class HemfDraw {
             return 0;
         }
 
-
         @Override
         public void draw(HemfGraphics ctx) {
             final HemfDrawProperties prop = ctx.getProperties();
@@ -939,6 +953,11 @@ public class HemfDraw {
                 prop.setLocation(path.getCurrentPoint());
             }
 
+        }
+
+        @Override
+        public String toString() {
+            return "{}";
         }
     }
 
@@ -972,12 +991,17 @@ public class HemfDraw {
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             return 0;
         }
+
+        @Override
+        public String toString() {
+            return "{}";
+        }
     }
 
     /**
      * The EMR_STROKEPATH record renders the specified path by using the current pen.
      */
-    public static class EmfStrokePath implements HemfRecord {
+    public static class EmfStrokePath implements HemfRecord, HemfBounded {
         protected final Rectangle2D bounds = new Rectangle2D.Double();
 
         @Override
@@ -989,6 +1013,28 @@ public class HemfDraw {
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             // A 128-bit WMF RectL object, which specifies bounding rectangle, in device units
             return readRectL(leis, bounds);
+        }
+
+        @Override
+        public void draw(HemfGraphics ctx) {
+            HemfDrawProperties props = ctx.getProperties();
+            ctx.draw(props.getPath());
+        }
+
+        @Override
+        public Rectangle2D getRecordBounds() {
+            return bounds;
+        }
+
+        @Override
+        public Rectangle2D getShapeBounds(HemfGraphics ctx) {
+            HemfDrawProperties props = ctx.getProperties();
+            return props.getPath().getBounds2D();
+        }
+
+        @Override
+        public String toString() {
+            return "{ bounds: { x: "+bounds.getX()+", y: "+bounds.getY()+", w: "+bounds.getWidth()+", h: "+bounds.getHeight()+" }";
         }
     }
 

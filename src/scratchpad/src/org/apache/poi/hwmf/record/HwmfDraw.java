@@ -374,6 +374,16 @@ public class HwmfDraw {
         public void draw(HwmfGraphics ctx) {
             ctx.fill(bounds);
         }
+
+        @Override
+        public String toString() {
+            return
+                "{ bounds: " +
+                "{ x: "+bounds.getX()+
+                ", y: "+bounds.getY()+
+                ", w: "+bounds.getWidth()+
+                ", h: "+bounds.getHeight()+" } }";
+        }
     }
 
     /**

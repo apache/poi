@@ -302,6 +302,11 @@ public class HwmfMisc {
         public void draw(HwmfGraphics ctx) {
 
         }
+
+        @Override
+        public String toString() {
+            return "{ drawMode: '"+drawMode+"' }";
+        }
     }
 
     /**
