@@ -99,15 +99,6 @@ public final class TestDateFormatConverter {
                     row.createCell(5).setCellValue(javaDateFormatPattern);
                     row.createCell(6).setCellValue(excelFormatPattern);
                 } catch (Exception e) {
-                    // this can be removed after https://bugs.openjdk.java.net/browse/JDK-8209047 is available
-                    // in JDK 11 ea > 26
-                    if(locale.toString().startsWith("my") &&
-                            e.getMessage().contains("Illegal pattern character 'B'") &&
-                                    System.getProperty("java.version").startsWith("11")) {
-                        System.out.println("DateFormat.getDateTimeInstance() fails for Malaysian Locale on JDK 11, submitted bug report to Oracle");
-                        continue;
-                    }
-
                     throw new RuntimeException(
                             "Failed for locale: " + locale + " and style " + style + "\n" +
                             "Having locales: " + Arrays.toString(DateFormat.getAvailableLocales()), e);
@@ -153,7 +144,6 @@ public final class TestDateFormatConverter {
         DateFormatConverter.getPrefixForLocale(new Locale(""));
     }
 
-    @Ignore("Fails on JDK 11, submitted as ID : 9056763")
     @Test
     public void testJDK11MyLocale() {
         DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.forLanguageTag("my"));
