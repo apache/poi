@@ -31,6 +31,7 @@ import java.io.InputStream;
 
 import org.apache.poi.EmptyFileException;
 import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -104,6 +105,13 @@ public final class TestWorkbookFactory {
         // POIFS -> hssf
         wb = WorkbookFactory.create(
                 new POIFSFileSystem(HSSFTestDataSamples.openSampleFileStream(xls))
+        );
+        assertNotNull(wb);
+        assertTrue(wb instanceof HSSFWorkbook);
+        assertCloseDoesNotModifyFile(xls, wb);
+
+        wb = WorkbookFactory.create(
+                new POIFSFileSystem(HSSFTestDataSamples.openSampleFileStream(xls)).getRoot()
         );
         assertNotNull(wb);
         assertTrue(wb instanceof HSSFWorkbook);
@@ -403,15 +411,15 @@ public final class TestWorkbookFactory {
         assertTrue(altXLS.exists());
         assertTrue(altXLSX.exists());
 
-        try (Workbook wb = WorkbookFactory.create(altXLS)) {
-            assertNotNull(wb);
-            assertTrue(wb instanceof HSSFWorkbook);
-        }
+        Workbook wb = WorkbookFactory.create(altXLS);
+        assertNotNull(wb);
+        assertTrue(wb instanceof HSSFWorkbook);
+        closeOrRevert(wb);
 
-        try (Workbook wb = WorkbookFactory.create(altXLSX)) {
-            assertNotNull(wb);
-            assertTrue(wb instanceof XSSFWorkbook);
-        }
+        wb = WorkbookFactory.create(altXLSX);
+        assertNotNull(wb);
+        assertTrue(wb instanceof XSSFWorkbook);
+        closeOrRevert(wb);
     }
     
     private static class TestFile extends File {
@@ -425,12 +433,24 @@ public final class TestWorkbookFactory {
      */
     @Test
     public void testCreateEmpty() throws Exception {
-        try (Workbook wb = WorkbookFactory.create(false)) {
-            assertTrue(wb instanceof HSSFWorkbook);
-        }
+        Workbook wb = WorkbookFactory.create(false);
+        assertTrue(wb instanceof HSSFWorkbook);
+        closeOrRevert(wb);
 
-        try (Workbook wb = WorkbookFactory.create(true)) {
-            assertTrue(wb instanceof XSSFWorkbook);
+        wb = WorkbookFactory.create(true);
+        assertTrue(wb instanceof XSSFWorkbook);
+        closeOrRevert(wb);
+    }
+
+    @Test
+    public void testInvalidFormatException() {
+        String filename = "OPCCompliance_DerivedPartNameFAIL.docx";
+        try {
+            WorkbookFactory.create(POIDataSamples.getOpenXML4JInstance().openResourceAsStream(filename));
+            fail("Expecting an Exception for this document");
+        } catch (IOException e) {
+            // expected here
         }
     }
+
 }
