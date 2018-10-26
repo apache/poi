@@ -32,6 +32,15 @@ import org.apache.poi.util.Internal;
 @Internal
 public class HSSFWorkbookFactory extends WorkbookFactory {
     /**
+     * Create a new empty Workbook
+     *
+     * @return The created workbook
+     */
+    public static HSSFWorkbook createWorkbook() {
+        return new HSSFWorkbook();
+    }
+
+    /**
      * Creates a HSSFWorkbook from the given NPOIFSFileSystem<p>
      * Note that in order to properly release resources the
      * Workbook should be closed after use.

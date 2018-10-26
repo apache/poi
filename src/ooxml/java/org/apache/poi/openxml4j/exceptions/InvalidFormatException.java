@@ -18,7 +18,7 @@
 package org.apache.poi.openxml4j.exceptions;
 
 @SuppressWarnings("serial")
-public final class InvalidFormatException extends OpenXML4JException{
+public final class InvalidFormatException extends OpenXML4JException {
 
 	public InvalidFormatException(String message){
 		super(message);
