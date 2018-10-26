@@ -44,6 +44,24 @@ import org.apache.poi.util.Removal;
  */
 public class WorkbookFactory {
     /**
+     * Create a new empty Workbook, either XSSF or HSSF depending
+     * on the parameter
+     *
+     * @param xssf If an XSSFWorkbook or a HSSFWorkbook should be created
+     *
+     * @return The created workbook
+     *
+     * @throws IOException if an error occurs while reading the data
+     */
+    public static Workbook create(boolean xssf) throws IOException {
+        if(xssf) {
+            return createXSSFWorkbook();
+        } else {
+            return createHSSFWorkbook();
+        }
+    }
+
+    /**
      * Creates a HSSFWorkbook from the given NPOIFSFileSystem<p>
      *
      * Note that in order to properly release resources the
