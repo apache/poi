@@ -31,22 +31,18 @@ import org.apache.poi.util.Internal;
  *         v20110608 Word (.doc) Binary File Format
  */
 @Internal
-public class FibBase extends FibBaseAbstractType
-{
+public class FibBase extends FibBaseAbstractType {
 
-    public FibBase()
-    {
+    public FibBase() {
     }
 
-    public FibBase( byte[] std, int offset )
-    {
+    public FibBase( byte[] std, int offset ) {
         fillFields( std, offset );
     }
 
     @Override
     @SuppressWarnings( "deprecation" )
-    public boolean equals( Object obj )
-    {
+    public boolean equals( Object obj ) {
         if ( this == obj )
             return true;
         if ( obj == null )
@@ -87,8 +83,7 @@ public class FibBase extends FibBaseAbstractType
 
     @Override
     @SuppressWarnings( "deprecation" )
-    public int hashCode()
-    {
+    public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + field_10_flags2;
@@ -107,5 +102,4 @@ public class FibBase extends FibBaseAbstractType
         result = prime * result + field_9_envr;
         return result;
     }
-
 }
