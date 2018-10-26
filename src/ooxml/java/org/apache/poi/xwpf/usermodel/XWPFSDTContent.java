@@ -47,6 +47,9 @@ public class XWPFSDTContent implements ISDTContent {
     private List<ISDTContents> bodyElements = new ArrayList<>();
 
     public XWPFSDTContent(CTSdtContentRun sdtRun, IBody part, IRunBody parent) {
+        if (sdtRun == null) {
+            return;
+        }
         for (CTR ctr : sdtRun.getRArray()) {
             XWPFRun run = new XWPFRun(ctr, parent);
             // runs.add(run);
@@ -55,6 +58,9 @@ public class XWPFSDTContent implements ISDTContent {
     }
 
     public XWPFSDTContent(CTSdtContentBlock block, IBody part, IRunBody parent) {
+        if (block == null) {
+            return;
+        }
         XmlCursor cursor = block.newCursor();
         cursor.selectPath("./*");
         while (cursor.toNextSelection()) {
