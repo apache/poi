@@ -2993,13 +2993,21 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         cell.setCellStyle(style);
 
         // Everything is fine at this point, cell is red
+        XSSFColor actual = cell.getCellStyle().getFillBackgroundColorColor();
+        assertNull(actual);
+        actual = cell.getCellStyle().getFillForegroundColorColor();
+        assertNotNull(actual);
+        assertEquals(color.getARGBHex(), actual.getARGBHex());
 
         Map<String, Object> properties = new HashMap<>();
         properties.put(CellUtil.BORDER_BOTTOM, BorderStyle.THIN);
         CellUtil.setCellStyleProperties(cell, properties);
 
         // Now the cell is all black
-        XSSFColor actual = cell.getCellStyle().getFillBackgroundColorColor();
+        actual = cell.getCellStyle().getFillBackgroundColorColor();
+        assertNotNull(actual);
+        assertNull(actual.getARGBHex());
+        actual = cell.getCellStyle().getFillForegroundColorColor();
         assertNotNull(actual);
         assertEquals(color.getARGBHex(), actual.getARGBHex());
 
