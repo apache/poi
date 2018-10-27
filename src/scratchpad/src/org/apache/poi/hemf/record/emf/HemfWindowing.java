@@ -17,8 +17,13 @@
 
 package org.apache.poi.hemf.record.emf;
 
+import static org.apache.poi.hemf.record.emf.HemfDraw.readDimensionInt;
+import static org.apache.poi.hemf.record.emf.HemfDraw.readPointL;
+
 import java.io.IOException;
 
+import org.apache.poi.hemf.draw.HemfDrawProperties;
+import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.record.emf.HemfFill.HemfRegionMode;
 import org.apache.poi.hwmf.record.HwmfWindowing;
 import org.apache.poi.util.LittleEndianConsts;
@@ -37,13 +42,7 @@ public class HemfWindowing {
 
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
-            // cx (4 bytes): A 32-bit unsigned integer that defines the x-coordinate of the point.
-            int width = (int)leis.readUInt();
-            // cy (4 bytes): A 32-bit unsigned integer that defines the y-coordinate of the point.
-            int height = (int)leis.readUInt();
-            size.setSize(width, height);
-
-            return 2*LittleEndianConsts.INT_SIZE;
+            return readDimensionInt(leis, size);
         }
     }
 
@@ -58,12 +57,7 @@ public class HemfWindowing {
 
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
-            // x (4 bytes): A 32-bit signed integer that defines the horizontal (x) coordinate of the point.
-            x = leis.readInt();
-            // y (4 bytes): A 32-bit signed integer that defines the vertical (y) coordinate of the point.
-            y = leis.readInt();
-
-            return 2*LittleEndianConsts.INT_SIZE;
+            return readPointL(leis, origin);
         }
     }
 
@@ -78,12 +72,7 @@ public class HemfWindowing {
 
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
-            // cx (4 bytes): A 32-bit unsigned integer that defines the x-coordinate of the point.
-            width = (int)leis.readUInt();
-            // cy (4 bytes): A 32-bit unsigned integer that defines the y-coordinate of the point.
-            height = (int)leis.readUInt();
-
-            return 2*LittleEndianConsts.INT_SIZE;
+            return readDimensionInt(leis, extents);
         }
     }
 
@@ -98,12 +87,7 @@ public class HemfWindowing {
 
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
-            // x (4 bytes): A 32-bit signed integer that defines the horizontal (x) coordinate of the point.
-            x = leis.readInt();
-            // y (4 bytes): A 32-bit signed integer that defines the vertical (y) coordinate of the point.
-            y = leis.readInt();
-
-            return 2*LittleEndianConsts.INT_SIZE;
+            return readPointL(leis, origin);
         }
     }
 
@@ -119,12 +103,7 @@ public class HemfWindowing {
 
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
-            // x (4 bytes): A 32-bit signed integer that defines the horizontal (x) coordinate of the point.
-            xOffset = leis.readInt();
-            // y (4 bytes): A 32-bit signed integer that defines the vertical (y) coordinate of the point.
-            yOffset = leis.readInt();
-
-            return 2*LittleEndianConsts.INT_SIZE;
+            return readPointL(leis, offset);
         }
     }
 
@@ -172,10 +151,11 @@ public class HemfWindowing {
 
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
-            xNum = leis.readInt();
-            xDenom = leis.readInt();
-            yNum = leis.readInt();
-            yDenom = leis.readInt();
+            double xNum = leis.readInt();
+            double xDenom = leis.readInt();
+            double yNum = leis.readInt();
+            double yDenom = leis.readInt();
+            scale.setSize(xNum / xDenom, yNum / yDenom);
             return 4*LittleEndianConsts.INT_SIZE;
         }
     }
@@ -192,10 +172,13 @@ public class HemfWindowing {
 
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
-            xNum = leis.readInt();
-            xDenom = leis.readInt();
-            yNum = leis.readInt();
-            yDenom = leis.readInt();
+            double xNum = leis.readInt();
+            double xDenom = leis.readInt();
+            double yNum = leis.readInt();
+            double yDenom = leis.readInt();
+
+            scale.setSize(xNum / xDenom, yNum / yDenom);
+
             return 4*LittleEndianConsts.INT_SIZE;
         }
     }
@@ -219,6 +202,17 @@ public class HemfWindowing {
             regionMode = HemfRegionMode.valueOf(leis.readInt());
 
             return LittleEndianConsts.INT_SIZE;
+        }
+
+        @Override
+        public void draw(HemfGraphics ctx) {
+            HemfDrawProperties props = ctx.getProperties();
+            ctx.setClip(props.getPath(), regionMode);
+        }
+
+        @Override
+        public String toString() {
+            return "{ regionMode: '"+regionMode+"' }";
         }
     }
 

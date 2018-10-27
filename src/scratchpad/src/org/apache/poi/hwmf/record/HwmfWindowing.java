@@ -17,11 +17,15 @@
 
 package org.apache.poi.hwmf.record;
 
+import static org.apache.poi.hwmf.record.HwmfDraw.boundsToString;
+import static org.apache.poi.hwmf.record.HwmfDraw.pointToString;
 import static org.apache.poi.hwmf.record.HwmfDraw.readBounds;
+import static org.apache.poi.hwmf.record.HwmfDraw.readPointS;
 
 import java.awt.Shape;
 import java.awt.geom.Area;
 import java.awt.geom.Dimension2D;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 
@@ -37,11 +41,7 @@ public class HwmfWindowing {
      */
     public static class WmfSetViewportOrg implements HwmfRecord {
 
-        /** A signed integer that defines the vertical offset, in device units. */
-        protected int y;
-
-        /** A signed integer that defines the horizontal offset, in device units. */
-        protected int x;
+        protected final Point2D origin = new Point2D.Double();
 
         @Override
         public HwmfRecordType getWmfRecordType() {
@@ -50,14 +50,18 @@ public class HwmfWindowing {
 
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            y = leis.readShort();
-            x = leis.readShort();
-            return 2*LittleEndianConsts.SHORT_SIZE;
+            return readPointS(leis, origin);
         }
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            ctx.getProperties().setViewportOrg(x, y);
+            ctx.getProperties().setViewportOrg(origin.getX(), origin.getY());
+            ctx.updateWindowMapMode();
+        }
+
+        @Override
+        public String toString() {
+            return pointToString(origin);
         }
     }
 
@@ -67,11 +71,7 @@ public class HwmfWindowing {
      */
     public static class WmfSetViewportExt implements HwmfRecord {
 
-        /** A signed integer that defines the vertical extent of the viewport in device units. */
-        protected int height;
-
-        /** A signed integer that defines the horizontal extent of the viewport in device units. */
-        protected int width;
+        protected final Dimension2D extents = new Dimension2DDouble();
 
         @Override
         public HwmfRecordType getWmfRecordType() {
@@ -80,14 +80,23 @@ public class HwmfWindowing {
 
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            height = leis.readShort();
-            width = leis.readShort();
+            // A signed integer that defines the vertical extent of the viewport in device units.
+            int height = leis.readShort();
+            // A signed integer that defines the horizontal extent of the viewport in device units.
+            int width = leis.readShort();
+            extents.setSize(width, height);
             return 2*LittleEndianConsts.SHORT_SIZE;
         }
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            ctx.getProperties().setViewportExt(width, height);
+            ctx.getProperties().setViewportExt(extents.getWidth(), extents.getHeight());
+            ctx.updateWindowMapMode();
+        }
+
+        @Override
+        public String toString() {
+            return "{ width: "+extents.getWidth()+", height: "+extents.getHeight()+" }";
         }
     }
 
@@ -97,15 +106,7 @@ public class HwmfWindowing {
      */
     public static class WmfOffsetViewportOrg implements HwmfRecord {
 
-        /**
-         * A 16-bit signed integer that defines the vertical offset, in device units.
-         */
-        private int yOffset;
-
-        /**
-         * A 16-bit signed integer that defines the horizontal offset, in device units.
-         */
-        private int xOffset;
+        protected final Point2D offset = new Point2D.Double();
 
         @Override
         public HwmfRecordType getWmfRecordType() {
@@ -114,9 +115,7 @@ public class HwmfWindowing {
 
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            yOffset = leis.readShort();
-            xOffset = leis.readShort();
-            return 2*LittleEndianConsts.SHORT_SIZE;
+            return readPointS(leis, offset);
         }
 
         @Override
@@ -124,7 +123,12 @@ public class HwmfWindowing {
             Rectangle2D viewport = ctx.getProperties().getViewport();
             double x = (viewport == null) ? 0 : viewport.getX();
             double y = (viewport == null) ? 0 : viewport.getY();
-            ctx.getProperties().setViewportOrg(x+xOffset, y+yOffset);
+            ctx.getProperties().setViewportOrg(x+offset.getX(), y+offset.getY());
+        }
+
+        @Override
+        public String toString() {
+            return pointToString(offset);
         }
     }
 
@@ -133,11 +137,7 @@ public class HwmfWindowing {
      */
     public static class WmfSetWindowOrg implements HwmfRecord {
 
-        /** A signed integer that defines the y-coordinate, in logical units. */
-        protected int y;
-
-        /** A signed integer that defines the x-coordinate, in logical units. */
-        protected int x;
+        protected final Point2D origin = new Point2D.Double();
 
         @Override
         public HwmfRecordType getWmfRecordType() {
@@ -146,23 +146,26 @@ public class HwmfWindowing {
 
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            y = leis.readShort();
-            x = leis.readShort();
-            return 2*LittleEndianConsts.SHORT_SIZE;
+            return readPointS(leis, origin);
         }
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            ctx.getProperties().setWindowOrg(x, y);
+            ctx.getProperties().setWindowOrg(getX(), getY());
             ctx.updateWindowMapMode();
         }
 
-        public int getY() {
-            return y;
+        public double getY() {
+            return origin.getY();
         }
 
-        public int getX() {
-            return x;
+        public double getX() {
+            return origin.getX();
+        }
+
+        @Override
+        public String toString() {
+            return pointToString(origin);
         }
     }
 
@@ -198,6 +201,11 @@ public class HwmfWindowing {
         public Dimension2D getSize() {
             return size;
         }
+
+        @Override
+        public String toString() {
+            return "{ width: "+size.getWidth()+", height: "+size.getHeight()+" }";
+        }
     }
 
     /**
@@ -206,15 +214,7 @@ public class HwmfWindowing {
      */
     public static class WmfOffsetWindowOrg implements HwmfRecord {
 
-        /**
-         * A 16-bit signed integer that defines the vertical offset, in device units.
-         */
-        private int yOffset;
-
-        /**
-         * A 16-bit signed integer that defines the horizontal offset, in device units.
-         */
-        private int xOffset;
+        protected final Point2D offset = new Point2D.Double();
 
         @Override
         public HwmfRecordType getWmfRecordType() {
@@ -223,16 +223,19 @@ public class HwmfWindowing {
 
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            yOffset = leis.readShort();
-            xOffset = leis.readShort();
-            return 2*LittleEndianConsts.SHORT_SIZE;
+            return readPointS(leis, offset);
         }
 
         @Override
         public void draw(HwmfGraphics ctx) {
             Rectangle2D window = ctx.getProperties().getWindow();
-            ctx.getProperties().setWindowOrg(window.getX()+xOffset, window.getY()+yOffset);
+            ctx.getProperties().setWindowOrg(window.getX()+offset.getX(), window.getY()+offset.getY());
             ctx.updateWindowMapMode();
+        }
+
+        @Override
+        public String toString() {
+            return pointToString(offset);
         }
     }
 
@@ -242,29 +245,7 @@ public class HwmfWindowing {
      */
     public static class WmfScaleWindowExt implements HwmfRecord {
 
-        /**
-         * A signed integer that defines the amount by which to divide the
-         * result of multiplying the current y-extent by the value of the yNum member.
-         */
-        protected int yDenom;
-
-        /**
-         * A signed integer that defines the amount by which to multiply the
-         * current y-extent.
-         */
-        protected int yNum;
-
-        /**
-         * A signed integer that defines the amount by which to divide the
-         * result of multiplying the current x-extent by the value of the xNum member.
-         */
-        protected int xDenom;
-
-        /**
-         * A signed integer that defines the amount by which to multiply the
-         * current x-extent.
-         */
-        protected int xNum;
+        protected final Dimension2D scale = new Dimension2DDouble();
 
         @Override
         public HwmfRecordType getWmfRecordType() {
@@ -273,20 +254,36 @@ public class HwmfWindowing {
 
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            yDenom = leis.readShort();
-            yNum = leis.readShort();
-            xDenom = leis.readShort();
-            xNum = leis.readShort();
+            // A signed integer that defines the amount by which to divide the
+            // result of multiplying the current y-extent by the value of the yNum member.
+            double yDenom = leis.readShort();
+            // A signed integer that defines the amount by which to multiply the
+            // current y-extent.
+            double yNum = leis.readShort();
+            // A signed integer that defines the amount by which to divide the
+            // result of multiplying the current x-extent by the value of the xNum member.
+            double xDenom = leis.readShort();
+            // A signed integer that defines the amount by which to multiply the
+            // current x-extent.
+            double xNum = leis.readShort();
+
+            scale.setSize(xNum / xDenom, yNum / yDenom);
+
             return 4*LittleEndianConsts.SHORT_SIZE;
         }
 
         @Override
         public void draw(HwmfGraphics ctx) {
             Rectangle2D window = ctx.getProperties().getWindow();
-            double width = window.getWidth() * xNum / xDenom;
-            double height = window.getHeight() * yNum / yDenom;
+            double width = window.getWidth() * scale.getWidth();
+            double height = window.getHeight() * scale.getHeight();
             ctx.getProperties().setWindowExt(width, height);
             ctx.updateWindowMapMode();
+        }
+
+        @Override
+        public String toString() {
+            return "{ scaleX: "+scale.getWidth()+", scaleY: "+scale.getHeight()+" }";
         }
     }
 
@@ -298,29 +295,7 @@ public class HwmfWindowing {
      */
     public static class WmfScaleViewportExt implements HwmfRecord {
 
-        /**
-         * A signed integer that defines the amount by which to divide the
-         * result of multiplying the current y-extent by the value of the yNum member.
-         */
-        protected int yDenom;
-
-        /**
-         * A signed integer that defines the amount by which to multiply the
-         * current y-extent.
-         */
-        protected int yNum;
-
-        /**
-         * A signed integer that defines the amount by which to divide the
-         * result of multiplying the current x-extent by the value of the xNum member.
-         */
-        protected int xDenom;
-
-        /**
-         * A signed integer that defines the amount by which to multiply the
-         * current x-extent.
-         */
-        protected int xNum;
+        protected final Dimension2D scale = new Dimension2DDouble();
 
         @Override
         public HwmfRecordType getWmfRecordType() {
@@ -329,10 +304,21 @@ public class HwmfWindowing {
 
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            yDenom = leis.readShort();
-            yNum = leis.readShort();
-            xDenom = leis.readShort();
-            xNum = leis.readShort();
+            // A signed integer that defines the amount by which to divide the
+            // result of multiplying the current y-extent by the value of the yNum member.
+            double yDenom = leis.readShort();
+            // A signed integer that defines the amount by which to multiply the
+            // current y-extent.
+            double yNum = leis.readShort();
+            // A signed integer that defines the amount by which to divide the
+            // result of multiplying the current x-extent by the value of the xNum member.
+            double xDenom = leis.readShort();
+            // A signed integer that defines the amount by which to multiply the
+            // current x-extent.
+            double xNum = leis.readShort();
+
+            scale.setSize(xNum / xDenom, yNum / yDenom);
+
             return 4*LittleEndianConsts.SHORT_SIZE;
         }
 
@@ -342,9 +328,14 @@ public class HwmfWindowing {
             if (viewport == null) {
                 viewport = ctx.getProperties().getWindow();
             }
-            double width = viewport.getWidth() * xNum / xDenom;
-            double height = viewport.getHeight() * yNum / yDenom;
+            double width = viewport.getWidth() * scale.getWidth();
+            double height = viewport.getHeight() * scale.getHeight();
             ctx.getProperties().setViewportExt(width, height);
+        }
+
+        @Override
+        public String toString() {
+            return "{ scaleX: "+scale.getWidth()+", scaleY: "+scale.getHeight()+" }";
         }
     }
 
@@ -354,15 +345,7 @@ public class HwmfWindowing {
      */
     public static class WmfOffsetClipRgn implements HwmfRecord, HwmfObjectTableEntry {
 
-        /**
-         * A signed integer that defines the number of logical units to move up or down.
-         */
-        protected int yOffset;
-
-        /**
-         * A signed integer that defines the number of logical units to move left or right.
-         */
-        protected int xOffset;
+        protected final Point2D offset = new Point2D.Double();
 
         @Override
         public HwmfRecordType getWmfRecordType() {
@@ -371,9 +354,7 @@ public class HwmfWindowing {
 
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            yOffset = leis.readShort();
-            xOffset = leis.readShort();
-            return 2*LittleEndianConsts.SHORT_SIZE;
+            return readPointS(leis, offset);
         }
 
         @Override
@@ -383,6 +364,11 @@ public class HwmfWindowing {
         
         @Override
         public void applyObject(HwmfGraphics ctx) {
+        }
+
+        @Override
+        public String toString() {
+            return pointToString(offset);
         }
     }
 
@@ -402,20 +388,7 @@ public class HwmfWindowing {
 
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            // A 16-bit signed integer that defines the y-coordinate, in logical units, of the
-            // lower-right corner of the rectangle.
-            final int bottom = leis.readShort();
-            // A 16-bit signed integer that defines the x-coordinate, in logical units, of the
-            // lower-right corner of the rectangle.
-            final int right = leis.readShort();
-            // A 16-bit signed integer that defines the y-coordinate, in logical units, of the
-            // upper-left corner of the rectangle.
-            final int top = leis.readShort();
-            // A 16-bit signed integer that defines the x-coordinate, in logical units, of the
-            // upper-left corner of the rectangle.
-            final int left = leis.readShort();
-            bounds.setRect(left, top, right-left, bottom-top);
-            return 4*LittleEndianConsts.SHORT_SIZE;
+            return readBounds(leis, bounds);
         }
 
         @Override
@@ -425,6 +398,11 @@ public class HwmfWindowing {
         
         @Override
         public void applyObject(HwmfGraphics ctx) {
+        }
+
+        @Override
+        public String toString() {
+            return boundsToString(bounds);
         }
     }
 
@@ -459,12 +437,7 @@ public class HwmfWindowing {
 
         @Override
         public String toString() {
-            return
-                "{ x: "+bounds.getX()+
-                ", y: "+bounds.getY()+
-                ", w: "+bounds.getWidth()+
-                ", h: "+bounds.getHeight()+
-                "}";
+            return boundsToString(bounds);
         }
     }
 
@@ -572,29 +545,7 @@ public class HwmfWindowing {
          */
         private int maxScan;
 
-        /**
-         * A 16-bit signed integer that defines the y-coordinate, in logical units, of the
-         * lower-right corner of the rectangle.
-         */
-        private int bottom;
-
-        /**
-         * A 16-bit signed integer that defines the x-coordinate, in logical units, of the
-         * lower-right corner of the rectangle.
-         */
-        private int right;
-
-        /**
-         * A 16-bit signed integer that defines the y-coordinate, in logical units, of the
-         * upper-left corner of the rectangle.
-         */
-        private int top;
-
-        /**
-         * A 16-bit signed integer that defines the x-coordinate, in logical units, of the
-         * upper-left corner of the rectangle.
-         */
-        private int left;
+        private Rectangle2D bounds = new Rectangle2D.Double();
 
         /**
          * An array of Scan objects that define the scanlines in the region.
@@ -614,10 +565,19 @@ public class HwmfWindowing {
             regionSize = leis.readShort();
             scanCount = leis.readShort();
             maxScan = leis.readShort();
-            left = leis.readShort();
-            top = leis.readShort();
-            right = leis.readShort();
-            bottom = leis.readShort();
+            // A 16-bit signed integer that defines the x-coordinate, in logical units, of the
+            // upper-left corner of the rectangle.
+            double left = leis.readShort();
+            // A 16-bit signed integer that defines the y-coordinate, in logical units, of the
+            // upper-left corner of the rectangle.
+            double top = leis.readShort();
+            // A 16-bit signed integer that defines the x-coordinate, in logical units, of the
+            // lower-right corner of the rectangle.
+            double right = leis.readShort();
+            // A 16-bit signed integer that defines the y-coordinate, in logical units, of the
+            // lower-right corner of the rectangle.
+            double bottom = leis.readShort();
+            bounds.setRect(left, top, right-left, bottom-top);
             
             int size = 9*LittleEndianConsts.SHORT_SIZE+LittleEndianConsts.INT_SIZE;
 

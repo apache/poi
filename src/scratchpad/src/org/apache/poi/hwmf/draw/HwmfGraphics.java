@@ -57,6 +57,10 @@ import org.apache.poi.util.LocaleUtil;
 
 public class HwmfGraphics {
 
+    public enum FillDrawStyle {
+        NONE, FILL, DRAW, FILL_DRAW
+    }
+
     protected final List<HwmfDrawProperties> propStack = new LinkedList<>();
     protected HwmfDrawProperties prop;
     protected final Graphics2D graphicsCtx;
@@ -297,6 +301,7 @@ public class HwmfGraphics {
      */
     public void updateWindowMapMode() {
         Rectangle2D win = getProperties().getWindow();
+        Rectangle2D view = getProperties().getViewport();
         HwmfMapMode mapMode = getProperties().getMapMode();
         graphicsCtx.setTransform(initialAT);
 
@@ -304,8 +309,10 @@ public class HwmfGraphics {
         default:
         case MM_ANISOTROPIC:
             // scale window bounds to output bounds
-            graphicsCtx.scale(bbox.getWidth()/win.getWidth(), bbox.getHeight()/win.getHeight());
-            graphicsCtx.translate(-win.getX(), -win.getY());
+            if (view != null) {
+                graphicsCtx.translate(view.getX() - win.getX(), view.getY() - win.getY());
+                graphicsCtx.scale(view.getWidth() / win.getWidth(), view.getHeight() / win.getHeight());
+            }
             break;
         case MM_ISOTROPIC:
             // TODO: to be validated ...

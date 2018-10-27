@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.hwmf.draw.HwmfGraphics;
+import org.apache.poi.hwmf.draw.HwmfGraphics.FillDrawStyle;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
@@ -61,7 +63,7 @@ public class HwmfDraw {
 
         @Override
         public String toString() {
-            return "{ x: "+point.getX()+", y: "+point.getY()+" }";
+            return pointToString(point);
         }
     }
 
@@ -93,7 +95,7 @@ public class HwmfDraw {
 
         @Override
         public String toString() {
-            return "{ x: "+point.getX()+", y: "+point.getY()+" }";
+            return pointToString(point);
         }
     }
 
@@ -139,10 +141,17 @@ public class HwmfDraw {
             Path2D p = (Path2D)poly.clone();
             // don't close the path
             p.setWindingRule(ctx.getProperties().getWindingRule());
-            if (isFill()) {
-                ctx.fill(p);
-            } else {
-                ctx.draw(p);
+            switch (getFillDrawStyle()) {
+                case FILL:
+                    ctx.fill(p);
+                    break;
+                case DRAW:
+                    ctx.draw(p);
+                    break;
+                case FILL_DRAW:
+                    ctx.fill(p);
+                    ctx.draw(p);
+                    break;
             }
         }
 
@@ -154,8 +163,8 @@ public class HwmfDraw {
         /**
          * @return true, if the shape should be filled
          */
-        protected boolean isFill() {
-            return true;
+        protected FillDrawStyle getFillDrawStyle() {
+            return FillDrawStyle.FILL;
         }
     }
 
@@ -171,8 +180,8 @@ public class HwmfDraw {
         }
 
         @Override
-        protected boolean isFill() {
-            return false;
+        protected FillDrawStyle getFillDrawStyle() {
+            return FillDrawStyle.DRAW;
         }
     }
 
@@ -196,8 +205,16 @@ public class HwmfDraw {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            Shape s = new Ellipse2D.Double(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
-            ctx.fill(s);
+            ctx.fill(getShape());
+        }
+
+        protected Ellipse2D getShape() {
+            return new Ellipse2D.Double(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
+        }
+
+        @Override
+        public String toString() {
+            return boundsToString(bounds);
         }
     }
 
@@ -264,7 +281,7 @@ public class HwmfDraw {
      */
     public static class WmfPolyPolygon implements HwmfRecord {
 
-        protected List<Path2D> polyList = new ArrayList<>();
+        protected final List<Path2D> polyList = new ArrayList<>();
         
         @Override
         public HwmfRecordType getWmfRecordType() {
@@ -316,40 +333,81 @@ public class HwmfDraw {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            Area area = getShape(ctx);
-            if (area == null) {
+            Shape shape = getShape(ctx);
+            if (shape == null) {
                 return;
             }
-            
-            if (isFill()) {
-                ctx.fill(area);
-            } else {
-                ctx.draw(area);
+
+            switch (getFillDrawStyle()) {
+                case DRAW:
+                    ctx.draw(shape);
+                    break;
+                case FILL:
+                    ctx.fill(shape);
+                    break;
+                case FILL_DRAW:
+                    ctx.fill(shape);
+                    ctx.draw(shape);
+                    break;
             }
         }
 
-        protected Area getShape(HwmfGraphics ctx) {
-            int windingRule = ctx.getProperties().getWindingRule();
-            Area area = null;
-            for (Path2D poly : polyList) {
-                Path2D p = (Path2D)poly.clone();
-                p.setWindingRule(windingRule);
-                Area newArea = new Area(p);
-                if (area == null) {
-                    area = newArea;
-                } else {
-                    area.exclusiveOr(newArea);
-                }
-            }
-
-            return area;
+        protected FillDrawStyle getFillDrawStyle() {
+            // Each polygon SHOULD be outlined using the current pen, and filled using the current brush and
+            // polygon fill mode that are defined in the playback device context. The polygons defined by this
+            // record can overlap.
+            return FillDrawStyle.FILL_DRAW;
         }
 
         /**
-         * @return true, if the shape should be filled
+         * @return true, if a polyline should be closed, i.e. is a polygon
          */
-        protected boolean isFill() {
+        protected boolean isClosed() {
             return true;
+        }
+
+        protected Shape getShape(HwmfGraphics ctx) {
+            int windingRule = ctx.getProperties().getWindingRule();
+
+            if (isClosed()) {
+                Area area = null;
+                for (Path2D poly : polyList) {
+                    Path2D p = (Path2D)poly.clone();
+                    p.setWindingRule(windingRule);
+                    Area newArea = new Area(p);
+                    if (area == null) {
+                        area = newArea;
+                    } else {
+                        area.exclusiveOr(newArea);
+                    }
+                }
+                return area;
+            } else {
+                Path2D path = new Path2D.Double();
+                path.setWindingRule(windingRule);
+                for (Path2D poly : polyList) {
+                    path.append(poly, false);
+                }
+                return path;
+            }
+        }
+
+        @Override
+        public String toString() {
+            final StringBuilder sb = new StringBuilder();
+            sb.append("{ polyList: [");
+            boolean isFirst = true;
+            for (Path2D p : polyList) {
+                if (!isFirst) {
+                    sb.append(",");
+                }
+                isFirst = false;
+                sb.append("{ points: ");
+                sb.append(polyToString(p));
+                sb.append(" }");
+            }
+            sb.append(" }");
+            return sb.toString();
         }
     }
 
@@ -377,12 +435,7 @@ public class HwmfDraw {
 
         @Override
         public String toString() {
-            return
-                "{ bounds: " +
-                "{ x: "+bounds.getX()+
-                ", y: "+bounds.getY()+
-                ", w: "+bounds.getWidth()+
-                ", h: "+bounds.getHeight()+" } }";
+            return boundsToString(bounds);
         }
     }
 
@@ -450,8 +503,11 @@ public class HwmfDraw {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            Shape s = new RoundRectangle2D.Double(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight(), width, height);
-            ctx.fill(s);
+            ctx.fill(getShape());
+        }
+
+        protected RoundRectangle2D getShape() {
+            return new RoundRectangle2D.Double(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight(), width, height);
         }
     }
 
@@ -487,15 +543,28 @@ public class HwmfDraw {
         @Override
         public void draw(HwmfGraphics ctx) {
             Shape s = getShape();
+            switch (getFillDrawStyle()) {
+                case FILL:
+                    ctx.fill(s);
+                    break;
+                case DRAW:
+                    ctx.draw(s);
+                    break;
+                case FILL_DRAW:
+                    ctx.fill(s);
+                    ctx.draw(s);
+                    break;
+            }
+        }
+
+        protected FillDrawStyle getFillDrawStyle() {
             switch (getWmfRecordType()) {
                 default:
                 case arc:
-                    ctx.draw(s);
-                    break;
+                    return FillDrawStyle.DRAW;
                 case chord:
                 case pie:
-                    ctx.fill(s);
-                    break;
+                    return FillDrawStyle.FILL_DRAW;
             }
         }
 
@@ -664,5 +733,15 @@ public class HwmfDraw {
         }
         sb.append("]");
         return sb.toString();
+    }
+
+    @Internal
+    public static String pointToString(Point2D point) {
+        return "{ x: "+point.getX()+", y: "+point.getY()+" }";
+    }
+
+    @Internal
+    public static String boundsToString(Rectangle2D bounds) {
+        return "{ x: "+bounds.getX()+", y: "+bounds.getY()+", w: "+bounds.getWidth()+", h: "+bounds.getHeight()+" }";
     }
 }

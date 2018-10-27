@@ -17,6 +17,8 @@
 
 package org.apache.poi.hwmf.record;
 
+import static org.apache.poi.hwmf.record.HwmfDraw.boundsToString;
+import static org.apache.poi.hwmf.record.HwmfDraw.pointToString;
 import static org.apache.poi.hwmf.record.HwmfDraw.readPointS;
 import static org.apache.poi.hwmf.record.HwmfDraw.readRectS;
 
@@ -422,8 +424,8 @@ public class HwmfText {
             }
 
             return
-                "{ reference: { x: "+reference.getX()+", y: "+reference.getY()+" }"+
-                ", bounds: { x: "+bounds.getX()+", y: "+bounds.getY()+", w: "+bounds.getWidth()+", h: "+bounds.getHeight()+"}"+
+                "{ reference: " + pointToString(reference) +
+                ", bounds: " + boundsToString(bounds) +
                 ", text: '"+text.replaceAll("\\p{Cntrl}",".")+"'"+
                 "}";
         }

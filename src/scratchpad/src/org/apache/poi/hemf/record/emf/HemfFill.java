@@ -51,10 +51,29 @@ public class HemfFill {
     private static final int MAX_RECORD_LENGTH = 10_000_000;
 
     public enum HemfRegionMode {
+        /**
+         * The new clipping region includes the intersection (overlapping areas)
+         * of the current clipping region and the current path (or new region).
+         */
         RGN_AND(0x01),
+        /**
+         * The new clipping region includes the union (combined areas)
+         * of the current clipping region and the current path (or new region).
+         */
         RGN_OR(0x02),
+        /**
+         * The new clipping region includes the union of the current clipping region
+         * and the current path (or new region) but without the overlapping areas
+         */
         RGN_XOR(0x03),
+        /**
+         * The new clipping region includes the areas of the current clipping region
+         * with those of the current path (or new region) excluded.
+         */
         RGN_DIFF(0x04),
+        /**
+         * The new clipping region is the current path (or the new region).
+         */
         RGN_COPY(0x05);
 
         int flag;
@@ -114,7 +133,7 @@ public class HemfFill {
      * optionally in combination with a brush pattern, according to a specified raster operation, stretching or
      * compressing the output to fit the dimensions of the destination, if necessary.
      */
-    public static class EmfStretchBlt extends HwmfFill.WmfBitBlt implements HemfRecord, HemfBounded {
+    public static class EmfStretchBlt extends HwmfFill.WmfBitBlt implements HemfRecord {
         protected final Rectangle2D bounds = new Rectangle2D.Double();
 
         /** An XForm object that specifies a world-space to page-space transform to apply to the source bitmap. */
@@ -196,16 +215,6 @@ public class HemfFill {
             return size;
         }
 
-        @Override
-        public Rectangle2D getRecordBounds() {
-            return bounds;
-        }
-
-        @Override
-        public Rectangle2D getShapeBounds(HemfGraphics ctx) {
-            return dstBounds;
-        }
-
         protected boolean srcEqualsDstDimension() {
             return false;
         }
@@ -226,7 +235,7 @@ public class HemfFill {
      * destination rectangle, optionally in combination with a brush pattern, according to a specified raster
      * operation, stretching or compressing the output to fit the dimensions of the destination, if necessary.
      */
-    public static class EmfStretchDiBits extends HwmfFill.WmfStretchDib implements HemfRecord, HemfBounded {
+    public static class EmfStretchDiBits extends HwmfFill.WmfStretchDib implements HemfRecord {
         protected final Rectangle2D bounds = new Rectangle2D.Double();
 
         @Override
@@ -286,16 +295,6 @@ public class HemfFill {
 
             return size;
         }
-
-        @Override
-        public Rectangle2D getRecordBounds() {
-            return bounds;
-        }
-
-        @Override
-        public Rectangle2D getShapeBounds(HemfGraphics ctx) {
-            return dstBounds;
-        }
     }
 
     /**
@@ -316,7 +315,7 @@ public class HemfFill {
 
 
     /** The EMR_FRAMERGN record draws a border around the specified region using the specified brush. */
-    public static class EmfFrameRgn extends HwmfDraw.WmfFrameRegion implements HemfRecord, HemfBounded {
+    public static class EmfFrameRgn extends HwmfDraw.WmfFrameRegion implements HemfRecord {
         private final Rectangle2D bounds = new Rectangle2D.Double();
         private final List<Rectangle2D> rgnRects = new ArrayList<>();
 
@@ -347,23 +346,13 @@ public class HemfFill {
             ctx.fill(getShape());
         }
 
-        @Override
-        public Rectangle2D getRecordBounds() {
-            return bounds;
-        }
-
-        @Override
-        public Rectangle2D getShapeBounds(HemfGraphics ctx) {
-            return getShape().getBounds2D();
-        }
-
         protected Area getShape() {
             return getRgnShape(rgnRects);
         }
     }
 
     /** The EMR_INVERTRGN record inverts the colors in the specified region. */
-    public static class EmfInvertRgn implements HemfRecord, HemfBounded {
+    public static class EmfInvertRgn implements HemfRecord {
         protected final Rectangle2D bounds = new Rectangle2D.Double();
         protected final List<Rectangle2D> rgnRects = new ArrayList<>();
 
@@ -380,16 +369,6 @@ public class HemfFill {
             size += LittleEndianConsts.INT_SIZE;
             size += readRgnData(leis, rgnRects);
             return size;
-        }
-
-        @Override
-        public Rectangle2D getRecordBounds() {
-            return bounds;
-        }
-
-        @Override
-        public Rectangle2D getShapeBounds(HemfGraphics ctx) {
-            return getShape().getBounds2D();
         }
 
         protected Area getShape() {
@@ -409,7 +388,7 @@ public class HemfFill {
     }
 
     /** The EMR_FILLRGN record fills the specified region by using the specified brush. */
-    public static class EmfFillRgn extends HwmfFill.WmfFillRegion implements HemfRecord, HemfBounded {
+    public static class EmfFillRgn extends HwmfFill.WmfFillRegion implements HemfRecord {
         protected final Rectangle2D bounds = new Rectangle2D.Double();
         protected final List<Rectangle2D> rgnRects = new ArrayList<>();
 
@@ -427,16 +406,6 @@ public class HemfFill {
             size += 2*LittleEndianConsts.INT_SIZE;
             size += readRgnData(leis, rgnRects);
             return size;
-        }
-
-        @Override
-        public Rectangle2D getRecordBounds() {
-            return bounds;
-        }
-
-        @Override
-        public Rectangle2D getShapeBounds(HemfGraphics ctx) {
-            return getShape().getBounds2D();
         }
 
         protected Area getShape() {
@@ -474,7 +443,7 @@ public class HemfFill {
         }
     }
 
-    public static class EmfAlphaBlend implements HemfRecord, HemfBounded {
+    public static class EmfAlphaBlend implements HemfRecord {
         /** the destination bounding rectangle in device units */
         protected final Rectangle2D bounds = new Rectangle2D.Double();
         /** the destination rectangle */
@@ -583,24 +552,13 @@ public class HemfFill {
 
             return size;
         }
-
-
-        @Override
-        public Rectangle2D getRecordBounds() {
-            return bounds;
-        }
-
-        @Override
-        public Rectangle2D getShapeBounds(HemfGraphics ctx) {
-            return destRect;
-        }
     }
 
     /**
      * The EMR_SETDIBITSTODEVICE record specifies a block transfer of pixels from specified scanlines of
      * a source bitmap to a destination rectangle.
      */
-    public static class EmfSetDiBitsToDevice implements HemfRecord, HemfBounded {
+    public static class EmfSetDiBitsToDevice implements HemfRecord {
         protected final Rectangle2D bounds = new Rectangle2D.Double();
         protected final Point2D dest = new Point2D.Double();
         protected final Rectangle2D src = new Rectangle2D.Double();
@@ -644,16 +602,6 @@ public class HemfFill {
             size += readBitmap(leis, bitmap, startIdx, offBmiSrc, cbBmiSrc, offBitsSrc, cbBitsSrc);
 
             return size;
-        }
-
-        @Override
-        public Rectangle2D getRecordBounds() {
-            return bounds;
-        }
-
-        @Override
-        public Rectangle2D getShapeBounds(HemfGraphics ctx) {
-            return new Rectangle2D.Double(dest.getX(), dest.getY(), src.getWidth(), src.getHeight());
         }
     }
 
@@ -767,52 +715,6 @@ public class HemfFill {
         xform.setTransform(eM11, eM21, eM12, eM22, eDx, eDy);
 
         return 6 * LittleEndian.INT_SIZE;
-    }
-
-    /**
-     * The EMR_FILLPATH record closes any open figures in the current path and fills the path's interior by
-     * using the current brush and polygon-filling mode.
-     */
-    public static class EmfFillPath implements HemfRecord, HemfBounded {
-        protected final Rectangle2D bounds = new Rectangle2D.Double();
-
-        @Override
-        public HemfRecordType getEmfRecordType() {
-            return HemfRecordType.fillPath;
-        }
-
-        @Override
-        public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
-            // A 128-bit WMF RectL object, which specifies bounding rectangle, in device units
-            return (recordSize == 0) ? 0 : readRectL(leis, bounds);
-        }
-
-        @Override
-        public Rectangle2D getRecordBounds() {
-            return bounds;
-        }
-
-        @Override
-        public Rectangle2D getShapeBounds(HemfGraphics ctx) {
-            final HemfDrawProperties prop = ctx.getProperties();
-            final Path2D path = prop.getPath();
-            return path.getBounds2D();
-        }
-
-        @Override
-        public void draw(HemfGraphics ctx) {
-            final HemfDrawProperties prop = ctx.getProperties();
-            if (!prop.usePathBracket()) {
-                return;
-            }
-            final Path2D path = (Path2D)prop.getPath().clone();
-            path.setWindingRule(ctx.getProperties().getWindingRule());
-            if (prop.getBrushStyle() == HwmfBrushStyle.BS_NULL) {
-                ctx.draw(path);
-            } else {
-                ctx.fill(path);
-            }
-        }
     }
 
     protected static Area getRgnShape(List<Rectangle2D> rgnRects) {
