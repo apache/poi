@@ -63,7 +63,13 @@ public class HemfPictureTest {
     public void paint() throws IOException {
         byte buf[] = new byte[50_000_000];
 
-        final boolean writeLog = false;
+        // good test samples to validate rendering:
+        // emfs/commoncrawl2/NB/NBWN2YH5VFCLZRFDQU7PB7IDD4UKY7DN_2.emf
+        // emfs/govdocs1/777/777525.ppt_0.emf
+        // emfs/govdocs1/844/844795.ppt_2.emf
+        // emfs/commoncrawl2/TO/TOYZSTNUSW5OFCFUQ6T5FBLIDLCRF3NH_0.emf
+
+        final boolean writeLog = true;
         final boolean dumpRecords = false;
         final boolean savePng = true;
 
@@ -257,7 +263,7 @@ public class HemfPictureTest {
             long fudgeFactorX = 1000;
             StringBuilder sb = new StringBuilder();
             for (HemfRecord record : pic) {
-                if (record.getEmfRecordType().equals(HemfRecordType.exttextoutw)) {
+                if (record.getEmfRecordType().equals(HemfRecordType.extTextOutW)) {
                     HemfText.EmfExtTextOutW extTextOutW = (HemfText.EmfExtTextOutW) record;
                     Point2D reference = extTextOutW.getReference();
                     if (lastY > -1 && lastY != reference.getY()) {
@@ -291,7 +297,7 @@ public class HemfPictureTest {
             expectedParts.add("testPDF.pdf");
             int foundExpected = 0;
             for (HemfRecord record : pic) {
-                if (record.getEmfRecordType().equals(HemfRecordType.exttextoutw)) {
+                if (record.getEmfRecordType().equals(HemfRecordType.extTextOutW)) {
                     HemfText.EmfExtTextOutW extTextOutW = (HemfText.EmfExtTextOutW) record;
                     Point2D reference = extTextOutW.getReference();
                     if (lastY > -1 && lastY != reference.getY()) {

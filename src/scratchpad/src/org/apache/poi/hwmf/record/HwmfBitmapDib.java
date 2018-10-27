@@ -234,20 +234,33 @@ public class HwmfBitmapDib {
 
         leis.reset();
 
-        assert( headerSize != 0x0C || ((((headerWidth * headerPlanes * headerBitCount.flag + 31) & ~31) / 8) * Math.abs(headerHeight)) == headerImageSize);
+        // The size and format of this data is determined by information in the DIBHeaderInfo field. If
+        // it is a BitmapCoreHeader, the size in bytes MUST be calculated as follows:
 
-        if (headerImageSize < headerSize) {
-            imageData = IOUtils.safelyAllocate(recordSize, MAX_RECORD_LENGTH);
-            leis.readFully(imageData);
-            return recordSize;
-        } else {
-            int fileSize = (int)Math.min(introSize+headerImageSize,recordSize);
+        int bodySize = ((((headerWidth * headerPlanes * headerBitCount.flag + 31) & ~31) / 8) * Math.abs(headerHeight));
+
+        // This formula SHOULD also be used to calculate the size of aData when DIBHeaderInfo is a
+        // BitmapInfoHeader Object, using values from that object, but only if its Compression value is
+        // BI_RGB, BI_BITFIELDS, or BI_CMYK.
+        // Otherwise, the size of aData MUST be the BitmapInfoHeader Object value ImageSize.
+
+        assert( headerSize != 0x0C || bodySize == headerImageSize);
+
+        if (headerSize == 0x0C ||
+            headerCompression == Compression.BI_RGB ||
+            headerCompression == Compression.BI_BITFIELDS ||
+            headerCompression == Compression.BI_CMYK) {
+            int fileSize = (int)Math.min(introSize+bodySize,recordSize);
             imageData = IOUtils.safelyAllocate(fileSize, MAX_RECORD_LENGTH);
             leis.readFully(imageData, 0, introSize);
             leis.skipFully(recordSize-fileSize);
             // emfs are sometimes truncated, read as much as possible
             int readBytes = leis.read(imageData, introSize, fileSize-introSize);
             return introSize+(recordSize-fileSize)+readBytes;
+        } else {
+            imageData = IOUtils.safelyAllocate(recordSize, MAX_RECORD_LENGTH);
+            leis.readFully(imageData);
+            return recordSize;
         }
     }
 

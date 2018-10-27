@@ -244,6 +244,11 @@ public class HwmfMisc {
             ctx.getProperties().setMapMode(mapMode);
             ctx.updateWindowMapMode();
         }
+
+        @Override
+        public String toString() {
+            return "{ mapMode: '"+mapMode+"' }";
+        }
     }
 
     /**
@@ -274,6 +279,11 @@ public class HwmfMisc {
         @Override
         public void draw(HwmfGraphics ctx) {
 
+        }
+
+        @Override
+        public String toString() {
+            return "{ mapperValues: "+mapperValues+" }";
         }
     }
 
@@ -378,6 +388,11 @@ public class HwmfMisc {
         @Override
         public void draw(HwmfGraphics ctx) {
 
+        }
+
+        @Override
+        public String toString() {
+            return "{ stretchBltMode: '"+stretchBltMode+"' }";
         }
     }
 

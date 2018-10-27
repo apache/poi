@@ -17,6 +17,7 @@
 
 package org.apache.poi.hemf.draw;
 
+import java.awt.Shape;
 import java.awt.geom.Path2D;
 
 import org.apache.poi.hwmf.draw.HwmfDrawProperties;
@@ -25,6 +26,8 @@ public class HemfDrawProperties extends HwmfDrawProperties {
 
     /** Path for path bracket operations */
     protected Path2D path = null;
+    protected Shape clip = null;
+    protected boolean usePathBracket = false;
 
 
     public HemfDrawProperties() {
@@ -33,6 +36,8 @@ public class HemfDrawProperties extends HwmfDrawProperties {
     public HemfDrawProperties(HemfDrawProperties other) {
         super(other);
         path = (other.path != null) ? (Path2D)other.path.clone() : null;
+        // TODO: check how to clone
+        clip = other.clip;
     }
 
     /**
@@ -55,7 +60,19 @@ public class HemfDrawProperties extends HwmfDrawProperties {
      * @return {@code true}, if the drawing should go to the path bracket,
      *      if {@code false} draw directly to the graphics context
      */
-    public boolean usePathBracket() {
-        return path != null;
+    public boolean getUsePathBracket() {
+        return usePathBracket;
+    }
+
+    public void setUsePathBracket(boolean usePathBracket) {
+        this.usePathBracket = usePathBracket;
+    }
+
+    public Shape getClip() {
+        return clip;
+    }
+
+    public void setClip(Shape shape) {
+        clip = shape;
     }
 }
