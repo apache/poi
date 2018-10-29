@@ -286,4 +286,18 @@ public class TestVBAMacroReader {
         assertContains(content, "Attribute VB_Customizable = True");
         r.close();
     }
+
+    @Test
+    public void bug62624() throws IOException {
+        //macro comes from Common Crawl: HRLOXHGMGLFIJQQU27RIWXOARRHAAAAS
+        File f = POIDataSamples.getSpreadSheetInstance().getFile("62624.bin");
+        VBAMacroReader r = new VBAMacroReader(f);
+
+        Map<String, Module> macros = r.readMacroModules();
+        assertEquals(13, macros.size());
+        assertNotNull(macros.get("M\u00F3dulo1"));
+        assertContains(macros.get("M\u00F3dulo1").getContent(), "Calcula_tributos");
+        assertEquals(Module.ModuleType.Module, macros.get("M\u00F3dulo1").geModuleType());
+        r.close();
+    }
 }

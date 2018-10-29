@@ -20,9 +20,19 @@ package org.apache.poi.poifs.macros;
 import static org.apache.poi.util.StringUtil.endsWithIgnoreCase;
 import static org.apache.poi.util.StringUtil.startsWithIgnoreCase;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -39,6 +49,8 @@ import org.apache.poi.util.CodePageUtil;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.util.RLEDecompressingInputStream;
 import org.apache.poi.util.StringUtil;
 
@@ -56,6 +68,8 @@ import org.apache.poi.util.StringUtil;
  * @since 3.15-beta2
  */
 public class VBAMacroReader implements Closeable {
+    private static final POILogger LOGGER = POILogFactory.getLogger(VBAMacroReader.class);
+
     protected static final String VBA_PROJECT_OOXML = "vbaProject.bin";
     protected static final String VBA_PROJECT_POIFS = "VBA";
 
@@ -111,8 +125,13 @@ public class VBAMacroReader implements Closeable {
 
     public Map<String, Module> readMacroModules() throws IOException {
         final ModuleMap modules = new ModuleMap();
+        //ascii -> unicode mapping for module names
+        //preserve insertion order
+        final Map<String, String> moduleNameMap = new LinkedHashMap<>();
+
         findMacros(fs.getRoot(), modules);
-        findProjectProperties(fs.getRoot(), modules);
+        findModuleNameMap(fs.getRoot(), moduleNameMap, modules);
+        findProjectProperties(fs.getRoot(), moduleNameMap, modules);
 
         Map<String, Module> moduleSources = new HashMap<>();
         for (Map.Entry<String, ModuleImpl> entry : modules.entrySet()) {
@@ -327,16 +346,33 @@ public class VBAMacroReader implements Closeable {
         }
     }
 
-    protected void findProjectProperties(DirectoryNode node, ModuleMap modules) throws IOException {
+    protected void findProjectProperties(DirectoryNode node, Map<String, String> moduleNameMap, ModuleMap modules) throws IOException {
         for (Entry entry : node) {
             if ("project".equalsIgnoreCase(entry.getName())) {
                 DocumentNode document = (DocumentNode)entry;
                 DocumentInputStream dis = new DocumentInputStream(document);
-                readProjectProperties(dis, modules);
+                readProjectProperties(dis, moduleNameMap, modules);
             } else {
                 for (Entry child : node) {
                     if (child instanceof DirectoryNode) {
-                        findProjectProperties((DirectoryNode)child, modules);
+                        findProjectProperties((DirectoryNode)child, moduleNameMap, modules);
+                    }
+                }
+
+            }
+        }
+    }
+
+    protected void findModuleNameMap(DirectoryNode node, Map<String, String> moduleNameMap, ModuleMap modules) throws IOException {
+        for (Entry entry : node) {
+            if ("projectwm".equalsIgnoreCase(entry.getName())) {
+                DocumentNode document = (DocumentNode)entry;
+                DocumentInputStream dis = new DocumentInputStream(document);
+                readNameMapRecords(dis, moduleNameMap, modules.charset);
+            } else {
+                for (Entry child : node) {
+                    if (child instanceof DirectoryNode) {
+                        findModuleNameMap((DirectoryNode)child, moduleNameMap, modules);
                     }
                 }
 
@@ -559,6 +595,75 @@ public class VBAMacroReader implements Closeable {
         return new ASCIIUnicodeStringPair(ascii, unicode);
     }
 
+    private static void readNameMapRecords(InputStream is, Map<String, String> moduleNames, Charset charset) throws IOException {
+        //see 2.3.3 PROJECTwm Stream: Module Name Information
+        //multibytecharstring
+        String mbcs = null;
+        String unicode = null;
+        do {
+            try {
+                mbcs = readMBCS(is, charset);
+            } catch (EOFException e) {
+                return;
+            }
+            if (mbcs == null) {
+                return;
+            }
+            try {
+                unicode = readUnicode(is);
+            } catch (EOFException e) {
+                return;
+            }
+            if (mbcs != null && unicode != null) {
+                moduleNames.put(mbcs, unicode);
+            }
+        } while (mbcs != null && unicode != null);
+    }
+
+    private static String readUnicode(InputStream is) throws IOException {
+        //reads null-terminated unicode string
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        int b0 = is.read();
+        int b1 = is.read();
+
+        while ((b0 + b1) != 0) {
+            if (b0 == -1 || b1 == -1) {
+                throw new EOFException();
+            }
+
+            bos.write(b0);
+            bos.write(b1);
+            b0 = is.read();
+            b1 = is.read();
+        }
+        return new String (bos.toByteArray(), StandardCharsets.UTF_16LE);
+    }
+
+    //returns a string if any bytes are read or null if two 0x00 are read
+    private static String readMBCS(InputStream is, Charset charset) throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        int len = 0;
+        int b = is.read();
+        while (b != 0) {
+            ++len;
+            if (b == -1) {
+                throw new EOFException();
+            }
+            bos.write(b);
+            b = is.read();
+        }
+        if (len == 0) {
+            b = is.read();
+            if (b == -1) {
+                throw new EOFException();
+            }
+            if (b != 0) {
+                LOGGER.log(POILogger.WARN, "expected two 0x00 at end of module name map");
+            }
+            return null;
+        }
+        return new String(bos.toByteArray(), charset);
+    }
 
     /**
      * Read <tt>length</tt> bytes of MBCS (multi-byte character set) characters from the stream
@@ -579,7 +684,8 @@ public class VBAMacroReader implements Closeable {
         return new String(buffer, 0, length, charset);
     }
 
-    protected void readProjectProperties(DocumentInputStream dis, ModuleMap modules) throws IOException {
+    protected void readProjectProperties(DocumentInputStream dis,
+                                         Map<String, String> moduleNameMap, ModuleMap modules) throws IOException {
         InputStreamReader reader = new InputStreamReader(dis, modules.charset);
         StringBuilder builder = new StringBuilder();
         char[] buffer = new char[512];
@@ -588,6 +694,9 @@ public class VBAMacroReader implements Closeable {
             builder.append(buffer, 0, read);
         }
         String properties = builder.toString();
+        //the module name map names should be in exactly the same order
+        //as the module names here. See 2.3.3 PROJECTwm Stream.
+        //At some point, we might want to enforce that.
         for (String line : properties.split("\r\n|\n\r")) {
             if (!line.startsWith("[")) {
                 String[] tokens = line.split("=");
@@ -595,21 +704,39 @@ public class VBAMacroReader implements Closeable {
                         && tokens[1].startsWith("\"") && tokens[1].endsWith("\"")) {
                     // Remove any double quotes
                     tokens[1] = tokens[1].substring(1, tokens[1].length() - 1);
-
                 }
-                if ("Document".equals(tokens[0])) {
+                if ("Document".equals(tokens[0]) && tokens.length > 1) {
                     String mn = tokens[1].substring(0, tokens[1].indexOf("/&H"));
-                    ModuleImpl module = modules.get(mn);
-                    module.moduleType = ModuleType.Document;
-                } else if ("Module".equals(tokens[0])) {
-                    ModuleImpl module = modules.get(tokens[1]);
-                    module.moduleType = ModuleType.Module;
-                } else if ("Class".equals(tokens[0])) {
-                    ModuleImpl module = modules.get(tokens[1]);
-                    module.moduleType = ModuleType.Class;
+                    ModuleImpl module = getModule(mn, moduleNameMap, modules);
+                    if (module != null) {
+                        module.moduleType = ModuleType.Document;
+                    } else {
+                        LOGGER.log(POILogger.WARN, "couldn't find module with name: "+mn);
+                    }
+                } else if ("Module".equals(tokens[0]) && tokens.length > 1) {
+                    ModuleImpl module = getModule(tokens[1], moduleNameMap, modules);
+                    if (module != null) {
+                        module.moduleType = ModuleType.Module;
+                    } else {
+                        LOGGER.log(POILogger.WARN, "couldn't find module with name: "+tokens[1]);
+                    }
+                } else if ("Class".equals(tokens[0]) && tokens.length > 1) {
+                    ModuleImpl module = getModule(tokens[1], moduleNameMap, modules);
+                    if (module != null) {
+                        module.moduleType = ModuleType.Class;
+                    } else {
+                        LOGGER.log(POILogger.WARN, "couldn't find module with name: "+tokens[1]);
+                    }
                 }
             }
         }
+    }
+    //can return null!
+    private ModuleImpl getModule(String moduleName, Map<String, String> moduleNameMap, ModuleMap moduleMap) {
+        if (moduleNameMap.containsKey(moduleName)) {
+            return moduleMap.get(moduleNameMap.get(moduleName));
+        }
+        return moduleMap.get(moduleName);
     }
 
     private String readUnicodeString(RLEDecompressingInputStream in, int unicodeNameRecordLength) throws IOException {
