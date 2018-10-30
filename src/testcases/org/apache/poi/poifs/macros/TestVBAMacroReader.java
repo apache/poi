@@ -300,4 +300,21 @@ public class TestVBAMacroReader {
         assertEquals(Module.ModuleType.Module, macros.get("M\u00F3dulo1").geModuleType());
         r.close();
     }
+
+    @Test
+    public void bug62625() throws IOException {
+        //macro comes from Common Crawl: 4BZ22N5QG5R2SUU2MNN47PO7VBQLNYIQ
+        //A REFERENCE_NAME can sometimes only have an ascii string without
+        //a reserved byte followed by the unicode string.
+        //See https://github.com/decalage2/oletools/blob/master/oletools/olevba.py#L1516
+        //and https://github.com/decalage2/oletools/pull/135 from (@c1fe)
+
+
+        File f = POIDataSamples.getSpreadSheetInstance().getFile("62625.bin");
+        VBAMacroReader r = new VBAMacroReader(f);
+
+        Map<String, Module> macros = r.readMacroModules();
+        assertEquals(20, macros.size());
+        r.close();
+    }
 }
