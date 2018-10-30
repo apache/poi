@@ -29,6 +29,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PushbackInputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -462,10 +463,18 @@ public class VBAMacroReader implements Closeable {
     private static class ASCIIUnicodeStringPair {
         private final String ascii;
         private final String unicode;
+        private final int pushbackRecordId;
+
+        ASCIIUnicodeStringPair(String ascii, int pushbackRecordId) {
+            this.ascii = ascii;
+            this.unicode = "";
+            this.pushbackRecordId = pushbackRecordId;
+        }
 
         ASCIIUnicodeStringPair(String ascii, String unicode) {
             this.ascii = ascii;
             this.unicode = unicode;
+            pushbackRecordId = -1;
         }
 
         private String getAscii() {
@@ -474,6 +483,10 @@ public class VBAMacroReader implements Closeable {
 
         private String getUnicode() {
             return unicode;
+        }
+
+        private int getPushbackRecordId() {
+            return pushbackRecordId;
         }
     }
 
@@ -521,7 +534,27 @@ public class VBAMacroReader implements Closeable {
                             if (dirState.equals(DIR_STATE.INFORMATION_RECORD)) {
                                 dirState = DIR_STATE.REFERENCES_RECORD;
                             }
-                            readStringPair(in, modules.charset, REFERENCE_NAME_RESERVED);
+                            ASCIIUnicodeStringPair stringPair = readStringPair(in,
+                                    modules.charset, REFERENCE_NAME_RESERVED, false);
+                            if (stringPair.getPushbackRecordId() == -1) {
+                                break;
+                            }
+                            //Special handling for when there's only an ascii string and a REFERENCED_REGISTERED
+                            //record that follows.
+                            //See https://github.com/decalage2/oletools/blob/master/oletools/olevba.py#L1516
+                            //and https://github.com/decalage2/oletools/pull/135 from (@c1fe)
+                            if (stringPair.getPushbackRecordId() != RecordType.REFERENCE_REGISTERED.id) {
+                                throw new IllegalArgumentException("Unexpected reserved character. "+
+                                        "Expected "+Integer.toHexString(REFERENCE_NAME_RESERVED)
+                                        + " or "+Integer.toHexString(RecordType.REFERENCE_REGISTERED.id)+
+                                        " not: "+Integer.toHexString(stringPair.getPushbackRecordId()));
+                            }
+                            //fall through!
+                        case REFERENCE_REGISTERED:
+                            //REFERENCE_REGISTERED must come immediately after
+                            //REFERENCE_NAME to allow for fall through in special case of bug 62625
+                            int recLength = in.readInt();
+                            trySkip(in, recLength);
                             break;
                         case MODULE_DOC_STRING:
                             int modDocStringLength = in.readInt();
@@ -582,13 +615,27 @@ public class VBAMacroReader implements Closeable {
         }
     }
 
-    private ASCIIUnicodeStringPair readStringPair(RLEDecompressingInputStream in, Charset charset, int reservedByte) throws IOException {
+
+
+    private ASCIIUnicodeStringPair readStringPair(RLEDecompressingInputStream in,
+                                                  Charset charset, int reservedByte) throws IOException {
+        return readStringPair(in, charset, reservedByte, true);
+    }
+
+    private ASCIIUnicodeStringPair readStringPair(RLEDecompressingInputStream in,
+                                                  Charset charset, int reservedByte,
+                                                  boolean throwOnUnexpectedReservedByte) throws IOException {
         int nameLength = in.readInt();
         String ascii = readString(in, nameLength, charset);
         int reserved = in.readShort();
+
         if (reserved != reservedByte) {
-            throw new IOException("Expected "+Integer.toHexString(reservedByte)+ "after name before Unicode name, but found: " +
-                    Integer.toHexString(reserved));
+            if (throwOnUnexpectedReservedByte) {
+                throw new IOException("Expected " + Integer.toHexString(reservedByte) + "after name before Unicode name, but found: " +
+                        Integer.toHexString(reserved));
+            } else {
+                return new ASCIIUnicodeStringPair(ascii, reserved);
+            }
         }
         int unicodeNameRecordLength = in.readInt();
         String unicode = readUnicodeString(in, unicodeNameRecordLength);
