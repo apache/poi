@@ -289,7 +289,7 @@ under the License.
     <!-- build and distro settings -->
     <property name="jar.name" value="poi"/>
     <property name="build.site" location="build/site"/>
-    <property name="javadocs.report.dir" location="${build.site}/apidocs"/>
+    <property name="javadocs.report.dir" location="${build.site}/apidocs/dev"/>
     <property name="dist.dir" location="build/dist"/>
     <property name="halt.on.test.failure" value="true"/>
 
@@ -1818,7 +1818,7 @@ under the License.
         </touch>
     </target>
 
-    <!-- Generates the API documentation. -->
+    <!-- Generates the latest/development API documentation. -->
     <target name="javadocs"
             description="Generates the API documentation">
         <javadoc verbose="false" author="true" destdir="${javadocs.report.dir}"
