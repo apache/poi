@@ -352,13 +352,8 @@ public class VBAMacroReader implements Closeable {
                 DocumentNode document = (DocumentNode)entry;
                 DocumentInputStream dis = new DocumentInputStream(document);
                 readProjectProperties(dis, moduleNameMap, modules);
-            } else {
-                for (Entry child : node) {
-                    if (child instanceof DirectoryNode) {
-                        findProjectProperties((DirectoryNode)child, moduleNameMap, modules);
-                    }
-                }
-
+            } else if (entry instanceof DirectoryNode) {
+                findProjectProperties((DirectoryNode)entry, moduleNameMap, modules);
             }
         }
     }
@@ -369,13 +364,8 @@ public class VBAMacroReader implements Closeable {
                 DocumentNode document = (DocumentNode)entry;
                 DocumentInputStream dis = new DocumentInputStream(document);
                 readNameMapRecords(dis, moduleNameMap, modules.charset);
-            } else {
-                for (Entry child : node) {
-                    if (child instanceof DirectoryNode) {
-                        findModuleNameMap((DirectoryNode)child, moduleNameMap, modules);
-                    }
-                }
-
+            } else if (entry.isDirectoryEntry()) {
+                findModuleNameMap((DirectoryNode)entry, moduleNameMap, modules);
             }
         }
     }
