@@ -113,7 +113,7 @@ public class HemfPicture implements Iterable<HemfRecord> {
             height = 100;
         }
 
-        return new Dimension2DDouble(width*coeff, height*coeff);
+        return new Dimension2DDouble(Math.abs(width*coeff), Math.abs(height*coeff));
     }
 
     public void draw(Graphics2D ctx, Rectangle2D graphicsBounds) {

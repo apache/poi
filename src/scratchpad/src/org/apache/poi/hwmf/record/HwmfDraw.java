@@ -20,6 +20,7 @@ package org.apache.poi.hwmf.record;
 import java.awt.Shape;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Area;
+import java.awt.geom.Dimension2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
@@ -744,4 +745,11 @@ public class HwmfDraw {
     public static String boundsToString(Rectangle2D bounds) {
         return "{ x: "+bounds.getX()+", y: "+bounds.getY()+", w: "+bounds.getWidth()+", h: "+bounds.getHeight()+" }";
     }
+
+    @Internal
+    public static String dimToString(Dimension2D dim) {
+        return "{ w: "+dim.getWidth()+", h: "+dim.getHeight()+" }";
+    }
+
+
 }

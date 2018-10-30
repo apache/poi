@@ -20,6 +20,8 @@ package org.apache.poi.hemf.record.emf;
 import static org.apache.poi.hemf.record.emf.HemfDraw.readDimensionInt;
 import static org.apache.poi.hemf.record.emf.HemfDraw.readRectL;
 import static org.apache.poi.hemf.record.emf.HemfRecordIterator.HEADER_SIZE;
+import static org.apache.poi.hwmf.record.HwmfDraw.boundsToString;
+import static org.apache.poi.hwmf.record.HwmfDraw.dimToString;
 
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
@@ -119,21 +121,21 @@ public class HemfHeader implements HemfRecord {
     @Override
     public String toString() {
         return "HemfHeader{" +
-                "boundsRectangle=" + boundsRectangle +
-                ", frameRectangle=" + frameRectangle +
-                ", bytes=" + bytes +
-                ", records=" + records +
-                ", handles=" + handles +
-                ", description=" + description +
-                ", nPalEntries=" + nPalEntries +
-                ", hasExtension1=" + hasExtension1 +
-                ", cbPixelFormat=" + cbPixelFormat +
-                ", offPixelFormat=" + offPixelFormat +
-                ", bOpenGL=" + bOpenGL +
-                ", hasExtension2=" + hasExtension2 +
-                ", deviceDimension=" + deviceDimension +
-                ", microDimension=" + microDimension +
-                ", milliDimension=" + milliDimension +
+                "boundsRectangle: " + boundsToString(boundsRectangle) +
+                ", frameRectangle: " + boundsToString(frameRectangle) +
+                ", bytes: " + bytes +
+                ", records: " + records +
+                ", handles: " + handles +
+                ", description: '" + description + "'" +
+                ", nPalEntries: " + nPalEntries +
+                ", hasExtension1: " + hasExtension1 +
+                ", cbPixelFormat: " + cbPixelFormat +
+                ", offPixelFormat: " + offPixelFormat +
+                ", bOpenGL: " + bOpenGL +
+                ", hasExtension2: " + hasExtension2 +
+                ", deviceDimension: " + dimToString(deviceDimension) +
+                ", microDimension: " + dimToString(microDimension) +
+                ", milliDimension: " + dimToString(milliDimension) +
                 '}';
     }
 

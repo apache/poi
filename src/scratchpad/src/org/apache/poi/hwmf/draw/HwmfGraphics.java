@@ -29,6 +29,7 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -50,7 +51,9 @@ import org.apache.poi.hwmf.record.HwmfMisc.WmfSetBkMode.HwmfBkMode;
 import org.apache.poi.hwmf.record.HwmfObjectTableEntry;
 import org.apache.poi.hwmf.record.HwmfPenStyle;
 import org.apache.poi.hwmf.record.HwmfPenStyle.HwmfLineDash;
+import org.apache.poi.hwmf.record.HwmfRegionMode;
 import org.apache.poi.hwmf.record.HwmfText;
+import org.apache.poi.hwmf.record.HwmfText.WmfExtTextOutOptions;
 import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.DrawFontManager;
 import org.apache.poi.util.LocaleUtil;
@@ -66,11 +69,12 @@ public class HwmfGraphics {
     protected final Graphics2D graphicsCtx;
     protected final BitSet objectIndexes = new BitSet();
     protected final TreeMap<Integer,HwmfObjectTableEntry> objectTable = new TreeMap<>();
+    protected final AffineTransform initialAT = new AffineTransform();
+
 
     private static final Charset DEFAULT_CHARSET = LocaleUtil.CHARSET_1252;
     /** Bounding box from the placeable header */
     private final Rectangle2D bbox;
-    private final AffineTransform initialAT;
 
     /**
      * Initialize a graphics context for wmf rendering
@@ -81,14 +85,18 @@ public class HwmfGraphics {
     public HwmfGraphics(Graphics2D graphicsCtx, Rectangle2D bbox) {
         this.graphicsCtx = graphicsCtx;
         this.bbox = (Rectangle2D)bbox.clone();
-        this.initialAT = graphicsCtx.getTransform();
+        this.initialAT.setTransform(graphicsCtx.getTransform());
     }
 
     public HwmfDrawProperties getProperties() {
         if (prop == null) {
-            prop = new HwmfDrawProperties();
+            prop = newProperties(null);
         }
         return prop;
+    }
+
+    protected HwmfDrawProperties newProperties(HwmfDrawProperties oldProps) {
+        return (oldProps == null) ? new HwmfDrawProperties() : new HwmfDrawProperties(oldProps);
     }
 
     public void draw(Shape shape) {
@@ -119,14 +127,18 @@ public class HwmfGraphics {
     }
 
     public void fill(Shape shape) {
-        if (getProperties().getBrushStyle() != HwmfBrushStyle.BS_NULL) {
-//            GeneralPath gp = new GeneralPath(shape);
-//            gp.setWindingRule(getProperties().getPolyfillMode().awtFlag);
+        HwmfDrawProperties prop = getProperties();
+        if (prop.getBrushStyle() != HwmfBrushStyle.BS_NULL) {
+            if (prop.getBkMode() == HwmfBkMode.OPAQUE) {
+                graphicsCtx.setPaint(prop.getBackgroundColor().getColor());
+                graphicsCtx.fill(shape);
+            }
+
             graphicsCtx.setPaint(getFill());
             graphicsCtx.fill(shape);
         }
 
-        draw(shape);
+//        draw(shape);
     }
 
     protected BasicStroke getStroke() {
@@ -264,8 +276,10 @@ public class HwmfGraphics {
     public void saveProperties() {
         final HwmfDrawProperties p = getProperties();
         assert(p != null);
+        p.setTransform(graphicsCtx.getTransform());
+        p.setClip(graphicsCtx.getClip());
         propStack.add(p);
-        prop = new HwmfDrawProperties(p);
+        prop = newProperties(p);
     }
     
     /**
@@ -291,7 +305,16 @@ public class HwmfGraphics {
             // roll to last when curIdx == 0
             stackIndex = propStack.size()-1;
         }
-        prop = propStack.get(stackIndex);
+
+        // The playback device context is restored by popping state information off a stack that was created by
+        // prior SAVEDC records
+        // ... so because being a stack, we will remove all entries having a greater index than the stackIndex
+        for (int i=propStack.size()-1; i>=stackIndex; i--) {
+            prop = propStack.remove(i);
+        }
+
+        graphicsCtx.setTransform(prop.getTransform());
+        graphicsCtx.setClip(prop.getClip());
     }
 
     /**
@@ -338,13 +361,14 @@ public class HwmfGraphics {
         }
     }
 
-    public void drawString(byte[] text, Point2D reference, Rectangle2D clip) {
-        drawString(text, reference, clip, null, false);
+    public void drawString(byte[] text, Point2D reference) {
+        drawString(text, reference, null, null, null, false);
     }
 
-    public void drawString(byte[] text, Point2D reference, Rectangle2D clip, List<Integer> dx, boolean isUnicode) {
+    public void drawString(byte[] text, Point2D reference, Rectangle2D clip, WmfExtTextOutOptions opts, List<Integer> dx, boolean isUnicode) {
+        final HwmfDrawProperties prop = getProperties();
 
-        HwmfFont font = getProperties().getFont();
+        HwmfFont font = prop.getFont();
         if (font == null || text == null || text.length == 0) {
             return;
         }
@@ -446,21 +470,31 @@ public class HwmfGraphics {
         Point2D dst = new Point2D.Double();
         tx.transform(src, dst);
 
-        // TODO: implement clipping on bounds
+        final Shape clipShape = graphicsCtx.getClip();
         final AffineTransform at = graphicsCtx.getTransform();
         try {
+            if (clip != null) {
+                graphicsCtx.translate(-clip.getCenterX(), -clip.getCenterY());
+                graphicsCtx.rotate(angle);
+                graphicsCtx.translate(clip.getCenterX(), clip.getCenterY());
+                if (prop.getBkMode() == HwmfBkMode.OPAQUE && opts.isOpaque()) {
+                    graphicsCtx.setPaint(prop.getBackgroundColor().getColor());
+                    graphicsCtx.fill(clip);
+                }
+                if (opts.isClipped()) {
+                    graphicsCtx.setClip(clip);
+                }
+                graphicsCtx.setTransform(at);
+            }
+
             graphicsCtx.translate(reference.getX(), reference.getY());
             graphicsCtx.rotate(angle);
             graphicsCtx.translate(dst.getX(), dst.getY());
-            if (getProperties().getBkMode() == HwmfBkMode.OPAQUE && clip != null) {
-                // TODO: validate bounds
-                graphicsCtx.setBackground(getProperties().getBackgroundColor().getColor());
-                graphicsCtx.fill(new Rectangle2D.Double(0, 0, clip.getWidth(), clip.getHeight()));
-            }
-            graphicsCtx.setColor(getProperties().getTextColor().getColor());
+            graphicsCtx.setColor(prop.getTextColor().getColor());
             graphicsCtx.drawString(as.getIterator(), 0, 0);
         } finally {
             graphicsCtx.setTransform(at);
+            graphicsCtx.setClip(clipShape);
         }
     }
 
@@ -498,18 +532,136 @@ public class HwmfGraphics {
     }
 
     public void drawImage(BufferedImage img, Rectangle2D srcBounds, Rectangle2D dstBounds) {
-        // prop.getRasterOp();
-        graphicsCtx.drawImage(img,
-            (int)dstBounds.getX(),
-            (int)dstBounds.getY(),
-            (int)(dstBounds.getX()+dstBounds.getWidth()),
-            (int)(dstBounds.getY()+dstBounds.getHeight()),
-            (int)srcBounds.getX(),
-            (int)srcBounds.getY(),
-            (int)(srcBounds.getX()+srcBounds.getWidth()),
-            (int)(srcBounds.getY()+srcBounds.getHeight()),
-            null, // getProperties().getBackgroundColor().getColor(),
-            null
-        );
+        HwmfDrawProperties prop = getProperties();
+
+        // handle raster op
+        // currently the raster op as described in https://docs.microsoft.com/en-us/windows/desktop/gdi/ternary-raster-operations
+        // are not supported, as we would need to extract the destination image area from the underlying buffered image
+        // and therefore would make it mandatory that the graphics context must be from a buffered image
+        // furthermore I doubt the purpose of bitwise image operations on non-black/white images
+        switch (prop.getRasterOp()) {
+            case D:
+                // keep destination, i.e. do nothing
+                break;
+            case PATCOPY:
+                graphicsCtx.setPaint(getFill());
+                graphicsCtx.fill(dstBounds);
+                break;
+            case BLACKNESS:
+                graphicsCtx.setPaint(Color.BLACK);
+                graphicsCtx.fill(dstBounds);
+                break;
+            case WHITENESS:
+                graphicsCtx.setPaint(Color.WHITE);
+                graphicsCtx.fill(dstBounds);
+                break;
+            default:
+            case SRCCOPY:
+                final Shape clip = graphicsCtx.getClip();
+
+                // add clipping in case of a source subimage, i.e. a clipped source image
+                // some dstBounds are horizontal or vertical flipped, so we need to normalize the images
+                Rectangle2D normalized = new Rectangle2D.Double(
+                    dstBounds.getWidth() >= 0 ? dstBounds.getMinX() : dstBounds.getMaxX(),
+                    dstBounds.getHeight() >= 0 ? dstBounds.getMinY() : dstBounds.getMaxY(),
+                    Math.abs(dstBounds.getWidth()),
+                    Math.abs(dstBounds.getHeight()));
+                graphicsCtx.clip(normalized);
+                final AffineTransform at = graphicsCtx.getTransform();
+
+                final Rectangle2D imgBounds = new Rectangle2D.Double(0,0,img.getWidth(),img.getHeight());
+                final boolean isImgBounds = (srcBounds.equals(new Rectangle2D.Double()));
+                final Rectangle2D srcBounds2 = isImgBounds ? imgBounds : srcBounds;
+
+                // TODO: apply emf transform
+                graphicsCtx.translate(dstBounds.getX(), dstBounds.getY());
+                graphicsCtx.scale(dstBounds.getWidth()/srcBounds2.getWidth(), dstBounds.getHeight()/srcBounds2.getHeight());
+                graphicsCtx.translate(-srcBounds2.getX(), -srcBounds2.getY());
+
+                graphicsCtx.drawImage(img, 0, 0, prop.getBackgroundColor().getColor(), null);
+
+                graphicsCtx.setTransform(at);
+                graphicsCtx.setClip(clip);
+                break;
+        }
+
+    }
+
+    /**
+     * @return the initial AffineTransform, when this graphics context was created
+     */
+    public AffineTransform getInitTransform() {
+        return new AffineTransform(initialAT);
+    }
+
+    /**
+     * @return the current AffineTransform
+     */
+    public AffineTransform getTransform() {
+        return new AffineTransform(graphicsCtx.getTransform());
+    }
+
+    /**
+     * Set the current AffineTransform
+     * @param tx the current AffineTransform
+     */
+    public void setTransform(AffineTransform tx) {
+        graphicsCtx.setTransform(tx);
+    }
+
+    private static int clipCnt = 0;
+
+    public void setClip(Shape clip, HwmfRegionMode regionMode, boolean useInitialAT) {
+        final AffineTransform at = graphicsCtx.getTransform();
+        if (useInitialAT) {
+            graphicsCtx.setTransform(initialAT);
+        }
+        final Shape oldClip = graphicsCtx.getClip();
+        final boolean isEmpty = clip.getBounds2D().isEmpty();
+        switch (regionMode) {
+            case RGN_AND:
+                if (!isEmpty) {
+                    graphicsCtx.clip(clip);
+                }
+                break;
+            case RGN_OR:
+                if (!isEmpty) {
+                    if (oldClip == null) {
+                        graphicsCtx.setClip(clip);
+                    } else {
+                        Area area = new Area(oldClip);
+                        area.add(new Area(clip));
+                        graphicsCtx.setClip(area);
+                    }
+                }
+                break;
+            case RGN_XOR:
+                if (!isEmpty) {
+                    if (oldClip == null) {
+                        graphicsCtx.setClip(clip);
+                    } else {
+                        Area area = new Area(oldClip);
+                        area.exclusiveOr(new Area(clip));
+                        graphicsCtx.setClip(area);
+                    }
+                }
+                break;
+            case RGN_DIFF:
+                if (!isEmpty) {
+                    if (oldClip != null) {
+                        Area area = new Area(oldClip);
+                        area.subtract(new Area(clip));
+                        graphicsCtx.setClip(area);
+                    }
+                }
+                break;
+            case RGN_COPY: {
+                graphicsCtx.setClip(isEmpty ? null : clip);
+                break;
+            }
+        }
+        if (useInitialAT) {
+            graphicsCtx.setTransform(at);
+        }
     }
 }

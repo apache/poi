@@ -1051,7 +1051,11 @@ public class HemfDraw {
         @Override
         public void draw(HemfGraphics ctx) {
             final HemfDrawProperties prop = ctx.getProperties();
-            final Path2D path = (Path2D)prop.getPath().clone();
+            final Path2D origPath = prop.getPath();
+            if (origPath.getCurrentPoint() == null) {
+                return;
+            }
+            final Path2D path = (Path2D)origPath.clone();
             path.closePath();
             path.setWindingRule(ctx.getProperties().getWindingRule());
             ctx.fill(path);

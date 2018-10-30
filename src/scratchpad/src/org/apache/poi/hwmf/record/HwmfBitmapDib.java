@@ -413,7 +413,7 @@ public class HwmfBitmapDib {
         return new ByteArrayInputStream(getBMPData());
     }
 
-    private byte[] getBMPData() {
+    public byte[] getBMPData() {
         if (imageData == null) {
             throw new RecordFormatException("bitmap not initialized ... need to call init() before");
         }

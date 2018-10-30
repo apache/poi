@@ -19,6 +19,7 @@ package org.apache.poi.hwmf.draw;
 
 import java.awt.Color;
 import java.awt.Shape;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
@@ -67,6 +68,8 @@ public class HwmfDrawProperties {
     private HwmfTextAlignment textAlignAsian;
     private HwmfTextVerticalAlignment textVAlignAsian;
     private HwmfTernaryRasterOp rasterOp;
+    protected Shape clip;
+    protected final AffineTransform transform = new AffineTransform();
 
     public HwmfDrawProperties() {
         window = new Rectangle2D.Double(0, 0, 1, 1);
@@ -89,6 +92,7 @@ public class HwmfDrawProperties {
         textAlignAsian = HwmfTextAlignment.RIGHT;
         textVAlignAsian = HwmfTextVerticalAlignment.TOP;
         rasterOp = HwmfTernaryRasterOp.PATCOPY;
+        clip = null;
     }
     
     public HwmfDrawProperties(HwmfDrawProperties other) {
@@ -126,6 +130,8 @@ public class HwmfDrawProperties {
         this.textAlignAsian = other.textAlignAsian;
         this.textVAlignAsian = other.textVAlignAsian;
         this.rasterOp = other.rasterOp;
+        this.transform.setTransform(other.transform);
+        this.clip = other.clip;
     }
     
     public void setViewportExt(double width, double height) {
@@ -386,5 +392,21 @@ public class HwmfDrawProperties {
 
     public void setRasterOp(HwmfTernaryRasterOp rasterOp) {
         this.rasterOp = rasterOp;
+    }
+
+    public AffineTransform getTransform() {
+        return transform;
+    }
+
+    public void setTransform(AffineTransform transform) {
+        this.transform.setTransform(transform);
+    }
+
+    public Shape getClip() {
+        return clip;
+    }
+
+    public void setClip(Shape clip) {
+        this.clip = clip;
     }
 }

@@ -433,6 +433,7 @@ public class HwmfWindowing {
         
         @Override
         public void applyObject(HwmfGraphics ctx) {
+            ctx.setClip(bounds, HwmfRegionMode.RGN_AND, true);
         }
 
         @Override
