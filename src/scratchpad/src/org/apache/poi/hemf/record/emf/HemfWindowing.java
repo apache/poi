@@ -24,7 +24,7 @@ import java.io.IOException;
 
 import org.apache.poi.hemf.draw.HemfDrawProperties;
 import org.apache.poi.hemf.draw.HemfGraphics;
-import org.apache.poi.hemf.record.emf.HemfFill.HemfRegionMode;
+import org.apache.poi.hwmf.record.HwmfRegionMode;
 import org.apache.poi.hwmf.record.HwmfWindowing;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
@@ -188,7 +188,7 @@ public class HemfWindowing {
      * device context, combining the new region with any existing clipping region using the specified mode.
      */
     public static class EmfSelectClipPath implements HemfRecord {
-        protected HemfRegionMode regionMode;
+        protected HwmfRegionMode regionMode;
 
         @Override
         public HemfRecordType getEmfRecordType() {
@@ -199,15 +199,15 @@ public class HemfWindowing {
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             // A 32-bit unsigned integer that specifies the way to use the path.
             // The value MUST be in the RegionMode enumeration
-            regionMode = HemfRegionMode.valueOf(leis.readInt());
+            regionMode = HwmfRegionMode.valueOf(leis.readInt());
 
             return LittleEndianConsts.INT_SIZE;
         }
 
         @Override
         public void draw(HemfGraphics ctx) {
-            HemfDrawProperties props = ctx.getProperties();
-            ctx.setClip(props.getPath(), regionMode);
+            HemfDrawProperties prop = ctx.getProperties();
+            ctx.setClip(prop.getPath(), regionMode, false);
         }
 
         @Override

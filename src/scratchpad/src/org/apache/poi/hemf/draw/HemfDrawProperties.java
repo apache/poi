@@ -26,7 +26,6 @@ public class HemfDrawProperties extends HwmfDrawProperties {
 
     /** Path for path bracket operations */
     protected Path2D path = null;
-    protected Shape clip = null;
     protected boolean usePathBracket = false;
 
 
@@ -66,13 +65,5 @@ public class HemfDrawProperties extends HwmfDrawProperties {
 
     public void setUsePathBracket(boolean usePathBracket) {
         this.usePathBracket = usePathBracket;
-    }
-
-    public Shape getClip() {
-        return clip;
-    }
-
-    public void setClip(Shape shape) {
-        clip = shape;
     }
 }

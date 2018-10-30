@@ -22,16 +22,13 @@ import static org.apache.poi.hwmf.record.HwmfBrushStyle.BS_SOLID;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Shape;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.function.Consumer;
 
-import org.apache.poi.hemf.record.emf.HemfFill;
 import org.apache.poi.hemf.record.emf.HemfRecord;
+import org.apache.poi.hwmf.draw.HwmfDrawProperties;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.hwmf.record.HwmfColorRef;
 import org.apache.poi.hwmf.record.HwmfObjectTableEntry;
@@ -47,36 +44,22 @@ public class HemfGraphics extends HwmfGraphics {
     private static final HwmfColorRef BLACK = new HwmfColorRef(Color.BLACK);
 
 
-    private final AffineTransform initTrans;
-
     public HemfGraphics(Graphics2D graphicsCtx, Rectangle2D bbox) {
         super(graphicsCtx,bbox);
         // add dummy entry for object ind ex 0, as emf is 1-based
         objectIndexes.set(0);
-        initTrans = new AffineTransform(graphicsCtx.getTransform());
     }
 
     @Override
     public HemfDrawProperties getProperties() {
-        if (prop == null) {
-            prop = new HemfDrawProperties();
-        }
-        return (HemfDrawProperties)prop;
+        return (HemfDrawProperties)super.getProperties();
     }
 
     @Override
-    public void saveProperties() {
-        final HemfDrawProperties oldProp = getProperties();
-        oldProp.setClip(graphicsCtx.getClip());
-        propStack.add(oldProp);
-        prop = new HemfDrawProperties(oldProp);
-    }
-
-    @Override
-    public void restoreProperties(int index) {
-        super.restoreProperties(index);
-        HemfDrawProperties newProp = getProperties();
-        graphicsCtx.setClip(newProp.getClip());
+    protected HemfDrawProperties newProperties(HwmfDrawProperties oldProps) {
+        return (oldProps == null)
+            ? new HemfDrawProperties()
+            : new HemfDrawProperties((HemfDrawProperties)oldProps);
     }
 
     public void draw(HemfRecord r) {
@@ -94,8 +77,12 @@ public class HemfGraphics extends HwmfGraphics {
         } else {
             path = new Path2D.Double();
             path.setWindingRule(prop.getWindingRule());
+        }
+
+        // add dummy move-to at start, to handle invalid emfs not containing that move-to
+        if (path.getCurrentPoint() == null) {
             Point2D pnt = prop.getLocation();
-            path.moveTo(pnt.getX(),pnt.getY());
+            path.moveTo(pnt.getX(), pnt.getY());
         }
 
         try {
@@ -108,7 +95,12 @@ public class HemfGraphics extends HwmfGraphics {
             pathConsumer.accept(path);
         }
 
-        prop.setLocation(path.getCurrentPoint());
+        Point2D curPnt = path.getCurrentPoint();
+        if (curPnt == null) {
+            return;
+        }
+
+        prop.setLocation(curPnt);
         if (!useBracket) {
             switch (fillDraw) {
                 case FILL:
@@ -261,66 +253,6 @@ public class HemfGraphics extends HwmfGraphics {
             case 0x80000013:
                 // DC_PEN
                 // The solid-color pen that is currently selected in the playback device context.
-                break;
-        }
-    }
-
-    /**
-     * @return the initial AffineTransform, when this graphics context was created
-     */
-    public AffineTransform getInitTransform() {
-        return new AffineTransform(initTrans);
-    }
-
-    /**
-     * @return the current AffineTransform
-     */
-    public AffineTransform getTransform() {
-        return new AffineTransform(graphicsCtx.getTransform());
-    }
-
-    /**
-     * Set the current AffineTransform
-     * @param tx the current AffineTransform
-     */
-    public void setTransform(AffineTransform tx) {
-        graphicsCtx.setTransform(tx);
-    }
-
-    public void setClip(Shape clip, HemfFill.HemfRegionMode regionMode) {
-        Shape oldClip = graphicsCtx.getClip();
-
-        switch (regionMode) {
-            case RGN_AND:
-                graphicsCtx.clip(clip);
-                break;
-            case RGN_OR:
-                if (oldClip == null) {
-                    graphicsCtx.setClip(clip);
-                } else {
-                    Area area = new Area(oldClip);
-                    area.add(new Area(clip));
-                    graphicsCtx.setClip(area);
-                }
-                break;
-            case RGN_XOR:
-                if (oldClip == null) {
-                    graphicsCtx.setClip(clip);
-                } else {
-                    Area area = new Area(oldClip);
-                    area.exclusiveOr(new Area(clip));
-                    graphicsCtx.setClip(area);
-                }
-                break;
-            case RGN_DIFF:
-                if (oldClip != null) {
-                    Area area = new Area(oldClip);
-                    area.subtract(new Area(clip));
-                    graphicsCtx.setClip(area);
-                }
-                break;
-            case RGN_COPY:
-                graphicsCtx.setClip(clip);
                 break;
         }
     }

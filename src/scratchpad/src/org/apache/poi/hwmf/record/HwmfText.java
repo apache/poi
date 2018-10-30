@@ -191,7 +191,7 @@ public class HwmfText {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            ctx.drawString(getTextBytes(), reference, null);
+            ctx.drawString(getTextBytes(), reference);
         }
 
         public String getText(Charset charset) {
@@ -396,7 +396,7 @@ public class HwmfText {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            ctx.drawString(rawTextBytes, reference, bounds, dx, false);
+            ctx.drawString(rawTextBytes, reference, bounds, options, dx, false);
         }
 
         public String getText(Charset charset) throws IOException {

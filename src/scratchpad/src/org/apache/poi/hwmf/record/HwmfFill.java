@@ -27,6 +27,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+import org.apache.poi.hwmf.draw.HwmfDrawProperties;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
@@ -222,7 +223,7 @@ public class HwmfFill {
          * An unsigned integer that defines polygon fill mode.
          * This MUST be one of the values: ALTERNATE = 0x0001, WINDING = 0x0002
          */
-        protected HwmfPolyfillMode polyfillMode;
+        protected HwmfPolyfillMode polyFillMode;
         
         @Override
         public HwmfRecordType getWmfRecordType() {
@@ -231,13 +232,18 @@ public class HwmfFill {
         
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            polyfillMode = HwmfPolyfillMode.valueOf(leis.readUShort() & 3);
+            polyFillMode = HwmfPolyfillMode.valueOf(leis.readUShort() & 3);
             return LittleEndianConsts.SHORT_SIZE;
         }
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            ctx.getProperties().setPolyfillMode(polyfillMode);
+            ctx.getProperties().setPolyfillMode(polyFillMode);
+        }
+
+        @Override
+        public String toString() {
+            return "{ polyFillMode: '"+ polyFillMode +"' }";
         }
     }
 
@@ -458,7 +464,7 @@ public class HwmfFill {
          * A variable-sized DeviceIndependentBitmap Object (section 2.2.2.9) that is the 
          * source of the color data.
          */
-        protected final HwmfBitmapDib dib = new HwmfBitmapDib();
+        protected final HwmfBitmapDib bitmap = new HwmfBitmapDib();
         
         @Override
         public HwmfRecordType getWmfRecordType() {
@@ -481,22 +487,36 @@ public class HwmfFill {
             size += readBounds2(leis, srcBounds);
             size += readBounds2(leis, dstBounds);
 
-            size += dib.init(leis, (int)(recordSize-6-size));
+            size += bitmap.init(leis, (int)(recordSize-6-size));
 
             return size;
         }        
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            if (dib.isValid()) {
-                ctx.getProperties().setRasterOp(rasterOperation);
+            HwmfDrawProperties prop = ctx.getProperties();
+            prop.setRasterOp(rasterOperation);
+            if (bitmap.isValid()) {
                 ctx.drawImage(getImage(), srcBounds, dstBounds);
+            } else {
+                BufferedImage bi = new BufferedImage((int)dstBounds.getWidth(), (int)dstBounds.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                ctx.drawImage(bi, dstBounds, dstBounds);
             }
         }
 
         @Override
         public BufferedImage getImage() {
-            return dib.getImage();
+            return bitmap.getImage();
+        }
+
+        @Override
+        public String toString() {
+            return
+                "{ rasterOperation: '"+rasterOperation+"'"+
+                ", colorUsage: '"+colorUsage+"'"+
+                ", srcBounds: "+boundsToString(srcBounds)+
+                ", dstBounds: "+boundsToString(dstBounds)+
+                "}";
         }
     }
     

@@ -191,7 +191,7 @@ public class HemfText {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            ctx.drawString(rawTextBytes, reference, bounds, dx, isUnicode());
+            ctx.drawString(rawTextBytes, reference, bounds, options, dx, isUnicode());
         }
 
         @Override

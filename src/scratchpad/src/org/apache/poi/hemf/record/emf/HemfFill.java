@@ -20,10 +20,11 @@ package org.apache.poi.hemf.record.emf;
 import static org.apache.poi.hemf.record.emf.HemfDraw.readPointL;
 import static org.apache.poi.hemf.record.emf.HemfDraw.readRectL;
 import static org.apache.poi.hemf.record.emf.HemfRecordIterator.HEADER_SIZE;
+import static org.apache.poi.hwmf.record.HwmfDraw.boundsToString;
 
+import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
-import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayInputStream;
@@ -36,11 +37,11 @@ import org.apache.poi.hemf.draw.HemfDrawProperties;
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.hwmf.record.HwmfBitmapDib;
-import org.apache.poi.hwmf.record.HwmfBrushStyle;
 import org.apache.poi.hwmf.record.HwmfColorRef;
 import org.apache.poi.hwmf.record.HwmfDraw;
 import org.apache.poi.hwmf.record.HwmfFill;
 import org.apache.poi.hwmf.record.HwmfFill.ColorUsage;
+import org.apache.poi.hwmf.record.HwmfRegionMode;
 import org.apache.poi.hwmf.record.HwmfTernaryRasterOp;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
@@ -49,47 +50,6 @@ import org.apache.poi.util.LittleEndianInputStream;
 
 public class HemfFill {
     private static final int MAX_RECORD_LENGTH = 10_000_000;
-
-    public enum HemfRegionMode {
-        /**
-         * The new clipping region includes the intersection (overlapping areas)
-         * of the current clipping region and the current path (or new region).
-         */
-        RGN_AND(0x01),
-        /**
-         * The new clipping region includes the union (combined areas)
-         * of the current clipping region and the current path (or new region).
-         */
-        RGN_OR(0x02),
-        /**
-         * The new clipping region includes the union of the current clipping region
-         * and the current path (or new region) but without the overlapping areas
-         */
-        RGN_XOR(0x03),
-        /**
-         * The new clipping region includes the areas of the current clipping region
-         * with those of the current path (or new region) excluded.
-         */
-        RGN_DIFF(0x04),
-        /**
-         * The new clipping region is the current path (or the new region).
-         */
-        RGN_COPY(0x05);
-
-        int flag;
-        HemfRegionMode(int flag) {
-            this.flag = flag;
-        }
-
-        public static HemfRegionMode valueOf(int flag) {
-            for (HemfRegionMode rm : values()) {
-                if (rm.flag == flag) return rm;
-            }
-            return null;
-        }
-
-    }
-
 
     /**
      * The EMR_SETPOLYFILLMODE record defines polygon fill mode.
@@ -105,7 +65,7 @@ public class HemfFill {
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             // A 32-bit unsigned integer that specifies the polygon fill mode and
             // MUST be in the PolygonFillMode enumeration.
-            polyfillMode = HwmfPolyfillMode.valueOf((int)leis.readUInt());
+            polyFillMode = HwmfPolyfillMode.valueOf((int)leis.readUInt());
             return LittleEndianConsts.INT_SIZE;
         }
     }
@@ -133,7 +93,7 @@ public class HemfFill {
      * optionally in combination with a brush pattern, according to a specified raster operation, stretching or
      * compressing the output to fit the dimensions of the destination, if necessary.
      */
-    public static class EmfStretchBlt extends HwmfFill.WmfBitBlt implements HemfRecord {
+    public static class EmfStretchBlt extends HwmfFill.WmfStretchDib implements HemfRecord {
         protected final Rectangle2D bounds = new Rectangle2D.Double();
 
         /** An XForm object that specifies a world-space to page-space transform to apply to the source bitmap. */
@@ -141,14 +101,6 @@ public class HemfFill {
 
         /** A WMF ColorRef object that specifies the background color of the source bitmap. */
         protected final HwmfColorRef bkColorSrc = new HwmfColorRef();
-
-        /**
-         * A 32-bit unsigned integer that specifies how to interpret values in the color table in
-         * the source bitmap header. This value MUST be in the DIBColors enumeration
-         */
-        protected int usageSrc;
-
-        protected final HwmfBitmapDib bitmap = new HwmfBitmapDib();
 
         @Override
         public HemfRecordType getEmfRecordType() {
@@ -168,7 +120,7 @@ public class HemfFill {
             // rectangle and optionally a brush pattern, to achieve the final color.
             int rasterOpIndex = (int)leis.readUInt();
 
-            rasterOperation = HwmfTernaryRasterOp.valueOf(rasterOpIndex);
+            rasterOperation = HwmfTernaryRasterOp.valueOf(rasterOpIndex >>> 16);
 
             size += LittleEndianConsts.INT_SIZE;
 
@@ -179,7 +131,7 @@ public class HemfFill {
 
             size += bkColorSrc.init(leis);
 
-            usageSrc = (int)leis.readUInt();
+            colorUsage = ColorUsage.valueOf((int)leis.readUInt());
 
             // A 32-bit unsigned integer that specifies the offset, in bytes, from the
             // start of this record to the source bitmap header in the BitmapBuffer field.
@@ -188,7 +140,7 @@ public class HemfFill {
             // A 32-bit unsigned integer that specifies the size, in bytes, of the source bitmap header.
             final int cbBmiSrc = (int)leis.readUInt();
             size += 3*LittleEndianConsts.INT_SIZE;
-            if (size <= recordSize) {
+            if (size >= recordSize) {
                 return size;
             }
 
@@ -198,8 +150,11 @@ public class HemfFill {
 
             // A 32-bit unsigned integer that specifies the size, in bytes, of the source bitmap bits.
             final int cbBitsSrc = (int)leis.readUInt();
-
             size += 2*LittleEndianConsts.INT_SIZE;
+
+            if (size >= recordSize) {
+                return size;
+            }
 
             if (srcEqualsDstDimension()) {
                 srcBounds.setRect(srcPnt.getX(), srcPnt.getY(), dstBounds.getWidth(), dstBounds.getHeight());
@@ -220,13 +175,19 @@ public class HemfFill {
         }
 
         @Override
+        public void draw(HemfGraphics ctx) {
+            HemfDrawProperties prop = ctx.getProperties();
+            prop.setBackgroundColor(this.bkColorSrc);
+            super.draw(ctx);
+        }
+
+        @Override
         public String toString() {
             return
-                "{ bounds: { x: "+bounds.getX()+", y: "+bounds.getY()+", w: "+bounds.getWidth()+", h: "+bounds.getHeight()+"}"+
+                "{ bounds: "+boundsToString(bounds)+
                 ", xFormSrc: { scaleX: "+xFormSrc.getScaleX()+", shearX: "+xFormSrc.getShearX()+", transX: "+xFormSrc.getTranslateX()+", scaleY: "+xFormSrc.getScaleY()+", shearY: "+xFormSrc.getShearY()+", transY: "+xFormSrc.getTranslateY()+" }"+
                 ", bkColorSrc: "+bkColorSrc+
-                ", usageSrc: "+usageSrc+", "
-                + super.toString().substring(1);
+                ","+super.toString().substring(1);
         }
     }
 
@@ -279,7 +240,8 @@ public class HemfFill {
             // These codes define how the color data of the source rectangle is to be combined with the color data
             // of the destination rectangle and optionally a brush pattern, to achieve the final color.
             // The value MUST be in the WMF Ternary Raster Operation enumeration
-            rasterOperation = HwmfTernaryRasterOp.valueOf(leis.readInt());
+            int rasterOpIndex = (int)leis.readUInt();
+            rasterOperation = HwmfTernaryRasterOp.valueOf(rasterOpIndex >>> 16);
 
             // A 32-bit signed integer that specifies the logical width of the destination rectangle.
             int cxDest = leis.readInt();
@@ -291,7 +253,7 @@ public class HemfFill {
 
             size += 8*LittleEndianConsts.INT_SIZE;
 
-            size += readBitmap(leis, dib, startIdx, offBmiSrc, cbBmiSrc, offBitsSrc, cbBitsSrc);
+            size += readBitmap(leis, bitmap, startIdx, offBmiSrc, cbBmiSrc, offBitsSrc, cbBitsSrc);
 
             return size;
         }
@@ -346,7 +308,7 @@ public class HemfFill {
             ctx.fill(getShape());
         }
 
-        protected Area getShape() {
+        protected Shape getShape() {
             return getRgnShape(rgnRects);
         }
     }
@@ -371,7 +333,7 @@ public class HemfFill {
             return size;
         }
 
-        protected Area getShape() {
+        protected Shape getShape() {
             return getRgnShape(rgnRects);
         }
     }
@@ -408,13 +370,13 @@ public class HemfFill {
             return size;
         }
 
-        protected Area getShape() {
+        protected Shape getShape() {
             return getRgnShape(rgnRects);
         }
     }
 
     public static class EmfExtSelectClipRgn implements HemfRecord {
-        protected HemfRegionMode regionMode;
+        protected HwmfRegionMode regionMode;
         protected final List<Rectangle2D> rgnRects = new ArrayList<>();
 
         @Override
@@ -427,19 +389,42 @@ public class HemfFill {
             // A 32-bit unsigned integer that specifies the size of region data in bytes
             long rgnDataSize = leis.readUInt();
             // A 32-bit unsigned integer that specifies the way to use the region.
-            regionMode = HemfRegionMode.valueOf((int)leis.readUInt());
+            regionMode = HwmfRegionMode.valueOf((int)leis.readUInt());
             long size = 2* LittleEndianConsts.INT_SIZE;
 
             // If RegionMode is RGN_COPY, this data can be omitted and the clip region
             // SHOULD be set to the default (NULL) clip region.
-            if (regionMode != HemfRegionMode.RGN_COPY) {
+            if (regionMode != HwmfRegionMode.RGN_COPY) {
                 size += readRgnData(leis, rgnRects);
             }
             return size;
         }
 
-        protected Area getShape() {
+        protected Shape getShape() {
             return getRgnShape(rgnRects);
+        }
+
+        @Override
+        public void draw(HemfGraphics ctx) {
+            HemfDrawProperties prop = ctx.getProperties();
+            ctx.setClip(getShape(), regionMode, true);
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append("{ regionMode: '"+regionMode+"'");
+            sb.append(", regions: [");
+            boolean isFirst = true;
+            for (Rectangle2D r : rgnRects) {
+                if (!isFirst) {
+                    sb.append(",");
+                }
+                isFirst = false;
+                sb.append(boundsToString(r));
+            }
+            sb.append("]}");
+            return sb.toString();
         }
     }
 
@@ -717,7 +702,10 @@ public class HemfFill {
         return 6 * LittleEndian.INT_SIZE;
     }
 
-    protected static Area getRgnShape(List<Rectangle2D> rgnRects) {
+    protected static Shape getRgnShape(List<Rectangle2D> rgnRects) {
+        if (rgnRects.size() == 1) {
+            return rgnRects.get(0);
+        }
         final Area frame = new Area();
         rgnRects.forEach((rct) -> frame.add(new Area(rct)));
         return frame;
