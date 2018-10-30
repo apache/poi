@@ -2036,7 +2036,7 @@ under the License.
                 <packageset dir="@{src}" defaultexcludes="yes">
                     <include name="org/apache/poi/**"/>
                 </packageset>
-                <link offline="true" href="https://poi.apache.org/apidocs" packagelistLoc="${javadocs.report.dir}"/>
+                <link offline="true" href="https://poi.apache.org/apidocs/dev" packagelistLoc="${javadocs.report.dir}"/>
             </javadoc>
             <jar destfile="${dist.dir}/maven/@{dest}/@{dest}-${version.id}-javadoc.jar"
                  manifest="build/poi-manifest.mf">
