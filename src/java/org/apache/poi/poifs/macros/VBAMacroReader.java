@@ -350,8 +350,9 @@ public class VBAMacroReader implements Closeable {
         for (Entry entry : node) {
             if ("project".equalsIgnoreCase(entry.getName())) {
                 DocumentNode document = (DocumentNode)entry;
-                DocumentInputStream dis = new DocumentInputStream(document);
-                readProjectProperties(dis, moduleNameMap, modules);
+                try(DocumentInputStream dis = new DocumentInputStream(document)) {
+                    readProjectProperties(dis, moduleNameMap, modules);
+                }
             } else if (entry instanceof DirectoryNode) {
                 findProjectProperties((DirectoryNode)entry, moduleNameMap, modules);
             }
@@ -362,8 +363,9 @@ public class VBAMacroReader implements Closeable {
         for (Entry entry : node) {
             if ("projectwm".equalsIgnoreCase(entry.getName())) {
                 DocumentNode document = (DocumentNode)entry;
-                DocumentInputStream dis = new DocumentInputStream(document);
-                readNameMapRecords(dis, moduleNameMap, modules.charset);
+                try(DocumentInputStream dis = new DocumentInputStream(document)) {
+                    readNameMapRecords(dis, moduleNameMap, modules.charset);
+                }
             } else if (entry.isDirectoryEntry()) {
                 findModuleNameMap((DirectoryNode)entry, moduleNameMap, modules);
             }
@@ -485,7 +487,7 @@ public class VBAMacroReader implements Closeable {
         try (DocumentInputStream dis = new DocumentInputStream(dirDocumentNode)) {
             String streamName = null;
             int recordId = 0;
-            boolean inReferenceTwiddled = false;
+
             try (RLEDecompressingInputStream in = new RLEDecompressingInputStream(dis)) {
                 while (true) {
                     recordId = in.readShort();
@@ -620,7 +622,8 @@ public class VBAMacroReader implements Closeable {
 
         if (reserved != reservedByte) {
             if (throwOnUnexpectedReservedByte) {
-                throw new IOException("Expected " + Integer.toHexString(reservedByte) + "after name before Unicode name, but found: " +
+                throw new IOException("Expected " + Integer.toHexString(reservedByte) +
+                        "after name before Unicode name, but found: " +
                         Integer.toHexString(reserved));
             } else {
                 return new ASCIIUnicodeStringPair(ascii, reserved);
