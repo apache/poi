@@ -548,6 +548,22 @@ public final class IOUtils {
         return new byte[(int)length];
     }
 
+    /**
+     * Simple utility function to check that you haven't hit EOF
+     * when reading a byte.
+     *
+     * @param is inputstream to read
+     * @return byte read, unless
+     * @throws IOException on IOException or EOF if -1 is read
+     */
+    public static int readByte(InputStream is) throws IOException {
+        int b = is.read();
+        if (b == -1) {
+            throw new EOFException();
+        }
+        return b;
+    }
+
     private static void throwRFE(long length, int maxLength) {
         throw new RecordFormatException("Tried to allocate an array of length "+length +
                 ", but "+ maxLength+" is the maximum for this record type.\n" +

@@ -631,14 +631,19 @@ public class VBAMacroReader implements Closeable {
         return new ASCIIUnicodeStringPair(ascii, unicode);
     }
 
-    private static void readNameMapRecords(InputStream is, Map<String, String> moduleNames, Charset charset) throws IOException {
+    private static void readNameMapRecords(InputStream is,
+                                           Map<String, String> moduleNames, Charset charset) throws IOException {
         //see 2.3.3 PROJECTwm Stream: Module Name Information
         //multibytecharstring
         String mbcs = null;
         String unicode = null;
-        do {
+        //arbitrary sanity thresholds
+        final int maxNameRecords = 10000;
+        final int maxNameLength = 20000;
+        int records = 0;
+        while (++records < maxNameRecords) {
             try {
-                mbcs = readMBCS(is, charset);
+                mbcs = readMBCS(is, charset, maxNameLength);
             } catch (EOFException e) {
                 return;
             }
@@ -646,53 +651,56 @@ public class VBAMacroReader implements Closeable {
                 return;
             }
             try {
-                unicode = readUnicode(is);
+                unicode = readUnicode(is, maxNameLength);
             } catch (EOFException e) {
                 return;
             }
-            if (mbcs != null && unicode != null) {
+            if (unicode != null) {
                 moduleNames.put(mbcs, unicode);
             }
-        } while (mbcs != null && unicode != null);
+        }
+        if (records >= maxNameRecords) {
+            LOGGER.log(POILogger.WARN, "Hit max name records to read ("+maxNameRecords+"). Stopped early.");
+        }
     }
 
-    private static String readUnicode(InputStream is) throws IOException {
+    private static String readUnicode(InputStream is, int maxNameLength) throws IOException {
         //reads null-terminated unicode string
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        int b0 = is.read();
-        int b1 = is.read();
+        int b0 = IOUtils.readByte(is);
+        int b1 = IOUtils.readByte(is);
 
-        while ((b0 + b1) != 0) {
-            if (b0 == -1 || b1 == -1) {
-                throw new EOFException();
-            }
+        int read = 2;
+        while ((b0 + b1) != 0 && read < maxNameLength) {
 
             bos.write(b0);
             bos.write(b1);
-            b0 = is.read();
-            b1 = is.read();
+            b0 = IOUtils.readByte(is);
+            b1 = IOUtils.readByte(is);
+            read += 2;
+        }
+        if (read >= maxNameLength) {
+            LOGGER.log(POILogger.WARN, "stopped reading unicode name after "+read+" bytes");
         }
         return new String (bos.toByteArray(), StandardCharsets.UTF_16LE);
     }
 
     //returns a string if any bytes are read or null if two 0x00 are read
-    private static String readMBCS(InputStream is, Charset charset) throws IOException {
+    private static String readMBCS(InputStream is, Charset charset, int maxLength) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         int len = 0;
-        int b = is.read();
-        while (b != 0) {
+        int b = IOUtils.readByte(is);
+        while (b > 0 && len < maxLength) {
             ++len;
-            if (b == -1) {
-                throw new EOFException();
-            }
             bos.write(b);
-            b = is.read();
+            b = IOUtils.readByte(is);
         }
+        //if b was 0 and the above while loop
+        //was never entered, check for a second 0,
+        //which would be the sign that you're at the end
+        //of the list
         if (len == 0) {
-            b = is.read();
-            if (b == -1) {
-                throw new EOFException();
-            }
+            b = IOUtils.readByte(is);
             if (b != 0) {
                 LOGGER.log(POILogger.WARN, "expected two 0x00 at end of module name map");
             }
