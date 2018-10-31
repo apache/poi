@@ -1799,9 +1799,11 @@ under the License.
         <fail message="Apache Forrest is not installed."/>
     </target>
 
-    <target name="docs" depends="init, -check-forrest-installed, -check-docs, javadocs"
-            unless="main.docs.notRequired" description="Builds the POI website">
-
+    <target name="docs" depends="init, -check-forrest-installed, -check-docs, javadocs, -forrest-docs"
+            unless="main.docs.notRequired" 
+            description="Builds the POI website" />
+    <target name="-forrest-docs" depends="-check-forrest-installed, -check-docs"
+            unless="main.docs.notRequired" description="Builds the HTML pages of the POI website">
         <exec executable="${env.FORREST_HOME}/bin/forrest" osfamily="unix"/>
         <exec executable="cmd" osfamily="windows">
             <arg value="/c"/>
@@ -1821,6 +1823,7 @@ under the License.
     <!-- Generates the latest/development API documentation. -->
     <target name="javadocs"
             description="Generates the API documentation">
+        <echo message="Generating latest Javadocs in ${javadocs.report.dir}"/>
         <javadoc verbose="false" author="true" destdir="${javadocs.report.dir}"
                  windowtitle="POI API Documentation" use="true" version="true"
                  maxmemory="384M" additionalparam="-notimestamp" locale="en_US"
