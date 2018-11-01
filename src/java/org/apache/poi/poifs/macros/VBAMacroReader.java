@@ -70,6 +70,8 @@ import org.apache.poi.util.StringUtil;
 public class VBAMacroReader implements Closeable {
     private static final POILogger LOGGER = POILogFactory.getLogger(VBAMacroReader.class);
 
+    //arbitrary limit on size of strings to read, etc.
+    private static final int MAX_STRING_LENGTH = 20000;
     protected static final String VBA_PROJECT_OOXML = "vbaProject.bin";
     protected static final String VBA_PROJECT_POIFS = "VBA";
 
@@ -352,6 +354,7 @@ public class VBAMacroReader implements Closeable {
                 DocumentNode document = (DocumentNode)entry;
                 try(DocumentInputStream dis = new DocumentInputStream(document)) {
                     readProjectProperties(dis, moduleNameMap, modules);
+                    return;
                 }
             } else if (entry instanceof DirectoryNode) {
                 findProjectProperties((DirectoryNode)entry, moduleNameMap, modules);
@@ -365,6 +368,7 @@ public class VBAMacroReader implements Closeable {
                 DocumentNode document = (DocumentNode)entry;
                 try(DocumentInputStream dis = new DocumentInputStream(document)) {
                     readNameMapRecords(dis, moduleNameMap, modules.charset);
+                    return;
                 }
             } else if (entry.isDirectoryEntry()) {
                 findModuleNameMap((DirectoryNode)entry, moduleNameMap, modules);
@@ -634,47 +638,53 @@ public class VBAMacroReader implements Closeable {
         return new ASCIIUnicodeStringPair(ascii, unicode);
     }
 
-    private static void readNameMapRecords(InputStream is,
+    protected void readNameMapRecords(InputStream is,
                                            Map<String, String> moduleNames, Charset charset) throws IOException {
         //see 2.3.3 PROJECTwm Stream: Module Name Information
         //multibytecharstring
         String mbcs = null;
         String unicode = null;
-        //arbitrary sanity thresholds
+        //arbitrary sanity threshold
         final int maxNameRecords = 10000;
-        final int maxNameLength = 20000;
         int records = 0;
         while (++records < maxNameRecords) {
             try {
-                mbcs = readMBCS(is, charset, maxNameLength);
+                int b = IOUtils.readByte(is);
+                //check for two 0x00 that mark end of record
+                if (b == 0) {
+                    b = IOUtils.readByte(is);
+                    if (b == 0) {
+                        return;
+                    }
+                }
+                mbcs = readMBCS(b, is, charset, MAX_STRING_LENGTH);
             } catch (EOFException e) {
                 return;
             }
-            if (mbcs == null) {
-                return;
-            }
+
             try {
-                unicode = readUnicode(is, maxNameLength);
+                unicode = readUnicode(is, MAX_STRING_LENGTH);
             } catch (EOFException e) {
                 return;
             }
-            if (unicode != null) {
+            if (mbcs.trim().length() > 0 && unicode.trim().length() > 0) {
                 moduleNames.put(mbcs, unicode);
             }
+
         }
         if (records >= maxNameRecords) {
             LOGGER.log(POILogger.WARN, "Hit max name records to read ("+maxNameRecords+"). Stopped early.");
         }
     }
 
-    private static String readUnicode(InputStream is, int maxNameLength) throws IOException {
+    private static String readUnicode(InputStream is, int maxLength) throws IOException {
         //reads null-terminated unicode string
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         int b0 = IOUtils.readByte(is);
         int b1 = IOUtils.readByte(is);
 
         int read = 2;
-        while ((b0 + b1) != 0 && read < maxNameLength) {
+        while ((b0 + b1) != 0 && read < maxLength) {
 
             bos.write(b0);
             bos.write(b1);
@@ -682,32 +692,20 @@ public class VBAMacroReader implements Closeable {
             b1 = IOUtils.readByte(is);
             read += 2;
         }
-        if (read >= maxNameLength) {
+        if (read >= maxLength) {
             LOGGER.log(POILogger.WARN, "stopped reading unicode name after "+read+" bytes");
         }
         return new String (bos.toByteArray(), StandardCharsets.UTF_16LE);
     }
 
-    //returns a string if any bytes are read or null if two 0x00 are read
-    private static String readMBCS(InputStream is, Charset charset, int maxLength) throws IOException {
+    private static String readMBCS(int firstByte, InputStream is, Charset charset, int maxLength) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         int len = 0;
-        int b = IOUtils.readByte(is);
+        int b = firstByte;
         while (b > 0 && len < maxLength) {
             ++len;
             bos.write(b);
             b = IOUtils.readByte(is);
-        }
-        //if b was 0 and the above while loop
-        //was never entered, check for a second 0,
-        //which would be the sign that you're at the end
-        //of the list
-        if (len == 0) {
-            b = IOUtils.readByte(is);
-            if (b != 0) {
-                LOGGER.log(POILogger.WARN, "expected two 0x00 at end of module name map");
-            }
-            return null;
         }
         return new String(bos.toByteArray(), charset);
     }
@@ -722,7 +720,7 @@ public class VBAMacroReader implements Closeable {
      * @throws IOException If reading from the stream fails
      */
     private static String readString(InputStream stream, int length, Charset charset) throws IOException {
-        byte[] buffer = IOUtils.safelyAllocate(length, 20000);
+        byte[] buffer = IOUtils.safelyAllocate(length, MAX_STRING_LENGTH);
         int bytesRead = IOUtils.readFully(stream, buffer);
         if (bytesRead != length) {
             throw new IOException("Tried to read: "+length +
@@ -787,10 +785,10 @@ public class VBAMacroReader implements Closeable {
     }
 
     private String readUnicodeString(RLEDecompressingInputStream in, int unicodeNameRecordLength) throws IOException {
-        byte[] buffer = IOUtils.safelyAllocate(unicodeNameRecordLength, 20000);
+        byte[] buffer = IOUtils.safelyAllocate(unicodeNameRecordLength, MAX_STRING_LENGTH);
         int bytesRead = IOUtils.readFully(in, buffer);
         if (bytesRead != unicodeNameRecordLength) {
-
+            throw new EOFException();
         }
         return new String(buffer, StringUtil.UTF16LE);
     }
