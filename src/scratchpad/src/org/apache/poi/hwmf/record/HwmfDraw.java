@@ -594,6 +594,18 @@ public class HwmfDraw {
 
             return new Arc2D.Double(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight(), startAngle, arcAngle, arcClosure);
         }
+
+        @Override
+        public String toString() {
+            Arc2D arc = getShape();
+            return
+                "{ startPoint: "+pointToString(startPoint)+
+                ", endPoint: "+pointToString(endPoint)+
+                ", startAngle: "+arc.getAngleStart()+
+                ", extentAngle: "+arc.getAngleExtent()+
+                ", bounds: "+boundsToString(bounds)+
+                " }";
+        }
     }
 
     /**

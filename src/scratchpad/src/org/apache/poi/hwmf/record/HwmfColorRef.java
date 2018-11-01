@@ -54,6 +54,10 @@ public class HwmfColorRef implements Cloneable {
         return colorRef;
     }
 
+    public void setColor(Color color) {
+        colorRef = color;
+    }
+
     /**
      * Creates a new object of the same class and with the
      * same contents as this object.
