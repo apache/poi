@@ -24,6 +24,7 @@ import static org.apache.poi.hemf.record.emf.HemfRecordIterator.HEADER_SIZE;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +41,7 @@ import org.apache.poi.hwmf.record.HwmfHatchStyle;
 import org.apache.poi.hwmf.record.HwmfMapMode;
 import org.apache.poi.hwmf.record.HwmfMisc;
 import org.apache.poi.hwmf.record.HwmfMisc.WmfSetBkMode;
+import org.apache.poi.hwmf.record.HwmfObjectTableEntry;
 import org.apache.poi.hwmf.record.HwmfPalette.PaletteEntry;
 import org.apache.poi.hwmf.record.HwmfPenStyle;
 import org.apache.poi.hwmf.record.HwmfPenStyle.HwmfLineDash;
@@ -687,13 +689,20 @@ public class HemfMisc {
         }
     }
 
-    public static class EmfCreateMonoBrush16 extends EmfCreatePen {
+    public static class EmfCreateMonoBrush implements HemfRecord, HwmfObjectTableEntry {
+        /**
+         * A 32-bit unsigned integer that specifies the index of the logical palette object
+         * in the EMF Object Table. This index MUST be saved so that this object can be
+         * reused or modified.
+         */
+        protected int penIndex;
+
         protected HwmfFill.ColorUsage colorUsage;
         protected final HwmfBitmapDib bitmap = new HwmfBitmapDib();
 
         @Override
         public HemfRecordType getEmfRecordType() {
-            return HemfRecordType.createMonoBrush16;
+            return HemfRecordType.createMonoBrush;
         }
 
         @Override
@@ -730,11 +739,16 @@ public class HemfMisc {
         }
 
         @Override
+        public void draw(HemfGraphics ctx) {
+            ctx.addObjectTableEntry(this, penIndex);
+        }
+
+        @Override
         public void applyObject(HwmfGraphics ctx) {
-            super.applyObject(ctx);
             HwmfDrawProperties props = ctx.getProperties();
             props.setBrushStyle(HwmfBrushStyle.BS_PATTERN);
-            props.setBrushBitmap(bitmap.getImage());
+            BufferedImage bmp = bitmap.getImage();
+            props.setBrushBitmap(bmp);
         }
     }
 }

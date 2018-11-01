@@ -361,11 +361,11 @@ public class HwmfGraphics {
         }
     }
 
-    public void drawString(byte[] text, Point2D reference) {
-        drawString(text, reference, null, null, null, false);
+    public void drawString(byte[] text, int length, Point2D reference) {
+        drawString(text, length, reference, null, null, null, false);
     }
 
-    public void drawString(byte[] text, Point2D reference, Rectangle2D clip, WmfExtTextOutOptions opts, List<Integer> dx, boolean isUnicode) {
+    public void drawString(byte[] text, int length, Point2D reference, Rectangle2D clip, WmfExtTextOutOptions opts, List<Integer> dx, boolean isUnicode) {
         final HwmfDrawProperties prop = getProperties();
 
         HwmfFont font = prop.getFont();
@@ -387,7 +387,7 @@ public class HwmfGraphics {
             }
         }
 
-        String textString = new String(text, charset).trim();
+        String textString = new String(text, charset).substring(0,length).trim();
         if (textString.isEmpty()) {
             return;
         }
@@ -462,7 +462,7 @@ public class HwmfGraphics {
             case BASELINE:
                 break;
             case BOTTOM:
-                tx.translate(0, pixelBounds.getHeight());
+                tx.translate(0, -(pixelBounds.getHeight()-layout.getDescent()));
                 break;
         }
         tx.rotate(angle);

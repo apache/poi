@@ -113,7 +113,10 @@ public class HemfText {
             size += LittleEndianConsts.INT_SIZE;
 
             // handle dx before string and other way round
-            for (char op : ((offDx < offString) ? "ds" : "sd").toCharArray()) {
+            final String order = (offDx < offString) ? "ds" : "sd";
+            // the next byte index after the string ends
+            int strEnd = (int)((offDx <= HEADER_SIZE) ? recordSize : offDx-HEADER_SIZE);
+            for (char op : order.toCharArray()) {
                 switch (op) {
                     case 'd': {
                         dx.clear();
@@ -138,6 +141,9 @@ public class HemfText {
                                 dx.add((int) leis.readUInt());
                                 size += LittleEndianConsts.INT_SIZE;
                             }
+                        } else {
+                            // if there are no dx entries, reset the string end
+                            strEnd = (int)recordSize;
                         }
                         if (dx.size() < stringLength) {
                             // invalid dx array
@@ -152,7 +158,9 @@ public class HemfText {
                             leis.skipFully(undefinedSpace1);
                             size += undefinedSpace1;
 
-                            final int maxSize = (int)Math.min(recordSize-size, stringLength * (isUnicode() ? 2 : 1));
+                            // read all available bytes and not just "stringLength * 1(ansi)/2(unicode)"
+                            // in case we need to deal with surrogate pairs
+                            final int maxSize = (int)(Math.min(recordSize, strEnd)-size);
                             rawTextBytes = IOUtils.safelyAllocate(maxSize, MAX_RECORD_LENGTH);
                             leis.readFully(rawTextBytes);
                             size += maxSize;
@@ -191,7 +199,7 @@ public class HemfText {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            ctx.drawString(rawTextBytes, reference, bounds, options, dx, isUnicode());
+            ctx.drawString(rawTextBytes, stringLength, reference, bounds, options, dx, isUnicode());
         }
 
         @Override
@@ -258,11 +266,11 @@ public class HemfText {
 
 
 
-    public static class ExtCreateFontIndirectW extends HwmfText.WmfCreateFontIndirect
+    public static class EmfExtCreateFontIndirectW extends HwmfText.WmfCreateFontIndirect
     implements HemfRecord {
         int fontIdx;
 
-        public ExtCreateFontIndirectW() {
+        public EmfExtCreateFontIndirectW() {
             super(new HemfFont());
         }
 

@@ -24,11 +24,7 @@ import static org.apache.poi.hwmf.record.HwmfDraw.readRectS;
 
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.io.ByteArrayInputStream;
-import java.io.EOFException;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +41,6 @@ import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.RecordFormatException;
 
 public class HwmfText {
     private static final POILogger logger = POILogFactory.getLogger(HwmfText.class);
@@ -191,7 +186,7 @@ public class HwmfText {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            ctx.drawString(getTextBytes(), reference);
+            ctx.drawString(getTextBytes(), stringLength, reference);
         }
 
         public String getText(Charset charset) {
@@ -396,11 +391,11 @@ public class HwmfText {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            ctx.drawString(rawTextBytes, reference, bounds, options, dx, false);
+            ctx.drawString(rawTextBytes, stringLength, reference, bounds, options, dx, false);
         }
 
         public String getText(Charset charset) throws IOException {
-            return new String(rawTextBytes, charset);
+            return new String(rawTextBytes, charset).substring(0, stringLength);
         }
 
         public Point2D getReference() {
@@ -448,57 +443,17 @@ public class HwmfText {
      */
     public static class WmfSetTextAlign implements HwmfRecord {
         
-        // ***********************************************************************************
-        // TextAlignmentMode Flags:
-        // ***********************************************************************************
-        
-        /** 
-         * The drawing position in the playback device context MUST NOT be updated after each
-         * text output call. The reference point MUST be passed to the text output function.
-         */
-        @SuppressWarnings("unused")
-        private static final BitField TA_NOUPDATECP = BitFieldFactory.getInstance(0x0000);
-        
-        /**
-         * The reference point MUST be on the left edge of the bounding rectangle.
-         */
-        @SuppressWarnings("unused")
-        private static final BitField TA_LEFT = BitFieldFactory.getInstance(0x0000);
-        
-        /**
-         * The reference point MUST be on the top edge of the bounding rectangle.
-         */
-        @SuppressWarnings("unused")
-        private static final BitField TA_TOP = BitFieldFactory.getInstance(0x0000);
-        
         /**
          * The drawing position in the playback device context MUST be updated after each text
-         * output call. It MUST be used as the reference point.
+         * output call. It MUST be used as the reference point.<p>
+         *
+         * If the flag is not set, the option TA_NOUPDATECP is active, i.e. the drawing position
+         * in the playback device context MUST NOT be updated after each text output call.
+         * The reference point MUST be passed to the text output function.
          */
         @SuppressWarnings("unused")
         private static final BitField TA_UPDATECP = BitFieldFactory.getInstance(0x0001);
-        
-        /**
-         * The reference point MUST be on the right edge of the bounding rectangle.
-         */
-        private static final BitField TA_RIGHT = BitFieldFactory.getInstance(0x0002);
-        
-        /**
-         * The reference point MUST be aligned horizontally with the center of the bounding
-         * rectangle.
-         */
-        private static final BitField TA_CENTER = BitFieldFactory.getInstance(0x0006);
-        
-        /**
-         * The reference point MUST be on the bottom edge of the bounding rectangle.
-         */
-        private static final BitField TA_BOTTOM = BitFieldFactory.getInstance(0x0008);
-        
-        /**
-         * The reference point MUST be on the baseline of the text.
-         */
-        private static final BitField TA_BASELINE = BitFieldFactory.getInstance(0x0018);
-        
+
         /**
          * The text MUST be laid out in right-to-left reading order, instead of the default
          * left-to-right order. This SHOULD be applied only when the font that is defined in the
@@ -506,43 +461,64 @@ public class HwmfText {
          */
         @SuppressWarnings("unused")
         private static final BitField TA_RTLREADING = BitFieldFactory.getInstance(0x0100);
-        
-        // ***********************************************************************************
-        // VerticalTextAlignmentMode Flags (e.g. for Kanji fonts)
-        // ***********************************************************************************
-        
+
+
+        private static final BitField ALIGN_MASK = BitFieldFactory.getInstance(0x0006);
+
         /**
-         * The reference point MUST be on the top edge of the bounding rectangle.
+         * Flag TA_LEFT (0x0000):
+         * The reference point MUST be on the left edge of the bounding rectangle,
+         * if all bits of the align mask (latin mode) are unset.
+         *
+         * Flag VTA_TOP (0x0000):
+         * The reference point MUST be on the top edge of the bounding rectangle,
+         * if all bits of the valign mask are unset.
          */
-        @SuppressWarnings("unused")
-        private static final BitField VTA_TOP = BitFieldFactory.getInstance(0x0000);
-        
+        private static final int ALIGN_LEFT = 0;
+
         /**
+         * Flag TA_RIGHT (0x0002):
          * The reference point MUST be on the right edge of the bounding rectangle.
-         */
-        @SuppressWarnings("unused")
-        private static final BitField VTA_RIGHT = BitFieldFactory.getInstance(0x0000);
-        
-        /**
+         *
+         * Flag VTA_BOTTOM (0x0002):
          * The reference point MUST be on the bottom edge of the bounding rectangle.
          */
-        private static final BitField VTA_BOTTOM = BitFieldFactory.getInstance(0x0002);
-        
+        private static final int ALIGN_RIGHT = 1;
+
         /**
-         * The reference point MUST be aligned vertically with the center of the bounding
+         * Flag TA_CENTER (0x0006) / VTA_CENTER (0x0006):
+         * The reference point MUST be aligned horizontally with the center of the bounding
          * rectangle.
          */
-        private static final BitField VTA_CENTER = BitFieldFactory.getInstance(0x0006);
-        
+        private static final int ALIGN_CENTER = 3;
+
+        private static final BitField VALIGN_MASK = BitFieldFactory.getInstance(0x0018);
+
         /**
+         * Flag TA_TOP (0x0000):
+         * The reference point MUST be on the top edge of the bounding rectangle,
+         * if all bits of the valign mask are unset.
+         *
+         * Flag VTA_RIGHT (0x0000):
+         * The reference point MUST be on the right edge of the bounding rectangle,
+         * if all bits of the align mask (asian mode) are unset.
+         */
+        private static final int VALIGN_TOP = 0;
+
+        /**
+         * Flag TA_BOTTOM (0x0008):
+         * The reference point MUST be on the bottom edge of the bounding rectangle.
+         *
+         * Flag VTA_LEFT (0x0008):
          * The reference point MUST be on the left edge of the bounding rectangle.
          */
-        private static final BitField VTA_LEFT = BitFieldFactory.getInstance(0x0008);
+        private static final int VALIGN_BOTTOM = 1;
         
         /**
+         * Flag TA_BASELINE (0x0018) / VTA_BASELINE (0x0018):
          * The reference point MUST be on the baseline of the text.
          */
-        private static final BitField VTA_BASELINE = BitFieldFactory.getInstance(0x0018);
+        private static final int VALIGN_BASELINE = 3;
         
         /**
          * A 16-bit unsigned integer that defines text alignment.
@@ -566,85 +542,68 @@ public class HwmfText {
         @Override
         public void draw(HwmfGraphics ctx) {
             HwmfDrawProperties props = ctx.getProperties();
-            if (TA_CENTER.isSet(textAlignmentMode)) {
-                props.setTextAlignLatin(HwmfTextAlignment.CENTER);
-            } else if (TA_RIGHT.isSet(textAlignmentMode)) {
-                props.setTextAlignLatin(HwmfTextAlignment.RIGHT);
-            } else {
-                props.setTextAlignLatin(HwmfTextAlignment.LEFT);
-            }
-
-            if (VTA_CENTER.isSet(textAlignmentMode)) {
-                props.setTextAlignAsian(HwmfTextAlignment.CENTER);
-            } else if (VTA_LEFT.isSet(textAlignmentMode)) {
-                props.setTextAlignAsian(HwmfTextAlignment.LEFT);
-            } else {
-                props.setTextAlignAsian(HwmfTextAlignment.RIGHT);
-            }
-
-            if (TA_BASELINE.isSet(textAlignmentMode)) {
-                props.setTextVAlignLatin(HwmfTextVerticalAlignment.BASELINE);
-            } else if (TA_BOTTOM.isSet(textAlignmentMode)) {
-                props.setTextVAlignLatin(HwmfTextVerticalAlignment.BOTTOM);
-            } else {
-                props.setTextVAlignLatin(HwmfTextVerticalAlignment.TOP);
-            }
-
-            if (VTA_BASELINE.isSet(textAlignmentMode)) {
-                props.setTextVAlignAsian(HwmfTextVerticalAlignment.BASELINE);
-            } else if (VTA_BOTTOM.isSet(textAlignmentMode)) {
-                props.setTextVAlignAsian(HwmfTextVerticalAlignment.BOTTOM);
-            } else {
-                props.setTextVAlignAsian(HwmfTextVerticalAlignment.TOP);
-            }
+            props.setTextAlignLatin(getAlignLatin());
+            props.setTextVAlignLatin(getVAlignLatin());
+            props.setTextAlignAsian(getAlignAsian());
+            props.setTextVAlignAsian(getVAlignAsian());
         }
 
         @Override
         public String toString() {
-            StringBuilder sb = new StringBuilder();
-            sb.append("{ align: '");
+            return
+                "{ align: '"+ getAlignLatin() + "'" +
+                ", valign: '"+ getVAlignLatin() + "'" +
+                ", alignAsian: '"+ getAlignAsian() + "'" +
+                ", valignAsian: '"+ getVAlignAsian() + "'" +
+                "}";
+        }
 
-            if (TA_CENTER.isSet(textAlignmentMode)) {
-                sb.append("center");
-            } else if (TA_RIGHT.isSet(textAlignmentMode)) {
-                sb.append("right");
-            } else {
-                sb.append("left");
+        private HwmfTextAlignment getAlignLatin() {
+            switch (ALIGN_MASK.getValue(textAlignmentMode)) {
+                default:
+                case ALIGN_LEFT:
+                    return HwmfTextAlignment.LEFT;
+                case ALIGN_CENTER:
+                    return HwmfTextAlignment.CENTER;
+                case ALIGN_RIGHT:
+                    return HwmfTextAlignment.RIGHT;
             }
+        }
 
-            sb.append("', align-asian: '");
-
-            if (VTA_CENTER.isSet(textAlignmentMode)) {
-                sb.append("center");
-            } else if (VTA_LEFT.isSet(textAlignmentMode)) {
-                sb.append("left");
-            } else {
-                sb.append("right");
+        private HwmfTextVerticalAlignment getVAlignLatin() {
+            switch (VALIGN_MASK.getValue(textAlignmentMode)) {
+                default:
+                case VALIGN_TOP:
+                    return HwmfTextVerticalAlignment.TOP;
+                case VALIGN_BASELINE:
+                    return HwmfTextVerticalAlignment.BASELINE;
+                case VALIGN_BOTTOM:
+                    return HwmfTextVerticalAlignment.BOTTOM;
             }
+        }
 
-            sb.append("', valign: '");
-
-            if (TA_BASELINE.isSet(textAlignmentMode)) {
-                sb.append("baseline");
-            } else if (TA_BOTTOM.isSet(textAlignmentMode)) {
-                sb.append("bottom");
-            } else {
-                sb.append("top");
+        private HwmfTextAlignment getAlignAsian() {
+            switch (getVAlignLatin()) {
+                default:
+                case TOP:
+                    return HwmfTextAlignment.RIGHT;
+                case BASELINE:
+                    return HwmfTextAlignment.CENTER;
+                case BOTTOM:
+                    return HwmfTextAlignment.LEFT;
             }
+        }
 
-            sb.append("', valign-asian: '");
-
-            if (VTA_BASELINE.isSet(textAlignmentMode)) {
-                sb.append("baseline");
-            } else if (VTA_BOTTOM.isSet(textAlignmentMode)) {
-                sb.append("bottom");
-            } else {
-                sb.append("top");
+        private HwmfTextVerticalAlignment getVAlignAsian() {
+            switch (getAlignLatin()) {
+                default:
+                case LEFT:
+                    return HwmfTextVerticalAlignment.TOP;
+                case CENTER:
+                    return HwmfTextVerticalAlignment.BASELINE;
+                case RIGHT:
+                    return HwmfTextVerticalAlignment.BOTTOM;
             }
-
-            sb.append("' }");
-
-            return sb.toString();
         }
     }
     
