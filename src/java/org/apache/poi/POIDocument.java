@@ -33,6 +33,7 @@ import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.SummaryInformation;
+import org.apache.poi.hpsf.WritingNotSupportedException;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.crypt.Encryptor;
 import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIDecryptor;
@@ -176,6 +177,8 @@ public abstract class POIDocument implements Closeable {
      *  
      *  @param setName The property to read
      *  @return The value of the given property or null if it wasn't found.
+     *
+     * @throws IOException If retrieving properties fails
      */
     @SuppressWarnings("WeakerAccess")
     protected PropertySet getPropertySet(String setName) throws IOException {
@@ -189,6 +192,8 @@ public abstract class POIDocument implements Closeable {
      *  @param setName The property to read
      *  @param encryptionInfo the encryption descriptor in case of cryptoAPI encryption
      *  @return The value of the given property or null if it wasn't found.
+     *
+     * @throws IOException If retrieving properties fails
      */
     @SuppressWarnings("WeakerAccess")
     protected PropertySet getPropertySet(String setName, EncryptionInfo encryptionInfo) throws IOException {
@@ -305,7 +310,8 @@ public abstract class POIDocument implements Closeable {
     }
 	
     /**
-     * Writes out a given ProperySet
+     * Writes out a given PropertySet
+     *
      * @param name the (POIFS Level) name of the property to write
      * @param set the PropertySet to write out 
      * @param outFS the NPOIFSFileSystem to write the property into
@@ -326,7 +332,7 @@ public abstract class POIDocument implements Closeable {
             outFS.createOrUpdateDocument(bIn, name);
 
             logger.log(POILogger.INFO, "Wrote property set " + name + " of size " + data.length);
-        } catch(org.apache.poi.hpsf.WritingNotSupportedException wnse) {
+        } catch(WritingNotSupportedException ignored) {
             logger.log( POILogger.ERROR, "Couldn't write property set with name " + name + " as not supported by HPSF yet");
         }
     }
@@ -468,6 +474,8 @@ public abstract class POIDocument implements Closeable {
 
     /**
      * @return the encryption info if the document is encrypted, otherwise {@code null}
+     *
+     * @throws IOException If retrieving the encryption information fails
      */
     public EncryptionInfo getEncryptionInfo() throws IOException {
         return null;
