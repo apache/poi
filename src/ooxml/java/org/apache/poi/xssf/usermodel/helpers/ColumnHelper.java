@@ -50,7 +50,7 @@ public class ColumnHelper {
         TreeSet<CTCol> trackedCols = new TreeSet<>(CTColComparator.BY_MIN_MAX);
         CTCols newCols = CTCols.Factory.newInstance();
         CTCols[] colsArray = worksheet.getColsArray();
-        int i = 0;
+        int i;
         for (i = 0; i < colsArray.length; i++) {
             CTCols cols = colsArray[i];
             for (CTCol col : cols.getColList()) {
@@ -61,7 +61,7 @@ public class ColumnHelper {
             worksheet.removeCols(y);
         }
         
-        newCols.setColArray(trackedCols.toArray(new CTCol[trackedCols.size()]));
+        newCols.setColArray(trackedCols.toArray(new CTCol[0]));
         worksheet.addNewCols();
         worksheet.setColsArray(0, newCols);
     }
