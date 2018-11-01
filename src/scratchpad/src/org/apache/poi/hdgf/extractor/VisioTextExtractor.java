@@ -60,7 +60,7 @@ public final class VisioTextExtractor extends POIOLE2TextExtractor {
 	/**
 	 * Locates all the text entries in the file, and returns their
 	 *  contents.
-	 * 
+	 *
 	 * @return An array of each Text item in the document
 	 */
 	public String[] getAllText() {
@@ -106,7 +106,7 @@ public final class VisioTextExtractor extends POIOLE2TextExtractor {
 	 * Returns the textual contents of the file.
 	 * Each textual object's text will be separated
 	 *  by a newline
-	 *  
+	 *
 	 * @return All text contained in this document, separated by <code>\n</code>
 	 */
 	@Override
@@ -128,12 +128,14 @@ public final class VisioTextExtractor extends POIOLE2TextExtractor {
 			System.exit(1);
 		}
 
-		VisioTextExtractor extractor =
-			new VisioTextExtractor(new FileInputStream(args[0]));
+		try (FileInputStream fis = new FileInputStream(args[0])) {
+			VisioTextExtractor extractor =
+				new VisioTextExtractor(fis);
 
-		// Print not PrintLn as already has \n added to it
-		System.out.print(extractor.getText());
-		
-		extractor.close();
+			// Print not PrintLn as already has \n added to it
+			System.out.print(extractor.getText());
+
+			extractor.close();
+		}
 	}
 }

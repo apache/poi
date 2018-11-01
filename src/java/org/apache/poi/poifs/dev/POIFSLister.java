@@ -68,9 +68,11 @@ public class POIFSLister {
    }
 
    public static void viewFileOld(final String filename, boolean withSizes) throws IOException {
-      POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(filename));
-      displayDirectory(fs.getRoot(), "", withSizes);
-      fs.close();
+      try (FileInputStream fis = new FileInputStream(filename)) {
+         POIFSFileSystem fs = new POIFSFileSystem(fis);
+         displayDirectory(fs.getRoot(), "", withSizes);
+         fs.close();
+      }
    }
 
    public static void displayDirectory(DirectoryNode dir, String indent, boolean withSizes) {
@@ -92,7 +94,7 @@ public class POIFSLister {
                name = name.substring(1) + " <" + altname + ">";
             }
             if (withSizes) {
-               size = " [" + doc.getSize() + " / 0x" + 
+               size = " [" + doc.getSize() + " / 0x" +
                       Integer.toHexString(doc.getSize()) + "]";
             }
             System.out.println(newIndent + name + size);
