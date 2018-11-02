@@ -21,6 +21,7 @@ import static org.apache.poi.hemf.record.emf.HemfDraw.readPointL;
 import static org.apache.poi.hemf.record.emf.HemfDraw.readRectL;
 import static org.apache.poi.hemf.record.emf.HemfRecordIterator.HEADER_SIZE;
 import static org.apache.poi.hwmf.record.HwmfDraw.boundsToString;
+import static org.apache.poi.hwmf.record.HwmfDraw.pointToString;
 
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
@@ -587,6 +588,17 @@ public class HemfFill {
             size += readBitmap(leis, bitmap, startIdx, offBmiSrc, cbBmiSrc, offBitsSrc, cbBitsSrc);
 
             return size;
+        }
+
+        @Override
+        public String toString() {
+            return
+                "{ bounds: " + boundsToString(bounds) +
+                ", dest: " + pointToString(dest) +
+                ", src: " + boundsToString(src) +
+                ", usageSrc: '" + usageSrc + "'" +
+                ", bitmap: " + bitmap +
+                "}";
         }
     }
 

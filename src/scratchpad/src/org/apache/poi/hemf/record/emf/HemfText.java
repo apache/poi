@@ -199,7 +199,11 @@ public class HemfText {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            ctx.drawString(rawTextBytes, stringLength, reference, bounds, options, dx, isUnicode());
+            // A 32-bit floating-point value that specifies the scale factor to apply along
+            // the axis to convert from page space units to .01mm units.
+            // This SHOULD be used only if the graphics mode specified by iGraphicsMode is GM_COMPATIBLE.
+            Dimension2D scl = graphicsMode == EmfGraphicsMode.GM_COMPATIBLE ? scale : null;
+            ctx.drawString(rawTextBytes, stringLength, reference, scl, bounds, options, dx, isUnicode());
         }
 
         @Override

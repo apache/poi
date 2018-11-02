@@ -30,6 +30,7 @@ import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
+import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -333,8 +334,9 @@ public class HwmfGraphics {
         case MM_ANISOTROPIC:
             // scale window bounds to output bounds
             if (view != null) {
-                graphicsCtx.translate(view.getX() - win.getX(), view.getY() - win.getY());
+                graphicsCtx.translate(view.getCenterX(), view.getCenterY());
                 graphicsCtx.scale(view.getWidth() / win.getWidth(), view.getHeight() / win.getHeight());
+                graphicsCtx.translate(-win.getCenterX(), -win.getCenterY());
             }
             break;
         case MM_ISOTROPIC:
@@ -362,10 +364,10 @@ public class HwmfGraphics {
     }
 
     public void drawString(byte[] text, int length, Point2D reference) {
-        drawString(text, length, reference, null, null, null, false);
+        drawString(text, length, reference, null, null, null, null, false);
     }
 
-    public void drawString(byte[] text, int length, Point2D reference, Rectangle2D clip, WmfExtTextOutOptions opts, List<Integer> dx, boolean isUnicode) {
+    public void drawString(byte[] text, int length, Point2D reference, Dimension2D scale, Rectangle2D clip, WmfExtTextOutOptions opts, List<Integer> dx, boolean isUnicode) {
         final HwmfDrawProperties prop = getProperties();
 
         HwmfFont font = prop.getFont();
@@ -489,6 +491,9 @@ public class HwmfGraphics {
 
             graphicsCtx.translate(reference.getX(), reference.getY());
             graphicsCtx.rotate(angle);
+            if (scale != null) {
+                graphicsCtx.scale(scale.getWidth() < 0 ? -1 : 1, scale.getHeight() < 0 ? -1 : 1);
+            }
             graphicsCtx.translate(dst.getX(), dst.getY());
             graphicsCtx.setColor(prop.getTextColor().getColor());
             graphicsCtx.drawString(as.getIterator(), 0, 0);

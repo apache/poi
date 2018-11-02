@@ -36,6 +36,11 @@ public class HemfFont extends HwmfFont {
 
     protected static class LogFontExDv implements LogFontDetails {
         protected int[] designVector;
+
+        @Override
+        public String toString() {
+            return "{ designVectorLen: " + (designVector == null ? 0 : designVector.length) + " }";
+        }
     }
 
     protected static class LogFontPanose implements LogFontDetails {
@@ -195,6 +200,25 @@ public class HemfFont extends HwmfFont {
         protected Letterform letterform;
         protected MidLine midLine;
         protected XHeight xHeight;
+
+        @Override
+        public String toString() {
+            return
+                "{ styleSize: " + styleSize +
+                ", vendorId: " + vendorId +
+                ", culture: " +  culture +
+                ", familyType: '" + familyType + "'" +
+                ", serifStyle: '" + serifStyle + "'" +
+                ", weight: '" + weight + "'" +
+                ", proportion: '" + proportion + "'" +
+                ", contrast: '" + contrast + "'" +
+                ", strokeVariation: '" + strokeVariation + "'" +
+                ", armStyle: '" + armStyle + "'" +
+                ", letterform: '" + letterform + "'" +
+                ", midLine: '" + midLine + "'" +
+                ", xHeight: '" + xHeight + "'" +
+                "}";
+        }
     }
 
     protected String fullname;
@@ -435,10 +459,17 @@ public class HemfFont extends HwmfFont {
             size += (2+numAxes)*LittleEndianConsts.INT_SIZE;
         }
 
-
-
-
         return size;
+    }
+
+    @Override
+    public String toString() {
+        return
+            "{ fullname: '" + (fullname == null ? "" : fullname) + "'" +
+            ", style: '" + (style == null ? "" : style) + "'" +
+            ", script: '" + (script == null ? "" : script) + "'" +
+            ", details: " + details +
+            "," + super.toString().substring(1);
     }
 
     @Override

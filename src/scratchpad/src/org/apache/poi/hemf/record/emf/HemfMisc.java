@@ -745,10 +745,22 @@ public class HemfMisc {
 
         @Override
         public void applyObject(HwmfGraphics ctx) {
+            if (!bitmap.isValid()) {
+                return;
+            }
             HwmfDrawProperties props = ctx.getProperties();
             props.setBrushStyle(HwmfBrushStyle.BS_PATTERN);
             BufferedImage bmp = bitmap.getImage();
             props.setBrushBitmap(bmp);
+        }
+
+        @Override
+        public String toString() {
+            return
+                "{ penIndex: " + penIndex +
+                ", colorUsage: " + colorUsage +
+                ", bitmap: " + bitmap +
+                "}";
         }
     }
 }

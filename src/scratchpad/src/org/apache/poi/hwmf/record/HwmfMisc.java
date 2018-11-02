@@ -454,6 +454,9 @@ public class HwmfMisc {
         
         @Override
         public void applyObject(HwmfGraphics ctx) {
+            if (patternDib != null && !patternDib.isValid()) {
+                return;
+            }
             HwmfDrawProperties prop = ctx.getProperties();
             prop.setBrushStyle(style);
             prop.setBrushBitmap(getImage());

@@ -19,6 +19,7 @@ package org.apache.poi.hemf.record.emf;
 
 import static org.apache.poi.hemf.record.emf.HemfDraw.readDimensionInt;
 import static org.apache.poi.hemf.record.emf.HemfDraw.readPointL;
+import static org.apache.poi.hwmf.record.HwmfDraw.normalizeBounds;
 
 import java.io.IOException;
 
@@ -135,7 +136,7 @@ public class HemfWindowing {
 
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
-            return HemfDraw.readRectL(leis, bounds);
+            return HemfDraw.readRectL(leis, normalizeBounds(bounds));
         }
     }
 
