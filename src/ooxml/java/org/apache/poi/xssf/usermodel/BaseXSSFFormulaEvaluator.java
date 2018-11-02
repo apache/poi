@@ -19,6 +19,7 @@ package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.ss.formula.BaseFormulaEvaluator;
 import org.apache.poi.ss.formula.EvaluationCell;
+import org.apache.poi.ss.formula.EvaluationWorkbook;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
@@ -26,6 +27,7 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.RichTextString;
 
@@ -68,5 +70,17 @@ public abstract class BaseXSSFFormulaEvaluator extends BaseFormulaEvaluator {
             return CellValue.getError(((ErrorEval)eval).getErrorCode());
         }
         throw new RuntimeException("Unexpected eval class (" + eval.getClass().getName() + ")");
+    }
+    
+    protected void setCellType(Cell cell, CellType cellType) {
+        if (cell instanceof  XSSFCell) {
+            EvaluationWorkbook evaluationWorkbook = getEvaluationWorkbook();
+            BaseXSSFEvaluationWorkbook xewb = BaseXSSFEvaluationWorkbook.class.isAssignableFrom(evaluationWorkbook.getClass()) ? (BaseXSSFEvaluationWorkbook) evaluationWorkbook : null;
+
+            ((XSSFCell) cell).setCellType(cellType, xewb);
+        } else {
+            // could be an SXSSFCell
+            cell.setCellType(cellType);
+        }
     }
 }

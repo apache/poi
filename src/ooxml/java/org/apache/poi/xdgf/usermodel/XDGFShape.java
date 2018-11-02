@@ -116,13 +116,15 @@ public class XDGFShape extends XDGFSheet {
         _parentPage = parentPage;
 
         TextType text = shapeSheet.getText();
-        if (text != null)
+        if (text != null) {
             _text = new XDGFText(text, this);
+        }
 
         if (shapeSheet.isSetShapes()) {
             _shapes = new ArrayList<>();
-            for (ShapeSheetType shape : shapeSheet.getShapes().getShapeArray())
+            for (ShapeSheetType shape : shapeSheet.getShapes().getShapeArray()) {
                 _shapes.add(new XDGFShape(this, shape, parentPage, document));
+            }
         }
 
         readProperties();
@@ -130,10 +132,11 @@ public class XDGFShape extends XDGFSheet {
 
     @Override
     public String toString() {
-        if (_parentPage instanceof XDGFMasterContents)
+        if (_parentPage instanceof XDGFMasterContents) {
             return _parentPage + ": <Shape ID=\"" + getID() + "\">";
-        else
+        } else {
             return "<Shape ID=\"" + getID() + "\">";
+        }
     }
 
     protected void readProperties() {
@@ -181,9 +184,10 @@ public class XDGFShape extends XDGFSheet {
 
         if (obj.isSetMaster()) {
             _master = pageContents.getMasterById(obj.getMaster());
-            if (_master == null)
+            if (_master == null) {
                 throw XDGFException.error("refers to non-existant master "
                         + obj.getMaster(), this);
+            }
 
             /*
              * If a master has one top-level shape, a shape that inherits from
@@ -209,11 +213,12 @@ public class XDGFShape extends XDGFSheet {
             }
 
         } else if (obj.isSetMasterShape()) {
-            _masterShape = master.getShapeById(obj.getMasterShape());
-            if (_masterShape == null)
+            _masterShape = (master == null) ? null : master.getShapeById(obj.getMasterShape());
+            if (_masterShape == null) {
                 throw XDGFException.error(
                         "refers to non-existant master shape "
                                 + obj.getMasterShape(), this);
+            }
 
         }
 
@@ -229,21 +234,24 @@ public class XDGFShape extends XDGFSheet {
 
     protected void setupSectionMasters() {
 
-        if (_masterShape == null)
+        if (_masterShape == null) {
             return;
+        }
 
         try {
             for (Entry<String, XDGFSection> section : _sections.entrySet()) {
                 XDGFSection master = _masterShape.getSection(section.getKey());
-                if (master != null)
+                if (master != null) {
                     section.getValue().setupMaster(master);
+                }
             }
 
             for (Entry<Long, GeometrySection> section : _geometry.entrySet()) {
                 GeometrySection master = _masterShape.getGeometryByIdx(section
                         .getKey());
-                if (master != null)
+                if (master != null) {
                     section.getValue().setupMaster(master);
+                }
             }
         } catch (POIXMLException e) {
             throw XDGFException.wrap(this.toString(), e);
@@ -266,8 +274,9 @@ public class XDGFShape extends XDGFSheet {
 
     public String getTextAsString() {
         XDGFText text = getText();
-        if (text == null)
+        if (text == null) {
             return "";
+        }
 
         return text.getTextContent();
     }
@@ -294,7 +303,7 @@ public class XDGFShape extends XDGFSheet {
     }
 
     /**
-     * Only available if this shape is a shape group, may be null 
+     * Only available if this shape is a shape group, may be null
      */
     // -> May be null
     public List<XDGFShape> getShapes() {
@@ -304,28 +313,32 @@ public class XDGFShape extends XDGFSheet {
     // unique to this shape on the page?
     public String getName() {
         String name = getXmlObject().getName();
-        if (name == null)
+        if (name == null) {
             return "";
+        }
         return name;
     }
 
     // unique to this shape on the page?
     public String getShapeType() {
         String type = getXmlObject().getType();
-        if (type == null)
+        if (type == null) {
             return "";
+        }
         return type;
     }
 
     // name of the symbol that this was derived from
     public String getSymbolName() {
 
-        if (_master == null)
+        if (_master == null) {
             return "";
+        }
 
         String name = _master.getName();
-        if (name == null)
+        if (name == null) {
             return "";
+        }
 
         return name;
     }
@@ -345,8 +358,9 @@ public class XDGFShape extends XDGFSheet {
         XDGFShape top = null;
         if (_parent != null) {
             top = _parent.getTopmostParentShape();
-            if (top == null)
+            if (top == null) {
                 top = _parent;
+            }
         }
 
         return top;
@@ -381,190 +395,223 @@ public class XDGFShape extends XDGFSheet {
     }
 
     public XDGFText getText() {
-        if (_text == null && _masterShape != null)
+        if (_text == null && _masterShape != null) {
             return _masterShape.getText();
+        }
 
         return _text;
     }
 
     public Double getPinX() {
-        if (_pinX == null && _masterShape != null)
+        if (_pinX == null && _masterShape != null) {
             return _masterShape.getPinX();
+        }
 
-        if (_pinX == null)
+        if (_pinX == null) {
             throw XDGFException.error("PinX not set!", this);
+        }
 
         return _pinX;
     }
 
     public Double getPinY() {
-        if (_pinY == null && _masterShape != null)
+        if (_pinY == null && _masterShape != null) {
             return _masterShape.getPinY();
+        }
 
-        if (_pinY == null)
+        if (_pinY == null) {
             throw XDGFException.error("PinY not specified!", this);
+        }
 
         return _pinY;
     }
 
     public Double getWidth() {
-        if (_width == null && _masterShape != null)
+        if (_width == null && _masterShape != null) {
             return _masterShape.getWidth();
+        }
 
-        if (_width == null)
+        if (_width == null) {
             throw XDGFException.error("Width not specified!", this);
+        }
 
         return _width;
     }
 
     public Double getHeight() {
-        if (_height == null && _masterShape != null)
+        if (_height == null && _masterShape != null) {
             return _masterShape.getHeight();
+        }
 
-        if (_height == null)
+        if (_height == null) {
             throw XDGFException.error("Height not specified!", this);
+        }
 
         return _height;
     }
 
     public Double getLocPinX() {
-        if (_locPinX == null && _masterShape != null)
+        if (_locPinX == null && _masterShape != null) {
             return _masterShape.getLocPinX();
+        }
 
-        if (_locPinX == null)
+        if (_locPinX == null) {
             throw XDGFException.error("LocPinX not specified!", this);
+        }
 
         return _locPinX;
     }
 
     public Double getLocPinY() {
-        if (_locPinY == null && _masterShape != null)
+        if (_locPinY == null && _masterShape != null) {
             return _masterShape.getLocPinY();
+        }
 
-        if (_locPinY == null)
+        if (_locPinY == null) {
             throw XDGFException.error("LocPinY not specified!", this);
+        }
 
         return _locPinY;
     }
 
     public Double getBeginX() {
-        if (_beginX == null && _masterShape != null)
+        if (_beginX == null && _masterShape != null) {
             return _masterShape.getBeginX();
+        }
 
         return _beginX;
     }
 
     public Double getBeginY() {
-        if (_beginY == null && _masterShape != null)
+        if (_beginY == null && _masterShape != null) {
             return _masterShape.getBeginY();
+        }
 
         return _beginY;
     }
 
     public Double getEndX() {
-        if (_endX == null && _masterShape != null)
+        if (_endX == null && _masterShape != null) {
             return _masterShape.getEndX();
+        }
 
         return _endX;
     }
 
     public Double getEndY() {
-        if (_endY == null && _masterShape != null)
+        if (_endY == null && _masterShape != null) {
             return _masterShape.getEndY();
+        }
 
         return _endY;
     }
 
     public Double getAngle() {
-        if (_angle == null && _masterShape != null)
+        if (_angle == null && _masterShape != null) {
             return _masterShape.getAngle();
+        }
 
         return _angle;
     }
 
     public Boolean getFlipX() {
-        if (_flipX == null && _masterShape != null)
+        if (_flipX == null && _masterShape != null) {
             return _masterShape.getFlipX();
+        }
 
         return _flipX;
     }
 
     public Boolean getFlipY() {
-        if (_flipY == null && _masterShape != null)
+        if (_flipY == null && _masterShape != null) {
             return _masterShape.getFlipY();
+        }
 
         return _flipY;
     }
 
     public Double getTxtPinX() {
         if (_txtPinX == null && _masterShape != null
-                && _masterShape._txtPinX != null)
+                && _masterShape._txtPinX != null) {
             return _masterShape._txtPinX;
+        }
 
-        if (_txtPinX == null)
+        if (_txtPinX == null) {
             return getWidth() * 0.5;
+        }
 
         return _txtPinX;
     }
 
     public Double getTxtPinY() {
         if (_txtLocPinY == null && _masterShape != null
-                && _masterShape._txtLocPinY != null)
+                && _masterShape._txtLocPinY != null) {
             return _masterShape._txtLocPinY;
+        }
 
-        if (_txtPinY == null)
+        if (_txtPinY == null) {
             return getHeight() * 0.5;
+        }
 
         return _txtPinY;
     }
 
     public Double getTxtLocPinX() {
         if (_txtLocPinX == null && _masterShape != null
-                && _masterShape._txtLocPinX != null)
+                && _masterShape._txtLocPinX != null) {
             return _masterShape._txtLocPinX;
+        }
 
-        if (_txtLocPinX == null)
+        if (_txtLocPinX == null) {
             return getTxtWidth() * 0.5;
+        }
 
         return _txtLocPinX;
     }
 
     public Double getTxtLocPinY() {
         if (_txtLocPinY == null && _masterShape != null
-                && _masterShape._txtLocPinY != null)
+                && _masterShape._txtLocPinY != null) {
             return _masterShape._txtLocPinY;
+        }
 
-        if (_txtLocPinY == null)
+        if (_txtLocPinY == null) {
             return getTxtHeight() * 0.5;
+        }
 
         return _txtLocPinY;
     }
 
     public Double getTxtAngle() {
-        if (_txtAngle == null && _masterShape != null)
+        if (_txtAngle == null && _masterShape != null) {
             return _masterShape.getTxtAngle();
+        }
 
         return _txtAngle;
     }
 
     public Double getTxtWidth() {
         if (_txtWidth == null && _masterShape != null
-                && _masterShape._txtWidth != null)
+                && _masterShape._txtWidth != null) {
             return _masterShape._txtWidth;
+        }
 
-        if (_txtWidth == null)
+        if (_txtWidth == null) {
             return getWidth();
+        }
 
         return _txtWidth;
     }
 
     public Double getTxtHeight() {
         if (_txtHeight == null && _masterShape != null
-                && _masterShape._txtHeight != null)
+                && _masterShape._txtHeight != null) {
             return _masterShape._txtHeight;
+        }
 
-        if (_txtHeight == null)
+        if (_txtHeight == null) {
             return getHeight();
+        }
 
         return _txtHeight;
     }
@@ -573,8 +620,9 @@ public class XDGFShape extends XDGFSheet {
     public Integer getLineCap() {
 
         Integer lineCap = super.getLineCap();
-        if (lineCap != null)
+        if (lineCap != null) {
             return lineCap;
+        }
 
         // get from master
         if (_masterShape != null) {
@@ -589,8 +637,9 @@ public class XDGFShape extends XDGFSheet {
     public Color getLineColor() {
 
         Color lineColor = super.getLineColor();
-        if (lineColor != null)
+        if (lineColor != null) {
             return lineColor;
+        }
 
         // get from master
         if (_masterShape != null) {
@@ -605,8 +654,9 @@ public class XDGFShape extends XDGFSheet {
     public Integer getLinePattern() {
 
         Integer linePattern = super.getLinePattern();
-        if (linePattern != null)
+        if (linePattern != null) {
             return linePattern;
+        }
 
         // get from master
         if (_masterShape != null) {
@@ -621,8 +671,9 @@ public class XDGFShape extends XDGFSheet {
     public Double getLineWeight() {
 
         Double lineWeight = super.getLineWeight();
-        if (lineWeight != null)
+        if (lineWeight != null) {
             return lineWeight;
+        }
 
         // get from master
         if (_masterShape != null) {
@@ -637,8 +688,9 @@ public class XDGFShape extends XDGFSheet {
     public Color getFontColor() {
 
         Color fontColor = super.getFontColor();
-        if (fontColor != null)
+        if (fontColor != null) {
             return fontColor;
+        }
 
         // get from master
         if (_masterShape != null) {
@@ -653,8 +705,9 @@ public class XDGFShape extends XDGFSheet {
     public Double getFontSize() {
 
         Double fontSize = super.getFontSize();
-        if (fontSize != null)
+        if (fontSize != null) {
             return fontSize;
+        }
 
         // get from master
         if (_masterShape != null) {
@@ -791,11 +844,11 @@ public class XDGFShape extends XDGFSheet {
     public Rectangle2D.Double getBounds() {
         return new Rectangle2D.Double(0, 0, getWidth(), getHeight());
     }
-    
+
     /**
      * @return returns bounds as a path in local coordinates, which is
      *         userful if you need to transform to global coordinates
-     *         
+     *
      * Warning: Don't use this for 1d objects, and will fail for
      *          infinite line objects
      */
@@ -819,8 +872,9 @@ public class XDGFShape extends XDGFSheet {
      */
     public Path2D.Double getPath() {
         for (GeometrySection geoSection : getGeometrySections()) {
-            if (geoSection.getNoShow())
+            if (geoSection.getNoShow()) {
                 continue;
+            }
 
             return geoSection.getPath(this);
         }
@@ -833,8 +887,9 @@ public class XDGFShape extends XDGFSheet {
      */
     public boolean hasGeometry() {
         for (GeometrySection geoSection : getGeometrySections()) {
-            if (!geoSection.getNoShow())
+            if (!geoSection.getNoShow()) {
                 return true;
+            }
         }
         return false;
     }
@@ -889,8 +944,9 @@ public class XDGFShape extends XDGFSheet {
         tr.concatenate(getParentTransform());
 
         try {
-            if (visitor.accept(this))
+            if (visitor.accept(this)) {
                 visitor.visit(this, tr, level);
+            }
 
             if (_shapes != null) {
                 for (XDGFShape shape : _shapes) {
@@ -914,8 +970,9 @@ public class XDGFShape extends XDGFSheet {
     public void visitShapes(ShapeVisitor visitor, int level) {
 
         try {
-            if (visitor.accept(this))
+            if (visitor.accept(this)) {
                 visitor.visit(this, null, level);
+            }
 
             if (_shapes != null) {
                 for (XDGFShape shape : _shapes) {

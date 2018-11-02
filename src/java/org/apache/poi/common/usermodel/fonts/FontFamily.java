@@ -68,13 +68,15 @@ public enum FontFamily {
         }
         return null;
     }
-    
 
     /**
      * Get FontFamily from combined native id
+     *
+     * @param pitchAndFamily The PitchFamily to decode.
+     *
+     * @return The resulting FontFamily
      */
     public static FontFamily valueOfPitchFamily(byte pitchAndFamily) {
         return valueOf(pitchAndFamily >>> 4);
     }
-
 }

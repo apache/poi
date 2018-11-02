@@ -17,7 +17,25 @@
 
 package org.apache.poi.ooxml.util;
 
-import junit.framework.TestCase;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.security.AccessController;
+import java.security.CodeSource;
+import java.security.PrivilegedAction;
+import java.security.ProtectionDomain;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.Vector;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.regex.Pattern;
+
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.SuppressForbidden;
@@ -29,19 +47,7 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.reflections.Reflections;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.security.AccessController;
-import java.security.CodeSource;
-import java.security.PrivilegedAction;
-import java.security.ProtectionDomain;
-import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.regex.Pattern;
+import junit.framework.TestCase;
 
 /**
  * Build a 'lite' version of the ooxml-schemas.jar
@@ -74,12 +80,12 @@ public final class OOXMLLite {
     }
 
     public static void main(String[] args) throws IOException {
-        System.out.println("Free memory (bytes): " + 
+        System.out.println("Free memory (bytes): " +
                 Runtime.getRuntime().freeMemory());
         long maxMemory = Runtime.getRuntime().maxMemory();
-        System.out.println("Maximum memory (bytes): " + 
+        System.out.println("Maximum memory (bytes): " +
         (maxMemory == Long.MAX_VALUE ? "no limit" : maxMemory));
-        System.out.println("Total memory (bytes): " + 
+        System.out.println("Total memory (bytes): " +
                 Runtime.getRuntime().totalMemory());
 
         String dest = null, test = null, ooxml = null;
@@ -87,13 +93,13 @@ public final class OOXMLLite {
         for (int i = 0; i < args.length; i++) {
             switch (args[i]) {
                 case "-dest":
-                    dest = args[++i];
+                    dest = args[++i]; // lgtm[java/index-out-of-bounds]
                     break;
                 case "-test":
-                    test = args[++i];
+                    test = args[++i]; // lgtm[java/index-out-of-bounds]
                     break;
                 case "-ooxml":
-                    ooxml = args[++i];
+                    ooxml = args[++i]; // lgtm[java/index-out-of-bounds]
                     break;
             }
         }
@@ -248,7 +254,7 @@ public final class OOXMLLite {
                 return true;
             }
         }
-        
+
         // also check super classes
         if(testclass.getSuperclass() != null) {
             for (Method m : testclass.getSuperclass().getDeclaredMethods()) {
@@ -257,7 +263,7 @@ public final class OOXMLLite {
                 }
             }
         }
-        
+
         System.out.println("Class " + testclass.getName() + " does not derive from TestCase and does not have a @Test annotation");
 
         // Should we also look at superclasses to find cases
@@ -286,8 +292,12 @@ public final class OOXMLLite {
             String path = arg.getAbsolutePath();
             String prefix = root.getAbsolutePath();
             String cls = path.substring(prefix.length() + 1).replace(File.separator, ".");
-            if(!cls.matches(ptrn)) return;
-            if (cls.matches(exclude)) return;
+            if(!cls.matches(ptrn)) {
+                return;
+            }
+            if (cls.matches(exclude)) {
+                return;
+            }
             //ignore inner classes defined in tests
             if (cls.indexOf('$') != -1) {
                 System.out.println("Inner class " + cls + " not included");
@@ -315,10 +325,11 @@ public final class OOXMLLite {
      */
     @SuppressWarnings("unchecked")
     private static Set<Class<?>> getLoadedClasses(String ptrn) {
-        // make the field accessible, we defer this from static initialization to here to 
+        // make the field accessible, we defer this from static initialization to here to
         // allow JDKs which do not have this field (e.g. IBM JDK) to at least load the class
         // without failing, see https://issues.apache.org/bugzilla/show_bug.cgi?id=56550
         final Field _classes = AccessController.doPrivileged(new PrivilegedAction<Field>() {
+            @Override
             @SuppressForbidden("TODO: Reflection works until Java 8 on Oracle/Sun JDKs, but breaks afterwards (different classloader types, access checks)")
             public Field run() {
                 try {
@@ -339,11 +350,17 @@ public final class OOXMLLite {
             for (Class<?> cls : classes) {
                 // e.g. proxy-classes, ...
                 ProtectionDomain pd = cls.getProtectionDomain();
-                if (pd == null) continue;
+                if (pd == null) {
+                    continue;
+                }
                 CodeSource cs = pd.getCodeSource();
-                if (cs == null) continue;
+                if (cs == null) {
+                    continue;
+                }
                 URL loc = cs.getLocation();
-                if (loc == null) continue;
+                if (loc == null) {
+                    continue;
+                }
 
                 String jar = loc.toString();
                 if (jar.contains(ptrn)) {

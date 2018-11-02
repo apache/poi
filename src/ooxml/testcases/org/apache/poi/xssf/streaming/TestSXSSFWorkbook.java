@@ -38,7 +38,6 @@ import java.util.Arrays;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POITestCase;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.ss.usermodel.BaseTestXWorkbook;
@@ -55,7 +54,6 @@ import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.After;
-import org.junit.Assume;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -103,9 +101,9 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
      *  changes.
      */
     @Override
+    @Ignore("SXSSF doesn't update formulas on sheet name changes, as most cells probably aren't in memory at the time")
     @Test
     public void setSheetName() {
-        Assume.assumeTrue("SXSSF doesn't update formulas on sheet name changes, as most cells probably aren't in memory at the time", false);
     }
 
     @Test
@@ -374,7 +372,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
     @Test
     public void bug53515a() throws Exception {
         File out = new File("Test.xlsx");
-        out.delete();
+        assertTrue(!out.exists() || out.delete());
         for (int i = 0; i < 2; i++) {
             final SXSSFWorkbook wb;
             if (out.exists()) {
@@ -402,7 +400,8 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
             }
             wb.close();
         }
-        out.delete();
+        assertTrue(out.exists());
+        assertTrue(out.delete());
     }
 
     private static void populateWorkbook(Workbook wb) {
@@ -500,32 +499,36 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
     @Test
     @Ignore
     public void createFromReadOnlyWorkbook() throws Exception {
-        File input = XSSFTestDataSamples.getSampleFile("sample.xlsx");
-        OPCPackage pkg = OPCPackage.open(input, PackageAccess.READ);
-        XSSFWorkbook xssf = new XSSFWorkbook(pkg);
-        SXSSFWorkbook wb = new SXSSFWorkbook(xssf, 2);
-        
         String sheetName = "Test SXSSF";
-        Sheet s = wb.createSheet(sheetName);
-        for (int i=0; i<10; i++) {
-            Row r = s.createRow(i);
-            r.createCell(0).setCellValue(true);
-            r.createCell(1).setCellValue(2.4);
-            r.createCell(2).setCellValue("Test Row " + i);
+        File input = XSSFTestDataSamples.getSampleFile("sample.xlsx");
+
+        try (OPCPackage pkg = OPCPackage.open(input, PackageAccess.READ)) {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            try (XSSFWorkbook xssf = new XSSFWorkbook(pkg)) {
+                try (SXSSFWorkbook wb = new SXSSFWorkbook(xssf, 2)) {
+                    Sheet s = wb.createSheet(sheetName);
+                    for (int i = 0; i < 10; i++) {
+                        Row r = s.createRow(i);
+                        r.createCell(0).setCellValue(true);
+                        r.createCell(1).setCellValue(2.4);
+                        r.createCell(2).setCellValue("Test Row " + i);
+                    }
+                    assertEquals(10, s.getLastRowNum());
+
+                    wb.write(bos);
+                    wb.dispose();
+                }
+            }
+
+            try (XSSFWorkbook xssf = new XSSFWorkbook(new ByteArrayInputStream(bos.toByteArray()))) {
+                Sheet s = xssf.getSheet(sheetName);
+                assertEquals(10, s.getLastRowNum());
+                assertTrue(s.getRow(0).getCell(0).getBooleanCellValue());
+                assertEquals("Test Row 9", s.getRow(9).getCell(2).getStringCellValue());
+            }
         }
-        assertEquals(10, s.getLastRowNum());
-        
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        wb.write(bos);
-        wb.dispose();
-        wb.close();
-        
-        xssf = new XSSFWorkbook(new ByteArrayInputStream(bos.toByteArray()));
-        s = xssf.getSheet(sheetName);
-        assertEquals(10, s.getLastRowNum());
-        assertTrue(s.getRow(0).getCell(0).getBooleanCellValue());
-        assertEquals("Test Row 9", s.getRow(9).getCell(2).getStringCellValue());
     }
+
 
     @Test
     public void test56557() throws IOException {

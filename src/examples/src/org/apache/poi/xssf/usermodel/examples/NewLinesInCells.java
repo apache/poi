@@ -44,8 +44,8 @@ public class NewLinesInCells {
             cs.setWrapText(true);
             cell.setCellStyle(cs);
 
-            //increase row height to accomodate two lines of text
-            row.setHeightInPoints((2 * sheet.getDefaultRowHeightInPoints()));
+            //increase row height to accommodate two lines of text
+            row.setHeightInPoints(2 * sheet.getDefaultRowHeightInPoints());
 
             //adjust column width to fit the content
             sheet.autoSizeColumn(2);
@@ -55,5 +55,4 @@ public class NewLinesInCells {
             }
         }
     }
-
 }

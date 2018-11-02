@@ -11,6 +11,7 @@ log*.*
 forrest.properties
 compile-lib/
 ooxml-lib/
+ooxml-testlib/
 
 # Eclipse
 /bin

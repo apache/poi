@@ -65,6 +65,14 @@ public abstract class BaseFormulaEvaluator implements FormulaEvaluator, Workbook
     }
 
     /**
+     * internal use
+     * @return evaluation workbook
+     */
+    protected EvaluationWorkbook getEvaluationWorkbook() {
+        return _bookEvaluator.getWorkbook();
+    }
+    
+    /**
      * Should be called whenever there are major changes (e.g. moving sheets) to input cells
      * in the evaluated workbook.  If performance is not critical, a single call to this method
      * may be used instead of many specific calls to the notify~ methods.
@@ -208,14 +216,19 @@ public abstract class BaseFormulaEvaluator implements FormulaEvaluator, Workbook
         return evaluateFormulaCell(cell);
     }
 
-    protected static void setCellType(Cell cell, CellValue cv) {
+    /**
+     * set the cell type
+     * @param cell
+     * @param cv
+     */
+    protected void setCellType(Cell cell, CellValue cv) {
         CellType cellType = cv.getCellType();
         switch (cellType) {
             case BOOLEAN:
             case ERROR:
             case NUMERIC:
             case STRING:
-                cell.setCellType(cellType);
+                setCellType(cell, cellType);
                 return;
             case BLANK:
                 // never happens - blanks eventually get translated to zero
@@ -226,6 +239,15 @@ public abstract class BaseFormulaEvaluator implements FormulaEvaluator, Workbook
             default:
                 throw new IllegalStateException("Unexpected cell value type (" + cellType + ")");
         }
+    }
+
+    /**
+     * Override if a different variation is needed, e.g. passing the evaluator to the cell method
+     * @param cell
+     * @param cellType
+     */
+    protected void setCellType(Cell cell, CellType cellType) {
+        cell.setCellType(cellType);
     }
     
     protected abstract RichTextString createRichTextString(String str);

@@ -147,6 +147,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorksheetDocument;
  * contain text, numbers, dates, and formulas. Cells can also be formatted.
  * </p>
  */
+@SuppressWarnings("deprecation")
 public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     private static final POILogger logger = POILogFactory.getLogger(XSSFSheet.class);
 
@@ -472,7 +473,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     /**
      * Verify that candidate region does not intersect with an existing merged region in this sheet
      *
-     * @param candidateRegion
+     * @param candidateRegion the range of cells to verify
      * @throws IllegalStateException if candidate region intersects an existing merged region in this sheet (or candidateRegion is already merged in this sheet)
      */
     private void validateMergedRegions(CellRangeAddress candidateRegion) {
@@ -855,8 +856,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     /**
      * Get a Hyperlink in this sheet anchored at row, column
      *
-     * @param row
-     * @param column
+     * @param row The row where the hyperlink is anchored
+     * @param column The column where the hyperlinkn is anchored
      * @return hyperlink if there is a hyperlink anchored at row, column; otherwise returns null
      */
     @Override
@@ -1480,8 +1481,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      *
      * @param startRowNum the first row number in this sheet to return
      * @param endRowNum the last row number in this sheet to return
-     * @param createRowIfMissing
-     * @return All rows between startRow and endRow, inclusive
+     * @param createRowIfMissing If missing rows should be created.
+     * @return All rows between startRow and endRow, inclusive. If createRowIfMissing is false,
+     *      only previously existing rows are returned, otherwise empty rows are added as necessary
      * @throws IllegalArgumentException if startRowNum and endRowNum are not in ascending order
      */
     private List<XSSFRow> getRows(int startRowNum, int endRowNum, boolean createRowIfMissing) {
@@ -2472,7 +2474,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * 'Collapsed' state is stored in a single column col info record
      * immediately after the outline group
      *
-     * @param idx
+     * @param idx The column-index to check
      * @return a boolean represented if the column is collapsed
      */
     private boolean isColumnGroupCollapsed(int idx) {
@@ -3052,7 +3054,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         rebuildRows();
     }
 
-    private final void rebuildRows() {
+    private void rebuildRows() {
         //rebuild the _rows map
         List<XSSFRow> rowList = new ArrayList<>(_rows.values());
         _rows.clear();
@@ -3114,25 +3116,22 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         // then do the actual moving and also adjust comments/rowHeight
         // we need to sort it in a way so the shifting does not mess up the structures,
         // i.e. when shifting down, start from down and go up, when shifting up, vice-versa
-        SortedMap<XSSFComment, Integer> commentsToShift = new TreeMap<>(new Comparator<XSSFComment>() {
-            @Override
-            public int compare(XSSFComment o1, XSSFComment o2) {
-                int row1 = o1.getRow();
-                int row2 = o2.getRow();
+        SortedMap<XSSFComment, Integer> commentsToShift = new TreeMap<>((o1, o2) -> {
+            int row1 = o1.getRow();
+            int row2 = o2.getRow();
 
-                if (row1 == row2) {
-                    // ordering is not important when row is equal, but don't return zero to still
-                    // get multiple comments per row into the map
-                    return o1.hashCode() - o2.hashCode();
-                }
+            if (row1 == row2) {
+                // ordering is not important when row is equal, but don't return zero to still
+                // get multiple comments per row into the map
+                return o1.hashCode() - o2.hashCode();
+            }
 
-                // when shifting down, sort higher row-values first
-                if (n > 0) {
-                    return row1 < row2 ? 1 : -1;
-                } else {
-                    // sort lower-row values first when shifting up
-                    return row1 > row2 ? 1 : -1;
-                }
+            // when shifting down, sort higher row-values first
+            if (n > 0) {
+                return row1 < row2 ? 1 : -1;
+            } else {
+                // sort lower-row values first when shifting up
+                return row1 > row2 ? 1 : -1;
             }
         });
 
@@ -3211,25 +3210,22 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         // then do the actual moving and also adjust comments/rowHeight
         // we need to sort it in a way so the shifting does not mess up the structures, 
         // i.e. when shifting down, start from down and go up, when shifting up, vice-versa
-        SortedMap<XSSFComment, Integer> commentsToShift = new TreeMap<>(new Comparator<XSSFComment>() {
-            @Override
-            public int compare(XSSFComment o1, XSSFComment o2) {
-                int column1 = o1.getColumn();
-                int column2 = o2.getColumn();
+        SortedMap<XSSFComment, Integer> commentsToShift = new TreeMap<>((o1, o2) -> {
+            int column1 = o1.getColumn();
+            int column2 = o2.getColumn();
 
-                if (column1 == column2) {
-                    // ordering is not important when row is equal, but don't return zero to still 
-                    // get multiple comments per row into the map
-                    return o1.hashCode() - o2.hashCode();
-                }
+            if (column1 == column2) {
+                // ordering is not important when row is equal, but don't return zero to still
+                // get multiple comments per row into the map
+                return o1.hashCode() - o2.hashCode();
+            }
 
-                // when shifting down, sort higher row-values first
-                if (n > 0) {
-                    return column1 < column2 ? 1 : -1;
-                } else {
-                    // sort lower-row values first when shifting up
-                    return column1 > column2 ? 1 : -1;
-                }
+            // when shifting down, sort higher row-values first
+            if (n > 0) {
+                return column1 < column2 ? 1 : -1;
+            } else {
+                // sort lower-row values first when shifting up
+                return column1 > column2 ? 1 : -1;
             }
         });
 
@@ -4096,7 +4092,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * Creates a new Table, and associates it with this Sheet.
      *
      * @param tableArea
-     *            the area that the table should cover, should not be {@null}
+     *            the area that the table should cover, should not be null
      * @return the created table
      * @since 4.0.0
      */
@@ -4421,18 +4417,15 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
                     + "defined source sheet " + sourceSheet.getSheetName() + ".");
         }
 
-        return createPivotTable(position, sourceSheet, new PivotTableReferenceConfigurator() {
-            @Override
-            public void configureReference(CTWorksheetSource wsSource) {
-                final String[] firstCell = source.getFirstCell().getCellRefParts();
-                final String firstRow = firstCell[1];
-                final String firstCol = firstCell[2];
-                final String[] lastCell = source.getLastCell().getCellRefParts();
-                final String lastRow = lastCell[1];
-                final String lastCol = lastCell[2];
-                final String ref = firstCol+firstRow+':'+lastCol+lastRow; //or just source.formatAsString()
-                wsSource.setRef(ref);
-            }
+        return createPivotTable(position, sourceSheet, wsSource -> {
+            final String[] firstCell = source.getFirstCell().getCellRefParts();
+            final String firstRow = firstCell[1];
+            final String firstCol = firstCell[2];
+            final String[] lastCell = source.getLastCell().getCellRefParts();
+            final String lastRow = lastCell[1];
+            final String lastCol = lastCell[2];
+            final String ref = firstCol+firstRow+':'+lastCol+lastRow; //or just source.formatAsString()
+            wsSource.setRef(ref);
         });
     }
 
@@ -4494,12 +4487,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
                     + "defined source sheet " + sourceSheet.getSheetName() + ".");
         }
 
-        return createPivotTable(position, sourceSheet, new PivotTableReferenceConfigurator() {
-            @Override
-            public void configureReference(CTWorksheetSource wsSource) {
-                wsSource.setName(source.getNameName());
-            }
-        });
+        return createPivotTable(position, sourceSheet, wsSource -> wsSource.setName(source.getNameName()));
     }
 
     /**
@@ -4523,12 +4511,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      */
     @Beta
     public XSSFPivotTable createPivotTable(final Table source, CellReference position) {
-        return createPivotTable(position, getWorkbook().getSheet(source.getSheetName()), new PivotTableReferenceConfigurator() {
-            @Override
-            public void configureReference(CTWorksheetSource wsSource) {
-                wsSource.setName(source.getName());
-            }
-        });
+        return createPivotTable(position, getWorkbook().getSheet(source.getSheetName()), wsSource -> wsSource.setName(source.getName()));
     }
 
     /**
@@ -4621,8 +4604,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
 
     /**
      *  when a cell with a 'master' shared formula is removed,  the next cell in the range becomes the master
+     * @param cell The cell that is removed
+     * @param evalWb BaseXSSFEvaluationWorkbook in use, if one exists
      */
-    protected void onDeleteFormula(XSSFCell cell){
+    protected void onDeleteFormula(XSSFCell cell, BaseXSSFEvaluationWorkbook evalWb){
 
         CTCellFormula f = cell.getCTCell().getF();
         if (f != null && f.getT() == STCellFormulaType.SHARED && f.isSetRef() && f.getStringValue() != null) {
@@ -4634,9 +4619,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
                     XSSFRow row = getRow(i);
                     if(row != null) for(int j = cell.getColumnIndex(); j <= ref.getLastColumn(); j++){
                         XSSFCell nextCell = row.getCell(j);
-                        if(nextCell != null && nextCell != cell){
+                        if(nextCell != null && nextCell != cell && nextCell.getCellType() == CellType.FORMULA){
                             CTCellFormula nextF = nextCell.getCTCell().getF();
-                            nextF.setStringValue(nextCell.getCellFormula());
+                            nextF.setStringValue(nextCell.getCellFormula(evalWb));
                             CellRangeAddress nextRef = new CellRangeAddress(
                                     nextCell.getRowIndex(), ref.getLastRow(),
                                     nextCell.getColumnIndex(), ref.getLastColumn());

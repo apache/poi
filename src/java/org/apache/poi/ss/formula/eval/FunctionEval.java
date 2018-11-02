@@ -115,7 +115,7 @@ public final class FunctionEval {
         // 47: DVAR
         retval[48] = TextFunction.TEXT;
         // 49: LINEST
-        // 50: TREND
+        retval[50] = new Trend();
         // 51: LOGEST
         // 52: GROWTH
 
@@ -243,7 +243,8 @@ public final class FunctionEval {
 
         // 247: DB
         // 252: FEQUENCY
-        
+        retval[252] = Frequency.instance;
+
         retval[FunctionID.EXTERNAL_FUNC] = null; // ExternalFunction is a FreeRefFunction, nominally 255
 
         retval[261] = new Errortype();
