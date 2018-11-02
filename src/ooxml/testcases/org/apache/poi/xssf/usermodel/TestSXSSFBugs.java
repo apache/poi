@@ -21,7 +21,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Date;
 
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
@@ -34,6 +37,9 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFITestDataProvider;
+import org.apache.poi.xssf.streaming.SXSSFCell;
+import org.apache.poi.xssf.streaming.SXSSFRow;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -165,5 +171,46 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
         // formula value cell
         CellRangeAddress range = new CellRangeAddress(rowIndex, rowIndex, colIndex, colIndex);
         sheet.setArrayFormula(col1Value, range);
+    }
+
+    @Test
+    @Ignore("takes too long for the normal test run")
+    public void test62872() throws Exception {
+        final int COLUMN_COUNT = 300;
+        final int ROW_COUNT = 600000;
+        final int TEN_MINUTES = 1000*60*10;
+
+        SXSSFWorkbook workbook = new SXSSFWorkbook(100);
+        workbook.setCompressTempFiles(true);
+        SXSSFSheet sheet = workbook.createSheet("RawData");
+
+        SXSSFRow row = sheet.createRow(0);
+        SXSSFCell cell;
+
+        for (int i = 1; i <= COLUMN_COUNT; i++) {
+            cell = row.createCell(i - 1);
+            cell.setCellValue("Column " + i);
+        }
+
+        for (int i = 1; i < ROW_COUNT; i++) {
+            row = sheet.createRow(i);
+            for (int j = 1; j <= COLUMN_COUNT; j++) {
+                cell = row.createCell(j - 1);
+
+                //make some noise
+                cell.setCellValue(new Date(i*TEN_MINUTES+(j*TEN_MINUTES)/COLUMN_COUNT));
+            }
+            i++;
+            // if (i % 1000 == 0)
+            // logger.info("Created Row " + i);
+        }
+
+        try (FileOutputStream out = new FileOutputStream(File.createTempFile("test62872", ".xlsx"))) {
+            workbook.write(out);
+            workbook.dispose();
+            workbook.close();
+            out.flush();
+        }
+        // logger.info("File written!");
     }
 }
