@@ -41,6 +41,7 @@ import org.junit.runners.Suite;
     TestQuotientFunctionsFromSpreadsheet.class,
     TestReptFunctionsFromSpreadsheet.class,
     TestRomanFunctionsFromSpreadsheet.class,
+    TestTrendFunctionsFromSpreadsheet.class,
     TestWeekNumFunctionsFromSpreadsheet.class,
     TestWeekNumFunctionsFromSpreadsheet2013.class
 })
