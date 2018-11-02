@@ -18,6 +18,7 @@
 package org.apache.poi.hwmf.record;
 
 import static org.apache.poi.hwmf.record.HwmfDraw.boundsToString;
+import static org.apache.poi.hwmf.record.HwmfDraw.normalizeBounds;
 import static org.apache.poi.hwmf.record.HwmfDraw.pointToString;
 import static org.apache.poi.hwmf.record.HwmfDraw.readBounds;
 import static org.apache.poi.hwmf.record.HwmfDraw.readPointS;
@@ -398,6 +399,7 @@ public class HwmfWindowing {
         
         @Override
         public void applyObject(HwmfGraphics ctx) {
+            ctx.setClip(normalizeBounds(bounds), HwmfRegionMode.RGN_DIFF, false);
         }
 
         @Override

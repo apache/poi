@@ -18,6 +18,7 @@
 package org.apache.poi.hemf.record.emf;
 
 import static org.apache.poi.hwmf.record.HwmfDraw.boundsToString;
+import static org.apache.poi.hwmf.record.HwmfDraw.normalizeBounds;
 
 import java.awt.Shape;
 import java.awt.geom.Arc2D;
@@ -660,7 +661,7 @@ public class HemfDraw {
 
         @Override
         public void draw(HemfGraphics ctx) {
-            ctx.draw(path -> path.append(bounds, false), FillDrawStyle.FILL_DRAW);
+            ctx.draw(path -> path.append(normalizeBounds(bounds), false), FillDrawStyle.FILL_DRAW);
         }
     }
 
@@ -1127,8 +1128,9 @@ public class HemfDraw {
     }
 
     static long readDimensionInt(LittleEndianInputStream leis, Dimension2D dimension) {
-        final double width = leis.readUInt();
-        final double height = leis.readUInt();
+        // although the spec says "use unsigned ints", there are examples out there using signed ints
+        final double width = leis.readInt();
+        final double height = leis.readInt();
         dimension.setSize(width, height);
         return 2*LittleEndianConsts.INT_SIZE;
     }

@@ -126,7 +126,7 @@ public class HemfHeader implements HemfRecord {
                 ", bytes: " + bytes +
                 ", records: " + records +
                 ", handles: " + handles +
-                ", description: '" + description + "'" +
+                ", description: '" + (description == null ? "" : description) + "'" +
                 ", nPalEntries: " + nPalEntries +
                 ", hasExtension1: " + hasExtension1 +
                 ", cbPixelFormat: " + cbPixelFormat +

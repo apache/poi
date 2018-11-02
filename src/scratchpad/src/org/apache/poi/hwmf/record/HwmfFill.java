@@ -498,7 +498,7 @@ public class HwmfFill {
             prop.setRasterOp(rasterOperation);
             if (bitmap.isValid()) {
                 ctx.drawImage(getImage(), srcBounds, dstBounds);
-            } else {
+            } else if (!dstBounds.isEmpty()) {
                 BufferedImage bi = new BufferedImage((int)dstBounds.getWidth(), (int)dstBounds.getHeight(), BufferedImage.TYPE_INT_ARGB);
                 ctx.drawImage(bi, dstBounds, dstBounds);
             }

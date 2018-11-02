@@ -369,6 +369,21 @@ public class HwmfFont implements FontInfo {
         return 5*LittleEndianConsts.SHORT_SIZE+8*LittleEndianConsts.BYTE_SIZE+readBytes;
     }
 
+    public void initDefaults() {
+        height = -12;
+        width = 0;
+        escapement = 0;
+        weight = 400;
+        italic = false;
+        underline = false;
+        strikeOut = false;
+        charSet = FontCharset.ANSI;
+        outPrecision = WmfOutPrecision.OUT_DEFAULT_PRECIS;
+        quality = WmfFontQuality.ANTIALIASED_QUALITY;
+        pitchAndFamily = FontFamily.FF_DONTCARE.getFlag() | (FontPitch.DEFAULT.getNativeId() << 6);
+        facename = "SansSerif";
+    }
+
     public int getHeight() {
         return height;
     }
@@ -479,7 +494,7 @@ public class HwmfFont implements FontInfo {
                 ", charset: '"+charSet+"'"+
                 ", outPrecision: '"+outPrecision+"'"+
                 ", clipPrecision: '"+clipPrecision+"'"+
-                ", qualtiy: '"+quality+"'"+
+                ", quality: '"+quality+"'"+
                 ", pitch: '"+getPitch()+"'"+
                 ", family: '"+getFamily()+"'"+
                 ", facename: '"+facename+"'"+

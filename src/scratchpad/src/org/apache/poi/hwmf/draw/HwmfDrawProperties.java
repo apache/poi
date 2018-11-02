@@ -93,6 +93,8 @@ public class HwmfDrawProperties {
         textVAlignAsian = HwmfTextVerticalAlignment.TOP;
         rasterOp = HwmfTernaryRasterOp.PATCOPY;
         clip = null;
+        font = new HwmfFont();
+        font.initDefaults();
     }
     
     public HwmfDrawProperties(HwmfDrawProperties other) {

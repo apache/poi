@@ -45,9 +45,11 @@ import org.apache.poi.util.RecordFormatException;
  */
 public class HwmfBitmapDib {
 
+    private static final POILogger logger = POILogFactory.getLogger(HwmfBitmapDib.class);
+    private static final int BMP_HEADER_SIZE = 14;
     private static final int MAX_RECORD_LENGTH = HwmfPicture.MAX_RECORD_LENGTH;
 
-    public static enum BitCount {
+    public enum BitCount {
         /**
          * The image SHOULD be in either JPEG or PNG format. <6> Neither of these formats includes
          *  a color table, so this value specifies that no color table is present. See [JFIF] and [RFC2083]
@@ -129,7 +131,7 @@ public class HwmfBitmapDib {
         }
     }
 
-    public static enum Compression {
+    public enum Compression {
         /**
          * The bitmap is in uncompressed red green blue (RGB) format that is not compressed
          * and does not use color masks.
@@ -198,9 +200,7 @@ public class HwmfBitmapDib {
         }
     }
 
-    private final static POILogger logger = POILogFactory.getLogger(HwmfBitmapDib.class);
-    private static final int BMP_HEADER_SIZE = 14;
-    
+
     private int headerSize;
     private int headerWidth;
     private int headerHeight;
@@ -406,7 +406,27 @@ public class HwmfBitmapDib {
     }
 
     public boolean isValid() {
-        return (imageData != null);
+        // the recordsize ended before the image data
+        if (imageData == null) {
+            return false;
+        }
+
+        // ignore all black mono-brushes
+        if (this.headerBitCount == BitCount.BI_BITCOUNT_1) {
+            if (colorTable == null) {
+                return false;
+            }
+
+            for (Color c : colorTable) {
+                if (!Color.BLACK.equals(c)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        return true;
     }
 
     public InputStream getBMPStream() {
@@ -446,6 +466,24 @@ public class HwmfBitmapDib {
             logger.log(POILogger.ERROR, "invalid bitmap data - returning placeholder image");
             return getPlaceholder();
         }
+    }
+
+    @Override
+    public String toString() {
+        return
+            "{ headerSize: " + headerSize +
+            ", width: " + headerWidth +
+            ", height: " + headerHeight +
+            ", planes: " + headerPlanes +
+            ", bitCount: '" + headerBitCount + "'" +
+            ", compression: '" + headerCompression + "'" +
+            ", imageSize: " + headerImageSize +
+            ", xPelsPerMeter: " + headerXPelsPerMeter +
+            ", yPelsPerMeter: " + headerYPelsPerMeter +
+            ", colorUsed: " + headerColorUsed +
+            ", colorImportant: " + headerColorImportant +
+            ", imageSize: " + (imageData == null ? 0 : imageData.length) +
+            "}";
     }
 
     protected BufferedImage getPlaceholder() {

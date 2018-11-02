@@ -763,5 +763,15 @@ public class HwmfDraw {
         return "{ w: "+dim.getWidth()+", h: "+dim.getHeight()+" }";
     }
 
+    @Internal
+    public static Rectangle2D normalizeBounds(Rectangle2D bounds) {
+        return (bounds.getWidth() >= 0 && bounds.getHeight() >= 0) ? bounds
+                : new Rectangle2D.Double(
+                bounds.getWidth() >= 0 ? bounds.getMinX() : bounds.getMaxX(),
+                bounds.getHeight() >= 0 ? bounds.getMinY() : bounds.getMaxY(),
+                Math.abs(bounds.getWidth()),
+                Math.abs(bounds.getHeight())
+        );
+    }
 
 }
