@@ -1006,7 +1006,10 @@ public interface Sheet extends Iterable<Row> {
 
     /**
      * Sets array formula to specified region for result.
-     *
+     * <p>
+     * Note if there are shared formulas this will invalidate any 
+     * {@link FormulaEvaluator} instances based on this workbook
+     *</p>
      * @param formula text representation of the formula
      * @param range Region of array formula for result.
      * @return the {@link CellRange} of cells affected by this change

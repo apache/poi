@@ -25,6 +25,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -192,14 +195,14 @@ public final class TestColumnHelper {
     }
 
     @Test
-    public void testAddCleanColIntoColsExactOverlap() throws Exception {
+    public void testAddCleanColIntoColsExactOverlap() {
         CTCols cols = createHiddenAndBestFitColsWithHelper(1, 1, 1, 1);
         assertEquals(1, cols.sizeOfColArray());
         assertMinMaxHiddenBestFit(cols, 0, 1, 1, true, true);
     }
 
     @Test
-    public void testAddCleanColIntoColsOverlapsOverhangingBothSides() throws Exception {
+    public void testAddCleanColIntoColsOverlapsOverhangingBothSides() {
         CTCols cols = createHiddenAndBestFitColsWithHelper(2, 2, 1, 3);
         assertEquals(3, cols.sizeOfColArray());
         assertMinMaxHiddenBestFit(cols, 0, 1, 1, false, true);
@@ -208,7 +211,7 @@ public final class TestColumnHelper {
     }
 
     @Test
-    public void testAddCleanColIntoColsOverlapsCompletelyNested() throws Exception {
+    public void testAddCleanColIntoColsOverlapsCompletelyNested() {
         CTCols cols = createHiddenAndBestFitColsWithHelper(1, 3, 2, 2);
         assertEquals(3, cols.sizeOfColArray());
         assertMinMaxHiddenBestFit(cols, 0, 1, 1, true, false);
@@ -217,7 +220,7 @@ public final class TestColumnHelper {
     }
 
     @Test
-    public void testAddCleanColIntoColsNewOverlapsOverhangingLeftNotRightExactRight() throws Exception {
+    public void testAddCleanColIntoColsNewOverlapsOverhangingLeftNotRightExactRight() {
         CTCols cols = createHiddenAndBestFitColsWithHelper(2, 3, 1, 3);
         assertEquals(2, cols.sizeOfColArray());
         assertMinMaxHiddenBestFit(cols, 0, 1, 1, false, true);
@@ -225,7 +228,7 @@ public final class TestColumnHelper {
     }
 
     @Test
-    public void testAddCleanColIntoColsNewOverlapsOverhangingRightNotLeftExactLeft() throws Exception {
+    public void testAddCleanColIntoColsNewOverlapsOverhangingRightNotLeftExactLeft() {
         CTCols cols = createHiddenAndBestFitColsWithHelper(1, 2, 1, 3);
         assertEquals(2, cols.sizeOfColArray());
         assertMinMaxHiddenBestFit(cols, 0, 1, 2, true, true);
@@ -233,7 +236,7 @@ public final class TestColumnHelper {
     }
 
     @Test
-    public void testAddCleanColIntoColsNewOverlapsOverhangingLeftNotRight() throws Exception {
+    public void testAddCleanColIntoColsNewOverlapsOverhangingLeftNotRight() {
         CTCols cols = createHiddenAndBestFitColsWithHelper(2, 3, 1, 2);
         assertEquals(3, cols.sizeOfColArray());
         assertMinMaxHiddenBestFit(cols, 0, 1, 1, false, true);
@@ -242,7 +245,7 @@ public final class TestColumnHelper {
     }
 
     @Test
-    public void testAddCleanColIntoColsNewOverlapsOverhangingRightNotLeft() throws Exception {
+    public void testAddCleanColIntoColsNewOverlapsOverhangingRightNotLeft() {
         CTCols cols = createHiddenAndBestFitColsWithHelper(1, 2, 2, 3);
         assertEquals(3, cols.sizeOfColArray());
         assertMinMaxHiddenBestFit(cols, 0, 1, 1, true, false);
@@ -401,5 +404,37 @@ public final class TestColumnHelper {
             }
         }
         return count;
+    }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testColumnsCollapsed() {
+        Workbook wb = new XSSFWorkbook();
+        Sheet sheet = wb.createSheet("test");
+        Row row = sheet.createRow(0);
+        row.createCell(0);
+        row.createCell(1);
+        row.createCell(2);
+
+        sheet.setColumnWidth(0, 10);
+        sheet.setColumnWidth(1, 10);
+        sheet.setColumnWidth(2, 10);
+
+        sheet.groupColumn(0, 1);
+        sheet.setColumnGroupCollapsed(0, true);
+
+        CTCols ctCols = ((XSSFSheet) sheet).getCTWorksheet().getColsArray()[0];
+        assertEquals(3, ctCols.sizeOfColArray());
+        assertTrue(ctCols.getColArray(0).isSetCollapsed());
+        assertTrue(ctCols.getColArray(1).isSetCollapsed());
+        assertTrue(ctCols.getColArray(2).isSetCollapsed());
+
+        ColumnHelper helper = new ColumnHelper(CTWorksheet.Factory.newInstance());
+        helper.setColumnAttributes(ctCols.getColArray(1), ctCols.getColArray(2));
+
+        ctCols = ((XSSFSheet) sheet).getCTWorksheet().getColsArray()[0];
+        assertTrue(ctCols.getColArray(0).isSetCollapsed());
+        assertTrue(ctCols.getColArray(1).isSetCollapsed());
+        assertTrue(ctCols.getColArray(2).isSetCollapsed());
     }
 }

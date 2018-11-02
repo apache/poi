@@ -75,33 +75,25 @@ import org.apache.poi.util.LittleEndian;
  * @author Sergey Vladimirov (vlsergey at gmail dot com)
  */
 @Beta
-public final class HWPFLister
-{
-    private static HWPFDocumentCore loadDoc( File docFile ) throws IOException
-    {
+public final class HWPFLister {
+    private static HWPFDocumentCore loadDoc( File docFile ) throws IOException {
         try (final FileInputStream istream = new FileInputStream( docFile )) {
             return loadDoc( istream );
         }
     }
 
     private static HWPFDocumentCore loadDoc( InputStream inputStream )
-            throws IOException
-    {
-        final POIFSFileSystem poifsFileSystem = HWPFDocumentCore.verifyAndBuildPOIFS( inputStream );
-        try
-        {
+            throws IOException {
+        final POIFSFileSystem poifsFileSystem = HWPFDocumentCore.verifyAndBuildPOIFS( inputStream );        // NOSONAR
+        try {
             return new HWPFDocument( poifsFileSystem );
-        }
-        catch ( OldWordFileFormatException exc )
-        {
+        } catch ( OldWordFileFormatException exc ) {
             return new HWPFOldDocument( poifsFileSystem );
         }
     }
 
-    public static void main( String[] args ) throws Exception
-    {
-        if ( args.length == 0 )
-        {
+    public static void main( String[] args ) throws Exception {
+        if ( args.length == 0 ) {
             System.err.println( "Use:" );
             System.err.println( "\tHWPFLister <filename>\n" + "\t\t[--dop]\n"
                     + "\t\t[--textPieces] [--textPiecesText]\n"
@@ -140,8 +132,7 @@ public final class HWPFLister
 
         boolean writereadback = false;
 
-        for ( String arg : Arrays.asList( args ).subList( 1, args.length ) )
-        {
+        for ( String arg : Arrays.asList( args ).subList( 1, args.length ) ) {
             if ( "--dop".equals( arg ) )
                 outputDop = true;
 
@@ -190,17 +181,14 @@ public final class HWPFLister
         if ( writereadback )
             doc = writeOutAndReadBack( doc );
 
-        HWPFDocumentCore original;
-        {
-            System.setProperty( "org.apache.poi.hwpf.preserveBinTables",
-                    Boolean.TRUE.toString() );
-            System.setProperty( "org.apache.poi.hwpf.preserveTextTable",
-                    Boolean.TRUE.toString() );
+        System.setProperty( "org.apache.poi.hwpf.preserveBinTables",
+                Boolean.TRUE.toString() );
+        System.setProperty( "org.apache.poi.hwpf.preserveTextTable",
+                Boolean.TRUE.toString() );
 
-            original = loadDoc( new File( args[0] ) );
-            if ( writereadback )
-                original = writeOutAndReadBack( original );
-        }
+        HWPFDocumentCore original = loadDoc( new File( args[0] ) );
+        if ( writereadback )
+            original = writeOutAndReadBack( original );
 
         HWPFLister listerOriginal = new HWPFLister( original );
         HWPFLister listerRebuilded = new HWPFLister( doc );
@@ -211,20 +199,17 @@ public final class HWPFLister
         System.out.println( "== FIB (original) ==" );
         listerOriginal.dumpFIB();
 
-        if ( outputDop )
-        {
+        if ( outputDop ) {
             System.out.println( "== Document properties ==" );
             listerOriginal.dumpDop();
         }
 
-        if ( outputTextPieces )
-        {
+        if ( outputTextPieces ) {
             System.out.println( "== Text pieces (original) ==" );
             listerOriginal.dumpTextPieces( outputTextPiecesText );
         }
 
-        if ( outputChpx )
-        {
+        if ( outputChpx ) {
             System.out.println( "== CHPX (original) ==" );
             listerOriginal.dumpChpx( outputChpxProperties, outputChpxSprms );
 
@@ -232,8 +217,7 @@ public final class HWPFLister
             listerRebuilded.dumpChpx( outputChpxProperties, outputChpxSprms );
         }
 
-        if ( outputPapx )
-        {
+        if ( outputPapx ) {
             System.out.println( "== PAPX (original) ==" );
             listerOriginal.dumpPapx( outputPapxProperties, outputPapxSprms );
 
@@ -241,8 +225,7 @@ public final class HWPFLister
             listerRebuilded.dumpPapx( outputPapxProperties, outputPapxSprms );
         }
 
-        if ( outputParagraphs )
-        {
+        if ( outputParagraphs ) {
             System.out.println( "== Text paragraphs (original) ==" );
             listerRebuilded.dumpParagraphs( true );
 
@@ -250,56 +233,47 @@ public final class HWPFLister
             listerRebuilded.dumpParagraphsDom( outputParagraphsText );
         }
 
-        if ( outputBookmarks )
-        {
+        if ( outputBookmarks ) {
             System.out.println( "== BOOKMARKS (rebuilded) ==" );
             listerRebuilded.dumpBookmarks();
         }
 
-        if ( outputEscher )
-        {
+        if ( outputEscher ) {
             System.out.println( "== ESCHER PROPERTIES (rebuilded) ==" );
             listerRebuilded.dumpEscher();
         }
 
-        if ( outputFields )
-        {
+        if ( outputFields ) {
             System.out.println( "== FIELDS (rebuilded) ==" );
             listerRebuilded.dumpFields();
         }
 
-        if ( outputOfficeDrawings )
-        {
+        if ( outputOfficeDrawings ) {
             System.out.println( "== OFFICE DRAWINGS (rebuilded) ==" );
             listerRebuilded.dumpOfficeDrawings();
         }
 
-        if ( outputPictures )
-        {
+        if ( outputPictures ) {
             System.out.println( "== PICTURES (rebuilded) ==" );
             listerRebuilded.dumpPictures();
         }
 
-        if ( outputStyles )
-        {
+        if ( outputStyles ) {
             System.out.println( "== STYLES (rebuilded) ==" );
             listerRebuilded.dumpStyles();
         }
     }
 
     private static HWPFDocumentCore writeOutAndReadBack(
-            HWPFDocumentCore original )
-    {
-        try
-        {
+            HWPFDocumentCore original ) {
+        try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream( 4096 );
             original.write( baos );
             ByteArrayInputStream bais = new ByteArrayInputStream(
                     baos.toByteArray() );
             return loadDoc( bais );
         }
-        catch ( IOException e )
-        {
+        catch ( IOException e ) {
             throw new RuntimeException( e );
         }
     }
@@ -308,82 +282,67 @@ public final class HWPFLister
 
     private LinkedHashMap<Integer, String> paragraphs;
 
-    public HWPFLister( HWPFDocumentCore doc )
-    {
+    public HWPFLister( HWPFDocumentCore doc ) {
         _doc = doc;
 
         buildParagraphs();
     }
 
-    private void buildParagraphs()
-    {
+    private void buildParagraphs() {
         paragraphs = new LinkedHashMap<>();
 
         StringBuilder part = new StringBuilder();
         String text = _doc.getDocumentText();
-        for ( int charIndex = 0; charIndex < text.length(); charIndex++ )
-        {
+        for ( int charIndex = 0; charIndex < text.length(); charIndex++ ) {
             char c = text.charAt( charIndex );
             part.append( c );
-            if ( c == 13 || c == 7 || c == 12 )
-            {
+            if ( c == 13 || c == 7 || c == 12 ) {
                 paragraphs.put( Integer.valueOf( charIndex ), part.toString() );
                 part.setLength( 0 );
             }
         }
     }
 
-    private void dumpBookmarks()
-    {
-        if ( !( _doc instanceof HWPFDocument ) )
-        {
+    private void dumpBookmarks() {
+        if ( !( _doc instanceof HWPFDocument ) ) {
             System.out.println( "Word 95 not supported so far" );
             return;
         }
 
         HWPFDocument document = (HWPFDocument) _doc;
         Bookmarks bookmarks = document.getBookmarks();
-        for ( int b = 0; b < bookmarks.getBookmarksCount(); b++ )
-        {
+        for ( int b = 0; b < bookmarks.getBookmarksCount(); b++ ) {
             Bookmark bookmark = bookmarks.getBookmark( b );
             System.out.println( "[" + bookmark.getStart() + "; "
                     + bookmark.getEnd() + "): " + bookmark.getName() );
         }
     }
 
-    public void dumpChpx( boolean withProperties, boolean withSprms )
-    {
-        for ( CHPX chpx : _doc.getCharacterTable().getTextRuns() )
-        {
+    public void dumpChpx( boolean withProperties, boolean withSprms ) {
+        for ( CHPX chpx : _doc.getCharacterTable().getTextRuns() ) {
             System.out.println( chpx );
 
-            if ( withProperties )
-            {
+            if ( withProperties ) {
                 System.out.println( chpx.getCharacterProperties(
                         _doc.getStyleSheet(), (short) StyleSheet.NIL_STYLE ) );
             }
 
-            if ( withSprms )
-            {
+            if ( withSprms ) {
                 SprmIterator sprmIt = new SprmIterator( chpx.getGrpprl(), 0 );
-                while ( sprmIt.hasNext() )
-                {
+                while ( sprmIt.hasNext() ) {
                     SprmOperation sprm = sprmIt.next();
                     System.out.println( "\t" + sprm);
                 }
             }
 
             String text = new Range( chpx.getStart(), chpx.getEnd(),
-                    _doc.getOverallRange() )
-            {
-                public String toString()
-                {
+                    _doc.getOverallRange() ) {
+                public String toString() {
                     return "CHPX range (" + super.toString() + ")";
                 }
             }.text();
             StringBuilder stringBuilder = new StringBuilder();
-            for ( char c : text.toCharArray() )
-            {
+            for ( char c : text.toCharArray() ) {
                 if ( c < 30 )
                     stringBuilder.append("\\0x").append(Integer.toHexString(c));
                 else
@@ -393,10 +352,8 @@ public final class HWPFLister
         }
     }
 
-    private void dumpDop()
-    {
-        if ( !( _doc instanceof HWPFDocument ) )
-        {
+    private void dumpDop() {
+        if ( !( _doc instanceof HWPFDocument ) ) {
             System.out.println( "Word 95 not supported so far" );
             return;
         }
@@ -404,10 +361,8 @@ public final class HWPFLister
         System.out.println( ( (HWPFDocument) _doc ).getDocProperties() );
     }
 
-    private void dumpEscher()
-    {
-        if ( _doc instanceof HWPFOldDocument )
-        {
+    private void dumpEscher() {
+        if ( _doc instanceof HWPFOldDocument ) {
             System.out.println( "Word 95 not supported so far" );
             return;
         }
@@ -415,46 +370,38 @@ public final class HWPFLister
         System.out.println( ( (HWPFDocument) _doc ).getEscherRecordHolder() );
     }
 
-    public void dumpFIB()
-    {
+    public void dumpFIB() {
         FileInformationBlock fib = _doc.getFileInformationBlock();
         System.out.println( fib );
 
     }
 
-    private void dumpFields()
-    {
-        if ( !( _doc instanceof HWPFDocument ) )
-        {
+    private void dumpFields() {
+        if ( !( _doc instanceof HWPFDocument ) ) {
             System.out.println( "Word 95 not supported so far" );
             return;
         }
 
         HWPFDocument document = (HWPFDocument) _doc;
 
-        for ( FieldsDocumentPart part : FieldsDocumentPart.values() )
-        {
+        for ( FieldsDocumentPart part : FieldsDocumentPart.values() ) {
             System.out.println( "=== Document part: " + part + " ===" );
-            for ( Field field : document.getFields().getFields( part ) )
-            {
+            for ( Field field : document.getFields().getFields( part ) ) {
                 System.out.println( field );
             }
         }
     }
 
-    public void dumpFileSystem() throws Exception
-    {
+    public void dumpFileSystem() throws Exception {
         System.out.println( dumpFileSystem( _doc.getDirectory() ) );
     }
 
-    private String dumpFileSystem( DirectoryEntry directory )
-    {
+    private String dumpFileSystem( DirectoryEntry directory ) {
         StringBuilder result = new StringBuilder();
         result.append( "+ " );
         result.append( directory.getName() );
         for ( Iterator<Entry> iterator = directory.getEntries(); iterator
-                .hasNext(); )
-        {
+                .hasNext(); ) {
             Entry entry = iterator.next();
             String entryToString = "\n" + dumpFileSystem( entry );
             entryToString = entryToString.replaceAll( "\n", "\n+---" );
@@ -464,50 +411,41 @@ public final class HWPFLister
         return result.toString();
     }
 
-    private String dumpFileSystem( Entry entry )
-    {
+    private String dumpFileSystem( Entry entry ) {
         if ( entry instanceof DirectoryEntry )
             return dumpFileSystem( (DirectoryEntry) entry );
 
         return entry.getName();
     }
 
-    private void dumpOfficeDrawings()
-    {
-        if ( !( _doc instanceof HWPFDocument ) )
-        {
+    private void dumpOfficeDrawings() {
+        if ( !( _doc instanceof HWPFDocument ) ) {
             System.out.println( "Word 95 not supported so far" );
             return;
         }
 
         HWPFDocument document = (HWPFDocument) _doc;
 
-        if ( document.getOfficeDrawingsHeaders() != null )
-        {
+        if ( document.getOfficeDrawingsHeaders() != null ) {
             System.out.println( "=== Document part: HEADER ===" );
             for ( OfficeDrawing officeDrawing : document
-                    .getOfficeDrawingsHeaders().getOfficeDrawings() )
-            {
+                    .getOfficeDrawingsHeaders().getOfficeDrawings() ) {
                 System.out.println( officeDrawing );
             }
         }
 
-        if ( document.getOfficeDrawingsHeaders() != null )
-        {
+        if ( document.getOfficeDrawingsHeaders() != null ) {
             System.out.println( "=== Document part: MAIN ===" );
             for ( OfficeDrawing officeDrawing : document
-                    .getOfficeDrawingsMain().getOfficeDrawings() )
-            {
+                    .getOfficeDrawingsMain().getOfficeDrawings() ) {
                 System.out.println( officeDrawing );
             }
         }
     }
 
     public void dumpPapx( boolean withProperties, boolean withSprms )
-            throws Exception
-    {
-        if ( _doc instanceof HWPFDocument )
-        {
+            throws Exception {
+        if ( _doc instanceof HWPFDocument ) {
             System.out.println( "binary PAP pages " );
 
             HWPFDocument doc = (HWPFDocument) _doc;
@@ -521,8 +459,7 @@ public final class HWPFLister
             List<PAPX> papxs = new ArrayList<>();
 
             int length = binTable.length();
-            for ( int x = 0; x < length; x++ )
-            {
+            for ( int x = 0; x < length; x++ ) {
                 GenericPropertyNode node = binTable.getProperty( x );
 
                 int pageNum = LittleEndian.getInt( node.getBytes() );
@@ -535,12 +472,10 @@ public final class HWPFLister
 
                 System.out.println( "* PFKP: " + pfkp );
 
-                for ( PAPX papx : pfkp.getPAPXs() )
-                {
+                for ( PAPX papx : pfkp.getPAPXs() ) {
                     System.out.println( "** " + papx );
                     papxs.add( papx );
-                    if ( papx != null && withSprms )
-                    {
+                    if ( papx != null && withSprms ) {
                         SprmIterator sprmIt = new SprmIterator(
                                 papx.getGrpprl(), 2 );
                         dumpSprms( sprmIt, "*** " );
@@ -551,11 +486,9 @@ public final class HWPFLister
 
             Collections.sort( papxs );
             System.out.println( "* Sorted by END" );
-            for ( PAPX papx : papxs )
-            {
+            for ( PAPX papx : papxs ) {
                 System.out.println( "** " + papx );
-                if ( papx != null && withSprms )
-                {
+                if ( papx != null && withSprms ) {
                     SprmIterator sprmIt = new SprmIterator( papx.getGrpprl(), 2 );
                     dumpSprms( sprmIt, "*** " );
                 }
@@ -563,12 +496,10 @@ public final class HWPFLister
         }
 
 
-        for ( PAPX papx : _doc.getParagraphTable().getParagraphs() )
-        {
+        for ( PAPX papx : _doc.getParagraphTable().getParagraphs() ) {
             System.out.println( papx );
 
-            if ( withProperties )
-            {
+            if ( withProperties ) {
                 Paragraph paragraph = Paragraph.newParagraph( _doc.getOverallRange(), papx );
                 System.out.println( paragraph.getProps() );
             }
@@ -578,23 +509,18 @@ public final class HWPFLister
         }
     }
 
-    public void dumpParagraphs( boolean dumpAssotiatedPapx )
-    {
-        for ( Map.Entry<Integer, String> entry : paragraphs.entrySet() )
-        {
+    public void dumpParagraphs( boolean dumpAssotiatedPapx ) {
+        for ( Map.Entry<Integer, String> entry : paragraphs.entrySet() ) {
             Integer endOfParagraphCharOffset = entry.getKey();
             System.out.println( "[...; " + ( endOfParagraphCharOffset + 1 )
                     + "): " + entry.getValue() );
 
-            if ( dumpAssotiatedPapx )
-            {
+            if ( dumpAssotiatedPapx ) {
                 boolean hasAssotiatedPapx = false;
-                for ( PAPX papx : _doc.getParagraphTable().getParagraphs() )
-                {
+                for ( PAPX papx : _doc.getParagraphTable().getParagraphs() ) {
                     if ( papx.getStart() <= endOfParagraphCharOffset.intValue()
                             && endOfParagraphCharOffset.intValue() < papx
-                                    .getEnd() )
-                    {
+                                    .getEnd() ) {
                         hasAssotiatedPapx = true;
                         System.out.println( "* " + papx );
 
@@ -603,8 +529,7 @@ public final class HWPFLister
                         dumpSprms( sprmIt, "** " );
                     }
                 }
-                if ( !hasAssotiatedPapx )
-                {
+                if ( !hasAssotiatedPapx ) {
                     System.out.println( "* "
                             + "NO PAPX ASSOTIATED WITH PARAGRAPH!" );
                 }
@@ -612,20 +537,16 @@ public final class HWPFLister
         }
     }
 
-    protected void dumpSprms( SprmIterator sprmIt, String linePrefix )
-    {
-        while ( sprmIt.hasNext() )
-        {
+    protected void dumpSprms( SprmIterator sprmIt, String linePrefix ) {
+        while ( sprmIt.hasNext() ) {
             SprmOperation sprm = sprmIt.next();
             System.out.println( linePrefix + sprm);
         }
     }
 
-    public void dumpParagraphsDom( boolean withText )
-    {
+    public void dumpParagraphsDom( boolean withText ) {
         Range range = _doc.getOverallRange();
-        for ( int p = 0; p < range.numParagraphs(); p++ )
-        {
+        for ( int p = 0; p < range.numParagraphs(); p++ ) {
             Paragraph paragraph = range.getParagraph( p );
             System.out.println( p + ":\t" + paragraph);
 
@@ -634,33 +555,27 @@ public final class HWPFLister
         }
     }
 
-    private void dumpPictures()
-    {
-        if ( _doc instanceof HWPFOldDocument )
-        {
+    private void dumpPictures() {
+        if ( _doc instanceof HWPFOldDocument ) {
             System.out.println( "Word 95 not supported so far" );
             return;
         }
 
         List<Picture> allPictures = ( (HWPFDocument) _doc ).getPicturesTable()
                 .getAllPictures();
-        for ( Picture picture : allPictures )
-        {
+        for ( Picture picture : allPictures ) {
             System.out.println(picture);
         }
     }
 
-    private void dumpStyles()
-    {
-        if ( _doc instanceof HWPFOldDocument )
-        {
+    private void dumpStyles() {
+        if ( _doc instanceof HWPFOldDocument ) {
             System.out.println( "Word 95 not supported so far" );
             return;
         }
         HWPFDocument hwpfDocument = (HWPFDocument) _doc;
 
-        for ( int s = 0; s < hwpfDocument.getStyleSheet().numStyles(); s++ )
-        {
+        for ( int s = 0; s < hwpfDocument.getStyleSheet().numStyles(); s++ ) {
             StyleDescription styleDescription = hwpfDocument.getStyleSheet()
                     .getStyleDescription( s );
             if ( styleDescription == null )
@@ -681,32 +596,27 @@ public final class HWPFLister
     }
 
     protected void dumpParagraphLevels( ListTables listTables,
-            ParagraphProperties paragraph )
-    {
-        if ( paragraph.getIlfo() != 0 )
-        {
+            ParagraphProperties paragraph ) {
+        if ( paragraph.getIlfo() != 0 ) {
             final LFO lfo = listTables.getLfo( paragraph.getIlfo() );
             System.out.println( "PAP's LFO: " + lfo );
 
             final LFOData lfoData = listTables.getLfoData( paragraph.getIlfo() );
             System.out.println( "PAP's LFOData: " + lfoData );
 
-            if ( lfo != null )
-            {
+            if ( lfo != null ) {
                 final ListLevel listLevel = listTables.getLevel( lfo.getLsid(),
                         paragraph.getIlvl() );
 
                 System.out.println( "PAP's ListLevel: " + listLevel );
-                if ( listLevel.getGrpprlPapx() != null )
-                {
+                if ( listLevel.getGrpprlPapx() != null ) {
                     System.out.println( "PAP's ListLevel PAPX:" );
                     dumpSprms(
                             new SprmIterator( listLevel.getGrpprlPapx(), 0 ),
                             "* " );
                 }
 
-                if ( listLevel.getGrpprlPapx() != null )
-                {
+                if ( listLevel.getGrpprlPapx() != null ) {
                     System.out.println( "PAP's ListLevel CHPX:" );
                     dumpSprms(
                             new SprmIterator( listLevel.getGrpprlChpx(), 0 ),
@@ -716,14 +626,11 @@ public final class HWPFLister
         }
     }
 
-    public void dumpTextPieces( boolean withText )
-    {
-        for ( TextPiece textPiece : _doc.getTextTable().getTextPieces() )
-        {
+    public void dumpTextPieces( boolean withText ) {
+        for ( TextPiece textPiece : _doc.getTextTable().getTextPieces() ) {
             System.out.println( textPiece );
 
-            if ( withText )
-            {
+            if ( withText ) {
                 System.out.println( "\t" + textPiece.getStringBuilder() );
             }
         }

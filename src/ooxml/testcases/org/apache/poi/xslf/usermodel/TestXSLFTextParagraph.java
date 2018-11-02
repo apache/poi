@@ -47,22 +47,22 @@ public class TestXSLFTextParagraph {
         DrawTextParagraphProxy(XSLFTextParagraph p) {
             super(p);
         }
-        
+
         @Override
         public void breakText(Graphics2D graphics) {
             super.breakText(graphics);
         }
-        
+
         @Override
         public double getWrappingWidth(boolean firstLine, Graphics2D graphics) {
             return super.getWrappingWidth(firstLine, graphics);
         }
-        
+
         public List<DrawTextFragment> getLines() {
             return lines;
         }
     }
-    
+
     @Test
     public void testWrappingWidth() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
@@ -78,11 +78,11 @@ public class TestXSLFTextParagraph {
 
         Rectangle2D anchor = new Rectangle2D.Double(50, 50, 300, 200);
         sh.setAnchor(anchor);
-        
+
         DrawTextParagraphProxy dtp = new DrawTextParagraphProxy(p);
 
-        Double leftInset = sh.getLeftInset();
-        Double rightInset = sh.getRightInset();
+        double leftInset = sh.getLeftInset();
+        double rightInset = sh.getRightInset();
         assertEquals(7.2, leftInset, 0);
         assertEquals(7.2, rightInset, 0);
 
@@ -142,13 +142,13 @@ public class TestXSLFTextParagraph {
         indent = p.getIndent();
         assertEquals(-72.0, indent, 0);
         expectedWidth = anchor.getWidth() - leftInset - rightInset;
-        assertEquals(280.0, expectedWidth, 0); // 300 - 10 - 10 
+        assertEquals(280.0, expectedWidth, 0); // 300 - 10 - 10
         assertEquals(expectedWidth, dtp.getWrappingWidth(true, null), 0); // first line is NOT indented
         // other lines are indented by leftMargin (the value of indent is not used)
         expectedWidth = anchor.getWidth() - leftInset - rightInset - leftMargin;
-        assertEquals(244.0, expectedWidth, 0); // 300 - 10 - 10 - 36 
+        assertEquals(244.0, expectedWidth, 0); // 300 - 10 - 10 - 36
         assertEquals(expectedWidth, dtp.getWrappingWidth(false, null), 0);
-        
+
         ppt.close();
      }
 
@@ -294,13 +294,13 @@ public class TestXSLFTextParagraph {
         assertEquals(-20.0, p.getBulletFontSize(), 0);
 
         assertEquals(72.0, p.getDefaultTabSize(), 0);
-        
+
         assertNull(p.getIndent());
         p.setIndent(72.0);
         assertEquals(72.0, p.getIndent(), 0);
         p.setIndent(-1d); // the value of -1.0 resets to the defaults (not any more ...)
         assertEquals(-1d, p.getIndent(), 0);
-        p.setIndent(null); 
+        p.setIndent(null);
         assertNull(p.getIndent());
 
         assertEquals(0.0, p.getLeftMargin(), 0);

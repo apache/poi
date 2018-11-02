@@ -291,6 +291,8 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 * @param in
 	 *            The InputStream to read the package from
 	 * @return A PackageBase object
+	 *
+	 * @throws InvalidFormatException
 	 */
 	public static OPCPackage open(InputStream in) throws InvalidFormatException,
 			IOException {

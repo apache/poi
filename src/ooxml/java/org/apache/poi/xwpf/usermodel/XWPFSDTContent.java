@@ -40,21 +40,27 @@ public class XWPFSDTContent implements ISDTContent {
 
     // private final IBody part;
     // private final XWPFDocument document;
-    private List<XWPFParagraph> paragraphs = new ArrayList<>();
-    private List<XWPFTable> tables = new ArrayList<>();
-    private List<XWPFRun> runs = new ArrayList<>();
-    private List<XWPFSDT> contentControls = new ArrayList<>();
+    // private List<XWPFParagraph> paragraphs = new ArrayList<>();
+    // private List<XWPFTable> tables = new ArrayList<>();
+    // private List<XWPFRun> runs = new ArrayList<>();
+    // private List<XWPFSDT> contentControls = new ArrayList<>();
     private List<ISDTContents> bodyElements = new ArrayList<>();
 
     public XWPFSDTContent(CTSdtContentRun sdtRun, IBody part, IRunBody parent) {
+        if (sdtRun == null) {
+            return;
+        }
         for (CTR ctr : sdtRun.getRArray()) {
             XWPFRun run = new XWPFRun(ctr, parent);
-            runs.add(run);
+            // runs.add(run);
             bodyElements.add(run);
         }
     }
 
     public XWPFSDTContent(CTSdtContentBlock block, IBody part, IRunBody parent) {
+        if (block == null) {
+            return;
+        }
         XmlCursor cursor = block.newCursor();
         cursor.selectPath("./*");
         while (cursor.toNextSelection()) {
@@ -62,24 +68,25 @@ public class XWPFSDTContent implements ISDTContent {
             if (o instanceof CTP) {
                 XWPFParagraph p = new XWPFParagraph((CTP) o, part);
                 bodyElements.add(p);
-                paragraphs.add(p);
+                // paragraphs.add(p);
             } else if (o instanceof CTTbl) {
                 XWPFTable t = new XWPFTable((CTTbl) o, part);
                 bodyElements.add(t);
-                tables.add(t);
+                // tables.add(t);
             } else if (o instanceof CTSdtBlock) {
                 XWPFSDT c = new XWPFSDT(((CTSdtBlock) o), part);
                 bodyElements.add(c);
-                contentControls.add(c);
+                // contentControls.add(c);
             } else if (o instanceof CTR) {
                 XWPFRun run = new XWPFRun((CTR) o, parent);
-                runs.add(run);
+                // runs.add(run);
                 bodyElements.add(run);
             }
         }
         cursor.dispose();
     }
 
+    @Override
     public String getText() {
         StringBuilder text = new StringBuilder();
         boolean addNewLine = false;
@@ -130,6 +137,7 @@ public class XWPFSDTContent implements ISDTContent {
         }
     }
 
+    @Override
     public String toString() {
         return getText();
     }

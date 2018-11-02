@@ -21,7 +21,10 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
@@ -33,7 +36,7 @@ import org.apache.poi.xdgf.usermodel.shape.ShapeRenderer;
 
 /**
  * Converts a Visio diagram to a PNG file.
- * 
+ *
  * As more elements and styles are added/supported the output will get
  * better, but it's very rough right now.
  */
@@ -91,11 +94,8 @@ public class VsdxToPng {
 
         graphics.dispose();
 
-        OutputStream out = new FileOutputStream(outFile);
-        try {
+        try (FileOutputStream out = new FileOutputStream(outFile)) {
             ImageIO.write(img, "png", out);
-        } finally {
-            out.close();
         }
     }
 
@@ -127,8 +127,9 @@ public class VsdxToPng {
             renderer = new ShapeDebuggerRenderer();
         }
 
-        XmlVisioDocument doc = new XmlVisioDocument(new FileInputStream(
-                inFilename));
-        renderToPng(doc, pngDir, 2000 / 11.0, renderer);
+        try (FileInputStream is = new FileInputStream(inFilename)) {
+            XmlVisioDocument doc = new XmlVisioDocument(is);
+            renderToPng(doc, pngDir, 2000 / 11.0, renderer);
+        }
     }
 }

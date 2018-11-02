@@ -148,6 +148,19 @@ public final class TestXWPFSDT {
         assertEquals("", sdts.get(0).getTitle());
     }
 
+    @Test
+    public void test62859() throws IOException {
+        //this doesn't test the exact code path for this issue, but
+        //it does test for a related issue, and the fix fixes both.
+        //We should try to add the actual triggering document
+        //to our test suite.
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug62859.docx");
+        List<XWPFAbstractSDT> sdts = extractAllSDTs(doc);
+        assertEquals(1, sdts.size());
+        assertEquals("", sdts.get(0).getTag());
+        assertEquals("", sdts.get(0).getTitle());
+    }
+
     private List<XWPFAbstractSDT> extractAllSDTs(XWPFDocument doc) {
 
         List<XWPFAbstractSDT> sdts = new ArrayList<>();

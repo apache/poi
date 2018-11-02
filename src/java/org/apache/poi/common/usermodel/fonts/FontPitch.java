@@ -59,6 +59,11 @@ public enum FontPitch {
      * Combine pitch and family to native id
      * 
      * @see <a href="https://msdn.microsoft.com/en-us/library/dd145037.aspx">LOGFONT structure</a>
+     *
+     * @param pitch The pitch-value, cannot be null
+     * @param family The family-value, cannot be null
+     *
+     * @return The resulting combined byte-value with pitch and family encoded into one byte
      */
     public static byte getNativeId(FontPitch pitch, FontFamily family) {
         return (byte)(pitch.getNativeId() | (family.getFlag() << 4));
@@ -66,9 +71,12 @@ public enum FontPitch {
 
     /**
      * Get FontPitch from native id
+     *
+     * @param pitchAndFamily The combined byte value for pitch and family
+     *
+     * @return The resulting FontPitch enumeration value
      */
     public static FontPitch valueOfPitchFamily(byte pitchAndFamily) {
         return valueOf(pitchAndFamily & 0x3);
     }
 }
-

@@ -17,18 +17,23 @@
 
 package org.apache.poi.xssf.util;
 
-import junit.framework.TestCase;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.util.CellReference;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
-
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetData;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
+
+import junit.framework.TestCase;
 
 /**
  * Mixed utilities for testing memory usage in XSSF
@@ -37,7 +42,7 @@ import java.util.ArrayList;
  */
 public class MemoryUsage extends TestCase {
     private static final int NUM_COLUMNS = 255;
-    
+
     private static void printMemoryUsage(String msg) {
         System.out.println(" Memory (" + msg + "): " + Runtime.getRuntime().totalMemory()/(1024*1024) + "MB");
     }
@@ -62,8 +67,11 @@ public class MemoryUsage extends TestCase {
                 Row row = sh.createRow(i);
                 for(int j=0; j < numCols; j++){
                     Cell cell = row.createCell(j);
-                    if(j % 2 == 0) cell.setCellValue(j);
-                    else cell.setCellValue(new CellReference(j, i).formatAsString());
+                    if(j % 2 == 0) {
+                        cell.setCellValue(j);
+                    } else {
+                        cell.setCellValue(new CellReference(j, i).formatAsString());
+                    }
                     cnt++;
                 }
             }
@@ -78,7 +86,7 @@ public class MemoryUsage extends TestCase {
 
     /**
      * Generate a spreadsheet who's all cell values are numbers.
-     * The data is generated until OutOfMemoryError. 
+     * The data is generated until OutOfMemoryError.
      * <p>
      * as compared to {@link #mixedSpreadsheet(org.apache.poi.ss.usermodel.Workbook, int)},
      * this method does not set string values and, hence, does not involve the Shared Strings Table.
@@ -161,7 +169,7 @@ public class MemoryUsage extends TestCase {
                 rows.add(r);
             }
         } catch (OutOfMemoryError er) {
-            System.out.println("Failed at row=" + i);
+            System.out.println("Failed at row=" + i + " from " + rows.size() + " kept.");
         } catch (final Exception e) {
             System.out.println("Unable to reach an OutOfMemoryError");
             System.out.println(e.getClass().getName() + ": " + e.getMessage());
@@ -190,7 +198,7 @@ public class MemoryUsage extends TestCase {
                 rows.add(r);
             }
         } catch (OutOfMemoryError er) {
-            System.out.println("Failed at row=" + i);
+            System.out.println("Failed at row=" + i + " from " + rows.size() + " kept.");
         } catch (final Exception e) {
             System.out.println("Unable to reach an OutOfMemoryError");
             System.out.println(e.getClass().getName() + ": " + e.getMessage());

@@ -14,17 +14,18 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+package org.apache.poi.ss.formula.functions;
 
-package org.apache.poi.openxml4j.exceptions;
+import java.util.Collection;
 
-@SuppressWarnings("serial")
-public final class InvalidFormatException extends OpenXML4JException {
+import org.junit.runners.Parameterized.Parameters;
 
-	public InvalidFormatException(String message){
-		super(message);
-	}
-
-    public InvalidFormatException(String message, Throwable cause){
-        super(message,cause);
+/**
+* Tests TREND() as loaded from a test data spreadsheet.
+*/
+public class TestTrendFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
+    @Parameters(name="{0}")
+    public static Collection<Object[]> data() throws Exception {
+        return data(TestTrendFunctionsFromSpreadsheet.class, "Trend.xls");
     }
 }

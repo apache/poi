@@ -29,6 +29,14 @@ import org.apache.poi.openxml4j.opc.ZipPackage;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 public class XSSFWorkbookFactory extends WorkbookFactory {
+    /**
+     * Create a new empty Workbook
+     *
+     * @return The created workbook
+     */
+    public static XSSFWorkbook createWorkbook() {
+        return new XSSFWorkbook();
+    }
 
     /**
      * Creates a XSSFWorkbook from the given OOXML Package.
@@ -42,7 +50,6 @@ public class XSSFWorkbookFactory extends WorkbookFactory {
      *  @return The created Workbook
      *
      *  @throws IOException if an error occurs while reading the data
-     * @throws InvalidFormatException
      */
     public static XSSFWorkbook create(OPCPackage pkg) throws IOException {
         return createWorkbook(pkg);
@@ -59,7 +66,6 @@ public class XSSFWorkbookFactory extends WorkbookFactory {
      *  @return The created Workbook
      *
      *  @throws IOException if an error occurs while reading the data
-     * @throws InvalidFormatException
      */
     public static XSSFWorkbook createWorkbook(ZipPackage pkg) throws IOException {
         return createWorkbook((OPCPackage)pkg);
@@ -76,7 +82,6 @@ public class XSSFWorkbookFactory extends WorkbookFactory {
      *  @return The created Workbook
      *
      *  @throws IOException if an error occurs while reading the data
-     * @throws InvalidFormatException
      */
     public static XSSFWorkbook createWorkbook(OPCPackage pkg) throws IOException {
         try {
@@ -122,13 +127,11 @@ public class XSSFWorkbookFactory extends WorkbookFactory {
      * @return The created Workbook
      *
      * @throws IOException if an error occurs while reading the data
-     * @throws InvalidFormatException
+     * @throws InvalidFormatException if the package is not valid.
      */
     @SuppressWarnings("resource")
     public static XSSFWorkbook createWorkbook(InputStream stream) throws IOException, InvalidFormatException {
         OPCPackage pkg = OPCPackage.open(stream);
         return createWorkbook(pkg);
     }
-
-
 }

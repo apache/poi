@@ -420,7 +420,7 @@ public final class CellUtil {
     }
 
     /**
-     * Utility method that returns the named short value form the given map.
+     * Utility method that returns the named short value from the given map.
      *
      * @param properties map of named properties (String -> Object)
      * @param name property name
@@ -436,7 +436,7 @@ public final class CellUtil {
     }
 
     /**
-     * Utility method that returns the named int value form the given map.
+     * Utility method that returns the named int value from the given map.
      *
      * @param properties map of named properties (String -> Object)
      * @param name property name
@@ -452,7 +452,7 @@ public final class CellUtil {
     }
     
     /**
-     * Utility method that returns the named BorderStyle value form the given map.
+     * Utility method that returns the named BorderStyle value from the given map.
      *
      * @param properties map of named properties (String -> Object)
      * @param name property name
@@ -483,7 +483,7 @@ public final class CellUtil {
     }
     
     /**
-     * Utility method that returns the named FillPatternType value form the given map.
+     * Utility method that returns the named FillPatternType value from the given map.
      *
      * @param properties map of named properties (String -> Object)
      * @param name property name
@@ -515,7 +515,7 @@ public final class CellUtil {
     }
     
     /**
-     * Utility method that returns the named HorizontalAlignment value form the given map.
+     * Utility method that returns the named HorizontalAlignment value from the given map.
      *
      * @param properties map of named properties (String -> Object)
      * @param name property name
@@ -547,7 +547,7 @@ public final class CellUtil {
     }
     
     /**
-     * Utility method that returns the named VerticalAlignment value form the given map.
+     * Utility method that returns the named VerticalAlignment value from the given map.
      *
      * @param properties map of named properties (String -> Object)
      * @param name property name
@@ -579,7 +579,7 @@ public final class CellUtil {
     }
 
     /**
-     * Utility method that returns the named boolean value form the given map.
+     * Utility method that returns the named boolean value from the given map.
      *
      * @param properties map of properties (String -> Object)
      * @param name property name
@@ -594,7 +594,7 @@ public final class CellUtil {
         }
         return false;
     }
-    
+
     /**
      * Utility method that puts the given value to the given map.
      *

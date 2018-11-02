@@ -39,22 +39,22 @@ import org.apache.poi.util.NotImplemented;
 public class SXSSFRow implements Row, Comparable<SXSSFRow>
 {
     private static final Boolean UNDEFINED = null;
-    
+
     private final SXSSFSheet _sheet; // parent sheet
     private final SortedMap<Integer, SXSSFCell> _cells = new TreeMap<>();
     private short _style = -1; // index of cell style in style table
     private short _height = -1; // row height in twips (1/20 point)
     private boolean _zHeight; // row zero-height (this is somehow different than being hidden)
     private int _outlineLevel;   // Outlining level of the row, when outlining is on
-    // use Boolean to have a tri-state for on/off/undefined 
+    // use Boolean to have a tri-state for on/off/undefined
     private Boolean _hidden = UNDEFINED;
     private Boolean _collapsed = UNDEFINED;
-    
+
     public SXSSFRow(SXSSFSheet sheet)
     {
         _sheet=sheet;
     }
-    
+
     public Iterator<Cell> allCellsIterator()
     {
         return new CellIterator();
@@ -71,7 +71,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
     void setOutlineLevel(int level){
         _outlineLevel = level;
     }
-    
+
     /**
      * get row hidden state: Hidden (true), Unhidden (false), Undefined (null)
      *
@@ -235,7 +235,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
     public SXSSFCell getCell(int cellnum, MissingCellPolicy policy)
     {
         checkBounds(cellnum);
-        
+
         final SXSSFCell cell = _cells.get(cellnum);
         switch (policy) {
             case RETURN_NULL_AND_BLANK:
@@ -345,10 +345,11 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
     @Override
     public void setHeightInPoints(float height)
     {
-        if(height==-1)
+        if(height==-1) {
             _height=-1;
-        else
+        } else {
             _height=(short)(height*20);
+        }
     }
 
     /**
@@ -375,7 +376,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
     {
         return (float)(_height==-1?getSheet().getDefaultRowHeightInPoints():_height/20.0);
     }
-    
+
     /**
      * Is this row formatted? Most aren't, but some rows
      *  do have whole-row styles. For those that do, you
@@ -392,16 +393,18 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      */
     @Override
     public CellStyle getRowStyle() {
-       if(!isFormatted()) return null;
-       
+       if(!isFormatted()) {
+        return null;
+    }
+
        return getSheet().getWorkbook().getCellStyleAt(_style);
     }
-    
+
     @Internal
     /*package*/ int getRowStyleIndex() {
         return _style;
     }
-    
+
     /**
      * Applies a whole-row cell styling to the row.
      * The row style can be cleared by passing in <code>null</code>.
@@ -440,7 +443,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
     /**
      * Create an iterator over the cells from [0, getLastCellNum()).
      * Includes blank cells, excludes empty cells
-     * 
+     *
      * Returns an iterator over all filled cells (created via Row.createCell())
      * Throws ConcurrentModificationException if cells are added, moved, or
      * removed after the iterator is created.
@@ -485,10 +488,11 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
         @Override
         public Cell next() throws NoSuchElementException
         {
-            if (hasNext())
+            if (hasNext()) {
                 return _cells.get(pos++);
-            else
+            } else {
                 throw new NoSuchElementException();
+            }
         }
         @Override
         public void remove()
@@ -496,7 +500,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
             throw new UnsupportedOperationException();
         }
     }
-    
+
     /**
      * Compares two <code>SXSSFRow</code> objects.  Two rows are equal if they belong to the same worksheet and
      * their row indexes are equal.
@@ -524,9 +528,9 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
             throw new IllegalArgumentException("The compared rows must belong to the same sheet");
         }
 
-        Integer thisRow = this.getRowNum();
-        Integer otherRow = other.getRowNum();
-        return thisRow.compareTo(otherRow);
+        int thisRow = this.getRowNum();
+        int otherRow = other.getRowNum();
+        return Integer.compare(thisRow, otherRow);
     }
 
     @Override

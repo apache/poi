@@ -22,8 +22,8 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellCopyPolicy;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -77,7 +77,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
             _cells.put(colI, cell);
             sheet.onReadCell(cell);
         }
-        
+
         if (! row.isSetR()) {
             // Certain file format writers skip the row number
             // Assume no gaps, and give this the next row number
@@ -158,9 +158,9 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
             throw new IllegalArgumentException("The compared rows must belong to the same sheet");
         }
 
-        Integer thisRow = this.getRowNum();
-        Integer otherRow = other.getRowNum();
-        return thisRow.compareTo(otherRow);
+        int thisRow = this.getRowNum();
+        int otherRow = other.getRowNum();
+        return Integer.compare(thisRow, otherRow);
     }
 
     @Override
@@ -245,7 +245,9 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      */
     @Override
     public XSSFCell getCell(int cellnum, MissingCellPolicy policy) {
-        if(cellnum < 0) throw new IllegalArgumentException("Cell index must be >= 0");
+        if(cellnum < 0) {
+            throw new IllegalArgumentException("Cell index must be >= 0");
+        }
 
         // Performance optimization for bug 57840: explicit boxing is slightly faster than auto-unboxing, though may use more memory
         final Integer colI = Integer.valueOf(cellnum); // NOSONAR
@@ -332,8 +334,12 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
     @Override
     public void setHeight(short height) {
         if (height == -1) {
-            if (_row.isSetHt()) _row.unsetHt();
-            if (_row.isSetCustomHeight()) _row.unsetCustomHeight();
+            if (_row.isSetHt()) {
+                _row.unsetHt();
+            }
+            if (_row.isSetCustomHeight()) {
+                _row.unsetCustomHeight();
+            }
         } else {
             _row.setHt((double) height / 20);
             _row.setCustomHeight(true);
@@ -425,8 +431,10 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      */
     @Override
     public XSSFCellStyle getRowStyle() {
-       if(!isFormatted()) return null;
-       
+       if(!isFormatted()) {
+        return null;
+    }
+
        StylesTable stylesSource = getSheet().getWorkbook().getStylesSource();
        if(stylesSource.getNumCellStyles() > 0) {
            return stylesSource.getStyleAt((int)_row.getS());
@@ -434,7 +442,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
           return null;
        }
     }
-    
+
     /**
      * Applies a whole-row cell styling to the row.
      * If the value is null then the style information is removed,
@@ -449,7 +457,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
            }
         } else {
             StylesTable styleSource = getSheet().getWorkbook().getStylesSource();
-            
+
             XSSFCellStyle xStyle = (XSSFCellStyle)style;
             xStyle.verifyBelongsToStylesSource(styleSource);
 
@@ -458,7 +466,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
             _row.setCustomFormat(true);
         }
     }
-    
+
     /**
      * Remove the Cell from this row.
      *
@@ -502,8 +510,8 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         int i = 0;
         for (XSSFCell xssfCell : _cells.values()) {
             cArray[i] = (CTCell) xssfCell.getCTCell().copy();
-            
-            // we have to copy and re-create the XSSFCell here because the 
+
+            // we have to copy and re-create the XSSFCell here because the
             // elements as otherwise setCArray below invalidates all the columns!
             // see Bug 56170, XMLBeans seems to always release previous objects
             // in the CArray, so we need to provide completely new ones here!
@@ -537,7 +545,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
           }
         setRowNum(rownum);
     }
-    
+
     /**
      * Copy the cells from srcRow to this row
      * If this row is not a blank row, this will merge the two rows, overwriting
@@ -589,7 +597,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
             final int srcRowNum = srcRow.getRowNum();
             final int destRowNum = getRowNum();
             final int rowDifference = destRowNum - srcRowNum;
-            
+
             final FormulaShifter formulaShifter = FormulaShifter.createForRowCopy(sheetIndex, sheetName, srcRowNum, srcRowNum, rowDifference, SpreadsheetVersion.EXCEL2007);
             final XSSFRowShifter rowShifter = new XSSFRowShifter(_sheet);
             rowShifter.updateRowFormulas(this, formulaShifter);
@@ -617,7 +625,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
     public int getOutlineLevel() {
         return _row.getOutlineLevel();
     }
-    
+
     /**
      * Shifts column range [firstShiftColumnIndex-lastShiftColumnIndex] step places to the right.
      * @param firstShiftColumnIndex the column to start shifting
@@ -626,20 +634,23 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      */
     @Override
     public void shiftCellsRight(int firstShiftColumnIndex, int lastShiftColumnIndex, int step) {
-        if(step < 0)
+        if(step < 0) {
             throw new IllegalArgumentException("Shifting step may not be negative ");
-        if(firstShiftColumnIndex > lastShiftColumnIndex)
+        }
+        if(firstShiftColumnIndex > lastShiftColumnIndex) {
             throw new IllegalArgumentException(String.format(LocaleUtil.getUserLocale(),
                     "Incorrect shifting range : %d-%d", firstShiftColumnIndex, lastShiftColumnIndex));
-        for (int columnIndex = lastShiftColumnIndex; columnIndex >= firstShiftColumnIndex; columnIndex--){ // process cells backwards, because of shifting 
+        }
+        for (int columnIndex = lastShiftColumnIndex; columnIndex >= firstShiftColumnIndex; columnIndex--){ // process cells backwards, because of shifting
             shiftCell(columnIndex, step);
         }
         for (int columnIndex = firstShiftColumnIndex; columnIndex <= firstShiftColumnIndex+step-1; columnIndex++)
         {
             _cells.remove(columnIndex);
             XSSFCell targetCell = getCell(columnIndex);
-            if(targetCell != null)
+            if(targetCell != null) {
                 targetCell.getCTCell().set(CTCell.Factory.newInstance());
+            }
         }
     }
     /**
@@ -650,27 +661,32 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      */
     @Override
     public void shiftCellsLeft(int firstShiftColumnIndex, int lastShiftColumnIndex, int step) {
-        if(step < 0)
+        if(step < 0) {
             throw new IllegalArgumentException("Shifting step may not be negative ");
-        if(firstShiftColumnIndex > lastShiftColumnIndex)
+        }
+        if(firstShiftColumnIndex > lastShiftColumnIndex) {
             throw new IllegalArgumentException(String.format(LocaleUtil.getUserLocale(),
                     "Incorrect shifting range : %d-%d", firstShiftColumnIndex, lastShiftColumnIndex));
-        if(firstShiftColumnIndex - step < 0) 
+        }
+        if(firstShiftColumnIndex - step < 0) {
             throw new IllegalStateException("Column index less than zero : " + (Integer.valueOf(firstShiftColumnIndex + step)).toString());
-        for (int columnIndex = firstShiftColumnIndex; columnIndex <= lastShiftColumnIndex; columnIndex++){ 
+        }
+        for (int columnIndex = firstShiftColumnIndex; columnIndex <= lastShiftColumnIndex; columnIndex++){
             shiftCell(columnIndex, -step);
         }
         for (int columnIndex = lastShiftColumnIndex-step+1; columnIndex <= lastShiftColumnIndex; columnIndex++){
             _cells.remove(columnIndex);
             XSSFCell targetCell = getCell(columnIndex);
-            if(targetCell != null)
+            if(targetCell != null) {
                 targetCell.getCTCell().set(CTCell.Factory.newInstance());
+            }
         }
     }
     private void shiftCell(int columnIndex, int step/*pass negative value for left shift*/){
-        if(columnIndex + step < 0) // only for shifting left
+        if(columnIndex + step < 0) {
             throw new IllegalStateException("Column index less than zero : " + (Integer.valueOf(columnIndex + step)).toString());
-        
+        }
+
         XSSFCell currentCell = getCell(columnIndex);
         if(currentCell != null){
             currentCell.setCellNum(columnIndex+step);
@@ -679,8 +695,9 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         else {
             _cells.remove(columnIndex+step);
             XSSFCell targetCell = getCell(columnIndex+step);
-            if(targetCell != null)
+            if(targetCell != null) {
                 targetCell.getCTCell().set(CTCell.Factory.newInstance());
+            }
         }
     }
 }
