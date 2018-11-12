@@ -17,39 +17,29 @@
 
 package org.apache.poi.hemf.record.emf;
 
+import org.apache.poi.hwmf.record.HwmfPenStyle;
 
-import java.io.IOException;
+public class HemfPenStyle extends HwmfPenStyle {
 
-import org.apache.poi.hemf.draw.HemfGraphics;
-import org.apache.poi.hwmf.record.HwmfRecord;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.LittleEndianInputStream;
+    private float[] dashPattern;
 
-@Internal
-public interface HemfRecord {
+    public static HemfPenStyle valueOf(int flag) {
+        HemfPenStyle ps = new HemfPenStyle();
+        ps.flag = flag;
+        return ps;
+    }
 
-    HemfRecordType getEmfRecordType();
+    @Override
+    public float[] getLineDashes() {
+        return (getLineDash() == HwmfLineDash.USERSTYLE) ? dashPattern : super.getLineDashes();
+    }
 
-    /**
-     * Init record from stream
-     *
-     * @param leis the little endian input stream
-     * @param recordSize the size limit for this record
-     * @param recordId the id of the {@link HemfRecordType}
-     *
-     * @return count of processed bytes
-     *
-     * @throws IOException when the inputstream is malformed
-     */
-    long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException;
+    public void setLineDashes(float[] dashPattern) {
+        this.dashPattern = (dashPattern == null) ? null : dashPattern.clone();
+    }
 
-    /**
-     * Draws the record, the default redirects to the parent WMF record drawing
-     * @param ctx the drawing context
-     */
-    default void draw(HemfGraphics ctx) {
-        if (this instanceof HwmfRecord) {
-            ((HwmfRecord) this).draw(ctx);
-        }
+    @Override
+    public HemfPenStyle clone() {
+        return (HemfPenStyle)super.clone();
     }
 }

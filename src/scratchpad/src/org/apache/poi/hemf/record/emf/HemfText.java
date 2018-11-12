@@ -141,14 +141,12 @@ public class HemfText {
                                 dx.add((int) leis.readUInt());
                                 size += LittleEndianConsts.INT_SIZE;
                             }
-                        } else {
-                            // if there are no dx entries, reset the string end
-                            strEnd = (int)recordSize;
                         }
                         if (dx.size() < stringLength) {
                             // invalid dx array
                             dx.clear();
                         }
+                        strEnd = (int)recordSize;
                         break;
                     }
                     default:

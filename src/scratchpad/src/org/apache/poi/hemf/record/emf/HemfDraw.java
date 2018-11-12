@@ -138,20 +138,18 @@ public class HemfDraw {
 
             Point2D pnt[] = { new Point2D.Double(), new Point2D.Double(), new Point2D.Double() };
 
-            // points-1 because of the first point
-            final int pointCnt = hasStartPoint() ? points-2 : points;
-            for (int i=0; i+2<pointCnt; i+=3) {
-                // x (4 bytes): A 32-bit signed integer that defines the horizontal (x) coordinate of the point.
-                // y (4 bytes): A 32-bit signed integer that defines the vertical (y) coordinate of the point.
-                if (i==0) {
-                    if (hasStartPoint()) {
-                        size += readPoint(leis, pnt[0]);
-                        poly.moveTo(pnt[0].getX(), pnt[0].getY());
-                    } else {
-                        poly.moveTo(0, 0);
-                    }
+            int i=0;
+            if (hasStartPoint()) {
+                if (i < points) {
+                    size += readPoint(leis, pnt[0]);
+                    poly.moveTo(pnt[0].getX(), pnt[0].getY());
+                    i++;
                 }
+            } else {
+                poly.moveTo(0, 0);
+            }
 
+            for (; i+2<points; i+=3) {
                 size += readPoint(leis, pnt[0]);
                 size += readPoint(leis, pnt[1]);
                 size += readPoint(leis, pnt[2]);
@@ -758,7 +756,8 @@ public class HemfDraw {
             size += LittleEndianConsts.INT_SIZE;
             Point2D points[] = new Point2D[count];
             for (int i=0; i<count; i++) {
-                 size += readPoint(leis, points[i]);
+                points[i] = new Point2D.Double();
+                size += readPoint(leis, points[i]);
             }
 
             poly = new Path2D.Double(Path2D.WIND_EVEN_ODD, count);
@@ -783,12 +782,14 @@ public class HemfDraw {
                     case 0x04:
                         int mode2 = leis.readUByte();
                         int mode3 = leis.readUByte();
-                        assert(mode2 == 0x04 && mode3 == 0x04);
+                        assert(mode2 == 0x04 && (mode3 == 0x04 || mode3 == 0x05));
                         poly.curveTo(
                             points[i].getX(), points[i].getY(),
                             points[i+1].getX(), points[i+1].getY(),
                             points[i+2].getX(), points[i+2].getY()
                         );
+                        // update mode for closePath handling below
+                        mode = mode3;
                         i+=2;
                         break;
                     // PT_MOVETO

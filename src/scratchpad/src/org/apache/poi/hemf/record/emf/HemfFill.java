@@ -683,33 +683,27 @@ public class HemfFill {
     }
 
     static int readXForm(LittleEndianInputStream leis, AffineTransform xform) {
-        // mapping <java AffineTransform> = <xform>:
+        // mapping <java AffineTransform> = <xform>
+
         // m00 (scaleX) = eM11 (Horizontal scaling component)
-        // m11 (scaleY) = eM22 (Vertical scaling component)
+        double m00 = leis.readFloat();
+
         // m01 (shearX) = eM12 (Horizontal proportionality constant)
+        double m01 = leis.readFloat();
+
         // m10 (shearY) = eM21 (Vertical proportionality constant)
+        double m10 = leis.readFloat();
+
+        // m11 (scaleY) = eM22 (Vertical scaling component)
+        double m11 = leis.readFloat();
+
         // m02 (translateX) = eDx (The horizontal translation component, in logical units.)
+        double m02 = leis.readFloat();
+
         // m12 (translateY) = eDy (The vertical translation component, in logical units.)
+        double m12 = leis.readFloat();
 
-        // A 32-bit floating-point value of the transform matrix.
-        double eM11 = leis.readFloat();
-
-        // A 32-bit floating-point value of the transform matrix.
-        double eM12 = leis.readFloat();
-
-        // A 32-bit floating-point value of the transform matrix.
-        double eM21 = leis.readFloat();
-
-        // A 32-bit floating-point value of the transform matrix.
-        double eM22 = leis.readFloat();
-
-        // A 32-bit floating-point value that contains a horizontal translation component, in logical units.
-        double eDx = leis.readFloat();
-
-        // A 32-bit floating-point value that contains a vertical translation component, in logical units.
-        double eDy = leis.readFloat();
-
-        xform.setTransform(eM11, eM21, eM12, eM22, eDx, eDy);
+        xform.setTransform(m00, m10, m01, m11, m02, m12);
 
         return 6 * LittleEndian.INT_SIZE;
     }

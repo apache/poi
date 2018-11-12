@@ -54,6 +54,8 @@ public class HemfRecordIterator implements Iterator<HemfRecord> {
             return null;
         }
 
+        final int readIndex = stream.getReadIndex();
+
         final long recordId, recordSize;
         try {
             recordId = stream.readUInt();
@@ -65,7 +67,7 @@ public class HemfRecordIterator implements Iterator<HemfRecord> {
 
         HemfRecordType type = HemfRecordType.getById(recordId);
         if (type == null) {
-            throw new RecordFormatException("Undefined record of type:"+recordId);
+            throw new RecordFormatException("Undefined record of type: "+recordId+" at "+Integer.toHexString(readIndex));
         }
         final HemfRecord record = type.constructor.get();
 

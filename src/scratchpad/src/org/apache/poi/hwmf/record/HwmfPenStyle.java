@@ -142,7 +142,7 @@ public class HwmfPenStyle implements Cloneable {
     private static final BitField SUBSECTION_JOIN      = BitFieldFactory.getInstance(0x03000);
     private static final BitField SUBSECTION_GEOMETRIC = BitFieldFactory.getInstance(0x10000);
 
-    private int flag;
+    protected int flag;
     
     public static HwmfPenStyle valueOf(int flag) {
         HwmfPenStyle ps = new HwmfPenStyle();
@@ -161,7 +161,16 @@ public class HwmfPenStyle implements Cloneable {
     public HwmfLineDash getLineDash() {
         return HwmfLineDash.valueOf(SUBSECTION_DASH.getValue(flag));
     }
-    
+
+    /**
+     * Convienence method which should be used instead of accessing {@link HwmfLineDash#dashes}
+     * directly, so an subclass can provide user-style dashes
+     *
+     * @return the dash pattern
+     */
+    public float[] getLineDashes() {
+        return getLineDash().dashes;
+    }
 
     /**
      * The pen sets every other pixel (this style is applicable only for cosmetic pens).
