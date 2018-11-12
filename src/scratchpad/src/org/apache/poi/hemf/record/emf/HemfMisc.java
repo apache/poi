@@ -27,7 +27,9 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hwmf.draw.HwmfDrawProperties;
@@ -443,8 +445,6 @@ public class HemfMisc {
         protected HwmfBrushStyle brushStyle;
         protected HwmfHatchStyle hatchStyle;
 
-        protected int[] styleEntry;
-
         protected final HwmfBitmapDib bitmap = new HwmfBitmapDib();
 
 
@@ -477,7 +477,8 @@ public class HemfMisc {
 
             // A 32-bit unsigned integer that specifies the PenStyle.
             // The value MUST be defined from the PenStyle enumeration table
-            penStyle = HwmfPenStyle.valueOf((int) leis.readUInt());
+            final HemfPenStyle emfPS = HemfPenStyle.valueOf((int) leis.readUInt());
+            penStyle = emfPS;
 
             // A 32-bit unsigned integer that specifies the width of the line drawn by the pen.
             // If the pen type in the PenStyle field is PS_GEOMETRIC, this value is the width in logical
@@ -517,10 +518,14 @@ public class HemfMisc {
             // If the pen type in the PenStyle field is PS_GEOMETRIC, the lengths are specified in logical
             // units; otherwise, the lengths are specified in device units.
 
-            styleEntry = new int[numStyleEntries];
+            float[] dashPattern = new float[numStyleEntries];
 
             for (int i = 0; i < numStyleEntries; i++) {
-                styleEntry[i] = (int) leis.readUInt();
+                dashPattern[i] = (int) leis.readUInt();
+            }
+
+            if (penStyle.getLineDash() == HwmfLineDash.USERSTYLE) {
+                emfPS.setLineDashes(dashPattern);
             }
 
             size += numStyleEntries * LittleEndianConsts.INT_SIZE;
@@ -533,8 +538,11 @@ public class HemfMisc {
         @Override
         public String toString() {
             // TODO: add style entries + bmp
-            return super.toString().replaceFirst("\\{",
-                "{ brushStyle: '"+brushStyle+"', hatchStyle: '"+hatchStyle+"', ");
+            return
+                "{ brushStyle: '"+brushStyle+"'"+
+                ", hatchStyle: '"+hatchStyle+"'"+
+                ", dashPattern: "+ Arrays.toString(penStyle.getLineDashes())+
+                ", "+super.toString().substring(1);
         }
     }
 
@@ -602,7 +610,8 @@ public class HemfMisc {
 
         @Override
         public void draw(HemfGraphics ctx) {
-            AffineTransform tx = ctx.getInitTransform();
+            ctx.updateWindowMapMode();
+            AffineTransform tx = ctx.getTransform();
             tx.concatenate(xForm);
             ctx.setTransform(tx);
         }
@@ -649,30 +658,46 @@ public class HemfMisc {
                 return;
             }
 
+            final AffineTransform tx;
             switch (modifyWorldTransformMode) {
+                case MWT_LEFTMULTIPLY:
+                    tx = ctx.getTransform();
+                    tx.concatenate(adaptXForm(tx));
+                    break;
+                case MWT_RIGHTMULTIPLY:
+                    tx = ctx.getTransform();
+                    tx.preConcatenate(adaptXForm(tx));
+                    break;
                 case MWT_IDENTITY:
-                    ctx.setTransform(ctx.getInitTransform());
+                    ctx.updateWindowMapMode();
+                    tx = ctx.getTransform();
                     break;
-                case MWT_LEFTMULTIPLY: {
-                    AffineTransform tx = new AffineTransform(xForm);
-                    tx.concatenate(ctx.getTransform());
-                    ctx.setTransform(tx);
-                    break;
-                }
-                case MWT_RIGHTMULTIPLY: {
-                    AffineTransform tx = new AffineTransform(xForm);
-                    tx.preConcatenate(ctx.getTransform());
-                    ctx.setTransform(tx);
-                    break;
-                }
                 default:
-                case MWT_SET: {
-                    AffineTransform tx = ctx.getInitTransform();
-                    tx.concatenate(xForm);
-                    ctx.setTransform(tx);
+                case MWT_SET:
+                    ctx.updateWindowMapMode();
+                    tx = ctx.getTransform();
+                    tx.concatenate(adaptXForm(tx));
                     break;
-                }
             }
+            ctx.setTransform(tx);
+        }
+
+        /**
+         * adapt xform depending on the base transformation (... experimental ...)
+         */
+        private AffineTransform adaptXForm(AffineTransform other) {
+            // normalize signed zero
+            Function<Double,Double> nn = (d) -> (d == 0. ? 0. : d);
+            double yDiff = Math.signum(nn.apply(xForm.getTranslateY())) == Math.signum(nn.apply(other.getTranslateY())) ? 1. : -1.;
+            double xDiff = Math.signum(nn.apply(xForm.getTranslateX())) == Math.signum(nn.apply(other.getTranslateX())) ? 1. : -1.;
+            return new AffineTransform(
+                    xForm.getScaleX() == 0 ? 1. : xForm.getScaleX(),
+                    yDiff * xForm.getShearY(),
+                    xDiff * xForm.getShearX(),
+                    xForm.getScaleY() == 0. ? 1. : xForm.getScaleY(),
+                    xForm.getTranslateX(),
+                    xForm.getTranslateY()
+            );
         }
 
         @Override

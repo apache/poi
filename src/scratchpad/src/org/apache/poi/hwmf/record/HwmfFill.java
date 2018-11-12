@@ -499,8 +499,8 @@ public class HwmfFill {
             if (bitmap.isValid()) {
                 ctx.drawImage(getImage(), srcBounds, dstBounds);
             } else if (!dstBounds.isEmpty()) {
-                BufferedImage bi = new BufferedImage((int)dstBounds.getWidth(), (int)dstBounds.getHeight(), BufferedImage.TYPE_INT_ARGB);
-                ctx.drawImage(bi, dstBounds, dstBounds);
+                BufferedImage bi = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
+                ctx.drawImage(bi, new Rectangle2D.Double(0,0,100,100), dstBounds);
             }
         }
 

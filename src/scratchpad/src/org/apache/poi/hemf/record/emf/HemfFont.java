@@ -273,15 +273,15 @@ public class HemfFont extends HwmfFont {
 
         // An 8-bit unsigned integer that specifies an italic font if set to 0x01;
         // otherwise, it MUST be set to 0x00.
-        italic = (leis.readUByte() == 0x01);
+        italic = (leis.readUByte() != 0x00);
 
         // An 8-bit unsigned integer that specifies an underlined font if set to 0x01;
         // otherwise, it MUST be set to 0x00.
-        underline = (leis.readUByte() == 0x01);
+        underline = (leis.readUByte() != 0x00);
 
         // An 8-bit unsigned integer that specifies a strikeout font if set to 0x01;
         // otherwise, it MUST be set to 0x00.
-        strikeOut = (leis.readUByte() == 0x01);
+        strikeOut = (leis.readUByte() != 0x00);
 
         // An 8-bit unsigned integer that specifies the set of character glyphs.
         // It MUST be a value in the WMF CharacterSet enumeration.
@@ -441,7 +441,8 @@ public class HemfFont extends HwmfFont {
 
             // A 32-bit unsigned integer that MUST be set to the value 0x08007664.
             int signature = leis.readInt();
-            assert (signature == 0x08007664);
+            // some non-conformant applications don't write the magic code in
+            // assert (signature == 0x08007664);
 
             // A 32-bit unsigned integer that specifies the number of elements in the
             // Values array. It MUST be in the range 0 to 16, inclusive.

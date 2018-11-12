@@ -31,6 +31,7 @@ import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Dimension2D;
+import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -43,6 +44,7 @@ import java.util.NoSuchElementException;
 import java.util.TreeMap;
 
 import org.apache.commons.codec.Charsets;
+import org.apache.poi.common.usermodel.fonts.FontCharset;
 import org.apache.poi.common.usermodel.fonts.FontInfo;
 import org.apache.poi.hwmf.record.HwmfBrushStyle;
 import org.apache.poi.hwmf.record.HwmfFont;
@@ -57,6 +59,7 @@ import org.apache.poi.hwmf.record.HwmfText;
 import org.apache.poi.hwmf.record.HwmfText.WmfExtTextOutOptions;
 import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.DrawFontManager;
+import org.apache.poi.sl.draw.DrawFontManagerDefault;
 import org.apache.poi.util.LocaleUtil;
 
 public class HwmfGraphics {
@@ -152,7 +155,7 @@ public class HwmfGraphics {
         int cap = ps.getLineCap().awtFlag;
         int join = ps.getLineJoin().awtFlag;
         float miterLimit = (float)getProperties().getPenMiterLimit();
-        float dashes[] = ps.getLineDash().dashes;
+        float dashes[] = ps.getLineDashes();
         boolean dashAlt = ps.isAlternateDash();
         // This value is not an integer index into the dash pattern array.
         // Instead, it is a floating-point value that specifies a linear distance.
@@ -370,6 +373,17 @@ public class HwmfGraphics {
     public void drawString(byte[] text, int length, Point2D reference, Dimension2D scale, Rectangle2D clip, WmfExtTextOutOptions opts, List<Integer> dx, boolean isUnicode) {
         final HwmfDrawProperties prop = getProperties();
 
+        final AffineTransform at = graphicsCtx.getTransform();
+        if (at.getScaleX() == 0. || at.getScaleY() == 0.) {
+            return;
+        }
+
+        try {
+            at.createInverse();
+        } catch (NoninvertibleTransformException e) {
+            return;
+        }
+
         HwmfFont font = prop.getFont();
         if (font == null || text == null || text.length == 0) {
             return;
@@ -390,11 +404,19 @@ public class HwmfGraphics {
         }
 
         String textString = new String(text, charset).substring(0,length).trim();
+
         if (textString.isEmpty()) {
             return;
         }
+
+        DrawFontManager fontHandler = DrawFactory.getInstance(graphicsCtx).getFontManager(graphicsCtx);
+        FontInfo fontInfo = fontHandler.getMappedFont(graphicsCtx, font);
+        if (fontInfo.getCharset() == FontCharset.SYMBOL) {
+            textString = DrawFontManagerDefault.mapSymbolChars(textString);
+        }
+
         AttributedString as = new AttributedString(textString);
-        addAttributes(as, font);
+        addAttributes(as, font, fontInfo.getTypeface());
 
         // disabled for the time being, as the results aren't promising
         /*
@@ -473,7 +495,6 @@ public class HwmfGraphics {
         tx.transform(src, dst);
 
         final Shape clipShape = graphicsCtx.getClip();
-        final AffineTransform at = graphicsCtx.getTransform();
         try {
             if (clip != null) {
                 graphicsCtx.translate(-clip.getCenterX(), -clip.getCenterY());
@@ -503,11 +524,8 @@ public class HwmfGraphics {
         }
     }
 
-    private void addAttributes(AttributedString as, HwmfFont font) {
-        DrawFontManager fontHandler = DrawFactory.getInstance(graphicsCtx).getFontManager(graphicsCtx);
-        FontInfo fontInfo = fontHandler.getMappedFont(graphicsCtx, font);
-
-        as.addAttribute(TextAttribute.FAMILY, fontInfo.getTypeface());
+    private void addAttributes(AttributedString as, HwmfFont font, String typeface) {
+        as.addAttribute(TextAttribute.FAMILY, typeface);
         as.addAttribute(TextAttribute.SIZE, getFontHeight(font));
         if (font.isStrikeOut()) {
             as.addAttribute(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON);
@@ -668,5 +686,12 @@ public class HwmfGraphics {
         if (useInitialAT) {
             graphicsCtx.setTransform(at);
         }
+    }
+
+    /**
+     * @return the bounding box
+     */
+    public Rectangle2D getBbox() {
+        return (Rectangle2D)bbox.clone();
     }
 }

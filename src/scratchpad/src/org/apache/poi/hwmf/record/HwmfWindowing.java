@@ -18,6 +18,7 @@
 package org.apache.poi.hwmf.record;
 
 import static org.apache.poi.hwmf.record.HwmfDraw.boundsToString;
+import static org.apache.poi.hwmf.record.HwmfDraw.dimToString;
 import static org.apache.poi.hwmf.record.HwmfDraw.normalizeBounds;
 import static org.apache.poi.hwmf.record.HwmfDraw.pointToString;
 import static org.apache.poi.hwmf.record.HwmfDraw.readBounds;
@@ -30,6 +31,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 
+import org.apache.poi.hwmf.draw.HwmfDrawProperties;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.util.Dimension2DDouble;
 import org.apache.poi.util.LittleEndianConsts;
@@ -56,8 +58,14 @@ public class HwmfWindowing {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            ctx.getProperties().setViewportOrg(origin.getX(), origin.getY());
-            ctx.updateWindowMapMode();
+            final HwmfDrawProperties prop = ctx.getProperties();
+            Rectangle2D old = prop.getViewport();
+            double oldX = (old == null ? 0 : old.getX());
+            double oldY = (old == null ? 0 : old.getY());
+            if (oldX != origin.getX() || oldY != origin.getY()) {
+                prop.setViewportOrg(origin.getX(), origin.getY());
+                ctx.updateWindowMapMode();
+            }
         }
 
         @Override
@@ -91,13 +99,19 @@ public class HwmfWindowing {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            ctx.getProperties().setViewportExt(extents.getWidth(), extents.getHeight());
-            ctx.updateWindowMapMode();
+            final HwmfDrawProperties prop = ctx.getProperties();
+            Rectangle2D old = prop.getViewport();
+            double oldW = (old == null ? 0 : old.getWidth());
+            double oldH = (old == null ? 0 : old.getHeight());
+            if (oldW != extents.getWidth() || oldH != extents.getHeight()) {
+                prop.setViewportExt(extents.getWidth(), extents.getHeight());
+                ctx.updateWindowMapMode();
+            }
         }
 
         @Override
         public String toString() {
-            return "{ width: "+extents.getWidth()+", height: "+extents.getHeight()+" }";
+            return dimToString(extents);
         }
     }
 
@@ -121,10 +135,14 @@ public class HwmfWindowing {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            Rectangle2D viewport = ctx.getProperties().getViewport();
-            double x = (viewport == null) ? 0 : viewport.getX();
-            double y = (viewport == null) ? 0 : viewport.getY();
-            ctx.getProperties().setViewportOrg(x+offset.getX(), y+offset.getY());
+            final HwmfDrawProperties prop = ctx.getProperties();
+            Rectangle2D viewport = prop.getViewport();
+            if (offset.getX() != 0 || offset.getY() != 0) {
+                double x = (viewport == null) ? 0 : viewport.getX();
+                double y = (viewport == null) ? 0 : viewport.getY();
+                prop.setViewportOrg(x + offset.getX(), y + offset.getY());
+                ctx.updateWindowMapMode();
+            }
         }
 
         @Override
@@ -152,8 +170,14 @@ public class HwmfWindowing {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            ctx.getProperties().setWindowOrg(getX(), getY());
-            ctx.updateWindowMapMode();
+            final HwmfDrawProperties prop = ctx.getProperties();
+            final Rectangle2D old = prop.getWindow();
+            double oldX = (old == null ? 0 : old.getX());
+            double oldY = (old == null ? 0 : old.getY());
+            if (oldX != getX() || oldY != getY()) {
+                prop.setWindowOrg(getX(), getY());
+                ctx.updateWindowMapMode();
+            }
         }
 
         public double getY() {
@@ -195,8 +219,14 @@ public class HwmfWindowing {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            ctx.getProperties().setWindowExt(size.getWidth(), size.getHeight());
-            ctx.updateWindowMapMode();
+            final HwmfDrawProperties prop = ctx.getProperties();
+            Rectangle2D old = prop.getWindow();
+            double oldW = (old == null ? 0 : old.getWidth());
+            double oldH = (old == null ? 0 : old.getHeight());
+            if (oldW != size.getWidth() || oldH != size.getHeight()) {
+                prop.setWindowExt(size.getWidth(), size.getHeight());
+                ctx.updateWindowMapMode();
+            }
         }
 
         public Dimension2D getSize() {
@@ -205,7 +235,7 @@ public class HwmfWindowing {
 
         @Override
         public String toString() {
-            return "{ width: "+size.getWidth()+", height: "+size.getHeight()+" }";
+            return dimToString(size);
         }
     }
 
@@ -229,9 +259,12 @@ public class HwmfWindowing {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            Rectangle2D window = ctx.getProperties().getWindow();
-            ctx.getProperties().setWindowOrg(window.getX()+offset.getX(), window.getY()+offset.getY());
-            ctx.updateWindowMapMode();
+            final HwmfDrawProperties prop = ctx.getProperties();
+            Rectangle2D old = prop.getWindow();
+            if (offset.getX() != 0 || offset.getY() != 0) {
+                prop.setWindowOrg(old.getX() + offset.getX(), old.getY() + offset.getY());
+                ctx.updateWindowMapMode();
+            }
         }
 
         @Override
@@ -275,11 +308,14 @@ public class HwmfWindowing {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            Rectangle2D window = ctx.getProperties().getWindow();
-            double width = window.getWidth() * scale.getWidth();
-            double height = window.getHeight() * scale.getHeight();
-            ctx.getProperties().setWindowExt(width, height);
-            ctx.updateWindowMapMode();
+            final HwmfDrawProperties prop = ctx.getProperties();
+            Rectangle2D old = prop.getWindow();
+            if (scale.getWidth() != 1.0 || scale.getHeight() != 1.0) {
+                double width = old.getWidth() * scale.getWidth();
+                double height = old.getHeight() * scale.getHeight();
+                ctx.getProperties().setWindowExt(width, height);
+                ctx.updateWindowMapMode();
+            }
         }
 
         @Override
@@ -325,13 +361,15 @@ public class HwmfWindowing {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            Rectangle2D viewport = ctx.getProperties().getViewport();
-            if (viewport == null) {
-                viewport = ctx.getProperties().getWindow();
+            final HwmfDrawProperties prop = ctx.getProperties();
+            final Rectangle2D old = prop.getViewport() == null ? prop.getWindow() : prop.getViewport();
+
+            if (scale.getWidth() != 1.0 || scale.getHeight() != 1.0) {
+                double width = old.getWidth() * scale.getWidth();
+                double height = old.getHeight() * scale.getHeight();
+                prop.setViewportExt(width, height);
+                ctx.updateWindowMapMode();
             }
-            double width = viewport.getWidth() * scale.getWidth();
-            double height = viewport.getHeight() * scale.getHeight();
-            ctx.getProperties().setViewportExt(width, height);
         }
 
         @Override
