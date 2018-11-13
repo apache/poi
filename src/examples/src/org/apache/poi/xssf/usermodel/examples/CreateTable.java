@@ -36,8 +36,8 @@ public class CreateTable {
 
     public static void main(String[] args) throws IOException {
 
-        try (Workbook wb = new XSSFWorkbook()) {
-            XSSFSheet sheet = (XSSFSheet) wb.createSheet();
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
 
             // Set which area the table should be placed in
             AreaReference reference = wb.getCreationHelper().createAreaReference(

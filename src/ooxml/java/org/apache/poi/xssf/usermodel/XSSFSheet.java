@@ -4109,18 +4109,17 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         int tableNumber = getPackagePart().getPackage().getPartsByContentType(XSSFRelation.TABLE.getContentType()).size() + 1;
 
         // the id could already be taken after insertion/deletion of different tables
-        outerloop:
-        while(true) {
+        boolean loop = true;
+        while(loop) {
+            loop = false;
             for (PackagePart packagePart : getPackagePart().getPackage().getPartsByContentType(XSSFRelation.TABLE.getContentType())) {
                 String fileName = XSSFRelation.TABLE.getFileName(tableNumber);
                 if(fileName.equals(packagePart.getPartName().getName())) {
                     // duplicate found, increase the number and start iterating again
                     tableNumber++;
-                    continue outerloop;
+                    loop = true;
                 }
             }
-
-            break;
         }
 
         RelationPart rp = createRelationship(XSSFRelation.TABLE, XSSFFactory.getInstance(), tableNumber, false);
