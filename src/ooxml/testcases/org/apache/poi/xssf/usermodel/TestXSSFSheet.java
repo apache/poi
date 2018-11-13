@@ -55,10 +55,7 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.util.CellAddress;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.ss.util.CellUtil;
+import org.apache.poi.ss.util.*;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
@@ -1993,12 +1990,11 @@ public final class TestXSSFSheet extends BaseTestXSheet {
 
     @Test
     public void testGetHeaderFooterProperties() throws IOException {
-         XSSFWorkbook wb = new XSSFWorkbook();
-         XSSFSheet sh = wb.createSheet();
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sh = wb.createSheet();
 
-         XSSFHeaderFooterProperties hfProp = sh.getHeaderFooterProperties();
-         assertNotNull(hfProp);
-
-         wb.close();
+            XSSFHeaderFooterProperties hfProp = sh.getHeaderFooterProperties();
+            assertNotNull(hfProp);
+        }
     }
 }
