@@ -77,10 +77,6 @@ public class CreateTable {
                     }
                 }
             }
-            // Create the columns
-            table.createColumn("Column 1");
-            table.createColumn("Column 2");
-            table.createColumn("Column 3");
 
             // Save
             try (FileOutputStream fileOut = new FileOutputStream("ooxml-table.xlsx")) {
