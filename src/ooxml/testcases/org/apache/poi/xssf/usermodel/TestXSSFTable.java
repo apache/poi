@@ -358,6 +358,7 @@ public final class TestXSSFTable {
                     new CellReference(0, 0), new CellReference(2, 2));
 
             XSSFTable table1 = sheet.createTable(reference1);
+            assertEquals("A1:C3", table1.getCTTable().getRef());
 
             assertEquals(1, table1.getCTTable().getTableColumns().getTableColumnArray(0).getId());
             assertEquals(2, table1.getCTTable().getTableColumns().getTableColumnArray(1).getId());
@@ -369,6 +370,7 @@ public final class TestXSSFTable {
                     new CellReference(10, 10), new CellReference(12, 12));
 
             XSSFTable table2 = sheet.createTable(reference2);
+            assertEquals("K11:M13", table2.getCTTable().getRef());
 
             // these IDs dupplicate those from table1 and may be cause of https://bz.apache.org/bugzilla/show_bug.cgi?id=62906
             assertEquals(1, table2.getCTTable().getTableColumns().getTableColumnArray(0).getId());
