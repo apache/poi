@@ -372,7 +372,7 @@ public final class TestXSSFTable {
             XSSFTable table2 = sheet.createTable(reference2);
             assertEquals("K11:M13", table2.getCTTable().getRef());
 
-            // these IDs dupplicate those from table1 and may be cause of https://bz.apache.org/bugzilla/show_bug.cgi?id=62906
+            // these IDs duplicate those from table1 and may be cause of https://bz.apache.org/bugzilla/show_bug.cgi?id=62906
             assertEquals(1, table2.getCTTable().getTableColumns().getTableColumnArray(0).getId());
             assertEquals(2, table2.getCTTable().getTableColumns().getTableColumnArray(1).getId());
             assertEquals(3, table2.getCTTable().getTableColumns().getTableColumnArray(2).getId());
