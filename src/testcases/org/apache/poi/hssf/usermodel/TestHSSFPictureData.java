@@ -19,6 +19,7 @@ package org.apache.poi.hssf.usermodel;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -27,7 +28,6 @@ import javax.imageio.ImageIO;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 /**
@@ -37,19 +37,19 @@ import org.junit.BeforeClass;
  * @author Yegor Kozlov (yegor at apache dot org)
  * @author Trejkaz (trejkaz at trypticon dot org)
  */
-public final class TestHSSFPictureData extends TestCase {
-    private static boolean cacheBefore = ImageIO.getUseCache();
-
+public final class TestHSSFPictureData extends TestCase{
     @BeforeClass
     public static void setUpClass() {
-        // disable cache to avoid strange errors related to temporary directories in CI-builds
-        ImageIO.setUseCache(false);
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-        // reset image cache to previous state
-        ImageIO.setUseCache(cacheBefore);
+        final String tmpDirProperty = System.getProperty("java.io.tmpdir");
+        if(tmpDirProperty == null || "".equals(tmpDirProperty)) {
+            return;
+        }
+        // ensure that temp-dir exists because ImageIO requires it
+        final File tmpDir = new File(tmpDirProperty);
+        if(!tmpDir.exists() && !tmpDir.mkdirs()) {
+            throw new IllegalStateException("Could not create temporary directory " + tmpDirProperty + ", full path " + tmpDir.getAbsolutePath());
+        }
+        ImageIO.setCacheDirectory(tmpDir);
     }
 
 	public void testPictures() throws IOException {
