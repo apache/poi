@@ -530,20 +530,18 @@ on that machine correctly.
  */
 matrixJob('POI-DSL-Test-Environment') {
     description(
-            '''
-Check installed version of Java/Ant on all build-nodes
+'''Check installed version of Java/Ant on all build-nodes
 
 This job is used to verify which machines actually have the required programs installed.
 
-Unfortunately we often see builds break because of changes/new machines...'''
-    )
+Unfortunately we often see builds break because of changes/new machines...''')
 
     /*throttleConcurrentBuilds {
         maxPerNode(1)
         maxTotal(1)
     }*/
     logRotator {
-        numToKeep(5)
+        numToKeep(1)
         artifactNumToKeep(1)
     }
     axes {
@@ -560,37 +558,54 @@ Unfortunately we often see builds break because of changes/new machines...'''
                 'JDK 11 b23 (early access build) (Windows Only)',
 
                 'JDK 12 (latest)',
-                'JDK 12 b8 (early access build) (Windows Only)'
+                'OpenJDK 12 b18 (early access build)'
         )
-        label('Nodes',
-				'arm1',
-                'beam1','beam2','beam3','beam4','beam5','beam6','beam7','beam8','beam9',
-                'beam10','beam11','beam12','beam13','beam14','beam15','beam16',
-                'H0','H1','H10','H11','H12','H13','H14','H15','H16','H17','H18','H19',
-                'H2','H20','H21','H22','H23','H24','H25','H26','H27','H28','H29',
-                'H3','H30','H31','H32','H33','H34','H35',
-                'H4','H5','H6','H7','H8','H9',
-                'ubuntu-1','ubuntu-2','ubuntu-4','ubuntu-6','ubuntu-eu2','ubuntu-eu3','ubuntu-ppc64le','ubuntu-us1',
-                'windows-2012-1','windows-2012-2','windows-2012-3','windows-2016-1','windows-2016-2','windows-2016-3'
-        )
+        elasticAxis {
+            name('Nodes')
+            labelString('!cloud-slave&&!H15&&!H17&&!H18&&!H24&&!ubuntu-4&&!H21&&!H35&&!websites1&&!couchdb&&!plc4x&&!ppc64le')
+            ignoreOffline(true)
+        }
     }
     steps {
-        /*if (poijob.windows) {
-            context.batchFile(cmd)
-        } else {*/
-        shell('''
-which javac
+        conditionalSteps {
+            condition {
+                fileExists('/usr', BaseDir.WORKSPACE)
+                runner('DontRun')
+                steps {
+                    shell(
+'''which javac
 javac -version
 echo '<?xml version="1.0"?><project name="POI Build" default="test"><target name="test"><echo>Using Ant: ${ant.version} from ${ant.home}</echo></target></project>' > build.xml
 ''')
-        //}
-        ant {
-            antInstallation(defaultAnt)
-        }
-    }
+                    ant {
+                        antInstallation(defaultAnt)
+                    }
 
-    publishers {
-        mailer('centic@poi.apache.org' /* defaultEmail */, false, false)
+                }
+            }
+        }
+        conditionalSteps {
+            condition {
+                fileExists('c:\\windows', BaseDir.WORKSPACE)
+                runner('DontRun')
+                steps {
+                    batchFile {
+                        command(
+'''@echo off
+echo .
+where javac.exe
+echo .
+javac -version
+echo .
+echo ^<?xml version=^"1.0^"?^>^<project name=^"POI Build^" default=^"test^"^>^<target name=^"test^"^>^<echo^>Using Ant: ${ant.version} from ${ant.home}^</echo^>^</target^>^</project^> > build.xml
+''')
+                    }
+                    ant {
+                        antInstallation(defaultAnt + ' (Windows)')
+                    }
+                }
+            }
+        }
     }
 }
 
