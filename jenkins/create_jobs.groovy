@@ -377,7 +377,7 @@ poijobs.each { poijob ->
                     }
                 } else if (poijob.noScratchpad) {
                     ant {
-                        targets(['clean', 'compile-all'] + (poijob.properties ?: []))
+                        targets(['clean', 'compile'] + (poijob.properties ?: []))
                         prop('coverage.enabled', true)
                         antInstallation(antRT)
                     }

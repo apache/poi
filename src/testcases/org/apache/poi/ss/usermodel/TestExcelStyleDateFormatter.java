@@ -18,6 +18,8 @@
 package org.apache.poi.ss.usermodel;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.text.DateFormatSymbols;
 import java.text.FieldPosition;
@@ -75,6 +77,8 @@ public class TestExcelStyleDateFormatter {
 
                 int actIdx = (Locale.CHINESE.equals(locale) && jreVersion >= 12) ? 1 : 0;
 
+                assertNotNull(msg, result);
+                assertTrue(msg, result.length() > actIdx);
                 assertEquals(msg, expected.charAt(month), result.charAt(actIdx));
                 month++;
             }
