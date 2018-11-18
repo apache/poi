@@ -1969,7 +1969,7 @@ under the License.
         </sequential>
     </macrodef>
 
-    <target name="jar" depends="compile, compile-version, -manifest" description="Creates jar files for distribution">
+    <target name="jar" depends="compile, compile-version, compile-ooxml-lite, -manifest" description="Creates jar files for distribution">
         <maven-jar src="${main.output.dir}"/>
         <maven-jar src="${scratchpad.output.dir}"/>
         <maven-jar src="${ooxml.output.dir}"/>
