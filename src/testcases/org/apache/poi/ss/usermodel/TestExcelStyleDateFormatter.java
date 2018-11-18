@@ -75,7 +75,7 @@ public class TestExcelStyleDateFormatter {
                 String msg = "Failed testDates for locale " + locale + ", provider: " + provider +
                         " and date " + d + ", having: " + result;
 
-                int actIdx = (Locale.CHINESE.equals(locale) && jreVersion >= 12) ? 1 : 0;
+                int actIdx = localeIndex(locale);
 
                 assertNotNull(msg, result);
                 assertTrue(msg, result.length() > actIdx);
@@ -83,6 +83,18 @@ public class TestExcelStyleDateFormatter {
                 month++;
             }
         }
+    }
+
+    /**
+     * Depending on the JRE version, the provider setting and the locale, a different result
+     * is expected and selected via an index
+     */
+    private int localeIndex(Locale locale) {
+        final String provider = System.getProperty("java.locale.providers");
+        return jreVersion < 12 ||
+            !locale.equals (Locale.CHINESE) ||
+            (provider != null && provider.startsWith("JRE"))
+            ? 0 : 1;
     }
 
     private Date parseDate(String dateStr) {
@@ -110,9 +122,10 @@ public class TestExcelStyleDateFormatter {
         testMap.put(new Locale("ru", "RU"),
             "\u044f\u0444\u043c\u0430\u043c\u0438\u0438\u0430\u0441\u043e\u043d\u0434");
 
-        testMap.put(Locale.CHINESE, jreVersion < 12
-            ? "\u4e00\u4e8c\u4e09\u56db\u4e94\u516d\u4e03\u516b\u4e5d\u5341\u5341\u5341"
-            : "123456789111");
+        testMap.put(Locale.CHINESE, new String[]{
+            "\u4e00\u4e8c\u4e09\u56db\u4e94\u516d\u4e03\u516b\u4e5d\u5341\u5341\u5341",
+            "123456789111"
+        }[localeIndex(Locale.CHINESE)]);
 
         testMap.put(new Locale("tr", "TR"),
             "\u004f\u015e\u004d\u004e\u004d\u0048\u0054\u0041\u0045\u0045\u004b\u0041");
