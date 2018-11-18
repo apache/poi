@@ -335,8 +335,11 @@ under the License.
         <propertyref name="user.country"/>
         <propertyref name="javax.xml.stream.XMLInputFactory"/>
         <propertyref name="org.apache.commons.logging.Log"/>
-        <propertyref name="java.locale.providers"/>        <!-- required for Java 9 compilation -->
-        <propertyref name="version.id"/>    <!-- to detect if we are running on slow Gump VM -->
+        <!-- required for Java 9 compilation -->
+        <propertyref name="java.locale.providers"/>
+        <!-- to detect if we are running on slow Gump VM -->
+        <propertyref name="version.id"/>
+        <propertyref name="scratchpad.ignore"/>
     </propertyset>
 
     <!-- these need to be set differently when running with Java 9 -->

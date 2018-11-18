@@ -90,6 +90,7 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class TestAllFiles {
     private static final File ROOT_DIR = new File("test-data");
+    private static final boolean IGNORE_SCRATCHPAD = Boolean.getBoolean("scratchpad.ignore");
 
     public static final String[] SCAN_EXCLUDES = new String[] { "**/.svn/**", "lost+found", "**/.git/**" };
 
@@ -98,6 +99,7 @@ public class TestAllFiles {
     
     // map file extensions to the actual mappers
     public static final Map<String, FileHandler> HANDLERS = new HashMap<>();
+
     static {
         // Excel
         HANDLERS.put(".xls", new HSSFFileHandler());
@@ -107,17 +109,17 @@ public class TestAllFiles {
         HANDLERS.put(".xlsb", new XSSFBFileHandler());
 
         // Word
-        HANDLERS.put(".doc", new HWPFFileHandler());
+        HANDLERS.put(".doc", IGNORE_SCRATCHPAD ? new HPSFFileHandler() : new HWPFFileHandler());
         HANDLERS.put(".docx", new XWPFFileHandler());
         HANDLERS.put(".dotx", new XWPFFileHandler());
         HANDLERS.put(".docm", new XWPFFileHandler());
 
         // OpenXML4J files
-        HANDLERS.put(".ooxml", new OPCFileHandler());		// OPCPackage
-        HANDLERS.put(".zip", new OPCFileHandler());      // OPCPackage
+        HANDLERS.put(".ooxml", new OPCFileHandler());
+        HANDLERS.put(".zip", new OPCFileHandler());
 
         // Powerpoint
-        HANDLERS.put(".ppt", new HSLFFileHandler());
+        HANDLERS.put(".ppt", IGNORE_SCRATCHPAD ? new HPSFFileHandler() : new HSLFFileHandler());
         HANDLERS.put(".pptx", new XSLFFileHandler());
         HANDLERS.put(".pptm", new XSLFFileHandler());
         HANDLERS.put(".ppsm", new XSLFFileHandler());
@@ -126,13 +128,13 @@ public class TestAllFiles {
         HANDLERS.put(".potx", new XSLFFileHandler());
 
         // Outlook
-        HANDLERS.put(".msg", new HSMFFileHandler());
+        HANDLERS.put(".msg", IGNORE_SCRATCHPAD ? new HPSFFileHandler() : new HSMFFileHandler());
 
         // Publisher
-        HANDLERS.put(".pub", new HPBFFileHandler());
+        HANDLERS.put(".pub", IGNORE_SCRATCHPAD ? new HPSFFileHandler() : new HPBFFileHandler());
 
         // Visio - binary
-        HANDLERS.put(".vsd", new HDGFFileHandler());
+        HANDLERS.put(".vsd", IGNORE_SCRATCHPAD ? new HPSFFileHandler() : new HDGFFileHandler());
         
         // Visio - ooxml
         HANDLERS.put(".vsdm", new XDGFFileHandler());
@@ -153,7 +155,7 @@ public class TestAllFiles {
         HANDLERS.put(".adm", new HPSFFileHandler());
 
         // Microsoft TNEF
-        HANDLERS.put(".dat", new HMEFFileHandler());
+        HANDLERS.put(".dat", IGNORE_SCRATCHPAD ? new HPSFFileHandler() : new HMEFFileHandler());
 
         // TODO: are these readable by some of the formats?
         HANDLERS.put(".wri", new NullFileHandler());
@@ -300,7 +302,7 @@ public class TestAllFiles {
         "spreadsheet/54764-2.xlsx",   // see TestXSSFBugs.bug54764()
         "spreadsheet/54764.xlsx",     // see TestXSSFBugs.bug54764()
         "poifs/unknown_properties.msg", // POIFS properties corrupted
-        "poifs/only-zero-byte-streams.ole2", // No actual contents
+        (IGNORE_SCRATCHPAD ? "" : "poifs/only-zero-byte-streams.ole2"), // No actual contents
         "spreadsheet/poc-xmlbomb.xlsx",  // contains xml-entity-expansion
         "spreadsheet/poc-xmlbomb-empty.xlsx",  // contains xml-entity-expansion
         "spreadsheet/poc-shared-strings.xlsx",  // contains shared-string-entity-expansion
@@ -438,8 +440,17 @@ public class TestAllFiles {
             }
         }
 
-        // let some file handlers do additional stuff
-        handler.handleAdditional(inputFile);
+        try {
+            // let some file handlers do additional stuff
+            handler.handleAdditional(inputFile);
+        } catch (AssumptionViolatedException e) {
+            // file handler ignored this file
+        } catch (Exception e) {
+            if(!EXPECTED_FAILURES.contains(file) && !AbstractFileHandler.EXPECTED_EXTRACTOR_FAILURES.contains(file)) {
+                System.out.println("Failed: " + file);
+                throw new Exception("While handling " + file, e);
+            }
+        }
     }
 
     public static String getExtension(String file) {
