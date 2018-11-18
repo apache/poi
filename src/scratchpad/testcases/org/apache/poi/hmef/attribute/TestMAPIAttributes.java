@@ -20,6 +20,7 @@ package org.apache.poi.hmef.attribute;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import org.apache.poi.POIDataSamples;
@@ -159,9 +160,7 @@ protected void tearDown() throws Exception {
       assertEquals(MAPIDateAttribute.class, attr.getClass());
       
       MAPIDateAttribute date = (MAPIDateAttribute)attr;
-      DateFormat fmt = DateFormat.getDateTimeInstance(
-            DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.UK
-      );
+      DateFormat fmt = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss", Locale.UK);
       fmt.setTimeZone(LocaleUtil.TIMEZONE_UTC);
       assertEquals("15-Dec-2010 14:46:31", fmt.format(date.getDate()));
       

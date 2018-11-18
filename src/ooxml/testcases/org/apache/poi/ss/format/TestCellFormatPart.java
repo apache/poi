@@ -41,7 +41,7 @@ public class TestCellFormatPart extends CellFormatTestBase {
     @BeforeClass
     public static void setLocale() {
         userLocale = LocaleUtil.getUserLocale();
-        LocaleUtil.setUserLocale(Locale.ROOT);
+        LocaleUtil.setUserLocale(Locale.UK);
     }
     
     @AfterClass
