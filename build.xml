@@ -81,7 +81,7 @@ under the License.
       user.language and user.country are required as we have locale-sensitive formatters
     -->
     <property name="testpattern" value="Test*"/> <!--note: this excludes BaseTest* -->
-    <property name="POI.testdata.path" value="test-data"/>
+    <property name="POI.testdata.path" location="test-data"/>
     <property name="java.awt.headless" value="true"/>
     <property name="additionaljar" value=""/>
     <propertyreset name="user.language" value="en"/>
