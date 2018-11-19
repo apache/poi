@@ -450,7 +450,6 @@ public class DataFormatter implements Observer {
             
             // Strip custom text in quotes and escaped characters for now as it can cause performance problems in fractions.
             //String strippedFormatStr = formatStr.replaceAll("\\\\ ", " ").replaceAll("\\\\.", "").replaceAll("\"[^\"]*\"", " ").replaceAll("\\?", "#");
-            //System.out.println("formatStr: "+strippedFormatStr);
             return new FractionFormat(defaultFractionWholePartFormat, defaultFractionFractionPartFormat);
         }
         

@@ -234,7 +234,6 @@ public final class FormulaParser {
             _inIntersection = false;
         }
         _pointer += Character.charCount(look);
-        //System.out.println(new StringBuilder("Got char: ").appendCodePoint(look)).toString();
     }
     private void resetPointer(int ptr) {
         _pointer = ptr;
