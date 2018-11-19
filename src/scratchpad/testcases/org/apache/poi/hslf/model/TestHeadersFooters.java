@@ -30,6 +30,12 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.HSLFTestDataSamples;
 import org.apache.poi.hslf.usermodel.HSLFSlide;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.hslf.usermodel.HSLFTextParagraph;
+import org.apache.poi.sl.usermodel.Shape;
+import org.apache.poi.sl.usermodel.Slide;
+import org.apache.poi.sl.usermodel.SlideShow;
+import org.apache.poi.sl.usermodel.TextParagraph;
+import org.apache.poi.sl.usermodel.TextShape;
 import org.junit.Test;
 
 /**
@@ -227,5 +233,46 @@ public final class TestHeadersFooters
         
         ppt2.close();
         ppt1.close();
+    }
+    @Test
+    public void bug58144a() throws IOException {
+        try (InputStream is = _slTests.openResourceAsStream("bug58144-headers-footers-2003.ppt");
+             SlideShow<?,?> ppt = new HSLFSlideShow(is)) {
+            HSLFSlide sl = (HSLFSlide) ppt.getSlides().get(0);
+            HeadersFooters hfs = sl.getHeadersFooters();
+            assertNull(hfs.getHeaderText());
+            assertEquals("Confidential", hfs.getFooterText());
+            List<List<HSLFTextParagraph>> llp = sl.getTextParagraphs();
+            assertEquals("Test", HSLFTextParagraph.getText(llp.get(0)));
+            assertFalse(llp.get(0).get(0).isHeaderOrFooter());
+        }
+    }
+
+    @Test
+    public void bug58144b() throws IOException {
+        try (InputStream is = _slTests.openResourceAsStream("bug58144-headers-footers-2007.ppt");
+             SlideShow<?,?> ppt = new HSLFSlideShow(is)) {
+            Slide<?, ?> sl = ppt.getSlides().get(0);
+            HeadersFooters hfs2 = ((HSLFSlide) sl).getHeadersFooters();
+            assertNull(hfs2.getHeaderText());
+            assertEquals("Slide footer", hfs2.getFooterText());
+
+            testSlideShow(ppt);
+        }
+    }
+
+    // copied from org.apache.poi.sl.TestHeadersFooters because of scratchpad.ignore option
+    private void testSlideShow(SlideShow<?,?> ppt) {
+        Slide<?,?> sl =  ppt.getSlides().get(0);
+
+        List<? extends Shape<?,?>> shapes = sl.getShapes();
+        TextShape<?,?> ts0 = (TextShape<?,?>)shapes.get(0);
+        assertEquals("Test file", ts0.getText());
+        TextShape<?,?> ts1 = (TextShape<?,?>)shapes.get(1);
+        assertEquals("Has some text in the headers and footers", ts1.getText());
+        TextShape<?,?> ts2 = (TextShape<?,?>)shapes.get(2);
+        assertEquals("Slide footer", ts2.getText());
+        List<? extends TextParagraph<?,?,?>> ltp = ts2.getTextParagraphs();
+        assertTrue(ltp.get(0).isHeaderOrFooter());
     }
 }

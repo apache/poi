@@ -17,6 +17,7 @@
 package org.apache.poi.xslf.usermodel;
 
 import static org.apache.poi.sl.TestCommonSL.sameColor;
+import static org.apache.poi.xslf.usermodel.TestXSLFSimpleShape.getSpPr;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -24,7 +25,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeFalse;
-import static org.apache.poi.xslf.usermodel.TestXSLFSimpleShape.getSpPr;
 
 import java.awt.Color;
 import java.io.File;
@@ -33,8 +33,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.hslf.usermodel.HSLFTextShape;
 import org.apache.poi.sl.usermodel.Placeholder;
+import org.apache.poi.sl.usermodel.Shape;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
@@ -950,12 +950,12 @@ public class TestXSLFTextShape {
     }
     
     @Test
-    public void metroBlob() throws IOException {
+    public void metroBlob() throws IOException, ReflectiveOperationException {
         assumeFalse(xslfOnly);
         File f = POIDataSamples.getSlideShowInstance().getFile("bug52297.ppt");
         SlideShow<?,?> ppt = SlideShowFactory.create(f);
-        HSLFTextShape sh = (HSLFTextShape)ppt.getSlides().get(1).getShapes().get(3);
-        XSLFAutoShape xsh = (XSLFAutoShape)sh.getMetroShape();
+        Shape<?, ?> sh = ppt.getSlides().get(1).getShapes().get(3);
+        XSLFAutoShape xsh = (XSLFAutoShape)sh.getClass().getMethod("getMetroShape").invoke(sh);
         String textExp = " ___ ___ ___ ________ __  _______ ___  ___________  __________ __ _____ ___ ___ ___ _______ ____ ______ ___________  _____________ ___ _______ ______  ____ ______ __ ___________  __________ ___ _________  _____ ________ __________  ___ _______ __________ ";
         String textAct = xsh.getText();
         ppt.close();

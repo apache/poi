@@ -1133,6 +1133,7 @@ under the License.
             <classpath>
                 <path refid="ooxml.classpath"/>
                 <pathelement path="${ooxml.output.dir}"/>
+                <pathelement location="${scratchpad.output.dir}"/>
             </classpath>
         </javac>
         <copy todir="${examples.output.dir}">
@@ -1303,6 +1304,7 @@ under the License.
                 <pathelement location="${main.output.test.dir}"/>
                 <pathelement location="${examples.output.dir}"/>
                 <pathelement location="${main.ant.jar}"/>
+                <pathelement location="${scratchpad.output.dir}"/>
             </classpath>
         </javac>
         <!--copy todir="${integration.output.dir}">

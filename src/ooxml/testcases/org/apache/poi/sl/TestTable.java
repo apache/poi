@@ -34,7 +34,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
@@ -96,9 +95,9 @@ public class TestTable {
     }
 
     @Test
-    public void directionHSLF() throws IOException {
+    public void directionHSLF() throws IOException, ReflectiveOperationException {
         assumeFalse(xslfOnly());
-        SlideShow<?,?> ppt1 = new HSLFSlideShow();
+        SlideShow<?,?> ppt1 = (SlideShow<?,?>)Class.forName("org.apache.poi.hslf.usermodel.HSLFSlideShow").newInstance();
         testTextDirection(ppt1);
         ppt1.close();
     }
