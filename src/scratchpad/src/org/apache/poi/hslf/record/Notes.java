@@ -63,7 +63,6 @@ public final class Notes extends SheetContainer
 		for(int i=0; i<_children.length; i++) {
 			if(_children[i] instanceof NotesAtom) {
 				notesAtom = (NotesAtom)_children[i];
-				//System.out.println("Found notes for sheet " + notesAtom.getSlideID());
 			}
 			if(_children[i] instanceof PPDrawing) {
 				ppDrawing = (PPDrawing)_children[i];
