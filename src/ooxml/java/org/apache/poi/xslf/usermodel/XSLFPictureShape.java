@@ -170,16 +170,25 @@ public class XSLFPictureShape extends XSLFSimpleShape
     
     @SuppressWarnings("WeakerAccess")
     protected String getBlipLink(){
-        String link = getBlip().getLink();
-        if (link.isEmpty()) return null;
-        return link;
+        CTBlip blip = getBlip();
+        if (blip != null) {
+            String link = blip.getLink();
+            if (link.isEmpty()) return null;
+        return link;} else {
+            return null;
+        }
     }
 
     @SuppressWarnings("WeakerAccess")
     protected String getBlipId(){
-        String id = getBlip().getEmbed();
-        if (id.isEmpty()) return null;
-        return id;
+        CTBlip blip = getBlip();
+        if (blip != null) {
+            String id = getBlip().getEmbed();
+            if (id.isEmpty()) return null;
+            return id;
+        } else {
+            return null;
+        }
     }
 
     @Override
