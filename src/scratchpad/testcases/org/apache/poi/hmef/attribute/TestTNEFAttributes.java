@@ -19,6 +19,7 @@ package org.apache.poi.hmef.attribute;
 
 import java.io.ByteArrayInputStream;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import org.apache.poi.POIDataSamples;
@@ -159,9 +160,7 @@ public final class TestTNEFAttributes extends TestCase {
       // Ask for it as a Java date, and have it converted
       // Pick a predictable format + location + timezone
       TNEFDateAttribute date = (TNEFDateAttribute)attr;
-      DateFormat fmt = DateFormat.getDateTimeInstance(
-            DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.UK
-      );
+      DateFormat fmt = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss", Locale.UK);
       fmt.setTimeZone(LocaleUtil.TIMEZONE_UTC);
       assertEquals("28-Apr-2010 12:40:56", fmt.format(date.getDate()));
 	}

@@ -54,26 +54,22 @@ public class CellFormatPart {
     private final CellFormatter format;
     private final CellFormatType type;
 
-    private static final Map<String, Color> NAMED_COLORS;
+    static final Map<String, Color> NAMED_COLORS;
 
     static {
         NAMED_COLORS = new TreeMap<>(
                 String.CASE_INSENSITIVE_ORDER);
 
-        Map<Integer,HSSFColor> colors = HSSFColor.getIndexHash();
-        for (HSSFColor color : colors.values()) {
-            Class<? extends HSSFColor> type = color.getClass();
-            String name = type.getSimpleName();
-            if (name.equals(name.toUpperCase(Locale.ROOT))) {
-                short[] rgb = color.getTriplet();
-                Color c = new Color(rgb[0], rgb[1], rgb[2]);
-                NAMED_COLORS.put(name, c);
-                if (name.indexOf('_') > 0)
-                    NAMED_COLORS.put(name.replace('_', ' '), c);
-                if (name.indexOf("_PERCENT") > 0)
-                    NAMED_COLORS.put(name.replace("_PERCENT", "%").replace('_',
-                            ' '), c);
-            }
+        for (HSSFColor.HSSFColorPredefined color : HSSFColor.HSSFColorPredefined.values()) {
+            String name = color.name();
+            short[] rgb = color.getTriplet();
+            Color c = new Color(rgb[0], rgb[1], rgb[2]);
+            NAMED_COLORS.put(name, c);
+            if (name.indexOf('_') > 0)
+                NAMED_COLORS.put(name.replace('_', ' '), c);
+            if (name.indexOf("_PERCENT") > 0)
+                NAMED_COLORS.put(name.replace("_PERCENT", "%").replace('_',
+                        ' '), c);
         }
     }
 

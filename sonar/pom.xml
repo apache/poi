@@ -4,7 +4,7 @@
     <groupId>org.apache.poi</groupId>
     <artifactId>poi-parent</artifactId>
     <packaging>pom</packaging>
-    <version>4.0.1-SNAPSHOT</version>
+    <version>4.0.2-SNAPSHOT</version>
     <name>Apache POI - the Java API for Microsoft Documents</name>
     <description>Maven build of Apache POI for Sonar checks</description>
     <url>http://poi.apache.org/</url>
@@ -117,7 +117,7 @@
                         <org.apache.poi.util.POILogger>org.apache.poi.util.NullLogger</org.apache.poi.util.POILogger>
                     </systemPropertyVariables>
                     <!-- use to following to analyze OOM issues:	-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp -->
-                    <argLine>@{argLine} -Duser.language=en -Duser.country=US -Xmx1024m -Djava.io.tmpdir=target/tmp
+                    <argLine>@{argLine} -Duser.language=en -Duser.country=US -Xmx1024m -Djava.io.tmpdir=${basedir}/target/tmp
                     </argLine>
                     <excludes>
                         <exclude>**/All*Tests.java</exclude>

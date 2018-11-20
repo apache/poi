@@ -19,7 +19,6 @@ package org.apache.poi.xssf.usermodel.examples;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -36,8 +35,8 @@ public class CreateTable {
 
     public static void main(String[] args) throws IOException {
 
-        try (Workbook wb = new XSSFWorkbook()) {
-            XSSFSheet sheet = (XSSFSheet) wb.createSheet();
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
 
             // Set which area the table should be placed in
             AreaReference reference = wb.getCreationHelper().createAreaReference(
@@ -78,10 +77,6 @@ public class CreateTable {
                     }
                 }
             }
-            // Create the columns
-            table.createColumn("Column 1");
-            table.createColumn("Column 2");
-            table.createColumn("Column 3");
 
             // Save
             try (FileOutputStream fileOut = new FileOutputStream("ooxml-table.xlsx")) {

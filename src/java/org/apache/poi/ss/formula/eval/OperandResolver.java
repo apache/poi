@@ -88,8 +88,7 @@ public final class OperandResolver {
         CellRangeAddress range =  cell.getArrayFormulaRange();
         int relativeRowIndex = cell.getRowIndex() - range.getFirstRow();
         int relativeColIndex = cell.getColumnIndex() - range.getFirstColumn();
-        //System.out.println("Row: " + relativeRowIndex + " Col: " + relativeColIndex);
-        
+
         if (ae.isColumn()) {
             if (ae.isRow()) {
                 return ae.getRelativeValue(0, 0);

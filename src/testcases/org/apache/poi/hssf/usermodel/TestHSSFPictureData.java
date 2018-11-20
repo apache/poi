@@ -19,6 +19,7 @@ package org.apache.poi.hssf.usermodel;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -27,6 +28,7 @@ import javax.imageio.ImageIO;
 import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.junit.BeforeClass;
 
 /**
  * Test <code>HSSFPictureData</code>.
@@ -36,7 +38,19 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
  * @author Trejkaz (trejkaz at trypticon dot org)
  */
 public final class TestHSSFPictureData extends TestCase{
-
+    @BeforeClass
+    public static void setUpClass() {
+        final String tmpDirProperty = System.getProperty("java.io.tmpdir");
+        if(tmpDirProperty == null || "".equals(tmpDirProperty)) {
+            return;
+        }
+        // ensure that temp-dir exists because ImageIO requires it
+        final File tmpDir = new File(tmpDirProperty);
+        if(!tmpDir.exists() && !tmpDir.mkdirs()) {
+            throw new IllegalStateException("Could not create temporary directory " + tmpDirProperty + ", full path " + tmpDir.getAbsolutePath());
+        }
+        ImageIO.setCacheDirectory(tmpDir);
+    }
 
 	public void testPictures() throws IOException {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("SimpleWithImages.xls");
@@ -64,8 +78,8 @@ public final class TestHSSFPictureData extends TestCase{
                 assertEquals(300, png.getHeight());
                 assertEquals(HSSFWorkbook.PICTURE_TYPE_PNG, pict.getFormat());
                 assertEquals("image/png", pict.getMimeType());
-            } else {
-                //TODO: test code for PICT, WMF and EMF
+            /*} else {
+                //TODO: test code for PICT, WMF and EMF*/
             }
         }
     }
@@ -93,7 +107,7 @@ public final class TestHSSFPictureData extends TestCase{
         assertEquals("image/png", pict.getMimeType());
     }
 
-    public void testNotNullPictures() throws IOException {
+    public void testNotNullPictures() {
 
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("SheetWithDrawing.xls");
 
@@ -103,5 +117,4 @@ public final class TestHSSFPictureData extends TestCase{
             assertNotNull(pict);
         }
     }
-
 }

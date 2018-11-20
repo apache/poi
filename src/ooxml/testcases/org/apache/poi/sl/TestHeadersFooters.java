@@ -20,19 +20,12 @@
 package org.apache.poi.sl;
 
 import static org.apache.poi.sl.SLCommonUtils.openSampleSlideshow;
-import static org.apache.poi.sl.SLCommonUtils.xslfOnly;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeFalse;
 
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.poi.hslf.model.HeadersFooters;
-import org.apache.poi.hslf.usermodel.HSLFSlide;
-import org.apache.poi.hslf.usermodel.HSLFTextParagraph;
 import org.apache.poi.sl.usermodel.Shape;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
@@ -41,33 +34,6 @@ import org.apache.poi.sl.usermodel.TextShape;
 import org.junit.Test;
 
 public class TestHeadersFooters {
-    @Test
-    public void bug58144a() throws IOException {
-        assumeFalse(xslfOnly());
-        SlideShow<?,?> ppt = openSampleSlideshow("bug58144-headers-footers-2003.ppt");
-        HSLFSlide sl = (HSLFSlide)ppt.getSlides().get(0);
-        HeadersFooters hfs = sl.getHeadersFooters();
-        assertNull(hfs.getHeaderText());
-        assertEquals("Confidential", hfs.getFooterText());
-        List<List<HSLFTextParagraph>> llp = sl.getTextParagraphs();
-        assertEquals("Test", HSLFTextParagraph.getText(llp.get(0)));
-        assertFalse(llp.get(0).get(0).isHeaderOrFooter());
-        ppt.close();
-    }
-    
-    @Test
-    public void bug58144b() throws IOException {
-        assumeFalse(xslfOnly());
-        SlideShow<?,?> ppt = openSampleSlideshow("bug58144-headers-footers-2007.ppt");
-        Slide<?,?> sl =  ppt.getSlides().get(0);
-        HeadersFooters hfs2 = ((HSLFSlide)sl).getHeadersFooters();
-        assertNull(hfs2.getHeaderText());
-        assertEquals("Slide footer", hfs2.getFooterText());
-
-        testSlideShow(ppt);
-        ppt.close();
-    }
-    
     @Test
     public void bug58144c() throws IOException {
         SlideShow<?,?> ppt = openSampleSlideshow("bug58144-headers-footers-2007.pptx");
