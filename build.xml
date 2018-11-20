@@ -1950,6 +1950,7 @@ under the License.
                 <mapper>
                     <chainedmapper>
                         <filtermapper>
+                            <replaceregex pattern=".jar" replace="" flags="g"/>
                             <replaceregex pattern="ooxml-lite" replace="ooxml-schemas" flags="g"/>
                             <replaceregex pattern="(.java|.src)$$" replace="-sources"/>
                             <replaceregex pattern=".*(?:build|src).?(.*)?" replace="\1"/>
