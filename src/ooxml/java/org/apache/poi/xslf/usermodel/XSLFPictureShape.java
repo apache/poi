@@ -173,8 +173,8 @@ public class XSLFPictureShape extends XSLFSimpleShape
         CTBlip blip = getBlip();
         if (blip != null) {
             String link = blip.getLink();
-            if (link.isEmpty()) return null;
-        return link;} else {
+            return (link.isEmpty()) ? null : link;
+        } else {
             return null;
         }
     }
@@ -183,9 +183,8 @@ public class XSLFPictureShape extends XSLFSimpleShape
     protected String getBlipId(){
         CTBlip blip = getBlip();
         if (blip != null) {
-            String id = getBlip().getEmbed();
-            if (id.isEmpty()) return null;
-            return id;
+            String id = blip.getEmbed();
+            return (id.isEmpty()) ? null : id;
         } else {
             return null;
         }
