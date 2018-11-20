@@ -17,12 +17,15 @@
 package org.apache.poi.ss.format;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.XSSFITestDataProvider;
@@ -38,7 +41,7 @@ public class TestCellFormatPart extends CellFormatTestBase {
     @BeforeClass
     public static void setLocale() {
         userLocale = LocaleUtil.getUserLocale();
-        LocaleUtil.setUserLocale(Locale.ROOT);
+        LocaleUtil.setUserLocale(Locale.UK);
     }
     
     @AfterClass
@@ -151,6 +154,19 @@ public class TestCellFormatPart extends CellFormatTestBase {
                 return cell.getNumericCellValue();
             }
         });
+    }
+
+    @Test
+    public void testNamedColors() {
+        assertTrue(CellFormatPart.NAMED_COLORS.size() >= HSSFColor.HSSFColorPredefined.values().length);
+        assertNotNull(CellFormatPart.NAMED_COLORS.get("GREEN"));
+        assertNotNull(CellFormatPart.NAMED_COLORS.get("Green"));
+        assertNotNull(CellFormatPart.NAMED_COLORS.get("RED"));
+        assertNotNull(CellFormatPart.NAMED_COLORS.get("Red"));
+        assertNotNull(CellFormatPart.NAMED_COLORS.get("BLUE"));
+        assertNotNull(CellFormatPart.NAMED_COLORS.get("Blue"));
+        assertNotNull(CellFormatPart.NAMED_COLORS.get("YELLOW"));
+        assertNotNull(CellFormatPart.NAMED_COLORS.get("Yellow"));
     }
 
     private double extractNumber(String str) {

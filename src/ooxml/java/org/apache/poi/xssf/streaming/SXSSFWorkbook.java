@@ -381,7 +381,10 @@ public class SXSSFWorkbook implements Workbook {
             Enumeration<? extends ZipArchiveEntry> en = zipEntrySource.getEntries();
             while (en.hasMoreElements()) {
                 ZipArchiveEntry ze = en.nextElement();
-                zos.putArchiveEntry(new ZipArchiveEntry(ze.getName()));
+                ZipArchiveEntry zeOut = new ZipArchiveEntry(ze.getName());
+                zeOut.setSize(ze.getSize());
+                zeOut.setTime(ze.getTime());
+                zos.putArchiveEntry(zeOut);
                 try (final InputStream is = zipEntrySource.getInputStream(ze)) {
                     if (is instanceof ZipArchiveThresholdInputStream) {
                         // #59743 - disable Threshold handling for SXSSF copy

@@ -35,13 +35,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.POIDocument;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.poifs.storage.RawDataUtil;
 import org.apache.poi.sl.usermodel.ObjectMetaData;
@@ -124,7 +125,7 @@ public class TestOleShape {
     }
     
     @Test
-    public void embedData() throws IOException, InvalidFormatException {
+    public void embedData() throws IOException, InvalidFormatException, ReflectiveOperationException {
         final ByteArrayInputStream pptBytes;
         try (SlideShow<?,?> ppt = createSlideShow()) {
             final PictureData picData = ppt.addPicture(pictureFile,  PictureType.EMF);
@@ -146,12 +147,12 @@ public class TestOleShape {
         }
     }
     
-    private SlideShow<?,?> createSlideShow() {
+    private SlideShow<?,?> createSlideShow() throws ReflectiveOperationException {
         if (api == Api.XSLF) {
             return new XMLSlideShow();
         } else {
             assumeFalse(xslfOnly());
-            return new HSLFSlideShow();
+            return (SlideShow<?,?>)Class.forName("org.apache.poi.hslf.usermodel.HSLFSlideShow").newInstance();
         }
     }
 
@@ -186,7 +187,7 @@ public class TestOleShape {
         }
     }
     
-    private void validateOleData(final InputStream in) throws IOException, InvalidFormatException {
+    private void validateOleData(final InputStream in) throws IOException, InvalidFormatException, ReflectiveOperationException {
         switch (app) {
         case EXCEL_V8:
         case EXCEL_V12:
@@ -195,8 +196,11 @@ public class TestOleShape {
             }
             break;
         case WORD_V8:
-            try (HWPFDocument doc = new HWPFDocument(in)) {
-                assertEquals("This is a simple file created with Word 97-SR2.\r", doc.getDocumentText());
+            Class<? extends POIDocument> clazz = (Class<? extends POIDocument>)Class.forName("org.apache.poi.hwpf.HWPFDocument");
+            Constructor<? extends POIDocument> con = clazz.getDeclaredConstructor(InputStream.class);
+            Method m = clazz.getMethod("getDocumentText");
+            try (POIDocument doc = con.newInstance(in)) {
+                assertEquals("This is a simple file created with Word 97-SR2.\r", m.invoke(doc));
             }
             break;
         case WORD_V12:

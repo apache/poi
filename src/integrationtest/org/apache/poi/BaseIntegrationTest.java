@@ -16,17 +16,24 @@
 ==================================================================== */
 package org.apache.poi;
 
-import org.apache.poi.hslf.exceptions.OldPowerPointFormatException;
-import org.apache.poi.hssf.OldExcelFormatException;
-import org.apache.poi.hwpf.OldWordFileFormatException;
-import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
-import org.apache.poi.stress.*;
-import org.junit.Assume;
+import static org.junit.Assert.assertNotNull;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.zip.ZipException;
 
-import static org.junit.Assert.assertNotNull;
+import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
+import org.apache.poi.stress.FileHandler;
+import org.apache.poi.stress.HSLFFileHandler;
+import org.apache.poi.stress.HSSFFileHandler;
+import org.apache.poi.stress.HWPFFileHandler;
+import org.apache.poi.stress.XSLFFileHandler;
+import org.apache.poi.stress.XSSFFileHandler;
+import org.apache.poi.stress.XWPFFileHandler;
+import org.junit.Assume;
 
 public class BaseIntegrationTest {
 	private final File rootDir;
@@ -53,12 +60,13 @@ public class BaseIntegrationTest {
 
         	// use XWPF instead of HWPF and XSSF instead of HSSF as the file seems to have the wrong extension
 			handleWrongExtension(inputFile, e);
-		} catch (OldWordFileFormatException | OldExcelFormatException | OldPowerPointFormatException e) {
-        	// at least perform extracting tests on these old files
         } catch (OldFileFormatException e) {
-            // Not even text extraction is supported for these: handler.handleExtracting(inputFile);
-			//noinspection ConstantConditions
-			Assume.assumeFalse("File " + file + " excluded because it is unsupported old Excel format", true);
+        	if (e.getClass().equals(OldFileFormatException.class)) {
+				// Not even text extraction is supported for these: handler.handleExtracting(inputFile);
+				//noinspection ConstantConditions
+				Assume.assumeFalse("File " + file + " excluded because it is unsupported old Excel format", true);
+			}
+			// otherwise try at least to perform extracting tests on these old files
         } catch (EncryptedDocumentException e) {
         	// Do not try to read encrypted files
 			//noinspection ConstantConditions

@@ -38,7 +38,6 @@ import java.util.Map;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.common.usermodel.fonts.FontGroup;
-import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.sl.usermodel.Slide;
@@ -93,9 +92,9 @@ public class TestFonts {
     }
 
     @Test
-    public void resizeToFitTextHSLF() throws IOException {
+    public void resizeToFitTextHSLF() throws IOException, ReflectiveOperationException {
         assumeFalse(xslfOnly());
-        SlideShow<?,?> ppt = new HSLFSlideShow();
+        SlideShow<?,?> ppt = (SlideShow<?,?>)Class.forName("org.apache.poi.hslf.usermodel.HSLFSlideShow").newInstance();
         resizeToFitText(ppt);
         ppt.close();
     }

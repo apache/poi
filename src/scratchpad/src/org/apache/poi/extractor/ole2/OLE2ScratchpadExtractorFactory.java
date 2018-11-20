@@ -32,6 +32,7 @@ import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hsmf.MAPIMessage;
 import org.apache.poi.hsmf.datatypes.AttachmentChunks;
 import org.apache.poi.hsmf.extractor.OutlookTextExtactor;
+import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.hwpf.OldWordFileFormatException;
 import org.apache.poi.hwpf.extractor.Word6Extractor;
 import org.apache.poi.hwpf.extractor.WordExtractor;
@@ -40,6 +41,8 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.sl.extractor.SlideShowExtractor;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * Scratchpad-specific logic for {@link OLE2ExtractorFactory} and
@@ -50,6 +53,8 @@ import org.apache.poi.sl.usermodel.SlideShowFactory;
  */
 @SuppressWarnings("WeakerAccess")
 public class OLE2ScratchpadExtractorFactory {
+    private static final POILogger logger = POILogFactory.getLogger(OLE2ScratchpadExtractorFactory.class);
+
     /**
      * Look for certain entries in the stream, to figure it
      * out what format is desired
@@ -125,7 +130,16 @@ public class OLE2ScratchpadExtractorFactory {
             throw new IllegalStateException("The extractor didn't know which POIFS it came from!");
         }
 
-        if (ext instanceof WordExtractor) {
+        if (ext instanceof ExcelExtractor) {
+            // These are in MBD... under the root
+            Iterator<Entry> it = root.getEntries();
+            while (it.hasNext()) {
+                Entry entry = it.next();
+                if (entry.getName().startsWith("MBD")) {
+                    dirs.add(entry);
+                }
+            }
+        } else if (ext instanceof WordExtractor) {
             // These are in ObjectPool -> _... under the root
             try {
                 DirectoryEntry op = (DirectoryEntry)
@@ -138,6 +152,7 @@ public class OLE2ScratchpadExtractorFactory {
                     }
                 }
             } catch(FileNotFoundException e) {
+                logger.log(POILogger.INFO, "Ignoring FileNotFoundException while extracting Word document", e.getLocalizedMessage());
                 // ignored here
             }
             //} else if(ext instanceof PowerPointExtractor) {

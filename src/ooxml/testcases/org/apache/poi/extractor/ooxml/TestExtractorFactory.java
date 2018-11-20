@@ -33,27 +33,18 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.UnsupportedFileFormatException;
 import org.apache.poi.extractor.POIOLE2TextExtractor;
 import org.apache.poi.extractor.POITextExtractor;
-import org.apache.poi.hdgf.extractor.VisioTextExtractor;
-import org.apache.poi.hpbf.extractor.PublisherTextExtractor;
-import org.apache.poi.hsmf.extractor.OutlookTextExtactor;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.extractor.EventBasedExcelExtractor;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
-import org.apache.poi.hwpf.extractor.Word6Extractor;
-import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.ooxml.extractor.ExtractorFactory;
 import org.apache.poi.ooxml.extractor.POIXMLTextExtractor;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.sl.extractor.SlideShowExtractor;
-import org.apache.poi.xdgf.extractor.XDGFVisioExtractor;
-import org.apache.poi.xssf.extractor.XSSFBEventBasedExcelExtractor;
 import org.apache.poi.xssf.extractor.XSSFEventBasedExcelExtractor;
 import org.apache.poi.xssf.extractor.XSSFExcelExtractor;
-import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.xmlbeans.XmlException;
 import org.junit.Test;
 
@@ -108,21 +99,21 @@ public class TestExtractorFactory {
     }
 
     private static final Object[] TEST_SET = {
-        "Excel", xls, ExcelExtractor.class, 200,
-        "Excel - xlsx", xlsx, XSSFExcelExtractor.class, 200,
-        "Excel - xltx", xltx, XSSFExcelExtractor.class, -1,
-        "Excel - xlsb", xlsb, XSSFBEventBasedExcelExtractor.class, -1,
-        "Word", doc, WordExtractor.class, 120,
-        "Word - docx", docx, XWPFWordExtractor.class, 120,
-        "Word - dotx", dotx, XWPFWordExtractor.class, -1,
-        "Word 6", doc6, Word6Extractor.class, 20,
-        "Word 95", doc95, Word6Extractor.class, 120,
-        "PowerPoint", ppt, SlideShowExtractor.class, 120,
-        "PowerPoint - pptx", pptx, SlideShowExtractor.class, 120,
-        "Visio", vsd, VisioTextExtractor.class, 50,
-        "Visio - vsdx", vsdx, XDGFVisioExtractor.class, 20,
-        "Publisher", pub, PublisherTextExtractor.class, 50,
-        "Outlook msg", msg, OutlookTextExtactor.class, 50,
+        "Excel", xls, "ExcelExtractor", 200,
+        "Excel - xlsx", xlsx, "XSSFExcelExtractor", 200,
+        "Excel - xltx", xltx, "XSSFExcelExtractor", -1,
+        "Excel - xlsb", xlsb, "XSSFBEventBasedExcelExtractor", -1,
+        "Word", doc, "WordExtractor", 120,
+        "Word - docx", docx, "XWPFWordExtractor", 120,
+        "Word - dotx", dotx, "XWPFWordExtractor", -1,
+        "Word 6", doc6, "Word6Extractor", 20,
+        "Word 95", doc95, "Word6Extractor", 120,
+        "PowerPoint", ppt, "SlideShowExtractor", 120,
+        "PowerPoint - pptx", pptx, "SlideShowExtractor", 120,
+        "Visio", vsd, "VisioTextExtractor", 50,
+        "Visio - vsdx", vsdx, "XDGFVisioExtractor", 20,
+        "Publisher", pub, "PublisherTextExtractor", 50,
+        "Outlook msg", msg, "OutlookTextExtactor", 50,
 
         // TODO Support OOXML-Strict, see bug #57699
         // xlsxStrict
@@ -138,7 +129,7 @@ public class TestExtractorFactory {
     public void testFile() throws Exception {
         for (int i = 0; i < TEST_SET.length; i += 4) {
             try (POITextExtractor ext = ExtractorFactory.createExtractor((File) TEST_SET[i + 1])) {
-                testExtractor(ext, (String) TEST_SET[i], (Class) TEST_SET[i + 2], (Integer) TEST_SET[i + 3]);
+                testExtractor(ext, (String) TEST_SET[i], (String) TEST_SET[i + 2], (Integer) TEST_SET[i + 3]);
             }
         }
     }
@@ -180,15 +171,15 @@ public class TestExtractorFactory {
             }
             try (FileInputStream fis = new FileInputStream(testFile);
                  POITextExtractor ext = poifsIS.apply(fis)) {
-                testExtractor(ext, (String) TEST_SET[i], (Class) TEST_SET[i + 2], (Integer) TEST_SET[i + 3]);
+                testExtractor(ext, (String) TEST_SET[i], (String) TEST_SET[i + 2], (Integer) TEST_SET[i + 3]);
             } catch (IllegalArgumentException e) {
                 fail("failed to process "+testFile);
             }
         }
     }
 
-    private void testExtractor(final POITextExtractor ext, final String testcase, final Class extrClass, final Integer minLength) {
-        assertTrue("invalid extractor for " + testcase, extrClass.isInstance(ext));
+    private void testExtractor(final POITextExtractor ext, final String testcase, final String extrClass, final Integer minLength) {
+        assertEquals("invalid extractor for " + testcase, extrClass, ext.getClass().getSimpleName());
         final String actual = ext.getText();
         if (minLength == -1) {
             assertContains(actual.toLowerCase(Locale.ROOT), "test");
@@ -215,7 +206,7 @@ public class TestExtractorFactory {
 
             try (final OPCPackage pkg = OPCPackage.open(testFile, PackageAccess.READ);
                  final POITextExtractor ext = ExtractorFactory.createExtractor(pkg)) {
-                testExtractor(ext, (String) TEST_SET[i], (Class) TEST_SET[i + 2], (Integer) TEST_SET[i + 3]);
+                testExtractor(ext, (String) TEST_SET[i], (String) TEST_SET[i + 2], (Integer) TEST_SET[i + 3]);
                 pkg.revert();
             }
         }
@@ -334,16 +325,22 @@ public class TestExtractorFactory {
                 int numWord = 0, numXls = 0, numPpt = 0, numMsg = 0, numWordX = 0;
                 for (POITextExtractor embed : embeds) {
                     assertTrue(embed.getText().length() > 20);
-                    if (embed instanceof SlideShowExtractor) {
-                        numPpt++;
-                    } else if (embed instanceof ExcelExtractor) {
-                        numXls++;
-                    } else if (embed instanceof WordExtractor) {
-                        numWord++;
-                    } else if (embed instanceof OutlookTextExtactor) {
-                        numMsg++;
-                    } else if (embed instanceof XWPFWordExtractor) {
-                        numWordX++;
+                    switch (embed.getClass().getSimpleName()) {
+                        case "SlideShowExtractor":
+                            numPpt++;
+                            break;
+                        case "ExcelExtractor":
+                            numXls++;
+                            break;
+                        case "WordExtractor":
+                            numWord++;
+                            break;
+                        case "OutlookTextExtactor":
+                            numMsg++;
+                            break;
+                        case "XWPFWordExtractor":
+                            numWordX++;
+                            break;
                     }
                 }
 

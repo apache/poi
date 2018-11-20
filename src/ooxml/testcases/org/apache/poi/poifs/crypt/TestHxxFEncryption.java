@@ -23,6 +23,7 @@ import static org.apache.poi.POIDataSamples.getSpreadSheetInstance;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -35,9 +36,8 @@ import java.util.Collection;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POIDocument;
 import org.apache.poi.extractor.POITextExtractor;
-import org.apache.poi.ooxml.extractor.ExtractorFactory;
-import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
+import org.apache.poi.ooxml.extractor.ExtractorFactory;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIEncryptionHeader;
 import org.apache.poi.poifs.storage.RawDataUtil;
@@ -64,21 +64,24 @@ public class TestHxxFEncryption {
 
     @Parameters(name="{1}")
     public static Collection<Object[]> data() throws IOException {
+        final String base64 =
+            "H4sIAAAAAAAAAF1Uu24bMRDs/RULVwkgCUhSpHaZwkDgpHJH8fZ0G/Nx4ZI6y13yG/mRfIb9R5mlZFlIpdPtcnZmdnjPf57/vvx6+f3h6obuv3"+
+            "ylbY5bEiVHe1fEpUp5pOgkrK0iabehm7FyoZi1ks8xcvHiQu8h5bLnorTlnUvkJ/YPOHKsLVInAqCs91KakuaxLq4w3g00SgCo9Xou1UnCmSBe"+
+            "MhpRY6qHmXVFteQfQJ5yUaaOw4qXwgPVjPGAqhNH5bBHAfTmwqqoSkLdFT/J3nC0eZBRk7yiu5s7yoU+r+9l3tDtm5A3jgt6AQxNOY2ya+U4sK"+
+            "XZ+YczbpfSVVuzFOuunKraqIVD2ND3yVXauT3TNthR/O3IJAM7gzTOGeIcXZvj14ahotW8wSognlMu0Yyp/Fi7O6s+CK6haUUjtPCji7MVcgqH"+
+            "jh+42tqeqPDMroJ/lBAE4AZbJbJu6Fu35ej42Tw9mYeTwVXoBKJiPeFV94q2rZJAyNEPo/qOdWYLBpq3B2JX8GDZeJ14mZf3tOQWBmpd9yQ7kI"+
+            "DCY/jmkj1oGOicFy62r9vutC5uJsVEMFgmAXXfYcC6BRBKNHCybALFJolnrDcPXNLl+K60Vctt09YZT7YgbeOICGJ/ZgC2JztOnm1JhX3eJXni"+
+            "U5Bqhezzlu334vD/Ajr3yDGXw5G9IZ6aLmLfQafY42N3J7cjj1LaXOHihSrcC5ThmuYIB5FX5AU8tKlnNG9Dn1EnsdD4KcnPhsSNPRiXtz461b"+
+            "VZw8Pm6vn0afh4fvr0D5P/+cMuBAAA";
+        final String x = new String(RawDataUtil.decompress(base64), StandardCharsets.UTF_8);
+
         return Arrays.asList(
             // binary rc4
             new Object[]{ getDocumentInstance(), "password_tika_binaryrc4.doc", "tika", "This is an encrypted Word 2007 File." },
             // cryptoapi
             new Object[]{ getDocumentInstance(), "password_password_cryptoapi.doc", "password", "This is a test" },
             // binary rc4
-            new Object[]{ getSpreadSheetInstance(), "password.xls", "password",
-                x("H4sIAAAAAAAAAF1Uu24bMRDs/RULVwkgCUhSpHaZwkDgpHJH8fZ0G/Nx4ZI6y13yG/mRfIb9R5mlZFlIpdPtcnZmdnjPf57/vvx6+f3h6obuv3"+
-                  "ylbY5bEiVHe1fEpUp5pOgkrK0iabehm7FyoZi1ks8xcvHiQu8h5bLnorTlnUvkJ/YPOHKsLVInAqCs91KakuaxLq4w3g00SgCo9Xou1UnCmSBe"+
-                  "MhpRY6qHmXVFteQfQJ5yUaaOw4qXwgPVjPGAqhNH5bBHAfTmwqqoSkLdFT/J3nC0eZBRk7yiu5s7yoU+r+9l3tDtm5A3jgt6AQxNOY2ya+U4sK"+
-                  "XZ+YczbpfSVVuzFOuunKraqIVD2ND3yVXauT3TNthR/O3IJAM7gzTOGeIcXZvj14ahotW8wSognlMu0Yyp/Fi7O6s+CK6haUUjtPCji7MVcgqH"+
-                  "jh+42tqeqPDMroJ/lBAE4AZbJbJu6Fu35ej42Tw9mYeTwVXoBKJiPeFV94q2rZJAyNEPo/qOdWYLBpq3B2JX8GDZeJ14mZf3tOQWBmpd9yQ7kI"+
-                  "DCY/jmkj1oGOicFy62r9vutC5uJsVEMFgmAXXfYcC6BRBKNHCybALFJolnrDcPXNLl+K60Vctt09YZT7YgbeOICGJ/ZgC2JztOnm1JhX3eJXni"+
-                  "U5Bqhezzlu334vD/Ajr3yDGXw5G9IZ6aLmLfQafY42N3J7cjj1LaXOHihSrcC5ThmuYIB5FX5AU8tKlnNG9Dn1EnsdD4KcnPhsSNPRiXtz461b"+
-                  "VZw8Pm6vn0afh4fvr0D5P/+cMuBAAA") },
+            new Object[]{ getSpreadSheetInstance(), "password.xls", "password", x },
             // cryptoapi
             new Object[]{ getSpreadSheetInstance(), "35897-type4.xls", "freedom", "Sheet1\nhello there!" },
             // cryptoapi (PPT only supports cryptoapi...)
@@ -86,10 +89,6 @@ public class TestHxxFEncryption {
         );
     }
 
-    private static String x(String base64) throws IOException {
-        return new String(RawDataUtil.decompress(base64), StandardCharsets.UTF_8);
-    }
-    
     @Test
     public void extract() throws IOException, OpenXML4JException, XmlException {
         File f = sampleDir.getFile(file);
@@ -112,7 +111,7 @@ public class TestHxxFEncryption {
         newPassword(null);
     }
     
-    public void newPassword(String newPass) throws IOException, OpenXML4JException, XmlException {
+    private void newPassword(String newPass) throws IOException, OpenXML4JException, XmlException {
         File f = sampleDir.getFile(file);
         Biff8EncryptionKey.setCurrentUserPassword(password);
         try (POITextExtractor te1 = ExtractorFactory.createExtractor(f)) {
@@ -156,10 +155,14 @@ public class TestHxxFEncryption {
             try (POITextExtractor te3 = ExtractorFactory.createExtractor(new ByteArrayInputStream(bos.toByteArray()));
                  POIDocument doc = (POIDocument) te3.getDocument()) {
                 // need to cache data (i.e. read all data) before changing the key size
-                if (doc instanceof HSLFSlideShowImpl) {
-                    HSLFSlideShowImpl hss = (HSLFSlideShowImpl) doc;
-                    hss.getPictureData();
-                    hss.getDocumentSummaryInformation();
+                Class<?> clazz = doc.getClass();
+                if ("HSLFSlideShowImpl".equals(clazz.getSimpleName())) {
+                    try {
+                        clazz.getDeclaredMethod("getPictureData").invoke(doc);
+                    } catch (ReflectiveOperationException e) {
+                        fail("either scratchpad jar is included and this should work or the clazz should be != HSLFSlideShowImpl");
+                    }
+                    doc.getDocumentSummaryInformation();
                 }
                 EncryptionInfo ei = doc.getEncryptionInfo();
                 assertNotNull(ei);

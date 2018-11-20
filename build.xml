@@ -42,7 +42,7 @@ under the License.
 
     <description>The Apache POI project Ant build.</description>
 
-    <property name="version.id" value="4.0.1-SNAPSHOT"/>
+    <property name="version.id" value="4.0.2"/>
     <property name="release.rc" value="RC1"/>
 
     <property environment="env"/>
@@ -81,7 +81,7 @@ under the License.
       user.language and user.country are required as we have locale-sensitive formatters
     -->
     <property name="testpattern" value="Test*"/> <!--note: this excludes BaseTest* -->
-    <property name="POI.testdata.path" value="test-data"/>
+    <property name="POI.testdata.path" location="test-data"/>
     <property name="java.awt.headless" value="true"/>
     <property name="additionaljar" value=""/>
     <propertyreset name="user.language" value="en"/>
@@ -130,8 +130,12 @@ under the License.
     <property name="ooxml.output.dir" location="build/ooxml-classes"/>
     <property name="ooxml.output.test.dir" location="build/ooxml-test-classes"/>
     <property name="ooxml.testokfile" location="build/ooxml-testokfile.txt"/>
-    <property name="ooxml.lite.output.dir" location="build/ooxml-lite-classes"/>
-    <property name="ooxml.lite.testokfile" location="build/ooxml-lite-testokfile.txt"/>
+
+    <property name="ooxml.lite.agent" location="build/ooxml-lite-agent.jar"/>
+    <property name="ooxml.lite.report" location="build/ooxml-lite-report.txt"/>
+    <property name="ooxml.lite.jar" location="build/ooxml-lite-classes.jar"/>
+    <property name="ooxml.lite.includes" value="^(com/microsoft/schemas|org/(etsi|openxmlformats|w3/)|schemaorg_apache_xmlbeans)"/>
+
 
     <!-- Integration testing: -->
     <property name="integration.src.test" location="src/integrationtest"/>
@@ -331,8 +335,11 @@ under the License.
         <propertyref name="user.country"/>
         <propertyref name="javax.xml.stream.XMLInputFactory"/>
         <propertyref name="org.apache.commons.logging.Log"/>
-        <propertyref name="java.locale.providers"/>        <!-- required for Java 9 compilation -->
-        <propertyref name="version.id"/>    <!-- to detect if we are running on slow Gump VM -->
+        <!-- required for Java 9 compilation -->
+        <propertyref name="java.locale.providers"/>
+        <!-- to detect if we are running on slow Gump VM -->
+        <propertyref name="version.id"/>
+        <propertyref name="scratchpad.ignore"/>
     </propertyset>
 
     <!-- these need to be set differently when running with Java 9 -->
@@ -397,7 +404,8 @@ under the License.
 
     <path id="ooxml-lite.classpath">
         <path refid="ooxml.base.classpath"/>
-        <pathelement location="${ooxml.lite.output.dir}"/> <!-- instead of ooxml-xsds.jar use the filtered classes-->
+        <!-- instead of ooxml-xsds.jar use the filtered classes-->
+        <pathelement location="${ooxml.lite.jar}"/>
         <pathelement location="${ooxml.output.dir}"/>
         <pathelement location="${ooxml.output.test.dir}"/>
         <pathelement location="${main.output.test.dir}"/>
@@ -1015,8 +1023,6 @@ under the License.
             compile-scratchpad, compile-examples, compile-excelant"
             description="Compiles the POI main classes, scratchpad and examples"/>
 
-    <target name="compile-all" depends="compile,compile-ooxml-lite"/>
-
     <target name="compile-main" depends="init">
         <!-- compile the sources -->
         <javac target="${jdk.version.class}"
@@ -1127,6 +1133,7 @@ under the License.
             <classpath>
                 <path refid="ooxml.classpath"/>
                 <pathelement path="${ooxml.output.dir}"/>
+                <pathelement location="${scratchpad.output.dir}"/>
             </classpath>
         </javac>
         <copy todir="${examples.output.dir}">
@@ -1297,6 +1304,7 @@ under the License.
                 <pathelement location="${main.output.test.dir}"/>
                 <pathelement location="${examples.output.dir}"/>
                 <pathelement location="${main.ant.jar}"/>
+                <pathelement location="${scratchpad.output.dir}"/>
             </classpath>
         </javac>
         <!--copy todir="${integration.output.dir}">
@@ -1338,7 +1346,7 @@ under the License.
     <!-- Section: test (execute junit tests on test suites) -->
     <target name="test" depends="compile,jacocotask,test-main,test-scratchpad,test-ooxml,test-excelant"
             description="Tests main, scratchpad and ooxml"/>
-    <target name="test-all" depends="test,test-ooxml-lite,testcoveragereport"
+    <target name="test-all" depends="test,test-integration,test-ooxml-lite,testcoveragereport"
             description="Tests main, scratchpad, ooxml, ooxml-lite, and coveragereport"/>
 
     <target name="testcoveragereport" depends="init,jacocotask" description="create test-report" xmlns:jacoco="antlib:org.jacoco.ant" if="coverage.enabled">
@@ -1385,9 +1393,7 @@ under the License.
                 <group name="OOXML">
                     <classfiles>
                         <fileset dir="${ooxml.output.dir}"/>
-                        <!-- there are no actual POI classes in build/ooxml-lite-classes, only generated code...
-                        <fileset dir="${ooxml.lite.output.dir}"/>
-                        -->
+                        <!-- there are no actual POI classes in build/ooxml-lite-classes, only generated code... -->
                     </classfiles>
                     <sourcefiles encoding="UTF-8">
                         <fileset dir="${ooxml.src}"/>
@@ -1564,6 +1570,7 @@ under the License.
                   <sysproperty key="java.io.tmpdir" value="${tempdir}"/>
                   <jvmarg value="-Xmx768M"/>
                   <jvmarg value="-ea"/>
+                  <jvmarg value="-javaagent:${ooxml.lite.agent}=${ooxml.lite.report}|${ooxml.lite.includes}"/>
                   <jvmarg value="${java9addmods}" />
                   <jvmarg value="${java9addmodsvalue}" />
                   <jvmarg value="${java9addopens1}" />
@@ -1598,6 +1605,7 @@ under the License.
                   </classpath>
                   <syspropertyset refid="junit.properties"/>
                   <sysproperty key="java.io.tmpdir" value="${tempdir}"/>
+                  <jvmarg value="-javaagent:${ooxml.lite.agent}=${ooxml.lite.report}|${ooxml.lite.includes}"/>
                   <jvmarg value="-Xmx768M"/>
                   <jvmarg value="-ea"/>
                   <jvmarg value="${java9addmods}" />
@@ -1620,7 +1628,7 @@ under the License.
         </sequential>
     </macrodef>
 
-    <target name="test-ooxml" depends="compile-main,compile-ooxml,-test-ooxml-check,jacocotask" unless="ooxml.test.notRequired"
+    <target name="test-ooxml" depends="compile-main,compile-ooxml,-test-ooxml-check,jacocotask,-ooxml-lite-agent" unless="ooxml.test.notRequired"
             description="test OOXML classes">
         <ooxml-test-runner classpath="test.ooxml.classpath" type="ooxml"/>
         <delete file="${ooxml.testokfile}"/>
@@ -1638,7 +1646,7 @@ under the License.
         </uptodate>
     </target>
 
-    <target name="test-integration" depends="compile-integration,-test-integration-check,jacocotask"
+    <target name="test-integration" depends="compile-integration,-test-integration-check,jacocotask,-ooxml-lite-agent"
             unless="integration.test.notRequired" xmlns:jacoco="antlib:org.jacoco.ant">
         <propertyreset name="org.apache.poi.util.POILogger" value="org.apache.poi.util.CommonsLogger"/>
         <delete dir="build" includes="test-integration.log*"/>
@@ -1650,6 +1658,7 @@ under the License.
                 <sysproperty key="java.io.tmpdir" value="${tempdir}"/>
                 <jvmarg value="-ea"/>
                 <jvmarg value="-Xmx1512M"/>
+                <jvmarg value="-javaagent:${ooxml.lite.agent}=${ooxml.lite.report}|${ooxml.lite.includes}"/>
                 <jvmarg value="${java9addmods}" />
                 <jvmarg value="${java9addmodsvalue}" />
                 <jvmarg value="${java9addopens1}" />
@@ -1677,63 +1686,43 @@ under the License.
         <echo file="${integration.testokfile}" append="false" message="testok"/>
     </target>
 
-    <!-- Section: test-ooxml-lite -->
-    <target name="-compile-ooxml-lite-check">
-        <uptodate property="ooxml.lite.test.notRequired" targetfile="${ooxml.lite.testokfile}">
-            <srcfiles dir="${ooxml.src}"/>
-            <srcfiles dir="${ooxml.src.test}"/>
-            <srcfiles file="${ooxml.xsds.jar}"/>
-            <srcfiles file="${ooxml.security.jar}"/>
-        </uptodate>
-    </target>
+    <!-- the ooxml lite agent collects referenced schema files while other junit tests are run, -->
+    <!-- therefore its best to compile the ooxml lite jar after all usual tests are done -->
+    <target name="compile-ooxml-lite" depends="compile-ooxml,-ooxml-lite-agent,test-ooxml">
+        <echo message="Create ooxml-lite schemas"/>
 
-    <target name="compile-ooxml-lite" depends="-compile-ooxml-lite-check,compile-ooxml"
-            unless="ooxml.lite.test.notRequired">
-        <delete file="${ooxml.lite.testokfile}"/>
-        <echo message="Running ooxml-lite generator"/>
+        <copy file="${ooxml.lite.report}" tofile="${ooxml.lite.report}-pat" overwrite="true"/>
+        <replaceregexp file="${ooxml.lite.report}-pat" byline="true" match="(.*)" replace="\1.class${line.separator}\1$*.class"/>
 
-        <property name="ooxml.lite-merged.dir" location="build/ooxml-lite-merged"/>
-        <mkdir dir="${ooxml.lite-merged.dir}"/>
+        <patternset id="xsbfiles">
+            <includesfile name="${ooxml.lite.report}-pat"/>
+            <include name="schemaorg_apache_xmlbeans/system/**/*.xsb"/>
+            <include name="schemaorg_apache_xmlbeans/element/**/*.xsb"/>
+        </patternset>
 
-        <jar destfile="${ooxml.lite-merged.dir}/ooxml-lite-merged.jar">
-            <zipfileset includes="**/*" src="${ooxml.xsds.jar}"/>
-            <zipfileset includes="**/*" src="${ooxml.security.jar}"/>
+        <jar destfile="${ooxml.lite.jar}" duplicate="preserve">
+            <zipfileset src="${ooxml.xsds.jar}">
+                <patternset refid="xsbfiles"/>
+            </zipfileset>
+            <zipfileset src="${ooxml.security.jar}">
+                <patternset refid="xsbfiles"/>
+            </zipfileset>
         </jar>
-
-        <java classname="org.apache.poi.ooxml.util.OOXMLLite" fork="yes"
-            failonerror="true">
-            <classpath>
-                <pathelement path="${ooxml.lite-merged.dir}/ooxml-lite-merged.jar"/>
-            </classpath>
-            <classpath refid="test.ooxml.classpath"/>
-            <classpath refid="ooxml.xmlsec.classpath"/>
-            <syspropertyset refid="junit.properties"/>
-            <sysproperty key="java.io.tmpdir" value="${tempdir}"/>
-            <jvmarg value="-Xmx512m"/>
-            <jvmarg value="${java9addmods}" />
-            <jvmarg value="${java9addmodsvalue}" />
-            <jvmarg value="${java9addopens1}" />
-            <jvmarg value="${java9addopens2}" />
-            <jvmarg value="${java9addopens3}" />
-            <jvmarg value="${java9addopens4}" />
-            <jvmarg value="${java9addopens5}" />
-            <jvmarg value="${java9addopens6}" />
-            <jvmarg value="${file.leak.detector}" />
-            <arg value="-ooxml"/>
-            <arg value="${ooxml.lite-merged.dir}/ooxml-lite-merged.jar"/>
-            <arg value="-test"/>
-            <arg value="${ooxml.output.test.dir}"/>
-            <arg value="-dest"/>
-            <arg value="${ooxml.lite.output.dir}"/>
-        </java>
-
-        <echo file="${ooxml.lite.testokfile}" append="false" message="testok"/>
     </target>
 
     <target name="test-ooxml-lite" depends="jacocotask,compile-ooxml-xsds,compile-ooxml-lite">
         <delete file="${ooxml.testokfile}"/>
         <echo message="Running ooxml tests against 'poi-ooxml-schemas'"/>
         <ooxml-test-runner classpath="ooxml-lite.classpath" type="ooxml-lite"/>
+    </target>
+
+    <target name="-ooxml-lite-agent" depends="jacocotask,compile-ooxml-xsds,compile-ooxml">
+        <jar destfile="${ooxml.lite.agent}">
+            <fileset dir="${ooxml.output.test.dir}" includes="org/apache/poi/ooxml/util/OOXMLLiteAgent*.class"/>
+            <manifest>
+                <attribute name="Premain-Class" value="org.apache.poi.ooxml.util.OOXMLLiteAgent"/>
+            </manifest>
+        </jar>
     </target>
 
     <!-- Section: test-excelant -->
@@ -1953,14 +1942,15 @@ under the License.
     </target>
 
     <macrodef name="maven-jar">
-        <attribute name="dir"/>
+        <attribute name="src"/>
         <sequential>
             <local name="destfile"/>
             <pathconvert property="destfile" targetos="unix">
-                <path><pathelement path="@{dir}"/></path>
+                <path><pathelement path="@{src}"/></path>
                 <mapper>
                     <chainedmapper>
                         <filtermapper>
+                            <replaceregex pattern=".jar" replace="" flags="g"/>
                             <replaceregex pattern="ooxml-lite" replace="ooxml-schemas" flags="g"/>
                             <replaceregex pattern="(.java|.src)$$" replace="-sources"/>
                             <replaceregex pattern=".*(?:build|src).?(.*)?" replace="\1"/>
@@ -1971,33 +1961,39 @@ under the License.
                     </chainedmapper>
                 </mapper>
             </pathconvert>
+            <local name="isjar"/>
+            <condition property="isjar">
+                <contains string="@{src}" substring=".jar"/>
+            </condition>
+
             <jar destfile="build/dist/maven/${destfile}.jar"
                  manifest="build/poi-manifest.mf">
-                <fileset dir="@{dir}"/>
+                <fileset dir="@{src}" unless:true="${isjar}"/>
+                <zipfileset src="@{src}" if:true="${isjar}"/>
                 <metainf dir="legal/"/>
             </jar>
         </sequential>
     </macrodef>
 
-    <target name="jar" depends="compile-all, compile-version, -manifest" description="Creates jar files for distribution">
-        <maven-jar dir="${main.output.dir}"/>
-        <maven-jar dir="${scratchpad.output.dir}"/>
-        <maven-jar dir="${ooxml.output.dir}"/>
-        <maven-jar dir="${examples.output.dir}"/>
-        <maven-jar dir="${excelant.output.dir}"/>
-        <maven-jar dir="${ooxml.lite.output.dir}"/>
+    <target name="jar" depends="compile, compile-version, compile-ooxml-lite, -manifest" description="Creates jar files for distribution">
+        <maven-jar src="${main.output.dir}"/>
+        <maven-jar src="${scratchpad.output.dir}"/>
+        <maven-jar src="${ooxml.output.dir}"/>
+        <maven-jar src="${examples.output.dir}"/>
+        <maven-jar src="${excelant.output.dir}"/>
+        <maven-jar src="${ooxml.lite.jar}"/>
     </target>
 
-    <target name="jar-src" depends="compile-all, compile-version, -manifest" description="Sources for Maven">
-        <maven-jar dir="${main.src}"/>
-        <maven-jar dir="${scratchpad.src}"/>
-        <maven-jar dir="${ooxml.src}"/>
-        <maven-jar dir="${examples.src}"/>
-        <maven-jar dir="${excelant.src}"/>
+    <target name="jar-src" depends="compile, compile-version, -manifest" description="Sources for Maven">
+        <maven-jar src="${main.src}"/>
+        <maven-jar src="${scratchpad.src}"/>
+        <maven-jar src="${ooxml.src}"/>
+        <maven-jar src="${examples.src}"/>
+        <maven-jar src="${excelant.src}"/>
     </target>
 
     <target name="integration-test-jar" depends="compile-integration,-manifest" description="target for packaging the integration-test code for mass regression test runs">
-        <maven-jar dir="${integration.output.test.dir}"/>
+        <maven-jar src="${integration.output.test.dir}"/>
     </target>
 
     <target name="-do-jar-check-javadocs-package-list">
@@ -2112,6 +2108,7 @@ under the License.
                       lib/**,
                       bin/**,
                       out/**,
+                      tmp/**,
                       sonar/**/target/**,
                       sonar/*/src/**,
                       compile-lib/**,
@@ -2167,14 +2164,12 @@ under the License.
        </mvn:mvn>
     </target>
 
-    <target name="dist" depends="clean, compile-all, test-all, rat-check, forbidden-apis-check, docs, jar, release-notes, assemble"
+    <target name="dist" depends="clean, compile, test-all, rat-check, forbidden-apis-check, docs, jar, release-notes, assemble"
             description="Creates the entire distribution into build/dist, from scratch">
     </target>
 
     <!-- continuous integration targets -->
-    <target name="gump" depends="compile-all, test-all, jar"
-        description="Target for running with Apache Gump continuous integration. Builds and tests POI and generates jar artifacts." />
-    <target name="jenkins" depends="compile-all, test-all, test-integration, jar, javadocs, assemble, findbugs, release-notes, rat-check, forbidden-apis-check"
+    <target name="jenkins" depends="compile, test-all, jar, javadocs, assemble, findbugs, release-notes, rat-check, forbidden-apis-check"
         description="Target run by Jenkins on a continuous basis. Builds and tests POI, generates artifacts and documentation, and searches for problems."/>
 
     <available property="maven.ant.tasks.present" classname="org.apache.maven.artifact.ant.Pom"/>
