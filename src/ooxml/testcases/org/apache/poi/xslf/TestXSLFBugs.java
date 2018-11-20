@@ -17,12 +17,7 @@
 package org.apache.poi.xslf;
 
 import static org.apache.poi.POITestCase.assertContains;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -92,6 +87,25 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 
 public class TestXSLFBugs {
     private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+
+    @Test
+    public void bug62929() throws Exception {
+        try(XMLSlideShow ss1 = XSLFTestDataSamples.openSampleDocument("missing-blip-fill.pptx")) {
+            assertEquals(1, ss1.getSlides().size());
+
+            XSLFSlide slide = ss1.getSlides().get(0);
+
+            assertEquals(slide.getShapes().size(), 1);
+
+            XSLFPictureShape picture = (XSLFPictureShape)slide.getShapes().get(0);
+
+            assertEquals(picture.getShapeId(), 662);
+            assertFalse(picture.isExternalLinkedPicture());
+            assertNull(picture.getPictureData());
+            assertNull(picture.getPictureLink());
+            assertNull(picture.getClipping());
+        }
+    }
 
     @Test
     public void bug62736() throws Exception {
