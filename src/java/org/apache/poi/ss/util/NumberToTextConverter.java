@@ -220,7 +220,7 @@ public final class NumberToTextConverter {
 			appendExp(sb, decExponent);
 			return;
 		}
-		int nFractionalDigits = countSigDigits - decExponent-1;
+		int nFractionalDigits = countSigDigits - decExponent - 1;
 		if (nFractionalDigits > 0) {
 			sb.append(decimalDigits.subSequence(0, decExponent+1));
 			sb.append('.');

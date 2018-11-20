@@ -25,9 +25,9 @@ import org.apache.poi.ss.usermodel.Cell;
  * <p>This class is a container for POI usermodel row=0 column=0 cell references.
  * It is barely a container for these two coordinates. The implementation
  * of the Comparable interface sorts by "natural" order top left to bottom right.</p>
- * 
+ *
  * <p>Use <tt>CellAddress</tt> when you want to refer to the location of a cell in a sheet
- * when the concept of relative/absolute does not apply (such as the anchor location 
+ * when the concept of relative/absolute does not apply (such as the anchor location
  * of a cell comment). Use {@link CellReference} when the concept of
  * relative/absolute does apply (such as a cell reference in a formula).
  * <tt>CellAddress</tt>es do not have a concept of "sheet", while <tt>CellReference</tt>s do.</p>
@@ -35,10 +35,10 @@ import org.apache.poi.ss.usermodel.Cell;
 public class CellAddress implements Comparable<CellAddress> {
     /** A constant for references to the first cell in a sheet. */
     public static final CellAddress A1 = new CellAddress(0, 0);
-    
+
     private final int _row;
     private final int _col;
-    
+
     /**
      * Create a new CellAddress object.
      *
@@ -50,7 +50,7 @@ public class CellAddress implements Comparable<CellAddress> {
         this._row = row;
         this._col = column;
     }
-    
+
     /**
      * Create a new CellAddress object.
      *
@@ -77,7 +77,7 @@ public class CellAddress implements Comparable<CellAddress> {
         this._row = Integer.parseInt(sRow)-1;
         this._col = CellReference.convertColStringToIndex(sCol);
     }
-    
+
     /**
      * Create a new CellAddress object.
      *
@@ -86,16 +86,16 @@ public class CellAddress implements Comparable<CellAddress> {
     public CellAddress(CellReference reference) {
         this(reference.getRow(), reference.getCol());
     }
-    
+
     /**
      * Create a new CellAddress object
-     * 
+     *
      * @param address a CellAddress
      */
     public CellAddress(CellAddress address) {
         this(address.getRow(), address.getColumn());
     }
-    
+
     /**
      * Create a new CellAddress object.
      *
@@ -104,7 +104,7 @@ public class CellAddress implements Comparable<CellAddress> {
     public CellAddress(Cell cell) {
         this(cell.getRowIndex(), cell.getColumnIndex());
     }
-    
+
     /**
      * Get the cell address row
      *
@@ -126,7 +126,7 @@ public class CellAddress implements Comparable<CellAddress> {
     /**
      * Compare this CellAddress using the "natural" row-major, column-minor ordering.
      * That is, top-left to bottom-right ordering.
-     * 
+     *
      * @param other
      * @return <ul>
      * <li>-1 if this CellAddress is before (above/left) of other</li>
@@ -137,10 +137,14 @@ public class CellAddress implements Comparable<CellAddress> {
     @Override
     public int compareTo(CellAddress other) {
         int r = this._row-other._row;
-        if (r!=0) return r;
+        if (r!=0) {
+            return r;
+        }
 
         r = this._col-other._col;
-        if (r!=0) return r;
+        if (r!=0) {
+            return r;
+        }
 
         return 0;
     }
@@ -153,7 +157,7 @@ public class CellAddress implements Comparable<CellAddress> {
         if(!(o instanceof CellAddress)) {
             return false;
         }
-        
+
         CellAddress other = (CellAddress) o;
         return _row == other._row &&
                _col == other._col;
@@ -161,14 +165,14 @@ public class CellAddress implements Comparable<CellAddress> {
 
     @Override
     public int hashCode() {
-        return this._row + this._col<<16;
+        return (this._row + this._col) << 16;
     }
 
     @Override
     public String toString() {
         return formatAsString();
     }
-    
+
     /**
      * Same as {@link #toString()}
      * @return A1-style cell address string representation
