@@ -87,6 +87,10 @@ public class TestNecessaryOOXMLClasses {
         Assert.assertNotNull(ctLblAlgn);
         CTDashStopList ctDashStopList = CTDashStopList.Factory.newInstance();
         Assert.assertNotNull(ctDashStopList);
+        STDispBlanksAs stDashBlanksAs = STDispBlanksAs.Factory.newInstance();
+        Assert.assertNotNull(stDashBlanksAs);
+        CTDispBlanksAs ctDashBlanksAs = CTDispBlanksAs.Factory.newInstance();
+        Assert.assertNotNull(ctDashBlanksAs);
 
         STLblAlgn.Enum e1 = STLblAlgn.Enum.forString("ctr");
         Assert.assertNotNull(e1);
@@ -100,6 +104,8 @@ public class TestNecessaryOOXMLClasses {
         Assert.assertNotNull(e5);
         STMarkerStyle.Enum e6 = STMarkerStyle.Enum.forString("circle");
         Assert.assertNotNull(e6);
+        STDispBlanksAs.Enum e7 = STDispBlanksAs.Enum.forString("span");
+        Assert.assertNotNull(e7);
 
         CTTextBulletTypefaceFollowText ctTextBulletTypefaceFollowText = CTTextBulletTypefaceFollowText.Factory.newInstance();
         Assert.assertNotNull(ctTextBulletTypefaceFollowText);
