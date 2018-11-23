@@ -52,4 +52,10 @@ public interface HemfRecord {
             ((HwmfRecord) this).draw(ctx);
         }
     }
+
+    /**
+     * Sets the header reference, in case the record needs to refer to it
+     * @param header the emf header
+     */
+    default void setHeader(HemfHeader header) {}
 }
