@@ -67,7 +67,14 @@ public class HemfPicture implements Iterable<HemfRecord> {
             // in case the (first) parsing throws an exception, we can provide the
             // records up to that point
             isParsed = true;
-            new HemfRecordIterator(stream).forEachRemaining(records::add);
+            HemfHeader[] header = new HemfHeader[1];
+            new HemfRecordIterator(stream).forEachRemaining(r -> {
+                if (r instanceof HemfHeader) {
+                    header[0] = (HemfHeader) r;
+                }
+                r.setHeader(header[0]);
+                records.add(r);
+            });
         }
         return records;
     }
@@ -116,23 +123,34 @@ public class HemfPicture implements Iterable<HemfRecord> {
         return new Dimension2DDouble(Math.abs(width*coeff), Math.abs(height*coeff));
     }
 
+    private static double minX(Rectangle2D bounds) {
+        return Math.min(bounds.getMinX(), bounds.getMaxX());
+    }
+
+    private static double minY(Rectangle2D bounds) {
+        return Math.min(bounds.getMinY(), bounds.getMaxY());
+    }
+
     public void draw(Graphics2D ctx, Rectangle2D graphicsBounds) {
         HemfHeader header = (HemfHeader)getRecords().get(0);
 
         AffineTransform at = ctx.getTransform();
         try {
             Rectangle2D emfBounds = header.getBoundsRectangle();
-            ctx.translate(graphicsBounds.getCenterX()-emfBounds.getCenterX(), graphicsBounds.getCenterY()-emfBounds.getCenterY());
 
             // scale output bounds to image bounds
-            ctx.translate(emfBounds.getCenterX(), emfBounds.getCenterY());
+            ctx.translate(minX(graphicsBounds), minY(graphicsBounds));
             ctx.scale(graphicsBounds.getWidth()/emfBounds.getWidth(), graphicsBounds.getHeight()/emfBounds.getHeight());
-            ctx.translate(-emfBounds.getCenterX(), -emfBounds.getCenterY());
+            ctx.translate(-minX(emfBounds), -minY(emfBounds));
 
             int idx = 0;
             HemfGraphics g = new HemfGraphics(ctx, emfBounds);
             for (HemfRecord r : getRecords()) {
-                g.draw(r);
+                try {
+                    g.draw(r);
+                } catch (RuntimeException ignored) {
+
+                }
                 idx++;
             }
         } finally {

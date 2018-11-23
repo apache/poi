@@ -374,9 +374,6 @@ public class HwmfGraphics {
         final HwmfDrawProperties prop = getProperties();
 
         final AffineTransform at = graphicsCtx.getTransform();
-        if (at.getScaleX() == 0. || at.getScaleY() == 0.) {
-            return;
-        }
 
         try {
             at.createInverse();
@@ -686,12 +683,5 @@ public class HwmfGraphics {
         if (useInitialAT) {
             graphicsCtx.setTransform(at);
         }
-    }
-
-    /**
-     * @return the bounding box
-     */
-    public Rectangle2D getBbox() {
-        return (Rectangle2D)bbox.clone();
     }
 }

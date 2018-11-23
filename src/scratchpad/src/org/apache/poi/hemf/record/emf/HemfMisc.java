@@ -23,7 +23,9 @@ import static org.apache.poi.hemf.record.emf.HemfFill.readXForm;
 import static org.apache.poi.hemf.record.emf.HemfRecordIterator.HEADER_SIZE;
 
 import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,6 +33,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
+import org.apache.poi.hemf.draw.HemfDrawProperties;
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hwmf.draw.HwmfDrawProperties;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
@@ -632,6 +635,7 @@ public class HemfMisc {
     public static class EmfModifyWorldTransform implements HemfRecord {
         protected final AffineTransform xForm = new AffineTransform();
         protected HemfModifyWorldTransformMode modifyWorldTransformMode;
+        protected HemfHeader header;
 
         @Override
         public HemfRecordType getEmfRecordType() {
@@ -653,16 +657,49 @@ public class HemfMisc {
         }
 
         @Override
+        public void setHeader(HemfHeader header) {
+            this.header = header;
+        }
+
+        @Override
         public void draw(HemfGraphics ctx) {
             if (modifyWorldTransformMode == null) {
                 return;
             }
 
+            final HemfDrawProperties prop = ctx.getProperties();
+
             final AffineTransform tx;
             switch (modifyWorldTransformMode) {
                 case MWT_LEFTMULTIPLY:
+
+                    AffineTransform wsTrans;
+                    final Rectangle2D win = prop.getWindow();
+                    boolean noSetWindowExYet = win.getWidth() == 1 && win.getHeight() == 1;
+                    if (noSetWindowExYet) {
+                        // TODO: understand world-space transformation [MSDN-WRLDPGSPC]
+                        // experimental and horrible solved, because the world-space transformation behind it
+                        // is not understood :(
+                        // only found one example which had landscape bounds and transform of 90 degress
+
+                        try {
+                            wsTrans = xForm.createInverse();
+                        } catch (NoninvertibleTransformException e) {
+                            wsTrans = new AffineTransform();
+                        }
+
+                        Rectangle2D emfBounds = header.getBoundsRectangle();
+
+                        if (xForm.getShearX() == -1.0 && xForm.getShearY() == 1.0) {
+                            // rotate 90 deg
+                            wsTrans.translate(-emfBounds.getHeight(), emfBounds.getHeight());
+                        }
+                    } else {
+                        wsTrans = adaptXForm(ctx.getTransform());
+                    }
+
                     tx = ctx.getTransform();
-                    tx.concatenate(adaptXForm(tx));
+                    tx.concatenate(wsTrans);
                     break;
                 case MWT_RIGHTMULTIPLY:
                     tx = ctx.getTransform();
@@ -690,7 +727,7 @@ public class HemfMisc {
             Function<Double,Double> nn = (d) -> (d == 0. ? 0. : d);
             double yDiff = Math.signum(nn.apply(xForm.getTranslateY())) == Math.signum(nn.apply(other.getTranslateY())) ? 1. : -1.;
             double xDiff = Math.signum(nn.apply(xForm.getTranslateX())) == Math.signum(nn.apply(other.getTranslateX())) ? 1. : -1.;
-            return new AffineTransform(
+                return new AffineTransform(
                     xForm.getScaleX() == 0 ? 1. : xForm.getScaleX(),
                     yDiff * xForm.getShearY(),
                     xDiff * xForm.getShearX(),
