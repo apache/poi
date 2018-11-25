@@ -42,7 +42,7 @@ public class TestXDGFVisioExtractor {
     }
     
     @After
-    public void closeResoures() throws IOException {
+    public void closeResources() throws IOException {
         if(xml != null) {
             xml.close();
         }

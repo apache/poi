@@ -77,7 +77,7 @@ public final class SharedFormulaRecord extends SharedValueRecordBase {
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[SHARED FORMULA (").append(HexDump.intToHex(sid)).append("]\n");
         buffer.append("    .range      = ").append(getRange()).append("\n");
@@ -99,6 +99,10 @@ public final class SharedFormulaRecord extends SharedValueRecordBase {
     }
 
     /**
+     * Convert formula into an array of {@link Ptg} tokens.
+     *
+     * @param formula The record to break into tokens, cannot be null
+     *
      * @return the equivalent {@link Ptg} array that the formula would have, were it not shared.
      */
     public Ptg[] getFormulaTokens(FormulaRecord formula) {
