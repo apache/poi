@@ -23,21 +23,24 @@ import java.awt.MultipleGradientPaint.CycleMethod;
 import java.awt.geom.*;
 import java.awt.image.*;
 
+import org.apache.poi.util.Internal;
+
+@Internal
 class PathGradientPaint implements Paint {
 
     // http://asserttrue.blogspot.de/2010/01/how-to-iimplement-custom-paint-in-50.html
-    protected final Color colors[];
-    protected final float fractions[];
-    protected final int capStyle;
-    protected final int joinStyle;
-    protected final int transparency;
+    private final Color[] colors;
+    private final float[] fractions;
+    private final int capStyle;
+    private final int joinStyle;
+    private final int transparency;
 
     
-    public PathGradientPaint(Color colors[], float fractions[]) {
-        this(colors,fractions,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND);
+    PathGradientPaint(float[] fractions, Color[] colors) {
+        this(fractions,colors,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND);
     }
     
-    public PathGradientPaint(Color colors[], float fractions[], int capStyle, int joinStyle) {
+    private PathGradientPaint(float[] fractions, Color[] colors, int capStyle, int joinStyle) {
         this.colors = colors.clone();
         this.fractions = fractions.clone();
         this.capStyle = capStyle;
@@ -66,26 +69,26 @@ class PathGradientPaint implements Paint {
     }
 
     class PathGradientContext implements PaintContext {
-        protected final Rectangle deviceBounds;
-        protected final Rectangle2D userBounds;
+        final Rectangle deviceBounds;
+        final Rectangle2D userBounds;
         protected final AffineTransform xform;
-        protected final RenderingHints hints;
+        final RenderingHints hints;
 
         /**
          * for POI: the shape will be only known when the subclasses determines the concrete implementation 
          * in the draw/-content method, so we need to postpone the setting/creation as long as possible
          **/
         protected final Shape shape;
-        protected final PaintContext pCtx;
-        protected final int gradientSteps;
+        final PaintContext pCtx;
+        final int gradientSteps;
         WritableRaster raster;
 
-        public PathGradientContext(
-              ColorModel cm
-            , Rectangle deviceBounds
-            , Rectangle2D userBounds
-            , AffineTransform xform
-            , RenderingHints hints
+        PathGradientContext(
+                ColorModel cm
+                , Rectangle deviceBounds
+                , Rectangle2D userBounds
+                , AffineTransform xform
+                , RenderingHints hints
         ) {
             shape = (Shape)hints.get(Drawable.GRADIENT_SHAPE);
             if (shape == null) {
@@ -139,7 +142,7 @@ class PathGradientPaint implements Paint {
             return childRaster;
         }
 
-        protected int getGradientSteps(Shape gradientShape) {
+        int getGradientSteps(Shape gradientShape) {
             Rectangle rect = gradientShape.getBounds();
             int lower = 1;
             int upper = (int)(Math.max(rect.getWidth(),rect.getHeight())/2.0);
@@ -158,7 +161,7 @@ class PathGradientPaint implements Paint {
         
         
         
-        protected void createRaster() {
+        void createRaster() {
             ColorModel cm = getColorModel();
             raster = cm.createCompatibleWritableRaster((int)deviceBounds.getWidth(), (int)deviceBounds.getHeight());
             BufferedImage img = new BufferedImage(cm, raster, false, null);
@@ -168,7 +171,7 @@ class PathGradientPaint implements Paint {
             graphics.transform(xform);
 
             Raster img2 = pCtx.getRaster(0, 0, gradientSteps, 1);
-            int rgb[] = new int[cm.getNumComponents()];
+            int[] rgb = new int[cm.getNumComponents()];
 
             for (int i = gradientSteps-1; i>=0; i--) {
                 img2.getPixel(i, 0, rgb);
