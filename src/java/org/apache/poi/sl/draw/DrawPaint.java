@@ -29,7 +29,10 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
+import java.util.function.BiFunction;
 
 import org.apache.poi.sl.usermodel.AbstractColorStyle;
 import org.apache.poi.sl.usermodel.ColorStyle;
@@ -197,28 +200,17 @@ public class DrawPaint {
 
             @Override
             public int getShade() {
-                int shade = orig.getShade();
-                switch (modifier) {
-                    case DARKEN:
-                        return Math.min(100000, Math.max(0,shade)+40000);
-                    case DARKEN_LESS:
-                        return Math.min(100000, Math.max(0,shade)+20000);
-                    default:
-                        return shade;
-                }
+                return scale(orig.getShade(), PaintModifier.DARKEN_LESS, PaintModifier.DARKEN);
             }
 
             @Override
             public int getTint() {
-                int tint = orig.getTint();
-                switch (modifier) {
-                    case LIGHTEN:
-                        return Math.min(100000, Math.max(0,tint)+40000);
-                    case LIGHTEN_LESS:
-                        return Math.min(100000, Math.max(0,tint)+20000);
-                    default:
-                        return tint;
-                }
+                return scale(orig.getTint(), PaintModifier.LIGHTEN_LESS, PaintModifier.LIGHTEN);
+            }
+
+            private int scale(int value, PaintModifier lessModifier, PaintModifier moreModifier) {
+                int delta = (modifier == lessModifier ? 20000 : (modifier == moreModifier ? 40000 : 0));
+                return Math.min(100000, Math.max(0,value)+delta);
             }
         };
 
@@ -300,7 +292,7 @@ public class DrawPaint {
         Color result = color.getColor();
 
         double alpha = getAlpha(result, color);
-        double hsl[] = RGB2HSL(result); // values are in the range [0..100] (usually ...)
+        double[] hsl = RGB2HSL(result); // values are in the range [0..100] (usually ...)
         applyHslModOff(hsl, 0, color.getHueMod(), color.getHueOff());
         applyHslModOff(hsl, 1, color.getSatMod(), color.getSatOff());
         applyHslModOff(hsl, 2, color.getLumMod(), color.getLumOff());
@@ -344,7 +336,7 @@ public class DrawPaint {
      * @param mod the modulation adjustment
      * @param off the offset adjustment
      */
-    private static void applyHslModOff(double hsl[], int hslPart, int mod, int off) {
+    private static void applyHslModOff(double[] hsl, int hslPart, int mod, int off) {
         if (mod == -1) {
             mod = 100000;
         }
@@ -363,7 +355,7 @@ public class DrawPaint {
      *
      * For a shade, the equation is luminance * %tint.
      */
-    private static void applyShade(double hsl[], ColorStyle fc) {
+    private static void applyShade(double[] hsl, ColorStyle fc) {
         int shade = fc.getShade();
         if (shade == -1) {
             return;
@@ -380,7 +372,7 @@ public class DrawPaint {
      * For a tint, the equation is luminance * %tint + (1-%tint).
      * (Note that 1-%tint is equal to the lumOff value in DrawingML.)
      */
-    private static void applyTint(double hsl[], ColorStyle fc) {
+    private static void applyTint(double[] hsl, ColorStyle fc) {
         int tint = fc.getTint();
         if (tint == -1) {
             return;
@@ -403,70 +395,63 @@ public class DrawPaint {
         }
 
         Rectangle2D anchor = DrawShape.getAnchor(graphics, shape);
-        final double h = anchor.getHeight(), w = anchor.getWidth(), x = anchor.getX(), y = anchor.getY();
 
         AffineTransform at = AffineTransform.getRotateInstance(Math.toRadians(angle), anchor.getCenterX(), anchor.getCenterY());
 
-        double diagonal = Math.sqrt(h * h + w * w);
-        Point2D p1 = new Point2D.Double(x + w / 2 - diagonal / 2, y + h / 2);
-        p1 = at.transform(p1, null);
-
-        Point2D p2 = new Point2D.Double(x + w, y + h / 2);
-        p2 = at.transform(p2, null);
+        double diagonal = Math.sqrt(Math.pow(anchor.getWidth(),2) + Math.pow(anchor.getHeight(),2));
+        final Point2D p1 = at.transform(new Point2D.Double(anchor.getCenterX() - diagonal / 2, anchor.getCenterY()), null);
+        final Point2D p2 = at.transform(new Point2D.Double(anchor.getMaxX(), anchor.getCenterY()), null);
 
 //        snapToAnchor(p1, anchor);
 //        snapToAnchor(p2, anchor);
 
-        if (p1.equals(p2)) {
-            // gradient paint on the same point throws an exception ... and doesn't make sense
-            return null;
-        }
-
-        float[] fractions = fill.getGradientFractions();
-        Color[] colors = new Color[fractions.length];
-
-        int i = 0;
-        for (ColorStyle fc : fill.getGradientColors()) {
-            // if fc is null, use transparent color to get color of background
-            colors[i++] = (fc == null) ? TRANSPARENT : applyColorTransform(fc);
-        }
-
-        return new LinearGradientPaint(p1, p2, fractions, colors);
+        // gradient paint on the same point throws an exception ... and doesn't make sense
+        return (p1.equals(p2)) ? null : safeFractions((f,c)->new LinearGradientPaint(p1,p2,f,c), fill);
     }
+
 
     @SuppressWarnings("WeakerAccess")
     protected Paint createRadialGradientPaint(GradientPaint fill, Graphics2D graphics) {
         Rectangle2D anchor = DrawShape.getAnchor(graphics, shape);
 
-        Point2D pCenter = new Point2D.Double(anchor.getX() + anchor.getWidth()/2,
-                anchor.getY() + anchor.getHeight()/2);
+        final Point2D pCenter = new Point2D.Double(anchor.getCenterX(), anchor.getCenterY());
 
-        float radius = (float)Math.max(anchor.getWidth(), anchor.getHeight());
+        final float radius = (float)Math.max(anchor.getWidth(), anchor.getHeight());
 
-        float[] fractions = fill.getGradientFractions();
-        Color[] colors = new Color[fractions.length];
-
-        int i=0;
-        for (ColorStyle fc : fill.getGradientColors()) {
-            colors[i++] = applyColorTransform(fc);
-        }
-
-        return new RadialGradientPaint(pCenter, radius, fractions, colors);
+        return safeFractions((f,c)->new RadialGradientPaint(pCenter,radius,f,c), fill);
     }
 
     @SuppressWarnings({"WeakerAccess", "unused"})
     protected Paint createPathGradientPaint(GradientPaint fill, Graphics2D graphics) {
         // currently we ignore an eventually center setting
 
-        float[] fractions = fill.getGradientFractions();
-        Color[] colors = new Color[fractions.length];
+        return safeFractions(PathGradientPaint::new, fill);
+    }
 
-        int i=0;
-        for (ColorStyle fc : fill.getGradientColors()) {
-            colors[i++] = applyColorTransform(fc);
+    private Paint safeFractions(BiFunction<float[],Color[],Paint> init, GradientPaint fill) {
+        float[] fractions = fill.getGradientFractions();
+        final ColorStyle[] styles = fill.getGradientColors();
+
+        // need to remap the fractions, because Java doesn't like repeating fraction values
+        Map<Float,Color> m = new TreeMap<>();
+        for (int i = 0; i<fractions.length; i++) {
+            // if fc is null, use transparent color to get color of background
+            m.put(fractions[i], (styles[i] == null ? TRANSPARENT : applyColorTransform(styles[i])));
         }
 
-        return new PathGradientPaint(colors, fractions);
+        final Color[] colors = new Color[m.size()];
+        if (fractions.length != m.size()) {
+            fractions = new float[m.size()];
+        }
+
+        int i=0;
+        for (Map.Entry<Float,Color> me : m.entrySet()) {
+            fractions[i] = me.getKey();
+            colors[i] = me.getValue();
+            i++;
+        }
+
+        return init.apply(fractions, colors);
     }
 
     /**
