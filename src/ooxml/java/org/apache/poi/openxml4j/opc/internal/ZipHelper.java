@@ -154,8 +154,6 @@ public final class ZipHelper {
                 "The supplied data appears to be a raw XML file. " +
                 "Formats such as Office 2003 XML are not supported");
         default:
-        case OOXML:
-        case UNKNOWN:
             // Don't check for a Zip header, as to maintain backwards
             //  compatibility we need to let them seek over junk at the
             //  start before beginning processing.

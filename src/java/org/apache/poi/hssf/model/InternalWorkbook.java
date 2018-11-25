@@ -2276,6 +2276,8 @@ public final class InternalWorkbook {
 
     /**
      * Only for internal calls - code based on this is not supported ...
+     *
+     * @return The list of records.
      */
     @Internal
     public WorkbookRecordList getWorkbookRecordList() {

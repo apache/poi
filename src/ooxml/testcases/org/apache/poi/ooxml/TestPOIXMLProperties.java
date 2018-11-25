@@ -19,6 +19,7 @@ package org.apache.poi.ooxml;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -89,7 +90,7 @@ public final class TestPOIXMLProperties {
         XSSFWorkbook newWorkbook =
                 XSSFTestDataSamples.writeOutAndReadBack(workbook);
         workbook.close();
-        assertTrue(workbook != newWorkbook);
+        assertNotSame(workbook, newWorkbook);
 
 
         POIXMLProperties newProps = newWorkbook.getProperties();
@@ -158,7 +159,7 @@ public final class TestPOIXMLProperties {
         p = ctProps.getPropertyArray(3);
         assertEquals("{D5CDD505-2E9C-101B-9397-08002B2CF9AE}", p.getFmtid());
         assertEquals("test-4", p.getName());
-        assertEquals(true, p.getBool());
+        assertTrue(p.getBool());
         assertEquals(5, p.getPid());
         
         wb2.close();
