@@ -2113,6 +2113,7 @@ under the License.
                       sonar/*/src/**,
                       compile-lib/**,
                       ooxml-lib/**,
+                      ooxml-testlib/**,
                       scripts/**,
                       TEST*,
                       *.ipr,
