@@ -59,6 +59,7 @@ public final class SheetNameFormatter {
      * @param rawSheetName - sheet name
      * @deprecated use <code>appendFormat(StringBuilder out, String rawSheetName)</code> instead
 	 */
+	@Deprecated
 	public static void appendFormat(StringBuffer out, String rawSheetName) {
 		boolean needsQuotes = needsDelimiting(rawSheetName);
 		if(needsQuotes) {
@@ -73,6 +74,7 @@ public final class SheetNameFormatter {
     /**
      * @deprecated use <code>appendFormat(StringBuilder out, String workbookName, String rawSheetName)</code> instead
      */
+    @Deprecated
 	public static void appendFormat(StringBuffer out, String workbookName, String rawSheetName) {
 		boolean needsQuotes = needsDelimiting(workbookName) || needsDelimiting(rawSheetName);
 		if(needsQuotes) {
@@ -123,7 +125,7 @@ public final class SheetNameFormatter {
 		}
 	}
 
-    private static void appendAndEscape(Appendable sb, String rawSheetName) {
+    static void appendAndEscape(Appendable sb, String rawSheetName) {
         int len = rawSheetName.length();
         for(int i=0; i<len; i++) {
             char ch = rawSheetName.charAt(i);
@@ -139,7 +141,12 @@ public final class SheetNameFormatter {
         }
     }
 
-	private static boolean needsDelimiting(String rawSheetName) {
+	/**
+	 * Tell if the given raw sheet name needs screening/delimiting.
+	 * @param rawSheetName the sheet name.
+	 * @return true if the given raw sheet name needs screening/delimiting, false otherwise.
+	 */
+	static boolean needsDelimiting(String rawSheetName) {
 		int len = rawSheetName.length();
 		if(len < 1) {
 			throw new RuntimeException("Zero length string is an invalid sheet name");
