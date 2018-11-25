@@ -17,6 +17,7 @@
 
 package org.apache.poi.poifs.filesystem;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -277,5 +278,19 @@ public final class TestPOIFSFileSystem {
 	@SuppressWarnings("SameParameterValue")
 	private static InputStream openSampleStream(String sampleFileName) {
 		return HSSFTestDataSamples.openSampleFileStream(sampleFileName);
+	}
+
+	@Test
+	public void fileMagics() {
+		for (FileMagic fm : FileMagic.values()) {
+			if (fm == FileMagic.UNKNOWN) {
+				continue;
+			}
+			for (byte[] b : fm.magic) {
+				assertEquals(fm, FileMagic.valueOf(b));
+			}
+		}
+
+		assertEquals(FileMagic.UNKNOWN, FileMagic.valueOf("foobaa".getBytes(UTF_8)));
 	}
 }
