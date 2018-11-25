@@ -289,6 +289,7 @@ public class TestAllFiles {
         "document/Bug50955.doc",
         "document/57843.doc",
         "slideshow/PPT95.ppt",
+        "slideshow/pp40only.ppt",
         "slideshow/Divino_Revelado.pptx",
         "openxml4j/OPCCompliance_CoreProperties_DCTermsNamespaceLimitedUseFAIL.docx",
         "openxml4j/OPCCompliance_CoreProperties_DoNotUseCompatibilityMarkupFAIL.docx",
