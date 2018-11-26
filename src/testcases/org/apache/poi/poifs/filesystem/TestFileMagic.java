@@ -17,6 +17,7 @@
 
 package org.apache.poi.poifs.filesystem;
 
+import org.apache.commons.codec.Charsets;
 import org.apache.poi.POIDataSamples;
 import org.junit.Test;
 
@@ -31,12 +32,12 @@ public class TestFileMagic {
     @Test
     public void testFileMagic() {
         assertEquals(FileMagic.XML, FileMagic.valueOf("XML"));
-        assertEquals(FileMagic.XML, FileMagic.valueOf("<?xml".getBytes()));
+        assertEquals(FileMagic.XML, FileMagic.valueOf("<?xml".getBytes(Charsets.UTF_8)));
 
         assertEquals(FileMagic.HTML, FileMagic.valueOf("HTML"));
-        assertEquals(FileMagic.HTML, FileMagic.valueOf("<!DOCTYP".getBytes()));
-        assertEquals(FileMagic.HTML, FileMagic.valueOf("<!DOCTYPE".getBytes()));
-        assertEquals(FileMagic.HTML, FileMagic.valueOf("<html".getBytes()));
+        assertEquals(FileMagic.HTML, FileMagic.valueOf("<!DOCTYP".getBytes(Charsets.UTF_8)));
+        assertEquals(FileMagic.HTML, FileMagic.valueOf("<!DOCTYPE".getBytes(Charsets.UTF_8)));
+        assertEquals(FileMagic.HTML, FileMagic.valueOf("<html".getBytes(Charsets.UTF_8)));
 
         try {
             FileMagic.valueOf("some string");
