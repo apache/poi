@@ -2454,7 +2454,7 @@ under the License.
             <copy todir="${repo}">
                 <mappedresources>
                     <!-- add sha-512 when nexus rules are updated (1/2) -->
-                    <fileset dir="build/dist/maven" includes="@{artifactId}/**" excludes="**/*.sha512"/>
+                    <fileset dir="build/dist/maven" includes="@{artifactId}/**" excludes="**/*.sha512,**/*.sha256"/>
                     <regexpmapper from="^([^/]+)/(.*)$$" to="org/apache/poi/\1/${version.id}/\2" handledirsep="true"/>
                 </mappedresources>
             </copy>
