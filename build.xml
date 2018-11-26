@@ -1950,6 +1950,7 @@ under the License.
                 <mapper>
                     <chainedmapper>
                         <filtermapper>
+                            <replaceregex pattern=".jar" replace="" flags="g"/>
                             <replaceregex pattern="ooxml-lite" replace="ooxml-schemas" flags="g"/>
                             <replaceregex pattern="(.java|.src)$$" replace="-sources"/>
                             <replaceregex pattern=".*(?:build|src).?(.*)?" replace="\1"/>
@@ -2112,6 +2113,7 @@ under the License.
                       sonar/*/src/**,
                       compile-lib/**,
                       ooxml-lib/**,
+                      ooxml-testlib/**,
                       scripts/**,
                       TEST*,
                       *.ipr,
@@ -2452,7 +2454,7 @@ under the License.
             <copy todir="${repo}">
                 <mappedresources>
                     <!-- add sha-512 when nexus rules are updated (1/2) -->
-                    <fileset dir="build/dist/maven" includes="@{artifactId}/**" excludes="**/*.sha512"/>
+                    <fileset dir="build/dist/maven" includes="@{artifactId}/**" excludes="**/*.sha512,**/*.sha256"/>
                     <regexpmapper from="^([^/]+)/(.*)$$" to="org/apache/poi/\1/${version.id}/\2" handledirsep="true"/>
                 </mappedresources>
             </copy>

@@ -33,8 +33,9 @@ import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.RecordFormatException;
 
 /**
- * Title:  Record Input Stream<P>
- * Description:  Wraps a stream and provides helper methods for the construction of records.<P>
+ * Title:  Record Input Stream
+ *
+ * Description:  Wraps a stream and provides helper methods for the construction of records.
  */
 public final class RecordInputStream implements LittleEndianInput {
 
@@ -194,11 +195,11 @@ public final class RecordInputStream implements LittleEndianInput {
 	private int readNextSid() {
 		int nAvailable  = _bhi.available();
 		if (nAvailable < EOFRecord.ENCODED_SIZE) {
-			if (nAvailable > 0) {
+			/*if (nAvailable > 0) {
 				// some scrap left over?
 				// ex45582-22397.xls has one extra byte after the last record
 				// Excel reads that file OK
-			}
+			}*/
 			return INVALID_SID_VALUE;
 		}
 		int result = _bhi.readRecordSID();
@@ -305,14 +306,13 @@ public final class RecordInputStream implements LittleEndianInput {
 	@Override
     public double readDouble() {
 		long valueLongBits = readLong();
-		double result = Double.longBitsToDouble(valueLongBits);
-		if (Double.isNaN(result)) {
+		/*if (Double.isNaN(result)) {
             // YK: Excel doesn't write NaN but instead converts the cell type into {@link CellType#ERROR}.
             // HSSF prior to version 3.7 had a bug: it could write Double.NaN but could not read such a file back.
             // This behavior was fixed in POI-3.7.
             //throw new RuntimeException("Did not expect to read NaN"); // (Because Excel typically doesn't write NaN)
-		}
-		return result;
+		}*/
+		return Double.longBitsToDouble(valueLongBits);
 	}
 	
 	public void readPlain(byte[] buf, int off, int len) {

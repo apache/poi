@@ -615,7 +615,7 @@ public class POIXMLDocumentPart {
     protected void read(POIXMLFactory factory, Map<PackagePart, POIXMLDocumentPart> context) throws OpenXML4JException {
         PackagePart pp = getPackagePart();
 
-        if (pp.getContentType().equals(XWPFRelation.TEMPLATE.getContentType())) {
+        if (pp.getContentType().equals(XWPFRelation.GLOSSARY_DOCUMENT.getContentType())) {
             logger.log(POILogger.WARN,
                     "POI does not currently support template.main+xml (glossary) parts.  " +
                     "Skipping this part for now.");
