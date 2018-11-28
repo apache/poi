@@ -234,7 +234,6 @@ public final class FormulaParser {
             _inIntersection = false;
         }
         _pointer += Character.charCount(look);
-        //System.out.println(new StringBuilder("Got char: ").appendCodePoint(look)).toString();
     }
     private void resetPointer(int ptr) {
         _pointer = ptr;
@@ -381,9 +380,6 @@ public final class FormulaParser {
         }
         if (token instanceof OperandPtg) {
             return false;
-        }
-        if (token instanceof OperationPtg) {
-            return true;
         }
 
         return false;

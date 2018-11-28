@@ -31,7 +31,13 @@ import org.apache.poi.util.LittleEndian;
  * A block of block allocation table entries. BATBlocks are created
  * only through a static factory method: createBATBlocks.
  */
-public final class BATBlock extends BigBlock {
+public final class BATBlock implements BlockWritable {
+    /**
+     * Either 512 bytes ({@link POIFSConstants#SMALLER_BIG_BLOCK_SIZE})
+     *  or 4096 bytes ({@link POIFSConstants#LARGER_BIG_BLOCK_SIZE})
+     */
+    private POIFSBigBlockSize bigBlockSize;
+
     /**
      * For a regular fat block, these are 128 / 1024 
      *  next sector values.
@@ -55,7 +61,7 @@ public final class BATBlock extends BigBlock {
      */
     private BATBlock(POIFSBigBlockSize bigBlockSize)
     {
-        super(bigBlockSize);
+        this.bigBlockSize = bigBlockSize;
         
         int _entries_per_block = bigBlockSize.getBATEntriesPerBlock();
         _values = new int[_entries_per_block];
@@ -64,39 +70,14 @@ public final class BATBlock extends BigBlock {
         Arrays.fill(_values, POIFSConstants.UNUSED_BLOCK);
     }
 
-    /**
-     * Create a single instance initialized (perhaps partially) with entries
-     *
-     * @param entries the array of block allocation table entries
-     * @param start_index the index of the first entry to be written
-     *                    to the block
-     * @param end_index the index, plus one, of the last entry to be
-     *                  written to the block (writing is for all index
-     *                  k, start_index <= k < end_index)
-     */
-
-    private BATBlock(POIFSBigBlockSize bigBlockSize, final int [] entries,
-                     final int start_index, final int end_index)
-    {
-        this(bigBlockSize);
-        for (int k = start_index; k < end_index; k++) {
-           _values[k - start_index] = entries[k];
-        }
-        
-        // Do we have any free sectors?
-        if(end_index - start_index == _values.length) {
-           recomputeFree();
-        }
-    }
-    
     private void recomputeFree() {
        boolean hasFree = false;
-       for(int k=0; k<_values.length; k++) {
-          if(_values[k] == POIFSConstants.UNUSED_BLOCK) {
-             hasFree = true;
-             break;
-          }
-       }
+        for (int _value : _values) {
+            if (_value == POIFSConstants.UNUSED_BLOCK) {
+                hasFree = true;
+                break;
+            }
+        }
        _has_free_sectors = hasFree;
     }
 
@@ -127,108 +108,12 @@ public final class BATBlock extends BigBlock {
     public static BATBlock createEmptyBATBlock(final POIFSBigBlockSize bigBlockSize, boolean isXBAT) {
        BATBlock block = new BATBlock(bigBlockSize);
        if(isXBAT) {
-          block.setXBATChain(bigBlockSize, POIFSConstants.END_OF_CHAIN);
+           final int _entries_per_xbat_block = bigBlockSize.getXBATEntriesPerBlock();
+           block._values[ _entries_per_xbat_block ] = POIFSConstants.END_OF_CHAIN;
        }
        return block;
     }
 
-    /**
-     * Create an array of BATBlocks from an array of int block
-     * allocation table entries
-     *
-     * @param entries the array of int entries
-     *
-     * @return the newly created array of BATBlocks
-     */
-    public static BATBlock [] createBATBlocks(final POIFSBigBlockSize bigBlockSize, final int [] entries)
-    {
-        int        block_count = calculateStorageRequirements(bigBlockSize, entries.length);
-        BATBlock[] blocks      = new BATBlock[ block_count ];
-        int        index       = 0;
-        int        remaining   = entries.length;
-
-        int _entries_per_block = bigBlockSize.getBATEntriesPerBlock();
-        for (int j = 0; j < entries.length; j += _entries_per_block)
-        {
-            blocks[ index++ ] = new BATBlock(bigBlockSize, entries, j,
-                                             (remaining > _entries_per_block)
-                                             ? j + _entries_per_block
-                                             : entries.length);
-            remaining         -= _entries_per_block;
-        }
-        return blocks;
-    }
-    
-    /**
-     * Create an array of XBATBlocks from an array of int block
-     * allocation table entries
-     *
-     * @param entries the array of int entries
-     * @param startBlock the start block of the array of XBAT blocks
-     *
-     * @return the newly created array of BATBlocks
-     */
-
-    public static BATBlock [] createXBATBlocks(final POIFSBigBlockSize bigBlockSize,
-                                               final int [] entries,
-                                               final int startBlock)
-    {
-        int        block_count =
-            calculateXBATStorageRequirements(bigBlockSize, entries.length);
-        BATBlock[] blocks      = new BATBlock[ block_count ];
-        int        index       = 0;
-        int        remaining   = entries.length;
-
-        int _entries_per_xbat_block = bigBlockSize.getXBATEntriesPerBlock();
-        if (block_count != 0)
-        {
-            for (int j = 0; j < entries.length; j += _entries_per_xbat_block)
-            {
-                blocks[ index++ ] =
-                    new BATBlock(bigBlockSize, entries, j,
-                                 (remaining > _entries_per_xbat_block)
-                                 ? j + _entries_per_xbat_block
-                                 : entries.length);
-                remaining         -= _entries_per_xbat_block;
-            }
-            for (index = 0; index < blocks.length - 1; index++)
-            {
-                blocks[ index ].setXBATChain(bigBlockSize, startBlock + index + 1);
-            }
-            blocks[ index ].setXBATChain(bigBlockSize, POIFSConstants.END_OF_CHAIN);
-        }
-        return blocks;
-    }
-
-    /**
-     * Calculate how many BATBlocks are needed to hold a specified
-     * number of BAT entries.
-     *
-     * @param entryCount the number of entries
-     *
-     * @return the number of BATBlocks needed
-     */
-    public static int calculateStorageRequirements(final POIFSBigBlockSize bigBlockSize, final int entryCount)
-    {
-        int _entries_per_block = bigBlockSize.getBATEntriesPerBlock();
-        return (entryCount + _entries_per_block - 1) / _entries_per_block;
-    }
-
-    /**
-     * Calculate how many XBATBlocks are needed to hold a specified
-     * number of BAT entries.
-     *
-     * @param entryCount the number of entries
-     *
-     * @return the number of XBATBlocks needed
-     */
-    public static int calculateXBATStorageRequirements(final POIFSBigBlockSize bigBlockSize, final int entryCount)
-    {
-        int _entries_per_xbat_block = bigBlockSize.getXBATEntriesPerBlock();
-        return (entryCount + _entries_per_xbat_block - 1)
-               / _entries_per_xbat_block;
-    }
-    
     /**
      * Calculates the maximum size of a file which is addressable given the
      *  number of FAT (BAT) sectors specified. (We don't care if those BAT
@@ -280,19 +165,7 @@ public final class BATBlock extends BigBlock {
      */
     public static BATBlockAndIndex getSBATBlockAndIndex(final int offset, 
           final HeaderBlock header, final List<BATBlock> sbats) {
-       POIFSBigBlockSize bigBlockSize = header.getBigBlockSize();
-       int entriesPerBlock = bigBlockSize.getBATEntriesPerBlock();
-       
-       // SBATs are so much easier, as they're chained streams
-       int whichSBAT = offset / entriesPerBlock;
-       int index = offset % entriesPerBlock;
-       return new BATBlockAndIndex( index, sbats.get(whichSBAT) );
-    }
-    
-    private void setXBATChain(final POIFSBigBlockSize bigBlockSize, int chainIndex)
-    {
-        int _entries_per_xbat_block = bigBlockSize.getXBATEntriesPerBlock();
-        _values[ _entries_per_xbat_block ] = chainIndex;
+        return getBATBlockAndIndex(offset, header, sbats);
     }
     
     /**
@@ -354,10 +227,7 @@ public final class BATBlock extends BigBlock {
        return ourBlockIndex;
     }
 
-
-    /* ********** START extension of BigBlock ********** */
-
-   /**
+    /**
      * Write the block's data to an OutputStream
      *
      * @param stream the OutputStream to which the stored data should
@@ -366,16 +236,13 @@ public final class BATBlock extends BigBlock {
      * @exception IOException on problems writing to the specified
      *            stream
      */
-    void writeData(final OutputStream stream)
-        throws IOException
-    {
-       // Save it out
-       stream.write( serialize() );
+
+    public void writeBlocks(final OutputStream stream) throws IOException {
+        // Save it out
+        stream.write( serialize() );
     }
-    
-    void writeData(final ByteBuffer block)
-        throws IOException
-    {
+
+    public void writeData(final ByteBuffer block) {
        // Save it out
        block.put( serialize() );
     }
@@ -384,21 +251,18 @@ public final class BATBlock extends BigBlock {
        // Create the empty array
        byte[] data = new byte[ bigBlockSize.getBigBlockSize() ];
        
-       // Fill in the values
-       int offset = 0;
-       for(int i=0; i<_values.length; i++) {
-          LittleEndian.putInt(data, offset, _values[i]);
-          offset += LittleEndian.INT_SIZE;
-       }
+        // Fill in the values
+        int offset = 0;
+        for (int _value : _values) {
+            LittleEndian.putInt(data, offset, _value);
+            offset += LittleEndian.INT_SIZE;
+        }
        
        // Done
        return data;
     }
 
-    /* **********  END  extension of BigBlock ********** */
-    
-    
-    public static class BATBlockAndIndex {
+    public static final class BATBlockAndIndex {
        private final int index;
        private final BATBlock block;
        private BATBlockAndIndex(int index, BATBlock block) {

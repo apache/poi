@@ -25,6 +25,10 @@ buildscript {
     }
 }
 
+repositories {
+    mavenCentral()
+}
+
 // Only add the plugin for Sonar if enabled
 if (project.hasProperty('enableSonar')) {
     println 'Enabling Sonar support'
@@ -33,6 +37,20 @@ if (project.hasProperty('enableSonar')) {
 
 // For help converting an Ant build to a Gradle build, see
 // https://docs.gradle.org/current/userguide/ant.html
+
+configurations {
+    antLibs
+}
+
+dependencies {
+    antLibs("junit:junit:4.12")
+    antLibs("org.apache.ant:ant-junit:1.10.4")
+    antLibs("org.apache.ant:ant-junit4:1.10.4")
+}
+
+ant.taskdef(name: "junit",
+        classname: "org.apache.tools.ant.taskdefs.optional.junit.JUnitTask",
+        classpath: configurations.antLibs.asPath)
 
 ant.importBuild 'build.xml'
 
@@ -73,9 +91,9 @@ subprojects {
     // See https://github.com/melix/japicmp-gradle-plugin 
     apply plugin: 'me.champeau.gradle.japicmp'
         
-    version = '4.0.0-SNAPSHOT'
+    version = '4.0.1-SNAPSHOT'
     ext {
-        japicmpversion = '3.17'
+        japicmpversion = '4.0.0'
     }
 
     tasks.withType(JavaCompile) {
@@ -101,6 +119,10 @@ subprojects {
         exclude '**/TestUnfixedBugs.class'
         exclude '**/TestOneFile.class'
 
+        // Exclude Test Suites
+        exclude '**/All*Tests.class'
+        exclude '**/HSSFTests.class'
+
         // set heap size for the test JVM(s)
         minHeapSize = "128m"
         maxHeapSize = "768m"
@@ -115,10 +137,13 @@ subprojects {
         systemProperties['user.dir'] = workingDir
         
         systemProperties['POI.testdata.path'] = '../../test-data'
+        
+        // this is necessary for JDK 9+ to keep formatting dates the same way as in previous JDK-versions
+        systemProperties['java.locale.providers'] = 'JRE,CLDR'
     }
 
     jacoco {
-        toolVersion = '0.7.9'
+        toolVersion = '0.8.2'
     }
     
     // ensure the build-dir exists
@@ -133,6 +158,15 @@ subprojects {
             }
         }
     }
+
+    task(japicmp, type: me.champeau.gradle.ArtifactJapicmpTask, dependsOn: jar) {
+        to = jar.archivePath
+        onlyModified = true
+        onlyBinaryIncompatibleModified = true
+        failOnModification = false
+        txtOutputFile = file("$buildDir/reports/japi.txt")
+        htmlOutputFile = file("$buildDir/reports/japi.html")
+    }
 }
 
 project('main') {
@@ -143,10 +177,21 @@ project('main') {
     dependencies {
         compile 'commons-codec:commons-codec:1.11'
         compile 'commons-logging:commons-logging:1.2'
-        compile 'org.apache.commons:commons-collections4:4.1'
+        compile 'org.apache.commons:commons-collections4:4.2'
         compile 'org.apache.commons:commons-math3:3.6.1'
+        compile 'javax.xml.bind:jaxb-api:2.3.0'
+        compile 'com.sun.xml.bind:jaxb-impl:2.3.0.1'
+        compile 'com.sun.xml.bind:jaxb-core:2.3.0.1'
+        compile 'javax.activation:activation:1.1.1'
 
         testCompile 'junit:junit:4.12'
+        testCompile 'org.reflections:reflections:0.9.11'
+    }
+
+    jar {
+        manifest {
+            attributes 'Automatic-Module-Name': 'org.apache.poi.main'
+        }
     }
 
     // Create a separate jar for test-code to depend on it in other projects
@@ -164,16 +209,7 @@ project('main') {
         tests testJar
     }
 
-    // TOOD: we should not duplicate this task in each project, but I did not figure out how to inject the artifactId for each project
-    task japicmp(type: me.champeau.gradle.ArtifactJapicmpTask, dependsOn: jar) {
-        baseline = 'org.apache.poi:poi:' + japicmpversion + '@jar'
-        to = jar.archivePath
-        onlyModified = true
-        onlyBinaryIncompatibleModified = true
-        failOnModification = false
-        txtOutputFile = file("$buildDir/reports/japi.txt")
-        htmlOutputFile = file("$buildDir/reports/japi.html")
-    }
+    japicmp.baseline = 'org.apache.poi:poi:' + japicmpversion + '@jar'
 }
 
 project('ooxml') {
@@ -189,12 +225,12 @@ project('ooxml') {
     compileJava.dependsOn 'ant-compile-ooxml-xsds'
 
     dependencies {
-        compile 'org.apache.xmlbeans:xmlbeans:2.6.0'
-        compile 'org.apache.commons:commons-collections4:4.1'
+        compile 'org.apache.xmlbeans:xmlbeans:3.0.2'
+        compile 'org.apache.commons:commons-collections4:4.2'
         compile 'org.apache.commons:commons-math3:3.6.1'
-        compile 'org.apache.commons:commons-compress:1.17'
+        compile 'org.apache.commons:commons-compress:1.18'
         compile 'org.apache.santuario:xmlsec:2.1.0'
-        compile 'org.bouncycastle:bcpkix-jdk15on:1.59'
+        compile 'org.bouncycastle:bcpkix-jdk15on:1.60'
         compile 'com.github.virtuald:curvesapi:1.05'
 
         // for ooxml-lite, should we move this somewhere else?
@@ -206,23 +242,21 @@ project('ooxml') {
         compile files('../../ooxml-lib/ooxml-security-1.1.jar')
 
         testCompile 'junit:junit:4.12'
-        testCompile 'org.mockito:mockito-core:2.13.0'
+        testCompile 'org.mockito:mockito-core:2.21.0'
         testCompile 'org.xmlunit:xmlunit-core:2.5.1'
+        testCompile 'org.reflections:reflections:0.9.11'
         testCompile project(path: ':main', configuration: 'tests')
         testCompile 'org.openjdk.jmh:jmh-core:1.19'
         testCompile 'org.openjdk.jmh:jmh-generator-annprocess:1.19'
     }
 
-    // TODO: we should not duplicate this task in each project, but I did not figure out how to inject the artifactId for each project
-    task japicmp(type: me.champeau.gradle.ArtifactJapicmpTask, dependsOn: jar) {
-        baseline = 'org.apache.poi:poi-ooxml:' + japicmpversion + '@jar'
-        to = jar.archivePath
-        onlyModified = true
-        onlyBinaryIncompatibleModified = true
-        failOnModification = false
-        txtOutputFile = file("$buildDir/reports/japi.txt")
-        htmlOutputFile = file("$buildDir/reports/japi.html")
+    jar {
+        manifest {
+            attributes 'Automatic-Module-Name': 'org.apache.poi.ooxml'
+        }
     }
+
+    japicmp.baseline = 'org.apache.poi:poi-ooxml:' + japicmpversion + '@jar'
 }
 
 project('examples') {
@@ -232,6 +266,8 @@ project('examples') {
         compile project(':main')
         compile project(':ooxml')
     }
+
+    japicmp.enabled = false
 }
 
 
@@ -241,7 +277,7 @@ project('excelant') {
     sourceSets.test.java.srcDirs = ['../../src/excelant/testcases']
 
     dependencies {
-        compile 'org.apache.ant:ant:1.10.1'
+        compile 'org.apache.ant:ant:1.10.4'
 
         compile project(':main')
         compile project(':ooxml')
@@ -249,23 +285,20 @@ project('excelant') {
         testCompile project(path: ':main', configuration: 'tests')
     }
 
-    // TOOD: we should not duplicate this task in each project, but I did not figure out how to inject the artifactId for each project
-    task japicmp(type: me.champeau.gradle.ArtifactJapicmpTask, dependsOn: jar) {
-        baseline = 'org.apache.poi:poi-excelant:' + japicmpversion + '@jar'
-        to = jar.archivePath
-        onlyModified = true
-        onlyBinaryIncompatibleModified = true
-        failOnModification = false
-        txtOutputFile = file("$buildDir/reports/japi.txt")
-        htmlOutputFile = file("$buildDir/reports/japi.html")
-    }
+	jar {
+		manifest {
+			attributes 'Automatic-Module-Name': 'org.apache.poi.excelant'
+		}
+	}
+
+    japicmp.baseline = 'org.apache.poi:poi-excelant:' + japicmpversion + '@jar'
 }
 
 project('integrationtest') {
     sourceSets.test.java.srcDirs = ['../../src/integrationtest']
 
     dependencies {
-        compile 'org.apache.ant:ant:1.10.1'
+        compile 'org.apache.ant:ant:1.10.4'
 
         compile project(':main')
         compile project(':ooxml')
@@ -275,7 +308,13 @@ project('integrationtest') {
         testCompile 'junit:junit:4.12'
     }
 
-    test {
+	jar {
+		manifest {
+			attributes 'Automatic-Module-Name': 'org.apache.poi.integrationtest'
+		}
+	}
+
+	test {
         // exclude these from the normal test-run
         exclude '**/TestAllFiles.class'
         exclude '**/*FileHandler.class'
@@ -287,6 +326,8 @@ project('integrationtest') {
         exclude '**/*FileHandler.class'
         exclude '**/RecordStresser.class'
     }
+
+    japicmp.enabled = false
 }
 
 project('scratchpad') {
@@ -302,14 +343,11 @@ project('scratchpad') {
         testCompile project(path: ':main', configuration: 'tests')
     }
 
-    // TOOD: we should not duplicate this task in each project, but I did not figure out how to inject the artifactId for each project
-    task japicmp(type: me.champeau.gradle.ArtifactJapicmpTask, dependsOn: jar) {
-        baseline = 'org.apache.poi:poi-scratchpad:' + japicmpversion + '@jar'
-        to = jar.archivePath
-        onlyModified = true
-        onlyBinaryIncompatibleModified = true
-        failOnModification = false
-        txtOutputFile = file("$buildDir/reports/japi.txt")
-        htmlOutputFile = file("$buildDir/reports/japi.html")
-    }
+	jar {
+		manifest {
+			attributes 'Automatic-Module-Name': 'org.apache.poi.scratchpad'
+		}
+	}
+
+    japicmp.baseline = 'org.apache.poi:poi-scratchpad:' + japicmpversion + '@jar'
 }

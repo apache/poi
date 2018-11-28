@@ -16,7 +16,18 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.Units;
 import org.apache.poi.wp.usermodel.HeaderFooterType;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
@@ -32,20 +43,12 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBrClear;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STEm;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHighlightColor;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STThemeColor;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STUnderline;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalAlignRun;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.math.BigInteger;
-import java.util.Iterator;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 /**
  * Tests for XWPF Run
@@ -161,27 +164,15 @@ public class TestXWPFRun {
     @Test
     public void testSetGetUnderline() {
         CTRPr rpr = ctRun.addNewRPr();
+        XWPFRun run = new XWPFRun(ctRun, irb);
         rpr.addNewU().setVal(STUnderline.DASH);
 
-        XWPFRun run = new XWPFRun(ctRun, irb);
         assertEquals(UnderlinePatterns.DASH.getValue(), run.getUnderline()
                 .getValue());
 
         run.setUnderline(UnderlinePatterns.NONE);
         assertEquals(STUnderline.NONE.intValue(), rpr.getU().getVal()
                 .intValue());
-    }
-
-    @Test
-    public void testSetGetVAlign() {
-        CTRPr rpr = ctRun.addNewRPr();
-        rpr.addNewVertAlign().setVal(STVerticalAlignRun.SUBSCRIPT);
-
-        XWPFRun run = new XWPFRun(ctRun, irb);
-        assertEquals(VerticalAlign.SUBSCRIPT, run.getSubscript());
-
-        run.setSubscript(VerticalAlign.BASELINE);
-        assertEquals(STVerticalAlignRun.BASELINE, rpr.getVertAlign().getVal());
     }
 
     @Test
@@ -468,20 +459,6 @@ public class TestXWPFRun {
     }
 
     @Test
-    public void testSetGetHighlight() {
-        XWPFRun run = p.createRun();
-        assertEquals(false, run.isHighlighted());
-        
-        // TODO Do this using XWPFRun methods
-        run.getCTR().addNewRPr().addNewHighlight().setVal(STHighlightColor.NONE);
-        assertEquals(false, run.isHighlighted());
-        run.getCTR().getRPr().getHighlight().setVal(STHighlightColor.CYAN);
-        assertEquals(true, run.isHighlighted());
-        run.getCTR().getRPr().getHighlight().setVal(STHighlightColor.NONE);
-        assertEquals(false, run.isHighlighted());
-    }
-
-    @Test
     public void testAddPicture() throws Exception {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("TestDocument.docx");
         XWPFParagraph p = doc.getParagraphArray(2);
@@ -670,7 +647,125 @@ public class TestXWPFRun {
         assertEquals(10, run.getFontSize());
         run.setImprinted(true);
         run.setItalic(true);
-
+    }
+    
+    @Test
+    public void testSetGetTextScale() throws IOException {
+        XWPFDocument document = new XWPFDocument();
+        final XWPFRun run = document.createParagraph().createRun();
+        assertEquals(100, run.getTextScale());
+        run.setTextScale(200);
+        assertEquals(200, run.getTextScale());
         document.close();
     }
+    
+    @Test
+    public void testSetGetTextHighlightColor() throws IOException {
+        XWPFDocument document = new XWPFDocument();
+        final XWPFRun run = document.createParagraph().createRun();
+        assertEquals(STHighlightColor.NONE, run.getTextHightlightColor());
+        assertEquals(false, run.isHighlighted());
+        run.setTextHighlightColor("darkGreen"); // See 17.18.40 ST_HighlightColor (Text Highlight Colors)
+        assertEquals(STHighlightColor.DARK_GREEN, run.getTextHightlightColor());
+        assertEquals(true, run.isHighlighted());
+        run.setTextHighlightColor("none");
+        assertEquals(false, run.isHighlighted());
+        
+        document.close();
+    }
+
+    @Test
+    public void testSetGetVanish() throws IOException {
+        XWPFDocument document = new XWPFDocument();
+        final XWPFRun run = document.createParagraph().createRun();
+        assertEquals(false, run.isVanish());
+        run.setVanish(true);
+        assertEquals(true, run.isVanish());
+        run.setVanish(false);
+        assertEquals(false, run.isVanish());
+        document.close();
+    }
+    
+    @Test
+    public void testSetGetVerticalAlignment() throws IOException {
+        XWPFDocument document = new XWPFDocument();
+        XWPFRun run = document.createParagraph().createRun();
+        assertEquals(STVerticalAlignRun.BASELINE, run.getVerticalAlignment());
+        // Reset to a fresh run so we test case of run not having vertical alignment at all
+        run = document.createParagraph().createRun();
+        run.setVerticalAlignment("subscript");
+        assertEquals(STVerticalAlignRun.SUBSCRIPT, run.getVerticalAlignment());
+        run.setVerticalAlignment("superscript");
+        assertEquals(STVerticalAlignRun.SUPERSCRIPT, run.getVerticalAlignment());
+        document.close();
+    }
+
+    @Test
+    public void testSetGetVAlign() {
+        CTRPr rpr = ctRun.addNewRPr();
+        rpr.addNewVertAlign().setVal(STVerticalAlignRun.SUBSCRIPT);
+
+        XWPFRun run = new XWPFRun(ctRun, irb);
+        assertEquals(VerticalAlign.SUBSCRIPT, run.getSubscript());
+
+        run.setSubscript(VerticalAlign.BASELINE);
+        assertEquals(STVerticalAlignRun.BASELINE, rpr.getVertAlign().getVal());
+    }
+
+
+    @Test
+    public void testSetGetEmphasisMark() throws IOException {
+        XWPFDocument document = new XWPFDocument();
+        XWPFRun run = document.createParagraph().createRun();
+        assertEquals(STEm.NONE, run.getEmphasisMark());
+        // Reset to a fresh run so we test case of run not having property at all
+        run = document.createParagraph().createRun();
+        run.setEmphasisMark("dot");
+        assertEquals(STEm.DOT, run.getEmphasisMark());
+        document.close();
+    }
+    
+    @Test
+    public void testSetGetUnderlineColor() throws IOException {
+        XWPFDocument document = new XWPFDocument();
+        XWPFRun run = document.createParagraph().createRun();
+        assertEquals("auto", run.getUnderlineColor());
+        // Reset to a fresh run so we test case of run not having property at all
+        run = document.createParagraph().createRun();
+        String colorRgb = "C0F1a2";
+        run.setUnderlineColor(colorRgb);
+        assertEquals(colorRgb.toUpperCase(LocaleUtil.getUserLocale()), run.getUnderlineColor());
+        run.setUnderlineColor("auto");
+        assertEquals("auto", run.getUnderlineColor());
+        document.close();
+    }
+    
+    @Test
+    public void testSetGetUnderlineThemeColor() throws IOException {
+        XWPFDocument document = new XWPFDocument();
+        XWPFRun run = document.createParagraph().createRun();
+        assertEquals(STThemeColor.NONE, run.getUnderlineThemeColor());
+        // Reset to a fresh run so we test case of run not having property at all
+        run = document.createParagraph().createRun();
+        String colorName = "accent4";
+        run.setUnderlineThemeColor(colorName);
+        assertEquals(STThemeColor.Enum.forString(colorName), run.getUnderlineThemeColor());
+        run.setUnderlineThemeColor("none");
+        assertEquals(STThemeColor.NONE, run.getUnderlineThemeColor());
+        document.close();
+    }
+    
+
+    @Test
+    public void testSetStyleId() throws IOException {
+        XWPFDocument document = XWPFTestDataSamples.openSampleDocument("SampleDoc.docx");
+        final XWPFRun run = document.createParagraph().createRun();
+        
+        String styleId = "bolditalic";
+        run.setStyle(styleId);
+        String candStyleId = run.getCTR().getRPr().getRStyle().getVal();
+        assertNotNull("Expected to find a run style ID", candStyleId);
+        assertEquals(styleId, candStyleId);        
+    }
+
 }

@@ -18,24 +18,31 @@
 package org.apache.poi.poifs.crypt.dsig;
 
 import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet.MS_DIGSIG_NS;
+import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet.XML_DIGSIG_NS;
 
 import java.io.IOException;
 import java.security.cert.X509Certificate;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
 import javax.xml.crypto.MarshalException;
 import javax.xml.crypto.dsig.XMLSignature;
 import javax.xml.crypto.dsig.XMLSignatureException;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
 import javax.xml.crypto.dsig.dom.DOMValidateContext;
+import javax.xml.namespace.NamespaceContext;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.poi.EncryptedDocumentException;
-import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ooxml.util.DocumentHelper;
+import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.xmlbeans.XmlException;
@@ -92,7 +99,7 @@ public class SignaturePart {
         // TODO: check for XXE
         return SignatureDocument.Factory.parse(signaturePart.getInputStream(), DEFAULT_XML_OPTIONS);
     }
-    
+
     /**
      * @return true, when the xml signature is valid, false otherwise
      * 
@@ -100,9 +107,11 @@ public class SignaturePart {
      */
     public boolean validate() {
         KeyInfoKeySelector keySelector = new KeyInfoKeySelector();
+        XPath xpath = XPathFactory.newInstance().newXPath();
+        xpath.setNamespaceContext(new XPathNSContext());
+
         try {
             Document doc = DocumentHelper.readDocument(signaturePart.getInputStream());
-            XPath xpath = XPathFactory.newInstance().newXPath();
             NodeList nl = (NodeList)xpath.compile("//*[@Id]").evaluate(doc, XPathConstants.NODESET);
             final int length = nl.getLength();
             for (int i=0; i<length; i++) {
@@ -121,6 +130,7 @@ public class SignaturePart {
             if (valid) {
                 signer = keySelector.getSigner();
                 certChain = keySelector.getCertChain();
+                extractConfig(doc, xmlSignature);
             }
             
             return valid;
@@ -144,6 +154,52 @@ public class SignaturePart {
             String s = "error in validating the signature";
             LOG.log(POILogger.ERROR, s, e);
             throw new EncryptedDocumentException(s, e);
+        }
+    }
+
+    private void extractConfig(final Document doc, final XMLSignature xmlSignature) throws XPathExpressionException {
+        if (!signatureConfig.isUpdateConfigOnValidate()) {
+            return;
+        }
+
+        signatureConfig.setSigningCertificateChain(certChain);
+        signatureConfig.setSignatureMethodFromUri(xmlSignature.getSignedInfo().getSignatureMethod().getAlgorithm());
+
+        final XPath xpath = XPathFactory.newInstance().newXPath();
+        xpath.setNamespaceContext(new XPathNSContext());
+
+        final Map<String,Consumer<String>> m = new HashMap();
+        m.put("//mdssi:SignatureTime/mdssi:Value", signatureConfig::setExecutionTime);
+        m.put("//xd:ClaimedRole", signatureConfig::setXadesRole);
+        m.put("//dsss:SignatureComments", signatureConfig::setSignatureDescription);
+        m.put("//xd:QualifyingProperties//xd:SignedSignatureProperties//ds:DigestMethod/@Algorithm", signatureConfig::setXadesDigestAlgo);
+        m.put("//ds:CanonicalizationMethod", signatureConfig::setCanonicalizationMethod);
+
+        for (Map.Entry<String,Consumer<String>> me : m.entrySet()) {
+            String val = (String)xpath.compile(me.getKey()).evaluate(doc, XPathConstants.STRING);
+            me.getValue().accept(val);
+        }
+    }
+
+    private class XPathNSContext implements NamespaceContext {
+        final Map<String,String> nsMap = new HashMap<>();
+
+        {
+            for (Map.Entry<String,String> me : signatureConfig.getNamespacePrefixes().entrySet()) {
+                nsMap.put(me.getValue(), me.getKey());
+            }
+            nsMap.put("dsss", MS_DIGSIG_NS);
+            nsMap.put("ds", XML_DIGSIG_NS);
+        }
+
+        public String getNamespaceURI(String prefix) {
+            return nsMap.get(prefix);
+        }
+        public Iterator getPrefixes(String val) {
+            return null;
+        }
+        public String getPrefix(String uri) {
+            return null;
         }
     }
 }

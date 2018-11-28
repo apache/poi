@@ -94,10 +94,9 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentNode;
 import org.apache.poi.poifs.filesystem.EntryUtils;
 import org.apache.poi.poifs.filesystem.FilteringDirectoryNode;
-import org.apache.poi.poifs.filesystem.NPOIFSDocument;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
-import org.apache.poi.poifs.filesystem.Ole10Native;
+import org.apache.poi.poifs.filesystem.POIFSDocument;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.poifs.filesystem.Ole10Native;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.formula.FormulaType;
@@ -129,6 +128,7 @@ import org.apache.poi.util.POILogger;
  * @see org.apache.poi.hssf.model.InternalWorkbook
  * @see org.apache.poi.hssf.usermodel.HSSFSheet
  */
+@SuppressWarnings("WeakerAccess")
 public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss.usermodel.Workbook {
 
     //arbitrarily selected; may need to increase
@@ -239,19 +239,6 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      */
     public HSSFWorkbook(POIFSFileSystem fs) throws IOException {
         this(fs,true);
-    }
-    /**
-     * Given a POI POIFSFileSystem object, read in its Workbook along
-     *  with all related nodes, and populate the high and low level models.
-     * <p>This calls {@link #HSSFWorkbook(POIFSFileSystem, boolean)} with
-     *  preserve nodes set to true.
-     *
-     * @see #HSSFWorkbook(POIFSFileSystem, boolean)
-     * @see org.apache.poi.poifs.filesystem.POIFSFileSystem
-     * @exception IOException if the stream cannot be read
-     */
-    public HSSFWorkbook(NPOIFSFileSystem fs) throws IOException {
-        this(fs.getRoot(),true);
     }
 
     /**
@@ -411,7 +398,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     public HSSFWorkbook(InputStream s, boolean preserveNodes)
             throws IOException
     {
-        this(new NPOIFSFileSystem(s).getRoot(), preserveNodes);
+        this(new POIFSFileSystem(s).getRoot(), preserveNodes);
     }
 
     /**
@@ -1154,11 +1141,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 
     HSSFName getBuiltInName(byte builtinCode, int sheetIndex) {
       int index = findExistingBuiltinNameRecordIdx(sheetIndex, builtinCode);
-      if (index < 0) {
-        return null;
-      } else {
-        return names.get(index);
-      }
+      return (index < 0) ? null : names.get(index);
     }
 
 
@@ -1244,7 +1227,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         // So we don't confuse users, give them back
         //  the same object every time, but create
         //  them lazily
-        Integer sIdx = Integer.valueOf(idx);
+        Integer sIdx = idx;
         if(fonts.containsKey(sIdx)) {
             return fonts.get(sIdx);
         }
@@ -1262,7 +1245,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * Should only be called after deleting fonts,
      *  and that's not something you should normally do
      */
-    protected void resetFontCache() {
+    void resetFontCache() {
         fonts = new HashMap<>();
     }
 
@@ -1308,7 +1291,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     }
 
     /**
-     * Closes the underlying {@link NPOIFSFileSystem} from which
+     * Closes the underlying {@link POIFSFileSystem} from which
      *  the Workbook was read, if any.
      *
      * <p>Once this has been called, no further
@@ -1338,7 +1321,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         // Update the Workbook stream in the file
         DocumentNode workbookNode = (DocumentNode)dir.getEntry(
                 getWorkbookDirEntryName(dir));
-        NPOIFSDocument workbookDoc = new NPOIFSDocument(workbookNode);
+        POIFSDocument workbookDoc = new POIFSDocument(workbookNode);
         workbookDoc.replaceContents(new ByteArrayInputStream(getBytes()));
         
         // Update the properties streams in the file
@@ -1388,14 +1371,14 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      */
     @Override
 	public void write(OutputStream stream) throws IOException {
-        try (NPOIFSFileSystem fs = new NPOIFSFileSystem()) {
+        try (POIFSFileSystem fs = new POIFSFileSystem()) {
             write(fs);
             fs.writeFilesystem(stream);
         }
     }
     
     /** Writes the workbook out to a brand new, empty POIFS */
-    private void write(NPOIFSFileSystem fs) throws IOException {
+    private void write(POIFSFileSystem fs) throws IOException {
         // For tracking what we've written out, used if we're
         //  going to be preserving nodes
         List<String> excepts = new ArrayList<>(1);
@@ -1525,7 +1508,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     }
 
     @SuppressWarnings("resource")
-    protected void encryptBytes(byte buf[]) {
+    void encryptBytes(byte buf[]) {
         EncryptionInfo ei = getEncryptionInfo();
         if (ei == null) {
             return;
@@ -1540,7 +1523,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
             ChunkedCipherOutputStream os = enc.getDataStream(leos, initialOffset);
             int totalBytes = 0;
             while (totalBytes < buf.length) {
-                plain.read(tmp, 0, 4);
+                IOUtils.readFully(plain, tmp, 0, 4);
                 final int sid = LittleEndian.getUShort(tmp, 0);
                 final int len = LittleEndian.getUShort(tmp, 2);
                 boolean isPlain = Biff8DecryptingStream.isNeverEncryptedRecord(sid);
@@ -1836,9 +1819,11 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     /**
      * Spits out a list of all the drawing records in the workbook.
      */
-    public void dumpDrawingGroupRecords(boolean fat)
-    {
+    public void dumpDrawingGroupRecords(boolean fat) {
         DrawingGroupRecord r = (DrawingGroupRecord) workbook.findFirstRecordBySid( DrawingGroupRecord.sid );
+        if (r == null) {
+            return;
+        }
         r.decode();
         List<EscherRecord> escherRecords = r.getEscherRecords();
         PrintWriter w = new PrintWriter(new OutputStreamWriter(System.out, Charset.defaultCharset()));
@@ -2007,7 +1992,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 
     }
 
-    protected static Map<String,ClassID> getOleMap() {
+    static Map<String,ClassID> getOleMap() {
     	Map<String,ClassID> olemap = new HashMap<>();
     	olemap.put("PowerPoint Document", ClassIDPredefined.POWERPOINT_V8.getClassID());
     	for (String str : WORKBOOK_DIR_ENTRY_NAMES) {

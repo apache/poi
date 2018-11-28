@@ -55,10 +55,6 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrRef;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTitle;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTValAx;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextField;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
@@ -74,7 +70,7 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
     private XSSFGraphicFrame frame;
 
     @Deprecated
-    @Removal(version="4.2")
+    @Removal(version = "4.2")
     List<XSSFChartAxis> axis = new ArrayList<>();
 
     /**
@@ -89,7 +85,8 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
      * Construct a SpreadsheetML chart from a package part.
      *
      * @param part
-     *            the package part holding the chart data, the content type must be
+     *            the package part holding the chart data, the content type must
+     *            be
      *            <code>application/vnd.openxmlformats-officedocument.drawingml.chart+xml</code>
      *
      * @since POI 3.14-Beta1
@@ -114,7 +111,8 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
     }
 
     /**
-     * Construct a new CTChartSpace bean. By default, it's just an empty placeholder for chart objects.
+     * Construct a new CTChartSpace bean. By default, it's just an empty
+     * placeholder for chart objects.
      */
     private void createChart() {
         CTPlotArea plotArea = getCTPlotArea();
@@ -140,12 +138,15 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
 
         /*
-         * Saved chart space must have the following namespaces set: <c:chartSpace
+         * Saved chart space must have the following namespaces set:
+         * <c:chartSpace
          * xmlns:c="http://schemas.openxmlformats.org/drawingml/2006/chart"
-         * xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r=
+         * xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"
+         * xmlns:r=
          * "http://schemas.openxmlformats.org/officeDocument/2006/relationships">
          */
-        xmlOptions.setSaveSyntheticDocumentElement(new QName(CTChartSpace.type.getName().getNamespaceURI(), "chartSpace", "c"));
+        xmlOptions.setSaveSyntheticDocumentElement(
+            new QName(CTChartSpace.type.getName().getNamespaceURI(), "chartSpace", "c"));
 
         PackagePart part = getPackagePart();
         try (OutputStream out = part.getOutputStream()) {
@@ -171,76 +172,76 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
 
     @Override
     @Deprecated
-    @Removal(version="4.2")
-	public XSSFChartDataFactory getChartDataFactory() {
-		return XSSFChartDataFactory.getInstance();
-	}
+    @Removal(version = "4.2")
+    public XSSFChartDataFactory getChartDataFactory() {
+        return XSSFChartDataFactory.getInstance();
+    }
 
     @Override
     @Deprecated
-    @Removal(version="4.2")
-	public XSSFChart getChartAxisFactory() {
-		return this;
-	}
+    @Removal(version = "4.2")
+    public XSSFChart getChartAxisFactory() {
+        return this;
+    }
 
     @Override
     @Deprecated
-    @Removal(version="4.2")
-	public void plot(ChartData data, ChartAxis... chartAxis) {
-		data.fillChart(this, chartAxis);
-	}
+    @Removal(version = "4.2")
+    public void plot(ChartData data, ChartAxis... chartAxis) {
+        data.fillChart(this, chartAxis);
+    }
 
     @Override
     @Deprecated
-    @Removal(version="4.2")
-	public XSSFValueAxis createValueAxis(org.apache.poi.ss.usermodel.charts.AxisPosition pos) {
-		long id = axis.size() + 1;
-		XSSFValueAxis valueAxis = new XSSFValueAxis(this, id, pos);
-		if (axis.size() == 1) {
-			ChartAxis ax = axis.get(0);
-			ax.crossAxis(valueAxis);
-			valueAxis.crossAxis(ax);
-		}
-		axis.add(valueAxis);
-		return valueAxis;
-	}
+    @Removal(version = "4.2")
+    public XSSFValueAxis createValueAxis(org.apache.poi.ss.usermodel.charts.AxisPosition pos) {
+        long id = axis.size() + 1;
+        XSSFValueAxis valueAxis = new XSSFValueAxis(this, id, pos);
+        if (axis.size() == 1) {
+            ChartAxis ax = axis.get(0);
+            ax.crossAxis(valueAxis);
+            valueAxis.crossAxis(ax);
+        }
+        axis.add(valueAxis);
+        return valueAxis;
+    }
 
     @Override
     @Deprecated
-    @Removal(version="4.2")
-	public XSSFCategoryAxis createCategoryAxis(org.apache.poi.ss.usermodel.charts.AxisPosition pos) {
-		long id = axis.size() + 1;
-		XSSFCategoryAxis categoryAxis = new XSSFCategoryAxis(this, id, pos);
-		if (axis.size() == 1) {
-			ChartAxis ax = axis.get(0);
-			ax.crossAxis(categoryAxis);
-			categoryAxis.crossAxis(ax);
-		}
-		axis.add(categoryAxis);
-		return categoryAxis;
-	}
+    @Removal(version = "4.2")
+    public XSSFCategoryAxis createCategoryAxis(org.apache.poi.ss.usermodel.charts.AxisPosition pos) {
+        long id = axis.size() + 1;
+        XSSFCategoryAxis categoryAxis = new XSSFCategoryAxis(this, id, pos);
+        if (axis.size() == 1) {
+            ChartAxis ax = axis.get(0);
+            ax.crossAxis(categoryAxis);
+            categoryAxis.crossAxis(ax);
+        }
+        axis.add(categoryAxis);
+        return categoryAxis;
+    }
 
     @Override
     @Deprecated
-    @Removal(version="4.2")
-	public XSSFDateAxis createDateAxis(org.apache.poi.ss.usermodel.charts.AxisPosition pos) {
-		long id = axis.size() + 1;
-		XSSFDateAxis dateAxis = new XSSFDateAxis(this, id, pos);
-		if (axis.size() == 1) {
-			ChartAxis ax = axis.get(0);
-			ax.crossAxis(dateAxis);
-			dateAxis.crossAxis(ax);
-		}
-		axis.add(dateAxis);
-		return dateAxis;
-	}
+    @Removal(version = "4.2")
+    public XSSFDateAxis createDateAxis(org.apache.poi.ss.usermodel.charts.AxisPosition pos) {
+        long id = axis.size() + 1;
+        XSSFDateAxis dateAxis = new XSSFDateAxis(this, id, pos);
+        if (axis.size() == 1) {
+            ChartAxis ax = axis.get(0);
+            ax.crossAxis(dateAxis);
+            dateAxis.crossAxis(ax);
+        }
+        axis.add(dateAxis);
+        return dateAxis;
+    }
 
     /**
      * @deprecated use {@link #getAxes()} instead
      */
     @Override
     @Deprecated
-    @Removal(version="4.2")
+    @Removal(version = "4.2")
     public List<? extends XSSFChartAxis> getAxis() {
         if (axis.isEmpty() && hasAxis()) {
             parseAxis();
@@ -250,107 +251,43 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
 
     @Override
     @Deprecated
-    @Removal(version="4.2")
-	public XSSFManualLayout getManualLayout() {
-		return new XSSFManualLayout(this);
-	}
-
-	/**
-	 * Returns the title static text, or null if none is set.
-	 * Note that a title formula may be set instead.
-	 * @return static title text, if set
-	 * @deprecated POI 3.16, use {@link #getTitleText()} instead.
-	 */
-    @Deprecated
-    @Removal(version="4.0")
-	public XSSFRichTextString getTitle() {
-	    return getTitleText();
-	}
-
-	/**
-     * Returns the title static text, or null if none is set.
-     * Note that a title formula may be set instead.
-     * Empty text result is for backward compatibility, and could mean the title text is empty or there is a formula instead.
-     * Check for a formula first, falling back on text for cleaner logic.
-     * @return static title text if set,
-     *         null if there is no title,
-     *         empty string if the title text is empty or the title uses a formula instead
-	 */
-	public XSSFRichTextString getTitleText() {
-		if(! chart.isSetTitle()) {
-			return null;
-		}
-
-		// TODO Do properly
-		CTTitle title = chart.getTitle();
-
-		StringBuilder text = new StringBuilder(64);
-		XmlObject[] t = title
-			.selectPath("declare namespace a='"+XSSFDrawing.NAMESPACE_A+"' .//a:t");
-		for (XmlObject element : t) {
-			NodeList kids = element.getDomNode().getChildNodes();
-			final int count = kids.getLength();
-			for (int n = 0; n < count; n++) {
-				Node kid = kids.item(n);
-				if (kid instanceof Text) {
-					text.append(kid.getNodeValue());
-				}
-			}
-		}
-
-		return new XSSFRichTextString(text.toString());
-	}
+    @Removal(version = "4.2")
+    public XSSFManualLayout getManualLayout() {
+        return new XSSFManualLayout(this);
+    }
 
     /**
-     * Sets the title text as a static string.
+     * Returns the title static text, or null if none is set. Note that a title
+     * formula may be set instead. Empty text result is for backward
+     * compatibility, and could mean the title text is empty or there is a
+     * formula instead. Check for a formula first, falling back on text for
+     * cleaner logic.
      *
-     * @param newTitle
-     *            to use
+     * @return static title text if set, null if there is no title, empty string
+     *         if the title text is empty or the title uses a formula instead
      */
-    public void setTitleText(String newTitle) {
-        CTTitle ctTitle;
-        if (chart.isSetTitle()) {
-            ctTitle = chart.getTitle();
-        } else {
-            ctTitle = chart.addNewTitle();
+    public XSSFRichTextString getTitleText() {
+        if (!chart.isSetTitle()) {
+            return null;
         }
 
-        CTTx tx;
-        if (ctTitle.isSetTx()) {
-            tx = ctTitle.getTx();
-        } else {
-            tx = ctTitle.addNewTx();
+        // TODO Do properly
+        CTTitle title = chart.getTitle();
+
+        StringBuilder text = new StringBuilder(64);
+        XmlObject[] t = title.selectPath("declare namespace a='" + XSSFDrawing.NAMESPACE_A + "' .//a:t");
+        for (XmlObject element : t) {
+            NodeList kids = element.getDomNode().getChildNodes();
+            final int count = kids.getLength();
+            for (int n = 0; n < count; n++) {
+                Node kid = kids.item(n);
+                if (kid instanceof Text) {
+                    text.append(kid.getNodeValue());
+                }
+            }
         }
 
-        if (tx.isSetStrRef()) {
-            tx.unsetStrRef();
-        }
-
-        CTTextBody rich;
-        if (tx.isSetRich()) {
-            rich = tx.getRich();
-        } else {
-            rich = tx.addNewRich();
-            rich.addNewBodyPr(); // body properties must exist (but can be empty)
-        }
-
-        CTTextParagraph para;
-        if (rich.sizeOfPArray() > 0) {
-            para = rich.getPArray(0);
-        } else {
-            para = rich.addNewP();
-        }
-
-        if (para.sizeOfRArray() > 0) {
-            CTRegularTextRun run = para.getRArray(0);
-            run.setT(newTitle);
-        } else if (para.sizeOfFldArray() > 0) {
-            CTTextField fld = para.getFldArray(0);
-            fld.setT(newTitle);
-        } else {
-            CTRegularTextRun run = para.addNewR();
-            run.setT(newTitle);
-        }
+        return new XSSFRichTextString(text.toString());
     }
 
     /**
@@ -414,21 +351,22 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
 
     @Override
     @Deprecated
-    @Removal(version="4.2")
-	public XSSFChartLegend getOrCreateLegend() {
-		return new XSSFChartLegend(this);
-	}
-
-	@Deprecated
-	@Removal(version="4.2")
-	private boolean hasAxis() {
-        CTPlotArea ctPlotArea = chart.getPlotArea();
-        int totalAxisCount = ctPlotArea.sizeOfValAxArray() + ctPlotArea.sizeOfCatAxArray() + ctPlotArea.sizeOfDateAxArray() + ctPlotArea.sizeOfSerAxArray();
-        return totalAxisCount > 0;
-	}
+    @Removal(version = "4.2")
+    public XSSFChartLegend getOrCreateLegend() {
+        return new XSSFChartLegend(this);
+    }
 
     @Deprecated
-    @Removal(version="4.2")
+    @Removal(version = "4.2")
+    private boolean hasAxis() {
+        CTPlotArea ctPlotArea = chart.getPlotArea();
+        int totalAxisCount = ctPlotArea.sizeOfValAxArray() + ctPlotArea.sizeOfCatAxArray() + ctPlotArea
+            .sizeOfDateAxArray() + ctPlotArea.sizeOfSerAxArray();
+        return totalAxisCount > 0;
+    }
+
+    @Deprecated
+    @Removal(version = "4.2")
     private void parseAxis() {
         // TODO: add other axis types
         parseCategoryAxis();
@@ -437,7 +375,7 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
     }
 
     @Deprecated
-    @Removal(version="4.2")
+    @Removal(version = "4.2")
     private void parseCategoryAxis() {
         for (CTCatAx catAx : chart.getPlotArea().getCatAxArray()) {
             axis.add(new XSSFCategoryAxis(this, catAx));
@@ -445,7 +383,7 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
     }
 
     @Deprecated
-    @Removal(version="4.2")
+    @Removal(version = "4.2")
     private void parseDateAxis() {
         for (CTDateAx dateAx : chart.getPlotArea().getDateAxArray()) {
             axis.add(new XSSFDateAxis(this, dateAx));
@@ -453,7 +391,7 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
     }
 
     @Deprecated
-    @Removal(version="4.2")
+    @Removal(version = "4.2")
     private void parseValueAxis() {
         for (CTValAx valAx : chart.getPlotArea().getValAxArray()) {
             axis.add(new XSSFValueAxis(this, valAx));

@@ -18,8 +18,9 @@
 
 package org.apache.poi.hpsf.basic;
 
+import static org.junit.Assert.fail;
+
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,7 +29,6 @@ import java.util.List;
 
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.poifs.eventfilesystem.POIFSReader;
-import org.apache.poi.poifs.eventfilesystem.POIFSReaderEvent;
 import org.apache.poi.poifs.eventfilesystem.POIFSReaderListener;
 import org.apache.poi.util.IOUtils;
 
@@ -38,6 +38,9 @@ import org.apache.poi.util.IOUtils;
  * <p>Static utility methods needed by the HPSF test cases.</p>
  */
 final class Util {
+
+    private Util() {
+    }
 
     /**
      * <p>Reads a set of files from a POI filesystem and returns them
@@ -58,24 +61,20 @@ final class Util {
      * 
      * @exception IOException if an I/O exception occurs
      */
-    public static List<POIFile> readPOIFiles(final File poiFs, final String... poiFiles)
-    throws FileNotFoundException, IOException {
+    static List<POIFile> readPOIFiles(final File poiFs, final String... poiFiles) throws IOException {
         final List<POIFile> files = new ArrayList<>();
         POIFSReader r = new POIFSReader();
-        POIFSReaderListener pfl = new POIFSReaderListener() {
-            @Override
-            public void processPOIFSReaderEvent(final POIFSReaderEvent event) {
-                try {
-                    final POIFile f = new POIFile();
-                    f.setName(event.getName());
-                    f.setPath(event.getPath());
-                    final InputStream in = event.getStream();
-                    f.setBytes(IOUtils.toByteArray(in));
-                    in.close();
-                    files.add(f);
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
+        POIFSReaderListener pfl = event -> {
+            try {
+                final POIFile f = new POIFile();
+                f.setName(event.getName());
+                f.setPath(event.getPath());
+                final InputStream in = event.getStream();
+                f.setBytes(IOUtils.toByteArray(in));
+                in.close();
+                files.add(f);
+            } catch (IOException ex) {
+                fail(ex.getMessage());
             }
         };
         if (poiFiles.length == 0) {
@@ -88,12 +87,8 @@ final class Util {
         }
 
         /* Read the POI filesystem. */
-        FileInputStream stream = new FileInputStream(poiFs);
-        try {
-            r.read(stream);
-        } finally {
-            stream.close();
-        }
+        r.read(poiFs);
+
         return files;
     }
 
@@ -110,29 +105,23 @@ final class Util {
      * @return The property sets. The elements are ordered in the same way
      * as the files in the POI filesystem.
      * 
-     * @exception FileNotFoundException if the file containing the POI 
-     * filesystem does not exist
-     * 
      * @exception IOException if an I/O exception occurs
      */
-    public static List<POIFile> readPropertySets(final File poiFs) throws IOException {
+    static List<POIFile> readPropertySets(final File poiFs) throws IOException {
         final List<POIFile> files = new ArrayList<>(7);
         final POIFSReader r = new POIFSReader();
-        POIFSReaderListener pfl = new POIFSReaderListener() {
-            @Override
-            public void processPOIFSReaderEvent(final POIFSReaderEvent event) {
-                try {
-                    final POIFile f = new POIFile();
-                    f.setName(event.getName());
-                    f.setPath(event.getPath());
-                    final InputStream in = event.getStream();
-                    if (PropertySet.isPropertySetStream(in)) {
-                        f.setBytes(IOUtils.toByteArray(in));
-                        files.add(f);
-                    }
-                } catch (Exception ex) {
-                    throw new RuntimeException(ex);
+        final POIFSReaderListener pfl = event -> {
+            try {
+                final POIFile f = new POIFile();
+                f.setName(event.getName());
+                f.setPath(event.getPath());
+                final InputStream in = event.getStream();
+                if (PropertySet.isPropertySetStream(in)) {
+                    f.setBytes(IOUtils.toByteArray(in));
+                    files.add(f);
                 }
+            } catch (Exception ex) {
+                fail(ex.getMessage());
             }
         };
 
@@ -140,12 +129,7 @@ final class Util {
         r.registerListener(pfl);
 
         /* Read the POI filesystem. */
-        InputStream is = new FileInputStream(poiFs);
-        try {
-            r.read(is);
-        } finally {
-            is.close();
-        }
+        r.read(poiFs);
 
         return files;
     }

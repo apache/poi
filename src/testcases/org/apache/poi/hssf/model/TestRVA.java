@@ -30,7 +30,7 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.formula.ptg.AttrPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.CellType;
@@ -50,12 +50,11 @@ import org.junit.runners.Parameterized.Parameters;
 public final class TestRVA {
 
 	private static final String NEW_LINE = System.getProperty("line.separator");
-	private static NPOIFSFileSystem poifs;
+	private static POIFSFileSystem poifs;
     private static HSSFWorkbook workbook;
-    private static HSSFSheet sheet;
 
-	
-    @Parameter(value = 0)
+
+	@Parameter(value = 0)
     public HSSFCell formulaCell;
     @Parameter(value = 1)
     public String formula;
@@ -68,9 +67,9 @@ public final class TestRVA {
 
     @Parameters(name="{1}")
     public static Collection<Object[]> data() throws Exception {
-        poifs = new NPOIFSFileSystem(HSSFTestDataSamples.getSampleFile("testRVA.xls"), true);
+        poifs = new POIFSFileSystem(HSSFTestDataSamples.getSampleFile("testRVA.xls"), true);
         workbook = new HSSFWorkbook(poifs);
-        sheet = workbook.getSheetAt(0);
+		HSSFSheet sheet = workbook.getSheetAt(0);
 
         List<Object[]> data = new ArrayList<>();
         
@@ -110,34 +109,27 @@ public final class TestRVA {
 			}
 		}
 		boolean hasMismatch = false;
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < nExcelTokens; i++) {
 			Ptg poiPtg = poiPtgs[i];
 			Ptg excelPtg = excelPtgs[i];
 			if (excelPtg.getClass() != poiPtg.getClass()) {
 				hasMismatch = true;
-				sb.append("  mismatch token type[" + i + "] " + getShortClassName(excelPtg) + " "
-						+ excelPtg.getRVAType() + " - " + getShortClassName(poiPtg) + " "
-						+ poiPtg.getRVAType());
+				sb.append("  mismatch token type[").append(i).append("] ").append(getShortClassName(excelPtg)).append(" ").append(excelPtg.getRVAType()).append(" - ").append(getShortClassName(poiPtg)).append(" ").append(poiPtg.getRVAType());
 				sb.append(NEW_LINE);
 				continue;
 			}
 			if (poiPtg.isBaseToken()) {
 				continue;
 			}
-			sb.append("  token[" + i + "] " + excelPtg + " "
-					+ excelPtg.getRVAType());
+			sb.append("  token[").append(i).append("] ").append(excelPtg).append(" ").append(excelPtg.getRVAType());
 
 			if (excelPtg.getPtgClass() != poiPtg.getPtgClass()) {
 				hasMismatch = true;
-				sb.append(" - was " + poiPtg.getRVAType());
+				sb.append(" - was ").append(poiPtg.getRVAType());
 			}
 			sb.append(NEW_LINE);
 		}
-//		if (false) { // set 'true' to see trace of RVA values
-//			System.out.println(formulaCell.getRowIndex() + " " + formula);
-//			System.out.println(sb.toString());
-//		}
 		assertFalse(hasMismatch);
 	}
 

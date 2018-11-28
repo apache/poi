@@ -21,27 +21,30 @@ package org.apache.poi.xslf.usermodel;
 
 import org.apache.poi.sl.usermodel.TextBox;
 import org.apache.poi.util.Beta;
-import org.openxmlformats.schemas.drawingml.x2006.main.*;
+import org.apache.poi.xddf.usermodel.text.XDDFTextBody;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetGeometry2D;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShapeNonVisual;
-
 
 /**
  * @author Yegor Kozlov
  */
 @Beta
-public class XSLFTextBox extends XSLFAutoShape
-    implements TextBox<XSLFShape,XSLFTextParagraph> {
+public class XSLFTextBox extends XSLFAutoShape implements TextBox<XSLFShape, XSLFTextParagraph> {
 
-    /*package*/ XSLFTextBox(CTShape shape, XSLFSheet sheet){
+    /* package */ XSLFTextBox(CTShape shape, XSLFSheet sheet) {
         super(shape, sheet);
     }
 
     /**
      *
-     * @param shapeId   1-based shapeId
+     * @param shapeId
+     *            1-based shapeId
      */
-    static CTShape prototype(int shapeId){
+    static CTShape prototype(int shapeId) {
         CTShape ct = CTShape.Factory.newInstance();
         CTShapeNonVisual nvSpPr = ct.addNewNvSpPr();
         CTNonVisualDrawingProps cnv = nvSpPr.addNewCNvPr();
@@ -53,8 +56,9 @@ public class XSLFTextBox extends XSLFAutoShape
         CTPresetGeometry2D prst = spPr.addNewPrstGeom();
         prst.setPrst(STShapeType.RECT);
         prst.addNewAvLst();
-        CTTextBody txBody = ct.addNewTxBody();
-        XSLFAutoShape.initTextBody(txBody);
+        XDDFTextBody body = new XDDFTextBody(null);
+        initTextBody(body);
+        ct.setTxBody(body.getXmlObject());
 
         return ct;
     }

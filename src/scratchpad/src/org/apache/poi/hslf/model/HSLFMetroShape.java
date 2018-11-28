@@ -75,7 +75,7 @@ public class HSLFMetroShape<T extends Shape<?,?>> {
         }
         
         // org.apache.poi.xslf.usermodel.XSLFMetroShape
-        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        ClassLoader cl = getClass().getClassLoader();
         try {
             Class<?> ms = cl.loadClass("org.apache.poi.xslf.usermodel.XSLFMetroShape");
             Method m = ms.getMethod("parseShape", byte[].class);

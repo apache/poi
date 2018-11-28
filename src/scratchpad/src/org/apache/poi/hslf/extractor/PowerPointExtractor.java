@@ -30,7 +30,6 @@ import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 import org.apache.poi.hslf.usermodel.HSLFTextParagraph;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.sl.extractor.SlideShowExtractor;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
@@ -115,15 +114,6 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 	public PowerPointExtractor(POIFSFileSystem fs) throws IOException {
 		this((HSLFSlideShow)SlideShowFactory.create(fs, Biff8EncryptionKey.getCurrentUserPassword()));
 	}
-
-   /**
-    * Creates a PowerPointExtractor, from an open NPOIFSFileSystem
-    *
-    * @param fs the NPOIFSFileSystem containing the PowerPoint document
-    */
-   public PowerPointExtractor(NPOIFSFileSystem fs) throws IOException {
-	   this((HSLFSlideShow)SlideShowFactory.create(fs, Biff8EncryptionKey.getCurrentUserPassword()));
-   }
 
    /**
     * Creates a PowerPointExtractor, from a specific place

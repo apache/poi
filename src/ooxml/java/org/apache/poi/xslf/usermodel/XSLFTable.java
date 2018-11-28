@@ -49,7 +49,6 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFra
 public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow>,
     TableShape<XSLFShape,XSLFTextParagraph> {
     /* package */ static final String TABLE_URI = "http://schemas.openxmlformats.org/drawingml/2006/table";
-    /* package */ static final String DRAWINGML_URI = "http://schemas.openxmlformats.org/drawingml/2006/main";
 
     private CTTable _table;
     private List<XSLFTableRow> _rows;
@@ -60,7 +59,7 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
         CTGraphicalObjectData god = shape.getGraphic().getGraphicData();
         XmlCursor xc = god.newCursor();
         try {
-            if (!xc.toChild(DRAWINGML_URI, "tbl")) {
+            if (!xc.toChild(XSLFRelation.NS_DRAWINGML, "tbl")) {
                 throw new IllegalStateException("a:tbl element was not found in\n " + god);
             }
     
@@ -174,7 +173,7 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
         CTGraphicalObjectData gr = frame.addNewGraphic().addNewGraphicData();
         XmlCursor grCur = gr.newCursor();
         grCur.toNextToken();
-        grCur.beginElement(new QName(DRAWINGML_URI, "tbl"));
+        grCur.beginElement(new QName(XSLFRelation.NS_DRAWINGML, "tbl"));
         
         CTTable tbl = CTTable.Factory.newInstance();
         tbl.addNewTblPr();
@@ -191,6 +190,7 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
     /**
      * Merge cells of a table
      */
+    @SuppressWarnings("unused")
     public void mergeCells(int firstRow, int lastRow, int firstCol, int lastCol) {
 
     	if(firstRow > lastRow) {
@@ -225,14 +225,14 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
 	    			if(i == firstRow) {
 	    				cell.setRowSpan(rowSpan);
 	    			} else {
-	    				cell.setVMerge(true);
+	    				cell.setVMerge();
 	    			}
     			}
     			if(mergeColumnRequired) {
     				if(colPos == firstCol) {
     					cell.setGridSpan(colSpan);
     				} else {
-    					cell.setHMerge(true);
+    					cell.setHMerge();
     				}
     			}
     		}

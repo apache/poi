@@ -79,6 +79,19 @@ public class XDDFCategoryAxis extends XDDFChartAxis {
         return new XDDFShapeProperties(properties);
     }
 
+    /**
+     * @since 4.0.1
+     */
+    @Override
+    public void setTitle(String text) {
+        if (!ctCatAx.isSetTitle()) {
+            ctCatAx.addNewTitle();
+        }
+        XDDFTitle title = new XDDFTitle(null, ctCatAx.getTitle());
+        title.setOverlay(false);
+        title.setText(text);
+    }
+
     @Override
     public boolean isSetMinorUnit() {
         return false;

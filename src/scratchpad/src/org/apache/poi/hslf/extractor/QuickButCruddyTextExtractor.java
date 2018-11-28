@@ -30,7 +30,7 @@ import org.apache.poi.hslf.record.TextBytesAtom;
 import org.apache.poi.hslf.record.TextCharsAtom;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hslf.usermodel.HSLFTextParagraph;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
@@ -53,7 +53,7 @@ import org.apache.poi.util.LittleEndian;
  *  lucene indexers) that would ever want to use this!
  */
 public final class QuickButCruddyTextExtractor {
-	private NPOIFSFileSystem fs;
+	private POIFSFileSystem fs;
 	private InputStream is;
 	private byte[] pptContents;
 
@@ -82,7 +82,7 @@ public final class QuickButCruddyTextExtractor {
 	 */
 	@SuppressWarnings("resource")
     public QuickButCruddyTextExtractor(String fileName) throws IOException {
-		this(new NPOIFSFileSystem(new File(fileName)));
+		this(new POIFSFileSystem(new File(fileName)));
 	}
 
 	/**
@@ -91,7 +91,7 @@ public final class QuickButCruddyTextExtractor {
 	 */
     @SuppressWarnings("resource")
 	public QuickButCruddyTextExtractor(InputStream iStream) throws IOException {
-		this(new NPOIFSFileSystem(iStream));
+		this(new POIFSFileSystem(iStream));
 		is = iStream;
 	}
 
@@ -99,7 +99,7 @@ public final class QuickButCruddyTextExtractor {
 	 * Creates an extractor from a POIFS Filesystem
 	 * @param poifs
 	 */
-	public QuickButCruddyTextExtractor(NPOIFSFileSystem poifs) throws IOException {
+	public QuickButCruddyTextExtractor(POIFSFileSystem poifs) throws IOException {
 		fs = poifs;
 
 		// Find the PowerPoint bit, and get out the bytes

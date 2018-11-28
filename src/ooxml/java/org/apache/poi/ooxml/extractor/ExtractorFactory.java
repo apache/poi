@@ -16,24 +16,20 @@
 ==================================================================== */
 package org.apache.poi.ooxml.extractor;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.extractor.OLE2ExtractorFactory;
 import org.apache.poi.extractor.POIOLE2TextExtractor;
 import org.apache.poi.extractor.POITextExtractor;
-import org.apache.poi.extractor.OLE2ExtractorFactory;
-import org.apache.poi.hsmf.MAPIMessage;
-import org.apache.poi.hsmf.datatypes.AttachmentChunks;
-import org.apache.poi.hsmf.extractor.OutlookTextExtactor;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
-import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
@@ -46,9 +42,7 @@ import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.FileMagic;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.NotOLE2FileException;
-import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.sl.extractor.SlideShowExtractor;
@@ -79,12 +73,15 @@ import org.apache.xmlbeans.XmlException;
  *  off switching to <a href="http://tika.apache.org">Apache Tika</a> instead!</p>
  */
 @SuppressWarnings("WeakerAccess")
-public class ExtractorFactory {
+public final class ExtractorFactory {
     private static final POILogger logger = POILogFactory.getLogger(ExtractorFactory.class);
     
     public static final String CORE_DOCUMENT_REL = PackageRelationshipTypes.CORE_DOCUMENT;
-    protected static final String VISIO_DOCUMENT_REL = PackageRelationshipTypes.VISIO_CORE_DOCUMENT;
-    protected static final String STRICT_DOCUMENT_REL = PackageRelationshipTypes.STRICT_CORE_DOCUMENT;
+    private static final String VISIO_DOCUMENT_REL = PackageRelationshipTypes.VISIO_CORE_DOCUMENT;
+    private static final String STRICT_DOCUMENT_REL = PackageRelationshipTypes.STRICT_CORE_DOCUMENT;
+
+    private ExtractorFactory() {
+    }
 
     /**
      * Should this thread prefer event based over usermodel based extractors?
@@ -128,10 +125,11 @@ public class ExtractorFactory {
          return OLE2ExtractorFactory.getPreferEventExtractor();
     }
 
+    @SuppressWarnings("unchecked")
     public static <T extends POITextExtractor> T createExtractor(File f) throws IOException, OpenXML4JException, XmlException {
-        NPOIFSFileSystem fs = null;
+        POIFSFileSystem fs = null;
         try {
-            fs = new NPOIFSFileSystem(f);
+            fs = new POIFSFileSystem(f);
             if (fs.getRoot().hasEntry(Decryptor.DEFAULT_POIFS_ENTRY)) {
                 return (T)createEncryptedOOXMLExtractor(fs);
             }
@@ -141,7 +139,10 @@ public class ExtractorFactory {
         } catch (OfficeXmlFileException e) {
             // ensure file-handle release
             IOUtils.closeQuietly(fs);
-            return (T)createExtractor(OPCPackage.open(f.toString(), PackageAccess.READ));
+            OPCPackage pkg = OPCPackage.open(f.toString(), PackageAccess.READ);
+            T t = (T)createExtractor(pkg);
+            t.setFilesystem(pkg);
+            return t;
         } catch (NotOLE2FileException ne) {
             // ensure file-handle release
             IOUtils.closeQuietly(fs);
@@ -160,7 +161,7 @@ public class ExtractorFactory {
         
         switch (fm) {
         case OLE2:
-            NPOIFSFileSystem fs = new NPOIFSFileSystem(is);
+            POIFSFileSystem fs = new POIFSFileSystem(is);
             boolean isEncrypted = fs.getRoot().hasEntry(Decryptor.DEFAULT_POIFS_ENTRY); 
             return isEncrypted ? createEncryptedOOXMLExtractor(fs) : createExtractor(fs);
         case OOXML:
@@ -227,13 +228,13 @@ public class ExtractorFactory {
             // Is it XSLF?
             for (XSLFRelation rel : XSLFPowerPointExtractor.SUPPORTED_TYPES) {
                 if ( rel.getContentType().equals( contentType ) ) {
-                    return new SlideShowExtractor(new XMLSlideShow(pkg));
+                    return new SlideShowExtractor<>(new XMLSlideShow(pkg));
                 }
             }
      
             // special handling for SlideShow-Theme-files, 
             if (XSLFRelation.THEME_MANAGER.getContentType().equals(contentType)) {
-                return new SlideShowExtractor(new XMLSlideShow(pkg));
+                return new SlideShowExtractor<>(new XMLSlideShow(pkg));
             }
 
             // How about xlsb?
@@ -256,13 +257,8 @@ public class ExtractorFactory {
     public static <T extends POITextExtractor> T createExtractor(POIFSFileSystem fs) throws IOException, OpenXML4JException, XmlException {
         return createExtractor(fs.getRoot());
     }
-    public static <T extends POITextExtractor> T createExtractor(NPOIFSFileSystem fs) throws IOException, OpenXML4JException, XmlException {
-        return createExtractor(fs.getRoot());
-    }
-    public static <T extends POITextExtractor> T createExtractor(OPOIFSFileSystem fs) throws IOException, OpenXML4JException, XmlException {
-        return createExtractor(fs.getRoot());
-    }
 
+    @SuppressWarnings("unchecked")
     public static <T extends POITextExtractor> T createExtractor(DirectoryNode poifsDir) throws IOException, OpenXML4JException, XmlException
     {
         // First, check for OOXML
@@ -311,6 +307,7 @@ public class ExtractorFactory {
             throw new IllegalStateException("The extractor didn't know which POIFS it came from!");
         }
 
+        // provide ExcelExtractor also in OOXML module, because scratchpad is not necessary for it
         if (ext instanceof ExcelExtractor) {
             // These are in MBD... under the root
             Iterator<Entry> it = root.getEntries();
@@ -320,34 +317,14 @@ public class ExtractorFactory {
                     dirs.add(entry);
                 }
             }
-        } else if (ext instanceof WordExtractor) {
-            // These are in ObjectPool -> _... under the root
+        } else {
             try {
-                DirectoryEntry op = (DirectoryEntry) root.getEntry("ObjectPool");
-                Iterator<Entry> it = op.getEntries();
-                while (it.hasNext()) {
-                    Entry entry = it.next();
-                    if (entry.getName().startsWith("_")) {
-                        dirs.add(entry);
-                    }
-                }
-            } catch (FileNotFoundException e) {
-                logger.log(POILogger.INFO, "Ignoring FileNotFoundException while extracting Word document", e.getLocalizedMessage());
-                // ignored here
-            }
-        //} else if(ext instanceof PowerPointExtractor) {
-            // Tricky, not stored directly in poifs
-            // TODO
-        } else if (ext instanceof OutlookTextExtactor) {
-            // Stored in the Attachment blocks
-            MAPIMessage msg = ((OutlookTextExtactor)ext).getMAPIMessage();
-            for (AttachmentChunks attachment : msg.getAttachmentFiles()) {
-                if (attachment.getAttachData() != null) {
-                    byte[] data = attachment.getAttachData().getValue();
-                    nonPOIFS.add( new ByteArrayInputStream(data) );
-                } else if (attachment.getAttachmentDirectory() != null) {
-                    dirs.add(attachment.getAttachmentDirectory().getDirectory());
-                }
+                Class<?> clazz = Class.forName("org.apache.poi.extractor.ole2.OLE2ScratchpadExtractorFactory");
+                Method m = clazz.getDeclaredMethod("identifyEmbeddedResources", POIOLE2TextExtractor.class, List.class, List.class);
+                m.invoke(null, ext, dirs, nonPOIFS);
+            } catch (ReflectiveOperationException e) {
+                logger.log(POILogger.WARN, "POI Scratchpad jar not included ", e.getLocalizedMessage());
+                return new POITextExtractor[0];
             }
         }
 
@@ -371,7 +348,7 @@ public class ExtractorFactory {
                 throw new IOException(e.getMessage(), e);
             }
         }
-        return textExtractors.toArray(new POITextExtractor[textExtractors.size()]);
+        return textExtractors.toArray(new POITextExtractor[0]);
     }
 
     /**
@@ -404,7 +381,7 @@ public class ExtractorFactory {
         throw new IllegalStateException("Not yet supported");
     }
     
-    private static POITextExtractor createEncryptedOOXMLExtractor(NPOIFSFileSystem fs)
+    private static POITextExtractor createEncryptedOOXMLExtractor(POIFSFileSystem fs)
     throws IOException {
         String pass = Biff8EncryptionKey.getCurrentUserPassword();
         if (pass == null) {

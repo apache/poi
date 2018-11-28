@@ -36,6 +36,7 @@ import org.apache.poi.ooxml.POIXMLDocument;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.ooxml.extractor.POIXMLPropertiesTextExtractor;
+import org.apache.poi.ooxml.util.PackageHelper;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -50,7 +51,6 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.ooxml.util.PackageHelper;
 import org.apache.poi.util.Units;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -362,7 +362,7 @@ public class XMLSlideShow extends POIXMLDocument
         CTNotesMasterIdListEntry notesMasterId = notesMasterIdList.addNewNotesMasterId();
         notesMasterId.setId(rp.getRelationship().getId());
 
-        Integer themeIndex = 1;
+        int themeIndex = 1;
         // TODO: check if that list can be replaced by idx = Math.max(idx,themeIdx)
         List<Integer> themeIndexList = new ArrayList<>();
         for (POIXMLDocumentPart p : getRelations()) {
@@ -372,8 +372,8 @@ public class XMLSlideShow extends POIXMLDocument
         }
 
         if (!themeIndexList.isEmpty()) {
-            Boolean found = false;
-            for (Integer i = 1; i <= themeIndexList.size(); i++) {
+            boolean found = false;
+            for (int i = 1; i <= themeIndexList.size(); i++) {
                 if (!themeIndexList.contains(i)) {
                     found = true;
                     themeIndex = i;
@@ -626,7 +626,7 @@ public class XMLSlideShow extends POIXMLDocument
         // TODO: implement!
         throw new UnsupportedOperationException();
     }
-    
+
     @Override
     public POIXMLPropertiesTextExtractor getMetadataTextExtractor() {
         return new POIXMLPropertiesTextExtractor(this);

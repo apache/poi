@@ -1,5 +1,4 @@
 /* ====================================================================
-/* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
    this work for additional information regarding copyright ownership.
@@ -17,361 +16,71 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.poi.ooxml.POIXMLDocumentPart;
-import org.apache.xmlbeans.XmlCursor;
-import org.apache.xmlbeans.XmlObject;
+import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFtnEdn;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtBlock;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFtnEdnRef;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 
-public class XWPFFootnote implements Iterable<XWPFParagraph>, IBody {
-    private List<XWPFParagraph> paragraphs = new ArrayList<>();
-    private List<XWPFTable> tables = new ArrayList<>();
-    private List<XWPFPictureData> pictures = new ArrayList<>();
-    private List<IBodyElement> bodyElements = new ArrayList<>();
-
-    private CTFtnEdn ctFtnEdn;
-    private XWPFFootnotes footnotes;
-    private XWPFDocument document;
-
-    public XWPFFootnote(CTFtnEdn note, XWPFFootnotes xFootnotes) {
-        footnotes = xFootnotes;
-        ctFtnEdn = note;
-        document = xFootnotes.getXWPFDocument();
-        init();
+/**
+ * Represents a bottom-of-the-page footnote.
+ * <p>Create a new footnote using {@link XWPFDocument#createFootnote()} or
+ * {@link XWPFFootnotes#createFootnote()}.</p>
+ * <p>The first body element of a footnote should (or possibly must) be a paragraph
+ * with the first run containing a CTFtnEdnRef object. The {@link XWPFFootnote#createParagraph()}
+ * and {@link XWPFFootnote#createTable()} methods do this for you.</p>
+ * <p>Footnotes have IDs that are unique across all footnotes in the document. You use
+ * the footnote ID to create a reference to a footnote from within a paragraph.</p>
+ * <p>To create a reference to a footnote within a paragraph you create a run
+ * with a CTFtnEdnRef that specifies the ID of the target paragraph. 
+ * The {@link XWPFParagraph#addFootnoteReference(XWPFAbstractFootnoteEndnote)}
+ * method does this for you.</p>
+ */
+public class XWPFFootnote extends XWPFAbstractFootnoteEndnote {
+    
+    @Internal
+    public XWPFFootnote(CTFtnEdn note, XWPFAbstractFootnotesEndnotes xFootnotes) {
+        super(note, xFootnotes);
     }
 
+    @Internal
     public XWPFFootnote(XWPFDocument document, CTFtnEdn body) {
-        ctFtnEdn = body;
-        this.document = document;
-        init();
+        super(document, body);
     }
-
-    private void init() {
-        XmlCursor cursor = ctFtnEdn.newCursor();
-        //copied from XWPFDocument...should centralize this code
-        //to avoid duplication
-        cursor.selectPath("./*");
-        while (cursor.toNextSelection()) {
-            XmlObject o = cursor.getObject();
-            if (o instanceof CTP) {
-                XWPFParagraph p = new XWPFParagraph((CTP) o, this);
-                bodyElements.add(p);
-                paragraphs.add(p);
-            } else if (o instanceof CTTbl) {
-                XWPFTable t = new XWPFTable((CTTbl) o, this);
-                bodyElements.add(t);
-                tables.add(t);
-            } else if (o instanceof CTSdtBlock) {
-                XWPFSDT c = new XWPFSDT((CTSdtBlock) o, this);
-                bodyElements.add(c);
-            }
-
-        }
-        cursor.dispose();
-    }
-
-    public List<XWPFParagraph> getParagraphs() {
-        return paragraphs;
-    }
-
-    public Iterator<XWPFParagraph> iterator() {
-        return paragraphs.iterator();
-    }
-
-    public List<XWPFTable> getTables() {
-        return tables;
-    }
-
-    public List<XWPFPictureData> getPictures() {
-        return pictures;
-    }
-
-    public List<IBodyElement> getBodyElements() {
-        return bodyElements;
-    }
-
-    public CTFtnEdn getCTFtnEdn() {
-        return ctFtnEdn;
-    }
-
-    public void setCTFtnEdn(CTFtnEdn footnote) {
-        ctFtnEdn = footnote;
-    }
-
+    
     /**
-     * @param pos in table array
-     * @return The table at position pos
-     * @see org.apache.poi.xwpf.usermodel.IBody#getTableArray(int)
-     */
-    public XWPFTable getTableArray(int pos) {
-        if (pos >= 0 && pos < tables.size()) {
-            return tables.get(pos);
-        }
-        return null;
-    }
-
-    /**
-     * inserts an existing XWPFTable to the arrays bodyElements and tables
+     * Ensure that the specified paragraph has a reference marker for this
+     * footnote by adding a footnote reference if one is not found.
+     * <p>This method is for the first paragraph in the footnote, not 
+     * paragraphs that will refer to the footnote. For references to
+     * the footnote, use {@link XWPFParagraph#addFootnoteReference(XWPFFootnote)}.
+     * </p>
+     * <p>The first run of the first paragraph in a footnote should
+     * contain a {@link CTFtnEdnRef} object.</p>
      *
-     * @param pos
-     * @param table
-     * @see org.apache.poi.xwpf.usermodel.IBody#insertTable(int pos, XWPFTable table)
-     */
-    public void insertTable(int pos, XWPFTable table) {
-        bodyElements.add(pos, table);
-        int i = 0;
-        for (CTTbl tbl : ctFtnEdn.getTblArray()) {
-            if (tbl == table.getCTTbl()) {
+     * @param p The {@link XWPFParagraph} to ensure
+     * @since 4.0.0
+       */
+    public void ensureFootnoteRef(XWPFParagraph p) {
+        
+        XWPFRun r = null;
+        if (p.getRuns().size() > 0) {
+            r = p.getRuns().get(0);
+        }
+        if (r == null) {
+            r = p.createRun();
+        }
+        CTR ctr = r.getCTR();
+        boolean foundRef = false;
+        for (CTFtnEdnRef ref : ctr.getFootnoteReferenceList()) {
+            if (getId().equals(ref.getId())) {
+                foundRef = true;
                 break;
             }
-            i++;
         }
-        tables.add(i, table);
-
-    }
-
-    /**
-     * if there is a corresponding {@link XWPFTable} of the parameter ctTable in the tableList of this header
-     * the method will return this table
-     * if there is no corresponding {@link XWPFTable} the method will return null
-     *
-     * @param ctTable
-     * @see org.apache.poi.xwpf.usermodel.IBody#getTable(CTTbl ctTable)
-     */
-    public XWPFTable getTable(CTTbl ctTable) {
-        for (XWPFTable table : tables) {
-            if (table == null)
-                return null;
-            if (table.getCTTbl().equals(ctTable))
-                return table;
+        if (!foundRef) {
+            ctr.addNewRPr().addNewRStyle().setVal("FootnoteReference");
+            ctr.addNewFootnoteRef();
         }
-        return null;
-    }
-
-    /**
-     * if there is a corresponding {@link XWPFParagraph} of the parameter ctTable in the paragraphList of this header or footer
-     * the method will return this paragraph
-     * if there is no corresponding {@link XWPFParagraph} the method will return null
-     *
-     * @param p is instance of CTP and is searching for an XWPFParagraph
-     * @return null if there is no XWPFParagraph with an corresponding CTPparagraph in the paragraphList of this header or footer
-     * XWPFParagraph with the correspondig CTP p
-     * @see org.apache.poi.xwpf.usermodel.IBody#getParagraph(CTP p)
-     */
-    public XWPFParagraph getParagraph(CTP p) {
-        for (XWPFParagraph paragraph : paragraphs) {
-            if (paragraph.getCTP().equals(p))
-                return paragraph;
-        }
-        return null;
-    }
-
-    /**
-     * Returns the paragraph that holds
-     * the text of the header or footer.
-     *
-     * @see org.apache.poi.xwpf.usermodel.IBody#getParagraphArray(int pos)
-     */
-    public XWPFParagraph getParagraphArray(int pos) {
-        if(pos >=0 && pos < paragraphs.size()) {
-            return paragraphs.get(pos);
-        }
-        return null;
-    }
-
-    /**
-     * get the TableCell which belongs to the TableCell
-     *
-     * @param cell
-     * @see org.apache.poi.xwpf.usermodel.IBody#getTableCell(CTTc cell)
-     */
-    public XWPFTableCell getTableCell(CTTc cell) {
-        XmlCursor cursor = cell.newCursor();
-        cursor.toParent();
-        XmlObject o = cursor.getObject();
-        if (!(o instanceof CTRow)) {
-            return null;
-        }
-        CTRow row = (CTRow) o;
-        cursor.toParent();
-        o = cursor.getObject();
-        cursor.dispose();
-        if (!(o instanceof CTTbl)) {
-            return null;
-        }
-        CTTbl tbl = (CTTbl) o;
-        XWPFTable table = getTable(tbl);
-        if (table == null) {
-            return null;
-        }
-        XWPFTableRow tableRow = table.getRow(row);
-        if(tableRow == null){
-            return null;
-        }
-        return tableRow.getTableCell(cell);
-    }
-
-    /**
-     * verifies that cursor is on the right position
-     *
-     * @param cursor
-     */
-    private boolean isCursorInFtn(XmlCursor cursor) {
-        XmlCursor verify = cursor.newCursor();
-        verify.toParent();
-        if (verify.getObject() == this.ctFtnEdn) {
-            return true;
-        }
-        return false;
-    }
-
-    public POIXMLDocumentPart getOwner() {
-        return footnotes;
-    }
-
-    /**
-     * @param cursor
-     * @return the inserted table
-     * @see org.apache.poi.xwpf.usermodel.IBody#insertNewTbl(XmlCursor cursor)
-     */
-    public XWPFTable insertNewTbl(XmlCursor cursor) {
-        if (isCursorInFtn(cursor)) {
-            String uri = CTTbl.type.getName().getNamespaceURI();
-            String localPart = "tbl";
-            cursor.beginElement(localPart, uri);
-            cursor.toParent();
-            CTTbl t = (CTTbl) cursor.getObject();
-            XWPFTable newT = new XWPFTable(t, this);
-            cursor.removeXmlContents();
-            XmlObject o = null;
-            while (!(o instanceof CTTbl) && (cursor.toPrevSibling())) {
-                o = cursor.getObject();
-            }
-            if (!(o instanceof CTTbl)) {
-                tables.add(0, newT);
-            } else {
-                int pos = tables.indexOf(getTable((CTTbl) o)) + 1;
-                tables.add(pos, newT);
-            }
-            int i = 0;
-            cursor = t.newCursor();
-            while (cursor.toPrevSibling()) {
-                o = cursor.getObject();
-                if (o instanceof CTP || o instanceof CTTbl)
-                    i++;
-            }
-            bodyElements.add(i, newT);
-            XmlCursor c2 = t.newCursor();
-            cursor.toCursor(c2);
-            cursor.toEndToken();
-            c2.dispose();
-            return newT;
-        }
-        return null;
-    }
-
-    /**
-     * add a new paragraph at position of the cursor
-     *
-     * @param cursor
-     * @return the inserted paragraph
-     * @see org.apache.poi.xwpf.usermodel.IBody#insertNewParagraph(XmlCursor cursor)
-     */
-    public XWPFParagraph insertNewParagraph(final XmlCursor cursor) {
-        if (isCursorInFtn(cursor)) {
-            String uri = CTP.type.getName().getNamespaceURI();
-            String localPart = "p";
-            cursor.beginElement(localPart, uri);
-            cursor.toParent();
-            CTP p = (CTP) cursor.getObject();
-            XWPFParagraph newP = new XWPFParagraph(p, this);
-            XmlObject o = null;
-            while (!(o instanceof CTP) && (cursor.toPrevSibling())) {
-                o = cursor.getObject();
-            }
-            if ((!(o instanceof CTP)) || o == p) {
-                paragraphs.add(0, newP);
-            } else {
-                int pos = paragraphs.indexOf(getParagraph((CTP) o)) + 1;
-                paragraphs.add(pos, newP);
-            }
-            int i = 0;
-            XmlCursor p2 = p.newCursor();
-            cursor.toCursor(p2);
-            p2.dispose();
-            while (cursor.toPrevSibling()) {
-                o = cursor.getObject();
-                if (o instanceof CTP || o instanceof CTTbl)
-                    i++;
-            }
-            bodyElements.add(i, newP);
-            p2 = p.newCursor();
-            cursor.toCursor(p2);
-            cursor.toEndToken();
-            p2.dispose();
-            return newP;
-        }
-        return null;
-    }
-
-    /**
-     * add a new table to the end of the footnote
-     *
-     * @param table
-     * @return the added XWPFTable
-     */
-    public XWPFTable addNewTbl(CTTbl table) {
-        CTTbl newTable = ctFtnEdn.addNewTbl();
-        newTable.set(table);
-        XWPFTable xTable = new XWPFTable(newTable, this);
-        tables.add(xTable);
-        return xTable;
-    }
-
-    /**
-     * add a new paragraph to the end of the footnote
-     *
-     * @param paragraph
-     * @return the added XWPFParagraph
-     */
-    public XWPFParagraph addNewParagraph(CTP paragraph) {
-        CTP newPara = ctFtnEdn.addNewP();
-        newPara.set(paragraph);
-        XWPFParagraph xPara = new XWPFParagraph(newPara, this);
-        paragraphs.add(xPara);
-        return xPara;
-    }
-
-    /**
-     * @see org.apache.poi.xwpf.usermodel.IBody#getXWPFDocument()
-     */
-    public XWPFDocument getXWPFDocument() {
-        return document;
-    }
-
-    /**
-     * returns the Part, to which the body belongs, which you need for adding relationship to other parts
-     *
-     * @see org.apache.poi.xwpf.usermodel.IBody#getPart()
-     */
-    public POIXMLDocumentPart getPart() {
-        return footnotes;
-    }
-
-    /**
-     * get the PartType of the body
-     *
-     * @see org.apache.poi.xwpf.usermodel.IBody#getPartType()
-     */
-    public BodyType getPartType() {
-        return BodyType.FOOTNOTE;
+        
     }
 }

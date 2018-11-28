@@ -17,10 +17,10 @@
 package org.apache.poi.poifs.dev;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.filesystem.NotOLE2FileException;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
-import org.apache.poi.poifs.property.NPropertyTable;
+import org.apache.poi.poifs.property.PropertyTable;
 import org.apache.poi.util.TempFile;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -40,7 +40,7 @@ public class TestPOIFSDump {
         SYSTEM = System.out;
         System.setOut(new PrintStream(new OutputStream() {
             @Override
-            public void write(int b) throws IOException {
+            public void write(int b) {
 
             }
         }, false, "UTF-8"));
@@ -85,7 +85,7 @@ public class TestPOIFSDump {
         }
     }
 
-    public static void cleanDirectory(File directory) throws IOException {
+    private static void cleanDirectory(File directory) throws IOException {
         if (!directory.isDirectory()) {
             String message = directory + " is not a directory";
             throw new IllegalArgumentException(message);
@@ -110,7 +110,7 @@ public class TestPOIFSDump {
         }
     }
 
-    public static void forceDelete(File file) throws IOException {
+    private static void forceDelete(File file) throws IOException {
         if (file.isDirectory()) {
             deleteDirectory(file);
         } else {
@@ -196,10 +196,10 @@ public class TestPOIFSDump {
         assertTrue("Had: " + dir, dir.mkdirs());
 
         FileInputStream is = new FileInputStream(TEST_FILE);
-        NPOIFSFileSystem fs = new NPOIFSFileSystem(is);
+        POIFSFileSystem fs = new POIFSFileSystem(is);
         is.close();
 
-        NPropertyTable props = fs.getPropertyTable();
+        PropertyTable props = fs.getPropertyTable();
         assertNotNull(props);
 
         // try with an invalid startBlock to trigger an exception

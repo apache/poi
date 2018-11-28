@@ -42,6 +42,7 @@ import org.apache.poi.util.POILogger;
 import org.apache.poi.xddf.usermodel.chart.XDDFChart;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xwpf.usermodel.XWPFRelation;
 
 /**
  * Represents an entry of a OOXML package.
@@ -613,6 +614,14 @@ public class POIXMLDocumentPart {
      */
     protected void read(POIXMLFactory factory, Map<PackagePart, POIXMLDocumentPart> context) throws OpenXML4JException {
         PackagePart pp = getPackagePart();
+
+        if (pp.getContentType().equals(XWPFRelation.GLOSSARY_DOCUMENT.getContentType())) {
+            logger.log(POILogger.WARN,
+                    "POI does not currently support template.main+xml (glossary) parts.  " +
+                    "Skipping this part for now.");
+            return;
+        }
+
         // add mapping a second time, in case of initial caller hasn't done so
         POIXMLDocumentPart otherChild = context.put(pp, this);
         if (otherChild != null && otherChild != this) {

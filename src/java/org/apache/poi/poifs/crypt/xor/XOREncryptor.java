@@ -26,6 +26,7 @@ import java.util.BitSet;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.poifs.crypt.ChunkedCipherOutputStream;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.Encryptor;
@@ -79,9 +80,6 @@ public class XOREncryptor extends Encryptor implements Cloneable {
         // chunkSize is irrelevant
     }
 
-    protected void createEncryptionInfoEntry(DirectoryNode dir) throws IOException {
-    }
-
     @Override
     public XOREncryptor clone() throws CloneNotSupportedException {
         return (XOREncryptor)super.clone();
@@ -110,9 +108,8 @@ public class XOREncryptor extends Encryptor implements Cloneable {
         }
 
         @Override
-        protected void createEncryptionInfoEntry(DirectoryNode dir, File tmpFile)
-        throws IOException, GeneralSecurityException {
-            XOREncryptor.this.createEncryptionInfoEntry(dir);
+        protected void createEncryptionInfoEntry(DirectoryNode dir, File tmpFile) {
+            throw new EncryptedDocumentException("createEncryptionInfoEntry not supported");
         }
 
         @Override

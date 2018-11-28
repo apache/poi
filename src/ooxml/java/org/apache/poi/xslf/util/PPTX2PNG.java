@@ -74,13 +74,13 @@ public class PPTX2PNG {
         for (int i = 0; i < args.length; i++) {
             if (args[i].startsWith("-")) {
                 if ("-scale".equals(args[i])) {
-                    scale = Float.parseFloat(args[++i]);
+                    scale = Float.parseFloat(args[++i]); // lgtm[java/index-out-of-bounds]
                 } else if ("-slide".equals(args[i])) {
-                    slidenumStr = args[++i];
+                    slidenumStr = args[++i]; // lgtm[java/index-out-of-bounds]
                 } else if ("-format".equals(args[i])) {
-                    format = args[++i];
+                    format = args[++i]; // lgtm[java/index-out-of-bounds]
                 } else if ("-outdir".equals(args[i])) {
-                    outdir = new File(args[++i]);
+                    outdir = new File(args[++i]); // lgtm[java/index-out-of-bounds]
                 } else if ("-quiet".equals(args[i])) {
                     quiet = true;
                 }
@@ -98,11 +98,11 @@ public class PPTX2PNG {
             usage("Invalid format given");
             return;
         }
-    
+
         if (outdir == null) {
             outdir = file.getParentFile();
         }
-        
+
         if (!"null".equals(format) && (outdir == null || !outdir.exists() || !outdir.isDirectory())) {
             usage("Output directory doesn't exist");
             return;
@@ -112,7 +112,7 @@ public class PPTX2PNG {
             usage("Invalid scale given");
             return;
         }
-        
+
         if (!quiet) {
             System.out.println("Processing " + file);
         }
@@ -169,7 +169,7 @@ public class PPTX2PNG {
             System.out.println("Done");
         }
     }
-    
+
     private static Set<Integer> slideIndexes(final int slideCount, String range) {
         Set<Integer> slideIdx = new TreeSet<>();
         if ("-1".equals(range)) {

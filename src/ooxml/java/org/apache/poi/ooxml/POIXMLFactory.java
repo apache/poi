@@ -44,10 +44,13 @@ public abstract class POIXMLFactory {
      * @since by POI 3.14-Beta1
      */
     public POIXMLDocumentPart createDocumentPart(POIXMLDocumentPart parent, PackagePart part) {
-        PackageRelationship rel = getPackageRelationship(parent, part);
-        POIXMLRelation descriptor = getDescriptor(rel.getRelationshipType());
-        
-        if (descriptor == null || descriptor.getRelationClass() == null) {
+        final PackageRelationship rel = getPackageRelationship(parent, part);
+        final String relType = rel.getRelationshipType();
+        final POIXMLRelation descriptor = getDescriptor(relType);
+
+        // don't parse the document parts, if its class can't be determined
+        // or if it's a package relation of another embedded resource
+        if (descriptor == null || descriptor.getRelationClass() == null || POIXMLDocument.PACK_OBJECT_REL_TYPE.equals(relType)) {
             LOGGER.log(POILogger.DEBUG, "using default POIXMLDocumentPart for " + rel.getRelationshipType());
             return new POIXMLDocumentPart(parent, part);
         }

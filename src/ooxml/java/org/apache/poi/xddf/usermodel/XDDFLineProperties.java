@@ -34,12 +34,12 @@ public class XDDFLineProperties {
     }
 
     @Internal
-    protected XDDFLineProperties(CTLineProperties properties) {
+    public XDDFLineProperties(CTLineProperties properties) {
         this.props = properties;
     }
 
     @Internal
-    protected CTLineProperties getXmlObject() {
+    public CTLineProperties getXmlObject() {
         return props;
     }
 

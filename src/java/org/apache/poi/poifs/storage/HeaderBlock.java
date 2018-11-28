@@ -214,12 +214,12 @@ public final class HeaderBlock implements HeaderBlockConstants {
       byte[] data = new byte[512];
       int bsCount = IOUtils.readFully(stream, data);
       if(bsCount != 512) {
-         throw alertShortRead(bsCount, 512);
+         throw alertShortRead(bsCount);
       }
       return data;
 	}
 
-	private static IOException alertShortRead(int pRead, int expectedReadSize) {
+	private static IOException alertShortRead(int pRead) {
 		int read;
 		if (pRead < 0) {
 			//Can't have -1 bytes read in the error message!
@@ -230,8 +230,7 @@ public final class HeaderBlock implements HeaderBlockConstants {
 		String type = " byte" + (read == 1 ? (""): ("s"));
 
 		return new IOException("Unable to read entire header; "
-				+ read + type + " read; expected "
-				+ expectedReadSize + " bytes");
+				+ read + type + " read; expected 512 bytes");
 	}
 
 	/**
@@ -372,7 +371,7 @@ public final class HeaderBlock implements HeaderBlockConstants {
     * @exception IOException on problems writing to the specified
     *            stream
     */
-   void writeData(final OutputStream stream) throws IOException {
+   public void writeData(final OutputStream stream) throws IOException {
       // Update the counts and start positions 
       new IntegerField(_bat_count_offset,      _bat_count, _data);
       new IntegerField(_property_start_offset, _property_start, _data);

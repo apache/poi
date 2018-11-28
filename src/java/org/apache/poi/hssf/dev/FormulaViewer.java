@@ -26,8 +26,7 @@ import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordFactory;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.formula.ptg.ExpPtg;
 import org.apache.poi.ss.formula.ptg.FuncPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
@@ -56,7 +55,7 @@ public class FormulaViewer
      * @throws IOException if the file contained errors 
      */
     public void run() throws IOException {
-        NPOIFSFileSystem fs  = new NPOIFSFileSystem(new File(file), true);
+        POIFSFileSystem fs  = new POIFSFileSystem(new File(file), true);
         try {
             InputStream is = BiffViewer.getPOIFSInputStream(fs);
             try {

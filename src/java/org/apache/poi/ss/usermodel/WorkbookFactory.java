@@ -32,7 +32,7 @@ import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentFactoryHelper;
 import org.apache.poi.poifs.filesystem.FileMagic;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Removal;
@@ -44,18 +44,36 @@ import org.apache.poi.util.Removal;
  */
 public class WorkbookFactory {
     /**
-     * Creates a HSSFWorkbook from the given NPOIFSFileSystem<p>
+     * Create a new empty Workbook, either XSSF or HSSF depending
+     * on the parameter
      *
-     * Note that in order to properly release resources the
-     * Workbook should be closed after use.
-     *
-     * @param fs The {@link NPOIFSFileSystem} to read the document from
+     * @param xssf If an XSSFWorkbook or a HSSFWorkbook should be created
      *
      * @return The created workbook
      *
      * @throws IOException if an error occurs while reading the data
      */
-    public static Workbook create(NPOIFSFileSystem fs) throws IOException {
+    public static Workbook create(boolean xssf) throws IOException {
+        if(xssf) {
+            return createXSSFWorkbook();
+        } else {
+            return createHSSFWorkbook();
+        }
+    }
+
+    /**
+     * Creates a HSSFWorkbook from the given NPOIFSFileSystem<p>
+     *
+     * Note that in order to properly release resources the
+     * Workbook should be closed after use.
+     *
+     * @param fs The {@link POIFSFileSystem} to read the document from
+     *
+     * @return The created workbook
+     *
+     * @throws IOException if an error occurs while reading the data
+     */
+    public static Workbook create(POIFSFileSystem fs) throws IOException {
         return create(fs, null);
     }
 
@@ -63,14 +81,14 @@ public class WorkbookFactory {
      * Creates a Workbook from the given NPOIFSFileSystem, which may
      *  be password protected
      *
-     *  @param fs The {@link NPOIFSFileSystem} to read the document from
+     *  @param fs The {@link POIFSFileSystem} to read the document from
      *  @param password The password that should be used or null if no password is necessary.
      *
      *  @return The created Workbook
      *
      *  @throws IOException if an error occurs while reading the data
      */
-    private static Workbook create(final NPOIFSFileSystem fs, String password) throws IOException {
+    private static Workbook create(final POIFSFileSystem fs, String password) throws IOException {
         return create(fs.getRoot(), password);
     }
 
@@ -110,6 +128,10 @@ public class WorkbookFactory {
                 return createXSSFWorkbook(stream);
             } finally {
                 IOUtils.closeQuietly(stream);
+
+                // as we processed the full stream already, we can close the filesystem here
+                // otherwise file handles are leaked
+                root.getFileSystem().close();
             }
         }
 
@@ -137,7 +159,7 @@ public class WorkbookFactory {
      * <p>Note that in order to properly release resources the
      *  Workbook should be closed after use.</p>
      *
-     *  @param pkg The {@link OPCPackage} opened for reading data.
+     *  @param pkg The {@link org.apache.poi.openxml4j.opc.OPCPackage} opened for reading data.
      *
      *  @return The created Workbook
      *
@@ -204,7 +226,7 @@ public class WorkbookFactory {
 
         switch (fm) {
             case OLE2:
-                NPOIFSFileSystem fs = new NPOIFSFileSystem(is);
+                POIFSFileSystem fs = new POIFSFileSystem(is);
                 return create(fs, password);
             case OOXML:
                 return createXSSFWorkbook(is);
@@ -271,9 +293,9 @@ public class WorkbookFactory {
             throw new FileNotFoundException(file.toString());
         }
 
-        NPOIFSFileSystem fs = null;
+        POIFSFileSystem fs = null;
         try {
-            fs = new NPOIFSFileSystem(file, readOnly);
+            fs = new POIFSFileSystem(file, readOnly);
             return create(fs, password);
         } catch(OfficeXmlFileException e) {
             IOUtils.closeQuietly(fs);
@@ -292,9 +314,14 @@ public class WorkbookFactory {
         return createWorkbook("org.apache.poi.xssf.usermodel.XSSFWorkbookFactory", args);
     }
 
+    /**
+     * Does the actual call to HSSF or XSSF to do the creation.
+     * Uses reflection, so that this class can be in the Core non-OOXML
+     *  POI jar without errors / broken references to the OOXML / XSSF code.
+     */
     private static Workbook createWorkbook(String factoryClass, Object args[]) throws IOException, EncryptedDocumentException {
         try {
-            Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(factoryClass);
+            Class<?> clazz = WorkbookFactory.class.getClassLoader().loadClass(factoryClass);
             Class<?> argsClz[] = new Class<?>[args.length];
             int i=0;
             for (Object o : args) {
@@ -303,6 +330,8 @@ public class WorkbookFactory {
                     c = boolean.class;
                 } else if (InputStream.class.isAssignableFrom(c)) {
                     c = InputStream.class;
+                } else if (File.class.isAssignableFrom(c)) {
+                    c = File.class;
                 }
                 argsClz[i++] = c;
             }

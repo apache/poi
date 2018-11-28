@@ -18,20 +18,25 @@
 package org.apache.poi.xddf.usermodel.chart;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
+import org.apache.poi.xddf.usermodel.text.TextContainer;
 import org.apache.poi.xddf.usermodel.text.XDDFTextBody;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTLegend;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties;
 
 /**
  * Represents a DrawingML chart legend
  */
 @Beta
-public final class XDDFChartLegend {
+public final class XDDFChartLegend implements TextContainer {
 
     /**
      * Underlying CTLegend bean
@@ -89,7 +94,7 @@ public final class XDDFChartLegend {
 
     public XDDFTextBody getTextBody() {
         if (legend.isSetTxPr()) {
-            return new XDDFTextBody(legend.getTxPr());
+            return new XDDFTextBody(this, legend.getTxPr());
         } else {
             return null;
         }
@@ -188,5 +193,17 @@ public final class XDDFChartLegend {
 
     public void setOverlay(boolean value) {
         legend.getOverlay().setVal(value);
+    }
+
+    public <R> Optional<R> findDefinedParagraphProperty(
+            Function<CTTextParagraphProperties, Boolean> isSet,
+            Function<CTTextParagraphProperties, R> getter) {
+        return Optional.empty(); // chart legend has no (indirect) paragraph properties
+    }
+
+    public <R> Optional<R> findDefinedRunProperty(
+            Function<CTTextCharacterProperties, Boolean> isSet,
+            Function<CTTextCharacterProperties, R> getter) {
+        return Optional.empty(); // chart legend has no (indirect) paragraph properties
     }
 }

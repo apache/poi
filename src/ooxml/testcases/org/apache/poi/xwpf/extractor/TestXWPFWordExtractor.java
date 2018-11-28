@@ -29,6 +29,7 @@ import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.POITestCase.assertEndsWith;
+import static org.apache.poi.POITestCase.assertNotContained;
 import static org.apache.poi.POITestCase.assertStartsWith;
 
 /**
@@ -440,5 +441,23 @@ public class TestXWPFWordExtractor extends TestCase {
         String txt = extractor.getText();
         assertContains(txt, "Sequencing data");
         extractor.close();
+    }
+
+    public void testGlossary() throws IOException {
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("60316.dotx");
+        XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
+        String txt = extractor.getText();
+        assertContains(txt, "Getting the perfect");
+        //this content appears only in the glossary document
+        //once we add processing for this, we can change this to contains
+        assertNotContained(txt, "table rows");
+    }
+
+    public void testPartsInTemplate() throws IOException {
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("60316b.dotx");
+        XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
+        String txt = extractor.getText();
+        assertContains(txt, "header 2");
+        assertContains(txt, "footer 1");
     }
 }

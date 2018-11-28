@@ -26,7 +26,7 @@ public class XDDFEffectContainer {
     private CTEffectContainer container;
 
     @Internal
-    protected XDDFEffectContainer(CTEffectContainer container) {
+    public XDDFEffectContainer(CTEffectContainer container) {
         this.container = container;
     }
 

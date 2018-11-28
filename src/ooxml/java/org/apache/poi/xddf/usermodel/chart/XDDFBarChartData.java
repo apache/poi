@@ -34,8 +34,23 @@ public class XDDFBarChartData extends XDDFChartData {
     public XDDFBarChartData(CTBarChart chart, Map<Long, XDDFChartAxis> categories,
             Map<Long, XDDFValueAxis> values) {
         this.chart = chart;
+        if (chart.getBarDir() == null) {
+            chart.addNewBarDir().setVal(BarDirection.BAR.underlying);
+        }
         for (CTBarSer series : chart.getSerList()) {
             this.series.add(new Series(series, series.getCat(), series.getVal()));
+        }
+        defineAxes(categories, values);
+    }
+
+    private void defineAxes(Map<Long, XDDFChartAxis> categories, Map<Long, XDDFValueAxis> values) {
+        if (chart.sizeOfAxIdArray() == 0) {
+            for (Long id : categories.keySet()) {
+                chart.addNewAxId().setVal(id);
+            }
+            for (Long id : values.keySet()) {
+                chart.addNewAxId().setVal(id);
+            }
         }
         defineAxes(chart.getAxIdArray(), categories, values);
     }
@@ -94,6 +109,7 @@ public class XDDFBarChartData extends XDDFChartData {
             XDDFNumericalDataSource<? extends Number> values) {
         final int index = this.series.size();
         final CTBarSer ctSer = this.chart.addNewSer();
+        ctSer.addNewTx();
         ctSer.addNewCat();
         ctSer.addNewVal();
         ctSer.addNewIdx().setVal(index);
@@ -119,7 +135,11 @@ public class XDDFBarChartData extends XDDFChartData {
 
         @Override
         protected CTSerTx getSeriesText() {
-            return series.getTx();
+            if (series.isSetTx()) {
+                return series.getTx();
+            } else {
+                return series.addNewTx();
+            }
         }
 
         @Override

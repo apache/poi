@@ -324,7 +324,7 @@ public class CryptoFunctions {
         }
         
         try {
-            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            ClassLoader cl = CryptoFunctions.class.getClassLoader();
             String bcProviderName = "org.bouncycastle.jce.provider.BouncyCastleProvider";
             Class<Provider> clazz = (Class<Provider>)cl.loadClass(bcProviderName);
             Security.addProvider(clazz.newInstance());

@@ -20,9 +20,19 @@ package org.apache.poi.poifs.macros;
 import static org.apache.poi.util.StringUtil.endsWithIgnoreCase;
 import static org.apache.poi.util.StringUtil.startsWithIgnoreCase;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -32,13 +42,15 @@ import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.DocumentNode;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.FileMagic;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.poifs.macros.Module.ModuleType;
 import org.apache.poi.util.CodePageUtil;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.util.RLEDecompressingInputStream;
 import org.apache.poi.util.StringUtil;
 
@@ -56,16 +68,20 @@ import org.apache.poi.util.StringUtil;
  * @since 3.15-beta2
  */
 public class VBAMacroReader implements Closeable {
+    private static final POILogger LOGGER = POILogFactory.getLogger(VBAMacroReader.class);
+
+    //arbitrary limit on size of strings to read, etc.
+    private static final int MAX_STRING_LENGTH = 20000;
     protected static final String VBA_PROJECT_OOXML = "vbaProject.bin";
     protected static final String VBA_PROJECT_POIFS = "VBA";
 
-    private NPOIFSFileSystem fs;
+    private POIFSFileSystem fs;
     
     public VBAMacroReader(InputStream rstream) throws IOException {
         InputStream is = FileMagic.prepareToCheckMagic(rstream);
         FileMagic fm = FileMagic.valueOf(is);
         if (fm == FileMagic.OLE2) {
-            fs = new NPOIFSFileSystem(is);
+            fs = new POIFSFileSystem(is);
         } else {
             openOOXML(is);
         }
@@ -73,12 +89,12 @@ public class VBAMacroReader implements Closeable {
     
     public VBAMacroReader(File file) throws IOException {
         try {
-            this.fs = new NPOIFSFileSystem(file);
+            this.fs = new POIFSFileSystem(file);
         } catch (OfficeXmlFileException e) {
             openOOXML(new FileInputStream(file));
         }
     }
-    public VBAMacroReader(NPOIFSFileSystem fs) {
+    public VBAMacroReader(POIFSFileSystem fs) {
         this.fs = fs;
     }
     
@@ -89,7 +105,7 @@ public class VBAMacroReader implements Closeable {
                 if (endsWithIgnoreCase(zipEntry.getName(), VBA_PROJECT_OOXML)) {
                     try {
                         // Make a NPOIFS from the contents, and close the stream
-                        this.fs = new NPOIFSFileSystem(zis);
+                        this.fs = new POIFSFileSystem(zis);
                         return;
                     } catch (IOException e) {
                         // Tidy up
@@ -111,8 +127,13 @@ public class VBAMacroReader implements Closeable {
 
     public Map<String, Module> readMacroModules() throws IOException {
         final ModuleMap modules = new ModuleMap();
+        //ascii -> unicode mapping for module names
+        //preserve insertion order
+        final Map<String, String> moduleNameMap = new LinkedHashMap<>();
+
         findMacros(fs.getRoot(), modules);
-        findProjectProperties(fs.getRoot(), modules);
+        findModuleNameMap(fs.getRoot(), moduleNameMap, modules);
+        findProjectProperties(fs.getRoot(), moduleNameMap, modules);
 
         Map<String, Module> moduleSources = new HashMap<>();
         for (Map.Entry<String, ModuleImpl> entry : modules.entrySet()) {
@@ -327,19 +348,30 @@ public class VBAMacroReader implements Closeable {
         }
     }
 
-    protected void findProjectProperties(DirectoryNode node, ModuleMap modules) throws IOException {
+    protected void findProjectProperties(DirectoryNode node, Map<String, String> moduleNameMap, ModuleMap modules) throws IOException {
         for (Entry entry : node) {
             if ("project".equalsIgnoreCase(entry.getName())) {
                 DocumentNode document = (DocumentNode)entry;
-                DocumentInputStream dis = new DocumentInputStream(document);
-                readProjectProperties(dis, modules);
-            } else {
-                for (Entry child : node) {
-                    if (child instanceof DirectoryNode) {
-                        findProjectProperties((DirectoryNode)child, modules);
-                    }
+                try(DocumentInputStream dis = new DocumentInputStream(document)) {
+                    readProjectProperties(dis, moduleNameMap, modules);
+                    return;
                 }
+            } else if (entry instanceof DirectoryNode) {
+                findProjectProperties((DirectoryNode)entry, moduleNameMap, modules);
+            }
+        }
+    }
 
+    protected void findModuleNameMap(DirectoryNode node, Map<String, String> moduleNameMap, ModuleMap modules) throws IOException {
+        for (Entry entry : node) {
+            if ("projectwm".equalsIgnoreCase(entry.getName())) {
+                DocumentNode document = (DocumentNode)entry;
+                try(DocumentInputStream dis = new DocumentInputStream(document)) {
+                    readNameMapRecords(dis, moduleNameMap, modules.charset);
+                    return;
+                }
+            } else if (entry.isDirectoryEntry()) {
+                findModuleNameMap((DirectoryNode)entry, moduleNameMap, modules);
             }
         }
     }
@@ -426,10 +458,18 @@ public class VBAMacroReader implements Closeable {
     private static class ASCIIUnicodeStringPair {
         private final String ascii;
         private final String unicode;
+        private final int pushbackRecordId;
+
+        ASCIIUnicodeStringPair(String ascii, int pushbackRecordId) {
+            this.ascii = ascii;
+            this.unicode = "";
+            this.pushbackRecordId = pushbackRecordId;
+        }
 
         ASCIIUnicodeStringPair(String ascii, String unicode) {
             this.ascii = ascii;
             this.unicode = unicode;
+            pushbackRecordId = -1;
         }
 
         private String getAscii() {
@@ -439,6 +479,10 @@ public class VBAMacroReader implements Closeable {
         private String getUnicode() {
             return unicode;
         }
+
+        private int getPushbackRecordId() {
+            return pushbackRecordId;
+        }
     }
 
     private void processDirStream(Entry dir, ModuleMap modules) throws IOException {
@@ -447,7 +491,7 @@ public class VBAMacroReader implements Closeable {
         try (DocumentInputStream dis = new DocumentInputStream(dirDocumentNode)) {
             String streamName = null;
             int recordId = 0;
-            boolean inReferenceTwiddled = false;
+
             try (RLEDecompressingInputStream in = new RLEDecompressingInputStream(dis)) {
                 while (true) {
                     recordId = in.readShort();
@@ -485,7 +529,27 @@ public class VBAMacroReader implements Closeable {
                             if (dirState.equals(DIR_STATE.INFORMATION_RECORD)) {
                                 dirState = DIR_STATE.REFERENCES_RECORD;
                             }
-                            readStringPair(in, modules.charset, REFERENCE_NAME_RESERVED);
+                            ASCIIUnicodeStringPair stringPair = readStringPair(in,
+                                    modules.charset, REFERENCE_NAME_RESERVED, false);
+                            if (stringPair.getPushbackRecordId() == -1) {
+                                break;
+                            }
+                            //Special handling for when there's only an ascii string and a REFERENCED_REGISTERED
+                            //record that follows.
+                            //See https://github.com/decalage2/oletools/blob/master/oletools/olevba.py#L1516
+                            //and https://github.com/decalage2/oletools/pull/135 from (@c1fe)
+                            if (stringPair.getPushbackRecordId() != RecordType.REFERENCE_REGISTERED.id) {
+                                throw new IllegalArgumentException("Unexpected reserved character. "+
+                                        "Expected "+Integer.toHexString(REFERENCE_NAME_RESERVED)
+                                        + " or "+Integer.toHexString(RecordType.REFERENCE_REGISTERED.id)+
+                                        " not: "+Integer.toHexString(stringPair.getPushbackRecordId()));
+                            }
+                            //fall through!
+                        case REFERENCE_REGISTERED:
+                            //REFERENCE_REGISTERED must come immediately after
+                            //REFERENCE_NAME to allow for fall through in special case of bug 62625
+                            int recLength = in.readInt();
+                            trySkip(in, recLength);
                             break;
                         case MODULE_DOC_STRING:
                             int modDocStringLength = in.readInt();
@@ -546,19 +610,105 @@ public class VBAMacroReader implements Closeable {
         }
     }
 
-    private ASCIIUnicodeStringPair readStringPair(RLEDecompressingInputStream in, Charset charset, int reservedByte) throws IOException {
+
+
+    private ASCIIUnicodeStringPair readStringPair(RLEDecompressingInputStream in,
+                                                  Charset charset, int reservedByte) throws IOException {
+        return readStringPair(in, charset, reservedByte, true);
+    }
+
+    private ASCIIUnicodeStringPair readStringPair(RLEDecompressingInputStream in,
+                                                  Charset charset, int reservedByte,
+                                                  boolean throwOnUnexpectedReservedByte) throws IOException {
         int nameLength = in.readInt();
         String ascii = readString(in, nameLength, charset);
         int reserved = in.readShort();
+
         if (reserved != reservedByte) {
-            throw new IOException("Expected "+Integer.toHexString(reservedByte)+ "after name before Unicode name, but found: " +
-                    Integer.toHexString(reserved));
+            if (throwOnUnexpectedReservedByte) {
+                throw new IOException("Expected " + Integer.toHexString(reservedByte) +
+                        "after name before Unicode name, but found: " +
+                        Integer.toHexString(reserved));
+            } else {
+                return new ASCIIUnicodeStringPair(ascii, reserved);
+            }
         }
         int unicodeNameRecordLength = in.readInt();
         String unicode = readUnicodeString(in, unicodeNameRecordLength);
         return new ASCIIUnicodeStringPair(ascii, unicode);
     }
 
+    protected void readNameMapRecords(InputStream is,
+                                           Map<String, String> moduleNames, Charset charset) throws IOException {
+        //see 2.3.3 PROJECTwm Stream: Module Name Information
+        //multibytecharstring
+        String mbcs = null;
+        String unicode = null;
+        //arbitrary sanity threshold
+        final int maxNameRecords = 10000;
+        int records = 0;
+        while (++records < maxNameRecords) {
+            try {
+                int b = IOUtils.readByte(is);
+                //check for two 0x00 that mark end of record
+                if (b == 0) {
+                    b = IOUtils.readByte(is);
+                    if (b == 0) {
+                        return;
+                    }
+                }
+                mbcs = readMBCS(b, is, charset, MAX_STRING_LENGTH);
+            } catch (EOFException e) {
+                return;
+            }
+
+            try {
+                unicode = readUnicode(is, MAX_STRING_LENGTH);
+            } catch (EOFException e) {
+                return;
+            }
+            if (mbcs.trim().length() > 0 && unicode.trim().length() > 0) {
+                moduleNames.put(mbcs, unicode);
+            }
+
+        }
+        if (records >= maxNameRecords) {
+            LOGGER.log(POILogger.WARN, "Hit max name records to read ("+maxNameRecords+"). Stopped early.");
+        }
+    }
+
+    private static String readUnicode(InputStream is, int maxLength) throws IOException {
+        //reads null-terminated unicode string
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        int b0 = IOUtils.readByte(is);
+        int b1 = IOUtils.readByte(is);
+
+        int read = 2;
+        while ((b0 + b1) != 0 && read < maxLength) {
+
+            bos.write(b0);
+            bos.write(b1);
+            b0 = IOUtils.readByte(is);
+            b1 = IOUtils.readByte(is);
+            read += 2;
+        }
+        if (read >= maxLength) {
+            LOGGER.log(POILogger.WARN, "stopped reading unicode name after "+read+" bytes");
+        }
+        return new String (bos.toByteArray(), StandardCharsets.UTF_16LE);
+    }
+
+    private static String readMBCS(int firstByte, InputStream is, Charset charset, int maxLength) throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        int len = 0;
+        int b = firstByte;
+        while (b > 0 && len < maxLength) {
+            ++len;
+            bos.write(b);
+            b = IOUtils.readByte(is);
+        }
+        return new String(bos.toByteArray(), charset);
+    }
 
     /**
      * Read <tt>length</tt> bytes of MBCS (multi-byte character set) characters from the stream
@@ -570,7 +720,7 @@ public class VBAMacroReader implements Closeable {
      * @throws IOException If reading from the stream fails
      */
     private static String readString(InputStream stream, int length, Charset charset) throws IOException {
-        byte[] buffer = IOUtils.safelyAllocate(length, 20000);
+        byte[] buffer = IOUtils.safelyAllocate(length, MAX_STRING_LENGTH);
         int bytesRead = IOUtils.readFully(stream, buffer);
         if (bytesRead != length) {
             throw new IOException("Tried to read: "+length +
@@ -579,7 +729,8 @@ public class VBAMacroReader implements Closeable {
         return new String(buffer, 0, length, charset);
     }
 
-    protected void readProjectProperties(DocumentInputStream dis, ModuleMap modules) throws IOException {
+    protected void readProjectProperties(DocumentInputStream dis,
+                                         Map<String, String> moduleNameMap, ModuleMap modules) throws IOException {
         InputStreamReader reader = new InputStreamReader(dis, modules.charset);
         StringBuilder builder = new StringBuilder();
         char[] buffer = new char[512];
@@ -588,33 +739,56 @@ public class VBAMacroReader implements Closeable {
             builder.append(buffer, 0, read);
         }
         String properties = builder.toString();
+        //the module name map names should be in exactly the same order
+        //as the module names here. See 2.3.3 PROJECTwm Stream.
+        //At some point, we might want to enforce that.
         for (String line : properties.split("\r\n|\n\r")) {
             if (!line.startsWith("[")) {
                 String[] tokens = line.split("=");
-                if (tokens.length > 1 && tokens[1].length() > 1 && tokens[1].startsWith("\"")) {
-                    // Remove any double qouates
-                    tokens[1] = tokens[1].substring(1, tokens[1].length() - 2);
+                if (tokens.length > 1 && tokens[1].length() > 1
+                        && tokens[1].startsWith("\"") && tokens[1].endsWith("\"")) {
+                    // Remove any double quotes
+                    tokens[1] = tokens[1].substring(1, tokens[1].length() - 1);
                 }
-                if ("Document".equals(tokens[0])) {
+                if ("Document".equals(tokens[0]) && tokens.length > 1) {
                     String mn = tokens[1].substring(0, tokens[1].indexOf("/&H"));
-                    ModuleImpl module = modules.get(mn);
-                    module.moduleType = ModuleType.Document;
-                } else if ("Module".equals(tokens[0])) {
-                    ModuleImpl module = modules.get(tokens[1]);
-                    module.moduleType = ModuleType.Module;
-                } else if ("Class".equals(tokens[0])) {
-                    ModuleImpl module = modules.get(tokens[1]);
-                    module.moduleType = ModuleType.Class;
+                    ModuleImpl module = getModule(mn, moduleNameMap, modules);
+                    if (module != null) {
+                        module.moduleType = ModuleType.Document;
+                    } else {
+                        LOGGER.log(POILogger.WARN, "couldn't find module with name: "+mn);
+                    }
+                } else if ("Module".equals(tokens[0]) && tokens.length > 1) {
+                    ModuleImpl module = getModule(tokens[1], moduleNameMap, modules);
+                    if (module != null) {
+                        module.moduleType = ModuleType.Module;
+                    } else {
+                        LOGGER.log(POILogger.WARN, "couldn't find module with name: "+tokens[1]);
+                    }
+                } else if ("Class".equals(tokens[0]) && tokens.length > 1) {
+                    ModuleImpl module = getModule(tokens[1], moduleNameMap, modules);
+                    if (module != null) {
+                        module.moduleType = ModuleType.Class;
+                    } else {
+                        LOGGER.log(POILogger.WARN, "couldn't find module with name: "+tokens[1]);
+                    }
                 }
             }
         }
     }
+    //can return null!
+    private ModuleImpl getModule(String moduleName, Map<String, String> moduleNameMap, ModuleMap moduleMap) {
+        if (moduleNameMap.containsKey(moduleName)) {
+            return moduleMap.get(moduleNameMap.get(moduleName));
+        }
+        return moduleMap.get(moduleName);
+    }
 
     private String readUnicodeString(RLEDecompressingInputStream in, int unicodeNameRecordLength) throws IOException {
-        byte[] buffer = IOUtils.safelyAllocate(unicodeNameRecordLength, 20000);
+        byte[] buffer = IOUtils.safelyAllocate(unicodeNameRecordLength, MAX_STRING_LENGTH);
         int bytesRead = IOUtils.readFully(in, buffer);
         if (bytesRead != unicodeNameRecordLength) {
-
+            throw new EOFException();
         }
         return new String(buffer, StringUtil.UTF16LE);
     }

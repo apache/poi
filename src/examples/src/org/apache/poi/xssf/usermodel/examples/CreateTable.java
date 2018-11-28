@@ -19,7 +19,6 @@ package org.apache.poi.xssf.usermodel.examples;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -33,14 +32,18 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * Demonstrates how to create a simple table using Apache POI.
  */
 public class CreateTable {
-        
+
     public static void main(String[] args) throws IOException {
-        
-        try (Workbook wb = new XSSFWorkbook()) {
-            XSSFSheet sheet = (XSSFSheet) wb.createSheet();
+
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+
+            // Set which area the table should be placed in
+            AreaReference reference = wb.getCreationHelper().createAreaReference(
+                    new CellReference(0, 0), new CellReference(2, 2));
 
             // Create
-            XSSFTable table = sheet.createTable();
+            XSSFTable table = sheet.createTable(reference);
             table.setName("Test");
             table.setDisplayName("Test_Table");
 
@@ -70,19 +73,10 @@ public class CreateTable {
                     if (i == 0) {
                         cell.setCellValue("Column" + (j + 1));
                     } else {
-                        cell.setCellValue((i + 1) * (j + 1));
+                        cell.setCellValue((i + 1.0) * (j + 1.0));
                     }
                 }
             }
-            // Create the columns
-            table.createColumn("Column 1");
-            table.createColumn("Column 2");
-            table.createColumn("Column 3");
-
-            // Set which area the table should be placed in
-            AreaReference reference = wb.getCreationHelper().createAreaReference(
-                    new CellReference(0, 0), new CellReference(2, 2));
-            table.setCellReferences(reference);
 
             // Save
             try (FileOutputStream fileOut = new FileOutputStream("ooxml-table.xlsx")) {

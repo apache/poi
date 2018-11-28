@@ -96,8 +96,7 @@ public class CellFormatTestBase {
         }
     }
 
-    protected void runFormatTests(String workbookName, CellValue valueGetter)
-            throws IOException {
+    protected void runFormatTests(String workbookName, CellValue valueGetter) {
 
         openWorkbook(workbookName);
 
@@ -136,11 +135,8 @@ public class CellFormatTestBase {
      * @param workbookName The workbook name.  This is presumed to live in the
      *                     "spreadsheets" directory under the directory named in
      *                     the Java property "POI.testdata.path".
-     *
-     * @throws IOException
      */
-    protected void openWorkbook(String workbookName)
-            throws IOException {
+    protected void openWorkbook(String workbookName) {
         workbook = _testDataProvider.openSampleWorkbook(workbookName);
         workbook.setMissingCellPolicy(MissingCellPolicy.CREATE_NULL_AS_BLANK);
         testFile = workbookName;

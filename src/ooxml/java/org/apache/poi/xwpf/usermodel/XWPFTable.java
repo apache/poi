@@ -18,13 +18,12 @@ package org.apache.poi.xwpf.usermodel;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Collections;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.util.Internal;
@@ -53,6 +52,11 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTblWidth;
  */
 @SuppressWarnings("WeakerAccess")
 public class XWPFTable implements IBodyElement, ISDTContents {
+
+    public static final String REGEX_PERCENTAGE = "[0-9]+(\\.[0-9]+)?%";
+    public static final String DEFAULT_PERCENTAGE_WIDTH = "100%";
+    static final String NS_OOXML_WP_MAIN = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+    public static final String REGEX_WIDTH_VALUE = "auto|[0-9]+|" + REGEX_PERCENTAGE;
 
     // Create a map from this XWPF-level enum to the STBorder.Enum values
     public enum XWPFBorderType {
@@ -157,8 +161,9 @@ public class XWPFTable implements IBodyElement, ISDTContents {
         this.ctTbl = table;
 
         // is an empty table: I add one row and one column as default
-        if (table.sizeOfTrArray() == 0)
+        if (table.sizeOfTrArray() == 0) {
             createEmptyTable(table);
+        }
 
         for (CTRow row : table.getTrList()) {
             StringBuilder rowText = new StringBuilder();
@@ -229,7 +234,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
         return text.toString();
     }
 
-    
+
     /**
      * This method has existed since 2008 without an implementation.
      * It will be removed unless an implementation is provided.
@@ -282,7 +287,10 @@ public class XWPFTable implements IBodyElement, ISDTContents {
     }
 
     /**
-     * @return width value
+     * Get the width value as an integer.
+     * <p>If the width type is AUTO, DXA, or NIL, the value is 20ths of a point. If
+     * the width type is PCT, the value is the percentage times 50 (e.g., 2500 for 50%).</p>
+     * @return width value as an integer
      */
     public int getWidth() {
         CTTblPr tblPr = getTblPr();
@@ -290,12 +298,14 @@ public class XWPFTable implements IBodyElement, ISDTContents {
     }
 
     /**
-     * @param width
+     * Set the width in 20ths of a point (twips).
+     * @param width Width value (20ths of a point)
      */
     public void setWidth(int width) {
         CTTblPr tblPr = getTblPr();
         CTTblWidth tblWidth = tblPr.isSetTblW() ? tblPr.getTblW() : tblPr.addNewTblW();
         tblWidth.setW(new BigInteger(Integer.toString(width)));
+        tblWidth.setType(STTblWidth.DXA);
     }
 
     /**
@@ -313,7 +323,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
     }
 
     /**
-     * Returns CTTblPr object for table. If force parameter is true, will 
+     * Returns CTTblPr object for table. If force parameter is true, will
      * create the element if necessary. If force parameter is false, returns
      * null when CTTblPr element is missing.
      *
@@ -334,7 +344,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
     private CTTblBorders getTblBorders(boolean force) {
         CTTblPr tblPr = getTblPr(force);
         return tblPr == null ? null
-               : tblPr.isSetTblBorders() ? tblPr.getTblBorders() 
+               : tblPr.isSetTblBorders() ? tblPr.getTblBorders()
                : force ? tblPr.addNewTblBorders()
                : null;
     }
@@ -404,18 +414,18 @@ public class XWPFTable implements IBodyElement, ISDTContents {
                 : tPr.isSetJc() ? TableRowAlign.valueOf(tPr.getJc().getVal().intValue())
                 : null;
     }
-    
+
     /**
      * Set table alignment to specified {@link TableRowAlign}
      *
-     * @param ha {@link TableRowAlign} to set
+     * @param tra {@link TableRowAlign} to set
      */
     public void setTableAlignment(TableRowAlign tra) {
         CTTblPr tPr = getTblPr(true);
         CTJc jc = tPr.isSetJc() ? tPr.getJc() : tPr.addNewJc();
         jc.setVal(STJc.Enum.forInt(tra.getValue()));
     }
-    
+
     /**
      * Removes the table alignment attribute from a table
      */
@@ -425,7 +435,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
             tPr.unsetJc();
         }
     }
-    
+
     private void addColumn(XWPFTableRow tabRow, int sizeCol) {
         if (sizeCol > 0) {
             for (int i = 0; i < sizeCol; i++) {
@@ -477,7 +487,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
 
     /**
      * Get inside horizontal border size
-     * 
+     *
      * @return The width of the Inside Horizontal borders in 1/8th points,
      * -1 if missing.
      */
@@ -487,7 +497,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
 
     /**
      * Get inside horizontal border spacing
-     * 
+     *
      * @return The offset to the Inside Horizontal borders in points,
      * -1 if missing.
      */
@@ -497,7 +507,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
 
     /**
      * Get inside horizontal border color
-     * 
+     *
      * @return The color of the Inside Horizontal borders, null if missing.
      */
     public String getInsideHBorderColor() {
@@ -515,7 +525,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
 
     /**
      * Get inside vertical border size
-     * 
+     *
      * @return The width of the Inside vertical borders in 1/8th points,
      * -1 if missing.
      */
@@ -525,7 +535,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
 
     /**
      * Get inside vertical border spacing
-     * 
+     *
      * @return The offset to the Inside vertical borders in points,
      * -1 if missing.
      */
@@ -535,7 +545,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
 
     /**
      * Get inside vertical border color
-     * 
+     *
      * @return The color of the Inside vertical borders, null if missing.
      */
     public String getInsideVBorderColor() {
@@ -553,7 +563,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
 
     /**
      * Get top border size
-     * 
+     *
      * @return The width of the top borders in 1/8th points,
      * -1 if missing.
      */
@@ -563,7 +573,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
 
     /**
      * Get top border spacing
-     * 
+     *
      * @return The offset to the top borders in points,
      * -1 if missing.
      */
@@ -573,7 +583,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
 
     /**
      * Get top border color
-     * 
+     *
      * @return The color of the top borders, null if missing.
      */
     public String getTopBorderColor() {
@@ -591,7 +601,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
 
     /**
      * Get bottom border size
-     * 
+     *
      * @return The width of the bottom borders in 1/8th points,
      * -1 if missing.
      */
@@ -601,7 +611,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
 
     /**
      * Get bottom border spacing
-     * 
+     *
      * @return The offset to the bottom borders in points,
      * -1 if missing.
      */
@@ -611,7 +621,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
 
     /**
      * Get bottom border color
-     * 
+     *
      * @return The color of the bottom borders, null if missing.
      */
     public String getBottomBorderColor() {
@@ -629,7 +639,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
 
     /**
      * Get Left border size
-     * 
+     *
      * @return The width of the Left borders in 1/8th points,
      * -1 if missing.
      */
@@ -639,7 +649,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
 
     /**
      * Get Left border spacing
-     * 
+     *
      * @return The offset to the Left borders in points,
      * -1 if missing.
      */
@@ -649,7 +659,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
 
     /**
      * Get Left border color
-     * 
+     *
      * @return The color of the Left borders, null if missing.
      */
     public String getLeftBorderColor() {
@@ -667,7 +677,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
 
     /**
      * Get Right border size
-     * 
+     *
      * @return The width of the Right borders in 1/8th points,
      * -1 if missing.
      */
@@ -677,7 +687,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
 
     /**
      * Get Right border spacing
-     * 
+     *
      * @return The offset to the Right borders in points,
      * -1 if missing.
      */
@@ -687,7 +697,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
 
     /**
      * Get Right border color
-     * 
+     *
      * @return The color of the Right borders, null if missing.
      */
     public String getRightBorderColor() {
@@ -761,7 +771,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      *      of a point) and a maximum value of 96 (twelve points). Any values outside this
      *      range may be reassigned to a more appropriate value.
      * @param space - Specifies the spacing offset that shall be used to place this border on the table
-     * @param rgbColor - This color may either be presented as a hex value (in RRGGBB format), 
+     * @param rgbColor - This color may either be presented as a hex value (in RRGGBB format),
      *      or auto to allow a consumer to automatically determine the border color as appropriate.
      */
     public void setInsideHBorder(XWPFBorderType type, int size, int space, String rgbColor) {
@@ -777,7 +787,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      *      of a point) and a maximum value of 96 (twelve points). Any values outside this
      *      range may be reassigned to a more appropriate value.
      * @param space - Specifies the spacing offset that shall be used to place this border on the table
-     * @param rgbColor - This color may either be presented as a hex value (in RRGGBB format), 
+     * @param rgbColor - This color may either be presented as a hex value (in RRGGBB format),
      *      or auto to allow a consumer to automatically determine the border color as appropriate.
      */
     public void setInsideVBorder(XWPFBorderType type, int size, int space, String rgbColor) {
@@ -793,7 +803,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      *      of a point) and a maximum value of 96 (twelve points). Any values outside this
      *      range may be reassigned to a more appropriate value.
      * @param space - Specifies the spacing offset that shall be used to place this border on the table
-     * @param rgbColor - This color may either be presented as a hex value (in RRGGBB format), 
+     * @param rgbColor - This color may either be presented as a hex value (in RRGGBB format),
      *      or auto to allow a consumer to automatically determine the border color as appropriate.
      */
     public void setTopBorder(XWPFBorderType type, int size, int space, String rgbColor) {
@@ -809,7 +819,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      *      of a point) and a maximum value of 96 (twelve points). Any values outside this
      *      range may be reassigned to a more appropriate value.
      * @param space - Specifies the spacing offset that shall be used to place this border on the table
-     * @param rgbColor - This color may either be presented as a hex value (in RRGGBB format), 
+     * @param rgbColor - This color may either be presented as a hex value (in RRGGBB format),
      *      or auto to allow a consumer to automatically determine the border color as appropriate.
      */
     public void setBottomBorder(XWPFBorderType type, int size, int space, String rgbColor) {
@@ -825,7 +835,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      *      of a point) and a maximum value of 96 (twelve points). Any values outside this
      *      range may be reassigned to a more appropriate value.
      * @param space - Specifies the spacing offset that shall be used to place this border on the table
-     * @param rgbColor - This color may either be presented as a hex value (in RRGGBB format), 
+     * @param rgbColor - This color may either be presented as a hex value (in RRGGBB format),
      *      or auto to allow a consumer to automatically determine the border color as appropriate.
      */
     public void setLeftBorder(XWPFBorderType type, int size, int space, String rgbColor) {
@@ -841,7 +851,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      *      of a point) and a maximum value of 96 (twelve points). Any values outside this
      *      range may be reassigned to a more appropriate value.
      * @param space - Specifies the spacing offset that shall be used to place this border on the table
-     * @param rgbColor - This color may either be presented as a hex value (in RRGGBB format), 
+     * @param rgbColor - This color may either be presented as a hex value (in RRGGBB format),
      *      or auto to allow a consumer to automatically determine the border color as appropriate.
      */
     public void setRightBorder(XWPFBorderType type, int size, int space, String rgbColor) {
@@ -863,14 +873,14 @@ public class XWPFTable implements IBodyElement, ISDTContents {
     public void removeInsideHBorder() {
         removeBorder(Border.INSIDE_H);
     }
-    
+
     /**
      * Remove inside vertical borders for table
      */
     public void removeInsideVBorder() {
         removeBorder(Border.INSIDE_V);
     }
-    
+
     /**
      * Remove top borders for table
      */
@@ -884,21 +894,21 @@ public class XWPFTable implements IBodyElement, ISDTContents {
     public void removeBottomBorder() {
         removeBorder(Border.BOTTOM);
     }
-    
+
     /**
      * Remove left borders for table
      */
     public void removeLeftBorder() {
         removeBorder(Border.LEFT);
     }
-    
+
     /**
      * Remove right borders for table
      */
     public void removeRightBorder() {
         removeBorder(Border.RIGHT);
     }
-    
+
     /**
      * Remove all borders from table
      */
@@ -950,7 +960,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
     }
 
     /**
-     * removes the Borders node from Table properties if there are 
+     * removes the Borders node from Table properties if there are
      * no border elements
      */
     private void cleanupTblBorders() {
@@ -967,7 +977,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
             }
         }
     }
-    
+
     public int getCellMarginTop() {
         return getCellMargin(CTTblCellMar::getTop);
     }
@@ -1086,10 +1096,12 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      *
      * @see org.apache.poi.xwpf.usermodel.IBodyElement#getElementType()
      */
+    @Override
     public BodyElementType getElementType() {
         return BodyElementType.TABLE;
     }
 
+    @Override
     public IBody getBody() {
         return part;
     }
@@ -1099,6 +1111,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      *
      * @see org.apache.poi.xwpf.usermodel.IBody#getPart()
      */
+    @Override
     public POIXMLDocumentPart getPart() {
         if (part != null) {
             return part.getPart();
@@ -1111,6 +1124,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      *
      * @see org.apache.poi.xwpf.usermodel.IBody#getPartType()
      */
+    @Override
     public BodyType getPartType() {
         return part.getPartType();
     }
@@ -1121,8 +1135,174 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      */
     public XWPFTableRow getRow(CTRow row) {
         for (int i = 0; i < getRows().size(); i++) {
-            if (getRows().get(i).getCtRow() == row) return getRow(i);
+            if (getRows().get(i).getCtRow() == row) {
+                return getRow(i);
+            }
         }
         return null;
+    }
+
+    /**
+     * Get the table width as a decimal value.
+     * <p>If the width type is DXA or AUTO, then the value will always have
+     * a fractional part of zero (because these values are really integers).
+     * If the with type is percentage, then value may have a non-zero fractional
+     * part.
+     *
+     * @return Width value as a double-precision decimal.
+     * @since 4.0.0
+     */
+    public double getWidthDecimal() {
+        return getWidthDecimal(getTblPr().getTblW());
+    }
+
+    /**
+     * Get the width as a decimal value.
+     * <p>This method is also used by table cells.
+     * @param ctWidth Width value to evaluate.
+     * @return Width value as a decimal
+     * @since 4.0.0
+     */
+    protected static double getWidthDecimal(CTTblWidth ctWidth) {
+        double result = 0.0;
+        STTblWidth.Enum typeValue = ctWidth.getType();
+        if (typeValue == STTblWidth.DXA
+                || typeValue == STTblWidth.AUTO
+                || typeValue == STTblWidth.NIL) {
+            result = 0.0 + ctWidth.getW().intValue();
+        } else if (typeValue == STTblWidth.PCT) {
+            // Percentage values are stored as integers that are 50 times
+            // percentage.
+            result = ctWidth.getW().intValue() / 50.0;
+        } else {
+            // Should never get here
+        }
+        return result;
+    }
+
+    /**
+     * Get the width type for the table, as an {@link STTblWidth.Enum} value.
+     * A table width can be specified as an absolute measurement (an integer
+     * number of twips), a percentage, or the value "AUTO".
+     *
+     * @return The width type.
+     * @since 4.0.0
+     */
+    public TableWidthType getWidthType() {
+        return getWidthType(getTblPr().getTblW());
+    }
+
+    /**
+     * Get the width type from the width value
+     * @param ctWidth CTTblWidth to evalute
+     * @return The table width type
+     * @since 4.0.0
+     */
+    protected static TableWidthType getWidthType(CTTblWidth ctWidth) {
+        STTblWidth.Enum typeValue = ctWidth.getType();
+        if (typeValue == null) {
+            typeValue = STTblWidth.NIL;
+            ctWidth.setType(typeValue);
+        }
+        switch (typeValue.intValue()) {
+        case STTblWidth.INT_NIL:
+            return TableWidthType.NIL;
+        case STTblWidth.INT_AUTO:
+            return TableWidthType.AUTO;
+        case STTblWidth.INT_DXA:
+            return TableWidthType.DXA;
+        case STTblWidth.INT_PCT:
+            return TableWidthType.PCT;
+        default:
+            // Should never get here
+            return TableWidthType.AUTO;
+        }
+    }
+
+    /**
+     * Set the width to the value "auto", an integer value (20ths of a point), or a percentage ("nn.nn%").
+     *
+     * @param widthValue String matching one of "auto", [0-9]+, or [0-9]+(\.[0-9]+)%.
+     * @since 4.0.0
+     */
+    public void setWidth(String widthValue) {
+        setWidthValue(widthValue, getTblPr().getTblW());
+    }
+
+    /**
+     * Set the width value from a string
+     * @param widthValue The width value string
+     * @param ctWidth CTTblWidth to set the value on.
+     */
+    protected static void setWidthValue(String widthValue, CTTblWidth ctWidth) {
+        if (!widthValue.matches(REGEX_WIDTH_VALUE)) {
+            throw new RuntimeException("Table width value \"" + widthValue + "\" "
+                    + "must match regular expression \"" + REGEX_WIDTH_VALUE + "\".");
+        }
+        if (widthValue.matches("auto")) {
+            ctWidth.setType(STTblWidth.AUTO);
+            ctWidth.setW(BigInteger.ZERO);
+        } else if (widthValue.matches(REGEX_PERCENTAGE)) {
+            setWidthPercentage(ctWidth, widthValue);
+        } else {
+            // Must be an integer
+            ctWidth.setW(new BigInteger(widthValue));
+            ctWidth.setType(STTblWidth.DXA);
+        }
+    }
+
+    /**
+     * Set the underlying table width value to a percentage value.
+     * @param ctWidth The CTTblWidth to set the value on
+     * @param widthValue String width value in form "33.3%" or an integer that is 50 times desired percentage value (e.g,
+     * 2500 for 50%)
+     * @since 4.0.0
+     */
+    protected static void setWidthPercentage(CTTblWidth ctWidth, String widthValue) {
+        ctWidth.setType(STTblWidth.PCT);
+        if (widthValue.matches(REGEX_PERCENTAGE)) {
+            String numberPart = widthValue.substring(0,  widthValue.length() - 1);
+            double percentage = Double.parseDouble(numberPart) * 50;
+            long intValue = Math.round(percentage);
+            ctWidth.setW(BigInteger.valueOf(intValue));
+        } else if (widthValue.matches("[0-9]+")) {
+            ctWidth.setW(new BigInteger(widthValue));
+        } else {
+            throw new RuntimeException("setWidthPercentage(): Width value must be a percentage (\"33.3%\" or an integer, was \"" + widthValue + "\"");
+        }
+    }
+
+    /**
+     * Set the width value type for the table.
+     * <p>If the width type is changed from the current type and the currently-set value
+     * is not consistent with the new width type, the value is reset to the default value
+     * for the specified width type.</p>
+     *
+     * @param widthType Width type
+     * @since 4.0.0
+     */
+    public void setWidthType(TableWidthType widthType) {
+        setWidthType(widthType, getTblPr().getTblW());
+    }
+
+    /**
+     * Set the width type if different from current width type
+     * @param widthType The new width type
+     * @param ctWidth CTTblWidth to set the type on
+     * @since 4.0.0
+     */
+    protected static void setWidthType(TableWidthType widthType, CTTblWidth ctWidth) {
+        TableWidthType currentType = getWidthType(ctWidth);
+        if (!currentType.equals(widthType)) {
+            STTblWidth.Enum stWidthType = widthType.getSTWidthType();
+            ctWidth.setType(stWidthType);
+            switch (stWidthType.intValue()) {
+            case STTblWidth.INT_PCT:
+                setWidthPercentage(ctWidth, DEFAULT_PERCENTAGE_WIDTH);
+                break;
+            default:
+                ctWidth.setW(BigInteger.ZERO);
+            }
+        }
     }
 }

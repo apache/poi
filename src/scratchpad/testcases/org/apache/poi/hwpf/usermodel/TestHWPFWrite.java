@@ -31,8 +31,6 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestCase;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
-import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
@@ -99,20 +97,13 @@ public final class TestHWPFWrite extends HWPFTestCase {
     public void testInPlaceWrite() throws Exception {
         // Setup as a copy of a known-good file
         final File file = TempFile.createTempFile("TestDocument", ".doc");
-        InputStream inputStream = SAMPLES.openResourceAsStream("SampleDoc.doc");
-        try {
-            FileOutputStream outputStream = new FileOutputStream(file);
-            try {
-                IOUtils.copy(inputStream, outputStream);
-            } finally {
-                outputStream.close();
-            }
-        } finally {
-            inputStream.close();
+        try (InputStream inputStream = SAMPLES.openResourceAsStream("SampleDoc.doc");
+             FileOutputStream outputStream = new FileOutputStream(file)) {
+            IOUtils.copy(inputStream, outputStream);
         }
 
         // Open from the temp file in read-write mode
-        NPOIFSFileSystem poifs = new NPOIFSFileSystem(file, false);
+        POIFSFileSystem poifs = new POIFSFileSystem(file, false);
         HWPFDocument doc = new HWPFDocument(poifs.getRoot());
         Range r = doc.getRange();
         assertEquals("I am a test document\r", r.getParagraph(0).text());
@@ -125,7 +116,7 @@ public final class TestHWPFWrite extends HWPFTestCase {
         doc.close();
         poifs.close();
 
-        poifs = new NPOIFSFileSystem(file);
+        poifs = new POIFSFileSystem(file);
         doc = new HWPFDocument(poifs.getRoot());
         r = doc.getRange();
         assertEquals("X XX a test document\r", r.getParagraph(0).text());
@@ -136,32 +127,17 @@ public final class TestHWPFWrite extends HWPFTestCase {
     @Test(expected=IllegalStateException.class)
     public void testInvalidInPlaceWriteInputStream() throws IOException {
         // Can't work for InputStream opened files
-        InputStream is = SAMPLES.openResourceAsStream("SampleDoc.doc");
-        HWPFDocument doc = new HWPFDocument(is);
-        is.close();
-        try {
+
+        try (InputStream is = SAMPLES.openResourceAsStream("SampleDoc.doc");
+             HWPFDocument doc = new HWPFDocument(is)) {
             doc.write();
-        } finally {
-            doc.close();
         }
     }
     
     @Test(expected=IllegalStateException.class)
-    public void testInvalidInPlaceWriteOPOIFS() throws Exception {
-        // Can't work for OPOIFS
-        OPOIFSFileSystem ofs = new OPOIFSFileSystem(SAMPLES.openResourceAsStream("SampleDoc.doc"));
-        HWPFDocument doc = new HWPFDocument(ofs.getRoot());
-        try {
-            doc.write();
-        } finally {
-            doc.close();
-        }
-    }
-
-    @Test(expected=IllegalStateException.class)
     public void testInvalidInPlaceWriteNPOIFS() throws Exception {
         // Can't work for Read-Only files
-        NPOIFSFileSystem fs = new NPOIFSFileSystem(SAMPLES.getFile("SampleDoc.doc"), true);
+        POIFSFileSystem fs = new POIFSFileSystem(SAMPLES.getFile("SampleDoc.doc"), true);
         HWPFDocument doc = new HWPFDocument(fs.getRoot());
         try {
             doc.write();

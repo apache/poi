@@ -30,7 +30,6 @@ import org.apache.poi.hpsf.Property;
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
@@ -46,9 +45,6 @@ public class HPSFPropertiesExtractor extends POIOLE2TextExtractor {
         super(doc);
     }
     public HPSFPropertiesExtractor(POIFSFileSystem fs) {
-        super(new HPSFPropertiesOnlyDocument(fs));
-    }
-    public HPSFPropertiesExtractor(NPOIFSFileSystem fs) {
         super(new HPSFPropertiesOnlyDocument(fs));
     }
 
@@ -144,7 +140,7 @@ public class HPSFPropertiesExtractor extends POIOLE2TextExtractor {
     public static void main(String[] args) throws IOException {
         for (String file : args) {
             try (HPSFPropertiesExtractor ext = new HPSFPropertiesExtractor(
-                    new NPOIFSFileSystem(new File(file)))) {
+                    new POIFSFileSystem(new File(file)))) {
                 System.out.println(ext.getText());
             }
         }

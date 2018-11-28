@@ -38,7 +38,7 @@ public class XDDFGradientFillProperties implements XDDFFillProperties {
     }
 
     @Internal
-    protected CTGradientFillProperties getXmlObject() {
+    public CTGradientFillProperties getXmlObject() {
         return props;
     }
 

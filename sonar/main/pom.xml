@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.apache.poi</groupId>
         <artifactId>poi-parent</artifactId>
-        <version>4.0.0-SNAPSHOT</version>
+        <version>4.0.2-SNAPSHOT</version>
     </parent>
     <artifactId>poi-main</artifactId>
     <packaging>jar</packaging>
@@ -103,7 +103,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven.plugin.surefire.version}</version>
                 <configuration>
-                    <argLine>@{argLine} -Duser.language=en -Duser.country=US -Xmx1024m -Djava.io.tmpdir=target/tmp -XX:-OmitStackTraceInFastThrow</argLine>
+                    <argLine>@{argLine} -Duser.language=en -Duser.country=US -Xmx1024m -Djava.io.tmpdir=${basedir}/target/tmp -XX:-OmitStackTraceInFastThrow</argLine>
                 </configuration>
             </plugin>
 		</plugins>
@@ -113,7 +113,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
-            <version>4.1</version>
+            <version>4.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -129,6 +129,26 @@
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
             <version>1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <version>2.3.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-core</artifactId>
+            <version>2.3.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.activation</groupId>
+            <artifactId>activation</artifactId>
+            <version>1.1.1</version>
         </dependency>
     </dependencies>
 </project>

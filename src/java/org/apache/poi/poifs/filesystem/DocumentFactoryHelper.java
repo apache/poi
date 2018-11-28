@@ -33,7 +33,10 @@ import org.apache.poi.util.Removal;
  * SlideShowFactory to combine common code here.
  */
 @Internal
-public class DocumentFactoryHelper {
+public final class DocumentFactoryHelper {
+    private DocumentFactoryHelper() {
+    }
+
     /**
      * Wrap the OLE2 data in the NPOIFSFileSystem into a decrypted stream by using
      * the given password.
@@ -43,7 +46,7 @@ public class DocumentFactoryHelper {
      * @return A stream for reading the decrypted data
      * @throws IOException If an error occurs while decrypting or if the password does not match
      */
-    public static InputStream getDecryptedStream(final NPOIFSFileSystem fs, String password)
+    public static InputStream getDecryptedStream(final POIFSFileSystem fs, String password)
     throws IOException {
         // wrap the stream in a FilterInputStream to close the NPOIFSFileSystem
         // as well when the resulting OPCPackage is closed

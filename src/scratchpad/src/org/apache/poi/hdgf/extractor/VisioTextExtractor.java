@@ -31,7 +31,6 @@ import org.apache.poi.hdgf.streams.ChunkStream;
 import org.apache.poi.hdgf.streams.PointerContainingStream;
 import org.apache.poi.hdgf.streams.Stream;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
@@ -49,14 +48,13 @@ public final class VisioTextExtractor extends POIOLE2TextExtractor {
 	public VisioTextExtractor(POIFSFileSystem fs) throws IOException {
 		this(fs.getRoot());
 	}
-	public VisioTextExtractor(NPOIFSFileSystem fs) throws IOException {
-		this(fs.getRoot());
-	}
+
 	public VisioTextExtractor(DirectoryNode dir) throws IOException {
 		this(new HDGFDiagram(dir));
 	}
+
 	public VisioTextExtractor(InputStream inp) throws IOException {
-		this(new NPOIFSFileSystem(inp));
+		this(new POIFSFileSystem(inp));
 	}
 
 	/**
@@ -70,7 +68,7 @@ public final class VisioTextExtractor extends POIOLE2TextExtractor {
 		for(Stream stream : hdgf.getTopLevelStreams()) {
 			findText(stream, text);
 		}
-		return text.toArray( new String[text.size()] );
+		return text.toArray(new String[0]);
 	}
 	private void findText(Stream stream, List<String> text) {
 		if(stream instanceof PointerContainingStream) {
@@ -113,7 +111,7 @@ public final class VisioTextExtractor extends POIOLE2TextExtractor {
 	 */
 	@Override
 	public String getText() {
-		StringBuffer text = new StringBuffer();
+		StringBuilder text = new StringBuilder();
 		for(String t : getAllText()) {
 			text.append(t);
 			if(!t.endsWith("\r") && !t.endsWith("\n")) {

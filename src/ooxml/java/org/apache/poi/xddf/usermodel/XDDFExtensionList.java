@@ -26,7 +26,7 @@ public class XDDFExtensionList {
     private CTOfficeArtExtensionList list;
 
     @Internal
-    protected XDDFExtensionList(CTOfficeArtExtensionList list) {
+    public XDDFExtensionList(CTOfficeArtExtensionList list) {
         this.list = list;
     }
 

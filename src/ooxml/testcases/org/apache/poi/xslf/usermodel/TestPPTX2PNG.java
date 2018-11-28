@@ -47,7 +47,7 @@ public class TestPPTX2PNG {
     private static final POIDataSamples samples = POIDataSamples.getSlideShowInstance();
     private static final File basedir = null;
     private static final String files =
-        "53446.ppt, alterman_security.ppt, alterman_security.pptx, KEY02.pptx, themes.pptx, backgrounds.pptx, layouts.pptx, sample.pptx, shapes.pptx, 54880_chinese.ppt";
+        "53446.ppt, alterman_security.ppt, alterman_security.pptx, KEY02.pptx, themes.pptx, backgrounds.pptx, layouts.pptx, sample.pptx, shapes.pptx, 54880_chinese.ppt, keyframes.pptx";
 
         
     

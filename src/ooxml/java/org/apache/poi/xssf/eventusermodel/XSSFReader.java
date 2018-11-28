@@ -59,10 +59,10 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * This class makes it easy to get at individual parts
- *  of an OOXML .xlsx file, suitable for low memory sax
- *  parsing or similar.
+ * of an OOXML .xlsx file, suitable for low memory sax
+ * parsing or similar.
  * It makes up the core part of the EventUserModel support
- *  for XSSF.
+ * for XSSF.
  */
 public class XSSFReader {
 
@@ -90,7 +90,7 @@ public class XSSFReader {
         // strict OOXML likely not fully supported, see #57699
         // this code is similar to POIXMLDocumentPart.getPartFromOPCPackage(), but I could not combine it
         // easily due to different return values
-        if(coreDocRelationship == null) {
+        if (coreDocRelationship == null) {
             if (this.pkg.getRelationshipsByType(
                     PackageRelationshipTypes.STRICT_CORE_DOCUMENT).getRelationship(0) != null) {
                 throw new POIXMLException("Strict OOXML isn't currently supported, please see bug #57699");
@@ -106,27 +106,27 @@ public class XSSFReader {
 
     /**
      * Opens up the Shared Strings Table, parses it, and
-     *  returns a handy object for working with
-     *  shared strings.
+     * returns a handy object for working with
+     * shared strings.
      */
     public SharedStringsTable getSharedStringsTable() throws IOException, InvalidFormatException {
-        ArrayList<PackagePart> parts = pkg.getPartsByContentType( XSSFRelation.SHARED_STRINGS.getContentType());
+        ArrayList<PackagePart> parts = pkg.getPartsByContentType(XSSFRelation.SHARED_STRINGS.getContentType());
         return parts.size() == 0 ? null : new SharedStringsTable(parts.get(0));
     }
 
     /**
      * Opens up the Styles Table, parses it, and
-     *  returns a handy object for working with cell styles
+     * returns a handy object for working with cell styles
      */
     public StylesTable getStylesTable() throws IOException, InvalidFormatException {
-        ArrayList<PackagePart> parts = pkg.getPartsByContentType( XSSFRelation.STYLES.getContentType());
-        if(parts.size() == 0) return null;
-        
+        ArrayList<PackagePart> parts = pkg.getPartsByContentType(XSSFRelation.STYLES.getContentType());
+        if (parts.size() == 0) return null;
+
         // Create the Styles Table, and associate the Themes if present
         StylesTable styles = new StylesTable(parts.get(0));
-        parts = pkg.getPartsByContentType( XSSFRelation.THEME.getContentType());
-        if(parts.size() != 0) {
-           styles.setTheme(new ThemesTable(parts.get(0)));
+        parts = pkg.getPartsByContentType(XSSFRelation.THEME.getContentType());
+        if (parts.size() != 0) {
+            styles.setTheme(new ThemesTable(parts.get(0)));
         }
         return styles;
     }
@@ -134,7 +134,7 @@ public class XSSFReader {
 
     /**
      * Returns an InputStream to read the contents of the
-     *  shared strings table.
+     * shared strings table.
      */
     public InputStream getSharedStringsData() throws IOException, InvalidFormatException {
         return XSSFRelation.SHARED_STRINGS.getContents(workbookPart);
@@ -142,7 +142,7 @@ public class XSSFReader {
 
     /**
      * Returns an InputStream to read the contents of the
-     *  styles table.
+     * styles table.
      */
     public InputStream getStylesData() throws IOException, InvalidFormatException {
         return XSSFRelation.STYLES.getContents(workbookPart);
@@ -150,7 +150,7 @@ public class XSSFReader {
 
     /**
      * Returns an InputStream to read the contents of the
-     *  themes table.
+     * themes table.
      */
     public InputStream getThemesData() throws IOException, InvalidFormatException {
         return XSSFRelation.THEME.getContents(workbookPart);
@@ -158,8 +158,8 @@ public class XSSFReader {
 
     /**
      * Returns an InputStream to read the contents of the
-     *  main Workbook, which contains key overall data for
-     *  the file, including sheet definitions.
+     * main Workbook, which contains key overall data for
+     * the file, including sheet definitions.
      */
     public InputStream getWorkbookData() throws IOException, InvalidFormatException {
         return workbookPart.getInputStream();
@@ -167,18 +167,19 @@ public class XSSFReader {
 
     /**
      * Returns an InputStream to read the contents of the
-     *  specified Sheet.
+     * specified Sheet.
+     *
      * @param relId The relationId of the sheet, from a r:id on the workbook
      */
     public InputStream getSheet(String relId) throws IOException, InvalidFormatException {
         PackageRelationship rel = workbookPart.getRelationship(relId);
-        if(rel == null) {
+        if (rel == null) {
             throw new IllegalArgumentException("No Sheet found with r:id " + relId);
         }
 
         PackagePartName relName = PackagingURIHelper.createPartName(rel.getTargetURI());
         PackagePart sheet = pkg.getPart(relName);
-        if(sheet == null) {
+        if (sheet == null) {
             throw new IllegalArgumentException("No data found for Sheet with r:id " + relId);
         }
         return sheet.getInputStream();
@@ -186,10 +187,10 @@ public class XSSFReader {
 
     /**
      * Returns an Iterator which will let you get at all the
-     *  different Sheets in turn.
+     * different Sheets in turn.
      * Each sheet's InputStream is only opened when fetched
-     *  from the Iterator. It's up to you to close the
-     *  InputStreams when done with each one.
+     * from the Iterator. It's up to you to close the
+     * InputStreams when done with each one.
      */
     public Iterator<InputStream> getSheetsData() throws IOException, InvalidFormatException {
         return new SheetIterator(workbookPart);
@@ -201,7 +202,7 @@ public class XSSFReader {
     public static class SheetIterator implements Iterator<InputStream> {
 
         /**
-         *  Maps relId and the corresponding PackagePart
+         * Maps relId and the corresponding PackagePart
          */
         private final Map<String, PackagePart> sheetMap;
 
@@ -232,7 +233,7 @@ public class XSSFReader {
                 sheetMap = new HashMap<>();
                 OPCPackage pkg = wb.getPackage();
                 Set<String> worksheetRels = getSheetRelationships();
-                for(PackageRelationship rel : wb.getRelationships()){
+                for (PackageRelationship rel : wb.getRelationships()) {
                     String relType = rel.getRelationshipType();
                     if (worksheetRels.contains(relType)) {
                         PackagePartName relName = PackagingURIHelper.createPartName(rel.getTargetURI());
@@ -242,7 +243,7 @@ public class XSSFReader {
                 //step 2. Read array of CTSheet elements, wrap it in a LinkedList
                 //and construct an iterator
                 sheetIterator = createSheetIteratorFromWB(wb);
-            } catch (InvalidFormatException e){
+            } catch (InvalidFormatException e) {
                 throw new POIXMLException(e);
             }
         }
@@ -311,7 +312,7 @@ public class XSSFReader {
             try {
                 PackagePart sheetPkg = sheetMap.get(sheetId);
                 return sheetPkg.getInputStream();
-            } catch(IOException e) {
+            } catch (IOException e) {
                 throw new POIXMLException(e);
             }
         }
@@ -324,67 +325,63 @@ public class XSSFReader {
         public String getSheetName() {
             return xssfSheetRef.getName();
         }
-        
+
         /**
          * Returns the comments associated with this sheet,
-         *  or null if there aren't any
+         * or null if there aren't any
          */
         public CommentsTable getSheetComments() {
-           PackagePart sheetPkg = getSheetPart();
-           
-           // Do we have a comments relationship? (Only ever one if so)
-           try {
-              PackageRelationshipCollection commentsList = 
-                   sheetPkg.getRelationshipsByType(XSSFRelation.SHEET_COMMENTS.getRelation());
-              if(commentsList.size() > 0) {
-                 PackageRelationship comments = commentsList.getRelationship(0);
-                 PackagePartName commentsName = PackagingURIHelper.createPartName(comments.getTargetURI());
-                 PackagePart commentsPart = sheetPkg.getPackage().getPart(commentsName);
-                 return new CommentsTable(commentsPart);
-              }
-           } catch (InvalidFormatException e) {
-              return null;
-           } catch (IOException e) {
-              return null;
-           }
-           return null;
+            PackagePart sheetPkg = getSheetPart();
+
+            // Do we have a comments relationship? (Only ever one if so)
+            try {
+                PackageRelationshipCollection commentsList =
+                        sheetPkg.getRelationshipsByType(XSSFRelation.SHEET_COMMENTS.getRelation());
+                if (commentsList.size() > 0) {
+                    PackageRelationship comments = commentsList.getRelationship(0);
+                    PackagePartName commentsName = PackagingURIHelper.createPartName(comments.getTargetURI());
+                    PackagePart commentsPart = sheetPkg.getPackage().getPart(commentsName);
+                    return new CommentsTable(commentsPart);
+                }
+            } catch (InvalidFormatException|IOException e) {
+                LOGGER.log(POILogger.WARN, e);
+                return null;
+            }
+            return null;
         }
-        
+
         /**
          * Returns the shapes associated with this sheet,
          * an empty list or null if there is an exception
          */
         public List<XSSFShape> getShapes() {
             PackagePart sheetPkg = getSheetPart();
-            List<XSSFShape> shapes= new LinkedList<>();
-           // Do we have a comments relationship? (Only ever one if so)
-           try {
-              PackageRelationshipCollection drawingsList = sheetPkg.getRelationshipsByType(XSSFRelation.DRAWINGS.getRelation());
-              for (int i = 0; i < drawingsList.size(); i++){
-                  PackageRelationship drawings = drawingsList.getRelationship(i);
-                  PackagePartName drawingsName = PackagingURIHelper.createPartName(drawings.getTargetURI());
-                  PackagePart drawingsPart = sheetPkg.getPackage().getPart(drawingsName);
-                  if (drawingsPart == null) {
-                      //parts can go missing; Excel ignores them silently -- TIKA-2134
-                      LOGGER.log(POILogger.WARN, "Missing drawing: "+drawingsName +". Skipping it.");
-                      continue;
-                  }
-                  XSSFDrawing drawing = new XSSFDrawing(drawingsPart);
-                  shapes.addAll(drawing.getShapes());
-              }
-           } catch (XmlException e){
-               return null;
-           } catch (InvalidFormatException e) {  
-              return null;
-           } catch (IOException e) {
-              return null;
-           }
-           return shapes;
+            List<XSSFShape> shapes = new LinkedList<>();
+            // Do we have a comments relationship? (Only ever one if so)
+            try {
+                PackageRelationshipCollection drawingsList = sheetPkg.getRelationshipsByType(XSSFRelation.DRAWINGS.getRelation());
+                for (int i = 0; i < drawingsList.size(); i++) {
+                    PackageRelationship drawings = drawingsList.getRelationship(i);
+                    PackagePartName drawingsName = PackagingURIHelper.createPartName(drawings.getTargetURI());
+                    PackagePart drawingsPart = sheetPkg.getPackage().getPart(drawingsName);
+                    if (drawingsPart == null) {
+                        //parts can go missing; Excel ignores them silently -- TIKA-2134
+                        LOGGER.log(POILogger.WARN, "Missing drawing: " + drawingsName + ". Skipping it.");
+                        continue;
+                    }
+                    XSSFDrawing drawing = new XSSFDrawing(drawingsPart);
+                    shapes.addAll(drawing.getShapes());
+                }
+            } catch (XmlException|InvalidFormatException|IOException e) {
+                LOGGER.log(POILogger.WARN, e);
+                return null;
+            }
+            return shapes;
         }
-        
+
         public PackagePart getSheetPart() {
-           String sheetId = xssfSheetRef.getId();
-           return sheetMap.get(sheetId);
+            String sheetId = xssfSheetRef.getId();
+            return sheetMap.get(sheetId);
         }
 
         /**

@@ -83,9 +83,7 @@ public final class TestOPCComplianceCoreProperties {
         try {
             InputStream is = OpenXML4JTestDataSamples.openComplianceSampleStream("OPCCompliance_CoreProperties_OnlyOneCorePropertiesPart.docx");
             pkg = OPCPackage.open(is);
-        } catch (InvalidFormatException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
+        } catch (InvalidFormatException | IOException e) {
             throw new RuntimeException(e);
         }
         pkg.revert();
@@ -151,9 +149,7 @@ public final class TestOPCComplianceCoreProperties {
         OPCPackage pkg;
         try {
             pkg = OPCPackage.open(is);
-        } catch (InvalidFormatException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
+        } catch (InvalidFormatException | IOException e) {
             throw new RuntimeException(e);
         }
         URI partUri = createURI("/docProps/core2.xml");

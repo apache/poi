@@ -30,6 +30,7 @@ import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPhoneticRun;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRElt;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRPrElt;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
@@ -181,6 +182,7 @@ public final class TestSharedStringsTable extends TestCase {
         assertEquals("Second string", sst.getItemAt(2).toString());
     }
 
+    @SuppressWarnings("deprecation")
     public void testReadWrite() throws IOException {
         XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("sample.xlsx");
         SharedStringsTable sst1 = wb1.getSharedStringSource();
@@ -199,6 +201,13 @@ public final class TestSharedStringsTable extends TestCase {
             CTRst st1 = items1.get(i);
             CTRst st2 = items2.get(i);
             assertEquals(st1.toString(), st2.toString());
+            // ensure that CTPhoneticRun is loaded by the ooxml test suite so that it is included in poi-ooxml-schemas
+            List<CTPhoneticRun> phList = st1.getRPhList();
+            assertEquals(phList, st2.getRPhList());
+            // this code is required to make sure all the necessary classes are loaded
+            CTPhoneticRun run = CTPhoneticRun.Factory.newInstance();
+            run.setEb(12);
+            assertEquals(12, run.getEb());
         }
 
         XSSFWorkbook wb3 = XSSFTestDataSamples.writeOutAndReadBack(wb2);

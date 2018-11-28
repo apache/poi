@@ -376,11 +376,15 @@ public class SXSSFWorkbook implements Workbook {
     }
 
     protected void injectData(ZipEntrySource zipEntrySource, OutputStream out) throws IOException {
-        try (ZipArchiveOutputStream zos = new ZipArchiveOutputStream(out)) {
+        ZipArchiveOutputStream zos = new ZipArchiveOutputStream(out);
+        try {
             Enumeration<? extends ZipArchiveEntry> en = zipEntrySource.getEntries();
             while (en.hasMoreElements()) {
                 ZipArchiveEntry ze = en.nextElement();
-                zos.putArchiveEntry(new ZipArchiveEntry(ze.getName()));
+                ZipArchiveEntry zeOut = new ZipArchiveEntry(ze.getName());
+                zeOut.setSize(ze.getSize());
+                zeOut.setTime(ze.getTime());
+                zos.putArchiveEntry(zeOut);
                 try (final InputStream is = zipEntrySource.getInputStream(ze)) {
                     if (is instanceof ZipArchiveThresholdInputStream) {
                         // #59743 - disable Threshold handling for SXSSF copy
@@ -402,6 +406,7 @@ public class SXSSFWorkbook implements Workbook {
                 }
             }
         } finally {
+            zos.finish();
             zipEntrySource.close();
         }
     }
@@ -689,9 +694,8 @@ public class SXSSFWorkbook implements Workbook {
      */
     @Override
     @NotImplemented
-    public Sheet cloneSheet(int sheetNum)
-    {
-        throw new RuntimeException("NotImplemented");
+    public Sheet cloneSheet(int sheetNum) {
+        throw new RuntimeException("Not Implemented");
     }
 
 
@@ -930,8 +934,10 @@ public class SXSSFWorkbook implements Workbook {
             }
 
             //Substitute the template entries with the generated sheet data files
-            final ZipEntrySource source = new ZipFileZipEntrySource(new ZipSecureFile(tmplFile));
-            injectData(source, stream);
+            try (ZipSecureFile zf = new ZipSecureFile(tmplFile);
+                 ZipFileZipEntrySource source = new ZipFileZipEntrySource(zf)) {
+                injectData(source, stream);
+            }
         } finally {
             deleted = tmplFile.delete();
         }
@@ -1289,7 +1295,7 @@ public class SXSSFWorkbook implements Workbook {
     @Override
     @NotImplemented
     public int linkExternalWorkbook(String name, Workbook workbook) {
-        throw new RuntimeException("NotImplemented");
+        throw new RuntimeException("Not Implemented");
     }
     
     /**

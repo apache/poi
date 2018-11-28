@@ -34,7 +34,7 @@ public class XDDFNoFillProperties implements XDDFFillProperties {
     }
 
     @Internal
-    protected CTNoFillProperties getXmlObject() {
+    public CTNoFillProperties getXmlObject() {
         return props;
     }
 }

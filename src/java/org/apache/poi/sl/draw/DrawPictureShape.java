@@ -72,7 +72,7 @@ public class DrawPictureShape extends DrawSimpleShape {
             try {
                 @SuppressWarnings("unchecked")
                 Class<? extends ImageRenderer> irc = (Class<? extends ImageRenderer>)
-                    Thread.currentThread().getContextClassLoader().loadClass(WMF_IMAGE_RENDERER);
+                        DrawPictureShape.class.getClassLoader().loadClass(WMF_IMAGE_RENDERER);
                 return irc.newInstance();
             } catch (Exception e) {
                 // WMF image renderer is not on the classpath, continuing with BitmapRenderer

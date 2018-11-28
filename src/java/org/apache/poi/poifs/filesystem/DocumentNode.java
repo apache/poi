@@ -35,7 +35,7 @@ public class DocumentNode
 {
 
     // underlying POIFSDocument instance
-    private OPOIFSDocument _document;
+    private POIFSDocument _document;
 
     /**
      * create a DocumentNode. This method is not public by design; it
@@ -56,7 +56,7 @@ public class DocumentNode
      *
      * @return the internal POIFSDocument
      */
-    OPOIFSDocument getDocument()
+    POIFSDocument getDocument()
     {
         return _document;
     }

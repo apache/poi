@@ -21,6 +21,8 @@ import java.io.File;
 import java.io.IOException;
 import java.security.SecureRandom;
 
+import static org.apache.poi.util.TempFile.JAVA_IO_TMPDIR;
+
 /**
  * Default implementation of the {@link TempFileCreationStrategy} used by {@link TempFile}:
  * Files are collected into one directory and by default are deleted on exit from the VM.
@@ -34,9 +36,6 @@ import java.security.SecureRandom;
  * processes or limited temporary storage.
  */
 public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy {
-    /** Define a constant for this property as it is sometimes mistypes as "tempdir" otherwise
-     * This is private to avoid having two public-visible constants ({@link TempFile#JAVA_IO_TMPDIR}). */
-    private static final String JAVA_IO_TMPDIR = TempFile.JAVA_IO_TMPDIR;
     /*package*/ static final String POIFILES = "poifiles";
     
     /** To keep files after JVM exit, set the <code>-Dpoi.keep.tmp.files</code> JVM property */

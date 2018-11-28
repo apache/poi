@@ -27,7 +27,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -182,13 +181,10 @@ public class ToCSV {
      *         exist or if the value passed to the strDestination paramater refers
      *         to a folder that does not exist or simply does not refer to a
      *         folder.
-     * @throws org.apache.poi.openxml4j.exceptions.InvalidFormatException Thrown
-     *         if the xml markup encountered whilst parsing a SpreadsheetML
-     *         file (.xlsx) is invalid.
      */
     public void convertExcelToCSV(String strSource, String strDestination)
                        throws FileNotFoundException, IOException,
-                              IllegalArgumentException, InvalidFormatException {
+                              IllegalArgumentException {
 
         // Simply chain the call to the overloaded convertExcelToCSV(String,
         // String, String, int) method, pass the default separator and ensure
@@ -226,14 +222,11 @@ public class ToCSV {
      *         exist or if the value passed to the strDestination paramater refers
      *         to a folder that does not exist or simply does not refer to a
      *         folder.
-     * @throws org.apache.poi.openxml4j.exceptions.InvalidFormatException Thrown
-     *         if the xml markup encounetered whilst parsing a SpreadsheetML
-     *         file (.xlsx) is invalid.
      */
     public void convertExcelToCSV(String strSource, String strDestination,
                                   String separator)
                        throws FileNotFoundException, IOException,
-                              IllegalArgumentException, InvalidFormatException {
+                              IllegalArgumentException {
 
         // Simply chain the call to the overloaded convertExcelToCSV(String,
         // String, String, int) method and ensure that certain embedded
@@ -275,14 +268,11 @@ public class ToCSV {
      *         value passed to the formattingConvention parameter is other than
      *         one of the values defined by the constants ToCSV.EXCEL_STYLE_ESCAPING
      *         and ToCSV.UNIX_STYLE_ESCAPING.
-     * @throws org.apache.poi.openxml4j.exceptions.InvalidFormatException Thrown
-     *         if the xml markup encounetered whilst parsing a SpreadsheetML
-     *         file (.xlsx) is invalid.
      */
     public void convertExcelToCSV(String strSource, String strDestination,
                                   String separator, int formattingConvention)
                        throws FileNotFoundException, IOException,
-                              IllegalArgumentException, InvalidFormatException {
+                              IllegalArgumentException {
         File source = new File(strSource);
         File destination = new File(strDestination);
         File[] filesList;
@@ -374,17 +364,11 @@ public class ToCSV {
      *        either binary (.xls) or SpreadsheetML (.xlsx) format.
      * @throws java.io.FileNotFoundException Thrown if the file cannot be located.
      * @throws java.io.IOException Thrown if a problem occurs in the file system.
-     * @throws org.apache.poi.openxml4j.exceptions.InvalidFormatException Thrown
-     *         if invalid xml is found whilst parsing an input SpreadsheetML
-     *         file.
      */
     private void openWorkbook(File file) throws FileNotFoundException,
-                                           IOException, InvalidFormatException {
-        FileInputStream fis = null;
-        try {
-            System.out.println("Opening workbook [" + file.getName() + "]");
-
-            fis = new FileInputStream(file);
+                                           IOException {
+        System.out.println("Opening workbook [" + file.getName() + "]");
+        try (FileInputStream fis = new FileInputStream(file)) {
 
             // Open the workbook and then create the FormulaEvaluator and
             // DataFormatter instances that will be needed to, respectively,
@@ -393,11 +377,6 @@ public class ToCSV {
             this.workbook = WorkbookFactory.create(fis);
             this.evaluator = this.workbook.getCreationHelper().createFormulaEvaluator();
             this.formatter = new DataFormatter(true);
-        }
-        finally {
-            if(fis != null) {
-                fis.close();
-            }
         }
     }
 

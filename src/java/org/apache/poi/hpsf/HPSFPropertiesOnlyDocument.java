@@ -25,8 +25,6 @@ import java.util.List;
 import org.apache.poi.POIDocument;
 import org.apache.poi.poifs.filesystem.EntryUtils;
 import org.apache.poi.poifs.filesystem.FilteringDirectoryNode;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
-import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
@@ -36,12 +34,6 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  *  without affecting the rest of the file
  */
 public class HPSFPropertiesOnlyDocument extends POIDocument {
-    public HPSFPropertiesOnlyDocument(NPOIFSFileSystem fs) {
-        super(fs.getRoot());
-    }
-    public HPSFPropertiesOnlyDocument(OPOIFSFileSystem fs) {
-        super(fs);
-    }
     public HPSFPropertiesOnlyDocument(POIFSFileSystem fs) {
         super(fs);
     }
@@ -50,7 +42,7 @@ public class HPSFPropertiesOnlyDocument extends POIDocument {
      * Write out to the currently open file the properties changes, but nothing else
      */
     public void write() throws IOException {
-        NPOIFSFileSystem fs = getDirectory().getFileSystem();
+        POIFSFileSystem fs = getDirectory().getFileSystem();
         
         validateInPlaceWritePossible();        
         writeProperties(fs, null);
@@ -60,28 +52,22 @@ public class HPSFPropertiesOnlyDocument extends POIDocument {
      * Write out, with any properties changes, but nothing else
      */
     public void write(File newFile) throws IOException {
-        POIFSFileSystem fs = POIFSFileSystem.create(newFile);
-        try {
+        try (POIFSFileSystem fs = POIFSFileSystem.create(newFile)) {
             write(fs);
             fs.writeFilesystem();
-        } finally {
-            fs.close();
         }
     }
     /**
      * Write out, with any properties changes, but nothing else
      */
     public void write(OutputStream out) throws IOException {
-        NPOIFSFileSystem fs = new NPOIFSFileSystem();
-        try {
+        try (POIFSFileSystem fs = new POIFSFileSystem()) {
             write(fs);
             fs.writeFilesystem(out);
-        } finally {
-            fs.close();
         }
     }
     
-    private void write(NPOIFSFileSystem fs) throws IOException {
+    private void write(POIFSFileSystem fs) throws IOException {
         // For tracking what we've written out, so far
         List<String> excepts = new ArrayList<>(2);
 

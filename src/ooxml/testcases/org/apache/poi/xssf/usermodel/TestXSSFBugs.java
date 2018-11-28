@@ -44,17 +44,20 @@ import java.util.Set;
 import java.util.TimeZone;
 import java.util.TreeMap;
 
-import org.apache.poi.EncryptedDocumentException;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.ooxml.POIXMLDocumentPart;
-import org.apache.poi.ooxml.POIXMLDocumentPart.RelationPart;
-import org.apache.poi.ooxml.POIXMLException;
-import org.apache.poi.ooxml.POIXMLProperties;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ooxml.POIXMLDocumentPart;
+import org.apache.poi.ooxml.POIXMLDocumentPart.RelationPart;
+import org.apache.poi.ooxml.POIXMLException;
+import org.apache.poi.ooxml.POIXMLProperties;
+import org.apache.poi.ooxml.util.DocumentHelper;
+import org.apache.poi.ooxml.util.SAXHelper;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
@@ -64,7 +67,6 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
@@ -80,7 +82,31 @@ import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.functions.Function;
 import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.FormulaError;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Name;
+import org.apache.poi.ss.usermodel.PrintSetup;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -104,6 +130,9 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedNames;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTFontImpl;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.XMLReader;
 
 public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     public TestXSSFBugs() {
@@ -998,10 +1027,10 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
 
         // Add some more tables, and check
-        t = s2.createTable();
+        t = s2.createTable(null);
         t.setName("New 2");
         t.setDisplayName("New 2");
-        t = s3.createTable();
+        t = s3.createTable(null);
         t.setName("New 3");
         t.setDisplayName("New 3");
 
@@ -1472,7 +1501,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void bug55692_stream() throws IOException, InvalidFormatException {
+    public void bug55692_stream() throws IOException {
         // Directly on a Stream, will go via NPOIFS and spot it's
         //  actually a .xlsx file encrypted with the default password, and open
         Workbook wb = WorkbookFactory.create(
@@ -1486,7 +1515,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     public void bug55692_npoifs() throws IOException {
         // Via a NPOIFSFileSystem, will spot it's actually a .xlsx file
         //  encrypted with the default password, and open
-        NPOIFSFileSystem fsNP = new NPOIFSFileSystem(
+        POIFSFileSystem fsNP = new POIFSFileSystem(
                 POIDataSamples.getPOIFSInstance().openResourceAsStream("protect.xlsx"));
         Workbook wb = WorkbookFactory.create(fsNP);
         assertNotNull(wb);
@@ -1915,6 +1944,35 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         wb.close();
     }
 
+    @Test
+    public void test54764WithSAXHelper() throws Exception {
+        File testFile = XSSFTestDataSamples.getSampleFile("54764.xlsx");
+        ZipFile zip = new ZipFile(testFile);
+        ZipArchiveEntry ze = zip.getEntry("xl/sharedStrings.xml");
+        XMLReader reader = SAXHelper.newXMLReader();
+        try {
+            reader.parse(new InputSource(zip.getInputStream(ze)));
+            fail("should have thrown SAXParseException");
+        } catch (SAXParseException e) {
+            assertNotNull(e.getMessage());
+            assertTrue(e.getMessage().contains("more than \"1\" entity"));
+        }
+    }
+
+    @Test
+    public void test54764WithDocumentHelper() throws Exception {
+        File testFile = XSSFTestDataSamples.getSampleFile("54764.xlsx");
+        ZipFile zip = new ZipFile(testFile);
+        ZipArchiveEntry ze = zip.getEntry("xl/sharedStrings.xml");
+        try {
+            DocumentHelper.readDocument(zip.getInputStream(ze));
+            fail("should have thrown SAXParseException");
+        } catch (SAXParseException e) {
+            assertNotNull(e.getMessage());
+            assertTrue(e.getMessage().contains("more than \"1\" entity"));
+        }
+    }
+
     /**
      * CTDefinedNamesImpl should be included in the smaller
      * poi-ooxml-schemas jar
@@ -1937,7 +1995,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      * error message if given one
      */
     @Test
-    public void bug56800_xlsb() throws IOException, InvalidFormatException {
+    public void bug56800_xlsb() throws IOException {
         // Can be opened at the OPC level
         OPCPackage pkg = XSSFTestDataSamples.openSamplePackage("Simple.xlsb");
 
@@ -2227,7 +2285,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      * problems when deleting columns, conditionally to stop recursion
      */
     private static final String FORMULA1 =
-            "IF( INDIRECT( ADDRESS( ROW(), COLUMN()-1 ) ) = 0, 0,"
+            "IF( INDIRECT( ADDRESS( ROW(), COLUMN()-1 ) ) = 0, 0, "
                     + "INDIRECT( ADDRESS( ROW(), COLUMN()-1 ) ) ) + 2";
 
     /**
@@ -2235,7 +2293,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      * problems when deleting rows, conditionally to stop recursion
      */
     private static final String FORMULA2 =
-            "IF( INDIRECT( ADDRESS( ROW()-1, COLUMN() ) ) = 0, 0,"
+            "IF( INDIRECT( ADDRESS( ROW()-1, COLUMN() ) ) = 0, 0, "
                     + "INDIRECT( ADDRESS( ROW()-1, COLUMN() ) ) ) + 2";
 
     /**
@@ -2484,7 +2542,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     private void runTest56574(boolean createRow) throws IOException {
-        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56574.xlsx");
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56574.xlsx");
 
         Sheet sheet = wb.getSheet("Func");
         assertNotNull(sheet);
@@ -2527,17 +2585,17 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             }
         }
 
-        XSSFFormulaEvaluator.evaluateAllFormulaCells((XSSFWorkbook) wb);
+        XSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
         wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
 
-        CalculationChain chain = ((XSSFWorkbook) wb).getCalculationChain();
+        CalculationChain chain = wb.getCalculationChain();
         checkCellsAreGone(chain);
 
-        Workbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        XSSFWorkbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
         Sheet sheetBack = wbBack.getSheet("Func");
         assertNotNull(sheetBack);
 
-        chain = ((XSSFWorkbook) wbBack).getCalculationChain();
+        chain = wbBack.getCalculationChain();
         checkCellsAreGone(chain);
 
         wbBack.close();
@@ -2618,7 +2676,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test51626() throws IOException, InvalidFormatException {
+    public void test51626() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("51626.xlsx");
         assertNotNull(wb);
         wb.close();
@@ -2813,7 +2871,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     @Test
     public void test57236() throws IOException {
         // Having very small numbers leads to different formatting, Excel uses the scientific notation, but POI leads to "0"
-        
+
         /*
         DecimalFormat format = new DecimalFormat("#.##########", new DecimalFormatSymbols(Locale.getDefault()));
         double d = 3.0E-104;
@@ -2935,13 +2993,21 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         cell.setCellStyle(style);
 
         // Everything is fine at this point, cell is red
+        XSSFColor actual = cell.getCellStyle().getFillBackgroundColorColor();
+        assertNull(actual);
+        actual = cell.getCellStyle().getFillForegroundColorColor();
+        assertNotNull(actual);
+        assertEquals(color.getARGBHex(), actual.getARGBHex());
 
         Map<String, Object> properties = new HashMap<>();
         properties.put(CellUtil.BORDER_BOTTOM, BorderStyle.THIN);
         CellUtil.setCellStyleProperties(cell, properties);
 
         // Now the cell is all black
-        XSSFColor actual = cell.getCellStyle().getFillBackgroundColorColor();
+        actual = cell.getCellStyle().getFillBackgroundColorColor();
+        assertNotNull(actual);
+        assertNull(actual.getARGBHex());
+        actual = cell.getCellStyle().getFillForegroundColorColor();
         assertNotNull(actual);
         assertEquals(color.getARGBHex(), actual.getARGBHex());
 
@@ -3169,7 +3235,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         final String initialFormula = "A1";
         final String expectedFormula = "#REF!"; // from ms excel
 
-        Workbook wb = new XSSFWorkbook();
+        XSSFWorkbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet("sheet1");
         sheet.createRow(0).createCell(0).setCellValue(1); // A1 = 1
 
@@ -3184,7 +3250,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         {
             FormulaShifter formulaShifter = FormulaShifter.createForRowCopy(0, "sheet1", 2/*firstRowToShift*/, 2/*lastRowToShift*/
                     , -1/*step*/, SpreadsheetVersion.EXCEL2007);    // parameters 2, 2, -1 should mean : move row range [2-2] one level up
-            XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create((XSSFWorkbook) wb);
+            XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
             Ptg[] ptgs = FormulaParser.parse(initialFormula, fpb, FormulaType.CELL, 0); // [A1]
             formulaShifter.adjustFormula(ptgs, 0);    // adjusted to [A]
             String shiftedFmla = FormulaRenderer.toFormulaString(fpb, ptgs);    //A
@@ -3196,7 +3262,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         {
             FormulaShifter formulaShifter = FormulaShifter.createForRowShift(0, "sheet1", 2/*firstRowToShift*/, 2/*lastRowToShift*/
                     , -1/*step*/, SpreadsheetVersion.EXCEL2007);    // parameters 2, 2, -1 should mean : move row range [2-2] one level up
-            XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create((XSSFWorkbook) wb);
+            XSSFEvaluationWorkbook fpb = XSSFEvaluationWorkbook.create(wb);
             Ptg[] ptgs = FormulaParser.parse(initialFormula, fpb, FormulaType.CELL, 0); // [A1]
             formulaShifter.adjustFormula(ptgs, 0);    // adjusted to [A]
             String shiftedFmla = FormulaRenderer.toFormulaString(fpb, ptgs);    //A
@@ -3241,57 +3307,57 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         XSSFWorkbook wb = new XSSFWorkbook();
 
         XSSFSheet sheet = wb.createSheet();
-        XSSFTable table1 = sheet.createTable();
-        XSSFTable table2 = sheet.createTable();
-        XSSFTable table3 = sheet.createTable();
+        XSSFTable table1 = sheet.createTable(null);
+        XSSFTable table2 = sheet.createTable(null);
+        XSSFTable table3 = sheet.createTable(null);
 
         sheet.removeTable(table1);
 
-        sheet.createTable();
+        sheet.createTable(null);
 
         sheet.removeTable(table2);
         sheet.removeTable(table3);
 
-        sheet.createTable();
+        sheet.createTable(null);
 
         wb.close();
     }
-    
+
     /**
      * Auto column sizing failed when there were loads of fonts with
      *  errors like ArrayIndexOutOfBoundsException: -32765
-     * TODO Get this to actually reproduce the bug...
      */
     @Test
     public void test62108() {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
         XSSFRow row = sheet.createRow(0);
-        
+
         // Create lots of fonts
         XSSFDataFormat formats = wb.createDataFormat();
         XSSFFont[] fonts = new XSSFFont[50000];
         for (int i=0; i<fonts.length; i++) {
             XSSFFont font = wb.createFont();
             font.setFontHeight(i);
+            fonts[i] = font;
         }
-        
+
         // Create a moderate number of columns, which use
         //  fonts from the start and end of the font list
         final int numCols = 125;
         for (int i=0; i<numCols; i++) {
             XSSFCellStyle cs = wb.createCellStyle();
             cs.setDataFormat(formats.getFormat("'Test "+i+"' #,###"));
-            
+
             XSSFFont font = fonts[i];
             if (i%2==1) { font = fonts[fonts.length-i]; }
             cs.setFont(font);
-            
+
             XSSFCell c = row.createCell(i);
             c.setCellValue(i);
             c.setCellStyle(cs);
         }
-        
+
         // Do the auto-size
         for (int i=0; i<numCols; i++) {
             sheet.autoSizeColumn(i);
@@ -3321,7 +3387,5 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         sheet = wbBack.getSheetAt(0);
         assertEquals("E11", sheet.getActiveCell().formatAsString());
         wbBack.close();
-
-        //wb.write(new FileOutputStream("c:/temp/61905." + instance.getStandardFileNameExtension()));
     }
 }

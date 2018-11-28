@@ -158,7 +158,7 @@ public class TestXSLFChart {
         final XDDFNumericalDataSource<Integer> valuesData = XDDFDataSourcesFactory.fromArray(values, valuesDataRange);
         series.replaceData(categoryData, valuesData);
         final String title = "Apache POI";
-        series.setTitle(title, chart.setSheetTitle(title));
+        series.setTitle(title, chart.setSheetTitle(title, 0));
         chart.plot(data);
 	}
 

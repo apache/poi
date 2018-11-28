@@ -17,20 +17,22 @@
 
 package org.apache.poi.poifs.eventfilesystem;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.poifs.filesystem.POIFSDocumentPath;
+import org.junit.Test;
 
 /**
  * Class to test POIFSReaderRegistry functionality
  *
  * @author Marc Johnson
  */
-public final class TestPOIFSReaderRegistry extends TestCase {
+public final class TestPOIFSReaderRegistry {
     private final POIFSReaderListener[] listeners =
     {
         new Listener(), new Listener(), new Listener(), new Listener()
@@ -56,13 +58,14 @@ public final class TestPOIFSReaderRegistry extends TestCase {
     /**
      * Test empty registry
      */
+    @Test
     public void testEmptyRegistry() {
         POIFSReaderRegistry registry = new POIFSReaderRegistry();
 
         for (POIFSDocumentPath path : paths) {
             for (String name : names) {
                 Iterator<POIFSReaderListener> listeners =
-                    registry.getListeners(path, name);
+                    registry.getListeners(path, name).iterator();
 
                 assertTrue(!listeners.hasNext());
             }
@@ -72,6 +75,7 @@ public final class TestPOIFSReaderRegistry extends TestCase {
     /**
      * Test mixed registration operations
      */
+    @Test
     public void testMixedRegistrationOperations() {
         POIFSReaderRegistry registry = new POIFSReaderRegistry();
 
@@ -93,21 +97,20 @@ public final class TestPOIFSReaderRegistry extends TestCase {
         {
             for (int n = 0; n < names.length; n++)
             {
-                Iterator<POIFSReaderListener> listeners =
+                Iterable<POIFSReaderListener> listeners =
                     registry.getListeners(paths[ k ], names[ n ]);
 
                 if (k == n)
                 {
-                    assertTrue(!listeners.hasNext());
+                    assertTrue(!listeners.iterator().hasNext());
                 }
                 else
                 {
                     Set<POIFSReaderListener> registeredListeners =
                             new HashSet<>();
 
-                    while (listeners.hasNext())
-                    {
-                        registeredListeners.add(listeners.next());
+                    for (POIFSReaderListener rl : listeners) {
+                        registeredListeners.add(rl);
                     }
                     assertEquals(this.listeners.length - 1,
                                  registeredListeners.size());
@@ -132,14 +135,13 @@ public final class TestPOIFSReaderRegistry extends TestCase {
         }
         for (POIFSDocumentPath path : paths) {
             for (String name : names) {
-                Iterator<POIFSReaderListener> listeners =
+                Iterable<POIFSReaderListener> listeners =
                     registry.getListeners(path, name);
                 Set<POIFSReaderListener> registeredListeners =
                         new HashSet<>();
 
-                while (listeners.hasNext())
-                {
-                    registeredListeners.add(listeners.next());
+                for (POIFSReaderListener rl : listeners) {
+                    registeredListeners.add(rl);
                 }
                 assertEquals(this.listeners.length,
                              registeredListeners.size());

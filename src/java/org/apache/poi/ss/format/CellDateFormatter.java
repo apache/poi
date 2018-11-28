@@ -50,6 +50,7 @@ public class CellDateFormatter extends CellFormatter {
         private int hStart = -1;
         private int hLen;
 
+        @Override
         public String handlePart(Matcher m, String part, CellFormatType type,
                 StringBuffer desc) {
 

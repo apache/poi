@@ -35,7 +35,6 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.junit.Assume;
@@ -134,7 +133,7 @@ public class TestDecryptor {
         // the fix limits the available size and tries to read all entries
         File f = samples.getFile("extenxls_pwd123.xlsx");
 
-        try (NPOIFSFileSystem fs = new NPOIFSFileSystem(f, true)) {
+        try (POIFSFileSystem fs = new POIFSFileSystem(f, true)) {
             EncryptionInfo info = new EncryptionInfo(fs);
             Decryptor d = Decryptor.getInstance(info);
             d.verifyPassword("pwd123");

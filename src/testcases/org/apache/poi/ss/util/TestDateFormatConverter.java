@@ -27,8 +27,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -37,10 +35,11 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.TempFile;
+import org.junit.Ignore;
+import org.junit.Test;
 
-public final class TestDateFormatConverter extends TestCase {
+public final class TestDateFormatConverter {
     private void outputLocaleDataFormats( Date date, boolean dates, boolean times, int style, String styleName ) throws Exception {
-
         try (Workbook workbook = new HSSFWorkbook()) {
             String sheetName;
             if (dates) {
@@ -100,8 +99,9 @@ public final class TestDateFormatConverter extends TestCase {
                     row.createCell(5).setCellValue(javaDateFormatPattern);
                     row.createCell(6).setCellValue(excelFormatPattern);
                 } catch (Exception e) {
-                    throw new RuntimeException("Failed for locale: " + locale + ", having locales: " +
-                            Arrays.toString(DateFormat.getAvailableLocales()), e);
+                    throw new RuntimeException(
+                            "Failed for locale: " + locale + " and style " + style + "\n" +
+                            "Having locales: " + Arrays.toString(DateFormat.getAvailableLocales()), e);
                 }
             }
 
@@ -114,6 +114,7 @@ public final class TestDateFormatConverter extends TestCase {
         }
     }
 
+    @Test
     public void testJavaDateFormatsInExcel() throws Exception {
         Date date = new Date();
 
@@ -135,11 +136,16 @@ public final class TestDateFormatConverter extends TestCase {
         outputLocaleDataFormats(date, false, true, DateFormat.LONG, "Long" );
         outputLocaleDataFormats(date, false, true, DateFormat.FULL, "Full" );
     }
-    
+
+    @Test
     public void testJDK8EmptyLocale() {
         // JDK 8 seems to add an empty locale-string to the list returned via DateFormat.getAvailableLocales()
         // therefore we now cater for this special locale as well
         DateFormatConverter.getPrefixForLocale(new Locale(""));
     }
 
+    @Test
+    public void testJDK11MyLocale() {
+        DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.forLanguageTag("my"));
+    }
 }

@@ -115,30 +115,30 @@ public final class TestUnfixedBugs {
                     if(prev != null) {
                         assertEquals(prev, cell.getDateCellValue());
                     }
-                    
+
                     prev = cell.getDateCellValue();
                 }
             }
         }
-        
+
         workbook.close();
     }
-    
+
     @Test
     public void test54071Simple() {
         double value1 = 41224.999988425923;
         double value2 = 41224.999988368058;
-        
+
         int wholeDays1 = (int)Math.floor(value1);
         int millisecondsInDay1 = (int)((value1 - wholeDays1) * DateUtil.DAY_MILLISECONDS + 0.5);
 
         int wholeDays2 = (int)Math.floor(value2);
         int millisecondsInDay2 = (int)((value2 - wholeDays2) * DateUtil.DAY_MILLISECONDS + 0.5);
-        
+
         assertEquals(wholeDays1, wholeDays2);
         // here we see that the time-value is 5 milliseconds apart, one is 86399000 and the other is 86398995, 
         // thus one is one second higher than the other
-        assertEquals("The time-values are 5 milliseconds apart", 
+        assertEquals("The time-values are 5 milliseconds apart",
                 millisecondsInDay1, millisecondsInDay2);
 
         // when we do the calendar-stuff, there is a boolean which determines if
@@ -148,19 +148,19 @@ public final class TestUnfixedBugs {
         int dayAdjust = -1; // Excel thinks 2/29/1900 is a valid date, which it isn't
         Calendar calendar1 = LocaleUtil.getLocaleCalendar(startYear,0, wholeDays1 + dayAdjust);
         calendar1.set(Calendar.MILLISECOND, millisecondsInDay1);
-      // this is the rounding part:
-      calendar1.add(Calendar.MILLISECOND, 500);
-      calendar1.clear(Calendar.MILLISECOND);
+        // this is the rounding part:
+        calendar1.add(Calendar.MILLISECOND, 500);
+        calendar1.clear(Calendar.MILLISECOND);
 
         Calendar calendar2 = LocaleUtil.getLocaleCalendar(startYear,0, wholeDays2 + dayAdjust);
         calendar2.set(Calendar.MILLISECOND, millisecondsInDay2);
-      // this is the rounding part:
-      calendar2.add(Calendar.MILLISECOND, 500);
-      calendar2.clear(Calendar.MILLISECOND);
+        // this is the rounding part:
+        calendar2.add(Calendar.MILLISECOND, 500);
+        calendar2.clear(Calendar.MILLISECOND);
 
         // now the calendars are equal
         assertEquals(calendar1, calendar2);
-        
+
         assertEquals(DateUtil.getJavaDate(value1, false), DateUtil.getJavaDate(value2, false));
     }
 
@@ -169,19 +169,19 @@ public final class TestUnfixedBugs {
     @Test
     public void testBug57294() throws IOException {
         Workbook wb = SXSSFITestDataProvider.instance.createWorkbook();
-        
+
         Sheet sheet = wb.createSheet();
         Row row = sheet.createRow(0);
         Cell cell = row.createCell(0);
-        
+
         RichTextString str = new XSSFRichTextString("Test rich text string");
         str.applyFont(2, 4, (short)0);
         assertEquals(3, str.numFormattingRuns());
         cell.setCellValue(str);
-        
+
         Workbook wbBack = SXSSFITestDataProvider.instance.writeOutAndReadBack(wb);
         wb.close();
-        
+
         // re-read after serializing and reading back
         Cell cellBack = wbBack.getSheetAt(0).getRow(0).getCell(0);
         assertNotNull(cellBack);
@@ -191,160 +191,160 @@ public final class TestUnfixedBugs {
         assertEquals(0, strBack.getIndexOfFormattingRun(0));
         assertEquals(2, strBack.getIndexOfFormattingRun(1));
         assertEquals(4, strBack.getIndexOfFormattingRun(2));
-        
+
         wbBack.close();
     }
 
-   @Test
-   public void testBug55752() throws IOException {
-       Workbook wb = new XSSFWorkbook();
-       try {
-           Sheet sheet = wb.createSheet("test");
-    
-           for (int i = 0; i < 4; i++) {
-               Row row = sheet.createRow(i);
-               for (int j = 0; j < 2; j++) {
-                   Cell cell = row.createCell(j);
-                   cell.setCellStyle(wb.createCellStyle());
-               }
-           }
-    
-           // set content
-           Row row1 = sheet.getRow(0);
-           row1.getCell(0).setCellValue("AAA");
-           Row row2 = sheet.getRow(1);
-           row2.getCell(0).setCellValue("BBB");
-           Row row3 = sheet.getRow(2);
-           row3.getCell(0).setCellValue("CCC");
-           Row row4 = sheet.getRow(3);
-           row4.getCell(0).setCellValue("DDD");
-    
-           // merge cells
-           CellRangeAddress range1 = new CellRangeAddress(0, 0, 0, 1);
-           sheet.addMergedRegion(range1);
-           CellRangeAddress range2 = new CellRangeAddress(1, 1, 0, 1);
-           sheet.addMergedRegion(range2);
-           CellRangeAddress range3 = new CellRangeAddress(2, 2, 0, 1);
-           sheet.addMergedRegion(range3);
-           assertEquals(0, range3.getFirstColumn());
-           assertEquals(1, range3.getLastColumn());
-           assertEquals(2, range3.getLastRow());
-           CellRangeAddress range4 = new CellRangeAddress(3, 3, 0, 1);
-           sheet.addMergedRegion(range4);
-           
-           // set border
-           RegionUtil.setBorderBottom(BorderStyle.THIN, range1, sheet);
-           
-           row2.getCell(0).getCellStyle().setBorderBottom(BorderStyle.THIN);
-           row2.getCell(1).getCellStyle().setBorderBottom(BorderStyle.THIN);
+    @Test
+    public void testBug55752() throws IOException {
+        Workbook wb = new XSSFWorkbook();
+        try {
+            Sheet sheet = wb.createSheet("test");
 
-           Cell cell0 = CellUtil.getCell(row3, 0);
-           CellUtil.setCellStyleProperty(cell0, CellUtil.BORDER_BOTTOM, BorderStyle.THIN);
-           Cell cell1 = CellUtil.getCell(row3, 1);
-           CellUtil.setCellStyleProperty(cell1, CellUtil.BORDER_BOTTOM, BorderStyle.THIN);
+            for (int i = 0; i < 4; i++) {
+                Row row = sheet.createRow(i);
+                for (int j = 0; j < 2; j++) {
+                    Cell cell = row.createCell(j);
+                    cell.setCellStyle(wb.createCellStyle());
+                }
+            }
 
-           RegionUtil.setBorderBottom(BorderStyle.THIN, range4, sheet);
-    
-           // write to file for manual inspection
-           XSSFTestDataSamples.writeOut(wb, "bug 55752 for review");
-       } finally {
-           wb.close();
-       }
-   }
+            // set content
+            Row row1 = sheet.getRow(0);
+            row1.getCell(0).setCellValue("AAA");
+            Row row2 = sheet.getRow(1);
+            row2.getCell(0).setCellValue("BBB");
+            Row row3 = sheet.getRow(2);
+            row3.getCell(0).setCellValue("CCC");
+            Row row4 = sheet.getRow(3);
+            row4.getCell(0).setCellValue("DDD");
 
-   @Test
-   public void test57423() throws IOException {        
-       Workbook wb = XSSFTestDataSamples.openSampleWorkbook("57423.xlsx");
-       
-       Sheet testSheet = wb.getSheetAt(0);
+            // merge cells
+            CellRangeAddress range1 = new CellRangeAddress(0, 0, 0, 1);
+            sheet.addMergedRegion(range1);
+            CellRangeAddress range2 = new CellRangeAddress(1, 1, 0, 1);
+            sheet.addMergedRegion(range2);
+            CellRangeAddress range3 = new CellRangeAddress(2, 2, 0, 1);
+            sheet.addMergedRegion(range3);
+            assertEquals(0, range3.getFirstColumn());
+            assertEquals(1, range3.getLastColumn());
+            assertEquals(2, range3.getLastRow());
+            CellRangeAddress range4 = new CellRangeAddress(3, 3, 0, 1);
+            sheet.addMergedRegion(range4);
 
-       // row shift (negative or positive) causes corrupted output xlsx file when the shift value is bigger 
-       // than the number of rows being shifted 
-       // Excel 2010 on opening the output file says:
-       // "Excel found unreadable content" and offers recovering the file by removing the unreadable content
-       // This can be observed in cases like the following:
-       // negative shift of 1 row by less than -1
-       // negative shift of 2 rows by less than -2
-       // positive shift of 1 row by 2 or more 
-       // positive shift of 2 rows by 3 or more
-       
-       //testSheet.shiftRows(4, 5, -3);
-       testSheet.shiftRows(10, 10, 2);
-       
-       checkRows57423(testSheet);
-       
-       Workbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
-       /* XSSFTestDataSamples.writeOut(wb, "bug 57423 for manual review"); */
+            // set border
+            RegionUtil.setBorderBottom(BorderStyle.THIN, range1, sheet);
 
-       wb.close();
-       
-       checkRows57423(wbBack.getSheetAt(0));
-       
-       wbBack.close();
-   }
+            row2.getCell(0).getCellStyle().setBorderBottom(BorderStyle.THIN);
+            row2.getCell(1).getCellStyle().setBorderBottom(BorderStyle.THIN);
 
-   private void checkRows57423(Sheet testSheet) throws IOException {
-       checkRow57423(testSheet, 0, "0");
-       checkRow57423(testSheet, 1, "1");
-       checkRow57423(testSheet, 2, "2");
-       checkRow57423(testSheet, 3, "3");
-       checkRow57423(testSheet, 4, "4");
-       checkRow57423(testSheet, 5, "5");
-       checkRow57423(testSheet, 6, "6");
-       checkRow57423(testSheet, 7, "7");
-       checkRow57423(testSheet, 8, "8");
-       checkRow57423(testSheet, 9, "9");
-       
-       assertNull("Row number 10 should be gone after the shift", 
-               testSheet.getRow(10));
-       
-       checkRow57423(testSheet, 11, "11");
-       checkRow57423(testSheet, 12, "10");
-       checkRow57423(testSheet, 13, "13");
-       checkRow57423(testSheet, 14, "14");
-       checkRow57423(testSheet, 15, "15");
-       checkRow57423(testSheet, 16, "16");
-       checkRow57423(testSheet, 17, "17");
-       checkRow57423(testSheet, 18, "18");
-       
-       ByteArrayOutputStream stream = new ByteArrayOutputStream();
-       try {
-           ((XSSFSheet)testSheet).write(stream);
-       } finally {
-           stream.close();
-       }
-       
-       // verify that the resulting XML has the rows in correct order as required by Excel
-       String xml = new String(stream.toByteArray(), "UTF-8");
-       int posR12 = xml.indexOf("<row r=\"12\"");
-       int posR13 = xml.indexOf("<row r=\"13\"");
-       
-       // both need to be found
-       assertTrue(posR12 != -1);
-       assertTrue(posR13 != -1);
-       
-       assertTrue("Need to find row 12 before row 13 after the shifting, but had row 12 at " + posR12 + " and row 13 at " + posR13, 
-               posR12 < posR13);
-   }
+            Cell cell0 = CellUtil.getCell(row3, 0);
+            CellUtil.setCellStyleProperty(cell0, CellUtil.BORDER_BOTTOM, BorderStyle.THIN);
+            Cell cell1 = CellUtil.getCell(row3, 1);
+            CellUtil.setCellStyleProperty(cell1, CellUtil.BORDER_BOTTOM, BorderStyle.THIN);
 
-   private void checkRow57423(Sheet testSheet, int rowNum, String contents) {
-       Row row = testSheet.getRow(rowNum);
-       assertNotNull("Expecting row at rownum " + rowNum, row);
-       
-       CTRow ctRow = ((XSSFRow)row).getCTRow();
-       assertEquals(rowNum+1, ctRow.getR());
-       
-       Cell cell = row.getCell(0);
-       assertNotNull("Expecting cell at rownum " + rowNum, cell);
-       assertEquals("Did not have expected contents at rownum " + rowNum, 
-               contents + ".0", cell.toString());
-   }
+            RegionUtil.setBorderBottom(BorderStyle.THIN, range4, sheet);
+
+            // write to file for manual inspection
+            XSSFTestDataSamples.writeOut(wb, "bug 55752 for review");
+        } finally {
+            wb.close();
+        }
+    }
+
+    @Test
+    public void test57423() throws IOException {
+        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("57423.xlsx");
+
+        Sheet testSheet = wb.getSheetAt(0);
+
+        // row shift (negative or positive) causes corrupted output xlsx file when the shift value is bigger
+        // than the number of rows being shifted
+        // Excel 2010 on opening the output file says:
+        // "Excel found unreadable content" and offers recovering the file by removing the unreadable content
+        // This can be observed in cases like the following:
+        // negative shift of 1 row by less than -1
+        // negative shift of 2 rows by less than -2
+        // positive shift of 1 row by 2 or more
+        // positive shift of 2 rows by 3 or more
+
+        //testSheet.shiftRows(4, 5, -3);
+        testSheet.shiftRows(10, 10, 2);
+
+        checkRows57423(testSheet);
+
+        Workbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        /* XSSFTestDataSamples.writeOut(wb, "bug 57423 for manual review"); */
+
+        wb.close();
+
+        checkRows57423(wbBack.getSheetAt(0));
+
+        wbBack.close();
+    }
+
+    private void checkRows57423(Sheet testSheet) throws IOException {
+        checkRow57423(testSheet, 0, "0");
+        checkRow57423(testSheet, 1, "1");
+        checkRow57423(testSheet, 2, "2");
+        checkRow57423(testSheet, 3, "3");
+        checkRow57423(testSheet, 4, "4");
+        checkRow57423(testSheet, 5, "5");
+        checkRow57423(testSheet, 6, "6");
+        checkRow57423(testSheet, 7, "7");
+        checkRow57423(testSheet, 8, "8");
+        checkRow57423(testSheet, 9, "9");
+
+        assertNull("Row number 10 should be gone after the shift",
+                testSheet.getRow(10));
+
+        checkRow57423(testSheet, 11, "11");
+        checkRow57423(testSheet, 12, "10");
+        checkRow57423(testSheet, 13, "13");
+        checkRow57423(testSheet, 14, "14");
+        checkRow57423(testSheet, 15, "15");
+        checkRow57423(testSheet, 16, "16");
+        checkRow57423(testSheet, 17, "17");
+        checkRow57423(testSheet, 18, "18");
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        try {
+            ((XSSFSheet)testSheet).write(stream);
+        } finally {
+            stream.close();
+        }
+
+        // verify that the resulting XML has the rows in correct order as required by Excel
+        String xml = new String(stream.toByteArray(), "UTF-8");
+        int posR12 = xml.indexOf("<row r=\"12\"");
+        int posR13 = xml.indexOf("<row r=\"13\"");
+
+        // both need to be found
+        assertTrue(posR12 != -1);
+        assertTrue(posR13 != -1);
+
+        assertTrue("Need to find row 12 before row 13 after the shifting, but had row 12 at " + posR12 + " and row 13 at " + posR13,
+                posR12 < posR13);
+    }
+
+    private void checkRow57423(Sheet testSheet, int rowNum, String contents) {
+        Row row = testSheet.getRow(rowNum);
+        assertNotNull("Expecting row at rownum " + rowNum, row);
+
+        CTRow ctRow = ((XSSFRow)row).getCTRow();
+        assertEquals(rowNum+1, ctRow.getR());
+
+        Cell cell = row.getCell(0);
+        assertNotNull("Expecting cell at rownum " + rowNum, cell);
+        assertEquals("Did not have expected contents at rownum " + rowNum,
+                contents + ".0", cell.toString());
+    }
 
     @Test
     public void bug57423_shiftRowsByLargeOffset() throws IOException {
         try (
-            XSSFWorkbook wb = new XSSFWorkbook();
-            //OutputStream out = new FileOutputStream("/tmp/57423." + wb.getClass().getName() + ".xlsx"));
+                XSSFWorkbook wb = new XSSFWorkbook();
+                //OutputStream out = new FileOutputStream("/tmp/57423." + wb.getClass().getName() + ".xlsx"));
         ) {
             Sheet sh = wb.createSheet();
             sh.createRow(0).createCell(0).setCellValue("a");
@@ -368,10 +368,10 @@ public final class TestUnfixedBugs {
     private void assertThatRowsInAscendingOrder(final XSSFWorkbook wb) {
         // Check that CTRows are stored in ascending order of row index
         long maxSeenRowNum = 0; //1-based
-        for (final CTRow ctRow : wb.getSheetAt(0).getCTWorksheet().getSheetData().getRowArray()) {
+        for (final CTRow ctRow : wb.getSheetAt(0).getCTWorksheet().getSheetData().getRowList()) {
             final long rowNum = ctRow.getR(); //1-based
             assertTrue("Row " + rowNum + " (1-based) is not in ascending order; previously saw " + maxSeenRowNum,
-                       rowNum > maxSeenRowNum);
+                    rowNum > maxSeenRowNum);
             maxSeenRowNum = rowNum;
         }
     }

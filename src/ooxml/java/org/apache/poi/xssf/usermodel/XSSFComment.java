@@ -54,7 +54,7 @@ public class XSSFComment implements Comment {
 
         // we potentially need to adjust the column/row information in the shape
         // the same way as we do in setRow()/setColumn()
-        if(vmlShape != null && vmlShape.sizeOfClientDataArray() > 0) {
+        if(comment != null && vmlShape != null && vmlShape.sizeOfClientDataArray() > 0) {
             CellReference ref = new CellReference(comment.getRef());
             CTClientData clientData = vmlShape.getClientDataArray(0);
             clientData.setRowArray(0, new BigInteger(String.valueOf(ref.getRow())));
@@ -70,7 +70,7 @@ public class XSSFComment implements Comment {
      */
     @Override
     public String getAuthor() {
-        return _comments.getAuthor((int) _comment.getAuthorId());
+        return _comments.getAuthor(_comment.getAuthorId());
     }
 
     /**
@@ -80,9 +80,7 @@ public class XSSFComment implements Comment {
      */
     @Override
     public void setAuthor(String author) {
-        _comment.setAuthorId(
-                _comments.findAuthor(author)
-        );
+        _comment.setAuthorId(_comments.findAuthor(author));
     }
 
     /**
@@ -109,7 +107,7 @@ public class XSSFComment implements Comment {
     @Override
     public boolean isVisible() {
         boolean visible = false;
-        if(_vmlShape != null){
+        if(_vmlShape != null) {
             String style = _vmlShape.getStyle();
             visible = style != null && style.contains("visibility:visible");
         }
@@ -217,6 +215,9 @@ public class XSSFComment implements Comment {
 
     @Override
     public ClientAnchor getClientAnchor() {
+        if(_vmlShape == null) {
+            return null;
+        }
         String position = _vmlShape.getClientDataArray(0).getAnchorArray(0);
         int[] pos = new int[8];
         int i = 0;

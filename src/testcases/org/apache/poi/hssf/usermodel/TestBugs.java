@@ -67,8 +67,6 @@ import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
-import org.apache.poi.poifs.filesystem.OPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.formula.ptg.DeletedArea3DPtg;
@@ -89,7 +87,6 @@ import org.apache.poi.ss.usermodel.SheetVisibility;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.LocaleUtil;
-import org.junit.After;
 import org.junit.Assume;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -1022,7 +1019,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
         assertEquals(4, wb.getNumberOfFontsAsInt());
 
-        HSSFFont f1 = wb.getFontAt((short) 0);
+        HSSFFont f1 = wb.getFontAt(0);
         assertFalse(f1.getBold());
 
         // Check that asking for the same font
@@ -1617,7 +1614,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     @Test
     public void bug46904() throws Exception {
         try {
-            OPOIFSFileSystem fs = new OPOIFSFileSystem(
+            POIFSFileSystem fs = new POIFSFileSystem(
                     HSSFITestDataProvider.instance.openWorkbookStream("46904.xls"));
             new HSSFWorkbook(fs.getRoot(), false).close();
             fail("Should catch exception here");
@@ -1627,7 +1624,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
             ));
         }
         try {
-            try (NPOIFSFileSystem fs = new NPOIFSFileSystem(
+            try (POIFSFileSystem fs = new POIFSFileSystem(
                     HSSFITestDataProvider.instance.openWorkbookStream("46904.xls"))) {
                 new HSSFWorkbook(fs.getRoot(), false).close();
                 fail("Should catch exception here");
@@ -2342,7 +2339,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
         HSSFWorkbook wbPOIFS = new HSSFWorkbook(new POIFSFileSystem(
                 new ByteArrayInputStream(data)).getRoot(), false);
-        HSSFWorkbook wbNPOIFS = new HSSFWorkbook(new NPOIFSFileSystem(
+        HSSFWorkbook wbNPOIFS = new HSSFWorkbook(new POIFSFileSystem(
                 new ByteArrayInputStream(data)).getRoot(), false);
 
         assertEquals(2, wbPOIFS.getNumberOfSheets());
@@ -2359,7 +2356,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
         HSSFWorkbook wbPOIFS = new HSSFWorkbook(new POIFSFileSystem(
                 new ByteArrayInputStream(data)).getRoot(), false);
-        HSSFWorkbook wbNPOIFS = new HSSFWorkbook(new NPOIFSFileSystem(
+        HSSFWorkbook wbNPOIFS = new HSSFWorkbook(new POIFSFileSystem(
                 new ByteArrayInputStream(data)).getRoot(), false);
 
         for (HSSFWorkbook wb : new HSSFWorkbook[]{wbPOIFS, wbNPOIFS}) {
@@ -2505,7 +2502,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
     @Test
     public void bug53432() throws IOException {
-        Workbook wb1 = new HSSFWorkbook(); //or new HSSFWorkbook();
+        HSSFWorkbook wb1 = new HSSFWorkbook(); //or new HSSFWorkbook();
         wb1.addPicture(new byte[]{123, 22}, Workbook.PICTURE_TYPE_JPEG);
         assertEquals(wb1.getAllPictures().size(), 1);
         wb1.close();
@@ -2513,13 +2510,13 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         wb1.close();
         wb1 = new HSSFWorkbook();
 
-        Workbook wb2 = writeOutAndReadBack((HSSFWorkbook) wb1);
+        HSSFWorkbook wb2 = writeOutAndReadBack(wb1);
         wb1.close();
         assertEquals(wb2.getAllPictures().size(), 0);
         wb2.addPicture(new byte[]{123, 22}, Workbook.PICTURE_TYPE_JPEG);
         assertEquals(wb2.getAllPictures().size(), 1);
 
-        Workbook wb3 = writeOutAndReadBack((HSSFWorkbook) wb2);
+        HSSFWorkbook wb3 = writeOutAndReadBack(wb2);
         wb2.close();
         assertEquals(wb3.getAllPictures().size(), 1);
 
@@ -3093,8 +3090,8 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
     @Test
     public void test61287() throws IOException {
-        final Workbook wb = HSSFTestDataSamples.openSampleWorkbook("61287.xls");
-        ExcelExtractor ex = new ExcelExtractor((HSSFWorkbook) wb);
+        final HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("61287.xls");
+        ExcelExtractor ex = new ExcelExtractor(wb);
         String text = ex.getText();
         assertContains(text, "\u8D44\u4EA7\u8D1F\u503A\u8868");
         wb.close();
@@ -3102,7 +3099,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
     @Test(expected = RuntimeException.class)
     public void test61300() throws Exception {
-        NPOIFSFileSystem npoifs = new NPOIFSFileSystem(HSSFTestDataSamples.openSampleFileStream("61300.xls"));
+        POIFSFileSystem npoifs = new POIFSFileSystem(HSSFTestDataSamples.openSampleFileStream("61300.xls"));
 
         DocumentEntry entry =
                 (DocumentEntry) npoifs.getRoot().getEntry(SummaryInformation.DEFAULT_STREAM_NAME);

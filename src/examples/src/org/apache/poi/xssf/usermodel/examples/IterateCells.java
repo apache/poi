@@ -32,7 +32,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class IterateCells {
 
     public static void main(String[] args) throws IOException {
-        try (Workbook wb = new XSSFWorkbook(new FileInputStream(args[0]))) {
+        try (
+                FileInputStream is = new FileInputStream(args[0]);
+                Workbook wb = new XSSFWorkbook(is)
+            ) {
             for (int i = 0; i < wb.getNumberOfSheets(); i++) {
                 Sheet sheet = wb.getSheetAt(i);
                 System.out.println(wb.getSheetName(i));

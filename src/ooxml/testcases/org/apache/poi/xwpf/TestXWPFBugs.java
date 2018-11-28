@@ -34,7 +34,7 @@ import org.apache.poi.poifs.crypt.CipherAlgorithm;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.xmlbeans.XmlException;
@@ -50,7 +50,7 @@ public class TestXWPFBugs {
     @Test
     public void bug53475NoCSPName() throws Exception {
         File file = POIDataSamples.getDocumentInstance().getFile("bug53475-password-is-solrcell.docx");
-        NPOIFSFileSystem filesystem = new NPOIFSFileSystem(file, true);
+        POIFSFileSystem filesystem = new POIFSFileSystem(file, true);
 
         // Check the encryption details
         EncryptionInfo info = new EncryptionInfo(filesystem);
@@ -85,7 +85,7 @@ public class TestXWPFBugs {
         Assume.assumeTrue("Please install JCE Unlimited Strength Jurisdiction Policy files for AES 256", maxKeyLen == 2147483647);
 
         File file = POIDataSamples.getDocumentInstance().getFile("bug53475-password-is-pass.docx");
-        NPOIFSFileSystem filesystem = new NPOIFSFileSystem(file, true);
+        POIFSFileSystem filesystem = new POIFSFileSystem(file, true);
 
         // Check the encryption details
         EncryptionInfo info = new EncryptionInfo(filesystem);

@@ -34,7 +34,7 @@ public final class UnknownRecordPlaceholder extends RecordAtom
 {
 
 	//arbitrarily selected; may need to increase
-	private static final int MAX_RECORD_LENGTH = 1_000_000;
+	private static final int MAX_RECORD_LENGTH = 20_000_000;
 
 	private byte[] _contents;
 	private long _type;

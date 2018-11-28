@@ -221,15 +221,11 @@ public class OOXMLSignatureFacet extends SignatureFacet {
         /*
          * SignatureTime
          */
-        DateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ROOT);
-        fmt.setTimeZone(LocaleUtil.TIMEZONE_UTC);
-        String nowStr = fmt.format(signatureConfig.getExecutionTime());
-        LOG.log(POILogger.DEBUG, "now: " + nowStr);
-
         SignatureTimeDocument sigTime = SignatureTimeDocument.Factory.newInstance();
         CTSignatureTime ctTime = sigTime.addNewSignatureTime();
         ctTime.setFormat("YYYY-MM-DDThh:mm:ssTZD");
-        ctTime.setValue(nowStr);
+        ctTime.setValue(signatureConfig.formatExecutionTime());
+        LOG.log(POILogger.DEBUG, "execution time: " + ctTime.getValue());
 
         Element n = (Element)document.importNode(ctTime.getDomNode(),true);
         List<XMLStructure> signatureTimeContent = new ArrayList<>();
@@ -253,6 +249,11 @@ public class OOXMLSignatureFacet extends SignatureFacet {
         SignatureInfoV1Document sigV1 = SignatureInfoV1Document.Factory.newInstance();
         CTSignatureInfoV1 ctSigV1 = sigV1.addNewSignatureInfoV1();
         ctSigV1.setManifestHashAlgorithm(signatureConfig.getDigestMethodUri());
+
+        if (signatureConfig.getSignatureDescription() != null) {
+            ctSigV1.setSignatureComments(signatureConfig.getSignatureDescription());
+        }
+
         Element n = (Element)document.importNode(ctSigV1.getDomNode(), true);
         n.setAttributeNS(XML_NS, XMLConstants.XMLNS_ATTRIBUTE, MS_DIGSIG_NS);
 

@@ -161,7 +161,7 @@ public final class SSTRecord extends ContinuableRecord {
      * <P>
      * The data consists of sets of string data. This string data is
      * arranged as follows:
-     * <P>
+     * </P><P>
      * <pre>
      * short  string_length;   // length of string data
      * byte   string_flag;     // flag specifying special string
@@ -176,9 +176,9 @@ public final class SSTRecord extends ContinuableRecord {
      * byte[] extension;       // optional extension (length of array
      *                         // is extend_length)
      * </pre>
-     * <P>
+     * </P><P>
      * The string_flag is bit mapped as follows:
-     * <P>
+     * </P><P>
      * <TABLE summary="string_flag mapping">
      *   <TR>
      *      <TH>Bit number</TH>
@@ -232,7 +232,7 @@ public final class SSTRecord extends ContinuableRecord {
      * associated data. The UnicodeString class can handle the byte[]
      * vs short[] nature of the actual string data
      *
-     * @param in the RecordInputstream to read the record from
+     * @param in the RecordInputStream to read the record from
      */
     public SSTRecord(RecordInputStream in) {
         // this method is ALWAYS called after construction -- using

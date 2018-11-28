@@ -78,7 +78,7 @@ public enum FileMagic {
     /** PDF document */
     PDF("%PDF"),
     /** Some different HTML documents */
-    HTML("<!DOCTYP".getBytes(UTF_8), "<html".getBytes(UTF_8)),
+    HTML("<!DOCTYP".getBytes(UTF_8), "<html".getBytes(UTF_8), "<HTML".getBytes(UTF_8)),
     WORD2(new byte[]{ (byte)0xdb, (byte)0xa5, 0x2d, 0x00}),
     // keep UNKNOWN always as last enum!
     /** UNKNOWN magic */
@@ -101,22 +101,24 @@ public enum FileMagic {
 
     public static FileMagic valueOf(byte[] magic) {
         for (FileMagic fm : values()) {
-            int i=0;
-            boolean found = true;
             for (byte[] ma : fm.magic) {
-                for (byte m : ma) {
-                    byte d = magic[i++];
-                    if (!(d == m || (m == 0x70 && (d == 0x10 || d == 0x20 || d == 0x40)))) {
-                        found = false;
-                        break;
-                    }
-                }
-                if (found) {
+                if (findMagic(ma, magic)) {
                     return fm;
                 }
             }
         }
         return UNKNOWN;
+    }
+
+    private static boolean findMagic(byte[] cmp, byte[] actual) {
+        int i=0;
+        for (byte m : cmp) {
+            byte d = actual[i++];
+            if (!(d == m || (m == 0x70 && (d == 0x10 || d == 0x20 || d == 0x40)))) {
+                return false;
+            }
+        }
+        return true;
     }
 
 

@@ -27,14 +27,14 @@ import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.hsmf.datatypes.PropertiesChunk;
 import org.apache.poi.hsmf.datatypes.PropertyValue;
 import org.apache.poi.hsmf.parsers.POIFSChunkParser;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * Dumps out the chunk details, and where possible contents
  */
 public class HSMFDump {
-   private NPOIFSFileSystem fs;
-   public HSMFDump(NPOIFSFileSystem fs) {
+   private POIFSFileSystem fs;
+   public HSMFDump(POIFSFileSystem fs) {
       this.fs = fs;
    }
    
@@ -84,7 +84,7 @@ public class HSMFDump {
    
    public static void main(String[] args) throws Exception {
       for(String file : args) {
-         NPOIFSFileSystem fs = new NPOIFSFileSystem(new File(file), true);
+         POIFSFileSystem fs = new POIFSFileSystem(new File(file), true);
          HSMFDump dump = new HSMFDump(fs);
          dump.dump();
          fs.close();

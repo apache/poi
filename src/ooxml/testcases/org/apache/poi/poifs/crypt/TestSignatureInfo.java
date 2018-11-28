@@ -56,11 +56,14 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.xml.crypto.dsig.CanonicalizationMethod;
 import javax.xml.crypto.dsig.dom.DOMSignContext;
 
 import org.apache.jcp.xml.dsig.internal.dom.DOMSignedInfo;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POITestCase;
+import org.apache.poi.ooxml.util.DocumentHelper;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
@@ -69,6 +72,7 @@ import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
 import org.apache.poi.poifs.crypt.dsig.SignaturePart;
 import org.apache.poi.poifs.crypt.dsig.facets.EnvelopedSignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.facets.KeyInfoSignatureFacet;
+import org.apache.poi.poifs.crypt.dsig.facets.OOXMLSignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.facets.XAdESSignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.facets.XAdESXLSignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.services.RevocationData;
@@ -77,7 +81,6 @@ import org.apache.poi.poifs.crypt.dsig.services.TimeStampService;
 import org.apache.poi.poifs.crypt.dsig.services.TimeStampServiceValidator;
 import org.apache.poi.poifs.storage.RawDataUtil;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
@@ -186,7 +189,7 @@ public class TestSignatureInfo {
         bos.reset();
         pkg1.save(bos);
         pkg1.close();
-        
+
         XSSFWorkbook wb2 = new XSSFWorkbook(new ByteArrayInputStream(bos.toByteArray()));
         assertEquals("Test", wb2.getSheetAt(0).getRow(1).getCell(1).getStringCellValue());
         OPCPackage pkg2 = wb2.getPackage();
@@ -395,142 +398,173 @@ public class TestSignatureInfo {
     @Test
     public void testSignEnvelopingDocument() throws Exception {
         String testFile = "hello-world-unsigned.xlsx";
-        OPCPackage pkg = OPCPackage.open(copy(testdata.getFile(testFile)), PackageAccess.READ_WRITE);
+        File sigCopy = testdata.getFile(testFile);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream(50000);
 
-        initKeyPair("Test", "CN=Test");
-        final X509CRL crl = PkiTestUtils.generateCrl(x509, keyPair.getPrivate());
-        
-        // setup
-        SignatureConfig signatureConfig = new SignatureConfig();
-        signatureConfig.setOpcPackage(pkg);
-        signatureConfig.setKey(keyPair.getPrivate());
+        final String execTimestr;
 
-        /*
-         * We need at least 2 certificates for the XAdES-C complete certificate
-         * refs construction.
-         */
-        List<X509Certificate> certificateChain = new ArrayList<>();
-        certificateChain.add(x509);
-        certificateChain.add(x509);
-        signatureConfig.setSigningCertificateChain(certificateChain);
-        
-        signatureConfig.addSignatureFacet(new EnvelopedSignatureFacet());
-        signatureConfig.addSignatureFacet(new KeyInfoSignatureFacet());
-        signatureConfig.addSignatureFacet(new XAdESSignatureFacet());
-        signatureConfig.addSignatureFacet(new XAdESXLSignatureFacet());
-        
-        // check for internet, no error means it works
-        boolean mockTsp = (getAccessError("http://timestamp.comodoca.com/rfc3161", true, 10000) != null);
-        
-        // http://timestamping.edelweb.fr/service/tsp
-        // http://tsa.belgium.be/connect
-        // http://timestamp.comodoca.com/authenticode
-        // http://timestamp.comodoca.com/rfc3161
-        // http://services.globaltrustfinder.com/adss/tsa
-        signatureConfig.setTspUrl("http://timestamp.comodoca.com/rfc3161");
-        signatureConfig.setTspRequestPolicy(null); // comodoca request fails, if default policy is set ...
-        signatureConfig.setTspOldProtocol(false);
-        
-        //set proxy info if any
-        String proxy = System.getProperty("http_proxy");
-        if (proxy != null && proxy.trim().length() > 0) {
-            signatureConfig.setProxyUrl(proxy);
-        }
 
-        if (mockTsp) {
-            TimeStampService tspService = new TimeStampService(){
-                @Override
-                public byte[] timeStamp(byte[] data, RevocationData revocationData) {
-                    revocationData.addCRL(crl);
-                    return "time-stamp-token".getBytes(LocaleUtil.CHARSET_1252);                
+        try (OPCPackage pkg = OPCPackage.open(copy(sigCopy), PackageAccess.READ_WRITE)) {
+
+            initKeyPair("Test", "CN=Test");
+            final X509CRL crl = PkiTestUtils.generateCrl(x509, keyPair.getPrivate());
+
+            // setup
+            SignatureConfig signatureConfig = new SignatureConfig();
+            signatureConfig.setOpcPackage(pkg);
+            signatureConfig.setKey(keyPair.getPrivate());
+
+            /*
+             * We need at least 2 certificates for the XAdES-C complete certificate
+             * refs construction.
+             */
+            List<X509Certificate> certificateChain = new ArrayList<>();
+            certificateChain.add(x509);
+            certificateChain.add(x509);
+            signatureConfig.setSigningCertificateChain(certificateChain);
+
+            signatureConfig.addSignatureFacet(new OOXMLSignatureFacet());
+            signatureConfig.addSignatureFacet(new EnvelopedSignatureFacet());
+            signatureConfig.addSignatureFacet(new KeyInfoSignatureFacet());
+            signatureConfig.addSignatureFacet(new XAdESSignatureFacet());
+            signatureConfig.addSignatureFacet(new XAdESXLSignatureFacet());
+
+            // check for internet, no error means it works
+            boolean mockTsp = (getAccessError("http://timestamp.comodoca.com/rfc3161", true, 10000) != null);
+
+            // http://timestamping.edelweb.fr/service/tsp
+            // http://tsa.belgium.be/connect
+            // http://timestamp.comodoca.com/authenticode
+            // http://timestamp.comodoca.com/rfc3161
+            // http://services.globaltrustfinder.com/adss/tsa
+            signatureConfig.setTspUrl("http://timestamp.comodoca.com/rfc3161");
+            signatureConfig.setTspRequestPolicy(null); // comodoca request fails, if default policy is set ...
+            signatureConfig.setTspOldProtocol(false);
+
+            signatureConfig.setXadesDigestAlgo(HashAlgorithm.sha512);
+            signatureConfig.setXadesRole("Xades Reviewer");
+            signatureConfig.setSignatureDescription("test xades signature");
+
+            execTimestr = signatureConfig.formatExecutionTime();
+
+            //set proxy info if any
+            String proxy = System.getProperty("http_proxy");
+            if (proxy != null && proxy.trim().length() > 0) {
+                signatureConfig.setProxyUrl(proxy);
+            }
+
+            if (mockTsp) {
+                TimeStampService tspService = new TimeStampService() {
+                    @Override
+                    public byte[] timeStamp(byte[] data, RevocationData revocationData) {
+                        revocationData.addCRL(crl);
+                        return "time-stamp-token".getBytes(LocaleUtil.CHARSET_1252);
+                    }
+
+                    @Override
+                    public void setSignatureConfig(SignatureConfig config) {
+                        // empty on purpose
+                    }
+                };
+                signatureConfig.setTspService(tspService);
+            } else {
+                TimeStampServiceValidator tspValidator = (validateChain, revocationData) -> {
+                    for (X509Certificate certificate : validateChain) {
+                        LOG.log(POILogger.DEBUG, "certificate: " + certificate.getSubjectX500Principal());
+                        LOG.log(POILogger.DEBUG, "validity: " + certificate.getNotBefore() + " - " + certificate.getNotAfter());
+                    }
+                };
+                signatureConfig.setTspValidator(tspValidator);
+                signatureConfig.setTspOldProtocol(signatureConfig.getTspUrl().contains("edelweb"));
+            }
+
+            final RevocationData revocationData = new RevocationData();
+            revocationData.addCRL(crl);
+            OCSPResp ocspResp = PkiTestUtils.createOcspResp(x509, false,
+                    x509, x509, keyPair.getPrivate(), "SHA1withRSA", cal.getTimeInMillis());
+            revocationData.addOCSP(ocspResp.getEncoded());
+
+            RevocationDataService revocationDataService = revocationChain -> revocationData;
+            signatureConfig.setRevocationDataService(revocationDataService);
+
+            // operate
+            SignatureInfo si = new SignatureInfo();
+            si.setSignatureConfig(signatureConfig);
+            try {
+                si.confirmSignature();
+            } catch (RuntimeException e) {
+                pkg.close();
+                // only allow a ConnectException because of timeout, we see this in Jenkins from time to time...
+                if (e.getCause() == null) {
+                    throw e;
                 }
-                @Override
-                public void setSignatureConfig(SignatureConfig config) {
-                    // empty on purpose
+                if ((e.getCause() instanceof ConnectException) || (e.getCause() instanceof SocketTimeoutException)) {
+                    Assume.assumeFalse("Only allowing ConnectException with 'timed out' as message here, but had: " + e,
+                            e.getCause().getMessage().contains("timed out"));
+                } else if (e.getCause() instanceof IOException) {
+                    Assume.assumeFalse("Only allowing IOException with 'Error contacting TSP server' as message here, but had: " + e,
+                            e.getCause().getMessage().contains("Error contacting TSP server"));
+                } else if (e.getCause() instanceof RuntimeException) {
+                    Assume.assumeFalse("Only allowing RuntimeException with 'This site is cur' as message here, but had: " + e,
+                            e.getCause().getMessage().contains("This site is cur"));
                 }
-            };
-            signatureConfig.setTspService(tspService);
-        } else {
-            TimeStampServiceValidator tspValidator = (validateChain, revocationData) -> {
-                for (X509Certificate certificate : validateChain) {
-                    LOG.log(POILogger.DEBUG, "certificate: " + certificate.getSubjectX500Principal());
-                    LOG.log(POILogger.DEBUG, "validity: " + certificate.getNotBefore() + " - " + certificate.getNotAfter());
-                }
-            };
-            signatureConfig.setTspValidator(tspValidator);
-            signatureConfig.setTspOldProtocol(signatureConfig.getTspUrl().contains("edelweb"));
-        }
-        
-        final RevocationData revocationData = new RevocationData();
-        revocationData.addCRL(crl);
-        OCSPResp ocspResp = PkiTestUtils.createOcspResp(x509, false,
-                x509, x509, keyPair.getPrivate(), "SHA1withRSA", cal.getTimeInMillis());
-        revocationData.addOCSP(ocspResp.getEncoded());
-
-        RevocationDataService revocationDataService = revocationChain -> revocationData;
-        signatureConfig.setRevocationDataService(revocationDataService);
-
-        // operate
-        SignatureInfo si = new SignatureInfo();
-        si.setSignatureConfig(signatureConfig);
-        try {
-            si.confirmSignature();
-        } catch (RuntimeException e) {
-            pkg.close();
-            // only allow a ConnectException because of timeout, we see this in Jenkins from time to time...
-            if(e.getCause() == null) {
                 throw e;
             }
-            if((e.getCause() instanceof ConnectException) || (e.getCause() instanceof SocketTimeoutException)) {
-                Assume.assumeFalse("Only allowing ConnectException with 'timed out' as message here, but had: " + e,
-                        e.getCause().getMessage().contains("timed out"));
-            } else if (e.getCause() instanceof IOException) {
-                Assume.assumeFalse("Only allowing IOException with 'Error contacting TSP server' as message here, but had: " + e,
-                        e.getCause().getMessage().contains("Error contacting TSP server"));
-            } else if (e.getCause() instanceof RuntimeException) {
-                Assume.assumeFalse("Only allowing RuntimeException with 'This site is cur' as message here, but had: " + e,
-                        e.getCause().getMessage().contains("This site is cur"));
+
+            // verify
+            Iterator<SignaturePart> spIter = si.getSignatureParts().iterator();
+            assertTrue("Had: " + si.getSignatureConfig().getOpcPackage().
+                            getRelationshipsByType(PackageRelationshipTypes.DIGITAL_SIGNATURE_ORIGIN),
+                    spIter.hasNext());
+            SignaturePart sp = spIter.next();
+            boolean valid = sp.validate();
+            assertTrue(valid);
+
+            SignatureDocument sigDoc = sp.getSignatureDocument();
+            String declareNS =
+                    "declare namespace xades='http://uri.etsi.org/01903/v1.3.2#'; "
+                            + "declare namespace ds='http://www.w3.org/2000/09/xmldsig#'; ";
+
+            String digestValXQuery = declareNS +
+                    "$this/ds:Signature/ds:SignedInfo/ds:Reference";
+            for (ReferenceType rt : (ReferenceType[]) sigDoc.selectPath(digestValXQuery)) {
+                assertNotNull(rt.getDigestValue());
+                assertEquals(signatureConfig.getDigestMethodUri(), rt.getDigestMethod().getAlgorithm());
             }
-            throw e;
-        }
-        
-        // verify
-        Iterator<SignaturePart> spIter = si.getSignatureParts().iterator();
-        assertTrue("Had: " + si.getSignatureConfig().getOpcPackage().
-                        getRelationshipsByType(PackageRelationshipTypes.DIGITAL_SIGNATURE_ORIGIN),
-                spIter.hasNext());
-        SignaturePart sp = spIter.next();
-        boolean valid = sp.validate();
-        assertTrue(valid);
-        
-        SignatureDocument sigDoc = sp.getSignatureDocument();
-        String declareNS = 
-            "declare namespace xades='http://uri.etsi.org/01903/v1.3.2#'; "
-          + "declare namespace ds='http://www.w3.org/2000/09/xmldsig#'; ";
-        
-        String digestValXQuery = declareNS +
-            "$this/ds:Signature/ds:SignedInfo/ds:Reference";
-        for (ReferenceType rt : (ReferenceType[])sigDoc.selectPath(digestValXQuery)) {
-            assertNotNull(rt.getDigestValue());
-            assertEquals(signatureConfig.getDigestMethodUri(), rt.getDigestMethod().getAlgorithm());
+
+            String certDigestXQuery = declareNS +
+                    "$this//xades:SigningCertificate/xades:Cert/xades:CertDigest";
+            XmlObject xoList[] = sigDoc.selectPath(certDigestXQuery);
+            assertEquals(xoList.length, 1);
+            DigestAlgAndValueType certDigest = (DigestAlgAndValueType) xoList[0];
+            assertNotNull(certDigest.getDigestValue());
+
+            String qualPropXQuery = declareNS +
+                    "$this/ds:Signature/ds:Object/xades:QualifyingProperties";
+            xoList = sigDoc.selectPath(qualPropXQuery);
+            assertEquals(xoList.length, 1);
+            QualifyingPropertiesType qualProp = (QualifyingPropertiesType) xoList[0];
+            boolean qualPropXsdOk = qualProp.validate();
+            assertTrue(qualPropXsdOk);
+
+            pkg.save(bos);
         }
 
-        String certDigestXQuery = declareNS +
-            "$this//xades:SigningCertificate/xades:Cert/xades:CertDigest";
-        XmlObject xoList[] = sigDoc.selectPath(certDigestXQuery);
-        assertEquals(xoList.length, 1);
-        DigestAlgAndValueType certDigest = (DigestAlgAndValueType)xoList[0];
-        assertNotNull(certDigest.getDigestValue());
+        try (OPCPackage pkg = OPCPackage.open(new ByteArrayInputStream(bos.toByteArray()))) {
+            SignatureConfig signatureConfig = new SignatureConfig();
+            signatureConfig.setOpcPackage(pkg);
+            signatureConfig.setUpdateConfigOnValidate(true);
 
-        String qualPropXQuery = declareNS +
-            "$this/ds:Signature/ds:Object/xades:QualifyingProperties";
-        xoList = sigDoc.selectPath(qualPropXQuery);
-        assertEquals(xoList.length, 1);
-        QualifyingPropertiesType qualProp = (QualifyingPropertiesType)xoList[0];
-        boolean qualPropXsdOk = qualProp.validate();
-        assertTrue(qualPropXsdOk);
+            SignatureInfo si = new SignatureInfo();
+            si.setSignatureConfig(signatureConfig);
 
-        pkg.close();
+            assertTrue(si.verifySignature());
+
+            assertEquals(HashAlgorithm.sha512, signatureConfig.getXadesDigestAlgo());
+            assertEquals("Xades Reviewer", signatureConfig.getXadesRole());
+            assertEquals("test xades signature", signatureConfig.getSignatureDescription());
+            assertEquals(execTimestr, signatureConfig.formatExecutionTime());
+        }
     }
 
     public static String getAccessError(String destinationUrl, boolean fireRequest, int timeout) {
@@ -696,6 +730,27 @@ public class TestSignatureInfo {
             //SignatureConfig signatureConfig = new SignatureConfig();
             assertNotNull(pkg);
         }
+    }
+
+    @Test
+    public void testRetrieveCertificate() throws InvalidFormatException, IOException {
+        SignatureConfig sic = new SignatureConfig();
+        final File file = testdata.getFile("PPT2016withComment.pptx");
+        try (final OPCPackage pkg = OPCPackage.open(file, PackageAccess.READ)) {
+            sic.setOpcPackage(pkg);
+            sic.setUpdateConfigOnValidate(true);
+            SignatureInfo si = new SignatureInfo();
+            si.setSignatureConfig(sic);
+            assertTrue(si.verifySignature());
+        }
+
+        final List<X509Certificate> certs = sic.getSigningCertificateChain();
+        assertEquals(1, certs.size());
+        assertEquals("CN=Test", certs.get(0).getSubjectDN().getName());
+        assertEquals("SuperDuper-Reviewer", sic.getXadesRole());
+        assertEquals("Purpose for signing", sic.getSignatureDescription());
+        assertEquals("2018-06-10T09:00:54Z", sic.formatExecutionTime());
+        assertEquals(CanonicalizationMethod.INCLUSIVE, sic.getCanonicalizationMethod());
     }
 
     private SignatureConfig prepareConfig(String alias, String signerDn, String pfxInput) throws Exception {

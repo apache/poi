@@ -18,6 +18,7 @@
 package org.apache.poi.hmef;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
@@ -83,9 +84,7 @@ public final class TestAttachments extends HMEFTest {
       List<Attachment> attachments = quick.getAttachments();
       
       // Pick a predictable date format + timezone
-      DateFormat fmt = DateFormat.getDateTimeInstance(
-            DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.UK
-      );
+      DateFormat fmt = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss", Locale.UK);
       fmt.setTimeZone(LocaleUtil.TIMEZONE_UTC);
       
       // They should all have the same date on them

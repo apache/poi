@@ -17,17 +17,15 @@
 
 package org.apache.poi.xwpf.usermodel;
 
+import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.apache.poi.POITestCase.assertContains;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.poi.xwpf.XWPFTestDataSamples;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public final class TestXWPFSDT {
@@ -42,8 +40,8 @@ public final class TestXWPFSDT {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug54849.docx");
         String tag = null;
         String title = null;
-        List<AbstractXWPFSDT> sdts = extractAllSDTs(doc);
-        for (AbstractXWPFSDT sdt : sdts) {
+        List<XWPFAbstractSDT> sdts = extractAllSDTs(doc);
+        for (XWPFAbstractSDT sdt : sdts) {
             if (sdt.getContent().toString().equals("Rich_text")) {
                 tag = "MyTag";
                 title = "MyTitle";
@@ -76,12 +74,12 @@ public final class TestXWPFSDT {
 
         };
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug54849.docx");
-        List<AbstractXWPFSDT> sdts = extractAllSDTs(doc);
+        List<XWPFAbstractSDT> sdts = extractAllSDTs(doc);
 
         assertEquals("number of sdts", contents.length, sdts.size());
 
         for (int i = 0; i < contents.length; i++) {
-            AbstractXWPFSDT sdt = sdts.get(i);
+            XWPFAbstractSDT sdt = sdts.get(i);
             assertEquals(i + ": " + contents[i], contents[i], sdt.getContent().toString());
         }
     }
@@ -94,7 +92,7 @@ public final class TestXWPFSDT {
         //Bug54771a.docx and Bug54771b.docx test slightly 
         //different recursion patterns. Keep both!
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug54771a.docx");
-        List<AbstractXWPFSDT> sdts = extractAllSDTs(doc);
+        List<XWPFAbstractSDT> sdts = extractAllSDTs(doc);
         String text = sdts.get(0).getContent().getText();
         assertEquals(2, sdts.size());
         assertContains(text, "Test");
@@ -120,7 +118,7 @@ public final class TestXWPFSDT {
     @Test
     public void testNewLinesBetweenRuns() throws Exception {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug55142.docx");
-        List<AbstractXWPFSDT> sdts = extractAllSDTs(doc);
+        List<XWPFAbstractSDT> sdts = extractAllSDTs(doc);
         List<String> targs = new ArrayList<>();
         //these test newlines and tabs in paragraphs/body elements
         targs.add("Rich-text1 abcdefghi");
@@ -135,7 +133,7 @@ public final class TestXWPFSDT {
         targs.add("sdt_incell2 abcdefg");
 
         for (int i = 0; i < sdts.size(); i++) {
-            AbstractXWPFSDT sdt = sdts.get(i);
+            XWPFAbstractSDT sdt = sdts.get(i);
             assertEquals(targs.get(i), targs.get(i), sdt.getContent().getText());
         }
     }
@@ -144,15 +142,28 @@ public final class TestXWPFSDT {
     public void test60341() throws IOException {
         //handle sdtbody without an sdtpr
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug60341.docx");
-        List<AbstractXWPFSDT> sdts = extractAllSDTs(doc);
+        List<XWPFAbstractSDT> sdts = extractAllSDTs(doc);
         assertEquals(1, sdts.size());
         assertEquals("", sdts.get(0).getTag());
         assertEquals("", sdts.get(0).getTitle());
     }
 
-    private List<AbstractXWPFSDT> extractAllSDTs(XWPFDocument doc) {
+    @Test
+    public void test62859() throws IOException {
+        //this doesn't test the exact code path for this issue, but
+        //it does test for a related issue, and the fix fixes both.
+        //We should try to add the actual triggering document
+        //to our test suite.
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug62859.docx");
+        List<XWPFAbstractSDT> sdts = extractAllSDTs(doc);
+        assertEquals(1, sdts.size());
+        assertEquals("", sdts.get(0).getTag());
+        assertEquals("", sdts.get(0).getTitle());
+    }
 
-        List<AbstractXWPFSDT> sdts = new ArrayList<>();
+    private List<XWPFAbstractSDT> extractAllSDTs(XWPFDocument doc) {
+
+        List<XWPFAbstractSDT> sdts = new ArrayList<>();
 
         List<XWPFHeader> headers = doc.getHeaderList();
         for (XWPFHeader header : headers) {
@@ -168,14 +179,14 @@ public final class TestXWPFSDT {
         for (XWPFFootnote footnote : doc.getFootnotes()) {
             sdts.addAll(extractSDTsFromBodyElements(footnote.getBodyElements()));
         }
-        for (Map.Entry<Integer, XWPFFootnote> e : doc.endnotes.entrySet()) {
-            sdts.addAll(extractSDTsFromBodyElements(e.getValue().getBodyElements()));
+        for (XWPFEndnote footnote : doc.getEndnotes()) {
+            sdts.addAll(extractSDTsFromBodyElements(footnote.getBodyElements()));
         }
         return sdts;
     }
 
-    private List<AbstractXWPFSDT> extractSDTsFromBodyElements(List<IBodyElement> elements) {
-        List<AbstractXWPFSDT> sdts = new ArrayList<>();
+    private List<XWPFAbstractSDT> extractSDTsFromBodyElements(List<IBodyElement> elements) {
+        List<XWPFAbstractSDT> sdts = new ArrayList<>();
         for (IBodyElement e : elements) {
             if (e instanceof XWPFSDT) {
                 XWPFSDT sdt = (XWPFSDT) e;
@@ -197,9 +208,9 @@ public final class TestXWPFSDT {
         return sdts;
     }
 
-    private List<AbstractXWPFSDT> extractSDTsFromTable(XWPFTable table) {
+    private List<XWPFAbstractSDT> extractSDTsFromTable(XWPFTable table) {
 
-        List<AbstractXWPFSDT> sdts = new ArrayList<>();
+        List<XWPFAbstractSDT> sdts = new ArrayList<>();
         for (XWPFTableRow r : table.getRows()) {
             for (ICell c : r.getTableICells()) {
                 if (c instanceof XWPFSDTCell) {

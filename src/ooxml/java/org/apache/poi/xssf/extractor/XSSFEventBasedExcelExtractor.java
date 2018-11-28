@@ -39,8 +39,7 @@ import org.apache.poi.xssf.eventusermodel.ReadOnlySharedStringsTable;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler.SheetContentsHandler;
-import org.apache.poi.xssf.model.CommentsTable;
-import org.apache.poi.xssf.model.StylesTable;
+import org.apache.poi.xssf.model.*;
 import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.apache.poi.xssf.usermodel.XSSFShape;
 import org.apache.poi.xssf.usermodel.XSSFSimpleShape;
@@ -59,16 +58,16 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
 
     private static final POILogger LOGGER = POILogFactory.getLogger(XSSFEventBasedExcelExtractor.class);
 
-    private OPCPackage container;
-    private POIXMLProperties properties;
+    protected OPCPackage container;
+    protected POIXMLProperties properties;
 
-    private Locale locale;
-    private boolean includeTextBoxes = true;
-    private boolean includeSheetNames = true;
-    private boolean includeCellComments;
-    private boolean includeHeadersFooters = true;
-    private boolean formulasNotResults;
-    private boolean concatenatePhoneticRuns = true;
+    protected Locale locale;
+    protected boolean includeTextBoxes = true;
+    protected boolean includeSheetNames = true;
+    protected boolean includeCellComments;
+    protected boolean includeHeadersFooters = true;
+    protected boolean formulasNotResults;
+    protected boolean concatenatePhoneticRuns = true;
 
     public XSSFEventBasedExcelExtractor(String path) throws XmlException, OpenXML4JException, IOException {
         this(OPCPackage.open(path));
@@ -230,9 +229,9 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
      */
     public void processSheet(
             SheetContentsHandler sheetContentsExtractor,
-            StylesTable styles,
-            CommentsTable comments,
-            ReadOnlySharedStringsTable strings,
+            Styles styles,
+            Comments comments,
+            SharedStrings strings,
             InputStream sheetInputStream)
             throws IOException, SAXException {
 
@@ -255,13 +254,18 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
         }
     }
 
+    protected SharedStrings createSharedStringsTable(XSSFReader xssfReader, OPCPackage container)
+            throws IOException, SAXException {
+        return new ReadOnlySharedStringsTable(container, concatenatePhoneticRuns);
+    }
+
     /**
      * Processes the file and returns the text
      */
     public String getText() {
         try {
-            ReadOnlySharedStringsTable strings = new ReadOnlySharedStringsTable(container, concatenatePhoneticRuns);
             XSSFReader xssfReader = new XSSFReader(container);
+            SharedStrings strings = createSharedStringsTable(xssfReader, container);
             StylesTable styles = xssfReader.getStylesTable();
             XSSFReader.SheetIterator iter = (XSSFReader.SheetIterator) xssfReader.getSheetsData();
             StringBuilder text = new StringBuilder(64);
@@ -273,7 +277,7 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
                     text.append(iter.getSheetName());
                     text.append('\n');
                 }
-                CommentsTable comments = includeCellComments ? iter.getSheetComments() : null;
+                Comments comments = includeCellComments ? iter.getSheetComments() : null;
                 processSheet(sheetExtractor, styles, comments, strings, stream);
                 if (includeHeadersFooters) {
                     sheetExtractor.appendHeaderText(text);

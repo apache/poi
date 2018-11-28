@@ -79,8 +79,9 @@ java.net.InetAddress#getCanonicalHostName()
 
 java.net.InetSocketAddress#getHostName() @ Use getHostString() instead, which avoids a DNS lookup
 
-@defaultMessage this method needs special permission
-java.lang.Thread#getAllStackTraces()
+
+java.lang.Thread#getAllStackTraces() @ this method needs special permission
+java.lang.Thread#getContextClassLoader() @ use getClass().getClassLoader() instead of getContextClassLoader() (see https://stackoverflow.com/a/36228195/2066598)
 
 @defaultMessage Avoid unchecked warnings by using Collections#empty(List|Map|Set) methods
 java.util.Collections#EMPTY_LIST
@@ -121,6 +122,11 @@ java.util.concurrent.Future#cancel(boolean)
 
 @defaultMessage Don't use ...InputStream.available() as it gives wrong result for certain streams - use IOUtils.toByteArray to read the stream fully and then count the available bytes 
 java.io.InputStream#available() 
+
+@defaultMessage Use newInstance, as newFactory does not seem to work on Android - https://github.com/centic9/poi-on-android/issues/44#issuecomment-426517981
+javax.xml.stream.XMLEventFactory#newFactory()
+javax.xml.stream.XMLInputFactory#newFactory()
+javax.xml.stream.XMLOutputFactory#newFactory()
 
 @defaultMessage Unnecessary, inefficient, and confusing conversion of String.toString
 java.lang.String#toString()

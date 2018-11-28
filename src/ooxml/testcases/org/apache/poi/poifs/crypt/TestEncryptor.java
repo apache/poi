@@ -37,7 +37,6 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentNode;
 import org.apache.poi.poifs.filesystem.Entry;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
@@ -102,7 +101,7 @@ public class TestEncryptor {
         final EncryptionInfo infoExpected;
         final Decryptor decExpected;
 
-        try (NPOIFSFileSystem nfs = new NPOIFSFileSystem(file, true)) {
+        try (POIFSFileSystem nfs = new POIFSFileSystem(file, true)) {
 
             // Check the encryption details
             infoExpected = new EncryptionInfo(nfs);
@@ -159,7 +158,7 @@ public class TestEncryptor {
         final EncryptionInfo infoActual2;
         final byte[] payloadActual, encPackActual;
         final long decPackLenActual;
-        try (NPOIFSFileSystem nfs = new NPOIFSFileSystem(new ByteArrayInputStream(bos.toByteArray()))) {
+        try (POIFSFileSystem nfs = new POIFSFileSystem(new ByteArrayInputStream(bos.toByteArray()))) {
             infoActual2 = new EncryptionInfo(nfs.getRoot());
             Decryptor decActual = Decryptor.getInstance(infoActual2);
             boolean passed = decActual.verifyPassword(pass);
@@ -196,7 +195,7 @@ public class TestEncryptor {
         final byte[] payloadExpected;
         final EncryptionInfo infoExpected;
         final Decryptor d;
-        try (NPOIFSFileSystem nfs = new NPOIFSFileSystem(file, true)) {
+        try (POIFSFileSystem nfs = new POIFSFileSystem(file, true)) {
 
             // Check the encryption details
             infoExpected = new EncryptionInfo(nfs);
@@ -260,7 +259,7 @@ public class TestEncryptor {
         }
 
         final byte[] payloadActual;
-        try (NPOIFSFileSystem nfs = new NPOIFSFileSystem(new ByteArrayInputStream(encBytes))) {
+        try (POIFSFileSystem nfs = new POIFSFileSystem(new ByteArrayInputStream(encBytes))) {
             final EncryptionInfo ei = new EncryptionInfo(nfs);
             Decryptor d2 = Decryptor.getInstance(ei);
             assertTrue("Unable to process: document is encrypted", d2.verifyPassword(pass));
@@ -297,7 +296,7 @@ public class TestEncryptor {
             Encryptor enc = info.getEncryptor();
             enc.confirmPassword("password");
 
-            try (NPOIFSFileSystem fs = new NPOIFSFileSystem()) {
+            try (POIFSFileSystem fs = new POIFSFileSystem()) {
 
                 try (OutputStream os = enc.getDataStream(fs)) {
                     pkg.save(os);
@@ -311,11 +310,11 @@ public class TestEncryptor {
         }
         
 
-        try (NPOIFSFileSystem inpFS = new NPOIFSFileSystem(new ByteArrayInputStream(encBytes))) {
+        try (POIFSFileSystem inpFS = new POIFSFileSystem(new ByteArrayInputStream(encBytes))) {
             // Check we can decrypt it
             EncryptionInfo info = new EncryptionInfo(inpFS);
             Decryptor d = Decryptor.getInstance(info);
-            assertEquals(true, d.verifyPassword("password"));
+            assertTrue(d.verifyPassword("password"));
 
             try (OPCPackage inpPkg = OPCPackage.open(d.getDataStream(inpFS))) {
                 // Check it now has empty core properties
@@ -338,7 +337,7 @@ public class TestEncryptor {
             IOUtils.copy(fis, fos);
         }
         
-        try (NPOIFSFileSystem fs = new NPOIFSFileSystem(f, false)) {
+        try (POIFSFileSystem fs = new POIFSFileSystem(f, false)) {
 
             // decrypt the protected file - in this case it was encrypted with the default password
             EncryptionInfo encInfo = new EncryptionInfo(fs);
@@ -480,7 +479,7 @@ public class TestEncryptor {
 
         final byte[] epNewBytes;
         final EncryptionInfo infoReload;
-        try (NPOIFSFileSystem fsNew = new NPOIFSFileSystem()) {
+        try (POIFSFileSystem fsNew = new POIFSFileSystem()) {
             try (OutputStream os = enc.getDataStream(fsNew)) {
                 os.write(zipInput);
             }
@@ -488,7 +487,7 @@ public class TestEncryptor {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             fsNew.writeFilesystem(bos);
 
-            try (NPOIFSFileSystem fsReload = new NPOIFSFileSystem(new ByteArrayInputStream(bos.toByteArray()))) {
+            try (POIFSFileSystem fsReload = new POIFSFileSystem(new ByteArrayInputStream(bos.toByteArray()))) {
                 infoReload = new EncryptionInfo(fsReload);
                 try (InputStream epReload = fsReload.getRoot().createDocumentInputStream("EncryptedPackage")) {
                     epNewBytes = IOUtils.toByteArray(epReload, 9400);

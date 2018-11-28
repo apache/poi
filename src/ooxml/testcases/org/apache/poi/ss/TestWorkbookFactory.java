@@ -17,18 +17,25 @@
 
 package org.apache.poi.ss;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.FileNotFoundException;
 
 import org.apache.poi.EmptyFileException;
 import org.apache.poi.EncryptedDocumentException;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
@@ -36,17 +43,14 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.xssf.usermodel.XSSFWorkbookFactory;
 import org.junit.Test;
 
 public final class TestWorkbookFactory {
     private static final String xls = "SampleSS.xls";
     private static final String xlsx = "SampleSS.xlsx";
-    private static final String[] xls_prot = new String[] {"password.xls", "password"};
-    private static final String[] xlsx_prot = new String[]{"protected_passtika.xlsx", "tika"};
+    private static final String[] xls_protected = new String[] {"password.xls", "password"};
+    private static final String[] xlsx_protected = new String[]{"protected_passtika.xlsx", "tika"};
     private static final String txt = "SampleSS.txt";
     
     private static final POILogger LOGGER = POILogFactory.getLogger(TestWorkbookFactory.class);
@@ -57,7 +61,6 @@ public final class TestWorkbookFactory {
      *
      * @param filename the sample workbook to read in
      * @param wb the workbook to close
-     * @throws IOException
      */
     private static void assertCloseDoesNotModifyFile(String filename, Workbook wb) throws IOException {
         final byte[] before = HSSFTestDataSamples.getTestDataFileContent(filename);
@@ -107,12 +110,20 @@ public final class TestWorkbookFactory {
         assertTrue(wb instanceof HSSFWorkbook);
         assertCloseDoesNotModifyFile(xls, wb);
 
+        wb = WorkbookFactory.create(
+                new POIFSFileSystem(HSSFTestDataSamples.openSampleFileStream(xls)).getRoot()
+        );
+        assertNotNull(wb);
+        assertTrue(wb instanceof HSSFWorkbook);
+        assertCloseDoesNotModifyFile(xls, wb);
+
         // Package -> xssf
         wb = XSSFWorkbookFactory.create(
                 OPCPackage.open(
                         HSSFTestDataSamples.openSampleFileStream(xlsx))
         );
         assertNotNull(wb);
+        //noinspection ConstantConditions
         assertTrue(wb instanceof XSSFWorkbook);
         assertCloseDoesNotModifyFile(xlsx, wb);
     }
@@ -176,11 +187,9 @@ public final class TestWorkbookFactory {
         // Invalid type -> exception
         final byte[] before = HSSFTestDataSamples.getTestDataFileContent(txt);
         try {
-            InputStream stream = HSSFTestDataSamples.openSampleFileStream(txt);
-            try {
+            try (InputStream stream = HSSFTestDataSamples.openSampleFileStream(txt)) {
                 wb = WorkbookFactory.create(stream);
-            } finally {
-                stream.close();
+                assertNotNull(wb);
             }
             fail();
         } catch(IOException e) {
@@ -197,7 +206,6 @@ public final class TestWorkbookFactory {
     @Test
     public void testCreateWithPasswordFromStream() throws Exception {
         Workbook wb;
-
 
         // Unprotected, no password given, opens normally
         wb = WorkbookFactory.create(
@@ -233,36 +241,40 @@ public final class TestWorkbookFactory {
 
         // Protected, correct password, opens fine
         wb = WorkbookFactory.create(
-                HSSFTestDataSamples.openSampleFileStream(xls_prot[0]), xls_prot[1]
+                HSSFTestDataSamples.openSampleFileStream(xls_protected[0]), xls_protected[1]
         );
         assertNotNull(wb);
         assertTrue(wb instanceof HSSFWorkbook);
-        assertCloseDoesNotModifyFile(xls_prot[0], wb);
+        assertCloseDoesNotModifyFile(xls_protected[0], wb);
 
         wb = WorkbookFactory.create(
-                HSSFTestDataSamples.openSampleFileStream(xlsx_prot[0]), xlsx_prot[1]
+                HSSFTestDataSamples.openSampleFileStream(xlsx_protected[0]), xlsx_protected[1]
         );
         assertNotNull(wb);
         assertTrue(wb instanceof XSSFWorkbook);
-        assertCloseDoesNotModifyFile(xlsx_prot[0], wb);
+        assertCloseDoesNotModifyFile(xlsx_protected[0], wb);
 
 
         // Protected, wrong password, throws Exception
         try {
             wb = WorkbookFactory.create(
-                    HSSFTestDataSamples.openSampleFileStream(xls_prot[0]), "wrong"
+                    HSSFTestDataSamples.openSampleFileStream(xls_protected[0]), "wrong"
             );
-            assertCloseDoesNotModifyFile(xls_prot[0], wb);
+            assertCloseDoesNotModifyFile(xls_protected[0], wb);
             fail("Shouldn't be able to open with the wrong password");
-        } catch (EncryptedDocumentException e) {}
+        } catch (EncryptedDocumentException e) {
+            // expected here
+        }
 
         try {
             wb = WorkbookFactory.create(
-                    HSSFTestDataSamples.openSampleFileStream(xlsx_prot[0]), "wrong"
+                    HSSFTestDataSamples.openSampleFileStream(xlsx_protected[0]), "wrong"
             );
-            assertCloseDoesNotModifyFile(xlsx_prot[0], wb);
+            assertCloseDoesNotModifyFile(xlsx_protected[0], wb);
             fail("Shouldn't be able to open with the wrong password");
-        } catch (EncryptedDocumentException e) {}
+        } catch (EncryptedDocumentException e) {
+            // expected here
+        }
     }
 
     /**
@@ -304,28 +316,28 @@ public final class TestWorkbookFactory {
 
         // Protected, correct password, opens fine
         wb = WorkbookFactory.create(
-                HSSFTestDataSamples.getSampleFile(xls_prot[0]), xls_prot[1]
+                HSSFTestDataSamples.getSampleFile(xls_protected[0]), xls_protected[1]
         );
         assertNotNull(wb);
         assertTrue(wb instanceof HSSFWorkbook);
-        assertCloseDoesNotModifyFile(xls_prot[0], wb);
+        assertCloseDoesNotModifyFile(xls_protected[0], wb);
 
         wb = WorkbookFactory.create(
-                HSSFTestDataSamples.getSampleFile(xlsx_prot[0]), xlsx_prot[1]
+                HSSFTestDataSamples.getSampleFile(xlsx_protected[0]), xlsx_protected[1]
         );
         assertNotNull(wb);
         assertTrue(wb instanceof XSSFWorkbook);
         assertTrue(wb.getNumberOfSheets() > 0);
         assertNotNull(wb.getSheetAt(0));
         assertNotNull(wb.getSheetAt(0).getRow(0));
-        assertCloseDoesNotModifyFile(xlsx_prot[0], wb);
+        assertCloseDoesNotModifyFile(xlsx_protected[0], wb);
 
         // Protected, wrong password, throws Exception
         try {
             wb = WorkbookFactory.create(
-                    HSSFTestDataSamples.getSampleFile(xls_prot[0]), "wrong"
+                    HSSFTestDataSamples.getSampleFile(xls_protected[0]), "wrong"
             );
-            assertCloseDoesNotModifyFile(xls_prot[0], wb);
+            assertCloseDoesNotModifyFile(xls_protected[0], wb);
             fail("Shouldn't be able to open with the wrong password");
         } catch (EncryptedDocumentException e) {
             // expected here
@@ -333,9 +345,9 @@ public final class TestWorkbookFactory {
 
         try {
             wb = WorkbookFactory.create(
-                    HSSFTestDataSamples.getSampleFile(xlsx_prot[0]), "wrong"
+                    HSSFTestDataSamples.getSampleFile(xlsx_protected[0]), "wrong"
             );
-            assertCloseDoesNotModifyFile(xlsx_prot[0], wb);
+            assertCloseDoesNotModifyFile(xlsx_protected[0], wb);
             fail("Shouldn't be able to open with the wrong password");
         } catch (EncryptedDocumentException e) {
             // expected here
@@ -363,23 +375,81 @@ public final class TestWorkbookFactory {
         try {
             WorkbookFactory.create(emptyFile);
             fail("Shouldn't be able to create for an empty file");
-        } catch (final EmptyFileException expected) {}
-        emptyFile.delete();
+        } catch (final EmptyFileException expected) {
+            // expected here
+        }
+
+        assertTrue(emptyFile.delete());
     }
 
     /**
       * Check that a helpful exception is raised on a non-existing file
       */
     @Test
-    public void testNonExistantFile() throws Exception {
-        File nonExistantFile = new File("notExistantFile");
-        assertFalse(nonExistantFile.exists());
+    public void testNonExistingFile() throws Exception {
+        File nonExistingFile = new File("notExistingFile");
+        assertFalse(nonExistingFile.exists());
 
         try {
-            WorkbookFactory.create(nonExistantFile, "password", true);
-            fail("Should not be able to create for a non-existant file");
+            WorkbookFactory.create(nonExistingFile, "password", true);
+            fail("Should not be able to create for a non-existing file");
         } catch (final FileNotFoundException e) {
             // expected
+        }
+    }
+
+    /**
+     * See Bugzilla bug #62831 - #WorkbookFactory.create(File) needs
+     *  to work for sub-classes of File too, eg JFileChooser
+     */
+    @Test
+    public void testFileSubclass() throws Exception {
+        File normalXLS = HSSFTestDataSamples.getSampleFile(xls);
+        File normalXLSX = HSSFTestDataSamples.getSampleFile(xlsx);
+        File altXLS = new TestFile(normalXLS.getAbsolutePath());
+        File altXLSX = new TestFile(normalXLSX.getAbsolutePath());
+        assertTrue(altXLS.exists());
+        assertTrue(altXLSX.exists());
+
+        Workbook wb = WorkbookFactory.create(altXLS);
+        assertNotNull(wb);
+        assertTrue(wb instanceof HSSFWorkbook);
+        closeOrRevert(wb);
+
+        wb = WorkbookFactory.create(altXLSX);
+        assertNotNull(wb);
+        assertTrue(wb instanceof XSSFWorkbook);
+        closeOrRevert(wb);
+    }
+    
+    private static class TestFile extends File {
+        public TestFile(String file) {
+            super(file);
+        }
+    }
+
+    /**
+     * Check that the overloaded file methods which take passwords work properly
+     */
+    @Test
+    public void testCreateEmpty() throws Exception {
+        Workbook wb = WorkbookFactory.create(false);
+        assertTrue(wb instanceof HSSFWorkbook);
+        closeOrRevert(wb);
+
+        wb = WorkbookFactory.create(true);
+        assertTrue(wb instanceof XSSFWorkbook);
+        closeOrRevert(wb);
+    }
+
+    @Test
+    public void testInvalidFormatException() {
+        String filename = "OPCCompliance_DerivedPartNameFAIL.docx";
+        try {
+            WorkbookFactory.create(POIDataSamples.getOpenXML4JInstance().openResourceAsStream(filename));
+            fail("Expecting an Exception for this document");
+        } catch (IOException e) {
+            // expected here
         }
     }
 

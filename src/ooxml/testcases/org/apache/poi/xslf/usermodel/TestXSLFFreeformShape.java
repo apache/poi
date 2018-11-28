@@ -17,13 +17,13 @@
 package org.apache.poi.xslf.usermodel;
 
 
-import static org.apache.poi.xslf.usermodel.TestXSLFSimpleShape.getSpPr;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import org.apache.poi.sl.draw.SLGraphics;
+import org.junit.Test;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
@@ -33,10 +33,8 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-import org.junit.Test;
-import org.mockito.AdditionalAnswers;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
+import static org.apache.poi.xslf.usermodel.TestXSLFSimpleShape.getSpPr;
+import static org.junit.Assert.assertEquals;
 
 public class TestXSLFFreeformShape {
 
@@ -78,17 +76,32 @@ public class TestXSLFFreeformShape {
             BufferedImage img = new BufferedImage(300, 300, BufferedImage.TYPE_INT_ARGB);
             Graphics2D graphics = img.createGraphics();
             try {
-                Graphics2D graphicsMock = Mockito.mock(Graphics2D.class, AdditionalAnswers.delegatesTo(graphics));
+                // previously we used Mockito here, but since JDK 11 mocking the Graphics2D does
+                // not work any longer
+                Graphics2D graphicsMock = new SLGraphics(new XSLFGroupShape(CTGroupShape.Factory.newInstance(), slide)) {
+                    boolean called;
+
+                    @Override
+                    public void draw(Shape shape) {
+                        if(called) {
+                            throw new IllegalStateException("Should only be called once, but was called a second time");
+                        }
+                        called = true;
+
+                        if(!(shape instanceof Path2D.Double)) {
+                            throw new IllegalStateException("Expecting a shape of type Path2D.Double, but had " + shape.getClass());
+                        }
+
+                        Path2D.Double actual = (Path2D.Double) shape;
+                        PathIterator pi = actual.getPathIterator(new AffineTransform());
+                        comparePoint(pi, PathIterator.SEG_MOVETO, 100, 150);
+                        pi.next();
+                        comparePoint(pi, PathIterator.SEG_LINETO, 100, 300);
+
+                        super.draw(shape);
+                    }
+                };
                 slide.draw(graphicsMock);
-
-                ArgumentCaptor<Path2D.Double> captor = ArgumentCaptor.forClass(Path2D.Double.class);
-                verify(graphicsMock, times(1)).draw(captor.capture());
-
-                Path2D.Double actual = captor.getValue();
-                PathIterator pi = actual.getPathIterator(new AffineTransform());
-                comparePoint(pi, PathIterator.SEG_MOVETO, 100, 150);
-                pi.next();
-                comparePoint(pi, PathIterator.SEG_LINETO, 100, 300);
             } finally {
                 graphics.dispose();
             }

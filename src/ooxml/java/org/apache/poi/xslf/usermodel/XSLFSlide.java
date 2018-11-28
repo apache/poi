@@ -128,10 +128,12 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
         return "sld";
     }
 
+    @SuppressWarnings({"WeakerAccess", "ProtectedMemberInFinalClass"})
     protected void removeChartRelation(XSLFChart chart) {
         removeRelation(chart);
     }
 
+    @SuppressWarnings({"WeakerAccess", "ProtectedMemberInFinalClass"})
     protected void removeLayoutRelation(XSLFSlideLayout layout) {
         removeRelation(layout, false);
     }
@@ -164,6 +166,7 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
      * @return the comments part or {@code null} if there weren't any comments
      * @since POI 4.0.0
      */
+    @SuppressWarnings("WeakerAccess")
     public XSLFComments getCommentsPart() {
         if(_comments == null) {
             for (POIXMLDocumentPart p : getRelations()) {
@@ -181,6 +184,7 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
      * @return the comment authors part or {@code null} if there weren't any comments
      * @since POI 4.0.0
      */
+    @SuppressWarnings("WeakerAccess")
     public XSLFCommentAuthors getCommentAuthorsPart() {
         if(_commentAuthors == null) {
             // first scan the slide relations
@@ -209,6 +213,7 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
         final XSLFComments xComments = getCommentsPart();
         final XSLFCommentAuthors xAuthors = getCommentAuthorsPart();
         if (xComments != null) {
+            //noinspection deprecation
             for (final CTComment xc : xComments.getCTCommentsList().getCmArray()) {
                 comments.add(new XSLFComment(xc, xAuthors));
             }
@@ -268,6 +273,7 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
      *
      * @param value whether shapes on the master slide should be shown or not.
      */
+    @SuppressWarnings("WeakerAccess")
     public void setFollowMasterGraphics(boolean value){
         _slide.setShowMasterSp(value);
     }
@@ -310,7 +316,7 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
 
         if(bgOther.isSetBgPr() && bgOther.getBgPr().isSetBlipFill()){
             String idOther = bgOther.getBgPr().getBlipFill().getBlip().getEmbed();
-            String idThis = importBlip(idOther, src.getPackagePart());
+            String idThis = importBlip(idOther, src);
             bgThis.getBgPr().getBlipFill().getBlip().setEmbed(idThis);
 
         }
@@ -358,7 +364,7 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
     /**
      * Render this sheet into the supplied graphics object
      *
-     * @param graphics
+     * @param graphics the graphics context to draw to
      */
     @Override
     public void draw(Graphics2D graphics){

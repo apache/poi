@@ -133,4 +133,18 @@ public class TestXWPFTableCell {
             }
         }
     }
+    
+    @Test
+    public void testCellGetSetWidth() throws Exception {
+        XWPFDocument doc = new XWPFDocument();
+        XWPFTable table = doc.createTable();
+        XWPFTableRow tr = table.createRow();        
+        XWPFTableCell cell = tr.addNewTableCell();
+        
+        cell.setWidth("50%");
+        assertEquals(TableWidthType.PCT, cell.getWidthType());
+        assertEquals(50.0, cell.getWidthDecimal(), 0.0);
+        assertEquals(2500, cell.getWidth());
+        doc.close();
+    }
 }

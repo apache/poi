@@ -18,7 +18,7 @@
 package org.apache.poi.poifs.macros;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.StringUtil;
 import org.junit.Ignore;
@@ -40,7 +40,7 @@ import java.util.Map;
 public class TestVBAMacroReader {
     private static final Map<POIDataSamples, String> expectedMacroContents;
 
-    protected static String readVBA(POIDataSamples poiDataSamples) {
+    private static String readVBA(POIDataSamples poiDataSamples) {
         File macro = poiDataSamples.getFile("SimpleMacro.vba");
         final byte[] bytes;
         try {
@@ -168,14 +168,14 @@ public class TestVBAMacroReader {
         fromNPOIFS(POIDataSamples.getDiagramInstance(), "SimpleMacro.vsd");
     }
 
-    protected void fromFile(POIDataSamples dataSamples, String filename) throws IOException {
+    private void fromFile(POIDataSamples dataSamples, String filename) throws IOException {
         File f = dataSamples.getFile(filename);
         try (VBAMacroReader r = new VBAMacroReader(f)) {
             assertMacroContents(dataSamples, r);
         }
     }
 
-    protected void fromStream(POIDataSamples dataSamples, String filename) throws IOException {
+    private void fromStream(POIDataSamples dataSamples, String filename) throws IOException {
         try (InputStream fis = dataSamples.openResourceAsStream(filename)) {
             try (VBAMacroReader r = new VBAMacroReader(fis)) {
                 assertMacroContents(dataSamples, r);
@@ -183,16 +183,16 @@ public class TestVBAMacroReader {
         }
     }
 
-    protected void fromNPOIFS(POIDataSamples dataSamples, String filename) throws IOException {
+    private void fromNPOIFS(POIDataSamples dataSamples, String filename) throws IOException {
         File f = dataSamples.getFile(filename);
-        try (NPOIFSFileSystem fs = new NPOIFSFileSystem(f)) {
+        try (POIFSFileSystem fs = new POIFSFileSystem(f)) {
             try (VBAMacroReader r = new VBAMacroReader(fs)) {
                 assertMacroContents(dataSamples, r);
             }
         }
     }
     
-    protected void assertMacroContents(POIDataSamples samples, VBAMacroReader r) throws IOException {
+    private void assertMacroContents(POIDataSamples samples, VBAMacroReader r) throws IOException {
         assertNotNull(r);
         Map<String,Module> contents = r.readMacroModules();
         assertNotNull(contents);
@@ -284,6 +284,37 @@ public class TestVBAMacroReader {
         String content = macros.get("ThisDocument");
         assertContains(content, "Attribute VB_Base = \"1Normal.ThisDocument\"");
         assertContains(content, "Attribute VB_Customizable = True");
+        r.close();
+    }
+
+    @Test
+    public void bug62624() throws IOException {
+        //macro comes from Common Crawl: HRLOXHGMGLFIJQQU27RIWXOARRHAAAAS
+        File f = POIDataSamples.getSpreadSheetInstance().getFile("62624.bin");
+        VBAMacroReader r = new VBAMacroReader(f);
+
+        Map<String, Module> macros = r.readMacroModules();
+        assertEquals(13, macros.size());
+        assertNotNull(macros.get("M\u00F3dulo1"));
+        assertContains(macros.get("M\u00F3dulo1").getContent(), "Calcula_tributos");
+        assertEquals(Module.ModuleType.Module, macros.get("M\u00F3dulo1").geModuleType());
+        r.close();
+    }
+
+    @Test
+    public void bug62625() throws IOException {
+        //macro comes from Common Crawl: 4BZ22N5QG5R2SUU2MNN47PO7VBQLNYIQ
+        //A REFERENCE_NAME can sometimes only have an ascii string without
+        //a reserved byte followed by the unicode string.
+        //See https://github.com/decalage2/oletools/blob/master/oletools/olevba.py#L1516
+        //and https://github.com/decalage2/oletools/pull/135 from (@c1fe)
+
+
+        File f = POIDataSamples.getSpreadSheetInstance().getFile("62625.bin");
+        VBAMacroReader r = new VBAMacroReader(f);
+
+        Map<String, Module> macros = r.readMacroModules();
+        assertEquals(20, macros.size());
         r.close();
     }
 }

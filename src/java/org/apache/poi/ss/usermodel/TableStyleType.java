@@ -65,7 +65,7 @@ public enum TableStyleType {
             // could do fancy math, but tables can't be that wide, a simple loop is fine
             // if not in this type of stripe, return null
             while (firstStart <= c) {
-                if (c >= firstStart && c <= secondStart -1) {
+                if (c <= secondStart -1) {
                     return new CellRangeAddress(table.getStartRowIndex(), table.getEndRowIndex(), firstStart, secondStart - 1);
                 }
                 firstStart = secondStart + c2Stripe;
@@ -121,7 +121,7 @@ public enum TableStyleType {
             // could do fancy math, but tables can't be that wide, a simple loop is fine
             // if not in this type of stripe, return null
             while (firstStart <= c) {
-                if (c >= firstStart && c <= secondStart -1) {
+                if (c <= secondStart -1) {
                     return new CellRangeAddress(firstStart, secondStart - 1, table.getStartColIndex(), table.getEndColIndex());
                 }
                 firstStart = secondStart + c2Stripe;

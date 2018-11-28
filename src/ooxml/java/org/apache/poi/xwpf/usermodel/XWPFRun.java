@@ -31,8 +31,11 @@ import javax.xml.namespace.QName;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ooxml.util.DocumentHelper;
+import org.apache.poi.util.HexDump;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 import org.apache.poi.wp.usermodel.CharacterRun;
+import org.apache.xmlbeans.SimpleValue;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -56,33 +59,7 @@ import org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
 import org.openxmlformats.schemas.drawingml.x2006.picture.CTPictureNonVisual;
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.CTAnchor;
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.CTInline;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTColor;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDrawing;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTEmpty;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFFCheckBox;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFldChar;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFtnEdnRef;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHpsMeasure;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPTab;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRuby;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRubyContent;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSignedHpsMeasure;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSignedTwipsMeasure;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTUnderline;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTVerticalAlignRun;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBrClear;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBrType;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STFldCharType;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHighlightColor;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STUnderline;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalAlignRun;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.xml.sax.InputSource;
@@ -260,7 +237,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * @return the language tag associated with this run, if any
      */
     public String getLang() {
-        CTRPr pr = run.getRPr();
+        CTRPr pr = getRunProperties(false);
         Object lang = pr == null || !pr.isSetLang() ? null : pr.getLang().getVal();
         return (String) lang;
     }
@@ -273,7 +250,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     @Override
     public boolean isBold() {
-        CTRPr pr = run.getRPr();
+        CTRPr pr = getRunProperties(false);
         return pr != null && pr.isSetB() && isCTOnOff(pr.getB());
     }
 
@@ -303,7 +280,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     @Override
     public void setBold(boolean value) {
-        CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
+        CTRPr pr = getRunProperties(true);
         CTOnOff bold = pr.isSetB() ? pr.getB() : pr.addNewB();
         bold.setVal(value ? STOnOff.TRUE : STOnOff.FALSE);
     }
@@ -314,8 +291,8 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     public String getColor() {
         String color = null;
         if (run.isSetRPr()) {
-            CTRPr pr = run.getRPr();
-            if (pr.isSetColor()) {
+            CTRPr pr = getRunProperties(false);
+            if (pr != null && pr.isSetColor()) {
                 CTColor clr = pr.getColor();
                 color = clr.xgetVal().getStringValue();
             }
@@ -329,7 +306,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * @param rgbStr - the desired color, in the hex form "RRGGBB".
      */
     public void setColor(String rgbStr) {
-        CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
+        CTRPr pr = getRunProperties(true);
         CTColor color = pr.isSetColor() ? pr.getColor() : pr.addNewColor();
         color.setVal(rgbStr);
     }
@@ -383,7 +360,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     @Override
     public boolean isItalic() {
-        CTRPr pr = run.getRPr();
+        CTRPr pr = getRunProperties(false);
         return pr != null && pr.isSetI() && isCTOnOff(pr.getI());
     }
 
@@ -414,29 +391,32 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     @Override
     public void setItalic(boolean value) {
-        CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
+        CTRPr pr = getRunProperties(true);
         CTOnOff italic = pr.isSetI() ? pr.getI() : pr.addNewI();
         italic.setVal(value ? STOnOff.TRUE : STOnOff.FALSE);
     }
 
     /**
-     * Specifies that the contents of this run should be displayed along with an
-     * underline appearing directly below the character heigh
+     * Get the underline setting for the run.
      *
-     * @return the Underline pattern applyed to this run
-     * @see UnderlinePatterns
+     * @return the Underline pattern applied to this run
+     * @see (@link UnderlinePatterns}
      */
     public UnderlinePatterns getUnderline() {
-        CTRPr pr = run.getRPr();
-        return (pr != null && pr.isSetU() && pr.getU().getVal() != null)
-                ? UnderlinePatterns.valueOf(pr.getU().getVal().intValue())
-                : UnderlinePatterns.NONE;
+        UnderlinePatterns value = UnderlinePatterns.NONE;
+        CTUnderline underline = getCTUnderline(false);
+        if (underline != null) {
+            STUnderline.Enum baseValue = underline.getVal();
+            if (baseValue != null) {
+                value = UnderlinePatterns.valueOf(baseValue.intValue());
+            }
+        }
+        return value;
     }
 
     /**
      * Specifies that the contents of this run should be displayed along with an
-     * underline appearing directly below the character heigh
-     * <p>
+     * underline appearing directly below the character height.
      * <p>
      * If this element is not present, the default value is to leave the
      * formatting applied at previous level in the style hierarchy. If this
@@ -446,14 +426,98 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      *
      * @param value -
      *              underline type
-     * @see UnderlinePatterns : all possible patterns that could be applied
+     * @see {@link UnderlinePatterns} : all possible patterns that could be applied
      */
     public void setUnderline(UnderlinePatterns value) {
-        CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
-        CTUnderline underline = (pr.getU() == null) ? pr.addNewU() : pr.getU();
+        CTUnderline underline = getCTUnderline(true);
         underline.setVal(STUnderline.Enum.forInt(value.getValue()));
     }
 
+    /**
+     * Get the CTUnderline for the run.
+     * @param create Create a new underline if necessary
+     * @return The underline, or null create is false and there is no underline.
+     */
+    private CTUnderline getCTUnderline(boolean create) {
+        CTRPr pr = getRunProperties(true);
+        CTUnderline underline = pr.getU();
+        if (create && underline == null) {
+            underline = pr.addNewU();
+        }
+        return underline;
+    }
+
+    /**
+     * Set the underline color for the run's underline, if any.
+     *
+     * @param color An RGB color value (e.g, "a0C6F3") or "auto". 
+     * @since 4.0.0
+     */
+    public void setUnderlineColor(String color) {
+        CTUnderline underline = getCTUnderline(true);
+        SimpleValue svColor = null;
+        if (color.equals("auto")) {
+            STHexColorAuto hexColor = STHexColorAuto.Factory.newInstance();
+            hexColor.set(STHexColorAuto.Enum.forString(color));
+            svColor = (SimpleValue) hexColor;
+        } else {
+            STHexColorRGB rgbColor = STHexColorRGB.Factory.newInstance();
+            rgbColor.setStringValue(color);
+            svColor = (SimpleValue) rgbColor;
+        }
+        underline.setColor(svColor);
+    }
+    
+    /**
+     * Set the underline theme color for the run's underline, if any.
+     *
+     * @param themeColor A theme color name (see {@link STThemeColor.Enum}). 
+     * @since 4.0.0
+     */
+    public void setUnderlineThemeColor(String themeColor) {
+        CTUnderline underline = getCTUnderline(true);
+        STThemeColor.Enum val = STThemeColor.Enum.forString(themeColor);
+        if (val != null) {
+            underline.setThemeColor(val);
+        }
+    }
+    
+    /**
+     * Get the underline theme color for the run's underline, if any.
+     *
+     * @return The {@link STThemeColor.Enum}.
+     * @since 4.0.0
+     */
+    public STThemeColor.Enum getUnderlineThemeColor() {
+        CTUnderline underline = getCTUnderline(false);
+        STThemeColor.Enum color = STThemeColor.NONE;
+        if (underline != null) {
+            color = underline.getThemeColor();
+        }
+        return color;
+    }
+    
+    /**
+     * Get the underline color for the run's underline, if any.
+     *
+     * @return The RGB color value as as a string of hexadecimal digits (e.g., "A0B2F1") or "auto".
+     * @since 4.0.0
+     */
+    public String getUnderlineColor() {
+        CTUnderline underline = getCTUnderline(true);
+        String colorName = "auto";
+        Object rawValue = underline.getColor();
+        if (rawValue != null) {
+            if (rawValue instanceof String) {
+                colorName = (String)rawValue;
+            } else {
+                byte[] rgbColor = (byte[])rawValue;
+                colorName = HexDump.toHex(rgbColor[0]) + HexDump.toHex(rgbColor[1]) + HexDump.toHex(rgbColor[2]);
+            }
+        }
+        return colorName;
+    }
+    
     /**
      * Specifies that the contents of this run shall be displayed with a single
      * horizontal line through the center of the line.
@@ -462,7 +526,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     @Override
     public boolean isStrikeThrough() {
-        CTRPr pr = run.getRPr();
+        CTRPr pr = getRunProperties(false);
         return pr != null && pr.isSetStrike() && isCTOnOff(pr.getStrike());
     }
 
@@ -492,7 +556,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     @Override
     public void setStrikeThrough(boolean value) {
-        CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
+        CTRPr pr = getRunProperties(true);
         CTOnOff strike = pr.isSetStrike() ? pr.getStrike() : pr.addNewStrike();
         strike.setVal(value ? STOnOff.TRUE : STOnOff.FALSE);
     }
@@ -515,7 +579,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     @Override
     public boolean isDoubleStrikeThrough() {
-        CTRPr pr = run.getRPr();
+        CTRPr pr = getRunProperties(false);
         return pr != null && pr.isSetDstrike() && isCTOnOff(pr.getDstrike());
     }
 
@@ -527,72 +591,72 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     @Override
     public void setDoubleStrikethrough(boolean value) {
-        CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
+        CTRPr pr = getRunProperties(true);
         CTOnOff dstrike = pr.isSetDstrike() ? pr.getDstrike() : pr.addNewDstrike();
         dstrike.setVal(value ? STOnOff.TRUE : STOnOff.FALSE);
     }
 
     @Override
     public boolean isSmallCaps() {
-        CTRPr pr = run.getRPr();
+        CTRPr pr = getRunProperties(false);
         return pr != null && pr.isSetSmallCaps() && isCTOnOff(pr.getSmallCaps());
     }
 
     @Override
     public void setSmallCaps(boolean value) {
-        CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
+        CTRPr pr = getRunProperties(true);
         CTOnOff caps = pr.isSetSmallCaps() ? pr.getSmallCaps() : pr.addNewSmallCaps();
         caps.setVal(value ? STOnOff.TRUE : STOnOff.FALSE);
     }
 
     @Override
     public boolean isCapitalized() {
-        CTRPr pr = run.getRPr();
+        CTRPr pr = getRunProperties(false);
         return pr != null && pr.isSetCaps() && isCTOnOff(pr.getCaps());
     }
 
     @Override
     public void setCapitalized(boolean value) {
-        CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
+        CTRPr pr = getRunProperties(true);
         CTOnOff caps = pr.isSetCaps() ? pr.getCaps() : pr.addNewCaps();
         caps.setVal(value ? STOnOff.TRUE : STOnOff.FALSE);
     }
 
     @Override
     public boolean isShadowed() {
-        CTRPr pr = run.getRPr();
+        CTRPr pr = getRunProperties(false);
         return pr != null && pr.isSetShadow() && isCTOnOff(pr.getShadow());
     }
 
     @Override
     public void setShadow(boolean value) {
-        CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
+        CTRPr pr = getRunProperties(true);
         CTOnOff shadow = pr.isSetShadow() ? pr.getShadow() : pr.addNewShadow();
         shadow.setVal(value ? STOnOff.TRUE : STOnOff.FALSE);
     }
 
     @Override
     public boolean isImprinted() {
-        CTRPr pr = run.getRPr();
+        CTRPr pr = getRunProperties(false);
         return pr != null && pr.isSetImprint() && isCTOnOff(pr.getImprint());
     }
 
     @Override
     public void setImprinted(boolean value) {
-        CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
+        CTRPr pr = getRunProperties(true);
         CTOnOff imprinted = pr.isSetImprint() ? pr.getImprint() : pr.addNewImprint();
         imprinted.setVal(value ? STOnOff.TRUE : STOnOff.FALSE);
     }
 
     @Override
     public boolean isEmbossed() {
-        CTRPr pr = run.getRPr();
+        CTRPr pr = getRunProperties(false);
         return pr != null && pr.isSetEmboss() && isCTOnOff(pr.getEmboss());
     }
 
     @Override
     public void setEmbossed(boolean value) {
-        CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
+        CTRPr pr = getRunProperties(true);
         CTOnOff emboss = pr.isSetEmboss() ? pr.getEmboss() : pr.addNewEmboss();
         emboss.setVal(value ? STOnOff.TRUE : STOnOff.FALSE);
     }
@@ -604,10 +668,12 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * altering the font size of the run properties.
      *
      * @return VerticalAlign
-     * @see VerticalAlign all possible value that could be applyed to this run
+     * @see {@link VerticalAlign} all possible value that could be applyed to this run
+     * @deprecated use {@link XWPFRun.getVerticalAlignment}
      */
+    @Removal(version = "4.2")
     public VerticalAlign getSubscript() {
-        CTRPr pr = run.getRPr();
+        CTRPr pr = getRunProperties(false);
         return (pr != null && pr.isSetVertAlign()) ? VerticalAlign.valueOf(pr.getVertAlign().getVal().intValue()) : VerticalAlign.BASELINE;
     }
 
@@ -628,14 +694,14 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * @see VerticalAlign
      */
     public void setSubscript(VerticalAlign valign) {
-        CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
+        CTRPr pr = getRunProperties(true);
         CTVerticalAlignRun ctValign = pr.isSetVertAlign() ? pr.getVertAlign() : pr.addNewVertAlign();
         ctValign.setVal(STVerticalAlignRun.Enum.forInt(valign.getValue()));
     }
 
     @Override
     public int getKerning() {
-        CTRPr pr = run.getRPr();
+        CTRPr pr = getRunProperties(false);
         if (pr == null || !pr.isSetKern()) {
             return 0;
         }
@@ -644,18 +710,19 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
 
     @Override
     public void setKerning(int kern) {
-        CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
+        CTRPr pr = getRunProperties(true);
         CTHpsMeasure kernmes = pr.isSetKern() ? pr.getKern() : pr.addNewKern();
         kernmes.setVal(BigInteger.valueOf(kern));
     }
 
     @Override
     public boolean isHighlighted() {
-        CTRPr pr = run.getRPr();
+        CTRPr pr = getRunProperties(false);
         if (pr == null || !pr.isSetHighlight()) {
             return false;
         }
-        if (pr.getHighlight().getVal() == STHighlightColor.NONE) {
+        STHighlightColor.Enum val = pr.getHighlight().getVal();
+        if (val == null || val == STHighlightColor.NONE) {
             return false;
         }
         return true;
@@ -665,7 +732,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
 
     @Override
     public int getCharacterSpacing() {
-        CTRPr pr = run.getRPr();
+        CTRPr pr = getRunProperties(false);
         if (pr == null || !pr.isSetSpacing()) {
             return 0;
         }
@@ -674,7 +741,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
 
     @Override
     public void setCharacterSpacing(int twips) {
-        CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
+        CTRPr pr = getRunProperties(true);
         CTSignedTwipsMeasure spc = pr.isSetSpacing() ? pr.getSpacing() : pr.addNewSpacing();
         spc.setVal(BigInteger.valueOf(twips));
     }
@@ -720,7 +787,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * @return a string representing the font famil
      */
     public String getFontFamily(FontCharRange fcr) {
-        CTRPr pr = run.getRPr();
+        CTRPr pr = getRunProperties(false);
         if (pr == null || !pr.isSetRFonts()) {
             return null;
         }
@@ -749,7 +816,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * @param fcr        FontCharRange or null for default handling
      */
     public void setFontFamily(String fontFamily, FontCharRange fcr) {
-        CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
+        CTRPr pr = getRunProperties(true);
         CTFonts fonts = pr.isSetRFonts() ? pr.getRFonts() : pr.addNewRFonts();
 
         if (fcr == null) {
@@ -789,7 +856,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     @Override
     public int getFontSize() {
-        CTRPr pr = run.getRPr();
+        CTRPr pr = getRunProperties(false);
         return (pr != null && pr.isSetSz()) ? pr.getSz().getVal().divide(new BigInteger("2")).intValue() : -1;
     }
 
@@ -808,7 +875,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     @Override
     public void setFontSize(int size) {
         BigInteger bint = new BigInteger(Integer.toString(size));
-        CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
+        CTRPr pr = getRunProperties(true);
         CTHpsMeasure ctSize = pr.isSetSz() ? pr.getSz() : pr.addNewSz();
         ctSize.setVal(bint.multiply(new BigInteger("2")));
     }
@@ -822,7 +889,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * @return a big integer representing the amount of text shall be "moved"
      */
     public int getTextPosition() {
-        CTRPr pr = run.getRPr();
+        CTRPr pr = getRunProperties(false);
         return (pr != null && pr.isSetPosition()) ? pr.getPosition().getVal().intValue()
                 : -1;
     }
@@ -852,7 +919,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public void setTextPosition(int val) {
         BigInteger bint = new BigInteger(Integer.toString(val));
-        CTRPr pr = run.isSetRPr() ? run.getRPr() : run.addNewRPr();
+        CTRPr pr = getRunProperties(true);
         CTSignedHpsMeasure position = pr.isSetPosition() ? pr.getPosition() : pr.addNewPosition();
         position.setVal(bint);
     }
@@ -1121,6 +1188,22 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     public List<XWPFPicture> getEmbeddedPictures() {
         return pictures;
     }
+    
+    /**
+     * Set the style ID for the run.
+     *
+     * @param styleId ID (not name) of the style to set for the run, e.g. "BoldItalic" (not "Bold Italic").
+     */
+    public void setStyle(String styleId) {
+        CTRPr pr = getCTR().getRPr();
+        if (null == pr) {
+           pr = getCTR().addNewRPr();
+        }
+        CTString style = pr.getRStyle() != null ? pr.getRStyle() : pr.addNewRStyle();
+        style.setVal(styleId);
+    }
+
+    
 
     /**
      * Returns the string version of the text and the phonetic string
@@ -1288,4 +1371,186 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         eastAsia /* east asia */,
         hAnsi /* high ansi */
     }
+
+    /**
+     * Set the text expand/collapse scale value.
+     *
+     * @param percentage The percentage to expand or compress the text
+     * @since 4.0.0
+     */
+    public void setTextScale(int percentage) {
+        CTRPr pr = getRunProperties(true);
+        CTTextScale scale = pr.isSetW() ? pr.getW() : pr.addNewW();
+        scale.setVal(percentage);        
+    }
+
+    /**
+     * Gets the current text scale value.
+     *
+     * @return Value is an integer percentage
+     * @since 4.0.0
+     */
+    public int getTextScale() {
+        CTRPr pr = getRunProperties(true);
+        CTTextScale scale = pr.isSetW() ? pr.getW() : pr.addNewW();
+        int value = scale.getVal();
+        if (value == 0) {
+            value = 100; // 100% scaling, that is, no change. See 17.3.2.43 w (Expanded/Compressed Text)
+        }
+        return value;
+    }
+
+    /**
+     * Set the highlight color for the run. Silently does nothing of colorName is not a recognized value.
+     *
+     * @param colorName The name of the color as defined in the ST_HighlightColor simple type ({@link STHightlightColor})
+     * @since 4.0.0
+     */
+    public void setTextHighlightColor(String colorName) {
+        CTRPr pr = getRunProperties(true);
+        CTHighlight highlight = pr.isSetHighlight() ? pr.getHighlight() : pr.addNewHighlight();
+        STHighlightColor color = highlight.xgetVal();
+        if (color == null) {
+            color = STHighlightColor.Factory.newInstance();            
+        }
+        STHighlightColor.Enum val = STHighlightColor.Enum.forString(colorName);
+        if (val != null) {
+            color.setStringValue(val.toString());
+            highlight.xsetVal(color);
+        }
+         
+    }
+
+    /**
+     * Gets the highlight color for the run
+     *
+     * @return {@link STHighlightColor} for the run.
+     * @since 4.0.0
+     */
+    public STHighlightColor.Enum getTextHightlightColor() {
+        CTRPr pr = getRunProperties(true);
+        CTHighlight highlight = pr.isSetHighlight() ? pr.getHighlight() : pr.addNewHighlight();
+        STHighlightColor color = highlight.xgetVal();
+        if (color == null) {
+            color = STHighlightColor.Factory.newInstance();
+            color.set(STHighlightColor.NONE);
+        }
+        return (STHighlightColor.Enum)(color.enumValue());
+    }
+
+    /**
+     * Get the vanish (hidden text) value
+     *
+     * @return True if the run is hidden text.
+     * @since 4.0.0
+     */
+    public boolean isVanish() {
+        CTRPr pr = getRunProperties(true);
+        return pr != null && pr.isSetVanish() && isCTOnOff(pr.getVanish());
+    }
+
+    /**
+     * The vanish (hidden text) property for the run. 
+     *
+     * @param value Set to true to make the run hidden text.
+     * @since 4.0.0
+     */
+    public void setVanish(boolean value) {
+        CTRPr pr = getRunProperties(true);
+        CTOnOff vanish = pr.isSetVanish() ? pr.getVanish() : pr.addNewVanish();
+        vanish.setVal(value ? STOnOff.TRUE : STOnOff.FALSE);
+    }
+
+    /**
+     * Get the vertical alignment value
+     *
+     * @return {@link STVerticalAlignRun.Enum} value (see 22.9.2.17 ST_VerticalAlignRun (Vertical Positioning Location))
+     * @since 4.0.0
+     */
+    public STVerticalAlignRun.Enum getVerticalAlignment() {
+        CTRPr pr = getRunProperties(true);
+        CTVerticalAlignRun vertAlign = pr.isSetVertAlign() ? pr.getVertAlign() : pr.addNewVertAlign();
+        STVerticalAlignRun.Enum val = vertAlign.getVal();
+        if (val == null) {
+            val = STVerticalAlignRun.BASELINE;
+        }
+        return val;
+    }
+
+    /**
+     * Set the vertical alignment of the run.
+     *
+     * @param verticalAlignment Vertical alignment value, one of "baseline", "superscript", or "subscript".
+     * @since 4.0.0
+     */
+    public void setVerticalAlignment(String verticalAlignment) {
+        CTRPr pr = getRunProperties(true);
+        CTVerticalAlignRun vertAlign = pr.isSetVertAlign() ? pr.getVertAlign() : pr.addNewVertAlign();
+        STVerticalAlignRun align = vertAlign.xgetVal();
+        if (align == null) {
+            align = STVerticalAlignRun.Factory.newInstance();            
+        }
+        STVerticalAlignRun.Enum val = STVerticalAlignRun.Enum.forString(verticalAlignment);
+        if (val != null) {
+            align.setStringValue(val.toString());
+            vertAlign.xsetVal(align);
+        }
+        
+        
+    }
+
+    /**
+     * Get the emphasis mark value for the run.
+     *
+     * @return {@link STEm.Enum} emphasis mark type enumeration. See 17.18.24 ST_Em (Emphasis Mark Type).
+     * @since 4.0.0
+     */
+    public STEm.Enum getEmphasisMark() {
+        CTRPr pr = getRunProperties(true);
+        CTEm emphasis = pr.isSetEm() ? pr.getEm() : pr.addNewEm();
+        
+        STEm.Enum val = emphasis.getVal();
+        if (val == null) {
+            val = STEm.NONE;
+        }
+        return val;
+    }
+
+    /**
+     * Set the emphasis mark for the run. The emphasis mark goes above or below the run
+     * text.
+     *
+     * @param markType Emphasis mark type name, e.g., "dot" or "none". See 17.18.24 ST_Em (Emphasis Mark Type)
+     * @since 4.0.0
+     */
+    public void setEmphasisMark(String markType) {
+        CTRPr pr = getRunProperties(true);
+        CTEm emphasisMark = pr.isSetEm() ? pr.getEm() : pr.addNewEm();
+        STEm mark = emphasisMark.xgetVal();
+        if (mark == null) {
+            mark = STEm.Factory.newInstance();            
+        }
+        STEm.Enum val = STEm.Enum.forString(markType);
+        if (val != null) {
+            mark.setStringValue(val.toString());
+            emphasisMark.xsetVal(mark);
+        }
+
+        
+    }
+    
+    /**
+     * Get the run properties for the run.
+     *
+     * @param create If true, create the properties, if false, do not.
+     * @return The run properties or null if there are no properties and create is false.
+     */
+    private CTRPr getRunProperties(boolean create) {
+        CTRPr pr = run.isSetRPr() ? run.getRPr() : null;
+        if (create && pr == null) {
+            pr = run.addNewRPr();
+        }
+        return pr;
+    }
+
 }

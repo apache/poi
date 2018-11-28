@@ -94,8 +94,6 @@ public final class MissingRecordAwareHSSFListener implements HSSFListener {
 					break;
 				case RowRecord.sid:
 					RowRecord rowrec = (RowRecord) record;
-					//System.out.println("Row " + rowrec.getRowNumber() + " found, first column at "
-					//        + rowrec.getFirstCol() + " last column at " + rowrec.getLastCol());
 
 					// If there's a jump in rows, fire off missing row records
 					if (lastRowRow + 1 < rowrec.getRowNumber()) {

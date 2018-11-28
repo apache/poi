@@ -101,7 +101,7 @@ public final class ZipPackage extends OPCPackage {
      */
     ZipPackage(InputStream in, PackageAccess access) throws IOException {
         super(access);
-        ZipArchiveThresholdInputStream zis = ZipHelper.openZipStream(in);
+        ZipArchiveThresholdInputStream zis = ZipHelper.openZipStream(in); // NOSONAR
         try {
             this.zipArchive = new ZipInputStreamZipEntrySource(zis);
         } catch (final IOException e) {
@@ -250,6 +250,9 @@ public final class ZipPackage extends OPCPackage {
         final ZipArchiveEntry contentTypeEntry =
                 zipArchive.getEntry(CONTENT_TYPES_PART_NAME);
         if (contentTypeEntry != null) {
+            if (this.contentTypeManager != null) {
+                throw new InvalidFormatException("ContentTypeManager can only be created once. This must be a cyclic relation?");
+            }
             try {
                 this.contentTypeManager = new ZipContentTypeManager(
                         zipArchive.getInputStream(contentTypeEntry), this);

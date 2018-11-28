@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart;
+import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.util.Internal;
 import org.apache.poi.wp.usermodel.Paragraph;
 import org.apache.xmlbeans.XmlCursor;
@@ -75,21 +76,24 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                 if (o instanceof CTFtnEdnRef) {
                     CTFtnEdnRef ftn = (CTFtnEdnRef) o;
                     footnoteText.append(" [").append(ftn.getId()).append(": ");
-                    XWPFFootnote footnote =
+                    XWPFAbstractFootnoteEndnote footnote =
                             ftn.getDomNode().getLocalName().equals("footnoteReference") ?
                                     document.getFootnoteByID(ftn.getId().intValue()) :
                                     document.getEndnoteByID(ftn.getId().intValue());
-
-                    boolean first = true;
-                    for (XWPFParagraph p : footnote.getParagraphs()) {
-                        if (!first) {
-                            footnoteText.append("\n");
+                    if (null != footnote) {
+                        boolean first = true;
+                        for (XWPFParagraph p : footnote.getParagraphs()) {
+                            if (!first) {
+                                footnoteText.append("\n");
+                            }
+                            first = false;
+                            footnoteText.append(p.getText());
                         }
-                        first = false;
-                        footnoteText.append(p.getText());
+                    } else {
+                        footnoteText.append("!!! End note with ID \"" + ftn.getId() + "\" not found in document.");
                     }
-
                     footnoteText.append("] ");
+
                 }
             }
             c.dispose();
@@ -1329,15 +1333,14 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     }
 
     /**
-     * This method provides a style to the paragraph
-     * This is useful when, e.g. an Heading style has to be assigned
+     * Set the style ID for the paragraph
      *
-     * @param newStyle
+     * @param styleId ID (not name) of the style to set for the paragraph, e.g. "Heading1" (not "Heading 1").
      */
-    public void setStyle(String newStyle) {
+    public void setStyle(String styleId) {
         CTPPr pr = getCTPPr();
         CTString style = pr.getPStyle() != null ? pr.getPStyle() : pr.addNewPStyle();
-        style.setVal(newStyle);
+        style.setVal(styleId);
     }
 
     /**
@@ -1666,5 +1669,23 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
             }
         }
         return null;
+    }
+
+    /**
+     * Add a new run with a reference to the specified footnote.
+     * The footnote reference run will have the style name "FootnoteReference".
+     *
+     * @param footnote Footnote to which to add a reference.
+     * @since 4.0.0
+     */
+    public void addFootnoteReference(XWPFAbstractFootnoteEndnote footnote) {
+        XWPFRun run = createRun();
+        CTR ctRun = run.getCTR();
+        ctRun.addNewRPr().addNewRStyle().setVal("FootnoteReference");
+        if (footnote instanceof XWPFEndnote) {
+            ctRun.addNewEndnoteReference().setId(footnote.getId());
+        } else {
+            ctRun.addNewFootnoteReference().setId(footnote.getId());
+        }
     }
 }

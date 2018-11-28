@@ -26,7 +26,7 @@ import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * <p>This is a sample application showing how to easily modify properties in
@@ -79,7 +79,7 @@ public class ModifyDocumentSummaryInformation {
         File summaryFile = new File(args[0]);
 
         /* Open the POI filesystem. */
-        try (NPOIFSFileSystem poifs = new NPOIFSFileSystem(summaryFile, false)) {
+        try (POIFSFileSystem poifs = new POIFSFileSystem(summaryFile, false)) {
 
             /* Read the summary information. */
             DirectoryEntry dir = poifs.getRoot();
@@ -128,7 +128,7 @@ public class ModifyDocumentSummaryInformation {
             /* Insert some custom properties into the container. */
             customProperties.put("Key 1", "Value 1");
             customProperties.put("Schl\u00fcssel 2", "Wert 2");
-            customProperties.put("Sample Number", new Integer(12345));
+            customProperties.put("Sample Number", 12345);
             customProperties.put("Sample Boolean", Boolean.TRUE);
             customProperties.put("Sample Date", new Date());
 

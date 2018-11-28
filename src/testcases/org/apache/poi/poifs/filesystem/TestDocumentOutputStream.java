@@ -18,13 +18,13 @@
 
 package org.apache.poi.poifs.filesystem;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 
+import org.apache.poi.util.IOUtils;
 import org.junit.Test;
 
 /**
@@ -37,30 +37,28 @@ public final class TestDocumentOutputStream {
      */
     @Test
     public void testWrite1() throws IOException {
-        ByteArrayOutputStream stream  = new ByteArrayOutputStream();
-        DocumentOutputStream  dstream = new DocumentOutputStream(stream, 25);
+        final byte[] expected = data(25);
 
-        for (int j = 0; j < 25; j++)
-        {
-            dstream.write(j);
-        }
-        try
-        {
-            dstream.write(0);
-            fail("Should have caught IOException");
-        }
-        catch (IOException ignored)
-        {
-        }
-        byte[] output = stream.toByteArray();
+        POIFSWriterListener l = (event) -> {
+            DocumentOutputStream dstream = event.getStream();
 
-        assertEquals(25, output.length);
-        for (int j = 0; j < 25; j++)
-        {
-            assertEquals(( byte ) j, output[ j ]);
-        }
-        dstream.close();
-        stream.close();
+            try {
+                for (byte b : expected) {
+                    dstream.write((int)b);
+                }
+            } catch (IOException ignored) {
+                fail("stream exhausted too early");
+            }
+
+            try {
+                dstream.write(0);
+                fail("Should have caught IOException");
+            }
+            catch (IOException ignored) {
+            }
+        };
+
+        compare(l, expected);
     }
 
     /**
@@ -68,40 +66,25 @@ public final class TestDocumentOutputStream {
      */
     @Test
     public void testWrite2() throws IOException {
-        ByteArrayOutputStream stream  = new ByteArrayOutputStream();
-        DocumentOutputStream  dstream = new DocumentOutputStream(stream, 25);
+        final byte[] expected = data(24);
 
-        for (int j = 0; j < 6; j++)
-        {
-            byte[] array = new byte[ 4 ];
+        POIFSWriterListener l = (event) -> {
+            DocumentOutputStream dstream = event.getStream();
 
-            Arrays.fill(array, ( byte ) j);
-            dstream.write(array);
-        }
-        try
-        {
-            byte[] array = new byte[ 4 ];
-
-            Arrays.fill(array, ( byte ) 7);
-            dstream.write(array);
-            fail("Should have caught IOException");
-        }
-        catch (IOException ignored)
-        {
-        }
-        byte[] output = stream.toByteArray();
-
-        assertEquals(24, output.length);
-        for (int j = 0; j < 6; j++)
-        {
-            for (int k = 0; k < 4; k++)
-            {
-                assertEquals(String.valueOf((j * 4) + k), ( byte ) j,
-                             output[ (j * 4) + k ]);
+            try {
+                dstream.write(expected);
+            } catch (IOException ignored) {
+                fail("stream exhausted too early");
             }
-        }
-        dstream.close();
-        stream.close();
+
+            try {
+                dstream.write(new byte[]{'7','7','7','7'});
+                fail("Should have caught IOException");
+            } catch (IOException ignored) {
+            }
+        };
+
+        compare(l, expected);
     }
 
     /**
@@ -109,67 +92,45 @@ public final class TestDocumentOutputStream {
      */
     @Test
     public void testWrite3() throws IOException {
-        ByteArrayOutputStream stream  = new ByteArrayOutputStream();
-        DocumentOutputStream  dstream = new DocumentOutputStream(stream, 25);
-        byte[]                array   = new byte[ 50 ];
+        byte[] input = data(50);
+        byte[] expected = new byte[25];
+        System.arraycopy(input, 1, expected, 0, 25);
 
-        for (int j = 0; j < 50; j++)
-        {
-            array[ j ] = ( byte ) j;
-        }
-        dstream.write(array, 1, 25);
-        try
-        {
-            dstream.write(array, 0, 1);
-            fail("Should have caught IOException");
-        }
-        catch (IOException ignored)
-        {
-        }
-        byte[] output = stream.toByteArray();
+        POIFSWriterListener l = (event) -> {
+            DocumentOutputStream dstream = event.getStream();
+            try {
+                dstream.write(input, 1, 25);
+            } catch (IOException ignored) {
+                fail("stream exhausted too early");
+            }
+            try {
+                dstream.write(input, 0, 1);
+                fail("Should have caught IOException");
+            }
+            catch (IOException ignored) {}
+        };
 
-        assertEquals(25, output.length);
-        for (int j = 0; j < 25; j++)
-        {
-            assertEquals(( byte ) (j + 1), output[ j ]);
-        }
-        dstream.close();
-        stream.close();
+        compare(l, expected);
     }
 
-    /**
-     * test writeFiller()
-     */
-    @Test
-    public void testWriteFiller() throws IOException {
-        ByteArrayOutputStream stream  = new ByteArrayOutputStream();
-        DocumentOutputStream  dstream = new DocumentOutputStream(stream, 25);
+    private static byte[] data(int len) {
+        byte[] input = new byte[len];
+        for (int i = 0; i < len; i++) {
+            input[i] = (byte)('0' + (i%10));
+        }
+        return input;
+    }
 
-        for (int j = 0; j < 25; j++)
-        {
-            dstream.write(j);
-        }
-        try
-        {
-            dstream.write(0);
-            fail("Should have caught IOException");
-        }
-        catch (IOException ignored)
-        {
-        }
-        dstream.writeFiller(100, ( byte ) 0xff);
-        byte[] output = stream.toByteArray();
+    private void compare(POIFSWriterListener l, byte[] expected) throws IOException {
+        try (POIFSFileSystem poifs = new POIFSFileSystem()) {
+            DirectoryNode root = poifs.getRoot();
+            root.createDocument("foo", expected.length, l);
 
-        assertEquals(100, output.length);
-        for (int j = 0; j < 25; j++)
-        {
-            assertEquals(( byte ) j, output[ j ]);
+            try (DocumentInputStream is = root.createDocumentInputStream("foo")) {
+                final ByteArrayOutputStream bos = new ByteArrayOutputStream(expected.length);
+                IOUtils.copy(is, bos);
+                assertArrayEquals(expected, bos.toByteArray());
+            }
         }
-        for (int j = 25; j < 100; j++)
-        {
-            assertEquals(String.valueOf(j), ( byte ) 0xff, output[ j ]);
-        }
-        dstream.close();
-        stream.close();
     }
 }

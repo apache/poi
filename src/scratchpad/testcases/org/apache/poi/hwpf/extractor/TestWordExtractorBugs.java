@@ -20,7 +20,7 @@ package org.apache.poi.hwpf.extractor;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.extractor.POITextExtractor;
 import org.apache.poi.extractor.OLE2ExtractorFactory;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -60,7 +60,7 @@ public final class TestWordExtractorBugs {
 
     @Test
     public void testBug60374() throws Exception {
-        NPOIFSFileSystem fs = new NPOIFSFileSystem(SAMPLES.openResourceAsStream("cn.orthodox.www_divenbog_APRIL_30-APRIL.DOC"));
+        POIFSFileSystem fs = new POIFSFileSystem(SAMPLES.openResourceAsStream("cn.orthodox.www_divenbog_APRIL_30-APRIL.DOC"));
         final POITextExtractor extractor = OLE2ExtractorFactory.createExtractor(fs);
 
         // Check it gives text without error

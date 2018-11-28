@@ -37,7 +37,6 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTColorMapping;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTColorScheme;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTOfficeStyleSheet;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.ThemeDocument;
 
 /**
@@ -66,6 +65,7 @@ public class XSLFTheme extends POIXMLDocumentPart {
         initialize();
     }
 
+    @SuppressWarnings("WeakerAccess")
     public void importTheme(XSLFTheme theme) {
         _theme = theme.getXmlObject();
         _schemeColors = theme._schemeColors;
@@ -134,7 +134,7 @@ public class XSLFTheme extends POIXMLDocumentPart {
     protected final void commit() throws IOException {
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
         xmlOptions.setSaveSyntheticDocumentElement(
-            new QName("http://schemas.openxmlformats.org/drawingml/2006/main", "theme"));
+            new QName(XSLFRelation.NS_DRAWINGML, "theme"));
 
         PackagePart part = getPackagePart();
         OutputStream out = part.getOutputStream();
@@ -147,6 +147,7 @@ public class XSLFTheme extends POIXMLDocumentPart {
      * Typically the major font is used for heading areas of a document.
      *
      */
+    @SuppressWarnings("WeakerAccess")
     public String getMajorFont(){
         return _theme.getThemeElements().getFontScheme().getMajorFont().getLatin().getTypeface();
     }
@@ -156,19 +157,8 @@ public class XSLFTheme extends POIXMLDocumentPart {
      * Typically the monor font is used for normal text or paragraph areas.
      *
      */
+    @SuppressWarnings("WeakerAccess")
     public String getMinorFont(){
         return _theme.getThemeElements().getFontScheme().getMinorFont().getLatin().getTypeface();
-    }
-
-
-    CTTextParagraphProperties getDefaultParagraphStyle(){
-        XmlObject[] o = _theme.selectPath(
-                "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' " +
-                "declare namespace a='http://schemas.openxmlformats.org/drawingml/2006/main' " +
-                ".//a:objectDefaults/a:spDef/a:lstStyle/a:defPPr");
-        if(o.length == 1){
-            return (CTTextParagraphProperties)o[0];
-        }
-        return null;
     }
 }

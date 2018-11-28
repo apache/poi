@@ -21,8 +21,10 @@ under the License.
     This build was tested with ant 1.9.4 although it will probably work with
     other versions, however at least 1.8.0 is required.
 
+
+    updated to forrest 0.9:
     To build the documentation you will need to install forrest and set
-    the FORREST_HOME environment variable.  Forrest 0.5.1 required.
+    the FORREST_HOME environment variable.
 
     Since POI 4.0 you will need JDK 1.8 or newer to build and run POI.
 
@@ -40,7 +42,7 @@ under the License.
 
     <description>The Apache POI project Ant build.</description>
 
-    <property name="version.id" value="4.0.0-SNAPSHOT"/>
+    <property name="version.id" value="4.0.2"/>
     <property name="release.rc" value="RC1"/>
 
     <property environment="env"/>
@@ -50,8 +52,8 @@ under the License.
 
     <property name="main.lib" location="lib"/>
     <property name="ooxml.lib" location="ooxml-lib"/>
+    <property name="ooxml.test.lib" location="ooxml-testlib"/>
     <property name="compile.lib" location="compile-lib"/>
-    <property name="forrest.home" value="${env.FORREST_HOME}"/>
 
     <!-- compiler options options -->
     <property name="jdk.version.source" value="1.8" description="JDK version of source code"/>
@@ -79,7 +81,7 @@ under the License.
       user.language and user.country are required as we have locale-sensitive formatters
     -->
     <property name="testpattern" value="Test*"/> <!--note: this excludes BaseTest* -->
-    <property name="POI.testdata.path" value="test-data"/>
+    <property name="POI.testdata.path" location="test-data"/>
     <property name="java.awt.headless" value="true"/>
     <property name="additionaljar" value=""/>
     <propertyreset name="user.language" value="en"/>
@@ -128,8 +130,12 @@ under the License.
     <property name="ooxml.output.dir" location="build/ooxml-classes"/>
     <property name="ooxml.output.test.dir" location="build/ooxml-test-classes"/>
     <property name="ooxml.testokfile" location="build/ooxml-testokfile.txt"/>
-    <property name="ooxml.lite.output.dir" location="build/ooxml-lite-classes"/>
-    <property name="ooxml.lite.testokfile" location="build/ooxml-lite-testokfile.txt"/>
+
+    <property name="ooxml.lite.agent" location="build/ooxml-lite-agent.jar"/>
+    <property name="ooxml.lite.report" location="build/ooxml-lite-report.txt"/>
+    <property name="ooxml.lite.jar" location="build/ooxml-lite-classes.jar"/>
+    <property name="ooxml.lite.includes" value="^(com/microsoft/schemas|org/(etsi|openxmlformats|w3/)|schemaorg_apache_xmlbeans)"/>
+
 
     <!-- Integration testing: -->
     <property name="integration.src.test" location="src/integrationtest"/>
@@ -166,8 +172,8 @@ under the License.
     <property name="main.hamcrest.url" value="${repository.m2}/maven2/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar"/>
     <property name="main.xmlunit.jar" location="${main.lib}/xmlunit-core-2.5.1.jar"/>
     <property name="main.xmlunit.url" value="${repository.m2}/maven2/org/xmlunit/xmlunit-core/2.5.1/xmlunit-core-2.5.1.jar"/>
-    <property name="main.mockito.jar" location="${main.lib}/mockito-core-2.13.0.jar"/>
-    <property name="main.mockito.url" value="${repository.m2}/maven2/org/mockito/mockito-core/2.13.0/mockito-core-2.13.0.jar"/>
+    <property name="main.mockito.jar" location="${main.lib}/mockito-core-2.21.0.jar"/>
+    <property name="main.mockito.url" value="${repository.m2}/maven2/org/mockito/mockito-core/2.21.0/mockito-core-2.21.0.jar"/>
     <property name="main.byte-buddy.jar" location="${main.lib}/byte-buddy-1.7.9.jar"/>
     <property name="main.byte-buddy.url" value="${repository.m2}/maven2/net/bytebuddy/byte-buddy/1.7.9/byte-buddy-1.7.9.jar"/>
     <property name="main.byte-buddy-agent.jar" location="${main.lib}/byte-buddy-agent-1.7.9.jar"/>
@@ -178,49 +184,72 @@ under the License.
     <property name="main.ant.url" value="${repository.m2}/maven2/org/apache/ant/ant/1.10.1/ant-1.10.1.jar"/>
     <property name="main.antlauncher.jar" location="${main.lib}/ant-launcher-1.10.1.jar"/>
     <property name="main.antlauncher.url" value="${repository.m2}/maven2/org/apache/ant/ant-launcher/1.10.1/ant-launcher-1.10.1.jar"/>
-    <property name="main.commons-collections4.jar" location="${main.lib}/commons-collections4-4.1.jar"/>
+    <property name="main.commons-collections4.jar" location="${main.lib}/commons-collections4-4.2.jar"/>
     <property name="main.commons-collections4.url"
-              value="${repository.m2}/maven2/org/apache/commons/commons-collections4/4.1/commons-collections4-4.1.jar"/>
+              value="${repository.m2}/maven2/org/apache/commons/commons-collections4/4.2/commons-collections4-4.2.jar"/>
     <property name="main.commons-math3.jar" location="${main.lib}/commons-math3-3.6.1.jar"/>
     <property name="main.commons-math3.url"
               value="${repository.m2}/maven2/org/apache/commons/commons-math3/3.6.1/commons-math3-3.6.1.jar"/>
+    <property name="main.xmlbind.jar" location="${main.lib}/jaxb-api-2.3.0.jar"/>
+    <property name="main.xmlbind.url"
+              value="${repository.m2}/maven2/javax/xml/bind/jaxb-api/2.3.0/jaxb-api-2.3.0.jar"/>
+    <property name="main.xmlbind-impl.jar" location="${main.lib}/jaxb-impl-2.3.0.1.jar"/>
+    <property name="main.xmlbind-impl.url"
+              value="${repository.m2}/maven2/com/sun/xml/bind/jaxb-impl/2.3.0.1/jaxb-impl-2.3.0.1.jar"/>
+    <property name="main.xmlbind-core.jar" location="${main.lib}/jaxb-core-2.3.0.1.jar"/>
+    <property name="main.xmlbind-core.url"
+              value="${repository.m2}/maven2/com/sun/xml/bind/jaxb-core/2.3.0.1/jaxb-core-2.3.0.1.jar"/>
+    <property name="main.activation.jar" location="${main.lib}/activation-1.1.1.jar"/>
+    <property name="main.activation.url"
+              value="${repository.m2}/maven2/javax/activation/activation/1.1.1/activation-1.1.1.jar"/>
 
     <!-- xml signature libs -->
     <property name="dsig.xmlsec.jar" location="${compile.lib}/xmlsec-2.1.0.jar"/>
     <property name="dsig.xmlsec.url" value="${repository.m2}/maven2/org/apache/santuario/xmlsec/2.1.0/xmlsec-2.1.0.jar"/>
-    <property name="dsig.bouncycastle-prov.jar" location="${compile.lib}/bcprov-ext-jdk15on-1.59.jar"/>
-    <property name="dsig.bouncycastle-prov.url" value="${repository.m2}/maven2/org/bouncycastle/bcprov-ext-jdk15on/1.59/bcprov-ext-jdk15on-1.59.jar"/>
-    <property name="dsig.bouncycastle-pkix.jar" location="${compile.lib}/bcpkix-jdk15on-1.59.jar"/>
-    <property name="dsig.bouncycastle-pkix.url" value="${repository.m2}/maven2/org/bouncycastle/bcpkix-jdk15on/1.59/bcpkix-jdk15on-1.59.jar"/>
+    <property name="dsig.bouncycastle-prov.jar" location="${compile.lib}/bcprov-ext-jdk15on-1.60.jar"/>
+    <property name="dsig.bouncycastle-prov.url" value="${repository.m2}/maven2/org/bouncycastle/bcprov-ext-jdk15on/1.60/bcprov-ext-jdk15on-1.60.jar"/>
+    <property name="dsig.bouncycastle-pkix.jar" location="${compile.lib}/bcpkix-jdk15on-1.60.jar"/>
+    <property name="dsig.bouncycastle-pkix.url" value="${repository.m2}/maven2/org/bouncycastle/bcpkix-jdk15on/1.60/bcpkix-jdk15on-1.60.jar"/>
     <property name="dsig.sl4j-api.jar" location="${compile.lib}/slf4j-api-1.7.25.jar"/>
     <property name="dsig.sl4j-api.url" value="${repository.m2}/maven2/org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar"/>
 
-    <!-- jars in the lib-ooxml directory, see the fetch-ooxml-jars target-->
+    <!-- jars in the ooxml-lib directory, see the fetch-ooxml-jars target-->
     <property name="ooxml.curvesapi.jar" location="${ooxml.lib}/curvesapi-1.05.jar"/>
     <property name="ooxml.curvesapi.url"
               value="${repository.m2}/maven2/com/github/virtuald/curvesapi/1.05/curvesapi-1.05.jar"/>
-    <property name="ooxml.xmlbeans.jar" location="${ooxml.lib}/xmlbeans-2.6.0.jar"/>
+    <property name="ooxml.xmlbeans.jar" location="${ooxml.lib}/xmlbeans-3.0.2.jar"/>
     <property name="ooxml.xmlbeans.url"
-              value="${repository.m2}/maven2/org/apache/xmlbeans/xmlbeans/2.6.0/xmlbeans-2.6.0.jar"/>
-    <property name="ooxml.commons-compress.jar" location="${main.lib}/commons-compress-1.17.jar"/>
+              value="https://repository.apache.org/content/repositories/releases/org/apache/xmlbeans/xmlbeans/3.0.2/xmlbeans-3.0.2.jar"/>
+    <property name="ooxml.commons-compress.jar" location="${main.lib}/commons-compress-1.18.jar"/>
     <property name="ooxml.commons-compress.url"
-              value="${repository.m2}/maven2/org/apache/commons/commons-compress/1.17/commons-compress-1.17.jar"/>
+              value="${repository.m2}/maven2/org/apache/commons/commons-compress/1.18/commons-compress-1.18.jar"/>
+
+    <!-- jars in the ooxml-test-lib directory, see the fetch-ooxml-jars target-->
+    <property name="ooxml.test.reflections.jar" location="${ooxml.test.lib}/reflections.jar"/>
+    <property name="ooxml.test.reflections.url"
+              value="${repository.m2}/maven2/org/reflections/reflections/0.9.11/reflections-0.9.11.jar"/>
+    <property name="ooxml.test.guava.jar" location="${ooxml.test.lib}/guava.jar"/>
+    <property name="ooxml.test.guava.url"
+              value="${repository.m2}/maven2/com/google/guava/guava/20.0/guava-20.0.jar"/>
+    <property name="ooxml.test.javassist.jar" location="${ooxml.test.lib}/javassist.jar"/>
+    <property name="ooxml.test.javassist.url"
+              value="${repository.m2}/maven2/org/javassist/javassist/3.21.0-GA/javassist-3.21.0-GA.jar"/>
 
     <!-- coverage libs -->
-    <property name="jacoco.zip" location="${main.lib}/jacoco-0.8.1.zip"/>
-    <property name="jacoco.url" value="${repository.m2}/maven2/org/jacoco/jacoco/0.8.1/jacoco-0.8.1.zip"/>
-    <property name="asm.jar" location="${main.lib}/asm-6.0.jar"/>
-    <property name="asm.url" value="${repository.m2}/maven2/org/ow2/asm/asm/6.0/asm-6.0.jar"/>
-    <property name="asmcommons.jar" location="${main.lib}/asm-commons-6.0.jar"/>
-    <property name="asmcommons.url" value="${repository.m2}/maven2/org/ow2/asm/asm-commons/6.0/asm-commons-6.0.jar"/>
-    <property name="asmtree.jar" location="${main.lib}/asm-tree-6.0.jar"/>
-    <property name="asmtree.url" value="${repository.m2}/maven2/org/ow2/asm/asm-tree/6.0/asm-tree-6.0.jar"/>
+    <property name="jacoco.zip" location="${main.lib}/jacoco-0.8.2.zip"/>
+    <property name="jacoco.url" value="${repository.m2}/maven2/org/jacoco/jacoco/0.8.2/jacoco-0.8.2.zip"/>
+    <property name="asm.jar" location="${main.lib}/asm-6.2.1.jar"/>
+    <property name="asm.url" value="${repository.m2}/maven2/org/ow2/asm/asm/6.2.1/asm-6.2.1.jar"/>
+    <property name="asmcommons.jar" location="${main.lib}/asm-commons-6.2.1.jar"/>
+    <property name="asmcommons.url" value="${repository.m2}/maven2/org/ow2/asm/asm-commons/6.2.1/asm-commons-6.2.1.jar"/>
+    <property name="asmtree.jar" location="${main.lib}/asm-tree-6.2.1.jar"/>
+    <property name="asmtree.url" value="${repository.m2}/maven2/org/ow2/asm/asm-tree/6.2.1/asm-tree-6.2.1.jar"/>
 
     <!-- license and api checks -->
     <property name="rat.jar" location="${main.lib}/apache-rat-0.12.jar"/>
     <property name="rat.url" value="${repository.m2}/maven2/org/apache/rat/apache-rat/0.12/apache-rat-0.12.jar"/>
-    <property name="forbidden.jar" location="${main.lib}/forbiddenapis-2.5.jar"/>
-    <property name="forbidden.url" value="${repository.m2}/maven2/de/thetaphi/forbiddenapis/2.5/forbiddenapis-2.5.jar"/>
+    <property name="forbidden.jar" location="${main.lib}/forbiddenapis-2.6.jar"/>
+    <property name="forbidden.url" value="${repository.m2}/maven2/de/thetaphi/forbiddenapis/2.6/forbiddenapis-2.6.jar"/>
 
     <property name="maven.ooxml.xsds.version.id" value="1.4"/>
 	
@@ -263,17 +292,16 @@ under the License.
 
     <!-- build and distro settings -->
     <property name="jar.name" value="poi"/>
-    <property name="build.site" location="build/tmp/site/build/site"/>
-    <property name="build.site.src" location="build/tmp/site"/>
-    <property name="apidocs.report.dir" location="${build.site}/apidocs"/>
+    <property name="build.site" location="build/site"/>
+    <property name="javadocs.report.dir" location="${build.site}/apidocs/dev"/>
     <property name="dist.dir" location="build/dist"/>
     <property name="halt.on.test.failure" value="true"/>
 
     <!-- helper jars for pgp signing, building and nexus staging -->
-    <property name="dist.bouncycastle-prov.jar" location="${compile.lib}/bcprov-ext-jdk15on-1.59.jar"/>
-    <property name="dist.bouncycastle-prov.url" value="${repository.m2}/maven2/org/bouncycastle/bcprov-ext-jdk15on/1.59/bcprov-ext-jdk15on-1.59.jar"/>
-    <property name="dist.bouncycastle-bcpg.jar" location="${compile.lib}/bcpg-jdk15on-1.59.jar"/>
-    <property name="dist.bouncycastle-bcpg.url" value="${repository.m2}/maven2/org/bouncycastle/bcpg-jdk15on/1.59/bcpg-jdk15on-1.59.jar"/>
+    <property name="dist.bouncycastle-prov.jar" location="${compile.lib}/bcprov-ext-jdk15on-1.60.jar"/>
+    <property name="dist.bouncycastle-prov.url" value="${repository.m2}/maven2/org/bouncycastle/bcprov-ext-jdk15on/1.60/bcprov-ext-jdk15on-1.60.jar"/>
+    <property name="dist.bouncycastle-bcpg.jar" location="${compile.lib}/bcpg-jdk15on-1.60.jar"/>
+    <property name="dist.bouncycastle-bcpg.url" value="${repository.m2}/maven2/org/bouncycastle/bcpg-jdk15on/1.60/bcpg-jdk15on-1.60.jar"/>
     <property name="dist.commons-openpgp.jar" location="${compile.lib}/commons-openpgp-1.0-SNAPSHOT.jar"/>
     <property name="dist.commons-openpgp.url" value="https://repository.apache.org/snapshots/org/apache/commons/commons-openpgp/1.0-SNAPSHOT/commons-openpgp-1.0-20140717.171036-11.jar"/>
     <property name="dist.nexus-staging.jar" location="${compile.lib}/nexus-staging-ant-tasks-1.6.3-uber.jar"/>
@@ -294,7 +322,7 @@ under the License.
     <property name="dist.sequence-library.jar" location="${compile.lib}/svnant/sequence-library-1.0.3.jar"/>
     <property name="dist.sequence-library.url" value="${repository.m2}/maven2/de/regnis/q/sequence/sequence-library/1.0.3/sequence-library-1.0.3.jar"/>
 
-    <property name="findbugs.url" value="http://downloads.sourceforge.net/project/findbugs/findbugs/3.0.1/findbugs-noUpdateChecks-3.0.1.zip?download="/>
+    <property name="findbugs.url" value="https://downloads.sourceforge.net/project/findbugs/findbugs/3.0.1/findbugs-noUpdateChecks-3.0.1.zip?download="/>
     <property name="findbugs.jar" location="${main.lib}/findbugs-noUpdateChecks-3.0.1.zip"/>
 
     <propertyset id="junit.properties">
@@ -307,8 +335,11 @@ under the License.
         <propertyref name="user.country"/>
         <propertyref name="javax.xml.stream.XMLInputFactory"/>
         <propertyref name="org.apache.commons.logging.Log"/>
-        <propertyref name="java.locale.providers"/>        <!-- required for Java 9 compilation -->
-        <propertyref name="version.id"/>    <!-- to detect if we are running on slow Gump VM -->
+        <!-- required for Java 9 compilation -->
+        <propertyref name="java.locale.providers"/>
+        <!-- to detect if we are running on slow Gump VM -->
+        <propertyref name="version.id"/>
+        <propertyref name="scratchpad.ignore"/>
     </propertyset>
 
     <!-- these need to be set differently when running with Java 9 -->
@@ -327,6 +358,10 @@ under the License.
         <pathelement location="${main.commons-codec.jar}"/>
         <pathelement location="${main.commons-collections4.jar}"/>
         <pathelement location="${main.commons-math3.jar}"/>
+        <pathelement location="${main.xmlbind.jar}"/>
+        <pathelement location="${main.xmlbind-impl.jar}"/>
+        <pathelement location="${main.xmlbind-core.jar}"/>
+        <pathelement location="${main.activation.jar}"/>
     </path>
 
     <!-- some libraries should only be required for compiling/running tests -->
@@ -354,11 +389,10 @@ under the License.
         <pathelement location="${dsig.sl4j-api.jar}"/>
     </path>
 
-    <path id="ooxml.classpath">
+    <path id="ooxml.base.classpath">
         <pathelement location="${ooxml.curvesapi.jar}"/>
         <pathelement location="${ooxml.xmlbeans.jar}"/>
         <pathelement location="${ooxml.commons-compress.jar}"/>
-        <pathelement location="${ooxml.xsds.jar}"/>
         <path refid="main.classpath"/>
         <pathelement location="${main.output.dir}"/>
         <pathelement location="${ooxml.security.jar}"/>
@@ -366,6 +400,25 @@ under the License.
         <!--path refid="ooxml.xmlsec.classpath"/-->
         <!-- Used only for ExtractorFactory, see #57963 -->
         <pathelement location="${scratchpad.output.dir}" unless:true="${scratchpad.ignore}"/>
+    </path>
+
+    <path id="ooxml-lite.classpath">
+        <path refid="ooxml.base.classpath"/>
+        <!-- instead of ooxml-xsds.jar use the filtered classes-->
+        <pathelement location="${ooxml.lite.jar}"/>
+        <pathelement location="${ooxml.output.dir}"/>
+        <pathelement location="${ooxml.output.test.dir}"/>
+        <pathelement location="${main.output.test.dir}"/>
+    </path>
+
+    <path id="ooxml.classpath">
+        <pathelement location="${ooxml.xsds.jar}"/>
+        <path refid="ooxml.base.classpath"/>
+    </path>
+
+    <path id="ooxml.lite.verify.classpath">
+        <pathelement location="build/dist/maven/poi-ooxml-schemas/poi-ooxml-schemas-${version.id}.jar"/>
+        <path refid="ooxml.base.classpath"/>
     </path>
 
     <path id="test.classpath">
@@ -383,8 +436,25 @@ under the License.
         <pathelement location="${additionaljar}"/>
     </path>
 
+    <path id="test.ooxml.reflections.classpath">
+        <pathelement location="${ooxml.test.reflections.jar}"/>
+        <pathelement location="${ooxml.test.guava.jar}"/>
+        <pathelement location="${ooxml.test.javassist.jar}"/>
+    </path>
+
     <path id="test.ooxml.classpath">
         <path refid="ooxml.classpath"/>
+        <path refid="ooxml.xmlsec.classpath"/>
+        <path refid="test.jar.classpath"/>
+        <path refid="test.ooxml.reflections.classpath"/>
+        <pathelement location="${ooxml.output.dir}"/>
+        <pathelement location="${ooxml.output.test.dir}"/>
+        <pathelement location="${main.output.test.dir}"/>
+        <pathelement location="${additionaljar}"/>
+    </path>
+
+    <path id="test.ooxml.lite.verify.classpath">
+        <path refid="ooxml.lite.verify.classpath"/>
         <path refid="ooxml.xmlsec.classpath"/>
         <path refid="test.jar.classpath"/>
         <pathelement location="${ooxml.output.dir}"/>
@@ -403,22 +473,6 @@ under the License.
         <pathelement location="${integration.output.test.dir}"/>
         <pathelement location="${examples.output.dir}"/>
     </path>
-
-    <path id="ooxml-lite.classpath">
-        <pathelement location="${ooxml.curvesapi.jar}"/>
-        <pathelement location="${ooxml.xmlbeans.jar}"/>
-        <pathelement location="${ooxml.commons-compress.jar}"/>
-        <pathelement location="${ooxml.lite.output.dir}"/> <!-- instead of ooxml-xsds.jar use the filtered classes-->
-        <path refid="main.classpath"/>
-        <pathelement location="${main.output.dir}"/>
-        <pathelement location="${scratchpad.output.dir}" unless:true="${scratchpad.ignore}"/>
-        <!--path refid="ooxml.classpath"/-->
-        <pathelement location="${ooxml.output.dir}"/>
-        <pathelement location="${ooxml.output.test.dir}"/>
-        <pathelement location="${main.output.test.dir}"/>
-        <pathelement location="${ooxml.security.jar}"/>
-    </path>
-
 
     <path id="examples.classpath">
         <path refid="main.classpath"/>
@@ -457,6 +511,7 @@ under the License.
         <path refid="scratchpad.classpath"/>
         <path refid="ooxml.classpath"/>
         <path refid="ooxml.xmlsec.classpath"/>
+        <path refid="test.ooxml.reflections.classpath"/> 
         <path refid="excelant.classpath"/>
         <path refid="examples.classpath"/>
         <pathelement location="${examples.output.dir}"/>
@@ -525,7 +580,6 @@ under the License.
 
         <scriptdef name="release_tag" language="javascript">
             var rel = ("REL_"+project.getProperty("version.id")).toUpperCase().replace(/\W/g,"_");
-            if (rel.search(/BETA/) == -1) rel += "_FINAL";
             project.setProperty("RELEASE_TAG", rel);
         </scriptdef>
         <release_tag/>
@@ -546,15 +600,6 @@ under the License.
         <attribute name="src"/>
         <attribute name="dest"/>
         <sequential>
-            <!--fail
-                message="Java version might be uncapable to download https URLs - see https://stackoverflow.com/questions/6851461/java-why-does-ssl-handshake-give-could-not-generate-dh-keypair-exception">
-                <condition>
-                    <and>
-                        <equals arg1="${ant.java.version}" arg2="1.6"/>
-                        <contains string="@{src}" substring="https"/>
-                    </and>
-                </condition>
-            </fail-->
             <get src="@{src}" dest="@{dest}" skipexisting="true"/>
         </sequential>
     </macrodef>
@@ -565,6 +610,7 @@ under the License.
         <mkdir dir="${main.lib}"/>
         <mkdir dir="${compile.lib}"/>
         <mkdir dir="${ooxml.lib}"/>
+        <mkdir dir="${ooxml.test.lib}"/>
         <delete verbose="true">
             <fileset dir="${main.lib}">
                 <include name="ant-1.8*"/>
@@ -573,10 +619,13 @@ under the License.
                 <include name="asm-all-4*"/>
                 <include name="asm-all-5.0.3*"/>
                 <include name="asm-all-5.2*"/>
+                <include name="asm*-6.0*"/>
                 <include name="commons-codec-1.5*"/>
                 <include name="commons-codec-1.9*"/>
                 <include name="commons-codec-1.10*"/>
                 <include name="commons-compress-1.16*"/>
+                <include name="commons-compress-1.17*"/>
+                <include name="commons-collections4-4.1*"/>
                 <include name="commons-logging-1.1*.jar"/>
                 <include name="findbugs-noUpdateChecks-2.0.3*"/>
                 <include name="jacoco-0.6*"/>
@@ -588,6 +637,7 @@ under the License.
                 <include name="jacoco-0.7.7*"/>
                 <include name="jacoco-0.7.8*"/>
                 <include name="jacoco-0.7.9*"/>
+                <include name="jacoco-0.8.1*"/>
                 <include name="jmh-core-1.15*"/>
                 <include name="jmh-generator-annprocess-1.15*"/>
                 <include name="log4j-1.2.13*"/>
@@ -600,6 +650,7 @@ under the License.
                 <include name="org.jacoco.*-0.7.7*"/>
                 <include name="org.jacoco.*-0.7.8*"/>
                 <include name="org.jacoco.*-0.7.9*"/>
+                <include name="org.jacoco.*-0.8.1*"/>
                 <include name="dom4j*"/>
                 <include name="apache-rat-0.10*"/>
                 <include name="xercesImpl-*.jar"/>
@@ -609,7 +660,9 @@ under the License.
                 <include name="forbiddenapis-2.0.jar"/>
                 <include name="forbiddenapis-2.1.jar"/>
                 <include name="forbiddenapis-2.3.jar"/>
+                <include name="forbiddenapis-2.5.jar"/>
                 <include name="apache-rat-0.11.jar"/>
+                <include name="mockito-core-2.13.0.jar"/>
             </fileset>
             <fileset dir="${ooxml.lib}">
                 <!-- remove jars from previous versions, but not the current version -->
@@ -624,17 +677,16 @@ under the License.
                 <include name="ooxml-security-1.0.jar"/>
                 <include name="curvesapi-1.03.jar"/>
                 <include name="curvesapi-1.04.jar"/>
-                <include name="xmlbeans-2.3.0.jar*"/>
+                <include name="xmlbeans-2.*.jar"/>
+                <include name="xmlbeans-3.0.0.jar"/>
+                <include name="xmlbeans-3.0.1.jar"/>
             </fileset>
             <fileset dir="${compile.lib}">
                 <include name="xercesImpl-*.jar"/>
                 <include name="xmlsec-2.0.1.jar"/>
                 <include name="xmlsec-2.0.5.jar"/>
                 <include name="xmlsec-2.0.6.jar"/>
-                <include name="bc*jdk15on-1.51.jar"/>
-                <include name="bc*jdk15on-1.53.jar"/>
-                <include name="bc*jdk15on-1.54.jar"/>
-                <include name="bc*jdk15on-1.58.jar"/>
+                <include name="bc*jdk15on-1.5*.jar"/>
                 <include name="slf4j-api-1.7.7.jar"/>
                 <include name="slf4j-api-1.7.12.jar"/>
             </fileset>
@@ -669,6 +721,10 @@ under the License.
                     <available file="${dsig.sl4j-api.jar}"/>
                     <available file="${main.commons-collections4.jar}"/>
                     <available file="${main.commons-math3.jar}"/>
+                    <available file="${main.xmlbind.jar}"/>
+                    <available file="${main.xmlbind-impl.jar}"/>
+                    <available file="${main.xmlbind-core.jar}"/>
+                    <available file="${main.activation.jar}"/>
 
                     <!-- we had some CI failures when the extracted files for JaCoCo were missing somehow... -->
                     <available file="${main.lib}/jacocoagent.jar"/>
@@ -701,6 +757,10 @@ under the License.
         <downloadfile src="${jacoco.url}" dest="${jacoco.zip}"/>
         <downloadfile src="${main.commons-collections4.url}" dest="${main.commons-collections4.jar}"/>
         <downloadfile src="${main.commons-math3.url}" dest="${main.commons-math3.jar}"/>
+        <downloadfile src="${main.xmlbind.url}" dest="${main.xmlbind.jar}"/>
+        <downloadfile src="${main.xmlbind-impl.url}" dest="${main.xmlbind-impl.jar}"/>
+        <downloadfile src="${main.xmlbind-core.url}" dest="${main.xmlbind-core.jar}"/>
+        <downloadfile src="${main.activation.url}" dest="${main.activation.jar}"/>
         <unzip src="${jacoco.zip}" dest=".">
             <patternset>
                 <include name="lib/*.jar"/>
@@ -721,6 +781,9 @@ under the License.
                     <available file="${ooxml.curvesapi.jar}"/>
                     <available file="${ooxml.xmlbeans.jar}"/>
                     <available file="${ooxml.commons-compress.jar}"/>
+                    <available file="${ooxml.test.reflections.jar}"/>
+                    <available file="${ooxml.test.guava.jar}"/>
+                    <available file="${ooxml.test.javassist.jar}"/>
                 </and>
                 <isset property="disconnected"/>
             </or>
@@ -728,13 +791,13 @@ under the License.
     </target>
     <target name="fetch-ooxml-jars" depends="check-ooxml-jars" unless="ooxml.jars.present">
         <mkdir dir="${ooxml.lib}"/>
+        <mkdir dir="${ooxml.test.lib}"/>
         <downloadfile src="${ooxml.curvesapi.url}" dest="${ooxml.curvesapi.jar}"/>
-        <downloadfile src="${ooxml.xmlbeans.url}" dest="${ooxml.xmlbeans.jar}.orig"/>
+        <downloadfile src="${ooxml.xmlbeans.url}" dest="${ooxml.xmlbeans.jar}"/>
         <downloadfile src="${ooxml.commons-compress.url}" dest="${ooxml.commons-compress.jar}"/>
-        <!-- remove piccolo parser, so we don't use unsafe calls to it instead of using jaxp -->
-        <zip destfile="${ooxml.xmlbeans.jar}">
-            <zipfileset src="${ooxml.xmlbeans.jar}.orig" excludes="org/apache/xmlbeans/impl/piccolo/**"/>
-        </zip>
+        <downloadfile src="${ooxml.test.reflections.url}" dest="${ooxml.test.reflections.jar}"/>
+        <downloadfile src="${ooxml.test.guava.url}" dest="${ooxml.test.guava.jar}"/>
+        <downloadfile src="${ooxml.test.javassist.url}" dest="${ooxml.test.javassist.jar}"/>
     </target>
     <target name="check-svn-jars">
         <condition property="svn.jars.present">
@@ -840,7 +903,7 @@ under the License.
 
             <taskdef name="xmlbean"
                      classname="org.apache.xmlbeans.impl.tool.XMLBean"
-                     classpath="${ooxml.xmlbeans.jar}.orig"/>
+                     classpath="${ooxml.xmlbeans.jar}"/>
 
             <property name="xmlbean.xsds.dir" location="build/xmlbean-xsds"/>
             <property name="xmlbean.sources.dir" location="build/xmlbean-sources"/>
@@ -871,13 +934,32 @@ under the License.
                     nopvr="@{nopvr}"
                     >
                 <classpath>
-                    <path location="${ooxml.xmlbeans.jar}.orig"/>
+                    <path location="${ooxml.xmlbeans.jar}"/>
                 </classpath>
             </xmlbean>
 
+            <local name="loaderMethod"/>
+            <property name="loaderMethod"><![CDATA[
+        private static java.lang.ref.SoftReference<org.apache.xmlbeans.SchemaTypeLoader> typeLoader;
+
+        private static synchronized org.apache.xmlbeans.SchemaTypeLoader getTypeLoader() {
+            org.apache.xmlbeans.SchemaTypeLoader stl = (typeLoader == null) ? null : typeLoader.get();
+            if (stl == null) {
+                stl = org.apache.xmlbeans.XmlBeans.typeLoaderForClassLoader(\2.class.getClassLoader());
+                typeLoader = new java.lang.ref.SoftReference(stl);
+            }
+            return stl;
+        }
+
+        public static \2 newInstance\(\) \{]]></property>
+
+            <replaceregexp byline="true" match="(\s*)public static ([^ ]+) newInstance\(\) \{" replace="${loaderMethod}">
+                <fileset dir="${xmlbean.sources.dir}" includes="**/*.java" excludes="**/impl/**"/>
+            </replaceregexp>
+
             <replace dir="${xmlbean.sources.dir}" includes="**/*.java" excludes="**/impl/**">
-                <replacetoken>org.apache.xmlbeans.XmlBeans.getContextTypeLoader()</replacetoken>
-                <replacevalue>org.apache.poi.ooxml.POIXMLTypeLoader</replacevalue>
+                <replacetoken>org.apache.xmlbeans.XmlBeans.getContextTypeLoader</replacetoken>
+                <replacevalue>getTypeLoader</replacevalue>
             </replace>
 
             <!-- remove deprecated warnings, as we prefer the array methods - see #56854 -->
@@ -885,22 +967,6 @@ under the License.
                 <replacetoken><![CDATA[     * @deprecated
 ]]></replacetoken>
             </replace>
-
-            <copy todir="${xmlbean.sources.dir}">
-                <fileset dir="${ooxml.src}">
-                    <include name="org/apache/poi/ooxml/POIXMLTypeLoader.java"/>
-                    <include name="org/apache/poi/ooxml/util/DocumentHelper.java"/>
-                    <include name="org/apache/poi/ooxml/util/SAXHelper.java"/>
-                    <include name="org/apache/poi/openxml4j/opc/PackageNamespaces.java"/>
-                </fileset>
-                <fileset dir="${main.src}">
-                    <include name="org/apache/poi/util/POILogFactory.java"/>
-                    <include name="org/apache/poi/util/POILogger.java"/>
-                    <include name="org/apache/poi/util/NullLogger.java"/>
-                    <include name="org/apache/poi/util/Internal.java"/>
-                	<include name="org/apache/poi/util/Removal.java"/>
-                </fileset>
-            </copy>
 
             <echo>Forking javac with max heap size ${ooxml.memory}</echo>
 
@@ -917,8 +983,14 @@ under the License.
                 <classpath refid="ooxml.classpath"/>
             </javac>
 
-            <jar basedir="${xmlbean.classes.dir}" destfile="@{classes-jar}" excludes="org/apache/**" level="9" />
-            <jar basedir="${xmlbean.sources.dir}" destfile="@{sources-jar}" excludes="org/apache/**" level="9" />
+            <jar destfile="@{classes-jar}" level="9">
+                <fileset dir="${xmlbean.classes.dir}" excludes="org/apache/**"/>
+                <metainf dir="legal"/>
+            </jar>
+            <jar destfile="@{sources-jar}" level="9">
+                <fileset dir="${xmlbean.sources.dir}" excludes="org/apache/**"/>
+                <metainf dir="legal"/>
+            </jar>
 
             <delete file="${xmlbean.xsds.dir}.jar"/>
             <delete dir="${xmlbean.xsds.dir}"/>
@@ -950,8 +1022,6 @@ under the License.
     <target name="compile" depends="init, compile-main,
             compile-scratchpad, compile-examples, compile-excelant"
             description="Compiles the POI main classes, scratchpad and examples"/>
-
-    <target name="compile-all" depends="compile,compile-ooxml-lite"/>
 
     <target name="compile-main" depends="init">
         <!-- compile the sources -->
@@ -1063,6 +1133,7 @@ under the License.
             <classpath>
                 <path refid="ooxml.classpath"/>
                 <pathelement path="${ooxml.output.dir}"/>
+                <pathelement location="${scratchpad.output.dir}"/>
             </classpath>
         </javac>
         <copy todir="${examples.output.dir}">
@@ -1107,6 +1178,80 @@ under the License.
         <copy todir="${ooxml.output.dir}">
             <fileset dir="${ooxml.resource1.dir}"/>
         </copy>
+    </target>
+
+    <target name="retest-ooxml" depends="jar">
+        <delete dir="${ooxml.reports.test}"/>
+        <delete dir="${ooxml.output.test.dir}"/>
+        <mkdir dir="${ooxml.reports.test}"/>
+        <mkdir dir="${ooxml.output.test.dir}"/> 
+        <!-- compile the sources -->
+        <javac target="${jdk.version.class}"
+               source="${jdk.version.source}"
+               destdir="${ooxml.output.dir}"
+               srcdir="${ooxml.src}"
+               debug="${compile.debug}"
+               encoding="${java.source.encoding}"
+               fork="yes"
+               includeantruntime="false">
+            <classpath>
+                <path refid="ooxml.lite.verify.classpath"/>
+                <path refid="ooxml.xmlsec.classpath"/>
+            </classpath>
+        </javac>
+        <!-- compile the tests -->
+        <javac target="${jdk.version.class}"
+               source="${jdk.version.source}"
+               destdir="${ooxml.output.test.dir}"
+               srcdir="${ooxml.src.test}"
+               debug="${compile.debug}"
+               encoding="${java.source.encoding}"
+               fork="yes"
+               includeantruntime="false">
+            <classpath>
+                <path refid="ooxml.classpath"/>
+                <path refid="ooxml.xmlsec.classpath"/>
+                <path refid="test.ooxml.lite.verify.classpath"/>
+                <pathelement path="${ooxml.output.dir}"/>
+                <pathelement path="${main.output.test.dir}"/>
+            </classpath>
+        </javac>
+        <copy todir="${ooxml.output.dir}">
+            <fileset dir="${ooxml.resource1.dir}"/>
+        </copy>
+        <junit printsummary="yes" fork="yes" forkmode="once" haltonfailure="${halt.on.test.failure}"
+               failureproperty="ooxml.test.failed">
+            <classpath>
+                <path refid="test.ooxml.lite.verify.classpath"/>
+                <path refid="test.jar.classpath"/>
+            </classpath>
+            <syspropertyset refid="junit.properties"/>
+            <sysproperty key="java.io.tmpdir" value="${tempdir}"/>
+            <jvmarg value="-Xmx768M"/>
+            <jvmarg value="-ea"/>
+            <jvmarg value="${java9addmods}" />
+            <jvmarg value="${java9addmodsvalue}" />
+            <jvmarg value="${java9addopens1}" />
+            <jvmarg value="${java9addopens2}" />
+            <jvmarg value="${java9addopens3}" />
+            <jvmarg value="${java9addopens4}" />
+            <jvmarg value="${java9addopens5}" />
+            <jvmarg value="${java9addopens6}" />
+            <!-- jvmarg value="-Duser.timezone=UTC"/ -->
+            <jvmarg value="${file.leak.detector}" />
+            <formatter type="plain"/>
+            <formatter type="xml"/>
+            <batchtest todir="${ooxml.reports.test}">
+                <fileset dir="${ooxml.src.test}">
+                     <include name="**/${testpattern}.java"/>
+                     <exclude name="**/TestUnfixedBugs.java"/>
+                     <exclude name="**/All*Tests.java"/>
+                     <exclude name="**/TestSignatureInfo.java"/>
+                     <exclude name="**/${testexcludepattern}.java"/>
+                     <patternset refid="exclude-scratchpad-test" if:true="${scratchpad.ignore}"/>
+                </fileset>
+            </batchtest>
+        </junit>
     </target>
 
     <target name="compile-excelant" depends="compile-main,compile-ooxml">
@@ -1159,6 +1304,7 @@ under the License.
                 <pathelement location="${main.output.test.dir}"/>
                 <pathelement location="${examples.output.dir}"/>
                 <pathelement location="${main.ant.jar}"/>
+                <pathelement location="${scratchpad.output.dir}"/>
             </classpath>
         </javac>
         <!--copy todir="${integration.output.dir}">
@@ -1200,10 +1346,10 @@ under the License.
     <!-- Section: test (execute junit tests on test suites) -->
     <target name="test" depends="compile,jacocotask,test-main,test-scratchpad,test-ooxml,test-excelant"
             description="Tests main, scratchpad and ooxml"/>
-    <target name="test-all" depends="test,test-ooxml-lite,testcoveragereport"
+    <target name="test-all" depends="test,test-integration,test-ooxml-lite,testcoveragereport"
             description="Tests main, scratchpad, ooxml, ooxml-lite, and coveragereport"/>
 
-    <target name="testcoveragereport" depends="jacocotask" description="create test-report" xmlns:jacoco="antlib:org.jacoco.ant" if="coverage.enabled">
+    <target name="testcoveragereport" depends="init,jacocotask" description="create test-report" xmlns:jacoco="antlib:org.jacoco.ant" if="coverage.enabled">
         <delete dir="${coverage.dir}"/>
         <mkdir dir="${coverage.dir}"/>
         <mkdir dir="${main.output.dir}"/>
@@ -1247,9 +1393,7 @@ under the License.
                 <group name="OOXML">
                     <classfiles>
                         <fileset dir="${ooxml.output.dir}"/>
-                        <!-- there are no actual POI classes in build/ooxml-lite-classes, only generated code...
-                        <fileset dir="${ooxml.lite.output.dir}"/>
-                        -->
+                        <!-- there are no actual POI classes in build/ooxml-lite-classes, only generated code... -->
                     </classfiles>
                     <sourcefiles encoding="UTF-8">
                         <fileset dir="${ooxml.src}"/>
@@ -1426,6 +1570,7 @@ under the License.
                   <sysproperty key="java.io.tmpdir" value="${tempdir}"/>
                   <jvmarg value="-Xmx768M"/>
                   <jvmarg value="-ea"/>
+                  <jvmarg value="-javaagent:${ooxml.lite.agent}=${ooxml.lite.report}|${ooxml.lite.includes}"/>
                   <jvmarg value="${java9addmods}" />
                   <jvmarg value="${java9addmodsvalue}" />
                   <jvmarg value="${java9addopens1}" />
@@ -1460,6 +1605,7 @@ under the License.
                   </classpath>
                   <syspropertyset refid="junit.properties"/>
                   <sysproperty key="java.io.tmpdir" value="${tempdir}"/>
+                  <jvmarg value="-javaagent:${ooxml.lite.agent}=${ooxml.lite.report}|${ooxml.lite.includes}"/>
                   <jvmarg value="-Xmx768M"/>
                   <jvmarg value="-ea"/>
                   <jvmarg value="${java9addmods}" />
@@ -1482,7 +1628,7 @@ under the License.
         </sequential>
     </macrodef>
 
-    <target name="test-ooxml" depends="compile-main,compile-ooxml,-test-ooxml-check,jacocotask" unless="ooxml.test.notRequired"
+    <target name="test-ooxml" depends="compile-main,compile-ooxml,-test-ooxml-check,jacocotask,-ooxml-lite-agent" unless="ooxml.test.notRequired"
             description="test OOXML classes">
         <ooxml-test-runner classpath="test.ooxml.classpath" type="ooxml"/>
         <delete file="${ooxml.testokfile}"/>
@@ -1500,7 +1646,7 @@ under the License.
         </uptodate>
     </target>
 
-    <target name="test-integration" depends="compile-integration,-test-integration-check,jacocotask"
+    <target name="test-integration" depends="compile-integration,-test-integration-check,jacocotask,-ooxml-lite-agent"
             unless="integration.test.notRequired" xmlns:jacoco="antlib:org.jacoco.ant">
         <propertyreset name="org.apache.poi.util.POILogger" value="org.apache.poi.util.CommonsLogger"/>
         <delete dir="build" includes="test-integration.log*"/>
@@ -1512,6 +1658,7 @@ under the License.
                 <sysproperty key="java.io.tmpdir" value="${tempdir}"/>
                 <jvmarg value="-ea"/>
                 <jvmarg value="-Xmx1512M"/>
+                <jvmarg value="-javaagent:${ooxml.lite.agent}=${ooxml.lite.report}|${ooxml.lite.includes}"/>
                 <jvmarg value="${java9addmods}" />
                 <jvmarg value="${java9addmodsvalue}" />
                 <jvmarg value="${java9addopens1}" />
@@ -1539,63 +1686,43 @@ under the License.
         <echo file="${integration.testokfile}" append="false" message="testok"/>
     </target>
 
-    <!-- Section: test-ooxml-lite -->
-    <target name="-compile-ooxml-lite-check">
-        <uptodate property="ooxml.lite.test.notRequired" targetfile="${ooxml.lite.testokfile}">
-            <srcfiles dir="${ooxml.src}"/>
-            <srcfiles dir="${ooxml.src.test}"/>
-            <srcfiles file="${ooxml.xsds.jar}"/>
-            <srcfiles file="${ooxml.security.jar}"/>
-        </uptodate>
-    </target>
+    <!-- the ooxml lite agent collects referenced schema files while other junit tests are run, -->
+    <!-- therefore its best to compile the ooxml lite jar after all usual tests are done -->
+    <target name="compile-ooxml-lite" depends="compile-ooxml,-ooxml-lite-agent,test-ooxml">
+        <echo message="Create ooxml-lite schemas"/>
 
-    <target name="compile-ooxml-lite" depends="-compile-ooxml-lite-check,compile-ooxml"
-            unless="ooxml.lite.test.notRequired">
-        <delete file="${ooxml.lite.testokfile}"/>
-        <echo message="Running ooxml-lite generator"/>
+        <copy file="${ooxml.lite.report}" tofile="${ooxml.lite.report}-pat" overwrite="true"/>
+        <replaceregexp file="${ooxml.lite.report}-pat" byline="true" match="(.*)" replace="\1.class${line.separator}\1$*.class"/>
 
-        <property name="ooxml.lite-merged.dir" location="build/ooxml-lite-merged"/>
-        <mkdir dir="${ooxml.lite-merged.dir}"/>
+        <patternset id="xsbfiles">
+            <includesfile name="${ooxml.lite.report}-pat"/>
+            <include name="schemaorg_apache_xmlbeans/system/**/*.xsb"/>
+            <include name="schemaorg_apache_xmlbeans/element/**/*.xsb"/>
+        </patternset>
 
-        <jar destfile="${ooxml.lite-merged.dir}/ooxml-lite-merged.jar">
-            <zipfileset includes="**/*" src="${ooxml.xsds.jar}"/>
-            <zipfileset includes="**/*" src="${ooxml.security.jar}"/>
+        <jar destfile="${ooxml.lite.jar}" duplicate="preserve">
+            <zipfileset src="${ooxml.xsds.jar}">
+                <patternset refid="xsbfiles"/>
+            </zipfileset>
+            <zipfileset src="${ooxml.security.jar}">
+                <patternset refid="xsbfiles"/>
+            </zipfileset>
         </jar>
-
-        <java classname="org.apache.poi.ooxml.util.OOXMLLite" fork="yes"
-            failonerror="true">
-            <classpath>
-                <pathelement path="${ooxml.lite-merged.dir}/ooxml-lite-merged.jar"/>
-            </classpath>
-            <classpath refid="test.ooxml.classpath"/>
-            <classpath refid="ooxml.xmlsec.classpath"/>
-            <syspropertyset refid="junit.properties"/>
-            <sysproperty key="java.io.tmpdir" value="${tempdir}"/>
-            <jvmarg value="-Xmx512m"/>
-            <jvmarg value="${java9addmods}" />
-            <jvmarg value="${java9addmodsvalue}" />
-            <jvmarg value="${java9addopens1}" />
-            <jvmarg value="${java9addopens2}" />
-            <jvmarg value="${java9addopens3}" />
-            <jvmarg value="${java9addopens4}" />
-            <jvmarg value="${java9addopens5}" />
-            <jvmarg value="${java9addopens6}" />
-            <jvmarg value="${file.leak.detector}" />
-            <arg value="-ooxml"/>
-            <arg value="${ooxml.lite-merged.dir}/ooxml-lite-merged.jar"/>
-            <arg value="-test"/>
-            <arg value="${ooxml.output.test.dir}"/>
-            <arg value="-dest"/>
-            <arg value="${ooxml.lite.output.dir}"/>
-        </java>
-
-        <echo file="${ooxml.lite.testokfile}" append="false" message="testok"/>
     </target>
 
     <target name="test-ooxml-lite" depends="jacocotask,compile-ooxml-xsds,compile-ooxml-lite">
         <delete file="${ooxml.testokfile}"/>
         <echo message="Running ooxml tests against 'poi-ooxml-schemas'"/>
         <ooxml-test-runner classpath="ooxml-lite.classpath" type="ooxml-lite"/>
+    </target>
+
+    <target name="-ooxml-lite-agent" depends="jacocotask,compile-ooxml-xsds,compile-ooxml">
+        <jar destfile="${ooxml.lite.agent}">
+            <fileset dir="${ooxml.output.test.dir}" includes="org/apache/poi/ooxml/util/OOXMLLiteAgent*.class"/>
+            <manifest>
+                <attribute name="Premain-Class" value="org.apache.poi.ooxml.util.OOXMLLiteAgent"/>
+            </manifest>
+        </jar>
     </target>
 
     <!-- Section: test-excelant -->
@@ -1661,25 +1788,19 @@ under the License.
         <fail message="Apache Forrest is not installed."/>
     </target>
 
-    <target name="docs" depends="init, -check-forrest-installed, -check-docs"
-            unless="main.docs.notRequired" description="Builds the POI website">
-
-        <mkdir dir="${build.site.src}/${main.documentation}"/>
-        <copy todir="${build.site.src}/${main.documentation}">
-            <fileset dir="${main.documentation}"/>
-        </copy>
-        <copy file="forrest.properties" tofile="${build.site.src}/forrest.properties"/>
-
-        <move
-                file="${build.site.src}/src/documentation/content/xdocs/status.xml"
-                tofile="${build.site.src}/status.xml"/>
-
-        <ant antfile="${env.FORREST_HOME}/forrest.antproxy.xml" target="site">
-            <property name="project.home" location="${build.site.src}"/>
-        </ant>
+    <target name="docs" depends="init, -check-forrest-installed, -check-docs, javadocs, -forrest-docs"
+            unless="main.docs.notRequired" 
+            description="Builds the POI website" />
+    <target name="-forrest-docs" depends="-check-forrest-installed, -check-docs"
+            unless="main.docs.notRequired" description="Builds the HTML pages of the POI website">
+        <exec executable="${env.FORREST_HOME}/bin/forrest" osfamily="unix"/>
+        <exec executable="cmd" osfamily="windows">
+            <arg value="/c"/>
+            <arg value="${env.FORREST_HOME}/bin/forrest.bat"/>
+        </exec>
 
         <echo>Broken links:</echo>
-        <echo file="${build.site}/../tmp/brokenlinks.txt"/>
+        <echo file="${build.site}/../tmp/brokenlinks.xml"/>
 
         <fixcrlf srcdir="${build.site}" includes="**/*.html,**/*.css" eol="unix" eof="remove" />
 
@@ -1688,10 +1809,11 @@ under the License.
         </touch>
     </target>
 
-    <!-- Generates the API documentation. -->
+    <!-- Generates the latest/development API documentation. -->
     <target name="javadocs"
             description="Generates the API documentation">
-        <javadoc verbose="false" author="true" destdir="${apidocs.report.dir}"
+        <echo message="Generating latest Javadocs in ${javadocs.report.dir}"/>
+        <javadoc verbose="false" author="true" destdir="${javadocs.report.dir}"
                  windowtitle="POI API Documentation" use="true" version="true"
                  maxmemory="384M" additionalparam="-notimestamp" locale="en_US"
                  classpathref="javadoc.classpath">
@@ -1783,11 +1905,6 @@ under the License.
     </target>
 
 
-    <!-- Generates documentation and reports -->
-    <target name="site" depends="docs,javadocs"
-            description="Generates POI's website's contents"/>
-
-
     <target name="maven-poms"
             description="Builds the POM files for a maven distribution, and copies these and the jars to the appropriate locations">
 
@@ -1825,14 +1942,15 @@ under the License.
     </target>
 
     <macrodef name="maven-jar">
-        <attribute name="dir"/>
+        <attribute name="src"/>
         <sequential>
             <local name="destfile"/>
             <pathconvert property="destfile" targetos="unix">
-                <path><pathelement path="@{dir}"/></path>
+                <path><pathelement path="@{src}"/></path>
                 <mapper>
                     <chainedmapper>
                         <filtermapper>
+                            <replaceregex pattern=".jar" replace="" flags="g"/>
                             <replaceregex pattern="ooxml-lite" replace="ooxml-schemas" flags="g"/>
                             <replaceregex pattern="(.java|.src)$$" replace="-sources"/>
                             <replaceregex pattern=".*(?:build|src).?(.*)?" replace="\1"/>
@@ -1843,38 +1961,44 @@ under the License.
                     </chainedmapper>
                 </mapper>
             </pathconvert>
+            <local name="isjar"/>
+            <condition property="isjar">
+                <contains string="@{src}" substring=".jar"/>
+            </condition>
+
             <jar destfile="build/dist/maven/${destfile}.jar"
                  manifest="build/poi-manifest.mf">
-                <fileset dir="@{dir}"/>
+                <fileset dir="@{src}" unless:true="${isjar}"/>
+                <zipfileset src="@{src}" if:true="${isjar}"/>
                 <metainf dir="legal/"/>
             </jar>
         </sequential>
     </macrodef>
 
-    <target name="jar" depends="compile-all, compile-version, -manifest" description="Creates jar files for distribution">
-        <maven-jar dir="${main.output.dir}"/>
-        <maven-jar dir="${scratchpad.output.dir}"/>
-        <maven-jar dir="${ooxml.output.dir}"/>
-        <maven-jar dir="${examples.output.dir}"/>
-        <maven-jar dir="${excelant.output.dir}"/>
-        <maven-jar dir="${ooxml.lite.output.dir}"/>
+    <target name="jar" depends="compile, compile-version, compile-ooxml-lite, -manifest" description="Creates jar files for distribution">
+        <maven-jar src="${main.output.dir}"/>
+        <maven-jar src="${scratchpad.output.dir}"/>
+        <maven-jar src="${ooxml.output.dir}"/>
+        <maven-jar src="${examples.output.dir}"/>
+        <maven-jar src="${excelant.output.dir}"/>
+        <maven-jar src="${ooxml.lite.jar}"/>
     </target>
 
-    <target name="jar-src" depends="compile-all, compile-version, -manifest" description="Sources for Maven">
-        <maven-jar dir="${main.src}"/>
-        <maven-jar dir="${scratchpad.src}"/>
-        <maven-jar dir="${ooxml.src}"/>
-        <maven-jar dir="${examples.src}"/>
-        <maven-jar dir="${excelant.src}"/>
+    <target name="jar-src" depends="compile, compile-version, -manifest" description="Sources for Maven">
+        <maven-jar src="${main.src}"/>
+        <maven-jar src="${scratchpad.src}"/>
+        <maven-jar src="${ooxml.src}"/>
+        <maven-jar src="${examples.src}"/>
+        <maven-jar src="${excelant.src}"/>
     </target>
 
     <target name="integration-test-jar" depends="compile-integration,-manifest" description="target for packaging the integration-test code for mass regression test runs">
-        <maven-jar dir="${integration.output.test.dir}"/>
+        <maven-jar src="${integration.output.test.dir}"/>
     </target>
 
     <target name="-do-jar-check-javadocs-package-list">
         <condition property="javadocs.package-list.present">
-            <available file="build/tmp/site/build/site/apidocs/package-list"/>
+            <available file="${javadocs.report.dir}/package-list"/>
         </condition>
     </target>
 
@@ -1911,7 +2035,7 @@ under the License.
                 <packageset dir="@{src}" defaultexcludes="yes">
                     <include name="org/apache/poi/**"/>
                 </packageset>
-                <link offline="true" href="https://poi.apache.org/apidocs" packagelistLoc="build/tmp/site/build/site/apidocs"/>
+                <link offline="true" href="https://poi.apache.org/apidocs/dev" packagelistLoc="${javadocs.report.dir}"/>
             </javadoc>
             <jar destfile="${dist.dir}/maven/@{dest}/@{dest}-${version.id}-javadoc.jar"
                  manifest="build/poi-manifest.mf">
@@ -1947,15 +2071,20 @@ under the License.
                     <include name="commons-codec-*.jar"/>
                     <include name="commons-logging-*.jar"/>
                     <include name="commons-collections4-*.jar"/>
+                    <include name="commons-compress*.jar"/>
                     <include name="commons-math3-*.jar"/>
+                    <include name="jaxb-api-*.jar"/>
+                    <include name="jaxb-impl-*.jar"/>
+                    <include name="jaxb-core-*.jar"/>
+                    <include name="activation-*.jar"/>
                     <include name="junit-*.jar"/>
                     <include name="log4j-*.jar"/>
                 </fileset>
                 <globmapper from="*" to="${zipdir}/lib/*"/>
             </mappedresources>
             <mappedresources cache="true">
-                <fileset dir="${ooxml.lib}" includes="xmlbeans-2.6.0.jar.orig,curvesapi-*.jar"/>
-                <regexpmapper from="^(.*\.jar)(\.orig)?$$" to="${zipdir}/ooxml-lib/\1"/>
+                <fileset dir="${ooxml.lib}" includes="xmlbeans-*.jar,curvesapi-*.jar"/>
+                <regexpmapper from="^(.*\.jar)$$" to="${zipdir}/ooxml-lib/\1"/>
             </mappedresources>
             <mappedresources cache="true">
                 <fileset dir="${dist.dir}/maven" includes="**/*.jar" excludes="**/*-javadoc.jar,**/*-sources.jar"/>
@@ -1979,10 +2108,12 @@ under the License.
                       lib/**,
                       bin/**,
                       out/**,
+                      tmp/**,
                       sonar/**/target/**,
                       sonar/*/src/**,
                       compile-lib/**,
                       ooxml-lib/**,
+                      ooxml-testlib/**,
                       scripts/**,
                       TEST*,
                       *.ipr,
@@ -2023,7 +2154,7 @@ under the License.
         <antcall target="maven-poms"/>
 
         <echo>Distribution located in ${dist.dir}</echo>
-        <echo>Use "ant dist-checksum" to create md5/sha1/sha512 checksums and GPG signatures</echo>
+        <echo>Use "ant dist-checksum" to create sha256/sha512 checksums and GPG signatures</echo>
     </target>
 
     <target name="osgi" depends="mvn-install">
@@ -2034,14 +2165,12 @@ under the License.
        </mvn:mvn>
     </target>
 
-    <target name="dist" depends="clean, compile-all, test-all, rat-check, forbidden-apis-check, site, jar, release-notes, assemble"
+    <target name="dist" depends="clean, compile, test-all, rat-check, forbidden-apis-check, docs, jar, release-notes, assemble"
             description="Creates the entire distribution into build/dist, from scratch">
     </target>
 
     <!-- continuous integration targets -->
-    <target name="gump" depends="compile-all, test-all, jar"
-        description="Target for running with Apache Gump continuous integration. Builds and tests POI and generates jar artifacts." />
-    <target name="jenkins" depends="compile-all, test-all, test-integration, jar, javadocs, assemble, findbugs, release-notes, rat-check, forbidden-apis-check"
+    <target name="jenkins" depends="compile, test-all, jar, javadocs, assemble, findbugs, release-notes, rat-check, forbidden-apis-check"
         description="Target run by Jenkins on a continuous basis. Builds and tests POI, generates artifacts and documentation, and searches for problems."/>
 
     <available property="maven.ant.tasks.present" classname="org.apache.maven.artifact.ant.Pom"/>
@@ -2220,6 +2349,10 @@ under the License.
             <auxClasspath path="${main.jmh.jar}"/>
             <auxClasspath path="${main.jmhAnnotation.jar}"/>
             <auxClasspath path="${main.ant.jar}" />
+            <auxClasspath path="${main.xmlbind.jar}" />
+            <auxClasspath path="${main.xmlbind-impl.jar}" />
+            <auxClasspath path="${main.xmlbind-core.jar}" />
+            <auxClasspath path="${main.activation.jar}" />
             <sourcePath path="src/java" />
             <sourcePath path="src/ooxml/java" />
             <sourcePath path="src/scratchpad/src" />
@@ -2265,17 +2398,20 @@ under the License.
     <target name="dist-checksum" depends="load-maven-server-settings">
         <fileset id="dist-archives" dir="${dist.dir}" includes="**/*.jar,**/*.pom,**/*.zip,**/*.tar.gz"/>
 
-        <checksum algorithm="SHA-512" fileext=".sha512" format="MD5SUM">
-            <fileset refid="dist-archives"/>
-        </checksum>
         <checksum algorithm="sha1" format="MD5SUM">
             <fileset refid="dist-archives"/>
         </checksum>
         <checksum algorithm="md5" format="MD5SUM">
             <fileset refid="dist-archives"/>
         </checksum>
+        <checksum algorithm="SHA-256" fileext=".sha256" format="MD5SUM">
+            <fileset refid="dist-archives"/>
+        </checksum>
+        <checksum algorithm="SHA-512" fileext=".sha512" format="MD5SUM">
+            <fileset refid="dist-archives"/>
+        </checksum>
 
-        <fixcrlf srcDir="${dist.dir}" includes="**/*.md5,**/*.sha1,**/*.sha512" eol="unix"/>
+        <fixcrlf srcDir="${dist.dir}" includes="**/*.md5,**/*.sha1,**/*.sha256,**/*.sha512" eol="unix"/>
 
         <downloadfile src="${dist.bouncycastle-prov.url}" dest="${dist.bouncycastle-prov.jar}"/>
         <downloadfile src="${dist.bouncycastle-bcpg.url}" dest="${dist.bouncycastle-bcpg.jar}"/>
@@ -2318,7 +2454,7 @@ under the License.
             <copy todir="${repo}">
                 <mappedresources>
                     <!-- add sha-512 when nexus rules are updated (1/2) -->
-                    <fileset dir="build/dist/maven" includes="@{artifactId}/**" excludes="**/*.sha512"/>
+                    <fileset dir="build/dist/maven" includes="@{artifactId}/**" excludes="**/*.sha512,**/*.sha256"/>
                     <regexpmapper from="^([^/]+)/(.*)$$" to="org/apache/poi/\1/${version.id}/\2" handledirsep="true"/>
                 </mappedresources>
             </copy>
@@ -2344,7 +2480,7 @@ under the License.
     <lastUpdated>${lastUpdated}</lastUpdated>
   </versioning>
 </metadata>]]></echo>
-            <fixcrlf srcdir="${metadir}" includes="maven-metadata.xml" eol="unix" eof="remove" />                    <!-- add sha-512 when nexus rules are updated -->
+            <fixcrlf srcdir="${metadir}" includes="maven-metadata.xml" eol="unix" eof="remove" />
             <!-- add sha-512 when nexus rules are updated (2/2) -->
             <!--checksum algorithm="SHA-512" fileext=".sha512" format="MD5SUM">
                 <fileset dir="${metadir}" includes="maven-metadata.xml"/>
@@ -2356,7 +2492,7 @@ under the License.
                 <fileset dir="${metadir}" includes="maven-metadata.xml"/>
             </checksum>
 
-            <fixcrlf srcDir="${metadir}" includes="*.md5,*.sha1,*.sha512" eol="unix"/>
+            <fixcrlf srcDir="${metadir}" includes="*.md5,*.sha1,*.sha256,*.sha512" eol="unix"/>
 
             <downloadfile src="${dist.nexus-staging.url}" dest="${dist.nexus-staging.jar}"/>
             <taskdef uri="antlib:org.sonatype.nexus.ant.staging" resource="org/sonatype/nexus/ant/staging/antlib.xml">
@@ -2435,7 +2571,6 @@ under the License.
         <scriptdef name="getnextrel" language="javascript">
             var relCurr = new String(project.getProperty("version.id"));
             var relNext = relCurr.replace(/[0-9]+$/, function(lastNum){ return new String(new Number(lastNum)+1); });
-            if (relNext.search(/beta/i) == -1) relNext += "-beta1";
             project.setProperty("rel_next", relNext);
         </scriptdef>
         <getnextrel/>
@@ -2448,19 +2583,19 @@ under the License.
             <regexp pattern="&lt;release.*date=&quot;.*\?\?&quot;&gt;"/>
             <substitution expression="&lt;!-- release version=&quot;${rel_next}&quot; date=&quot;${tstamp_next}-??&quot;&gt;&#10;    &lt;/release --&gt;&#10;&#10;    &lt;release version=&quot;${version.id}&quot; date=&quot;${tstamp_rel}&quot;&gt;"/>
             <fileset dir="src/documentation/content/xdocs">
-              <include name="status.xml"/>
+              <include name="changes.xml"/>
             </fileset>
         </replaceregexp>
 
-        <fixcrlf srcdir="." includes="src/documentation/content/xdocs/status.xml" eol="unix" eof="remove" />
+        <fixcrlf srcdir="." includes="src/documentation/content/xdocs/changes.xml" eol="unix" eof="remove" />
 
         <!-- can't combine updating and pinning of the documentation ... so we need two commits -->
         <!-- (revision)properties can't be set and read within one svn block -->
-        <echo message="updating build.xml and status.xml"/>
-        <exec command="svn ci --username ${settings.apache-id.username} --password ${settings.apache-id.password} -m 'release prepare for ${version.id} - updating build.xml and status.xml' build.xml src/documentation/content/xdocs/status.xml"/>
+        <echo message="updating build.xml and changes.xml"/>
+        <exec command="svn ci --username ${settings.apache-id.username} --password ${settings.apache-id.password} -m 'release prepare for ${version.id} - updating build.xml and changes.xml' build.xml src/documentation/content/xdocs/changes.xml"/>
         <svn refid="svn.settings">
-            <!--<commit message="release prepare for ${version.id} - updating build.xml and status.xml" recurse="false">
-                <fileset dir="." includes="build.xml,src/documentation/content/xdocs/status.xml"/>
+            <!--<commit message="release prepare for ${version.id} - updating build.xml and changes.xml" recurse="false">
+                <fileset dir="." includes="build.xml,src/documentation/content/xdocs/changes.xml"/>
             </commit>-->
             <update dir="." recurse="true"/>
             <status path="." revisionProperty="svn_version1"/>
@@ -2481,7 +2616,7 @@ under the License.
                 message="tag r${svn_version2} as ${version.id}"/>
         </svn>
 
-        <!-- update build.xml to the next beta version -->
+        <!-- update build.xml to the next snapshot version -->
         <antcall target="-update-build.xml">
             <param name="version_id" value="${rel_next}"/>
         </antcall>
@@ -2495,7 +2630,7 @@ under the License.
             </fileset>
         </replaceregexp>
 
-        <!-- unpin documentation and commit next beta version -->
+        <!-- unpin documentation and commit next snapshot version -->
         <svn refid="svn.settings">
             <update dir="." recurse="true"/>
             <propset path="src" name="svn:externals" value="documentation https://svn.apache.org/repos/asf/poi/site/src/documentation"/>
@@ -2545,6 +2680,45 @@ under the License.
                 message="release candidate POI ${version.id}"/>
         </svn>
     </target>
+
+    <target name="release-finish" description="write the dist to the release candidate repo - needs Java7+">
+        <!--svn refid="svn.settings">
+            <update dir="." recurse="true"/>
+        </svn-->
+        <local name="rel_prev"/>
+        <local name="file_date"/>
+        <local name="file_date_iso"/>
+
+        <tstamp>
+            <!-- usually overwritten by a command line argument -->
+            <!-- for convience this is kept in the same format as in the release-prep call  -->
+            <format property="file_date" pattern="yyyyMMdd" locale="US"/>
+        </tstamp>
+
+
+        <scriptdef name="getnextrel" language="javascript">
+            var relPrev = new String(project.getProperty("version.id"))
+                .replace(/([0-9]+)[^0-9]*$/, function(all,lastNum){ return new String(new Number(lastNum)-1); });
+            project.setProperty("rel_prev", relPrev);
+            var fileDateIso = new String(project.getProperty("file_date"))
+                .replace(/([0-9]{4})([0-9]{2})([0-9]{2})/, "$1-$2-$3");
+            project.setProperty("file_date_iso", fileDateIso);
+        </scriptdef>
+        <getnextrel/>
+
+        <replaceregexp file="build.gradle" match="( +version += +)'[^']+'" replace="\1'${version.id}'"/>
+        <replaceregexp file="build.gradle" match="(japicmpversion += +)'[^']+'" replace="\1'${rel_prev}'"/>
+        <replaceregexp file="src/examples/groovy/build.gradle" match="( *compile 'org.apache.poi:[^0-9]+)([0-9.]+)'" replace="\1${rel_prev}'" byline="true"/>
+        <replaceregexp file="src/examples/scala/build.sbt" match='( *org.apache.poi.* ")[0-9.]+(.+)' replace="\1${rel_prev}\2" byline="true"/>
+        <replaceregexp file="osgi/build.xml" match='(name="version.id" value=")[^"]+' replace="\1${version.id}"/>
+        <replaceregexp file="doap_POI.rdf" match="&lt;release&gt;" replace="&lt;release&gt;&#10;      &lt;Version&gt;&#10;        &lt;name&gt;Apache POI ${rel_prev}&lt;/name&gt;&#10;        &lt;created&gt;${file_date_iso}&lt;/created&gt;&#10;        &lt;revision&gt;${rel_prev}&lt;/revision&gt;&#10;      &lt;/Version&gt;&#10;    &lt;/release&gt;&#10;    &lt;release&gt;"/>
+
+        <replaceregexp match="(&lt;version&gt;)[^&lt;]+" replace="\1${version.id}">
+            <fileset dir="sonar" includes="**/pom.xml"/>
+        </replaceregexp>
+    </target>
+
+
 
     <target name="-update-build.xml">
         <replaceregexp byline="true">
@@ -2606,13 +2780,20 @@ under the License.
         project.setProperty(attributes.get("property"), mega);
     </scriptdef>
 
-    <macrodef name="loadFilesize">
-        <attribute name="url"/>
-        <attribute name="property"/>
+    <macrodef name="download-line">
+        <attribute name="prop"/>
+        <attribute name="dist"/>
+        <attribute name="pack"/>
         <sequential>
+            <local name="baseurl"/>
+            <property name="baseurl" value="https://www.apache.org/dist/poi/release"/>
+
+            <local name="basedyn"/>
+            <property name="basedyn" value="https://www.apache.org/dyn/closer.lua/poi/release"/>
+
             <delete file="build/loadFilesize.txt"/>
             <record name="build/loadFilesize.txt" action="start" loglevel="verbose" append="false"/>
-            <http url="@{url}" method="HEAD" expected="200" printrequestheaders="false" printresponseheaders="false"/>
+            <http url="${baseurl}/@{dist}/poi-@{dist}-${version.id}-${file_date}.@{pack}" method="HEAD" expected="200" printrequestheaders="false" printresponseheaders="false"/>
             <record name="build/loadFilesize.txt" action="stop"/>
             <local name="fileSize"/>
             <loadfile property="fileSize" srcFile="build/loadFilesize.txt">
@@ -2623,12 +2804,21 @@ under the License.
                     </tokenfilter>
                 </filterchain>
             </loadfile>
-            <bytes2mega property="@{property}" bytes="${fileSize}"/>
+
+            <local name="fileSizeMb"/>
+            <bytes2mega property="fileSizeMb" bytes="${fileSize}"/>
+
+            <property name="@{prop}"><![CDATA[<li>
+          <a href="${basedyn}/@{dist}/poi-@{dist}-${version.id}-${file_date}.@{pack}">poi-@{dist}-${version.id}-${file_date}.@{pack}</a>
+          (${fileSizeMb} MB, <a href="${baseurl}/@{dist}/poi-@{dist}-${version.id}-${file_date}.@{pack}.asc">signature (.asc)</a>,
+          checksum: <a href="${baseurl}/@{dist}/poi-@{dist}-${version.id}-${file_date}.@{pack}.sha256">SHA-256</a>,
+          <a href="${baseurl}/@{dist}/poi-@{dist}-${version.id}-${file_date}.@{pack}.sha512">SHA-512</a>)
+        </li>]]></property>
         </sequential>
     </macrodef>
 
     <!-- TODO: currently this only saves a copy and paste snipplet to a file ...
-         would be nice if it really changes status.xml and download.xml
+         would be nice if it really changes changes.xml and download.xml
          Doesn't work with Java6 - the https urls can't be accessed via loadChecksum
      -->
     <target name="update-download">
@@ -2648,97 +2838,41 @@ under the License.
             <format property="rel_date" pattern="dd MMMM yyyy" locale="US"/>
             <format property="file_date" pattern="yyyyMMdd" locale="US"/>
         </tstamp>
-        <!-- TODO: change reltype (dev/release), depending on BETA / FINAL -->
-        <property name="reltype" value="dev"/>
-        <property name="baseurl" value="https://www.apache.org/dist/poi/${reltype}"/>
 
-        <loadChecksum property="bin-tar-md5" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.tar.gz.md5"/>
-        <loadChecksum property="bin-tar-sha1" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.tar.gz.sha1"/>
-        <loadChecksum property="bin-tar-sha512" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.tar.gz.sha512"/>
-        <loadChecksum property="bin-zip-md5" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.zip.md5"/>
-        <loadChecksum property="bin-zip-sha1" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.zip.sha1"/>
-        <loadChecksum property="bin-zip-sha512" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.zip.sha512"/>
-        <loadChecksum property="src-tar-md5" url="${baseurl}/src/poi-src-${version.id}-${file_date}.tar.gz.md5"/>
-        <loadChecksum property="src-tar-sha1" url="${baseurl}/src/poi-src-${version.id}-${file_date}.tar.gz.sha1"/>
-        <loadChecksum property="src-tar-sha512" url="${baseurl}/src/poi-src-${version.id}-${file_date}.tar.gz.sha512"/>
-        <loadChecksum property="src-zip-md5" url="${baseurl}/src/poi-src-${version.id}-${file_date}.zip.md5"/>
-        <loadChecksum property="src-zip-sha1" url="${baseurl}/src/poi-src-${version.id}-${file_date}.zip.sha1"/>
-        <loadChecksum property="src-zip-sha512" url="${baseurl}/src/poi-src-${version.id}-${file_date}.zip.sha512"/>
+        <local name="li1"/>
+        <local name="li2"/>
+        <local name="li3"/>
+        <local name="li4"/>
+        <download-line prop="li1" dist="bin" pack="tar.gz"/>
+        <download-line prop="li2" dist="bin" pack="zip"/>
+        <download-line prop="li3" dist="src" pack="tar.gz"/>
+        <download-line prop="li4" dist="src" pack="zip"/>
 
-        <loadFilesize property="bin-tar-size" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.tar.gz"/>
-        <loadFilesize property="bin-zip-size" url="${baseurl}/bin/poi-bin-${version.id}-${file_date}.zip"/>
-        <loadFilesize property="src-tar-size" url="${baseurl}/src/poi-src-${version.id}-${file_date}.tar.gz"/>
-        <loadFilesize property="src-zip-size" url="${baseurl}/src/poi-src-${version.id}-${file_date}.zip"/>
-
-        <echo file="download-snipplet.xml"><![CDATA[
+<echo file="download-snipplet.xml"><![CDATA[
     <section id="POI-${version.id}"><title>${rel_date} - POI ${version.id} available</title>
       <p>The Apache POI team is pleased to announce the release of ${version.id}.
          Featured are a handful of new areas of functionality and numerous bug fixes.</p>
       <p>A summary of changes is available in the
-        <link href="https://www.apache.org/dyn/closer.lua/poi/dev/RELEASE-NOTES-${version.id}.txt">Release Notes</link>.
-        A full list of changes is available in the <link href="changes.html">change log</link>.
-        People interested should also follow the <link href="mailinglists.html">dev list</link>
+        <a href="https://www.apache.org/dyn/closer.lua/poi/dev/RELEASE-NOTES-${version.id}.txt">Release Notes</a>.
+        A full list of changes is available in the <a href="site:changes">change log</a>.
+        People interested should also follow the <a href="site:mailinglists">dev list</a>
         to track progress.</p>
       <p>
         The POI source release as well as the pre-built binary deployment packages are listed below.
-        Pre-built versions of all <link href="overview.html#components">POI components</link>
+        Pre-built versions of all <a href="site:components">POI components</a>
         are available in the central Maven repository under Group ID "org.apache.poi" and Version
         "${version.id}".
       </p>
       <section id="POI-${version.id}-bin"><title>Binary Distribution</title>
       <ul>
-        <li><link href="https://www.apache.org/dyn/closer.lua/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.tar.gz">poi-bin-${version.id}-${file_date}.tar.gz</link>
-          (${bin-tar-size} MB, <link href="https://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.tar.gz.asc">signature (.asc)</link>)
-          <br/>
-          MD5 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.tar.gz.md5">
-          ${bin-tar-md5}</link>
-          <br/>
-          SHA1 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.tar.gz.sha1">
-          ${bin-tar-sha1}</link>
-          <br/>
-          SHA512 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.tar.gz.sha512">
-          ${bin-tar-sha512}</link>
-        </li>
-        <li><link href="https://www.apache.org/dyn/closer.lua/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.zip">poi-bin-${version.id}-${file_date}.zip</link>
-          (${bin-zip-size} MB, <link href="https://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.zip.asc">signature (.asc)</link>)
-          <br/>
-          MD5 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.zip.md5">
-          ${bin-zip-md5}</link>
-          <br/>
-          SHA1 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.zip.sha1">
-          ${bin-zip-sha1}</link>
-          <br/>
-          SHA512 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/bin/poi-bin-${version.id}-${file_date}.zip.sha512">
-          ${bin-zip-sha512}</link>
-        </li>
+        ${li1}
+        ${li2}
       </ul>
       </section>
       <section id="POI-${version.id}-src"><title>Source Distribution</title>
       <ul>
-        <li><link href="https://www.apache.org/dyn/closer.lua/poi/${reltype}/src/poi-src-${version.id}-${file_date}.tar.gz">poi-src-${version.id}-${file_date}.tar.gz</link>
-          (${src-tar-size} MB, <link href="https://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.tar.gz.asc">signature (.asc)</link>)
-          <br/>
-          MD5 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.tar.gz.md5">
-          ${src-tar-md5}</link>
-          <br/>
-          SHA1 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.tar.gz.sha1">
-          ${src-tar-sha1}</link>
-          <br/>
-          SHA512 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.tar.gz.sha512">
-          ${src-tar-sha512}</link>
-        </li>
-        <li><link href="https://www.apache.org/dyn/closer.lua/poi/${reltype}/src/poi-src-${version.id}-${file_date}.zip">poi-src-${version.id}-${file_date}.zip</link>
-          (${src-zip-size} MB, <link href="https://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.zip.asc">signature (.asc)</link>)
-          <br/>
-          MD5 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.zip.md5">
-          ${src-zip-md5}</link>
-          <br/>
-          SHA1 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.zip.sha1">
-          ${src-zip-sha1}</link>
-          <br/>
-          SHA512 checksum: <link href="https://www.apache.org/dist/poi/${reltype}/src/poi-src-${version.id}-${file_date}.zip.sha512">
-          ${src-zip-sha512}</link>
-        </li>
+        ${li3}
+        ${li4}
       </ul>
       </section>
     </section>

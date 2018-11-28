@@ -30,7 +30,7 @@ import org.apache.poi.util.IOUtils;
 public final class CompressedStreamStore extends StreamStore {
 
 	//arbitrarily selected; may need to increase
-	private static final int MAX_RECORD_LENGTH = 1_000_000;
+	private static final int MAX_RECORD_LENGTH = 64_000_000;
 
 	/** The raw, compressed contents */
 	private byte[] compressedContents;

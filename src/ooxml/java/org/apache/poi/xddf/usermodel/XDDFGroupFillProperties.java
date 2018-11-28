@@ -34,7 +34,7 @@ public class XDDFGroupFillProperties implements XDDFFillProperties {
     }
 
     @Internal
-    protected CTGroupFillProperties getXmlObject() {
+    public CTGroupFillProperties getXmlObject() {
         return props;
     }
 }

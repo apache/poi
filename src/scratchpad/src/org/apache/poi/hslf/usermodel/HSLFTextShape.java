@@ -704,10 +704,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
         return
             ((getPlaceholderAtom() != null) ||
             //special case for files saved in Office 2007
-            (getHFPlaceholderAtom() != null)) &&
-            // check for metro shape of complex placeholder
-            (!new HSLFMetroShape<HSLFShape>(this).hasMetroBlob())
-        ;
+            (getHFPlaceholderAtom() != null));
     }
 
 

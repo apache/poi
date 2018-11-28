@@ -43,7 +43,7 @@ public abstract class RefPtgBase extends OperandPtg {
 
     /**
      * YK: subclasses of RefPtgBase are used by the FormulaParser and FormulaEvaluator accross HSSF and XSSF.
-     * The bit mask should accomodate the maximum number of avaiable columns, i.e. 0x3FFF.
+     * The bit mask should accommodate the maximum number of avaiable columns, i.e. 0x3FFF.
      *
      * @see org.apache.poi.ss.SpreadsheetVersion
      */

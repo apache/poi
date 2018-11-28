@@ -55,7 +55,7 @@ public class HWPFOldDocument extends HWPFDocumentCore {
             .getLogger( HWPFOldDocument.class );
 
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 1_000_000;
+    private static final int MAX_RECORD_LENGTH = 10_000_000;
 
     private final static Charset DEFAULT_CHARSET = StringUtil.WIN_1252;
 

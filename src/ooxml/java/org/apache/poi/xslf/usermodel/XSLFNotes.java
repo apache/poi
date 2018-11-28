@@ -49,9 +49,7 @@ implements Notes<XSLFShape,XSLFTextParagraph> {
      *
      * @param part the package part holding the notes data,
      * the content type must be <code>application/vnd.openxmlformats-officedocument.notes+xml</code>
-     * @param rel  the package relationship holding this notes,
-     * the relationship type must be http://schemas.openxmlformats.org/officeDocument/2006/relationships/notes
-     * 
+     *
      * @since POI 3.14-Beta1
      */
     XSLFNotes(PackagePart part) throws IOException, XmlException {
@@ -77,7 +75,7 @@ implements Notes<XSLFShape,XSLFTextParagraph> {
 
     @Override
     protected String getRootElementName(){
-        return "notes";        
+        return "notes";
     }
 
     @Override

@@ -37,6 +37,7 @@ import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FormulaError;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
@@ -477,7 +478,7 @@ public final class XSSFCell implements Cell {
      * @return a formula for the cell
      * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is not {@link CellType#FORMULA}
      */
-    protected String getCellFormula(XSSFEvaluationWorkbook fpb) {
+    protected String getCellFormula(BaseXSSFEvaluationWorkbook fpb) {
         CellType cellType = getCellType();
         if(cellType != CellType.FORMULA) {
             throw typeMismatch(CellType.FORMULA, cellType, false);
@@ -491,10 +492,13 @@ public final class XSSFCell implements Cell {
                 return cell.getCellFormula(fpb);
             }
         }
-        if (f.getT() == STCellFormulaType.SHARED) {
+        if (f == null) {
+            return null;
+        } else if (f.getT() == STCellFormulaType.SHARED) {
             return convertSharedFormula((int)f.getSi(), fpb == null ? XSSFEvaluationWorkbook.create(getSheet().getWorkbook()) : fpb);
+        } else {
+            return f.getStringValue();
         }
-        return f.getStringValue();
     }
 
     /**
@@ -503,7 +507,7 @@ public final class XSSFCell implements Cell {
      * @param si Shared Group Index
      * @return non shared formula created for the given shared formula and this cell
      */
-    private String convertSharedFormula(int si, XSSFEvaluationWorkbook fpb){
+    private String convertSharedFormula(int si, BaseXSSFEvaluationWorkbook fpb){
         XSSFSheet sheet = getSheet();
 
         CTCellFormula f = sheet.getSharedFormula(si);
@@ -533,6 +537,10 @@ public final class XSSFCell implements Cell {
      * Note, this method only sets the formula string and does not calculate the formula value.
      * To set the precalculated value use {@link #setCellValue(double)} or {@link #setCellValue(String)}
      * </p>
+     * <p>
+     * Note, if there are any shared formulas, his will invalidate any 
+     * {@link FormulaEvaluator} instances based on this workbook.
+     * </p>
      *
      * @param formula the formula to set, e.g. <code>"SUM(C4:E4)"</code>.
      *  If the argument is <code>null</code> then the current formula is removed.
@@ -560,7 +568,7 @@ public final class XSSFCell implements Cell {
         if (formula == null) {
             wb.onDeleteFormula(this);
             if (_cell.isSetF()) {
-                _row.getSheet().onDeleteFormula(this);
+                _row.getSheet().onDeleteFormula(this, null);
                 _cell.unsetF();
             }
             return;
@@ -959,6 +967,16 @@ public final class XSSFCell implements Cell {
      */
     @Override
     public void setCellType(CellType cellType) {
+        setCellType(cellType, null);
+    }
+    
+    /**
+     * Needed by bug #62834, which points out getCellFormula() expects an evaluation context or creates a new one,
+     * so if there is one in use, it needs to be carried on through.
+     * @param cellType
+     * @param evalWb BaseXSSFEvaluationWorkbook already in use, or null if a new implicit one should be used
+     */
+    protected void setCellType(CellType cellType, BaseXSSFEvaluationWorkbook evalWb) {
         CellType prevType = getCellType();
 
         if(isPartOfArrayFormulaGroup()){
@@ -966,7 +984,7 @@ public final class XSSFCell implements Cell {
         }
         if(prevType == CellType.FORMULA && cellType != CellType.FORMULA) {
             if (_cell.isSetF()) {
-                _row.getSheet().onDeleteFormula(this);
+                _row.getSheet().onDeleteFormula(this, evalWb);
             }
             getSheet().getWorkbook().onDeleteFormula(this);
         }

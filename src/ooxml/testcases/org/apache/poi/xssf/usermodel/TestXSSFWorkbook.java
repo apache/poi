@@ -39,8 +39,8 @@ import java.util.List;
 import java.util.zip.CRC32;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.ooxml.POIXMLProperties;
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.ooxml.POIXMLProperties;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.ContentTypes;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -67,6 +67,8 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.TempFile;
+import org.apache.poi.xddf.usermodel.chart.XDDFBarChartData;
+import org.apache.poi.xddf.usermodel.chart.XDDFChartData;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.StylesTable;
@@ -553,7 +555,9 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
         Sheet sheet = wb.getSheetAt(0);
         sheet.shiftRows(2, sheet.getLastRowNum(), 1, true, false);
         Row newRow = sheet.getRow(2);
-        if (newRow == null) newRow = sheet.createRow(2);
+        if (newRow == null) {
+            newRow = sheet.createRow(2);
+        }
         newRow.createCell(0).setCellValue(" Another Header");
         wb.cloneSheet(0);
 
@@ -667,8 +671,8 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
         XSSFWorkbook wb3 = XSSFTestDataSamples.writeOutAndReadBack(wb2);
         assertNotNull(wb3);
         sheet = wb3.getSheetAt(0);
-        row = sheet.getRow(2);        
-        
+        row = sheet.getRow(2);
+
         assertEquals("test1", row.getCell(3).getStringCellValue());
         assertEquals("test2", row.getCell(4).getStringCellValue());
         wb3.close();
@@ -698,6 +702,24 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
 
             assertEquals(1, countMatches(str, "<worksheet"));
         }
+    }
+
+    @Test
+    public void bug60509() throws Exception {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("60509.xlsx");
+        assertSheetOrder(wb, "Sheet1", "Sheet2", "Sheet3");
+        int sheetIndex = wb.getSheetIndex("Sheet1");
+        wb.setSheetName(sheetIndex, "Sheet1-Renamed");
+        Workbook read = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        assertNotNull(read);
+        assertSheetOrder(read, "Sheet1-Renamed", "Sheet2", "Sheet3");
+        XSSFSheet sheet = (XSSFSheet) read.getSheet("Sheet1-Renamed");
+        XDDFChartData.Series series = sheet.getDrawingPatriarch().getCharts().get(0).getChartSeries().get(0).getSeries().get(0);
+        assertTrue("should be a bar chart data series", series instanceof XDDFBarChartData.Series);
+        String formula = ((XDDFBarChartData.Series) series).getCategoryData().getFormula();
+        assertTrue("should contain new sheet name", formula.startsWith("'Sheet1-Renamed'!"));
+        read.close();
+        wb.close();
     }
 
     private static final int INDEX_NOT_FOUND = -1;
@@ -1009,22 +1031,24 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
         final String filename = "SampleSS.xlsx";
         final File file = POIDataSamples.getSpreadSheetInstance().getFile(filename);
         Workbook wb;
-        
+
         // Some tests commented out because close() modifies the file
         // See bug 58779
-        
+
         // String
         //wb = new XSSFWorkbook(file.getPath());
         //assertCloseDoesNotModifyFile(filename, wb);
-        
+
         // File
         //wb = new XSSFWorkbook(file);
         //assertCloseDoesNotModifyFile(filename, wb);
-        
+
         // InputStream
-        wb = new XSSFWorkbook(new FileInputStream(file));
-        assertCloseDoesNotModifyFile(filename, wb);
-        
+        try (FileInputStream is = new FileInputStream(file)) {
+            wb = new XSSFWorkbook(is);
+            assertCloseDoesNotModifyFile(filename, wb);
+        }
+
         // OPCPackage
         //wb = new XSSFWorkbook(OPCPackage.open(file));
         //assertCloseDoesNotModifyFile(filename, wb);
@@ -1070,7 +1094,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
        XSSFTable table2 = wb.getSheet("Foglio2").createTable();
        table2.setName("Table2");
        assertSame("Did not find Table2", table2, wb.getTable("Table2"));
-       
+
        // If table name is modified after getTable is called, the table can only be found by its new name
        // This test makes sure that if any caching is done that getTable never uses a stale cache
        table1.setName("Table1");

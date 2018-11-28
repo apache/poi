@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -30,6 +31,7 @@ import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
@@ -38,9 +40,11 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComments;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CommentsDocument;
 
 @Internal
-public class CommentsTable extends POIXMLDocumentPart {
+public class CommentsTable extends POIXMLDocumentPart implements Comments {
+
     public static final String DEFAULT_AUTHOR = "";
     public static final int DEFAULT_AUTHOR_ID = 0;
+
     /**
      * Underlying XML Beans CTComment list.
      */
@@ -75,6 +79,7 @@ public class CommentsTable extends POIXMLDocumentPart {
             throw new IOException(e.getLocalizedMessage());
         }
     }
+
     public void writeTo(OutputStream out) throws IOException {
         CommentsDocument doc = CommentsDocument.Factory.newInstance();
         doc.setComments(comments);
@@ -102,18 +107,22 @@ public class CommentsTable extends POIXMLDocumentPart {
        }
     }
 
+    @Override
     public int getNumberOfComments() {
         return comments.getCommentList().sizeOfCommentArray();
     }
 
+    @Override
     public int getNumberOfAuthors() {
         return comments.getAuthors().sizeOfAuthorArray();
     }
 
+    @Override
     public String getAuthor(long authorId) {
         return comments.getAuthors().getAuthorArray((int)authorId);
     }
 
+    @Override
     public int findAuthor(String author) {
         String[] authorArray = comments.getAuthors().getAuthorArray();
         for (int i = 0 ; i < authorArray.length; i++) {
@@ -130,6 +139,7 @@ public class CommentsTable extends POIXMLDocumentPart {
      * @param cellAddress the address of the cell to find a comment
      * @return cell comment if one exists, otherwise returns null
      */
+    @Override
     public XSSFComment findCellComment(CellAddress cellAddress) {
         CTComment ct = getCTComment(cellAddress);
         return ct == null ? null : new XSSFComment(this, ct, null);
@@ -149,17 +159,31 @@ public class CommentsTable extends POIXMLDocumentPart {
         // Return the comment, or null if not known
         return commentRefs.get(cellRef);
     }
-    
+
+    /**
+     * Returns all cell addresses that have comments.
+     * @return An iterator to traverse all cell addresses that have comments.
+     * @since 4.0.0
+     */
+    @Override
+    public Iterator<CellAddress> getCellAddresses() {
+        prepareCTCommentCache();
+        return commentRefs.keySet().iterator();
+    }
+
     /**
      * Returns all cell comments on this sheet.
      * @return A map of each Comment in this sheet, keyed on the cell address where
      * the comment is located.
+     * @deprecated use <code>getCellAddresses</code> instead
      */
+    @Removal(version = "4.2")
+    @Deprecated
     public Map<CellAddress, XSSFComment> getCellComments() {
         prepareCTCommentCache();
         final TreeMap<CellAddress, XSSFComment> map = new TreeMap<>();
         
-        for (final Entry<CellAddress, CTComment> e: commentRefs.entrySet()) {
+        for (final Entry<CellAddress, CTComment> e : commentRefs.entrySet()) {
             map.put(e.getKey(), new XSSFComment(this, e.getValue(), null));
         }
         
@@ -205,6 +229,7 @@ public class CommentsTable extends POIXMLDocumentPart {
      * @param cellRef the location of the comment to remove
      * @return returns true if a comment was removed
      */
+    @Override
     public boolean removeComment(CellAddress cellRef) {
         final String stringRef = cellRef.formatAsString();
         CTCommentList lst = comments.getCommentList();

@@ -21,6 +21,7 @@ package org.apache.poi.xslf.usermodel;
 import java.awt.Color;
 
 import org.apache.poi.sl.draw.DrawPaint;
+import org.apache.poi.sl.usermodel.AbstractColorStyle;
 import org.apache.poi.sl.usermodel.ColorStyle;
 import org.apache.poi.sl.usermodel.PresetColor;
 import org.apache.poi.util.Beta;
@@ -47,11 +48,12 @@ import org.w3c.dom.Node;
 @Internal
 public class XSLFColor {
     private final static POILogger LOGGER = POILogFactory.getLogger(XSLFColor.class);
-    
+
     private XmlObject _xmlObject;
     private Color _color;
     private CTSchemeColor _phClr;
 
+    @SuppressWarnings("WeakerAccess")
     public XSLFColor(XmlObject obj, XSLFTheme theme, CTSchemeColor phClr) {
         _xmlObject = obj;
         _phClr = phClr;
@@ -72,8 +74,9 @@ public class XSLFColor {
         return DrawPaint.applyColorTransform(getColorStyle());
     }
 
+    @SuppressWarnings("WeakerAccess")
     public ColorStyle getColorStyle() {
-        return new ColorStyle() {
+        return new AbstractColorStyle() {
             @Override
             public Color getColor() {
                 return _color;
@@ -125,8 +128,8 @@ public class XSLFColor {
             }
         };
     }
-    
-    Color toColor(XmlObject obj, XSLFTheme theme) {
+
+    private Color toColor(XmlObject obj, XSLFTheme theme) {
         Color color = null;
         for (XmlObject ch : obj.selectPath("*")) {
             if (ch instanceof CTHslColor) {
@@ -150,7 +153,7 @@ public class XSLFColor {
                     colorRef = _phClr.getVal().toString();
                 }
                 // find referenced CTColor in the theme and convert it to java.awt.Color via a recursive call
-                CTColor ctColor = theme.getCTColor(colorRef);
+                CTColor ctColor = theme == null ? null : theme.getCTColor(colorRef);
                 if(ctColor != null) {
                     color = toColor(ctColor, null);
                 }
@@ -178,10 +181,7 @@ public class XSLFColor {
                         color = Color.black;
                     }
                 }
-            } else if (ch instanceof CTFontReference) {
-                // try next ...
-                continue;
-            } else {
+            } else if (!(ch instanceof CTFontReference)) {
                 throw new IllegalArgumentException("Unexpected color choice: " + ch.getClass());
             }
         }
@@ -207,19 +207,19 @@ public class XSLFColor {
         if (fill.isSetScrgbClr()) {
             fill.unsetScrgbClr();
         }
-        
+
         if (fill.isSetHslClr()) {
             fill.unsetHslClr();
         }
-        
+
         if (fill.isSetPrstClr()) {
             fill.unsetPrstClr();
         }
-        
+
         if (fill.isSetSchemeClr()) {
             fill.unsetSchemeClr();
         }
-        
+
         if (fill.isSetSysClr()) {
             fill.unsetSysClr();
         }
@@ -227,12 +227,12 @@ public class XSLFColor {
         float[] rgbaf = color.getRGBComponents(null);
         boolean addAlpha = (rgbaf.length == 4 && rgbaf[3] < 1f);
         CTPositiveFixedPercentage alphaPct;
-        
+
         // see office open xml part 4 - 5.1.2.2.30 and 5.1.2.2.32
         if (isInt(rgbaf[0]) && isInt(rgbaf[1]) && isInt(rgbaf[2])) {
             // sRGB has a gamma of 2.2
             CTSRgbColor rgb = fill.addNewSrgbClr();
-            
+
             byte rgbBytes[] = { (byte)color.getRed(), (byte)color.getGreen(), (byte)color.getBlue() };
             rgb.setVal(rgbBytes);
             alphaPct = (addAlpha) ? rgb.addNewAlpha() : null;
@@ -249,14 +249,14 @@ public class XSLFColor {
             alphaPct.setVal((int)(100000 * rgbaf[3]));
         }
     }
-    
+
     /**
      * @return true, if this is an integer color value
      */
     private static boolean isInt(float f) {
-        return Math.abs((f*255f) - Math.rint(f*255f)) < 0.00001f;
+        return Math.abs((f*255d) - Math.rint(f*255d)) < 0.00001;
     }
-    
+
     private int getRawValue(String elem) {
         String query = "declare namespace a='http://schemas.openxmlformats.org/drawingml/2006/main' $this//a:" + elem;
 
@@ -281,9 +281,9 @@ public class XSLFColor {
             }
         }
 
-        return -1;        
+        return -1;
     }
-    
+
     /**
      * Read a perecentage value from the supplied xml bean.
      * Example:
@@ -298,11 +298,6 @@ public class XSLFColor {
         return (val == -1) ? val : (val / 1000);
     }
 
-    private int getAngleValue(String elem){
-        int val = getRawValue(elem);
-        return (val == -1) ? val : (val / 60000);
-    }
-
     /**
      * the opacity as expressed by a percentage value
      *
@@ -310,7 +305,7 @@ public class XSLFColor {
      * or -1 if the value is not set
      */
     int getAlpha(){
-        return getPercentageValue("alpha");        
+        return getPercentageValue("alpha");
     }
 
     /**
@@ -336,14 +331,18 @@ public class XSLFColor {
     }
 
 
+    @SuppressWarnings("unused")
     int getHue(){
-        return getAngleValue("hue");
+        int val = getRawValue("hue");
+        return (val == -1) ? val : (val / 60000);
     }
 
+    @SuppressWarnings("unused")
     int getHueMod(){
         return getPercentageValue("hueMod");
     }
 
+    @SuppressWarnings("unused")
     int getHueOff(){
         return getPercentageValue("hueOff");
     }
@@ -355,6 +354,7 @@ public class XSLFColor {
      * @return  luminance in percents in the range [0..100]
      * or -1 if the value is not set
      */
+    @SuppressWarnings("unused")
     int getLum(){
         return getPercentageValue("lum");
     }
@@ -413,7 +413,7 @@ public class XSLFColor {
     /**
      * specifies the input color with the specific red component, but with the blue and green color
      * components unchanged
-     * 
+     *
      * @return the value of the red component specified as a
      * percentage with 0% indicating minimal blue and 100% indicating maximum
      * or -1 if the value is not set
@@ -422,10 +422,12 @@ public class XSLFColor {
         return getPercentageValue("red");
     }
 
+    @SuppressWarnings("unused")
     int getRedMod(){
         return getPercentageValue("redMod");
     }
 
+    @SuppressWarnings("unused")
     int getRedOff(){
         return getPercentageValue("redOff");
     }
@@ -442,10 +444,12 @@ public class XSLFColor {
         return getPercentageValue("green");
     }
 
+    @SuppressWarnings("unused")
     int getGreenMod(){
         return getPercentageValue("greenMod");
     }
 
+    @SuppressWarnings("unused")
     int getGreenOff(){
         return getPercentageValue("greenOff");
     }
@@ -462,10 +466,12 @@ public class XSLFColor {
         return getPercentageValue("blue");
     }
 
+    @SuppressWarnings("unused")
     int getBlueMod(){
         return getPercentageValue("blueMod");
     }
 
+    @SuppressWarnings("unused")
     int getBlueOff(){
         return getPercentageValue("blueOff");
     }
@@ -473,11 +479,12 @@ public class XSLFColor {
     /**
      * specifies a darker version of its input color.
      * A 10% shade is 10% of the input color combined with 90% black.
-     * 
+     *
      * @return the value of the shade specified as a
      * percentage with 0% indicating minimal shade and 100% indicating maximum
      * or -1 if the value is not set
      */
+    @SuppressWarnings("WeakerAccess")
     public int getShade(){
         return getPercentageValue("shade");
     }

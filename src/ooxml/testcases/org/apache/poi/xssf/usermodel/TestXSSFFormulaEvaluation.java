@@ -17,7 +17,10 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -27,6 +30,7 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.BaseTestFormulaEvaluator;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -441,5 +445,49 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
         assertEquals("D 67.10", value.getStringValue());
         
         assertEquals("D 0,068", evaluator.evaluate(wb.getSheetAt(0).getRow(1).getCell(1)));
+    }
+
+    /**
+     * see bug 62275
+     * @throws IOException
+     */
+    @Test
+    public void testBug62275() throws IOException {
+        try (Workbook wb = new XSSFWorkbook()) {
+            Sheet sheet = wb.createSheet();
+            Row row = sheet.createRow(0);
+
+            Cell cell = row.createCell(0);
+            cell.setCellFormula("vlookup(A2,B1:B5,2,true)");
+
+            CreationHelper createHelper = wb.getCreationHelper();
+            FormulaEvaluator eval = createHelper.createFormulaEvaluator();
+            eval.evaluate(cell);
+        }
+    }
+    
+    /**
+     * see bug 62834, handle when a shared formula range doesn't contain only formula cells
+     * @throws IOException 
+     */
+    @Test
+    public void testBug62834() throws IOException {
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("62834.xlsx")) {
+            FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+
+            Cell a2 = wb.getSheetAt(0).getRow(1).getCell(0);
+            Cell value = evaluator.evaluateInCell(a2);
+            assertEquals("wrong value A2", "a value", value.getStringCellValue());
+            
+//            evaluator.clearAllCachedResultValues();
+            
+            Cell a3 = wb.getSheetAt(0).getRow(2).getCell(0);
+            value = evaluator.evaluateInCell(a3);
+            assertEquals("wrong value A3", "a value", value.getStringCellValue());
+            
+            Cell a5 = wb.getSheetAt(0).getRow(4).getCell(0);
+            value = evaluator.evaluateInCell(a5);
+            assertEquals("wrong value A5", "another value", value.getStringCellValue());
+        }
     }
 }

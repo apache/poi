@@ -26,7 +26,7 @@ under the License.
 
     <!-- TODO Import these from the parent build file -->
     <property name="repository.m2" value="http://repo1.maven.org"/>
-    <property name="version.id" value="4.0.0-SNAPSHOT"/>
+    <property name="version.id" value="4.0.1-SNAPSHOT"/>
     <property name="dist.dir" value="build/dist"/>
 
     <!-- jars in the /lib directory, see the fetch-bundle-jars target-->

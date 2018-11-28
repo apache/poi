@@ -23,7 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * A simple viewer for POIFS files
@@ -31,8 +31,9 @@ import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
  * @author Marc Johnson (mjohnson at apache dot org)
  */
 
-public class POIFSViewer
-{
+public final class POIFSViewer {
+
+    private POIFSViewer() {}
 
     /**
      * Display the contents of multiple POIFS files
@@ -47,9 +48,8 @@ public class POIFSViewer
         }
         boolean printNames = (args.length > 1);
 
-        for (int j = 0; j < args.length; j++)
-        {
-            viewFile(args[ j ], printNames);
+        for (String arg : args) {
+            viewFile(arg, printNames);
         }
     }
 
@@ -67,7 +67,7 @@ public class POIFSViewer
             System.out.println(flowerbox);
         }
         try {
-            NPOIFSFileSystem fs = new NPOIFSFileSystem(new File(filename));
+            POIFSFileSystem fs = new POIFSFileSystem(new File(filename));
             List<String> strings = POIFSViewEngine.inspectViewable(fs, true, 0, "  ");
             for (String s : strings) {
                 System.out.print(s);
@@ -77,5 +77,4 @@ public class POIFSViewer
             System.out.println(e.getMessage());
         }
     }
-}   // end public class POIFSViewer
-
+}

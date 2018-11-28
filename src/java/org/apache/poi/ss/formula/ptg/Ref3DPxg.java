@@ -18,7 +18,7 @@
 package org.apache.poi.ss.formula.ptg;
 
 import org.apache.poi.ss.formula.SheetIdentifier;
-import org.apache.poi.ss.formula.SheetNameFormatter;
+import org.apache.poi.ss.formula.SheetRangeAndWorkbookIndexFormatter;
 import org.apache.poi.ss.formula.SheetRangeIdentifier;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.LittleEndianOutput;
@@ -101,18 +101,8 @@ public final class Ref3DPxg extends RefPtgBase implements Pxg3D {
 
     public String toFormulaString() {
         StringBuilder sb = new StringBuilder(64);
-        if (externalWorkbookNumber >= 0) {
-            sb.append('[');
-            sb.append(externalWorkbookNumber);
-            sb.append(']');
-        }
-        if (firstSheetName != null) {
-            SheetNameFormatter.appendFormat(sb, firstSheetName);
-        }
-        if (lastSheetName != null) {
-            sb.append(':');
-            SheetNameFormatter.appendFormat(sb, lastSheetName);
-        }
+
+        SheetRangeAndWorkbookIndexFormatter.format(sb, externalWorkbookNumber, firstSheetName, lastSheetName);
         sb.append('!');
         sb.append(formatReferenceAsString());
         return sb.toString();

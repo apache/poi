@@ -19,6 +19,7 @@ package org.apache.poi.xssf.usermodel;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -347,15 +348,47 @@ public final class TestXSSFTable {
         
         IOUtils.closeQuietly(wb);
     }
-    
+
+    @Test
+    public void testCreateTableIds() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+
+            AreaReference reference1 = wb.getCreationHelper().createAreaReference(
+                    new CellReference(0, 0), new CellReference(2, 2));
+
+            XSSFTable table1 = sheet.createTable(reference1);
+            assertEquals("A1:C3", table1.getCTTable().getRef());
+
+            assertEquals(1, table1.getCTTable().getTableColumns().getTableColumnArray(0).getId());
+            assertEquals(2, table1.getCTTable().getTableColumns().getTableColumnArray(1).getId());
+            assertEquals(3, table1.getCTTable().getTableColumns().getTableColumnArray(2).getId());
+
+            assertEquals(1, table1.getCTTable().getId());
+
+            AreaReference reference2 = wb.getCreationHelper().createAreaReference(
+                    new CellReference(10, 10), new CellReference(12, 12));
+
+            XSSFTable table2 = sheet.createTable(reference2);
+            assertEquals("K11:M13", table2.getCTTable().getRef());
+
+            // these IDs duplicate those from table1 and may be cause of https://bz.apache.org/bugzilla/show_bug.cgi?id=62906
+            assertEquals(1, table2.getCTTable().getTableColumns().getTableColumnArray(0).getId());
+            assertEquals(2, table2.getCTTable().getTableColumns().getTableColumnArray(1).getId());
+            assertEquals(3, table2.getCTTable().getTableColumns().getTableColumnArray(2).getId());
+
+            assertEquals(2, table2.getCTTable().getId());
+        }
+    }
+
     @Test
     public void testSetArea() throws IOException {
-        XSSFWorkbook wb = new XSSFWorkbook();
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sh = wb.createSheet();
-            
+
             AreaReference tableArea = new AreaReference("B10:D12", wb.getSpreadsheetVersion());
             XSSFTable table = sh.createTable(tableArea);
-            
+
             assertEquals(3, table.getColumnCount());
             assertEquals(3, table.getRowCount());
 
@@ -365,11 +398,11 @@ public final class TestXSSFTable {
 
             assertEquals(3, table.getColumnCount());
             assertEquals(3, table.getRowCount());
- 
+
             // increase size by 1 row and 1 column
             AreaReference tableArea3 = new AreaReference("B11:E14", wb.getSpreadsheetVersion());
             table.setArea(tableArea3);
-            
+
             assertEquals(4, table.getColumnCount());
             assertEquals(4, table.getRowCount());
 
@@ -379,37 +412,41 @@ public final class TestXSSFTable {
 
             assertEquals(2, table.getColumnCount());
             assertEquals(2, table.getRowCount());
-            
-            IOUtils.closeQuietly(wb);
+        }
     }
     
     @Test
-    public void testCreateColumn() {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        XSSFSheet sh = wb.createSheet();
-        
-        AreaReference tableArea = new AreaReference("A2:A3", wb.getSpreadsheetVersion());
-        XSSFTable table = sh.createTable(tableArea);
+    public void testCreateColumn() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sh = wb.createSheet();
 
-        assertEquals(1, table.getColumnCount());
-        assertEquals(2, table.getRowCount());
+            AreaReference tableArea = new AreaReference("A2:A3", wb.getSpreadsheetVersion());
+            XSSFTable table = sh.createTable(tableArea);
 
-        // add columns
-        table.createColumn("Column B");
-        table.createColumn("Column D");
-        table.createColumn("Column C", 2); // add between B and D
-        table.updateReferences();
-        table.updateHeaders();
+            assertEquals(1, table.getColumnCount());
+            assertEquals(2, table.getRowCount());
 
-        assertEquals(4, table.getColumnCount());
-        assertEquals(2, table.getRowCount());
+            // add columns
+            XSSFTableColumn c1 = table.getColumns().get(0);
+            XSSFTableColumn cB = table.createColumn("Column B");
+            XSSFTableColumn cD = table.createColumn("Column D");
+            XSSFTableColumn cC = table.createColumn("Column C", 2); // add between B and D
+            table.updateReferences();
+            table.updateHeaders();
 
-        assertEquals("Column 1", table.getColumns().get(0).getName()); // generated name
-        assertEquals("Column B", table.getColumns().get(1).getName());
-        assertEquals("Column C", table.getColumns().get(2).getName());
-        assertEquals("Column D", table.getColumns().get(3).getName());
+            assertEquals(4, table.getColumnCount());
+            assertEquals(2, table.getRowCount());
 
-        IOUtils.closeQuietly(wb);
+            // column IDs start at 1, and increase in the order columns are added (see bug #62740)
+            assertEquals("Column c ID", 1, c1.getId());
+            assertTrue("Column B ID", c1.getId() < cB.getId());
+            assertTrue("Column D ID", cB.getId() < cD.getId());
+            assertTrue("Column C ID", cD.getId() < cC.getId());
+            assertEquals("Column 1", table.getColumns().get(0).getName()); // generated name
+            assertEquals("Column B", table.getColumns().get(1).getName());
+            assertEquals("Column C", table.getColumns().get(2).getName());
+            assertEquals("Column D", table.getColumns().get(3).getName());
+        }
     }
 
     @Test(expected = IllegalArgumentException.class)

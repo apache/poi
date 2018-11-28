@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
@@ -38,17 +39,17 @@ import org.apache.poi.xdgf.usermodel.shape.ShapeVisitor;
 public class HierarchyPrinter {
 
     public static void printHierarchy(XDGFPage page, File outDir)
-            throws FileNotFoundException, UnsupportedEncodingException {
+            throws FileNotFoundException, UnsupportedEncodingException, IOException {
 
         File pageFile = new File(outDir, "page" + page.getPageNumber() + "-"
                 + Util.sanitizeFilename(page.getName()) + ".txt");
 
-        OutputStream os = new FileOutputStream(pageFile);
-        PrintStream pos = new PrintStream(os, false, "utf-8");
-
-        printHierarchy(page, pos);
-
-        pos.close();
+        try (
+                OutputStream os = new FileOutputStream(pageFile);
+                PrintStream pos = new PrintStream(os, false, "utf-8")
+            ) {
+            printHierarchy(page, pos);
+        }
     }
 
     public static void printHierarchy(XDGFPage page, final PrintStream os) {
@@ -71,7 +72,7 @@ public class HierarchyPrinter {
     }
 
     public static void printHierarchy(XmlVisioDocument document,
-            String outDirname) throws FileNotFoundException, UnsupportedEncodingException {
+            String outDirname) throws FileNotFoundException, UnsupportedEncodingException, IOException {
 
         File outDir = new File(outDirname);
 
@@ -89,8 +90,9 @@ public class HierarchyPrinter {
         String inFilename = args[0];
         String outDir = args[1];
 
-        XmlVisioDocument doc = new XmlVisioDocument(new FileInputStream(
-                inFilename));
-        printHierarchy(doc, outDir);
+        try (FileInputStream is = new FileInputStream(inFilename)) {
+            XmlVisioDocument doc = new XmlVisioDocument(is);
+            printHierarchy(doc, outDir);
+        }
     }
 }

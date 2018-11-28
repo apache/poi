@@ -34,7 +34,7 @@ public final class StaxHelper {
      * Creates a new StAX XMLInputFactory, with sensible defaults
      */
     public static XMLInputFactory newXMLInputFactory() {
-        XMLInputFactory factory = XMLInputFactory.newFactory();
+        XMLInputFactory factory = XMLInputFactory.newInstance();
         trySetProperty(factory, XMLInputFactory.IS_NAMESPACE_AWARE, true);
         trySetProperty(factory, XMLInputFactory.IS_VALIDATING, false);
         trySetProperty(factory, XMLInputFactory.SUPPORT_DTD, false);
@@ -46,7 +46,7 @@ public final class StaxHelper {
      * Creates a new StAX XMLOutputFactory, with sensible defaults
      */
     public static XMLOutputFactory newXMLOutputFactory() {
-        XMLOutputFactory factory = XMLOutputFactory.newFactory();
+        XMLOutputFactory factory = XMLOutputFactory.newInstance();
         trySetProperty(factory, XMLOutputFactory.IS_REPAIRING_NAMESPACES, true);
         return factory;
     }
@@ -55,7 +55,8 @@ public final class StaxHelper {
      * Creates a new StAX XMLEventFactory, with sensible defaults
      */
     public static XMLEventFactory newXMLEventFactory() {
-        return XMLEventFactory.newFactory();
+        // this method seems safer on Android than getFactory()
+        return XMLEventFactory.newInstance();
     }
             
     private static void trySetProperty(XMLInputFactory factory, String feature, boolean flag) {

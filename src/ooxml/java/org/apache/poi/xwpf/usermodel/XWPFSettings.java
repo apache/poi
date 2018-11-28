@@ -430,4 +430,48 @@ public class XWPFSettings extends POIXMLDocumentPart {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * Check if separate even and odd headings is turned on.
+     *
+     * @return True if even and odd headings is turned on.
+     */
+    public boolean getEvenAndOddHeadings() {
+        return ctSettings.isSetEvenAndOddHeaders();
+    }
+
+    /**
+     * Turn separate even-and-odd headings on or off
+     *
+     * @param enable <code>true</code> to turn on separate even and odd headings, 
+     * <code>false</code> to turn off even and odd headings.
+     */
+    public void setEvenAndOddHeadings(boolean enable) {
+        CTOnOff onOff = CTOnOff.Factory.newInstance();
+        onOff.setVal(enable ? STOnOff.TRUE : STOnOff.FALSE);
+        ctSettings.setEvenAndOddHeaders(onOff);
+    }
+
+    /**
+     * Check if mirrored margins is turned on
+     *
+     * @return True if mirrored margins is turned on.
+     */
+    public boolean getMirrorMargins() {
+        return ctSettings.isSetMirrorMargins();
+    }
+
+    /**
+     * Turn mirrored margins on or off
+     *
+     * @param enable <code>true</code> to turn on mirrored margins, 
+     * <code>false</code> to turn off mirrored marginss.
+     */
+    public void setMirrorMargins(boolean enable) {
+        CTOnOff onOff = CTOnOff.Factory.newInstance();
+        onOff.setVal(enable ? STOnOff.TRUE : STOnOff.FALSE);
+        ctSettings.setMirrorMargins(onOff);
+    }
+
+
 }

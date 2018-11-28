@@ -22,28 +22,29 @@ import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFootnotes;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFtnEdn;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.FootnotesDocument;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STFtnEdn;
 
 /**
- * Looks after the collection of Footnotes for a document
+ * Looks after the collection of Footnotes for a document.
+ * Manages bottom-of-the-page footnotes ({@link XWPFFootnote}).
  */
-public class XWPFFootnotes extends POIXMLDocumentPart {
-    protected XWPFDocument document;
-    private List<XWPFFootnote> listFootnote = new ArrayList<>();
-    private CTFootnotes ctFootnotes;
+public class XWPFFootnotes extends XWPFAbstractFootnotesEndnotes {
+    protected CTFootnotes ctFootnotes;
 
     /**
      * Construct XWPFFootnotes from a package part
@@ -60,6 +61,49 @@ public class XWPFFootnotes extends POIXMLDocumentPart {
      * Construct XWPFFootnotes from scratch for a new document.
      */
     public XWPFFootnotes() {
+    }
+
+    /**
+     * Sets the ctFootnotes
+     *
+     * @param footnotes Collection of CTFntEdn objects.
+     */
+    @Internal
+    public void setFootnotes(CTFootnotes footnotes) {
+        ctFootnotes = footnotes;
+    }
+
+    /**
+     * Create a new footnote and add it to the document. 
+     *
+     * @return New {@link XWPFFootnote}
+     * @since 4.0.0
+     */
+    public XWPFFootnote createFootnote() {
+        CTFtnEdn newNote = CTFtnEdn.Factory.newInstance(); 
+        newNote.setType(STFtnEdn.NORMAL);
+
+        XWPFFootnote footnote = addFootnote(newNote);
+        footnote.getCTFtnEdn().setId(getIdManager().nextId());
+        return footnote;
+        
+    }
+
+    /**
+     * Remove the specified footnote if present.
+     *
+     * @param pos Array position of the footnote to be removed
+     * @return True if the footnote was removed.
+     * @since 4.0.0
+     */
+    public boolean removeFootnote(int pos) {
+        if (ctFootnotes.sizeOfFootnoteArray() >= pos - 1) {
+            ctFootnotes.removeFootnote(pos);
+            listFootnote.remove(pos);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -80,9 +124,8 @@ public class XWPFFootnotes extends POIXMLDocumentPart {
                 is.close();
             }
         }
-
-        // Find our footnotes
-        for (CTFtnEdn note : ctFootnotes.getFootnoteArray()) {
+    
+        for (CTFtnEdn note : ctFootnotes.getFootnoteList()) {
             listFootnote.add(new XWPFFootnote(note, this));
         }
     }
@@ -97,31 +140,10 @@ public class XWPFFootnotes extends POIXMLDocumentPart {
         out.close();
     }
 
-    public List<XWPFFootnote> getFootnotesList() {
-        return listFootnote;
-    }
-
-    public XWPFFootnote getFootnoteById(int id) {
-        for (XWPFFootnote note : listFootnote) {
-            if (note.getCTFtnEdn().getId().intValue() == id)
-                return note;
-        }
-        return null;
-    }
-
     /**
-     * Sets the ctFootnotes
+     * Add an {@link XWPFFootnote} to the document
      *
-     * @param footnotes
-     */
-    public void setFootnotes(CTFootnotes footnotes) {
-        ctFootnotes = footnotes;
-    }
-
-    /**
-     * add an XWPFFootnote to the document
-     *
-     * @param footnote
+     * @param footnote Footnote to add
      * @throws IOException
      */
     public void addFootnote(XWPFFootnote footnote) {
@@ -130,11 +152,12 @@ public class XWPFFootnotes extends POIXMLDocumentPart {
     }
 
     /**
-     * add a footnote to the document
+     * Add a CT footnote to the document
      *
-     * @param note
+     * @param note CTFtnEdn to add.
      * @throws IOException
      */
+    @Internal
     public XWPFFootnote addFootnote(CTFtnEdn note) {
         CTFtnEdn newNote = ctFootnotes.addNewFootnote();
         newNote.set(note);
@@ -144,17 +167,18 @@ public class XWPFFootnotes extends POIXMLDocumentPart {
     }
 
     /**
-     * @see org.apache.poi.xwpf.usermodel.IBody#getPart()
+     * Get the list of {@link XWPFFootnote} in the Footnotes part.
+     *
+     * @return List, possibly empty, of footnotes.
      */
-    public XWPFDocument getXWPFDocument() {
-        if (document != null) {
-            return document;
-        } else {
-            return (XWPFDocument) getParent();
+    public List<XWPFFootnote> getFootnotesList() {
+        List<XWPFFootnote> resultList = new ArrayList<XWPFFootnote>();
+        for (XWPFAbstractFootnoteEndnote note : listFootnote) {
+            resultList.add((XWPFFootnote)note);
         }
+        return resultList;
     }
+    
+    
 
-    public void setXWPFDocument(XWPFDocument doc) {
-        document = doc;
-    }
 }

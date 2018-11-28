@@ -41,7 +41,6 @@ import org.apache.poi.hpsf.NoPropertySetStreamException;
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -62,14 +61,11 @@ public class TestReadAllFiles {
     public static Iterable<Object[]> files() {
         final List<Object[]> files = new ArrayList<>();
         
-        _samples.getFile("").listFiles(new FileFilter() {
-            @Override
-            public boolean accept(final File f) {
-                if (f.getName().startsWith("Test")) { // && f.getName().equals("TestCorel.shw")
-                    files.add(new Object[]{ f });
-                }
-                return false;
+        _samples.getFile("").listFiles(f -> {
+            if (f.getName().startsWith("Test")) {
+                files.add(new Object[]{ f });
             }
+            return false;
         });
         
         return files;
@@ -86,11 +82,8 @@ public class TestReadAllFiles {
     public void read() throws IOException, NoPropertySetStreamException, MarkUnsupportedException {
         /* Read the POI filesystem's property set streams: */
         for (POIFile pf : Util.readPropertySets(file)) {
-            final InputStream in = new ByteArrayInputStream(pf.getBytes());
-            try {
+            try (InputStream in = new ByteArrayInputStream(pf.getBytes())) {
                 PropertySetFactory.create(in);
-            } finally {
-                in.close();
             }
         }
     }
@@ -148,18 +141,16 @@ public class TestReadAllFiles {
     }
     
     /**
-     * <p>This test method checks whether DocumentSummary information streams
+     * This test method checks whether DocumentSummary information streams
      * can be read. This is done by opening all "Test*" files in the 'poifs' directrory
      * pointed to by the "POI.testdata.path" system property, trying to extract
      * the document summary information stream in the root directory and calling
-     * its get... methods.</p>
-     * @throws Exception 
+     * its get... methods.
      */
     @Test
     public void readDocumentSummaryInformation() throws Exception {
         /* Read a test document <em>doc</em> into a POI filesystem. */
-        NPOIFSFileSystem poifs = new NPOIFSFileSystem(file, true);
-        try {
+        try (POIFSFileSystem poifs = new POIFSFileSystem(file, true)) {
             final DirectoryEntry dir = poifs.getRoot();
             /*
              * If there is a document summry information stream, read it from
@@ -167,7 +158,7 @@ public class TestReadAllFiles {
              */
             if (dir.hasEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME)) {
                 final DocumentSummaryInformation dsi = TestWriteWellKnown.getDocumentSummaryInformation(poifs);
-    
+
                 /* Execute the get... methods. */
                 dsi.getByteCount();
                 dsi.getByteOrder();
@@ -187,22 +178,19 @@ public class TestReadAllFiles {
                 dsi.getScale();
                 dsi.getSlideCount();
             }
-        } finally {
-            poifs.close();
         }
     }
     
     /**
-     * <p>Tests the simplified custom properties by reading them from the
-     * available test files.</p>
+     * Tests the simplified custom properties by reading them from the
+     * available test files.
      *
-     * @throws Throwable if anything goes wrong.
+     * @throws Exception if anything goes wrong.
      */
     @Test
     public void readCustomPropertiesFromFiles() throws Exception {
         /* Read a test document <em>doc</em> into a POI filesystem. */
-        NPOIFSFileSystem poifs = new NPOIFSFileSystem(file);
-        try {
+        try (POIFSFileSystem poifs = new POIFSFileSystem(file)) {
             /*
              * If there is a document summry information stream, read it from
              * the POI filesystem, else create a new one.
@@ -222,8 +210,6 @@ public class TestReadAllFiles {
                 assertNotNull(cp.getName());
                 assertNotNull(cp.getValue());
             }
-        } finally {
-            poifs.close();
         }
     }
 

@@ -43,7 +43,7 @@ import org.apache.poi.hsmf.datatypes.PropertyValue.LongPropertyValue;
 import org.apache.poi.hsmf.datatypes.PropertyValue.TimePropertyValue;
 import org.apache.poi.hsmf.dev.HSMFDump;
 import org.apache.poi.hsmf.extractor.OutlookTextExtactor;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -58,8 +58,8 @@ public final class TestFixedSizedProperties {
    private static final String messageFails = "53784_fails.msg";
    private static MAPIMessage mapiMessageSucceeds;
    private static MAPIMessage mapiMessageFails;
-   private static NPOIFSFileSystem fsMessageSucceeds;
-   private static NPOIFSFileSystem fsMessageFails;
+   private static POIFSFileSystem fsMessageSucceeds;
+   private static POIFSFileSystem fsMessageFails;
    private static SimpleDateFormat messageDateFormat;
    private static TimeZone userTimeZone;
 
@@ -69,8 +69,8 @@ public final class TestFixedSizedProperties {
    @BeforeClass
    public static void initMapi()  throws Exception {
        POIDataSamples samples = POIDataSamples.getHSMFInstance();
-       fsMessageSucceeds = new NPOIFSFileSystem(samples.getFile(messageSucceeds));
-       fsMessageFails = new NPOIFSFileSystem(samples.getFile(messageFails));
+       fsMessageSucceeds = new POIFSFileSystem(samples.getFile(messageSucceeds));
+       fsMessageFails = new POIFSFileSystem(samples.getFile(messageFails));
 
        mapiMessageSucceeds = new MAPIMessage(fsMessageSucceeds);
        mapiMessageFails = new MAPIMessage(fsMessageFails);        
@@ -95,7 +95,7 @@ public final class TestFixedSizedProperties {
     * of our test files
     */
    @Test
-   public void testPropertiesFound() throws Exception {
+   public void testPropertiesFound() {
        Map<MAPIProperty,List<PropertyValue>> props;
        
        props = mapiMessageSucceeds.getMainChunks().getProperties();
@@ -109,7 +109,7 @@ public final class TestFixedSizedProperties {
     * Check we find properties of a variety of different types
     */
    @Test
-   public void testPropertyValueTypes() throws Exception {
+   public void testPropertyValueTypes() {
        Chunks mainChunks = mapiMessageSucceeds.getMainChunks();
        
        // Ask to have the values looked up

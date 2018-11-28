@@ -26,7 +26,7 @@ import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.RecordFormatException;
 import org.junit.BeforeClass;
@@ -49,7 +49,6 @@ public class TestBiffViewer extends BaseXLSIteratingTest {
         EXCLUDED.put("testEXCEL_5.xls", OldExcelFormatException.class);  // Biff 5 / Excel 5
         EXCLUDED.put("60284.xls", OldExcelFormatException.class); // Biff 5 / Excel 5
         EXCLUDED.put("testEXCEL_95.xls", OldExcelFormatException.class); // Biff 5 / Excel 95
-        EXCLUDED.put("60284.xls", OldExcelFormatException.class); // Biff 5 / Excel 95
         EXCLUDED.put("43493.xls", RecordInputStream.LeftoverDataException.class);  // HSSFWorkbook cannot open it as well
         // EXCLUDED.put("44958_1.xls", RecordInputStream.LeftoverDataException.class);
         EXCLUDED.put("50833.xls", IllegalArgumentException.class);       // "Name is too long" when setting username
@@ -59,18 +58,11 @@ public class TestBiffViewer extends BaseXLSIteratingTest {
 
     @Override
     void runOneFile(File fileIn) throws IOException {
-        NPOIFSFileSystem fs  = new NPOIFSFileSystem(fileIn, true);
-        try {
-            InputStream is = BiffViewer.getPOIFSInputStream(fs);
-            try {
-                // use a NullOutputStream to not write the bytes anywhere for best runtime
-                PrintWriter dummy = new PrintWriter(new OutputStreamWriter(NULL_OUTPUT_STREAM, LocaleUtil.CHARSET_1252));
-                BiffViewer.runBiffViewer(dummy, is, true, true, true, false);
-            } finally {
-                is.close();
-            }
-        } finally {
-            fs.close();
+        try (POIFSFileSystem fs = new POIFSFileSystem(fileIn, true);
+             InputStream is = BiffViewer.getPOIFSInputStream(fs)) {
+            // use a NullOutputStream to not write the bytes anywhere for best runtime
+            PrintWriter dummy = new PrintWriter(new OutputStreamWriter(NULL_OUTPUT_STREAM, LocaleUtil.CHARSET_1252));
+            BiffViewer.runBiffViewer(dummy, is, true, true, true, false);
         }
     }
 

@@ -267,7 +267,7 @@ public class DataFormatter implements Observer {
      * @param  localeIsAdapting (true only if locale is not user-specified)
      * @param  emulateCSV whether to emulate CSV output.
      */
-    private DataFormatter(Locale locale, boolean localeIsAdapting, boolean emulateCSV) {
+    public DataFormatter(Locale locale, boolean localeIsAdapting, boolean emulateCSV) {
         this.localeIsAdapting = true;
         localeChangedObservable.addObserver(this);
         // localeIsAdapting must be true prior to this first checkForLocaleChange call.
@@ -450,7 +450,6 @@ public class DataFormatter implements Observer {
             
             // Strip custom text in quotes and escaped characters for now as it can cause performance problems in fractions.
             //String strippedFormatStr = formatStr.replaceAll("\\\\ ", " ").replaceAll("\\\\.", "").replaceAll("\"[^\"]*\"", " ").replaceAll("\\?", "#");
-            //System.out.println("formatStr: "+strippedFormatStr);
             return new FractionFormat(defaultFractionWholePartFormat, defaultFractionFractionPartFormat);
         }
         

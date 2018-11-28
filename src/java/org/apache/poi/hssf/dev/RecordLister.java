@@ -25,7 +25,7 @@ import org.apache.poi.hssf.record.ContinueRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordFactory;
 import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.poifs.filesystem.NPOIFSFileSystem;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * This is a low-level debugging class, which simply prints
@@ -47,45 +47,36 @@ public class RecordLister
     {
     }
 
-    public void run()
-        throws IOException
-    {
-        NPOIFSFileSystem  fs    = new NPOIFSFileSystem(new File(file), true);
-        try {
-            InputStream       din   = BiffViewer.getPOIFSInputStream(fs);
-            try {
-                RecordInputStream rinp  = new RecordInputStream(din);
-        
-                while(rinp.hasNextRecord()) {
-                   int sid  = rinp.getNextSid();
-                   rinp.nextRecord();
-                   
-                   int size = rinp.available();
-                   Class<? extends Record> clz = RecordFactory.getRecordClass(sid);
-                   
-                   System.out.print(
-                         formatSID(sid) +
-                         " - " +
-                         formatSize(size) +
-                         " bytes"
-                   );
-                   if(clz != null) {
-                      System.out.print("  \t");
-                      System.out.print(clz.getName().replace("org.apache.poi.hssf.record.", ""));
-                   }
-                   System.out.println();
-                   
-                   byte[] data = rinp.readRemainder();
-                   if(data.length > 0) {
-                      System.out.print("   ");
-                      System.out.println( formatData(data) );
-                   }
+    public void run() throws IOException {
+        try (POIFSFileSystem fs = new POIFSFileSystem(new File(file), true);
+             InputStream din = BiffViewer.getPOIFSInputStream(fs)) {
+            RecordInputStream rinp = new RecordInputStream(din);
+
+            while (rinp.hasNextRecord()) {
+                int sid = rinp.getNextSid();
+                rinp.nextRecord();
+
+                int size = rinp.available();
+                Class<? extends Record> clz = RecordFactory.getRecordClass(sid);
+
+                System.out.print(
+                        formatSID(sid) +
+                                " - " +
+                                formatSize(size) +
+                                " bytes"
+                );
+                if (clz != null) {
+                    System.out.print("  \t");
+                    System.out.print(clz.getName().replace("org.apache.poi.hssf.record.", ""));
                 }
-            } finally {
-                din.close();
+                System.out.println();
+
+                byte[] data = rinp.readRemainder();
+                if (data.length > 0) {
+                    System.out.print("   ");
+                    System.out.println(formatData(data));
+                }
             }
-        } finally {
-            fs.close();
         }
     }
     
@@ -93,7 +84,7 @@ public class RecordLister
        String hex = Integer.toHexString(sid);
        String dec = Integer.toString(sid);
        
-       StringBuffer s = new StringBuffer();
+       StringBuilder s = new StringBuilder();
        s.append("0x");
        for(int i=hex.length(); i<4; i++) {
           s.append('0');
@@ -113,7 +104,7 @@ public class RecordLister
        String hex = Integer.toHexString(size);
        String dec = Integer.toString(size);
        
-       StringBuffer s = new StringBuffer();
+       StringBuilder s = new StringBuilder();
        for(int i=hex.length(); i<3; i++) {
           s.append('0');
        }
@@ -133,7 +124,7 @@ public class RecordLister
           return "";
        
        // If possible, do first 4 and last 4 bytes
-       StringBuffer s = new StringBuffer();
+       StringBuilder s = new StringBuilder();
        if(data.length > 9) {
           s.append(byteToHex(data[0]));
           s.append(' ');
@@ -155,10 +146,10 @@ public class RecordLister
           s.append(' ');
           s.append(byteToHex(data[data.length-1]));
        } else {
-          for(int i=0; i<data.length; i++) {
-             s.append(byteToHex(data[i]));
-             s.append(' ');
-          }
+           for (byte aData : data) {
+               s.append(byteToHex(aData));
+               s.append(' ');
+           }
        }
        
        return s.toString();

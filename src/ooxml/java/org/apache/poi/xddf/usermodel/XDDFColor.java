@@ -52,7 +52,7 @@ public abstract class XDDFColor {
     }
 
     @Internal
-    protected static XDDFColor forColorContainer(CTColor container) {
+    public static XDDFColor forColorContainer(CTColor container) {
         if (container.isSetHslClr()) {
             return new XDDFColorHsl(container.getHslClr(), container);
         } else if (container.isSetPrstClr()) {
@@ -70,7 +70,7 @@ public abstract class XDDFColor {
     }
 
     @Internal
-    protected CTColor getColorContainer() {
+    public CTColor getColorContainer() {
         return container;
     }
 

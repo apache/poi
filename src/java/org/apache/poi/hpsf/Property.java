@@ -248,12 +248,14 @@ public class Property {
     /**
      * Returns the property's size in bytes. This is always a multiple of 4.
      *
+     * @param property The integer property to check
+     *
      * @return the property's size in bytes
      *
      * @exception WritingNotSupportedException if HPSF does not yet support the
      * property's variant type.
      */
-    protected int getSize(int codepage) throws WritingNotSupportedException
+    protected int getSize(int property) throws WritingNotSupportedException
     {
         int length = Variant.getVariantLength(type);
         if (length >= 0  || type == Variant.VT_EMPTY) {
@@ -269,16 +271,16 @@ public class Property {
         if (type == Variant.VT_LPSTR || type == Variant.VT_LPWSTR) {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             try {
-                length = write(bos, codepage) - 2*LittleEndianConsts.INT_SIZE;
+                length = write(bos, property) - 2*LittleEndianConsts.INT_SIZE;
                 /* Pad to multiples of 4. */
                 length += (4 - (length & 0x3)) & 0x3;
                 return length;
             } catch (IOException e) {
-                throw new WritingNotSupportedException(type, value);
+                throw new WritingNotSupportedException(type, this.value);
             }
         }
 
-        throw new WritingNotSupportedException(type, value);
+        throw new WritingNotSupportedException(type, this.value);
     }
 
 
@@ -345,9 +347,13 @@ public class Property {
      * @return the truncated size with a maximum of 4 bytes shorter (3 bytes + trailing 0 of strings)
      */
     private static int unpaddedLength(byte[] buf) {
-        int len;
-        for (len = buf.length; len > 0 && len > buf.length-4 && buf[len-1] == 0; len--);
-        return len;
+        final int end = (buf.length-(buf.length+3)%4);
+        for (int i = buf.length; i>end; i--) {
+            if (buf[i-1] != 0) {
+                return i;
+            }
+        }
+        return end;
     }
 
 

@@ -18,7 +18,9 @@
 package org.apache.poi.xssf.usermodel;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.EnumMap;
 import java.util.Map;
@@ -33,11 +35,13 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.ls.DOMImplementationLS;
-import org.w3c.dom.ls.LSSerializer;
+
+import javax.xml.transform.*;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 /**
- * Table style names defined in the OOXML spec.  
+ * Table style names defined in the OOXML spec.
  * The actual styling is defined in presetTableStyles.xml
  */
 public enum XSSFBuiltinTableStyle {
@@ -329,16 +333,16 @@ public enum XSSFBuiltinTableStyle {
     PivotStyleDark27,
     /***/
     PivotStyleDark28,
-   ;
-    
+    ;
+
     /**
      * Interestingly, this is initialized after the enum instances, so using an {@link EnumMap} works.
      */
     private static final Map<XSSFBuiltinTableStyle, TableStyle> styleMap = new EnumMap<>(XSSFBuiltinTableStyle.class);
-    
+
     private XSSFBuiltinTableStyle() {
     }
-    
+
     /**
      * @return built-in {@link TableStyle} definition
      */
@@ -346,9 +350,10 @@ public enum XSSFBuiltinTableStyle {
         init();
         return styleMap.get(this);
     }
-    
+
     /**
      * NOTE: only checks by name, not definition.
+     *
      * @param style
      * @return true if the style represents a built-in style, false if it is null or a custom style
      */
@@ -361,6 +366,7 @@ public enum XSSFBuiltinTableStyle {
             return false;
         }
     }
+
     /**
      * Only init once - thus the synchronized.  Lazy, after creating instances,
      * and only when a style is actually needed, to avoid overhead for uses
@@ -370,8 +376,8 @@ public enum XSSFBuiltinTableStyle {
      * during evaluation if desired.
      */
     public static synchronized void init() {
-        if (! styleMap.isEmpty()) return; 
-        
+        if (!styleMap.isEmpty()) return;
+
         /*
          * initialize map.  Every built-in has this format:
          * <styleName>
@@ -388,18 +394,18 @@ public enum XSSFBuiltinTableStyle {
             final InputStream is = XSSFBuiltinTableStyle.class.getResourceAsStream("presetTableStyles.xml");
             try {
                 final Document doc = DocumentHelper.readDocument(is);
-                
+
                 final NodeList styleNodes = doc.getDocumentElement().getChildNodes();
-                for (int i=0; i < styleNodes.getLength(); i++) {
+                for (int i = 0; i < styleNodes.getLength(); i++) {
                     final Node node = styleNodes.item(i);
                     if (node.getNodeType() != Node.ELEMENT_NODE) continue; // only care about elements
                     final Element tag = (Element) node;
                     String styleName = tag.getTagName();
                     XSSFBuiltinTableStyle builtIn = XSSFBuiltinTableStyle.valueOf(styleName);
-                    
+
                     Node dxfsNode = tag.getElementsByTagName("dxfs").item(0);
                     Node tableStyleNode = tag.getElementsByTagName("tableStyles").item(0);
-                    
+
                     // hack because I can't figure out how to get XMLBeans to parse a sub-element in a standalone manner
                     // - build a fake styles.xml file with just this built-in
                     StylesTable styles = new StylesTable();
@@ -413,28 +419,35 @@ public enum XSSFBuiltinTableStyle {
             throw new RuntimeException(e);
         }
     }
-    
-    private static String styleXML(Node dxfsNode, Node tableStyleNode) {
+
+    private static String styleXML(Node dxfsNode, Node tableStyleNode) throws IOException, TransformerException {
         // built-ins doc uses 1-based dxf indexing, Excel uses 0 based.
         // add a dummy node to adjust properly.
         dxfsNode.insertBefore(dxfsNode.getOwnerDocument().createElement("dxf"), dxfsNode.getFirstChild());
 
-        DOMImplementationLS lsImpl = (DOMImplementationLS)dxfsNode.getOwnerDocument().getImplementation().getFeature("LS", "3.0");
-        LSSerializer lsSerializer = lsImpl.createLSSerializer();
-        lsSerializer.getDomConfig().setParameter("xml-declaration", false);
         StringBuilder sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n")
-        .append("<styleSheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" "
-                + "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" "
-                + "xmlns:x14ac=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac\" "
-                + "xmlns:x16r2=\"http://schemas.microsoft.com/office/spreadsheetml/2015/02/main\" "
-                + "mc:Ignorable=\"x14ac x16r2\">\n");
-       sb.append(lsSerializer.writeToString(dxfsNode));
-       sb.append(lsSerializer.writeToString(tableStyleNode));
-       sb.append("</styleSheet>");
-        return sb.toString(); 
+                .append("<styleSheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" ")
+                .append("xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" ")
+                .append("xmlns:x14ac=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac\" ")
+                .append("xmlns:x16r2=\"http://schemas.microsoft.com/office/spreadsheetml/2015/02/main\" ")
+                .append("mc:Ignorable=\"x14ac x16r2\">\n");
+        sb.append(writeToString(dxfsNode));
+        sb.append(writeToString(tableStyleNode));
+        sb.append("</styleSheet>");
+        return sb.toString();
     }
-    
+
+    private static String writeToString(Node node) throws IOException, TransformerException {
+        TransformerFactory tf = TransformerFactory.newInstance();
+        try (StringWriter sw = new StringWriter()){
+            Transformer transformer = tf.newTransformer();
+            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            transformer.transform(new DOMSource(node), new StreamResult(sw));
+            return sw.toString();
+        }
+    }
+
     /**
      * implementation for built-in styles
      */
@@ -451,7 +464,7 @@ public enum XSSFBuiltinTableStyle {
             this.builtIn = builtIn;
             this.style = style;
         }
-        
+
         public String getName() {
             return style.getName();
         }
@@ -463,10 +476,10 @@ public enum XSSFBuiltinTableStyle {
         public boolean isBuiltin() {
             return true;
         }
-        
+
         public DifferentialStyleProvider getStyle(TableStyleType type) {
             return style.getStyle(type);
         }
-        
+
     }
 }

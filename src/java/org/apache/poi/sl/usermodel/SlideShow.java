@@ -130,7 +130,7 @@ public interface SlideShow<
     /**
      * @return the instance which handles the persisting of the slideshow,
      * which is either a subclass of {@link org.apache.poi.POIDocument}
-     * or {@link org.apache.poi.POIXMLDocument}
+     * or {@link org.apache.poi.ooxml.POIXMLDocument}
      *
      * @since POI 4.0.0
      */

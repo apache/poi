@@ -32,10 +32,12 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtBlock;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtRun;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTShd;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblWidth;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTcPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTVerticalJc;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STShd;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTblWidth;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalJc;
 
 /**
@@ -216,7 +218,7 @@ public class XWPFTableCell implements IBody, ICell {
      * @param rgbStr - the desired cell color, in the hex form "RRGGBB".
      */
     public void setColor(String rgbStr) {
-        CTTcPr tcpr = ctTc.isSetTcPr() ? ctTc.getTcPr() : ctTc.addNewTcPr();
+        CTTcPr tcpr = getTcPr();
         CTShd ctshd = tcpr.isSetShd() ? tcpr.getShd() : tcpr.addNewShd();
         ctshd.setColor("auto");
         ctshd.setVal(STShd.CLEAR);
@@ -247,7 +249,7 @@ public class XWPFTableCell implements IBody, ICell {
      * @param vAlign - the desired alignment enum value
      */
     public void setVerticalAlignment(XWPFVertAlign vAlign) {
-        CTTcPr tcpr = ctTc.isSetTcPr() ? ctTc.getTcPr() : ctTc.addNewTcPr();
+        CTTcPr tcpr = getTcPr();
         CTVerticalJc va = tcpr.addNewVAlign();
         va.setVal(alignMap.get(vAlign));
     }
@@ -407,7 +409,7 @@ public class XWPFTableCell implements IBody, ICell {
     public void insertTable(int pos, XWPFTable table) {
         bodyElements.add(pos, table);
         int i = 0;
-        for (CTTbl tbl : ctTc.getTblArray()) {
+        for (CTTbl tbl : ctTc.getTblList()) {
             if (tbl == table.getCTTbl()) {
                 break;
             }
@@ -509,5 +511,72 @@ public class XWPFTableCell implements IBody, ICell {
     // Create a map from this XWPF-level enum to the STVerticalJc.Enum values
     public enum XWPFVertAlign {
         TOP, CENTER, BOTH, BOTTOM
+    }
+
+    /**
+     * Get the table width as a decimal value.
+     * <p>If the width type is DXA or AUTO, then the value will always have
+     * a fractional part of zero (because these values are really integers).
+     * If the with type is percentage, then value may have a non-zero fractional
+     * part.
+     *
+     * @return Width value as a double-precision decimal.
+     * @since 4.0.0
+     */
+    public double getWidthDecimal() {                
+        return XWPFTable.getWidthDecimal(getTcWidth());    
+    }
+
+    /**
+     * Get the width type for the table, as an {@link STTblWidth.Enum} value.
+     * A table width can be specified as an absolute measurement (an integer
+     * number of twips), a percentage, or the value "AUTO".
+     *
+     * @return The width type.
+     * @since 4.0.0
+     */
+    public TableWidthType getWidthType() {
+        return XWPFTable.getWidthType(getTcWidth());    
+    }
+
+    /**
+     * Set the width to the value "auto", an integer value (20ths of a point), or a percentage ("nn.nn%").
+     *
+     * @param widthValue String matching one of "auto", [0-9]+, or [0-9]+(\.[0-9]+)%.
+     * @since 4.0.0
+     */
+    public void setWidth(String widthValue) {
+        XWPFTable.setWidthValue(widthValue, getTcWidth());    
+    }
+
+    private CTTblWidth getTcWidth() {
+        CTTcPr tcPr = getTcPr();
+        return tcPr.isSetTcW() ? tcPr.getTcW() : tcPr.addNewTcW();
+    }
+
+    /**
+     * Get the cell properties for the cell.
+     * @return The cell properties
+     * @since 4.0.0
+     */
+    protected CTTcPr getTcPr() {
+        return ctTc.isSetTcPr() ? ctTc.getTcPr() : ctTc.addNewTcPr();
+    }
+
+    /**
+     * Set the width value type for the table.
+     * <p>If the width type is changed from the current type and the currently-set value
+     * is not consistent with the new width type, the value is reset to the default value
+     * for the specified width type.</p>
+     *
+     * @param widthType Width type
+     * @since 4.0.0
+     */
+    public void setWidthType(TableWidthType widthType) {
+        XWPFTable.setWidthType(widthType, getTcWidth());
+    }
+
+    public int getWidth() {
+        return getTcWidth().getW().intValue();
     }
 }

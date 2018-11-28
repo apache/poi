@@ -19,7 +19,7 @@
 
 package org.apache.poi.poifs.filesystem;
 
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -38,42 +38,19 @@ import org.apache.poi.util.IOUtils;
  * @author Marc Johnson (mjohnson at apache dot org)
  */
 
-public class ReaderWriter
+public final class ReaderWriter
     implements POIFSReaderListener, POIFSWriterListener
 {
-    private final POIFSFileSystem filesystem;
     private final DirectoryEntry  root;
 
     // keys are DocumentDescriptors, values are byte[]s
-    private final Map<DocumentDescriptor, byte[]> dataMap;
+    private final Map<DocumentDescriptor, byte[]> dataMap = new HashMap<>();
 
-    /**
-     * Constructor ReaderWriter
-     *
-     *
-     * @param filesystem
-     *
-     */
-
-    ReaderWriter(final POIFSFileSystem filesystem)
-    {
-        this.filesystem = filesystem;
-        root            = this.filesystem.getRoot();
-        dataMap         = new HashMap<>();
+    private ReaderWriter(final POIFSFileSystem filesystem) {
+        root = filesystem.getRoot();
     }
 
-    /**
-     * Method main
-     *
-     *
-     * @param args
-     *
-     * @exception IOException
-     *
-     */
-
-    public static void main(String [] args)
-        throws IOException
+    public static void main(String [] args) throws IOException
     {
         if (args.length != 2)
         {
@@ -86,10 +63,8 @@ public class ReaderWriter
             POIFSFileSystem filesystem = new POIFSFileSystem();
 
             reader.registerListener(new ReaderWriter(filesystem));
-            FileInputStream istream = new FileInputStream(args[ 0 ]);
 
-            reader.read(istream);
-            istream.close();
+            reader.read(new File(args[ 0 ]));
             FileOutputStream ostream = new FileOutputStream(args[ 1 ]);
 
             filesystem.writeFilesystem(ostream);

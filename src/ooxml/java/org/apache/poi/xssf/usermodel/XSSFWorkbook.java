@@ -245,7 +245,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
         this(XSSFWorkbookType.XLSX);
     }
 
-    @Internal
     public XSSFWorkbook(XSSFFactory factory) {
         this(XSSFWorkbookType.XLSX, factory);
     }
