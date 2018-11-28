@@ -20,6 +20,7 @@ import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -52,6 +53,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
+import org.apache.poi.xddf.usermodel.chart.XDDFChart;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -717,6 +719,33 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
     public XSLFPlaceholderDetails getPlaceholderDetails(Placeholder placeholder) {
         final XSLFSimpleShape ph = getPlaceholder(placeholder);
         return (ph == null) ? null : new XSLFPlaceholderDetails(ph);
+    }
+    
+    /**
+     * this method will add chart into slide
+     * with default height, width, x and y
+     * @param chart xslf chart object
+     * @return xslf chart object
+     */
+    public XSLFChart addChart(XSLFChart chart)
+    {
+        Rectangle2D rect2D = new java.awt.Rectangle(XDDFChart.DEFAULT_X, XDDFChart.DEFAULT_Y, 
+                XDDFChart.DEFAULT_WIDTH, XDDFChart.DEFAULT_HEIGHT);
+        
+        return addChart(chart, rect2D);
+    }
+    
+    /**
+     * this method will add chart into slide
+     * with given height, width, x and y
+     * @param chart xslf chart object
+     * @return xslf chart object
+     */
+    public XSLFChart addChart(XSLFChart chart, Rectangle2D rect2D)
+    {
+        RelationPart rp = addRelation(null, XSLFRelation.CHART, chart);
+        getDrawing().addChart(rp.getRelationship().getId(), rect2D);
+        return chart;
     }
 
 }

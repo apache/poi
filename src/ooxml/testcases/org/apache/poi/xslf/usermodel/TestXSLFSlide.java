@@ -20,6 +20,7 @@ import static org.apache.poi.sl.TestCommonSL.sameColor;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -191,6 +192,18 @@ public class TestXSLFSlide {
             }
         }
         assertEquals(30, ppt.getSlides().size());
+        
+        ppt.close();
+    }    
+    
+    @Test
+    public void testAutoChart() throws IOException {
+        XMLSlideShow ppt = new XMLSlideShow();
+        XSLFSlide slide = ppt.createSlide();
+        XSLFChart chart = ppt.createChart();
+        slide.addChart(chart);
+        
+        assertNotNull(chart); 
         
         ppt.close();
     }    

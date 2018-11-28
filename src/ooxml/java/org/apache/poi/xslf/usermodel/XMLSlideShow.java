@@ -302,14 +302,23 @@ public class XMLSlideShow extends POIXMLDocument
      * Create a blank chart on the given slide.
      */
     public XSLFChart createChart(XSLFSlide slide) {
+        XSLFChart chart = createChart();
+        slide.addRelation(null, XSLFRelation.CHART, chart);
+        return chart;
+    }
+    
+    /**
+     * This method is used to create template for chart XML.
+     * @return Xslf chart object 
+     */
+    public XSLFChart createChart() {
         int chartIdx = findNextAvailableFileNameIndex(XSLFRelation.CHART, _charts.size() + 1);
         XSLFChart chart = (XSLFChart) createRelationship(XSLFRelation.CHART, XSLFFactory.getInstance(), chartIdx, true).getDocumentPart();
-        slide.addRelation(null, XSLFRelation.CHART, chart);
         chart.setChartIndex(chartIdx);
         _charts.add(chart);
         return chart;
     }
-
+    
     /**
      * Return notes slide for the specified slide or create new if it does not exist yet.
      */
@@ -416,7 +425,7 @@ public class XMLSlideShow extends POIXMLDocument
      * Return all the charts in the slideshow
      */
     public List<XSLFChart> getCharts() {
-        return _charts;
+        return Collections.unmodifiableList(_charts);
     }
 
     /**

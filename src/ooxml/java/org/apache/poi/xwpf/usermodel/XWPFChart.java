@@ -36,16 +36,7 @@ import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.CTInline
  */
 @Beta
 public class XWPFChart extends XDDFChart {
-    /**
-     * default width of chart in emu
-     */
-    public static final int DEFAULT_WIDTH = 500000;
-
-    /**
-     * default height of chart in emu
-     */
-    public static final int DEFAULT_HEIGHT = 500000;
-
+    
     // lazy initialization
     private Long checksum;
 
