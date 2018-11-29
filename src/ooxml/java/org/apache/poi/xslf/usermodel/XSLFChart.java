@@ -48,7 +48,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFra
 @Beta
 public final class XSLFChart extends XDDFChart {
 
-    static String CHART_URI = "http://schemas.openxmlformats.org/drawingml/2006/chart";
+    private static String CHART_URI = "http://schemas.openxmlformats.org/drawingml/2006/chart";
     
     /**
      * Construct a PresentationML chart.
@@ -112,6 +112,7 @@ public final class XSLFChart extends XDDFChart {
      * @param rID relation id
      * @param anchor size and location of chart
      * @return graphic frame object
+     * @since POI 4.0.2
      */
     static CTGraphicalObjectFrame prototype(int shapeId, String rID, Rectangle2D anchor){
         CTGraphicalObjectFrame frame = CTGraphicalObjectFrame.Factory.newInstance();
