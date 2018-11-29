@@ -201,9 +201,13 @@ public class TestXSLFSlide {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
         XSLFChart chart = ppt.createChart();
-        slide.addChart(chart);
-        
         assertNotNull(chart); 
+        
+        slide.addChart(chart);
+        assertEquals(XSLFRelation.CHART.getContentType(), chart.getPackagePart().getContentType());
+        
+        String partName = slide.getRelationPartById("rId2").getDocumentPart().getPackagePart().getPartName().getName();
+        assertEquals(partName, chart.getPackagePart().getPartName().getName());
         
         ppt.close();
     }    
