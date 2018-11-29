@@ -92,7 +92,7 @@ public class AutoChartPPTExample {
         		XSLFSlide slide = ppt.createSlide();
         		XSLFChart chart = ppt.createChart();
         		Rectangle2D rect2D = new java.awt.Rectangle(XDDFChart.DEFAULT_X, XDDFChart.DEFAULT_Y, 
-        				5000000, 5000000);
+        				XDDFChart.DEFAULT_WIDTH, XDDFChart.DEFAULT_HEIGHT);
         		slide.addChart(chart, rect2D);
         		setBarData(chart, chartTitle, series, categories, values1, values2);
         		// save the result
