@@ -725,7 +725,6 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
      * this method will add chart into slide
      * with default height, width, x and y
      * @param chart xslf chart object
-     * @return xslf chart Relation ID in slide
      * @since POI 4.0.2
      */
     public void addChart(XSLFChart chart)
@@ -740,7 +739,6 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
      * this method will add chart into slide
      * with given height, width, x and y
      * @param chart xslf chart object
-     * @return xslf chart Relation ID in slide
      * @since POI 4.0.2
      */
     public void addChart(XSLFChart chart, Rectangle2D rect2D)
