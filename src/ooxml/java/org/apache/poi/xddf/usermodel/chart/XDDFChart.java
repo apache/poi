@@ -771,10 +771,9 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
         CTTableColumns tableColumnList = ctTable.getTableColumns();
         CTTableColumn column = null;
         int columnCount  = tableColumnList.getTableColumnList().size()-1;
-        for( int i = columnCount; columnCount < index; i++) {
+        for( int i = columnCount; i < index; i++) {
             column = tableColumnList.addNewTableColumn();
             column.setId(i);
-            ++columnCount;
         }
         column = tableColumnList.getTableColumnArray(index);
         column.setName(title);
