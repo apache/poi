@@ -319,7 +319,6 @@ public class XMLSlideShow extends POIXMLDocument
         _charts.add(chart);
         return chart;
     }
-    
     /**
      * Return notes slide for the specified slide or create new if it does not exist yet.
      */
