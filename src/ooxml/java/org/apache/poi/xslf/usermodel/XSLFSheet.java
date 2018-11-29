@@ -726,6 +726,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
      * with default height, width, x and y
      * @param chart xslf chart object
      * @return xslf chart object
+     * @since POI 4.0.2
      */
     public XSLFChart addChart(XSLFChart chart)
     {
@@ -740,6 +741,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
      * with given height, width, x and y
      * @param chart xslf chart object
      * @return xslf chart object
+     * @since POI 4.0.2
      */
     public XSLFChart addChart(XSLFChart chart, Rectangle2D rect2D)
     {
