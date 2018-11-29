@@ -725,29 +725,28 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
      * this method will add chart into slide
      * with default height, width, x and y
      * @param chart xslf chart object
-     * @return xslf chart object
+     * @return xslf chart Relation ID in slide
      * @since POI 4.0.2
      */
-    public XSLFChart addChart(XSLFChart chart)
+    public void addChart(XSLFChart chart)
     {
         Rectangle2D rect2D = new java.awt.Rectangle(XDDFChart.DEFAULT_X, XDDFChart.DEFAULT_Y, 
                 XDDFChart.DEFAULT_WIDTH, XDDFChart.DEFAULT_HEIGHT);
         
-        return addChart(chart, rect2D);
+        this.addChart(chart, rect2D);
     }
     
     /**
      * this method will add chart into slide
      * with given height, width, x and y
      * @param chart xslf chart object
-     * @return xslf chart object
+     * @return xslf chart Relation ID in slide
      * @since POI 4.0.2
      */
-    public XSLFChart addChart(XSLFChart chart, Rectangle2D rect2D)
+    public void addChart(XSLFChart chart, Rectangle2D rect2D)
     {
         RelationPart rp = addRelation(null, XSLFRelation.CHART, chart);
         getDrawing().addChart(rp.getRelationship().getId(), rect2D);
-        return chart;
     }
 
 }
