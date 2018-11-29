@@ -33,6 +33,7 @@ import org.apache.poi.xddf.usermodel.chart.BarDirection;
 import org.apache.poi.xddf.usermodel.chart.ChartTypes;
 import org.apache.poi.xddf.usermodel.chart.LegendPosition;
 import org.apache.poi.xddf.usermodel.chart.XDDFBarChartData;
+import org.apache.poi.xddf.usermodel.chart.XDDFChart;
 import org.apache.poi.xddf.usermodel.chart.XDDFChartAxis;
 import org.apache.poi.xddf.usermodel.chart.XDDFChartLegend;
 import org.apache.poi.xddf.usermodel.chart.XDDFDataSource;
@@ -84,7 +85,7 @@ public class AutoChartDOCExample {
         	Double[] values2 = listSpeakers.toArray(new Double[listSpeakers.size()]);
 
         	try (XWPFDocument doc = new XWPFDocument()) {
-        		XWPFChart chart = doc.createChart(5000000,5000000);
+        		XWPFChart chart = doc.createChart(XDDFChart.DEFAULT_WIDTH, XDDFChart.DEFAULT_HEIGHT);
         		setBarData(chart, chartTitle, series, categories, values1, values2);
         		// save the result
         		try (OutputStream out = new FileOutputStream("bar-chart-demo-output.docx")) {
