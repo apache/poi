@@ -310,6 +310,7 @@ public class XMLSlideShow extends POIXMLDocument
     /**
      * This method is used to create template for chart XML.
      * @return Xslf chart object 
+     * @since POI 4.0.2 
      */
     public XSLFChart createChart() {
         int chartIdx = findNextAvailableFileNameIndex(XSLFRelation.CHART, _charts.size() + 1);
