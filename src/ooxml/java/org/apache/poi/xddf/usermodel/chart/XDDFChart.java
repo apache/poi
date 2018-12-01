@@ -746,7 +746,6 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      * in case table size zero then create new table and add table columns element
      * @param sheet
      * @return table object
-     * @since POI 4.0.2
      */
     private CTTable getSheetTable(XSSFSheet sheet) {
         if(sheet.getTables().size() == 0)
