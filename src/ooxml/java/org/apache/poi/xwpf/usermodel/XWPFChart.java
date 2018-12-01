@@ -45,7 +45,7 @@ public class XWPFChart extends XDDFChart {
      * default height of chart in emu
      */
     public static final int DEFAULT_HEIGHT = XDDFChart.DEFAULT_HEIGHT;
-    
+
     // lazy initialization
     private Long checksum;
 
