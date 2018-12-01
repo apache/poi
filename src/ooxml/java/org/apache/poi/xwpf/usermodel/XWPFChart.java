@@ -36,7 +36,7 @@ import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.CTInline
  */
 @Beta
 public class XWPFChart extends XDDFChart {
-   /**
+    /**
      * default width of chart in emu
      */
     public static final int DEFAULT_WIDTH = XDDFChart.DEFAULT_WIDTH;
@@ -45,7 +45,7 @@ public class XWPFChart extends XDDFChart {
      * default height of chart in emu
      */
     public static final int DEFAULT_HEIGHT = XDDFChart.DEFAULT_HEIGHT;
-   
+    
     // lazy initialization
     private Long checksum;
 
