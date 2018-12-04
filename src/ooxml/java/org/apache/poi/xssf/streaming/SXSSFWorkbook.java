@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import org.apache.commons.compress.archivers.zip.Zip64Mode;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -51,13 +52,7 @@ import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.SheetVisibility;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.NotImplemented;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.Removal;
-import org.apache.poi.util.TempFile;
+import org.apache.poi.util.*;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFChartSheet;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -116,6 +111,8 @@ public class SXSSFWorkbook implements Workbook {
      * shared string table - a cache of strings in this workbook
      */
     private final SharedStringsTable _sharedStringSource;
+
+    private Zip64Mode zip64Mode = Zip64Mode.AsNeeded;
 
     /**
      * Construct a new workbook with default row window size
@@ -250,6 +247,7 @@ public class SXSSFWorkbook implements Workbook {
             }
         }
     }
+
     /**
      * Construct an empty workbook and specify the window for row access.
      * <p>
@@ -291,6 +289,16 @@ public class SXSSFWorkbook implements Workbook {
     }
 
     /**
+     * @param zip64Mode {@link Zip64Mode}
+     *
+     * @since 4.0.3
+     */
+    @Beta
+    public void setZip64Mode(Zip64Mode zip64Mode) {
+        this.zip64Mode = zip64Mode;
+    }
+
+    /**
      * Get whether temp files should be compressed.
      *
      * @return whether to compress temp files
@@ -298,6 +306,7 @@ public class SXSSFWorkbook implements Workbook {
     public boolean isCompressTempFiles() {
         return _compressTmpFiles;
     }
+
     /**
      * Set whether temp files should be compressed.
      * <p>
@@ -377,6 +386,7 @@ public class SXSSFWorkbook implements Workbook {
 
     protected void injectData(ZipEntrySource zipEntrySource, OutputStream out) throws IOException {
         ZipArchiveOutputStream zos = new ZipArchiveOutputStream(out);
+        zos.setUseZip64(zip64Mode);
         try {
             Enumeration<? extends ZipArchiveEntry> en = zipEntrySource.getEntries();
             while (en.hasMoreElements()) {
