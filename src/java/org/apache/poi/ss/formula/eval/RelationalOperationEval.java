@@ -30,7 +30,7 @@ import org.apache.poi.ss.util.NumberComparer;
  */
 public abstract class RelationalOperationEval extends Fixed2ArgFunction implements ArrayFunction {
 
-	/**
+   /**
 	 * Converts a standard compare result (-1, 0, 1) to <code>true</code> or <code>false</code>
 	 * according to subclass' comparison type.
 	 */
@@ -47,7 +47,7 @@ public abstract class RelationalOperationEval extends Fixed2ArgFunction implemen
 	 * Bool.TRUE > Bool.FALSE
 	 * Bool.FALSE == Blank
 	 *
-	 * Strings are never converted to numbers or booleans
+	 * Strings can converted to numbers or booleans to compare
 	 * String > any number. ALWAYS
 	 * Non-empty String > Blank
 	 * Empty String == Blank
@@ -177,6 +177,15 @@ public abstract class RelationalOperationEval extends Fixed2ArgFunction implemen
 		if (vb instanceof BoolEval) {
 			return -1;
 		}
+		
+		try {
+            Double nA = OperandResolver.coerceValueToDouble(va);
+            Double nB = OperandResolver.coerceValueToDouble(vb);
+            return NumberComparer.compare(nA, nB);
+        } catch (Exception e) {
+            //
+        }
+		
 		if (va instanceof StringEval) {
 			if (vb instanceof StringEval) {
 				StringEval sA = (StringEval) va;
@@ -187,13 +196,6 @@ public abstract class RelationalOperationEval extends Fixed2ArgFunction implemen
 		}
 		if (vb instanceof StringEval) {
 			return -1;
-		}
-		if (va instanceof NumberEval) {
-			if (vb instanceof NumberEval) {
-				NumberEval nA = (NumberEval) va;
-				NumberEval nB = (NumberEval) vb;
-				return NumberComparer.compare(nA.getNumberValue(), nB.getNumberValue());
-			}
 		}
 		throw new IllegalArgumentException("Bad operand types (" + va.getClass().getName() + "), ("
 				+ vb.getClass().getName() + ")");
