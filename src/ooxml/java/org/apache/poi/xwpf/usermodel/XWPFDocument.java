@@ -58,6 +58,7 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.wp.usermodel.HeaderFooterType;
+import org.apache.poi.xddf.usermodel.chart.XDDFChart;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
@@ -1672,7 +1673,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * @since POI 4.0.0
      */
     public XWPFChart createChart() throws InvalidFormatException, IOException {
-        return createChart(XWPFChart.DEFAULT_WIDTH, XWPFChart.DEFAULT_HEIGHT);
+        return createChart(XDDFChart.DEFAULT_WIDTH, XDDFChart.DEFAULT_HEIGHT);
     }
 
     /**
