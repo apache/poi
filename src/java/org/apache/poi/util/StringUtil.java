@@ -698,7 +698,7 @@ public class StringUtil {
         final String prefix;
 
         // #61881 - for now we only check the first char
-        if (len > 0 && string[offset] == 0 && string[offset+1] == 0) {
+        if (len > 0 && offset < (string.length - 1) && string[offset] == 0 && string[offset+1] == 0) {
             newOffset = offset+2;
             prefix = "?";
 
