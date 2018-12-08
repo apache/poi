@@ -53,6 +53,7 @@ import org.apache.poi.xddf.usermodel.text.XDDFTextBody;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFTable;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
@@ -81,6 +82,27 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumns;
 
 @Beta
 public abstract class XDDFChart extends POIXMLDocumentPart implements TextContainer {
+    
+    /**
+     * default width of chart in emu
+     */
+    public static final int DEFAULT_WIDTH = 500000;
+
+    /**
+     * default height of chart in emu
+     */
+    public static final int DEFAULT_HEIGHT = 500000;
+    
+    /**
+     * default x-coordinate  of chart in emu
+     */
+    public static final int DEFAULT_X = 10;
+
+    /**
+     * default y-coordinate value of chart in emu
+     */
+    public static final int DEFAULT_Y = 10;
+    
     /**
      * Underlying workbook
      */
@@ -712,8 +734,27 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
         XSSFRow row = this.getRow(sheet, 0);
         XSSFCell cell = this.getCell(row, column);
         cell.setCellValue(title);
-        this.updateSheetTable(sheet.getTables().get(0).getCTTable(), title, column);
+        
+        CTTable ctTable = this.getSheetTable(sheet);
+        
+        this.updateSheetTable(ctTable, title, column);
         return new CellReference(sheet.getSheetName(), 0, column, true, true);
+    }
+
+    /**
+     * this method will check whether sheet have table
+     * in case table size zero then create new table and add table columns element
+     * @param sheet
+     * @return table object
+     */
+    private CTTable getSheetTable(XSSFSheet sheet) {
+        if(sheet.getTables().size() == 0)
+        {
+            XSSFTable newTable = sheet.createTable(null);
+            newTable.getCTTable().addNewTableColumns();
+            sheet.getTables().add(newTable);
+        }
+        return sheet.getTables().get(0).getCTTable();
     }
 
     /**
@@ -729,7 +770,8 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
     private void updateSheetTable(CTTable ctTable, String title, int index) {
         CTTableColumns tableColumnList = ctTable.getTableColumns();
         CTTableColumn column = null;
-        for( int i = 0; tableColumnList.getCount() < index; i++) {
+        int columnCount  = tableColumnList.getTableColumnList().size()-1;
+        for( int i = columnCount; i < index; i++) {
             column = tableColumnList.addNewTableColumn();
             column.setId(i);
         }
