@@ -60,6 +60,7 @@ import javax.xml.crypto.dsig.CanonicalizationMethod;
 import javax.xml.crypto.dsig.dom.DOMSignContext;
 
 import org.apache.jcp.xml.dsig.internal.dom.DOMSignedInfo;
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POITestCase;
 import org.apache.poi.ooxml.util.DocumentHelper;
@@ -682,6 +683,8 @@ public class TestSignatureInfo {
                 si.confirmSignature();
                 boolean b = si.verifySignature();
                 assertTrue("Signature not correctly calculated for " + ha, b);
+            } catch (EncryptedDocumentException e) {
+                Assume.assumeTrue(e.getMessage().startsWith("Export Restrictions"));
             } finally {
                 if (pkg != null) {
                     pkg.close();
