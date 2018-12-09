@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import org.apache.commons.math3.stat.descriptive.moment.GeometricMean;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.NumberEval;
@@ -255,6 +256,12 @@ public abstract class AggregateFunction extends MultiOperandNumericFunction {
                 throw new EvaluationException(ErrorEval.DIV_ZERO);
             }
             return StatsLib.varp(values);
+        }
+    };
+    public static final Function GEOMEAN = new AggregateFunction() {
+        @Override
+        protected double evaluate(double[] values) throws EvaluationException {
+            return new GeometricMean().evaluate(values, 0, values.length);
         }
     };
 }
