@@ -716,7 +716,6 @@ public abstract class XSLFSimpleShape extends XSLFShape
     }
 
     /**
-     *
      * @return definition of the shape geometry
      */
     @Override

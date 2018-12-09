@@ -22,11 +22,18 @@ package org.apache.poi.sl.draw.geom;
 import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class Context {
-    final Map<String, Double> _ctx = new HashMap<>();
-    final IAdjustableShape _props;
-    final Rectangle2D _anchor;
+    private static final Pattern DOUBLE_PATTERN = Pattern.compile(
+        "[\\x00-\\x20]*[+-]?(NaN|Infinity|((((\\p{Digit}+)(\\.)?((\\p{Digit}+)?)" +
+        "([eE][+-]?(\\p{Digit}+))?)|(\\.(\\p{Digit}+)([eE][+-]?(\\p{Digit}+))?)|" +
+        "(((0[xX](\\p{XDigit}+)(\\.)?)|(0[xX](\\p{XDigit}+)?(\\.)(\\p{XDigit}+)))" +
+        "[pP][+-]?(\\p{Digit}+)))[fFdD]?))[\\x00-\\x20]*");
+
+    private final Map<String, Double> _ctx = new HashMap<>();
+    private final IAdjustableShape _props;
+    private final Rectangle2D _anchor;
     
     public Context(CustomGeometry geom, Rectangle2D anchor, IAdjustableShape props){
         _props = props;
@@ -39,23 +46,22 @@ public class Context {
         }
     }
 
-    public Rectangle2D getShapeAnchor(){
+    Rectangle2D getShapeAnchor(){
         return _anchor;
     }
 
-    public Guide getAdjustValue(String name){
+    Guide getAdjustValue(String name){
         // ignore HSLF props for now ... the results with default value are usually better - see #59004
         return (_props.getClass().getName().contains("hslf")) ? null : _props.getAdjustValue(name);
     }
 
     public double getValue(String key){
-        if(key.matches("(\\+|-)?\\d+")){
+        if(DOUBLE_PATTERN.matcher(key).matches()){
             return Double.parseDouble(key);
         }
 
-        Double val = _ctx.get(key);
         // BuiltInGuide throws IllegalArgumentException if key is not defined
-        return (val != null) ? val : evaluate(BuiltInGuide.valueOf("_"+key));
+        return _ctx.containsKey(key) ? _ctx.get(key) : evaluate(BuiltInGuide.valueOf("_"+key));
     }
 
     public double evaluate(Formula fmla){
