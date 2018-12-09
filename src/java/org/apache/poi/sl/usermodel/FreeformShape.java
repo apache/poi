@@ -24,16 +24,15 @@ public interface FreeformShape<
     P extends TextParagraph<S,P,? extends TextRun>
 > extends AutoShape<S,P> {
     /**
-     * Gets the shape path.
-     * <p>
-     *     The path is translated in the shape's coordinate system, i.e.
-     *     freeform.getPath().getBounds2D() equals to freeform.getAnchor()
-     *     (small discrepancies are possible due to rounding errors)
-     * </p>
+     * Gets the shape path.<p>
+     *
+     * The path is translated in the shape's coordinate system, i.e.
+     * freeform.getPath2D().getBounds2D() equals to freeform.getAnchor()
+     * (small discrepancies are possible due to rounding errors)
      *
      * @return the path
      */
-    Path2D.Double getPath();
+    Path2D getPath();
 
     /**
      * Set the shape path
@@ -41,5 +40,5 @@ public interface FreeformShape<
      * @param path  shape outline
      * @return the number of points written
      */
-    int setPath(Path2D.Double path);
+    int setPath(Path2D path);
 }

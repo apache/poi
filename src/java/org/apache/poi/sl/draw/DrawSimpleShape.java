@@ -410,14 +410,20 @@ public class DrawSimpleShape extends DrawShape {
         }
         for (Path p : geom) {
 
-            double w = p.getW(), h = p.getH(), scaleX = Units.toPoints(1), scaleY = scaleX;
+            double w = p.getW(), h = p.getH(), scaleX, scaleY;
             if (w == -1) {
                 w = Units.toEMU(anchor.getWidth());
+                scaleX = Units.toPoints(1);
+            } else if (anchor.getWidth() == 0) {
+                scaleX = 1;
             } else {
                 scaleX = anchor.getWidth() / w;
             }
             if (h == -1) {
                 h = Units.toEMU(anchor.getHeight());
+                scaleY = Units.toPoints(1);
+            } else if (anchor.getHeight() == 0) {
+                scaleY = 1;
             } else {
                 scaleY = anchor.getHeight() / h;
             }

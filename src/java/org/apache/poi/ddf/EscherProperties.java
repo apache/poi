@@ -26,6 +26,7 @@ import java.util.Map;
  *
  * @author Glen Stampoultzis (glens at apache.org)
  */
+@SuppressWarnings("WeakerAccess")
 public final class EscherProperties {
 
 	// Property constants
@@ -117,6 +118,15 @@ public final class EscherProperties {
 	public static final short GEOMETRY__ADJUST8VALUE = 334;
 	public static final short GEOMETRY__ADJUST9VALUE = 335;
 	public static final short GEOMETRY__ADJUST10VALUE = 336;
+	public static final short GEOMETRY__PCONNECTIONSITES = 337;
+	public static final short GEOMETRY__PCONNECTIONSITESDIR = 338;
+	public static final short GEOMETRY__XLIMO = 339;
+	public static final short GEOMETRY__YLIMO = 340;
+	public static final short GEOMETRY__PADJUSTHANDLES = 341;
+	public static final short GEOMETRY__PGUIDES = 342;
+	public static final short GEOMETRY__PINSCRIBE = 343;
+	public static final short GEOMETRY__CXK = 344;
+	public static final short GEOMETRY__PFRAGMENTS = 345;
 	public static final short GEOMETRY__SHADOWok = 378;
 	public static final short GEOMETRY__3DOK = 379;
 	public static final short GEOMETRY__LINEOK = 380;
@@ -333,6 +343,9 @@ public final class EscherProperties {
 
 	private static final Map<Short, EscherPropertyMetaData> properties = initProps();
 
+	private EscherProperties() {
+	}
+
 	private static Map<Short, EscherPropertyMetaData> initProps() {
 		Map<Short, EscherPropertyMetaData> m = new HashMap<>();
 		addProp(m, TRANSFORM__ROTATION, "transform.rotation");
@@ -423,6 +436,15 @@ public final class EscherProperties {
 		addProp(m, GEOMETRY__ADJUST8VALUE, "geometry.adjust8value");
 		addProp(m, GEOMETRY__ADJUST9VALUE, "geometry.adjust9value");
 		addProp(m, GEOMETRY__ADJUST10VALUE, "geometry.adjust10value");
+		addProp(m, GEOMETRY__PCONNECTIONSITES, "geometry.pConnectionSites");
+		addProp(m, GEOMETRY__PCONNECTIONSITESDIR, "geometry.pConnectionSitesDir");
+		addProp(m, GEOMETRY__XLIMO, "geometry.xLimo");
+		addProp(m, GEOMETRY__YLIMO, "geometry.yLimo");
+		addProp(m, GEOMETRY__PADJUSTHANDLES, "geometry.pAdjustHandles");
+		addProp(m, GEOMETRY__PGUIDES, "geometry.pGuides");
+		addProp(m, GEOMETRY__PINSCRIBE, "geometry.pInscribe");
+		addProp(m, GEOMETRY__CXK, "geometry.cxk");
+		addProp(m, GEOMETRY__PFRAGMENTS, "geometry.pFragments");
 		addProp(m, GEOMETRY__SHADOWok, "geometry.shadowOK");
 		addProp(m, GEOMETRY__3DOK, "geometry.3dok");
 		addProp(m, GEOMETRY__LINEOK, "geometry.lineok");
@@ -641,20 +663,20 @@ public final class EscherProperties {
 	}
 
 	private static void addProp(Map<Short, EscherPropertyMetaData> m, int s, String propName) {
-		m.put(Short.valueOf((short) s), new EscherPropertyMetaData(propName));
+		m.put((short) s, new EscherPropertyMetaData(propName));
 	}
 
 	private static void addProp(Map<Short, EscherPropertyMetaData> m, int s, String propName, byte type) {
-		m.put(Short.valueOf((short) s), new EscherPropertyMetaData(propName, type));
+		m.put((short) s, new EscherPropertyMetaData(propName, type));
 	}
 
 	public static String getPropertyName(short propertyId) {
-		EscherPropertyMetaData o = properties.get(Short.valueOf(propertyId));
+		EscherPropertyMetaData o = properties.get(propertyId);
 		return o == null ? "unknown" : o.getDescription();
 	}
 
 	public static byte getPropertyType(short propertyId) {
-		EscherPropertyMetaData escherPropertyMetaData = properties.get(Short.valueOf(propertyId));
+		EscherPropertyMetaData escherPropertyMetaData = properties.get(propertyId);
 		return escherPropertyMetaData == null ? 0 : escherPropertyMetaData.getType();
 	}
 }

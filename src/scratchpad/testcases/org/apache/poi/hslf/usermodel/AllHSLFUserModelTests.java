@@ -26,6 +26,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
     TestAddingSlides.class,
+    TestBackground.class,
     TestBugs.class,
     TestCounts.class,
     TestMostRecentRecords.class,

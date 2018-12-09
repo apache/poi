@@ -17,43 +17,11 @@
 
 package org.apache.poi.sl.draw;
 
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Path2D;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import org.apache.poi.sl.usermodel.FreeformShape;
 
-import org.apache.poi.sl.draw.geom.Outline;
-import org.apache.poi.sl.draw.geom.Path;
-import org.apache.poi.sl.usermodel.*;
-
+@SuppressWarnings("WeakerAccess")
 public class DrawFreeformShape extends DrawAutoShape {
     public DrawFreeformShape(FreeformShape<?,?> shape) {
         super(shape);
-    }
-
-    protected Collection<Outline> computeOutlines(Graphics2D graphics) {
-        List<Outline> lst = new ArrayList<>();
-        FreeformShape<?,?> fsh = (FreeformShape<?, ?>) getShape();
-        Path2D sh = fsh.getPath();
-
-        AffineTransform tx = (AffineTransform)graphics.getRenderingHint(Drawable.GROUP_TRANSFORM);
-        if (tx == null) {
-            tx = new AffineTransform();
-        }
-
-        java.awt.Shape canvasShape = tx.createTransformedShape(sh);
-
-        FillStyle fs = fsh.getFillStyle();
-        StrokeStyle ss = fsh.getStrokeStyle();
-        Path path = new Path(fs != null, ss != null);
-        lst.add(new Outline(canvasShape, path));
-        return lst;
-    }
-
-    @Override
-    protected TextShape<?,? extends TextParagraph<?,?,? extends TextRun>> getShape() {
-        return (TextShape<?,? extends TextParagraph<?,?,? extends TextRun>>)shape;
     }
 }
