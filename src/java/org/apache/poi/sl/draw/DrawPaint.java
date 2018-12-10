@@ -23,6 +23,7 @@ import java.awt.Graphics2D;
 import java.awt.LinearGradientPaint;
 import java.awt.Paint;
 import java.awt.RadialGradientPaint;
+import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -603,6 +604,21 @@ public class DrawPaint {
             return (float)(linRGB / 100000d * 12.92d);
         } else {
             return (float)(1.055d * Math.pow(linRGB / 100000d, 1.0d/2.4d) - 0.055d);
+        }
+    }
+
+
+    static void fillPaintWorkaround(Graphics2D graphics, Shape shape) {
+        // the ibm jdk has a rendering/JIT bug, which throws an AIOOBE in
+        // TexturePaintContext$Int.setRaster(TexturePaintContext.java:476)
+        // this usually doesn't happen while debugging, because JIT doesn't jump in then.
+        try {
+            graphics.fill(shape);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            LOG.log(POILogger.WARN, "IBM JDK failed with TexturePaintContext AIOOBE - try adding the following to the VM parameter:\n" +
+                "-Xjit:exclude={sun/java2d/pipe/AlphaPaintPipe.renderPathTile(Ljava/lang/Object;[BIIIIII)V} and " +
+                "search for 'JIT Problem Determination for IBM SDK using -Xjit' (http://www-01.ibm.com/support/docview.wss?uid=swg21294023) " +
+                "for how to add/determine further excludes", e);
         }
     }
 }

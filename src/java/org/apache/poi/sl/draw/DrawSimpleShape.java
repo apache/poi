@@ -17,6 +17,8 @@
 
 package org.apache.poi.sl.draw;
 
+import static org.apache.poi.sl.draw.DrawPaint.fillPaintWorkaround;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -87,7 +89,7 @@ public class DrawSimpleShape extends DrawShape {
                         graphics.setPaint(fillMod);
                         java.awt.Shape s = o.getOutline();
                         graphics.setRenderingHint(Drawable.GRADIENT_SHAPE, s);
-                        graphics.fill(s);
+                        fillPaintWorkaround(graphics, s);
                     }
                 }
             }
@@ -327,7 +329,7 @@ public class DrawSimpleShape extends DrawShape {
               graphics.setPaint(shadowColor);
 
               if(fill != null && p.isFilled()){
-                  graphics.fill(s);
+                  fillPaintWorkaround(graphics, s);
               } else if (line != null && p.isStroked()) {
                   graphics.draw(s);
               }
