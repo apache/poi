@@ -60,6 +60,10 @@ under the License.
     <property name="jdk.version.class" value="1.8" description="JDK version of generated class files"/>
     <property name="compile.debug" value="true"/>
 
+    <condition property="isIBMVM">
+        <contains string="${java.vendor}" substring="IBM" casesensitive="false"/>
+    </condition>
+
     <!--
         Logging is suppressed by default.
         To redirect log output to console, run ant with -Dorg.apache.poi.util.POILogger=org.apache.poi.util.SystemOutLogger
@@ -1239,6 +1243,7 @@ under the License.
             <jvmarg value="${java9addopens6}" />
             <!-- jvmarg value="-Duser.timezone=UTC"/ -->
             <jvmarg value="${file.leak.detector}" />
+            <jvmarg value="-Xjit:exclude={sun/java2d/pipe/AlphaPaintPipe.renderPathTile(Ljava/lang/Object;[BIIIIII)V}" if:true="${isIBMVM}"/>
             <formatter type="plain"/>
             <formatter type="xml"/>
             <batchtest todir="${ooxml.reports.test}">
@@ -1306,6 +1311,7 @@ under the License.
                 <pathelement location="${main.ant.jar}"/>
                 <pathelement location="${scratchpad.output.dir}"/>
             </classpath>
+            <exclude name="**/HeapDump**" if:true="${isIBMVM}"/>
         </javac>
         <!--copy todir="${integration.output.dir}">
             <fileset dir="${integration.resource1.dir}"/>
@@ -1455,6 +1461,7 @@ under the License.
                 <jvmarg value="${java9addopens5}" />
                 <jvmarg value="${java9addopens6}" />
                 <jvmarg value="${file.leak.detector}" />
+                <jvmarg value="-Xjit:exclude={sun/java2d/pipe/AlphaPaintPipe.renderPathTile(Ljava/lang/Object;[BIIIIII)V}" if:true="${isIBMVM}"/>
                 <formatter type="plain"/>
                 <formatter type="xml"/>
                 <batchtest todir="${main.reports.test}">
@@ -1527,6 +1534,7 @@ under the License.
                 <jvmarg value="${java9addopens4}" />
                 <jvmarg value="${java9addopens5}" />
                 <jvmarg value="${java9addopens6}" />
+                <jvmarg value="-Xjit:exclude={sun/java2d/pipe/AlphaPaintPipe.renderPathTile(Ljava/lang/Object;[BIIIIII)V}" if:true="${isIBMVM}"/>
                 <formatter type="plain"/>
                 <formatter type="xml"/>
                 <batchtest todir="${scratchpad.reports.test}">
@@ -1581,6 +1589,7 @@ under the License.
                   <jvmarg value="${java9addopens6}" />
                   <!-- jvmarg value="-Duser.timezone=UTC"/ -->
                   <jvmarg value="${file.leak.detector}" />
+                  <jvmarg value="-Xjit:exclude={sun/java2d/pipe/AlphaPaintPipe.renderPathTile(Ljava/lang/Object;[BIIIIII)V}" if:true="${isIBMVM}"/>
                   <formatter type="plain"/>
                   <formatter type="xml"/>
                   <batchtest todir="${ooxml.reports.test}">
@@ -1616,6 +1625,7 @@ under the License.
                   <jvmarg value="${java9addopens4}" />
                   <jvmarg value="${java9addopens5}" />
                   <jvmarg value="${java9addopens6}" />
+                  <jvmarg value="-Xjit:exclude={sun/java2d/pipe/AlphaPaintPipe.renderPathTile(Ljava/lang/Object;[BIIIIII)V}" if:true="${isIBMVM}"/>
                   <formatter type="plain"/>
                   <formatter type="xml"/>
                   <batchtest todir="${ooxml.reports.test}">
@@ -1667,6 +1677,7 @@ under the License.
                 <jvmarg value="${java9addopens4}" />
                 <jvmarg value="${java9addopens5}" />
                 <jvmarg value="${java9addopens6}" />
+                <jvmarg value="-Xjit:exclude={sun/java2d/pipe/AlphaPaintPipe.renderPathTile(Ljava/lang/Object;[BIIIIII)V}" if:true="${isIBMVM}"/>
                 <formatter type="plain"/>
                 <formatter type="xml"/>
                 <batchtest todir="${integration.reports.test}">
@@ -1755,6 +1766,7 @@ under the License.
                 <jvmarg value="${java9addopens5}" />
                 <jvmarg value="${java9addopens6}" />
                 <jvmarg value="${file.leak.detector}" />
+                <jvmarg value="-Xjit:exclude={sun/java2d/pipe/AlphaPaintPipe.renderPathTile(Ljava/lang/Object;[BIIIIII)V}" if:true="${isIBMVM}"/>
                 <formatter type="plain"/>
                 <formatter type="xml"/>
                 <batchtest todir="${excelant.reports.test}">
@@ -2884,5 +2896,9 @@ under the License.
 
     <target name="test-env" description="tests if ant is available on the jenkins slave">
       <echo>Using Ant: ${ant.version} from ${ant.home}</echo>    
+    </target>
+
+    <target name="foo">
+        <echo>${isIBMVM}</echo>
     </target>
 </project>
