@@ -1192,6 +1192,9 @@ under the License.
                 project.setProperty("no.jit.sherlock", before.trim().replace(/ *(\S+) */g,"exclude={$1}").replace(/\s/g,","));
             </script>
 
+            <local name="ooxml.lite.agent.exists"/>
+            <available property="ooxml.lite.agent.exists" file="${ooxml.lite.agent}"/>
+
             <jacoco:coverage enabled="${coverage.enabled}" excludes="${coverage.excludes}" destfile="@{jacocodest}">
                 <junit printsummary="yes" fork="yes" forkmode="once" haltonfailure="${halt.on.test.failure}"
                        failureproperty="@{failureproperty}" showoutput="@{showoutput}">
@@ -1209,6 +1212,9 @@ under the License.
                     <jvmarg value="${java9addopens4}" if:set="${java9addopens4}" />
                     <jvmarg value="${java9addopens5}" if:set="${java9addopens5}" />
                     <jvmarg value="${java9addopens6}" if:set="${java9addopens6}" />
+
+                    <jvmarg value="-javaagent:${ooxml.lite.agent}=${ooxml.lite.report}|${ooxml.lite.includes}" if:true="${ooxml.lite.agent.exists}"/>
+
                     <!-- jvmarg value="-Duser.timezone=UTC"/ -->
                     <jvmarg value="${file.leak.detector}" />
                     <jvmarg value="-Xjit:verbose={compileStart|compileEnd},vlog=build/jit.log,${no.jit.sherlock}" if:true="${isIBMVM}"/>
