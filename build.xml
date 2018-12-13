@@ -2230,7 +2230,7 @@ under the License.
     <!-- disabling findbugs until jenkins is updated to a current IBM JDK
          see https://stackoverflow.com/a/48561534/2066598
          this should be replaced by spotbugs when available in the jenkins warnings plugin -->
-    <target name="findbugs" depends="jar" unless:true="${isIBMVM}">
+    <target name="findbugs" depends="jar" unless="${isIBMVM}">
         <downloadfile src="${findbugs.url}" dest="${findbugs.jar}"/>
 
         <property name="findbugs.home" value="build/findbugs" />
