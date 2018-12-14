@@ -107,6 +107,19 @@ public class XSLFDrawing {
         return shape;
     }
 
+    /**
+     * This method will add chart into slide's graphic frame
+     *
+     * @param rID relation id of chart
+     * @param rect2D Chart Bounding values
+     * @since POI 4.0.2
+     */
+    public void addChart(String rID, Rectangle2D rect2D) {
+        CTGraphicalObjectFrame sp = _spTree.addNewGraphicFrame();
+        sp.set(XSLFChart.prototype(_sheet.allocateShapeId(), rID, rect2D));
+    }
+
+
     public XSLFObjectShape createOleShape(String pictureRel) {
         CTGraphicalObjectFrame sp = _spTree.addNewGraphicFrame();
         sp.set(XSLFObjectShape.prototype(_sheet.allocateShapeId(), pictureRel));

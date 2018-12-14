@@ -207,9 +207,15 @@ public class CryptoAPIEncryptor extends Encryptor implements Cloneable {
         protected Cipher initCipherForBlock(Cipher cipher, int block, boolean lastChunk)
         throws IOException, GeneralSecurityException {
             flush();
+            return initCipherForBlockNoFlush(cipher, block, lastChunk);
+        }
+
+        @Override
+        protected Cipher initCipherForBlockNoFlush(Cipher existing, int block, boolean lastChunk)
+        throws GeneralSecurityException {
             EncryptionInfo ei = getEncryptionInfo();
             SecretKey sk = getSecretKey();
-            return CryptoAPIDecryptor.initCipherForBlock(cipher, block, ei, sk, Cipher.ENCRYPT_MODE);
+            return CryptoAPIDecryptor.initCipherForBlock(existing, block, ei, sk, Cipher.ENCRYPT_MODE);
         }
 
         @Override

@@ -60,6 +60,10 @@ under the License.
     <property name="jdk.version.class" value="1.8" description="JDK version of generated class files"/>
     <property name="compile.debug" value="true"/>
 
+    <condition property="isIBMVM">
+        <contains string="${java.vendor}" substring="IBM" casesensitive="false"/>
+    </condition>
+
     <!--
         Logging is suppressed by default.
         To redirect log output to console, run ant with -Dorg.apache.poi.util.POILogger=org.apache.poi.util.SystemOutLogger
@@ -341,17 +345,6 @@ under the License.
         <propertyref name="version.id"/>
         <propertyref name="scratchpad.ignore"/>
     </propertyset>
-
-    <!-- these need to be set differently when running with Java 9 -->
-    <property name="java9addmods" value="-Dthis.is.a.dummy=true"/>
-    <property name="javadoc9addmods" value="-J-Dthis.is.a.dummy=true"/>
-    <property name="java9addmodsvalue" value="-Dthis.is.a.dummy=true"/>
-    <property name="java9addopens1" value="-Dthis.is.a.dummy=true"/>
-    <property name="java9addopens2" value="-Dthis.is.a.dummy=true"/>
-    <property name="java9addopens3" value="-Dthis.is.a.dummy=true"/>
-    <property name="java9addopens4" value="-Dthis.is.a.dummy=true"/>
-    <property name="java9addopens5" value="-Dthis.is.a.dummy=true"/>
-    <property name="java9addopens6" value="-Dthis.is.a.dummy=true"/>
 
     <path id="main.classpath">
         <pathelement location="${main.commons-logging.jar}"/>
@@ -1180,6 +1173,59 @@ under the License.
         </copy>
     </target>
 
+    <macrodef name="poiunit" xmlns:jacoco="antlib:org.jacoco.ant">
+        <attribute name="failureproperty"/>
+        <attribute name="heap" default="512"/>
+        <attribute name="showoutput" default="false"/>
+        <attribute name="jacocodest" default="build/jacoco-dest.exec"/>
+        <element name="elements" implicit="true"/>
+        <sequential>
+            <local name="no.jit.sherlock"/>
+            <!-- see http://www-01.ibm.com/support/docview.wss?uid=swg21294023 on how to determine the method strings -->
+            <property name="no.jit.sherlock">
+                sun/java2d/pipe/AAShapePipe.renderTiles(Lsun/java2d/SunGraphics2D;Ljava/awt/Shape;Lsun/java2d/pipe/AATileGenerator;[I)V
+                sun/java2d/pipe/AlphaPaintPipe.renderPathTile(Ljava/lang/Object;[BIIIIII)V
+                java/awt/TexturePaintContext.getRaster(IIII)Ljava/awt/image/Raster;
+            </property>
+            <script language="javascript">
+                var before = project.getProperty("no.jit.sherlock");
+                project.setProperty("no.jit.sherlock", before.trim().replace(/ *(\S+) */g,"exclude={$1}").replace(/\s/g,","));
+            </script>
+
+            <local name="ooxml.lite.agent.exists"/>
+            <available property="ooxml.lite.agent.exists" file="${ooxml.lite.agent}"/>
+
+            <jacoco:coverage enabled="${coverage.enabled}" excludes="${coverage.excludes}" destfile="@{jacocodest}">
+                <junit printsummary="yes" fork="yes" forkmode="once" haltonfailure="${halt.on.test.failure}"
+                       failureproperty="@{failureproperty}" showoutput="@{showoutput}">
+                    <syspropertyset refid="junit.properties"/>
+                    <sysproperty key="java.io.tmpdir" value="${tempdir}"/>
+                    <jvmarg value="-Xmx@{heap}M"/>
+                    <jvmarg value="-ea"/>
+
+                    <!-- these need to be set differently when running with Java 9 -->
+                    <jvmarg value="${java9addmods}" if:set="${java9addmods}" />
+                    <jvmarg value="${java9addmodsvalue}" if:set="${java9addmodsvalue}" />
+                    <jvmarg value="${java9addopens1}" if:set="${java9addopens1}" />
+                    <jvmarg value="${java9addopens2}" if:set="${java9addopens2}" />
+                    <jvmarg value="${java9addopens3}" if:set="${java9addopens3}" />
+                    <jvmarg value="${java9addopens4}" if:set="${java9addopens4}" />
+                    <jvmarg value="${java9addopens5}" if:set="${java9addopens5}" />
+                    <jvmarg value="${java9addopens6}" if:set="${java9addopens6}" />
+
+                    <jvmarg value="-javaagent:${ooxml.lite.agent}=${ooxml.lite.report}|${ooxml.lite.includes}" if:true="${ooxml.lite.agent.exists}"/>
+
+                    <!-- jvmarg value="-Duser.timezone=UTC"/ -->
+                    <jvmarg value="${file.leak.detector}" />
+                    <jvmarg value="-Xjit:verbose={compileStart|compileEnd},vlog=build/jit.log,${no.jit.sherlock}" if:true="${isIBMVM}"/>
+                    <formatter type="plain"/>
+                    <formatter type="xml"/>
+                    <elements/>
+                </junit>
+            </jacoco:coverage>
+        </sequential>
+    </macrodef>
+
     <target name="retest-ooxml" depends="jar">
         <delete dir="${ooxml.reports.test}"/>
         <delete dir="${ooxml.output.test.dir}"/>
@@ -1219,39 +1265,23 @@ under the License.
         <copy todir="${ooxml.output.dir}">
             <fileset dir="${ooxml.resource1.dir}"/>
         </copy>
-        <junit printsummary="yes" fork="yes" forkmode="once" haltonfailure="${halt.on.test.failure}"
-               failureproperty="ooxml.test.failed">
+
+        <poiunit failureproperty="ooxml.test.failed" heap="768">
             <classpath>
                 <path refid="test.ooxml.lite.verify.classpath"/>
                 <path refid="test.jar.classpath"/>
             </classpath>
-            <syspropertyset refid="junit.properties"/>
-            <sysproperty key="java.io.tmpdir" value="${tempdir}"/>
-            <jvmarg value="-Xmx768M"/>
-            <jvmarg value="-ea"/>
-            <jvmarg value="${java9addmods}" />
-            <jvmarg value="${java9addmodsvalue}" />
-            <jvmarg value="${java9addopens1}" />
-            <jvmarg value="${java9addopens2}" />
-            <jvmarg value="${java9addopens3}" />
-            <jvmarg value="${java9addopens4}" />
-            <jvmarg value="${java9addopens5}" />
-            <jvmarg value="${java9addopens6}" />
-            <!-- jvmarg value="-Duser.timezone=UTC"/ -->
-            <jvmarg value="${file.leak.detector}" />
-            <formatter type="plain"/>
-            <formatter type="xml"/>
             <batchtest todir="${ooxml.reports.test}">
                 <fileset dir="${ooxml.src.test}">
-                     <include name="**/${testpattern}.java"/>
-                     <exclude name="**/TestUnfixedBugs.java"/>
-                     <exclude name="**/All*Tests.java"/>
-                     <exclude name="**/TestSignatureInfo.java"/>
-                     <exclude name="**/${testexcludepattern}.java"/>
-                     <patternset refid="exclude-scratchpad-test" if:true="${scratchpad.ignore}"/>
+                    <include name="**/${testpattern}.java"/>
+                    <exclude name="**/TestUnfixedBugs.java"/>
+                    <exclude name="**/All*Tests.java"/>
+                    <exclude name="**/TestSignatureInfo.java"/>
+                    <exclude name="**/${testexcludepattern}.java"/>
+                    <patternset refid="exclude-scratchpad-test" if:true="${scratchpad.ignore}"/>
                 </fileset>
             </batchtest>
-        </junit>
+        </poiunit>
     </target>
 
     <target name="compile-excelant" depends="compile-main,compile-ooxml">
@@ -1306,6 +1336,7 @@ under the License.
                 <pathelement location="${main.ant.jar}"/>
                 <pathelement location="${scratchpad.output.dir}"/>
             </classpath>
+            <exclude name="**/HeapDump**" if:true="${isIBMVM}"/>
         </javac>
         <!--copy todir="${integration.output.dir}">
             <fileset dir="${integration.resource1.dir}"/>
@@ -1436,39 +1467,22 @@ under the License.
     <target name="test-main" unless="main.test.notRequired"
             depends="compile-main, -test-main-check,jacocotask" xmlns:jacoco="antlib:org.jacoco.ant"
             description="tests POI classes that deal with the Microsoft Office binary (BIFF8) file formats (excludes OOXML)">
-        <jacoco:coverage enabled="${coverage.enabled}" excludes="${coverage.excludes}" destfile="build/jacoco-main.exec">
-            <junit fork="yes" forkmode="once" printsummary="yes" haltonfailure="${halt.on.test.failure}"
-                   failureproperty="main.test.failed" showoutput="true">
-                <classpath refid="test.classpath"/>
-                <classpath refid="test.jar.classpath"/>
-                <syspropertyset refid="junit.properties"/>
-                <sysproperty key="java.io.tmpdir" value="${tempdir}"/>
-                <jvmarg value="-ea"/>
-                <jvmarg value="-Xmx256m"/>
-                <!-- jvmarg value="-Duser.timezone=UTC"/ -->
-                <jvmarg value="${java9addmods}" />
-                <jvmarg value="${java9addmodsvalue}" />
-                <jvmarg value="${java9addopens1}" />
-                <jvmarg value="${java9addopens2}" />
-                <jvmarg value="${java9addopens3}" />
-                <jvmarg value="${java9addopens4}" />
-                <jvmarg value="${java9addopens5}" />
-                <jvmarg value="${java9addopens6}" />
-                <jvmarg value="${file.leak.detector}" />
-                <formatter type="plain"/>
-                <formatter type="xml"/>
-                <batchtest todir="${main.reports.test}">
-                    <fileset dir="${main.src.test}">
-                        <include name="**/${testpattern}.java"/>
-                        <exclude name="**/All*Tests.java"/>
-                        <exclude name="**/TestUnfixedBugs.java"/>
-                        <exclude name="**/TestcaseRecordInputStream.java"/>
-                        <exclude name="**/${testexcludepattern}.java"/>
-                        <patternset refid="exclude-scratchpad-test" if:true="${scratchpad.ignore}"/>
-                    </fileset>
-                </batchtest>
-            </junit>
-        </jacoco:coverage>
+        <poiunit failureproperty="main.test.failed" heap="256" showoutput="true" jacocodest="build/jacoco-main.exec">
+            <classpath>
+                <path refid="test.classpath"/>
+                <path refid="test.jar.classpath"/>
+            </classpath>
+            <batchtest todir="${main.reports.test}">
+                <fileset dir="${main.src.test}">
+                    <include name="**/${testpattern}.java"/>
+                    <exclude name="**/All*Tests.java"/>
+                    <exclude name="**/TestUnfixedBugs.java"/>
+                    <exclude name="**/TestcaseRecordInputStream.java"/>
+                    <exclude name="**/${testexcludepattern}.java"/>
+                    <patternset refid="exclude-scratchpad-test" if:true="${scratchpad.ignore}"/>
+                </fileset>
+            </batchtest>
+        </poiunit>
         <delete file="${main.testokfile}"/>
         <antcall target="-test-main-write-testfile"/>
     </target>
@@ -1500,45 +1514,23 @@ under the License.
         </uptodate>
     </target>
 
-    <target name="test-scratchpad" depends="compile-main,compile-scratchpad,-test-scratchpad-check,jacocotask,test-scratchpad-download-resources"
+    <target name="test-scratchpad" depends="compile-main,compile-scratchpad,-test-scratchpad-check,test-scratchpad-download-resources"
             unless="scratchpad.test.notRequired" xmlns:jacoco="antlib:org.jacoco.ant"
             description="test non-OOXML scratchpad classes">
-        <jacoco:coverage enabled="${coverage.enabled}" excludes="${coverage.excludes}" destfile="build/jacoco-scratchpad.exec">
-            <junit printsummary="yes" fork="yes" forkmode="once" haltonfailure="${halt.on.test.failure}"
-                   failureproperty="scratchpad.test.failed">
-                <classpath refid="test.scratchpad.classpath"/>
-                <classpath refid="test.jar.classpath"/>
-                <syspropertyset refid="junit.properties"/>
-                <sysproperty key="java.io.tmpdir" value="${tempdir}"/>
-                <jvmarg value="-ea"/>
-                <!-- jvmarg value="-Duser.timezone=UTC"/ -->
-                <jvmarg value="${file.leak.detector}" />
-                <!--
-                  YK: ensure that JUnit has enough memory to run tests.
-                  Without the line below tests fail on Mac OS X with jdk-1.6.26
-                  and on Windows with jdk-1.5.22
-                -->
-                <jvmarg value="-Xmx512m"/>
-                <jvmarg value="${java9addmods}" />
-                <jvmarg value="${java9addmodsvalue}" />
-                <jvmarg value="${java9addopens1}" />
-                <jvmarg value="${java9addopens2}" />
-                <jvmarg value="${java9addopens3}" />
-                <jvmarg value="${java9addopens4}" />
-                <jvmarg value="${java9addopens5}" />
-                <jvmarg value="${java9addopens6}" />
-                <formatter type="plain"/>
-                <formatter type="xml"/>
-                <batchtest todir="${scratchpad.reports.test}">
-                    <fileset dir="${scratchpad.src.test}">
-                        <include name="**/${testpattern}.java"/>
-                        <exclude name="**/AllTests.java"/>
-                        <exclude name="**/${testexcludepattern}.java"/>
-                        <patternset refid="exclude-scratchpad-test" if:true="${scratchpad.ignore}"/>
-                    </fileset>
-                </batchtest>
-            </junit>
-        </jacoco:coverage>
+        <poiunit failureproperty="scratchpad.test.failed" heap="512" jacocodest="build/jacoco-scratchpad.exec">
+            <classpath>
+                <path refid="test.scratchpad.classpath"/>
+                <path refid="test.jar.classpath"/>
+            </classpath>
+            <batchtest todir="${scratchpad.reports.test}">
+                <fileset dir="${scratchpad.src.test}">
+                    <include name="**/${testpattern}.java"/>
+                    <exclude name="**/AllTests.java"/>
+                    <exclude name="**/${testexcludepattern}.java"/>
+                    <patternset refid="exclude-scratchpad-test" if:true="${scratchpad.ignore}"/>
+                </fileset>
+            </batchtest>
+        </poiunit>
         <delete file="${scratchpad.testokfile}"/>
         <antcall target="-test-scratchpad-write-testfile"/>
     </target>
@@ -1559,72 +1551,35 @@ under the License.
         <attribute name="classpath"/>
         <attribute name="type"/>
         <sequential>
-            <jacoco:coverage enabled="${coverage.enabled}" excludes="${coverage.excludes}" destfile="build/jacoco-@{type}.exec">
-              <junit printsummary="yes" fork="yes" forkmode="once" haltonfailure="${halt.on.test.failure}"
-                     failureproperty="ooxml.test.failed">
-                  <classpath>
-                      <path refid="@{classpath}"/>
-                      <path refid="test.jar.classpath"/>
-                  </classpath>
-                  <syspropertyset refid="junit.properties"/>
-                  <sysproperty key="java.io.tmpdir" value="${tempdir}"/>
-                  <jvmarg value="-Xmx768M"/>
-                  <jvmarg value="-ea"/>
-                  <jvmarg value="-javaagent:${ooxml.lite.agent}=${ooxml.lite.report}|${ooxml.lite.includes}"/>
-                  <jvmarg value="${java9addmods}" />
-                  <jvmarg value="${java9addmodsvalue}" />
-                  <jvmarg value="${java9addopens1}" />
-                  <jvmarg value="${java9addopens2}" />
-                  <jvmarg value="${java9addopens3}" />
-                  <jvmarg value="${java9addopens4}" />
-                  <jvmarg value="${java9addopens5}" />
-                  <jvmarg value="${java9addopens6}" />
-                  <!-- jvmarg value="-Duser.timezone=UTC"/ -->
-                  <jvmarg value="${file.leak.detector}" />
-                  <formatter type="plain"/>
-                  <formatter type="xml"/>
-                  <batchtest todir="${ooxml.reports.test}">
-                      <fileset dir="${ooxml.src.test}">
-                          <include name="**/${testpattern}.java"/>
-                          <exclude name="**/TestUnfixedBugs.java"/>
-                          <exclude name="**/All*Tests.java"/>
-                          <exclude name="**/TestSignatureInfo.java"/>
-                          <exclude name="**/${testexcludepattern}.java"/>
-                          <patternset refid="exclude-scratchpad-test" if:true="${scratchpad.ignore}"/>
-                      </fileset>
-                  </batchtest>
-              </junit>
-            </jacoco:coverage>
-            <jacoco:coverage enabled="${coverage.enabled}" excludes="${coverage.excludes}" destfile="build/jacoco-@{type}-xmlsec.exec">
-              <junit printsummary="yes" fork="yes" forkmode="once" haltonfailure="${halt.on.test.failure}"
-                     failureproperty="ooxml.xmlsec.test.failed">
-                  <classpath>
-                      <path refid="@{classpath}"/>
-                      <path refid="test.jar.classpath"/>
-                      <path refid="ooxml.xmlsec.classpath"/>
-                  </classpath>
-                  <syspropertyset refid="junit.properties"/>
-                  <sysproperty key="java.io.tmpdir" value="${tempdir}"/>
-                  <jvmarg value="-javaagent:${ooxml.lite.agent}=${ooxml.lite.report}|${ooxml.lite.includes}"/>
-                  <jvmarg value="-Xmx768M"/>
-                  <jvmarg value="-ea"/>
-                  <jvmarg value="${java9addmods}" />
-                  <jvmarg value="${java9addmodsvalue}" />
-                  <jvmarg value="${java9addopens1}" />
-                  <jvmarg value="${java9addopens2}" />
-                  <jvmarg value="${java9addopens3}" />
-                  <jvmarg value="${java9addopens4}" />
-                  <jvmarg value="${java9addopens5}" />
-                  <jvmarg value="${java9addopens6}" />
-                  <formatter type="plain"/>
-                  <formatter type="xml"/>
-                  <batchtest todir="${ooxml.reports.test}">
-                      <fileset dir="${ooxml.src.test}">
-                            <include name="**/TestSignatureInfo.java"/>
-                      </fileset>
-                  </batchtest>
-              </junit>
-            </jacoco:coverage>
+            <poiunit failureproperty="ooxml.test.failed" heap="768" jacocodest="build/jacoco-@{type}.exec">
+                <classpath>
+                    <path refid="@{classpath}"/>
+                    <path refid="test.jar.classpath"/>
+                </classpath>
+                <batchtest todir="${ooxml.reports.test}">
+                    <fileset dir="${ooxml.src.test}">
+                        <include name="**/${testpattern}.java"/>
+                        <exclude name="**/TestUnfixedBugs.java"/>
+                        <exclude name="**/All*Tests.java"/>
+                        <exclude name="**/TestSignatureInfo.java"/>
+                        <exclude name="**/${testexcludepattern}.java"/>
+                        <patternset refid="exclude-scratchpad-test" if:true="${scratchpad.ignore}"/>
+                    </fileset>
+                </batchtest>
+            </poiunit>
+
+            <poiunit failureproperty="ooxml.xmlsec.test.failed" heap="768" jacocodest="build/jacoco-@{type}-xmlsec.exec">
+                <classpath>
+                    <path refid="@{classpath}"/>
+                    <path refid="test.jar.classpath"/>
+                    <path refid="ooxml.xmlsec.classpath"/>
+                </classpath>
+                <batchtest todir="${ooxml.reports.test}">
+                    <fileset dir="${ooxml.src.test}">
+                        <include name="**/TestSignatureInfo.java"/>
+                    </fileset>
+                </batchtest>
+            </poiunit>
         </sequential>
     </macrodef>
 
@@ -1650,34 +1605,16 @@ under the License.
             unless="integration.test.notRequired" xmlns:jacoco="antlib:org.jacoco.ant">
         <propertyreset name="org.apache.poi.util.POILogger" value="org.apache.poi.util.CommonsLogger"/>
         <delete dir="build" includes="test-integration.log*"/>
-        <jacoco:coverage enabled="${coverage.enabled}" excludes="${coverage.excludes}" destfile="build/jacoco-integration.exec">
-            <junit printsummary="yes" fork="yes" forkmode="once" haltonfailure="${halt.on.test.failure}"
-                   failureproperty="integration.test.failed" showoutput="true">
-                <classpath refid="test.integration.classpath"/>
-                <syspropertyset refid="junit.properties"/>
-                <sysproperty key="java.io.tmpdir" value="${tempdir}"/>
-                <jvmarg value="-ea"/>
-                <jvmarg value="-Xmx1512M"/>
-                <jvmarg value="-javaagent:${ooxml.lite.agent}=${ooxml.lite.report}|${ooxml.lite.includes}"/>
-                <jvmarg value="${java9addmods}" />
-                <jvmarg value="${java9addmodsvalue}" />
-                <jvmarg value="${java9addopens1}" />
-                <jvmarg value="${java9addopens2}" />
-                <jvmarg value="${java9addopens3}" />
-                <jvmarg value="${java9addopens4}" />
-                <jvmarg value="${java9addopens5}" />
-                <jvmarg value="${java9addopens6}" />
-                <formatter type="plain"/>
-                <formatter type="xml"/>
-                <batchtest todir="${integration.reports.test}">
-                    <fileset dir="${integration.src.test}">
-                        <include name="**/${testpattern}.java"/>
-                        <exclude name="**/${testexcludepattern}.java"/>
-                        <patternset refid="exclude-scratchpad-test" if:true="${scratchpad.ignore}"/>
-                    </fileset>
-                </batchtest>
-            </junit>
-        </jacoco:coverage>
+        <poiunit failureproperty="integration.test.failed" heap="1512" showoutput="true" jacocodest="build/jacoco-integration.exec">
+            <classpath refid="test.integration.classpath"/>
+            <batchtest todir="${integration.reports.test}">
+                <fileset dir="${integration.src.test}">
+                    <include name="**/${testpattern}.java"/>
+                    <exclude name="**/${testexcludepattern}.java"/>
+                    <patternset refid="exclude-scratchpad-test" if:true="${scratchpad.ignore}"/>
+                </fileset>
+            </batchtest>
+        </poiunit>
         <delete file="${integration.testokfile}"/>
         <antcall target="-test-integration-write-testfile"/>
     </target>
@@ -1739,33 +1676,16 @@ under the License.
 
     <target name="test-excelant" depends="compile-excelant,-test-excelant-check,jacocotask"
             unless="excelant.test.notRequired" xmlns:jacoco="antlib:org.jacoco.ant">
-        <jacoco:coverage enabled="${coverage.enabled}" excludes="${coverage.excludes}" destfile="build/jacoco-excelant.exec">
-            <junit printsummary="yes" fork="yes" forkmode="once" haltonfailure="${halt.on.test.failure}"
-                   failureproperty="excelant.test.failed">
-                <classpath refid="test.excelant.classpath"/>
-                <syspropertyset refid="junit.properties"/>
-                <sysproperty key="java.io.tmpdir" value="${tempdir}"/>
-                <jvmarg value="-ea"/>
-                <jvmarg value="${java9addmods}" />
-                <jvmarg value="${java9addmodsvalue}" />
-                <jvmarg value="${java9addopens1}" />
-                <jvmarg value="${java9addopens2}" />
-                <jvmarg value="${java9addopens3}" />
-                <jvmarg value="${java9addopens4}" />
-                <jvmarg value="${java9addopens5}" />
-                <jvmarg value="${java9addopens6}" />
-                <jvmarg value="${file.leak.detector}" />
-                <formatter type="plain"/>
-                <formatter type="xml"/>
-                <batchtest todir="${excelant.reports.test}">
-                    <fileset dir="${excelant.src.test}">
-                        <include name="**/${testpattern}.java"/>
-                        <exclude name="**/${testexcludepattern}.java"/>
-                        <patternset refid="exclude-scratchpad-test" if:true="${scratchpad.ignore}"/>
-                    </fileset>
-                </batchtest>
-            </junit>
-        </jacoco:coverage>
+        <poiunit failureproperty="excelant.test.failed" jacocodest="build/jacoco-excelant.exec">
+            <classpath refid="test.excelant.classpath"/>
+            <batchtest todir="${excelant.reports.test}">
+                <fileset dir="${excelant.src.test}">
+                    <include name="**/${testpattern}.java"/>
+                    <exclude name="**/${testexcludepattern}.java"/>
+                    <patternset refid="exclude-scratchpad-test" if:true="${scratchpad.ignore}"/>
+                </fileset>
+            </batchtest>
+        </poiunit>
         <delete file="${excelant.testokfile}"/>
         <antcall target="-test-excelant-write-testfile"/>
     </target>
@@ -1791,6 +1711,9 @@ under the License.
     <target name="docs" depends="init, -check-forrest-installed, -check-docs, javadocs, -forrest-docs"
             unless="main.docs.notRequired" 
             description="Builds the POI website" />
+
+    <target name="site" depends="-forrest-docs"/>
+
     <target name="-forrest-docs" depends="-check-forrest-installed, -check-docs"
             unless="main.docs.notRequired" description="Builds the HTML pages of the POI website">
         <exec executable="${env.FORREST_HOME}/bin/forrest" osfamily="unix"/>
@@ -1828,7 +1751,7 @@ under the License.
                 <include name="org/apache/poi/**"/>
             </packageset>
             
-            <arg value="${javadoc9addmods}"/>
+            <arg value="${javadoc9addmods}" if:set="${javadoc9addmods}"/>
 
             <doctitle><![CDATA[<h1>POI API Documentation</h1>]]></doctitle>
             <bottom>
@@ -2113,6 +2036,7 @@ under the License.
                       sonar/*/src/**,
                       compile-lib/**,
                       ooxml-lib/**,
+                      ooxml-testlib/**,
                       scripts/**,
                       TEST*,
                       *.ipr,
@@ -2303,7 +2227,10 @@ under the License.
         </forbiddenapis>
     </target>
 
-    <target name="findbugs" depends="jar">
+    <!-- disabling findbugs until jenkins is updated to a current IBM JDK
+         see https://stackoverflow.com/a/48561534/2066598
+         this should be replaced by spotbugs when available in the jenkins warnings plugin -->
+    <target name="findbugs" depends="jar" unless="${isIBMVM}">
         <downloadfile src="${findbugs.url}" dest="${findbugs.jar}"/>
 
         <property name="findbugs.home" value="build/findbugs" />
@@ -2453,7 +2380,7 @@ under the License.
             <copy todir="${repo}">
                 <mappedresources>
                     <!-- add sha-512 when nexus rules are updated (1/2) -->
-                    <fileset dir="build/dist/maven" includes="@{artifactId}/**" excludes="**/*.sha512"/>
+                    <fileset dir="build/dist/maven" includes="@{artifactId}/**" excludes="**/*.sha512,**/*.sha256"/>
                     <regexpmapper from="^([^/]+)/(.*)$$" to="org/apache/poi/\1/${version.id}/\2" handledirsep="true"/>
                 </mappedresources>
             </copy>

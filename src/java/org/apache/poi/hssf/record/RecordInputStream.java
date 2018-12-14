@@ -33,8 +33,9 @@ import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.RecordFormatException;
 
 /**
- * Title:  Record Input Stream<P>
- * Description:  Wraps a stream and provides helper methods for the construction of records.<P>
+ * Title:  Record Input Stream
+ *
+ * Description:  Wraps a stream and provides helper methods for the construction of records.
  */
 public final class RecordInputStream implements LittleEndianInput {
 
@@ -140,6 +141,15 @@ public final class RecordInputStream implements LittleEndianInput {
 			_bhi = bds;
 		}
 		_nextSid = readNextSid();
+	}
+
+	static LittleEndianInput getLEI(InputStream is) {
+		if (is instanceof LittleEndianInput) {
+			// accessing directly is an optimisation
+			return (LittleEndianInput) is;
+		}
+		// less optimal, but should work OK just the same. Often occurs in junit tests.
+		return new LittleEndianInputStream(is);
 	}
 
 	/**
@@ -295,12 +305,9 @@ public final class RecordInputStream implements LittleEndianInput {
 		return _dataInput.readUShort();
 	}
 
-	/**
-	 *
-	 * @return a double - might return NaN
-	 */
 	@Override
     public double readDouble() {
+        // YK: Excel doesn't write NaN but instead converts the cell type into {@link CellType#ERROR}.
 		return Double.longBitsToDouble(readLong());
 	}
 	

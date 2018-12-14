@@ -27,12 +27,12 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.stream.EventFilter;
-import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
+import javax.xml.transform.stream.StreamSource;
 
 import org.apache.poi.sl.draw.binding.CTCustomGeometry2D;
 import org.apache.poi.util.POILogFactory;
@@ -61,27 +61,30 @@ public class PresetGeometries extends LinkedHashMap<String, CustomGeometry> {
         };
         
         XMLInputFactory staxFactory = StaxHelper.newXMLInputFactory();
-        XMLEventReader staxReader = staxFactory.createXMLEventReader(is);
-        XMLEventReader staxFiltRd = staxFactory.createFilteredReader(staxReader, startElementFilter);
-        // ignore StartElement:
-        /* XMLEvent evDoc = */ staxFiltRd.nextEvent();
-        // JAXB:
-        JAXBContext jaxbContext = JAXBContext.newInstance(BINDING_PACKAGE);
-        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+        XMLStreamReader streamReader = staxFactory.createXMLStreamReader(new StreamSource(is));
+        try {
+            // ignore StartElement:
+            streamReader.nextTag();
 
-        long cntElem = 0;
-        while (staxFiltRd.peek() != null) {
-            StartElement evRoot = (StartElement)staxFiltRd.peek();
-            String name = evRoot.getName().getLocalPart();
-            JAXBElement<CTCustomGeometry2D> el = unmarshaller.unmarshal(staxReader, CTCustomGeometry2D.class);
-            CTCustomGeometry2D cus = el.getValue();
-            cntElem++;
-            
-            if(containsKey(name)) {
-                LOG.log(POILogger.WARN, "Duplicate definition of " + name);
+            // JAXB:
+            JAXBContext jaxbContext = JAXBContext.newInstance(BINDING_PACKAGE);
+            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+
+            long cntElem = 0;
+            while (streamReader.hasNext() && streamReader.nextTag() == XMLStreamConstants.START_ELEMENT) {
+                String name = streamReader.getLocalName();
+                JAXBElement<CTCustomGeometry2D> el = unmarshaller.unmarshal(streamReader, CTCustomGeometry2D.class);
+                CTCustomGeometry2D cus = el.getValue();
+                cntElem++;
+
+                if (containsKey(name)) {
+                    LOG.log(POILogger.WARN, "Duplicate definition of " + name);
+                }
+                put(name, new CustomGeometry(cus));
             }
-            put(name, new CustomGeometry(cus));
-        }       
+        } finally {
+            streamReader.close();
+        }
     }
     
     /**

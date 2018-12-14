@@ -71,6 +71,7 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 
 	/** Powerpoint document entry/stream name */
     public static final String POWERPOINT_DOCUMENT = "PowerPoint Document";
+	public static final String PP95_DOCUMENT = "PP40";
 
     enum LoadSavePhase {
         INIT, LOADED

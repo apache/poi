@@ -17,6 +17,8 @@
 
 package org.apache.poi.sl.draw;
 
+import static org.apache.poi.sl.draw.DrawPaint.fillPaintWorkaround;
+
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Paint;
@@ -59,10 +61,10 @@ public class DrawBackground extends DrawShape {
         if(fill != null) {
             graphics.setRenderingHint(Drawable.GRADIENT_SHAPE, anchor);
             graphics.setPaint(fill);
-            graphics.fill(anchor2);
+            fillPaintWorkaround(graphics, anchor2);
         }
     }
-    
+
     protected Background<?,?> getShape() {
         return (Background<?,?>)shape;
     }

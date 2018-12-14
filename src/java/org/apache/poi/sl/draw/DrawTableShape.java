@@ -17,6 +17,8 @@
 
 package org.apache.poi.sl.draw;
 
+import static org.apache.poi.sl.draw.DrawPaint.fillPaintWorkaround;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Paint;
@@ -83,8 +85,8 @@ public class DrawTableShape extends DrawShape {
                 Paint fillPaint = drawPaint.getPaint(graphics, tc.getFillStyle().getPaint());
                 graphics.setPaint(fillPaint);
                 Rectangle2D cellAnc = tc.getAnchor();
-                graphics.fill(cellAnc);
-                
+                fillPaintWorkaround(graphics, cellAnc);
+
                 for (BorderEdge edge : BorderEdge.values()) {
                     StrokeStyle stroke = tc.getBorderStyle(edge);
                     if (stroke == null) {
