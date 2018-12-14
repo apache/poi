@@ -20,6 +20,7 @@ package org.apache.poi.poifs.crypt.dsig;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
+import java.security.Security;
 import java.security.Signature;
 import java.security.SignatureException;
 
@@ -35,7 +36,12 @@ import org.apache.poi.poifs.crypt.HashAlgorithm;
     @Override
     public void init() throws GeneralSecurityException {
         final String provider = isMSCapi(key) ? "SunMSCAPI" : "SunRsaSign";
-        signature = Signature.getInstance(algo.ecmaString+"withRSA", provider);
+        if (Security.getProvider(provider) != null) {
+            signature = Signature.getInstance(algo.ecmaString + "withRSA", provider);
+        } else {
+            signature = Signature.getInstance(algo.ecmaString + "withRSA");
+        }
+
         signature.initSign(key);
     }
 

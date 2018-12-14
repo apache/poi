@@ -91,9 +91,9 @@ public class TestExcelStyleDateFormatter {
      */
     private int localeIndex(Locale locale) {
         final String provider = System.getProperty("java.locale.providers");
-        return jreVersion < 12 ||
+        return jreVersion < 9 ||
             !locale.equals (Locale.CHINESE) ||
-            (provider != null && provider.startsWith("JRE"))
+            (provider != null && (provider.startsWith("JRE") || provider.startsWith("COMPAT")))
             ? 0 : 1;
     }
 

@@ -164,7 +164,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
             return null;
         }
 
-        Color clr = getColor(EscherProperties.LINESTYLE__COLOR, EscherProperties.LINESTYLE__OPACITY, -1);
+        Color clr = getColor(EscherProperties.LINESTYLE__COLOR, EscherProperties.LINESTYLE__OPACITY);
         return clr == null ? null : clr;
     }
 
@@ -179,7 +179,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
             return null;
         }
 
-        Color clr = getColor(EscherProperties.LINESTYLE__BACKCOLOR, EscherProperties.LINESTYLE__OPACITY, -1);
+        Color clr = getColor(EscherProperties.LINESTYLE__BACKCOLOR, EscherProperties.LINESTYLE__OPACITY);
         return clr == null ? null : clr;
     }
 
@@ -385,7 +385,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
      * @return color of the line. If color is not set returns <code>java.awt.Color.black</code>
      */
     public Color getShadowColor(){
-        Color clr = getColor(EscherProperties.SHADOWSTYLE__COLOR, EscherProperties.SHADOWSTYLE__OPACITY, -1);
+        Color clr = getColor(EscherProperties.SHADOWSTYLE__COLOR, EscherProperties.SHADOWSTYLE__OPACITY);
         return clr == null ? Color.black : clr;
     }
 

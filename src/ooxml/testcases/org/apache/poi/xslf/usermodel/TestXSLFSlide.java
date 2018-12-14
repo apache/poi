@@ -20,6 +20,7 @@ import static org.apache.poi.sl.TestCommonSL.sameColor;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -34,7 +35,7 @@ import org.junit.Test;
  * @author Yegor Kozlov
  */
 public class TestXSLFSlide {
-    
+
     @Test
     public void testReadShapes() throws IOException {
         XMLSlideShow  ppt = XSLFTestDataSamples.openSampleDocument("shapes.pptx");
@@ -101,7 +102,7 @@ public class TestXSLFSlide {
         XSLFTable tbl = (XSLFTable)shapes4.get(0);
         assertEquals(3, tbl.getNumberOfColumns());
         assertEquals(6, tbl.getNumberOfRows());
-        
+
         ppt.close();
     }
 
@@ -116,7 +117,7 @@ public class TestXSLFSlide {
         assertFalse(slide.getFollowMasterGraphics());
         slide.setFollowMasterGraphics(true);
         assertTrue(slide.getFollowMasterGraphics());
-        
+
         ppt.close();
     }
 
@@ -174,7 +175,7 @@ public class TestXSLFSlide {
         XSLFPictureShape sh4 = (XSLFPictureShape)shapes2.get(1);
         XSLFPictureShape srcPic = (XSLFPictureShape)src.getSlides().get(4).getShapes().get(1);
         assertArrayEquals(sh4.getPictureData().getData(), srcPic.getPictureData().getData());
-        
+
         ppt.close();
     }
 
@@ -191,7 +192,23 @@ public class TestXSLFSlide {
             }
         }
         assertEquals(30, ppt.getSlides().size());
-        
+
         ppt.close();
-    }    
+    }
+
+    @Test
+    public void testCreateChart() throws IOException {
+        XMLSlideShow ppt = new XMLSlideShow();
+        XSLFSlide slide = ppt.createSlide();
+        XSLFChart chart = ppt.createChart();
+        assertNotNull(chart);
+
+        slide.addChart(chart);
+        assertEquals(XSLFRelation.CHART.getContentType(), chart.getPackagePart().getContentType());
+
+        String partName = slide.getRelationPartById("rId2").getDocumentPart().getPackagePart().getPartName().getName();
+        assertEquals(partName, chart.getPackagePart().getPartName().getName());
+
+        ppt.close();
+    }
 }

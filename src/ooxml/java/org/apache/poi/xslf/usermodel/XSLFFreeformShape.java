@@ -24,6 +24,12 @@ import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
 
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
+import org.apache.poi.ooxml.POIXMLTypeLoader;
+import org.apache.poi.sl.draw.geom.CustomGeometry;
+import org.apache.poi.sl.draw.geom.PresetGeometries;
 import org.apache.poi.sl.usermodel.FreeformShape;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.POILogFactory;
@@ -31,6 +37,7 @@ import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTAdjPoint2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTCustomGeometry2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGeomRect;
@@ -61,7 +68,7 @@ public class XSLFFreeformShape extends XSLFAutoShape
     }
 
     @Override
-    public int setPath(final Path2D.Double path) {
+    public int setPath(final Path2D path) {
         final CTPath2D ctPath = CTPath2D.Factory.newInstance();
 
         final Rectangle2D bounds = path.getBounds2D();
@@ -117,6 +124,30 @@ public class XSLFFreeformShape extends XSLFAutoShape
         return numPoints;
     }
 
+    /**
+     * @return definition of the shape geometry
+     */
+    @Override
+    public CustomGeometry getGeometry() {
+        final XmlObject xo = getShapeProperties();
+        if (!(xo instanceof CTShapeProperties)) {
+            return null;
+        }
+
+        XmlOptions xop = new XmlOptions(POIXMLTypeLoader.DEFAULT_XML_OPTIONS);
+        xop.setSaveOuter();
+
+        XMLStreamReader staxReader = ((CTShapeProperties)xo).getCustGeom().newXMLStreamReader(xop);
+        CustomGeometry custGeo = PresetGeometries.convertCustomGeometry(staxReader);
+        try {
+            staxReader.close();
+        } catch (XMLStreamException e) {
+            LOG.log(POILogger.WARN,
+                    "An error occurred while closing a Custom Geometry XML Stream Reader: " + e.getMessage());
+        }
+
+        return custGeo;
+    }
 
     @Override
     public Path2D.Double getPath() {

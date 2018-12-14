@@ -70,7 +70,7 @@ public class XSSFTestDataSamples {
      * @param wb the workbook to write
      * @param testName a fragment of the filename
      * @return the location where the workbook was saved
-     * @throws IOException
+     * @throws IOException If writing the file fails
      */
     public static <R extends Workbook> File writeOut(R wb, String testName) throws IOException {
         final File file = getOutputFile(testName);
@@ -104,7 +104,9 @@ public class XSSFTestDataSamples {
             file = TempFile.createTempFile(testName, ".xlsx");
         }
         if (file.exists()) {
-            file.delete();
+            if(!file.delete()) {
+                throw new IOException("Could not delete file " + file);
+            }
         }
         return file;
     }
@@ -114,7 +116,7 @@ public class XSSFTestDataSamples {
      *
      * @param wb the workbook to write
      * @return the memory buffer
-     * @throws IOException
+     * @throws IOException If writing the file fails
      */
     public static <R extends Workbook> ByteArrayOutputStream writeOut(R wb) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream(8192);
@@ -137,7 +139,7 @@ public class XSSFTestDataSamples {
      * to avoid creating a temporary file. However, this may complicate the calling
      * code to avoid having the workbook, BAOS, and BAIS open at the same time.
      *
-     * @param wb
+     * @param wb The workbook to write out, it is closed after the call.
      * @param testName file name to be used to write to a file. This file will be cleaned up by a call to readBack(String)
      * @return workbook location
      * @throws RuntimeException if {@link #TEST_OUTPUT_DIR} System property is not set
@@ -161,18 +163,13 @@ public class XSSFTestDataSamples {
      *
      * @param wb the workbook to write
      * @return the memory buffer
-     * @throws IOException
+     * @throws RuntimeException If writing the file fails
      */
-    public static <R extends Workbook> ByteArrayOutputStream writeOutAndClose(R wb) {
-        try {
-            ByteArrayOutputStream out = writeOut(wb);
-            // Do not close the workbook if there was a problem writing the workbook
-            wb.close();
-            return out;
-        }
-        catch (final IOException e) {
-            throw new RuntimeException(e);
-        }
+    public static <R extends Workbook> ByteArrayOutputStream writeOutAndClose(R wb) throws IOException {
+        ByteArrayOutputStream out = writeOut(wb);
+        // Do not close the workbook if there was a problem writing the workbook
+        wb.close();
+        return out;
     }
 
     /**
@@ -183,12 +180,14 @@ public class XSSFTestDataSamples {
      *
      * @param file the workbook file to read and delete
      * @return the read back workbook
-     * @throws IOException
+     * @throws IOException If reading or deleting the file fails
      */
     public static XSSFWorkbook readBackAndDelete(File file) throws IOException {
         XSSFWorkbook wb = readBack(file);
         // do not delete the file if there's an error--might be helpful for debugging
-        file.delete();
+        if(!file.delete()) {
+            throw new IOException("Could not delete file " + file + " after reading");
+        }
         return wb;
     }
 
@@ -198,15 +197,11 @@ public class XSSFTestDataSamples {
      *
      * @param file the workbook file to read
      * @return the read back workbook
-     * @throws IOException
+     * @throws IOException If reading the file fails
      */
     public static XSSFWorkbook readBack(File file) throws IOException {
-        InputStream in = new FileInputStream(file);
-        try {
+        try (InputStream in = new FileInputStream(file)) {
             return new XSSFWorkbook(in);
-        }
-        finally {
-            in.close();
         }
     }
 
@@ -216,16 +211,12 @@ public class XSSFTestDataSamples {
      *
      * @param out the output stream to read back from
      * @return the read back workbook
-     * @throws IOException
+     * @throws IOException If reading the file fails
      */
     public static XSSFWorkbook readBack(ByteArrayOutputStream out) throws IOException {
-        InputStream is = new ByteArrayInputStream(out.toByteArray());
-        out.close();
-        try {
+        try (InputStream is = new ByteArrayInputStream(out.toByteArray())) {
+            out.close();
             return new XSSFWorkbook(is);
-        }
-        finally {
-            is.close();
         }
     }
 

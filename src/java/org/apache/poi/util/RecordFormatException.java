@@ -45,8 +45,8 @@ public class RecordFormatException
      * be thrown.  If assertTrue is <code>false</code>, this will throw this
      * exception with the message.
      *
-     * @param assertTrue
-     * @param message
+     * @param assertTrue If false, the exception is thrown, if true, no action is performed
+     * @param message The message to include in the thrown exception
      */
     public static void check(boolean assertTrue, String message) {
         if (! assertTrue) {

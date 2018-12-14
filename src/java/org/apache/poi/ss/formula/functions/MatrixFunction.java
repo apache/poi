@@ -63,7 +63,7 @@ public abstract class MatrixFunction implements Function{
                     i = 0;
                     j++;
                 }
-                matrix[j][i++] = aVector;
+                if (j < matrix.length) matrix[j][i++] = aVector;
             }
         }
         

@@ -38,7 +38,7 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
 	
 	/**
 	 * Reads all the entries from the ZipInputStream 
-	 *  into memory, and closes the source stream.
+	 *  into memory, and don't close (since POI 4.0.1) the source stream.
 	 * We'll then eat lots of memory, but be able to
 	 *  work with the entries at-will.
 	 */

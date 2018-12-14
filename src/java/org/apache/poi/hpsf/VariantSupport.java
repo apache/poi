@@ -36,7 +36,7 @@ import org.apache.poi.util.POILogger;
  * Supports reading and writing of variant data.<p>
  *
  * <strong>FIXME (3):</strong> Reading and writing should be made more
- * uniform than it is now. The following items should be resolved:<p>
+ * uniform than it is now. The following items should be resolved:
  *
  * <ul>
  *

@@ -127,7 +127,7 @@ public class Units {
         points /= MASTER_DPI;
         return points;
     }
-    
+
     public static int pointsToMaster(double points) {
         points *= MASTER_DPI;
         points /= POINT_DPI;

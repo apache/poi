@@ -49,60 +49,61 @@ import org.apache.poi.util.Units;
 /**
  * Represents functionality provided by the 'Fill Effects' dialog in PowerPoint.
  */
+@SuppressWarnings("WeakerAccess")
 public final class HSLFFill {
     private static final POILogger LOG = POILogFactory.getLogger(HSLFFill.class);
 
     /**
      *  Fill with a solid color
      */
-    public static final int FILL_SOLID = 0;
+    static final int FILL_SOLID = 0;
 
     /**
      *  Fill with a pattern (bitmap)
      */
-    public static final int FILL_PATTERN = 1;
+    static final int FILL_PATTERN = 1;
 
     /**
      *  A texture (pattern with its own color map)
      */
-    public static final int FILL_TEXTURE = 2;
+    static final int FILL_TEXTURE = 2;
 
     /**
      *  Center a picture in the shape
      */
-    public static final int FILL_PICTURE = 3;
+    static final int FILL_PICTURE = 3;
 
     /**
      *  Shade from start to end points
      */
-    public static final int FILL_SHADE = 4;
+    static final int FILL_SHADE = 4;
 
     /**
      *  Shade from bounding rectangle to end point
      */
-    public static final int FILL_SHADE_CENTER = 5;
+    static final int FILL_SHADE_CENTER = 5;
 
     /**
      *  Shade from shape outline to end point
      */
-    public static final int FILL_SHADE_SHAPE = 6;
+    static final int FILL_SHADE_SHAPE = 6;
 
     /**
      *  Similar to FILL_SHADE, but the fill angle
      *  is additionally scaled by the aspect ratio of
      *  the shape. If shape is square, it is the same as FILL_SHADE
      */
-    public static final int FILL_SHADE_SCALE = 7;
+    static final int FILL_SHADE_SCALE = 7;
 
     /**
      *  shade to title
      */
-    public static final int FILL_SHADE_TITLE = 8;
+    static final int FILL_SHADE_TITLE = 8;
 
     /**
      *  Use the background fill color/pattern
      */
-    public static final int FILL_BACKGROUND = 9;
+    static final int FILL_BACKGROUND = 9;
 
     /**
      * A bit that specifies whether the RecolorFillAsPicture bit is set.
@@ -214,7 +215,7 @@ public final class HSLFFill {
     private HSLFShape shape;
 
     /**
-     * Construct a <code>Fill</code> object for a shape.
+     * Construct a {@code Fill} object for a shape.
      * Fill information will be read from shape's escher properties.
      *
      * @param shape the shape this background applies to
@@ -279,7 +280,7 @@ public final class HSLFFill {
             
             @Override
             public ColorStyle[] getGradientColors() {
-                ColorStyle cs[];
+                ColorStyle[] cs;
                 if (colorCnt == 0) {
                     cs = new ColorStyle[2];
                     cs[0] = wrapColor(getBackgroundColor());
@@ -288,7 +289,7 @@ public final class HSLFFill {
                     cs = new ColorStyle[colorCnt];
                     int idx = 0;
                     // TODO: handle palette colors and alpha(?) value 
-                    for (byte data[] : ep) {
+                    for (byte[] data : ep) {
                         EscherColorRef ecr = new EscherColorRef(data, 0, 4);
                         cs[idx++] = wrapColor(shape.getColor(ecr));
                     }
@@ -302,13 +303,13 @@ public final class HSLFFill {
             
             @Override
             public float[] getGradientFractions() {
-                float frc[];
+                float[] frc;
                 if (colorCnt == 0) {
                     frc = new float[]{0, 1};
                 } else {
                     frc = new float[colorCnt];
                     int idx = 0;
-                    for (byte data[] : ep) {
+                    for (byte[] data : ep) {
                         double pos = Units.fixedPointToDouble(LittleEndian.getInt(data, 4));
                         frc[idx++] = (float)pos;
                     }
@@ -354,7 +355,7 @@ public final class HSLFFill {
 
     /**
      * Returns fill type.
-     * Must be one of the <code>FILL_*</code> constants defined in this class.
+     * Must be one of the {@code FILL_*} constants defined in this class.
      *
      * @return type of fill
      */
@@ -364,9 +365,7 @@ public final class HSLFFill {
         return prop == null ? FILL_SOLID : prop.getPropertyValue();
     }
 
-    /**
-     */
-    protected void afterInsert(HSLFSheet sh){
+    void afterInsert(HSLFSheet sh){
         AbstractEscherOptRecord opt = shape.getEscherOptRecord();
         EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__PATTERNTEXTURE);
         if(p != null) {
@@ -379,7 +378,7 @@ public final class HSLFFill {
     }
 
     @SuppressWarnings("resource")
-    protected EscherBSERecord getEscherBSERecord(int idx){
+    EscherBSERecord getEscherBSERecord(int idx){
         HSLFSheet sheet = shape.getSheet();
         if(sheet == null) {
             LOG.log(POILogger.DEBUG, "Fill has not yet been assigned to a sheet");
@@ -399,7 +398,7 @@ public final class HSLFFill {
 
     /**
      * Sets fill type.
-     * Must be one of the <code>FILL_*</code> constants defined in this class.
+     * Must be one of the {@code FILL_*} constants defined in this class.
      *
      * @param type type of the fill
      */
@@ -415,10 +414,10 @@ public final class HSLFFill {
         AbstractEscherOptRecord opt = shape.getEscherOptRecord();
         EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST);
         int propVal = (p == null) ? 0 : p.getPropertyValue();
-        
+
         return (FILL_USE_FILLED.isSet(propVal) && !FILL_FILLED.isSet(propVal))
             ? null
-            : shape.getColor(EscherProperties.FILL__FILLCOLOR, EscherProperties.FILL__FILLOPACITY, -1);
+            : shape.getColor(EscherProperties.FILL__FILLCOLOR, EscherProperties.FILL__FILLOPACITY);
     }
 
     /**
@@ -462,7 +461,7 @@ public final class HSLFFill {
 
         return (FILL_USE_FILLED.isSet(propVal) && !FILL_FILLED.isSet(propVal))
             ? null
-            : shape.getColor(EscherProperties.FILL__FILLBACKCOLOR, EscherProperties.FILL__FILLOPACITY, -1);
+            : shape.getColor(EscherProperties.FILL__FILLBACKCOLOR, EscherProperties.FILL__FILLOPACITY);
     }
 
     /**
@@ -480,7 +479,7 @@ public final class HSLFFill {
     }
 
     /**
-     * <code>PictureData</code> object used in a texture, pattern of picture fill.
+     * {@code PictureData} object used in a texture, pattern of picture fill.
      */
     @SuppressWarnings("resource")
     public HSLFPictureData getPictureData(){

@@ -87,7 +87,7 @@ public final class TestFreeform {
     public void test54188() {
 
         HSLFFreeformShape p = new HSLFFreeformShape();
-        Path2D.Double path = p.getPath();
+        Path2D path = p.getPath();
         Path2D.Double emptyPath = new Path2D.Double();
         assertEquals(emptyPath.getBounds2D(), path.getBounds2D());
     }

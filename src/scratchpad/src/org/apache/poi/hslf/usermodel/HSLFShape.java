@@ -358,17 +358,18 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
         _sheet = sheet;
     }
 
-    Color getColor(short colorProperty, short opacityProperty, int defaultColor){
-        AbstractEscherOptRecord opt = getEscherOptRecord();
-        EscherSimpleProperty p = getEscherProperty(opt, colorProperty);
-        if(p == null && defaultColor == -1) return null;
-
-        int val = (p == null) ? defaultColor : p.getPropertyValue();
-
-        EscherColorRef ecr = new EscherColorRef(val);
-        Color col = getColor(ecr);
-        if (col == null) {
-            return null;
+    Color getColor(short colorProperty, short opacityProperty){
+        final AbstractEscherOptRecord opt = getEscherOptRecord();
+        final EscherSimpleProperty colProp = getEscherProperty(opt, colorProperty);
+        final Color col;
+        if (colProp == null) {
+            col = Color.WHITE;
+        } else {
+            EscherColorRef ecr = new EscherColorRef(colProp.getPropertyValue());
+            col = getColor(ecr);
+            if (col == null) {
+                return null;
+            }
         }
 
         double alpha = getAlpha(opacityProperty);

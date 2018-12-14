@@ -35,7 +35,6 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Set;
 
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.apache.poi.EncryptedDocumentException;
@@ -148,7 +147,7 @@ public class XSSFFileHandler extends SpreadsheetHandler {
     }
     
     private void exportToXML(XSSFWorkbook wb) throws SAXException,
-            ParserConfigurationException, TransformerException {
+            TransformerException {
         for (XSSFMap map : wb.getCustomXMLMappings()) {
             XSSFExportToXml exporter = new XSSFExportToXml(map);
 
@@ -165,7 +164,6 @@ public class XSSFFileHandler extends SpreadsheetHandler {
         // zip-bomb
         EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/54764.xlsx");
         EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/54764-2.xlsx");
-        EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/54764.xlsx");
         EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/poc-xmlbomb.xlsx");
         EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/poc-xmlbomb-empty.xlsx");
         // strict OOXML
@@ -185,18 +183,19 @@ public class XSSFFileHandler extends SpreadsheetHandler {
     public void handleAdditional(File file) throws Exception {
         // redirect stdout as the examples often write lots of text
         PrintStream oldOut = System.out;
+        String testFile = file.getParentFile().getName() + "/" + file.getName();
         try {
             System.setOut(new NullPrintStream());
             FromHowTo.main(new String[]{file.getAbsolutePath()});
             XLSX2CSV.main(new String[]{file.getAbsolutePath()});
 
             assertFalse("Expected Extraction to fail for file " + file + " and handler " + this + ", but did not fail!",
-                    EXPECTED_ADDITIONAL_FAILURES.contains(file.getParentFile().getName() + "/" + file.getName()));
+                    EXPECTED_ADDITIONAL_FAILURES.contains(testFile));
 
         } catch (OLE2NotOfficeXmlFileException e) {
             // we have some files that are not actually OOXML and thus cannot be tested here
         } catch (IllegalArgumentException | InvalidFormatException | POIXMLException | IOException e) {
-            if(!EXPECTED_ADDITIONAL_FAILURES.contains(file.getParentFile().getName() + "/" + file.getName())) {
+            if(!EXPECTED_ADDITIONAL_FAILURES.contains(testFile)) {
                 throw e;
             }
         } finally {

@@ -17,6 +17,9 @@
 
 package org.apache.poi.hslf.usermodel;
 
+import static org.apache.poi.hslf.usermodel.HSLFSlideShow.POWERPOINT_DOCUMENT;
+import static org.apache.poi.hslf.usermodel.HSLFSlideShow.PP95_DOCUMENT;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
@@ -35,6 +38,7 @@ import java.util.TreeMap;
 import org.apache.poi.POIDocument;
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 import org.apache.poi.hslf.exceptions.HSLFException;
+import org.apache.poi.hslf.exceptions.OldPowerPointFormatException;
 import org.apache.poi.hslf.record.CurrentUserAtom;
 import org.apache.poi.hslf.record.DocumentEncryptionAtom;
 import org.apache.poi.hslf.record.ExOleObjStg;
@@ -183,13 +187,18 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
      * @throws IOException when the powerpoint can't be read
      */
     private void readPowerPointStream() throws IOException {
+        final DirectoryNode dir = getDirectory();
+
+        if (!dir.hasEntry(POWERPOINT_DOCUMENT) && dir.hasEntry(PP95_DOCUMENT)) {
+            throw new OldPowerPointFormatException("You seem to have supplied a PowerPoint95 file, which isn't supported");
+        }
+
         // Get the main document stream
-        DocumentEntry docProps =
-                (DocumentEntry) getDirectory().getEntry(HSLFSlideShow.POWERPOINT_DOCUMENT);
+        DocumentEntry docProps = (DocumentEntry)dir.getEntry(POWERPOINT_DOCUMENT);
 
         // Grab the document stream
         int len = docProps.getSize();
-        try (InputStream is = getDirectory().createDocumentInputStream(HSLFSlideShow.POWERPOINT_DOCUMENT)) {
+        try (InputStream is = dir.createDocumentInputStream(docProps)) {
             _docstream = IOUtils.toByteArray(is, len);
         }
     }
@@ -665,8 +674,8 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
 
         // Write the PPT stream into the POIFS layer
         ByteArrayInputStream bais = new ByteArrayInputStream(_docstream);
-        outFS.createOrUpdateDocument(bais, HSLFSlideShow.POWERPOINT_DOCUMENT);
-        writtenEntries.add(HSLFSlideShow.POWERPOINT_DOCUMENT);
+        outFS.createOrUpdateDocument(bais, POWERPOINT_DOCUMENT);
+        writtenEntries.add(POWERPOINT_DOCUMENT);
 
         currentUser.setEncrypted(encryptedSS.getDocumentEncryptionAtom() != null);
         currentUser.writeToFS(outFS);
