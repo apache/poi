@@ -76,19 +76,16 @@ public abstract class MultiOperandNumericFunction implements Function {
 	private static final int DEFAULT_MAX_NUM_OPERANDS = SpreadsheetVersion.EXCEL2007.getMaxFunctionArgs();
 
 	public final ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
-
-		double d;
 		try {
 			double[] values = getNumberArray(args);
-			d = evaluate(values);
+			double d = evaluate(values);
+			if (Double.isNaN(d) || Double.isInfinite(d)) {
+				return ErrorEval.NUM_ERROR;
+			}
+			return new NumberEval(d);
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
 		}
-
-		if (Double.isNaN(d) || Double.isInfinite(d))
-			return ErrorEval.NUM_ERROR;
-
-		return new NumberEval(d);
 	}
 
 	protected abstract double evaluate(double[] values) throws EvaluationException;

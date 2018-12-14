@@ -261,6 +261,12 @@ public abstract class AggregateFunction extends MultiOperandNumericFunction {
     public static final Function GEOMEAN = new AggregateFunction() {
         @Override
         protected double evaluate(double[] values) throws EvaluationException {
+        	// The library implementation returns 0 for an input sequence like [1, 0]. So this check is necessary.
+        	for (double value: values) {
+        		if (value <= 0) {
+        			throw new EvaluationException(ErrorEval.NUM_ERROR);
+				}
+			}
             return new GeometricMean().evaluate(values, 0, values.length);
         }
     };
