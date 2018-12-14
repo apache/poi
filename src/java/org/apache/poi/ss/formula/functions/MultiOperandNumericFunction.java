@@ -20,16 +20,7 @@ package org.apache.poi.ss.formula.functions;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.ThreeDEval;
 import org.apache.poi.ss.formula.TwoDEval;
-import org.apache.poi.ss.formula.eval.BlankEval;
-import org.apache.poi.ss.formula.eval.BoolEval;
-import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.formula.eval.EvaluationException;
-import org.apache.poi.ss.formula.eval.NumberEval;
-import org.apache.poi.ss.formula.eval.NumericValueEval;
-import org.apache.poi.ss.formula.eval.OperandResolver;
-import org.apache.poi.ss.formula.eval.RefEval;
-import org.apache.poi.ss.formula.eval.StringValueEval;
-import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.eval.*;
 
 /**
  * This is the super class for all excel function evaluator
@@ -215,6 +206,10 @@ public abstract class MultiOperandNumericFunction implements Function {
 			if (_isBlankCounted) {
 				temp.add(0.0);
 			}
+			return;
+		}
+		if (ve == MissingArgEval.instance) {
+			temp.add(0.0);
 			return;
 		}
 		throw new RuntimeException("Invalid ValueEval type passed for conversion: ("

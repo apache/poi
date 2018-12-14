@@ -18,9 +18,13 @@
 package org.apache.poi.ss.formula.functions;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.eval.EvaluationException;
+import org.apache.poi.ss.formula.eval.MissingArgEval;
+import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
 import org.junit.Test;
 
 public class TestMultiOperandNumericFunction {
@@ -35,5 +39,24 @@ public class TestMultiOperandNumericFunction {
             
         };
         assertEquals(SpreadsheetVersion.EXCEL2007.getMaxFunctionArgs(), fun.getMaxNumOperands());
+    }
+
+    @Test
+    public void missingArgEvalsAreCountedAsZero() {
+        MultiOperandNumericFunction instance = new Stub(true, true);
+        ValueEval result = instance.evaluate(new ValueEval[]{MissingArgEval.instance}, 0, 0);
+        assertTrue(result instanceof NumberEval);
+        assertEquals(0.0, ((NumberEval)result).getNumberValue(), 0);
+    }
+
+    private static class Stub extends MultiOperandNumericFunction {
+        protected Stub(boolean isReferenceBoolCounted, boolean isBlankCounted) {
+            super(isReferenceBoolCounted, isBlankCounted);
+        }
+
+        @Override
+        protected double evaluate(double[] values) throws EvaluationException {
+            return values[0];
+        }
     }
 }
