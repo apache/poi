@@ -129,10 +129,8 @@ public class KeyInfoSignatureFacet extends SignatureFacet {
         DOMSignContext domSignContext = (nextSibling == null)
             ? new DOMSignContext(key, n)
             : new DOMSignContext(key, n, nextSibling);
-        for (Map.Entry<String,String> me : signatureConfig.getNamespacePrefixes().entrySet()) {
-            domSignContext.putNamespacePrefix(me.getKey(), me.getValue());
-        }
-        
+        signatureConfig.getNamespacePrefixes().forEach(domSignContext::putNamespacePrefix);
+
         DOMStructure domStructure = new DOMStructure(n);
         domKeyInfo.marshal(domStructure, domSignContext);
         

@@ -185,9 +185,7 @@ public class SignaturePart {
         final Map<String,String> nsMap = new HashMap<>();
 
         {
-            for (Map.Entry<String,String> me : signatureConfig.getNamespacePrefixes().entrySet()) {
-                nsMap.put(me.getValue(), me.getKey());
-            }
+            signatureConfig.getNamespacePrefixes().forEach((k,v) -> nsMap.put(v,k));
             nsMap.put("dsss", MS_DIGSIG_NS);
             nsMap.put("ds", XML_DIGSIG_NS);
         }
