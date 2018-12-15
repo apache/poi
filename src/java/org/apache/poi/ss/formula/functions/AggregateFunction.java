@@ -219,6 +219,7 @@ public abstract class AggregateFunction extends MultiOperandNumericFunction {
 	
 	public static final Function PRODUCT = new AggregateFunction() {
 		protected double evaluate(double[] values) {
+			setMissingArgPolicy(Policy.SKIP);
 			return MathX.product(values);
 		}
 	};
