@@ -211,7 +211,13 @@ public class TestAllFiles {
         HANDLERS.put("spreadsheet/BigSSTRecord2CR7", new NullFileHandler());
         HANDLERS.put("spreadsheet/BigSSTRecordCR", new NullFileHandler());
         HANDLERS.put("spreadsheet/test_properties1", new NullFileHandler());
-        
+
+        // keystore files
+        HANDLERS.put(".pfx", new NullFileHandler());
+        HANDLERS.put(".pem", new NullFileHandler());
+        HANDLERS.put(".jks", new NullFileHandler());
+        HANDLERS.put(".pkcs12", new NullFileHandler());
+
         Map<String,String> passmap = new HashMap<>();
         passmap.put("slideshow/Password_Protected-hello.ppt", "hello");
         passmap.put("slideshow/Password_Protected-56-hello.ppt", "hello");
