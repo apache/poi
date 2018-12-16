@@ -23,7 +23,7 @@ import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.util.LittleEndianInputStream;
 
 public interface HwmfRecord {
-    HwmfRecordType getRecordType();
+    HwmfRecordType getWmfRecordType();
 
     /**
      * Init record from stream

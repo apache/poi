@@ -15,23 +15,27 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hemf.hemfplus.record;
+package org.apache.poi.hemf.record.emfplus;
 
 
 import java.io.IOException;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.LittleEndianInputStream;
 
 @Internal
 public class UnimplementedHemfPlusRecord implements HemfPlusRecord {
 
-    private int recordId;
+    private static final int MAX_RECORD_LENGTH = 1_000_000;
+
+    private HemfPlusRecordType recordType;
     private int flags;
     private byte[] recordBytes;
 
     @Override
-    public HemfPlusRecordType getRecordType() {
-        return HemfPlusRecordType.getById(recordId);
+    public HemfPlusRecordType getEmfPlusRecordType() {
+        return recordType;
     }
 
     @Override
@@ -40,10 +44,12 @@ public class UnimplementedHemfPlusRecord implements HemfPlusRecord {
     }
 
     @Override
-    public void init(byte[] recordBytes, int recordId, int flags) throws IOException {
-        this.recordId = recordId;
+    public long init(LittleEndianInputStream leis, long dataSize, long recordId, int flags) throws IOException {
+        recordType = HemfPlusRecordType.getById(recordId);
         this.flags = flags;
-        this.recordBytes = recordBytes;
+        recordBytes = IOUtils.safelyAllocate(dataSize, MAX_RECORD_LENGTH);
+        leis.readFully(recordBytes);
+        return recordBytes.length;
     }
 
     public byte[] getRecordBytes() {

@@ -32,14 +32,27 @@ public enum HwmfHatchStyle {
     /** +++++ - A horizontal and vertical cross-hatch. */
     HS_CROSS(0x0004),
     /** xxxxx - A 45-degree crosshatch. */
-    HS_DIAGCROSS(0x0005);
+    HS_DIAGCROSS(0x0005),
+    /** The hatch is not a pattern, but is a solid color. */
+    HS_SOLIDCLR(0x0006),
+    /** The hatch is not a pattern, but is a dithered color. */
+    HS_DITHEREDCLR(0x0007),
+    /** The hatch is not a pattern, but is a solid color, defined by the current text (foreground) color. */
+    HS_SOLIDTEXTCLR(0x0008),
+    /** The hatch is not a pattern, but is a dithered color, defined by the current text (foreground) color. */
+    HS_DITHEREDTEXTCLR(0x0009),
+    /** The hatch is not a pattern, but is a solid color, defined by the current background color. */
+    HS_SOLIDBKCLR(0x000A),
+    /** The hatch is not a pattern, but is a dithered color, defined by the current background color. */
+    HS_DITHEREDBKCLR(0x000B)
+    ;
 
     int flag;
     HwmfHatchStyle(int flag) {
         this.flag = flag;
     }
 
-    static HwmfHatchStyle valueOf(int flag) {
+    public static HwmfHatchStyle valueOf(int flag) {
         for (HwmfHatchStyle hs : values()) {
             if (hs.flag == flag) return hs;
         }

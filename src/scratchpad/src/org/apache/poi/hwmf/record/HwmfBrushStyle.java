@@ -71,7 +71,7 @@ public enum HwmfBrushStyle {
         this.flag = flag;
     }
 
-    static HwmfBrushStyle valueOf(int flag) {
+    public static HwmfBrushStyle valueOf(int flag) {
         for (HwmfBrushStyle bs : values()) {
             if (bs.flag == flag) return bs;
         }

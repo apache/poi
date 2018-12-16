@@ -39,6 +39,7 @@ import org.apache.batik.ext.awt.image.renderable.ClipRable8Bit;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.util.XMLResourceDescriptor;
 import org.apache.poi.sl.draw.ImageRenderer;
+import org.apache.poi.sl.usermodel.PictureData;
 import org.w3c.dom.Document;
 
 public class SVGImageRenderer implements ImageRenderer {
@@ -132,5 +133,10 @@ public class SVGImageRenderer implements ImageRenderer {
         svgRoot.paint(graphics);
 
         return true;
+    }
+
+    @Override
+    public boolean canRender(String contentType) {
+        return PictureData.PictureType.SVG.contentType.equalsIgnoreCase(contentType);
     }
 }

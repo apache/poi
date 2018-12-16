@@ -15,17 +15,32 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hemf.record;
+package org.apache.poi.hemf.record.emf;
 
+
+import java.io.IOException;
+
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.LittleEndianInputStream;
 
-/**
- * Not yet implemented
- */
 @Internal
-public class HemfCommentEMFSpool extends AbstractHemfComment {
+public class UnimplementedHemfRecord implements HemfRecord {
 
-    public HemfCommentEMFSpool(byte[] rawBytes) {
-        super(rawBytes);
+    private HemfRecordType recordType;
+
+    @Override
+    public HemfRecordType getEmfRecordType() {
+        return recordType;
+    }
+
+    @Override
+    public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
+        recordType = HemfRecordType.getById(recordId);
+        long skipped = IOUtils.skipFully(leis, recordSize);
+        if (skipped < recordSize) {
+            throw new IOException("End of stream reached before record read");
+        }
+        return skipped;
     }
 }

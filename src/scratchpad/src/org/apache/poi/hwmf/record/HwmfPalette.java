@@ -39,12 +39,12 @@ public class HwmfPalette {
         private int values;
         private Color colorRef;
 
-        private PaletteEntry() {
+        public PaletteEntry() {
             this.values = PC_RESERVED.set(0);
             this.colorRef = Color.BLACK;
         }
 
-        private PaletteEntry(PaletteEntry other) {
+        public PaletteEntry(PaletteEntry other) {
             this.values = other.values;
             this.colorRef = other.colorRef;
         }
@@ -100,19 +100,24 @@ public class HwmfPalette {
          * used with the META_SETPALENTRIES and META_ANIMATEPALETTE record types.
          * When used with META_CREATEPALETTE, it MUST be 0x0300
          */
-        private int start;
+        protected int start;
 
-        private List<PaletteEntry> palette = new ArrayList<>();
+        protected final List<PaletteEntry> palette = new ArrayList<>();
 
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             start = leis.readUShort();
+            int size = readPaletteEntries(leis, -1);
+            return size + LittleEndianConsts.SHORT_SIZE;
+        }
+
+        protected int readPaletteEntries(LittleEndianInputStream leis, int nbrOfEntries) throws IOException {
             /**
              * NumberOfEntries (2 bytes):  A 16-bit unsigned integer that defines the number of objects in
              * aPaletteEntries.
              */
-            int numberOfEntries = leis.readUShort();
-            int size = 2*LittleEndianConsts.SHORT_SIZE;
+            final int numberOfEntries = (nbrOfEntries > -1) ? nbrOfEntries : leis.readUShort();
+            int size = (nbrOfEntries > -1) ? 0 : LittleEndianConsts.SHORT_SIZE;
             for (int i=0; i<numberOfEntries; i++) {
                 PaletteEntry pe = new PaletteEntry();
                 size += pe.init(leis);
@@ -144,7 +149,7 @@ public class HwmfPalette {
      */
     public static class WmfCreatePalette extends WmfPaletteParent implements HwmfObjectTableEntry {
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.createPalette;
         }
 
@@ -160,7 +165,7 @@ public class HwmfPalette {
      */
     public static class WmfSetPaletteEntries extends WmfPaletteParent {
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.setPalEntries;
         }
 
@@ -197,10 +202,10 @@ public class HwmfPalette {
          * A 16-bit unsigned integer that defines the number of entries in
          * the logical palette.
          */
-        int numberOfEntries;
+        protected int numberOfEntries;
 
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.resizePalette;
         }
 
@@ -238,10 +243,10 @@ public class HwmfPalette {
          * A 16-bit unsigned integer used to index into the WMF Object Table to get
          * the Palette Object to be selected.
          */
-        private int paletteIndex;
+        protected int paletteIndex;
 
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.selectPalette;
         }
 
@@ -263,7 +268,7 @@ public class HwmfPalette {
      */
     public static class WmfRealizePalette implements HwmfRecord {
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.realizePalette;
         }
 
@@ -292,7 +297,7 @@ public class HwmfPalette {
      */
     public static class WmfAnimatePalette extends WmfPaletteParent {
         @Override
-        public HwmfRecordType getRecordType() {
+        public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.animatePalette;
         }
 

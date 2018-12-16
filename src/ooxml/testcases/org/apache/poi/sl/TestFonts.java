@@ -130,8 +130,6 @@ public class TestFonts {
         graphics.setRenderingHint(Drawable.FONT_FALLBACK, fallbackMap);
         graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
 
-        DrawFactory.getInstance(graphics).fixFonts(graphics);
-
         tb.resizeToFitText(graphics);
         graphics.dispose();
 

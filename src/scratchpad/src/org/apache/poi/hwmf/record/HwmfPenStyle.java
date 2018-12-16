@@ -136,12 +136,13 @@ public class HwmfPenStyle implements Cloneable {
         }    
     }
     
-    private static final BitField SUBSECTION_DASH      = BitFieldFactory.getInstance(0x0007);
-    private static final BitField SUBSECTION_ALTERNATE = BitFieldFactory.getInstance(0x0008);
-    private static final BitField SUBSECTION_ENDCAP    = BitFieldFactory.getInstance(0x0300);
-    private static final BitField SUBSECTION_JOIN      = BitFieldFactory.getInstance(0x3000);
-    
-    private int flag;
+    private static final BitField SUBSECTION_DASH      = BitFieldFactory.getInstance(0x00007);
+    private static final BitField SUBSECTION_ALTERNATE = BitFieldFactory.getInstance(0x00008);
+    private static final BitField SUBSECTION_ENDCAP    = BitFieldFactory.getInstance(0x00300);
+    private static final BitField SUBSECTION_JOIN      = BitFieldFactory.getInstance(0x03000);
+    private static final BitField SUBSECTION_GEOMETRIC = BitFieldFactory.getInstance(0x10000);
+
+    protected int flag;
     
     public static HwmfPenStyle valueOf(int flag) {
         HwmfPenStyle ps = new HwmfPenStyle();
@@ -160,13 +161,30 @@ public class HwmfPenStyle implements Cloneable {
     public HwmfLineDash getLineDash() {
         return HwmfLineDash.valueOf(SUBSECTION_DASH.getValue(flag));
     }
-    
+
+    /**
+     * Convienence method which should be used instead of accessing {@link HwmfLineDash#dashes}
+     * directly, so an subclass can provide user-style dashes
+     *
+     * @return the dash pattern
+     */
+    public float[] getLineDashes() {
+        return getLineDash().dashes;
+    }
 
     /**
      * The pen sets every other pixel (this style is applicable only for cosmetic pens).
      */
     public boolean isAlternateDash() {
         return SUBSECTION_ALTERNATE.isSet(flag);
+    }
+
+    /**
+     * A pen type that specifies a line with a width that is measured in logical units
+     * and a style that can contain any of the attributes of a brush.
+     */
+    public boolean isGeometric()  {
+        return SUBSECTION_GEOMETRIC.isSet(flag);
     }
 
 
@@ -185,5 +203,16 @@ public class HwmfPenStyle implements Cloneable {
             // this shouldn't happen, since we are Cloneable
             throw new InternalError();
         }
+    }
+
+    @Override
+    public String toString() {
+        return
+            "{ lineCap: '"+getLineCap()+"'"+
+            ", lineDash: '"+getLineDash()+"'"+
+            ", lineJoin: '"+getLineJoin()+"'"+
+            (isAlternateDash()?", alternateDash: true ":"")+
+            (isGeometric()?", geometric: true ":"")+
+            "}";
     }
 }
