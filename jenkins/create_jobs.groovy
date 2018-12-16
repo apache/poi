@@ -70,9 +70,7 @@ def poijobs = [
                        '-Djava.locale.providers=JRE,CLDR'],
           skipcigame: true
         ],
-        [ name: 'POI-DSL-IBM-JDK', jdk: 'IBMJDK', trigger: triggerSundays,
-          // some OOXML tests fail with strange XML parsing errors and missing JCE unlimited strength requirements
-          disabled: true, skipcigame: true
+        [ name: 'POI-DSL-IBM-JDK', jdk: 'IBMJDK', trigger: triggerSundays, skipcigame: true
         ],
         [ name: 'POI-DSL-old-Xerces', trigger: triggerSundays,
           shell: "test -f ${xercesLib} || wget -O ${xercesLib} ${xercesUrl}\n",
