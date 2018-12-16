@@ -177,7 +177,7 @@ public class SignatureConfig {
     /**
      * if true, the signature is added to the existing signatures
      *
-     * @since POI 4.0.2
+     * @since POI 4.1.0
      */
     private boolean allowMultipleSignatures = false;
 
@@ -1019,7 +1019,7 @@ public class SignatureConfig {
     /**
      * @return true, if multiple signatures can be attached
      *
-     * @since POI 4.0.2
+     * @since POI 4.1.0
      */
     public boolean isAllowMultipleSignatures() {
         return allowMultipleSignatures;
@@ -1031,7 +1031,7 @@ public class SignatureConfig {
      * @param allowMultipleSignatures if true, the signature will be added,
      *          otherwise all existing signatures will be replaced by the current
      *
-     * @since POI 4.0.2
+     * @since POI 4.1.0
      */
     public void setAllowMultipleSignatures(boolean allowMultipleSignatures) {
         this.allowMultipleSignatures = allowMultipleSignatures;

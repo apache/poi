@@ -254,7 +254,6 @@ public class DrawTextParagraph implements Drawable {
         lines.clear();
 
         DrawFactory fact = DrawFactory.getInstance(graphics);
-        fact.fixFonts(graphics);
         StringBuilder text = new StringBuilder();
         AttributedString at = getAttributedString(graphics, text);
         boolean emptyParagraph = text.toString().trim().isEmpty();
@@ -634,13 +633,6 @@ public class DrawTextParagraph implements Drawable {
      * Processing the glyphs is done in two steps.
      * <li>determine the font group - a text run can have different font groups. Depending on the chars,
      * the correct font group needs to be used
-     *
-     * @param graphics
-     * @param dfm
-     * @param attList
-     * @param beginIndex
-     * @param run
-     * @param runText
      *
      * @see <a href="https://blogs.msdn.microsoft.com/officeinteroperability/2013/04/22/office-open-xml-themes-schemes-and-fonts/">Office Open XML Themes, Schemes, and Fonts</a>
      */

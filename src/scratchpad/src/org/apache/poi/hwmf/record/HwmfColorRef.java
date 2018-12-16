@@ -19,6 +19,7 @@ package org.apache.poi.hwmf.record;
 
 import java.awt.Color;
 import java.io.IOException;
+import java.util.Locale;
 
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
@@ -53,6 +54,10 @@ public class HwmfColorRef implements Cloneable {
         return colorRef;
     }
 
+    public void setColor(Color color) {
+        colorRef = color;
+    }
+
     /**
      * Creates a new object of the same class and with the
      * same contents as this object.
@@ -68,5 +73,10 @@ public class HwmfColorRef implements Cloneable {
             // this shouldn't happen, since we are Cloneable
             throw new InternalError();
         }
+    }
+
+    @Override
+    public String toString() {
+        return String.format(Locale.ROOT, "%#08X", colorRef.getRGB()&0xFFFFFF);
     }
 }

@@ -22,8 +22,6 @@ import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.text.AttributedString;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.poi.sl.usermodel.Background;
 import org.apache.poi.sl.usermodel.ConnectorShape;
@@ -40,18 +38,18 @@ import org.apache.poi.sl.usermodel.TableShape;
 import org.apache.poi.sl.usermodel.TextBox;
 import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.TextShape;
-import org.apache.poi.util.JvmBugs;
 
 public class DrawFactory {
-    protected static final ThreadLocal<DrawFactory> defaultFactory = new ThreadLocal<>();
+    private static final ThreadLocal<DrawFactory> defaultFactory = new ThreadLocal<>();
 
     /**
      * Set a custom draw factory for the current thread.
      * This is a fallback, for operations where usercode can't set a graphics context.
      * Preferably use the rendering hint {@link Drawable#DRAW_FACTORY} to set the factory.
      *
-     * @param factory
+     * @param factory the custom factory
      */
+    @SuppressWarnings("unused")
     public static void setDefaultFactory(DrawFactory factory) {
         defaultFactory.set(factory);
     }
@@ -170,6 +168,7 @@ public class DrawFactory {
         return new DrawBackground(shape);
     }
     
+    @SuppressWarnings("WeakerAccess")
     public DrawTextFragment getTextFragment(TextLayout layout, AttributedString str) {
         return new DrawTextFragment(layout, str);
     }
@@ -212,35 +211,6 @@ public class DrawFactory {
         }
     }
     
-    
-    /**
-     * Replace font families for Windows JVM 6, which contains a font rendering error.
-     * This is likely to be removed, when POI upgrades to JDK 7
-     *
-     * @param graphics the graphics context which will contain the font mapping
-     */
-    public void fixFonts(Graphics2D graphics) {
-        if (!JvmBugs.hasLineBreakMeasurerBug()) return;
-        @SuppressWarnings("unchecked")
-        Map<String,String> fontMap = (Map<String,String>)graphics.getRenderingHint(Drawable.FONT_MAP);
-        if (fontMap == null) {
-            fontMap = new HashMap<>();
-            graphics.setRenderingHint(Drawable.FONT_MAP, fontMap);
-        }
-        
-        String fonts[][] = {
-            { "Calibri", "Lucida Sans" },
-            { "Cambria", "Lucida Bright" },
-            { "Times New Roman", "Lucida Bright" },
-            { "serif", "Lucida Bright" }
-        };
-
-        for (String f[] : fonts) {
-            if (!fontMap.containsKey(f[0])) {
-                fontMap.put(f[0], f[1]);
-            }
-        }
-    }
     
     /**
      * Return a FontManager, either registered beforehand or a default implementation

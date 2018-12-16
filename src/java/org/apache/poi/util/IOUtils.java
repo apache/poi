@@ -50,6 +50,7 @@ public final class IOUtils {
      * @param maxOverride The number of bytes that should be possible to be allocated in one step.
      * @since 4.0.0
      */
+    @SuppressWarnings("unused")
     public static void setByteArrayMaxOverride(int maxOverride) {
         BYTE_ARRAY_MAX_OVERRIDE = maxOverride;
     }
@@ -395,13 +396,35 @@ public final class IOUtils {
      * @throws IOException If copying the data fails.
      */
     public static long copy(InputStream inp, OutputStream out) throws IOException {
+        return copy(inp, out, -1);
+    }
+
+    /**
+     * Copies all the data from the given InputStream to the OutputStream. It
+     * leaves both streams open, so you will still need to close them once done.
+     *
+     * @param inp The {@link InputStream} which provides the data
+     * @param out The {@link OutputStream} to write the data to
+     * @param limit limit the copied bytes - use {@code -1} for no limit
+     * @return the amount of bytes copied
+     *
+     * @throws IOException If copying the data fails.
+     */
+    public static long copy(InputStream inp, OutputStream out, long limit) throws IOException {
         final byte[] buff = new byte[4096];
         long totalCount = 0;
-        for (int count; (count = inp.read(buff)) != -1; totalCount += count) {
-            if (count > 0) {
-                out.write(buff, 0, count);
+        int readBytes = -1;
+        do {
+            int todoBytes = (int)((limit < 0) ? buff.length : Math.min(limit-totalCount, buff.length));
+            if (todoBytes > 0) {
+                readBytes = inp.read(buff, 0, todoBytes);
+                if (readBytes > 0) {
+                    out.write(buff, 0, readBytes);
+                    totalCount += readBytes;
+                }
             }
-        }
+        } while (readBytes >= 0 && (limit == -1 || totalCount < limit));
+
         return totalCount;
     }
 
