@@ -24,6 +24,7 @@ import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
+import org.apache.poi.ss.formula.eval.MissingArgEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.NumericValueEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
@@ -85,19 +86,16 @@ public abstract class MultiOperandNumericFunction implements Function {
 	private static final int DEFAULT_MAX_NUM_OPERANDS = SpreadsheetVersion.EXCEL2007.getMaxFunctionArgs();
 
 	public final ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
-
-		double d;
 		try {
 			double[] values = getNumberArray(args);
-			d = evaluate(values);
+			double d = evaluate(values);
+			if (Double.isNaN(d) || Double.isInfinite(d)) {
+				return ErrorEval.NUM_ERROR;
+			}
+			return new NumberEval(d);
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
 		}
-
-		if (Double.isNaN(d) || Double.isInfinite(d))
-			return ErrorEval.NUM_ERROR;
-
-		return new NumberEval(d);
 	}
 
 	protected abstract double evaluate(double[] values) throws EvaluationException;
@@ -215,6 +213,10 @@ public abstract class MultiOperandNumericFunction implements Function {
 			if (_isBlankCounted) {
 				temp.add(0.0);
 			}
+			return;
+		}
+		if (ve == MissingArgEval.instance) {
+			temp.add(0.0);
 			return;
 		}
 		throw new RuntimeException("Invalid ValueEval type passed for conversion: ("
