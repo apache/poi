@@ -355,7 +355,7 @@ public class HemfComment {
 
         int id;
 
-        EmfFormatSignature(int flag) {
+        EmfFormatSignature(int id) {
             this.id = id;
         }
 
