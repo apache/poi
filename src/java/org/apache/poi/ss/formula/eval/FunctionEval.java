@@ -299,7 +299,7 @@ public final class FunctionEval {
         // 316: TTEST
         // 317: PROB
         retval[318] = AggregateFunction.DEVSQ;
-        // 319: GEOMEAN
+        retval[319] = AggregateFunction.GEOMEAN;
         // 320: HARMEAN
         retval[321] = AggregateFunction.SUMSQ;
         // 322: KURT
