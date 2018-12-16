@@ -21,6 +21,7 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -38,6 +39,7 @@ import org.apache.batik.ext.awt.RenderingHintsKeyExt;
 import org.apache.batik.ext.awt.image.renderable.ClipRable8Bit;
 import org.apache.batik.gvt.GraphicsNode;
 import org.apache.batik.util.XMLResourceDescriptor;
+import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.sl.draw.ImageRenderer;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.w3c.dom.Document;
@@ -118,6 +120,15 @@ public class SVGImageRenderer implements ImageRenderer {
 
     @Override
     public boolean drawImage(Graphics2D graphics, Rectangle2D anchor, Insets clip) {
+        graphics.setRenderingHint(RenderingHintsKeyExt.KEY_BUFFERED_IMAGE, graphics.getRenderingHint(Drawable.BUFFERED_IMAGE));
+
+        Dimension bounds = getDimension();
+
+        AffineTransform at = new AffineTransform();
+        at.translate(anchor.getX(), anchor.getY());
+        at.scale(anchor.getWidth()/bounds.getWidth(), anchor.getHeight()/bounds.getHeight());
+        svgRoot.setTransform(at);
+
         if (clip == null) {
             svgRoot.setClip(null);
         } else {

@@ -27,6 +27,7 @@ import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -36,7 +37,9 @@ import java.util.Map;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.TempFile;
 import org.apache.poi.xslf.XSLFTestDataSamples;
+import org.apache.poi.xslf.util.PPTX2PNG;
 import org.junit.Test;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
 
@@ -266,8 +269,21 @@ public class TestXSLFPictureShape {
         anchor.setRect(100, 100, anchor.getWidth(), anchor.getHeight());
         shape.setAnchor(anchor);
 
-//        try (FileOutputStream fos = new FileOutputStream("svgtest.pptx")) {
-//            ppt.write(fos);
-//        }
+        assertNotNull(shape.getSvgImage());
+
+        final File tmpFile = TempFile.createTempFile("svgtest", ".pptx");
+        System.out.println(tmpFile);
+        try (FileOutputStream fos = new FileOutputStream(tmpFile)) {
+            ppt.write(fos);
+        }
+
+        String[] args = {
+                "-format", "png", // png,gif,jpg or null for test
+                "-slide", "-1", // -1 for all
+                "-outdir", tmpFile.getParentFile().getCanonicalPath(),
+                "-quiet",
+                tmpFile.getAbsolutePath()
+        };
+        PPTX2PNG.main(args);
     }
 }

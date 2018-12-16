@@ -44,20 +44,29 @@ public class DrawPictureShape extends DrawSimpleShape {
     
     @Override
     public void drawContent(Graphics2D graphics) {
-        PictureData data = getShape().getPictureData();
-        if(data == null) return;
+        PictureShape<?,?> ps = getShape();
 
-        Rectangle2D anchor = getAnchor(graphics, getShape());
-        Insets insets = getShape().getClipping();
+        Rectangle2D anchor = getAnchor(graphics, ps);
+        Insets insets = ps.getClipping();
 
-        try {
-            ImageRenderer renderer = getImageRenderer(graphics, data.getContentType());
-            renderer.loadImage(data.getData(), data.getContentType());
-            renderer.drawImage(graphics, anchor, insets);
-        } catch (IOException e) {
-            LOG.log(POILogger.ERROR, "image can't be loaded/rendered.", e);
+        PictureData[] pics = { ps.getAlternativePictureData(), ps.getPictureData() };
+        for (PictureData data : pics) {
+            if (data == null) {
+                continue;
+            }
+
+            try {
+                ImageRenderer renderer = getImageRenderer(graphics, data.getContentType());
+                if (renderer.canRender(data.getContentType())) {
+                    renderer.loadImage(data.getData(), data.getContentType());
+                    renderer.drawImage(graphics, anchor, insets);
+                    return;
+                }
+            } catch (IOException e) {
+                LOG.log(POILogger.ERROR, "image can't be loaded/rendered.", e);
+            }
         }
-    }    
+    }
 
     /**
      * Returns an ImageRenderer for the PictureData

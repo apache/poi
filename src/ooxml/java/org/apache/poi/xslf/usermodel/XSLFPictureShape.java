@@ -36,6 +36,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.PictureShape;
 import org.apache.poi.sl.usermodel.Placeholder;
@@ -217,6 +218,8 @@ public class XSLFPictureShape extends XSLFSimpleShape
     /**
      * Add a SVG image reference
      * @param svgPic a previously imported svg image
+     *
+     * @since POI 4.1.0
      */
     public void setSvgImage(XSLFPictureData svgPic) {
         CTBlip blip = getBlip();
@@ -255,6 +258,35 @@ public class XSLFPictureShape extends XSLFSimpleShape
         cur.dispose();
     }
 
+    @Override
+    public PictureData getAlternativePictureData() {
+        return getSvgImage();
+    }
+
+    public XSLFPictureData getSvgImage() {
+        CTBlip blip = getBlip();
+        CTOfficeArtExtensionList extLst = blip.getExtLst();
+        if (extLst == null) {
+            return null;
+        }
+
+        int size = extLst.sizeOfExtArray();
+        for (int i=0; i<size; i++) {
+            XmlCursor cur = extLst.getExtArray(i).newCursor();
+            try {
+                if (cur.toChild(SVG_NS, "svgBlip")) {
+                    String svgRelId = cur.getAttributeText(new QName(CORE_PROPERTIES_ECMA376_NS, "embed"));
+                    return (svgRelId != null) ? (XSLFPictureData)getSheet().getRelationById(svgRelId) : null;
+                }
+            } finally {
+                cur.dispose();
+            }
+        }
+
+        return null;
+    }
+
+
     /**
      * Convienence method for adding SVG images, which generates the preview image
      * @param sheet the sheet to add
@@ -262,6 +294,8 @@ public class XSLFPictureShape extends XSLFSimpleShape
      * @param previewType the preview picture type or null (defaults to PNG) - currently only JPEG,GIF,PNG are allowed
      * @param anchor the image anchor (for calculating the preview image size) or
      *               null (the preview size is taken from the svg picture bounds)
+     *
+     * @since POI 4.1.0
      */
     public static XSLFPictureShape addSvgImage(XSLFSheet sheet, XSLFPictureData svgPic, PictureType previewType, Rectangle2D anchor) throws IOException {
 
