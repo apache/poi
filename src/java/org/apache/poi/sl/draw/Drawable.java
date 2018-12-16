@@ -136,8 +136,13 @@ public interface Drawable {
      * are printed. In this situation we need to have a way to access the current slide
      */
     DrawableHint CURRENT_SLIDE = new DrawableHint(12);
-    
-    
+
+    /**
+     * Stores a reference (WEAK_REFERENCE) to the buffered image, if the rendering is
+     * based on a buffered image
+     */
+    DrawableHint BUFFERED_IMAGE = new DrawableHint(13);
+
     /**
      * Apply 2-D transforms before drawing this shape. This includes rotation and flipping.
      *

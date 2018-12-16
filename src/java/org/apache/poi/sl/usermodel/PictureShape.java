@@ -31,6 +31,16 @@ public interface PictureShape<
     PictureData getPictureData();
 
 	/**
+	 * Returns an alternative picture data, e.g. an embedded SVG image
+	 *
+	 * @return an alternative picture data
+	 *
+	 * @since POI 4.1.0
+	 */
+    default PictureData getAlternativePictureData() { return null; }
+
+
+	/**
 	 * Returns the clipping values as percent ratio relatively to the image size.
 	 * The clipping are returned as insets converted/scaled to 100000 (=100%).
 	 * 
