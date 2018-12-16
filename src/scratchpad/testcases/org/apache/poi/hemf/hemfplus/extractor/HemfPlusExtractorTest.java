@@ -73,20 +73,16 @@ public class HemfPlusExtractorTest {
 
 
     private EmfCommentDataPlus getCommentRecord(String testFileName, int recordIndex) throws Exception {
-        EmfCommentDataPlus returnRecord = null;
-
         try (InputStream is = POIDataSamples.getSpreadSheetInstance().openResourceAsStream(testFileName)) {
             HemfPicture ex = new HemfPicture(is);
             int i = 0;
             for (HemfRecord record : ex) {
-                if (i == recordIndex) {
-                    EmfComment commentRecord = ((EmfComment) record);
-                    returnRecord = (EmfCommentDataPlus) commentRecord.getCommentData();
-                    break;
+                if (record instanceof EmfComment && i++ == recordIndex) {
+                    EmfComment commentRecord = (EmfComment)record;
+                    return (EmfCommentDataPlus) commentRecord.getCommentData();
                 }
-                i++;
             }
         }
-        return returnRecord;
+        return null;
     }
 }
