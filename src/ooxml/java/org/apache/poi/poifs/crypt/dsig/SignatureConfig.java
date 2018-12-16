@@ -174,6 +174,13 @@ public class SignatureConfig {
      */
     private boolean updateConfigOnValidate = false;
 
+    /**
+     * if true, the signature is added to the existing signatures
+     *
+     * @since POI 4.0.2
+     */
+    private boolean allowMultipleSignatures = false;
+
 
     /**
      * Inits and checks the config object.
@@ -1007,5 +1014,26 @@ public class SignatureConfig {
      */
     public void setUpdateConfigOnValidate(boolean updateConfigOnValidate) {
         this.updateConfigOnValidate = updateConfigOnValidate;
+    }
+
+    /**
+     * @return true, if multiple signatures can be attached
+     *
+     * @since POI 4.0.2
+     */
+    public boolean isAllowMultipleSignatures() {
+        return allowMultipleSignatures;
+    }
+
+    /**
+     * Activate multiple signatures
+     *
+     * @param allowMultipleSignatures if true, the signature will be added,
+     *          otherwise all existing signatures will be replaced by the current
+     *
+     * @since POI 4.0.2
+     */
+    public void setAllowMultipleSignatures(boolean allowMultipleSignatures) {
+        this.allowMultipleSignatures = allowMultipleSignatures;
     }
 }
