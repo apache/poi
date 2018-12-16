@@ -207,8 +207,8 @@ public class HemfPictureTest {
             assertEquals(27864, header.getBytes());
             assertEquals(31, header.getRecords());
             assertEquals(3, header.getHandles());
-            assertEquals(346000, header.getMicroDimension().getWidth());
-            assertEquals(194000, header.getMicroDimension().getHeight());
+            assertEquals(346000, header.getMicroDimension().getWidth(), 0);
+            assertEquals(194000, header.getMicroDimension().getHeight(), 0);
 
             List<HemfRecord> records = pic.getRecords();
 
