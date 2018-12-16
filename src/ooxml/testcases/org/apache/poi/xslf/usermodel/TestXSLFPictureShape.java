@@ -16,14 +16,17 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
+import static org.apache.poi.POIDataSamples.TEST_PROPERTY;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -246,5 +249,25 @@ public class TestXSLFPictureShape {
         assertEquals("image1.tiff", pic.getFileName());
         
         slideShow.close();
+    }
+
+
+    @Test
+    public void renderSvgImage() throws Exception {
+        String dataDirName = System.getProperty(TEST_PROPERTY);
+        final String SVG_FILE = (dataDirName != null ? "../" : "") + "src/documentation/resources/images/project-header.svg";
+        XMLSlideShow ppt = new XMLSlideShow();
+        XSLFSlide slide = ppt.createSlide();
+
+        XSLFPictureData svgPic = ppt.addPicture(new File(dataDirName, SVG_FILE), PictureType.SVG);
+        XSLFPictureShape shape = XSLFPictureShape.addSvgImage(slide, svgPic, PictureType.JPEG, null);
+
+        Rectangle2D anchor = shape.getAnchor();
+        anchor.setRect(100, 100, anchor.getWidth(), anchor.getHeight());
+        shape.setAnchor(anchor);
+
+//        try (FileOutputStream fos = new FileOutputStream("svgtest.pptx")) {
+//            ppt.write(fos);
+//        }
     }
 }

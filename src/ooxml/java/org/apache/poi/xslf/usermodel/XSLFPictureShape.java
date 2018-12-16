@@ -19,18 +19,31 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import static org.apache.poi.openxml4j.opc.PackageRelationshipTypes.CORE_PROPERTIES_ECMA376_NS;
+
+import java.awt.Dimension;
 import java.awt.Insets;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 
+import javax.imageio.ImageIO;
 import javax.xml.namespace.QName;
 
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.PictureShape;
 import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.Units;
+import org.apache.poi.xslf.draw.SVGImageRenderer;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -54,6 +67,11 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTPictureNonVisual;
 public class XSLFPictureShape extends XSLFSimpleShape
     implements PictureShape<XSLFShape,XSLFTextParagraph> {
     private static final POILogger LOG = POILogFactory.getLogger(XSLFPictureShape.class);
+
+    private static final String DML_NS = "http://schemas.microsoft.com/office/drawing/2010/main";
+    private static final String SVG_NS = "http://schemas.microsoft.com/office/drawing/2016/SVG/main";
+    private static final String BITMAP_URI = "{28A0092B-C50C-407E-A947-70E740481C1C}";
+    private static final String SVG_URI = "{96DAC541-7B7A-43D3-8B79-37D633B846F1}";
 
     private XSLFPictureData _data;
 
@@ -196,6 +214,97 @@ public class XSLFPictureShape extends XSLFSimpleShape
         return (r == null) ? null : new Insets(r.getT(), r.getL(), r.getB(), r.getR());
     }
 
+    /**
+     * Add a SVG image reference
+     * @param svgPic a previously imported svg image
+     */
+    public void setSvgImage(XSLFPictureData svgPic) {
+        CTBlip blip = getBlip();
+        CTOfficeArtExtensionList extLst = blip.isSetExtLst() ? blip.getExtLst() : blip.addNewExtLst();
+
+        final int bitmapId = getExt(extLst, BITMAP_URI);
+        CTOfficeArtExtension extBitmap;
+        if (bitmapId == -1) {
+            extBitmap = extLst.addNewExt();
+            extBitmap.setUri(BITMAP_URI);
+            XmlCursor cur = extBitmap.newCursor();
+            cur.toEndToken();
+            cur.beginElement(new QName(DML_NS, "useLocalDpi", "a14"));
+            cur.insertNamespace("a14", DML_NS);
+            cur.insertAttributeWithValue("val", "0");
+            cur.dispose();
+        }
+
+        final int svgId = getExt(extLst, SVG_URI);;
+        if (svgId != -1) {
+            extLst.removeExt(svgId);
+        }
+
+        String svgRelId = getSheet().getRelationId(svgPic);
+        if (svgRelId == null) {
+            svgRelId = getSheet().addRelation(null, XSLFRelation.IMAGE_SVG, svgPic).getRelationship().getId();
+        }
+
+        CTOfficeArtExtension svgBitmap = extLst.addNewExt();
+        svgBitmap.setUri(SVG_URI);
+        XmlCursor cur = svgBitmap.newCursor();
+        cur.toEndToken();
+        cur.beginElement(new QName(SVG_NS, "svgBlip", "asvg"));
+        cur.insertNamespace("asvg", SVG_NS);
+        cur.insertAttributeWithValue(new QName(CORE_PROPERTIES_ECMA376_NS, "embed", "rel"), svgRelId);
+        cur.dispose();
+    }
+
+    /**
+     * Convienence method for adding SVG images, which generates the preview image
+     * @param sheet the sheet to add
+     * @param svgPic the svg picture to add
+     * @param previewType the preview picture type or null (defaults to PNG) - currently only JPEG,GIF,PNG are allowed
+     * @param anchor the image anchor (for calculating the preview image size) or
+     *               null (the preview size is taken from the svg picture bounds)
+     */
+    public static XSLFPictureShape addSvgImage(XSLFSheet sheet, XSLFPictureData svgPic, PictureType previewType, Rectangle2D anchor) throws IOException {
+
+        SVGImageRenderer renderer = new SVGImageRenderer();
+        try (InputStream is = svgPic.getInputStream()) {
+            renderer.loadImage(is, svgPic.getType().contentType);
+        }
+
+        Dimension dim = renderer.getDimension();
+        Rectangle2D anc = (anchor != null) ? anchor
+            : new Rectangle2D.Double(0,0, Units.pixelToPoints((int)dim.getWidth()), Units.pixelToPoints((int)dim.getHeight()));
+
+        PictureType pt = (previewType != null) ? previewType : PictureType.PNG;
+        if (pt != PictureType.JPEG || pt != PictureType.GIF || pt != PictureType.PNG) {
+            pt = PictureType.PNG;
+        }
+
+        BufferedImage thmBI = renderer.getImage(dim);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream(100000);
+        // use extension instead of enum name, because of "jpeg"
+        ImageIO.write(thmBI, pt.extension.substring(1), bos);
+
+        XSLFPictureData pngPic = sheet.getSlideShow().addPicture(new ByteArrayInputStream(bos.toByteArray()), pt);
+
+        XSLFPictureShape shape = sheet.createPicture(pngPic);
+        shape.setAnchor(anc);
+        shape.setSvgImage(svgPic);
+        return shape;
+    }
+
+
+    private int getExt(CTOfficeArtExtensionList extLst, String uri) {
+        final int size = extLst.sizeOfExtArray();
+        for (int i=0; i<size; i++) {
+            CTOfficeArtExtension ext = extLst.getExtArray(i);
+            if (uri.equals(ext.getUri())) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+
     @Override
     void copy(XSLFShape sh){
         super.copy(sh);
@@ -219,11 +328,11 @@ public class XSLFPictureShape extends XSLFSimpleShape
             nvPr.unsetCustDataLst();
         }
         if(blip.isSetExtLst()) {
-
+            // TODO: check for SVG copying
             CTOfficeArtExtensionList extLst = blip.getExtLst();
             //noinspection deprecation
             for(CTOfficeArtExtension ext : extLst.getExtArray()){
-                String xpath = "declare namespace a14='http://schemas.microsoft.com/office/drawing/2010/main' $this//a14:imgProps/a14:imgLayer";
+                String xpath = "declare namespace a14='"+ DML_NS +"' $this//a14:imgProps/a14:imgLayer";
                 XmlObject[] obj = ext.selectPath(xpath);
                 if(obj != null && obj.length == 1){
                     XmlCursor c = obj[0].newCursor();
@@ -234,6 +343,5 @@ public class XSLFPictureShape extends XSLFSimpleShape
                 }
             }
         }
-
     }
 }

@@ -91,7 +91,7 @@ subprojects {
     // See https://github.com/melix/japicmp-gradle-plugin 
     apply plugin: 'me.champeau.gradle.japicmp'
         
-    version = '4.0.1-SNAPSHOT'
+    version = '4.0.2-SNAPSHOT'
     ext {
         japicmpversion = '4.0.0'
     }
@@ -232,6 +232,11 @@ project('ooxml') {
         compile 'org.apache.santuario:xmlsec:2.1.0'
         compile 'org.bouncycastle:bcpkix-jdk15on:1.60'
         compile 'com.github.virtuald:curvesapi:1.05'
+
+        // compile only, don't add it to our dist as it blows up the size
+        compile 'org.apache.xmlgraphics:batik-all:1.10'
+        compile 'xml-apis:xml-apis-ext:1.3.04'
+        compile 'org.apache.xmlgraphics:xmlgraphics-commons:2.3'
 
         // for ooxml-lite, should we move this somewhere else?
         compile 'junit:junit:4.12'

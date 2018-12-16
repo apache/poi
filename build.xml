@@ -217,6 +217,14 @@ under the License.
     <property name="dsig.sl4j-api.jar" location="${compile.lib}/slf4j-api-1.7.25.jar"/>
     <property name="dsig.sl4j-api.url" value="${repository.m2}/maven2/org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar"/>
 
+    <!-- svg/batik libs - not part of the distribution -->
+    <property name="svg.batik-all.url" value="${repository.m2}/maven2/org/apache/xmlgraphics/batik-all/1.10/batik-all-1.10.jar"/>
+    <property name="svg.batik-all.jar" value="${compile.lib}/batik-all-1.10.jar"/>
+    <property name="svg.xml-apis-ext.url" value="${repository.m2}/maven2/xml-apis/xml-apis-ext/1.3.04/xml-apis-ext-1.3.04.jar"/>
+    <property name="svg.xml-apis-ext.jar" value="${compile.lib}/xml-apis-ext-1.3.04.jar"/>
+    <property name="svg.xmlgraphics-commons.url" value="${repository.m2}/maven2/org/apache/xmlgraphics/xmlgraphics-commons/2.3/xmlgraphics-commons-2.3.jar"/>
+    <property name="svg.xmlgraphics-commons.jar" value="${compile.lib}/xmlgraphics-commons-2.3.jar"/>
+
     <!-- jars in the ooxml-lib directory, see the fetch-ooxml-jars target-->
     <property name="ooxml.curvesapi.jar" location="${ooxml.lib}/curvesapi-1.05.jar"/>
     <property name="ooxml.curvesapi.url"
@@ -395,6 +403,12 @@ under the License.
         <pathelement location="${scratchpad.output.dir}" unless:true="${scratchpad.ignore}"/>
     </path>
 
+    <path id="batik.classpath">
+        <pathelement location="${svg.batik-all.jar}"/>
+        <pathelement location="${svg.xml-apis-ext.jar}"/>
+        <pathelement location="${svg.xmlgraphics-commons.jar}"/>
+    </path>
+
     <path id="ooxml-lite.classpath">
         <path refid="ooxml.base.classpath"/>
         <!-- instead of ooxml-xsds.jar use the filtered classes-->
@@ -402,11 +416,13 @@ under the License.
         <pathelement location="${ooxml.output.dir}"/>
         <pathelement location="${ooxml.output.test.dir}"/>
         <pathelement location="${main.output.test.dir}"/>
+        <path refid="batik.classpath"/>
     </path>
 
     <path id="ooxml.classpath">
         <pathelement location="${ooxml.xsds.jar}"/>
         <path refid="ooxml.base.classpath"/>
+        <path refid="batik.classpath"/>
     </path>
 
     <path id="ooxml.lite.verify.classpath">
@@ -777,6 +793,9 @@ under the License.
                     <available file="${ooxml.test.reflections.jar}"/>
                     <available file="${ooxml.test.guava.jar}"/>
                     <available file="${ooxml.test.javassist.jar}"/>
+                    <available file="${svg.xml-apis-ext.jar}"/>
+                    <available file="${svg.batik-all.jar}"/>
+                    <available file="${svg.xmlgraphics-commons.jar}"/>
                 </and>
                 <isset property="disconnected"/>
             </or>
@@ -791,6 +810,9 @@ under the License.
         <downloadfile src="${ooxml.test.reflections.url}" dest="${ooxml.test.reflections.jar}"/>
         <downloadfile src="${ooxml.test.guava.url}" dest="${ooxml.test.guava.jar}"/>
         <downloadfile src="${ooxml.test.javassist.url}" dest="${ooxml.test.javassist.jar}"/>
+        <downloadfile src="${svg.batik-all.url}" dest="${svg.batik-all.jar}"/>
+        <downloadfile src="${svg.xml-apis-ext.url}" dest="${svg.xml-apis-ext.jar}"/>
+        <downloadfile src="${svg.xmlgraphics-commons.url}" dest="${svg.xmlgraphics-commons.jar}"/>
     </target>
     <target name="check-svn-jars">
         <condition property="svn.jars.present">
@@ -932,6 +954,7 @@ under the License.
             </xmlbean>
 
             <local name="loaderMethod"/>
+            <!-- the space between "public  static" is on purpose to prevent double execution -->
             <property name="loaderMethod"><![CDATA[
         private static java.lang.ref.SoftReference<org.apache.xmlbeans.SchemaTypeLoader> typeLoader;
 
@@ -944,7 +967,7 @@ under the License.
             return stl;
         }
 
-        public static \2 newInstance\(\) \{]]></property>
+        public  static \2 newInstance\(\) \{]]></property>
 
             <replaceregexp byline="true" match="(\s*)public static ([^ ]+) newInstance\(\) \{" replace="${loaderMethod}">
                 <fileset dir="${xmlbean.sources.dir}" includes="**/*.java" excludes="**/impl/**"/>
