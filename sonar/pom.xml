@@ -268,9 +268,7 @@
                                 </goals>
                                 <configuration>
                                     <target>
-                                        <property name="xmlbean.sources.dir"
-                                                  location="${basedir}/target/generated-sources/xmlbeans"/>
-
+                                        <!-- the space between "public  static" is on purpose to prevent double execution -->
                                         <property name="loaderMethod"><![CDATA[
         private static java.lang.ref.SoftReference<org.apache.xmlbeans.SchemaTypeLoader> typeLoader;
 
@@ -283,25 +281,26 @@
             return stl;
         }
 
-        public static \2 newInstance\(\) \{]]></property>
+        public  static \2 newInstance\(\) \{]]></property>
+
+                                        <fileset id="xsrc" dir="${basedir}/target/generated-sources/xmlbeans" includes="**/*.java" excludes="**/impl/**"/>
 
                                         <replaceregexp byline="true"
                                                        match="(\s*)public static ([^ ]+) newInstance\(\) \{"
                                                        replace="${loaderMethod}">
-                                            <fileset dir="${xmlbean.sources.dir}" includes="**/*.java"
-                                                     excludes="**/impl/**"/>
+                                            <fileset refid="xsrc"/>
                                         </replaceregexp>
 
-                                        <replace dir="${xmlbean.sources.dir}" includes="**/*.java"
-                                                 excludes="**/impl/**">
+                                        <replace>
+                                            <fileset refid="xsrc"/>
                                             <replacetoken>org.apache.xmlbeans.XmlBeans.getContextTypeLoader
                                             </replacetoken>
                                             <replacevalue>getTypeLoader</replacevalue>
                                         </replace>
 
                                         <!-- remove deprecated warnings, as we prefer the array methods - see #56854 -->
-                                        <replace dir="${xmlbean.sources.dir}" includes="**/*.java"
-                                                 excludes="**/impl/**">
+                                        <replace>
+                                            <fileset refid="xsrc"/>
                                             <replacetoken><![CDATA[     * @deprecated
 ]]></replacetoken>
                                         </replace>
