@@ -43,46 +43,6 @@ public abstract class MultiOperandNumericFunction implements Function {
 		void accept(T value, R receiver) throws EvaluationException;
 	}
 
-	private static class ConsumerFactory {
-		static EvalConsumer<MissingArgEval, DoubleList> createForMissingArg(Policy policy) {
-			final EvalConsumer<MissingArgEval, DoubleList> coercer =
-					(MissingArgEval value, DoubleList receiver) -> receiver.add(0.0);
-			return createAny(coercer, policy);
-		}
-
-		static EvalConsumer<BoolEval, DoubleList> createForBoolEval(Policy policy) {
-			final EvalConsumer<BoolEval, DoubleList> coercer =
-					(BoolEval value, DoubleList receiver) -> receiver.add(value.getNumberValue());
-			return createAny(coercer, policy);
-		}
-
-		static EvalConsumer<BlankEval, DoubleList> createForBlank(Policy policy) {
-			final EvalConsumer<BlankEval, DoubleList> coercer =
-					(BlankEval value, DoubleList receiver) -> receiver.add(0.0);
-			return createAny(coercer, policy);
-		}
-
-		private static <T> EvalConsumer<T, DoubleList> createAny(EvalConsumer<T, DoubleList> coercer, Policy policy) {
-			switch (policy) {
-				case COERCE:
-					return coercer;
-				case SKIP:
-					return doNothing();
-				case ERROR:
-					return throwValueInvalid();
-				default:
-					throw new AssertionError();
-			}
-		}
-
-		private static <T> EvalConsumer<T, DoubleList> doNothing() {
-			return (T value, DoubleList receiver) -> {};
-		}
-
-		private static <T> EvalConsumer<T, DoubleList> throwValueInvalid() {
-			return (T value, DoubleList receiver) -> {throw new EvaluationException(ErrorEval.VALUE_INVALID);};
-		}
-	}
 	private EvalConsumer<BoolEval, DoubleList> boolByRefConsumer;
 	private EvalConsumer<BoolEval, DoubleList> boolByValueConsumer;
 	private EvalConsumer<BlankEval, DoubleList> blankConsumer;
@@ -272,5 +232,46 @@ public abstract class MultiOperandNumericFunction implements Function {
 		}
 		throw new RuntimeException("Invalid ValueEval type passed for conversion: ("
 				+ ve.getClass() + ")");
+	}
+
+	private static class ConsumerFactory {
+		static EvalConsumer<MissingArgEval, DoubleList> createForMissingArg(Policy policy) {
+			final EvalConsumer<MissingArgEval, DoubleList> coercer =
+					(MissingArgEval value, DoubleList receiver) -> receiver.add(0.0);
+			return createAny(coercer, policy);
+		}
+
+		static EvalConsumer<BoolEval, DoubleList> createForBoolEval(Policy policy) {
+			final EvalConsumer<BoolEval, DoubleList> coercer =
+					(BoolEval value, DoubleList receiver) -> receiver.add(value.getNumberValue());
+			return createAny(coercer, policy);
+		}
+
+		static EvalConsumer<BlankEval, DoubleList> createForBlank(Policy policy) {
+			final EvalConsumer<BlankEval, DoubleList> coercer =
+					(BlankEval value, DoubleList receiver) -> receiver.add(0.0);
+			return createAny(coercer, policy);
+		}
+
+		private static <T> EvalConsumer<T, DoubleList> createAny(EvalConsumer<T, DoubleList> coercer, Policy policy) {
+			switch (policy) {
+				case COERCE:
+					return coercer;
+				case SKIP:
+					return doNothing();
+				case ERROR:
+					return throwValueInvalid();
+				default:
+					throw new AssertionError();
+			}
+		}
+
+		private static <T> EvalConsumer<T, DoubleList> doNothing() {
+			return (T value, DoubleList receiver) -> {};
+		}
+
+		private static <T> EvalConsumer<T, DoubleList> throwValueInvalid() {
+			return (T value, DoubleList receiver) -> {throw new EvaluationException(ErrorEval.VALUE_INVALID);};
+		}
 	}
 }

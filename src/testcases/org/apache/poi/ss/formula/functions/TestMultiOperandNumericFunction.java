@@ -42,16 +42,26 @@ public class TestMultiOperandNumericFunction {
     }
 
     @Test
-    public void missingArgEvalsAreCountedAsZero() {
-        MultiOperandNumericFunction instance = new Stub(true, true);
+    public void missingArgEvalsAreCountedAsZeroIfPolicyIsCoerce() {
+        MultiOperandNumericFunction instance = new Stub(true, true, MultiOperandNumericFunction.Policy.COERCE);
         ValueEval result = instance.evaluate(new ValueEval[]{MissingArgEval.instance}, 0, 0);
         assertTrue(result instanceof NumberEval);
         assertEquals(0.0, ((NumberEval)result).getNumberValue(), 0);
     }
 
+    @Test
+    public void missingArgEvalsAreSkippedIfZeroIfPolicyIsSkipped() {
+        MultiOperandNumericFunction instance = new Stub(true, true, MultiOperandNumericFunction.Policy.SKIP);
+        ValueEval result = instance.evaluate(new ValueEval[]{new NumberEval(1), MissingArgEval.instance}, 0, 0);
+        assertTrue(result instanceof NumberEval);
+        assertEquals(1.0, ((NumberEval)result).getNumberValue(), 0);
+    }
+
     private static class Stub extends MultiOperandNumericFunction {
-        protected Stub(boolean isReferenceBoolCounted, boolean isBlankCounted) {
+        protected Stub(
+                boolean isReferenceBoolCounted, boolean isBlankCounted, MultiOperandNumericFunction.Policy missingArgEvalPolicy) {
             super(isReferenceBoolCounted, isBlankCounted);
+            setMissingArgPolicy(missingArgEvalPolicy);
         }
 
         @Override
