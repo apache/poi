@@ -96,6 +96,10 @@ public abstract class MultiOperandNumericFunction implements Function {
 		missingArgConsumer = ConsumerFactory.createForMissingArg(policy);
 	}
 
+	public void setBlankEvalPolicy(Policy policy) {
+	    blankConsumer = ConsumerFactory.createForBlank(policy);
+    }
+
 	public final ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
 		try {
 			double[] values = getNumberArray(args);
