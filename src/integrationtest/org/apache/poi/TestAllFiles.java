@@ -331,6 +331,9 @@ public class TestAllFiles {
         "spreadsheet/sample.strict.xlsx",
         "spreadsheet/57914.xlsx",
 
+        // files with XML entities
+        "openxml4j/ContentTypeHasEntities.ooxml",
+
         // non-TNEF files
         "ddf/Container.dat",
         "ddf/47143.dat",
