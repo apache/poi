@@ -265,23 +265,24 @@ public class XSLFPictureShape extends XSLFSimpleShape
 
     public XSLFPictureData getSvgImage() {
         CTBlip blip = getBlip();
-        if (blip != null) {
-            CTOfficeArtExtensionList extLst = blip.getExtLst();
-            if (extLst == null) {
-                return null;
-            }
+        if (blip == null) {
+            return null;
+        }
+        CTOfficeArtExtensionList extLst = blip.getExtLst();
+        if (extLst == null) {
+            return null;
+        }
 
-            int size = extLst.sizeOfExtArray();
-            for (int i = 0; i < size; i++) {
-                XmlCursor cur = extLst.getExtArray(i).newCursor();
-                try {
-                    if (cur.toChild(SVG_NS, "svgBlip")) {
-                        String svgRelId = cur.getAttributeText(new QName(CORE_PROPERTIES_ECMA376_NS, "embed"));
-                        return (svgRelId != null) ? (XSLFPictureData) getSheet().getRelationById(svgRelId) : null;
-                    }
-                } finally {
-                    cur.dispose();
+        int size = extLst.sizeOfExtArray();
+        for (int i = 0; i < size; i++) {
+            XmlCursor cur = extLst.getExtArray(i).newCursor();
+            try {
+                if (cur.toChild(SVG_NS, "svgBlip")) {
+                    String svgRelId = cur.getAttributeText(new QName(CORE_PROPERTIES_ECMA376_NS, "embed"));
+                    return (svgRelId != null) ? (XSLFPictureData) getSheet().getRelationById(svgRelId) : null;
                 }
+            } finally {
+                cur.dispose();
             }
         }
         return null;
