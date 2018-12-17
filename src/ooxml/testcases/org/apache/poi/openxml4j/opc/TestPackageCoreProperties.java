@@ -249,8 +249,8 @@ public final class TestPackageCoreProperties {
         // Get the Core Properties
         PackagePropertiesPart props = (PackagePropertiesPart)p.getPackageProperties();
         
-        // Check
-        assertEquals("Stefan Kopf", props.getCreatorProperty().get());
+        // used to resolve a vale but now we ignore DTD entities for security reasons
+        assertFalse(props.getCreatorProperty().isPresent());
         
         p.close();
     }

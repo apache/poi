@@ -1969,7 +1969,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             fail("should have thrown SAXParseException");
         } catch (SAXParseException e) {
             assertNotNull(e.getMessage());
-            assertTrue(e.getMessage().contains("more than \"1\" entity"));
+            assertTrue(e.getMessage().contains("DOCTYPE is disallowed when the feature"));
         }
     }
 
