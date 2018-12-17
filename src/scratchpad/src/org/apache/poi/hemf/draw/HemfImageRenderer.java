@@ -15,12 +15,13 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hwmf.draw;
+package org.apache.poi.hemf.draw;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.RenderingHints;
+import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.RescaleOp;
@@ -28,41 +29,41 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.poi.hwmf.usermodel.HwmfPicture;
-import org.apache.poi.sl.draw.DrawPictureShape;
+import org.apache.poi.hemf.usermodel.HemfPicture;
 import org.apache.poi.sl.draw.ImageRenderer;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.util.Units;
 
-/**
- * Helper class which is instantiated by {@link DrawPictureShape}
- * via reflection
- */
-public class HwmfSLImageRenderer implements ImageRenderer {
-    HwmfPicture image;
+public class HemfImageRenderer implements ImageRenderer {
+    HemfPicture image;
     double alpha;
-    
+
+    @Override
+    public boolean canRender(String contentType) {
+        return PictureData.PictureType.EMF.contentType.equalsIgnoreCase(contentType);
+    }
+
     @Override
     public void loadImage(InputStream data, String contentType) throws IOException {
-        if (!PictureData.PictureType.WMF.contentType.equals(contentType)) {
+        if (!PictureData.PictureType.EMF.contentType.equals(contentType)) {
             throw new IOException("Invalid picture type");
         }
-        image = new HwmfPicture(data);
+        image = new HemfPicture(data);
     }
 
     @Override
     public void loadImage(byte[] data, String contentType) throws IOException {
-        if (!PictureData.PictureType.WMF.contentType.equals(contentType)) {
+        if (!PictureData.PictureType.EMF.contentType.equals(contentType)) {
             throw new IOException("Invalid picture type");
         }
-        image = new HwmfPicture(new ByteArrayInputStream(data));
+        image = new HemfPicture(new ByteArrayInputStream(data));
     }
 
     @Override
     public Dimension getDimension() {
         int width = 0, height = 0;
         if (image != null) {
-            Dimension dim = image.getSize();
+            Dimension2D dim = image.getSize();
             width = Units.pointsToPixel(dim.getWidth());
             // keep aspect ratio for height
             height = Units.pointsToPixel(dim.getHeight());
@@ -83,9 +84,9 @@ public class HwmfSLImageRenderer implements ImageRenderer {
     @Override
     public BufferedImage getImage(Dimension dim) {
         if (image == null) {
-            return new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB); 
+            return new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         }
-        
+
         BufferedImage bufImg = new BufferedImage((int)dim.getWidth(), (int)dim.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = bufImg.createGraphics();
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -94,7 +95,7 @@ public class HwmfSLImageRenderer implements ImageRenderer {
         g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
         image.draw(g, new Rectangle2D.Double(0,0,dim.getWidth(),dim.getHeight()));
         g.dispose();
-        
+
         if (alpha != 0) {
             BufferedImage newImg = new BufferedImage((int)dim.getWidth(), (int)dim.getHeight(), BufferedImage.TYPE_INT_ARGB);
             g = newImg.createGraphics();
@@ -103,10 +104,10 @@ public class HwmfSLImageRenderer implements ImageRenderer {
             g.dispose();
             bufImg = newImg;
         }
-        
+
         return bufImg;
     }
-    
+
     @Override
     public boolean drawImage(Graphics2D graphics, Rectangle2D anchor) {
         return drawImage(graphics, anchor, null);
@@ -121,4 +122,5 @@ public class HwmfSLImageRenderer implements ImageRenderer {
             return true;
         }
     }
+
 }

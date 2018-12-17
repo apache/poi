@@ -16,14 +16,18 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
+import static org.apache.poi.POIDataSamples.TEST_PROPERTY;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -33,7 +37,9 @@ import java.util.Map;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.TempFile;
 import org.apache.poi.xslf.XSLFTestDataSamples;
+import org.apache.poi.xslf.util.PPTX2PNG;
 import org.junit.Test;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
 
@@ -246,5 +252,38 @@ public class TestXSLFPictureShape {
         assertEquals("image1.tiff", pic.getFileName());
         
         slideShow.close();
+    }
+
+
+    @Test
+    public void renderSvgImage() throws Exception {
+        String dataDirName = System.getProperty(TEST_PROPERTY);
+        final String SVG_FILE = (dataDirName != null ? "../" : "") + "src/documentation/resources/images/project-header.svg";
+        XMLSlideShow ppt = new XMLSlideShow();
+        XSLFSlide slide = ppt.createSlide();
+
+        XSLFPictureData svgPic = ppt.addPicture(new File(dataDirName, SVG_FILE), PictureType.SVG);
+        XSLFPictureShape shape = XSLFPictureShape.addSvgImage(slide, svgPic, PictureType.JPEG, null);
+
+        Rectangle2D anchor = shape.getAnchor();
+        anchor.setRect(100, 100, anchor.getWidth(), anchor.getHeight());
+        shape.setAnchor(anchor);
+
+        assertNotNull(shape.getSvgImage());
+
+        final File tmpFile = TempFile.createTempFile("svgtest", ".pptx");
+        System.out.println(tmpFile);
+        try (FileOutputStream fos = new FileOutputStream(tmpFile)) {
+            ppt.write(fos);
+        }
+
+        String[] args = {
+                "-format", "png", // png,gif,jpg or null for test
+                "-slide", "-1", // -1 for all
+                "-outdir", tmpFile.getParentFile().getCanonicalPath(),
+                "-quiet",
+                tmpFile.getAbsolutePath()
+        };
+        PPTX2PNG.main(args);
     }
 }

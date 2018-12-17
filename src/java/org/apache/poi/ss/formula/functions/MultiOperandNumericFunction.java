@@ -20,7 +20,17 @@ package org.apache.poi.ss.formula.functions;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.ThreeDEval;
 import org.apache.poi.ss.formula.TwoDEval;
-import org.apache.poi.ss.formula.eval.*;
+import org.apache.poi.ss.formula.eval.BlankEval;
+import org.apache.poi.ss.formula.eval.BoolEval;
+import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.eval.EvaluationException;
+import org.apache.poi.ss.formula.eval.MissingArgEval;
+import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.NumericValueEval;
+import org.apache.poi.ss.formula.eval.OperandResolver;
+import org.apache.poi.ss.formula.eval.RefEval;
+import org.apache.poi.ss.formula.eval.StringValueEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
  * This is the super class for all excel function evaluator
@@ -127,19 +137,16 @@ public abstract class MultiOperandNumericFunction implements Function {
 	}
 
 	public final ValueEval evaluate(ValueEval[] args, int srcCellRow, int srcCellCol) {
-
-		double d;
 		try {
 			double[] values = getNumberArray(args);
-			d = evaluate(values);
+			double d = evaluate(values);
+			if (Double.isNaN(d) || Double.isInfinite(d)) {
+				return ErrorEval.NUM_ERROR;
+			}
+			return new NumberEval(d);
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
 		}
-
-		if (Double.isNaN(d) || Double.isInfinite(d))
-			return ErrorEval.NUM_ERROR;
-
-		return new NumberEval(d);
 	}
 
 	protected abstract double evaluate(double[] values) throws EvaluationException;

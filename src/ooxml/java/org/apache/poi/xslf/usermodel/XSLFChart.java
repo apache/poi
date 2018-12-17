@@ -112,7 +112,7 @@ public final class XSLFChart extends XDDFChart {
      * @param rID relation id
      * @param anchor size and location of chart
      * @return graphic frame object
-     * @since POI 4.0.2
+     * @since POI 4.1.0
      */
     static CTGraphicalObjectFrame prototype(int shapeId, String rID, Rectangle2D anchor) {
         CTGraphicalObjectFrame frame = CTGraphicalObjectFrame.Factory.newInstance();

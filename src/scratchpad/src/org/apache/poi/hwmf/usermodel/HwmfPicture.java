@@ -43,6 +43,9 @@ import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.Units;
 
 public class HwmfPicture {
+    /** Max. record length - processing longer records will throw an exception */
+    public static final int MAX_RECORD_LENGTH = 50_000_000;
+
     private static final POILogger logger = POILogFactory.getLogger(HwmfPicture.class);
     
     final List<HwmfRecord> records = new ArrayList<>();
@@ -51,8 +54,7 @@ public class HwmfPicture {
     
     public HwmfPicture(InputStream inputStream) throws IOException {
 
-        try (BufferedInputStream bis = new BufferedInputStream(inputStream, 10000);
-             LittleEndianInputStream leis = new LittleEndianInputStream(bis)) {
+        try (LittleEndianInputStream leis = new LittleEndianInputStream(inputStream)) {
             placeableHeader = HwmfPlaceableHeader.readHeader(leis);
             header = new HwmfHeader(leis);
 
@@ -82,17 +84,12 @@ public class HwmfPicture {
                 if (wrt == HwmfRecordType.eof) {
                     break;
                 }
-                if (wrt.clazz == null) {
+                if (wrt.constructor == null) {
                     throw new IOException("unsupported record type: "+recordFunction);
                 }
 
-                HwmfRecord wr;
-                try {
-                    wr = wrt.clazz.newInstance();
-                    records.add(wr);
-                } catch (Exception e) {
-                    throw (IOException)new IOException("can't create wmf record").initCause(e);
-                }
+                final HwmfRecord wr = wrt.constructor.get();
+                records.add(wr);
 
                 consumedSize += wr.init(leis, recordSize, recordFunction);
                 int remainingSize = (int)(recordSize - consumedSize);
@@ -162,7 +159,7 @@ public class HwmfPicture {
             if (wOrg == null || wExt == null) {
                 throw new RuntimeException("invalid wmf file - window records are incomplete.");
             }
-            return new Rectangle2D.Double(wOrg.getX(), wOrg.getY(), wExt.getWidth(), wExt.getHeight());
+            return new Rectangle2D.Double(wOrg.getX(), wOrg.getY(), wExt.getSize().getWidth(), wExt.getSize().getHeight());
         }        
     }
     

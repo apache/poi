@@ -112,7 +112,7 @@ public class XSLFDrawing {
      *
      * @param rID relation id of chart
      * @param rect2D Chart Bounding values
-     * @since POI 4.0.2
+     * @since POI 4.1.0
      */
     public void addChart(String rID, Rectangle2D rect2D) {
         CTGraphicalObjectFrame sp = _spTree.addNewGraphicFrame();

@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.apache.poi</groupId>
         <artifactId>poi-parent</artifactId>
-        <version>4.0.2-SNAPSHOT</version>
+        <version>4.1.0-SNAPSHOT</version>
     </parent>
     <artifactId>poi-ooxml</artifactId>
     <packaging>jar</packaging>
@@ -184,6 +184,13 @@
             <artifactId>jmh-generator-annprocess</artifactId>
             <version>1.19</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <!-- don't add it to the distribution -->
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>batik-all</artifactId>
+            <version>1.10</version>
         </dependency>
     </dependencies>
 </project>

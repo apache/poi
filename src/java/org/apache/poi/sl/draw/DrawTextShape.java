@@ -40,8 +40,6 @@ public class DrawTextShape extends DrawSimpleShape {
 
     @Override
     public void drawContent(Graphics2D graphics) {
-        DrawFactory.getInstance(graphics).fixFonts(graphics);
-        
         TextShape<?,?> s = getShape();
         
         Rectangle2D anchor = DrawShape.getAnchor(graphics, s);
@@ -219,10 +217,9 @@ public class DrawTextShape extends DrawSimpleShape {
             graphics.addRenderingHints(oldGraphics.getRenderingHints());
             graphics.setTransform(oldGraphics.getTransform());
         }
-        DrawFactory.getInstance(graphics).fixFonts(graphics);
         return drawParagraphs(graphics, 0, 0);
     }
-    
+
     @Override
     protected TextShape<?,? extends TextParagraph<?,?,? extends TextRun>> getShape() {
         return (TextShape<?,? extends TextParagraph<?,?,? extends TextRun>>)shape;

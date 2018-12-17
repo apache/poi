@@ -76,6 +76,13 @@ import java.io.InputStream;
  */
 public interface ImageRenderer {
     /**
+     * Determines if this image renderer implementation supports the given contentType
+     * @param contentType the image content type
+     * @return if the content type is supported
+     */
+    boolean canRender(String contentType);
+
+    /**
      * Load and buffer the image
      *
      * @param data the raw image stream

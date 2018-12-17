@@ -15,30 +15,31 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hemf.hemfplus.record;
+package org.apache.poi.hemf.record.emf;
 
+import org.apache.poi.hwmf.record.HwmfPenStyle;
 
-import java.io.IOException;
+public class HemfPenStyle extends HwmfPenStyle {
 
-import org.apache.poi.util.Internal;
+    private float[] dashPattern;
 
-@Internal
-public interface HemfPlusRecord {
+    public static HemfPenStyle valueOf(int flag) {
+        HemfPenStyle ps = new HemfPenStyle();
+        ps.flag = flag;
+        return ps;
+    }
 
-    HemfPlusRecordType getRecordType();
+    @Override
+    public float[] getLineDashes() {
+        return (getLineDash() == HwmfLineDash.USERSTYLE) ? dashPattern : super.getLineDashes();
+    }
 
-    int getFlags();
+    public void setLineDashes(float[] dashPattern) {
+        this.dashPattern = (dashPattern == null) ? null : dashPattern.clone();
+    }
 
-    /**
-     *
-     * @param dataBytes these are the bytes that start after the id, flags, record size
-     *                    and go to the end of the record; they do not include any required padding
-     *                    at the end.
-     * @param recordId record type id
-     * @param flags flags
-     * @throws IOException, RecordFormatException
-     */
-    void init(byte[] dataBytes, int recordId, int flags) throws IOException;
-
-
+    @Override
+    public HemfPenStyle clone() {
+        return (HemfPenStyle)super.clone();
+    }
 }

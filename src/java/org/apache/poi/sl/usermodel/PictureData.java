@@ -46,7 +46,10 @@ public interface PictureData {
         /** WordPerfect graphics (.wpg) */
         WPG(-1,12,"image/x-wpg",".wpg"),
         /** Microsoft Windows Media Photo image (.wdp) */
-        WDP(-1,13,"image/vnd.ms-photo",".wdp");
+        WDP(-1,13,"image/vnd.ms-photo",".wdp"),
+        /** Scalable vector graphics (.svg) - supported by Office 2016 and higher */
+        SVG(-1, -1, "image/svg+xml", ".svg")
+        ;
         
         public final int nativeId, ooxmlId;
         public final String contentType,extension;

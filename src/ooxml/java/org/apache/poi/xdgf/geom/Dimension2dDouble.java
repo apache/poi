@@ -17,57 +17,18 @@
 
 package org.apache.poi.xdgf.geom;
 
-import java.awt.geom.Dimension2D;
+import org.apache.poi.util.Removal;
 
-public class Dimension2dDouble extends Dimension2D {
-
-    double width;
-    double height;
-
+/**
+ * @deprecated in 4.1.0 - use org.apache.poi.util.Dimension2DDouble
+ */
+@Deprecated
+@Removal(version = "5.0.0")
+public class Dimension2dDouble extends org.apache.poi.util.Dimension2DDouble {
     public Dimension2dDouble() {
-        width = 0d;
-        height = 0d;
     }
 
     public Dimension2dDouble(double width, double height) {
-        this.width = width;
-        this.height = height;
-    }
-
-    @Override
-    public double getWidth() {
-        return width;
-    }
-
-    @Override
-    public double getHeight() {
-        return height;
-    }
-
-    @Override
-    public void setSize(double width, double height) {
-        this.width = width;
-        this.height = height;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof Dimension2dDouble) {
-            Dimension2dDouble other = (Dimension2dDouble) obj;
-            return width == other.width && height == other.height;
-        }
-
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        double sum = width + height;
-        return (int) Math.ceil(sum * (sum + 1) / 2 + width);
-    }
-
-    @Override
-    public String toString() {
-        return "Dimension2dDouble[" + width + ", " + height + "]";
+        super(width, height);
     }
 }

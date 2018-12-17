@@ -19,7 +19,9 @@ package org.apache.poi.hwmf.draw;
 
 import java.awt.Color;
 import java.awt.Shape;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
+import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -36,6 +38,7 @@ import org.apache.poi.hwmf.record.HwmfMapMode;
 import org.apache.poi.hwmf.record.HwmfMisc.WmfSetBkMode.HwmfBkMode;
 import org.apache.poi.hwmf.record.HwmfPalette.PaletteEntry;
 import org.apache.poi.hwmf.record.HwmfPenStyle;
+import org.apache.poi.hwmf.record.HwmfTernaryRasterOp;
 import org.apache.poi.hwmf.record.HwmfText.HwmfTextAlignment;
 import org.apache.poi.hwmf.record.HwmfText.HwmfTextVerticalAlignment;
 
@@ -43,36 +46,59 @@ public class HwmfDrawProperties {
     private final Rectangle2D window;
     private Rectangle2D viewport;
     private final Point2D location;
-    private HwmfMapMode mapMode = HwmfMapMode.MM_ANISOTROPIC;
-    private HwmfColorRef backgroundColor = new HwmfColorRef(Color.BLACK);
-    private HwmfBrushStyle brushStyle = HwmfBrushStyle.BS_SOLID;
-    private HwmfColorRef brushColor = new HwmfColorRef(Color.BLACK);
-    private HwmfHatchStyle brushHatch = HwmfHatchStyle.HS_HORIZONTAL;
+    private HwmfMapMode mapMode;
+    private HwmfColorRef backgroundColor;
+    private HwmfBrushStyle brushStyle;
+    private HwmfColorRef brushColor;
+    private HwmfHatchStyle brushHatch;
     private BufferedImage brushBitmap;
-    private double penWidth = 1;
-    private HwmfPenStyle penStyle = HwmfPenStyle.valueOf(0);
-    private HwmfColorRef penColor = new HwmfColorRef(Color.BLACK);
-    private double penMiterLimit = 10;
-    private HwmfBkMode bkMode = HwmfBkMode.OPAQUE;
-    private HwmfPolyfillMode polyfillMode = HwmfPolyfillMode.WINDING;
+    private double penWidth;
+    private HwmfPenStyle penStyle;
+    private HwmfColorRef penColor;
+    private double penMiterLimit;
+    private HwmfBkMode bkMode;
+    private HwmfPolyfillMode polyfillMode;
     private Shape region;
     private List<PaletteEntry> palette;
     private int paletteOffset;
     private HwmfFont font;
-    private HwmfColorRef textColor = new HwmfColorRef(Color.BLACK);
-    private HwmfTextAlignment textAlignLatin = HwmfTextAlignment.LEFT;
-    private HwmfTextVerticalAlignment textVAlignLatin = HwmfTextVerticalAlignment.TOP;
-    private HwmfTextAlignment textAlignAsian = HwmfTextAlignment.RIGHT;
-    private HwmfTextVerticalAlignment textVAlignAsian = HwmfTextVerticalAlignment.TOP;
+    private HwmfColorRef textColor;
+    private HwmfTextAlignment textAlignLatin;
+    private HwmfTextVerticalAlignment textVAlignLatin;
+    private HwmfTextAlignment textAlignAsian;
+    private HwmfTextVerticalAlignment textVAlignAsian;
+    private HwmfTernaryRasterOp rasterOp;
+    protected Shape clip;
+    protected final AffineTransform transform = new AffineTransform();
 
     public HwmfDrawProperties() {
         window = new Rectangle2D.Double(0, 0, 1, 1);
         viewport = null;
         location = new Point2D.Double(0,0);
+        mapMode = HwmfMapMode.MM_ANISOTROPIC;
+        backgroundColor = new HwmfColorRef(Color.BLACK);
+        brushStyle = HwmfBrushStyle.BS_SOLID;
+        brushColor = new HwmfColorRef(Color.BLACK);
+        brushHatch = HwmfHatchStyle.HS_HORIZONTAL;
+        penWidth = 1;
+        penStyle = HwmfPenStyle.valueOf(0);
+        penColor = new HwmfColorRef(Color.BLACK);
+        penMiterLimit = 10;
+        bkMode = HwmfBkMode.OPAQUE;
+        polyfillMode = HwmfPolyfillMode.WINDING;
+        textColor = new HwmfColorRef(Color.BLACK);
+        textAlignLatin = HwmfTextAlignment.LEFT;
+        textVAlignLatin = HwmfTextVerticalAlignment.TOP;
+        textAlignAsian = HwmfTextAlignment.RIGHT;
+        textVAlignAsian = HwmfTextVerticalAlignment.TOP;
+        rasterOp = HwmfTernaryRasterOp.PATCOPY;
+        clip = null;
+        font = new HwmfFont();
+        font.initDefaults();
     }
     
     public HwmfDrawProperties(HwmfDrawProperties other) {
-        this.window = (Rectangle2D)other.window.clone();
+        this.window = (other.window == null) ? null : (Rectangle2D)other.window.clone();
         this.viewport = (other.viewport == null) ? null : (Rectangle2D)other.viewport.clone();
         this.location = (Point2D)other.location.clone();
         this.mapMode = other.mapMode;
@@ -86,7 +112,7 @@ public class HwmfDrawProperties {
             WritableRaster raster = other.brushBitmap.copyData(null);
             this.brushBitmap = new BufferedImage(cm, raster, isAlphaPremultiplied, null);            
         }
-        this.penWidth = 1;
+        this.penWidth = other.penWidth;
         this.penStyle = (other.penStyle == null) ? null : other.penStyle.clone();
         this.penColor = (other.penColor == null) ? null : other.penColor.clone();
         this.penMiterLimit = other.penMiterLimit;
@@ -101,6 +127,13 @@ public class HwmfDrawProperties {
         this.paletteOffset = other.paletteOffset;
         this.font = other.font;
         this.textColor = (other.textColor == null) ? null : other.textColor.clone();
+        this.textAlignLatin = other.textAlignLatin;
+        this.textVAlignLatin = other.textVAlignLatin;
+        this.textAlignAsian = other.textAlignAsian;
+        this.textVAlignAsian = other.textVAlignAsian;
+        this.rasterOp = other.rasterOp;
+        this.transform.setTransform(other.transform);
+        this.clip = other.clip;
     }
     
     public void setViewportExt(double width, double height) {
@@ -147,6 +180,10 @@ public class HwmfDrawProperties {
 
     public void setLocation(double x, double y) {
         location.setLocation(x, y);
+    }
+
+    public void setLocation(Point2D point) {
+        location.setLocation(point);
     }
 
     public Point2D getLocation() {
@@ -342,5 +379,36 @@ public class HwmfDrawProperties {
 
     public void setTextVAlignAsian(HwmfTextVerticalAlignment textVAlignAsian) {
         this.textVAlignAsian = textVAlignAsian;
+    }
+
+    /**
+     * @return the current active winding rule ({@link Path2D#WIND_EVEN_ODD} or {@link Path2D#WIND_NON_ZERO})
+     */
+    public int getWindingRule() {
+        return getPolyfillMode().awtFlag;
+    }
+
+    public HwmfTernaryRasterOp getRasterOp() {
+        return rasterOp;
+    }
+
+    public void setRasterOp(HwmfTernaryRasterOp rasterOp) {
+        this.rasterOp = rasterOp;
+    }
+
+    public AffineTransform getTransform() {
+        return transform;
+    }
+
+    public void setTransform(AffineTransform transform) {
+        this.transform.setTransform(transform);
+    }
+
+    public Shape getClip() {
+        return clip;
+    }
+
+    public void setClip(Shape clip) {
+        this.clip = clip;
     }
 }

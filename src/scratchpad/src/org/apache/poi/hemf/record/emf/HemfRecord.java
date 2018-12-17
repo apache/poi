@@ -15,35 +15,47 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.hemf.record;
+package org.apache.poi.hemf.record.emf;
 
 
 import java.io.IOException;
 
-import org.apache.poi.util.IOUtils;
+import org.apache.poi.hemf.draw.HemfGraphics;
+import org.apache.poi.hwmf.record.HwmfRecord;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianInputStream;
 
 @Internal
-public class UnimplementedHemfRecord implements HemfRecord {
+public interface HemfRecord {
 
-    private long recordId;
-    public UnimplementedHemfRecord() {
+    HemfRecordType getEmfRecordType();
 
-    }
+    /**
+     * Init record from stream
+     *
+     * @param leis the little endian input stream
+     * @param recordSize the size limit for this record
+     * @param recordId the id of the {@link HemfRecordType}
+     *
+     * @return count of processed bytes
+     *
+     * @throws IOException when the inputstream is malformed
+     */
+    long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException;
 
-    @Override
-    public HemfRecordType getRecordType() {
-        return HemfRecordType.getById(recordId);
-    }
-
-    @Override
-    public long init(LittleEndianInputStream leis, long recordId, long recordSize) throws IOException {
-        this.recordId = recordId;
-        long skipped = IOUtils.skipFully(leis, recordSize);
-        if (skipped < recordSize) {
-            throw new IOException("End of stream reached before record read");
+    /**
+     * Draws the record, the default redirects to the parent WMF record drawing
+     * @param ctx the drawing context
+     */
+    default void draw(HemfGraphics ctx) {
+        if (this instanceof HwmfRecord) {
+            ((HwmfRecord) this).draw(ctx);
         }
-        return skipped;
     }
+
+    /**
+     * Sets the header reference, in case the record needs to refer to it
+     * @param header the emf header
+     */
+    default void setHeader(HemfHeader header) {}
 }
