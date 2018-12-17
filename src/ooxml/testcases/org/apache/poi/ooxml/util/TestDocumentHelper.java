@@ -39,6 +39,7 @@ public class TestDocumentHelper {
     public void testDocumentBuilderFactory() throws Exception {
         try {
             assertTrue(DocumentHelper.documentBuilderFactory.getFeature(XMLConstants.FEATURE_SECURE_PROCESSING));
+            assertTrue(DocumentHelper.documentBuilderFactory.getFeature(POIXMLConstants.FEATURE_DISALLOW_DOCTYPE_DECL));
             assertFalse(DocumentHelper.documentBuilderFactory.getFeature(POIXMLConstants.FEATURE_LOAD_DTD_GRAMMAR));
             assertFalse(DocumentHelper.documentBuilderFactory.getFeature(POIXMLConstants.FEATURE_LOAD_EXTERNAL_DTD));
         } catch(AbstractMethodError e) {

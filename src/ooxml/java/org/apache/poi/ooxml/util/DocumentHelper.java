@@ -105,6 +105,7 @@ public final class DocumentHelper {
         //entity expansions to 1 in trySetXercesSecurityManager
         documentBuilderFactory.setExpandEntityReferences(false);
         trySetFeature(documentBuilderFactory, XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        trySetFeature(documentBuilderFactory, POIXMLConstants.FEATURE_DISALLOW_DOCTYPE_DECL, true);
         trySetFeature(documentBuilderFactory, POIXMLConstants.FEATURE_LOAD_DTD_GRAMMAR, false);
         trySetFeature(documentBuilderFactory, POIXMLConstants.FEATURE_LOAD_EXTERNAL_DTD, false);
         trySetXercesSecurityManager(documentBuilderFactory);
