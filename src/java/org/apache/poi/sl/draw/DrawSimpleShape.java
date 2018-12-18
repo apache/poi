@@ -69,6 +69,10 @@ public class DrawSimpleShape extends DrawShape {
 
     @Override
     public void draw(Graphics2D graphics) {
+        if (getAnchor(graphics, getShape()) == null) {
+            return;
+        }
+
         DrawPaint drawPaint = DrawFactory.getInstance(graphics).getPaint(getShape());
         Paint fill = drawPaint.getPaint(graphics, getShape().getFillStyle().getPaint());
         Paint line = drawPaint.getPaint(graphics, getShape().getStrokeStyle().getPaint());

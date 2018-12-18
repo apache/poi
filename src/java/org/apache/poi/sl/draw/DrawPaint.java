@@ -143,7 +143,7 @@ public class DrawPaint {
 
     public Paint getPaint(Graphics2D graphics, PaintStyle paint, PaintModifier modifier) {
         if (modifier == PaintModifier.NONE) {
-            return null;
+            return TRANSPARENT;
         }
         if (paint instanceof SolidPaint) {
             return getSolidPaint((SolidPaint)paint, graphics, modifier);
@@ -152,7 +152,7 @@ public class DrawPaint {
         } else if (paint instanceof TexturePaint) {
             return getTexturePaint((TexturePaint)paint, graphics);
         }
-        return null;
+        return TRANSPARENT;
     }
 
     @SuppressWarnings({"WeakerAccess", "unused"})
@@ -236,7 +236,7 @@ public class DrawPaint {
     protected Paint getTexturePaint(TexturePaint fill, Graphics2D graphics) {
         InputStream is = fill.getImageData();
         if (is == null) {
-            return null;
+            return TRANSPARENT;
         }
         assert(graphics != null);
 
@@ -250,7 +250,7 @@ public class DrawPaint {
             }
         } catch (IOException e) {
             LOG.log(POILogger.ERROR, "Can't load image data - using transparent color", e);
-            return null;
+            return TRANSPARENT;
         }
 
         int alpha = fill.getAlpha();
@@ -270,7 +270,7 @@ public class DrawPaint {
 
         if(image == null) {
             LOG.log(POILogger.ERROR, "Can't load image data");
-            return null;
+            return TRANSPARENT;
         }
 
         return new java.awt.TexturePaint(image, textAnchor);

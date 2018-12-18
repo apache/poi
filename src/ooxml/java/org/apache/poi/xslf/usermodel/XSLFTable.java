@@ -159,6 +159,16 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
         return row;
     }
 
+    /**
+     * Remove the row on the given index
+     * @param rowIdx the row index
+     */
+    public void removeRow(int rowIdx) {
+        _table.removeTr(rowIdx);
+        _rows.remove(rowIdx);
+        updateRowColIndexes();
+    }
+
     static CTGraphicalObjectFrame prototype(int shapeId){
         CTGraphicalObjectFrame frame = CTGraphicalObjectFrame.Factory.newInstance();
         CTGraphicalObjectFrameNonVisual nvGr = frame.addNewNvGraphicFramePr();
@@ -275,12 +285,15 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
         }
     }
 
-    /* package */ void updateCellAnchor() {
+    /**
+     * Calculates the bounding boxes of all cells and updates the dimension of the table
+     */
+    public void updateCellAnchor() {
         int rows = getNumberOfRows();
         int cols = getNumberOfColumns();
 
-        double colWidths[] = new double[cols];
-        double rowHeights[] = new double[rows];
+        double[] colWidths = new double[cols];
+        double[] rowHeights = new double[rows];
 
         for (int row=0; row<rows; row++) {
             rowHeights[row] = getRowHeight(row);
@@ -292,7 +305,8 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
         Rectangle2D tblAnc = getAnchor();
         DrawFactory df = DrawFactory.getInstance(null);
         
-        double newY = tblAnc.getY();
+        double nextY = tblAnc.getY();
+        double nextX = tblAnc.getX();
 
         // #1 pass - determine row heights, the height values might be too low or 0 ...
         for (int row=0; row<rows; row++) {
@@ -312,16 +326,16 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
         
         // #2 pass - init properties
         for (int row=0; row<rows; row++) {
-            double newX = tblAnc.getX();
+            nextX = tblAnc.getX();
             for (int col=0; col<cols; col++) {
-                Rectangle2D bounds = new Rectangle2D.Double(newX, newY, colWidths[col], rowHeights[row]);
+                Rectangle2D bounds = new Rectangle2D.Double(nextX, nextY, colWidths[col], rowHeights[row]);
                 XSLFTableCell tc = getCell(row, col);
                 if (tc != null) {
                     tc.setAnchor(bounds);
-                    newX += colWidths[col]+DrawTableShape.borderSize;
+                    nextX += colWidths[col]+DrawTableShape.borderSize;
                 }
             }
-            newY += rowHeights[row]+DrawTableShape.borderSize;
+            nextY += rowHeights[row]+DrawTableShape.borderSize;
         }
         
         // #3 pass - update merge info
@@ -347,6 +361,9 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
                 tc.setAnchor(mergedBounds);
             }
         }
-        
+
+        setAnchor(new Rectangle2D.Double(tblAnc.getX(),tblAnc.getY(),
+                nextX-tblAnc.getX(),
+                nextY-tblAnc.getY()));
     }
 }
