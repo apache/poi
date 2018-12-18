@@ -243,6 +243,18 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     }
 
     /**
+     * Set the language tag associated with this run.
+     *
+     * @param lang the language tag associated with this run
+     * @since 4.1.0
+     */
+    public void setLang(String lang) {
+        CTRPr pr = getRunProperties(true);
+        CTLanguage ctLang = pr.isSetLang() ? pr.getLang() : pr.addNewLang();
+        ctLang.setVal(lang);
+    }
+
+    /**
      * Whether the bold property shall be applied to all non-complex script
      * characters in the contents of this run when displayed in a document
      *
@@ -1545,7 +1557,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * @param create If true, create the properties, if false, do not.
      * @return The run properties or null if there are no properties and create is false.
      */
-    private CTRPr getRunProperties(boolean create) {
+    protected CTRPr getRunProperties(boolean create) {
         CTRPr pr = run.isSetRPr() ? run.getRPr() : null;
         if (create && pr == null) {
             pr = run.addNewRPr();
