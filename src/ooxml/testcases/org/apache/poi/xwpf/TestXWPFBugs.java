@@ -43,13 +43,24 @@ import org.junit.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.DocumentDocument;
 
 public class TestXWPFBugs {
+    private static final POIDataSamples samples = POIDataSamples.getDocumentInstance();
+
+    @Test
+    public void truncatedDocx() throws Exception {
+        try (InputStream fis = samples.openResourceAsStream("truncated62886.docx");
+            OPCPackage opc = OPCPackage.open(fis);
+            XWPFWordExtractor ext = new XWPFWordExtractor(opc)) {
+            assertNotNull(ext.getText());
+        }
+    }
+
     /**
      * A word document that's encrypted with non-standard
      * Encryption options, and no cspname section. See bug 53475
      */
     @Test
     public void bug53475NoCSPName() throws Exception {
-        File file = POIDataSamples.getDocumentInstance().getFile("bug53475-password-is-solrcell.docx");
+        File file = samples.getFile("bug53475-password-is-solrcell.docx");
         POIFSFileSystem filesystem = new POIFSFileSystem(file, true);
 
         // Check the encryption details
@@ -84,7 +95,7 @@ public class TestXWPFBugs {
         int maxKeyLen = Cipher.getMaxAllowedKeyLength("AES");
         Assume.assumeTrue("Please install JCE Unlimited Strength Jurisdiction Policy files for AES 256", maxKeyLen == 2147483647);
 
-        File file = POIDataSamples.getDocumentInstance().getFile("bug53475-password-is-pass.docx");
+        File file = samples.getFile("bug53475-password-is-pass.docx");
         POIFSFileSystem filesystem = new POIFSFileSystem(file, true);
 
         // Check the encryption details
@@ -117,7 +128,7 @@ public class TestXWPFBugs {
     public void bug59058() throws IOException, XmlException {
         String files[] = { "bug57031.docx", "bug59058.docx" };
         for (String f : files) {
-            ZipFile zf = new ZipFile(POIDataSamples.getDocumentInstance().getFile(f));
+            ZipFile zf = new ZipFile(samples.getFile(f));
             ZipArchiveEntry entry = zf.getEntry("word/document.xml");
             DocumentDocument document = DocumentDocument.Factory.parse(zf.getInputStream(entry));
             assertNotNull(document);
