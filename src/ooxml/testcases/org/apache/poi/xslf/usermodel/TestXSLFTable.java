@@ -68,7 +68,7 @@ public class TestXSLFTable {
             tab.setColumnWidth(1, 60);
             tab.setColumnWidth(2, 60);
 
-            int startRow = rowIdx;
+            int startRow = rowIdx-1;
 
             XSLFTableRow row = tab.getRows().get(0);
             for (int colIdx=0; colIdx<data[0].length; colIdx++) {
@@ -97,7 +97,7 @@ public class TestXSLFTable {
             as.setAnchor(tab.getAnchor());
         }
 
-        File fileOut = TempFile.createTempFile("tabtest", "pptx");
+        File fileOut = TempFile.createTempFile("tabtest", ".pptx");
         try (FileOutputStream fos = new FileOutputStream(fileOut)) {
             ppt.write(fos);
         }
