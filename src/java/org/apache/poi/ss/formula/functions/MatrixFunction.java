@@ -284,16 +284,23 @@ public abstract class MatrixFunction implements Function{
         }
     };
     
-    public static final Function MDETERM = new OneArrayArg() {
-        private final MutableValueCollector instance = new MutableValueCollector(false, false);
-        
+    public static final Function MDETERM = new Mdeterm();
+
+    private static class Mdeterm extends OneArrayArg {
+        private final MutableValueCollector instance;
+
+        public Mdeterm() {
+            instance = new MutableValueCollector(false, false);
+            instance.setBlankEvalPolicy(MultiOperandNumericFunction.Policy.ERROR);
+        }
+
         protected double[] collectValues(ValueEval arg) throws EvaluationException {
             double[] values = instance.collectValues(arg);
             
             /* handle case where MDETERM is operating on an array that that is not completely filled*/
             if (arg instanceof AreaEval && values.length == 1)
                 throw new EvaluationException(ErrorEval.VALUE_INVALID);
-            
+
             return instance.collectValues(arg);
         }
         
@@ -307,7 +314,7 @@ public abstract class MatrixFunction implements Function{
             result[0][0] = (new LUDecomposition(temp)).getDeterminant();
             return result;
         }
-    };
+    }
     
     public static final Function MMULT = new TwoArrayArg() {
         private final MutableValueCollector instance = new MutableValueCollector(false, false);

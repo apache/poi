@@ -218,11 +218,7 @@ public abstract class AggregateFunction extends MultiOperandNumericFunction {
 
     public static final Function PERCENTILE = new Percentile();
 
-    public static final Function PRODUCT = new AggregateFunction() {
-        protected double evaluate(double[] values) {
-            return MathX.product(values);
-        }
-    };
+    public static final Function PRODUCT = new Product();
     public static final Function SMALL = new LargeSmall(false);
     public static final Function STDEV = new AggregateFunction() {
         protected double evaluate(double[] values) throws EvaluationException {
@@ -258,7 +254,24 @@ public abstract class AggregateFunction extends MultiOperandNumericFunction {
             return StatsLib.varp(values);
         }
     };
-    public static final Function GEOMEAN = new AggregateFunction() {
+    public static final Function GEOMEAN = new Geomean();
+
+    private static class Product extends AggregateFunction {
+        Product() {
+            setMissingArgPolicy(Policy.SKIP);
+        }
+
+        @Override
+        protected double evaluate(double[] values) throws EvaluationException {
+            return MathX.product(values);
+        }
+    }
+
+    private static class Geomean extends AggregateFunction {
+        Geomean() {
+            setMissingArgPolicy(Policy.COERCE);
+        }
+
         @Override
         protected double evaluate(double[] values) throws EvaluationException {
             // The library implementation returns 0 for an input sequence like [1, 0]. So this check is necessary.
@@ -269,5 +282,5 @@ public abstract class AggregateFunction extends MultiOperandNumericFunction {
             }
             return new GeometricMean().evaluate(values, 0, values.length);
         }
-    };
+    }
 }
