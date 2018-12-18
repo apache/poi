@@ -20,6 +20,7 @@ package org.apache.poi.openxml4j.util;
 import static org.apache.poi.openxml4j.util.ZipSecureFile.MAX_ENTRY_SIZE;
 import static org.apache.poi.openxml4j.util.ZipSecureFile.MIN_INFLATE_RATIO;
 
+import java.io.EOFException;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -144,6 +145,8 @@ public class ZipArchiveThresholdInputStream extends FilterInputStream {
                         "No valid entries or contents found, this is not a valid OOXML (Office Open XML) file", ze);
             }
             throw ze;
+        } catch (EOFException e) {
+            return null;
         }
     }
 
