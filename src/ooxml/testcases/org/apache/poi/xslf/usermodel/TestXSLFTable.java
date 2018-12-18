@@ -26,22 +26,118 @@ import static org.junit.Assert.assertTrue;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Random;
 
-import org.apache.poi.sl.draw.DrawFactory;
+import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.sl.usermodel.Slide;
+import org.apache.poi.sl.usermodel.StrokeStyle;
 import org.apache.poi.sl.usermodel.TableCell.BorderEdge;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
+import org.apache.poi.util.TempFile;
 import org.apache.poi.xslf.XSLFTestDataSamples;
+import org.apache.poi.xslf.util.PPTX2PNG;
 import org.junit.Test;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTableCell;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFrame;
 
 public class TestXSLFTable {
+
+    @Test
+    public void testResize() throws Exception {
+        String[][] data = getDummyData(20);
+        final int maxHeight = 400;
+
+        XMLSlideShow ppt = new XMLSlideShow();
+        int rowIdx=1;
+        while (rowIdx<data.length) {
+            XSLFSlide slide = ppt.createSlide();
+            // a red bordered box in the background, to show/verify the table dimensions
+            XSLFAutoShape as = slide.createAutoShape();
+            as.setShapeType(ShapeType.RECT);
+            as.setStrokeStyle(Color.RED, 2., StrokeStyle.LineDash.LG_DASH);
+
+            XSLFTable tab = slide.createTable(1, data[0].length);
+            tab.setAnchor(new Rectangle2D.Double(50,50,0,0));
+            tab.setColumnWidth(0, 60);
+            tab.setColumnWidth(1, 60);
+            tab.setColumnWidth(2, 60);
+
+            int startRow = rowIdx;
+
+            XSLFTableRow row = tab.getRows().get(0);
+            for (int colIdx=0; colIdx<data[0].length; colIdx++) {
+                XSLFTextRun tr = row.getCells().get(colIdx).setText(data[0][colIdx]);
+                tr.setFontSize(20.);
+                tr.setFontFamily("Arial");
+            }
+
+
+            while (rowIdx<data.length) {
+                row = tab.addRow();
+                for (int col=0; col<data[rowIdx].length; col++) {
+                    XSLFTextRun tr = row.addCell().setText(data[rowIdx][col]);
+                    tr.setFontSize(15.);
+                    tr.setFontFamily("Arial");
+                }
+                tab.updateCellAnchor();
+                if (tab.getAnchor().getHeight() > maxHeight) {
+                    tab.removeRow(rowIdx-startRow);
+                    break;
+                }
+                rowIdx++;
+            }
+
+            tab.updateCellAnchor();
+            as.setAnchor(tab.getAnchor());
+        }
+
+        File fileOut = TempFile.createTempFile("tabtest", "pptx");
+        try (FileOutputStream fos = new FileOutputStream(fileOut)) {
+            ppt.write(fos);
+        }
+
+        String[] args = {
+            "-format", "null", // png,gif,jpg or null for test
+            "-slide", "-1", // -1 for all
+            "-outdir", fileOut.getParentFile().getCanonicalPath(),
+            "-quiet",
+            fileOut.getAbsolutePath()
+        };
+        PPTX2PNG.main(args);
+    }
+
+    private static String[][] getDummyData(int rows) {
+        String[] header = { "Row#", "ID", "Name", "Description", "Price", "Percent", "Current Value" };
+        String[][] data = new String[rows+1][header.length];
+        System.arraycopy(header, 0, data[0], 0, header.length);
+
+        String[] names = { "car", "rubber duckie", "phone", "gadget" };
+        String[] desc = { "new", "used", "untouched" };
+
+        Random r = new Random();
+
+        for (int row=1; row<=rows; row++) {
+            String[] line = new String[header.length];
+            line[0] = Integer.toString(row);
+            line[1] = Integer.toString(r.nextInt(1000));
+            line[2] = names[r.nextInt(names.length)];
+            line[3] = "The "+desc[r.nextInt(desc.length)]+" "+line[2]+" in "+(2017+row);
+            line[4] = "$"+r.nextInt(50000);
+            line[5] = r.nextInt(100)+"%";
+            line[6] = "$"+r.nextInt(50000);
+            System.arraycopy(line, 0, data[row], 0, header.length);
+        }
+
+        return data;
+    }
+
+
     @Test
     public void testRead() throws IOException {
         XMLSlideShow  ppt = XSLFTestDataSamples.openSampleDocument("shapes.pptx");

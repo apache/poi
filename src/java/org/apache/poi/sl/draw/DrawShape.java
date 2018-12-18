@@ -121,7 +121,10 @@ public class DrawShape implements Drawable {
     }
 
     public static Rectangle2D getAnchor(Graphics2D graphics, PlaceableShape<?,?> shape) {
-//        return getAnchor(graphics, shape.getAnchor());
+        final Rectangle2D shapeAnchor = shape.getAnchor();
+        if (shapeAnchor == null) {
+            return null;
+        }
 
         final boolean isHSLF = isHSLF(shape);
         AffineTransform tx = graphics == null ? null : (AffineTransform)graphics.getRenderingHint(Drawable.GROUP_TRANSFORM);
@@ -146,7 +149,6 @@ public class DrawShape implements Drawable {
             // and later on, turn it around again to compare it with its original size ...
 
 
-            final Rectangle2D shapeAnchor = shape.getAnchor();
             final Rectangle2D anchorO = tx.createTransformedShape(shapeAnchor).getBounds2D();
 
             final Rectangle2D anchorT;
@@ -190,7 +192,7 @@ public class DrawShape implements Drawable {
                 normalizedShape = txs2.createTransformedShape(shapeAnchor).getBounds2D();
             }
         } else {
-            normalizedShape = shape.getAnchor();
+            normalizedShape = shapeAnchor;
         }
 
         if (tx.isIdentity()) {
