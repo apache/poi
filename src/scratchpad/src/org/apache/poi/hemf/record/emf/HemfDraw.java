@@ -783,7 +783,7 @@ public class HemfDraw {
                         int mode2 = leis.readUByte();
                         int mode3 = leis.readUByte();
                         assert(mode2 == 0x04 && (mode3 == 0x04 || mode3 == 0x05));
-                        if ((i + 2) > points.length) {
+                        if ((i + 2) >= points.length) {
                             throw new IllegalStateException("Points index causes index out of bounds");
                         }
                         poly.curveTo(
