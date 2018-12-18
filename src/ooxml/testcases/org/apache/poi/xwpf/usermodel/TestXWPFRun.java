@@ -442,9 +442,24 @@ public class TestXWPFRun {
         assertEquals(1, count);
         sampleDoc.close();
     }
-    
+
     @Test
     public void testSetGetLang() {
+        XWPFRun run = p.createRun();
+        assertNull(run.getLang());
+
+        run.setLang("en-CA");
+        assertEquals("en-CA", run.getLang());
+
+        run.setLang("fr-CA");
+        assertEquals("fr-CA", run.getLang());
+
+        run.setLang(null);
+        assertNull(run.getLang());
+    }
+
+    @Test
+    public void testSetGetLang2() {
         XWPFRun run = p.createRun();
         assertNull(run.getLang());
 
