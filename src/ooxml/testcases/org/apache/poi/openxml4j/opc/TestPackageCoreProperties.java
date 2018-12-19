@@ -36,6 +36,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Test;
 import org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperty;
 
+import static org.apache.poi.openxml4j.opc.TestContentType.isOldXercesActive;
 import static org.junit.Assert.*;
 
 public final class TestPackageCoreProperties {
@@ -249,9 +250,9 @@ public final class TestPackageCoreProperties {
         // Get the Core Properties
         PackagePropertiesPart props = (PackagePropertiesPart)p.getPackageProperties();
         
-        // used to resolve a vale but now we ignore DTD entities for security reasons
-        assertFalse(props.getCreatorProperty().isPresent());
-        
+        // used to resolve a value but now we ignore DTD entities for security reasons
+        assertEquals(isOldXercesActive(), props.getCreatorProperty().isPresent());
+
         p.close();
     }
     

@@ -17,6 +17,8 @@
 
 package org.apache.poi.openxml4j.opc;
 
+import static org.apache.poi.openxml4j.opc.TestContentType.isOldXercesActive;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -418,8 +420,8 @@ public class TestRelationships extends TestCase {
             if (pr.getRelationshipType().equals(PackageRelationshipTypes.EXTENDED_PROPERTIES))
                 foundExtPropRel = true;
         }
-        assertFalse("Core/Doc Relationship not found in " + p.getRelationships(), foundDocRel);
-        assertFalse("Core Props Relationship not found in " + p.getRelationships(), foundCorePropRel);
-        assertFalse("Ext Props Relationship not found in " + p.getRelationships(), foundExtPropRel);
+        assertEquals("Core/Doc Relationship not found in " + p.getRelationships(), isOldXercesActive(), foundDocRel);
+        assertEquals("Core Props Relationship not found in " + p.getRelationships(), isOldXercesActive(), foundCorePropRel);
+        assertEquals("Ext Props Relationship not found in " + p.getRelationships(), isOldXercesActive(), foundExtPropRel);
     }
 }

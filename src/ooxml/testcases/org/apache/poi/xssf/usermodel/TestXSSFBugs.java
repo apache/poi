@@ -17,6 +17,7 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import static org.apache.poi.openxml4j.opc.TestContentType.isOldXercesActive;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -1969,7 +1970,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             fail("should have thrown SAXParseException");
         } catch (SAXParseException e) {
             assertNotNull(e.getMessage());
-            assertTrue(e.getMessage().contains("DOCTYPE is disallowed when the feature"));
+            assertNotEquals(isOldXercesActive(), e.getMessage().contains("DOCTYPE is disallowed when the feature"));
         }
     }
 

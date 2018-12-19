@@ -18,20 +18,27 @@
 package org.apache.poi.openxml4j.opc;
 
 import java.io.InputStream;
+import java.net.URL;
 
+import org.apache.poi.ooxml.util.POIXMLConstants;
 import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.internal.ContentType;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.*;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+
 /**
  * Tests for content type (ContentType class).
- *
- * @author Julien Chable
  */
 public final class TestContentType {
+
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
 
     /**
      * Check rule M1.13: Package implementers shall only create and only
@@ -144,9 +151,14 @@ public final class TestContentType {
     /**
      * OOXML content types don't need entities and we shouldn't
      * barf if we get one from a third party system that added them
+     * (expected = InvalidFormatException.class)
      */
-    @Test(expected = InvalidFormatException.class)
+    @Test
     public void testFileWithContentTypeEntities() throws Exception {
+        if (!isOldXercesActive()) {
+            exception.expect(InvalidFormatException.class);
+        }
+
         InputStream is = OpenXML4JTestDataSamples.openSampleStream("ContentTypeHasEntities.ooxml");
         OPCPackage.open(is);
     }
@@ -224,5 +236,14 @@ public final class TestContentType {
 
     private static void assertContains(String needle, String haystack) {
         assertTrue(haystack.contains(needle));
+    }
+
+    public static boolean isOldXercesActive() {
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        try {
+            dbf.setFeature(POIXMLConstants.FEATURE_DISALLOW_DOCTYPE_DECL, true);
+            return false;
+        } catch (Exception|AbstractMethodError ignored) {}
+        return true;
     }
 }
