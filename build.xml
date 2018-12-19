@@ -1488,7 +1488,7 @@ under the License.
     </target>
 
     <target name="test-main" unless="main.test.notRequired"
-            depends="compile-main, -test-main-check,jacocotask" xmlns:jacoco="antlib:org.jacoco.ant"
+            depends="compile-main, -test-main-check,jacocotask"
             description="tests POI classes that deal with the Microsoft Office binary (BIFF8) file formats (excludes OOXML)">
         <poiunit failureproperty="main.test.failed" heap="256" showoutput="true" jacocodest="build/jacoco-main.exec">
             <classpath>
@@ -1537,8 +1537,8 @@ under the License.
         </uptodate>
     </target>
 
-    <target name="test-scratchpad" depends="compile-main,compile-scratchpad,-test-scratchpad-check,test-scratchpad-download-resources"
-            unless="scratchpad.test.notRequired" xmlns:jacoco="antlib:org.jacoco.ant"
+    <target name="test-scratchpad" depends="jacocotask,compile-main,compile-scratchpad,-test-scratchpad-check,test-scratchpad-download-resources"
+            unless="scratchpad.test.notRequired"
             description="test non-OOXML scratchpad classes">
         <poiunit failureproperty="scratchpad.test.failed" heap="512" jacocodest="build/jacoco-scratchpad.exec">
             <classpath>
@@ -1625,7 +1625,7 @@ under the License.
     </target>
 
     <target name="test-integration" depends="compile-integration,-test-integration-check,jacocotask,-ooxml-lite-agent"
-            unless="integration.test.notRequired" xmlns:jacoco="antlib:org.jacoco.ant">
+            unless="integration.test.notRequired">
         <propertyreset name="org.apache.poi.util.POILogger" value="org.apache.poi.util.CommonsLogger"/>
         <delete dir="build" includes="test-integration.log*"/>
         <poiunit failureproperty="integration.test.failed" heap="1512" showoutput="true" jacocodest="build/jacoco-integration.exec">
@@ -1698,7 +1698,7 @@ under the License.
     </target>
 
     <target name="test-excelant" depends="compile-excelant,-test-excelant-check,jacocotask"
-            unless="excelant.test.notRequired" xmlns:jacoco="antlib:org.jacoco.ant">
+            unless="excelant.test.notRequired">
         <poiunit failureproperty="excelant.test.failed" jacocodest="build/jacoco-excelant.exec">
             <classpath refid="test.excelant.classpath"/>
             <batchtest todir="${excelant.reports.test}">
