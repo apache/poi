@@ -61,15 +61,17 @@ import org.apache.poi.poifs.eventfilesystem.POIFSReader;
 import org.apache.poi.poifs.eventfilesystem.POIFSReaderEvent;
 import org.apache.poi.poifs.eventfilesystem.POIFSReaderListener;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
-import org.apache.poi.poifs.filesystem.DocumentNode;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
+import org.apache.poi.poifs.filesystem.DocumentNode;
 import org.apache.poi.poifs.filesystem.DocumentOutputStream;
 import org.apache.poi.poifs.filesystem.POIFSDocument;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.CodePageUtil;
+import org.apache.poi.util.CommonsLogger;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.TempFile;
+import org.junit.AfterClass;
 import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -91,9 +93,26 @@ public class TestWrite {
         "LANG environment variable to a proper value, e.g. " +
         "\"de_DE\".";
 
+    private static String loggerBefore;
+
     @BeforeClass
-    public static void setUp() {
+    public static void setUpClass() {
+        loggerBefore = System.getProperty("org.apache.poi.util.POILogger");
+
+        // this test may fails in newer JDKs because of disallowed access if
+        // properties are missing, make this visible
+        System.setProperty("org.apache.poi.util.POILogger", CommonsLogger.class.getName());
+
         VariantSupport.setLogUnsupportedTypes(false);
+    }
+
+    @AfterClass
+    public static void tearDownClass() {
+        if(loggerBefore == null) {
+            System.clearProperty("org.apache.poi.util.POILogger");
+        } else {
+            System.setProperty("org.apache.poi.util.POILogger", loggerBefore);
+        }
     }
     
     /**
@@ -163,8 +182,6 @@ public class TestWrite {
                            SummaryInformation.DEFAULT_STREAM_NAME);
         r.read(filename);
     }
-
-
 
     /**
      * <p>Writes a simple property set with a SummaryInformation section to a
@@ -295,7 +312,6 @@ public class TestWrite {
     }
 
 
-
     static class MyPOIFSReaderListener implements POIFSReaderListener {
         @Override
         public void processPOIFSReaderEvent(final POIFSReaderEvent event) {
@@ -306,8 +322,6 @@ public class TestWrite {
             }
         }
     }
-
-
 
     /**
      * Writes and reads back various variant types and checks whether the
@@ -486,219 +500,205 @@ public class TestWrite {
      */
     @Test
     public void inPlaceNPOIFSWrite() throws Exception {
-        POIFSFileSystem fs;
-        DirectoryEntry root;
-        DocumentNode sinfDoc;
-        DocumentNode dinfDoc;
-        SummaryInformation sinf;
-        DocumentSummaryInformation dinf;
-        
         // We need to work on a File for in-place changes, so create a temp one
         final File copy = TempFile.createTempFile("Test-HPSF", "ole2");
         copy.deleteOnExit();
         
         // Copy a test file over to our temp location
-        InputStream inp = _samples.openResourceAsStream("TestShiftJIS.doc");
-        FileOutputStream out = new FileOutputStream(copy);
-        IOUtils.copy(inp, out);
-        inp.close();
-        out.close();
-        
-        
+        try (FileOutputStream out = new FileOutputStream(copy);
+             InputStream inp = _samples.openResourceAsStream("TestShiftJIS.doc")) {
+            IOUtils.copy(inp, out);
+        }
+
         // Open the copy in read/write mode
-        fs = new POIFSFileSystem(copy, false);
-        root = fs.getRoot();
-        
-        
-        // Read the properties in there
-        sinfDoc = (DocumentNode)root.getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
-        dinfDoc = (DocumentNode)root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+        try (POIFSFileSystem fs = new POIFSFileSystem(copy, false)) {
+            DirectoryEntry root = fs.getRoot();
 
-        InputStream sinfStream = new DocumentInputStream(sinfDoc);
-        sinf = (SummaryInformation)PropertySetFactory.create(sinfStream);
-        sinfStream.close();
-        assertEquals(131077, sinf.getOSVersion());
-        
-        InputStream dinfStream = new DocumentInputStream(dinfDoc);
-        dinf = (DocumentSummaryInformation)PropertySetFactory.create(dinfStream);
-        dinfStream.close();
-        assertEquals(131077, dinf.getOSVersion());
-        
-        
-        // Check they start as we expect
-        assertEquals("Reiichiro Hori", sinf.getAuthor());
-        assertEquals("Microsoft Word 9.0", sinf.getApplicationName());
-        assertEquals("\u7b2c1\u7ae0", sinf.getTitle());
-        
-        assertEquals("", dinf.getCompany());
-        assertNull(dinf.getManager());
-        
-        
-        // Do an in-place replace via an InputStream
-        assertNotNull(sinfDoc);
-        assertNotNull(dinfDoc);
+            // Read the properties in there
+            DocumentNode sinfDoc = (DocumentNode) root.getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
+            DocumentNode dinfDoc = (DocumentNode) root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
 
-        new POIFSDocument(sinfDoc).replaceContents(sinf.toInputStream());
-        new POIFSDocument(dinfDoc).replaceContents(dinf.toInputStream());
-        
-        
-        // Check it didn't get changed
-        sinfDoc = (DocumentNode)root.getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
-        dinfDoc = (DocumentNode)root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
-        
-        InputStream sinfStream2 = new DocumentInputStream(sinfDoc);
-        sinf = (SummaryInformation)PropertySetFactory.create(sinfStream2);
-        sinfStream2.close();
-        assertEquals(131077, sinf.getOSVersion());
-        
-        InputStream dinfStream2 = new DocumentInputStream(dinfDoc);
-        dinf = (DocumentSummaryInformation)PropertySetFactory.create(dinfStream2);
-        dinfStream2.close();
-        assertEquals(131077, dinf.getOSVersion());
+            InputStream sinfStream = new DocumentInputStream(sinfDoc);
+            SummaryInformation sinf = (SummaryInformation) PropertySetFactory.create(sinfStream);
+            sinfStream.close();
+            assertEquals(131077, sinf.getOSVersion());
 
-        
+            InputStream dinfStream = new DocumentInputStream(dinfDoc);
+            DocumentSummaryInformation dinf = (DocumentSummaryInformation) PropertySetFactory.create(dinfStream);
+            dinfStream.close();
+            assertEquals(131077, dinf.getOSVersion());
+
+
+            // Check they start as we expect
+            assertEquals("Reiichiro Hori", sinf.getAuthor());
+            assertEquals("Microsoft Word 9.0", sinf.getApplicationName());
+            assertEquals("\u7b2c1\u7ae0", sinf.getTitle());
+
+            assertEquals("", dinf.getCompany());
+            assertNull(dinf.getManager());
+
+
+            // Do an in-place replace via an InputStream
+            assertNotNull(sinfDoc);
+            assertNotNull(dinfDoc);
+
+            new POIFSDocument(sinfDoc).replaceContents(sinf.toInputStream());
+            new POIFSDocument(dinfDoc).replaceContents(dinf.toInputStream());
+
+
+            // Check it didn't get changed
+            sinfDoc = (DocumentNode) root.getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
+            dinfDoc = (DocumentNode) root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+
+            InputStream sinfStream2 = new DocumentInputStream(sinfDoc);
+            sinf = (SummaryInformation) PropertySetFactory.create(sinfStream2);
+            sinfStream2.close();
+            assertEquals(131077, sinf.getOSVersion());
+
+            InputStream dinfStream2 = new DocumentInputStream(dinfDoc);
+            dinf = (DocumentSummaryInformation) PropertySetFactory.create(dinfStream2);
+            dinfStream2.close();
+            assertEquals(131077, dinf.getOSVersion());
+        }
+
         // Start again!
-        fs.close();
-        inp = _samples.openResourceAsStream("TestShiftJIS.doc");
-        out = new FileOutputStream(copy);
-        IOUtils.copy(inp, out);
-        inp.close();
-        out.close();
-        
-        fs = new POIFSFileSystem(copy, false);
-        root = fs.getRoot();
-        
-        // Read the properties in once more
-        sinfDoc = (DocumentNode)root.getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
-        dinfDoc = (DocumentNode)root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+        try (FileOutputStream out = new FileOutputStream(copy);
+                     InputStream inp = _samples.openResourceAsStream("TestShiftJIS.doc")) {
+            IOUtils.copy(inp, out);
+        }
 
-        InputStream sinfStream3 = new DocumentInputStream(sinfDoc);
-        sinf = (SummaryInformation)PropertySetFactory.create(sinfStream3);
-        sinfStream3.close();
-        assertEquals(131077, sinf.getOSVersion());
-        
-        InputStream dinfStream3 = new DocumentInputStream(dinfDoc);
-        dinf = (DocumentSummaryInformation)PropertySetFactory.create(dinfStream3);
-        dinfStream3.close();
-        assertEquals(131077, dinf.getOSVersion());
-        
-        
-        // Have them write themselves in-place with no changes, as an OutputStream
-        OutputStream soufStream = new DocumentOutputStream(sinfDoc);
-        sinf.write(soufStream);
-        soufStream.close();
-        OutputStream doufStream = new DocumentOutputStream(dinfDoc);
-        dinf.write(doufStream);
-        doufStream.close();
-        
-        // And also write to some bytes for checking
-        ByteArrayOutputStream sinfBytes = new ByteArrayOutputStream();
-        sinf.write(sinfBytes);
-        ByteArrayOutputStream dinfBytes = new ByteArrayOutputStream();
-        dinf.write(dinfBytes);
-        
-        
-        // Check that the filesystem can give us back the same bytes
-        sinfDoc = (DocumentNode)root.getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
-        dinfDoc = (DocumentNode)root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+        try (POIFSFileSystem fs = new POIFSFileSystem(copy, false)) {
+            DirectoryEntry root = fs.getRoot();
 
-        InputStream sinfStream4 = new DocumentInputStream(sinfDoc);
-        byte[] sinfData = IOUtils.toByteArray(sinfStream4);
-        sinfStream4.close();
-        InputStream dinfStream4 = new DocumentInputStream(dinfDoc);
-        byte[] dinfData = IOUtils.toByteArray(dinfStream4);
-        dinfStream4.close();
-        assertThat(sinfBytes.toByteArray(), equalTo(sinfData));
-        assertThat(dinfBytes.toByteArray(), equalTo(dinfData));
+            // Read the properties in once more
+            DocumentNode sinfDoc = (DocumentNode)root.getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
+            DocumentNode dinfDoc = (DocumentNode)root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
 
-        
-        // Read back in as-is
-        InputStream sinfStream5 = new DocumentInputStream(sinfDoc);
-        sinf = (SummaryInformation)PropertySetFactory.create(sinfStream5);
-        sinfStream5.close();
-        assertEquals(131077, sinf.getOSVersion());
-        
-        InputStream dinfStream5 = new DocumentInputStream(dinfDoc);
-        dinf = (DocumentSummaryInformation)PropertySetFactory.create(dinfStream5);
-        dinfStream5.close();
-        assertEquals(131077, dinf.getOSVersion());
-        
-        assertEquals("Reiichiro Hori", sinf.getAuthor());
-        assertEquals("Microsoft Word 9.0", sinf.getApplicationName());
-        assertEquals("\u7b2c1\u7ae0", sinf.getTitle());
-        
-        assertEquals("", dinf.getCompany());
-        assertNull(dinf.getManager());
-        
+            InputStream sinfStream3 = new DocumentInputStream(sinfDoc);
+            SummaryInformation sinf = (SummaryInformation)PropertySetFactory.create(sinfStream3);
+            sinfStream3.close();
+            assertEquals(131077, sinf.getOSVersion());
 
-        // Now alter a few of them
-        sinf.setAuthor("Changed Author");
-        sinf.setTitle("Le titre \u00e9tait chang\u00e9");
-        dinf.setManager("Changed Manager");
-        
-        
-        // Save this into the filesystem
-        OutputStream soufStream2 = new DocumentOutputStream(sinfDoc);
-        sinf.write(soufStream2);
-        soufStream2.close();
-        OutputStream doufStream2 = new DocumentOutputStream(dinfDoc);
-        dinf.write(doufStream2);
-        doufStream2.close();
-        
-        
-        // Read them back in again
-        sinfDoc = (DocumentNode)root.getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
-        InputStream sinfStream6 = new DocumentInputStream(sinfDoc);
-        sinf = (SummaryInformation)PropertySetFactory.create(sinfStream6);
-        sinfStream6.close();
-        assertEquals(131077, sinf.getOSVersion());
-        
-        dinfDoc = (DocumentNode)root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
-        InputStream dinfStream6 = new DocumentInputStream(dinfDoc);
-        dinf = (DocumentSummaryInformation)PropertySetFactory.create(dinfStream6);
-        dinfStream6.close();
-        assertEquals(131077, dinf.getOSVersion());
+            InputStream dinfStream3 = new DocumentInputStream(dinfDoc);
+            DocumentSummaryInformation dinf = (DocumentSummaryInformation)PropertySetFactory.create(dinfStream3);
+            dinfStream3.close();
+            assertEquals(131077, dinf.getOSVersion());
 
-        assertEquals("Changed Author", sinf.getAuthor());
-        assertEquals("Microsoft Word 9.0", sinf.getApplicationName());
-        assertEquals("Le titre \u00e9tait chang\u00e9", sinf.getTitle());
-        
-        assertEquals("", dinf.getCompany());
-        assertEquals("Changed Manager", dinf.getManager());
 
-        
-        // Close the whole filesystem, and open it once more
-        fs.writeFilesystem();
-        fs.close();
-        
-        fs = new POIFSFileSystem(copy);
-        root = fs.getRoot();
-        
-        // Re-check on load
-        sinfDoc = (DocumentNode)root.getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
-        InputStream sinfStream7 = new DocumentInputStream(sinfDoc);
-        sinf = (SummaryInformation)PropertySetFactory.create(sinfStream7);
-        sinfStream7.close();
-        assertEquals(131077, sinf.getOSVersion());
-        
-        dinfDoc = (DocumentNode)root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
-        InputStream dinfStream7 = new DocumentInputStream(dinfDoc);
-        dinf = (DocumentSummaryInformation)PropertySetFactory.create(dinfStream7);
-        dinfStream7.close();
-        assertEquals(131077, dinf.getOSVersion());
+            // Have them write themselves in-place with no changes, as an OutputStream
+            OutputStream soufStream = new DocumentOutputStream(sinfDoc);
+            sinf.write(soufStream);
+            soufStream.close();
+            OutputStream doufStream = new DocumentOutputStream(dinfDoc);
+            dinf.write(doufStream);
+            doufStream.close();
 
-        assertEquals("Changed Author", sinf.getAuthor());
-        assertEquals("Microsoft Word 9.0", sinf.getApplicationName());
-        assertEquals("Le titre \u00e9tait chang\u00e9", sinf.getTitle());
-        
-        assertEquals("", dinf.getCompany());
-        assertEquals("Changed Manager", dinf.getManager());
-        
-        
+            // And also write to some bytes for checking
+            ByteArrayOutputStream sinfBytes = new ByteArrayOutputStream();
+            sinf.write(sinfBytes);
+            ByteArrayOutputStream dinfBytes = new ByteArrayOutputStream();
+            dinf.write(dinfBytes);
+
+
+            // Check that the filesystem can give us back the same bytes
+            sinfDoc = (DocumentNode)root.getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
+            dinfDoc = (DocumentNode)root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+
+            InputStream sinfStream4 = new DocumentInputStream(sinfDoc);
+            byte[] sinfData = IOUtils.toByteArray(sinfStream4);
+            sinfStream4.close();
+            InputStream dinfStream4 = new DocumentInputStream(dinfDoc);
+            byte[] dinfData = IOUtils.toByteArray(dinfStream4);
+            dinfStream4.close();
+            assertThat(sinfBytes.toByteArray(), equalTo(sinfData));
+            assertThat(dinfBytes.toByteArray(), equalTo(dinfData));
+
+
+            // Read back in as-is
+            InputStream sinfStream5 = new DocumentInputStream(sinfDoc);
+            sinf = (SummaryInformation)PropertySetFactory.create(sinfStream5);
+            sinfStream5.close();
+            assertEquals(131077, sinf.getOSVersion());
+
+            InputStream dinfStream5 = new DocumentInputStream(dinfDoc);
+            dinf = (DocumentSummaryInformation)PropertySetFactory.create(dinfStream5);
+            dinfStream5.close();
+            assertEquals(131077, dinf.getOSVersion());
+
+            assertEquals("Reiichiro Hori", sinf.getAuthor());
+            assertEquals("Microsoft Word 9.0", sinf.getApplicationName());
+            assertEquals("\u7b2c1\u7ae0", sinf.getTitle());
+
+            assertEquals("", dinf.getCompany());
+            assertNull(dinf.getManager());
+
+
+            // Now alter a few of them
+            sinf.setAuthor("Changed Author");
+            sinf.setTitle("Le titre \u00e9tait chang\u00e9");
+            dinf.setManager("Changed Manager");
+
+
+            // Save this into the filesystem
+            OutputStream soufStream2 = new DocumentOutputStream(sinfDoc);
+            sinf.write(soufStream2);
+            soufStream2.close();
+            OutputStream doufStream2 = new DocumentOutputStream(dinfDoc);
+            dinf.write(doufStream2);
+            doufStream2.close();
+
+
+            // Read them back in again
+            sinfDoc = (DocumentNode)root.getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
+            InputStream sinfStream6 = new DocumentInputStream(sinfDoc);
+            sinf = (SummaryInformation)PropertySetFactory.create(sinfStream6);
+            sinfStream6.close();
+            assertEquals(131077, sinf.getOSVersion());
+
+            dinfDoc = (DocumentNode)root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+            InputStream dinfStream6 = new DocumentInputStream(dinfDoc);
+            dinf = (DocumentSummaryInformation)PropertySetFactory.create(dinfStream6);
+            dinfStream6.close();
+            assertEquals(131077, dinf.getOSVersion());
+
+            assertEquals("Changed Author", sinf.getAuthor());
+            assertEquals("Microsoft Word 9.0", sinf.getApplicationName());
+            assertEquals("Le titre \u00e9tait chang\u00e9", sinf.getTitle());
+
+            assertEquals("", dinf.getCompany());
+            assertEquals("Changed Manager", dinf.getManager());
+
+
+            // Close the whole filesystem, and open it once more
+            fs.writeFilesystem();
+        }
+
+        try (POIFSFileSystem fs = new POIFSFileSystem(copy)) {
+            DirectoryEntry root = fs.getRoot();
+
+            // Re-check on load
+            DocumentNode sinfDoc = (DocumentNode) root.getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
+            InputStream sinfStream7 = new DocumentInputStream(sinfDoc);
+            SummaryInformation sinf = (SummaryInformation) PropertySetFactory.create(sinfStream7);
+            sinfStream7.close();
+            assertEquals(131077, sinf.getOSVersion());
+
+            DocumentNode dinfDoc = (DocumentNode) root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+            InputStream dinfStream7 = new DocumentInputStream(dinfDoc);
+            DocumentSummaryInformation dinf = (DocumentSummaryInformation) PropertySetFactory.create(dinfStream7);
+            dinfStream7.close();
+            assertEquals(131077, dinf.getOSVersion());
+
+            assertEquals("Changed Author", sinf.getAuthor());
+            assertEquals("Microsoft Word 9.0", sinf.getApplicationName());
+            assertEquals("Le titre \u00e9tait chang\u00e9", sinf.getTitle());
+
+            assertEquals("", dinf.getCompany());
+            assertEquals("Changed Manager", dinf.getManager());
+        }
+
         // Tidy up
-        fs.close();
-        //noinspection ResultOfMethodCallIgnored
-        copy.delete();
+        assertTrue(copy.delete());
     }
 
 
