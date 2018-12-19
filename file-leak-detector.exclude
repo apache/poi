@@ -9,6 +9,7 @@ org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter.getDocument
 sun.security.jca.ProviderConfig.doLoadProvider
 javax.xml.parsers.FactoryFinder.findJarServiceProvider
 com.sun.org.apache.xerces.internal.utils.SecuritySupport.getResourceBundle
+java.util.ResourceBundle.getBundle
 
 # Codepage support loads classes
 java.nio.charset.Charset.lookupViaProviders
