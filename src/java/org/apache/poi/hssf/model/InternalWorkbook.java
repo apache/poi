@@ -728,6 +728,8 @@ public final class InternalWorkbook {
      * @since 3.16 beta 2
      */
     public void setSheetHidden(int sheetnum, SheetVisibility visibility) {
+        checkSheets(sheetnum);
+
         BoundSheetRecord bsr = getBoundSheetRec(sheetnum);
         bsr.setHidden(visibility == SheetVisibility.HIDDEN);
         bsr.setVeryHidden(visibility == SheetVisibility.VERY_HIDDEN);

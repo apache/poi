@@ -20,6 +20,7 @@ package org.apache.poi.ss.usermodel;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 
@@ -81,7 +82,25 @@ public abstract class BaseTestSheetHiding {
         assertFalse(wb.isSheetHidden(0));
         assertFalse(wb.isSheetVeryHidden(0));
         assertEquals(SheetVisibility.VISIBLE, wb.getSheetVisibility(0));
-    
+
+        // verify limits-check
+
+        // check sheet-index with one more => throws exception
+        try {
+            wb.setSheetVisibility(1, SheetVisibility.HIDDEN);
+            fail("Should catch exception here");
+        } catch (IllegalArgumentException e) {
+            // expected here
+        }
+
+        // check sheet-index with index out of bounds => throws exception
+        try {
+            wb.setSheetVisibility(10, SheetVisibility.HIDDEN);
+            fail("Should catch exception here");
+        } catch (IllegalArgumentException e) {
+            // expected here
+        }
+
         wb.close();
     }
 
