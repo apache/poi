@@ -39,6 +39,9 @@ javax.crypto.Cipher.getMaxAllowedKeyLength
 # IntelliJ
 com.intellij.junit4.JUnit4TestRunnerUtil.<clinit>
 
+# OpenJPA (regression testing)
+org.apache.openjpa.enhance.InstrumentationFactory.loadVMClass
+
 # Java
 sun.util.resources.LocaleData.getBundle
 sun.util.LocaleServiceProviderPool.<init>
