@@ -179,7 +179,7 @@ public class PPTX2PNG {
             }
         } else {
             for (String subrange : range.split(",")) {
-                String idx[] = subrange.split("-");
+                String[] idx = subrange.split("-");
                 switch (idx.length) {
                 default:
                 case 0: break;

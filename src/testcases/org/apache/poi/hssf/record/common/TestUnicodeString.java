@@ -319,7 +319,7 @@ public final class TestUnicodeString {
 
     @Test
     public void extRstEqualsAndHashCode() {
-        byte buf[] = new byte[200];
+        byte[] buf = new byte[200];
         LittleEndianByteArrayOutputStream bos = new LittleEndianByteArrayOutputStream(buf, 0);
         String str = "\u1d02\u1d12\u1d22";
         bos.writeShort(1);

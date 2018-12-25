@@ -56,13 +56,13 @@ public class StandardDecryptor extends Decryptor implements Cloneable {
         Cipher cipher = getCipher(skey);
 
         try {
-            byte encryptedVerifier[] = ver.getEncryptedVerifier();
-            byte verifier[] = cipher.doFinal(encryptedVerifier);
+            byte[] encryptedVerifier = ver.getEncryptedVerifier();
+            byte[] verifier = cipher.doFinal(encryptedVerifier);
             setVerifier(verifier);
             MessageDigest sha1 = CryptoFunctions.getMessageDigest(ver.getHashAlgorithm());
             byte[] calcVerifierHash = sha1.digest(verifier);
-            byte encryptedVerifierHash[] = ver.getEncryptedVerifierHash();
-            byte decryptedVerifierHash[] = cipher.doFinal(encryptedVerifierHash);
+            byte[] encryptedVerifierHash = ver.getEncryptedVerifierHash();
+            byte[] decryptedVerifierHash = cipher.doFinal(encryptedVerifierHash);
 
             // see 2.3.4.9 Password Verification (Standard Encryption)
             // ... The number of bytes used by the encrypted Verifier hash MUST be 32 ...
@@ -83,14 +83,14 @@ public class StandardDecryptor extends Decryptor implements Cloneable {
     protected static SecretKey generateSecretKey(String password, EncryptionVerifier ver, int keySize) {
         HashAlgorithm hashAlgo = ver.getHashAlgorithm();
 
-        byte pwHash[] = hashPassword(password, hashAlgo, ver.getSalt(), ver.getSpinCount());
+        byte[] pwHash = hashPassword(password, hashAlgo, ver.getSalt(), ver.getSpinCount());
 
         byte[] blockKey = new byte[4];
         LittleEndian.putInt(blockKey, 0, 0);
 
         byte[] finalHash = CryptoFunctions.generateKey(pwHash, hashAlgo, blockKey, hashAlgo.hashSize);
-        byte x1[] = fillAndXor(finalHash, (byte) 0x36);
-        byte x2[] = fillAndXor(finalHash, (byte) 0x5c);
+        byte[] x1 = fillAndXor(finalHash, (byte) 0x36);
+        byte[] x2 = fillAndXor(finalHash, (byte) 0x5c);
 
         byte[] x3 = new byte[x1.length + x2.length];
         System.arraycopy(x1, 0, x3, 0, x1.length);
@@ -101,7 +101,7 @@ public class StandardDecryptor extends Decryptor implements Cloneable {
         return new SecretKeySpec(key, ver.getCipherAlgorithm().jceId);
     }
 
-    protected static byte[] fillAndXor(byte hash[], byte fillByte) {
+    protected static byte[] fillAndXor(byte[] hash, byte fillByte) {
         byte[] buff = new byte[64];
         Arrays.fill(buff, fillByte);
 

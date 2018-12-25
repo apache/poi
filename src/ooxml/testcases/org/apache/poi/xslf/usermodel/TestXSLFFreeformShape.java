@@ -109,7 +109,7 @@ public class TestXSLFFreeformShape {
     }
 
     private void comparePoint(PathIterator pi, int type, double x0, double y0) {
-        double points[] = new double[6];
+        double[] points = new double[6];
         int piType = pi.currentSegment(points);
         assertEquals(type, piType);
         assertEquals(x0, points[0], 0);

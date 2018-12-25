@@ -290,7 +290,7 @@ public class TestXSLFBugs {
     @Test
     public void bug60499() throws IOException, InvalidFormatException {
         InputStream is = slTests.openResourceAsStream("bug60499.pptx");
-        byte buf[] = IOUtils.toByteArray(is);
+        byte[] buf = IOUtils.toByteArray(is);
         is.close();
 
         PackagePartName ppn = PackagingURIHelper.createPartName("/ppt/media/image1.png");
@@ -775,8 +775,8 @@ public class TestXSLFBugs {
         assertTrue(actualStyle instanceof SolidPaint);
         SolidPaint ps = (SolidPaint)actualStyle;
         Color actual = DrawPaint.applyColorTransform(ps.getSolidColor());
-        float expRGB[] = expected.getRGBComponents(null);
-        float actRGB[] = actual.getRGBComponents(null);
+        float[] expRGB = expected.getRGBComponents(null);
+        float[] actRGB = actual.getRGBComponents(null);
         assertArrayEquals(expRGB, actRGB, 0.0001f);
     }
 

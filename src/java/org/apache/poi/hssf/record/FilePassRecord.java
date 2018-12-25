@@ -88,7 +88,7 @@ public final class FilePassRecord extends StandardRecord implements Cloneable {
     public void serialize(LittleEndianOutput out) {
         out.writeShort(encryptionType);
 
-        byte data[] = new byte[1024];
+        byte[] data = new byte[1024];
         LittleEndianByteArrayOutputStream bos = new LittleEndianByteArrayOutputStream(data, 0); // NOSONAR
 
         switch (encryptionInfo.getEncryptionMode()) {

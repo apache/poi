@@ -116,7 +116,7 @@ public final class AesZipFileZipEntrySource implements ZipEntrySource {
         return fileToSource(tmpFile, keyBytes, ivBytes);
     }
 
-    private static void copyToFile(InputStream is, File tmpFile, byte keyBytes[], byte ivBytes[]) throws IOException {
+    private static void copyToFile(InputStream is, File tmpFile, byte[] keyBytes, byte[] ivBytes) throws IOException {
         SecretKeySpec skeySpec = new SecretKeySpec(keyBytes, CipherAlgorithm.aes128.jceId);
         Cipher ciEnc = CryptoFunctions.getCipher(skeySpec, CipherAlgorithm.aes128, ChainingMode.cbc, ivBytes, Cipher.ENCRYPT_MODE, PADDING);
         
@@ -150,7 +150,7 @@ public final class AesZipFileZipEntrySource implements ZipEntrySource {
         zis.close();
     }
 
-    private static AesZipFileZipEntrySource fileToSource(File tmpFile, byte keyBytes[], byte ivBytes[]) throws IOException {
+    private static AesZipFileZipEntrySource fileToSource(File tmpFile, byte[] keyBytes, byte[] ivBytes) throws IOException {
         SecretKeySpec skeySpec = new SecretKeySpec(keyBytes, CipherAlgorithm.aes128.jceId);
         Cipher ciDec = CryptoFunctions.getCipher(skeySpec, CipherAlgorithm.aes128, ChainingMode.cbc, ivBytes, Cipher.DECRYPT_MODE, PADDING);
         return new AesZipFileZipEntrySource(tmpFile, ciDec);

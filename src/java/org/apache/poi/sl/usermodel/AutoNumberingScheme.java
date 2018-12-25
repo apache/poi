@@ -245,31 +245,31 @@ public enum AutoNumberingScheme {
         //M (1000), CM (900), D (500), CD (400), C (100), XC (90), L (50), XL (40), X (10), IX (9), V (5), IV (4) and I (1).
         final int[] VALUES = new int[]{1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
         final String[] ROMAN = new String[]{"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
-        final String conciseList[][] = {
-            {"XLV", "VL"}, //45
-            {"XCV", "VC"}, //95
-            {"CDL", "LD"}, //450
-            {"CML", "LM"}, //950
-            {"CMVC", "LMVL"}, //995
-            {"CDXC", "LDXL"}, //490
-            {"CDVC", "LDVL"}, //495
-            {"CMXC", "LMXL"}, //990
-            {"XCIX", "VCIV"}, //99
-            {"XLIX", "VLIV"}, //49
-            {"XLIX", "IL"}, //49
-            {"XCIX", "IC"}, //99
-            {"CDXC", "XD"}, //490
-            {"CDVC", "XDV"}, //495
-            {"CDIC", "XDIX"}, //499
-            {"LMVL", "XMV"}, //995
-            {"CMIC", "XMIX"}, //999
-            {"CMXC", "XM"}, // 990
-            {"XDV", "VD"},  //495
-            {"XDIX", "VDIV"}, //499
-            {"XMV", "VM"}, // 995
-            {"XMIX", "VMIV"}, //999
-            {"VDIV", "ID"}, //499
-            {"VMIV", "IM"} //999
+        final String[][] conciseList = {
+                {"XLV", "VL"}, //45
+                {"XCV", "VC"}, //95
+                {"CDL", "LD"}, //450
+                {"CML", "LM"}, //950
+                {"CMVC", "LMVL"}, //995
+                {"CDXC", "LDXL"}, //490
+                {"CDVC", "LDVL"}, //495
+                {"CMXC", "LMXL"}, //990
+                {"XCIX", "VCIV"}, //99
+                {"XLIX", "VLIV"}, //49
+                {"XLIX", "IL"}, //49
+                {"XCIX", "IC"}, //99
+                {"CDXC", "XD"}, //490
+                {"CDVC", "XDV"}, //495
+                {"CDIC", "XDIX"}, //499
+                {"LMVL", "XMV"}, //995
+                {"CMIC", "XMIX"}, //999
+                {"CMXC", "XM"}, // 990
+                {"XDV", "VD"},  //495
+                {"XDIX", "VDIV"}, //499
+                {"XMV", "VM"}, // 995
+                {"XMIX", "VMIV"}, //999
+                {"VDIV", "ID"}, //499
+                {"VMIV", "IM"} //999
         };
 
         StringBuilder sb = new StringBuilder();
@@ -280,7 +280,7 @@ public enum AutoNumberingScheme {
             }
         }
         String result = sb.toString();
-        for (String cc[] : conciseList) {
+        for (String[] cc : conciseList) {
             result = result.replace(cc[0], cc[1]);
         }
         return result;

@@ -53,7 +53,7 @@ public class EscherBitmapBlip extends EscherBlipRecord {
 
         System.arraycopy( field_1_UID, 0, data, pos, 16 );
         data[pos + 16] = field_2_marker;
-        byte pd[] = getPicturedata();
+        byte[] pd = getPicturedata();
         System.arraycopy( pd, 0, data, pos + 17, pd.length );
 
         listener.afterRecordSerialize(offset + getRecordSize(), getRecordId(), getRecordSize(), this);

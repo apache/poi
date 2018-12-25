@@ -804,7 +804,7 @@ public final class TestPackage {
 							IOUtils.copy(is, bos2);
 							long size = bos2.size() - "</Types>".length();
 							append.write(bos2.toByteArray(), 0, (int) size);
-							byte spam[] = new byte[0x7FFF];
+                            byte[] spam = new byte[0x7FFF];
 							Arrays.fill(spam, (byte) ' ');
 							// 0x7FFF0000 is the maximum for 32-bit zips, but less still works
 							while (size < 0x7FFF00) {
@@ -979,12 +979,12 @@ public final class TestPackage {
     public void testTooShortFilterStreams() throws IOException {
         File xssf = OpenXML4JTestDataSamples.getSampleFile("sample.xlsx");
         File hssf = POIDataSamples.getSpreadSheetInstance().getFile("SampleSS.xls");
-        
-        InputStream isList[] = {
-            new PushbackInputStream(new FileInputStream(xssf), 2),
-            new BufferedInputStream(new FileInputStream(xssf), 2),
-            new PushbackInputStream(new FileInputStream(hssf), 2),
-            new BufferedInputStream(new FileInputStream(hssf), 2),
+
+        InputStream[] isList = {
+                new PushbackInputStream(new FileInputStream(xssf), 2),
+                new BufferedInputStream(new FileInputStream(xssf), 2),
+                new PushbackInputStream(new FileInputStream(hssf), 2),
+                new BufferedInputStream(new FileInputStream(hssf), 2),
         };
         
         try {

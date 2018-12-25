@@ -81,8 +81,8 @@ public class AgileEncryptor extends Encryptor implements Cloneable {
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 1_000_000;
 
-    private byte integritySalt[];
-	private byte pwHash[];
+    private byte[] integritySalt;
+    private byte[] pwHash;
     
 	protected AgileEncryptor() {
 	}
@@ -111,7 +111,7 @@ public class AgileEncryptor extends Encryptor implements Cloneable {
     }
 	
 	@Override
-    public void confirmPassword(String password, byte keySpec[], byte keySalt[], byte verifier[], byte verifierSalt[], byte integritySalt[]) {
+    public void confirmPassword(String password, byte[] keySpec, byte[] keySalt, byte[] verifier, byte[] verifierSalt, byte[] integritySalt) {
         AgileEncryptionVerifier ver = (AgileEncryptionVerifier)getEncryptionInfo().getVerifier();
         AgileEncryptionHeader header = (AgileEncryptionHeader)getEncryptionInfo().getHeader();
 
@@ -135,7 +135,7 @@ public class AgileEncryptor extends Encryptor implements Cloneable {
          *    blockSize bytes.
          * 4. Use base64 to encode the result of step 3.
          */
-        byte encryptedVerifier[] = hashInput(ver, pwHash, kVerifierInputBlock, verifier, Cipher.ENCRYPT_MODE);
+        byte[] encryptedVerifier = hashInput(ver, pwHash, kVerifierInputBlock, verifier, Cipher.ENCRYPT_MODE);
         ver.setEncryptedVerifier(encryptedVerifier);
 	    
 
@@ -153,7 +153,7 @@ public class AgileEncryptor extends Encryptor implements Cloneable {
          */
         MessageDigest hashMD = getMessageDigest(ver.getHashAlgorithm());
         byte[] hashedVerifier = hashMD.digest(verifier);
-        byte encryptedVerifierHash[] = hashInput(ver, pwHash, kHashedVerifierBlock, hashedVerifier, Cipher.ENCRYPT_MODE);
+        byte[] encryptedVerifierHash = hashInput(ver, pwHash, kHashedVerifierBlock, hashedVerifier, Cipher.ENCRYPT_MODE);
         ver.setEncryptedVerifierHash(encryptedVerifierHash);
         
         /**
@@ -169,7 +169,7 @@ public class AgileEncryptor extends Encryptor implements Cloneable {
          *    blockSize bytes.
          * 4. Use base64 to encode the result of step 3.
          */
-        byte encryptedKey[] = hashInput(ver, pwHash, kCryptoKeyBlock, keySpec, Cipher.ENCRYPT_MODE);
+        byte[] encryptedKey = hashInput(ver, pwHash, kCryptoKeyBlock, keySpec, Cipher.ENCRYPT_MODE);
         ver.setEncryptedKey(encryptedKey);
         
         SecretKey secretKey = new SecretKeySpec(keySpec, header.getCipherAlgorithm().jceId);
@@ -202,10 +202,10 @@ public class AgileEncryptor extends Encryptor implements Cloneable {
         this.integritySalt = integritySalt.clone();
 
         try {
-            byte vec[] = CryptoFunctions.generateIv(header.getHashAlgorithm(), header.getKeySalt(), kIntegrityKeyBlock, header.getBlockSize());
+            byte[] vec = CryptoFunctions.generateIv(header.getHashAlgorithm(), header.getKeySalt(), kIntegrityKeyBlock, header.getBlockSize());
             Cipher cipher = getCipher(secretKey, header.getCipherAlgorithm(), header.getChainingMode(), vec, Cipher.ENCRYPT_MODE);
-            byte hmacKey[] = getBlock0(this.integritySalt, getNextBlockSize(this.integritySalt.length, blockSize));
-            byte encryptedHmacKey[] = cipher.doFinal(hmacKey);
+            byte[] hmacKey = getBlock0(this.integritySalt, getNextBlockSize(this.integritySalt.length, blockSize));
+            byte[] encryptedHmacKey = cipher.doFinal(hmacKey);
             header.setEncryptedHmacKey(encryptedHmacKey);
 
             cipher = Cipher.getInstance("RSA");
@@ -245,10 +245,10 @@ public class AgileEncryptor extends Encryptor implements Cloneable {
         int blockSize = header.getBlockSize();
         HashAlgorithm hashAlgo = header.getHashAlgorithm();
         Mac integrityMD = CryptoFunctions.getMac(hashAlgo);
-        byte hmacKey[] = getBlock0(this.integritySalt, getNextBlockSize(this.integritySalt.length, blockSize));
+        byte[] hmacKey = getBlock0(this.integritySalt, getNextBlockSize(this.integritySalt.length, blockSize));
         integrityMD.init(new SecretKeySpec(hmacKey, hashAlgo.jceHmacId));
 
-        byte buf[] = new byte[1024];
+        byte[] buf = new byte[1024];
         LittleEndian.putLong(buf, 0, oleStreamSize);
         integrityMD.update(buf, 0, LittleEndianConsts.LONG_SIZE);
         
@@ -261,13 +261,13 @@ public class AgileEncryptor extends Encryptor implements Cloneable {
         } finally {
         	fis.close();
         }
-        
-        byte hmacValue[] = integrityMD.doFinal();
-        byte hmacValueFilled[] = getBlock0(hmacValue, getNextBlockSize(hmacValue.length, blockSize));
-        
-        byte iv[] = CryptoFunctions.generateIv(header.getHashAlgorithm(), header.getKeySalt(), kIntegrityValueBlock, blockSize);
+
+        byte[] hmacValue = integrityMD.doFinal();
+        byte[] hmacValueFilled = getBlock0(hmacValue, getNextBlockSize(hmacValue.length, blockSize));
+
+        byte[] iv = CryptoFunctions.generateIv(header.getHashAlgorithm(), header.getKeySalt(), kIntegrityValueBlock, blockSize);
         Cipher cipher = CryptoFunctions.getCipher(getSecretKey(), header.getCipherAlgorithm(), header.getChainingMode(), iv, Cipher.ENCRYPT_MODE);
-        byte encryptedHmacValue[] = cipher.doFinal(hmacValueFilled);
+        byte[] encryptedHmacValue = cipher.doFinal(hmacValueFilled);
         
         header.setEncryptedHmacValue(encryptedHmacValue);
     }

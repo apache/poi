@@ -43,7 +43,7 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class TestAgileEncryptionParameters {
 
-    static byte testData[];
+    static byte[] testData;
     
     @Parameter(value = 0)
     public CipherAlgorithm ca;
@@ -54,9 +54,9 @@ public class TestAgileEncryptionParameters {
 
     @Parameters(name="{0} {1} {2}")
     public static Collection<Object[]> data() {
-        CipherAlgorithm caList[] = { CipherAlgorithm.aes128, CipherAlgorithm.aes192, CipherAlgorithm.aes256, CipherAlgorithm.rc2, CipherAlgorithm.des, CipherAlgorithm.des3 };
-        HashAlgorithm haList[] = { HashAlgorithm.sha1, HashAlgorithm.sha256, HashAlgorithm.sha384, HashAlgorithm.sha512, HashAlgorithm.md5 };
-        ChainingMode cmList[] = { ChainingMode.cbc, ChainingMode.cfb };
+        CipherAlgorithm[] caList = {CipherAlgorithm.aes128, CipherAlgorithm.aes192, CipherAlgorithm.aes256, CipherAlgorithm.rc2, CipherAlgorithm.des, CipherAlgorithm.des3};
+        HashAlgorithm[] haList = {HashAlgorithm.sha1, HashAlgorithm.sha256, HashAlgorithm.sha384, HashAlgorithm.sha512, HashAlgorithm.md5};
+        ChainingMode[] cmList = {ChainingMode.cbc, ChainingMode.cfb};
 
         List<Object[]> data = new ArrayList<>();
         for (CipherAlgorithm ca : caList) {
@@ -101,7 +101,7 @@ public class TestAgileEncryptionParameters {
         boolean passed = dec.verifyPassword("foobaa");
         assertTrue(passed);
         InputStream is = dec.getDataStream(fsDec);
-        byte actualData[] = IOUtils.toByteArray(is);
+        byte[] actualData = IOUtils.toByteArray(is);
         is.close();
         fsDec.close();
         assertArrayEquals("Failed roundtrip - "+ca+"-"+ha+"-"+cm, testData, actualData);

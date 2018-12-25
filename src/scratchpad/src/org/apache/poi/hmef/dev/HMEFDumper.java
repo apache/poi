@@ -143,7 +143,7 @@ public final class HMEFDumper {
                   thisLen = len - offset;
                }
 
-               byte data[] = IOUtils.safelyAllocate(thisLen, MAX_RECORD_LENGTH);
+                byte[] data = IOUtils.safelyAllocate(thisLen, MAX_RECORD_LENGTH);
                System.arraycopy(attr.getData(), offset, data, 0, thisLen);
                
                System.out.print(

@@ -74,7 +74,7 @@ public abstract class QCPLCBit extends QCBit {
 		return plcValB;
 	}
 
-	final void setPreData(int preData[]) {
+	final void setPreData(int[] preData) {
 	    this.preData = preData.clone();
 	}
 
@@ -115,18 +115,19 @@ public abstract class QCPLCBit extends QCBit {
 			super(thingType, bitType, data);
 
 			// Grab our 4x pre-data
-			int preData[] = {
-    			LittleEndian.getUShort(data, 8+0),
-    			LittleEndian.getUShort(data, 8+2),
-    			LittleEndian.getUShort(data, 8+4),
-    			LittleEndian.getUShort(data, 8+6)
-			};
+            int[] preData = {
+                    LittleEndian.getUShort(data, 8 + 0),
+                    LittleEndian.getUShort(data, 8 + 2),
+                    LittleEndian.getUShort(data, 8 + 4),
+                    LittleEndian.getUShort(data, 8 + 6)
+            };
 			setPreData(preData);
 
             // And grab the 2 byte values
 			int cntPlcs = getNumberOfPLCs();
-			long plcValA[] = new long[cntPlcs], plcValB[] = new long[cntPlcs];
-			for(int i=0; i<cntPlcs; i++) {
+            long[] plcValA = new long[cntPlcs];
+            long[] plcValB = new long[cntPlcs];
+            for(int i=0; i<cntPlcs; i++) {
 				plcValA[i] = LittleEndian.getUShort(data, 16+(4*i));
 				plcValB[i] = LittleEndian.getUShort(data, 16+(4*i)+2);
 			}
@@ -144,18 +145,19 @@ public abstract class QCPLCBit extends QCBit {
 			super(thingType, bitType, data);
 
 			// Grab our 4x pre-data
-			int preData[] = {
-    			LittleEndian.getUShort(data, 8+0),
-    			LittleEndian.getUShort(data, 8+2),
-    			LittleEndian.getUShort(data, 8+4),
-    			LittleEndian.getUShort(data, 8+6)
-			};
+            int[] preData = {
+                    LittleEndian.getUShort(data, 8 + 0),
+                    LittleEndian.getUShort(data, 8 + 2),
+                    LittleEndian.getUShort(data, 8 + 4),
+                    LittleEndian.getUShort(data, 8 + 6)
+            };
 			setPreData(preData);
 
 			// And grab the 4 byte values
             int cntPlcs = getNumberOfPLCs();
-            long plcValA[] = new long[cntPlcs], plcValB[] = new long[cntPlcs];
-			for(int i=0; i<cntPlcs; i++) {
+            long[] plcValA = new long[cntPlcs];
+            long[] plcValB = new long[cntPlcs];
+            for(int i=0; i<cntPlcs; i++) {
 				plcValA[i] = LittleEndian.getUInt(data, 16+(8*i));
 				plcValB[i] = LittleEndian.getUInt(data, 16+(8*i)+4);
 			}
@@ -173,21 +175,22 @@ public abstract class QCPLCBit extends QCBit {
 			super(thingType, bitType, data);
 
 			// Grab our 7x pre-data
-			int preData[] = {
-    			LittleEndian.getUShort(data, 8+0),
-    			LittleEndian.getUShort(data, 8+2),
-    			LittleEndian.getUShort(data, 8+4),
-    			LittleEndian.getUShort(data, 8+6),
-    			LittleEndian.getUShort(data, 8+8),
-    			LittleEndian.getUShort(data, 8+10),
-    			LittleEndian.getUShort(data, 8+12)
-			};
+            int[] preData = {
+                    LittleEndian.getUShort(data, 8 + 0),
+                    LittleEndian.getUShort(data, 8 + 2),
+                    LittleEndian.getUShort(data, 8 + 4),
+                    LittleEndian.getUShort(data, 8 + 6),
+                    LittleEndian.getUShort(data, 8 + 8),
+                    LittleEndian.getUShort(data, 8 + 10),
+                    LittleEndian.getUShort(data, 8 + 12)
+            };
             setPreData(preData);
 
 			// And grab the 4 byte values
             int cntPlcs = getNumberOfPLCs();
-            long plcValA[] = new long[cntPlcs], plcValB[] = new long[cntPlcs];
-			for(int i=0; i<cntPlcs; i++) {
+            long[] plcValA = new long[cntPlcs];
+            long[] plcValB = new long[cntPlcs];
+            for(int i=0; i<cntPlcs; i++) {
 				plcValA[i] = LittleEndian.getUInt(data, 22+(8*i));
 				plcValB[i] = LittleEndian.getUInt(data, 22+(8*i)+4);
 			}
@@ -221,7 +224,7 @@ public abstract class QCPLCBit extends QCBit {
 
 			// We have 4 bytes, then the start point of each
 			//  hyperlink, then the end point of the text.
-			int preData[] = new int[1+cntPlcs+1];
+            int[] preData = new int[1 + cntPlcs + 1];
 			for(int i=0; i<preData.length; i++) {
 				preData[i] = (int)LittleEndian.getUInt(data, 8+(i*4));
 			}
@@ -238,8 +241,8 @@ public abstract class QCPLCBit extends QCBit {
 				until = twoStartsAt + (cntPlcs-2)*threePlusIncrement;
 			}
 
-			long plcValA[] = new long[(until-at)/2];
-			long plcValB[] = new long[0];
+            long[] plcValA = new long[(until - at) / 2];
+            long[] plcValB = new long[0];
 			for(int i=0; i<plcValA.length; i++) {
 				plcValA[i] = LittleEndian.getUShort(data, at+(i*2));
 			}

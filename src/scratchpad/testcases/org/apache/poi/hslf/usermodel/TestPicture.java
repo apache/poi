@@ -173,12 +173,12 @@ public final class TestPicture {
     @Ignore("Just for visual validation - antialiasing is different on various systems")
     public void bug54541()
     throws IOException, ClassNotFoundException, SecurityException, NoSuchMethodException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException {
-        String files[] = {
+        String[] files = {
 //            "sample_pptx_grouping_issues.pptx",
 //            "54542_cropped_bitmap.pptx",
 //            "54541_cropped_bitmap.ppt",
 //            "54541_cropped_bitmap2.ppt",
-            "alterman_security.ppt",
+                "alterman_security.ppt",
 //            "alterman_security3.pptx",
         };
         

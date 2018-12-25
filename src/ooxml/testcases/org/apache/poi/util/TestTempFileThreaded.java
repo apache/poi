@@ -43,7 +43,7 @@ public class TestTempFileThreaded {
     private static final int NUMBER_OF_TESTS = 200;
 
     private volatile Throwable exception;
-    private int executions[];
+    private int[] executions;
 
     // the actual thread-safe temp-file strategy
     private static TempFileCreationStrategy createTempFileCreationStrategy(File poiTempFileDirectory) {

@@ -74,15 +74,15 @@ public class CryptoAPIDecryptor extends Decryptor implements Cloneable {
         SecretKey skey = generateSecretKey(password, ver);
         try {
             Cipher cipher = initCipherForBlock(null, 0, getEncryptionInfo(), skey, Cipher.DECRYPT_MODE);
-            byte encryptedVerifier[] = ver.getEncryptedVerifier();
-            byte verifier[] = new byte[encryptedVerifier.length];
+            byte[] encryptedVerifier = ver.getEncryptedVerifier();
+            byte[] verifier = new byte[encryptedVerifier.length];
             cipher.update(encryptedVerifier, 0, encryptedVerifier.length, verifier);
             setVerifier(verifier);
-            byte encryptedVerifierHash[] = ver.getEncryptedVerifierHash();
-            byte verifierHash[] = cipher.doFinal(encryptedVerifierHash);
+            byte[] encryptedVerifierHash = ver.getEncryptedVerifierHash();
+            byte[] verifierHash = cipher.doFinal(encryptedVerifierHash);
             HashAlgorithm hashAlgo = ver.getHashAlgorithm();
             MessageDigest hashAlg = CryptoFunctions.getMessageDigest(hashAlgo);
-            byte calcVerifierHash[] = hashAlg.digest(verifier);
+            byte[] calcVerifierHash = hashAlg.digest(verifier);
             if (Arrays.equals(calcVerifierHash, verifierHash)) {
                 setSecretKey(skey);
                 return true;
@@ -106,11 +106,11 @@ public class CryptoAPIDecryptor extends Decryptor implements Cloneable {
     throws GeneralSecurityException {
         EncryptionVerifier ver = encryptionInfo.getVerifier();
         HashAlgorithm hashAlgo = ver.getHashAlgorithm();
-        byte blockKey[] = new byte[4];
+        byte[] blockKey = new byte[4];
         LittleEndian.putUInt(blockKey, 0, block);
         MessageDigest hashAlg = CryptoFunctions.getMessageDigest(hashAlgo);
         hashAlg.update(skey.getEncoded());
-        byte encKey[] = hashAlg.digest(blockKey);
+        byte[] encKey = hashAlg.digest(blockKey);
         EncryptionHeader header = encryptionInfo.getHeader();
         int keyBits = header.getKeySize();
         encKey = CryptoFunctions.getBlock0(encKey, keyBits / 8);
@@ -133,7 +133,7 @@ public class CryptoAPIDecryptor extends Decryptor implements Cloneable {
         HashAlgorithm hashAlgo = ver.getHashAlgorithm();
         MessageDigest hashAlg = CryptoFunctions.getMessageDigest(hashAlgo);
         hashAlg.update(ver.getSalt());
-        byte hash[] = hashAlg.digest(StringUtil.getToUnicodeLE(password));
+        byte[] hash = hashAlg.digest(StringUtil.getToUnicodeLE(password));
         return new SecretKeySpec(hash, ver.getCipherAlgorithm().jceId);
     }
 
@@ -182,7 +182,7 @@ public class CryptoAPIDecryptor extends Decryptor implements Cloneable {
             }
             sbis.setBlock(0);
             int encryptedStreamDescriptorCount = (int) leis.readUInt();
-            StreamDescriptorEntry entries[] = new StreamDescriptorEntry[encryptedStreamDescriptorCount];
+            StreamDescriptorEntry[] entries = new StreamDescriptorEntry[encryptedStreamDescriptorCount];
             for (int i = 0; i < encryptedStreamDescriptorCount; i++) {
                 StreamDescriptorEntry entry = new StreamDescriptorEntry();
                 entries[i] = entry;

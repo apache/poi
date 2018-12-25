@@ -64,7 +64,7 @@ public final class StreamHelper {
             Result outputTarget = new StreamResult(new FilterOutputStream(
                     outStream) {
                 @Override
-                public void write(byte b[], int off, int len)
+                public void write(byte[] b, int off, int len)
                         throws IOException {
                     out.write(b, off, len);
                 }

@@ -102,7 +102,7 @@ public abstract class HPBFPart {
 		return data;
 	}
 	
-	protected final void setData(byte data[]) {
+	protected final void setData(byte[] data) {
 	    this.data = data.clone();
 	}
 

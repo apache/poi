@@ -476,7 +476,7 @@ public class HemfFont extends HwmfFont {
     @Override
     protected int readString(LittleEndianInputStream leis, StringBuilder sb, int limit) throws IOException {
         sb.setLength(0);
-        byte buf[] = new byte[limit*2];
+        byte[] buf = new byte[limit * 2];
         leis.readFully(buf);
 
         int b1, b2, readBytes = 0;

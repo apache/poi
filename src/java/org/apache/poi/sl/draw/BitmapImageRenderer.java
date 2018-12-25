@@ -72,7 +72,7 @@ public class BitmapImageRenderer implements ImageRenderer {
     }
 
     @Override
-    public void loadImage(byte data[], String contentType) throws IOException {
+    public void loadImage(byte[] data, String contentType) throws IOException {
         img = readImage(new ByteArrayInputStream(data), contentType);
     }
     

@@ -81,7 +81,7 @@ public interface StrokeStyle {
         /** PS_DASHDOTDOT system dash style / native 5 */
         SYS_DASH_DOT_DOT(5, 11, 2,2,1,1,1,1);
 
-        public final int pattern[];
+        public final int[] pattern;
         public final int nativeId;
         public final int ooxmlId;
 

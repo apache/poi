@@ -27,7 +27,7 @@ import java.io.FileOutputStream;
  */
 public final class MergePresentations {
 
-    public static void main(String args[]) throws Exception {
+    public static void main(String[] args) throws Exception {
         try (XMLSlideShow ppt = new XMLSlideShow()) {
             for (String arg : args) {
                 try (FileInputStream is = new FileInputStream(arg);

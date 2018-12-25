@@ -45,13 +45,13 @@ public class TestDetectAsOOXML {
 	
     @Test
 	public void testDetectAsPOIFS() throws IOException {
-	    Object fileAndMagic[][] = {
-            { "SampleSS.xlsx", FileMagic.OOXML },
-            { "SampleSS.xls", FileMagic.OLE2 },
-            { "SampleSS.txt", FileMagic.UNKNOWN }
-	    };
+        Object[][] fileAndMagic = {
+                {"SampleSS.xlsx", FileMagic.OOXML},
+                {"SampleSS.xls", FileMagic.OLE2},
+                {"SampleSS.txt", FileMagic.UNKNOWN}
+        };
 
-	    for (Object fm[] : fileAndMagic) {
+	    for (Object[] fm : fileAndMagic) {
 	        InputStream is = HSSFTestDataSamples.openSampleFileStream((String)fm[0]);
 	        is = FileMagic.prepareToCheckMagic(is);
 	        FileMagic act = FileMagic.valueOf(is);

@@ -270,7 +270,7 @@ public class XWPFSettings extends POIXMLDocumentPart {
 
 
             SecureRandom random = new SecureRandom();
-            byte salt[] = random.generateSeed(16);
+            byte[] salt = random.generateSeed(16);
 
             // Iterations specifies the number of times the hashing function shall be iteratively run (using each
             // iteration's result as the input for the next iteration).
@@ -280,7 +280,7 @@ public class XWPFSettings extends POIXMLDocumentPart {
             // Implementation Notes List:
             // --> In this third stage, the reversed byte order legacy hash from the second stage shall
             //     be converted to Unicode hex string representation
-            byte hash[] = CryptoFunctions.hashPassword(legacyHash, hashAlgo, salt, spinCount, false);
+            byte[] hash = CryptoFunctions.hashPassword(legacyHash, hashAlgo, salt, spinCount, false);
 
             safeGetDocumentProtection().setSalt(salt);
             safeGetDocumentProtection().setHash(hash);
@@ -300,8 +300,8 @@ public class XWPFSettings extends POIXMLDocumentPart {
      */
     public boolean validateProtectionPassword(String password) {
         BigInteger sid = safeGetDocumentProtection().getCryptAlgorithmSid();
-        byte hash[] = safeGetDocumentProtection().getHash();
-        byte salt[] = safeGetDocumentProtection().getSalt();
+        byte[] hash = safeGetDocumentProtection().getHash();
+        byte[] salt = safeGetDocumentProtection().getSalt();
         BigInteger spinCount = safeGetDocumentProtection().getCryptSpinCount();
 
         if (sid == null || hash == null || salt == null || spinCount == null) return false;
@@ -337,7 +337,7 @@ public class XWPFSettings extends POIXMLDocumentPart {
         // Implementation Notes List:
         // --> In this third stage, the reversed byte order legacy hash from the second stage shall
         //     be converted to Unicode hex string representation
-        byte hash2[] = CryptoFunctions.hashPassword(legacyHash, hashAlgo, salt, spinCount.intValue(), false);
+        byte[] hash2 = CryptoFunctions.hashPassword(legacyHash, hashAlgo, salt, spinCount.intValue(), false);
 
         return Arrays.equals(hash, hash2);
     }

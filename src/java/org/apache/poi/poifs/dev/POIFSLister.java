@@ -38,7 +38,7 @@ public class POIFSLister {
     *
     * @param args the names of the files to be displayed
     */
-   public static void main(final String args[]) throws IOException {
+   public static void main(final String[] args) throws IOException {
       if (args.length == 0) {
          System.err.println("Must specify at least one file to view");
          System.exit(1);

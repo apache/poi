@@ -89,7 +89,7 @@ public class TestDecryptor {
                     continue;
                 }
                 assertEquals(entry.getSize() - 1, zin.skip(entry.getSize() - 1));
-                byte buf[] = new byte[10];
+                byte[] buf = new byte[10];
                 int readBytes = zin.read(buf);
                 // zin.available() doesn't work for entries
                 assertEquals("size failed for " + entry.getName(), 1, readBytes);

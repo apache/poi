@@ -155,7 +155,7 @@ public class HwmfGraphics {
         int cap = ps.getLineCap().awtFlag;
         int join = ps.getLineJoin().awtFlag;
         float miterLimit = (float)getProperties().getPenMiterLimit();
-        float dashes[] = ps.getLineDashes();
+        float[] dashes = ps.getLineDashes();
         boolean dashAlt = ps.isAlternateDash();
         // This value is not an integer index into the dash pattern array.
         // Instead, it is a floating-point value that specifies a linear distance.

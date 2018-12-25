@@ -284,7 +284,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
      * @return text run records
      */
     public Record[] getRecords() {
-        Record r[] = _headerAtom.getParentRecord().getChildRecords();
+        Record[] r = _headerAtom.getParentRecord().getChildRecords();
         return getRecords(r, new int[] { 0 }, _headerAtom);
     }
 
@@ -313,7 +313,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
             }
         }
 
-        Record result[] = new Record[length];
+        Record[] result = new Record[length];
         System.arraycopy(records, startIdx[0], result, 0, length);
         startIdx[0] += length;
 
@@ -812,7 +812,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
      * are queried
      */
     protected <T extends TextProp> T getPropVal(TextPropCollection props, String propName) {
-        String propNames[] = propName.split(",");
+        String[] propNames = propName.split(",");
         for (String pn : propNames) {
             T prop = props.findByName(pn);
             if (isValidProp(prop)) {
@@ -835,7 +835,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
             }
         }
 
-        final String propNames[] = propName.split(",");
+        final String[] propNames = propName.split(",");
         final HSLFSheet sheet = getSheet();
         final int txtype = getRunType();
         final HSLFMasterSheet master;

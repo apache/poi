@@ -210,7 +210,7 @@ public class FormulaViewer
      * @param args pass one argument with the filename or --help
      * @throws IOException if the file can't be read or contained errors
      */
-    public static void main(String args[]) throws IOException
+    public static void main(String[] args) throws IOException
     {
         if ((args == null) || (args.length >2 )
                 || args[ 0 ].equals("--help"))

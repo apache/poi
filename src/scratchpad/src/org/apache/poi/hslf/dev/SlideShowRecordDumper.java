@@ -55,7 +55,7 @@ public final class SlideShowRecordDumper {
      * right now this function takes one parameter: a ppt file, and outputs a
      * dump of what it contains
      */
-    public static void main(String args[]) throws IOException {
+    public static void main(String[] args) throws IOException {
         String filename = "";
         boolean verbose = false;
         boolean escher = false;

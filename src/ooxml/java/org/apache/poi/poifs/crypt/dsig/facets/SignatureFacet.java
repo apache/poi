@@ -113,18 +113,18 @@ public abstract class SignatureFacet implements SignatureConfigurable {
         }
     }
     
-    protected Reference newReference(String uri, List<Transform> transforms, String type, String id, byte digestValue[])
+    protected Reference newReference(String uri, List<Transform> transforms, String type, String id, byte[] digestValue)
     throws XMLSignatureException {
         return newReference(uri, transforms, type, id, digestValue, signatureConfig);
     }
 
     public static Reference newReference(
-          String uri
+            String uri
         , List<Transform> transforms
         , String type
         , String id
-        , byte digestValue[]
-        , SignatureConfig signatureConfig)
+        , byte[] digestValue
+            , SignatureConfig signatureConfig)
     throws XMLSignatureException {
         // the references appear in the package signature or the package object
         // so we can use the default digest algorithm

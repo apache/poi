@@ -68,7 +68,7 @@ public class TestFonts {
         "\u304C\u597D\u304D\u3067\u3001\u5C0F\u3055\u3044\u9803\u3001\u53E4\u4EE3\u751F\u7269\u306E\u56F3" +
         "\u9451\u3092\u4E00\u7DD2\u306B\u898B\u3066\u305F\u306E\u601D\u3044\u51FA\u3059\u301C\u3068\u3044";
 
-    private static final String INIT_FONTS[] = { "mona.ttf" };
+    private static final String[] INIT_FONTS = {"mona.ttf"};
 
     // currently linux and mac return quite different values
     private static final int[] expected_sizes = {

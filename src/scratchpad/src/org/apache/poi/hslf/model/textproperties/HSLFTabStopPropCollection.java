@@ -55,7 +55,7 @@ public class HSLFTabStopPropCollection extends TextProp {
      * @param data the data stream
      * @param offset the offset within the data
      */
-    public void parseProperty(byte data[], int offset) {
+    public void parseProperty(byte[] data, int offset) {
         tabStops.addAll(readTabStops(new LittleEndianByteArrayInputStream(data, offset)));
     }
     

@@ -139,7 +139,7 @@ public class RelationshipTransformService extends TransformService {
         
         try {
             TransformDocument transDoc = TransformDocument.Factory.parse(parentNode, DEFAULT_XML_OPTIONS);
-            XmlObject xoList[] = transDoc.getTransform().selectChildren(RelationshipReferenceDocument.type.getDocumentElementName());
+            XmlObject[] xoList = transDoc.getTransform().selectChildren(RelationshipReferenceDocument.type.getDocumentElementName());
             if (xoList.length == 0) {
                 LOG.log(POILogger.WARN, "no RelationshipReference/@SourceId parameters present");
             }

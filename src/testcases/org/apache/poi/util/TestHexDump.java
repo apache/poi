@@ -53,8 +53,8 @@ public class TestHexDump {
         byte[] testArray = testArray();
         ByteArrayOutputStream streamAct = new ByteArrayOutputStream();
         HexDump.dump(testArray, 0, streamAct, 0);
-        byte bytesAct[] = streamAct.toByteArray();
-        byte bytesExp[] = toHexDump(0,0);
+        byte[] bytesAct = streamAct.toByteArray();
+        byte[] bytesExp = toHexDump(0, 0);
 
         assertEquals("array size mismatch", bytesExp.length, bytesAct.length);
         assertArrayEquals("array mismatch", bytesExp, bytesAct);
@@ -123,7 +123,7 @@ public class TestHexDump {
 
     private byte[] toHexDump(long offset, int index) {
         StringBuilder strExp = new StringBuilder(), chrs = new StringBuilder();
-        Object obj[] = new Object[33];
+        Object[] obj = new Object[33];
         StringBuilder format = new StringBuilder();
 
         for (int j = 0; j < 16 && (index + j*16) < 256; j++) {

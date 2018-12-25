@@ -34,13 +34,13 @@ public class BinaryRC4EncryptionVerifier extends EncryptionVerifier implements E
     }
 
     protected BinaryRC4EncryptionVerifier(LittleEndianInput is) {
-        byte salt[] = new byte[16];
+        byte[] salt = new byte[16];
         is.readFully(salt);
         setSalt(salt);
-        byte encryptedVerifier[] = new byte[16];
+        byte[] encryptedVerifier = new byte[16];
         is.readFully(encryptedVerifier);
         setEncryptedVerifier(encryptedVerifier);
-        byte encryptedVerifierHash[] = new byte[16];
+        byte[] encryptedVerifierHash = new byte[16];
         is.readFully(encryptedVerifierHash);
         setEncryptedVerifierHash(encryptedVerifierHash);
         setSpinCount(-1);
@@ -51,7 +51,7 @@ public class BinaryRC4EncryptionVerifier extends EncryptionVerifier implements E
     }
 
     @Override
-    protected void setSalt(byte salt[]) {
+    protected void setSalt(byte[] salt) {
         if (salt == null || salt.length != 16) {
             throw new EncryptedDocumentException("invalid verifier salt");
         }
@@ -60,24 +60,24 @@ public class BinaryRC4EncryptionVerifier extends EncryptionVerifier implements E
     }
 
     @Override
-    protected void setEncryptedVerifier(byte encryptedVerifier[]) {
+    protected void setEncryptedVerifier(byte[] encryptedVerifier) {
         super.setEncryptedVerifier(encryptedVerifier);
     }
 
     @Override
-    protected void setEncryptedVerifierHash(byte encryptedVerifierHash[]) {
+    protected void setEncryptedVerifierHash(byte[] encryptedVerifierHash) {
         super.setEncryptedVerifierHash(encryptedVerifierHash);
     }
 
     @Override
     public void write(LittleEndianByteArrayOutputStream bos) {
-        byte salt[] = getSalt();
+        byte[] salt = getSalt();
         assert (salt.length == 16);
         bos.write(salt);
-        byte encryptedVerifier[] = getEncryptedVerifier();
+        byte[] encryptedVerifier = getEncryptedVerifier();
         assert (encryptedVerifier.length == 16);
         bos.write(encryptedVerifier);
-        byte encryptedVerifierHash[] = getEncryptedVerifierHash();
+        byte[] encryptedVerifierHash = getEncryptedVerifierHash();
         assert (encryptedVerifierHash.length == 16);
         bos.write(encryptedVerifierHash);
     }

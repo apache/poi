@@ -185,8 +185,8 @@ public class CellNumberFormatter extends CellFormatter {
         } else {
             afterFractional = null;
         }
-        
-        double scaleByRef[] = { ph.getScale() };
+
+        double[] scaleByRef = {ph.getScale()};
         showGroupingSeparator = interpretIntegerCommas(descBuf, specials, decimalPoint, integerEnd(), fractionalEnd(), scaleByRef);
         if (exponent == null) {
             scale = scaleByRef[0];

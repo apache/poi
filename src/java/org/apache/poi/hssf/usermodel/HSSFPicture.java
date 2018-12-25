@@ -256,7 +256,7 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
     
     public void setFileName(String data){
         // TODO: add trailing \u0000? 
-        byte bytes[] = StringUtil.getToUnicodeLE(data);
+        byte[] bytes = StringUtil.getToUnicodeLE(data);
         EscherComplexProperty prop = new EscherComplexProperty(EscherProperties.BLIP__BLIPFILENAME, true, bytes);
         setPropertyValue(prop);
     }

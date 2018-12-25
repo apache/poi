@@ -35,7 +35,7 @@ public class ImageHeaderBitmap {
     
     private final Dimension size;
     
-    public ImageHeaderBitmap(byte data[], int offset) {
+    public ImageHeaderBitmap(byte[] data, int offset) {
         BufferedImage img = null;
         try {
             img = ImageIO.read(new ByteArrayInputStream(data, offset, data.length-offset));

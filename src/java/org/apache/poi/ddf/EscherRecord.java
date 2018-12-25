@@ -93,7 +93,7 @@ public abstract class EscherRecord implements Cloneable {
      * @param offset    the offset to start reading from
      * @return          value of instance part of options field
      */
-    protected static short readInstance( byte data[], int offset ) {
+    protected static short readInstance(byte[] data, int offset ) {
         final short options = LittleEndian.getShort( data, offset );
         return fInstance.getShortValue( options );
     }

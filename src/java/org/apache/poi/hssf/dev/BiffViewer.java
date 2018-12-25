@@ -699,7 +699,7 @@ public final class BiffViewer {
 		return ib;
 	}
 
-	private static void writeHex(char buf[], int startInBuf, int value, int nDigits) {
+	private static void writeHex(char[] buf, int startInBuf, int value, int nDigits) {
 		int acc = value;
 		for(int i=nDigits-1; i>=0; i--) {
 			int digit = acc & 0x0F;

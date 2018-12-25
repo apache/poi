@@ -29,7 +29,7 @@ import org.apache.poi.sl.usermodel.PictureData.PictureType;
  * Utility to extract pictures from a PowerPoint file.
  */
 public final class ImageExtractor {
-    public static void main(String args[]) throws IOException {
+    public static void main(String[] args) throws IOException {
         if (args.length < 1) {
             System.err.println("Usage:");
             System.err.println("\tImageExtractor <file>");

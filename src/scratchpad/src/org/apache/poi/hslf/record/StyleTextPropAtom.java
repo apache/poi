@@ -398,8 +398,8 @@ public final class StyleTextPropAtom extends RecordAtom {
         }
 
         out.append("  original byte stream \n");
-        
-        byte buf[] = IOUtils.safelyAllocate(rawContents.length+reserved.length, MAX_RECORD_LENGTH);
+
+        byte[] buf = IOUtils.safelyAllocate(rawContents.length + reserved.length, MAX_RECORD_LENGTH);
         System.arraycopy(rawContents, 0, buf, 0, rawContents.length);
         System.arraycopy(reserved, 0, buf, rawContents.length, reserved.length);
         out.append( HexDump.dump(buf, 0, 0) );

@@ -57,7 +57,7 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
 	
 	@Override
 	public int readUByte() {
-		byte buf[] = new byte[1];
+        byte[] buf = new byte[1];
 		try {
 			checkEOF(read(buf), 1);
 		} catch (IOException e) {
@@ -84,7 +84,7 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
 	
 	@Override
 	public int readInt() {
-		byte buf[] = new byte[LittleEndianConsts.INT_SIZE];
+        byte[] buf = new byte[LittleEndianConsts.INT_SIZE];
 		try {
 			checkEOF(read(buf), buf.length);
 		} catch (IOException e) {
@@ -108,7 +108,7 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
 	
 	@Override
 	public long readLong() {
-		byte buf[] = new byte[LittleEndianConsts.LONG_SIZE];
+        byte[] buf = new byte[LittleEndianConsts.LONG_SIZE];
 		try {
 		    checkEOF(read(buf), LittleEndianConsts.LONG_SIZE);
 		} catch (IOException e) {
@@ -124,7 +124,7 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
 	
 	@Override
 	public int readUShort() {
-		byte buf[] = new byte[LittleEndianConsts.SHORT_SIZE];
+        byte[] buf = new byte[LittleEndianConsts.SHORT_SIZE];
 		try {
 		    checkEOF(read(buf), LittleEndianConsts.SHORT_SIZE);
 		} catch (IOException e) {

@@ -35,30 +35,30 @@ import org.junit.Test;
  */
 public class TestFieldsTables extends HWPFTestCase {
 
-    private static final String EXPECTED[] = {
-        "[19, 43) - FLD - 0x13; 0x1f\n" + "[43, 54) - FLD - 0x14; 0xff\n"
-        + "[54, 59) - FLD - 0x15; 0x81\n",
+    private static final String[] EXPECTED = {
+            "[19, 43) - FLD - 0x13; 0x1f\n" + "[43, 54) - FLD - 0x14; 0xff\n"
+                    + "[54, 59) - FLD - 0x15; 0x81\n",
 
-        "[31, 59) - FLD - 0x13; 0x45\n" + "[59, 61) - FLD - 0x14; 0xff\n"
-        + "[61, 66) - FLD - 0x15; 0x80\n",
+            "[31, 59) - FLD - 0x13; 0x45\n" + "[59, 61) - FLD - 0x14; 0xff\n"
+                    + "[61, 66) - FLD - 0x15; 0x80\n",
 
-        "[23, 49) - FLD - 0x13; 0x11\n" + "[49, 64) - FLD - 0x14; 0xff\n"
-        + "[64, 69) - FLD - 0x15; 0x80\n",
+            "[23, 49) - FLD - 0x13; 0x11\n" + "[49, 64) - FLD - 0x14; 0xff\n"
+                    + "[64, 69) - FLD - 0x15; 0x80\n",
 
-        "[18, 42) - FLD - 0x13; 0x21\n" + "[42, 44) - FLD - 0x14; 0xff\n"
-        + "[44, 47) - FLD - 0x15; 0x81\n"
-        + "[47, 75) - FLD - 0x13; 0x1d\n"
-        + "[75, 85) - FLD - 0x14; 0xff\n"
-        + "[85, 91) - FLD - 0x15; 0x81\n",
+            "[18, 42) - FLD - 0x13; 0x21\n" + "[42, 44) - FLD - 0x14; 0xff\n"
+                    + "[44, 47) - FLD - 0x15; 0x81\n"
+                    + "[47, 75) - FLD - 0x13; 0x1d\n"
+                    + "[75, 85) - FLD - 0x14; 0xff\n"
+                    + "[85, 91) - FLD - 0x15; 0x81\n",
 
-        "[30, 54) - FLD - 0x13; 0x20\n" + "[54, 62) - FLD - 0x14; 0xff\n"
-        + "[62, 68) - FLD - 0x15; 0x81\n",
+            "[30, 54) - FLD - 0x13; 0x20\n" + "[54, 62) - FLD - 0x14; 0xff\n"
+                    + "[62, 68) - FLD - 0x15; 0x81\n",
 
-        "[1, 31) - FLD - 0x13; 0x15\n" + "[31, 51) - FLD - 0x14; 0xff\n"
-        + "[51, 541) - FLD - 0x15; 0x81\n",
+            "[1, 31) - FLD - 0x13; 0x15\n" + "[31, 51) - FLD - 0x14; 0xff\n"
+                    + "[51, 541) - FLD - 0x15; 0x81\n",
 
-        "[19, 47) - FLD - 0x13; 0x19\n" + "[47, 49) - FLD - 0x14; 0xff\n"
-        + "[49, 55) - FLD - 0x15; 0x81\n"
+            "[19, 47) - FLD - 0x13; 0x19\n" + "[47, 49) - FLD - 0x14; 0xff\n"
+                    + "[49, 55) - FLD - 0x15; 0x81\n"
     };
 
     @Override

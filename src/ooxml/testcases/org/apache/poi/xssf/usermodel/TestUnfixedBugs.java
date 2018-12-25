@@ -82,7 +82,7 @@ public final class TestUnfixedBugs {
 
     private void verifyBug54084Unicode(Workbook wb) {
         // expected data is stored in UTF-8 in a text-file
-        byte data[] = HSSFTestDataSamples.getTestDataFileContent("54084 - Greek - beyond BMP.txt");
+        byte[] data = HSSFTestDataSamples.getTestDataFileContent("54084 - Greek - beyond BMP.txt");
         String testData = new String(data, StandardCharsets.UTF_8).trim();
 
         Sheet sheet = wb.getSheetAt(0);

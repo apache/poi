@@ -58,10 +58,10 @@ public class TestDocumentEncryption {
 
     @Test
     public void cryptoAPIDecryptionOther() throws Exception {
-        String encPpts[] = {
-            "Password_Protected-56-hello.ppt",
-            "Password_Protected-hello.ppt",
-            "Password_Protected-np-hello.ppt",
+        String[] encPpts = {
+                "Password_Protected-56-hello.ppt",
+                "Password_Protected-hello.ppt",
+                "Password_Protected-np-hello.ppt",
         };
 
         Biff8EncryptionKey.setCurrentUserPassword("hello");
@@ -156,7 +156,7 @@ public class TestDocumentEncryption {
             String rawText = HSLFTextParagraph.getRawText(slide.getTextParagraphs().get(0));
             assertEquals("Dominic Salemno", rawText);
 
-            String picCmp[][] = {
+            String[][] picCmp = {
                     {"0", "nKsDTKqxTCR8LFkVVWlP9GSTvZ0="},
                     {"95163", "SuNOR+9V1UVYZIoeD65l3VTaLoc="},
                     {"100864", "Ql3IGrr4bNq07ZTp5iPg7b+pva8="},
@@ -170,7 +170,7 @@ public class TestDocumentEncryption {
             List<HSLFPictureData> pd = ss.getSlideShowImpl().getPictureData();
             int i = 0;
             for (HSLFPictureData p : pd) {
-                byte hash[] = md.digest(p.getData());
+                byte[] hash = md.digest(p.getData());
                 assertEquals(Integer.parseInt(picCmp[i][0]), p.getOffset());
                 assertEquals(picCmp[i][1], Base64.encodeBase64String(hash));
                 i++;

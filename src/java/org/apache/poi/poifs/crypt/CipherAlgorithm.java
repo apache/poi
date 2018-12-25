@@ -41,13 +41,13 @@ public enum CipherAlgorithm {
     public final String jceId;
     public final int ecmaId;
     public final int defaultKeySize;
-    public final int allowedKeySize[];
+    public final int[] allowedKeySize;
     public final int blockSize;
     public final int encryptedVerifierHashLength;
     public final String xmlId;
     public final boolean needsBouncyCastle;
     
-    CipherAlgorithm(CipherProvider provider, String jceId, int ecmaId, int defaultKeySize, int allowedKeySize[], int blockSize, int encryptedVerifierHashLength, String xmlId, boolean needsBouncyCastle) {
+    CipherAlgorithm(CipherProvider provider, String jceId, int ecmaId, int defaultKeySize, int[] allowedKeySize, int blockSize, int encryptedVerifierHashLength, String xmlId, boolean needsBouncyCastle) {
         this.provider = provider;
         this.jceId = jceId;
         this.ecmaId = ecmaId;

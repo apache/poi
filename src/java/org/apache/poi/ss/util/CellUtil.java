@@ -100,10 +100,9 @@ public final class CellUtil {
                     BORDER_RIGHT,
                     BORDER_TOP
             )));
-    
 
 
-    private static UnicodeMapping unicodeMappings[];
+    private static UnicodeMapping[] unicodeMappings;
 
     private static final class UnicodeMapping {
 

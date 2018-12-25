@@ -357,7 +357,7 @@ public enum HwmfTernaryRasterOp {
     }
 
     public String describeCmd() {
-        String stack[] = new String[10];
+        String[] stack = new String[10];
         int stackPnt = 0;
 
         for (char c : opCmd.toCharArray()) {

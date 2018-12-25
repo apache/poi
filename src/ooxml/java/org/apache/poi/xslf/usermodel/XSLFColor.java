@@ -233,7 +233,7 @@ public class XSLFColor {
             // sRGB has a gamma of 2.2
             CTSRgbColor rgb = fill.addNewSrgbClr();
 
-            byte rgbBytes[] = { (byte)color.getRed(), (byte)color.getGreen(), (byte)color.getBlue() };
+            byte[] rgbBytes = {(byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue()};
             rgb.setVal(rgbBytes);
             alphaPct = (addAlpha) ? rgb.addNewAlpha() : null;
         } else {

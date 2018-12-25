@@ -43,7 +43,7 @@ public class OOXMLLiteAgent {
         final Set<Integer> fileHashes = new HashSet<>();
 
         public LoggingTransformer(String agentArgs) {
-            String args[] = (agentArgs == null ? "" : agentArgs).split("\\|",2);
+            String[] args = (agentArgs == null ? "" : agentArgs).split("\\|", 2);
             path = Paths.get(args.length >= 1 ? args[0] : "ooxml-lite.out");
             includes = Pattern.compile(args.length >= 2 ? args[1] : ".*/schemas/.*");
 

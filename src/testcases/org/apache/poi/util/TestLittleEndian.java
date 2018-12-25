@@ -43,7 +43,7 @@ public final class TestLittleEndian {
         testdata[0] = 0x01;
         testdata[1] = (byte) 0xFF;
         testdata[2] = 0x02;
-        short expected[] = new short[2];
+        short[] expected = new short[2];
 
         expected[0] = ( short ) 0xFF01;
         expected[1] = 0x02FF;
@@ -164,7 +164,7 @@ public final class TestLittleEndian {
         expected[1] = (byte) 0xFF;
         expected[2] = 0x02;
         byte[] received   = new byte[ LittleEndianConsts.SHORT_SIZE + 1 ];
-        short  testdata[] = new short[2];
+        short[] testdata = new short[2];
 
         testdata[0] = ( short ) 0xFF01;
         testdata[1] = 0x02FF;

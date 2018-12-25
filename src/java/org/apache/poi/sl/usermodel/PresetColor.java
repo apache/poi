@@ -273,7 +273,7 @@ public enum PresetColor {
     }
     
     public static PresetColor valueOfNativeId(int nativeId) {
-        PresetColor vals[] = values();
+        PresetColor[] vals = values();
         return (0 < nativeId && nativeId <= vals.length) ? vals[nativeId-1] : null;
     }
 }

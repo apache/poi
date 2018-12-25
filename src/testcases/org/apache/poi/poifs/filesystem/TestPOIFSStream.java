@@ -2612,7 +2612,7 @@ public final class TestPOIFSStream {
    public void NPOIFSReadCopyWritePOIFSRead() throws IOException {
       File testFile = POIDataSamples.getSpreadSheetInstance().getFile("Simple.xls");
       POIFSFileSystem src = new POIFSFileSystem(testFile);
-      byte wbDataExp[] = IOUtils.toByteArray(src.createDocumentInputStream("Workbook"));
+       byte[] wbDataExp = IOUtils.toByteArray(src.createDocumentInputStream("Workbook"));
 
       POIFSFileSystem nfs = new POIFSFileSystem();
       EntryUtils.copyNodes(src.getRoot(), nfs.getRoot());
@@ -2623,7 +2623,7 @@ public final class TestPOIFSStream {
       nfs.close();
 
       POIFSFileSystem pfs = new POIFSFileSystem(new ByteArrayInputStream(bos.toByteArray()));
-      byte wbDataAct[] = IOUtils.toByteArray(pfs.createDocumentInputStream("Workbook"));
+       byte[] wbDataAct = IOUtils.toByteArray(pfs.createDocumentInputStream("Workbook"));
 
       assertThat(wbDataExp, equalTo(wbDataAct));
       pfs.close();

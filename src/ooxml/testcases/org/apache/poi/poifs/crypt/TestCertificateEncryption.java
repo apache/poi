@@ -80,7 +80,7 @@ public class TestCertificateEncryption {
      */
     static final String certDN = "CN=poitest";
     // static final File pfxFile = TempFile.createTempFile("poitest", ".pfx");
-    static byte pfxFileBytes[];
+    static byte[] pfxFileBytes;
     
     static class CertData {
         KeyPair keypair;
@@ -171,7 +171,7 @@ public class TestCertificateEncryption {
         
         File file = POIDataSamples.getDocumentInstance().getFile("VariousPictures.docx");
         InputStream fis = new FileInputStream(file);
-        byte byteExpected[] = IOUtils.toByteArray(fis);
+        byte[] byteExpected = IOUtils.toByteArray(fis);
         fis.close();
         
         OutputStream os = enc.getDataStream(fs);
@@ -189,7 +189,7 @@ public class TestCertificateEncryption {
         assertTrue("certificate verification failed", passed);
         
         fis = agDec.getDataStream(fs);
-        byte byteActual[] = IOUtils.toByteArray(fis);
+        byte[] byteActual = IOUtils.toByteArray(fis);
         fis.close();
         
         assertThat(byteExpected, equalTo(byteActual));

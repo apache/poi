@@ -32,17 +32,17 @@ public class ImageHeaderPICT {
 
     public static final double DEFAULT_RESOLUTION = Units.POINT_DPI;
 
-    private static final byte V2_HEADER[] = {
-        0x00, 0x11,       // v2 version opcode
-        0x02, (byte)0xFF, // version number of new picture
-        0x0C, 0x00,        // header opcode
-        (byte)0xFF, (byte)0xFE, 0x00, 0x00 // pic size dummy
+    private static final byte[] V2_HEADER = {
+            0x00, 0x11,       // v2 version opcode
+            0x02, (byte) 0xFF, // version number of new picture
+            0x0C, 0x00,        // header opcode
+            (byte) 0xFF, (byte) 0xFE, 0x00, 0x00 // pic size dummy
     };
 
     private final Rectangle bounds;
     private final double hRes, vRes;
 
-    public ImageHeaderPICT(byte data[], final int off) {
+    public ImageHeaderPICT(byte[] data, final int off) {
         // http://mirrors.apple2.org.za/apple.cabi.net/Graphics/PICT.and_QT.INFO/PICT.file.format.TI.txt
         int offset = off;
         // low order 16 bits of picture size - can be ignored
@@ -86,13 +86,13 @@ public class ImageHeaderPICT {
         return bounds;
     }
 
-    private static int readUnsignedShort(byte data[], int offset) {
+    private static int readUnsignedShort(byte[] data, int offset) {
         int b0 = data[offset] & 0xFF;
         int b1 = data[offset+1] & 0xFF;
         return b0 << 8 | b1;
     }
 
-    private static double readFixedPoint(byte data[], int offset) {
+    private static double readFixedPoint(byte[] data, int offset) {
         int b0 = data[offset] & 0xFF;
         int b1 = data[offset+1] & 0xFF;
         int b2 = data[offset+2] & 0xFF;

@@ -126,7 +126,7 @@ public class TestXWPFBugs {
     
     @Test
     public void bug59058() throws IOException, XmlException {
-        String files[] = { "bug57031.docx", "bug59058.docx" };
+        String[] files = {"bug57031.docx", "bug59058.docx"};
         for (String f : files) {
             ZipFile zf = new ZipFile(samples.getFile(f));
             ZipArchiveEntry entry = zf.getEntry("word/document.xml");

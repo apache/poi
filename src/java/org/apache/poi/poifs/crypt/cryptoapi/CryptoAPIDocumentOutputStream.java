@@ -31,7 +31,7 @@ import org.apache.poi.util.Internal;
 /* package */ class CryptoAPIDocumentOutputStream extends ByteArrayOutputStream {
     private final Cipher cipher;
     private final CryptoAPIEncryptor encryptor;
-    private final byte oneByte[] = { 0 };
+    private final byte[] oneByte = {0};
 
     public CryptoAPIDocumentOutputStream(CryptoAPIEncryptor encryptor) throws GeneralSecurityException {
         this.encryptor = encryptor;

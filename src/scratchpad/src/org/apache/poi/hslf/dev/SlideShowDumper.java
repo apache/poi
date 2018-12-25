@@ -65,7 +65,7 @@ public final class SlideShowDumper {
    *  right now this function takes one parameter: a ppt file, and outputs
    *  a dump of what it contains
    */
-  public static void main(String args[]) throws IOException
+  public static void main(String[] args) throws IOException
   {
 	if(args.length == 0) {
 		System.err.println("Useage: SlideShowDumper [-escher|-basicescher] <filename>");

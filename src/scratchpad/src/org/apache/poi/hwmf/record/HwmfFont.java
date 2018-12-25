@@ -502,7 +502,9 @@ public class HwmfFont implements FontInfo {
     }
 
     protected int readString(LittleEndianInputStream leis, StringBuilder sb, int limit) throws IOException {
-        byte buf[] = new byte[limit], b, readBytes = 0;
+        byte[] buf = new byte[limit];
+        byte b;
+        byte readBytes = 0;
         do {
             if (readBytes == limit) {
                 return -1;

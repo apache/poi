@@ -288,7 +288,7 @@ public class XMLSlideShow extends POIXMLDocument
         XSLFSlideLayout layout = sm.getLayout(SlideLayout.BLANK);
         if (layout == null) {
             LOG.log(POILogger.WARN, "Blank layout was not found - defaulting to first slide layout in master");
-            XSLFSlideLayout sl[] = sm.getSlideLayouts();
+            XSLFSlideLayout[] sl = sm.getSlideLayouts();
             if (sl.length == 0) {
                 throw new POIXMLException("SlideMaster must contain a SlideLayout.");
             }
@@ -580,7 +580,7 @@ public class XMLSlideShow extends POIXMLDocument
     @Override
     public XSLFPictureData findPictureData(byte[] pictureData) {
         long checksum = IOUtils.calculateChecksum(pictureData);
-        byte cs[] = new byte[LittleEndianConsts.LONG_SIZE];
+        byte[] cs = new byte[LittleEndianConsts.LONG_SIZE];
         LittleEndian.putLong(cs, 0, checksum);
 
         for (XSLFPictureData pic : getPictureData()) {

@@ -220,7 +220,7 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
      * @throws ShortBufferException
      */
     protected int invokeCipher(int posInChunk, boolean doFinal) throws GeneralSecurityException, IOException {
-        byte plain[] = (plainByteFlags.isEmpty()) ? null : chunk.clone();
+        byte[] plain = (plainByteFlags.isEmpty()) ? null : chunk.clone();
 
         int ciLen = (doFinal)
             ? cipher.doFinal(chunk, 0, posInChunk, chunk)
@@ -316,7 +316,7 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
                     // encrypted within the EncryptedData field, not including the size of the StreamSize field.
                     // Note that the actual size of the \EncryptedPackage stream (1) can be larger than this
                     // value, depending on the block size of the chosen encryption algorithm
-                    byte buf[] = new byte[LittleEndianConsts.LONG_SIZE];
+                    byte[] buf = new byte[LittleEndianConsts.LONG_SIZE];
                     LittleEndian.putLong(buf, 0, pos);
                     os.write(buf);
 

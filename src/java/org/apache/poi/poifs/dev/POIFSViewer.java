@@ -41,7 +41,7 @@ public final class POIFSViewer {
      * @param args the names of the files to be displayed
      */
 
-    public static void main(final String args[]) {
+    public static void main(final String[] args) {
         if (args.length == 0) {
             System.err.println("Must specify at least one file to view");
             System.exit(1);

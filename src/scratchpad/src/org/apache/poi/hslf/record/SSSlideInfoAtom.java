@@ -201,8 +201,8 @@ public class SSSlideInfoAtom extends RecordAtom {
         out.write(_header);
         writeLittleEndian(_slideTime, out);
         writeLittleEndian(_soundIdRef, out);
-        
-        byte byteBuf[] = new byte[LittleEndianConsts.BYTE_SIZE];
+
+        byte[] byteBuf = new byte[LittleEndianConsts.BYTE_SIZE];
         LittleEndian.putUByte(byteBuf, 0, _effectDirection);
         out.write(byteBuf);
         LittleEndian.putUByte(byteBuf, 0, _effectType);

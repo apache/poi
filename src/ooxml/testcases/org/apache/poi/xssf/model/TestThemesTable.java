@@ -44,9 +44,9 @@ public class TestThemesTable {
     private final String testFileSimple = "Themes.xlsx";
     private final String testFileComplex = "Themes2.xlsx";
     // TODO .xls version available too, add HSSF support then check 
-    
+
     // What colours they should show up as
-    private static String rgbExpected[] = {
+    private static String[] rgbExpected = {
             "ffffff", // Lt1
             "000000", // Dk1
             "eeece1", // Lt2

@@ -41,12 +41,12 @@ public final class Biff8DecryptingStream implements BiffHeaderInput, LittleEndia
     private static final int MAX_RECORD_LENGTH = 100_000;
 
     private ChunkedCipherInputStream ccis;
-    private final byte buffer[] = new byte[LittleEndianConsts.LONG_SIZE];
+    private final byte[] buffer = new byte[LittleEndianConsts.LONG_SIZE];
     private boolean shouldSkipEncryptionOnCurrentRecord;
 
 	public Biff8DecryptingStream(InputStream in, int initialOffset, EncryptionInfo info) throws RecordFormatException {
         try {
-    	    byte initialBuf[] = IOUtils.safelyAllocate(initialOffset, MAX_RECORD_LENGTH);
+            byte[] initialBuf = IOUtils.safelyAllocate(initialOffset, MAX_RECORD_LENGTH);
     	    InputStream stream;
     	    if (initialOffset == 0) {
     	        stream = in;
@@ -207,7 +207,7 @@ public final class Biff8DecryptingStream implements BiffHeaderInput, LittleEndia
     }
 
     @Override
-    public void readPlain(byte b[], int off, int len) {
+    public void readPlain(byte[] b, int off, int len) {
         ccis.readPlain(b, off, len);
     }
 

@@ -1581,10 +1581,10 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream(8096);
         wb.write(bos);
-        byte firstSave[] = bos.toByteArray();
+        byte[] firstSave = bos.toByteArray();
         bos.reset();
         wb.write(bos);
-        byte secondSave[] = bos.toByteArray();
+        byte[] secondSave = bos.toByteArray();
 
         /*OutputStream stream = new FileOutputStream("C:\\temp\\poi.xlsx");
         try {

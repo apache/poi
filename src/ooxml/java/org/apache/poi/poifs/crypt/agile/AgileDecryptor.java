@@ -111,7 +111,7 @@ public class AgileDecryptor extends Decryptor implements Cloneable {
          *    blockSize bytes.
          * 4. Use base64 to encode the result of step 3.
          */
-        byte verfierInputEnc[] = hashInput(ver, pwHash, kVerifierInputBlock, ver.getEncryptedVerifier(), Cipher.DECRYPT_MODE);
+        byte[] verfierInputEnc = hashInput(ver, pwHash, kVerifierInputBlock, ver.getEncryptedVerifier(), Cipher.DECRYPT_MODE);
         setVerifier(verfierInputEnc);
         MessageDigest hashMD = getMessageDigest(ver.getHashAlgorithm());
         byte[] verifierHash = hashMD.digest(verfierInputEnc);
@@ -128,7 +128,7 @@ public class AgileDecryptor extends Decryptor implements Cloneable {
          *    blockSize bytes, pad the hash value with 0x00 to an integral multiple of blockSize bytes.
          * 4. Use base64 to encode the result of step 3.
          */
-        byte verifierHashDec[] = hashInput(ver, pwHash, kHashedVerifierBlock, ver.getEncryptedVerifierHash(), Cipher.DECRYPT_MODE);
+        byte[] verifierHashDec = hashInput(ver, pwHash, kHashedVerifierBlock, ver.getEncryptedVerifierHash(), Cipher.DECRYPT_MODE);
         verifierHashDec = getBlock0(verifierHashDec, ver.getHashAlgorithm().hashSize);
         
         /**
@@ -144,7 +144,7 @@ public class AgileDecryptor extends Decryptor implements Cloneable {
          *    blockSize bytes.
          * 4. Use base64 to encode the result of step 3.
          */
-        byte keyspec[] = hashInput(ver, pwHash, kCryptoKeyBlock, ver.getEncryptedKey(), Cipher.DECRYPT_MODE);
+        byte[] keyspec = hashInput(ver, pwHash, kCryptoKeyBlock, ver.getEncryptedKey(), Cipher.DECRYPT_MODE);
         keyspec = getBlock0(keyspec, header.getKeySize()/8);
         SecretKeySpec secretKey = new SecretKeySpec(keyspec, header.getCipherAlgorithm().jceId);
 
@@ -161,10 +161,10 @@ public class AgileDecryptor extends Decryptor implements Cloneable {
          *    array with 0x00 to the next integral multiple of blockSize bytes.
          * 4. Assign the encryptedHmacKey attribute to the base64-encoded form of the result of step 3.
          */
-        byte vec[] = CryptoFunctions.generateIv(header.getHashAlgorithm(), header.getKeySalt(), kIntegrityKeyBlock, blockSize);
+        byte[] vec = CryptoFunctions.generateIv(header.getHashAlgorithm(), header.getKeySalt(), kIntegrityKeyBlock, blockSize);
         CipherAlgorithm cipherAlgo = header.getCipherAlgorithm();
         Cipher cipher = getCipher(secretKey, cipherAlgo, header.getChainingMode(), vec, Cipher.DECRYPT_MODE);
-        byte hmacKey[] = cipher.doFinal(header.getEncryptedHmacKey());
+        byte[] hmacKey = cipher.doFinal(header.getEncryptedHmacKey());
         hmacKey = getBlock0(hmacKey, header.getHashAlgorithm().hashSize);
 
         /**
@@ -178,7 +178,7 @@ public class AgileDecryptor extends Decryptor implements Cloneable {
          */
         vec = CryptoFunctions.generateIv(header.getHashAlgorithm(), header.getKeySalt(), kIntegrityValueBlock, blockSize);
         cipher = getCipher(secretKey, cipherAlgo, ver.getChainingMode(), vec, Cipher.DECRYPT_MODE);
-        byte hmacValue[] = cipher.doFinal(header.getEncryptedHmacValue());
+        byte[] hmacValue = cipher.doFinal(header.getEncryptedHmacValue());
         hmacValue = getBlock0(hmacValue, header.getHashAlgorithm().hashSize);
         
         if (Arrays.equals(verifierHashDec, verifierHash)) {
@@ -222,21 +222,21 @@ public class AgileDecryptor extends Decryptor implements Cloneable {
         
         Cipher cipher = Cipher.getInstance("RSA");
         cipher.init(Cipher.DECRYPT_MODE, keyPair.getPrivate());
-        byte keyspec[] = cipher.doFinal(ace.encryptedKey);
+        byte[] keyspec = cipher.doFinal(ace.encryptedKey);
         SecretKeySpec secretKey = new SecretKeySpec(keyspec, ver.getCipherAlgorithm().jceId);
         
         Mac x509Hmac = CryptoFunctions.getMac(hashAlgo);
         x509Hmac.init(secretKey);
-        byte certVerifier[] = x509Hmac.doFinal(ace.x509.getEncoded());
+        byte[] certVerifier = x509Hmac.doFinal(ace.x509.getEncoded());
 
-        byte vec[] = CryptoFunctions.generateIv(hashAlgo, header.getKeySalt(), kIntegrityKeyBlock, blockSize); 
+        byte[] vec = CryptoFunctions.generateIv(hashAlgo, header.getKeySalt(), kIntegrityKeyBlock, blockSize);
         cipher = getCipher(secretKey, cipherAlgo, header.getChainingMode(), vec, Cipher.DECRYPT_MODE);
-        byte hmacKey[] = cipher.doFinal(header.getEncryptedHmacKey());
+        byte[] hmacKey = cipher.doFinal(header.getEncryptedHmacKey());
         hmacKey = getBlock0(hmacKey, hashAlgo.hashSize);
 
         vec = CryptoFunctions.generateIv(hashAlgo, header.getKeySalt(), kIntegrityValueBlock, blockSize);
         cipher = getCipher(secretKey, cipherAlgo, header.getChainingMode(), vec, Cipher.DECRYPT_MODE);
-        byte hmacValue[] = cipher.doFinal(header.getEncryptedHmacValue());
+        byte[] hmacValue = cipher.doFinal(header.getEncryptedHmacValue());
         hmacValue = getBlock0(hmacValue, hashAlgo.hashSize);
         
         
@@ -256,14 +256,14 @@ public class AgileDecryptor extends Decryptor implements Cloneable {
         return fillSize;
     }
 
-    /* package */ static byte[] hashInput(AgileEncryptionVerifier ver, byte pwHash[], byte blockKey[], byte inputKey[], int cipherMode) {
+    /* package */ static byte[] hashInput(AgileEncryptionVerifier ver, byte[] pwHash, byte[] blockKey, byte[] inputKey, int cipherMode) {
         CipherAlgorithm cipherAlgo = ver.getCipherAlgorithm();
         ChainingMode chainMode = ver.getChainingMode();
         int keySize = ver.getKeySize()/8;
         int blockSize = ver.getBlockSize();
         HashAlgorithm hashAlgo = ver.getHashAlgorithm();
-        
-        byte intermedKey[] = generateKey(pwHash, hashAlgo, blockKey, keySize);
+
+        byte[] intermedKey = generateKey(pwHash, hashAlgo, blockKey, keySize);
         SecretKey skey = new SecretKeySpec(intermedKey, cipherAlgo.jceId);
         byte[] iv = generateIv(hashAlgo, ver.getSalt(), null, blockSize);
         Cipher cipher = getCipher(skey, cipherAlgo, chainMode, iv, cipherMode);

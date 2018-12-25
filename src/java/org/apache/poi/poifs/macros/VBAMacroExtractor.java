@@ -34,7 +34,7 @@ import org.apache.poi.util.StringUtil;
  * @since 3.15-beta2
  */
 public class VBAMacroExtractor {
-    public static void main(String args[]) throws IOException {
+    public static void main(String[] args) throws IOException {
         if (args.length == 0) {
             System.err.println("Use:");
             System.err.println("   VBAMacroExtractor <office.doc> [output]");

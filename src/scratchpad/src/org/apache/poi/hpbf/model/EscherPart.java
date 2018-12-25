@@ -47,7 +47,7 @@ public abstract class EscherPart extends HPBFPart {
 			new DefaultEscherRecordFactory();
 
 		ArrayList<EscherRecord> ec = new ArrayList<>();
-		byte data[] = getData();
+        byte[] data = getData();
 		int left = data.length;
 		while(left > 0) {
 			EscherRecord er = erf.createRecord(data, 0);
@@ -74,7 +74,7 @@ public abstract class EscherPart extends HPBFPart {
 			size += records[i].getRecordSize();
 		}
 
-		byte data[] = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH);
+        byte[] data = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH);
 		size = 0;
 		for(int i=0; i<records.length; i++) {
 			int thisSize =

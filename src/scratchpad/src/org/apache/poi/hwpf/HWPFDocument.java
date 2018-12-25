@@ -640,7 +640,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
         updateEncryptionInfo();
         EncryptionInfo ei = getEncryptionInfo();
         if (ei != null) {
-            byte buf[] = new byte[1000];
+            byte[] buf = new byte[1000];
             LittleEndianByteArrayOutputStream leos = new LittleEndianByteArrayOutputStream(buf, 0);
             leos.writeShort(ei.getVersionMajor());
             leos.writeShort(ei.getVersionMinor());

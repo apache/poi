@@ -112,7 +112,7 @@ public final class DocumentEncryptionAtom extends PositionDependentRecordAtom {
 	public void writeOut(OutputStream out) throws IOException {
 
 		// Data
-		byte data[] = new byte[1024];
+        byte[] data = new byte[1024];
 		LittleEndianByteArrayOutputStream bos = new LittleEndianByteArrayOutputStream(data, 0);
 		bos.writeShort(ei.getVersionMajor());
 		bos.writeShort(ei.getVersionMinor());

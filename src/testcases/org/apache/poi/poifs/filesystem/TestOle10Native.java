@@ -50,14 +50,14 @@ public class TestOle10Native {
 
     @Test
     public void testFiles() throws IOException, Ole10NativeException {
-        File files[] = {
-            // bug 51891
-            POIDataSamples.getPOIFSInstance().getFile("multimedia.doc"),
-            // tika bug 1072
-            POIDataSamples.getPOIFSInstance().getFile("20-Force-on-a-current-S00.doc"),
-            // other files containing ole10native records ...
-            POIDataSamples.getDocumentInstance().getFile("Bug53380_3.doc"),
-            POIDataSamples.getDocumentInstance().getFile("Bug47731.doc")
+        File[] files = {
+                // bug 51891
+                POIDataSamples.getPOIFSInstance().getFile("multimedia.doc"),
+                // tika bug 1072
+                POIDataSamples.getPOIFSInstance().getFile("20-Force-on-a-current-S00.doc"),
+                // other files containing ole10native records ...
+                POIDataSamples.getDocumentInstance().getFile("Bug53380_3.doc"),
+                POIDataSamples.getDocumentInstance().getFile("Bug47731.doc")
         };
         
         for (File f : files) {

@@ -43,8 +43,8 @@ public class AgileEncryptionVerifier extends EncryptionVerifier implements Clone
 
     public static class AgileCertificateEntry {
         X509Certificate x509;
-        byte encryptedKey[];
-        byte certVerifier[];
+        byte[] encryptedKey;
+        byte[] certVerifier;
     }
     
     private List<AgileCertificateEntry> certList = new ArrayList<>();
@@ -137,7 +137,7 @@ public class AgileEncryptionVerifier extends EncryptionVerifier implements Clone
     }
     
     @Override
-    protected void setSalt(byte salt[]) {
+    protected void setSalt(byte[] salt) {
         if (salt == null || salt.length != getCipherAlgorithm().blockSize) {
             throw new EncryptedDocumentException("invalid verifier salt");
         }
@@ -146,13 +146,13 @@ public class AgileEncryptionVerifier extends EncryptionVerifier implements Clone
     
     // make method visible for this package
     @Override
-    protected void setEncryptedVerifier(byte encryptedVerifier[]) {
+    protected void setEncryptedVerifier(byte[] encryptedVerifier) {
         super.setEncryptedVerifier(encryptedVerifier);
     }
 
     // make method visible for this package
     @Override
-    protected void setEncryptedVerifierHash(byte encryptedVerifierHash[]) {
+    protected void setEncryptedVerifierHash(byte[] encryptedVerifierHash) {
         super.setEncryptedVerifierHash(encryptedVerifierHash);
     }
 

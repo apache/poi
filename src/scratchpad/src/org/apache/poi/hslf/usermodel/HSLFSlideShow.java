@@ -1020,7 +1020,7 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 		ExEmbed exEmbed = new ExEmbed();
         // remove unneccessary infos, so we don't need to specify the type
         // of the ole object multiple times
-        Record children[] = exEmbed.getChildRecords();
+        Record[] children = exEmbed.getChildRecords();
         exEmbed.removeChild(children[2]);
         exEmbed.removeChild(children[3]);
         exEmbed.removeChild(children[4]);

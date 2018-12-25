@@ -136,7 +136,7 @@ public class HemfDraw {
              * The cubic Bezier curves SHOULD be drawn using the current pen.
              */
 
-            Point2D pnt[] = { new Point2D.Double(), new Point2D.Double(), new Point2D.Double() };
+            Point2D[] pnt = {new Point2D.Double(), new Point2D.Double(), new Point2D.Double()};
 
             int i=0;
             if (hasStartPoint()) {
@@ -754,7 +754,7 @@ public class HemfDraw {
             long size = readRectL(leis, bounds);
             int count = (int)leis.readUInt();
             size += LittleEndianConsts.INT_SIZE;
-            Point2D points[] = new Point2D[count];
+            Point2D[] points = new Point2D[count];
             for (int i=0; i<count; i++) {
                 points[i] = new Point2D.Double();
                 size += readPoint(leis, points[i]);

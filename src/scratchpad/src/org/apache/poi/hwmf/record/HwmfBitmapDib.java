@@ -215,13 +215,13 @@ public class HwmfBitmapDib {
     private long headerColorUsed = -1;
     @SuppressWarnings("unused")
     private long headerColorImportant = -1;
-    private Color colorTable[];
+    private Color[] colorTable;
     @SuppressWarnings("unused")
     private int colorMaskR,colorMaskG,colorMaskB;
 
     // size of header and color table, for start of image data calculation
     private int introSize;
-    private byte imageData[];
+    private byte[] imageData;
 
     public int init(LittleEndianInputStream leis, int recordSize) throws IOException {
         leis.mark(10000);
@@ -442,7 +442,7 @@ public class HwmfBitmapDib {
         int imageSize = (int)Math.max(imageData.length, introSize+headerImageSize);
         
         // create the image data and leave the parsing to the ImageIO api
-        byte buf[] = IOUtils.safelyAllocate(BMP_HEADER_SIZE+imageSize, MAX_RECORD_LENGTH);
+        byte[] buf = IOUtils.safelyAllocate(BMP_HEADER_SIZE + imageSize, MAX_RECORD_LENGTH);
 
         // https://en.wikipedia.org/wiki/BMP_file_format #  Bitmap file header
         buf[0] = (byte)'B';

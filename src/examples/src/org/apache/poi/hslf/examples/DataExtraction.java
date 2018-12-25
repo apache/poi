@@ -39,7 +39,7 @@ import org.apache.poi.hwpf.usermodel.Range;
  */
 public final class DataExtraction {
 
-    public static void main(String args[]) throws Exception {
+    public static void main(String[] args) throws Exception {
 
         if (args.length == 0) {
             usage();

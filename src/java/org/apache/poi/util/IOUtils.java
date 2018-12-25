@@ -86,7 +86,7 @@ public final class IOUtils {
         if (readBytes < limit) {
             bos.write(new byte[limit-readBytes]);
         }
-        byte peekedBytes[] = bos.toByteArray();
+        byte[] peekedBytes = bos.toByteArray();
         if(stream instanceof PushbackInputStream) {
             PushbackInputStream pin = (PushbackInputStream)stream;
             pin.unread(peekedBytes, 0, readBytes);

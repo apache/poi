@@ -831,7 +831,7 @@ public class Section {
             }
 
             try {
-                byte buf[] = IOUtils.safelyAllocate(nrBytes, MAX_RECORD_LENGTH);
+                byte[] buf = IOUtils.safelyAllocate(nrBytes, MAX_RECORD_LENGTH);
                 leis.readFully(buf, 0, nrBytes);
                 final String str = CodePageUtil.getStringFromCodePage(buf, 0, nrBytes, cp);
 
@@ -862,7 +862,7 @@ public class Section {
      */
     private void writeDictionary(final OutputStream out, final int codepage)
     throws IOException {
-        final byte padding[] = new byte[4];
+        final byte[] padding = new byte[4];
         final Map<Long,String> dic = getDictionary();
 
         LittleEndian.putUInt(dic.size(), out);
@@ -873,7 +873,7 @@ public class Section {
             length += LittleEndianConsts.INT_SIZE;
 
             final String value = ls.getValue()+"\0";
-            final byte bytes[] = CodePageUtil.getBytesInCodePage(value, codepage);
+            final byte[] bytes = CodePageUtil.getBytesInCodePage(value, codepage);
             final int len = (codepage == CodePageUtil.CP_UNICODE) ? value.length() : bytes.length;
 
             LittleEndian.putUInt( len, out );

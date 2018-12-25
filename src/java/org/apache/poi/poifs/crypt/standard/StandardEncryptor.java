@@ -78,7 +78,7 @@ public class StandardEncryptor extends Encryptor implements Cloneable {
      * see [MS-OFFCRYPTO] - 2.3.4.7 ECMA-376 Document Encryption Key Generation
      */
     @Override
-    public void confirmPassword(String password, byte keySpec[], byte keySalt[], byte verifier[], byte verifierSalt[], byte integritySalt[]) {
+    public void confirmPassword(String password, byte[] keySpec, byte[] keySalt, byte[] verifier, byte[] verifierSalt, byte[] integritySalt) {
         StandardEncryptionVerifier ver = (StandardEncryptionVerifier)getEncryptionInfo().getVerifier();
 
         ver.setSalt(verifierSalt);
@@ -87,9 +87,9 @@ public class StandardEncryptor extends Encryptor implements Cloneable {
         Cipher cipher = getCipher(secretKey, null);
         
         try {
-            byte encryptedVerifier[] = cipher.doFinal(verifier); 
+            byte[] encryptedVerifier = cipher.doFinal(verifier);
             MessageDigest hashAlgo = CryptoFunctions.getMessageDigest(ver.getHashAlgorithm());
-            byte calcVerifierHash[] = hashAlgo.digest(verifier);
+            byte[] calcVerifierHash = hashAlgo.digest(verifier);
             
             // 2.3.3 EncryptionVerifier ...
             // An array of bytes that contains the encrypted form of the 
@@ -98,8 +98,8 @@ public class StandardEncryptor extends Encryptor implements Cloneable {
             // Verifier. If the encryption algorithm is RC4, the length MUST be 20 bytes. If the encryption 
             // algorithm is AES, the length MUST be 32 bytes. After decrypting the EncryptedVerifierHash
             // field, only the first VerifierHashSize bytes MUST be used.
-            int encVerHashSize = ver.getCipherAlgorithm().encryptedVerifierHashLength; 
-            byte encryptedVerifierHash[] = cipher.doFinal(Arrays.copyOf(calcVerifierHash, encVerHashSize));
+            int encVerHashSize = ver.getCipherAlgorithm().encryptedVerifierHashLength;
+            byte[] encryptedVerifierHash = cipher.doFinal(Arrays.copyOf(calcVerifierHash, encVerHashSize));
     
             ver.setEncryptedVerifier(encryptedVerifier);
             ver.setEncryptedVerifierHash(encryptedVerifierHash);

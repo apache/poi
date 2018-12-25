@@ -33,7 +33,7 @@ public abstract class TwoOperandNumericOperation extends Fixed2ArgFunction imple
 		return OperandResolver.coerceValueToDouble(ve);
 	}
 	
-	public ValueEval evaluateArray(ValueEval args[], int srcRowIndex, int srcColumnIndex) {
+	public ValueEval evaluateArray(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
 	    if (args.length != 2) {
 	        return ErrorEval.VALUE_INVALID;
 	    }
@@ -73,8 +73,8 @@ public abstract class TwoOperandNumericOperation extends Fixed2ArgFunction imple
 	    protected double[][] evaluate(double[][] d1, double[][] d2) throws IllegalArgumentException, EvaluationException {
 	        int width = (d1[0].length < d2[0].length) ? d1[0].length : d2[0].length;
 	        int height = (d1.length < d2.length) ? d1.length : d2.length;
-	        
-	        double result[][] = new double[height][width];
+
+            double[][] result = new double[height][width];
 	        
 	        for (int j = 0; j < height; j++) {
 	            for (int i = 0; i < width; i++) {

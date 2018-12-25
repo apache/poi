@@ -96,7 +96,7 @@ public interface ImageRenderer {
      * @param data the raw image bytes
      * @param contentType the content type
      */
-    void loadImage(byte data[], String contentType) throws IOException;
+    void loadImage(byte[] data, String contentType) throws IOException;
 
     /**
      * @return the dimension of the buffered image

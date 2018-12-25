@@ -48,7 +48,7 @@ public abstract class QCBit {
 	 */
 	public String getBitType() { return bitType; }
 	public final byte[] getData() { return data; }
-	protected final void setData(byte data[]) {
+	protected final void setData(byte[] data) {
 	    this.data = data.clone();
 	}
 

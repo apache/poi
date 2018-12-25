@@ -244,8 +244,8 @@ public class EscherGraphics extends Graphics
     }
 
     @Override
-    public void drawPolygon(int xPoints[], int yPoints[],
-				     int nPoints)
+    public void drawPolygon(int[] xPoints, int[] yPoints,
+                            int nPoints)
     {
         int right  = findBiggest(xPoints);
         int bottom = findBiggest(yPoints);
@@ -269,8 +269,8 @@ public class EscherGraphics extends Graphics
 
     @Override
     @NotImplemented
-    public void drawPolyline(int xPoints[], int yPoints[],
-				      int nPoints)
+    public void drawPolyline(int[] xPoints, int[] yPoints,
+                             int nPoints)
     {
         if (logger.check( POILogger.WARN ))
             logger.log(POILogger.WARN,"drawPolyline not supported");
@@ -401,8 +401,8 @@ public class EscherGraphics extends Graphics
      * @see   java.awt.Graphics#drawPolygon(int[], int[], int)
      */
     @Override
-    public void fillPolygon(int xPoints[], int yPoints[],
-				     int nPoints)
+    public void fillPolygon(int[] xPoints, int[] yPoints,
+                            int nPoints)
     {
         int right  = findBiggest(xPoints);
         int bottom = findBiggest(yPoints);

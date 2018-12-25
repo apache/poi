@@ -247,11 +247,11 @@ public final class TestHSSFPicture extends BaseTestPicture {
     	// test if inserted EscherMetafileBlip will be read again
         HSSFWorkbook wb = new HSSFWorkbook();
 
-        byte pictureDataEmf[] = POIDataSamples.getDocumentInstance().readFile("vector_image.emf");
+        byte[] pictureDataEmf = POIDataSamples.getDocumentInstance().readFile("vector_image.emf");
         int indexEmf = wb.addPicture(pictureDataEmf, HSSFWorkbook.PICTURE_TYPE_EMF);
-        byte pictureDataPng[] = POIDataSamples.getSpreadSheetInstance().readFile("logoKarmokar4.png");
+        byte[] pictureDataPng = POIDataSamples.getSpreadSheetInstance().readFile("logoKarmokar4.png");
         int indexPng = wb.addPicture(pictureDataPng, HSSFWorkbook.PICTURE_TYPE_PNG);
-        byte pictureDataWmf[] = POIDataSamples.getSlideShowInstance().readFile("santa.wmf");
+        byte[] pictureDataWmf = POIDataSamples.getSlideShowInstance().readFile("santa.wmf");
         int indexWmf = wb.addPicture(pictureDataWmf, HSSFWorkbook.PICTURE_TYPE_WMF);
 
         HSSFSheet sheet = wb.createSheet();
@@ -281,10 +281,10 @@ public final class TestHSSFPicture extends BaseTestPicture {
         
         
         wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        byte pictureDataOut[] = wb.getAllPictures().get(0).getData();
+        byte[] pictureDataOut = wb.getAllPictures().get(0).getData();
         assertArrayEquals(pictureDataEmf, pictureDataOut);
 
-        byte wmfNoHeader[] = new byte[pictureDataWmf.length-22];
+        byte[] wmfNoHeader = new byte[pictureDataWmf.length - 22];
         System.arraycopy(pictureDataWmf, 22, wmfNoHeader, 0, pictureDataWmf.length-22);
         pictureDataOut = wb.getAllPictures().get(2).getData();
         assertArrayEquals(wmfNoHeader, pictureDataOut);

@@ -439,8 +439,8 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
             return Integer.compare(pos1, pos2);
         });
 
-        final ColorStyle cs[] = new ColorStyle[gs.length];
-        final float fractions[] = new float[gs.length];
+        final ColorStyle[] cs = new ColorStyle[gs.length];
+        final float[] fractions = new float[gs.length];
 
         int i=0;
         for (CTGradientStop cgs : gs) {

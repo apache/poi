@@ -55,7 +55,7 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 	/**
 	 * Basic extractor. Returns all the text, and optionally all the notes
 	 */
-	public static void main(String args[]) throws IOException {
+	public static void main(String[] args) throws IOException {
 		if (args.length < 1) {
 			System.err.println("Useage:");
 			System.err.println("\tPowerPointExtractor [-notes] <file>");

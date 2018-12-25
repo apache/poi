@@ -49,30 +49,30 @@ public class BinaryRC4Encryptor extends Encryptor implements Cloneable {
     @Override
     public void confirmPassword(String password) {
         Random r = new SecureRandom();
-        byte salt[] = new byte[16];
-        byte verifier[] = new byte[16];
+        byte[] salt = new byte[16];
+        byte[] verifier = new byte[16];
         r.nextBytes(salt);
         r.nextBytes(verifier);
         confirmPassword(password, null, null, verifier, salt, null);
     }
 
     @Override
-    public void confirmPassword(String password, byte keySpec[],
-            byte keySalt[], byte verifier[], byte verifierSalt[],
-            byte integritySalt[]) {
+    public void confirmPassword(String password, byte[] keySpec,
+                                byte[] keySalt, byte[] verifier, byte[] verifierSalt,
+                                byte[] integritySalt) {
         BinaryRC4EncryptionVerifier ver = (BinaryRC4EncryptionVerifier)getEncryptionInfo().getVerifier();
         ver.setSalt(verifierSalt);
         SecretKey skey = BinaryRC4Decryptor.generateSecretKey(password, ver);
         setSecretKey(skey);
         try {
             Cipher cipher = BinaryRC4Decryptor.initCipherForBlock(null, 0, getEncryptionInfo(), skey, Cipher.ENCRYPT_MODE);
-            byte encryptedVerifier[] = new byte[16];
+            byte[] encryptedVerifier = new byte[16];
             cipher.update(verifier, 0, 16, encryptedVerifier);
             ver.setEncryptedVerifier(encryptedVerifier);
             HashAlgorithm hashAlgo = ver.getHashAlgorithm();
             MessageDigest hashAlg = CryptoFunctions.getMessageDigest(hashAlgo);
-            byte calcVerifierHash[] = hashAlg.digest(verifier);
-            byte encryptedVerifierHash[] = cipher.doFinal(calcVerifierHash);
+            byte[] calcVerifierHash = hashAlg.digest(verifier);
+            byte[] encryptedVerifierHash = cipher.doFinal(calcVerifierHash);
             ver.setEncryptedVerifierHash(encryptedVerifierHash);
         } catch (GeneralSecurityException e) {
             throw new EncryptedDocumentException("Password confirmation failed", e);
