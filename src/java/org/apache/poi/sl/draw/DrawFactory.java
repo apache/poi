@@ -211,7 +211,7 @@ public class DrawFactory {
         }
     }
     
-    
+
     /**
      * Return a FontManager, either registered beforehand or a default implementation
      *

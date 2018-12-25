@@ -114,7 +114,7 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
     @Override
     public byte[] getChecksum() {
         cacheProperties();
-        byte cs[] = new byte[LittleEndianConsts.LONG_SIZE];
+        byte[] cs = new byte[LittleEndianConsts.LONG_SIZE];
         LittleEndian.putLong(cs,0,checksum);
         return cs;
     }
@@ -139,7 +139,7 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
      */
     protected void cacheProperties() {
         if (origSize == null || checksum == null) {
-            byte data[] = getData();
+            byte[] data = getData();
             checksum = IOUtils.calculateChecksum(data);
             
             PictureType pt = getType();

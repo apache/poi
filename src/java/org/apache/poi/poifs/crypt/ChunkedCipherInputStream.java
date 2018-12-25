@@ -226,7 +226,7 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
      * 
      */
     @Override
-    public void readPlain(byte b[], int off, int len) {
+    public void readPlain(byte[] b, int off, int len) {
         if (len <= 0) {
             return;
         }

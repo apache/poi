@@ -470,13 +470,13 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
     public void testZipBombNotTriggeredOnUselessContent() throws IOException {
         SXSSFWorkbook swb = new SXSSFWorkbook(null, 1, true, true);
         SXSSFSheet s = swb.createSheet();
-        char useless[] = new char[32767];
+        char[] useless = new char[32767];
         Arrays.fill(useless, ' ');
         
         for (int row=0; row<1; row++) {
             Row r = s.createRow(row);
             for (int col=0; col<10; col++) {
-                char prefix[] = Integer.toHexString(row*1000+col).toCharArray();
+                char[] prefix = Integer.toHexString(row * 1000 + col).toCharArray();
                 Arrays.fill(useless, 0, 10, ' ');
                 System.arraycopy(prefix, 0, useless, 0, prefix.length);
                 String ul = new String(useless);

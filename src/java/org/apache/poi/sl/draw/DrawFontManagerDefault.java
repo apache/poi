@@ -76,7 +76,7 @@ public class DrawFontManagerDefault implements DrawFontManager {
     public static String mapSymbolChars(String text) {
         // wingdings doesn't contain high-surrogates, so chars are ok
         boolean changed = false;
-        char chrs[] = text.toCharArray();
+        char[] chrs = text.toCharArray();
         for (int i=0; i<chrs.length; i++) {
             // only change valid chars
             if ((0x20 <= chrs[i] && chrs[i] <= 0x7f) ||

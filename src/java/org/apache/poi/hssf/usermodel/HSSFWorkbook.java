@@ -1508,7 +1508,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     }
 
     @SuppressWarnings("resource")
-    void encryptBytes(byte buf[]) {
+    void encryptBytes(byte[] buf) {
         EncryptionInfo ei = getEncryptionInfo();
         if (ei == null) {
             return;
@@ -1518,7 +1518,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         LittleEndianByteArrayInputStream plain = new LittleEndianByteArrayInputStream(buf, 0); // NOSONAR
         LittleEndianByteArrayOutputStream leos = new LittleEndianByteArrayOutputStream(buf, 0); // NOSONAR
         enc.setChunkSize(Biff8DecryptingStream.RC4_REKEYING_INTERVAL);
-        byte tmp[] = new byte[1024];
+        byte[] tmp = new byte[1024];
         try {
             ChunkedCipherOutputStream os = enc.getDataStream(leos, initialOffset);
             int totalBytes = 0;
@@ -1532,7 +1532,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
                 if (sid == BoundSheetRecord.sid) {
                     // special case for the field_1_position_of_BOF (=lbPlyPos) field of
                     // the BoundSheet8 record which must be unencrypted
-                    byte bsrBuf[] = IOUtils.safelyAllocate(len, MAX_RECORD_LENGTH);
+                    byte[] bsrBuf = IOUtils.safelyAllocate(len, MAX_RECORD_LENGTH);
                     plain.readFully(bsrBuf);
                     os.writePlain(bsrBuf, 0, 4);
                     os.write(bsrBuf, 4, len-4);
@@ -1877,7 +1877,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
                 // remove first 22 bytes if file starts with magic bytes D7-CD-C6-9A
                 // see also http://de.wikipedia.org/wiki/Windows_Metafile#Hinweise_zur_WMF-Spezifikation
                 if (LittleEndian.getInt(pictureData) == 0x9AC6CDD7) {
-                    byte picDataNoHeader[] = new byte[pictureData.length-22];
+                    byte[] picDataNoHeader = new byte[pictureData.length - 22];
                     System.arraycopy(pictureData, 22, picDataNoHeader, 0, pictureData.length-22);
                     pictureData = picDataNoHeader;
                 }
@@ -2260,15 +2260,15 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
             // check if the password has been changed
             EncryptionInfo ei = fpr.getEncryptionInfo();
             EncryptionVerifier ver = ei.getVerifier();
-            byte encVer[] = ver.getEncryptedVerifier();
+            byte[] encVer = ver.getEncryptedVerifier();
             Decryptor dec = ei.getDecryptor();
             Encryptor enc = ei.getEncryptor();
             try {
                 if (encVer == null || !dec.verifyPassword(password)) {
                     enc.confirmPassword(password);
                 } else {
-                    byte verifier[] = dec.getVerifier();
-                    byte salt[] = ver.getSalt();
+                    byte[] verifier = dec.getVerifier();
+                    byte[] salt = ver.getSalt();
                     enc.confirmPassword(password, null, null, verifier, salt, null);
                 }
             } catch (GeneralSecurityException e) {

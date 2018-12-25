@@ -238,7 +238,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
         if (sheet != null) {
             PPDrawing drawing = sheet.getPPDrawing();
             if (drawing != null) {
-                EscherTextboxWrapper wrappers[] = drawing.getTextboxWrappers();
+                EscherTextboxWrapper[] wrappers = drawing.getTextboxWrappers();
                 if (wrappers != null) {
                     for (EscherTextboxWrapper w : wrappers) {
                         // check for object identity

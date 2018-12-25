@@ -294,10 +294,10 @@ public class SlideShowFactory {
     private static <
         S extends Shape<S,P>,
         P extends TextParagraph<S,P,? extends TextRun>
-    > SlideShow<S,P> createSlideShow(String factoryClass, Object args[]) throws IOException, EncryptedDocumentException {
+    > SlideShow<S,P> createSlideShow(String factoryClass, Object[] args) throws IOException, EncryptedDocumentException {
         try {
             Class<?> clazz = SlideShowFactory.class.getClassLoader().loadClass(factoryClass);
-            Class<?> argsClz[] = new Class<?>[args.length];
+            Class<?>[] argsClz = new Class<?>[args.length];
             int i=0;
             for (Object o : args) {
                 Class<?> c = o.getClass();

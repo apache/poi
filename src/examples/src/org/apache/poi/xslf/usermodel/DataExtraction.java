@@ -33,7 +33,7 @@ import org.apache.poi.openxml4j.opc.PackagePart;
  */
 public final class DataExtraction {
 
-    public static void main(String args[]) throws IOException, OpenXML4JException {
+    public static void main(String[] args) throws IOException, OpenXML4JException {
 
         PrintStream out = System.out;
 

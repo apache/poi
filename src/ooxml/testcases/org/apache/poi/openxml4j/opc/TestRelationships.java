@@ -56,7 +56,7 @@ public class TestRelationships extends TestCase {
         PackageRelationshipCollection rels = pkg.getRelationshipsByType(PackageRelationshipTypes.CORE_DOCUMENT);
         PackageRelationship coreDocRelationship = rels.getRelationship(0);
         PackagePart corePart = pkg.getPart(coreDocRelationship);
-        String relIds[] = { "rId1", "rId2", "rId3" };
+        String[] relIds = {"rId1", "rId2", "rId3"};
         for (String relId : relIds) {
             PackageRelationship rel = corePart.getRelationship(relId);
             assertNotNull(rel);

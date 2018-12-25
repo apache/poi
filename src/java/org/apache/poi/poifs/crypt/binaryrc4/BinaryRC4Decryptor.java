@@ -66,15 +66,15 @@ public class BinaryRC4Decryptor extends Decryptor implements Cloneable {
         SecretKey skey = generateSecretKey(password, ver);
         try {
             Cipher cipher = initCipherForBlock(null, 0, getEncryptionInfo(), skey, Cipher.DECRYPT_MODE);
-            byte encryptedVerifier[] = ver.getEncryptedVerifier();
-            byte verifier[] = new byte[encryptedVerifier.length];
+            byte[] encryptedVerifier = ver.getEncryptedVerifier();
+            byte[] verifier = new byte[encryptedVerifier.length];
             cipher.update(encryptedVerifier, 0, encryptedVerifier.length, verifier);
             setVerifier(verifier);
-            byte encryptedVerifierHash[] = ver.getEncryptedVerifierHash();
-            byte verifierHash[] = cipher.doFinal(encryptedVerifierHash);
+            byte[] encryptedVerifierHash = ver.getEncryptedVerifierHash();
+            byte[] verifierHash = cipher.doFinal(encryptedVerifierHash);
             HashAlgorithm hashAlgo = ver.getHashAlgorithm();
             MessageDigest hashAlg = CryptoFunctions.getMessageDigest(hashAlgo);
-            byte calcVerifierHash[] = hashAlg.digest(verifier);
+            byte[] calcVerifierHash = hashAlg.digest(verifier);
             if (Arrays.equals(calcVerifierHash, verifierHash)) {
                 setSecretKey(skey);
                 return true;
@@ -96,9 +96,9 @@ public class BinaryRC4Decryptor extends Decryptor implements Cloneable {
     throws GeneralSecurityException {
         EncryptionVerifier ver = encryptionInfo.getVerifier();
         HashAlgorithm hashAlgo = ver.getHashAlgorithm();
-        byte blockKey[] = new byte[4];
+        byte[] blockKey = new byte[4];
         LittleEndian.putUInt(blockKey, 0, block);
-        byte encKey[] = CryptoFunctions.generateKey(skey.getEncoded(), hashAlgo, blockKey, 16);
+        byte[] encKey = CryptoFunctions.generateKey(skey.getEncoded(), hashAlgo, blockKey, 16);
         SecretKey key = new SecretKeySpec(encKey, skey.getAlgorithm());
         if (cipher == null) {
             EncryptionHeader em = encryptionInfo.getHeader();
@@ -115,8 +115,8 @@ public class BinaryRC4Decryptor extends Decryptor implements Cloneable {
         }
         HashAlgorithm hashAlgo = ver.getHashAlgorithm();
         MessageDigest hashAlg = CryptoFunctions.getMessageDigest(hashAlgo);
-        byte hash[] = hashAlg.digest(StringUtil.getToUnicodeLE(password));
-        byte salt[] = ver.getSalt();
+        byte[] hash = hashAlg.digest(StringUtil.getToUnicodeLE(password));
+        byte[] salt = ver.getSalt();
         hashAlg.reset();
         for (int i = 0; i < 16; i++) {
             hashAlg.update(hash, 0, 5);

@@ -330,9 +330,9 @@ public class HwmfText {
          */
         protected byte[] rawTextBytes;
         /**
-         * An optional array of 16-bit signed integers that indicate the distance between 
-         * origins of adjacent character cells. For example, Dx[i] logical units separate the origins of 
-         * character cell i and character cell i + 1. If this field is present, there MUST be the same 
+         * An optional array of 16-bit signed integers that indicate the distance between
+         * origins of adjacent character cells. For example, Dx[i] logical units separate the origins of
+         * character cell i and character cell i + 1. If this field is present, there MUST be the same
          * number of values as there are characters in the string.
          */
         protected final List<Integer> dx = new ArrayList<>();
@@ -442,7 +442,7 @@ public class HwmfText {
      * The META_SETTEXTALIGN record defines text-alignment values in the playback device context.
      */
     public static class WmfSetTextAlign implements HwmfRecord {
-        
+
         /**
          * The drawing position in the playback device context MUST be updated after each text
          * output call. It MUST be used as the reference point.<p>

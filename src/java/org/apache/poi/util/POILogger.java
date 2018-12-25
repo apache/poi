@@ -32,10 +32,14 @@ public abstract class POILogger {
     public static final int ERROR = 7;
     public static final int FATAL = 9;
 
-    /** Short strings for numeric log level. Use level as array index. */
-    protected static final String LEVEL_STRINGS_SHORT[] = {"?", "D", "?", "I", "?", "W", "?", "E", "?", "F", "?"};
-    /** Long strings for numeric log level. Use level as array index. */
-    protected static final String LEVEL_STRINGS[] = {"?0?", "DEBUG", "?2?", "INFO", "?4?", "WARN", "?6?", "ERROR", "?8?", "FATAL", "?10+?"};
+    /**
+     * Short strings for numeric log level. Use level as array index.
+     */
+    protected static final String[] LEVEL_STRINGS_SHORT = {"?", "D", "?", "I", "?", "W", "?", "E", "?", "F", "?"};
+    /**
+     * Long strings for numeric log level. Use level as array index.
+     */
+    protected static final String[] LEVEL_STRINGS = {"?0?", "DEBUG", "?2?", "INFO", "?4?", "WARN", "?6?", "ERROR", "?8?", "FATAL", "?10+?"};
 
 
     /**

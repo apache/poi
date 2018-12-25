@@ -319,10 +319,10 @@ public class WorkbookFactory {
      * Uses reflection, so that this class can be in the Core non-OOXML
      *  POI jar without errors / broken references to the OOXML / XSSF code.
      */
-    private static Workbook createWorkbook(String factoryClass, Object args[]) throws IOException, EncryptedDocumentException {
+    private static Workbook createWorkbook(String factoryClass, Object[] args) throws IOException, EncryptedDocumentException {
         try {
             Class<?> clazz = WorkbookFactory.class.getClassLoader().loadClass(factoryClass);
-            Class<?> argsClz[] = new Class<?>[args.length];
+            Class<?>[] argsClz = new Class<?>[args.length];
             int i=0;
             for (Object o : args) {
                 Class<?> c = o.getClass();

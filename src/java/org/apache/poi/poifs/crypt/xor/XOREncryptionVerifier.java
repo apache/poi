@@ -35,7 +35,7 @@ public class XOREncryptionVerifier extends EncryptionVerifier implements Encrypt
          * See [MS-OFFCRYPTO], 2.3.6.2 section, the first step of initializing XOR
          * array where it describes the generation of 16-bit XorKey value.
          */
-        byte key[] = new byte[2];
+        byte[] key = new byte[2];
         is.readFully(key);
         setEncryptedKey(key);
         
@@ -43,7 +43,7 @@ public class XOREncryptionVerifier extends EncryptionVerifier implements Encrypt
          * verificationBytes (2 bytes): An unsigned integer that specifies
          * the password verification identifier.
          */
-        byte verifier[] = new byte[2];
+        byte[] verifier = new byte[2];
         is.readFully(verifier);
         setEncryptedVerifier(verifier);
     }

@@ -43,7 +43,7 @@ public class XSLFMetroShape {
     /*
      * parses the metro bytes to a XSLF shape
      */
-    public static Shape<?,?> parseShape(byte metroBytes[])
+    public static Shape<?,?> parseShape(byte[] metroBytes)
     throws InvalidFormatException, IOException, XmlException {
         PackagePartName shapePN = PackagingURIHelper.createPartName("/drs/shapexml.xml");
         OPCPackage pkg = null;

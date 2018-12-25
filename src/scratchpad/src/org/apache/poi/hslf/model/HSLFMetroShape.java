@@ -69,7 +69,7 @@ public class HSLFMetroShape<T extends Shape<?,?>> {
      */
     @SuppressWarnings("unchecked")
     public T getShape() {
-        byte metroBytes[] = getMetroBytes();
+        byte[] metroBytes = getMetroBytes();
         if (metroBytes == null) {
             return null;
         }

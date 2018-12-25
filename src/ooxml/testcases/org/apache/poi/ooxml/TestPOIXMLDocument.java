@@ -360,7 +360,7 @@ public final class TestPOIXMLDocument {
         UncaughtHandler uh = new UncaughtHandler();
         
         // check schema type loading and check if we could run in an OOM
-        Thread ta[] = new Thread[30];
+        Thread[] ta = new Thread[30];
         for (int j=0; j<10; j++) {
             for (int i=0; i<ta.length; i++) {
                 ta[i] = new Thread(run);

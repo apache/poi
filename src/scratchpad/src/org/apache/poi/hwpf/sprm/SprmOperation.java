@@ -114,7 +114,7 @@ public final class SprmOperation
 
             return LittleEndian.getInt( codeBytes, 0 );
         case 7:
-            byte threeByteInt[] = new byte[4];
+            byte[] threeByteInt = new byte[4];
             threeByteInt[0] = _grpprl[_gOffset];
             threeByteInt[1] = _grpprl[_gOffset + 1];
             threeByteInt[2] = _grpprl[_gOffset + 2];

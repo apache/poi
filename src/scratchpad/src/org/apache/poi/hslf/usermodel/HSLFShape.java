@@ -382,8 +382,8 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
         boolean fSystemRGB = ecr.hasSystemRGBFlag();
         boolean fSchemeIndex = ecr.hasSchemeIndexFlag();
         boolean fSysIndex = ecr.hasSysIndexFlag();
-        
-        int rgb[] = ecr.getRGB();
+
+        int[] rgb = ecr.getRGB();
 
         HSLFSheet sheet = getSheet();
         if (fSchemeIndex && sheet != null) {

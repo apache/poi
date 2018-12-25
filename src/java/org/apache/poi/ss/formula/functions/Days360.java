@@ -92,8 +92,8 @@ public class Days360 extends Var2or3ArgFunction {
     private static double evaluate(double d0, double d1, boolean method) {
         Calendar realStart = getDate(d0);
         Calendar realEnd = getDate(d1);
-        int startingDate[] = getStartingDate(realStart, method);
-        int endingDate[] = getEndingDate(realEnd, startingDate, method);
+        int[] startingDate = getStartingDate(realStart, method);
+        int[] endingDate = getEndingDate(realEnd, startingDate, method);
         return
             (endingDate[0]*360+endingDate[1]*30+endingDate[2])-
             (startingDate[0]*360+startingDate[1]*30+startingDate[2]);
@@ -115,7 +115,7 @@ public class Days360 extends Var2or3ArgFunction {
         return new int[]{yyyy,mm,dd};
     }
 
-    private static int[] getEndingDate(Calendar realEnd, int startingDate[], boolean method) {
+    private static int[] getEndingDate(Calendar realEnd, int[] startingDate, boolean method) {
         int yyyy = realEnd.get(Calendar.YEAR);
         int mm = realEnd.get(Calendar.MONTH);
         int dd = Math.min(30, realEnd.get(Calendar.DAY_OF_MONTH));

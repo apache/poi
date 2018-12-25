@@ -66,7 +66,7 @@ public final class TestSubtotal {
 		}
 
 		AreaEval arg1 = EvalFactory.createAreaEval("C1:D5", values);
-		ValueEval args[] = { new NumberEval(function), arg1 };
+        ValueEval[] args = {new NumberEval(function), arg1};
 
 		ValueEval result = new Subtotal().evaluate(args, 0, 0);
 

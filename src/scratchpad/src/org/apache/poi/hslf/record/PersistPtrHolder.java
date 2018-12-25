@@ -189,7 +189,7 @@ public final class PersistPtrHolder extends PositionDependentRecordAtom
         
         @SuppressWarnings("resource")
         BufAccessBAOS bos = new BufAccessBAOS(); // NOSONAR
-        byte intbuf[] = new byte[4];
+        byte[] intbuf = new byte[4];
         int lastPersistEntry = -1;
         int lastSlideId = -1;
         for (Entry<Integer,Integer> me : orderedSlideLocations.entrySet()) {

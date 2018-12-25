@@ -82,7 +82,7 @@ public class TestEmbedOLEPackage {
 
     static void validateEmbeddedObjects(Workbook wb) throws IOException {
         boolean ooxml = wb.getClass().getName().toLowerCase(Locale.ROOT).contains("xssf");
-        byte data[] = (ooxml) ? samplePPTX : samplePPT;
+        byte[] data = (ooxml) ? samplePPTX : samplePPT;
         Iterator<Integer> shapeIds = Arrays.asList(1025,1026,2049).iterator();
         EmbeddedExtractor ee = new EmbeddedExtractor();
         for (Sheet sheet : wb) {
@@ -101,7 +101,7 @@ public class TestEmbedOLEPackage {
     static void addEmbeddedObjects(Workbook wb) throws IOException {
         boolean ooxml = wb.getClass().getName().toLowerCase(Locale.ROOT).contains("xssf");
         int picIdx = wb.addPicture(samplePNG, Workbook.PICTURE_TYPE_PNG);
-        byte data[] = (ooxml) ? samplePPTX : samplePPT;
+        byte[] data = (ooxml) ? samplePPTX : samplePPT;
         String ext = (ooxml) ? ".pptx" : ".ppt";
         
         int oleIdx1a = wb.addOlePackage(data, "dummy1a"+ext, "dummy1a"+ext, "dummy1a"+ext);

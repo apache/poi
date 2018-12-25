@@ -70,7 +70,7 @@ public final class NumberFormatter {
         int num = number;
         final int radix = 26;
 
-        char buf[] = new char[33];
+        char[] buf = new char[33];
         int charPos = buf.length;
 
         while (num > 0) {

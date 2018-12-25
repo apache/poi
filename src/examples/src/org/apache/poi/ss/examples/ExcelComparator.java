@@ -92,7 +92,7 @@ public class ExcelComparator {
     
     List<String> listOfDifferences = new ArrayList<>();
 
-    public static void main(String args[]) throws Exception {
+    public static void main(String[] args) throws Exception {
         if (args.length != 2 || !(new File(args[0]).exists()) || !(new File(args[1]).exists())) {
             System.err.println("java -cp <classpath> "+ExcelComparator.class.getCanonicalName()+" <workbook1.xls/x> <workbook2.xls/x");
             System.exit(-1);

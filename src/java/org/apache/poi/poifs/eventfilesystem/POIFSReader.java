@@ -179,7 +179,7 @@ public class POIFSReader
      * @exception IOException if the files can't be read or have invalid content
      */
 
-    public static void main(String args[]) throws IOException {
+    public static void main(String[] args) throws IOException {
         if (args.length == 0) {
             System.err.println("at least one argument required: input filename(s)");
             System.exit(1);

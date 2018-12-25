@@ -233,7 +233,7 @@ public class XAdESXLSignatureFacet extends SignatureFacet {
                     DERTaggedObject derTaggedObject = (DERTaggedObject)ocspResponderId.toASN1Primitive();
                     if (2 == derTaggedObject.getTagNo()) {
                         ASN1OctetString keyHashOctetString = (ASN1OctetString)derTaggedObject.getObject();
-                        byte key[] = keyHashOctetString.getOctets();
+                        byte[] key = keyHashOctetString.getOctets();
                         responderId.setByKey(key);
                     } else {
                         X500Name name = X500Name.getInstance(derTaggedObject.getObject());

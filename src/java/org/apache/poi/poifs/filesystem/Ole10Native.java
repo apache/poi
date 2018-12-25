@@ -428,7 +428,7 @@ public class Ole10Native {
         this.unknown1 = unknown1;
     }
 
-    public void setDataBuffer(byte dataBuffer[]) {
+    public void setDataBuffer(byte[] dataBuffer) {
         this.dataBuffer = dataBuffer.clone();
     }
 }

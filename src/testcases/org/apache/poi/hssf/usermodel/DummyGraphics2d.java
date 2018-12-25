@@ -429,7 +429,7 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.drawArc( x, y, width, height, startAngle, arcAngle );
     }
 
-    public void drawBytes(byte data[], int offset, int length, int x, int y) {
+    public void drawBytes(byte[] data, int offset, int length, int x, int y) {
         String l =
             "drawBytes(byte[],int,int,int,int):" +
             "\n  data = " + Arrays.toString(data) +
@@ -441,7 +441,7 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.drawBytes( data, offset, length, x, y );
     }
 
-    public void drawChars(char data[], int offset, int length, int x, int y) {
+    public void drawChars(char[] data, int offset, int length, int x, int y) {
         String l =
             "drawChars(data,int,int,int,int):" +
             "\n  data = " + Arrays.toString(data) +
@@ -568,7 +568,7 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.drawPolygon( p );
     }
 
-    public void drawPolygon(int xPoints[], int yPoints[], int nPoints) {
+    public void drawPolygon(int[] xPoints, int[] yPoints, int nPoints) {
         String l =
             "drawPolygon(int[],int[],int):" +
             "\n  xPoints = " + Arrays.toString(xPoints) +
@@ -578,7 +578,7 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.drawPolygon( xPoints, yPoints, nPoints );
     }
 
-    public void drawPolyline(int xPoints[], int yPoints[], int nPoints) {
+    public void drawPolyline(int[] xPoints, int[] yPoints, int nPoints) {
         String l =
             "drawPolyline(int[],int[],int):" +
             "\n  xPoints = " + Arrays.toString(xPoints) +
@@ -676,7 +676,7 @@ public class DummyGraphics2d extends Graphics2D {
         g2D.fillPolygon( p );
     }
 
-    public void fillPolygon(int xPoints[], int yPoints[], int nPoints) {
+    public void fillPolygon(int[] xPoints, int[] yPoints, int nPoints) {
         String l =
             "fillPolygon(int[],int[],int):" +
             "\n  xPoints = " + Arrays.toString(xPoints) +

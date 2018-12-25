@@ -75,27 +75,27 @@ public class TestVariantSupport {
     public void newNumberTypes() throws Exception {
         ClipboardData cd = new ClipboardData();
         cd.setValue(new byte[10]);
-        
-        Object exp[][] = {
-            { Variant.VT_CF, cd.toByteArray() },
-            { Variant.VT_BOOL, true },
-            { Variant.VT_LPSTR, "codepagestring" },
-            { Variant.VT_LPWSTR, "widestring" },
-            { Variant.VT_I2, -1 }, // int, not short ... :(
-            { Variant.VT_UI2, 0xFFFF },
-            { Variant.VT_I4, -1 },
-            { Variant.VT_UI4, 0xFFFFFFFFL },
-            { Variant.VT_I8, -1L },
-            { Variant.VT_UI8, BigInteger.valueOf(Long.MAX_VALUE).add(BigInteger.TEN) },
-            { Variant.VT_R4, -999.99f },
-            { Variant.VT_R8, -999.99d },
+
+        Object[][] exp = {
+                {Variant.VT_CF, cd.toByteArray()},
+                {Variant.VT_BOOL, true},
+                {Variant.VT_LPSTR, "codepagestring"},
+                {Variant.VT_LPWSTR, "widestring"},
+                {Variant.VT_I2, -1}, // int, not short ... :(
+                {Variant.VT_UI2, 0xFFFF},
+                {Variant.VT_I4, -1},
+                {Variant.VT_UI4, 0xFFFFFFFFL},
+                {Variant.VT_I8, -1L},
+                {Variant.VT_UI8, BigInteger.valueOf(Long.MAX_VALUE).add(BigInteger.TEN)},
+                {Variant.VT_R4, -999.99f},
+                {Variant.VT_R8, -999.99d},
         };
         
         HSSFWorkbook wb = new HSSFWorkbook();
         POIFSFileSystem poifs = new POIFSFileSystem();
         DocumentSummaryInformation dsi = PropertySetFactory.newDocumentSummaryInformation();
         CustomProperties cpList = new CustomProperties();
-        for (Object o[] : exp) {
+        for (Object[] o : exp) {
             int type = (Integer)o[0];
             Property p = new Property(PropertyIDMap.PID_MAX+type, type, o[1]);
             cpList.put("testprop"+type, new CustomProperty(p, "testprop"+type));
@@ -110,7 +110,7 @@ public class TestVariantSupport {
         dsi = (DocumentSummaryInformation)PropertySetFactory.create(poifs.getRoot(), DocumentSummaryInformation.DEFAULT_STREAM_NAME);
         cpList = dsi.getCustomProperties();
         int i=0;
-        for (Object o[] : exp) {
+        for (Object[] o : exp) {
             Object obj = cpList.get("testprop"+o[0]);
             if (o[1] instanceof byte[]) {
                 assertArrayEquals("property "+i, (byte[])o[1], (byte[])obj);

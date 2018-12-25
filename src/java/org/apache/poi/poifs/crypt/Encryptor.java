@@ -42,7 +42,7 @@ public abstract class Encryptor implements Cloneable {
         throws IOException, GeneralSecurityException;
 
     // for tests
-    public abstract void confirmPassword(String password, byte keySpec[], byte keySalt[], byte verifier[], byte verifierSalt[], byte integritySalt[]);
+    public abstract void confirmPassword(String password, byte[] keySpec, byte[] keySalt, byte[] verifier, byte[] verifierSalt, byte[] integritySalt);
     
     public abstract void confirmPassword(String password);
 	

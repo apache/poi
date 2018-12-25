@@ -96,12 +96,13 @@ public abstract class MatrixFunction implements Function{
         @Override
         public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
             if (arg0 instanceof AreaEval) {
-                double result[], resultArray[][];
+                double[] result;
+                double[][] resultArray;
                 int width, height;
                 
                 try {
-                    double values[] = collectValues(arg0);
-                    double array[][] = fillDoubleArray(values,((AreaEval) arg0).getHeight(),((AreaEval) arg0).getWidth());
+                    double[] values = collectValues(arg0);
+                    double[][] array = fillDoubleArray(values, ((AreaEval) arg0).getHeight(), ((AreaEval) arg0).getWidth());
                     resultArray = evaluate(array);
                     width = resultArray[0].length;
                     height = resultArray.length;
@@ -112,8 +113,8 @@ public abstract class MatrixFunction implements Function{
                 catch(EvaluationException e){
                     return e.getErrorEval();
                 }
-                
-                ValueEval vals[] = new ValueEval[result.length];
+
+                ValueEval[] vals = new ValueEval[result.length];
                 
                 for (int idx = 0; idx < result.length; idx++) {
                     vals[idx] = new NumberEval(result[idx]);
@@ -130,10 +131,10 @@ public abstract class MatrixFunction implements Function{
                 }
             }
             else {
-                double result[][];
+                double[][] result;
                 try {
                     double value = NumericFunction.singleOperandEvaluate(arg0, srcRowIndex, srcColumnIndex);
-                    double temp[][] = {{value}};
+                    double[][] temp = {{value}};
                     result = evaluate(temp);
                     NumericFunction.checkValue(result[0][0]);
                 }
@@ -156,15 +157,17 @@ public abstract class MatrixFunction implements Function{
         
         @Override
         public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
-            double result[];
+            double[] result;
             int width, height;
 
             try {
-                double array0[][], array1[][], resultArray[][];
-                
+                double[][] array0;
+                double[][] array1;
+                double[][] resultArray;
+
                 if (arg0 instanceof AreaEval) {
                     try {
-                        double values[] = collectValues(arg0);
+                        double[] values = collectValues(arg0);
                         array0 = fillDoubleArray(values, ((AreaEval) arg0).getHeight(), ((AreaEval) arg0).getWidth());
                     }
                     catch(EvaluationException e) {
@@ -183,7 +186,7 @@ public abstract class MatrixFunction implements Function{
                     
                 if (arg1 instanceof AreaEval) {
                    try {
-                      double values[] = collectValues(arg1);
+                       double[] values = collectValues(arg1);
                       array1 = fillDoubleArray(values, ((AreaEval) arg1).getHeight(),((AreaEval) arg1).getWidth());
                    }
                    catch (EvaluationException e) {
@@ -212,9 +215,9 @@ public abstract class MatrixFunction implements Function{
             catch (IllegalArgumentException e) {
                 return ErrorEval.VALUE_INVALID;
             }
-                
-                
-            ValueEval vals[] = new ValueEval[result.length];
+
+
+            ValueEval[] vals = new ValueEval[result.length];
             
             for (int idx = 0; idx < result.length; idx++) {
                 vals[idx] = new NumberEval(result[idx]);
@@ -308,8 +311,8 @@ public abstract class MatrixFunction implements Function{
             if (d1.length != d1[0].length) {
                 throw new EvaluationException(ErrorEval.VALUE_INVALID);
             }
-            
-            double result[][] = new double[1][1];
+
+            double[][] result = new double[1][1];
             Array2DRowRealMatrix temp = new Array2DRowRealMatrix(d1);
             result[0][0] = (new LUDecomposition(temp)).getDeterminant();
             return result;
@@ -320,7 +323,7 @@ public abstract class MatrixFunction implements Function{
         private final MutableValueCollector instance = new MutableValueCollector(false, false);
         
         protected double[] collectValues(ValueEval arg) throws EvaluationException {
-            double values[] = instance.collectValues(arg);
+            double[] values = instance.collectValues(arg);
             
             /* handle case where MMULT is operating on an array that is not completely filled*/
             if (arg instanceof AreaEval && values.length == 1)

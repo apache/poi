@@ -302,11 +302,11 @@ public class TestSignatureInfo {
     
     @Test
     public void getSignerUnsigned() throws Exception {
-        String testFiles[] = { 
-            "hello-world-unsigned.docx",
-            "hello-world-unsigned.pptx",
-            "hello-world-unsigned.xlsx",
-            "hello-world-office-2010-technical-preview-unsigned.docx"
+        String[] testFiles = {
+                "hello-world-unsigned.docx",
+                "hello-world-unsigned.pptx",
+                "hello-world-unsigned.xlsx",
+                "hello-world-office-2010-technical-preview-unsigned.docx"
         };
         
         for (String testFile : testFiles) {
@@ -330,17 +330,17 @@ public class TestSignatureInfo {
     
     @Test
     public void getSigner() throws Exception {
-        String testFiles[] = { 
-            "hyperlink-example-signed.docx",
-            "hello-world-signed.docx",
-            "hello-world-signed.pptx",
-            "hello-world-signed.xlsx",
-            "hello-world-office-2010-technical-preview.docx",
-            "ms-office-2010-signed.docx",
-            "ms-office-2010-signed.pptx",
-            "ms-office-2010-signed.xlsx",
-            "Office2010-SP1-XAdES-X-L.docx",
-            "signed.docx",
+        String[] testFiles = {
+                "hyperlink-example-signed.docx",
+                "hello-world-signed.docx",
+                "hello-world-signed.pptx",
+                "hello-world-signed.xlsx",
+                "hello-world-office-2010-technical-preview.docx",
+                "ms-office-2010-signed.docx",
+                "ms-office-2010-signed.pptx",
+                "ms-office-2010-signed.xlsx",
+                "Office2010-SP1-XAdES-X-L.docx",
+                "signed.docx",
         };
         
         for (String testFile : testFiles) {
@@ -594,7 +594,7 @@ public class TestSignatureInfo {
 
             String certDigestXQuery = declareNS +
                     "$this//xades:SigningCertificate/xades:Cert/xades:CertDigest";
-            XmlObject xoList[] = sigDoc.selectPath(certDigestXQuery);
+            XmlObject[] xoList = sigDoc.selectPath(certDigestXQuery);
             assertEquals(xoList.length, 1);
             DigestAlgAndValueType certDigest = (DigestAlgAndValueType) xoList[0];
             assertNotNull(certDigest.getDigestValue());
@@ -682,7 +682,7 @@ public class TestSignatureInfo {
         is.close();
 
         Key key = keystore.getKey("poitest", password.toCharArray());
-        Certificate chainList[] = keystore.getCertificateChain("poitest");
+        Certificate[] chainList = keystore.getCertificateChain("poitest");
         List<X509Certificate> certChain = new ArrayList<>();
         for (Certificate c : chainList) {
             certChain.add((X509Certificate)c);
@@ -726,8 +726,8 @@ public class TestSignatureInfo {
         signatureConfig.setKey(keyPair.getPrivate());
         signatureConfig.setSigningCertificateChain(Collections.singletonList(x509));
 
-        HashAlgorithm testAlgo[] = { HashAlgorithm.sha224, HashAlgorithm.sha256
-            , HashAlgorithm.sha384, HashAlgorithm.sha512, HashAlgorithm.ripemd160 }; 
+        HashAlgorithm[] testAlgo = {HashAlgorithm.sha224, HashAlgorithm.sha256
+                , HashAlgorithm.sha384, HashAlgorithm.sha512, HashAlgorithm.ripemd160};
         
         for (HashAlgorithm ha : testAlgo) {
             OPCPackage pkg = null;
@@ -932,7 +932,7 @@ public class TestSignatureInfo {
     }
     
     private void initKeyPair(String alias, String subjectDN, String pfxInput) throws Exception {
-        final char password[] = "test".toCharArray();
+        final char[] password = "test".toCharArray();
         File file = new File("build/test.pfx");
 
         KeyStore keystore = KeyStore.getInstance("PKCS12");

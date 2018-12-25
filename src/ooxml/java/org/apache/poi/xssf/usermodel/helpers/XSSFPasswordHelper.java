@@ -66,8 +66,8 @@ public final class XSSFPasswordHelper {
             cur.insertAttributeWithValue(getAttrName(prefix, "password"),
                                          String.format(Locale.ROOT, "%04X", hash).toUpperCase(Locale.ROOT));
         } else {
-            SecureRandom random = new SecureRandom(); 
-            byte salt[] = random.generateSeed(16);
+            SecureRandom random = new SecureRandom();
+            byte[] salt = random.generateSeed(16);
     
             // Iterations specifies the number of times the hashing function shall be iteratively run (using each
             // iteration's result as the input for the next iteration).
@@ -76,7 +76,7 @@ public final class XSSFPasswordHelper {
             // Implementation Notes List:
             // --> In this third stage, the reversed byte order legacy hash from the second stage shall
             //     be converted to Unicode hex string representation
-            byte hash[] = CryptoFunctions.hashPassword(password, hashAlgo, salt, spinCount, false);
+            byte[] hash = CryptoFunctions.hashPassword(password, hashAlgo, salt, spinCount, false);
             
             cur.insertAttributeWithValue(getAttrName(prefix, "algorithmName"), hashAlgo.jceId); 
             cur.insertAttributeWithValue(getAttrName(prefix, "hashValue"), DatatypeConverter.printBase64Binary(hash));
@@ -117,12 +117,12 @@ public final class XSSFPasswordHelper {
             if (hashVal == null || algoName == null || saltVal == null || spinCount == null) {
                 return false;
             }
-            
-            byte hash1[] = DatatypeConverter.parseBase64Binary(hashVal);
+
+            byte[] hash1 = DatatypeConverter.parseBase64Binary(hashVal);
             HashAlgorithm hashAlgo = HashAlgorithm.fromString(algoName);
-            byte salt[] = DatatypeConverter.parseBase64Binary(saltVal);
+            byte[] salt = DatatypeConverter.parseBase64Binary(saltVal);
             int spinCnt = Integer.parseInt(spinCount);
-            byte hash2[] = CryptoFunctions.hashPassword(password, hashAlgo, salt, spinCnt, false);
+            byte[] hash2 = CryptoFunctions.hashPassword(password, hashAlgo, salt, spinCnt, false);
             return Arrays.equals(hash1, hash2);
         }
     }

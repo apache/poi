@@ -108,7 +108,7 @@ public class TestEmbeddedExtractor {
     public static String md5hash(byte[] input) {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
-            byte hash[] = md.digest(input);
+            byte[] hash = md.digest(input);
             return DatatypeConverter.printBase64Binary(hash);
         } catch (NoSuchAlgorithmException e) {
             // doesn't happen

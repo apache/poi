@@ -453,8 +453,8 @@ public final class TestTextRun {
 		assertEquals("sdfsdfsdf", rt.get(0).getRawText());
 
 		textParas = textParass.get(1);
-		String texts[] = {"Sdfsdfsdf\r","Dfgdfg\r","Dfgdfgdfg\r","Sdfsdfs\r","Sdfsdf\r"};
-		int indents[] = {0,0,0,1,1};
+        String[] texts = {"Sdfsdfsdf\r", "Dfgdfg\r", "Dfgdfgdfg\r", "Sdfsdfs\r", "Sdfsdf\r"};
+        int[] indents = {0, 0, 0, 1, 1};
 		int i=0;
 		for (HSLFTextParagraph p : textParas) {
 		    assertEquals(texts[i], p.getTextRuns().get(0).getRawText());
@@ -563,7 +563,7 @@ public final class TestTextRun {
         HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("52244.ppt");
         HSLFSlide slide = ppt.getSlides().get(0);
 
-        int sizes[] = { 36, 24, 12, 32, 12, 12 };
+        int[] sizes = {36, 24, 12, 32, 12, 12};
         
         int i=0;
         for (List<HSLFTextParagraph> textParas : slide.getTextParagraphs()) {

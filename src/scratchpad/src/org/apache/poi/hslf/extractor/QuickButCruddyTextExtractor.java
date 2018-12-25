@@ -61,7 +61,7 @@ public final class QuickButCruddyTextExtractor {
 	 * Really basic text extractor, that will also return lots of crud text.
 	 * Takes a single argument, the file to extract from
 	 */
-	public static void main(String args[]) throws IOException
+	public static void main(String[] args) throws IOException
 	{
 		if(args.length < 1) {
 			System.err.println("Useage:");

@@ -57,8 +57,8 @@ public final class TestOleEmbedding {
         // Placeholder EMFs for clients that don't support the OLE components.
         List<HSLFPictureData> pictures = slideShow.getPictureData();
         assertEquals("Should be two pictures", 2, pictures.size());
-        
-        long checkSums[] = { 0xD37A4204l, 0x26A62F68l, 0x82853169l, 0xE0E45D2Bl };
+
+        long[] checkSums = {0xD37A4204l, 0x26A62F68l, 0x82853169l, 0xE0E45D2Bl};
         int checkId = 0;
         
         // check for checksum to be uptodate
@@ -154,11 +154,11 @@ public final class TestOleEmbedding {
     	
     	ppt = new HSLFSlideShow(new ByteArrayInputStream(bos.toByteArray()));
     	HSLFObjectShape comp = (HSLFObjectShape)ppt.getSlides().get(0).getShapes().get(0);
-    	byte compData[] = IOUtils.toByteArray(comp.getObjectData().getInputStream());
+        byte[] compData = IOUtils.toByteArray(comp.getObjectData().getInputStream());
     	
     	bos.reset();
     	poiData1.writeFilesystem(bos);
-    	byte expData[] = bos.toByteArray();
+        byte[] expData = bos.toByteArray();
     	
     	assertArrayEquals(expData, compData);
     	

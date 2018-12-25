@@ -82,11 +82,11 @@ public class TestDateUtil {
 
         Calendar expCal = LocaleUtil.getLocaleCalendar(1900, 0, 0);
 
-        Calendar actCal[] = {
-            DateUtil.getJavaCalendar(dateValue),
-            DateUtil.getJavaCalendar(dateValue, use1904windowing),
-            DateUtil.getJavaCalendar(dateValue, use1904windowing, tz),
-            DateUtil.getJavaCalendar(dateValue, use1904windowing, tz, roundSeconds)
+        Calendar[] actCal = {
+                DateUtil.getJavaCalendar(dateValue),
+                DateUtil.getJavaCalendar(dateValue, use1904windowing),
+                DateUtil.getJavaCalendar(dateValue, use1904windowing, tz),
+                DateUtil.getJavaCalendar(dateValue, use1904windowing, tz, roundSeconds)
         };
         assertEquals(expCal, actCal[0]);
         assertEquals(expCal, actCal[1]);

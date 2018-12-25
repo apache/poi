@@ -56,17 +56,17 @@ public class CryptoAPIEncryptor extends Encryptor implements Cloneable {
     @Override
     public void confirmPassword(String password) {
         Random r = new SecureRandom();
-        byte salt[] = new byte[16];
-        byte verifier[] = new byte[16];
+        byte[] salt = new byte[16];
+        byte[] verifier = new byte[16];
         r.nextBytes(salt);
         r.nextBytes(verifier);
         confirmPassword(password, null, null, verifier, salt, null);
     }
 
     @Override
-    public void confirmPassword(String password, byte keySpec[],
-            byte keySalt[], byte verifier[], byte verifierSalt[],
-            byte integritySalt[]) {
+    public void confirmPassword(String password, byte[] keySpec,
+                                byte[] keySalt, byte[] verifier, byte[] verifierSalt,
+                                byte[] integritySalt) {
         assert(verifier != null && verifierSalt != null);
         CryptoAPIEncryptionVerifier ver = (CryptoAPIEncryptionVerifier)getEncryptionInfo().getVerifier();
         ver.setSalt(verifierSalt);
@@ -74,13 +74,13 @@ public class CryptoAPIEncryptor extends Encryptor implements Cloneable {
         setSecretKey(skey);
         try {
             Cipher cipher = initCipherForBlock(null, 0);
-            byte encryptedVerifier[] = new byte[verifier.length];
+            byte[] encryptedVerifier = new byte[verifier.length];
             cipher.update(verifier, 0, verifier.length, encryptedVerifier);
             ver.setEncryptedVerifier(encryptedVerifier);
             HashAlgorithm hashAlgo = ver.getHashAlgorithm();
             MessageDigest hashAlg = CryptoFunctions.getMessageDigest(hashAlgo);
-            byte calcVerifierHash[] = hashAlg.digest(verifier);
-            byte encryptedVerifierHash[] = cipher.doFinal(calcVerifierHash);
+            byte[] calcVerifierHash = hashAlg.digest(verifier);
+            byte[] encryptedVerifierHash = cipher.doFinal(calcVerifierHash);
             ver.setEncryptedVerifierHash(encryptedVerifierHash);
         } catch (GeneralSecurityException e) {
             throw new EncryptedDocumentException("Password confirmation failed", e);
@@ -121,7 +121,7 @@ public class CryptoAPIEncryptor extends Encryptor implements Cloneable {
     public void setSummaryEntries(DirectoryNode dir, String encryptedStream, POIFSFileSystem entries)
     throws IOException, GeneralSecurityException {
         CryptoAPIDocumentOutputStream bos = new CryptoAPIDocumentOutputStream(this); // NOSONAR
-        byte buf[] = new byte[8];
+        byte[] buf = new byte[8];
         
         bos.write(buf, 0, 8); // skip header
         List<StreamDescriptorEntry> descList = new ArrayList<>();
@@ -168,7 +168,7 @@ public class CryptoAPIEncryptor extends Encryptor implements Cloneable {
             bos.write(buf, 0, 1);
             LittleEndian.putUInt(buf, 0, sde.reserved2);
             bos.write(buf, 0, 4);
-            byte nameBytes[] = StringUtil.getToUnicodeLE(sde.streamName);
+            byte[] nameBytes = StringUtil.getToUnicodeLE(sde.streamName);
             bos.write(nameBytes, 0, nameBytes.length);
             LittleEndian.putShort(buf, 0, (short)0); // null-termination
             bos.write(buf, 0, 2);

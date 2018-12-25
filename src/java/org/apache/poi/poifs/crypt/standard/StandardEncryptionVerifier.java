@@ -38,17 +38,17 @@ public class StandardEncryptionVerifier extends EncryptionVerifier implements En
             throw new RuntimeException("Salt size != 16 !?");
         }
 
-        byte salt[] = new byte[16];
+        byte[] salt = new byte[16];
         is.readFully(salt);
         setSalt(salt);
-        
-        byte encryptedVerifier[] = new byte[16];
+
+        byte[] encryptedVerifier = new byte[16];
         is.readFully(encryptedVerifier);
         setEncryptedVerifier(encryptedVerifier);
 
         verifierHashSize = is.readInt();
 
-        byte encryptedVerifierHash[] = new byte[header.getCipherAlgorithm().encryptedVerifierHashLength];
+        byte[] encryptedVerifierHash = new byte[header.getCipherAlgorithm().encryptedVerifierHashLength];
         is.readFully(encryptedVerifierHash);
         setEncryptedVerifierHash(encryptedVerifierHash);
 
@@ -69,7 +69,7 @@ public class StandardEncryptionVerifier extends EncryptionVerifier implements En
 
     // make method visible for this package
     @Override
-    protected void setSalt(byte salt[]) {
+    protected void setSalt(byte[] salt) {
         if (salt == null || salt.length != 16) {
             throw new EncryptedDocumentException("invalid verifier salt");
         }
@@ -78,26 +78,26 @@ public class StandardEncryptionVerifier extends EncryptionVerifier implements En
     
     // make method visible for this package
     @Override
-    protected void setEncryptedVerifier(byte encryptedVerifier[]) {
+    protected void setEncryptedVerifier(byte[] encryptedVerifier) {
         super.setEncryptedVerifier(encryptedVerifier);
     }
 
     // make method visible for this package
     @Override
-    protected void setEncryptedVerifierHash(byte encryptedVerifierHash[]) {
+    protected void setEncryptedVerifierHash(byte[] encryptedVerifierHash) {
         super.setEncryptedVerifierHash(encryptedVerifierHash);
     }
     
     @Override
     public void write(LittleEndianByteArrayOutputStream bos) {
         // see [MS-OFFCRYPTO] - 2.3.4.9
-        byte salt[] = getSalt();
+        byte[] salt = getSalt();
         assert(salt.length == 16);
         bos.writeInt(salt.length); // salt size
         bos.write(salt);
         
         // The resulting Verifier value MUST be an array of 16 bytes.
-        byte encryptedVerifier[] = getEncryptedVerifier(); 
+        byte[] encryptedVerifier = getEncryptedVerifier();
         assert(encryptedVerifier.length == 16);
         bos.write(encryptedVerifier);
 
@@ -111,7 +111,7 @@ public class StandardEncryptionVerifier extends EncryptionVerifier implements En
         // Verifier. If the encryption algorithm is RC4, the length MUST be 20 bytes. If the encryption
         // algorithm is AES, the length MUST be 32 bytes. After decrypting the EncryptedVerifierHash
         // field, only the first VerifierHashSize bytes MUST be used.
-        byte encryptedVerifierHash[] = getEncryptedVerifierHash(); 
+        byte[] encryptedVerifierHash = getEncryptedVerifierHash();
         assert(encryptedVerifierHash.length == getCipherAlgorithm().encryptedVerifierHashLength);
         bos.write(encryptedVerifierHash);
     }

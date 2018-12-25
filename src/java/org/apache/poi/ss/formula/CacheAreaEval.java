@@ -63,8 +63,8 @@ public final class CacheAreaEval extends AreaEvalBase {
         
         int height = area.getLastRow() - area.getFirstRow() + 1;
         int width = area.getLastColumn() - area.getFirstColumn() + 1;
-        
-        ValueEval newVals[] = new ValueEval[height * width];
+
+        ValueEval[] newVals = new ValueEval[height * width];
         
         int startRow = area.getFirstRow() - getFirstRow();
         int startCol = area.getFirstColumn() - getFirstColumn();

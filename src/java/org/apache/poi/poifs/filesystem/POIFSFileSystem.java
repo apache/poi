@@ -787,7 +787,7 @@ public class POIFSFileSystem extends BlockStore
      * @param args names of the files; arg[ 0 ] is the input file,
      *             arg[ 1 ] is the output file
      */
-    public static void main(String args[]) throws IOException {
+    public static void main(String[] args) throws IOException {
         if (args.length != 2) {
             System.err.println(
                 "two arguments required: input filename and output filename");

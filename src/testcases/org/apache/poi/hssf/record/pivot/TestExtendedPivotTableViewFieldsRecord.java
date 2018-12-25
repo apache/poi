@@ -55,7 +55,7 @@ public final class TestExtendedPivotTableViewFieldsRecord extends TestCase {
 	public void testOlderFormat_bug46918() {
 		// There are 10 SXVDEX records in the file (not uploaded) that originated bugzilla 46918
 		// They all had the following hex encoding:
-		byte data[] = HexRead.readFromString("00 01 0A 00 1E 14 00 0A FF FF FF FF 00 00");  
+        byte[] data = HexRead.readFromString("00 01 0A 00 1E 14 00 0A FF FF FF FF 00 00");
 
 		RecordInputStream in = TestcaseRecordInputStream.create(data);
 		ExtendedPivotTableViewFieldsRecord rec;
@@ -68,8 +68,8 @@ public final class TestExtendedPivotTableViewFieldsRecord extends TestCase {
 			throw e;
 		}
 
-		byte expReserData[] = HexRead.readFromString("1E 14 00 0A FF FF FF FF 00 00" +
-				"FF FF 00 00 00 00 00 00 00 00");  
+        byte[] expReserData = HexRead.readFromString("1E 14 00 0A FF FF FF FF 00 00" +
+                "FF FF 00 00 00 00 00 00 00 00");
 		
 		TestcaseRecordInputStream.confirmRecordEncoding(ExtendedPivotTableViewFieldsRecord.sid, expReserData, rec.serialize());
 	}

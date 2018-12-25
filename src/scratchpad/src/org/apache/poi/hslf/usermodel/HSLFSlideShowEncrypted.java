@@ -60,18 +60,18 @@ public class HSLFSlideShowEncrypted implements Closeable {
 
     private static final BitField fieldRecInst = new BitField(0xFFF0);
 
-    private static final int BLIB_STORE_ENTRY_PARTS[] = {
-        1,     // btWin32
-        1,     // btMacOS
-        16,    // rgbUid
-        2,     // tag
-        4,     // size
-        4,     // cRef
-        4,     // foDelay
-        1,     // unused1
-        1,     // cbName (@ index 33)
-        1,     // unused2
-        1,     // unused3
+    private static final int[] BLIB_STORE_ENTRY_PARTS = {
+            1,     // btWin32
+            1,     // btMacOS
+            16,    // rgbUid
+            2,     // tag
+            4,     // size
+            4,     // cRef
+            4,     // foDelay
+            1,     // unused1
+            1,     // cbName (@ index 33)
+            1,     // unused2
+            1,     // unused3
     };
     
     protected HSLFSlideShowEncrypted(DocumentEncryptionAtom dea) {
@@ -359,7 +359,7 @@ public class HSLFSlideShowEncrypted implements Closeable {
         }
     }
 
-    protected Record[] updateEncryptionRecord(Record records[]) {
+    protected Record[] updateEncryptionRecord(Record[] records) {
         String password = Biff8EncryptionKey.getCurrentUserPassword();
         if (password == null) {
             if (dea == null) {
@@ -376,12 +376,12 @@ public class HSLFSlideShowEncrypted implements Closeable {
                 dea = new DocumentEncryptionAtom();
             }
             EncryptionInfo ei = dea.getEncryptionInfo();
-            byte salt[] = ei.getVerifier().getSalt();
+            byte[] salt = ei.getVerifier().getSalt();
             Encryptor enc = getEncryptionInfo().getEncryptor();
             if (salt == null) {
                 enc.confirmPassword(password);
             } else {
-                byte verifier[] = ei.getDecryptor().getVerifier();
+                byte[] verifier = ei.getDecryptor().getVerifier();
                 enc.confirmPassword(password, null, null, verifier, salt, null);
             }
 
@@ -396,7 +396,7 @@ public class HSLFSlideShowEncrypted implements Closeable {
      * Before this method is called, make sure that the offsets are correct,
      * i.e. call {@link HSLFSlideShowImpl#updateAndWriteDependantRecords(OutputStream, Map)}
      */
-    protected static Record[] normalizeRecords(Record records[]) {
+    protected static Record[] normalizeRecords(Record[] records) {
         // http://msdn.microsoft.com/en-us/library/office/gg615594(v=office.14).aspx
         // repeated slideIds can be overwritten, i.e. ignored
 
@@ -456,7 +456,7 @@ public class HSLFSlideShowEncrypted implements Closeable {
     }
 
 
-    protected static Record[] removeEncryptionRecord(Record records[]) {
+    protected static Record[] removeEncryptionRecord(Record[] records) {
         int deaSlideId = -1;
         int deaOffset = -1;
         PersistPtrHolder ptr = null;
@@ -502,7 +502,7 @@ public class HSLFSlideShowEncrypted implements Closeable {
     }
 
 
-    protected static Record[] addEncryptionRecord(Record records[], DocumentEncryptionAtom dea) {
+    protected static Record[] addEncryptionRecord(Record[] records, DocumentEncryptionAtom dea) {
         assert(dea != null);
         int ueaIdx = -1, ptrIdx = -1, deaIdx = -1, idx = -1;
         for (Record r : records) {
@@ -530,7 +530,7 @@ public class HSLFSlideShowEncrypted implements Closeable {
             uea.setEncryptSessionPersistIdRef(nextSlideId);
             uea.setMaxPersistWritten(nextSlideId);
 
-            Record newRecords[] = new Record[records.length+1];
+            Record[] newRecords = new Record[records.length + 1];
             if (ptrIdx > 0) {
                 System.arraycopy(records, 0, newRecords, 0, ptrIdx);
             }

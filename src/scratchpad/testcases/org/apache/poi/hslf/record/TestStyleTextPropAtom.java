@@ -669,7 +669,7 @@ public final class TestStyleTextPropAtom {
     @Test
     public void testLoadWriteC() {
         // BitMaskTextProperties will sanitize the output
-        byte expected[] = data_c.clone();
+        byte[] expected = data_c.clone();
         expected[56] = 0;
         expected[68] = 0;
         doReadWrite(data_c, expected, data_c_text_len);

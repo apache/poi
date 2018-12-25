@@ -177,7 +177,7 @@ public class POIFSStream implements Iterable<ByteBuffer>
    }
    
    protected class StreamBlockByteBuffer extends OutputStream {
-       byte oneByte[] = new byte[1];
+       byte[] oneByte = new byte[1];
        ByteBuffer buffer;
        // Make sure we don't encounter a loop whilst overwriting
        // the existing blocks

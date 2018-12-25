@@ -75,7 +75,7 @@ public class ZipArchiveThresholdInputStream extends FilterInputStream {
     }
 
     @Override
-    public int read(byte b[], int off, int len) throws IOException {
+    public int read(byte[] b, int off, int len) throws IOException {
         int cnt = super.read(b, off, len);
         if (cnt > -1) {
             checkThreshold();

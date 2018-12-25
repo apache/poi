@@ -132,7 +132,7 @@ public class TestHwmfParsing {
                     if (pd.getType() != PictureType.WMF) {
                         continue;
                     }
-                    byte wmfData[] = pd.getData();
+                    byte[] wmfData = pd.getData();
                     String filename = String.format(Locale.ROOT, "%s-%04d.wmf", basename, wmfIdx);
                     FileOutputStream fos = new FileOutputStream(new File(outdir, filename));
                     fos.write(wmfData);
@@ -156,8 +156,9 @@ public class TestHwmfParsing {
         File outdir = new File("build/wmf");
         outdir.mkdirs();
         final String startFile = "";
-        File files[] = indir.listFiles(new FileFilter() {
+        File[] files = indir.listFiles(new FileFilter() {
             boolean foundStartFile;
+
             @Override
             public boolean accept(File pathname) {
                 foundStartFile |= startFile.isEmpty() || pathname.getName().contains(startFile);

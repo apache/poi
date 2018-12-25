@@ -41,9 +41,9 @@ public class XOREncryptor extends Encryptor implements Cloneable {
     public void confirmPassword(String password) {
         int keyComp      = CryptoFunctions.createXorKey1(password);
         int verifierComp = CryptoFunctions.createXorVerifier1(password);
-        byte xorArray[]  = CryptoFunctions.createXorArray1(password);
-        
-        byte shortBuf[] = new byte[2];
+        byte[] xorArray = CryptoFunctions.createXorArray1(password);
+
+        byte[] shortBuf = new byte[2];
         XOREncryptionVerifier ver = (XOREncryptionVerifier)getEncryptionInfo().getVerifier();
         LittleEndian.putUShort(shortBuf, 0, keyComp);
         ver.setEncryptedKey(shortBuf);
@@ -53,9 +53,9 @@ public class XOREncryptor extends Encryptor implements Cloneable {
     }
 
     @Override
-    public void confirmPassword(String password, byte keySpec[],
-            byte keySalt[], byte verifier[], byte verifierSalt[],
-            byte integritySalt[]) {
+    public void confirmPassword(String password, byte[] keySpec,
+                                byte[] keySalt, byte[] verifier, byte[] verifierSalt,
+                                byte[] integritySalt) {
         confirmPassword(password);
     }
 
@@ -137,9 +137,9 @@ public class XOREncryptor extends Encryptor implements Cloneable {
             final int start = Math.max(posInChunk-(recordEnd-recordStart), 0);
 
             final BitSet plainBytes = getPlainByteFlags();
-            final byte xorArray[] = getEncryptionInfo().getEncryptor().getSecretKey().getEncoded();
-            final byte chunk[] = getChunk();
-            final byte plain[] = (plainBytes.isEmpty()) ? null : chunk.clone();
+            final byte[] xorArray = getEncryptionInfo().getEncryptor().getSecretKey().getEncoded();
+            final byte[] chunk = getChunk();
+            final byte[] plain = (plainBytes.isEmpty()) ? null : chunk.clone();
 
             /*
              * From: http://social.msdn.microsoft.com/Forums/en-US/3dadbed3-0e68-4f11-8b43-3a2328d9ebd5

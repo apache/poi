@@ -299,11 +299,11 @@ public abstract class HWPFDocumentCore extends POIDocument {
                 fBase.setFObfuscated(false);
             }
             Encryptor enc = _encryptionInfo.getEncryptor();
-            byte salt[] = _encryptionInfo.getVerifier().getSalt();
+            byte[] salt = _encryptionInfo.getVerifier().getSalt();
             if (salt == null) {
                 enc.confirmPassword(password);
             } else {
-                byte verifier[] = _encryptionInfo.getDecryptor().getVerifier();
+                byte[] verifier = _encryptionInfo.getDecryptor().getVerifier();
                 enc.confirmPassword(password, null, null, verifier, salt, null);
             }
         }
@@ -336,7 +336,7 @@ public abstract class HWPFDocumentCore extends POIDocument {
                     is = dec.getDataStream(dis, streamSize, 0);
                     if (encryptionOffset > 0) {
                         ChunkedCipherInputStream cis = (ChunkedCipherInputStream)is;
-                        byte plain[] = IOUtils.safelyAllocate(encryptionOffset, MAX_RECORD_LENGTH);
+                        byte[] plain = IOUtils.safelyAllocate(encryptionOffset, MAX_RECORD_LENGTH);
                         cis.readPlain(plain, 0, encryptionOffset);
                         bos.write(plain);
                     }

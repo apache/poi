@@ -126,11 +126,11 @@ public class TestEncryptor {
         }
 
         // check that same verifier/salt lead to same hashes
-        final byte verifierSaltExpected[] = infoExpected.getVerifier().getSalt();
-        final byte verifierExpected[] = decExpected.getVerifier();
-        final byte keySalt[] = infoExpected.getHeader().getKeySalt();
-        final byte keySpec[] = decExpected.getSecretKey().getEncoded();
-        final byte integritySalt[] = decExpected.getIntegrityHmacKey();
+        final byte[] verifierSaltExpected = infoExpected.getVerifier().getSalt();
+        final byte[] verifierExpected = decExpected.getVerifier();
+        final byte[] keySalt = infoExpected.getHeader().getKeySalt();
+        final byte[] keySpec = decExpected.getSecretKey().getEncoded();
+        final byte[] integritySalt = decExpected.getIntegrityHmacKey();
         // the hmacs of the file always differ, as we use PKCS5-padding to pad the bytes
         // whereas office just uses random bytes
         // byte integrityHash[] = d.getIntegrityHmacValue();
@@ -210,10 +210,10 @@ public class TestEncryptor {
         }
 
         // check that same verifier/salt lead to same hashes
-        final byte verifierSaltExpected[] = infoExpected.getVerifier().getSalt();
-        final byte verifierExpected[] = d.getVerifier();
-        final byte keySpec[] = d.getSecretKey().getEncoded();
-        final byte keySalt[] = infoExpected.getHeader().getKeySalt();
+        final byte[] verifierSaltExpected = infoExpected.getVerifier().getSalt();
+        final byte[] verifierExpected = d.getVerifier();
+        final byte[] keySpec = d.getSecretKey().getEncoded();
+        final byte[] keySalt = infoExpected.getHeader().getKeySalt();
         
         
         final EncryptionInfo infoActual = new EncryptionInfo(

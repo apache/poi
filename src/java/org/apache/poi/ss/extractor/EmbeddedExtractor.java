@@ -234,7 +234,7 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
             }
 
             // TODO: investigate if this is just an EMF-hack or if other formats are also embedded in EMF
-            byte pictureBytes[] = pd.getData();
+            byte[] pictureBytes = pd.getData();
             int idxStart = indexOf(pictureBytes, 0, "%PDF-".getBytes(LocaleUtil.CHARSET_1252));
             if (idxStart == -1) {
                 return null;
@@ -283,7 +283,7 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
             }
 
             DocumentInputStream dis = dn.createDocumentInputStream("package");
-            byte data[] = IOUtils.toByteArray(dis);
+            byte[] data = IOUtils.toByteArray(dis);
             dis.close();
             
             return new EmbeddedData(dn.getName()+ext, data, contentType);

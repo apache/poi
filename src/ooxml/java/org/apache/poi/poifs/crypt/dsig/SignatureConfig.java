@@ -950,12 +950,12 @@ public class SignatureConfig {
     public Provider getProvider() {
         Provider prov = provider.get();
         if (prov == null) {
-            String dsigProviderNames[] = {
-                System.getProperty("jsr105Provider"),
-                // Santuario xmlsec
-                "org.apache.jcp.xml.dsig.internal.dom.XMLDSigRI",
-                // JDK xmlsec
-                "org.jcp.xml.dsig.internal.dom.XMLDSigRI"
+            String[] dsigProviderNames = {
+                    System.getProperty("jsr105Provider"),
+                    // Santuario xmlsec
+                    "org.apache.jcp.xml.dsig.internal.dom.XMLDSigRI",
+                    // JDK xmlsec
+                    "org.jcp.xml.dsig.internal.dom.XMLDSigRI"
             };
             for (String pn : dsigProviderNames) {
                 if (pn == null) {

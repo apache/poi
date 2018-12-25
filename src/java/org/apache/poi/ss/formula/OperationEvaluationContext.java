@@ -347,8 +347,8 @@ public final class OperationEvaluationContext {
 
     public ValueEval getAreaValueEval(int firstRowIndex, int firstColumnIndex,
             int lastRowIndex, int lastColumnIndex, Object[][] tokens) {
-        
-        ValueEval values[] = new ValueEval[tokens.length * tokens[0].length];
+
+        ValueEval[] values = new ValueEval[tokens.length * tokens[0].length];
         
         int index = 0;
         for (int jdx = 0; jdx < tokens.length; jdx++) {

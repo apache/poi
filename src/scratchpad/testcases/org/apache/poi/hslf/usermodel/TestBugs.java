@@ -601,18 +601,18 @@ public final class TestBugs {
         HSLFAutoShape as = (HSLFAutoShape)ppt.getSlides().get(0).getShapes().get(0);
         AbstractEscherOptRecord opt = as.getEscherOptRecord();
         EscherArrayProperty ep = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__SHADECOLORS);
-        double exp[][] = {
-            // r, g, b, position
-            { 94, 158, 255, 0 },
-            { 133, 194, 255, 0.399994 },
-            { 196, 214, 235, 0.699997 },
-            { 255, 235, 250, 1 }
+        double[][] exp = {
+                // r, g, b, position
+                {94, 158, 255, 0},
+                {133, 194, 255, 0.399994},
+                {196, 214, 235, 0.699997},
+                {255, 235, 250, 1}
         };
 
         int i = 0;
-        for (byte data[] : ep) {
+        for (byte[] data : ep) {
             EscherColorRef ecr = new EscherColorRef(data, 0, 4);
-            int rgb[] = ecr.getRGB();
+            int[] rgb = ecr.getRGB();
             double pos = Units.fixedPointToDouble(LittleEndian.getInt(data, 4));
             assertEquals((int)exp[i][0], rgb[0]);
             assertEquals((int)exp[i][1], rgb[1]);
@@ -796,7 +796,7 @@ public final class TestBugs {
 
     @Test
     public void bug58718() throws IOException {
-        String files[] = { "bug58718_008524.ppt","bug58718_008558.ppt","bug58718_349008.ppt","bug58718_008495.ppt",  }; 
+        String[] files = {"bug58718_008524.ppt", "bug58718_008558.ppt", "bug58718_349008.ppt", "bug58718_008495.ppt",};
         for (String f : files) {
             File sample = HSLFTestDataSamples.getSampleFile(f);
             try (SlideShowExtractor ex = new SlideShowExtractor(SlideShowFactory.create(sample))) {
@@ -877,8 +877,8 @@ public final class TestBugs {
             @Override
             public void write(int b) throws IOException {}
         };
-        
-        final boolean found[] = { false }; 
+
+        final boolean[] found = {false};
         DummyGraphics2d dgfx = new DummyGraphics2d(new PrintStream(nullOutput)){
             @Override
             public void drawString(AttributedCharacterIterator iterator, float x, float y) {

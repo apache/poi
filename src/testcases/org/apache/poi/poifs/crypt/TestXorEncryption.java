@@ -50,9 +50,9 @@ public class TestXorEncryption {
         int key = CryptoFunctions.createXorKey1("abc");
         assertEquals(20810, key);
         assertEquals(52250, verifier);
-        
-        byte xorArrAct[] = CryptoFunctions.createXorArray1("abc");
-        byte xorArrExp[] = HexRead.readFromString("AC-CC-A4-AB-D6-BA-C3-BA-D6-A3-2B-45-D3-79-29-BB");
+
+        byte[] xorArrAct = CryptoFunctions.createXorArray1("abc");
+        byte[] xorArrExp = HexRead.readFromString("AC-CC-A4-AB-D6-BA-C3-BA-D6-A3-2B-45-D3-79-29-BB");
         assertThat(xorArrExp, equalTo(xorArrAct));
     }
 

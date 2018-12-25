@@ -157,7 +157,7 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
         super.afterInsert(sh);
 
         Set<HSLFLine> lineSet = new HashSet<>();
-        for (HSLFTableCell row[] : cells) {
+        for (HSLFTableCell[] row : cells) {
             for (HSLFTableCell c : row) {
                 addShape(c);
                 for (HSLFLine bt : new HSLFLine[]{ c.borderTop, c.borderRight, c.borderBottom, c.borderLeft }) {
@@ -343,7 +343,7 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
         if (cells == null) {
             initTable();
         } else {
-            for (HSLFTableCell cols[] : cells) {
+            for (HSLFTableCell[] cols : cells) {
                 for (HSLFTableCell col : cols) {
                     col.setSheet(sheet);
                 }
@@ -412,7 +412,7 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
         }
         double currentWidth = cells[0][col].getAnchor().getWidth();
         double dx = width - currentWidth;
-        for (HSLFTableCell cols[] : cells) {
+        for (HSLFTableCell[] cols : cells) {
             Rectangle2D anchor = cols[col].getAnchor();
             anchor.setRect(anchor.getX(), anchor.getY(), width, anchor.getHeight());
             cols[col].setAnchor(anchor);

@@ -529,12 +529,12 @@ public class HwmfWindowing {
          * A 16-bit unsigned integer that defines the horizontal (x-axis) coordinate,
          * in logical units, of the left endpoint of the scanline.
          */
-        private int left_scanline[];
+        private int[] left_scanline;
         /**
          * A 16-bit unsigned integer that defines the horizontal (x-axis) coordinate,
          * in logical units, of the right endpoint of the scanline.
          */
-        private int right_scanline[];
+        private int[] right_scanline;
         /**
          * A 16-bit unsigned integer that MUST be the same as the value of the Count
          * field; it is present to allow upward travel in the structure.
@@ -591,7 +591,7 @@ public class HwmfWindowing {
         /**
          * An array of Scan objects that define the scanlines in the region.
          */
-        private WmfScanObject scanObjects[];
+        private WmfScanObject[] scanObjects;
 
         @Override
         public HwmfRecordType getWmfRecordType() {

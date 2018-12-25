@@ -56,13 +56,13 @@ public class TestFontRendering {
     public void bug55902mixedFontWithChineseCharacters() throws IOException, FontFormatException {
         // font files need to be downloaded first via
         // ant test-scratchpad-download-resources
-        String fontFiles[][] = {
-            // Calibri is not available on *nix systems, so we need to use another similar free font
-            { "build/scratchpad-test-resources/Cabin-Regular.ttf", "mapped", "Calibri" },
+        String[][] fontFiles = {
+                // Calibri is not available on *nix systems, so we need to use another similar free font
+                {"build/scratchpad-test-resources/Cabin-Regular.ttf", "mapped", "Calibri"},
 
-            // use "MS PGothic" if available (Windows only) ...
-            // for the junit test not all chars are rendered
-            { "build/scratchpad-test-resources/mona.ttf", "fallback", "Cabin" }
+                // use "MS PGothic" if available (Windows only) ...
+                // for the junit test not all chars are rendered
+                {"build/scratchpad-test-resources/mona.ttf", "fallback", "Cabin"}
         };
         
         // setup fonts (especially needed, when run under *nix systems)
@@ -70,7 +70,7 @@ public class TestFontRendering {
         Map<String,String> fontMap = new HashMap<>();
         Map<String,String> fallbackMap = new HashMap<>();
         
-        for (String fontFile[] : fontFiles) {
+        for (String[] fontFile : fontFiles) {
             File f = new File(fontFile[0]);
             assumeTrue("necessary font file "+f.getName()+" not downloaded.", f.exists());
             

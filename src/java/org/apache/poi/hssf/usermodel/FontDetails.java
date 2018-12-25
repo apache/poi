@@ -151,7 +151,7 @@ public class FontDetails
         int listSize = tok.countTokens();
         if(max != -1 && listSize > max)
             listSize = max;
-        String list[] = new String[listSize];
+        String[] list = new String[listSize];
         for(int i = 0; tok.hasMoreTokens(); i++)
         {
             if(max != -1 && i == listSize - 1)

@@ -259,7 +259,7 @@ public final class TestSlideMaster {
                 assertEquals(true, rt.isUnderlined());
                 assertEquals("Arial", rt.getFontFamily());
             } else if (tpara.getRunType() == TextHeaderAtom.BODY_TYPE){
-                int indents[] = { 32, 28, 24 };
+                int[] indents = {32, 28, 24};
                 for (HSLFTextRun rt : tpara.getTextRuns()) {
                     int indent = tpara.getIndentLevel();
                     assertEquals(indents[indent], rt.getFontSize(), 0);

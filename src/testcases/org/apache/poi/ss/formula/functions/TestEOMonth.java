@@ -68,7 +68,7 @@ public class TestEOMonth {
     }
 
     private void checkValue(double startDate, int monthInc, double expectedResult) {
-        ValueEval ve[] = {new NumberEval(startDate), new NumberEval(monthInc)};
+        ValueEval[] ve = {new NumberEval(startDate), new NumberEval(monthInc)};
         NumberEval result = (NumberEval) eOMonth.evaluate(ve, ec);
         assertEquals(expectedResult, result.getNumberValue(), 0);
     }
@@ -107,10 +107,10 @@ public class TestEOMonth {
             cal.clear(Calendar.SECOND);
             cal.clear(Calendar.MILLISECOND);
             Date expDate = cal.getTime();
-            
-            ValueEval ve[] = {
-                new NumberEval(DateUtil.getExcelDate(startDate)),
-                new NumberEval(offset)
+
+            ValueEval[] ve = {
+                    new NumberEval(DateUtil.getExcelDate(startDate)),
+                    new NumberEval(offset)
             };
             NumberEval result = (NumberEval) eOMonth.evaluate(ve, ec);
             Date actDate = DateUtil.getJavaDate(result.getNumberValue());
@@ -121,14 +121,14 @@ public class TestEOMonth {
 
     @Test
     public void testBug56688() {
-        ValueEval ve[] = {new NumberEval(DATE_1902_09_26), new RefEvalImplementation(new NumberEval(0))};
+        ValueEval[] ve = {new NumberEval(DATE_1902_09_26), new RefEvalImplementation(new NumberEval(0))};
         NumberEval result = (NumberEval) eOMonth.evaluate(ve, ec);
         assertEquals(DATE_1902_09_30, result.getNumberValue(), 0);
     }
 
     @Test
     public void testRefEvalStartDate() {
-        ValueEval ve[] = {new RefEvalImplementation(new NumberEval(DATE_1902_09_26)), new NumberEval(0)};
+        ValueEval[] ve = {new RefEvalImplementation(new NumberEval(DATE_1902_09_26)), new NumberEval(0)};
         NumberEval result = (NumberEval) eOMonth.evaluate(ve, ec);
         assertEquals(DATE_1902_09_30, result.getNumberValue(), 0);
     }

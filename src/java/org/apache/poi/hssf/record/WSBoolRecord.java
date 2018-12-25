@@ -55,7 +55,7 @@ public final class WSBoolRecord extends StandardRecord {
 
     public WSBoolRecord(RecordInputStream in)
     {
-       byte data[] = in.readRemainder();
+        byte[] data = in.readRemainder();
         field_1_wsbool =
             data[ 1 ];   // backwards because theoretically this is one short field
         field_2_wsbool =

@@ -173,18 +173,18 @@ public class TextSpecInfoRun {
      * @throws java.io.IOException if an error occurs.
      */
     public void writeOut(OutputStream out) throws IOException {
-        final byte buf[] = new byte[4];
+        final byte[] buf = new byte[4];
         LittleEndian.putInt(buf, 0, length);
         out.write(buf);
         LittleEndian.putInt(buf, 0, mask);
         out.write(buf);
-        Object flds[] = {
-            spellFld, spellInfo, "spell info",
-            langFld, langId, "lang id",
-            altLangFld, altLangId, "alt lang id",
-            bidiFld, bidi, "bidi",
-            pp10extFld, pp10extMask, "pp10 extension field",
-            smartTagFld, smartTagsBytes, "smart tags"
+        Object[] flds = {
+                spellFld, spellInfo, "spell info",
+                langFld, langId, "lang id",
+                altLangFld, altLangId, "alt lang id",
+                bidiFld, bidi, "bidi",
+                pp10extFld, pp10extMask, "pp10 extension field",
+                smartTagFld, smartTagsBytes, "smart tags"
         };
         
         for (int i=0; i<flds.length-1; i+=3) {
@@ -193,7 +193,7 @@ public class TextSpecInfoRun {
             if (!fld.isSet(mask)) continue;
             boolean valid;
             if (valO instanceof byte[]) {
-                byte bufB[] = (byte[])valO;
+                byte[] bufB = (byte[]) valO;
                 valid = bufB.length > 0;
                 out.write(bufB);
             } else if (valO instanceof Integer) {

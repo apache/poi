@@ -48,7 +48,7 @@ public class XORDecryptor extends Decryptor implements Cloneable {
         int keyComp      = CryptoFunctions.createXorKey1(password);
         int verifierComp = CryptoFunctions.createXorVerifier1(password);
         if (keyVer == keyComp && verifierVer == verifierComp) {
-            byte xorArray[] = CryptoFunctions.createXorArray1(password);
+            byte[] xorArray = CryptoFunctions.createXorArray1(password);
             setSecretKey(new SecretKeySpec(xorArray, "XOR"));
             return true;
         } else {
@@ -119,9 +119,9 @@ public class XORDecryptor extends Decryptor implements Cloneable {
         @Override
         protected int invokeCipher(int totalBytes, boolean doFinal) {
             final int pos = (int)getPos();
-            final byte xorArray[] = getEncryptionInfo().getDecryptor().getSecretKey().getEncoded();
-            final byte chunk[] = getChunk();
-            final byte plain[] = getPlain();
+            final byte[] xorArray = getEncryptionInfo().getDecryptor().getSecretKey().getEncoded();
+            final byte[] chunk = getChunk();
+            final byte[] plain = getPlain();
             final int posInChunk = pos & getChunkMask();
             
             /*
@@ -164,7 +164,7 @@ public class XORDecryptor extends Decryptor implements Cloneable {
         @Override
         public void setNextRecordSize(int recordSize) {
             final int pos = (int)getPos();
-            final byte chunk[] = getChunk();
+            final byte[] chunk = getChunk();
             final int chunkMask = getChunkMask();
             recordStart = pos;
             recordEnd = recordStart+recordSize;

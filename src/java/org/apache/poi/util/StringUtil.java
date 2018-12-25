@@ -407,7 +407,7 @@ public class StringUtil {
         }
     }
 
-    private static final int symbolMap_f020[] = {
+    private static final int[] symbolMap_f020 = {
             ' ', // 0xf020 space
             '!', // 0xf021 exclam
             8704, // 0xf022 universal
@@ -506,7 +506,7 @@ public class StringUtil {
             ' ', // 0xf07f not defined
     };
 
-    private static final int symbolMap_f0a0[] = {
+    private static final int[] symbolMap_f0a0 = {
             8364, // 0xf0a0 not defined / euro symbol
             978, // 0xf0a1 upsilon1 (upper)
             8242, // 0xf0a2 minute

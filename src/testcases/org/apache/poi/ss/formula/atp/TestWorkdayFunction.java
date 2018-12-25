@@ -50,25 +50,25 @@ public class TestWorkdayFunction {
 
     @Test
     public void testFailWhenNoArguments() {
-        ValueEval ve[] = new ValueEval[0];
+        ValueEval[] ve = new ValueEval[0];
         assertEquals(VALUE_INVALID, WorkdayFunction.instance.evaluate(ve, null));
     }
 
     @Test
     public void testFailWhenLessThan2Arguments() {
-        ValueEval ve[] = new ValueEval[1];
+        ValueEval[] ve = new ValueEval[1];
         assertEquals(VALUE_INVALID, WorkdayFunction.instance.evaluate(ve, null));
     }
 
     @Test
     public void testFailWhenMoreThan3Arguments() {
-        ValueEval ve[] = new ValueEval[4];
+        ValueEval[] ve = new ValueEval[4];
         assertEquals(VALUE_INVALID, WorkdayFunction.instance.evaluate(ve, null));
     }
 
     @Test
     public void testFailWhenArgumentsAreNotDatesNorNumbers() {
-        ValueEval ve[] = { new StringEval("Potato"), new StringEval("Cucumber") };
+        ValueEval[] ve = {new StringEval("Potato"), new StringEval("Cucumber")};
         assertEquals(VALUE_INVALID, WorkdayFunction.instance.evaluate(ve, EC));
     }
 
@@ -76,7 +76,7 @@ public class TestWorkdayFunction {
     public void testReturnWorkdays() {
         Calendar expCal = LocaleUtil.getLocaleCalendar(2009, 3, 30);
         Date expDate = expCal.getTime();
-        ValueEval ve[] = { new StringEval(STARTING_DATE), new NumberEval(151) };
+        ValueEval[] ve = {new StringEval(STARTING_DATE), new NumberEval(151)};
         Date actDate = DateUtil.getJavaDate(((NumberEval) WorkdayFunction.instance.evaluate(ve, EC)).getNumberValue());
         assertEquals(expDate, actDate);
     }
@@ -86,7 +86,7 @@ public class TestWorkdayFunction {
         Calendar expCal = LocaleUtil.getLocaleCalendar(2013, 8, 27);
         Date expDate = expCal.getTime();
 
-    	ValueEval ve[] = { new StringEval("2013/09/30"), new NumberEval(-1) };
+        ValueEval[] ve = {new StringEval("2013/09/30"), new NumberEval(-1)};
 		double numberValue = ((NumberEval) WorkdayFunction.instance.evaluate(ve, EC)).getNumberValue();
 		assertEquals(41544.0, numberValue, 0);
 		
@@ -98,8 +98,8 @@ public class TestWorkdayFunction {
     public void testReturnWorkdaysSpanningAWeekendAddingDays() {
         Calendar expCal = LocaleUtil.getLocaleCalendar(2013, 8, 30);
         Date expDate = expCal.getTime();
-        
-        ValueEval ve[] = { new StringEval("2013/09/27"), new NumberEval(1) };
+
+        ValueEval[] ve = {new StringEval("2013/09/27"), new NumberEval(1)};
         double numberValue = ((NumberEval) WorkdayFunction.instance.evaluate(ve, EC)).getNumberValue();
         assertEquals(41547.0, numberValue, 0);
 
@@ -111,8 +111,8 @@ public class TestWorkdayFunction {
     public void testReturnWorkdaysWhenStartIsWeekendAddingDays() {
         Calendar expCal = LocaleUtil.getLocaleCalendar(2013, 9, 7);
         Date expDate = expCal.getTime();
-        
-        ValueEval ve[] = { new StringEval("2013/10/06"), new NumberEval(1) };
+
+        ValueEval[] ve = {new StringEval("2013/10/06"), new NumberEval(1)};
         double numberValue = ((NumberEval) WorkdayFunction.instance.evaluate(ve, EC)).getNumberValue();
         assertEquals(41554.0, numberValue, 0);
 
@@ -124,8 +124,8 @@ public class TestWorkdayFunction {
     public void testReturnWorkdaysWhenStartIsWeekendSubtractingDays() {
         Calendar expCal = LocaleUtil.getLocaleCalendar(2013, 9, 4);
         Date expDate = expCal.getTime();
-        
-        ValueEval ve[] = { new StringEval("2013/10/06"), new NumberEval(-1) };
+
+        ValueEval[] ve = {new StringEval("2013/10/06"), new NumberEval(-1)};
         double numberValue = ((NumberEval) WorkdayFunction.instance.evaluate(ve, EC)).getNumberValue();
         assertEquals(41551.0, numberValue, 0);
 
@@ -137,8 +137,8 @@ public class TestWorkdayFunction {
     public void testReturnWorkdaysWithDaysTruncated() {
         Calendar expCal = LocaleUtil.getLocaleCalendar(2009, 3, 30);
         Date expDate = expCal.getTime();
-        
-        ValueEval ve[] = { new StringEval(STARTING_DATE), new NumberEval(151.99999) };
+
+        ValueEval[] ve = {new StringEval(STARTING_DATE), new NumberEval(151.99999)};
         double numberValue = ((NumberEval) WorkdayFunction.instance.evaluate(ve, EC)).getNumberValue();
         
         Date actDate = DateUtil.getJavaDate(numberValue);
@@ -149,8 +149,8 @@ public class TestWorkdayFunction {
     public void testReturnRetroativeWorkday() {
         Calendar expCal = LocaleUtil.getLocaleCalendar(2008, 8, 23);
         Date expDate = expCal.getTime();
-        
-        ValueEval ve[] = { new StringEval(STARTING_DATE), new NumberEval(-5), new StringEval(RETROATIVE_HOLIDAY) };
+
+        ValueEval[] ve = {new StringEval(STARTING_DATE), new NumberEval(-5), new StringEval(RETROATIVE_HOLIDAY)};
         double numberValue = ((NumberEval) WorkdayFunction.instance.evaluate(ve, EC)).getNumberValue();
         
         Date actDate = DateUtil.getJavaDate(numberValue);
@@ -161,10 +161,10 @@ public class TestWorkdayFunction {
     public void testReturnNetworkdaysWithManyHolidays() {
         Calendar expCal = LocaleUtil.getLocaleCalendar(2009, 4, 5);
         Date expDate = expCal.getTime();
-        
-        ValueEval ve[] = {
-            new StringEval(STARTING_DATE), new NumberEval(151),
-            new MockAreaEval(FIRST_HOLIDAY, SECOND_HOLIDAY, THIRD_HOLIDAY) };
+
+        ValueEval[] ve = {
+                new StringEval(STARTING_DATE), new NumberEval(151),
+                new MockAreaEval(FIRST_HOLIDAY, SECOND_HOLIDAY, THIRD_HOLIDAY)};
         double numberValue = ((NumberEval) WorkdayFunction.instance.evaluate(ve, EC)).getNumberValue();
         
         Date actDate = DateUtil.getJavaDate(numberValue);

@@ -36,7 +36,7 @@ public class ImageHeaderEMF {
     // rectangle that can be drawn around the image stored in the metafile.
     private final Rectangle deviceBounds;
 
-    public ImageHeaderEMF(final byte data[], final int off) {
+    public ImageHeaderEMF(final byte[] data, final int off) {
         int offset = off;
         int type = (int)LittleEndian.getUInt(data, offset); offset += 4;
         if (type != 1) {

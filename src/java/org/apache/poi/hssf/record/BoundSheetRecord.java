@@ -62,7 +62,7 @@ public final class BoundSheetRecord extends StandardRecord {
 	 * @param in the record stream to read from
 	 */
 	public BoundSheetRecord(RecordInputStream in) {
-	    byte buf[] = new byte[LittleEndianConsts.INT_SIZE];
+        byte[] buf = new byte[LittleEndianConsts.INT_SIZE];
 	    in.readPlain(buf, 0, buf.length);
 		field_1_position_of_BOF = LittleEndian.getInt(buf);
 		field_2_option_flags = in.readUShort();

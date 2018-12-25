@@ -58,7 +58,7 @@ public class HSLFEscherClientDataRecord extends EscherClientDataRecord {
     @Override
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesRemaining = readHeader( data, offset );
-        byte remainingData[] = IOUtils.safelyAllocate(bytesRemaining, MAX_RECORD_LENGTH);
+        byte[] remainingData = IOUtils.safelyAllocate(bytesRemaining, MAX_RECORD_LENGTH);
         System.arraycopy(data, offset+8, remainingData, 0, bytesRemaining);
         setRemainingData(remainingData);
         return bytesRemaining + 8;
@@ -70,8 +70,8 @@ public class HSLFEscherClientDataRecord extends EscherClientDataRecord {
         
         LittleEndian.putShort(data, offset, getOptions());
         LittleEndian.putShort(data, offset+2, getRecordId());
-        
-        byte childBytes[] = getRemainingData();
+
+        byte[] childBytes = getRemainingData();
         
         LittleEndian.putInt(data, offset+4, childBytes.length);
         System.arraycopy(childBytes, 0, data, offset+8, childBytes.length);

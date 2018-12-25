@@ -130,7 +130,7 @@ public abstract class EncryptionHeader implements Cloneable {
         return keySalt;
     }
     
-    protected void setKeySalt(byte salt[]) {
+    protected void setKeySalt(byte[] salt) {
         this.keySalt = (salt == null) ? null : salt.clone();
     }
 

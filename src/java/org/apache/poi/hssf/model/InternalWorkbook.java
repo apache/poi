@@ -1338,7 +1338,7 @@ public final class InternalWorkbook {
      */
     private static FormatRecord createFormat(int id) {
         // we'll need multiple editions for the different formats
-        final int mappings[] = { 5, 6, 7, 8, 0x2a, 0x29, 0x2c, 0x2b };
+        final int[] mappings = {5, 6, 7, 8, 0x2a, 0x29, 0x2c, 0x2b};
         if (id < 0 || id >= mappings.length) {
             throw new  IllegalArgumentException("Unexpected id " + id);
         }
@@ -1433,8 +1433,8 @@ public final class InternalWorkbook {
      */
     private static StyleRecord createStyle(int id) {
         // we'll need multiple editions
-        final int mappings[][] = {
-            { 0x010, 3 }, { 0x011, 6 }, { 0x012, 4 }, { 0x013, 7 }, { 0x000, 0 }, { 0x014, 5 }  
+        final int[][] mappings = {
+                {0x010, 3}, {0x011, 6}, {0x012, 4}, {0x013, 7}, {0x000, 0}, {0x014, 5}
         };
         if (id < 0 || id >= mappings.length) {
             throw new  IllegalArgumentException("Unexpected style id " + id);

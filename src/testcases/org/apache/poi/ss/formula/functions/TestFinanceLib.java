@@ -70,8 +70,11 @@ public class TestFinanceLib extends AbstractNumericTestCase {
         
     }
     public void testNpv() {
-        double r, v[], npv, x;
-        
+        double r;
+        double[] v;
+        double npv;
+        double x;
+
         r = 1; v = new double[]{100, 200, 300, 400};
         npv = FinanceLib.npv(r, v);
         x = 162.5;

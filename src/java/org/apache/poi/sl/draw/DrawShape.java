@@ -65,7 +65,7 @@ public class DrawShape implements Drawable {
 
         final Rectangle2D anchor = getAnchor(graphics, ps);
 
-        char cmds[] = isHSLF ? new char[]{ 'h','v','r' } : new char[]{ 'r','h','v' };
+        char[] cmds = isHSLF ? new char[]{'h', 'v', 'r'} : new char[]{'r', 'h', 'v'};
         for (char ch : cmds) {
             switch (ch) {
             case 'h':
@@ -232,7 +232,7 @@ public class DrawShape implements Drawable {
             lineDash = LineDash.SOLID;
         }
 
-        int dashPatI[] = lineDash.pattern;
+        int[] dashPatI = lineDash.pattern;
         final float dash_phase = 0;
         float[] dashPatF = null;
         if (dashPatI != null) {
