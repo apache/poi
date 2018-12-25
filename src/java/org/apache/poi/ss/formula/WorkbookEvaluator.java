@@ -823,7 +823,7 @@ public final class WorkbookEvaluator {
      * <p>
      * Returns a single value e.g. a cell formula result or boolean value for conditional formatting.
      * 
-     * @param formula
+     * @param formula The formula to evaluate
      * @param target cell context for the operation
      * @param region containing the cell
      * @return value
@@ -840,8 +840,8 @@ public final class WorkbookEvaluator {
      * offset position relative to the top left of the range.
      * <p>
      * Returns a ValueEval that may be one or more values, such as the allowed values for a data validation constraint.
-     * 
-     * @param formula
+     *
+     * @param formula The formula to evaluate
      * @param target cell context for the operation
      * @param region containing the cell
      * @return ValueEval for one or more values

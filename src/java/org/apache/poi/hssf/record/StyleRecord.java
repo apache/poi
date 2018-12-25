@@ -120,6 +120,8 @@ public final class StyleRecord extends StandardRecord {
 
 	/**
 	 * set the row or column level of the style (if builtin 1||2)
+	 *
+	 * @param level The outline-level
 	 */
 	public void setOutlineStyleLevel(int level) {
 		field_3_outline_style_level = level & 0x00FF;

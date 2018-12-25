@@ -42,18 +42,18 @@ public abstract class RelationalOperationEval extends Fixed2ArgFunction implemen
 	 * for the relational operators Evals.
 	 *
 	 * <pre>
-	 * Bool.TRUE > any number.
-	 * Bool > any string. ALWAYS
-	 * Bool.TRUE > Bool.FALSE
+	 * Bool.TRUE &gt; any number.
+	 * Bool &gt; any string. ALWAYS
+	 * Bool.TRUE &gt; Bool.FALSE
 	 * Bool.FALSE == Blank
 	 *
 	 * Strings are never converted to numbers or booleans
-	 * String > any number. ALWAYS
-	 * Non-empty String > Blank
+	 * String &gt; any number. ALWAYS
+	 * Non-empty String &gt; Blank
 	 * Empty String == Blank
 	 * String are sorted dictionary wise
 	 *
-	 * Blank > Negative numbers
+	 * Blank &gt; Negative numbers
 	 * Blank == 0
 	 * Blank < Positive numbers
 	 * </pre>

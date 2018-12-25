@@ -74,8 +74,7 @@ public final class HSSFRichTextString implements Comparable<HSSFRichTextString>,
     private InternalWorkbook _book;
     private LabelSSTRecord _record;
 
-    public HSSFRichTextString()
-    {
+    public HSSFRichTextString() {
         this("");
     }
 
@@ -129,8 +128,7 @@ public final class HSSFRichTextString implements Comparable<HSSFRichTextString>,
      * @param endIndex      The end index to apply the font to (exclusive)
      * @param fontIndex     The font to use.
      */
-    public void applyFont(int startIndex, int endIndex, short fontIndex)
-    {
+    public void applyFont(int startIndex, int endIndex, short fontIndex) {
         if (startIndex > endIndex)
             throw new IllegalArgumentException("Start index must be less than end index.");
         if (startIndex < 0 || endIndex > length())
@@ -171,8 +169,7 @@ public final class HSSFRichTextString implements Comparable<HSSFRichTextString>,
      * @param endIndex      The end index to apply to font to (exclusive)
      * @param font          The index of the font to use.
      */
-    public void applyFont(int startIndex, int endIndex, Font font)
-    {
+    public void applyFont(int startIndex, int endIndex, Font font) {
         applyFont(startIndex, endIndex, font.getIndex());
     }
 
@@ -180,8 +177,7 @@ public final class HSSFRichTextString implements Comparable<HSSFRichTextString>,
      * Sets the font of the entire string.
      * @param font          The font to use.
      */
-    public void applyFont(Font font)
-    {
+    public void applyFont(Font font) {
         applyFont(0, _string.getCharCount(), font);
     }
 
@@ -197,8 +193,7 @@ public final class HSSFRichTextString implements Comparable<HSSFRichTextString>,
     /**
      * Returns the plain string representation.
      */
-    public String getString()
-    {
+    public String getString() {
         return _string.getString();
     }
 
@@ -243,8 +238,7 @@ public final class HSSFRichTextString implements Comparable<HSSFRichTextString>,
      *                      index or null if no font is being applied or the
      *                      index is out of range.
      */
-    public short getFontAtIndex( int index )
-    {
+    public short getFontAtIndex( int index ) {
       int size = _string.getFormatRunCount();
       UnicodeString.FormatRun currentRun = null;
       for (int i=0;i<size;i++) {
@@ -266,8 +260,7 @@ public final class HSSFRichTextString implements Comparable<HSSFRichTextString>,
      *
      * @see #NO_FONT
      */
-    public int numFormattingRuns()
-    {
+    public int numFormattingRuns() {
         return _string.getFormatRunCount();
     }
 
@@ -276,8 +269,7 @@ public final class HSSFRichTextString implements Comparable<HSSFRichTextString>,
      * @param index     the index of the formatting run
      * @return  the index within the string.
      */
-    public int getIndexOfFormattingRun(int index)
-    {
+    public int getIndexOfFormattingRun(int index) {
         UnicodeString.FormatRun r = _string.getFormatRun(index);
         return r.getCharacterPos();
     }
@@ -288,8 +280,7 @@ public final class HSSFRichTextString implements Comparable<HSSFRichTextString>,
      * @param index     the index of the formatting run
      * @return  the font number used.
      */
-    public short getFontOfFormattingRun(int index)
-    {
+    public short getFontOfFormattingRun(int index) {
       UnicodeString.FormatRun r = _string.getFormatRun(index);
       return r.getFontIndex();
     }
@@ -320,8 +311,7 @@ public final class HSSFRichTextString implements Comparable<HSSFRichTextString>,
     /**
      * @return  the plain text representation of this string.
      */
-    public String toString()
-    {
+    public String toString() {
         return _string.toString();
     }
 
@@ -330,8 +320,7 @@ public final class HSSFRichTextString implements Comparable<HSSFRichTextString>,
      *
      * @param fontIndex  the font to apply.
      */
-    public void applyFont( short fontIndex )
-    {
+    public void applyFont( short fontIndex ) {
         applyFont(0, _string.getCharCount(), fontIndex);
     }
 }

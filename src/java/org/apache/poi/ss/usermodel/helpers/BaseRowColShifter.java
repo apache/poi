@@ -60,7 +60,7 @@ public abstract class BaseRowColShifter {
 
     /**
      * Update conditional formatting
-     * @param formulaShifter
+     * @param formulaShifter The {@link FormulaShifter} to use
      */
     public abstract void updateConditionalFormatting(FormulaShifter formulaShifter);
 
