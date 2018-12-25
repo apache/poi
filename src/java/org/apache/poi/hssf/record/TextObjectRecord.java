@@ -221,6 +221,8 @@ public final class TextObjectRecord extends ContinuableRecord {
 
 	/**
 	 * Sets the Horizontal text alignment field value.
+	 *
+	 * @param value The horizontal alignment, use one of the HORIZONTAL_TEXT_ALIGNMENT_... constants in this class
 	 */
 	public void setHorizontalTextAlignment(int value) {
 		field_1_options = HorizontalTextAlignment.setValue(field_1_options, value);
@@ -235,6 +237,8 @@ public final class TextObjectRecord extends ContinuableRecord {
 
 	/**
 	 * Sets the Vertical text alignment field value.
+	 *
+	 * @param value The vertical alignment, use one of the VERTIUCAL_TEST_ALIGNMENT_... constants in this class
 	 */
 	public void setVerticalTextAlignment(int value) {
 		field_1_options = VerticalTextAlignment.setValue(field_1_options, value);
@@ -249,6 +253,8 @@ public final class TextObjectRecord extends ContinuableRecord {
 
 	/**
 	 * Sets the text locked field value.
+	 *
+	 * @param value If the text should be locked
 	 */
 	public void setTextLocked(boolean value) {
 		field_1_options = textLocked.setBoolean(field_1_options, value);
@@ -295,7 +301,7 @@ public final class TextObjectRecord extends ContinuableRecord {
 	}
 
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		sb.append("[TXO]\n");
 		sb.append("    .options        = ").append(HexDump.shortToHex(field_1_options)).append("\n");
@@ -322,7 +328,6 @@ public final class TextObjectRecord extends ContinuableRecord {
 	public Object clone() {
 
 		TextObjectRecord rec = new TextObjectRecord();
-		rec._text = _text;
 
 		rec.field_1_options = field_1_options;
 		rec.field_2_textOrientation = field_2_textOrientation;

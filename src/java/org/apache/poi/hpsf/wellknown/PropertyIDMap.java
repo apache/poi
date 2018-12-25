@@ -458,6 +458,8 @@ public class PropertyIDMap implements Map<Long,String> {
     /**
      * Returns a property map, which is only used as a fallback, i.e. if available, the correct map
      * for {@link DocumentSummaryInformation} or {@link SummaryInformation} should be used.
+     *
+     * @return the resulting property map
      */
     public static synchronized PropertyIDMap getFallbackProperties() {
         if (fallbackProperties == null) {

@@ -49,12 +49,10 @@ public final class WSBoolRecord extends StandardRecord {
     private static final BitField alternateexpression = BitFieldFactory.getInstance(0x40); // whether to use alternate expression eval
     private static final BitField alternateformula    = BitFieldFactory.getInstance(0x80); // whether to use alternate formula entry
 
-    public WSBoolRecord()
-    {
+    public WSBoolRecord() {
     }
 
-    public WSBoolRecord(RecordInputStream in)
-    {
+    public WSBoolRecord(RecordInputStream in) {
         byte[] data = in.readRemainder();
         field_1_wsbool =
             data[ 1 ];   // backwards because theoretically this is one short field
@@ -70,10 +68,10 @@ public final class WSBoolRecord extends StandardRecord {
 
     /**
      * set first byte (see bit setters)
+     *
+     * @param bool1 Set boolean 1 of this record
      */
-
-    public void setWSBool1(byte bool1)
-    {
+    public void setWSBool1(byte bool1) {
         field_1_wsbool = bool1;
     }
 
@@ -83,7 +81,6 @@ public final class WSBoolRecord extends StandardRecord {
      * show automatic page breaks or not
      * @param ab  whether to show auto page breaks
      */
-
     public void setAutobreaks(boolean ab)
     {
         field_1_wsbool = autobreaks.setByteBoolean(field_1_wsbool, ab);
@@ -93,7 +90,6 @@ public final class WSBoolRecord extends StandardRecord {
      * set whether sheet is a dialog sheet or not
      * @param isDialog or not
      */
-
     public void setDialog(boolean isDialog)
     {
         field_1_wsbool = dialog.setByteBoolean(field_1_wsbool, isDialog);
@@ -103,7 +99,6 @@ public final class WSBoolRecord extends StandardRecord {
      * set if row summaries appear below detail in the outline
      * @param below or not
      */
-
     public void setRowSumsBelow(boolean below)
     {
         field_1_wsbool = rowsumsbelow.setByteBoolean(field_1_wsbool, below);
@@ -113,7 +108,6 @@ public final class WSBoolRecord extends StandardRecord {
      * set if col summaries appear right of the detail in the outline
      * @param right or not
      */
-
     public void setRowSumsRight(boolean right)
     {
         field_1_wsbool = rowsumsright.setByteBoolean(field_1_wsbool, right);
@@ -123,8 +117,9 @@ public final class WSBoolRecord extends StandardRecord {
 
     /**
      * set the second byte (see bit setters)
+     *
+     * @param bool2 Set boolean 2 of this record
      */
-
     public void setWSBool2(byte bool2)
     {
         field_2_wsbool = bool2;
@@ -136,7 +131,6 @@ public final class WSBoolRecord extends StandardRecord {
      * fit to page option is on
      * @param fit2page  fit or not
      */
-
     public void setFitToPage(boolean fit2page)
     {
         field_2_wsbool = fittopage.setByteBoolean(field_2_wsbool, fit2page);
@@ -147,7 +141,6 @@ public final class WSBoolRecord extends StandardRecord {
      *
      * @param guts or no guts (or glory)
      */
-
     public void setDisplayGuts(boolean guts)
     {
         field_2_wsbool = displayguts.setByteBoolean(field_2_wsbool, guts);
@@ -157,7 +150,6 @@ public final class WSBoolRecord extends StandardRecord {
      * whether alternate expression evaluation is on
      * @param altexp  alternative expression evaluation or not
      */
-
     public void setAlternateExpression(boolean altexp)
     {
         field_2_wsbool = alternateexpression.setByteBoolean(field_2_wsbool,
@@ -168,7 +160,6 @@ public final class WSBoolRecord extends StandardRecord {
      * whether alternative formula entry is on
      * @param formula  alternative formulas or not
      */
-
     public void setAlternateFormula(boolean formula)
     {
         field_2_wsbool = alternateformula.setByteBoolean(field_2_wsbool,
@@ -179,8 +170,9 @@ public final class WSBoolRecord extends StandardRecord {
 
     /**
      * get first byte (see bit getters)
+     *
+     * @return boolean 1 of this record
      */
-
     public byte getWSBool1()
     {
         return field_1_wsbool;
@@ -192,7 +184,6 @@ public final class WSBoolRecord extends StandardRecord {
      * show automatic page breaks or not
      * @return whether to show auto page breaks
      */
-
     public boolean getAutobreaks()
     {
         return autobreaks.isSet(field_1_wsbool);
@@ -202,7 +193,6 @@ public final class WSBoolRecord extends StandardRecord {
      * get whether sheet is a dialog sheet or not
      * @return isDialog or not
      */
-
     public boolean getDialog()
     {
         return dialog.isSet(field_1_wsbool);
@@ -212,7 +202,6 @@ public final class WSBoolRecord extends StandardRecord {
      * get if row summaries appear below detail in the outline
      * @return below or not
      */
-
     public boolean getRowSumsBelow()
     {
         return rowsumsbelow.isSet(field_1_wsbool);
@@ -222,7 +211,6 @@ public final class WSBoolRecord extends StandardRecord {
      * get if col summaries appear right of the detail in the outline
      * @return right or not
      */
-
     public boolean getRowSumsRight()
     {
         return rowsumsright.isSet(field_1_wsbool);
@@ -232,10 +220,10 @@ public final class WSBoolRecord extends StandardRecord {
 
     /**
      * get the second byte (see bit getters)
+     *
+     * @return boolean 1 of this record
      */
-
-    public byte getWSBool2()
-    {
+    public byte getWSBool2() {
         return field_2_wsbool;
     }
 
@@ -245,9 +233,7 @@ public final class WSBoolRecord extends StandardRecord {
      * fit to page option is on
      * @return fit or not
      */
-
-    public boolean getFitToPage()
-    {
+    public boolean getFitToPage() {
         return fittopage.isSet(field_2_wsbool);
     }
 
@@ -256,9 +242,7 @@ public final class WSBoolRecord extends StandardRecord {
      *
      * @return guts or no guts (or glory)
      */
-
-    public boolean getDisplayGuts()
-    {
+    public boolean getDisplayGuts() {
         return displayguts.isSet(field_2_wsbool);
     }
 
@@ -266,9 +250,7 @@ public final class WSBoolRecord extends StandardRecord {
      * whether alternate expression evaluation is on
      * @return alternative expression evaluation or not
      */
-
-    public boolean getAlternateExpression()
-    {
+    public boolean getAlternateExpression() {
         return alternateexpression.isSet(field_2_wsbool);
     }
 
@@ -276,9 +258,7 @@ public final class WSBoolRecord extends StandardRecord {
      * whether alternative formula entry is on
      * @return alternative formulas or not
      */
-
-    public boolean getAlternateFormula()
-    {
+    public boolean getAlternateFormula() {
         return alternateformula.isSet(field_2_wsbool);
     }
 

@@ -35,10 +35,10 @@ public final class OperandResolver {
     private static final String Digits    = "(\\p{Digit}+)";
     private static final String Exp    = "[eE][+-]?"+Digits;
     private static final String fpRegex    =
-                ("[\\x00-\\x20]*" +    
-                 "[+-]?(" +    
-                   "((("+Digits+"(\\.)?("+Digits+"?)("+Exp+")?)|"+        
-                 "(\\.("+Digits+")("+Exp+")?))))"+       
+                ("[\\x00-\\x20]*" +
+                 "[+-]?(" +
+                   "("+Digits+"(\\.)?("+Digits+"?)("+Exp+")?)|"+
+                 "(\\."+Digits+"("+Exp+")?))"+
                  "[\\x00-\\x20]*"); 
             
     
@@ -54,7 +54,7 @@ public final class OperandResolver {
      * @param srcCellCol used when arg is a single row AreaRef
      * @return a <tt>NumberEval</tt>, <tt>StringEval</tt>, <tt>BoolEval</tt> or <tt>BlankEval</tt>.
      * Never <code>null</code> or <tt>ErrorEval</tt>.
-     * @throws EvaluationException(#VALUE!) if srcCellRow or srcCellCol do not properly index into
+     * @throws EvaluationException if srcCellRow or srcCellCol do not properly index into
      *  an AreaEval.  If the actual value retrieved is an ErrorEval, a corresponding
      *  EvaluationException is thrown.
      */
@@ -243,7 +243,7 @@ public final class OperandResolver {
      * @param ev must be a {@link NumberEval}, {@link StringEval}, {@link BoolEval} or
      * {@link BlankEval}
      * @return actual, parsed or interpreted double value (respectively).
-     * @throws EvaluationException(#VALUE!) only if a StringEval is supplied and cannot be parsed
+     * @throws EvaluationException if a StringEval is supplied and cannot be parsed
      * as a double (See <tt>parseDouble()</tt> for allowable formats).
      * @throws RuntimeException if the supplied parameter is not {@link NumberEval},
      * {@link StringEval}, {@link BoolEval} or {@link BlankEval}
@@ -327,10 +327,6 @@ public final class OperandResolver {
         }
         if (ve instanceof BoolEval) {
             return Boolean.valueOf(((BoolEval) ve).getBooleanValue());
-        }
-
-        if (ve == BlankEval.instance) {
-            return null;
         }
 
         if (ve instanceof StringEval) {

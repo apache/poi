@@ -34,6 +34,8 @@ public abstract class RecordAggregate extends RecordBase {
 	 * that they should be written to file.  Implementors may or may not return the actual
 	 * {@link Record}s being used to manage POI's internal implementation.  Callers should not
 	 * assume either way, and therefore only attempt to modify those {@link Record}s after cloning
+	 *
+	 * @param rv The visitor to use for callbacks while walking this object
 	 */
 	public abstract void visitContainedRecords(RecordVisitor rv);
 

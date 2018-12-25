@@ -27,19 +27,16 @@ import org.apache.poi.util.StringUtil;
  * Stores the cached result of a text formula
  */
 public final class StringRecord extends ContinuableRecord {
-
 	public final static short sid = 0x0207;
 
 	private boolean _is16bitUnicode;
 	private String _text;
 
-
-    public StringRecord()
-    {
+    public StringRecord() {
     }
 
     /**
-     * @param in the RecordInputstream to read the record from
+     * @param in the RecordInputStream to read the record from
      */
     public StringRecord( RecordInputStream in) {
         int field_1_string_length           = in.readUShort();
@@ -52,12 +49,10 @@ public final class StringRecord extends ContinuableRecord {
         }
     }
 
-
     protected void serialize(ContinuableRecordOutput out) {
         out.writeShort(_text.length());
         out.writeStringData(_text);
     }
-
 
     public short getSid()
     {
@@ -72,24 +67,20 @@ public final class StringRecord extends ContinuableRecord {
         return _text;
     }
 
-
     /**
      * Sets the string represented by this record.
+     *
+     * @param string The string-value for this record
      */
     public void setString(String string) {
         _text = string;
         _is16bitUnicode = StringUtil.hasMultibyte(string);        
     }
 
-    public String toString()
-    {
-        StringBuffer buffer = new StringBuffer();
-
-        buffer.append("[STRING]\n");
-        buffer.append("    .string            = ")
-            .append(_text).append("\n");
-        buffer.append("[/STRING]\n");
-        return buffer.toString();
+    public String toString() {
+        return "[STRING]\n" +
+                "    .string            = " + _text + "\n" +
+                "[/STRING]\n";
     }
     
     public Object clone() {

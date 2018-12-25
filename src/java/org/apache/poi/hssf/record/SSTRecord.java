@@ -135,7 +135,7 @@ public final class SSTRecord extends ContinuableRecord {
      * @return string representation
      */
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append( "[SST]\n" );
         buffer.append( "    .numstrings     = " )
@@ -145,7 +145,7 @@ public final class SSTRecord extends ContinuableRecord {
         for ( int k = 0; k < field_3_strings.size(); k++ )
         {
           UnicodeString s = field_3_strings.get( k );
-            buffer.append( "    .string_" + k + "      = " )
+            buffer.append("    .string_").append(k).append("      = ")
                     .append( s.getDebugInfo() ).append( "\n" );
         }
         buffer.append( "[/SST]\n" );
@@ -161,7 +161,7 @@ public final class SSTRecord extends ContinuableRecord {
      * <P>
      * The data consists of sets of string data. This string data is
      * arranged as follows:
-     * </P><P>
+     * </P>
      * <pre>
      * short  string_length;   // length of string data
      * byte   string_flag;     // flag specifying special string
@@ -176,9 +176,10 @@ public final class SSTRecord extends ContinuableRecord {
      * byte[] extension;       // optional extension (length of array
      *                         // is extend_length)
      * </pre>
-     * </P><P>
+     * <P>
      * The string_flag is bit mapped as follows:
-     * </P><P>
+     * </P>
+     * <P>
      * <TABLE summary="string_flag mapping">
      *   <TR>
      *      <TH>Bit number</TH>

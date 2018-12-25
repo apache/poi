@@ -24,12 +24,14 @@ import java.awt.geom.Path2D;
 /**
  * A path command in DrawingML. One of:
  *
- * <li>arcTo
- * <li>moveTo
- * <li>lineTo
- * <li>cubicBezTo
- * <li>quadBezTo
- * <li>close
+ *<ul>
+ *     <li>arcTo</li>
+ *      <li>moveTo/li>
+ *      <li>lineTo/li>
+ *      <li>cubicBezTo/li>
+ *      <li>quadBezTo/li>
+ *      <li>close/li>
+ * </ul>
  */
 public interface PathCommand {
     /**

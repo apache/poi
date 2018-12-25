@@ -36,6 +36,9 @@ import org.apache.poi.hssf.record.TextObjectRecord;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.SimpleShape;
 
+import static org.apache.poi.hssf.record.TextObjectRecord.HORIZONTAL_TEXT_ALIGNMENT_CENTERED;
+import static org.apache.poi.hssf.record.TextObjectRecord.VERTICAL_TEXT_ALIGNMENT_CENTER;
+
 /**
  * Represents a simple shape such as a line, rectangle or oval.
  */
@@ -94,8 +97,8 @@ public class HSSFSimpleShape extends HSSFShape implements SimpleShape
 
     protected TextObjectRecord createTextObjRecord(){
         TextObjectRecord obj = new TextObjectRecord();
-        obj.setHorizontalTextAlignment(2);
-        obj.setVerticalTextAlignment(2);
+        obj.setHorizontalTextAlignment(HORIZONTAL_TEXT_ALIGNMENT_CENTERED);
+        obj.setVerticalTextAlignment(VERTICAL_TEXT_ALIGNMENT_CENTER);
         obj.setTextLocked(true);
         obj.setTextOrientation(TextObjectRecord.TEXT_ORIENTATION_NONE);
         obj.setStr(new HSSFRichTextString(""));

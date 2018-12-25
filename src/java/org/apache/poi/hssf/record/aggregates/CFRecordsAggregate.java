@@ -123,6 +123,8 @@ public final class CFRecordsAggregate extends RecordAggregate {
 
     /**
      * Create a deep clone of the record
+     *
+     * @return A new object with the same values as this record
      */
     public CFRecordsAggregate cloneCFAggregate() {
         CFRuleBase[] newRecs = new CFRuleBase[rules.size()];
@@ -215,6 +217,9 @@ public final class CFRecordsAggregate extends RecordAggregate {
     }
 
     /**
+     * @param shifter The {@link FormulaShifter} to use
+     * @param currentExternSheetIx The index for extern sheets
+     *
      * @return <code>false</code> if this whole {@link CFHeaderRecord} / {@link CFRuleRecord}s should be deleted
      */
     public boolean updateFormulasAfterCellShift(FormulaShifter shifter, int currentExternSheetIx) {

@@ -51,23 +51,20 @@ public final class TestTextObjectBaseRecord extends TestCase {
         "02 00 00 00 00 00 00 00 "
     );
 
-
     public void testLoad() {
         RecordInputStream in = TestcaseRecordInputStream.create(data);
         TextObjectRecord record = new TextObjectRecord(in);
 
         assertEquals(TextObjectRecord.HORIZONTAL_TEXT_ALIGNMENT_CENTERED, record.getHorizontalTextAlignment());
         assertEquals(TextObjectRecord.VERTICAL_TEXT_ALIGNMENT_JUSTIFY, record.getVerticalTextAlignment());
-        assertEquals(true, record.isTextLocked());
+        assertTrue(record.isTextLocked());
         assertEquals(TextObjectRecord.TEXT_ORIENTATION_ROT_RIGHT, record.getTextOrientation());
 
         assertEquals(49, record.getRecordSize() );
     }
 
-    public void testStore()
-    {
+    public void testStore() {
         TextObjectRecord record = new TextObjectRecord();
-
 
         HSSFRichTextString str = new HSSFRichTextString("AB");
         str.applyFont(0, 2, (short)0x0018);
