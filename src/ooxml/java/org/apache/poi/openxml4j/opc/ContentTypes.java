@@ -101,7 +101,7 @@ public final class ContentTypes {
 	 */
 	public static final String IMAGE_PICT = "image/pict";
 
-	public static final String EXTENSION_PICT = "tiff";
+	public static final String EXTENSION_PICT = "pict";
 
 	/**
 	 * XML file.
