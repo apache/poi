@@ -925,4 +925,17 @@ public class TestDataFormatter {
         assertEquals("4,33 " + euro, df.formatRawCellContents(4.33, 178, formatString));
         assertEquals("1.234,33 " + euro, df.formatRawCellContents(1234.33, 178, formatString));
     }
+
+    @Test
+    public void testBug62839() {
+        Workbook wb = new HSSFWorkbook();
+        Sheet sheet = wb.createSheet();
+        Row row = sheet.createRow(0);
+        Cell cell = row.createCell(0);
+        cell.setCellFormula("FLOOR(-123,10)");
+        DataFormatter df = new DataFormatter(Locale.GERMANY);
+
+        String value = df.formatCellValue(cell, wb.getCreationHelper().createFormulaEvaluator());
+        assertEquals("-130", value);
+    }
 }

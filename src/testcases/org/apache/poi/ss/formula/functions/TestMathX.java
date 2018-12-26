@@ -27,6 +27,7 @@ import org.apache.poi.ss.formula.functions.XYNumericFunction.Accumulator;
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  *  
  */
+@SuppressWarnings("ConstantConditions")
 public class TestMathX extends AbstractNumericTestCase {
 
     public void testAcosh() {
@@ -1000,5 +1001,10 @@ public class TestMathX extends AbstractNumericTestCase {
         assertEquals("floor ", 1.5, MathX.floor(d, s));
         d = 0.234; s = 0.01;
         assertEquals("floor ", 0.23, MathX.floor(d, s));
+
+        // see bug 62839
+        d = -123;
+        s = 10;
+        assertEquals("floor ", -130, MathX.floor(d, s));
     }
 }
