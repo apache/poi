@@ -69,7 +69,6 @@ public class TestBug47563 extends TestCase {
 				row.sanityCheck();
 				table.sanityCheck();
 				range.sanityCheck();
-
 			}
 		}
 
@@ -77,7 +76,8 @@ public class TestBug47563 extends TestCase {
 		int mustBeAfter = 0;
 		for (int i = 0; i < rows * columns; i++) {
 			int next = text.indexOf(Integer.toString(i), mustBeAfter);
-			assertTrue("Test with " + rows + "/" + columns + ": Should not find " + i + " but found it at " + next + " in " + text, 
+			assertTrue("Test with " + rows + "/" + columns + ": Should not find " + i + " but found it at " + next + " with " + mustBeAfter + " in " + text + "\n" +
+							text.indexOf(Integer.toString(i), mustBeAfter),
 					next != -1);
 			mustBeAfter = next;
 		}

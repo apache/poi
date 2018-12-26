@@ -210,18 +210,11 @@ public final class PackageRelationship {
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(id == null ? "id=null" : "id=" + id);
-		sb.append(container == null ? " - container=null" : " - container="
-				+ container);
-		sb.append(relationshipType == null ? " - relationshipType=null"
-				: " - relationshipType=" + relationshipType);
-		sb.append(source == null ? " - source=null" : " - source="
-				+ getSourceURI().toASCIIString());
-		sb.append(targetUri == null ? " - target=null" : " - target="
-				+ getTargetURI().toASCIIString());
-		sb.append(targetMode == null ? ",targetMode=null" : ",targetMode="
-				+ targetMode);
-		return sb.toString();
+		return (id == null ? "id=null" : "id=" + id) +
+				(container == null ? " - container=null" : " - container=" + container) +
+				(relationshipType == null ? " - relationshipType=null" : " - relationshipType=" + relationshipType) +
+				(source == null ? " - source=null" : " - source=" + getSourceURI().toASCIIString()) +
+				(targetUri == null ? " - target=null" : " - target=" + getTargetURI().toASCIIString()) +
+				(targetMode == null ? ",targetMode=null" : ",targetMode=" + targetMode);
 	}
 }

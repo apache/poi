@@ -161,7 +161,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
 	 *
 	 * @param partUri
 	 *            The part name to check.
-	 * @throws Exception
+	 * @throws InvalidFormatException
 	 *             Throws if the part name is invalid.
 	 */
 	private static void throwExceptionIfInvalidPartUri(URI partUri)
@@ -513,7 +513,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
      * (lexigraphical sort)
      *
      * @param str1 first string to compare
-     * @param str1 second string to compare
+     * @param str2 second string to compare
      * @return a negative integer, zero, or a positive integer as the first argument is less than,
      *         equal to, or greater than the second.
      */

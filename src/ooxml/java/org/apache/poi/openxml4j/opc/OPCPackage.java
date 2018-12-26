@@ -293,6 +293,8 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 * @return A PackageBase object
 	 *
 	 * @throws InvalidFormatException
+	 * 				Throws if the specified file exist and is not valid.
+	 * @throws IOException If reading the stream fails
 	 */
 	public static OPCPackage open(InputStream in) throws InvalidFormatException,
 			IOException {
@@ -1466,14 +1468,8 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 		}
 		
 		// Do the save
-		FileOutputStream fos = null;
-		try {
-			fos = new FileOutputStream(targetFile);
+		try (FileOutputStream fos = new FileOutputStream(targetFile)) {
 			this.save(fos);
-		} finally {
-			if (fos != null) {
-                fos.close();
-            }
 		}
 	}
 

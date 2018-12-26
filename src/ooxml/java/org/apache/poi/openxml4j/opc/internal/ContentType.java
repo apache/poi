@@ -92,7 +92,7 @@ public final class ContentType {
 		 *
 		 * CHAR = <any US-ASCII character (octets 0 - 127)>
 		 */
-		String token = "[\\x21-\\x7E&&[^\\(\\)<>@,;:\\\\/\"\\[\\]\\?={}\\x20\\x09]]";
+		String token = "[\\x21-\\x7E&&[^()<>@,;:\\\\/\"\\[\\]?={}\\x20\\x09]]";
 
 		/*
 		 * parameter = attribute "=" value
@@ -248,7 +248,7 @@ public final class ContentType {
 	public String[] getParameterKeys() {
 	    if (parameters == null)
 	        return new String[0];
-	    return parameters.keySet().toArray(new String[parameters.size()]);
+	    return parameters.keySet().toArray(new String[0]);
 	}
 
 	/**

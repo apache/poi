@@ -72,7 +72,7 @@ public class Complex extends Var2or3ArgFunction implements FreeRefFunction {
         } catch (EvaluationException e) {
             return e.getErrorEval();
         }
-        double realNum = 0;
+        double realNum;
         try {
             realNum = OperandResolver.coerceValueToDouble(veText1);
         } catch (EvaluationException e) {
@@ -85,7 +85,7 @@ public class Complex extends Var2or3ArgFunction implements FreeRefFunction {
         } catch (EvaluationException e) {
             return e.getErrorEval();
         }
-        double realINum = 0;
+        double realINum;
         try {
             realINum = OperandResolver.coerceValueToDouble(veINum);
         } catch (EvaluationException e) {
@@ -104,7 +104,7 @@ public class Complex extends Var2or3ArgFunction implements FreeRefFunction {
             return ErrorEval.VALUE_INVALID;
         }
 
-        StringBuffer strb = new StringBuffer("");
+        StringBuilder strb = new StringBuilder();
         if (realNum != 0) {
             if (isDoubleAnInt(realNum)) {
                 strb.append((int)realNum);

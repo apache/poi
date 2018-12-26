@@ -48,32 +48,32 @@ public final class PackagingURIHelper {
 	/**
 	 * Extension name of a relationship part.
 	 */
-	public static final String RELATIONSHIP_PART_EXTENSION_NAME;
+	public static final String RELATIONSHIP_PART_EXTENSION_NAME = ".rels";
 
 	/**
 	 * Segment name of a relationship part.
 	 */
-	public static final String RELATIONSHIP_PART_SEGMENT_NAME;
+	public static final String RELATIONSHIP_PART_SEGMENT_NAME = "_rels";
 
 	/**
 	 * Segment name of the package properties folder.
 	 */
-	public static final String PACKAGE_PROPERTIES_SEGMENT_NAME;
+	public static final String PACKAGE_PROPERTIES_SEGMENT_NAME = "docProps";
 
 	/**
 	 * Core package properties art name.
 	 */
-	public static final String PACKAGE_CORE_PROPERTIES_NAME;
+	public static final String PACKAGE_CORE_PROPERTIES_NAME = "core.xml";
 
 	/**
 	 * Forward slash URI separator.
 	 */
-	public static final char FORWARD_SLASH_CHAR;
+	public static final char FORWARD_SLASH_CHAR = '/';
 
 	/**
 	 * Forward slash URI separator.
 	 */
-	public static final String FORWARD_SLASH_STRING;
+	public static final String FORWARD_SLASH_STRING = "/";
 
 	/**
 	 * Package relationships part URI
@@ -107,13 +107,6 @@ public final class PackagingURIHelper {
 
 	/* Static initialization */
 	static {
-		RELATIONSHIP_PART_SEGMENT_NAME = "_rels";
-		RELATIONSHIP_PART_EXTENSION_NAME = ".rels";
-		FORWARD_SLASH_CHAR = '/';
-		FORWARD_SLASH_STRING = "/";
-		PACKAGE_PROPERTIES_SEGMENT_NAME = "docProps";
-		PACKAGE_CORE_PROPERTIES_NAME = "core.xml";
-
 		// Make URI
 		URI uriPACKAGE_ROOT_URI = null;
 		URI uriPACKAGE_RELATIONSHIPS_ROOT_URI = null;

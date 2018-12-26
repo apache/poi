@@ -26,7 +26,7 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.internal.unmarshallers.UnmarshallContext;
 
 /**
- * Object implemented this interface are considered as part unmarshaller. A part
+ * Classes implementing this interface are considered as part unmarshaller. A part
  * unmarshaller is responsible to unmarshall a part in order to load it from a
  * package.
  *
@@ -38,12 +38,10 @@ public interface PartUnmarshaller {
 	/**
 	 * Save the content of the package in the stream
 	 *
-	 * @param in
-	 *            The input stream from which the part will be unmarshall.
-	 * @return The part freshly unmarshall from the input stream.
-	 * @throws OpenXML4JException
-	 *             Throws only if any other exceptions are thrown by inner
-	 *             methods.
+	 * @param in The input stream from which the part will be read.
+	 * @return The part freshly read from the input stream.
+	 * @throws InvalidFormatException If the data can not be interpreted correctly
+	 * @throws IOException if reading from the stream fails
 	 */
 	public PackagePart unmarshall(UnmarshallContext context, InputStream in)
 			throws InvalidFormatException, IOException;
