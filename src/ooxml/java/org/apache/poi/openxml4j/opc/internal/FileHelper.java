@@ -69,7 +69,6 @@ public final class FileHelper {
              FileChannel destinationChannel = fos.getChannel()) {
             
             sourceChannel.transferTo(0, sourceChannel.size(), destinationChannel);
-            sourceChannel.close();
         }
     }
 

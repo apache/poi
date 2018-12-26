@@ -94,7 +94,7 @@ public final class ZipPackage extends OPCPackage {
      * @param access
      *            The package access mode.
      * @throws IllegalArgumentException
-     *             If the specified input stream not an instance of
+     *             If the specified input stream is not an instance of
      *             ZipInputStream.
      * @throws IOException
      *            if input stream cannot be opened, read, or closed

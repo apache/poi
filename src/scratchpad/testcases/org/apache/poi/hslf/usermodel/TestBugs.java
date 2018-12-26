@@ -579,20 +579,20 @@ public final class TestBugs {
 
     @Test
     public void bug47261() throws IOException {
-        HSLFSlideShow ppt = open("bug47261.ppt");
-        ppt.removeSlide(0);
-        ppt.createSlide();
-        HSLFTestDataSamples.writeOutAndReadBack(ppt).close();
-        ppt.close();
+        try (HSLFSlideShow ppt = open("bug47261.ppt")) {
+            ppt.removeSlide(0);
+            ppt.createSlide();
+            HSLFTestDataSamples.writeOutAndReadBack(ppt).close();
+        }
     }
 
     @Test
     public void bug56240() throws IOException {
-        HSLFSlideShow ppt = open("bug56240.ppt");
-        int slideCnt = ppt.getSlides().size();
-        assertEquals(105, slideCnt);
-        HSLFTestDataSamples.writeOutAndReadBack(ppt).close();
-        ppt.close();
+        try (HSLFSlideShow ppt = open("bug56240.ppt")) {
+            int slideCnt = ppt.getSlides().size();
+            assertEquals(105, slideCnt);
+            HSLFTestDataSamples.writeOutAndReadBack(ppt).close();
+        }
     }
 
     @Test

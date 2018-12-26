@@ -17,7 +17,7 @@
 
 package org.apache.poi.openxml4j.opc;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.util.TreeMap;
@@ -52,7 +52,7 @@ public final class TestFileHelper {
 //				assertTrue(expectedValue.get(filename).equalsIgnoreCase(f2.getAbsolutePath()));
 //				// This comparison is platform dependent. A better approach is below
 //			}
-			assertTrue(f1.equals(f2));
+			assertEquals(f1, f2);
 		}
 	}
 }
