@@ -45,8 +45,8 @@ public final class HMEFContentsExtractor {
         if(args.length < 2) {
             System.err.println("Use:");
             System.err.println("  HMEFContentsExtractor <filename> <output dir>");
-            System.err.println("");
-            System.err.println("");
+            System.err.println();
+            System.err.println();
             System.err.println("Where <filename> is the winmail.dat file to extract,");
             System.err.println(" and <output dir> is where to place the extracted files");
             System.exit(2);

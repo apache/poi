@@ -72,7 +72,7 @@ public class FromHowTo {
 					InputSource sheetSource = new InputSource(sheet);
 					parser.parse(sheetSource);
 				}
-                System.out.println("");
+                System.out.println();
             }
         }
     }

@@ -75,7 +75,7 @@ public final class Substitute extends Var3or4ArgFunction {
 				return sb.toString();
 			}
 			// store everything from end of last match to start of this match
-			sb.append(oldStr.substring(startIndex, nextMatch));
+			sb.append(oldStr, startIndex, nextMatch);
 			sb.append(newStr);
 			startIndex = nextMatch + searchStr.length();
 		}
@@ -97,7 +97,7 @@ public final class Substitute extends Var3or4ArgFunction {
 			count++;
 			if (count == instanceNumber) {
 				StringBuffer sb = new StringBuffer(oldStr.length() + newStr.length());
-				sb.append(oldStr.substring(0, nextMatch));
+				sb.append(oldStr, 0, nextMatch);
 				sb.append(newStr);
 				sb.append(oldStr.substring(nextMatch + searchStr.length()));
 				return sb.toString();
