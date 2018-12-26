@@ -95,9 +95,9 @@ public class TestOleShape {
         "jHkKLEAUFMA+04XC1EzX6UdMAALxcERgK444+wB0Go1CA3jANCNRGdj1UoyIZhlpPsMobf48GmkeI1Pp8xi" +
         "Nsm0eo9O3/mAoAvIFEKIQ58wPgrAtK+oJwyjAmL0+bBEPBugzGsUoiKAKhSQGmYjD4y3trXD/AmBc9IeqBwAA";
     
-    enum Api { HSLF, XSLF };
-    
-    
+    enum Api { HSLF, XSLF }
+
+
     @Parameter(value = 0)
     public Api api;
     @Parameter(value = 1)

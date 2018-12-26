@@ -19,7 +19,7 @@ package org.apache.poi.xddf.usermodel.chart;
 
 import java.util.HashMap;
 
-import org.openxmlformats.schemas.drawingml.x2006.chart.STLayoutMode;;
+import org.openxmlformats.schemas.drawingml.x2006.chart.STLayoutMode;
 
 public enum LayoutMode {
     EDGE(STLayoutMode.EDGE),

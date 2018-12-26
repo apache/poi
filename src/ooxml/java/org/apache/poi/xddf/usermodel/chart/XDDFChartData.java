@@ -132,7 +132,7 @@ public abstract class XDDFChartData {
                 }
                 if (cache.sizeOfPtArray() < 1) {
                     cache.addNewPtCount().setVal(1);
-                    cache.addNewPt().setIdx(0);;
+                    cache.addNewPt().setIdx(0);
                 }
                 cache.getPtArray(0).setV(title);
                 ref.setF(titleRef.formatAsString());

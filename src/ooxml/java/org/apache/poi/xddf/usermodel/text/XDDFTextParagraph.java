@@ -242,7 +242,6 @@ public class XDDFTextParagraph {
     public void setIndentation(Double points) {
         if (points != null || _p.isSetPPr()) {
             getOrCreateProperties().setIndentation(points);
-            ;
         }
     }
 

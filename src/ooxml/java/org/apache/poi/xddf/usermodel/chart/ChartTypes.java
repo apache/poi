@@ -21,5 +21,5 @@ public enum ChartTypes {
     LINE,
     PIE,
     RADAR,
-    SCATTER;
+    SCATTER
 }

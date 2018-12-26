@@ -99,7 +99,7 @@ public final class ZipFileAssert {
         BufferedInputStream buffi = new BufferedInputStream(file_decompress);
 
         /* Open the file with the buffer */
-        ZipArchiveInputStream zis = new ZipArchiveInputStream(buffi);
+        ZipArchiveInputStream zis = new ZipArchiveInputStream(buffi)
         ) {
 
             /* Processing entries of the zip file */

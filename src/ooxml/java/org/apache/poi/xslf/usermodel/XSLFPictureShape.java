@@ -238,7 +238,7 @@ public class XSLFPictureShape extends XSLFSimpleShape
             cur.dispose();
         }
 
-        final int svgId = getExt(extLst, SVG_URI);;
+        final int svgId = getExt(extLst, SVG_URI);
         if (svgId != -1) {
             extLst.removeExt(svgId);
         }

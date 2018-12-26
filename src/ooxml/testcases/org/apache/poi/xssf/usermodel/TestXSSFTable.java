@@ -451,7 +451,7 @@ public final class TestXSSFTable {
 
     @Test(expected = IllegalArgumentException.class)
     public void testCreateColumnInvalidIndex() throws IOException {
-        try (XSSFWorkbook wb = new XSSFWorkbook();) {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sh = wb.createSheet();
             AreaReference tableArea = new AreaReference("D2:D3", wb.getSpreadsheetVersion());
             XSSFTable table = sh.createTable(tableArea);

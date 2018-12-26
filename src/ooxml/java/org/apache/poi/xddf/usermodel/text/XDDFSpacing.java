@@ -25,7 +25,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTextSpacing;
 public abstract class XDDFSpacing {
     public static enum Kind {
         PERCENT,
-        POINTS;
+        POINTS
     }
 
     protected CTTextSpacing spacing;
