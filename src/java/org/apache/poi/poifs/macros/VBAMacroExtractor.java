@@ -38,7 +38,7 @@ public class VBAMacroExtractor {
         if (args.length == 0) {
             System.err.println("Use:");
             System.err.println("   VBAMacroExtractor <office.doc> [output]");
-            System.err.println("");
+            System.err.println();
             System.err.println("If an output directory is given, macros are written there");
             System.err.println("Otherwise they are output to the screen");
             System.exit(1);
@@ -90,7 +90,7 @@ public class VBAMacroExtractor {
             if (outputDir == null) {
                 System.out.println(divider);
                 System.out.println(moduleName);
-                System.out.println("");
+                System.out.println();
                 System.out.println(moduleCode);
             } else {
                 File out = new File(outputDir, moduleName + extension);

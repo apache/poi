@@ -1569,7 +1569,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                 if ((j == textEnd) && (i == runEnd)) {
                     endChar = charEnd;
                 }
-                out.append(tmpText.substring(startChar, endChar + 1));
+                out.append(tmpText, startChar, endChar + 1);
             }
         }
         return out.toString();

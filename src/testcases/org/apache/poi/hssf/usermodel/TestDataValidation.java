@@ -98,7 +98,7 @@ public final class TestDataValidation extends BaseTestDataValidation {
 				+ "make the fix elsewhere (do not modify this test or the proof spreadsheet to get the test working).");
 		ps.println("If the changes were wanted, make sure to open the newly generated file in Excel "
 				+ "and verify it manually.  The new proof file should be submitted after it is verified to be correct.");
-		ps.println("");
+		ps.println();
 		ps.println("One other possible (but less likely) cause of a failed test is a problem in the "
 				+ "comparison logic used here. Perhaps some extra file regions need to be ignored.");
 		ps.println("The generated file has been saved to '" + generatedFile.getAbsolutePath() + "' for manual inspection.");

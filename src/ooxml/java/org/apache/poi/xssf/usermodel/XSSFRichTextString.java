@@ -508,7 +508,7 @@ public class XSSFRichTextString implements RichTextString {
         while(m.find()) {
             int pos = m.start();
             if( pos > idx) {
-                buf.append(value.substring(idx, pos));
+                buf.append(value, idx, pos);
             }
 
             String code = m.group(1);

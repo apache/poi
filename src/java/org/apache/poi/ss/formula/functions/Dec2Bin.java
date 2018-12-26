@@ -104,7 +104,7 @@ public class Dec2Bin extends Var1or2ArgFunction implements FreeRefFunction {
         String binary = Integer.toBinaryString(number.intValue());
 
         if (binary.length() > DEFAULT_PLACES_VALUE) {
-            binary = binary.substring(binary.length() - DEFAULT_PLACES_VALUE, binary.length());
+            binary = binary.substring(binary.length() - DEFAULT_PLACES_VALUE);
         }
         //If DEC2BIN requires more than places characters, it returns the #NUM! error value.
         if (binary.length() > placesNumber) {

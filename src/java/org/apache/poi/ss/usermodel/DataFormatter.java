@@ -145,20 +145,20 @@ public class DataFormatter implements Observer {
      *  Magenta, Red, White, Yellow, "Color n" (1<=n<=56)
      */
     private static final Pattern colorPattern = 
-       Pattern.compile("(\\[BLACK\\])|(\\[BLUE\\])|(\\[CYAN\\])|(\\[GREEN\\])|" +
-       		"(\\[MAGENTA\\])|(\\[RED\\])|(\\[WHITE\\])|(\\[YELLOW\\])|" +
-       		"(\\[COLOR\\s*\\d\\])|(\\[COLOR\\s*[0-5]\\d\\])", Pattern.CASE_INSENSITIVE);
+       Pattern.compile("(\\[BLACK])|(\\[BLUE])|(\\[CYAN])|(\\[GREEN])|" +
+       		"(\\[MAGENTA])|(\\[RED])|(\\[WHITE])|(\\[YELLOW])|" +
+       		"(\\[COLOR\\s*\\d])|(\\[COLOR\\s*[0-5]\\d])", Pattern.CASE_INSENSITIVE);
 
     /**
      * A regex to identify a fraction pattern.
      * This requires that replaceAll("\\?", "#") has already been called 
      */
-    private static final Pattern fractionPattern = Pattern.compile("(?:([#\\d]+)\\s+)?(#+)\\s*\\/\\s*([#\\d]+)");
+    private static final Pattern fractionPattern = Pattern.compile("(?:([#\\d]+)\\s+)?(#+)\\s*/\\s*([#\\d]+)");
 
     /**
      * A regex to strip junk out of fraction formats
      */
-    private static final Pattern fractionStripper = Pattern.compile("(\"[^\"]*\")|([^ \\?#\\d\\/]+)");
+    private static final Pattern fractionStripper = Pattern.compile("(\"[^\"]*\")|([^ ?#\\d/]+)");
 
     /**
      * A regex to detect if an alternate grouping character is used
@@ -413,7 +413,7 @@ public class DataFormatter implements Observer {
             if (symbol.indexOf('$') > -1) {
                 symbol = symbol.substring(0, symbol.indexOf('$')) +
                         '\\' +
-                        symbol.substring(symbol.indexOf('$'), symbol.length());
+                        symbol.substring(symbol.indexOf('$'));
             }
             formatStr = m.replaceAll(symbol);
             m = localePatternGroup.matcher(formatStr);

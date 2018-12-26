@@ -124,14 +124,14 @@ public final class HPBFDumper {
 	}
 	protected void dumpEscherStm(DirectoryNode escherDir) throws IOException {
 		byte[] data = getData(escherDir, "EscherStm");
-		System.out.println("");
+		System.out.println();
 		System.out.println("EscherStm - " + data.length + " bytes long:");
 		if(data.length > 0)
 			dumpEscherStream(data);
 	}
 	protected void dumpEscherDelayStm(DirectoryNode escherDir) throws IOException {
 		byte[] data = getData(escherDir, "EscherDelayStm");
-		System.out.println("");
+		System.out.println();
 		System.out.println("EscherDelayStm - " + data.length + " bytes long:");
 		if(data.length > 0)
 			dumpEscherStream(data);
@@ -140,14 +140,14 @@ public final class HPBFDumper {
 	public void dumpEnvelope() throws IOException {
 		byte[] data = getData(fs.getRoot(), "Envelope");
 
-		System.out.println("");
+		System.out.println();
 		System.out.println("Envelope - " + data.length + " bytes long:");
 	}
 
 	public void dumpContents() throws IOException {
 		byte[] data = getData(fs.getRoot(), "Contents");
 
-		System.out.println("");
+		System.out.println();
 		System.out.println("Contents - " + data.length + " bytes long:");
 
 		// 8 bytes, always seems to be
@@ -179,7 +179,7 @@ public final class HPBFDumper {
 	public void dumpCONTENTSraw(DirectoryNode dir) throws IOException {
 		byte[] data = getData(dir, "CONTENTS");
 
-		System.out.println("");
+		System.out.println();
 		System.out.println("CONTENTS - " + data.length + " bytes long:");
 
 		// Between the start and 0x200 we have
@@ -236,7 +236,7 @@ public final class HPBFDumper {
 		}
 		if(textStop > 0) {
 			int len = (textStop - 0x200) / 2;
-			System.out.println("");
+			System.out.println();
 			System.out.println(
 					StringUtil.getFromUnicodeLE(data, 0x200, len)
 			);
@@ -250,7 +250,7 @@ public final class HPBFDumper {
 	public void dumpCONTENTSguessed(DirectoryNode dir) throws IOException {
 		byte[] data = getData(dir, "CONTENTS");
 
-		System.out.println("");
+		System.out.println();
 		System.out.println("CONTENTS - " + data.length + " bytes long:");
 
 		String[] startType = new String[20];
@@ -313,10 +313,10 @@ public final class HPBFDumper {
 		}
 
 		// Text
-		System.out.println("");
+		System.out.println();
 		System.out.println("TEXT:");
 		System.out.println(text);
-		System.out.println("");
+		System.out.println();
 
 		// All the others
 		for(int i=0; i<20; i++) {

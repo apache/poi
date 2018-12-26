@@ -73,7 +73,7 @@ public final class PLCDumper {
 	}
 
 	private void dumpBit(QCBit bit, int index) {
-		System.out.println("");
+		System.out.println();
 		System.out.println("Dumping " + bit.getBitType() + " bit at " + index);
 		System.out.println("  Is a " + bit.getThingType() + ", number is " + bit.getOptA());
 		System.out.println("  Starts at " + bit.getDataOffset() + " (0x" + Integer.toHexString(bit.getDataOffset()) + ")");

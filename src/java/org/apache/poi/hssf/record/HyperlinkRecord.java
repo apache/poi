@@ -130,7 +130,7 @@ public final class HyperlinkRecord extends StandardRecord implements Cloneable {
 			sb.append(HexDump.shortToHex(_d3).substring(PREFIX_LEN));
 			sb.append("-");
 			String d4Chars = HexDump.longToHex(getD4());
-			sb.append(d4Chars.substring(PREFIX_LEN, PREFIX_LEN+4));
+			sb.append(d4Chars, PREFIX_LEN, PREFIX_LEN+4);
 			sb.append("-");
 			sb.append(d4Chars.substring(PREFIX_LEN+4));
 			return sb.toString();
