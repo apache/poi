@@ -37,7 +37,6 @@ public class TestRecordLister extends BaseXLSIteratingTest {
         EXCLUDED.put("testEXCEL_5.xls", OldExcelFormatException.class);  // Biff 5 / Excel 5
         EXCLUDED.put("60284.xls", OldExcelFormatException.class); // Biff 5 / Excel 5
         EXCLUDED.put("testEXCEL_95.xls", OldExcelFormatException.class); // Biff 5 / Excel 95
-        EXCLUDED.put("60284.xls", OldExcelFormatException.class); // Biff 5 / Excel 95
         EXCLUDED.put("61300.xls", RecordFormatException.class);
 
     }

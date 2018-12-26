@@ -54,12 +54,9 @@ public final class PPTXMLDump {
     private boolean hexHeader = true;
 
     public PPTXMLDump(File ppt) throws IOException {
-        POIFSFileSystem fs = new POIFSFileSystem(ppt, true);
-        try {
+        try (POIFSFileSystem fs = new POIFSFileSystem(ppt, true)) {
             docstream = readEntry(fs, HSLFSlideShow.POWERPOINT_DOCUMENT);
             pictstream = readEntry(fs, PICTURES_ENTRY);
-        } finally {
-            fs.close();
         }
     }
 
@@ -69,20 +66,17 @@ public final class PPTXMLDump {
         if (!dn.hasEntry(entry)) {
             return null;
         }
-        InputStream is = dn.createDocumentInputStream(entry);
-        try {
+        try (InputStream is = dn.createDocumentInputStream(entry)) {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             IOUtils.copy(is, bos);
             return bos.toByteArray();
-        } finally {
-            is.close();
         }
     }
     
     /**
      * Dump the structure of the supplied PPT file into XML
      * @param outWriter <code>Writer</code> to write out
-     * @throws java.io.IOException
+     * @throws java.io.IOException If writing to the writer fails
      */
     public void dump(Writer outWriter) throws IOException {
         this.out = outWriter;
@@ -98,7 +92,9 @@ public final class PPTXMLDump {
         //dump the structure of the powerpoint document
         write(out, "<PowerPointDocument>" + CR, padding);
         padding++;
-        dump(docstream, 0, docstream.length, padding);
+        if(docstream != null) {
+            dump(docstream, 0, docstream.length, padding);
+        }
         padding--;
         write(out, "</PowerPointDocument>" + CR, padding);
         padding--;
@@ -111,7 +107,7 @@ public final class PPTXMLDump {
      * @param offset offset from the beginning of the document
      * @param length of the document
      * @param padding used for formatting results
-     * @throws java.io.IOException
+     * @throws java.io.IOException If writing out information fails
      */
     public void dump(byte[] data, int offset, int length, int padding) throws IOException {
         int pos = offset;
@@ -158,16 +154,24 @@ public final class PPTXMLDump {
      * Dumps the Pictures OLE stream into XML.
      *
      * @param data from the Pictures OLE data stream
-     * @param padding
-     * @throws java.io.IOException
+     * @param padding How many leading blanks to add in the output
+     * @throws java.io.IOException If writing out information fails
      */
     public void dumpPictures(byte[] data, int padding) throws IOException {
         int pos = 0;
         while (pos < data.length) {
             byte[] header = new byte[PICT_HEADER_SIZE];
 
+            if(data.length - pos < header.length) {
+                // corrupt file, cannot read header
+                return;
+            }
             System.arraycopy(data, pos, header, 0, header.length);
             int size = LittleEndian.getInt(header, 4) - 17;
+            if(size < 0) {
+                // corrupt file, negative image size
+                return;
+            }
             byte[] pictdata = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH);
             System.arraycopy(data, pos + PICT_HEADER_SIZE, pictdata, 0, pictdata.length);
             pos += PICT_HEADER_SIZE + size;
@@ -184,7 +188,6 @@ public final class PPTXMLDump {
             padding--;
             write(out, "</picture>" + CR, padding);
             padding--;
-
         }
     }
 
@@ -272,5 +275,4 @@ public final class PPTXMLDump {
                     (byte) '4', (byte) '5', (byte) '6', (byte) '7',
                     (byte) '8', (byte) '9', (byte) 'A', (byte) 'B',
                     (byte) 'C', (byte) 'D', (byte) 'E', (byte) 'F'};
-
 }

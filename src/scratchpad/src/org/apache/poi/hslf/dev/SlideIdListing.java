@@ -61,23 +61,23 @@ public final class SlideIdListing {
 
 		// Grab any records that interest us
 		Document document = null;
-		for(int i=0; i<latestRecords.length; i++) {
-			if(latestRecords[i] instanceof Document) {
-				document = (Document)latestRecords[i];
+		for (Record latestRecord : latestRecords) {
+			if (latestRecord instanceof Document) {
+				document = (Document) latestRecord;
 			}
 		}
 
-		System.out.println("");
+		System.out.println();
 
 
 		// Look for SlidePersistAtoms, and report what they have to
 		//  say about possible slide IDs
 		SlideListWithText[] slwts = document.getSlideListWithTexts();
-		for(int i=0; i<slwts.length; i++) {
-			Record[] cr = slwts[i].getChildRecords();
-			for(int j=0; j<cr.length; j++) {
-				if(cr[j] instanceof SlidePersistAtom) {
-					SlidePersistAtom spa = (SlidePersistAtom)cr[j];
+		for (SlideListWithText slwt : slwts) {
+			Record[] cr = slwt.getChildRecords();
+			for (Record record : cr) {
+				if (record instanceof SlidePersistAtom) {
+					SlidePersistAtom spa = (SlidePersistAtom) record;
 					System.out.println("SlidePersistAtom knows about slide:");
 					System.out.println("\t" + spa.getRefID());
 					System.out.println("\t" + spa.getSlideIdentifier());
@@ -85,7 +85,7 @@ public final class SlideIdListing {
 			}
 		}
 
-		System.out.println("");
+		System.out.println();
 
 		// Look for latest core records that are slides or notes
 		for(int i=0; i<latestRecords.length; i++) {
@@ -100,7 +100,7 @@ public final class SlideIdListing {
 				System.out.println("\tNotes ID is " + sa.getNotesID());
 			}
 		}
-		System.out.println("");
+		System.out.println();
 		for(int i=0; i<latestRecords.length; i++) {
 			if(latestRecords[i] instanceof Notes) {
 				Notes n = (Notes)latestRecords[i];
@@ -113,27 +113,24 @@ public final class SlideIdListing {
 			}
 		}
 
-		System.out.println("");
+		System.out.println();
 
 		// Find any persist ones first
 		int pos = 0;
-		for(int i=0; i<records.length; i++) {
-			Record r = records[i];
-
-			if(r.getRecordType() == 6001l) {
+		for (Record r : records) {
+			if (r.getRecordType() == 6001L) {
 				// PersistPtrFullBlock
 				System.out.println("Found PersistPtrFullBlock at " + pos + " (" + Integer.toHexString(pos) + ")");
 			}
-			if(r.getRecordType() == 6002l) {
+			if (r.getRecordType() == 6002L) {
 				// PersistPtrIncrementalBlock
 				System.out.println("Found PersistPtrIncrementalBlock at " + pos + " (" + Integer.toHexString(pos) + ")");
-				PersistPtrHolder pph = (PersistPtrHolder)r;
+				PersistPtrHolder pph = (PersistPtrHolder) r;
 
 				// Check the sheet offsets
 				int[] sheetIDs = pph.getKnownSlideIDs();
-				Map<Integer,Integer> sheetOffsets = pph.getSlideLocationsLookup();
-				for(int j=0; j<sheetIDs.length; j++) {
-					Integer id = sheetIDs[j];
+				Map<Integer, Integer> sheetOffsets = pph.getSlideLocationsLookup();
+				for (Integer id : sheetIDs) {
 					Integer offset = sheetOffsets.get(id);
 
 					System.out.println("  Knows about sheet " + id);
@@ -143,7 +140,7 @@ public final class SlideIdListing {
 					System.out.println("    The record at that pos is of type " + atPos.getRecordType());
 					System.out.println("    The record at that pos has class " + atPos.getClass().getName());
 
-					if(! (atPos instanceof PositionDependentRecord)) {
+					if (!(atPos instanceof PositionDependentRecord)) {
 						System.out.println("    ** The record class isn't position aware! **");
 					}
 				}
@@ -157,7 +154,7 @@ public final class SlideIdListing {
 
 		ss.close();
 		
-		System.out.println("");
+		System.out.println();
 	}
 
 

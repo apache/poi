@@ -39,43 +39,44 @@ public final class PPDrawingTextListing {
 			System.exit(1);
 		}
 
-		HSLFSlideShowImpl ss = new HSLFSlideShowImpl(args[0]);
+		try (HSLFSlideShowImpl ss = new HSLFSlideShowImpl(args[0])) {
 
-		// Find PPDrawings at any second level position
-		Record[] records = ss.getRecords();
-		for(int i=0; i<records.length; i++) {
-			Record[] children = records[i].getChildRecords();
-			if(children != null && children.length != 0) {
-				for(int j=0; j<children.length; j++) {
-					if(children[j] instanceof PPDrawing) {
-						System.out.println("Found PPDrawing at " + j + " in top level record " + i + " (" + records[i].getRecordType() + ")" );
+			// Find PPDrawings at any second level position
+			Record[] records = ss.getRecords();
+			for (int i = 0; i < records.length; i++) {
+				Record[] children = records[i].getChildRecords();
+				if (children != null && children.length != 0) {
+					for (int j = 0; j < children.length; j++) {
+						if (children[j] instanceof PPDrawing) {
+							System.out.println("Found PPDrawing at " + j + " in top level record " + i + " (" + records[i].getRecordType() + ")");
 
-						// Look for EscherTextboxWrapper's
-						PPDrawing ppd = (PPDrawing)children[j];
-						EscherTextboxWrapper[] wrappers = ppd.getTextboxWrappers();
-						System.out.println("  Has " + wrappers.length + " textbox wrappers within");
+							// Look for EscherTextboxWrapper's
+							PPDrawing ppd = (PPDrawing) children[j];
+							EscherTextboxWrapper[] wrappers = ppd.getTextboxWrappers();
+							System.out.println("  Has " + wrappers.length + " textbox wrappers within");
 
-						// Loop over the wrappers, showing what they contain
-						for(int k=0; k<wrappers.length; k++) {
-							EscherTextboxWrapper tbw = wrappers[k];
-							System.out.println("    " + k + " has " + tbw.getChildRecords().length + " PPT atoms within");
+							// Loop over the wrappers, showing what they contain
+							for (int k = 0; k < wrappers.length; k++) {
+								EscherTextboxWrapper tbw = wrappers[k];
+								System.out.println("    " + k + " has " + tbw.getChildRecords().length + " PPT atoms within");
 
-							// Loop over the records, printing the text
-							Record[] pptatoms = tbw.getChildRecords();
-							for(int l=0; l<pptatoms.length; l++) {
-								String text = null;
-								if(pptatoms[l] instanceof TextBytesAtom) {
-									TextBytesAtom tba = (TextBytesAtom)pptatoms[l];
-									text = tba.getText();
-								}
-								if(pptatoms[l] instanceof TextCharsAtom) {
-									TextCharsAtom tca = (TextCharsAtom)pptatoms[l];
-									text = tca.getText();
-								}
+								// Loop over the records, printing the text
+								Record[] pptatoms = tbw.getChildRecords();
+								for (Record pptatom : pptatoms) {
+									String text = null;
+									if (pptatom instanceof TextBytesAtom) {
+										TextBytesAtom tba = (TextBytesAtom) pptatom;
+										text = tba.getText();
+									}
+									if (pptatom instanceof TextCharsAtom) {
+										TextCharsAtom tca = (TextCharsAtom) pptatom;
+										text = tca.getText();
+									}
 
-								if(text != null) {
-									text = text.replace('\r','\n');
-									System.out.println("        ''" + text + "''");
+									if (text != null) {
+										text = text.replace('\r', '\n');
+										System.out.println("        ''" + text + "''");
+									}
 								}
 							}
 						}
@@ -83,7 +84,5 @@ public final class PPDrawingTextListing {
 				}
 			}
 		}
-		
-		ss.close();
 	}
 }
