@@ -562,7 +562,7 @@ public final class IOUtils {
 
     public static byte[] safelyAllocate(long length, int maxLength) {
         if (length < 0L) {
-            throw new RecordFormatException("Can't allocate an array of length < 0");
+            throw new RecordFormatException("Can't allocate an array of length < 0, but had " + length + " and " + maxLength);
         }
         if (length > (long)Integer.MAX_VALUE) {
             throw new RecordFormatException("Can't allocate an array > "+Integer.MAX_VALUE);

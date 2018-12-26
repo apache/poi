@@ -52,7 +52,7 @@ public class TestEscherDump {
 
     @Test
     public void testWithData() throws Exception {
-        new EscherDump().dumpOld(8, new ByteArrayInputStream(new byte[] { 00, 00, 00, 00, 00, 00, 00, 00 }), nullPS);
+        new EscherDump().dumpOld(8, new ByteArrayInputStream(new byte[] {0, 0, 0, 0, 0, 0, 0, 0}), nullPS);
     }
 
     @Test
@@ -63,14 +63,11 @@ public class TestEscherDump {
         //new EscherDump().dumpOld(data.length, new ByteArrayInputStream(data), System.out);
         
         data = new byte[2586114];
-        InputStream stream = HSSFTestDataSamples.openSampleFileStream("44593.xls");
-        try {
+        try (InputStream stream = HSSFTestDataSamples.openSampleFileStream("44593.xls")) {
             int bytes = IOUtils.readFully(stream, data);
             assertTrue(bytes != -1);
             //new EscherDump().dump(bytes, data, System.out);
             //new EscherDump().dumpOld(bytes, new ByteArrayInputStream(data), System.out);
-        } finally {
-            stream.close();
         }
     }
     

@@ -20,7 +20,6 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FilenameFilter;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,7 +28,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.NullOutputStream;
 import org.junit.Rule;
@@ -71,12 +69,7 @@ public abstract class BaseXLSIteratingTest {
     }
 	
     private static void findFile(List<Object[]> list, String dir) {
-        String[] files = new File(dir).list(new FilenameFilter() {
-            @Override
-            public boolean accept(File arg0, String arg1) {
-                return arg1.toLowerCase(Locale.ROOT).endsWith(".xls");
-            }
-        });
+        String[] files = new File(dir).list((arg0, arg1) -> arg1.toLowerCase(Locale.ROOT).endsWith(".xls"));
         
         assertNotNull("Did not find any xls files in directory " + dir, files);
         
@@ -99,17 +92,9 @@ public abstract class BaseXLSIteratingTest {
 			runOneFile(file);
 		} catch (Exception e) {
 			// try to read it in HSSFWorkbook to quickly fail if we cannot read the file there at all and thus probably should use EXCLUDED instead
-			FileInputStream stream = new FileInputStream(file);
-			HSSFWorkbook wb = null;
-			try {
-			    wb = new HSSFWorkbook(stream);
-				assertNotNull(wb);
-			} finally {
-			    if (wb != null) {
-			        wb.close();
-			    }
-				stream.close();
-			}
+            try (FileInputStream stream = new FileInputStream(file); HSSFWorkbook wb = new HSSFWorkbook(stream)) {
+                assertNotNull(wb);
+            }
 			
 			throw e;
 		}

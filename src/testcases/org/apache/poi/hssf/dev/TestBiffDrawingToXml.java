@@ -43,7 +43,6 @@ public class TestBiffDrawingToXml extends BaseXLSIteratingTest {
         EXCLUDED.put("testEXCEL_5.xls", OldExcelFormatException.class);  // Biff 5 / Excel 5
         EXCLUDED.put("60284.xls", OldExcelFormatException.class); // Biff 5 / Excel 5
         EXCLUDED.put("testEXCEL_95.xls", OldExcelFormatException.class); // Biff 5 / Excel 95
-        EXCLUDED.put("60284.xls", OldExcelFormatException.class); // Biff 5 / Excel 95
         EXCLUDED.put("43493.xls", RecordInputStream.LeftoverDataException.class);  // HSSFWorkbook cannot open it as well
         EXCLUDED.put("44958_1.xls", RecordInputStream.LeftoverDataException.class);
         EXCLUDED.put("61300.xls", RecordFormatException.class);
@@ -55,12 +54,9 @@ public class TestBiffDrawingToXml extends BaseXLSIteratingTest {
 		try {
 			//System.setOut(new PrintStream(TestBiffViewer.NULL_OUTPUT_STREAM));
 			// use a NullOutputStream to not write the bytes anywhere for best runtime 
-		    InputStream wb = new FileInputStream(pFile);
-		    try {
-		    	BiffDrawingToXml.writeToFile(NULL_OUTPUT_STREAM, wb, false, new String[] {});
-		    } finally {
-		    	wb.close();
-		    }
+            try (InputStream wb = new FileInputStream(pFile)) {
+                BiffDrawingToXml.writeToFile(NULL_OUTPUT_STREAM, wb, false, new String[]{});
+            }
 		} finally {
 			System.setOut(save);
 		}

@@ -56,7 +56,6 @@ public final class SlideShowRecordDumper {
      * dump of what it contains
      */
     public static void main(String[] args) throws IOException {
-        String filename = "";
         boolean verbose = false;
         boolean escher = false;
 
@@ -81,12 +80,14 @@ public final class SlideShowRecordDumper {
             return;
         }
 
-        filename = args[ndx];
+        String filename = args[ndx];
 
         SlideShowRecordDumper foo = new SlideShowRecordDumper(System.out,
                 filename, verbose, escher);
 
         foo.printDump();
+
+        foo.doc.close();
     }
 
     public static void printUsage() {
@@ -118,11 +119,11 @@ public final class SlideShowRecordDumper {
     }
 
     public String makeHex(int number, int padding) {
-        String hex = Integer.toHexString(number).toUpperCase(Locale.ROOT);
+        StringBuilder hex = new StringBuilder(Integer.toHexString(number).toUpperCase(Locale.ROOT));
         while (hex.length() < padding) {
-            hex = "0" + hex;
+            hex.insert(0, "0");
         }
-        return hex;
+        return hex.toString();
     }
 
     public String reverseHex(String s) {
@@ -186,7 +187,7 @@ public final class SlideShowRecordDumper {
         for (Record child : etw.getChildRecords()) {
             if (child instanceof StyleTextPropAtom) {
                 // need preceding Text[Chars|Bytes]Atom to initialize the data structure
-                String text = null;
+                String text;
                 if (prevChild instanceof TextCharsAtom) {
                     text = ((TextCharsAtom)prevChild).getText();
                 } else if (prevChild instanceof TextBytesAtom) {
@@ -227,8 +228,7 @@ public final class SlideShowRecordDumper {
     public void walkTree(int depth, int pos, Record[] records, int indent) throws IOException {
         String ind = tabs.substring(0, indent);
 
-        for (int i = 0; i < records.length; i++) {
-            Record r = records[i];
+        for (Record r : records) {
             if (r == null) {
                 ps.println(ind + "At position " + pos + " (" + makeHex(pos, 6) + "):");
                 ps.println(ind + "Warning! Null record found.");
@@ -242,49 +242,49 @@ public final class SlideShowRecordDumper {
             String hexType = makeHex((int) r.getRecordType(), 4);
             String rHexType = reverseHex(hexType);
 
-		// Grab the hslf.record type
-		Class<? extends Record> c = r.getClass();
-		String cname = c.toString();
-		if(cname.startsWith("class ")) {
-			cname = cname.substring(6);
-		}
-		if(cname.startsWith("org.apache.poi.hslf.record.")) {
-			cname = cname.substring(27);
-		}
+            // Grab the hslf.record type
+            Class<? extends Record> c = r.getClass();
+            String cname = c.toString();
+            if (cname.startsWith("class ")) {
+                cname = cname.substring(6);
+            }
+            if (cname.startsWith("org.apache.poi.hslf.record.")) {
+                cname = cname.substring(27);
+            }
 
-		// Display the record
-		ps.println(ind + "At position " + pos + " (" + makeHex(pos,6) + "):");
-		ps.println(ind + " Record is of type " + cname);
-		ps.println(ind + " Type is " + r.getRecordType() + " (" + hexType + " -> " + rHexType + " )");
-		ps.println(ind + " Len is " + (len-8) + " (" + makeHex((len-8),8) + "), on disk len is " + len );
+            // Display the record
+            ps.println(ind + "At position " + pos + " (" + makeHex(pos, 6) + "):");
+            ps.println(ind + " Record is of type " + cname);
+            ps.println(ind + " Type is " + r.getRecordType() + " (" + hexType + " -> " + rHexType + " )");
+            ps.println(ind + " Len is " + (len - 8) + " (" + makeHex((len - 8), 8) + "), on disk len is " + len);
 
-		// print additional information for drawings and atoms
-		if (optEscher && cname.equals("PPDrawing")) {
-			DefaultEscherRecordFactory factory = new HSLFEscherRecordFactory();
+            // print additional information for drawings and atoms
+            if (optEscher && cname.equals("PPDrawing")) {
+                DefaultEscherRecordFactory factory = new HSLFEscherRecordFactory();
 
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			r.writeOut(baos);
-			byte[] b = baos.toByteArray();
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                r.writeOut(baos);
+                byte[] b = baos.toByteArray();
 
-			EscherRecord er = factory.createRecord(b, 0);
-			er.fillFields(b, 0, factory);
+                EscherRecord er = factory.createRecord(b, 0);
+                er.fillFields(b, 0, factory);
 
-			printEscherRecord( er, indent+1 );
+                printEscherRecord(er, indent + 1);
 
-		} else if(optVerbose && r.getChildRecords() == null) {
-			String recData = getPrintableRecordContents(r);
-			ps.println(ind + recData );
-		}
+            } else if (optVerbose && r.getChildRecords() == null) {
+                String recData = getPrintableRecordContents(r);
+                ps.println(ind + recData);
+            }
 
-		ps.println();
+            ps.println();
 
-		// If it has children, show them
-		if(r.getChildRecords() != null) {
-			walkTree((depth+3),pos+8,r.getChildRecords(), indent+1);
-		}
+            // If it has children, show them
+            if (r.getChildRecords() != null) {
+                walkTree((depth + 3), pos + 8, r.getChildRecords(), indent + 1);
+            }
 
-		// Wind on the position marker
-		pos += len;
-	}
+            // Wind on the position marker
+            pos += len;
+        }
   }
 }

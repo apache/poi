@@ -45,25 +45,24 @@ public final class TextStyleListing {
 
 		// Find the documents, and then their SLWT
 		Record[] records = ss.getRecords();
-		for(int i=0; i<records.length; i++) {
-			if(records[i].getRecordType() == 1000l) {
-				Record docRecord = records[i];
-				Record[] docChildren = docRecord.getChildRecords();
-				for(int j=0; j<docChildren.length; j++) {
-					if(docChildren[j] instanceof SlideListWithText) {
-						Record[] slwtChildren = docChildren[j].getChildRecords();
+		for (Record record : records) {
+			if (record.getRecordType() == 1000L) {
+				Record[] docChildren = record.getChildRecords();
+				for (Record docChild : docChildren) {
+					if (docChild instanceof SlideListWithText) {
+						Record[] slwtChildren = docChild.getChildRecords();
 
 						int lastTextLen = -1;
-						for(int k=0; k<slwtChildren.length; k++) {
-							if(slwtChildren[k] instanceof TextCharsAtom) {
-								lastTextLen = ((TextCharsAtom)slwtChildren[k]).getText().length();
+						for (Record slwtChild : slwtChildren) {
+							if (slwtChild instanceof TextCharsAtom) {
+								lastTextLen = ((TextCharsAtom) slwtChild).getText().length();
 							}
-							if(slwtChildren[k] instanceof TextBytesAtom) {
-								lastTextLen = ((TextBytesAtom)slwtChildren[k]).getText().length();
+							if (slwtChild instanceof TextBytesAtom) {
+								lastTextLen = ((TextBytesAtom) slwtChild).getText().length();
 							}
 
-							if(slwtChildren[k] instanceof StyleTextPropAtom) {
-								StyleTextPropAtom stpa = (StyleTextPropAtom)slwtChildren[k];
+							if (slwtChild instanceof StyleTextPropAtom) {
+								StyleTextPropAtom stpa = (StyleTextPropAtom) slwtChild;
 								stpa.setParentTextSize(lastTextLen);
 								showStyleTextPropAtom(stpa);
 							}

@@ -41,7 +41,7 @@ public final class SlideAndNotesAtomListing {
 		}
 
 		HSLFSlideShowImpl ss = new HSLFSlideShowImpl(args[0]);
-		System.out.println("");
+		System.out.println();
 
 		// Find either Slides or Notes
 		Record[] records = ss.getRecords();
@@ -55,14 +55,14 @@ public final class SlideAndNotesAtomListing {
 				System.out.println("Found Slide at " + i);
 				System.out.println("  Slide's master ID is " + sa.getMasterID());
 				System.out.println("  Slide's notes ID is  " + sa.getNotesID());
-				System.out.println("");
+				System.out.println();
 			}
 			if(r instanceof Notes) {
 				Notes n = (Notes)r;
 				NotesAtom na = n.getNotesAtom();
 				System.out.println("Found Notes at " + i);
 				System.out.println("  Notes ID is " + na.getSlideID());
-				System.out.println("");
+				System.out.println();
 			}
 		}
 		
