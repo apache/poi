@@ -37,11 +37,11 @@ public class PackagePropertiesMarshaller implements PartMarshaller {
     private final static NamespaceImpl namespaceDC =
             new NamespaceImpl("dc", PackagePropertiesPart.NAMESPACE_DC_URI);
     private final static NamespaceImpl namespaceCoreProperties =
-            new NamespaceImpl("cp", PackagePropertiesPart.NAMESPACE_CP_URI);;
+            new NamespaceImpl("cp", PackagePropertiesPart.NAMESPACE_CP_URI);
     private final static NamespaceImpl namespaceDcTerms =
             new NamespaceImpl("dcterms", PackagePropertiesPart.NAMESPACE_DCTERMS_URI);
     private final static NamespaceImpl namespaceXSI =
-            new NamespaceImpl("xsi", XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);;
+            new NamespaceImpl("xsi", XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI);
 
     protected static final String KEYWORD_CATEGORY = "category";
 

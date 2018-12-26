@@ -207,7 +207,7 @@ public final class Trend implements Function {
                 allEquals = false;
                 break;
             }
-        };
+        }
         return allEquals;
 
     }

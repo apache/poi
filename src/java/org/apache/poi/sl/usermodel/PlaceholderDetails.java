@@ -25,7 +25,7 @@ package org.apache.poi.sl.usermodel;
  */
 public interface PlaceholderDetails {
     enum PlaceholderSize {
-        quarter, half, full;
+        quarter, half, full
     }
     
     Placeholder getPlaceholder();

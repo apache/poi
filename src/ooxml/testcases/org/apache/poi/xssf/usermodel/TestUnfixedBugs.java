@@ -343,7 +343,7 @@ public final class TestUnfixedBugs {
     @Test
     public void bug57423_shiftRowsByLargeOffset() throws IOException {
         try (
-                XSSFWorkbook wb = new XSSFWorkbook();
+                XSSFWorkbook wb = new XSSFWorkbook()
                 //OutputStream out = new FileOutputStream("/tmp/57423." + wb.getClass().getName() + ".xlsx"));
         ) {
             Sheet sh = wb.createSheet();
