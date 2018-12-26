@@ -125,13 +125,12 @@ final class MathX {
     public static double average(double[] values) {
         double ave = 0;
         double sum = 0;
-        for (int i=0, iSize=values.length; i<iSize; i++) {
-            sum += values[i];
+        for (double value : values) {
+            sum += value;
         }
         ave = sum / values.length;
         return ave;
     }
-
 
     /**
      * sum of all values
@@ -139,8 +138,8 @@ final class MathX {
      */
     public static double sum(double[] values) {
         double sum = 0;
-        for (int i=0, iSize=values.length; i<iSize; i++) {
-            sum += values[i];
+        for (double value : values) {
+            sum += value;
         }
         return sum;
     }
@@ -151,8 +150,8 @@ final class MathX {
      */
     public static double sumsq(double[] values) {
         double sumsq = 0;
-        for (int i=0, iSize=values.length; i<iSize; i++) {
-            sumsq += values[i]*values[i];
+        for (double value : values) {
+            sumsq += value * value;
         }
         return sumsq;
     }
@@ -166,8 +165,8 @@ final class MathX {
         double product = 0;
         if (values!=null && values.length > 0) {
             product = 1;
-            for (int i=0, iSize=values.length; i<iSize; i++) {
-                product *= values[i];
+            for (double value : values) {
+                product *= value;
             }
         }
         return product;
@@ -180,8 +179,8 @@ final class MathX {
      */
     public static double min(double[] values) {
         double min = Double.POSITIVE_INFINITY;
-        for (int i=0, iSize=values.length; i<iSize; i++) {
-            min = Math.min(min, values[i]);
+        for (double value : values) {
+            min = Math.min(min, value);
         }
         return min;
     }
@@ -193,8 +192,8 @@ final class MathX {
      */
     public static double max(double[] values) {
         double max = Double.NEGATIVE_INFINITY;
-        for (int i=0, iSize=values.length; i<iSize; i++) {
-            max = Math.max(max, values[i]);
+        for (double value : values) {
+            max = Math.max(max, value);
         }
         return max;
     }
@@ -215,16 +214,11 @@ final class MathX {
      * @param s
      */
     public static double floor(double n, double s) {
-        double f;
-
-        if ((n<0 && s>0) || (n>0 && s<0) || (s==0 && n!=0)) {
-            f = Double.NaN;
+        if (s==0 && n!=0) {
+            return Double.NaN;
+        } else {
+            return (n==0 || s==0) ? 0 : Math.floor(n/s) * s;
         }
-        else {
-            f = (n==0 || s==0) ? 0 : Math.floor(n/s) * s;
-        }
-
-        return f;
     }
 
     /**
@@ -243,15 +237,11 @@ final class MathX {
      * @param s
      */
     public static double ceiling(double n, double s) {
-        double c;
-
         if (n>0 && s<0) {
-            c = Double.NaN;
+            return Double.NaN;
         } else {
-            c = (n == 0 || s == 0) ? 0 : Math.ceil(n/s) * s;
+            return (n == 0 || s == 0) ? 0 : Math.ceil(n/s) * s;
         }
-
-        return c;
     }
 
     /**
@@ -300,19 +290,15 @@ final class MathX {
      * @param d
      */
     public static double mod(double n, double d) {
-        double result = 0;
-
         if (d == 0) {
-            result = Double.NaN;
+            return Double.NaN;
         }
         else if (sign(n) == sign(d)) {
-            result = n % d;
+            return n % d;
         }
         else {
-            result = ((n % d) + d) % d;
+            return ((n % d) + d) % d;
         }
-
-        return result;
     }
 
     /**
@@ -396,5 +382,4 @@ final class MathX {
 
         return d;
     }
-
 }
