@@ -153,8 +153,11 @@ public abstract class ContentTypeManager {
     public void addContentType(PackagePartName partName, String contentType) {
         boolean defaultCTExists = this.defaultContentType.containsValue(contentType);
         String extension = partName.getExtension().toLowerCase(Locale.ROOT);
-        if ((extension.length() == 0)
-                || (this.defaultContentType.containsKey(extension) && !defaultCTExists)) {
+        if ((extension.length() == 0) ||
+                // check if content-type and extension do match in both directions
+                // some applications create broken files, e.g. extension "jpg" instead of "jpeg"
+                (this.defaultContentType.containsKey(extension) && !defaultCTExists) ||
+                (!this.defaultContentType.containsKey(extension) && defaultCTExists)) {
             this.addOverrideContentType(partName, contentType);
         } else if (!defaultCTExists) {
             this.addDefaultContentType(extension, contentType);
