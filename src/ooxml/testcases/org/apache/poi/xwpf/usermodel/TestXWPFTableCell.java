@@ -33,7 +33,7 @@ import java.util.List;
 public class TestXWPFTableCell {
 
     @Test
-    public void testSetGetVertAlignment() throws Exception {
+    public void testSetGetVertAlignment() {
         // instantiate the following classes so they'll get picked up by
         // the XmlBean process and added to the jar file. they are required
         // for the following XWPFTableCell methods.
@@ -62,7 +62,7 @@ public class TestXWPFTableCell {
     }
 
     @Test
-    public void testSetGetColor() throws Exception {
+    public void testSetGetColor() {
         // create a table
         XWPFDocument doc = new XWPFDocument();
         CTTbl ctTable = CTTbl.Factory.newInstance();
@@ -81,7 +81,6 @@ public class TestXWPFTableCell {
     /**
      * ensure that CTHMerge and CTTcBorders go in poi-ooxml.jar
      */
-    @SuppressWarnings("unused")
     @Test
     public void test54099() {
         XWPFDocument doc = new XWPFDocument();
@@ -96,24 +95,27 @@ public class TestXWPFTableCell {
         hMerge.setVal(STMerge.RESTART);
 
         CTTcBorders tblBorders = tcPr.addNewTcBorders();
+        assertNotNull(tblBorders);
         CTVMerge vMerge = tcPr.addNewVMerge();
+        assertNotNull(vMerge);
     }
 
     @Test
     public void testCellVerticalAlign() throws Exception{
-        XWPFDocument docx = XWPFTestDataSamples.openSampleDocument("59030.docx");
-        List<XWPFTable> tables = docx.getTables();
-        assertEquals(1, tables.size());
+        try (XWPFDocument docx = XWPFTestDataSamples.openSampleDocument("59030.docx")) {
+            List<XWPFTable> tables = docx.getTables();
+            assertEquals(1, tables.size());
 
-        XWPFTable table = tables.get(0);
+            XWPFTable table = tables.get(0);
 
-        List<XWPFTableRow> tableRows = table.getRows();
-        assertEquals(2, tableRows.size());
+            List<XWPFTableRow> tableRows = table.getRows();
+            assertEquals(2, tableRows.size());
 
-        assertNull(tableRows.get(0).getCell(0).getVerticalAlignment());
-        assertEquals(XWPFVertAlign.BOTTOM, tableRows.get(0).getCell(1).getVerticalAlignment());
-        assertEquals(XWPFVertAlign.CENTER, tableRows.get(1).getCell(0).getVerticalAlignment());
-        assertNull(tableRows.get(1).getCell(1).getVerticalAlignment()); // should return null since alignment isn't set
+            assertNull(tableRows.get(0).getCell(0).getVerticalAlignment());
+            assertEquals(XWPFVertAlign.BOTTOM, tableRows.get(0).getCell(1).getVerticalAlignment());
+            assertEquals(XWPFVertAlign.CENTER, tableRows.get(1).getCell(0).getVerticalAlignment());
+            assertNull(tableRows.get(1).getCell(1).getVerticalAlignment()); // should return null since alignment isn't set
+        }
     }
 
     // This is not a very useful test as written. It is not worth the execution time for a unit test

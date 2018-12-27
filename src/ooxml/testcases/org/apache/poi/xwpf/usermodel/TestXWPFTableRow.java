@@ -102,20 +102,21 @@ public class TestXWPFTableRow {
     // generated in Word
     @Test
     public void testIsRepeatHeader() throws Exception {
-        XWPFDocument doc = XWPFTestDataSamples
-                .openSampleDocument("Bug60337.docx");
-        XWPFTable table = doc.getTables().get(0);
-        XWPFTableRow tr = table.getRow(0);
-        boolean isRpt = tr.isRepeatHeader();
-        assertTrue(isRpt);
-        
-        tr = table.getRow(1);
-        isRpt = tr.isRepeatHeader();
-        assertFalse(isRpt);
-        
-        tr = table.getRow(2);
-        isRpt = tr.isRepeatHeader();
-        assertFalse(isRpt);
+        try (XWPFDocument doc = XWPFTestDataSamples
+                .openSampleDocument("Bug60337.docx")) {
+            XWPFTable table = doc.getTables().get(0);
+            XWPFTableRow tr = table.getRow(0);
+            boolean isRpt = tr.isRepeatHeader();
+            assertTrue(isRpt);
+
+            tr = table.getRow(1);
+            isRpt = tr.isRepeatHeader();
+            assertFalse(isRpt);
+
+            tr = table.getRow(2);
+            isRpt = tr.isRepeatHeader();
+            assertFalse(isRpt);
+        }
     }
     
     
@@ -123,20 +124,21 @@ public class TestXWPFTableRow {
     // generated in Word
     @Test
     public void testIsCantSplit() throws Exception {
-        XWPFDocument doc = XWPFTestDataSamples
-                .openSampleDocument("Bug60337.docx");
-        XWPFTable table = doc.getTables().get(0);
-        XWPFTableRow tr = table.getRow(0);
-        boolean isCantSplit = tr.isCantSplitRow();
-        assertFalse(isCantSplit);
-        
-        tr = table.getRow(1);
-        isCantSplit = tr.isCantSplitRow();
-        assertFalse(isCantSplit);
+        try (XWPFDocument doc = XWPFTestDataSamples
+                .openSampleDocument("Bug60337.docx")) {
+            XWPFTable table = doc.getTables().get(0);
+            XWPFTableRow tr = table.getRow(0);
+            boolean isCantSplit = tr.isCantSplitRow();
+            assertFalse(isCantSplit);
 
-        tr = table.getRow(2);
-        isCantSplit = tr.isCantSplitRow();
-        assertTrue(isCantSplit);
+            tr = table.getRow(1);
+            isCantSplit = tr.isCantSplitRow();
+            assertFalse(isCantSplit);
+
+            tr = table.getRow(2);
+            isCantSplit = tr.isCantSplitRow();
+            assertTrue(isCantSplit);
+        }
     }
 
     @Test

@@ -1571,7 +1571,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
      *
      * @param oldContentType  the content type to be replaced
      * @param newContentType  the replacement
-     * @return whether replacement was succesfull
+     * @return whether replacement was successful
      * @since POI-3.8
      */
     public boolean replaceContentType(String oldContentType, String newContentType){

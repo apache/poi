@@ -30,10 +30,11 @@ import static org.apache.poi.POITestCase.assertContains;
 public final class TestXWPFSmartTag extends TestCase {
 
     public void testSmartTags() throws IOException {
-        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("smarttag-snippet.docx");
-        XWPFParagraph p = doc.getParagraphArray(0);
-        assertContains(p.getText(), "Carnegie Mellon University School of Computer Science");
-        p = doc.getParagraphArray(2);
-        assertContains(p.getText(), "Alice's Adventures");
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("smarttag-snippet.docx")) {
+            XWPFParagraph p = doc.getParagraphArray(0);
+            assertContains(p.getText(), "Carnegie Mellon University School of Computer Science");
+            p = doc.getParagraphArray(2);
+            assertContains(p.getText(), "Alice's Adventures");
+        }
     }
 }

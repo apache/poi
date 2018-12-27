@@ -112,7 +112,6 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
             return;
         }
         Cell readCell = readRow.getCell(0);
-        //noinspection deprecation
         if(readCell.getCellType() == CellType.NUMERIC) {
             assertEquals(expect, Double.toString(readCell.getNumericCellValue()));
         } else {
@@ -470,7 +469,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
     // bug 60260: shift rows or rename a sheet containing a named range
     // that refers to formula with a unicode (non-ASCII) sheet name formula
     @Test
-    public void shiftRowsWithUnicodeNamedRange() throws IOException {
+    public void shiftRowsWithUnicodeNamedRange() {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("unicodeSheetName.xlsx");
         XSSFSheet sheet = wb.getSheetAt(0);
         sheet.shiftRows(1, 2, 3);
