@@ -52,7 +52,7 @@ public final class TestBoundSheetRecord extends TestCase {
 
 		try {
 			record.setSheetname("s//*s");
-			throw new AssertionFailedError("Should have thrown IllegalArgumentException, but didnt");
+			fail("Should have thrown IllegalArgumentException, but didnt");
 		} catch (IllegalArgumentException e) {
 			// expected
 		}

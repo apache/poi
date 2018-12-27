@@ -32,27 +32,26 @@ public final class TestXWPFSDT {
 
     /**
      * Test simple tag and title extraction from SDT
-     *
-     * @throws Exception
      */
     @Test
     public void testTagTitle() throws Exception {
-        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug54849.docx");
-        String tag = null;
-        String title = null;
-        List<XWPFAbstractSDT> sdts = extractAllSDTs(doc);
-        for (XWPFAbstractSDT sdt : sdts) {
-            if (sdt.getContent().toString().equals("Rich_text")) {
-                tag = "MyTag";
-                title = "MyTitle";
-                break;
+        try (XWPFDocument doc =XWPFTestDataSamples.openSampleDocument("Bug54849.docx")) {
+            String tag = null;
+            String title = null;
+            List<XWPFAbstractSDT> sdts = extractAllSDTs(doc);
+            for (XWPFAbstractSDT sdt : sdts) {
+                if (sdt.getContent().toString().equals("Rich_text")) {
+                    tag = "MyTag";
+                    title = "MyTitle";
+                    break;
+                }
+
             }
+            assertEquals("controls size", 13, sdts.size());
 
+            assertEquals("tag", "MyTag", tag);
+            assertEquals("title", "MyTitle", title);
         }
-        assertEquals("controls size", 13, sdts.size());
-
-        assertEquals("tag", "MyTag", tag);
-        assertEquals("title", "MyTitle", title);
     }
 
     @Test
@@ -73,14 +72,15 @@ public final class TestXWPFSDT {
                 "Endnote_sdt"
 
         };
-        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug54849.docx");
-        List<XWPFAbstractSDT> sdts = extractAllSDTs(doc);
+        try (XWPFDocument doc =XWPFTestDataSamples.openSampleDocument("Bug54849.docx")) {
+            List<XWPFAbstractSDT> sdts = extractAllSDTs(doc);
 
-        assertEquals("number of sdts", contents.length, sdts.size());
+            assertEquals("number of sdts", contents.length, sdts.size());
 
-        for (int i = 0; i < contents.length; i++) {
-            XWPFAbstractSDT sdt = sdts.get(i);
-            assertEquals(i + ": " + contents[i], contents[i], sdt.getContent().toString());
+            for (int i = 0; i < contents.length; i++) {
+                XWPFAbstractSDT sdt = sdts.get(i);
+                assertEquals(i + ": " + contents[i], contents[i], sdt.getContent().toString());
+            }
         }
     }
 
@@ -91,25 +91,26 @@ public final class TestXWPFSDT {
     public void testSDTAsCell() throws Exception {
         //Bug54771a.docx and Bug54771b.docx test slightly 
         //different recursion patterns. Keep both!
-        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug54771a.docx");
-        List<XWPFAbstractSDT> sdts = extractAllSDTs(doc);
-        String text = sdts.get(0).getContent().getText();
-        assertEquals(2, sdts.size());
-        assertContains(text, "Test");
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug54771a.docx")) {
+            List<XWPFAbstractSDT> sdts = extractAllSDTs(doc);
+            String text = sdts.get(0).getContent().getText();
+            assertEquals(2, sdts.size());
+            assertContains(text, "Test");
 
-        text = sdts.get(1).getContent().getText();
-        assertContains(text, "Test Subtitle");
-        assertContains(text, "Test User");
-        assertTrue(text.indexOf("Test") < text.indexOf("Test Subtitle"));
+            text = sdts.get(1).getContent().getText();
+            assertContains(text, "Test Subtitle");
+            assertContains(text, "Test User");
+            assertTrue(text.indexOf("Test") < text.indexOf("Test Subtitle"));
+        }
 
-        doc = XWPFTestDataSamples.openSampleDocument("Bug54771b.docx");
-        sdts = extractAllSDTs(doc);
-        assertEquals(3, sdts.size());
-        assertContains(sdts.get(0).getContent().getText(), "Test");
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug54771b.docx")) {
+             List<XWPFAbstractSDT> sdts = extractAllSDTs(doc);
+            assertEquals(3, sdts.size());
+            assertContains(sdts.get(0).getContent().getText(), "Test");
 
-        assertContains(sdts.get(1).getContent().getText(), "Test Subtitle");
-        assertContains(sdts.get(2).getContent().getText(), "Test User");
-
+            assertContains(sdts.get(1).getContent().getText(), "Test Subtitle");
+            assertContains(sdts.get(2).getContent().getText(), "Test User");
+        }
     }
 
     /**
@@ -117,35 +118,37 @@ public final class TestXWPFSDT {
      */
     @Test
     public void testNewLinesBetweenRuns() throws Exception {
-        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug55142.docx");
-        List<XWPFAbstractSDT> sdts = extractAllSDTs(doc);
-        List<String> targs = new ArrayList<>();
-        //these test newlines and tabs in paragraphs/body elements
-        targs.add("Rich-text1 abcdefghi");
-        targs.add("Rich-text2 abcd\t\tefgh");
-        targs.add("Rich-text3 abcd\nefg");
-        targs.add("Rich-text4 abcdefg");
-        targs.add("Rich-text5 abcdefg\nhijk");
-        targs.add("Plain-text1 abcdefg");
-        targs.add("Plain-text2 abcdefg\nhijk\nlmnop");
-        //this tests consecutive runs within a cell (not a paragraph)
-        //this test case was triggered by Tika-1130
-        targs.add("sdt_incell2 abcdefg");
+        try (XWPFDocument doc =XWPFTestDataSamples.openSampleDocument("Bug55142.docx")) {
+            List<XWPFAbstractSDT> sdts = extractAllSDTs(doc);
+            List<String> targs = new ArrayList<>();
+            //these test newlines and tabs in paragraphs/body elements
+            targs.add("Rich-text1 abcdefghi");
+            targs.add("Rich-text2 abcd\t\tefgh");
+            targs.add("Rich-text3 abcd\nefg");
+            targs.add("Rich-text4 abcdefg");
+            targs.add("Rich-text5 abcdefg\nhijk");
+            targs.add("Plain-text1 abcdefg");
+            targs.add("Plain-text2 abcdefg\nhijk\nlmnop");
+            //this tests consecutive runs within a cell (not a paragraph)
+            //this test case was triggered by Tika-1130
+            targs.add("sdt_incell2 abcdefg");
 
-        for (int i = 0; i < sdts.size(); i++) {
-            XWPFAbstractSDT sdt = sdts.get(i);
-            assertEquals(targs.get(i), targs.get(i), sdt.getContent().getText());
+            for (int i = 0; i < sdts.size(); i++) {
+                XWPFAbstractSDT sdt = sdts.get(i);
+                assertEquals(targs.get(i), targs.get(i), sdt.getContent().getText());
+            }
         }
     }
 
     @Test
     public void test60341() throws IOException {
         //handle sdtbody without an sdtpr
-        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug60341.docx");
-        List<XWPFAbstractSDT> sdts = extractAllSDTs(doc);
-        assertEquals(1, sdts.size());
-        assertEquals("", sdts.get(0).getTag());
-        assertEquals("", sdts.get(0).getTitle());
+        try (XWPFDocument doc =XWPFTestDataSamples.openSampleDocument("Bug60341.docx")) {
+            List<XWPFAbstractSDT> sdts = extractAllSDTs(doc);
+            assertEquals(1, sdts.size());
+            assertEquals("", sdts.get(0).getTag());
+            assertEquals("", sdts.get(0).getTitle());
+        }
     }
 
     @Test
@@ -154,15 +157,15 @@ public final class TestXWPFSDT {
         //it does test for a related issue, and the fix fixes both.
         //We should try to add the actual triggering document
         //to our test suite.
-        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug62859.docx");
-        List<XWPFAbstractSDT> sdts = extractAllSDTs(doc);
-        assertEquals(1, sdts.size());
-        assertEquals("", sdts.get(0).getTag());
-        assertEquals("", sdts.get(0).getTitle());
+        try (XWPFDocument doc =XWPFTestDataSamples.openSampleDocument("Bug62859.docx")) {
+            List<XWPFAbstractSDT> sdts = extractAllSDTs(doc);
+            assertEquals(1, sdts.size());
+            assertEquals("", sdts.get(0).getTag());
+            assertEquals("", sdts.get(0).getTitle());
+        }
     }
 
     private List<XWPFAbstractSDT> extractAllSDTs(XWPFDocument doc) {
-
         List<XWPFAbstractSDT> sdts = new ArrayList<>();
 
         List<XWPFHeader> headers = doc.getHeaderList();

@@ -470,7 +470,6 @@ public class TestExtractorFactory {
         ExtractorFactory.getEmbededDocsTextExtractors((POIXMLTextExtractor) null);
     }
 
-    @SuppressWarnings("deprecation")
     @Test(expected = IllegalStateException.class)
     public void testGetEmbeddedFromXMLExtractor() {
         // currently not implemented
