@@ -18,10 +18,14 @@
 package org.apache.poi.sl.extractor;
 
 import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.apache.poi.extractor.POITextExtractor;
-import org.apache.poi.sl.usermodel.Comment;
 import org.apache.poi.sl.usermodel.MasterSheet;
 import org.apache.poi.sl.usermodel.Notes;
 import org.apache.poi.sl.usermodel.ObjectShape;
@@ -52,6 +56,10 @@ public class SlideShowExtractor<
 > extends POITextExtractor {
     private static final POILogger LOG = POILogFactory.getLogger(SlideShowExtractor.class);
 
+    // placeholder text for slide numbers
+    private static final String SLIDE_NUMBER_PH = "‹#›";
+
+
     private SlideShow<S,P> slideshow;
 
     private boolean slidesByDefault = true;
@@ -59,7 +67,8 @@ public class SlideShowExtractor<
     private boolean commentsByDefault;
     private boolean masterByDefault;
 
-    
+    private Predicate<Object> filter = o -> true;
+
     public SlideShowExtractor(final SlideShow<S,P> slideshow) {
         setFilesystem(slideshow);
         this.slideshow = slideshow;
@@ -115,9 +124,8 @@ public class SlideShowExtractor<
     @Override
     public String getText() {
         final StringBuilder sb = new StringBuilder();
-        
         for (final Slide<S, P> slide : slideshow.getSlides()) {
-            sb.append(getText(slide));
+            getText(slide, sb::append);
         }
 
         return sb.toString();
@@ -125,34 +133,37 @@ public class SlideShowExtractor<
 
     public String getText(final Slide<S,P> slide) {
         final StringBuilder sb = new StringBuilder();
+        getText(slide, sb::append);
+        return sb.toString();
+    }
 
+
+    private void getText(final Slide<S,P> slide, final Consumer<String> consumer) {
         if (slidesByDefault) {
-            printShapeText(slide, sb);
+            printShapeText(slide, consumer);
         }
 
         if (masterByDefault) {
             final MasterSheet<S,P> ms = slide.getMasterSheet();
-            printSlideMaster(ms, sb);
+            printSlideMaster(ms, consumer);
 
             // only print slide layout, if it's a different instance
             final MasterSheet<S,P> sl = slide.getSlideLayout();
             if (sl != ms) {
-                printSlideMaster(sl, sb);
+                printSlideMaster(sl, consumer);
             }
         }
 
         if (commentsByDefault) {
-            printComments(slide, sb);
+            printComments(slide, consumer);
         }
 
         if (notesByDefault) {
-            printNotes(slide, sb);
+            printNotes(slide, consumer);
         }
-
-        return sb.toString();
     }
 
-    private void printSlideMaster(final MasterSheet<S,P> master, final StringBuilder sb) {
+    private void printSlideMaster(final MasterSheet<S,P> master, final Consumer<String> consumer) {
         if (master == null) {
             return;
         }
@@ -163,163 +174,140 @@ public class SlideShowExtractor<
                 if (text == null || text.isEmpty() || "*".equals(text)) {
                     continue;
                 }
+
                 if (ts.isPlaceholder()) {
                     // don't bother about boiler plate text on master sheets
                     LOG.log(POILogger.INFO, "Ignoring boiler plate (placeholder) text on slide master:", text);
                     continue;
                 }
-                sb.append(text);
-                if (!text.endsWith("\n")) {
-                    sb.append("\n");
-                }
 
+                printTextParagraphs(ts.getTextParagraphs(), consumer);
             }
         }
     }
 
-    private String printHeaderReturnFooter(final Sheet<S,P> sheet, final StringBuilder sb) {
+    private void printTextParagraphs(final List<P> paras, final Consumer<String> consumer) {
+        printTextParagraphs(paras, consumer, "\n");
+    }
+
+
+    private void printTextParagraphs(final List<P> paras, final Consumer<String> consumer, String trailer) {
+        printTextParagraphs(paras, consumer, trailer, SlideShowExtractor::replaceTextCap);
+    }
+
+    private void printTextParagraphs(final List<P> paras, final Consumer<String> consumer, String trailer, final Function<TextRun,String> converter) {
+        for (P p : paras) {
+            for (TextRun r : p) {
+                if (filter.test(r)) {
+                    consumer.accept(converter.apply(r));
+                }
+            }
+            if (!trailer.isEmpty() && filter.test(trailer)) {
+                consumer.accept(trailer);
+            }
+        }
+    }
+
+    private void printHeaderFooter(final Sheet<S,P> sheet, final Consumer<String> consumer, final Consumer<String> footerCon) {
         final Sheet<S, P> m = (sheet instanceof Slide) ? sheet.getMasterSheet() : sheet;
-        final StringBuilder footer = new StringBuilder("\n");
-        addSheetPlaceholderDatails(sheet, Placeholder.HEADER, sb);
-        addSheetPlaceholderDatails(sheet, Placeholder.FOOTER, footer);
+        addSheetPlaceholderDatails(sheet, Placeholder.HEADER, consumer);
+        addSheetPlaceholderDatails(sheet, Placeholder.FOOTER, footerCon);
 
-        if (masterByDefault) {
-            // write header texts and determine footer text
-            for (Shape<S, P> s : m) {
-                if (!(s instanceof TextShape)) {
-                    continue;
-                }
-                final TextShape<S, P> ts = (TextShape<S, P>) s;
-                final PlaceholderDetails pd = ts.getPlaceholderDetails();
-                if (pd == null || !pd.isVisible() || pd.getPlaceholder() == null) {
-                    continue;
-                }
-                switch (pd.getPlaceholder()) {
-                    case HEADER:
-                        sb.append(ts.getText());
-                        sb.append('\n');
-                        break;
-                    case SLIDE_NUMBER:
-                        if (sheet instanceof Slide) {
-                            footer.append(ts.getText().replace("‹#›", Integer.toString(((Slide<S, P>) sheet).getSlideNumber() + 1)));
-                            footer.append('\n');
-                        }
-                        break;
-                    case FOOTER:
-                        footer.append(ts.getText());
-                        footer.append('\n');
-                        break;
-                    case DATETIME:
-                        // currently not supported
-                    default:
-                        break;
-                }
+        if (!masterByDefault) {
+            return;
+        }
+
+        // write header texts and determine footer text
+        for (Shape<S, P> s : m) {
+            if (!(s instanceof TextShape)) {
+                continue;
+            }
+            final TextShape<S, P> ts = (TextShape<S, P>) s;
+            final PlaceholderDetails pd = ts.getPlaceholderDetails();
+            if (pd == null || !pd.isVisible() || pd.getPlaceholder() == null) {
+                continue;
+            }
+            switch (pd.getPlaceholder()) {
+                case HEADER:
+                    printTextParagraphs(ts.getTextParagraphs(), consumer);
+                    break;
+                case FOOTER:
+                    printTextParagraphs(ts.getTextParagraphs(), footerCon);
+                    break;
+                case SLIDE_NUMBER:
+                    printTextParagraphs(ts.getTextParagraphs(), footerCon, "\n", SlideShowExtractor::replaceSlideNumber);
+                    break;
+                case DATETIME:
+                    // currently not supported
+                default:
+                    break;
             }
         }
-
-        return (footer.length() > 1) ? footer.toString() : "";
     }
 
-    private void addSheetPlaceholderDatails(final Sheet<S,P> sheet, final Placeholder placeholder, final StringBuilder sb) {
+
+    private void addSheetPlaceholderDatails(final Sheet<S,P> sheet, final Placeholder placeholder, final Consumer<String> consumer) {
         final PlaceholderDetails headerPD = sheet.getPlaceholderDetails(placeholder);
-        if (headerPD == null) {
-            return;
+        final String headerStr = (headerPD != null) ? headerPD.getText() : null;
+        if (headerStr != null && filter.test(headerPD)) {
+            consumer.accept(headerStr);
         }
-        final String headerStr = headerPD.getText();
-        if (headerStr == null) {
-            return;
-        }
-        sb.append(headerStr);
     }
 
-    private void printShapeText(final Sheet<S,P> sheet, final StringBuilder sb) {
-        final String footer = printHeaderReturnFooter(sheet, sb);
-        printShapeText((ShapeContainer<S,P>)sheet, sb);
-        sb.append(footer);
+    private void printShapeText(final Sheet<S,P> sheet, final Consumer<String> consumer) {
+        final List<String> footer = new LinkedList<>();
+        printHeaderFooter(sheet, consumer, footer::add);
+        printShapeText((ShapeContainer<S,P>)sheet, consumer);
+        footer.forEach(consumer);
     }
 
     @SuppressWarnings("unchecked")
-    private void printShapeText(final ShapeContainer<S,P> container, final StringBuilder sb) {
+    private void printShapeText(final ShapeContainer<S,P> container, final Consumer<String> consumer) {
         for (Shape<S,P> shape : container) {
             if (shape instanceof TextShape) {
-                printShapeText((TextShape<S,P>)shape, sb);
+                printTextParagraphs(((TextShape<S,P>)shape).getTextParagraphs(), consumer);
             } else if (shape instanceof TableShape) {
-                printShapeText((TableShape<S,P>)shape, sb);
+                printShapeText((TableShape<S,P>)shape, consumer);
             } else if (shape instanceof ShapeContainer) {
-                printShapeText((ShapeContainer<S,P>)shape, sb);
+                printShapeText((ShapeContainer<S,P>)shape, consumer);
             }
-        }
-    }
-
-    private void printShapeText(final TextShape<S,P> shape, final StringBuilder sb) {
-        final List<P> paraList = shape.getTextParagraphs();
-        if (paraList.isEmpty()) {
-            sb.append('\n');
-            return;
-        }
-        for (final P para : paraList) {
-            for (final TextRun tr : para) {
-                final String str = tr.getRawText().replace("\r", "");
-                final String newStr;
-                switch (tr.getTextCap()) {
-                    case ALL:
-                        newStr = str.toUpperCase(LocaleUtil.getUserLocale());
-                        break;
-                    case SMALL:
-                        newStr = str.toLowerCase(LocaleUtil.getUserLocale());
-                        break;
-                    default:
-                    case NONE:
-                        newStr = str;
-                        break;
-                }
-                sb.append(newStr);
-            }
-            sb.append('\n');
         }
     }
 
     @SuppressWarnings("Duplicates")
-    private void printShapeText(final TableShape<S,P> shape, final StringBuilder sb) {
+    private void printShapeText(final TableShape<S,P> shape, final Consumer<String> consumer) {
         final int nrows = shape.getNumberOfRows();
         final int ncols = shape.getNumberOfColumns();
-        for (int row = 0; row < nrows; row++){
+        for (int row = 0; row < nrows; row++) {
+            String trailer = "";
             for (int col = 0; col < ncols; col++){
                 TableCell<S, P> cell = shape.getCell(row, col);
                 //defensive null checks; don't know if they're necessary
-                if (cell != null){
-                    String txt = cell.getText();
-                    txt = (txt == null) ? "" : txt;
-                    sb.append(txt);
-                    if (col < ncols-1){
-                        sb.append('\t');
-                    }
+                if (cell != null) {
+                    trailer = col < ncols-1 ? "\t" : "\n";
+                    printTextParagraphs(cell.getTextParagraphs(), consumer, trailer);
                 }
             }
-            sb.append('\n');
+            if (!trailer.equals("\n") && filter.test("\n")) {
+                consumer.accept("\n");
+            }
         }
     }
 
-    private void printComments(final Slide<S,P> slide, final StringBuilder sb) {
-        for (final Comment comment : slide.getComments()) {
-            sb.append(comment.getAuthor());
-            sb.append(" - ");
-            sb.append(comment.getText());
-            sb.append("\n");
-        }
+    private void printComments(final Slide<S,P> slide, final Consumer<String> consumer) {
+        slide.getComments().stream().filter(filter).map(c -> c.getAuthor()+" - "+c.getText()).forEach(consumer);
     }
 
-    private void printNotes(final Slide<S,P> slide, final StringBuilder sb) {
+    private void printNotes(final Slide<S,P> slide, final Consumer<String> consumer) {
         final Notes<S, P> notes = slide.getNotes();
         if (notes == null) {
             return;
         }
 
-        final String footer = printHeaderReturnFooter(notes, sb);
-
-        printShapeText(notes, sb);
-
-        sb.append(footer);
+        List<String> footer = new LinkedList<>();
+        printHeaderFooter(notes, consumer, footer::add);
+        printShapeText(notes, consumer);
+        footer.forEach(consumer);
     }
 
     public List<? extends ObjectShape<S,P>> getOLEShapes() {
@@ -341,5 +329,84 @@ public class SlideShowExtractor<
                 oleShapes.add((ObjectShape<S,P>)shape);
             }
         }
+    }
+
+    private static String replaceSlideNumber(TextRun tr) {
+        String raw = tr.getRawText();
+
+        if (!raw.contains(SLIDE_NUMBER_PH)) {
+            return raw;
+        }
+
+        TextParagraph tp = tr.getParagraph();
+        TextShape ps = (tp != null) ? tp.getParentShape() : null;
+        Sheet sh = (ps != null) ? ps.getSheet() : null;
+        String slideNr = (sh instanceof Slide) ? Integer.toString(((Slide)sh).getSlideNumber() + 1) : "";
+
+        return raw.replace(SLIDE_NUMBER_PH, slideNr);
+    }
+
+    private static String replaceTextCap(TextRun tr) {
+        final TextParagraph tp = tr.getParagraph();
+        final TextShape sh = (tp != null) ? tp.getParentShape() : null;
+        final Placeholder ph = (sh != null) ? sh.getPlaceholder() : null;
+
+        // 0xB acts like cariage return in page titles and like blank in the others
+        final char sep = (
+            ph == Placeholder.TITLE ||
+            ph == Placeholder.CENTERED_TITLE ||
+            ph == Placeholder.SUBTITLE
+        ) ? '\n' : ' ';
+
+        // PowerPoint seems to store files with \r as the line break
+        // The messes things up on everything but a Mac, so translate them to \n
+        String txt = tr.getRawText();
+        txt = txt.replace('\r', '\n');
+        txt = txt.replace((char) 0x0B, sep);
+
+        switch (tr.getTextCap()) {
+            case ALL:
+                txt = txt.toUpperCase(LocaleUtil.getUserLocale());
+            case SMALL:
+                txt = txt.toLowerCase(LocaleUtil.getUserLocale());
+        }
+
+        return txt;
+    }
+
+    /**
+     * Extract the used codepoints for font embedding / subsetting
+     * @param typeface the typeface/font family of the textruns to examine
+     * @param italic use {@code true} for italic TextRuns, {@code false} for non-italic ones and
+     *      {@code null} if it doesn't matter
+     * @param bold use {@code true} for bold TextRuns, {@code false} for non-bold ones and
+     *      {@code null} if it doesn't matter
+     * @return a bitset with the marked/used codepoints
+     */
+    public BitSet getCodepoints(String typeface, Boolean italic, Boolean bold) {
+        final BitSet glyphs = new BitSet();
+
+        Predicate<Object> filterOld = filter;
+        try {
+            filter = o -> filterFonts(o, typeface, italic, bold);
+            slideshow.getSlides().forEach(slide ->
+                getText(slide, s -> s.codePoints().forEach(glyphs::set))
+            );
+        } finally {
+            filter = filterOld;
+        }
+
+        return glyphs;
+    }
+
+    private static boolean filterFonts(Object o, String typeface, Boolean italic, Boolean bold) {
+        if (!(o instanceof TextRun)) {
+            return false;
+        }
+        TextRun tr = (TextRun)o;
+        return
+            typeface.equalsIgnoreCase(tr.getFontFamily()) &&
+            (italic == null || tr.isItalic() == italic) &&
+            (bold == null || tr.isBold() == bold);
     }
 }

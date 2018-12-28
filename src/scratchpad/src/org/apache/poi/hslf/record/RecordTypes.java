@@ -62,7 +62,18 @@ public enum RecordTypes {
     NamedShow(1041,null),
     NamedShowSlides(1042,null),
     SheetProperties(1044,null),
-    RoundTripCustomTableStyles12Atom(1064,null),
+    OriginalMainMasterId(1052,null),
+    CompositeMasterId(1052,null),
+    RoundTripContentMasterInfo12(1054,null),
+    RoundTripShapeId12(1055,null),
+    RoundTripHFPlaceholder12(1056,RoundTripHFPlaceholder12::new),
+    RoundTripContentMasterId(1058,null),
+    RoundTripOArtTextStyles12(1059,null),
+    RoundTripShapeCheckSumForCustomLayouts12(1062,null),
+    RoundTripNotesMasterTextStyles12(1063,null),
+    RoundTripCustomTableStyles12(1064,null),
+
+
     List(2000,DocInfoListContainer::new),
     FontCollection(2005,FontCollection::new),
     BookmarkCollection(2019,null),
@@ -92,7 +103,7 @@ public enum RecordTypes {
     DefaultRulerAtom(4011,null),
     StyleTextProp9Atom(4012, StyleTextProp9Atom::new), //0x0FAC RT_StyleTextProp9Atom
     FontEntityAtom(4023,FontEntityAtom::new),
-    FontEmbeddedData(4024,null),
+    FontEmbeddedData(4024,FontEmbeddedData::new),
     CString(4026,CString::new),
     MetaFile(4033,null),
     ExOleObjAtom(4035,ExOleObjAtom::new),
@@ -158,17 +169,6 @@ public enum RecordTypes {
 
     // Records ~12050 seem to be related to Document Encryption
     DocumentEncryptionAtom(12052,DocumentEncryptionAtom::new),
-
-    OriginalMainMasterId(1052,null),
-    CompositeMasterId(1052,null),
-    RoundTripContentMasterInfo12(1054,null),
-    RoundTripShapeId12(1055,null),
-    RoundTripHFPlaceholder12(1056,RoundTripHFPlaceholder12::new),
-    RoundTripContentMasterId(1058,null),
-    RoundTripOArtTextStyles12(1059,null),
-    RoundTripShapeCheckSumForCustomLayouts12(1062,null),
-    RoundTripNotesMasterTextStyles12(1063,null),
-    RoundTripCustomTableStyles12(1064,null),
 
     // records greater then 0xF000 belong to with Microsoft Office Drawing format also known as Escher
     EscherDggContainer(0xF000,null),

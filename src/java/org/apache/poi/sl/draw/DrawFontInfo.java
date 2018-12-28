@@ -19,10 +19,7 @@
 
 package org.apache.poi.sl.draw;
 
-import org.apache.poi.common.usermodel.fonts.FontCharset;
-import org.apache.poi.common.usermodel.fonts.FontFamily;
 import org.apache.poi.common.usermodel.fonts.FontInfo;
-import org.apache.poi.common.usermodel.fonts.FontPitch;
 import org.apache.poi.util.Internal;
 
 /**
@@ -38,52 +35,7 @@ import org.apache.poi.util.Internal;
     }
     
     @Override
-    public Integer getIndex() {
-        return null;
-    }
-
-    @Override
-    public void setIndex(int index) {
-        throw new UnsupportedOperationException("DrawFontManagers FontInfo can't be changed.");
-    }
-
-    @Override
     public String getTypeface() {
         return typeface;
-    }
-
-    @Override
-    public void setTypeface(String typeface) {
-        throw new UnsupportedOperationException("DrawFontManagers FontInfo can't be changed.");
-    }
-
-    @Override
-    public FontCharset getCharset() {
-        return FontCharset.ANSI;
-    }
-
-    @Override
-    public void setCharset(FontCharset charset) {
-        throw new UnsupportedOperationException("DrawFontManagers FontInfo can't be changed.");
-    }
-
-    @Override
-    public FontFamily getFamily() {
-        return FontFamily.FF_SWISS;
-    }
-
-    @Override
-    public void setFamily(FontFamily family) {
-        throw new UnsupportedOperationException("DrawFontManagers FontInfo can't be changed.");
-    }
-
-    @Override
-    public FontPitch getPitch() {
-        return FontPitch.VARIABLE;
-    }
-
-    @Override
-    public void setPitch(FontPitch pitch) {
-        throw new UnsupportedOperationException("DrawFontManagers FontInfo can't be changed.");
     }
 }

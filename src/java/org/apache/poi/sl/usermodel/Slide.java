@@ -19,6 +19,7 @@ package org.apache.poi.sl.usermodel;
 
 import java.util.List;
 
+@SuppressWarnings("unused")
 public interface Slide<
     S extends Shape<S,P>,
     P extends TextParagraph<S,P,? extends TextRun>
@@ -82,7 +83,7 @@ public interface Slide<
      *
      * @since POI 4.0.0
      */
-    MasterSheet getSlideLayout();
+    MasterSheet<S,P> getSlideLayout();
 
     /**
      * @return the slide name, defaults to "Slide[slideNumber]"

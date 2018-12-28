@@ -17,25 +17,25 @@
 
 package org.apache.poi.hslf.record;
 
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.LittleEndian;
 import java.io.IOException;
 import java.io.OutputStream;
+
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.LittleEndianByteArrayInputStream;
 
 /**
  * A Document Atom (type 1001). Holds misc information on the PowerPoint
  * document, lots of them size and scale related.
- *
- * @author Nick Burch
  */
 
+@SuppressWarnings({"WeakerAccess", "unused"})
 public final class DocumentAtom extends RecordAtom
 {
 	//arbitrarily selected; may need to increase
 	private static final int MAX_RECORD_LENGTH = 1_000_000;
 
-	private byte[] _header;
-	private static long _type = 1001l;
+	private final byte[] _header = new byte[8];
+	private static long _type = RecordTypes.DocumentAtom.typeID;
 
 	private long slideSizeX; // PointAtom, assume 1st 4 bytes = X
 	private long slideSizeY; // PointAtom, assume 2nd 4 bytes = Y
@@ -87,6 +87,11 @@ public final class DocumentAtom extends RecordAtom
 		return saveWithFonts != 0;
 	}
 
+	/** Set the font embedding state */
+	public void setSaveWithFonts(boolean saveWithFonts) {
+		this.saveWithFonts = (byte)(saveWithFonts ? 1 : 0);
+	}
+
 	/** Have the placeholders on the title slide been omitted? */
 	public boolean getOmitTitlePlace() {
 		return omitTitlePlace != 0;
@@ -108,41 +113,41 @@ public final class DocumentAtom extends RecordAtom
 	/**
 	 * For the Document Atom
 	 */
-	protected DocumentAtom(byte[] source, int start, int len) {
-		// Sanity Checking
-		if(len < 48) { len = 48; }
+	/* package */ DocumentAtom(byte[] source, int start, int len) {
+		final int maxLen = Math.max(len, 48);
+		LittleEndianByteArrayInputStream leis =
+			new LittleEndianByteArrayInputStream(source, start, maxLen);
 
 		// Get the header
-		_header = new byte[8];
-		System.arraycopy(source,start,_header,0,8);
+		leis.readFully(_header);
 
 		// Get the sizes and zoom ratios
-		slideSizeX = LittleEndian.getInt(source,start+0+8);
-		slideSizeY = LittleEndian.getInt(source,start+4+8);
-		notesSizeX = LittleEndian.getInt(source,start+8+8);
-		notesSizeY = LittleEndian.getInt(source,start+12+8);
-		serverZoomFrom = LittleEndian.getInt(source,start+16+8);
-		serverZoomTo   = LittleEndian.getInt(source,start+20+8);
+		slideSizeX = leis.readInt();
+		slideSizeY = leis.readInt();
+		notesSizeX = leis.readInt();
+		notesSizeY = leis.readInt();
+		serverZoomFrom = leis.readInt();
+		serverZoomTo = leis.readInt();
 
 		// Get the master persists
-		notesMasterPersist = LittleEndian.getInt(source,start+24+8);
-		handoutMasterPersist = LittleEndian.getInt(source,start+28+8);
+		notesMasterPersist = leis.readInt();
+		handoutMasterPersist = leis.readInt();
 
 		// Get the ID of the first slide
-		firstSlideNum = LittleEndian.getShort(source,start+32+8);
+		firstSlideNum = leis.readShort();
 
 		// Get the slide size type
-		slideSizeType = LittleEndian.getShort(source,start+34+8);
+		slideSizeType = leis.readShort();
 
 		// Get the booleans as bytes
-		saveWithFonts = source[start+36+8];
-		omitTitlePlace = source[start+37+8];
-		rightToLeft = source[start+38+8];
-		showComments = source[start+39+8];
+		saveWithFonts = leis.readByte();
+		omitTitlePlace = leis.readByte();
+		rightToLeft = leis.readByte();
+		showComments = leis.readByte();
 
 		// If there's any other bits of data, keep them about
-		reserved = IOUtils.safelyAllocate(len-40-8, MAX_RECORD_LENGTH);
-		System.arraycopy(source,start+48,reserved,0,reserved.length);
+		reserved = IOUtils.safelyAllocate(maxLen-48, MAX_RECORD_LENGTH);
+		leis.readFully(reserved);
 	}
 
 	/**

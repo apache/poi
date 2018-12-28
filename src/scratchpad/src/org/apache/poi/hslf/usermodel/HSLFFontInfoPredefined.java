@@ -44,25 +44,10 @@ public enum HSLFFontInfoPredefined implements FontInfo {
         this.pitch = pitch;
         this.family = family;
     }
-    
-    @Override
-    public Integer getIndex() {
-        return -1;
-    }
-
-    @Override
-    public void setIndex(int index) {
-        throw new UnsupportedOperationException("Predefined enum can't be changed.");
-    }
 
     @Override
     public String getTypeface() {
         return typeface;
-    }
-
-    @Override
-    public void setTypeface(String typeface) {
-        throw new UnsupportedOperationException("Predefined enum can't be changed.");
     }
 
     @Override
@@ -71,27 +56,12 @@ public enum HSLFFontInfoPredefined implements FontInfo {
     }
 
     @Override
-    public void setCharset(FontCharset charset) {
-        throw new UnsupportedOperationException("Predefined enum can't be changed.");
-    }
-
-    @Override
     public FontFamily getFamily() {
         return family;
     }
 
     @Override
-    public void setFamily(FontFamily family) {
-        throw new UnsupportedOperationException("Predefined enum can't be changed.");
-    }
-
-    @Override
     public FontPitch getPitch() {
         return pitch;
-    }
-
-    @Override
-    public void setPitch(FontPitch pitch) {
-        throw new UnsupportedOperationException("Predefined enum can't be changed.");
     }
 }

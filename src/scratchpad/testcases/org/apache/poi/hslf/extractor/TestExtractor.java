@@ -29,7 +29,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.BitSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.usermodel.HSLFObjectShape;
@@ -52,12 +54,22 @@ public final class TestExtractor {
     /**
      * Extractor primed on the 2 page basic test data
      */
-    private static final String expectText = "This is a test title\nThis is a test subtitle\nThis is on page 1\nThis is the title on page 2\nThis is page two\nIt has several blocks of text\nNone of them have formatting\n";
+    private static final String EXPECTED_PAGE1 =
+        "This is a test title\n" +
+        "This is a test subtitle\n\n" +
+        "This is on page 1\n";
 
-    /**
-     * Extractor primed on the 1 page but text-box'd test data
-     */
-    private static final String expectText2 = "Hello, World!!!\nI am just a poor boy\nThis is Times New Roman\nPlain Text \n";
+    private static final String EXPECTED_PAGE2 =
+        "This is the title on page 2\n" +
+        "This is page two\n\n" +
+        "It has several blocks of text\n\n" +
+        "None of them have formatting\n";
+
+    private static final String NOTES_PAGE1 =
+        "\nThese are the notes for page 1\n";
+
+    private static final String NOTES_PAGE2 =
+        "\nThese are the notes on page two, again lacking formatting\n";
 
     /**
      * Where our embeded files live
@@ -75,8 +87,15 @@ public final class TestExtractor {
     public void testReadSheetText() throws IOException {
         // Basic 2 page example
         try (SlideShowExtractor ppe = openExtractor("basic_test_ppt_file.ppt")) {
-            assertEquals(expectText, ppe.getText());
+            assertEquals(EXPECTED_PAGE1+EXPECTED_PAGE2, ppe.getText());
         }
+
+        // Extractor primed on the 1 page but text-box'd test data
+        final String expectText2 =
+            "Hello, World!!!\n" +
+            "I am just a poor boy\n" +
+            "This is Times New Roman\n" +
+            "Plain Text \n";
 
         // 1 page example with text boxes
         try (SlideShowExtractor ppe = openExtractor("with_textbox.ppt")) {
@@ -92,8 +111,7 @@ public final class TestExtractor {
             ppe.setSlidesByDefault(false);
             ppe.setMasterByDefault(false);
             String notesText = ppe.getText();
-            String expText = "\nThese are the notes for page 1\n\nThese are the notes on page two, again lacking formatting\n";
-            assertEquals(expText, notesText);
+            assertEquals(NOTES_PAGE1+NOTES_PAGE2, notesText);
         }
 
         // Other one doesn't have notes
@@ -109,14 +127,8 @@ public final class TestExtractor {
 
     @Test
     public void testReadBoth() throws IOException {
-        String[] slText = new String[]{
-                "This is a test title\nThis is a test subtitle\nThis is on page 1\n",
-                "This is the title on page 2\nThis is page two\nIt has several blocks of text\nNone of them have formatting\n"
-        };
-        String[] ntText = new String[]{
-                "\nThese are the notes for page 1\n",
-                "\nThese are the notes on page two, again lacking formatting\n"
-        };
+        String[] slText = { EXPECTED_PAGE1, EXPECTED_PAGE2 };
+        String[] ntText = { NOTES_PAGE1, NOTES_PAGE2 };
 
         try (SlideShowExtractor ppe = openExtractor("basic_test_ppt_file.ppt")) {
             ppe.setSlidesByDefault(true);
@@ -165,8 +177,8 @@ public final class TestExtractor {
             final DirectoryNode root = fs.getRoot();
 
             final String[] TEST_SET = {
-                "MBD0000A3B6", "Sample PowerPoint file\nThis is the 1st file\nNot much too it\n",
-                "MBD0000A3B3", "Sample PowerPoint file\nThis is the 2nd file\nNot much too it either\n"
+                "MBD0000A3B6", "Sample PowerPoint file\nThis is the 1st file\n\nNot much too it\n",
+                "MBD0000A3B3", "Sample PowerPoint file\nThis is the 2nd file\n\nNot much too it either\n"
             };
 
             for (int i=0; i<TEST_SET.length; i+=2) {
@@ -386,7 +398,7 @@ public final class TestExtractor {
             // Open directly
             try (SlideShow<?,?> ppt = SlideShowFactory.create(npoifs.getRoot());
                 SlideShowExtractor<?,?> extractor = new SlideShowExtractor<>(ppt)) {
-                assertEquals(expectText, extractor.getText());
+                assertEquals(EXPECTED_PAGE1+EXPECTED_PAGE2, extractor.getText());
             }
         }
     }
@@ -456,5 +468,20 @@ public final class TestExtractor {
 
     private static int countMatches(final String base, final String find) {
         return base.split(find).length-1;
+    }
+
+    @Test
+    public void glyphCounting() throws IOException {
+        String[] expected = {
+            "Times New Roman", "\t\n ,-./01234679:ABDEFGILMNOPRSTVWabcdefghijklmnoprstuvwxyz\u00F3\u201C\u201D",
+            "Arial", " Lacdilnost"
+        };
+        try (SlideShowExtractor ppt = openExtractor("45543.ppt")) {
+            for (int i=0; i<expected.length; i+=2) {
+                BitSet l = ppt.getCodepoints(expected[i], null, null);
+                String s = l.stream().mapToObj(Character::toChars).map(String::valueOf).collect(Collectors.joining());
+                assertEquals(expected[i+1], s);
+            }
+        }
     }
 }

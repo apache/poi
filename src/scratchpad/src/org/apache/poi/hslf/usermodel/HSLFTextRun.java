@@ -44,8 +44,9 @@ import org.apache.poi.util.POILogger;
  * Represents a run of text, all with the same style
  *
  */
+@SuppressWarnings({"WeakerAccess", "Duplicates", "unused"})
 public final class HSLFTextRun implements TextRun {
-	protected POILogger logger = POILogFactory.getLogger(this.getClass());
+	private static final POILogger logger = POILogFactory.getLogger(HSLFTextRun.class);
 
 	/** The TextRun we belong to */
 	private HSLFTextParagraph parentParagraph;
@@ -132,17 +133,17 @@ public final class HSLFTextRun implements TextRun {
 		return getFlag(index);
 	}
 
-	protected boolean getFlag(int index) {
+	boolean getFlag(int index) {
 		BitMaskTextProp prop = (characterStyle == null) ? null : characterStyle.findByName(CharFlagsTextProp.NAME);
 
 		if (prop == null || !prop.getSubPropMatches()[index]) {
-		    prop = getMasterProp(CharFlagsTextProp.NAME);
+		    prop = getMasterProp();
 		}
 
-		return prop == null ? false : prop.getSubValue(index);
+		return prop != null && prop.getSubValue(index);
 	}
 
-	private <T extends TextProp> T getMasterProp(final String name) {
+	private <T extends TextProp> T getMasterProp() {
         final int txtype = parentParagraph.getRunType();
         final HSLFSheet sheet = parentParagraph.getSheet();
         if (sheet == null) {
@@ -155,7 +156,8 @@ public final class HSLFTextRun implements TextRun {
             logger.log(POILogger.WARN, "MasterSheet is not available");
             return null;
         }
-        
+
+        String name = CharFlagsTextProp.NAME;
         final TextPropCollection col = master.getPropCollection(txtype, parentParagraph.getIndentLevel(), name, true);
         return (col == null) ? null : col.findByName(name);
 	}
@@ -302,7 +304,7 @@ public final class HSLFTextRun implements TextRun {
 
 	@Override
 	public void setFontFamily(String typeface) {
-	    setFontInfo(new HSLFFontInfo(typeface), FontGroup.LATIN);
+		setFontFamily(typeface, FontGroup.LATIN);
 	}
 
     @Override
@@ -330,7 +332,7 @@ public final class HSLFTextRun implements TextRun {
         switch (fg) {
         default:
         case LATIN:
-            propName = "font.index";
+            propName = "ansi.font.index";
             break;
         case COMPLEX_SCRIPT:
             // TODO: implement TextCFException10 structure
@@ -350,6 +352,7 @@ public final class HSLFTextRun implements TextRun {
         }
 
 
+		setCharTextPropVal("font.index", fontIdx);
         setCharTextPropVal(propName, fontIdx);
     }
 
@@ -435,8 +438,8 @@ public final class HSLFTextRun implements TextRun {
 		setFontColor(rgb);
 	}
 
-    protected void setFlag(int index, boolean value) {
-        BitMaskTextProp prop = (BitMaskTextProp)characterStyle.addWithName(CharFlagsTextProp.NAME);
+    private void setFlag(int index, boolean value) {
+        BitMaskTextProp prop = characterStyle.addWithName(CharFlagsTextProp.NAME);
         prop.setSubValue(value, index);
     }
 
@@ -469,7 +472,7 @@ public final class HSLFTextRun implements TextRun {
      *
      * @param link the hyperlink
      */
-    protected void setHyperlink(HSLFHyperlink link) {
+    /* package */ void setHyperlink(HSLFHyperlink link) {
         this.link = link;
     }
 
@@ -521,4 +524,9 @@ public final class HSLFTextRun implements TextRun {
     private FontGroup safeFontGroup(FontGroup fontGroup) {
         return (fontGroup != null) ? fontGroup : FontGroup.getFontGroupFirst(getRawText());
     }
+
+	@Override
+	public HSLFTextParagraph getParagraph() {
+		return parentParagraph;
+	}
 }
