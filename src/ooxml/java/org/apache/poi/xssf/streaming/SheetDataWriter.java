@@ -262,6 +262,20 @@ public class SheetDataWriter implements Closeable {
                 break;
             }
             case FORMULA: {
+                switch(cell.getCachedFormulaResultType()) {
+                    case NUMERIC:
+                        writeAttribute("t", "n");
+                        break;
+                    case STRING:
+                        writeAttribute("t", STCellType.S.toString());
+                        break;
+                    case BOOLEAN:
+                        writeAttribute("t", "b");
+                        break;
+                    case ERROR:
+                        writeAttribute("t", "e");
+                        break;
+                }
                 _out.write("><f>");
                 outputQuotedString(cell.getCellFormula());
                 _out.write("</f>");
@@ -274,8 +288,27 @@ public class SheetDataWriter implements Closeable {
                             _out.write("</v>");
                         }
                         break;
-                    default:
+                    case STRING:
+                        String value = cell.getStringCellValue();
+                        if(value != null && !value.isEmpty()) {
+                            _out.write("<v>");
+                            _out.write(value);
+                            _out.write("</v>");
+                        }
                         break;
+                    case BOOLEAN:
+                        _out.write("><v>");
+                        _out.write(cell.getBooleanCellValue() ? "1" : "0");
+                        _out.write("</v>");
+                        break;
+                    case ERROR: {
+                        FormulaError error = FormulaError.forInt(cell.getErrorCellValue());
+
+                        _out.write("><v>");
+                        _out.write(error.getString());
+                        _out.write("</v>");
+                        break;
+                    }
                 }
                 break;
             }

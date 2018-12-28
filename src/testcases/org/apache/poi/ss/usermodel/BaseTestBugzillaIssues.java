@@ -393,7 +393,7 @@ public abstract class BaseTestBugzillaIssues {
         cell0.setCellValue(longValue);
 
         // autoSize will fail if required fonts are not installed, skip this test then
-        Font font = wb.getFontAt(cell0.getCellStyle().getFontIndex());
+        Font font = wb.getFontAt(cell0.getCellStyle().getFontIndexAsInt());
         Assume.assumeTrue("Cannot verify autoSizeColumn() because the necessary Fonts are not installed on this machine: " + font,
                 SheetUtil.canComputeColumnWidth(font));
 
@@ -745,79 +745,79 @@ public abstract class BaseTestBugzillaIssues {
         // First up, check that TRUE and ISLOGICAL both behave
         cf.setCellFormula("TRUE()");
         cf = evaluateCell(wb, cf);
-        assertEquals(true, cf.getBooleanCellValue());
+        assertTrue(cf.getBooleanCellValue());
 
         cf.setCellFormula("ISLOGICAL(TRUE())");
         cf = evaluateCell(wb, cf);
-        assertEquals(true, cf.getBooleanCellValue());
+        assertTrue(cf.getBooleanCellValue());
 
         cf.setCellFormula("ISLOGICAL(4)");
         cf = evaluateCell(wb, cf);
-        assertEquals(false, cf.getBooleanCellValue());
+        assertFalse(cf.getBooleanCellValue());
 
 
         // Now, check ISNUMBER / ISTEXT / ISNONTEXT
         cf.setCellFormula("ISNUMBER(A1)");
         cf = evaluateCell(wb, cf);
-        assertEquals(true, cf.getBooleanCellValue());
+        assertTrue(cf.getBooleanCellValue());
 
         cf.setCellFormula("ISNUMBER(B1)");
         cf = evaluateCell(wb, cf);
-        assertEquals(false, cf.getBooleanCellValue());
+        assertFalse(cf.getBooleanCellValue());
 
         cf.setCellFormula("ISNUMBER(C1)");
         cf = evaluateCell(wb, cf);
-        assertEquals(false, cf.getBooleanCellValue());
+        assertFalse(cf.getBooleanCellValue());
 
         cf.setCellFormula("ISNUMBER(D1)");
         cf = evaluateCell(wb, cf);
-        assertEquals(false, cf.getBooleanCellValue());
+        assertFalse(cf.getBooleanCellValue());
 
         cf.setCellFormula("ISNUMBER(E1)");
         cf = evaluateCell(wb, cf);
-        assertEquals(false, cf.getBooleanCellValue());
+        assertFalse(cf.getBooleanCellValue());
 
 
         cf.setCellFormula("ISTEXT(A1)");
         cf = evaluateCell(wb, cf);
-        assertEquals(false, cf.getBooleanCellValue());
+        assertFalse(cf.getBooleanCellValue());
 
         cf.setCellFormula("ISTEXT(B1)");
         cf = evaluateCell(wb, cf);
-        assertEquals(true, cf.getBooleanCellValue());
+        assertTrue(cf.getBooleanCellValue());
 
         cf.setCellFormula("ISTEXT(C1)");
         cf = evaluateCell(wb, cf);
-        assertEquals(true, cf.getBooleanCellValue());
+        assertTrue(cf.getBooleanCellValue());
 
         cf.setCellFormula("ISTEXT(D1)");
         cf = evaluateCell(wb, cf);
-        assertEquals(false, cf.getBooleanCellValue());
+        assertFalse(cf.getBooleanCellValue());
 
         cf.setCellFormula("ISTEXT(E1)");
         cf = evaluateCell(wb, cf);
-        assertEquals(false, cf.getBooleanCellValue());
+        assertFalse(cf.getBooleanCellValue());
 
 
         cf.setCellFormula("ISNONTEXT(A1)");
         cf = evaluateCell(wb, cf);
-        assertEquals(true, cf.getBooleanCellValue());
+        assertTrue(cf.getBooleanCellValue());
 
         cf.setCellFormula("ISNONTEXT(B1)");
         cf = evaluateCell(wb, cf);
-        assertEquals(false, cf.getBooleanCellValue());
+        assertFalse(cf.getBooleanCellValue());
 
         cf.setCellFormula("ISNONTEXT(C1)");
         cf = evaluateCell(wb, cf);
-        assertEquals(false, cf.getBooleanCellValue());
+        assertFalse(cf.getBooleanCellValue());
 
         cf.setCellFormula("ISNONTEXT(D1)");
         cf = evaluateCell(wb, cf);
-        assertEquals(true, cf.getBooleanCellValue());
+        assertTrue(cf.getBooleanCellValue());
 
         cf.setCellFormula("ISNONTEXT(E1)");
         cf = evaluateCell(wb, cf);
-        assertEquals(true, cf.getBooleanCellValue()); // Blank and Null the same
+        assertTrue(cf.getBooleanCellValue()); // Blank and Null the same
 
 
         // Next up, SEARCH on its own
@@ -841,23 +841,23 @@ public abstract class BaseTestBugzillaIssues {
         // Finally, bring it all together
         cf.setCellFormula("ISNUMBER(SEARCH(\"am\", A1))");
         cf = evaluateCell(wb, cf);
-        assertEquals(false, cf.getBooleanCellValue());
+        assertFalse(cf.getBooleanCellValue());
 
         cf.setCellFormula("ISNUMBER(SEARCH(\"am\", B1))");
         cf = evaluateCell(wb, cf);
-        assertEquals(true, cf.getBooleanCellValue());
+        assertTrue(cf.getBooleanCellValue());
 
         cf.setCellFormula("ISNUMBER(SEARCH(\"am\", C1))");
         cf = evaluateCell(wb, cf);
-        assertEquals(false, cf.getBooleanCellValue());
+        assertFalse(cf.getBooleanCellValue());
 
         cf.setCellFormula("ISNUMBER(SEARCH(\"am\", D1))");
         cf = evaluateCell(wb, cf);
-        assertEquals(false, cf.getBooleanCellValue());
+        assertFalse(cf.getBooleanCellValue());
 
         cf.setCellFormula("ISNUMBER(SEARCH(\"am\", E1))");
         cf = evaluateCell(wb, cf);
-        assertEquals(false, cf.getBooleanCellValue());
+        assertFalse(cf.getBooleanCellValue());
 
         wb.close();
     }
@@ -1230,8 +1230,7 @@ public abstract class BaseTestBugzillaIssues {
         cell.setCellValue("somevalue");
 
         value = cell.getStringCellValue();
-        assertTrue("can set value afterwards: " + value,
-                value.equals("somevalue"));
+        assertEquals("can set value afterwards: " + value, "somevalue", value);
 
         // verify that the null-value is actually set even if there was some value in the cell before
         cell.setCellValue((String)null);
@@ -1282,18 +1281,30 @@ public abstract class BaseTestBugzillaIssues {
         // Check read ok, and re-evaluate fine
         cell = row.getCell(5);
         assertEquals("ab", cell.getStringCellValue());
+        assertEquals(CellType.FORMULA, cell.getCellType());
+        assertEquals("IF(A1<>\"\",MID(A1,1,2),\" \")", cell.getCellFormula());
         ev.evaluateFormulaCell(cell);
         assertEquals("ab", cell.getStringCellValue());
+        assertEquals(CellType.FORMULA, cell.getCellType());
+        assertEquals("IF(A1<>\"\",MID(A1,1,2),\" \")", cell.getCellFormula());
 
         cell = row.getCell(6);
         assertEquals("empty", cell.getStringCellValue());
+        assertEquals(CellType.FORMULA, cell.getCellType());
+        assertEquals("IF(B1<>\"\",MID(A1,1,2),\"empty\")", cell.getCellFormula());
         ev.evaluateFormulaCell(cell);
         assertEquals("empty", cell.getStringCellValue());
+        assertEquals(CellType.FORMULA, cell.getCellType());
+        assertEquals("IF(B1<>\"\",MID(A1,1,2),\"empty\")", cell.getCellFormula());
 
         cell = row.getCell(7);
         assertEquals("ab", cell.getStringCellValue());
+        assertEquals(CellType.FORMULA, cell.getCellType());
+        assertEquals("IF(A1<>\"\",IF(C1<>\"\",MID(A1,1,2),\"c1\"),\"c2\")", cell.getCellFormula());
         ev.evaluateFormulaCell(cell);
         assertEquals("ab", cell.getStringCellValue());
+        assertEquals(CellType.FORMULA, cell.getCellType());
+        assertEquals("IF(A1<>\"\",IF(C1<>\"\",MID(A1,1,2),\"c1\"),\"c2\")", cell.getCellFormula());
         wb2.close();
     }
 
