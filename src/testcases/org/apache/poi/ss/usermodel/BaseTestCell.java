@@ -1062,6 +1062,49 @@ public abstract class BaseTestCell {
     }
 
     @Test
+    public void test62216() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Cell instance = wb.createSheet().createRow(0).createCell(0);
+            String formula = "2";
+            instance.setCellFormula(formula);
+            instance.setCellErrorValue(FormulaError.NAME.getCode());
+
+            assertEquals(formula, instance.getCellFormula());
+        }
+    }
+
+    @Test
+    public void testSetNullValues() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Cell cell = wb.createSheet("test").createRow(0).createCell(0);
+
+        cell.setCellValue((Calendar)null);
+        assertEquals(CellType.BLANK, cell.getCellType());
+        assertEquals("", cell.getStringCellValue());
+
+        cell.setCellValue((Date)null);
+        assertEquals(CellType.BLANK, cell.getCellType());
+        assertEquals("", cell.getStringCellValue());
+
+        cell.setCellValue((String)null);
+        assertEquals(CellType.BLANK, cell.getCellType());
+        assertEquals("", cell.getStringCellValue());
+
+        assertEquals(CellType.BLANK, cell.getCellType());
+        assertEquals("", cell.getStringCellValue());
+
+        cell.setCellValue((RichTextString) null);
+        assertEquals(CellType.BLANK, cell.getCellType());
+        assertEquals("", cell.getStringCellValue());
+
+        cell.setCellValue((String)null);
+        assertEquals(CellType.BLANK, cell.getCellType());
+        assertEquals("", cell.getStringCellValue());
+
+        wb.close();
+    }
+
+    @Test
     public void testFormulaSetValueDoesNotChangeType() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet();
