@@ -50,7 +50,6 @@ import org.apache.poi.poifs.filesystem.Ole10Native;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.sl.usermodel.MasterSheet;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
-import org.apache.poi.sl.usermodel.Resources;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
@@ -892,6 +891,21 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 	}
 
 	/**
+	 * Add a font in this presentation and also embed its font data
+	 *
+	 * @param fontData the EOT font data as stream
+	 *
+	 * @return the registered HSLFFontInfo - the font info object is unique based on the typeface
+	 *
+	 * @since POI 4.1.0
+	 */
+	public HSLFFontInfo addFont(InputStream fontData) throws IOException {
+		Document doc = getDocumentRecord();
+		doc.getDocumentAtom().setSaveWithFonts(true);
+		return doc.getEnvironment().getFontCollection().addFont(fontData);
+	}
+
+	/**
 	 * Get a font by index
 	 *
 	 * @param idx
@@ -910,6 +924,11 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 	 */
 	public int getNumberOfFonts() {
 		return getDocumentRecord().getEnvironment().getFontCollection().getNumberOfFonts();
+	}
+
+	@Override
+	public List<HSLFFontInfo> getFonts() {
+		return getDocumentRecord().getEnvironment().getFontCollection().getFonts();
 	}
 
 	/**
@@ -1124,12 +1143,6 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
     @Override
     public MasterSheet<HSLFShape,HSLFTextParagraph> createMasterSheet() {
 		// TODO implement or throw exception if not supported
-        return null;
-    }
-
-    @Override
-    public Resources getResources() {
-        // TODO implement or throw exception if not supported
         return null;
     }
 

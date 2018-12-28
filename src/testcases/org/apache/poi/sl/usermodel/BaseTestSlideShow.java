@@ -17,6 +17,7 @@
 package org.apache.poi.sl.usermodel;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
@@ -29,20 +30,24 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.common.usermodel.fonts.FontInfo;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.TabStop.TabStopType;
 import org.junit.Test;
 
-public abstract class BaseTestSlideShow {
+public abstract class BaseTestSlideShow<
+        S extends Shape<S,P>,
+        P extends TextParagraph<S,P,? extends TextRun>
+> {
     protected static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
     
-    public abstract SlideShow<?, ?> createSlideShow();
+    public abstract SlideShow<S,P> createSlideShow();
 
-    public abstract SlideShow<?, ?> reopen(SlideShow<?, ?> show);
+    public abstract SlideShow<S,P> reopen(SlideShow<S,P> show);
     
     @Test
     public void addPicture_File() throws IOException {
-        SlideShow<?,?> show = createSlideShow();
+        SlideShow<S,P> show = createSlideShow();
         File f = slTests.getFile("clock.jpg");
         
         assertEquals(0, show.getPictureData().size());
@@ -55,26 +60,18 @@ public abstract class BaseTestSlideShow {
     
     @Test
     public void addPicture_Stream() throws IOException {
-        SlideShow<?,?> show = createSlideShow();
-        try {
-            InputStream stream = slTests.openResourceAsStream("clock.jpg");
-            try {
-                assertEquals(0, show.getPictureData().size());
-                PictureData picture = show.addPicture(stream, PictureType.JPEG);
-                assertEquals(1, show.getPictureData().size());
-                assertSame(picture, show.getPictureData().get(0));
-
-            } finally {
-                stream.close();
-            }
-        } finally {
-            show.close();
+        try (SlideShow<S,P> show = createSlideShow();
+             InputStream stream = slTests.openResourceAsStream("clock.jpg")) {
+            assertEquals(0, show.getPictureData().size());
+            PictureData picture = show.addPicture(stream, PictureType.JPEG);
+            assertEquals(1, show.getPictureData().size());
+            assertSame(picture, show.getPictureData().get(0));
         }
     }
     
     @Test
     public void addPicture_ByteArray() throws IOException {
-        SlideShow<?,?> show = createSlideShow();
+        SlideShow<S,P> show = createSlideShow();
         byte[] data = slTests.readFile("clock.jpg");
         
         assertEquals(0, show.getPictureData().size());
@@ -87,7 +84,7 @@ public abstract class BaseTestSlideShow {
     
     @Test
     public void findPicture() throws IOException {
-        SlideShow<?,?> show = createSlideShow();
+        SlideShow<S,P> show = createSlideShow();
         byte[] data = slTests.readFile("clock.jpg");
         
         assertNull(show.findPictureData(data));
@@ -101,11 +98,11 @@ public abstract class BaseTestSlideShow {
     
     @Test
     public void addTabStops() throws IOException {
-        try (final SlideShow<?,?> show1 = createSlideShow()) {
+        try (final SlideShow<S,P> show1 = createSlideShow()) {
             // first set the TabStops in the Master sheet
-            final MasterSheet<?, ?> master1 = show1.getSlideMasters().get(0);
-            final AutoShape<?, ?> master1_as = (AutoShape<?,?>)master1.getPlaceholder(Placeholder.BODY);
-            final TextParagraph<?, ?, ? extends TextRun> master1_tp = master1_as.getTextParagraphs().get(0);
+            final MasterSheet<S,P> master1 = show1.getSlideMasters().get(0);
+            final AutoShape<S,P> master1_as = (AutoShape<S,P>)master1.getPlaceholder(Placeholder.BODY);
+            final P master1_tp = master1_as.getTextParagraphs().get(0);
             master1_tp.clearTabStops();
             int i1 = 0;
             for (final TabStopType tst : TabStopType.values()) {
@@ -114,11 +111,11 @@ public abstract class BaseTestSlideShow {
             }
             
             // then set it on a normal slide
-            final Slide<?,?> slide1 = show1.createSlide();
-            final AutoShape<?, ?> slide1_as = slide1.createAutoShape();
+            final Slide<S,P> slide1 = show1.createSlide();
+            final AutoShape<S,P> slide1_as = slide1.createAutoShape();
             slide1_as.setText("abc");
             slide1_as.setAnchor(new Rectangle2D.Double(100,100,100,100));
-            final TextParagraph<?, ?, ? extends TextRun> slide1_tp = slide1_as.getTextParagraphs().get(0);
+            final P slide1_tp = slide1_as.getTextParagraphs().get(0);
             slide1_tp.getTextRuns().get(0).setFontColor(new Color(0x563412));
             slide1_tp.clearTabStops();
             int i2 = 0;
@@ -127,10 +124,10 @@ public abstract class BaseTestSlideShow {
                 i2++;
             }
             
-            try (final SlideShow<?, ?> show2 = reopen(show1)) {
-                final MasterSheet<?, ?> master2 = show2.getSlideMasters().get(0);
-                final AutoShape<?, ?> master2_as = (AutoShape<?,?>)master2.getPlaceholder(Placeholder.BODY);
-                final TextParagraph<?, ?, ? extends TextRun> master2_tp = master2_as.getTextParagraphs().get(0);
+            try (final SlideShow<S,P> show2 = reopen(show1)) {
+                final MasterSheet<S,P> master2 = show2.getSlideMasters().get(0);
+                final AutoShape<S,P> master2_as = (AutoShape<S,P>)master2.getPlaceholder(Placeholder.BODY);
+                final P master2_tp = master2_as.getTextParagraphs().get(0);
                 final List<? extends TabStop> master2_tabStops = master2_tp.getTabStops();
                 assertNotNull(master2_tabStops);
                 int i3 = 0;
@@ -142,9 +139,10 @@ public abstract class BaseTestSlideShow {
                 }
                 
                 
-                final Slide<?,?> slide2 = show2.getSlides().get(0);
-                final AutoShape<?,?> slide2_as = (AutoShape<?,?>)slide2.getShapes().get(0);
-                final TextParagraph<?, ?, ? extends TextRun> slide2_tp = slide2_as.getTextParagraphs().get(0);
+                final Slide<S,P> slide2 = show2.getSlides().get(0);
+                @SuppressWarnings("unchecked")
+                final AutoShape<S,P> slide2_as = (AutoShape<S,P>)slide2.getShapes().get(0);
+                final P slide2_tp = slide2_as.getTextParagraphs().get(0);
                 final List<? extends TabStop> slide2_tabStops = slide2_tp.getTabStops();
                 assertNotNull(slide2_tabStops);
                 int i4 = 0;
@@ -162,17 +160,34 @@ public abstract class BaseTestSlideShow {
     public void shapeAndSlideName() throws IOException {
         final String file = "SampleShow.ppt"+(getClass().getSimpleName().contains("XML")?"x":"");
         try (final InputStream is = slTests.openResourceAsStream(file);
-             final SlideShow<? extends Shape, ?> ppt = SlideShowFactory.create(is)) {
-            final List<? extends Shape> shapes1 = ppt.getSlides().get(0).getShapes();
+             final SlideShow<S,P> ppt = SlideShowFactory.create(is)) {
+            final List<S> shapes1 = ppt.getSlides().get(0).getShapes();
             assertEquals("The Title", shapes1.get(0).getShapeName());
             assertEquals("Another Subtitle", shapes1.get(1).getShapeName());
-            final List<? extends Shape> shapes2 = ppt.getSlides().get(1).getShapes();
+            final List<S> shapes2 = ppt.getSlides().get(1).getShapes();
             assertEquals("Title 1", shapes2.get(0).getShapeName());
             assertEquals("Content Placeholder 2", shapes2.get(1).getShapeName());
 
-            for (final Slide<?,?> slide : ppt.getSlides()) {
+            for (final Slide<S,P> slide : ppt.getSlides()) {
                 final String expected = slide.getSlideNumber()==1 ? "FirstSlide" : "Slide2";
                 assertEquals(expected, slide.getSlideName());
+            }
+        }
+    }
+
+    @Test
+    public void addFont() throws IOException {
+        try (SlideShow<S,P> ppt = createSlideShow()) {
+            ppt.createSlide();
+            try (InputStream fontData = slTests.openResourceAsStream("font.fntdata")) {
+                ppt.addFont(fontData);
+            }
+
+            try (SlideShow<S, P> ppt2 = reopen(ppt)) {
+                List<? extends FontInfo> fonts = ppt2.getFonts();
+                assertFalse(fonts.isEmpty());
+                FontInfo fi = fonts.get(fonts.size()-1);
+                assertEquals("Harlow Solid Italic", fi.getTypeface());
             }
         }
     }

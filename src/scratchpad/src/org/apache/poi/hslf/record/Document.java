@@ -87,11 +87,11 @@ public final class Document extends PositionDependentRecordContainer
 	 *  Master Slides
 	 */
 	public SlideListWithText getMasterSlideListWithText() {
-        for (int i = 0; i < slwts.length; i++) {
-            if(slwts[i].getInstance() == SlideListWithText.MASTER) {
-                return slwts[i];
-            }
-        }
+		for (SlideListWithText slwt : slwts) {
+			if (slwt.getInstance() == SlideListWithText.MASTER) {
+				return slwt;
+			}
+		}
         return null;
     }
 
@@ -100,11 +100,11 @@ public final class Document extends PositionDependentRecordContainer
 	 *  Slides, or null if there isn't one
 	 */
 	public SlideListWithText getSlideSlideListWithText() {
-        for (int i = 0; i < slwts.length; i++) {
-            if(slwts[i].getInstance() == SlideListWithText.SLIDES) {
-                return slwts[i];
-            }
-        }
+		for (SlideListWithText slwt : slwts) {
+			if (slwt.getInstance() == SlideListWithText.SLIDES) {
+				return slwt;
+			}
+		}
 		return null;
     }
 	/**
@@ -112,11 +112,11 @@ public final class Document extends PositionDependentRecordContainer
 	 *  notes, or null if there isn't one
 	 */
 	public SlideListWithText getNotesSlideListWithText() {
-        for (int i = 0; i < slwts.length; i++) {
-            if(slwts[i].getInstance() == SlideListWithText.NOTES) {
-                return slwts[i];
-            }
-        }
+		for (SlideListWithText slwt : slwts) {
+			if (slwt.getInstance() == SlideListWithText.NOTES) {
+				return slwt;
+			}
+		}
 		return null;
     }
 
@@ -124,7 +124,7 @@ public final class Document extends PositionDependentRecordContainer
 	/**
 	 * Set things up, and find our more interesting children
 	 */
-	protected Document(byte[] source, int start, int len) {
+	/* package */ Document(byte[] source, int start, int len) {
 		// Grab the header
 		_header = new byte[8];
 		System.arraycopy(source,start,_header,0,8);
@@ -186,7 +186,7 @@ public final class Document extends PositionDependentRecordContainer
 		// The new SlideListWithText should go in
 		//  just before the EndDocumentRecord
 		Record endDoc = _children[_children.length - 1];
-		if(endDoc.getRecordType() == RecordTypes.RoundTripCustomTableStyles12Atom.typeID) {
+		if(endDoc.getRecordType() == RecordTypes.RoundTripCustomTableStyles12.typeID) {
 		    // last record can optionally be a RoundTripCustomTableStyles12Atom
 		    endDoc = _children[_children.length - 2];
 		}
@@ -213,7 +213,7 @@ public final class Document extends PositionDependentRecordContainer
                 removeChild(slwt);
             }
         }
-        slwts = lst.toArray(new SlideListWithText[lst.size()]);
+        slwts = lst.toArray(new SlideListWithText[0]);
     }
 
 	/**

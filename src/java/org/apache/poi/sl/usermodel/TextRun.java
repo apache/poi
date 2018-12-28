@@ -27,6 +27,7 @@ import org.apache.poi.util.Internal;
 /**
  * Some text.
  */
+@SuppressWarnings("unused")
 public interface TextRun {
     /**
      * Type of text capitals
@@ -243,4 +244,11 @@ public interface TextRun {
      */
     @Internal
     FieldType getFieldType();
+
+    /**
+     * @return the paragraph which contains this TextRun
+     *
+     * @since POI 4.1.0
+     */
+    TextParagraph<?,?,?> getParagraph();
 }

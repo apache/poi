@@ -28,6 +28,7 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
+import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.POILogFactory;
@@ -629,16 +630,6 @@ public class XSLFTextRun implements TextRun {
         }
 
         @Override
-        public Integer getIndex() {
-            return null;
-        }
-
-        @Override
-        public void setIndex(int index) {
-            throw new UnsupportedOperationException("setIndex not supported by XSLFFontInfo.");
-        }
-
-        @Override
         public String getTypeface() {
             CTTextFont tf = getXmlObject(false);
             return (tf != null && tf.isSetTypeface()) ? tf.getTypeface() : null;
@@ -828,5 +819,10 @@ public class XSLFTextRun implements TextRun {
 
             return font;
         }
+    }
+
+    @Override
+    public XSLFTextParagraph getParagraph() {
+        return _p;
     }
 }

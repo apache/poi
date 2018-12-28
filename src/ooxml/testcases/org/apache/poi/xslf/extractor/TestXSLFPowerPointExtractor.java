@@ -59,7 +59,7 @@ public class TestXSLFPowerPointExtractor {
 
             // Check Basics
             assertStartsWith(text, "Lorem ipsum dolor sit amet\n");
-            assertContains(text, "amet\n\n");
+            assertContains(text, "amet\n");
 
             // Our placeholder master text
             // This shouldn't show up in the output
@@ -96,7 +96,7 @@ public class TestXSLFPowerPointExtractor {
             extractor.setSlidesByDefault(false);
             extractor.setNotesByDefault(true);
             text = extractor.getText();
-            assertEquals("\n\n1\n\n\n2\n", text);
+            assertEquals("\n1\n\n2\n", text);
 
             // Both
             extractor.setSlidesByDefault(true);
@@ -105,14 +105,14 @@ public class TestXSLFPowerPointExtractor {
             String bothText =
                 "Lorem ipsum dolor sit amet\n" +
                 "Nunc at risus vel erat tempus posuere. Aenean non ante.\n" +
-                "\n\n\n1\n" +
+                "\n\n1\n" +
                 "Lorem ipsum dolor sit amet\n" +
                 "Lorem\n" +
                 "ipsum\n" +
                 "dolor\n" +
                 "sit\n" +
                 "amet\n" +
-                "\n\n\n2\n";
+                "\n\n2\n";
             assertEquals(bothText, text);
 
             // With Slides and Master Text
@@ -141,21 +141,21 @@ public class TestXSLFPowerPointExtractor {
             String snmText =
                 "Lorem ipsum dolor sit amet\n" +
                 "Nunc at risus vel erat tempus posuere. Aenean non ante.\n" +
-                "\n\n\n1\n" +
+                "\n\n1\n" +
                 "Lorem ipsum dolor sit amet\n" +
                 "Lorem\n" +
                 "ipsum\n" +
                 "dolor\n" +
                 "sit\n" +
                 "amet\n" +
-                "\n\n\n2\n";
+                "\n\n2\n";
             assertEquals(snmText, text);
 
             // Via set defaults
             extractor.setSlidesByDefault(false);
             extractor.setNotesByDefault(true);
             text = extractor.getText();
-            assertEquals("\n\n1\n\n\n2\n", text);
+            assertEquals("\n1\n\n2\n", text);
         }
 	}
 

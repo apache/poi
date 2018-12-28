@@ -18,13 +18,19 @@
 package org.apache.poi.hslf.record;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.common.usermodel.fonts.FontHeader;
 import org.apache.poi.common.usermodel.fonts.FontInfo;
+import org.apache.poi.common.usermodel.fonts.FontPitch;
 import org.apache.poi.hslf.usermodel.HSLFFontInfo;
 import org.apache.poi.hslf.usermodel.HSLFFontInfoPredefined;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogger;
 
 /**
@@ -32,11 +38,12 @@ import org.apache.poi.util.POILogger;
  * about all the fonts in the presentation.
  */
 
+@SuppressWarnings("WeakerAccess")
 public final class FontCollection extends RecordContainer {
     private final Map<String,HSLFFontInfo> fonts = new LinkedHashMap<>();
     private byte[] _header;
 
-	protected FontCollection(byte[] source, int start, int len) {
+	/* package */ FontCollection(byte[] source, int start, int len) {
 		_header = new byte[8];
 		System.arraycopy(source,start,_header,0,8);
 
@@ -44,8 +51,13 @@ public final class FontCollection extends RecordContainer {
 
 		for (Record r : _children){
 			if(r instanceof FontEntityAtom) {
-			    HSLFFontInfo fi = new HSLFFontInfo((FontEntityAtom)r);
-	            fonts.put(fi.getTypeface(), fi);
+                HSLFFontInfo fi = new HSLFFontInfo((FontEntityAtom) r);
+                fonts.put(fi.getTypeface(), fi);
+            } else if (r instanceof FontEmbeddedData) {
+                FontEmbeddedData fed = (FontEmbeddedData)r;
+			    FontHeader fontHeader = fed.getFontHeader();
+			    HSLFFontInfo fi = addFont(fontHeader);
+			    fi.addFacet(fed);
 			} else {
 				logger.log(POILogger.WARN, "Warning: FontCollection child wasn't a FontEntityAtom, was " + r.getClass().getSimpleName());
 			}
@@ -88,7 +100,7 @@ public final class FontCollection extends RecordContainer {
         fi = new HSLFFontInfo(fontInfo);
         fi.setIndex(fonts.size());
         fonts.put(fi.getTypeface(), fi);
-        
+
         FontEntityAtom fnt = fi.createRecord();
 
         // Append new child to the end
@@ -96,6 +108,58 @@ public final class FontCollection extends RecordContainer {
 
         // the added font is the last in the list
         return fi;
+    }
+
+    public HSLFFontInfo addFont(InputStream fontData) throws IOException {
+        FontHeader fontHeader = new FontHeader();
+        InputStream is = fontHeader.bufferInit(fontData);
+
+        HSLFFontInfo fi = addFont(fontHeader);
+
+        // always overwrite the font info properties when a font data given
+        // as the font info properties are assigned generically when only a typeface is given
+        FontEntityAtom fea = fi.getFontEntityAtom();
+        assert (fea != null);
+        fea.setCharSet(fontHeader.getCharsetByte());
+        fea.setPitchAndFamily(FontPitch.getNativeId(fontHeader.getPitch(),fontHeader.getFamily()));
+
+        // always activate subsetting
+        fea.setFontFlags(1);
+        // true type font and no font substitution
+        fea.setFontType(12);
+
+        Record after = fea;
+
+        final int insertIdx = getFacetIndex(fontHeader.isItalic(), fontHeader.isBold());
+
+        FontEmbeddedData newChild = null;
+        for (FontEmbeddedData fed : fi.getFacets()) {
+            FontHeader fh = fed.getFontHeader();
+            final int curIdx = getFacetIndex(fh.isItalic(), fh.isBold());
+
+            if (curIdx == insertIdx) {
+                newChild = fed;
+                break;
+            } else if (curIdx > insertIdx) {
+                // the new facet needs to be inserted before the current facet
+                break;
+            }
+
+            after = fed;
+        }
+
+        if (newChild == null) {
+            newChild = new FontEmbeddedData();
+            addChildAfter(newChild, after);
+            fi.addFacet(newChild);
+        }
+
+        newChild.setFontData(IOUtils.toByteArray(is));
+        return fi;
+    }
+
+    private static int getFacetIndex(boolean isItalic, boolean isBold) {
+        return (isItalic ? 2 : 0) | (isBold ? 1 : 0);
     }
 
 
@@ -131,5 +195,9 @@ public final class FontCollection extends RecordContainer {
      */
     public int getNumberOfFonts() {
         return fonts.size();
+    }
+
+    public List<HSLFFontInfo> getFonts() {
+        return new ArrayList<>(fonts.values());
     }
 }

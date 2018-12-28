@@ -17,13 +17,18 @@
 
 package org.apache.poi.hslf.usermodel;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.poi.common.usermodel.fonts.FontCharset;
 import org.apache.poi.common.usermodel.fonts.FontFamily;
 import org.apache.poi.common.usermodel.fonts.FontInfo;
 import org.apache.poi.common.usermodel.fonts.FontPitch;
+import org.apache.poi.hslf.record.FontEmbeddedData;
 import org.apache.poi.hslf.record.FontEntityAtom;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.Internal;
 
 /**
  * Represents a Font used in a presentation.<p>
@@ -32,6 +37,7 @@ import org.apache.poi.util.BitFieldFactory;
  * 
  * @since POI 3.17-beta2
  */
+@SuppressWarnings("WeakerAccess")
 public class HSLFFontInfo implements FontInfo {
 
     public enum FontRenderType {
@@ -53,6 +59,8 @@ public class HSLFFontInfo implements FontInfo {
     private FontPitch pitch = FontPitch.VARIABLE;
     private boolean isSubsetted;
     private boolean isSubstitutable = true;
+    private final List<FontEmbeddedData> facets = new ArrayList<>();
+    private FontEntityAtom fontEntityAtom;
 
     /**
      * Creates a new instance of HSLFFontInfo with more or sensible defaults.<p>
@@ -70,6 +78,7 @@ public class HSLFFontInfo implements FontInfo {
      * Creates a new instance of HSLFFontInfo and initialize it from the supplied font atom
      */
     public HSLFFontInfo(FontEntityAtom fontAtom){
+        fontEntityAtom = fontAtom;
         setIndex(fontAtom.getFontIndex());
         setTypeface(fontAtom.getFontName());
         setCharset(FontCharset.valueOf(fontAtom.getCharSet()));
@@ -187,7 +196,11 @@ public class HSLFFontInfo implements FontInfo {
     }
     
     public FontEntityAtom createRecord() {
+        assert(fontEntityAtom == null);
+
         FontEntityAtom fnt = new FontEntityAtom();
+        fontEntityAtom = fnt;
+
         fnt.setFontIndex(getIndex() << 4);
         fnt.setFontName(getTypeface());
         fnt.setCharSet(getCharset().getNativeId());
@@ -211,5 +224,19 @@ public class HSLFFontInfo implements FontInfo {
         
         fnt.setPitchAndFamily(FontPitch.getNativeId(pitch, family));
         return fnt;
+    }
+
+    public void addFacet(FontEmbeddedData facet) {
+        facets.add(facet);
+    }
+
+    @Override
+    public List<FontEmbeddedData> getFacets() {
+        return facets;
+    }
+
+    @Internal
+    public FontEntityAtom getFontEntityAtom() {
+        return fontEntityAtom;
     }
 }

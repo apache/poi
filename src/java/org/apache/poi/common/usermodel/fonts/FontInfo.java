@@ -17,6 +17,11 @@ limitations under the License.
 
 package org.apache.poi.common.usermodel.fonts;
 
+import java.util.Collections;
+import java.util.List;
+
+import org.apache.poi.util.Beta;
+
 /**
  * A FontInfo object holds information about a font configuration.
  * It is roughly an equivalent to the LOGFONT structure in Windows GDI.<p>
@@ -30,6 +35,7 @@ package org.apache.poi.common.usermodel.fonts;
  *
  * @see <a href="https://msdn.microsoft.com/en-us/library/dd145037.aspx">LOGFONT structure</a>
  */
+@SuppressWarnings("unused")
 public interface FontInfo {
 
     /**
@@ -37,7 +43,9 @@ public interface FontInfo {
      * @return unique index number of the underlying record this Font represents
      *   (probably you don't care unless you're comparing which one is which)
      */
-    Integer getIndex();
+    default Integer getIndex() {
+        return null;
+    }
 
     /**
      * Sets the index within the collection of Font objects
@@ -46,7 +54,9 @@ public interface FontInfo {
      *
      * @throws UnsupportedOperationException if unsupported
      */
-    void setIndex(int index);
+    default void setIndex(int index) {
+        throw new UnsupportedOperationException("FontInfo is read-only.");
+    }
     
     
     /**
@@ -60,36 +70,48 @@ public interface FontInfo {
      * @param typeface the full name of the font, when {@code null} removes the font definition -
      *    removal is implementation specific
      */
-    void setTypeface(String typeface);
+    default void setTypeface(String typeface) {
+        throw new UnsupportedOperationException("FontInfo is read-only.");
+    }
 
     /**
      * @return the font charset
      */
-    FontCharset getCharset();
+    default FontCharset getCharset() {
+        return FontCharset.ANSI;
+    }
 
     /**
      * Sets the charset
      *
      * @param charset the charset
      */
-    void setCharset(FontCharset charset);
+    default void setCharset(FontCharset charset) {
+        throw new UnsupportedOperationException("FontInfo is read-only.");
+    }
 
     /**
      * @return the family class
      */
-    FontFamily getFamily();
+    default FontFamily getFamily() {
+        return FontFamily.FF_DONTCARE;
+    }
 
     /**
      * Sets the font family class
      *
      * @param family the font family class
      */
-    void setFamily(FontFamily family);
+    default void setFamily(FontFamily family) {
+        throw new UnsupportedOperationException("FontInfo is read-only.");
+    }
 
     /**
      * @return the font pitch or {@code null} if unsupported
      */
-    FontPitch getPitch();
+    default FontPitch getPitch() {
+        return null;
+    }
 
     /**
      * Set the font pitch
@@ -98,5 +120,33 @@ public interface FontInfo {
      *
      * @throws UnsupportedOperationException if unsupported
      */
-    void setPitch(FontPitch pitch);
+    default void setPitch(FontPitch pitch) {
+        throw new UnsupportedOperationException("FontInfo is read-only.");
+    }
+
+    /**
+     * @return panose info in binary form or {@code null} if unknown
+     */
+    default byte[] getPanose() {
+        return null;
+    }
+
+    /**
+     * Set the panose in binary form
+     * @param panose the panose bytes
+     */
+    default void setPanose(byte[] panose) {
+        throw new UnsupportedOperationException("FontInfo is read-only.");
+    }
+
+
+    /**
+     * If font facets are embedded in the document, return the list of embedded facets.
+     * The font embedding is experimental, therefore the API can change.
+     * @return the list of embedded EOT font data
+     */
+    @Beta
+    default List<? extends FontFacet> getFacets() {
+        return Collections.emptyList();
+    }
 }

@@ -43,7 +43,7 @@ public final class FontEntityAtom extends RecordAtom {
     /**
      * record header
      */
-    private byte[] _header;
+    private final byte[] _header = new byte[8];
 
 	/**
      * record data
@@ -53,9 +53,8 @@ public final class FontEntityAtom extends RecordAtom {
     /**
      * Build an instance of <code>FontEntityAtom</code> from on-disk data
      */
-	protected FontEntityAtom(byte[] source, int start, int len) {
+	/* package */ FontEntityAtom(byte[] source, int start, int len) {
 		// Get the header
-		_header = new byte[8];
 		System.arraycopy(source,start,_header,0,8);
 
 		// Grab the record data
@@ -69,7 +68,6 @@ public final class FontEntityAtom extends RecordAtom {
     public FontEntityAtom() {
         _recdata = new byte[68];
 
-        _header = new byte[8];
         LittleEndian.putShort(_header, 2, (short)getRecordType());
         LittleEndian.putInt(_header, 4, _recdata.length);
     }
@@ -108,7 +106,7 @@ public final class FontEntityAtom extends RecordAtom {
         byte[] bytes = StringUtil.getToUnicodeLE(name);
         System.arraycopy(bytes, 0, _recdata, 0, bytes.length);
         // null the remaining bytes
-        Arrays.fill(_recdata, 64-bytes.length, 64, (byte)0);
+        Arrays.fill(_recdata, bytes.length, 64, (byte)0);
     }
 
     public void setFontIndex(int idx){

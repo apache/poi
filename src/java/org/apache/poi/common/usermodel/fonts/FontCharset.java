@@ -70,7 +70,7 @@ public enum FontCharset {
     /** Specifies the Russian Cyrillic character set. */
     RUSSIAN(0x000000CC, "Cp1251"),
     /** Specifies the Thai character set. */
-    THAI_(0x000000DE, "x-windows-874"),
+    THAI(0x000000DE, "x-windows-874"),
     /** Specifies a Eastern European character set. */
     EASTEUROPE(0x000000EE, "Cp1250"),
     /**

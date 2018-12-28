@@ -22,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 
 import org.apache.poi.common.usermodel.fonts.FontCharset;
 import org.apache.poi.common.usermodel.fonts.FontFamily;
+import org.apache.poi.common.usermodel.fonts.FontHeader;
 import org.apache.poi.common.usermodel.fonts.FontInfo;
 import org.apache.poi.common.usermodel.fonts.FontPitch;
 import org.apache.poi.util.BitField;
@@ -32,6 +33,7 @@ import org.apache.poi.util.LittleEndianInputStream;
 /**
  * The Font object specifies the attributes of a logical font
  */
+@SuppressWarnings({"unused", "Duplicates"})
 public class HwmfFont implements FontInfo {
 
     /**
@@ -289,7 +291,7 @@ public class HwmfFont implements FontInfo {
 
     /**
      * An 8-bit unsigned integer that defines the character set.
-     * It SHOULD be set to a value in the {@link WmfCharset} Enumeration.
+     * It SHOULD be set to a value in the {@link FontCharset} Enumeration.
      *
      * The DEFAULT_CHARSET value MAY be used to allow the name and size of a font to fully
      * describe the logical font. If the specified font name does not exist, a font in another character
@@ -373,7 +375,7 @@ public class HwmfFont implements FontInfo {
         height = -12;
         width = 0;
         escapement = 0;
-        weight = 400;
+        weight = FontHeader.REGULAR_WEIGHT;
         italic = false;
         underline = false;
         strikeOut = false;
@@ -438,28 +440,8 @@ public class HwmfFont implements FontInfo {
     }
 
     @Override
-    public void setFamily(FontFamily family) {
-        throw new UnsupportedOperationException("setCharset not supported by HwmfFont.");
-    }
-
-    @Override
     public FontPitch getPitch() {
         return FontPitch.valueOf((pitchAndFamily >>> 6) & 3);
-    }
-
-    @Override
-    public void setPitch(FontPitch pitch) {
-        throw new UnsupportedOperationException("setPitch not supported by HwmfFont.");
-    }
-
-    @Override
-    public Integer getIndex() {
-        return null;
-    }
-
-    @Override
-    public void setIndex(int index) {
-        throw new UnsupportedOperationException("setIndex not supported by HwmfFont.");
     }
 
     @Override
@@ -468,18 +450,8 @@ public class HwmfFont implements FontInfo {
     }
 
     @Override
-    public void setTypeface(String typeface) {
-        throw new UnsupportedOperationException("setTypeface not supported by HwmfFont.");
-    }
-
-    @Override
     public FontCharset getCharset() {
         return charSet;
-    }
-
-    @Override
-    public void setCharset(FontCharset charset) {
-        throw new UnsupportedOperationException("setCharset not supported by HwmfFont.");
     }
 
     @Override

@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
+import org.apache.poi.common.usermodel.fonts.FontInfo;
 import org.apache.poi.extractor.POITextExtractor;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 
@@ -43,8 +44,6 @@ public interface SlideShow<
      * This doesn't include notes master and other arbitrary masters.
      */
 	List<? extends MasterSheet<S,P>> getSlideMasters();
-
-	Resources getResources();
 
     /**
      * Returns the current page size
@@ -135,4 +134,30 @@ public interface SlideShow<
      * @since POI 4.0.0
      */
     Object getPersistDocument();
+
+    /**
+     * Add an EOT font to the slideshow.
+     * An EOT or MTX font is a transformed True-Type (.ttf) or Open-Type (.otf) font.
+     * To transform a True-Type font use the sfntly library (see "see also" below)<p>
+     *
+     * (Older?) Powerpoint versions handle embedded fonts by converting them to .ttf files
+     * and put them into the Windows fonts directory. If the user is not allowed to install
+     * fonts, the slideshow can't be opened. While the slideshow is opened, its possible
+     * to copy the extracted .ttfs from the fonts directory. When the slideshow is closed,
+     * they will be removed.
+     *
+     * @param fontData the EOT font as stream
+     * @return the font info object containing the new font data
+     * @throws IOException if the fontData can't be saved or if the fontData is no EOT font
+     *
+     * @see <a href="http://www.w3.org/Submission/EOT">EOT specification</a>
+     * @see <a href="https://github.com/googlei18n/sfntly">googles sfntly library</a>
+     * @see <a href="https://github.com/kiwiwings/poi-font-mbender">Example on how to subset and embed fonts</a>
+     */
+    FontInfo addFont(InputStream fontData) throws IOException;
+
+    /**
+     * @return a list of registered fonts
+     */
+    List<? extends FontInfo> getFonts();
 }

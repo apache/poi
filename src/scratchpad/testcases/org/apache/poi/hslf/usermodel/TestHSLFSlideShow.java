@@ -27,7 +27,7 @@ import org.apache.poi.sl.usermodel.BaseTestSlideShow;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.junit.Test;
 
-public class TestHSLFSlideShow extends BaseTestSlideShow {
+public class TestHSLFSlideShow extends BaseTestSlideShow<HSLFShape,HSLFTextParagraph> {
     @Override
     public HSLFSlideShow createSlideShow() {
         return new HSLFSlideShow();
@@ -39,11 +39,7 @@ public class TestHSLFSlideShow extends BaseTestSlideShow {
         assertNotNull(createSlideShow());
     }
 
-    public SlideShow<?, ?> reopen(SlideShow<?, ?> show) {
-        return reopen((HSLFSlideShow)show);
-    }
-
-    public static HSLFSlideShow reopen(HSLFSlideShow show) {
+    public HSLFSlideShow reopen(SlideShow<HSLFShape,HSLFTextParagraph> show) {
         try {
             BufAccessBAOS bos = new BufAccessBAOS();
             show.write(bos);
@@ -55,7 +51,7 @@ public class TestHSLFSlideShow extends BaseTestSlideShow {
     }
 
     private static class BufAccessBAOS extends ByteArrayOutputStream {
-        public byte[] getBuf() {
+        byte[] getBuf() {
             return buf;
         }
     }

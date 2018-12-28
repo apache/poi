@@ -260,6 +260,13 @@ public final class XSLFRelation extends POIXMLRelation {
             XSLFObjectData.class
     );
 
+    public static final XSLFRelation FONT = new XSLFRelation(
+            "application/x-fontdata",
+            "http://schemas.openxmlformats.org/officeDocument/2006/relationships/font",
+            "/ppt/fonts/font#.fntdata",
+            XSLFFontData.class
+    );
+
 
     private XSLFRelation(String type, String rel, String defaultName, Class<? extends POIXMLDocumentPart> cls) {
         super(type, rel, defaultName, cls);
