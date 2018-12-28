@@ -83,16 +83,4 @@ public class TestSXSSFCell extends BaseTestXCell {
             swb.close();
         }
     }
-
-    @Test
-    public void test62216() throws IOException {
-        try (SXSSFWorkbook wb = new SXSSFWorkbook()) {
-            Cell instance = wb.createSheet().createRow(0).createCell(0);
-            String formula = "2";
-            instance.setCellFormula(formula);
-            instance.setCellErrorValue(FormulaError.NAME.getCode());
-
-            assertEquals(formula, instance.getCellFormula());
-        }
-    }
 }

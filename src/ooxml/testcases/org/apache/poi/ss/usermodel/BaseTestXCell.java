@@ -57,18 +57,4 @@ public abstract class BaseTestXCell extends BaseTestCell {
         assertEquals("???<>\t\n\u00a0 &\"POI\'\u2122", wb2.getSheetAt(0).getRow(0).getCell(0).getStringCellValue());
         wb2.close();
     }
-
-    @Test
-    public void testSetNullValues() throws IOException {
-        Workbook wb = _testDataProvider.createWorkbook();
-        Cell cell = wb.createSheet("test").createRow(0).createCell(0);
-
-        cell.setCellValue((Calendar)null);
-        cell.setCellValue((Date)null);
-        cell.setCellValue((String)null);
-        cell.setCellValue((RichTextString) null);
-        cell.setCellValue((String)null);
-
-        wb.close();
-    }
 }

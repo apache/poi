@@ -494,6 +494,11 @@ public class HSSFCell implements Cell {
      */
     public void setCellValue(Date value)
     {
+        if(value == null) {
+            setCellType(CellType.BLANK);
+            return;
+        }
+
         setCellValue(HSSFDateUtil.getExcelDate(value, _book.getWorkbook().isUsing1904DateWindowing()));
     }
 
@@ -514,6 +519,11 @@ public class HSSFCell implements Cell {
      */
     public void setCellValue(Calendar value)
     {
+        if(value == null) {
+            setCellType(CellType.BLANK);
+            return;
+        }
+
         setCellValue( HSSFDateUtil.getExcelDate(value, _book.getWorkbook().isUsing1904DateWindowing()) );
     }
 
