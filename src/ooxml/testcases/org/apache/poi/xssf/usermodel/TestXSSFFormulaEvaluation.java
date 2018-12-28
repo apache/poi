@@ -30,7 +30,6 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.BaseTestFormulaEvaluator;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
-import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -253,7 +252,7 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
      */
     @Test
     @Ignore
-    public void testCachedReferencesToOtherWorkbooks() throws Exception {
+    public void testCachedReferencesToOtherWorkbooks() {
         // TODO
         fail("unit test not written yet");
     }
@@ -388,7 +387,7 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
         verifyAllFormulasInWorkbookCanBeEvaluated("StructuredRefs-lots-with-lookups.xlsx");
     }
 
-    // FIXME: use junit4 parameterization
+    // FIXME: use junit4 parametrization
     private static void verifyAllFormulasInWorkbookCanBeEvaluated(String sampleWorkbook) throws IOException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook(sampleWorkbook);
         XSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
@@ -442,33 +441,16 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
 //        assertEquals("D 67.10", cell.getStringCellValue());
         
         CellValue value = evaluator.evaluate(cell);
-        assertEquals("D 67.10", value.getStringValue());
+        assertEquals("D 67.10",
+                value.getStringValue());
         
-        assertEquals("D 0,068", evaluator.evaluate(wb.getSheetAt(0).getRow(1).getCell(1)));
+        assertEquals("D 0,068",
+                evaluator.evaluate(wb.getSheetAt(0).getRow(1).getCell(1)).getStringValue());
     }
 
-    /**
-     * see bug 62275
-     * @throws IOException
-     */
-    @Test
-    public void testBug62275() throws IOException {
-        try (Workbook wb = new XSSFWorkbook()) {
-            Sheet sheet = wb.createSheet();
-            Row row = sheet.createRow(0);
-
-            Cell cell = row.createCell(0);
-            cell.setCellFormula("vlookup(A2,B1:B5,2,true)");
-
-            CreationHelper createHelper = wb.getCreationHelper();
-            FormulaEvaluator eval = createHelper.createFormulaEvaluator();
-            eval.evaluate(cell);
-        }
-    }
     
     /**
      * see bug 62834, handle when a shared formula range doesn't contain only formula cells
-     * @throws IOException 
      */
     @Test
     public void testBug62834() throws IOException {

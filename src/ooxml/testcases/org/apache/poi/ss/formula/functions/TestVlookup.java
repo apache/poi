@@ -17,26 +17,122 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Test;
 
-import junit.framework.TestCase;
+import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 /**
  * Test the VLOOKUP function
  */
-public class TestVlookup extends TestCase {
+public class TestVlookup {
 
     @Test
-    public void testFullColumnAreaRef61841() {
-        final Workbook wb = XSSFTestDataSamples.openSampleWorkbook("VLookupFullColumn.xlsx");
-        FormulaEvaluator feval = wb.getCreationHelper().createFormulaEvaluator();
-        feval.evaluateAll();
-        assertEquals("Wrong lookup value",  "Value1", feval.evaluate(wb.getSheetAt(0).getRow(3).getCell(1)).getStringValue());
-        assertEquals("Lookup should return #N/A", CellType.ERROR, feval.evaluate(wb.getSheetAt(0).getRow(4).getCell(1)).getCellType());
+    public void testFullColumnAreaRef61841() throws IOException {
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("VLookupFullColumn.xlsx")) {
+            FormulaEvaluator feval = wb.getCreationHelper().createFormulaEvaluator();
+            feval.evaluateAll();
+            assertEquals("Wrong lookup value", "Value1",
+                    feval.evaluate(wb.getSheetAt(0).getRow(3).getCell(1)).getStringValue());
+            assertEquals("Lookup should return #N/A",
+                    CellType.ERROR, feval.evaluate(wb.getSheetAt(0).getRow(4).getCell(1)).getCellType());
+        }
     }
 
+    @Test
+    public void bug62275_true() throws IOException {
+        try (Workbook wb = new XSSFWorkbook()) {
+            Sheet sheet = wb.createSheet();
+            Row row = sheet.createRow(0);
+
+            Cell cell = row.createCell(0);
+            cell.setCellFormula("vlookup(A2,B1:B5,2,true)");
+
+            CreationHelper createHelper = wb.getCreationHelper();
+            FormulaEvaluator eval = createHelper.createFormulaEvaluator();
+            CellValue value = eval.evaluate(cell);
+
+            assertFalse(value.getBooleanValue());
+        }
+    }
+
+    @Test
+    public void bug62275_false() throws IOException {
+        try (Workbook wb = new XSSFWorkbook()) {
+            Sheet sheet = wb.createSheet();
+            Row row = sheet.createRow(0);
+
+            Cell cell = row.createCell(0);
+            cell.setCellFormula("vlookup(A2,B1:B5,2,false)");
+
+            CreationHelper crateHelper = wb.getCreationHelper();
+            FormulaEvaluator eval = crateHelper.createFormulaEvaluator();
+            CellValue value = eval.evaluate(cell);
+
+            assertFalse(value.getBooleanValue());
+        }
+    }
+
+    @Test
+    public void bug62275_empty_3args() throws IOException {
+        try (Workbook wb = new XSSFWorkbook()) {
+            Sheet sheet = wb.createSheet();
+            Row row = sheet.createRow(0);
+
+            Cell cell = row.createCell(0);
+            cell.setCellFormula("vlookup(A2,B1:B5,2,)");
+
+            CreationHelper crateHelper = wb.getCreationHelper();
+            FormulaEvaluator eval = crateHelper.createFormulaEvaluator();
+            CellValue value = eval.evaluate(cell);
+
+            assertFalse(value.getBooleanValue());
+        }
+    }
+
+    @Test
+    public void bug62275_empty_2args() throws IOException {
+        try (Workbook wb = new XSSFWorkbook()) {
+            Sheet sheet = wb.createSheet();
+            Row row = sheet.createRow(0);
+
+            Cell cell = row.createCell(0);
+            cell.setCellFormula("vlookup(A2,B1:B5,,)");
+
+            CreationHelper crateHelper = wb.getCreationHelper();
+            FormulaEvaluator eval = crateHelper.createFormulaEvaluator();
+            CellValue value = eval.evaluate(cell);
+
+            assertFalse(value.getBooleanValue());
+        }
+    }
+
+    @Test
+    public void bug62275_empty_1arg() throws IOException {
+        try (Workbook wb = new XSSFWorkbook()) {
+            Sheet sheet = wb.createSheet();
+            Row row = sheet.createRow(0);
+
+            Cell cell = row.createCell(0);
+            cell.setCellFormula("vlookup(A2,,,)");
+
+            CreationHelper crateHelper = wb.getCreationHelper();
+            FormulaEvaluator eval = crateHelper.createFormulaEvaluator();
+            CellValue value = eval.evaluate(cell);
+
+            assertFalse(value.getBooleanValue());
+        }
+    }
 }
