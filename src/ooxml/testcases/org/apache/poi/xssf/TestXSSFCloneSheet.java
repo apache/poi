@@ -85,4 +85,14 @@ public class TestXSSFCloneSheet  extends BaseTestCloneSheet {
 
         wb.close();
     }
+
+    @Test
+    public void test61605() throws IOException {
+        try (Workbook template_wb = XSSFTestDataSamples.openSampleWorkbook("61605.xlsx")) {
+            Sheet template_sh = template_wb.getSheetAt(0);
+            assertNotNull(template_sh);
+            Sheet source_sh = template_wb.cloneSheet(0);
+            assertNotNull(source_sh);
+        }
+    }
 }
