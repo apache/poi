@@ -97,8 +97,7 @@ def poijobs = [
         ],
         [ name: 'POI-DSL-Windows-1.8', trigger: 'H */12 * * *', windows: true, slaves: 'Windows'
         ],
-        [ name: 'POI-DSL-Github-PullRequests', trigger: '', githubpr: true, skipcigame: true,
-                disabled: true // not fully functional yet, thus disable it for now
+        [ name: 'POI-DSL-Github-PullRequests', trigger: '', githubpr: true, skipcigame: true
         ],
 ]
 
