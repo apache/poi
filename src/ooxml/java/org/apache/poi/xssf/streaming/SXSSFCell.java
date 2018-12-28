@@ -46,8 +46,6 @@ import org.apache.poi.xssf.usermodel.XSSFRichTextString;
  * Streaming version of XSSFCell implementing the "BigGridDemo" strategy.
  */
 public class SXSSFCell implements Cell {
-    private static final POILogger logger = POILogFactory.getLogger(SXSSFCell.class);
-
     private final SXSSFRow _row;
     private Value _value;
     private CellStyle _style;
@@ -277,15 +275,19 @@ public class SXSSFCell implements Cell {
     public void setCellValue(RichTextString value)
     {
         XSSFRichTextString xvalue = (XSSFRichTextString)value;
-        
+
         if (xvalue != null && xvalue.getString() != null) {
             ensureRichTextStringType();
-            
+
             if (xvalue.length() > SpreadsheetVersion.EXCEL2007.getMaxTextLength()) {
                 throw new IllegalArgumentException("The maximum length of cell contents (text) is 32,767 characters");
             }
 
-            ((RichTextValue)_value).setValue(xvalue);
+            if(_value instanceof RichTextStringFormulaValue) {
+                ((RichTextStringFormulaValue) _value).setPreEvaluatedValue(xvalue);
+            } else {
+                ((RichTextValue) _value).setValue(xvalue);
+            }
         } else {
             setCellType(CellType.BLANK);
         }
@@ -312,6 +314,8 @@ public class SXSSFCell implements Cell {
             if(_value.getType()==CellType.FORMULA)
                 if(_value instanceof NumericFormulaValue) {
                     ((NumericFormulaValue) _value).setPreEvaluatedValue(Double.parseDouble(value));
+                } else if(_value instanceof RichTextStringFormulaValue) {
+                    ((RichTextStringFormulaValue) _value).setPreEvaluatedValue(new XSSFRichTextString(value));
                 } else {
                     ((StringFormulaValue) _value).setPreEvaluatedValue(value);
                 }
@@ -461,7 +465,11 @@ public class SXSSFCell implements Cell {
                 FormulaValue fv=(FormulaValue)_value;
                 if(fv.getFormulaType()!=CellType.STRING)
                       throw typeMismatch(CellType.STRING, CellType.FORMULA, false);
-                return ((StringFormulaValue)_value).getPreEvaluatedValue();
+                if(_value instanceof RichTextStringFormulaValue) {
+                    return ((RichTextStringFormulaValue) _value).getPreEvaluatedValue().getString();
+                } else {
+                    return ((StringFormulaValue) _value).getPreEvaluatedValue();
+                }
             }
             case STRING:
             {
@@ -841,9 +849,15 @@ public class SXSSFCell implements Cell {
     }
     /*package*/ void ensureRichTextStringType()
     {
-        if(_value.getType()!=CellType.STRING
-           ||!((StringValue)_value).isRichText())
+        // don't change cell type for formulas
+        if(_value.getType() == CellType.FORMULA) {
+            String formula = ((FormulaValue)_value).getValue();
+            _value = new RichTextStringFormulaValue();
+            ((RichTextStringFormulaValue) _value).setValue(formula);
+        } else if(_value.getType()!=CellType.STRING ||
+                !((StringValue)_value).isRichText()) {
             _value = new RichTextValue();
+        }
     }
     /*package*/ void ensureType(CellType type)
     {
@@ -1202,6 +1216,23 @@ public class SXSSFCell implements Cell {
             _preEvaluatedValue=value;
         }
         String getPreEvaluatedValue()
+        {
+            return _preEvaluatedValue;
+        }
+    }
+    static class RichTextStringFormulaValue extends FormulaValue
+    {
+        RichTextString _preEvaluatedValue;
+        @Override
+        CellType getFormulaType()
+        {
+            return CellType.STRING;
+        }
+        void setPreEvaluatedValue(RichTextString value)
+        {
+            _preEvaluatedValue=value;
+        }
+        RichTextString getPreEvaluatedValue()
         {
             return _preEvaluatedValue;
         }

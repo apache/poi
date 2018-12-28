@@ -20,6 +20,7 @@
 package org.apache.poi.xssf.streaming;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
@@ -101,14 +102,14 @@ public final class TestSXSSFFormulaEvaluation  extends BaseTestFormulaEvaluator 
         SXSSFSheet s = wb.createSheet();
         
         s.createRow(0).createCell(0).setCellFormula("1+2");
-        assertEquals(false, s.areAllRowsFlushed());
+        assertFalse(s.areAllRowsFlushed());
         assertEquals(-1, s.getLastFlushedRowNum());
         
         for (int i=1; i<=19; i++) { s.createRow(i); }
         Cell c = s.createRow(20).createCell(0);
         c.setCellFormula("A1+100");
-        
-        assertEquals(false, s.areAllRowsFlushed());
+
+        assertFalse(s.areAllRowsFlushed());
         assertEquals(15, s.getLastFlushedRowNum());
         
         FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
@@ -184,8 +185,10 @@ public final class TestSXSSFFormulaEvaluation  extends BaseTestFormulaEvaluator 
         
         wb.close();
     }
+
     @Test
-    public void testUpdateCachedFormulaResultFromErrorToNumber_bug46479() throws IOException {
+    public void testUpdateCachedFormulaResultFromErrorToNumber_bug46479() {
+        //noinspection ConstantConditions
         Assume.assumeTrue("This test is disabled because it fails for SXSSF because " +
                         "handling of errors in formulas is slightly different than in XSSF, " +
                         "but this proved to be non-trivial to solve...",

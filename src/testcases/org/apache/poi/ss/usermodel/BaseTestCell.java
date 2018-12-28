@@ -27,6 +27,10 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -66,10 +70,10 @@ public abstract class BaseTestCell {
                 CellType.FORMULA, CellType.ERROR);
 
         cell.setCellValue(false);
-        assertEquals(false, cell.getBooleanCellValue());
+        assertFalse(cell.getBooleanCellValue());
         assertEquals(CellType.BOOLEAN, cell.getCellType());
         cell.setCellValue(true);
-        assertEquals(true, cell.getBooleanCellValue());
+        assertTrue(cell.getBooleanCellValue());
         assertProhibitedValueAccess(cell, CellType.NUMERIC, CellType.STRING,
                 CellType.FORMULA, CellType.ERROR);
 
@@ -156,14 +160,14 @@ public abstract class BaseTestCell {
         assertEquals(0, c.getRowIndex());
         assertEquals(1, c.getColumnIndex());
         c.setCellValue(true);
-        assertEquals("B1 value", true, c.getBooleanCellValue());
+        assertTrue("B1 value", c.getBooleanCellValue());
 
         // C1
         c=r.createCell(2);
         assertEquals(0, c.getRowIndex());
         assertEquals(2, c.getColumnIndex());
         c.setCellValue(false);
-        assertEquals("C1 value", false, c.getBooleanCellValue());
+        assertFalse("C1 value", c.getBooleanCellValue());
 
         // Make sure values are saved and re-read correctly.
         Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
@@ -177,13 +181,13 @@ public abstract class BaseTestCell {
         assertEquals(0, c.getRowIndex());
         assertEquals(1, c.getColumnIndex());
         assertEquals(CellType.BOOLEAN, c.getCellType());
-        assertEquals("B1 value", true, c.getBooleanCellValue());
+        assertTrue("B1 value", c.getBooleanCellValue());
         
         c = r.getCell(2);
         assertEquals(0, c.getRowIndex());
         assertEquals(2, c.getColumnIndex());
         assertEquals(CellType.BOOLEAN, c.getCellType());
-        assertEquals("C1 value", false, c.getBooleanCellValue());
+        assertFalse("C1 value", c.getBooleanCellValue());
         
         wb2.close();
     }
@@ -276,7 +280,7 @@ public abstract class BaseTestCell {
         cs = c.getCellStyle();
 
         assertNotNull("Formula Cell Style", cs);
-        assertEquals("Font Index Matches", f.getIndexAsInt(), cs.getFontIndex());
+        assertEquals("Font Index Matches", f.getIndexAsInt(), cs.getFontIndexAsInt());
         assertEquals("Top Border", BorderStyle.THIN, cs.getBorderTop());
         assertEquals("Left Border", BorderStyle.THIN, cs.getBorderLeft());
         assertEquals("Right Border", BorderStyle.THIN, cs.getBorderRight());
@@ -301,7 +305,7 @@ public abstract class BaseTestCell {
 
         // create date-formatted cell
         Calendar c = LocaleUtil.getLocaleCalendar();
-        c.set(2010, 01, 02, 00, 00, 00);
+        c.set(2010, Calendar.FEBRUARY, 2, 0, 0, 0);
         r.createCell(7).setCellValue(c);
         CellStyle dateStyle = wb1.createCellStyle();
         short formatId = wb1.getCreationHelper().createDataFormat().getFormat("m/d/yy h:mm"); // any date format will do
@@ -426,7 +430,7 @@ public abstract class BaseTestCell {
         cell.setCellType(CellType.BOOLEAN);
 
         assertEquals(CellType.BOOLEAN, cell.getCellType());
-        assertEquals(true, cell.getBooleanCellValue());
+        assertTrue(cell.getBooleanCellValue());
         cell.setCellType(CellType.STRING);
         assertEquals("TRUE", cell.getRichStringCellValue().getString());
 
@@ -434,7 +438,7 @@ public abstract class BaseTestCell {
         cell.setCellValue("FALSE");
         cell.setCellType(CellType.BOOLEAN);
         assertEquals(CellType.BOOLEAN, cell.getCellType());
-        assertEquals(false, cell.getBooleanCellValue());
+        assertFalse(cell.getBooleanCellValue());
         cell.setCellType(CellType.STRING);
         assertEquals("FALSE", cell.getRichStringCellValue().getString());
         
@@ -479,7 +483,7 @@ public abstract class BaseTestCell {
         cell.setCellErrorValue(FormulaError.NAME.getCode());
         cell.setCellValue(true);
         // Identify bug 46479c
-        assertEquals(true, cell.getBooleanCellValue());
+        assertTrue(cell.getBooleanCellValue());
         
         wb.close();
     }
@@ -541,7 +545,7 @@ public abstract class BaseTestCell {
         fe.clearAllCachedResultValues();
         fe.evaluateFormulaCell(cellA1);
         confirmCannotReadString(cellA1);
-        assertEquals(true, cellA1.getBooleanCellValue());
+        assertTrue(cellA1.getBooleanCellValue());
         cellA1.setCellType(CellType.STRING);
         assertEquals("TRUE", cellA1.getStringCellValue());
 
@@ -572,7 +576,7 @@ public abstract class BaseTestCell {
         cell.setCellValue(true);
         cell.setCellType(CellType.BOOLEAN);
         assertTrue("Identified bug 46479d", cell.getBooleanCellValue());
-        assertEquals(true, cell.getBooleanCellValue());
+        assertTrue(cell.getBooleanCellValue());
         
         wb.close();
     }
@@ -626,7 +630,9 @@ public abstract class BaseTestCell {
         Workbook wb = _testDataProvider.createWorkbook();
         Cell cell = wb.createSheet("Sheet1").createRow(0).createCell(0);
         cell.setCellFormula("B1&C1");
+        assertEquals(CellType.FORMULA, cell.getCellType());
         cell.setCellValue(wb.getCreationHelper().createRichTextString("hello"));
+        assertEquals(CellType.FORMULA, cell.getCellType());
         wb.close();
     }
 
@@ -714,10 +720,10 @@ public abstract class BaseTestCell {
         assertTrue(style.getLocked());
         assertFalse(style.getHidden());
         assertEquals(0, style.getIndention());
-        assertEquals(0, style.getFontIndex());
+        assertEquals(0, style.getFontIndexAsInt());
         assertEquals(HorizontalAlignment.GENERAL, style.getAlignment());
         assertEquals(0, style.getDataFormat());
-        assertEquals(false, style.getWrapText());
+        assertFalse(style.getWrapText());
 
         CellStyle style2 = wb1.createCellStyle();
         assertTrue(style2.getLocked());
@@ -1052,6 +1058,36 @@ public abstract class BaseTestCell {
             }
             assertEquals(FormulaError.NAME.getCode(), cell.getErrorCellValue());
             assertNull(cell.getHyperlink());
+        }
+    }
+
+    @Test
+    public void testFormulaSetValueDoesNotChangeType() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet sheet = wb.createSheet();
+            Row row = sheet.createRow(0);
+            Cell cell = row.createCell(0);
+            cell.setCellFormula("SQRT(-1)");
+
+            assertEquals(CellType.FORMULA, cell.getCellType());
+
+            cell.setCellValue(new Date());
+            assertEquals(CellType.FORMULA, cell.getCellType());
+
+            cell.setCellValue(GregorianCalendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.ROOT));
+            assertEquals(CellType.FORMULA, cell.getCellType());
+
+            cell.setCellValue(1.0);
+            assertEquals(CellType.FORMULA, cell.getCellType());
+
+            cell.setCellValue("test");
+            assertEquals(CellType.FORMULA, cell.getCellType());
+
+            cell.setCellValue(wb.getCreationHelper().createRichTextString("test"));
+            assertEquals(CellType.FORMULA, cell.getCellType());
+
+            cell.setCellValue(false);
+            assertEquals(CellType.FORMULA, cell.getCellType());
         }
     }
 }

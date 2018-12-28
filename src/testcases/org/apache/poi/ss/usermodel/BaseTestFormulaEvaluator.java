@@ -18,8 +18,11 @@
 package org.apache.poi.ss.usermodel;
 
 import java.io.IOException;
+import java.util.Locale;
 
 import org.apache.poi.ss.ITestDataProvider;
+import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.util.CellRangeAddressList;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -622,6 +625,77 @@ public abstract class BaseTestFormulaEvaluator {
             assertEquals("3.0", cell.toString());
             assertEquals(CellType.NUMERIC, cell.getCellType());
             assertEquals(3.0, cell.getNumericCellValue(), 0.01);
+        }
+    }
+
+    @Test
+    public void testFormulaEvaluatorEvaluateSimpleFormulaCell() throws Exception {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            final Row row = wb.createSheet().createRow(0);
+            final Cell a1 = row.createCell(0, CellType.NUMERIC);
+            a1.setCellValue(1.0);
+            final Cell a2 = row.createCell(1, CellType.NUMERIC);
+            a2.setCellValue(2.0);
+            final Cell a3 = row.createCell(2, CellType.FORMULA);
+            final String formula = "SUM(A1:B1)";
+            a3.setCellFormula(formula);
+            FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+            CellType resultType = evaluator.evaluateFormulaCell(a3);
+            assertEquals(CellType.NUMERIC, resultType);
+
+            double result = a3.getNumericCellValue();
+            // result is correct
+            assertTrue(String.format(Locale.ROOT, "Expected %f to be greater than %f", result, 2.0), result > 2.0);
+            assertTrue(String.format(Locale.ROOT, "Expected %f to be less than %f", result, 4.0), result < 4.0);
+
+            // ensure that this works for SUM
+            assertEquals(CellType.FORMULA, a3.getCellType());
+            assertEquals(formula, a3.getCellFormula());
+        }
+    }
+
+    @Test
+    public void testFormulaEvaluatorEvaluateVlookupFormulaCell() throws Exception {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            final Sheet mainSheet = wb.createSheet("main");
+            final Sheet otherSheet = wb.createSheet("other");
+            final Row otherRow1 = otherSheet.createRow(0);
+            final Cell label1 = otherRow1.createCell(0, CellType.STRING);
+            label1.setCellValue("Thing One");
+            final Cell id1 = otherRow1.createCell(1, CellType.STRING);
+            id1.setCellValue("1");
+            final Row otherRow2 = otherSheet.createRow(1);
+            final Cell label2 = otherRow2.createCell(0, CellType.STRING);
+            label2.setCellValue("Thing Two");
+            final Cell id2 = otherRow2.createCell(1, CellType.STRING);
+            id2.setCellValue("2");
+            final DataValidationHelper dvHelper = mainSheet.getDataValidationHelper();
+            final int maxRows = SpreadsheetVersion.EXCEL2007.getMaxRows() - 1;
+            final CellRangeAddressList addressList = new CellRangeAddressList(0, maxRows, 0, 0);
+            final String constraint = "'other'!$A:$A";
+            final DataValidationConstraint dvConstraint = dvHelper.createFormulaListConstraint(constraint);
+            final DataValidation dataValidation = dvHelper.createValidation(dvConstraint, addressList);
+            dataValidation.setShowErrorBox(true);
+            mainSheet.addValidationData(dataValidation);
+            wb.setSheetHidden(wb.getSheetIndex(otherSheet), true);
+            final Row row = mainSheet.createRow(0);
+            final Cell a1 = row.createCell(0, CellType.STRING);
+            a1.setCellValue("Thing Two");
+            final Cell a2 = row.createCell(1, CellType.FORMULA);
+            final String formula = "VLOOKUP(A1,other!A:B,2,FALSE)";
+            a2.setCellFormula(formula);
+
+            FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+            CellType resultType = evaluator.evaluateFormulaCell(a2);
+            assertEquals(CellType.STRING, resultType);
+
+            // result is correct
+            String result = a2.getStringCellValue();
+            assertEquals("2", result);
+
+            // ensure that this works for vlookup as well
+            assertEquals(CellType.FORMULA, a2.getCellType());
+            assertEquals(formula, a2.getCellFormula());
         }
     }
 }
