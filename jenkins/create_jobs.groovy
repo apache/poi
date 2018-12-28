@@ -276,10 +276,12 @@ poijobs.each { poijob ->
 
         if (poijob.githubpr) {
             parameters {
+                /* plugin not available:
                 gitParam('sha1') {
                     description('Pull request')
                     type('BRANCH')
-                }
+                }*/
+                stringParam('sha1', 'origin/pr/9/head', 'Provide a branch-spec, e.g. origin/pr/9/head')
             }
             triggers {
                 githubPullRequest {
