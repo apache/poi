@@ -97,10 +97,17 @@ def poijobs = [
         ],
         [ name: 'POI-DSL-Windows-1.8', trigger: 'H */12 * * *', windows: true, slaves: 'Windows'
         ],
+        [ name: 'POI-DSL-Github-PullRequests', trigger: '', githubpr: true, skipcigame: true,
+                disabled: true // not fully functional yet, thus disable it for now
+        ],
 ]
 
 def xmlbeansjobs = [
-        [ name: 'POI-XMLBeans-DSL-1.6', jdk: '1.6', trigger: 'H */12 * * *', skipcigame: true
+        [ name: 'POI-XMLBeans-DSL-1.6', jdk: '1.6', trigger: 'H */12 * * *', skipcigame: true,
+        ],
+        [ name: 'POI-XMLBeans-DSL-1.8', jdk: '1.8', trigger: triggerSundays, skipcigame: true,
+        ],
+        [ name: 'POI-XMLBeans-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true,
         ]
 ]
 
@@ -250,15 +257,43 @@ poijobs.each { poijob ->
         }
         jdk(jdkMapping.get(jdkKey))
         scm {
-            svn(svnBase) { svnNode ->
-                svnNode / browser(class: 'hudson.scm.browsers.ViewSVN') /
-                        url << 'http://svn.apache.org/viewcvs.cgi/?root=Apache-SVN'
+            if (poijob.githubpr) {
+                git {
+                    remote {
+                        github('apache/poi')
+                        refspec('+refs/pull/*:refs/remotes/origin/pr/*')
+                    }
+                    branch('${sha1}')
+                }
+            } else {
+                svn(svnBase) { svnNode ->
+                    svnNode / browser(class: 'hudson.scm.browsers.ViewSVN') /
+                            url << 'http://svn.apache.org/viewcvs.cgi/?root=Apache-SVN'
+                }
             }
         }
         checkoutRetryCount(3)
 
-        triggers {
-            scm(trigger)
+        if (poijob.githubpr) {
+            parameters {
+                gitParam('sha1') {
+                    description('Pull request')
+                    type('BRANCH')
+                }
+            }
+            triggers {
+                githubPullRequest {
+                    admins(['centic9', 'poi-benchmark', 'tballison', 'gagravarr', 'onealj', 'pjfanning', 'Alain-Bearez'])
+                    userWhitelist(['centic9', 'poi-benchmark', 'tballison', 'gagravarr', 'onealj', 'pjfanning', 'Alain-Bearez'])
+                    orgWhitelist(['apache'])
+                    cron('H/5 * * * *')
+                    triggerPhrase('OK to test')
+                }
+            }
+        } else {
+            triggers {
+                scm(trigger)
+            }
         }
 
         def shellcmds = (poijob.windows ? shellCmdsWin : shellCmdsUnix).replace('POIJOBSHELL', poijob.shell ?: '')
