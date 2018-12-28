@@ -257,12 +257,10 @@ public class TestXSLFPictureShape {
 
     @Test
     public void renderSvgImage() throws Exception {
-        String dataDirName = System.getProperty(TEST_PROPERTY);
-        final String SVG_FILE = (dataDirName != null ? "../" : "") + "src/documentation/resources/images/project-header.svg";
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
 
-        XSLFPictureData svgPic = ppt.addPicture(new File(dataDirName, SVG_FILE), PictureType.SVG);
+        XSLFPictureData svgPic = ppt.addPicture(POIDataSamples.getDocumentInstance().getFile("../project-header.svg"), PictureType.SVG);
         XSLFPictureShape shape = XSLFPictureShape.addSvgImage(slide, svgPic, PictureType.JPEG, null);
 
         Rectangle2D anchor = shape.getAnchor();
