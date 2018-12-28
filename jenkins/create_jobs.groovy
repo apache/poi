@@ -275,6 +275,10 @@ poijobs.each { poijob ->
         checkoutRetryCount(3)
 
         if (poijob.githubpr) {
+            throttleConcurrentBuilds {
+                maxPerNode(1)
+                maxTotal(1)
+            }
             parameters {
                 /* plugin not available:
                 gitParam('sha1') {
