@@ -97,7 +97,10 @@ def poijobs = [
         ],
         [ name: 'POI-DSL-Windows-1.8', trigger: 'H */12 * * *', windows: true, slaves: 'Windows'
         ],
-        [ name: 'POI-DSL-Github-PullRequests', trigger: '', githubpr: true, skipcigame: true
+        [ name: 'POI-DSL-Github-PullRequests', trigger: '', githubpr: true, skipcigame: true,
+          // ensure the file which is needed from the separate documentation module does exist
+          // as we are checking out from git, we do not have the reference checked out here
+          addShell: 'mkdir src/documentation\ntouch src/documentation/RELEASE-NOTES.txt'
         ],
 ]
 
@@ -287,13 +290,13 @@ poijobs.each { poijob ->
                 stringParam('sha1', 'origin/pr/9/head', 'Provide a branch-spec, e.g. origin/pr/9/head')
             }
             triggers {
-                githubPullRequest {
+                /*githubPullRequest {
                     admins(['centic9', 'poi-benchmark', 'tballison', 'gagravarr', 'onealj', 'pjfanning', 'Alain-Bearez'])
                     userWhitelist(['centic9', 'poi-benchmark', 'tballison', 'gagravarr', 'onealj', 'pjfanning', 'Alain-Bearez'])
                     orgWhitelist(['apache'])
                     cron('H/5 * * * *')
                     triggerPhrase('OK to test')
-                }
+                }*/
             }
         } else {
             triggers {
@@ -598,11 +601,11 @@ Unfortunately we often see builds break because of changes/new machines...''')
                 'JDK 12 (latest)',
                 'OpenJDK 12 b18 (early access build)'
         )
-        elasticAxis {
+        /*elasticAxis {
             name('Nodes')
             labelString('!cloud-slave&&!H15&&!H17&&!H18&&!H24&&!ubuntu-4&&!H21&&!H35&&!websites1&&!couchdb&&!plc4x&&!ppc64le')
             ignoreOffline(true)
-        }
+        }*/
     }
     steps {
         conditionalSteps {
@@ -627,7 +630,7 @@ echo '<?xml version="1.0"?><project name="POI Build" default="test"><target name
                 fileExists('c:\\windows', BaseDir.WORKSPACE)
                 runner('DontRun')
                 steps {
-                    batchFile {
+                    /*batchFile {
                         command(
 '''@echo off
 echo .
@@ -637,7 +640,7 @@ javac -version
 echo .
 echo ^<?xml version=^"1.0^"?^>^<project name=^"POI Build^" default=^"test^"^>^<target name=^"test^"^>^<echo^>Using Ant: ${ant.version} from ${ant.home}^</echo^>^</target^>^</project^> > build.xml
 ''')
-                    }
+                    }*/
                     ant {
                         antInstallation(defaultAnt + ' (Windows)')
                     }
