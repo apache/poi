@@ -875,7 +875,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
         // Column 1 has a font with regular colours
         XSSFCell cr = r.getCell(1);
-        XSSFFont fr = wb.getFontAt(cr.getCellStyle().getFontIndex());
+        XSSFFont fr = wb.getFontAt(cr.getCellStyle().getFontIndexAsInt());
         XSSFColor colr = fr.getXSSFColor();
         // No theme, has colours
         assertEquals(0, colr.getTheme());
@@ -883,7 +883,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
         // Column 0 has a font with colours from a theme
         XSSFCell ct = r.getCell(0);
-        XSSFFont ft = wb.getFontAt(ct.getCellStyle().getFontIndex());
+        XSSFFont ft = wb.getFontAt(ct.getCellStyle().getFontIndexAsInt());
         XSSFColor colt = ft.getXSSFColor();
         // Has a theme, which has the colours on it
         assertEquals(9, colt.getTheme());

@@ -22,11 +22,9 @@ import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.record.NameRecord;
-import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.BaseTestNamedRange;
-import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.junit.Test;
 
@@ -126,7 +124,7 @@ public final class TestHSSFName extends BaseTestNamedRange {
 
         HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
         HSSFName nm = wb2.getNameAt(wb2.getNameIndex("RangeTest"));
-        assertTrue("Name is "+nm.getNameName(),"RangeTest".equals(nm.getNameName()));
+        assertEquals("Name is " + nm.getNameName(), "RangeTest", nm.getNameName());
         assertEquals(wb2.getSheetName(0)+"!$D$4:$E$8", nm.getRefersToFormula());
         wb2.close();
         wb1.close();

@@ -25,10 +25,7 @@ import java.io.InputStream;
 
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.Entry;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
