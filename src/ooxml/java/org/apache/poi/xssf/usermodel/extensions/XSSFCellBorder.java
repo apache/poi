@@ -17,6 +17,8 @@
 package org.apache.poi.xssf.usermodel.extensions;
 
 
+import java.util.Objects;
+
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.xssf.model.ThemesTable;
 import org.apache.poi.xssf.usermodel.IndexedColorMap;
@@ -196,6 +198,21 @@ public class XSSFCellBorder {
         if (!(o instanceof XSSFCellBorder)) return false;
 
         XSSFCellBorder cf = (XSSFCellBorder) o;
-        return border.toString().equals(cf.getCTBorder().toString());
+
+        // bug 60845
+        // Do not compare the representing strings but the properties
+        // Reason:
+        //   The strings are different if the XMLObject is a fragment (e.g. the ones from cloneStyle)
+        //   even if they are in fact representing the same style
+        boolean equal = true;
+        for(BorderSide side : BorderSide.values()){
+            if(!Objects.equals(this.getBorderColor(side), cf.getBorderColor(side))
+                    || !Objects.equals(this.getBorderStyle(side), cf.getBorderStyle(side))){
+                equal = false;
+                break;
+            }
+        }
+        
+        return equal;
     }
 }

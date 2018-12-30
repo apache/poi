@@ -21,6 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -67,10 +68,10 @@ public class TestXSSFCellStyle {
 		ctBorderA = CTBorder.Factory.newInstance();
 		XSSFCellBorder borderA = new XSSFCellBorder(ctBorderA);
 		long borderId = stylesTable.putBorder(borderA);
-		assertEquals(1, borderId);
+		assertEquals(0, borderId);
 
 		XSSFCellBorder borderB = new XSSFCellBorder();
-		assertEquals(1, stylesTable.putBorder(borderB));
+		assertEquals(0, stylesTable.putBorder(borderB));
 
 		ctFill = CTFill.Factory.newInstance();
 		XSSFCellFill fill = new XSSFCellFill(ctFill, null);
@@ -133,7 +134,10 @@ public class TestXSSFCellStyle {
         assertEquals(num, stylesTable.getBorders().size());
         borderId = (int)cellStyle.getCoreXf().getBorderId();
         ctBorder = stylesTable.getBorderAt(borderId).getCTBorder();
-        assertFalse(ctBorder.isSetBottom());
+        //none is not the same as "not set", therefore the following doesn't work any more
+        //assertFalse(ctBorder.isSetBottom());
+        //replacement:
+        assertEquals(ctBorder.getBottom().getStyle(), STBorderStyle.NONE);
     }
 
 	@Test
@@ -168,7 +172,10 @@ public class TestXSSFCellStyle {
         assertEquals(num, stylesTable.getBorders().size());
         borderId = (int)cellStyle.getCoreXf().getBorderId();
         ctBorder = stylesTable.getBorderAt(borderId).getCTBorder();
-        assertFalse(ctBorder.isSetRight());
+        //none is not the same as "not set", therefore the following doesn't work any more
+        //assertFalse(ctBorder.isSetRight());
+        //replacement:
+        assertEquals(ctBorder.getRight().getStyle(), STBorderStyle.NONE);
     }
 
 	@Test
@@ -203,7 +210,10 @@ public class TestXSSFCellStyle {
         assertEquals(num, stylesTable.getBorders().size());
         borderId = (int)cellStyle.getCoreXf().getBorderId();
         ctBorder = stylesTable.getBorderAt(borderId).getCTBorder();
-        assertFalse(ctBorder.isSetLeft());
+        //none is not the same as "not set", therefore the following doesn't work any more
+        //assertFalse(ctBorder.isSetLeft());
+        //replacement:
+        assertEquals(ctBorder.getLeft().getStyle(), STBorderStyle.NONE);
 	}
 
 	@Test
@@ -238,7 +248,10 @@ public class TestXSSFCellStyle {
         assertEquals(num, stylesTable.getBorders().size());
         borderId = (int)cellStyle.getCoreXf().getBorderId();
         ctBorder = stylesTable.getBorderAt(borderId).getCTBorder();
-        assertFalse(ctBorder.isSetTop());
+        //none is not the same as "not set", therefore the following doesn't work any more
+        //assertFalse(ctBorder.isSetTop());
+        //replacement:
+        assertEquals(ctBorder.getTop().getStyle(), STBorderStyle.NONE);
     }
     
     private void testGetSetBorderXMLBean(BorderStyle border, STBorderStyle.Enum expected) {
@@ -258,10 +271,14 @@ public class TestXSSFCellStyle {
         cellStyle.setBorderTop(BorderStyle.NONE);
         assertEquals(BorderStyle.NONE, cellStyle.getBorderTop());
         int borderId = (int)cellStyle.getCoreXf().getBorderId();
-        assertTrue(borderId > 0);
+        // The default Style is already "none"
+        // Therefore the new style already exists as Id=0
+        //assertTrue(borderId > 0);
+        // replacement:
+        assertEquals(0, borderId);
         //check changes in the underlying xml bean
         CTBorder ctBorder = stylesTable.getBorderAt(borderId).getCTBorder();
-        assertNull(ctBorder.getTop());
+        assertNotNull(ctBorder.getTop());
         // no border style and STBorderStyle.NONE are equivalent
         // POI prefers to unset the border style than explicitly set it STBorderStyle.NONE
     }
@@ -537,7 +554,6 @@ public class TestXSSFCellStyle {
         assertEquals(IndexedColors.AUTOMATIC.getIndex(), cellStyle.getFillBackgroundColor());
 	}
 
-	@SuppressWarnings("deprecation")
     @Test
     public void testDefaultStyles() throws IOException {
 
@@ -571,7 +587,6 @@ public class TestXSSFCellStyle {
 	}
 
     @Test
-    @SuppressWarnings("deprecation")
     public void testGetFillForegroundColor() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         StylesTable styles = wb.getStylesSource();
@@ -580,7 +595,7 @@ public class TestXSSFCellStyle {
 
         XSSFCellStyle defaultStyle = wb.getCellStyleAt((short)0);
         assertEquals(IndexedColors.AUTOMATIC.getIndex(), defaultStyle.getFillForegroundColor());
-        assertEquals(null, defaultStyle.getFillForegroundXSSFColor());
+        assertNull(defaultStyle.getFillForegroundXSSFColor());
         assertEquals(FillPatternType.NO_FILL, defaultStyle.getFillPattern());
         assertEquals(FillPatternType.NO_FILL, defaultStyle.getFillPatternEnum());
 
@@ -636,8 +651,7 @@ public class TestXSSFCellStyle {
         assertEquals(FillPatternType.NO_FILL, cellStyle.getFillPattern());
         fillId = (int)cellStyle.getCoreXf().getFillId();
         ctFill2 = stylesTable.getFillAt(fillId).getCTFill();
-        assertFalse(ctFill2.getPatternFill().isSetPatternType());
-
+        assertNull(ctFill2.getPatternFill());
 	}
 
 	@Test
@@ -753,9 +767,9 @@ public class TestXSSFCellStyle {
       assertEquals(18, orig.getDataFormat());
       
       XSSFCellStyle clone = wb.createCellStyle();
-      assertFalse(HorizontalAlignment.RIGHT == clone.getAlignment());
-      assertFalse(fnt == clone.getFont());
-      assertFalse(18 == clone.getDataFormat());
+        assertNotSame(HorizontalAlignment.RIGHT, clone.getAlignment());
+        assertNotSame(fnt, clone.getFont());
+        assertNotEquals(18, clone.getDataFormat());
       
       clone.cloneStyleFrom(orig);
       assertEquals(HorizontalAlignment.RIGHT, clone.getAlignment());
@@ -770,87 +784,95 @@ public class TestXSSFCellStyle {
       wb.close();
 	}
 
-	/**
-	 * Cloning one XSSFCellStyle onto Another, different XSSFWorkbooks
-	 */
-	@Test
+    /**
+     * Cloning one XSSFCellStyle onto Another, different XSSFWorkbooks
+     */
+    @Test
     public void testCloneStyleDiffWB() throws IOException {
-       XSSFWorkbook wbOrig = new XSSFWorkbook();
-       assertEquals(1, wbOrig.getNumberOfFonts());
-       assertEquals(0, wbOrig.getStylesSource().getNumberFormats().size());
-       
-       XSSFFont fnt = wbOrig.createFont();
-       fnt.setFontName("TestingFont");
-       assertEquals(2, wbOrig.getNumberOfFonts());
-       assertEquals(0, wbOrig.getStylesSource().getNumberFormats().size());
-       
-       XSSFDataFormat fmt = wbOrig.createDataFormat();
-       fmt.getFormat("MadeUpOne");
-       fmt.getFormat("MadeUpTwo");
-       
-       XSSFCellStyle orig = wbOrig.createCellStyle();
-       orig.setAlignment(HorizontalAlignment.RIGHT);
-       orig.setFont(fnt);
-       orig.setDataFormat(fmt.getFormat("Test##"));
-       
-       assertTrue(HorizontalAlignment.RIGHT == orig.getAlignment());
-       assertTrue(fnt == orig.getFont());
-       assertTrue(fmt.getFormat("Test##") == orig.getDataFormat());
-       
-       assertEquals(2, wbOrig.getNumberOfFonts());
-       assertEquals(3, wbOrig.getStylesSource().getNumberFormats().size());
-       
-       
-       // Now a style on another workbook
-       XSSFWorkbook wbClone = new XSSFWorkbook();
-       assertEquals(1, wbClone.getNumberOfFonts());
-       assertEquals(0, wbClone.getStylesSource().getNumberFormats().size());
-       assertEquals(1, wbClone.getNumCellStyles());
-       
-       XSSFDataFormat fmtClone = wbClone.createDataFormat();
-       XSSFCellStyle clone = wbClone.createCellStyle();
-       
-       assertEquals(1, wbClone.getNumberOfFonts());
-       assertEquals(0, wbClone.getStylesSource().getNumberFormats().size());
-       
-       assertFalse(HorizontalAlignment.RIGHT == clone.getAlignment());
-       assertNotEquals("TestingFont", clone.getFont().getFontName());
-       
-       clone.cloneStyleFrom(orig);
-       
-       assertEquals(2, wbClone.getNumberOfFonts());
-       assertEquals(2, wbClone.getNumCellStyles());
-       assertEquals(1, wbClone.getStylesSource().getNumberFormats().size());
-       
-       assertEquals(HorizontalAlignment.RIGHT, clone.getAlignment());
-       assertEquals("TestingFont", clone.getFont().getFontName());
-       assertEquals(fmtClone.getFormat("Test##"), clone.getDataFormat());
-       assertFalse(fmtClone.getFormat("Test##") == fmt.getFormat("Test##"));
-       
-       // Save it and re-check
-       XSSFWorkbook wbReload = XSSFTestDataSamples.writeOutAndReadBack(wbClone);
-       assertEquals(2, wbReload.getNumberOfFonts());
-       assertEquals(2, wbReload.getNumCellStyles());
-       assertEquals(1, wbReload.getStylesSource().getNumberFormats().size());
-       
-       XSSFCellStyle reload = wbReload.getCellStyleAt((short)1);
-       assertEquals(HorizontalAlignment.RIGHT, reload.getAlignment());
-       assertEquals("TestingFont", reload.getFont().getFontName());
-       assertEquals(fmtClone.getFormat("Test##"), reload.getDataFormat());
-       assertFalse(fmtClone.getFormat("Test##") == fmt.getFormat("Test##"));
+        XSSFWorkbook wbOrig = new XSSFWorkbook();
+        assertEquals(1, wbOrig.getNumberOfFonts());
+        assertEquals(0, wbOrig.getStylesSource().getNumberFormats().size());
 
-       XSSFWorkbook wbOrig2 = XSSFTestDataSamples.writeOutAndReadBack(wbOrig);
-       assertNotNull(wbOrig2);
-       wbOrig2.close();
-       
-       XSSFWorkbook wbClone2 = XSSFTestDataSamples.writeOutAndReadBack(wbClone);
-       assertNotNull(wbClone2);
-       wbClone2.close();
-       
-       wbReload.close();
-       wbClone.close();
-       wbOrig.close();
-   }
+        XSSFFont fnt = wbOrig.createFont();
+        fnt.setFontName("TestingFont");
+        assertEquals(2, wbOrig.getNumberOfFonts());
+        assertEquals(0, wbOrig.getStylesSource().getNumberFormats().size());
+
+        XSSFDataFormat fmt = wbOrig.createDataFormat();
+        fmt.getFormat("MadeUpOne");
+        fmt.getFormat("MadeUpTwo");
+
+        XSSFCellStyle orig = wbOrig.createCellStyle();
+        orig.setAlignment(HorizontalAlignment.RIGHT);
+        orig.setFont(fnt);
+        orig.setDataFormat(fmt.getFormat("Test##"));
+        orig.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        orig.setFillForegroundColor(IndexedColors.BRIGHT_GREEN.getIndex());
+
+        XSSFCellStyle origEmpty = wbOrig.createCellStyle();
+
+        assertSame(HorizontalAlignment.RIGHT, orig.getAlignment());
+        assertSame(fnt, orig.getFont());
+        assertEquals(fmt.getFormat("Test##"), orig.getDataFormat());
+
+        assertEquals(2, wbOrig.getNumberOfFonts());
+        assertEquals(3, wbOrig.getStylesSource().getNumberFormats().size());
+
+
+        // Now a style on another workbook
+        XSSFWorkbook wbClone = new XSSFWorkbook();
+        assertEquals(1, wbClone.getNumberOfFonts());
+        assertEquals(0, wbClone.getStylesSource().getNumberFormats().size());
+        assertEquals(1, wbClone.getNumCellStyles());
+
+        XSSFDataFormat fmtClone = wbClone.createDataFormat();
+        XSSFCellStyle clone = wbClone.createCellStyle();
+
+        assertEquals(1, wbClone.getNumberOfFonts());
+        assertEquals(0, wbClone.getStylesSource().getNumberFormats().size());
+
+        assertNotSame(HorizontalAlignment.RIGHT, clone.getAlignment());
+        assertNotEquals("TestingFont", clone.getFont().getFontName());
+
+        clone.cloneStyleFrom(orig);
+
+        assertEquals(2, wbClone.getNumberOfFonts());
+        assertEquals(2, wbClone.getNumCellStyles());
+        assertEquals(1, wbClone.getStylesSource().getNumberFormats().size());
+
+        assertEquals(HorizontalAlignment.RIGHT, clone.getAlignment());
+        assertEquals("TestingFont", clone.getFont().getFontName());
+        assertEquals(fmtClone.getFormat("Test##"), clone.getDataFormat());
+        assertNotEquals(fmtClone.getFormat("Test##"), fmt.getFormat("Test##"));
+        assertEquals(clone.getFillPatternEnum(), FillPatternType.SOLID_FOREGROUND);
+        assertEquals(clone.getFillForegroundColor(), IndexedColors.BRIGHT_GREEN.getIndex());
+
+        // Save it and re-check
+        XSSFWorkbook wbReload = XSSFTestDataSamples.writeOutAndReadBack(wbClone);
+        assertEquals(2, wbReload.getNumberOfFonts());
+        assertEquals(2, wbReload.getNumCellStyles());
+        assertEquals(1, wbReload.getStylesSource().getNumberFormats().size());
+
+        XSSFCellStyle reload = wbReload.getCellStyleAt((short)1);
+        assertEquals(HorizontalAlignment.RIGHT, reload.getAlignment());
+        assertEquals("TestingFont", reload.getFont().getFontName());
+        assertEquals(fmtClone.getFormat("Test##"), reload.getDataFormat());
+        assertNotEquals(fmtClone.getFormat("Test##"), fmt.getFormat("Test##"));
+        assertEquals(clone.getFillPatternEnum(), FillPatternType.SOLID_FOREGROUND);
+        assertEquals(clone.getFillForegroundColor(), IndexedColors.BRIGHT_GREEN.getIndex());
+
+        XSSFWorkbook wbOrig2 = XSSFTestDataSamples.writeOutAndReadBack(wbOrig);
+        assertNotNull(wbOrig2);
+        wbOrig2.close();
+
+        XSSFWorkbook wbClone2 = XSSFTestDataSamples.writeOutAndReadBack(wbClone);
+        assertNotNull(wbClone2);
+        wbClone2.close();
+
+        wbReload.close();
+        wbClone.close();
+        wbOrig.close();
+    }
 
     /**
      * Avoid ArrayIndexOutOfBoundsException  when creating cell style
@@ -900,7 +922,7 @@ public class TestXSSFCellStyle {
     	Row r = s.getRow(0);
     	CellStyle cs = r.getCell(0).getCellStyle();
 
-    	assertEquals(true, cs.getShrinkToFit());
+        assertTrue(cs.getShrinkToFit());
 
     	// New file
     	XSSFWorkbook wb2 = new XSSFWorkbook();
@@ -919,8 +941,8 @@ public class TestXSSFCellStyle {
     	XSSFWorkbook wb3 = XSSFTestDataSamples.writeOutAndReadBack(wb2);
     	s = wb3.getSheetAt(0);
     	r = s.getRow(0);
-    	assertEquals(false, r.getCell(0).getCellStyle().getShrinkToFit());
-    	assertEquals(true,  r.getCell(1).getCellStyle().getShrinkToFit());
+        assertFalse(r.getCell(0).getCellStyle().getShrinkToFit());
+        assertTrue(r.getCell(1).getCellStyle().getShrinkToFit());
 
     	XSSFWorkbook wb4 = XSSFTestDataSamples.writeOutAndReadBack(wb2);
     	assertNotNull(wb4);
