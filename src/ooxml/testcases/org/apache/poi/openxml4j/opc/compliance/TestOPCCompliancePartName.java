@@ -17,7 +17,9 @@
 
 package org.apache.poi.openxml4j.opc.compliance;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -95,7 +97,7 @@ public final class TestOPCCompliancePartName {
             try {
                 uri = new URI(s);
             } catch (URISyntaxException e) {
-                assertTrue(s.equals("[Content_Types].xml"));
+                assertEquals("[Content_Types].xml", s);
                 continue;
             }
             assertFalse("This part name SHOULD NOT be valid: " + s,
@@ -225,9 +227,9 @@ public final class TestOPCCompliancePartName {
         for (int i = 0; i < partName1.length || i < partName2.length; ++i) {
             PackagePartName p1 = PackagingURIHelper.createPartName(partName1[i]);
             PackagePartName p2 = PackagingURIHelper.createPartName(partName2[i]);
-            assertTrue(p1.equals(p2));
-            assertTrue(p1.compareTo(p2) == 0);
-            assertTrue(p1.hashCode() == p2.hashCode());
+            assertEquals(p1, p2);
+            assertEquals(0, p1.compareTo(p2));
+            assertEquals(p1.hashCode(), p2.hashCode());
         }
     }
 
@@ -244,9 +246,9 @@ public final class TestOPCCompliancePartName {
         for (int i = 0; i < partName1.length || i < partName2.length; ++i) {
             PackagePartName p1 = PackagingURIHelper.createPartName(partName1[i]);
             PackagePartName p2 = PackagingURIHelper.createPartName(partName2[i]);
-            assertFalse(p1.equals(p2));
-            assertFalse(p1.compareTo(p2) == 0);
-            assertFalse(p1.hashCode() == p2.hashCode());
+            assertNotEquals(p1, p2);
+            assertNotEquals(0, p1.compareTo(p2));
+            assertNotEquals(p1.hashCode(), p2.hashCode());
         }
     }
 }

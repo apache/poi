@@ -72,7 +72,7 @@ public final class TestNameRecord extends TestCase {
 		wb.createSheet("Sheet1");
 		name.setNameName("test");
 		name.setRefersToFormula("Sheet1!$B$3");
-		if (name.getRefersToFormula().equals("Sheet1!B3")) {
+		if ("Sheet1!B3".equals(name.getRefersToFormula())) {
 			fail("Identified bug 46174");
 		}
 		assertEquals("Sheet1!$B$3", name.getRefersToFormula());
@@ -701,7 +701,7 @@ public final class TestNameRecord extends TestCase {
         NameRecord record = new NameRecord();
         assertEquals(0, record.getExternSheetNumber());
         
-        record.setNameDefinition(new Ptg[] {});
+        record.setNameDefinition(Ptg.EMPTY_PTG_ARRAY);
         assertEquals(0, record.getExternSheetNumber());
         
         record.setNameDefinition(new Ptg[] {new NamePtg(1)});

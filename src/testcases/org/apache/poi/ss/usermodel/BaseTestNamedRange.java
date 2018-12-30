@@ -248,12 +248,12 @@ public abstract class BaseTestNamedRange {
          // Read the Excel file and verify its content
          Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
          Name nm1 = wb2.getName("RangeTest1");
-         assertTrue("Name is "+nm1.getNameName(),"RangeTest1".equals(nm1.getNameName()));
-         assertTrue("Reference is "+nm1.getRefersToFormula(),(wb2.getSheetName(0)+"!$A$1:$L$41").equals(nm1.getRefersToFormula()));
+        assertEquals("Name is " + nm1.getNameName(), "RangeTest1", nm1.getNameName());
+        assertEquals("Reference is " + nm1.getRefersToFormula(), (wb2.getSheetName(0) + "!$A$1:$L$41"), nm1.getRefersToFormula());
 
          Name nm2 = wb2.getName("RangeTest2");
-         assertTrue("Name is "+nm2.getNameName(),"RangeTest2".equals(nm2.getNameName()));
-         assertTrue("Reference is "+nm2.getRefersToFormula(),(wb2.getSheetName(1)+"!$A$1:$O$21").equals(nm2.getRefersToFormula()));
+        assertEquals("Name is " + nm2.getNameName(), "RangeTest2", nm2.getNameName());
+        assertEquals("Reference is " + nm2.getRefersToFormula(), (wb2.getSheetName(1) + "!$A$1:$O$21"), nm2.getRefersToFormula());
          
          wb2.close();
          wb1.close();
@@ -464,12 +464,12 @@ public abstract class BaseTestNamedRange {
 
         Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
         Name nm =wb2.getName("RangeTest");
-        assertTrue("Name is "+nm.getNameName(),"RangeTest".equals(nm.getNameName()));
-        assertTrue("Reference is "+nm.getRefersToFormula(),(wb2.getSheetName(0)+"!$D$4:$E$8").equals(nm.getRefersToFormula()));
+        assertEquals("Name is " + nm.getNameName(), "RangeTest", nm.getNameName());
+        assertEquals("Reference is " + nm.getRefersToFormula(), (wb2.getSheetName(0) + "!$D$4:$E$8"), nm.getRefersToFormula());
 
         nm = wb2.getName("AnotherTest");
-        assertTrue("Name is "+nm.getNameName(),"AnotherTest".equals(nm.getNameName()));
-        assertTrue("Reference is "+nm.getRefersToFormula(),newNamedRange2.getRefersToFormula().equals(nm.getRefersToFormula()));
+        assertEquals("Name is " + nm.getNameName(), "AnotherTest", nm.getNameName());
+        assertEquals("Reference is " + nm.getRefersToFormula(), newNamedRange2.getRefersToFormula(), nm.getRefersToFormula());
         
         wb2.close();
         wb1.close();
@@ -695,7 +695,7 @@ public abstract class BaseTestNamedRange {
     }
     
     @Test
-    public void testInvalid() throws IOException {
+    public void testInvalid() {
         Workbook wb = _testDataProvider.createWorkbook();
         
         Name name = wb.createName();
