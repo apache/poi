@@ -33,11 +33,12 @@ public class XSSFColor extends ExtendedColor {
     private final IndexedColorMap indexedColorMap;
 
     /**
-     * @param color
-     * @param map
+     * @param color The ooxml color object to use
+     * @param map The IndexedColorMap to use instead of the default one
      * @return null if color is null, new instance otherwise
      */
     public static XSSFColor from(CTColor color, IndexedColorMap map) {
+        //noinspection deprecation
         return color == null ? null : new XSSFColor(color, map);
     }
     
@@ -80,9 +81,10 @@ public class XSSFColor extends ExtendedColor {
 
     /**
      * new color with the given indexed color map
-     * @param colorMap
+     * @param colorMap The IndexedColorMap to use instead of the default one
      */
     public XSSFColor(IndexedColorMap colorMap) {
+        //noinspection deprecation
         this(CTColor.Factory.newInstance(), colorMap);
     }
 
@@ -100,7 +102,7 @@ public class XSSFColor extends ExtendedColor {
     /**
      * TEST ONLY
      * @param clr awt Color
-     * @param map 
+     * @param map The IndexedColorMap to use instead of the default one
      */
     public XSSFColor(java.awt.Color clr, IndexedColorMap map) {
         this(map);
@@ -113,6 +115,7 @@ public class XSSFColor extends ExtendedColor {
      * @param colorMap The IndexedColorMap to use instead of the default one
      */
     public XSSFColor(byte[] rgb, IndexedColorMap colorMap) {
+        //noinspection deprecation
         this(CTColor.Factory.newInstance(), colorMap);
         ctColor.setRgb(rgb);
     }
@@ -122,6 +125,7 @@ public class XSSFColor extends ExtendedColor {
      * @param colorMap The IndexedColorMap to use instead of the default one
      */
     public XSSFColor(IndexedColors indexedColor, IndexedColorMap colorMap) {
+        //noinspection deprecation
         this(CTColor.Factory.newInstance(), colorMap);
         ctColor.setIndexed(indexedColor.index);
     }
