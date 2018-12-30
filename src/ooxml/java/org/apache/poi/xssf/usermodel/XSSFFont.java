@@ -39,6 +39,8 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STFontScheme;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STUnderlineValues;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STVerticalAlignRun;
 
+import java.util.Objects;
+
 /**
  * Represents a font used in a workbook.
  *
@@ -542,10 +544,16 @@ public class XSSFFont implements Font {
      *  to the style table
      */
     public long registerTo(StylesTable styles) {
+        return registerTo(styles, true);
+    }
+
+    public long registerTo(StylesTable styles, boolean force) {
         this._themes = styles.getTheme();
-        this._index = styles.putFont(this, true);
+        this._index = styles.putFont(this, force);
         return this._index;
     }
+
+
     /**
      * Records the Themes Table that is associated with
      *  the current font, used when looking up theme
@@ -635,7 +643,22 @@ public class XSSFFont implements Font {
         if(!(o instanceof XSSFFont)) return false;
 
         XSSFFont cf = (XSSFFont)o;
-        return _ctFont.toString().equals(cf.getCTFont().toString());
+
+        // BUG 60845
+        return Objects.equals(this.getItalic(), cf.getItalic())
+                        && Objects.equals(this.getBold(), cf.getBold())
+                        && Objects.equals(this.getStrikeout(), cf.getStrikeout())
+                        && Objects.equals(this.getCharSet(), cf.getCharSet())
+                        && Objects.equals(this.getBold(), cf.getBold())
+                        && Objects.equals(this.getColor(), cf.getColor())
+                        && Objects.equals(this.getFamily(), cf.getFamily())
+                        && Objects.equals(this.getFontHeight(), cf.getFontHeight())
+                        && Objects.equals(this.getFontName(), cf.getFontName())
+                        && Objects.equals(this.getScheme(), cf.getScheme())
+                        && Objects.equals(this.getThemeColor(), cf.getThemeColor())
+                        && Objects.equals(this.getTypeOffset(), cf.getTypeOffset())
+                        && Objects.equals(this.getUnderline(), cf.getUnderline())
+                        && Objects.equals(this.getXSSFColor(), cf.getXSSFColor());
     }
 
 }
