@@ -110,6 +110,7 @@ def xmlbeansjobs = [
         [ name: 'POI-XMLBeans-DSL-1.8', jdk: '1.8', trigger: triggerSundays, skipcigame: true,
         ],
         [ name: 'POI-XMLBeans-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true,
+                disabled: true // XMLBeans does not yet compile with Java 11
         ]
 ]
 
