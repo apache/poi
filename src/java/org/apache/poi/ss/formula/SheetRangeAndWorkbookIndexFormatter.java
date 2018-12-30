@@ -66,8 +66,8 @@ public class SheetRangeAndWorkbookIndexFormatter {
     }
 
     private static boolean anySheetNameNeedsEscaping(String firstSheetName, String lastSheetName) {
-        boolean anySheetNameNeedsDelimiting = firstSheetName != null && SheetNameFormatter.needsDelimiting(firstSheetName);
-        anySheetNameNeedsDelimiting |= lastSheetName != null && SheetNameFormatter.needsDelimiting(lastSheetName);
+        boolean anySheetNameNeedsDelimiting = SheetNameFormatter.needsDelimiting(firstSheetName);
+        anySheetNameNeedsDelimiting |= SheetNameFormatter.needsDelimiting(lastSheetName);
         return anySheetNameNeedsDelimiting;
     }
 }

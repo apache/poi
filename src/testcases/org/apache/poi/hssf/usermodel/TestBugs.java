@@ -3135,4 +3135,21 @@ public final class TestBugs extends BaseTestBugzillaIssues {
             assertEquals("\uFF2D\uFF33 \uFF30\u30B4\u30B7\u30C3\u30AF", font.getFontName());
         }
     }
+
+    @Test
+    public void test60460() throws IOException {
+        final Workbook wb = HSSFTestDataSamples.openSampleWorkbook("60460.xls");
+
+        assertEquals(2, wb.getAllNames().size());
+
+        Name rangedName = wb.getAllNames().get(0);
+        assertFalse(rangedName.isFunctionName());
+        assertEquals("'[\\\\HEPPC3/gt$/Teaching/Syn/physyn.xls]#REF'!$AK$70:$AL$70", rangedName.getRefersToFormula());
+
+        rangedName = wb.getAllNames().get(1);
+        assertFalse(rangedName.isFunctionName());
+        assertEquals("Questionnaire!$A$1:$L$65", rangedName.getRefersToFormula());
+
+        wb.close();
+    }
 }

@@ -37,7 +37,7 @@ final class ExternSheetNameResolver {
             String wbName = externalSheet.getWorkbookName();
             String sheetName = externalSheet.getSheetName();
             if (wbName != null) {
-                sb = new StringBuilder(wbName.length() + sheetName.length() + cellRefText.length() + 4);
+                sb = new StringBuilder(wbName.length() + (sheetName == null ? 0 : sheetName.length()) + cellRefText.length() + 4);
                 SheetNameFormatter.appendFormat(sb, wbName, sheetName);
             } else {
                 sb = new StringBuilder(sheetName.length() + cellRefText.length() + 4);

@@ -17,22 +17,23 @@
 
 package org.apache.poi.ss.formula;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * Tests for {@link SheetNameFormatter}
  * 
  * @author Josh Micich
  */
-public final class TestSheetNameFormatter extends TestCase {
-
-	private static void confirmFormat(String rawSheetName, String expectedSheetNameEncoding) {
-		assertEquals(expectedSheetNameEncoding, SheetNameFormatter.format(rawSheetName));
-	}
-
+public final class TestSheetNameFormatter {
 	/**
 	 * Tests main public method 'format' 
 	 */
+	@Test
 	public void testFormat() {
 		
 		confirmFormat("abc", "abc");
@@ -43,14 +44,108 @@ public final class TestSheetNameFormatter extends TestCase {
 
 		confirmFormat("O'Brian", "'O''Brian'"); // single quote gets doubled
 		
-		
 		confirmFormat("3rdTimeLucky", "'3rdTimeLucky'"); // digit in first pos
 		confirmFormat("_", "_"); // plain underscore OK
 		confirmFormat("my_3rd_sheet", "my_3rd_sheet"); // underscores and digits OK
 		confirmFormat("A12220", "'A12220'"); 
-		confirmFormat("TAXRETURN19980415", "TAXRETURN19980415"); 
+		confirmFormat("TAXRETURN19980415", "TAXRETURN19980415");
+
+		confirmFormat(null, "#REF");
 	}
-	
+
+	private static void confirmFormat(String rawSheetName, String expectedSheetNameEncoding) {
+		// test all variants
+
+		assertEquals(expectedSheetNameEncoding, SheetNameFormatter.format(rawSheetName));
+
+		StringBuilder sb = new StringBuilder();
+		SheetNameFormatter.appendFormat(sb, rawSheetName);
+		assertEquals(expectedSheetNameEncoding, sb.toString());
+
+		sb = new StringBuilder();
+		SheetNameFormatter.appendFormat((Appendable)sb, rawSheetName);
+		assertEquals(expectedSheetNameEncoding, sb.toString());
+
+		StringBuffer sbf = new StringBuffer();
+		//noinspection deprecation
+		SheetNameFormatter.appendFormat(sbf, rawSheetName);
+		assertEquals(expectedSheetNameEncoding, sbf.toString());
+	}
+
+	@Test
+	public void testFormatWithWorkbookName() {
+
+		confirmFormat("abc", "abc", "[abc]abc");
+		confirmFormat("abc", "123", "'[abc]123'");
+
+		confirmFormat("abc", "my sheet", "'[abc]my sheet'"); // space
+		confirmFormat("abc", "A:MEM", "'[abc]A:MEM'"); // colon
+
+		confirmFormat("abc", "O'Brian", "'[abc]O''Brian'"); // single quote gets doubled
+
+		confirmFormat("abc", "3rdTimeLucky", "'[abc]3rdTimeLucky'"); // digit in first pos
+		confirmFormat("abc", "_", "[abc]_"); // plain underscore OK
+		confirmFormat("abc", "my_3rd_sheet", "[abc]my_3rd_sheet"); // underscores and digits OK
+		confirmFormat("abc", "A12220", "'[abc]A12220'");
+		confirmFormat("abc", "TAXRETURN19980415", "[abc]TAXRETURN19980415");
+
+		confirmFormat("abc", null, "[abc]#REF");
+		confirmFormat(null, "abc", "[#REF]abc");
+		confirmFormat(null, null, "[#REF]#REF");
+	}
+
+	private static void confirmFormat(String workbookName, String rawSheetName, String expectedSheetNameEncoding) {
+		// test all variants
+
+		StringBuilder sb = new StringBuilder();
+		SheetNameFormatter.appendFormat(sb, workbookName, rawSheetName);
+		assertEquals(expectedSheetNameEncoding, sb.toString());
+
+		sb = new StringBuilder();
+		SheetNameFormatter.appendFormat((Appendable)sb, workbookName, rawSheetName);
+		assertEquals(expectedSheetNameEncoding, sb.toString());
+
+		StringBuffer sbf = new StringBuffer();
+		//noinspection deprecation
+		SheetNameFormatter.appendFormat(sbf, workbookName, rawSheetName);
+		assertEquals(expectedSheetNameEncoding, sbf.toString());
+	}
+
+	@Test
+	public void testFormatException() {
+		Appendable mock = new Appendable() {
+			@Override
+			public Appendable append(CharSequence csq) throws IOException {
+				throw new IOException("Test exception");
+			}
+
+			@Override
+			public Appendable append(CharSequence csq, int start, int end) throws IOException {
+				throw new IOException("Test exception");
+			}
+
+			@Override
+			public Appendable append(char c) throws IOException {
+				throw new IOException("Test exception");
+			}
+		};
+
+		try {
+			SheetNameFormatter.appendFormat(mock, null, null);
+			fail("Should catch exception here");
+		} catch (RuntimeException e) {
+			// expected here
+		}
+
+		try {
+			SheetNameFormatter.appendFormat(mock, null);
+			fail("Should catch exception here");
+		} catch (RuntimeException e) {
+			// expected here
+		}
+	}
+
+	@Test
 	public void testBooleanLiterals() {
 		confirmFormat("TRUE", "'TRUE'");
 		confirmFormat("FALSE", "'FALSE'");
@@ -69,6 +164,7 @@ public final class TestSheetNameFormatter extends TestCase {
 	 * Tests functionality to determine whether a sheet name containing only letters and digits
 	 * would look (to Excel) like a cell name.
 	 */
+	@Test
 	public void testLooksLikePlainCellReference() {
 		
 		confirmCellNameMatch("A1", true);
@@ -91,6 +187,7 @@ public final class TestSheetNameFormatter extends TestCase {
 	 * Tests exact boundaries for names that look very close to cell names (i.e. contain 1 or more
 	 * letters followed by one or more digits).
 	 */
+	@Test
 	public void testCellRange() {
 		confirmCellRange("A1", 1, true);
 		confirmCellRange("a111", 1, true);
