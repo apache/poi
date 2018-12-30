@@ -17,11 +17,13 @@
 
 package org.apache.poi.ss.formula;
 
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.util.Removal;
 
 /**
  * Formats sheet names for use in formula expressions.
@@ -47,106 +49,134 @@ public final class SheetNameFormatter {
 	 * sheet name will be converted to double single quotes ('').  
 	 */
 	public static String format(String rawSheetName) {
-        StringBuilder sb = new StringBuilder(rawSheetName.length() + 2);
+        StringBuilder sb = new StringBuilder((rawSheetName == null ? 0 : rawSheetName.length()) + 2);
 		appendFormat(sb, rawSheetName);
 		return sb.toString();
 	}
-	
+
+    /**
+     * @deprecated Only kept for binary compatibility, will be replaced by the version with Appendable as parameter
+     */
+    @Deprecated
+    @Removal(version="5.0.0")
+    public static void appendFormat(StringBuffer out, String rawSheetName) {
+        appendFormat((Appendable)out, rawSheetName);
+    }
+
+    /**
+     * @deprecated Only kept for binary compatibility, will be replaced by the version with Appendable as parameter
+     */
+    @Deprecated
+    @Removal(version="5.0.0")
+    public static void appendFormat(StringBuffer out, String workbookName, String rawSheetName) {
+        appendFormat((Appendable)out, workbookName, rawSheetName);
+    }
+
+    /**
+     * Only kept for binary compatibility, will be replaced by the version with Appendable as parameter
+     */
+    @Removal(version="5.0.0")
+    public static void appendFormat(StringBuilder out, String rawSheetName) {
+        appendFormat((Appendable)out, rawSheetName);
+    }
+
+    /**
+     * Only kept for binary compatibility, will be replaced by the version with Appendable as parameter
+     */
+    @Removal(version="5.0.0")
+    public static void appendFormat(StringBuilder out, String workbookName, String rawSheetName) {
+        appendFormat((Appendable)out, workbookName, rawSheetName);
+    }
+
+    /**
+     * Convenience method for ({@link #format(String)}) when a StringBuffer is already available.
+     *
+     * @param out - sheet name will be appended here possibly with delimiting quotes
+     * @param rawSheetName - sheet name
+     */
+	public static void appendFormat(Appendable out, String rawSheetName) {
+		try {
+			boolean needsQuotes = needsDelimiting(rawSheetName);
+			if(needsQuotes) {
+				out.append(DELIMITER);
+				appendAndEscape(out, rawSheetName);
+				out.append(DELIMITER);
+			} else {
+				appendAndEscape(out, rawSheetName);
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	/**
 	 * Convenience method for ({@link #format(String)}) when a StringBuffer is already available.
 	 *
-     * @param out - sheet name will be appended here possibly with delimiting quotes
-     * @param rawSheetName - sheet name
-     * @deprecated use <code>appendFormat(StringBuilder out, String rawSheetName)</code> instead
-	 */
-	@Deprecated
-	public static void appendFormat(StringBuffer out, String rawSheetName) {
-		boolean needsQuotes = needsDelimiting(rawSheetName);
-		if(needsQuotes) {
-			out.append(DELIMITER);
-			appendAndEscape(out, rawSheetName);
-			out.append(DELIMITER);
-		} else {
-			out.append(rawSheetName);
-		}
-	}
-
-    /**
-     * @deprecated use <code>appendFormat(StringBuilder out, String workbookName, String rawSheetName)</code> instead
-     */
-    @Deprecated
-	public static void appendFormat(StringBuffer out, String workbookName, String rawSheetName) {
-		boolean needsQuotes = needsDelimiting(workbookName) || needsDelimiting(rawSheetName);
-		if(needsQuotes) {
-			out.append(DELIMITER);
-			out.append('[');
-			appendAndEscape(out, workbookName.replace('[', '(').replace(']', ')'));
-			out.append(']');
-			appendAndEscape(out, rawSheetName);
-			out.append(DELIMITER);
-		} else {
-			out.append('[');
-			out.append(workbookName);
-			out.append(']');
-			out.append(rawSheetName);
-		}
-	}
-
-	/**
-	 * Convenience method for ({@link #format(String)}) when a StringBuilder is already available.
-	 *
 	 * @param out - sheet name will be appended here possibly with delimiting quotes
-     * @param rawSheetName - sheet name
+	 * @param workbookName - workbook name
+	 * @param rawSheetName - sheet name
 	 */
-	public static void appendFormat(StringBuilder out, String rawSheetName) {
-		boolean needsQuotes = needsDelimiting(rawSheetName);
-		if(needsQuotes) {
-			out.append(DELIMITER);
-			appendAndEscape(out, rawSheetName);
-			out.append(DELIMITER);
-		} else {
-			out.append(rawSheetName);
-		}
-	}
-	public static void appendFormat(StringBuilder out, String workbookName, String rawSheetName) {
-		boolean needsQuotes = needsDelimiting(workbookName) || needsDelimiting(rawSheetName);
-		if(needsQuotes) {
-			out.append(DELIMITER);
-			out.append('[');
-			appendAndEscape(out, workbookName.replace('[', '(').replace(']', ')'));
-			out.append(']');
-			appendAndEscape(out, rawSheetName);
-			out.append(DELIMITER);
-		} else {
-			out.append('[');
-			out.append(workbookName);
-			out.append(']');
-			out.append(rawSheetName);
+	public static void appendFormat(Appendable out, String workbookName, String rawSheetName) {
+		try {
+			boolean needsQuotes = needsDelimiting(workbookName) || needsDelimiting(rawSheetName);
+			if(needsQuotes) {
+				out.append(DELIMITER);
+				out.append('[');
+				appendAndEscape(out, workbookName.replace('[', '(').replace(']', ')'));
+				out.append(']');
+				appendAndEscape(out, rawSheetName);
+				out.append(DELIMITER);
+			} else {
+				out.append('[');
+				appendOrREF(out, workbookName);
+				out.append(']');
+				appendOrREF(out, rawSheetName);
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 	}
 
-    static void appendAndEscape(Appendable sb, String rawSheetName) {
-        int len = rawSheetName.length();
-        for(int i=0; i<len; i++) {
-            char ch = rawSheetName.charAt(i);
-            try {
-                if(ch == DELIMITER) {
-                    // single quotes (') are encoded as ('')
-                    sb.append(DELIMITER);
-                }
-                sb.append(ch);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
+	private static void appendOrREF(Appendable out, String name) throws IOException {
+		if(name == null) {
+			out.append("#REF");
+		} else {
+			out.append(name);
+		}
+	}
+
+	static void appendAndEscape(Appendable sb, String rawSheetName) {
+		try {
+			if (rawSheetName == null) {
+				sb.append("#REF");
+				return;
+			}
+
+			int len = rawSheetName.length();
+			for (int i = 0; i < len; i++) {
+				char ch = rawSheetName.charAt(i);
+				if (ch == DELIMITER) {
+					// single quotes (') are encoded as ('')
+					sb.append(DELIMITER);
+				}
+				sb.append(ch);
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
     }
 
 	/**
 	 * Tell if the given raw sheet name needs screening/delimiting.
 	 * @param rawSheetName the sheet name.
-	 * @return true if the given raw sheet name needs screening/delimiting, false otherwise.
+	 * @return true if the given raw sheet name needs screening/delimiting, false otherwise or
+	 * 			if the sheet name is null.
 	 */
 	static boolean needsDelimiting(String rawSheetName) {
+		if(rawSheetName == null) {
+			return false;
+		}
+
 		int len = rawSheetName.length();
 		if(len < 1) {
 			throw new RuntimeException("Zero length string is an invalid sheet name");
@@ -185,6 +215,7 @@ public final class SheetNameFormatter {
 		}
 		return false;
 	}
+
 	/**
 	 * @return <code>true</code> if the presence of the specified character in a sheet name would 
 	 * require the sheet name to be delimited in formulas.  This includes every non-alphanumeric 
