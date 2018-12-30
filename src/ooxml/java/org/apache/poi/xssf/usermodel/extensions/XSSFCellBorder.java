@@ -32,37 +32,37 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STBorderStyle;
  * Color is optional.
  */
 public class XSSFCellBorder {
-    private IndexedColorMap _indexedColorMap;
+    private final IndexedColorMap _indexedColorMap;
     private ThemesTable _theme;
-    private CTBorder border;
+    private final CTBorder border;
 
     /**
      * Creates a Cell Border from the supplied XML definition
-     * @param border 
-     * @param theme 
-     * @param colorMap 
+     * @param border The ooxml object for the border
+     * @param theme  The related themes
+     * @param colorMap The global map of colors
      */
     public XSSFCellBorder(CTBorder border, ThemesTable theme, IndexedColorMap colorMap) {
-        this(border, colorMap);
+        this.border = border;
+        this._indexedColorMap = colorMap;
         this._theme = theme;
     }
 
     /**
      * Creates a Cell Border from the supplied XML definition
-     * @param border 
+     * @param border The ooxml object for the border
      */
     public XSSFCellBorder(CTBorder border) {
-        this(border, null);
+        this(border, null, null);
     }
     
     /**
      *
-     * @param border
-     * @param colorMap
+     * @param border The ooxml object for the border
+     * @param colorMap The global map of colors
      */
     public XSSFCellBorder(CTBorder border, IndexedColorMap colorMap) {
-        this.border = border;
-        this._indexedColorMap = colorMap;
+        this(border, null, colorMap);
     }
 
     /**
@@ -70,7 +70,7 @@ public class XSSFCellBorder {
      * You need to attach this to the Styles Table
      */
     public XSSFCellBorder() {
-        border = CTBorder.Factory.newInstance();
+        this(CTBorder.Factory.newInstance(), null, null);
     }
 
     /**

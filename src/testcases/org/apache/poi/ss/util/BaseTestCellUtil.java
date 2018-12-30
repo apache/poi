@@ -46,7 +46,7 @@ import org.junit.Test;
  *
  * @see org.apache.poi.ss.util.CellUtil
  */
-public class BaseTestCellUtil {
+public abstract class BaseTestCellUtil {
     protected final ITestDataProvider _testDataProvider;
 
     protected BaseTestCellUtil(ITestDataProvider testDataProvider) {
@@ -302,10 +302,10 @@ public class BaseTestCellUtil {
         Row row = sh.createRow(0);
         Cell A1 = row.createCell(0);
         Cell B1 = row.createCell(1);
-        final short defaultFontIndex = 0;
+        final int defaultFontIndex = 0;
         Font font = wb.createFont();
         font.setItalic(true);
-        final short customFontIndex = font.getIndex();
+        final int customFontIndex = font.getIndexAsInt();
 
         // Assumptions
         assertNotEquals(defaultFontIndex, customFontIndex);
@@ -313,17 +313,17 @@ public class BaseTestCellUtil {
         // should be assertSame, but a new HSSFCellStyle is returned for each getCellStyle() call. 
         // HSSFCellStyle wraps an underlying style record, and the underlying
         // style record is the same between multiple getCellStyle() calls.
-        assertEquals(defaultFontIndex, A1.getCellStyle().getFontIndex());
-        assertEquals(defaultFontIndex, B1.getCellStyle().getFontIndex());
+        assertEquals(defaultFontIndex, A1.getCellStyle().getFontIndexAsInt());
+        assertEquals(defaultFontIndex, B1.getCellStyle().getFontIndexAsInt());
 
         // get/set alignment modifies the cell's style
         CellUtil.setFont(A1, font);
-        assertEquals(customFontIndex, A1.getCellStyle().getFontIndex());
+        assertEquals(customFontIndex, A1.getCellStyle().getFontIndexAsInt());
 
         // get/set alignment doesn't affect the style of cells with
         // the same style prior to modifying the style
         assertNotEquals(A1.getCellStyle(), B1.getCellStyle());
-        assertEquals(defaultFontIndex, B1.getCellStyle().getFontIndex());
+        assertEquals(defaultFontIndex, B1.getCellStyle().getFontIndexAsInt());
 
         wb.close();
     }

@@ -562,6 +562,7 @@ public class XSSFFont implements Font {
      * @return FontScheme
      * @see org.apache.poi.xssf.model.StylesTable#createDefaultFont()
      */
+    @SuppressWarnings("JavadocReference")
     public FontScheme getScheme() {
         CTFontScheme scheme = _ctFont.sizeOfSchemeArray() == 0 ? null : _ctFont.getSchemeArray(0);
         return scheme == null ? FontScheme.NONE : FontScheme.valueOf(scheme.getVal().intValue());

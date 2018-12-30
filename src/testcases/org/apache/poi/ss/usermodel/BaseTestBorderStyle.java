@@ -31,7 +31,7 @@ import org.junit.Test;
 /**
  * Tests of {@link BorderStyle}
  */
-public class BaseTestBorderStyle {
+public abstract class BaseTestBorderStyle {
     
     private final ITestDataProvider _testDataProvider;
 

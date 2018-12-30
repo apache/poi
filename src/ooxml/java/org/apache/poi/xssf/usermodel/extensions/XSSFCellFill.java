@@ -66,7 +66,7 @@ public final class XSSFCellFill {
     /**
      * Set the background fill color represented as a indexed color value.
      *
-     * @param index
+     * @param index - the color to use
      */
     public void setFillBackgroundColor(int index) {
         CTPatternFill ptrn = ensureCTPatternFill();
@@ -77,7 +77,7 @@ public final class XSSFCellFill {
     /**
      * Set the background fill color represented as a {@link XSSFColor} value.
      *
-     * @param color
+     * @param color - background color. null if color should be unset
      */
     public void setFillBackgroundColor(XSSFColor color) {
         CTPatternFill ptrn = ensureCTPatternFill();
@@ -161,7 +161,7 @@ public final class XSSFCellFill {
      */
     @Internal
     public CTFill getCTFill() {
-        return _fill;
+        return _fill; 
     }
 
 

@@ -184,6 +184,7 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
      * @param is The input stream containing the XML document.
      * @throws IOException if an error occurs while reading.
      */
+    @SuppressWarnings("deprecation")
     public void readFrom(InputStream is) throws IOException {
         try {
             doc = StyleSheetDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
@@ -240,7 +241,7 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
             CTTableStyles ctTableStyles = styleSheet.getTableStyles();
             if (ctTableStyles != null) {
                 int idx = 0;
-                for (CTTableStyle style : Arrays.asList(ctTableStyles.getTableStyleArray())) {
+                for (CTTableStyle style : ctTableStyles.getTableStyleArray()) {
                     tableStyles.put(style.getName(), new XSSFTableStyle(idx, styleDxfs, style, indexedColors));
                     idx++;
                 }
@@ -670,7 +671,7 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
             }
             ctXfs.setCount(xfs.size());
             ctXfs.setXfArray(
-                    xfs.toArray(new CTXf[xfs.size()])
+                    xfs.toArray(new CTXf[0])
             );
             styleSheet.setCellXfs(ctXfs);
         }
@@ -683,7 +684,7 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
             }
             ctSXfs.setCount(styleXfs.size());
             ctSXfs.setXfArray(
-                    styleXfs.toArray(new CTXf[styleXfs.size()])
+                    styleXfs.toArray(new CTXf[0])
             );
             styleSheet.setCellStyleXfs(ctSXfs);
         }
@@ -695,7 +696,7 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
                 ctDxfs = CTDxfs.Factory.newInstance();
             }
             ctDxfs.setCount(dxfs.size());
-            ctDxfs.setDxfArray(dxfs.toArray(new CTDxf[dxfs.size()]));
+            ctDxfs.setDxfArray(dxfs.toArray(new CTDxf[0]));
             styleSheet.setDxfs(ctDxfs);
         }
 
