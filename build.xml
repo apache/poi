@@ -2172,6 +2172,7 @@ under the License.
                 <exclude name="**/*.iml" />
                 <exclude name="documentation/resources/images/pb-poi.cdr"/>
                 <exclude name="scratchpad/models/poi-hdf.zargo"/>
+                <exclude name="integrationtest/build/**"/>
             </fileset>
         </rat:report>
 
