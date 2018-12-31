@@ -27,7 +27,7 @@ import org.junit.Test;
 /**
  * Tests the log class.
  */
-public final class TestPOILogger extends POILogger {
+public final class TestPOILogger implements POILogger {
     private String lastLog = "";
     private Throwable lastEx;
     
@@ -65,13 +65,13 @@ public final class TestPOILogger extends POILogger {
     }
 
     @Override
-    protected void _log(int level, Object obj1) {
+    public void _log(int level, Object obj1) {
         lastLog = (obj1 == null) ? "" : obj1.toString();
         lastEx = null;
     }
 
     @Override
-    protected void _log(int level, Object obj1, Throwable exception) {
+    public void _log(int level, Object obj1, Throwable exception) {
         lastLog = (obj1 == null) ? "" : obj1.toString();
         lastEx = exception;
     }

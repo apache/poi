@@ -24,7 +24,7 @@ package org.apache.poi.util;
  * message.<p>
  */
 @Internal
-public class NullLogger extends POILogger {
+public class NullLogger implements POILogger {
     @Override
     public void initialize(final String cat) {
        // do nothing
@@ -38,7 +38,7 @@ public class NullLogger extends POILogger {
      */
 
     @Override
-    protected void _log(final int level, final Object obj1) {
+    public void _log(final int level, final Object obj1) {
         // do nothing
     }
 
@@ -50,7 +50,7 @@ public class NullLogger extends POILogger {
      * @param exception An exception to be logged
      */
     @Override
-    protected void _log(int level, Object obj1, final Throwable exception) {
+    public void _log(int level, Object obj1, final Throwable exception) {
         // do nothing
     }
 
