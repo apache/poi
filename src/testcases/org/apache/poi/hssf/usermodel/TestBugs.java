@@ -2446,10 +2446,6 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         wb.close();
     }
 
-    /**
-     * Note - part of this test is still failing, see
-     * {@link TestUnfixedBugs#test49612()}
-     */
     @Test
     public void bug49612_part() throws IOException {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("49612.xls");
@@ -3144,7 +3140,9 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
         Name rangedName = wb.getAllNames().get(0);
         assertFalse(rangedName.isFunctionName());
-        assertEquals("'[\\\\HEPPC3/gt$/Teaching/Syn/physyn.xls]#REF'!$AK$70:$AL$70", rangedName.getRefersToFormula());
+        assertEquals("'[\\\\HEPPC3\\gt$\\Teaching\\Syn\\physyn.xls]#REF'!$AK$70:$AL$70",
+                // replace '/' to make test work equally on Windows and Linux
+                rangedName.getRefersToFormula().replace("/", "\\"));
 
         rangedName = wb.getAllNames().get(1);
         assertFalse(rangedName.isFunctionName());
