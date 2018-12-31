@@ -291,7 +291,7 @@ public class SXSSFWorkbook implements Workbook {
     /**
      * @param zip64Mode {@link Zip64Mode}
      *
-     * @since 4.0.3
+     * @since 4.1.0
      */
     @Beta
     public void setZip64Mode(Zip64Mode zip64Mode) {
