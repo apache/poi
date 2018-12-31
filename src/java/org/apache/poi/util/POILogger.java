@@ -21,53 +21,41 @@ package org.apache.poi.util;
  * A logger interface that strives to make it as easy as possible for
  * developers to write log calls, while simultaneously making those
  * calls as cheap as possible by performing lazy evaluation of the log
- * message.<p>
+ * message.
  */
 @Internal
-public abstract class POILogger {
+public interface POILogger {
 
-    public static final int DEBUG = 1;
-    public static final int INFO  = 3;
-    public static final int WARN  = 5;
-    public static final int ERROR = 7;
-    public static final int FATAL = 9;
+    int DEBUG = 1;
+    int INFO  = 3;
+    int WARN  = 5;
+    int ERROR = 7;
+    int FATAL = 9;
 
     /**
-     * Short strings for numeric log level. Use level as array index.
+     * Initialize the Logger - belongs to the SPI, called from the POILogFactory
+     * @param cat the String that defines the log
      */
-    protected static final String[] LEVEL_STRINGS_SHORT = {"?", "D", "?", "I", "?", "W", "?", "E", "?", "F", "?"};
-    /**
-     * Long strings for numeric log level. Use level as array index.
-     */
-    protected static final String[] LEVEL_STRINGS = {"?0?", "DEBUG", "?2?", "INFO", "?4?", "WARN", "?6?", "ERROR", "?8?", "FATAL", "?10+?"};
-
+    void initialize(String cat);
 
     /**
-     * package scope so it cannot be instantiated outside of the util
-     * package. You need a POILogger? Go to the POILogFactory for one
-     */
-    POILogger() {
-        // no fields to initialize
-    }
-
-    abstract public void initialize(String cat);
-
-    /**
-     * Log a message
+     * Log a message - belongs to the SPI, usually not called from user code
      *
      * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
      * @param obj1 The object to log.  This is converted to a string.
      */
-    abstract protected void _log(int level, Object obj1);
+    @Internal
+    void _log(int level, Object obj1);
 
     /**
-     * Log a message
+     * Log a message - belongs to the SPI, usually not called from user code
      *
      * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
      * @param obj1 The object to log.  This is converted to a string.
      * @param exception An exception to be logged
      */
-    abstract protected void _log(int level, Object obj1, final Throwable exception);
+    @Internal
+    void _log(int level, Object obj1, final Throwable exception);
 
 
     /**
@@ -84,7 +72,7 @@ public abstract class POILogger {
      *
      * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
      */
-    abstract public boolean check(int level);
+    boolean check(int level);
 
    /**
      * Log a message. Lazily appends Object parameters together.
@@ -93,7 +81,7 @@ public abstract class POILogger {
      * @param level One of DEBUG, INFO, WARN, ERROR, FATAL
      * @param objs the objects to place in the message
      */
-    public void log(int level, Object... objs) {
+    default void log(int level, Object... objs) {
         if (!check(level)) return;
         StringBuilder sb = new StringBuilder(32);
         Throwable lastEx = null;
@@ -106,10 +94,9 @@ public abstract class POILogger {
         }
         
         String msg = sb.toString();
-        msg = msg.replaceAll("[\r\n]+", " ");  // log forging escape
+        // log forging escape
+        msg = msg.replaceAll("[\r\n]+", " ");
         
-        // somehow this ambiguity works and doesn't lead to a loop,
-        // but it's confusing ...
         if (lastEx == null) {
             _log(level, msg);
         } else {
