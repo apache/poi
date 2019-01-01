@@ -35,7 +35,9 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
  */
 public class ZipInputStreamZipEntrySource implements ZipEntrySource {
 	private final Map<String, ZipArchiveFakeEntry> zipEntries = new HashMap<>();
-	
+
+	private InputStream streamToClose;
+
 	/**
 	 * Reads all the entries from the ZipInputStream 
 	 *  into memory, and don't close (since POI 4.0.1) the source stream.
@@ -50,6 +52,8 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
 			}
 			zipEntries.put(zipEntry.getName(), new ZipArchiveFakeEntry(zipEntry, inp));
 		}
+
+		streamToClose = inp;
 	}
 
 	@Override
@@ -64,9 +68,11 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
 	}
 
 	@Override
-	public void close() {
+	public void close() throws IOException {
 		// Free the memory
 		zipEntries.clear();
+
+		streamToClose.close();
 	}
 
 	@Override
