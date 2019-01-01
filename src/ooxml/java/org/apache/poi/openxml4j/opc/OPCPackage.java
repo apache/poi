@@ -455,6 +455,9 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 			output.close();
 		}
 
+		// ensure all held resources are freed
+        revert();
+
 		// Clear
 		this.contentTypeManager.clearAll();
 	}
