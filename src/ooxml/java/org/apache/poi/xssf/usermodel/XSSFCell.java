@@ -285,12 +285,10 @@ public final class XSSFCell implements Cell {
      */
     @Override
     public double getNumericCellValue() {
-        CellType cellType = getCellType();
-        switch(cellType) {
+        CellType valueType = isFormulaCell() ? getCachedFormulaResultType() : getCellType();
+        switch(valueType) {
             case BLANK:
                 return 0.0;
-            case FORMULA:
-                // fall-through
             case NUMERIC:
                 if(_cell.isSetV()) {
                    String v = _cell.getV();
@@ -305,8 +303,10 @@ public final class XSSFCell implements Cell {
                 } else {
                    return 0.0;
                 }
+            case FORMULA:
+                throw new AssertionError();
             default:
-                throw typeMismatch(CellType.NUMERIC, cellType, false);
+                throw typeMismatch(CellType.NUMERIC, valueType, false);
         }
     }
 

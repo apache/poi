@@ -74,7 +74,7 @@ public abstract class BaseTestCell {
         assertEquals(CellType.BOOLEAN, cell.getCellType());
         cell.setCellValue(true);
         assertTrue(cell.getBooleanCellValue());
-        assertProhibitedValueAccess(cell, CellType.NUMERIC, CellType.STRING,
+        assertProhibitedValueAccess(cell, CellType.NUMERIC, CellType.STRING, CellType.BOOLEAN,
                 CellType.FORMULA, CellType.ERROR);
 
         cell.setCellValue(factory.createRichTextString("Foo"));
@@ -1132,5 +1132,12 @@ public abstract class BaseTestCell {
             cell.setCellValue(false);
             assertEquals(CellType.FORMULA, cell.getCellType());
         }
+    }
+
+    @Test
+    public void testGetNumericCellValueOnABlankCellReturnsZero() {
+        Cell cell = _testDataProvider.createWorkbook().createSheet().createRow(0).createCell(0);
+        assertEquals(CellType.BLANK, cell.getCellType());
+        assertEquals(0, cell.getNumericCellValue(), 0);
     }
 }
