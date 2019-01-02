@@ -1295,7 +1295,7 @@ public final class XSSFCell implements Cell {
     public CellRangeAddress getArrayFormulaRange() {
         XSSFCell cell = getSheet().getFirstCellInArrayFormula(this);
         if (cell == null) {
-            throw new IllegalStateException("Cell " + getReference()
+            throw new IllegalStateException("Cell " + new CellReference(this).formatAsString()
                     + " is not part of an array formula.");
         }
         String formulaRef = cell._cell.getF().getRef();

@@ -145,7 +145,7 @@ public class CellReference {
     }
 
     public CellReference(Cell cell) {
-        this(cell.getRowIndex(), cell.getColumnIndex(), false, false);
+        this(cell.getSheet().getSheetName(), cell.getRowIndex(), cell.getColumnIndex(), false, false);
     }
 
     public CellReference(int pRow, int pCol, boolean pAbsRow, boolean pAbsCol) {
