@@ -177,8 +177,7 @@ public class XSSFHyperlink implements Hyperlink {
     }
 
     /**
-     * Get the reference of the cell this applies to,
-     * es A55
+     * Get the address of the cell this hyperlink applies to, e.g. A55
      */
     public String getCellRef() {
         return _ctHyperlink.getRef();

@@ -19,12 +19,16 @@ package org.apache.poi.ss.util;
 
 import org.apache.poi.ss.SpreadsheetVersion;
 
+import org.apache.poi.ss.usermodel.Cell;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 
 /**
  * Tests that the common CellReference works as we need it to.
@@ -56,6 +60,27 @@ public final class TestCellReference {
 
         cellReference = new CellReference(sheet, row, col, absRow, absCol);
         assertEquals("Sheet1!A$1", cellReference.formatAsString());
+
+        cellReference = new CellReference(sheet+"!$A1");
+        assertFalse(cellReference.isRowAbsolute());
+        assertTrue(cellReference.isColAbsolute());
+
+        cellReference = new CellReference(sheet+"!A$1");
+        assertTrue(cellReference.isRowAbsolute());
+        assertFalse(cellReference.isColAbsolute());
+    }
+
+    @Test
+    public void testCtorFromCell() {
+        Cell cell = mock(Cell.class, RETURNS_DEEP_STUBS);
+        when(cell.getSheet().getSheetName()).thenReturn("sheet");
+
+        CellReference result = new CellReference(cell);
+        assertEquals("sheet", result.getSheetName());
+        assertEquals(cell.getRowIndex(), result.getRow());
+        assertEquals(cell.getColumnIndex(), result.getCol());
+        assertFalse(result.isRowAbsolute());
+        assertFalse(result.isColAbsolute());
     }
 
     @Test
