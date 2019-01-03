@@ -27,7 +27,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -131,7 +130,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetViews;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTablePart;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableParts;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheetSource;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCalcMode;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPane;
@@ -1211,6 +1209,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
 
     @Override
     public int getLastRowNum() {
+        // _rows.getLastKey() (O(logN)) or caching last row (O(1))?
+        // A test with 1_000_000 rows shows that querying getLastRowNum with lastKey() implementation takes ~40 ms,
+        // and ~1.2 ms with cached implementation. 40 ms is negligible compared to the time of evaluation a million
+        // cells, and the lastKey implementation is much more elegant and less error prone than caching.
         return _rows.isEmpty() ? 0 : _rows.lastKey();
     }
 
