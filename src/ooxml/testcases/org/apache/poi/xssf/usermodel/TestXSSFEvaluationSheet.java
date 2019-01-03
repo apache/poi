@@ -16,11 +16,19 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
+import org.apache.poi.ss.formula.EvaluationSheet;
+import org.apache.poi.ss.usermodel.BaseTestXEvaluationSheet;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import java.util.AbstractMap;
+import java.util.Map;
 
-public class TestXSSFEvaluationSheet {
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+public class TestXSSFEvaluationSheet extends BaseTestXEvaluationSheet {
 
     @Test
     public void test() throws Exception {
@@ -51,5 +59,11 @@ public class TestXSSFEvaluationSheet {
 
         // other things
         assertEquals(sheet, evalsheet.getXSSFSheet());
+    }
+
+    @Override
+    protected Map.Entry<Sheet, EvaluationSheet> getInstance() {
+        XSSFSheet sheet = new XSSFWorkbook().createSheet();
+        return new AbstractMap.SimpleEntry<>(sheet, new XSSFEvaluationSheet(sheet));
     }
 }
