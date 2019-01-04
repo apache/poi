@@ -274,19 +274,17 @@ public class SXSSFCell implements Cell {
     @Override
     public void setCellValue(RichTextString value)
     {
-        XSSFRichTextString xvalue = (XSSFRichTextString)value;
-
-        if (xvalue != null && xvalue.getString() != null) {
-            ensureRichTextStringType();
-
-            if (xvalue.length() > SpreadsheetVersion.EXCEL2007.getMaxTextLength()) {
+        if (value != null && value.getString() != null) {
+            if (value.length() > SpreadsheetVersion.EXCEL2007.getMaxTextLength()) {
                 throw new IllegalArgumentException("The maximum length of cell contents (text) is 32,767 characters");
             }
 
+            ensureRichTextStringType();
+
             if(_value instanceof RichTextStringFormulaValue) {
-                ((RichTextStringFormulaValue) _value).setPreEvaluatedValue(xvalue);
+                ((RichTextStringFormulaValue) _value).setPreEvaluatedValue(value);
             } else {
-                ((RichTextValue) _value).setValue(xvalue);
+                ((RichTextValue) _value).setValue(value);
             }
         } else {
             setCellType(CellType.BLANK);
@@ -305,22 +303,17 @@ public class SXSSFCell implements Cell {
     public void setCellValue(String value)
     {
         if (value != null) {
-            ensureTypeOrFormulaType(CellType.STRING);
-            
             if (value.length() > SpreadsheetVersion.EXCEL2007.getMaxTextLength()) {
                 throw new IllegalArgumentException("The maximum length of cell contents (text) is 32,767 characters");
             }
-    
-            if(_value.getType()==CellType.FORMULA)
-                if(_value instanceof NumericFormulaValue) {
-                    ((NumericFormulaValue) _value).setPreEvaluatedValue(Double.parseDouble(value));
-                } else if(_value instanceof RichTextStringFormulaValue) {
-                    ((RichTextStringFormulaValue) _value).setPreEvaluatedValue(new XSSFRichTextString(value));
-                } else {
-                    ((StringFormulaValue) _value).setPreEvaluatedValue(value);
-                }
-            else
-                ((PlainStringValue)_value).setValue(value);
+
+            ensureTypeOrFormulaType(CellType.STRING);
+
+            if(_value.getType() == CellType.FORMULA) {
+                ((StringFormulaValue) _value).setPreEvaluatedValue(value);
+            } else {
+                ((PlainStringValue) _value).setValue(value);
+            }
         } else {
             setCellType(CellType.BLANK);
         }
