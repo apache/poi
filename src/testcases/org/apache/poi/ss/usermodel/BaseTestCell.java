@@ -1156,4 +1156,47 @@ public abstract class BaseTestCell {
         boolean result = cell.getBooleanCellValue();
         assertFalse(result);
     }
+
+    @Test
+    public void setStringCellValue_ifThrows_shallNotChangeCell() {
+        Cell cell = _testDataProvider.createWorkbook().createSheet().createRow(0).createCell(0);
+
+        final double value = 2.78;
+        cell.setCellValue(value);
+        assertEquals(CellType.NUMERIC, cell.getCellType());
+
+        int badLength = cell.getSheet().getWorkbook().getSpreadsheetVersion().getMaxTextLength() + 1;
+        String badStringValue = new String(new byte[badLength]);
+
+        try {
+            cell.setCellValue(badStringValue);
+        } catch (IllegalArgumentException e) {
+            // no-op, expected to throw but we need to assert something more
+        }
+
+        assertEquals(CellType.NUMERIC, cell.getCellType());
+        assertEquals(value, cell.getNumericCellValue(), 0);
+    }
+
+    @Test
+    public void setStringCellValueWithRichTextString_ifThrows_shallNotChangeCell() {
+        Cell cell = _testDataProvider.createWorkbook().createSheet().createRow(0).createCell(0);
+
+        final double value = 2.78;
+        cell.setCellValue(value);
+        assertEquals(CellType.NUMERIC, cell.getCellType());
+
+        int badLength = cell.getSheet().getWorkbook().getSpreadsheetVersion().getMaxTextLength() + 1;
+        RichTextString badStringValue = cell.getSheet().getWorkbook().getCreationHelper().
+                createRichTextString(new String(new byte[badLength]));
+
+        try {
+            cell.setCellValue(badStringValue);
+        } catch (IllegalArgumentException e) {
+            // no-op, expected to throw but we need to assert something more
+        }
+
+        assertEquals(CellType.NUMERIC, cell.getCellType());
+        assertEquals(value, cell.getNumericCellValue(), 0);
+    }
 }
