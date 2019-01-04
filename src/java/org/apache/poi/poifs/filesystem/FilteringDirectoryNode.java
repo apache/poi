@@ -59,8 +59,12 @@ public class FilteringDirectoryNode implements DirectoryEntry
     *  
     * @param directory The Directory to filter
     * @param excludes The Entries to exclude
+    * @throws IllegalArgumentException if directory is null
     */
    public FilteringDirectoryNode(DirectoryEntry directory, Collection<String> excludes) {
+      if (directory == null) {
+         throw new IllegalArgumentException("directory cannot be null");
+      }
       this.directory = directory;
       
       // Process the excludes
