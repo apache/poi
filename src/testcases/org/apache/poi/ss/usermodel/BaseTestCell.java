@@ -26,6 +26,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -1166,7 +1167,7 @@ public abstract class BaseTestCell {
         assertEquals(CellType.NUMERIC, cell.getCellType());
 
         int badLength = cell.getSheet().getWorkbook().getSpreadsheetVersion().getMaxTextLength() + 1;
-        String badStringValue = new String(new byte[badLength]);
+        String badStringValue = new String(new byte[badLength], StandardCharsets.UTF_8);
 
         try {
             cell.setCellValue(badStringValue);
@@ -1188,7 +1189,7 @@ public abstract class BaseTestCell {
 
         int badLength = cell.getSheet().getWorkbook().getSpreadsheetVersion().getMaxTextLength() + 1;
         RichTextString badStringValue = cell.getSheet().getWorkbook().getCreationHelper().
-                createRichTextString(new String(new byte[badLength]));
+                createRichTextString(new String(new byte[badLength], StandardCharsets.UTF_8));
 
         try {
             cell.setCellValue(badStringValue);
