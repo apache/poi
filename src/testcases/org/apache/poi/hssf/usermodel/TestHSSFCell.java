@@ -472,4 +472,10 @@ public final class TestHSSFCell extends BaseTestCell {
         cell.setCellValue((RichTextString)null);
         wb.close();
     }
+
+	@Test(expected = IllegalStateException.class)
+	public void getErrorCellValue_throwsISE_onABlankCell() {
+		Cell cell = new HSSFWorkbook().createSheet().createRow(0).createCell(0);
+		cell.getErrorCellValue();
+	}
 }

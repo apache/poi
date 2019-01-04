@@ -20,23 +20,33 @@
 package org.apache.poi.xssf.streaming;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
 
 import javax.xml.namespace.QName;
 
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.BaseTestXCell;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.FormulaError;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.XmlCursor;
 import org.junit.AfterClass;
 import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
+
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 /**
  * Tests various functionality having to do with {@link SXSSFCell}.  For instance support for
@@ -49,7 +59,7 @@ public class TestSXSSFCell extends BaseTestXCell {
     }
 
     @AfterClass
-    public static void tearDownClass(){
+    public static void tearDownClass() {
         SXSSFITestDataProvider.instance.cleanup();
     }
 
@@ -69,7 +79,7 @@ public class TestSXSSFCell extends BaseTestXCell {
             assertEquals(sCell.getStringCellValue(), str);
 
             // read back as XSSF and check that xml:spaces="preserve" is set
-            XSSFWorkbook xwb = (XSSFWorkbook)_testDataProvider.writeOutAndReadBack(swb);
+            XSSFWorkbook xwb = (XSSFWorkbook) _testDataProvider.writeOutAndReadBack(swb);
             XSSFCell xCell = xwb.getSheetAt(0).getRow(0).getCell(0);
 
             CTRst is = xCell.getCTCell().getIs();
@@ -82,5 +92,58 @@ public class TestSXSSFCell extends BaseTestXCell {
             xwb.close();
             swb.close();
         }
+    }
+
+    @Test
+    public void getCellTypeEnumDelegatesToGetCellType() {
+        SXSSFCell instance = spy(new SXSSFCell(null, CellType.BLANK));
+        CellType result = instance.getCellTypeEnum();
+        verify(instance).getCellType();
+        assertEquals(CellType.BLANK, result);
+    }
+
+    @Test
+    public void getCachedFormulaResultTypeEnum_delegatesTo_getCachedFormulaResultType() {
+        SXSSFCell instance = spy(new SXSSFCell(null, CellType.BLANK));
+        instance.setCellFormula("");
+        instance.getCachedFormulaResultTypeEnum();
+        verify(instance).getCachedFormulaResultType();
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void getCachedFormulaResultType_throwsISE_whenNotAFormulaCell() {
+        SXSSFCell instance = new SXSSFCell(null, CellType.BLANK);
+        instance.getCachedFormulaResultType();
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void setCellValue_withTooLongRichTextString_throwsIAE() {
+        Cell cell = spy(new SXSSFCell(null, CellType.BLANK));
+        RichTextString string = spy(new XSSFRichTextString(""));
+        doReturn(SpreadsheetVersion.EXCEL2007.getMaxTextLength() + 1).when(string).length();
+        cell.setCellValue(string);
+    }
+
+    @Test
+    public void getArrayFormulaRange_returnsNull() {
+        Cell cell = new SXSSFCell(null, CellType.BLANK);
+        CellRangeAddress result = cell.getArrayFormulaRange();
+        assertNull(result);
+    }
+
+    @Test
+    public void isPartOfArrayFormulaGroup_returnsFalse() {
+        Cell cell = new SXSSFCell(null, CellType.BLANK);
+        boolean result = cell.isPartOfArrayFormulaGroup();
+        assertFalse(result);
+    }
+
+    @Test
+    public void getErrorCellValue_returns0_onABlankCell() {
+        Cell cell = new SXSSFCell(null, CellType.BLANK);
+        assertEquals(CellType.BLANK, cell.getCellType());
+        byte result = cell.getErrorCellValue();
+        assertEquals(0, result);
     }
 }

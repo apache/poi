@@ -1140,4 +1140,20 @@ public abstract class BaseTestCell {
         assertEquals(CellType.BLANK, cell.getCellType());
         assertEquals(0, cell.getNumericCellValue(), 0);
     }
+
+    @Test
+    public void getDateCellValue_returnsNull_onABlankCell() {
+        Cell cell = _testDataProvider.createWorkbook().createSheet().createRow(0).createCell(0);
+        assertEquals(CellType.BLANK, cell.getCellType());
+        Date result = cell.getDateCellValue();
+        assertNull(result);
+    }
+
+    @Test
+    public void getBooleanCellValue_returnsFalse_onABlankCell() {
+        Cell cell = _testDataProvider.createWorkbook().createSheet().createRow(0).createCell(0);
+        assertEquals(CellType.BLANK, cell.getCellType());
+        boolean result = cell.getBooleanCellValue();
+        assertFalse(result);
+    }
 }
