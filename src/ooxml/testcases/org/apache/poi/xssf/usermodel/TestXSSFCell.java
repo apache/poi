@@ -744,6 +744,11 @@ public final class TestXSSFCell extends BaseTestXCell {
             assertEquals("C13:G13", sheet.getSharedFormula(0).getRef());
 
         }
+    }
 
+    @Test(expected = IllegalStateException.class)
+    public void getErrorCellValue_returns0_onABlankCell() {
+        Cell cell = new XSSFWorkbook().createSheet().createRow(0).createCell(0);
+        cell.getErrorCellValue();
     }
 }
