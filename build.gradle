@@ -185,7 +185,7 @@ project('main') {
         compile 'javax.activation:activation:1.1.1'
 
         testCompile 'junit:junit:4.12'
-        testCompile 'org.mockito:mockito-core:2.21.0'
+        testCompile 'org.mockito:mockito-core:2.23.4'
         testCompile 'org.reflections:reflections:0.9.11'
     }
 
@@ -248,7 +248,7 @@ project('ooxml') {
         compile files('../../ooxml-lib/ooxml-security-1.1.jar')
 
         testCompile 'junit:junit:4.12'
-        testCompile 'org.mockito:mockito-core:2.21.0'
+        testCompile 'org.mockito:mockito-core:2.23.4'
         testCompile 'org.xmlunit:xmlunit-core:2.5.1'
         testCompile 'org.reflections:reflections:0.9.11'
         testCompile project(path: ':main', configuration: 'tests')
