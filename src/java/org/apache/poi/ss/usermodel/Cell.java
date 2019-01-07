@@ -70,17 +70,22 @@ public interface Cell {
      Row getRow();
 
     /**
-     * Set the cells type (numeric, formula or string).
+     * Set the cells type (blank, numeric, boolean, error or string).
      * <p>If the cell currently contains a value, the value will
      *  be converted to match the new type, if possible. Formatting
      *  is generally lost in the process however.</p>
+     * <p>Conversion rules:</p>
+     * <p>to NUMERIC: numeric value is left as is. True converts to 1.0, false converts to 0. otherwise, the
+     * value is set to 0. Formula is removed.</p>
      * <p>If what you want to do is get a String value for your
      *  numeric cell, <i>stop!</i>. This is not the way to do it.
      *  Instead, for fetching the string value of a numeric or boolean
-     *  or date cell, use {@link DataFormatter} instead.</p> 
-     *
-     * @throws IllegalArgumentException if the specified cell type is invalid
-     * @throws IllegalStateException if the current value cannot be converted to the new type
+     *  or date cell, use {@link DataFormatter} instead.</p>
+     * <p>If cell is a member of an array formula group containing more than 1 cell, an {@link IllegalStateException}
+     * is thrown. If the array formula group contains only this cell, it is removed</p>
+     * @throws IllegalArgumentException if the specified cell type is invalid (null or _NONE)
+     * @throws IllegalStateException if the current value cannot be converted to the new type or
+     * if the cell is a part of an array formula group containing other cells
      */
     void setCellType(CellType cellType);
 
@@ -90,7 +95,7 @@ public interface Cell {
      * @return the cell type
      */
     CellType getCellType();
-    
+
     /**
      * Return the cell type.
      *
@@ -101,13 +106,13 @@ public interface Cell {
     @Deprecated
     @Removal(version="4.2")
     CellType getCellTypeEnum();
-    
+
     /**
      * Only valid for formula cells
-     * 
+     *
      * Will return {@link CellType} in a future version of POI.
      * For forwards compatibility, do not hard-code cell type literals in your code.
-     * 
+     *
      * @return one of ({@link CellType#NUMERIC}, {@link CellType#STRING},
      *     {@link CellType#BOOLEAN}, {@link CellType#ERROR}) depending
      * on the cached value of the formula
@@ -138,7 +143,7 @@ public interface Cell {
     /**
      * <p>Converts the supplied date to its equivalent Excel numeric value and sets
      * that into the cell.</p>
-     * 
+     *
      * <p><b>Note</b> - There is actually no 'DATE' cell type in Excel. In many
      * cases (when entering date values), Excel automatically adjusts the
      * <i>cell style</i> to some date format, creating the illusion that the cell
@@ -193,16 +198,33 @@ public interface Cell {
 
     /**
      * Sets formula for this cell.
+     *
      * <p>
      * Note, this method only sets the formula string and does not calculate the formula value.
-     * To set the precalculated value use {@link #setCellValue(double)} or {@link #setCellValue(String)}
+     * To set the precalculated value use {@link #setCellValue}
+     * </p>
+     *
+     * <p>
+     * If the cell was blank, sets value to 0. Otherwise, preserves the value as precalculated.
      * </p>
      *
      * @param formula the formula to set, e.g. <code>"SUM(C4:E4)"</code>.
-     *  If the argument is <code>null</code> then the current formula is removed.
+     * If the argument is <code>null</code> then the current formula is removed.
+     *
+     * @throws IllegalStateException if this cell is a part of an array formula group containing other cells
      * @throws FormulaParseException if the formula has incorrect syntax or is otherwise invalid
      */
-    void setCellFormula(String formula) throws FormulaParseException;
+    void setCellFormula(String formula) throws FormulaParseException, IllegalStateException;
+
+    /**
+     * Removes formula, if any.
+     *
+     * If cell was blank, leaves it as is.
+     * If it is a part of an array formula group, blanks the cell.
+     * If has a regular formula, removes the formula preserving the "cached" value.
+     * @throws IllegalStateException if cell is a part of an array formula group containing other cells
+     */
+    void removeFormula() throws IllegalStateException;
 
     /**
      * Return a formula for the cell, for example, <code>SUM(C4:E4)</code>
@@ -304,7 +326,7 @@ public interface Cell {
     /**
      * <p>Set the style for the cell.  The style should be an CellStyle created/retrieved from
      * the Workbook.</p>
-     * 
+     *
      * <p>To change the style of a cell without affecting other cells that use the same style,
      * use {@link org.apache.poi.ss.util.CellUtil#setCellStyleProperties(Cell, Map)}</p>
      *

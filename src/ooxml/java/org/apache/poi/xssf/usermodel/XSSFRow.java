@@ -480,7 +480,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
 
         XSSFCell xcell = (XSSFCell)cell;
         if(xcell.isPartOfArrayFormulaGroup()) {
-            xcell.notifyArrayFormulaChanging();
+            xcell.setCellFormula(null); // to remove the array formula
         }
         if(cell.getCellType() == CellType.FORMULA) {
            _sheet.getWorkbook().onDeleteFormula(xcell);

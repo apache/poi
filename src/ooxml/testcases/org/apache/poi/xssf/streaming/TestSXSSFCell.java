@@ -41,6 +41,7 @@ import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.XmlCursor;
 import org.junit.AfterClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 
@@ -145,5 +146,36 @@ public class TestSXSSFCell extends BaseTestXCell {
         assertEquals(CellType.BLANK, cell.getCellType());
         byte result = cell.getErrorCellValue();
         assertEquals(0, result);
+    }
+
+    /**
+     * For now, {@link SXSSFCell} doesn't support array formulas.
+     * However, this test should be enabled if array formulas are implemented for SXSSF.
+     */
+    @Override
+    @Ignore
+    public void setCellType_BLANK_removesArrayFormula_ifCellIsPartOfAnArrayFormulaGroupContainingOnlyThisCell() {
+    }
+
+    /**
+     * For now, {@link SXSSFCell} doesn't support array formulas.
+     * However, this test should be enabled if array formulas are implemented for SXSSF.
+     */
+    @Override
+    @Ignore
+    @Test // <- annotation is necessary to override expected exception
+    public void setCellType_BLANK_throwsISE_ifCellIsPartOfAnArrayFormulaGroupContainingOtherCells() {
+    }
+
+    @Override
+    @Ignore
+    @Test
+    public void setCellFormula_throwsISE_ifCellIsPartOfAnArrayFormulaGroupContainingOtherCells() {
+    }
+
+    @Override
+    @Ignore
+    @Test
+    public void removeFormula_turnsCellToBlank_whenFormulaWasASingleCellArrayFormula() {
     }
 }

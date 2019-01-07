@@ -164,7 +164,7 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
             throw new RuntimeException("Specified cell is not from this row");
         }
         if(cell.isPartOfArrayFormulaGroup()){
-            cell.notifyArrayFormulaChanging();
+            cell.tryToDeleteArrayFormula(null);
         }
 
         cells[column]=null;
