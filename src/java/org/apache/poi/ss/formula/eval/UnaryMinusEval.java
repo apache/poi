@@ -17,13 +17,14 @@
 
 package org.apache.poi.ss.formula.eval;
 
+import org.apache.poi.ss.formula.functions.ArrayFunction;
 import org.apache.poi.ss.formula.functions.Fixed1ArgFunction;
 import org.apache.poi.ss.formula.functions.Function;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  */
-public final class UnaryMinusEval extends Fixed1ArgFunction {
+public final class UnaryMinusEval extends Fixed1ArgFunction  implements ArrayFunction {
 
 	public static final Function instance = new UnaryMinusEval();
 
@@ -44,4 +45,12 @@ public final class UnaryMinusEval extends Fixed1ArgFunction {
 		}
 		return new NumberEval(-d);
 	}
+
+	@Override
+	public ValueEval evaluateArray(ValueEval[] args, int srcRowIndex, int srcColumnIndex){
+		return evaluateOneArrayArg(args, srcRowIndex, srcColumnIndex, (valA) ->
+				evaluate(srcRowIndex, srcColumnIndex, valA)
+		);
+	}
+
 }

@@ -17,12 +17,7 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import org.apache.poi.ss.formula.eval.BlankEval;
-import org.apache.poi.ss.formula.eval.BoolEval;
-import org.apache.poi.ss.formula.eval.EvaluationException;
-import org.apache.poi.ss.formula.eval.MissingArgEval;
-import org.apache.poi.ss.formula.eval.OperandResolver;
-import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.eval.*;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.RefPtg;
 
@@ -36,8 +31,9 @@ import org.apache.poi.ss.formula.ptg.RefPtg;
  * See bug numbers #55324 and #55747 for the full details on this.
  * TODO Fix this...
  */
-public final class IfFunc extends Var2or3ArgFunction {
+public final class IfFunc extends Var2or3ArgFunction implements ArrayFunction {
 
+    @Override
 	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
 		boolean b;
 		try {
@@ -54,6 +50,7 @@ public final class IfFunc extends Var2or3ArgFunction {
 		return BoolEval.FALSE;
 	}
 
+    @Override
 	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
 			ValueEval arg2) {
 		boolean b;
@@ -83,4 +80,29 @@ public final class IfFunc extends Var2or3ArgFunction {
 		}
 		return b.booleanValue();
 	}
+
+
+ 	@Override
+	public ValueEval evaluateArray(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
+		ValueEval arg0 = args[0];
+		ValueEval arg1 = args[1];
+		return evaluateTwoArrayArgs(arg0, arg1, srcRowIndex, srcColumnIndex,
+                (vA, vB) -> {
+					Boolean b;
+					try {
+						b = OperandResolver.coerceValueToBoolean(vA, false);
+					} catch (EvaluationException e) {
+						return e.getErrorEval();
+					}
+					if (b != null && b) {
+						if (vB == MissingArgEval.instance) {
+							return BlankEval.instance;
+						}
+						return vB;
+					}
+					return BoolEval.FALSE;
+				}
+        );
+	}
+
 }

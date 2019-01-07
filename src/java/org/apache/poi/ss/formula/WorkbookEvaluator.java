@@ -453,15 +453,24 @@ public final class WorkbookEvaluator {
                         // nothing to skip - true param follows
                     } else {
                         int dist = attrPtg.getData();
+                        Ptg currPtg = ptgs[i+1];
                         i+= countTokensToBeSkipped(ptgs, i, dist);
                         Ptg nextPtg = ptgs[i+1];
-                        if (ptgs[i] instanceof AttrPtg && nextPtg instanceof FuncVarPtg && 
-                                // in order to verify that there is no third param, we need to check 
+
+                        if (ptgs[i] instanceof AttrPtg && nextPtg instanceof FuncVarPtg &&
+                                // in order to verify that there is no third param, we need to check
                                 // if we really have the IF next or some other FuncVarPtg as third param, e.g. ROW()/COLUMN()!
                                 ((FuncVarPtg)nextPtg).getFunctionIndex() == FunctionMetadataRegistry.FUNCTION_INDEX_IF) {
                             // this is an if statement without a false param (as opposed to MissingArgPtg as the false param)
-                            i++;
-                            stack.push(BoolEval.FALSE);
+                            //i++;
+                            stack.push(arg0);
+                            if(currPtg instanceof AreaPtg){
+                                // IF in array mode. See Bug 62904
+                                ValueEval currEval = getEvalForPtg(currPtg, ec);
+                                stack.push(currEval);
+                            } else {
+                                stack.push(BoolEval.FALSE);
+                            }
                         }
                     }
                     continue;
@@ -759,7 +768,7 @@ public final class WorkbookEvaluator {
             return evaluateNameFormula(nameRecord.getNameDefinition(), ec);
         }
 
-        throw new RuntimeException("Don't now how to evalate name '" + nameRecord.getNameText() + "'");
+        throw new RuntimeException("Don't now how to evaluate name '" + nameRecord.getNameText() + "'");
     }
     
     /**
