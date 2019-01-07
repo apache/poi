@@ -17,10 +17,11 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import org.apache.poi.ss.formula.eval.BlankEval;
-import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.formula.eval.MissingArgEval;
-import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.CacheAreaEval;
+import org.apache.poi.ss.formula.FormulaParseException;
+import org.apache.poi.ss.formula.eval.*;
+
+import java.util.function.BiFunction;
 
 /**
  * @author Robert Hulbert
@@ -41,4 +42,153 @@ public interface ArrayFunction {
      */
 
     ValueEval evaluateArray(ValueEval[] args, int srcRowIndex, int srcColumnIndex);
+
+    /**
+     * Evaluate an array function with two arguments.
+     *
+     * @param arg0 the first function argument. Empty values are represented with
+     *        {@link BlankEval} or {@link MissingArgEval}, never <code>null</code>
+     * @param arg1 the first function argument. Empty values are represented with
+     *      @link BlankEval} or {@link MissingArgEval}, never <code>null</code>
+     *
+     * @param srcRowIndex row index of the cell containing the formula under evaluation
+     * @param srcColumnIndex column index of the cell containing the formula under evaluation
+     * @return The evaluated result, possibly an {@link ErrorEval}, never <code>null</code>.
+     * <b>Note</b> - Excel uses the error code <i>#NUM!</i> instead of IEEE <i>NaN</i>, so when
+     * numeric functions evaluate to {@link Double#NaN} be sure to translate the result to {@link
+     * ErrorEval#NUM_ERROR}.
+     */
+    default ValueEval evaluateTwoArrayArgs(ValueEval arg0, ValueEval arg1, int srcRowIndex, int srcColumnIndex,
+                                           BiFunction<ValueEval, ValueEval, ValueEval> evalFunc) {
+        int w1, w2, h1, h2;
+        int a1FirstCol = 0, a1FirstRow = 0;
+        if (arg0 instanceof AreaEval) {
+            AreaEval ae = (AreaEval)arg0;
+            w1 = ae.getWidth();
+            h1 = ae.getHeight();
+            a1FirstCol = ae.getFirstColumn();
+            a1FirstRow = ae.getFirstRow();
+        } else if (arg0 instanceof RefEval){
+            RefEval ref = (RefEval)arg0;
+            w1 = 1;
+            h1 = 1;
+            a1FirstCol = ref.getColumn();
+            a1FirstRow = ref.getRow();
+        } else {
+            w1 = 1;
+            h1 = 1;
+        }
+        int a2FirstCol = 0, a2FirstRow = 0;
+        if (arg1 instanceof AreaEval) {
+            AreaEval ae = (AreaEval)arg1;
+            w2 = ae.getWidth();
+            h2 = ae.getHeight();
+            a2FirstCol = ae.getFirstColumn();
+            a2FirstRow = ae.getFirstRow();
+        } else if (arg1 instanceof RefEval){
+            RefEval ref = (RefEval)arg1;
+            w2 = 1;
+            h2 = 1;
+            a2FirstCol = ref.getColumn();
+            a2FirstRow = ref.getRow();
+        } else {
+            w2 = 1;
+            h2 = 1;
+        }
+
+        int width = Math.max(w1, w2);
+        int height = Math.max(h1, h2);
+
+        ValueEval[] vals = new ValueEval[height * width];
+
+        int idx = 0;
+        for(int i = 0; i < height; i++){
+            for(int j = 0; j < width; j++){
+                ValueEval vA;
+                try {
+                    vA = OperandResolver.getSingleValue(arg0, a1FirstRow + i, a1FirstCol + j);
+                } catch (FormulaParseException e) {
+                    vA = ErrorEval.NAME_INVALID;
+                } catch (EvaluationException e) {
+                    vA = e.getErrorEval();
+                }
+                ValueEval vB;
+                try {
+                    vB = OperandResolver.getSingleValue(arg1, a2FirstRow + i, a2FirstCol + j);
+                } catch (FormulaParseException e) {
+                    vB = ErrorEval.NAME_INVALID;
+                } catch (EvaluationException e) {
+                    vB = e.getErrorEval();
+                }
+                if(vA instanceof ErrorEval){
+                    vals[idx++] = vA;
+                } else if (vB instanceof ErrorEval) {
+                    vals[idx++] = vB;
+                } else {
+                    vals[idx++] = evalFunc.apply(vA, vB);
+                }
+
+            }
+        }
+
+        if (vals.length == 1) {
+            return vals[0];
+        }
+
+        return new CacheAreaEval(srcRowIndex, srcColumnIndex, srcRowIndex + height - 1, srcColumnIndex + width - 1, vals);
+    }
+
+    default ValueEval evaluateOneArrayArg(ValueEval[] args, int srcRowIndex, int srcColumnIndex,
+                                          java.util.function.Function<ValueEval, ValueEval> evalFunc){
+        ValueEval arg0 = args[0];
+
+        int w1, w2, h1, h2;
+        int a1FirstCol = 0, a1FirstRow = 0;
+        if (arg0 instanceof AreaEval) {
+            AreaEval ae = (AreaEval)arg0;
+            w1 = ae.getWidth();
+            h1 = ae.getHeight();
+            a1FirstCol = ae.getFirstColumn();
+            a1FirstRow = ae.getFirstRow();
+        } else if (arg0 instanceof RefEval){
+            RefEval ref = (RefEval)arg0;
+            w1 = 1;
+            h1 = 1;
+            a1FirstCol = ref.getColumn();
+            a1FirstRow = ref.getRow();
+        } else {
+            w1 = 1;
+            h1 = 1;
+        }
+        w2 = 1;
+        h2 = 1;
+
+        int width = Math.max(w1, w2);
+        int height = Math.max(h1, h2);
+
+        ValueEval[] vals = new ValueEval[height * width];
+
+        int idx = 0;
+        for(int i = 0; i < height; i++){
+            for(int j = 0; j < width; j++){
+                ValueEval vA;
+                try {
+                    vA = OperandResolver.getSingleValue(arg0, a1FirstRow + i, a1FirstCol + j);
+                } catch (FormulaParseException e) {
+                    vA = ErrorEval.NAME_INVALID;
+                } catch (EvaluationException e) {
+                    vA = e.getErrorEval();
+                }
+                vals[idx++] = evalFunc.apply(vA);
+            }
+        }
+
+        if (vals.length == 1) {
+            return vals[0];
+        }
+
+        return new CacheAreaEval(srcRowIndex, srcColumnIndex, srcRowIndex + height - 1, srcColumnIndex + width - 1, vals);
+
+    }
+
 }

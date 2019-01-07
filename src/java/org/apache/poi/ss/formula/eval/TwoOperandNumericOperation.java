@@ -37,7 +37,20 @@ public abstract class TwoOperandNumericOperation extends Fixed2ArgFunction imple
 	    if (args.length != 2) {
 	        return ErrorEval.VALUE_INVALID;
 	    }
-	    return new ArrayEval().evaluate(srcRowIndex, srcColumnIndex, args[0], args[1]);
+	    //return new ArrayEval().evaluate(srcRowIndex, srcColumnIndex, args[0], args[1]);
+
+		return evaluateTwoArrayArgs(args[0], args[1], srcRowIndex, srcColumnIndex,
+				(vA, vB) -> {
+					try {
+						double d0 = OperandResolver.coerceValueToDouble(vA);
+						double d1 = OperandResolver.coerceValueToDouble(vB);
+						double result = evaluate(d0, d1);
+						return new NumberEval(result);
+					} catch (EvaluationException e){
+						return e.getErrorEval();
+					}
+				});
+
 	}
 	
 	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {

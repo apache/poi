@@ -56,6 +56,7 @@ import org.apache.poi.ss.formula.function.FunctionMetadataRegistry;
 import org.apache.poi.ss.formula.functions.ArrayFunction;
 import org.apache.poi.ss.formula.functions.Function;
 import org.apache.poi.ss.formula.functions.Indirect;
+import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
  * This class creates <tt>OperationEval</tt> instances to help evaluate <tt>OperationPtg</tt>
@@ -138,8 +139,16 @@ final class OperationEvaluatorFactory {
 			EvaluationSheet evalSheet = ec.getWorkbook().getSheet(ec.getSheetIndex());
 			EvaluationCell evalCell = evalSheet.getCell(ec.getRowIndex(), ec.getColumnIndex());
 
-		    if (evalCell != null && (evalCell.isPartOfArrayFormulaGroup() || ec.isArraymode()) && result instanceof ArrayFunction)
-		        return ((ArrayFunction) result).evaluateArray(args, ec.getRowIndex(), ec.getColumnIndex());
+		    if (evalCell != null && result instanceof ArrayFunction) {
+				ArrayFunction func = (ArrayFunction) result;
+				if(evalCell.isPartOfArrayFormulaGroup()){
+					// array arguments must be evaluated relative to the function defining range
+					CellRangeAddress ca = evalCell.getArrayFormulaRange();
+					return func.evaluateArray(args, ca.getFirstRow(), ca.getFirstColumn());
+				} else if (ec.isArraymode()){
+					return func.evaluateArray(args, ec.getRowIndex(), ec.getColumnIndex());
+				}
+			}
 		                
 			return  result.evaluate(args, ec.getRowIndex(), ec.getColumnIndex());
 		} else if (udfFunc != null){

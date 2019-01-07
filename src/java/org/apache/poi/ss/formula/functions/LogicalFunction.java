@@ -23,7 +23,7 @@ import org.apache.poi.ss.formula.eval.*;
  * Implementation of the various ISxxx Logical Functions, which
  *  take a single expression argument, and return True or False.
  */
-public abstract class LogicalFunction extends Fixed1ArgFunction {
+public abstract class LogicalFunction extends Fixed1ArgFunction implements ArrayFunction{
 
     @SuppressWarnings("unused")
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
@@ -41,6 +41,14 @@ public abstract class LogicalFunction extends Fixed1ArgFunction {
 		return BoolEval.valueOf(evaluate(ve));
 
 	}
+
+	@Override
+	public ValueEval evaluateArray(ValueEval[] args, int srcRowIndex, int srcColumnIndex){
+		return evaluateOneArrayArg(args, srcRowIndex, srcColumnIndex, (valA) ->
+				BoolEval.valueOf(evaluate(valA))
+		);
+	}
+
 	/**
 	 * @param arg any {@link ValueEval}, potentially {@link BlankEval} or {@link ErrorEval}.
 	 */
