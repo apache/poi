@@ -43,6 +43,7 @@ import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.ptg.ExpPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellBase;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Comment;
@@ -68,7 +69,7 @@ import org.apache.poi.util.Removal;
  * cells that have values should be added.
  * <p>
  */
-public class HSSFCell implements Cell {
+public class HSSFCell extends CellBase {
     private static final String FILE_FORMAT_NAME  = "BIFF8";
     /**
      * The maximum  number of columns in BIFF8
@@ -255,17 +256,10 @@ public class HSSFCell implements Cell {
         return new CellAddress(this);
     }
     
-    /**
-     * Set the cells type (numeric, formula or string).
-     * If the cell currently contains a value, the value will
-     *  be converted to match the new type, if possible.
-     */
     @Override
-    public void setCellType(CellType cellType) {
+    protected void setCellTypeImpl(CellType cellType) {
         notifyFormulaChanging();
-        if(isPartOfArrayFormulaGroup()){
-            notifyArrayFormulaChanging();
-        }
+
         int row=_record.getRow();
         short col=_record.getColumn();
         short styleIndex=_record.getXFIndex();
@@ -594,26 +588,21 @@ public class HSSFCell implements Cell {
         _stringValue.setUnicodeString(_book.getWorkbook().getSSTString(index));
     }
 
-    public void setCellFormula(String formula) {
-        if(isPartOfArrayFormulaGroup()){
-            notifyArrayFormulaChanging();
-        }
+    @Override
+    protected void setCellFormulaImpl(String formula) {
+        assert formula != null;
 
         int row=_record.getRow();
         short col=_record.getColumn();
         short styleIndex=_record.getXFIndex();
 
-        if (formula==null) {
-            notifyFormulaChanging();
-            setCellType(CellType.BLANK, false, row, col, styleIndex);
-            return;
-        }
         int sheetIndex = _book.getSheetIndex(_sheet);
         Ptg[] ptgs = HSSFFormulaParser.parse(formula, _book, FormulaType.CELL, sheetIndex);
         setCellType(CellType.FORMULA, false, row, col, styleIndex);
         FormulaRecordAggregate agg = (FormulaRecordAggregate) _record;
         FormulaRecord frec = agg.getFormulaRecord();
         frec.setOptions((short) 2);
+
         frec.setValue(0);
 
         //only set to default if there is no extended format index already set
@@ -622,6 +611,42 @@ public class HSSFCell implements Cell {
         }
         agg.setParsedExpression(ptgs);
     }
+
+    @Override
+    protected void removeFormulaImpl() {
+        assert getCellType() == CellType.FORMULA;
+
+        notifyFormulaChanging();
+
+        switch (getCachedFormulaResultType()) {
+            case NUMERIC:
+                double numericValue = ((FormulaRecordAggregate)_record).getFormulaRecord().getValue();
+                _record = new NumberRecord();
+                ((NumberRecord)_record).setValue(numericValue);
+                _cellType = CellType.NUMERIC;
+                break;
+            case STRING:
+                _record = new NumberRecord();
+                ((NumberRecord)_record).setValue(0);
+                _cellType = CellType.STRING;
+                break;
+            case BOOLEAN:
+                boolean booleanValue = ((FormulaRecordAggregate)_record).getFormulaRecord().getCachedBooleanValue();
+                _record = new BoolErrRecord();
+                ((BoolErrRecord)_record).setValue(booleanValue);
+                _cellType = CellType.BOOLEAN;
+                break;
+            case ERROR:
+                byte errorValue = (byte) ((FormulaRecordAggregate)_record).getFormulaRecord().getCachedErrorValue();
+                _record = new BoolErrRecord();
+                ((BoolErrRecord)_record).setValue(errorValue);
+                _cellType = CellType.ERROR;
+                break;
+            default:
+                throw new AssertionError();
+        }
+    }
+
     /**
      * Should be called any time that a formula could potentially be deleted.
      * Does nothing if this cell currently does not hold a formula
@@ -1190,40 +1215,6 @@ public class HSSFCell implements Cell {
 
     public boolean isPartOfArrayFormulaGroup() {
         return _cellType == CellType.FORMULA && ((FormulaRecordAggregate) _record).isPartOfArrayFormula();
-    }
-
-    /**
-     * The purpose of this method is to validate the cell state prior to modification
-     *
-     * @see #notifyArrayFormulaChanging()
-     */
-    void notifyArrayFormulaChanging(String msg){
-        CellRangeAddress cra = getArrayFormulaRange();
-        if(cra.getNumberOfCells() > 1) {
-            throw new IllegalStateException(msg);
-        }
-        //un-register the single-cell array formula from the parent XSSFSheet
-        getRow().getSheet().removeArrayFormula(this);
-    }
-
-    /**
-     * Called when this cell is modified.
-     * <p>
-     * The purpose of this method is to validate the cell state prior to modification.
-     * </p>
-     *
-     * @see #setCellFormula(String)
-     * @see HSSFRow#removeCell(org.apache.poi.ss.usermodel.Cell)
-     * @see org.apache.poi.hssf.usermodel.HSSFSheet#removeRow(org.apache.poi.ss.usermodel.Row)
-     * @see org.apache.poi.hssf.usermodel.HSSFSheet#shiftRows(int, int, int)
-     * @see org.apache.poi.hssf.usermodel.HSSFSheet#addMergedRegion(org.apache.poi.ss.util.CellRangeAddress)
-     * @throws IllegalStateException if modification is not allowed
-     */
-    void notifyArrayFormulaChanging(){
-        CellReference ref = new CellReference(this);
-        String msg = "Cell "+ref.formatAsString()+" is part of a multi-cell array formula. " +
-                "You cannot change part of an array.";
-        notifyArrayFormulaChanging(msg);
     }
 
     /**

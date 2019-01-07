@@ -30,6 +30,7 @@ import org.apache.poi.ss.formula.SharedFormula;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellBase;
 import org.apache.poi.ss.usermodel.CellCopyPolicy;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
@@ -70,7 +71,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
  * cells that have values should be added.
  * </p>
  */
-public final class XSSFCell implements Cell {
+public final class XSSFCell extends CellBase {
 
     private static final String FALSE_AS_STRING = "0";
     private static final String TRUE_AS_STRING  = "1";
@@ -549,10 +550,7 @@ public final class XSSFCell implements Cell {
      *  when the cell is a part of a multi-cell array formula
      */
     @Override
-    public void setCellFormula(String formula) {
-        if(isPartOfArrayFormulaGroup()){
-            notifyArrayFormulaChanging();
-        }
+    protected void setCellFormulaImpl(String formula) {
         setFormula(formula, FormulaType.CELL);
     }
 
@@ -565,7 +563,7 @@ public final class XSSFCell implements Cell {
 
     private void setFormula(String formula, FormulaType formulaType) {
         XSSFWorkbook wb = _row.getSheet().getWorkbook();
-        if (formula == null) {
+        if (formulaType == FormulaType.ARRAY && formula == null) {
             wb.onDeleteFormula(this);
             if (_cell.isSetF()) {
                 _row.getSheet().onDeleteFormula(this, null);
@@ -594,6 +592,15 @@ public final class XSSFCell implements Cell {
         }
         if(_cell.isSetV()) {
             _cell.unsetV();
+        }
+    }
+
+    @Override
+    protected void removeFormulaImpl() {
+        _row.getSheet().getWorkbook().onDeleteFormula(this);
+        if (_cell.isSetF()) {
+            _row.getSheet().onDeleteFormula(this, null);
+            _cell.unsetF();
         }
     }
 
@@ -960,13 +967,8 @@ public final class XSSFCell implements Cell {
         _cell.setR(ref);
     }
 
-    /**
-     * Set the cells type (numeric, formula or string)
-     *
-     * @throws IllegalArgumentException if the specified cell type is invalid
-     */
     @Override
-    public void setCellType(CellType cellType) {
+    protected void setCellTypeImpl(CellType cellType) {
         setCellType(cellType, null);
     }
     
@@ -978,10 +980,6 @@ public final class XSSFCell implements Cell {
      */
     protected void setCellType(CellType cellType, BaseXSSFEvaluationWorkbook evalWb) {
         CellType prevType = getCellType();
-
-        if(isPartOfArrayFormulaGroup()){
-            notifyArrayFormulaChanging();
-        }
         if(prevType == CellType.FORMULA && cellType != CellType.FORMULA) {
             if (_cell.isSetF()) {
                 _row.getSheet().onDeleteFormula(this, evalWb);
@@ -1307,48 +1305,12 @@ public final class XSSFCell implements Cell {
         return getSheet().isCellInArrayFormulaContext(this);
     }
 
-    /**
-     * The purpose of this method is to validate the cell state prior to modification
-     *
-     * @see #notifyArrayFormulaChanging()
-     */
-    void notifyArrayFormulaChanging(String msg){
-        if(isPartOfArrayFormulaGroup()){
-            CellRangeAddress cra = getArrayFormulaRange();
-            if(cra.getNumberOfCells() > 1) {
-                throw new IllegalStateException(msg);
-            }
-            //un-register the single-cell array formula from the parent XSSFSheet
-            getRow().getSheet().removeArrayFormula(this);
-        }
-    }
-
-    /**
-     * Called when this cell is modified.
-     * <p>
-     * The purpose of this method is to validate the cell state prior to modification.
-     * </p>
-     *
-     * @see #setCellType(CellType)
-     * @see #setCellFormula(String)
-     * @see XSSFRow#removeCell(org.apache.poi.ss.usermodel.Cell)
-     * @see org.apache.poi.xssf.usermodel.XSSFSheet#removeRow(org.apache.poi.ss.usermodel.Row)
-     * @see org.apache.poi.xssf.usermodel.XSSFSheet#shiftRows(int, int, int)
-     * @see org.apache.poi.xssf.usermodel.XSSFSheet#addMergedRegion(org.apache.poi.ss.util.CellRangeAddress)
-     * @throws IllegalStateException if modification is not allowed
-     */
-    void notifyArrayFormulaChanging(){
-        CellReference ref = new CellReference(this);
-        String msg = "Cell "+ref.formatAsString()+" is part of a multi-cell array formula. " +
-                "You cannot change part of an array.";
-        notifyArrayFormulaChanging(msg);
-    }
-    
-    
-    //Moved from XSSFRow.shift(). Not sure what is purpose. 
+    //Moved from XSSFRow.shift(). Not sure what is purpose.
     public void updateCellReferencesForShifting(String msg){
-        if(isPartOfArrayFormulaGroup())
-            notifyArrayFormulaChanging(msg);
+        if(isPartOfArrayFormulaGroup()) {
+            tryToDeleteArrayFormula(msg);
+        }
+
         CalculationChain calcChain = getSheet().getWorkbook().getCalculationChain();
         int sheetId = (int)getSheet().sheet.getSheetId();
     

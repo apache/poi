@@ -299,7 +299,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
             HSSFCell xcell = (HSSFCell) cell;
             if (xcell.isPartOfArrayFormulaGroup()) {
                 String msg = "Row[rownum=" + row.getRowNum() + "] contains cell(s) included in a multi-cell array formula. You cannot change part of an array.";
-                xcell.notifyArrayFormulaChanging(msg);
+                xcell.tryToDeleteArrayFormula(msg);
             }
         }
 
@@ -1779,7 +1779,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         for (Cell cell : row) {
             HSSFCell hcell = (HSSFCell) cell;
             if (hcell.isPartOfArrayFormulaGroup()) {
-                hcell.notifyArrayFormulaChanging(msg);
+                hcell.tryToDeleteArrayFormula(msg);
             }
         }
     }

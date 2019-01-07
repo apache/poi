@@ -37,6 +37,7 @@ import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.Test;
 
@@ -1199,5 +1200,110 @@ public abstract class BaseTestCell {
 
         assertEquals(CellType.NUMERIC, cell.getCellType());
         assertEquals(value, cell.getNumericCellValue(), 0);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void setCellType_null_throwsIAE() {
+        Cell cell = getInstance();
+        cell.setCellType(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void setCellType_NONE_throwsIAE() {
+        Cell cell = getInstance();
+        cell.setCellType(CellType._NONE);
+    }
+
+
+    @Test
+    public void setCellType_BLANK_removesArrayFormula_ifCellIsPartOfAnArrayFormulaGroupContainingOnlyThisCell() {
+        Cell cell = getInstance();
+
+        cell.getSheet().setArrayFormula("1", CellRangeAddress.valueOf("A1"));
+        cell.setCellValue("foo");
+        assertTrue(cell.isPartOfArrayFormulaGroup());
+        assertEquals("1", cell.getCellFormula());
+
+        cell.setCellType(CellType.BLANK);
+
+        assertEquals(CellType.BLANK, cell.getCellType());
+        assertFalse(cell.isPartOfArrayFormulaGroup());
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void setCellType_BLANK_throwsISE_ifCellIsPartOfAnArrayFormulaGroupContainingOtherCells() {
+        Cell cell = getInstance();
+        cell.getSheet().setArrayFormula("1", CellRangeAddress.valueOf("A1:B1"));
+        cell.setCellValue("foo");
+        cell.setCellType(CellType.BLANK);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void setCellFormula_throwsISE_ifCellIsPartOfAnArrayFormulaGroupContainingOtherCells() {
+        Cell cell = getInstance();
+
+        cell.getSheet().setArrayFormula("1", CellRangeAddress.valueOf("A1:B1"));
+        assertTrue(cell.isPartOfArrayFormulaGroup());
+        assertEquals(CellType.FORMULA, cell.getCellType());
+
+        cell.setCellFormula("1");
+    }
+
+    @Test
+    public void removeFormula_preservesValue() {
+        Cell cell = getInstance();
+
+        cell.setCellFormula("#DIV/0!");
+        cell.setCellValue(true);
+        cell.removeFormula();
+        assertEquals(CellType.BOOLEAN, cell.getCellType());
+        assertTrue(cell.getBooleanCellValue());
+
+        cell.setCellFormula("#DIV/0!");
+        cell.setCellValue(2);
+        cell.removeFormula();
+        assertEquals(CellType.NUMERIC, cell.getCellType());
+        assertEquals(2, cell.getNumericCellValue(), 0);
+
+        cell.setCellFormula("#DIV/0!");
+        cell.setCellValue("foo");
+        cell.removeFormula();
+        assertEquals(CellType.STRING, cell.getCellType());
+        assertEquals("foo", cell.getStringCellValue());
+
+        cell.setCellFormula("#DIV/0!");
+        cell.setCellErrorValue(FormulaError.NUM.getCode());
+        cell.removeFormula();
+        assertEquals(CellType.ERROR, cell.getCellType());
+        assertEquals(FormulaError.NUM.getCode(), cell.getErrorCellValue());
+    }
+
+    @Test
+    public void removeFormula_turnsCellToBlank_whenFormulaWasASingleCellArrayFormula() {
+        Cell cell = getInstance();
+
+        cell.getSheet().setArrayFormula("#DIV/0!", CellRangeAddress.valueOf("A1"));
+        cell.setCellValue(true);
+        cell.removeFormula();
+        assertEquals(CellType.BLANK, cell.getCellType());
+
+        cell.getSheet().setArrayFormula("#DIV/0!", CellRangeAddress.valueOf("A1"));
+        cell.setCellValue(2);
+        cell.removeFormula();
+        assertEquals(CellType.BLANK, cell.getCellType());
+
+        cell.getSheet().setArrayFormula("#DIV/0!", CellRangeAddress.valueOf("A1"));
+        cell.setCellValue(true);
+        cell.removeFormula();
+        assertEquals(CellType.BLANK, cell.getCellType());
+
+        cell.getSheet().setArrayFormula("#DIV/0!", CellRangeAddress.valueOf("A1"));
+        cell.setCellErrorValue(FormulaError.NUM.getCode());
+        cell.removeFormula();
+        assertEquals(CellType.BLANK, cell.getCellType());
+    }
+
+    private Cell getInstance() {
+        return _testDataProvider.createWorkbook().createSheet().createRow(0).createCell(0);
     }
 }

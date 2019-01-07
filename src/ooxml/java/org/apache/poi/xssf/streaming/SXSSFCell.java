@@ -27,6 +27,7 @@ import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellBase;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Comment;
@@ -45,7 +46,7 @@ import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 /**
  * Streaming version of XSSFCell implementing the "BigGridDemo" strategy.
  */
-public class SXSSFCell implements Cell {
+public class SXSSFCell extends CellBase {
     private final SXSSFRow _row;
     private Value _value;
     private CellStyle _style;
@@ -111,14 +112,8 @@ public class SXSSFCell implements Cell {
         return _row;
     }
 
-    /**
-     * Set the cells type (numeric, formula or string)
-     *
-     * @throws IllegalArgumentException if the specified cell type is invalid
-     */
     @Override
-    public void setCellType(CellType cellType)
-    {
+    protected void setCellTypeImpl(CellType cellType) {
         ensureType(cellType);
     }
 
@@ -331,7 +326,7 @@ public class SXSSFCell implements Cell {
      * @throws FormulaParseException if the formula has incorrect syntax or is otherwise invalid
      */
     @Override
-    public void setCellFormula(String formula) throws FormulaParseException
+    public void setCellFormulaImpl(String formula) throws FormulaParseException
     {
         if(formula == null) {
             setType(CellType.BLANK);
@@ -341,6 +336,36 @@ public class SXSSFCell implements Cell {
         ensureFormulaType(computeTypeFromFormula(formula));
         ((FormulaValue)_value).setValue(formula);
     }
+
+    @Override
+    protected void removeFormulaImpl() {
+        assert getCellType() == CellType.FORMULA;
+        switch (getCachedFormulaResultType()) {
+            case NUMERIC:
+                double numericValue = ((NumericFormulaValue)_value).getPreEvaluatedValue();
+                _value = new NumericValue();
+                ((NumericValue) _value).setValue(numericValue);
+                break;
+            case STRING:
+                String stringValue = ((StringFormulaValue)_value).getPreEvaluatedValue();
+                _value = new PlainStringValue();
+                ((PlainStringValue) _value).setValue(stringValue);
+                break;
+            case BOOLEAN:
+                boolean booleanValue = ((BooleanFormulaValue)_value).getPreEvaluatedValue();
+                _value = new BooleanValue();
+                ((BooleanValue) _value).setValue(booleanValue);
+                break;
+            case ERROR:
+                byte errorValue = ((ErrorFormulaValue)_value).getPreEvaluatedValue();
+                _value = new ErrorValue();
+                ((ErrorValue) _value).setValue(errorValue);
+                break;
+            default:
+                throw new AssertionError();
+        }
+    }
+
     /**
      * Return a formula for the cell, for example, <code>SUM(C4:E4)</code>
      *
