@@ -264,8 +264,8 @@ under the License.
     <property name="forbidden.url" value="${repository.m2}/maven2/de/thetaphi/forbiddenapis/2.6/forbiddenapis-2.6.jar"/>
 
     <property name="maven.ooxml.xsds.version.id" value="1.4"/>
-	
-	<!-- See http://www.ecma-international.org/publications/standards/Ecma-376.htm -->
+
+    <!-- See http://www.ecma-international.org/publications/standards/Ecma-376.htm -->
     <!-- "Copy these file(s), free of charge" -->
     <property name="ooxml.xsds.ozip.1" value="OfficeOpenXML-Part4.zip"/>
     <property name="ooxml.xsds.izip.1" value="OfficeOpenXML-XMLSchema.zip"/>
@@ -671,10 +671,10 @@ under the License.
                 <include name="forbiddenapis-2.3.jar"/>
                 <include name="forbiddenapis-2.5.jar"/>
                 <include name="apache-rat-0.11.jar"/>
-				<include name="mockito-core-2.13.0.jar"/>
+                <include name="mockito-core-2.13.0.jar"/>
                 <include name="mockito-core-2.21.0.jar"/>
-				<include name="byte-buddy-1.7.9.jar"/>
-				<include name="byte-buddy-agent-1.7.9.jar"/>
+                <include name="byte-buddy-1.7.9.jar"/>
+                <include name="byte-buddy-agent-1.7.9.jar"/>
             </fileset>
             <fileset dir="${ooxml.lib}">
                 <!-- remove jars from previous versions, but not the current version -->
@@ -1100,9 +1100,9 @@ under the License.
             <fileset dir="${geometry.output.tmpdir}" includes="**/*.java"/>
              <filterchain>
                  <concatfilter prepend="${geometry.output.tmpdir}/apache-license.txt"/>
-         		 <!-- fix javadocs for java 8 doclint -->
-             	 <replaceregex pattern="&amp;lt;(.*)>" replace="&amp;lt;\1&amp;gt;" flags="g"/>
-             	 <fixcrlf eol="lf"/>
+                 <!-- fix javadocs for java 8 doclint -->
+                 <replaceregex pattern="&amp;lt;(.*)>" replace="&amp;lt;\1&amp;gt;" flags="g"/>
+                 <fixcrlf eol="lf"/>
              </filterchain>
         </copy>
     </target>
