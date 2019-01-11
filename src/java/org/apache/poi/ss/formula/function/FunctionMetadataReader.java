@@ -21,7 +21,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -146,9 +145,8 @@ final class FunctionMetadataReader {
 
 	private static boolean isDash(String codes) {
 		if(codes.length() == 1) {
-			switch (codes.charAt(0)) {
-				case '-':
-					return true;
+			if (codes.charAt(0) == '-') {
+				return true;
 			}
 		}
 		return false;

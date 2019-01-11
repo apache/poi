@@ -135,7 +135,7 @@ public final class SupBookRecord extends StandardRecord {
 
         if(isExternalReferences()) {
             sb.append("External References]\n");
-            sb.append(" .url     = ").append(field_2_encoded_url).append("\n");
+            sb.append(" .url     = ").append(getURL()).append("\n");
             sb.append(" .nSheets = ").append(field_1_number_of_sheets).append("\n");
             for (String sheetname : field_3_sheet_names) {
                 sb.append("    .name = ").append(sheetname).append("\n");

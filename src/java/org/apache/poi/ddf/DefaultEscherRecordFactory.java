@@ -117,11 +117,7 @@ public class DefaultEscherRecordFactory implements EscherRecordFactory {
             short sid;
             try {
                 sid = recCls.getField("RECORD_ID").getShort(null);
-            } catch (IllegalArgumentException e) {
-                throw new RuntimeException(e);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            } catch (NoSuchFieldException e) {
+            } catch (IllegalArgumentException | NoSuchFieldException | IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
             Constructor<? extends EscherRecord> constructor;

@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.record.aggregates;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -92,11 +93,9 @@ public final class SharedValueManager {
 		}
 
 		public final String toString() {
-			StringBuffer sb = new StringBuffer(64);
-			sb.append(getClass().getName()).append(" [");
-			sb.append(_sfr.getRange());
-			sb.append("]");
-			return sb.toString();
+			return getClass().getName() + " [" +
+					_sfr.getRange() +
+					"]";
 		}
 	}
 
@@ -135,9 +134,7 @@ public final class SharedValueManager {
 	 */
 	private static <Z> List<Z> toList(Z[] zz) {
 		List<Z> result = new ArrayList<>(zz.length);
-		for (int i = 0; i < zz.length; i++) {
-			result.add(zz[i]);
-		}
+		Collections.addAll(result, zz);
 		return result;
 	}
 

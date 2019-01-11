@@ -276,7 +276,7 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 
 	@Override
     public String getText() {
-		StringBuffer text = new StringBuffer();
+		StringBuilder text = new StringBuilder();
 
 		// We don't care about the difference between
 		//  null (missing) and blank cells
@@ -374,7 +374,7 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 							// Replace any newlines with spaces, otherwise it
 							//  breaks the output
 							String commentText = comment.getString().getString().replace('\n', ' ');
-							text.append(" Comment by "+comment.getAuthor()+": "+commentText);
+							text.append(" Comment by ").append(comment.getAuthor()).append(": ").append(commentText);
 						}
 					}
 
@@ -398,7 +398,7 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 	}
 
 	public static String _extractHeaderFooter(HeaderFooter hf) {
-		StringBuffer text = new StringBuffer();
+		StringBuilder text = new StringBuilder();
 
 		if(hf.getLeft() != null) {
 			text.append(hf.getLeft());

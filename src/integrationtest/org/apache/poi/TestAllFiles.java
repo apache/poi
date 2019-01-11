@@ -474,15 +474,15 @@ public class TestAllFiles {
 
     public static class NullFileHandler implements FileHandler {
         @Override
-        public void handleFile(InputStream stream, String path) throws Exception {
+        public void handleFile(InputStream stream, String path) {
         }
 
         @Override
-        public void handleExtracting(File file) throws Exception {
+        public void handleExtracting(File file) {
         }
 
         @Override
-        public void handleAdditional(File file) throws Exception {
+        public void handleAdditional(File file) {
         }
     }
 }

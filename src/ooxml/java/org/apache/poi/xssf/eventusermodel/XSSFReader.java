@@ -254,9 +254,7 @@ public class XSSFReader {
             XMLReader xmlReader;
             try {
                 xmlReader = SAXHelper.newXMLReader();
-            } catch (ParserConfigurationException e) {
-                throw new POIXMLException(e);
-            } catch (SAXException e) {
+            } catch (ParserConfigurationException | SAXException e) {
                 throw new POIXMLException(e);
             }
             xmlReader.setContentHandler(xmlSheetRefReader);
