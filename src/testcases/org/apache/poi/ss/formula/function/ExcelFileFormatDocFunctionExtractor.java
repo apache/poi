@@ -449,9 +449,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
 		try {
 			xr.parse(inSrc);
 			is.close();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		} catch (SAXException e) {
+		} catch (IOException | SAXException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -521,8 +519,6 @@ public final class ExcelFileFormatDocFunctionExtractor {
 			InputStream is = zf.getInputStream(zf.getEntry("content.xml"));
 			extractFunctionData(new FunctionDataCollector(ps), is);
 			zf.close();
-		} catch (ZipException e) {
-			throw new RuntimeException(e);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

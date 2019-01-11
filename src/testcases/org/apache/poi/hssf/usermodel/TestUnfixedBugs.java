@@ -28,10 +28,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.util.RecordFormatException;
 import org.junit.Test;
-
-import junit.framework.AssertionFailedError;
 
 /**
  * @author aviks
@@ -43,100 +40,51 @@ import junit.framework.AssertionFailedError;
  * fixed, so that they are then run automatically.
  */
 public final class TestUnfixedBugs {
-
-    @Test
-	public void test43493() {
-		// Has crazy corrupt sub-records on
-		// a EmbeddedObjectRefSubRecord
-		try {
-			HSSFTestDataSamples.openSampleWorkbook("43493.xls");
-		} catch (RecordFormatException e) {
-			if (e.getCause().getCause() instanceof ArrayIndexOutOfBoundsException) {
-				throw new AssertionFailedError("Identified bug 43493");
-			}
-			throw e;
-		}
-	}
-
-	/**
-	 * Note - some parts of this bug have been fixed, and have been
-	 * transfered over to {@link TestBugs#bug49612_part()}
-	 */
-    @Test
-    public void test49612() throws IOException {
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("49612.xls");
-        HSSFSheet sh = wb.getSheetAt(0);
-        HSSFRow row = sh.getRow(0);
-        HSSFCell c1 = row.getCell(2);
-        HSSFCell d1 = row.getCell(3);
-        HSSFCell e1 = row.getCell(2);
-
-        assertEquals("SUM(BOB+JIM)", c1.getCellFormula());
-
-        // Problem 1: Filename missing, see bug #56742
-        assertEquals("SUM('49612.xls'!BOB+'49612.xls'!JIM)", d1.getCellFormula());
-
-        //Problem 2: Filename missing, see bug #56742
-        //junit.framework.ComparisonFailure:
-        //Expected :SUM('49612.xls'!BOB+'49612.xls'!JIM)
-        //Actual   :SUM(BOB+JIM)
-        assertEquals("SUM('49612.xls'!BOB+'49612.xls'!JIM)", e1.getCellFormula());
-        
-        // Problem 3 - fixed and transfered
-        wb.close();
-    }
-
     @Test
     public void testFormulaRecordAggregate_1() throws Exception {
         // fails at formula "=MEHRFACH.OPERATIONEN(E$3;$B$5;$D4)"
-        Workbook wb = HSSFTestDataSamples.openSampleWorkbook("44958_1.xls");
-        try {
-            for(int i = 0;i < wb.getNumberOfSheets();i++) {
+        try (Workbook wb = HSSFTestDataSamples.openSampleWorkbook("44958_1.xls")) {
+            for (int i = 0; i < wb.getNumberOfSheets(); i++) {
                 Sheet sheet = wb.getSheetAt(i);
                 assertNotNull(wb.getSheet(sheet.getSheetName()));
                 sheet.groupColumn((short) 4, (short) 5);
                 sheet.setColumnGroupCollapsed(4, true);
                 sheet.setColumnGroupCollapsed(4, false);
-                
-                for(Row row : sheet) {
-                    for(Cell cell : row) {
+
+                for (Row row : sheet) {
+                    for (Cell cell : row) {
                         try {
-                            cell.toString();
+                            assertNotNull(cell.toString());
                         } catch (Exception e) {
                             throw new Exception("While handling: " + sheet.getSheetName() + "/" + row.getRowNum() + "/" + cell.getColumnIndex(), e);
                         }
                     }
                 }
             }
-        } finally {
-            wb.close();
         }
     }
 
     @Test
     public void testFormulaRecordAggregate() throws Exception {
         // fails at formula "=MEHRFACH.OPERATIONEN(E$3;$B$5;$D4)"
-        Workbook wb = HSSFTestDataSamples.openSampleWorkbook("44958.xls");
-        try {
-            for(int i = 0;i < wb.getNumberOfSheets();i++) {
+        try (Workbook wb = HSSFTestDataSamples.openSampleWorkbook("44958.xls")) {
+            for (int i = 0; i < wb.getNumberOfSheets(); i++) {
                 Sheet sheet = wb.getSheetAt(i);
                 assertNotNull(wb.getSheet(sheet.getSheetName()));
                 sheet.groupColumn((short) 4, (short) 5);
                 sheet.setColumnGroupCollapsed(4, true);
                 sheet.setColumnGroupCollapsed(4, false);
-                
-                for(Row row : sheet) {
-                    for(Cell cell : row) {
+
+                for (Row row : sheet) {
+                    for (Cell cell : row) {
                         try {
-                            cell.toString();
+                            assertNotNull(cell.toString());
                         } catch (Exception e) {
                             throw new Exception("While handling: " + sheet.getSheetName() + "/" + row.getRowNum() + "/" + cell.getColumnIndex(), e);
                         }
                     }
                 }
-            } 
-        } finally {
-            wb.close();
+            }
         }
     }
 

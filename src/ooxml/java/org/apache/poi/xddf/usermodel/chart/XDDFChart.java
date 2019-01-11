@@ -799,8 +799,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
         XSSFSheet sheet = null;
         try {
             sheet = getWorkbook().getSheetAt(0);
-        } catch (InvalidFormatException ife) {
-        } catch (IOException ioe) {
+        } catch (InvalidFormatException | IOException ife) {
         }
         return sheet;
     }

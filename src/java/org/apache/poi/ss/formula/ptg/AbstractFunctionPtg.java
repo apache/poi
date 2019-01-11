@@ -59,12 +59,7 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
     }
 
     public final String toString() {
-        StringBuilder sb = new StringBuilder(64);
-        sb.append(getClass().getName()).append(" [");
-        sb.append(lookupName(_functionIndex));
-        sb.append(" nArgs=").append(_numberOfArgs);
-        sb.append("]");
-        return sb.toString();
+        return getClass().getName() + " [" + lookupName(_functionIndex) + " nArgs=" + _numberOfArgs + "]";
     }
 
     public final short getFunctionIndex() {

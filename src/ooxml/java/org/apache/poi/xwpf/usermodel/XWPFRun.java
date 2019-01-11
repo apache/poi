@@ -1184,9 +1184,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
             docPr.setName("chart " + id);
 
             return inline;
-        } catch (XmlException e) {
-            throw new IllegalStateException(e);
-        } catch (SAXException e) {
+        } catch (XmlException | SAXException e) {
             throw new IllegalStateException(e);
         }
     }

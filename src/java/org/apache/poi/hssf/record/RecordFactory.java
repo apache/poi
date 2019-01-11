@@ -82,11 +82,7 @@ public final class RecordFactory {
             Object[] args = { in, };
             try {
                 return _c.newInstance(args);
-            } catch (IllegalArgumentException e) {
-                throw new RuntimeException(e);
-            } catch (InstantiationException e) {
-                throw new RuntimeException(e);
-            } catch (IllegalAccessException e) {
+            } catch (IllegalArgumentException | IllegalAccessException | InstantiationException e) {
                 throw new RuntimeException(e);
             } catch (InvocationTargetException e) {
                 Throwable t = e.getTargetException();
@@ -118,9 +114,7 @@ public final class RecordFactory {
             Object[] args = { in, };
             try {
                 return (Record) _m.invoke(null, args);
-            } catch (IllegalArgumentException e) {
-                throw new RuntimeException(e);
-            } catch (IllegalAccessException e) {
+            } catch (IllegalArgumentException | IllegalAccessException e) {
                 throw new RuntimeException(e);
             } catch (InvocationTargetException e) {
                 throw new org.apache.poi.util.RecordFormatException("Unable to construct record instance" , e.getTargetException());

@@ -35,6 +35,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -116,6 +117,7 @@ import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.NullOutputStream;
 import org.apache.poi.util.TempFile;
+import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.XLSBUnsupportedException;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
@@ -3389,4 +3391,44 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertEquals("E11", sheet.getActiveCell().formatAsString());
         wbBack.close();
     }
+
+    @Test
+    public void testBug54084Unicode() throws IOException {
+        // sample XLSX with the same text-contents as the text-file above
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("54084 - Greek - beyond BMP.xlsx");
+
+        verifyBug54084Unicode(wb);
+
+        //XSSFTestDataSamples.writeOut(wb, "bug 54084 for manual review");
+
+        // now write the file and read it back in
+        XSSFWorkbook wbWritten = XSSFTestDataSamples.writeOutAndReadBack(wb);
+        verifyBug54084Unicode(wbWritten);
+
+        // finally also write it out via the streaming interface and verify that we still can read it back in
+        SXSSFWorkbook swb = new SXSSFWorkbook(wb);
+        Workbook wbStreamingWritten = SXSSFITestDataProvider.instance.writeOutAndReadBack(swb);
+        verifyBug54084Unicode(wbStreamingWritten);
+
+        wbWritten.close();
+        swb.close();
+        wbStreamingWritten.close();
+        wb.close();
+    }
+
+    private void verifyBug54084Unicode(Workbook wb) {
+        // expected data is stored in UTF-8 in a text-file
+        byte[] data = HSSFTestDataSamples.getTestDataFileContent("54084 - Greek - beyond BMP.txt");
+        String testData = new String(data, StandardCharsets.UTF_8).trim();
+
+        Sheet sheet = wb.getSheetAt(0);
+        Row row = sheet.getRow(0);
+        Cell cell = row.getCell(0);
+
+        String value = cell.getStringCellValue();
+        //System.out.println(value);
+
+        assertEquals("The data in the text-file should exactly match the data that we read from the workbook", testData, value);
+    }
+
 }

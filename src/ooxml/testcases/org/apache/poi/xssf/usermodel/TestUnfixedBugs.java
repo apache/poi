@@ -57,45 +57,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
  */
 public final class TestUnfixedBugs {
     @Test
-    public void testBug54084Unicode() throws IOException {
-        // sample XLSX with the same text-contents as the text-file above
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("54084 - Greek - beyond BMP.xlsx");
-
-        verifyBug54084Unicode(wb);
-
-        //XSSFTestDataSamples.writeOut(wb, "bug 54084 for manual review");
-
-        // now write the file and read it back in
-        XSSFWorkbook wbWritten = XSSFTestDataSamples.writeOutAndReadBack(wb);
-        verifyBug54084Unicode(wbWritten);
-
-        // finally also write it out via the streaming interface and verify that we still can read it back in
-        SXSSFWorkbook swb = new SXSSFWorkbook(wb);
-        Workbook wbStreamingWritten = SXSSFITestDataProvider.instance.writeOutAndReadBack(swb);
-        verifyBug54084Unicode(wbStreamingWritten);
-
-        wbWritten.close();
-        swb.close();
-        wbStreamingWritten.close();
-        wb.close();
-    }
-
-    private void verifyBug54084Unicode(Workbook wb) {
-        // expected data is stored in UTF-8 in a text-file
-        byte[] data = HSSFTestDataSamples.getTestDataFileContent("54084 - Greek - beyond BMP.txt");
-        String testData = new String(data, StandardCharsets.UTF_8).trim();
-
-        Sheet sheet = wb.getSheetAt(0);
-        Row row = sheet.getRow(0);
-        Cell cell = row.getCell(0);
-
-        String value = cell.getStringCellValue();
-        //System.out.println(value);
-
-        assertEquals("The data in the text-file should exactly match the data that we read from the workbook", testData, value);
-    }
-
-    @Test
     public void test54071() throws Exception {
         Workbook workbook = XSSFTestDataSamples.openSampleWorkbook("54071.xlsx");
         Sheet sheet = workbook.getSheetAt(0);
@@ -197,8 +158,7 @@ public final class TestUnfixedBugs {
 
     @Test
     public void testBug55752() throws IOException {
-        Workbook wb = new XSSFWorkbook();
-        try {
+        try (Workbook wb = new XSSFWorkbook()) {
             Sheet sheet = wb.createSheet("test");
 
             for (int i = 0; i < 4; i++) {
@@ -247,8 +207,6 @@ public final class TestUnfixedBugs {
 
             // write to file for manual inspection
             XSSFTestDataSamples.writeOut(wb, "bug 55752 for review");
-        } finally {
-            wb.close();
         }
     }
 
@@ -315,7 +273,7 @@ public final class TestUnfixedBugs {
         }
 
         // verify that the resulting XML has the rows in correct order as required by Excel
-        String xml = new String(stream.toByteArray(), "UTF-8");
+        String xml = new String(stream.toByteArray(), StandardCharsets.UTF_8);
         int posR12 = xml.indexOf("<row r=\"12\"");
         int posR13 = xml.indexOf("<row r=\"13\"");
 

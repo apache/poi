@@ -192,9 +192,7 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
                 chartCopy.importContent(srcChart);
                 chartCopy.setWorkbook(srcChart.getWorkbook());
                 c.setAttributeText(idQualifiedName, slide.getRelationId(chartCopy));
-            } catch (InvalidFormatException e) {
-                throw new POIXMLException(e);
-            } catch (IOException e) {
+            } catch (InvalidFormatException | IOException e) {
                 throw new POIXMLException(e);
             }
             c.dispose();
