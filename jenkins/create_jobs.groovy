@@ -53,9 +53,7 @@ def poijobs = [
                        '-Djava.locale.providers=JRE,CLDR'],
           skipcigame: true
         ],
-        [ name: 'POI-DSL-1.12', jdk: '1.12', trigger: '''
-# do not run this via a schedule for now
-''',
+        [ name: 'POI-DSL-1.12', jdk: '1.12', trigger: triggerSundays,
           // Nodes beam* do not yet have JDK 12 installed
           slaveAdd: '&&!beam1&&!beam2&&!beam3&&!beam4&&!beam6&&!beam7&&!beam8&&!beam9&&!beam10&&!beam11&&!beam12&&!beam13&&!beam14&&!beam15&&!beam16',
           properties: ['-Djava9addmods=-Dthis.is.a.dummy=true',
