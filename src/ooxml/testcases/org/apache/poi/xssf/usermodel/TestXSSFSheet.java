@@ -113,7 +113,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         ftr = (XSSFOddFooter) s1.getFooter();
 
         assertEquals("&Ctestdoc&Rtest phrase", hdr.getText());
-        assertEquals(null, ftr.getText());
+        assertNull(ftr.getText());
 
         assertEquals("", hdr.getLeft());
         assertEquals("testdoc", hdr.getCenter());
@@ -130,7 +130,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         hdr = (XSSFOddHeader) s2.getHeader();
         ftr = (XSSFOddFooter) s2.getFooter();
 
-        assertEquals(null, hdr.getText());
+        assertNull(hdr.getText());
         assertEquals("&L&F", ftr.getText());
 
         assertEquals("", hdr.getLeft());
@@ -964,15 +964,15 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         //rows are sorted: {0, 1, 2}
         assertEquals(4, xrow[0].sizeOfCArray());
         assertEquals(1, xrow[0].getR());
-        assertTrue(xrow[0].equals(row3.getCTRow()));
+        assertEquals(xrow[0], row3.getCTRow());
 
         assertEquals(3, xrow[1].sizeOfCArray());
         assertEquals(2, xrow[1].getR());
-        assertTrue(xrow[1].equals(row2.getCTRow()));
+        assertEquals(xrow[1], row2.getCTRow());
 
         assertEquals(2, xrow[2].sizeOfCArray());
         assertEquals(3, xrow[2].getR());
-        assertTrue(xrow[2].equals(row1.getCTRow()));
+        assertEquals(xrow[2], row1.getCTRow());
 
         CTCell[] xcell = xrow[0].getCArray();
         assertEquals("D1", xcell[0].getR());
@@ -1487,7 +1487,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         // Boolean
         cell = CellUtil.getCell(destRow, col++);
         assertEquals("[Boolean] F7 cell type", CellType.BOOLEAN, cell.getCellType());
-        assertEquals("[Boolean] F7 cell value", true, cell.getBooleanCellValue());
+        assertTrue("[Boolean] F7 cell value", cell.getBooleanCellValue());
 
         // String
         cell = CellUtil.getCell(destRow, col++);
@@ -1656,11 +1656,11 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         col++;
         cell = CellUtil.getCell(destRow1, col);
         assertEquals("[Boolean] F10 cell type", CellType.BOOLEAN, cell.getCellType());
-        assertEquals("[Boolean] F10 cell value", true, cell.getBooleanCellValue());
+        assertTrue("[Boolean] F10 cell value", cell.getBooleanCellValue());
 
         cell = CellUtil.getCell(destRow2, col);
         assertEquals("[Boolean] F11 cell type", CellType.BOOLEAN, cell.getCellType());
-        assertEquals("[Boolean] F11 cell value", false, cell.getBooleanCellValue());
+        assertFalse("[Boolean] F11 cell value", cell.getBooleanCellValue());
 
         // String
         col++;
@@ -1922,6 +1922,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
 
             // test regular-colored (non-indexed, ARGB) sheet
             expected = XSSFColor.from(CTColor.Factory.newInstance(), wb.getStylesSource().getIndexedColors());
+            assertNotNull(expected);
             expected.setARGBHex("FF7F2700");
             assertEquals(expected, wb.getSheet("customOrange").getTabColor());
         }
@@ -1931,7 +1932,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
      * See bug #52425
      */
     @Test
-    public void testInsertCommentsToClonedSheet() {
+    public void testInsertCommentsToClonedSheet() throws IOException {
     	Workbook wb = XSSFTestDataSamples.openSampleWorkbook("52425.xlsx");
 		CreationHelper helper = wb.getCreationHelper();
 		Sheet sheet2 = wb.createSheet("Sheet 2");
@@ -1942,7 +1943,9 @@ public final class TestXSSFSheet extends BaseTestXSheet {
 		addComments(helper, sheet2);
 		// Adding Comment to cloned Sheet 3
 		addComments(helper, sheet3);
-	}
+
+        wb.close();
+    }
 
     private void addComments(CreationHelper helper, Sheet sheet) {
 		Drawing<?> drawing = sheet.createDrawingPatriarch();
@@ -1986,6 +1989,8 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         sheet.removeRow(sheet.getRow(commentCellAddress.getRow()));
 
         assertEquals("There should not be any comments left!",  0, sheet.getCellComments().size());
+
+        wb.close();
     }
 
     @Test

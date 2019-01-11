@@ -59,7 +59,9 @@ public final class TestCellReference {
         try {
             CellReference.convertColStringToIndex("A$B$");
             fail("Column reference is invalid and shouldn't be accepted");
-        } catch (IllegalArgumentException e) {}
+        } catch (IllegalArgumentException e) {
+            // expected here
+        }
     }
 
     @Test
