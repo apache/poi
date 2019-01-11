@@ -232,6 +232,11 @@ public class POIXMLProperties {
             }
         }
         if(custPart != null && cust != null && cust.props != null){
+            /* bug #60977, when writing a file multiple times, 
+             * and there are custom properties and an existing package part,
+             * replace, don't append to raw document byte array
+             */
+            custPart.clear();
             try (OutputStream out = custPart.getOutputStream()) {
                 cust.props.save(out, DEFAULT_XML_OPTIONS);
             }

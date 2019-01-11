@@ -25,12 +25,18 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
 
 import org.apache.poi.ooxml.POIXMLProperties.CoreProperties;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.XSSFTestDataSamples;
@@ -270,6 +276,68 @@ public final class TestPOIXMLProperties {
             return "0" + i;
         } else {
             return String.valueOf(i);
+        }
+    }
+
+    @Test
+    public void testBug60977() throws IOException {
+        
+        try (final XSSFWorkbook workbook = new XSSFWorkbook()) {
+            final Sheet sheet = workbook.createSheet("sheet");
+            final Row row = sheet.createRow(0);
+            final Cell cell = row.createCell(0);
+            cell.setCellValue("cell");
+
+            final POIXMLProperties properties = workbook.getProperties();
+            final POIXMLProperties.CustomProperties customProperties = properties.getCustomProperties();
+            final String propName = "Project";
+            final String propValue = "Some name";
+            customProperties.addProperty(propName, propValue);
+
+            // in the unit-test just try to write out the file more than once and see if we can still parse it
+            XSSFWorkbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(workbook);
+            assertNotNull(wbBack);
+            // properties documents are read lazily, so we have to access them to verify they parse properly
+            assertNotNull("First writeOutAndReadBack", wbBack.getProperties());
+            assertEquals("First prop check", propValue, wbBack.getProperties().getCustomProperties().getProperty(propName).getLpwstr());
+
+            customProperties.addProperty(propName + "1", propValue);
+            wbBack = XSSFTestDataSamples.writeOutAndReadBack(workbook);
+            assertNotNull(wbBack);
+            // properties documents are read lazily, so we have to access them to verify they parse properly
+            assertNotNull("Second writeOutAndReadBack", wbBack.getProperties());
+            assertEquals("Second prop check", propValue, wbBack.getProperties().getCustomProperties().getProperty(propName).getLpwstr());
+            assertEquals("Second prop check1", propValue, wbBack.getProperties().getCustomProperties().getProperty(propName + "1").getLpwstr());
+
+            wbBack = XSSFTestDataSamples.writeOutAndReadBack(workbook);
+            assertNotNull(wbBack);
+            // properties documents are read lazily, so we have to access them to verify they parse properly
+            assertNotNull("Third writeOutAndReadBack", wbBack.getProperties());
+            assertEquals("Third prop check", propValue, wbBack.getProperties().getCustomProperties().getProperty(propName).getLpwstr());
+            assertEquals("Third prop check1", propValue, wbBack.getProperties().getCustomProperties().getProperty(propName + "1").getLpwstr());
+            
+            /* Manual test to write out the file more than once:
+            File test1 = File.createTempFile("test1", ".xlsx", new File("C:\\temp"));
+            File test2 = File.createTempFile("test2", ".xlsx", new File("C:\\temp"));
+            try (final java.io.FileOutputStream fs = new java.io.FileOutputStream(test1)) {
+                workbook.write(fs);
+            }
+            try (final XSSFWorkbook wb = new XSSFWorkbook(test1)) {
+                assertNotNull(wb.getProperties());
+            } catch (InvalidFormatException e) {
+                fail("Test1 copy failed: " + e.getMessage());
+            }
+
+            try (final java.io.FileOutputStream fs = new java.io.FileOutputStream(test2)) {
+                workbook.write(fs);
+            }
+            
+            try (final XSSFWorkbook wb = new XSSFWorkbook(test2)) {
+                assertNotNull(wb.getProperties());
+            } catch (InvalidFormatException e) {
+                fail("Test2 copy failed: " + e.getMessage());
+            }
+             */
         }
     }
 }
