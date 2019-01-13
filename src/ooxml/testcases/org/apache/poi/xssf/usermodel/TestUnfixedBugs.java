@@ -27,22 +27,30 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Hashtable;
 
-import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.ss.formula.OperationEvaluationContext;
+import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.functions.FreeRefFunction;
+import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
+import org.apache.poi.ss.formula.udf.DefaultUDFFinder;
+import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.ss.util.RegionUtil;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
 
@@ -334,4 +342,52 @@ public final class TestUnfixedBugs {
         }
     }
 
+    @Test
+    public void testBug60355() throws IOException {
+        try (Workbook workbook = XSSFTestDataSamples.openSampleWorkbook("HsGetVal.xlsx")){
+
+            Sheet sheet = workbook.getSheetAt(workbook.getActiveSheetIndex());
+            System.out.println("cell_4_1 formula:" + sheet.getRow(4).getCell(1).getCellFormula());
+            System.out.println("cell_4_2 formula:" + sheet.getRow(4).getCell(2).getCellFormula());
+
+            // hard code HsGetValue test values for formulas on the sheet
+            Hashtable<CellAddress, String> cellToValueTable = new Hashtable<>();
+            CellAddress cell4_1 = new CellAddress(4, 1);
+            cellToValueTable.put(cell4_1, "678.0");
+            CellAddress cell4_2 = new CellAddress(4, 2);
+            cellToValueTable.put(cell4_2, "123.0");
+
+            String[] functionNames = {HsGetValue.name};
+            FreeRefFunction[] functionImpls = {new HsGetValue(cellToValueTable)};
+            UDFFinder udfs = new DefaultUDFFinder(functionNames, functionImpls);
+            UDFFinder udfToolpack = new AggregatingUDFFinder(udfs);
+            workbook.addToolPack(udfToolpack);
+
+            FormulaEvaluator formulaEvaluator = workbook.getCreationHelper().createFormulaEvaluator();
+            formulaEvaluator.setIgnoreMissingWorkbooks(true);
+            formulaEvaluator.evaluateAll();
+        }
+    }
+
+    public class HsGetValue implements FreeRefFunction {
+        public static final String name = "HsGetValue";
+
+        private Hashtable<CellAddress, String> cellValues;
+
+        public HsGetValue(Hashtable<CellAddress, String> cellValues) {
+            super();
+            this.cellValues = cellValues;
+        }
+
+        @Override
+        public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext evaluationContext) {
+            int row = evaluationContext.getRowIndex();
+            int column = evaluationContext.getColumnIndex();
+            CellAddress cell = new CellAddress(row, column);
+
+            String value = cellValues.get(cell);
+            return new NumberEval( Double.parseDouble(value) );
+        }
+
+    }
 }
