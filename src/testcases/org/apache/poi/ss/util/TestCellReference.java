@@ -399,10 +399,10 @@ public final class TestCellReference {
         assertFalse("1 beyond last row", CellReference.isRowWithinRange(1048576, ss));
     }
 
-    @Test(expected=NumberFormatException.class)
+    @Test
     public void isRowWithinRangeNonInteger_BigNumber() {
         String rowNum = "4000000000";
-        CellReference.isRowWithinRange(rowNum, SpreadsheetVersion.EXCEL2007);
+        assertFalse(CellReference.isRowWithinRange(rowNum, SpreadsheetVersion.EXCEL2007));
     }
     
     @Test(expected=NumberFormatException.class)
