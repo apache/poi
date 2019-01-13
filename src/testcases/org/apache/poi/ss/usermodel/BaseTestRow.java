@@ -21,6 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -258,25 +259,25 @@ public abstract class BaseTestRow {
         // First up, no policy given, uses default
         assertEquals(CellType.STRING,  row.getCell(0).getCellType());
         assertEquals(CellType.NUMERIC, row.getCell(1).getCellType());
-        assertEquals(null, row.getCell(2));
-        assertEquals(null, row.getCell(3));
+        assertNull(row.getCell(2));
+        assertNull(row.getCell(3));
         assertEquals(CellType.BLANK,   row.getCell(4).getCellType());
         assertEquals(CellType.NUMERIC, row.getCell(5).getCellType());
 
         // RETURN_NULL_AND_BLANK - same as default
         assertEquals(CellType.STRING,  row.getCell(0, MissingCellPolicy.RETURN_NULL_AND_BLANK).getCellType());
         assertEquals(CellType.NUMERIC, row.getCell(1, MissingCellPolicy.RETURN_NULL_AND_BLANK).getCellType());
-        assertEquals(null, row.getCell(2, MissingCellPolicy.RETURN_NULL_AND_BLANK));
-        assertEquals(null, row.getCell(3, MissingCellPolicy.RETURN_NULL_AND_BLANK));
+        assertNull(row.getCell(2, MissingCellPolicy.RETURN_NULL_AND_BLANK));
+        assertNull(row.getCell(3, MissingCellPolicy.RETURN_NULL_AND_BLANK));
         assertEquals(CellType.BLANK,   row.getCell(4, MissingCellPolicy.RETURN_NULL_AND_BLANK).getCellType());
         assertEquals(CellType.NUMERIC, row.getCell(5, MissingCellPolicy.RETURN_NULL_AND_BLANK).getCellType());
 
         // RETURN_BLANK_AS_NULL - nearly the same
         assertEquals(CellType.STRING,  row.getCell(0, MissingCellPolicy.RETURN_BLANK_AS_NULL).getCellType());
         assertEquals(CellType.NUMERIC, row.getCell(1, MissingCellPolicy.RETURN_BLANK_AS_NULL).getCellType());
-        assertEquals(null, row.getCell(2, MissingCellPolicy.RETURN_BLANK_AS_NULL));
-        assertEquals(null, row.getCell(3, MissingCellPolicy.RETURN_BLANK_AS_NULL));
-        assertEquals(null, row.getCell(4, MissingCellPolicy.RETURN_BLANK_AS_NULL));
+        assertNull(row.getCell(2, MissingCellPolicy.RETURN_BLANK_AS_NULL));
+        assertNull(row.getCell(3, MissingCellPolicy.RETURN_BLANK_AS_NULL));
+        assertNull(row.getCell(4, MissingCellPolicy.RETURN_BLANK_AS_NULL));
         assertEquals(CellType.NUMERIC, row.getCell(5, MissingCellPolicy.RETURN_BLANK_AS_NULL).getCellType());
 
         // CREATE_NULL_AS_BLANK - creates as needed
@@ -302,9 +303,9 @@ public abstract class BaseTestRow {
 
         assertEquals(CellType.STRING,  row.getCell(0).getCellType());
         assertEquals(CellType.NUMERIC, row.getCell(1).getCellType());
-        assertEquals(null, row.getCell(2));
-        assertEquals(null, row.getCell(3));
-        assertEquals(null, row.getCell(4));
+        assertNull(row.getCell(2));
+        assertNull(row.getCell(3));
+        assertNull(row.getCell(4));
         assertEquals(CellType.NUMERIC, row.getCell(5).getCellType());
         
         workbook.close();
@@ -376,36 +377,36 @@ public abstract class BaseTestRow {
         Cell cell1 = row.createCell(1);
         Iterator<Cell> it = row.cellIterator();
         assertTrue(it.hasNext());
-        assertTrue(cell1 == it.next());
+        assertSame(cell1, it.next());
         assertFalse(it.hasNext());
 
         // Add another cell at the end
         Cell cell2 = row.createCell(99);
         it = row.cellIterator();
         assertTrue(it.hasNext());
-        assertTrue(cell1 == it.next());
+        assertSame(cell1, it.next());
         assertTrue(it.hasNext());
-        assertTrue(cell2 == it.next());
+        assertSame(cell2, it.next());
 
         // Add another cell at the beginning
         Cell cell3 = row.createCell(0);
         it = row.cellIterator();
         assertTrue(it.hasNext());
-        assertTrue(cell3 == it.next());
+        assertSame(cell3, it.next());
         assertTrue(it.hasNext());
-        assertTrue(cell1 == it.next());
+        assertSame(cell1, it.next());
         assertTrue(it.hasNext());
-        assertTrue(cell2 == it.next());
+        assertSame(cell2, it.next());
 
         // Replace cell1
         Cell cell4 = row.createCell(1);
         it = row.cellIterator();
         assertTrue(it.hasNext());
-        assertTrue(cell3 == it.next());
+        assertSame(cell3, it.next());
         assertTrue(it.hasNext());
-        assertTrue(cell4 == it.next());
+        assertSame(cell4, it.next());
         assertTrue(it.hasNext());
-        assertTrue(cell2 == it.next());
+        assertSame(cell2, it.next());
         assertFalse(it.hasNext());
 
         // Add another cell, specifying the cellType
@@ -413,13 +414,13 @@ public abstract class BaseTestRow {
         it = row.cellIterator();
         assertNotNull(cell5);
         assertTrue(it.hasNext());
-        assertTrue(cell3 == it.next());
+        assertSame(cell3, it.next());
         assertTrue(it.hasNext());
-        assertTrue(cell4 == it.next());
+        assertSame(cell4, it.next());
         assertTrue(it.hasNext());
-        assertTrue(cell5 == it.next());
+        assertSame(cell5, it.next());
         assertTrue(it.hasNext());
-        assertTrue(cell2 == it.next());
+        assertSame(cell2, it.next());
         assertEquals(CellType.STRING, cell5.getCellType());
         wb.close();
     }
@@ -432,10 +433,10 @@ public abstract class BaseTestRow {
        Row row2 = sheet.createRow(1);
 
        // Won't be styled currently
-       assertEquals(false, row1.isFormatted());
-       assertEquals(false, row2.isFormatted());
-       assertEquals(null, row1.getRowStyle());
-       assertEquals(null, row2.getRowStyle());
+        assertFalse(row1.isFormatted());
+        assertFalse(row2.isFormatted());
+        assertNull(row1.getRowStyle());
+        assertNull(row2.getRowStyle());
 
        // Style one
        CellStyle style = wb1.createCellStyle();
@@ -443,9 +444,9 @@ public abstract class BaseTestRow {
        row2.setRowStyle(style);
 
        // Check
-       assertEquals(false, row1.isFormatted());
-       assertEquals(true, row2.isFormatted());
-       assertEquals(null, row1.getRowStyle());
+        assertFalse(row1.isFormatted());
+        assertTrue(row2.isFormatted());
+        assertNull(row1.getRowStyle());
        assertEquals(style, row2.getRowStyle());
 
        // Save, load and re-check
@@ -458,9 +459,9 @@ public abstract class BaseTestRow {
        row2 = sheet.getRow(1);
        style = wb2.getCellStyleAt(style.getIndex());
 
-       assertEquals(false, row1.isFormatted());
-       assertEquals(true, row2.isFormatted());
-       assertEquals(null, row1.getRowStyle());
+        assertFalse(row1.isFormatted());
+        assertTrue(row2.isFormatted());
+        assertNull(row1.getRowStyle());
        assertEquals(style, row2.getRowStyle());
        assertEquals(4, style.getDataFormat());
        

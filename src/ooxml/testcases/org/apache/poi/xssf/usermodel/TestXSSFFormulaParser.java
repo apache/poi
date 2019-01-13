@@ -19,6 +19,7 @@ package org.apache.poi.xssf.usermodel;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -180,7 +181,7 @@ public final class TestXSSFFormulaParser {
         assertEquals(1, ptgs.length);
         assertEquals(NameXPxg.class, ptgs[0].getClass());
         assertEquals(0,    ((NameXPxg)ptgs[0]).getExternalWorkbookNumber());
-        assertEquals(null, ((NameXPxg)ptgs[0]).getSheetName());
+        assertNull(((NameXPxg) ptgs[0]).getSheetName());
         assertEquals("NR_Global_B2",((NameXPxg)ptgs[0]).getNameName());
         assertEquals("[0]!NR_Global_B2", ptgs[0].toFormulaString());
 
@@ -259,7 +260,7 @@ public final class TestXSSFFormulaParser {
         assertEquals(1, ptgs.length);
         assertEquals(NameXPxg.class, ptgs[0].getClass());
         assertEquals(1,    ((NameXPxg)ptgs[0]).getExternalWorkbookNumber());
-        assertEquals(null, ((NameXPxg)ptgs[0]).getSheetName());
+        assertNull(((NameXPxg) ptgs[0]).getSheetName());
         assertEquals("NR_Global_B2",((NameXPxg)ptgs[0]).getNameName());
         assertEquals("[1]!NR_Global_B2", ptgs[0].toFormulaString());
 

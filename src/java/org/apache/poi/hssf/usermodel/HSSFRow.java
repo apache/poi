@@ -28,8 +28,8 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.helpers.RowShifter;
 import org.apache.poi.util.Configurator;
-import org.apache.poi.util.LocaleUtil;
 
 /**
  * High level representation of a row of a spreadsheet.
@@ -725,11 +725,8 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
      */
     @Override
     public void shiftCellsRight(int firstShiftColumnIndex, int lastShiftColumnIndex, int step) {
-        if(step < 0)
-            throw new IllegalArgumentException("Shifting step may not be negative ");
-        if(firstShiftColumnIndex > lastShiftColumnIndex)
-            throw new IllegalArgumentException(String.format(LocaleUtil.getUserLocale(),
-                    "Incorrect shifting range : %d-%d", firstShiftColumnIndex, lastShiftColumnIndex));
+        RowShifter.validateShiftParameters(firstShiftColumnIndex, lastShiftColumnIndex, step);
+
         if(lastShiftColumnIndex + step + 1> cells.length)
             extend(lastShiftColumnIndex + step + 1);
         for (int columnIndex = lastShiftColumnIndex; columnIndex >= firstShiftColumnIndex; columnIndex--){ // process cells backwards, because of shifting 
@@ -746,6 +743,7 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
         cells = new HSSFCell[newLenght];
         System.arraycopy(temp, 0, cells, 0, temp.length);
     }
+
     /**
      * Shifts column range [firstShiftColumnIndex-lastShiftColumnIndex] step places to the left.
      * @param firstShiftColumnIndex the column to start shifting
@@ -754,13 +752,8 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
      */
     @Override
     public void shiftCellsLeft(int firstShiftColumnIndex, int lastShiftColumnIndex, int step) {
-        if(step < 0)
-            throw new IllegalArgumentException("Shifting step may not be negative ");
-        if(firstShiftColumnIndex > lastShiftColumnIndex)
-            throw new IllegalArgumentException(String.format(LocaleUtil.getUserLocale(),
-                    "Incorrect shifting range : %d-%d", firstShiftColumnIndex, lastShiftColumnIndex));
-        if(firstShiftColumnIndex - step < 0) 
-            throw new IllegalStateException("Column index less than zero : " + (Integer.valueOf(firstShiftColumnIndex + step)).toString());
+        RowShifter.validateShiftLeftParameters(firstShiftColumnIndex, lastShiftColumnIndex, step);
+
         for (int columnIndex = firstShiftColumnIndex; columnIndex <= lastShiftColumnIndex; columnIndex++){ 
             HSSFCell cell = getCell(columnIndex);
             if(cell != null){

@@ -17,8 +17,9 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
@@ -72,8 +73,8 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
         s1.setRepeatingRows(cra);
 
         PrintSetup ps1 = s1.getPrintSetup();
-        assertEquals(false, ps1.getValidSettings());
-        assertEquals(false, ps1.getLandscape());
+        assertFalse(ps1.getValidSettings());
+        assertFalse(ps1.getLandscape());
 
 
         // Had valid print settings before repeating
@@ -81,14 +82,14 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
         PrintSetup ps2 = s2.getPrintSetup();
 
         ps2.setLandscape(false);
-        assertEquals(true, ps2.getValidSettings());
-        assertEquals(false, ps2.getLandscape());
+        assertTrue(ps2.getValidSettings());
+        assertFalse(ps2.getLandscape());
         s2.setRepeatingColumns(cra);
         s2.setRepeatingRows(cra);
 
         ps2 = s2.getPrintSetup();
-        assertEquals(true, ps2.getValidSettings());
-        assertEquals(false, ps2.getLandscape());
+        assertTrue(ps2.getValidSettings());
+        assertFalse(ps2.getLandscape());
 
         wb1.close();
         wb2.close();
@@ -137,7 +138,7 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
         Cell cell = row.createCell(colIndex++);
         cell.setCellType(CellType.STRING);
         cell.setCellValue("multiple");
-        cell = row.createCell(colIndex++);
+        cell = row.createCell(colIndex);
         cell.setCellType(CellType.STRING);
         cell.setCellValue("unique");
 
@@ -146,7 +147,7 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
         writeRow(sheet, rowIndex++, 30d, "IFERROR(INDEX(A2:A7, MATCH(1, (COUNTIF(B2:B3, A2:A7) = 0) * (NOT(ISBLANK(A2:A7))), 0)), \"\")");
         writeRow(sheet, rowIndex++, 2d,  "IFERROR(INDEX(A2:A7, MATCH(1, (COUNTIF(B2:B4, A2:A7) = 0) * (NOT(ISBLANK(A2:A7))), 0)), \"\")");
         writeRow(sheet, rowIndex++, 30d, "IFERROR(INDEX(A2:A7, MATCH(1, (COUNTIF(B2:B5, A2:A7) = 0) * (NOT(ISBLANK(A2:A7))), 0)), \"\")");
-        writeRow(sheet, rowIndex++, 2d,  "IFERROR(INDEX(A2:A7, MATCH(1, (COUNTIF(B2:B6, A2:A7) = 0) * (NOT(ISBLANK(A2:A7))), 0)), \"\")");
+        writeRow(sheet, rowIndex, 2d,  "IFERROR(INDEX(A2:A7, MATCH(1, (COUNTIF(B2:B6, A2:A7) = 0) * (NOT(ISBLANK(A2:A7))), 0)), \"\")");
 
         /*FileOutputStream fileOut = new FileOutputStream(filename);
         wb.write(fileOut);
@@ -211,6 +212,5 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
             workbook.close();
             out.flush();
         }
-        // logger.info("File written!");
     }
 }

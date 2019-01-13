@@ -24,6 +24,7 @@ import java.util.Set;
 
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.LocaleUtil;
 
 /**
  * Helper for shifting rows up or down
@@ -115,5 +116,37 @@ public abstract class RowShifter extends BaseRowColShifter {
 
         // if the merged-region and the overwritten area intersect, we need to remove it
         return merged.intersects(overwrite);
+    }
+
+    /**
+     * Verify that the given column indices and step denote a valid range of columns to shift
+     *
+     * @param firstShiftColumnIndex the column to start shifting
+     * @param lastShiftColumnIndex the column to end shifting
+     * @param step length of the shifting step
+     */
+    public static void validateShiftParameters(int firstShiftColumnIndex, int lastShiftColumnIndex, int step) {
+        if(step < 0) {
+            throw new IllegalArgumentException("Shifting step may not be negative, but had " + step);
+        }
+        if(firstShiftColumnIndex > lastShiftColumnIndex) {
+            throw new IllegalArgumentException(String.format(LocaleUtil.getUserLocale(),
+                    "Incorrect shifting range : %d-%d", firstShiftColumnIndex, lastShiftColumnIndex));
+        }
+    }
+
+    /**
+     * Verify that the given column indices and step denote a valid range of columns to shift to the left
+     *
+     * @param firstShiftColumnIndex the column to start shifting
+     * @param lastShiftColumnIndex the column to end shifting
+     * @param step length of the shifting step
+     */
+    public static void validateShiftLeftParameters(int firstShiftColumnIndex, int lastShiftColumnIndex, int step) {
+        validateShiftParameters(firstShiftColumnIndex, lastShiftColumnIndex, step);
+
+        if(firstShiftColumnIndex - step < 0) {
+            throw new IllegalStateException("Column index less than zero: " + (firstShiftColumnIndex + step));
+        }
     }
 }

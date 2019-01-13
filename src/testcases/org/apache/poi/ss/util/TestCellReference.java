@@ -465,7 +465,7 @@ public final class TestCellReference {
 
     @Test
     public void test62828() {
-        Workbook wb = new HSSFWorkbook();
+        final Workbook wb = new HSSFWorkbook();
         final Sheet sheet = wb.createSheet("Ctor test");
         final String sheetName = sheet.getSheetName();
         final Row row = sheet.createRow(0);

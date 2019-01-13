@@ -37,6 +37,10 @@ import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.util.IOUtils;
 import org.apache.xmlbeans.XmlException;
 
+/**
+ * Base class with things that can be run for any supported file handler
+ * in the integration tests, mostly text-extraction related at the moment.
+ */
 public abstract class AbstractFileHandler implements FileHandler {
     public static final Set<String> EXPECTED_EXTRACTOR_FAILURES = new HashSet<>();
     static {

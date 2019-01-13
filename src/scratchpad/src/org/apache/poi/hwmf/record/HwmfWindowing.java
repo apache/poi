@@ -172,9 +172,7 @@ public class HwmfWindowing {
         public void draw(HwmfGraphics ctx) {
             final HwmfDrawProperties prop = ctx.getProperties();
             final Rectangle2D old = prop.getWindow();
-            double oldX = (old == null ? 0 : old.getX());
-            double oldY = (old == null ? 0 : old.getY());
-            if (oldX != getX() || oldY != getY()) {
+            if (old.getX() != getX() || old.getY() != getY()) {
                 prop.setWindowOrg(getX(), getY());
                 ctx.updateWindowMapMode();
             }

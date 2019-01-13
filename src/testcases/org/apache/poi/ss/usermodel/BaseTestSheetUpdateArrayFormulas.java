@@ -71,6 +71,7 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
         
         workbook.close();
     }
+
     /**
      *  Set single-cell array formula
      */

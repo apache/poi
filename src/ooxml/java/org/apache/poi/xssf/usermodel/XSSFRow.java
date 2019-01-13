@@ -29,10 +29,10 @@ import org.apache.poi.ss.usermodel.CellCopyPolicy;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.helpers.RowShifter;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.helpers.XSSFRowShifter;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
@@ -634,13 +634,8 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      */
     @Override
     public void shiftCellsRight(int firstShiftColumnIndex, int lastShiftColumnIndex, int step) {
-        if(step < 0) {
-            throw new IllegalArgumentException("Shifting step may not be negative ");
-        }
-        if(firstShiftColumnIndex > lastShiftColumnIndex) {
-            throw new IllegalArgumentException(String.format(LocaleUtil.getUserLocale(),
-                    "Incorrect shifting range : %d-%d", firstShiftColumnIndex, lastShiftColumnIndex));
-        }
+        RowShifter.validateShiftParameters(firstShiftColumnIndex, lastShiftColumnIndex, step);
+
         for (int columnIndex = lastShiftColumnIndex; columnIndex >= firstShiftColumnIndex; columnIndex--){ // process cells backwards, because of shifting
             shiftCell(columnIndex, step);
         }
@@ -653,6 +648,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
             }
         }
     }
+
     /**
      * Shifts column range [firstShiftColumnIndex-lastShiftColumnIndex] step places to the left.
      * @param firstShiftColumnIndex the column to start shifting
@@ -661,16 +657,8 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      */
     @Override
     public void shiftCellsLeft(int firstShiftColumnIndex, int lastShiftColumnIndex, int step) {
-        if(step < 0) {
-            throw new IllegalArgumentException("Shifting step may not be negative ");
-        }
-        if(firstShiftColumnIndex > lastShiftColumnIndex) {
-            throw new IllegalArgumentException(String.format(LocaleUtil.getUserLocale(),
-                    "Incorrect shifting range : %d-%d", firstShiftColumnIndex, lastShiftColumnIndex));
-        }
-        if(firstShiftColumnIndex - step < 0) {
-            throw new IllegalStateException("Column index less than zero : " + (Integer.valueOf(firstShiftColumnIndex + step)).toString());
-        }
+        RowShifter.validateShiftLeftParameters(firstShiftColumnIndex, lastShiftColumnIndex, step);
+
         for (int columnIndex = firstShiftColumnIndex; columnIndex <= lastShiftColumnIndex; columnIndex++){
             shiftCell(columnIndex, -step);
         }
@@ -682,6 +670,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
             }
         }
     }
+
     private void shiftCell(int columnIndex, int step/*pass negative value for left shift*/){
         if(columnIndex + step < 0) {
             throw new IllegalStateException("Column index less than zero : " + (Integer.valueOf(columnIndex + step)).toString());
