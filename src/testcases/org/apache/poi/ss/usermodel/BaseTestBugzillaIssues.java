@@ -37,6 +37,7 @@ import java.util.Map;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.PaneInformation;
@@ -353,7 +354,7 @@ public abstract class BaseTestBugzillaIssues {
                 fmla = createFunction(name, ssVersion.getMaxFunctionArgs() + 1);
                 cell.setCellFormula(fmla);
                 fail("Expected FormulaParseException");
-            } catch (RuntimeException e){
+            } catch (FormulaParseException e){
                  assertTrue(e.getMessage().startsWith("Too many arguments to function '"+name+"'"));
             }
         }
@@ -464,8 +465,10 @@ public abstract class BaseTestBugzillaIssues {
         double leadingWhitespaceRatio = ((double) leadingWhitespaceColWidth)/noWhitespaceColWidth;
         double trailingWhitespaceRatio = ((double) leadingWhitespaceColWidth)/noWhitespaceColWidth;
         
-        assertGreaterThan("leading whitespace is longer than no whitespace", leadingWhitespaceRatio, expectedRatioThreshold);
-        assertGreaterThan("trailing whitespace is longer than no whitespace", trailingWhitespaceRatio, expectedRatioThreshold);
+        assertGreaterThan("leading whitespace is longer than no whitespace",
+                leadingWhitespaceRatio, expectedRatioThreshold);
+        assertGreaterThan("trailing whitespace is longer than no whitespace",
+                trailingWhitespaceRatio, expectedRatioThreshold);
         assertEquals("cells with equal leading and trailing whitespace have equal width",
                 leadingWhitespaceColWidth, trailingWhitespaceColWidth);
         

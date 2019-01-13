@@ -18,6 +18,7 @@
 package org.apache.poi.ss.formula.eval.forked;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 
@@ -68,12 +69,7 @@ public class TestForkedEvaluator {
 		Workbook wb = createWorkbook();
 
 		// The stability classifier is useful to reduce memory consumption of caching logic
-		IStabilityClassifier stabilityClassifier = new IStabilityClassifier() {
-			@Override
-            public boolean isCellFinal(int sheetIndex, int rowIndex, int columnIndex) {
-				return sheetIndex == 1;
-			}
-		};
+		IStabilityClassifier stabilityClassifier = (sheetIndex, rowIndex, columnIndex) -> sheetIndex == 1;
 
 		ForkedEvaluator fe1 = ForkedEvaluator.create(wb, stabilityClassifier, null);
 		ForkedEvaluator fe2 = ForkedEvaluator.create(wb, stabilityClassifier, null);
@@ -86,10 +82,16 @@ public class TestForkedEvaluator {
 		fe2.updateCell("Inputs", 0, 0, new NumberEval(1.2));
 		fe2.updateCell("Inputs", 0, 1, new NumberEval(2.0));
 
-		assertEquals(18.9, ((NumberEval) fe1.evaluate("Calculations", 0, 0)).getNumberValue(), 0.0);
-		assertEquals(4.0, ((NumberEval) fe2.evaluate("Calculations", 0, 0)).getNumberValue(), 0.0);
+		NumberEval eval1 = (NumberEval) fe1.evaluate("Calculations", 0, 0);
+		assertNotNull(eval1);
+		assertEquals(18.9, eval1.getNumberValue(), 0.0);
+		NumberEval eval2 = (NumberEval) fe2.evaluate("Calculations", 0, 0);
+		assertNotNull(eval2);
+		assertEquals(4.0, eval2.getNumberValue(), 0.0);
 		fe1.updateCell("Inputs", 0, 0, new NumberEval(3.0));
-		assertEquals(13.9, ((NumberEval) fe1.evaluate("Calculations", 0, 0)).getNumberValue(), 0.0);
+		eval1 = (NumberEval) fe1.evaluate("Calculations", 0, 0);
+		assertNotNull(eval1);
+		assertEquals(13.9, eval1.getNumberValue(), 0.0);
 		
 		wb.close();
 	}

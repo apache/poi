@@ -145,6 +145,7 @@ public abstract class Ptg {
 			case MissingArgPtg.sid:   return MissingArgPtg.instance;  // 0x16
 
 			case StringPtg.sid:       return new StringPtg(in);       // 0x17
+			// not implemented yet: case SxNamePtg.sid:       return new SxNamePtg(in);       // 0x18
 			case AttrPtg.sid:         return new AttrPtg(in);         // 0x19
 			case ErrPtg.sid:          return ErrPtg.read(in);         // 0x1c
 			case BoolPtg.sid:         return BoolPtg.read(in);        // 0x1d

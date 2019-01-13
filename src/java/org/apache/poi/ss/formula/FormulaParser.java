@@ -203,7 +203,7 @@ public final class FormulaParser {
         final int sheetIndex = -1; //don't care?
         Ptg[] arr = FormulaParser.parse(tableText, workbook, FormulaType.CELL, sheetIndex, rowIndex);
         if (arr.length != 1 || !(arr[0] instanceof Area3DPxg) ) {
-            throw new IllegalStateException("Illegal structured reference");
+            throw new IllegalStateException("Illegal structured reference, had length: " + arr.length);
         }
         return (Area3DPxg) arr[0];
     }
@@ -211,7 +211,7 @@ public final class FormulaParser {
     /** Read New Character From Input Stream */
     private void GetChar() {
         // The intersection operator is a space.  We track whether the run of 
-        // whitespace preceeding "look" counts as an intersection operator.  
+        // whitespace preceding "look" counts as an intersection operator.
         if (IsWhite(look)) {
             if (look == ' ') {
                 _inIntersection = true;
@@ -223,7 +223,8 @@ public final class FormulaParser {
         
         // Check to see if we've walked off the end of the string.
         if (_pointer > _formulaLength) {
-            throw new RuntimeException("too far");
+            throw new RuntimeException("Parsed past the end of the formula, pos: " + _pointer +
+                    ", length: " + _formulaLength + ", formula: " + _formulaString);
         }
         if (_pointer < _formulaLength) {
             look=_formulaString.codePointAt(_pointer);
@@ -650,18 +651,24 @@ public final class FormulaParser {
                 resetPointer(savePtr1);
                 break;
             }
-            if (specName.equals(specAll)) {
-                isAllSpec = true;
-            } else if (specName.equals(specData)) {
-                isDataSpec = true;
-            } else if (specName.equals(specHeaders)) {
-                isHeadersSpec = true;
-            } else if (specName.equals(specThisRow)) {
-                isThisRowSpec = true;
-            } else if (specName.equals(specTotals)) {
-                isTotalsSpec  = true;
-            } else {
-                throw new FormulaParseException("Unknown special quantifier "+ specName);
+            switch (specName) {
+                case specAll:
+                    isAllSpec = true;
+                    break;
+                case specData:
+                    isDataSpec = true;
+                    break;
+                case specHeaders:
+                    isHeadersSpec = true;
+                    break;
+                case specThisRow:
+                    isThisRowSpec = true;
+                    break;
+                case specTotals:
+                    isTotalsSpec = true;
+                    break;
+                default:
+                    throw new FormulaParseException("Unknown special quantifier " + specName);
             }
             nSpecQuantifiers++;
             if (look == ','){
@@ -687,13 +694,13 @@ public final class FormulaParser {
         } else {
             nColQuantifiers++;
             if (look == ','){
-                throw new FormulaParseException("The formula "+ _formulaString + "is illegal: you should not use ',' with column quantifiers");
+                throw new FormulaParseException("The formula "+ _formulaString + " is illegal: you should not use ',' with column quantifiers");
             } else if (look == ':') {
                 GetChar();
                 endColumnName = parseAsColumnQuantifier();
                 nColQuantifiers++;
                 if (endColumnName == null) {
-                    throw new FormulaParseException("The formula "+ _formulaString + "is illegal: the string after ':' must be column quantifier");
+                    throw new FormulaParseException("The formula "+ _formulaString + " is illegal: the string after ':' must be column quantifier");
                 }
             }
         }
@@ -708,18 +715,24 @@ public final class FormulaParser {
                 resetPointer(savePtr0);
                 String name = parseAsSpecialQuantifier();
                 if (name!=null) {
-                    if (name.equals(specAll)) {
-                        isAllSpec = true;
-                    } else if (name.equals(specData)) {
-                        isDataSpec = true;
-                    } else if (name.equals(specHeaders)) {
-                        isHeadersSpec = true;
-                    } else if (name.equals(specThisRow)) {
-                        isThisRowSpec = true;
-                    } else if (name.equals(specTotals)) {
-                        isTotalsSpec  = true;
-                    } else {
-                        throw new FormulaParseException("Unknown special quantifier "+ name);
+                    switch (name) {
+                        case specAll:
+                            isAllSpec = true;
+                            break;
+                        case specData:
+                            isDataSpec = true;
+                            break;
+                        case specHeaders:
+                            isHeadersSpec = true;
+                            break;
+                        case specThisRow:
+                            isThisRowSpec = true;
+                            break;
+                        case specTotals:
+                            isTotalsSpec = true;
+                            break;
+                        default:
+                            throw new FormulaParseException("Unknown special quantifier " + name);
                     }
                     nSpecQuantifiers++;
                 } else {
@@ -1344,7 +1357,6 @@ public final class FormulaParser {
     
     /**
      * Adds a name (named range or user defined function) to underlying workbook's names table
-     * @param functionName
      */
     private void addName(String functionName) {
         final Name name = _book.createName();
@@ -1878,13 +1890,12 @@ public final class FormulaParser {
         boolean hasUnions = false;
         while (true) {
             SkipWhite();
-            switch(look) {
-                case ',':
-                    GetChar();
-                    hasUnions = true;
-                    ParseNode other = intersectionExpression();
-                    result = new ParseNode(UnionPtg.instance, result, other);
-                    continue;
+            if (look == ',') {
+                GetChar();
+                hasUnions = true;
+                ParseNode other = intersectionExpression();
+                result = new ParseNode(UnionPtg.instance, result, other);
+                continue;
             }
             if (hasUnions) {
                 return augmentWithMemPtg(result);

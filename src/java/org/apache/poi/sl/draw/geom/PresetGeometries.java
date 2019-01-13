@@ -26,12 +26,10 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.stream.EventFilter;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.events.XMLEvent;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.poi.sl.draw.binding.CTCustomGeometry2D;
@@ -52,14 +50,6 @@ public class PresetGeometries extends LinkedHashMap<String, CustomGeometry> {
 
     @SuppressWarnings("unused")
     public void init(InputStream is) throws XMLStreamException, JAXBException {
-        // StAX:
-        EventFilter startElementFilter = new EventFilter() {
-            @Override
-            public boolean accept(XMLEvent event) {
-                return event.isStartElement();
-            }
-        };
-        
         XMLInputFactory staxFactory = StaxHelper.newXMLInputFactory();
         XMLStreamReader streamReader = staxFactory.createXMLStreamReader(new StreamSource(is));
         try {
@@ -108,12 +98,9 @@ public class PresetGeometries extends LinkedHashMap<String, CustomGeometry> {
             // in case of failure
             PresetGeometries lInst = new PresetGeometries();
             try {
-                InputStream is = PresetGeometries.class.
-                    getResourceAsStream("presetShapeDefinitions.xml");
-                try {
+                try (InputStream is = PresetGeometries.class.
+                        getResourceAsStream("presetShapeDefinitions.xml")) {
                     lInst.init(is);
-                } finally {
-                    is.close();
                 }
             } catch (Exception e){
                 throw new RuntimeException(e);

@@ -88,7 +88,7 @@ public class HSSFFileHandler extends SpreadsheetHandler {
 		try {
 			System.setOut(new PrintStream(new OutputStream() {
 				@Override
-				public void write(int b) throws IOException {
+				public void write(int b) {
 				}
 			}));
 
