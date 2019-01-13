@@ -113,6 +113,8 @@ public class AreaReference {
         boolean swapRows = topLeft.getRow() > botRight.getRow();
         boolean swapCols = topLeft.getCol() > botRight.getCol();
         if (swapRows || swapCols) {
+            String firstSheet;
+            String lastSheet;
             int firstRow; 
             int lastRow; 
             int firstColumn; 
@@ -133,18 +135,22 @@ public class AreaReference {
                 lastRowAbs = botRight.isRowAbsolute();
             }
             if (swapCols) {
+                firstSheet = botRight.getSheetName();
                 firstColumn = botRight.getCol();
                 firstColAbs = botRight.isColAbsolute();
+                lastSheet = topLeft.getSheetName();
                 lastColumn = topLeft.getCol();
                 lastColAbs = topLeft.isColAbsolute();
             } else {
+                firstSheet = topLeft.getSheetName();
                 firstColumn = topLeft.getCol();
                 firstColAbs = topLeft.isColAbsolute();
+                lastSheet = botRight.getSheetName();
                 lastColumn = botRight.getCol();
                 lastColAbs = botRight.isColAbsolute();
             }
-            _firstCell = new CellReference(firstRow, firstColumn, firstRowAbs, firstColAbs);
-            _lastCell = new CellReference(lastRow, lastColumn, lastRowAbs, lastColAbs);
+            _firstCell = new CellReference(firstSheet, firstRow, firstColumn, firstRowAbs, firstColAbs);
+            _lastCell = new CellReference(lastSheet, lastRow, lastColumn, lastRowAbs, lastColAbs);
         } else {
             _firstCell = topLeft;
             _lastCell = botRight;
@@ -220,7 +226,7 @@ public class AreaReference {
                     new AreaReference(st.nextToken(), version)
             );
         }
-        return refs.toArray(new AreaReference[refs.size()]);
+        return refs.toArray(new AreaReference[0]);
     }
 
     /**
@@ -271,7 +277,7 @@ public class AreaReference {
                 refs.add(ref);
             }
         }
-        return refs.toArray(new CellReference[refs.size()]);
+        return refs.toArray(new CellReference[0]);
     }
 
     /**
@@ -316,7 +322,7 @@ public class AreaReference {
         try {
             sb.append(formatAsString());
         } catch(Exception e) {
-            sb.append(e.toString());
+            sb.append(e);
         }
         sb.append(']');
         return sb.toString();
