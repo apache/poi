@@ -350,8 +350,11 @@ public class CellReference {
      * @throws NumberFormatException if rowStr is not parseable as an integer
      */
     public static boolean isRowWithinRange(String rowStr, SpreadsheetVersion ssVersion) {
-        final int rowNum = Integer.parseInt(rowStr) - 1;
-        return isRowWithinRange(rowNum, ssVersion);
+        final long rowNum = Long.parseLong(rowStr) - 1;
+        if(rowNum > Integer.MAX_VALUE) {
+            return false;
+        }
+        return isRowWithinRange((int)rowNum, ssVersion);
     }
 
     /**
