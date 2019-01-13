@@ -46,18 +46,18 @@ public final class TestAreaReference extends TestCase {
         AreaReference ar = new AreaReference("$A$1:$B$2", SpreadsheetVersion.EXCEL97);
         assertFalse("Two cells expected", ar.isSingleCell());
         CellReference cf = ar.getFirstCell();
-        assertTrue("row is 4",cf.getRow()==0);
-        assertTrue("col is 1",cf.getCol()==0);
+        assertEquals("row is 4", 0, cf.getRow());
+        assertEquals("col is 1", 0, cf.getCol());
         assertTrue("row is abs",cf.isRowAbsolute());
         assertTrue("col is abs",cf.isColAbsolute());
-        assertTrue("string is $A$1",cf.formatAsString().equals("$A$1"));
+        assertEquals("string is $A$1", "$A$1", cf.formatAsString());
 
         cf = ar.getLastCell();
-        assertTrue("row is 4",cf.getRow()==1);
-        assertTrue("col is 1",cf.getCol()==1);
+        assertEquals("row is 4", 1, cf.getRow());
+        assertEquals("col is 1", 1, cf.getCol());
         assertTrue("row is abs",cf.isRowAbsolute());
         assertTrue("col is abs",cf.isColAbsolute());
-        assertTrue("string is $B$2",cf.formatAsString().equals("$B$2"));
+        assertEquals("string is $B$2", "$B$2", cf.formatAsString());
 
         CellReference[] refs = ar.getAllReferencedCells();
         assertEquals(4, refs.length);
@@ -225,11 +225,13 @@ public final class TestAreaReference extends TestCase {
         HSSFName aNamedCell = wb.getNameAt(idx);
 
         // Should have 2 references
-        assertEquals(ref, aNamedCell.getRefersToFormula());
+        String formulaRefs = aNamedCell.getRefersToFormula();
+        assertNotNull(formulaRefs);
+        assertEquals(ref, formulaRefs);
 
         // Check the parsing of the reference into cells
-        assertFalse(AreaReference.isContiguous(aNamedCell.getRefersToFormula()));
-        AreaReference[] arefs = AreaReference.generateContiguous(SpreadsheetVersion.EXCEL97, aNamedCell.getRefersToFormula());
+        assertFalse(AreaReference.isContiguous(formulaRefs));
+        AreaReference[] arefs = AreaReference.generateContiguous(SpreadsheetVersion.EXCEL97, formulaRefs);
         assertEquals(2, arefs.length);
         assertEquals(refA, arefs[0].formatAsString());
         assertEquals(refB, arefs[1].formatAsString());
