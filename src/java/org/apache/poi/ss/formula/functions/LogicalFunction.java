@@ -44,7 +44,10 @@ public abstract class LogicalFunction extends Fixed1ArgFunction implements Array
 
 	@Override
 	public ValueEval evaluateArray(ValueEval[] args, int srcRowIndex, int srcColumnIndex){
-		return evaluateOneArrayArg(args, srcRowIndex, srcColumnIndex, (valA) ->
+		if (args.length != 1) {
+			return ErrorEval.VALUE_INVALID;
+		}
+		return evaluateOneArrayArg(args[0], srcRowIndex, srcColumnIndex, (valA) ->
 				BoolEval.valueOf(evaluate(valA))
 		);
 	}
