@@ -17,9 +17,13 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import org.apache.poi.ss.formula.CacheAreaEval;
+import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.formula.eval.*;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.RefPtg;
+
+import java.util.function.BiFunction;
 
 /**
  * Implementation for the Excel function IF
@@ -84,25 +88,120 @@ public final class IfFunc extends Var2or3ArgFunction implements ArrayFunction {
 
  	@Override
 	public ValueEval evaluateArray(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
+		if (args.length < 2 || args.length > 3) {
+			return ErrorEval.VALUE_INVALID;
+		}
+
 		ValueEval arg0 = args[0];
 		ValueEval arg1 = args[1];
-		return evaluateTwoArrayArgs(arg0, arg1, srcRowIndex, srcColumnIndex,
-                (vA, vB) -> {
+		ValueEval arg2 = args.length == 2 ? BoolEval.FALSE : args[2];
+		return evaluateArrayArgs(arg0, arg1, arg2, srcRowIndex, srcColumnIndex);
+	}
+
+	ValueEval evaluateArrayArgs(ValueEval arg0, ValueEval arg1, ValueEval arg2, int srcRowIndex, int srcColumnIndex) {
+		int w1, w2, h1, h2;
+		int a1FirstCol = 0, a1FirstRow = 0;
+		if (arg0 instanceof AreaEval) {
+			AreaEval ae = (AreaEval)arg0;
+			w1 = ae.getWidth();
+			h1 = ae.getHeight();
+			a1FirstCol = ae.getFirstColumn();
+			a1FirstRow = ae.getFirstRow();
+		} else if (arg0 instanceof RefEval){
+			RefEval ref = (RefEval)arg0;
+			w1 = 1;
+			h1 = 1;
+			a1FirstCol = ref.getColumn();
+			a1FirstRow = ref.getRow();
+		} else {
+			w1 = 1;
+			h1 = 1;
+		}
+		int a2FirstCol = 0, a2FirstRow = 0;
+		if (arg1 instanceof AreaEval) {
+			AreaEval ae = (AreaEval)arg1;
+			w2 = ae.getWidth();
+			h2 = ae.getHeight();
+			a2FirstCol = ae.getFirstColumn();
+			a2FirstRow = ae.getFirstRow();
+		} else if (arg1 instanceof RefEval){
+			RefEval ref = (RefEval)arg1;
+			w2 = 1;
+			h2 = 1;
+			a2FirstCol = ref.getColumn();
+			a2FirstRow = ref.getRow();
+		} else {
+			w2 = 1;
+			h2 = 1;
+		}
+
+		int a3FirstCol = 0, a3FirstRow = 0;
+		if (arg2 instanceof AreaEval) {
+			AreaEval ae = (AreaEval)arg2;
+			a3FirstCol = ae.getFirstColumn();
+			a3FirstRow = ae.getFirstRow();
+		} else if (arg2 instanceof RefEval){
+			RefEval ref = (RefEval)arg2;
+			a3FirstCol = ref.getColumn();
+			a3FirstRow = ref.getRow();
+		}
+
+		int width = Math.max(w1, w2);
+		int height = Math.max(h1, h2);
+
+		ValueEval[] vals = new ValueEval[height * width];
+
+		int idx = 0;
+		for(int i = 0; i < height; i++){
+			for(int j = 0; j < width; j++){
+				ValueEval vA;
+				try {
+					vA = OperandResolver.getSingleValue(arg0, a1FirstRow + i, a1FirstCol + j);
+				} catch (FormulaParseException e) {
+					vA = ErrorEval.NAME_INVALID;
+				} catch (EvaluationException e) {
+					vA = e.getErrorEval();
+				}
+				ValueEval vB;
+				try {
+					vB = OperandResolver.getSingleValue(arg1, a2FirstRow + i, a2FirstCol + j);
+				} catch (FormulaParseException e) {
+					vB = ErrorEval.NAME_INVALID;
+				} catch (EvaluationException e) {
+					vB = e.getErrorEval();
+				}
+
+				ValueEval vC;
+				try {
+					vC = OperandResolver.getSingleValue(arg2, a3FirstRow + i, a3FirstCol + j);
+				} catch (FormulaParseException e) {
+					vC = ErrorEval.NAME_INVALID;
+				} catch (EvaluationException e) {
+					vC = e.getErrorEval();
+				}
+
+				if(vA instanceof ErrorEval){
+					vals[idx++] = vA;
+				} else if (vB instanceof ErrorEval) {
+					vals[idx++] = vB;
+				} else {
 					Boolean b;
 					try {
 						b = OperandResolver.coerceValueToBoolean(vA, false);
+						vals[idx++] = b != null && b ? vB : vC;
 					} catch (EvaluationException e) {
-						return e.getErrorEval();
+						vals[idx++] = e.getErrorEval();
 					}
-					if (b != null && b) {
-						if (vB == MissingArgEval.instance) {
-							return BlankEval.instance;
-						}
-						return vB;
-					}
-					return BoolEval.FALSE;
 				}
-        );
+
+			}
+		}
+
+		if (vals.length == 1) {
+			return vals[0];
+		}
+
+		return new CacheAreaEval(srcRowIndex, srcColumnIndex, srcRowIndex + height - 1, srcColumnIndex + width - 1, vals);
 	}
 
 }

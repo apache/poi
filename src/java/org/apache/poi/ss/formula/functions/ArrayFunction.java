@@ -111,6 +111,12 @@ public interface ArrayFunction {
                     vA = ErrorEval.NAME_INVALID;
                 } catch (EvaluationException e) {
                     vA = e.getErrorEval();
+                } catch (RuntimeException e) {
+                    if(e.getMessage().startsWith("Don't now how to evaluate name")){
+                        vA = ErrorEval.NAME_INVALID;
+                    } else {
+                        throw e;
+                    }
                 }
                 ValueEval vB;
                 try {
@@ -119,6 +125,12 @@ public interface ArrayFunction {
                     vB = ErrorEval.NAME_INVALID;
                 } catch (EvaluationException e) {
                     vB = e.getErrorEval();
+                } catch (RuntimeException e) {
+                    if(e.getMessage().startsWith("Don't now how to evaluate name")){
+                        vB = ErrorEval.NAME_INVALID;
+                    } else {
+                        throw e;
+                    }
                 }
                 if(vA instanceof ErrorEval){
                     vals[idx++] = vA;
@@ -138,10 +150,8 @@ public interface ArrayFunction {
         return new CacheAreaEval(srcRowIndex, srcColumnIndex, srcRowIndex + height - 1, srcColumnIndex + width - 1, vals);
     }
 
-    default ValueEval evaluateOneArrayArg(ValueEval[] args, int srcRowIndex, int srcColumnIndex,
+    default ValueEval evaluateOneArrayArg(ValueEval arg0, int srcRowIndex, int srcColumnIndex,
                                           java.util.function.Function<ValueEval, ValueEval> evalFunc){
-        ValueEval arg0 = args[0];
-
         int w1, w2, h1, h2;
         int a1FirstCol = 0, a1FirstRow = 0;
         if (arg0 instanceof AreaEval) {
@@ -178,6 +188,12 @@ public interface ArrayFunction {
                     vA = ErrorEval.NAME_INVALID;
                 } catch (EvaluationException e) {
                     vA = e.getErrorEval();
+                } catch (RuntimeException e) {
+                    if(e.getMessage().startsWith("Don't now how to evaluate name")){
+                        vA = ErrorEval.NAME_INVALID;
+                    } else {
+                        throw e;
+                    }
                 }
                 vals[idx++] = evalFunc.apply(vA);
             }

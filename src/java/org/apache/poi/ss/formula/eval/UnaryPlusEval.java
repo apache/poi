@@ -52,7 +52,10 @@ public final class UnaryPlusEval extends Fixed1ArgFunction  implements ArrayFunc
 
 	@Override
 	public ValueEval evaluateArray(ValueEval[] args, int srcRowIndex, int srcColumnIndex){
-		return evaluateOneArrayArg(args, srcRowIndex, srcColumnIndex, (valA) ->
+		if (args.length != 1) {
+			return ErrorEval.VALUE_INVALID;
+		}
+		return evaluateOneArrayArg(args[0], srcRowIndex, srcColumnIndex, (valA) ->
 				evaluate(srcRowIndex, srcColumnIndex, valA)
 		);
 	}

@@ -37,7 +37,7 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  *
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  */
-public abstract class BooleanFunction implements Function {
+public abstract class BooleanFunction implements Function,ArrayFunction {
 
 	public final ValueEval evaluate(ValueEval[] args, int srcRow, int srcCol) {
 		if (args.length < 1) {
@@ -142,7 +142,20 @@ public abstract class BooleanFunction implements Function {
 			return BoolEval.TRUE;
 		}
 	};
-	public static final Function NOT = new Fixed1ArgFunction() {
+
+	abstract static class Boolean1ArgFunction extends Fixed1ArgFunction implements ArrayFunction {
+		@Override
+		public ValueEval evaluateArray(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
+			if (args.length != 1) {
+				return ErrorEval.VALUE_INVALID;
+			}
+			return evaluateOneArrayArg(args[0], srcRowIndex, srcColumnIndex,
+					vA -> evaluate(srcRowIndex, srcColumnIndex, vA));
+		}
+
+	}
+
+	public static final Function NOT = new Boolean1ArgFunction() {
 		public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
 			boolean boolArgVal;
 			try {
@@ -156,4 +169,13 @@ public abstract class BooleanFunction implements Function {
 			return BoolEval.valueOf(!boolArgVal);
 		}
 	};
+
+	@Override
+	public ValueEval evaluateArray(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
+		if (args.length != 1) {
+			return ErrorEval.VALUE_INVALID;
+		}
+		return evaluateOneArrayArg(args[0], srcRowIndex, srcColumnIndex,
+				vA -> evaluate(new ValueEval[]{vA}, srcRowIndex, srcColumnIndex));
+	}
 }
