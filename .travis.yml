@@ -1,0 +1,8 @@
+language: java
+jdk:
+- openjdk8
+before_install: /bin/true
+install: /bin/true
+before_script: /bin/true
+script:
+- ant clean test rat-check
