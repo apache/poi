@@ -531,11 +531,11 @@ xmlbeansjobs.each { xjob ->
                 antInstallation(antRT)
             }
             ant {
-                targets(['checkintest'])
+                targets(['test'])
                 antInstallation(antRT)
             }
             ant {
-                targets(['dist'])
+                targets(['package'])
                 antInstallation(antRT)
             }
         }
