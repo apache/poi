@@ -1229,7 +1229,7 @@ under the License.
                     <jvmarg value="-Xmx@{heap}M"/>
                     <jvmarg value="-ea"/>
 
-                    <!-- some --add-opens and other properties are needed when running with Java 9 or newer -->
+                    <!-- some "add-opens" and other properties are needed when running with Java 9 or newer -->
                     <jvmarg value="${java9addmods}" if:set="java9addmods" />
                     <jvmarg value="${java9addmodsvalue}" if:set="java9addmodsvalue" />
                     <jvmarg value="${java9addopens1}" if:set="java9addopens1" />
