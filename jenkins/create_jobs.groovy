@@ -62,6 +62,18 @@ def poijobs = [
                        '-Djava.locale.providers=JRE,CLDR'],
           skipcigame: true
         ],
+        [ name: 'POI-DSL-1.13', jdk: '1.13', trigger: triggerSundays,
+          // Nodes beam* do not yet have JDK 13 installed
+          slaveAdd: '&&!beam1&&!beam2&&!beam3&&!beam4&&!beam6&&!beam7&&!beam8&&!beam9&&!beam10&&!beam11&&!beam12&&!beam13&&!beam14&&!beam15&&!beam16',
+          properties: ['-Djava9addmodsvalue=-Dsun.reflect.debugModuleAccessChecks=true',
+                       '-Djava9addopens1=--add-opens=java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED',
+                       '-Djava9addopens2=--add-opens=java.base/java.io=ALL-UNNAMED',
+                       '-Djava9addopens3=--add-opens=java.base/java.nio=ALL-UNNAMED',
+                       '-Djava9addopens4=--add-opens=java.base/java.lang=ALL-UNNAMED',
+                       '-Djava9addopens5=--add-opens=java.base/jdk.internal.ref=ALL-UNNAMED',
+                       '-Djava.locale.providers=JRE,CLDR'],
+          skipcigame: true
+        ],
         [ name: 'POI-DSL-IBM-JDK', jdk: 'IBMJDK', trigger: triggerSundays, skipcigame: true
         ],
         [ name: 'POI-DSL-old-Xerces', trigger: triggerSundays,
@@ -88,6 +100,9 @@ def poijobs = [
                 disabled: true // this one does run, but does not actually send data to Sonarqube for some reason, we need to investigate some more
         ],
         [ name: 'POI-DSL-Windows-1.8', trigger: 'H */12 * * *', windows: true, slaves: 'Windows'
+        ],
+        [ name: 'POI-DSL-Windows-1.12', jdk: '1.12', trigger: triggerSundays, windows: true, slaves: 'Windows',
+                skipcigame: true
         ],
         [ name: 'POI-DSL-Github-PullRequests', trigger: '', githubpr: true, skipcigame: true,
           // ensure the file which is needed from the separate documentation module does exist
@@ -123,6 +138,7 @@ def jdkMapping = [
         '1.10': 'JDK 10 (latest)',
         '1.11': 'JDK 11 (latest)',
         '1.12': 'JDK 12 (latest)',
+        '1.13': 'JDK 13 (latest)',
         'OpenJDK': 'OpenJDK 8 (on Ubuntu only) ',   // blank is required here until the name in the Jenkins instance is fixed!
         'IBMJDK': 'IBM 1.8 64-bit (on Ubuntu only)',
 ]
