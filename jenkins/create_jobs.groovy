@@ -71,7 +71,10 @@ def poijobs = [
                        '-Djava9addopens3=--add-opens=java.base/java.nio=ALL-UNNAMED',
                        '-Djava9addopens4=--add-opens=java.base/java.lang=ALL-UNNAMED',
                        '-Djava9addopens5=--add-opens=java.base/jdk.internal.ref=ALL-UNNAMED',
-                       '-Djava.locale.providers=JRE,CLDR'],
+                       '-Djava.locale.providers=JRE,CLDR',
+                       // JaCoCo currently fails with "java.lang.NoSuchFieldException: $jacocoAccess",
+                       // need to review/check with newer JDK 13 builds or when at least JaCoCo 0.8.3
+                       '-Dcoverage.enabled=false'],
           skipcigame: true
         ],
         [ name: 'POI-DSL-IBM-JDK', jdk: 'IBMJDK', trigger: triggerSundays, skipcigame: true
