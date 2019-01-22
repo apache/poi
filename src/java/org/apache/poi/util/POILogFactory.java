@@ -106,7 +106,7 @@ public final class POILogFactory {
                 @SuppressWarnings("unchecked")
                 Class<? extends POILogger> loggerClass =
                     (Class<? extends POILogger>) Class.forName(_loggerClassName);
-                logger = loggerClass.newInstance();
+                logger = loggerClass.getConstructor().newInstance();
                 logger.initialize(cat);
             } catch(Exception e) {
                 // Give up and use the null logger

@@ -380,10 +380,9 @@ public final class TestCellReference {
         //noinspection ObjectEqualsNull
         assertNotEquals("null", null, ref1);
         assertNotEquals("3D vs 2D", ref1, new CellReference("A5"));
-        //noinspection EqualsBetweenInconvertibleTypes
-        assertNotEquals("type", ref1, new Integer(0));
+        assertNotEquals("type", ref1, 0L);
     }
-    
+
     @Test
     public void isRowWithinRange() {
         SpreadsheetVersion ss = SpreadsheetVersion.EXCEL2007;
