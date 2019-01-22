@@ -1229,15 +1229,15 @@ under the License.
                     <jvmarg value="-Xmx@{heap}M"/>
                     <jvmarg value="-ea"/>
 
-                    <!-- these need to be set differently when running with Java 9 -->
-                    <jvmarg value="${java9addmods}" if:set="${java9addmods}" />
-                    <jvmarg value="${java9addmodsvalue}" if:set="${java9addmodsvalue}" />
-                    <jvmarg value="${java9addopens1}" if:set="${java9addopens1}" />
-                    <jvmarg value="${java9addopens2}" if:set="${java9addopens2}" />
-                    <jvmarg value="${java9addopens3}" if:set="${java9addopens3}" />
-                    <jvmarg value="${java9addopens4}" if:set="${java9addopens4}" />
-                    <jvmarg value="${java9addopens5}" if:set="${java9addopens5}" />
-                    <jvmarg value="${java9addopens6}" if:set="${java9addopens6}" />
+                    <!-- some --add-opens and other properties are needed when running with Java 9 or newer -->
+                    <jvmarg value="${java9addmods}" if:set="java9addmods" />
+                    <jvmarg value="${java9addmodsvalue}" if:set="java9addmodsvalue" />
+                    <jvmarg value="${java9addopens1}" if:set="java9addopens1" />
+                    <jvmarg value="${java9addopens2}" if:set="java9addopens2" />
+                    <jvmarg value="${java9addopens3}" if:set="java9addopens3" />
+                    <jvmarg value="${java9addopens4}" if:set="java9addopens4" />
+                    <jvmarg value="${java9addopens5}" if:set="java9addopens5" />
+                    <jvmarg value="${java9addopens6}" if:set="java9addopens6}" />
 
                     <jvmarg value="-javaagent:${ooxml.lite.agent}=${ooxml.lite.report}|${ooxml.lite.includes}" if:true="${ooxml.lite.agent.exists}"/>
 
