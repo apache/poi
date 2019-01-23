@@ -106,11 +106,13 @@ public final class SXSSFFormulaEvaluator extends BaseXSSFFormulaEvaluator {
         // Process the sheets as best we can
         for (Sheet sheet : wb) {
             
-            // Check if any rows have already been flushed out
-            int lastFlushedRowNum = ((SXSSFSheet) sheet).getLastFlushedRowNum();
-            if (lastFlushedRowNum > -1) {
-                if (! skipOutOfWindow) throw new RowFlushedException(0);
-                logger.log(POILogger.INFO, "Rows up to " + lastFlushedRowNum + " have already been flushed, skipping");
+            if (sheet instanceof SXSSFSheet) {
+                // Check if any rows have already been flushed out
+                int lastFlushedRowNum = ((SXSSFSheet) sheet).getLastFlushedRowNum();
+                if (lastFlushedRowNum > -1) {
+                    if (! skipOutOfWindow) throw new RowFlushedException(0);
+                    logger.log(POILogger.INFO, "Rows up to " + lastFlushedRowNum + " have already been flushed, skipping");
+                }
             }
             
             // Evaluate what we have

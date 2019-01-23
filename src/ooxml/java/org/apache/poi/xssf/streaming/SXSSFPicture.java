@@ -24,6 +24,7 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Shape;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.ImageUtils;
 import org.apache.poi.util.Internal;
@@ -201,7 +202,8 @@ public final class SXSSFPicture implements Picture {
         // THE FOLLOWING THREE LINES ARE THE MAIN CHANGE compared to the non-streaming version: use the SXSSF sheet,
 		// not the XSSF sheet (which never contais rows when using SXSSF)
         XSSFSheet xssfSheet = getSheet();
-        SXSSFSheet sheet = _wb.getSXSSFSheet(xssfSheet);
+        SXSSFSheet sxSheet = _wb.getSXSSFSheet(xssfSheet);
+        Sheet sheet = sxSheet == null ? xssfSheet : sxSheet;
         Row row = sheet.getRow(rowIndex);
         float height = row != null ?  row.getHeightInPoints() : sheet.getDefaultRowHeightInPoints();
         return height * Units.PIXEL_DPI / Units.POINT_DPI;
