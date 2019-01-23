@@ -18,23 +18,14 @@
 package org.apache.poi.xssf.streaming;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
-import org.apache.poi.openxml4j.util.ZipArchiveThresholdInputStream;
-import org.apache.poi.openxml4j.util.ZipEntrySource;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.Beta;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.xssf.usermodel.XSSFChartSheet;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -43,6 +34,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * the provided OutputStream.
  * @since 4.1.0
  */
+@Beta
 public class SuperSXSSFWorkbook extends SXSSFWorkbook {
     private static final POILogger logger = POILogFactory.getLogger(SuperSXSSFWorkbook.class);
     
