@@ -79,133 +79,11 @@ public class SuperSXSSFWorkbook extends SXSSFWorkbook {
     }
     
     @Override
-    protected void injectData(ZipEntrySource zipEntrySource, OutputStream out) throws IOException {
-        ZipArchiveOutputStream zos = new ZipArchiveOutputStream(out);
-        zos.setUseZip64(zip64Mode);
-        try {
-            Enumeration<? extends ZipArchiveEntry> en = zipEntrySource.getEntries();
-            while (en.hasMoreElements()) {
-                ZipArchiveEntry ze = en.nextElement();
-                ZipArchiveEntry zeOut = new ZipArchiveEntry(ze.getName());
-                zeOut.setSize(ze.getSize());
-                zeOut.setTime(ze.getTime());
-                zos.putArchiveEntry(zeOut);
-                try (final InputStream is = zipEntrySource.getInputStream(ze)) {
-                    if (is instanceof ZipArchiveThresholdInputStream) {
-                        // #59743 - disable Threshold handling for SXSSF copy
-                        // as users tend to put too much repetitive data in when using SXSSF :)
-                        ((ZipArchiveThresholdInputStream) is).setGuardState(false);
-                    }
-                    XSSFSheet xSheet = getSheetFromZipEntryName(ze.getName());
-                    // See bug 56557, we should not inject data into the special ChartSheets
-                    if (xSheet != null && !(xSheet instanceof XSSFChartSheet)) {
-                        SuperSXSSFSheet sxSheet = (SuperSXSSFSheet) getSXSSFSheet(xSheet);
-                        if (sxSheet != null) {
-                            copyStreamAndInjectWorksheet(is, zos, sxSheet);
-                        } else {
-                            IOUtils.copy(is, zos);
-                        }
-                    } else {
-                        IOUtils.copy(is, zos);
-                    }
-                } finally {
-                    zos.closeArchiveEntry();
-                }
-            }
-        } finally {
-            zos.finish();
-            zipEntrySource.close();
-        }
-    }
-    
-    private static void copyStreamAndInjectWorksheet(InputStream in, OutputStream out, SuperSXSSFSheet sxSheet)
-            throws IOException {
-        InputStreamReader inReader = new InputStreamReader(in, "UTF-8");
-        OutputStreamWriter outWriter = new OutputStreamWriter(out, "UTF-8");
-        boolean needsStartTag = true;
-        int c;
-        int pos = 0;
-        String s = "<sheetData";
-        int n = s.length();
-        // Copy from "in" to "out" up to the string "<sheetData/>" or "</sheetData>"
-        // (excluding).
-        while (((c = inReader.read()) != -1)) {
-            if (c == s.charAt(pos)) {
-                pos++;
-                if (pos == n) {
-                    if ("<sheetData".equals(s)) {
-                        c = inReader.read();
-                        if (c == -1) {
-                            outWriter.write(s);
-                            break;
-                        }
-                        if (c == '>') {
-                            // Found <sheetData>
-                            outWriter.write(s);
-                            outWriter.write(c);
-                            s = "</sheetData>";
-                            n = s.length();
-                            pos = 0;
-                            needsStartTag = false;
-                            continue;
-                        }
-                        if (c == '/') {
-                            // Found <sheetData/
-                            c = inReader.read();
-                            if (c == -1) {
-                                outWriter.write(s);
-                                break;
-                            }
-                            if (c == '>') {
-                                // Found <sheetData/>
-                                break;
-                            }
-                            
-                            outWriter.write(s);
-                            outWriter.write('/');
-                            outWriter.write(c);
-                            pos = 0;
-                            continue;
-                        }
-                        
-                        outWriter.write(s);
-                        outWriter.write('/');
-                        outWriter.write(c);
-                        pos = 0;
-                        continue;
-                    } else {
-                        // Found </sheetData>
-                        break;
-                    }
-                }
-            } else {
-                if (pos > 0) {
-                    outWriter.write(s, 0, pos);
-                }
-                if (c == s.charAt(0)) {
-                    pos = 1;
-                } else {
-                    outWriter.write(c);
-                    pos = 0;
-                }
-            }
-        }
-        outWriter.flush();
-        if (needsStartTag) {
-            outWriter.write("<sheetData>\n");
-            outWriter.flush();
-        }
-        
-        // Invoke row generation in SXSSFSheet
-        sxSheet.writeRows(out);
-        
-        outWriter.write("</sheetData>");
-        outWriter.flush();
-        // Copy the rest of "in" to "out".
-        while (((c = inReader.read()) != -1)) {
-            outWriter.write(c);
-        }
-        outWriter.flush();
+    protected ISheetInjector createSheetInjector(SXSSFSheet sxSheet) throws IOException {
+        SuperSXSSFSheet ssxSheet = (SuperSXSSFSheet) sxSheet;
+        return (output) -> {
+            ssxSheet.writeRows(output);
+        };
     }
     
     @Override
@@ -218,6 +96,14 @@ public class SuperSXSSFWorkbook extends SXSSFWorkbook {
         }
         registerSheetMapping(sxSheet, xSheet);
         return sxSheet;
+    }
+    
+    public SuperSXSSFSheet createSheet() {
+        return (SuperSXSSFSheet) super.createSheet();
+    }
+    
+    public SuperSXSSFSheet createSheet(String sheetname) {
+        return (SuperSXSSFSheet) super.createSheet(sheetname);
     }
     
     /**
@@ -285,13 +171,13 @@ public class SuperSXSSFWorkbook extends SXSSFWorkbook {
      * @param index the index
      * @return the streaming sheet at
      */
-    public SXSSFSheet getStreamingSheetAt(int index) {
+    public SuperSXSSFSheet getStreamingSheetAt(int index) {
         XSSFSheet xSheet = _wb.getSheetAt(index);
         SXSSFSheet sxSheet = getSXSSFSheet(xSheet);
-        if (sxSheet == null) {
-            return createAndRegisterSXSSFSheet(xSheet);
+        if (sxSheet == null && xSheet != null) {
+            return (SuperSXSSFSheet) createAndRegisterSXSSFSheet(xSheet);
         } else {
-            return sxSheet;
+            return (SuperSXSSFSheet) sxSheet;
         }
     }
     
@@ -313,7 +199,7 @@ public class SuperSXSSFWorkbook extends SXSSFWorkbook {
     public SuperSXSSFSheet getStreamingSheet(String name) {
         XSSFSheet xSheet = _wb.getSheet(name);
         SuperSXSSFSheet sxSheet = (SuperSXSSFSheet) getSXSSFSheet(xSheet);
-        if (sxSheet == null) {
+        if (sxSheet == null && xSheet != null) {
             return (SuperSXSSFSheet) createAndRegisterSXSSFSheet(xSheet);
         } else {
             return sxSheet;

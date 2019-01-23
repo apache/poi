@@ -103,6 +103,10 @@ public class SXSSFWorkbook implements Workbook {
 
     private int _randomAccessWindowSize = DEFAULT_WINDOW_SIZE;
 
+    protected static interface ISheetInjector {
+        void writeSheetData(OutputStream out) throws IOException;
+    }
+    
     /**
      * whether temp files should be compressed.
      */
@@ -409,7 +413,8 @@ public class SXSSFWorkbook implements Workbook {
                     if (xSheet != null && !(xSheet instanceof XSSFChartSheet)) {
                         SXSSFSheet sxSheet = getSXSSFSheet(xSheet);
                         try (InputStream xis = sxSheet.getWorksheetXMLInputStream()) {
-                            copyStreamAndInjectWorksheet(is, zos, xis);
+                            // copyStreamAndInjectWorksheet(is, zos, xis);
+                            copyStreamAndInjectWorksheet(is, zos, createSheetInjector(sxSheet));
                         }
                     } else {
                         IOUtils.copy(is, zos);
@@ -434,7 +439,17 @@ public class SXSSFWorkbook implements Workbook {
         }
     }
 
-    private static void copyStreamAndInjectWorksheet(InputStream in, OutputStream out, InputStream worksheetData) throws IOException {
+    protected ISheetInjector createSheetInjector(SXSSFSheet sxSheet) throws IOException {
+        return (output) -> {
+            try (InputStream xis = sxSheet.getWorksheetXMLInputStream()) {
+                // Copy the worksheet data to "output".
+                IOUtils.copy(xis, output);
+            }
+        };
+    }
+
+    // private static void copyStreamAndInjectWorksheet(InputStream in, OutputStream out, InputStream worksheetData) throws IOException {
+    private static void copyStreamAndInjectWorksheet(InputStream in, OutputStream out, ISheetInjector sheetInjector) throws IOException {
         InputStreamReader inReader = new InputStreamReader(in, StandardCharsets.UTF_8);
         OutputStreamWriter outWriter = new OutputStreamWriter(out, StandardCharsets.UTF_8);
         boolean needsStartTag = true;
@@ -526,8 +541,7 @@ public class SXSSFWorkbook implements Workbook {
         	outWriter.write("<sheetData>\n");
         	outWriter.flush();
         }
-        //Copy the worksheet data to "out".
-        IOUtils.copy(worksheetData,out);
+        sheetInjector.writeSheetData(out);
         outWriter.write("</sheetData>");
         outWriter.flush();
         //Copy the rest of "in" to "out".
@@ -918,7 +932,8 @@ public class SXSSFWorkbook implements Workbook {
         for (SXSSFSheet sheet : _xFromSxHash.values())
         {
             try {
-                sheet.getSheetDataWriter().close();
+                SheetDataWriter _writer = sheet.getSheetDataWriter();
+                if (_writer != null) _writer.close();
             } catch (IOException e) {
                 logger.log(POILogger.WARN,
                         "An exception occurred while closing sheet data writer for sheet "
