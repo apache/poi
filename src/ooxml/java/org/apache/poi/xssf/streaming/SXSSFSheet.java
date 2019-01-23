@@ -65,15 +65,22 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 public class SXSSFSheet implements Sheet
 {
     /*package*/ final XSSFSheet _sh;
-    private final SXSSFWorkbook _workbook;
+    protected final SXSSFWorkbook _workbook;
     private final TreeMap<Integer,SXSSFRow> _rows = new TreeMap<>();
-    private final SheetDataWriter _writer;
+    protected SheetDataWriter _writer;
     private int _randomAccessWindowSize = SXSSFWorkbook.DEFAULT_WINDOW_SIZE;
-    private final AutoSizeColumnTracker _autoSizeColumnTracker;
+    protected final AutoSizeColumnTracker _autoSizeColumnTracker;
     private int outlineLevelRow;
     private int lastFlushedRowNumber = -1;
     private boolean allFlushed;
 
+    protected SXSSFSheet(SXSSFWorkbook workbook, XSSFSheet xSheet, int randomAccessWindowSize) {
+    	_workbook = workbook;
+        _sh = xSheet;
+        setRandomAccessWindowSize(randomAccessWindowSize);
+        _autoSizeColumnTracker = new AutoSizeColumnTracker(this);
+    }
+    
     public SXSSFSheet(SXSSFWorkbook workbook, XSSFSheet xSheet) throws IOException {
         _workbook = workbook;
         _sh = xSheet;

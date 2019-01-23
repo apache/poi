@@ -96,7 +96,7 @@ public class SXSSFWorkbook implements Workbook {
     public static final int DEFAULT_WINDOW_SIZE = 100;
     private static final POILogger logger = POILogFactory.getLogger(SXSSFWorkbook.class);
 
-    private final XSSFWorkbook _wb;
+    protected final XSSFWorkbook _wb;
 
     private final Map<SXSSFSheet,XSSFSheet> _sxFromXHash = new HashMap<>();
     private final Map<XSSFSheet,SXSSFSheet> _xFromSxHash = new HashMap<>();
@@ -111,12 +111,12 @@ public class SXSSFWorkbook implements Workbook {
     /**
      * shared string table - a cache of strings in this workbook
      */
-    private final SharedStringsTable _sharedStringSource;
+    protected final SharedStringsTable _sharedStringSource;
 
     /**
      * controls whether Zip64 mode is used - Always became the default in POI 5.0.0
      */
-    private Zip64Mode zip64Mode = Zip64Mode.Always;
+    protected Zip64Mode zip64Mode = Zip64Mode.Always;
 
     /**
      * Construct a new workbook with default row window size
@@ -285,7 +285,7 @@ public class SXSSFWorkbook implements Workbook {
     	return _randomAccessWindowSize;
     }
 
-    private void setRandomAccessWindowSize(int rowAccessWindowSize) {
+    protected void setRandomAccessWindowSize(int rowAccessWindowSize) {
         if(rowAccessWindowSize == 0 || rowAccessWindowSize < -1) {
             throw new IllegalArgumentException("rowAccessWindowSize must be greater than 0 or -1");
         }
@@ -377,7 +377,7 @@ public class SXSSFWorkbook implements Workbook {
         _xFromSxHash.remove(xSheet);
     }
 
-    private XSSFSheet getSheetFromZipEntryName(String sheetRef)
+    protected XSSFSheet getSheetFromZipEntryName(String sheetRef)
     {
         for(XSSFSheet sheet : _sxFromXHash.values())
         {
