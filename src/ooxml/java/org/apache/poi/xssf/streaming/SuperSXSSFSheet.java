@@ -21,12 +21,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.apache.poi.util.Beta;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 /**
  * An update of SXSSFSheet that uses IRowGenerator to create rows.
  * @since 4.1.0
  */
+@Beta
 public class SuperSXSSFSheet extends SXSSFSheet {
     private IRowGenerator rowGenerator;
     

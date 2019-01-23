@@ -25,6 +25,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
+import org.apache.poi.util.Beta;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -33,6 +34,7 @@ import org.apache.poi.util.POILogger;
  * to the provided OutputStream.
  * @since 4.1.0
  */
+@Beta
 public class StreamingSheetWriter extends SheetDataWriter {
     private static final POILogger logger = POILogFactory.getLogger(StreamingSheetWriter.class);
     
