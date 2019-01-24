@@ -25,57 +25,23 @@ def poijobs = [
           // the JDK is missing on some slaves so builds are unstable
           skipcigame: true
         ],
-        [ name: 'POI-DSL-1.10', jdk: '1.10', trigger: triggerSundays,
-          properties: ['-Djava9addmods=--add-modules=java.xml.bind',
-                       '-Djavadoc9addmods=--add-modules=java.xml.bind',
-                       '-Djava9addmodsvalue=-Dsun.reflect.debugModuleAccessChecks=true',
-                       '-Djava9addopens1=--add-opens=java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED',
-                       '-Djava9addopens2=--add-opens=java.base/java.io=ALL-UNNAMED',
-                       '-Djava9addopens3=--add-opens=java.base/java.nio=ALL-UNNAMED',
-                       '-Djava9addopens4=--add-opens=java.base/java.lang=ALL-UNNAMED',
-                       '-Djava9addopens5=--add-opens=java.base/jdk.internal.ref=ALL-UNNAMED',
-                       '-Djava9addopens6=--add-opens=java.base/java.lang=java.xml.bind',
-                       '-Djava.locale.providers=JRE,CLDR'],
-          skipcigame: true
+        [ name: 'POI-DSL-1.10', jdk: '1.10', trigger: triggerSundays, skipcigame: true
         ],
-        [ name: 'POI-DSL-1.11', jdk: '1.11', trigger: triggerSundays,
+        [ name: 'POI-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true,
           // Nodes beam* do not yet have JDK 11 installed
-          slaveAdd: '&&!beam1&&!beam2&&!beam3&&!beam4&&!beam6&&!beam7&&!beam8&&!beam9&&!beam10&&!beam11&&!beam12&&!beam13&&!beam14&&!beam15&&!beam16',
-          properties: ['-Djava9addmodsvalue=-Dsun.reflect.debugModuleAccessChecks=true',
-                       '-Djava9addopens1=--add-opens=java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED',
-                       '-Djava9addopens2=--add-opens=java.base/java.io=ALL-UNNAMED',
-                       '-Djava9addopens3=--add-opens=java.base/java.nio=ALL-UNNAMED',
-                       '-Djava9addopens4=--add-opens=java.base/java.lang=ALL-UNNAMED',
-                       '-Djava9addopens5=--add-opens=java.base/jdk.internal.ref=ALL-UNNAMED',
-                       '-Djava.locale.providers=JRE,CLDR'],
-          skipcigame: true
+          slaveAdd: '&&!beam1&&!beam2&&!beam3&&!beam4&&!beam6&&!beam7&&!beam8&&!beam9&&!beam10&&!beam11&&!beam12&&!beam13&&!beam14&&!beam15&&!beam16'
         ],
-        [ name: 'POI-DSL-1.12', jdk: '1.12', trigger: triggerSundays,
+        [ name: 'POI-DSL-1.12', jdk: '1.12', trigger: triggerSundays, skipcigame: true,
           // Nodes beam* do not yet have JDK 12 installed
-          slaveAdd: '&&!beam1&&!beam2&&!beam3&&!beam4&&!beam6&&!beam7&&!beam8&&!beam9&&!beam10&&!beam11&&!beam12&&!beam13&&!beam14&&!beam15&&!beam16',
-          properties: ['-Djava9addmodsvalue=-Dsun.reflect.debugModuleAccessChecks=true',
-                       '-Djava9addopens1=--add-opens=java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED',
-                       '-Djava9addopens2=--add-opens=java.base/java.io=ALL-UNNAMED',
-                       '-Djava9addopens3=--add-opens=java.base/java.nio=ALL-UNNAMED',
-                       '-Djava9addopens4=--add-opens=java.base/java.lang=ALL-UNNAMED',
-                       '-Djava9addopens5=--add-opens=java.base/jdk.internal.ref=ALL-UNNAMED',
-                       '-Djava.locale.providers=JRE,CLDR'],
-          skipcigame: true
+          // H43 has outdated JDK12 installed
+          slaveAdd: '&&!beam1&&!beam2&&!beam3&&!beam4&&!beam6&&!beam7&&!beam8&&!beam9&&!beam10&&!beam11&&!beam12&&!beam13&&!beam14&&!beam15&&!beam16&&!H43'
         ],
-        [ name: 'POI-DSL-1.13', jdk: '1.13', trigger: triggerSundays,
+        [ name: 'POI-DSL-1.13', jdk: '1.13', trigger: triggerSundays, skipcigame: true,
           // Nodes beam* do not yet have JDK 13 installed
           slaveAdd: '&&!beam1&&!beam2&&!beam3&&!beam4&&!beam6&&!beam7&&!beam8&&!beam9&&!beam10&&!beam11&&!beam12&&!beam13&&!beam14&&!beam15&&!beam16',
-          properties: ['-Djava9addmodsvalue=-Dsun.reflect.debugModuleAccessChecks=true',
-                       '-Djava9addopens1=--add-opens=java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED',
-                       '-Djava9addopens2=--add-opens=java.base/java.io=ALL-UNNAMED',
-                       '-Djava9addopens3=--add-opens=java.base/java.nio=ALL-UNNAMED',
-                       '-Djava9addopens4=--add-opens=java.base/java.lang=ALL-UNNAMED',
-                       '-Djava9addopens5=--add-opens=java.base/jdk.internal.ref=ALL-UNNAMED',
-                       '-Djava.locale.providers=JRE,CLDR',
-                       // JaCoCo currently fails with "java.lang.NoSuchFieldException: $jacocoAccess",
+          properties: [// JaCoCo currently fails with "java.lang.NoSuchFieldException: $jacocoAccess",
                        // need to review/check with newer JDK 13 builds or when at least JaCoCo 0.8.3
-                       '-Dcoverage.enabled=false'],
-          skipcigame: true
+                       '-Dcoverage.enabled=false']
         ],
         [ name: 'POI-DSL-IBM-JDK', jdk: 'IBMJDK', trigger: triggerSundays, skipcigame: true
         ],
@@ -104,15 +70,7 @@ def poijobs = [
         ],
         [ name: 'POI-DSL-Windows-1.8', trigger: 'H */12 * * *', windows: true, slaves: 'Windows'
         ],
-        [ name: 'POI-DSL-Windows-1.12', jdk: '1.12', trigger: triggerSundays, windows: true, slaves: 'Windows',
-                properties: ['-Djava9addmodsvalue=-Dsun.reflect.debugModuleAccessChecks=true',
-                       '-Djava9addopens1=--add-opens=java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED',
-                       '-Djava9addopens2=--add-opens=java.base/java.io=ALL-UNNAMED',
-                       '-Djava9addopens3=--add-opens=java.base/java.nio=ALL-UNNAMED',
-                       '-Djava9addopens4=--add-opens=java.base/java.lang=ALL-UNNAMED',
-                       '-Djava9addopens5=--add-opens=java.base/jdk.internal.ref=ALL-UNNAMED',
-                       '-Djava.locale.providers=JRE,CLDR'],
-                skipcigame: true
+        [ name: 'POI-DSL-Windows-1.12', jdk: '1.12', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true
         ],
         [ name: 'POI-DSL-Github-PullRequests', trigger: '', githubpr: true, skipcigame: true,
           // ensure the file which is needed from the separate documentation module does exist

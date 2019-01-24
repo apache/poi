@@ -64,6 +64,17 @@ under the License.
         <contains string="${java.vendor}" substring="IBM" casesensitive="false"/>
     </condition>
 
+    <!-- add addOpens parameter for Java 9 and higher -->
+    <condition property="addOpens">
+        <not><matches pattern="1\..*" string="${java.version}"/></not>
+    </condition>
+
+    <!-- add addOpens parameter for Java 10 -->
+    <condition property="addOpens10">
+        <matches pattern="10\..*" string="${java.version}"/>
+    </condition>
+
+
     <!--
         Logging is suppressed by default.
         To redirect log output to console, run ant with -Dorg.apache.poi.util.POILogger=org.apache.poi.util.SystemOutLogger
@@ -87,6 +98,7 @@ under the License.
     <property name="testpattern" value="Test*"/> <!--note: this excludes BaseTest* -->
     <property name="POI.testdata.path" location="test-data"/>
     <property name="java.awt.headless" value="true"/>
+    <property name="java.locale.providers" value="JRE,CLDR"/>
     <property name="additionaljar" value=""/>
     <propertyreset name="user.language" value="en"/>
     <propertyreset name="user.country" value="US"/>
@@ -1230,14 +1242,15 @@ under the License.
                     <jvmarg value="-ea"/>
 
                     <!-- some "add-opens" and other properties are needed when running with Java 9 or newer -->
-                    <jvmarg value="${java9addmods}" if:set="java9addmods" />
-                    <jvmarg value="${java9addmodsvalue}" if:set="java9addmodsvalue" />
-                    <jvmarg value="${java9addopens1}" if:set="java9addopens1" />
-                    <jvmarg value="${java9addopens2}" if:set="java9addopens2" />
-                    <jvmarg value="${java9addopens3}" if:set="java9addopens3" />
-                    <jvmarg value="${java9addopens4}" if:set="java9addopens4" />
-                    <jvmarg value="${java9addopens5}" if:set="java9addopens5" />
-                    <jvmarg value="${java9addopens6}" if:set="java9addopens6}" />
+                    <jvmarg value="--add-modules=java.xml.bind" if:true="${addOpens10}" />
+                    <jvmarg value="--add-opens=java.base/java.lang=java.xml.bind" if:true="${addOpens10}" />
+
+                    <jvmarg value="-Dsun.reflect.debugModuleAccessChecks=true" if:true="${addOpens}" />
+                    <jvmarg value="--add-opens=java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED" if:true="${addOpens}" />
+                    <jvmarg value="--add-opens=java.base/java.io=ALL-UNNAMED" if:true="${addOpens}" />
+                    <jvmarg value="--add-opens=java.base/java.nio=ALL-UNNAMED" if:true="${addOpens}" />
+                    <jvmarg value="--add-opens=java.base/java.lang=ALL-UNNAMED" if:true="${addOpens}" />
+                    <jvmarg value="--add-opens=java.base/jdk.internal.ref=ALL-UNNAMED" if:true="${addOpens}" />
 
                     <jvmarg value="-javaagent:${ooxml.lite.agent}=${ooxml.lite.report}|${ooxml.lite.includes}" if:true="${ooxml.lite.agent.exists}"/>
 
@@ -1777,7 +1790,7 @@ under the License.
                 <include name="org/apache/poi/**"/>
             </packageset>
             
-            <arg value="${javadoc9addmods}" if:set="${javadoc9addmods}"/>
+            <arg value="--add-modules=java.xml.bind" if:true="${addOpens10}"/>
 
             <doctitle><![CDATA[<h1>POI API Documentation</h1>]]></doctitle>
             <bottom>
