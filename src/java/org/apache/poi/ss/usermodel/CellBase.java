@@ -21,6 +21,7 @@ import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.Removal;
 
 /**
  * Common implementation-independent logic shared by all implementations of {@link Cell}.
@@ -123,6 +124,16 @@ public abstract class CellBase implements Cell {
         }
 
         setCellFormulaImpl(formula);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Deprecated
+    @Removal(version = "4.2")
+    @Override
+    public final CellType getCellTypeEnum() {
+        return getCellType();
     }
 
     /**

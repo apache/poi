@@ -713,25 +713,6 @@ public final class XSSFCell extends CellBase {
     }
 
     /**
-     * Return the cell type.  Tables in an array formula return 
-     * {@link CellType#FORMULA} for all cells, even though the formula is only defined
-     * in the OOXML file for the top left cell of the array. 
-     * <p>
-     * NOTE: POI does not support data table formulas.
-     * Cells in a data table appear to POI as plain cells typed from their cached value.
-     *
-     * @return the cell type
-     * @since POI 3.15 beta 3
-     * @deprecated use <code>getCellType</code> instead
-     */
-    @Deprecated
-    @Removal(version = "4.2")
-    @Override
-    public CellType getCellTypeEnum() {
-        return getCellType();
-    }
-
-    /**
      * Only valid for formula cells
      * @return one of ({@link CellType#NUMERIC}, {@link CellType#STRING},
      *     {@link CellType#BOOLEAN}, {@link CellType#ERROR}) depending
