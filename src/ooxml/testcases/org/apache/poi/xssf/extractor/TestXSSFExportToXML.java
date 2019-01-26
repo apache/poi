@@ -36,7 +36,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ooxml.util.DocumentHelper;
@@ -526,14 +526,12 @@ public final class TestXSSFExportToXML {
        
        Cell cString = row.createCell(0);
        cString.setCellValue("somestring");
-       cString.setCellType(CellType.STRING);
-       
+
        Cell cBoolean = row.createCell(1);
        cBoolean.setCellValue(true);
-       cBoolean.setCellType(CellType.BOOLEAN);
-       
+
        Cell cError = row.createCell(2);
-       cError.setCellType(CellType.ERROR);
+       cError.setCellErrorValue(FormulaError.NUM.getCode());
        
        Cell cFormulaString = row.createCell(3);
        cFormulaString.setCellFormula("A1");

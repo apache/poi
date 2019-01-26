@@ -364,22 +364,18 @@ public abstract class BaseTestFormulaEvaluator {
 
             // sheet1 A1
             Cell cell = sheet1.createRow(0).createCell(0);
-            cell.setCellType(CellType.NUMERIC);
             cell.setCellValue(1.0);
 
             // sheet2 A1
             cell = sheet2.createRow(0).createCell(0);
-            cell.setCellType(CellType.NUMERIC);
             cell.setCellValue(1.0);
 
             // sheet2 B1
             cell = sheet2.getRow(0).createCell(1);
-            cell.setCellType(CellType.NUMERIC);
             cell.setCellValue(1.0);
 
             // sheet3 A1
             cell = sheet3.createRow(0).createCell(0);
-            cell.setCellType(CellType.NUMERIC);
             cell.setCellValue(1.0);
 
             // sheet1 A2 formulae

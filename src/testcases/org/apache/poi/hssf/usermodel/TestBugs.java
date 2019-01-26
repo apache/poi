@@ -79,6 +79,7 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 import org.apache.poi.ss.usermodel.ComparisonOperator;
 import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row;
@@ -177,7 +178,6 @@ public final class TestBugs extends BaseTestBugzillaIssues {
             cell = row.createCell(3);
 
         // Write test
-        cell.setCellType(CellType.STRING);
         setCellText(cell, "a test");
 
         // change existing numeric cell value
@@ -2550,7 +2550,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
             row.createCell(2).setCellValue(cal);
             row.createCell(3).setCellValue(String.format(Locale.ROOT, "row:%d/col:%d", r, 3));
             row.createCell(4).setCellValue(true);
-            row.createCell(5).setCellType(CellType.ERROR);
+            row.createCell(5).setCellErrorValue(FormulaError.NUM.getCode());
             row.createCell(6).setCellValue("added cells.");
         }
 

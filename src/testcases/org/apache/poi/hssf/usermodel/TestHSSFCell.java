@@ -45,8 +45,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.Test;
 
-import junit.framework.AssertionFailedError;
-
 /**
  * Tests various functionality having to do with {@link HSSFCell}.  For instance support for
  * particular datatypes, etc.
@@ -443,28 +441,22 @@ public final class TestHSSFCell extends BaseTestCell {
         
         cell.setCellType(CellType.STRING);
         assertEquals("", cell.toString());
-        cell.setCellType(CellType.STRING);
         cell.setCellValue(1.2);
-        cell.setCellType(CellType.NUMERIC);
         assertEquals("1.2", cell.toString());
         cell.setCellType(CellType.BOOLEAN);
         assertEquals("TRUE", cell.toString());
         cell.setCellType(CellType.BOOLEAN);
         cell.setCellValue("" + FormulaError.VALUE.name());
-        cell.setCellType(CellType.ERROR);
-        assertEquals("#VALUE!", cell.toString());
-        cell.setCellType(CellType.ERROR);
+        assertEquals(CellType.STRING, cell.getCellType());
         cell.setCellType(CellType.BOOLEAN);
         assertEquals("FALSE", cell.toString());
         cell.setCellValue(1.2);
-        cell.setCellType(CellType.NUMERIC);
         assertEquals("1.2", cell.toString());
         cell.setCellType(CellType.BOOLEAN);
         cell.setCellType(CellType.STRING);
         cell.setCellType(CellType.ERROR);
         cell.setCellType(CellType.STRING);
         cell.setCellValue(1.2);
-        cell.setCellType(CellType.NUMERIC);
         cell.setCellType(CellType.STRING);
         assertEquals("1.2", cell.toString());
         

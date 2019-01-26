@@ -26,7 +26,6 @@ import org.apache.poi.ss.formula.DataValidationEvaluator;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.BaseTestDataValidation;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataValidation;
 import org.apache.poi.ss.usermodel.DataValidationConstraint;
 import org.apache.poi.ss.usermodel.DataValidationConstraint.OperatorType;
@@ -142,9 +141,6 @@ public class TestXSSFDataValidation extends BaseTestDataValidation {
                 Cell cell_22 = i==0 && j < 2 ? (row2 == null ? null : row2.createCell(2)) : null;
 
                 Cell cell_13 = row1.createCell(3);
-
-
-                cell_13.setCellType(CellType.NUMERIC);
                 cell_13.setCellValue(validationType==ValidationType.DECIMAL ? dvalue.doubleValue() : value.intValue());
 
 
@@ -210,11 +206,9 @@ public class TestXSSFDataValidation extends BaseTestDataValidation {
 
 
                 String value1String = validationType==ValidationType.DECIMAL ? dvalue.toString() : value.toString();
-                cell_13.setCellType(CellType.NUMERIC);
                 cell_13.setCellValue(validationType==ValidationType.DECIMAL ? dvalue.doubleValue() : value.intValue());
 
                 String value2String = validationType==ValidationType.DECIMAL ? dvalue2.toString() : value2.toString();
-                cell_14.setCellType(CellType.NUMERIC);
                 cell_14.setCellValue(validationType==ValidationType.DECIMAL ? dvalue2.doubleValue() : value2.intValue());
 
 

@@ -30,7 +30,6 @@ import java.util.Date;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.usermodel.BaseTestBugzillaIssues;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -136,10 +135,8 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
         Row row = sheet.createRow(rowIndex++);
 
         Cell cell = row.createCell(colIndex++);
-        cell.setCellType(CellType.STRING);
         cell.setCellValue("multiple");
         cell = row.createCell(colIndex);
-        cell.setCellType(CellType.STRING);
         cell.setCellValue("unique");
 
         writeRow(sheet, rowIndex++, 80d, "INDEX(A2:A7, MATCH(FALSE, ISBLANK(A2:A7), 0))");
@@ -166,7 +163,6 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
 
         // numeric value cell
         Cell cell = row.createCell(colIndex++);
-        cell.setCellType(CellType.NUMERIC);
         cell.setCellValue(col0Value);
 
         // formula value cell
