@@ -55,6 +55,7 @@ public class SXSSFCell extends CellBase {
     public SXSSFCell(SXSSFRow row, CellType cellType)
     {
         _row=row;
+        _value = new BlankValue();
         setType(cellType);
     }
 
@@ -326,15 +327,37 @@ public class SXSSFCell extends CellBase {
      * @throws FormulaParseException if the formula has incorrect syntax or is otherwise invalid
      */
     @Override
-    public void setCellFormulaImpl(String formula) throws FormulaParseException
-    {
-        if(formula == null) {
-            setType(CellType.BLANK);
-            return;
+    public void setCellFormulaImpl(String formula) throws FormulaParseException {
+        assert formula != null;
+        if (getCellType() == CellType.FORMULA) {
+            ((FormulaValue)_value).setValue(formula);
+        } else {
+            switch (getCellType()) {
+                case NUMERIC:
+                    _value = new NumericFormulaValue(formula, getNumericCellValue());
+                    break;
+                case STRING:
+                    if (_value instanceof PlainStringValue) {
+                        _value = new StringFormulaValue(formula, getStringCellValue());
+                    } else {
+                        assert(_value instanceof RichTextValue);
+                        _value = new RichTextStringFormulaValue(formula, ((RichTextValue) _value).getValue());
+                    }
+                    break;
+                case BOOLEAN:
+                    _value = new BooleanFormulaValue(formula, getBooleanCellValue());
+                    break;
+                case ERROR:
+                    _value = new ErrorFormulaValue(formula, getErrorCellValue());
+                    break;
+                case _NONE:
+                    // fall-through
+                case FORMULA:
+                    // fall-through
+                case BLANK:
+                    throw new AssertionError();
+            }
         }
-
-        ensureFormulaType(computeTypeFromFormula(formula));
-        ((FormulaValue)_value).setValue(formula);
     }
 
     @Override
@@ -531,14 +554,9 @@ public class SXSSFCell extends CellBase {
     public void setCellErrorValue(byte value) {
         // for formulas, we want to keep the type and only have an ERROR as formula value
         if(_value.getType()==CellType.FORMULA) {
-            // ensure that the type is "ERROR"
-            setFormulaType(CellType.ERROR);
-
-            // populate the value
-            ((ErrorFormulaValue) _value).setPreEvaluatedValue(value);
+            _value = new ErrorFormulaValue(getCellFormula(), value);
         } else {
-            ensureTypeOrFormulaType(CellType.ERROR);
-            ((ErrorValue) _value).setValue(value);
+            _value = new ErrorValue(value);
         }
     }
 
@@ -870,8 +888,7 @@ public class SXSSFCell extends CellBase {
         // don't change cell type for formulas
         if(_value.getType() == CellType.FORMULA) {
             String formula = ((FormulaValue)_value).getValue();
-            _value = new RichTextStringFormulaValue();
-            ((RichTextStringFormulaValue) _value).setValue(formula);
+            _value = new RichTextStringFormulaValue(formula, new XSSFRichTextString(""));
         } else if(_value.getType()!=CellType.STRING ||
                 !((StringValue)_value).isRichText()) {
             _value = new RichTextValue();
@@ -882,12 +899,7 @@ public class SXSSFCell extends CellBase {
         if(_value.getType()!=type)
             setType(type);
     }
-    /*package*/ void ensureFormulaType(CellType type)
-    {
-        if(_value.getType()!=CellType.FORMULA
-           ||((FormulaValue)_value).getFormulaType()!=type)
-            setFormulaType(type);
-    }
+
     /*
      * Sets the cell type to type if it is different
      */
@@ -903,7 +915,22 @@ public class SXSSFCell extends CellBase {
         {
             if(((FormulaValue)_value).getFormulaType()==type)
                 return;
-            setFormulaType(type); // once a formula, always a formula
+            switch (type) {
+                case BOOLEAN:
+                    _value = new BooleanFormulaValue(getCellFormula(), false);
+                    break;
+                case NUMERIC:
+                    _value = new NumericFormulaValue(getCellFormula(), 0);
+                    break;
+                case STRING:
+                    _value = new StringFormulaValue(getCellFormula(), "");
+                    break;
+                case ERROR:
+                    _value = new ErrorFormulaValue(getCellFormula(), FormulaError._NO_ERROR.getCode());
+                    break;
+                default:
+                    throw new AssertionError();
+            }
             return;
         }
         setType(type);
@@ -937,7 +964,9 @@ public class SXSSFCell extends CellBase {
             }
             case FORMULA:
             {
-                _value = new NumericFormulaValue();
+                if (getCellType() == CellType.BLANK) {
+                    _value = new NumericFormulaValue("", 0);
+                }
                 break;
             }
             case BLANK:
@@ -966,49 +995,6 @@ public class SXSSFCell extends CellBase {
                 throw new IllegalArgumentException("Illegal type " + type);
             }
         }
-    }
-    /*package*/ void setFormulaType(CellType type)
-    {
-        Value prevValue = _value;
-        switch(type)
-        {
-            case NUMERIC:
-            {
-                _value = new NumericFormulaValue();
-                break;
-            }
-            case STRING:
-            {
-                _value = new StringFormulaValue();
-                break;
-            }
-            case BOOLEAN:
-            {
-                _value = new BooleanFormulaValue();
-                break;
-            }
-            case ERROR:
-            {
-                _value = new ErrorFormulaValue();
-                break;
-            }
-            default:
-            {
-                throw new IllegalArgumentException("Illegal type " + type);
-            }
-        }
-
-        // if we had a Formula before, we should copy over the _value of the formula
-        if(prevValue instanceof FormulaValue) {
-            ((FormulaValue)_value)._value = ((FormulaValue)prevValue)._value;
-        }
-    }
-
-//TODO: implement this correctly
-    @NotImplemented
-    /*package*/ CellType computeTypeFromFormula(String formula)
-    {
-        return CellType.NUMERIC;
     }
 //COPIED FROM https://svn.apache.org/repos/asf/poi/trunk/src/ooxml/java/org/apache/poi/xssf/usermodel/XSSFCell.java since the functions are declared private there
     /**
@@ -1123,9 +1109,17 @@ public class SXSSFCell extends CellBase {
     {
         CellType getType();
     }
-    static class NumericValue implements Value
-    {
+    static class NumericValue implements Value {
         double _value;
+
+        public NumericValue() {
+            _value = 0;
+        }
+
+        public NumericValue(double _value) {
+            this._value = _value;
+        }
+
         public CellType getType()
         {
             return CellType.NUMERIC;
@@ -1190,6 +1184,11 @@ public class SXSSFCell extends CellBase {
     static abstract class FormulaValue implements Value
     {
         String _value;
+
+        public FormulaValue(String _value) {
+            this._value = _value;
+        }
+
         public CellType getType()
         {
             return CellType.FORMULA;
@@ -1204,9 +1203,14 @@ public class SXSSFCell extends CellBase {
         }
         abstract CellType getFormulaType();
     }
-    static class NumericFormulaValue extends FormulaValue
-    {
+    static class NumericFormulaValue extends FormulaValue {
         double _preEvaluatedValue;
+
+        public NumericFormulaValue(String formula, double _preEvaluatedValue) {
+            super(formula);
+            this._preEvaluatedValue = _preEvaluatedValue;
+        }
+
         @Override
         CellType getFormulaType()
         {
@@ -1221,9 +1225,14 @@ public class SXSSFCell extends CellBase {
             return _preEvaluatedValue;
         }
     }
-    static class StringFormulaValue extends FormulaValue
-    {
+    static class StringFormulaValue extends FormulaValue {
         String _preEvaluatedValue;
+
+        public StringFormulaValue(String formula, String value) {
+            super(formula);
+            _preEvaluatedValue = value;
+        }
+
         @Override
         CellType getFormulaType()
         {
@@ -1238,9 +1247,15 @@ public class SXSSFCell extends CellBase {
             return _preEvaluatedValue;
         }
     }
-    static class RichTextStringFormulaValue extends FormulaValue
-    {
+
+    static class RichTextStringFormulaValue extends FormulaValue {
         RichTextString _preEvaluatedValue;
+
+        public RichTextStringFormulaValue(String formula, RichTextString value) {
+            super(formula);
+            _preEvaluatedValue = value;
+        }
+
         @Override
         CellType getFormulaType()
         {
@@ -1255,9 +1270,15 @@ public class SXSSFCell extends CellBase {
             return _preEvaluatedValue;
         }
     }
-    static class BooleanFormulaValue extends FormulaValue
-    {
+
+    static class BooleanFormulaValue extends FormulaValue {
         boolean _preEvaluatedValue;
+
+        public BooleanFormulaValue(String formula, boolean value) {
+            super(formula);
+            _preEvaluatedValue = value;
+        }
+
         @Override
         CellType getFormulaType()
         {
@@ -1272,9 +1293,15 @@ public class SXSSFCell extends CellBase {
             return _preEvaluatedValue;
         }
     }
-    static class ErrorFormulaValue extends FormulaValue
-    {
+
+    static class ErrorFormulaValue extends FormulaValue {
         byte _preEvaluatedValue;
+
+        public ErrorFormulaValue(String formula, byte value) {
+            super(formula);
+            _preEvaluatedValue = value;
+        }
+
         @Override
         CellType getFormulaType()
         {
@@ -1289,16 +1316,25 @@ public class SXSSFCell extends CellBase {
             return _preEvaluatedValue;
         }
     }
-    static class BlankValue implements Value
-    {
+
+    static class BlankValue implements Value {
         public CellType getType()
         {
             return CellType.BLANK;
         }
     }
-    static class BooleanValue implements Value
-    {
+
+    static class BooleanValue implements Value {
         boolean _value;
+
+        public BooleanValue() {
+            _value = false;
+        }
+
+        public BooleanValue(boolean _value) {
+            this._value = _value;
+        }
+
         public CellType getType()
         {
             return CellType.BOOLEAN;
@@ -1315,6 +1351,15 @@ public class SXSSFCell extends CellBase {
     static class ErrorValue implements Value
     {
         byte _value;
+
+        public ErrorValue() {
+            _value = FormulaError._NO_ERROR.getCode();
+        }
+
+        public ErrorValue(byte _value) {
+            this._value = _value;
+        }
+
         public CellType getType()
         {
             return CellType.ERROR;

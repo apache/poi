@@ -175,7 +175,16 @@ public class TestSXSSFCell extends BaseTestXCell {
 
     @Override
     @Ignore
-    @Test
     public void removeFormula_turnsCellToBlank_whenFormulaWasASingleCellArrayFormula() {
+    }
+
+    @Override
+    @Ignore
+    public void setCellFormula_onASingleCellArrayFormulaCell_preservesTheValue() {
+    }
+
+    @Test
+    @Ignore
+    public void setCellFormula_isExceptionSafe_onBlankCell() {
     }
 }

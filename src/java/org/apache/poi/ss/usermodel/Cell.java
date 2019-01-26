@@ -198,19 +198,18 @@ public interface Cell {
 
     /**
      * Sets formula for this cell.
+     * <p>If {@code formula} is not null, sets or updates the formula. If {@code formula} is null, removes the formula.
+     * Or use {@link #removeFormula()} to remove the formula.</p>
      *
-     * <p>
-     * Note, this method only sets the formula string and does not calculate the formula value.
-     * To set the precalculated value use {@link #setCellValue}
-     * </p>
+     * <p>Note, this method only sets the formula string and does not calculate the formula value.
+     * To set the precalculated value use {@link #setCellValue}.</p>
      *
-     * <p>
-     * If the cell was blank, sets value to 0. Otherwise, preserves the value as precalculated.
-     * </p>
+     * <p>If the cell was blank, sets value to 0. Otherwise, preserves the value as precalculated.</p>
      *
      * @param formula the formula to set, e.g. <code>"SUM(C4:E4)"</code>.
      * If the argument is <code>null</code> then the current formula is removed.
      *
+     * @see Cell#removeFormula
      * @throws IllegalStateException if this cell is a part of an array formula group containing other cells
      * @throws FormulaParseException if the formula has incorrect syntax or is otherwise invalid
      */

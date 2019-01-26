@@ -46,8 +46,10 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellBase;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.FormulaError;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.util.CellAddress;
@@ -290,8 +292,9 @@ public class HSSFCell extends CellBase {
                     frec.setRow(row);
                     frec.setColumn(col);
                 }
-                if (setValue)
-                {
+                if (getCellType() == CellType.BLANK) {
+                    frec.getFormulaRecord().setValue(0);
+                } else if (setValue) {
                     frec.getFormulaRecord().setValue(getNumericCellValue());
                 }
                 frec.setXFIndex(styleIndex);
@@ -596,6 +599,7 @@ public class HSSFCell extends CellBase {
         short col=_record.getColumn();
         short styleIndex=_record.getXFIndex();
 
+        final CellValue savedValue = readValue();
         int sheetIndex = _book.getSheetIndex(_sheet);
         Ptg[] ptgs = HSSFFormulaParser.parse(formula, _book, FormulaType.CELL, sheetIndex);
         setCellType(CellType.FORMULA, false, row, col, styleIndex);
@@ -603,13 +607,48 @@ public class HSSFCell extends CellBase {
         FormulaRecord frec = agg.getFormulaRecord();
         frec.setOptions((short) 2);
 
-        frec.setValue(0);
-
         //only set to default if there is no extended format index already set
         if (agg.getXFIndex() == (short)0) {
             agg.setXFIndex((short) 0x0f);
         }
         agg.setParsedExpression(ptgs);
+
+        restoreValue(savedValue);
+    }
+
+    private CellValue readValue() {
+        final CellType valueType = getCellType() == CellType.FORMULA ? getCachedFormulaResultType() : getCellType();
+        switch (valueType) {
+            case NUMERIC:
+                return new CellValue(getNumericCellValue());
+            case STRING:
+                return new CellValue(getStringCellValue());
+            case BOOLEAN:
+                return CellValue.valueOf(getBooleanCellValue());
+            case ERROR:
+                return CellValue.getError(getErrorCellValue());
+            default:
+                throw new IllegalStateException();
+        }
+    }
+
+    private void restoreValue(CellValue value) {
+        switch (value.getCellType()) {
+            case NUMERIC:
+                setCellValue(value.getNumberValue());
+                break;
+            case STRING:
+                setCellValue(value.getStringValue());
+                break;
+            case BOOLEAN:
+                setCellValue(value.getBooleanValue());
+                break;
+            case ERROR:
+                setCellErrorValue(FormulaError.forInt(value.getErrorValue()));
+                break;
+            default:
+                throw new IllegalStateException();
+        }
     }
 
     @Override

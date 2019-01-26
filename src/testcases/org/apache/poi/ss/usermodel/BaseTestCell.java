@@ -32,11 +32,13 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.function.Consumer;
 
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.Test;
@@ -1301,6 +1303,58 @@ public abstract class BaseTestCell {
         cell.setCellErrorValue(FormulaError.NUM.getCode());
         cell.removeFormula();
         assertEquals(CellType.BLANK, cell.getCellType());
+    }
+
+    @Test
+    public void setCellFormula_onABlankCell_setsValueToZero() {
+        Cell cell = getInstance();
+        cell.setCellFormula("\"foo\"");
+        assertEquals(CellType.FORMULA, cell.getCellType());
+        assertEquals(CellType.NUMERIC, cell.getCachedFormulaResultType());
+        assertEquals(0, cell.getNumericCellValue(), 0);
+    }
+
+
+    @Test
+    public void setCellFormula_onANonBlankCell_preservesTheValue() {
+        Cell cell = getInstance();
+        cell.setCellValue(true);
+        cell.setCellFormula("\"foo\"");
+        assertEquals(CellType.FORMULA, cell.getCellType());
+        assertEquals(CellType.BOOLEAN, cell.getCachedFormulaResultType());
+        assertTrue(cell.getBooleanCellValue());
+    }
+
+    @Test
+    public void setCellFormula_onAFormulaCell_changeFormula_preservesTheValue() {
+        Cell cell = getInstance();
+        cell.setCellFormula("\"foo\"");
+        cell.setCellValue(true);
+        assertEquals(CellType.FORMULA, cell.getCellType());
+        assertEquals(CellType.BOOLEAN, cell.getCachedFormulaResultType());
+        assertTrue(cell.getBooleanCellValue());
+
+        cell.setCellFormula("\"bar\"");
+        assertEquals(CellType.FORMULA, cell.getCellType());
+        assertEquals(CellType.BOOLEAN, cell.getCachedFormulaResultType());
+        assertTrue(cell.getBooleanCellValue());
+    }
+
+    @Test
+    public void setCellFormula_onASingleCellArrayFormulaCell_preservesTheValue() {
+        Cell cell = getInstance();
+        cell.getSheet().setArrayFormula("\"foo\"", CellRangeAddress.valueOf("A1"));
+        cell.setCellValue(true);
+
+        assertTrue(cell.isPartOfArrayFormulaGroup());
+        assertEquals(CellType.FORMULA, cell.getCellType());
+        assertEquals(CellType.BOOLEAN, cell.getCachedFormulaResultType());
+        assertTrue(cell.getBooleanCellValue());
+
+        cell.getSheet().setArrayFormula("\"bar\"", CellRangeAddress.valueOf("A1"));
+        assertEquals(CellType.FORMULA, cell.getCellType());
+        assertEquals(CellType.BOOLEAN, cell.getCachedFormulaResultType());
+        assertTrue(cell.getBooleanCellValue());
     }
 
     private Cell getInstance() {

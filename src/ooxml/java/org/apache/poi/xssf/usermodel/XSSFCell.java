@@ -551,6 +551,7 @@ public final class XSSFCell extends CellBase {
      */
     @Override
     protected void setCellFormulaImpl(String formula) {
+        assert formula != null;
         setFormula(formula, FormulaType.CELL);
     }
 
@@ -589,9 +590,6 @@ public final class XSSFCell extends CellBase {
             f = CTCellFormula.Factory.newInstance();
             f.setStringValue(formula);
             _cell.setF(f);
-        }
-        if(_cell.isSetV()) {
-            _cell.unsetV();
         }
     }
 
