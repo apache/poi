@@ -125,7 +125,15 @@ public final class XSSFCell extends CellBase {
         _sharedStringSource = row.getSheet().getWorkbook().getSharedStringSource();
         _stylesSource = row.getSheet().getWorkbook().getStylesSource();
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected SpreadsheetVersion getSpreadsheetVersion() {
+        return SpreadsheetVersion.EXCEL2007;
+    }
+
     /**
      * Copy cell value, formula and style, from srcCell per cell copy policy
      * If srcCell is null, clears the cell value and cell style per cell copy policy
@@ -391,55 +399,33 @@ public final class XSSFCell extends CellBase {
     }
 
     /**
-     * Set a string value for the cell.
-     *
-     * @param str value to set the cell to.  For formulas we'll set the formula
-     * cached string result, for String cells we'll set its value. For other types we will
-     * change the cell to a string cell and set its value.
-     * If value is null then we will change the cell to a Blank cell.
+     * {@inheritDoc}
      */
     @Override
-    public void setCellValue(String str) {
-        setCellValue(str == null ? null : new XSSFRichTextString(str));
+    protected void setCellValueImpl(String value) {
+        setCellValueImpl(new XSSFRichTextString(value));
     }
 
     /**
-     * Set a string value for the cell.
-     *
-     * @param str  value to set the cell to.  For formulas we'll set the 'pre-evaluated result string,
-     * for String cells we'll set its value.  For other types we will
-     * change the cell to a string cell and set its value.
-     * If value is null then we will change the cell to a Blank cell.
+     * {@inheritDoc}
      */
     @Override
-    public void setCellValue(RichTextString str) {
-        if(str == null || str.getString() == null){
-            setBlank();
-            return;
-        }
-
-        if(str.length() > SpreadsheetVersion.EXCEL2007.getMaxTextLength()){
-            throw new IllegalArgumentException("The maximum length of cell contents (text) is 32,767 characters");
-        }
-
+    protected void setCellValueImpl(RichTextString str) {
         CellType cellType = getCellType();
-        switch (cellType){
-            case FORMULA:
+        if (cellType == CellType.FORMULA) {
+            _cell.setV(str.getString());
+            _cell.setT(STCellType.STR);
+        } else {
+            if(_cell.getT() == STCellType.INLINE_STR) {
+                //set the 'pre-evaluated result
                 _cell.setV(str.getString());
-                _cell.setT(STCellType.STR);
-                break;
-            default:
-                if(_cell.getT() == STCellType.INLINE_STR) {
-                    //set the 'pre-evaluated result
-                    _cell.setV(str.getString());
-                } else {
-                    _cell.setT(STCellType.S);
-                    XSSFRichTextString rt = (XSSFRichTextString)str;
-                    rt.setStylesTableReference(_stylesSource);
-                    int sRef = _sharedStringSource.addSharedStringItem(rt);
-                    _cell.setV(Integer.toString(sRef));
-                }
-                break;
+            } else {
+                _cell.setT(STCellType.S);
+                XSSFRichTextString rt = (XSSFRichTextString)str;
+                rt.setStylesTableReference(_stylesSource);
+                int sRef = _sharedStringSource.addSharedStringItem(rt);
+                _cell.setV(Integer.toString(sRef));
+            }
         }
     }
 

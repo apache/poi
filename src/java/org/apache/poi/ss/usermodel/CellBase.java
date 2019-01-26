@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.usermodel;
 
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -25,6 +26,7 @@ import org.apache.poi.util.Removal;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Common implementation-independent logic shared by all implementations of {@link Cell}.
@@ -196,7 +198,7 @@ public abstract class CellBase implements Cell {
      * {@inheritDoc}
      */
     @Override
-    public final void setCellValue(double value) {
+    public void setCellValue(double value) {
         if(Double.isInfinite(value)) {
             // Excel does not support positive/negative infinities,
             // rather, it gives a #DIV/0! error in these cases.
@@ -239,7 +241,7 @@ public abstract class CellBase implements Cell {
      * {@inheritDoc}
      */
     @Override
-    public final void setCellValue(Calendar value) {
+    public void setCellValue(Calendar value) {
         if(value == null) {
             setBlank();
             return;
@@ -255,4 +257,68 @@ public abstract class CellBase implements Cell {
      * @param value the new calendar value to set
      */
     protected abstract void setCellValueImpl(Calendar value);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setCellValue(String value) {
+        if(value == null){
+            setBlank();
+            return;
+        }
+
+        checkLength(value);
+
+        setCellValueImpl(value);
+    }
+
+    /**
+     * Implementation-specific way to set a string value.
+     * The value is guaranteed to be non-null and to satisfy the length limitation imposed by the spreadsheet version.
+     * The implementation is expected to adjust cell type accordingly, so that after this call
+     * getCellType() or getCachedFormulaResultType() (whichever appropriate) would return {@link CellType#STRING}.
+     * @param value the new value to set.
+     */
+    protected abstract void setCellValueImpl(String value);
+
+    private void checkLength(String value) {
+        if(value.length() > getSpreadsheetVersion().getMaxTextLength()){
+            final String message = String.format(Locale.ROOT,
+                    "The maximum length of cell contents (text) is %d characters",
+                    getSpreadsheetVersion().getMaxTextLength());
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setCellValue(RichTextString value) {
+        if(value == null || value.getString() == null){
+            setBlank();
+            return;
+        }
+
+        checkLength(value.getString());
+
+        setCellValueImpl(value);
+    }
+
+    /**
+     * Implementation-specific way to set a RichTextString value.
+     * The value is guaranteed to be non-null, having non-null value, and to satisfy the length limitation imposed
+     * by the spreadsheet version.
+     * The implementation is expected to adjust cell type accordingly, so that after this call
+     * getCellType() or getCachedFormulaResultType() (whichever appropriate) would return {@link CellType#STRING}.
+     * @param value the new value to set.
+     */
+    protected abstract void setCellValueImpl(RichTextString value);
+
+    /**
+     * Get the spreadsheet version for the given implementation.
+     * @return the spreadsheet version
+     */
+    protected abstract SpreadsheetVersion getSpreadsheetVersion();
 }

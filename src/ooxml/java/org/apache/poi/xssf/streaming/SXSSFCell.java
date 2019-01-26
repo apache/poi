@@ -58,7 +58,13 @@ public class SXSSFCell extends CellBase {
         setType(cellType);
     }
 
-//start of interface implementation
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected SpreadsheetVersion getSpreadsheetVersion() {
+        return SpreadsheetVersion.EXCEL2007;
+    }
 
     /**
      * Returns column index of this cell
@@ -190,58 +196,29 @@ public class SXSSFCell extends CellBase {
     }
 
     /**
-     * Set a rich string value for the cell.
-     *
-     * @param value  value to set the cell to.  For formulas: we'll set the formula
-     * string, for String cells: we'll set its value.  For other types we will
-     * change the cell to a string cell and set its value.
-     * If value is null then we will change the cell to a Blank cell.
+     * {@inheritDoc}
      */
     @Override
-    public void setCellValue(RichTextString value)
-    {
-        if (value != null && value.getString() != null) {
-            if (value.length() > SpreadsheetVersion.EXCEL2007.getMaxTextLength()) {
-                throw new IllegalArgumentException("The maximum length of cell contents (text) is 32,767 characters");
-            }
+    protected void setCellValueImpl(RichTextString value) {
+        ensureRichTextStringType();
 
-            ensureRichTextStringType();
-
-            if(_value instanceof RichTextStringFormulaValue) {
-                ((RichTextStringFormulaValue) _value).setPreEvaluatedValue(value);
-            } else {
-                ((RichTextValue) _value).setValue(value);
-            }
+        if(_value instanceof RichTextStringFormulaValue) {
+            ((RichTextStringFormulaValue) _value).setPreEvaluatedValue(value);
         } else {
-            setBlank();
+            ((RichTextValue) _value).setValue(value);
         }
     }
 
     /**
-     * Set a string value for the cell.
-     *
-     * @param value  value to set the cell to.  For formulas we'll set the formula
-     * string, for String cells we'll set its value.  For other types we will
-     * change the cell to a string cell and set its value.
-     * If value is null then we will change the cell to a Blank cell.
+     * {@inheritDoc}
      */
     @Override
-    public void setCellValue(String value)
-    {
-        if (value != null) {
-            if (value.length() > SpreadsheetVersion.EXCEL2007.getMaxTextLength()) {
-                throw new IllegalArgumentException("The maximum length of cell contents (text) is 32,767 characters");
-            }
-
-            ensureTypeOrFormulaType(CellType.STRING);
-
-            if(_value.getType() == CellType.FORMULA) {
-                ((StringFormulaValue) _value).setPreEvaluatedValue(value);
-            } else {
-                ((PlainStringValue) _value).setValue(value);
-            }
+    protected void setCellValueImpl(String value) {
+        ensureTypeOrFormulaType(CellType.STRING);
+        if(_value.getType() == CellType.FORMULA) {
+            ((StringFormulaValue) _value).setPreEvaluatedValue(value);
         } else {
-            setBlank();
+            ((PlainStringValue) _value).setValue(value);
         }
     }
 
