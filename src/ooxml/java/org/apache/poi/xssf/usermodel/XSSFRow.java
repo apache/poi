@@ -28,6 +28,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellCopyPolicy;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.helpers.RowShifter;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -220,12 +221,33 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         }
         XSSFCell xcell = new XSSFCell(this, ctCell);
         xcell.setCellNum(columnIndex);
-        if (type != CellType.BLANK) {
-            xcell.setCellType(type);
+        if (type != CellType.BLANK && type != CellType.FORMULA) {
+            setDefaultValue(xcell, type);
         }
+
         _cells.put(colI, xcell);
         return xcell;
     }
+
+    private static void setDefaultValue(XSSFCell cell, CellType type) {
+        switch (type) {
+            case NUMERIC:
+                cell.setCellValue(0);
+                break;
+            case STRING:
+                cell.setCellValue("");
+                break;
+            case BOOLEAN:
+                cell.setCellValue(false);
+                break;
+            case ERROR:
+                cell.setCellErrorValue(FormulaError._NO_ERROR);
+                break;
+            default:
+                throw new AssertionError();
+        }
+    }
+
     /**
      * Returns the cell at the given (0 based) index,
      *  with the {@link org.apache.poi.ss.usermodel.Row.MissingCellPolicy} from the parent Workbook.
@@ -588,7 +610,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         else {
             for (final Cell c : srcRow){
                 final XSSFCell srcCell = (XSSFCell)c;
-                final XSSFCell destCell = createCell(srcCell.getColumnIndex(), srcCell.getCellType());
+                final XSSFCell destCell = createCell(srcCell.getColumnIndex());
                 destCell.copyCellFrom(srcCell, policy);
             }
 

@@ -425,8 +425,6 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
     private void addDataField(DataConsolidateFunction function, int columnIndex, String valueFieldName, String valueFormat) {
         checkColumnIndex(columnIndex);
         
-        AreaReference pivotArea = getPivotArea();
-        
         CTDataFields dataFields;
         if(pivotTableDefinition.getDataFields() != null) {
             dataFields = pivotTableDefinition.getDataFields();
@@ -435,9 +433,6 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         }
         CTDataField dataField = dataFields.addNewDataField();
         dataField.setSubtotal(STDataConsolidateFunction.Enum.forInt(function.getValue()));
-        Cell cell = getDataSheet().getRow(pivotArea.getFirstCell().getRow())
-                .getCell(pivotArea.getFirstCell().getCol() + columnIndex);
-        cell.setCellType(CellType.STRING);
         dataField.setName(valueFieldName);
         dataField.setFld(columnIndex);
         if (valueFormat != null && !valueFormat.trim().isEmpty()) {

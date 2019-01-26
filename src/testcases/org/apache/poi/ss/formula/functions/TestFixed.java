@@ -48,7 +48,6 @@ public final class TestFixed {
         try {
             HSSFSheet sheet = wb.createSheet("new sheet");
             cell11 = sheet.createRow(0).createCell(0);
-            cell11.setCellType(CellType.FORMULA);
             evaluator = new HSSFFormulaEvaluator(wb);
         } finally {
             wb.close();

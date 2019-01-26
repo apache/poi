@@ -292,8 +292,6 @@ public class HSSFCell extends CellBase {
                 }
                 if (getCellType() == CellType.BLANK) {
                     frec.getFormulaRecord().setValue(0);
-                } else if (setValue) {
-                    frec.getFormulaRecord().setValue(getNumericCellValue());
                 }
                 frec.setXFIndex(styleIndex);
                 _record = frec;

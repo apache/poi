@@ -78,15 +78,22 @@ public interface Cell {
      * <p>to NUMERIC: numeric value is left as is. True converts to 1.0, false converts to 0. otherwise, the
      * value is set to 0. Formula is removed.</p>
      * <p>If what you want to do is get a String value for your
-     *  numeric cell, <i>stop!</i>. This is not the way to do it.
+     *  numeric cell, <i>stop!</i> This is not the way to do it.
      *  Instead, for fetching the string value of a numeric or boolean
      *  or date cell, use {@link DataFormatter} instead.</p>
      * <p>If cell is a member of an array formula group containing more than 1 cell, an {@link IllegalStateException}
-     * is thrown. If the array formula group contains only this cell, it is removed</p>
-     * @throws IllegalArgumentException if the specified cell type is invalid (null or _NONE)
+     * is thrown. If the array formula group contains only this cell, it is removed.</p>
+     * <p>Passing {@link CellType#FORMULA} is illegal and will result in an {@link IllegalArgumentException}.</p>
+     *
+     * @deprecated This method is deprecated and will be removed in POI 5.0.
+     * Use explicit {@link #setCellFormula(String)}, <code>setCellValue(...)</code> or {@link #setBlank()}
+     * to get the desired result.
+     * @throws IllegalArgumentException if the specified cell type is invalid (null, _NONE or FORMULA)
      * @throws IllegalStateException if the current value cannot be converted to the new type or
      * if the cell is a part of an array formula group containing other cells
      */
+    @Deprecated
+    @Removal(version = "5.0")
     void setCellType(CellType cellType);
 
     /**

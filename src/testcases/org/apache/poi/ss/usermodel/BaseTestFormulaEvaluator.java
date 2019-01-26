@@ -384,12 +384,10 @@ public abstract class BaseTestFormulaEvaluator {
 
             // sheet1 A2 formulae
             cell = sheet1.createRow(1).createCell(0);
-            cell.setCellType(CellType.FORMULA);
             cell.setCellFormula("SUM(Sheet1:Sheet3!A1)");
 
             // sheet1 A3 formulae
             cell = sheet1.createRow(2).createCell(0);
-            cell.setCellType(CellType.FORMULA);
             cell.setCellFormula("SUM(Sheet1:Sheet3!A1:B1)");
 
             wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
@@ -589,7 +587,6 @@ public abstract class BaseTestFormulaEvaluator {
         if (cell == null) {
             cell = r.createCell(column);
         }
-        cell.setCellType(CellType.FORMULA);
         cell.setCellFormula(formula);
     }
 

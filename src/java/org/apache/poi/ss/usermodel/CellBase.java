@@ -35,6 +35,15 @@ public abstract class CellBase implements Cell {
             throw new IllegalArgumentException("cellType shall not be null nor _NONE");
         }
 
+        if (cellType == CellType.FORMULA) {
+            if (getCellType() != CellType.FORMULA){
+                throw new IllegalArgumentException("Calling Cell.setCellType(CellType.FORMULA) is illegal. " +
+                        "Use setCellFormula(String) directly.");
+            } else {
+                return;
+            }
+        }
+
         tryToDeleteArrayFormulaIfSet();
 
         setCellTypeImpl(cellType);

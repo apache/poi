@@ -537,20 +537,16 @@ public final class TestXSSFExportToXML {
        
        Cell cFormulaString = row.createCell(3);
        cFormulaString.setCellFormula("A1");
-       cFormulaString.setCellType(CellType.FORMULA);
-       
+
        Cell cFormulaNumeric = row.createCell(4);
        cFormulaNumeric.setCellFormula("F1");
-       cFormulaNumeric.setCellType(CellType.FORMULA);
-       
+
        Cell cNumeric = row.createCell(5);
        cNumeric.setCellValue(1.2);
-       cNumeric.setCellType(CellType.NUMERIC);
-       
+
        Cell cDate = row.createCell(6);
        cDate.setCellValue(new Date());
-       cDate.setCellType(CellType.NUMERIC);
-       
+
        boolean found = false;
        for (POIXMLDocumentPart p : wb.getRelations()) {
 
