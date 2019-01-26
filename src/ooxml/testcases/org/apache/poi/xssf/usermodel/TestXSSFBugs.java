@@ -629,7 +629,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         sheet.getRow(3).getCell(0).setCellFormula("14"); // stay
         XSSFTestDataSamples.writeOutAndReadBack(wb1).close();
 
-        sheet.getRow(4).getCell(0).setCellType(CellType.STRING); // go
+        sheet.getRow(4).getCell(0).setBlank(); // go
         XSSFTestDataSamples.writeOutAndReadBack(wb1).close();
 
         validateCells(sheet);

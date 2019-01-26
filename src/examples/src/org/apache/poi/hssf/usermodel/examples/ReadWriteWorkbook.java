@@ -26,7 +26,6 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.ss.usermodel.CellType;
 
 /**
  * This example demonstrates opening a workbook, modifying it and writing
@@ -46,7 +45,6 @@ public class ReadWriteWorkbook {
             HSSFCell cell = row.getCell(3);
             if (cell == null)
                 cell = row.createCell(3);
-            cell.setCellType(CellType.STRING);
             cell.setCellValue("a test");
 
             // Write the output to a file

@@ -71,7 +71,6 @@ public final class TestXSSFCell extends BaseTestXCell {
         Sheet sheet = wb.getSheetAt(0);
         Row row = sheet.getRow(0);
         Cell cell = row.getCell(0);
-        cell.setCellType(CellType.STRING);
         cell.setCellValue("456");
         wb.close();
     }

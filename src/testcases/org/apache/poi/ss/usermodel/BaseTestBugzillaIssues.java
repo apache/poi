@@ -1228,7 +1228,6 @@ public abstract class BaseTestBugzillaIssues {
                 value == null || value.length() == 0);
 
         // set some value
-        cell.setCellType(CellType.STRING);
         cell.setCellValue("somevalue");
 
         value = cell.getStringCellValue();
