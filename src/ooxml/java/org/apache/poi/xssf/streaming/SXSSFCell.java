@@ -36,7 +36,6 @@ import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.*;
@@ -159,27 +158,15 @@ public class SXSSFCell extends CellBase {
     }
 
     /**
-     * Set a numeric value for the cell
-     *
-     * @param value  the numeric value to set this cell to.  For formulas we'll set the
-     *        precalculated value, for numerics we'll set its value. For other types we
-     *        will change the cell to a numeric cell and set its value.
+     * {@inheritDoc}
      */
     @Override
-    public void setCellValue(double value)
-    {
-        if(Double.isInfinite(value)) {
-            // Excel does not support positive/negative infinities,
-            // rather, it gives a #DIV/0! error in these cases.
-            setCellErrorValue(FormulaError.DIV0.getCode());
-        } else if (Double.isNaN(value)){
-            setCellErrorValue(FormulaError.NUM.getCode());
+    public void setCellValueImpl(double value) {
+        ensureTypeOrFormulaType(CellType.NUMERIC);
+        if(_value.getType() == CellType.FORMULA) {
+            ((NumericFormulaValue) _value).setPreEvaluatedValue(value);
         } else {
-            ensureTypeOrFormulaType(CellType.NUMERIC);
-            if(_value.getType()==CellType.FORMULA)
-                ((NumericFormulaValue)_value).setPreEvaluatedValue(value);
-            else
-                ((NumericValue)_value).setValue(value);
+            ((NumericValue)_value).setValue(value);
         }
     }
 

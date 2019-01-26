@@ -311,30 +311,13 @@ public final class XSSFCell extends CellBase {
         }
     }
 
-
     /**
-     * Set a numeric value for the cell
-     *
-     * @param value  the numeric value to set this cell to.  For formulas we'll set the
-     *        precalculated value, for numerics we'll set its value. For other types we
-     *        will change the cell to a numeric cell and set its value.
+     * {@inheritDoc}
      */
     @Override
-    public void setCellValue(double value) {
-        if(Double.isInfinite(value)) {
-            // Excel does not support positive/negative infinities,
-            // rather, it gives a #DIV/0! error in these cases.
-            _cell.setT(STCellType.E);
-            _cell.setV(FormulaError.DIV0.getString());
-        } else if (Double.isNaN(value)){
-            // Excel does not support Not-a-Number (NaN),
-            // instead it immediately generates an #NUM! error.
-            _cell.setT(STCellType.E);
-            _cell.setV(FormulaError.NUM.getString());
-        } else {
-            _cell.setT(STCellType.N);
-            _cell.setV(String.valueOf(value));
-        }
+    public void setCellValueImpl(double value) {
+        _cell.setT(STCellType.N);
+        _cell.setV(String.valueOf(value));
     }
 
     /**

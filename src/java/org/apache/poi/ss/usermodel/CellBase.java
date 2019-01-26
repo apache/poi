@@ -188,4 +188,29 @@ public abstract class CellBase implements Cell {
             tryToDeleteArrayFormula(null);
         }
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void setCellValue(double value) {
+        if(Double.isInfinite(value)) {
+            // Excel does not support positive/negative infinities,
+            // rather, it gives a #DIV/0! error in these cases.
+            setCellErrorValue(FormulaError.DIV0.getCode());
+        } else if (Double.isNaN(value)){
+            setCellErrorValue(FormulaError.NUM.getCode());
+        } else {
+            setCellValueImpl(value);
+        }
+    }
+
+    /**
+     * Implementation-specific way to set a numeric value.
+     * <code>value</code> is guaranteed to be a valid (non-NaN) double.
+     * The implementation is expected to adjust the cell type accordingly, so that after this call
+     * getCellType() or getCachedFormulaResultType() would return {@link CellType#NUMERIC}.
+     * @param value the new value to set
+     */
+    protected abstract void setCellValueImpl(double value);
 }
