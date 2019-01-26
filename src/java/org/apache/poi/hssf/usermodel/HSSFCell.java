@@ -118,6 +118,14 @@ public class HSSFCell extends CellBase {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected SpreadsheetVersion getSpreadsheetVersion() {
+        return SpreadsheetVersion.EXCEL97;
+    }
+
+    /**
      * Returns the HSSFSheet this cell belongs to
      *
      * @return the HSSFSheet that owns this cell
@@ -461,43 +469,18 @@ public class HSSFCell extends CellBase {
     }
 
     /**
-     * set a string value for the cell.
-     *
-     * @param value value to set the cell to.  For formulas we'll set the formula
-     * cached string result, for String cells we'll set its value. For other types we will
-     * change the cell to a string cell and set its value.
-     * If value is null then we will change the cell to a Blank cell.
+     * {@inheritDoc}
      */
-    public void setCellValue(String value) {
-        HSSFRichTextString str = value == null ? null :  new HSSFRichTextString(value);
-        setCellValue(str);
+    @Override
+    protected void setCellValueImpl(String value) {
+        setCellValueImpl(new HSSFRichTextString(value));
     }
 
     /**
-     * Set a string value for the cell.
-     *
-     * @param value  value to set the cell to.  For formulas we'll set the formula
-     * string, for String cells we'll set its value.  For other types we will
-     * change the cell to a string cell and set its value.
-     * If value is <code>null</code> then we will change the cell to a Blank cell.
+     * {@inheritDoc}
      */
-
-    public void setCellValue(RichTextString value)
-    {
-        int row=_record.getRow();
-        short col=_record.getColumn();
-        short styleIndex=_record.getXFIndex();
-        if (value == null)
-        {
-            notifyFormulaChanging();
-            setCellType(CellType.BLANK, false, row, col, styleIndex);
-            return;
-        }
-
-        if(value.length() > SpreadsheetVersion.EXCEL97.getMaxTextLength()){
-            throw new IllegalArgumentException("The maximum length of cell contents (text) is 32,767 characters");
-        }
-
+    @Override
+    protected void setCellValueImpl(RichTextString value) {
         if (_cellType == CellType.FORMULA) {
             // Set the 'pre-evaluated result' for the formula
             // note - formulas do not preserve text formatting.
@@ -514,6 +497,9 @@ public class HSSFCell extends CellBase {
         //  so handle things as a normal rich text cell
 
         if (_cellType != CellType.STRING) {
+            int row=_record.getRow();
+            short col=_record.getColumn();
+            short styleIndex=_record.getXFIndex();
             setCellType(CellType.STRING, false, row, col, styleIndex);
         }
         int index;
@@ -527,6 +513,9 @@ public class HSSFCell extends CellBase {
         _stringValue.setUnicodeString(_book.getWorkbook().getSSTString(index));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void setCellFormulaImpl(String formula) {
         assert formula != null;

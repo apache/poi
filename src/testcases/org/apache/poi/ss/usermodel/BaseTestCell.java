@@ -967,7 +967,7 @@ public abstract class BaseTestCell {
             cell.setCellValue(b.toString());
             fail("Expected exception");
         } catch (IllegalArgumentException e){
-            assertEquals("The maximum length of cell contents (text) is 32,767 characters", e.getMessage());
+            assertEquals("The maximum length of cell contents (text) is 32767 characters", e.getMessage());
         }
         wb.close();
     }

@@ -25,6 +25,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import javax.xml.namespace.QName;
 
@@ -45,7 +46,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
@@ -121,9 +121,10 @@ public class TestSXSSFCell extends BaseTestXCell {
     @Test(expected = IllegalArgumentException.class)
     public void setCellValue_withTooLongRichTextString_throwsIAE() {
         Cell cell = spy(new SXSSFCell(null, CellType.BLANK));
-        RichTextString string = spy(new XSSFRichTextString(""));
-        doReturn(SpreadsheetVersion.EXCEL2007.getMaxTextLength() + 1).when(string).length();
-        cell.setCellValue(string);
+        int length = SpreadsheetVersion.EXCEL2007.getMaxTextLength() + 1;
+        String string = new String(new byte[length], StandardCharsets.UTF_8).replace("\0", "x");
+        RichTextString richTextString = new XSSFRichTextString(string);
+        cell.setCellValue(richTextString);
     }
 
     @Test
