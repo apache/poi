@@ -1218,8 +1218,7 @@ public abstract class BaseTestBugzillaIssues {
                 value == null || value.length() == 0);
 
         cell = row.createCell(1);
-        // also verify that setting formulas to null works
-        cell.setCellType(CellType.FORMULA);
+        cell.setCellFormula("0");
         cell.setCellValue((String)null);
 
         wb.getCreationHelper().createFormulaEvaluator().evaluateAll();

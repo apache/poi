@@ -626,7 +626,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         // Otherwise should go
         sheet.getRow(1).getCell(0).setCellFormula("A1"); // stay
         sheet.getRow(2).getCell(0).setCellFormula(null); // go
-        sheet.getRow(3).getCell(0).setCellType(CellType.FORMULA); // stay
+        sheet.getRow(3).getCell(0).setCellFormula("14"); // stay
         XSSFTestDataSamples.writeOutAndReadBack(wb1).close();
 
         sheet.getRow(4).getCell(0).setCellType(CellType.STRING); // go

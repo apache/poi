@@ -217,7 +217,6 @@ public final class TestHSSFDataFormatter {
         { // formula cell
             row = sheet.createRow(7);
             HSSFCell cell = row.createCell(0);
-            cell.setCellType(CellType.FORMULA);
             cell.setCellFormula("SUM(12.25,12.25)/100");
             HSSFCellStyle cellStyle = wb.createCellStyle();
             cellStyle.setDataFormat(format.getFormat("##.00%;"));

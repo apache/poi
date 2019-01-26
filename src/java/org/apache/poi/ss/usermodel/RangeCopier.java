@@ -94,9 +94,9 @@ public abstract class RangeCopier {
                     destRow = destSheet.createRow(rowNo + deltaY);
                 
                 Cell newCell = destRow.getCell(columnIndex + deltaX);
-                if(newCell != null)
-                    newCell.setCellType(sourceCell.getCellType());
-                else newCell = destRow.createCell(columnIndex + deltaX, sourceCell.getCellType());
+                if(newCell == null) {
+                    newCell = destRow.createCell(columnIndex + deltaX);
+                }
 
                 cloneCellContent(sourceCell, newCell, null);
                 if(newCell.getCellType() == CellType.FORMULA)

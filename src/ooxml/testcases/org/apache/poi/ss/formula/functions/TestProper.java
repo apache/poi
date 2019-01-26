@@ -59,7 +59,6 @@ public final class TestProper {
     private void confirm(Workbook wb) {
         Sheet sheet = wb.createSheet("new sheet");
         cell11 = sheet.createRow(0).createCell(0);
-        cell11.setCellType(CellType.FORMULA);
 
         confirm("PROPER(\"hi there\")", "Hi There"); //simple case
         confirm("PROPER(\"what's up\")", "What'S Up"); //apostrophes are treated as word breaks

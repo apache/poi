@@ -187,4 +187,9 @@ public class TestSXSSFCell extends BaseTestXCell {
     @Ignore
     public void setCellFormula_isExceptionSafe_onBlankCell() {
     }
+
+    @Test
+    @Ignore
+    public void setCellType_FORMULA_onAnArrayFormulaCell_doesNothing() {
+    }
 }

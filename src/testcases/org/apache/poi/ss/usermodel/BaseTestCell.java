@@ -1358,6 +1358,38 @@ public abstract class BaseTestCell {
         assertTrue(cell.getBooleanCellValue());
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void setCellType_FORMULA_onANonFormulaCell_throwsIllegalArgumentException() {
+        Cell cell = getInstance();
+        cell.setCellType(CellType.FORMULA);
+    }
+
+    @Test
+    public void setCellType_FORMULA_onAFormulaCell_doesNothing() {
+        Cell cell = getInstance();
+        cell.setCellFormula("3");
+        cell.setCellValue("foo");
+
+        cell.setCellType(CellType.FORMULA);
+
+        assertEquals(CellType.FORMULA, cell.getCellType());
+        assertEquals(CellType.STRING, cell.getCachedFormulaResultType());
+        assertEquals("foo", cell.getStringCellValue());
+    }
+
+    @Test
+    public void setCellType_FORMULA_onAnArrayFormulaCell_doesNothing() {
+        Cell cell = getInstance();
+        cell.getSheet().setArrayFormula("3", CellRangeAddress.valueOf("A1:A2"));
+        cell.setCellValue("foo");
+
+        cell.setCellType(CellType.FORMULA);
+
+        assertEquals(CellType.FORMULA, cell.getCellType());
+        assertEquals(CellType.STRING, cell.getCachedFormulaResultType());
+        assertEquals("foo", cell.getStringCellValue());
+    }
+
     @Test
     public final void setBlank_delegatesTo_setCellType_BLANK() {
         Cell cell = mock(CellBase.class);
