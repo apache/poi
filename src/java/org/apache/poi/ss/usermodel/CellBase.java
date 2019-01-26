@@ -82,28 +82,45 @@ public abstract class CellBase implements Cell {
      */
     @Override
     public final void setCellFormula(String formula) throws FormulaParseException, IllegalStateException {
+        // todo validate formula here, before changing the cell?
+        tryToDeleteArrayFormulaIfSet();
+
         if (formula == null) {
             removeFormula();
             return;
         }
 
-        CellType previousValueType = getCellType() == CellType.FORMULA ? getCachedFormulaResultType() : getCellType();
-
-        tryToDeleteArrayFormulaIfSet();
-
-        setCellFormulaImpl(formula);
-
-        if (previousValueType == CellType.BLANK) {
+        // formula cells always have a value. If the cell is blank (either initially or after removing an
+        // array formula), set value to 0
+        if (getValueType() == CellType.BLANK) {
             setCellValue(0);
         }
+
+        setCellFormulaImpl(formula);
     }
 
     /**
-     * Implementation-specific setting the formula.
+     * Implementation-specific setting the formula. Formula is not null.
      * Shall not change the value.
      * @param formula
      */
     protected abstract void setCellFormulaImpl(String formula);
+
+    /**
+     * Get value type of this cell. Can return BLANK, NUMERIC, STRING, BOOLEAN or ERROR.
+     * For current implementations where type is strongly coupled with formula, is equivalent to
+     * <code>getCellType() == CellType.FORMULA ? getCachedFormulaResultType() : getCellType()</code>
+     *
+     * <p>This is meant as a temporary helper method until the time when value type is decoupled from the formula.</p>
+     * @return value type
+     */
+    protected final CellType getValueType() {
+        CellType type = getCellType();
+        if (type != CellType.FORMULA) {
+            return type;
+        }
+        return getCachedFormulaResultType();
+    }
 
     /**
      * {@inheritDoc}
