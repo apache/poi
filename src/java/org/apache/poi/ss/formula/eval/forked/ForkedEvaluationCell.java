@@ -91,7 +91,7 @@ final class ForkedEvaluationCell implements EvaluationCell {
 	}
 	public void copyValue(Cell destCell) {
 		switch (_cellType) {
-			case BLANK:   destCell.setCellType(CellType.BLANK);          return;
+			case BLANK:   destCell.setBlank();                           return;
 			case NUMERIC: destCell.setCellValue(_numberValue);           return;
 			case BOOLEAN: destCell.setCellValue(_booleanValue);          return;
 			case STRING:  destCell.setCellValue(_stringValue);           return;

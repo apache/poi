@@ -766,7 +766,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
             if (row != null) {
                 XSSFCell cell = row.getCell(cellRef.getCol());
                 if (cell != null) {
-                    cell.setCellType(CellType.BLANK);
+                    cell.setBlank();
                     cell.setCellStyle(null);
                 }
             }
