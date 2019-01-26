@@ -111,10 +111,16 @@ public interface Cell {
     CellType getCellType();
 
     /**
-     * Return the cell type.
+     * Return the cell type.  Tables in an array formula return
+     * {@link CellType#FORMULA} for all cells, even though the formula is only defined
+     * in the OOXML file for the top left cell of the array.
+     * <p>
+     * NOTE: POI does not support data table formulas.
+     * Cells in a data table appear to POI as plain cells typed from their cached value.
      *
      * @return the cell type
      * @since POI 3.15 beta 3
+     * @deprecated will be removed in 4.2
      * Will be renamed to <code>getCellType()</code> when we make the CellType enum transition in POI 4.0. See bug 59791.
      */
     @Deprecated

@@ -418,18 +418,6 @@ public class HSSFCell extends CellBase {
     {
         return _cellType;
     }
-    
-    /**
-     * get the cells type (numeric, formula or string)
-     * @since POI 3.15 beta 3
-     */
-    @Deprecated
-    @Removal(version = "4.2")
-    @Override
-    public CellType getCellTypeEnum()
-    {
-        return getCellType();
-    }
 
     /**
      * set a numeric value for the cell
