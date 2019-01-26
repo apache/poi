@@ -248,14 +248,6 @@ public class HSSFCell extends CellBase {
         return _record.getColumn() & 0xFFFF;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public CellAddress getAddress() {
-        return new CellAddress(this);
-    }
-    
     @Override
     protected void setCellTypeImpl(CellType cellType) {
         notifyFormulaChanging();

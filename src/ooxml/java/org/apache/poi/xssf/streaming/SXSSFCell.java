@@ -84,14 +84,6 @@ public class SXSSFCell extends CellBase {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public CellAddress getAddress() {
-        return new CellAddress(this);
-    }
-
-    /**
      * Returns the sheet this cell belongs to
      *
      * @return the sheet this cell belongs to
