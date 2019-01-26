@@ -24,6 +24,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -32,13 +35,11 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
-import java.util.function.Consumer;
 
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.Test;
@@ -1355,6 +1356,16 @@ public abstract class BaseTestCell {
         assertEquals(CellType.FORMULA, cell.getCellType());
         assertEquals(CellType.BOOLEAN, cell.getCachedFormulaResultType());
         assertTrue(cell.getBooleanCellValue());
+    }
+
+    @Test
+    public final void setBlank_delegatesTo_setCellType_BLANK() {
+        Cell cell = mock(CellBase.class);
+        doCallRealMethod().when(cell).setBlank();
+
+        cell.setBlank();
+
+        verify(cell).setCellType(CellType.BLANK);
     }
 
     private Cell getInstance() {

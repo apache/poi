@@ -944,7 +944,7 @@ public final class XSSFCell extends CellBase {
      * Blanks this cell. Blank cells have no formula or value but may have styling.
      * This method erases all the data previously associated with this cell.
      */
-    private void setBlank(){
+    private void setBlankPrivate(){
         CTCell blank = CTCell.Factory.newInstance();
         blank.setR(_cell.getR());
         if(_cell.isSetS()) {
@@ -1010,7 +1010,7 @@ public final class XSSFCell extends CellBase {
                 }
                 break;
             case BLANK:
-                setBlank();
+                setBlankPrivate();
                 break;
             case BOOLEAN:
                 String newVal = convertCellValueToBoolean() ? TRUE_AS_STRING : FALSE_AS_STRING;

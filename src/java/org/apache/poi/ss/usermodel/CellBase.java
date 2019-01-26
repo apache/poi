@@ -41,6 +41,14 @@ public abstract class CellBase implements Cell {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setBlank() {
+        setCellType(CellType.BLANK);
+    }
+
+    /**
      * Implementation-specific logic
      * @param cellType new cell type. Guaranteed non-null, not _NONE.
      */
