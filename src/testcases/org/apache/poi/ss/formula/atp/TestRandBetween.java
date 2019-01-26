@@ -119,7 +119,7 @@ public class TestRandBetween extends TestCase {
 	public void testRandBetweenTopBlank() {
 
 		bottomValueCell.setCellValue(-1);		
-		topValueCell.setCellType(CellType.BLANK);
+		topValueCell.setBlank();
 		formulaCell.setCellFormula("RANDBETWEEN($A$1,$B$1)");
 		evaluator.clearAllCachedResultValues();
 		evaluator.evaluateFormulaCell(formulaCell);
@@ -174,7 +174,7 @@ public class TestRandBetween extends TestCase {
 		assertEquals(CellType.ERROR, formulaCell.getCachedFormulaResultType());
 		assertEquals(ErrorEval.NUM_ERROR.getErrorCode(), formulaCell.getErrorCellValue());		
 		bottomValueCell.setCellValue(1);		
-		topValueCell.setCellType(CellType.BLANK);
+		topValueCell.setBlank();
 		formulaCell.setCellFormula("RANDBETWEEN($A$1,$B$1)");
 		evaluator.clearAllCachedResultValues();
 		evaluator.evaluateFormulaCell(formulaCell);

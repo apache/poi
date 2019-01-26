@@ -204,7 +204,7 @@ public final class TestSharedFormulaRecord extends TestCase {
 
         assertEquals("A$1*2", sheet.getRow(ROW_IX).getCell(1).getCellFormula());
         cell = sheet.getRow(ROW_IX).getCell(1);
-        cell.setCellType(CellType.BLANK);
+        cell.setBlank();
         assertEquals(3, countSharedFormulas(sheet));
 
         wb = HSSFTestDataSamples.writeOutAndReadBack(wb);

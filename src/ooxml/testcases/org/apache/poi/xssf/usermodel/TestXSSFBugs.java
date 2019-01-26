@@ -637,7 +637,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         validateCells(sheet);
         XSSFTestDataSamples.writeOutAndReadBack(wb1).close();
 
-        sheet.getRow(6).getCell(0).setCellType(CellType.BLANK); // go
+        sheet.getRow(6).getCell(0).setBlank(); // go
         XSSFTestDataSamples.writeOutAndReadBack(wb1).close();
 
         sheet.getRow(7).getCell(0).setCellValue((String) null); // go

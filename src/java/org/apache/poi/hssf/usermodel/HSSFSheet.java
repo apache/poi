@@ -2389,7 +2389,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         CellRange<HSSFCell> result = getCellRange(range);
         // clear all cells in the range
         for (Cell c : result) {
-            c.setCellType(CellType.BLANK);
+            c.setBlank();
         }
         return result;
     }

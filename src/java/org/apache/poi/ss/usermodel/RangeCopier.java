@@ -140,7 +140,7 @@ public abstract class RangeCopier {
                  destCell.setCellValue(srcCell.getNumericCellValue());   
                  break;   
              case BLANK:   
-                 destCell.setCellType(CellType.BLANK);   
+                 destCell.setBlank();
                  break;   
              case BOOLEAN:   
                  destCell.setCellValue(srcCell.getBooleanCellValue());   

@@ -154,7 +154,7 @@ public class TestSXSSFCell extends BaseTestXCell {
      */
     @Override
     @Ignore
-    public void setCellType_BLANK_removesArrayFormula_ifCellIsPartOfAnArrayFormulaGroupContainingOnlyThisCell() {
+    public void setBlank_removesArrayFormula_ifCellIsPartOfAnArrayFormulaGroupContainingOnlyThisCell() {
     }
 
     /**
@@ -164,7 +164,7 @@ public class TestSXSSFCell extends BaseTestXCell {
     @Override
     @Ignore
     @Test // <- annotation is necessary to override expected exception
-    public void setCellType_BLANK_throwsISE_ifCellIsPartOfAnArrayFormulaGroupContainingOtherCells() {
+    public void setBlank_throwsISE_ifCellIsPartOfAnArrayFormulaGroupContainingOtherCells() {
     }
 
     @Override

@@ -42,14 +42,12 @@ import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.ptg.ExpPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellBase;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.FormulaError;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.util.CellAddress;
@@ -492,7 +490,7 @@ public class HSSFCell extends CellBase {
     public void setCellValue(Date value)
     {
         if(value == null) {
-            setCellType(CellType.BLANK);
+            setBlank();
             return;
         }
 
@@ -517,7 +515,7 @@ public class HSSFCell extends CellBase {
     public void setCellValue(Calendar value)
     {
         if(value == null) {
-            setCellType(CellType.BLANK);
+            setBlank();
             return;
         }
 
@@ -1302,3 +1300,4 @@ public class HSSFCell extends CellBase {
         return styleIndex;
     }
 }
+

@@ -436,7 +436,7 @@ public final class TestHSSFCell extends BaseTestCell {
         Row row = sheet.createRow(0);
         Cell cell = row.createCell(0);
 
-        cell.setCellType(CellType.BLANK);
+        cell.setBlank();
         assertNull(null, cell.getDateCellValue());
         assertFalse(cell.getBooleanCellValue());
         assertEquals("", cell.toString());

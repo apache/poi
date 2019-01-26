@@ -431,7 +431,7 @@ public final class XSSFCell extends CellBase {
     @Override
     public void setCellValue(RichTextString str) {
         if(str == null || str.getString() == null){
-            setCellType(CellType.BLANK);
+            setBlank();
             return;
         }
 
@@ -830,7 +830,7 @@ public final class XSSFCell extends CellBase {
     @Override
     public void setCellValue(Date value) {
         if(value == null) {
-            setCellType(CellType.BLANK);
+            setBlank();
             return;
         }
 
@@ -857,7 +857,7 @@ public final class XSSFCell extends CellBase {
     @Override
     public void setCellValue(Calendar value) {
         if(value == null) {
-            setCellType(CellType.BLANK);
+            setBlank();
             return;
         }
 

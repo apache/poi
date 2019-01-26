@@ -224,7 +224,7 @@ public class SXSSFCell extends CellBase {
     @Override
     public void setCellValue(Date value) {
         if(value == null) {
-            setCellType(CellType.BLANK);
+            setBlank();
             return;
         }
 
@@ -251,7 +251,7 @@ public class SXSSFCell extends CellBase {
     @Override
     public void setCellValue(Calendar value) {
         if(value == null) {
-            setCellType(CellType.BLANK);
+            setBlank();
             return;
         }
 
@@ -283,7 +283,7 @@ public class SXSSFCell extends CellBase {
                 ((RichTextValue) _value).setValue(value);
             }
         } else {
-            setCellType(CellType.BLANK);
+            setBlank();
         }
     }
 
@@ -311,7 +311,7 @@ public class SXSSFCell extends CellBase {
                 ((PlainStringValue) _value).setValue(value);
             }
         } else {
-            setCellType(CellType.BLANK);
+            setBlank();
         }
     }
 

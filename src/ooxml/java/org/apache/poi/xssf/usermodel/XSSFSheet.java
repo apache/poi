@@ -3993,7 +3993,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
                 arrayFormulas.remove(range);
                 CellRange<XSSFCell> cr = getCellRange(range);
                 for (XSSFCell c : cr) {
-                    c.setCellType(CellType.BLANK);
+                    c.setBlank();
                 }
                 return cr;
             }

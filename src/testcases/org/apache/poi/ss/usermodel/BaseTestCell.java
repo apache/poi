@@ -642,7 +642,7 @@ public abstract class BaseTestCell {
     }
 
     /**
-     *  Make sure that cell.setCellType(CellType.BLANK) preserves the cell style
+     *  Make sure that cell.setBlank() preserves the cell style
      */
     @Test
     public void testSetBlank_bug47028() throws Exception {
@@ -651,7 +651,7 @@ public abstract class BaseTestCell {
         Cell cell = wb.createSheet("Sheet1").createRow(0).createCell(0);
         cell.setCellStyle(style);
         int i1 = cell.getCellStyle().getIndex();
-        cell.setCellType(CellType.BLANK);
+        cell.setBlank();
         int i2 = cell.getCellStyle().getIndex();
         assertEquals(i1, i2);
         wb.close();
@@ -1219,7 +1219,7 @@ public abstract class BaseTestCell {
 
 
     @Test
-    public void setCellType_BLANK_removesArrayFormula_ifCellIsPartOfAnArrayFormulaGroupContainingOnlyThisCell() {
+    public void setBlank_removesArrayFormula_ifCellIsPartOfAnArrayFormulaGroupContainingOnlyThisCell() {
         Cell cell = getInstance();
 
         cell.getSheet().setArrayFormula("1", CellRangeAddress.valueOf("A1"));
@@ -1227,18 +1227,18 @@ public abstract class BaseTestCell {
         assertTrue(cell.isPartOfArrayFormulaGroup());
         assertEquals("1", cell.getCellFormula());
 
-        cell.setCellType(CellType.BLANK);
+        cell.setBlank();
 
         assertEquals(CellType.BLANK, cell.getCellType());
         assertFalse(cell.isPartOfArrayFormulaGroup());
     }
 
     @Test(expected = IllegalStateException.class)
-    public void setCellType_BLANK_throwsISE_ifCellIsPartOfAnArrayFormulaGroupContainingOtherCells() {
+    public void setBlank_throwsISE_ifCellIsPartOfAnArrayFormulaGroupContainingOtherCells() {
         Cell cell = getInstance();
         cell.getSheet().setArrayFormula("1", CellRangeAddress.valueOf("A1:B1"));
         cell.setCellValue("foo");
-        cell.setCellType(CellType.BLANK);
+        cell.setBlank();
     }
 
     @Test(expected = IllegalStateException.class)
