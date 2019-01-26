@@ -636,14 +636,6 @@ public final class XSSFCell extends CellBase {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public CellAddress getAddress() {
-        return new CellAddress(this);
-    }
-
-    /**
      * Return the cell's style.
      *
      * @return the cell's style.

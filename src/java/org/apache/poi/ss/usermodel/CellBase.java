@@ -18,6 +18,7 @@
 package org.apache.poi.ss.usermodel;
 
 import org.apache.poi.ss.formula.FormulaParseException;
+import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 
@@ -55,6 +56,14 @@ public abstract class CellBase implements Cell {
     @Override
     public void setBlank() {
         setCellType(CellType.BLANK);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public CellAddress getAddress() {
+        return new CellAddress(this);
     }
 
     /**
