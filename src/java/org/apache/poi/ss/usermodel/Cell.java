@@ -145,6 +145,7 @@ public interface Cell {
      *     {@link CellType#BOOLEAN}, {@link CellType#ERROR}) depending
      * on the cached value of the formula
      * @since POI 3.15 beta 3
+     * @deprecated will be removed in 4.2
      * Will be renamed to <code>getCachedFormulaResultType()</code> when we make the CellType enum transition in POI 4.0. See bug 59791.
      */
     @Deprecated
@@ -152,9 +153,9 @@ public interface Cell {
     CellType getCachedFormulaResultTypeEnum();
 
     /**
-     * Set a numeric value for the cell
+     * Set a numeric value for the cell.
      *
-     * @param value  the numeric value to set this cell to.  For formulas we'll set the
+     * @param value the numeric value to set this cell to.  For formulas we'll set the
      *        precalculated value, for numerics we'll set its value. For other types we
      *        will change the cell to a numeric cell and set its value.
      */

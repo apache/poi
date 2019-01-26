@@ -50,7 +50,6 @@ import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.NumberToTextConverter;
@@ -420,41 +419,26 @@ public class HSSFCell extends CellBase {
     }
 
     /**
-     * set a numeric value for the cell
-     *
-     * @param value  the numeric value to set this cell to.  For formulas we'll set the
-     *        precalculated value, for numerics we'll set its value. For other types we
-     *        will change the cell to a numeric cell and set its value.
+     * {@inheritDoc}
      */
-    @SuppressWarnings("fallthrough")
     @Override
-    public void setCellValue(double value) {
-        if(Double.isInfinite(value)) {
-            // Excel does not support positive/negative infinities,
-            // rather, it gives a #DIV/0! error in these cases.
-            setCellErrorValue(FormulaError.DIV0.getCode());
-        } else if (Double.isNaN(value)){
-            // Excel does not support Not-a-Number (NaN),
-            // instead it immediately generates a #NUM! error.
-            setCellErrorValue(FormulaError.NUM.getCode());
-        } else {
-            int row=_record.getRow();
-            short col=_record.getColumn();
-            short styleIndex=_record.getXFIndex();
-
-            switch (_cellType) {
-                default:
-                    setCellType(CellType.NUMERIC, false, row, col, styleIndex);
-                    // fall through
-                case NUMERIC:
-                    (( NumberRecord ) _record).setValue(value);
-                    break;
-                case FORMULA:
-                    ((FormulaRecordAggregate)_record).setCachedDoubleResult(value);
-                    break;
-            }
+    @SuppressWarnings("fallthrough")
+    protected void setCellValueImpl(double value) {
+        switch (_cellType) {
+            default:
+                setCellType(CellType.NUMERIC,
+                        false,
+                        _record.getRow(),
+                        _record.getColumn(),
+                        _record.getXFIndex());
+                // fall through
+            case NUMERIC:
+                ((NumberRecord)_record).setValue(value);
+                break;
+            case FORMULA:
+                ((FormulaRecordAggregate)_record).setCachedDoubleResult(value);
+                break;
         }
-
     }
 
     /**
