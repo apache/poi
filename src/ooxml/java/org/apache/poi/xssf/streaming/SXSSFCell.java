@@ -171,54 +171,20 @@ public class SXSSFCell extends CellBase {
     }
 
     /**
-     * Converts the supplied date to its equivalent Excel numeric value and sets
-     * that into the cell.
-     * <p>
-     * <b>Note</b> - There is actually no 'DATE' cell type in Excel. In many
-     * cases (when entering date values), Excel automatically adjusts the
-     * <i>cell style</i> to some date format, creating the illusion that the cell
-     * data type is now something besides {@link CellType#NUMERIC}.  POI
-     * does not attempt to replicate this behaviour.  To make a numeric cell
-     * display as a date, use {@link #setCellStyle(CellStyle)} etc.
-     *
-     * @param value the numeric value to set this cell to.  For formulas we'll set the
-     *        precalculated value, for numerics we'll set its value. For other types we
-     *        will change the cell to a numerics cell and set its value.
+     * {@inheritDoc}
      */
     @Override
-    public void setCellValue(Date value) {
-        if(value == null) {
-            setBlank();
-            return;
-        }
-
+    protected void setCellValueImpl(Date value) {
         boolean date1904 = getSheet().getWorkbook().isDate1904();
         setCellValue(DateUtil.getExcelDate(value, date1904));
     }
 
+
     /**
-     * Set a date value for the cell. Excel treats dates as numeric so you will need to format the cell as
-     * a date.
-     * <p>
-     * This will set the cell value based on the Calendar's timezone. As Excel
-     * does not support timezones this means that both 20:00+03:00 and
-     * 20:00-03:00 will be reported as the same value (20:00) even that there
-     * are 6 hours difference between the two times. This difference can be
-     * preserved by using <code>setCellValue(value.getTime())</code> which will
-     * automatically shift the times to the default timezone.
-     * </p>
-     *
-     * @param value  the date value to set this cell to.  For formulas we'll set the
-     *        precalculated value, for numerics we'll set its value. For othertypes we
-     *        will change the cell to a numeric cell and set its value.
+     * {@inheritDoc}
      */
     @Override
-    public void setCellValue(Calendar value) {
-        if(value == null) {
-            setBlank();
-            return;
-        }
-
+    protected void setCellValueImpl(Calendar value) {
         boolean date1904 = getSheet().getWorkbook().isDate1904();
         setCellValue( DateUtil.getExcelDate(value, date1904 ));
     }

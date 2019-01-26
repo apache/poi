@@ -23,6 +23,9 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Removal;
 
+import java.util.Calendar;
+import java.util.Date;
+
 /**
  * Common implementation-independent logic shared by all implementations of {@link Cell}.
  * @author Vladislav "gallon" Galas gallon at apache dot org
@@ -213,4 +216,43 @@ public abstract class CellBase implements Cell {
      * @param value the new value to set
      */
     protected abstract void setCellValueImpl(double value);
+
+    @Override
+    public void setCellValue(Date value) {
+        if(value == null) {
+            setBlank();
+            return;
+        }
+        setCellValueImpl(value);
+    }
+
+    /**
+     * Implementation-specific way to set a date value.
+     * <code>value</code> is guaranteed to be non-null.
+     * The implementation is expected to adjust the cell type accordingly, so that after this call
+     * getCellType() or getCachedFormulaResultType() would return {@link CellType#NUMERIC}.
+     * @param value the new date to set
+     */
+    protected abstract void setCellValueImpl(Date value);
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final void setCellValue(Calendar value) {
+        if(value == null) {
+            setBlank();
+            return;
+        }
+        setCellValueImpl(value);
+    }
+
+    /**
+     * Implementation-specific way to set a calendar value.
+     * <code>value</code> is guaranteed to be non-null.
+     * The implementation is expected to adjust the cell type accordingly, so that after this call
+     * getCellType() or getCachedFormulaResultType() would return {@link CellType#NUMERIC}.
+     * @param value the new calendar value to set
+     */
+    protected abstract void setCellValueImpl(Calendar value);
 }
