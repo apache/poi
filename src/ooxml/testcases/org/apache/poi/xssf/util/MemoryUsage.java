@@ -40,6 +40,7 @@ import junit.framework.TestCase;
  *
  * @author Yegor Kozlov
  */
+@SuppressWarnings("InfiniteLoopStatement")
 public class MemoryUsage extends TestCase {
     private static final int NUM_COLUMNS = 255;
 
@@ -56,16 +57,16 @@ public class MemoryUsage extends TestCase {
      * @param wb        the workbook to write to
      * @param numCols   the number of columns in a row
      */
-    public static void mixedSpreadsheet(Workbook wb, int numCols){
-
-        System.out.println("Testing " + wb.getClass().getName());
+    public static void mixedSpreadsheet(Workbook wb, int numCols) {
+        System.out.println();
+        System.out.println("Testing " + wb.getClass().getName() + " mixed");
         printMemoryUsage("before");
         int i=0, cnt=0;
         try {
             Sheet sh = wb.createSheet();
-            for(i=0; ; i++){
+            for(i=0; ; i++) {
                 Row row = sh.createRow(i);
-                for(int j=0; j < numCols; j++){
+                for(int j=0; j < numCols; j++) {
                     Cell cell = row.createCell(j);
                     if(j % 2 == 0) {
                         cell.setCellValue(j);
@@ -75,7 +76,7 @@ public class MemoryUsage extends TestCase {
                     cnt++;
                 }
             }
-        } catch (OutOfMemoryError er){
+        } catch (OutOfMemoryError er) {
             System.out.println("Failed at row=" + i + ", objects : " + cnt);
         } catch (final Exception e) {
             System.out.println("Unable to reach an OutOfMemoryError");
@@ -95,22 +96,22 @@ public class MemoryUsage extends TestCase {
      * @param wb        the workbook to write to
      * @param numCols   the number of columns in a row
      */
-    public static void numberSpreadsheet(Workbook wb, int numCols){
-
-        System.out.println("Testing " + wb.getClass().getName());
+    public static void numberSpreadsheet(Workbook wb, int numCols) {
+        System.out.println();
+        System.out.println("Testing " + wb.getClass().getName() + " numbers");
         printMemoryUsage("before");
         int i=0, cnt=0;
         try {
             Sheet sh = wb.createSheet();
-            for(i=0; ; i++){
+            for(i=0; ; i++) {
                 Row row = sh.createRow(i);
-                for(int j=0; j < numCols; j++){
+                for(int j=0; j < numCols; j++) {
                     Cell cell = row.createCell(j);
                     cell.setCellValue(j);
                     cnt++;
                 }
             }
-        } catch (OutOfMemoryError er){
+        } catch (OutOfMemoryError er) {
             System.out.println("Failed at row=" + i + ", objects : " + cnt);
         } catch (final Exception e) {
             System.out.println("Unable to reach an OutOfMemoryError");
@@ -158,11 +159,14 @@ public class MemoryUsage extends TestCase {
      *
      * @see #testXmlAttached()
      */
-    public void testXmlDetached(){
+    public void testXmlDetached() {
+        System.out.println();
+        System.out.println("Testing detached");
+
         List<CTRow> rows = new ArrayList<>();
         int i = 0;
         try {
-            for(;;){
+            for(;;) {
                 //create a standalone CTRow bean
                 CTRow r = CTRow.Factory.newInstance();
                 r.setR(++i);
@@ -183,7 +187,9 @@ public class MemoryUsage extends TestCase {
      *
      * @see #testXmlAttached()
      */
-    public void testXmlAttached(){
+    public void testXmlAttached() {
+        System.out.println();
+        System.out.println("Testing attached");
         printMemoryUsage("before");
         List<CTRow> rows = new ArrayList<>();
         int i = 0;
@@ -191,7 +197,7 @@ public class MemoryUsage extends TestCase {
         CTWorksheet sh = CTWorksheet.Factory.newInstance();
         CTSheetData data = sh.addNewSheetData();
         try {
-            for(;;){
+            for(;;) {
                 //create CTRow attached to the parent object
                 CTRow r = data.addNewRow();
                 r.setR(++i);
@@ -206,20 +212,19 @@ public class MemoryUsage extends TestCase {
         printMemoryUsage("after");
     }
 
-    public void testMixedHSSF(){
+    public void testMixedHSSF() {
+        mixedSpreadsheet(new HSSFWorkbook(), NUM_COLUMNS);
+    }
+
+    public void testMixedXSSF() {
+        mixedSpreadsheet(new XSSFWorkbook(), NUM_COLUMNS);
+    }
+
+    public void testNumberHSSF() {
         numberSpreadsheet(new HSSFWorkbook(), NUM_COLUMNS);
     }
 
-    public void testMixedXSSF(){
+    public void testNumberXSSF() {
         numberSpreadsheet(new XSSFWorkbook(), NUM_COLUMNS);
     }
-
-    public void testNumberHSSF(){
-        numberSpreadsheet(new HSSFWorkbook(), NUM_COLUMNS);
-    }
-
-    public void testNumberXSSF(){
-        numberSpreadsheet(new XSSFWorkbook(), NUM_COLUMNS);
-    }
-
 }
