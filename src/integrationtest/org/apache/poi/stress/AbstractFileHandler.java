@@ -31,9 +31,11 @@ import java.util.Set;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.extractor.POIOLE2TextExtractor;
 import org.apache.poi.extractor.POITextExtractor;
+import org.apache.poi.hssf.extractor.EventBasedExcelExtractor;
 import org.apache.poi.ooxml.extractor.ExtractorFactory;
 import org.apache.poi.hpsf.extractor.HPSFPropertiesExtractor;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
+import org.apache.poi.ss.extractor.ExcelExtractor;
 import org.apache.poi.util.IOUtils;
 import org.apache.xmlbeans.XmlException;
 
@@ -83,6 +85,7 @@ public abstract class AbstractFileHandler implements FileHandler {
         long modified = file.lastModified();
         
         POITextExtractor extractor = null;
+        String fileAndParentName = file.getParentFile().getName() + "/" + file.getName();
         try {
             extractor = ExtractorFactory.createExtractor(file);
             assertNotNull("Should get a POITextExtractor but had none for file " + file, extractor);
@@ -95,7 +98,7 @@ public abstract class AbstractFileHandler implements FileHandler {
             assertNotNull(metadataExtractor.getText());
 
             assertFalse("Expected Extraction to fail for file " + file + " and handler " + this + ", but did not fail!",
-                    EXPECTED_EXTRACTOR_FAILURES.contains(file.getParentFile().getName() + "/" + file.getName()));
+                    EXPECTED_EXTRACTOR_FAILURES.contains(fileAndParentName));
 
             assertEquals("File should not be modified by extractor", length, file.length());
             assertEquals("File should not be modified by extractor", modified, file.lastModified());
@@ -111,8 +114,24 @@ public abstract class AbstractFileHandler implements FileHandler {
                     assertNotNull(text);
                 }
             }
+
+            // test again with including formulas and cell-comments as this caused some bugs
+            if(extractor instanceof ExcelExtractor &&
+                    // comment-extraction and formula extraction are not well supported in event based extraction
+                    !(extractor instanceof EventBasedExcelExtractor)) {
+                ((ExcelExtractor)extractor).setFormulasNotResults(true);
+
+                String text = extractor.getText();
+                assertNotNull(text);
+                // */
+
+                ((ExcelExtractor) extractor).setIncludeCellComments(true);
+
+                text = extractor.getText();
+                assertNotNull(text);
+            }
         } catch (IllegalArgumentException e) {
-            if(!EXPECTED_EXTRACTOR_FAILURES.contains(file.getParentFile().getName() + "/" + file.getName())) {
+            if(!EXPECTED_EXTRACTOR_FAILURES.contains(fileAndParentName)) {
                 throw e;
             }
         } catch (EncryptedDocumentException e) {

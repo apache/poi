@@ -81,8 +81,7 @@ final class FunctionDataBuilder {
 		FunctionMetadata[] jumbledArray =  new FunctionMetadata[_functionDataByName.size()];
 		_functionDataByName.values().toArray(jumbledArray);
 		FunctionMetadata[] fdIndexArray = new FunctionMetadata[_maxFunctionIndex+1];
-		for (int i = 0; i < jumbledArray.length; i++) {
-			FunctionMetadata fd = jumbledArray[i];
+		for (FunctionMetadata fd : jumbledArray) {
 			fdIndexArray[fd.getIndex()] = fd;
 		}
 

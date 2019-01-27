@@ -31,6 +31,7 @@ public final class FunctionMetadata {
 	 * to make that file more version neutral.
 	 * @see org.apache.poi.ss.formula.FormulaParser#validateNumArgs(int, FunctionMetadata)
 	 */
+	@SuppressWarnings("JavadocReference")
 	private static final short FUNCTION_MAX_PARAMS = 30;
 
 	private final int _index;
@@ -49,27 +50,35 @@ public final class FunctionMetadata {
 		_returnClassCode = returnClassCode;
 		_parameterClassCodes = (parameterClassCodes == null) ? null : parameterClassCodes.clone();
 	}
+
 	public int getIndex() {
 		return _index;
 	}
+
 	public String getName() {
 		return _name;
 	}
+
 	public int getMinParams() {
 		return _minParams;
 	}
+
 	public int getMaxParams() {
 		return _maxParams;
 	}
+
 	public boolean hasFixedArgsLength() {
 		return _minParams == _maxParams;
 	}
+
 	public byte getReturnClassCode() {
 		return _returnClassCode;
 	}
+
 	public byte[] getParameterClassCodes() {
 		return _parameterClassCodes.clone();
 	}
+
 	/**
 	 * Some varags functions (like VLOOKUP) have a specific limit to the number of arguments that 
 	 * can be passed.  Other functions (like SUM) don't have such a limit.  For those functions,
@@ -80,11 +89,8 @@ public final class FunctionMetadata {
 	public boolean hasUnlimitedVarags() {
 		return FUNCTION_MAX_PARAMS == _maxParams;
 	}
+
 	public String toString() {
-		StringBuffer sb = new StringBuffer(64);
-		sb.append(getClass().getName()).append(" [");
-		sb.append(_index).append(" ").append(_name);
-		sb.append("]");
-		return sb.toString();
+		return getClass().getName() + " [" + _index + " " + _name + "]";
 	}
 }

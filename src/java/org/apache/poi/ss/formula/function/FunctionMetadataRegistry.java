@@ -37,6 +37,7 @@ public final class FunctionMetadataRegistry {
 	public static final short FUNCTION_INDEX_EXTERNAL = 255;
 
 	private static FunctionMetadataRegistry _instance;
+	private static FunctionMetadataRegistry _instanceCetab;
 
 	private final FunctionMetadata[] _functionDataByIndex;
 	private final Map<String, FunctionMetadata> _functionDataByName;
@@ -46,6 +47,13 @@ public final class FunctionMetadataRegistry {
 			_instance = FunctionMetadataReader.createRegistry();
 		}
 		return _instance;
+	}
+
+	private static FunctionMetadataRegistry getInstanceCetab() {
+		if (_instanceCetab == null) {
+			_instanceCetab = FunctionMetadataReader.createRegistryCetab();
+		}
+		return _instanceCetab;
 	}
 
 	/* package */ FunctionMetadataRegistry(FunctionMetadata[] functionDataByIndex, Map<String, FunctionMetadata> functionDataByName) {
@@ -62,6 +70,10 @@ public final class FunctionMetadataRegistry {
 		return getInstance().getFunctionByIndexInternal(index);
 	}
 
+	public static FunctionMetadata getCetabFunctionByIndex(int index) {
+		return getInstanceCetab().getFunctionByIndexInternal(index);
+	}
+
 	private FunctionMetadata getFunctionByIndexInternal(int index) {
 		return _functionDataByIndex[index];
 	}
@@ -74,7 +86,11 @@ public final class FunctionMetadataRegistry {
 	public static short lookupIndexByName(String name) {
 		FunctionMetadata fd = getInstance().getFunctionByNameInternal(name);
 		if (fd == null) {
-			return -1;
+			// also try the cetab functions
+			fd = getInstanceCetab().getFunctionByNameInternal(name);
+			if (fd == null) {
+				return -1;
+			}
 		}
 		return (short) fd.getIndex();
 	}
@@ -83,8 +99,12 @@ public final class FunctionMetadataRegistry {
 		return _functionDataByName.get(name);
 	}
 
-
 	public static FunctionMetadata getFunctionByName(String name) {
-		return getInstance().getFunctionByNameInternal(name);
+		FunctionMetadata fm = getInstance().getFunctionByNameInternal(name);
+		if(fm == null) {
+			return getInstanceCetab().getFunctionByNameInternal(name);
+		}
+
+		return fm;
 	}
 }

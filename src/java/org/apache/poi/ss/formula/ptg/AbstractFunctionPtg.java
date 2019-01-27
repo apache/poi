@@ -123,13 +123,22 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
         return ix >= 0;
     }
 
-    protected final String lookupName(short index) {
+    protected String lookupName(short index) {
+        return lookupName(index, false);
+    }
+
+    protected final String lookupName(short index, boolean isCetab) {
         if(index == FunctionMetadataRegistry.FUNCTION_INDEX_EXTERNAL) {
             return "#external#";
         }
-        FunctionMetadata fm = FunctionMetadataRegistry.getFunctionByIndex(index);
+        final FunctionMetadata fm;
+        if(isCetab) {
+            fm = FunctionMetadataRegistry.getCetabFunctionByIndex(index);
+        } else {
+            fm = FunctionMetadataRegistry.getFunctionByIndex(index);
+        }
         if(fm == null) {
-            throw new RuntimeException("bad function index (" + index + ")");
+            throw new RuntimeException("bad function index (" + index + ", " + isCetab + ")");
         }
         return fm.getName();
     }
