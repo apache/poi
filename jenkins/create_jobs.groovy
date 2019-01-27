@@ -608,7 +608,7 @@ where javac.exe
 echo .
 javac -version
 echo .
-echo ^<?xml version=^"1.0^"?^>^<project name=^"POI Build^" default=^"test^"^>^<target name=^"test^"^>^<echo^>Using Ant: ${ant.version} from ${ant.home}^</echo^>^</target^>^</project^> > build.xml
+echo ^<?xml version=^"1.0^"?^>^<project name=^"POI Build^" default=^"test^"^>^<target name=^"test^"^>^<echo^>Using Ant: ${ant.version} from ${ant.home}, ant detected Java ${ant.java.version} (may be different than actual Java sometimes...), using Java: ${java.version}/${java.runtime.version}/${java.vm.version}/${java.vm.name} from ${java.vm.vendor} on ${os.name}: ${os.version}^</echo^>^</target^>^</project^> > build.xml
 ''')
                     }
                     ant {
