@@ -33,7 +33,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -923,7 +922,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      * Problems with extracting check boxes from
      * HSSFObjectData
      */
-    @Test(expected = FileNotFoundException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void bug44840() throws Exception {
         HSSFWorkbook wb = openSample("WithCheckBoxes.xls");
 

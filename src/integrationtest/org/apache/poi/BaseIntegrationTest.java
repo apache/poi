@@ -51,30 +51,33 @@ public class BaseIntegrationTest {
 
         File inputFile = new File(rootDir, file);
         try {
-            handleFile(inputFile);
+            try {
+                handleFile(inputFile);
+            } catch (IllegalArgumentException e) {
+                handleWrongFileExtension(inputFile, e);
+                return;
+            }
         } catch (OfficeXmlFileException e) {
         	// check if the file-extension is wrong
         	if(!e.getMessage().contains("data appears to be in the Office 2007")) {
-        		throw e;
+				// use XWPF instead of HWPF and XSSF instead of HSSF as the file seems to have the wrong extension
+				handleWrongOLE2XMLExtension(inputFile, e);
+				return;
         	}
 
-        	// use XWPF instead of HWPF and XSSF instead of HSSF as the file seems to have the wrong extension
-			handleWrongExtension(inputFile, e);
+			throw e;
         } catch (OldFileFormatException e) {
         	if (e.getClass().equals(OldFileFormatException.class)) {
 				// Not even text extraction is supported for these: handler.handleExtracting(inputFile);
-				//noinspection ConstantConditions
 				Assume.assumeFalse("File " + file + " excluded because it is unsupported old Excel format", true);
 			}
 			// otherwise try at least to perform extracting tests on these old files
         } catch (EncryptedDocumentException e) {
         	// Do not try to read encrypted files
-			//noinspection ConstantConditions
 			Assume.assumeFalse("File " + file + " excluded because it is password-encrypted", true);
         } catch (ZipException e) {
 			// some files are corrupted
-			if (e.getMessage().equals("unexpected EOF")) {
-				//noinspection ConstantConditions
+			if (e.getMessage().equals("unexpected EOF") || e.getMessage().equals("Truncated ZIP file")) {
 				Assume.assumeFalse("File " + file + " excluded because the Zip file is incomplete", true);
 			}
 
@@ -82,37 +85,58 @@ public class BaseIntegrationTest {
 		} catch (IOException e) {
 			// sometimes binary format has XML-format-extension...
 			if(e.getMessage().contains("rong file format or file extension for OO XML file")) {
-				handleWrongExtension(inputFile, e);
-			} else {
-				throw e;
+				handleWrongOLE2XMLExtension(inputFile, e);
+				return;
 			}
+
+			throw e;
         } catch (IllegalArgumentException e) {
         	// ignore errors for documents with incorrect extension
         	String message = e.getMessage();
 			if(message != null && (message.equals("The document is really a RTF file") ||
         			message.equals("The document is really a PDF file") ||
 					message.equals("The document is really a HTML file"))) {
-				//noinspection ConstantConditions
-				Assume.assumeFalse("File " + file + " excluded because it is actually a PDF/RTF file", true);
+				Assume.assumeFalse("File " + file + " excluded because it is actually a PDF/RTF/HTML file", true);
 			}
 
-			if(e.getMessage().equals("The document is really a OOXML file")) {
-				handleWrongExtension(inputFile, e);
-			} else {
-				throw e;
+			if(message != null && message.equals("The document is really a OOXML file")) {
+				handleWrongOLE2XMLExtension(inputFile, e);
+				return;
 			}
+
+			throw e;
         }
 
         try {
         	handler.handleExtracting(inputFile);
 		} catch (EncryptedDocumentException e) {
 			// Do not try to read encrypted files
-			//noinspection ConstantConditions
 			Assume.assumeFalse("File " + file + " excluded because it is password-encrypted", true);
 		}
 	}
 
-	void handleWrongExtension(File inputFile, Exception e) throws Exception {
+    private void handleWrongFileExtension(File inputFile, IllegalArgumentException e) throws Exception {
+        // we sometimes have wrong extensions, so for some exceptions we try to handle it
+        // with the correct FileHandler instead
+        String message = e.getMessage();
+        if(message != null && (message.equals("The document is really a XLS file"))) {
+            handler = TestAllFiles.HANDLERS.get(".xls");
+            handleFile(inputFile);
+        } else if(message != null && (message.equals("The document is really a PPT file"))) {
+            handler = TestAllFiles.HANDLERS.get(".ppt");
+            handleFile(inputFile);
+        } else if(message != null && (message.equals("The document is really a DOC file"))) {
+            handler = TestAllFiles.HANDLERS.get(".doc");
+            handleFile(inputFile);
+        } else if(message != null && (message.equals("The document is really a VSD file"))) {
+            handler = TestAllFiles.HANDLERS.get(".vsd");
+            handleFile(inputFile);
+        }
+
+        throw e;
+    }
+
+    void handleWrongOLE2XMLExtension(File inputFile, Exception e) throws Exception {
 		// use XWPF instead of HWPF and XSSF instead of HSSF as the file seems to have the wrong extension
 		if (handler instanceof HWPFFileHandler) {
             handler = TestAllFiles.HANDLERS.get(".docx");

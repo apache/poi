@@ -138,7 +138,7 @@ public class OldExcelExtractor implements Closeable {
         DocumentNode book;
         try {
             book = (DocumentNode)directory.getEntry(OLD_WORKBOOK_DIR_ENTRY_NAME);
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException | IllegalArgumentException e) {
             // some files have "Workbook" instead
             book = (DocumentNode)directory.getEntry(WORKBOOK_DIR_ENTRY_NAMES[0]);
         }

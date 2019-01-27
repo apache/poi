@@ -266,21 +266,20 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         }
 
         // check for an encrypted .xlsx file - they get OLE2 wrapped
-        try {
-        	directory.getEntry(Decryptor.DEFAULT_POIFS_ENTRY);
+        if(directory.hasEntry(Decryptor.DEFAULT_POIFS_ENTRY)) {
         	throw new EncryptedDocumentException("The supplied spreadsheet seems to be an Encrypted .xlsx file. " +
         			"It must be decrypted before use by XSSF, it cannot be used by HSSF");
-        } catch (FileNotFoundException e) {
-            // fall through
         }
 
         // check for previous version of file format
-        try {
-            directory.getEntry(OLD_WORKBOOK_DIR_ENTRY_NAME);
+        if(directory.hasEntry(OLD_WORKBOOK_DIR_ENTRY_NAME)) {
             throw new OldExcelFormatException("The supplied spreadsheet seems to be Excel 5.0/7.0 (BIFF5) format. "
                     + "POI only supports BIFF8 format (from Excel versions 97/2000/XP/2003)");
-        } catch (FileNotFoundException e) {
-            // fall through
+        }
+
+        // throw more useful exceptions for known wrong file-extensions
+        if(directory.hasEntry("WordDocument")) {
+            throw new IllegalArgumentException("The document is really a DOC file");
         }
 
         throw new IllegalArgumentException("The supplied POIFSFileSystem does not contain a BIFF8 'Workbook' entry. "
