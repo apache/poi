@@ -23,13 +23,13 @@ import static org.junit.Assert.assertNotNull;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hpsf.CustomProperties;
@@ -59,19 +59,18 @@ public class TestReadAllFiles {
     
     @Parameters(name="{index}: {0} using {1}")
     public static Iterable<Object[]> files() {
-        final List<Object[]> files = new ArrayList<>();
-        
-        _samples.getFile("").listFiles(f -> {
-            if (f.getName().startsWith("Test")) {
-                files.add(new Object[]{ f });
-            }
-            return false;
-        });
-        
-        return files;
+        File hpsfTestDir = _samples.getFile("");
+
+        File[] files = hpsfTestDir.listFiles(f -> true);
+        Objects.requireNonNull(files, "Could not find directory " + hpsfTestDir.getAbsolutePath());
+
+        // convert to list of object-arrays for @Parameterized
+        return Arrays.stream(files).
+                map(file1 -> new Object[] {file1}).
+                collect(Collectors.toList());
     }
 
-    @Parameter(value=0)
+    @Parameter()
     public File file;
 
     /**
@@ -158,9 +157,11 @@ public class TestReadAllFiles {
              */
             if (dir.hasEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME)) {
                 final DocumentSummaryInformation dsi = TestWriteWellKnown.getDocumentSummaryInformation(poifs);
+                assertNotNull(dsi);
 
                 /* Execute the get... methods. */
                 dsi.getByteCount();
+                //noinspection ResultOfMethodCallIgnored
                 dsi.getByteOrder();
                 dsi.getCategory();
                 dsi.getCompany();
