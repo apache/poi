@@ -34,7 +34,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LocaleUtil;
-import org.junit.After;
 import org.junit.Test;
 
 /**
@@ -130,50 +129,42 @@ public final class TestExcelExtractor {
     public void testEventExtractor() throws Exception {
 		// First up, a simple file with string
 		//  based formulas in it
-		EventBasedExcelExtractor extractor1 = null;
-		try {
-	        extractor1 = new EventBasedExcelExtractor(
-	                new POIFSFileSystem(
-	                        HSSFTestDataSamples.openSampleFileStream("SimpleWithFormula.xls")
-	                )
-	        );
-    		extractor1.setIncludeSheetNames(true);
-        
-    		String text = extractor1.getText();
-    		assertEquals("Sheet1\nreplaceme\nreplaceme\nreplacemereplaceme\nSheet2\nSheet3\n", text);
-    
-    		extractor1.setIncludeSheetNames(false);
-    		extractor1.setFormulasNotResults(true);
-    
-    		text = extractor1.getText();
-    		assertEquals("replaceme\nreplaceme\nCONCATENATE(A1,A2)\n", text);
-		} finally {
-		    if (extractor1 != null) extractor1.close();
+		try (EventBasedExcelExtractor extractor1 = new EventBasedExcelExtractor(
+				new POIFSFileSystem(
+						HSSFTestDataSamples.openSampleFileStream("SimpleWithFormula.xls")
+				)
+		)) {
+			extractor1.setIncludeSheetNames(true);
+
+			String text = extractor1.getText();
+			assertEquals("Sheet1\nreplaceme\nreplaceme\nreplacemereplaceme\nSheet2\nSheet3\n", text);
+
+			extractor1.setIncludeSheetNames(false);
+			extractor1.setFormulasNotResults(true);
+
+			text = extractor1.getText();
+			assertEquals("replaceme\nreplaceme\nCONCATENATE(A1,A2)\n", text);
 		}
 
 		// Now, a slightly longer file with numeric formulas
-		EventBasedExcelExtractor extractor2 = null;
-		try {
-		    extractor2 = new EventBasedExcelExtractor(
-	                new POIFSFileSystem(
-	                        HSSFTestDataSamples.openSampleFileStream("sumifformula.xls")
-	                )
-	        );		    
-		    
-    		extractor2.setIncludeSheetNames(false);
-    		extractor2.setFormulasNotResults(true);
-    
-    		String text = extractor2.getText();
-    		assertEquals(
-    				"1000\t1\tSUMIF(A1:A5,\">4000\",B1:B5)\n" +
-    				"2000\t2\n" +
-    				"3000\t3\n" +
-    				"4000\t4\n" +
-    				"5000\t5\n",
-    				text
-    		);
-		} finally {
-		    if (extractor2 != null) extractor2.close();
+		try (EventBasedExcelExtractor extractor2 = new EventBasedExcelExtractor(
+				new POIFSFileSystem(
+						HSSFTestDataSamples.openSampleFileStream("sumifformula.xls")
+				)
+		)) {
+
+			extractor2.setIncludeSheetNames(false);
+			extractor2.setFormulasNotResults(true);
+
+			String text = extractor2.getText();
+			assertEquals(
+					"1000\t1\tSUMIF(A1:A5,\">4000\",B1:B5)\n" +
+							"2000\t2\n" +
+							"3000\t3\n" +
+							"4000\t4\n" +
+							"5000\t5\n",
+					text
+			);
 		}
 	}
 
@@ -370,6 +361,27 @@ public final class TestExcelExtractor {
 		try (ExcelExtractor extractor = createExtractor("61045_govdocs1_626534.xls")) {
 			String txt = extractor.getText();
 			assertContains(txt, "NONBUSINESS");
+		}
+	}
+
+	@Test
+	public void test60405a() throws IOException {
+		//bug 61045. File is govdocs1 626534
+		try (ExcelExtractor extractor = createExtractor("60405.xls")) {
+			String txt = extractor.getText();
+			assertContains(txt, "Macro1");
+			assertContains(txt, "Macro2");
+		}
+	}
+
+	@Test
+	public void test60405b() throws IOException {
+		//bug 61045. File is govdocs1 626534
+		try (ExcelExtractor extractor = createExtractor("60405.xls")) {
+			extractor.setFormulasNotResults(true);
+			String txt = extractor.getText();
+			assertContains(txt, "Macro1");
+			assertContains(txt, "Macro2");
 		}
 	}
 }

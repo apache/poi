@@ -41,6 +41,7 @@ final class FunctionMetadataReader {
 	private static final int MAX_RECORD_LENGTH = 100_000;
 
 	private static final String METADATA_FILE_NAME = "functionMetadata.txt";
+	private static final String METADATA_FILE_NAME_CETAB = "functionMetadataCetab.txt";
 
 	/** plain ASCII text metadata file uses three dots for ellipsis */
 	private static final String ELLIPSIS = "...";
@@ -52,51 +53,56 @@ final class FunctionMetadataReader {
 	private static final String[] DIGIT_ENDING_FUNCTION_NAMES = {
 		// Digits at the end of a function might be due to a left-over footnote marker.
 		// except in these cases
-		"LOG10", "ATAN2", "DAYS360", "SUMXMY2", "SUMX2MY2", "SUMX2PY2",
+		"LOG10", "ATAN2", "DAYS360", "SUMXMY2", "SUMX2MY2", "SUMX2PY2", "A1.R1C1",
 	};
 	private static final Set<String> DIGIT_ENDING_FUNCTION_NAMES_SET = new HashSet<>(Arrays.asList(DIGIT_ENDING_FUNCTION_NAMES));
 
 	public static FunctionMetadataRegistry createRegistry() {
-	    try {
-    		InputStream is = FunctionMetadataReader.class.getResourceAsStream(METADATA_FILE_NAME);
-    		if (is == null) {
-    			throw new RuntimeException("resource '" + METADATA_FILE_NAME + "' not found");
-    		}
-    
-    		try {
-        		try(BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
-        		    FunctionDataBuilder fdb = new FunctionDataBuilder(400);
-        
-        			while (true) {
-        				String line = br.readLine();
-        				if (line == null) {
-        					break;
-        				}
-        				if (line.length() < 1 || line.charAt(0) == '#') {
-        					continue;
-        				}
-        				String trimLine = line.trim();
-        				if (trimLine.length() < 1) {
-        					continue;
-        				}
-        				processLine(fdb, line);
-        			}
+		FunctionDataBuilder fdb = new FunctionDataBuilder(800);
+		readResourceFile(fdb, METADATA_FILE_NAME);
+		return fdb.build();
+	}
 
-        			return fdb.build();
-        		}
-    		} finally {
-    		    is.close();
-    		}
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-	    } 
+	public static FunctionMetadataRegistry createRegistryCetab() {
+		FunctionDataBuilder fdb = new FunctionDataBuilder(800);
+		readResourceFile(fdb, METADATA_FILE_NAME_CETAB);
+		return fdb.build();
+	}
+
+	private static void readResourceFile(FunctionDataBuilder fdb, String resourceFile) {
+		try (InputStream is = FunctionMetadataReader.class.getResourceAsStream(resourceFile)) {
+			if (is == null) {
+				throw new RuntimeException("resource '" + resourceFile + "' not found");
+			}
+
+			try(BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+
+				while (true) {
+					String line = br.readLine();
+					if (line == null) {
+						break;
+					}
+					if (line.length() < 1 || line.charAt(0) == '#') {
+						continue;
+					}
+					String trimLine = line.trim();
+					if (trimLine.length() < 1) {
+						continue;
+					}
+					processLine(fdb, line);
+				}
+			}
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private static void processLine(FunctionDataBuilder fdb, String line) {
 
 		String[] parts = TAB_DELIM_PATTERN.split(line, -2);
 		if(parts.length != 8) {
-			throw new RuntimeException("Bad line format '" + line + "' - expected 8 data fields");
+			throw new RuntimeException("Bad line format '" + line + "' - expected 8 data fields delimited by tab, " +
+					"but had " + parts.length + ": " + Arrays.toString(parts));
 		}
 		int functionIndex = parseInt(parts[0]);
 		String functionName = parts[1];
