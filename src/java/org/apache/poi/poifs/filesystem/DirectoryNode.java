@@ -328,6 +328,15 @@ public class DirectoryNode
             rval = _byname.get(name);
         }
         if (rval == null) {
+            // throw more useful exceptions for known wrong file-extensions
+            if(_byname.containsKey("Workbook")) {
+                throw new IllegalArgumentException("The document is really a XLS file");
+            } else if(_byname.containsKey("PowerPoint Document")) {
+                throw new IllegalArgumentException("The document is really a PPT file");
+            } else if(_byname.containsKey("VisioDocument")) {
+                throw new IllegalArgumentException("The document is really a VSD file");
+            }
+
             // either a null name was given, or there is no such name
             throw new FileNotFoundException("no such entry: \"" + name
                     + "\", had: " + _byname.keySet());
