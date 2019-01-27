@@ -564,14 +564,12 @@ Unfortunately we often see builds break because of changes/new machines...''')
                 'IBM 1.8 64-bit (on Ubuntu only)',
 
                 'JDK 10 (latest)',
-                'JDK 10 b46 (Windows Only)',
-                'OpenJDK 10.0.2 (on Ubuntu only)',
 
                 'JDK 11 (latest)',
-                'JDK 11 b23 (early access build) (Windows Only)',
 
                 'JDK 12 (latest)',
-                'OpenJDK 12 b18 (early access build)'
+
+                'JDK 13 (latest)'
         )
         elasticAxis {
             name('Nodes')
