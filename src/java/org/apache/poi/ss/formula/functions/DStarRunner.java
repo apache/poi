@@ -164,6 +164,7 @@ public final class DStarRunner implements Function3Arg {
 
     /**
      * For a given database returns the column number for a column heading.
+     * Comparison is case-insensitive.
      *
      * @param db Database.
      * @param name Column heading.
@@ -183,7 +184,7 @@ public final class DStarRunner implements Function3Arg {
                 continue;
             }
             String columnName = OperandResolver.coerceValueToString(columnNameValueEval);
-            if(name.equals(columnName)) {
+            if(name.equalsIgnoreCase(columnName)) {
                 resultColumn = column;
                 break;
             }
