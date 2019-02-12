@@ -144,7 +144,7 @@ public final class ZipPackage extends OPCPackage {
             if (access == PackageAccess.WRITE) {
                 throw new InvalidOperationException("Can't open the specified file: '" + file + "'", e);
             }
-            if ("java.util.zip.ZipException: archive is not a ZIP archive".equals(e.getMessage())) {
+            if ("archive is not a ZIP archive".equals(e.getMessage())) {
                 throw new NotOfficeXmlFileException("archive is not a ZIP archive", e);
             }
             LOG.log(POILogger.ERROR, "Error in zip file "+file+" - falling back to stream processing (i.e. ignoring zip central directory)");
@@ -424,14 +424,18 @@ public final class ZipPackage extends OPCPackage {
 		File tempFile = TempFile.createTempFile(tempFileName, ".tmp");
 
 		// Save the final package to a temporary file
+        boolean success = false;
 		try {
 			save(tempFile);
+            success = true;
 		} finally {
             // Close the current zip file, so we can overwrite it on all platforms
             IOUtils.closeQuietly(this.zipArchive);
 			try {
-				// Copy the new file over the old one
-				FileHelper.copyFile(tempFile, targetFile);
+				// Copy the new file over the old one if save() succeed
+                if(success) {
+				    FileHelper.copyFile(tempFile, targetFile);
+                }
 			} finally {
 				// Either the save operation succeed or not, we delete the temporary file
 				if (!tempFile.delete()) {
