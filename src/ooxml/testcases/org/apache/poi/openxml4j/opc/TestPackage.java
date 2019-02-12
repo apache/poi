@@ -17,6 +17,8 @@
 
 package org.apache.poi.openxml4j.opc;
 
+import com.google.common.hash.Hashing;
+import com.google.common.io.Files;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipFile;
@@ -84,6 +86,7 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.function.BiConsumer;
 import java.util.regex.Pattern;
+import java.util.zip.ZipException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -1184,5 +1187,40 @@ public final class TestPackage {
 					.appendText(" and a message ")
 					.appendValue(expectedMessage);
 		}
+	}
+
+	@Test
+	public void testBug63029() throws Exception {
+		File testFile = OpenXML4JTestDataSamples.getSampleFile("sample.docx");
+		File tmpFile = OpenXML4JTestDataSamples.getOutputFile("Bug63029.docx");
+		Files.copy(testFile, tmpFile);
+
+		String md5Before = Files.hash(tmpFile, Hashing.md5()).toString();
+
+		RuntimeException ex = null;
+		try(OPCPackage pkg = OPCPackage.open(tmpFile, PackageAccess.READ_WRITE))
+		{
+			// add a marshaller that will throw an exception on save
+			pkg.addMarshaller("poi/junit", (part, out) -> {
+				throw new RuntimeException("Bugzilla 63029");
+			});
+			pkg.createPart(PackagingURIHelper.createPartName("/poi/test.xml"), "poi/junit");
+		} catch (RuntimeException e){
+			ex = e;
+		}
+		// verify there was an exception while closing the file
+		assertEquals("Fail to save: an error occurs while saving the package : Bugzilla 63029", ex.getMessage());
+
+		// assert that md5 after closing is the same, i.e. the source is left intact
+		String md5After = Files.hash(tmpFile, Hashing.md5()).toString();
+		assertEquals(md5Before, md5After);
+
+		// try to read the source file once again
+		try ( OPCPackage zip = OPCPackage.open(tmpFile, PackageAccess.READ_WRITE)){
+			// the source is still a valid zip archive.
+			// prior to the fix this used to throw NotOfficeXmlFileException("archive is not a ZIP archive")
+
+		}
+
 	}
 }
