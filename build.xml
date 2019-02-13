@@ -409,6 +409,7 @@ under the License.
         <path refid="main.classpath"/>
         <pathelement location="${main.output.dir}"/>
         <pathelement location="${ooxml.security.jar}"/>
+        <pathelement location="${ooxml.test.guava.jar}"/>
         <!-- classes are omitted on test cases outside the xml-dsign area to avoid classpath poisioning -->
         <!--path refid="ooxml.xmlsec.classpath"/-->
         <!-- Used only for ExtractorFactory, see #57963 -->
