@@ -144,7 +144,9 @@ public final class ZipPackage extends OPCPackage {
             if (access == PackageAccess.WRITE) {
                 throw new InvalidOperationException("Can't open the specified file: '" + file + "'", e);
             }
-            if ("archive is not a ZIP archive".equals(e.getMessage())) {
+            // YK: this is incorrect and the exception below is never thrown.
+            // The could below should catch "archive is not a ZIP archive"
+            if ("java.util.zip.ZipException: archive is not a ZIP archive".equals(e.getMessage())) {
                 throw new NotOfficeXmlFileException("archive is not a ZIP archive", e);
             }
             LOG.log(POILogger.ERROR, "Error in zip file "+file+" - falling back to stream processing (i.e. ignoring zip central directory)");

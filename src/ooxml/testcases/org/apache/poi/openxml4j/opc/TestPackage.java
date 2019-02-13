@@ -1195,11 +1195,14 @@ public final class TestPackage {
 		File tmpFile = OpenXML4JTestDataSamples.getOutputFile("Bug63029.docx");
 		Files.copy(testFile, tmpFile);
 
+		int numPartsBefore = 0;
 		String md5Before = Files.hash(tmpFile, Hashing.md5()).toString();
 
 		RuntimeException ex = null;
 		try(OPCPackage pkg = OPCPackage.open(tmpFile, PackageAccess.READ_WRITE))
 		{
+			numPartsBefore = pkg.getParts().size();
+
 			// add a marshaller that will throw an exception on save
 			pkg.addMarshaller("poi/junit", (part, out) -> {
 				throw new RuntimeException("Bugzilla 63029");
@@ -1216,10 +1219,12 @@ public final class TestPackage {
 		assertEquals(md5Before, md5After);
 
 		// try to read the source file once again
-		try ( OPCPackage zip = OPCPackage.open(tmpFile, PackageAccess.READ_WRITE)){
+		try ( OPCPackage pkg = OPCPackage.open(tmpFile, PackageAccess.READ_WRITE)){
 			// the source is still a valid zip archive.
 			// prior to the fix this used to throw NotOfficeXmlFileException("archive is not a ZIP archive")
 
+			// assert that the number of parts remained the same
+			assertEquals(pkg.getParts().size(), numPartsBefore);
 		}
 
 	}
