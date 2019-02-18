@@ -98,7 +98,7 @@ public final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
 	        assertEquals(5.33, value.getNumberValue(), 0.0);
 	        
 		} catch (RuntimeException e) {
-			if (e.getMessage().equals("Don't now how to evalate name 'Is_Multicar_Vehicle'")) {
+			if (e.getMessage().equals("Don't know how to evaluate name 'Is_Multicar_Vehicle'")) {
 				fail("Identified bug 47048a");
 			}
 			throw e;

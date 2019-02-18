@@ -766,7 +766,7 @@ public final class WorkbookEvaluator {
             return evaluateNameFormula(nameRecord.getNameDefinition(), ec);
         }
 
-        throw new RuntimeException("Don't now how to evaluate name '" + nameRecord.getNameText() + "'");
+        throw new RuntimeException("Don't know how to evaluate name '" + nameRecord.getNameText() + "'");
     }
     
     /**

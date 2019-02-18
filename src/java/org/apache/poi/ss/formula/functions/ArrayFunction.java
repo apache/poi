@@ -112,7 +112,7 @@ public interface ArrayFunction {
                 } catch (EvaluationException e) {
                     vA = e.getErrorEval();
                 } catch (RuntimeException e) {
-                    if(e.getMessage().startsWith("Don't now how to evaluate name")){
+                    if(e.getMessage().startsWith("Don't know how to evaluate name")){
                         vA = ErrorEval.NAME_INVALID;
                     } else {
                         throw e;
@@ -126,7 +126,7 @@ public interface ArrayFunction {
                 } catch (EvaluationException e) {
                     vB = e.getErrorEval();
                 } catch (RuntimeException e) {
-                    if(e.getMessage().startsWith("Don't now how to evaluate name")){
+                    if(e.getMessage().startsWith("Don't know how to evaluate name")){
                         vB = ErrorEval.NAME_INVALID;
                     } else {
                         throw e;
@@ -189,7 +189,7 @@ public interface ArrayFunction {
                 } catch (EvaluationException e) {
                     vA = e.getErrorEval();
                 } catch (RuntimeException e) {
-                    if(e.getMessage().startsWith("Don't now how to evaluate name")){
+                    if(e.getMessage().startsWith("Don't know how to evaluate name")){
                         vA = ErrorEval.NAME_INVALID;
                     } else {
                         throw e;
