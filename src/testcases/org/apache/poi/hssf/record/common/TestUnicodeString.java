@@ -21,6 +21,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 import org.apache.poi.hssf.record.ContinueRecord;
 import org.apache.poi.hssf.record.RecordInputStream;
@@ -28,6 +29,12 @@ import org.apache.poi.hssf.record.SSTRecord;
 import org.apache.poi.hssf.record.common.UnicodeString.ExtRst;
 import org.apache.poi.hssf.record.common.UnicodeString.FormatRun;
 import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
+import org.apache.poi.hssf.usermodel.HSSFOptimiser;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianConsts;
@@ -344,26 +351,46 @@ public final class TestUnicodeString {
         assertEquals(extRst1.hashCode(), extRst2.hashCode());
     }
 
+    @Test
+    public void unicodeStringsNullPointer() throws IOException {
+        HSSFWorkbook wb = new HSSFWorkbook();
+
+        Sheet sheet = wb.createSheet("styles");
+        Row row = sheet.createRow(0);
+        Cell cell = row.createCell(0);
+
+        CellStyle style = wb.createCellStyle();
+        style.setFont(wb.createFont());
+        cell.setCellStyle(style);
+
+        cell.setCellValue("test");
+
+        HSSFOptimiser.optimiseFonts(wb);
+
+        wb.close();
+    }
+
     private static UnicodeString makeUnicodeString(String s) {
-      UnicodeString st = new UnicodeString(s);
-      st.setOptionFlags((byte)0);
-      return st;
+        UnicodeString st = new UnicodeString(s);
+        st.setOptionFlags((byte)0);
+        return st;
     }
 
     private static UnicodeString makeUnicodeString(int numChars) {
         return makeUnicodeString(numChars, false);
     }
+
     /**
      * @param is16Bit if <code>true</code> the created string will have characters > 0x00FF
      * @return a string of the specified number of characters
      */
     private static UnicodeString makeUnicodeString(int numChars, boolean is16Bit) {
-      StringBuffer b = new StringBuffer(numChars);
-      int charBase = is16Bit ? 0x8A00 : 'A';
-      for (int i=0;i<numChars;i++) {
-        char ch = (char) ((i%16)+charBase);
-        b.append(ch);
-      }
-      return makeUnicodeString(b.toString());
+        StringBuilder b = new StringBuilder(numChars);
+        int charBase = is16Bit ? 0x8A00 : 'A';
+        for (int i = 0; i < numChars; i++) {
+            char ch = (char) ((i % 16) + charBase);
+            b.append(ch);
+        }
+        return makeUnicodeString(b.toString());
     }
 }

@@ -44,8 +44,7 @@ import org.apache.poi.util.StringUtil;
  * REFERENCE:  PG 951 Excel Binary File Format (.xls) Structure Specification v20091214 
  */
 public class UnicodeString implements Comparable<UnicodeString> {
-    // TODO - make this final when the compatibility version is removed
-    private static POILogger _logger = POILogFactory.getLogger(UnicodeString.class);
+    private static final POILogger _logger = POILogFactory.getLogger(UnicodeString.class);
 
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
@@ -673,9 +672,11 @@ public class UnicodeString implements Comparable<UnicodeString> {
      *  removed / re-ordered
      */
     public void swapFontUse(short oldFontIndex, short newFontIndex) {
-        for (FormatRun run : field_4_format_runs) {
-            if(run._fontIndex == oldFontIndex) {
-                run._fontIndex = newFontIndex;
+        if (field_4_format_runs != null) {
+            for (FormatRun run : field_4_format_runs) {
+                if(run._fontIndex == oldFontIndex) {
+                    run._fontIndex = newFontIndex;
+                }
             }
         }
     }
@@ -700,7 +701,7 @@ public class UnicodeString implements Comparable<UnicodeString> {
      */
     public String getDebugInfo()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[UNICODESTRING]\n");
         buffer.append("    .charcount       = ")
