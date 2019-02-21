@@ -691,4 +691,42 @@ public abstract class BaseTestFormulaEvaluator {
             assertEquals(formula, a2.getCellFormula());
         }
     }
+
+    // setting an evaluation of function arguments with the intersect operator (space)
+    // see https://bz.apache.org/bugzilla/show_bug.cgi?id=60980
+    @Test
+    public void testIntersectionInFunctionArgs_60980() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
+
+
+        Name n1 = wb.createName();
+        n1.setNameName("foo");
+        n1.setRefersToFormula("A4:B5");
+        Name n2 = wb.createName();
+        n2.setNameName("bar");
+        n2.setRefersToFormula("B4:C5");
+
+        Sheet sheet = wb.createSheet();
+        Row row3 = sheet.createRow(3);
+        row3.createCell(0).setCellValue(1);
+        row3.createCell(1).setCellValue(2);
+        row3.createCell(2).setCellValue(3);
+        Row row4 = sheet.createRow(4);
+        row4.createCell(0).setCellValue(4);
+        row4.createCell(1).setCellValue(5);
+        row4.createCell(2).setCellValue(6);
+
+        Cell fmla1 = row3.createCell(4);
+        fmla1.setCellFormula("SUM(A4:B5 B4:C5)");
+        fe.evaluateFormulaCell(fmla1);
+        assertEquals(7, fmla1.getNumericCellValue(), 0.000);
+
+        Cell fmla2 = row3.createCell(5);
+        fmla2.setCellFormula("SUM(foo bar)");
+        fe.evaluateFormulaCell(fmla2);
+        assertEquals(7, fmla2.getNumericCellValue(), 0.000);
+
+        wb.close();
+    }
 }
