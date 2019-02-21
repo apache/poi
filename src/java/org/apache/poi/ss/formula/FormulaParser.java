@@ -939,7 +939,7 @@ public final class FormulaParser {
             GetChar();
         }
         SkipWhite();
-        
+
         return sb.toString();
     }
 
@@ -1476,7 +1476,7 @@ public final class FormulaParser {
                 missedPrevArg = true;
                 continue;
             }
-            temp.add(comparisonExpression());
+            temp.add(intersectionExpression());
             missedPrevArg = false;
             SkipWhite();
             if (!isArgumentDelimiter(look)) {

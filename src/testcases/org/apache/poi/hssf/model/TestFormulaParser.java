@@ -1279,7 +1279,42 @@ public final class TestFormulaParser {
             ParenthesisPtg.class
         );
     }
-    
+
+    // https://bz.apache.org/bugzilla/show_bug.cgi?id=60980
+    @Test
+    public void testIntersectionInFunctionArgs() {
+        confirmTokenClasses("SUM(A1:B2 B2:C3)",
+                MemAreaPtg.class,
+                AreaPtg.class,
+                AreaPtg.class,
+                IntersectionPtg.class,
+                AttrPtg.class
+        );
+    }
+
+    @Test
+    public void testIntersectionNamesInFunctionArgs() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+
+        HSSFName name1 = wb.createName();
+        name1.setNameName("foo1");
+        name1.setRefersToFormula("A1:A3");
+
+        HSSFName name2 = wb.createName();
+        name2.setNameName("foo2");
+        name2.setRefersToFormula("A1:B3");
+
+        Ptg[] ptgs = FormulaParser.parse("SUM(foo1 foo2)", HSSFEvaluationWorkbook.create(wb), FormulaType.CELL, -1);
+
+        confirmTokenClasses(ptgs,
+                MemFuncPtg.class,
+                NamePtg.class,
+                NamePtg.class,
+                IntersectionPtg.class,
+                AttrPtg.class
+        );
+    }
+
     @Test
     public void testRange_bug46643() throws IOException {
         String formula = "Sheet1!A1:Sheet1!B3";
