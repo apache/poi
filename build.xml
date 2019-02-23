@@ -2321,6 +2321,9 @@ under the License.
             <auxClasspath path="${main.xmlbind-impl.jar}" />
             <auxClasspath path="${main.xmlbind-core.jar}" />
             <auxClasspath path="${main.activation.jar}" />
+            <auxClasspath path="${svg.batik-all.jar}"/>
+            <auxClasspath path="${svg.xml-apis-ext.jar}"/>
+            <auxClasspath path="${svg.xmlgraphics-commons.jar}"/>
             <sourcePath path="src/java" />
             <sourcePath path="src/ooxml/java" />
             <sourcePath path="src/scratchpad/src" />
