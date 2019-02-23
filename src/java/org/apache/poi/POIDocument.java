@@ -418,8 +418,8 @@ public abstract class POIDocument implements Closeable {
     @Override
     public void close() throws IOException {
         if (directory != null) {
-            if (directory.getNFileSystem() != null) {
-                directory.getNFileSystem().close();
+            if (directory.getFileSystem() != null) {
+                directory.getFileSystem().close();
                 clearDirectory();
             }
         }

@@ -119,17 +119,6 @@ public class DirectoryNode
         return _nfilesystem;
     }
 
-
-    /**
-     * If this is NPOIFS based, return the NPOIFSFileSystem
-     *  that this belong to, otherwise Null if OPOIFS based
-     * @return the filesystem that this belongs to
-     */
-    public POIFSFileSystem getNFileSystem()
-    {
-        return _nfilesystem;
-    }
-
     /**
      * open a document in the directory's entry's list of entries
      *

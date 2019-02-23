@@ -54,7 +54,7 @@ public final class POIFSDocument implements POIFSViewable, Iterable<ByteBuffer> 
     */
    public POIFSDocument(DocumentNode document) {
        this((DocumentProperty)document.getProperty(), 
-            ((DirectoryNode)document.getParent()).getNFileSystem());
+            ((DirectoryNode)document.getParent()).getFileSystem());
    }
    
    /**
