@@ -30,25 +30,21 @@ import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.junit.Test;
 
 public class TestXSSFBSheetHyperlinkManager {
-
     private static POIDataSamples _ssTests = POIDataSamples.getSpreadSheetInstance();
 
     @Test
     public void testBasic() throws Exception {
-
-        OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("hyperlink.xlsb"));
-        XSSFBReader reader = new XSSFBReader(pkg);
-        XSSFReader.SheetIterator it = (XSSFReader.SheetIterator) reader.getSheetsData();
-        it.next();
-        XSSFBHyperlinksTable manager = new XSSFBHyperlinksTable(it.getSheetPart());
-        List<XSSFHyperlinkRecord> records = manager.getHyperLinks().get(new CellAddress(0, 0));
-        assertNotNull(records);
-        assertEquals(1, records.size());
-        XSSFHyperlinkRecord record = records.get(0);
-        assertEquals("http://tika.apache.org/", record.getLocation());
-        assertEquals("rId2", record.getRelId());
-
+        try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("hyperlink.xlsb"))) {
+            XSSFBReader reader = new XSSFBReader(pkg);
+            XSSFReader.SheetIterator it = (XSSFReader.SheetIterator) reader.getSheetsData();
+            it.next();
+            XSSFBHyperlinksTable manager = new XSSFBHyperlinksTable(it.getSheetPart());
+            List<XSSFHyperlinkRecord> records = manager.getHyperLinks().get(new CellAddress(0, 0));
+            assertNotNull(records);
+            assertEquals(1, records.size());
+            XSSFHyperlinkRecord record = records.get(0);
+            assertEquals("http://tika.apache.org/", record.getLocation());
+            assertEquals("rId2", record.getRelId());
+        }
     }
-
-
 }

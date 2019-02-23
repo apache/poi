@@ -41,38 +41,36 @@ public final class TextStyleListing {
 			System.exit(1);
 		}
 
-		HSLFSlideShowImpl ss = new HSLFSlideShowImpl(args[0]);
+		try (HSLFSlideShowImpl ss = new HSLFSlideShowImpl(args[0])) {
+			// Find the documents, and then their SLWT
+			Record[] records = ss.getRecords();
+			for (Record record : records) {
+				if (record.getRecordType() == 1000L) {
+					Record[] docChildren = record.getChildRecords();
+					for (Record docChild : docChildren) {
+						if (docChild instanceof SlideListWithText) {
+							Record[] slwtChildren = docChild.getChildRecords();
 
-		// Find the documents, and then their SLWT
-		Record[] records = ss.getRecords();
-		for (Record record : records) {
-			if (record.getRecordType() == 1000L) {
-				Record[] docChildren = record.getChildRecords();
-				for (Record docChild : docChildren) {
-					if (docChild instanceof SlideListWithText) {
-						Record[] slwtChildren = docChild.getChildRecords();
+							int lastTextLen = -1;
+							for (Record slwtChild : slwtChildren) {
+								if (slwtChild instanceof TextCharsAtom) {
+									lastTextLen = ((TextCharsAtom) slwtChild).getText().length();
+								}
+								if (slwtChild instanceof TextBytesAtom) {
+									lastTextLen = ((TextBytesAtom) slwtChild).getText().length();
+								}
 
-						int lastTextLen = -1;
-						for (Record slwtChild : slwtChildren) {
-							if (slwtChild instanceof TextCharsAtom) {
-								lastTextLen = ((TextCharsAtom) slwtChild).getText().length();
-							}
-							if (slwtChild instanceof TextBytesAtom) {
-								lastTextLen = ((TextBytesAtom) slwtChild).getText().length();
-							}
-
-							if (slwtChild instanceof StyleTextPropAtom) {
-								StyleTextPropAtom stpa = (StyleTextPropAtom) slwtChild;
-								stpa.setParentTextSize(lastTextLen);
-								showStyleTextPropAtom(stpa);
+								if (slwtChild instanceof StyleTextPropAtom) {
+									StyleTextPropAtom stpa = (StyleTextPropAtom) slwtChild;
+									stpa.setParentTextSize(lastTextLen);
+									showStyleTextPropAtom(stpa);
+								}
 							}
 						}
 					}
 				}
 			}
 		}
-		
-		ss.close();
 	}
 
 	public static void showStyleTextPropAtom(StyleTextPropAtom stpa) {

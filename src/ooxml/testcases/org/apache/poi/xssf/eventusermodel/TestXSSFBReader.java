@@ -120,40 +120,41 @@ public class TestXSSFBReader {
 
     @Test
     public void testAbsPath() throws Exception {
-        OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("testVarious.xlsb"));
-        XSSFBReader r = new XSSFBReader(pkg);
-        assertEquals("C:\\Users\\tallison\\Desktop\\working\\xlsb\\", r.getAbsPathMetadata());
+        try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("testVarious.xlsb"))) {
+            XSSFBReader r = new XSSFBReader(pkg);
+            assertEquals("C:\\Users\\tallison\\Desktop\\working\\xlsb\\", r.getAbsPathMetadata());
+        }
     }
 
     private List<String> getSheets(String testFileName) throws Exception {
-        OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream(testFileName));
-        List<String> sheetTexts = new ArrayList<>();
-        XSSFBReader r = new XSSFBReader(pkg);
+        try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream(testFileName))) {
+            List<String> sheetTexts = new ArrayList<>();
+            XSSFBReader r = new XSSFBReader(pkg);
 
 //        assertNotNull(r.getWorkbookData());
-        //      assertNotNull(r.getSharedStringsData());
-        assertNotNull(r.getXSSFBStylesTable());
-        XSSFBSharedStringsTable sst = new XSSFBSharedStringsTable(pkg);
-        XSSFBStylesTable xssfbStylesTable = r.getXSSFBStylesTable();
-        XSSFBReader.SheetIterator it = (XSSFBReader.SheetIterator) r.getSheetsData();
+            //      assertNotNull(r.getSharedStringsData());
+            assertNotNull(r.getXSSFBStylesTable());
+            XSSFBSharedStringsTable sst = new XSSFBSharedStringsTable(pkg);
+            XSSFBStylesTable xssfbStylesTable = r.getXSSFBStylesTable();
+            XSSFBReader.SheetIterator it = (XSSFBReader.SheetIterator) r.getSheetsData();
 
-        while (it.hasNext()) {
-            InputStream is = it.next();
-            String name = it.getSheetName();
-            TestSheetHandler testSheetHandler = new TestSheetHandler();
-            testSheetHandler.startSheet(name);
-            XSSFBSheetHandler sheetHandler = new XSSFBSheetHandler(is,
-                    xssfbStylesTable,
-                    it.getXSSFBSheetComments(),
-                    sst, testSheetHandler,
-                    new DataFormatter(),
-                    false);
-            sheetHandler.parse();
-            testSheetHandler.endSheet();
-            sheetTexts.add(testSheetHandler.toString());
+            while (it.hasNext()) {
+                InputStream is = it.next();
+                String name = it.getSheetName();
+                TestSheetHandler testSheetHandler = new TestSheetHandler();
+                testSheetHandler.startSheet(name);
+                XSSFBSheetHandler sheetHandler = new XSSFBSheetHandler(is,
+                        xssfbStylesTable,
+                        it.getXSSFBSheetComments(),
+                        sst, testSheetHandler,
+                        new DataFormatter(),
+                        false);
+                sheetHandler.parse();
+                testSheetHandler.endSheet();
+                sheetTexts.add(testSheetHandler.toString());
+            }
+            return sheetTexts;
         }
-        return sheetTexts;
-
     }
 
     @Test

@@ -119,17 +119,18 @@ public final class TestOPCComplianceCoreProperties {
        
        // We will use the first core properties, and ignore the others
       InputStream is = OpenXML4JTestDataSamples.openSampleStream("MultipleCoreProperties.docx");
-      OPCPackage pkg = OPCPackage.open(is);
-      
-      // We can see 2 by type
-      assertEquals(2, pkg.getPartsByContentType(ContentTypes.CORE_PROPERTIES_PART).size());
-      // But only the first one by relationship
-      assertEquals(1, pkg.getPartsByRelationshipType(PackageRelationshipTypes.CORE_PROPERTIES).size());
-      // It should be core.xml not the older core1.xml
-      assertEquals(
-            "/docProps/core.xml",
-            pkg.getPartsByRelationshipType(PackageRelationshipTypes.CORE_PROPERTIES).get(0).getPartName().toString()
-      );
+      try (OPCPackage pkg = OPCPackage.open(is)) {
+
+          // We can see 2 by type
+          assertEquals(2, pkg.getPartsByContentType(ContentTypes.CORE_PROPERTIES_PART).size());
+          // But only the first one by relationship
+          assertEquals(1, pkg.getPartsByRelationshipType(PackageRelationshipTypes.CORE_PROPERTIES).size());
+          // It should be core.xml not the older core1.xml
+          assertEquals(
+                  "/docProps/core.xml",
+                  pkg.getPartsByRelationshipType(PackageRelationshipTypes.CORE_PROPERTIES).get(0).getPartName().toString()
+          );
+      }
     }
     
     private static URI createURI(String text) {

@@ -51,72 +51,76 @@ public final class TestXSSFReader {
 
     @Test
     public void testGetBits() throws Exception {
-		OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("SampleSS.xlsx"));
+		try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("SampleSS.xlsx"))) {
 
-		XSSFReader r = new XSSFReader(pkg);
+            XSSFReader r = new XSSFReader(pkg);
 
-        assertNotNull(r.getWorkbookData());
-		assertNotNull(r.getSharedStringsData());
-		assertNotNull(r.getStylesData());
+            assertNotNull(r.getWorkbookData());
+            assertNotNull(r.getSharedStringsData());
+            assertNotNull(r.getStylesData());
 
-		assertNotNull(r.getSharedStringsTable());
-		assertNotNull(r.getStylesTable());
+            assertNotNull(r.getSharedStringsTable());
+            assertNotNull(r.getStylesTable());
+        }
 	}
 
     @Test
 	public void testStyles() throws Exception {
-		OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("SampleSS.xlsx"));
+		try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("SampleSS.xlsx"))) {
 
-		XSSFReader r = new XSSFReader(pkg);
+            XSSFReader r = new XSSFReader(pkg);
 
-		assertEquals(3, r.getStylesTable().getFonts().size());
-		assertEquals(0, r.getStylesTable().getNumDataFormats());
-		
-		// The Styles Table should have the themes associated with it too
-		assertNotNull(r.getStylesTable().getTheme());
-		
-		// Check we get valid data for the two
-		assertNotNull(r.getStylesData());
-      assertNotNull(r.getThemesData());
+            assertEquals(3, r.getStylesTable().getFonts().size());
+            assertEquals(0, r.getStylesTable().getNumDataFormats());
+
+            // The Styles Table should have the themes associated with it too
+            assertNotNull(r.getStylesTable().getTheme());
+
+            // Check we get valid data for the two
+            assertNotNull(r.getStylesData());
+            assertNotNull(r.getThemesData());
+        }
 	}
 
     @Test
 	public void testStrings() throws Exception {
-        OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("SampleSS.xlsx"));
+        try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("SampleSS.xlsx"))) {
 
-		XSSFReader r = new XSSFReader(pkg);
+            XSSFReader r = new XSSFReader(pkg);
 
-		assertEquals(11, r.getSharedStringsTable().getItems().size());
-		assertEquals("Test spreadsheet", new XSSFRichTextString(r.getSharedStringsTable().getEntryAt(0)).toString());
+            assertEquals(11, r.getSharedStringsTable().getItems().size());
+            assertEquals("Test spreadsheet", new XSSFRichTextString(r.getSharedStringsTable().getEntryAt(0)).toString());
+        }
 	}
 
     @Test
 	public void testSheets() throws Exception {
-        OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("SampleSS.xlsx"));
+        try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("SampleSS.xlsx"))) {
 
-		XSSFReader r = new XSSFReader(pkg);
-		byte[] data = new byte[4096];
+            XSSFReader r = new XSSFReader(pkg);
+            byte[] data = new byte[4096];
 
-		// By r:id
-		assertNotNull(r.getSheet("rId2"));
-		int read = IOUtils.readFully(r.getSheet("rId2"), data);
-		assertEquals(974, read);
+            // By r:id
+            assertNotNull(r.getSheet("rId2"));
+            int read = IOUtils.readFully(r.getSheet("rId2"), data);
+            assertEquals(974, read);
 
-		// All
-		Iterator<InputStream> it = r.getSheetsData();
+            // All
+            Iterator<InputStream> it = r.getSheetsData();
 
-		int count = 0;
-		while(it.hasNext()) {
-			count++;
-			InputStream inp = it.next();
-			assertNotNull(inp);
-			read = IOUtils.readFully(inp, data);
-			inp.close();
+            int count = 0;
+            while (it.hasNext()) {
+                count++;
+                InputStream inp = it.next();
+                assertNotNull(inp);
+                read = IOUtils.readFully(inp, data);
+                inp.close();
 
-			assertTrue(read > 400);
-			assertTrue(read < 1500);
-		}
-		assertEquals(3, count);
+                assertTrue(read > 400);
+                assertTrue(read < 1500);
+            }
+            assertEquals(3, count);
+        }
 	}
 
 	/**
@@ -125,82 +129,82 @@ public final class TestXSSFReader {
 	 */
     @Test
 	public void testOrderOfSheets() throws Exception {
-        OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("reordered_sheets.xlsx"));
+        try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("reordered_sheets.xlsx"))) {
 
-		XSSFReader r = new XSSFReader(pkg);
+            XSSFReader r = new XSSFReader(pkg);
 
-		String[] sheetNames = {"Sheet4", "Sheet2", "Sheet3", "Sheet1"};
-		XSSFReader.SheetIterator it = (XSSFReader.SheetIterator)r.getSheetsData();
+            String[] sheetNames = {"Sheet4", "Sheet2", "Sheet3", "Sheet1"};
+            XSSFReader.SheetIterator it = (XSSFReader.SheetIterator) r.getSheetsData();
 
-		int count = 0;
-		while(it.hasNext()) {
-			InputStream inp = it.next();
-			assertNotNull(inp);
-			inp.close();
+            int count = 0;
+            while (it.hasNext()) {
+                InputStream inp = it.next();
+                assertNotNull(inp);
+                inp.close();
 
-			assertEquals(sheetNames[count], it.getSheetName());
-			count++;
-		}
-		assertEquals(4, count);
+                assertEquals(sheetNames[count], it.getSheetName());
+                count++;
+            }
+            assertEquals(4, count);
+        }
 	}
 
     @Test
 	public void testComments() throws Exception {
-      OPCPackage pkg =  XSSFTestDataSamples.openSamplePackage("comments.xlsx");
-      XSSFReader r = new XSSFReader(pkg);
-      XSSFReader.SheetIterator it = (XSSFReader.SheetIterator)r.getSheetsData();
-      
-      int count = 0;
-      while(it.hasNext()) {
-         count++;
-         InputStream inp = it.next();
-         inp.close();
+      try (OPCPackage pkg =  XSSFTestDataSamples.openSamplePackage("comments.xlsx")) {
+          XSSFReader r = new XSSFReader(pkg);
+          XSSFReader.SheetIterator it = (XSSFReader.SheetIterator) r.getSheetsData();
 
-         if(count == 1) {
-            assertNotNull(it.getSheetComments());
-            CommentsTable ct = it.getSheetComments();
-            assertEquals(1, ct.getNumberOfAuthors());
-            assertEquals(3, ct.getNumberOfComments());
-         } else {
-            assertNull(it.getSheetComments());
-         }
+          int count = 0;
+          while (it.hasNext()) {
+              count++;
+              InputStream inp = it.next();
+              inp.close();
+
+              if (count == 1) {
+                  assertNotNull(it.getSheetComments());
+                  CommentsTable ct = it.getSheetComments();
+                  assertEquals(1, ct.getNumberOfAuthors());
+                  assertEquals(3, ct.getNumberOfComments());
+              } else {
+                  assertNull(it.getSheetComments());
+              }
+          }
+          assertEquals(3, count);
       }
-      assertEquals(3, count);
 	}
    
    /**
     * Iterating over a workbook with chart sheets in it, using the
     *  XSSFReader method
-    * @throws Exception
     */
    @Test
    public void test50119() throws Exception {
-      OPCPackage pkg =  XSSFTestDataSamples.openSamplePackage("WithChartSheet.xlsx");
-      XSSFReader r = new XSSFReader(pkg);
-      XSSFReader.SheetIterator it = (XSSFReader.SheetIterator)r.getSheetsData();
-      
-      while(it.hasNext())
-      {
-          InputStream stream = it.next();
-          stream.close();
+      try (OPCPackage pkg =  XSSFTestDataSamples.openSamplePackage("WithChartSheet.xlsx")) {
+          XSSFReader r = new XSSFReader(pkg);
+          XSSFReader.SheetIterator it = (XSSFReader.SheetIterator) r.getSheetsData();
+
+          while (it.hasNext()) {
+              InputStream stream = it.next();
+              stream.close();
+          }
       }
    }
 
     /**
      * Test text extraction from text box using getShapes()
-     *
-     * @throws Exception
      */
     @Test
     public void testShapes() throws Exception {
-        OPCPackage pkg = XSSFTestDataSamples.openSamplePackage("WithTextBox.xlsx");
-        XSSFReader r = new XSSFReader(pkg);
-        XSSFReader.SheetIterator it = (XSSFReader.SheetIterator) r.getSheetsData();
+        try (OPCPackage pkg = XSSFTestDataSamples.openSamplePackage("WithTextBox.xlsx")) {
+            XSSFReader r = new XSSFReader(pkg);
+            XSSFReader.SheetIterator it = (XSSFReader.SheetIterator) r.getSheetsData();
 
-        String text = getShapesString(it);
-        assertContains(text, "Line 1");
-        assertContains(text, "Line 2");
-        assertContains(text, "Line 3");
+            String text = getShapesString(it);
+            assertContains(text, "Line 1");
+            assertContains(text, "Line 2");
+            assertContains(text, "Line 3");
+        }
     }
 
     private String getShapesString(XSSFReader.SheetIterator it) {
@@ -222,25 +226,26 @@ public final class TestXSSFReader {
 
     @Test
     public void testBug57914() throws Exception {
-        OPCPackage pkg = XSSFTestDataSamples.openSamplePackage("57914.xlsx");
-        final XSSFReader r;
+        try (OPCPackage pkg = XSSFTestDataSamples.openSamplePackage("57914.xlsx")) {
+            final XSSFReader r;
 
-        // for now expect this to fail, when we fix 57699, this one should fail so we know we should adjust
-        // this test as well
-        try {
-            r = new XSSFReader(pkg);
-            fail("This will fail until bug 57699 is fixed");
-        } catch (POIXMLException e) {
-            assertContains(e.getMessage(), "57699");
-            return;
+            // for now expect this to fail, when we fix 57699, this one should fail so we know we should adjust
+            // this test as well
+            try {
+                r = new XSSFReader(pkg);
+                fail("This will fail until bug 57699 is fixed");
+            } catch (POIXMLException e) {
+                assertContains(e.getMessage(), "57699");
+                return;
+            }
+
+            XSSFReader.SheetIterator it = (XSSFReader.SheetIterator) r.getSheetsData();
+
+            String text = getShapesString(it);
+            assertContains(text, "Line 1");
+            assertContains(text, "Line 2");
+            assertContains(text, "Line 3");
         }
-
-        XSSFReader.SheetIterator it = (XSSFReader.SheetIterator) r.getSheetsData();
-
-        String text = getShapesString(it);
-        assertContains(text, "Line 1");
-        assertContains(text, "Line 2");
-        assertContains(text, "Line 3");
     }
 
    /**
@@ -249,21 +254,20 @@ public final class TestXSSFReader {
     */
    @Test
    public void test58747() throws Exception {
-       OPCPackage pkg =  XSSFTestDataSamples.openSamplePackage("58747.xlsx");
-       ReadOnlySharedStringsTable strings = new ReadOnlySharedStringsTable(pkg);
-       assertNotNull(strings);
-       XSSFReader reader = new XSSFReader(pkg);
-       StylesTable styles = reader.getStylesTable();
-       assertNotNull(styles);
+       try (OPCPackage pkg =  XSSFTestDataSamples.openSamplePackage("58747.xlsx")) {
+           ReadOnlySharedStringsTable strings = new ReadOnlySharedStringsTable(pkg);
+           assertNotNull(strings);
+           XSSFReader reader = new XSSFReader(pkg);
+           StylesTable styles = reader.getStylesTable();
+           assertNotNull(styles);
 
-       XSSFReader.SheetIterator iter = (XSSFReader.SheetIterator) reader.getSheetsData();
-       assertEquals(true, iter.hasNext());
-       iter.next();
+           XSSFReader.SheetIterator iter = (XSSFReader.SheetIterator) reader.getSheetsData();
+           assertTrue(iter.hasNext());
+           iter.next();
 
-       assertEquals(false, iter.hasNext());
-       assertEquals("Orders", iter.getSheetName());
-       
-       pkg.close();
+           assertFalse(iter.hasNext());
+           assertEquals("Orders", iter.getSheetName());
+       }
    }
 
     /**
@@ -272,18 +276,17 @@ public final class TestXSSFReader {
      */
     @Test
     public void testSheetWithNoRelationshipId() throws Exception {
-        OPCPackage pkg =  XSSFTestDataSamples.openSamplePackage("60825.xlsx");
-        ReadOnlySharedStringsTable strings = new ReadOnlySharedStringsTable(pkg);
-        assertNotNull(strings);
-        XSSFReader reader = new XSSFReader(pkg);
-        StylesTable styles = reader.getStylesTable();
-        assertNotNull(styles);
+        try (OPCPackage pkg =  XSSFTestDataSamples.openSamplePackage("60825.xlsx")) {
+            ReadOnlySharedStringsTable strings = new ReadOnlySharedStringsTable(pkg);
+            assertNotNull(strings);
+            XSSFReader reader = new XSSFReader(pkg);
+            StylesTable styles = reader.getStylesTable();
+            assertNotNull(styles);
 
-        XSSFReader.SheetIterator iter = (XSSFReader.SheetIterator) reader.getSheetsData();
-        assertNotNull(iter.next());
-        assertFalse(iter.hasNext());
-
-        pkg.close();
+            XSSFReader.SheetIterator iter = (XSSFReader.SheetIterator) reader.getSheetsData();
+            assertNotNull(iter.next());
+            assertFalse(iter.hasNext());
+        }
     }
 
     /**
@@ -300,18 +303,18 @@ public final class TestXSSFReader {
      */
     @Test
     public void test61034() throws Exception {
-        OPCPackage pkg = XSSFTestDataSamples.openSamplePackage("61034.xlsx");
-        XSSFReader reader = new XSSFReader(pkg);
-        XSSFReader.SheetIterator iter = (XSSFReader.SheetIterator) reader.getSheetsData();
-        Set<String> seen = new HashSet<>();
-        while (iter.hasNext()) {
-            InputStream stream = iter.next();
-            String sheetName = iter.getSheetName();
-            assertNotContained(seen, sheetName);
-            seen.add(sheetName);
-            stream.close();
+        try (OPCPackage pkg = XSSFTestDataSamples.openSamplePackage("61034.xlsx")) {
+            XSSFReader reader = new XSSFReader(pkg);
+            XSSFReader.SheetIterator iter = (XSSFReader.SheetIterator) reader.getSheetsData();
+            Set<String> seen = new HashSet<>();
+            while (iter.hasNext()) {
+                InputStream stream = iter.next();
+                String sheetName = iter.getSheetName();
+                assertNotContained(seen, sheetName);
+                seen.add(sheetName);
+                stream.close();
+            }
         }
-        pkg.close();
     }
 
     @Test

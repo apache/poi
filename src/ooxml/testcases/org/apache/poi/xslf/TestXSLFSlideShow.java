@@ -33,6 +33,7 @@ import org.apache.poi.xslf.usermodel.XSLFRelation;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.poi.xslf.usermodel.XSLFSlideShow;
 import org.apache.xmlbeans.XmlException;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTProperties;
@@ -48,6 +49,11 @@ public class TestXSLFSlideShow {
     @Before
     public void setUp() throws Exception {
 		pack = OPCPackage.open(slTests.openResourceAsStream("sample.pptx"));
+	}
+
+	@After
+	public void tearDown() throws IOException {
+    	pack.close();
 	}
 
     @Test

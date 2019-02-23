@@ -17,8 +17,10 @@
 package org.apache.poi.xwpf.usermodel;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -104,23 +106,23 @@ public class TestXWPFRun {
 
         // True values: "true", "1", "on"
         bold.setVal(STOnOff.TRUE);
-        assertEquals(true, run.isBold());    
+        assertTrue(run.isBold());
 
         bold.setVal(STOnOff.X_1);
-        assertEquals(true, run.isBold());
+        assertTrue(run.isBold());
 
         bold.setVal(STOnOff.ON);
-        assertEquals(true, run.isBold());
+        assertTrue(run.isBold());
 
         // False values: "false", "0", "off"
         bold.setVal(STOnOff.FALSE);
-        assertEquals(false, run.isBold());
+        assertFalse(run.isBold());
 
         bold.setVal(STOnOff.X_0);
-        assertEquals(false, run.isBold());
+        assertFalse(run.isBold());
 
         bold.setVal(STOnOff.OFF);
-        assertEquals(false, run.isBold());
+        assertFalse(run.isBold());
     }
 
     @Test
@@ -129,7 +131,7 @@ public class TestXWPFRun {
         rpr.addNewB().setVal(STOnOff.TRUE);
 
         XWPFRun run = new XWPFRun(ctRun, irb);
-        assertEquals(true, run.isBold());
+        assertTrue(run.isBold());
 
         run.setBold(false);
         // Implementation detail: POI natively prefers <w:b w:val="false"/>,
@@ -143,7 +145,7 @@ public class TestXWPFRun {
         rpr.addNewI().setVal(STOnOff.TRUE);
 
         XWPFRun run = new XWPFRun(ctRun, irb);
-        assertEquals(true, run.isItalic());
+        assertTrue(run.isItalic());
 
         run.setItalic(false);
         assertEquals(STOnOff.FALSE, rpr.getI().getVal());
@@ -155,7 +157,7 @@ public class TestXWPFRun {
         rpr.addNewStrike().setVal(STOnOff.TRUE);
 
         XWPFRun run = new XWPFRun(ctRun, irb);
-        assertEquals(true, run.isStrikeThrough());
+        assertTrue(run.isStrikeThrough());
 
         run.setStrikeThrough(false);
         assertEquals(STOnOff.FALSE, rpr.getStrike().getVal());
@@ -297,17 +299,17 @@ public class TestXWPFRun {
 
         run = p.getRuns().get(0);
         assertEquals("This is a test document", run.toString());
-        assertEquals(false, run.isBold());
-        assertEquals(false, run.isItalic());
-        assertEquals(false, run.isStrikeThrough());
-        assertEquals(null, run.getCTR().getRPr());
+        assertFalse(run.isBold());
+        assertFalse(run.isItalic());
+        assertFalse(run.isStrikeThrough());
+        assertNull(run.getCTR().getRPr());
 
         run = p.getRuns().get(1);
         assertEquals(".", run.toString());
-        assertEquals(false, run.isBold());
-        assertEquals(false, run.isItalic());
-        assertEquals(false, run.isStrikeThrough());
-        assertEquals(null, run.getCTR().getRPr());
+        assertFalse(run.isBold());
+        assertFalse(run.isItalic());
+        assertFalse(run.isStrikeThrough());
+        assertNull(run.getCTR().getRPr());
 
 
         // Next paragraph is all in one style, but a different one
@@ -317,11 +319,11 @@ public class TestXWPFRun {
 
         run = p.getRuns().get(0);
         assertEquals("This bit is in bold and italic", run.toString());
-        assertEquals(true, run.isBold());
-        assertEquals(true, run.isItalic());
-        assertEquals(false, run.isStrikeThrough());
-        assertEquals(true, run.getCTR().getRPr().isSetB());
-        assertEquals(false, run.getCTR().getRPr().getB().isSetVal());
+        assertTrue(run.isBold());
+        assertTrue(run.isItalic());
+        assertFalse(run.isStrikeThrough());
+        assertTrue(run.getCTR().getRPr().isSetB());
+        assertFalse(run.getCTR().getRPr().getB().isSetVal());
 
 
         // Back to normal
@@ -331,10 +333,10 @@ public class TestXWPFRun {
 
         run = p.getRuns().get(0);
         assertEquals("Back to normal", run.toString());
-        assertEquals(false, run.isBold());
-        assertEquals(false, run.isItalic());
-        assertEquals(false, run.isStrikeThrough());
-        assertEquals(null, run.getCTR().getRPr());
+        assertFalse(run.isBold());
+        assertFalse(run.isItalic());
+        assertFalse(run.isStrikeThrough());
+        assertNull(run.getCTR().getRPr());
 
 
         // Different styles in one paragraph
@@ -344,75 +346,75 @@ public class TestXWPFRun {
 
         run = p.getRuns().get(0);
         assertEquals("This contains ", run.toString());
-        assertEquals(false, run.isBold());
-        assertEquals(false, run.isItalic());
-        assertEquals(false, run.isStrikeThrough());
-        assertEquals(null, run.getCTR().getRPr());
+        assertFalse(run.isBold());
+        assertFalse(run.isItalic());
+        assertFalse(run.isStrikeThrough());
+        assertNull(run.getCTR().getRPr());
 
         run = p.getRuns().get(1);
         assertEquals("BOLD", run.toString());
-        assertEquals(true, run.isBold());
-        assertEquals(false, run.isItalic());
-        assertEquals(false, run.isStrikeThrough());
+        assertTrue(run.isBold());
+        assertFalse(run.isItalic());
+        assertFalse(run.isStrikeThrough());
 
         run = p.getRuns().get(2);
         assertEquals(", ", run.toString());
-        assertEquals(false, run.isBold());
-        assertEquals(false, run.isItalic());
-        assertEquals(false, run.isStrikeThrough());
-        assertEquals(null, run.getCTR().getRPr());
+        assertFalse(run.isBold());
+        assertFalse(run.isItalic());
+        assertFalse(run.isStrikeThrough());
+        assertNull(run.getCTR().getRPr());
 
         run = p.getRuns().get(3);
         assertEquals("ITALIC", run.toString());
-        assertEquals(false, run.isBold());
-        assertEquals(true, run.isItalic());
-        assertEquals(false, run.isStrikeThrough());
+        assertFalse(run.isBold());
+        assertTrue(run.isItalic());
+        assertFalse(run.isStrikeThrough());
 
         run = p.getRuns().get(4);
         assertEquals(" and ", run.toString());
-        assertEquals(false, run.isBold());
-        assertEquals(false, run.isItalic());
-        assertEquals(false, run.isStrikeThrough());
-        assertEquals(null, run.getCTR().getRPr());
+        assertFalse(run.isBold());
+        assertFalse(run.isItalic());
+        assertFalse(run.isStrikeThrough());
+        assertNull(run.getCTR().getRPr());
 
         run = p.getRuns().get(5);
         assertEquals("BOTH", run.toString());
-        assertEquals(true, run.isBold());
-        assertEquals(true, run.isItalic());
-        assertEquals(false, run.isStrikeThrough());
+        assertTrue(run.isBold());
+        assertTrue(run.isItalic());
+        assertFalse(run.isStrikeThrough());
 
         run = p.getRuns().get(6);
         assertEquals(", as well as ", run.toString());
-        assertEquals(false, run.isBold());
-        assertEquals(false, run.isItalic());
-        assertEquals(false, run.isStrikeThrough());
-        assertEquals(null, run.getCTR().getRPr());
+        assertFalse(run.isBold());
+        assertFalse(run.isItalic());
+        assertFalse(run.isStrikeThrough());
+        assertNull(run.getCTR().getRPr());
 
         run = p.getRuns().get(7);
         assertEquals("RED", run.toString());
-        assertEquals(false, run.isBold());
-        assertEquals(false, run.isItalic());
-        assertEquals(false, run.isStrikeThrough());
+        assertFalse(run.isBold());
+        assertFalse(run.isItalic());
+        assertFalse(run.isStrikeThrough());
 
         run = p.getRuns().get(8);
         assertEquals(" and ", run.toString());
-        assertEquals(false, run.isBold());
-        assertEquals(false, run.isItalic());
-        assertEquals(false, run.isStrikeThrough());
-        assertEquals(null, run.getCTR().getRPr());
+        assertFalse(run.isBold());
+        assertFalse(run.isItalic());
+        assertFalse(run.isStrikeThrough());
+        assertNull(run.getCTR().getRPr());
 
         run = p.getRuns().get(9);
         assertEquals("YELLOW", run.toString());
-        assertEquals(false, run.isBold());
-        assertEquals(false, run.isItalic());
-        assertEquals(false, run.isStrikeThrough());
+        assertFalse(run.isBold());
+        assertFalse(run.isItalic());
+        assertFalse(run.isStrikeThrough());
 
         run = p.getRuns().get(10);
         assertEquals(" text.", run.toString());
-        assertEquals(false, run.isBold());
-        assertEquals(false, run.isItalic());
-        assertEquals(false, run.isStrikeThrough());
-        assertEquals(null, run.getCTR().getRPr());
+        assertFalse(run.isBold());
+        assertFalse(run.isItalic());
+        assertFalse(run.isStrikeThrough());
+        assertNull(run.getCTR().getRPr());
         
         doc.close();
     }
@@ -643,7 +645,7 @@ public class TestXWPFRun {
     }
 
     @Test
-    public void testSetters() throws IOException {
+    public void testSetters() {
         XWPFDocument document = new XWPFDocument();
         final XWPFRun run = document.createParagraph().createRun();
 
@@ -679,12 +681,12 @@ public class TestXWPFRun {
         XWPFDocument document = new XWPFDocument();
         final XWPFRun run = document.createParagraph().createRun();
         assertEquals(STHighlightColor.NONE, run.getTextHightlightColor());
-        assertEquals(false, run.isHighlighted());
+        assertFalse(run.isHighlighted());
         run.setTextHighlightColor("darkGreen"); // See 17.18.40 ST_HighlightColor (Text Highlight Colors)
         assertEquals(STHighlightColor.DARK_GREEN, run.getTextHightlightColor());
-        assertEquals(true, run.isHighlighted());
+        assertTrue(run.isHighlighted());
         run.setTextHighlightColor("none");
-        assertEquals(false, run.isHighlighted());
+        assertFalse(run.isHighlighted());
         
         document.close();
     }
@@ -693,11 +695,11 @@ public class TestXWPFRun {
     public void testSetGetVanish() throws IOException {
         XWPFDocument document = new XWPFDocument();
         final XWPFRun run = document.createParagraph().createRun();
-        assertEquals(false, run.isVanish());
+        assertFalse(run.isVanish());
         run.setVanish(true);
-        assertEquals(true, run.isVanish());
+        assertTrue(run.isVanish());
         run.setVanish(false);
-        assertEquals(false, run.isVanish());
+        assertFalse(run.isVanish());
         document.close();
     }
     
@@ -726,7 +728,6 @@ public class TestXWPFRun {
         run.setSubscript(VerticalAlign.BASELINE);
         assertEquals(STVerticalAlignRun.BASELINE, rpr.getVertAlign().getVal());
     }
-
 
     @Test
     public void testSetGetEmphasisMark() throws IOException {
@@ -780,7 +781,9 @@ public class TestXWPFRun {
         run.setStyle(styleId);
         String candStyleId = run.getCTR().getRPr().getRStyle().getVal();
         assertNotNull("Expected to find a run style ID", candStyleId);
-        assertEquals(styleId, candStyleId);        
+        assertEquals(styleId, candStyleId);
+
+        document.close();
     }
 
 }

@@ -40,7 +40,7 @@ import org.junit.Test;
 public class TestDetectAsOOXML {
     @Test
 	public void testOpensProperly() throws IOException, InvalidFormatException {
-        OPCPackage.open(HSSFTestDataSamples.openSampleFileStream("sample.xlsx"));
+		OPCPackage.open(HSSFTestDataSamples.openSampleFileStream("sample.xlsx")).close();
 	}
 	
     @Test

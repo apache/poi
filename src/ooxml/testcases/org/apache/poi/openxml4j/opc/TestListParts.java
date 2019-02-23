@@ -81,15 +81,10 @@ public final class TestListParts extends TestCase {
 	/**
 	 * List all parts of a package.
 	 */
-	public void testListParts() throws InvalidFormatException {
+	public void testListParts() throws InvalidFormatException, IOException {
 		InputStream is = OpenXML4JTestDataSamples.openSampleStream("sample.docx");
 
-		OPCPackage p;
-		try {
-			p = OPCPackage.open(is);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+		OPCPackage p = OPCPackage.open(is);
 		for (PackagePart part : p.getParts()) {
 			values.put(part.getPartName(), part.getContentType());
 			logger.log(POILogger.DEBUG, part.getPartName());
@@ -100,5 +95,7 @@ public final class TestListParts extends TestCase {
 			assertNotNull(values.get(partName));
 			assertEquals(expectedValues.get(partName), values.get(partName));
 		}
+
+		p.close();
 	}
 }
