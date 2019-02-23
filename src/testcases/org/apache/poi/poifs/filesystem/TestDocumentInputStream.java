@@ -442,7 +442,6 @@ public final class TestDocumentInputStream {
 
         try (POIFSFileSystem npoifs = new POIFSFileSystem(sample)) {
             // Ensure we have what we expect on the root
-            assertEquals(npoifs, npoifs.getRoot().getNFileSystem());
             assertEquals(npoifs, npoifs.getRoot().getFileSystem());
 
             // Check inside

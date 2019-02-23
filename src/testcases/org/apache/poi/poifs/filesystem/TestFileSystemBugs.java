@@ -140,9 +140,9 @@ public final class TestFileSystemBugs {
         // Copy over
         EntryUtils.copyNodes(root, dest);
 
-        // Re-load, always as NPOIFS
+        // Re-load
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        root.getNFileSystem().writeFilesystem(baos);
+        root.getFileSystem().writeFilesystem(baos);
 
         POIFSFileSystem read = new POIFSFileSystem(
                 new ByteArrayInputStream(baos.toByteArray()));

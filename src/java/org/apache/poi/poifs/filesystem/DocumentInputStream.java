@@ -87,7 +87,7 @@ public final class DocumentInputStream extends InputStream implements LittleEndi
         DocumentProperty property = (DocumentProperty)doc.getProperty();
         _document = new POIFSDocument(
                 property, 
-                ((DirectoryNode)doc.getParent()).getNFileSystem()
+                ((DirectoryNode)doc.getParent()).getFileSystem()
         );
         _data = _document.getBlockIterator();
     }
