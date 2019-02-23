@@ -64,6 +64,8 @@ public class HSSFFileHandler extends SpreadsheetHandler {
 				}
 			}
 		}
+
+		HSSFOptimiser.optimiseFonts(wb);
 	}
 
 	private static final Set<String> EXPECTED_ADDITIONAL_FAILURES = new HashSet<>();
@@ -85,6 +87,7 @@ public class HSSFFileHandler extends SpreadsheetHandler {
 	public void handleAdditional(File file) throws Exception {
 		// redirect stdout as the examples often write lots of text
 		PrintStream oldOut = System.out;
+		String fileWithParent = file.getParentFile().getName() + "/" + file.getName();
 		try {
 			System.setOut(new PrintStream(new OutputStream() {
 				@Override
@@ -95,11 +98,11 @@ public class HSSFFileHandler extends SpreadsheetHandler {
 			BiffViewer.main(new String[]{file.getAbsolutePath()});
 
 			assertFalse("Expected Extraction to fail for file " + file + " and handler " + this + ", but did not fail!",
-					EXPECTED_ADDITIONAL_FAILURES.contains(file.getParentFile().getName() + "/" + file.getName()));
+					EXPECTED_ADDITIONAL_FAILURES.contains(fileWithParent));
 		} catch (OldExcelFormatException e) {
 			// old excel formats are not supported here
 		} catch (RuntimeException e) {
-			if(!EXPECTED_ADDITIONAL_FAILURES.contains(file.getParentFile().getName() + "/" + file.getName())) {
+			if(!EXPECTED_ADDITIONAL_FAILURES.contains(fileWithParent)) {
 				throw e;
 			}
 		} finally {

@@ -59,9 +59,10 @@ public final class TestUnicodeString {
     private static void confirmSize(int expectedSize, UnicodeString s) {
         confirmSize(expectedSize, s, 0);
     }
+
     /**
      * Note - a value of zero for <tt>amountUsedInCurrentRecord</tt> would only ever occur just
-     * after a {@link ContinueRecord} had been started.  In the initial {@link SSTRecord} this 
+     * after a {@link ContinueRecord} had been started.  In the initial {@link SSTRecord} this
      * value starts at 8 (for the first {@link UnicodeString} written).  In general, it can be
      * any value between 0 and {@link #MAX_DATA_SIZE}
      */
@@ -181,7 +182,7 @@ public final class TestUnicodeString {
     }
     
     @Test
-    public void formatRun() throws Exception {
+    public void formatRun() {
        FormatRun fr = new FormatRun((short)4, (short)0x15c);
        assertEquals(4, fr.getCharacterPos());
        assertEquals(0x15c, fr.getFontIndex());
@@ -207,7 +208,7 @@ public final class TestUnicodeString {
     }
     
     @Test
-    public void extRstFromEmpty() throws Exception {
+    public void extRstFromEmpty() {
        ExtRst ext = new ExtRst();
        
        assertEquals(0, ext.getNumberOfRuns());
@@ -231,14 +232,14 @@ public final class TestUnicodeString {
        assertEquals(-1, b[0]);
        assertEquals(-1, b[1]);
        assertEquals(14, b[2]);
-       assertEquals(00, b[3]);
+       assertEquals(0, b[3]);
        
        // Reserved
        assertEquals(1, b[4]);
        assertEquals(0, b[5]);
        // Data size
        assertEquals(10, b[6]);
-       assertEquals(00, b[7]);
+       assertEquals(0, b[7]);
        // Font*2
        assertEquals(0, b[8]);
        assertEquals(0, b[9]);
@@ -274,13 +275,13 @@ public final class TestUnicodeString {
     }
     
     @Test
-    public void extRstFromData() throws Exception {
+    public void extRstFromData() {
        byte[] data = new byte[] {
-             01, 00, 0x0C, 00, 
-             00, 00, 0x37, 00, 
-             00, 00, 
-             00, 00, 00, 00, 
-             00, 00 // Cruft at the end, as found from real files
+               1, 0, 0x0C, 0,
+               0, 0, 0x37, 0,
+               0, 0,
+               0, 0, 0, 0,
+               0, 0 // Cruft at the end, as found from real files
        };
        assertEquals(16, data.length);
        
@@ -298,7 +299,7 @@ public final class TestUnicodeString {
     }
     
     @Test
-    public void corruptExtRstDetection() throws Exception {
+    public void corruptExtRstDetection() {
        byte[] data = new byte[] {
              0x79, 0x79, 0x11, 0x11, 
              0x22, 0x22, 0x33, 0x33, 
@@ -385,7 +386,7 @@ public final class TestUnicodeString {
      * @return a string of the specified number of characters
      */
     private static UnicodeString makeUnicodeString(int numChars, boolean is16Bit) {
-        StringBuilder b = new StringBuilder(numChars);
+      StringBuilder b = new StringBuilder(numChars);
         int charBase = is16Bit ? 0x8A00 : 'A';
         for (int i = 0; i < numChars; i++) {
             char ch = (char) ((i % 16) + charBase);

@@ -712,7 +712,7 @@ public class UnicodeString implements Comparable<UnicodeString> {
         if (field_4_format_runs != null) {
           for (int i = 0; i < field_4_format_runs.size();i++) {
             FormatRun r = field_4_format_runs.get(i);
-            buffer.append("      .format_run"+i+"          = ").append(r).append("\n");
+            buffer.append("      .format_run").append(i).append("          = ").append(r).append("\n");
           }
         }
         if (field_5_ext_rst != null) {
