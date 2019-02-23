@@ -16,15 +16,6 @@
 ==================================================================== */
 package org.apache.poi;
 
-import static org.junit.Assert.assertNotNull;
-
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.zip.ZipException;
-
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.stress.FileHandler;
 import org.apache.poi.stress.HSLFFileHandler;
@@ -34,6 +25,15 @@ import org.apache.poi.stress.XSLFFileHandler;
 import org.apache.poi.stress.XSSFFileHandler;
 import org.apache.poi.stress.XWPFFileHandler;
 import org.junit.Assume;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.zip.ZipException;
+
+import static org.junit.Assert.assertNotNull;
 
 public class BaseIntegrationTest {
 	private final File rootDir;
@@ -48,34 +48,25 @@ public class BaseIntegrationTest {
 
 	public void test() throws Exception {
         assertNotNull("Unknown file extension for file: " + file + ": " + TestAllFiles.getExtension(file), handler);
+		testOneFile(new File(rootDir, file));
+	}
 
-        File inputFile = new File(rootDir, file);
-        try {
-            try {
-                handleFile(inputFile);
-            } catch (IllegalArgumentException e) {
-                handleWrongFileExtension(inputFile, e);
-                return;
-            }
-        } catch (OfficeXmlFileException e) {
-        	// check if the file-extension is wrong
-        	if(!e.getMessage().contains("data appears to be in the Office 2007")) {
-				// use XWPF instead of HWPF and XSSF instead of HSSF as the file seems to have the wrong extension
-				handleWrongOLE2XMLExtension(inputFile, e);
-				return;
-        	}
-
-			throw e;
-        } catch (OldFileFormatException e) {
-        	if (e.getClass().equals(OldFileFormatException.class)) {
+	protected void testOneFile(File inputFile) throws Exception {
+		try {
+			handleFile(inputFile);
+		} catch (OfficeXmlFileException e) {
+			// switch XWPF and HWPF and so forth depending on the error message
+			handleWrongOLE2XMLExtension(inputFile, e);
+		} catch (OldFileFormatException e) {
+			if (e.getClass().equals(OldFileFormatException.class)) {
 				// Not even text extraction is supported for these: handler.handleExtracting(inputFile);
 				Assume.assumeFalse("File " + file + " excluded because it is unsupported old Excel format", true);
 			}
 			// otherwise try at least to perform extracting tests on these old files
-        } catch (EncryptedDocumentException e) {
-        	// Do not try to read encrypted files
+		} catch (EncryptedDocumentException e) {
+			// Do not try to read encrypted files
 			Assume.assumeFalse("File " + file + " excluded because it is password-encrypted", true);
-        } catch (ZipException e) {
+		} catch (ZipException e) {
 			// some files are corrupted
 			if (e.getMessage().equals("unexpected EOF") || e.getMessage().equals("Truncated ZIP file")) {
 				Assume.assumeFalse("File " + file + " excluded because the Zip file is incomplete", true);
@@ -83,6 +74,11 @@ public class BaseIntegrationTest {
 
 			throw e;
 		} catch (IOException e) {
+			// ignore some other ways of corrupted files
+			if(e.getMessage().contains("Truncated ZIP file")) {
+				Assume.assumeFalse("File " + file + " excluded because the Zip file is incomplete", true);
+			}
+
 			// sometimes binary format has XML-format-extension...
 			if(e.getMessage().contains("rong file format or file extension for OO XML file")) {
 				handleWrongOLE2XMLExtension(inputFile, e);
@@ -90,11 +86,11 @@ public class BaseIntegrationTest {
 			}
 
 			throw e;
-        } catch (IllegalArgumentException e) {
-        	// ignore errors for documents with incorrect extension
-        	String message = e.getMessage();
+		} catch (IllegalArgumentException e) {
+			// ignore errors for documents with incorrect extension
+			String message = e.getMessage();
 			if(message != null && (message.equals("The document is really a RTF file") ||
-        			message.equals("The document is really a PDF file") ||
+					message.equals("The document is really a PDF file") ||
 					message.equals("The document is really a HTML file"))) {
 				Assume.assumeFalse("File " + file + " excluded because it is actually a PDF/RTF/HTML file", true);
 			}
@@ -105,40 +101,42 @@ public class BaseIntegrationTest {
 			}
 
 			throw e;
-        }
+		}
 
-        try {
-        	handler.handleExtracting(inputFile);
+		try {
+			handler.handleExtracting(inputFile);
 		} catch (EncryptedDocumentException e) {
 			// Do not try to read encrypted files
 			Assume.assumeFalse("File " + file + " excluded because it is password-encrypted", true);
 		}
 	}
 
-    private void handleWrongFileExtension(File inputFile, IllegalArgumentException e) throws Exception {
-        // we sometimes have wrong extensions, so for some exceptions we try to handle it
-        // with the correct FileHandler instead
-        String message = e.getMessage();
-        if(message != null && (message.equals("The document is really a XLS file"))) {
-            handler = TestAllFiles.HANDLERS.get(".xls");
-            handleFile(inputFile);
-        } else if(message != null && (message.equals("The document is really a PPT file"))) {
-            handler = TestAllFiles.HANDLERS.get(".ppt");
-            handleFile(inputFile);
-        } else if(message != null && (message.equals("The document is really a DOC file"))) {
-            handler = TestAllFiles.HANDLERS.get(".doc");
-            handleFile(inputFile);
-        } else if(message != null && (message.equals("The document is really a VSD file"))) {
-            handler = TestAllFiles.HANDLERS.get(".vsd");
-            handleFile(inputFile);
-        }
-
-        throw e;
-    }
-
     void handleWrongOLE2XMLExtension(File inputFile, Exception e) throws Exception {
+		// we sometimes have wrong extensions, so for some exceptions we try to handle it
+		// with the correct FileHandler instead
+		String message = e.getMessage();
+
+		// ignore some file-types that we do not want to handle here
+		Assume.assumeFalse("File " + file + " excluded because it is actually a PDF/RTF/HTML file",
+				message != null && (message.equals("The document is really a RTF file") ||
+					message.equals("The document is really a PDF file") ||
+					message.equals("The document is really a HTML file")));
+
+		if(message != null && (message.equals("The document is really a XLS file"))) {
+			handler = TestAllFiles.HANDLERS.get(".xls");
+			handleFile(inputFile);
+		} else if(message != null && (message.equals("The document is really a PPT file"))) {
+			handler = TestAllFiles.HANDLERS.get(".ppt");
+			handleFile(inputFile);
+		} else if(message != null && (message.equals("The document is really a DOC file"))) {
+			handler = TestAllFiles.HANDLERS.get(".doc");
+			handleFile(inputFile);
+		} else if(message != null && (message.equals("The document is really a VSD file"))) {
+			handler = TestAllFiles.HANDLERS.get(".vsd");
+			handleFile(inputFile);
+
 		// use XWPF instead of HWPF and XSSF instead of HSSF as the file seems to have the wrong extension
-		if (handler instanceof HWPFFileHandler) {
+		} else if (handler instanceof HWPFFileHandler) {
             handler = TestAllFiles.HANDLERS.get(".docx");
             handleFile(inputFile);
         } else if (handler instanceof HSSFFileHandler) {
@@ -147,6 +145,7 @@ public class BaseIntegrationTest {
         } else if (handler instanceof HSLFFileHandler) {
 			handler = TestAllFiles.HANDLERS.get(".pptx");
 			handleFile(inputFile);
+
 		// and the other way around, use HWPF instead of XWPF and so forth
 		} else if(handler instanceof XWPFFileHandler) {
 			handler = TestAllFiles.HANDLERS.get(".doc");
@@ -158,6 +157,7 @@ public class BaseIntegrationTest {
 			handler = TestAllFiles.HANDLERS.get(".ppt");
 			handleFile(inputFile);
         } else {
+			// nothing matched => throw the exception to the outside
             throw e;
         }
 	}
