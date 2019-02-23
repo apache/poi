@@ -42,151 +42,162 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class TestWorkbookProtection {
 
     @Test
     public void workbookAndRevisionPassword() throws Exception {
-        XSSFWorkbook workbook;
         String password = "test";
         
         // validate password with an actual office file (Excel 2010)
-        workbook = openSampleWorkbook("workbookProtection-workbook_password_user_range-2010.xlsx");
-        assertTrue(workbook.validateWorkbookPassword(password));
+        try (XSSFWorkbook workbook = openSampleWorkbook("workbookProtection-workbook_password_user_range-2010.xlsx")) {
+            assertTrue(workbook.validateWorkbookPassword(password));
+        }
 
         // validate with another office file (Excel 2013)
-        workbook = openSampleWorkbook("workbookProtection-workbook_password-2013.xlsx");
-        assertTrue(workbook.validateWorkbookPassword(password));
+        try (XSSFWorkbook workbook = openSampleWorkbook("workbookProtection-workbook_password-2013.xlsx")){
+            assertTrue(workbook.validateWorkbookPassword(password));
+        }
 
-        
-        workbook = openSampleWorkbook("workbookProtection_not_protected.xlsx");
 
-        // setting a null password shouldn't introduce the protection element
-        workbook.setWorkbookPassword(null, null);
-        assertNull(workbook.getCTWorkbook().getWorkbookProtection());
+        try (XSSFWorkbook workbook = openSampleWorkbook("workbookProtection_not_protected.xlsx")) {
+            // setting a null password shouldn't introduce the protection element
+            workbook.setWorkbookPassword(null, null);
+            assertNull(workbook.getCTWorkbook().getWorkbookProtection());
 
-        // compare the hashes
-        workbook.setWorkbookPassword(password, null);
-        int hashVal = CryptoFunctions.createXorVerifier1(password);
-        int actualVal = Integer.parseInt(workbook.getCTWorkbook().getWorkbookProtection().xgetWorkbookPassword().getStringValue(),16);
-        assertEquals(hashVal, actualVal);
-        assertTrue(workbook.validateWorkbookPassword(password));
-        
-        // removing the password again
-        workbook.setWorkbookPassword(null, null);
-        assertFalse(workbook.getCTWorkbook().getWorkbookProtection().isSetWorkbookPassword());
-        
-        // removing the whole protection structure
-        workbook.unLock();
-        assertNull(workbook.getCTWorkbook().getWorkbookProtection());
-        
-        // setting a null password shouldn't introduce the protection element
-        workbook.setRevisionsPassword(null, null);
-        assertNull(workbook.getCTWorkbook().getWorkbookProtection());
+            // compare the hashes
+            workbook.setWorkbookPassword(password, null);
+            int hashVal = CryptoFunctions.createXorVerifier1(password);
+            int actualVal = Integer.parseInt(workbook.getCTWorkbook().getWorkbookProtection().xgetWorkbookPassword().getStringValue(), 16);
+            assertEquals(hashVal, actualVal);
+            assertTrue(workbook.validateWorkbookPassword(password));
 
-        // compare the hashes
-        password = "T\u0400ST\u0100passwordWhichIsLongerThan15Chars";
-        workbook.setRevisionsPassword(password, null);
-        hashVal = CryptoFunctions.createXorVerifier1(password);
-        actualVal = Integer.parseInt(workbook.getCTWorkbook().getWorkbookProtection().xgetRevisionsPassword().getStringValue(),16);
-        assertEquals(hashVal, actualVal);
-        assertTrue(workbook.validateRevisionsPassword(password));
+            // removing the password again
+            workbook.setWorkbookPassword(null, null);
+            assertFalse(workbook.getCTWorkbook().getWorkbookProtection().isSetWorkbookPassword());
+
+            // removing the whole protection structure
+            workbook.unLock();
+            assertNull(workbook.getCTWorkbook().getWorkbookProtection());
+
+            // setting a null password shouldn't introduce the protection element
+            workbook.setRevisionsPassword(null, null);
+            assertNull(workbook.getCTWorkbook().getWorkbookProtection());
+
+            // compare the hashes
+            password = "T\u0400ST\u0100passwordWhichIsLongerThan15Chars";
+            workbook.setRevisionsPassword(password, null);
+            hashVal = CryptoFunctions.createXorVerifier1(password);
+            actualVal = Integer.parseInt(workbook.getCTWorkbook().getWorkbookProtection().xgetRevisionsPassword().getStringValue(), 16);
+            assertEquals(hashVal, actualVal);
+            assertTrue(workbook.validateRevisionsPassword(password));
+        }
     }
     
     @Test
     public void shouldReadWorkbookProtection() throws Exception {
-        XSSFWorkbook workbook = openSampleWorkbook("workbookProtection_not_protected.xlsx");
-        assertFalse(workbook.isStructureLocked());
-        assertFalse(workbook.isWindowsLocked());
-        assertFalse(workbook.isRevisionLocked());
+        try (XSSFWorkbook workbook = openSampleWorkbook("workbookProtection_not_protected.xlsx")) {
+            assertFalse(workbook.isStructureLocked());
+            assertFalse(workbook.isWindowsLocked());
+            assertFalse(workbook.isRevisionLocked());
+        }
 
-        workbook = openSampleWorkbook("workbookProtection_workbook_structure_protected.xlsx");
-        assertTrue(workbook.isStructureLocked());
-        assertFalse(workbook.isWindowsLocked());
-        assertFalse(workbook.isRevisionLocked());
+        try (XSSFWorkbook workbook = openSampleWorkbook("workbookProtection_workbook_structure_protected.xlsx")) {
+            assertTrue(workbook.isStructureLocked());
+            assertFalse(workbook.isWindowsLocked());
+            assertFalse(workbook.isRevisionLocked());
+        }
 
-        workbook = openSampleWorkbook("workbookProtection_workbook_windows_protected.xlsx");
-        assertTrue(workbook.isWindowsLocked());
-        assertFalse(workbook.isStructureLocked());
-        assertFalse(workbook.isRevisionLocked());
+        try (XSSFWorkbook workbook = openSampleWorkbook("workbookProtection_workbook_windows_protected.xlsx")) {
+            assertTrue(workbook.isWindowsLocked());
+            assertFalse(workbook.isStructureLocked());
+            assertFalse(workbook.isRevisionLocked());
+        }
 
-        workbook = openSampleWorkbook("workbookProtection_workbook_revision_protected.xlsx");
-        assertTrue(workbook.isRevisionLocked());
-        assertFalse(workbook.isWindowsLocked());
-        assertFalse(workbook.isStructureLocked());
+        try (XSSFWorkbook workbook = openSampleWorkbook("workbookProtection_workbook_revision_protected.xlsx")) {
+            assertTrue(workbook.isRevisionLocked());
+            assertFalse(workbook.isWindowsLocked());
+            assertFalse(workbook.isStructureLocked());
+        }
     }
 
     @Test
     public void shouldWriteStructureLock() throws Exception {
-        XSSFWorkbook workbook = openSampleWorkbook("workbookProtection_not_protected.xlsx");
-        assertFalse(workbook.isStructureLocked());
+        try (XSSFWorkbook workbook = openSampleWorkbook("workbookProtection_not_protected.xlsx")) {
+            assertFalse(workbook.isStructureLocked());
 
-        workbook.lockStructure();
+            workbook.lockStructure();
 
-        assertTrue(workbook.isStructureLocked());
+            assertTrue(workbook.isStructureLocked());
 
-        workbook.unLockStructure();
+            workbook.unLockStructure();
 
-        assertFalse(workbook.isStructureLocked());
+            assertFalse(workbook.isStructureLocked());
+        }
     }
 
     @Test
     public void shouldWriteWindowsLock() throws Exception {
-        XSSFWorkbook workbook = openSampleWorkbook("workbookProtection_not_protected.xlsx");
-        assertFalse(workbook.isWindowsLocked());
+        try (XSSFWorkbook workbook = openSampleWorkbook("workbookProtection_not_protected.xlsx")) {
+            assertFalse(workbook.isWindowsLocked());
 
-        workbook.lockWindows();
+            workbook.lockWindows();
 
-        assertTrue(workbook.isWindowsLocked());
+            assertTrue(workbook.isWindowsLocked());
 
-        workbook.unLockWindows();
+            workbook.unLockWindows();
 
-        assertFalse(workbook.isWindowsLocked());
+            assertFalse(workbook.isWindowsLocked());
+        }
     }
 
     @Test
     public void shouldWriteRevisionLock() throws Exception {
-        XSSFWorkbook workbook = openSampleWorkbook("workbookProtection_not_protected.xlsx");
-        assertFalse(workbook.isRevisionLocked());
+        try (XSSFWorkbook workbook = openSampleWorkbook("workbookProtection_not_protected.xlsx")) {
+            assertFalse(workbook.isRevisionLocked());
 
-        workbook.lockRevision();
+            workbook.lockRevision();
 
-        assertTrue(workbook.isRevisionLocked());
+            assertTrue(workbook.isRevisionLocked());
 
-        workbook.unLockRevision();
+            workbook.unLockRevision();
 
-        assertFalse(workbook.isRevisionLocked());
+            assertFalse(workbook.isRevisionLocked());
+        }
     }
 
     @SuppressWarnings("resource")
     @Test
     public void testHashPassword() throws Exception {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        wb.lockRevision();
-        wb.setRevisionsPassword("test", HashAlgorithm.sha1);
-        
-        wb = writeOutAndReadBack(wb);
-        
-        assertTrue(wb.isRevisionLocked());
-        assertTrue(wb.validateRevisionsPassword("test"));
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            wb.lockRevision();
+            wb.setRevisionsPassword("test", HashAlgorithm.sha1);
+
+            try (XSSFWorkbook wbBack = writeOutAndReadBack(wb)) {
+
+                assertTrue(wbBack.isRevisionLocked());
+                assertTrue(wbBack.validateRevisionsPassword("test"));
+            }
+        }
     }
     
     @SuppressWarnings("resource")
     @Test
     public void testIntegration() throws Exception {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        wb.createSheet("Testing purpose sheet");
-        assertFalse(wb.isRevisionLocked());
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            wb.createSheet("Testing purpose sheet");
+            assertFalse(wb.isRevisionLocked());
 
-        wb.lockRevision();
-        wb.setRevisionsPassword("test", null);
+            wb.lockRevision();
+            wb.setRevisionsPassword("test", null);
 
-        wb = writeOutAndReadBack(wb);
-        
-        assertTrue(wb.isRevisionLocked());
-        assertTrue(wb.validateRevisionsPassword("test"));
+            try (XSSFWorkbook wbBack = writeOutAndReadBack(wb)) {
+
+                assertTrue(wbBack.isRevisionLocked());
+                assertTrue(wbBack.validateRevisionsPassword("test"));
+            }
+        }
     }
     
     @Test
@@ -194,43 +205,43 @@ public class TestWorkbookProtection {
         final String password = "abc123";
         final String sheetName = "TestSheet1";
         final String cellValue = "customZipEntrySource";
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet1 = workbook.createSheet(sheetName);
-        XSSFRow row1 = sheet1.createRow(1);
-        XSSFCell cell1 = row1.createCell(1);
-        cell1.setCellValue(cellValue);
-        File tf1 = TempFile.createTempFile("poitest", ".xlsx");
-        FileOutputStream fos1 = new FileOutputStream(tf1);
-        workbook.write(fos1);
-        IOUtils.closeQuietly(fos1);
-        POIFSFileSystem poiFileSystem = new POIFSFileSystem();
-        EncryptionInfo encryptionInfo = new EncryptionInfo(EncryptionMode.agile);
-        Encryptor enc = encryptionInfo.getEncryptor();
-        enc.confirmPassword(password);
-        FileInputStream fis = new FileInputStream(tf1);
-        OPCPackage opc = OPCPackage.open(fis);
-        IOUtils.closeQuietly(fis);
-        try {
-            OutputStream os = enc.getDataStream(poiFileSystem);
-            opc.save(os);
-            IOUtils.closeQuietly(os);
-        } finally {
-            IOUtils.closeQuietly(opc);
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            XSSFSheet sheet1 = workbook.createSheet(sheetName);
+            XSSFRow row1 = sheet1.createRow(1);
+            XSSFCell cell1 = row1.createCell(1);
+            cell1.setCellValue(cellValue);
+            File tf1 = TempFile.createTempFile("poitest", ".xlsx");
+            FileOutputStream fos1 = new FileOutputStream(tf1);
+            workbook.write(fos1);
+            IOUtils.closeQuietly(fos1);
+            POIFSFileSystem poiFileSystem = new POIFSFileSystem();
+            EncryptionInfo encryptionInfo = new EncryptionInfo(EncryptionMode.agile);
+            Encryptor enc = encryptionInfo.getEncryptor();
+            enc.confirmPassword(password);
+            FileInputStream fis = new FileInputStream(tf1);
+            OPCPackage opc = OPCPackage.open(fis);
+            IOUtils.closeQuietly(fis);
+            try {
+                OutputStream os = enc.getDataStream(poiFileSystem);
+                opc.save(os);
+                IOUtils.closeQuietly(os);
+            } finally {
+                IOUtils.closeQuietly(opc);
+            }
+            assertTrue(tf1.delete());
+            FileOutputStream fos2 = new FileOutputStream(tf1);
+            poiFileSystem.writeFilesystem(fos2);
+            IOUtils.closeQuietly(fos2);
+            workbook.close();
+            fis = new FileInputStream(tf1);
+            POIFSFileSystem poiFileSystem2 = new POIFSFileSystem(fis);
+            IOUtils.closeQuietly(fis);
+            EncryptionInfo encryptionInfo2 = new EncryptionInfo(poiFileSystem2);
+            Decryptor decryptor = encryptionInfo2.getDecryptor();
+            decryptor.verifyPassword(password);
+            XSSFWorkbook workbook2 = new XSSFWorkbook(decryptor.getDataStream(poiFileSystem2));
+            workbook2.close();
+            assertTrue(tf1.delete());
         }
-        tf1.delete();
-        FileOutputStream fos2 = new FileOutputStream(tf1);
-        poiFileSystem.writeFilesystem(fos2);
-        IOUtils.closeQuietly(fos2);
-        workbook.close();
-        fis = new FileInputStream(tf1);
-        POIFSFileSystem poiFileSystem2 = new POIFSFileSystem(fis);
-        IOUtils.closeQuietly(fis);
-        EncryptionInfo encryptionInfo2 = new EncryptionInfo(poiFileSystem2);
-        Decryptor decryptor = encryptionInfo2.getDecryptor();
-        decryptor.verifyPassword(password);
-        XSSFWorkbook workbook2 = new XSSFWorkbook(decryptor.getDataStream(poiFileSystem2));
-        workbook2.close();
-        tf1.delete();
     }
-
 }

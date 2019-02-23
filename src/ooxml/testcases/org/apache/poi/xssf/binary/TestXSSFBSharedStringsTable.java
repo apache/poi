@@ -28,29 +28,24 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.junit.Test;
 
 public class TestXSSFBSharedStringsTable {
-
-
     private static POIDataSamples _ssTests = POIDataSamples.getSpreadSheetInstance();
 
     @Test
     public void testBasic() throws Exception {
+        try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("51519.xlsb"))) {
+            List<PackagePart> parts = pkg.getPartsByName(Pattern.compile("/xl/sharedStrings.bin"));
+            assertEquals(1, parts.size());
 
-        OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("51519.xlsb"));
-        List<PackagePart> parts = pkg.getPartsByName(Pattern.compile("/xl/sharedStrings.bin"));
-        assertEquals(1, parts.size());
+            XSSFBSharedStringsTable rtbl = new XSSFBSharedStringsTable(parts.get(0));
+            List<String> strings = rtbl.getItems();
+            assertEquals(49, strings.size());
 
-        XSSFBSharedStringsTable rtbl = new XSSFBSharedStringsTable(parts.get(0));
-        List<String> strings = rtbl.getItems();
-        assertEquals(49, strings.size());
+            assertEquals("\u30B3\u30E1\u30F3\u30C8", rtbl.getEntryAt(0));
+            assertEquals("\u65E5\u672C\u30AA\u30E9\u30AF\u30EB", rtbl.getEntryAt(3));
+            assertEquals(55, rtbl.getCount());
+            assertEquals(49, rtbl.getUniqueCount());
 
-        assertEquals("\u30B3\u30E1\u30F3\u30C8", rtbl.getEntryAt(0));
-        assertEquals("\u65E5\u672C\u30AA\u30E9\u30AF\u30EB", rtbl.getEntryAt(3));
-        assertEquals(55, rtbl.getCount());
-        assertEquals(49, rtbl.getUniqueCount());
-
-        //TODO: add in tests for phonetic runs
-
+            //TODO: add in tests for phonetic runs
+        }
     }
-
-
 }

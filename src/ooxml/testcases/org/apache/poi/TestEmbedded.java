@@ -67,5 +67,7 @@ public class TestEmbedded extends TestCase
 			byte[] b = IOUtils.toByteArray(pp.getInputStream());
 			assertTrue(b.length > 0);
 		}
+
+		doc.close();
 	}
 }

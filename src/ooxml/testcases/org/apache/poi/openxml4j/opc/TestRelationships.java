@@ -30,7 +30,6 @@ import junit.framework.TestCase;
 import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.xwpf.usermodel.XWPFRelation;
 
 
 public class TestRelationships extends TestCase {
@@ -51,18 +50,19 @@ public class TestRelationships extends TestCase {
      */
     public void testLoadRelationships() throws Exception {
         InputStream is = OpenXML4JTestDataSamples.openSampleStream("sample.xlsx");
-        OPCPackage pkg = OPCPackage.open(is);
-        logger.log(POILogger.DEBUG, "1: " + pkg);
-        PackageRelationshipCollection rels = pkg.getRelationshipsByType(PackageRelationshipTypes.CORE_DOCUMENT);
-        PackageRelationship coreDocRelationship = rels.getRelationship(0);
-        PackagePart corePart = pkg.getPart(coreDocRelationship);
-        String[] relIds = {"rId1", "rId2", "rId3"};
-        for (String relId : relIds) {
-            PackageRelationship rel = corePart.getRelationship(relId);
-            assertNotNull(rel);
-            PackagePartName relName = PackagingURIHelper.createPartName(rel.getTargetURI());
-            PackagePart sheetPart = pkg.getPart(relName);
-            assertEquals("Number of relationships1 for " + sheetPart.getPartName(), 1, sheetPart.getRelationships().size());
+        try (OPCPackage pkg = OPCPackage.open(is)) {
+            logger.log(POILogger.DEBUG, "1: " + pkg);
+            PackageRelationshipCollection rels = pkg.getRelationshipsByType(PackageRelationshipTypes.CORE_DOCUMENT);
+            PackageRelationship coreDocRelationship = rels.getRelationship(0);
+            PackagePart corePart = pkg.getPart(coreDocRelationship);
+            String[] relIds = {"rId1", "rId2", "rId3"};
+            for (String relId : relIds) {
+                PackageRelationship rel = corePart.getRelationship(relId);
+                assertNotNull(rel);
+                PackagePartName relName = PackagingURIHelper.createPartName(rel.getTargetURI());
+                PackagePart sheetPart = pkg.getPart(relName);
+                assertEquals("Number of relationships1 for " + sheetPart.getPartName(), 1, sheetPart.getRelationships().size());
+            }
         }
     }
     
@@ -72,39 +72,40 @@ public class TestRelationships extends TestCase {
      */
     public void testFetchFromCollection() throws Exception {
         InputStream is = OpenXML4JTestDataSamples.openSampleStream("ExcelWithHyperlinks.xlsx");
-        OPCPackage pkg = OPCPackage.open(is);
-        PackagePart sheet = pkg.getPart(
-        		PackagingURIHelper.createPartName(SHEET_WITH_COMMENTS));
-        assertNotNull(sheet);
-        
-        assertTrue(sheet.hasRelationships());
-        assertEquals(6, sheet.getRelationships().size());
-        
-        // Should have three hyperlinks, and one comment
-        PackageRelationshipCollection hyperlinks =
-        	sheet.getRelationshipsByType(HYPERLINK_REL_TYPE);
-        PackageRelationshipCollection comments =
-        	sheet.getRelationshipsByType(COMMENTS_REL_TYPE);
-        assertEquals(3, hyperlinks.size());
-        assertEquals(1, comments.size());
-        
-        // Check we can get bits out by id
-        // Hyperlinks are rId1, rId2 and rId3
-        // Comment is rId6
-        assertNotNull(hyperlinks.getRelationshipByID("rId1"));
-        assertNotNull(hyperlinks.getRelationshipByID("rId2"));
-        assertNotNull(hyperlinks.getRelationshipByID("rId3"));
-        assertNull(hyperlinks.getRelationshipByID("rId6"));
-        
-        assertNull(comments.getRelationshipByID("rId1"));
-        assertNull(comments.getRelationshipByID("rId2"));
-        assertNull(comments.getRelationshipByID("rId3"));
-        assertNotNull(comments.getRelationshipByID("rId6"));
-        
-        assertNotNull(sheet.getRelationship("rId1"));
-        assertNotNull(sheet.getRelationship("rId2"));
-        assertNotNull(sheet.getRelationship("rId3"));
-        assertNotNull(sheet.getRelationship("rId6"));
+        try (OPCPackage pkg = OPCPackage.open(is)) {
+            PackagePart sheet = pkg.getPart(
+                    PackagingURIHelper.createPartName(SHEET_WITH_COMMENTS));
+            assertNotNull(sheet);
+
+            assertTrue(sheet.hasRelationships());
+            assertEquals(6, sheet.getRelationships().size());
+
+            // Should have three hyperlinks, and one comment
+            PackageRelationshipCollection hyperlinks =
+                    sheet.getRelationshipsByType(HYPERLINK_REL_TYPE);
+            PackageRelationshipCollection comments =
+                    sheet.getRelationshipsByType(COMMENTS_REL_TYPE);
+            assertEquals(3, hyperlinks.size());
+            assertEquals(1, comments.size());
+
+            // Check we can get bits out by id
+            // Hyperlinks are rId1, rId2 and rId3
+            // Comment is rId6
+            assertNotNull(hyperlinks.getRelationshipByID("rId1"));
+            assertNotNull(hyperlinks.getRelationshipByID("rId2"));
+            assertNotNull(hyperlinks.getRelationshipByID("rId3"));
+            assertNull(hyperlinks.getRelationshipByID("rId6"));
+
+            assertNull(comments.getRelationshipByID("rId1"));
+            assertNull(comments.getRelationshipByID("rId2"));
+            assertNull(comments.getRelationshipByID("rId3"));
+            assertNotNull(comments.getRelationshipByID("rId6"));
+
+            assertNotNull(sheet.getRelationship("rId1"));
+            assertNotNull(sheet.getRelationship("rId2"));
+            assertNotNull(sheet.getRelationship("rId3"));
+            assertNotNull(sheet.getRelationship("rId6"));
+        }
     }
     
     /**
@@ -113,31 +114,32 @@ public class TestRelationships extends TestCase {
      */
     public void testLoadExcelHyperlinkRelations() throws Exception {
         InputStream is = OpenXML4JTestDataSamples.openSampleStream("ExcelWithHyperlinks.xlsx");
-        OPCPackage pkg = OPCPackage.open(is);
-	    PackagePart sheet = pkg.getPart(
-	    		PackagingURIHelper.createPartName(SHEET_WITH_COMMENTS));
-	    assertNotNull(sheet);
+        try (OPCPackage pkg = OPCPackage.open(is)) {
+            PackagePart sheet = pkg.getPart(
+                    PackagingURIHelper.createPartName(SHEET_WITH_COMMENTS));
+            assertNotNull(sheet);
 
-	    // rId1 is url
-	    PackageRelationship url = sheet.getRelationship("rId1");
-	    assertNotNull(url);
-	    assertEquals("rId1", url.getId());
-	    assertEquals("/xl/worksheets/sheet1.xml", url.getSourceURI().toString());
-	    assertEquals("http://poi.apache.org/", url.getTargetURI().toString());
-	    
-	    // rId2 is file
-	    PackageRelationship file = sheet.getRelationship("rId2");
-	    assertNotNull(file);
-	    assertEquals("rId2", file.getId());
-	    assertEquals("/xl/worksheets/sheet1.xml", file.getSourceURI().toString());
-	    assertEquals("WithVariousData.xlsx", file.getTargetURI().toString());
-	    
-	    // rId3 is mailto
-	    PackageRelationship mailto = sheet.getRelationship("rId3");
-	    assertNotNull(mailto);
-	    assertEquals("rId3", mailto.getId());
-	    assertEquals("/xl/worksheets/sheet1.xml", mailto.getSourceURI().toString());
-	    assertEquals("mailto:dev@poi.apache.org?subject=XSSF%20Hyperlinks", mailto.getTargetURI().toString());
+            // rId1 is url
+            PackageRelationship url = sheet.getRelationship("rId1");
+            assertNotNull(url);
+            assertEquals("rId1", url.getId());
+            assertEquals("/xl/worksheets/sheet1.xml", url.getSourceURI().toString());
+            assertEquals("http://poi.apache.org/", url.getTargetURI().toString());
+
+            // rId2 is file
+            PackageRelationship file = sheet.getRelationship("rId2");
+            assertNotNull(file);
+            assertEquals("rId2", file.getId());
+            assertEquals("/xl/worksheets/sheet1.xml", file.getSourceURI().toString());
+            assertEquals("WithVariousData.xlsx", file.getTargetURI().toString());
+
+            // rId3 is mailto
+            PackageRelationship mailto = sheet.getRelationship("rId3");
+            assertNotNull(mailto);
+            assertEquals("rId3", mailto.getId());
+            assertEquals("/xl/worksheets/sheet1.xml", mailto.getSourceURI().toString());
+            assertEquals("mailto:dev@poi.apache.org?subject=XSSF%20Hyperlinks", mailto.getTargetURI().toString());
+        }
     }
     
     /*
@@ -217,73 +219,72 @@ public class TestRelationships extends TestCase {
     }
 
     public void testCreateRelationsFromScratch() throws Exception {
-    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    	OPCPackage pkg = OPCPackage.create(baos);
-    	
-    	PackagePart partA =
-    		pkg.createPart(PackagingURIHelper.createPartName("/partA"), "text/plain");
-    	PackagePart partB =
-    		pkg.createPart(PackagingURIHelper.createPartName("/partB"), "image/png");
-    	assertNotNull(partA);
-    	assertNotNull(partB);
-    	
-    	// Internal
-    	partA.addRelationship(partB.getPartName(), TargetMode.INTERNAL, "http://example/Rel");
-    	
-    	// External
-    	partA.addExternalRelationship("http://poi.apache.org/", "http://example/poi");
-    	partB.addExternalRelationship("http://poi.apache.org/ss/", "http://example/poi/ss");
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        OPCPackage pkg = OPCPackage.create(baos);
 
-    	// Check as expected currently
-    	assertEquals("/partB", partA.getRelationship("rId1").getTargetURI().toString());
-    	assertEquals("http://poi.apache.org/", 
-    			partA.getRelationship("rId2").getTargetURI().toString());
-    	assertEquals("http://poi.apache.org/ss/", 
-    			partB.getRelationship("rId1").getTargetURI().toString());
-    	
-    	
-    	// Save, and re-load
-    	pkg.close();
-    	ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-    	pkg = OPCPackage.open(bais);
-    	
-    	partA = pkg.getPart(PackagingURIHelper.createPartName("/partA"));
-    	partB = pkg.getPart(PackagingURIHelper.createPartName("/partB"));
-    	
-    	
-    	// Check the relations
-    	assertEquals(2, partA.getRelationships().size());
-    	assertEquals(1, partB.getRelationships().size());
-    	
-    	assertEquals("/partB", partA.getRelationship("rId1").getTargetURI().toString());
-    	assertEquals("http://poi.apache.org/", 
-    			partA.getRelationship("rId2").getTargetURI().toString());
-    	assertEquals("http://poi.apache.org/ss/", 
-    			partB.getRelationship("rId1").getTargetURI().toString());
-    	// Check core too
-    	assertEquals("/docProps/core.xml",
-    			pkg.getRelationshipsByType(PackageRelationshipTypes.CORE_PROPERTIES).getRelationship(0).getTargetURI().toString());
-    	
-    	
-    	// Add some more
-      partB.addExternalRelationship("http://poi.apache.org/new", "http://example/poi/new");
-      partB.addExternalRelationship("http://poi.apache.org/alt", "http://example/poi/alt");
-      
-      // Check the relations
-      assertEquals(2, partA.getRelationships().size());
-      assertEquals(3, partB.getRelationships().size());
-      
-      assertEquals("/partB", partA.getRelationship("rId1").getTargetURI().toString());
-      assertEquals("http://poi.apache.org/", 
+        PackagePart partA =
+            pkg.createPart(PackagingURIHelper.createPartName("/partA"), "text/plain");
+        PackagePart partB =
+            pkg.createPart(PackagingURIHelper.createPartName("/partB"), "image/png");
+        assertNotNull(partA);
+        assertNotNull(partB);
+
+        // Internal
+        partA.addRelationship(partB.getPartName(), TargetMode.INTERNAL, "http://example/Rel");
+
+        // External
+        partA.addExternalRelationship("http://poi.apache.org/", "http://example/poi");
+        partB.addExternalRelationship("http://poi.apache.org/ss/", "http://example/poi/ss");
+
+        // Check as expected currently
+        assertEquals("/partB", partA.getRelationship("rId1").getTargetURI().toString());
+        assertEquals("http://poi.apache.org/",
+                partA.getRelationship("rId2").getTargetURI().toString());
+        assertEquals("http://poi.apache.org/ss/",
+                partB.getRelationship("rId1").getTargetURI().toString());
+
+
+        // Save, and re-load
+        pkg.close();
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        pkg = OPCPackage.open(bais);
+
+        partA = pkg.getPart(PackagingURIHelper.createPartName("/partA"));
+        partB = pkg.getPart(PackagingURIHelper.createPartName("/partB"));
+
+
+        // Check the relations
+        assertEquals(2, partA.getRelationships().size());
+        assertEquals(1, partB.getRelationships().size());
+
+        assertEquals("/partB", partA.getRelationship("rId1").getTargetURI().toString());
+        assertEquals("http://poi.apache.org/",
+                partA.getRelationship("rId2").getTargetURI().toString());
+        assertEquals("http://poi.apache.org/ss/",
+                partB.getRelationship("rId1").getTargetURI().toString());
+        // Check core too
+        PackageRelationship relationship = pkg.getRelationshipsByType(PackageRelationshipTypes.CORE_PROPERTIES).getRelationship(0);
+        assertNotNull(relationship);
+        assertEquals("/docProps/core.xml", relationship.getTargetURI().toString());
+
+        // Add some more
+        partB.addExternalRelationship("http://poi.apache.org/new", "http://example/poi/new");
+        partB.addExternalRelationship("http://poi.apache.org/alt", "http://example/poi/alt");
+
+        // Check the relations
+        assertEquals(2, partA.getRelationships().size());
+        assertEquals(3, partB.getRelationships().size());
+
+        assertEquals("/partB", partA.getRelationship("rId1").getTargetURI().toString());
+        assertEquals("http://poi.apache.org/",
             partA.getRelationship("rId2").getTargetURI().toString());
-      assertEquals("http://poi.apache.org/ss/", 
+        assertEquals("http://poi.apache.org/ss/",
             partB.getRelationship("rId1").getTargetURI().toString());
-      assertEquals("http://poi.apache.org/new", 
+        assertEquals("http://poi.apache.org/new",
             partB.getRelationship("rId2").getTargetURI().toString());
-      assertEquals("http://poi.apache.org/alt", 
+        assertEquals("http://poi.apache.org/alt",
             partB.getRelationship("rId3").getTargetURI().toString());
     }
-
 
     public void testTargetWithSpecialChars() throws Exception{
         OPCPackage pkg;
@@ -371,7 +372,8 @@ public class TestRelationships extends TestCase {
 
        PackageRelationship rel2 = partA.getRelationships().getRelationship(0);
 
-    	assertEquals(rel1.getRelationshipType(), rel2.getRelationshipType());
+       assertNotNull(rel2);
+       assertEquals(rel1.getRelationshipType(), rel2.getRelationshipType());
        assertEquals(rel1.getId(), rel2.getId());
        assertEquals(rel1.getSourceURI(), rel2.getSourceURI());
        assertEquals(rel1.getTargetURI(), rel2.getTargetURI());

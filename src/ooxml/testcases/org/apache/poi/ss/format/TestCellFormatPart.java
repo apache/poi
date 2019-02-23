@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
@@ -27,6 +28,7 @@ import java.util.regex.Pattern;
 
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.junit.AfterClass;
@@ -58,7 +60,7 @@ public class TestCellFormatPart extends CellFormatTestBase {
     }
 
     @Test
-    public void testGeneralFormat() {
+    public void testGeneralFormat() throws IOException {
         runFormatTests("GeneralFormatTests.xlsx", new CellValue() {
             @Override
             public Object getValue(Cell cell) {
@@ -75,7 +77,7 @@ public class TestCellFormatPart extends CellFormatTestBase {
     }
 
     @Test
-    public void testNumberFormat() {
+    public void testNumberFormat() throws IOException {
         runFormatTests("NumberFormatTests.xlsx", new CellValue() {
             @Override
             public Object getValue(Cell cell) {
@@ -85,7 +87,7 @@ public class TestCellFormatPart extends CellFormatTestBase {
     }
 
     @Test
-    public void testNumberApproxFormat() {
+    public void testNumberApproxFormat() throws IOException {
         runFormatTests("NumberFormatApproxTests.xlsx", new CellValue() {
             @Override
             public Object getValue(Cell cell) {
@@ -106,7 +108,7 @@ public class TestCellFormatPart extends CellFormatTestBase {
     }
 
     @Test
-    public void testDateFormat() {
+    public void testDateFormat() throws IOException {
         TimeZone tz = LocaleUtil.getUserTimeZone();
         LocaleUtil.setUserTimeZone(TimeZone.getTimeZone("CET"));
         try {
@@ -122,7 +124,7 @@ public class TestCellFormatPart extends CellFormatTestBase {
     }
 
     @Test
-    public void testElapsedFormat() {
+    public void testElapsedFormat() throws IOException {
         runFormatTests("ElapsedFormatTests.xlsx", new CellValue() {
             @Override
             public Object getValue(Cell cell) {
@@ -132,22 +134,20 @@ public class TestCellFormatPart extends CellFormatTestBase {
     }
 
     @Test
-    public void testTextFormat() {
+    public void testTextFormat() throws IOException {
         runFormatTests("TextFormatTests.xlsx", new CellValue() {
             @Override
             public Object getValue(Cell cell) {
-                switch(CellFormat.ultimateType(cell)) {
-                    case BOOLEAN:
-                        return cell.getBooleanCellValue();
-                    default:
-                        return cell.getStringCellValue();
+                if (CellFormat.ultimateType(cell) == CellType.BOOLEAN) {
+                    return cell.getBooleanCellValue();
                 }
+                return cell.getStringCellValue();
             }
         });
     }
 
     @Test
-    public void testConditions() {
+    public void testConditions() throws IOException {
         runFormatTests("FormatConditionTests.xlsx", new CellValue() {
             @Override
             Object getValue(Cell cell) {

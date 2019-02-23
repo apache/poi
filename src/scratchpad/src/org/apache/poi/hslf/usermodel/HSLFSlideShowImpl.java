@@ -66,13 +66,14 @@ import org.apache.poi.util.POILogger;
  * "reader". It is only a very basic class for now
  */
 public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
+    private static final POILogger logger = POILogFactory.getLogger(HSLFSlideShowImpl.class);
+
     static final int UNSET_OFFSET = -1;
 
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 200_000_000;
 
-    // For logging
-    private POILogger logger = POILogFactory.getLogger(this.getClass());
+    private static final String DUAL_STORAGE_NAME = "PP97_DUALSTORAGE";
 
     // Holds metadata on where things are in our document
     private CurrentUserAtom currentUser;
@@ -136,29 +137,35 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     public HSLFSlideShowImpl(DirectoryNode dir) throws IOException {
         super(handleDualStorage(dir));
 
-        // First up, grab the "Current User" stream
-        // We need this before we can detect Encrypted Documents
-        readCurrentUserStream();
+        try {
+            // First up, grab the "Current User" stream
+            // We need this before we can detect Encrypted Documents
+            readCurrentUserStream();
 
-        // Next up, grab the data that makes up the
-        //  PowerPoint stream
-        readPowerPointStream();
+            // Next up, grab the data that makes up the
+            //  PowerPoint stream
+            readPowerPointStream();
 
-        // Now, build records based on the PowerPoint stream
-        buildRecords();
+            // Now, build records based on the PowerPoint stream
+            buildRecords();
 
-        // Look for any other streams
-        readOtherStreams();
+            // Look for any other streams
+            readOtherStreams();
+        } catch (RuntimeException | IOException e) {
+            // clean up the filesystem when we cannot read it here to avoid
+            // leaking file handles
+            dir.getFileSystem().close();
+
+            throw e;
+        }
     }
 
     private static DirectoryNode handleDualStorage(DirectoryNode dir) throws IOException {
         // when there's a dual storage entry, use it, as the outer document can't be read quite probably ...
-        String dualName = "PP97_DUALSTORAGE";
-        if (!dir.hasEntry(dualName)) {
+        if (!dir.hasEntry(DUAL_STORAGE_NAME)) {
             return dir;
         }
-        dir = (DirectoryNode) dir.getEntry(dualName);
-        return dir;
+        return (DirectoryNode) dir.getEntry(DUAL_STORAGE_NAME);
     }
 
     /**
@@ -834,7 +841,8 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     public void close() throws IOException {
         // only close the filesystem, if we are based on the root node.
         // embedded documents/slideshows shouldn't close the parent container
-        if (getDirectory().getParent() == null) {
+        if (getDirectory().getParent() == null ||
+                getDirectory().getName().equals(DUAL_STORAGE_NAME)) {
             POIFSFileSystem fs = getDirectory().getFileSystem();
             if (fs != null) {
                 fs.close();

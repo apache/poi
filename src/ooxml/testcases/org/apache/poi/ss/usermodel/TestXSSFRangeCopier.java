@@ -26,8 +26,11 @@ import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFRangeCopier;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.IOException;
 
 public class TestXSSFRangeCopier extends TestRangeCopier {
     public TestXSSFRangeCopier() {
@@ -42,6 +45,11 @@ public class TestXSSFRangeCopier extends TestRangeCopier {
         initSheets();
         rangeCopier = new XSSFRangeCopier(sheet1, sheet1);
         transSheetRangeCopier = new XSSFRangeCopier(sheet1, sheet2);
+    }
+
+    @After
+    public void shutdown() throws IOException {
+        workbook.close();
     }
 
     @Test // XSSF only. HSSF version wouldn't be so simple. And also this test is contained in following, more complex tests, so it's not really important.

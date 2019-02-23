@@ -77,19 +77,19 @@ public final class SlideShowDumper {
 		filename = args[1];
 	}
 
-	POIFSFileSystem poifs = new POIFSFileSystem(new File(filename));
-	SlideShowDumper foo = new SlideShowDumper(poifs, System.out);
-    poifs.close();
+	try (POIFSFileSystem poifs = new POIFSFileSystem(new File(filename))) {
+		SlideShowDumper foo = new SlideShowDumper(poifs, System.out);
 
-	if(args.length > 1) {
-		if(args[0].equalsIgnoreCase("-escher")) {
-			foo.setDDFEscher(true);
-		} else {
-			foo.setBasicEscher(true);
+		if(args.length > 1) {
+			if(args[0].equalsIgnoreCase("-escher")) {
+				foo.setDDFEscher(true);
+			} else {
+				foo.setBasicEscher(true);
+			}
 		}
-	}
 
-	foo.printDump();
+		foo.printDump();
+	}
   }
 
   /**

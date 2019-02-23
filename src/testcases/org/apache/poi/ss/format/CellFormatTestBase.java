@@ -96,7 +96,7 @@ public class CellFormatTestBase {
         }
     }
 
-    protected void runFormatTests(String workbookName, CellValue valueGetter) {
+    protected void runFormatTests(String workbookName, CellValue valueGetter) throws IOException {
 
         openWorkbook(workbookName);
 
@@ -127,6 +127,8 @@ public class CellFormatTestBase {
                 tryFormat(row.getRowNum(), expectedText, format, valueGetter, value);
             }
         }
+
+        workbook.close();
     }
 
     /**

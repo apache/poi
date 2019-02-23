@@ -16,21 +16,34 @@
 ==================================================================== */
 package org.apache.poi.xssf;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class TestSheetProtection extends TestCase {
+import java.io.IOException;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+public class TestSheetProtection {
+	private XSSFWorkbook workbook;
 	private XSSFSheet sheet;
 	
-	@Override
-	protected void setUp() throws Exception {
-		XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("sheetProtection_not_protected.xlsx");
+	@Before
+	public void setUp() {
+		workbook = XSSFTestDataSamples.openSampleWorkbook("sheetProtection_not_protected.xlsx");
 		sheet = workbook.getSheetAt(0);
 	}
-	
-	public void testShouldReadWorkbookProtection() throws Exception {
+
+	@After
+	public void tearDown() throws IOException {
+		workbook.close();
+	}
+
+	@Test
+	public void testShouldReadWorkbookProtection() throws IOException {
 		assertFalse(sheet.isAutoFilterLocked());
 		assertFalse(sheet.isDeleteColumnsLocked());
 		assertFalse(sheet.isDeleteRowsLocked());
@@ -48,27 +61,30 @@ public class TestSheetProtection extends TestCase {
 		assertFalse(sheet.isSelectUnlockedCellsLocked());
 		assertFalse(sheet.isSheetLocked());
 
-		sheet = XSSFTestDataSamples.openSampleWorkbook("sheetProtection_allLocked.xlsx").getSheetAt(0);
+		try (XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("sheetProtection_allLocked.xlsx")) {
+			sheet = workbook.getSheetAt(0);
 
-		assertTrue(sheet.isAutoFilterLocked());
-		assertTrue(sheet.isDeleteColumnsLocked());
-		assertTrue(sheet.isDeleteRowsLocked());
-		assertTrue(sheet.isFormatCellsLocked());
-		assertTrue(sheet.isFormatColumnsLocked());
-		assertTrue(sheet.isFormatRowsLocked());
-		assertTrue(sheet.isInsertColumnsLocked());
-		assertTrue(sheet.isInsertHyperlinksLocked());
-		assertTrue(sheet.isInsertRowsLocked());
-		assertTrue(sheet.isPivotTablesLocked());
-		assertTrue(sheet.isSortLocked());
-		assertTrue(sheet.isObjectsLocked());
-		assertTrue(sheet.isScenariosLocked());
-		assertTrue(sheet.isSelectLockedCellsLocked());
-		assertTrue(sheet.isSelectUnlockedCellsLocked());
-		assertTrue(sheet.isSheetLocked());
+			assertTrue(sheet.isAutoFilterLocked());
+			assertTrue(sheet.isDeleteColumnsLocked());
+			assertTrue(sheet.isDeleteRowsLocked());
+			assertTrue(sheet.isFormatCellsLocked());
+			assertTrue(sheet.isFormatColumnsLocked());
+			assertTrue(sheet.isFormatRowsLocked());
+			assertTrue(sheet.isInsertColumnsLocked());
+			assertTrue(sheet.isInsertHyperlinksLocked());
+			assertTrue(sheet.isInsertRowsLocked());
+			assertTrue(sheet.isPivotTablesLocked());
+			assertTrue(sheet.isSortLocked());
+			assertTrue(sheet.isObjectsLocked());
+			assertTrue(sheet.isScenariosLocked());
+			assertTrue(sheet.isSelectLockedCellsLocked());
+			assertTrue(sheet.isSelectUnlockedCellsLocked());
+			assertTrue(sheet.isSheetLocked());
+		}
 	}
-	
-	public void testWriteAutoFilter() throws Exception {
+
+	@Test
+	public void testWriteAutoFilter() {
 		assertFalse(sheet.isAutoFilterLocked());
 		sheet.lockAutoFilter(true);
 		assertFalse(sheet.isAutoFilterLocked());
@@ -77,8 +93,9 @@ public class TestSheetProtection extends TestCase {
 		sheet.lockAutoFilter(false);
 		assertFalse(sheet.isAutoFilterLocked());
 	}
-	
-	public void testWriteDeleteColumns() throws Exception {
+
+	@Test
+	public void testWriteDeleteColumns() {
 		assertFalse(sheet.isDeleteColumnsLocked());
 		sheet.lockDeleteColumns(true);
 		assertFalse(sheet.isDeleteColumnsLocked());
@@ -87,8 +104,9 @@ public class TestSheetProtection extends TestCase {
 		sheet.lockDeleteColumns(false);
 		assertFalse(sheet.isDeleteColumnsLocked());
 	}
-	
-	public void testWriteDeleteRows() throws Exception {
+
+	@Test
+	public void testWriteDeleteRows() {
 		assertFalse(sheet.isDeleteRowsLocked());
 		sheet.lockDeleteRows(true);
 		assertFalse(sheet.isDeleteRowsLocked());
@@ -97,8 +115,9 @@ public class TestSheetProtection extends TestCase {
         sheet.lockDeleteRows(false);
         assertFalse(sheet.isDeleteRowsLocked());
 	}
-	
-	public void testWriteFormatCells() throws Exception {
+
+	@Test
+	public void testWriteFormatCells() {
 		assertFalse(sheet.isFormatCellsLocked());
 		sheet.lockFormatCells(true);
 		assertFalse(sheet.isFormatCellsLocked());
@@ -107,8 +126,9 @@ public class TestSheetProtection extends TestCase {
         sheet.lockFormatCells(false);
         assertFalse(sheet.isFormatCellsLocked());
 	}
-	
-	public void testWriteFormatColumns() throws Exception {
+
+	@Test
+	public void testWriteFormatColumns() {
 		assertFalse(sheet.isFormatColumnsLocked());
 		sheet.lockFormatColumns(true);
 		assertFalse(sheet.isFormatColumnsLocked());
@@ -117,8 +137,9 @@ public class TestSheetProtection extends TestCase {
         sheet.lockFormatColumns(false);
         assertFalse(sheet.isFormatColumnsLocked());
 	}
-	
-	public void testWriteFormatRows() throws Exception {
+
+	@Test
+	public void testWriteFormatRows() {
 		assertFalse(sheet.isFormatRowsLocked());
 		sheet.lockFormatRows(true);
 		assertFalse(sheet.isFormatRowsLocked());
@@ -127,8 +148,9 @@ public class TestSheetProtection extends TestCase {
         sheet.lockFormatRows(false);
         assertFalse(sheet.isFormatRowsLocked());
 	}
-	
-	public void testWriteInsertColumns() throws Exception {
+
+	@Test
+	public void testWriteInsertColumns() {
 		assertFalse(sheet.isInsertColumnsLocked());
 		sheet.lockInsertColumns(true);
 		assertFalse(sheet.isInsertColumnsLocked());
@@ -137,8 +159,9 @@ public class TestSheetProtection extends TestCase {
         sheet.lockInsertColumns(false);
         assertFalse(sheet.isInsertColumnsLocked());
 	}
-	
-	public void testWriteInsertHyperlinks() throws Exception {
+
+	@Test
+	public void testWriteInsertHyperlinks() {
 		assertFalse(sheet.isInsertHyperlinksLocked());
 		sheet.lockInsertHyperlinks(true);
 		assertFalse(sheet.isInsertHyperlinksLocked());
@@ -147,8 +170,9 @@ public class TestSheetProtection extends TestCase {
         sheet.lockInsertHyperlinks(false);
         assertFalse(sheet.isInsertHyperlinksLocked());
 	}
-	
-	public void testWriteInsertRows() throws Exception {
+
+	@Test
+	public void testWriteInsertRows() {
 		assertFalse(sheet.isInsertRowsLocked());
 		sheet.lockInsertRows(true);
 		assertFalse(sheet.isInsertRowsLocked());
@@ -157,8 +181,9 @@ public class TestSheetProtection extends TestCase {
         sheet.lockInsertRows(false);
         assertFalse(sheet.isInsertRowsLocked());
 	}
-	
-	public void testWritePivotTables() throws Exception {
+
+	@Test
+	public void testWritePivotTables() {
 		assertFalse(sheet.isPivotTablesLocked());
 		sheet.lockPivotTables(true);
 		assertFalse(sheet.isPivotTablesLocked());
@@ -167,8 +192,9 @@ public class TestSheetProtection extends TestCase {
         sheet.lockPivotTables(false);
         assertFalse(sheet.isPivotTablesLocked());
 	}
-	
-	public void testWriteSort() throws Exception {
+
+	@Test
+	public void testWriteSort() {
 		assertFalse(sheet.isSortLocked());
 		sheet.lockSort(true);
 		assertFalse(sheet.isSortLocked());
@@ -177,8 +203,9 @@ public class TestSheetProtection extends TestCase {
         sheet.lockSort(false);
         assertFalse(sheet.isSortLocked());
 	}
-	
-	public void testWriteObjects() throws Exception {
+
+	@Test
+	public void testWriteObjects() {
 		assertFalse(sheet.isObjectsLocked());
 		sheet.lockObjects(true);
 		assertFalse(sheet.isObjectsLocked());
@@ -187,8 +214,9 @@ public class TestSheetProtection extends TestCase {
         sheet.lockObjects(false);
         assertFalse(sheet.isObjectsLocked());
 	}
-	
-	public void testWriteScenarios() throws Exception {
+
+	@Test
+	public void testWriteScenarios() {
 		assertFalse(sheet.isScenariosLocked());
 		sheet.lockScenarios(true);
 		assertFalse(sheet.isScenariosLocked());
@@ -197,8 +225,9 @@ public class TestSheetProtection extends TestCase {
         sheet.lockScenarios(false);
         assertFalse(sheet.isScenariosLocked());
 	}
-	
-	public void testWriteSelectLockedCells() throws Exception {
+
+	@Test
+	public void testWriteSelectLockedCells() {
 		assertFalse(sheet.isSelectLockedCellsLocked());
 		sheet.lockSelectLockedCells(true);
 		assertFalse(sheet.isSelectLockedCellsLocked());
@@ -207,8 +236,9 @@ public class TestSheetProtection extends TestCase {
         sheet.lockSelectLockedCells(false);
         assertFalse(sheet.isSelectLockedCellsLocked());
 	}
-	
-	public void testWriteSelectUnlockedCells() throws Exception {
+
+	@Test
+	public void testWriteSelectUnlockedCells() {
 		assertFalse(sheet.isSelectUnlockedCellsLocked());
 		sheet.lockSelectUnlockedCells(true);
 		assertFalse(sheet.isSelectUnlockedCellsLocked());
@@ -218,43 +248,46 @@ public class TestSheetProtection extends TestCase {
         assertFalse(sheet.isSelectUnlockedCellsLocked());
 	}
 
-	public void testWriteSelectEnableLocking() throws Exception {
-		sheet = XSSFTestDataSamples.openSampleWorkbook("sheetProtection_allLocked.xlsx").getSheetAt(0);
-		
-		assertTrue(sheet.isAutoFilterLocked());
-		assertTrue(sheet.isDeleteColumnsLocked());
-		assertTrue(sheet.isDeleteRowsLocked());
-		assertTrue(sheet.isFormatCellsLocked());
-		assertTrue(sheet.isFormatColumnsLocked());
-		assertTrue(sheet.isFormatRowsLocked());
-		assertTrue(sheet.isInsertColumnsLocked());
-		assertTrue(sheet.isInsertHyperlinksLocked());
-		assertTrue(sheet.isInsertRowsLocked());
-		assertTrue(sheet.isPivotTablesLocked());
-		assertTrue(sheet.isSortLocked());
-		assertTrue(sheet.isObjectsLocked());
-		assertTrue(sheet.isScenariosLocked());
-		assertTrue(sheet.isSelectLockedCellsLocked());
-		assertTrue(sheet.isSelectUnlockedCellsLocked());
-		assertTrue(sheet.isSheetLocked());
-		
-		sheet.disableLocking();
-		
-		assertFalse(sheet.isAutoFilterLocked());
-		assertFalse(sheet.isDeleteColumnsLocked());
-		assertFalse(sheet.isDeleteRowsLocked());
-		assertFalse(sheet.isFormatCellsLocked());
-		assertFalse(sheet.isFormatColumnsLocked());
-		assertFalse(sheet.isFormatRowsLocked());
-		assertFalse(sheet.isInsertColumnsLocked());
-		assertFalse(sheet.isInsertHyperlinksLocked());
-		assertFalse(sheet.isInsertRowsLocked());
-		assertFalse(sheet.isPivotTablesLocked());
-		assertFalse(sheet.isSortLocked());
-		assertFalse(sheet.isObjectsLocked());
-		assertFalse(sheet.isScenariosLocked());
-		assertFalse(sheet.isSelectLockedCellsLocked());
-		assertFalse(sheet.isSelectUnlockedCellsLocked());
-		assertFalse(sheet.isSheetLocked());
+	@Test
+	public void testWriteSelectEnableLocking() throws IOException {
+		try (XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("sheetProtection_allLocked.xlsx")) {
+			sheet = workbook.getSheetAt(0);
+
+			assertTrue(sheet.isAutoFilterLocked());
+			assertTrue(sheet.isDeleteColumnsLocked());
+			assertTrue(sheet.isDeleteRowsLocked());
+			assertTrue(sheet.isFormatCellsLocked());
+			assertTrue(sheet.isFormatColumnsLocked());
+			assertTrue(sheet.isFormatRowsLocked());
+			assertTrue(sheet.isInsertColumnsLocked());
+			assertTrue(sheet.isInsertHyperlinksLocked());
+			assertTrue(sheet.isInsertRowsLocked());
+			assertTrue(sheet.isPivotTablesLocked());
+			assertTrue(sheet.isSortLocked());
+			assertTrue(sheet.isObjectsLocked());
+			assertTrue(sheet.isScenariosLocked());
+			assertTrue(sheet.isSelectLockedCellsLocked());
+			assertTrue(sheet.isSelectUnlockedCellsLocked());
+			assertTrue(sheet.isSheetLocked());
+
+			sheet.disableLocking();
+
+			assertFalse(sheet.isAutoFilterLocked());
+			assertFalse(sheet.isDeleteColumnsLocked());
+			assertFalse(sheet.isDeleteRowsLocked());
+			assertFalse(sheet.isFormatCellsLocked());
+			assertFalse(sheet.isFormatColumnsLocked());
+			assertFalse(sheet.isFormatRowsLocked());
+			assertFalse(sheet.isInsertColumnsLocked());
+			assertFalse(sheet.isInsertHyperlinksLocked());
+			assertFalse(sheet.isInsertRowsLocked());
+			assertFalse(sheet.isPivotTablesLocked());
+			assertFalse(sheet.isSortLocked());
+			assertFalse(sheet.isObjectsLocked());
+			assertFalse(sheet.isScenariosLocked());
+			assertFalse(sheet.isSelectLockedCellsLocked());
+			assertFalse(sheet.isSelectUnlockedCellsLocked());
+			assertFalse(sheet.isSheetLocked());
+		}
 	}
 }
