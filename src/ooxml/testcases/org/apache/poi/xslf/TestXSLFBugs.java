@@ -966,4 +966,21 @@ public class TestXSLFBugs {
 
         }
     }
+
+    @Test
+    public void bug63200() throws Exception {
+        try (XMLSlideShow ss1 = XSLFTestDataSamples.openSampleDocument("63200.pptx")) {
+            assertEquals(1, ss1.getSlides().size());
+
+            XSLFSlide slide = ss1.getSlides().get(0);
+
+            assertEquals(slide.getShapes().size(), 1);
+            XSLFGroupShape group = (XSLFGroupShape) slide.getShapes().get(0);
+            assertEquals(group.getShapes().size(), 2);
+            XSLFAutoShape oval = (XSLFAutoShape) group.getShapes().get(0);
+            XSLFAutoShape arrow = (XSLFAutoShape) group.getShapes().get(1);
+            assertNull(oval.getFillColor());
+            assertNull(arrow.getFillColor());
+        }
+    }
 }

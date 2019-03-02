@@ -16,8 +16,18 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import org.apache.poi.sl.draw.Drawable;
+import org.apache.poi.sl.usermodel.GroupShape;
+import org.apache.poi.sl.usermodel.Notes;
+import org.apache.poi.sl.usermodel.PictureData;
+import org.apache.poi.sl.usermodel.Shape;
+import org.apache.poi.sl.usermodel.SimpleShape;
+import org.apache.poi.sl.usermodel.Slide;
+import org.apache.poi.sl.usermodel.SlideShow;
+import org.apache.poi.sl.usermodel.SlideShowFactory;
+import org.apache.poi.sl.usermodel.TextParagraph;
+import org.apache.poi.sl.usermodel.TextRun;
+import org.apache.poi.sl.usermodel.TextShape;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -28,16 +38,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 
-import org.apache.poi.sl.draw.Drawable;
-import org.apache.poi.sl.usermodel.PictureData;
-import org.apache.poi.sl.usermodel.Shape;
-import org.apache.poi.sl.usermodel.ShapeContainer;
-import org.apache.poi.sl.usermodel.Slide;
-import org.apache.poi.sl.usermodel.SlideShow;
-import org.apache.poi.sl.usermodel.SlideShowFactory;
-import org.apache.poi.sl.usermodel.TextParagraph;
-import org.apache.poi.sl.usermodel.TextRun;
-import org.apache.poi.sl.usermodel.TextShape;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public abstract class SlideShowHandler extends POIFSFileHandler {
     public void handleSlideShow(SlideShow<?,?> ss) throws IOException {
@@ -73,20 +75,50 @@ public abstract class SlideShowHandler extends POIFSFileHandler {
     private void readContent(SlideShow<?,?> ss) {
         for (Slide<?,?> s : ss.getSlides()) {
             s.getTitle();
-            readText(s);
-            readText(s.getNotes());
-            readText(s.getMasterSheet());
+
+            for (Shape<?,?> shape : s) {
+                readShapes(shape);
+            }
+
+            Notes<?, ?> notes = s.getNotes();
+            if(notes != null) {
+                for (Shape<?, ?> shape : notes) {
+                    readShapes(shape);
+                }
+            }
+
+            for (Shape<?,?> shape : s.getMasterSheet()) {
+                readShapes(shape);
+            }
         }
     }
-    
-    private void readText(ShapeContainer<?,?> sc) {
-        if (sc == null) return;
-        for (Shape<?,?> s : sc) {
-            if (s instanceof TextShape) {
-                for (TextParagraph<?,?,?> tp : (TextShape<?,?>)s) {
-                    for (TextRun tr : tp) {
-                        tr.getRawText();
-                    }
+
+    private void readShapes(Shape<?,?> s) {
+        // recursively walk group-shapes
+        if(s instanceof GroupShape) {
+            GroupShape<? extends Shape, ?> shapes = (GroupShape<? extends Shape, ?>) s;
+            for (Shape<? extends Shape, ?> shape : shapes) {
+                readShapes(shape);
+            }
+        }
+
+        if(s instanceof SimpleShape) {
+            SimpleShape<?, ?> simpleShape = (SimpleShape<?, ?>) s;
+
+            simpleShape.getFillColor();
+            simpleShape.getFillStyle();
+            simpleShape.getStrokeStyle();
+            simpleShape.getLineDecoration();
+        }
+
+        readText(s);
+    }
+
+    private void readText(Shape<?,?> s) {
+        if (s instanceof TextShape) {
+            for (TextParagraph<?,?,?> tp : (TextShape<?,?>)s) {
+                for (TextRun tr : tp) {
+                    tr.getRawText();
                 }
             }
         }

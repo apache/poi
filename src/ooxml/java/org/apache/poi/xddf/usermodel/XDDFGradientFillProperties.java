@@ -112,7 +112,7 @@ public class XDDFGradientFillProperties implements XDDFFillProperties {
                 .getGsLst()
                 .getGsList()
                 .stream()
-                .map(gs -> new XDDFGradientStop(gs))
+                .map(XDDFGradientStop::new)
                 .collect(Collectors.toList()));
         } else {
             return Collections.emptyList();
