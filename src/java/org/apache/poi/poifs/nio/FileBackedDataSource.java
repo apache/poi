@@ -17,25 +17,21 @@
 
 package org.apache.poi.poifs.nio;
 
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
-import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.SuppressForbidden;
 
 /**
  * A POIFS {@link DataSource} backed by a File
@@ -171,22 +167,14 @@ public class FileBackedDataSource extends DataSource {
            return;
        }
 
-       AccessController.doPrivileged(new PrivilegedAction<Void>() {
-           @Override
-           @SuppressForbidden("Java 9 Jigsaw whitelists access to sun.misc.Cleaner, so setAccessible works")
-           public Void run() {
-               try {
-                   final Method getCleanerMethod = buffer.getClass().getMethod("cleaner");
-                   getCleanerMethod.setAccessible(true);
-                   final Object cleaner = getCleanerMethod.invoke(buffer);
-                   if (cleaner != null) {
-                       cleaner.getClass().getMethod("clean").invoke(cleaner);
-                   }
-               } catch (Exception e) {
-                   logger.log(POILogger.WARN, "Unable to unmap memory mapped ByteBuffer.", e);
-               }
-               return null; // Void
+       if (CleanerUtil.UNMAP_SUPPORTED) {
+           try {
+               CleanerUtil.getCleaner().freeBuffer(buffer);
+           } catch (IOException e) {
+               logger.log(POILogger.WARN, "Failed to unmap the buffer", e);
            }
-       });
-    }
+       } else {
+           logger.log(POILogger.DEBUG, CleanerUtil.UNMAP_NOT_SUPPORTED_REASON);
+       }
+   }
 }
