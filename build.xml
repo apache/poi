@@ -66,12 +66,12 @@ under the License.
 
     <!-- add addOpens parameter for Java 9 and higher -->
     <condition property="addOpens">
-        <not><matches pattern="1\..*" string="${java.version}"/></not>
+        <not><matches pattern="^1\..*" string="${java.version}"/></not>
     </condition>
 
     <!-- add addOpens parameter for Java 10 -->
     <condition property="addOpens10">
-        <matches pattern="10\..*" string="${java.version}"/>
+        <matches pattern="^10\..*" string="${java.version}"/>
     </condition>
 
 
@@ -1242,11 +1242,14 @@ under the License.
                     <jvmarg value="-Xmx@{heap}M"/>
                     <jvmarg value="-ea"/>
 
-                    <!-- some "add-opens" and other properties are needed when running with Java 9 or newer -->
+                    <!-- some "add-opens" are needed for Java 10, but not for 11+ -->
                     <jvmarg value="--add-modules=java.xml.bind" if:true="${addOpens10}" />
                     <jvmarg value="--add-opens=java.base/java.lang=java.xml.bind" if:true="${addOpens10}" />
 
-                    <jvmarg value="-Dsun.reflect.debugModuleAccessChecks=true" if:true="${addOpens}" />
+                    <!-- some "add-opens" and other properties are needed when running with Java 9 or newer -->
+                    <sysproperty key="sun.reflect.debugModuleAccessChecks" value="true" if:true="${addOpens}" />
+                    <sysproperty key="com.sun.xml.bind.v2.bytecode.ClassTailor.noOptimize" value="true" if:true="${addOpens}" />
+                    <jvmarg value="--illegal-access=warn" if:true="${addOpens}" />
                     <jvmarg value="--add-opens=java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED" if:true="${addOpens}" />
                     <jvmarg value="--add-opens=java.base/java.io=ALL-UNNAMED" if:true="${addOpens}" />
                     <jvmarg value="--add-opens=java.base/java.nio=ALL-UNNAMED" if:true="${addOpens}" />
