@@ -431,7 +431,8 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
     protected static PaintStyle selectPaint(final CTGradientFillProperties gradFill, CTSchemeColor phClr, final XSLFTheme theme) {
 
         @SuppressWarnings("deprecation")
-        final CTGradientStop[] gs = gradFill.getGsLst().getGsArray();
+        final CTGradientStop[] gs = gradFill.getGsLst() == null ?
+                new CTGradientStop[0] : gradFill.getGsLst().getGsArray();
 
         Arrays.sort(gs, (o1, o2) -> {
             int pos1 = o1.getPos();

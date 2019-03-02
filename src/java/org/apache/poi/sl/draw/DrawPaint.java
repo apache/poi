@@ -407,7 +407,10 @@ public class DrawPaint {
 //        snapToAnchor(p2, anchor);
 
         // gradient paint on the same point throws an exception ... and doesn't make sense
-        return (p1.equals(p2)) ? null : safeFractions((f,c)->new LinearGradientPaint(p1,p2,f,c), fill);
+        // also having less than two fractions will not work
+        return (p1.equals(p2) || fill.getGradientFractions().length < 2) ?
+                null :
+                safeFractions((f,c)->new LinearGradientPaint(p1,p2,f,c), fill);
     }
 
 
