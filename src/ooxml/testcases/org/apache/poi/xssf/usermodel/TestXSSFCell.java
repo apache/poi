@@ -133,13 +133,20 @@ public final class TestXSSFCell extends BaseTestXCell {
         assertNull(str.getString());
         cell_0.setCellValue(str);
         assertEquals(0, sst.getCount());
-        assertEquals(CellType.BLANK, cell_0.getCellType());
+        assertEquals("Having: " + cell_0, CellType.BLANK, cell_0.getCellType());
 
         //case 2. cell.setCellValue((String)null);
         Cell cell_1 = row.createCell(1);
         cell_1.setCellValue((String)null);
         assertEquals(0, sst.getCount());
-        assertEquals(CellType.BLANK, cell_1.getCellType());
+        assertEquals("Having: " + cell_1, CellType.BLANK, cell_1.getCellType());
+
+        //case 3. cell.setCellValue((RichTextString)null);
+        Cell cell_2 = row.createCell(2);
+        cell_2.setCellValue((RichTextString) null);
+        assertEquals(0, sst.getCount());
+        assertEquals("Having: " + cell_2, CellType.BLANK, cell_2.getCellType());
+
         wb.close();
     }
 
