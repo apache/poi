@@ -1155,32 +1155,36 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    public void getBooleanCellValue_returnsFalse_onABlankCell() {
-        Cell cell = _testDataProvider.createWorkbook().createSheet().createRow(0).createCell(0);
-        assertEquals(CellType.BLANK, cell.getCellType());
-        boolean result = cell.getBooleanCellValue();
-        assertFalse(result);
+    public void getBooleanCellValue_returnsFalse_onABlankCell() throws IOException {
+        try (Workbook workbook = _testDataProvider.createWorkbook()) {
+            Cell cell = workbook.createSheet().createRow(0).createCell(0);
+            assertEquals(CellType.BLANK, cell.getCellType());
+            boolean result = cell.getBooleanCellValue();
+            assertFalse(result);
+        }
     }
 
     @Test
-    public void setStringCellValue_ifThrows_shallNotChangeCell() {
-        Cell cell = _testDataProvider.createWorkbook().createSheet().createRow(0).createCell(0);
+    public void setStringCellValue_ifThrows_shallNotChangeCell() throws IOException {
+        try (Workbook workbook = _testDataProvider.createWorkbook()) {
+            Cell cell = workbook.createSheet().createRow(0).createCell(0);
 
-        final double value = 2.78;
-        cell.setCellValue(value);
-        assertEquals(CellType.NUMERIC, cell.getCellType());
+            final double value = 2.78;
+            cell.setCellValue(value);
+            assertEquals(CellType.NUMERIC, cell.getCellType());
 
-        int badLength = cell.getSheet().getWorkbook().getSpreadsheetVersion().getMaxTextLength() + 1;
-        String badStringValue = new String(new byte[badLength], StandardCharsets.UTF_8);
+            int badLength = cell.getSheet().getWorkbook().getSpreadsheetVersion().getMaxTextLength() + 1;
+            String badStringValue = new String(new byte[badLength], StandardCharsets.UTF_8);
 
-        try {
-            cell.setCellValue(badStringValue);
-        } catch (IllegalArgumentException e) {
-            // no-op, expected to throw but we need to assert something more
+            try {
+                cell.setCellValue(badStringValue);
+            } catch (IllegalArgumentException e) {
+                // no-op, expected to throw but we need to assert something more
+            }
+
+            assertEquals(CellType.NUMERIC, cell.getCellType());
+            assertEquals(value, cell.getNumericCellValue(), 0);
         }
-
-        assertEquals(CellType.NUMERIC, cell.getCellType());
-        assertEquals(value, cell.getNumericCellValue(), 0);
     }
 
     @Test
@@ -1359,22 +1363,30 @@ public abstract class BaseTestCell {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void setCellType_FORMULA_onANonFormulaCell_throwsIllegalArgumentException() {
+    public void setCellType_FORMULA_onANonFormulaCell_throwsIllegalArgumentException() throws IOException {
         Cell cell = getInstance();
-        cell.setCellType(CellType.FORMULA);
+        try {
+            cell.setCellType(CellType.FORMULA);
+        } finally {
+            cell.getSheet().getWorkbook().close();
+        }
     }
 
     @Test
-    public void setCellType_FORMULA_onAFormulaCell_doesNothing() {
+    public void setCellType_FORMULA_onAFormulaCell_doesNothing() throws IOException {
         Cell cell = getInstance();
-        cell.setCellFormula("3");
-        cell.setCellValue("foo");
-
-        cell.setCellType(CellType.FORMULA);
-
-        assertEquals(CellType.FORMULA, cell.getCellType());
-        assertEquals(CellType.STRING, cell.getCachedFormulaResultType());
-        assertEquals("foo", cell.getStringCellValue());
+        try {
+            cell.setCellFormula("3");
+            cell.setCellValue("foo");
+    
+            cell.setCellType(CellType.FORMULA);
+    
+            assertEquals(CellType.FORMULA, cell.getCellType());
+            assertEquals(CellType.STRING, cell.getCachedFormulaResultType());
+            assertEquals("foo", cell.getStringCellValue());
+        } finally {
+            cell.getSheet().getWorkbook().close();
+        }
     }
 
     @Test
@@ -1397,7 +1409,7 @@ public abstract class BaseTestCell {
 
         cell.setBlank();
 
-        verify(cell).setCellType(CellType.BLANK);
+        verify(cell).setBlank();
     }
 
     private Cell getInstance() {

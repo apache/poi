@@ -54,7 +54,7 @@ public class TestCommentsTable {
     private static final String TEST_AUTHOR = "test author";
 
     @Test
-    public void findAuthor() throws Exception {
+    public void findAuthor() {
         CommentsTable sheetComments = new CommentsTable();
         assertEquals(1, sheetComments.getNumberOfAuthors());
         assertEquals(0, sheetComments.findAuthor(""));
@@ -68,7 +68,7 @@ public class TestCommentsTable {
     }
 
     @Test
-    public void getCellComment() throws Exception {
+    public void getCellComment() {
         CommentsTable sheetComments = new CommentsTable();
 
         CTComments comments = sheetComments.getCTComments();
@@ -94,123 +94,126 @@ public class TestCommentsTable {
 
 
     @Test
-    public void existing() {
-        Workbook workbook = XSSFTestDataSamples.openSampleWorkbook("WithVariousData.xlsx");
-        Sheet sheet1 = workbook.getSheetAt(0);
-        Sheet sheet2 = workbook.getSheetAt(1);
+    public void existing() throws IOException {
+        try (Workbook workbook = XSSFTestDataSamples.openSampleWorkbook("WithVariousData.xlsx")) {
+            Sheet sheet1 = workbook.getSheetAt(0);
+            Sheet sheet2 = workbook.getSheetAt(1);
 
-        assertTrue( ((XSSFSheet)sheet1).hasComments() );
-        assertFalse( ((XSSFSheet)sheet2).hasComments() );
+            assertTrue(((XSSFSheet) sheet1).hasComments());
+            assertFalse(((XSSFSheet) sheet2).hasComments());
 
-        // Comments should be in C5 and C7
-        Row r5 = sheet1.getRow(4);
-        Row r7 = sheet1.getRow(6);
-        assertNotNull( r5.getCell(2).getCellComment() );
-        assertNotNull( r7.getCell(2).getCellComment() );
+            // Comments should be in C5 and C7
+            Row r5 = sheet1.getRow(4);
+            Row r7 = sheet1.getRow(6);
+            assertNotNull(r5.getCell(2).getCellComment());
+            assertNotNull(r7.getCell(2).getCellComment());
 
-        // Check they have what we expect
-        // TODO: Rich text formatting
-        Comment cc5 = r5.getCell(2).getCellComment();
-        Comment cc7 = r7.getCell(2).getCellComment();
+            // Check they have what we expect
+            // TODO: Rich text formatting
+            Comment cc5 = r5.getCell(2).getCellComment();
+            Comment cc7 = r7.getCell(2).getCellComment();
 
-        assertEquals("Nick Burch", cc5.getAuthor());
-        assertEquals("Nick Burch:\nThis is a comment", cc5.getString().getString());
-        assertEquals(4, cc5.getRow());
-        assertEquals(2, cc5.getColumn());
+            assertEquals("Nick Burch", cc5.getAuthor());
+            assertEquals("Nick Burch:\nThis is a comment", cc5.getString().getString());
+            assertEquals(4, cc5.getRow());
+            assertEquals(2, cc5.getColumn());
 
-        assertEquals("Nick Burch", cc7.getAuthor());
-        assertEquals("Nick Burch:\nComment #1\n", cc7.getString().getString());
-        assertEquals(6, cc7.getRow());
-        assertEquals(2, cc7.getColumn());
+            assertEquals("Nick Burch", cc7.getAuthor());
+            assertEquals("Nick Burch:\nComment #1\n", cc7.getString().getString());
+            assertEquals(6, cc7.getRow());
+            assertEquals(2, cc7.getColumn());
+        }
     }
 
     @Test
-    public void writeRead() {
-        XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("WithVariousData.xlsx");
-        XSSFSheet sheet1 = workbook.getSheetAt(0);
-        XSSFSheet sheet2 = workbook.getSheetAt(1);
+    public void writeRead() throws IOException {
+        try (XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("WithVariousData.xlsx")) {
+            XSSFSheet sheet1 = workbook.getSheetAt(0);
+            XSSFSheet sheet2 = workbook.getSheetAt(1);
 
-        assertTrue( sheet1.hasComments() );
-        assertFalse( sheet2.hasComments() );
+            assertTrue(sheet1.hasComments());
+            assertFalse(sheet2.hasComments());
 
-        // Change on comment on sheet 1, and add another into
-        //  sheet 2
-        Row r5 = sheet1.getRow(4);
-        Comment cc5 = r5.getCell(2).getCellComment();
-        cc5.setAuthor("Apache POI");
-        cc5.setString(new XSSFRichTextString("Hello!"));
+            // Change on comment on sheet 1, and add another into
+            //  sheet 2
+            Row r5 = sheet1.getRow(4);
+            Comment cc5 = r5.getCell(2).getCellComment();
+            cc5.setAuthor("Apache POI");
+            cc5.setString(new XSSFRichTextString("Hello!"));
 
-        Row r2s2 = sheet2.createRow(2);
-        Cell c1r2s2 = r2s2.createCell(1);
-        assertNull(c1r2s2.getCellComment());
+            Row r2s2 = sheet2.createRow(2);
+            Cell c1r2s2 = r2s2.createCell(1);
+            assertNull(c1r2s2.getCellComment());
 
-        Drawing<?> dg = sheet2.createDrawingPatriarch();
-        Comment cc2 = dg.createCellComment(new XSSFClientAnchor());
-        cc2.setAuthor("Also POI");
-        cc2.setString(new XSSFRichTextString("A new comment"));
-        c1r2s2.setCellComment(cc2);
+            Drawing<?> dg = sheet2.createDrawingPatriarch();
+            Comment cc2 = dg.createCellComment(new XSSFClientAnchor());
+            cc2.setAuthor("Also POI");
+            cc2.setString(new XSSFRichTextString("A new comment"));
+            c1r2s2.setCellComment(cc2);
 
+            // Save, and re-load the file
+            try (XSSFWorkbook workbookBack = XSSFTestDataSamples.writeOutAndReadBack(workbook)) {
+                // Check we still have comments where we should do
+                sheet1 = workbookBack.getSheetAt(0);
+                sheet2 = workbookBack.getSheetAt(1);
+                assertNotNull(sheet1.getRow(4).getCell(2).getCellComment());
+                assertNotNull(sheet1.getRow(6).getCell(2).getCellComment());
+                assertNotNull(sheet2.getRow(2).getCell(1).getCellComment());
 
-        // Save, and re-load the file
-        workbook = XSSFTestDataSamples.writeOutAndReadBack(workbook);
+                // And check they still have the contents they should do
+                assertEquals("Apache POI",
+                        sheet1.getRow(4).getCell(2).getCellComment().getAuthor());
+                assertEquals("Nick Burch",
+                        sheet1.getRow(6).getCell(2).getCellComment().getAuthor());
+                assertEquals("Also POI",
+                        sheet2.getRow(2).getCell(1).getCellComment().getAuthor());
 
-        // Check we still have comments where we should do
-        sheet1 = workbook.getSheetAt(0);
-        sheet2 = workbook.getSheetAt(1);
-        assertNotNull(sheet1.getRow(4).getCell(2).getCellComment());
-        assertNotNull(sheet1.getRow(6).getCell(2).getCellComment());
-        assertNotNull(sheet2.getRow(2).getCell(1).getCellComment());
-
-        // And check they still have the contents they should do
-        assertEquals("Apache POI",
-                sheet1.getRow(4).getCell(2).getCellComment().getAuthor());
-        assertEquals("Nick Burch",
-                sheet1.getRow(6).getCell(2).getCellComment().getAuthor());
-        assertEquals("Also POI",
-                sheet2.getRow(2).getCell(1).getCellComment().getAuthor());
-
-        assertEquals("Hello!",
-                sheet1.getRow(4).getCell(2).getCellComment().getString().getString());
+                assertEquals("Hello!",
+                        sheet1.getRow(4).getCell(2).getCellComment().getString().getString());
+            }
+        }
     }
 
     @Test
-    public void readWriteMultipleAuthors() {
-        XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("WithMoreVariousData.xlsx");
-        XSSFSheet sheet1 = workbook.getSheetAt(0);
-        XSSFSheet sheet2 = workbook.getSheetAt(1);
+    public void readWriteMultipleAuthors() throws IOException {
+        try (XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("WithMoreVariousData.xlsx")) {
+            XSSFSheet sheet1 = workbook.getSheetAt(0);
+            XSSFSheet sheet2 = workbook.getSheetAt(1);
 
-        assertTrue( sheet1.hasComments() );
-        assertFalse( sheet2.hasComments() );
+            assertTrue(sheet1.hasComments());
+            assertFalse(sheet2.hasComments());
 
-        assertEquals("Nick Burch",
-                sheet1.getRow(4).getCell(2).getCellComment().getAuthor());
-        assertEquals("Nick Burch",
-                sheet1.getRow(6).getCell(2).getCellComment().getAuthor());
-        assertEquals("Torchbox",
-                sheet1.getRow(12).getCell(2).getCellComment().getAuthor());
+            assertEquals("Nick Burch",
+                    sheet1.getRow(4).getCell(2).getCellComment().getAuthor());
+            assertEquals("Nick Burch",
+                    sheet1.getRow(6).getCell(2).getCellComment().getAuthor());
+            assertEquals("Torchbox",
+                    sheet1.getRow(12).getCell(2).getCellComment().getAuthor());
 
-        // Save, and re-load the file
-        workbook = XSSFTestDataSamples.writeOutAndReadBack(workbook);
+            // Save, and re-load the file
+            try (XSSFWorkbook workbookBack = XSSFTestDataSamples.writeOutAndReadBack(workbook)) {
 
-        // Check we still have comments where we should do
-        sheet1 = workbook.getSheetAt(0);
-        assertNotNull(sheet1.getRow(4).getCell(2).getCellComment());
-        assertNotNull(sheet1.getRow(6).getCell(2).getCellComment());
-        assertNotNull(sheet1.getRow(12).getCell(2).getCellComment());
+                // Check we still have comments where we should do
+                sheet1 = workbookBack.getSheetAt(0);
+                assertNotNull(sheet1.getRow(4).getCell(2).getCellComment());
+                assertNotNull(sheet1.getRow(6).getCell(2).getCellComment());
+                assertNotNull(sheet1.getRow(12).getCell(2).getCellComment());
 
-        // And check they still have the contents they should do
-        assertEquals("Nick Burch",
-                sheet1.getRow(4).getCell(2).getCellComment().getAuthor());
-        assertEquals("Nick Burch",
-                sheet1.getRow(6).getCell(2).getCellComment().getAuthor());
-        assertEquals("Torchbox",
-                sheet1.getRow(12).getCell(2).getCellComment().getAuthor());
+                // And check they still have the contents they should do
+                assertEquals("Nick Burch",
+                        sheet1.getRow(4).getCell(2).getCellComment().getAuthor());
+                assertEquals("Nick Burch",
+                        sheet1.getRow(6).getCell(2).getCellComment().getAuthor());
+                assertEquals("Torchbox",
+                        sheet1.getRow(12).getCell(2).getCellComment().getAuthor());
 
-        // Todo - check text too, once bug fixed
+                // Todo - check text too, once bug fixed
+            }
+        }
     }
 
     @Test
-    public void removeComment() throws Exception {
+    public void removeComment() {
         final CellAddress addrA1 = new CellAddress("A1");
         final CellAddress addrA2 = new CellAddress("A2");
         final CellAddress addrA3 = new CellAddress("A3");
@@ -257,7 +260,7 @@ public class TestCommentsTable {
         Cell A1 = getCell(sheet, 0, 0);
         //Cell A1 = getCell(sheet, 2, 2);
         Drawing<?> drawing = sheet.createDrawingPatriarch();
-        setComment(sheet, A1, drawing, "for A1", helper, anchor);
+        setComment(A1, drawing, "for A1", helper, anchor);
         
         // find comment in A1 before we set the comment in B2
         Comment commentA1 = A1.getCellComment();
@@ -266,7 +269,7 @@ public class TestCommentsTable {
         
         // place comment in B2, according to Bug 54920 this removes the comment in A1!
         Cell B2 = getCell(sheet, 1, 1);
-        setComment(sheet, B2, drawing, "for B2", helper, anchor);
+        setComment(B2, drawing, "for B2", helper, anchor);
 
         // find comment in A1
         Comment commentB2 = B2.getCellComment();
@@ -282,7 +285,7 @@ public class TestCommentsTable {
     
     // Set the comment on a sheet
     //
-    private static void setComment(Sheet sheet, Cell cell, Drawing<?> drawing, String commentText, CreationHelper helper, ClientAnchor anchor) {
+    private static void setComment(Cell cell, Drawing<?> drawing, String commentText, CreationHelper helper, ClientAnchor anchor) {
         anchor.setCol1(cell.getColumnIndex());
         anchor.setCol2(cell.getColumnIndex());
         anchor.setRow1(cell.getRowIndex());

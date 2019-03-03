@@ -34,8 +34,6 @@ import java.nio.file.Files;
  * Tests for {@link XSSFBEventBasedExcelExtractor}
  */
 public class TestXSSFBEventBasedExcelExtractor {
-
-
     protected XSSFEventBasedExcelExtractor getExtractor(String sampleName) throws Exception {
         return new XSSFBEventBasedExcelExtractor(XSSFTestDataSamples.
                 openSamplePackage(sampleName));
@@ -47,88 +45,83 @@ public class TestXSSFBEventBasedExcelExtractor {
     @Test
     public void testGetSimpleText() throws Exception {
         // a very simple file
-        XSSFEventBasedExcelExtractor extractor = getExtractor("sample.xlsb");
-        extractor.setIncludeCellComments(true);
-        extractor.getText();
+        try (XSSFEventBasedExcelExtractor extractor = getExtractor("sample.xlsb")) {
+            extractor.setIncludeCellComments(true);
+            extractor.getText();
 
-        String text = extractor.getText();
-        assertTrue(text.length() > 0);
+            String text = extractor.getText();
+            assertTrue(text.length() > 0);
 
-        // Check sheet names
-        assertStartsWith(text, "Sheet1");
-        assertEndsWith(text, "Sheet3\n");
+            // Check sheet names
+            assertStartsWith(text, "Sheet1");
+            assertEndsWith(text, "Sheet3\n");
 
-        // Now without, will have text
-        extractor.setIncludeSheetNames(false);
-        text = extractor.getText();
-        String CHUNK1 =
-                "Lorem\t111\n" +
-                        "ipsum\t222\n" +
-                        "dolor\t333\n" +
-                        "sit\t444\n" +
-                        "amet\t555\n" +
-                        "consectetuer\t666\n" +
-                        "adipiscing\t777\n" +
-                        "elit\t888\n" +
-                        "Nunc\t999\n";
-        String CHUNK2 =
-                "The quick brown fox jumps over the lazy dog\n" +
-                        "hello, xssf	hello, xssf\n" +
-                        "hello, xssf	hello, xssf\n" +
-                        "hello, xssf	hello, xssf\n" +
-                        "hello, xssf	hello, xssf\n";
-        assertEquals(
-                CHUNK1 +
-                        "at\t4995\n" +
-                        CHUNK2
-                , text);
-
+            // Now without, will have text
+            extractor.setIncludeSheetNames(false);
+            text = extractor.getText();
+            String CHUNK1 =
+                    "Lorem\t111\n" +
+                            "ipsum\t222\n" +
+                            "dolor\t333\n" +
+                            "sit\t444\n" +
+                            "amet\t555\n" +
+                            "consectetuer\t666\n" +
+                            "adipiscing\t777\n" +
+                            "elit\t888\n" +
+                            "Nunc\t999\n";
+            String CHUNK2 =
+                    "The quick brown fox jumps over the lazy dog\n" +
+                            "hello, xssf	hello, xssf\n" +
+                            "hello, xssf	hello, xssf\n" +
+                            "hello, xssf	hello, xssf\n" +
+                            "hello, xssf	hello, xssf\n";
+            assertEquals(
+                    CHUNK1 +
+                            "at\t4995\n" +
+                            CHUNK2
+                    , text);
+        }
     }
-
 
     /**
      * Test text extraction from text box using getShapes()
-     *
-     * @throws Exception
      */
     @Test
     public void testShapes() throws Exception {
-        XSSFEventBasedExcelExtractor ooxmlExtractor = getExtractor("WithTextBox.xlsb");
-
-        try {
+        try (XSSFEventBasedExcelExtractor ooxmlExtractor = getExtractor("WithTextBox.xlsb")) {
             String text = ooxmlExtractor.getText();
             assertContains(text, "Line 1");
             assertContains(text, "Line 2");
             assertContains(text, "Line 3");
-        } finally {
-            ooxmlExtractor.close();
         }
     }
 
     @Test
     public void testBeta() throws Exception {
-        XSSFEventBasedExcelExtractor extractor = getExtractor("Simple.xlsb");
-        extractor.setIncludeCellComments(true);
-        String text = extractor.getText();
-        assertContains(text,
-                "This is an example spreadsheet created with Microsoft Excel 2007 Beta 2.");
+        try (XSSFEventBasedExcelExtractor extractor = getExtractor("Simple.xlsb")) {
+            extractor.setIncludeCellComments(true);
+            String text = extractor.getText();
+            assertContains(text,
+                    "This is an example spreadsheet created with Microsoft Excel 2007 Beta 2.");
+        }
     }
 
     @Test
     public void test62815() throws Exception {
         //test file based on http://oss.sheetjs.com/test_files/RkNumber.xlsb
-        XSSFEventBasedExcelExtractor extractor = getExtractor("62815.xlsb");
-        extractor.setIncludeCellComments(true);
-        String[] rows = extractor.getText().split("[\r\n]+");
-        assertEquals(283, rows.length);
-        BufferedReader reader = Files.newBufferedReader(XSSFTestDataSamples.getSampleFile("62815.xlsb.txt").toPath(),
-                StandardCharsets.UTF_8);
-        String line = reader.readLine();
-        for (int i = 0; i < rows.length; i++) {
-            assertEquals(line, rows[i]);
-            line = reader.readLine();
-            while (line != null && line.startsWith("#")) {
+        try (XSSFEventBasedExcelExtractor extractor = getExtractor("62815.xlsb")) {
+            extractor.setIncludeCellComments(true);
+            String[] rows = extractor.getText().split("[\r\n]+");
+            assertEquals(283, rows.length);
+            BufferedReader reader = Files.newBufferedReader(XSSFTestDataSamples.getSampleFile("62815.xlsb.txt").toPath(),
+                    StandardCharsets.UTF_8);
+            String line = reader.readLine();
+            for (String row : rows) {
+                assertEquals(line, row);
                 line = reader.readLine();
+                while (line != null && line.startsWith("#")) {
+                    line = reader.readLine();
+                }
             }
         }
     }

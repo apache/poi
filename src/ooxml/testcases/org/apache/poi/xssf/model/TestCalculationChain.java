@@ -26,37 +26,37 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcCell;
 
 import junit.framework.TestCase;
 
+import java.io.IOException;
 
 public final class TestCalculationChain extends TestCase {
 
-    public void test46535() {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("46535.xlsx");
+    public void test46535() throws IOException {
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("46535.xlsx")) {
 
-        CalculationChain chain = wb.getCalculationChain();
-        //the bean holding the reference to the formula to be deleted
-        CTCalcCell c = chain.getCTCalcChain().getCArray(0);
-        int cnt = chain.getCTCalcChain().sizeOfCArray();
-        assertEquals(10, c.getI());
-        assertEquals("E1", c.getR());
+            CalculationChain chain = wb.getCalculationChain();
+            //the bean holding the reference to the formula to be deleted
+            CTCalcCell c = chain.getCTCalcChain().getCArray(0);
+            int cnt = chain.getCTCalcChain().sizeOfCArray();
+            assertEquals(10, c.getI());
+            assertEquals("E1", c.getR());
 
-        XSSFSheet sheet = wb.getSheet("Test");
-        XSSFCell cell = sheet.getRow(0).getCell(4);
+            XSSFSheet sheet = wb.getSheet("Test");
+            XSSFCell cell = sheet.getRow(0).getCell(4);
 
-        assertEquals(CellType.FORMULA, cell.getCellType());
-        cell.setCellFormula(null);
+            assertEquals(CellType.FORMULA, cell.getCellType());
+            cell.setCellFormula(null);
 
-        //the count of items is less by one
-        c = chain.getCTCalcChain().getCArray(0);
-        int cnt2 =  chain.getCTCalcChain().sizeOfCArray();
-        assertEquals(cnt - 1, cnt2);
-        //the first item in the calculation chain is the former second one
-        assertEquals(10, c.getI());
-        assertEquals("C1", c.getR());
+            //the count of items is less by one
+            c = chain.getCTCalcChain().getCArray(0);
+            int cnt2 = chain.getCTCalcChain().sizeOfCArray();
+            assertEquals(cnt - 1, cnt2);
+            //the first item in the calculation chain is the former second one
+            assertEquals(10, c.getI());
+            assertEquals("C1", c.getR());
 
-        assertEquals(CellType.STRING, cell.getCellType());
-        cell.setCellValue("ABC");
-        assertEquals(CellType.STRING, cell.getCellType());
+            assertEquals(CellType.STRING, cell.getCellType());
+            cell.setCellValue("ABC");
+            assertEquals(CellType.STRING, cell.getCellType());
+        }
     }
-
-
 }

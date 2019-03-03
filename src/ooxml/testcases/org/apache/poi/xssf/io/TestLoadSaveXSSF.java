@@ -31,35 +31,36 @@ import org.apache.poi.POIDataSamples;
 
 
 public class TestLoadSaveXSSF extends TestCase {
-    private static final POIDataSamples _ssSampels = POIDataSamples.getSpreadSheetInstance();
+    private static final POIDataSamples _ssSamples = POIDataSamples.getSpreadSheetInstance();
 
     public void testLoadSample() throws Exception {
-        XSSFWorkbook workbook = new XSSFWorkbook(_ssSampels.openResourceAsStream("sample.xlsx"));
-        assertEquals(3, workbook.getNumberOfSheets());
-        assertEquals("Sheet1", workbook.getSheetName(0));
-        Sheet sheet = workbook.getSheetAt(0);
-        Row row = sheet.getRow(0);
-        Cell cell = row.getCell((short) 1);
-        assertNotNull(cell);
-        assertEquals(111.0, cell.getNumericCellValue(), 0.0);
-        cell = row.getCell((short) 0);
-        assertEquals("Lorem", cell.getRichStringCellValue().getString());
+        try (XSSFWorkbook workbook = new XSSFWorkbook(_ssSamples.openResourceAsStream("sample.xlsx"))) {
+            assertEquals(3, workbook.getNumberOfSheets());
+            assertEquals("Sheet1", workbook.getSheetName(0));
+            Sheet sheet = workbook.getSheetAt(0);
+            Row row = sheet.getRow(0);
+            Cell cell = row.getCell((short) 1);
+            assertNotNull(cell);
+            assertEquals(111.0, cell.getNumericCellValue(), 0.0);
+            cell = row.getCell((short) 0);
+            assertEquals("Lorem", cell.getRichStringCellValue().getString());
+        }
     }
 
-    // TODO filename string hard coded in XSSFWorkbook constructor in order to make ant test-ooxml target be successful.
     public void testLoadStyles() throws Exception {
-        XSSFWorkbook workbook = new XSSFWorkbook(_ssSampels.openResourceAsStream("styles.xlsx"));
-        Sheet sheet = workbook.getSheetAt(0);
-        Row row = sheet.getRow(0);
-        Cell cell = row.getCell((short) 0);
-        CellStyle style = cell.getCellStyle();
-        // assertNotNull(style);
+        try (XSSFWorkbook workbook = new XSSFWorkbook(_ssSamples.openResourceAsStream("styles.xlsx"))) {
+            Sheet sheet = workbook.getSheetAt(0);
+            Row row = sheet.getRow(0);
+            Cell cell = row.getCell((short) 0);
+            CellStyle style = cell.getCellStyle();
+            assertNotNull(style);
+        }
     }
 
-    // TODO filename string hard coded in XSSFWorkbook constructor in order to make ant test-ooxml target be successful.
     public void testLoadPictures() throws Exception {
-        XSSFWorkbook workbook = new XSSFWorkbook(_ssSampels.openResourceAsStream("picture.xlsx"));
-        List<XSSFPictureData> pictures = workbook.getAllPictures();
-        assertEquals(1, pictures.size());
+        try (XSSFWorkbook workbook = new XSSFWorkbook(_ssSamples.openResourceAsStream("picture.xlsx"))) {
+            List<XSSFPictureData> pictures = workbook.getAllPictures();
+            assertEquals(1, pictures.size());
+        }
     }
 }
