@@ -159,7 +159,7 @@ public class TestXWPFPictureData extends TestCase {
 
     }
 
-    public void testBug51770() throws InvalidFormatException, IOException {
+    public void testBug51770() throws IOException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug51170.docx");
         XWPFHeaderFooterPolicy policy = doc.getHeaderFooterPolicy();
         XWPFHeader header = policy.getDefaultHeader();
@@ -175,6 +175,5 @@ public class TestXWPFPictureData extends TestCase {
                 }
             }
         }
-
     }
 }
