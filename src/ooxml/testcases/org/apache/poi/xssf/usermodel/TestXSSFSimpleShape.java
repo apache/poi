@@ -38,8 +38,7 @@ import org.junit.Test;
 public class TestXSSFSimpleShape {
     @Test
     public void testXSSFTextParagraph() throws IOException {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        try {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sheet = wb.createSheet();
             XSSFDrawing drawing = sheet.createDrawingPatriarch();
 
@@ -209,8 +208,6 @@ public class TestXSSFSimpleShape {
             // assertEquals(-1, shape.getShapeType());
 
             assertNotNull(shape.getShapeProperties());
-        } finally {
-            wb.close();
         }
     }
 }

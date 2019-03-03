@@ -41,19 +41,19 @@ public final class TestXSSFRichTextString extends TestCase {
     public void testCreate() {
         XSSFRichTextString rt = new XSSFRichTextString("Apache POI");
         assertEquals("Apache POI", rt.getString());
-        assertEquals(false, rt.hasFormatting());
+        assertFalse(rt.hasFormatting());
 
         CTRst st = rt.getCTRst();
         assertTrue(st.isSetT());
         assertEquals("Apache POI", st.getT());
-        assertEquals(false, rt.hasFormatting());
+        assertFalse(rt.hasFormatting());
 
         rt.append(" is cool stuff");
         assertEquals(2, st.sizeOfRArray());
         assertFalse(st.isSetT());
 
         assertEquals("Apache POI is cool stuff", rt.getString());
-        assertEquals(false, rt.hasFormatting());
+        assertFalse(rt.hasFormatting());
     }
 
     public void testEmpty() {
@@ -70,13 +70,13 @@ public final class TestXSSFRichTextString extends TestCase {
         rt.append("89");
 
         assertEquals("123456789", rt.getString());
-        assertEquals(false, rt.hasFormatting());
+        assertFalse(rt.hasFormatting());
 
         XSSFFont font1 = new XSSFFont();
         font1.setBold(true);
 
         rt.applyFont(2, 5, font1);
-        assertEquals(true, rt.hasFormatting());
+        assertTrue(rt.hasFormatting());
 
         assertEquals(4, rt.numFormattingRuns());
         assertEquals(0, rt.getIndexOfFormattingRun(0));
@@ -157,7 +157,7 @@ public final class TestXSSFRichTextString extends TestCase {
 
         XSSFRichTextString rt = new XSSFRichTextString("Apache POI");
         assertEquals("Apache POI", rt.getString());
-        assertEquals(false, rt.hasFormatting());
+        assertFalse(rt.hasFormatting());
 
         rt.clearFormatting();
 
@@ -165,20 +165,20 @@ public final class TestXSSFRichTextString extends TestCase {
         assertTrue(st.isSetT());
         assertEquals("Apache POI", rt.getString());
         assertEquals(0, rt.numFormattingRuns());
-        assertEquals(false, rt.hasFormatting());
+        assertFalse(rt.hasFormatting());
 
         XSSFFont font = new XSSFFont();
         font.setBold(true);
 
         rt.applyFont(7, 10, font);
         assertEquals(2, rt.numFormattingRuns());
-        assertEquals(true, rt.hasFormatting());
+        assertTrue(rt.hasFormatting());
         
         rt.clearFormatting();
         
         assertEquals("Apache POI", rt.getString());
         assertEquals(0, rt.numFormattingRuns());
-        assertEquals(false, rt.hasFormatting());
+        assertFalse(rt.hasFormatting());
     }
 
     public void testGetFonts() {
@@ -227,7 +227,7 @@ public final class TestXSSFRichTextString extends TestCase {
     /**
      * test that unicode representation_ xHHHH_ is properly processed
      */
-    public void testUtfDecode() throws IOException {
+    public void testUtfDecode() {
         CTRst st = CTRst.Factory.newInstance();
         st.setT("abc_x000D_2ef_x000D_");
         XSSFRichTextString rt = new XSSFRichTextString(st);
@@ -382,7 +382,7 @@ public final class TestXSSFRichTextString extends TestCase {
         assertEquals(" Software Foundation", str.getCTRst().getRArray(1).getT());
     }
 
-    public void testLineBreaks_bug48877() throws IOException{
+    public void testLineBreaks_bug48877() {
 
         XSSFFont font = new XSSFFont();
         font.setBold(true);
@@ -441,27 +441,28 @@ public final class TestXSSFRichTextString extends TestCase {
         assertEquals("<xml-fragment xml:space=\"preserve\">\n\n</xml-fragment>", t3.xmlText());
     }
 
-    public void testBug56511() {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56511.xlsx");
-        for (Sheet sheet : wb) {
-            int lastRow = sheet.getLastRowNum();
-            for (int rowIdx = sheet.getFirstRowNum(); rowIdx <= lastRow; rowIdx++) {
-                Row row = sheet.getRow(rowIdx);
-                if(row != null) {
-                    int lastCell = row.getLastCellNum();
-    
-                    for (int cellIdx = row.getFirstCellNum(); cellIdx <= lastCell; cellIdx++) {
-    
-                        Cell cell = row.getCell(cellIdx);
-                        if (cell != null) {
-                            //System.out.println("row " + rowIdx + " column " + cellIdx + ": " + cell.getCellType() + ": " + cell.toString());
-                            
-                            XSSFRichTextString richText = (XSSFRichTextString) cell.getRichStringCellValue();
-                            int anzFormattingRuns = richText.numFormattingRuns();
-                            for (int run = 0; run < anzFormattingRuns; run++) {
-                                /*XSSFFont font =*/ richText.getFontOfFormattingRun(run);
-                                //System.out.println("  run " + run
-                                //        + " font " + (font == null ? "<null>" : font.getFontName()));
+    public void testBug56511() throws IOException {
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56511.xlsx")) {
+            for (Sheet sheet : wb) {
+                int lastRow = sheet.getLastRowNum();
+                for (int rowIdx = sheet.getFirstRowNum(); rowIdx <= lastRow; rowIdx++) {
+                    Row row = sheet.getRow(rowIdx);
+                    if (row != null) {
+                        int lastCell = row.getLastCellNum();
+
+                        for (int cellIdx = row.getFirstCellNum(); cellIdx <= lastCell; cellIdx++) {
+
+                            Cell cell = row.getCell(cellIdx);
+                            if (cell != null) {
+                                //System.out.println("row " + rowIdx + " column " + cellIdx + ": " + cell.getCellType() + ": " + cell.toString());
+
+                                XSSFRichTextString richText = (XSSFRichTextString) cell.getRichStringCellValue();
+                                int anzFormattingRuns = richText.numFormattingRuns();
+                                for (int run = 0; run < anzFormattingRuns; run++) {
+                                    /*XSSFFont font =*/ richText.getFontOfFormattingRun(run);
+                                    //System.out.println("  run " + run
+                                    //        + " font " + (font == null ? "<null>" : font.getFontName()));
+                                }
                             }
                         }
                     }
@@ -470,51 +471,51 @@ public final class TestXSSFRichTextString extends TestCase {
         }
     }
 
-    public void testBug56511_values() {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56511.xlsx");
-        Sheet sheet = wb.getSheetAt(0);
-        Row row = sheet.getRow(0);
+    public void testBug56511_values() throws IOException {
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56511.xlsx")) {
+            Sheet sheet = wb.getSheetAt(0);
+            Row row = sheet.getRow(0);
 
-        // verify the values to ensure future changes keep the returned information equal 
-        XSSFRichTextString rt = (XSSFRichTextString) row.getCell(0).getRichStringCellValue();
-        assertEquals(0, rt.numFormattingRuns());
-        assertNull(rt.getFontOfFormattingRun(0));
-        assertEquals(-1, rt.getLengthOfFormattingRun(0));
-        
-        rt = (XSSFRichTextString) row.getCell(1).getRichStringCellValue();
-        assertEquals(0, row.getCell(1).getRichStringCellValue().numFormattingRuns());
-        assertNull(rt.getFontOfFormattingRun(1));
-        assertEquals(-1, rt.getLengthOfFormattingRun(1));
-               
-        rt = (XSSFRichTextString) row.getCell(2).getRichStringCellValue();
-        assertEquals(2, rt.numFormattingRuns());
-        assertNotNull(rt.getFontOfFormattingRun(0));
-        assertEquals(4, rt.getLengthOfFormattingRun(0));
-        
-        assertNotNull(rt.getFontOfFormattingRun(1));
-        assertEquals(9, rt.getLengthOfFormattingRun(1));
+            // verify the values to ensure future changes keep the returned information equal
+            XSSFRichTextString rt = (XSSFRichTextString) row.getCell(0).getRichStringCellValue();
+            assertEquals(0, rt.numFormattingRuns());
+            assertNull(rt.getFontOfFormattingRun(0));
+            assertEquals(-1, rt.getLengthOfFormattingRun(0));
 
-        assertNull(rt.getFontOfFormattingRun(2));
-        
-        rt = (XSSFRichTextString) row.getCell(3).getRichStringCellValue();
-        assertEquals(3, rt.numFormattingRuns());
-        assertNull(rt.getFontOfFormattingRun(0));
-        assertEquals(1, rt.getLengthOfFormattingRun(0));
-        
-        assertNotNull(rt.getFontOfFormattingRun(1));
-        assertEquals(3, rt.getLengthOfFormattingRun(1));
-        
-        assertNotNull(rt.getFontOfFormattingRun(2));
-        assertEquals(9, rt.getLengthOfFormattingRun(2));
+            rt = (XSSFRichTextString) row.getCell(1).getRichStringCellValue();
+            assertEquals(0, row.getCell(1).getRichStringCellValue().numFormattingRuns());
+            assertNull(rt.getFontOfFormattingRun(1));
+            assertEquals(-1, rt.getLengthOfFormattingRun(1));
+
+            rt = (XSSFRichTextString) row.getCell(2).getRichStringCellValue();
+            assertEquals(2, rt.numFormattingRuns());
+            assertNotNull(rt.getFontOfFormattingRun(0));
+            assertEquals(4, rt.getLengthOfFormattingRun(0));
+
+            assertNotNull(rt.getFontOfFormattingRun(1));
+            assertEquals(9, rt.getLengthOfFormattingRun(1));
+
+            assertNull(rt.getFontOfFormattingRun(2));
+
+            rt = (XSSFRichTextString) row.getCell(3).getRichStringCellValue();
+            assertEquals(3, rt.numFormattingRuns());
+            assertNull(rt.getFontOfFormattingRun(0));
+            assertEquals(1, rt.getLengthOfFormattingRun(0));
+
+            assertNotNull(rt.getFontOfFormattingRun(1));
+            assertEquals(3, rt.getLengthOfFormattingRun(1));
+
+            assertNotNull(rt.getFontOfFormattingRun(2));
+            assertEquals(9, rt.getLengthOfFormattingRun(2));
+        }
     }
 
     public void testToString() {
         XSSFRichTextString rt = new XSSFRichTextString("Apache POI");
         assertNotNull(rt.toString());
-        
-        // TODO: normally toString() should never return null, should we adjust this?
+
         rt = new XSSFRichTextString();
-        assertNull(rt.toString());
+        assertEquals("", rt.toString());
     }
 
     public void test59008Font() {

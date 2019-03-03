@@ -177,8 +177,6 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
         StringBuilder out = new StringBuilder();
         List<Integer> levelCount = new ArrayList<>(MAX_LEVELS); // maximum 9
                                                                 // levels
-        XSSFTextParagraph p = null;
-
         // initialise the levelCount array - this maintains a record of the
         // numbering to be used at each level
         for (int k = 0; k < MAX_LEVELS; k++) {
@@ -189,7 +187,7 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
             if (out.length() > 0) {
                 out.append('\n');
             }
-            p = _paragraphs.get(i);
+            XSSFTextParagraph p = _paragraphs.get(i);
 
             if (p.isBullet() && p.getText().length() > 0) {
 
@@ -223,12 +221,7 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
      *
      */
     private int processAutoNumGroup(int index, int level, List<Integer> levelCount, StringBuilder out) {
-        XSSFTextParagraph p = null;
-        XSSFTextParagraph nextp = null;
-        ListAutoNumber scheme, nextScheme;
-        int startAt, nextStartAt;
-
-        p = _paragraphs.get(index);
+        XSSFTextParagraph p = _paragraphs.get(index);
 
         // The rules for generating the auto numbers are as follows. If the
         // following paragraph is also
@@ -242,8 +235,8 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
 
         // first auto-number paragraph so initialise to 1 or the bullets startAt
         // if present
-        startAt = p.getBulletAutoNumberStart();
-        scheme = p.getBulletAutoNumberScheme();
+        int startAt = p.getBulletAutoNumberStart();
+        ListAutoNumber scheme = p.getBulletAutoNumberScheme();
         if (levelCount.get(level) == 0) {
             levelCount.set(level, startAt == 0 ? 1 : startAt);
         }
@@ -256,7 +249,7 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
             out.append(p.getText());
         }
         while (true) {
-            nextp = (index + 1) == _paragraphs.size() ? null : _paragraphs.get(index + 1);
+            XSSFTextParagraph nextp = (index + 1) == _paragraphs.size() ? null : _paragraphs.get(index + 1);
             if (nextp == null) {
                 break; // out of paragraphs
             }
@@ -273,8 +266,8 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
             } else if (nextp.getLevel() < level) {
                 break; // changed level
             }
-            nextScheme = nextp.getBulletAutoNumberScheme();
-            nextStartAt = nextp.getBulletAutoNumberStart();
+            ListAutoNumber nextScheme = nextp.getBulletAutoNumberScheme();
+            int nextStartAt = nextp.getBulletAutoNumberStart();
 
             if (nextScheme == scheme && nextStartAt == startAt) {
                 // bullet is valid, so increment i

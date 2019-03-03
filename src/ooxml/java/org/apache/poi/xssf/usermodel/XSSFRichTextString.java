@@ -307,11 +307,15 @@ public class XSSFRichTextString implements RichTextString {
 
     /**
      * Returns the plain string representation.
+     *
+     * @return The string representation of this RichText string, null if
+     *          there is no data at all
      */
     public String getString() {
         if(st.sizeOfRArray() == 0) {
             return utfDecode(st.getT());
         }
+
         StringBuilder buf = new StringBuilder();
         //noinspection deprecation - for performance reasons!
         for(CTRElt r : st.getRArray()){
@@ -333,9 +337,16 @@ public class XSSFRichTextString implements RichTextString {
 
     /**
      * Returns the plain string representation.
+     *
+     * @return The string representation of this RichText string, never null
      */
     public String toString() {
-        return getString();
+        String str = getString();
+        if(str == null) {
+            return "";
+        }
+
+        return str;
     }
 
     /**
@@ -495,7 +506,7 @@ public class XSSFRichTextString implements RichTextString {
      * See section 3.18.9 in the OOXML spec.
      *
      * @param   value the string to decode
-     * @return  the decoded string
+     * @return  the decoded string or null if the input string is null
      */
     static String utfDecode(String value) {
         if(value == null || !value.contains("_x")) {
