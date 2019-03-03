@@ -86,6 +86,9 @@ def xmlbeansjobs = [
         ],
         [ name: 'POI-XMLBeans-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true,
                 disabled: true // XMLBeans does not yet compile with Java 11
+        ],
+        [ name: 'POI-XMLBeans-DSL-1.12', jdk: '1.12', trigger: triggerSundays, skipcigame: true,
+                disabled: true // XMLBeans does not yet compile with Java 11
         ]
 ]
 
@@ -168,6 +171,12 @@ java -version
 echo which javac
 which javac
 javac -version
+
+echo Ant-Home: $ANT_HOME
+ls -al $ANT_HOME
+echo which ant
+which ant
+ant -version
 
 echo '<project default="test"><target name="test"><echo>Java ${ant.java.version}/${java.version}</echo><exec executable="javac"><arg value="-version"/></exec></target></project>' > build.javacheck.xml
 ant -f build.javacheck.xml -v
@@ -479,7 +488,10 @@ xmlbeansjobs.each { xjob ->
                 // when using JDK 9/10 for running Ant, we need to provide more modules for the forbidden-api-checks task
                 // on JDK 11 and newer there is no such module any more, so do not add it here
                 env('ANT_OPTS', '--add-modules=java.xml.bind --add-opens=java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED')
+            } else if (jdkKey == '1.11' || jdkKey == '1.12' || jdkKey == '1.13') {
+                env('ANT_OPTS', '--add-opens=java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED')
             }
+            // will be needed for forbidden-apis-check: env('ANT_HOME', xjob.windows ? 'f:\\jenkins\\tools\\ant\\latest' : '/usr/share/ant')
             env('FORREST_HOME', xjob.windows ? 'f:\\jenkins\\tools\\forrest\\latest' : '/home/jenkins/tools/forrest/latest')
         }
         wrappers {
@@ -515,16 +527,21 @@ xmlbeansjobs.each { xjob ->
                 antInstallation(antRT)
             }
             ant {
-                targets(['test'])
-                antInstallation(antRT)
-            }
-            ant {
-                targets(['package'])
+                targets(['jenkins'])
                 antInstallation(antRT)
             }
         }
         publishers {
             archiveArtifacts('build/**')
+
+            warnings(['Java Compiler (javac)', 'JavaDoc Tool'], null) {
+                resolveRelativePaths()
+            }
+            archiveJunit('build/test-results/TEST-*.xml') {
+                testDataPublishers {
+                    publishTestStabilityData()
+                }
+            }
 
             if (!xjob.skipcigame) {
                 configure { project ->
