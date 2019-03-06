@@ -86,7 +86,7 @@ public final class DocumentHelper {
      * @throws IllegalStateException If creating the DocumentBuilder fails, e.g.
      *  due to {@link ParserConfigurationException}.
      */
-    public static synchronized DocumentBuilder newDocumentBuilder() {
+    public static DocumentBuilder newDocumentBuilder() {
         try {
             DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
             documentBuilder.setEntityResolver(SAXHelper.IGNORING_ENTITY_RESOLVER);
