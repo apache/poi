@@ -22,6 +22,9 @@ import org.xml.sax.InputSource;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.*;
 
@@ -33,6 +36,21 @@ public class TestDocumentHelper {
         assertTrue(documentBuilder.isNamespaceAware());
         assertFalse(documentBuilder.isValidating());
         documentBuilder.parse(new InputSource(new ByteArrayInputStream("<xml></xml>".getBytes("UTF-8"))));
+    }
+
+    @Test
+    public void testCreatingManyDocumentBuilders() throws Exception {
+        int limit = 1000;
+        ArrayList<CompletableFuture<DocumentBuilder>> futures = new ArrayList<>();
+        for(int i = 0; i < limit; i++) {
+            futures.add(CompletableFuture.supplyAsync(() -> {
+                return DocumentHelper.newDocumentBuilder();
+            }));
+        }
+        for(CompletableFuture<DocumentBuilder> future : futures) {
+            DocumentBuilder documentBuilder = future.get(10, TimeUnit.SECONDS);
+            assertTrue(documentBuilder.isNamespaceAware());
+        }
     }
 
     @Test
