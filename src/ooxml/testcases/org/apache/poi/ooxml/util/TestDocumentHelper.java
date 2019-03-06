@@ -18,11 +18,13 @@ package org.apache.poi.ooxml.util;
 
 import org.junit.Test;
 import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -47,10 +49,13 @@ public class TestDocumentHelper {
                 return DocumentHelper.newDocumentBuilder();
             }));
         }
+        HashSet<DocumentBuilder> dbs = new HashSet<>();
         for(CompletableFuture<DocumentBuilder> future : futures) {
             DocumentBuilder documentBuilder = future.get(10, TimeUnit.SECONDS);
             assertTrue(documentBuilder.isNamespaceAware());
+            dbs.add(documentBuilder);
         }
+        assertEquals(limit, dbs.size());
     }
 
     @Test

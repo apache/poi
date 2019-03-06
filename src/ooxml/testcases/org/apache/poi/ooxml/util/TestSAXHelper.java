@@ -19,8 +19,13 @@ package org.apache.poi.ooxml.util;
 import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
 
 import org.junit.Test;
 import org.xml.sax.InputSource;
@@ -45,5 +50,29 @@ public class TestSAXHelper {
             // (https://bz.apache.org/bugzilla/show_bug.cgi?id=62692)
         }
         reader.parse(new InputSource(new ByteArrayInputStream("<xml></xml>".getBytes("UTF-8"))));
+    }
+
+    @Test
+    public void testCreatingManyXMLReaders() throws Exception {
+        int limit = 1000;
+        ArrayList<CompletableFuture<XMLReader>> futures = new ArrayList<>();
+        for(int i = 0; i < limit; i++) {
+            futures.add(CompletableFuture.supplyAsync(() -> {
+                try {
+                    return SAXHelper.newXMLReader();
+                } catch (RuntimeException e) {
+                    throw e;
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }));
+        }
+        HashSet<XMLReader> readers = new HashSet<>();
+        for(CompletableFuture<XMLReader> future : futures) {
+            XMLReader reader = future.get(10, TimeUnit.SECONDS);
+            assertTrue(reader.getFeature(XMLConstants.FEATURE_SECURE_PROCESSING));
+            readers.add(reader);
+        }
+        assertEquals(limit, readers.size());
     }
 }

@@ -46,7 +46,7 @@ public final class SAXHelper {
     /**
      * Creates a new SAX XMLReader, with sensible defaults
      */
-    public static synchronized XMLReader newXMLReader() throws SAXException, ParserConfigurationException {
+    public static XMLReader newXMLReader() throws SAXException, ParserConfigurationException {
         XMLReader xmlReader = saxFactory.newSAXParser().getXMLReader();
         xmlReader.setEntityResolver(IGNORING_ENTITY_RESOLVER);
         trySetSAXFeature(xmlReader, XMLConstants.FEATURE_SECURE_PROCESSING);
