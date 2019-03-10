@@ -17,7 +17,6 @@
 
 package org.apache.poi.ooxml.util;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
@@ -54,13 +53,7 @@ public final class SAXHelper {
         return xmlReader;
     }
     
-    static final EntityResolver IGNORING_ENTITY_RESOLVER = new EntityResolver() {
-        @Override
-        public InputSource resolveEntity(String publicId, String systemId)
-                throws SAXException, IOException {
-            return new InputSource(new StringReader(""));
-        }
-    };
+    static final EntityResolver IGNORING_ENTITY_RESOLVER = (publicId, systemId) -> new InputSource(new StringReader(""));
     
     private static final SAXParserFactory saxFactory;
     static {
@@ -84,7 +77,8 @@ public final class SAXHelper {
         }
     }
             
-    private static void trySetSAXFeature(SAXParserFactory spf, String feature, boolean flag) {
+    private static void trySetSAXFeature(@SuppressWarnings("SameParameterValue") SAXParserFactory spf,
+                                         String feature, boolean flag) {
         try {
             spf.setFeature(feature, flag);
         } catch (Exception e) {
@@ -94,7 +88,7 @@ public final class SAXHelper {
         }
     }
 
-    private static void trySetSAXFeature(XMLReader xmlReader, String feature) {
+    private static void trySetSAXFeature(XMLReader xmlReader, @SuppressWarnings("SameParameterValue") String feature) {
         try {
             xmlReader.setFeature(feature, true);
         } catch (Exception e) {

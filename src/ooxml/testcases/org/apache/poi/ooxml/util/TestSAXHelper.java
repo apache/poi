@@ -19,13 +19,13 @@ package org.apache.poi.ooxml.util;
 import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilder;
 
 import org.junit.Test;
 import org.xml.sax.InputSource;
@@ -49,7 +49,7 @@ public class TestSAXHelper {
             // ignore exceptions from old parsers that don't support these features
             // (https://bz.apache.org/bugzilla/show_bug.cgi?id=62692)
         }
-        reader.parse(new InputSource(new ByteArrayInputStream("<xml></xml>".getBytes("UTF-8"))));
+        reader.parse(new InputSource(new ByteArrayInputStream("<xml></xml>".getBytes(StandardCharsets.UTF_8))));
     }
 
     @Test
@@ -70,7 +70,14 @@ public class TestSAXHelper {
         HashSet<XMLReader> readers = new HashSet<>();
         for(CompletableFuture<XMLReader> future : futures) {
             XMLReader reader = future.get(10, TimeUnit.SECONDS);
-            assertTrue(reader.getFeature(XMLConstants.FEATURE_SECURE_PROCESSING));
+            try {
+                assertTrue(reader.getFeature(XMLConstants.FEATURE_SECURE_PROCESSING));
+            } catch (SAXNotRecognizedException e) {
+                // can happen for older XML Parsers, e.g. we have a CI Job which runs with Xerces XML Parser
+                assertTrue("Had Exception about not-recognized SAX feature: " + e + " which is only expected" +
+                                " for Xerces XML Parser, but had parser: " + reader,
+                        reader.getClass().getName().contains("org.apache.xerces"));
+            }
             readers.add(reader);
         }
         assertEquals(limit, readers.size());
