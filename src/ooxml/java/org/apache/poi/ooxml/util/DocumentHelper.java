@@ -45,11 +45,11 @@ public final class DocumentHelper {
 
     private static class DocHelperErrorHandler implements ErrorHandler {
 
-        public void warning(SAXParseException exception) throws SAXException {
+        public void warning(SAXParseException exception) {
             printError(POILogger.WARN, exception);
         }
 
-        public void error(SAXParseException exception) throws SAXException {
+        public void error(SAXParseException exception) {
             printError(POILogger.ERROR, exception);
         }
 
@@ -111,7 +111,7 @@ public final class DocumentHelper {
         trySetXercesSecurityManager(documentBuilderFactory);
     }
 
-    private static void trySetFeature(DocumentBuilderFactory dbf, String feature, boolean enabled) {
+    private static void trySetFeature(@SuppressWarnings("SameParameterValue") DocumentBuilderFactory dbf, String feature, boolean enabled) {
         try {
             dbf.setFeature(feature, enabled);
         } catch (Exception e) {
@@ -121,7 +121,7 @@ public final class DocumentHelper {
         }
     }
     
-    private static void trySetXercesSecurityManager(DocumentBuilderFactory dbf) {
+    private static void trySetXercesSecurityManager(@SuppressWarnings("SameParameterValue") DocumentBuilderFactory dbf) {
         // Try built-in JVM one first, standalone if not
         for (String securityManagerClassName : new String[]{
                 //"com.sun.org.apache.xerces.internal.util.SecurityManager",

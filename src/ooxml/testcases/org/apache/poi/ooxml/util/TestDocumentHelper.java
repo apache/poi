@@ -18,17 +18,20 @@ package org.apache.poi.ooxml.util;
 
 import org.junit.Test;
 import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
 
 public class TestDocumentHelper {
     @Test
@@ -37,7 +40,7 @@ public class TestDocumentHelper {
         assertNotSame(documentBuilder, DocumentHelper.newDocumentBuilder());
         assertTrue(documentBuilder.isNamespaceAware());
         assertFalse(documentBuilder.isValidating());
-        documentBuilder.parse(new InputSource(new ByteArrayInputStream("<xml></xml>".getBytes("UTF-8"))));
+        documentBuilder.parse(new InputSource(new ByteArrayInputStream("<xml></xml>".getBytes(StandardCharsets.UTF_8))));
     }
 
     @Test
@@ -45,9 +48,7 @@ public class TestDocumentHelper {
         int limit = 1000;
         ArrayList<CompletableFuture<DocumentBuilder>> futures = new ArrayList<>();
         for(int i = 0; i < limit; i++) {
-            futures.add(CompletableFuture.supplyAsync(() -> {
-                return DocumentHelper.newDocumentBuilder();
-            }));
+            futures.add(CompletableFuture.supplyAsync(DocumentHelper::newDocumentBuilder));
         }
         HashSet<DocumentBuilder> dbs = new HashSet<>();
         for(CompletableFuture<DocumentBuilder> future : futures) {
