@@ -2932,7 +2932,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         Workbook wb = HSSFTestDataSamples.openSampleWorkbook("46515.xls");
 
         // Get structure from webservice
-        String urlString = "http://poi.apache.org/resources/images/project-logo.jpg";
+        String urlString = "http://poi.apache.org/images/project-header.png";
         URL structURL = new URL(urlString);
         BufferedImage bimage;
         try {
@@ -2978,6 +2978,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         assertEquals(CellType.FORMULA, cell.getCellType());
         assertEquals("IF(TRUE,\"\",\"\")", cell.getCellFormula());
         assertEquals("", cell.getStringCellValue());
+        //noinspection deprecation
         cell.setCellType(CellType.STRING);
 
         assertEquals(CellType.BLANK, cell.getCellType());
