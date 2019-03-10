@@ -115,10 +115,10 @@ public class XSSFPrintSetup implements PrintSetup {
     /**
      * Set whether to go left to right or top down in ordering
      *
-     * @param ltor left to right
+     * @param leftToRight left to right
      */
-    public void setLeftToRight(boolean ltor) {
-        if (ltor)
+    public void setLeftToRight(boolean leftToRight) {
+        if (leftToRight)
             setPageOrder(PageOrder.OVER_THEN_DOWN);
         else 
             setPageOrder(PageOrder.DOWN_THEN_OVER);
@@ -139,7 +139,7 @@ public class XSSFPrintSetup implements PrintSetup {
     /**
      * Use the printer's defaults settings for page setup values and don't use the default values
      * specified in the schema. For example, if dpi is not present or specified in the XML, the
-     * a plication shall not assume 600dpi as specified in the schema as a default and instead
+     * application shall not assume 600dpi as specified in the schema as a default and instead
      * shall let the printer specify the default dpi.
      *
      * @param valid Valid
@@ -169,10 +169,10 @@ public class XSSFPrintSetup implements PrintSetup {
     /**
      * Print the include notes
      *
-     * @param printnotes print the notes
+     * @param printNotes print the notes
      */
-    public void setNotes(boolean printnotes) {
-        if (printnotes){
+    public void setNotes(boolean printNotes) {
+        if (printNotes){
             pageSetup.setCellComments(STCellComments.AS_DISPLAYED);
         }
     }
@@ -218,19 +218,19 @@ public class XSSFPrintSetup implements PrintSetup {
     /**
      * Sets the header margin.
      *
-     * @param headermargin header margin
+     * @param headerMargin header margin
      */
-    public void setHeaderMargin(double headermargin) {
-        pageMargins.setHeader(headermargin);
+    public void setHeaderMargin(double headerMargin) {
+        pageMargins.setHeader(headerMargin);
     }
 
     /**
      * Sets the footer margin.
      *
-     * @param footermargin footer margin
+     * @param footerMargin footer margin
      */
-    public void setFooterMargin(double footermargin) {
-        pageMargins.setFooter(footermargin);
+    public void setFooterMargin(double footerMargin) {
+        pageMargins.setFooter(footerMargin);
     }
 
     /**
@@ -273,7 +273,7 @@ public class XSSFPrintSetup implements PrintSetup {
     /**
      * Set print page order.
      *
-     * @param pageOrder
+     * @param pageOrder An enum indicating the wanted ordering of printed pages
      */
     public void setPageOrder(PageOrder pageOrder) {
         STPageOrder.Enum v = STPageOrder.Enum.forInt(pageOrder.getValue());
@@ -283,7 +283,7 @@ public class XSSFPrintSetup implements PrintSetup {
     /**
      * get print page order.
      *
-     * @return PageOrder
+     * @return The currently set ordering of printed pages
      */
     public PageOrder getPageOrder() {
         return (pageSetup.getPageOrder() == null) ? null : PageOrder.valueOf(pageSetup.getPageOrder().intValue());
@@ -465,4 +465,75 @@ public class XSSFPrintSetup implements PrintSetup {
         return (short) pageSetup.getCopies();
     }
 
+    /**
+     * Sets the top margin.
+     *
+     * @param topMargin top margin
+     */
+    public void setTopMargin(double topMargin) {
+        pageMargins.setTop(topMargin);
+    }
+
+    /**
+     * Returns the top margin.
+     *
+     * @return top margin
+     */
+    public double getTopMargin() {
+        return pageMargins.getTop();
+    }
+
+    /**
+     * Sets the bottom margin.
+     *
+     * @param bottomMargin bottom margin
+     */
+    public void setBottomMargin(double bottomMargin) {
+        pageMargins.setBottom(bottomMargin);
+    }
+
+    /**
+     * Returns the bottom margin.
+     *
+     * @return bottom margin
+     */
+    public double getBottomMargin() {
+        return pageMargins.getBottom();
+    }
+
+    /**
+     * Sets the left margin.
+     *
+     * @param leftMargin left margin
+     */
+    public void setLeftMargin(double leftMargin) {
+        pageMargins.setLeft(leftMargin);
+    }
+
+    /**
+     * Returns the left margin.
+     *
+     * @return left margin
+     */
+    public double getLeftMargin() {
+        return pageMargins.getLeft();
+    }
+
+    /**
+     * Sets the right margin.
+     *
+     * @param rightMargin right margin
+     */
+    public void setRightMargin(double rightMargin) {
+        pageMargins.setRight(rightMargin);
+    }
+
+    /**
+     * Returns the right margin.
+     *
+     * @return right margin
+     */
+    public double getRightMargin() {
+        return pageMargins.getRight();
+    }
 }
