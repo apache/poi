@@ -59,7 +59,7 @@ public class ImageUtils {
      *
      * @return image dimension in pixels
      */
-    public static Dimension getImageDimension(InputStream is, int type){
+    public static Dimension getImageDimension(InputStream is, int type) {
         Dimension size = new Dimension();
 
         switch (type){
@@ -70,28 +70,29 @@ public class ImageUtils {
             case Workbook.PICTURE_TYPE_DIB:
                 try {
                     //read the image using javax.imageio.*
-                    ImageInputStream iis = ImageIO.createImageInputStream( is );
-                    try {
+                    try (ImageInputStream iis = ImageIO.createImageInputStream(is)) {
                         Iterator<ImageReader> i = ImageIO.getImageReaders( iis );
-                        ImageReader r = i.next();
-                        try {
-                            r.setInput( iis );
-                            BufferedImage img = r.read(0);
-        
-                            int[] dpi = getResolution(r);
-        
-                            //if DPI is zero then assume standard 96 DPI
-                            //since cannot divide by zero
-                            if (dpi[0] == 0) dpi[0] = PIXEL_DPI;
-                            if (dpi[1] == 0) dpi[1] = PIXEL_DPI;
-        
-                            size.width = img.getWidth()*PIXEL_DPI/dpi[0];
-                            size.height = img.getHeight()*PIXEL_DPI/dpi[1];
-                        } finally {
-                            r.dispose();
+                        if (i.hasNext()) {
+                            ImageReader r = i.next();
+                            try {
+                                r.setInput( iis );
+                                BufferedImage img = r.read(0);
+
+                                int[] dpi = getResolution(r);
+
+                                //if DPI is zero then assume standard 96 DPI
+                                //since cannot divide by zero
+                                if (dpi[0] == 0) dpi[0] = PIXEL_DPI;
+                                if (dpi[1] == 0) dpi[1] = PIXEL_DPI;
+
+                                size.width = img.getWidth()*PIXEL_DPI/dpi[0];
+                                size.height = img.getHeight()*PIXEL_DPI/dpi[1];
+                            } finally {
+                                r.dispose();
+                            }
+                        } else {
+                            logger.log(POILogger.WARN, "ImageIO found no images");
                         }
-                    } finally {
-                        iis.close();
                     }
 
                 } catch (IOException e) {

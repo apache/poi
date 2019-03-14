@@ -1220,7 +1220,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         assert(!paragraphs.isEmpty() && !paragraphs.get(0).getTextRuns().isEmpty());
 
         Iterator<HSLFTextParagraph> paraIter = paragraphs.iterator();
-        HSLFTextParagraph htp = paraIter.next(); // keep first
+        HSLFTextParagraph htp = paraIter.hasNext() ? paraIter.next() : null; // keep first
         assert (htp != null);
         while (paraIter.hasNext()) {
             paraIter.next();

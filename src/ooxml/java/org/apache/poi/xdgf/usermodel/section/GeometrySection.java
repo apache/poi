@@ -98,7 +98,7 @@ public class GeometrySection extends XDGFSection {
         Iterator<GeometryRow> rows = getCombinedRows().iterator();
 
         // special cases
-        GeometryRow first = rows.next();
+        GeometryRow first = rows.hasNext() ? rows.next() : null;
 
         if (first instanceof Ellipse) {
             return ((Ellipse)first).getPath();
