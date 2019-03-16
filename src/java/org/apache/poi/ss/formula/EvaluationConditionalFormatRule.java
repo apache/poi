@@ -69,6 +69,9 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
     
     /* cached values */
     private final CellRangeAddress[] regions;
+    
+    private CellRangeAddress topLeftRegion;
+    
     /**
      * Depending on the rule type, it may want to know about certain values in the region when evaluating {@link #matches(CellReference)},
      * such as top 10, unique, duplicate, average, etc.  This collection stores those if needed so they are not repeatedly calculated
@@ -114,6 +117,14 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
         this.priority = rule.getPriority();
         
         this.regions = regions;
+        
+        for (CellRangeAddress region : regions) {
+            if (topLeftRegion == null) topLeftRegion = region;
+            else if (region.getFirstColumn() < topLeftRegion.getFirstColumn()
+                    || region.getFirstRow() < topLeftRegion.getFirstRow()) {
+                topLeftRegion = region;
+            }
+        }
         formula1 = rule.getFormula1();
         formula2 = rule.getFormula2();
         
@@ -316,13 +327,13 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
         if (ruleType.equals(ConditionType.CELL_VALUE_IS)) {
             // undefined cells never match a VALUE_IS condition
             if (cell == null) return false;
-            return checkValue(cell, region);
+            return checkValue(cell, topLeftRegion);
         }
         if (ruleType.equals(ConditionType.FORMULA)) {
-            return checkFormula(ref, region);
+            return checkFormula(ref, topLeftRegion);
         }
         if (ruleType.equals(ConditionType.FILTER)) {
-            return checkFilter(cell, ref, region);
+            return checkFilter(cell, ref, topLeftRegion);
         }
         
         // TODO: anything else, we don't handle yet, such as top 10
