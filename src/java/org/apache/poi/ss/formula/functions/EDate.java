@@ -45,6 +45,9 @@ public class EDate implements FreeRefFunction {
             int offsetInMonthAsNumber = (int) getValue(args[1]);
 
             Date startDate = DateUtil.getJavaDate(startDateAsNumber);
+            if (startDate == null) {
+                return ErrorEval.VALUE_INVALID;
+            }
             Calendar calendar = LocaleUtil.getLocaleCalendar();
             calendar.setTime(startDate);
             calendar.add(Calendar.MONTH, offsetInMonthAsNumber);
