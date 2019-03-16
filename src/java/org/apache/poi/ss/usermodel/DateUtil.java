@@ -18,6 +18,14 @@
 
 package org.apache.poi.ss.usermodel;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
+import java.time.temporal.TemporalAccessor;
+import java.time.temporal.TemporalQueries;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
@@ -57,6 +65,14 @@ public class DateUtil {
     
     // for format which start with "[DBNum1]" or "[DBNum2]" or "[DBNum3]" could be a Chinese date
     private static final Pattern date_ptrn5 = Pattern.compile("^\\[DBNum(1|2|3)\\]");
+
+    private static final DateTimeFormatter dateTimeFormats = new DateTimeFormatterBuilder()
+            .appendPattern("[dd MMM[ yyyy]][[ ]h:m[:s] a][[ ]H:m[:s]]")
+            .appendPattern("[[yyyy ]dd-MMM[-yyyy]][[ ]h:m[:s] a][[ ]H:m[:s]]")
+            .appendPattern("[M/dd[/yyyy]][[ ]h:m[:s] a][[ ]H:m[:s]]")
+            .appendPattern("[[yyyy/]M/dd][[ ]h:m[:s] a][[ ]H:m[:s]]")
+            .parseDefaulting(ChronoField.YEAR_OF_ERA, Calendar.getInstance().get(Calendar.YEAR))
+            .toFormatter();
 
     /**
      * Given a Date, converts it into a double representing its internal Excel representation,
@@ -723,5 +739,21 @@ public class DateUtil {
                     + ") is outside the allowable range(0.." + upperLimit + ")");
         }
         return result;
+    }
+
+    public static Double parseDateTime(String str){
+        TemporalAccessor tmp = dateTimeFormats.parse(str.replaceAll("\\s+", " "));
+        LocalTime time = tmp.query(TemporalQueries.localTime());
+        LocalDate date = tmp.query(TemporalQueries.localDate());
+        if(time == null && date == null) return null;
+
+        double tm = 0;
+        if(date != null) {
+            Date d = Date.from(date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+            tm = DateUtil.getExcelDate(d);
+        }
+        if(time != null) tm += 1.0*time.toSecondOfDay()/SECONDS_PER_DAY;
+
+        return tm;
     }
 }

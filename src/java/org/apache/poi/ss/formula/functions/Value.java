@@ -22,6 +22,9 @@ import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.usermodel.DateUtil;
+
+import java.time.DateTimeException;
 
 /**
  * Implementation for Excel VALUE() function.<p>
@@ -48,6 +51,7 @@ public final class Value extends Fixed1ArgFunction {
 		}
 		String strText = OperandResolver.coerceValueToString(veText);
 		Double result = convertTextToNumber(strText);
+		if(result == null) result = parseDateTime(strText);
 		if (result == null) {
 			return ErrorEval.VALUE_INVALID;
 		}
@@ -59,7 +63,7 @@ public final class Value extends Fixed1ArgFunction {
 	 *
 	 * @return <code>null</code> if there is any problem converting the text
 	 */
-	private static Double convertTextToNumber(String strText) {
+	public static Double convertTextToNumber(String strText) {
 		boolean foundCurrency = false;
 		boolean foundUnaryPlus = false;
 		boolean foundUnaryMinus = false;
@@ -188,5 +192,15 @@ public final class Value extends Fixed1ArgFunction {
 		}
         double result = foundUnaryMinus ? -d : d;
         return foundPercentage ? result/100. : result;
+	}
+
+	public static Double parseDateTime(String pText) {
+
+		try {
+			return DateUtil.parseDateTime(pText);
+		} catch (DateTimeException e) {
+			return null;
+		}
+
 	}
 }

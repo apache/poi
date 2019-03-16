@@ -18,8 +18,10 @@
 package org.apache.poi.ss.formula.eval;
 
 import org.apache.poi.ss.formula.EvaluationCell;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.util.CellRangeAddress;
 
+import java.time.DateTimeException;
 import java.util.regex.Pattern;
 
 /**
@@ -258,7 +260,9 @@ public final class OperandResolver {
             return ((NumericValueEval)ev).getNumberValue();
         }
         if (ev instanceof StringEval) {
-            Double dd = parseDouble(((StringEval) ev).getStringValue());
+            String sval = ((StringEval) ev).getStringValue();
+            Double dd = parseDouble(sval);
+            if(dd == null) dd = parseDateTime(sval);
             if (dd == null) {
                 throw EvaluationException.invalidValue();
             }
@@ -298,6 +302,16 @@ public final class OperandResolver {
             return null;
         }
         
+    }
+
+    public static Double parseDateTime(String pText) {
+
+        try {
+            return DateUtil.parseDateTime(pText);
+        } catch (DateTimeException e) {
+            return null;
+        }
+
     }
 
     /**

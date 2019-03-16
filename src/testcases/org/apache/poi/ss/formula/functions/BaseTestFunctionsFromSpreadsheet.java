@@ -78,6 +78,8 @@ public abstract class BaseTestFunctionsFromSpreadsheet {
     public int formulasRowIdx;
     @Parameter(value = 4)
     public HSSFFormulaEvaluator evaluator;
+    @Parameter(value = 5)
+    public int precisionColumnIndex;
 
 
     
@@ -92,7 +94,7 @@ public abstract class BaseTestFunctionsFromSpreadsheet {
             HSSFSheet sheet = workbook.getSheetAt(sheetIdx);
             processFunctionGroup(data, sheet, SS.START_TEST_CASES_ROW_INDEX, filename);
         }
-        
+
         workbook.close();
         
         return data;
@@ -100,6 +102,14 @@ public abstract class BaseTestFunctionsFromSpreadsheet {
 
     private static void processFunctionGroup(List<Object[]> data, HSSFSheet sheet, final int startRowIndex, String filename) {
         HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(sheet.getWorkbook());
+
+        int precisionColumnIndex = -1;
+        HSSFRow precisionRow = sheet.getWorkbook().getSheetAt(0).getRow(11);
+        HSSFCell precisionCell = precisionRow == null ? null : precisionRow.getCell(0);
+        if(precisionCell != null && precisionCell.getCellType() == CellType.NUMERIC){
+            precisionColumnIndex = (int)precisionCell.getNumericCellValue();
+        }
+
 
         String currentGroupComment = "";
         final int maxRows = sheet.getLastRowNum()+1;
@@ -131,7 +141,7 @@ public abstract class BaseTestFunctionsFromSpreadsheet {
                 testName = evalCell.getCellFormula();
             }
             
-            data.add(new Object[]{testName, filename, sheet, rowIndex, evaluator});
+            data.add(new Object[]{testName, filename, sheet, rowIndex, evaluator, precisionColumnIndex});
         }
         fail("Missing end marker '" + SS.TEST_CASES_END_MARKER + "' on sheet '" + sheet.getSheetName() + "'");
     }
@@ -141,7 +151,8 @@ public abstract class BaseTestFunctionsFromSpreadsheet {
         HSSFRow r = sheet.getRow(formulasRowIdx);
         HSSFCell evalCell = r.getCell(SS.COLUMN_INDEX_EVALUATION);
         HSSFCell expectedCell = r.getCell(SS.COLUMN_INDEX_EXPECTED_RESULT);
-        
+        HSSFCell precisionCell = r.getCell(precisionColumnIndex);
+
         CellReference cr = new CellReference(sheet.getSheetName(), formulasRowIdx, evalCell.getColumnIndex(), false, false);
         String msg = String.format(Locale.ROOT, "In %s %s {=%s} '%s'"
             , filename, cr.formatAsString(), evalCell.getCellFormula(), testName);
@@ -175,7 +186,9 @@ public abstract class BaseTestFunctionsFromSpreadsheet {
             case FORMULA: // will never be used, since we will call method after formula evaluation
                 fail("Cannot expect formula as result of formula evaluation: " + msg);
             case NUMERIC:
-                assertEquals(expectedCell.getNumericCellValue(), actualValue.getNumberValue(), 0.0);
+                double precision = precisionCell != null && precisionCell.getCellType() == CellType.NUMERIC
+                        ? precisionCell.getNumericCellValue() : 0.0;
+                assertEquals(expectedCell.getNumericCellValue(), actualValue.getNumberValue(), precision);
                 break;
             case STRING:
                 assertEquals(msg, expectedCell.getRichStringCellValue().getString(), actualValue.getStringValue());
@@ -197,6 +210,12 @@ public abstract class BaseTestFunctionsFromSpreadsheet {
         HSSFSheet sheet = workbook.getSheetAt(0);
         String specifiedClassName = sheet.getRow(2).getCell(0).getRichStringCellValue().getString();
         assertEquals("Test class name in spreadsheet comment", clazz.getName(), specifiedClassName);
+
+        HSSFRow precisionRow = sheet.getRow(11);
+        HSSFCell precisionCell = precisionRow == null ? null : precisionRow.getCell(0);
+        if(precisionCell != null && precisionCell.getCellType() == CellType.NUMERIC){
+
+        }
     }
 
     /**
