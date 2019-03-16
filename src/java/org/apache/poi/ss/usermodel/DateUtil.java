@@ -71,7 +71,7 @@ public class DateUtil {
             .appendPattern("[[yyyy ]dd-MMM[-yyyy]][[ ]h:m[:s] a][[ ]H:m[:s]]")
             .appendPattern("[M/dd[/yyyy]][[ ]h:m[:s] a][[ ]H:m[:s]]")
             .appendPattern("[[yyyy/]M/dd][[ ]h:m[:s] a][[ ]H:m[:s]]")
-            .parseDefaulting(ChronoField.YEAR_OF_ERA, Calendar.getInstance().get(Calendar.YEAR))
+            .parseDefaulting(ChronoField.YEAR_OF_ERA, LocaleUtil.getLocaleCalendar().get(Calendar.YEAR))
             .toFormatter();
 
     /**
