@@ -2932,7 +2932,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         Workbook wb = HSSFTestDataSamples.openSampleWorkbook("46515.xls");
 
         // Get structure from webservice
-        String urlString = "http://poi.apache.org/images/project-header.png";
+        String urlString = "http://poi.apache.org/components/spreadsheet/images/calendar.jpg";
         URL structURL = new URL(urlString);
         BufferedImage bimage;
         try {
