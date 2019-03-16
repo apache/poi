@@ -20,6 +20,9 @@ package org.apache.poi.ss.formula.eval;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * Tests for <tt>OperandResolver</tt>
  *
@@ -72,6 +75,31 @@ public final class TestOperandResolver extends TestCase {
 		
 		for (String value : values) {
 			assertNull(OperandResolver.parseDouble(value));
+		}
+	}
+
+	public void testCoerceDateStringToNumber() throws EvaluationException {
+		Map<String, Double> values = new LinkedHashMap<>();
+		values.put("2019/1/18", 43483.);
+		values.put("01/18/2019", 43483.);
+		values.put("18 Jan 2019", 43483.);
+		values.put("18-Jan-2019", 43483.);
+
+		for (String str : values.keySet()) {
+			assertEquals(OperandResolver.coerceValueToDouble(new StringEval(str)), values.get(str), 0.00001);
+		}
+	}
+
+	public void testCoerceTimeStringToNumber() throws EvaluationException {
+		Map<String, Double> values = new LinkedHashMap<>();
+		values.put("00:00", 0.0);
+		values.put("12:00", 0.5);
+		values.put("15:43:09", 0.654965278);
+		values.put("15:43", 0.654861111);
+		values.put("3:43 PM", 0.654861111);
+
+		for (String str : values.keySet()) {
+			assertEquals(OperandResolver.coerceValueToDouble(new StringEval(str)), values.get(str), 0.00001);
 		}
 	}
 }
