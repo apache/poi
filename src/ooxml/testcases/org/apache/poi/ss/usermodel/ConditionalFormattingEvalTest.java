@@ -19,6 +19,7 @@ package org.apache.poi.ss.usermodel;
 
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.poi.ss.formula.ConditionalFormattingEvaluator;
@@ -117,6 +118,28 @@ public class ConditionalFormattingEvalTest {
         getRulesFor(8,2);
         assertEquals("wrong # of rules for " + ref, 1, rules.size());
         
+        sheet = wb.getSheet("Compare to totals");
+        getRulesFor(3, 2);
+        assertEquals("wrong # of rules for " + ref, 1, rules.size());
+        assertEquals("wrong fg color for " + ref, "FFFF0000", getColor(rules.get(0).getRule().getFontFormatting().getFontColor()));
+        getRulesFor(3, 3);
+        assertEquals("wrong # of rules for " + ref, 0, rules.size());
+        getRulesFor(15, 4);
+        assertEquals("wrong # of rules for " + ref, 0, rules.size());
+        getRulesFor(16, 1);
+        assertEquals("wrong # of rules for " + ref, 1, rules.size());
+        assertEquals("wrong fg color for " + ref, "FFFF0000", getColor(rules.get(0).getRule().getFontFormatting().getFontColor()));
+        
+        sheet = wb.getSheet("Products3");
+        sheet.getRow(8).getCell(0).setCellValue(new Date());
+        getRulesFor(8, 0);
+        assertEquals("wrong # of rules for " + ref, 1, rules.size());
+        getRulesFor(8, 3);
+        assertEquals("wrong # of rules for " + ref, 1, rules.size());
+
+        sheet = wb.getSheet("Customers2");
+        getRulesFor(3, 0);
+        assertEquals("wrong # of rules for " + ref, 0, rules.size());
     }
 
     @Test

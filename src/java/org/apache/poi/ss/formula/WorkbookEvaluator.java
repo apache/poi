@@ -880,20 +880,16 @@ public final class WorkbookEvaluator {
      * <p><pre>formula ref + current cell ref</pre></p>
      * @param ptgs
      * @param target cell within the region to use.
-     * @param region containing the cell
+     * @param region containing the cell, OR, for conditional format rules with multiple ranges, the region with the top-left-most cell
      * @return true if any Ptg references were shifted
      * @throws IndexOutOfBoundsException if the resulting shifted row/column indexes are over the document format limits
      * @throws IllegalArgumentException if target is not within region.
      */
     protected boolean adjustRegionRelativeReference(Ptg[] ptgs, CellReference target, CellRangeAddressBase region) {
-        if (! region.isInRange(target)) {
-            throw new IllegalArgumentException(target + " is not within " + region);
-        }
+        // region may not be the one that contains the target, if a conditional formatting rule applies to multiple regions
         
-        //return adjustRegionRelativeReference(ptgs, target.getRow() - region.getFirstRow(), target.getCol() - region.getFirstColumn());
-        
-        int deltaRow = target.getRow();
-        int deltaColumn = target.getCol();
+        int deltaRow = target.getRow() - region.getFirstRow();
+        int deltaColumn = target.getCol() - region.getFirstColumn();
         
         boolean shifted = false;
         for (Ptg ptg : ptgs) {
@@ -902,7 +898,7 @@ public final class WorkbookEvaluator {
                 RefPtgBase ref = (RefPtgBase) ptg;
                 // re-calculate cell references
                 final SpreadsheetVersion version = _workbook.getSpreadsheetVersion();
-                if (ref.isRowRelative()) {
+                if (ref.isRowRelative() && deltaRow > 0) {
                     final int rowIndex = ref.getRow() + deltaRow;
                     if (rowIndex > version.getMaxRows()) {
                         throw new IndexOutOfBoundsException(version.name() + " files can only have " + version.getMaxRows() + " rows, but row " + rowIndex + " was requested.");
@@ -910,7 +906,7 @@ public final class WorkbookEvaluator {
                     ref.setRow(rowIndex);
                     shifted = true;
                 }
-                if (ref.isColRelative()) {
+                if (ref.isColRelative() && deltaColumn > 0) {
                     final int colIndex = ref.getColumn() + deltaColumn;
                     if (colIndex > version.getMaxColumns()) {
                         throw new IndexOutOfBoundsException(version.name() + " files can only have " + version.getMaxColumns() + " columns, but column " + colIndex + " was requested.");
