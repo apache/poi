@@ -56,7 +56,17 @@ import java.util.List;
  *      <tr align='center'><td>9</td><td>SUM</td></tr>
  *      <tr align='center'><td>10</td><td>VAR *</td></tr>
  *      <tr align='center'><td>11</td><td>VARP *</td></tr>
- *      <tr align='center'><td>101-111</td><td>*</td></tr>
+ *      <tr align='center'><td>101</td><td>AVERAGE</td></tr>
+ *      <tr align='center'><td>102</td><td>COUNT</td></tr>
+ *      <tr align='center'><td>103</td><td>COUNTA</td></tr>
+ *      <tr align='center'><td>104</td><td>MAX</td></tr>
+ *      <tr align='center'><td>105</td><td>MIN</td></tr>
+ *      <tr align='center'><td>106</td><td>PRODUCT</td></tr>
+ *      <tr align='center'><td>107</td><td>STDEV</td></tr>
+ *      <tr align='center'><td>108</td><td>STDEVP *</td></tr>
+ *      <tr align='center'><td>109</td><td>SUM</td></tr>
+ *      <tr align='center'><td>110</td><td>VAR *</td></tr>
+ *      <tr align='center'><td>111</td><td>VARP *</td></tr>
  *  </table><br>
  * * Not implemented in POI yet. Functions 101-111 are the same as functions 1-11 but with
  * the option 'ignore hidden values'.
@@ -68,20 +78,28 @@ public class Subtotal implements Function {
 
 	private static Function findFunction(int functionCode) throws EvaluationException {
         switch (functionCode) {
-			case 1: return subtotalInstance(AggregateFunction.AVERAGE);
-			case 2: return Count.subtotalInstance();
-			case 3: return Counta.subtotalInstance();
-			case 4: return subtotalInstance(AggregateFunction.MAX);
-			case 5: return subtotalInstance(AggregateFunction.MIN);
-			case 6: return subtotalInstance(AggregateFunction.PRODUCT);
-			case 7: return subtotalInstance(AggregateFunction.STDEV);
+			case 1: return subtotalInstance(AggregateFunction.AVERAGE, true);
+			case 2: return Count.subtotalInstance(true);
+			case 3: return Counta.subtotalInstance(true);
+			case 4: return subtotalInstance(AggregateFunction.MAX, true);
+			case 5: return subtotalInstance(AggregateFunction.MIN, true);
+			case 6: return subtotalInstance(AggregateFunction.PRODUCT, true);
+			case 7: return subtotalInstance(AggregateFunction.STDEV, true);
 			case 8: throw new NotImplementedFunctionException("STDEVP");
-			case 9: return subtotalInstance(AggregateFunction.SUM);
+			case 9: return subtotalInstance(AggregateFunction.SUM, true);
 			case 10: throw new NotImplementedFunctionException("VAR");
 			case 11: throw new NotImplementedFunctionException("VARP");
-		}
-		if (functionCode > 100 && functionCode < 112) {
-			throw new NotImplementedException("SUBTOTAL - with 'exclude hidden values' option");
+			case 101: return subtotalInstance(AggregateFunction.AVERAGE, false);
+			case 102: return Count.subtotalInstance(false);
+			case 103: return Counta.subtotalInstance(false);
+			case 104: return subtotalInstance(AggregateFunction.MAX, false);
+			case 105: return subtotalInstance(AggregateFunction.MIN, false);
+			case 106: return subtotalInstance(AggregateFunction.PRODUCT, false);
+			case 107: return subtotalInstance(AggregateFunction.STDEV, false);
+			case 108: throw new NotImplementedFunctionException("STDEVP SUBTOTAL with 'exclude hidden values' option");
+			case 109: return subtotalInstance(AggregateFunction.SUM, false);
+			case 110: throw new NotImplementedFunctionException("VAR SUBTOTAL with 'exclude hidden values' option");
+			case 111: throw new NotImplementedFunctionException("VARP SUBTOTAL with 'exclude hidden values' option");
 		}
 		throw EvaluationException.invalidValue();
 	}
@@ -93,9 +111,10 @@ public class Subtotal implements Function {
 		}
 
 		final Function innerFunc;
+		int functionCode = 0;
 		try {
 			ValueEval ve = OperandResolver.getSingleValue(args[0], srcRowIndex, srcColumnIndex);
-			int functionCode = OperandResolver.coerceValueToInt(ve);
+            functionCode = OperandResolver.coerceValueToInt(ve);
 			innerFunc = findFunction(functionCode);
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
@@ -115,6 +134,9 @@ public class Subtotal implements Function {
 				LazyRefEval lazyRefEval = (LazyRefEval) eval;
 				if(lazyRefEval.isSubTotal()) {
 					it.remove();
+				}
+				if (functionCode > 100 && lazyRefEval.isRowHidden()) {
+				    it.remove();
 				}
 			}
 		}

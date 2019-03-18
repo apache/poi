@@ -376,6 +376,15 @@ public final class TestSubtotal {
         confirmExpectedResult(evaluator, "SUBTOTAL(COUNT;B2:B8,C2:C8)", cellC2, 3.0);
         confirmExpectedResult(evaluator, "SUBTOTAL(COUNTA;B2:B8,C2:C8)", cellC3, 5.0);
     
+        // test same functions ignoring hidden rows over a copy of the same data
+        cellC1 = sheet.getRow(11).getCell(3);
+        cellC2 = sheet.getRow(12).getCell(3);
+        cellC3 = sheet.getRow(13).getCell(3);
+        confirmExpectedResult(evaluator, "SUBTOTAL(SUM NO HIDDEN;B22:B28;C22:C28)", cellC1, 17.0);
+        confirmExpectedResult(evaluator, "SUBTOTAL(COUNT NO HIDDEN;B22:B28,C22:C28)", cellC2, 2.0);
+        confirmExpectedResult(evaluator, "SUBTOTAL(COUNTA NO HIDDEN;B22:B28,C22:C28)", cellC3, 4.0);
+        
+        
         workbook.close();
     }
 
@@ -393,7 +402,6 @@ public final class TestSubtotal {
             { "SUBTOTAL(8,B2:B3)", NotImplementedException.class.getName() },
             { "SUBTOTAL(10,B2:B3)", NotImplementedException.class.getName() },
             { "SUBTOTAL(11,B2:B3)", NotImplementedException.class.getName() },
-            { "SUBTOTAL(107,B2:B3)", NotImplementedException.class.getName() },
             { "SUBTOTAL(0,B2:B3)", null },
             { "SUBTOTAL(9)", FormulaParseException.class.getName() },
             { "SUBTOTAL()", FormulaParseException.class.getName() },
@@ -404,7 +412,7 @@ public final class TestSubtotal {
             try {
                 a3.setCellFormula(f[0]);
                 fe.evaluateAll();
-                assertEquals(FormulaError.VALUE.getCode(), a3.getErrorCellValue());
+                assertEquals(f[0], FormulaError.VALUE.getCode(), a3.getErrorCellValue());
             } catch (Exception e) {
                 actualEx = e;
             }

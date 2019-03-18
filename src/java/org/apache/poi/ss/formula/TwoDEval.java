@@ -19,6 +19,7 @@ package org.apache.poi.ss.formula;
 
 import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.functions.Subtotal;
 
 /**
  * Common interface of {@link AreaEval} and {@link org.apache.poi.ss.formula.eval.AreaEvalBase},
@@ -64,5 +65,13 @@ public interface TwoDEval extends ValueEval {
      * @return true if the  cell at row and col is a subtotal
      */
     boolean isSubTotal(int rowIndex, int columnIndex);
+    
+    /**
+     *
+     * @param rowIndex
+     * @return true if the row is hidden
+     * @see Subtotal
+     */
+    boolean isRowHidden(int rowIndex);
 
 }

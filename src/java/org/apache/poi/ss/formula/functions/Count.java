@@ -86,6 +86,9 @@ public final class Count implements Function {
 		}
 	};
 
+    /**
+     * matches hidden rows but not subtotals
+     */
     private static final I_MatchPredicate subtotalPredicate = new I_MatchAreaPredicate() {
         public boolean matches(ValueEval valueEval) {
             return defaultPredicate.matches(valueEval);
@@ -100,15 +103,33 @@ public final class Count implements Function {
     };
 
     /**
+     * matches nither hidden rows or subtotals
+     */
+    private static final I_MatchPredicate subtotalVisibleOnlyPredicate = new I_MatchAreaPredicate() {
+        public boolean matches(ValueEval valueEval) {
+            return defaultPredicate.matches(valueEval);
+        }
+        
+        /**
+         * don't count cells that are subtotals
+         */
+        public boolean matches(TwoDEval areEval, int rowIndex, int columnIndex) {
+            return !areEval.isSubTotal(rowIndex, columnIndex) && !areEval.isRowHidden(rowIndex);
+        }
+    };
+    
+    /**
      *  Create an instance of Count to use in {@link Subtotal}
      * <p>
      *     If there are other subtotals within argument refs (or nested subtotals),
      *     these nested subtotals are ignored to avoid double counting.
      * </p>
+     * @param includeHiddenRows true to include hidden rows in the aggregate, false to skip them
+     * @return function
      *
      *  @see Subtotal
      */
-    public static Count subtotalInstance() {
-        return new Count(subtotalPredicate );
+    public static Count subtotalInstance(boolean includeHiddenRows) {
+        return new Count(includeHiddenRows ? subtotalPredicate : subtotalVisibleOnlyPredicate);
     }
 }

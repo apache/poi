@@ -146,4 +146,11 @@ public abstract class AreaEvalBase implements AreaEval {
         return false;
     }
 
+    /**
+     * @return false by default, meaning all rows are calculated
+     * @see org.apache.poi.ss.formula.TwoDEval#isRowHidden(int)
+     */
+    public boolean isRowHidden(int rowIndex) {
+        return false;
+    }
 }

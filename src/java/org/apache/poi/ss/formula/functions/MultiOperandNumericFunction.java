@@ -153,6 +153,14 @@ public abstract class MultiOperandNumericFunction implements Function {
     }
 
     /**
+     * @return true if values in hidden rows are counted
+     * @see Subtotal
+     */
+    public boolean isHiddenRowCounted() {
+        return true;
+    }
+    
+    /**
      * Collects values from a single argument
      */
     private void collectValues(ValueEval operand, DoubleList temp) throws EvaluationException {
@@ -165,6 +173,7 @@ public abstract class MultiOperandNumericFunction implements Function {
                     for (int rcIx = 0; rcIx < width; rcIx++) {
                         ValueEval ve = ae.getValue(sIx, rrIx, rcIx);
                         if (!isSubtotalCounted() && ae.isSubTotal(rrIx, rcIx)) continue;
+                        if (!isHiddenRowCounted() && ae.isRowHidden(rrIx)) continue;
                         collectValue(ve, true, temp);
                     }
                 }

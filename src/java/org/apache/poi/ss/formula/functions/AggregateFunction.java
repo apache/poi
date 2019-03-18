@@ -162,7 +162,7 @@ public abstract class AggregateFunction extends MultiOperandNumericFunction {
      * @param   func  the function to wrap
      * @return  wrapped instance. The actual math is delegated to the argument function.
      */
-    /*package*/ static Function subtotalInstance(Function func) {
+    /*package*/ static Function subtotalInstance(Function func, boolean countHiddenRows) {
         final AggregateFunction arg = (AggregateFunction)func;
         return new AggregateFunction() {
             @Override
@@ -178,6 +178,9 @@ public abstract class AggregateFunction extends MultiOperandNumericFunction {
                 return false;
             }
 
+            public boolean isHiddenRowCounted() {
+                return countHiddenRows;
+            }
         };
     }
 

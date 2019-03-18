@@ -52,6 +52,16 @@ final class XSSFEvaluationSheet implements EvaluationSheet {
         return _xs.getLastRowNum();
     }
     
+    /* (non-Javadoc)
+     * @see org.apache.poi.ss.formula.EvaluationSheet#isRowHidden(int)
+     * @since POI 4.0.2
+     */
+    public boolean isRowHidden(int rowIndex) {
+        final XSSFRow row = _xs.getRow(rowIndex);
+        if (row == null) return false;
+        return row.getZeroHeight();
+    }
+    
     /* (non-JavaDoc), inherit JavaDoc from EvaluationWorkbook
      * @since POI 3.15 beta 3
      */

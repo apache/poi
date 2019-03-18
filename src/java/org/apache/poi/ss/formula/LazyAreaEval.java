@@ -94,4 +94,14 @@ final class LazyAreaEval extends AreaEvalBase {
         SheetRefEvaluator _sre = _evaluator.getSheetEvaluator(_evaluator.getFirstSheetIndex());
         return _sre.isSubTotal(getFirstRow() + rowIndex, getFirstColumn() + columnIndex);
     }
+    
+    /**
+     * @return whether the row at rowIndex is hidden
+     * @see org.apache.poi.ss.formula.eval.AreaEvalBase#isRowHidden(int)
+     */
+    public boolean isRowHidden(int rowIndex) {
+        // delegate the query to the sheet evaluator which has access to internal ptgs
+        SheetRefEvaluator _sre = _evaluator.getSheetEvaluator(_evaluator.getFirstSheetIndex());
+        return _sre.isRowHidden(getFirstRow() + rowIndex);
+    }
 }
