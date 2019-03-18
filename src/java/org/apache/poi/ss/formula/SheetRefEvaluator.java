@@ -56,6 +56,8 @@ final class SheetRefEvaluator {
 	}
 
     /**
+     * @param rowIndex 
+     * @param columnIndex 
      * @return  whether cell at rowIndex and columnIndex is a subtotal
      * @see org.apache.poi.ss.formula.functions.Subtotal
      */
@@ -77,4 +79,14 @@ final class SheetRefEvaluator {
         return subtotal;
     }
 
+    /**
+     * Used by functions that calculate differently depending on row visibility, like some
+     * variations of SUBTOTAL()
+     * @see org.apache.poi.ss.formula.functions.Subtotal
+     * @param rowIndex
+     * @return true if the row is hidden
+     */
+    public boolean isRowHidden(int rowIndex) {
+        return getSheet().isRowHidden(rowIndex);
+    }
 }

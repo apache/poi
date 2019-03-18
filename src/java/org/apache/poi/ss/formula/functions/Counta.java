@@ -80,7 +80,8 @@ public final class Counta implements Function {
 			return true;
 		}
 	};
-    private static final I_MatchPredicate subtotalPredicate = new I_MatchAreaPredicate() {
+
+	private static final I_MatchPredicate subtotalPredicate = new I_MatchAreaPredicate() {
         public boolean matches(ValueEval valueEval) {
             return defaultPredicate.matches(valueEval);
         }
@@ -93,8 +94,21 @@ public final class Counta implements Function {
         }
     };
 
-    public static Counta subtotalInstance() {
-        return new Counta(subtotalPredicate);
+    private static final I_MatchPredicate subtotalVisibleOnlyPredicate = new I_MatchAreaPredicate() {
+        public boolean matches(ValueEval valueEval) {
+            return defaultPredicate.matches(valueEval);
+        }
+        
+        /**
+         * don't count cells in rows that are hidden or subtotal cells
+         */
+        public boolean matches(TwoDEval areEval, int rowIndex, int columnIndex) {
+            return !areEval.isSubTotal(rowIndex, columnIndex) && ! areEval.isRowHidden(rowIndex);
+        }
+    };
+    
+    public static Counta subtotalInstance(boolean includeHiddenRows) {
+        return new Counta(includeHiddenRows ? subtotalPredicate : subtotalVisibleOnlyPredicate);
     }
 
 }

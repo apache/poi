@@ -48,4 +48,12 @@ public interface EvaluationSheet {
      * @since POI 4.0.0
      */
     public int getLastRowNum();
+    
+    /**
+     * Used by SUBTOTAL and similar functions that have options to ignore hidden rows
+     * @param rowIndex
+     * @return true if the row is hidden, false if not
+     * @since POI 4.0.2
+     */
+    public boolean isRowHidden(int rowIndex);
 }

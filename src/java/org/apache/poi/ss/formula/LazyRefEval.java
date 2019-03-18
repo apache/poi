@@ -47,10 +47,22 @@ public final class LazyRefEval extends RefEvalBase {
 		return new LazyAreaEval(area, _evaluator);
 	}
 
+	/**
+	 * @return true if the cell is a subtotal
+	 */
 	public boolean isSubTotal() {
 		SheetRefEvaluator sheetEvaluator = _evaluator.getSheetEvaluator(getFirstSheetIndex());
 		return sheetEvaluator.isSubTotal(getRow(), getColumn());
 	}
+    
+    /**
+     * @return whether the row at rowIndex is hidden
+     */
+    public boolean isRowHidden() {
+        // delegate the query to the sheet evaluator which has access to internal ptgs
+        SheetRefEvaluator _sre = _evaluator.getSheetEvaluator(_evaluator.getFirstSheetIndex());
+        return _sre.isRowHidden(getRow());
+    }
 
 	public String toString() {
 		CellReference cr = new CellReference(getRow(), getColumn());
