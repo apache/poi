@@ -161,19 +161,9 @@ public class ConditionalFormattingEvalTest {
         cfe = new ConditionalFormattingEvaluator(wb, formulaEval);
 
         sheet = wb.getSheetAt(0);
-        try {
-            getRulesFor(2, 1);
-            fail("Got rules when an unsupported function error was expected.");
-        } catch (NotImplementedException e) {
-            // expected
-        }
+        assertEquals("no rules should apply", 0, getRulesFor(2, 1).size());
 
-        try {
-            getRulesFor(2, 1);
-            fail("Got rules the second time when an unsupported function error was expected.");
-        } catch (NotImplementedException e) {
-            // expected
-        }
+        assertEquals("no rules should apply", 0, getRulesFor(2, 1).size());
         
     }
     
