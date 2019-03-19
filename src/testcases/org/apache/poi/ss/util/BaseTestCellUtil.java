@@ -378,4 +378,23 @@ public abstract class BaseTestCellUtil {
 
         wb1.close();
     }
+
+    /**
+     * bug 63268
+     * @since POI 4.1.0
+     */
+    @Test
+    public void setFontShouldNotCreateDuplicateStyle() throws IOException {
+        Workbook wb1 = _testDataProvider.createWorkbook();
+        Cell c = wb1.createSheet().createRow(1).createCell(1);
+        Font f = wb1.createFont();
+
+        CellUtil.setFont(c, f);
+        int num1 = wb1.getNumCellStyles();
+
+        CellUtil.setFont(c, f);
+        int num2 = wb1.getNumCellStyles();
+        assertEquals(num1, num2);
+        wb1.close();
+    }
 }
