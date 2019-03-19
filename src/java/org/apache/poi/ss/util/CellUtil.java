@@ -84,8 +84,11 @@ public final class CellUtil {
                     FILL_BACKGROUND_COLOR,
                     INDENTION,
                     DATA_FORMAT,
-                    FONT,
                     ROTATION
+            )));
+    private static final Set<String> intValues = Collections.unmodifiableSet(
+            new HashSet<>(Arrays.asList(
+                    FONT
             )));
     private static final Set<String> booleanValues = Collections.unmodifiableSet(
             new HashSet<>(Arrays.asList(
@@ -369,6 +372,8 @@ public final class CellUtil {
         for (final String key : src.keySet()) {
             if (shortValues.contains(key)) {
                 dest.put(key, getShort(src, key));
+            } else if (intValues.contains(key)) {
+                dest.put(key, getInt(src, key));
             } else if (booleanValues.contains(key)) {
                 dest.put(key, getBoolean(src, key));
             } else if (borderTypeValues.contains(key)) {
