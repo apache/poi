@@ -41,7 +41,7 @@ public class HSSFWorkbookFactory extends WorkbookFactory {
     }
 
     /**
-     * Creates a HSSFWorkbook from the given NPOIFSFileSystem<p>
+     * Creates a HSSFWorkbook from the given {@link POIFSFileSystem}<p>
      * Note that in order to properly release resources the
      * Workbook should be closed after use.
      */

@@ -55,20 +55,20 @@ public final class TestDocumentInputStream {
             _workbook_data[j] = (byte) (j * j);
         }
 
-        // Now create the NPOIFS Version
+        // Now create the POIFS Version
         byte[] _workbook_data_only = new byte[_workbook_size];
         System.arraycopy(_workbook_data, 0, _workbook_data_only, 0, _workbook_size);
 
-        POIFSFileSystem npoifs = new POIFSFileSystem();
+        POIFSFileSystem poifs = new POIFSFileSystem();
         // Make it easy when debugging to see what isn't the doc
         byte[] minus1 = new byte[512];
         Arrays.fill(minus1, (byte) -1);
-        npoifs.getBlockAt(-1).put(minus1);
-        npoifs.getBlockAt(0).put(minus1);
-        npoifs.getBlockAt(1).put(minus1);
+        poifs.getBlockAt(-1).put(minus1);
+        poifs.getBlockAt(0).put(minus1);
+        poifs.getBlockAt(1).put(minus1);
 
-        // Create the NPOIFS document
-        _workbook_n = (DocumentNode) npoifs.createDocument(
+        // Create the POIFS document
+        _workbook_n = (DocumentNode) poifs.createDocument(
                 new ByteArrayInputStream(_workbook_data_only),
                 "Workbook"
         );
@@ -440,12 +440,12 @@ public final class TestDocumentInputStream {
 
         DocumentInputStream stream;
 
-        try (POIFSFileSystem npoifs = new POIFSFileSystem(sample)) {
+        try (POIFSFileSystem poifs = new POIFSFileSystem(sample)) {
             // Ensure we have what we expect on the root
-            assertEquals(npoifs, npoifs.getRoot().getFileSystem());
+            assertEquals(poifs, poifs.getRoot().getFileSystem());
 
             // Check inside
-            DirectoryNode root = npoifs.getRoot();
+            DirectoryNode root = poifs.getRoot();
             // Top Level
             Entry top = root.getEntry("Contents");
             assertTrue(top.isDocumentEntry());

@@ -236,7 +236,7 @@ public abstract class POIDocument implements Closeable {
     
     /**
      * Writes out the updated standard Document Information Properties (HPSF)
-     *  into the currently open NPOIFSFileSystem
+     *  into the currently open POIFSFileSystem
      * 
      * @throws IOException if an error when writing to the open
      *      {@link POIFSFileSystem} occurs
@@ -258,7 +258,7 @@ public abstract class POIDocument implements Closeable {
     }
     /**
      * Writes out the standard Document Information Properties (HPSF)
-     * @param outFS the NPOIFSFileSystem to write the properties into
+     * @param outFS the {@link POIFSFileSystem} to write the properties into
      * @param writtenEntries a list of POIFS entries to add the property names too
      * 
      * @throws IOException if an error when writing to the 
@@ -314,7 +314,7 @@ public abstract class POIDocument implements Closeable {
      *
      * @param name the (POIFS Level) name of the property to write
      * @param set the PropertySet to write out 
-     * @param outFS the NPOIFSFileSystem to write the property into
+     * @param outFS the {@link POIFSFileSystem} to write the property into
      * 
      * @throws IOException if an error when writing to the 
      *      {@link POIFSFileSystem} occurs

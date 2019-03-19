@@ -104,7 +104,7 @@ public class VBAMacroReader implements Closeable {
             while ((zipEntry = zis.getNextEntry()) != null) {
                 if (endsWithIgnoreCase(zipEntry.getName(), VBA_PROJECT_OOXML)) {
                     try {
-                        // Make a NPOIFS from the contents, and close the stream
+                        // Make a POIFSFileSystem from the contents, and close the stream
                         this.fs = new POIFSFileSystem(zis);
                         return;
                     } catch (IOException e) {

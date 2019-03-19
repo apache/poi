@@ -183,9 +183,9 @@ public final class TestHPSFPropertiesExtractor {
 
 	@Test
 	public void test61300Extractor() throws IOException {
-		try (POIFSFileSystem npoifs = new POIFSFileSystem(
+		try (POIFSFileSystem poifs = new POIFSFileSystem(
 				POIDataSamples.getPOIFSInstance().getFile("61300.bin"))) {
-			HPSFPropertiesExtractor ext = new HPSFPropertiesExtractor(npoifs);
+			HPSFPropertiesExtractor ext = new HPSFPropertiesExtractor(poifs);
 			assertContains(ext.getText(), "PID_CODEPAGE = 1252");
 		}
 	}

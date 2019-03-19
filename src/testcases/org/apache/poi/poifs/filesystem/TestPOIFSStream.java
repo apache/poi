@@ -2605,11 +2605,11 @@ public final class TestPOIFSStream {
    }
 
    /**
-    * Test that we can read a file with NPOIFS, create a new NPOIFS instance,
+    * Test that we can read a file with POIFS, create a new POIFS instance,
     *  write it out, read it with POIFS, and see the original data
     */
    @Test
-   public void NPOIFSReadCopyWritePOIFSRead() throws IOException {
+   public void POIFSReadCopyWritePOIFSRead() throws IOException {
       File testFile = POIDataSamples.getSpreadSheetInstance().getFile("Simple.xls");
       POIFSFileSystem src = new POIFSFileSystem(testFile);
        byte[] wbDataExp = IOUtils.toByteArray(src.createDocumentInputStream("Workbook"));

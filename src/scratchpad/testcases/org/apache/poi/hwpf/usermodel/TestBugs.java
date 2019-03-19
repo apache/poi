@@ -606,7 +606,7 @@ public class TestBugs{
     }
 
     /**
-     * [RESOLVED FIXED] Bug 51671 - HWPFDocument.write based on NPOIFSFileSystem
+     * [RESOLVED FIXED] Bug 51671 - HWPFDocument.write based on POIFSFileSystem
      * throws a NullPointerException
      */
     @Test
@@ -614,9 +614,9 @@ public class TestBugs{
     {
         InputStream is = POIDataSamples.getDocumentInstance()
                 .openResourceAsStream("empty.doc");
-        try (POIFSFileSystem npoifsFileSystem = new POIFSFileSystem(is)) {
+        try (POIFSFileSystem poifsFileSystem = new POIFSFileSystem(is)) {
             HWPFDocument hwpfDocument = new HWPFDocument(
-                    npoifsFileSystem.getRoot());
+                    poifsFileSystem.getRoot());
             hwpfDocument.write(new ByteArrayOutputStream());
             hwpfDocument.close();
         }

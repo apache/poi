@@ -343,9 +343,9 @@ public final class TestWordExtractor {
     public void testDifferentPOIFS() throws Exception {
        // Open the two filesystems
        File file = docTests.getFile("test2.doc");
-       try (POIFSFileSystem npoifs = new POIFSFileSystem(file, true)) {
+       try (POIFSFileSystem poifs = new POIFSFileSystem(file, true)) {
 
-           DirectoryNode dir = npoifs.getRoot();
+           DirectoryNode dir = poifs.getRoot();
 
            // Open directly
            @SuppressWarnings("resource")

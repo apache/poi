@@ -394,9 +394,9 @@ public final class TestExtractor {
     public void testDifferentPOIFS() throws IOException {
         // Open the two filesystems
         File pptFile = slTests.getFile("basic_test_ppt_file.ppt");
-        try (final POIFSFileSystem npoifs = new POIFSFileSystem(pptFile, true)) {
+        try (final POIFSFileSystem poifs = new POIFSFileSystem(pptFile, true)) {
             // Open directly
-            try (SlideShow<?,?> ppt = SlideShowFactory.create(npoifs.getRoot());
+            try (SlideShow<?,?> ppt = SlideShowFactory.create(poifs.getRoot());
                 SlideShowExtractor<?,?> extractor = new SlideShowExtractor<>(ppt)) {
                 assertEquals(EXPECTED_PAGE1+EXPECTED_PAGE2, extractor.getText());
             }

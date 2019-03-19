@@ -1505,7 +1505,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
     @Test
     public void bug55692_stream() throws IOException {
-        // Directly on a Stream, will go via NPOIFS and spot it's
+        // Directly on a Stream, will go via POIFS and spot it's
         //  actually a .xlsx file encrypted with the default password, and open
         Workbook wb = WorkbookFactory.create(
                 POIDataSamples.getPOIFSInstance().openResourceAsStream("protect.xlsx"));
@@ -1515,8 +1515,8 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void bug55692_npoifs() throws IOException {
-        // Via a NPOIFSFileSystem, will spot it's actually a .xlsx file
+    public void bug55692_poifs2() throws IOException {
+        // Via a POIFSFileSystem, will spot it's actually a .xlsx file
         //  encrypted with the default password, and open
         POIFSFileSystem fsNP = new POIFSFileSystem(
                 POIDataSamples.getPOIFSInstance().openResourceAsStream("protect.xlsx"));

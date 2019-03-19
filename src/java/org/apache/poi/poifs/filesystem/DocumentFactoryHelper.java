@@ -38,7 +38,7 @@ public final class DocumentFactoryHelper {
     }
 
     /**
-     * Wrap the OLE2 data in the NPOIFSFileSystem into a decrypted stream by using
+     * Wrap the OLE2 data in the {@link POIFSFileSystem} into a decrypted stream by using
      * the given password.
      *
      * @param fs The OLE2 stream for the document
@@ -48,7 +48,7 @@ public final class DocumentFactoryHelper {
      */
     public static InputStream getDecryptedStream(final POIFSFileSystem fs, String password)
     throws IOException {
-        // wrap the stream in a FilterInputStream to close the NPOIFSFileSystem
+        // wrap the stream in a FilterInputStream to close the POIFSFileSystem
         // as well when the resulting OPCPackage is closed
         return new FilterInputStream(getDecryptedStream(fs.getRoot(), password)) {
             @Override

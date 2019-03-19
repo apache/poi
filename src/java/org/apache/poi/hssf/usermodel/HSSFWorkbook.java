@@ -393,7 +393,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      * @see #HSSFWorkbook(POIFSFileSystem)
      * @exception IOException if the stream cannot be read
      */
-    @SuppressWarnings("resource")   // NPOIFSFileSystem always closes the stream
+    @SuppressWarnings("resource")   // POIFSFileSystem always closes the stream
     public HSSFWorkbook(InputStream s, boolean preserveNodes)
             throws IOException
     {
