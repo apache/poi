@@ -32,7 +32,7 @@ import org.apache.poi.util.Internal;
 @Internal
 public class HSLFSlideShowFactory extends SlideShowFactory {
     /**
-     * Creates a HSLFSlideShow from the given NPOIFSFileSystem<p>
+     * Creates a HSLFSlideShow from the given {@link POIFSFileSystem}<p>
      * Note that in order to properly release resources the
      * SlideShow should be closed after use.
      */

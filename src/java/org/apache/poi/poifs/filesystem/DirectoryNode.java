@@ -49,8 +49,8 @@ public class DirectoryNode
     // Our list of entries, kept sorted to preserve order
     private final ArrayList<Entry> _entries = new ArrayList<>();
 
-    // the NPOIFSFileSytem we belong to
-    private final POIFSFileSystem _nfilesystem;
+    // the POIFSFileSystem we belong to
+    private final POIFSFileSystem _filesystem;
 
     // the path described by this document
     private final POIFSDocumentPath _path;
@@ -60,15 +60,15 @@ public class DirectoryNode
      * is intended strictly for the internal use of this package
      *
      * @param property the DirectoryProperty for this DirectoryEntry
-     * @param nfilesystem the NPOIFSFileSystem we belong to
+     * @param filesystem the {@link POIFSFileSystem} we belong to
      * @param parent the parent of this entry
      */
     DirectoryNode(final DirectoryProperty property,
-                  final POIFSFileSystem nfilesystem,
+                  final POIFSFileSystem filesystem,
                   final DirectoryNode parent)
     {
         super(property, parent);
-        this._nfilesystem = nfilesystem;
+        this._filesystem = filesystem;
 
         if (parent == null)
         {
@@ -91,7 +91,7 @@ public class DirectoryNode
             if (child.isDirectory())
             {
                 DirectoryProperty childDir = (DirectoryProperty) child;
-                childNode = new DirectoryNode(childDir, _nfilesystem, this);
+                childNode = new DirectoryNode(childDir, _filesystem, this);
             }
             else
             {
@@ -116,7 +116,7 @@ public class DirectoryNode
      */
     public POIFSFileSystem getFileSystem()
     {
-        return _nfilesystem;
+        return _filesystem;
     }
 
     /**
@@ -175,7 +175,7 @@ public class DirectoryNode
         DocumentNode     rval     = new DocumentNode(property, this);
 
         (( DirectoryProperty ) getProperty()).addChild(property);
-        _nfilesystem.addDocument(document);
+        _filesystem.addDocument(document);
 
         _entries.add(rval);
         _byname.put(property.getName(), rval);
@@ -228,7 +228,7 @@ public class DirectoryNode
             _byname.remove(entry.getName());
 
             try {
-                _nfilesystem.remove(entry);
+                _filesystem.remove(entry);
             } catch (IOException e) {
                 // TODO Work out how to report this, given we can't change the method signature...
                 throw new RuntimeException(e);
@@ -349,7 +349,7 @@ public class DirectoryNode
                                         final InputStream stream)
         throws IOException
     {
-        return createDocument(new POIFSDocument(name, _nfilesystem, stream));
+        return createDocument(new POIFSDocument(name, _filesystem, stream));
     }
 
     /**
@@ -368,7 +368,7 @@ public class DirectoryNode
                                         final POIFSWriterListener writer)
         throws IOException
     {
-        return createDocument(new POIFSDocument(name, size, _nfilesystem, writer));
+        return createDocument(new POIFSDocument(name, size, _filesystem, writer));
     }
 
     /**
@@ -386,8 +386,8 @@ public class DirectoryNode
     {
         DirectoryProperty property = new DirectoryProperty(name);
 
-        DirectoryNode rval = new DirectoryNode(property, _nfilesystem, this);
-       _nfilesystem.addDirectory(property);
+        DirectoryNode rval = new DirectoryNode(property, _filesystem, this);
+       _filesystem.addDirectory(property);
 
         (( DirectoryProperty ) getProperty()).addChild(property);
         _entries.add(rval);

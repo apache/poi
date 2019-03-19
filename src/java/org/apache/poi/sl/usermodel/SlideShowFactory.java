@@ -36,7 +36,7 @@ import org.apache.poi.util.IOUtils;
 
 public class SlideShowFactory {
     /**
-     * Creates a SlideShow from the given NPOIFSFileSystem.
+     * Creates a SlideShow from the given POIFSFileSystem.
      *
      * @param fs The {@link POIFSFileSystem} to read the document from
      *
@@ -52,7 +52,7 @@ public class SlideShowFactory {
     }
 
     /**
-     * Creates a SlideShow from the given NPOIFSFileSystem, which may
+     * Creates a SlideShow from the given POIFSFileSystem, which may
      * be password protected
      *
      * @param fs The {@link POIFSFileSystem} to read the document from
@@ -70,7 +70,7 @@ public class SlideShowFactory {
     }
 
     /**
-     * Creates a SlideShow from the given NPOIFSFileSystem.
+     * Creates a SlideShow from the given DirectoryNode.
      *
      * @param root The {@link DirectoryNode} to start reading the document from
      *
@@ -87,7 +87,7 @@ public class SlideShowFactory {
 
 
     /**
-     * Creates a SlideShow from the given NPOIFSFileSystem, which may
+     * Creates a SlideShow from the given DirectoryNode, which may
      * be password protected
      *
      * @param root The {@link DirectoryNode} to start reading the document from

@@ -404,7 +404,7 @@ public final class ExtractorFactory {
         } finally {
             IOUtils.closeQuietly(is);
 
-            // also close the NPOIFSFileSystem here as we read all the data
+            // also close the POIFSFileSystem here as we read all the data
             // while decrypting
             fs.close();
         }

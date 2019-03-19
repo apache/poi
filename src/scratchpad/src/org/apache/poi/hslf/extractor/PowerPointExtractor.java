@@ -117,7 +117,7 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 
    /**
     * Creates a PowerPointExtractor, from a specific place
-    *  inside an open NPOIFSFileSystem
+    *  inside an open {@link POIFSFileSystem}
     *
     * @param dir the POIFS Directory containing the PowerPoint document
     */

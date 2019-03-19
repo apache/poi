@@ -55,12 +55,12 @@ public abstract class BaseTestSlideShowFactory {
     @SuppressWarnings("resource")
     protected static void testFactoryFromNative(String file) throws Exception {
         SlideShow<?,?> ss;
-        // from NPOIFS
+        // from POIFS
         if (file.endsWith(".ppt")) {
-            POIFSFileSystem npoifs = new POIFSFileSystem(fromFile(file));
-            ss = SlideShowFactory.create(npoifs);
+            POIFSFileSystem poifs = new POIFSFileSystem(fromFile(file));
+            ss = SlideShowFactory.create(poifs);
             assertNotNull(ss);
-            npoifs.close();
+            poifs.close();
             assertCloseDoesNotModifyFile(file, ss);
         }
         // from OPCPackage
@@ -92,15 +92,15 @@ public abstract class BaseTestSlideShowFactory {
     @SuppressWarnings("resource")
     protected static void testFactoryFromProtectedNative(String protectedFile, String password) throws Exception {
         SlideShow<?,?> ss;
-        // Encryption layer is a BIFF8 binary format that can be read by NPOIFSFileSystem,
+        // Encryption layer is a BIFF8 binary format that can be read by POIFSFileSystem,
         // used for both HSLF and XSLF
 
-        // from protected NPOIFS
+        // from protected POIFS
         if (protectedFile.endsWith(".ppt") || protectedFile.endsWith(".pptx")) {
-            POIFSFileSystem npoifs = new POIFSFileSystem(fromFile(protectedFile));
-            ss = SlideShowFactory.create(npoifs, password);
+            POIFSFileSystem poifs = new POIFSFileSystem(fromFile(protectedFile));
+            ss = SlideShowFactory.create(poifs, password);
             assertNotNull(ss);
-            npoifs.close();
+            poifs.close();
             assertCloseDoesNotModifyFile(protectedFile, ss);
         }
         else {

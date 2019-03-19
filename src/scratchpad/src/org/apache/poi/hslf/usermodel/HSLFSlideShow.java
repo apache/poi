@@ -148,8 +148,8 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
      * Constructs a Powerpoint document from an POIFSFileSystem.
      */
     @SuppressWarnings("resource")
-    public HSLFSlideShow(POIFSFileSystem npoifs) throws IOException {
-        this(new HSLFSlideShowImpl(npoifs));
+    public HSLFSlideShow(POIFSFileSystem poifs) throws IOException {
+        this(new HSLFSlideShowImpl(poifs));
     }
 
     /**

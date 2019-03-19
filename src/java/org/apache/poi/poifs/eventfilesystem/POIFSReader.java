@@ -78,9 +78,9 @@ public class POIFSReader
     }
 
     /**
-     * Read from a NPOIFSFileSystem and process the documents we get
+     * Read from a {@link POIFSFileSystem} and process the documents we get
      *
-     * @param poifs the NPOIFSFileSystem from which to read the data
+     * @param poifs the POIFSFileSystem from which to read the data
      *
      * @exception IOException on errors reading, or on invalid data
      */

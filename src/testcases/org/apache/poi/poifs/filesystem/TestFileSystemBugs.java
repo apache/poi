@@ -34,7 +34,7 @@ import org.junit.After;
 import org.junit.Test;
 
 /**
- * Tests bugs across both POIFSFileSystem and NPOIFSFileSystem
+ * Tests bugs for POIFSFileSystem
  */
 public final class TestFileSystemBugs {
     private static POIDataSamples _samples = POIDataSamples.getPOIFSInstance();
@@ -115,7 +115,7 @@ public final class TestFileSystemBugs {
      * Ensure that a file with a corrupted property in the
      *  properties table can still be loaded, and the remaining
      *  properties used
-     * Note - only works for NPOIFSFileSystem, POIFSFileSystem
+     * Note - only works for POIFSFileSystem
      *  can't cope with this level of corruption
      */
     @Test

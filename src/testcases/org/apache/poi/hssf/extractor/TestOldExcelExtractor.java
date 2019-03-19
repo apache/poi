@@ -283,7 +283,7 @@ public final class TestOldExcelExtractor {
     }
 
     @Test
-    public void testNPOIFSFileSystem() throws IOException {
+    public void testPOIFSFileSystem() throws IOException {
         File file = HSSFTestDataSamples.getSampleFile("FormulaRefs.xls");
         try (POIFSFileSystem fs = new POIFSFileSystem(file)) {
             OldExcelExtractor extractor = new OldExcelExtractor(fs);

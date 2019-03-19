@@ -992,15 +992,15 @@ public final class TestBugs {
     //It isn't pretty, but it works...
     private Map<String, String> getMacrosFromHSLF(String fileName) throws IOException {
         InputStream is = null;
-        POIFSFileSystem npoifs = null;
+        POIFSFileSystem poifs = null;
         try {
             is = new FileInputStream(POIDataSamples.getSlideShowInstance().getFile(fileName));
-            npoifs = new POIFSFileSystem(is);
-            //TODO: should we run the VBAMacroReader on this npoifs?
+            poifs = new POIFSFileSystem(is);
+            //TODO: should we run the VBAMacroReader on this poifs?
             //TBD: We know that ppt typically don't store macros in the regular place,
             //but _can_ they?
 
-            HSLFSlideShow ppt = new HSLFSlideShow(npoifs);
+            HSLFSlideShow ppt = new HSLFSlideShow(poifs);
 
             //get macro persist id
             DocInfoListContainer list = (DocInfoListContainer)ppt.getDocumentRecord().findFirstOfType(RecordTypes.List.typeID);
@@ -1018,7 +1018,7 @@ public final class TestBugs {
             ppt.close();
 
         } finally {
-            IOUtils.closeQuietly(npoifs);
+            IOUtils.closeQuietly(poifs);
             IOUtils.closeQuietly(is);
         }
         return null;

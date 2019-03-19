@@ -495,11 +495,11 @@ public class TestWrite {
     }
 
     /**
-     * Tests that when using NPOIFS, we can do an in-place write
+     * Tests that when using POIFS, we can do an in-place write
      *  without needing to stream in + out the whole kitchen sink
      */
     @Test
-    public void inPlaceNPOIFSWrite() throws Exception {
+    public void inPlacePOIFSWrite() throws Exception {
         // We need to work on a File for in-place changes, so create a temp one
         final File copy = TempFile.createTempFile("Test-HPSF", "ole2");
         copy.deleteOnExit();

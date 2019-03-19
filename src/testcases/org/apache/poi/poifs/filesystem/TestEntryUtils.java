@@ -123,7 +123,7 @@ public class TestEntryUtils {
        assertTrue(EntryUtils.areDocumentsIdentical(entryA1, entryB1));
        
        
-       // Can work with NPOIFS + POIFS
+       // Can work with POIFS
        ByteArrayOutputStream tmpO = new ByteArrayOutputStream();
        fs.writeFilesystem(tmpO);
        

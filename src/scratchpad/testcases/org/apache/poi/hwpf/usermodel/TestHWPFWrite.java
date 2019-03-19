@@ -135,7 +135,7 @@ public final class TestHWPFWrite extends HWPFTestCase {
     }
     
     @Test(expected=IllegalStateException.class)
-    public void testInvalidInPlaceWriteNPOIFS() throws Exception {
+    public void testInvalidInPlaceWritePOIFS() throws Exception {
         // Can't work for Read-Only files
         POIFSFileSystem fs = new POIFSFileSystem(SAMPLES.getFile("SampleDoc.doc"), true);
         HWPFDocument doc = new HWPFDocument(fs.getRoot());

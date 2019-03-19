@@ -98,11 +98,11 @@ public final class TestPublisherTextExtractor {
         // And with NPOIFS
         sample = _samples.openResourceAsStream("Sample.pub");
         POIFSFileSystem fs = new POIFSFileSystem(sample);
-        HPBFDocument docNPOIFS = new HPBFDocument(fs);
-        ext = new PublisherTextExtractor(docNPOIFS);
+        HPBFDocument docPOIFS = new HPBFDocument(fs);
+        ext = new PublisherTextExtractor(docPOIFS);
         assertEquals(SAMPLE_TEXT, ext.getText());
         ext.close();
-        docNPOIFS.close();
+        docPOIFS.close();
         fs.close();
         sample.close();
 

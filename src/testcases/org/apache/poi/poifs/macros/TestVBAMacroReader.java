@@ -148,24 +148,24 @@ public class TestVBAMacroReader {
         fromFile(POIDataSamples.getDiagramInstance(), "SimpleMacro.vsdm");
     }
 
-    //////////////////////////////// From NPOIFS /////////////////////////////
+    //////////////////////////////// From POIFS /////////////////////////////
     @Test
-    public void HSSFFromNPOIFS() throws Exception {
-        fromNPOIFS(POIDataSamples.getSpreadSheetInstance(), "SimpleMacro.xls");
+    public void HSSFFromPOIFS() throws Exception {
+        fromPOIFS(POIDataSamples.getSpreadSheetInstance(), "SimpleMacro.xls");
     }
     @Ignore("bug 59302: Found 0 macros")
     @Test
-    public void HSLFFromNPOIFS() throws Exception {
-        fromNPOIFS(POIDataSamples.getSlideShowInstance(), "SimpleMacro.ppt");
+    public void HSLFFromPOIFS() throws Exception {
+        fromPOIFS(POIDataSamples.getSlideShowInstance(), "SimpleMacro.ppt");
     }
     @Test
-    public void HWPFFromNPOIFS() throws Exception {
-        fromNPOIFS(POIDataSamples.getDocumentInstance(), "SimpleMacro.doc");
+    public void HWPFFromPOIFS() throws Exception {
+        fromPOIFS(POIDataSamples.getDocumentInstance(), "SimpleMacro.doc");
     }
     @Ignore("Found 0 macros")
     @Test
-    public void HDGFFromNPOIFS() throws Exception {
-        fromNPOIFS(POIDataSamples.getDiagramInstance(), "SimpleMacro.vsd");
+    public void HDGFFromPOIFS() throws Exception {
+        fromPOIFS(POIDataSamples.getDiagramInstance(), "SimpleMacro.vsd");
     }
 
     private void fromFile(POIDataSamples dataSamples, String filename) throws IOException {
@@ -183,7 +183,7 @@ public class TestVBAMacroReader {
         }
     }
 
-    private void fromNPOIFS(POIDataSamples dataSamples, String filename) throws IOException {
+    private void fromPOIFS(POIDataSamples dataSamples, String filename) throws IOException {
         File f = dataSamples.getFile(filename);
         try (POIFSFileSystem fs = new POIFSFileSystem(f)) {
             try (VBAMacroReader r = new VBAMacroReader(fs)) {
