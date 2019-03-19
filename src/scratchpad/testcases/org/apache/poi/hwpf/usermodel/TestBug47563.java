@@ -16,28 +16,50 @@
 ==================================================================== */
 package org.apache.poi.hwpf.usermodel;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Bug 47563 - Exception when working with table 
  */
-public class TestBug47563 extends TestCase {
+@RunWith(Parameterized.class)
+public class TestBug47563 {
 
-	public void test() throws Exception {
-		test(1, 5);
-		test(1, 6);
-		test(5, 1);
-		test(6, 1);
-		test(2, 2);
-		test(3, 2);
-		test(2, 3);
-		test(3, 3);
+	@Parameterized.Parameter()
+	public int rows;
+	@Parameterized.Parameter(1)
+	public int columns;
+
+	@Parameterized.Parameters(name="rows: {0}, columns: {1}")
+	public static Collection<Object[]> data() {
+		List<Object[]> data = new ArrayList<>();
+
+		data.add(new Object[] {1, 5});
+		data.add(new Object[] {1, 6});
+		data.add(new Object[] {5, 1});
+		data.add(new Object[] {6, 1});
+		data.add(new Object[] {2, 2});
+		data.add(new Object[] {3, 2});
+		data.add(new Object[] {2, 3});
+		data.add(new Object[] {3, 3});
+
+		return data;
 	}
 
-	private void test(int rows, int columns) throws Exception {
+	@Test
+	public void test() throws Exception {
+		System.out.println();
+		System.out.println("Testing with rows: " + rows + ", columns: " + columns);
+
 		// POI apparently can't create a document from scratch,
 		// so we need an existing empty dummy document
 		HWPFDocument doc = HWPFTestDataSamples.openSampleFile("empty.doc");
