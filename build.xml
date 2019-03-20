@@ -241,9 +241,9 @@ under the License.
     <property name="ooxml.curvesapi.jar" location="${ooxml.lib}/curvesapi-1.05.jar"/>
     <property name="ooxml.curvesapi.url"
               value="${repository.m2}/maven2/com/github/virtuald/curvesapi/1.05/curvesapi-1.05.jar"/>
-    <property name="ooxml.xmlbeans.jar" location="${ooxml.lib}/xmlbeans-3.0.2.jar"/>
+    <property name="ooxml.xmlbeans.jar" location="${ooxml.lib}/xmlbeans-3.0.3.jar"/>
     <property name="ooxml.xmlbeans.url"
-              value="https://repository.apache.org/content/repositories/releases/org/apache/xmlbeans/xmlbeans/3.0.2/xmlbeans-3.0.2.jar"/>
+              value="https://repository.apache.org/content/repositories/staging/org/apache/xmlbeans/xmlbeans/3.0.3/xmlbeans-3.0.3.jar"/>
     <property name="ooxml.commons-compress.jar" location="${main.lib}/commons-compress-1.18.jar"/>
     <property name="ooxml.commons-compress.url"
               value="${repository.m2}/maven2/org/apache/commons/commons-compress/1.18/commons-compress-1.18.jar"/>
@@ -706,6 +706,7 @@ under the License.
                 <include name="xmlbeans-2.*.jar"/>
                 <include name="xmlbeans-3.0.0.jar"/>
                 <include name="xmlbeans-3.0.1.jar"/>
+                <include name="xmlbeans-3.0.2.jar"/>
             </fileset>
             <fileset dir="${compile.lib}">
                 <include name="xercesImpl-*.jar"/>
