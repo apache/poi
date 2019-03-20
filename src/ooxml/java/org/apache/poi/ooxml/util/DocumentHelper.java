@@ -182,7 +182,7 @@ public final class DocumentHelper {
     /**
      * Creates a new DOM Document
      */
-    public static synchronized Document createDocument() {
+    public static Document createDocument() {
         return documentBuilderSingleton.newDocument();
     }
 
