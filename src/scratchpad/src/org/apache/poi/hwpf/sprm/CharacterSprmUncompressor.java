@@ -153,13 +153,7 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
    *
    * @param oldCHP The base CharacterProperties.
    * @param newCHP The current CharacterProperties.
-   * @param operand The operand defined by the sprm (See Word file format spec)
-   * @param param The parameter defined by the sprm (See Word file format spec)
-   * @param varParam The variable length parameter defined by the sprm. (See
-   *        Word file format spec)
-   * @param grpprl The entire chpx that this operation is a part of.
-   * @param offset The offset in the grpprl of the next sprm
-   * @param styleSheet The StyleSheet for this document.
+   * @param sprm an SPRM opearation
    */
   static void unCompressCHPOperation (CharacterProperties oldCHP,
                                       CharacterProperties newCHP,

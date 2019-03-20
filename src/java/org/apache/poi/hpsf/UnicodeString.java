@@ -78,7 +78,7 @@ public class UnicodeString {
         final int terminator = result.indexOf( '\0' );
         if ( terminator == -1 ) {
             String msg =
-                "String terminator (\\0) for UnicodeString property value not found."+
+                "String terminator (\\0) for UnicodeString property value not found. " +
                 "Continue without trimming and hope for the best.";
             LOG.log(POILogger.WARN, msg);
             return result;
@@ -86,7 +86,7 @@ public class UnicodeString {
         
         if ( terminator != result.length() - 1 ) {
             String msg =
-                "String terminator (\\0) for UnicodeString property value occured before the end of string. "+
+                "String terminator (\\0) for UnicodeString property value occured before the end of string. " +
                 "Trimming and hope for the best.";
             LOG.log(POILogger.WARN, msg);
         }

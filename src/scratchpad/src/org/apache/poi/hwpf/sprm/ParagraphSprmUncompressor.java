@@ -92,12 +92,7 @@ public final class ParagraphSprmUncompressor
    * from a papx.
    *
    * @param newPAP The ParagraphProperties object to perform the operation on.
-   * @param operand The operand that defines the operation.
-   * @param param The operation's parameter.
-   * @param varParam The operation's variable length parameter.
-   * @param grpprl The original papx.
-   * @param offset The current offset in the papx.
-   * @param spra A part of the sprm that defined this operation.
+   * @param sprm sn SPRM operation.
    */
   static void unCompressPAPOperation (ParagraphProperties newPAP, SprmOperation sprm)
   {
