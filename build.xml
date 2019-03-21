@@ -222,10 +222,10 @@ under the License.
     <!-- xml signature libs -->
     <property name="dsig.xmlsec.jar" location="${compile.lib}/xmlsec-2.1.0.jar"/>
     <property name="dsig.xmlsec.url" value="${repository.m2}/maven2/org/apache/santuario/xmlsec/2.1.0/xmlsec-2.1.0.jar"/>
-    <property name="dsig.bouncycastle-prov.jar" location="${compile.lib}/bcprov-ext-jdk15on-1.60.jar"/>
-    <property name="dsig.bouncycastle-prov.url" value="${repository.m2}/maven2/org/bouncycastle/bcprov-ext-jdk15on/1.60/bcprov-ext-jdk15on-1.60.jar"/>
-    <property name="dsig.bouncycastle-pkix.jar" location="${compile.lib}/bcpkix-jdk15on-1.60.jar"/>
-    <property name="dsig.bouncycastle-pkix.url" value="${repository.m2}/maven2/org/bouncycastle/bcpkix-jdk15on/1.60/bcpkix-jdk15on-1.60.jar"/>
+    <property name="dsig.bouncycastle-prov.jar" location="${compile.lib}/bcprov-ext-jdk15on-1.61.jar"/>
+    <property name="dsig.bouncycastle-prov.url" value="${repository.m2}/maven2/org/bouncycastle/bcprov-ext-jdk15on/1.61/bcprov-ext-jdk15on-1.61.jar"/>
+    <property name="dsig.bouncycastle-pkix.jar" location="${compile.lib}/bcpkix-jdk15on-1.61.jar"/>
+    <property name="dsig.bouncycastle-pkix.url" value="${repository.m2}/maven2/org/bouncycastle/bcpkix-jdk15on/1.61/bcpkix-jdk15on-1.61.jar"/>
     <property name="dsig.sl4j-api.jar" location="${compile.lib}/slf4j-api-1.7.25.jar"/>
     <property name="dsig.sl4j-api.url" value="${repository.m2}/maven2/org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar"/>
 
@@ -238,9 +238,9 @@ under the License.
     <property name="svg.xmlgraphics-commons.jar" value="${compile.lib}/xmlgraphics-commons-2.3.jar"/>
 
     <!-- jars in the ooxml-lib directory, see the fetch-ooxml-jars target-->
-    <property name="ooxml.curvesapi.jar" location="${ooxml.lib}/curvesapi-1.05.jar"/>
+    <property name="ooxml.curvesapi.jar" location="${ooxml.lib}/curvesapi-1.06.jar"/>
     <property name="ooxml.curvesapi.url"
-              value="${repository.m2}/maven2/com/github/virtuald/curvesapi/1.05/curvesapi-1.05.jar"/>
+              value="${repository.m2}/maven2/com/github/virtuald/curvesapi/1.06/curvesapi-1.06.jar"/>
     <property name="ooxml.xmlbeans.jar" location="${ooxml.lib}/xmlbeans-3.0.3.jar"/>
     <property name="ooxml.xmlbeans.url"
               value="https://repository.apache.org/content/repositories/staging/org/apache/xmlbeans/xmlbeans/3.0.3/xmlbeans-3.0.3.jar"/>
@@ -322,10 +322,10 @@ under the License.
     <property name="halt.on.test.failure" value="true"/>
 
     <!-- helper jars for pgp signing, building and nexus staging -->
-    <property name="dist.bouncycastle-prov.jar" location="${compile.lib}/bcprov-ext-jdk15on-1.60.jar"/>
-    <property name="dist.bouncycastle-prov.url" value="${repository.m2}/maven2/org/bouncycastle/bcprov-ext-jdk15on/1.60/bcprov-ext-jdk15on-1.60.jar"/>
-    <property name="dist.bouncycastle-bcpg.jar" location="${compile.lib}/bcpg-jdk15on-1.60.jar"/>
-    <property name="dist.bouncycastle-bcpg.url" value="${repository.m2}/maven2/org/bouncycastle/bcpg-jdk15on/1.60/bcpg-jdk15on-1.60.jar"/>
+    <property name="dist.bouncycastle-prov.jar" location="${compile.lib}/bcprov-ext-jdk15on-1.61.jar"/>
+    <property name="dist.bouncycastle-prov.url" value="${repository.m2}/maven2/org/bouncycastle/bcprov-ext-jdk15on/1.61/bcprov-ext-jdk15on-1.61.jar"/>
+    <property name="dist.bouncycastle-bcpg.jar" location="${compile.lib}/bcpg-jdk15on-1.61.jar"/>
+    <property name="dist.bouncycastle-bcpg.url" value="${repository.m2}/maven2/org/bouncycastle/bcpg-jdk15on/1.61/bcpg-jdk15on-1.61.jar"/>
     <property name="dist.commons-openpgp.jar" location="${compile.lib}/commons-openpgp-1.0-SNAPSHOT.jar"/>
     <property name="dist.commons-openpgp.url" value="https://repository.apache.org/snapshots/org/apache/commons/commons-openpgp/1.0-SNAPSHOT/commons-openpgp-1.0-20140717.171036-11.jar"/>
     <property name="dist.nexus-staging.jar" location="${compile.lib}/nexus-staging-ant-tasks-1.6.3-uber.jar"/>
@@ -705,6 +705,7 @@ under the License.
                 <include name="ooxml-security-1.0.jar"/>
                 <include name="curvesapi-1.03.jar"/>
                 <include name="curvesapi-1.04.jar"/>
+                <include name="curvesapi-1.05.jar"/>
                 <include name="xmlbeans-2.*.jar"/>
                 <include name="xmlbeans-3.0.0.jar"/>
                 <include name="xmlbeans-3.0.1.jar"/>
@@ -716,6 +717,7 @@ under the License.
                 <include name="xmlsec-2.0.5.jar"/>
                 <include name="xmlsec-2.0.6.jar"/>
                 <include name="bc*jdk15on-1.5*.jar"/>
+                <include name="bc*jdk15on-1.60*.jar"/>
                 <include name="slf4j-api-1.7.7.jar"/>
                 <include name="slf4j-api-1.7.12.jar"/>
             </fileset>

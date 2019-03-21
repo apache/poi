@@ -137,12 +137,12 @@
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpkix-jdk15on</artifactId>
-            <version>1.60</version>
+            <version>1.61</version>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
-            <version>1.60</version>
+            <version>1.61</version>
         </dependency>
         <dependency>
             <groupId>org.apache.santuario</groupId>
@@ -157,7 +157,7 @@
         <dependency>
             <groupId>com.github.virtuald</groupId>
             <artifactId>curvesapi</artifactId>
-            <version>1.05</version>
+            <version>1.06</version>
         </dependency>
   
         <dependency>
