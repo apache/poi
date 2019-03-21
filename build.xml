@@ -713,9 +713,7 @@ under the License.
             </fileset>
             <fileset dir="${compile.lib}">
                 <include name="xercesImpl-*.jar"/>
-                <include name="xmlsec-2.0.1.jar"/>
-                <include name="xmlsec-2.0.5.jar"/>
-                <include name="xmlsec-2.0.6.jar"/>
+                <include name="xmlsec-2.0*.jar"/>
                 <include name="xmlsec-2.1.0.jar"/>
                 <include name="bc*jdk15on-1.5*.jar"/>
                 <include name="bc*jdk15on-1.60*.jar"/>
