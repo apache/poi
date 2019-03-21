@@ -77,7 +77,7 @@
     <dependency>
       <groupId>com.github.virtuald</groupId>
       <artifactId>curvesapi</artifactId>
-      <version>1.05</version>
+      <version>1.06</version>
     </dependency>
   </dependencies>
 </project>
