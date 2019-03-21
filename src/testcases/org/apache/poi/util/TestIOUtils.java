@@ -60,7 +60,7 @@ public final class TestIOUtils {
 
     @AfterClass
     public static void tearDown() {
-        assertTrue(TMP.delete());
+        if (TMP != null) assertTrue(TMP.delete());
     }
 
     @Test
