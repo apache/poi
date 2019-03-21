@@ -103,10 +103,10 @@ subprojects {
     sourceCompatibility = 1.8
 
     repositories {
+        mavenCentral()
         maven {
             url 'https://repository.apache.org/content/repositories/staging'
         }
-        mavenCentral()
     }
 
     jar {
