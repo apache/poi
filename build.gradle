@@ -63,7 +63,7 @@ allprojects {
     apply plugin: 'eclipse'
 
     task wrapper(type: Wrapper) {
-        gradleVersion = '4.6'
+        gradleVersion = '4.10.3'
     }
 
     task adjustWrapperPropertiesFile {
@@ -103,6 +103,9 @@ subprojects {
     sourceCompatibility = 1.8
 
     repositories {
+        maven {
+            url 'https://repository.apache.org/content/repositories/staging'
+        }
         mavenCentral()
     }
 
@@ -214,13 +217,6 @@ project('main') {
 }
 
 project('ooxml') {
-
-    repositories {
-        maven {
-            url 'https://repository.apache.org/content/repositories/staging'
-        }
-        mavenCentral()
-    }
     
     sourceSets.main.java.srcDirs = ['../../src/ooxml/java']
     sourceSets.main.resources.srcDirs = ['../../src/ooxml/resources', '../../src/resources/ooxml']
