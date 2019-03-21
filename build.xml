@@ -716,10 +716,10 @@ under the License.
                 <include name="xmlsec-2.0.1.jar"/>
                 <include name="xmlsec-2.0.5.jar"/>
                 <include name="xmlsec-2.0.6.jar"/>
+                <include name="xmlsec-2.1.0.jar"/>
                 <include name="bc*jdk15on-1.5*.jar"/>
                 <include name="bc*jdk15on-1.60*.jar"/>
                 <include name="batik-all-1.10.jar"/>
-                <include name="xmlsec-2.1.0.jar"/>
                 <include name="slf4j-api-1.7.7.jar"/>
                 <include name="slf4j-api-1.7.12.jar"/>
                 <include name="slf4j-api-1.7.25.jar"/>
