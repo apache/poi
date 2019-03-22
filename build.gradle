@@ -230,7 +230,7 @@ project('ooxml') {
     compileJava.dependsOn 'ant-compile-ooxml-xsds'
 
     dependencies {
-        compile 'org.apache.xmlbeans:xmlbeans:3.0.3'
+        compile 'org.apache.xmlbeans:xmlbeans:3.1.0'
         compile 'org.apache.commons:commons-collections4:4.3'
         compile 'org.apache.commons:commons-math3:3.6.1'
         compile 'org.apache.commons:commons-compress:1.18'
