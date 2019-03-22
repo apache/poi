@@ -144,8 +144,8 @@ public class ExcelComparator {
     }
 
     private void compareDataInSheet(Locator loc1, Locator loc2) {
-        for (int j = 0; j < loc1.sheet.getPhysicalNumberOfRows(); j++) {
-            if (loc2.sheet.getPhysicalNumberOfRows() <= j) return;
+        for (int j = 0; j < loc1.sheet.getLastRowNum(); j++) {
+            if (loc2.sheet.getLastRowNum() <= j) return;
 
             loc1.row = loc1.sheet.getRow(j);
             loc2.row = loc2.sheet.getRow(j);
@@ -160,7 +160,7 @@ public class ExcelComparator {
 
     private void compareDataInRow(Locator loc1, Locator loc2) {
         for (int k = 0; k < loc1.row.getLastCellNum(); k++) {
-            if (loc2.row.getPhysicalNumberOfCells() <= k) return;
+            if (loc2.row.getLastCellNum() <= k) return;
 
             loc1.cell = loc1.row.getCell(k);
             loc2.cell = loc2.row.getCell(k);
