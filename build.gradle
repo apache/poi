@@ -105,7 +105,7 @@ subprojects {
     repositories {
         mavenCentral()
         maven {
-            url 'https://repository.apache.org/content/repositories/staging'
+            url 'https://repository.apache.org/content/repositories/releases'
         }
     }
 

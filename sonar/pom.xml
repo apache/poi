@@ -53,11 +53,6 @@
             <name>apache releases repo</name>
             <url>https://repository.apache.org/content/repositories/releases</url>
         </repository>
-        <repository>
-            <id>apache-staging-repo</id>
-            <name>apache staging repo</name>
-            <url>https://repository.apache.org/content/repositories/staging</url>
-        </repository>
     </repositories>
 
     <modules>
