@@ -28,11 +28,9 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.text.DateFormat;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -938,4 +936,46 @@ public class TestDataFormatter {
         String value = df.formatCellValue(cell, wb.getCreationHelper().createFormulaEvaluator());
         assertEquals("-130", value);
     }
+
+    @Test
+    public void testConcurrentCellFormat() throws Exception {
+        int formatIndex = 105;
+        String formatString = "[$-F400]m/d/yy h:mm:ss\\ AM/PM;[$-F400]m/d/yy h:mm:ss\\ AM/PM;_-* \"\"??_-;_-@_-";
+
+        DataFormatter formatter = new DataFormatter();
+        doFormatTestSequential(formatter, 43551.50990171296, "3/27/19 12:14:15 PM", formatIndex, formatString);
+        doFormatTestSequential(formatter, 36104.424780092595, "11/5/98 10:11:41 AM", formatIndex, formatString);
+
+        doFormatTestConcurrent(formatter, 43551.50990171296, "3/27/19 12:14:15 PM", formatIndex, formatString);
+        doFormatTestConcurrent(formatter, 36104.424780092595, "11/5/98 10:11:41 AM", formatIndex, formatString);
+    }
+
+    private void doFormatTestSequential(DataFormatter formatter, double n, String expected, int formatIndex,
+                                        String formatString) {
+        for (int i = 0; i < 1_000; i++) {
+            assertTrue(doFormatTest(formatter, n, expected, formatIndex, formatString, i));
+        }
+    }
+
+    private void doFormatTestConcurrent(DataFormatter formatter, double n, String expected, int formatIndex,
+                                        String formatString) throws Exception {
+        ArrayList<CompletableFuture<Boolean>> futures = new ArrayList<>();
+        for (int i = 0; i < 1_000; i++) {
+            final int iteration = i;
+            CompletableFuture<Boolean> future = CompletableFuture.supplyAsync(
+                    () -> { return doFormatTest(formatter, n, expected, formatIndex, formatString, iteration); });
+            futures.add(future);
+        }
+        for (CompletableFuture<Boolean> future : futures) {
+            assertTrue(future.get(1, TimeUnit.MINUTES));
+        }
+    }
+
+    private static boolean doFormatTest(DataFormatter formatter, double n, String expected, int formatIndex,
+                              String formatString, int iteration) {
+        String actual = formatter.formatRawCellContents(n, formatIndex, formatString);
+        assertEquals("Failed on iteration " + iteration, expected, actual);
+        return true;
+    }
+
 }
