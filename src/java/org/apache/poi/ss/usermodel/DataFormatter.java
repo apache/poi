@@ -309,7 +309,7 @@ public class DataFormatter implements Observer {
         return getFormat(cell.getNumericCellValue(), formatIndex, formatStr);
     }
 
-    private Format getFormat(double cellValue, int formatIndex, String formatStrIn) {
+    private synchronized Format getFormat(double cellValue, int formatIndex, String formatStrIn) {
         localeChangedObservable.checkForLocaleChange();
 
         // Might be better to separate out the n p and z formats, falling back to p when n and z are not set.
@@ -794,7 +794,10 @@ public class DataFormatter implements Observer {
      *  supplied Date and format
      */
     private String performDateFormatting(Date d, Format dateFormat) {
-       return (dateFormat != null ? dateFormat : defaultDateformat).format(d);
+        Format df = dateFormat != null ? dateFormat : defaultDateformat;
+        synchronized (df) {
+            return df.format(d);
+        }
     }
 
     /**
@@ -815,14 +818,16 @@ public class DataFormatter implements Observer {
             return null;
         }
         Format dateFormat = getFormat(cell, cfEvaluator);
-        if(dateFormat instanceof ExcelStyleDateFormatter) {
-           // Hint about the raw excel value
-           ((ExcelStyleDateFormatter)dateFormat).setDateToBeFormatted(
-                 cell.getNumericCellValue()
-           );
+        synchronized (dateFormat) {
+            if(dateFormat instanceof ExcelStyleDateFormatter) {
+                // Hint about the raw excel value
+                ((ExcelStyleDateFormatter)dateFormat).setDateToBeFormatted(
+                        cell.getNumericCellValue()
+                );
+            }
+            Date d = cell.getDateCellValue();
+            return performDateFormatting(d, dateFormat);
         }
-        Date d = cell.getDateCellValue();
-        return performDateFormatting(d, dateFormat);
     }
 
     /**
