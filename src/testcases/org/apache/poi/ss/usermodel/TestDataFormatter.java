@@ -936,6 +936,37 @@ public class TestDataFormatter {
         String value = df.formatCellValue(cell, wb.getCreationHelper().createFormulaEvaluator());
         assertEquals("-130", value);
     }
+    
+    /**
+     * Bug #63292
+     */
+    @Test
+    public void test1904With4PartFormat() {
+        Date date = new Date();
+        int formatIndex = 105;
+        String formatString1 = "[$-F400]m/d/yy h:mm:ss\\ AM/PM";
+        String formatString4 = "[$-F400]m/d/yy h:mm:ss\\ AM/PM;[$-F400]m/d/yy h:mm:ss\\ AM/PM;_-* \"\"??_-;_-@_-";
+
+        String s1900, s1904;
+
+        // These two format calls return the same thing, as expected:
+        // The assertEquals() passes with 1-part format
+        s1900 = format(date, formatIndex, formatString1, false);
+        s1904 = format(date, formatIndex, formatString1, true);
+        assertEquals(s1900, s1904);  // WORKS
+
+        // These two format calls should return the same thing but don't:
+        // It fails with 4-part format because the call to CellFormat ignores 'use1904Windowing'
+        s1900 = format(date, formatIndex, formatString4, false);
+        s1904 = format(date, formatIndex, formatString4, true);
+        assertEquals(s1900, s1904);  // FAILS before fix for #63292
+    }
+
+    private String format(Date date, int formatIndex, String formatString, boolean use1904Windowing) {
+        DataFormatter formatter = new DataFormatter();
+        double n = DateUtil.getExcelDate(date, use1904Windowing);
+        return formatter.formatRawCellContents(n, formatIndex, formatString, use1904Windowing);
+    }
 
     @Test
     public void testConcurrentCellFormat() throws Exception {
