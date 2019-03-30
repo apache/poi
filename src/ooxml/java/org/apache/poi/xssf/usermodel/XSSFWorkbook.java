@@ -67,12 +67,8 @@ import org.apache.poi.ss.formula.SheetNameFormatter;
 import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
 import org.apache.poi.ss.formula.udf.IndexedUDFFinder;
 import org.apache.poi.ss.formula.udf.UDFFinder;
-import org.apache.poi.ss.usermodel.Name;
-import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.SheetVisibility;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.util.Beta;
@@ -119,7 +115,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorkbookDocument;
  * will construct whether they are reading or writing a workbook.  It is also the
  * top level object for creating new sheets/etc.
  */
-public class XSSFWorkbook extends POIXMLDocument implements Workbook {
+public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Support {
     private static final Pattern COMMA_PATTERN = Pattern.compile(",");
 
     /**
@@ -1854,7 +1850,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook {
      * @return true if the date systems used in the workbook starts in 1904
      */
     @Internal
-    public boolean isDate1904(){
+    @Override
+    public boolean isDate1904() {
         CTWorkbookPr workbookPr = workbook.getWorkbookPr();
         return workbookPr != null && workbookPr.getDate1904();
     }

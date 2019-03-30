@@ -49,7 +49,6 @@ import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 
 /**
@@ -311,10 +310,11 @@ public class DataFormatter implements Observer {
     }
 
     private boolean isDate1904(Cell cell) {
-        if (cell == null || ! (cell.getSheet().getWorkbook() instanceof XSSFWorkbook) ) {
-            return false;
+        if ( cell != null && cell.getSheet().getWorkbook() instanceof Date1904Support) {
+            return ((Date1904Support)cell.getSheet().getWorkbook()).isDate1904();
+
         }
-        return ((XSSFWorkbook) cell.getSheet().getWorkbook()).isDate1904();
+        return false;
     }
     
     private Format getFormat(double cellValue, int formatIndex, String formatStrIn, boolean use1904Windowing) {
