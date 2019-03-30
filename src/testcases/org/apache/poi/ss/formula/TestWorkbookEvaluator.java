@@ -274,12 +274,22 @@ public class TestWorkbookEvaluator {
         Name name3 = wb.createName();
         name3.setNameName("aSet");
         name3.setRefersToFormula("Sheet1!$A$2:$A$4");
-
+        
+        Name name4 = wb.createName();
+        name4.setNameName("offsetFormula");
+        name4.setRefersToFormula("OFFSET(Sheet1!$A$1:$A$4,2,0,2,1)");
+        
+        Name name5 = wb.createName();
+        name5.setNameName("rowFormula");
+        name5.setRefersToFormula("ROW()");
         
         Row row0 = sheet.createRow(0);
         Row row1 = sheet.createRow(1);
         Row row2 = sheet.createRow(2);
         Row row3 = sheet.createRow(3);
+        Row row4 = sheet.createRow(4);
+        Row row5 = sheet.createRow(5);
+        
         row0.createCell(0).setCellValue(2);
         row1.createCell(0).setCellValue(5);
         row2.createCell(0).setCellValue(3);
@@ -289,16 +299,20 @@ public class TestWorkbookEvaluator {
         row1.createCell(2).setCellFormula("aFormula");
         row2.createCell(2).setCellFormula("SUM(aSet)");
         row3.createCell(2).setCellFormula("aConstant+aFormula+SUM(aSet)");
+        row4.createCell(2).setCellFormula("SUM(offsetFormula)");
+        row5.createCell(2).setCellFormula("rowFormula");
 
         FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
         assertEquals(3.14, fe.evaluate(row0.getCell(2)).getNumberValue(), EPSILON);
         assertEquals(10.0, fe.evaluate(row1.getCell(2)).getNumberValue(), EPSILON);
         assertEquals(15.0, fe.evaluate(row2.getCell(2)).getNumberValue(), EPSILON);
         assertEquals(28.14, fe.evaluate(row3.getCell(2)).getNumberValue(), EPSILON);
+        assertEquals(10.0, fe.evaluate(row4.getCell(2)).getNumberValue(), EPSILON);
+        assertEquals(6.0, fe.evaluate(row5.getCell(2)).getNumberValue(), EPSILON);
         
         wb.close();
     }
-
+    
     @Test
     public void testIgnoreMissingWorkbooks() {
         // TODO: update this test for meaningful functional behavior
