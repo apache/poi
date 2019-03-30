@@ -773,10 +773,12 @@ public final class WorkbookEvaluator {
      * YK: Used by OperationEvaluationContext to resolve indirect names.
      */
     /*package*/ ValueEval evaluateNameFormula(Ptg[] ptgs, OperationEvaluationContext ec) {
-    if (ptgs.length == 1) {
-      return getEvalForPtg(ptgs[0], ec);
-    }
-      return evaluateFormula(ec, ptgs);
+      if (ptgs.length == 1 && !(ptgs[0] instanceof FuncVarPtg)) {
+        return getEvalForPtg(ptgs[0], ec);
+      }
+        
+      OperationEvaluationContext anyValueContext = new OperationEvaluationContext(this, ec.getWorkbook(), ec.getSheetIndex(), ec.getRowIndex(), ec.getColumnIndex(), new EvaluationTracker(_cache), false);
+      return evaluateFormula(anyValueContext, ptgs);
     }
 
     /**
