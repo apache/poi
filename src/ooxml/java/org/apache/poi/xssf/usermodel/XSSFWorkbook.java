@@ -2239,7 +2239,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     public boolean getForceFormulaRecalculation(){
         CTWorkbook ctWorkbook = getCTWorkbook();
         CTCalcPr calcPr = ctWorkbook.getCalcPr();
-        return calcPr != null && calcPr.getCalcId() != 0;
+        return calcPr != null && calcPr.getCalcId() != 1;
     }
 
 
