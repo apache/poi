@@ -163,7 +163,7 @@ public class CellDateFormatter extends CellFormatter {
     }
 
     /** {@inheritDoc} */
-    public void formatValue(StringBuffer toAppendTo, Object value) {
+    public synchronized void formatValue(StringBuffer toAppendTo, Object value) {
         if (value == null)
             value = 0.0;
         if (value instanceof Number) {

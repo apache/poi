@@ -939,9 +939,10 @@ public class TestDataFormatter {
 
     @Test
     public void testConcurrentCellFormat() throws Exception {
-        DataFormatter formatter = new DataFormatter();
-        doFormatTestSequential(formatter);
-        doFormatTestConcurrent(formatter);
+        DataFormatter formatter1 = new DataFormatter();
+        DataFormatter formatter2 = new DataFormatter();
+        doFormatTestSequential(formatter1);
+        doFormatTestConcurrent(formatter1, formatter2);
     }
 
     private void doFormatTestSequential(DataFormatter formatter) {
@@ -951,14 +952,21 @@ public class TestDataFormatter {
         }
     }
 
-    private void doFormatTestConcurrent(DataFormatter formatter) throws Exception {
+    private void doFormatTestConcurrent(DataFormatter formatter1, DataFormatter formatter2) throws Exception {
         ArrayList<CompletableFuture<Boolean>> futures = new ArrayList<>();
         for (int i = 0; i < 1_000; i++) {
             final int iteration = i;
             CompletableFuture<Boolean> future = CompletableFuture.supplyAsync(
                     () -> {
-                        boolean r1 = doFormatTest(formatter, 43551.50990171296, "3/27/19 12:14:15 PM", iteration);
-                        boolean r2 = doFormatTest(formatter, 36104.424780092595, "11/5/98 10:11:41 AM", iteration);
+                        boolean r1 = doFormatTest(formatter1, 43551.50990171296, "3/27/19 12:14:15 PM", iteration);
+                        boolean r2 = doFormatTest(formatter1, 36104.424780092595, "11/5/98 10:11:41 AM", iteration);
+                        return r1 && r2;
+                    });
+            futures.add(future);
+            future = CompletableFuture.supplyAsync(
+                    () -> {
+                        boolean r1 = doFormatTest(formatter2, 43551.50990171296, "3/27/19 12:14:15 PM", iteration);
+                        boolean r2 = doFormatTest(formatter2, 36104.424780092595, "11/5/98 10:11:41 AM", iteration);
                         return r1 && r2;
                     });
             futures.add(future);
