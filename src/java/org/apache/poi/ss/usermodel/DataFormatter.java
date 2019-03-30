@@ -309,7 +309,7 @@ public class DataFormatter implements Observer {
         return getFormat(cell.getNumericCellValue(), formatIndex, formatStr);
     }
 
-    private synchronized Format getFormat(double cellValue, int formatIndex, String formatStrIn) {
+    private Format getFormat(double cellValue, int formatIndex, String formatStrIn) {
         localeChangedObservable.checkForLocaleChange();
 
         // Might be better to separate out the n p and z formats, falling back to p when n and z are not set.

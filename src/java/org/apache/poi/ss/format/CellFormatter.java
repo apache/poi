@@ -57,6 +57,11 @@ public abstract class CellFormatter {
 
     /**
      * Format a value according the format string.
+     * <p/>
+     * NOTE: this method must be thread safe!  In particular, if it uses a 
+     * Format instance that is not thread safe, i.e. DateFormat, this method
+     * must be synchronized, either on the method, if the format is a final 
+     * property, or on the format instance itself.
      *
      * @param toAppendTo The buffer to append to.
      * @param value      The value to format.
@@ -65,6 +70,11 @@ public abstract class CellFormatter {
 
     /**
      * Format a value according to the type, in the most basic way.
+     * <p/>
+     * NOTE: this method must be thread safe!  In particular, if it uses a 
+     * Format instance that is not thread safe, i.e. DateFormat, this method
+     * must be synchronized, either on the method, if the format is a final 
+     * property, or on the format instance itself.
      *
      * @param toAppendTo The buffer to append to.
      * @param value      The value to format.
