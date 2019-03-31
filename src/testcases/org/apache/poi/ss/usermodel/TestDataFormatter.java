@@ -584,8 +584,7 @@ public class TestDataFormatter {
         DataFormatter dfUS = new DataFormatter(Locale.US, true);
 
         // Create a spreadsheet with some formula errors in it
-        Workbook wb = new HSSFWorkbook();
-        try {
+        try (Workbook wb = new HSSFWorkbook()) {
             Sheet s = wb.createSheet();
             Row r = s.createRow(0);
             Cell c = r.createCell(0, CellType.ERROR);
@@ -595,8 +594,6 @@ public class TestDataFormatter {
 
             c.setCellErrorValue(FormulaError.REF.getCode());
             assertEquals(FormulaError.REF.getString(), dfUS.formatCellValue(c));
-        } finally {
-            wb.close();
         }
     }
 
@@ -605,8 +602,7 @@ public class TestDataFormatter {
         DataFormatter formatter = new DataFormatter();
 
         // Create a spreadsheet with some TRUE/FALSE boolean values in it
-        Workbook wb = new HSSFWorkbook();
-        try {
+        try (Workbook wb = new HSSFWorkbook()) {
             Sheet s = wb.createSheet();
             Row r = s.createRow(0);
             Cell c = r.createCell(0);
@@ -616,8 +612,6 @@ public class TestDataFormatter {
 
             c.setCellValue(false);
             assertEquals("FALSE", formatter.formatCellValue(c));
-        } finally {
-            wb.close();
         }
     }
 
@@ -785,8 +779,7 @@ public class TestDataFormatter {
     }
 
     private static void assertFormatsTo(String expected, double input) throws IOException {
-        Workbook wb = new HSSFWorkbook();
-        try {
+        try (Workbook wb = new HSSFWorkbook()) {
             Sheet s1 = wb.createSheet();
             Row row = s1.createRow(0);
             Cell rawValue = row.createCell(0);
@@ -796,9 +789,6 @@ public class TestDataFormatter {
             newStyle.setDataFormat(dataFormat.getFormat("General"));
             String actual = new DataFormatter().formatCellValue(rawValue);
             assertEquals(expected, actual);
-        }
-        finally {
-            wb.close();
         }
     }
 
@@ -835,7 +825,7 @@ public class TestDataFormatter {
     }
 
     @Test
-    public void testFormatWithTrailingDotsOtherLocale() throws Exception {
+    public void testFormatWithTrailingDotsOtherLocale() {
         DataFormatter dfIT = new DataFormatter(Locale.ITALY);
         assertEquals("1.000.000", dfIT.formatRawCellContents(1000000, -1, "#,##0"));
         assertEquals("1.000", dfIT.formatRawCellContents(1000000, -1, "#,##0,"));
@@ -892,7 +882,7 @@ public class TestDataFormatter {
      */
     @Test
     public void testSimpleNumericFormatsInGermanyLocale() {
-        List<Locale> locales = Arrays.asList(new Locale[] {Locale.GERMANY, Locale.US, Locale.ROOT} );
+        Locale[] locales = new Locale[] {Locale.GERMANY, Locale.US, Locale.ROOT};
         for (Locale locale : locales) {
             //show that LocaleUtil has no effect on these tests
             LocaleUtil.setUserLocale(locale);
