@@ -2221,9 +2221,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     public void setForceFormulaRecalculation(boolean value){
         CTWorkbook ctWorkbook = getCTWorkbook();
         CTCalcPr calcPr = ctWorkbook.isSetCalcPr() ? ctWorkbook.getCalcPr() : ctWorkbook.addNewCalcPr();
-        // when set to 0, will tell Excel that it needs to recalculate all formulas
+        // when set to true, will tell Excel that it needs to recalculate all formulas
         // in the workbook the next time the file is opened.
-        calcPr.setCalcId(0);
+        calcPr.setFullCalcOnLoad(value);
 
         if(value && calcPr.getCalcMode() == STCalcMode.MANUAL) {
             calcPr.setCalcMode(STCalcMode.AUTO);
@@ -2239,7 +2239,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     public boolean getForceFormulaRecalculation(){
         CTWorkbook ctWorkbook = getCTWorkbook();
         CTCalcPr calcPr = ctWorkbook.getCalcPr();
-        return calcPr != null && calcPr.getCalcId() != 1;
+        return calcPr != null && calcPr.isSetFullCalcOnLoad() && calcPr.getFullCalcOnLoad();
     }
 
 
