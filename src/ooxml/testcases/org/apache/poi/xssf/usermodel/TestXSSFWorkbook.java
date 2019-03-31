@@ -499,7 +499,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
             assertTrue(wb.getForceFormulaRecalculation());
 
             wb.setForceFormulaRecalculation(false);
-            assertTrue(wb.getForceFormulaRecalculation());
+            assertFalse(wb.getForceFormulaRecalculation());
 
             // calcMode="manual" is unset when forceFormulaRecalculation=true
             calcPr.setCalcMode(STCalcMode.MANUAL);
