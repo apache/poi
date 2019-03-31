@@ -38,6 +38,10 @@ public class TestFileMagic {
         assertEquals(FileMagic.HTML, FileMagic.valueOf("<!DOCTYP".getBytes(Charsets.UTF_8)));
         assertEquals(FileMagic.HTML, FileMagic.valueOf("<!DOCTYPE".getBytes(Charsets.UTF_8)));
         assertEquals(FileMagic.HTML, FileMagic.valueOf("<html".getBytes(Charsets.UTF_8)));
+        assertEquals(FileMagic.HTML, FileMagic.valueOf("\n\r<html".getBytes(Charsets.UTF_8)));
+        assertEquals(FileMagic.HTML, FileMagic.valueOf("\n<html".getBytes(Charsets.UTF_8)));
+        assertEquals(FileMagic.HTML, FileMagic.valueOf("\r\n<html".getBytes(Charsets.UTF_8)));
+        assertEquals(FileMagic.HTML, FileMagic.valueOf("\r<html".getBytes(Charsets.UTF_8)));
 
         try {
             FileMagic.valueOf("some string");

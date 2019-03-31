@@ -78,7 +78,17 @@ public enum FileMagic {
     /** PDF document */
     PDF("%PDF"),
     /** Some different HTML documents */
-    HTML("<!DOCTYP".getBytes(UTF_8), "<html".getBytes(UTF_8), "<HTML".getBytes(UTF_8)),
+    HTML("<!DOCTYP".getBytes(UTF_8),
+            "<html".getBytes(UTF_8),
+            "\n\r<html".getBytes(UTF_8),
+            "\r\n<html".getBytes(UTF_8),
+            "\r<html".getBytes(UTF_8),
+            "\n<html".getBytes(UTF_8),
+            "<HTML".getBytes(UTF_8),
+            "\r\n<HTML".getBytes(UTF_8),
+            "\n\r<HTML".getBytes(UTF_8),
+            "\r<HTML".getBytes(UTF_8),
+            "\n<HTML".getBytes(UTF_8)),
     WORD2(new byte[]{ (byte)0xdb, (byte)0xa5, 0x2d, 0x00}),
     // keep UNKNOWN always as last enum!
     /** UNKNOWN magic */
@@ -110,11 +120,12 @@ public enum FileMagic {
         return UNKNOWN;
     }
 
-    private static boolean findMagic(byte[] cmp, byte[] actual) {
+    private static boolean findMagic(byte[] expected, byte[] actual) {
         int i=0;
-        for (byte m : cmp) {
-            byte d = actual[i++];
-            if (!(d == m || (m == 0x70 && (d == 0x10 || d == 0x20 || d == 0x40)))) {
+        for (byte expectedByte : expected) {
+            byte actualByte = actual[i++];
+            if ((actualByte != expectedByte &&
+                    (expectedByte != 0x70 || (actualByte != 0x10 && actualByte != 0x20 && actualByte != 0x40)))) {
                 return false;
             }
         }
