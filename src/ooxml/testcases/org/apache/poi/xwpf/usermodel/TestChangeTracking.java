@@ -28,41 +28,44 @@ import org.junit.Test;
 public class TestChangeTracking {
     @Test
     public void detection() throws Exception {
-        XWPFDocument documentWithoutChangeTracking = XWPFTestDataSamples.openSampleDocument("bug56075-changeTracking_off.docx");
-        assertFalse(documentWithoutChangeTracking.isTrackRevisions());
+        try (XWPFDocument documentWithoutChangeTracking = XWPFTestDataSamples.openSampleDocument("bug56075-changeTracking_off.docx")) {
+            assertFalse(documentWithoutChangeTracking.isTrackRevisions());
 
-        XWPFDocument documentWithChangeTracking = XWPFTestDataSamples.openSampleDocument("bug56075-changeTracking_on.docx");
-        assertTrue(documentWithChangeTracking.isTrackRevisions());
+            try (XWPFDocument documentWithChangeTracking = XWPFTestDataSamples.openSampleDocument("bug56075-changeTracking_on.docx")) {
+                assertTrue(documentWithChangeTracking.isTrackRevisions());
+            }
+        }
     }
 
     @Test
     public void activateChangeTracking() throws Exception {
-        XWPFDocument document = XWPFTestDataSamples.openSampleDocument("bug56075-changeTracking_off.docx");
-        assertFalse(document.isTrackRevisions());
+        try (XWPFDocument document = XWPFTestDataSamples.openSampleDocument("bug56075-changeTracking_off.docx")) {
+            assertFalse(document.isTrackRevisions());
 
-        document.setTrackRevisions(true);
+            document.setTrackRevisions(true);
 
-        assertTrue(document.isTrackRevisions());
+            assertTrue(document.isTrackRevisions());
+        }
     }
 
     @Test
-    @SuppressWarnings("resource")
     public void integration() throws Exception {
-        XWPFDocument doc = new XWPFDocument();
+        try (XWPFDocument doc = new XWPFDocument()) {
 
-        XWPFParagraph p1 = doc.createParagraph();
+            XWPFParagraph p1 = doc.createParagraph();
 
-        XWPFRun r1 = p1.createRun();
-        r1.setText("Lorem ipsum dolor sit amet.");
-        doc.setTrackRevisions(true);
+            XWPFRun r1 = p1.createRun();
+            r1.setText("Lorem ipsum dolor sit amet.");
+            doc.setTrackRevisions(true);
 
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        doc.write(out);
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            doc.write(out);
 
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(out.toByteArray());
-        XWPFDocument document = new XWPFDocument(inputStream);
-        inputStream.close();
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(out.toByteArray());
+            XWPFDocument document = new XWPFDocument(inputStream);
+            inputStream.close();
 
-        assertTrue(document.isTrackRevisions());
+            assertTrue(document.isTrackRevisions());
+        }
     }
 }

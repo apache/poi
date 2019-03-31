@@ -875,25 +875,25 @@ public abstract class BaseTestCell {
 
     @Test
     public void test57008() throws IOException {
-        Workbook wb1 = _testDataProvider.createWorkbook();
-        Sheet sheet = wb1.createSheet();
-        
-        Row row0 = sheet.createRow(0);
-        Cell cell0 = row0.createCell(0);
-        cell0.setCellValue("row 0, cell 0 _x0046_ without changes");
-        
-        Cell cell1 = row0.createCell(1);
-        cell1.setCellValue("row 0, cell 1 _x005fx0046_ with changes");
-        
-        Cell cell2 = row0.createCell(2);
-        cell2.setCellValue("hgh_x0041_**_x0100_*_x0101_*_x0190_*_x0200_*_x0300_*_x0427_*");
+        try (Workbook wb1 = _testDataProvider.createWorkbook()) {
+            Sheet sheet = wb1.createSheet();
 
-        checkUnicodeValues(wb1);
-        
-        Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
-        checkUnicodeValues(wb2);
-        wb2.close();
-        wb1.close();
+            Row row0 = sheet.createRow(0);
+            Cell cell0 = row0.createCell(0);
+            cell0.setCellValue("row 0, cell 0 _x0046_ without changes");
+
+            Cell cell1 = row0.createCell(1);
+            cell1.setCellValue("row 0, cell 1 _x005fx0046_ with changes");
+
+            Cell cell2 = row0.createCell(2);
+            cell2.setCellValue("hgh_x0041_**_x0100_*_x0101_*_x0190_*_x0200_*_x0300_*_x0427_*");
+
+            checkUnicodeValues(wb1);
+
+            try (Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1)) {
+                checkUnicodeValues(wb2);
+            }
+        }
     }
 
     /**
@@ -903,30 +903,29 @@ public abstract class BaseTestCell {
     @SuppressWarnings("ConstantConditions")
     @Test
     public void testSetCellValueNullRichTextString() throws IOException {
-        Workbook wb = _testDataProvider.createWorkbook();
-        Sheet sheet = wb.createSheet();
-        Cell cell = sheet.createRow(0).createCell(0);
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet sheet = wb.createSheet();
+            Cell cell = sheet.createRow(0).createCell(0);
 
-        RichTextString nullStr = null;
-        cell.setCellValue(nullStr);
-        assertEquals("", cell.getStringCellValue());
-        assertEquals(CellType.BLANK, cell.getCellType());
+            RichTextString nullStr = null;
+            cell.setCellValue(nullStr);
+            assertEquals("", cell.getStringCellValue());
+            assertEquals(CellType.BLANK, cell.getCellType());
 
-        cell = sheet.createRow(0).createCell(1);
-        cell.setCellValue(1.2d);
-        assertEquals(CellType.NUMERIC, cell.getCellType());
-        cell.setCellValue(nullStr);
-        assertEquals("", cell.getStringCellValue());
-        assertEquals(CellType.BLANK, cell.getCellType());
+            cell = sheet.createRow(0).createCell(1);
+            cell.setCellValue(1.2d);
+            assertEquals(CellType.NUMERIC, cell.getCellType());
+            cell.setCellValue(nullStr);
+            assertEquals("", cell.getStringCellValue());
+            assertEquals(CellType.BLANK, cell.getCellType());
 
-        cell = sheet.createRow(0).createCell(1);
-        cell.setCellValue(wb.getCreationHelper().createRichTextString("Test"));
-        assertEquals(CellType.STRING, cell.getCellType());
-        cell.setCellValue(nullStr);
-        assertEquals("", cell.getStringCellValue());
-        assertEquals(CellType.BLANK, cell.getCellType());
-
-        wb.close();
+            cell = sheet.createRow(0).createCell(1);
+            cell.setCellValue(wb.getCreationHelper().createRichTextString("Test"));
+            assertEquals(CellType.STRING, cell.getCellType());
+            cell.setCellValue(nullStr);
+            assertEquals("", cell.getStringCellValue());
+            assertEquals(CellType.BLANK, cell.getCellType());
+        }
     }
 
     private void checkUnicodeValues(Workbook wb) {
@@ -943,33 +942,32 @@ public abstract class BaseTestCell {
      */
     @Test
     public void testMaxTextLength() throws IOException{
-        Workbook wb = _testDataProvider.createWorkbook();
-        Sheet sheet = wb.createSheet();
-        Cell cell = sheet.createRow(0).createCell(0);
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet sheet = wb.createSheet();
+            Cell cell = sheet.createRow(0).createCell(0);
 
-        int maxlen = wb instanceof HSSFWorkbook ? 
-                SpreadsheetVersion.EXCEL97.getMaxTextLength()
-                : SpreadsheetVersion.EXCEL2007.getMaxTextLength();
-        assertEquals(32767, maxlen);
+            int maxlen = wb instanceof HSSFWorkbook ?
+                    SpreadsheetVersion.EXCEL97.getMaxTextLength()
+                    : SpreadsheetVersion.EXCEL2007.getMaxTextLength();
+            assertEquals(32767, maxlen);
 
-        StringBuilder b = new StringBuilder() ;
+            StringBuilder b = new StringBuilder();
 
-        // 32767 is okay
-        for( int i = 0 ; i < maxlen ; i++ )
-        {
-            b.append( "X" ) ;
-        }
-        cell.setCellValue(b.toString());
-
-        b.append("X");
-        // 32768 produces an invalid XLS file
-        try {
+            // 32767 is okay
+            for (int i = 0; i < maxlen; i++) {
+                b.append("X");
+            }
             cell.setCellValue(b.toString());
-            fail("Expected exception");
-        } catch (IllegalArgumentException e){
-            assertEquals("The maximum length of cell contents (text) is 32767 characters", e.getMessage());
+
+            b.append("X");
+            // 32768 produces an invalid XLS file
+            try {
+                cell.setCellValue(b.toString());
+                fail("Expected exception");
+            } catch (IllegalArgumentException e) {
+                assertEquals("The maximum length of cell contents (text) is 32767 characters", e.getMessage());
+            }
         }
-        wb.close();
     }
 
     /**
@@ -977,49 +975,47 @@ public abstract class BaseTestCell {
      */
     @Test
     public void setAsActiveCell() throws IOException {
-        Workbook wb = _testDataProvider.createWorkbook();
-        Sheet sheet = wb.createSheet();
-        Row row = sheet.createRow(0);
-        Cell A1 = row.createCell(0);
-        Cell B1 = row.createCell(1);
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet sheet = wb.createSheet();
+            Row row = sheet.createRow(0);
+            Cell A1 = row.createCell(0);
+            Cell B1 = row.createCell(1);
 
-        A1.setAsActiveCell();
-        assertEquals(A1.getAddress(), sheet.getActiveCell());
+            A1.setAsActiveCell();
+            assertEquals(A1.getAddress(), sheet.getActiveCell());
 
-        B1.setAsActiveCell();
-        assertEquals(B1.getAddress(), sheet.getActiveCell());
-        
-        wb.close();
+            B1.setAsActiveCell();
+            assertEquals(B1.getAddress(), sheet.getActiveCell());
+        }
     }
 
     @Test
     public void getCellComment() throws IOException {
-        Workbook wb = _testDataProvider.createWorkbook();
-        Sheet sheet = wb.createSheet();
-        CreationHelper factory = wb.getCreationHelper();
-        Row row = sheet.createRow(0);
-        Cell cell = row.createCell(1);
-        
-        // cell does not have a comment
-        assertNull(cell.getCellComment());
- 
-        // add a cell comment
-        ClientAnchor anchor = factory.createClientAnchor();
-        anchor.setCol1(cell.getColumnIndex());
-        anchor.setCol2(cell.getColumnIndex()+1);
-        anchor.setRow1(row.getRowNum());
-        anchor.setRow2(row.getRowNum()+3);
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet sheet = wb.createSheet();
+            CreationHelper factory = wb.getCreationHelper();
+            Row row = sheet.createRow(0);
+            Cell cell = row.createCell(1);
 
-        Drawing<?> drawing = sheet.createDrawingPatriarch();
-        Comment comment = drawing.createCellComment(anchor);
-        RichTextString str = factory.createRichTextString("Hello, World!");
-        comment.setString(str);
-        comment.setAuthor("Apache POI");
-        cell.setCellComment(comment);
-        // ideally assertSame, but XSSFCell creates a new XSSFCellComment wrapping the same bean for every call to getCellComment.
-        assertEquals(comment, cell.getCellComment());
+            // cell does not have a comment
+            assertNull(cell.getCellComment());
 
-        wb.close();
+            // add a cell comment
+            ClientAnchor anchor = factory.createClientAnchor();
+            anchor.setCol1(cell.getColumnIndex());
+            anchor.setCol2(cell.getColumnIndex() + 1);
+            anchor.setRow1(row.getRowNum());
+            anchor.setRow2(row.getRowNum() + 3);
+
+            Drawing<?> drawing = sheet.createDrawingPatriarch();
+            Comment comment = drawing.createCellComment(anchor);
+            RichTextString str = factory.createRichTextString("Hello, World!");
+            comment.setString(str);
+            comment.setAuthor("Apache POI");
+            cell.setCellComment(comment);
+            // ideally assertSame, but XSSFCell creates a new XSSFCellComment wrapping the same bean for every call to getCellComment.
+            assertEquals(comment, cell.getCellComment());
+        }
     }
 
     @Test
@@ -1080,33 +1076,32 @@ public abstract class BaseTestCell {
 
     @Test
     public void testSetNullValues() throws IOException {
-        Workbook wb = _testDataProvider.createWorkbook();
-        Cell cell = wb.createSheet("test").createRow(0).createCell(0);
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Cell cell = wb.createSheet("test").createRow(0).createCell(0);
 
-        cell.setCellValue((Calendar)null);
-        assertEquals(CellType.BLANK, cell.getCellType());
-        assertEquals("", cell.getStringCellValue());
+            cell.setCellValue((Calendar) null);
+            assertEquals(CellType.BLANK, cell.getCellType());
+            assertEquals("", cell.getStringCellValue());
 
-        cell.setCellValue((Date)null);
-        assertEquals(CellType.BLANK, cell.getCellType());
-        assertEquals("", cell.getStringCellValue());
+            cell.setCellValue((Date) null);
+            assertEquals(CellType.BLANK, cell.getCellType());
+            assertEquals("", cell.getStringCellValue());
 
-        cell.setCellValue((String)null);
-        assertEquals(CellType.BLANK, cell.getCellType());
-        assertEquals("", cell.getStringCellValue());
+            cell.setCellValue((String) null);
+            assertEquals(CellType.BLANK, cell.getCellType());
+            assertEquals("", cell.getStringCellValue());
 
-        assertEquals(CellType.BLANK, cell.getCellType());
-        assertEquals("", cell.getStringCellValue());
+            assertEquals(CellType.BLANK, cell.getCellType());
+            assertEquals("", cell.getStringCellValue());
 
-        cell.setCellValue((RichTextString) null);
-        assertEquals(CellType.BLANK, cell.getCellType());
-        assertEquals("", cell.getStringCellValue());
+            cell.setCellValue((RichTextString) null);
+            assertEquals(CellType.BLANK, cell.getCellType());
+            assertEquals("", cell.getStringCellValue());
 
-        cell.setCellValue((String)null);
-        assertEquals(CellType.BLANK, cell.getCellType());
-        assertEquals("", cell.getStringCellValue());
-
-        wb.close();
+            cell.setCellValue((String) null);
+            assertEquals(CellType.BLANK, cell.getCellType());
+            assertEquals("", cell.getStringCellValue());
+        }
     }
 
     @Test
@@ -1140,18 +1135,22 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    public void testGetNumericCellValueOnABlankCellReturnsZero() {
-        Cell cell = _testDataProvider.createWorkbook().createSheet().createRow(0).createCell(0);
-        assertEquals(CellType.BLANK, cell.getCellType());
-        assertEquals(0, cell.getNumericCellValue(), 0);
+    public void testGetNumericCellValueOnABlankCellReturnsZero() throws IOException {
+        try (Workbook workbook = _testDataProvider.createWorkbook()) {
+            Cell cell = workbook.createSheet().createRow(0).createCell(0);
+            assertEquals(CellType.BLANK, cell.getCellType());
+            assertEquals(0, cell.getNumericCellValue(), 0);
+        }
     }
 
     @Test
-    public void getDateCellValue_returnsNull_onABlankCell() {
-        Cell cell = _testDataProvider.createWorkbook().createSheet().createRow(0).createCell(0);
-        assertEquals(CellType.BLANK, cell.getCellType());
-        Date result = cell.getDateCellValue();
-        assertNull(result);
+    public void getDateCellValue_returnsNull_onABlankCell() throws IOException {
+        try (Workbook workbook = _testDataProvider.createWorkbook()) {
+            Cell cell = workbook.createSheet().createRow(0).createCell(0);
+            assertEquals(CellType.BLANK, cell.getCellType());
+            Date result = cell.getDateCellValue();
+            assertNull(result);
+        }
     }
 
     @Test
@@ -1188,31 +1187,37 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    public void setStringCellValueWithRichTextString_ifThrows_shallNotChangeCell() {
-        Cell cell = _testDataProvider.createWorkbook().createSheet().createRow(0).createCell(0);
+    public void setStringCellValueWithRichTextString_ifThrows_shallNotChangeCell() throws IOException {
+        try (Workbook workbook = _testDataProvider.createWorkbook()) {
+            Cell cell = workbook.createSheet().createRow(0).createCell(0);
 
-        final double value = 2.78;
-        cell.setCellValue(value);
-        assertEquals(CellType.NUMERIC, cell.getCellType());
+            final double value = 2.78;
+            cell.setCellValue(value);
+            assertEquals(CellType.NUMERIC, cell.getCellType());
 
-        int badLength = cell.getSheet().getWorkbook().getSpreadsheetVersion().getMaxTextLength() + 1;
-        RichTextString badStringValue = cell.getSheet().getWorkbook().getCreationHelper().
-                createRichTextString(new String(new byte[badLength], StandardCharsets.UTF_8));
+            int badLength = cell.getSheet().getWorkbook().getSpreadsheetVersion().getMaxTextLength() + 1;
+            RichTextString badStringValue = cell.getSheet().getWorkbook().getCreationHelper().
+                    createRichTextString(new String(new byte[badLength], StandardCharsets.UTF_8));
 
-        try {
-            cell.setCellValue(badStringValue);
-        } catch (IllegalArgumentException e) {
-            // no-op, expected to throw but we need to assert something more
+            try {
+                cell.setCellValue(badStringValue);
+            } catch (IllegalArgumentException e) {
+                // no-op, expected to throw but we need to assert something more
+            }
+
+            assertEquals(CellType.NUMERIC, cell.getCellType());
+            assertEquals(value, cell.getNumericCellValue(), 0);
         }
-
-        assertEquals(CellType.NUMERIC, cell.getCellType());
-        assertEquals(value, cell.getNumericCellValue(), 0);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void setCellType_null_throwsIAE() {
+    public void setCellType_null_throwsIAE() throws IOException {
         Cell cell = getInstance();
-        cell.setCellType(null);
+        try {
+            cell.setCellType(null);
+        } finally {
+            cell.getSheet().getWorkbook().close();
+        }
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -1246,14 +1251,18 @@ public abstract class BaseTestCell {
     }
 
     @Test(expected = IllegalStateException.class)
-    public void setCellFormula_throwsISE_ifCellIsPartOfAnArrayFormulaGroupContainingOtherCells() {
+    public void setCellFormula_throwsISE_ifCellIsPartOfAnArrayFormulaGroupContainingOtherCells() throws IOException {
         Cell cell = getInstance();
 
-        cell.getSheet().setArrayFormula("1", CellRangeAddress.valueOf("A1:B1"));
-        assertTrue(cell.isPartOfArrayFormulaGroup());
-        assertEquals(CellType.FORMULA, cell.getCellType());
+        try {
+            cell.getSheet().setArrayFormula("1", CellRangeAddress.valueOf("A1:B1"));
+            assertTrue(cell.isPartOfArrayFormulaGroup());
+            assertEquals(CellType.FORMULA, cell.getCellType());
 
-        cell.setCellFormula("1");
+            cell.setCellFormula("1");
+        } finally {
+            cell.getSheet().getWorkbook().close();
+        }
     }
 
     @Test
@@ -1311,23 +1320,25 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    public void setCellFormula_onABlankCell_setsValueToZero() {
+    public void setCellFormula_onABlankCell_setsValueToZero() throws IOException {
         Cell cell = getInstance();
         cell.setCellFormula("\"foo\"");
         assertEquals(CellType.FORMULA, cell.getCellType());
         assertEquals(CellType.NUMERIC, cell.getCachedFormulaResultType());
         assertEquals(0, cell.getNumericCellValue(), 0);
+        cell.getSheet().getWorkbook().close();
     }
 
 
     @Test
-    public void setCellFormula_onANonBlankCell_preservesTheValue() {
+    public void setCellFormula_onANonBlankCell_preservesTheValue() throws IOException {
         Cell cell = getInstance();
         cell.setCellValue(true);
         cell.setCellFormula("\"foo\"");
         assertEquals(CellType.FORMULA, cell.getCellType());
         assertEquals(CellType.BOOLEAN, cell.getCachedFormulaResultType());
         assertTrue(cell.getBooleanCellValue());
+        cell.getSheet().getWorkbook().close();
     }
 
     @Test
