@@ -179,7 +179,7 @@ public final class SheetNameFormatter {
 
 		int len = rawSheetName.length();
 		if(len < 1) {
-			throw new RuntimeException("Zero length string is an invalid sheet name");
+		    return false; // some cases we get missing external references, resulting in empty sheet names
 		}
 		if(Character.isDigit(rawSheetName.charAt(0))) {
 			// sheet name with digit in the first position always requires delimiting

@@ -17,9 +17,12 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.formula.EvaluationSheet;
 import org.apache.poi.ss.usermodel.BaseTestXEvaluationSheet;
+import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.junit.Test;
 
 import java.util.AbstractMap;
 import java.util.Map;
@@ -29,5 +32,16 @@ public class TestHSSFEvaluationSheet extends BaseTestXEvaluationSheet {
     protected Map.Entry<Sheet, EvaluationSheet> getInstance() {
         HSSFSheet sheet = new HSSFWorkbook().createSheet();
         return new AbstractMap.SimpleEntry<>(sheet, new HSSFEvaluationSheet(sheet));
+    }
+    
+    @Test
+    public void testMissingExternalName() {
+        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("external_name.xls");
+        for (Name name : wb.getAllNames()) {
+            // this sometimes causes exceptions
+            if(!name.isFunctionName()) {
+                name.getRefersToFormula();
+            }
+        }
     }
 }
