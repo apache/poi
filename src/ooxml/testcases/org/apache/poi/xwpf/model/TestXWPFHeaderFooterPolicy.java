@@ -17,19 +17,24 @@
 
 package org.apache.poi.xwpf.model;
 
-import java.io.IOException;
-
-import junit.framework.TestCase;
-
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFFooter;
 import org.apache.poi.xwpf.usermodel.XWPFHeader;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * Tests for XWPF Header Footer Stuff
  */
-public class TestXWPFHeaderFooterPolicy extends TestCase {
+public class TestXWPFHeaderFooterPolicy {
     private XWPFDocument noHeader;
     private XWPFDocument header;
     private XWPFDocument headerFooter;
@@ -37,8 +42,8 @@ public class TestXWPFHeaderFooterPolicy extends TestCase {
     private XWPFDocument oddEven;
     private XWPFDocument diffFirst;
 
-    @Override
-    protected void setUp() throws IOException {
+    @Before
+    public void setUp() throws IOException {
         noHeader = XWPFTestDataSamples.openSampleDocument("NoHeadFoot.docx");
         header = XWPFTestDataSamples.openSampleDocument("ThreeColHead.docx");
         headerFooter = XWPFTestDataSamples.openSampleDocument("SimpleHeadThreeColFoot.docx");
@@ -47,6 +52,17 @@ public class TestXWPFHeaderFooterPolicy extends TestCase {
         diffFirst = XWPFTestDataSamples.openSampleDocument("DiffFirstPageHeadFoot.docx");
     }
 
+    @After
+    public void tearDown() throws IOException {
+        noHeader.close();
+        header.close();
+        headerFooter.close();
+        footer.close();
+        oddEven.close();
+        diffFirst.close();
+    }
+
+    @Test
     public void testPolicy() {
         XWPFHeaderFooterPolicy policy;
 
@@ -127,36 +143,39 @@ public class TestXWPFHeaderFooterPolicy extends TestCase {
         assertEquals(policy.getDefaultFooter(), policy.getFooter(2));
         assertEquals(policy.getDefaultFooter(), policy.getFooter(3));
     }
-    
-    @SuppressWarnings("resource")
+
+    @Test
     public void testCreate() throws Exception {
-        XWPFDocument doc = new XWPFDocument();
-        assertEquals(null, doc.getHeaderFooterPolicy());
-        assertEquals(0, doc.getHeaderList().size());
-        assertEquals(0, doc.getFooterList().size());
-        
-        XWPFHeaderFooterPolicy policy = doc.createHeaderFooterPolicy();
-        assertNotNull(doc.getHeaderFooterPolicy());
-        assertEquals(0, doc.getHeaderList().size());
-        assertEquals(0, doc.getFooterList().size());
-        
-        // Create a header and a footer
-        XWPFHeader header = policy.createHeader(XWPFHeaderFooterPolicy.DEFAULT);
-        XWPFFooter footer = policy.createFooter(XWPFHeaderFooterPolicy.DEFAULT);
-        header.createParagraph().createRun().setText("Header Hello");
-        footer.createParagraph().createRun().setText("Footer Bye");
-        
-        
-        // Save, re-load, and check
-        doc = XWPFTestDataSamples.writeOutAndReadBack(doc);
-        assertNotNull(doc.getHeaderFooterPolicy());
-        assertEquals(1, doc.getHeaderList().size());
-        assertEquals(1, doc.getFooterList().size());
-        
-        assertEquals("Header Hello\n", doc.getHeaderList().get(0).getText());
-        assertEquals("Footer Bye\n", doc.getFooterList().get(0).getText());
+        try (XWPFDocument doc = new XWPFDocument()) {
+            assertNull(doc.getHeaderFooterPolicy());
+            assertEquals(0, doc.getHeaderList().size());
+            assertEquals(0, doc.getFooterList().size());
+
+            XWPFHeaderFooterPolicy policy = doc.createHeaderFooterPolicy();
+            assertNotNull(doc.getHeaderFooterPolicy());
+            assertEquals(0, doc.getHeaderList().size());
+            assertEquals(0, doc.getFooterList().size());
+
+            // Create a header and a footer
+            XWPFHeader header = policy.createHeader(XWPFHeaderFooterPolicy.DEFAULT);
+            XWPFFooter footer = policy.createFooter(XWPFHeaderFooterPolicy.DEFAULT);
+            header.createParagraph().createRun().setText("Header Hello");
+            footer.createParagraph().createRun().setText("Footer Bye");
+
+
+            // Save, re-load, and check
+            try (XWPFDocument docBack = XWPFTestDataSamples.writeOutAndReadBack(doc)) {
+                assertNotNull(docBack.getHeaderFooterPolicy());
+                assertEquals(1, docBack.getHeaderList().size());
+                assertEquals(1, docBack.getFooterList().size());
+
+                assertEquals("Header Hello\n", docBack.getHeaderList().get(0).getText());
+                assertEquals("Footer Bye\n", docBack.getFooterList().get(0).getText());
+            }
+        }
     }
 
+    @Test
     public void testContents() {
         XWPFHeaderFooterPolicy policy;
 

@@ -194,7 +194,7 @@ public class HSSFFormulaEvaluator extends BaseFormulaEvaluator {
 
     /**
      * Returns a CellValue wrapper around the supplied ValueEval instance.
-     * @param cell
+     * @param cell The cell with the formula
      */
     protected CellValue evaluateFormulaCellValue(Cell cell) {
         ValueEval eval = _bookEvaluator.evaluate(new HSSFEvaluationCell((HSSFCell)cell));
