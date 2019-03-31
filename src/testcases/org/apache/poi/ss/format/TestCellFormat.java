@@ -849,11 +849,9 @@ public class TestCellFormat {
      */
     @Test
     public void testApplyObjectDate() throws ParseException {
-        
         CellFormat cf1 = CellFormat.getInstance("m/d/yyyy");
         Date date1 = new SimpleDateFormat("M/d/y", Locale.ROOT).parse("01/11/2012");
-        //assertEquals("1/11/2012", cf1.apply(date1).text);
-        
+        assertEquals("1/11/2012", cf1.apply(date1).text);
     }
 
     @Test
@@ -911,21 +909,18 @@ public class TestCellFormat {
     public void testSimpleFractionFormat() throws IOException {
         CellFormat cf1 = CellFormat.getInstance("# ?/?");
         // Create a workbook, row and cell to test with
-        Workbook wb = new HSSFWorkbook();
-        try {
+        try (Workbook wb = new HSSFWorkbook()) {
             Sheet sheet = wb.createSheet();
             Row row = sheet.createRow(0);
             Cell cell = row.createCell(0);
             cell.setCellValue(123456.6);
             //System.out.println(cf1.apply(cell).text);
             assertEquals("123456 3/5", cf1.apply(cell).text);
-        } finally {
-            wb.close();
         }
     }
     
     @Test
-    public void testAccountingFormats() throws IOException {
+    public void testAccountingFormats() {
         char pound = '\u00A3';
         char euro  = '\u20AC';
         
