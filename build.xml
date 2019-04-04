@@ -48,7 +48,7 @@ under the License.
     <property environment="env"/>
     <!-- the repository to download jars from -->
     <property name="repository.m2" value="https://repo1.maven.org"/>
-    <property name="repository.pentaho" value="http://repo.pentaho.org/"/>
+    <property name="repository.pentaho" value="http://nexus.pentaho.org/"/>
 
     <property name="main.lib" location="lib"/>
     <property name="ooxml.lib" location="ooxml-lib"/>
