@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.apache.poi</groupId>
         <artifactId>poi-parent</artifactId>
-        <version>4.1.0-SNAPSHOT</version>
+        <version>4.1.1-SNAPSHOT</version>
     </parent>
     <artifactId>poi-ooxml</artifactId>
     <packaging>jar</packaging>
@@ -190,7 +190,7 @@
             <!-- don't add it to the distribution -->
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-all</artifactId>
-            <version>1.10</version>
+            <version>1.11</version>
         </dependency>
     </dependencies>
 </project>

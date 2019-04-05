@@ -327,7 +327,7 @@ under the License.
     <property name="dist.bouncycastle-bcpg.jar" location="${compile.lib}/bcpg-jdk15on-1.61.jar"/>
     <property name="dist.bouncycastle-bcpg.url" value="${repository.m2}/maven2/org/bouncycastle/bcpg-jdk15on/1.61/bcpg-jdk15on-1.61.jar"/>
     <property name="dist.commons-openpgp.jar" location="${compile.lib}/commons-openpgp-1.0-SNAPSHOT.jar"/>
-    <property name="dist.commons-openpgp.url" value="https://repository.apache.org/snapshots/org/apache/commons/commons-openpgp/1.0-SNAPSHOT/commons-openpgp-1.0-20140717.171036-11.jar"/>
+    <property name="dist.commons-openpgp.url" value="https://repository.apache.org/content/groups/snapshots/org/apache/commons/commons-openpgp/1.0-SNAPSHOT/commons-openpgp-1.0-20190121.221905-12.jar"/>
     <property name="dist.nexus-staging.jar" location="${compile.lib}/nexus-staging-ant-tasks-1.6.3-uber.jar"/>
     <property name="dist.nexus-staging.url" value="${repository.m2}/maven2/org/sonatype/nexus/ant/nexus-staging-ant-tasks/1.6.3/nexus-staging-ant-tasks-1.6.3-uber.jar"/>
 
@@ -2629,7 +2629,7 @@ under the License.
     </target>
 
     <target name="release-prep2" depends="init" description="compile the freshly checked out svn tag and upload it to the nexus - needs a JDK6">
-        <!-- JAVA_HOME needs to point to a JDK6, otherwise the ant invocation is failing on a missing javac -->
+        <!-- JAVA_HOME needs to point to a JDK8, otherwise the ant invocation is failing on a missing javac -->
         <fail message="Environment needs to point to a Java 8 JDK">
             <condition>
                 <not><equals arg1="${ant.java.version}" arg2="1.8"/></not>
