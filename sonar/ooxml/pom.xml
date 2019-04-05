@@ -190,7 +190,7 @@
             <!-- don't add it to the distribution -->
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-all</artifactId>
-            <version>1.10</version>
+            <version>1.11</version>
         </dependency>
     </dependencies>
 </project>
