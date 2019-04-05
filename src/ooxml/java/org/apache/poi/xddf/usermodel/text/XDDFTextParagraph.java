@@ -237,7 +237,8 @@ public class XDDFTextParagraph {
      *            <dt>Minimum inclusive =</dt>
      *            <dd>-4032</dd>
      *            <dt>Maximum inclusive =</dt>
-     *            <dd>4032</dd></dt>
+     *            <dd>4032</dd>
+     *            </dl>
      */
     public void setIndentation(Double points) {
         if (points != null || _p.isSetPPr()) {
@@ -267,7 +268,8 @@ public class XDDFTextParagraph {
      *            <dt>Minimum inclusive =</dt>
      *            <dd>0</dd>
      *            <dt>Maximum inclusive =</dt>
-     *            <dd>4032</dd></dt>
+     *            <dd>4032</dd>
+     *            </dl>
      */
     public void setMarginLeft(Double points) {
         if (points != null || _p.isSetPPr()) {
@@ -297,7 +299,8 @@ public class XDDFTextParagraph {
      *            <dt>Minimum inclusive =</dt>
      *            <dd>0</dd>
      *            <dt>Maximum inclusive =</dt>
-     *            <dd>4032</dd></dt>
+     *            <dd>4032</dd>
+     *            </dl>
      */
     public void setMarginRight(Double points) {
         if (points != null || _p.isSetPPr()) {
