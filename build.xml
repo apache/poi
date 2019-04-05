@@ -222,10 +222,10 @@ under the License.
     <!-- xml signature libs -->
     <property name="dsig.xmlsec.jar" location="${compile.lib}/xmlsec-2.1.2.jar"/>
     <property name="dsig.xmlsec.url" value="${repository.m2}/maven2/org/apache/santuario/xmlsec/2.1.2/xmlsec-2.1.2.jar"/>
-    <property name="dsig.bouncycastle-prov.jar" location="${compile.lib}/bcprov-ext-jdk15on-1.51.jar"/>
-    <property name="dsig.bouncycastle-prov.url" value="${repository.m2}/maven2/org/bouncycastle/bcprov-ext-jdk15on/1.51/bcprov-ext-jdk15on-1.51.jar"/>
-    <property name="dsig.bouncycastle-pkix.jar" location="${compile.lib}/bcpkix-jdk15on-1.51.jar"/>
-    <property name="dsig.bouncycastle-pkix.url" value="${repository.m2}/maven2/org/bouncycastle/bcpkix-jdk15on/1.51/bcpkix-jdk15on-1.51.jar"/>
+    <property name="dsig.bouncycastle-prov.jar" location="${compile.lib}/bcprov-ext-jdk15on-1.61.jar"/>
+    <property name="dsig.bouncycastle-prov.url" value="${repository.m2}/maven2/org/bouncycastle/bcprov-ext-jdk15on/1.61/bcprov-ext-jdk15on-1.61.jar"/>
+    <property name="dsig.bouncycastle-pkix.jar" location="${compile.lib}/bcpkix-jdk15on-1.61.jar"/>
+    <property name="dsig.bouncycastle-pkix.url" value="${repository.m2}/maven2/org/bouncycastle/bcpkix-jdk15on/1.61/bcpkix-jdk15on-1.61.jar"/>
     <property name="dsig.sl4j-api.jar" location="${compile.lib}/slf4j-api-1.7.26.jar"/>
     <property name="dsig.sl4j-api.url" value="${repository.m2}/maven2/org/slf4j/slf4j-api/1.7.26/slf4j-api-1.7.26.jar"/>
 
@@ -321,16 +321,13 @@ under the License.
     <property name="dist.dir" location="build/dist"/>
     <property name="halt.on.test.failure" value="true"/>
 
-    <!-- 
-      helper jars for pgp signing, building and nexus staging 
-      NOTE: Signing uses commons-openpgp, which currently uses BouncyCastle API calls removed after 1.51.
-    -->
-    <property name="dist.bouncycastle-prov.jar" location="${compile.lib}/bcprov-ext-jdk15on-1.51.jar"/>
-    <property name="dist.bouncycastle-prov.url" value="${repository.m2}/maven2/org/bouncycastle/bcprov-ext-jdk15on/1.51/bcprov-ext-jdk15on-1.51.jar"/>
-    <property name="dist.bouncycastle-bcpg.jar" location="${compile.lib}/bcpg-jdk15on-1.51.jar"/>
-    <property name="dist.bouncycastle-bcpg.url" value="${repository.m2}/maven2/org/bouncycastle/bcpg-jdk15on/1.51/bcpg-jdk15on-1.51.jar"/>
+    <!-- helper jars for pgp signing, building and nexus staging -->
+    <property name="dist.bouncycastle-prov.jar" location="${compile.lib}/bcprov-ext-jdk15on-1.61.jar"/>
+    <property name="dist.bouncycastle-prov.url" value="${repository.m2}/maven2/org/bouncycastle/bcprov-ext-jdk15on/1.61/bcprov-ext-jdk15on-1.61.jar"/>
+    <property name="dist.bouncycastle-bcpg.jar" location="${compile.lib}/bcpg-jdk15on-1.61.jar"/>
+    <property name="dist.bouncycastle-bcpg.url" value="${repository.m2}/maven2/org/bouncycastle/bcpg-jdk15on/1.61/bcpg-jdk15on-1.61.jar"/>
     <property name="dist.commons-openpgp.jar" location="${compile.lib}/commons-openpgp-1.0-SNAPSHOT.jar"/>
-    <property name="dist.commons-openpgp.url" value="https://repository.apache.org/snapshots/org/apache/commons/commons-openpgp/1.0-SNAPSHOT/commons-openpgp-1.0-20140717.171036-11.jar"/>
+    <property name="dist.commons-openpgp.url" value="https://repository.apache.org/content/groups/snapshots/org/apache/commons/commons-openpgp/1.0-SNAPSHOT/commons-openpgp-1.0-20190121.221905-12.jar"/>
     <property name="dist.nexus-staging.jar" location="${compile.lib}/nexus-staging-ant-tasks-1.6.3-uber.jar"/>
     <property name="dist.nexus-staging.url" value="${repository.m2}/maven2/org/sonatype/nexus/ant/nexus-staging-ant-tasks/1.6.3/nexus-staging-ant-tasks-1.6.3-uber.jar"/>
 
