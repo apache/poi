@@ -119,7 +119,7 @@ public final class Types {
          * Is this type a fixed-length type, or a variable-length one?
          */
         public boolean isFixedLength() {
-            return (length != -1);
+            return (length != -1) && (length <= 8);
         }
 
         public int getId() {
