@@ -16,59 +16,62 @@
 ==================================================================== */
 package org.apache.poi.xssf.model;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFMap;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMapInfo;
 import org.w3c.dom.Node;
+
+import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * @author Roberto Manicardi
  */
-public final class TestMapInfo extends TestCase {
+public final class TestMapInfo {
+    @Test
+    public void testMapInfoExists() throws IOException {
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("CustomXMLMappings.xlsx")) {
+
+            MapInfo mapInfo = null;
+            SingleXmlCells singleXMLCells = null;
+
+            for (POIXMLDocumentPart p : wb.getRelations()) {
 
 
-    public void testMapInfoExists() {
-
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("CustomXMLMappings.xlsx");
-
-        MapInfo mapInfo = null;
-        SingleXmlCells singleXMLCells = null;
-
-        for (POIXMLDocumentPart p : wb.getRelations()) {
+                if (p instanceof MapInfo) {
+                    mapInfo = (MapInfo) p;
 
 
-            if (p instanceof MapInfo) {
-                mapInfo = (MapInfo) p;
+                    CTMapInfo ctMapInfo = mapInfo.getCTMapInfo();
 
+                    assertNotNull(ctMapInfo);
 
-                CTMapInfo ctMapInfo = mapInfo.getCTMapInfo();
+                    assertEquals(1, ctMapInfo.sizeOfSchemaArray());
 
-                assertNotNull(ctMapInfo);
-
-                assertEquals(1, ctMapInfo.sizeOfSchemaArray());
-
-                for (XSSFMap map : mapInfo.getAllXSSFMaps()) {
-                    Node xmlSchema = map.getSchema();
-                    assertNotNull(xmlSchema);
+                    for (XSSFMap map : mapInfo.getAllXSSFMaps()) {
+                        Node xmlSchema = map.getSchema();
+                        assertNotNull(xmlSchema);
+                    }
                 }
             }
-        }
 
-        XSSFSheet sheet1 = wb.getSheetAt(0);
+            XSSFSheet sheet1 = wb.getSheetAt(0);
 
-        for (POIXMLDocumentPart p : sheet1.getRelations()) {
+            for (POIXMLDocumentPart p : sheet1.getRelations()) {
 
-            if (p instanceof SingleXmlCells) {
-                singleXMLCells = (SingleXmlCells) p;
+                if (p instanceof SingleXmlCells) {
+                    singleXMLCells = (SingleXmlCells) p;
+                }
+
             }
-
+            assertNotNull(mapInfo);
+            assertNotNull(singleXMLCells);
         }
-        assertNotNull(mapInfo);
-        assertNotNull(singleXMLCells);
     }
 }

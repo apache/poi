@@ -18,31 +18,36 @@ package org.apache.poi.xwpf.usermodel;
 
 import java.io.IOException;
 
-import junit.framework.TestCase;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
-import org.apache.xmlbeans.XmlException;
+import org.junit.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtBlock;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * @author Paolo Mottadelli
  */
-public final class TestXWPFHeadings extends TestCase {
+public final class TestXWPFHeadings {
     private static final String HEADING1 = "Heading1";
 
-    public void testSetParagraphStyle() throws IOException, XmlException {
+    @Test
+    public void testSetParagraphStyle() throws IOException {
         //new clean instance of paragraph
-        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("heading123.docx");
-        XWPFParagraph p = doc.createParagraph();
-        XWPFRun run = p.createRun();
-        run.setText("Heading 1");
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("heading123.docx")) {
+            XWPFParagraph p = doc.createParagraph();
+            XWPFRun run = p.createRun();
+            run.setText("Heading 1");
 
-        CTSdtBlock block = doc.getDocument().getBody().addNewSdt();
+            CTSdtBlock block = doc.getDocument().getBody().addNewSdt();
+            assertNotNull(block);
 
-        assertNull(p.getStyle());
-        p.setStyle(HEADING1);
-        assertEquals(HEADING1, p.getCTP().getPPr().getPStyle().getVal());
+            assertNull(p.getStyle());
+            p.setStyle(HEADING1);
+            assertEquals(HEADING1, p.getCTP().getPPr().getPStyle().getVal());
 
-        doc.createTOC();
+            doc.createTOC();
         /*
         // TODO - finish this test
 		if (false) {
@@ -59,5 +64,6 @@ public final class TestXWPFHeadings extends TestCase {
 			out.close();
 		}
         */
+        }
     }
 }
