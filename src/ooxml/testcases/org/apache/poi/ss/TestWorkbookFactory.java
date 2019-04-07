@@ -420,6 +420,16 @@ public final class TestWorkbookFactory {
         assertNotNull(wb);
         assertTrue(wb instanceof XSSFWorkbook);
         closeOrRevert(wb);
+
+        // check what happens if the file is passed as "Object"
+
+        try {
+            //noinspection deprecation
+            WorkbookFactory.create((Object)altXLSX);
+            fail("Will throw an exception");
+        } catch(IOException e) {
+            // expected here because create() in this case expects an object of type "OPCPackage"
+        }
     }
     
     private static class TestFile extends File {
