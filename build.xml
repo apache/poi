@@ -48,7 +48,7 @@ under the License.
     <property environment="env"/>
     <!-- the repository to download jars from -->
     <property name="repository.m2" value="https://repo1.maven.org"/>
-    <property name="repository.pentaho" value="http://nexus.pentaho.org/"/>
+    <property name="repository.pentaho" value="https://nexus.pentaho.org/"/>
 
     <property name="main.lib" location="lib"/>
     <property name="ooxml.lib" location="ooxml-lib"/>
@@ -260,14 +260,14 @@ under the License.
               value="${repository.m2}/maven2/org/javassist/javassist/3.21.0-GA/javassist-3.21.0-GA.jar"/>
 
     <!-- coverage libs -->
-    <property name="jacoco.zip" location="${main.lib}/jacoco-0.8.2.zip"/>
-    <property name="jacoco.url" value="${repository.m2}/maven2/org/jacoco/jacoco/0.8.2/jacoco-0.8.2.zip"/>
-    <property name="asm.jar" location="${main.lib}/asm-6.2.1.jar"/>
-    <property name="asm.url" value="${repository.m2}/maven2/org/ow2/asm/asm/6.2.1/asm-6.2.1.jar"/>
-    <property name="asmcommons.jar" location="${main.lib}/asm-commons-6.2.1.jar"/>
-    <property name="asmcommons.url" value="${repository.m2}/maven2/org/ow2/asm/asm-commons/6.2.1/asm-commons-6.2.1.jar"/>
-    <property name="asmtree.jar" location="${main.lib}/asm-tree-6.2.1.jar"/>
-    <property name="asmtree.url" value="${repository.m2}/maven2/org/ow2/asm/asm-tree/6.2.1/asm-tree-6.2.1.jar"/>
+    <property name="jacoco.zip" location="${main.lib}/jacoco-0.8.3.zip"/>
+    <property name="jacoco.url" value="${repository.m2}/maven2/org/jacoco/jacoco/0.8.3/jacoco-0.8.3.zip"/>
+    <property name="asm.jar" location="${main.lib}/asm-7.0.jar"/>
+    <property name="asm.url" value="${repository.m2}/maven2/org/ow2/asm/asm/7.0/asm-7.0.jar"/>
+    <property name="asmcommons.jar" location="${main.lib}/asm-commons-7.0.jar"/>
+    <property name="asmcommons.url" value="${repository.m2}/maven2/org/ow2/asm/asm-commons/7.0/asm-commons-7.0.jar"/>
+    <property name="asmtree.jar" location="${main.lib}/asm-tree-7.0.jar"/>
+    <property name="asmtree.url" value="${repository.m2}/maven2/org/ow2/asm/asm-tree/7.0/asm-tree-7.0.jar"/>
 
     <!-- license and api checks -->
     <property name="rat.jar" location="${main.lib}/apache-rat-0.12.jar"/>
@@ -330,6 +330,9 @@ under the License.
     <property name="dist.commons-openpgp.url" value="https://repository.apache.org/content/groups/snapshots/org/apache/commons/commons-openpgp/1.0-SNAPSHOT/commons-openpgp-1.0-20190121.221905-12.jar"/>
     <property name="dist.nexus-staging.jar" location="${compile.lib}/nexus-staging-ant-tasks-1.6.3-uber.jar"/>
     <property name="dist.nexus-staging.url" value="${repository.m2}/maven2/org/sonatype/nexus/ant/nexus-staging-ant-tasks/1.6.3/nexus-staging-ant-tasks-1.6.3-uber.jar"/>
+    <!-- jars required for maven helper targets -->
+    <property name="maven.ant.url" value="${repository.m2}/maven2/org/apache/maven/maven-ant-tasks/2.1.3/maven-ant-tasks-2.1.3.jar"/>
+    <property name="maven.ant.jar" value="${compile.lib}/maven-ant-tasks-2.1.3.jar"/>
 
     <property name="dist.svnant.zip" location="${compile.lib}/svnant/svnant-1.3.1.zip"/>
     <property name="dist.svnant.url" value="http://subclipse.tigris.org/files/documents/906/49042/svnant-1.3.1.zip"/>
@@ -641,7 +644,7 @@ under the License.
                 <include name="asm-all-4*"/>
                 <include name="asm-all-5.0.3*"/>
                 <include name="asm-all-5.2*"/>
-                <include name="asm*-6.0*"/>
+                <include name="asm*-6.*"/>
                 <include name="commons-codec-1.5*"/>
                 <include name="commons-codec-1.9*"/>
                 <include name="commons-codec-1.10*"/>
@@ -653,28 +656,16 @@ under the License.
                 <include name="commons-logging-1.1*.jar"/>
                 <include name="findbugs-noUpdateChecks-2.0.3*"/>
                 <include name="jacoco-0.6*"/>
-                <include name="jacoco-0.7.1*"/>
-                <include name="jacoco-0.7.2*"/>
-                <include name="jacoco-0.7.3*"/>
-                <include name="jacoco-0.7.4*"/>
-                <include name="jacoco-0.7.6*"/>
-                <include name="jacoco-0.7.7*"/>
-                <include name="jacoco-0.7.8*"/>
-                <include name="jacoco-0.7.9*"/>
+                <include name="jacoco-0.7*"/>
                 <include name="jacoco-0.8.1*"/>
+                <include name="jacoco-0.8.2*"/>
                 <include name="jmh-core-1.15*"/>
                 <include name="jmh-generator-annprocess-1.15*"/>
                 <include name="log4j-1.2.13*"/>
-                <include name="org.jacoco.*-0.6.*"/>
-                <include name="org.jacoco.*-0.7.1*"/>
-                <include name="org.jacoco.*-0.7.2*"/>
-                <include name="org.jacoco.*-0.7.3*"/>
-                <include name="org.jacoco.*-0.7.4*"/>
-                <include name="org.jacoco.*-0.7.6*"/>
-                <include name="org.jacoco.*-0.7.7*"/>
-                <include name="org.jacoco.*-0.7.8*"/>
-                <include name="org.jacoco.*-0.7.9*"/>
+                <include name="org.jacoco.*-0.6*"/>
+                <include name="org.jacoco.*-0.7**"/>
                 <include name="org.jacoco.*-0.8.1*"/>
+                <include name="org.jacoco.*-0.8.2*"/>
                 <include name="dom4j*"/>
                 <include name="apache-rat-0.10*"/>
                 <include name="xercesImpl-*.jar"/>
@@ -2141,18 +2132,20 @@ under the License.
     </target>
 
     <!-- continuous integration targets -->
-    <target name="jenkins" depends="compile, test-all, jar, javadocs, assemble, findbugs, release-notes, rat-check, forbidden-apis-check, integration-test-jar"
+    <target name="jenkins"
+        depends="compile, test-all, jar, javadocs, assemble, findbugs, release-notes, rat-check, forbidden-apis-check, integration-test-jar, help, fetch-svn-jars, maven-poms, maventask, mvn-install"
         description="Target run by Jenkins on a continuous basis. Builds and tests POI, generates artifacts and documentation, and searches for problems."/>
 
-    <available property="maven.ant.tasks.present" classname="org.apache.maven.artifact.ant.Pom"/>
-    <target name="maven.ant.tasks-check">
-      <fail unless="maven.ant.tasks.present">
-      Maven ant tasks not found.
-      Please make sure the maven-ant-tasks jar is in ANT_HOME/lib, or made
-      available to Ant using other mechanisms like -lib or CLASSPATH.
+    <target name="maventask" depends="init">
+        <downloadfile src="${maven.ant.url}" dest="${maven.ant.jar}"/>
 
-      You can download the Maven Ant Tasks from https://maven.apache.org/ant-tasks/download.html
-      </fail>
+        <path id="maven-ant-tasks.classpath">
+            <pathelement location="${maven.ant.jar}"/>
+        </path>
+
+        <taskdef uri="antlib:org.apache.maven.artifact.ant" resource="org/apache/maven/artifact/ant/antlib.xml">
+            <classpath refid="maven-ant-tasks.classpath"/>
+        </taskdef>
     </target>
 
     <macrodef name="m2-install">
@@ -2165,7 +2158,7 @@ under the License.
       </sequential>
     </macrodef>
 
-    <target name="mvn-install" depends="maven.ant.tasks-check,jar,maven-poms" description="Install POI artifacts into the local repository. Equivalent of 'mvn install'">
+    <target name="mvn-install" depends="maventask,jar,maven-poms" description="Install POI artifacts into the local repository. Equivalent of 'mvn install'">
       <m2-install artifactId="poi"/>
       <m2-install artifactId="poi-scratchpad"/>
       <m2-install artifactId="poi-ooxml"/>
