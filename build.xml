@@ -42,7 +42,7 @@ under the License.
 
     <description>The Apache POI project Ant build.</description>
 
-    <property name="version.id" value="4.1.1"/>
+    <property name="version.id" value="4.1.1-SNAPSHOT"/>
     <property name="release.rc" value="RC1"/>
 
     <property environment="env"/>
@@ -2133,7 +2133,7 @@ under the License.
 
     <!-- continuous integration targets -->
     <target name="jenkins"
-        depends="compile, test-all, jar, javadocs, assemble, findbugs, release-notes, rat-check, forbidden-apis-check, integration-test-jar, help, fetch-svn-jars, maven-poms, maventask, mvn-install"
+        depends="replaceVersion, compile, test-all, jar, javadocs, assemble, findbugs, release-notes, rat-check, forbidden-apis-check, integration-test-jar, help, fetch-svn-jars, maven-poms, maventask, mvn-install"
         description="Target run by Jenkins on a continuous basis. Builds and tests POI, generates artifacts and documentation, and searches for problems."/>
 
     <target name="maventask" depends="init">
@@ -2854,4 +2854,28 @@ under the License.
     <target name="test-env" description="tests if ant is available on the jenkins slave">
       <echo>Using Ant: ${ant.version} from ${ant.home}</echo>    
     </target>
+
+	<target name="replaceVersion" description="Apply the version from build.xml in all other places">
+		<replaceregexp
+               match="(packaging>\n\s*&lt;version>)[0-9.]+(?:-SNAPSHOT)?"
+               replace="\1${version.id}">
+			<fileset dir="sonar">
+				<include name="**/pom.xml"/>
+			</fileset>
+        </replaceregexp>
+		<replaceregexp
+               match="(poi-parent&lt;/artifactId>\n\s*&lt;version>)[0-9.]+(?:-SNAPSHOT)?"
+               replace="\1${version.id}">
+			<fileset dir="sonar">
+				<include name="**/pom.xml"/>
+			</fileset>
+        </replaceregexp>
+		<replaceregexp
+               match=" version = '[0-9.]+(?:-SNAPSHOT)?'"
+               replace=" version = '${version.id}'">
+			<fileset dir=".">
+				<include name="build.gradle"/>
+			</fileset>
+        </replaceregexp>
+	</target>
 </project>
