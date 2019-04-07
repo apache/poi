@@ -49,7 +49,7 @@ public class TestBug47563 {
 		data.add(new Object[] {6, 1});
 		data.add(new Object[] {2, 2});
 		data.add(new Object[] {3, 2});
-		data.add(new Object[] {2, 3});
+		data.add(new Object[] {2, 3});	//
 		data.add(new Object[] {3, 3});
 
 		return data;
@@ -62,46 +62,47 @@ public class TestBug47563 {
 
 		// POI apparently can't create a document from scratch,
 		// so we need an existing empty dummy document
-		HWPFDocument doc = HWPFTestDataSamples.openSampleFile("empty.doc");
+		try (HWPFDocument doc = HWPFTestDataSamples.openSampleFile("empty.doc")) {
+			Range range = doc.getRange();
+			range.sanityCheck();
 
-		Range range = doc.getRange();
-		range.sanityCheck();
+			Table table = range.insertTableBefore((short) columns, rows);
+			table.sanityCheck();
 
-		Table table = range.insertTableBefore((short) columns, rows);
-		table.sanityCheck();
-
-		for (int rowIdx = 0; rowIdx < table.numRows(); rowIdx++) {
-			TableRow row = table.getRow(rowIdx);
-			row.sanityCheck();
-
-			System.out.println("row " + rowIdx);
-			for (int colIdx = 0; colIdx < row.numCells(); colIdx++) {
-				TableCell cell = row.getCell(colIdx);
-				cell.sanityCheck();
-
-				System.out.println("column " + colIdx + ", num paragraphs "
-						+ cell.numParagraphs());
-
-				Paragraph par = cell.getParagraph(0);
-				par.sanityCheck();
-
-				par.insertBefore("" + (rowIdx * row.numCells() + colIdx));
-				par.sanityCheck();
-				
+			for (int rowIdx = 0; rowIdx < table.numRows(); rowIdx++) {
+				TableRow row = table.getRow(rowIdx);
 				row.sanityCheck();
-				table.sanityCheck();
-				range.sanityCheck();
-			}
-		}
 
-		String text = range.text();
-		int mustBeAfter = 0;
-		for (int i = 0; i < rows * columns; i++) {
-			int next = text.indexOf(Integer.toString(i), mustBeAfter);
-			assertTrue("Test with " + rows + "/" + columns + ": Should not find " + i + " but found it at " + next + " with " + mustBeAfter + " in " + text + "\n" +
-							text.indexOf(Integer.toString(i), mustBeAfter),
-					next != -1);
-			mustBeAfter = next;
+				System.out.println("row " + rowIdx);
+				for (int colIdx = 0; colIdx < row.numCells(); colIdx++) {
+					TableCell cell = row.getCell(colIdx);
+					cell.sanityCheck();
+
+					System.out.println("column " + colIdx + ", num paragraphs "
+							+ cell.numParagraphs());
+
+					Paragraph par = cell.getParagraph(0);
+					par.sanityCheck();
+
+					par.insertBefore("" + (rowIdx * row.numCells() + colIdx));
+					par.sanityCheck();
+
+					row.sanityCheck();
+					table.sanityCheck();
+					range.sanityCheck();
+				}
+			}
+
+			String text = range.text();
+			int mustBeAfter = 0;
+			for (int i = 0; i < rows * columns; i++) {
+				int next = text.indexOf(Integer.toString(i), mustBeAfter);
+				assertTrue("Test with " + rows + "/" + columns + ": Should not find " + i +
+								" but found it at " + next + " with " + mustBeAfter + " in " + text + "\n" +
+								text.indexOf(Integer.toString(i), mustBeAfter),
+						next != -1);
+				mustBeAfter = next;
+			}
 		}
 	}
 }
