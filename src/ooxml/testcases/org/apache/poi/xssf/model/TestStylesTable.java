@@ -57,47 +57,50 @@ public final class TestStylesTable {
     }
 
     @Test
-    public void testCreateSaveLoad() {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        StylesTable st = wb.getStylesSource();
+    public void testCreateSaveLoad() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            StylesTable st = wb.getStylesSource();
 
-        assertNotNull(st.getCTStylesheet());
-        assertEquals(1, st._getXfsSize());
-        assertEquals(1, st._getStyleXfsSize());
-        assertEquals(0, st.getNumDataFormats());
+            assertNotNull(st.getCTStylesheet());
+            assertEquals(1, st._getXfsSize());
+            assertEquals(1, st._getStyleXfsSize());
+            assertEquals(0, st.getNumDataFormats());
 
-        st = XSSFTestDataSamples.writeOutAndReadBack(wb).getStylesSource();
+            st = XSSFTestDataSamples.writeOutAndReadBack(wb).getStylesSource();
 
-        assertNotNull(st.getCTStylesheet());
-        assertEquals(1, st._getXfsSize());
-        assertEquals(1, st._getStyleXfsSize());
-        assertEquals(0, st.getNumDataFormats());
-        
-        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
+            assertNotNull(st.getCTStylesheet());
+            assertEquals(1, st._getXfsSize());
+            assertEquals(1, st._getStyleXfsSize());
+            assertEquals(0, st.getNumDataFormats());
+
+            assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
+        }
     }
 
     @Test
-    public void testLoadExisting() {
-        XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook(testFile);
-        assertNotNull(workbook.getStylesSource());
+    public void testLoadExisting() throws IOException {
+        try (XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook(testFile)) {
+            assertNotNull(workbook.getStylesSource());
 
-        StylesTable st = workbook.getStylesSource();
+            StylesTable st = workbook.getStylesSource();
 
-        doTestExisting(st);
-        
-        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(workbook));
+            doTestExisting(st);
+
+            assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(workbook));
+        }
     }
 
     @Test
-    public void testLoadSaveLoad() {
-        XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook(testFile);
-        assertNotNull(workbook.getStylesSource());
+    public void testLoadSaveLoad() throws IOException {
+        try (XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook(testFile)) {
+            assertNotNull(workbook.getStylesSource());
 
-        StylesTable st = workbook.getStylesSource();
-        doTestExisting(st);
+            StylesTable st = workbook.getStylesSource();
+            doTestExisting(st);
 
-        st = XSSFTestDataSamples.writeOutAndReadBack(workbook).getStylesSource();
-        doTestExisting(st);
+            st = XSSFTestDataSamples.writeOutAndReadBack(workbook).getStylesSource();
+            doTestExisting(st);
+        }
     }
 
     public void doTestExisting(StylesTable st) {
@@ -128,61 +131,63 @@ public final class TestStylesTable {
     }
 
     @Test
-    public void populateNew() {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        StylesTable st = wb.getStylesSource();
+    public void populateNew() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            StylesTable st = wb.getStylesSource();
 
-        assertNotNull(st.getCTStylesheet());
-        assertEquals(1, st._getXfsSize());
-        assertEquals(1, st._getStyleXfsSize());
-        assertEquals(0, st.getNumDataFormats());
+            assertNotNull(st.getCTStylesheet());
+            assertEquals(1, st._getXfsSize());
+            assertEquals(1, st._getStyleXfsSize());
+            assertEquals(0, st.getNumDataFormats());
 
-        int nf1 = st.putNumberFormat("yyyy-mm-dd");
-        int nf2 = st.putNumberFormat("yyyy-mm-DD");
-        assertEquals(nf1, st.putNumberFormat("yyyy-mm-dd"));
+            int nf1 = st.putNumberFormat("yyyy-mm-dd");
+            int nf2 = st.putNumberFormat("yyyy-mm-DD");
+            assertEquals(nf1, st.putNumberFormat("yyyy-mm-dd"));
 
-        st.putStyle(new XSSFCellStyle(st));
+            st.putStyle(new XSSFCellStyle(st));
 
-        // Save and re-load
-        st = XSSFTestDataSamples.writeOutAndReadBack(wb).getStylesSource();
+            // Save and re-load
+            st = XSSFTestDataSamples.writeOutAndReadBack(wb).getStylesSource();
 
-        assertNotNull(st.getCTStylesheet());
-        assertEquals(2, st._getXfsSize());
-        assertEquals(1, st._getStyleXfsSize());
-        assertEquals(2, st.getNumDataFormats());
+            assertNotNull(st.getCTStylesheet());
+            assertEquals(2, st._getXfsSize());
+            assertEquals(1, st._getStyleXfsSize());
+            assertEquals(2, st.getNumDataFormats());
 
-        assertEquals("yyyy-mm-dd", st.getNumberFormatAt((short)nf1));
-        assertEquals(nf1, st.putNumberFormat("yyyy-mm-dd"));
-        assertEquals(nf2, st.putNumberFormat("yyyy-mm-DD"));
-        
-        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
+            assertEquals("yyyy-mm-dd", st.getNumberFormatAt((short) nf1));
+            assertEquals(nf1, st.putNumberFormat("yyyy-mm-dd"));
+            assertEquals(nf2, st.putNumberFormat("yyyy-mm-DD"));
+
+            assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
+        }
     }
 
     @Test
-    public void populateExisting() {
-        XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook(testFile);
-        assertNotNull(workbook.getStylesSource());
+    public void populateExisting() throws IOException {
+        try (XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook(testFile)) {
+            assertNotNull(workbook.getStylesSource());
 
-        StylesTable st = workbook.getStylesSource();
-        assertEquals(11, st._getXfsSize());
-        assertEquals(1, st._getStyleXfsSize());
-        assertEquals(8, st.getNumDataFormats());
+            StylesTable st = workbook.getStylesSource();
+            assertEquals(11, st._getXfsSize());
+            assertEquals(1, st._getStyleXfsSize());
+            assertEquals(8, st.getNumDataFormats());
 
-        int nf1 = st.putNumberFormat("YYYY-mm-dd");
-        int nf2 = st.putNumberFormat("YYYY-mm-DD");
-        assertEquals(nf1, st.putNumberFormat("YYYY-mm-dd"));
+            int nf1 = st.putNumberFormat("YYYY-mm-dd");
+            int nf2 = st.putNumberFormat("YYYY-mm-DD");
+            assertEquals(nf1, st.putNumberFormat("YYYY-mm-dd"));
 
-        st = XSSFTestDataSamples.writeOutAndReadBack(workbook).getStylesSource();
+            st = XSSFTestDataSamples.writeOutAndReadBack(workbook).getStylesSource();
 
-        assertEquals(11, st._getXfsSize());
-        assertEquals(1, st._getStyleXfsSize());
-        assertEquals(10, st.getNumDataFormats());
+            assertEquals(11, st._getXfsSize());
+            assertEquals(1, st._getStyleXfsSize());
+            assertEquals(10, st.getNumDataFormats());
 
-        assertEquals("YYYY-mm-dd", st.getNumberFormatAt((short)nf1));
-        assertEquals(nf1, st.putNumberFormat("YYYY-mm-dd"));
-        assertEquals(nf2, st.putNumberFormat("YYYY-mm-DD"));
-        
-        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(workbook));
+            assertEquals("YYYY-mm-dd", st.getNumberFormatAt((short) nf1));
+            assertEquals(nf1, st.putNumberFormat("YYYY-mm-dd"));
+            assertEquals(nf2, st.putNumberFormat("YYYY-mm-DD"));
+
+            assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(workbook));
+        }
     }
     
     @Test
@@ -298,7 +303,6 @@ public final class TestStylesTable {
     
     @Test
     public void addDataFormatsBeyondUpperLimit() throws IOException {
-
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             StylesTable styles = wb.getStylesSource();
             styles.setMaxNumberOfDataFormats(0);
@@ -317,7 +321,6 @@ public final class TestStylesTable {
     
     @Test
     public void decreaseUpperLimitBelowCurrentNumDataFormats() throws IOException {
-
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             StylesTable styles = wb.getStylesSource();
             styles.putNumberFormat(customDataFormat);
@@ -335,27 +338,29 @@ public final class TestStylesTable {
     }
 
     @Test
-    public void testLoadWithAlternateContent() {
-        XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("style-alternate-content.xlsx");
-        assertNotNull(workbook.getStylesSource());
+    public void testLoadWithAlternateContent() throws IOException {
+        try (XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("style-alternate-content.xlsx")) {
+            assertNotNull(workbook.getStylesSource());
 
-        StylesTable st = workbook.getStylesSource();
-        assertNotNull(st);
+            StylesTable st = workbook.getStylesSource();
+            assertNotNull(st);
 
-        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(workbook));
+            assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(workbook));
+        }
     }
 
     @Test
-    public void testReplaceStyle() {
-        XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("style-alternate-content.xlsx");
-        assertNotNull(workbook.getStylesSource());
+    public void testReplaceStyle() throws IOException {
+        try (XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("style-alternate-content.xlsx")) {
+            assertNotNull(workbook.getStylesSource());
 
-        StylesTable st = workbook.getStylesSource();
-        assertNotNull(st);
+            StylesTable st = workbook.getStylesSource();
+            assertNotNull(st);
 
-        st.replaceCellStyleXfAt(0, st.getCellStyleXfAt(1));
-        st.replaceCellStyleXfAt(1, st.getCellStyleXfAt(1));
+            st.replaceCellStyleXfAt(0, st.getCellStyleXfAt(1));
+            st.replaceCellStyleXfAt(1, st.getCellStyleXfAt(1));
 
-        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(workbook));
+            assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(workbook));
+        }
     }
 }

@@ -19,126 +19,128 @@ package org.apache.poi.xssf.model;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Test;
 
+import java.io.IOException;
+
 public final class TestExternalLinksTable {
     @Test
-    public void none() {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("SampleSS.xlsx");
-        assertNotNull(wb.getExternalLinksTable());
-        assertEquals(0, wb.getExternalLinksTable().size());
+    public void none() throws IOException {
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("SampleSS.xlsx")) {
+            assertNotNull(wb.getExternalLinksTable());
+            assertEquals(0, wb.getExternalLinksTable().size());
+        }
     }
     
     @Test
-    public void basicRead() {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("ref-56737.xlsx");
-        assertNotNull(wb.getExternalLinksTable());
-        Name name = null;
+    public void basicRead() throws IOException {
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("ref-56737.xlsx")) {
+            assertNotNull(wb.getExternalLinksTable());
+            assertEquals(1, wb.getExternalLinksTable().size());
 
-        assertEquals(1, wb.getExternalLinksTable().size());
+            ExternalLinksTable links = wb.getExternalLinksTable().get(0);
+            assertEquals(3, links.getSheetNames().size());
+            assertEquals(2, links.getDefinedNames().size());
 
-        ExternalLinksTable links = wb.getExternalLinksTable().get(0);
-        assertEquals(3, links.getSheetNames().size());
-        assertEquals(2, links.getDefinedNames().size());
-        
-        assertEquals("Uses",    links.getSheetNames().get(0));
-        assertEquals("Defines", links.getSheetNames().get(1));
-        assertEquals("56737",   links.getSheetNames().get(2));
-        
-        name = links.getDefinedNames().get(0);
-        assertEquals("NR_Global_B2", name.getNameName());
-        assertEquals(-1, name.getSheetIndex());
-        assertEquals(null, name.getSheetName());
-        assertEquals("'Defines'!$B$2", name.getRefersToFormula());
-        
-        name = links.getDefinedNames().get(1);
-        assertEquals("NR_To_A1", name.getNameName());
-        assertEquals(1, name.getSheetIndex());
-        assertEquals("Defines", name.getSheetName());
-        assertEquals("'Defines'!$A$1", name.getRefersToFormula());
-        
-        assertEquals("56737.xlsx", links.getLinkedFileName());
+            assertEquals("Uses", links.getSheetNames().get(0));
+            assertEquals("Defines", links.getSheetNames().get(1));
+            assertEquals("56737", links.getSheetNames().get(2));
+
+            Name name = links.getDefinedNames().get(0);
+            assertEquals("NR_Global_B2", name.getNameName());
+            assertEquals(-1, name.getSheetIndex());
+            assertNull(name.getSheetName());
+            assertEquals("'Defines'!$B$2", name.getRefersToFormula());
+
+            name = links.getDefinedNames().get(1);
+            assertEquals("NR_To_A1", name.getNameName());
+            assertEquals(1, name.getSheetIndex());
+            assertEquals("Defines", name.getSheetName());
+            assertEquals("'Defines'!$A$1", name.getRefersToFormula());
+
+            assertEquals("56737.xlsx", links.getLinkedFileName());
+        }
     }
     
     @Test
-    public void basicReadWriteRead() {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("ref-56737.xlsx");
-        Name name = wb.getExternalLinksTable().get(0).getDefinedNames().get(1);
-        name.setNameName("Testing");
-        name.setRefersToFormula("$A$1");
-        
-        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
-        assertEquals(1, wb.getExternalLinksTable().size());
-        ExternalLinksTable links = wb.getExternalLinksTable().get(0);
-        
-        name = links.getDefinedNames().get(0);
-        assertEquals("NR_Global_B2", name.getNameName());
-        assertEquals(-1, name.getSheetIndex());
-        assertEquals(null, name.getSheetName());
-        assertEquals("'Defines'!$B$2", name.getRefersToFormula());
-        
-        name = links.getDefinedNames().get(1);
-        assertEquals("Testing", name.getNameName());
-        assertEquals(1, name.getSheetIndex());
-        assertEquals("Defines", name.getSheetName());
-        assertEquals("$A$1", name.getRefersToFormula());
+    public void basicReadWriteRead() throws IOException {
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("ref-56737.xlsx")) {
+            Name name = wb.getExternalLinksTable().get(0).getDefinedNames().get(1);
+            name.setNameName("Testing");
+            name.setRefersToFormula("$A$1");
+
+            XSSFWorkbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
+            assertEquals(1, wbBack.getExternalLinksTable().size());
+            ExternalLinksTable links = wbBack.getExternalLinksTable().get(0);
+
+            name = links.getDefinedNames().get(0);
+            assertEquals("NR_Global_B2", name.getNameName());
+            assertEquals(-1, name.getSheetIndex());
+            assertNull(name.getSheetName());
+            assertEquals("'Defines'!$B$2", name.getRefersToFormula());
+
+            name = links.getDefinedNames().get(1);
+            assertEquals("Testing", name.getNameName());
+            assertEquals(1, name.getSheetIndex());
+            assertEquals("Defines", name.getSheetName());
+            assertEquals("$A$1", name.getRefersToFormula());
+        }
     }
     
     @Test
-    public void readWithReferencesToTwoExternalBooks() {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("ref2-56737.xlsx");
-        
-        assertNotNull(wb.getExternalLinksTable());
-        Name name = null;
+    public void readWithReferencesToTwoExternalBooks() throws IOException {
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("ref2-56737.xlsx")) {
+            assertNotNull(wb.getExternalLinksTable());
+            assertEquals(2, wb.getExternalLinksTable().size());
 
-        assertEquals(2, wb.getExternalLinksTable().size());
+            // Check the first one, links to 56737.xlsx
+            ExternalLinksTable links = wb.getExternalLinksTable().get(0);
+            assertEquals("56737.xlsx", links.getLinkedFileName());
+            assertEquals(3, links.getSheetNames().size());
+            assertEquals(2, links.getDefinedNames().size());
 
-        // Check the first one, links to 56737.xlsx
-        ExternalLinksTable links = wb.getExternalLinksTable().get(0);
-        assertEquals("56737.xlsx", links.getLinkedFileName());
-        assertEquals(3, links.getSheetNames().size());
-        assertEquals(2, links.getDefinedNames().size());
-        
-        assertEquals("Uses",    links.getSheetNames().get(0));
-        assertEquals("Defines", links.getSheetNames().get(1));
-        assertEquals("56737",   links.getSheetNames().get(2));
-        
-        name = links.getDefinedNames().get(0);
-        assertEquals("NR_Global_B2", name.getNameName());
-        assertEquals(-1, name.getSheetIndex());
-        assertEquals(null, name.getSheetName());
-        assertEquals("'Defines'!$B$2", name.getRefersToFormula());
-        
-        name = links.getDefinedNames().get(1);
-        assertEquals("NR_To_A1", name.getNameName());
-        assertEquals(1, name.getSheetIndex());
-        assertEquals("Defines", name.getSheetName());
-        assertEquals("'Defines'!$A$1", name.getRefersToFormula());
+            assertEquals("Uses", links.getSheetNames().get(0));
+            assertEquals("Defines", links.getSheetNames().get(1));
+            assertEquals("56737", links.getSheetNames().get(2));
 
-        
-        // Check the second one, links to 56737.xls, slightly differently
-        links = wb.getExternalLinksTable().get(1);
-        assertEquals("56737.xls", links.getLinkedFileName());
-        assertEquals(2, links.getSheetNames().size());
-        assertEquals(2, links.getDefinedNames().size());
-        
-        assertEquals("Uses",    links.getSheetNames().get(0));
-        assertEquals("Defines", links.getSheetNames().get(1));
-        
-        name = links.getDefinedNames().get(0);
-        assertEquals("NR_Global_B2", name.getNameName());
-        assertEquals(-1, name.getSheetIndex());
-        assertEquals(null, name.getSheetName());
-        assertEquals("'Defines'!$B$2", name.getRefersToFormula());
-        
-        name = links.getDefinedNames().get(1);
-        assertEquals("NR_To_A1", name.getNameName());
-        assertEquals(1, name.getSheetIndex());
-        assertEquals("Defines", name.getSheetName());
-        assertEquals("'Defines'!$A$1", name.getRefersToFormula());
+            Name name = links.getDefinedNames().get(0);
+            assertEquals("NR_Global_B2", name.getNameName());
+            assertEquals(-1, name.getSheetIndex());
+            assertNull(name.getSheetName());
+            assertEquals("'Defines'!$B$2", name.getRefersToFormula());
+
+            name = links.getDefinedNames().get(1);
+            assertEquals("NR_To_A1", name.getNameName());
+            assertEquals(1, name.getSheetIndex());
+            assertEquals("Defines", name.getSheetName());
+            assertEquals("'Defines'!$A$1", name.getRefersToFormula());
+
+
+            // Check the second one, links to 56737.xls, slightly differently
+            links = wb.getExternalLinksTable().get(1);
+            assertEquals("56737.xls", links.getLinkedFileName());
+            assertEquals(2, links.getSheetNames().size());
+            assertEquals(2, links.getDefinedNames().size());
+
+            assertEquals("Uses", links.getSheetNames().get(0));
+            assertEquals("Defines", links.getSheetNames().get(1));
+
+            name = links.getDefinedNames().get(0);
+            assertEquals("NR_Global_B2", name.getNameName());
+            assertEquals(-1, name.getSheetIndex());
+            assertNull(name.getSheetName());
+            assertEquals("'Defines'!$B$2", name.getRefersToFormula());
+
+            name = links.getDefinedNames().get(1);
+            assertEquals("NR_To_A1", name.getNameName());
+            assertEquals(1, name.getSheetIndex());
+            assertEquals("Defines", name.getSheetName());
+            assertEquals("'Defines'!$A$1", name.getRefersToFormula());
+        }
     }
 }
