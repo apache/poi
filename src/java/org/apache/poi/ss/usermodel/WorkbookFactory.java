@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.OldFileFormatException;
@@ -351,8 +352,8 @@ public class WorkbookFactory {
                 throw new IOException(t.getMessage(), t);
             }
         } catch (Exception e) {
-            throw new IOException(e);
+            throw new IOException("While trying to invoke 'createWorkbook' on factory " + factoryClass +
+                    " and arguments " + Arrays.toString(args), e);
         }
     }
-
 }
