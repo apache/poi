@@ -38,10 +38,7 @@ def poijobs = [
         ],
         [ name: 'POI-DSL-1.13', jdk: '1.13', trigger: triggerSundays, skipcigame: true,
           // Nodes beam* do not yet have JDK 13 installed
-          slaveAdd: '&&!beam1&&!beam2&&!beam3&&!beam4&&!beam6&&!beam7&&!beam8&&!beam9&&!beam10&&!beam11&&!beam12&&!beam13&&!beam14&&!beam15&&!beam16',
-          properties: [// JaCoCo currently fails with "java.lang.NoSuchFieldException: $jacocoAccess",
-                       // need to review/check with newer JDK 13 builds or when at least JaCoCo 0.8.3
-                       '-Dcoverage.enabled=false']
+          slaveAdd: '&&!beam1&&!beam2&&!beam3&&!beam4&&!beam6&&!beam7&&!beam8&&!beam9&&!beam10&&!beam11&&!beam12&&!beam13&&!beam14&&!beam15&&!beam16'
         ],
         [ name: 'POI-DSL-IBM-JDK', jdk: 'IBMJDK', trigger: triggerSundays, skipcigame: true
         ],
