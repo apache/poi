@@ -40,7 +40,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import com.sun.xml.bind.api.impl.NameConverter;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hemf.record.emf.HemfComment;
 import org.apache.poi.hemf.record.emf.HemfComment.EmfComment;
