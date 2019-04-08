@@ -400,7 +400,11 @@ public class HwmfGraphics {
             }
         }
 
-        String textString = new String(text, charset).substring(0,length).trim();
+        String textString = "";
+        if (text != null) {
+            textString = new String(text, charset).trim();
+            textString = textString.substring(0, Math.min(textString.length(), length));
+        }
 
         if (textString.isEmpty()) {
             return;
