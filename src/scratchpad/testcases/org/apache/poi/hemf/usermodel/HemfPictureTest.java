@@ -20,6 +20,7 @@ package org.apache.poi.hemf.usermodel;
 
 import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.geom.Point2D;
@@ -39,6 +40,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import com.sun.xml.bind.api.impl.NameConverter;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hemf.record.emf.HemfComment;
 import org.apache.poi.hemf.record.emf.HemfComment.EmfComment;
@@ -48,6 +50,9 @@ import org.apache.poi.hemf.record.emf.HemfHeader;
 import org.apache.poi.hemf.record.emf.HemfRecord;
 import org.apache.poi.hemf.record.emf.HemfRecordType;
 import org.apache.poi.hemf.record.emf.HemfText;
+import org.apache.poi.hwmf.record.HwmfRecord;
+import org.apache.poi.hwmf.record.HwmfText;
+import org.apache.poi.hwmf.usermodel.HwmfPicture;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.RecordFormatException;
 import org.junit.Test;
@@ -282,6 +287,35 @@ public class HemfPictureTest {
             assertContains(txt, "Tika http://incubator.apache.org");
             assertContains(txt, "Latest News\n");
         }
+    }
+
+    @Test
+    public void testWMFInsideEMF() throws Exception {
+
+        byte[] wmfData = null;
+        try (InputStream is = ss_samples.openResourceAsStream("63327.emf")) {
+            HemfPicture pic = new HemfPicture(is);
+            for (HemfRecord record : pic) {
+                if (record.getEmfRecordType() == HemfRecordType.comment) {
+                    HemfComment.EmfComment commentRecord = (HemfComment.EmfComment) record;
+                    HemfComment.EmfCommentData emfCommentData = commentRecord.getCommentData();
+                    if (emfCommentData instanceof HemfComment.EmfCommentDataWMF) {
+                        wmfData = ((HemfComment.EmfCommentDataWMF) emfCommentData).getWMFData();
+                    }
+                }
+            }
+        }
+        assertNotNull(wmfData);
+        assertEquals(230, wmfData.length);
+        HwmfPicture pict = new HwmfPicture(new ByteArrayInputStream(wmfData));
+        String embedded = null;
+        for (HwmfRecord r : pict.getRecords()) {
+            if (r instanceof HwmfText.WmfTextOut) {
+                embedded = ((HwmfText.WmfTextOut) r).getText(StandardCharsets.US_ASCII);
+            }
+        }
+        assertNotNull(embedded);
+        assertEquals("Hw.txt", embedded);
     }
 
     @Test

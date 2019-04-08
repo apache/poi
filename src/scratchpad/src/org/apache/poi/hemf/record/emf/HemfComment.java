@@ -408,7 +408,7 @@ public class HemfComment {
     public static class EmfCommentDataWMF implements EmfCommentData {
         private final Rectangle2D bounds = new Rectangle2D.Double();
         private final List<EmfCommentDataFormat> formats = new ArrayList<>();
-
+        private byte[] wmfData;
         @Override
         public HemfCommentRecordType getCommentRecordType() {
             return HemfCommentRecordType.emfWMF;
@@ -439,11 +439,15 @@ public class HemfComment {
             // WMF metafile in the WinMetafile field.
             int winMetafileSize = (int)leis.readUInt();
 
-            byte[] winMetafile = IOUtils.safelyAllocate(winMetafileSize, MAX_RECORD_LENGTH);
+            wmfData = IOUtils.safelyAllocate(winMetafileSize, MAX_RECORD_LENGTH);
             // some emf comments are truncated, so we don't use readFully here
-            leis.read(winMetafile);
+            leis.read(wmfData);
 
             return leis.getReadIndex()-startIdx;
+        }
+
+        public byte[] getWMFData() {
+            return wmfData;
         }
     }
 
