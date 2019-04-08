@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
 import java.util.zip.ZipEntry;
@@ -238,12 +239,12 @@ public class TestHwmfParsing {
     }
 
     @Test
-    @Ignore("If we decide we can use the common crawl file attached to Bug 60677, " +
-            "we can turn this back on")
     public void testShift_JIS() throws Exception {
-        //TODO: move test file to framework and fix this
-        File f = new File("C:/data/file8.wmf");
-        HwmfPicture wmf = new HwmfPicture(new FileInputStream(f));
+        //this file derives from common crawl: see Bug 60677
+        HwmfPicture wmf = null;
+        try (InputStream fis = samples.openResourceAsStream("60677.wmf")) {
+            wmf = new HwmfPicture(fis);
+        }
 
         Charset charset = LocaleUtil.CHARSET_1252;
         StringBuilder sb = new StringBuilder();
@@ -262,5 +263,22 @@ public class TestHwmfParsing {
         }
         String txt = sb.toString();
         assertContains(txt, "\u822A\u7A7A\u60C5\u5831\u696D\u52D9\u3078\u306E\uFF27\uFF29\uFF33");
+    }
+
+    @Test
+    public void testLengths() throws Exception {
+        //both substring and length rely on char, not codepoints.
+        //This test confirms that the substring calls in HwmfText
+        //will not truncate even beyond-bmp data.
+        //The last character (Deseret AY U+1040C) is comprised of 2 utf16 surrogates/codepoints
+        String s = "\u666E\u6797\u65AF\uD801\uDC0C";
+        Charset utf16LE = StandardCharsets.UTF_16LE;
+        byte[] bytes = s.getBytes(utf16LE);
+        String rebuilt = new String(bytes, utf16LE);
+        rebuilt = rebuilt.substring(0, Math.min(bytes.length, rebuilt.length()));
+        assertEquals(s, rebuilt);
+        assertEquals(5, rebuilt.length());
+        long cnt = rebuilt.codePoints().count();
+        assertEquals(4, cnt);
     }
 }

@@ -395,7 +395,12 @@ public class HwmfText {
         }
 
         public String getText(Charset charset) throws IOException {
-            return new String(rawTextBytes, charset).substring(0, stringLength);
+            if (rawTextBytes == null) {
+                return "";
+            }
+            String ret = new String(rawTextBytes, charset);
+            return ret.substring(0,
+                    Math.min(ret.length(), stringLength));
         }
 
         public Point2D getReference() {
