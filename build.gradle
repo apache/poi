@@ -93,7 +93,7 @@ subprojects {
         
     version = '4.1.1-SNAPSHOT'
     ext {
-        japicmpversion = '4.0.0'
+        japicmpversion = '4.1.0'
     }
 
     tasks.withType(JavaCompile) {
