@@ -26,6 +26,7 @@ import java.util.zip.InflaterInputStream;
 
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.sl.image.ImageHeaderEMF;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Units;
 
 /**
@@ -42,7 +43,7 @@ public final class EMF extends Metafile {
             InputStream is = new ByteArrayInputStream( rawdata );
             Header header = new Header();
             header.read(rawdata, CHECKSUM_SIZE);
-            long len = is.skip(header.getSize() + (long)CHECKSUM_SIZE);
+            long len = IOUtils.skipFully(is,header.getSize() + (long)CHECKSUM_SIZE);
             assert(len == header.getSize() + CHECKSUM_SIZE);
 
             InflaterInputStream inflater = new InflaterInputStream( is );

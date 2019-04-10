@@ -26,6 +26,7 @@ import java.util.zip.InflaterInputStream;
 
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.sl.image.ImageHeaderPICT;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
@@ -58,7 +59,7 @@ public final class PICT extends Metafile {
         Header header = new Header();
         header.read(data, pos);
         long bs_exp = (long)pos + header.getSize();
-        long bs_act = bis.skip(bs_exp);
+        long bs_act = IOUtils.skipFully(bis, bs_exp);
         if (bs_exp != bs_act) {
             throw new EOFException();
         }

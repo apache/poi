@@ -123,6 +123,7 @@ public class RLEDecompressingInputStream extends InputStream {
 
     @Override
     public long skip(long n) throws IOException {
+        //this relies on readChunk's readFully to skipFully
         long length = n;
         while (length > 0) {
             if (pos >= len) {
@@ -165,7 +166,7 @@ public class RLEDecompressingInputStream extends InputStream {
         }
         boolean rawChunk = (w & 0x8000) == 0;
         if (rawChunk) {
-            if (in.read(buf, 0, chunkSize) < chunkSize) {
+            if (IOUtils.readFully(in, buf, 0, chunkSize) < chunkSize) {
                 throw new IllegalStateException(String.format(Locale.ROOT, "Not enough bytes read, expected %d", chunkSize));
             }
             return chunkSize;
