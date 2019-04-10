@@ -96,7 +96,7 @@ public abstract class XSSFBParser {
             is.readFully(buff);
             handleRecord(recordId, buff);
         } else {
-            long length = is.skip(recordLength);
+            long length = IOUtils.skipFully(is, recordLength);
             if (length != recordLength) {
                 throw new XSSFBParseException("End of file reached before expected.\t"+
                 "Tried to skip "+recordLength + ", but only skipped "+length);

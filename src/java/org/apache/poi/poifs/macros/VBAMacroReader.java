@@ -260,10 +260,7 @@ public class VBAMacroReader implements Closeable {
             InputStream compressed = new DocumentInputStream(documentNode);
             try {
                 // we know the offset already, so decompress immediately on-the-fly
-                long skippedBytes = compressed.skip(module.offset);
-                if (skippedBytes != module.offset) {
-                    throw new IOException("tried to skip " + module.offset + " bytes, but actually skipped " + skippedBytes + " bytes");
-                }
+                trySkip(compressed, module.offset);
                 decompressed = new RLEDecompressingInputStream(compressed);
                 module.read(decompressed);
                 return;

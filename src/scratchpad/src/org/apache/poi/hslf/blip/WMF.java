@@ -26,6 +26,7 @@ import java.util.zip.InflaterInputStream;
 
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.sl.image.ImageHeaderWMF;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Units;
 
 /**
@@ -42,8 +43,9 @@ public final class WMF extends Metafile {
             InputStream is = new ByteArrayInputStream( rawdata );
             Header header = new Header();
             header.read(rawdata, CHECKSUM_SIZE*getUIDInstanceCount());
-            long len = is.skip(header.getSize() + (long)CHECKSUM_SIZE*getUIDInstanceCount());
-            assert(len == header.getSize() + CHECKSUM_SIZE*getUIDInstanceCount());
+            long skipLen = header.getSize() + CHECKSUM_SIZE*getUIDInstanceCount();
+            long skipped = IOUtils.skipFully(is, skipLen);
+            assert(skipped == skipLen);
 
             ImageHeaderWMF aldus = new ImageHeaderWMF(header.getBounds());
             aldus.write(out);

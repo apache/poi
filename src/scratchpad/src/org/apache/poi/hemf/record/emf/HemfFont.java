@@ -19,12 +19,10 @@ package org.apache.poi.hemf.record.emf;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.common.usermodel.fonts.FontCharset;
 import org.apache.poi.hwmf.record.HwmfFont;
-import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
@@ -418,7 +416,10 @@ public class HemfFont extends HwmfFont {
             logPan.xHeight = LogFontPanose.XHeight.values()[leis.readUByte()];
 
             // skip 2 byte to ensure 32-bit alignment of this structure.
-            leis.skip(2);
+            long skipped = IOUtils.skipFully(leis,2);
+            if (skipped != 2) {
+                throw new IOException("Didn't skip 2: "+skipped);
+            }
 
             size += 6*LittleEndianConsts.INT_SIZE+10* LittleEndianConsts.BYTE_SIZE+2;
         } else {
