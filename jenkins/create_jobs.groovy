@@ -97,7 +97,10 @@ def defaultEmail = 'dev@poi.apache.org'
 def defaultAnt = 'Ant 1.9.9'
 // currently a lot of H?? slaves don't have Ant installed ... H21 seems to have a SVN problem
 // H35 fails with ImageIO create cache file errors, although the java.io.tmpdir is writable
-def defaultSlaves = '(ubuntu||beam)&&!cloud-slave&&!H15&&!H17&&!H18&&!H24&&!ubuntu-4&&!H21&&!H35'
+def defaultSlaves = '(ubuntu||beam)&&!cloud-slave&&!H15&&!H17&&!H18&&!H24&&!ubuntu-4&&!H21&&!H35' +
+        // Disable all apache-beam-* nodes as they seem to lack svn and Ant installations currently
+        '&&!apache-beam-jenkins-1&&!apache-beam-jenkins-2&&!apache-beam-jenkins-4&&!apache-beam-jenkins-7' +
+        '&&!apache-beam-jenkins-8&&!apache-beam-jenkins-9'
 
 def jdkMapping = [
         '1.6': 'JDK 1.6 (latest)',
