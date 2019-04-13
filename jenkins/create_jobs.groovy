@@ -97,7 +97,8 @@ def defaultEmail = 'dev@poi.apache.org'
 def defaultAnt = 'Ant 1.9.9'
 // currently a lot of H?? slaves don't have Ant installed ... H21 seems to have a SVN problem
 // H35 fails with ImageIO create cache file errors, although the java.io.tmpdir is writable
-def defaultSlaves = '(ubuntu||beam)&&!cloud-slave&&!H15&&!H17&&!H18&&!H24&&!ubuntu-4&&!H21&&!H35'
+def defaultSlaves = '(ubuntu||beam)&&!cloud-slave&&!H15&&!H17&&!H18&&!H24&&!ubuntu-4&&!H21&&!H35' +
+        '&&!apache-beam-jenkins-8'
 
 def jdkMapping = [
         '1.6': 'JDK 1.6 (latest)',
@@ -597,7 +598,8 @@ Unfortunately we often see builds break because of changes/new machines...''')
                 runner('DontRun')
                 steps {
                     shell(
-'''which javac
+'''which svn
+which javac
 javac -version
 echo '<?xml version="1.0"?><project name="POI Build" default="test"><target name="test"><echo>Using Ant: ${ant.version} from ${ant.home}</echo></target></project>' > build.xml
 ''')
