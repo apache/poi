@@ -87,7 +87,7 @@ public class POIFSFileSystem extends BlockStore
     private HeaderBlock _header;
     private DirectoryNode _root;
 
-    private DataSource _data;
+    protected DataSource _data;
 
     /**
      * What big block size the file uses. Most files
@@ -105,11 +105,15 @@ public class POIFSFileSystem extends BlockStore
         _root = null;
 
         if (newFS) {
-            // Data needs to initially hold just the header block,
-            //  a single bat block, and an empty properties section
-            _data = new ByteArrayBackedDataSource(IOUtils.safelyAllocate(
-                    bigBlockSize.getBigBlockSize() * 3, MAX_RECORD_LENGTH));
+            createNewDataSource();
         }
+    }
+
+    protected void createNewDataSource() {
+        // Data needs to initially hold just the header block,
+        //  a single bat block, and an empty properties section
+        _data = new ByteArrayBackedDataSource(IOUtils.safelyAllocate(
+                bigBlockSize.getBigBlockSize() * 3, MAX_RECORD_LENGTH));
     }
 
     /**

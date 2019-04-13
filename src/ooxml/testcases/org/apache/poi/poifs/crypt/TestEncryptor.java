@@ -33,11 +33,7 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.poifs.crypt.agile.AgileDecryptor;
 import org.apache.poi.poifs.crypt.agile.AgileEncryptionHeader;
 import org.apache.poi.poifs.crypt.agile.AgileEncryptionVerifier;
-import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.DocumentEntry;
-import org.apache.poi.poifs.filesystem.DocumentNode;
-import org.apache.poi.poifs.filesystem.Entry;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.poifs.filesystem.*;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -85,6 +81,43 @@ public class TestEncryptor {
             }
         }
         
+        assertArrayEquals(payloadExpected, payloadActual);
+    }
+
+    @Test
+    public void tempFileAgileEncryption() throws Exception {
+        String password = "pass";
+
+        final byte[] payloadExpected;
+        try (InputStream is = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("SimpleMultiCell.xlsx")) {
+            payloadExpected = IOUtils.toByteArray(is);
+        }
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        try (POIFSFileSystem fs = new TempFilePOIFSFileSystem()) {
+            EncryptionInfo ei = new EncryptionInfo(EncryptionMode.agile);
+            Encryptor enc = ei.getEncryptor();
+            enc.confirmPassword(password);
+
+            try (OutputStream os = enc.getDataStream(fs.getRoot())) {
+                os.write(payloadExpected);
+            }
+
+            fs.writeFilesystem(bos);
+        }
+
+        final byte[] payloadActual;
+        try (POIFSFileSystem fs = new POIFSFileSystem(new ByteArrayInputStream(bos.toByteArray()))) {
+            EncryptionInfo ei = new EncryptionInfo(fs);
+            Decryptor dec = ei.getDecryptor();
+            boolean b = dec.verifyPassword(password);
+            assertTrue(b);
+
+            try (InputStream is = dec.getDataStream(fs.getRoot())) {
+                payloadActual = IOUtils.toByteArray(is);
+            }
+        }
+
         assertArrayEquals(payloadExpected, payloadActual);
     }
 
