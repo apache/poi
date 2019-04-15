@@ -17,6 +17,7 @@
 
 package org.apache.poi.poifs.property;
 
+import org.apache.commons.math3.util.ArithmeticUtils;
 import org.apache.poi.poifs.common.POIFSConstants;
 
 /**
@@ -55,7 +56,7 @@ public final class RootProperty extends DirectoryProperty {
     {
         final int BLOCK_SHIFT = 6;
         final int _block_size = 1 << BLOCK_SHIFT;
-        super.setSize(size * _block_size);
+        super.setSize(ArithmeticUtils.mulAndCheck(size, _block_size));
     }
 
     /**

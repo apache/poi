@@ -154,7 +154,7 @@ public final class POIFSDocument implements POIFSViewable, Iterable<ByteBuffer> 
            }
        }
 
-       return (int)length;
+       return Math.toIntExact(length);
    }
    
    /**
