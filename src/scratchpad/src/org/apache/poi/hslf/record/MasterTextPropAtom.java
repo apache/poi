@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.math3.util.ArithmeticUtils;
 import org.apache.poi.hslf.model.textproperties.IndentProp;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
@@ -113,7 +114,8 @@ public final class MasterTextPropAtom extends RecordAtom {
      */
     private void write() {
         int pos = 0;
-        _data = IOUtils.safelyAllocate(indents.size()*6, MAX_RECORD_LENGTH);
+        long newSize = ArithmeticUtils.mulAndCheck((long)indents.size(), (long)6);
+        _data = IOUtils.safelyAllocate(newSize, MAX_RECORD_LENGTH);
         for (IndentProp prop : indents) {
             LittleEndian.putInt(_data, pos, prop.getCharactersCovered());
             LittleEndian.putShort(_data, pos+4, (short)prop.getIndentLevel());

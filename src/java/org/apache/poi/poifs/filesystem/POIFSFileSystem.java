@@ -113,8 +113,8 @@ public class POIFSFileSystem extends BlockStore
     protected void createNewDataSource() {
         // Data needs to initially hold just the header block,
         //  a single bat block, and an empty properties section
-        _data = new ByteArrayBackedDataSource(IOUtils.safelyAllocate(
-                bigBlockSize.getBigBlockSize() * 3, MAX_RECORD_LENGTH));
+        long blockSize = ArithmeticUtils.mulAndCheck((long)bigBlockSize.getBigBlockSize(), (long)3);
+        _data = new ByteArrayBackedDataSource(IOUtils.safelyAllocate(blockSize, MAX_RECORD_LENGTH));
     }
 
     /**
