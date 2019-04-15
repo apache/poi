@@ -36,6 +36,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.math3.util.ArithmeticUtils;
 import org.apache.poi.EmptyFileException;
 import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.common.POIFSConstants;
@@ -407,7 +408,8 @@ public class POIFSFileSystem extends BlockStore
         newBAT.setOurBlockIndex(offset);
         // Ensure there's a spot in the file for it
         ByteBuffer buffer = ByteBuffer.allocate(bigBlockSize.getBigBlockSize());
-        int writeTo = (1 + offset) * bigBlockSize.getBigBlockSize(); // Header isn't in BATs
+        // Header isn't in BATs
+        long writeTo = ArithmeticUtils.mulAndCheck((1 + (long)offset), (long)bigBlockSize.getBigBlockSize());
         _data.write(buffer, writeTo);
         // All done
         return newBAT;

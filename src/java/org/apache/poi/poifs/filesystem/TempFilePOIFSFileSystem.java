@@ -42,7 +42,7 @@ public class TempFilePOIFSFileSystem extends POIFSFileSystem {
     }
 
     public void close() throws IOException {
-        if (tempFile != null) tempFile.delete();
+        if (tempFile != null && tempFile.exists()) tempFile.delete();
         super.close();
     }
 
