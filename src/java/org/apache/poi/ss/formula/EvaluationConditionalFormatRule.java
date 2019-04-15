@@ -455,7 +455,7 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
                         Collections.sort(allValues);
                     }
                     
-                    int limit = (int) conf.getRank();
+                    int limit = Math.toIntExact(conf.getRank());
                     if (conf.getPercent()) {
                         limit = allValues.size() * limit / 100;
                     }
