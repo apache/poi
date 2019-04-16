@@ -24,6 +24,7 @@ import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.FontUnderline;
 import org.apache.poi.ss.usermodel.ShapeTypes;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.util.Units;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.Test;
@@ -34,12 +35,25 @@ import org.openxmlformats.schemas.drawingml.x2006.main.STTextUnderlineType;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTDrawing;
 
 import java.awt.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
 import static org.junit.Assert.*;
 
 public class TestXSSFDrawing {
+    @Test
+    public void bug54803() throws Exception {
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("bug54803.xlsx")) {
+            XSSFSheet sheet = wb.getSheetAt(0);
+            XSSFDrawing drawing = sheet.createDrawingPatriarch();
+            XSSFTestDataSamples.writeOutAndReadBack(wb).close();
+        }
+    }
+
     @Test
     public void testRead() throws IOException {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("WithDrawing.xlsx");

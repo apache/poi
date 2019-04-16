@@ -17,6 +17,11 @@
 
 package org.apache.poi.openxml4j.opc;
 
+import static org.apache.poi.openxml4j.opc.ContentTypes.EXTENSION_XML;
+import static org.apache.poi.openxml4j.opc.ContentTypes.PLAIN_OLD_XML;
+import static org.apache.poi.openxml4j.opc.ContentTypes.RELATIONSHIPS_PART;
+import static org.apache.poi.openxml4j.opc.PackagingURIHelper.RELATIONSHIP_PART_EXTENSION_NAME;
+
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
@@ -31,6 +36,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.poi.ooxml.util.PackageHelper;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JRuntimeException;
@@ -382,10 +388,10 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 			pkg.contentTypeManager.addContentType(
 					PackagingURIHelper.createPartName(
 							PackagingURIHelper.PACKAGE_RELATIONSHIPS_ROOT_URI),
-					ContentTypes.RELATIONSHIPS_PART);
+					RELATIONSHIPS_PART);
 			pkg.contentTypeManager.addContentType(
 					PackagingURIHelper.createPartName("/default.xml"),
-					ContentTypes.PLAIN_OLD_XML);
+					PLAIN_OLD_XML);
 
 			// Initialise some PackageBase properties
 			pkg.packageProperties = new PackagePropertiesPart(pkg,
@@ -846,6 +852,17 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 
 		PackagePart part = this.createPartImpl(partName, contentType,
 				loadRelationships);
+
+		/* check/create default entries - for bug54803 */
+		try {
+			PackagePartName ppn = PackagingURIHelper.createPartName("/."+EXTENSION_XML);
+			contentTypeManager.addContentType(ppn, PLAIN_OLD_XML);
+			ppn = PackagingURIHelper.createPartName("/"+RELATIONSHIP_PART_EXTENSION_NAME);
+			contentTypeManager.addContentType(ppn, RELATIONSHIPS_PART);
+		} catch (InvalidFormatException e) {
+			throw new InvalidOperationException("unable to create default content-type entries.", e);
+		}
+
 		this.contentTypeManager.addContentType(partName, contentType);
 		this.partList.put(partName, part);
 		this.isDirty = true;
