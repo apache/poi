@@ -29,16 +29,16 @@ def poijobs = [
         ],
         [ name: 'POI-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true,
           // Nodes beam* do not yet have JDK 11 installed
-          slaveAdd: '&&!beam1&&!beam2&&!beam3&&!beam4&&!beam6&&!beam7&&!beam8&&!beam9&&!beam10&&!beam11&&!beam12&&!beam13&&!beam14&&!beam15&&!beam16'
+          slaveAdd: '&&!beam1&&!beam2&&!beam3&&!beam4&&!beam5&&!beam6&&!beam7&&!beam8&&!beam9&&!beam10&&!beam11&&!beam12&&!beam13&&!beam14&&!beam15&&!beam16'
         ],
         [ name: 'POI-DSL-1.12', jdk: '1.12', trigger: triggerSundays, skipcigame: true,
           // Nodes beam* do not yet have JDK 12 installed
           // H43 has outdated JDK12 installed
-          slaveAdd: '&&!beam1&&!beam2&&!beam3&&!beam4&&!beam6&&!beam7&&!beam8&&!beam9&&!beam10&&!beam11&&!beam12&&!beam13&&!beam14&&!beam15&&!beam16&&!H43'
+          slaveAdd: '&&!beam1&&!beam2&&!beam3&&!beam4&&!beam5&&!beam6&&!beam7&&!beam8&&!beam9&&!beam10&&!beam11&&!beam12&&!beam13&&!beam14&&!beam15&&!beam16&&!H43'
         ],
         [ name: 'POI-DSL-1.13', jdk: '1.13', trigger: triggerSundays, skipcigame: true,
           // Nodes beam* do not yet have JDK 13 installed
-          slaveAdd: '&&!beam1&&!beam2&&!beam3&&!beam4&&!beam6&&!beam7&&!beam8&&!beam9&&!beam10&&!beam11&&!beam12&&!beam13&&!beam14&&!beam15&&!beam16'
+          slaveAdd: '&&!beam1&&!beam2&&!beam3&&!beam4&&!beam5&&!beam6&&!beam7&&!beam8&&!beam9&&!beam10&&!beam11&&!beam12&&!beam13&&!beam14&&!beam15&&!beam16'
         ],
         [ name: 'POI-DSL-IBM-JDK', jdk: 'IBMJDK', trigger: triggerSundays, skipcigame: true
         ],
@@ -99,9 +99,11 @@ def defaultAntWindows = 'Ant 1.9 (Latest Windows)'
 // currently a lot of H?? slaves don't have Ant installed ... H21 seems to have a SVN problem
 // H35 fails with ImageIO create cache file errors, although the java.io.tmpdir is writable
 def defaultSlaves = '(ubuntu||beam)&&!cloud-slave&&!H15&&!H17&&!H18&&!H24&&!ubuntu-4&&!H21&&!H35' +
+        // some nodes have strange problems with fetching from SVN
+        '&&!beam5' +
         // Disable all apache-beam-* nodes as they seem to lack svn and Ant installations currently
         '&&!apache-beam-jenkins-1&&!apache-beam-jenkins-2&&!apache-beam-jenkins-4&&!apache-beam-jenkins-7' +
-        '&&!apache-beam-jenkins-8&&!apache-beam-jenkins-9'
+        '&&!apache-beam-jenkins-8&&!apache-beam-jenkins-9&&!apache-beam-jenkins-12'
 
 def jdkMapping = [
         '1.6': 'JDK 1.6 (latest)',
@@ -175,7 +177,7 @@ javac -version
 echo Ant-Home: $ANT_HOME
 ls -al $ANT_HOME
 echo which ant
-which ant
+which ant || true
 ant -version
 
 echo '<project default="test"><target name="test"><echo>Java ${ant.java.version}/${java.version}</echo><exec executable="javac"><arg value="-version"/></exec></target></project>' > build.javacheck.xml
