@@ -277,12 +277,12 @@ under the License.
 
     <property name="maven.ooxml.xsds.version.id" value="1.4"/>
 
-    <!-- See http://www.ecma-international.org/publications/standards/Ecma-376.htm -->
+    <!-- See https://www.ecma-international.org/publications/standards/Ecma-376.htm -->
     <!-- "Copy these file(s), free of charge" -->
     <property name="ooxml.xsds.ozip.1" value="OfficeOpenXML-Part4.zip"/>
     <property name="ooxml.xsds.izip.1" value="OfficeOpenXML-XMLSchema.zip"/>
     <property name="ooxml.xsds.url.1"
-              value="http://www.ecma-international.org/publications/files/ECMA-ST/Office%20Open%20XML%201st%20edition%20Part%204%20(PDF).zip"/>
+              value="https://www.ecma-international.org/publications/files/ECMA-ST/Office%20Open%20XML%201st%20edition%20Part%204%20(PDF).zip"/>
     <property name="ooxml.xsds.src.dir" location="build/ooxml-xsds-src"/>
     <property name="ooxml.xsds.src.jar" location="${ooxml.lib}/ooxml-schemas-${maven.ooxml.xsds.version.id}-sources.jar"/>
     <property name="ooxml.xsds.jar" location="${ooxml.lib}/ooxml-schemas-${maven.ooxml.xsds.version.id}.jar"/>
@@ -290,12 +290,12 @@ under the License.
     <!-- additional schemas are packed into the poi schemas jar, -->
     <!-- so we don't have to care about a seperate versioning of the original ooxml schemas -->
     <property name="ooxml.xsds.dsig.1" value="https://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd"/>
-    <property name="ooxml.xsds.dsig.2" value="http://uri.etsi.org/01903/v1.3.2/XAdES.xsd"/>
-    <property name="ooxml.xsds.dsig.3" value="http://uri.etsi.org/01903/v1.4.1/XAdESv141.xsd"/>
+    <property name="ooxml.xsds.dsig.2" value="https://uri.etsi.org/01903/v1.3.2/XAdES.xsd"/>
+    <property name="ooxml.xsds.dsig.3" value="https://uri.etsi.org/01903/v1.4.1/XAdESv141.xsd"/>
     <property name="ooxml.xsds.ozip.2" value="OfficeOpenXML-Part2.zip"/>
     <property name="ooxml.xsds.izip.2" value="OpenPackagingConventions-XMLSchema.zip"/>
     <property name="ooxml.xsds.url.2"
-              value="http://www.ecma-international.org/publications/files/ECMA-ST/Office%20Open%20XML%201st%20edition%20Part%202%20(PDF).zip"/>
+              value="https://www.ecma-international.org/publications/files/ECMA-ST/Office%20Open%20XML%201st%20edition%20Part%202%20(PDF).zip"/>
     <property name="ooxml.security.src.dir" location="build/ooxml-security-src"/>
     <property name="ooxml.security.src.jar" location="${ooxml.lib}/ooxml-security-1.1-sources.jar"/>
     <property name="ooxml.security.jar" location="${ooxml.lib}/ooxml-security-1.1.jar"/>
