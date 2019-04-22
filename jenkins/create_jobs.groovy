@@ -94,7 +94,8 @@ def xmlbeansSvnBase = 'https://svn.apache.org/repos/asf/xmlbeans/trunk'
 def defaultJdk = '1.8'
 def defaultTrigger = 'H/15 * * * *'     // check SCM every 60/15 = 4 minutes
 def defaultEmail = 'dev@poi.apache.org'
-def defaultAnt = 'Ant 1.9.9'
+def defaultAnt = 'Ant 1.9 (Latest)'
+def defaultAntWindows = 'Ant 1.9 (Latest Windows)'
 // currently a lot of H?? slaves don't have Ant installed ... H21 seems to have a SVN problem
 // H35 fails with ImageIO create cache file errors, although the java.io.tmpdir is writable
 def defaultSlaves = '(ubuntu||beam)&&!cloud-slave&&!H15&&!H17&&!H18&&!H24&&!ubuntu-4&&!H21&&!H35' +
@@ -205,7 +206,7 @@ poijobs.each { poijob ->
     def trigger = poijob.trigger ?: defaultTrigger
     def email = poijob.email ?: defaultEmail
     def slaves = poijob.slaves ?: defaultSlaves + (poijob.slaveAdd ?: '')
-    def antRT = defaultAnt + (poijob.windows ? ' (Windows)' : '')
+    def antRT = poijob.windows ? defaultAntWindows : defaultAnt
 
     job(poijob.name) {
         if (poijob.disabled) {
@@ -468,7 +469,7 @@ xmlbeansjobs.each { xjob ->
     def trigger = xjob.trigger ?: defaultTrigger
     def email = xjob.email ?: defaultEmail
     def slaves = xjob.slaves ?: defaultSlaves + (xjob.slaveAdd ?: '')
-    def antRT = defaultAnt + (xjob.windows ? ' (Windows)' : '')
+    def antRT = xjob.windows ? defaultAntWindows : defaultAnt
 
     job(xjob.name) {
         if (xjob.disabled) {
@@ -629,7 +630,7 @@ echo ^<?xml version=^"1.0^"?^>^<project name=^"POI Build^" default=^"test^"^>^<t
 ''')
                     }
                     ant {
-                        antInstallation(defaultAnt + ' (Windows)')
+                        antInstallation(defaultAntWindows)
                     }
                 }
             }
