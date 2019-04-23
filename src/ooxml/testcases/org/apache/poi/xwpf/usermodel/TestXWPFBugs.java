@@ -37,80 +37,79 @@ public class TestXWPFBugs {
                         "\nK\u0131rm\u0131z\u0131 don,\n" +
                         "\ngel bizim bah\u00e7eye kon,\n" +
                         "\nsar\u0131 limon";
-        XWPFDocument doc = new XWPFDocument();
-        XWPFRun run = doc.createParagraph().createRun();
+        try (XWPFDocument doc = new XWPFDocument()) {
+            XWPFRun run = doc.createParagraph().createRun();
 
-        for (String str : blabla.split("\n")) {
-            run.setText(str);
-            run.addBreak();
+            for (String str : blabla.split("\n")) {
+                run.setText(str);
+                run.addBreak();
+            }
+
+            run.setFontFamily("Times New Roman");
+            run.setFontSize(20);
+            assertEquals(run.getFontFamily(), "Times New Roman");
+            assertEquals(run.getFontFamily(FontCharRange.cs), "Times New Roman");
+            assertEquals(run.getFontFamily(FontCharRange.eastAsia), "Times New Roman");
+            assertEquals(run.getFontFamily(FontCharRange.hAnsi), "Times New Roman");
+            run.setFontFamily("Arial", FontCharRange.hAnsi);
+            assertEquals(run.getFontFamily(FontCharRange.hAnsi), "Arial");
         }
-
-        run.setFontFamily("Times New Roman");
-        run.setFontSize(20);
-        assertEquals(run.getFontFamily(), "Times New Roman");
-        assertEquals(run.getFontFamily(FontCharRange.cs), "Times New Roman");
-        assertEquals(run.getFontFamily(FontCharRange.eastAsia), "Times New Roman");
-        assertEquals(run.getFontFamily(FontCharRange.hAnsi), "Times New Roman");
-        run.setFontFamily("Arial", FontCharRange.hAnsi);
-        assertEquals(run.getFontFamily(FontCharRange.hAnsi), "Arial");
-        
-        doc.close();
     }
 
     @Test
     public void bug57312_NullPointException() throws IOException {
-        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("57312.docx");
-        assertNotNull(doc);
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("57312.docx")) {
+            assertNotNull(doc);
 
-        for (IBodyElement bodyElement : doc.getBodyElements()) {
-            BodyElementType elementType = bodyElement.getElementType();
+            for (IBodyElement bodyElement : doc.getBodyElements()) {
+                BodyElementType elementType = bodyElement.getElementType();
 
-            if (elementType == BodyElementType.PARAGRAPH) {
-                XWPFParagraph paragraph = (XWPFParagraph) bodyElement;
+                if (elementType == BodyElementType.PARAGRAPH) {
+                    XWPFParagraph paragraph = (XWPFParagraph) bodyElement;
 
-                for (IRunElement iRunElem : paragraph.getIRuns()) {
+                    for (IRunElement iRunElem : paragraph.getIRuns()) {
 
-                    if (iRunElem instanceof XWPFRun) {
-                        XWPFRun runElement = (XWPFRun) iRunElem;
+                        if (iRunElem instanceof XWPFRun) {
+                            XWPFRun runElement = (XWPFRun) iRunElem;
 
-                        UnderlinePatterns underline = runElement.getUnderline();
-                        assertNotNull(underline);
+                            UnderlinePatterns underline = runElement.getUnderline();
+                            assertNotNull(underline);
 
-                        //System.out.println("Found: " + underline + ": " + runElement.getText(0));
+                            //System.out.println("Found: " + underline + ": " + runElement.getText(0));
+                        }
                     }
                 }
             }
         }
-        doc.close();
     }
 
     @Test
     public void bug57495_getTableArrayInDoc() throws IOException {
-        XWPFDocument doc =new XWPFDocument();
-        //let's create a few tables for the test
-        for(int i=0;i<3;i++) {
-            doc.createTable(2, 2);
+        try (XWPFDocument doc = new XWPFDocument()) {
+            //let's create a few tables for the test
+            for (int i = 0; i < 3; i++) {
+                doc.createTable(2, 2);
+            }
+            XWPFTable table = doc.getTableArray(0);
+            assertNotNull(table);
+            //let's check also that returns the correct table
+            XWPFTable same = doc.getTables().get(0);
+            assertEquals(table, same);
         }
-        XWPFTable table = doc.getTableArray(0);
-        assertNotNull(table);
-        //let's check also that returns the correct table
-        XWPFTable same = doc.getTables().get(0);
-        assertEquals(table, same);
-        doc.close();
     }
 
     @Test
     public void bug57495_getParagraphArrayInTableCell() throws IOException {
-        XWPFDocument doc =new XWPFDocument();
-        //let's create a table for the test
-        XWPFTable table = doc.createTable(2, 2);       
-        assertNotNull(table);
-        XWPFParagraph p = table.getRow(0).getCell(0).getParagraphArray(0);
-        assertNotNull(p);
-        //let's check also that returns the correct paragraph
-        XWPFParagraph same = table.getRow(0).getCell(0).getParagraphs().get(0);        
-        assertEquals(p, same);
-        doc.close();
+        try (XWPFDocument doc = new XWPFDocument()) {
+            //let's create a table for the test
+            XWPFTable table = doc.createTable(2, 2);
+            assertNotNull(table);
+            XWPFParagraph p = table.getRow(0).getCell(0).getParagraphArray(0);
+            assertNotNull(p);
+            //let's check also that returns the correct paragraph
+            XWPFParagraph same = table.getRow(0).getCell(0).getParagraphs().get(0);
+            assertEquals(p, same);
+        }
     }
     
     @Test
@@ -123,9 +122,9 @@ public class TestXWPFBugs {
 
     @Test
     public void test56392() throws IOException {
-        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("56392.docx");
-        assertNotNull(doc);
-        doc.close();
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("56392.docx")) {
+            assertNotNull(doc);
+        }
     }
 
     /**
@@ -133,15 +132,15 @@ public class TestXWPFBugs {
      */
     @Test
     public void test57829() throws IOException {
-        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
-        assertNotNull(doc);
-        assertEquals(3, doc.getParagraphs().size());
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx")) {
+            assertNotNull(doc);
+            assertEquals(3, doc.getParagraphs().size());
 
-        for (XWPFParagraph paragraph : doc.getParagraphs()) {
-            paragraph.removeRun(0);
-            assertNotNull(paragraph.getText());
+            for (XWPFParagraph paragraph : doc.getParagraphs()) {
+                paragraph.removeRun(0);
+                assertNotNull(paragraph.getText());
+            }
         }
-        doc.close();
     }
     
   /**
@@ -149,29 +148,30 @@ public class TestXWPFBugs {
    */
   @Test
   public void test58618() throws IOException {
-      XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("58618.docx");
-      XWPFParagraph para = (XWPFParagraph)doc.getBodyElements().get(0);
-      assertNotNull(para);
-      assertEquals("Some text  some hyper links link link and some text.....", para.getText());
-      XWPFRun run = para.insertNewRun(para.getRuns().size());
-      run.setText("New Text");
-      assertEquals("Some text  some hyper links link link and some text.....New Text", para.getText());
-      para.removeRun(para.getRuns().size() -2);
-      assertEquals("Some text  some hyper links link linkNew Text", para.getText());
-      doc.close();
+      try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("58618.docx")) {
+          XWPFParagraph para = (XWPFParagraph) doc.getBodyElements().get(0);
+          assertNotNull(para);
+          assertEquals("Some text  some hyper links link link and some text.....", para.getText());
+          XWPFRun run = para.insertNewRun(para.getRuns().size());
+          run.setText("New Text");
+          assertEquals("Some text  some hyper links link link and some text.....New Text", para.getText());
+          para.removeRun(para.getRuns().size() - 2);
+          assertEquals("Some text  some hyper links link linkNew Text", para.getText());
+      }
   }
 
     @Test
     public void test59378() throws IOException {
-        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("59378.docx");
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        doc.write(out);
-        out.close();
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("59378.docx")) {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            doc.write(out);
+            out.close();
 
-        XWPFDocument doc2 = new XWPFDocument(new ByteArrayInputStream(out.toByteArray()));
-        doc2.close();
+            XWPFDocument doc2 = new XWPFDocument(new ByteArrayInputStream(out.toByteArray()));
+            doc2.close();
 
-        XWPFDocument docBack = XWPFTestDataSamples.writeOutAndReadBack(doc);
-        docBack.close();
+            XWPFDocument docBack = XWPFTestDataSamples.writeOutAndReadBack(doc);
+            docBack.close();
+        }
     }
 }

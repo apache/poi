@@ -19,27 +19,41 @@ package org.apache.poi.xwpf.model;
 
 import java.io.IOException;
 
-import junit.framework.TestCase;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFHyperlinkRun;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests for the various XWPF decorators
  */
-public class TestXWPFDecorators extends TestCase {
+public class TestXWPFDecorators {
     private XWPFDocument simple;
     private XWPFDocument hyperlink;
     private XWPFDocument comments;
 
-    @Override
-    protected void setUp() throws IOException {
+    @Before
+    public void setUp() throws IOException {
         simple = XWPFTestDataSamples.openSampleDocument("SampleDoc.docx");
         hyperlink = XWPFTestDataSamples.openSampleDocument("TestDocument.docx");
         comments = XWPFTestDataSamples.openSampleDocument("WordWithAttachments.docx");
     }
 
+    @After
+    public void tearDown() throws IOException {
+        simple.close();
+        hyperlink.close();
+        comments.close();
+    }
+
+    @Test
     public void testHyperlink() {
         XWPFParagraph ps;
         XWPFParagraph ph;
@@ -66,6 +80,7 @@ public class TestXWPFDecorators extends TestCase {
         assertEquals("http://poi.apache.org/", link.getHyperlink(hyperlink).getURL());
     }
 
+    @Test
     public void testComments() {
         int numComments = 0;
         for (XWPFParagraph p : comments.getParagraphs()) {
