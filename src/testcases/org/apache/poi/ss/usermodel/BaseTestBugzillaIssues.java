@@ -154,30 +154,30 @@ public abstract class BaseTestBugzillaIssues {
      */
     @Test
     public void bug22720() throws IOException {
-       Workbook wb = _testDataProvider.createWorkbook();
-       wb.createSheet("TEST");
-       Sheet template = wb.getSheetAt(0);
+        Workbook wb = _testDataProvider.createWorkbook();
+        wb.createSheet("TEST");
+        Sheet template = wb.getSheetAt(0);
 
-       template.addMergedRegion(new CellRangeAddress(0, 1, 0, 2));
-       template.addMergedRegion(new CellRangeAddress(2, 3, 0, 2));
+        assertEquals(0, template.addMergedRegion(new CellRangeAddress(0, 1, 0, 2)));
+        assertEquals(1, template.addMergedRegion(new CellRangeAddress(2, 3, 0, 2)));
 
-       Sheet clone = wb.cloneSheet(0);
-       int originalMerged = template.getNumMergedRegions();
-       assertEquals("2 merged regions", 2, originalMerged);
+        Sheet clone = wb.cloneSheet(0);
+        int originalMerged = template.getNumMergedRegions();
+        assertEquals("2 merged regions", 2, originalMerged);
 
-       //remove merged regions from clone
-       for (int i=template.getNumMergedRegions()-1; i>=0; i--) {
-           clone.removeMergedRegion(i);
-       }
+        //remove merged regions from clone
+        for (int i=template.getNumMergedRegions()-1; i>=0; i--) {
+            clone.removeMergedRegion(i);
+        }
 
-       assertEquals("Original Sheet's Merged Regions were removed", originalMerged, template.getNumMergedRegions());
-       //check if template's merged regions are OK
-       if (template.getNumMergedRegions()>0) {
+        assertEquals("Original Sheet's Merged Regions were removed", originalMerged, template.getNumMergedRegions());
+        //check if template's merged regions are OK
+        if (template.getNumMergedRegions()>0) {
             // fetch the first merged region...EXCEPTION OCCURS HERE
             template.getMergedRegion(0);
-       }
+        }
 
-       wb.close();
+        wb.close();
     }
 
     @Test

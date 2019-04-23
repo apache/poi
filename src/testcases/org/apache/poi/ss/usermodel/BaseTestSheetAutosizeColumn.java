@@ -212,7 +212,7 @@ public abstract class BaseTestSheetAutosizeColumn {
         trackColumnsForAutoSizingIfSXSSF(sheet);
         Row row = sheet.createRow(0);
         
-        Font defaultFont = workbook.getFontAt((short)0);
+        Font defaultFont = workbook.getFontAt(0);
 
         CellStyle style1 = workbook.createCellStyle();
         Font font1 = workbook.createFont();
@@ -276,7 +276,7 @@ public abstract class BaseTestSheetAutosizeColumn {
         trackColumnsForAutoSizingIfSXSSF(sheet);
 
         Row row = sheet.createRow(0);
-        sheet.addMergedRegion(CellRangeAddress.valueOf("A1:B1"));
+        assertEquals(0, sheet.addMergedRegion(CellRangeAddress.valueOf("A1:B1")));
 
         Cell cell0 = row.createCell(0);
         cell0.setCellValue("Apache Software Foundation");
@@ -292,7 +292,6 @@ public abstract class BaseTestSheetAutosizeColumn {
         workbook.close();
     }
 
-    
     /**
      * Auto-Sizing a column needs to work when we have rows
      *  passed the 32767 boundary. See bug #48079
@@ -354,8 +353,8 @@ public abstract class BaseTestSheetAutosizeColumn {
 
     protected static void fixFonts(Workbook workbook) {
         if (!JvmBugs.hasLineBreakMeasurerBug()) return;
-        for (int i=workbook.getNumberOfFonts()-1; i>=0; i--) {
-            Font f = workbook.getFontAt((short)0);
+        for (int i=workbook.getNumberOfFontsAsInt()-1; i>=0; i--) {
+            Font f = workbook.getFontAt(0);
             if ("Calibri".equals(f.getFontName())) {
                 f.setFontName("Lucida Sans");
             } else if ("Cambria".equals(f.getFontName())) {

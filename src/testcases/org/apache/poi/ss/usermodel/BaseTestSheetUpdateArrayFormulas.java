@@ -480,7 +480,7 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
         CellRange<? extends Cell> srange =
                 sheet.setArrayFormula("SUM(A4:A6,B4:B6)", CellRangeAddress.valueOf("B5"));
         Cell scell = srange.getTopLeftCell();
-        sheet.addMergedRegion(CellRangeAddress.valueOf("B5:C6"));
+        assertEquals(0, sheet.addMergedRegion(CellRangeAddress.valueOf("B5:C6")));
         //we are still an array formula
         assertEquals(CellType.FORMULA, scell.getCellType());
         assertTrue(scell.isPartOfArrayFormulaGroup());
@@ -595,7 +595,7 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
         Sheet sheet = workbook.createSheet();
         
         CellRangeAddress mergedRegion = CellRangeAddress.valueOf("B2:C2");
-        sheet.addMergedRegion(mergedRegion);
+        assertEquals(0, sheet.addMergedRegion(mergedRegion));
         CellRangeAddress arrayFormula = CellRangeAddress.valueOf("C1:C3");
         assumeTrue(mergedRegion.intersects(arrayFormula));
         assumeTrue(arrayFormula.intersects(mergedRegion));

@@ -288,7 +288,7 @@ public abstract class BaseTestSheetShiftRows {
         CellRangeAddress region = new CellRangeAddress(0, 0, 0, 2);
         assertEquals("A1:C1", region.formatAsString());
 
-        sheet.addMergedRegion(region);
+        assertEquals(0, sheet.addMergedRegion(region));
 
         sheet.shiftRows(0, 1, 2);
         region = sheet.getMergedRegion(0);
@@ -313,9 +313,9 @@ public abstract class BaseTestSheetShiftRows {
         
         CellRangeAddress A4_B7 = CellRangeAddress.valueOf("A4:B7");
         CellRangeAddress C4_D7 = CellRangeAddress.valueOf("C4:D7");
-        
-        sheet.addMergedRegion(A4_B7);
-        sheet.addMergedRegion(C4_D7);
+
+        assertEquals(0, sheet.addMergedRegion(A4_B7));
+        assertEquals(1, sheet.addMergedRegion(C4_D7));
         
         assumeTrue(sheet.getLastRowNum() > 8);
         
@@ -480,8 +480,9 @@ public abstract class BaseTestSheetShiftRows {
     public void testBug55280() throws IOException {
         Workbook w = _testDataProvider.createWorkbook();
         Sheet s = w.createSheet();
-        for (int row = 0; row < 5000; ++row)
-            s.addMergedRegion(new CellRangeAddress(row, row, 0, 3));
+        for (int row = 0; row < 5000; ++row) {
+            assertEquals(row, s.addMergedRegion(new CellRangeAddress(row, row, 0, 3)));
+        }
 
         s.shiftRows(0, 4999, 1);        // takes a long time...
         w.close();
@@ -614,8 +615,8 @@ public abstract class BaseTestSheetShiftRows {
         CellRangeAddress A4_B7 = new CellRangeAddress(3, 6, 0, 1);
         CellRangeAddress C5_D7 = new CellRangeAddress(4, 6, 2, 3);
 
-        sheet.addMergedRegion(A4_B7);
-        sheet.addMergedRegion(C5_D7);
+        assertEquals(0, sheet.addMergedRegion(A4_B7));
+        assertEquals(1, sheet.addMergedRegion(C5_D7));
 
         // A4:B7 will elongate vertically
         // C5:D7 will be shifted down with same size
@@ -646,8 +647,8 @@ public abstract class BaseTestSheetShiftRows {
         CellRangeAddress A1_E1 = new CellRangeAddress(0, 0, 0, 4);
         CellRangeAddress A2_C2 = new CellRangeAddress(1, 1, 0, 2);
 
-        sheet.addMergedRegion(A1_E1);
-        sheet.addMergedRegion(A2_C2);
+        assertEquals(0, sheet.addMergedRegion(A1_E1));
+        assertEquals(1, sheet.addMergedRegion(A2_C2));
 
         // A1:E1 should be removed
         // A2:C2 will be A1:C1
@@ -668,8 +669,8 @@ public abstract class BaseTestSheetShiftRows {
         CellRangeAddress A1_E1 = new CellRangeAddress(0, 0, 0, 4);
         CellRangeAddress A2_C2 = new CellRangeAddress(1, 7, 0, 2);
 
-        sheet.addMergedRegion(A1_E1);
-        sheet.addMergedRegion(A2_C2);
+        assertEquals(0, sheet.addMergedRegion(A1_E1));
+        assertEquals(1, sheet.addMergedRegion(A2_C2));
 
         // A1:E1 should move to A5:E5
         // A2:C2 should be removed
@@ -691,8 +692,8 @@ public abstract class BaseTestSheetShiftRows {
         CellRangeAddress A8_E8 = new CellRangeAddress(7, 7, 0, 4);
         CellRangeAddress A9_C9 = new CellRangeAddress(8, 8, 0, 2);
 
-        sheet.addMergedRegion(A8_E8);
-        sheet.addMergedRegion(A9_C9);
+        assertEquals(0, sheet.addMergedRegion(A8_E8));
+        assertEquals(1, sheet.addMergedRegion(A9_C9));
 
         // A1:E1 should be removed
         // A2:C2 will be A1:C1
@@ -727,8 +728,8 @@ public abstract class BaseTestSheetShiftRows {
         CellRangeAddress A1_E1 = new CellRangeAddress(0, 0, 0, 4);
         CellRangeAddress A2_C2 = new CellRangeAddress(1, 1, 0, 2);
 
-        sheet.addMergedRegion(A1_E1);
-        sheet.addMergedRegion(A2_C2);
+        assertEquals(0, sheet.addMergedRegion(A1_E1));
+        assertEquals(1, sheet.addMergedRegion(A2_C2));
 
         // A1:E1 should be moved to A2:E2
         // A2:C2 will be removed

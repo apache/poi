@@ -19,6 +19,7 @@
 package org.apache.poi.ss.usermodel;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -109,9 +110,9 @@ public abstract class BaseTestSheetShiftColumns {
         assertEquals("$D1+D$2", formulaD5);
 
         Cell newb5Null = sheet1.getRow(4).getCell(1);
-        assertEquals(newb5Null, null);
+        assertNull(newb5Null);
         boolean logicalValue = sheet1.getRow(6).getCell(2).getBooleanCellValue();
-        assertEquals(logicalValue, false);
+        assertFalse(logicalValue);
         Cell textCell = sheet1.getRow(6).getCell(3);
         assertEquals(textCell.getStringCellValue(), "TEXT");
         assertEquals(textCell.getCellStyle().getAlignment(), HorizontalAlignment.CENTER);
@@ -134,11 +135,11 @@ public abstract class BaseTestSheetShiftColumns {
         assertEquals("SUM(A3:E3)", formulaD5);
 
         Cell b5Null = sheet1.getRow(4).getCell(1);
-        assertEquals(b5Null, null);
+        assertNull(b5Null);
         Object c6Null = sheet1.getRow(5).getCell(2); // null cell A5 is shifted
                                                         // for 2 columns, so now
                                                         // c5 should be null
-        assertEquals(c6Null, null);
+        assertNull(c6Null);
     }
 
     @Test
@@ -152,7 +153,7 @@ public abstract class BaseTestSheetShiftColumns {
         String formulaB5 = sheet1.getRow(4).getCell(1).getCellFormula();
         assertEquals("$B1+B$2", formulaB5);
         Cell newb6Null = sheet1.getRow(5).getCell(1);
-        assertEquals(newb6Null, null);
+        assertNull(newb6Null);
     }
     
     @Test(expected = IllegalStateException.class)
@@ -264,8 +265,8 @@ public abstract class BaseTestSheetShiftColumns {
         CellRangeAddress A1_A5 = new CellRangeAddress(0, 4, 0, 0); // NOSONAR, it's more readable this way
         CellRangeAddress B1_B3 = new CellRangeAddress(0, 2, 1, 1); // NOSONAR, it's more readable this way
 
-        sheet.addMergedRegion(B1_B3);
-        sheet.addMergedRegion(A1_A5);
+        assertEquals(0, sheet.addMergedRegion(B1_B3));
+        assertEquals(1, sheet.addMergedRegion(A1_A5));
 
         // A1:A5 should be moved to B1:B5
         // B1:B3 will be removed
@@ -285,8 +286,8 @@ public abstract class BaseTestSheetShiftColumns {
         CellRangeAddress A1_A5 = new CellRangeAddress(0, 4, 0, 0);  // NOSONAR, it's more readable this way
         CellRangeAddress B1_B3 = new CellRangeAddress(0, 2, 1, 1);  // NOSONAR, it's more readable this way
 
-        sheet.addMergedRegion(A1_A5);
-        sheet.addMergedRegion(B1_B3);
+        assertEquals(0, sheet.addMergedRegion(A1_A5));
+        assertEquals(1, sheet.addMergedRegion(B1_B3));
 
         // A1:E1 should be removed
         // B1:B3 will be A1:A3
@@ -320,7 +321,7 @@ public abstract class BaseTestSheetShiftColumns {
         CellRangeAddress region = new CellRangeAddress(0, 2, 0, 0);
         assertEquals("A1:A3", region.formatAsString());
 
-        sheet.addMergedRegion(region);
+        assertEquals(0, sheet.addMergedRegion(region));
 
         sheet.shiftColumns(0, 1, 2);
         region = sheet.getMergedRegion(0);

@@ -392,7 +392,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      *
      * @param region to merge
      * @param validate whether to validate merged region
-     * @return index of this region
+     * @return 0-based index of this region
      * @throws IllegalArgumentException if region contains fewer than 2 cells (this check is inexpensive and is performed regardless of <tt>validate</tt>)
      * @throws IllegalStateException if region intersects with a multi-cell array formula
      * @throws IllegalStateException if region intersects with an existing region on this sheet
@@ -409,14 +409,14 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             validateArrayFormulas(region);
 
             // Throw IllegalStateException if the argument CellRangeAddress intersects with
-            // a merged region already in this sheet 
+            // a merged region already in this sheet
             validateMergedRegions(region);
         }
 
         CTMergeCells ctMergeCells = worksheet.isSetMergeCells() ? worksheet.getMergeCells() : worksheet.addNewMergeCells();
         CTMergeCell ctMergeCell = ctMergeCells.addNewMergeCell();
         ctMergeCell.setRef(region.formatAsString());
-        return ctMergeCells.sizeOfMergeCellArray();
+        return ctMergeCells.sizeOfMergeCellArray()-1;
     }
 
     /**

@@ -524,7 +524,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
 
         int sclLoc = sheet.getSheet().findFirstRecordLocBySid(SCLRecord.sid);
         int window2Loc = sheet.getSheet().findFirstRecordLocBySid(WindowTwoRecord.sid);
-        assertTrue(sclLoc == window2Loc + 1);
+        assertEquals(sclLoc, window2Loc + 1);
         
         // verify limits
         try {
@@ -667,7 +667,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
         assertTrue("Column autosized with only one row: wrong width", sheet.getColumnWidth(0) <= maxWithRow1And2);
 
         //create a region over the 2nd row and auto size the first column
-        sheet.addMergedRegion(new CellRangeAddress(1,1,0,1));
+        assertEquals(1, sheet.addMergedRegion(new CellRangeAddress(1,1,0,1)));
         assertNotNull(sheet.getMergedRegion(0));
         sheet.autoSizeColumn((short)0);
         HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);

@@ -46,7 +46,7 @@ import org.junit.Test;
  * Tests the auto-sizing behaviour of {@link SXSSFSheet} when not all
  * rows fit into the memory window size etc.
  * 
- * @see Bug #57450 which reported the original mis-behaviour
+ * see Bug #57450 which reported the original misbehaviour
  */
 public class TestAutoSizeColumnTracker {
     
@@ -169,12 +169,12 @@ public class TestAutoSizeColumnTracker {
         }
         tracker.updateColumnWidths(row1);
         tracker.updateColumnWidths(row2);
-        sheet.addMergedRegion(CellRangeAddress.valueOf("D1:E1"));
+        assertEquals(0, sheet.addMergedRegion(CellRangeAddress.valueOf("D1:E1")));
         
         assumeRequiredFontsAreInstalled(workbook, row1.getCell(columns.iterator().next()));
         
         // Excel 2013 and LibreOffice 4.2.8.2 both treat columns with merged regions as blank
-        /**    A     B    C      D   E
+        /*     A     B    C      D   E
          * 1 LONG  LONG        LONGMERGE
          * 2       SHORT SHORT     SHORT
          */

@@ -17,22 +17,26 @@
 
 package org.apache.poi.ss.util;
 
-import java.io.IOException;
-
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests SheetUtil.
  *
  * @see org.apache.poi.ss.util.SheetUtil
  */
-public final class TestSheetUtil extends TestCase {
+public final class TestSheetUtil {
+    @Test
     public void testCellWithMerges() throws Exception {
         Workbook wb = new HSSFWorkbook();
         Sheet s = wb.createSheet();
@@ -44,39 +48,41 @@ public final class TestSheetUtil extends TestCase {
         Row r3 = s.createRow(2);
         r3.createCell(0).setCellValue(20);
         r3.createCell(1).setCellValue(21);
-        
-        s.addMergedRegion(new CellRangeAddress(2, 3, 0, 0));
-        s.addMergedRegion(new CellRangeAddress(2, 2, 1, 4));
+
+        assertEquals(0, s.addMergedRegion(new CellRangeAddress(2, 3, 0, 0)));
+        assertEquals(1, s.addMergedRegion(new CellRangeAddress(2, 2, 1, 4)));
         
         // With a cell that isn't defined, we'll get null
-        assertEquals(null, SheetUtil.getCellWithMerges(s, 0, 0));
+        assertNull(SheetUtil.getCellWithMerges(s, 0, 0));
         
         // With a cell that's not in a merged region, we'll get that
-        assertEquals(10.0, SheetUtil.getCellWithMerges(s, 1, 0).getNumericCellValue());
-        assertEquals(11.0, SheetUtil.getCellWithMerges(s, 1, 1).getNumericCellValue());
+        assertEquals(10.0, SheetUtil.getCellWithMerges(s, 1, 0).getNumericCellValue(), 0.01);
+        assertEquals(11.0, SheetUtil.getCellWithMerges(s, 1, 1).getNumericCellValue(), 0.01);
         
         // With a cell that's the primary one of a merged region, we get that cell
-        assertEquals(20.0, SheetUtil.getCellWithMerges(s, 2, 0).getNumericCellValue());
-        assertEquals(21., SheetUtil.getCellWithMerges(s, 2, 1).getNumericCellValue());
+        assertEquals(20.0, SheetUtil.getCellWithMerges(s, 2, 0).getNumericCellValue(), 0.01);
+        assertEquals(21., SheetUtil.getCellWithMerges(s, 2, 1).getNumericCellValue(), 0.01);
         
         // With a cell elsewhere in the merged region, get top-left
-        assertEquals(20.0, SheetUtil.getCellWithMerges(s, 3, 0).getNumericCellValue());
-        assertEquals(21.0, SheetUtil.getCellWithMerges(s, 2, 2).getNumericCellValue());
-        assertEquals(21.0, SheetUtil.getCellWithMerges(s, 2, 3).getNumericCellValue());
-        assertEquals(21.0, SheetUtil.getCellWithMerges(s, 2, 4).getNumericCellValue());
+        assertEquals(20.0, SheetUtil.getCellWithMerges(s, 3, 0).getNumericCellValue(), 0.01);
+        assertEquals(21.0, SheetUtil.getCellWithMerges(s, 2, 2).getNumericCellValue(), 0.01);
+        assertEquals(21.0, SheetUtil.getCellWithMerges(s, 2, 3).getNumericCellValue(), 0.01);
+        assertEquals(21.0, SheetUtil.getCellWithMerges(s, 2, 4).getNumericCellValue(), 0.01);
         
         wb.close();
     }
-    
+
+    @Test
     public void testCanComputeWidthHSSF() throws IOException {
         Workbook wb = new HSSFWorkbook();
         
         // cannot check on result because on some machines we get back false here!
-        SheetUtil.canComputeColumnWidth(wb.getFontAt((short)0));
+        SheetUtil.canComputeColumnWidth(wb.getFontAt(0));
 
         wb.close();        
     }
 
+    @Test
     public void testGetCellWidthEmpty() throws IOException {
         Workbook wb = new HSSFWorkbook();
         Sheet sheet = wb.createSheet("sheet");
@@ -85,11 +91,12 @@ public final class TestSheetUtil extends TestCase {
         
         // no contents: cell.setCellValue("sometext");
         
-        assertEquals(-1.0, SheetUtil.getCellWidth(cell, 1, null, true));
+        assertEquals(-1.0, SheetUtil.getCellWidth(cell, 1, null, true), 0.01);
         
         wb.close();
     }
 
+    @Test
     public void testGetCellWidthString() throws IOException {
         Workbook wb = new HSSFWorkbook();
         Sheet sheet = wb.createSheet("sheet");
@@ -103,6 +110,7 @@ public final class TestSheetUtil extends TestCase {
         wb.close();
     }
 
+    @Test
     public void testGetCellWidthNumber() throws IOException {
         Workbook wb = new HSSFWorkbook();
         Sheet sheet = wb.createSheet("sheet");
@@ -116,6 +124,7 @@ public final class TestSheetUtil extends TestCase {
         wb.close();
     }
 
+    @Test
     public void testGetCellWidthBoolean() throws IOException {
         Workbook wb = new HSSFWorkbook();
         Sheet sheet = wb.createSheet("sheet");
@@ -129,6 +138,7 @@ public final class TestSheetUtil extends TestCase {
         wb.close();
     }
 
+    @Test
     public void testGetColumnWidthString() throws IOException {
         Workbook wb = new HSSFWorkbook();
         Sheet sheet = wb.createSheet("sheet");
@@ -142,7 +152,7 @@ public final class TestSheetUtil extends TestCase {
         assertTrue("Having some width for rows with actual cells", 
                 SheetUtil.getColumnWidth(sheet, 0, true) > 0);
         assertEquals("Not having any widht for rows with all empty cells", 
-                -1.0, SheetUtil.getColumnWidth(sheet, 0, true, 1, 2));
+                -1.0, SheetUtil.getColumnWidth(sheet, 0, true, 1, 2), 0.01);
         
         wb.close();
     }
