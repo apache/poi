@@ -275,9 +275,9 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         CellRangeAddress region_2 = CellRangeAddress.valueOf("C3:D4");
         CellRangeAddress region_3 = CellRangeAddress.valueOf("E5:F6");
         CellRangeAddress region_4 = CellRangeAddress.valueOf("G7:H8");
-        sheet.addMergedRegion(region_1);
-        sheet.addMergedRegion(region_2);
-        sheet.addMergedRegion(region_3);
+        assertEquals(0, sheet.addMergedRegion(region_1));
+        assertEquals(1, sheet.addMergedRegion(region_2));
+        assertEquals(2, sheet.addMergedRegion(region_3));
         assertEquals("C3:D4", ctWorksheet.getMergeCells().getMergeCellArray(1).getRef());
         assertEquals(3, sheet.getNumMergedRegions());
         sheet.removeMergedRegion(1);
@@ -288,10 +288,10 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         assertEquals(0, sheet.getNumMergedRegions());
         assertNull(" CTMergeCells should be deleted after removing the last merged " +
                 "region on the sheet.", sheet.getCTWorksheet().getMergeCells());
-        sheet.addMergedRegion(region_1);
-        sheet.addMergedRegion(region_2);
-        sheet.addMergedRegion(region_3);
-        sheet.addMergedRegion(region_4);
+        assertEquals(0, sheet.addMergedRegion(region_1));
+        assertEquals(1, sheet.addMergedRegion(region_2));
+        assertEquals(2, sheet.addMergedRegion(region_3));
+        assertEquals(3, sheet.addMergedRegion(region_4));
         // test invalid indexes OOBE
         Set<Integer> rmIdx = new HashSet<>(Arrays.asList(5, 6));
         sheet.removeMergedRegions(rmIdx);

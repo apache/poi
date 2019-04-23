@@ -277,7 +277,7 @@ public abstract class BaseTestSheet {
         final Sheet sheet = wb.createSheet();
         
         final CellRangeAddress baseRegion = new CellRangeAddress(0, 1, 0, 1); //A1:B2
-        sheet.addMergedRegion(baseRegion);
+        assertEquals(0, sheet.addMergedRegion(baseRegion));
         
         try {
             final CellRangeAddress duplicateRegion = new CellRangeAddress(0, 1, 0, 1); //A1:B2
@@ -316,7 +316,7 @@ public abstract class BaseTestSheet {
         }
         
         final CellRangeAddress disjointRegion = new CellRangeAddress(10, 11, 10, 11);
-        sheet.addMergedRegion(disjointRegion);
+        assertEquals(1, sheet.addMergedRegion(disjointRegion));
         
         wb.close();
     }
@@ -352,7 +352,7 @@ public abstract class BaseTestSheet {
         SpreadsheetVersion ssVersion = _testDataProvider.getSpreadsheetVersion();
 
         CellRangeAddress region = new CellRangeAddress(0, 1, 0, 1);
-        sheet.addMergedRegion(region);
+        assertEquals(0, sheet.addMergedRegion(region));
         assertEquals(1, sheet.getNumMergedRegions());
 
         try {
@@ -390,9 +390,9 @@ public abstract class BaseTestSheet {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet();
         CellRangeAddress region = new CellRangeAddress(0, 1, 0, 1);
-        sheet.addMergedRegion(region);
+        assertEquals(0, sheet.addMergedRegion(region));
         region = new CellRangeAddress(2, 3, 0, 1);
-        sheet.addMergedRegion(region);
+        assertEquals(1, sheet.addMergedRegion(region));
 
         sheet.removeMergedRegion(0);
 
@@ -404,14 +404,14 @@ public abstract class BaseTestSheet {
         assertEquals("there should be no merged regions left!", 0, sheet.getNumMergedRegions());
 
         //an, add, remove, get(0) would null pointer
-        sheet.addMergedRegion(region);
+        assertEquals(0, sheet.addMergedRegion(region));
         assertEquals("there should now be one merged region!", 1, sheet.getNumMergedRegions());
         sheet.removeMergedRegion(0);
         assertEquals("there should now be zero merged regions!", 0, sheet.getNumMergedRegions());
         //add it again!
         region.setLastRow(4);
 
-        sheet.addMergedRegion(region);
+        assertEquals(0, sheet.addMergedRegion(region));
         assertEquals("there should now be one merged region!", 1, sheet.getNumMergedRegions());
 
         //should exist now!
@@ -434,7 +434,7 @@ public abstract class BaseTestSheet {
         for (int r=0; r<10; r++) {
             CellRangeAddress region = new CellRangeAddress(r, r, 0, 1);
             mergedRegions.put(r, region);
-            sheet.addMergedRegion(region);
+            assertEquals(r, sheet.addMergedRegion(region));
         }
         assertCollectionEquals(mergedRegions.values(), sheet.getMergedRegions());
         
@@ -466,7 +466,7 @@ public abstract class BaseTestSheet {
         cell.setCellValue(factory.createRichTextString("second row, second cell"));
 
         CellRangeAddress region = CellRangeAddress.valueOf("A2:B2");
-        sheet.addMergedRegion(region);
+        assertEquals(0, sheet.addMergedRegion(region));
 
         sheet.shiftRows(1, 1, 1);
 
@@ -495,13 +495,13 @@ public abstract class BaseTestSheet {
         assumeTrue(region1.intersects(region2));
         assumeTrue(region2.intersects(region3));
 
-        sh.addMergedRegionUnsafe(region1);
+        assertEquals(0, sh.addMergedRegionUnsafe(region1));
         assertTrue(sh.getMergedRegions().contains(region1));
 
         // adding a duplicate or overlapping merged region should not
         // raise an exception with the unsafe version of addMergedRegion.
 
-        sh.addMergedRegionUnsafe(region2);
+        assertEquals(1, sh.addMergedRegionUnsafe(region2));
 
         // the safe version of addMergedRegion should throw when trying to add a merged region that overlaps an existing region
         assertTrue(sh.getMergedRegions().contains(region2));
@@ -513,7 +513,7 @@ public abstract class BaseTestSheet {
             assertFalse(sh.getMergedRegions().contains(region3));
         }
         // addMergedRegion should not re-validate previously-added merged regions
-        sh.addMergedRegion(region4);
+        assertEquals(2, sh.addMergedRegion(region4));
 
         // validation methods should detect a problem with previously added merged regions (runs in O(n^2) time)
         try {
@@ -534,10 +534,10 @@ public abstract class BaseTestSheet {
         Workbook wb1 = _testDataProvider.createWorkbook();
         Sheet sheet = wb1.createSheet();
 
-        assertEquals(sheet.isDisplayGridlines(), true);
-        assertEquals(sheet.isDisplayRowColHeadings(), true);
-        assertEquals(sheet.isDisplayFormulas(), false);
-        assertEquals(sheet.isDisplayZeros(), true);
+        assertTrue(sheet.isDisplayGridlines());
+        assertTrue(sheet.isDisplayRowColHeadings());
+        assertFalse(sheet.isDisplayFormulas());
+        assertTrue(sheet.isDisplayZeros());
 
         sheet.setDisplayGridlines(false);
         sheet.setDisplayRowColHeadings(false);
@@ -548,10 +548,10 @@ public abstract class BaseTestSheet {
         wb1.close();
         sheet = wb2.getSheetAt(0);
 
-        assertEquals(sheet.isDisplayGridlines(), false);
-        assertEquals(sheet.isDisplayRowColHeadings(), false);
-        assertEquals(sheet.isDisplayFormulas(), true);
-        assertEquals(sheet.isDisplayZeros(), false);
+        assertFalse(sheet.isDisplayGridlines());
+        assertFalse(sheet.isDisplayRowColHeadings());
+        assertTrue(sheet.isDisplayFormulas());
+        assertFalse(sheet.isDisplayZeros());
         
         wb2.close();
     }
@@ -1151,15 +1151,14 @@ public abstract class BaseTestSheet {
         
         workbook.close();
     }
-    
-    
+
     @Test
     public void getCellComments() throws IOException {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet("TEST");
 
         // a sheet with no cell comments should return an empty map (not null or raise NPE).
-        assertEquals(Collections.emptyMap(), sheet.getCellComments());
+        assertTrue(sheet.getCellComments().isEmpty());
 
         Drawing<?> dg = sheet.createDrawingPatriarch();
         ClientAnchor anchor = workbook.getCreationHelper().createClientAnchor();
@@ -1223,13 +1222,13 @@ public abstract class BaseTestSheet {
         CellAddress B6 = new CellAddress(5, 1);
         assertEquals("row, col", hyperlink, sheet.getHyperlink(5, 1));
         assertEquals("addr", hyperlink, sheet.getHyperlink(B6));
-        assertEquals("no hyperlink at A1", null, sheet.getHyperlink(CellAddress.A1));
+        assertNull("no hyperlink at A1", sheet.getHyperlink(CellAddress.A1));
         
         workbook.close();
     }
     
     @Test
-    public void removeAllHyperlinks() throws IOException {
+    public void removeAllHyperlinks() {
         Workbook workbook = _testDataProvider.createWorkbook();
         Hyperlink hyperlink = workbook.getCreationHelper().createHyperlink(HyperlinkType.URL);
         hyperlink.setAddress("https://poi.apache.org/");
@@ -1257,7 +1256,7 @@ public abstract class BaseTestSheet {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet = workbook.createSheet();
         CellRangeAddress region = CellRangeAddress.valueOf("B2:D4");
-        sheet.addMergedRegion(region);
+        assertEquals(0, sheet.addMergedRegion(region));
         assertEquals("B2:D4", sheet.getMergedRegion(0).formatAsString());
         assertEquals(1, sheet.getNumMergedRegions());
         

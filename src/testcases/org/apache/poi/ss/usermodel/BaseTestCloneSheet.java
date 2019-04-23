@@ -41,7 +41,7 @@ public abstract class BaseTestCloneSheet {
     public void testCloneSheetBasic() throws IOException{
         Workbook b = _testDataProvider.createWorkbook();
         Sheet s = b.createSheet("Test");
-        s.addMergedRegion(new CellRangeAddress(0, 1, 0, 1));
+        assertEquals(0, s.addMergedRegion(new CellRangeAddress(0, 1, 0, 1)));
         Sheet clonedSheet = b.cloneSheet(0);
 
         assertEquals("One merged area", 1, clonedSheet.getNumMergedRegions());
@@ -51,7 +51,6 @@ public abstract class BaseTestCloneSheet {
 
     /**
      * Ensures that pagebreak cloning works properly
-     * @throws IOException
      */
     @Test
     public void testPageBreakClones() throws IOException {

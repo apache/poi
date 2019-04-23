@@ -50,7 +50,7 @@ import org.junit.runners.Parameterized.Parameters;
  * Tests the auto-sizing behaviour of {@link SXSSFSheet} when not all
  * rows fit into the memory window size etc.
  * 
- * @see Bug #57450 which reported the original mis-behaviour
+ * see Bug #57450 which reported the original misbehaviour
  */
 @RunWith(Parameterized.class)
 public class TestSXSSFSheetAutoSizeColumn {
@@ -79,7 +79,7 @@ public class TestSXSSFSheetAutoSizeColumn {
     private SXSSFSheet sheet;
     private SXSSFWorkbook workbook;
     
-    @Parameter(0)
+    @Parameter
     public boolean useMergedCells;
     
     @Parameters(name="{index}: useMergedCells={0}")
@@ -189,11 +189,11 @@ public class TestSXSSFSheetAutoSizeColumn {
         Cell a1 = createRowWithCellValues(sheet, 0, LONG_CELL_VALUE);
 
         assumeRequiredFontsAreInstalled(workbook, a1);
-        sheet.addMergedRegion(CellRangeAddress.valueOf("A1:B1"));
+        assertEquals(0, sheet.addMergedRegion(CellRangeAddress.valueOf("A1:B1")));
         
         createRowWithCellValues(sheet, 1, SHORT_CELL_VALUE, SHORT_CELL_VALUE);
         
-        /**
+        /*
          *    A      B
          * 1 LONGMERGED
          * 2 SHORT SHORT

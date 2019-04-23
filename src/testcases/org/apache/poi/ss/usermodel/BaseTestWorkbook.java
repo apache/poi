@@ -482,8 +482,8 @@ public abstract class BaseTestWorkbook {
         Sheet sheet = book.createSheet("TEST");
         sheet.createRow(0).createCell(0).setCellValue("Test");
         sheet.createRow(1).createCell(0).setCellValue(36.6);
-        sheet.addMergedRegion(new CellRangeAddress(0, 1, 0, 2));
-        sheet.addMergedRegion(new CellRangeAddress(2, 3, 0, 2));
+        assertEquals(0, sheet.addMergedRegion(new CellRangeAddress(0, 1, 0, 2)));
+        assertEquals(1, sheet.addMergedRegion(new CellRangeAddress(2, 3, 0, 2)));
         assertTrue(sheet.isSelected());
 
         Sheet clonedSheet = book.cloneSheet(0);
@@ -494,12 +494,12 @@ public abstract class BaseTestWorkbook {
 
         //cloned sheet is a deep copy, adding rows or merged regions in the original does not affect the clone
         sheet.createRow(2).createCell(0).setCellValue(1);
-        sheet.addMergedRegion(new CellRangeAddress(4, 5, 0, 2));
+        assertEquals(2, sheet.addMergedRegion(new CellRangeAddress(4, 5, 0, 2)));
         assertEquals(2, clonedSheet.getPhysicalNumberOfRows());
         assertEquals(2, clonedSheet.getNumMergedRegions());
 
         clonedSheet.createRow(2).createCell(0).setCellValue(1);
-        clonedSheet.addMergedRegion(new CellRangeAddress(6, 7, 0, 2));
+        assertEquals(2, clonedSheet.addMergedRegion(new CellRangeAddress(6, 7, 0, 2)));
         assertEquals(3, clonedSheet.getPhysicalNumberOfRows());
         assertEquals(3, clonedSheet.getNumMergedRegions());
         book.close();

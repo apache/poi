@@ -386,8 +386,8 @@ public final class TestWorkbook {
 
         populateSheet(s);
 
-        s.addMergedRegion(new CellRangeAddress(0, 10, 0, 10));
-        s.addMergedRegion(new CellRangeAddress(30, 40, 5, 15));
+        assertEquals(0, s.addMergedRegion(new CellRangeAddress(0, 10, 0, 10)));
+        assertEquals(1, s.addMergedRegion(new CellRangeAddress(30, 40, 5, 15)));
         sanityChecker.checkHSSFWorkbook(wb1);
         HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
 

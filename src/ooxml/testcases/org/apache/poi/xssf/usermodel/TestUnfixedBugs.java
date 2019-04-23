@@ -164,6 +164,8 @@ public final class TestUnfixedBugs {
         wbBack.close();
     }
 
+    // This test will run green, but the resulting file is formatted incorrectly,
+    // see the bug at https://bz.apache.org/bugzilla/show_bug.cgi?id=55752
     @Test
     public void testBug55752() throws IOException {
         try (Workbook wb = new XSSFWorkbook()) {
@@ -189,16 +191,16 @@ public final class TestUnfixedBugs {
 
             // merge cells
             CellRangeAddress range1 = new CellRangeAddress(0, 0, 0, 1);
-            sheet.addMergedRegion(range1);
+            assertEquals(0, sheet.addMergedRegion(range1));
             CellRangeAddress range2 = new CellRangeAddress(1, 1, 0, 1);
-            sheet.addMergedRegion(range2);
+            assertEquals(1, sheet.addMergedRegion(range2));
             CellRangeAddress range3 = new CellRangeAddress(2, 2, 0, 1);
-            sheet.addMergedRegion(range3);
+            assertEquals(2, sheet.addMergedRegion(range3));
             assertEquals(0, range3.getFirstColumn());
             assertEquals(1, range3.getLastColumn());
             assertEquals(2, range3.getLastRow());
             CellRangeAddress range4 = new CellRangeAddress(3, 3, 0, 1);
-            sheet.addMergedRegion(range4);
+            assertEquals(3, sheet.addMergedRegion(range4));
 
             // set border
             RegionUtil.setBorderBottom(BorderStyle.THIN, range1, sheet);
