@@ -131,6 +131,8 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedNames;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCell;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCells;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTFontImpl;
 import org.xml.sax.InputSource;
@@ -3431,4 +3433,33 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertEquals("The data in the text-file should exactly match the data that we read from the workbook", testData, value);
     }
 
+
+    @Test
+    public void bug63371() {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sheet = wb.createSheet();
+
+        CellRangeAddress region = new CellRangeAddress(1, 1, 1, 2);
+        assertEquals(0, sheet.addMergedRegion(region));
+        //System.out.println(String.format("%s: index=%d", "testAddMergedRegion", index));
+
+        final List<CellRangeAddress> ranges = sheet.getMergedRegions();
+        final int numMergedRegions = sheet.getNumMergedRegions();
+        final CTWorksheet ctSheet = sheet.getCTWorksheet();
+        final CTMergeCells ctMergeCells = ctSheet.getMergeCells();
+        final List<CTMergeCell> ctMergeCellList = ctMergeCells.getMergeCellList();
+        final long ctMergeCellCount = ctMergeCells.getCount();
+        final int ctMergeCellListSize = ctMergeCellList.size();
+
+        /*System.out.println(String.format("\ntestMergeRegions(%s)", "After adding first region"));
+        System.out.println(String.format("ranges.size=%d", ranges.size()));
+        System.out.println(String.format("numMergedRegions=%d", numMergedRegions));
+        System.out.println(String.format("ctMergeCellCount=%d", ctMergeCellCount));
+        System.out.println(String.format("ctMergeCellListSize=%d", ctMergeCellListSize));*/
+
+        assertEquals(1, ranges.size());
+        assertEquals(1, numMergedRegions);
+        assertEquals(1, ctMergeCellCount);
+        assertEquals(1, ctMergeCellListSize);
+    }
 }
