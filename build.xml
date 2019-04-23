@@ -206,12 +206,12 @@ under the License.
     <property name="main.commons-math3.jar" location="${main.lib}/commons-math3-3.6.1.jar"/>
     <property name="main.commons-math3.url"
               value="${repository.m2}/maven2/org/apache/commons/commons-math3/3.6.1/commons-math3-3.6.1.jar"/>
-    <property name="main.xmlbind.jar" location="${main.lib}/jaxb-api-2.3.0.jar"/>
+    <property name="main.xmlbind.jar" location="${main.lib}/jaxb-api-2.3.1.jar"/>
     <property name="main.xmlbind.url"
-              value="${repository.m2}/maven2/javax/xml/bind/jaxb-api/2.3.0/jaxb-api-2.3.0.jar"/>
-    <property name="main.xmlbind-impl.jar" location="${main.lib}/jaxb-impl-2.3.0.1.jar"/>
+              value="${repository.m2}/maven2/javax/xml/bind/jaxb-api/2.3.1/jaxb-api-2.3.1.jar"/>
+    <property name="main.xmlbind-impl.jar" location="${main.lib}/jaxb-impl-2.3.2.jar"/>
     <property name="main.xmlbind-impl.url"
-              value="${repository.m2}/maven2/com/sun/xml/bind/jaxb-impl/2.3.0.1/jaxb-impl-2.3.0.1.jar"/>
+              value="${repository.m2}/maven2/com/sun/xml/bind/jaxb-impl/2.3.2/jaxb-impl-2.3.2.jar"/>
     <property name="main.xmlbind-core.jar" location="${main.lib}/jaxb-core-2.3.0.1.jar"/>
     <property name="main.xmlbind-core.url"
               value="${repository.m2}/maven2/com/sun/xml/bind/jaxb-core/2.3.0.1/jaxb-core-2.3.0.1.jar"/>
@@ -681,6 +681,8 @@ under the License.
                 <include name="mockito-core-2.21.0.jar"/>
                 <include name="byte-buddy-1.7.9.jar"/>
                 <include name="byte-buddy-agent-1.7.9.jar"/>
+                <include name="lib/jaxb-api-2.3.0.jar"/>
+                <include name="lib/jaxb-impl-2.3.0.1.jar"/>
             </fileset>
             <fileset dir="${ooxml.lib}">
                 <!-- remove jars from previous versions, but not the current version -->
