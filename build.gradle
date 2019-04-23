@@ -182,8 +182,8 @@ project('main') {
         compile 'commons-logging:commons-logging:1.2'
         compile 'org.apache.commons:commons-collections4:4.3'
         compile 'org.apache.commons:commons-math3:3.6.1'
-        compile 'javax.xml.bind:jaxb-api:2.3.0'
-        compile 'com.sun.xml.bind:jaxb-impl:2.3.0.1'
+        compile 'javax.xml.bind:jaxb-api:2.3.1'
+        compile 'com.sun.xml.bind:jaxb-impl:2.3.2'
         compile 'com.sun.xml.bind:jaxb-core:2.3.0.1'
         compile 'javax.activation:activation:1.1.1'
 
