@@ -34,9 +34,9 @@ final class PlainCellCache {
 		}
 
 		public static long toBookSheetColumn(int bookIndex, int sheetIndex, int columnIndex) {
-			return ((bookIndex   & 0xFFFFl) << 48)  +
-                   ((sheetIndex  & 0xFFFFl) << 32) +
-                   ((columnIndex & 0xFFFFl) << 0);
+			return ((bookIndex   & 0xFFFFL) << 48)  +
+                   ((sheetIndex  & 0xFFFFL) << 32) +
+                   ((columnIndex & 0xFFFFL) << 0);
 		}
 
 		public Loc(long bookSheetColumn, int rowIndex) {
@@ -80,15 +80,19 @@ final class PlainCellCache {
 	public PlainCellCache() {
 		_plainValueEntriesByLoc = new HashMap<>();
 	}
+
 	public void put(Loc key, PlainValueCellCacheEntry cce) {
 		_plainValueEntriesByLoc.put(key, cce);
 	}
+
 	public void clear() {
 		_plainValueEntriesByLoc.clear();
 	}
+
 	public PlainValueCellCacheEntry get(Loc key) {
 		return _plainValueEntriesByLoc.get(key);
 	}
+
 	public void remove(Loc key) {
 		_plainValueEntriesByLoc.remove(key);
 	}

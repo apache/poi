@@ -17,6 +17,7 @@
 
 package org.apache.poi.xssf.usermodel.charts;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.xddf.usermodel.chart.AxisPosition;
@@ -46,7 +47,7 @@ public final class TestXSSFChartAxis extends TestCase {
 		axis = chart.createValueAxis(AxisPosition.BOTTOM);
 	}
 
-	public void testLogBaseIllegalArgument() throws Exception {
+	public void testLogBaseIllegalArgument() {
 		IllegalArgumentException iae = null;
 		try {
 			axis.setLogBase(0.0);
@@ -64,12 +65,12 @@ public final class TestXSSFChartAxis extends TestCase {
 		assertNotNull(iae);
 	}
 
-	public void testLogBaseLegalArgument() throws Exception {
+	public void testLogBaseLegalArgument() {
 		axis.setLogBase(Math.E);
 		assertTrue(Math.abs(axis.getLogBase() - Math.E) < EPSILON);
 	}
 
-	public void testNumberFormat() throws Exception {
+	public void testNumberFormat() {
 		final String numberFormat = "General";
 		axis.setNumberFormat(numberFormat);
 		assertEquals(numberFormat, axis.getNumberFormat());
@@ -121,19 +122,20 @@ public final class TestXSSFChartAxis extends TestCase {
 		assertEquals(AxisTickMark.CROSS, axis.getMinorTickMark());
 	}
 
-	public void testGetChartAxisBug57362() {
+	public void testGetChartAxisBug57362() throws IOException {
 	  //Load existing excel with some chart on it having primary and secondary axis.
-	    final XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("57362.xlsx");
-        final XSSFSheet sh = workbook.getSheetAt(0);
-        final XSSFDrawing drawing = sh.createDrawingPatriarch();
-        final XSSFChart chart = drawing.getCharts().get(0);
+	    try (final XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("57362.xlsx")) {
+			final XSSFSheet sh = workbook.getSheetAt(0);
+			final XSSFDrawing drawing = sh.createDrawingPatriarch();
+			final XSSFChart chart = drawing.getCharts().get(0);
 
-        final List<? extends XDDFChartAxis> axisList = chart.getAxes();
+			final List<? extends XDDFChartAxis> axisList = chart.getAxes();
 
-        assertEquals(4, axisList.size());
-        assertNotNull(axisList.get(0));
-        assertNotNull(axisList.get(1));
-        assertNotNull(axisList.get(2));
-        assertNotNull(axisList.get(3));
+			assertEquals(4, axisList.size());
+			assertNotNull(axisList.get(0));
+			assertNotNull(axisList.get(1));
+			assertNotNull(axisList.get(2));
+			assertNotNull(axisList.get(3));
+		}
 	}
 }

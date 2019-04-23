@@ -38,13 +38,14 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
  */
 public final class TestPackageCorePropertiesGetKeywords extends TestCase {
     public void testGetSetKeywords() throws IOException {
-        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("TestPoiXMLDocumentCorePropertiesGetKeywords.docx");
-        String keywords = doc.getProperties().getCoreProperties().getKeywords();
-        assertEquals("extractor, test, rdf", keywords);
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("TestPoiXMLDocumentCorePropertiesGetKeywords.docx")) {
+            String keywords = doc.getProperties().getCoreProperties().getKeywords();
+            assertEquals("extractor, test, rdf", keywords);
 
-        doc.getProperties().getCoreProperties().setKeywords("test, keywords");
-        doc = XWPFTestDataSamples.writeOutAndReadBack(doc);
-        keywords = doc.getProperties().getCoreProperties().getKeywords();
-        assertEquals("test, keywords", keywords);
+            doc.getProperties().getCoreProperties().setKeywords("test, keywords");
+            XWPFDocument docBack = XWPFTestDataSamples.writeOutAndReadBack(doc);
+            keywords = docBack.getProperties().getCoreProperties().getKeywords();
+            assertEquals("test, keywords", keywords);
+        }
     }
 }

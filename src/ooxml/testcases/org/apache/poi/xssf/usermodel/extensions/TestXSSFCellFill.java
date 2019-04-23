@@ -67,7 +67,9 @@ public class TestXSSFCellFill {
         XSSFCellFill cellFill = new XSSFCellFill(ctFill, null);
         CTPatternFill ctPatternFill = ctFill.addNewPatternFill();
         ctPatternFill.setPatternType(STPatternType.SOLID);
-        assertEquals(FillPatternType.SOLID_FOREGROUND.ordinal(), cellFill.getPatternType().intValue()-1);
+        STPatternType.Enum patternType = cellFill.getPatternType();
+        assertNotNull(patternType);
+        assertEquals(FillPatternType.SOLID_FOREGROUND.ordinal(), patternType.intValue()-1);
     }
 
     @Test
@@ -76,38 +78,41 @@ public class TestXSSFCellFill {
         XSSFCellFill cellFill = new XSSFCellFill(ctFill, null);
         CTPatternFill ctPatternFill = ctFill.addNewPatternFill();
         ctPatternFill.setPatternType(STPatternType.DARK_DOWN);
-        assertEquals(8, cellFill.getPatternType().intValue());
+        STPatternType.Enum patternType = cellFill.getPatternType();
+        assertNotNull(patternType);
+        assertEquals(8, patternType.intValue());
     }
 
     @Test
     public void testColorFromTheme() throws IOException {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("styles.xlsx");
-        XSSFCell cellWithThemeColor = wb.getSheetAt(0).getRow(10).getCell(0);
-        //color RGB will be extracted from theme
-        XSSFColor foregroundColor = cellWithThemeColor.getCellStyle().getFillForegroundXSSFColor();
-        byte[] rgb = foregroundColor.getRGB();
-        byte[] rgbWithTint = foregroundColor.getRGBWithTint();
-        // Dk2
-        assertEquals(rgb[0],31);
-        assertEquals(rgb[1],73);
-        assertEquals(rgb[2],125);
-        // Dk2, lighter 40% (tint is about 0.39998)
-        // 31 * (1.0 - 0.39998) + (255 - 255 * (1.0 - 0.39998)) = 120.59552 => 120 (byte)
-        // 73 * (1.0 - 0.39998) + (255 - 255 * (1.0 - 0.39998)) = 145.79636 => -111 (byte)
-        // 125 * (1.0 - 0.39998) + (255 - 255 * (1.0 - 0.39998)) = 176.99740 => -80 (byte)
-        assertEquals(rgbWithTint[0],120);
-        assertEquals(rgbWithTint[1],-111);
-        assertEquals(rgbWithTint[2],-80);
-        wb.close();
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("styles.xlsx")) {
+            XSSFCell cellWithThemeColor = wb.getSheetAt(0).getRow(10).getCell(0);
+            //color RGB will be extracted from theme
+            XSSFColor foregroundColor = cellWithThemeColor.getCellStyle().getFillForegroundXSSFColor();
+            byte[] rgb = foregroundColor.getRGB();
+            byte[] rgbWithTint = foregroundColor.getRGBWithTint();
+            // Dk2
+            assertEquals(rgb[0], 31);
+            assertEquals(rgb[1], 73);
+            assertEquals(rgb[2], 125);
+            // Dk2, lighter 40% (tint is about 0.39998)
+            // 31 * (1.0 - 0.39998) + (255 - 255 * (1.0 - 0.39998)) = 120.59552 => 120 (byte)
+            // 73 * (1.0 - 0.39998) + (255 - 255 * (1.0 - 0.39998)) = 145.79636 => -111 (byte)
+            // 125 * (1.0 - 0.39998) + (255 - 255 * (1.0 - 0.39998)) = 176.99740 => -80 (byte)
+            assertEquals(rgbWithTint[0], 120);
+            assertEquals(rgbWithTint[1], -111);
+            assertEquals(rgbWithTint[2], -80);
+        }
     }
     
     @Test
-    public void testFillWithoutColors() {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("FillWithoutColor.xlsx");
-        XSSFCell cellWithFill = wb.getSheetAt(0).getRow(5).getCell(1);
-        XSSFCellStyle style = cellWithFill.getCellStyle();
-        assertNotNull(style);
-        assertNull("had an empty background color", style.getFillBackgroundColorColor());
-        assertNull("had an empty background color", style.getFillBackgroundXSSFColor());
+    public void testFillWithoutColors() throws IOException {
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("FillWithoutColor.xlsx")) {
+            XSSFCell cellWithFill = wb.getSheetAt(0).getRow(5).getCell(1);
+            XSSFCellStyle style = cellWithFill.getCellStyle();
+            assertNotNull(style);
+            assertNull("had an empty background color", style.getFillBackgroundColorColor());
+            assertNull("had an empty background color", style.getFillBackgroundXSSFColor());
+        }
     }
 }
