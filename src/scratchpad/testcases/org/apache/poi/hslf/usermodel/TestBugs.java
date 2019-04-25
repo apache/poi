@@ -934,7 +934,9 @@ public final class TestBugs {
     
     private static HSLFSlideShow open(String fileName) throws IOException {
         File sample = HSLFTestDataSamples.getSampleFile(fileName);
-        return (HSLFSlideShow)SlideShowFactory.create(sample);
+        // Note: don't change the code here, it is required for Eclipse to compile the code
+        SlideShow slideShowOrig = SlideShowFactory.create(sample, null, false);
+        return (HSLFSlideShow)slideShowOrig;
     }
 
     @Test

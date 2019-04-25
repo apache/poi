@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.extractor.POIOLE2TextExtractor;
 import org.apache.poi.hslf.usermodel.HSLFObjectShape;
 import org.apache.poi.hslf.usermodel.HSLFShape;
@@ -32,6 +33,7 @@ import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.sl.extractor.SlideShowExtractor;
+import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.util.Removal;
 
@@ -94,7 +96,7 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 	 * @param fileName The name of the file to extract from
 	 */
 	public PowerPointExtractor(String fileName) throws IOException {
-		this((HSLFSlideShow)SlideShowFactory.create(new File(fileName), Biff8EncryptionKey.getCurrentUserPassword(), true));
+		this(createHSLF(new File(fileName), Biff8EncryptionKey.getCurrentUserPassword(), true));
 	}
 
 	/**
@@ -103,7 +105,7 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 	 * @param iStream The input stream containing the PowerPoint document
 	 */
 	public PowerPointExtractor(InputStream iStream) throws IOException {
-		this((HSLFSlideShow)SlideShowFactory.create(iStream, Biff8EncryptionKey.getCurrentUserPassword()));
+		this(createHSLF(iStream, Biff8EncryptionKey.getCurrentUserPassword()));
 	}
 
 	/**
@@ -112,7 +114,7 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 	 * @param fs the POIFSFileSystem containing the PowerPoint document
 	 */
 	public PowerPointExtractor(POIFSFileSystem fs) throws IOException {
-		this((HSLFSlideShow)SlideShowFactory.create(fs, Biff8EncryptionKey.getCurrentUserPassword()));
+		this(createHSLF(fs, Biff8EncryptionKey.getCurrentUserPassword()));
 	}
 
    /**
@@ -212,5 +214,66 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 	@SuppressWarnings("unchecked")
 	public List<HSLFObjectShape> getOLEShapes() {
 		return (List<HSLFObjectShape>)delegate.getOLEShapes();
+	}
+
+	/**
+	 * Helper method to avoid problems with compiling code in Eclipse
+	 *
+	 * Eclipse javac has some bugs with complex casts, this method tries
+	 * to work around this.
+	 *
+	 * @param fs The {@link POIFSFileSystem} to read the document from
+	 * @param password The password that should be used or null if no password is necessary.
+	 *
+	 * @return The created SlideShow
+	 *
+	 * @throws IOException if an error occurs while reading the data
+	 */
+	private static HSLFSlideShow createHSLF(POIFSFileSystem fs, String password) throws IOException, EncryptedDocumentException {
+		// Note: don't change the code here, it is required for Eclipse to compile the code
+		SlideShow slideShowOrig = SlideShowFactory.create(fs, password);
+		return (HSLFSlideShow)slideShowOrig;
+	}
+
+	/**
+	 * Helper method to avoid problems with compiling code in Eclipse
+	 *
+	 * Eclipse javac has some bugs with complex casts, this method tries
+	 * to work around this.
+	 *
+	 *  @param inp The {@link InputStream} to read data from.
+	 *  @param password The password that should be used or null if no password is necessary.
+	 *
+	 *  @return The created SlideShow
+	 *
+	 *  @throws IOException if an error occurs while reading the data
+	 *  @throws EncryptedDocumentException If the wrong password is given for a protected file
+	 */
+	private static HSLFSlideShow createHSLF(InputStream inp, String password) throws IOException, EncryptedDocumentException {
+		// Note: don't change the code here, it is required for Eclipse to compile the code
+		SlideShow slideShowOrig = SlideShowFactory.create(inp, password);
+		return (HSLFSlideShow)slideShowOrig;
+	}
+
+	/**
+	 * Helper method to avoid problems with compiling code in Eclipse
+	 *
+	 * Eclipse javac has some bugs with complex casts, this method tries
+	 * to work around this.
+	 *
+	 *  @param file The file to read data from.
+	 *  @param password The password that should be used or null if no password is necessary.
+	 *  @param readOnly If the SlideShow should be opened in read-only mode to avoid writing back
+	 *      changes when the document is closed.
+	 *
+	 *  @return The created SlideShow
+	 *
+	 *  @throws IOException if an error occurs while reading the data
+	 *  @throws EncryptedDocumentException If the wrong password is given for a protected file
+	 */
+	private static HSLFSlideShow createHSLF(File file, String password, boolean readOnly) throws IOException, EncryptedDocumentException {
+		// Note: don't change the code here, it is required for Eclipse to compile the code
+		SlideShow slideShowOrig = SlideShowFactory.create(file, password, readOnly);
+		return (HSLFSlideShow)slideShowOrig;
 	}
 }
