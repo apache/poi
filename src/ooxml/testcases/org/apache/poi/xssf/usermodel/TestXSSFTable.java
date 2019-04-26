@@ -171,7 +171,7 @@ public final class TestXSSFTable {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("StructuredReferences.xlsx")) {
             XSSFTable table = wb.getTable("\\_Prime.1");
             assertEquals(0, table.getStartColIndex());
-        } 
+        }
     }
 
     @Test
@@ -229,17 +229,13 @@ public final class TestXSSFTable {
             assertEquals(3, table.getColumnCount());
         }
     }
-    
+
     @Test
     public void getAndSetDisplayName() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("StructuredReferences.xlsx")) {
             XSSFTable table = wb.getTable("\\_Prime.1");
             assertEquals("\\_Prime.1", table.getDisplayName());
-
-            table.setDisplayName(null);
-            assertNull(table.getDisplayName());
-            assertEquals("\\_Prime.1", table.getName()); // name and display name are different
-
+            
             table.setDisplayName("Display name");
             assertEquals("Display name", table.getDisplayName());
             assertEquals("\\_Prime.1", table.getName()); // name and display name are different
@@ -253,6 +249,8 @@ public final class TestXSSFTable {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sh = wb.createSheet();
             XSSFTable table = sh.createTable();
+            assertNotNull(table.getDisplayName());
+            assertNotNull(table.getCTTable().getDisplayName());
             CTTable ctTable = table.getCTTable();
             ctTable.setRef("B2:E8");
 
@@ -299,7 +297,7 @@ public final class TestXSSFTable {
             IOUtils.closeQuietly(wb);
         }
     }
-    
+
     @Test
     public void testGetDataRowCount() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
@@ -318,7 +316,7 @@ public final class TestXSSFTable {
             IOUtils.closeQuietly(wb);
         }
     }
-    
+
     @Test
     public void testSetDataRowCount() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
@@ -358,6 +356,8 @@ public final class TestXSSFTable {
 
             XSSFTable table1 = sheet.createTable(reference1);
             assertEquals("A1:C3", table1.getCTTable().getRef());
+            assertNotNull(table1.getDisplayName());
+            assertNotNull(table1.getCTTable().getDisplayName());
 
             assertEquals(1, table1.getCTTable().getTableColumns().getTableColumnArray(0).getId());
             assertEquals(2, table1.getCTTable().getTableColumns().getTableColumnArray(1).getId());
@@ -413,7 +413,7 @@ public final class TestXSSFTable {
             assertEquals(2, table.getRowCount());
         }
     }
-    
+
     @Test
     public void testCreateColumn() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
@@ -460,7 +460,7 @@ public final class TestXSSFTable {
             table.createColumn("Column 3", 3); // out of bounds
         }
     }
-    
+
     @Test
     public void testDifferentHeaderTypes() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("TablesWithDifferentHeaders.xlsx")) {
@@ -492,7 +492,7 @@ public final class TestXSSFTable {
             assertEquals("Column2", t.getCTTable().getTableColumns().getTableColumnArray(1).getName());
         }
     }
-    
+
     /**
      * See https://stackoverflow.com/questions/44407111/apache-poi-cant-format-filled-cells-as-numeric
      */
@@ -544,6 +544,47 @@ public final class TestXSSFTable {
 
             // Done
             IOUtils.closeQuietly(wb2);
+        }
+    }
+
+    @Test
+    public void testSetDisplayName() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+
+            AreaReference reference1 = wb.getCreationHelper().createAreaReference(
+                    new CellReference(0, 0), new CellReference(2, 2));
+
+            XSSFTable table1 = sheet.createTable(reference1);
+            table1.setDisplayName("TableTest");
+            assertEquals("TableTest", table1.getDisplayName());
+            assertEquals("TableTest", table1.getCTTable().getDisplayName());
+        }
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetDisplayNameNull() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+
+            AreaReference reference1 = wb.getCreationHelper().createAreaReference(
+                    new CellReference(0, 0), new CellReference(2, 2));
+
+            XSSFTable table1 = sheet.createTable(reference1);
+            table1.setDisplayName(null);
+        }
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetDisplayNameEmpty() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+
+            AreaReference reference1 = wb.getCreationHelper().createAreaReference(
+                    new CellReference(0, 0), new CellReference(2, 2));
+
+            XSSFTable table1 = sheet.createTable(reference1);
+            table1.setDisplayName("");
         }
     }
 }
