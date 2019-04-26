@@ -432,6 +432,9 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      * @param name to use
      */
     public void setDisplayName(String name) {
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException("Display name must not be null or empty");
+        }
         ctTable.setDisplayName(name);
     }
 

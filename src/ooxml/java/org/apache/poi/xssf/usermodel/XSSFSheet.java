@@ -4140,6 +4140,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             table.setArea(tableArea);
         }
 
+        // Bug 62906: Must set a display name; can be overridden using setDisplayName
+        final String displayName = "Table" + tableNumber;
+        table.setDisplayName(displayName);
+
         return table;
     }
 
