@@ -142,7 +142,7 @@ public class HwmfGraphics {
             graphicsCtx.fill(shape);
         }
 
-//        draw(shape);
+        draw(shape);
     }
 
     protected BasicStroke getStroke() {

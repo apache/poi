@@ -20,15 +20,40 @@ package org.apache.poi.hemf.record.emfplus;
 
 import java.io.IOException;
 
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
 @Internal
 public class HemfPlusHeader implements HemfPlusRecord {
+    /**
+     * The GraphicsVersion enumeration defines versions of operating system graphics that are used to
+     * create EMF+ metafiles.
+     */
+    public enum GraphicsVersion {
+        V1(0x0001),
+        V1_1(0x0002)
+        ;
+
+        public final int id;
+
+        GraphicsVersion(int id) {
+            this.id = id;
+        }
+
+        public static GraphicsVersion valueOf(int id) {
+            for (GraphicsVersion wrt : values()) {
+                if (wrt.id == id) return wrt;
+            }
+            return null;
+        }
+    }
+
 
     private int flags;
-    private long version; //hack for now; replace with EmfPlusGraphicsVersion object
+    private final EmfPlusGraphicsVersion version = new EmfPlusGraphicsVersion();
     private long emfPlusFlags;
     private long logicalDpiX;
     private long logicalDpiY;
@@ -45,11 +70,9 @@ public class HemfPlusHeader implements HemfPlusRecord {
     @Override
     public long init(LittleEndianInputStream leis, long dataSize, long recordId, int flags) throws IOException {
         this.flags = flags;
-        version = leis.readUInt();
+        version.init(leis);
 
-        // verify MetafileSignature (20 bits) == 0xDBC01 and
-        // GraphicsVersion (12 bits) in (1 or 2)
-        assert((version & 0xFFFFFA00) == 0xDBC01000L && ((version & 0x3FF) == 1 || (version & 0x3FF) == 2));
+        assert(version.getMetafileSignature() == 0xDBC01 && version.getGraphicsVersion() != null);
 
         emfPlusFlags = leis.readUInt();
 
@@ -58,7 +81,7 @@ public class HemfPlusHeader implements HemfPlusRecord {
         return 4* LittleEndianConsts.INT_SIZE;
     }
 
-    public long getVersion() {
+    public EmfPlusGraphicsVersion getVersion() {
         return version;
     }
 
@@ -83,5 +106,39 @@ public class HemfPlusHeader implements HemfPlusRecord {
                 ", logicalDpiX=" + logicalDpiX +
                 ", logicalDpiY=" + logicalDpiY +
                 '}';
+    }
+
+    public static class EmfPlusGraphicsVersion {
+        private static final BitField METAFILE_SIGNATURE = BitFieldFactory.getInstance(0xFFFFF000);
+
+        private static final BitField GRAPHICS_VERSION = BitFieldFactory.getInstance(0x00000FFF);
+
+
+        private int metafileSignature;
+        private GraphicsVersion graphicsVersion;
+
+
+        public int getMetafileSignature() {
+            return metafileSignature;
+        }
+
+        public GraphicsVersion getGraphicsVersion() {
+            return graphicsVersion;
+        }
+
+        public long init(LittleEndianInputStream leis) throws IOException {
+            int val = leis.readInt();
+            // A value that identifies the type of metafile. The value for an EMF+ metafile is 0xDBC01.
+            metafileSignature = METAFILE_SIGNATURE.getValue(val);
+            // The version of operating system graphics. This value MUST be defined in the GraphicsVersion enumeration
+            graphicsVersion = GraphicsVersion.valueOf(GRAPHICS_VERSION.getValue(val));
+
+            return LittleEndianConsts.INT_SIZE;
+        }
+
+        public String toString() {
+            return "{ metafileSignature=0x"+Integer.toHexString(metafileSignature)+
+                    " , graphicsVersion='"+graphicsVersion+"' }";
+        }
     }
 }

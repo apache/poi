@@ -66,7 +66,13 @@ public class HwmfPlaceableHeader {
          * This value can be used to determine whether the metafile has become corrupted.
          */
         leis.readShort();
-        
+
+        // sometimes the placeable header is filled/aligned to dwords.
+        // check for padding 0 bytes.
+        leis.mark(LittleEndianConsts.INT_SIZE);
+        if (leis.readShort() != 0) {
+            leis.reset();
+        }
     }
     
     public static HwmfPlaceableHeader readHeader(LittleEndianInputStream leis) throws IOException {

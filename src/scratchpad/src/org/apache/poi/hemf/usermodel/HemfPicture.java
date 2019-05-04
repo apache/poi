@@ -35,6 +35,7 @@ import org.apache.poi.hemf.record.emf.HemfHeader;
 import org.apache.poi.hemf.record.emf.HemfRecord;
 import org.apache.poi.hemf.record.emf.HemfRecordIterator;
 import org.apache.poi.hemf.record.emf.HemfWindowing;
+import org.apache.poi.hwmf.usermodel.HwmfEmbedded;
 import org.apache.poi.util.Dimension2DDouble;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianInputStream;
@@ -158,4 +159,7 @@ public class HemfPicture implements Iterable<HemfRecord> {
         }
     }
 
+    public Iterable<HwmfEmbedded> getEmbeddings() {
+        return () -> new HemfEmbeddedIterator(HemfPicture.this);
+    }
 }

@@ -682,7 +682,7 @@ public class HemfFill {
         return 4 * LittleEndianConsts.INT_SIZE;
     }
 
-    static int readXForm(LittleEndianInputStream leis, AffineTransform xform) {
+    public static int readXForm(LittleEndianInputStream leis, AffineTransform xform) {
         // mapping <java AffineTransform> = <xform>
 
         // m00 (scaleX) = eM11 (Horizontal scaling component)
