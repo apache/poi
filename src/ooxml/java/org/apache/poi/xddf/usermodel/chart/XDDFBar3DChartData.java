@@ -22,22 +22,23 @@ import java.util.Map;
 import org.apache.poi.util.Beta;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTMarker;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTBar3DChart;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTBarSer;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTScatterChart;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTScatterSer;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTScatterStyle;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTSerTx;
 
 @Beta
-public class XDDFScatterChartData extends XDDFChartData {
-    private CTScatterChart chart;
+public class XDDFBar3DChartData extends XDDFChartData {
+    private CTBar3DChart chart;
 
-    public XDDFScatterChartData(CTScatterChart chart, Map<Long, XDDFChartAxis> categories,
+    public XDDFBar3DChartData(CTBar3DChart chart, Map<Long, XDDFChartAxis> categories,
             Map<Long, XDDFValueAxis> values) {
         this.chart = chart;
-        for (CTScatterSer series : chart.getSerList()) {
-            this.series.add(new Series(series, series.getXVal(), series.getYVal()));
+        if (chart.getBarDir() == null) {
+            chart.addNewBarDir().setVal(BarDirection.BAR.underlying);
+        }
+        for (CTBarSer series : chart.getSerList()) {
+            this.series.add(new Series(series, series.getCat(), series.getVal()));
         }
         defineAxes(categories, values);
     }
@@ -63,30 +64,54 @@ public class XDDFScatterChartData extends XDDFChartData {
         }
     }
 
-    public ScatterStyle getStyle() {
-        CTScatterStyle scatterStyle = chart.getScatterStyle();
-        if (scatterStyle == null) {
-            scatterStyle = chart.addNewScatterStyle();
-            scatterStyle.setVal(ScatterStyle.LINE_MARKER.underlying);
-        }
-        return ScatterStyle.valueOf(scatterStyle.getVal());
+    public BarDirection getBarDirection() {
+        return BarDirection.valueOf(chart.getBarDir().getVal());
     }
 
-    public void setStyle(ScatterStyle style) {
-        CTScatterStyle scatterStyle = chart.getScatterStyle();
-        if (scatterStyle == null) {
-            scatterStyle = chart.addNewScatterStyle();
+    public void setBarDirection(BarDirection direction) {
+        chart.getBarDir().setVal(direction.underlying);
+    }
+
+    public BarGrouping getBarGrouping() {
+        if (chart.isSetGrouping()) {
+            return BarGrouping.valueOf(chart.getGrouping().getVal());
+        } else {
+            return BarGrouping.STANDARD;
         }
-        scatterStyle.setVal(style.underlying);
+    }
+
+    public void setBarGrouping(BarGrouping grouping) {
+        if (chart.isSetGrouping()) {
+            chart.getGrouping().setVal(grouping.underlying);
+        } else {
+            chart.addNewGrouping().setVal(grouping.underlying);
+        }
+    }
+
+    public int getGapWidth() {
+        if (chart.isSetGapWidth()) {
+            return chart.getGapWidth().getVal();
+        } else {
+            return 0;
+        }
+    }
+
+    public void setGapWidth(int width) {
+        if (chart.isSetGapWidth()) {
+            chart.getGapWidth().setVal(width);
+        } else {
+            chart.addNewGapWidth().setVal(width);
+        }
     }
 
     @Override
     public XDDFChartData.Series addSeries(XDDFDataSource<?> category,
             XDDFNumericalDataSource<? extends Number> values) {
         final int index = this.series.size();
-        final CTScatterSer ctSer = this.chart.addNewSer();
-        ctSer.addNewXVal();
-        ctSer.addNewYVal();
+        final CTBarSer ctSer = this.chart.addNewSer();
+        ctSer.addNewTx();
+        ctSer.addNewCat();
+        ctSer.addNewVal();
         ctSer.addNewIdx().setVal(index);
         ctSer.addNewOrder().setVal(index);
         final Series added = new Series(ctSer, category, values);
@@ -95,14 +120,15 @@ public class XDDFScatterChartData extends XDDFChartData {
     }
 
     public class Series extends XDDFChartData.Series {
-        private CTScatterSer series;
+        private CTBarSer series;
 
-        protected Series(CTScatterSer series, XDDFDataSource<?> category, XDDFNumericalDataSource<?> values) {
+        protected Series(CTBarSer series, XDDFDataSource<?> category,
+                XDDFNumericalDataSource<? extends Number> values) {
             super(category, values);
             this.series = series;
         }
 
-        protected Series(CTScatterSer series, CTAxDataSource category, CTNumDataSource values) {
+        protected Series(CTBarSer series, CTAxDataSource category, CTNumDataSource values) {
             super(XDDFDataSourcesFactory.fromDataSource(category), XDDFDataSourcesFactory.fromDataSource(values));
             this.series = series;
         }
@@ -113,73 +139,6 @@ public class XDDFScatterChartData extends XDDFChartData {
                 return series.getTx();
             } else {
                 return series.addNewTx();
-            }
-        }
-
-        /**
-         * @since 4.0.1
-         */
-        public Boolean getSmooth() {
-            if (series.isSetSmooth()) {
-                return series.getSmooth().getVal();
-            } else {
-                return null;
-            }
-        }
-
-        /**
-         * @param smooth
-         *        whether or not to smooth lines, if <code>null</code> then reverts to default.
-         * @since 4.0.1
-         */
-        public void setSmooth(Boolean smooth) {
-            if (smooth == null) {
-                if (series.isSetSmooth()) {
-                    series.unsetSmooth();
-                }
-            } else {
-                if (series.isSetSmooth()) {
-                    series.getSmooth().setVal(smooth);
-                } else {
-                    series.addNewSmooth().setVal(smooth);
-                }
-            }
-        }
-
-        /**
-         * @param size
-         * <dl><dt>Minimum inclusive:</dt><dd>2</dd><dt>Maximum inclusive:</dt><dd>72</dd></dl>
-         * @since 4.0.1
-         */
-        public void setMarkerSize(short size) {
-            if (size < 2 || 72 < size) {
-                throw new IllegalArgumentException("Minimum inclusive: 2; Maximum inclusive: 72");
-            }
-            CTMarker marker = getMarker();
-            if (marker.isSetSize()) {
-                marker.getSize().setVal(size);
-            } else {
-                marker.addNewSize().setVal(size);
-            }
-        }
-
-        /**
-         * @since 4.0.1
-         */
-        public void setMarkerStyle(MarkerStyle style) {
-            CTMarker marker = getMarker();
-            if (marker.isSetSymbol()) {
-                marker.getSymbol().setVal(style.underlying);
-            } else {
-                marker.addNewSymbol().setVal(style.underlying);
-            }
-        }
-
-        private CTMarker getMarker() {
-            if (series.isSetMarker()) {
-                return series.getMarker();
-            } else {
-                return series.addNewMarker();
             }
         }
 
@@ -221,12 +180,12 @@ public class XDDFScatterChartData extends XDDFChartData {
 
         @Override
         protected CTAxDataSource getAxDS() {
-            return series.getXVal();
+            return series.getCat();
         }
 
         @Override
         protected CTNumDataSource getNumDS() {
-            return series.getYVal();
+            return series.getVal();
         }
         
         @Override
@@ -234,9 +193,9 @@ public class XDDFScatterChartData extends XDDFChartData {
             series.getIdx().setVal(val);
         }
         
-      @Override
-      public void updateOrderVal(long val) {
-         series.getOrder().setVal(val);
-      }
+        @Override
+        public void updateOrderVal(long val) {
+            series.getOrder().setVal(val);
+        }
     }
 }
