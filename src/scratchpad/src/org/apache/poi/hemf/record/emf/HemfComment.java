@@ -221,6 +221,10 @@ public class HemfComment {
             return privateData.length;
         }
 
+        public byte[] getPrivateData() {
+            return privateData;
+        }
+
         @Override
         public String toString() {
             return "\""+new String(privateData, LocaleUtil.CHARSET_1252).replaceAll("\\p{Cntrl}", ".")+"\"";
@@ -350,7 +354,15 @@ public class HemfComment {
     }
 
     public enum EmfFormatSignature {
+        /**
+         * The value of this member is the sequence of ASCII characters "FME ",
+         * which happens to be the reverse of the string "EMF", and it denotes EMF record data.
+         */
         ENHMETA_SIGNATURE(0x464D4520),
+        /**
+         * The value of this member is the sequence of ASCII characters "FSPE", which happens to be the reverse
+         * of the string "EPSF", and it denotes encapsulated PostScript (EPS) format data.
+         */
         EPS_SIGNATURE(0x46535045);
 
         int id;
@@ -402,6 +414,10 @@ public class HemfComment {
 
         public byte[] getRawData() {
             return rawData;
+        }
+
+        public EmfFormatSignature getSignature() {
+            return signature;
         }
     }
 

@@ -25,6 +25,7 @@ import java.awt.LinearGradientPaint;
 import java.awt.MultipleGradientPaint;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.awt.image.IndexColorModel;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -460,12 +461,29 @@ public class HwmfBitmapDib {
     }
     
     public BufferedImage getImage() {
+        return getImage(null, null, false);
+    }
+
+    public BufferedImage getImage(Color foreground, Color background, boolean hasAlpha) {
+        BufferedImage bi;
         try {
-            return ImageIO.read(getBMPStream());
+            bi = ImageIO.read(getBMPStream());
         } catch (IOException|RuntimeException e) {
             logger.log(POILogger.ERROR, "invalid bitmap data - returning placeholder image");
             return getPlaceholder();
         }
+
+        if (foreground != null && background != null && headerBitCount == HwmfBitmapDib.BitCount.BI_BITCOUNT_1) {
+            IndexColorModel cmOld = (IndexColorModel)bi.getColorModel();
+            int transPixel = hasAlpha ? (((cmOld.getRGB(0) & 0xFFFFFF) == 0) ? 0 : 1) : -1;
+            int transferType = bi.getData().getTransferType();
+            int fg = foreground.getRGB(), bg = background.getRGB();
+            int[] cmap = { (transPixel == 0 ? bg : fg), (transPixel == 1 ? bg : fg) };
+            IndexColorModel cmNew = new IndexColorModel(1, cmap.length, cmap, 0, hasAlpha, transPixel, transferType);
+            bi = new BufferedImage(cmNew, bi.getRaster(), false, null);
+        }
+
+        return bi;
     }
 
     @Override

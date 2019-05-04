@@ -20,6 +20,7 @@ package org.apache.poi.hwmf.record;
 import static org.apache.poi.hwmf.record.HwmfDraw.boundsToString;
 import static org.apache.poi.hwmf.record.HwmfDraw.readPointS;
 
+import java.awt.Color;
 import java.awt.Shape;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
@@ -29,6 +30,7 @@ import java.io.IOException;
 
 import org.apache.poi.hwmf.draw.HwmfDrawProperties;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
+import org.apache.poi.hwmf.record.HwmfMisc.WmfSetBkMode.HwmfBkMode;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
@@ -37,7 +39,29 @@ public class HwmfFill {
      * A record which contains an image (to be extracted)
      */
     public interface HwmfImageRecord {
-        BufferedImage getImage();
+
+        default BufferedImage getImage() {
+            return getImage(Color.BLACK, new Color(0x00FFFFFF, true), true);
+        }
+
+        /**
+         * Provide an image using the fore-/background color, in case of a 1-bit pattern
+         * @param foreground the foreground color
+         * @param background the background color
+         * @param hasAlpha if true, the background color is rendered transparent - see {@link HwmfMisc.WmfSetBkMode.HwmfBkMode}
+         * @return the image
+         *
+         * @since POI 4.1.1
+         */
+        BufferedImage getImage(Color foreground, Color background, boolean hasAlpha);
+
+        /**
+         * @return the raw BMP data
+         *
+         * @see <a href="https://en.wikipedia.org/wiki/BMP_file_format">BMP format</a>
+         * @since POI 4.1.1
+         */
+        byte[] getBMPData();
     }
     
     /**
@@ -497,7 +521,9 @@ public class HwmfFill {
             HwmfDrawProperties prop = ctx.getProperties();
             prop.setRasterOp(rasterOperation);
             if (bitmap.isValid()) {
-                ctx.drawImage(getImage(), srcBounds, dstBounds);
+                BufferedImage bi = bitmap.getImage(prop.getPenColor().getColor(), prop.getBackgroundColor().getColor(),
+                                                   prop.getBkMode() == HwmfBkMode.TRANSPARENT);
+                ctx.drawImage(bi, srcBounds, dstBounds);
             } else if (!dstBounds.isEmpty()) {
                 BufferedImage bi = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
                 ctx.drawImage(bi, new Rectangle2D.Double(0,0,100,100), dstBounds);
@@ -505,8 +531,17 @@ public class HwmfFill {
         }
 
         @Override
-        public BufferedImage getImage() {
-            return bitmap.getImage();
+        public BufferedImage getImage(Color foreground, Color background, boolean hasAlpha) {
+            return bitmap.getImage(foreground,background,hasAlpha);
+        }
+
+        public HwmfBitmapDib getBitmap() {
+            return bitmap;
+        }
+
+        @Override
+        public byte[] getBMPData() {
+            return bitmap.getBMPData();
         }
 
         @Override
@@ -631,8 +666,13 @@ public class HwmfFill {
         }
 
         @Override
-        public BufferedImage getImage() {
-            return dib.getImage();
+        public BufferedImage getImage(Color foreground, Color background, boolean hasAlpha) {
+            return dib.getImage(foreground,background,hasAlpha);
+        }
+
+        @Override
+        public byte[] getBMPData() {
+            return dib.getBMPData();
         }
     }
 
@@ -738,8 +778,13 @@ public class HwmfFill {
         }
 
         @Override
-        public BufferedImage getImage() {
-            return (target != null && target.isValid()) ? target.getImage() : null;
+        public BufferedImage getImage(Color foreground, Color background, boolean hasAlpha) {
+            return (target != null && target.isValid()) ? target.getImage(foreground,background,hasAlpha) : null;
+        }
+
+        @Override
+        public byte[] getBMPData() {
+            return (target != null && target.isValid()) ? target.getBMPData() : null;
         }
     }
 

@@ -204,6 +204,9 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
 
 
 	public void skipFully(int len) throws IOException {
+    	if (len == 0) {
+    		return;
+		}
 		long skipped = IOUtils.skipFully(this, len);
 		if (skipped > Integer.MAX_VALUE) {
 			throw new IOException("can't skip further than "+Integer.MAX_VALUE);
