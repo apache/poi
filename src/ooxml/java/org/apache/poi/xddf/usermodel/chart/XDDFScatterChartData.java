@@ -228,5 +228,16 @@ public class XDDFScatterChartData extends XDDFChartData {
         protected CTNumDataSource getNumDS() {
             return series.getYVal();
         }
+        
+        @Override
+        public void updateIdXVal(long val) {
+            series.getIdx().setVal(val);
+        }
+        
+        @Override
+        public void updateOrderVal(long val)
+        {
+            series.getOrder().setVal(val);
+        }
     }
 }

@@ -22,17 +22,17 @@ import java.util.Map;
 import org.apache.poi.util.Beta;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTLineChart;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTLine3DChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTLineSer;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTMarker;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTSerTx;
 
 @Beta
-public class XDDFLineChartData extends XDDFChartData {
-    private CTLineChart chart;
+public class XDDFLine3DChartData extends XDDFChartData {
+    private CTLine3DChart chart;
 
-    public XDDFLineChartData(CTLineChart chart, Map<Long, XDDFChartAxis> categories,
+    public XDDFLine3DChartData(CTLine3DChart chart, Map<Long, XDDFChartAxis> categories,
             Map<Long, XDDFValueAxis> values) {
         this.chart = chart;
         for (CTLineSer series : chart.getSerList()) {
@@ -68,7 +68,7 @@ public class XDDFLineChartData extends XDDFChartData {
 
     public void setGrouping(Grouping grouping) {
         if (chart.getGrouping()!=null) {
-        chart.getGrouping().setVal(grouping.underlying);
+            chart.getGrouping().setVal(grouping.underlying);
         } else {
             chart.addNewGrouping().setVal(grouping.underlying);
         }

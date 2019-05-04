@@ -72,6 +72,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTSerAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTSurface;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTitle;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTValAx;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTView3D;
 import org.openxmlformats.schemas.drawingml.x2006.chart.ChartSpaceDocument;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
@@ -302,6 +303,22 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
     }
 
     /**
+     * Get or Add chart 3D view into chart
+     * 
+     * @return this method will add 3D view
+     */
+    public XDDFView3D getOrAddView3D()
+    {
+        CTView3D view3D;
+        if(chart.isSetView3D()) {
+            view3D = chart.getView3D();
+        }
+        else {
+            view3D = chart.addNewView3D();
+        }
+        return new XDDFView3D(view3D);
+    }
+    /**
      * Get the chart title body if there is one, i.e. title is set and is not a
      * formula.
      *
@@ -436,6 +453,23 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
         return valueAxis;
     }
 
+    /**
+     * this method will return series axis with specified position 
+     *
+     * @param pos axis position Left, Right, Top, Bottom
+     * @return series axis with specified position
+     */
+    public XDDFSeriesAxis createSeriesAxis(AxisPosition pos) {
+        XDDFSeriesAxis seriesAxis = new XDDFSeriesAxis(chart.getPlotArea(), pos);
+        if (axes.size() == 1) {
+            XDDFChartAxis axis = axes.get(0);
+            axis.crossAxis(seriesAxis);
+            seriesAxis.crossAxis(axis);
+        }
+        axes.add(seriesAxis);
+        return seriesAxis;
+    }
+
     public XDDFCategoryAxis createCategoryAxis(AxisPosition pos) {
         XDDFCategoryAxis categoryAxis = new XDDFCategoryAxis(chart.getPlotArea(), pos);
         if (axes.size() == 1) {
@@ -458,21 +492,50 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
         return dateAxis;
     }
 
+    /**
+     * this method will return specified chart data with category and series values
+     *
+     * @param type chart type
+     * @param category category values of chart
+     * @param values series values of chart
+     * @return specified chart data.
+     */
     public XDDFChartData createData(ChartTypes type, XDDFChartAxis category, XDDFValueAxis values) {
-        Map<Long, XDDFChartAxis> categories = Collections.singletonMap(category.getId(), category);
-        Map<Long, XDDFValueAxis> mapValues = Collections.singletonMap(values.getId(), values);
+        Map<Long, XDDFChartAxis> categories = null;
+        Map<Long, XDDFValueAxis> mapValues = null;
+        
+        if(ChartTypes.PIE != type && ChartTypes.PIE3D != type)
+        {
+            categories = Collections.singletonMap(category.getId(), category);
+            mapValues = Collections.singletonMap(values.getId(), values);
+        }
+        
         final CTPlotArea plotArea = getCTPlotArea();
         switch (type) {
+        case AREA:
+            return new XDDFAreaChartData(plotArea.addNewAreaChart(), categories, mapValues);
+        case AREA3D:
+            return new XDDFArea3DChartData(plotArea.addNewArea3DChart(), categories, mapValues);
         case BAR:
             return new XDDFBarChartData(plotArea.addNewBarChart(), categories, mapValues);
+        case BAR3D:
+            return new XDDFBar3DChartData(plotArea.addNewBar3DChart(), categories, mapValues);
         case LINE:
             return new XDDFLineChartData(plotArea.addNewLineChart(), categories, mapValues);
+        case LINE3D:
+            return new XDDFLine3DChartData(plotArea.addNewLine3DChart(), categories, mapValues);
         case PIE:
             return new XDDFPieChartData(plotArea.addNewPieChart());
+        case PIE3D:
+            return new XDDFPie3DChartData(plotArea.addNewPie3DChart());
         case RADAR:
             return new XDDFRadarChartData(plotArea.addNewRadarChart(), categories, mapValues);
         case SCATTER:
             return new XDDFScatterChartData(plotArea.addNewScatterChart(), categories, mapValues);
+        case SURFACE:
+            return new XDDFSurfaceChartData(plotArea.addNewSurfaceChart(), categories, mapValues);
+        case SURFACE3D:
+            return new XDDFSurface3DChartData(plotArea.addNewSurface3DChart(), categories, mapValues);
         default:
             return null;
         }

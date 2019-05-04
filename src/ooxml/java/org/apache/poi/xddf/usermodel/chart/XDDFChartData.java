@@ -98,6 +98,10 @@ public abstract class XDDFChartData {
 
         protected abstract CTNumDataSource getNumDS();
 
+        protected abstract void updateIdXVal(long val);
+        
+        protected abstract void updateOrderVal(long val);
+
         protected Series(XDDFDataSource<?> category, XDDFNumericalDataSource<? extends Number> values) {
             replaceData(category, values);
         }

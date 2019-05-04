@@ -156,5 +156,16 @@ public class XDDFRadarChartData extends XDDFChartData {
         protected CTNumDataSource getNumDS() {
             return series.getVal();
         }
+        
+        @Override
+        public void updateIdXVal(long val) {
+            series.getIdx().setVal(val);
+        }
+        
+        @Override
+        public void updateOrderVal(long val)
+        {
+            series.getOrder().setVal(val);
+        }
     }
 }

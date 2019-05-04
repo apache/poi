@@ -22,20 +22,22 @@ import java.util.Map;
 import org.apache.poi.util.Beta;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTLineChart;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTLineSer;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTMarker;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTBar3DChart;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTBarSer;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTSerTx;
 
 @Beta
-public class XDDFLineChartData extends XDDFChartData {
-    private CTLineChart chart;
+public class XDDFBar3DChartData extends XDDFChartData {
+    private CTBar3DChart chart;
 
-    public XDDFLineChartData(CTLineChart chart, Map<Long, XDDFChartAxis> categories,
+    public XDDFBar3DChartData(CTBar3DChart chart, Map<Long, XDDFChartAxis> categories,
             Map<Long, XDDFValueAxis> values) {
         this.chart = chart;
-        for (CTLineSer series : chart.getSerList()) {
+        if (chart.getBarDir() == null) {
+            chart.addNewBarDir().setVal(BarDirection.BAR.underlying);
+        }
+        for (CTBarSer series : chart.getSerList()) {
             this.series.add(new Series(series, series.getCat(), series.getVal()));
         }
         defineAxes(categories, values);
@@ -62,15 +64,43 @@ public class XDDFLineChartData extends XDDFChartData {
         }
     }
 
-    public Grouping getGrouping() {
-        return Grouping.valueOf(chart.getGrouping().getVal());
+    public BarDirection getBarDirection() {
+        return BarDirection.valueOf(chart.getBarDir().getVal());
     }
 
-    public void setGrouping(Grouping grouping) {
-        if (chart.getGrouping()!=null) {
-        chart.getGrouping().setVal(grouping.underlying);
+    public void setBarDirection(BarDirection direction) {
+        chart.getBarDir().setVal(direction.underlying);
+    }
+
+    public BarGrouping getBarGrouping() {
+        if (chart.isSetGrouping()) {
+            return BarGrouping.valueOf(chart.getGrouping().getVal());
+        } else {
+            return BarGrouping.STANDARD;
+        }
+    }
+
+    public void setBarGrouping(BarGrouping grouping) {
+        if (chart.isSetGrouping()) {
+            chart.getGrouping().setVal(grouping.underlying);
         } else {
             chart.addNewGrouping().setVal(grouping.underlying);
+        }
+    }
+
+    public int getGapWidth() {
+        if (chart.isSetGapWidth()) {
+            return chart.getGapWidth().getVal();
+        } else {
+            return 0;
+        }
+    }
+
+    public void setGapWidth(int width) {
+        if (chart.isSetGapWidth()) {
+            chart.getGapWidth().setVal(width);
+        } else {
+            chart.addNewGapWidth().setVal(width);
         }
     }
 
@@ -78,7 +108,8 @@ public class XDDFLineChartData extends XDDFChartData {
     public XDDFChartData.Series addSeries(XDDFDataSource<?> category,
             XDDFNumericalDataSource<? extends Number> values) {
         final int index = this.series.size();
-        final CTLineSer ctSer = this.chart.addNewSer();
+        final CTBarSer ctSer = this.chart.addNewSer();
+        ctSer.addNewTx();
         ctSer.addNewCat();
         ctSer.addNewVal();
         ctSer.addNewIdx().setVal(index);
@@ -89,15 +120,15 @@ public class XDDFLineChartData extends XDDFChartData {
     }
 
     public class Series extends XDDFChartData.Series {
-        private CTLineSer series;
+        private CTBarSer series;
 
-        protected Series(CTLineSer series, XDDFDataSource<?> category,
+        protected Series(CTBarSer series, XDDFDataSource<?> category,
                 XDDFNumericalDataSource<? extends Number> values) {
             super(category, values);
             this.series = series;
         }
 
-        protected Series(CTLineSer series, CTAxDataSource category, CTNumDataSource values) {
+        protected Series(CTBarSer series, CTAxDataSource category, CTNumDataSource values) {
             super(XDDFDataSourcesFactory.fromDataSource(category), XDDFDataSourcesFactory.fromDataSource(values));
             this.series = series;
         }
@@ -144,69 +175,6 @@ public class XDDFLineChartData extends XDDFChartData {
                 } else {
                     series.addNewSpPr().set(properties.getXmlObject());
                 }
-            }
-        }
-
-        /**
-         * @since 4.0.1
-         */
-        public Boolean getSmooth() {
-            if (series.isSetSmooth()) {
-                return series.getSmooth().getVal();
-            } else {
-                return null;
-            }
-        }
-
-        /**
-         * @param smooth
-         *        whether or not to smooth lines, if <code>null</code> then reverts to default.
-         * @since 4.0.1
-         */
-        public void setSmooth(Boolean smooth) {
-            if (smooth == null) {
-                if (series.isSetSmooth()) {
-                    series.unsetSmooth();
-                }
-            } else {
-                if (series.isSetSmooth()) {
-                    series.getSmooth().setVal(smooth);
-                } else {
-                    series.addNewSmooth().setVal(smooth);
-                }
-            }
-        }
-
-        /**
-         * @param size
-         * <dl><dt>Minimum inclusive:</dt><dd>2</dd><dt>Maximum inclusive:</dt><dd>72</dd></dl>
-         */
-        public void setMarkerSize(short size) {
-            if (size < 2 || 72 < size) {
-                throw new IllegalArgumentException("Minimum inclusive: 2; Maximum inclusive: 72");
-            }
-            CTMarker marker = getMarker();
-            if (marker.isSetSize()) {
-                marker.getSize().setVal(size);
-            } else {
-                marker.addNewSize().setVal(size);
-            }
-        }
-
-        public void setMarkerStyle(MarkerStyle style) {
-            CTMarker marker = getMarker();
-            if (marker.isSetSymbol()) {
-                marker.getSymbol().setVal(style.underlying);
-            } else {
-                marker.addNewSymbol().setVal(style.underlying);
-            }
-        }
-
-        private CTMarker getMarker() {
-            if (series.isSetMarker()) {
-                return series.getMarker();
-            } else {
-                return series.addNewMarker();
             }
         }
 

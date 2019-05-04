@@ -21,6 +21,8 @@ import java.util.Map;
 
 import org.apache.poi.util.Beta;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTAreaChart;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTAreaSer;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTLineChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTLineSer;
@@ -29,13 +31,13 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTSerTx;
 
 @Beta
-public class XDDFLineChartData extends XDDFChartData {
-    private CTLineChart chart;
+public class XDDFAreaChartData extends XDDFChartData {
+    private CTAreaChart chart;
 
-    public XDDFLineChartData(CTLineChart chart, Map<Long, XDDFChartAxis> categories,
+    public XDDFAreaChartData(CTAreaChart chart, Map<Long, XDDFChartAxis> categories,
             Map<Long, XDDFValueAxis> values) {
         this.chart = chart;
-        for (CTLineSer series : chart.getSerList()) {
+        for (CTAreaSer series : chart.getSerList()) {
             this.series.add(new Series(series, series.getCat(), series.getVal()));
         }
         defineAxes(categories, values);
@@ -67,18 +69,14 @@ public class XDDFLineChartData extends XDDFChartData {
     }
 
     public void setGrouping(Grouping grouping) {
-        if (chart.getGrouping()!=null) {
         chart.getGrouping().setVal(grouping.underlying);
-        } else {
-            chart.addNewGrouping().setVal(grouping.underlying);
-        }
     }
 
     @Override
     public XDDFChartData.Series addSeries(XDDFDataSource<?> category,
             XDDFNumericalDataSource<? extends Number> values) {
         final int index = this.series.size();
-        final CTLineSer ctSer = this.chart.addNewSer();
+        final CTAreaSer ctSer = this.chart.addNewSer();
         ctSer.addNewCat();
         ctSer.addNewVal();
         ctSer.addNewIdx().setVal(index);
@@ -89,15 +87,15 @@ public class XDDFLineChartData extends XDDFChartData {
     }
 
     public class Series extends XDDFChartData.Series {
-        private CTLineSer series;
+        private CTAreaSer series;
 
-        protected Series(CTLineSer series, XDDFDataSource<?> category,
+        protected Series(CTAreaSer series, XDDFDataSource<?> category,
                 XDDFNumericalDataSource<? extends Number> values) {
             super(category, values);
             this.series = series;
         }
 
-        protected Series(CTLineSer series, CTAxDataSource category, CTNumDataSource values) {
+        protected Series(CTAreaSer series, CTAxDataSource category, CTNumDataSource values) {
             super(XDDFDataSourcesFactory.fromDataSource(category), XDDFDataSourcesFactory.fromDataSource(values));
             this.series = series;
         }
@@ -144,69 +142,6 @@ public class XDDFLineChartData extends XDDFChartData {
                 } else {
                     series.addNewSpPr().set(properties.getXmlObject());
                 }
-            }
-        }
-
-        /**
-         * @since 4.0.1
-         */
-        public Boolean getSmooth() {
-            if (series.isSetSmooth()) {
-                return series.getSmooth().getVal();
-            } else {
-                return null;
-            }
-        }
-
-        /**
-         * @param smooth
-         *        whether or not to smooth lines, if <code>null</code> then reverts to default.
-         * @since 4.0.1
-         */
-        public void setSmooth(Boolean smooth) {
-            if (smooth == null) {
-                if (series.isSetSmooth()) {
-                    series.unsetSmooth();
-                }
-            } else {
-                if (series.isSetSmooth()) {
-                    series.getSmooth().setVal(smooth);
-                } else {
-                    series.addNewSmooth().setVal(smooth);
-                }
-            }
-        }
-
-        /**
-         * @param size
-         * <dl><dt>Minimum inclusive:</dt><dd>2</dd><dt>Maximum inclusive:</dt><dd>72</dd></dl>
-         */
-        public void setMarkerSize(short size) {
-            if (size < 2 || 72 < size) {
-                throw new IllegalArgumentException("Minimum inclusive: 2; Maximum inclusive: 72");
-            }
-            CTMarker marker = getMarker();
-            if (marker.isSetSize()) {
-                marker.getSize().setVal(size);
-            } else {
-                marker.addNewSize().setVal(size);
-            }
-        }
-
-        public void setMarkerStyle(MarkerStyle style) {
-            CTMarker marker = getMarker();
-            if (marker.isSetSymbol()) {
-                marker.getSymbol().setVal(style.underlying);
-            } else {
-                marker.addNewSymbol().setVal(style.underlying);
-            }
-        }
-
-        private CTMarker getMarker() {
-            if (series.isSetMarker()) {
-                return series.getMarker();
-            } else {
-                return series.addNewMarker();
             }
         }
 
