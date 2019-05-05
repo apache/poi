@@ -271,7 +271,7 @@ public class HwmfEscape implements HwmfRecord {
             }
 
             // A 32-bit unsigned integer that defines this record as a WMF Comment record.
-            int commentIdentifier = leis.readInt();
+            commentIdentifier = leis.readInt();
 
             if (commentIdentifier != EMF_COMMENT_IDENTIFIER) {
                 // there are some WMF implementation using this record as a MFCOMMENT or similar
