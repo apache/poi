@@ -51,8 +51,7 @@ public class HemfPlusRecordIterator implements Iterator<HemfPlusRecord> {
     public HemfPlusRecord next() {
         HemfPlusRecord toReturn = currentRecord;
         // add the size for recordId/flags/recordSize/dataSize = 12 bytes
-        final boolean isEOF = (limit == -1 || (leis.getReadIndex()-startIdx)+12 >= limit);
-        // (currentRecord instanceof HemfPlusMisc.EmfEof)
+        final boolean isEOF = (limit == -1 || (leis.getReadIndex()-startIdx)+12 > limit);
         currentRecord = isEOF ? null : _next();
         return toReturn;
     }
