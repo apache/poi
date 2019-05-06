@@ -235,7 +235,7 @@ public final class TestXSSFTable {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("StructuredReferences.xlsx")) {
             XSSFTable table = wb.getTable("\\_Prime.1");
             assertEquals("\\_Prime.1", table.getDisplayName());
-            
+
             table.setDisplayName("Display name");
             assertEquals("Display name", table.getDisplayName());
             assertEquals("\\_Prime.1", table.getName()); // name and display name are different

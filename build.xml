@@ -2019,7 +2019,7 @@ under the License.
         </copy>
     </target>
 
-    <target name="assemble" depends="jar,jar-src,jar-javadocs">
+    <target name="assemble" depends="jar,jar-src,jar-javadocs" description="Produce the zipped distribution files">
         <property name="zipdir" value="${jar.name}-${version.id}"/>
 
         <mappedresources id="legal-files" cache="true">
