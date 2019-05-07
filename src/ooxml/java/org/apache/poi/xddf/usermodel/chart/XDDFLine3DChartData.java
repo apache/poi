@@ -147,9 +147,7 @@ public class XDDFLine3DChartData extends XDDFChartData {
             }
         }
 
-        /**
-         * @since 4.0.1
-         */
+
         public Boolean getSmooth() {
             if (series.isSetSmooth()) {
                 return series.getSmooth().getVal();
@@ -161,7 +159,7 @@ public class XDDFLine3DChartData extends XDDFChartData {
         /**
          * @param smooth
          *        whether or not to smooth lines, if <code>null</code> then reverts to default.
-         * @since 4.0.1
+         *
          */
         public void setSmooth(Boolean smooth) {
             if (smooth == null) {

@@ -21,9 +21,6 @@ package org.apache.poi.xddf.usermodel.chart;
 
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTView3D;
 
-/**
- * @since 4.1
- */
 
 public class XDDFView3D {
     private final CTView3D view3D;
