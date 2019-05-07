@@ -759,6 +759,7 @@ public class POIFSFileSystem extends BlockStore
      * and buffers. After this, you will be unable to read or
      * write from the FileSystem.
      */
+    @Override
     public void close() throws IOException {
         _data.close();
     }
@@ -834,6 +835,7 @@ public class POIFSFileSystem extends BlockStore
      *
      * @return an array of Object; may not be null, but may be empty
      */
+    @Override
     public Object[] getViewableArray() {
         if (preferArray()) {
             return getRoot().getViewableArray();
@@ -850,6 +852,7 @@ public class POIFSFileSystem extends BlockStore
      * back end store
      */
 
+    @Override
     public Iterator<Object> getViewableIterator() {
         if (!preferArray()) {
             return getRoot().getViewableIterator();
@@ -866,6 +869,7 @@ public class POIFSFileSystem extends BlockStore
      * a viewer should call getViewableIterator
      */
 
+    @Override
     public boolean preferArray() {
         return getRoot().preferArray();
     }
@@ -877,6 +881,7 @@ public class POIFSFileSystem extends BlockStore
      * @return short description
      */
 
+    @Override
     public String getShortDescription() {
         return "POIFS FileSystem";
     }
@@ -949,4 +954,3 @@ public class POIFSFileSystem extends BlockStore
     }
 
 }
-

@@ -87,8 +87,8 @@ public final class HSSFReadWrite {
 
 				for (int cellnum = 0; cellnum < 50; cellnum += 2) {
 					HSSFCell c = r.createCell(cellnum);
-					c.setCellValue(rownum * 10000 + cellnum
-							+ (((double) rownum / 1000) + ((double) cellnum / 10000)));
+					c.setCellValue((rownum * 10000.0) + cellnum
+							+ (rownum / 1000.0) + (cellnum / 10000.0));
 					if ((rownum % 2) == 0) {
 						c.setCellStyle(cs);
 					}

@@ -92,7 +92,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
     /**
      * Creates new instance of {@link WordToHtmlConverter}. Can be used for
      * output several {@link HWPFDocument}s into single HTML document.
-     * 
+     *
      * @param document XML DOM Document used as HTML document
      */
     public WordToHtmlConverter( Document document ) {
@@ -102,7 +102,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
     public WordToHtmlConverter( HtmlDocumentFacade htmlDocumentFacade ) {
         this.htmlDocumentFacade = htmlDocumentFacade;
     }
-    
+
     private static String getSectionStyle( Section section )
     {
         float leftMargin = section.getMarginLeft() / TWIPS_PER_INCH;
@@ -132,9 +132,9 @@ public class WordToHtmlConverter extends AbstractWordConverter
 
     /**
      * Java main() interface to interact with {@link WordToHtmlConverter}<p>
-     * 
+     *
      * Usage: WordToHtmlConverter infile outfile<p>
-     * 
+     *
      * Where infile is an input .doc file ( Word 95-2007) which will be rendered
      * as HTML into outfile
      */
@@ -344,11 +344,11 @@ public class WordToHtmlConverter extends AbstractWordConverter
 
         if ( aspectRatioX > 0 )
         {
-            imageWidth = picture.getDxaGoal() * aspectRatioX / 1000.f
+            imageWidth = aspectRatioX / 1000.f * picture.getDxaGoal()
                     / TWIPS_PER_INCH;
-            cropRight = picture.getDxaCropRight() * aspectRatioX / 1000.f
+            cropRight = aspectRatioX / 1000.f * picture.getDxaCropRight()
                     / TWIPS_PER_INCH;
-            cropLeft = picture.getDxaCropLeft() * aspectRatioX / 1000.f
+            cropLeft = aspectRatioX / 1000.f * picture.getDxaCropLeft()
                     / TWIPS_PER_INCH;
         }
         else
@@ -360,11 +360,11 @@ public class WordToHtmlConverter extends AbstractWordConverter
 
         if ( aspectRatioY > 0 )
         {
-            imageHeight = picture.getDyaGoal() * aspectRatioY / 1000.f
+            imageHeight = aspectRatioY / 1000.f * picture.getDyaGoal()
                     / TWIPS_PER_INCH;
-            cropTop = picture.getDyaCropTop() * aspectRatioY / 1000.f
+            cropTop = aspectRatioY / 1000.f * picture.getDyaCropTop()
                     / TWIPS_PER_INCH;
-            cropBottom = picture.getDyaCropBottom() * aspectRatioY / 1000.f
+            cropBottom = aspectRatioY / 1000.f * picture.getDyaCropBottom()
                     / TWIPS_PER_INCH;
         }
         else

@@ -108,7 +108,7 @@ public class HwmfDraw {
     public static class WmfPolygon implements HwmfRecord {
 
         protected Path2D poly;
-        
+
         @Override
         public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.polygon;
@@ -266,8 +266,8 @@ public class HwmfDraw {
             Rectangle2D inner = ctx.getProperties().getRegion().getBounds();
             double x = inner.getX()-width;
             double y = inner.getY()-height;
-            double w = inner.getWidth()+2*width;
-            double h = inner.getHeight()+2*height;
+            double w = inner.getWidth()+2.0*width;
+            double h = inner.getHeight()+2.0*height;
             Rectangle2D outer = new Rectangle2D.Double(x,y,w,h);
             Area frame = new Area(outer);
             frame.subtract(new Area(inner));
@@ -283,7 +283,7 @@ public class HwmfDraw {
     public static class WmfPolyPolygon implements HwmfRecord {
 
         protected final List<Path2D> polyList = new ArrayList<>();
-        
+
         @Override
         public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.polyPolygon;
@@ -577,7 +577,6 @@ public class HwmfDraw {
                 startAngle += 360;
             }
 
-            boolean fillShape;
             int arcClosure;
             switch (getWmfRecordType()) {
                 default:
@@ -671,7 +670,7 @@ public class HwmfDraw {
             return "{ index: "+objectIndex +" }";
         }
     }
-    
+
     static int readBounds(LittleEndianInputStream leis, Rectangle2D bounds) {
         /**
          * The 16-bit signed integers that defines the corners of the bounding rectangle.

@@ -15,7 +15,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 
 package org.apache.poi.hslf.record;
@@ -73,7 +73,7 @@ public class CurrentUserAtom
 
 	/** Only correct after reading in or writing out */
 	private byte[] _contents;
-	
+
 	/** Flag for encryption state of the whole file */
 	private boolean isEncrypted;
 
@@ -96,7 +96,7 @@ public class CurrentUserAtom
 
 	public boolean isEncrypted() { return isEncrypted; }
 	public void setEncrypted(boolean isEncrypted) { this.isEncrypted = isEncrypted; }
-	
+
 
 	/* ********************* real code follows *************************** */
 
@@ -117,19 +117,19 @@ public class CurrentUserAtom
 	}
 
 
-	/** 
+	/**
 	 * Find the Current User in the filesystem, and create from that
 	 */
 	public CurrentUserAtom(DirectoryNode dir) throws IOException {
 		// Decide how big it is
 		DocumentEntry docProps =
 			(DocumentEntry)dir.getEntry("Current User");
-		
+
 		// If it's clearly junk, bail out
 		if(docProps.getSize() > 131072) {
 			throw new CorruptPowerPointFileException("The Current User stream is implausably long. It's normally 28-200 bytes long, but was " + docProps.getSize() + " bytes");
 		}
-		
+
 		// Grab the contents
 		int len = docProps.getSize();
 		_contents = IOUtils.safelyAllocate(len, MAX_RECORD_LENGTH);
@@ -140,8 +140,8 @@ public class CurrentUserAtom
         if (len != readLen) {
             throw new IOException("Current User input stream ended prematurely - expected "+len+" bytes - received "+readLen+" bytes");
         }
-		
-		
+
+
 		// See how long it is. If it's under 28 bytes long, we can't
 		//  read it
 		if(_contents.length < 28) {
@@ -169,9 +169,9 @@ public class CurrentUserAtom
 	private void init() {
 		// First up is the size, in 4 bytes, which is fixed
 		// Then is the header
-		
-	    isEncrypted = (LittleEndian.getInt(encHeaderToken) == LittleEndian.getInt(_contents,12)); 
-	    
+
+	    isEncrypted = (LittleEndian.getInt(encHeaderToken) == LittleEndian.getInt(_contents,12));
+
 		// Grab the edit offset
 		currentEditOffset = LittleEndian.getUInt(_contents,16);
 
@@ -188,7 +188,7 @@ public class CurrentUserAtom
 			usernameLen = 0;
 		}
 
-		// Now we know the length of the username, 
+		// Now we know the length of the username,
 		//  use this to grab the revision
 		if(_contents.length >= 28+(int)usernameLen + 4) {
 			releaseVersion = LittleEndian.getUInt(_contents,28+(int)usernameLen);
@@ -227,7 +227,7 @@ public class CurrentUserAtom
 		_contents = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH);
 
 		// First we have a 8 byte atom header
-		System.arraycopy(atomHeader,0,_contents,0,4);	
+		System.arraycopy(atomHeader,0,_contents,0,4);
 		// Size is 20+user len + revision len(4)
 		int atomSize = 20+4+lastEditUser.length();
 		LittleEndian.putInt(_contents,4,atomSize);
@@ -241,14 +241,14 @@ public class CurrentUserAtom
 		// Now the current edit offset
 		LittleEndian.putInt(_contents,16,(int)currentEditOffset);
 
-		// The username gets stored twice, once as US 
+		// The username gets stored twice, once as US
 		//  ascii, and again as unicode laster on
 		byte[] asciiUN = IOUtils.safelyAllocate(lastEditUser.length(), MAX_RECORD_LENGTH);
 		StringUtil.putCompressedUnicode(lastEditUser,asciiUN,0);
-		
+
 		// Now we're able to do the length of the last edited user
 		LittleEndian.putShort(_contents,20,(short)asciiUN.length);
-		
+
 		// Now the file versions, 2+1+1
 		LittleEndian.putShort(_contents,22,(short)docFinalVersion);
 		_contents[24] = docMajorNo;
@@ -265,7 +265,7 @@ public class CurrentUserAtom
 		LittleEndian.putInt(_contents,28+asciiUN.length,(int)releaseVersion);
 
 		// username in unicode
-		byte [] ucUN = IOUtils.safelyAllocate(lastEditUser.length()*2, MAX_RECORD_LENGTH);
+		byte [] ucUN = IOUtils.safelyAllocate(lastEditUser.length() * 2L, MAX_RECORD_LENGTH);
 		StringUtil.putUnicodeLE(lastEditUser,ucUN,0);
 		System.arraycopy(ucUN,0,_contents,28+asciiUN.length+4,ucUN.length);
 
@@ -280,7 +280,7 @@ public class CurrentUserAtom
 		// Grab contents
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		writeOut(baos);
-		ByteArrayInputStream bais = 
+		ByteArrayInputStream bais =
 			new ByteArrayInputStream(baos.toByteArray());
 
 		// Write out

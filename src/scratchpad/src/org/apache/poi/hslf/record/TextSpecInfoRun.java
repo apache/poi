@@ -20,7 +20,10 @@ package org.apache.poi.hslf.record;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.poi.util.*;
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianByteArrayInputStream;
 
 public class TextSpecInfoRun {
 
@@ -39,14 +42,14 @@ public class TextSpecInfoRun {
         grammar(new BitField(4)),
         /** the text is spelled correct */
         correct(new BitField(0));
-        
+
         final BitField bitField;
-        
+
         SpellInfoEnum(BitField bitField) {
             this.bitField = bitField;
         }
     }
-    
+
     /** A bit that specifies whether the spellInfo field exists. */
     private static final BitField spellFld    = new BitField(0X00000001);
     /** A bit that specifies whether the lid field exists. */
@@ -62,7 +65,7 @@ public class TextSpecInfoRun {
     // reserved1 - MUST be zero and MUST be ignored.
     /** A bit that specifies whether the smartTags field exists. */
     private static final BitField smartTagFld = new BitField(0X00000200);
-    // reserved2 - MUST be zero and MUST be ignored. 
+    // reserved2 - MUST be zero and MUST be ignored.
 
     /**
      * An optional unsigned integer that specifies an identifier for a character
@@ -76,7 +79,7 @@ public class TextSpecInfoRun {
      * only if fPp10ext is TRUE.
      **/
     private static final BitField grammarErrorFld = new BitField(0X80000000);
-    
+
     //Length of special info run.
     private int length;
 
@@ -97,7 +100,7 @@ public class TextSpecInfoRun {
      * reserved (13 bits): MUST be zero and MUST be ignored.
      */
     private short spellInfo = -1;
-    
+
     /**
      * An optional TxLCID that specifies the language identifier of this text.
      * It MUST exist if and only if lang is TRUE.
@@ -108,13 +111,13 @@ public class TextSpecInfoRun {
      * &gt; 0x0400 = A valid LCID as specified by [MS-LCID].
      */
     private short langId = -1;
-    
+
     /**
      * An optional TxLCID that specifies the alternate language identifier of this text.
      * It MUST exist if and only if altLang is TRUE.
      */
     private short altLangId = -1;
-    
+
     /**
      * An optional signed integer that specifies whether the text contains bidirectional
      * characters. It MUST exist if and only if fBidi is TRUE.
@@ -122,7 +125,7 @@ public class TextSpecInfoRun {
      * 0x0001 = Contains bidirectional characters.
      */
     private short bidi = -1;
-    
+
     private int pp10extMask = -1;
     private byte[] smartTagsBytes;
 
@@ -135,7 +138,7 @@ public class TextSpecInfoRun {
         setLength(len);
         setLangId((short)0);
     }
-    
+
     public TextSpecInfoRun(LittleEndianByteArrayInputStream source) {
         length = source.readInt();
         mask = source.readInt();
@@ -157,7 +160,7 @@ public class TextSpecInfoRun {
         if (smartTagFld.isSet(mask)) {
             // An unsigned integer specifies the count of items in rgSmartTagIndex.
             int count = source.readInt();
-            smartTagsBytes = IOUtils.safelyAllocate(4+count*4, MAX_RECORD_LENGTH);
+            smartTagsBytes = IOUtils.safelyAllocate(4 + count * 4L, MAX_RECORD_LENGTH);
             LittleEndian.putInt(smartTagsBytes, 0, count);
             // An array of SmartTagIndex that specifies the indices.
             // The count of items in the array is specified by count.
@@ -186,11 +189,13 @@ public class TextSpecInfoRun {
                 pp10extFld, pp10extMask, "pp10 extension field",
                 smartTagFld, smartTagsBytes, "smart tags"
         };
-        
+
         for (int i=0; i<flds.length-1; i+=3) {
             BitField fld = (BitField)flds[i+0];
             Object valO = flds[i+1];
-            if (!fld.isSet(mask)) continue;
+            if (!fld.isSet(mask)) {
+                continue;
+            }
             boolean valid;
             if (valO instanceof byte[]) {
                 byte[] bufB = (byte[]) valO;
@@ -214,15 +219,19 @@ public class TextSpecInfoRun {
                 throw new IOException(fval + " is activated, but its value is invalid");
             }
         }
-    }        
-    
+    }
+
     /**
      * @return Spelling status of this text. null if not defined.
      */
     public SpellInfoEnum getSpellInfo(){
-        if (spellInfo == -1) return null;
+        if (spellInfo == -1) {
+            return null;
+        }
         for (SpellInfoEnum si : new SpellInfoEnum[]{SpellInfoEnum.clean,SpellInfoEnum.error,SpellInfoEnum.grammar}) {
-            if (si.bitField.isSet(spellInfo)) return si;
+            if (si.bitField.isSet(spellInfo)) {
+                return si;
+            }
         }
         return SpellInfoEnum.correct;
     }
@@ -236,7 +245,7 @@ public class TextSpecInfoRun {
             : (short)spellInfo.bitField.set(0);
         mask = spellFld.setBoolean(mask, spellInfo != null);
     }
-    
+
     /**
      * Windows LANGID for this text.
      *
@@ -253,7 +262,7 @@ public class TextSpecInfoRun {
         this.langId = langId;
         mask = langFld.setBoolean(mask, langId != -1);
     }
-    
+
     /**
      * Alternate Windows LANGID of this text;
      * must be a valid non-East Asian LANGID if the text has an East Asian language,
@@ -313,15 +322,15 @@ public class TextSpecInfoRun {
         this.smartTagsBytes = (smartTagsBytes == null) ? null : smartTagsBytes.clone();
         mask = smartTagFld.setBoolean(mask, smartTagsBytes != null);
     }
-    
+
     /**
      * @return an identifier for a character run that contains StyleTextProp11 data.
      */
     public int getPP10RunId() {
         return (pp10extMask == -1 || !pp10extFld.isSet(mask)) ? -1 : pp10runidFld.getValue(pp10extMask);
-        
+
     }
-    
+
     /**
      * @param pp10RunId an identifier for a character run that contains StyleTextProp11 data, -1 to unset
      */
@@ -334,11 +343,11 @@ public class TextSpecInfoRun {
         // if both parameters are invalid, remove the extension mask
         mask = pp10extFld.setBoolean(mask, pp10extMask != -1);
     }
-    
+
     public Boolean getGrammarError() {
         return (pp10extMask == -1 || !pp10extFld.isSet(mask)) ? null : grammarErrorFld.isSet(pp10extMask);
     }
-    
+
     public void getGrammarError(Boolean grammarError) {
         if (grammarError == null) {
             pp10extMask = (getPP10RunId() == -1) ? -1 : grammarErrorFld.clear(pp10extMask);
