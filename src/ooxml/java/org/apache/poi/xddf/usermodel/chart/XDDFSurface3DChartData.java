@@ -53,26 +53,25 @@ public class XDDFSurface3DChartData extends XDDFChartData {
         defineAxes(chart.getAxIdArray(), categories, values);
     }
     
-    public void setSeriesAxisId(XDDFSeriesAxis seriesAxis)
-    {
+    public void setSeriesAxisId(XDDFSeriesAxis seriesAxis) {
             chart.addNewAxId().setVal(seriesAxis.getId());
     }
     
-    public CTBoolean getWireframe()
-    {
-        if(chart.isSetWireframe())
-            return chart.getWireframe();
-        else
-            return chart.addNewWireframe();
-    }
-    
-    public void setWireframe(boolean val)
-    {
-        if(chart.isSetWireframe())
-            chart.getWireframe().setVal(val);
-        else
-            chart.addNewWireframe().setVal(val);
-    }
+    public CTBoolean getWireframe() {
+       if (chart.isSetWireframe()) {
+           return chart.getWireframe();
+       } else {
+           return chart.addNewWireframe();
+       }
+   }
+
+   public void setWireframe(boolean val) {
+       if (chart.isSetWireframe()) {
+           chart.getWireframe().setVal(val);
+       } else {
+           chart.addNewWireframe().setVal(val);
+       }
+   }
 
     /**
      * Surface chart is not supporting vary color property
