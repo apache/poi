@@ -35,6 +35,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -51,6 +52,8 @@ import org.apache.poi.hemf.record.emf.HemfRecordType;
 import org.apache.poi.hemf.record.emf.HemfText;
 import org.apache.poi.hwmf.record.HwmfRecord;
 import org.apache.poi.hwmf.record.HwmfText;
+import org.apache.poi.hwmf.usermodel.HwmfEmbedded;
+import org.apache.poi.hwmf.usermodel.HwmfEmbeddedType;
 import org.apache.poi.hwmf.usermodel.HwmfPicture;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.RecordFormatException;
@@ -73,22 +76,28 @@ public class HemfPictureTest {
         // emfs/govdocs1/844/844795.ppt_2.emf
         // emfs/commoncrawl2/TO/TOYZSTNUSW5OFCFUQ6T5FBLIDLCRF3NH_0.emf
 
-        final boolean writeLog = true;
+        final boolean writeLog = false;
         final boolean dumpRecords = false;
-        final boolean savePng = true;
+        final boolean savePng = false;
+        final boolean dumpEmbedded = true;
 
         Set<String> passed = new HashSet<>();
 
         try (BufferedWriter sucWrite = parseEmfLog(passed, "emf-success.txt");
              BufferedWriter parseError = parseEmfLog(passed, "emf-parse.txt");
              BufferedWriter renderError = parseEmfLog(passed, "emf-render.txt");
-             SevenZFile sevenZFile = new SevenZFile(new File("tmp/render_emf.7z"))) {
+             SevenZFile sevenZFile = new SevenZFile(new File("tmp/plus_emf.7z"))) {
             for (int idx=0;;idx++) {
                 SevenZArchiveEntry entry = sevenZFile.getNextEntry();
                 if (entry == null) break;
                 final String etName = entry.getName();
 
                 if (entry.isDirectory() || !etName.endsWith(".emf") || passed.contains(etName)) continue;
+
+                if (!etName.equals("emfs/commoncrawl2/2S/2SYMYPLNJURGCXJKLNZCJQGIBHVMQTRS_0.emf")) continue;
+
+                // emfs/commoncrawl2/ZJ/ZJT2BZPLQR7DKSKYLYL6GRDEUM2KIO5F_4.emf
+                // emfs/govdocs1/005/005203.ppt_3.emf
 
                 System.out.println(etName);
 
@@ -115,6 +124,18 @@ public class HemfPictureTest {
                 if (dumpRecords) {
                     dumpRecords(emf);
                 }
+
+                if (dumpEmbedded) {
+                    int embIdx = 0;
+                    for (HwmfEmbedded emb : emf.getEmbeddings()) {
+                        final File embName = new File("build/tmp", "emb_"+etName.replaceFirst(".+/", "").replace(".emf", "_"+embIdx + emb.getEmbeddedType().extension) );
+//                        try (FileOutputStream fos = new FileOutputStream(embName)) {
+//                            fos.write(emb.getRawData());
+//                        }
+                        embIdx++;
+                    }
+                }
+
 
                 Graphics2D g = null;
                 try {
@@ -194,7 +215,7 @@ public class HemfPictureTest {
         if (Files.exists(log)) {
             soo = StandardOpenOption.APPEND;
             try (Stream<String> stream = Files.lines(log)) {
-                stream.forEach((s) -> passed.add(s.split("\\s")[0]));
+                stream.filter(s -> !s.startsWith("#")).forEach((s) -> passed.add(s.split("\\s")[0]));
             }
         } else {
             soo = StandardOpenOption.CREATE;
@@ -380,7 +401,28 @@ public class HemfPictureTest {
         }
     }
 
-     /*
-        govdocs1 064213.doc-0.emf contains an example of extextouta
-     */
+    @Test
+    public void nestedWmfEmf() throws Exception {
+        try (InputStream is = sl_samples.openResourceAsStream("nested_wmf.emf")) {
+            HemfPicture emf1 = new HemfPicture(is);
+            List<HwmfEmbedded> embeds = new ArrayList<>();
+            emf1.getEmbeddings().forEach(embeds::add);
+            assertEquals(1, embeds.size());
+            assertEquals(HwmfEmbeddedType.WMF, embeds.get(0).getEmbeddedType());
+
+            HwmfPicture wmf = new HwmfPicture(new ByteArrayInputStream(embeds.get(0).getRawData()));
+            embeds.clear();
+            wmf.getEmbeddings().forEach(embeds::add);
+            assertEquals(3, embeds.size());
+            assertEquals(HwmfEmbeddedType.EMF, embeds.get(0).getEmbeddedType());
+
+            HemfPicture emf2 = new HemfPicture(new ByteArrayInputStream(embeds.get(0).getRawData()));
+            embeds.clear();
+            emf2.getEmbeddings().forEach(embeds::add);
+            assertTrue(embeds.isEmpty());
+        }
+    }
+
+
+    /* govdocs1 064213.doc-0.emf contains an example of extextouta */
 }

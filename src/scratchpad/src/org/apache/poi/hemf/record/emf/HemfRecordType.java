@@ -121,7 +121,7 @@ public enum HemfRecordType {
     extCreatePen(0x0000005F, HemfMisc.EmfExtCreatePen::new),
     polytextouta(0x00000060, HemfText.PolyTextOutA::new),
     polytextoutw(0x00000061, HemfText.PolyTextOutW::new),
-    seticmmode(0x00000062, UnimplementedHemfRecord::new),
+    seticmmode(0x00000062, HemfPalette.EmfSetIcmMode::new),
     createcolorspace(0x00000063, UnimplementedHemfRecord::new),
     setcolorspace(0x00000064, UnimplementedHemfRecord::new),
     deletecolorspace(0x00000065, UnimplementedHemfRecord::new),

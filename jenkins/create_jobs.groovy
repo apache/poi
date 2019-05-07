@@ -18,8 +18,7 @@ def poijobs = [
         ],
         [ name: 'POI-DSL-OpenJDK', jdk: 'OpenJDK', trigger: 'H */12 * * *',
           // H13-H20 (Ubuntu 16.04) do not have OpenJDK 6 installed, see https://issues.apache.org/jira/browse/INFRA-12880
-          slaveAdd: '&&!beam1&&!beam2&&!beam3&&!beam4&&!beam5&&!beam6&&!beam7&&!beam8' +
-                  '&&!H0&&!H1&&!H2&&!H3&&!H4&&!H5&&!H6&&!H7&&!H8&&!H9&&!H10&&!H11' +
+          slaveAdd: '&&!H0&&!H1&&!H2&&!H3&&!H4&&!H5&&!H6&&!H7&&!H8&&!H9&&!H10&&!H11' +
                   '&&!qnode3' +
                   '&&!ubuntu-1&&!ubuntu-2&&!ubuntu-4&&!ubuntu-5&&!ubuntu-6&&!ubuntu-eu2&&!ubuntu-us1',
           // the JDK is missing on some slaves so builds are unstable
@@ -27,18 +26,13 @@ def poijobs = [
         ],
         [ name: 'POI-DSL-1.10', jdk: '1.10', trigger: triggerSundays, skipcigame: true
         ],
-        [ name: 'POI-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true,
-          // Nodes beam* do not yet have JDK 11 installed
-          slaveAdd: '&&!beam1&&!beam2&&!beam3&&!beam4&&!beam5&&!beam6&&!beam7&&!beam8&&!beam9&&!beam10&&!beam11&&!beam12&&!beam13&&!beam14&&!beam15&&!beam16'
+        [ name: 'POI-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true
         ],
         [ name: 'POI-DSL-1.12', jdk: '1.12', trigger: triggerSundays, skipcigame: true,
-          // Nodes beam* do not yet have JDK 12 installed
           // H43 has outdated JDK12 installed
-          slaveAdd: '&&!beam1&&!beam2&&!beam3&&!beam4&&!beam5&&!beam6&&!beam7&&!beam8&&!beam9&&!beam10&&!beam11&&!beam12&&!beam13&&!beam14&&!beam15&&!beam16&&!H43'
+          slaveAdd: '&&!H43'
         ],
-        [ name: 'POI-DSL-1.13', jdk: '1.13', trigger: triggerSundays, skipcigame: true,
-          // Nodes beam* do not yet have JDK 13 installed
-          slaveAdd: '&&!beam1&&!beam2&&!beam3&&!beam4&&!beam5&&!beam6&&!beam7&&!beam8&&!beam9&&!beam10&&!beam11&&!beam12&&!beam13&&!beam14&&!beam15&&!beam16'
+        [ name: 'POI-DSL-1.13', jdk: '1.13', trigger: triggerSundays, skipcigame: true
         ],
         [ name: 'POI-DSL-IBM-JDK', jdk: 'IBMJDK', trigger: triggerSundays, skipcigame: true
         ],
@@ -98,12 +92,7 @@ def defaultAnt = 'Ant 1.9 (Latest)'
 def defaultAntWindows = 'Ant 1.9 (Latest Windows)'
 // currently a lot of H?? slaves don't have Ant installed ... H21 seems to have a SVN problem
 // H35 fails with ImageIO create cache file errors, although the java.io.tmpdir is writable
-def defaultSlaves = '(ubuntu||beam)&&!cloud-slave&&!H15&&!H17&&!H18&&!H24&&!ubuntu-4&&!H21&&!H35' +
-        // some nodes have strange problems with fetching from SVN
-        '&&!beam5' +
-        // Disable all apache-beam-* nodes as they seem to lack svn and Ant installations currently
-        '&&!apache-beam-jenkins-1&&!apache-beam-jenkins-2&&!apache-beam-jenkins-4&&!apache-beam-jenkins-7' +
-        '&&!apache-beam-jenkins-8&&!apache-beam-jenkins-9&&!apache-beam-jenkins-12'
+def defaultSlaves = '(ubuntu)&&!beam&&!cloud-slave&&!H15&&!H17&&!H18&&!H24&&!ubuntu-4&&!H21&&!H35'
 
 def jdkMapping = [
         '1.6': 'JDK 1.6 (latest)',

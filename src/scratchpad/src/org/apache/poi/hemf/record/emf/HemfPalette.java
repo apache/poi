@@ -151,4 +151,59 @@ public class HemfPalette {
             return 0;
         }
     }
+
+    /**
+     * The EMR_SETICMMODE record specifies the mode of Image Color Management (ICM) for graphics operations.
+     */
+    public static class EmfSetIcmMode implements HemfRecord {
+        /** The ICMMode enumeration defines values that specify when to turn on and off ICM. */
+        public enum ICMMode {
+            /**
+             * Turns off Image Color Management (ICM) in the playback device context.
+             * Turns on old-style color correction of halftones.
+             */
+            ICM_OFF(0x01),
+            /**
+             * Turns on ICM in the playback device context.
+             * Turns off old-style color correction of halftones.
+             */
+            ICM_ON(0x02),
+            /**
+             * Queries the current state of color management in the playback device context.
+             */
+            ICM_QUERY(0x03),
+            /**
+             * Turns off ICM in the playback device context, and turns off old-style color correction of halftones.
+             */
+            ICM_DONE_OUTSIDEDC(0x04)
+            ;
+
+            public final int id;
+
+            ICMMode(int id) {
+                this.id = id;
+            }
+
+            public static ICMMode valueOf(int id) {
+                for (ICMMode wrt : values()) {
+                    if (wrt.id == id) return wrt;
+                }
+                return null;
+            }
+
+        }
+
+        private ICMMode icmMode;
+
+        @Override
+        public HemfRecordType getEmfRecordType() {
+            return HemfRecordType.seticmmode;
+        }
+
+        @Override
+        public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
+            icmMode = ICMMode.valueOf(leis.readInt());
+            return LittleEndianConsts.INT_SIZE;
+        }
+    }
 }

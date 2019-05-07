@@ -17,6 +17,7 @@
 
 package org.apache.poi.hwmf.record;
 
+import java.awt.Color;
 import java.awt.geom.Dimension2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -25,6 +26,7 @@ import org.apache.poi.hwmf.draw.HwmfDrawProperties;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.hwmf.record.HwmfFill.ColorUsage;
 import org.apache.poi.hwmf.record.HwmfFill.HwmfImageRecord;
+import org.apache.poi.hwmf.record.HwmfMisc.WmfSetBkMode.HwmfBkMode;
 import org.apache.poi.util.Dimension2DDouble;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
@@ -459,15 +461,27 @@ public class HwmfMisc {
             }
             HwmfDrawProperties prop = ctx.getProperties();
             prop.setBrushStyle(style);
-            prop.setBrushBitmap(getImage());
+            prop.setBrushBitmap(getImage(prop.getBrushColor().getColor(), prop.getBackgroundColor().getColor(),
+                                         prop.getBkMode() == HwmfBkMode.TRANSPARENT));
         }
 
         @Override
-        public BufferedImage getImage() {
+        public BufferedImage getImage(Color foreground, Color background, boolean hasAlpha) {
             if (patternDib != null && patternDib.isValid()) {
-                return patternDib.getImage();
+                return patternDib.getImage(foreground, background, hasAlpha);
             } else if (pattern16 != null) {
                 return pattern16.getImage();
+            } else {
+                return null;
+            }
+        }
+
+        @Override
+        public byte[] getBMPData() {
+            if (patternDib != null && patternDib.isValid()) {
+                return patternDib.getBMPData();
+            } else if (pattern16 != null) {
+                return null;
             } else {
                 return null;
             }

@@ -127,8 +127,10 @@ public class HwmfPicture {
             ctx.scale(graphicsBounds.getWidth()/wmfBounds.getWidth(), graphicsBounds.getHeight()/wmfBounds.getHeight());
             
             HwmfGraphics g = new HwmfGraphics(ctx, wmfBounds);
+            int idx = 0;
             for (HwmfRecord r : records) {
                 r.draw(g);
+                idx++;
             }
         } finally {
             ctx.setTransform(at);
@@ -183,5 +185,9 @@ public class HwmfPicture {
         //coefficient to translate from WMF dpi to 72dpi
         double coeff = Units.POINT_DPI/inch;
         return new Dimension((int)Math.round(bounds.getWidth()*coeff), (int)Math.round(bounds.getHeight()*coeff));
+    }
+
+    public Iterable<HwmfEmbedded> getEmbeddings() {
+        return () -> new HwmfEmbeddedIterator(HwmfPicture.this);
     }
 }
