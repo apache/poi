@@ -74,6 +74,9 @@ public class XDDFSurface3DChartData extends XDDFChartData {
             chart.addNewWireframe().setVal(val);
     }
 
+    /**
+     * Surface chart is not supporting vary color property
+     */
     @Override
     public void setVaryColors(boolean varyColors) {
        
@@ -116,10 +119,13 @@ public class XDDFSurface3DChartData extends XDDFChartData {
             }
         }
 
-        @Override
-        public void setShowLeaderLines(boolean showLeaderLines) {
-            
-        }
+      /**
+       * Surface chart is not supporting vary show leader lines property
+       */
+      @Override
+      public void setShowLeaderLines(boolean showLeaderLines) {
+
+      }
 
         @Override
         public XDDFShapeProperties getShapeProperties() {

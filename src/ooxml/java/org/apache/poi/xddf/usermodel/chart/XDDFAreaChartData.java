@@ -68,9 +68,13 @@ public class XDDFAreaChartData extends XDDFChartData {
         return Grouping.valueOf(chart.getGrouping().getVal());
     }
 
-    public void setGrouping(Grouping grouping) {
-        chart.getGrouping().setVal(grouping.underlying);
-    }
+   public void setGrouping(Grouping grouping) {
+      if (chart.getGrouping() != null) {
+         chart.getGrouping().setVal(grouping.underlying);
+      } else {
+         chart.addNewGrouping().setVal(grouping.underlying);
+      }
+   }
 
     @Override
     public XDDFChartData.Series addSeries(XDDFDataSource<?> category,

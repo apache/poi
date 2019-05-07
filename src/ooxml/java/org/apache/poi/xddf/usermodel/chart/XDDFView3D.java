@@ -32,75 +32,75 @@ public class XDDFView3D {
         this.view3D = view3D;
     }
     
-    public int getRotXVal() {
+    public int getXRotationAngle() {
         return view3D.getRotX().getVal();
     }
     
-    public void setRotXVal(int val) {
-        if(view3D.isSetRotY()) {
-            view3D.getRotY().setVal(val);
-        }
-        else
-            view3D.addNewRotY().setVal(val);
-    }
+   public void setXRotationAngle(int val) {
+      if (view3D.isSetRotY()) {
+         view3D.getRotY().setVal(val);
+      } else {
+         view3D.addNewRotY().setVal(val);
+      }
+   }
     
-    public int getRotYVal() {
+    public int getYRotationAngle() {
         return view3D.getRotY().getVal();
     }
     
-    public void setRotYVal(int val) {
-        if(view3D.isSetRotY()) {
-            view3D.getRotY().setVal(val);
-        }
-        else
-            view3D.addNewRotY().setVal(val);
-    }
+   public void setYRotationAngle(int val) {
+      if (view3D.isSetRotY()) {
+         view3D.getRotY().setVal(val);
+      } else {
+         view3D.addNewRotY().setVal(val);
+      }
+   }
     
-    public boolean getRAngAxVal() {
+    public boolean getRightAngleAxes() {
         return view3D.getRAngAx().getVal();
     }
     
-    public void setRAngAxVal(boolean val) {
-        if(view3D.isSetRAngAx()) {
-            view3D.getRAngAx().setVal(val);
-        }
-        else
-            view3D.addNewRAngAx().setVal(val);
-    }
+   public void setRightAngleAxes(boolean val) {
+      if (view3D.isSetRAngAx()) {
+         view3D.getRAngAx().setVal(val);
+      } else {
+         view3D.addNewRAngAx().setVal(val);
+      }
+   }
     
-    public short getPerspectiveVal() {
+    public short getPerspectiveAngle() {
         return view3D.getPerspective().getVal();
     }
     
-    public void setPerspectiveVal(short val) {
-        if(view3D.isSetPerspective()) {
-            view3D.getPerspective().setVal(val);
-        }
-        else
-            view3D.addNewPerspective().setVal(val);
-    }
+   public void setPerspectiveAngle(short val) {
+      if (view3D.isSetPerspective()) {
+         view3D.getPerspective().setVal(val);
+      } else {
+         view3D.addNewPerspective().setVal(val);
+      }
+   }
     
     public int getDepthPercentVal() {
         return view3D.getDepthPercent().getVal();
     }
     
-    public void setDepthPercentVal(int val) {
-        if(view3D.isSetDepthPercent()) {
-            view3D.getDepthPercent().setVal(val);
-        }
-        else
-            view3D.addNewDepthPercent().setVal(val);
-    }
+   public void setDepthPercent(int val) {
+      if (view3D.isSetDepthPercent()) {
+         view3D.getDepthPercent().setVal(val);
+      } else {
+         view3D.addNewDepthPercent().setVal(val);
+      }
+   }
     
-    public int getHPercentVal() {
+    public int getHeightPercent() {
         return view3D.getHPercent().getVal();
     }
     
-    public void setHPercentVal(int val) {
-        if(view3D.isSetDepthPercent()) {
-            view3D.getDepthPercent().setVal(val);
-        }
-        else
-            view3D.addNewDepthPercent().setVal(val);
-    }
+   public void setHeightPercent(int val) {
+      if (view3D.isSetHPercent()) {
+         view3D.getHPercent().setVal(val);
+      } else {
+         view3D.addNewHPercent().setVal(val);
+      }
+   }
 }

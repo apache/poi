@@ -302,22 +302,21 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
         }
     }
 
-    /**
-     * Get or Add chart 3D view into chart
-     * 
-     * @return this method will add 3D view
-     */
-    public XDDFView3D getOrAddView3D()
-    {
-        CTView3D view3D;
-        if(chart.isSetView3D()) {
-            view3D = chart.getView3D();
-        }
-        else {
-            view3D = chart.addNewView3D();
-        }
-        return new XDDFView3D(view3D);
-    }
+   /**
+    * Get or Add chart 3D view into chart
+    *
+    * @return this method will add 3D view
+    */
+   public XDDFView3D getOrAddView3D() {
+      CTView3D view3D;
+      if (chart.isSetView3D()) {
+         view3D = chart.getView3D();
+      } else {
+         view3D = chart.addNewView3D();
+      }
+      return new XDDFView3D(view3D);
+   }
+
     /**
      * Get the chart title body if there is one, i.e. title is set and is not a
      * formula.
