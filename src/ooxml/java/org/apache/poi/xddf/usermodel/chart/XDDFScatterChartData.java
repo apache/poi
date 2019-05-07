@@ -234,10 +234,9 @@ public class XDDFScatterChartData extends XDDFChartData {
             series.getIdx().setVal(val);
         }
         
-        @Override
-        public void updateOrderVal(long val)
-        {
-            series.getOrder().setVal(val);
-        }
+      @Override
+      public void updateOrderVal(long val) {
+         series.getOrder().setVal(val);
+      }
     }
 }
