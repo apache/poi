@@ -321,8 +321,10 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
             name = "1";
         }
 
+        final int adjInt = Integer.parseInt(name);
+
         short escherProp;
-        switch (Integer.parseInt(name)) {
+        switch (adjInt) {
             case 1: escherProp = EscherProperties.GEOMETRY__ADJUSTVALUE; break;
             case 2: escherProp = EscherProperties.GEOMETRY__ADJUST2VALUE; break;
             case 3: escherProp = EscherProperties.GEOMETRY__ADJUST3VALUE; break;
@@ -336,14 +338,36 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
             default: throw new HSLFException();
         }
 
-        // TODO: the adjust values need to be corrected somehow depending on the shape width/height
-        // see https://social.msdn.microsoft.com/Forums/en-US/3f69ebb3-62a0-4fdd-b367-64790dfb2491/presetshapedefinitionsxml-does-not-specify-width-and-height-form-some-autoshapes?forum=os_binaryfile
-        
-        // the adjust value can be format dependent, e.g. hexagon has different values,
-        // other shape types have the same adjust values in OOXML and native
         int adjval = getEscherProperty(escherProp, -1);
 
-        return (adjval == -1) ? null : new Guide(name, "val "+adjval);
+        if (adjval == -1) {
+            return null;
+        }
+
+        // Bug 59004
+        // the adjust value are format dependent, we scale them up so they match the OOXML ones.
+        // see https://social.msdn.microsoft.com/Forums/en-US/33e458e6-58df-48fe-9a10-e303ab08991d/preset-shapes-for-ppt?forum=os_binaryfile
+
+        // usually we deal with length units and only very few degree units:
+        boolean isDegreeUnit = false;
+        switch (getShapeType()) {
+            case ARC:
+            case BLOCK_ARC:
+            case CHORD:
+            case PIE:
+                isDegreeUnit = (adjInt == 1 || adjInt == 2);
+                break;
+            case CIRCULAR_ARROW:
+            case LEFT_CIRCULAR_ARROW:
+            case LEFT_RIGHT_CIRCULAR_ARROW:
+                isDegreeUnit = (adjInt == 2 || adjInt == 3 || adjInt == 4);
+                break;
+            case MATH_NOT_EQUAL:
+                isDegreeUnit = (adjInt == 2);
+                break;
+        }
+
+        return new Guide(name, "val "+Math.rint(adjval * (isDegreeUnit ? 65536. : 100000./21000.)));
     }
 
     @Override

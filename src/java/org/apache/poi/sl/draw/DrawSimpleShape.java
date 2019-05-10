@@ -307,98 +307,39 @@ public class DrawSimpleShape extends DrawShape {
       , Paint fill
       , Paint line
     ) {
-          Shadow<?,?> shadow = getShape().getShadow();
-          if (shadow == null || (fill == null && line == null)) {
-              return;
-          }
+        Shadow<?,?> shadow = getShape().getShadow();
+        if (shadow == null || (fill == null && line == null)) {
+            return;
+        }
 
-          SolidPaint shadowPaint = shadow.getFillStyle();
-          Color shadowColor = DrawPaint.applyColorTransform(shadowPaint.getSolidColor());
+        SolidPaint shadowPaint = shadow.getFillStyle();
+        Color shadowColor = DrawPaint.applyColorTransform(shadowPaint.getSolidColor());
 
-          double shapeRotation = getShape().getRotation();
-          if(getShape().getFlipVertical()) {
-              shapeRotation += 180;
-          }
-          double angle = shadow.getAngle() - shapeRotation;
-          double dist = shadow.getDistance();
-          double dx = dist * Math.cos(Math.toRadians(angle));
-          double dy = dist * Math.sin(Math.toRadians(angle));
+        double shapeRotation = getShape().getRotation();
+        if (getShape().getFlipVertical()) {
+            shapeRotation += 180;
+        }
+        double angle = shadow.getAngle() - shapeRotation;
+        double dist = shadow.getDistance();
+        double dx = dist * Math.cos(Math.toRadians(angle));
+        double dy = dist * Math.sin(Math.toRadians(angle));
 
-          graphics.translate(dx, dy);
+        graphics.translate(dx, dy);
 
-          for(Outline o : outlines){
-              java.awt.Shape s = o.getOutline();
-              Path p = o.getPath();
-              graphics.setRenderingHint(Drawable.GRADIENT_SHAPE, s);
-              graphics.setPaint(shadowColor);
+        for (Outline o : outlines) {
+            java.awt.Shape s = o.getOutline();
+            Path p = o.getPath();
+            graphics.setRenderingHint(Drawable.GRADIENT_SHAPE, s);
+            graphics.setPaint(shadowColor);
 
-              if(fill != null && p.isFilled()){
-                  fillPaintWorkaround(graphics, s);
-              } else if (line != null && p.isStroked()) {
-                  graphics.draw(s);
-              }
-          }
-
-          graphics.translate(-dx, -dy);
-      }
-
-    protected static CustomGeometry getCustomGeometry(String name) {
-        return getCustomGeometry(name, null);
-    }
-
-    protected static CustomGeometry getCustomGeometry(String name, Graphics2D graphics) {
-        @SuppressWarnings("unchecked")
-        Map<String, CustomGeometry> presets = (graphics == null)
-            ? null
-            : (Map<String, CustomGeometry>)graphics.getRenderingHint(Drawable.PRESET_GEOMETRY_CACHE);
-
-        if (presets == null) {
-            presets = new HashMap<>();
-            if (graphics != null) {
-                graphics.setRenderingHint(Drawable.PRESET_GEOMETRY_CACHE, presets);
-            }
-
-            String packageName = "org.apache.poi.sl.draw.binding";
-            InputStream presetIS = Drawable.class.getResourceAsStream("presetShapeDefinitions.xml");
-
-            // StAX:
-            EventFilter startElementFilter = new EventFilter() {
-                @Override
-                public boolean accept(XMLEvent event) {
-                    return event.isStartElement();
-                }
-            };
-
-            try {
-                XMLInputFactory staxFactory = StaxHelper.newXMLInputFactory();
-                XMLEventReader staxReader = staxFactory.createXMLEventReader(presetIS);
-                XMLEventReader staxFiltRd = staxFactory.createFilteredReader(staxReader, startElementFilter);
-                // Ignore StartElement:
-                staxFiltRd.nextEvent();
-                // JAXB:
-                JAXBContext jaxbContext = JAXBContext.newInstance(packageName);
-                Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-
-                while (staxFiltRd.peek() != null) {
-                    StartElement evRoot = (StartElement)staxFiltRd.peek();
-                    String cusName = evRoot.getName().getLocalPart();
-                    // XMLEvent ev = staxReader.nextEvent();
-                    JAXBElement<org.apache.poi.sl.draw.binding.CTCustomGeometry2D> el = unmarshaller.unmarshal(staxReader, CTCustomGeometry2D.class);
-                    CTCustomGeometry2D cusGeom = el.getValue();
-
-                    presets.put(cusName, new CustomGeometry(cusGeom));
-                }
-
-                staxFiltRd.close();
-                staxReader.close();
-            } catch (Exception e) {
-                throw new RuntimeException("Unable to load preset geometries.", e);
-            } finally {
-                IOUtils.closeQuietly(presetIS);
+            if (fill != null && p.isFilled()) {
+                fillPaintWorkaround(graphics, s);
+            } else if (line != null && p.isStroked()) {
+                graphics.draw(s);
             }
         }
 
-        return presets.get(name);
+        graphics.translate(-dx, -dy);
     }
 
     protected Collection<Outline> computeOutlines(Graphics2D graphics) {
