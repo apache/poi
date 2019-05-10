@@ -51,8 +51,7 @@ public class Context {
     }
 
     Guide getAdjustValue(String name){
-        // ignore HSLF props for now ... the results with default value are usually better - see #59004
-        return (_props.getClass().getName().contains("hslf")) ? null : _props.getAdjustValue(name);
+        return _props.getAdjustValue(name);
     }
 
     public double getValue(String key){
