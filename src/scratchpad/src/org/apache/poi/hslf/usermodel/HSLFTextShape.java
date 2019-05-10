@@ -347,7 +347,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
             return -1;
         }
         List<HSLFTextParagraph> paras = HSLFTextParagraph.findTextParagraphs(_txtbox, getSheet());
-        return (paras.isEmpty()) ? -1 : paras.get(0).getRunType();
+        return (paras.isEmpty() || paras.get(0).getIndex() == -1) ? -1 : paras.get(0).getRunType();
     }
 
     /**
