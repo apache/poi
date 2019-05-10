@@ -364,7 +364,7 @@ public abstract class PropertiesChunk extends Chunk {
             LittleEndian.putUInt(tag, out);
             LittleEndian.putUInt(value.getFlags(), out); // readable + writable
 
-            MAPIType type = getTypeMapping(value.getActualType());
+            MAPIType type = value.getActualType();
             if (type.isFixedLength()) {
                 // page 11, point 2.1.2
                 writeFixedLengthValueHeader(out, property, type, value);
@@ -410,11 +410,6 @@ public abstract class PropertiesChunk extends Chunk {
         while (str.length() < 4) {
             str = "0" + str;
         }
-        MAPIType type = getTypeMapping(actualType);
-        return str + type.asFileEnding();
-    }
-
-    private MAPIType getTypeMapping(MAPIType type) {
-        return type == Types.ASCII_STRING ? Types.UNICODE_STRING : type;
+        return str + actualType.asFileEnding();
     }
 }

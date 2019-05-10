@@ -40,7 +40,8 @@ import org.junit.runners.Suite;
     TestMessageSubmissionChunkY2KRead.class,
     TestMessageSubmissionChunk.class,
     TestExtractEmbeddedMSG.class,
-    Test7BitCodepage.class
+    Test7BitCodepage.class,
+    TestWriteProperties.class
 })
 public class AllHSMFTests {
 }
