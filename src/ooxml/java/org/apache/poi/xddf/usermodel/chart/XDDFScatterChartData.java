@@ -20,6 +20,7 @@ package org.apache.poi.xddf.usermodel.chart;
 import java.util.Map;
 
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.Internal;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTMarker;
@@ -54,12 +55,24 @@ public class XDDFScatterChartData extends XDDFChartData {
         defineAxes(chart.getAxIdArray(), categories, values);
     }
 
+    @Internal
     @Override
-    public void setVaryColors(boolean varyColors) {
-        if (chart.isSetVaryColors()) {
-            chart.getVaryColors().setVal(varyColors);
+    protected void removeCTSeries(int n) {
+        chart.removeSer(n);
+    }
+
+    @Override
+    public void setVaryColors(Boolean varyColors) {
+        if (varyColors == null) {
+            if (chart.isSetVaryColors()) {
+                chart.unsetVaryColors();
+            }
         } else {
-            chart.addNewVaryColors().setVal(varyColors);
+            if (chart.isSetVaryColors()) {
+                chart.getVaryColors().setVal(varyColors);
+            } else {
+                chart.addNewVaryColors().setVal(varyColors);
+            }
         }
     }
 
@@ -119,7 +132,7 @@ public class XDDFScatterChartData extends XDDFChartData {
         /**
          * @since 4.0.1
          */
-        public Boolean getSmooth() {
+        public Boolean isSmooth() {
             if (series.isSetSmooth()) {
                 return series.getSmooth().getVal();
             } else {
@@ -228,15 +241,15 @@ public class XDDFScatterChartData extends XDDFChartData {
         protected CTNumDataSource getNumDS() {
             return series.getYVal();
         }
-        
+
         @Override
-        public void updateIdXVal(long val) {
+        public void setIndex(long val) {
             series.getIdx().setVal(val);
         }
-        
-      @Override
-      public void updateOrderVal(long val) {
-         series.getOrder().setVal(val);
-      }
+
+        @Override
+        public void setOrder(long val) {
+            series.getOrder().setVal(val);
+        }
     }
 }

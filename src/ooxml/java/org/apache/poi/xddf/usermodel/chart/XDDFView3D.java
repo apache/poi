@@ -19,85 +19,162 @@
 
 package org.apache.poi.xddf.usermodel.chart;
 
+import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTView3D;
-
 
 public class XDDFView3D {
     private final CTView3D view3D;
 
-    public XDDFView3D(CTView3D view3D) {
+    @Internal
+    protected XDDFView3D(CTView3D view3D) {
         this.view3D = view3D;
     }
-    
-    public int getXRotationAngle() {
-        return view3D.getRotX().getVal();
+
+    public Byte getXRotationAngle() {
+        if (view3D.isSetRotX()) {
+            return view3D.getRotX().getVal();
+        } else {
+            return null;
+        }
     }
-    
-   public void setXRotationAngle(int val) {
-      if (view3D.isSetRotY()) {
-         view3D.getRotY().setVal(val);
-      } else {
-         view3D.addNewRotY().setVal(val);
-      }
-   }
-    
-    public int getYRotationAngle() {
-        return view3D.getRotY().getVal();
+
+    public void setXRotationAngle(Byte rotation) {
+        if (rotation == null) {
+            if (view3D.isSetRotX()) {
+                view3D.unsetRotX();
+            }
+        } else {
+            if (rotation < -90 || 90 < rotation) {
+                throw new IllegalArgumentException("rotation must be between -90 and 90");
+            }
+            if (view3D.isSetRotX()) {
+                view3D.getRotX().setVal(rotation);
+            } else {
+                view3D.addNewRotX().setVal(rotation);
+            }
+        }
     }
-    
-   public void setYRotationAngle(int val) {
-      if (view3D.isSetRotY()) {
-         view3D.getRotY().setVal(val);
-      } else {
-         view3D.addNewRotY().setVal(val);
-      }
-   }
-    
-    public boolean getRightAngleAxes() {
-        return view3D.getRAngAx().getVal();
+
+    public Integer getYRotationAngle() {
+        if (view3D.isSetRotY()) {
+            return view3D.getRotY().getVal();
+        } else {
+            return null;
+        }
     }
-    
-   public void setRightAngleAxes(boolean val) {
-      if (view3D.isSetRAngAx()) {
-         view3D.getRAngAx().setVal(val);
-      } else {
-         view3D.addNewRAngAx().setVal(val);
-      }
-   }
-    
-    public short getPerspectiveAngle() {
-        return view3D.getPerspective().getVal();
+
+    public void setYRotationAngle(Integer rotation) {
+        if (rotation == null) {
+            if (view3D.isSetRotY()) {
+                view3D.unsetRotY();
+            }
+        } else {
+            if (rotation < 0 || 360 < rotation) {
+                throw new IllegalArgumentException("rotation must be between 0 and 360");
+            }
+            if (view3D.isSetRotY()) {
+                view3D.getRotY().setVal(rotation);
+            } else {
+                view3D.addNewRotY().setVal(rotation);
+            }
+        }
     }
-    
-   public void setPerspectiveAngle(short val) {
-      if (view3D.isSetPerspective()) {
-         view3D.getPerspective().setVal(val);
-      } else {
-         view3D.addNewPerspective().setVal(val);
-      }
-   }
-    
-    public int getDepthPercentVal() {
-        return view3D.getDepthPercent().getVal();
+
+    public Boolean hasRightAngleAxes() {
+        if (view3D.isSetRAngAx()) {
+            return view3D.getRAngAx().getVal();
+        } else {
+            return null;
+        }
     }
-    
-   public void setDepthPercent(int val) {
-      if (view3D.isSetDepthPercent()) {
-         view3D.getDepthPercent().setVal(val);
-      } else {
-         view3D.addNewDepthPercent().setVal(val);
-      }
-   }
-    
-    public int getHeightPercent() {
-        return view3D.getHPercent().getVal();
+
+    public void setRightAngleAxes(Boolean rightAngles) {
+        if (rightAngles == null) {
+            if (view3D.isSetRAngAx()) {
+                view3D.unsetRAngAx();
+            }
+        } else {
+            if (view3D.isSetRAngAx()) {
+                view3D.getRAngAx().setVal(rightAngles);
+            } else {
+                view3D.addNewRAngAx().setVal(rightAngles);
+            }
+        }
     }
-    
-   public void setHeightPercent(int val) {
-      if (view3D.isSetHPercent()) {
-         view3D.getHPercent().setVal(val);
-      } else {
-         view3D.addNewHPercent().setVal(val);
-      }
-   }
+
+    public Short getPerspectiveAngle() {
+        if (view3D.isSetPerspective()) {
+            return view3D.getPerspective().getVal();
+        } else {
+            return null;
+        }
+    }
+
+    public void setPerspectiveAngle(Short perspective) {
+        if (perspective == null) {
+            if (view3D.isSetPerspective()) {
+                view3D.unsetPerspective();
+            }
+        } else {
+            if (perspective < 0 || 240 < perspective) {
+                throw new IllegalArgumentException("perspective must be between 0 and 240");
+            }
+            if (view3D.isSetPerspective()) {
+                view3D.getPerspective().setVal(perspective);
+            } else {
+                view3D.addNewPerspective().setVal(perspective);
+            }
+        }
+    }
+
+    public Integer getDepthPercent() {
+        if (view3D.isSetDepthPercent()) {
+            return view3D.getDepthPercent().getVal();
+        } else {
+            return null;
+        }
+    }
+
+    public void setDepthPercent(Integer percent) {
+        if (percent == null) {
+            if (view3D.isSetDepthPercent()) {
+                view3D.unsetDepthPercent();
+            }
+        } else {
+            if (percent < 20 || 2000 < percent) {
+                throw new IllegalArgumentException("percent must be between 20 and 2000");
+            }
+            if (view3D.isSetDepthPercent()) {
+                view3D.getDepthPercent().setVal(percent);
+            } else {
+                view3D.addNewDepthPercent().setVal(percent);
+            }
+        }
+    }
+
+    public Integer getHPercent() {
+        if (view3D.isSetHPercent()) {
+            return view3D.getHPercent().getVal();
+        } else {
+            return null;
+        }
+    }
+
+    public void setHPercent(Integer percent) {
+        if (percent == null) {
+            if (view3D.isSetHPercent()) {
+                view3D.unsetHPercent();
+            }
+        } else {
+            if (percent < 5 || 500 < percent) {
+                throw new IllegalArgumentException("percent must be between 5 and 500");
+            }
+            if (view3D.isSetHPercent()) {
+                view3D.getHPercent().setVal(percent);
+            } else {
+                view3D.addNewHPercent().setVal(percent);
+            }
+        }
+    }
+
 }

@@ -20,6 +20,7 @@ package org.apache.poi.xddf.usermodel.chart;
 import java.util.Map;
 
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.Internal;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBarChart;
@@ -55,12 +56,24 @@ public class XDDFBarChartData extends XDDFChartData {
         defineAxes(chart.getAxIdArray(), categories, values);
     }
 
+    @Internal
     @Override
-    public void setVaryColors(boolean varyColors) {
-        if (chart.isSetVaryColors()) {
-            chart.getVaryColors().setVal(varyColors);
+    protected void removeCTSeries(int n) {
+        chart.removeSer(n);
+    }
+
+    @Override
+    public void setVaryColors(Boolean varyColors) {
+        if (varyColors == null) {
+            if (chart.isSetVaryColors()) {
+                chart.unsetVaryColors();
+            }
         } else {
-            chart.addNewVaryColors().setVal(varyColors);
+            if (chart.isSetVaryColors()) {
+                chart.getVaryColors().setVal(varyColors);
+            } else {
+                chart.addNewVaryColors().setVal(varyColors);
+            }
         }
     }
 
@@ -76,31 +89,74 @@ public class XDDFBarChartData extends XDDFChartData {
         if (chart.isSetGrouping()) {
             return BarGrouping.valueOf(chart.getGrouping().getVal());
         } else {
-            return BarGrouping.STANDARD;
+            return null;
         }
     }
 
     public void setBarGrouping(BarGrouping grouping) {
-        if (chart.isSetGrouping()) {
-            chart.getGrouping().setVal(grouping.underlying);
+        if (grouping == null) {
+            if (chart.isSetGrouping()) {
+                chart.unsetGrouping();
+            }
         } else {
-            chart.addNewGrouping().setVal(grouping.underlying);
+            if (chart.isSetGrouping()) {
+                chart.getGrouping().setVal(grouping.underlying);
+            } else {
+                chart.addNewGrouping().setVal(grouping.underlying);
+            }
         }
     }
 
-    public int getGapWidth() {
+    public Integer getGapWidth() {
         if (chart.isSetGapWidth()) {
             return chart.getGapWidth().getVal();
         } else {
-            return 0;
+            return null;
         }
     }
 
-    public void setGapWidth(int width) {
-        if (chart.isSetGapWidth()) {
-            chart.getGapWidth().setVal(width);
+    public void setGapWidth(Integer width) {
+        if (width == null) {
+            if (chart.isSetGapWidth()) {
+                chart.unsetGapWidth();
+            }
         } else {
-            chart.addNewGapWidth().setVal(width);
+            if (chart.isSetGapWidth()) {
+                chart.getGapWidth().setVal(width);
+            } else {
+                chart.addNewGapWidth().setVal(width);
+            }
+        }
+    }
+
+    public Byte getOverlap() {
+        if (chart.isSetOverlap()) {
+            return chart.getOverlap().getVal();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Minimum inclusive: -100
+     * <br/>
+     * Maximum inclusive: 100
+     * @param overlap
+     */
+    public void setOverlap(Byte overlap) {
+        if (overlap == null) {
+            if (chart.isSetOverlap()) {
+                chart.unsetOverlap();
+            }
+        } else {
+            if (overlap < -100 || 100 < overlap) {
+                return;
+            }
+            if (chart.isSetOverlap()) {
+                chart.getOverlap().setVal(overlap);
+            } else {
+                chart.addNewOverlap().setVal(overlap);
+            }
         }
     }
 
@@ -187,15 +243,15 @@ public class XDDFBarChartData extends XDDFChartData {
         protected CTNumDataSource getNumDS() {
             return series.getVal();
         }
-        
+
         @Override
-        public void updateIdXVal(long val) {
-            series.getIdx().setVal(val);
+        protected void setIndex(long index) {
+            series.getIdx().setVal(index);
         }
-        
-      @Override
-      public void updateOrderVal(long val) {
-         series.getOrder().setVal(val);
-      }
+
+        @Override
+        protected void setOrder(long order) {
+            series.getOrder().setVal(order);
+        }
     }
 }

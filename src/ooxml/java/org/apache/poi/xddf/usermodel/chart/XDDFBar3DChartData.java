@@ -20,6 +20,7 @@ package org.apache.poi.xddf.usermodel.chart;
 import java.util.Map;
 
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.Internal;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBar3DChart;
@@ -55,12 +56,24 @@ public class XDDFBar3DChartData extends XDDFChartData {
         defineAxes(chart.getAxIdArray(), categories, values);
     }
 
+    @Internal
     @Override
-    public void setVaryColors(boolean varyColors) {
-        if (chart.isSetVaryColors()) {
-            chart.getVaryColors().setVal(varyColors);
+    protected void removeCTSeries(int n) {
+        chart.removeSer(n);
+    }
+
+    @Override
+    public void setVaryColors(Boolean varyColors) {
+        if (varyColors == null) {
+            if (chart.isSetVaryColors()) {
+                chart.unsetVaryColors();
+            }
         } else {
-            chart.addNewVaryColors().setVal(varyColors);
+            if (chart.isSetVaryColors()) {
+                chart.getVaryColors().setVal(varyColors);
+            } else {
+                chart.addNewVaryColors().setVal(varyColors);
+            }
         }
     }
 
@@ -76,31 +89,87 @@ public class XDDFBar3DChartData extends XDDFChartData {
         if (chart.isSetGrouping()) {
             return BarGrouping.valueOf(chart.getGrouping().getVal());
         } else {
-            return BarGrouping.STANDARD;
+            return null;
         }
     }
 
     public void setBarGrouping(BarGrouping grouping) {
-        if (chart.isSetGrouping()) {
-            chart.getGrouping().setVal(grouping.underlying);
+        if (grouping == null) {
+            if (chart.isSetGrouping()) {
+                chart.unsetGrouping();
+            }
         } else {
-            chart.addNewGrouping().setVal(grouping.underlying);
+            if (chart.isSetGrouping()) {
+                chart.getGrouping().setVal(grouping.underlying);
+            } else {
+                chart.addNewGrouping().setVal(grouping.underlying);
+            }
         }
     }
 
-    public int getGapWidth() {
+    public Integer getGapDepth() {
+        if (chart.isSetGapDepth()) {
+            return chart.getGapDepth().getVal();
+        } else {
+            return null;
+        }
+    }
+
+    public void setGapDepth(Integer depth) {
+        if (depth == null) {
+            if (chart.isSetGapDepth()) {
+                chart.unsetGapDepth();
+            }
+        } else {
+            if (chart.isSetGapDepth()) {
+                chart.getGapDepth().setVal(depth);
+            } else {
+                chart.addNewGapDepth().setVal(depth);
+            }
+        }
+    }
+
+    public Integer getGapWidth() {
         if (chart.isSetGapWidth()) {
             return chart.getGapWidth().getVal();
         } else {
-            return 0;
+            return null;
         }
     }
 
-    public void setGapWidth(int width) {
-        if (chart.isSetGapWidth()) {
-            chart.getGapWidth().setVal(width);
+    public void setGapWidth(Integer width) {
+        if (width == null) {
+            if (chart.isSetGapWidth()) {
+                chart.unsetGapWidth();
+            }
         } else {
-            chart.addNewGapWidth().setVal(width);
+            if (chart.isSetGapWidth()) {
+                chart.getGapWidth().setVal(width);
+            } else {
+                chart.addNewGapWidth().setVal(width);
+            }
+        }
+    }
+
+    public Shape getShape() {
+        if (chart.isSetShape()) {
+            return Shape.valueOf(chart.getShape().getVal());
+        } else {
+            return null;
+        }
+    }
+
+    public void setShape(Shape shape) {
+        if (shape == null) {
+            if (chart.isSetShape()) {
+                chart.unsetShape();
+            }
+        } else {
+            if (chart.isSetShape()) {
+                chart.getShape().setVal(shape.underlying);
+            } else {
+                chart.addNewShape().setVal(shape.underlying);
+            }
         }
     }
 
@@ -187,14 +256,14 @@ public class XDDFBar3DChartData extends XDDFChartData {
         protected CTNumDataSource getNumDS() {
             return series.getVal();
         }
-        
+
         @Override
-        public void updateIdXVal(long val) {
+        public void setIndex(long val) {
             series.getIdx().setVal(val);
         }
-        
+
         @Override
-        public void updateOrderVal(long val) {
+        public void setOrder(long val) {
             series.getOrder().setVal(val);
         }
     }
