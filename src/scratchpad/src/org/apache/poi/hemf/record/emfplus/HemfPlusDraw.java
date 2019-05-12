@@ -35,7 +35,6 @@ import org.apache.poi.hemf.record.emfplus.HemfPlusMisc.EmfPlusObjectId;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.StringUtil;
@@ -43,7 +42,7 @@ import org.apache.poi.util.StringUtil;
 public class HemfPlusDraw {
     private static final int MAX_OBJECT_SIZE = 1_000_000;
 
-    public enum UnitType {
+    public enum EmfPlusUnitType {
         /** Specifies a unit of logical distance within the world space. */
         World(0x00),
         /** Specifies a unit of distance based on the characteristics of the physical display. */
@@ -62,12 +61,12 @@ public class HemfPlusDraw {
 
         public final int id;
 
-        UnitType(int id) {
+        EmfPlusUnitType(int id) {
             this.id = id;
         }
 
-        public static UnitType valueOf(int id) {
-            for (UnitType wrt : values()) {
+        public static EmfPlusUnitType valueOf(int id) {
+            for (EmfPlusUnitType wrt : values()) {
                 if (wrt.id == id) return wrt;
             }
             return null;
@@ -95,6 +94,25 @@ public class HemfPlusDraw {
 
         default BiFunction<LittleEndianInputStream, Rectangle2D, Integer> getReadRect() {
             return isCompressed() ? HemfPlusDraw::readRectS : HemfPlusDraw::readRectF;
+        }
+    }
+
+    public interface EmfPlusRelativePosition {
+        /**
+         * This bit indicates whether the PointData field specifies relative or absolute locations.
+         * If set, each element in PointData specifies a location in the coordinate space that is relative to the
+         * location specified by the previous element in the array. In the case of the first element in PointData,
+         * a previous location at coordinates (0,0) is assumed.
+         * If clear, PointData specifies absolute locations according to the {@link #isCompressed()} flag.
+         *
+         * Note If this flag is set, the {@link #isCompressed()} flag (above) is undefined and MUST be ignored.
+         */
+        BitField POSITION = BitFieldFactory.getInstance(0x0800);
+
+        int getFlags();
+
+        default boolean isRelativePosition() {
+            return POSITION.isSet(getFlags());
         }
     }
 
@@ -182,27 +200,16 @@ public class HemfPlusDraw {
         }
     }
 
-    public static class EmfPlusDrawImagePoints implements HemfPlusRecord, EmfPlusObjectId, EmfPlusCompressed {
+    public static class EmfPlusDrawImagePoints implements HemfPlusRecord, EmfPlusObjectId, EmfPlusCompressed, EmfPlusRelativePosition {
         /**
          * This bit indicates that the rendering of the image includes applying an effect.
          * If set, an object of the Effect class MUST have been specified in an earlier EmfPlusSerializableObject record.
          */
         private static final BitField EFFECT = BitFieldFactory.getInstance(0x2000);
 
-        /**
-         * This bit indicates whether the PointData field specifies relative or absolute locations.
-         * If set, each element in PointData specifies a location in the coordinate space that is relative to the
-         * location specified by the previous element in the array. In the case of the first element in PointData,
-         * a previous location at coordinates (0,0) is assumed.
-         * If clear, PointData specifies absolute locations according to the {@link #isCompressed()} flag.
-         *
-         * Note If this flag is set, the {@link #isCompressed()} flag (above) is undefined and MUST be ignored.
-         */
-        private static final BitField POSITION = BitFieldFactory.getInstance(0x0800);
-
         private int flags;
         private int imageAttributesID;
-        private UnitType srcUnit;
+        private EmfPlusUnitType srcUnit;
         private final Rectangle2D srcRect = new Rectangle2D.Double();
         private final Point2D upperLeft = new Point2D.Double();
         private final Point2D lowerRight = new Point2D.Double();
@@ -229,8 +236,8 @@ public class HemfPlusDraw {
 
             // A 32-bit signed integer that defines the units of the SrcRect field.
             // It MUST be the UnitPixel value of the UnitType enumeration
-            srcUnit = UnitType.valueOf(leis.readInt());
-            assert(srcUnit == UnitType.Pixel);
+            srcUnit = EmfPlusUnitType.valueOf(leis.readInt());
+            assert(srcUnit == EmfPlusUnitType.Pixel);
 
             int size = 2 * LittleEndianConsts.INT_SIZE;
 
@@ -245,7 +252,7 @@ public class HemfPlusDraw {
 
             BiFunction<LittleEndianInputStream, Point2D, Integer> readPoint;
 
-            if (POSITION.isSet(flags)) {
+            if (isRelativePosition()) {
                 // If the POSITION flag is set in the Flags, the points specify relative locations.
                 readPoint = HemfPlusDraw::readPointR;
             } else if (isCompressed()) {
@@ -301,7 +308,7 @@ public class HemfPlusDraw {
     public static class EmfPlusDrawImage implements HemfPlusRecord, EmfPlusObjectId, EmfPlusCompressed {
         private int flags;
         private int imageAttributesID;
-        private UnitType srcUnit;
+        private EmfPlusUnitType srcUnit;
         private final Rectangle2D srcRect = new Rectangle2D.Double();
         private final Rectangle2D rectData = new Rectangle2D.Double();
 
@@ -325,8 +332,8 @@ public class HemfPlusDraw {
 
             // A 32-bit signed integer that defines the units of the SrcRect field.
             // It MUST be the UnitPixel value of the UnitType enumeration
-            srcUnit = UnitType.valueOf(leis.readInt());
-            assert(srcUnit == UnitType.Pixel);
+            srcUnit = EmfPlusUnitType.valueOf(leis.readInt());
+            assert(srcUnit == EmfPlusUnitType.Pixel);
 
             int size = 2 * LittleEndianConsts.INT_SIZE;
 
@@ -347,7 +354,7 @@ public class HemfPlusDraw {
         private static final BitField SOLID_COLOR = BitFieldFactory.getInstance(0x8000);
 
         private int flags;
-        private final byte[] brushId = new byte[LittleEndianConsts.INT_SIZE];
+        private int brushId;
 
         @Override
         public HemfPlusRecordType getEmfPlusRecordType() {
@@ -364,11 +371,11 @@ public class HemfPlusDraw {
         }
 
         public int getBrushId() {
-            return (isSolidColor()) ? -1 : LittleEndian.getInt(brushId);
+            return (isSolidColor()) ? -1 : brushId;
         }
 
         public Color getSolidColor() {
-            return (isSolidColor()) ? new Color(brushId[2], brushId[1], brushId[0], brushId[3]) : null;
+            return (isSolidColor()) ? readARGB(brushId) : null;
         }
 
         @Override
@@ -379,7 +386,7 @@ public class HemfPlusDraw {
             // the SOLID_COLOR bit in the Flags field.
             // If SOLID_COLOR is set, BrushId specifies a color as an EmfPlusARGB object.
             // If clear, BrushId contains the index of an EmfPlusBrush object in the EMF+ Object Table.
-            leis.readFully(brushId);
+            brushId = leis.readInt();
 
             return LittleEndianConsts.INT_SIZE;
         }
@@ -606,4 +613,9 @@ public class HemfPlusDraw {
         value[0] = ((value[0] << 8) | leis.readByte()) & 0x7FFF;
         return LittleEndianConsts.SHORT_SIZE;
     }
+
+    static Color readARGB(int argb) {
+        return new Color(  (argb >>> 8) & 0xFF, (argb >>> 16) & 0xFF, (argb >>> 24) & 0xFF, argb & 0xFF);
+    }
+
 }

@@ -94,7 +94,7 @@ public class HemfPictureTest {
 
                 if (entry.isDirectory() || !etName.endsWith(".emf") || passed.contains(etName)) continue;
 
-                if (!etName.equals("emfs/commoncrawl2/2S/2SYMYPLNJURGCXJKLNZCJQGIBHVMQTRS_0.emf")) continue;
+                // if (!etName.equals("emfs/commoncrawl2/2S/2SYMYPLNJURGCXJKLNZCJQGIBHVMQTRS_0.emf")) continue;
 
                 // emfs/commoncrawl2/ZJ/ZJT2BZPLQR7DKSKYLYL6GRDEUM2KIO5F_4.emf
                 // emfs/govdocs1/005/005203.ppt_3.emf
