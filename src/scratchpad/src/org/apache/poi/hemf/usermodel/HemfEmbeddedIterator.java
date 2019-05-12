@@ -36,7 +36,11 @@ import javax.imageio.ImageIO;
 
 import org.apache.poi.hemf.record.emf.HemfComment;
 import org.apache.poi.hemf.record.emf.HemfRecord;
+import org.apache.poi.hemf.record.emfplus.HemfPlusImage.EmfPlusBitmapDataType;
+import org.apache.poi.hemf.record.emfplus.HemfPlusImage.EmfPlusImage;
+import org.apache.poi.hemf.record.emfplus.HemfPlusImage.EmfPlusPixelFormat;
 import org.apache.poi.hemf.record.emfplus.HemfPlusObject;
+import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObject;
 import org.apache.poi.hwmf.record.HwmfBitmapDib;
 import org.apache.poi.hwmf.record.HwmfFill;
 import org.apache.poi.hwmf.usermodel.HwmfEmbedded;
@@ -105,7 +109,7 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
                     return true;
                 }
 
-                if (obj instanceof HemfPlusObject.EmfPlusObject && ((HemfPlusObject.EmfPlusObject)obj).getObjectType() == HemfPlusObject.EmfPlusObjectType.IMAGE) {
+                if (obj instanceof EmfPlusObject && ((EmfPlusObject)obj).getObjectType() == HemfPlusObject.EmfPlusObjectType.IMAGE) {
                     current = obj;
                     return true;
                 }
@@ -196,13 +200,13 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
     }
 
     private HwmfEmbedded checkEmfPlusObject() {
-        if (!(current instanceof HemfPlusObject.EmfPlusObject)) {
+        if (!(current instanceof EmfPlusObject)) {
             return null;
         }
 
-        HemfPlusObject.EmfPlusObject epo = (HemfPlusObject.EmfPlusObject)current;
+        EmfPlusObject epo = (EmfPlusObject)current;
         assert(epo.getObjectType() == HemfPlusObject.EmfPlusObjectType.IMAGE);
-        HemfPlusObject.EmfPlusImage img = epo.getObjectData();
+        EmfPlusImage img = epo.getObjectData();
         assert(img.getImageDataType() != null);
 
         HwmfEmbedded emb = getEmfPlusImageData();
@@ -210,7 +214,7 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
         HwmfEmbeddedType et;
         switch (img.getImageDataType()) {
             case BITMAP:
-                if (img.getBitmapType() == HemfPlusObject.EmfPlusBitmapDataType.COMPRESSED) {
+                if (img.getBitmapType() == EmfPlusBitmapDataType.COMPRESSED) {
                     switch (FileMagic.valueOf(emb.getRawData())) {
                         case JPEG:
                             et = HwmfEmbeddedType.JPEG;
@@ -262,11 +266,11 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
     /**
      * Compress GDIs internal format to something useful
      */
-    private void compressGDIBitmap(HemfPlusObject.EmfPlusImage img, HwmfEmbedded emb, HwmfEmbeddedType et) {
+    private void compressGDIBitmap(EmfPlusImage img, HwmfEmbedded emb, HwmfEmbeddedType et) {
         final int width = img.getBitmapWidth();
         final int height = img.getBitmapHeight();
         final int stride = img.getBitmapStride();
-        final HemfPlusObject.EmfPlusPixelFormat pf = img.getPixelFormat();
+        final EmfPlusPixelFormat pf = img.getPixelFormat();
 
         int[] nBits, bOffs;
         switch (pf) {
@@ -306,14 +310,14 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
 
 
     private HwmfEmbedded getEmfPlusImageData() {
-        HemfPlusObject.EmfPlusObject epo = (HemfPlusObject.EmfPlusObject)current;
+        EmfPlusObject epo = (EmfPlusObject)current;
         assert(epo.getObjectType() == HemfPlusObject.EmfPlusObjectType.IMAGE);
 
         final int objectId = epo.getObjectId();
 
         HwmfEmbedded emb = new HwmfEmbedded();
 
-        HemfPlusObject.EmfPlusImage img = (HemfPlusObject.EmfPlusImage)epo.getObjectData();
+        EmfPlusImage img = (EmfPlusImage)epo.getObjectData();
         assert(img.getImageDataType() != null);
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -324,10 +328,10 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
                 current = null;
                 //noinspection ConstantConditions
                 if (hasNext() &&
-                    (current instanceof HemfPlusObject.EmfPlusObject) &&
-                    ((epo = (HemfPlusObject.EmfPlusObject) current).getObjectId() == objectId)
+                    (current instanceof EmfPlusObject) &&
+                    ((epo = (EmfPlusObject) current).getObjectId() == objectId)
                 ) {
-                    img = (HemfPlusObject.EmfPlusImage)epo.getObjectData();
+                    img = (EmfPlusImage)epo.getObjectData();
                 } else {
                     return emb;
                 }
