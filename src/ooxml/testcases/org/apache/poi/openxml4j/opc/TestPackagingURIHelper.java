@@ -25,36 +25,36 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
 public class TestPackagingURIHelper extends TestCase {
 
-	/**
-	 * Test relativizePartName() method.
-	 */
-	public void testRelativizeURI() throws Exception {
-		URI uri1 = new URI("/word/document.xml");
-		URI uri2 = new URI("/word/media/image1.gif");
+    /**
+     * Test relativizePartName() method.
+     */
+    public void testRelativizeURI() throws Exception {
+        URI uri1 = new URI("/word/document.xml");
+        URI uri2 = new URI("/word/media/image1.gif");
         URI uri3 = new URI("/word/media/image1.gif#Sheet1!A1");
         URI uri4 = new URI("#'My%20Sheet1'!A1");
 
-		// Document to image is down a directory
-		URI retURI1to2 = PackagingURIHelper.relativizeURI(uri1, uri2);
-		assertEquals("media/image1.gif", retURI1to2.getPath());
-		// Image to document is up a directory
-		URI retURI2to1 = PackagingURIHelper.relativizeURI(uri2, uri1);
-		assertEquals("../document.xml", retURI2to1.getPath());
-		
-		// Document and CustomXML parts totally different [Julien C.]
-		URI uriCustomXml = new URI("/customXml/item1.xml");
-		URI uriRes = PackagingURIHelper.relativizeURI(uri1, uriCustomXml);
-		assertEquals("../customXml/item1.xml", uriRes.toString());
+        // Document to image is down a directory
+        URI retURI1to2 = PackagingURIHelper.relativizeURI(uri1, uri2);
+        assertEquals("media/image1.gif", retURI1to2.getPath());
+        // Image to document is up a directory
+        URI retURI2to1 = PackagingURIHelper.relativizeURI(uri2, uri1);
+        assertEquals("../document.xml", retURI2to1.getPath());
 
-		// Document to itself is the same place (empty URI)
-		URI retURI2 = PackagingURIHelper.relativizeURI(uri1, uri1);
-		// YK: the line below used to assert empty string which is wrong
+        // Document and CustomXML parts totally different [Julien C.]
+        URI uriCustomXml = new URI("/customXml/item1.xml");
+        URI uriRes = PackagingURIHelper.relativizeURI(uri1, uriCustomXml);
+        assertEquals("../customXml/item1.xml", uriRes.toString());
+
+        // Document to itself is the same place (empty URI)
+        URI retURI2 = PackagingURIHelper.relativizeURI(uri1, uri1);
+        // YK: the line below used to assert empty string which is wrong
         // if source and target are the same they should be relaitivized as the last segment,
         // see Bugzilla 51187
         assertEquals("document.xml", retURI2.getPath());
 
-		// relativization against root
-		URI root = new URI("/");
+        // relativization against root
+        URI root = new URI("/");
         uriRes = PackagingURIHelper.relativizeURI(root, uri1);
         assertEquals("/word/document.xml", uriRes.toString());
 
@@ -69,48 +69,48 @@ public class TestPackagingURIHelper extends TestCase {
         assertEquals("#'My%20Sheet1'!A1", uriRes.toString());
     }
 
-	/**
-	 * Test createPartName(String, y)
-	 */
-	public void testCreatePartNameRelativeString()
-			throws InvalidFormatException {
-		PackagePartName partNameToValid = PackagingURIHelper
-				.createPartName("/word/media/image1.gif");
+    /**
+     * Test createPartName(String, y)
+     */
+    public void testCreatePartNameRelativeString()
+            throws InvalidFormatException {
+        PackagePartName partNameToValid = PackagingURIHelper
+                .createPartName("/word/media/image1.gif");
 
-		OPCPackage pkg = OPCPackage.create("DELETEIFEXISTS.docx");
-		// Base part
-		PackagePartName nameBase = PackagingURIHelper
-				.createPartName("/word/document.xml");
-		PackagePart partBase = pkg.createPart(nameBase, ContentTypes.XML);
-		// Relative part name
-		PackagePartName relativeName = PackagingURIHelper.createPartName(
-				"media/image1.gif", partBase);
-		assertTrue("The part name must be equal to "
-				+ partNameToValid.getName(), partNameToValid
-				.equals(relativeName));
-		pkg.revert();
-	}
+        OPCPackage pkg = OPCPackage.create("DELETEIFEXISTS.docx");
+        // Base part
+        PackagePartName nameBase = PackagingURIHelper
+                .createPartName("/word/document.xml");
+        PackagePart partBase = pkg.createPart(nameBase, ContentTypes.XML);
+        // Relative part name
+        PackagePartName relativeName = PackagingURIHelper.createPartName(
+                "media/image1.gif", partBase);
+        assertTrue("The part name must be equal to "
+                + partNameToValid.getName(), partNameToValid
+                .equals(relativeName));
+        pkg.revert();
+    }
 
-	/**
-	 * Test createPartName(URI, y)
-	 */
-	public void testCreatePartNameRelativeURI() throws Exception {
-		PackagePartName partNameToValid = PackagingURIHelper
-				.createPartName("/word/media/image1.gif");
+    /**
+     * Test createPartName(URI, y)
+     */
+    public void testCreatePartNameRelativeURI() throws Exception {
+        PackagePartName partNameToValid = PackagingURIHelper
+                .createPartName("/word/media/image1.gif");
 
-		OPCPackage pkg = OPCPackage.create("DELETEIFEXISTS.docx");
-		// Base part
-		PackagePartName nameBase = PackagingURIHelper
-				.createPartName("/word/document.xml");
-		PackagePart partBase = pkg.createPart(nameBase, ContentTypes.XML);
-		// Relative part name
-		PackagePartName relativeName = PackagingURIHelper.createPartName(
-				new URI("media/image1.gif"), partBase);
-		assertTrue("The part name must be equal to "
-				+ partNameToValid.getName(), partNameToValid
-				.equals(relativeName));
-		pkg.revert();
-	}
+        OPCPackage pkg = OPCPackage.create("DELETEIFEXISTS.docx");
+        // Base part
+        PackagePartName nameBase = PackagingURIHelper
+                .createPartName("/word/document.xml");
+        PackagePart partBase = pkg.createPart(nameBase, ContentTypes.XML);
+        // Relative part name
+        PackagePartName relativeName = PackagingURIHelper.createPartName(
+                new URI("media/image1.gif"), partBase);
+        assertTrue("The part name must be equal to "
+                + partNameToValid.getName(), partNameToValid
+                .equals(relativeName));
+        pkg.revert();
+    }
 
     public void testCreateURIFromString() throws Exception {
         String[] href = {
@@ -119,6 +119,7 @@ public class TestPackagingURIHelper extends TestCase {
                 "file:///D:\\seva\\1981\\r810102ns.mp3",
                 "..\\cygwin\\home\\yegor\\dinom\\%5baccess%5d.2010-10-26.log",
                 "#'Instructions (Text)'!B21",
+                "#'性'!B21",
                 "javascript://"
         };
         for(String s : href){
