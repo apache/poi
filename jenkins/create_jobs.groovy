@@ -65,7 +65,7 @@ def poijobs = [
         [ name: 'POI-DSL-Github-PullRequests', trigger: '', githubpr: true, skipcigame: true,
           // ensure the file which is needed from the separate documentation module does exist
           // as we are checking out from git, we do not have the reference checked out here
-          addShell: 'mkdir src/documentation\ntouch src/documentation/RELEASE-NOTES.txt'
+          addShell: 'mkdir -p src/documentation\ntouch src/documentation/RELEASE-NOTES.txt'
         ],
 ]
 
@@ -92,7 +92,7 @@ def defaultAnt = 'Ant 1.9 (Latest)'
 def defaultAntWindows = 'Ant 1.9 (Latest Windows)'
 // currently a lot of H?? slaves don't have Ant installed ... H21 seems to have a SVN problem
 // H35 fails with ImageIO create cache file errors, although the java.io.tmpdir is writable
-def defaultSlaves = '(ubuntu)&&!beam&&!cloud-slave&&!H15&&!H17&&!H18&&!H24&&!ubuntu-4&&!H21&&!H35&&!H27'
+def defaultSlaves = '(ubuntu)&&!beam&&!cloud-slave&&!H15&&!H17&&!H18&&!H24&&!ubuntu-4&&!H21&&!H35'
 
 def jdkMapping = [
         '1.6': 'JDK 1.6 (latest)',
