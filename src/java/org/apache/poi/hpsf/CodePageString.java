@@ -54,8 +54,8 @@ public class CodePageString {
         // CodePage property has any other value, it MUST be a null-terminated array of 8-bit characters
         // from the code page identified by the CodePage property, followed by zero padding to a
         // multiple of 4 bytes. The string represented by this field MAY contain embedded or additional
-        // trailing null characters and an OLEPS implementation MUST be able to handle such strings.        
-        
+        // trailing null characters and an OLEPS implementation MUST be able to handle such strings.
+
         lei.readFully(_value);
         if (_value[size - 1] != 0 ) {
             // TODO Some files, such as TestVisioWithCodepage.vsd, are currently
@@ -72,17 +72,17 @@ public class CodePageString {
         int cp = ( codepage == -1 ) ? Property.DEFAULT_CODEPAGE : codepage;
         String result = CodePageUtil.getStringFromCodePage(_value, cp);
 
-        
+
         final int terminator = result.indexOf( '\0' );
         if ( terminator == -1 ) {
-            String msg = 
-                "String terminator (\\0) for CodePageString property value not found." +
+            String msg =
+                "String terminator (\\0) for CodePageString property value not found. " +
                 "Continue without trimming and hope for the best.";
             LOG.log(POILogger.WARN, msg);
             return result;
         }
         if ( terminator != result.length() - 1 ) {
-            String msg = 
+            String msg =
                 "String terminator (\\0) for CodePageString property value occured before the end of string. "+
                 "Trimming and hope for the best.";
             LOG.log(POILogger.WARN, msg );
