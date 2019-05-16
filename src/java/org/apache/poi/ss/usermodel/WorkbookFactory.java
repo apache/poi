@@ -52,7 +52,7 @@ public class WorkbookFactory {
      *
      * @return The created workbook
      *
-     * @throws IOException if an error occurs while reading the data
+     * @throws IOException if an error occurs while creating the objects
      */
     public static Workbook create(boolean xssf) throws IOException {
         if(xssf) {
@@ -160,13 +160,14 @@ public class WorkbookFactory {
      * <p>Note that in order to properly release resources the
      *  Workbook should be closed after use.</p>
      *
-     *  @param pkg The {@link org.apache.poi.openxml4j.opc.OPCPackage} opened for reading data.
+     *  @param pkg The org.apache.poi.openxml4j.opc.OPCPackage opened for reading data.
      *
      *  @return The created Workbook
      *
      *  @throws IOException if an error occurs while reading the data
      *
-     * @deprecated use XSSFWorkbookFactory.create
+     * @deprecated use {@link #create(File)}, {@link #create(InputStream)} or
+     *          XSSFWorkbookFactory.create(OPCPackage) instead.
      */
     @Deprecated
     @Removal(version = "4.2.0")
