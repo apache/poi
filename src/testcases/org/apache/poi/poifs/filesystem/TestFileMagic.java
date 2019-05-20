@@ -19,6 +19,7 @@ package org.apache.poi.poifs.filesystem;
 
 import org.apache.commons.codec.Charsets;
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.util.TempFile;
 import org.junit.Test;
 
 import java.io.BufferedInputStream;
@@ -108,7 +109,7 @@ public class TestFileMagic {
         // having a file shorter than 8 bytes previously caused an exception
         byte[] data = new byte[] { -1, -40, -1, -32, 0 };
 
-        File file = File.createTempFile("TestFileMagic", ".bin");
+        File file = TempFile.createTempFile("TestFileMagic", ".bin");
         try {
             try (FileOutputStream fos = new FileOutputStream(file)) {
                 fos.write(data);
@@ -124,7 +125,7 @@ public class TestFileMagic {
     public void testMarkRequired() throws IOException {
         byte[] data = new byte[] { -1, -40, -1, -32, 0 };
 
-        File file = File.createTempFile("TestFileMagic", ".bin");
+        File file = TempFile.createTempFile("TestFileMagic", ".bin");
         try {
             try (FileOutputStream fos = new FileOutputStream(file)) {
                 fos.write(data);
