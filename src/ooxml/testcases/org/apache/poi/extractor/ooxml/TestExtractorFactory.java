@@ -42,6 +42,7 @@ import org.apache.poi.ooxml.extractor.POIXMLTextExtractor;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
+import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.xssf.extractor.XSSFEventBasedExcelExtractor;
 import org.apache.poi.xssf.extractor.XSSFExcelExtractor;
@@ -193,6 +194,11 @@ public class TestExtractorFactory {
         try (FileInputStream fis = new FileInputStream(txt);
              POITextExtractor ignored = poifs.apply(fis)) {
             fail("extracting from invalid package");
+        } catch (IllegalArgumentException e) {
+            assertTrue("Had: " + e,
+                    e.getMessage().contains(FileMagic.UNKNOWN.name()));
+
+            throw e;
         }
     }
 
