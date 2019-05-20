@@ -19,13 +19,13 @@ package org.apache.poi.poifs.filesystem;
 
 import static org.apache.poi.poifs.common.POIFSConstants.OOXML_FILE_HEADER;
 import static org.apache.poi.poifs.common.POIFSConstants.RAW_XML_FILE_HEADER;
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 
 import org.apache.poi.poifs.storage.HeaderBlockConstants;
 import org.apache.poi.util.IOUtils;
@@ -98,6 +98,9 @@ public enum FileMagic {
     /** UNKNOWN magic */
     UNKNOWN(new byte[0]);
 
+    // update this if a longer pattern is added
+    final static int MAX_PATTERN_LENGTH = 12;
+
     final byte[][] magic;
     
     FileMagic(long magic) {
@@ -120,6 +123,12 @@ public enum FileMagic {
     public static FileMagic valueOf(byte[] magic) {
         for (FileMagic fm : values()) {
             for (byte[] ma : fm.magic) {
+                // don't try to match if the given byte-array is too short
+                // for this pattern anyway
+                if(magic.length < ma.length) {
+                    continue;
+                }
+
                 if (findMagic(ma, magic)) {
                     return fm;
                 }
@@ -149,7 +158,13 @@ public enum FileMagic {
      */
     public static FileMagic valueOf(final File inp) throws IOException {
         try (FileInputStream fis = new FileInputStream(inp)) {
-            final byte[] data = IOUtils.toByteArray(fis, 8);
+            // read as many bytes as possible, up to the required number of bytes
+            byte[] data = new byte[MAX_PATTERN_LENGTH];
+            int read = IOUtils.readFully(fis, data, 0, MAX_PATTERN_LENGTH);
+
+            // only use the bytes that could be read
+            data = Arrays.copyOf(data, read);
+
             return FileMagic.valueOf(data);
         }
     }
@@ -173,8 +188,8 @@ public enum FileMagic {
             throw new IOException("getFileMagic() only operates on streams which support mark(int)");
         }
 
-        // Grab the first 8 bytes
-        byte[] data = IOUtils.peekFirst8Bytes(inp);
+        // Grab the first bytes of this stream
+        byte[] data = IOUtils.peekFirstNBytes(inp, MAX_PATTERN_LENGTH);
 
         return FileMagic.valueOf(data);
     }

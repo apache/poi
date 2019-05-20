@@ -22,9 +22,13 @@ import org.apache.poi.POIDataSamples;
 import org.junit.Test;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Random;
 
 import static org.junit.Assert.*;
 
@@ -42,6 +46,14 @@ public class TestFileMagic {
         assertEquals(FileMagic.HTML, FileMagic.valueOf("\n<html".getBytes(Charsets.UTF_8)));
         assertEquals(FileMagic.HTML, FileMagic.valueOf("\r\n<html".getBytes(Charsets.UTF_8)));
         assertEquals(FileMagic.HTML, FileMagic.valueOf("\r<html".getBytes(Charsets.UTF_8)));
+
+        assertEquals(FileMagic.JPEG, FileMagic.valueOf(new byte[]{ (byte)0xFF, (byte)0xD8, (byte)0xFF, (byte)0xDB }));
+        assertEquals(FileMagic.JPEG, FileMagic.valueOf(new byte[]{ (byte)0xFF, (byte)0xD8, (byte)0xFF, (byte)0xE0, 'a', 'b', 'J', 'F', 'I', 'F', 0x00, 0x01 }));
+        assertEquals(FileMagic.JPEG, FileMagic.valueOf(new byte[]{ (byte)0xFF, (byte)0xD8, (byte)0xFF, (byte)0xEE }));
+        assertEquals(FileMagic.JPEG, FileMagic.valueOf(new byte[]{ (byte)0xFF, (byte)0xD8, (byte)0xFF, (byte)0xE1, 'd', 'c', 'E', 'x', 'i', 'f', 0x00, 0x00 }));
+
+        assertEquals(FileMagic.UNKNOWN, FileMagic.valueOf("something".getBytes(Charsets.UTF_8)));
+        assertEquals(FileMagic.UNKNOWN, FileMagic.valueOf(new byte[0]));
 
         try {
             FileMagic.valueOf("some string");
@@ -80,6 +92,83 @@ public class TestFileMagic {
             }
         }) {
             assertNotSame(stream, FileMagic.prepareToCheckMagic(stream));
+        }
+    }
+
+    @Test
+    public void testMatchingButTooLessData() {
+        // this matches JPG, but is not long enough, previously this caused an Exception
+        byte[] data = new byte[] { -1, -40, -1, -32, 0, 16, 74, 70 };
+
+        assertEquals(FileMagic.UNKNOWN, FileMagic.valueOf(data));
+    }
+
+    @Test
+    public void testShortFile() throws IOException {
+        // having a file shorter than 8 bytes previously caused an exception
+        byte[] data = new byte[] { -1, -40, -1, -32, 0 };
+
+        File file = File.createTempFile("TestFileMagic", ".bin");
+        try {
+            try (FileOutputStream fos = new FileOutputStream(file)) {
+                fos.write(data);
+            }
+
+            assertEquals(FileMagic.UNKNOWN, FileMagic.valueOf(file));
+        } finally {
+            assertTrue(file.delete());
+        }
+    }
+
+    @Test(expected = IOException.class)
+    public void testMarkRequired() throws IOException {
+        byte[] data = new byte[] { -1, -40, -1, -32, 0 };
+
+        File file = File.createTempFile("TestFileMagic", ".bin");
+        try {
+            try (FileOutputStream fos = new FileOutputStream(file)) {
+                fos.write(data);
+            }
+
+            // a FileInputStream does not support "marking"
+            try (FileInputStream str = new FileInputStream(file)) {
+                assertFalse(str.markSupported());
+
+                FileMagic.valueOf(str);
+            }
+        } finally {
+            assertTrue(file.delete());
+        }
+    }
+
+    @Test
+    public void testPatterns() {
+        // just try to trash the functionality with some byte-patterns
+        for(int i = 0; i < 256;i++) {
+            final byte[] data = new byte[12];
+            for(int j = 0;j < 12; j++) {
+                data[j] = (byte)i;
+
+                assertEquals(FileMagic.UNKNOWN, FileMagic.valueOf(data));
+            }
+        }
+    }
+
+    @Test
+    public void testRandomPatterns() {
+        Random random = new Random();
+
+        // just try to trash the functionality with some byte-patterns
+        for(int i = 0; i < 1000;i++) {
+            final byte[] data = new byte[12];
+            random.nextBytes(data);
+
+            // we cannot check for UNKNOWN as we might hit valid byte-patterns here as well
+            try {
+                assertNotNull(FileMagic.valueOf(data));
+            } catch (Exception e) {
+                throw new IllegalStateException("Failed with pattern " + Arrays.toString(data), e);
+            }
         }
     }
 }
