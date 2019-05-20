@@ -167,7 +167,7 @@ public final class ExtractorFactory {
         case OOXML:
             return createExtractor(OPCPackage.open(is));
         default:
-            throw new IllegalArgumentException("Your InputStream was neither an OLE2 stream, nor an OOXML stream");
+            throw new IllegalArgumentException("Your InputStream was neither an OLE2 stream, nor an OOXML stream, found type: " + fm);
         }
     }
 
