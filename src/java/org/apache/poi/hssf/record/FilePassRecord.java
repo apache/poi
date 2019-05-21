@@ -43,10 +43,10 @@ public final class FilePassRecord extends StandardRecord implements Cloneable {
 	public static final short sid = 0x002F;
     private static final int ENCRYPTION_XOR = 0;
     private static final int ENCRYPTION_OTHER = 1;
-	
+
 	private final int encryptionType;
     private EncryptionInfo encryptionInfo;
-	
+
 	private FilePassRecord(FilePassRecord other) {
 	    encryptionType = other.encryptionType;
         try {
@@ -55,15 +55,15 @@ public final class FilePassRecord extends StandardRecord implements Cloneable {
             throw new EncryptedDocumentException(e);
         }
 	}
-	
+
 	public FilePassRecord(EncryptionMode encryptionMode) {
 	    encryptionType = (encryptionMode == EncryptionMode.xor) ? ENCRYPTION_XOR : ENCRYPTION_OTHER;
 	    encryptionInfo = new EncryptionInfo(encryptionMode);
 	}
-	
+
 	public FilePassRecord(RecordInputStream in) {
 		encryptionType = in.readUShort();
-		
+
 		EncryptionMode preferredMode;
         switch (encryptionType) {
             case ENCRYPTION_XOR:
@@ -75,7 +75,7 @@ public final class FilePassRecord extends StandardRecord implements Cloneable {
             default:
                 throw new EncryptedDocumentException("invalid encryption type");
         }
-		
+
 		try {
             encryptionInfo = new EncryptionInfo(in, preferredMode);
         } catch (IOException e) {
@@ -88,32 +88,37 @@ public final class FilePassRecord extends StandardRecord implements Cloneable {
     public void serialize(LittleEndianOutput out) {
         out.writeShort(encryptionType);
 
-        byte[] data = new byte[1024];
-        LittleEndianByteArrayOutputStream bos = new LittleEndianByteArrayOutputStream(data, 0); // NOSONAR
+        byte data[] = new byte[1024];
+        try (LittleEndianByteArrayOutputStream bos =
+                new LittleEndianByteArrayOutputStream(data, 0)) { // NOSONAR
 
-        switch (encryptionInfo.getEncryptionMode()) {
-            case xor:
-                ((XOREncryptionHeader)encryptionInfo.getHeader()).write(bos);
-                ((XOREncryptionVerifier)encryptionInfo.getVerifier()).write(bos);
-                break;
-            case binaryRC4:
-                out.writeShort(encryptionInfo.getVersionMajor());
-                out.writeShort(encryptionInfo.getVersionMinor());
-                ((BinaryRC4EncryptionHeader)encryptionInfo.getHeader()).write(bos);
-                ((BinaryRC4EncryptionVerifier)encryptionInfo.getVerifier()).write(bos);
-                break;
-            case cryptoAPI:
-                out.writeShort(encryptionInfo.getVersionMajor());
-                out.writeShort(encryptionInfo.getVersionMinor());
-                out.writeInt(encryptionInfo.getEncryptionFlags());
-                ((CryptoAPIEncryptionHeader)encryptionInfo.getHeader()).write(bos);
-                ((CryptoAPIEncryptionVerifier)encryptionInfo.getVerifier()).write(bos);
-                break;
-            default:
-                throw new EncryptedDocumentException("not supported");
+            switch (encryptionInfo.getEncryptionMode()) {
+                case xor:
+                    ((XOREncryptionHeader)encryptionInfo.getHeader()).write(bos);
+                    ((XOREncryptionVerifier)encryptionInfo.getVerifier()).write(bos);
+                    break;
+                case binaryRC4:
+                    out.writeShort(encryptionInfo.getVersionMajor());
+                    out.writeShort(encryptionInfo.getVersionMinor());
+                    ((BinaryRC4EncryptionHeader)encryptionInfo.getHeader()).write(bos);
+                    ((BinaryRC4EncryptionVerifier)encryptionInfo.getVerifier()).write(bos);
+                    break;
+                case cryptoAPI:
+                    out.writeShort(encryptionInfo.getVersionMajor());
+                    out.writeShort(encryptionInfo.getVersionMinor());
+                    out.writeInt(encryptionInfo.getEncryptionFlags());
+                    ((CryptoAPIEncryptionHeader)encryptionInfo.getHeader()).write(bos);
+                    ((CryptoAPIEncryptionVerifier)encryptionInfo.getVerifier()).write(bos);
+                    break;
+                default:
+                    throw new EncryptedDocumentException("not supported");
+            }
+
+            out.write(data, 0, bos.getWriteIndex());
+        } catch (IOException ioe) {
+            // should never happen in practice
+            throw new IllegalStateException(ioe);
         }
-
-        out.write(data, 0, bos.getWriteIndex());
 	}
 
 	@Override
@@ -132,7 +137,7 @@ public final class FilePassRecord extends StandardRecord implements Cloneable {
     public short getSid() {
 		return sid;
 	}
-	
+
 	@Override
 	public FilePassRecord clone() {
 		return new FilePassRecord(this);

@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.util;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,13 +29,13 @@ import org.apache.poi.util.LittleEndianOutput;
  * Implementation of the cell range address lists,like is described
  * in OpenOffice.org's Excel Documentation: excelfileformat.pdf sec 2.5.14 -
  * 'Cell Range Address List'
- * 
+ *
  * In BIFF8 there is a common way to store absolute cell range address lists in
  * several records (not formulas). A cell range address list consists of a field
  * with the number of ranges and the list of the range addresses. Each cell
  * range address (called an ADDR structure) contains 4 16-bit-values.
  * </p>
- * 
+ *
  * @author Dragos Buleandra (dragos.buleandra@trade2b.ro)
  */
 public class CellRangeAddressList {
@@ -48,7 +49,7 @@ public class CellRangeAddressList {
 		_list = new ArrayList<>();
 	}
 	/**
-	 * Convenience constructor for creating a <tt>CellRangeAddressList</tt> with a single 
+	 * Convenience constructor for creating a <tt>CellRangeAddressList</tt> with a single
 	 * <tt>CellRangeAddress</tt>.  Other <tt>CellRangeAddress</tt>es may be added later.
 	 */
 	public CellRangeAddressList(int firstRow, int lastRow, int firstCol, int lastCol) {
@@ -71,7 +72,7 @@ public class CellRangeAddressList {
 	 * structures is automatically set when reading an Excel file and/or
 	 * increased when you manually add a new ADDR structure . This is the reason
 	 * there isn't a set method for this field .
-	 * 
+	 *
 	 * @return number of ADDR structures
 	 */
 	public int countRanges() {
@@ -80,7 +81,7 @@ public class CellRangeAddressList {
 
 	/**
 	 * Add a cell range structure.
-	 * 
+	 *
 	 * @param firstRow - the upper left hand corner's row
 	 * @param firstCol - the upper left hand corner's col
 	 * @param lastRow - the lower right hand corner's row
@@ -98,7 +99,7 @@ public class CellRangeAddressList {
 			throw new RuntimeException("List is empty");
 		}
 		if (rangeIndex < 0 || rangeIndex >= _list.size()) {
-			throw new RuntimeException("Range index (" + rangeIndex 
+			throw new RuntimeException("Range index (" + rangeIndex
 					+ ") is outside allowable range (0.." + (_list.size()-1) + ")");
 		}
 		return _list.remove(rangeIndex);
@@ -124,9 +125,17 @@ public class CellRangeAddressList {
 
 	public int serialize(int offset, byte[] data) {
 		int totalSize = getSize();
-		serialize(new LittleEndianByteArrayOutputStream(data, offset, totalSize));
+		try (LittleEndianByteArrayOutputStream lebaos =
+				new LittleEndianByteArrayOutputStream(data, offset, totalSize)) {
+			serialize(lebaos);
+		}
+		catch (IOException ioe) {
+			// should never happen in practice
+			throw new IllegalStateException(ioe);
+		}
 		return totalSize;
 	}
+
 	public void serialize(LittleEndianOutput out) {
 		int nItems = _list.size();
 		out.writeShort(nItems);
@@ -135,11 +144,10 @@ public class CellRangeAddressList {
 			region.serialize(out);
 		}
 	}
-	
 
 	public CellRangeAddressList copy() {
 		CellRangeAddressList result = new CellRangeAddressList();
-		
+
 		int nItems = _list.size();
 		for (int k = 0; k < nItems; k++) {
 			CellRangeAddress region = _list.get(k);
