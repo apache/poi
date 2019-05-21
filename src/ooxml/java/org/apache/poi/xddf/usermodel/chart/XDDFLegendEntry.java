@@ -35,6 +35,9 @@ public class XDDFLegendEntry implements TextContainer {
     @Internal
     protected XDDFLegendEntry(CTLegendEntry entry) {
         this.entry = entry;
+        if (entry.getIdx() == null) {
+            entry.addNewIdx().setVal(0);
+        }
     }
 
     @Internal
@@ -108,12 +111,14 @@ public class XDDFLegendEntry implements TextContainer {
         }
     }
 
+    @Override
     public <R> Optional<R> findDefinedParagraphProperty(
             Function<CTTextParagraphProperties, Boolean> isSet,
             Function<CTTextParagraphProperties, R> getter) {
         return Optional.empty(); // legend entry has no (indirect) paragraph properties
     }
 
+    @Override
     public <R> Optional<R> findDefinedRunProperty(
             Function<CTTextCharacterProperties, Boolean> isSet,
             Function<CTTextCharacterProperties, R> getter) {

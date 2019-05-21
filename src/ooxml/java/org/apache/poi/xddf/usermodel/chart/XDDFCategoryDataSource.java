@@ -29,6 +29,11 @@ public interface XDDFCategoryDataSource extends XDDFDataSource<String> {
     }
 
     @Override
+    default boolean isLiteral() {
+        return false;
+    }
+
+    @Override
     default boolean isNumeric() {
         return false;
     }

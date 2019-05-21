@@ -34,21 +34,24 @@ public class XDDFLinearShadeProperties {
         return props;
     }
 
-    public Integer getAngle() {
+    public Double getAngle() {
         if (props.isSetAng()) {
-            return props.getAng();
+            return Angles.attributeToDegrees(props.getAng());
         } else {
             return null;
         }
     }
 
-    public void setAngle(Integer angle) {
+    public void setAngle(Double angle) {
         if (angle == null) {
             if (props.isSetAng()) {
                 props.unsetAng();
             }
         } else {
-            props.setAng(angle);
+            if (angle < 0.0 || 360.0 <= angle) {
+                throw new IllegalArgumentException("angle must be in the range [0, 360).");
+            }
+            props.setAng(Angles.degreesToAttribute(angle));
         }
     }
 

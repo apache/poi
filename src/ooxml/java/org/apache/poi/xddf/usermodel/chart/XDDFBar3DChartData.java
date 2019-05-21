@@ -32,8 +32,13 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTSerTx;
 public class XDDFBar3DChartData extends XDDFChartData {
     private CTBar3DChart chart;
 
-    public XDDFBar3DChartData(CTBar3DChart chart, Map<Long, XDDFChartAxis> categories,
+    @Internal
+    protected XDDFBar3DChartData(
+            XDDFChart parent,
+            CTBar3DChart chart,
+            Map<Long, XDDFChartAxis> categories,
             Map<Long, XDDFValueAxis> values) {
+        super(parent);
         this.chart = chart;
         if (chart.getBarDir() == null) {
             chart.addNewBarDir().setVal(BarDirection.BAR.underlying);
@@ -258,12 +263,12 @@ public class XDDFBar3DChartData extends XDDFChartData {
         }
 
         @Override
-        public void setIndex(long val) {
+        protected void setIndex(long val) {
             series.getIdx().setVal(val);
         }
 
         @Override
-        public void setOrder(long val) {
+        protected void setOrder(long val) {
             series.getOrder().setVal(val);
         }
     }

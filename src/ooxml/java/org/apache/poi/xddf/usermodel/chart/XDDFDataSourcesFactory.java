@@ -32,7 +32,8 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrData;
 
 /**
- * Class {@code XDDFDataSourcesFactory} is a factory for {@link XDDFDataSource} instances.
+ * Class {@code XDDFDataSourcesFactory} is a factory for {@link XDDFDataSource}
+ * instances.
  */
 @Beta
 public class XDDFDataSourcesFactory {
@@ -137,6 +138,14 @@ public class XDDFDataSourcesFactory {
                 return 0;
             }
         };
+    }
+
+    public static <T extends Number> XDDFNumericalDataSource<T> fromArray(T[] elements) {
+        return new LiteralNumericalArrayDataSource<>(elements);
+    }
+
+    public static XDDFCategoryDataSource fromArray(String[] elements) {
+        return new LiteralStringArrayDataSource(elements);
     }
 
     public static <T extends Number> XDDFNumericalDataSource<T> fromArray(T[] elements, String dataRange) {
@@ -257,6 +266,28 @@ public class XDDFDataSourcesFactory {
         @Override
         public String getFormula() {
             return getDataRangeReference();
+        }
+    }
+
+    private static class LiteralNumericalArrayDataSource<T extends Number> extends NumericalArrayDataSource<T> {
+        public LiteralNumericalArrayDataSource(T[] elements) {
+            super(elements, null, 0);
+        }
+
+        @Override
+        public boolean isLiteral() {
+            return true;
+        }
+    }
+
+    private static class LiteralStringArrayDataSource extends StringArrayDataSource {
+        public LiteralStringArrayDataSource(String[] elements) {
+            super(elements, null, 0);
+        }
+
+        @Override
+        public boolean isLiteral() {
+            return true;
         }
     }
 

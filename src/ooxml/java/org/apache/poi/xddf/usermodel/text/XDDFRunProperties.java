@@ -45,7 +45,7 @@ public class XDDFRunProperties {
     }
 
     @Internal
-    protected XDDFRunProperties(CTTextCharacterProperties properties) {
+    public XDDFRunProperties(CTTextCharacterProperties properties) {
         this.props = properties;
     }
 

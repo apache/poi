@@ -26,6 +26,8 @@ import java.util.Map;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
+import org.apache.poi.xddf.usermodel.XDDFFillProperties;
+import org.apache.poi.xddf.usermodel.XDDFLineProperties;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumData;
@@ -43,11 +45,13 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTUnsignedInt;
  */
 @Beta
 public abstract class XDDFChartData {
+    protected XDDFChart parent;
     protected List<Series> series;
     private XDDFCategoryAxis categoryAxis;
     private List<XDDFValueAxis> valueAxes;
 
-    protected XDDFChartData() {
+    protected XDDFChartData(XDDFChart chart) {
+        this.parent = chart;
         this.series = new ArrayList<>();
     }
 
@@ -181,18 +185,20 @@ public abstract class XDDFChartData {
                 } else {
                     ref = getSeriesText().addNewStrRef();
                 }
-                CTStrData cache;
-                if (ref.isSetStrCache()) {
-                    cache = ref.getStrCache();
-                } else {
-                    cache = ref.addNewStrCache();
-                }
-                if (cache.sizeOfPtArray() < 1) {
-                    cache.addNewPtCount().setVal(1);
-                    cache.addNewPt().setIdx(0);
-                }
-                cache.getPtArray(0).setV(title);
                 ref.setF(titleRef.formatAsString());
+                if (title != null) {
+                    CTStrData cache;
+                    if (ref.isSetStrCache()) {
+                        cache = ref.getStrCache();
+                    } else {
+                        cache = ref.addNewStrCache();
+                    }
+                    if (cache.sizeOfPtArray() < 1) {
+                        cache.addNewPtCount().setVal(1);
+                        cache.addNewPt().setIdx(0);;
+                    }
+                    cache.getPtArray(0).setV(title);
+                }
             }
         }
 
@@ -215,6 +221,34 @@ public abstract class XDDFChartData {
             }
             CTNumData cache = retrieveNumCache(getNumDS(), valuesData);
             fillNumCache(cache, numOfPoints, valuesData);
+        }
+
+        /**
+         * @param fill
+         *      fill property for the shape representing the series.
+         * @since POI 4.1.1
+         */
+        public void setFillProperties(XDDFFillProperties fill) {
+            XDDFShapeProperties properties = getShapeProperties();
+            if (properties == null) {
+                properties = new XDDFShapeProperties();
+            }
+            properties.setFillProperties(fill);
+            setShapeProperties(properties);
+        }
+
+        /**
+         * @param line
+         *      line property for the shape representing the series.
+         * @since POI 4.1.1
+         */
+        public void setLineProperties(XDDFLineProperties line) {
+            XDDFShapeProperties properties = getShapeProperties();
+            if (properties == null) {
+                properties = new XDDFShapeProperties();
+            }
+            properties.setLineProperties(line);
+            setShapeProperties(properties);
         }
 
         private CTNumData retrieveNumCache(final CTAxDataSource axDataSource, XDDFDataSource<?> data) {
@@ -312,17 +346,19 @@ public abstract class XDDFChartData {
 
         private void fillStringCache(CTStrData cache, int numOfPoints, XDDFDataSource<?> data) {
             cache.setPtArray(null); // unset old values
-            if (cache.isSetPtCount()) {
-                cache.getPtCount().setVal(numOfPoints);
-            } else {
-                cache.addNewPtCount().setVal(numOfPoints);
-            }
-            for (int i = 0; i < numOfPoints; ++i) {
-                String value = data.getPointAt(i).toString();
-                if (value != null) {
-                    CTStrVal ctStrVal = cache.addNewPt();
-                    ctStrVal.setIdx(i);
-                    ctStrVal.setV(value);
+            if (data.getPointAt(0) != null) { // assuming no value for first is no values at all
+                if (cache.isSetPtCount()) {
+                    cache.getPtCount().setVal(numOfPoints);
+                } else {
+                    cache.addNewPtCount().setVal(numOfPoints);
+                }
+                for (int i = 0; i < numOfPoints; ++i) {
+                    String value = data.getPointAt(i).toString();
+                    if (value != null) {
+                        CTStrVal ctStrVal = cache.addNewPt();
+                        ctStrVal.setIdx(i);
+                        ctStrVal.setV(value);
+                    }
                 }
             }
         }
@@ -337,17 +373,19 @@ public abstract class XDDFChartData {
                 cache.setFormatCode(formatCode);
             }
             cache.setPtArray(null); // unset old values
-            if (cache.isSetPtCount()) {
-                cache.getPtCount().setVal(numOfPoints);
-            } else {
-                cache.addNewPtCount().setVal(numOfPoints);
-            }
-            for (int i = 0; i < numOfPoints; ++i) {
-                Object value = data.getPointAt(i);
-                if (value != null) {
-                    CTNumVal ctNumVal = cache.addNewPt();
-                    ctNumVal.setIdx(i);
-                    ctNumVal.setV(value.toString());
+            if (data.getPointAt(0) != null) { // assuming no value for first is no values at all
+                if (cache.isSetPtCount()) {
+                    cache.getPtCount().setVal(numOfPoints);
+                } else {
+                    cache.addNewPtCount().setVal(numOfPoints);
+                }
+                for (int i = 0; i < numOfPoints; ++i) {
+                    Object value = data.getPointAt(i);
+                    if (value != null) {
+                        CTNumVal ctNumVal = cache.addNewPt();
+                        ctNumVal.setIdx(i);
+                        ctNumVal.setV(value.toString());
+                    }
                 }
             }
         }

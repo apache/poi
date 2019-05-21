@@ -120,21 +120,21 @@ public class XDDFTransform2D {
         xformOff.setY(offset.getY());
     }
 
-    public Integer getRotation() {
+    public Double getRotation() {
         if (transform.isSetRot()) {
-            return transform.getRot();
+            return Angles.attributeToDegrees(transform.getRot());
         } else {
             return null;
         }
     }
 
-    public void setRotation(Integer rotation) {
+    public void setRotation(Double rotation) {
         if (rotation == null) {
             if (transform.isSetRot()) {
                 transform.unsetRot();
             }
         } else {
-            transform.setRot(rotation);
+            transform.setRot(Angles.degreesToAttribute(rotation));
         }
     }
 }

@@ -30,7 +30,9 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTSerTx;
 public class XDDFPieChartData extends XDDFChartData {
     private CTPieChart chart;
 
-    public XDDFPieChartData(CTPieChart chart) {
+    @Internal
+    protected XDDFPieChartData(XDDFChart parent, CTPieChart chart) {
+        super(parent);
         this.chart = chart;
         for (CTPieSer series : chart.getSerList()) {
             this.series.add(new Series(series, series.getCat(), series.getVal()));
@@ -86,7 +88,7 @@ public class XDDFPieChartData extends XDDFChartData {
     @Override
     public XDDFChartData.Series addSeries(XDDFDataSource<?> category,
             XDDFNumericalDataSource<? extends Number> values) {
-        final int index = this.series.size();
+        final long index = this.parent.incrementSeriesCount();
         final CTPieSer ctSer = this.chart.addNewSer();
         ctSer.addNewCat();
         ctSer.addNewVal();
@@ -189,12 +191,12 @@ public class XDDFPieChartData extends XDDFChartData {
         }
 
         @Override
-        public void setIndex(long val) {
+        protected void setIndex(long val) {
             series.getIdx().setVal(val);
         }
 
         @Override
-        public void setOrder(long val) {
+        protected void setOrder(long val) {
             series.getOrder().setVal(val);
         }
     }

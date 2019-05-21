@@ -20,6 +20,7 @@ package org.apache.poi.xddf.usermodel.chart;
 import org.apache.poi.util.Beta;
 import org.apache.poi.xddf.usermodel.HasShapeProperties;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
+import org.apache.poi.xddf.usermodel.text.XDDFRunProperties;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartLines;
@@ -27,9 +28,14 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTCrosses;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumFmt;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTScaling;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTTickLblPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTickMark;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTUnsignedInt;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties;
 
 /**
  * Base class for all axis types.
@@ -52,9 +58,16 @@ public abstract class XDDFChartAxis implements HasShapeProperties {
 
     protected abstract CTTickMark getMinorCTTickMark();
 
+    protected abstract CTTickLblPos getCTTickLblPos();
+
     public abstract XDDFShapeProperties getOrAddMajorGridProperties();
 
     public abstract XDDFShapeProperties getOrAddMinorGridProperties();
+
+    /**
+     * @since POI 4.0.2
+     */
+    public abstract XDDFRunProperties getOrAddTextProperties();
 
     /**
      * @since 4.0.1
@@ -340,6 +353,48 @@ public abstract class XDDFChartAxis implements HasShapeProperties {
      */
     public void setMinorTickMark(AxisTickMark tickMark) {
         getMinorCTTickMark().setVal(tickMark.underlying);
+    }
+
+    /**
+     * @return tick label position.
+     * @since POI 4.0.2
+     */
+    public AxisTickLabelPosition getTickLabelPosition() {
+        return AxisTickLabelPosition.valueOf(getCTTickLblPos().getVal());
+    }
+
+    /**
+     * @param labelPosition
+     *            tick label position.
+     * @since POI 4.0.2
+     */
+    public void setTickLabelPosition(AxisTickLabelPosition labelPosition) {
+        getCTTickLblPos().setVal(labelPosition.underlying);
+    }
+
+    protected CTTextCharacterProperties getOrAddTextProperties(CTTextBody body) {
+        CTTextCharacterProperties properties;
+        if (body.getBodyPr() == null) {
+            body.addNewBodyPr();
+        }
+        CTTextParagraph paragraph;
+        if (body.sizeOfPArray() > 0) {
+            paragraph = body.getPArray(0);
+        } else {
+            paragraph = body.addNewP();
+        }
+        CTTextParagraphProperties paraprops;
+        if (paragraph.isSetPPr()) {
+            paraprops = paragraph.getPPr();
+        } else {
+            paraprops = paragraph.addNewPPr();
+        }
+        if (paraprops.isSetDefRPr()) {
+            properties = paraprops.getDefRPr();
+        } else {
+            properties = paraprops.addNewDefRPr();
+        }
+        return properties;
     }
 
     protected CTShapeProperties getOrAddLinesProperties(CTChartLines gridlines) {
