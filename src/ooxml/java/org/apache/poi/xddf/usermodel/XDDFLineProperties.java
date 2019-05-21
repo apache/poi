@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Units;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTLineProperties;
 
 @Beta
@@ -31,6 +32,16 @@ public class XDDFLineProperties {
 
     public XDDFLineProperties() {
         this(CTLineProperties.Factory.newInstance());
+    }
+
+    /**
+     * @param fill
+     *      fill properties to set on the new line properties.
+     * @since POI 4.0.2
+     */
+    public XDDFLineProperties(XDDFFillProperties fill) {
+        this();
+        this.setFillProperties(fill);
     }
 
     @Internal
@@ -293,21 +304,29 @@ public class XDDFLineProperties {
         }
     }
 
-    public Integer getWidth() {
+    /**
+     * @return the width expressed in points.
+     */
+    public Double getWidth() {
         if (props.isSetW()) {
-            return props.getW();
+            return Units.toPoints(props.getW());
         } else {
             return null;
         }
     }
 
-    public void setWidth(Integer width) {
+    /**
+     * Internally converts the width to EMU units.
+     *
+     * @param width expressed in points.
+     */
+    public void setWidth(Double width) {
         if (width == null) {
             if (props.isSetW()) {
                 props.unsetW();
             }
         } else {
-            props.setW(width);
+            props.setW(Units.toEMU(width));
         }
     }
 }

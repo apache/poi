@@ -383,11 +383,23 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
         return new XDDFManualLayout(chart.getPlotArea());
     }
 
+    private long seriesCount = 0;
+    protected long incrementSeriesCount() {
+        return seriesCount++;
+    }
+
     public void plot(XDDFChartData data) {
         XSSFSheet sheet = getSheet();
         for (XDDFChartData.Series series : data.getSeries()) {
             series.plot();
-            fillSheet(sheet, series.getCategoryData(), series.getValuesData());
+            XDDFDataSource<?> categoryDS = series.getCategoryData();
+            XDDFNumericalDataSource<? extends Number> valuesDS = series.getValuesData();
+            if (categoryDS.isReference() || valuesDS.isReference()
+                    || categoryDS.isLiteral() || valuesDS.isLiteral()) {
+                // let's assume the data is already in the sheet
+            } else {
+                fillSheet(sheet, categoryDS, valuesDS);
+            }
         }
     }
 
@@ -399,62 +411,62 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
 
         for (int i = 0; i < plotArea.sizeOfAreaChartArray(); i++) {
             CTAreaChart areaChart = plotArea.getAreaChartArray(i);
-            series.add(new XDDFAreaChartData(areaChart, categories, values));
+            series.add(new XDDFAreaChartData(this, areaChart, categories, values));
         }
 
         for (int i = 0; i < plotArea.sizeOfArea3DChartArray(); i++) {
             CTArea3DChart areaChart = plotArea.getArea3DChartArray(i);
-            series.add(new XDDFArea3DChartData(areaChart, categories, values));
+            series.add(new XDDFArea3DChartData(this, areaChart, categories, values));
         }
 
         for (int i = 0; i < plotArea.sizeOfBarChartArray(); i++) {
             CTBarChart barChart = plotArea.getBarChartArray(i);
-            series.add(new XDDFBarChartData(barChart, categories, values));
+            series.add(new XDDFBarChartData(this, barChart, categories, values));
         }
 
         for (int i = 0; i < plotArea.sizeOfBar3DChartArray(); i++) {
             CTBar3DChart barChart = plotArea.getBar3DChartArray(i);
-            series.add(new XDDFBar3DChartData(barChart, categories, values));
+            series.add(new XDDFBar3DChartData(this, barChart, categories, values));
         }
 
         for (int i = 0; i < plotArea.sizeOfLineChartArray(); i++) {
             CTLineChart lineChart = plotArea.getLineChartArray(i);
-            series.add(new XDDFLineChartData(lineChart, categories, values));
+            series.add(new XDDFLineChartData(this, lineChart, categories, values));
         }
 
         for (int i = 0; i < plotArea.sizeOfLine3DChartArray(); i++) {
             CTLine3DChart lineChart = plotArea.getLine3DChartArray(i);
-            series.add(new XDDFLine3DChartData(lineChart, categories, values));
+            series.add(new XDDFLine3DChartData(this, lineChart, categories, values));
         }
 
         for (int i = 0; i < plotArea.sizeOfPieChartArray(); i++) {
             CTPieChart pieChart = plotArea.getPieChartArray(i);
-            series.add(new XDDFPieChartData(pieChart));
+            series.add(new XDDFPieChartData(this, pieChart));
         }
 
         for (int i = 0; i < plotArea.sizeOfPie3DChartArray(); i++) {
             CTPie3DChart pieChart = plotArea.getPie3DChartArray(i);
-            series.add(new XDDFPie3DChartData(pieChart));
+            series.add(new XDDFPie3DChartData(this, pieChart));
         }
 
         for (int i = 0; i < plotArea.sizeOfRadarChartArray(); i++) {
             CTRadarChart radarChart = plotArea.getRadarChartArray(i);
-            series.add(new XDDFRadarChartData(radarChart, categories, values));
+            series.add(new XDDFRadarChartData(this, radarChart, categories, values));
         }
 
         for (int i = 0; i < plotArea.sizeOfScatterChartArray(); i++) {
             CTScatterChart scatterChart = plotArea.getScatterChartArray(i);
-            series.add(new XDDFScatterChartData(scatterChart, categories, values));
+            series.add(new XDDFScatterChartData(this, scatterChart, categories, values));
         }
 
         for (int i = 0; i < plotArea.sizeOfSurfaceChartArray(); i++) {
             CTSurfaceChart surfaceChart = plotArea.getSurfaceChartArray(i);
-            series.add(new XDDFSurfaceChartData(surfaceChart, categories, values));
+            series.add(new XDDFSurfaceChartData(this, surfaceChart, categories, values));
         }
 
         for (int i = 0; i < plotArea.sizeOfSurface3DChartArray(); i++) {
             CTSurface3DChart surfaceChart = plotArea.getSurface3DChartArray(i);
-            series.add(new XDDFSurface3DChartData(surfaceChart, categories, values));
+            series.add(new XDDFSurface3DChartData(this, surfaceChart, categories, values));
         }
 
         // TODO repeat above code for missing charts: Bubble, Doughnut, OfPie and Stock
@@ -553,29 +565,29 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
         final CTPlotArea plotArea = getCTPlotArea();
         switch (type) {
         case AREA:
-            return new XDDFAreaChartData(plotArea.addNewAreaChart(), categories, mapValues);
+            return new XDDFAreaChartData(this, plotArea.addNewAreaChart(), categories, mapValues);
         case AREA3D:
-            return new XDDFArea3DChartData(plotArea.addNewArea3DChart(), categories, mapValues);
+            return new XDDFArea3DChartData(this, plotArea.addNewArea3DChart(), categories, mapValues);
         case BAR:
-            return new XDDFBarChartData(plotArea.addNewBarChart(), categories, mapValues);
+            return new XDDFBarChartData(this, plotArea.addNewBarChart(), categories, mapValues);
         case BAR3D:
-            return new XDDFBar3DChartData(plotArea.addNewBar3DChart(), categories, mapValues);
+            return new XDDFBar3DChartData(this, plotArea.addNewBar3DChart(), categories, mapValues);
         case LINE:
-            return new XDDFLineChartData(plotArea.addNewLineChart(), categories, mapValues);
+            return new XDDFLineChartData(this, plotArea.addNewLineChart(), categories, mapValues);
         case LINE3D:
-            return new XDDFLine3DChartData(plotArea.addNewLine3DChart(), categories, mapValues);
+            return new XDDFLine3DChartData(this, plotArea.addNewLine3DChart(), categories, mapValues);
         case PIE:
-            return new XDDFPieChartData(plotArea.addNewPieChart());
+            return new XDDFPieChartData(this, plotArea.addNewPieChart());
         case PIE3D:
-            return new XDDFPie3DChartData(plotArea.addNewPie3DChart());
+            return new XDDFPie3DChartData(this, plotArea.addNewPie3DChart());
         case RADAR:
-            return new XDDFRadarChartData(plotArea.addNewRadarChart(), categories, mapValues);
+            return new XDDFRadarChartData(this, plotArea.addNewRadarChart(), categories, mapValues);
         case SCATTER:
-            return new XDDFScatterChartData(plotArea.addNewScatterChart(), categories, mapValues);
+            return new XDDFScatterChartData(this, plotArea.addNewScatterChart(), categories, mapValues);
         case SURFACE:
-            return new XDDFSurfaceChartData(plotArea.addNewSurfaceChart(), categories, mapValues);
+            return new XDDFSurfaceChartData(this, plotArea.addNewSurfaceChart(), categories, mapValues);
         case SURFACE3D:
-            return new XDDFSurface3DChartData(plotArea.addNewSurface3DChart(), categories, mapValues);
+            return new XDDFSurface3DChartData(this, plotArea.addNewSurface3DChart(), categories, mapValues);
         default:
             return null;
         }

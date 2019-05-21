@@ -19,6 +19,7 @@ package org.apache.poi.xddf.usermodel.chart;
 
 import org.apache.poi.util.Beta;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
+import org.apache.poi.xddf.usermodel.text.XDDFRunProperties;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTCatAx;
@@ -27,10 +28,11 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTCrosses;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumFmt;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTScaling;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTTickLblPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTickMark;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTUnsignedInt;
-import org.openxmlformats.schemas.drawingml.x2006.chart.STTickLblPos;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
 
 @Beta
 public class XDDFCategoryAxis extends XDDFChartAxis {
@@ -75,8 +77,21 @@ public class XDDFCategoryAxis extends XDDFChartAxis {
         } else {
             properties = ctCatAx.addNewSpPr();
         }
-
         return new XDDFShapeProperties(properties);
+    }
+
+    /**
+     * @since POI 4.0.2
+     */
+    @Override
+    public XDDFRunProperties getOrAddTextProperties() {
+        CTTextBody text;
+        if (ctCatAx.isSetTxPr()) {
+            text = ctCatAx.getTxPr();
+        } else {
+            text = ctCatAx.addNewTxPr();
+        }
+        return new XDDFRunProperties(getOrAddTextProperties(text));
     }
 
     /**
@@ -180,6 +195,11 @@ public class XDDFCategoryAxis extends XDDFChartAxis {
         return ctCatAx.getMinorTickMark();
     }
 
+    @Override
+    protected CTTickLblPos getCTTickLblPos() {
+        return ctCatAx.getTickLblPos();
+    }
+
     public AxisLabelAlignment getLabelAlignment() {
         return AxisLabelAlignment.valueOf(ctCatAx.getLblAlgn().getVal());
     }
@@ -196,7 +216,7 @@ public class XDDFCategoryAxis extends XDDFChartAxis {
         ctCatAx.addNewScaling();
         ctCatAx.addNewCrosses();
         ctCatAx.addNewCrossAx();
-        ctCatAx.addNewTickLblPos().setVal(STTickLblPos.NEXT_TO);
+        ctCatAx.addNewTickLblPos();
         ctCatAx.addNewDelete();
         ctCatAx.addNewMajorTickMark();
         ctCatAx.addNewMinorTickMark();
@@ -207,5 +227,6 @@ public class XDDFCategoryAxis extends XDDFChartAxis {
         setVisible(true);
         setMajorTickMark(AxisTickMark.CROSS);
         setMinorTickMark(AxisTickMark.NONE);
+        setTickLabelPosition(AxisTickLabelPosition.NEXT_TO);
     }
 }

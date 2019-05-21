@@ -26,4 +26,9 @@ public interface XDDFNumericalDataSource<T extends Number> extends XDDFDataSourc
     String getFormatCode();
 
     void setFormatCode(String formatCode);
+
+    @Override
+    default boolean isLiteral() {
+        return false;
+    }
 }

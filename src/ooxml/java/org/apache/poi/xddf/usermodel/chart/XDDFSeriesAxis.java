@@ -19,6 +19,7 @@ package org.apache.poi.xddf.usermodel.chart;
 
 import org.apache.poi.util.Beta;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
+import org.apache.poi.xddf.usermodel.text.XDDFRunProperties;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartLines;
@@ -27,10 +28,11 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumFmt;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTScaling;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTSerAx;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTTickLblPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTickMark;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTUnsignedInt;
-import org.openxmlformats.schemas.drawingml.x2006.chart.STTickLblPos;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
 
 @Beta
 public class XDDFSeriesAxis extends XDDFChartAxis {
@@ -75,8 +77,21 @@ public class XDDFSeriesAxis extends XDDFChartAxis {
         } else {
             properties = ctSerAx.addNewSpPr();
         }
-
         return new XDDFShapeProperties(properties);
+    }
+
+    /**
+     * @since POI 4.0.2
+     */
+    @Override
+    public XDDFRunProperties getOrAddTextProperties() {
+        CTTextBody text;
+        if (ctSerAx.isSetTxPr()) {
+            text = ctSerAx.getTxPr();
+        } else {
+            text = ctSerAx.addNewTxPr();
+        }
+        return new XDDFRunProperties(getOrAddTextProperties(text));
     }
 
     /**
@@ -180,6 +195,11 @@ public class XDDFSeriesAxis extends XDDFChartAxis {
         return ctSerAx.getMinorTickMark();
     }
 
+    @Override
+    protected CTTickLblPos getCTTickLblPos() {
+        return ctSerAx.getTickLblPos();
+    }
+
     private void initializeAxis(CTPlotArea plotArea, AxisPosition position) {
         final long id = getNextAxId(plotArea);
         ctSerAx = plotArea.addNewSerAx();
@@ -188,7 +208,7 @@ public class XDDFSeriesAxis extends XDDFChartAxis {
         ctSerAx.addNewScaling();
         ctSerAx.addNewCrosses();
         ctSerAx.addNewCrossAx();
-        ctSerAx.addNewTickLblPos().setVal(STTickLblPos.NEXT_TO);
+        ctSerAx.addNewTickLblPos();
         ctSerAx.addNewDelete();
         ctSerAx.addNewMajorTickMark();
         ctSerAx.addNewMinorTickMark();
@@ -199,5 +219,6 @@ public class XDDFSeriesAxis extends XDDFChartAxis {
         setVisible(true);
         setMajorTickMark(AxisTickMark.CROSS);
         setMinorTickMark(AxisTickMark.NONE);
+        setTickLabelPosition(AxisTickLabelPosition.NEXT_TO);
     }
 }

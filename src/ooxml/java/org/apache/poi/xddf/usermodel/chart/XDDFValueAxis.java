@@ -19,6 +19,7 @@ package org.apache.poi.xddf.usermodel.chart;
 
 import org.apache.poi.util.Beta;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
+import org.apache.poi.xddf.usermodel.text.XDDFRunProperties;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartLines;
@@ -26,11 +27,12 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTCrosses;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumFmt;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTScaling;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTTickLblPos;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTickMark;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTUnsignedInt;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTValAx;
-import org.openxmlformats.schemas.drawingml.x2006.chart.STTickLblPos;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
 
 @Beta
 public class XDDFValueAxis extends XDDFChartAxis {
@@ -76,6 +78,20 @@ public class XDDFValueAxis extends XDDFChartAxis {
             properties = ctValAx.addNewSpPr();
         }
         return new XDDFShapeProperties(properties);
+    }
+
+    /**
+     * @since POI 4.0.2
+     */
+    @Override
+    public XDDFRunProperties getOrAddTextProperties() {
+        CTTextBody text;
+        if (ctValAx.isSetTxPr()) {
+            text = ctValAx.getTxPr();
+        } else {
+            text = ctValAx.addNewTxPr();
+        }
+        return new XDDFRunProperties(getOrAddTextProperties(text));
     }
 
     /**
@@ -207,6 +223,11 @@ public class XDDFValueAxis extends XDDFChartAxis {
         return ctValAx.getMinorTickMark();
     }
 
+    @Override
+    protected CTTickLblPos getCTTickLblPos() {
+        return ctValAx.getTickLblPos();
+    }
+
     public AxisCrossBetween getCrossBetween() {
         return AxisCrossBetween.valueOf(ctValAx.getCrossBetween().getVal());
     }
@@ -224,7 +245,7 @@ public class XDDFValueAxis extends XDDFChartAxis {
         ctValAx.addNewCrossBetween();
         ctValAx.addNewCrosses();
         ctValAx.addNewCrossAx();
-        ctValAx.addNewTickLblPos().setVal(STTickLblPos.NEXT_TO);
+        ctValAx.addNewTickLblPos();
         ctValAx.addNewDelete();
         ctValAx.addNewMajorTickMark();
         ctValAx.addNewMinorTickMark();
@@ -236,5 +257,6 @@ public class XDDFValueAxis extends XDDFChartAxis {
         setVisible(true);
         setMajorTickMark(AxisTickMark.CROSS);
         setMinorTickMark(AxisTickMark.NONE);
+        setTickLabelPosition(AxisTickLabelPosition.NEXT_TO);
     }
 }

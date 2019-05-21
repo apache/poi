@@ -27,6 +27,11 @@ public interface XDDFDataSource<T> {
 
     T getPointAt(int index);
 
+    /**
+     * @since POI 4.0.2
+     */
+    boolean isLiteral();
+
     boolean isReference();
 
     boolean isNumeric();
