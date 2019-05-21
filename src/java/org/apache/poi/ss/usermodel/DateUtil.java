@@ -62,7 +62,7 @@ public class DateUtil {
     private static final Pattern date_ptrn3b = Pattern.compile("^[\\[\\]yYmMdDhHsS\\-T/\u5e74\u6708\u65e5,. :\"\\\\]+0*[ampAMP/]*$");
     //  elapsed time patterns: [h],[m] and [s]
     private static final Pattern date_ptrn4 = Pattern.compile("^\\[([hH]+|[mM]+|[sS]+)\\]");
-    
+
     // for format which start with "[DBNum1]" or "[DBNum2]" or "[DBNum3]" could be a Chinese date
     private static final Pattern date_ptrn5 = Pattern.compile("^\\[DBNum(1|2|3)\\]");
 
@@ -124,11 +124,11 @@ public class DateUtil {
         // be 4 hours.
         // E.g. 2004-03-28 04:00 CEST - 2004-03-28 00:00 CET is 3 hours
         // and 2004-10-31 04:00 CET - 2004-10-31 00:00 CEST is 5 hours
-        double fraction = (((date.get(Calendar.HOUR_OF_DAY) * 60
+        double fraction = (((date.get(Calendar.HOUR_OF_DAY) * 60.0
                              + date.get(Calendar.MINUTE)
-                            ) * 60 + date.get(Calendar.SECOND)
-                           ) * 1000 + date.get(Calendar.MILLISECOND)
-                          ) / ( double ) DAY_MILLISECONDS;
+                            ) * 60.0 + date.get(Calendar.SECOND)
+                           ) * 1000.0 + date.get(Calendar.MILLISECOND)
+                          ) / DAY_MILLISECONDS;
         Calendar calStart = dayStart(date);
 
         double value = fraction + absoluteDay(calStart, use1904windowing);
@@ -145,12 +145,12 @@ public class DateUtil {
     /**
      *  Given an Excel date with using 1900 date windowing, and
      *  converts it to a java.util.Date.
-     *  
-     *  Excel Dates and Times are stored without any timezone 
-     *  information. If you know (through other means) that your file 
+     *
+     *  Excel Dates and Times are stored without any timezone
+     *  information. If you know (through other means) that your file
      *  uses a different TimeZone to the system default, you can use
      *  this version of the getJavaDate() method to handle it.
-     *   
+     *
      *  @param date  The Excel date.
      *  @param tz The TimeZone to evaluate the date in
      *  @return Java representation of the date, or null if date is not a valid Excel date
@@ -182,12 +182,12 @@ public class DateUtil {
     /**
      *  Given an Excel date with either 1900 or 1904 date windowing,
      *  converts it to a java.util.Date.
-     *  
-     *  Excel Dates and Times are stored without any timezone 
-     *  information. If you know (through other means) that your file 
+     *
+     *  Excel Dates and Times are stored without any timezone
+     *  information. If you know (through other means) that your file
      *  uses a different TimeZone to the system default, you can use
      *  this version of the getJavaDate() method to handle it.
-     *   
+     *
      *  @param date  The Excel date.
      *  @param tz The TimeZone to evaluate the date in
      *  @param use1904windowing  true if date uses 1904 windowing,
@@ -197,16 +197,16 @@ public class DateUtil {
     public static Date getJavaDate(double date, boolean use1904windowing, TimeZone tz) {
         return getJavaDate(date, use1904windowing, tz, false);
     }
-    
+
     /**
      *  Given an Excel date with either 1900 or 1904 date windowing,
      *  converts it to a java.util.Date.
-     *  
-     *  Excel Dates and Times are stored without any timezone 
-     *  information. If you know (through other means) that your file 
+     *
+     *  Excel Dates and Times are stored without any timezone
+     *  information. If you know (through other means) that your file
      *  uses a different TimeZone to the system default, you can use
      *  this version of the getJavaDate() method to handle it.
-     *   
+     *
      *  @param date  The Excel date.
      *  @param tz The TimeZone to evaluate the date in
      *  @param use1904windowing  true if date uses 1904 windowing,
@@ -218,7 +218,7 @@ public class DateUtil {
         Calendar calendar = getJavaCalendar(date, use1904windowing, tz, roundSeconds);
         return calendar == null ? null : calendar.getTime();
     }
-    
+
     /**
      *  Given an Excel date with either 1900 or 1904 date windowing,
      *  converts it to a java.util.Date.
@@ -314,7 +314,7 @@ public class DateUtil {
     public static Calendar getJavaCalendar(double date, boolean use1904windowing, TimeZone timeZone) {
         return getJavaCalendar(date, use1904windowing, timeZone, false);
     }
-        
+
     /**
      * Get EXCEL date as Java Calendar with given time zone.
      * @param date  The Excel date.
@@ -345,13 +345,14 @@ public class DateUtil {
     // string represents a date format if the same string is passed multiple times.
     // see https://issues.apache.org/bugzilla/show_bug.cgi?id=55611
     private static ThreadLocal<Integer> lastFormatIndex = new ThreadLocal<Integer>() {
+        @Override
         protected Integer initialValue() {
             return -1;
         }
     };
     private static ThreadLocal<String> lastFormatString = new ThreadLocal<>();
     private static ThreadLocal<Boolean> lastCachedResult = new ThreadLocal<>();
-    
+
     private static boolean isCached(String formatString, int formatIndex) {
         String cachedFormatString = lastFormatString.get();
         return cachedFormatString != null && formatIndex == lastFormatIndex.get()
@@ -378,12 +379,14 @@ public class DateUtil {
      * @see #isInternalDateFormat(int)
      */
     public static boolean isADateFormat(ExcelNumberFormat numFmt) {
-        
-        if (numFmt == null) return false;
-        
+
+        if (numFmt == null) {
+            return false;
+        }
+
         return isADateFormat(numFmt.getIdx(), numFmt.getFormat());
     }
-        
+
     /**
      * Given a format ID and its format String, will check to see if the
      *  format represents a date format or not.
@@ -399,7 +402,7 @@ public class DateUtil {
      * @see #isInternalDateFormat(int)
      */
     public static boolean isADateFormat(int formatIndex, String formatString) {
-        
+
         // First up, is this an internal date format?
         if(isInternalDateFormat(formatIndex)) {
             cache(formatString, formatIndex, true);
@@ -469,7 +472,7 @@ public class DateUtil {
             return true;
         }
         // If it starts with [DBNum1] or [DBNum2] or [DBNum3]
-        // then it could be a Chinese date 
+        // then it could be a Chinese date
         fs = date_ptrn5.matcher(fs).replaceAll("");
         // If it starts with [$-...], then could be a date, but
         //  who knows what that starting bit is all about
@@ -490,7 +493,7 @@ public class DateUtil {
         if (! date_ptrn3a.matcher(fs).find()) {
            return false;
         }
-        
+
         // If we get here, check it's only made up, in any case, of:
         //  y m d h s - \ / , . : [ ] T
         // optionally followed by AM/PM
@@ -530,7 +533,7 @@ public class DateUtil {
      *  Check if a cell contains a date
      *  Since dates are stored internally in Excel as double values
      *  we infer it is a date if it is formatted as such.
-     * @param cell 
+     * @param cell
      * @return true if it looks like a date
      *  @see #isADateFormat(int, String)
      *  @see #isInternalDateFormat(int)
@@ -538,32 +541,36 @@ public class DateUtil {
     public static boolean isCellDateFormatted(Cell cell) {
         return isCellDateFormatted(cell, null);
     }
-    
+
     /**
      *  Check if a cell contains a date
      *  Since dates are stored internally in Excel as double values
      *  we infer it is a date if it is formatted as such.
      *  Format is determined from applicable conditional formatting, if
      *  any, or cell style.
-     * @param cell 
+     * @param cell
      * @param cfEvaluator if available, or null
      * @return true if it looks like a date
      *  @see #isADateFormat(int, String)
      *  @see #isInternalDateFormat(int)
      */
     public static boolean isCellDateFormatted(Cell cell, ConditionalFormattingEvaluator cfEvaluator) {
-        if (cell == null) return false;
+        if (cell == null) {
+            return false;
+        }
         boolean bDate = false;
 
         double d = cell.getNumericCellValue();
         if ( DateUtil.isValidExcelDate(d) ) {
             ExcelNumberFormat nf = ExcelNumberFormat.from(cell, cfEvaluator);
-            if(nf==null) return false;
+            if(nf==null) {
+                return false;
+            }
             bDate = isADateFormat(nf);
         }
         return bDate;
     }
-    
+
     /**
      *  Check if a cell contains a date, checking only for internal
      *   excel date formats.
@@ -573,7 +580,9 @@ public class DateUtil {
      *  @see #isInternalDateFormat(int)
      */
     public static boolean isCellInternalDateFormatted(Cell cell) {
-        if (cell == null) return false;
+        if (cell == null) {
+            return false;
+        }
         boolean bDate = false;
 
         double d = cell.getNumericCellValue();
@@ -691,7 +700,7 @@ public class DateUtil {
         int minutes = parseInt(minStr, "minute", MINUTES_PER_HOUR);
         int seconds = parseInt(secStr, "second", SECONDS_PER_MINUTE);
 
-        double totalSeconds = seconds + (minutes + (hours) * 60) * 60;
+        double totalSeconds = seconds + (minutes + (hours * 60.0)) * 60.0;
         return totalSeconds / (SECONDS_PER_DAY);
     }
     /**

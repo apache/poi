@@ -263,7 +263,7 @@ public class StringUtil {
     }
 
     public static String readUnicodeLE(LittleEndianInput in, int nChars) {
-        byte[] bytes = IOUtils.safelyAllocate(nChars * 2, MAX_RECORD_LENGTH);
+        byte[] bytes = IOUtils.safelyAllocate(nChars * 2L, MAX_RECORD_LENGTH);
         in.readFully(bytes);
         return new String(bytes, UTF16LE);
     }

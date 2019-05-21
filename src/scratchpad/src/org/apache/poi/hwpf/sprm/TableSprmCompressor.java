@@ -81,7 +81,9 @@ public final class TableSprmCompressor
     {
       int itcMac = newTAP.getItcMac();
       byte[] buf = IOUtils.safelyAllocate(
-              1 + (LittleEndian.SHORT_SIZE*(itcMac + 1)) + (TableCellDescriptor.SIZE*itcMac),
+              1
+                + (LittleEndian.SHORT_SIZE*((long)itcMac + 1))
+                + (TableCellDescriptor.SIZE*(long)itcMac),
               MAX_RECORD_LENGTH);
       buf[0] = (byte)itcMac;
 

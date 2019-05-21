@@ -59,7 +59,7 @@ public final class MasterTextPropAtom extends RecordAtom {
 
         LittleEndian.putShort(_header, 2, (short)getRecordType());
         LittleEndian.putInt(_header, 4, _data.length);
-        
+
         indents = new ArrayList<>();
     }
 
@@ -92,6 +92,7 @@ public final class MasterTextPropAtom extends RecordAtom {
      *
      * @return the record type.
      */
+    @Override
     public long getRecordType() {
         return RecordTypes.MasterTextPropAtom.typeID;
     }
@@ -103,12 +104,13 @@ public final class MasterTextPropAtom extends RecordAtom {
      * @param out the output stream to write to.
      * @throws java.io.IOException if an error occurs.
      */
+    @Override
     public void writeOut(OutputStream out) throws IOException {
         write();
         out.write(_header);
         out.write(_data);
     }
-    
+
     /**
      * Write the internal variables to the record bytes
      */
@@ -129,7 +131,7 @@ public final class MasterTextPropAtom extends RecordAtom {
     private void read() {
         int pos = 0;
         indents = new ArrayList<>(_data.length / 6);
-        
+
         while (pos <= _data.length - 6) {
             int count = LittleEndian.getInt(_data, pos);
             short indent = LittleEndian.getShort(_data, pos+4);
@@ -137,7 +139,7 @@ public final class MasterTextPropAtom extends RecordAtom {
             pos += 6;
         }
     }
-    
+
     /**
      * Returns the indent that applies at the given text offset
      */
@@ -151,7 +153,7 @@ public final class MasterTextPropAtom extends RecordAtom {
         }
         return -1;
     }
-    
+
     public List<IndentProp> getIndents() {
         return Collections.unmodifiableList(indents);
     }

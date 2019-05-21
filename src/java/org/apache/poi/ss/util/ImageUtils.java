@@ -122,10 +122,14 @@ public class ImageUtils {
         NodeList lst;
         Element node = (Element)r.getImageMetadata(0).getAsTree("javax_imageio_1.0");
         lst = node.getElementsByTagName("HorizontalPixelSize");
-        if(lst != null && lst.getLength() == 1) hdpi = (int)(mm2inch/Float.parseFloat(((Element)lst.item(0)).getAttribute("value")));
+        if(lst != null && lst.getLength() == 1) {
+            hdpi = (int)(mm2inch/Float.parseFloat(((Element)lst.item(0)).getAttribute("value")));
+        }
 
         lst = node.getElementsByTagName("VerticalPixelSize");
-        if(lst != null && lst.getLength() == 1) vdpi = (int)(mm2inch/Float.parseFloat(((Element)lst.item(0)).getAttribute("value")));
+        if(lst != null && lst.getLength() == 1) {
+            vdpi = (int)(mm2inch/Float.parseFloat(((Element)lst.item(0)).getAttribute("value")));
+        }
 
         return new int[]{hdpi, vdpi};
     }
@@ -142,7 +146,7 @@ public class ImageUtils {
         boolean isHSSF = (anchor instanceof HSSFClientAnchor);
         PictureData data = picture.getPictureData();
         Sheet sheet = picture.getSheet();
-        
+
         // in pixel
         Dimension imgSize = getImageDimension(new ByteArrayInputStream(data.getData()), data.getPictureType());
         // in emus
@@ -163,11 +167,11 @@ public class ImageUtils {
         } else {
             w -= anchor.getDx1()/(double)EMU_PER_PIXEL;
         }
-        
+
         while(w < scaledWidth){
             w += sheet.getColumnWidthInPixels(col2++);
         }
-        
+
         if(w > scaledWidth) {
             //calculate dx2, offset in the rightmost cell
             double cw = sheet.getColumnWidthInPixels(--col2);
@@ -177,7 +181,9 @@ public class ImageUtils {
             } else {
                 dx2 = (int)((cw-delta)*EMU_PER_PIXEL);
             }
-            if (dx2 < 0) dx2 = 0;
+            if (dx2 < 0) {
+                dx2 = 0;
+            }
         }
         anchor.setCol2(col2);
         anchor.setDx2(dx2);
@@ -185,7 +191,7 @@ public class ImageUtils {
         double h = 0;
         int row2 = anchor.getRow1();
         int dy2 = 0;
-        
+
         h = getRowHeightInPixels(sheet,row2++);
         if (isHSSF) {
             h *= 1 - anchor.getDy1()/256d;
@@ -196,7 +202,7 @@ public class ImageUtils {
         while(h < scaledHeight){
             h += getRowHeightInPixels(sheet,row2++);
         }
-        
+
         if(h > scaledHeight) {
             double ch = getRowHeightInPixels(sheet,--row2);
             double delta = h - scaledHeight;
@@ -205,7 +211,9 @@ public class ImageUtils {
             } else {
                 dy2 = (int)((ch-delta)*EMU_PER_PIXEL);
             }
-            if (dy2 < 0) dy2 = 0;
+            if (dy2 < 0) {
+                dy2 = 0;
+            }
         }
 
         anchor.setRow2(row2);
@@ -238,20 +246,20 @@ public class ImageUtils {
         } else {
             w -= anchor.getDx1()/(double)EMU_PER_PIXEL;
         }
-        
+
         while(col2 < anchor.getCol2()){
             w += sheet.getColumnWidthInPixels(col2++);
         }
-        
+
         if (isHSSF) {
-            w += sheet.getColumnWidthInPixels(col2) * anchor.getDx2()/1024d;
+            w += anchor.getDx2()/1024d * sheet.getColumnWidthInPixels(col2);
         } else {
             w += anchor.getDx2()/(double)EMU_PER_PIXEL;
         }
 
         double h = 0;
         int row2 = anchor.getRow1();
-        
+
         h = getRowHeightInPixels(sheet,row2++);
         if (isHSSF) {
             h *= 1 - anchor.getDy1()/256d;
@@ -262,7 +270,7 @@ public class ImageUtils {
         while(row2 < anchor.getRow2()){
             h += getRowHeightInPixels(sheet,row2++);
         }
-        
+
         if (isHSSF) {
             h += getRowHeightInPixels(sheet,row2) * anchor.getDy2()/256;
         } else {
@@ -271,11 +279,11 @@ public class ImageUtils {
 
         w *= EMU_PER_PIXEL;
         h *= EMU_PER_PIXEL;
-        
+
         return new Dimension((int)Math.rint(w), (int)Math.rint(h));
     }
-    
-    
+
+
     public static double getRowHeightInPixels(Sheet sheet, int rowNum) {
         Row r = sheet.getRow(rowNum);
         double points = (r == null) ? sheet.getDefaultRowHeightInPoints() : r.getHeightInPoints();
