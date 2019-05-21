@@ -14,9 +14,10 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hssf.record;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +29,7 @@ import org.apache.poi.util.RecordFormatException;
 
 /**
  * OBJRECORD (0x005D)<p>
- * 
+ *
  * The obj record is used to hold various graphic objects and controls.
  */
 public final class ObjRecord extends Record implements Cloneable {
@@ -36,7 +37,7 @@ public final class ObjRecord extends Record implements Cloneable {
 
 	private static final int NORMAL_PAD_ALIGNMENT = 2;
 	private static int MAX_PAD_ALIGNMENT = 4;
-	
+
 	private List<SubRecord> subrecords;
 	/** used when POI has no idea what is going on */
 	private final byte[] _uninterpretedData;
@@ -100,7 +101,7 @@ public final class ObjRecord extends Record implements Cloneable {
 			_isPaddedToQuadByteMultiple = subRecordData.length % MAX_PAD_ALIGNMENT == 0;
 			if (nRemainingBytes >= (_isPaddedToQuadByteMultiple ? MAX_PAD_ALIGNMENT : NORMAL_PAD_ALIGNMENT)) {
 				if (!canPaddingBeDiscarded(subRecordData, nRemainingBytes)) {
-					String msg = "Leftover " + nRemainingBytes 
+					String msg = "Leftover " + nRemainingBytes
 						+ " bytes in subrecord data " + HexDump.toHex(subRecordData);
 					throw new RecordFormatException(msg);
 				}
@@ -118,7 +119,7 @@ public final class ObjRecord extends Record implements Cloneable {
 	 * written by a version of POI (around 3.1) which incorrectly interpreted the second short of
 	 * the ftLbs subrecord (0x1FEE) as a length, and read that many bytes as padding (other bugs
 	 * helped allow this to occur).
-	 * 
+	 *
 	 * Excel reads files with this excessive padding OK, truncating the over-sized ObjRecord back
 	 * to the its proper size.  POI does the same.
 	 */
@@ -145,7 +146,7 @@ public final class ObjRecord extends Record implements Cloneable {
 		sb.append("[/OBJ]\n");
 		return sb.toString();
 	}
-	
+
 	@Override
 	public int getRecordSize() {
 		if (_uninterpretedData != null) {
@@ -167,31 +168,35 @@ public final class ObjRecord extends Record implements Cloneable {
 		return size + 4;
 	}
 
-	@Override
-	public int serialize(int offset, byte[] data) {
-		int recSize = getRecordSize();
-		int dataSize = recSize - 4;
-		LittleEndianByteArrayOutputStream out = new LittleEndianByteArrayOutputStream(data, offset, recSize); // NOSONAR
+    @Override
+    public int serialize(int offset, byte[] data) {
+        int recSize = getRecordSize();
+        int dataSize = recSize - 4;
 
-		out.writeShort(sid);
-		out.writeShort(dataSize);
+        try (LittleEndianByteArrayOutputStream out = new LittleEndianByteArrayOutputStream(data, offset, recSize)) { // NOSONAR
+            out.writeShort(sid);
+            out.writeShort(dataSize);
 
-		if (_uninterpretedData == null) {
+            if (_uninterpretedData == null) {
 
-			for (int i = 0; i < subrecords.size(); i++) {
-				SubRecord record = subrecords.get(i);
-				record.serialize(out);
-			}
-			int expectedEndIx = offset+dataSize;
-			// padding
-			while (out.getWriteIndex() < expectedEndIx) {
-				out.writeByte(0);
-			}
-		} else {
-			out.write(_uninterpretedData);
-		}
-		return recSize;
-	}
+                for (int i = 0; i < subrecords.size(); i++) {
+                    SubRecord record = subrecords.get(i);
+                    record.serialize(out);
+                }
+                int expectedEndIx = offset + dataSize;
+                // padding
+                while (out.getWriteIndex() < expectedEndIx) {
+                    out.writeByte(0);
+                }
+            } else {
+                out.write(_uninterpretedData);
+            }
+        } catch (IOException ioe) {
+            // should never happen in practice
+            throw new IllegalStateException(ioe);
+        }
+        return recSize;
+    }
 
 	@Override
 	public short getSid() {
