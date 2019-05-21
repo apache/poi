@@ -33,8 +33,11 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 public class EmbeddedObjects {
     @SuppressWarnings("unused")
     public static void main(String[] args) throws Exception {
-        POIFSFileSystem fs = new POIFSFileSystem(new FileInputStream(args[0]));
-        try (HSSFWorkbook workbook = new HSSFWorkbook(fs)) {
+        try (
+            FileInputStream fis = new FileInputStream(args[0]);
+            POIFSFileSystem fs = new POIFSFileSystem(fis);
+            HSSFWorkbook workbook = new HSSFWorkbook(fs)
+        ) {
             for (HSSFObjectData obj : workbook.getAllEmbeddedObjects()) {
                 //the OLE2 Class Name of the object
                 String oleName = obj.getOLE2ClassName();
