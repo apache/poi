@@ -334,10 +334,10 @@ under the License.
     <property name="maven.ant.url" value="${repository.m2}/maven2/org/apache/maven/maven-ant-tasks/2.1.3/maven-ant-tasks-2.1.3.jar"/>
     <property name="maven.ant.jar" value="${compile.lib}/maven-ant-tasks-2.1.3.jar"/>
 
-    <property name="dist.svnant.zip" location="${compile.lib}/svnant/svnant-1.3.1.zip"/>
-    <property name="dist.svnant.url" value="http://subclipse.tigris.org/files/documents/906/49042/svnant-1.3.1.zip"/>
-    <property name="dist.svnclient.jar" location="${compile.lib}/svnant/svnClientAdapter-1.3.0.jar"/>
-    <property name="dist.svnclient.url" value="http://repository.transtep.com/repository/thirdparty/ant/svnant-1.3.0/lib/svnClientAdapter.jar"/>
+    <property name="dist.svnant.jar" location="${compile.lib}/svnant/svnant-1.3.1.jar"/>
+    <property name="dist.svnant.url" value="https://dl.bintray.com/openmeetings/maven/org/tigris/subclipse/svnant/1.3.1/svnant-1.3.1.jar"/>
+    <property name="dist.svnclient.jar" location="${compile.lib}/svnant/svnClientAdapter-1.3.1.jar"/>
+    <property name="dist.svnclient.url" value="https://dl.bintray.com/openmeetings/maven/org/tigris/subclipse/svnclientadapter/1.3.1//svnclientadapter-1.3.1.jar"/>
     <property name="dist.svnkit.jar" location="${compile.lib}/svnant/svnkit-1.8.11.jar"/>
     <property name="dist.svnkit.url" value="${repository.m2}/maven2/org/tmatesoft/svnkit/svnkit/1.8.11/svnkit-1.8.11.jar"/>
     <property name="dist.svnkit-javahl16.jar" location="${compile.lib}/svnant/svnkit-javahl16-1.8.11.jar"/>
@@ -832,7 +832,7 @@ under the License.
         <condition property="svn.jars.present">
             <or>
                 <and>
-                    <available file="${dist.svnant.zip}"/>
+                    <available file="${dist.svnant.jar}"/>
                     <available file="${dist.svnclient.jar}"/>
                     <available file="${dist.svnkit.jar}"/>
                     <available file="${dist.svnkit-javahl16.jar}"/>
@@ -846,18 +846,7 @@ under the License.
     </target>
     <target name="fetch-svn-jars" depends="check-svn-jars" unless="svn.jars.present">
         <mkdir dir="${compile.lib}/svnant"/>
-        <downloadfile src="${dist.svnant.url}" dest="${dist.svnant.zip}"/>
-        <unzip src="${dist.svnant.zip}" dest="${compile.lib}/svnant">
-            <patternset>
-                <include name="lib/svnant.jar"/>
-            </patternset>
-            <mapper>
-                <chainedmapper>
-                    <flattenmapper/>
-                    <globmapper from="svnant.jar" to="svnant-1.3.1.jar"/>
-                </chainedmapper>
-            </mapper>
-        </unzip>
+        <downloadfile src="${dist.svnant.url}" dest="${dist.svnant.jar}"/>
         <downloadfile src="${dist.svnclient.url}" dest="${dist.svnclient.jar}"/>
         <downloadfile src="${dist.svnkit.url}" dest="${dist.svnkit.jar}"/>
         <downloadfile src="${dist.svnkit-javahl16.url}" dest="${dist.svnkit-javahl16.jar}"/>
