@@ -53,12 +53,13 @@ public final class PLCDumper {
 			System.err.println("  PLCDumper <filename>");
 			System.exit(1);
 		}
-		PLCDumper dump = new PLCDumper(
-				new FileInputStream(args[0])
-		);
 
-		System.out.println("Dumping " + args[0]);
-		dump.dumpPLC();
+		try (FileInputStream fis = new FileInputStream(args[0])) {
+			PLCDumper dump = new PLCDumper(fis);
+
+			System.out.println("Dumping " + args[0]);
+			dump.dumpPLC();
+		}
 	}
 
 	private void dumpPLC() {
