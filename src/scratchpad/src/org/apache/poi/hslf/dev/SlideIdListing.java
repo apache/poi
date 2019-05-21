@@ -44,7 +44,7 @@ public final class SlideIdListing {
 	private static byte[] fileContents;
 
 	public static void main(String[] args) throws IOException {
-		if(args.length < 1) {
+		if (args.length < 1) {
 			System.err.println("Need to give a filename");
 			System.exit(1);
 		}
@@ -88,8 +88,8 @@ public final class SlideIdListing {
 		System.out.println();
 
 		// Look for latest core records that are slides or notes
-		for(int i=0; i<latestRecords.length; i++) {
-			if(latestRecords[i] instanceof Slide) {
+		for (int i=0; i<latestRecords.length; i++) {
+			if (latestRecords[i] instanceof Slide) {
 				Slide s = (Slide)latestRecords[i];
 				SlideAtom sa = s.getSlideAtom();
 				System.out.println("Found the latest version of a slide record:");
@@ -101,8 +101,8 @@ public final class SlideIdListing {
 			}
 		}
 		System.out.println();
-		for(int i=0; i<latestRecords.length; i++) {
-			if(latestRecords[i] instanceof Notes) {
+		for (int i=0; i<latestRecords.length; i++) {
+			if (latestRecords[i] instanceof Notes) {
 				Notes n = (Notes)latestRecords[i];
 				NotesAtom na = n.getNotesAtom();
 				System.out.println("Found the latest version of a notes record:");
@@ -153,7 +153,7 @@ public final class SlideIdListing {
 		}
 
 		ss.close();
-		
+
 		System.out.println();
 	}
 
@@ -163,6 +163,6 @@ public final class SlideIdListing {
 		long type = LittleEndian.getUShort(fileContents, pos+2);
 		long rlen = LittleEndian.getUInt(fileContents, pos+4);
 
-        return Record.createRecordForType(type,fileContents,pos,(int)rlen+8);
+		return Record.createRecordForType(type,fileContents,pos,(int)rlen+8);
 	}
 }

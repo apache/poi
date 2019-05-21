@@ -19,25 +19,33 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import org.apache.poi.ss.formula.eval.*;
+import org.apache.poi.ss.formula.eval.AreaEval;
+import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.eval.EvaluationException;
+import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.OperandResolver;
+import org.apache.poi.ss.formula.eval.RefEval;
+import org.apache.poi.ss.formula.eval.RefListEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
 
 
 /**
  * Returns the rank of a number in a list of numbers. The rank of a number is its size relative to other values in a list.
 
  * Syntax:
- *    RANK(number,ref,order)
- *       Number   is the number whose rank you want to find.
- *       Ref     is an array of, or a reference to, a list of numbers. Nonnumeric values in ref are ignored.
- *       Order   is a number specifying how to rank number.
+ *	RANK(number,ref,order)
+ *	   Number   is the number whose rank you want to find.
+ *	   Ref	 is an array of, or a reference to, a list of numbers. Nonnumeric values in ref are ignored.
+ *	   Order   is a number specifying how to rank number.
 
  * If order is 0 (zero) or omitted, Microsoft Excel ranks number as if ref were a list sorted in descending order.
  * If order is any nonzero value, Microsoft Excel ranks number as if ref were a list sorted in ascending order.
- * 
+ *
  * @author Rubin Wang
  */
 public class Rank extends Var2or3ArgFunction {
 
+	@Override
 	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
 		try {
 			ValueEval ve = OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);
@@ -46,9 +54,9 @@ public class Rank extends Var2or3ArgFunction {
 				throw new EvaluationException(ErrorEval.NUM_ERROR);
 			}
 
-			if(arg1 instanceof RefListEval) {
-			    return eval(result, ((RefListEval)arg1), true);
-            }
+			if (arg1 instanceof RefListEval) {
+				return eval(result, ((RefListEval)arg1), true);
+			}
 
 			final AreaEval aeRange = convertRangeArg(arg1);
 
@@ -58,6 +66,7 @@ public class Rank extends Var2or3ArgFunction {
 		}
 	}
 
+	@Override
 	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1, ValueEval arg2) {
 		try {
 			ValueEval ve = OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);
@@ -66,22 +75,22 @@ public class Rank extends Var2or3ArgFunction {
 				throw new EvaluationException(ErrorEval.NUM_ERROR);
 			}
 
-            ve = OperandResolver.getSingleValue(arg2, srcRowIndex, srcColumnIndex);
-            int order_value = OperandResolver.coerceValueToInt(ve);
-            final boolean order;
-            if(order_value==0) {
-                order = true;
-            } else if(order_value==1) {
-                order = false;
-            } else {
-                throw new EvaluationException(ErrorEval.NUM_ERROR);
-            }
+			ve = OperandResolver.getSingleValue(arg2, srcRowIndex, srcColumnIndex);
+			int order_value = OperandResolver.coerceValueToInt(ve);
+			final boolean order;
+			if (order_value==0) {
+				order = true;
+			} else if(order_value==1) {
+				order = false;
+			} else {
+				throw new EvaluationException(ErrorEval.NUM_ERROR);
+			}
 
-            if(arg1 instanceof RefListEval) {
-                return eval(result, ((RefListEval)arg1), order);
-            }
+			if (arg1 instanceof RefListEval) {
+				return eval(result, ((RefListEval)arg1), order);
+			}
 
-            final AreaEval aeRange = convertRangeArg(arg1);
+			final AreaEval aeRange = convertRangeArg(arg1);
 			return eval(result, aeRange, order);
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
@@ -94,10 +103,12 @@ public class Rank extends Var2or3ArgFunction {
 		int width= aeRange.getWidth();
 		for (int r=0; r<height; r++) {
 			for (int c=0; c<width; c++) {
-				
+
 				Double value = getValue(aeRange, r, c);
-				if(value==null)continue;
-				if(descending_order && value>arg0 || !descending_order && value<arg0){
+				if (value==null) {
+					continue;
+				}
+				if (descending_order && value>arg0 || !descending_order && value<arg0){
 					rank++;
 				}
 			}
@@ -108,21 +119,21 @@ public class Rank extends Var2or3ArgFunction {
 	private static ValueEval eval(double arg0, RefListEval aeRange, boolean descending_order) {
 		int rank = 1;
 		for(ValueEval ve : aeRange.getList()) {
-            if (ve instanceof RefEval) {
-                ve = ((RefEval) ve).getInnerValueEval(((RefEval) ve).getFirstSheetIndex());
-            }
+			if (ve instanceof RefEval) {
+				ve = ((RefEval) ve).getInnerValueEval(((RefEval) ve).getFirstSheetIndex());
+			}
 
-            final Double value;
-            if (ve instanceof NumberEval) {
-                value = ((NumberEval)ve).getNumberValue();
-            } else {
-                continue;
-            }
+			final double value;
+			if (ve instanceof NumberEval) {
+				value = ((NumberEval)ve).getNumberValue();
+			} else {
+				continue;
+			}
 
-            if(descending_order && value>arg0 || !descending_order && value<arg0){
-                rank++;
-            }
-        }
+			if (descending_order && value>arg0 || !descending_order && value<arg0){
+				rank++;
+			}
+		}
 
 		return new NumberEval(rank);
 	}

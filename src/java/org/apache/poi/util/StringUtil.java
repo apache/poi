@@ -282,8 +282,9 @@ public class StringUtil {
      * @return boolean result true:string has at least one multibyte character
      */
     public static boolean hasMultibyte(String value) {
-        if (value == null)
+        if (value == null) {
             return false;
+        }
         for (char c : value.toCharArray()) {
             if (c > 0xFF) {
                 return true;
@@ -331,10 +332,12 @@ public class StringUtil {
             }
         }
 
+        @Override
         public boolean hasNext() {
             return position < strings.length;
         }
 
+        @Override
         public String next() {
             int ourPos = position++;
             if (ourPos >= strings.length) {
@@ -343,6 +346,7 @@ public class StringUtil {
             return strings[ourPos];
         }
 
+        @Override
         public void remove() {
         }
     }
@@ -374,13 +378,15 @@ public class StringUtil {
      * @see <a href="http://www.alanwood.net/demos/symbol.html">Symbol font - Unicode alternatives for Greek and special characters in HTML</a>
      */
     public static String mapMsCodepointString(String string) {
-        if (string == null || string.isEmpty()) return string;
+        if (string == null || string.isEmpty()) {
+            return string;
+        }
         initMsCodepointMap();
 
         StringBuilder sb = new StringBuilder();
         final int length = string.length();
         for (int offset = 0; offset < length; ) {
-            Integer msCodepoint = string.codePointAt(offset);
+            int msCodepoint = string.codePointAt(offset);
             Integer uniCodepoint = msCodepointToUnicode.get(msCodepoint);
             sb.appendCodePoint(uniCodepoint == null ? msCodepoint : uniCodepoint);
             offset += Character.charCount(msCodepoint);
@@ -395,7 +401,9 @@ public class StringUtil {
     }
 
     private static synchronized void initMsCodepointMap() {
-        if (msCodepointToUnicode != null) return;
+        if (msCodepointToUnicode != null) {
+            return;
+        }
         msCodepointToUnicode = new HashMap<>();
         int i = 0xF020;
         for (int ch : symbolMap_f020) {
@@ -609,7 +617,9 @@ public class StringUtil {
     // Could be replaced with org.apache.commons.lang3.StringUtils#join
     @Internal
     public static String join(Object[] array, String separator) {
-        if (array == null || array.length == 0) return "";
+        if (array == null || array.length == 0) {
+            return "";
+        }
         StringBuilder sb = new StringBuilder();
         sb.append(array[0]);
         for (int i = 1; i < array.length; i++) {
@@ -620,7 +630,9 @@ public class StringUtil {
 
     @Internal
     public static String join(Object[] array) {
-        if (array == null) return "";
+        if (array == null) {
+            return "";
+        }
         StringBuilder sb = new StringBuilder();
         for (Object o : array) {
             sb.append(o);
@@ -642,7 +654,9 @@ public class StringUtil {
      * @return the number of occurrences, 0 if the CharSequence is null
      */
     public static int countMatches(CharSequence haystack, char needle) {
-        if (haystack == null) return 0;
+        if (haystack == null) {
+            return 0;
+        }
         int count = 0;
         final int length = haystack.length();
         for (int i = 0; i < length; i++) {
