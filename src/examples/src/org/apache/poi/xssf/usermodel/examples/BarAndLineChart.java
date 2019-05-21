@@ -134,17 +134,26 @@ public class BarAndLineChart {
             lineCategories.crossAxis(rightValues);
 
             // the bar chart
-            XDDFBarChartData bar = (XDDFBarChartData) chart.createData(ChartTypes.BAR, lineCategories, rightValues);
+            XDDFBarChartData bar = (XDDFBarChartData) chart.createData(ChartTypes.BAR, barCategories, leftValues);
             XDDFBarChartData.Series series1 = (XDDFBarChartData.Series) bar.addSeries(xs, ys1);
             series1.setTitle("Bars", new CellReference("Sheet1!$B$1"));
             bar.setVaryColors(true);
             bar.setBarDirection(BarDirection.COL);
             chart.plot(bar);
 
-            // the line chart
+            // the line chart on secondary axis
             XDDFLineChartData lines = (XDDFLineChartData) chart.createData(ChartTypes.LINE, lineCategories,
                     rightValues);
+            
+            //uncomment below line if only primary axis required and comment above line 
+            // the line chart on primary axis
+            /*XDDFLineChartData lines = (XDDFLineChartData) chart.createData(ChartTypes.LINE, lineCategories,
+                    leftValues);*/
+            
+            
             XDDFLineChartData.Series series2 = (XDDFLineChartData.Series) lines.addSeries(xs, ys2);
+            series2.updateIdXVal(1);
+            series2.updateOrderVal(1);
             series2.setTitle("Lines", new CellReference("Sheet1!$C$1"));
             lines.setVaryColors(true);
             chart.plot(lines);

@@ -22,25 +22,24 @@ import java.util.Map;
 import org.apache.poi.util.Beta;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTLineChart;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTLineSer;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTMarker;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTSerTx;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTSurfaceChart;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTSurfaceSer;
 
 @Beta
-public class XDDFLineChartData extends XDDFChartData {
-    private CTLineChart chart;
+public class XDDFSurfaceChartData extends XDDFChartData {
+    private CTSurfaceChart chart;
 
-    public XDDFLineChartData(CTLineChart chart, Map<Long, XDDFChartAxis> categories,
+    public XDDFSurfaceChartData(CTSurfaceChart chart, Map<Long, XDDFChartAxis> categories,
             Map<Long, XDDFValueAxis> values) {
         this.chart = chart;
-        for (CTLineSer series : chart.getSerList()) {
+        for (CTSurfaceSer series : chart.getSerList()) {
             this.series.add(new Series(series, series.getCat(), series.getVal()));
         }
         defineAxes(categories, values);
     }
-
     private void defineAxes(Map<Long, XDDFChartAxis> categories, Map<Long, XDDFValueAxis> values) {
         if (chart.sizeOfAxIdArray() == 0) {
             for (Long id : categories.keySet()) {
@@ -53,32 +52,39 @@ public class XDDFLineChartData extends XDDFChartData {
         defineAxes(chart.getAxIdArray(), categories, values);
     }
 
+    public void setSeriesAxisId(XDDFSeriesAxis seriesAxis) {
+            chart.addNewAxId().setVal(seriesAxis.getId());
+    }
+    
+    public CTBoolean getWireframe() {
+       if (chart.isSetWireframe()) {
+           return chart.getWireframe();
+       } else {
+           return chart.addNewWireframe();
+       }
+   }
+
+   public void setWireframe(boolean val) {
+       if (chart.isSetWireframe()) {
+           chart.getWireframe().setVal(val);
+       } else {
+           chart.addNewWireframe().setVal(val);
+       }
+   }
+
+    /**
+     * Surface chart is not supporting vary color property
+     */
     @Override
     public void setVaryColors(boolean varyColors) {
-        if (chart.isSetVaryColors()) {
-            chart.getVaryColors().setVal(varyColors);
-        } else {
-            chart.addNewVaryColors().setVal(varyColors);
-        }
+        
     }
-
-    public Grouping getGrouping() {
-        return Grouping.valueOf(chart.getGrouping().getVal());
-    }
-
-   public void setGrouping(Grouping grouping) {
-      if (chart.getGrouping() != null) {
-         chart.getGrouping().setVal(grouping.underlying);
-      } else {
-         chart.addNewGrouping().setVal(grouping.underlying);
-      }
-   }
 
     @Override
     public XDDFChartData.Series addSeries(XDDFDataSource<?> category,
             XDDFNumericalDataSource<? extends Number> values) {
         final int index = this.series.size();
-        final CTLineSer ctSer = this.chart.addNewSer();
+        final CTSurfaceSer ctSer = this.chart.addNewSer();
         ctSer.addNewCat();
         ctSer.addNewVal();
         ctSer.addNewIdx().setVal(index);
@@ -89,15 +95,15 @@ public class XDDFLineChartData extends XDDFChartData {
     }
 
     public class Series extends XDDFChartData.Series {
-        private CTLineSer series;
+        private CTSurfaceSer series;
 
-        protected Series(CTLineSer series, XDDFDataSource<?> category,
+        protected Series(CTSurfaceSer series, XDDFDataSource<?> category,
                 XDDFNumericalDataSource<? extends Number> values) {
             super(category, values);
             this.series = series;
         }
 
-        protected Series(CTLineSer series, CTAxDataSource category, CTNumDataSource values) {
+        protected Series(CTSurfaceSer series, CTAxDataSource category, CTNumDataSource values) {
             super(XDDFDataSourcesFactory.fromDataSource(category), XDDFDataSourcesFactory.fromDataSource(values));
             this.series = series;
         }
@@ -111,17 +117,13 @@ public class XDDFLineChartData extends XDDFChartData {
             }
         }
 
-        @Override
-        public void setShowLeaderLines(boolean showLeaderLines) {
-            if (!series.isSetDLbls()) {
-                series.addNewDLbls();
-            }
-            if (series.getDLbls().isSetShowLeaderLines()) {
-                series.getDLbls().getShowLeaderLines().setVal(showLeaderLines);
-            } else {
-                series.getDLbls().addNewShowLeaderLines().setVal(showLeaderLines);
-            }
-        }
+      /**
+       * Surface chart is not supporting vary show leader lines property
+       */
+      @Override
+      public void setShowLeaderLines(boolean showLeaderLines) {
+
+      }
 
         @Override
         public XDDFShapeProperties getShapeProperties() {
@@ -144,69 +146,6 @@ public class XDDFLineChartData extends XDDFChartData {
                 } else {
                     series.addNewSpPr().set(properties.getXmlObject());
                 }
-            }
-        }
-
-        /**
-         * @since 4.0.1
-         */
-        public Boolean getSmooth() {
-            if (series.isSetSmooth()) {
-                return series.getSmooth().getVal();
-            } else {
-                return null;
-            }
-        }
-
-        /**
-         * @param smooth
-         *        whether or not to smooth lines, if <code>null</code> then reverts to default.
-         * @since 4.0.1
-         */
-        public void setSmooth(Boolean smooth) {
-            if (smooth == null) {
-                if (series.isSetSmooth()) {
-                    series.unsetSmooth();
-                }
-            } else {
-                if (series.isSetSmooth()) {
-                    series.getSmooth().setVal(smooth);
-                } else {
-                    series.addNewSmooth().setVal(smooth);
-                }
-            }
-        }
-
-        /**
-         * @param size
-         * <dl><dt>Minimum inclusive:</dt><dd>2</dd><dt>Maximum inclusive:</dt><dd>72</dd></dl>
-         */
-        public void setMarkerSize(short size) {
-            if (size < 2 || 72 < size) {
-                throw new IllegalArgumentException("Minimum inclusive: 2; Maximum inclusive: 72");
-            }
-            CTMarker marker = getMarker();
-            if (marker.isSetSize()) {
-                marker.getSize().setVal(size);
-            } else {
-                marker.addNewSize().setVal(size);
-            }
-        }
-
-        public void setMarkerStyle(MarkerStyle style) {
-            CTMarker marker = getMarker();
-            if (marker.isSetSymbol()) {
-                marker.getSymbol().setVal(style.underlying);
-            } else {
-                marker.addNewSymbol().setVal(style.underlying);
-            }
-        }
-
-        private CTMarker getMarker() {
-            if (series.isSetMarker()) {
-                return series.getMarker();
-            } else {
-                return series.addNewMarker();
             }
         }
 
