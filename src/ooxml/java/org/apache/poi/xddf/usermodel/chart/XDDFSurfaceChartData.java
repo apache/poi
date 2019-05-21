@@ -31,8 +31,14 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTSurfaceSer;
 @Beta
 public class XDDFSurfaceChartData extends XDDFChartData {
     private CTSurfaceChart chart;
-    public XDDFSurfaceChartData(CTSurfaceChart chart, Map<Long, XDDFChartAxis> categories,
+
+    @Internal
+    protected XDDFSurfaceChartData(
+            XDDFChart parent,
+            CTSurfaceChart chart,
+            Map<Long, XDDFChartAxis> categories,
             Map<Long, XDDFValueAxis> values) {
+        super(parent);
         this.chart = chart;
         for (CTSurfaceSer series : chart.getSerList()) {
             this.series.add(new Series(series, series.getCat(), series.getVal()));
@@ -172,12 +178,12 @@ public class XDDFSurfaceChartData extends XDDFChartData {
         }
 
         @Override
-        public void setIndex(long val) {
+        protected void setIndex(long val) {
             series.getIdx().setVal(val);
         }
 
         @Override
-        public void setOrder(long val) {
+        protected void setOrder(long val) {
             series.getOrder().setVal(val);
         }
     }

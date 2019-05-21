@@ -34,8 +34,13 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTSerTx;
 public class XDDFScatterChartData extends XDDFChartData {
     private CTScatterChart chart;
 
-    public XDDFScatterChartData(CTScatterChart chart, Map<Long, XDDFChartAxis> categories,
+    @Internal
+    protected XDDFScatterChartData(
+            XDDFChart parent,
+            CTScatterChart chart,
+            Map<Long, XDDFChartAxis> categories,
             Map<Long, XDDFValueAxis> values) {
+        super(parent);
         this.chart = chart;
         for (CTScatterSer series : chart.getSerList()) {
             this.series.add(new Series(series, series.getXVal(), series.getYVal()));
@@ -96,13 +101,14 @@ public class XDDFScatterChartData extends XDDFChartData {
     @Override
     public XDDFChartData.Series addSeries(XDDFDataSource<?> category,
             XDDFNumericalDataSource<? extends Number> values) {
-        final int index = this.series.size();
+        final long index = this.parent.incrementSeriesCount();
         final CTScatterSer ctSer = this.chart.addNewSer();
         ctSer.addNewXVal();
         ctSer.addNewYVal();
         ctSer.addNewIdx().setVal(index);
         ctSer.addNewOrder().setVal(index);
         final Series added = new Series(ctSer, category, values);
+        added.setMarkerStyle(MarkerStyle.NONE);
         this.series.add(added);
         return added;
     }
@@ -243,12 +249,12 @@ public class XDDFScatterChartData extends XDDFChartData {
         }
 
         @Override
-        public void setIndex(long val) {
+        protected void setIndex(long val) {
             series.getIdx().setVal(val);
         }
 
         @Override
-        public void setOrder(long val) {
+        protected void setOrder(long val) {
             series.getOrder().setVal(val);
         }
     }

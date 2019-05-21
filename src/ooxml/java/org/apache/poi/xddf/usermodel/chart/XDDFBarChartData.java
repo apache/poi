@@ -32,8 +32,13 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTSerTx;
 public class XDDFBarChartData extends XDDFChartData {
     private CTBarChart chart;
 
-    public XDDFBarChartData(CTBarChart chart, Map<Long, XDDFChartAxis> categories,
+    @Internal
+    protected XDDFBarChartData(
+            XDDFChart parent,
+            CTBarChart chart,
+            Map<Long, XDDFChartAxis> categories,
             Map<Long, XDDFValueAxis> values) {
+        super(parent);
         this.chart = chart;
         if (chart.getBarDir() == null) {
             chart.addNewBarDir().setVal(BarDirection.BAR.underlying);
@@ -163,7 +168,7 @@ public class XDDFBarChartData extends XDDFChartData {
     @Override
     public XDDFChartData.Series addSeries(XDDFDataSource<?> category,
             XDDFNumericalDataSource<? extends Number> values) {
-        final int index = this.series.size();
+        final long index = this.parent.incrementSeriesCount();
         final CTBarSer ctSer = this.chart.addNewSer();
         ctSer.addNewTx();
         ctSer.addNewCat();

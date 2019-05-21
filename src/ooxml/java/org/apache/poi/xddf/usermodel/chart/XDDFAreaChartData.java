@@ -32,8 +32,13 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTSerTx;
 public class XDDFAreaChartData extends XDDFChartData {
     private CTAreaChart chart;
 
-    public XDDFAreaChartData(CTAreaChart chart, Map<Long, XDDFChartAxis> categories,
+    @Internal
+    protected XDDFAreaChartData(
+            XDDFChart parent,
+            CTAreaChart chart,
+            Map<Long, XDDFChartAxis> categories,
             Map<Long, XDDFValueAxis> values) {
+        super(parent);
         this.chart = chart;
         for (CTAreaSer series : chart.getSerList()) {
             this.series.add(new Series(series, series.getCat(), series.getVal()));
@@ -180,12 +185,12 @@ public class XDDFAreaChartData extends XDDFChartData {
         }
 
         @Override
-        public void setIndex(long val) {
+        protected void setIndex(long val) {
             series.getIdx().setVal(val);
         }
 
         @Override
-        public void setOrder(long val) {
+        protected void setOrder(long val) {
             series.getOrder().setVal(val);
         }
     }

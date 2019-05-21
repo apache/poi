@@ -33,8 +33,13 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTSerTx;
 public class XDDFRadarChartData extends XDDFChartData {
     private CTRadarChart chart;
 
-    public XDDFRadarChartData(CTRadarChart chart, Map<Long, XDDFChartAxis> categories,
+    @Internal
+    protected XDDFRadarChartData(
+            XDDFChart parent,
+            CTRadarChart chart,
+            Map<Long, XDDFChartAxis> categories,
             Map<Long, XDDFValueAxis> values) {
+        super(parent);
         this.chart = chart;
         for (CTRadarSer series : chart.getSerList()) {
             this.series.add(new Series(series, series.getCat(), series.getVal()));
@@ -90,7 +95,7 @@ public class XDDFRadarChartData extends XDDFChartData {
     @Override
     public XDDFChartData.Series addSeries(XDDFDataSource<?> category,
             XDDFNumericalDataSource<? extends Number> values) {
-        final int index = this.series.size();
+        final long index = this.parent.incrementSeriesCount();
         final CTRadarSer ctSer = this.chart.addNewSer();
         ctSer.addNewCat();
         ctSer.addNewVal();
@@ -171,12 +176,12 @@ public class XDDFRadarChartData extends XDDFChartData {
         }
 
         @Override
-        public void setIndex(long val) {
+        protected void setIndex(long val) {
             series.getIdx().setVal(val);
         }
 
         @Override
-        public void setOrder(long val) {
+        protected void setOrder(long val) {
             series.getOrder().setVal(val);
         }
     }

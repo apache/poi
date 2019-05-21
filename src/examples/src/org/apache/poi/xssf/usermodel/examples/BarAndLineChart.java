@@ -27,8 +27,8 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xddf.usermodel.PresetColor;
 import org.apache.poi.xddf.usermodel.XDDFColor;
+import org.apache.poi.xddf.usermodel.XDDFFillProperties;
 import org.apache.poi.xddf.usermodel.XDDFLineProperties;
-import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
 import org.apache.poi.xddf.usermodel.XDDFSolidFillProperties;
 import org.apache.poi.xddf.usermodel.chart.AxisCrosses;
 import org.apache.poi.xddf.usermodel.chart.AxisPosition;
@@ -36,10 +36,10 @@ import org.apache.poi.xddf.usermodel.chart.BarDirection;
 import org.apache.poi.xddf.usermodel.chart.ChartTypes;
 import org.apache.poi.xddf.usermodel.chart.LayoutMode;
 import org.apache.poi.xddf.usermodel.chart.LegendPosition;
+import org.apache.poi.xddf.usermodel.chart.MarkerStyle;
 import org.apache.poi.xddf.usermodel.chart.XDDFBarChartData;
 import org.apache.poi.xddf.usermodel.chart.XDDFCategoryAxis;
 import org.apache.poi.xddf.usermodel.chart.XDDFCategoryDataSource;
-import org.apache.poi.xddf.usermodel.chart.XDDFChartData;
 import org.apache.poi.xddf.usermodel.chart.XDDFChartLegend;
 import org.apache.poi.xddf.usermodel.chart.XDDFDataSourcesFactory;
 import org.apache.poi.xddf.usermodel.chart.XDDFLineChartData;
@@ -97,12 +97,13 @@ public class BarAndLineChart {
             properties.setItalic(true);
             properties.setUnderline(UnderlineType.DOT_DOT_DASH_HEAVY);
             properties.setFontSize(22.5);
-            XDDFFont[] fonts = new XDDFFont[]{
+            XDDFFont[] fonts = new XDDFFont[] {
                     new XDDFFont(FontGroup.LATIN, "Calibri", null, null, null),
                     new XDDFFont(FontGroup.COMPLEX_SCRIPT, "Liberation Sans", null, null, null)
                     };
             properties.setFonts(fonts);
-            properties.setLineProperties(solidLine(PresetColor.SIENNA));
+            properties.setLineProperties(new XDDFLineProperties(
+                    new XDDFSolidFillProperties(XDDFColor.from(PresetColor.SIENNA))));
             XDDFTextParagraph paragraph = chart.getTitle().getBody().getParagraph(0);
             paragraph.setDefaultRunProperties(properties);
 
@@ -136,7 +137,7 @@ public class BarAndLineChart {
             // the bar chart
             XDDFBarChartData bar = (XDDFBarChartData) chart.createData(ChartTypes.BAR, barCategories, leftValues);
             XDDFBarChartData.Series series1 = (XDDFBarChartData.Series) bar.addSeries(xs, ys1);
-            series1.setTitle("Bars", new CellReference("Sheet1!$B$1"));
+            series1.setTitle(null, new CellReference(sheet.getSheetName(), 0, 1, true,true));
             bar.setVaryColors(true);
             bar.setBarDirection(BarDirection.COL);
             chart.plot(bar);
@@ -152,15 +153,20 @@ public class BarAndLineChart {
 
 
             XDDFLineChartData.Series series2 = (XDDFLineChartData.Series) lines.addSeries(xs, ys2);
-            series2.setIndex(1);
-            series2.setOrder(1);
-            series2.setTitle("Lines", new CellReference("Sheet1!$C$1"));
+            series2.setTitle(null, new CellReference(sheet.getSheetName(), 0, 2, true, true));
+            series2.setSmooth(false);
+            series2.setMarkerStyle(MarkerStyle.DIAMOND);
+            series2.setMarkerSize((short)14);
             lines.setVaryColors(true);
             chart.plot(lines);
 
             // some colors
-            solidFillSeries(bar, 0, PresetColor.CHARTREUSE);
-            solidLineSeries(lines, 0, PresetColor.TURQUOISE);
+            XDDFFillProperties solidChartreuse = new XDDFSolidFillProperties(XDDFColor.from(PresetColor.CHARTREUSE));
+            XDDFFillProperties solidTurquoise = new XDDFSolidFillProperties(XDDFColor.from(PresetColor.TURQUOISE));
+            XDDFLineProperties solidLines = new XDDFLineProperties(solidTurquoise);
+            series1.setFillProperties(solidChartreuse);
+            series1.setLineProperties(solidLines); // bar border color different from fill
+            series2.setLineProperties(solidLines);
 
             // legend
             XDDFChartLegend legend = chart.getOrAddLegend();
@@ -176,34 +182,5 @@ public class BarAndLineChart {
                 wb.write(fileOut);
             }
         }
-    }
-
-    private static void solidFillSeries(XDDFChartData data, int index, PresetColor color) {
-        XDDFSolidFillProperties fill = new XDDFSolidFillProperties(XDDFColor.from(color));
-        XDDFChartData.Series series = data.getSeries().get(index);
-        XDDFShapeProperties properties = series.getShapeProperties();
-        if (properties == null) {
-            properties = new XDDFShapeProperties();
-        }
-        properties.setFillProperties(fill);
-        series.setShapeProperties(properties);
-    }
-
-    private static void solidLineSeries(XDDFChartData data, int index, PresetColor color) {
-        XDDFLineProperties line = solidLine(color);
-        XDDFChartData.Series series = data.getSeries().get(index);
-        XDDFShapeProperties properties = series.getShapeProperties();
-        if (properties == null) {
-            properties = new XDDFShapeProperties();
-        }
-        properties.setLineProperties(line);
-        series.setShapeProperties(properties);
-    }
-
-    private static XDDFLineProperties solidLine(PresetColor color) {
-        XDDFSolidFillProperties fill = new XDDFSolidFillProperties(XDDFColor.from(color));
-        XDDFLineProperties line = new XDDFLineProperties();
-        line.setFillProperties(fill);
-        return line;
     }
 }
