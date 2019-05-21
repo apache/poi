@@ -37,10 +37,6 @@
   </description>
   <url>http://poi.apache.org/</url>
   <version>${poi.version}</version>
-<!--
-  <version>3.12-beta2</version>
-  <version>@VERSION@</version>
--->
 
   <properties>
     <maven.compiler.source>1.6</maven.compiler.source>
@@ -222,8 +218,8 @@
     <url>http://www.apache.org</url>
   </organization>
   <scm>
-    <url>http://svn.apache.org/viewvc/poi/trunk/osgi</url>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/poi/trunk/osgi</connection>
+    <url>https://svn.apache.org/viewvc/poi/trunk/osgi</url>
+    <connection>scm:svn:https://svn.apache.org/repos/asf/poi/trunk/osgi</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/poi/trunk/osgi</developerConnection>
   </scm>
 </project>
