@@ -37,7 +37,7 @@ public final class SprmUtils
 
     public static byte[] shortArrayToByteArray(short[] convert)
     {
-        byte[] buf = IOUtils.safelyAllocate(convert.length * LittleEndian.SHORT_SIZE, MAX_RECORD_LENGTH);
+        byte[] buf = IOUtils.safelyAllocate(convert.length * (long)LittleEndian.SHORT_SIZE, MAX_RECORD_LENGTH);
 
         for (int x = 0; x < convert.length; x++)
         {
@@ -102,7 +102,7 @@ public final class SprmUtils
                 break;
             default:
                 //should never happen
-                throw new RuntimeException("Invalid sprm type"); 
+                throw new RuntimeException("Invalid sprm type");
         }
         LittleEndian.putShort(sprm, 0, instruction);
         list.add(sprm);

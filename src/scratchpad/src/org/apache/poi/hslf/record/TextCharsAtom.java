@@ -48,7 +48,7 @@ public final class TextCharsAtom extends RecordAtom {
 	/** Updates the text in the Atom. */
 	public void setText(String text) {
 		// Convert to little endian unicode
-		_text = IOUtils.safelyAllocate(text.length()*2, MAX_RECORD_LENGTH);
+		_text = IOUtils.safelyAllocate(text.length() * 2L, MAX_RECORD_LENGTH);
 		StringUtil.putUnicodeLE(text,_text,0);
 
 		// Update the size (header bytes 5-8)

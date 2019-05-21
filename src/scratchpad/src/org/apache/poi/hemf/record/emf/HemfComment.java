@@ -69,7 +69,9 @@ public class HemfComment {
 
         public static HemfCommentRecordType getById(long id, boolean isEmfPublic) {
             for (HemfCommentRecordType wrt : values()) {
-                if (wrt.id == id && wrt.isEmfPublic == isEmfPublic) return wrt;
+                if (wrt.id == id && wrt.isEmfPublic == isEmfPublic) {
+                    return wrt;
+                }
             }
             return emfGeneric;
         }
@@ -277,7 +279,7 @@ public class HemfComment {
             // The number of Unicode characters in the optional description string that follows.
             int nDescription = (int)leis.readUInt();
 
-            byte[] buf = IOUtils.safelyAllocate(nDescription*2, MAX_RECORD_LENGTH);
+            byte[] buf = IOUtils.safelyAllocate(nDescription * 2L, MAX_RECORD_LENGTH);
             leis.readFully(buf);
             description = new String(buf, StandardCharsets.UTF_16LE);
 
@@ -373,7 +375,9 @@ public class HemfComment {
 
         public static EmfFormatSignature getById(int id) {
             for (EmfFormatSignature wrt : values()) {
-                if (wrt.id == id) return wrt;
+                if (wrt.id == id) {
+                    return wrt;
+                }
             }
             return null;
         }

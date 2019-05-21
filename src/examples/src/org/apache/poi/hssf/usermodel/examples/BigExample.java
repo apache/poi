@@ -102,9 +102,9 @@ public class BigExample {
                     // create a numeric cell
                     c = r.createCell(cellnum);
                     // do some goofy math to demonstrate decimals
-                    c.setCellValue(rownum * 10000 + cellnum
-                            + (((double) rownum / 1000)
-                            + ((double) cellnum / 10000)));
+                    c.setCellValue((rownum * 10000.0) + cellnum
+                            + (rownum / 1000.0)
+                            + (cellnum / 10000.0));
 
                     // on every other row
                     if ((rownum % 2) == 0) {
