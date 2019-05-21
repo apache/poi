@@ -67,9 +67,9 @@ public class TestXSLFChart {
         List<XDDFChartData> data = findChartData(chart);
 
         XDDFPieChartData pie = (XDDFPieChartData) data.get(0);
-        XDDFPieChartData.Series firstSeries = (XDDFPieChartData.Series) pie.getSeries().get(0);
-        firstSeries.setExplosion(25);
-        assertEquals(25, firstSeries.getExplosion());
+        XDDFPieChartData.Series firstSeries = (XDDFPieChartData.Series) pie.getSeries(0);
+        firstSeries.setExplosion(25L);
+        assertEquals(Long.valueOf(25), firstSeries.getExplosion());
 
         fillChartData(chart, pie);
         pptx.close();
@@ -87,7 +87,7 @@ public class TestXSLFChart {
         XDDFBarChartData bar = (XDDFBarChartData) data.get(0);
         assertEquals(BarDirection.BAR, bar.getBarDirection());
         assertEquals(BarGrouping.CLUSTERED, bar.getBarGrouping());
-        assertEquals(100, bar.getGapWidth());
+        assertEquals(Integer.valueOf(100), bar.getGapWidth());
         fillChartData(chart, bar);
 
         XDDFBarChartData column = (XDDFBarChartData) findChartData(chart2).get(0);
@@ -153,7 +153,7 @@ public class TestXSLFChart {
         final String categoryDataRange = chart.formatRange(new CellRangeAddress(1, numOfPoints, 0, 0));
         final String valuesDataRange = chart.formatRange(new CellRangeAddress(1, numOfPoints, 1, 1));
 
-		final XDDFChartData.Series series = data.getSeries().get(0);
+		final XDDFChartData.Series series = data.getSeries(0);
 		final XDDFDataSource<?> categoryData = XDDFDataSourcesFactory.fromArray(categories, categoryDataRange);
         final XDDFNumericalDataSource<Integer> valuesData = XDDFDataSourcesFactory.fromArray(values, valuesDataRange);
         series.replaceData(categoryData, valuesData);

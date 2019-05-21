@@ -713,7 +713,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
         assertNotNull(read);
         assertSheetOrder(read, "Sheet1-Renamed", "Sheet2", "Sheet3");
         XSSFSheet sheet = (XSSFSheet) read.getSheet("Sheet1-Renamed");
-        XDDFChartData.Series series = sheet.getDrawingPatriarch().getCharts().get(0).getChartSeries().get(0).getSeries().get(0);
+        XDDFChartData.Series series = sheet.getDrawingPatriarch().getCharts().get(0).getChartSeries().get(0).getSeries(0);
         assertTrue("should be a bar chart data series", series instanceof XDDFBarChartData.Series);
         String formula = ((XDDFBarChartData.Series) series).getCategoryData().getFormula();
         assertTrue("should contain new sheet name", formula.startsWith("'Sheet1-Renamed'!"));
@@ -1142,7 +1142,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
 
         wb.close();
     }
-    
+
     /**
      * See bug #61700
      * @throws Exception
@@ -1152,14 +1152,14 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
         Workbook workbook = _testDataProvider.createWorkbook();
         workbook.createSheet().createRow(0).createCell(0).setCellFormula("B1+C1");
         workbook.getCreationHelper().createFormulaEvaluator().evaluateAll();
-    
+
         assertFalse(workbook.getForceFormulaRecalculation());
         workbook.setForceFormulaRecalculation(true);
         assertTrue(workbook.getForceFormulaRecalculation());
-    
+
         Workbook wbBack = _testDataProvider.writeOutAndReadBack(workbook);
         assertTrue(wbBack.getForceFormulaRecalculation());
-    
+
         workbook.close();
         wbBack.close();
     }

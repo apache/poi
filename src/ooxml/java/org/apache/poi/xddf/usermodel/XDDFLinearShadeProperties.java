@@ -52,7 +52,7 @@ public class XDDFLinearShadeProperties {
         }
     }
 
-    public Boolean getScaled() {
+    public Boolean isScaled() {
         if (props.isSetScaled()) {
             return props.getScaled();
         } else {

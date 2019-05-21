@@ -20,10 +20,12 @@ package org.apache.poi.xddf.usermodel.chart;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.Internal;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumData;
@@ -75,11 +77,62 @@ public abstract class XDDFChartData {
         return valueAxes;
     }
 
+    /**
+     * Calls to <code>getSeries().add(series)</code> or to <code>getSeries().remove(series)</code>
+     * may corrupt the workbook.
+     *
+     * <p>
+     * Instead, use the following methods:
+     * <ul>
+     * <li>{@link #getSeriesCount()}</li>
+     * <li>{@link #getSeries(int)}</li>
+     * <li>{@link #addSeries(XDDFDataSource,XDDFNumericalDataSource)}</li>
+     * <li>{@link #removeSeries(int)}</li>
+     * </ul>
+     *
+     * @deprecated since POI 4.1.1
+     * @return
+     */
+    @Deprecated
     public List<Series> getSeries() {
         return series;
     }
 
-    public abstract void setVaryColors(boolean varyColors);
+    public final int getSeriesCount() {
+        return series.size();
+    }
+
+    public final Series getSeries(int n) {
+        return series.get(n);
+    }
+
+    public final void removeSeries(int n) {
+        final String procName = "removeSeries";
+        if (n < 0 || series.size() <= n) {
+            throw new IllegalArgumentException(String.format(Locale.ROOT, "%s(%d): illegal index", procName, n));
+        }
+        series.remove(n);
+        removeCTSeries(n);
+    }
+
+    /**
+     * This method should be implemented in every class that extends <code>XDDFChartData</code>.
+     * <p>
+     * A typical implementation would be
+     *
+     * <pre><code>
+    protected void removeCTSeries(int n) {
+        chart.removeSer(n);
+    }
+
+     * </code></pre>
+     *
+     * @param n
+     */
+    @Internal
+    protected abstract void removeCTSeries(int n);
+
+    public abstract void setVaryColors(Boolean varyColors);
 
     public abstract XDDFChartData.Series addSeries(XDDFDataSource<?> category,
             XDDFNumericalDataSource<? extends Number> values);
@@ -98,19 +151,9 @@ public abstract class XDDFChartData {
 
         protected abstract CTNumDataSource getNumDS();
 
-      /**
-       * This method will update series id value
-       *
-       * @param val
-       */
-      public abstract void updateIdXVal(long val);
+        protected abstract void setIndex(long index);
 
-      /**
-       * this method will update series order value
-       *
-       * @param val
-       */
-      public abstract void updateOrderVal(long val);
+        protected abstract void setOrder(long order);
 
         protected Series(XDDFDataSource<?> category, XDDFNumericalDataSource<? extends Number> values) {
             replaceData(category, values);

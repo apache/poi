@@ -98,10 +98,10 @@ public class PieChartDemo {
 	            final XDDFDataSource<?> categoriesData = XDDFDataSourcesFactory.fromArray(categories, categoryDataRange);
 	            final XDDFNumericalDataSource<? extends Number> valuesData = XDDFDataSourcesFactory.fromArray(values, valuesDataRange);
 
-	            XDDFPieChartData.Series firstSeries = (XDDFPieChartData.Series) pie.getSeries().get(0);
+	            XDDFPieChartData.Series firstSeries = (XDDFPieChartData.Series) pie.getSeries(0);
 	            firstSeries.replaceData(categoriesData, valuesData);
 	            firstSeries.setTitle(chartTitle, chart.setSheetTitle(chartTitle, 0));
-	            firstSeries.setExplosion(25);
+	            firstSeries.setExplosion(25L);
 	            chart.plot(pie);
 
                 // save the result
