@@ -57,19 +57,26 @@ import org.apache.poi.xssf.usermodel.XSSFTable;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTArea3DChart;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTAreaChart;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTBar3DChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBarChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTCatAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartSpace;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTDateAx;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTLine3DChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTLineChart;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTPie3DChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTPieChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTRadarChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTScatterChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTSerAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTSurface;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTSurface3DChart;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTSurfaceChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTitle;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTValAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTView3D;
@@ -83,7 +90,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumns;
 
 @Beta
 public abstract class XDDFChart extends POIXMLDocumentPart implements TextContainer {
-    
+
     /**
      * default width of chart in emu
      */
@@ -93,7 +100,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      * default height of chart in emu
      */
     public static final int DEFAULT_HEIGHT = 500000;
-    
+
     /**
      * default x-coordinate  of chart in emu
      */
@@ -103,7 +110,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      * default y-coordinate value of chart in emu
      */
     public static final int DEFAULT_Y = 10;
-    
+
     /**
      * Underlying workbook
      */
@@ -390,9 +397,24 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
         Map<Long, XDDFChartAxis> categories = getCategoryAxes();
         Map<Long, XDDFValueAxis> values = getValueAxes();
 
+        for (int i = 0; i < plotArea.sizeOfAreaChartArray(); i++) {
+            CTAreaChart areaChart = plotArea.getAreaChartArray(i);
+            series.add(new XDDFAreaChartData(areaChart, categories, values));
+        }
+
+        for (int i = 0; i < plotArea.sizeOfArea3DChartArray(); i++) {
+            CTArea3DChart areaChart = plotArea.getArea3DChartArray(i);
+            series.add(new XDDFArea3DChartData(areaChart, categories, values));
+        }
+
         for (int i = 0; i < plotArea.sizeOfBarChartArray(); i++) {
             CTBarChart barChart = plotArea.getBarChartArray(i);
             series.add(new XDDFBarChartData(barChart, categories, values));
+        }
+
+        for (int i = 0; i < plotArea.sizeOfBar3DChartArray(); i++) {
+            CTBar3DChart barChart = plotArea.getBar3DChartArray(i);
+            series.add(new XDDFBar3DChartData(barChart, categories, values));
         }
 
         for (int i = 0; i < plotArea.sizeOfLineChartArray(); i++) {
@@ -400,9 +422,19 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
             series.add(new XDDFLineChartData(lineChart, categories, values));
         }
 
+        for (int i = 0; i < plotArea.sizeOfLine3DChartArray(); i++) {
+            CTLine3DChart lineChart = plotArea.getLine3DChartArray(i);
+            series.add(new XDDFLine3DChartData(lineChart, categories, values));
+        }
+
         for (int i = 0; i < plotArea.sizeOfPieChartArray(); i++) {
             CTPieChart pieChart = plotArea.getPieChartArray(i);
             series.add(new XDDFPieChartData(pieChart));
+        }
+
+        for (int i = 0; i < plotArea.sizeOfPie3DChartArray(); i++) {
+            CTPie3DChart pieChart = plotArea.getPie3DChartArray(i);
+            series.add(new XDDFPie3DChartData(pieChart));
         }
 
         for (int i = 0; i < plotArea.sizeOfRadarChartArray(); i++) {
@@ -415,7 +447,17 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
             series.add(new XDDFScatterChartData(scatterChart, categories, values));
         }
 
-        // TODO repeat above code for all kind of charts
+        for (int i = 0; i < plotArea.sizeOfSurfaceChartArray(); i++) {
+            CTSurfaceChart surfaceChart = plotArea.getSurfaceChartArray(i);
+            series.add(new XDDFSurfaceChartData(surfaceChart, categories, values));
+        }
+
+        for (int i = 0; i < plotArea.sizeOfSurface3DChartArray(); i++) {
+            CTSurface3DChart surfaceChart = plotArea.getSurface3DChartArray(i);
+            series.add(new XDDFSurface3DChartData(surfaceChart, categories, values));
+        }
+
+        // TODO repeat above code for missing charts: Bubble, Doughnut, OfPie and Stock
         return series;
     }
 
@@ -453,7 +495,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
     }
 
     /**
-     * this method will return series axis with specified position 
+     * this method will return series axis with specified position
      *
      * @param pos axis position Left, Right, Top, Bottom
      * @return series axis with specified position
@@ -502,13 +544,12 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
     public XDDFChartData createData(ChartTypes type, XDDFChartAxis category, XDDFValueAxis values) {
         Map<Long, XDDFChartAxis> categories = null;
         Map<Long, XDDFValueAxis> mapValues = null;
-        
-        if(ChartTypes.PIE != type && ChartTypes.PIE3D != type)
-        {
+
+        if (ChartTypes.PIE != type && ChartTypes.PIE3D != type) {
             categories = Collections.singletonMap(category.getId(), category);
             mapValues = Collections.singletonMap(values.getId(), values);
         }
-        
+
         final CTPlotArea plotArea = getCTPlotArea();
         switch (type) {
         case AREA:
@@ -796,9 +837,9 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
         XSSFRow row = this.getRow(sheet, 0);
         XSSFCell cell = this.getCell(row, column);
         cell.setCellValue(title);
-        
+
         CTTable ctTable = this.getSheetTable(sheet);
-        
+
         this.updateSheetTable(ctTable, title, column);
         return new CellReference(sheet.getSheetName(), 0, column, true, true);
     }

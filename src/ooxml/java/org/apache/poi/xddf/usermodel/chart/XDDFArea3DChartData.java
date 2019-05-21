@@ -20,6 +20,7 @@ package org.apache.poi.xddf.usermodel.chart;
 import java.util.Map;
 
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.Internal;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTArea3DChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAreaSer;
@@ -52,26 +53,70 @@ public class XDDFArea3DChartData extends XDDFChartData {
         defineAxes(chart.getAxIdArray(), categories, values);
     }
 
+    @Internal
     @Override
-    public void setVaryColors(boolean varyColors) {
-        if (chart.isSetVaryColors()) {
-            chart.getVaryColors().setVal(varyColors);
+    protected void removeCTSeries(int n) {
+        chart.removeSer(n);
+    }
+
+    @Override
+    public void setVaryColors(Boolean varyColors) {
+        if (varyColors == null) {
+            if (chart.isSetVaryColors()) {
+                chart.unsetVaryColors();
+            }
         } else {
-            chart.addNewVaryColors().setVal(varyColors);
+            if (chart.isSetVaryColors()) {
+                chart.getVaryColors().setVal(varyColors);
+            } else {
+                chart.addNewVaryColors().setVal(varyColors);
+            }
         }
     }
 
     public Grouping getGrouping() {
-        return Grouping.valueOf(chart.getGrouping().getVal());
+        if (chart.isSetGrouping()) {
+            return Grouping.valueOf(chart.getGrouping().getVal());
+        } else {
+            return null;
+        }
     }
 
-   public void setGrouping(Grouping grouping) {
-      if (chart.getGrouping() != null) {
-         chart.getGrouping().setVal(grouping.underlying);
-      } else {
-         chart.addNewGrouping().setVal(grouping.underlying);
-      }
-   }
+    public void setGrouping(Grouping grouping) {
+        if (grouping == null) {
+            if (chart.isSetGrouping()) {
+                chart.unsetGrouping();
+            }
+        } else {
+            if (chart.isSetGrouping()) {
+                chart.getGrouping().setVal(grouping.underlying);
+            } else {
+                chart.addNewGrouping().setVal(grouping.underlying);
+            }
+        }
+    }
+
+    public Integer getGapDepth() {
+        if (chart.isSetGapDepth()) {
+            return chart.getGapDepth().getVal();
+        } else {
+            return null;
+        }
+    }
+
+    public void setGapDepth(Integer depth) {
+        if (depth == null) {
+            if (chart.isSetGapDepth()) {
+                chart.unsetGapDepth();
+            }
+        } else {
+            if (chart.isSetGapDepth()) {
+                chart.getGapDepth().setVal(depth);
+            } else {
+                chart.addNewGapDepth().setVal(depth);
+            }
+        }
+    }
 
     @Override
     public XDDFChartData.Series addSeries(XDDFDataSource<?> category,
@@ -155,14 +200,14 @@ public class XDDFArea3DChartData extends XDDFChartData {
         protected CTNumDataSource getNumDS() {
             return series.getVal();
         }
-        
+
         @Override
-        public void updateIdXVal(long val) {
+        public void setIndex(long val) {
             series.getIdx().setVal(val);
         }
-        
+
         @Override
-        public void updateOrderVal(long val) {
+        public void setOrder(long val) {
             series.getOrder().setVal(val);
         }
     }

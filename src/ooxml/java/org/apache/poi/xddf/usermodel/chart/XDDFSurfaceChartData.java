@@ -20,9 +20,9 @@ package org.apache.poi.xddf.usermodel.chart;
 import java.util.Map;
 
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.Internal;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTBoolean;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTSerTx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTSurfaceChart;
@@ -31,7 +31,6 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTSurfaceSer;
 @Beta
 public class XDDFSurfaceChartData extends XDDFChartData {
     private CTSurfaceChart chart;
-
     public XDDFSurfaceChartData(CTSurfaceChart chart, Map<Long, XDDFChartAxis> categories,
             Map<Long, XDDFValueAxis> values) {
         this.chart = chart;
@@ -40,6 +39,7 @@ public class XDDFSurfaceChartData extends XDDFChartData {
         }
         defineAxes(categories, values);
     }
+
     private void defineAxes(Map<Long, XDDFChartAxis> categories, Map<Long, XDDFValueAxis> values) {
         if (chart.sizeOfAxIdArray() == 0) {
             for (Long id : categories.keySet()) {
@@ -52,33 +52,45 @@ public class XDDFSurfaceChartData extends XDDFChartData {
         defineAxes(chart.getAxIdArray(), categories, values);
     }
 
-    public void setSeriesAxisId(XDDFSeriesAxis seriesAxis) {
-            chart.addNewAxId().setVal(seriesAxis.getId());
+    @Internal
+    @Override
+    protected void removeCTSeries(int n) {
+        chart.removeSer(n);
     }
-    
-    public CTBoolean getWireframe() {
-       if (chart.isSetWireframe()) {
-           return chart.getWireframe();
-       } else {
-           return chart.addNewWireframe();
-       }
-   }
-
-   public void setWireframe(boolean val) {
-       if (chart.isSetWireframe()) {
-           chart.getWireframe().setVal(val);
-       } else {
-           chart.addNewWireframe().setVal(val);
-       }
-   }
 
     /**
-     * Surface chart is not supporting vary color property
+     * Surface chart is not supporting vary color property.
      */
     @Override
-    public void setVaryColors(boolean varyColors) {
-        
+    public void setVaryColors(Boolean varyColors) {
+        // nothing to do
     }
+
+    public void defineSeriesAxis(XDDFSeriesAxis seriesAxis) {
+        chart.addNewAxId().setVal(seriesAxis.getId());
+    }
+
+    public Boolean isWireframe() {
+       if (chart.isSetWireframe()) {
+           return chart.getWireframe().getVal();
+       } else {
+           return null;
+       }
+   }
+
+   public void setWireframe(Boolean show) {
+       if (show == null) {
+           if (chart.isSetWireframe()) {
+               chart.unsetWireframe();
+           }
+       } else {
+           if (chart.isSetWireframe()) {
+               chart.getWireframe().setVal(show);
+           } else {
+               chart.addNewWireframe().setVal(show);
+           }
+       }
+   }
 
     @Override
     public XDDFChartData.Series addSeries(XDDFDataSource<?> category,
@@ -118,11 +130,11 @@ public class XDDFSurfaceChartData extends XDDFChartData {
         }
 
       /**
-       * Surface chart is not supporting vary show leader lines property
+       * Surface chart is not supporting show leader lines property
        */
       @Override
       public void setShowLeaderLines(boolean showLeaderLines) {
-
+          // nothing to do
       }
 
         @Override
@@ -158,14 +170,14 @@ public class XDDFSurfaceChartData extends XDDFChartData {
         protected CTNumDataSource getNumDS() {
             return series.getVal();
         }
-        
+
         @Override
-        public void updateIdXVal(long val) {
+        public void setIndex(long val) {
             series.getIdx().setVal(val);
         }
-        
+
         @Override
-        public void updateOrderVal(long val) {
+        public void setOrder(long val) {
             series.getOrder().setVal(val);
         }
     }
