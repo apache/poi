@@ -36,7 +36,7 @@
 							<goal>wget</goal>
 						</goals>
 						<configuration>
-							<url>http://www.ecma-international.org/publications/files/ECMA-ST/Office%20Open%20XML%201st%20edition%20Part%204%20(PDF).zip</url>
+							<url>https://www.ecma-international.org/publications/files/ECMA-ST/Office%20Open%20XML%201st%20edition%20Part%204%20(PDF).zip</url>
 							<unpack>true</unpack>
 							<md5>abe6bb6e7799e854934b3c634e8bcf7b</md5>
 						</configuration>
