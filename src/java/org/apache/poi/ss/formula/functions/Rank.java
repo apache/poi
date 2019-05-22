@@ -45,116 +45,116 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  */
 public class Rank extends Var2or3ArgFunction {
 
-	@Override
-	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
-		try {
-			ValueEval ve = OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);
-			double result = OperandResolver.coerceValueToDouble(ve);
-			if (Double.isNaN(result) || Double.isInfinite(result)) {
-				throw new EvaluationException(ErrorEval.NUM_ERROR);
-			}
+    @Override
+    public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
+        try {
+            ValueEval ve = OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);
+            double result = OperandResolver.coerceValueToDouble(ve);
+            if (Double.isNaN(result) || Double.isInfinite(result)) {
+                throw new EvaluationException(ErrorEval.NUM_ERROR);
+            }
 
-			if (arg1 instanceof RefListEval) {
-				return eval(result, ((RefListEval)arg1), true);
-			}
+            if (arg1 instanceof RefListEval) {
+                return eval(result, ((RefListEval)arg1), true);
+            }
 
-			final AreaEval aeRange = convertRangeArg(arg1);
+            final AreaEval aeRange = convertRangeArg(arg1);
 
-			return eval(result, aeRange, true);
-		} catch (EvaluationException e) {
-			return e.getErrorEval();
-		}
-	}
+            return eval(result, aeRange, true);
+        } catch (EvaluationException e) {
+            return e.getErrorEval();
+        }
+    }
 
-	@Override
-	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1, ValueEval arg2) {
-		try {
-			ValueEval ve = OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);
-			final double result = OperandResolver.coerceValueToDouble(ve);
-			if (Double.isNaN(result) || Double.isInfinite(result)) {
-				throw new EvaluationException(ErrorEval.NUM_ERROR);
-			}
+    @Override
+    public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1, ValueEval arg2) {
+        try {
+            ValueEval ve = OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);
+            final double result = OperandResolver.coerceValueToDouble(ve);
+            if (Double.isNaN(result) || Double.isInfinite(result)) {
+                throw new EvaluationException(ErrorEval.NUM_ERROR);
+            }
 
-			ve = OperandResolver.getSingleValue(arg2, srcRowIndex, srcColumnIndex);
-			int order_value = OperandResolver.coerceValueToInt(ve);
-			final boolean order;
-			if (order_value==0) {
-				order = true;
-			} else if(order_value==1) {
-				order = false;
-			} else {
-				throw new EvaluationException(ErrorEval.NUM_ERROR);
-			}
+            ve = OperandResolver.getSingleValue(arg2, srcRowIndex, srcColumnIndex);
+            int order_value = OperandResolver.coerceValueToInt(ve);
+            final boolean order;
+            if (order_value==0) {
+                order = true;
+            } else if(order_value==1) {
+                order = false;
+            } else {
+                throw new EvaluationException(ErrorEval.NUM_ERROR);
+            }
 
-			if (arg1 instanceof RefListEval) {
-				return eval(result, ((RefListEval)arg1), order);
-			}
+            if (arg1 instanceof RefListEval) {
+                return eval(result, ((RefListEval)arg1), order);
+            }
 
-			final AreaEval aeRange = convertRangeArg(arg1);
-			return eval(result, aeRange, order);
-		} catch (EvaluationException e) {
-			return e.getErrorEval();
-		}
-	}
+            final AreaEval aeRange = convertRangeArg(arg1);
+            return eval(result, aeRange, order);
+        } catch (EvaluationException e) {
+            return e.getErrorEval();
+        }
+    }
 
-	private static ValueEval eval(double arg0, AreaEval aeRange, boolean descending_order) {
-		int rank = 1;
-		int height=aeRange.getHeight();
-		int width= aeRange.getWidth();
-		for (int r=0; r<height; r++) {
-			for (int c=0; c<width; c++) {
+    private static ValueEval eval(double arg0, AreaEval aeRange, boolean descending_order) {
+        int rank = 1;
+        int height=aeRange.getHeight();
+        int width= aeRange.getWidth();
+        for (int r=0; r<height; r++) {
+            for (int c=0; c<width; c++) {
 
-				Double value = getValue(aeRange, r, c);
-				if (value==null) {
-					continue;
-				}
-				if (descending_order && value>arg0 || !descending_order && value<arg0){
-					rank++;
-				}
-			}
-		}
-		return new NumberEval(rank);
-	}
+                Double value = getValue(aeRange, r, c);
+                if (value==null) {
+                    continue;
+                }
+                if (descending_order && value>arg0 || !descending_order && value<arg0){
+                    rank++;
+                }
+            }
+        }
+        return new NumberEval(rank);
+    }
 
-	private static ValueEval eval(double arg0, RefListEval aeRange, boolean descending_order) {
-		int rank = 1;
-		for(ValueEval ve : aeRange.getList()) {
-			if (ve instanceof RefEval) {
-				ve = ((RefEval) ve).getInnerValueEval(((RefEval) ve).getFirstSheetIndex());
-			}
+    private static ValueEval eval(double arg0, RefListEval aeRange, boolean descending_order) {
+        int rank = 1;
+        for(ValueEval ve : aeRange.getList()) {
+            if (ve instanceof RefEval) {
+                ve = ((RefEval) ve).getInnerValueEval(((RefEval) ve).getFirstSheetIndex());
+            }
 
-			final double value;
-			if (ve instanceof NumberEval) {
-				value = ((NumberEval)ve).getNumberValue();
-			} else {
-				continue;
-			}
+            final double value;
+            if (ve instanceof NumberEval) {
+                value = ((NumberEval)ve).getNumberValue();
+            } else {
+                continue;
+            }
 
-			if (descending_order && value>arg0 || !descending_order && value<arg0){
-				rank++;
-			}
-		}
+            if (descending_order && value>arg0 || !descending_order && value<arg0){
+                rank++;
+            }
+        }
 
-		return new NumberEval(rank);
-	}
+        return new NumberEval(rank);
+    }
 
-	private static Double getValue(AreaEval aeRange, int relRowIndex, int relColIndex) {
-		ValueEval addend = aeRange.getRelativeValue(relRowIndex, relColIndex);
-		if (addend instanceof NumberEval) {
-			return ((NumberEval)addend).getNumberValue();
-		}
-		// everything else (including string and boolean values) counts as zero
-		return null;
-	}
+    private static Double getValue(AreaEval aeRange, int relRowIndex, int relColIndex) {
+        ValueEval addend = aeRange.getRelativeValue(relRowIndex, relColIndex);
+        if (addend instanceof NumberEval) {
+            return ((NumberEval)addend).getNumberValue();
+        }
+        // everything else (including string and boolean values) counts as zero
+        return null;
+    }
 
-	private static AreaEval convertRangeArg(ValueEval eval) throws EvaluationException {
-		if (eval instanceof AreaEval) {
-			return (AreaEval) eval;
-		}
-		if (eval instanceof RefEval) {
-			return ((RefEval)eval).offset(0, 0, 0, 0);
-		}
-		throw new EvaluationException(ErrorEval.VALUE_INVALID);
-	}
+    private static AreaEval convertRangeArg(ValueEval eval) throws EvaluationException {
+        if (eval instanceof AreaEval) {
+            return (AreaEval) eval;
+        }
+        if (eval instanceof RefEval) {
+            return ((RefEval)eval).offset(0, 0, 0, 0);
+        }
+        throw new EvaluationException(ErrorEval.VALUE_INVALID);
+    }
 
 }
