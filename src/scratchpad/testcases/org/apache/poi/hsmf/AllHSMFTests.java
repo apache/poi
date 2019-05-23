@@ -39,7 +39,8 @@ import org.junit.runners.Suite;
     TestPOIFSChunkParser.class,
     TestMessageSubmissionChunkY2KRead.class,
     TestMessageSubmissionChunk.class,
-    TestExtractEmbeddedMSG.class
+    TestExtractEmbeddedMSG.class,
+    Test7BitCodepage.class
 })
 public class AllHSMFTests {
 }
