@@ -512,6 +512,8 @@ public class MAPIProperty {
         new MAPIProperty(0x1a, ASCII_STRING, "MessageClass", "PR_MESSAGE_CLASS");
     public static final MAPIProperty MESSAGE_CODEPAGE =
         new MAPIProperty(0x3ffd, Types.LONG,  "MessageCodepage", "PR_MESSAGE_CODEPAGE");
+    public static final MAPIProperty MESSAGE_LOCALE_ID =
+        new MAPIProperty(0x3ff1, Types.LONG,  "MessageLocaleId", "PR_MESSAGE_LOCALE_ID");
     public static final MAPIProperty MESSAGE_DELIVERY_ID =
         new MAPIProperty(0x1b, BINARY, "MessageDeliveryId", "PR_MESSAGE_DELIVERY_ID");
     public static final MAPIProperty MESSAGE_DELIVERY_TIME =
