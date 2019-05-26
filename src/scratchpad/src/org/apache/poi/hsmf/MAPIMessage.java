@@ -50,6 +50,7 @@ import org.apache.poi.hsmf.parsers.POIFSChunkParser;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.CodePageUtil;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -210,8 +211,21 @@ public class MAPIMessage extends POIReadOnlyDocument {
     *       returnNullOnMissingChunk is set
     */
    public String getHtmlBody() throws ChunkNotFoundException {
-      if(mainChunks.getHtmlBodyChunkBinary() != null) {
-         return mainChunks.getHtmlBodyChunkBinary().getAs7bitString();
+      ByteChunk htmlBodyBinaryChunk = mainChunks.getHtmlBodyChunkBinary();
+      if (htmlBodyBinaryChunk != null) {
+         List<PropertyValue> cpid = mainChunks.getProperties().get(MAPIProperty.INTERNET_CPID);
+         if (cpid != null && cpid.size() > 0) {
+            int codepage = ((LongPropertyValue) cpid.get(0)).getValue();
+            try {
+               String encoding = CodePageUtil.codepageToEncoding(codepage, true);
+               byte[] htmlBodyBinary = htmlBodyBinaryChunk.getValue();
+               return new String(htmlBodyBinary, encoding);
+            } catch (UnsupportedEncodingException e) {
+               logger.log(POILogger.WARN, "HTML body binary: Invalid codepage ID ", codepage, " set for the message via ",
+                  MAPIProperty.INTERNET_CPID, ", ignoring");
+            }
+         }
+         return htmlBodyBinaryChunk.getAs7bitString();
       }
       return getStringFromChunk(mainChunks.getHtmlBodyChunkString());
    }
@@ -391,67 +405,86 @@ public class MAPIMessage extends POIReadOnlyDocument {
     * <p>Bug #49441 has more on why this is needed</p>
     */
    public void guess7BitEncoding() {
-      // First choice is a codepage property
-      for (MAPIProperty prop : new MAPIProperty[] {
-               MAPIProperty.MESSAGE_CODEPAGE,
-               MAPIProperty.INTERNET_CPID
-      }) {
-        List<PropertyValue> val = mainChunks.getProperties().get(prop);
-        if (val != null && val.size() > 0) {
-           int codepage = ((LongPropertyValue)val.get(0)).getValue();
-           try {
-               String encoding = CodePageUtil.codepageToEncoding(codepage, true);
-               set7BitEncoding(encoding);
-               return;
-            } catch(UnsupportedEncodingException e) {
-               logger.log(POILogger.WARN, "Invalid codepage ID ", codepage, 
-                          " set for the message via ", prop, ", ignoring");
-            }
+     String generalcodepage = null;
+     String htmlbodycodepage = null;
+     String bodycodepage = null;
+     //
+     // General codepage: Message codepage property.
+     //
+     List<PropertyValue> val = mainChunks.getProperties().get(MAPIProperty.MESSAGE_CODEPAGE);
+     if (val != null && val.size() > 0) {
+       int codepage = ((LongPropertyValue) val.get(0)).getValue();
+       try {
+         String encoding = CodePageUtil.codepageToEncoding(codepage, true);
+         generalcodepage = encoding;
+       } catch (UnsupportedEncodingException e) {
+         logger.log(POILogger.WARN, "Invalid codepage ID ", codepage, " set for the message via ",
+             MAPIProperty.MESSAGE_CODEPAGE, ", ignoring");
+       }
+     }
+     //
+     // General codepage fallback: Message locale ID property.
+     //
+     if (generalcodepage == null) {
+       val = mainChunks.getProperties().get(MAPIProperty.MESSAGE_LOCALE_ID);
+       if (val != null && val.size() > 0) {
+         int lcid = ((LongPropertyValue) val.get(0)).getValue();
+         int codepage = LocaleUtil.getDefaultCodePageFromLCID(lcid);
+         try {
+           if (codepage != 0) {
+             String encoding = CodePageUtil.codepageToEncoding(codepage, true);
+             generalcodepage = encoding;
+           }
+         } catch (UnsupportedEncodingException e) {
+           logger.log(POILogger.WARN, "Invalid codepage ID ", codepage, "from locale ID", lcid, " set for the message via ",
+               MAPIProperty.MESSAGE_LOCALE_ID, ", ignoring");
          }
-      }
-     
-       
-      // Second choice is a charset on a content type header
-      try {
+       }
+     }
+     //
+     // General codepage fallback: Charset on a content type header.
+     //
+     if (generalcodepage == null) {
+       try {
          String[] headers = getHeaders();
-         if(headers != null && headers.length > 0) {
-            // Look for a content type with a charset
-            Pattern p = Pattern.compile("Content-Type:.*?charset=[\"']?([^;'\"]+)[\"']?", Pattern.CASE_INSENSITIVE);
-
-            for(String header : headers) {
-               if(header.startsWith("Content-Type")) {
-                  Matcher m = p.matcher(header);
-                  if(m.matches()) {
-                     // Found it! Tell all the string chunks
-                     String charset = m.group(1);
-
-                     if (!charset.equalsIgnoreCase("utf-8")) { 
-                        set7BitEncoding(charset);
-                     }
-                     return;
-                  }
+         if (headers != null && headers.length > 0) {
+           Pattern p = Pattern.compile("content-type:.*?charset=[\"']?([^;'\"]+)[\"']?", Pattern.CASE_INSENSITIVE);
+           for (String header : headers) {
+             if (header.toLowerCase().startsWith("content-type")) {
+               Matcher m = p.matcher(header);
+               if (m.matches()) {
+                 String encoding = m.group(1);
+                 generalcodepage = encoding;
                }
-            }
+             }
+           }
          }
-      } catch(ChunkNotFoundException e) {}
-      
-      // Nothing suitable in the headers, try HTML
-      try {
-         String html = getHtmlBody();
-         if(html != null && html.length() > 0) {
-            // Look for a content type in the meta headers
-            Pattern p = Pattern.compile(
-                  "<META\\s+HTTP-EQUIV=\"Content-Type\"\\s+CONTENT=\"text/html;\\s+charset=(.*?)\""
-            );
-            Matcher m = p.matcher(html);
-            if(m.find()) {
-               // Found it! Tell all the string chunks
-               String charset = m.group(1);
-               set7BitEncoding(charset);
-            }
+       } catch (ChunkNotFoundException e) {
+       }
+     }
+     //
+     // HTML and text body encoding: Internet CPID property.
+     // UTF-8 is ignored for text body. This seems to be a special Outlook behavior.
+     //
+     val = mainChunks.getProperties().get(MAPIProperty.INTERNET_CPID);
+     if (val != null && val.size() > 0) {
+       int codepage = ((LongPropertyValue) val.get(0)).getValue();
+       try {
+         String encoding = CodePageUtil.codepageToEncoding(codepage, true);
+         htmlbodycodepage = encoding;
+         if (!encoding.equalsIgnoreCase("utf-8")) {
+           bodycodepage = encoding;
          }
-      } catch(ChunkNotFoundException e) {}
-   }
+       } catch (UnsupportedEncodingException e) {
+         logger.log(POILogger.WARN, "Invalid codepage ID ", codepage, " set for the message via ",
+             MAPIProperty.INTERNET_CPID, ", ignoring");
+       }
+     }
+     //
+     // Apply encoding
+     //
+     set7BitEncoding(generalcodepage, htmlbodycodepage, bodycodepage);
+  }
 
    /**
     * Many messages store their strings as unicode, which is
@@ -464,26 +497,41 @@ public class MAPIMessage extends POIReadOnlyDocument {
     * @see #guess7BitEncoding()
     */
    public void set7BitEncoding(String charset) {
+     set7BitEncoding(charset, charset, charset);
+   }
+   public void set7BitEncoding(String generalcharset, String htmlbodycharset, String bodycharset) {
       for(Chunk c : mainChunks.getChunks()) {
          if(c instanceof StringChunk) {
-            ((StringChunk)c).set7BitEncoding(charset);
+           if (c.getChunkId() == MAPIProperty.BODY_HTML.id) {
+             if (htmlbodycharset != null) {
+               ((StringChunk)c).set7BitEncoding(htmlbodycharset);
+             }
+           }
+           else if (c.getChunkId() == MAPIProperty.BODY.id) {
+             if (bodycharset != null) {
+               ((StringChunk)c).set7BitEncoding(bodycharset);
+             }
+           }
+           else if (generalcharset != null) {
+             ((StringChunk)c).set7BitEncoding(generalcharset);
+           }
          }
       }
-
-      if (nameIdChunks!=null) {
-         for(Chunk c : nameIdChunks.getChunks()) {
-            if(c instanceof StringChunk) {
-                ((StringChunk)c).set7BitEncoding(charset);
-            }
-         }
-      }
-
-      for(RecipientChunks rc : recipientChunks) {
-         for(Chunk c : rc.getAll()) {
-            if(c instanceof StringChunk) {
-               ((StringChunk)c).set7BitEncoding(charset);
-            }
-         }
+      if (generalcharset != null) {
+        if (nameIdChunks!=null) {
+           for(Chunk c : nameIdChunks.getChunks()) {
+              if(c instanceof StringChunk) {
+                  ((StringChunk)c).set7BitEncoding(generalcharset);
+              }
+           }
+        }
+        for(RecipientChunks rc : recipientChunks) {
+           for(Chunk c : rc.getAll()) {
+              if(c instanceof StringChunk) {
+                 ((StringChunk)c).set7BitEncoding(generalcharset);
+              }
+           }
+        }
       }
    }
    
