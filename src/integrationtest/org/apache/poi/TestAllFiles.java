@@ -340,7 +340,14 @@ public class TestAllFiles {
 
         // sheet cloning errors
         "spreadsheet/56450.xls",
-        "spreadsheet/OddStyleRecord.xls"
+        "spreadsheet/OddStyleRecord.xls",
+
+        // msg files with non-standard encodings
+        "hsmf/ASCII_CP1251_LCID1049.msg",
+        "hsmf/ASCII_UTF-8_CP1252_LCID1031.msg",
+        "hsmf/ASCII_UTF-8_CP1252_LCID1031_HTML.msg",
+        "hsmf/HTMLBodyBinary_CP1251.msg",
+        "hsmf/HTMLBodyBinary_UTF-8.msg"
     );
 
     private static final Set<String> IGNORED = unmodifiableHashSet(
