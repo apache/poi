@@ -81,7 +81,7 @@ public class AttachmentChunks implements ChunkGroup {
      */
     public MAPIMessage getEmbeddedMessage() throws IOException {
         if (attachmentDirectory != null) {
-            return attachmentDirectory.getAsEmbededMessage();
+            return attachmentDirectory.getAsEmbeddedMessage();
         }
         return null;
     }

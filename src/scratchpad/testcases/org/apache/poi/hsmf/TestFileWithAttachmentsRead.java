@@ -173,7 +173,7 @@ public class TestFileWithAttachmentsRead {
         assertNotNull(attachment.getAttachmentDirectory());
         
         // Check we can see some bits of it
-        MAPIMessage nested = attachment.getAttachmentDirectory().getAsEmbededMessage();
+        MAPIMessage nested = attachment.getAttachmentDirectory().getAsEmbeddedMessage();
         assertEquals(1, nested.getRecipientNamesList().length);
         assertEquals("Nick Booth", nested.getRecipientNames());
         assertEquals("Test Attachment", nested.getConversationTopic());

@@ -23,6 +23,7 @@ import java.io.OutputStream;
 import org.apache.poi.hsmf.MAPIMessage;
 import org.apache.poi.hsmf.datatypes.Types.MAPIType;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.util.Removal;
 
 /**
  * A Chunk that is just a placeholder in the MAPIMessage directory structure,
@@ -45,10 +46,24 @@ public class DirectoryChunk extends Chunk {
     }
 
     /**
-     * Treats the directory as an embeded MAPIMessage (it normally is one), and
+     * Treats the directory as an embedded MAPIMessage (it normally is one), and
      * returns a MAPIMessage object to process it with.
+     *
+     * @deprecated use {@link #getAsEmbeddedMessage()} instead
      */
+    @Removal(version = "4.3")
+    @Deprecated
     public MAPIMessage getAsEmbededMessage() throws IOException {
+        return getAsEmbeddedMessage();
+    }
+
+    /**
+     * Treats the directory as an embedded MAPIMessage (it normally is one), and
+     * returns a MAPIMessage object to process it with.
+     *
+     * @since 4.1.1
+     */
+    public MAPIMessage getAsEmbeddedMessage() throws IOException {
         return new MAPIMessage(dir);
     }
 

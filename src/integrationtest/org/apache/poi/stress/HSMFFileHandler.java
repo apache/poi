@@ -41,7 +41,7 @@ public class HSMFFileHandler extends POIFSFileHandler {
 
 		   DirectoryChunk chunkDirectory = attachment.getAttachmentDirectory();
 		   if(chunkDirectory != null) {
-			   MAPIMessage attachmentMSG = chunkDirectory.getAsEmbededMessage();
+			   MAPIMessage attachmentMSG = chunkDirectory.getAsEmbeddedMessage();
 			   assertNotNull(attachmentMSG);
 			   String body = attachmentMSG.getTextBody();
 			   assertNotNull(body);
