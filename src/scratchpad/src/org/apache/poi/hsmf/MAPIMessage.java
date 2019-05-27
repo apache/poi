@@ -450,7 +450,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
          if (headers != null && headers.length > 0) {
            Pattern p = Pattern.compile("content-type:.*?charset=[\"']?([^;'\"]+)[\"']?", Pattern.CASE_INSENSITIVE);
            for (String header : headers) {
-             if (header.toLowerCase().startsWith("content-type")) {
+             if (header.toLowerCase(LocaleUtil.getUserLocale()).startsWith("content-type")) {
                Matcher m = p.matcher(header);
                if (m.matches()) {
                  String encoding = m.group(1);
