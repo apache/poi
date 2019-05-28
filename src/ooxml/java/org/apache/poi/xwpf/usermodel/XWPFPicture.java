@@ -79,17 +79,17 @@ public class XWPFPicture {
     }
    
     /**
-     * Returns the width of the picture (in EMU). 
+     * Returns the width of the picture (in points). 
      */
     public long getWidth() {
-        return ctPic.getSpPr().getXfrm().getExt().getCx();
+        return Units.toPoints(ctPic.getSpPr().getXfrm().getExt().getCx());
     }
    
     /**
-     * Returns the width of the picture (in EMU). 
+     * Returns the depth of the picture (in points). 
      */
     public long getDepth() {
-        return ctPic.getSpPr().getXfrm().getExt().getCy();
+        return Units.toPoints(ctPic.getSpPr().getXfrm().getExt().getCy());
     }
 
     public String getDescription() {
