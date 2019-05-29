@@ -183,48 +183,51 @@ class ExcelChartWithTargetLine {
         barCategories.getOrAddShapeProperties().setLineProperties(categoriesProps);
     }
 
-    public static void main(String[] args) throws Exception {
-
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = workbook.createSheet("targetline");
-        final int NUM_OF_COLUMNS = 4;
-
-        // create some data
-        XSSFRow row;
-        XSSFCell cell;
-        String[] headings = new String[] { "Year", "Male", "Female", "Other" };
-        int rowIndex = 0;
-        row = sheet.createRow(rowIndex);
-        for (int colIndex = 0; colIndex < NUM_OF_COLUMNS; colIndex++) {
-            cell = row.createCell(colIndex);
-            cell.setCellValue(headings[colIndex]);
+    private static XSSFClientAnchor createAnchor(XSSFDrawing drawing, int[] chartedCols) {
+        if (chartedCols.length > 1) {
+            return drawing.createAnchor(0, 0, 0, 0, 0, 8, 10, 23);
+        } else {
+            return drawing.createAnchor(0, 0, 0, 0, 0, 8, 5, 23);
         }
-        double[][] values = new double[][] { new double[] { 1980, 56.0, 44.1, 12.2 },
-                new double[] { 1985, 34.5, 41.0, 4 }, new double[] { 1990, 65.0, 68.5, 9.1 },
-                new double[] { 1995, 34.7, 47.6, 4.9 }, new double[] { 2000, 23.0, 64.5, 11.1 },
-                new double[] { 2005, 56.3, 69.8, 9.5 } };
-        for (; rowIndex < NUM_OF_ROWS; rowIndex++) {
-            row = sheet.createRow(rowIndex + 1);
+    }
+
+    public static void main(String[] args) throws Exception {
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            XSSFSheet sheet = workbook.createSheet("targetline");
+            final int NUM_OF_COLUMNS = 4;
+
+            // create some data
+            XSSFRow row;
+            XSSFCell cell;
+            String[] headings = new String[] { "Year", "Male", "Female", "Other" };
+            int rowIndex = 0;
+            row = sheet.createRow(rowIndex);
             for (int colIndex = 0; colIndex < NUM_OF_COLUMNS; colIndex++) {
                 cell = row.createCell(colIndex);
-                cell.setCellValue(values[rowIndex][colIndex]);
+                cell.setCellValue(headings[colIndex]);
+            }
+            double[][] values = new double[][] { new double[] { 1980, 56.0, 44.1, 12.2 },
+                    new double[] { 1985, 34.5, 41.0, 4 }, new double[] { 1990, 65.0, 68.5, 9.1 },
+                    new double[] { 1995, 34.7, 47.6, 4.9 }, new double[] { 2000, 23.0, 64.5, 11.1 },
+                    new double[] { 2005, 56.3, 69.8, 9.5 } };
+            for (; rowIndex < NUM_OF_ROWS; rowIndex++) {
+                row = sheet.createRow(rowIndex + 1);
+                for (int colIndex = 0; colIndex < NUM_OF_COLUMNS; colIndex++) {
+                    cell = row.createCell(colIndex);
+                    cell.setCellValue(values[rowIndex][colIndex]);
+                }
+            }
+
+            int[] chartedCols = new int[] {  1,  2  , 3  };
+
+            XSSFDrawing drawing = sheet.createDrawingPatriarch();
+            XSSFClientAnchor anchor = createAnchor(drawing, chartedCols);
+            XSSFChart chart = drawing.createChart(anchor);
+            createChart(chart, sheet, chartedCols, 42.0);
+
+            try (FileOutputStream fos = new FileOutputStream("ExcelChartWithTargetLine.xlsx")) {
+                workbook.write(fos);
             }
         }
-
-        int[] chartedCols = new int[] {  1,  2  , 3  };
-
-        XSSFDrawing drawing = sheet.createDrawingPatriarch();
-        XSSFClientAnchor anchor = null;
-        if (chartedCols.length > 1) {
-            anchor = drawing.createAnchor(0, 0, 0, 0, 0, 8, 10, 23);
-        } else {
-            anchor = drawing.createAnchor(0, 0, 0, 0, 0, 8, 5, 23);
-        }
-        XSSFChart chart = drawing.createChart(anchor);
-        createChart(chart, sheet, chartedCols, 42.0);
-
-        workbook.write(new FileOutputStream("ExcelChartWithTargetLine.xlsx"));
-        workbook.close();
-
     }
 }

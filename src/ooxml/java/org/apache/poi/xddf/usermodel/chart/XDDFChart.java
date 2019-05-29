@@ -588,6 +588,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
             return new XDDFSurfaceChartData(this, plotArea.addNewSurfaceChart(), categories, mapValues);
         case SURFACE3D:
             return new XDDFSurface3DChartData(this, plotArea.addNewSurface3DChart(), categories, mapValues);
+        // TODO repeat above code for missing charts: Bubble, Doughnut, OfPie and Stock
         default:
             return null;
         }
