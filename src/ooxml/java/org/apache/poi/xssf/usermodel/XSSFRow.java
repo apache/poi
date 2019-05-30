@@ -562,10 +562,11 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         int rownum = getRowNum() + n;
         String msg = "Row[rownum=" + getRowNum() + "] contains cell(s) included in a multi-cell array formula. " +
                 "You cannot change part of an array.";
+        setRowNum(rownum);
         for(Cell c : this){
             ((XSSFCell)c).updateCellReferencesForShifting(msg);
-          }
-        setRowNum(rownum);
+        }
+
     }
 
     /**
