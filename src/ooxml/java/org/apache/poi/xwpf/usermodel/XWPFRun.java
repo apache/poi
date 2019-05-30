@@ -1213,7 +1213,19 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         style.setVal(styleId);
     }
 
-    
+    /**
+     * Return this run's style ID. If this run has no style (no run properties or properties without a style), 
+     * an empty string is returned. 
+     */
+    public String getStyle() {
+        CTRPr pr = run.getCTR().getRPr();
+        if (pr != null) {
+            CTString style = pr.getRStyle();
+            if (style != null) {
+                styleID = style.getVal();
+            }
+        }
+    }
 
     /**
      * Returns the string version of the text and the phonetic string
