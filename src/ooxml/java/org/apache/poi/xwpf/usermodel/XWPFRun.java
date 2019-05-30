@@ -1218,7 +1218,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * an empty string is returned. 
      */
     public String getStyle() {
-        CTRPr pr = run.getCTR().getRPr();
+        CTRPr pr = getCTR().getRPr();
         if (pr == null) {
            return "";
         }
