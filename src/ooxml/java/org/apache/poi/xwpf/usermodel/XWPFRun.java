@@ -1219,12 +1219,16 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public String getStyle() {
         CTRPr pr = run.getCTR().getRPr();
-        if (pr != null) {
-            CTString style = pr.getRStyle();
-            if (style != null) {
-                styleID = style.getVal();
-            }
+        if (pr == null) {
+           return "";
         }
+       
+        CTString style = pr.getRStyle();
+        if (style == null) {
+            return "";
+        }
+       
+        return style.getVal();
     }
 
     /**
