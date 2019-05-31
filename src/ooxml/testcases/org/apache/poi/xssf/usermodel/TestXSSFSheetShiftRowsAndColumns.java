@@ -67,7 +67,7 @@ public class TestXSSFSheetShiftRowsAndColumns {
             for (int nCol = 0; nCol < numCols; ++nCol) {
                 final XSSFCell cell = row.createCell(nCol);
                 cell.setCellType(CellType.STRING);
-                cell.setCellValue(String.format("Row %d col %d", nRow, nCol));
+                cell.setCellValue(String.format(Locale.US, "Row %d col %d", nRow, nCol));
             }
         }
         /*
@@ -75,7 +75,7 @@ public class TestXSSFSheetShiftRowsAndColumns {
          */
         final CellRangeAddress range=new CellRangeAddress(FIRST_MERGE_ROW,LAST_MERGE_ROW,FIRST_MERGE_COL,LAST_MERGE_COL);
         sheet.addMergedRegion(range);
-        System.out.println(String.format("\n%s: mergeArea=%s", procName,range));
+        System.out.println(String.format(Locale.US, "\n%s: mergeArea=%s", procName,range));
 
     }
 
@@ -123,7 +123,7 @@ public class TestXSSFSheetShiftRowsAndColumns {
         testCellAddresses(procName,0,0);
         testMergeRegion(procName,0,0);
 
-        System.out.println(String.format("%s: finished without error", procName));
+        System.out.println(String.format(Locale.US, "%s: finished without error", procName));
     }
 
     @Test
@@ -134,7 +134,7 @@ public class TestXSSFSheetShiftRowsAndColumns {
 
         sheet.shiftRows(INSERT_ROW, numRows-1, nRowsToShift);
         testCellAddresses(procName,nRowsToShift,0);
-        System.out.println(String.format("%s: finished without error", procName));
+        System.out.println(String.format(Locale.US, "%s: finished without error", procName));
     }
 
     @Ignore("currently fails")
@@ -146,7 +146,7 @@ public class TestXSSFSheetShiftRowsAndColumns {
 
         sheet.shiftRows(INSERT_ROW, numRows-1, nRowsToShift);
         testMergeRegion(procName,nRowsToShift,0);
-        System.out.println(String.format("%s: finished without error", procName));
+        System.out.println(String.format(Locale.US, "%s: finished without error", procName));
     }
 
     @Test
@@ -157,7 +157,7 @@ public class TestXSSFSheetShiftRowsAndColumns {
 
         sheet.shiftColumns(INSERT_COLUMN, numCols-1, nShift);
         testCellAddresses(procName,0,nShift);
-        System.out.println(String.format("%s: finished without error", procName));
+        System.out.println(String.format(Locale.US, "%s: finished without error", procName));
     }
 
     @Ignore("currently fails")
@@ -169,7 +169,7 @@ public class TestXSSFSheetShiftRowsAndColumns {
 
         sheet.shiftColumns(INSERT_COLUMN, numCols-1, nShift);
         testMergeRegion(procName,0,nShift);
-        System.out.println(String.format("%s: finished without error", procName));
+        System.out.println(String.format(Locale.US, "%s: finished without error", procName));
     }
 
     /**
@@ -181,14 +181,14 @@ public class TestXSSFSheetShiftRowsAndColumns {
         for(int nRow=0;nRow<nNumRows;++nRow) {
             final XSSFRow row=sheet.getRow(nRow);
             if(row==null) {
-                System.out.println(String.format("%s: Row %d is empty", procName,nRow));
+                System.out.println(String.format(Locale.US, "%s: Row %d is empty", procName,nRow));
                 continue;
             }
             for(int nCol=0;nCol<nNumCols;++nCol) {
                 final String address=new CellAddress(nRow,nCol).formatAsString();
                 final XSSFCell cell=row.getCell(nCol);
                 if(cell==null) {
-                    System.out.println(String.format("%s: Cell %s is empty", procName,address));
+                    System.out.println(String.format(Locale.US, "%s: Cell %s is empty", procName,address));
                     continue;
                 }
                 final CTCell ctCell=cell.getCTCell();
@@ -196,11 +196,11 @@ public class TestXSSFSheetShiftRowsAndColumns {
                 final Object r=ctCell.getR();
 
                 if(nCol==0 || nRow==0) {
-                    System.out.println(String.format("%s: Row %d col %d address=%s cell.address=%s cell.getR=%s", procName, nRow,
+                    System.out.println(String.format(Locale.US, "%s: Row %d col %d address=%s cell.address=%s cell.getR=%s", procName, nRow,
                             nCol, address, cellAddress, ctCell.getR()));
                 }
-                assertEquals(String.format("%s: Testing cell.getAddress",procName),address,cellAddress);
-                assertEquals(String.format("%s: Testing ctCell.getR",procName),address,r);
+                assertEquals(String.format(Locale.US, "%s: Testing cell.getAddress",procName),address,cellAddress);
+                assertEquals(String.format(Locale.US, "%s: Testing ctCell.getR",procName),address,r);
             }
         }
 
@@ -211,7 +211,7 @@ public class TestXSSFSheetShiftRowsAndColumns {
      */
     private void testMergeRegion(String procName,int nRowsToShift,int nColsToShift) {
         final CellRangeAddress range=sheet.getMergedRegion(0);
-        assertEquals(String.format("%s: Testing merge area %s",procName,range),range,
+        assertEquals(String.format(Locale.US, "%s: Testing merge area %s",procName,range),range,
                 new CellRangeAddress(FIRST_MERGE_ROW,LAST_MERGE_ROW+nRowsToShift,FIRST_MERGE_COL,LAST_MERGE_COL+nColsToShift));
     }
 
