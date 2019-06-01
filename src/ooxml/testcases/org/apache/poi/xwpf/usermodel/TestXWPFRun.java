@@ -783,6 +783,8 @@ public class TestXWPFRun {
         assertNotNull("Expected to find a run style ID", candStyleId);
         assertEquals(styleId, candStyleId);
 
+        assertEquals(styleId, run.getStyle());
+
         document.close();
     }
 
