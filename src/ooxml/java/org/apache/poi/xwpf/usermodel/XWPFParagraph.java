@@ -1418,6 +1418,29 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     }
 
     /**
+     * Appends a new hyperlink run to this paragraph
+     *
+     * @return a new hyperlink run
+     */
+    public XWPFHyperlinkRun createHyperlinkRun(String uri) {
+        // Create a relationship ID for this link. 
+        String rId = getPart().getPackagePart().addExternalRelationship(
+                uri, XWPFRelation.HYPERLINK.getRelation()
+        ).getId();
+        
+        // Create the run. 
+        CTHyperlink ctHyperLink = getCTP().addNewHyperlink();
+        ctHyperLink.setId(rId);
+        ctHyperLink.addNewR();
+        
+        // Append this run to the paragraph. 
+        XWPFHyperlinkRun link = new XWPFHyperlinkRun(ctHyperLink, ctHyperLink.getRArray(0), this);
+        runs.add(link);
+        iruns.add(link);
+        return link;
+    }
+
+    /**
      * insert a new Run in RunArray
      *
      * @param pos The position at which the new run should be added.
