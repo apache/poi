@@ -1525,6 +1525,7 @@ under the License.
           </fileset>
           <report format="frames" todir="build/report"/>
         </junitreport>
+        <echo message="Published results from tests at build/report/index.html"/>
     </target>
 
     <target name="-test-property-check" unless="testcase">
