@@ -47,6 +47,7 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.examples.ExcelComparator;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.eventusermodel.XLSX2CSV;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
@@ -188,6 +189,7 @@ public class XSSFFileHandler extends SpreadsheetHandler {
             System.setOut(new NullPrintStream());
             FromHowTo.main(new String[]{file.getAbsolutePath()});
             XLSX2CSV.main(new String[]{file.getAbsolutePath()});
+            ExcelComparator.main(new String[]{file.getAbsolutePath(), file.getAbsolutePath()});
 
             assertFalse("Expected Extraction to fail for file " + file + " and handler " + this + ", but did not fail!",
                     EXPECTED_ADDITIONAL_FAILURES.contains(testFile));

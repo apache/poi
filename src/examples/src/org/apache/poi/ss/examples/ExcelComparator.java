@@ -38,6 +38,8 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 
 /**
  * Utility to compare Excel File Contents cell by cell for all sheets.
@@ -97,15 +99,14 @@ public class ExcelComparator {
             System.err.println("java -cp <classpath> "+ExcelComparator.class.getCanonicalName()+" <workbook1.xls/x> <workbook2.xls/x");
             System.exit(-1);
         }
-        Workbook wb1 = WorkbookFactory.create(new File(args[0]));
-        Workbook wb2 = WorkbookFactory.create(new File(args[1]));
-        
-        for (String d : ExcelComparator.compare(wb1, wb2)) {
-            System.out.println(d);
+
+        try (Workbook wb1 = WorkbookFactory.create(new File(args[0]), null, true)) {
+            try (Workbook wb2 = WorkbookFactory.create(new File(args[1]), null, true)) {
+                for (String d : ExcelComparator.compare(wb1, wb2)) {
+                    System.out.println(d);
+                }
+            }
         }
-        
-        wb2.close();
-        wb1.close();
     }
     
     /**
@@ -134,7 +135,9 @@ public class ExcelComparator {
      */
     private void compareDataInAllSheets(Locator loc1, Locator loc2) {
         for (int i = 0; i < loc1.workbook.getNumberOfSheets(); i++) {
-            if (loc2.workbook.getNumberOfSheets() <= i) return;
+            if (loc2.workbook.getNumberOfSheets() <= i) {
+                return;
+            }
 
             loc1.sheet = loc1.workbook.getSheetAt(i);
             loc2.sheet = loc2.workbook.getSheetAt(i);
@@ -144,8 +147,10 @@ public class ExcelComparator {
     }
 
     private void compareDataInSheet(Locator loc1, Locator loc2) {
-        for (int j = 0; j < loc1.sheet.getLastRowNum(); j++) {
-            if (loc2.sheet.getLastRowNum() <= j) return;
+        for (int j = 0; j <= loc1.sheet.getLastRowNum(); j++) {
+            if (loc2.sheet.getLastRowNum() <= j) {
+                return;
+            }
 
             loc1.row = loc1.sheet.getRow(j);
             loc2.row = loc2.sheet.getRow(j);
@@ -159,8 +164,10 @@ public class ExcelComparator {
     }
 
     private void compareDataInRow(Locator loc1, Locator loc2) {
-        for (int k = 0; k < loc1.row.getLastCellNum(); k++) {
-            if (loc2.row.getLastCellNum() <= k) return;
+        for (int k = 0; k <= loc1.row.getLastCellNum(); k++) {
+            if (loc2.row.getLastCellNum() <= k) {
+                return;
+            }
 
             loc1.cell = loc1.row.getCell(k);
             loc2.cell = loc2.row.getCell(k);
@@ -221,7 +228,9 @@ public class ExcelComparator {
      */
     private void compareNumberOfColumnsInSheets(Locator loc1, Locator loc2) {
         for (int i = 0; i < loc1.workbook.getNumberOfSheets(); i++) {
-            if (loc2.workbook.getNumberOfSheets() <= i) return;
+            if (loc2.workbook.getNumberOfSheets() <= i) {
+                return;
+            }
             
             loc1.sheet = loc1.workbook.getSheetAt(i);
             loc2.sheet = loc2.workbook.getSheetAt(i);
@@ -248,7 +257,9 @@ public class ExcelComparator {
      */
     private void compareNumberOfRowsInSheets(Locator loc1, Locator loc2) {
         for (int i = 0; i < loc1.workbook.getNumberOfSheets(); i++) {
-            if (loc2.workbook.getNumberOfSheets() <= i) return;
+            if (loc2.workbook.getNumberOfSheets() <= i) {
+                return;
+            }
 
             loc1.sheet = loc1.workbook.getSheetAt(i);
             loc2.sheet = loc2.workbook.getSheetAt(i);
@@ -329,7 +340,10 @@ public class ExcelComparator {
      * Checks if cell alignment matches.
      */
     private void isCellAlignmentMatches(Locator loc1, Locator loc2) {
-        // TODO: check for NPE
+        if(loc1.cell.getCellStyle() == null || loc2.cell.getCellStyle() == null) {
+            return;
+        }
+
         HorizontalAlignment align1 = loc1.cell.getCellStyle().getAlignment();
         HorizontalAlignment align2 = loc2.cell.getCellStyle().getAlignment();
         if (align1 != align2) {
@@ -345,7 +359,11 @@ public class ExcelComparator {
      * Checks if cell border bottom matches.
      */
     private void isCellBorderMatches(Locator loc1, Locator loc2, char borderSide) {
-        if (!(loc1.cell instanceof XSSFCell)) return;
+        if (!(loc1.cell instanceof XSSFCell) ||
+                loc1.cell.getCellStyle() == null || loc2.cell.getCellStyle() == null) {
+            return;
+        }
+
         XSSFCellStyle style1 = ((XSSFCell)loc1.cell).getCellStyle();
         XSSFCellStyle style2 = ((XSSFCell)loc2.cell).getCellStyle();
         boolean b1, b2;
@@ -385,9 +403,8 @@ public class ExcelComparator {
      * Checks if cell content matches.
      */
     private void isCellContentMatches(Locator loc1, Locator loc2) {
-        // TODO: check for null and non-rich-text cells
-        String str1 = loc1.cell.getRichStringCellValue().getString();
-        String str2 = loc2.cell.getRichStringCellValue().getString();
+        String str1 = loc1.cell.toString();
+        String str2 = loc2.cell.toString();
         if (!str1.equals(str2)) {
             addMessage(loc1,loc2,CELL_DATA_DOES_NOT_MATCH,str1,str2);
         }
@@ -449,6 +466,10 @@ public class ExcelComparator {
      * Checks if cell file back ground matches.
      */
     private void isCellFillBackGroundMatches(Locator loc1, Locator loc2) {
+        if(loc1.cell.getCellStyle() == null || loc2.cell.getCellStyle() == null) {
+            return;
+        }
+
         String col1 = getCellFillBackground(loc1);
         String col2 = getCellFillBackground(loc2);
         if (!col1.equals(col2)) {
@@ -459,7 +480,10 @@ public class ExcelComparator {
      * Checks if cell fill pattern matches.
      */
     private void isCellFillPatternMatches(Locator loc1, Locator loc2) {
-        // TOOO: Check for NPE
+        if(loc1.cell.getCellStyle() == null || loc2.cell.getCellStyle() == null) {
+            return;
+        }
+
         FillPatternType fill1 = loc1.cell.getCellStyle().getFillPattern();
         FillPatternType fill2 = loc2.cell.getCellStyle().getFillPattern();
         if (fill1 != fill2) {
@@ -475,7 +499,15 @@ public class ExcelComparator {
      * Checks if cell font bold matches.
      */
     private void isCellFontBoldMatches(Locator loc1, Locator loc2) {
-        if (!(loc1.cell instanceof XSSFCell)) return;
+        if (!(loc1.cell instanceof XSSFCell) ||
+                loc1.cell.getCellStyle() == null || loc2.cell.getCellStyle() == null) {
+            return;
+        }
+
+        if(hasInvalidFontIndex(loc1, loc2)) {
+            return;
+        }
+
         boolean b1 = ((XSSFCell)loc1.cell).getCellStyle().getFont().getBold();
         boolean b2 = ((XSSFCell)loc2.cell).getCellStyle().getFont().getBold();
         if (b1 != b2) {
@@ -491,8 +523,15 @@ public class ExcelComparator {
      * Checks if cell font family matches.
      */
     private void isCellFontFamilyMatches(Locator loc1, Locator loc2) {
-        // TODO: Check for NPEs
-        if (!(loc1.cell instanceof XSSFCell)) return;
+        if (!(loc1.cell instanceof XSSFCell) ||
+                loc1.cell.getCellStyle() == null || loc2.cell.getCellStyle() == null) {
+            return;
+        }
+
+        if(hasInvalidFontIndex(loc1, loc2)) {
+            return;
+        }
+
         String family1 = ((XSSFCell)loc1.cell).getCellStyle().getFont().getFontName();
         String family2 = ((XSSFCell)loc2.cell).getCellStyle().getFont().getFontName();
         if (!family1.equals(family2)) {
@@ -500,11 +539,33 @@ public class ExcelComparator {
         }
     }
 
+    private boolean hasInvalidFontIndex(Locator loc1, Locator loc2) {
+        int fontIdx1 = loc1.cell.getCellStyle().getFontIndexAsInt();
+        int fontCount1 = ((XSSFWorkbook)loc1.workbook).getStylesSource().getFonts().size();
+        int fontIdx2 = loc2.cell.getCellStyle().getFontIndexAsInt();
+        int fontCount2 = ((XSSFWorkbook)loc2.workbook).getStylesSource().getFonts().size();
+
+        if(fontIdx1 >= fontCount1 || fontIdx2 >= fontCount2) {
+            addMessage(loc1, loc2, "Corrupted file, cell style references a font which is not defined", Integer.toString(fontIdx1), Integer.toString(fontIdx2));
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * Checks if cell font italics matches.
      */
     private void isCellFontItalicsMatches(Locator loc1, Locator loc2) {
-        if (!(loc1.cell instanceof XSSFCell)) return;
+        if (!(loc1.cell instanceof XSSFCell) ||
+                loc1.cell.getCellStyle() == null || loc2.cell.getCellStyle() == null) {
+            return;
+        }
+
+        if(hasInvalidFontIndex(loc1, loc2)) {
+            return;
+        }
+
         boolean b1 = ((XSSFCell)loc1.cell).getCellStyle().getFont().getItalic();
         boolean b2 = ((XSSFCell)loc2.cell).getCellStyle().getFont().getItalic();
         if (b1 != b2) {
@@ -520,7 +581,15 @@ public class ExcelComparator {
      * Checks if cell font size matches.
      */
     private void isCellFontSizeMatches(Locator loc1, Locator loc2) {
-        if (!(loc1.cell instanceof XSSFCell)) return;
+        if (!(loc1.cell instanceof XSSFCell) ||
+                loc1.cell.getCellStyle() == null || loc2.cell.getCellStyle() == null) {
+            return;
+        }
+
+        if(hasInvalidFontIndex(loc1, loc2)) {
+            return;
+        }
+
         short size1 = ((XSSFCell)loc1.cell).getCellStyle().getFont().getFontHeightInPoints();
         short size2 = ((XSSFCell)loc2.cell).getCellStyle().getFont().getFontHeightInPoints();
         if (size1 != size2) {
@@ -536,6 +605,10 @@ public class ExcelComparator {
      * Checks if cell hidden matches.
      */
     private void isCellHiddenMatches(Locator loc1, Locator loc2) {
+        if (loc1.cell.getCellStyle() == null || loc2.cell.getCellStyle() == null) {
+            return;
+        }
+
         boolean b1 = loc1.cell.getCellStyle().getHidden();
         boolean b2 = loc1.cell.getCellStyle().getHidden();
         if (b1 != b2) {
@@ -551,6 +624,10 @@ public class ExcelComparator {
      * Checks if cell locked matches.
      */
     private void isCellLockedMatches(Locator loc1, Locator loc2) {
+        if (loc1.cell.getCellStyle() == null || loc2.cell.getCellStyle() == null) {
+            return;
+        }
+
         boolean b1 = loc1.cell.getCellStyle().getLocked();
         boolean b2 = loc1.cell.getCellStyle().getLocked();
         if (b1 != b2) {
@@ -568,7 +645,10 @@ public class ExcelComparator {
     private boolean isCellTypeMatches(Locator loc1, Locator loc2) {
         CellType type1 = loc1.cell.getCellType();
         CellType type2 = loc2.cell.getCellType();
-        if (type1 == type2) return true;
+        if (type1 == type2) {
+            return true;
+        }
+
         addMessage(loc1, loc2,
             "Cell Data-Type does not Match in :: ",
             type1.name(), type2.name()
@@ -580,8 +660,17 @@ public class ExcelComparator {
      * Checks if cell under line matches.
      */
     private void isCellUnderLineMatches(Locator loc1, Locator loc2) {
-        // TOOO: distinguish underline type
-        if (!(loc1.cell instanceof XSSFCell)) return;
+        // TODO: distinguish underline type
+
+        if (!(loc1.cell instanceof XSSFCell) ||
+                loc1.cell.getCellStyle() == null || loc2.cell.getCellStyle() == null) {
+            return;
+        }
+
+        if(hasInvalidFontIndex(loc1, loc2)) {
+            return;
+        }
+
         byte b1 = ((XSSFCell)loc1.cell).getCellStyle().getFont().getUnderline();
         byte b2 = ((XSSFCell)loc2.cell).getCellStyle().getFont().getUnderline();
         if (b1 != b2) {
