@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Supplier;
 
+import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.record.emfplus.HemfPlusRecord;
 import org.apache.poi.hemf.record.emfplus.HemfPlusRecordIterator;
 import org.apache.poi.hwmf.usermodel.HwmfPicture;
@@ -100,6 +101,17 @@ public class HemfComment {
 
         public EmfCommentData getCommentData() {
             return data;
+        }
+
+        @Override
+        public void draw(HemfGraphics ctx) {
+            if (data instanceof EmfCommentDataPlus) {
+                if (ctx.getRenderState() == HemfGraphics.EmfRenderState.INITIAL) {
+                    ctx.setRenderState(HemfGraphics.EmfRenderState.EMFPLUS_ONLY);
+                }
+
+                ((EmfCommentDataPlus)data).draw(ctx);
+            }
         }
 
         @Override
@@ -254,6 +266,10 @@ public class HemfComment {
 
         public List<HemfPlusRecord> getRecords() {
             return Collections.unmodifiableList(records);
+        }
+
+        public void draw(HemfGraphics ctx) {
+            records.forEach(ctx::draw);
         }
     }
 

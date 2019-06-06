@@ -18,8 +18,11 @@
 package org.apache.poi.hemf.record.emfplus;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 
+import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.record.emfplus.HemfPlusBrush.EmfPlusBrush;
 import org.apache.poi.hemf.record.emfplus.HemfPlusFont.EmfPlusFont;
 import org.apache.poi.hemf.record.emfplus.HemfPlusHeader.EmfPlusGraphicsVersion;
@@ -29,6 +32,8 @@ import org.apache.poi.hemf.record.emfplus.HemfPlusMisc.EmfPlusObjectId;
 import org.apache.poi.hemf.record.emfplus.HemfPlusPath.EmfPlusPath;
 import org.apache.poi.hemf.record.emfplus.HemfPlusPen.EmfPlusPen;
 import org.apache.poi.hemf.record.emfplus.HemfPlusRegion.EmfPlusRegion;
+import org.apache.poi.hwmf.draw.HwmfGraphics;
+import org.apache.poi.hwmf.record.HwmfObjectTableEntry;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.IOUtils;
@@ -107,7 +112,7 @@ public class HemfPlusObject {
      * The EmfPlusObject record specifies an object for use in graphics operations. The object definition
      * can span multiple records), which is indicated by the value of the Flags field.
      */
-    public static class EmfPlusObject implements HemfPlusRecord, EmfPlusObjectId {
+    public static class EmfPlusObject implements HemfPlusRecord, EmfPlusObjectId, HwmfObjectTableEntry {
 
 
         /**
@@ -126,6 +131,7 @@ public class HemfPlusObject {
         // for debugging
         private int objectId;
         private EmfPlusObjectData objectData;
+        private List<EmfPlusObjectData> continuedObjectData;
         private int totalObjectSize;
 
         @Override
@@ -174,10 +180,50 @@ public class HemfPlusObject {
 
             return size;
         }
+
+        @Override
+        public void draw(HemfGraphics ctx) {
+            HwmfObjectTableEntry entry = ctx.getObjectTableEntry(getObjectId());
+            if (objectData.isContinuedRecord()) {
+                EmfPlusObject other;
+                if (entry instanceof EmfPlusObject && objectData.getClass().isInstance((other = (EmfPlusObject)entry).getObjectData())) {
+                    other.linkContinuedObject(objectData);
+                    return;
+                } else {
+                    throw new RuntimeException("can't find previous record for continued record");
+                }
+            }
+            ctx.addObjectTableEntry(this, getObjectId());
+        }
+
+        @Override
+        public void applyObject(HwmfGraphics ctx) {
+            objectData.applyObject((HemfGraphics)ctx, continuedObjectData);
+        }
+
+        void linkContinuedObject(EmfPlusObjectData continueObject) {
+            if (continuedObjectData == null) {
+                continuedObjectData = new ArrayList<>();
+            }
+            continuedObjectData.add(continueObject);
+        }
+
+        List<EmfPlusObjectData> getContinuedObject() {
+            return continuedObjectData;
+        }
     }
 
     public interface EmfPlusObjectData {
         long init(LittleEndianInputStream leis, long dataSize, EmfPlusObjectType objectType, int flags) throws IOException;
+
+        void applyObject(HemfGraphics ctx, List<? extends EmfPlusObjectData> continuedObjectData);
+
+        EmfPlusGraphicsVersion getGraphicsVersion();
+
+        default boolean isContinuedRecord() {
+            EmfPlusGraphicsVersion gv = getGraphicsVersion();
+            return (gv.getGraphicsVersion() == null || gv.getMetafileSignature() != 0xDBC01);
+        }
     }
 
     public static class EmfPlusUnknownData implements EmfPlusObjectData {
@@ -194,6 +240,16 @@ public class HemfPlusObject {
             objectDataBytes = IOUtils.toByteArray(leis, dataSize - size, MAX_OBJECT_SIZE);
 
             return dataSize;
+        }
+
+        @Override
+        public void applyObject(HemfGraphics ctx, List<? extends EmfPlusObjectData> continuedObjectData) {
+
+        }
+
+        @Override
+        public EmfPlusGraphicsVersion getGraphicsVersion() {
+            return graphicsVersion;
         }
     }
 }

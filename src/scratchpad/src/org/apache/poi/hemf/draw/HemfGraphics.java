@@ -22,12 +22,15 @@ import static org.apache.poi.hwmf.record.HwmfBrushStyle.BS_SOLID;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Paint;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.function.Consumer;
 
+import org.apache.poi.hemf.record.emf.HemfComment.EmfComment;
 import org.apache.poi.hemf.record.emf.HemfRecord;
+import org.apache.poi.hemf.record.emfplus.HemfPlusRecord;
 import org.apache.poi.hwmf.draw.HwmfDrawProperties;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.hwmf.record.HwmfColorRef;
@@ -37,12 +40,20 @@ import org.apache.poi.util.Internal;
 
 public class HemfGraphics extends HwmfGraphics {
 
+    public enum EmfRenderState {
+        INITIAL,
+        EMF_ONLY,
+        EMFPLUS_ONLY,
+        EMF_DCONTEXT
+    }
+
     private static final HwmfColorRef WHITE = new HwmfColorRef(Color.WHITE);
     private static final HwmfColorRef LTGRAY = new HwmfColorRef(new Color(0x00C0C0C0));
     private static final HwmfColorRef GRAY = new HwmfColorRef(new Color(0x00808080));
     private static final HwmfColorRef DKGRAY = new HwmfColorRef(new Color(0x00404040));
     private static final HwmfColorRef BLACK = new HwmfColorRef(Color.BLACK);
 
+    private EmfRenderState renderState = EmfRenderState.INITIAL;
 
     public HemfGraphics(Graphics2D graphicsCtx, Rectangle2D bbox) {
         super(graphicsCtx,bbox);
@@ -62,8 +73,49 @@ public class HemfGraphics extends HwmfGraphics {
             : new HemfDrawProperties((HemfDrawProperties)oldProps);
     }
 
+    public EmfRenderState getRenderState() {
+        return renderState;
+    }
+
+    public void setRenderState(EmfRenderState renderState) {
+        this.renderState = renderState;
+    }
+
     public void draw(HemfRecord r) {
-        r.draw(this);
+        switch (renderState) {
+            case EMF_DCONTEXT:
+                // keep the dcontext state, if the next record is an EMF+ record
+                // only reset it, when we are processing EMF records again
+                if (!(r instanceof EmfComment)) {
+                    renderState = EmfRenderState.INITIAL;
+                }
+                r.draw(this);
+                break;
+            case INITIAL:
+                r.draw(this);
+                break;
+            case EMF_ONLY:
+            case EMFPLUS_ONLY:
+                if ((r instanceof EmfComment) == (renderState == EmfRenderState.EMFPLUS_ONLY)) {
+                    r.draw(this);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    public void draw(HemfPlusRecord r) {
+        switch (renderState) {
+            case EMFPLUS_ONLY:
+            case EMF_DCONTEXT:
+            case INITIAL:
+                r.draw(this);
+                break;
+            case EMF_ONLY:
+            default:
+                break;
+        }
     }
 
     @Internal
@@ -131,13 +183,35 @@ public class HemfGraphics extends HwmfGraphics {
      * @see HwmfGraphics#addObjectTableEntry(HwmfObjectTableEntry)
      */
     public void addObjectTableEntry(HwmfObjectTableEntry entry, int index) {
-        if (index < 1) {
-            throw new IndexOutOfBoundsException("Object table entry index in EMF must be > 0 - invalid index: "+index);
-        }
-
+        checkTableEntryIndex(index);
         objectIndexes.set(index);
         objectTable.put(index, entry);
     }
+
+    /**
+     * Gets a record which was registered earliser
+     * @param index the record index
+     * @return the record or {@code null} if it doesn't exist
+     */
+    public HwmfObjectTableEntry getObjectTableEntry(int index) {
+        checkTableEntryIndex(index);
+        return objectTable.get(index);
+    }
+
+    private void checkTableEntryIndex(int index) {
+        if (renderState != EmfRenderState.EMFPLUS_ONLY) {
+            // in EMF the index must > 0
+            if (index < 1) {
+                throw new IndexOutOfBoundsException("Object table entry index in EMF must be > 0 - invalid index: "+index);
+            }
+        } else {
+            // in EMF+ the index must be between 0 and 63
+            if (index < 0 || index > 63) {
+                throw new IndexOutOfBoundsException("Object table entry index in EMF+ must be [0..63] - invalid index: "+index);
+            }
+        }
+    }
+
 
     @Override
     public void applyObjectTableEntry(int index) {
@@ -255,5 +329,11 @@ public class HemfGraphics extends HwmfGraphics {
                 // The solid-color pen that is currently selected in the playback device context.
                 break;
         }
+    }
+
+    @Override
+    protected Paint getHatchedFill() {
+        // TODO: use EmfPlusHatchBrushData
+        return super.getHatchedFill();
     }
 }

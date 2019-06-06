@@ -18,6 +18,7 @@
 package org.apache.poi.hemf.record.emf;
 
 import static org.apache.poi.hemf.record.emf.HemfDraw.readPointL;
+import static org.apache.poi.hemf.record.emf.HemfDraw.xformToString;
 import static org.apache.poi.hemf.record.emf.HemfFill.readBitmap;
 import static org.apache.poi.hemf.record.emf.HemfFill.readXForm;
 import static org.apache.poi.hemf.record.emf.HemfRecordIterator.HEADER_SIZE;
@@ -621,14 +622,7 @@ public class HemfMisc {
 
         @Override
         public String toString() {
-            return
-                "{ xForm: " +
-                "{ scaleX: "+xForm.getScaleX()+
-                ", shearX: "+xForm.getShearX()+
-                ", transX: "+xForm.getTranslateX()+
-                ", scaleY: "+xForm.getScaleY()+
-                ", shearY: "+xForm.getShearY()+
-                ", transY: "+xForm.getTranslateY()+" } }";
+            return "{ xForm: " + xformToString(xForm)+" }";
         }
     }
 
@@ -695,7 +689,7 @@ public class HemfMisc {
                             wsTrans.translate(-emfBounds.getHeight(), emfBounds.getHeight());
                         }
                     } else {
-                        wsTrans = adaptXForm(ctx.getTransform());
+                        wsTrans = adaptXForm(xForm, ctx.getTransform());
                     }
 
                     tx = ctx.getTransform();
@@ -703,7 +697,7 @@ public class HemfMisc {
                     break;
                 case MWT_RIGHTMULTIPLY:
                     tx = ctx.getTransform();
-                    tx.preConcatenate(adaptXForm(tx));
+                    tx.preConcatenate(adaptXForm(xForm, tx));
                     break;
                 case MWT_IDENTITY:
                     ctx.updateWindowMapMode();
@@ -713,40 +707,16 @@ public class HemfMisc {
                 case MWT_SET:
                     ctx.updateWindowMapMode();
                     tx = ctx.getTransform();
-                    tx.concatenate(adaptXForm(tx));
+                    tx.concatenate(adaptXForm(xForm, tx));
                     break;
             }
             ctx.setTransform(tx);
         }
 
-        /**
-         * adapt xform depending on the base transformation (... experimental ...)
-         */
-        private AffineTransform adaptXForm(AffineTransform other) {
-            // normalize signed zero
-            Function<Double,Double> nn = (d) -> (d == 0. ? 0. : d);
-            double yDiff = Math.signum(nn.apply(xForm.getTranslateY())) == Math.signum(nn.apply(other.getTranslateY())) ? 1. : -1.;
-            double xDiff = Math.signum(nn.apply(xForm.getTranslateX())) == Math.signum(nn.apply(other.getTranslateX())) ? 1. : -1.;
-                return new AffineTransform(
-                    xForm.getScaleX() == 0 ? 1. : xForm.getScaleX(),
-                    yDiff * xForm.getShearY(),
-                    xDiff * xForm.getShearX(),
-                    xForm.getScaleY() == 0. ? 1. : xForm.getScaleY(),
-                    xForm.getTranslateX(),
-                    xForm.getTranslateY()
-            );
-        }
-
         @Override
         public String toString() {
             return
-                "{ xForm: " +
-                "{ scaleX: "+xForm.getScaleX()+
-                ", shearX: "+xForm.getShearX()+
-                ", transX: "+xForm.getTranslateX()+
-                ", scaleY: "+xForm.getScaleY()+
-                ", shearY: "+xForm.getShearY()+
-                ", transY: "+xForm.getTranslateY()+" }"+
+                "{ xForm: " + xformToString(xForm) +
                 ", modifyWorldTransformMode: '"+modifyWorldTransformMode+"' }";
         }
     }
@@ -824,5 +794,24 @@ public class HemfMisc {
                 ", bitmap: " + bitmap +
                 "}";
         }
+    }
+
+
+    /**
+     * adapt xform depending on the base transformation (... experimental ...)
+     */
+    public static AffineTransform adaptXForm(AffineTransform xForm, AffineTransform other) {
+        // normalize signed zero
+        Function<Double,Double> nn = (d) -> (d == 0. ? 0. : d);
+        double yDiff = Math.signum(nn.apply(xForm.getTranslateY())) == Math.signum(nn.apply(other.getTranslateY())) ? 1. : -1.;
+        double xDiff = Math.signum(nn.apply(xForm.getTranslateX())) == Math.signum(nn.apply(other.getTranslateX())) ? 1. : -1.;
+        return new AffineTransform(
+                xForm.getScaleX() == 0 ? 1. : xForm.getScaleX(),
+                yDiff * xForm.getShearY(),
+                xDiff * xForm.getShearX(),
+                xForm.getScaleY() == 0. ? 1. : xForm.getScaleY(),
+                xForm.getTranslateX(),
+                xForm.getTranslateY()
+        );
     }
 }

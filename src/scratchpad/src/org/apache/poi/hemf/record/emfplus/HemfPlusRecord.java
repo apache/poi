@@ -20,7 +20,7 @@ package org.apache.poi.hemf.record.emfplus;
 
 import java.io.IOException;
 
-import org.apache.poi.hemf.record.emf.HemfRecordType;
+import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianInputStream;
 
@@ -44,5 +44,14 @@ public interface HemfPlusRecord {
      * @throws IOException when the inputstream is malformed
      */
     long init(LittleEndianInputStream leis, long dataSize, long recordId, int flags) throws IOException;
+
+
+
+    /**
+     * Draws the record, the default redirects to the parent WMF record drawing
+     * @param ctx the drawing context
+     */
+    default void draw(HemfGraphics ctx) {
+    }
 
 }

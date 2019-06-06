@@ -18,7 +18,9 @@
 package org.apache.poi.hemf.record.emfplus;
 
 import java.io.IOException;
+import java.util.List;
 
+import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.record.emfplus.HemfPlusDraw.EmfPlusUnitType;
 import org.apache.poi.hemf.record.emfplus.HemfPlusHeader.EmfPlusGraphicsVersion;
 import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectData;
@@ -60,7 +62,7 @@ public class HemfPlusFont {
         private static final BitField STRIKEOUT = BitFieldFactory.getInstance(0x00000008);
 
 
-        private final EmfPlusGraphicsVersion version = new EmfPlusGraphicsVersion();
+        private final EmfPlusGraphicsVersion graphicsVersion = new EmfPlusGraphicsVersion();
         private double emSize;
         private EmfPlusUnitType sizeUnit;
         private int styleFlags;
@@ -70,7 +72,7 @@ public class HemfPlusFont {
         public long init(LittleEndianInputStream leis, long dataSize, HemfPlusObject.EmfPlusObjectType objectType, int flags) throws IOException {
             // An EmfPlusGraphicsVersion object that specifies the version of operating system graphics that was used
             // to create this object.
-            long size = version.init(leis);
+            long size = graphicsVersion.init(leis);
 
             // A 32-bit floating-point value that specifies the em size of the font in units specified by the SizeUnit field.
             emSize = leis.readFloat();
@@ -95,6 +97,16 @@ public class HemfPlusFont {
             size += len*LittleEndianConsts.SHORT_SIZE;
 
             return size;
+        }
+
+        @Override
+        public void applyObject(HemfGraphics ctx, List<? extends EmfPlusObjectData> continuedObjectData) {
+
+        }
+
+        @Override
+        public EmfPlusGraphicsVersion getGraphicsVersion() {
+            return graphicsVersion;
         }
     }
 }

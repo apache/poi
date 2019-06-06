@@ -18,6 +18,7 @@
 package org.apache.poi.hwmf.record;
 
 import java.awt.Shape;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Area;
 import java.awt.geom.Dimension2D;
@@ -749,17 +750,17 @@ public class HwmfDraw {
 
     @Internal
     public static String pointToString(Point2D point) {
-        return "{ x: "+point.getX()+", y: "+point.getY()+" }";
+        return (point == null) ? "null" : "{ x: "+point.getX()+", y: "+point.getY()+" }";
     }
 
     @Internal
     public static String boundsToString(Rectangle2D bounds) {
-        return "{ x: "+bounds.getX()+", y: "+bounds.getY()+", w: "+bounds.getWidth()+", h: "+bounds.getHeight()+" }";
+        return (bounds == null) ? "null" : "{ x: "+bounds.getX()+", y: "+bounds.getY()+", w: "+bounds.getWidth()+", h: "+bounds.getHeight()+" }";
     }
 
     @Internal
     public static String dimToString(Dimension2D dim) {
-        return "{ w: "+dim.getWidth()+", h: "+dim.getHeight()+" }";
+        return (dim == null) ? "null" : "{ w: "+dim.getWidth()+", h: "+dim.getHeight()+" }";
     }
 
     @Internal
@@ -772,5 +773,4 @@ public class HwmfDraw {
                 Math.abs(bounds.getHeight())
         );
     }
-
 }

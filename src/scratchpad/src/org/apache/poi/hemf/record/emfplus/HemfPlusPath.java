@@ -17,11 +17,15 @@
 
 package org.apache.poi.hemf.record.emfplus;
 
+import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.BiFunction;
 
+import org.apache.poi.hemf.draw.HemfDrawProperties;
+import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.record.emfplus.HemfPlusDraw.EmfPlusCompressed;
 import org.apache.poi.hemf.record.emfplus.HemfPlusDraw.EmfPlusRelativePosition;
 import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectData;
@@ -69,14 +73,14 @@ public class HemfPlusPath {
 
         private static final BitField POINT_RLE_COUNT = BitFieldFactory.getInstance(0x3F);
 
-        private final HemfPlusHeader.EmfPlusGraphicsVersion version = new HemfPlusHeader.EmfPlusGraphicsVersion();
+        private final HemfPlusHeader.EmfPlusGraphicsVersion graphicsVersion = new HemfPlusHeader.EmfPlusGraphicsVersion();
         private int pointFlags;
         private Point2D[] pathPoints;
         private byte[] pointTypes;
 
         @Override
         public long init(LittleEndianInputStream leis, long dataSize, EmfPlusObjectType objectType, int flags) throws IOException {
-            long size = version.init(leis);
+            long size = graphicsVersion.init(leis);
 
             // A 32-bit unsigned integer that specifies the number of points and associated point types that
             // are defined by this object.
@@ -124,6 +128,11 @@ public class HemfPlusPath {
             return size;
         }
 
+        @Override
+        public HemfPlusHeader.EmfPlusGraphicsVersion getGraphicsVersion() {
+            return graphicsVersion;
+        }
+
         public boolean isPointDashed(int index) {
             return POINT_TYPE_DASHED.isSet(pointTypes[index]);
         }
@@ -144,6 +153,38 @@ public class HemfPlusPath {
         public int getFlags() {
             return pointFlags;
         }
+
+
+
+        @Override
+        public void applyObject(HemfGraphics ctx, List<? extends EmfPlusObjectData> continuedObjectData) {
+            HemfDrawProperties prop = ctx.getProperties();
+            Path2D path = new Path2D.Double(Path2D.WIND_NON_ZERO);
+            prop.setPath(path);
+
+            for (int idx=0; idx < pathPoints.length; idx++) {
+                Point2D p1 = pathPoints[idx];
+                switch (getPointType(idx)) {
+                    case START:
+                        path.moveTo(p1.getX(), p1.getY());
+                        break;
+                    case LINE:
+                        path.lineTo(p1.getX(), p1.getY());
+                        break;
+                    case BEZIER: {
+                        Point2D p2 = pathPoints[++idx];
+                        Point2D p3 = pathPoints[++idx];
+                        path.curveTo(p1.getX(), p1.getY(), p2.getX(), p2.getY(), p3.getX(), p3.getY());
+                        break;
+                    }
+                }
+                if (isPointClosed(idx)) {
+                    path.closePath();
+                }
+            }
+        }
+
+
     }
 
 

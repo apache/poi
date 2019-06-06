@@ -21,9 +21,11 @@ import static org.apache.poi.hemf.record.emfplus.HemfPlusDraw.readRectF;
 
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.record.emfplus.HemfPlusHeader.EmfPlusGraphicsVersion;
 import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectData;
 import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectType;
@@ -92,12 +94,12 @@ public class HemfPlusRegion {
 
     public static class EmfPlusRegion implements EmfPlusObjectData {
 
-        private final EmfPlusGraphicsVersion version = new EmfPlusGraphicsVersion();
+        private final EmfPlusGraphicsVersion graphicsVersion = new EmfPlusGraphicsVersion();
         private EmfPlusRegionNodeData regionNode;
 
         @Override
         public long init(LittleEndianInputStream leis, long dataSize, EmfPlusObjectType objectType, int flags) throws IOException {
-            long size = version.init(leis);
+            long size = graphicsVersion.init(leis);
 
             // A 32-bit unsigned integer that specifies the number of child nodes in the RegionNode field.
             int nodeCount = leis.readInt();
@@ -111,7 +113,15 @@ public class HemfPlusRegion {
             return size;
         }
 
+        @Override
+        public void applyObject(HemfGraphics ctx, List<? extends EmfPlusObjectData> continuedObjectData) {
 
+        }
+
+        @Override
+        public EmfPlusGraphicsVersion getGraphicsVersion() {
+            return graphicsVersion;
+        }
     }
 
 
