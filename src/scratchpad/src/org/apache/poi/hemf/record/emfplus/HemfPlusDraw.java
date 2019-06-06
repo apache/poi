@@ -17,10 +17,18 @@
 
 package org.apache.poi.hemf.record.emfplus;
 
+import static java.util.stream.Collectors.joining;
+import static org.apache.poi.hemf.record.emf.HemfDraw.xformToString;
+import static org.apache.poi.hwmf.record.HwmfDraw.boundsToString;
+import static org.apache.poi.hwmf.record.HwmfDraw.pointToString;
+
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Area;
+import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -30,8 +38,17 @@ import java.util.function.BiFunction;
 import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.poi.hemf.draw.HemfDrawProperties;
+import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.record.emf.HemfFill;
+import org.apache.poi.hemf.record.emfplus.HemfPlusImage.EmfPlusImage;
 import org.apache.poi.hemf.record.emfplus.HemfPlusMisc.EmfPlusObjectId;
+import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObject;
+import org.apache.poi.hwmf.record.HwmfBrushStyle;
+import org.apache.poi.hwmf.record.HwmfColorRef;
+import org.apache.poi.hwmf.record.HwmfDraw;
+import org.apache.poi.hwmf.record.HwmfMisc.WmfSetBkMode.HwmfBkMode;
+import org.apache.poi.hwmf.record.HwmfTernaryRasterOp;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.IOUtils;
@@ -116,12 +133,45 @@ public class HemfPlusDraw {
         }
     }
 
+    public interface EmfPlusSolidColor {
+        /**
+         * If set, brushId specifies a color as an EmfPlusARGB object.
+         * If clear, brushId contains the index of an EmfPlusBrush object in the EMF+ Object Table.
+         */
+        BitField SOLID_COLOR = BitFieldFactory.getInstance(0x8000);
+
+        int getFlags();
+
+        int getBrushIdValue();
+
+        default boolean isSolidColor() {
+            return SOLID_COLOR.isSet(getFlags());
+        }
+
+        default int getBrushId() {
+            return (isSolidColor()) ? -1 : getBrushIdValue();
+        }
+
+        default Color getSolidColor() {
+            return (isSolidColor()) ? readARGB(getBrushIdValue()) : null;
+        }
+
+        default void applyColor(HemfGraphics ctx) {
+            HemfDrawProperties prop = ctx.getProperties();
+            if (isSolidColor()) {
+                prop.setBrushStyle(HwmfBrushStyle.BS_SOLID);
+                prop.setBrushColor(new HwmfColorRef(getSolidColor()));
+            } else {
+                ctx.applyObjectTableEntry(getBrushId());
+            }
+        }
+    }
 
 
     /**
      * The EmfPlusDrawPath record specifies drawing a graphics path
      */
-    public static class EmfPlusDrawPath implements HemfPlusRecord {
+    public static class EmfPlusDrawPath implements HemfPlusRecord, EmfPlusObjectId {
         private int flags;
         private int penId;
 
@@ -148,18 +198,31 @@ public class HemfPlusDraw {
 
             return LittleEndianConsts.INT_SIZE;
         }
+
+        @Override
+        public void draw(HemfGraphics ctx) {
+            ctx.applyObjectTableEntry(penId);
+            ctx.applyObjectTableEntry(getObjectId());
+
+            HemfDrawProperties prop = ctx.getProperties();
+            final Path2D path = prop.getPath();
+            if (path != null) {
+                ctx.draw(path);
+            }
+        }
+
+        @Override
+        public String toString() {
+            return
+                "{ flags: "+flags+
+                ", penId: "+penId+" }";
+        }
     }
 
     /**
      * The EmfPlusFillRects record specifies filling the interiors of a series of rectangles.
      */
-    public static class EmfPlusFillRects implements HemfPlusRecord, EmfPlusCompressed {
-        /**
-         * If set, brushId specifies a color as an EmfPlusARGB object.
-         * If clear, brushId contains the index of an EmfPlusBrush object in the EMF+ Object Table.
-         */
-        private static final BitField SOLID_COLOR = BitFieldFactory.getInstance(0x8000);
-
+    public static class EmfPlusFillRects implements HemfPlusRecord, EmfPlusCompressed, EmfPlusSolidColor {
         private int flags;
         private int brushId;
         private final ArrayList<Rectangle2D> rectData = new ArrayList<>();
@@ -197,6 +260,29 @@ public class HemfPlusDraw {
             }
 
             return size;
+        }
+
+        @Override
+        public void draw(HemfGraphics ctx) {
+            applyColor(ctx);
+
+            Area area = new Area();
+            rectData.stream().map(Area::new).forEach(area::add);
+            ctx.fill(area);
+        }
+
+        @Override
+        public int getBrushIdValue() {
+            return brushId;
+        }
+
+        @Override
+        public String toString() {
+            return
+                "{ flags: "+flags+
+                ", brushId: "+brushId+
+                ", rectData: "+rectData.stream().map(HwmfDraw::boundsToString).collect(joining(",", "{", "}"))+
+                "}";
         }
     }
 
@@ -302,6 +388,58 @@ public class HemfPlusDraw {
 
             return size;
         }
+
+        @Override
+        public void draw(HemfGraphics ctx) {
+            HemfDrawProperties prop = ctx.getProperties();
+
+            ctx.applyObjectTableEntry(imageAttributesID);
+            ctx.applyObjectTableEntry(getObjectId());
+
+            AffineTransform txSaved = ctx.getTransform(), tx = new AffineTransform(txSaved);
+            try {
+                tx.concatenate(trans);
+                ctx.setTransform(tx);
+
+                EmfPlusObject imgObj = (EmfPlusObject)ctx.getObjectTableEntry(getObjectId());
+                EmfPlusImage img = imgObj.getObjectData();
+                Rectangle2D srcBounds = img.getBounds(imgObj.getContinuedObject());
+                BufferedImage bi = prop.getEmfPlusImage();
+
+                prop.setRasterOp(HwmfTernaryRasterOp.SRCCOPY);
+                prop.setBkMode(HwmfBkMode.TRANSPARENT);
+
+                // the buffered image might be rescaled, so we need to calculate a new src rect to take
+                // the image data from
+                AffineTransform srcTx = new AffineTransform();
+                srcTx.translate(-srcBounds.getX(), srcBounds.getY());
+                srcTx.scale(bi.getWidth()/srcBounds.getWidth(), bi.getHeight()/srcBounds.getHeight());
+                srcTx.translate(bi.getMinX(), bi.getMinY());
+
+                Rectangle2D biRect = srcTx.createTransformedShape(srcRect).getBounds2D();
+
+                // TODO: handle srcUnit
+                Rectangle2D destRect = new Rectangle2D.Double(0, 0, biRect.getWidth(), biRect.getHeight());
+                ctx.drawImage(bi, srcRect, destRect);
+            } finally {
+                ctx.setTransform(txSaved);
+            }
+        }
+
+        @Override
+        public String toString() {
+            return
+                "{ flags: "+flags+
+                ", imageAttributesID: "+imageAttributesID+
+                ", srcUnit: '"+srcUnit+"'"+
+                ", srcRect: "+boundsToString(srcRect)+
+                ", upperLeft: "+pointToString(upperLeft)+
+                ", lowerLeft: "+pointToString(lowerLeft)+
+                ", lowerRight: "+pointToString(lowerRight)+
+                ", transform: "+xformToString(trans)+
+                "}"
+                ;
+        }
     }
 
     /** The EmfPlusDrawImage record specifies drawing a scaled image. */
@@ -347,12 +485,34 @@ public class HemfPlusDraw {
 
             return size;
         }
+
+        @Override
+        public void draw(HemfGraphics ctx) {
+            ctx.applyObjectTableEntry(imageAttributesID);
+            ctx.applyObjectTableEntry(getObjectId());
+
+            HemfDrawProperties prop = ctx.getProperties();
+            prop.setRasterOp(HwmfTernaryRasterOp.SRCCOPY);
+            prop.setBkMode(HwmfBkMode.TRANSPARENT);
+
+            ctx.drawImage(prop.getEmfPlusImage(), srcRect, rectData);
+        }
+
+        @Override
+        public String toString() {
+            return
+                "{ flags: "+flags+
+                ", imageAttributesID: "+imageAttributesID+
+                ", srcUnit: '"+srcUnit+"'"+
+                ", srcRect: "+boundsToString(srcRect)+
+                ", rectData: "+boundsToString(rectData)+
+                "}"
+                ;
+        }
     }
 
     /** The EmfPlusFillRegion record specifies filling the interior of a graphics region. */
-    public static class EmfPlusFillRegion implements HemfPlusRecord {
-        private static final BitField SOLID_COLOR = BitFieldFactory.getInstance(0x8000);
-
+    public static class EmfPlusFillRegion implements HemfPlusRecord, EmfPlusSolidColor, EmfPlusObjectId {
         private int flags;
         private int brushId;
 
@@ -366,16 +526,9 @@ public class HemfPlusDraw {
             return flags;
         }
 
-        public boolean isSolidColor() {
-            return SOLID_COLOR.isSet(getFlags());
-        }
-
-        public int getBrushId() {
-            return (isSolidColor()) ? -1 : brushId;
-        }
-
-        public Color getSolidColor() {
-            return (isSolidColor()) ? readARGB(brushId) : null;
+        @Override
+        public int getBrushIdValue() {
+            return brushId;
         }
 
         @Override
@@ -390,6 +543,21 @@ public class HemfPlusDraw {
 
             return LittleEndianConsts.INT_SIZE;
         }
+
+        @Override
+        public void draw(HemfGraphics ctx) {
+            applyColor(ctx);
+            ctx.applyObjectTableEntry(getObjectId());
+            HemfDrawProperties prop = ctx.getProperties();
+            ctx.fill(prop.getPath());
+        }
+
+        @Override
+        public String toString() {
+            return
+                "{ flags: "+flags+
+                ", brushId: "+brushId+" }";
+        }
     }
 
     /** The EmfPlusFillPath record specifies filling the interior of a graphics path. */
@@ -403,13 +571,7 @@ public class HemfPlusDraw {
     }
 
     /** The EmfPlusDrawDriverString record specifies text output with character positions. */
-    public static class EmfPlusDrawDriverString implements HemfPlusRecord, EmfPlusObjectId {
-        /**
-         * If set, brushId specifies a color as an EmfPlusARGB object.
-         * If clear, brushId contains the index of an EmfPlusBrush object in the EMF+ Object Table.
-         */
-        private static final BitField SOLID_COLOR = BitFieldFactory.getInstance(0x8000);
-
+    public static class EmfPlusDrawDriverString implements HemfPlusRecord, EmfPlusObjectId, EmfPlusSolidColor {
         /**
          * If set, the positions of character glyphs SHOULD be specified in a character map lookup table.
          * If clear, the glyph positions SHOULD be obtained from an array of coordinates.
@@ -451,6 +613,11 @@ public class HemfPlusDraw {
         @Override
         public int getFlags() {
             return flags;
+        }
+
+        @Override
+        public int getBrushIdValue() {
+            return brushId;
         }
 
         @Override
@@ -615,7 +782,7 @@ public class HemfPlusDraw {
     }
 
     static Color readARGB(int argb) {
-        return new Color(  (argb >>> 8) & 0xFF, (argb >>> 16) & 0xFF, (argb >>> 24) & 0xFF, argb & 0xFF);
+        return new Color((argb >>> 16) & 0xFF, (argb >>> 8) & 0xFF, argb & 0xFF, (argb >>> 24) & 0xFF);
     }
 
 }

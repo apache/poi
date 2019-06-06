@@ -17,9 +17,10 @@
 
 package org.apache.poi.hemf.draw;
 
-import java.awt.Shape;
 import java.awt.geom.Path2D;
+import java.awt.image.BufferedImage;
 
+import org.apache.poi.hemf.record.emfplus.HemfPlusBrush.EmfPlusHatchStyle;
 import org.apache.poi.hwmf.draw.HwmfDrawProperties;
 
 public class HemfDrawProperties extends HwmfDrawProperties {
@@ -27,6 +28,8 @@ public class HemfDrawProperties extends HwmfDrawProperties {
     /** Path for path bracket operations */
     protected Path2D path = null;
     protected boolean usePathBracket = false;
+    private EmfPlusHatchStyle emfPlusBrushHatch;
+    private BufferedImage emfPlusImage;
 
 
     public HemfDrawProperties() {
@@ -35,8 +38,11 @@ public class HemfDrawProperties extends HwmfDrawProperties {
     public HemfDrawProperties(HemfDrawProperties other) {
         super(other);
         path = (other.path != null) ? (Path2D)other.path.clone() : null;
+        usePathBracket = other.usePathBracket;
+        emfPlusBrushHatch = other.emfPlusBrushHatch;
         // TODO: check how to clone
         clip = other.clip;
+        emfPlusImage = other.emfPlusImage;
     }
 
     /**
@@ -65,5 +71,21 @@ public class HemfDrawProperties extends HwmfDrawProperties {
 
     public void setUsePathBracket(boolean usePathBracket) {
         this.usePathBracket = usePathBracket;
+    }
+
+    public EmfPlusHatchStyle getEmfPlusBrushHatch() {
+        return emfPlusBrushHatch;
+    }
+
+    public void setEmfPlusBrushHatch(EmfPlusHatchStyle emfPlusBrushHatch) {
+        this.emfPlusBrushHatch = emfPlusBrushHatch;
+    }
+
+    public BufferedImage getEmfPlusImage() {
+        return emfPlusImage;
+    }
+
+    public void setEmfPlusImage(BufferedImage emfPlusImage) {
+        this.emfPlusImage = emfPlusImage;
     }
 }

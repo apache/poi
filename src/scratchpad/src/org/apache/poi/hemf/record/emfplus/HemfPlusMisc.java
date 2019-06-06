@@ -17,6 +17,7 @@
 
 package org.apache.poi.hemf.record.emfplus;
 
+import static org.apache.poi.hemf.record.emf.HemfMisc.adaptXForm;
 import static org.apache.poi.hemf.record.emfplus.HemfPlusDraw.readRectF;
 
 import java.awt.geom.AffineTransform;
@@ -24,10 +25,10 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 
+import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.record.emf.HemfFill;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
@@ -134,6 +135,12 @@ public class HemfPlusMisc {
      * SHOULD be processed.
      */
     public static class EmfPlusGetDC extends EmfPlusFlagOnly {
+        @Override
+        public void draw(HemfGraphics ctx) {
+            if (ctx.getRenderState() == HemfGraphics.EmfRenderState.EMFPLUS_ONLY) {
+                ctx.setRenderState(HemfGraphics.EmfRenderState.EMF_DCONTEXT);
+            }
+        }
     }
 
     /**
@@ -174,6 +181,18 @@ public class HemfPlusMisc {
 
             return HemfFill.readXForm(leis, matrixData);
         }
+
+        public AffineTransform getMatrixData() {
+            return matrixData;
+        }
+
+        @Override
+        public void draw(HemfGraphics ctx) {
+            ctx.updateWindowMapMode();
+            AffineTransform tx = ctx.getTransform();
+            tx.concatenate(getMatrixData());
+            ctx.setTransform(tx);
+        }
     }
 
     /**
@@ -184,6 +203,15 @@ public class HemfPlusMisc {
         @Override
         public HemfPlusRecordType getEmfPlusRecordType() {
             return HemfPlusRecordType.multiplyWorldTransform;
+        }
+
+        @Override
+        public void draw(HemfGraphics ctx) {
+            ctx.updateWindowMapMode();
+            AffineTransform tx = ctx.getTransform();
+            tx.preConcatenate(adaptXForm(getMatrixData(), tx));
+            tx.concatenate(getMatrixData());
+            ctx.setTransform(tx);
         }
     }
 

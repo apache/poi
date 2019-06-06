@@ -17,8 +17,10 @@
 
 package org.apache.poi.hwmf.draw;
 
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.Paint;
@@ -132,6 +134,9 @@ public class HwmfGraphics {
 
     public void fill(Shape shape) {
         HwmfDrawProperties prop = getProperties();
+
+        Composite old = graphicsCtx.getComposite();
+        graphicsCtx.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
         if (prop.getBrushStyle() != HwmfBrushStyle.BS_NULL) {
             if (prop.getBkMode() == HwmfBkMode.OPAQUE) {
                 graphicsCtx.setPaint(prop.getBackgroundColor().getColor());
@@ -141,20 +146,22 @@ public class HwmfGraphics {
             graphicsCtx.setPaint(getFill());
             graphicsCtx.fill(shape);
         }
+        graphicsCtx.setComposite(old);
 
         draw(shape);
     }
 
     protected BasicStroke getStroke() {
+        HwmfDrawProperties prop = getProperties();
+        HwmfPenStyle ps = prop.getPenStyle();
         // TODO: fix line width calculation
-        float width = (float)getProperties().getPenWidth();
+        float width = (float)prop.getPenWidth();
         if (width == 0) {
             width = 1;
         }
-        HwmfPenStyle ps = getProperties().getPenStyle();
         int cap = ps.getLineCap().awtFlag;
         int join = ps.getLineJoin().awtFlag;
-        float miterLimit = (float)getProperties().getPenMiterLimit();
+        float miterLimit = (float)prop.getPenMiterLimit();
         float[] dashes = ps.getLineDashes();
         boolean dashAlt = ps.isAlternateDash();
         // This value is not an integer index into the dash pattern array.
@@ -602,7 +609,14 @@ public class HwmfGraphics {
                 graphicsCtx.scale(dstBounds.getWidth()/srcBounds2.getWidth(), dstBounds.getHeight()/srcBounds2.getHeight());
                 graphicsCtx.translate(-srcBounds2.getX(), -srcBounds2.getY());
 
-                graphicsCtx.drawImage(img, 0, 0, prop.getBackgroundColor().getColor(), null);
+                if (prop.getBkMode() == HwmfBkMode.OPAQUE) {
+                    graphicsCtx.drawImage(img, 0, 0, prop.getBackgroundColor().getColor(), null);
+                } else {
+                    Composite old = graphicsCtx.getComposite();
+                    graphicsCtx.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+                    graphicsCtx.drawImage(img, 0, 0, null);
+                    graphicsCtx.setComposite(old);
+                }
 
                 graphicsCtx.setTransform(at);
                 graphicsCtx.setClip(clip);

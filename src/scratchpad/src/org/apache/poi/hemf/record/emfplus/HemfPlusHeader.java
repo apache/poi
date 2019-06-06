@@ -20,6 +20,8 @@ package org.apache.poi.hemf.record.emfplus;
 
 import java.io.IOException;
 
+import org.apache.poi.hemf.draw.HemfGraphics;
+import org.apache.poi.hemf.draw.HemfGraphics.EmfRenderState;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.Internal;
@@ -85,6 +87,19 @@ public class HemfPlusHeader implements HemfPlusRecord {
         return version;
     }
 
+    /**
+     * If set, this flag indicates that this metafile is "dual-mode", which means that it contains two sets of records,
+     * each of which completely specifies the graphics content. If clear, the graphics content is specified by EMF+
+     * records, and possibly EMF records that are preceded by an EmfPlusGetDC record. If this flag is set, EMF records
+     * alone SHOULD suffice to define the graphics content. Note that whether the "dual-mode" flag is set or not, some
+     * EMF records are always present, namely EMF control records and the EMF records that contain EMF+ records.
+     *
+     * @return {@code true} if dual-mode is enabled
+     */
+    public boolean isEmfPlusDualMode() {
+        return (emfPlusFlags & 1) == 1;
+    }
+
     public long getEmfPlusFlags() {
         return emfPlusFlags;
     }
@@ -95,6 +110,13 @@ public class HemfPlusHeader implements HemfPlusRecord {
 
     public long getLogicalDpiY() {
         return logicalDpiY;
+    }
+
+    @Override
+    public void draw(HemfGraphics ctx) {
+        // currently EMF is better supported than EMF+ ... so if there's a complete set of EMF records available,
+        // disable EMF+ rendering for now
+        ctx.setRenderState(isEmfPlusDualMode() ? EmfRenderState.EMF_ONLY : EmfRenderState.EMFPLUS_ONLY);
     }
 
     @Override

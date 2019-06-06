@@ -21,6 +21,7 @@ import static org.apache.poi.hwmf.record.HwmfDraw.boundsToString;
 import static org.apache.poi.hwmf.record.HwmfDraw.normalizeBounds;
 
 import java.awt.Shape;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Path2D;
@@ -34,6 +35,7 @@ import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hwmf.draw.HwmfGraphics.FillDrawStyle;
 import org.apache.poi.hwmf.record.HwmfDraw;
 import org.apache.poi.hwmf.record.HwmfDraw.WmfSelectObject;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
@@ -1152,5 +1154,17 @@ public class HemfDraw {
         }
 
         ctx.draw((path) -> path.append(pi, true), fillDrawStyle);
+    }
+
+
+    @Internal
+    public static String xformToString(AffineTransform xForm) {
+        return (xForm == null) ? "null" :
+            "{ scaleX: "+xForm.getScaleX()+
+            ", shearX: "+xForm.getShearX()+
+            ", transX: "+xForm.getTranslateX()+
+            ", scaleY: "+xForm.getScaleY()+
+            ", shearY: "+xForm.getShearY()+
+            ", transY: "+xForm.getTranslateY()+" }";
     }
 }

@@ -19,6 +19,7 @@ package org.apache.poi.hemf.record.emf;
 
 import static org.apache.poi.hemf.record.emf.HemfDraw.readPointL;
 import static org.apache.poi.hemf.record.emf.HemfDraw.readRectL;
+import static org.apache.poi.hemf.record.emf.HemfDraw.xformToString;
 import static org.apache.poi.hemf.record.emf.HemfRecordIterator.HEADER_SIZE;
 import static org.apache.poi.hwmf.record.HwmfDraw.boundsToString;
 import static org.apache.poi.hwmf.record.HwmfDraw.pointToString;
@@ -186,7 +187,7 @@ public class HemfFill {
         public String toString() {
             return
                 "{ bounds: "+boundsToString(bounds)+
-                ", xFormSrc: { scaleX: "+xFormSrc.getScaleX()+", shearX: "+xFormSrc.getShearX()+", transX: "+xFormSrc.getTranslateX()+", scaleY: "+xFormSrc.getScaleY()+", shearY: "+xFormSrc.getShearY()+", transY: "+xFormSrc.getTranslateY()+" }"+
+                ", xFormSrc: " + xformToString(xFormSrc) +
                 ", bkColorSrc: "+bkColorSrc+
                 ","+super.toString().substring(1);
         }
@@ -704,6 +705,10 @@ public class HemfFill {
         double m12 = leis.readFloat();
 
         xform.setTransform(m00, m10, m01, m11, m02, m12);
+
+        if (xform.isIdentity()) {
+            xform.setToIdentity();
+        }
 
         return 6 * LittleEndian.INT_SIZE;
     }

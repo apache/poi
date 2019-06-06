@@ -20,18 +20,45 @@ package org.apache.poi.hemf.record.emfplus;
 import static org.apache.poi.hemf.record.emfplus.HemfPlusDraw.readARGB;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.Transparency;
+import java.awt.color.ColorSpace;
+import java.awt.geom.Dimension2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.awt.image.ComponentColorModel;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferByte;
+import java.awt.image.PixelInterleavedSampleModel;
+import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.List;
+import java.util.function.BiConsumer;
 
+import javax.imageio.ImageIO;
+
+import org.apache.poi.hemf.draw.HemfDrawProperties;
+import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.record.emfplus.HemfPlusHeader.EmfPlusGraphicsVersion;
 import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectData;
 import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectType;
+import org.apache.poi.hemf.usermodel.HemfPicture;
+import org.apache.poi.hwmf.usermodel.HwmfPicture;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
+import org.apache.poi.util.Units;
 
 public class HemfPlusImage {
+    /** Maximum image dimension for converting embedded metafiles */
+    private static final int MAX_IMAGE_SIZE = 1500;
+
     /** The ImageDataType enumeration defines types of image data formats. */
     public enum EmfPlusImageDataType {
         /** The type of image is not known. */
@@ -302,7 +329,7 @@ public class HemfPlusImage {
             leis.mark(LittleEndianConsts.INT_SIZE);
             long size = graphicsVersion.init(leis);
 
-            if (graphicsVersion.getGraphicsVersion() == null || graphicsVersion.getMetafileSignature() != 0xDBC01) {
+            if (isContinuedRecord()) {
                 // CONTINUABLE is not always correctly set, so we check the version field if this record is continued
                 imageDataType = EmfPlusImageDataType.CONTINUED;
                 leis.reset();
@@ -385,7 +412,192 @@ public class HemfPlusImage {
 
             return size + fileSize;
         }
+
+        @Override
+        public EmfPlusGraphicsVersion getGraphicsVersion() {
+            return graphicsVersion;
+        }
+
+        public Rectangle2D getBounds(List<? extends EmfPlusObjectData> continuedObjectData) {
+            try {
+                switch (getImageDataType()) {
+                    case BITMAP:
+                        if (getBitmapType() == EmfPlusBitmapDataType.PIXEL) {
+                            return new Rectangle2D.Double(0, 0, bitmapWidth, bitmapHeight);
+                        } else {
+                            BufferedImage bi = ImageIO.read(new ByteArrayInputStream(getRawData(continuedObjectData)));
+                            return new Rectangle2D.Double(bi.getMinX(), bi.getMinY(), bi.getWidth(), bi.getHeight());
+                        }
+                    case METAFILE:
+                        ByteArrayInputStream bis = new ByteArrayInputStream(getRawData(continuedObjectData));
+                        switch (getMetafileType()) {
+                            case Wmf:
+                            case WmfPlaceable:
+                                HwmfPicture wmf = new HwmfPicture(bis);
+                                return wmf.getBounds();
+                            case Emf:
+                            case EmfPlusDual:
+                            case EmfPlusOnly:
+                                HemfPicture emf = new HemfPicture(bis);
+                                return emf.getBounds();
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            } catch (Exception ignored) {
+            }
+            return new Rectangle2D.Double(1,1,1,1);
+        }
+
+        public byte[] getRawData(List<? extends EmfPlusObjectData> continuedObjectData) {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            try {
+                bos.write(getImageData());
+                if (continuedObjectData != null) {
+                    for (EmfPlusObjectData od : continuedObjectData) {
+                        bos.write(((EmfPlusImage)od).getImageData());
+                    }
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            return bos.toByteArray();
+        }
+
+        @Override
+        public void applyObject(HemfGraphics ctx, List<? extends EmfPlusObjectData> continuedObjectData) {
+            HemfDrawProperties prop = ctx.getProperties();
+            BufferedImage bi = readImage(getRawData(continuedObjectData));
+            prop.setEmfPlusImage(bi);
+        }
+
+        /**
+         * Converts the gdi pixel data to a buffered image
+         * @param data the image data of all EmfPlusImage parts
+         * @return the BufferedImage
+         */
+        public BufferedImage readGDIImage(final byte[] data) {
+            if (getImageDataType() != EmfPlusImageDataType.BITMAP || getBitmapType() != EmfPlusBitmapDataType.PIXEL) {
+                throw new RuntimeException("image data is not a GDI image");
+            }
+
+            final int width = getBitmapWidth();
+            final int height = getBitmapHeight();
+            final int stride = getBitmapStride();
+            final EmfPlusPixelFormat pf = getPixelFormat();
+
+            int[] nBits, bOffs;
+            switch (pf) {
+                case ARGB_32BPP:
+                    nBits = new int[]{8, 8, 8, 8};
+                    bOffs = new int[]{2, 1, 0, 3};
+                    break;
+                case RGB_24BPP:
+                    nBits = new int[]{8, 8, 8};
+                    bOffs = new int[]{2, 1, 0};
+                    break;
+                default:
+                    throw new RuntimeException("not yet implemented");
+            }
+
+            ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
+            ComponentColorModel cm = new ComponentColorModel
+                    (cs, nBits, pf.isAlpha(), pf.isPreMultiplied(), Transparency.TRANSLUCENT, DataBuffer.TYPE_BYTE);
+            PixelInterleavedSampleModel csm =
+                    new PixelInterleavedSampleModel(cm.getTransferType(), width, height, cm.getNumComponents(), stride, bOffs);
+
+            DataBufferByte dbb = new DataBufferByte(data, data.length);
+            WritableRaster raster = (WritableRaster) Raster.createRaster(csm, dbb, null);
+
+            return new BufferedImage(cm, raster, cm.isAlphaPremultiplied(), null);
+        }
+
+        private BufferedImage readImage(final byte[] data) {
+            // TODO: instead of returning a BufferedImage, we might return a pair of raw data + image renderer
+            // instead, so metafiles aren't pixelated, but directly written to the output graphics context
+            try {
+                switch (getImageDataType()) {
+                    case BITMAP: {
+                        BufferedImage bi = (getBitmapType() == EmfPlusBitmapDataType.PIXEL)
+                                ? readGDIImage(data)
+                                : ImageIO.read(new ByteArrayInputStream(data));
+
+//                        final int w = bi.getWidth();
+//                        final int h = bi.getHeight();
+//
+//                        int[] line = new int[w];
+//
+//                        WritableRaster wr = bi.getRaster();
+//                        for (int row=0; row<h; row++) {
+//                            wr.get
+//                            for (int x=0; x<w; x++) {
+//                                // TODO: use clamp color here
+//                                if ((line[x] & 0xFFFFFF) == 0) {
+//                                    // make it transparent
+//                                    line[x] &= 0xFFFFFF;
+//                                }
+//                            }
+//                            wr.setPixels(0, row, w, 1, line);
+//                        }
+
+
+                        return bi;
+                    }
+                    case METAFILE:
+                        assert (getMetafileType() != null);
+                        switch (getMetafileType()) {
+                            case Wmf:
+                            case WmfPlaceable:
+                                HwmfPicture wmf = new HwmfPicture(new ByteArrayInputStream(data));
+                                return readImage(wmf.getSize(), wmf::draw);
+
+                            case Emf:
+                            case EmfPlusDual:
+                            case EmfPlusOnly:
+                                HemfPicture emf = new HemfPicture(new ByteArrayInputStream(data));
+                                return readImage(emf.getSize(), emf::draw);
+
+                            default:
+                                break;
+                        }
+                    default:
+                        break;
+                }
+            } catch (IOException ignored) {
+            }
+
+            // fallback to empty image
+            return new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+        }
+
+        private BufferedImage readImage(final Dimension2D dim, final BiConsumer<Graphics2D,Rectangle2D> draw) {
+            int width = Units.pointsToPixel(dim.getWidth());
+            // keep aspect ratio for height
+            int height = Units.pointsToPixel(dim.getHeight());
+            double longSide = Math.max(width,height);
+            if (longSide > MAX_IMAGE_SIZE) {
+                double scale = MAX_IMAGE_SIZE / longSide;
+                width *= scale;
+                height *= scale;
+            }
+
+            BufferedImage bufImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = bufImg.createGraphics();
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+            g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+
+            draw.accept(g, new Rectangle2D.Double(0, 0, width, height));
+
+            g.dispose();
+
+            return bufImg;
+        }
     }
+
+
 
     public static class EmfPlusImageAttributes implements EmfPlusObjectData {
         private final EmfPlusGraphicsVersion graphicsVersion = new EmfPlusGraphicsVersion();
@@ -433,6 +645,10 @@ public class HemfPlusImage {
 
         public EmfPlusObjectClamp getObjectClamp() {
             return objectClamp;
+        }
+
+        @Override
+        public void applyObject(HemfGraphics ctx, List<? extends EmfPlusObjectData> continuedObjectData) {
         }
     }
 

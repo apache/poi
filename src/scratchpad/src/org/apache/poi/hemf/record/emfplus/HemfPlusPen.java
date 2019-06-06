@@ -23,12 +23,17 @@ import static org.apache.poi.hemf.record.emfplus.HemfPlusDraw.readPointF;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.io.IOException;
+import java.util.List;
 import java.util.function.Consumer;
 
+import org.apache.poi.hemf.draw.HemfDrawProperties;
+import org.apache.poi.hemf.draw.HemfGraphics;
+import org.apache.poi.hemf.record.emfplus.HemfPlusDraw.EmfPlusUnitType;
 import org.apache.poi.hemf.record.emfplus.HemfPlusHeader.EmfPlusGraphicsVersion;
 import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectData;
 import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectType;
 import org.apache.poi.hemf.record.emfplus.HemfPlusPath.EmfPlusPath;
+import org.apache.poi.hwmf.record.HwmfPenStyle;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.Internal;
@@ -215,6 +220,13 @@ public class HemfPlusPen {
         }
     }
 
+
+    @Internal
+    public interface EmfPlusCustomLineCap {
+        long init(LittleEndianInputStream leis) throws IOException;
+    }
+
+
     public static class EmfPlusPen implements EmfPlusObjectData {
 
 
@@ -283,16 +295,17 @@ public class HemfPlusPen {
 
         private int type;
         private int penDataFlags;
-        private HemfPlusDraw.EmfPlusUnitType unitType;
+        private EmfPlusUnitType unitType;
         private double penWidth;
-        private AffineTransform trans;
-        private EmfPlusLineCapType startCap, endCap;
-        private EmfPlusLineJoin join;
-        private Double mitterLimit;
-        private EmfPlusLineStyle style;
-        EmfPlusDashedLineCapType dashedLineCapType;
+        private final AffineTransform trans = new AffineTransform();
+        private EmfPlusLineCapType startCap = EmfPlusLineCapType.FLAT;
+        private EmfPlusLineCapType endCap = startCap;
+        private EmfPlusLineJoin join = EmfPlusLineJoin.ROUND;
+        private Double miterLimit = 1.;
+        private EmfPlusLineStyle style = EmfPlusLineStyle.SOLID;
+        private EmfPlusDashedLineCapType dashedLineCapType;
         private Double dashOffset;
-        private double[] dashedLineData;
+        private float[] dashedLineData;
         private EmfPlusPenAlignment penAlignment;
         private double[] compoundLineData;
         private EmfPlusCustomLineCap customStartCap;
@@ -310,17 +323,16 @@ public class HemfPlusPen {
             penDataFlags = leis.readInt();
             // A 32-bit unsigned integer that specifies the measuring units for the pen.
             // The value MUST be from the UnitType enumeration
-            unitType = HemfPlusDraw.EmfPlusUnitType.valueOf(leis.readInt());
+            unitType = EmfPlusUnitType.valueOf(leis.readInt());
             // A 32-bit floating-point value that specifies the width of the line drawn by the pen in the units specified
             // by the PenUnit field. If a zero width is specified, a minimum value is used, which is determined by the units.
             penWidth = leis.readFloat();
-            size += 4* LittleEndianConsts.INT_SIZE;
+            size += 4*LittleEndianConsts.INT_SIZE;
 
             if (TRANSFORM.isSet(penDataFlags)) {
                 // An optional EmfPlusTransformMatrix object that specifies a world space to device space transform for
                 // the pen. This field MUST be present if the PenDataTransform flag is set in the PenDataFlags field of
                 // the EmfPlusPenData object.
-                trans = new AffineTransform();
                 size += readXForm(leis, trans);
             }
 
@@ -354,7 +366,7 @@ public class HemfPlusPen {
                 // line walls on the inside the join to the intersection of the line walls outside the join. The miter
                 // length can be large when the angle between two lines is small. This field MUST be present if the
                 // PenDataMiterLimit flag is set in the PenDataFlags field of the EmfPlusPenData object.
-                mitterLimit = (double)leis.readFloat();
+                miterLimit = (double)leis.readFloat();
                 size += LittleEndianConsts.INT_SIZE;
             }
 
@@ -390,7 +402,7 @@ public class HemfPlusPen {
                 }
 
                 // An array of DashedLineDataSize floating-point values that specify the lengths of the dashes and spaces in a dashed line.
-                dashedLineData = new double[dashesSize];
+                dashedLineData = new float[dashesSize];
                 for (int i=0; i<dashesSize; i++) {
                     dashedLineData[i] = leis.readFloat();
                 }
@@ -435,6 +447,11 @@ public class HemfPlusPen {
             return size;
         }
 
+        @Override
+        public EmfPlusGraphicsVersion getGraphicsVersion() {
+            return graphicsVersion;
+        }
+
         private long initCustomCap(Consumer<EmfPlusCustomLineCap> setter, LittleEndianInputStream leis) throws IOException {
             EmfPlusGraphicsVersion version = new EmfPlusGraphicsVersion();
             long size = version.init(leis);
@@ -450,153 +467,209 @@ public class HemfPlusPen {
             return size;
         }
 
-        @Internal
-        public interface EmfPlusCustomLineCap {
-            long init(LittleEndianInputStream leis) throws IOException;
-        }
+        @Override
+        public void applyObject(HemfGraphics ctx, List<? extends EmfPlusObjectData> continuedObjectData) {
+            final HemfDrawProperties prop = ctx.getProperties();
+            // TOOD:
+            // - set width according unit type
+            // - provide logic for different start and end cap
+            // - provide standard caps like diamondd
+            // - support custom caps
 
-        public static class EmfPlusPathArrowCap implements EmfPlusCustomLineCap {
-            /**
-             * If set, an EmfPlusFillPath object MUST be specified in the OptionalData field of the
-             * EmfPlusCustomLineCapData object for filling the custom line cap.
-             */
-            private static final BitField FILL_PATH = BitFieldFactory.getInstance(0x00000001);
-            /**
-             * If set, an EmfPlusLinePath object MUST be specified in the OptionalData field of the
-             * EmfPlusCustomLineCapData object for outlining the custom line cap.
-             */
-            private static final BitField LINE_PATH = BitFieldFactory.getInstance(0x00000002);
-
-
-            private int dataFlags;
-            private EmfPlusLineCapType baseCap;
-            private double baseInset;
-            private EmfPlusLineCapType startCap;
-            private EmfPlusLineCapType endCap;
-            private EmfPlusLineJoin join;
-            private double mitterLimit;
-            private double widthScale;
-            private final Point2D fillHotSpot = new Point2D.Double();
-            private final Point2D lineHotSpot = new Point2D.Double();
-            private EmfPlusPath fillPath;
-            private EmfPlusPath outlinePath;
-
-            @Override
-            public long init(LittleEndianInputStream leis) throws IOException {
-                // A 32-bit unsigned integer that specifies the data in the OptionalData field.
-                // This value MUST be composed of CustomLineCapData flags
-                dataFlags = leis.readInt();
-
-                // A 32-bit unsigned integer that specifies the value from the LineCap enumeration on which
-                // the custom line cap is based.
-                baseCap = EmfPlusLineCapType.valueOf(leis.readInt());
-
-                // A 32-bit floating-point value that specifies the distance between the
-                // beginning of the line cap and the end of the line.
-                baseInset = leis.readFloat();
-
-                // A 32-bit unsigned integer that specifies the value in the LineCap enumeration that indicates the line
-                // cap used at the start/end of the line to be drawn.
-                startCap = EmfPlusLineCapType.valueOf(leis.readInt());
-                endCap = EmfPlusLineCapType.valueOf(leis.readInt());
-
-                // A 32-bit unsigned integer that specifies the value in the LineJoin enumeration, which specifies how
-                // to join two lines that are drawn by the same pen and whose ends meet. At the intersection of the two
-                // line ends, a line join makes the connection look more continuous.
-                join = EmfPlusLineJoin.valueOf(leis.readInt());
-
-                // A 32-bit floating-point value that contains the limit of the thickness of the join on a mitered corner
-                // by setting the maximum allowed ratio of miter length to line width.
-                mitterLimit = leis.readFloat();
-
-                // A 32-bit floating-point value that specifies the amount by which to scale the custom line cap with
-                // respect to the width of the EmfPlusPen object that is used to draw the lines.
-                widthScale = leis.readFloat();
-
-                int size = 8* LittleEndianConsts.INT_SIZE;
-
-                // An EmfPlusPointF object that is not currently used. It MUST be set to {0.0, 0.0}.
-                size += readPointF(leis, fillHotSpot);
-                size += readPointF(leis, lineHotSpot);
-
-                if (FILL_PATH.isSet(dataFlags)) {
-                    fillPath = new EmfPlusPath();
-                    size += fillPath.init(leis, -1, null, -1);
+            // workaround for too wide pens ... just arbitrary reduce high values ...
+            prop.setPenWidth(penWidth > 20 ? 1 : penWidth);
+            prop.setPenStyle(new HwmfPenStyle(){
+                @Override
+                public HwmfLineCap getLineCap() {
+                    // ignore endCap for now
+                    switch(startCap) {
+                        default:
+                        case FLAT:
+                            return HwmfLineCap.FLAT;
+                        case ROUND:
+                            return HwmfLineCap.ROUND;
+                        case SQUARE:
+                            return HwmfLineCap.SQUARE;
+                    }
                 }
 
-                if (LINE_PATH.isSet(dataFlags)) {
-                    outlinePath = new EmfPlusPath();
-                    size += outlinePath.init(leis, -1, null, -1);
+                @Override
+                public HwmfLineJoin getLineJoin() {
+                    switch (join) {
+                        default:
+                        case BEVEL:
+                            return HwmfLineJoin.BEVEL;
+                        case ROUND:
+                            return HwmfLineJoin.ROUND;
+                        case MITER_CLIPPED:
+                        case MITER:
+                            return HwmfLineJoin.MITER;
+                    }
                 }
 
-                return size;
-            }
+                @Override
+                public HwmfLineDash getLineDash() {
+                    return dashedLineData == null ? HwmfLineDash.SOLID : HwmfLineDash.USERSTYLE;
+                }
+
+                @Override
+                public float[] getLineDashes() {
+                    return dashedLineData;
+                }
+
+                @Override
+                public boolean isAlternateDash() {
+                    return (getLineDash() != HwmfLineDash.SOLID && dashOffset != null && dashOffset == 0);
+                }
+
+                @Override
+                public boolean isGeometric() {
+                    return (unitType == EmfPlusUnitType.World || unitType == EmfPlusUnitType.Display);
+                }
+            });
         }
+    }
 
-        public static class EmfPlusAdjustableArrowCap implements EmfPlusCustomLineCap {
-            private double width;
-            private double height;
-            private double middleInset;
-            private boolean isFilled;
-            private EmfPlusLineCapType startCap;
-            private EmfPlusLineCapType endCap;
-            private EmfPlusLineJoin join;
-            private double mitterLimit;
-            private double widthScale;
-            private final Point2D fillHotSpot = new Point2D.Double();
-            private final Point2D lineHotSpot = new Point2D.Double();
+    public static class EmfPlusPathArrowCap implements EmfPlusCustomLineCap {
+        /**
+         * If set, an EmfPlusFillPath object MUST be specified in the OptionalData field of the
+         * EmfPlusCustomLineCapData object for filling the custom line cap.
+         */
+        private static final BitField FILL_PATH = BitFieldFactory.getInstance(0x00000001);
+        /**
+         * If set, an EmfPlusLinePath object MUST be specified in the OptionalData field of the
+         * EmfPlusCustomLineCapData object for outlining the custom line cap.
+         */
+        private static final BitField LINE_PATH = BitFieldFactory.getInstance(0x00000002);
 
-            @Override
-            public long init(LittleEndianInputStream leis) throws IOException {
-                // A 32-bit floating-point value that specifies the width of the arrow cap.
-                // The width of the arrow cap is scaled by the width of the EmfPlusPen object that is used to draw the
-                // line being capped. For example, when drawing a capped line with a pen that has a width of 5 pixels,
-                // and the adjustable arrow cap object has a width of 3, the actual arrow cap is drawn 15 pixels wide.
-                width = leis.readFloat();
 
-                // A 32-bit floating-point value that specifies the height of the arrow cap.
-                // The height of the arrow cap is scaled by the width of the EmfPlusPen object that is used to draw the
-                // line being capped. For example, when drawing a capped line with a pen that has a width of 5 pixels,
-                // and the adjustable arrow cap object has a height of 3, the actual arrow cap is drawn 15 pixels high.
-                height = leis.readFloat();
+        private int dataFlags;
+        private EmfPlusLineCapType baseCap;
+        private double baseInset;
+        private EmfPlusLineCapType startCap;
+        private EmfPlusLineCapType endCap;
+        private EmfPlusLineJoin join;
+        private double mitterLimit;
+        private double widthScale;
+        private final Point2D fillHotSpot = new Point2D.Double();
+        private final Point2D lineHotSpot = new Point2D.Double();
+        private EmfPlusPath fillPath;
+        private EmfPlusPath outlinePath;
 
-                // A 32-bit floating-point value that specifies the number of pixels between the outline of the arrow
-                // cap and the fill of the arrow cap.
-                middleInset = leis.readFloat();
+        @Override
+        public long init(LittleEndianInputStream leis) throws IOException {
+            // A 32-bit unsigned integer that specifies the data in the OptionalData field.
+            // This value MUST be composed of CustomLineCapData flags
+            dataFlags = leis.readInt();
 
-                // A 32-bit Boolean value that specifies whether the arrow cap is filled.
-                // If the arrow cap is not filled, only the outline is drawn.
-                isFilled = (leis.readInt() != 0);
+            // A 32-bit unsigned integer that specifies the value from the LineCap enumeration on which
+            // the custom line cap is based.
+            baseCap = EmfPlusLineCapType.valueOf(leis.readInt());
 
-                // A 32-bit unsigned integer that specifies the value in the LineCap enumeration that indicates
-                // the line cap to be used at the start/end of the line to be drawn.
-                startCap = EmfPlusLineCapType.valueOf(leis.readInt());
-                endCap = EmfPlusLineCapType.valueOf(leis.readInt());
+            // A 32-bit floating-point value that specifies the distance between the
+            // beginning of the line cap and the end of the line.
+            baseInset = leis.readFloat();
 
-                // 32-bit unsigned integer that specifies the value in the LineJoin enumeration that specifies how to
-                // join two lines that are drawn by the same pen and whose ends meet. At the intersection of the two
-                // line ends, a line join makes the connection look more continuous.
-                join = EmfPlusLineJoin.valueOf(leis.readInt());
+            // A 32-bit unsigned integer that specifies the value in the LineCap enumeration that indicates the line
+            // cap used at the start/end of the line to be drawn.
+            startCap = EmfPlusLineCapType.valueOf(leis.readInt());
+            endCap = EmfPlusLineCapType.valueOf(leis.readInt());
 
-                // A 32-bit floating-point value that specifies the limit of the thickness of the join on a mitered
-                // corner by setting the maximum allowed ratio of miter length to line width.
-                mitterLimit = leis.readFloat();
+            // A 32-bit unsigned integer that specifies the value in the LineJoin enumeration, which specifies how
+            // to join two lines that are drawn by the same pen and whose ends meet. At the intersection of the two
+            // line ends, a line join makes the connection look more continuous.
+            join = EmfPlusLineJoin.valueOf(leis.readInt());
 
-                // A 32-bit floating-point value that specifies the amount by which to scale an EmfPlusCustomLineCap
-                // object with respect to the width of the graphics pen that is used to draw the lines.
-                widthScale = leis.readFloat();
+            // A 32-bit floating-point value that contains the limit of the thickness of the join on a mitered corner
+            // by setting the maximum allowed ratio of miter length to line width.
+            mitterLimit = leis.readFloat();
 
-                int size = 9 * LittleEndianConsts.INT_SIZE;
+            // A 32-bit floating-point value that specifies the amount by which to scale the custom line cap with
+            // respect to the width of the EmfPlusPen object that is used to draw the lines.
+            widthScale = leis.readFloat();
 
-                // An EmfPlusPointF object that is not currently used. It MUST be set to {0.0, 0.0}.
-                size += readPointF(leis, fillHotSpot);
+            int size = 8* LittleEndianConsts.INT_SIZE;
 
-                // An EmfPlusPointF object that is not currently used. It MUST be set to {0.0, 0.0}.
-                size += readPointF(leis, lineHotSpot);
+            // An EmfPlusPointF object that is not currently used. It MUST be set to {0.0, 0.0}.
+            size += readPointF(leis, fillHotSpot);
+            size += readPointF(leis, lineHotSpot);
 
-                return size;
+            if (FILL_PATH.isSet(dataFlags)) {
+                fillPath = new EmfPlusPath();
+                size += fillPath.init(leis, -1, null, -1);
             }
-        }
 
+            if (LINE_PATH.isSet(dataFlags)) {
+                outlinePath = new EmfPlusPath();
+                size += outlinePath.init(leis, -1, null, -1);
+            }
+
+            return size;
+        }
+    }
+
+    public static class EmfPlusAdjustableArrowCap implements EmfPlusCustomLineCap {
+        private double width;
+        private double height;
+        private double middleInset;
+        private boolean isFilled;
+        private EmfPlusLineCapType startCap;
+        private EmfPlusLineCapType endCap;
+        private EmfPlusLineJoin join;
+        private double mitterLimit;
+        private double widthScale;
+        private final Point2D fillHotSpot = new Point2D.Double();
+        private final Point2D lineHotSpot = new Point2D.Double();
+
+        @Override
+        public long init(LittleEndianInputStream leis) throws IOException {
+            // A 32-bit floating-point value that specifies the width of the arrow cap.
+            // The width of the arrow cap is scaled by the width of the EmfPlusPen object that is used to draw the
+            // line being capped. For example, when drawing a capped line with a pen that has a width of 5 pixels,
+            // and the adjustable arrow cap object has a width of 3, the actual arrow cap is drawn 15 pixels wide.
+            width = leis.readFloat();
+
+            // A 32-bit floating-point value that specifies the height of the arrow cap.
+            // The height of the arrow cap is scaled by the width of the EmfPlusPen object that is used to draw the
+            // line being capped. For example, when drawing a capped line with a pen that has a width of 5 pixels,
+            // and the adjustable arrow cap object has a height of 3, the actual arrow cap is drawn 15 pixels high.
+            height = leis.readFloat();
+
+            // A 32-bit floating-point value that specifies the number of pixels between the outline of the arrow
+            // cap and the fill of the arrow cap.
+            middleInset = leis.readFloat();
+
+            // A 32-bit Boolean value that specifies whether the arrow cap is filled.
+            // If the arrow cap is not filled, only the outline is drawn.
+            isFilled = (leis.readInt() != 0);
+
+            // A 32-bit unsigned integer that specifies the value in the LineCap enumeration that indicates
+            // the line cap to be used at the start/end of the line to be drawn.
+            startCap = EmfPlusLineCapType.valueOf(leis.readInt());
+            endCap = EmfPlusLineCapType.valueOf(leis.readInt());
+
+            // 32-bit unsigned integer that specifies the value in the LineJoin enumeration that specifies how to
+            // join two lines that are drawn by the same pen and whose ends meet. At the intersection of the two
+            // line ends, a line join makes the connection look more continuous.
+            join = EmfPlusLineJoin.valueOf(leis.readInt());
+
+            // A 32-bit floating-point value that specifies the limit of the thickness of the join on a mitered
+            // corner by setting the maximum allowed ratio of miter length to line width.
+            mitterLimit = leis.readFloat();
+
+            // A 32-bit floating-point value that specifies the amount by which to scale an EmfPlusCustomLineCap
+            // object with respect to the width of the graphics pen that is used to draw the lines.
+            widthScale = leis.readFloat();
+
+            int size = 9 * LittleEndianConsts.INT_SIZE;
+
+            // An EmfPlusPointF object that is not currently used. It MUST be set to {0.0, 0.0}.
+            size += readPointF(leis, fillHotSpot);
+
+            // An EmfPlusPointF object that is not currently used. It MUST be set to {0.0, 0.0}.
+            size += readPointF(leis, lineHotSpot);
+
+            return size;
+        }
     }
 }

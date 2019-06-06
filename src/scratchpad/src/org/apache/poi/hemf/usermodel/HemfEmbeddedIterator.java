@@ -267,36 +267,7 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
      * Compress GDIs internal format to something useful
      */
     private void compressGDIBitmap(EmfPlusImage img, HwmfEmbedded emb, HwmfEmbeddedType et) {
-        final int width = img.getBitmapWidth();
-        final int height = img.getBitmapHeight();
-        final int stride = img.getBitmapStride();
-        final EmfPlusPixelFormat pf = img.getPixelFormat();
-
-        int[] nBits, bOffs;
-        switch (pf) {
-            case ARGB_32BPP:
-                nBits = new int[]{8, 8, 8, 8};
-                bOffs = new int[]{2, 1, 0, 3};
-                break;
-            case RGB_24BPP:
-                nBits = new int[]{8, 8, 8};
-                bOffs = new int[]{2, 1, 0};
-                break;
-            default:
-                throw new RuntimeException("not yet implemented");
-        }
-
-        ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
-        ComponentColorModel cm = new ComponentColorModel
-                (cs, nBits, pf.isAlpha(), pf.isPreMultiplied(), Transparency.TRANSLUCENT, DataBuffer.TYPE_BYTE);
-        PixelInterleavedSampleModel csm =
-                new PixelInterleavedSampleModel(cm.getTransferType(), width, height, cm.getNumColorComponents(), stride, bOffs);
-
-        byte d[] = emb.getRawData();
-        WritableRaster raster = (WritableRaster) Raster.createRaster(csm, new DataBufferByte(d, d.length), null);
-
-        BufferedImage bi = new BufferedImage(cm, raster, cm.isAlphaPremultiplied(), null);
-
+        BufferedImage bi = img.readGDIImage(emb.getRawData());
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             // use HwmfEmbeddedType literal for conversion

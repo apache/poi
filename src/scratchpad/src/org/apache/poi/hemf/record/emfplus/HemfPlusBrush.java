@@ -17,27 +17,40 @@
 
 package org.apache.poi.hemf.record.emfplus;
 
+import static java.util.stream.Collectors.joining;
+import static org.apache.poi.hemf.record.emf.HemfDraw.xformToString;
 import static org.apache.poi.hemf.record.emf.HemfFill.readXForm;
 import static org.apache.poi.hemf.record.emfplus.HemfPlusDraw.readARGB;
 import static org.apache.poi.hemf.record.emfplus.HemfPlusDraw.readPointF;
 import static org.apache.poi.hemf.record.emfplus.HemfPlusDraw.readRectF;
+import static org.apache.poi.hwmf.record.HwmfDraw.boundsToString;
+import static org.apache.poi.hwmf.record.HwmfDraw.pointToString;
 
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
+import org.apache.poi.hemf.draw.HemfDrawProperties;
+import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.record.emfplus.HemfPlusHeader.EmfPlusGraphicsVersion;
 import org.apache.poi.hemf.record.emfplus.HemfPlusImage.EmfPlusImage;
 import org.apache.poi.hemf.record.emfplus.HemfPlusImage.EmfPlusWrapMode;
 import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectData;
 import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectType;
 import org.apache.poi.hemf.record.emfplus.HemfPlusPath.EmfPlusPath;
+import org.apache.poi.hwmf.record.HwmfBrushStyle;
+import org.apache.poi.hwmf.record.HwmfColorRef;
+import org.apache.poi.hwmf.record.HwmfDraw;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
@@ -68,58 +81,149 @@ public class HemfPlusBrush {
     }
 
     public enum EmfPlusHatchStyle {
+        /** Specifies equally spaced horizontal lines. */
         HORIZONTAL(0X00000000),
+        /** Specifies equally spaced vertical lines. */
         VERTICAL(0X00000001),
+        /** Specifies lines on a diagonal from upper left to lower right. */
         FORWARD_DIAGONAL(0X00000002),
+        /** Specifies lines on a diagonal from upper right to lower left. */
         BACKWARD_DIAGONAL(0X00000003),
+        /** Specifies crossing horizontal and vertical lines. */
         LARGE_GRID(0X00000004),
+        /** Specifies crossing forward diagonal and backward diagonal lines with anti-aliasing. */
         DIAGONAL_CROSS(0X00000005),
+        /** Specifies a 5-percent hatch, which is the ratio of foreground color to background color equal to 5:100. */
         PERCENT_05(0X00000006),
+        /** Specifies a 10-percent hatch, which is the ratio of foreground color to background color equal to 10:100. */
         PERCENT_10(0X00000007),
+        /** Specifies a 20-percent hatch, which is the ratio of foreground color to background color equal to 20:100. */
         PERCENT_20(0X00000008),
+        /** Specifies a 25-percent hatch, which is the ratio of foreground color to background color equal to 25:100. */
         PERCENT_25(0X00000009),
+        /** Specifies a 30-percent hatch, which is the ratio of foreground color to background color equal to 30:100. */
         PERCENT_30(0X0000000A),
+        /** Specifies a 40-percent hatch, which is the ratio of foreground color to background color equal to 40:100. */
         PERCENT_40(0X0000000B),
+        /** Specifies a 50-percent hatch, which is the ratio of foreground color to background color equal to 50:100. */
         PERCENT_50(0X0000000C),
+        /** Specifies a 60-percent hatch, which is the ratio of foreground color to background color equal to 60:100. */
         PERCENT_60(0X0000000D),
+        /** Specifies a 70-percent hatch, which is the ratio of foreground color to background color equal to 70:100. */
         PERCENT_70(0X0000000E),
+        /** Specifies a 75-percent hatch, which is the ratio of foreground color to background color equal to 75:100. */
         PERCENT_75(0X0000000F),
+        /** Specifies an 80-percent hatch, which is the ratio of foreground color to background color equal to 80:100. */
         PERCENT_80(0X00000010),
+        /** Specifies a 90-percent hatch, which is the ratio of foreground color to background color equal to 90:100. */
         PERCENT_90(0X00000011),
+        /**
+         * Specifies diagonal lines that slant to the right from top to bottom points with no anti-aliasing.
+         * They are spaced 50 percent further apart than lines in the FORWARD_DIAGONAL pattern
+         */
         LIGHT_DOWNWARD_DIAGONAL(0X00000012),
+        /**
+         * Specifies diagonal lines that slant to the left from top to bottom points with no anti-aliasing.
+         * They are spaced 50 percent further apart than lines in the BACKWARD_DIAGONAL pattern.
+         */
         LIGHT_UPWARD_DIAGONAL(0X00000013),
+        /**
+         * Specifies diagonal lines that slant to the right from top to bottom points with no anti-aliasing.
+         * They are spaced 50 percent closer and are twice the width of lines in the FORWARD_DIAGONAL pattern.
+         */
         DARK_DOWNWARD_DIAGONAL(0X00000014),
+        /**
+         * Specifies diagonal lines that slant to the left from top to bottom points with no anti-aliasing.
+         * They are spaced 50 percent closer and are twice the width of lines in the BACKWARD_DIAGONAL pattern.
+         */
         DARK_UPWARD_DIAGONAL(0X00000015),
+        /**
+         * Specifies diagonal lines that slant to the right from top to bottom points with no anti-aliasing.
+         * They have the same spacing between lines in WIDE_DOWNWARD_DIAGONAL pattern and FORWARD_DIAGONAL pattern,
+         * but WIDE_DOWNWARD_DIAGONAL has the triple line width of FORWARD_DIAGONAL.
+         */
         WIDE_DOWNWARD_DIAGONAL(0X00000016),
+        /**
+         * Specifies diagonal lines that slant to the left from top to bottom points with no anti-aliasing.
+         * They have the same spacing between lines in WIDE_UPWARD_DIAGONAL pattern and BACKWARD_DIAGONAL pattern,
+         * but WIDE_UPWARD_DIAGONAL has the triple line width of WIDE_UPWARD_DIAGONAL.
+         */
         WIDE_UPWARD_DIAGONAL(0X00000017),
+        /** Specifies vertical lines that are spaced 50 percent closer together than lines in the VERTICAL pattern. */
         LIGHT_VERTICAL(0X00000018),
+        /** Specifies horizontal lines that are spaced 50 percent closer than lines in the HORIZONTAL pattern. */
         LIGHT_HORIZONTAL(0X00000019),
+        /**
+         * Specifies vertical lines that are spaced 75 percent closer than lines in the VERTICAL pattern;
+         * or 25 percent closer than lines in the LIGHT_VERTICAL pattern.
+         */
         NARROW_VERTICAL(0X0000001A),
+        /**
+         * Specifies horizontal lines that are spaced 75 percent closer than lines in the HORIZONTAL pattern;
+         * or 25 percent closer than lines in the LIGHT_HORIZONTAL pattern.
+         */
         NARROW_HORIZONTAL(0X0000001B),
+        /** Specifies lines that are spaced 50 percent closer than lines in the VERTICAL pattern. */
         DARK_VERTICAL(0X0000001C),
+        /** Specifies lines that are spaced 50 percent closer than lines in the HORIZONTAL pattern. */
         DARK_HORIZONTAL(0X0000001D),
+        /** Specifies dashed diagonal lines that slant to the right from top to bottom points. */
         DASHED_DOWNWARD_DIAGONAL(0X0000001E),
+        /** Specifies dashed diagonal lines that slant to the left from top to bottom points. */
         DASHED_UPWARD_DIAGONAL(0X0000001F),
+        /** Specifies dashed horizontal lines. */
         DASHED_HORIZONTAL(0X00000020),
+        /** Specifies dashed vertical lines. */
         DASHED_VERTICAL(0X00000021),
+        /** Specifies a pattern of lines that has the appearance of confetti. */
         SMALL_CONFETTI(0X00000022),
+        /**
+         * Specifies a pattern of lines that has the appearance of confetti, and is composed of larger pieces
+         * than the SMALL_CONFETTI pattern.
+         */
         LARGE_CONFETTI(0X00000023),
+        /** Specifies horizontal lines that are composed of zigzags. */
         ZIGZAG(0X00000024),
+        /** Specifies horizontal lines that are composed of tildes. */
         WAVE(0X00000025),
+        /**
+         * Specifies a pattern of lines that has the appearance of layered bricks that slant to the left from
+         * top to bottom points.
+         */
         DIAGONAL_BRICK(0X00000026),
+        /** Specifies a pattern of lines that has the appearance of horizontally layered bricks. */
         HORIZONTAL_BRICK(0X00000027),
+        /** Specifies a pattern of lines that has the appearance of a woven material. */
         WEAVE(0X00000028),
+        /** Specifies a pattern of lines that has the appearance of a plaid material. */
         PLAID(0X00000029),
+        /** Specifies a pattern of lines that has the appearance of divots. */
         DIVOT(0X0000002A),
+        /** Specifies crossing horizontal and vertical lines, each of which is composed of dots. */
         DOTTED_GRID(0X0000002B),
+        /** Specifies crossing forward and backward diagonal lines, each of which is composed of dots. */
         DOTTED_DIAMOND(0X0000002C),
+        /**
+         * Specifies a pattern of lines that has the appearance of diagonally layered
+         * shingles that slant to the right from top to bottom points.
+         */
         SHINGLE(0X0000002D),
+        /** Specifies a pattern of lines that has the appearance of a trellis. */
         TRELLIS(0X0000002E),
+        /** Specifies a pattern of lines that has the appearance of spheres laid adjacent to each other. */
         SPHERE(0X0000002F),
+        /** Specifies crossing horizontal and vertical lines that are spaced 50 percent closer together than LARGE_GRID. */
         SMALL_GRID(0X00000030),
+        /** Specifies a pattern of lines that has the appearance of a checkerboard. */
         SMALL_CHECKER_BOARD(0X00000031),
+        /**
+         * Specifies a pattern of lines that has the appearance of a checkerboard, with squares that are twice the
+         * size of the squares in the SMALL_CHECKER_BOARD pattern.
+         */
         LARGE_CHECKER_BOARD(0X00000032),
+        /** Specifies crossing forward and backward diagonal lines; the lines are not anti-aliased. */
         OUTLINED_DIAMOND(0X00000033),
+        /** Specifies a pattern of lines that has the appearance of a checkerboard placed diagonally. */
         SOLID_DIAMOND(0X00000034)
         ;
 
@@ -204,17 +308,19 @@ public class HemfPlusBrush {
         BitField DO_NOT_TRANSFORM = BitFieldFactory.getInstance(0x00000100);
 
         long init(LittleEndianInputStream leis, long dataSize) throws IOException;
+
+        void applyObject(HemfGraphics ctx, List<? extends EmfPlusObjectData> continuedObjectData);
     }
 
     /** The EmfPlusBrush object specifies a graphics brush for filling regions. */
     public static class EmfPlusBrush implements EmfPlusObjectData {
-        private final EmfPlusGraphicsVersion version = new EmfPlusGraphicsVersion();
+        private final EmfPlusGraphicsVersion graphicsVersion = new EmfPlusGraphicsVersion();
         private EmfPlusBrushType brushType;
         private EmfPlusBrushData brushData;
 
         @Override
         public long init(LittleEndianInputStream leis, long dataSize, EmfPlusObjectType objectType, int flags) throws IOException {
-            long size = version.init(leis);
+            long size = graphicsVersion.init(leis);
 
             brushType = EmfPlusBrushType.valueOf(leis.readInt());
             size += LittleEndianConsts.INT_SIZE;
@@ -223,6 +329,23 @@ public class HemfPlusBrush {
             size += (brushData = brushType.constructor.get()).init(leis, dataSize-size);
 
             return size;
+        }
+
+        @Override
+        public void applyObject(HemfGraphics ctx, List<? extends EmfPlusObjectData> continuedObjectData) {
+            brushData.applyObject(ctx, continuedObjectData);
+        }
+
+        @Override
+        public EmfPlusGraphicsVersion getGraphicsVersion() {
+            return graphicsVersion;
+        }
+
+        @Override
+        public String toString() {
+            return
+                "{ brushType: '"+brushType+"'" +
+                ", brushData: "+brushData+" }";
         }
     }
 
@@ -233,6 +356,17 @@ public class HemfPlusBrush {
         public long init(LittleEndianInputStream leis, long dataSize) throws IOException {
             solidColor = readARGB(leis.readInt());
             return LittleEndianConsts.INT_SIZE;
+        }
+
+        @Override
+        public void applyObject(HemfGraphics ctx, List<? extends EmfPlusObjectData> continuedObjectData) {
+            HemfDrawProperties prop = ctx.getProperties();
+            prop.setBackgroundColor(new HwmfColorRef(solidColor));
+        }
+
+        @Override
+        public String toString() {
+            return "{ solidColor: "+new HwmfColorRef(solidColor)+" }";
         }
     }
 
@@ -246,6 +380,22 @@ public class HemfPlusBrush {
             foreColor = readARGB(leis.readInt());
             backColor = readARGB(leis.readInt());
             return 3*LittleEndianConsts.INT_SIZE;
+        }
+
+        @Override
+        public void applyObject(HemfGraphics ctx, List<? extends EmfPlusObjectData> continuedObjectData) {
+            HemfDrawProperties prop = ctx.getProperties();
+            prop.setBrushColor(new HwmfColorRef(foreColor));
+            prop.setBackgroundColor(new HwmfColorRef(backColor));
+            prop.setEmfPlusBrushHatch(style);
+        }
+
+        @Override
+        public String toString() {
+            return
+                "{ style: '"+style+"'" +
+                ", foreColor: "+new HwmfColorRef(foreColor) +
+                ", backColor: "+new HwmfColorRef(backColor) + " }";
         }
     }
 
@@ -303,6 +453,32 @@ public class HemfPlusBrush {
 
             return size;
         }
+
+        @Override
+        public void applyObject(HemfGraphics ctx, List<? extends EmfPlusObjectData> continuedObjectData) {
+            HemfDrawProperties prop = ctx.getProperties();
+            // TODO: implement
+        }
+
+        @Override
+        public String toString() {
+            return
+                "{ flags: "+dataFlags+
+                ", wrapMode: '"+wrapMode+"'"+
+                ", rect: "+boundsToString(rect)+
+                ", startColor: "+new HwmfColorRef(startColor)+
+                ", endColor: "+new HwmfColorRef(endColor)+
+                ", transform: "+xformToString(transform)+
+                ", positions: "+ Arrays.toString(positions)+
+                ", blendColors: "+ colorsToString(blendColors)+
+                ", positionsV: "+ Arrays.toString(positionsV)+
+                ", blendFactorsV: "+ Arrays.toString(blendFactorsV)+
+                ", positionsH: "+ Arrays.toString(positionsH)+
+                ", blendFactorsH: "+ Arrays.toString(blendFactorsH)+
+                "}";
+        }
+
+
     }
 
     /** The EmfPlusPathGradientBrushData object specifies a path gradient for a graphics brush. */
@@ -409,6 +585,31 @@ public class HemfPlusBrush {
 
             return size;
         }
+
+        @Override
+        public void applyObject(HemfGraphics ctx, List<? extends EmfPlusObjectData> continuedObjectData) {
+
+        }
+
+        @Override
+        public String toString() {
+            return
+                "{ flags: "+dataFlags+
+                ", wrapMode: '"+wrapMode+"'"+
+                ", centerColor: "+new HwmfColorRef(centerColor)+
+                ", centerPoint: "+pointToString(centerPoint)+
+                ", surroundingColor: "+colorsToString(surroundingColor)+
+                ", boundaryPath: "+(boundaryPath == null ? "null" : boundaryPath)+
+                ", boundaryPoints: "+pointsToString(boundaryPoints)+
+                ", transform: "+xformToString(transform)+
+                ", positions: "+Arrays.toString(positions)+
+                ", blendColors: "+colorsToString(blendColors)+
+                ", blendFactorsH: "+Arrays.toString(blendFactorsH)+
+                ", focusScaleX: "+focusScaleX+
+                ", focusScaleY: "+focusScaleY+
+                "}"
+                ;
+        }
     }
 
     /** The EmfPlusTextureBrushData object specifies a texture image for a graphics brush. */
@@ -439,6 +640,24 @@ public class HemfPlusBrush {
             }
 
             return size;
+        }
+
+        @Override
+        public void applyObject(HemfGraphics ctx, List<? extends EmfPlusObjectData> continuedObjectData) {
+            image.applyObject(ctx, continuedObjectData);
+            HemfDrawProperties prop = ctx.getProperties();
+            prop.setBrushBitmap(prop.getEmfPlusImage());
+            prop.setBrushStyle(HwmfBrushStyle.BS_PATTERN);
+        }
+
+        @Override
+        public String toString() {
+            return
+                "{ flags: "+dataFlags+
+                ", wrapMode: '"+wrapMode+"'"+
+                ", transform: "+xformToString(transform)+
+                ", image: "+image+
+                "]";
         }
     }
 
@@ -476,5 +695,19 @@ public class HemfPlusBrush {
         }
         facs.accept(factors);
         return size + factors.length * LittleEndianConsts.INT_SIZE;
+    }
+
+    @Internal
+    public static String colorsToString(Color[] colors) {
+        return (colors == null ? "null" :
+            Stream.of(colors).map(HwmfColorRef::new).map(Object::toString).
+            collect(joining(",", "{", "}")));
+    }
+
+    @Internal
+    public static String pointsToString(Point2D[] points) {
+        return (points == null ? "null" :
+            Stream.of(points).map(HwmfDraw::pointToString).
+            collect(joining(",", "{", "}")));
     }
 }
