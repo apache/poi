@@ -49,15 +49,15 @@ public final class TestExternalNameReference extends TestCase {
 		assertEquals("x123",wb.getSheet("Sheet1").getRow(1).getCell(1).getStringCellValue());
 		assertEquals("Sheet1!$C$2", wb.getName("UNITCOST").getRefersToFormula());
 		CellReference cellRef = new CellReference(wb.getName("UNITCOST").getRefersToFormula());
-		HSSFCell cell = wb.getSheet(cellRef.getSheetName()).getRow(cellRef.getRow()).getCell((int)cellRef.getCol());
+		HSSFCell cell = wb.getSheet(cellRef.getSheetName()).getRow(cellRef.getRow()).getCell(cellRef.getCol());
 		assertEquals("VLOOKUP(PART,COSTS,2,FALSE)",cell.getCellFormula());
 		assertEquals("Sheet1!$D$2", wb.getName("COST").getRefersToFormula());
 		cellRef = new CellReference(wb.getName("COST").getRefersToFormula());
-		cell = wb.getSheet(cellRef.getSheetName()).getRow(cellRef.getRow()).getCell((int)cellRef.getCol());
+		cell = wb.getSheet(cellRef.getSheetName()).getRow(cellRef.getRow()).getCell(cellRef.getCol());
 		assertEquals("UNITCOST*Quant",cell.getCellFormula());
 		assertEquals("Sheet1!$E$2", wb.getName("TOTALCOST").getRefersToFormula());
 		cellRef = new CellReference(wb.getName("TOTALCOST").getRefersToFormula());
-		cell = wb.getSheet(cellRef.getSheetName()).getRow(cellRef.getRow()).getCell((int)cellRef.getCol());
+		cell = wb.getSheet(cellRef.getSheetName()).getRow(cellRef.getRow()).getCell(cellRef.getCol());
 		assertEquals("Cost*Markup_Cost",cell.getCellFormula());
 	    }catch(Exception e){
 		fail();
@@ -91,11 +91,11 @@ public final class TestExternalNameReference extends TestCase {
 		HSSFFormulaEvaluator[] evaluators = { evaluator, evaluatorCost, };
 		HSSFFormulaEvaluator.setupEnvironment(bookNames, evaluators);
 		cellRef = new CellReference(wb.getName("UNITCOST").getRefersToFormula());
-		HSSFCell uccell = wb.getSheet(cellRef.getSheetName()).getRow(cellRef.getRow()).getCell((int)cellRef.getCol());
+		HSSFCell uccell = wb.getSheet(cellRef.getSheetName()).getRow(cellRef.getRow()).getCell(cellRef.getCol());
 		cellRef = new CellReference(wb.getName("COST").getRefersToFormula());
-		HSSFCell ccell = wb.getSheet(cellRef.getSheetName()).getRow(cellRef.getRow()).getCell((int)cellRef.getCol());
+		HSSFCell ccell = wb.getSheet(cellRef.getSheetName()).getRow(cellRef.getRow()).getCell(cellRef.getCol());
 		cellRef = new CellReference(wb.getName("TOTALCOST").getRefersToFormula());
-		HSSFCell tccell = wb.getSheet(cellRef.getSheetName()).getRow(cellRef.getRow()).getCell((int)cellRef.getCol());
+		HSSFCell tccell = wb.getSheet(cellRef.getSheetName()).getRow(cellRef.getRow()).getCell(cellRef.getCol());
 		evaluator.evaluateFormulaCell(uccell);
 		evaluator.evaluateFormulaCell(ccell);
 		evaluator.evaluateFormulaCell(tccell);

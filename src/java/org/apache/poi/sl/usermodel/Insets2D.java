@@ -124,7 +124,7 @@ public final class Insets2D implements Cloneable {
      * @return  a string representation of this <code>Insets</code> object.
      */
     public String toString() {
-    return getClass().getName() + "[top="  + top + ",left=" + left + ",bottom=" + bottom + ",right=" + right + "]";
+        return getClass().getName() + "[top="  + top + ",left=" + left + ",bottom=" + bottom + ",right=" + right + "]";
     }
 
     /**
