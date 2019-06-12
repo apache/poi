@@ -63,7 +63,7 @@ public abstract class ChunkHeader {
 			ch.setUnknown2(LittleEndian.getUByte(data, offset + 4));
 			ch.setUnknown3(LittleEndian.getUByte(data, offset + 5));
 			ch.setUnknown1(LittleEndian.getShort(data, offset + 6));
-			ch.setLength((int)LittleEndian.getUInt(data, offset + 8));
+			ch.setLength(Math.toIntExact(LittleEndian.getUInt(data, offset + 8)));
 
 			return ch;
 		} else {
