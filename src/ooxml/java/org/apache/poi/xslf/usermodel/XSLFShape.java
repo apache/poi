@@ -98,13 +98,18 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
     }
 
     @Override
-    public String getShapeName(){
-        return getCNvPr().getName();
+    public String getShapeName() {
+        CTNonVisualDrawingProps nonVisualDrawingProps = getCNvPr();
+        return nonVisualDrawingProps == null ? null : nonVisualDrawingProps.getName();
     }
 
     @Override
     public int getShapeId() {
-        return (int)getCNvPr().getId();
+        CTNonVisualDrawingProps nonVisualDrawingProps = getCNvPr();
+        if (nonVisualDrawingProps == null) {
+            throw new IllegalStateException("no underlying shape exists");
+        }
+        return Math.toIntExact(nonVisualDrawingProps.getId());
     }
 
     /**
