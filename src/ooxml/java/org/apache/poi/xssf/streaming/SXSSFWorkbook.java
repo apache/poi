@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.Zip64Mode;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
@@ -385,8 +386,7 @@ public class SXSSFWorkbook implements Workbook {
     }
 
     protected void injectData(ZipEntrySource zipEntrySource, OutputStream out) throws IOException {
-        ZipArchiveOutputStream zos = new ZipArchiveOutputStream(out);
-        zos.setUseZip64(zip64Mode);
+        ArchiveOutputStream zos = createArchiveOutputStream(out);
         try {
             Enumeration<? extends ZipArchiveEntry> en = zipEntrySource.getEntries();
             while (en.hasMoreElements()) {
@@ -418,6 +418,16 @@ public class SXSSFWorkbook implements Workbook {
         } finally {
             zos.finish();
             zipEntrySource.close();
+        }
+    }
+
+    protected ZipArchiveOutputStream createArchiveOutputStream(OutputStream out) {
+        if (Zip64Mode.Always.equals(zip64Mode)) {
+            return new OpcZipArchiveOutputStream(out);
+        } else {
+            ZipArchiveOutputStream zos = new ZipArchiveOutputStream(out);
+            zos.setUseZip64(zip64Mode);
+            return zos;
         }
     }
 
