@@ -16,12 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -128,4 +123,28 @@ public class TestXSLFTableRow {
         assertNotNull(ctrow);
     }
 
+
+    @Test
+    public void getShapeNameOfCells() throws Exception {
+        try(XMLSlideShow ss1 = XSLFTestDataSamples.openSampleDocument("table_test.pptx")) {
+            for (XSLFSlide slide : ss1.getSlides()) {
+                for (XSLFShape shape : slide.getShapes()) {
+                    assertEquals("Table 3", shape.getShapeName());
+                    if (shape instanceof XSLFTable) {
+                        for (XSLFTableRow row : ((XSLFTable) shape).getRows()) {
+                            for (XSLFTableCell cell : row.getCells()) {
+                                assertNull(cell.getShapeName()); // Do not throw NPE
+                                try {
+                                    cell.getShapeId();
+                                    fail("expected getShapeId to fail");
+                                } catch (IllegalStateException ise) {
+                                    // expected
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
