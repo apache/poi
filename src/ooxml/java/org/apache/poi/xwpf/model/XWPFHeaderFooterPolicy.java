@@ -424,7 +424,11 @@ public class XWPFHeaderFooterPolicy {
      * TODO: manage all the other variables
      */
     private XWPFParagraph getWatermarkParagraph(String text, int idx) {
-        CTP p = CTP.Factory.newInstance();
+        CTP p;
+        if (getDefaultHeader() == null) // When there is no existing header
+            p = CTP.Factory.newInstance();
+        else // If there is already header in the docx
+            p = getDefaultHeader().createParagraph().getCTP();
         byte[] rsidr = doc.getDocument().getBody().getPArray(0).getRsidR();
         byte[] rsidrdefault = doc.getDocument().getBody().getPArray(0).getRsidRDefault();
         p.setRsidP(rsidr);
