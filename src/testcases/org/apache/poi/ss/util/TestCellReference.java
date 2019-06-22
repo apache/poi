@@ -54,18 +54,28 @@ public final class TestCellReference {
 
         cellReference = new CellReference(row, col);
         assertEquals("A1", cellReference.formatAsString());
+        assertEquals("A1", cellReference.formatAsString(true));
+        assertEquals("A1", cellReference.formatAsString(false));
 
         cellReference = new CellReference(row, col, absRow, absCol);
         assertEquals("A$1", cellReference.formatAsString());
+        assertEquals("A$1", cellReference.formatAsString(true));
+        assertEquals("A$1", cellReference.formatAsString(false));
 
         cellReference = new CellReference(row, (short)col);
         assertEquals("A1", cellReference.formatAsString());
+        assertEquals("A1", cellReference.formatAsString(true));
+        assertEquals("A1", cellReference.formatAsString(false));
 
         cellReference = new CellReference(cellRef);
         assertEquals("A1", cellReference.formatAsString());
+        assertEquals("A1", cellReference.formatAsString(true));
+        assertEquals("A1", cellReference.formatAsString(false));
 
         cellReference = new CellReference(sheet, row, col, absRow, absCol);
         assertEquals("Sheet1!A$1", cellReference.formatAsString());
+        assertEquals("Sheet1!A$1", cellReference.formatAsString(true));
+        assertEquals("A$1", cellReference.formatAsString(false));
 
         cellReference = new CellReference(sheet+"!$A1");
         assertFalse(cellReference.isRowAbsolute());
@@ -95,18 +105,26 @@ public final class TestCellReference {
 
         cellReference = new CellReference(null, 0, 0, false, false);
         assertEquals("A1", cellReference.formatAsString());
+        assertEquals("A1", cellReference.formatAsString(true));
+        assertEquals("A1", cellReference.formatAsString(false));
 
         //absolute references
         cellReference = new CellReference(null, 0, 0, true, false);
         assertEquals("A$1", cellReference.formatAsString());
+        assertEquals("A$1", cellReference.formatAsString(true));
+        assertEquals("A$1", cellReference.formatAsString(false));
 
         //sheet name with no spaces
         cellReference = new CellReference("Sheet1", 0, 0, true, false);
         assertEquals("Sheet1!A$1", cellReference.formatAsString());
+        assertEquals("Sheet1!A$1", cellReference.formatAsString(true));
+        assertEquals("A$1", cellReference.formatAsString(false));
 
         //sheet name with spaces
         cellReference = new CellReference("Sheet 1", 0, 0, true, false);
         assertEquals("'Sheet 1'!A$1", cellReference.formatAsString());
+        assertEquals("'Sheet 1'!A$1", cellReference.formatAsString(true));
+        assertEquals("A$1", cellReference.formatAsString(false));
     }
 
     @Test
@@ -474,6 +492,11 @@ public final class TestCellReference {
         final CellReference badCellRef = new CellReference(cell);
 
         assertEquals("'Ctor test'!$A$1", goodCellRef.formatAsString());
+        assertEquals("'Ctor test'!$A$1", goodCellRef.formatAsString(true));
+        assertEquals("$A$1", goodCellRef.formatAsString(false));
+
         assertEquals("'Ctor test'!A1", badCellRef.formatAsString());
+        assertEquals("'Ctor test'!A1", badCellRef.formatAsString(true));
+        assertEquals("A1", badCellRef.formatAsString(false));
     }
 }

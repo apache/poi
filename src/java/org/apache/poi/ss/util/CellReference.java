@@ -487,8 +487,28 @@ public class CellReference {
      * @return the text representation of this cell reference as it would appear in a formula.
      */
     public String formatAsString() {
+        return formatAsString(true);
+    }
+
+    /**
+     * Returns a text representation of this cell reference and allows to control
+     * if the sheetname is included in the reference.
+     *
+     * <p>
+     *  Example return values:
+     *	<table border="0" cellpadding="1" cellspacing="0" summary="Example return values">
+     *	  <tr><th align='left'>Result</th><th align='left'>Comment</th></tr>
+     *	  <tr><td>A1</td><td>Cell reference without sheet</td></tr>
+     *	  <tr><td>Sheet1!A1</td><td>Standard sheet name</td></tr>
+     *	  <tr><td>'O''Brien''s Sales'!A1'&nbsp;</td><td>Sheet name with special characters</td></tr>
+     *	</table>
+     * @param   includeSheetName If true and there is a sheet name set for this cell reference,
+     *                           the reference is prefixed with the sheet name and '!'
+     * @return the text representation of this cell reference as it would appear in a formula.
+     */
+    public String formatAsString(boolean includeSheetName) {
         StringBuilder sb = new StringBuilder(32);
-        if(_sheetName != null) {
+        if(includeSheetName && _sheetName != null) {
             SheetNameFormatter.appendFormat(sb, _sheetName);
             sb.append(SHEET_NAME_DELIMITER);
         }
