@@ -4097,6 +4097,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
 
     /**
      * Creates a new Table, and associates it with this Sheet.
+     * <p>
+     * The table is assigned a default display name (since 4.1.1) which can be overridden
+     * by calling {@code setDisplayName}.  The default display name is guaranteed to not conflict
+     * with the names of any {@code XSSFName} or {@code XSSFTable} in the workbook.
      *
      * @param tableArea
      *            the area that the table should cover, should not be null
@@ -4140,9 +4144,17 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             table.setArea(tableArea);
         }
 
-        // Bug 62906: Must set a display name; can be overridden using setDisplayName
-        final String displayName = "Table" + tableNumber;
-        table.setDisplayName(displayName);
+        // Set the default name of the table.  This must not conflict with any defined names.
+        while(tableNumber<Integer.MAX_VALUE) {
+            final String displayName="Table"+tableNumber;
+            if(getWorkbook().getTable(displayName) == null &&
+                    getWorkbook().getName(displayName) == null) {
+                table.setDisplayName(displayName);
+                table.setName(displayName);
+                break;
+            }
+            ++tableNumber;
+        }
 
         return table;
     }

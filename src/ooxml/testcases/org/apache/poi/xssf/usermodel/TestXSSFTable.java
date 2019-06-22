@@ -17,6 +17,7 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
@@ -35,6 +36,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -586,5 +588,38 @@ public final class TestXSSFTable {
             XSSFTable table1 = sheet.createTable(reference1);
             table1.setDisplayName("");
         }
+    }
+
+    /**
+     * Delete table2, and create a named range in sheet0; it should automatically be assigned the name "Table4"
+     */
+    @Test
+    public void testBug63401And62906() throws IOException {
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            XSSFSheet sheet0 = workbook.createSheet();
+            XSSFTable table = addTable(sheet0, 3, 0, 2, 2);
+
+            final String procName = "testXSSFTableGetName";
+            final String name = table.getName();
+            System.out.println(String.format(Locale.ROOT, "%s: table.getName=%s", procName, name));
+        }
+    }
+
+    private static XSSFTable addTable(XSSFSheet sheet,int nRow, int nCol, int nNumRows, int nNumCols) {
+        for (int i = 0; i < nNumRows; i++) {
+            XSSFRow row = sheet.createRow(i + nRow);
+            for (int j = 0; j < nNumCols; j++) {
+                XSSFCell localXSSFCell = row.createCell(j + nCol);
+                if (i == 0) {
+                    localXSSFCell.setCellValue(String.format(Locale.ROOT, "Col%d", j + 1));
+                } else {
+                    localXSSFCell.setCellValue(String.format(Locale.ROOT, "(%d,%d)", i + 1, j + 1));
+                }
+            }
+        }
+        final CellReference upperLeft = new CellReference(nRow, nCol);
+        final CellReference lowerRight = new CellReference(nNumRows - 1, nNumCols - 1);
+        final AreaReference area = new AreaReference(upperLeft, lowerRight, SpreadsheetVersion.EXCEL2007);
+        return sheet.createTable(area);
     }
 }
