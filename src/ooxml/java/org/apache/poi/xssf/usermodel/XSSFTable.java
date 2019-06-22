@@ -369,7 +369,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      * @return the name of the Table, if set
      */
     public String getName() {
-        if (name == null) {
+        if (name == null && ctTable.getName() != null) {
             setName(ctTable.getName());
         }
         return name;
