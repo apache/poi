@@ -101,6 +101,7 @@ import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.IgnoredErrorType;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.PrintSetup;
@@ -3461,5 +3462,31 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertEquals(1, numMergedRegions);
         assertEquals(1, ctMergeCellCount);
         assertEquals(1, ctMergeCellListSize);
+    }
+
+    @Test
+    public void testBug63509() throws IOException {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+
+        XSSFSheet sheet = workbook.createSheet("sheet1");
+
+        Row row = sheet.createRow(0);
+
+        Cell cell = row.createCell(0);
+        cell.setCellValue("1000");
+
+        // This causes the error
+        sheet.addIgnoredErrors(new CellReference(cell), IgnoredErrorType.NUMBER_STORED_AS_TEXT);
+
+        // Workaround
+        // sheet.addIgnoredErrors(new CellReference(cell.getRowIndex(), cell.getColumnIndex(), false, false),
+        //        IgnoredErrorType.NUMBER_STORED_AS_TEXT);
+
+        /*File file = new File("/tmp/63509.xlsx");
+        try(FileOutputStream outputStream = new FileOutputStream(file)) {
+            workbook.write(outputStream);
+        }*/
+
+        workbook.close();
     }
 }

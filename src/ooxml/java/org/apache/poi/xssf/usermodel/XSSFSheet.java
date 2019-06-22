@@ -4555,7 +4555,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * @param ignoredErrorTypes Types of error to ignore there.
      */
     public void addIgnoredErrors(CellReference cell, IgnoredErrorType... ignoredErrorTypes) {
-        addIgnoredErrors(cell.formatAsString(), ignoredErrorTypes);
+        addIgnoredErrors(cell.formatAsString(false), ignoredErrorTypes);
     }
 
     /**
