@@ -415,9 +415,9 @@ public final class HSLFFill {
         EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST);
         int propVal = (p == null) ? 0 : p.getPropertyValue();
 
-        return (FILL_USE_FILLED.isSet(propVal) && !FILL_FILLED.isSet(propVal))
-            ? null
-            : shape.getColor(EscherProperties.FILL__FILLCOLOR, EscherProperties.FILL__FILLOPACITY);
+        return (FILL_USE_FILLED.isSet(propVal) && FILL_FILLED.isSet(propVal))
+            ? shape.getColor(EscherProperties.FILL__FILLCOLOR, EscherProperties.FILL__FILLOPACITY)
+            : null;
     }
 
     /**
@@ -459,9 +459,9 @@ public final class HSLFFill {
         EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST);
         int propVal = (p == null) ? 0 : p.getPropertyValue();
 
-        return (FILL_USE_FILLED.isSet(propVal) && !FILL_FILLED.isSet(propVal))
-            ? null
-            : shape.getColor(EscherProperties.FILL__FILLBACKCOLOR, EscherProperties.FILL__FILLOPACITY);
+        return (FILL_USE_FILLED.isSet(propVal) && FILL_FILLED.isSet(propVal))
+            ? shape.getColor(EscherProperties.FILL__FILLBACKCOLOR, EscherProperties.FILL__FILLOPACITY)
+            : null;
     }
 
     /**

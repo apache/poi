@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 
@@ -39,21 +40,30 @@ import org.apache.poi.sl.usermodel.SlideShowFactory;
 
 /**
  * An utility to convert slides of a .pptx slide show to a PNG image
- *
- * @author Yegor Kozlov
  */
 public class PPTX2PNG {
 
-    static void usage(String error){
+    private static final String INPUT_PAT_REGEX =
+        "(?<slideno>[^|]+)\\|(?<format>[^|]+)\\|(?<basename>.+)\\.(?<ext>[^.]++)";
+
+    private static final Pattern INPUT_PATTERN = Pattern.compile(INPUT_PAT_REGEX);
+
+    private static final String OUTPUT_PAT_REGEX = "${basename}-${slideno}.${format}";
+
+
+    private static void usage(String error){
         String msg =
             "Usage: PPTX2PNG [options] <ppt or pptx file>\n" +
             (error == null ? "" : ("Error: "+error+"\n")) +
             "Options:\n" +
-            "    -scale <float>   scale factor\n" +
-            "    -slide <integer> 1-based index of a slide to render\n" +
-            "    -format <type>   png,gif,jpg (,null for testing)" +
-            "    -outdir <dir>    output directory, defaults to origin of the ppt/pptx file" +
-            "    -quiet           do not write to console (for normal processing)";
+            "    -scale <float>    scale factor\n" +
+            "    -slide <integer>  1-based index of a slide to render\n" +
+            "    -format <type>    png,gif,jpg (,null for testing)\n" +
+            "    -outdir <dir>     output directory, defaults to origin of the ppt/pptx file\n" +
+            "    -outfile <file>   output filename, defaults to '"+OUTPUT_PAT_REGEX+"'\n" +
+            "    -outpat <pattern> output filename pattern, defaults to '"+OUTPUT_PAT_REGEX+"'\n" +
+            "                      patterns: basename, slideno, format, ext\n" +
+            "    -quiet            do not write to console (for normal processing)";
 
         System.out.println(msg);
         // no System.exit here, as we also run in junit tests!
@@ -70,23 +80,43 @@ public class PPTX2PNG {
         File file = null;
         String format = "png";
         File outdir = null;
+        String outfile = null;
         boolean quiet = false;
+        String outpattern = OUTPUT_PAT_REGEX;
 
         for (int i = 0; i < args.length; i++) {
-            if (args[i].startsWith("-")) {
-                if ("-scale".equals(args[i])) {
-                    scale = Float.parseFloat(args[++i]); // lgtm[java/index-out-of-bounds]
-                } else if ("-slide".equals(args[i])) {
-                    slidenumStr = args[++i]; // lgtm[java/index-out-of-bounds]
-                } else if ("-format".equals(args[i])) {
-                    format = args[++i]; // lgtm[java/index-out-of-bounds]
-                } else if ("-outdir".equals(args[i])) {
-                    outdir = new File(args[++i]); // lgtm[java/index-out-of-bounds]
-                } else if ("-quiet".equals(args[i])) {
+            String opt = (i+1 < args.length) ? args[i+1] : null;
+            switch (args[i]) {
+                case "-scale":
+                    scale = Float.parseFloat(opt);
+                    i++;
+                    break;
+                case "-slide":
+                    slidenumStr = opt;
+                    i++;
+                    break;
+                case "-format":
+                    format = opt;
+                    i++;
+                    break;
+                case "-outdir":
+                    outdir = new File(opt);
+                    i++;
+                    break;
+                case "-outfile":
+                    outfile = opt;
+                    i++;
+                    break;
+                case "-outpat":
+                    outpattern = opt;
+                    i++;
+                    break;
+                case "-quiet":
                     quiet = true;
-                }
-            } else {
-                file = new File(args[i]);
+                    break;
+                default:
+                    file = new File(args[i]);
+                    break;
             }
         }
 
@@ -135,7 +165,7 @@ public class PPTX2PNG {
                 Slide<?, ?> slide = slides.get(slideNo);
                 String title = slide.getTitle();
                 if (!quiet) {
-                    System.out.println("Rendering slide " + slideNo + (title == null ? "" : ": " + title));
+                    System.out.println("Rendering slide " + (slideNo+1) + (title == null ? "" : ": " + title.trim()));
                 }
 
                 BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -155,10 +185,9 @@ public class PPTX2PNG {
 
                 // save the result
                 if (!"null".equals(format)) {
-                    String outname = file.getName().replaceFirst(".pptx?", "");
-                    outname = String.format(Locale.ROOT, "%1$s-%2$04d.%3$s", outname, slideNo, format);
-                    File outfile = new File(outdir, outname);
-                    ImageIO.write(img, format, outfile);
+                    String inname = String.format(Locale.ROOT, "%04d|%s|%s", slideNo+1, format, file.getName());
+                    String outname = (outfile != null) ? outfile : INPUT_PATTERN.matcher(inname).replaceAll(outpattern);
+                    ImageIO.write(img, format, new File(outdir, outname));
                 }
 
                 graphics.dispose();

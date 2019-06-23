@@ -17,11 +17,11 @@
 
 package org.apache.poi.xslf.draw;
 
-import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -42,6 +42,7 @@ import org.apache.batik.util.XMLResourceDescriptor;
 import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.sl.draw.ImageRenderer;
 import org.apache.poi.sl.usermodel.PictureData;
+import org.apache.poi.util.Dimension2DDouble;
 import org.w3c.dom.Document;
 
 public class SVGImageRenderer implements ImageRenderer {
@@ -75,9 +76,9 @@ public class SVGImageRenderer implements ImageRenderer {
     }
 
     @Override
-    public Dimension getDimension() {
+    public Dimension2D getDimension() {
         Rectangle2D r = svgRoot.getPrimitiveBounds();
-        return new Dimension((int)Math.ceil(r.getWidth()), (int)Math.ceil(r.getHeight()));
+        return new Dimension2DDouble(Math.ceil(r.getWidth()), Math.ceil(r.getHeight()));
     }
 
     @Override
@@ -91,7 +92,7 @@ public class SVGImageRenderer implements ImageRenderer {
     }
 
     @Override
-    public BufferedImage getImage(Dimension dim) {
+    public BufferedImage getImage(Dimension2D dim) {
         BufferedImage bi = new BufferedImage((int)dim.getWidth(), (int)dim.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = (Graphics2D) bi.getGraphics();
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -101,7 +102,7 @@ public class SVGImageRenderer implements ImageRenderer {
         g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         g2d.setRenderingHint(RenderingHintsKeyExt.KEY_BUFFERED_IMAGE, new WeakReference(bi));
-        Dimension dimSVG = getDimension();
+        Dimension2D dimSVG = getDimension();
 
         double scaleX = dim.getWidth() / dimSVG.getWidth();
         double scaleY = dim.getHeight() / dimSVG.getHeight();
@@ -122,7 +123,7 @@ public class SVGImageRenderer implements ImageRenderer {
     public boolean drawImage(Graphics2D graphics, Rectangle2D anchor, Insets clip) {
         graphics.setRenderingHint(RenderingHintsKeyExt.KEY_BUFFERED_IMAGE, graphics.getRenderingHint(Drawable.BUFFERED_IMAGE));
 
-        Dimension bounds = getDimension();
+        Dimension2D bounds = getDimension();
 
         AffineTransform at = new AffineTransform();
         at.translate(anchor.getX(), anchor.getY());

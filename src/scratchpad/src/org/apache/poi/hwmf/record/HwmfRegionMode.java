@@ -17,37 +17,42 @@
 
 package org.apache.poi.hwmf.record;
 
-import org.apache.poi.hemf.record.emf.HemfFill;
+import java.awt.Shape;
+import java.awt.geom.Area;
+import java.util.function.BiFunction;
 
 public enum HwmfRegionMode {
     /**
      * The new clipping region includes the intersection (overlapping areas)
      * of the current clipping region and the current path (or new region).
      */
-    RGN_AND(0x01),
+    RGN_AND(0x01, HwmfRegionMode::andOp),
     /**
      * The new clipping region includes the union (combined areas)
      * of the current clipping region and the current path (or new region).
      */
-    RGN_OR(0x02),
+    RGN_OR(0x02, HwmfRegionMode::orOp),
     /**
      * The new clipping region includes the union of the current clipping region
      * and the current path (or new region) but without the overlapping areas
      */
-    RGN_XOR(0x03),
+    RGN_XOR(0x03, HwmfRegionMode::xorOp),
     /**
      * The new clipping region includes the areas of the current clipping region
      * with those of the current path (or new region) excluded.
      */
-    RGN_DIFF(0x04),
+    RGN_DIFF(0x04, HwmfRegionMode::diffOp),
     /**
      * The new clipping region is the current path (or the new region).
      */
-    RGN_COPY(0x05);
+    RGN_COPY(0x05, HwmfRegionMode::copyOp);
 
-    int flag;
-    HwmfRegionMode(int flag) {
+    private final int flag;
+    private final BiFunction<Shape,Shape,Shape> op;
+
+    HwmfRegionMode(int flag, BiFunction<Shape,Shape,Shape> op) {
         this.flag = flag;
+        this.op = op;
     }
 
     public static HwmfRegionMode valueOf(int flag) {
@@ -55,5 +60,69 @@ public enum HwmfRegionMode {
             if (rm.flag == flag) return rm;
         }
         return null;
+    }
+
+    public int getFlag() {
+        return flag;
+    }
+
+    public Shape applyOp(Shape oldClip, Shape newClip) {
+        return op.apply(oldClip, newClip);
+    }
+
+    private static Shape andOp(final Shape oldClip, final Shape newClip) {
+        assert(newClip != null);
+        if (newClip.getBounds2D().isEmpty()) {
+            return oldClip;
+        } else if (oldClip == null) {
+            return newClip;
+        } else {
+            Area newArea = new Area(oldClip);
+            newArea.intersect(new Area(newClip));
+            return newArea.getBounds2D().isEmpty() ? newClip : newArea;
+        }
+    }
+
+    private static Shape orOp(final Shape oldClip, final Shape newClip) {
+        assert(newClip != null);
+        if (newClip.getBounds2D().isEmpty()) {
+            return oldClip;
+        } else if (oldClip == null) {
+            return newClip;
+        } else {
+            Area newArea = new Area(oldClip);
+            newArea.add(new Area(newClip));
+            return newArea;
+        }
+    }
+
+    private static Shape xorOp(final Shape oldClip, final Shape newClip) {
+        assert(newClip != null);
+        if (newClip.getBounds2D().isEmpty()) {
+            return oldClip;
+        } else if (oldClip == null) {
+            return newClip;
+        } else {
+            Area newArea = new Area(oldClip);
+            newArea.exclusiveOr(new Area(newClip));
+            return newArea;
+        }
+    }
+
+    private static Shape diffOp(final Shape oldClip, final Shape newClip) {
+        assert(newClip != null);
+        if (newClip.getBounds2D().isEmpty()) {
+            return oldClip;
+        } else if (oldClip == null) {
+            return newClip;
+        } else {
+            Area newArea = new Area(oldClip);
+            newArea.subtract(new Area(newClip));
+            return newArea;
+        }
+    }
+
+    private static Shape copyOp(final Shape oldClip, final Shape newClip) {
+        return (newClip == null || newClip.getBounds2D().isEmpty()) ? null : newClip;
     }
 }

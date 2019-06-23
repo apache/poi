@@ -56,9 +56,10 @@ public class DrawPictureShape extends DrawSimpleShape {
             }
 
             try {
-                ImageRenderer renderer = getImageRenderer(graphics, data.getContentType());
-                if (renderer.canRender(data.getContentType())) {
-                    renderer.loadImage(data.getData(), data.getContentType());
+                String ct = data.getContentType();
+                ImageRenderer renderer = getImageRenderer(graphics, ct);
+                if (renderer.canRender(ct)) {
+                    renderer.loadImage(data.getData(), ct);
                     renderer.drawImage(graphics, anchor, insets);
                     return;
                 }
