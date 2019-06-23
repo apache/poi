@@ -94,7 +94,7 @@ public class TestPPTX2PNG {
         assumeFalse("ignore HSLF / .ppt files in no-scratchpad run", xslfOnly && pptFile.toLowerCase(Locale.ROOT).endsWith("ppt"));
         
         String[] args = {
-            "-format", "png", // png,gif,jpg or null for test
+            "-format", "null", // png,gif,jpg or null for test
             "-slide", "-1", // -1 for all
             "-outdir", new File("build/tmp/").getCanonicalPath(),
             "-outpat", "${basename}-${slideno}-${ext}.${format}",
