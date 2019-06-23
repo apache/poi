@@ -428,6 +428,9 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
 
             @Override
             public String getContentType() {
+                if (blip == null || !blip.isSetEmbed() || blip.getEmbed().isEmpty()) {
+                    return null;
+                }
                 /* TOOD: map content-type */
                 return getPart().getContentType();
             }
