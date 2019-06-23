@@ -234,46 +234,50 @@ public class DrawPaint {
 
     @SuppressWarnings("WeakerAccess")
     protected Paint getTexturePaint(TexturePaint fill, Graphics2D graphics) {
-        InputStream is = fill.getImageData();
-        if (is == null) {
-            return TRANSPARENT;
-        }
         assert(graphics != null);
 
-        ImageRenderer renderer = DrawPictureShape.getImageRenderer(graphics, fill.getContentType());
+        final String contentType = fill.getContentType();
 
-        try {
-            try {
-                renderer.loadImage(is, fill.getContentType());
-            } finally {
-                is.close();
-            }
-        } catch (IOException e) {
-            LOG.log(POILogger.ERROR, "Can't load image data - using transparent color", e);
-            return TRANSPARENT;
-        }
+        ImageRenderer renderer = DrawPictureShape.getImageRenderer(graphics, contentType);
 
         int alpha = fill.getAlpha();
         if (0 <= alpha && alpha < 100000) {
             renderer.setAlpha(alpha/100000.f);
         }
 
+        // TODO: handle tile settings, currently the pattern is always streched 100% in height/width
         Rectangle2D textAnchor = shape.getAnchor();
-        BufferedImage image;
-        if ("image/x-wmf".equals(fill.getContentType())) {
-            // don't rely on wmf dimensions, use dimension of anchor
-            // TODO: check pixels vs. points for image dimension
-            image = renderer.getImage(new Dimension((int)textAnchor.getWidth(), (int)textAnchor.getHeight()));
-        } else {
-            image = renderer.getImage();
-        }
 
-        if(image == null) {
-            LOG.log(POILogger.ERROR, "Can't load image data");
+        try (InputStream is = fill.getImageData()) {
+            if (is == null) {
+                return TRANSPARENT;
+            }
+
+            renderer.loadImage(is, contentType);
+
+            final BufferedImage image;
+            switch (contentType) {
+                case "image/x-wmf":
+                case "image/x-emf":
+                    // don't rely on wmf dimensions, use dimension of anchor
+                    // TODO: check pixels vs. points for image dimension
+                    image = renderer.getImage(new Dimension((int)textAnchor.getWidth(), (int)textAnchor.getHeight()));
+                    break;
+                default:
+                    image = renderer.getImage();
+                    break;
+            }
+
+            if(image == null) {
+                LOG.log(POILogger.ERROR, "Can't load image data");
+                return TRANSPARENT;
+            }
+
+            return new java.awt.TexturePaint(image, textAnchor);
+        } catch (IOException e) {
+            LOG.log(POILogger.ERROR, "Can't load image data - using transparent color", e);
             return TRANSPARENT;
         }
-
-        return new java.awt.TexturePaint(image, textAnchor);
     }
 
     /**

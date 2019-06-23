@@ -60,15 +60,8 @@ public class HemfImageRenderer implements ImageRenderer {
     }
 
     @Override
-    public Dimension getDimension() {
-        int width = 0, height = 0;
-        if (image != null) {
-            Dimension2D dim = image.getSize();
-            width = Units.pointsToPixel(dim.getWidth());
-            // keep aspect ratio for height
-            height = Units.pointsToPixel(dim.getHeight());
-        }
-        return new Dimension(width, height);
+    public Dimension2D getDimension() {
+        return Units.pointsToPixel(image == null ? new Dimension() : image.getSize());
     }
 
     @Override
@@ -82,7 +75,7 @@ public class HemfImageRenderer implements ImageRenderer {
     }
 
     @Override
-    public BufferedImage getImage(Dimension dim) {
+    public BufferedImage getImage(Dimension2D dim) {
         if (image == null) {
             return new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         }

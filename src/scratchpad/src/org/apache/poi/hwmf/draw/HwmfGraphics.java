@@ -43,6 +43,7 @@ import java.util.BitSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.TreeMap;
 
 import org.apache.commons.codec.Charsets;
@@ -352,8 +353,9 @@ public class HwmfGraphics {
         case MM_ISOTROPIC:
             // TODO: to be validated ...
             // like anisotropic, but use x-axis as reference
+            graphicsCtx.translate(bbox.getCenterX(), bbox.getCenterY());
             graphicsCtx.scale(bbox.getWidth()/win.getWidth(), bbox.getWidth()/win.getWidth());
-            graphicsCtx.translate(-win.getX(), -win.getY());
+            graphicsCtx.translate(-win.getCenterX(), -win.getCenterY());
             break;
         case MM_LOMETRIC:
         case MM_HIMETRIC:
@@ -407,11 +409,8 @@ public class HwmfGraphics {
             }
         }
 
-        String textString = "";
-        if (text != null) {
-            textString = new String(text, charset).trim();
-            textString = textString.substring(0, Math.min(textString.length(), length));
-        }
+        String textString = new String(text, charset).trim();
+        textString = textString.substring(0, Math.min(textString.length(), length));
 
         if (textString.isEmpty()) {
             return;
@@ -504,7 +503,7 @@ public class HwmfGraphics {
 
         final Shape clipShape = graphicsCtx.getClip();
         try {
-            if (clip != null) {
+            if (clip != null && !clip.getBounds2D().isEmpty()) {
                 graphicsCtx.translate(-clip.getCenterX(), -clip.getCenterY());
                 graphicsCtx.rotate(angle);
                 graphicsCtx.translate(clip.getCenterX(), clip.getCenterY());
@@ -647,59 +646,28 @@ public class HwmfGraphics {
         graphicsCtx.setTransform(tx);
     }
 
-    private static int clipCnt = 0;
-
+    /**
+     * Set the new clipping region
+     *
+     * @param clip the next clipping region to be processed
+     * @param regionMode the mode and operation of how to apply the next clipping region
+     * @param useInitialAT if true, the clipping is applied on the initial (world) coordinate system
+     */
     public void setClip(Shape clip, HwmfRegionMode regionMode, boolean useInitialAT) {
         final AffineTransform at = graphicsCtx.getTransform();
         if (useInitialAT) {
             graphicsCtx.setTransform(initialAT);
         }
+
         final Shape oldClip = graphicsCtx.getClip();
-        final boolean isEmpty = clip.getBounds2D().isEmpty();
-        switch (regionMode) {
-            case RGN_AND:
-                if (!isEmpty) {
-                    graphicsCtx.clip(clip);
-                }
-                break;
-            case RGN_OR:
-                if (!isEmpty) {
-                    if (oldClip == null) {
-                        graphicsCtx.setClip(clip);
-                    } else {
-                        Area area = new Area(oldClip);
-                        area.add(new Area(clip));
-                        graphicsCtx.setClip(area);
-                    }
-                }
-                break;
-            case RGN_XOR:
-                if (!isEmpty) {
-                    if (oldClip == null) {
-                        graphicsCtx.setClip(clip);
-                    } else {
-                        Area area = new Area(oldClip);
-                        area.exclusiveOr(new Area(clip));
-                        graphicsCtx.setClip(area);
-                    }
-                }
-                break;
-            case RGN_DIFF:
-                if (!isEmpty) {
-                    if (oldClip != null) {
-                        Area area = new Area(oldClip);
-                        area.subtract(new Area(clip));
-                        graphicsCtx.setClip(area);
-                    }
-                }
-                break;
-            case RGN_COPY: {
-                graphicsCtx.setClip(isEmpty ? null : clip);
-                break;
-            }
+        final Shape newClip = regionMode.applyOp(oldClip, clip);
+        if (!Objects.equals(oldClip, newClip)) {
+            graphicsCtx.setClip(newClip);
         }
+
         if (useInitialAT) {
             graphicsCtx.setTransform(at);
         }
+        prop.setClip(graphicsCtx.getClip());
     }
 }

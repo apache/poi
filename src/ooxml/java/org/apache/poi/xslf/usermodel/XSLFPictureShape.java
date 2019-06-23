@@ -21,8 +21,8 @@ package org.apache.poi.xslf.usermodel;
 
 import static org.apache.poi.openxml4j.opc.PackageRelationshipTypes.CORE_PROPERTIES_ECMA376_NS;
 
-import java.awt.Dimension;
 import java.awt.Insets;
+import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -305,7 +305,7 @@ public class XSLFPictureShape extends XSLFSimpleShape
             renderer.loadImage(is, svgPic.getType().contentType);
         }
 
-        Dimension dim = renderer.getDimension();
+        Dimension2D dim = renderer.getDimension();
         Rectangle2D anc = (anchor != null) ? anchor
             : new Rectangle2D.Double(0,0, Units.pixelToPoints((int)dim.getWidth()), Units.pixelToPoints((int)dim.getHeight()));
 

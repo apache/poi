@@ -18,9 +18,9 @@
  */
 package org.apache.poi.sl.draw;
 
-import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Insets;
+import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -101,7 +101,7 @@ public interface ImageRenderer {
     /**
      * @return the dimension of the buffered image
      */
-    Dimension getDimension();
+    Dimension2D getDimension();
 
     /**
      * @param alpha the alpha [0..1] to be added to the image (possibly already containing an alpha channel)
@@ -119,7 +119,7 @@ public interface ImageRenderer {
      * 
      * @since POI 3.15-beta2
      */
-    BufferedImage getImage(Dimension dim);
+    BufferedImage getImage(Dimension2D dim);
     
     /**
      * Render picture data into the supplied graphics

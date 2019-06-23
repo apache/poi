@@ -17,17 +17,19 @@
 
 package org.apache.poi.hwmf.usermodel;
 
-import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Shape;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
+import org.apache.poi.hwmf.draw.HwmfDrawProperties;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.hwmf.record.HwmfHeader;
 import org.apache.poi.hwmf.record.HwmfPlaceableHeader;
@@ -35,6 +37,7 @@ import org.apache.poi.hwmf.record.HwmfRecord;
 import org.apache.poi.hwmf.record.HwmfRecordType;
 import org.apache.poi.hwmf.record.HwmfWindowing.WmfSetWindowExt;
 import org.apache.poi.hwmf.record.HwmfWindowing.WmfSetWindowOrg;
+import org.apache.poi.util.Dimension2DDouble;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.POILogFactory;
@@ -110,7 +113,7 @@ public class HwmfPicture {
     }
 
     public void draw(Graphics2D ctx) {
-        Dimension dim = getSize();
+        Dimension2D dim = getSize();
         int width = Units.pointsToPixel(dim.getWidth());
         // keep aspect ratio for height
         int height = Units.pointsToPixel(dim.getHeight());
@@ -119,52 +122,86 @@ public class HwmfPicture {
     }
     
     public void draw(Graphics2D ctx, Rectangle2D graphicsBounds) {
-        AffineTransform at = ctx.getTransform();
+        final Shape clip = ctx.getClip();
+        final AffineTransform at = ctx.getTransform();
         try {
             Rectangle2D wmfBounds = getBounds();
+            Rectangle2D innerBounds = getInnnerBounds();
+            if (innerBounds == null) {
+                innerBounds = wmfBounds;
+            }
+
             // scale output bounds to image bounds
             ctx.translate(graphicsBounds.getX(), graphicsBounds.getY());
             ctx.scale(graphicsBounds.getWidth()/wmfBounds.getWidth(), graphicsBounds.getHeight()/wmfBounds.getHeight());
-            
-            HwmfGraphics g = new HwmfGraphics(ctx, wmfBounds);
+
+            ctx.translate(-wmfBounds.getX(), -wmfBounds.getY());
+            ctx.translate(innerBounds.getCenterX(), innerBounds.getCenterY());
+            ctx.scale(wmfBounds.getWidth()/innerBounds.getWidth(), wmfBounds.getHeight()/innerBounds.getHeight());
+            ctx.translate(-wmfBounds.getCenterX(), -wmfBounds.getCenterY());
+
+            HwmfGraphics g = new HwmfGraphics(ctx, innerBounds);
+            HwmfDrawProperties prop = g.getProperties();
+            prop.setViewportOrg(innerBounds.getX(), innerBounds.getY());
+            prop.setViewportExt(innerBounds.getWidth(), innerBounds.getHeight());
+
             int idx = 0;
             for (HwmfRecord r : records) {
+                prop = g.getProperties();
+                Shape propClip = prop.getClip();
+                Shape ctxClip = ctx.getClip();
+                if (!Objects.equals(propClip, ctxClip)) {
+                    int a = 5;
+                }
                 r.draw(g);
                 idx++;
             }
         } finally {
             ctx.setTransform(at);
+            ctx.setClip(clip);
         }
     }
 
     /**
      * Returns the bounding box in device-independent units. Usually this is taken from the placeable header.
-     * 
+     *
      * @return the bounding box
+     *
+     * @throws RuntimeException if neither WmfSetWindowOrg/Ext nor the placeableHeader are set
      */
     public Rectangle2D getBounds() {
         if (placeableHeader != null) {
             return placeableHeader.getBounds();
-        } else {
-            WmfSetWindowOrg wOrg = null;
-            WmfSetWindowExt wExt = null;
-            for (HwmfRecord r : getRecords()) {
-                if (wOrg != null && wExt != null) {
-                    break;
-                }
-                if (r instanceof WmfSetWindowOrg) {
-                    wOrg = (WmfSetWindowOrg)r;
-                } else if (r instanceof WmfSetWindowExt) {
-                    wExt = (WmfSetWindowExt)r;
-                }
-            }
-            if (wOrg == null || wExt == null) {
-                throw new RuntimeException("invalid wmf file - window records are incomplete.");
-            }
-            return new Rectangle2D.Double(wOrg.getX(), wOrg.getY(), wExt.getSize().getWidth(), wExt.getSize().getHeight());
-        }        
+        }
+        Rectangle2D inner = getInnnerBounds();
+        if (inner != null) {
+            return inner;
+        }
+        throw new RuntimeException("invalid wmf file - window records are incomplete.");
     }
-    
+
+    /**
+     * Returns the bounding box in device-independent units taken from the WmfSetWindowOrg/Ext records
+     *
+     * @return the bounding box or null, if the WmfSetWindowOrg/Ext records aren't set
+     */
+    public Rectangle2D getInnnerBounds() {
+        WmfSetWindowOrg wOrg = null;
+        WmfSetWindowExt wExt = null;
+        for (HwmfRecord r : getRecords()) {
+            if (r instanceof WmfSetWindowOrg) {
+                wOrg = (WmfSetWindowOrg)r;
+            } else if (r instanceof WmfSetWindowExt) {
+                wExt = (WmfSetWindowExt)r;
+            }
+            if (wOrg != null && wExt != null) {
+                return new Rectangle2D.Double(wOrg.getX(), wOrg.getY(), wExt.getSize().getWidth(), wExt.getSize().getHeight());
+        }
+        }
+        return null;
+    }
+
+
     public HwmfPlaceableHeader getPlaceableHeader() {
         return placeableHeader;
     }
@@ -178,13 +215,13 @@ public class HwmfPicture {
      *
      * @return the image size in points
      */
-    public Dimension getSize() {
+    public Dimension2D getSize() {
         double inch = (placeableHeader == null) ? 1440 : placeableHeader.getUnitsPerInch();
         Rectangle2D bounds = getBounds();
         
         //coefficient to translate from WMF dpi to 72dpi
         double coeff = Units.POINT_DPI/inch;
-        return new Dimension((int)Math.round(bounds.getWidth()*coeff), (int)Math.round(bounds.getHeight()*coeff));
+        return new Dimension2DDouble(bounds.getWidth()*coeff, bounds.getHeight()*coeff);
     }
 
     public Iterable<HwmfEmbedded> getEmbeddings() {

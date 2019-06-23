@@ -19,6 +19,7 @@ package org.apache.poi.hemf.usermodel;
 
 
 import java.awt.Graphics2D;
+import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
@@ -152,9 +153,10 @@ public class HemfPicture implements Iterable<HemfRecord> {
     }
 
     public void draw(Graphics2D ctx, Rectangle2D graphicsBounds) {
-        HemfHeader header = (HemfHeader)getRecords().get(0);
+        final HemfHeader header = (HemfHeader)getRecords().get(0);
 
-        AffineTransform at = ctx.getTransform();
+        final Shape clip = ctx.getClip();
+        final AffineTransform at = ctx.getTransform();
         try {
             Rectangle2D emfBounds = header.getBoundsRectangle();
 
@@ -175,6 +177,7 @@ public class HemfPicture implements Iterable<HemfRecord> {
             }
         } finally {
             ctx.setTransform(at);
+            ctx.setClip(clip);
         }
     }
 

@@ -23,6 +23,7 @@ import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
@@ -237,7 +238,7 @@ public class BitmapImageRenderer implements ImageRenderer {
     }
 
     @Override
-    public BufferedImage getImage(Dimension dim) {
+    public BufferedImage getImage(Dimension2D dim) {
         double w_old = img.getWidth();
         double h_old = img.getHeight();
         BufferedImage scaled = new BufferedImage((int)w_old, (int)h_old, BufferedImage.TYPE_INT_ARGB);

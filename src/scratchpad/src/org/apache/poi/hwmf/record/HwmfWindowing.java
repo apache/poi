@@ -25,6 +25,7 @@ import static org.apache.poi.hwmf.record.HwmfDraw.readBounds;
 import static org.apache.poi.hwmf.record.HwmfDraw.readPointS;
 
 import java.awt.Shape;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
@@ -380,7 +381,7 @@ public class HwmfWindowing {
      * The META_OFFSETCLIPRGN record moves the clipping region in the playback device context by the
      * specified offsets.
      */
-    public static class WmfOffsetClipRgn implements HwmfRecord, HwmfObjectTableEntry {
+    public static class WmfOffsetClipRgn implements HwmfRecord {
 
         protected final Point2D offset = new Point2D.Double();
 
@@ -396,11 +397,14 @@ public class HwmfWindowing {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            ctx.addObjectTableEntry(this);
-        }
-        
-        @Override
-        public void applyObject(HwmfGraphics ctx) {
+            final Shape oldClip = ctx.getProperties().getClip();
+            if (oldClip == null) {
+                return;
+            }
+            AffineTransform at = new AffineTransform();
+            at.translate(offset.getX(),offset.getY());
+            final Shape newClip = at.createTransformedShape(oldClip);
+            ctx.setClip(newClip, HwmfRegionMode.RGN_COPY, false);
         }
 
         @Override
@@ -413,7 +417,7 @@ public class HwmfWindowing {
      * The META_EXCLUDECLIPRECT record sets the clipping region in the playback device context to the
      * existing clipping region minus the specified rectangle.
      */
-    public static class WmfExcludeClipRect implements HwmfRecord, HwmfObjectTableEntry {
+    public static class WmfExcludeClipRect implements HwmfRecord {
 
         /** a rectangle in logical units */
         protected final Rectangle2D bounds = new Rectangle2D.Double();
@@ -430,14 +434,9 @@ public class HwmfWindowing {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            ctx.addObjectTableEntry(this);
-        }
-        
-        @Override
-        public void applyObject(HwmfGraphics ctx) {
             ctx.setClip(normalizeBounds(bounds), HwmfRegionMode.RGN_DIFF, false);
         }
-
+        
         @Override
         public String toString() {
             return boundsToString(bounds);
@@ -449,7 +448,7 @@ public class HwmfWindowing {
      * The META_INTERSECTCLIPRECT record sets the clipping region in the playback device context to the
      * intersection of the existing clipping region and the specified rectangle.
      */
-    public static class WmfIntersectClipRect implements HwmfRecord, HwmfObjectTableEntry {
+    public static class WmfIntersectClipRect implements HwmfRecord {
 
         /** a rectangle in logical units */
         protected final Rectangle2D bounds = new Rectangle2D.Double();
@@ -466,14 +465,9 @@ public class HwmfWindowing {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            ctx.addObjectTableEntry(this);
+            ctx.setClip(bounds, HwmfRegionMode.RGN_AND, false);
         }
         
-        @Override
-        public void applyObject(HwmfGraphics ctx) {
-            ctx.setClip(bounds, HwmfRegionMode.RGN_AND, true);
-        }
-
         @Override
         public String toString() {
             return boundsToString(bounds);

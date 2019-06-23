@@ -60,6 +60,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTStyleMatrix;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTStyleMatrixReference;
 import org.openxmlformats.schemas.drawingml.x2006.main.STPathShadeType;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTBackgroundProperties;
+import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
@@ -149,6 +150,15 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
         PropertyFetcher<PaintStyle> fetcher = new PropertyFetcher<PaintStyle>() {
             @Override
             public boolean fetch(XSLFShape shape) {
+                PackagePart pp = shape.getSheet().getPackagePart();
+                if (shape instanceof XSLFPictureShape) {
+                    CTPicture pic = (CTPicture)shape.getXmlObject();
+                    if (pic.getBlipFill() != null) {
+                        setValue(selectPaint(pic.getBlipFill(), pp));
+                        return true;
+                    }
+                }
+
                 XSLFFillProperties fp = XSLFPropertiesDelegate.getFillDelegate(shape.getShapeProperties());
                 if (fp == null) {
                     return false;
@@ -159,7 +169,6 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
                     return true;
                 }
 
-                PackagePart pp = shape.getSheet().getPackagePart();
                 PaintStyle paint = selectPaint(fp, null, pp, theme, hasPlaceholder);
                 if (paint != null) {
                     setValue(paint);
