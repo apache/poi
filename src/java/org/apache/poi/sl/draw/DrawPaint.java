@@ -237,6 +237,9 @@ public class DrawPaint {
         assert(graphics != null);
 
         final String contentType = fill.getContentType();
+        if (contentType == null || contentType.isEmpty()) {
+            return TRANSPARENT;
+        }
 
         ImageRenderer renderer = DrawPictureShape.getImageRenderer(graphics, contentType);
 
