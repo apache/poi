@@ -425,10 +425,26 @@ public class XWPFHeaderFooterPolicy {
      */
     private XWPFParagraph getWatermarkParagraph(String text, int idx) {
         CTP p;
-        if (getDefaultHeader() == null) // When there is no existing header
-            p = CTP.Factory.newInstance();
-        else // If there is already header in the docx
-            p = getDefaultHeader().createParagraph().getCTP();
+        switch (idx) {
+            case 2:
+                if (getFirstPageHeader() == null) // If there is no existing First Page Header
+                    p = CTP.Factory.newInstance();
+                else
+                    p = getFirstPageHeader().createParagraph().getCTP();
+                break;
+            case 3:
+                if (getEvenPageHeader() == null) // If there is no existing Even Page Header
+                    p = CTP.Factory.newInstance();
+                else
+                    p = getEvenPageHeader().createParagraph().getCTP();
+                break;
+            default:
+                if (getDefaultHeader() == null) // If there is no existing Default Page Header
+                    p = CTP.Factory.newInstance();
+                else
+                    p = getDefaultHeader().createParagraph().getCTP();
+                break;
+        }
         byte[] rsidr = doc.getDocument().getBody().getPArray(0).getRsidR();
         byte[] rsidrdefault = doc.getDocument().getBody().getPArray(0).getRsidRDefault();
         p.setRsidP(rsidr);
