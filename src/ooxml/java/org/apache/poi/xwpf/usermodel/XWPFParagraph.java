@@ -407,9 +407,10 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * Indicates whether this paragraph should be kept on the same page as the next one.
      */
     public boolean isKeepNext() {
-        if (getCTP() != null && getCTP().getPPr() != null) {
-            return getCTP().getPPr().setKeepNext(on);
+        if (getCTP() != null && getCTP().getPPr() != null && getCTP().getPPr().isSetKeepNext()) {
+            return getCTP().getPPr().getKeepNext().getVal() == STOnOff.ON;
         }
+        return false;
     }
     
     /**

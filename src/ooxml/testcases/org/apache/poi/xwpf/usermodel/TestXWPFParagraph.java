@@ -467,6 +467,12 @@ public final class TestXWPFParagraph {
             p.setPageBreak(false);
             assertFalse(p.isPageBreak());
 
+            assertFalse(p.isKeepNext());
+            p.setKeepNext(true);
+            assertTrue(p.isKeepNext());
+            p.setKeepNext(false);
+            assertFalse(p.isKeepNext());
+
             assertEquals(-1, p.getSpacingAfter());
             p.setSpacingAfter(12);
             assertEquals(12, p.getSpacingAfter());
