@@ -186,6 +186,17 @@ public final class TestXWPFDocument {
     }
 
     @Test
+    public void testAddHyperlink() throws IOException {
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("SampleDoc.docx");
+        XWPFParagraph p = doc.createParagraph();
+        XWPFHyperlinkRun h = p.createHyperlinkRun("http://poi.apache.org/");
+
+        assertEquals("http://poi.apache.org/", h.getHyperlink(doc).getURL());
+        assertEquals(p.getRuns().size(), 1);
+        assertEquals(p.getRuns().get(0), h);
+    }
+
+    @Test
     public void testRemoveBodyElement() throws IOException {
         XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
         assertEquals(3, doc.getParagraphs().size());
