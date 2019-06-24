@@ -520,7 +520,7 @@ public class TestXWPFRun {
         XWPFPicture pic = r.getEmbeddedPictures().get(0);
         CTPicture ctPic = pic.getCTPicture();
         CTBlipFillProperties ctBlipFill = ctPic.getBlipFill();
-        
+
         assertNotNull(ctBlipFill);
         
         CTBlip ctBlip = ctBlipFill.getBlip();
@@ -784,6 +784,27 @@ public class TestXWPFRun {
         assertEquals(styleId, candStyleId);
 
         document.close();
+    }
+
+    @Test
+    public void testGetDepthWidth() throws IOException, InvalidFormatException {
+        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("TestDocument.docx");
+        XWPFHeader hdr = doc.createHeader(HeaderFooterType.DEFAULT);
+        XWPFParagraph p = hdr.createParagraph();
+        XWPFRun r = p.createRun();
+
+        assertEquals(0, hdr.getAllPictures().size());
+        assertEquals(0, r.getEmbeddedPictures().size());
+
+        r.addPicture(new ByteArrayInputStream(new byte[0]), Document.PICTURE_TYPE_JPEG, "test.jpg", 21, 32);
+
+        assertEquals(1, hdr.getAllPictures().size());
+        assertEquals(1, r.getEmbeddedPictures().size());
+
+        XWPFPicture pic = r.getEmbeddedPictures().get(0);
+
+        assertEquals(pic.getWidth(), 21);
+        assertEquals(pic.getDepth(), 32);
     }
 
 }
