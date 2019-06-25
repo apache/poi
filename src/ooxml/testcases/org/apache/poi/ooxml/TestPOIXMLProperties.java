@@ -116,6 +116,42 @@ public final class TestPOIXMLProperties {
         newWorkbook.close();
     }
 
+    @Test
+    public void testWorkbookExtendedPropertiesGettersSetters() throws Exception {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        POIXMLProperties props = workbook.getProperties();
+        assertNotNull(props);
+
+        POIXMLProperties.ExtendedProperties properties =
+                props.getExtendedProperties();
+
+        String appVersion = "3.5 beta";
+        String application = "POI";
+
+        assertNull(properties.getApplication());
+        properties.setApplication(application);
+        assertEquals(properties.getApplication(), application);
+
+        assertNull(properties.getAppVersion());
+        properties.setAppVersion(appVersion);
+        assertEquals(properties.getAppVersion(), appVersion);
+
+        XSSFWorkbook newWorkbook =
+                XSSFTestDataSamples.writeOutAndReadBack(workbook);
+        workbook.close();
+        assertNotSame(workbook, newWorkbook);
+
+        POIXMLProperties newProps = newWorkbook.getProperties();
+        assertNotNull(newProps);
+        POIXMLProperties.ExtendedProperties newProperties =
+                newProps.getExtendedProperties();
+
+        assertEquals(application, newProperties.getApplication());
+        assertEquals(appVersion, newProperties.getAppVersion());
+
+        newWorkbook.close();
+    }
+
 
     /**
      * Test usermodel API for setting custom properties
