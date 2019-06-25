@@ -376,11 +376,17 @@ public class POIXMLProperties {
             }
             return null;
         }
+        public void setTemplate(String template) {
+            props.getProperties().setTemplate(template);
+        }
         public String getManager() {
             if (props.getProperties().isSetManager()) {
                 return props.getProperties().getManager();
             }
             return null;
+        }
+        public void setManager(String manager) {
+            props.getProperties().setManager(manager);
         }
         public String getCompany() {
             if (props.getProperties().isSetCompany()) {
@@ -388,11 +394,17 @@ public class POIXMLProperties {
             }
             return null;
         }
+        public void setCompany(String company) {
+            props.getProperties().setCompany(company);
+        }
         public String getPresentationFormat() {
             if (props.getProperties().isSetPresentationFormat()) {
                 return props.getProperties().getPresentationFormat();
             }
             return null;
+        }
+        public void setPresentationFormat(String presentationFormat) {
+            props.getProperties().setPresentationFormat(presentationFormat);
         }
         public String getApplication() {
             if (props.getProperties().isSetApplication()) {
@@ -400,11 +412,17 @@ public class POIXMLProperties {
             }
             return null;
         }
+        public void setApplication(String application) {
+            props.getProperties().setApplication(application);
+        }
         public String getAppVersion() {
             if (props.getProperties().isSetAppVersion()) {
                 return props.getProperties().getAppVersion();
             }
             return null;
+        }
+        public void setAppVersion(String appVersion) {
+            props.getProperties().setAppVersion(appVersion);
         }
 
         public int getPages() {
@@ -413,11 +431,17 @@ public class POIXMLProperties {
             }
             return -1;
         }
+        public void setPages(int pages) {
+            props.getProperties().setPages(pages);
+        }
         public int getWords() {
             if (props.getProperties().isSetWords()) {
                 return props.getProperties().getWords();
             }
             return -1;
+        }
+        public void setWords(int words) {
+            props.getProperties().setWords(words);
         }
         public int getCharacters() {
             if (props.getProperties().isSetCharacters()) {
@@ -425,11 +449,17 @@ public class POIXMLProperties {
             }
             return -1;
         }
+        public void setCharacters(int characters) {
+            props.getProperties().setCharacters(characters);
+        }
         public int getCharactersWithSpaces() {
             if (props.getProperties().isSetCharactersWithSpaces()) {
                 return props.getProperties().getCharactersWithSpaces();
             }
             return -1;
+        }
+        public void setCharactersWithSpaces(int charactersWithSpaces) {
+            props.getProperties().setCharactersWithSpaces(charactersWithSpaces);
         }
         public int getLines() {
             if (props.getProperties().isSetLines()) {
@@ -437,11 +467,17 @@ public class POIXMLProperties {
             }
             return -1;
         }
+        public void setLines(int lines) {
+            props.getProperties().setLines(lines);
+        }
         public int getParagraphs() {
             if (props.getProperties().isSetParagraphs()) {
                 return props.getProperties().getParagraphs();
             }
             return -1;
+        }
+        public void setParagraphs(int paragraphs) {
+            props.getProperties().setParagraphs(paragraphs);
         }
         public int getSlides() {
             if (props.getProperties().isSetSlides()) {
@@ -449,11 +485,17 @@ public class POIXMLProperties {
             }
             return -1;
         }
+        public void setSlides(int slides) {
+            props.getProperties().setSlides(slides);
+        }
         public int getNotes() {
             if (props.getProperties().isSetNotes()) {
                 return props.getProperties().getNotes();
             }
             return -1;
+        }
+        public void setNotes(int notes) {
+            props.getProperties().setNotes(notes);
         }
         public int getTotalTime()  {
             if (props.getProperties().isSetTotalTime()) {
@@ -461,11 +503,17 @@ public class POIXMLProperties {
             }
             return -1;
         }
+        public void setTotalTime(int totalTime) {
+            props.getProperties().setTotalTime(totalTime);
+        }
         public int getHiddenSlides()  {
             if (props.getProperties().isSetHiddenSlides()) {
                 return props.getProperties().getHiddenSlides();
             }
             return -1;
+        }
+        public void setHiddenSlides(int hiddenSlides) {
+            props.getProperties().setHiddenSlides(hiddenSlides);
         }
         public int getMMClips() {
             if (props.getProperties().isSetMMClips()) {
@@ -473,12 +521,18 @@ public class POIXMLProperties {
             }
             return -1;
         }
+        public void setMMClips(int mmClips) {
+            props.getProperties().setMMClips(mmClips);
+        }
 
         public String getHyperlinkBase() {
             if (props.getProperties().isSetHyperlinkBase()) {
                 return props.getProperties().getHyperlinkBase();
             }
             return null;
+        }
+        public void setHyperlinkBase(String hyperlinkBase) {
+            props.getProperties().setHyperlinkBase(hyperlinkBase);
         }
     }
 
