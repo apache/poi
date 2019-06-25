@@ -407,6 +407,17 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
     }
 
     /**
+     * Add a new {@link XWPFParagraph} to the end of the footnote.
+     *
+     * @return The new {@link XWPFParagraph}
+     */
+    public XWPFParagraph createParagraph() {
+        XWPFParagraph p = new XWPFParagraph(ctFtnEdn.addNewP(), this);
+        paragraphs.add(p);
+        return p;
+    }
+
+    /**
      * Get the {@link XWPFDocument} the footnote is part of.
      * @see org.apache.poi.xwpf.usermodel.IBody#getXWPFDocument()
      */
