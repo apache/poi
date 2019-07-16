@@ -402,6 +402,29 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         }
         return null;
     }
+    
+    /**
+     * Indicates whether this paragraph should be kept on the same page as the next one.
+     *
+     * @since POI 4.1.1
+     */
+    public boolean isKeepNext() {
+        if (getCTP() != null && getCTP().getPPr() != null && getCTP().getPPr().isSetKeepNext()) {
+            return getCTP().getPPr().getKeepNext().getVal() == STOnOff.ON;
+        }
+        return false;
+    }
+    
+    /**
+     * Sets this paragraph to be kept on the same page as the next one or not. 
+     *
+     * @since POI 4.1.1
+     */
+    public void setKeepNext(boolean keepNext) {
+        CTOnOff state = CTOnOff.Factory.newInstance();
+        state.setVal(keepNext ? STOnOff.ON : STOnOff.OFF);
+        getCTP().getPPr().setKeepNext(state);
+    }
 
     /**
      * Returns the text of the paragraph, but not of any objects in the
