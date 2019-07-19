@@ -405,14 +405,21 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     public XWPFHyperlink getHyperlinkByID(String id) {
-        initHyperlinks();
-
         for (XWPFHyperlink link : hyperlinks) {
             if (link.getId().equals(id)) {
                 return link;
             }
         }
 
+        // If the link was not found, rebuild the list (maybe a new link was added into the document) and check again.
+        initHyperlinks();
+        for (XWPFHyperlink link : hyperlinks) {
+            if (link.getId().equals(id)) {
+                return link;
+            }
+        }
+
+        // Link still not there? Giving up.
         return null;
     }
 
