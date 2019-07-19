@@ -18,6 +18,7 @@ package org.apache.poi.xwpf.usermodel;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.util.Units;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
 
@@ -81,14 +82,14 @@ public class XWPFPicture {
     /**
      * Returns the width of the picture (in points). 
      */
-    public long getWidth() {
+    public double getWidth() {
         return Units.toPoints(ctPic.getSpPr().getXfrm().getExt().getCx());
     }
    
     /**
      * Returns the depth of the picture (in points). 
      */
-    public long getDepth() {
+    public double getDepth() {
         return Units.toPoints(ctPic.getSpPr().getXfrm().getExt().getCy());
     }
 

@@ -803,8 +803,8 @@ public class TestXWPFRun {
 
         XWPFPicture pic = r.getEmbeddedPictures().get(0);
 
-        assertEquals(pic.getWidth(), 21);
-        assertEquals(pic.getDepth(), 32);
+        assertEquals(pic.getWidth(), Units.toPoints(21), 0.0);
+        assertEquals(pic.getDepth(), Units.toPoints(32), 0.0);
     }
 
 }
