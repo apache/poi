@@ -1444,6 +1444,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * Appends a new hyperlink run to this paragraph
      *
      * @return a new hyperlink run
+     * @since POI 4.1.1
      */
     public XWPFHyperlinkRun createHyperlinkRun(String uri) {
         // Create a relationship ID for this link. 

@@ -80,7 +80,9 @@ public class XWPFPicture {
     }
    
     /**
-     * Returns the width of the picture (in points). 
+     * Returns the width of the picture (in points).
+     *
+     * @since POI 4.1.1
      */
     public double getWidth() {
         return Units.toPoints(ctPic.getSpPr().getXfrm().getExt().getCx());
@@ -88,6 +90,8 @@ public class XWPFPicture {
    
     /**
      * Returns the depth of the picture (in points). 
+     *
+     * @since POI 4.1.1
      */
     public double getDepth() {
         return Units.toPoints(ctPic.getSpPr().getXfrm().getExt().getCy());
