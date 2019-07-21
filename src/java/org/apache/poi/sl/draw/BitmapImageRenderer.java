@@ -239,6 +239,9 @@ public class BitmapImageRenderer implements ImageRenderer {
 
     @Override
     public BufferedImage getImage(Dimension2D dim) {
+        if (img == null) {
+            return img;
+        }
         double w_old = img.getWidth();
         double h_old = img.getHeight();
         BufferedImage scaled = new BufferedImage((int)w_old, (int)h_old, BufferedImage.TYPE_INT_ARGB);
