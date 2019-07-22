@@ -24,9 +24,7 @@ import static org.apache.poi.hemf.record.emf.HemfFill.readXForm;
 import static org.apache.poi.hemf.record.emf.HemfRecordIterator.HEADER_SIZE;
 
 import java.awt.geom.AffineTransform;
-import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -666,34 +664,8 @@ public class HemfMisc {
             final AffineTransform tx;
             switch (modifyWorldTransformMode) {
                 case MWT_LEFTMULTIPLY:
-
-                    AffineTransform wsTrans;
-                    final Rectangle2D win = prop.getWindow();
-                    boolean noSetWindowExYet = win.getWidth() == 1 && win.getHeight() == 1;
-                    if (noSetWindowExYet) {
-                        // TODO: understand world-space transformation [MSDN-WRLDPGSPC]
-                        // experimental and horrible solved, because the world-space transformation behind it
-                        // is not understood :(
-                        // only found one example which had landscape bounds and transform of 90 degress
-
-                        try {
-                            wsTrans = xForm.createInverse();
-                        } catch (NoninvertibleTransformException e) {
-                            wsTrans = new AffineTransform();
-                        }
-
-                        Rectangle2D emfBounds = header.getBoundsRectangle();
-
-                        if (xForm.getShearX() == -1.0 && xForm.getShearY() == 1.0) {
-                            // rotate 90 deg
-                            wsTrans.translate(-emfBounds.getHeight(), emfBounds.getHeight());
-                        }
-                    } else {
-                        wsTrans = adaptXForm(xForm, ctx.getTransform());
-                    }
-
                     tx = ctx.getTransform();
-                    tx.concatenate(wsTrans);
+                    tx.concatenate(adaptXForm(xForm, ctx.getTransform()));
                     break;
                 case MWT_RIGHTMULTIPLY:
                     tx = ctx.getTransform();
