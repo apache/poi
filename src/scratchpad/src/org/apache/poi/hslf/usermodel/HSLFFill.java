@@ -254,20 +254,20 @@ public final class HSLFFill {
         };
     }
     
-    
+    private boolean isRotatedWithShape() {
+        // NOFILLHITTEST can be in the normal escher opt record but also in the tertiary record
+        // the extended bit fields seem to be in the second
+        AbstractEscherOptRecord opt = shape.getEscherChild(RecordTypes.EscherUserDefined);
+        EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST);
+        int propVal = (p == null) ? 0 : p.getPropertyValue();
+        return FILL_USE_USE_SHAPE_ANCHOR.isSet(propVal) && FILL_USE_SHAPE_ANCHOR.isSet(propVal);
+    }
 
     private GradientPaint getGradientPaint(final GradientType gradientType) {
         AbstractEscherOptRecord opt = shape.getEscherOptRecord();
         final EscherArrayProperty ep = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__SHADECOLORS);
         final int colorCnt = (ep == null) ? 0 : ep.getNumberOfElementsInArray();
 
-        // NOFILLHITTEST can be in the normal escher opt record but also in the tertiary record
-        // the extended bit fields seem to be in the second
-        opt = shape.getEscherChild(RecordTypes.EscherUserDefined);
-        EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST);
-        int propVal = (p == null) ? 0 : p.getPropertyValue();
-        final boolean rotateWithShape = FILL_USE_USE_SHAPE_ANCHOR.isSet(propVal) && FILL_USE_SHAPE_ANCHOR.isSet(propVal);
-        
         return new GradientPaint() {
             @Override
             public double getGradientAngle() {
@@ -319,7 +319,7 @@ public final class HSLFFill {
             
             @Override
             public boolean isRotatedWithShape() {
-                return rotateWithShape;
+                return HSLFFill.this.isRotatedWithShape();
             }
             
             @Override
@@ -349,6 +349,11 @@ public final class HSLFFill {
             @Override
             public int getAlpha() {
                 return (int)(shape.getAlpha(EscherProperties.FILL__FILLOPACITY)*100000.0);
+            }
+
+            @Override
+            public boolean isRotatedWithShape() {
+                return HSLFFill.this.isRotatedWithShape();
             }
         };
     }
