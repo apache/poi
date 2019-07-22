@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.poi.hwmf.usermodel.HwmfPicture;
+import org.apache.poi.sl.draw.BitmapImageRenderer;
 import org.apache.poi.sl.draw.DrawPictureShape;
 import org.apache.poi.sl.draw.ImageRenderer;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
@@ -93,17 +94,8 @@ public class HwmfImageRenderer implements ImageRenderer {
         g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
         image.draw(g, new Rectangle2D.Double(0,0,dim.getWidth(),dim.getHeight()));
         g.dispose();
-        
-        if (alpha != 0) {
-            BufferedImage newImg = new BufferedImage((int)dim.getWidth(), (int)dim.getHeight(), BufferedImage.TYPE_INT_ARGB);
-            g = newImg.createGraphics();
-            RescaleOp op = new RescaleOp(new float[]{1.0f, 1.0f, 1.0f, (float)alpha}, new float[]{0,0,0,0}, null);
-            g.drawImage(bufImg, op, 0, 0);
-            g.dispose();
-            bufImg = newImg;
-        }
-        
-        return bufImg;
+
+        return BitmapImageRenderer.setAlpha(bufImg, alpha);
     }
     
     @Override
