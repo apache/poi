@@ -22,12 +22,11 @@ package org.apache.poi.xslf.usermodel;
 import static org.junit.Assume.assumeFalse;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.util.Collection;
 import java.util.Locale;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.regex.Pattern;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.xslf.util.PPTX2PNG;
@@ -66,29 +65,15 @@ public class TestPPTX2PNG {
     @Parameter(value = 0)
     public String pptFile;
     
+    @SuppressWarnings("ConstantConditions")
     @Parameters(name="{0}")
     public static Collection<String> data() {
-        final Set<String> data = new TreeSet<>();
-        for (String f : files.split(", ?")) {
-            if (basedir == null) {
-                data.add(f);
-            } else {
-                final Pattern p = Pattern.compile(f);
-                basedir.listFiles(new FileFilter(){
-                    public boolean accept(File pathname) {
-                        String name = pathname.getName();
-                        if (p.matcher(name).matches()) {
-                            data.add(name);
-                        }
-                        return false;
-                    }
-                });
-            }
-        }
-                
-        return data;
+        Function<String, Stream<String>> fun = (basedir == null) ? Stream::of :
+            (f) -> Stream.of(basedir.listFiles(p -> p.getName().matches(f))).map(File::getName);
+
+        return Stream.of(files.split(", ?")).flatMap(fun).collect(Collectors.toList());
     }
-    
+
     @Test
     public void render() throws Exception {
         assumeFalse("ignore HSLF / .ppt files in no-scratchpad run", xslfOnly && pptFile.toLowerCase(Locale.ROOT).endsWith("ppt"));
@@ -98,6 +83,7 @@ public class TestPPTX2PNG {
             "-slide", "-1", // -1 for all
             "-outdir", new File("build/tmp/").getCanonicalPath(),
             "-outpat", "${basename}-${slideno}-${ext}.${format}",
+            "-scale", "1.333333333",
             "-quiet",
             (basedir == null ? samples.getFile(pptFile) : new File(basedir, pptFile)).getAbsolutePath()
         };

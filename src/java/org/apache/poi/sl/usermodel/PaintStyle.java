@@ -17,6 +17,8 @@
 
 package org.apache.poi.sl.usermodel;
 
+import java.awt.geom.Dimension2D;
+import java.awt.geom.Point2D;
 import java.io.InputStream;
 
 
@@ -40,6 +42,45 @@ public interface PaintStyle {
         /** darken (... a bit less) the paint/filling */
         DARKEN_LESS
     }
+
+    enum FlipMode {
+        /** not flipped/mirrored */
+        NONE,
+        /** flipped/mirrored/duplicated along the x axis */
+        X,
+        /** flipped/mirrored/duplicated along the y axis */
+        Y,
+        /** flipped/mirrored/duplicated along the x and y axis */
+        XY
+    }
+
+    enum TextureAlignment {
+        BOTTOM("b"),
+        BOTTOM_LEFT("bl"),
+        BOTTOM_RIGHT("br"),
+        CENTER("ctr"),
+        LEFT("l"),
+        RIGHT("r"),
+        TOP("t"),
+        TOP_LEFT("tl"),
+        TOP_RIGHT("tr");
+
+        private final String ooxmlId;
+
+        TextureAlignment(String ooxmlId) {
+            this.ooxmlId = ooxmlId;
+        }
+
+        public static TextureAlignment fromOoxmlId(String ooxmlId) {
+            for (TextureAlignment ta : values()) {
+                if (ta.ooxmlId.equals(ooxmlId)) {
+                    return ta;
+                }
+            }
+            return null;
+        }
+    }
+
 
     interface SolidPaint extends PaintStyle {
         ColorStyle getSolidColor();
@@ -73,5 +114,29 @@ public interface PaintStyle {
          * @return the alpha mask in percents [0..100000]
          */
         int getAlpha();
+
+        /**
+         * @return {@code true}, if the rotation of the shape is also applied to the texture paint
+         */
+        default boolean isRotatedWithShape() { return true; }
+
+        /**
+         * @return the dimensions of the tiles in percent of the shape dimensions
+         * or {@code null} if no scaling is applied
+         */
+        default Dimension2D getScale() { return null; }
+
+        /**
+         * @return the offset of the tiles in points or {@code null} if there's no offset
+         */
+        default Point2D getOffset() { return null; }
+
+        /**
+         * @return the flip/mirroring/duplication mode
+         */
+        default FlipMode getFlipMode() { return FlipMode.NONE; }
+
+
+        default TextureAlignment getAlignment() { return null; }
     }
 }

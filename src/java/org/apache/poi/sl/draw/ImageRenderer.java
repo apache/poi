@@ -99,7 +99,7 @@ public interface ImageRenderer {
     void loadImage(byte[] data, String contentType) throws IOException;
 
     /**
-     * @return the dimension of the buffered image
+     * @return the dimension of the buffered image in pixel
      */
     Dimension2D getDimension();
 

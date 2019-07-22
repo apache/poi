@@ -18,13 +18,13 @@
 package org.apache.poi.sl.draw;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.LinearGradientPaint;
 import java.awt.Paint;
 import java.awt.RadialGradientPaint;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -38,11 +38,13 @@ import java.util.function.BiFunction;
 import org.apache.poi.sl.usermodel.AbstractColorStyle;
 import org.apache.poi.sl.usermodel.ColorStyle;
 import org.apache.poi.sl.usermodel.PaintStyle;
+import org.apache.poi.sl.usermodel.PaintStyle.FlipMode;
 import org.apache.poi.sl.usermodel.PaintStyle.GradientPaint;
 import org.apache.poi.sl.usermodel.PaintStyle.PaintModifier;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.PaintStyle.TexturePaint;
 import org.apache.poi.sl.usermodel.PlaceableShape;
+import org.apache.poi.util.Dimension2DDouble;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -243,11 +245,6 @@ public class DrawPaint {
 
         ImageRenderer renderer = DrawPictureShape.getImageRenderer(graphics, contentType);
 
-        int alpha = fill.getAlpha();
-        if (0 <= alpha && alpha < 100000) {
-            renderer.setAlpha(alpha/100000.f);
-        }
-
         // TODO: handle tile settings, currently the pattern is always streched 100% in height/width
         Rectangle2D textAnchor = shape.getAnchor();
 
@@ -258,25 +255,67 @@ public class DrawPaint {
 
             renderer.loadImage(is, contentType);
 
-            final BufferedImage image;
-            switch (contentType) {
-                case "image/x-wmf":
-                case "image/x-emf":
-                    // don't rely on wmf dimensions, use dimension of anchor
-                    // TODO: check pixels vs. points for image dimension
-                    image = renderer.getImage(new Dimension((int)textAnchor.getWidth(), (int)textAnchor.getHeight()));
-                    break;
-                default:
-                    image = renderer.getImage();
-                    break;
+            int alpha = fill.getAlpha();
+            if (0 <= alpha && alpha < 100000) {
+                renderer.setAlpha(alpha/100000.f);
             }
 
+            Dimension2D imgDim = renderer.getDimension();
+            if ("image/x-wmf".contains(contentType)) {
+                // don't rely on wmf dimensions, use dimension of anchor
+                // TODO: check pixels vs. points for image dimension
+                imgDim = new Dimension2DDouble(textAnchor.getWidth(), textAnchor.getHeight());
+            }
+
+            BufferedImage image = renderer.getImage(imgDim);
             if(image == null) {
                 LOG.log(POILogger.ERROR, "Can't load image data");
                 return TRANSPARENT;
             }
 
-            return new java.awt.TexturePaint(image, textAnchor);
+            double flipX = 1, flipY = 1;
+            final FlipMode flip = fill.getFlipMode();
+            if (flip != null && flip != FlipMode.NONE) {
+                final int width = image.getWidth(), height = image.getHeight();
+                switch (flip) {
+                    case X:
+                        flipX = 2;
+                        break;
+                    case Y:
+                        flipY = 2;
+                        break;
+                    case XY:
+                        flipX = 2;
+                        flipY = 2;
+                        break;
+                }
+
+                final BufferedImage img = new BufferedImage((int)(width*flipX), (int)(height*flipY), BufferedImage.TYPE_INT_ARGB);
+                Graphics2D g = img.createGraphics();
+                g.drawImage(image, 0, 0, null);
+
+                switch (flip) {
+                    case X:
+                        g.drawImage(image, 2*width, 0, -width, height, null);
+                        break;
+                    case Y:
+                        g.drawImage(image, 0, 2*height, width, -height, null);
+                        break;
+                    case XY:
+                        g.drawImage(image, 2*width, 0, -width, height, null);
+                        g.drawImage(image, 0, 2*height, width, -height, null);
+                        g.drawImage(image, 2*width, 2*height, -width, -height, null);
+                        break;
+                }
+
+                g.dispose();
+                image = img;
+            }
+
+            Shape s = (Shape)graphics.getRenderingHint(Drawable.GRADIENT_SHAPE);
+
+            // TODO: check why original bitmaps scale/behave differently to vector based images
+            return new DrawTexturePaint(image, s, fill, flipX, flipY, renderer instanceof BitmapImageRenderer);
         } catch (IOException e) {
             LOG.log(POILogger.ERROR, "Can't load image data - using transparent color", e);
             return TRANSPARENT;

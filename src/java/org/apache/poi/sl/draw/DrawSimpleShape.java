@@ -24,12 +24,14 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.apache.poi.sl.draw.geom.Context;
 import org.apache.poi.sl.draw.geom.CustomGeometry;
@@ -38,6 +40,8 @@ import org.apache.poi.sl.draw.geom.Path;
 import org.apache.poi.sl.usermodel.LineDecoration;
 import org.apache.poi.sl.usermodel.LineDecoration.DecorationShape;
 import org.apache.poi.sl.usermodel.LineDecoration.DecorationSize;
+import org.apache.poi.sl.usermodel.PaintStyle;
+import org.apache.poi.sl.usermodel.PaintStyle.PaintModifier;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.Shadow;
 import org.apache.poi.sl.usermodel.SimpleShape;
@@ -58,9 +62,8 @@ public class DrawSimpleShape extends DrawShape {
             return;
         }
 
-        DrawPaint drawPaint = DrawFactory.getInstance(graphics).getPaint(getShape());
-        Paint fill = drawPaint.getPaint(graphics, getShape().getFillStyle().getPaint());
-        Paint line = drawPaint.getPaint(graphics, getShape().getStrokeStyle().getPaint());
+        Paint fill = getFillPaint(graphics);
+        Paint line = getLinePaint(graphics);
         BasicStroke stroke = getStroke(); // the stroke applies both to the shadow and the shape
         graphics.setStroke(stroke);
 
@@ -71,16 +74,28 @@ public class DrawSimpleShape extends DrawShape {
 
         // then fill the shape interior
         if (fill != null) {
+            final Path2D area = new Path2D.Double();
+            graphics.setRenderingHint(Drawable.GRADIENT_SHAPE, area);
+
+            Consumer<PaintModifier> fun = (pm) -> fillArea(graphics, pm, area);
+
+            PaintModifier pm = null;
             for (Outline o : elems) {
-                if (o.getPath().isFilled()){
-                    Paint fillMod = drawPaint.getPaint(graphics, getShape().getFillStyle().getPaint(), o.getPath().getFill());
-                    if (fillMod != null) {
-                        graphics.setPaint(fillMod);
-                        java.awt.Shape s = o.getOutline();
-                        graphics.setRenderingHint(Drawable.GRADIENT_SHAPE, s);
-                        fillPaintWorkaround(graphics, s);
+                Path path = o.getPath();
+                if (path.isFilled()) {
+                    PaintModifier pmOld = pm;
+                    pm = path.getFill();
+                    if (pmOld != null && pmOld != pm) {
+                        fun.accept(pmOld);
+                        area.reset();
+                    } else {
+                        area.append(o.getOutline(), false);
                     }
                 }
+            }
+
+            if (area.getCurrentPoint() != null) {
+                fun.accept(pm);
             }
         }
 
@@ -103,6 +118,30 @@ public class DrawSimpleShape extends DrawShape {
 		// draw line decorations
         drawDecoration(graphics, line, stroke);
     }
+
+    private void fillArea(Graphics2D graphics, PaintModifier pm, Path2D area) {
+        final SimpleShape<?, ?> ss = getShape();
+        final PaintStyle ps = ss.getFillStyle().getPaint();
+        final DrawPaint drawPaint = DrawFactory.getInstance(graphics).getPaint(ss);
+        final Paint fillMod = drawPaint.getPaint(graphics, ps, pm);
+        if (fillMod != null) {
+            graphics.setPaint(fillMod);
+            fillPaintWorkaround(graphics, area);
+        }
+    }
+
+    protected Paint getFillPaint(Graphics2D graphics) {
+        final PaintStyle ps = getShape().getFillStyle().getPaint();
+        DrawPaint drawPaint = DrawFactory.getInstance(graphics).getPaint(getShape());
+        return drawPaint.getPaint(graphics, ps);
+    }
+
+    protected Paint getLinePaint(Graphics2D graphics) {
+        final PaintStyle ps = getShape().getFillStyle().getPaint();
+        DrawPaint drawPaint = DrawFactory.getInstance(graphics).getPaint(getShape());
+        return drawPaint.getPaint(graphics, getShape().getStrokeStyle().getPaint());
+    }
+
 
     protected void drawDecoration(Graphics2D graphics, Paint line, BasicStroke stroke) {
         if(line == null) {
