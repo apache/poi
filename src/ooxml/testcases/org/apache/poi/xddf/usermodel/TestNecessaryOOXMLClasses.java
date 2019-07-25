@@ -111,6 +111,8 @@ public class TestNecessaryOOXMLClasses {
         Assert.assertNotNull(ctSurfaceSer);
         CTView3D ctView3D = CTView3D.Factory.newInstance();
         Assert.assertNotNull(ctView3D);
+        STShape stShape = STShape.Factory.newInstance();
+        Assert.assertNotNull(stShape);
 
         STLblAlgn.Enum e1 = STLblAlgn.Enum.forString("ctr");
         Assert.assertNotNull(e1);
@@ -140,7 +142,7 @@ public class TestNecessaryOOXMLClasses {
         Assert.assertNotNull(ctTextBlipBullet);
         CTRotX ctRotX = CTRotX.Factory.newInstance();
         Assert.assertNotNull(ctRotX);
-        CTRotX ctRotY = CTRotX.Factory.newInstance();
+        CTRotY ctRotY = CTRotY.Factory.newInstance();
         Assert.assertNotNull(ctRotY);
         CTPerspective ctPerspective = CTPerspective.Factory.newInstance();
         Assert.assertNotNull(ctPerspective);
