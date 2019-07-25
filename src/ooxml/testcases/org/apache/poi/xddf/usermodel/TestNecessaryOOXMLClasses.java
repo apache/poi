@@ -91,6 +91,26 @@ public class TestNecessaryOOXMLClasses {
         Assert.assertNotNull(stDashBlanksAs);
         CTDispBlanksAs ctDashBlanksAs = CTDispBlanksAs.Factory.newInstance();
         Assert.assertNotNull(ctDashBlanksAs);
+        CTAreaChart ctAreaChart = CTAreaChart.Factory.newInstance();
+        Assert.assertNotNull(ctAreaChart);
+        CTArea3DChart ctArea3DChart = CTArea3DChart.Factory.newInstance();
+        Assert.assertNotNull(ctArea3DChart);
+        CTSurfaceChart ctSurfaceChart = CTSurfaceChart.Factory.newInstance();
+        Assert.assertNotNull(ctSurfaceChart);
+        CTBar3DChart ctBar3DChart = CTBar3DChart.Factory.newInstance();
+        Assert.assertNotNull(ctBar3DChart);
+        CTLine3DChart ctLine3DChart = CTLine3DChart.Factory.newInstance();
+        Assert.assertNotNull(ctLine3DChart);
+        CTPie3DChart ctPie3DChart = CTPie3DChart.Factory.newInstance();
+        Assert.assertNotNull(ctPie3DChart);
+        CTSurface3DChart ctSurface3DChart = CTSurface3DChart.Factory.newInstance();
+        Assert.assertNotNull(ctSurface3DChart);
+        CTAreaSer ctAreaSer = CTAreaSer.Factory.newInstance();
+        Assert.assertNotNull(ctAreaSer);
+        CTSurfaceSer ctSurfaceSer = CTSurfaceSer.Factory.newInstance();
+        Assert.assertNotNull(ctSurfaceSer);
+        CTView3D ctView3D = CTView3D.Factory.newInstance();
+        Assert.assertNotNull(ctView3D);
 
         STLblAlgn.Enum e1 = STLblAlgn.Enum.forString("ctr");
         Assert.assertNotNull(e1);
@@ -106,6 +126,9 @@ public class TestNecessaryOOXMLClasses {
         Assert.assertNotNull(e6);
         STDispBlanksAs.Enum e7 = STDispBlanksAs.Enum.forString("span");
         Assert.assertNotNull(e7);
+        STShape.Enum e8 = STShape.Enum.forString("cone");
+        Assert.assertNotNull(e8);
+
 
         CTTextBulletTypefaceFollowText ctTextBulletTypefaceFollowText = CTTextBulletTypefaceFollowText.Factory.newInstance();
         Assert.assertNotNull(ctTextBulletTypefaceFollowText);
@@ -115,6 +138,22 @@ public class TestNecessaryOOXMLClasses {
         Assert.assertNotNull(ctTextBulletColorFollowText);
         CTTextBlipBullet ctTextBlipBullet = CTTextBlipBullet.Factory.newInstance();
         Assert.assertNotNull(ctTextBlipBullet);
+        CTRotX ctRotX = CTRotX.Factory.newInstance();
+        Assert.assertNotNull(ctRotX);
+        CTRotX ctRotY = CTRotX.Factory.newInstance();
+        Assert.assertNotNull(ctRotY);
+        CTPerspective ctPerspective = CTPerspective.Factory.newInstance();
+        Assert.assertNotNull(ctPerspective);
+        CTDepthPercent ctDepthPercent = CTDepthPercent.Factory.newInstance();
+        Assert.assertNotNull(ctDepthPercent);
+        CTHPercent ctHPercent = CTHPercent.Factory.newInstance();
+        Assert.assertNotNull(ctHPercent);
+        CTShape ctShape = CTShape.Factory.newInstance();
+        Assert.assertNotNull(ctShape);
+        CTOverlap ctOverlap = CTOverlap.Factory.newInstance();
+        Assert.assertNotNull(ctOverlap);
+        CTFirstSliceAng ctFirstSliceAng = CTFirstSliceAng.Factory.newInstance();
+        Assert.assertNotNull(ctFirstSliceAng);
     }
 
 }
