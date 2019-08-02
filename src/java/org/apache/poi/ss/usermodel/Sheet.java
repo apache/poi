@@ -84,6 +84,17 @@ public interface Sheet extends Iterable<Row> {
     Row getRow(int rownum);
 
     /**
+     * Returns a read-only view of a column, 0-based. The object is created, even if it
+     * is empty.
+     *
+     * @param colnum  column to get (0-based)
+     * @return Row representing the rownumber
+     */
+    default Column getColumn(int colnum) {
+        return new Column(this, colnum);
+    }
+
+    /**
      * Returns the number of physically defined rows (NOT the number of rows in the sheet)
      *
      * @return the number of physically defined rows in this sheet
