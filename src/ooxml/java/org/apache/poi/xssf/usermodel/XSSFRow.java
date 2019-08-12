@@ -18,7 +18,10 @@
 package org.apache.poi.xssf.usermodel;
 
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -220,7 +223,15 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
             ctCell = _row.addNewC();
         }
         XSSFCell xcell = new XSSFCell(this, ctCell);
-        xcell.setCellNum(columnIndex);
+        try {
+            xcell.setCellNum(columnIndex);
+        } catch (IllegalArgumentException e) {
+            // we need to undo adding the CTCell in _row if something fails here, e.g.
+            // cell-limits are exceeded
+            _row.removeC(_row.getCList().size()-1);
+
+            throw e;
+        }
         if (type != CellType.BLANK && type != CellType.FORMULA) {
             setDefaultValue(xcell, type);
         }
@@ -499,6 +510,10 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         if (cell.getRow() != this) {
             throw new IllegalArgumentException("Specified cell does not belong to this row");
         }
+        //noinspection SuspiciousMethodCalls
+        if(!_cells.containsValue(cell)) {
+            throw new IllegalArgumentException("the row does not contain this cell");
+        }
 
         XSSFCell xcell = (XSSFCell)cell;
         if(xcell.isPartOfArrayFormulaGroup()) {
@@ -509,7 +524,18 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         }
         // Performance optimization for bug 57840: explicit boxing is slightly faster than auto-unboxing, though may use more memory
         final Integer colI = Integer.valueOf(cell.getColumnIndex()); // NOSONAR
-        _cells.remove(colI);
+        XSSFCell removed = _cells.remove(colI);
+
+        // also remove the corresponding CTCell from the _row.cArray,
+        // it may not be at the same position right now
+        // thus search for it
+        int i = 0;
+        for (CTCell ctCell : _row.getCArray()) {
+            if(ctCell == removed.getCTCell()) {
+                _row.removeC(i);
+            }
+            i++;
+        }
     }
 
     /**
@@ -527,22 +553,39 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      *
      * @see org.apache.poi.xssf.usermodel.XSSFSheet#write(java.io.OutputStream) ()
      */
-    protected void onDocumentWrite(){
-        CTCell[] cArray = new CTCell[_cells.size()];
-        int i = 0;
-        for (XSSFCell xssfCell : _cells.values()) {
-            cArray[i] = (CTCell) xssfCell.getCTCell().copy();
+    protected void onDocumentWrite() {
+        // _row.cArray and _cells.getCTCell might be out of sync after adding/removing cells,
+        // thus we need to re-order it here to make the resulting file correct
 
-            // we have to copy and re-create the XSSFCell here because the
-            // elements as otherwise setCArray below invalidates all the columns!
-            // see Bug 56170, XMLBeans seems to always release previous objects
-            // in the CArray, so we need to provide completely new ones here!
-            //_cells.put(entry.getKey(), new XSSFCell(this, cArray[i]));
-            xssfCell.setCTCell(cArray[i]);
+        // copy all values to 2nd array and a map for lookup of index
+        List<CTCell> cArrayOrig = _row.getCList();
+        CTCell[] cArrayCopy = new CTCell[cArrayOrig.size()];
+        IdentityHashMap<CTCell, Integer> map = new IdentityHashMap<>(_cells.size());
+        int i = 0;
+        for (CTCell ctCell : cArrayOrig) {
+            cArrayCopy[i] = (CTCell) ctCell.copy();
+            map.put(ctCell, i);
             i++;
         }
 
-        _row.setCArray(cArray);
+        // populate _row.cArray correctly
+        i = 0;
+        for (XSSFCell cell : _cells.values()) {
+            // no need to change anything if position is correct
+            Integer correctPosition = map.get(cell.getCTCell());
+            Objects.requireNonNull(correctPosition, "Should find CTCell in _row");
+            if(correctPosition != i) {
+                // we need to re-populate this CTCell
+                _row.setCArray(i, cArrayCopy[correctPosition]);
+                cell.setCTCell(_row.getCArray(i));
+            }
+            i++;
+        }
+
+        // remove any remaining illegal references in _rows.cArray
+        while(cArrayOrig.size() > _cells.size()) {
+            _row.removeC(_cells.size());
+        }
     }
 
     /**
@@ -696,7 +739,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
 
     private void shiftCell(int columnIndex, int step/*pass negative value for left shift*/){
         if(columnIndex + step < 0) {
-            throw new IllegalStateException("Column index less than zero : " + (Integer.valueOf(columnIndex + step)).toString());
+            throw new IllegalStateException("Column index less than zero : " + (Integer.valueOf(columnIndex + step)));
         }
 
         XSSFCell currentCell = getCell(columnIndex);
