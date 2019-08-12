@@ -18,7 +18,6 @@
 package org.apache.poi.xssf.usermodel;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 
@@ -196,24 +195,44 @@ public final class TestXSSFRow extends BaseTestXRow {
         
         workbook.close();
     }
-    
+
     @Test
     public void testMultipleEditWriteCycles() {
         final XSSFWorkbook wb1 = new XSSFWorkbook();
         final XSSFSheet sheet1 = wb1.createSheet("Sheet1");
-        final XSSFRow srcRow = sheet1.createRow(0);
+        XSSFRow srcRow = sheet1.createRow(0);
         srcRow.createCell(0).setCellValue("hello");
         srcRow.createCell(3).setCellValue("world");
-        
-        // discard result
-        XSSFTestDataSamples.writeOutAndReadBack(wb1);
-        srcRow.createCell(1).setCellValue("cruel");
+
         // discard result
         XSSFTestDataSamples.writeOutAndReadBack(wb1);
 
+        assertEquals("hello", srcRow.getCell(0).getStringCellValue());
+        assertEquals("hello",
+                wb1.getSheet("Sheet1").getRow(0).getCell(0).getStringCellValue());
+        assertEquals("world", srcRow.getCell(3).getStringCellValue());
+        assertEquals("world",
+                wb1.getSheet("Sheet1").getRow(0).getCell(3).getStringCellValue());
+
+        srcRow.createCell(1).setCellValue("cruel");
+
+        // discard result
+        XSSFTestDataSamples.writeOutAndReadBack(wb1);
+
+        assertEquals("hello", srcRow.getCell(0).getStringCellValue());
+        assertEquals("hello",
+                wb1.getSheet("Sheet1").getRow(0).getCell(0).getStringCellValue());
+        assertEquals("cruel", srcRow.getCell(1).getStringCellValue());
+        assertEquals("cruel",
+                wb1.getSheet("Sheet1").getRow(0).getCell(1).getStringCellValue());
+        assertEquals("world", srcRow.getCell(3).getStringCellValue());
+        assertEquals("world",
+                wb1.getSheet("Sheet1").getRow(0).getCell(3).getStringCellValue());
+
         srcRow.getCell(1).setCellValue((RichTextString) null);
-        
+
         XSSFWorkbook wb3 = XSSFTestDataSamples.writeOutAndReadBack(wb1);
-        assertEquals("Cell not blank", CellType.BLANK, wb3.getSheet("Sheet1").getRow(0).getCell(1).getCellType());
+        assertEquals("Cell should be blank", CellType.BLANK,
+                wb3.getSheet("Sheet1").getRow(0).getCell(1).getCellType());
     }
 }

@@ -415,8 +415,13 @@ public final class TestXSSFCell extends BaseTestXCell {
 
             validateRow(row);
 
-            // once again with removing one cell
-            row.removeCell(cell1);
+            // once again with removing the same cell, this throws an exception
+            try {
+                row.removeCell(cell1);
+                fail("Should catch an exception");
+            } catch (IllegalArgumentException e) {
+                // expected here
+            }
 
             // now check again
             validateRow(row);
