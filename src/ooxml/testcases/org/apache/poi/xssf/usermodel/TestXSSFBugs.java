@@ -160,32 +160,31 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      */
     @Test
     public void bug45430() throws IOException {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("45430.xlsx");
-        assertFalse(wb.isMacroEnabled());
-        assertEquals(3, wb.getNumberOfNames());
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("45430.xlsx")) {
+            assertFalse(wb.isMacroEnabled());
+            assertEquals(3, wb.getNumberOfNames());
 
-        assertEquals(0, wb.getName("SheetAA1").getCTName().getLocalSheetId());
-        assertFalse(wb.getName("SheetAA1").getCTName().isSetLocalSheetId());
-        assertEquals("SheetA!$A$1", wb.getName("SheetAA1").getRefersToFormula());
-        assertEquals("SheetA", wb.getName("SheetAA1").getSheetName());
+            assertEquals(0, wb.getName("SheetAA1").getCTName().getLocalSheetId());
+            assertFalse(wb.getName("SheetAA1").getCTName().isSetLocalSheetId());
+            assertEquals("SheetA!$A$1", wb.getName("SheetAA1").getRefersToFormula());
+            assertEquals("SheetA", wb.getName("SheetAA1").getSheetName());
 
-        assertEquals(0, wb.getName("SheetBA1").getCTName().getLocalSheetId());
-        assertFalse(wb.getName("SheetBA1").getCTName().isSetLocalSheetId());
-        assertEquals("SheetB!$A$1", wb.getName("SheetBA1").getRefersToFormula());
-        assertEquals("SheetB", wb.getName("SheetBA1").getSheetName());
+            assertEquals(0, wb.getName("SheetBA1").getCTName().getLocalSheetId());
+            assertFalse(wb.getName("SheetBA1").getCTName().isSetLocalSheetId());
+            assertEquals("SheetB!$A$1", wb.getName("SheetBA1").getRefersToFormula());
+            assertEquals("SheetB", wb.getName("SheetBA1").getSheetName());
 
-        assertEquals(0, wb.getName("SheetCA1").getCTName().getLocalSheetId());
-        assertFalse(wb.getName("SheetCA1").getCTName().isSetLocalSheetId());
-        assertEquals("SheetC!$A$1", wb.getName("SheetCA1").getRefersToFormula());
-        assertEquals("SheetC", wb.getName("SheetCA1").getSheetName());
+            assertEquals(0, wb.getName("SheetCA1").getCTName().getLocalSheetId());
+            assertFalse(wb.getName("SheetCA1").getCTName().isSetLocalSheetId());
+            assertEquals("SheetC!$A$1", wb.getName("SheetCA1").getRefersToFormula());
+            assertEquals("SheetC", wb.getName("SheetCA1").getSheetName());
 
-        // Save and re-load, still there
-        XSSFWorkbook nwb = XSSFTestDataSamples.writeOutAndReadBack(wb);
-        assertEquals(3, nwb.getNumberOfNames());
-        assertEquals("SheetA!$A$1", nwb.getName("SheetAA1").getRefersToFormula());
-
-        nwb.close();
-        wb.close();
+            // Save and re-load, still there
+            try (XSSFWorkbook nwb = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                assertEquals(3, nwb.getNumberOfNames());
+                assertEquals("SheetA!$A$1", nwb.getName("SheetAA1").getRefersToFormula());
+            }
+        }
     }
 
     /**
@@ -276,8 +275,9 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      */
     @Test
     public void bug49020() throws IOException {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("BrNotClosed.xlsx");
-        wb.close();
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("BrNotClosed.xlsx")) {
+            assertNotNull(wb);
+        }
     }
 
     /**
@@ -285,10 +285,10 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      */
     @Test
     public void bug49325() throws IOException {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("49325.xlsx");
-        CTWorksheet sh = wb.getSheetAt(0).getCTWorksheet();
-        assertNotNull(sh.getPhoneticPr());
-        wb.close();
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("49325.xlsx")) {
+            CTWorksheet sh = wb.getSheetAt(0).getCTWorksheet();
+            assertNotNull(sh.getPhoneticPr());
+        }
     }
 
     /**
@@ -297,35 +297,34 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      */
     @Test
     public void bug48923() throws IOException {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("48923.xlsx");
-        assertEquals(4, wb.getNumberOfNames());
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("48923.xlsx")) {
+            assertEquals(4, wb.getNumberOfNames());
 
-        Name b1 = wb.getName("NameB1");
-        Name b2 = wb.getName("NameB2");
-        Name sheet2 = wb.getName("NameSheet2");
-        Name test = wb.getName("Test");
+            Name b1 = wb.getName("NameB1");
+            Name b2 = wb.getName("NameB2");
+            Name sheet2 = wb.getName("NameSheet2");
+            Name test = wb.getName("Test");
 
-        assertNotNull(b1);
-        assertEquals("NameB1", b1.getNameName());
-        assertEquals("Sheet1", b1.getSheetName());
-        assertEquals(-1, b1.getSheetIndex());
+            assertNotNull(b1);
+            assertEquals("NameB1", b1.getNameName());
+            assertEquals("Sheet1", b1.getSheetName());
+            assertEquals(-1, b1.getSheetIndex());
 
-        assertNotNull(b2);
-        assertEquals("NameB2", b2.getNameName());
-        assertEquals("Sheet1", b2.getSheetName());
-        assertEquals(-1, b2.getSheetIndex());
+            assertNotNull(b2);
+            assertEquals("NameB2", b2.getNameName());
+            assertEquals("Sheet1", b2.getSheetName());
+            assertEquals(-1, b2.getSheetIndex());
 
-        assertNotNull(sheet2);
-        assertEquals("NameSheet2", sheet2.getNameName());
-        assertEquals("Sheet2", sheet2.getSheetName());
-        assertEquals(-1, sheet2.getSheetIndex());
+            assertNotNull(sheet2);
+            assertEquals("NameSheet2", sheet2.getNameName());
+            assertEquals("Sheet2", sheet2.getSheetName());
+            assertEquals(-1, sheet2.getSheetIndex());
 
-        assertNotNull(test);
-        assertEquals("Test", test.getNameName());
-        assertEquals("Sheet1", test.getSheetName());
-        assertEquals(-1, test.getSheetIndex());
-
-        wb.close();
+            assertNotNull(test);
+            assertEquals("Test", test.getNameName());
+            assertEquals("Sheet1", test.getSheetName());
+            assertEquals(-1, test.getSheetIndex());
+        }
     }
 
     /**
@@ -375,37 +374,36 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      */
     @Test
     public void bug48779() throws IOException {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("48779.xlsx");
-        XSSFCell cell = wb.getSheetAt(0).getRow(0).getCell(0);
-        XSSFCellStyle cs = cell.getCellStyle();
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("48779.xlsx")) {
+            XSSFCell cell = wb.getSheetAt(0).getRow(0).getCell(0);
+            XSSFCellStyle cs = cell.getCellStyle();
 
-        assertNotNull(cs);
-        assertEquals(1, cs.getIndex());
+            assertNotNull(cs);
+            assertEquals(1, cs.getIndex());
 
-        // Look at the low level xml elements
-        assertEquals(2, cs.getCoreXf().getFillId());
-        assertEquals(0, cs.getCoreXf().getXfId());
-        assertTrue(cs.getCoreXf().getApplyFill());
+            // Look at the low level xml elements
+            assertEquals(2, cs.getCoreXf().getFillId());
+            assertEquals(0, cs.getCoreXf().getXfId());
+            assertTrue(cs.getCoreXf().getApplyFill());
 
-        XSSFCellFill fg = wb.getStylesSource().getFillAt(2);
-        assertNotNull(fg.getFillForegroundColor());
-        assertEquals(0, fg.getFillForegroundColor().getIndexed());
-        assertEquals(0.0, fg.getFillForegroundColor().getTint(), 0);
-        assertEquals("FFFF0000", fg.getFillForegroundColor().getARGBHex());
-        assertNotNull(fg.getFillBackgroundColor());
-        assertEquals(64, fg.getFillBackgroundColor().getIndexed());
+            XSSFCellFill fg = wb.getStylesSource().getFillAt(2);
+            assertNotNull(fg.getFillForegroundColor());
+            assertEquals(0, fg.getFillForegroundColor().getIndexed());
+            assertEquals(0.0, fg.getFillForegroundColor().getTint(), 0);
+            assertEquals("FFFF0000", fg.getFillForegroundColor().getARGBHex());
+            assertNotNull(fg.getFillBackgroundColor());
+            assertEquals(64, fg.getFillBackgroundColor().getIndexed());
 
-        // Now look higher up
-        assertNotNull(cs.getFillForegroundXSSFColor());
-        assertEquals(0, cs.getFillForegroundColor());
-        assertEquals("FFFF0000", cs.getFillForegroundXSSFColor().getARGBHex());
-        assertEquals("FFFF0000", cs.getFillForegroundColorColor().getARGBHex());
+            // Now look higher up
+            assertNotNull(cs.getFillForegroundXSSFColor());
+            assertEquals(0, cs.getFillForegroundColor());
+            assertEquals("FFFF0000", cs.getFillForegroundXSSFColor().getARGBHex());
+            assertEquals("FFFF0000", cs.getFillForegroundColorColor().getARGBHex());
 
-        assertEquals(64, cs.getFillBackgroundColor());
-        assertNull(cs.getFillBackgroundXSSFColor().getARGBHex());
-        assertNull(cs.getFillBackgroundColorColor().getARGBHex());
-
-        wb.close();
+            assertEquals(64, cs.getFillBackgroundColor());
+            assertNull(cs.getFillBackgroundXSSFColor().getARGBHex());
+            assertNull(cs.getFillBackgroundColorColor().getARGBHex());
+        }
     }
 
     /**
@@ -414,33 +412,32 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      */
     @Test
     public void bug47490() throws IOException {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("GeneralFormatTests.xlsx");
-        Sheet s = wb.getSheetAt(1);
-        Row r;
-        DataFormatter df = new DataFormatter();
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("GeneralFormatTests.xlsx")) {
+            Sheet s = wb.getSheetAt(1);
+            Row r;
+            DataFormatter df = new DataFormatter();
 
-        r = s.getRow(1);
-        assertEquals(1.0, r.getCell(2).getNumericCellValue(), 0);
-        assertEquals("General", r.getCell(2).getCellStyle().getDataFormatString());
-        assertEquals("1", df.formatCellValue(r.getCell(2)));
-        assertEquals("1", df.formatRawCellContents(1.0, -1, "@"));
-        assertEquals("1", df.formatRawCellContents(1.0, -1, "General"));
+            r = s.getRow(1);
+            assertEquals(1.0, r.getCell(2).getNumericCellValue(), 0);
+            assertEquals("General", r.getCell(2).getCellStyle().getDataFormatString());
+            assertEquals("1", df.formatCellValue(r.getCell(2)));
+            assertEquals("1", df.formatRawCellContents(1.0, -1, "@"));
+            assertEquals("1", df.formatRawCellContents(1.0, -1, "General"));
 
-        r = s.getRow(2);
-        assertEquals(12.0, r.getCell(2).getNumericCellValue(), 0);
-        assertEquals("General", r.getCell(2).getCellStyle().getDataFormatString());
-        assertEquals("12", df.formatCellValue(r.getCell(2)));
-        assertEquals("12", df.formatRawCellContents(12.0, -1, "@"));
-        assertEquals("12", df.formatRawCellContents(12.0, -1, "General"));
+            r = s.getRow(2);
+            assertEquals(12.0, r.getCell(2).getNumericCellValue(), 0);
+            assertEquals("General", r.getCell(2).getCellStyle().getDataFormatString());
+            assertEquals("12", df.formatCellValue(r.getCell(2)));
+            assertEquals("12", df.formatRawCellContents(12.0, -1, "@"));
+            assertEquals("12", df.formatRawCellContents(12.0, -1, "General"));
 
-        r = s.getRow(3);
-        assertEquals(123.0, r.getCell(2).getNumericCellValue(), 0);
-        assertEquals("General", r.getCell(2).getCellStyle().getDataFormatString());
-        assertEquals("123", df.formatCellValue(r.getCell(2)));
-        assertEquals("123", df.formatRawCellContents(123.0, -1, "@"));
-        assertEquals("123", df.formatRawCellContents(123.0, -1, "General"));
-
-        wb.close();
+            r = s.getRow(3);
+            assertEquals(123.0, r.getCell(2).getNumericCellValue(), 0);
+            assertEquals("General", r.getCell(2).getCellStyle().getDataFormatString());
+            assertEquals("123", df.formatCellValue(r.getCell(2)));
+            assertEquals("123", df.formatRawCellContents(123.0, -1, "@"));
+            assertEquals("123", df.formatRawCellContents(123.0, -1, "General"));
+        }
     }
 
     /**
@@ -453,38 +450,37 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      */
     @Test
     public void bug49609() throws IOException {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("49609.xlsx");
-        assertEquals("FAM", wb.getSheetName(0));
-        assertEquals("Cycle", wb.getSheetAt(0).getRow(0).getCell(1).getStringCellValue());
-        wb.close();
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("49609.xlsx")) {
+            assertEquals("FAM", wb.getSheetName(0));
+            assertEquals("Cycle", wb.getSheetAt(0).getRow(0).getCell(1).getStringCellValue());
+        }
 
     }
 
     @Test
     public void bug49783() throws IOException {
-        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("49783.xlsx");
-        Sheet sheet = wb.getSheetAt(0);
-        FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
-        Cell cell;
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("49783.xlsx")) {
+            Sheet sheet = wb.getSheetAt(0);
+            FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+            Cell cell;
 
-        cell = sheet.getRow(0).getCell(0);
-        assertEquals("#REF!*#REF!", cell.getCellFormula());
-        assertEquals(CellType.ERROR, evaluator.evaluateInCell(cell).getCellType());
-        assertEquals("#REF!", FormulaError.forInt(cell.getErrorCellValue()).getString());
+            cell = sheet.getRow(0).getCell(0);
+            assertEquals("#REF!*#REF!", cell.getCellFormula());
+            assertEquals(CellType.ERROR, evaluator.evaluateInCell(cell).getCellType());
+            assertEquals("#REF!", FormulaError.forInt(cell.getErrorCellValue()).getString());
 
-        Name nm1 = wb.getName("sale_1");
-        assertNotNull("name sale_1 should be present", nm1);
-        assertEquals("Sheet1!#REF!", nm1.getRefersToFormula());
-        Name nm2 = wb.getName("sale_2");
-        assertNotNull("name sale_2 should be present", nm2);
-        assertEquals("Sheet1!#REF!", nm2.getRefersToFormula());
+            Name nm1 = wb.getName("sale_1");
+            assertNotNull("name sale_1 should be present", nm1);
+            assertEquals("Sheet1!#REF!", nm1.getRefersToFormula());
+            Name nm2 = wb.getName("sale_2");
+            assertNotNull("name sale_2 should be present", nm2);
+            assertEquals("Sheet1!#REF!", nm2.getRefersToFormula());
 
-        cell = sheet.getRow(1).getCell(0);
-        assertEquals("sale_1*sale_2", cell.getCellFormula());
-        assertEquals(CellType.ERROR, evaluator.evaluateInCell(cell).getCellType());
-        assertEquals("#REF!", FormulaError.forInt(cell.getErrorCellValue()).getString());
-
-        wb.close();
+            cell = sheet.getRow(1).getCell(0);
+            assertEquals("sale_1*sale_2", cell.getCellFormula());
+            assertEquals(CellType.ERROR, evaluator.evaluateInCell(cell).getCellType());
+            assertEquals("#REF!", FormulaError.forInt(cell.getErrorCellValue()).getString());
+        }
     }
 
     /**
@@ -575,28 +571,27 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      */
     @Test
     public void bug49940() throws IOException {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("styles.xlsx");
-        assertEquals(3, wb.getNumberOfSheets());
-        assertEquals(10, wb.getStylesSource().getNumCellStyles());
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("styles.xlsx")) {
+            assertEquals(3, wb.getNumberOfSheets());
+            assertEquals(10, wb.getStylesSource().getNumCellStyles());
 
-        ByteArrayOutputStream b1 = new ByteArrayOutputStream();
-        ByteArrayOutputStream b2 = new ByteArrayOutputStream();
-        ByteArrayOutputStream b3 = new ByteArrayOutputStream();
-        wb.write(b1);
-        wb.write(b2);
-        wb.write(b3);
+            ByteArrayOutputStream b1 = new ByteArrayOutputStream();
+            ByteArrayOutputStream b2 = new ByteArrayOutputStream();
+            ByteArrayOutputStream b3 = new ByteArrayOutputStream();
+            wb.write(b1);
+            wb.write(b2);
+            wb.write(b3);
 
-        for (byte[] data : new byte[][]{
-                b1.toByteArray(), b2.toByteArray(), b3.toByteArray()
-        }) {
-            ByteArrayInputStream bais = new ByteArrayInputStream(data);
-            XSSFWorkbook wb2 = new XSSFWorkbook(bais);
-            assertEquals(3, wb2.getNumberOfSheets());
-            assertEquals(10, wb2.getStylesSource().getNumCellStyles());
-            wb2.close();
+            for (byte[] data : new byte[][]{
+                    b1.toByteArray(), b2.toByteArray(), b3.toByteArray()
+            }) {
+                ByteArrayInputStream bais = new ByteArrayInputStream(data);
+                XSSFWorkbook wb2 = new XSSFWorkbook(bais);
+                assertEquals(3, wb2.getNumberOfSheets());
+                assertEquals(10, wb2.getStylesSource().getNumCellStyles());
+                wb2.close();
+            }
         }
-
-        wb.close();
     }
 
     /**
@@ -605,71 +600,71 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      */
     @Test
     public void bug49966() throws IOException {
-        XSSFWorkbook wb1 = XSSFTestDataSamples
-                .openSampleWorkbook("shared_formulas.xlsx");
-        XSSFSheet sheet = wb1.getSheetAt(0);
+        try (XSSFWorkbook wb1 = XSSFTestDataSamples
+                .openSampleWorkbook("shared_formulas.xlsx")) {
+            XSSFSheet sheet = wb1.getSheetAt(0);
 
-        XSSFTestDataSamples.writeOutAndReadBack(wb1).close();
+            XSSFTestDataSamples.writeOutAndReadBack(wb1).close();
 
-        // CalcChain has lots of entries
-        CalculationChain cc = wb1.getCalculationChain();
-        assertEquals("A2", cc.getCTCalcChain().getCArray(0).getR());
-        assertEquals("A3", cc.getCTCalcChain().getCArray(1).getR());
-        assertEquals("A4", cc.getCTCalcChain().getCArray(2).getR());
-        assertEquals("A5", cc.getCTCalcChain().getCArray(3).getR());
-        assertEquals("A6", cc.getCTCalcChain().getCArray(4).getR());
-        assertEquals("A7", cc.getCTCalcChain().getCArray(5).getR());
-        assertEquals("A8", cc.getCTCalcChain().getCArray(6).getR());
-        assertEquals(40, cc.getCTCalcChain().sizeOfCArray());
+            // CalcChain has lots of entries
+            CalculationChain cc = wb1.getCalculationChain();
+            assertEquals("A2", cc.getCTCalcChain().getCArray(0).getR());
+            assertEquals("A3", cc.getCTCalcChain().getCArray(1).getR());
+            assertEquals("A4", cc.getCTCalcChain().getCArray(2).getR());
+            assertEquals("A5", cc.getCTCalcChain().getCArray(3).getR());
+            assertEquals("A6", cc.getCTCalcChain().getCArray(4).getR());
+            assertEquals("A7", cc.getCTCalcChain().getCArray(5).getR());
+            assertEquals("A8", cc.getCTCalcChain().getCArray(6).getR());
+            assertEquals(40, cc.getCTCalcChain().sizeOfCArray());
 
-        XSSFTestDataSamples.writeOutAndReadBack(wb1).close();
+            XSSFTestDataSamples.writeOutAndReadBack(wb1).close();
 
-        // Try various ways of changing the formulas
-        // If it stays a formula, chain entry should remain
-        // Otherwise should go
-        sheet.getRow(1).getCell(0).setCellFormula("A1"); // stay
-        sheet.getRow(2).getCell(0).setCellFormula(null); // go
-        sheet.getRow(3).getCell(0).setCellFormula("14"); // stay
-        XSSFTestDataSamples.writeOutAndReadBack(wb1).close();
+            // Try various ways of changing the formulas
+            // If it stays a formula, chain entry should remain
+            // Otherwise should go
+            sheet.getRow(1).getCell(0).setCellFormula("A1"); // stay
+            sheet.getRow(2).getCell(0).setCellFormula(null); // go
+            sheet.getRow(3).getCell(0).setCellFormula("14"); // stay
+            XSSFTestDataSamples.writeOutAndReadBack(wb1).close();
 
-        sheet.getRow(4).getCell(0).setBlank(); // go
-        XSSFTestDataSamples.writeOutAndReadBack(wb1).close();
+            sheet.getRow(4).getCell(0).setBlank(); // go
+            XSSFTestDataSamples.writeOutAndReadBack(wb1).close();
 
-        validateCells(sheet);
-        sheet.getRow(5).removeCell(sheet.getRow(5).getCell(0)); // go
-        validateCells(sheet);
-        XSSFTestDataSamples.writeOutAndReadBack(wb1).close();
+            validateCells(sheet);
+            sheet.getRow(5).removeCell(sheet.getRow(5).getCell(0)); // go
+            validateCells(sheet);
+            XSSFTestDataSamples.writeOutAndReadBack(wb1).close();
 
-        sheet.getRow(6).getCell(0).setBlank(); // go
-        XSSFTestDataSamples.writeOutAndReadBack(wb1).close();
+            sheet.getRow(6).getCell(0).setBlank(); // go
+            XSSFTestDataSamples.writeOutAndReadBack(wb1).close();
 
-        sheet.getRow(7).getCell(0).setCellValue((String) null); // go
+            sheet.getRow(7).getCell(0).setCellValue((String) null); // go
 
-        XSSFTestDataSamples.writeOutAndReadBack(wb1).close();
+            XSSFTestDataSamples.writeOutAndReadBack(wb1).close();
 
-        // Save and check
-        XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1);
-        wb1.close();
-        assertEquals(35, cc.getCTCalcChain().sizeOfCArray());
+            // Save and check
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1)) {
+                wb1.close();
+                assertEquals(35, cc.getCTCalcChain().sizeOfCArray());
 
-        cc = wb2.getCalculationChain();
-        assertEquals("A2", cc.getCTCalcChain().getCArray(0).getR());
-        assertEquals("A4", cc.getCTCalcChain().getCArray(1).getR());
-        assertEquals("A9", cc.getCTCalcChain().getCArray(2).getR());
-        wb2.close();
+                cc = wb2.getCalculationChain();
+                assertEquals("A2", cc.getCTCalcChain().getCArray(0).getR());
+                assertEquals("A4", cc.getCTCalcChain().getCArray(1).getR());
+                assertEquals("A9", cc.getCTCalcChain().getCArray(2).getR());
+            }
+        }
     }
 
     @Test
     public void bug49966Row() throws IOException {
-        XSSFWorkbook wb = XSSFTestDataSamples
-                .openSampleWorkbook("shared_formulas.xlsx");
-        XSSFSheet sheet = wb.getSheetAt(0);
+        try (XSSFWorkbook wb = XSSFTestDataSamples
+                .openSampleWorkbook("shared_formulas.xlsx")) {
+            XSSFSheet sheet = wb.getSheetAt(0);
 
-        validateCells(sheet);
-        sheet.getRow(5).removeCell(sheet.getRow(5).getCell(0)); // go
-        validateCells(sheet);
-
-        wb.close();
+            validateCells(sheet);
+            sheet.getRow(5).removeCell(sheet.getRow(5).getCell(0)); // go
+            validateCells(sheet);
+        }
     }
 
     private void validateCells(XSSFSheet sheet) {
@@ -681,18 +676,18 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
     @Test
     public void bug49156() throws IOException {
-        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("49156.xlsx");
-        FormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("49156.xlsx")) {
+            FormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
 
-        Sheet sheet = wb.getSheetAt(0);
-        for (Row row : sheet) {
-            for (Cell cell : row) {
-                if (cell.getCellType() == CellType.FORMULA) {
-                    formulaEvaluator.evaluateInCell(cell); // caused NPE on some cells
+            Sheet sheet = wb.getSheetAt(0);
+            for (Row row : sheet) {
+                for (Cell cell : row) {
+                    if (cell.getCellType() == CellType.FORMULA) {
+                        formulaEvaluator.evaluateInCell(cell); // caused NPE on some cells
+                    }
                 }
             }
         }
-        wb.close();
     }
 
     /**
@@ -700,26 +695,25 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      */
     @Test
     public void bug50440And51875() throws IOException {
-        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("NewlineInFormulas.xlsx");
-        Sheet s = wb.getSheetAt(0);
-        Cell c = s.getRow(0).getCell(0);
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("NewlineInFormulas.xlsx")) {
+            Sheet s = wb.getSheetAt(0);
+            Cell c = s.getRow(0).getCell(0);
 
-        assertEquals("SUM(\n1,2\n)", c.getCellFormula());
-        assertEquals(3.0, c.getNumericCellValue(), 0);
+            assertEquals("SUM(\n1,2\n)", c.getCellFormula());
+            assertEquals(3.0, c.getNumericCellValue(), 0);
 
-        FormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
-        formulaEvaluator.evaluateFormulaCell(c);
+            FormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
+            formulaEvaluator.evaluateFormulaCell(c);
 
-        assertEquals("SUM(\n1,2\n)", c.getCellFormula());
-        assertEquals(3.0, c.getNumericCellValue(), 0);
+            assertEquals("SUM(\n1,2\n)", c.getCellFormula());
+            assertEquals(3.0, c.getNumericCellValue(), 0);
 
-        // For 51875
-        Cell b3 = s.getRow(2).getCell(1);
-        formulaEvaluator.evaluateFormulaCell(b3);
-        assertEquals("B1+B2", b3.getCellFormula()); // The newline is lost for shared formulas
-        assertEquals(3.0, b3.getNumericCellValue(), 0);
-
-        wb.close();
+            // For 51875
+            Cell b3 = s.getRow(2).getCell(1);
+            formulaEvaluator.evaluateFormulaCell(b3);
+            assertEquals("B1+B2", b3.getCellFormula()); // The newline is lost for shared formulas
+            assertEquals(3.0, b3.getNumericCellValue(), 0);
+        }
     }
 
     /**
@@ -789,31 +783,30 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      */
     @Test
     public void bug50299() throws IOException {
-        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("50299.xlsx");
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("50299.xlsx")) {
 
-        // Check all the colours
-        for (int sn = 0; sn < wb.getNumberOfSheets(); sn++) {
-            Sheet s = wb.getSheetAt(sn);
-            for (Row r : s) {
-                for (Cell c : r) {
-                    CellStyle cs = c.getCellStyle();
-                    if (cs != null) {
-                        cs.getFillForegroundColor();
+            // Check all the colours
+            for (int sn = 0; sn < wb.getNumberOfSheets(); sn++) {
+                Sheet s = wb.getSheetAt(sn);
+                for (Row r : s) {
+                    for (Cell c : r) {
+                        CellStyle cs = c.getCellStyle();
+                        if (cs != null) {
+                            cs.getFillForegroundColor();
+                        }
                     }
                 }
             }
+
+            // Check one bit in detail
+            // Check that we get back foreground=0 for the theme colours,
+            //  and background=64 for the auto colouring
+            Sheet s = wb.getSheetAt(0);
+            assertEquals(0, s.getRow(0).getCell(8).getCellStyle().getFillForegroundColor());
+            assertEquals(64, s.getRow(0).getCell(8).getCellStyle().getFillBackgroundColor());
+            assertEquals(0, s.getRow(1).getCell(8).getCellStyle().getFillForegroundColor());
+            assertEquals(64, s.getRow(1).getCell(8).getCellStyle().getFillBackgroundColor());
         }
-
-        // Check one bit in detail
-        // Check that we get back foreground=0 for the theme colours,
-        //  and background=64 for the auto colouring
-        Sheet s = wb.getSheetAt(0);
-        assertEquals(0, s.getRow(0).getCell(8).getCellStyle().getFillForegroundColor());
-        assertEquals(64, s.getRow(0).getCell(8).getCellStyle().getFillBackgroundColor());
-        assertEquals(0, s.getRow(1).getCell(8).getCellStyle().getFillForegroundColor());
-        assertEquals(64, s.getRow(1).getCell(8).getCellStyle().getFillBackgroundColor());
-
-        wb.close();
     }
 
     /**
@@ -821,21 +814,21 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      */
     @Test
     public void bug50786() throws IOException {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("50786-indexed_colours.xlsx");
-        XSSFSheet s = wb.getSheetAt(0);
-        XSSFRow r = s.getRow(2);
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("50786-indexed_colours.xlsx")) {
+            XSSFSheet s = wb.getSheetAt(0);
+            XSSFRow r = s.getRow(2);
 
-        // Check we have the right cell
-        XSSFCell c = r.getCell(1);
-        assertEquals("test\u00a0", c.getRichStringCellValue().getString());
+            // Check we have the right cell
+            XSSFCell c = r.getCell(1);
+            assertEquals("test\u00a0", c.getRichStringCellValue().getString());
 
-        // It should be light green
-        XSSFCellStyle cs = c.getCellStyle();
-        assertEquals(42, cs.getFillForegroundColor());
-        assertEquals(42, cs.getFillForegroundColorColor().getIndexed());
-        assertNotNull(cs.getFillForegroundColorColor().getRGB());
-        assertEquals("FFCCFFCC", cs.getFillForegroundColorColor().getARGBHex());
-        wb.close();
+            // It should be light green
+            XSSFCellStyle cs = c.getCellStyle();
+            assertEquals(42, cs.getFillForegroundColor());
+            assertEquals(42, cs.getFillForegroundColorColor().getIndexed());
+            assertNotNull(cs.getFillForegroundColorColor().getRGB());
+            assertEquals("FFCCFFCC", cs.getFillForegroundColorColor().getARGBHex());
+        }
     }
 
     /**
@@ -844,27 +837,27 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      */
     @Test
     public void bug50846() throws IOException {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("50846-border_colours.xlsx");
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("50846-border_colours.xlsx")) {
 
-        XSSFSheet sheet = wb.getSheetAt(0);
-        XSSFRow row = sheet.getRow(0);
+            XSSFSheet sheet = wb.getSheetAt(0);
+            XSSFRow row = sheet.getRow(0);
 
-        // Border from a theme, brown
-        XSSFCell cellT = row.getCell(0);
-        XSSFCellStyle styleT = cellT.getCellStyle();
-        XSSFColor colorT = styleT.getBottomBorderXSSFColor();
+            // Border from a theme, brown
+            XSSFCell cellT = row.getCell(0);
+            XSSFCellStyle styleT = cellT.getCellStyle();
+            XSSFColor colorT = styleT.getBottomBorderXSSFColor();
 
-        assertEquals(5, colorT.getTheme());
-        assertEquals("FFC0504D", colorT.getARGBHex());
+            assertEquals(5, colorT.getTheme());
+            assertEquals("FFC0504D", colorT.getARGBHex());
 
-        // Border from a style direct, red
-        XSSFCell cellS = row.getCell(1);
-        XSSFCellStyle styleS = cellS.getCellStyle();
-        XSSFColor colorS = styleS.getBottomBorderXSSFColor();
+            // Border from a style direct, red
+            XSSFCell cellS = row.getCell(1);
+            XSSFCellStyle styleS = cellS.getCellStyle();
+            XSSFColor colorS = styleS.getBottomBorderXSSFColor();
 
-        assertEquals(0, colorS.getTheme());
-        assertEquals("FFFF0000", colorS.getARGBHex());
-        wb.close();
+            assertEquals(0, colorS.getTheme());
+            assertEquals("FFFF0000", colorS.getARGBHex());
+        }
     }
 
     /**
@@ -874,29 +867,29 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      */
     @Test
     public void bug50784() throws IOException {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("50784-font_theme_colours.xlsx");
-        XSSFSheet s = wb.getSheetAt(0);
-        XSSFRow r = s.getRow(0);
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("50784-font_theme_colours.xlsx")) {
+            XSSFSheet s = wb.getSheetAt(0);
+            XSSFRow r = s.getRow(0);
 
-        // Column 1 has a font with regular colours
-        XSSFCell cr = r.getCell(1);
-        XSSFFont fr = wb.getFontAt(cr.getCellStyle().getFontIndexAsInt());
-        XSSFColor colr = fr.getXSSFColor();
-        // No theme, has colours
-        assertEquals(0, colr.getTheme());
-        assertNotNull(colr.getRGB());
+            // Column 1 has a font with regular colours
+            XSSFCell cr = r.getCell(1);
+            XSSFFont fr = wb.getFontAt(cr.getCellStyle().getFontIndexAsInt());
+            XSSFColor colr = fr.getXSSFColor();
+            // No theme, has colours
+            assertEquals(0, colr.getTheme());
+            assertNotNull(colr.getRGB());
 
-        // Column 0 has a font with colours from a theme
-        XSSFCell ct = r.getCell(0);
-        XSSFFont ft = wb.getFontAt(ct.getCellStyle().getFontIndexAsInt());
-        XSSFColor colt = ft.getXSSFColor();
-        // Has a theme, which has the colours on it
-        assertEquals(9, colt.getTheme());
-        XSSFColor themeC = wb.getTheme().getThemeColor(colt.getTheme());
-        assertNotNull(themeC.getRGB());
-        assertNotNull(colt.getRGB());
-        assertEquals(themeC.getARGBHex(), colt.getARGBHex()); // The same colour
-        wb.close();
+            // Column 0 has a font with colours from a theme
+            XSSFCell ct = r.getCell(0);
+            XSSFFont ft = wb.getFontAt(ct.getCellStyle().getFontIndexAsInt());
+            XSSFColor colt = ft.getXSSFColor();
+            // Has a theme, which has the colours on it
+            assertEquals(9, colt.getTheme());
+            XSSFColor themeC = wb.getTheme().getThemeColor(colt.getTheme());
+            assertNotNull(themeC.getRGB());
+            assertNotNull(colt.getRGB());
+            assertEquals(themeC.getARGBHex(), colt.getARGBHex()); // The same colour
+        }
     }
 
     /**
@@ -1247,65 +1240,64 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      */
     @Test
     public void bug51222() throws IOException {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("51222.xlsx");
-        XSSFSheet s = wb.getSheetAt(0);
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("51222.xlsx")) {
+            XSSFSheet s = wb.getSheetAt(0);
 
-        XSSFCell cA4_EEECE1 = s.getRow(3).getCell(0);
-        XSSFCell cA5_1F497D = s.getRow(4).getCell(0);
+            XSSFCell cA4_EEECE1 = s.getRow(3).getCell(0);
+            XSSFCell cA5_1F497D = s.getRow(4).getCell(0);
 
-        // Check the text
-        assertEquals("A4", cA4_EEECE1.getRichStringCellValue().getString());
-        assertEquals("A5", cA5_1F497D.getRichStringCellValue().getString());
+            // Check the text
+            assertEquals("A4", cA4_EEECE1.getRichStringCellValue().getString());
+            assertEquals("A5", cA5_1F497D.getRichStringCellValue().getString());
 
-        // Check the styles assigned to them
-        assertEquals(4, cA4_EEECE1.getCTCell().getS());
-        assertEquals(5, cA5_1F497D.getCTCell().getS());
+            // Check the styles assigned to them
+            assertEquals(4, cA4_EEECE1.getCTCell().getS());
+            assertEquals(5, cA5_1F497D.getCTCell().getS());
 
-        // Check we look up the correct style
-        assertEquals(4, cA4_EEECE1.getCellStyle().getIndex());
-        assertEquals(5, cA5_1F497D.getCellStyle().getIndex());
+            // Check we look up the correct style
+            assertEquals(4, cA4_EEECE1.getCellStyle().getIndex());
+            assertEquals(5, cA5_1F497D.getCellStyle().getIndex());
 
-        // Check the fills on them at the low level
-        assertEquals(5, cA4_EEECE1.getCellStyle().getCoreXf().getFillId());
-        assertEquals(6, cA5_1F497D.getCellStyle().getCoreXf().getFillId());
+            // Check the fills on them at the low level
+            assertEquals(5, cA4_EEECE1.getCellStyle().getCoreXf().getFillId());
+            assertEquals(6, cA5_1F497D.getCellStyle().getCoreXf().getFillId());
 
-        // These should reference themes 2 and 3
-        assertEquals(2, wb.getStylesSource().getFillAt(5).getCTFill().getPatternFill().getFgColor().getTheme());
-        assertEquals(3, wb.getStylesSource().getFillAt(6).getCTFill().getPatternFill().getFgColor().getTheme());
+            // These should reference themes 2 and 3
+            assertEquals(2, wb.getStylesSource().getFillAt(5).getCTFill().getPatternFill().getFgColor().getTheme());
+            assertEquals(3, wb.getStylesSource().getFillAt(6).getCTFill().getPatternFill().getFgColor().getTheme());
 
-        // Ensure we get the right colours for these themes
-        // TODO fix
-        // assertEquals("FFEEECE1", wb.getTheme().getThemeColor(2).getARGBHex());
-        // assertEquals("FF1F497D", wb.getTheme().getThemeColor(3).getARGBHex());
+            // Ensure we get the right colours for these themes
+            // TODO fix
+            // assertEquals("FFEEECE1", wb.getTheme().getThemeColor(2).getARGBHex());
+            // assertEquals("FF1F497D", wb.getTheme().getThemeColor(3).getARGBHex());
 
-        // Finally check the colours on the styles
-        // TODO fix
-        // assertEquals("FFEEECE1", cA4_EEECE1.getCellStyle().getFillForegroundXSSFColor().getARGBHex());
-        // assertEquals("FF1F497D", cA5_1F497D.getCellStyle().getFillForegroundXSSFColor().getARGBHex());
-
-        wb.close();
+            // Finally check the colours on the styles
+            // TODO fix
+            // assertEquals("FFEEECE1", cA4_EEECE1.getCellStyle().getFillForegroundXSSFColor().getARGBHex());
+            // assertEquals("FF1F497D", cA5_1F497D.getCellStyle().getFillForegroundXSSFColor().getARGBHex());
+        }
     }
 
     @Test
     public void bug51470() throws IOException {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("51470.xlsx");
-        XSSFSheet sh0 = wb.getSheetAt(0);
-        XSSFSheet sh1 = wb.cloneSheet(0);
-        List<RelationPart> rels0 = sh0.getRelationParts();
-        List<RelationPart> rels1 = sh1.getRelationParts();
-        assertEquals(1, rels0.size());
-        assertEquals(1, rels1.size());
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("51470.xlsx")) {
+            XSSFSheet sh0 = wb.getSheetAt(0);
+            XSSFSheet sh1 = wb.cloneSheet(0);
+            List<RelationPart> rels0 = sh0.getRelationParts();
+            List<RelationPart> rels1 = sh1.getRelationParts();
+            assertEquals(1, rels0.size());
+            assertEquals(1, rels1.size());
 
-        PackageRelationship pr0 = rels0.get(0).getRelationship();
-        PackageRelationship pr1 = rels1.get(0).getRelationship();
+            PackageRelationship pr0 = rels0.get(0).getRelationship();
+            PackageRelationship pr1 = rels1.get(0).getRelationship();
 
-        assertEquals(pr0.getTargetMode(), pr1.getTargetMode());
-        assertEquals(pr0.getTargetURI(), pr1.getTargetURI());
-        POIXMLDocumentPart doc0 = rels0.get(0).getDocumentPart();
-        POIXMLDocumentPart doc1 = rels1.get(0).getDocumentPart();
+            assertEquals(pr0.getTargetMode(), pr1.getTargetMode());
+            assertEquals(pr0.getTargetURI(), pr1.getTargetURI());
+            POIXMLDocumentPart doc0 = rels0.get(0).getDocumentPart();
+            POIXMLDocumentPart doc1 = rels1.get(0).getDocumentPart();
 
-        assertEquals(doc0, doc1);
-        wb.close();
+            assertEquals(doc0, doc1);
+        }
     }
 
     /**
@@ -1379,19 +1371,19 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      */
     @Test
     public void bug51963() throws IOException {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("51963.xlsx");
-        Sheet sheet = wb.getSheetAt(0);
-        assertEquals("Abc,1", sheet.getSheetName());
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("51963.xlsx")) {
+            Sheet sheet = wb.getSheetAt(0);
+            assertEquals("Abc,1", sheet.getSheetName());
 
-        Name name = wb.getName("Intekon.ProdCodes");
-        assertEquals("'Abc,1'!$A$1:$A$2", name.getRefersToFormula());
+            Name name = wb.getName("Intekon.ProdCodes");
+            assertEquals("'Abc,1'!$A$1:$A$2", name.getRefersToFormula());
 
-        AreaReference ref = wb.getCreationHelper().createAreaReference(name.getRefersToFormula());
-        assertEquals(0, ref.getFirstCell().getRow());
-        assertEquals(0, ref.getFirstCell().getCol());
-        assertEquals(1, ref.getLastCell().getRow());
-        assertEquals(0, ref.getLastCell().getCol());
-        wb.close();
+            AreaReference ref = wb.getCreationHelper().createAreaReference(name.getRefersToFormula());
+            assertEquals(0, ref.getFirstCell().getRow());
+            assertEquals(0, ref.getFirstCell().getCol());
+            assertEquals(1, ref.getLastCell().getRow());
+            assertEquals(0, ref.getLastCell().getCol());
+        }
     }
 
     /**
@@ -1400,29 +1392,29 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      */
     @Test
     public void bug48703() throws IOException {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("48703.xlsx");
-        XSSFSheet sheet = wb.getSheetAt(0);
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("48703.xlsx")) {
+            XSSFSheet sheet = wb.getSheetAt(0);
 
-        // Contains two forms, one with a range and one a list
-        XSSFRow r1 = sheet.getRow(0);
-        XSSFRow r2 = sheet.getRow(1);
-        XSSFCell c1 = r1.getCell(1);
-        XSSFCell c2 = r2.getCell(1);
+            // Contains two forms, one with a range and one a list
+            XSSFRow r1 = sheet.getRow(0);
+            XSSFRow r2 = sheet.getRow(1);
+            XSSFCell c1 = r1.getCell(1);
+            XSSFCell c2 = r2.getCell(1);
 
-        assertEquals(20.0, c1.getNumericCellValue(), 0);
-        assertEquals("SUM(Sheet1!C1,Sheet2!C1,Sheet3!C1,Sheet4!C1)", c1.getCellFormula());
+            assertEquals(20.0, c1.getNumericCellValue(), 0);
+            assertEquals("SUM(Sheet1!C1,Sheet2!C1,Sheet3!C1,Sheet4!C1)", c1.getCellFormula());
 
-        assertEquals(20.0, c2.getNumericCellValue(), 0);
-        assertEquals("SUM(Sheet1:Sheet4!C1)", c2.getCellFormula());
+            assertEquals(20.0, c2.getNumericCellValue(), 0);
+            assertEquals("SUM(Sheet1:Sheet4!C1)", c2.getCellFormula());
 
-        // Try evaluating both
-        XSSFFormulaEvaluator eval = new XSSFFormulaEvaluator(wb);
-        eval.evaluateFormulaCell(c1);
-        eval.evaluateFormulaCell(c2);
+            // Try evaluating both
+            XSSFFormulaEvaluator eval = new XSSFFormulaEvaluator(wb);
+            eval.evaluateFormulaCell(c1);
+            eval.evaluateFormulaCell(c2);
 
-        assertEquals(20.0, c1.getNumericCellValue(), 0);
-        assertEquals(20.0, c2.getNumericCellValue(), 0);
-        wb.close();
+            assertEquals(20.0, c1.getNumericCellValue(), 0);
+            assertEquals(20.0, c2.getNumericCellValue(), 0);
+        }
     }
 
     /**
@@ -1430,31 +1422,31 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      */
     @Test
     public void bug51710() throws IOException {
-        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("51710.xlsx");
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("51710.xlsx")) {
 
-        final String[] columns = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N"};
-        final int rowMax = 500; // bug triggers on row index 59
+            final String[] columns = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N"};
+            final int rowMax = 500; // bug triggers on row index 59
 
-        Sheet sheet = wb.getSheetAt(0);
+            Sheet sheet = wb.getSheetAt(0);
 
 
-        // go through all formula cells
-        for (int rInd = 2; rInd <= rowMax; rInd++) {
-            Row row = sheet.getRow(rInd);
+            // go through all formula cells
+            for (int rInd = 2; rInd <= rowMax; rInd++) {
+                Row row = sheet.getRow(rInd);
 
-            for (int cInd = 1; cInd <= 12; cInd++) {
-                Cell cell = row.getCell(cInd);
-                String formula = cell.getCellFormula();
-                CellReference ref = new CellReference(cell);
+                for (int cInd = 1; cInd <= 12; cInd++) {
+                    Cell cell = row.getCell(cInd);
+                    String formula = cell.getCellFormula();
+                    CellReference ref = new CellReference(cell);
 
-                //simulate correct answer
-                String correct = "$A" + (rInd + 1) + "*" + columns[cInd] + "$2";
+                    //simulate correct answer
+                    String correct = "$A" + (rInd + 1) + "*" + columns[cInd] + "$2";
 
-                assertEquals("Incorrect formula in " + ref.formatAsString(), correct, formula);
+                    assertEquals("Incorrect formula in " + ref.formatAsString(), correct, formula);
+                }
+
             }
-
         }
-        wb.close();
     }
 
     /**
@@ -1462,35 +1454,35 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      */
     @Test
     public void bug5301() throws IOException {
-        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("53101.xlsx");
-        FormulaEvaluator evaluator =
-                wb.getCreationHelper().createFormulaEvaluator();
-        // A1: SUM(B1: IZ1)
-        double a1Value =
-                evaluator.evaluate(wb.getSheetAt(0).getRow(0).getCell(0)).getNumberValue();
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("53101.xlsx")) {
+            FormulaEvaluator evaluator =
+                    wb.getCreationHelper().createFormulaEvaluator();
+            // A1: SUM(B1: IZ1)
+            double a1Value =
+                    evaluator.evaluate(wb.getSheetAt(0).getRow(0).getCell(0)).getNumberValue();
 
-        // Assert
-        assertEquals(259.0, a1Value, 0.0);
+            // Assert
+            assertEquals(259.0, a1Value, 0.0);
 
-        // KY: SUM(B1: IZ1)
-        /*double ky1Value =*/
-        assertEquals(259.0, evaluator.evaluate(wb.getSheetAt(0).getRow(0).getCell(310)).getNumberValue(), 0.0001);
+            // KY: SUM(B1: IZ1)
+            /*double ky1Value =*/
+            assertEquals(259.0, evaluator.evaluate(wb.getSheetAt(0).getRow(0).getCell(310)).getNumberValue(), 0.0001);
 
-        // Assert
-        assertEquals(259.0, a1Value, 0.0);
-        wb.close();
+            // Assert
+            assertEquals(259.0, a1Value, 0.0);
+        }
     }
 
     @Test
     public void bug54436() throws IOException {
-        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("54436.xlsx");
-        if (!WorkbookEvaluator.getSupportedFunctionNames().contains("GETPIVOTDATA")) {
-            Function func = (args, srcRowIndex, srcColumnIndex) -> ErrorEval.NA;
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("54436.xlsx")) {
+            if (!WorkbookEvaluator.getSupportedFunctionNames().contains("GETPIVOTDATA")) {
+                Function func = (args, srcRowIndex, srcColumnIndex) -> ErrorEval.NA;
 
-            WorkbookEvaluator.registerFunction("GETPIVOTDATA", func);
+                WorkbookEvaluator.registerFunction("GETPIVOTDATA", func);
+            }
+            wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
         }
-        wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
-        wb.close();
     }
 
     /**
@@ -1510,33 +1502,33 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     public void bug55692_stream() throws IOException {
         // Directly on a Stream, will go via POIFS and spot it's
         //  actually a .xlsx file encrypted with the default password, and open
-        Workbook wb = WorkbookFactory.create(
-                POIDataSamples.getPOIFSInstance().openResourceAsStream("protect.xlsx"));
-        assertNotNull(wb);
-        assertEquals(3, wb.getNumberOfSheets());
-        wb.close();
+        try (Workbook wb = WorkbookFactory.create(
+                POIDataSamples.getPOIFSInstance().openResourceAsStream("protect.xlsx"))) {
+            assertNotNull(wb);
+            assertEquals(3, wb.getNumberOfSheets());
+        }
     }
 
     @Test
     public void bug55692_poifs2() throws IOException {
         // Via a POIFSFileSystem, will spot it's actually a .xlsx file
         //  encrypted with the default password, and open
-        POIFSFileSystem fsNP = new POIFSFileSystem(
-                POIDataSamples.getPOIFSInstance().openResourceAsStream("protect.xlsx"));
-        Workbook wb = WorkbookFactory.create(fsNP);
-        assertNotNull(wb);
-        assertEquals(3, wb.getNumberOfSheets());
-        wb.close();
-        fsNP.close();
+        try (POIFSFileSystem fsNP = new POIFSFileSystem(
+                POIDataSamples.getPOIFSInstance().openResourceAsStream("protect.xlsx"))) {
+            Workbook wb = WorkbookFactory.create(fsNP);
+            assertNotNull(wb);
+            assertEquals(3, wb.getNumberOfSheets());
+            wb.close();
+        }
     }
 
     @Test
     public void bug53282() throws IOException {
-        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("53282b.xlsx");
-        Cell c = wb.getSheetAt(0).getRow(1).getCell(0);
-        assertEquals("#@_#", c.getStringCellValue());
-        assertEquals("http://invalid.uri", c.getHyperlink().getAddress());
-        wb.close();
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("53282b.xlsx")) {
+            Cell c = wb.getSheetAt(0).getRow(1).getCell(0);
+            assertEquals("#@_#", c.getStringCellValue());
+            assertEquals("http://invalid.uri", c.getHyperlink().getAddress());
+        }
     }
 
     /**
@@ -1546,24 +1538,24 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      */
     @Test
     public void bug56278() throws IOException {
-        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56278.xlsx");
-        assertEquals(0, wb.getSheetIndex("Market Rates"));
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56278.xlsx")) {
+            assertEquals(0, wb.getSheetIndex("Market Rates"));
 
-        // Save and re-check
-        Workbook nwb = XSSFTestDataSamples.writeOutAndReadBack(wb);
-        assertEquals(0, nwb.getSheetIndex("Market Rates"));
-        nwb.close();
-        wb.close();
+            // Save and re-check
+            Workbook nwb = XSSFTestDataSamples.writeOutAndReadBack(wb);
+            assertEquals(0, nwb.getSheetIndex("Market Rates"));
+            nwb.close();
+        }
     }
 
     @Test
     public void bug56315() throws IOException {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56315.xlsx");
-        Cell c = wb.getSheetAt(0).getRow(1).getCell(0);
-        CellValue cv = wb.getCreationHelper().createFormulaEvaluator().evaluate(c);
-        double rounded = cv.getNumberValue();
-        assertEquals(0.1, rounded, 0.0);
-        wb.close();
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56315.xlsx")) {
+            Cell c = wb.getSheetAt(0).getRow(1).getCell(0);
+            CellValue cv = wb.getCreationHelper().createFormulaEvaluator().evaluate(c);
+            double rounded = cv.getNumberValue();
+            assertEquals(0.1, rounded, 0.0);
+        }
     }
 
     @Test
@@ -1613,17 +1605,16 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         TimeZone tz = LocaleUtil.getUserTimeZone();
         LocaleUtil.setUserTimeZone(TimeZone.getTimeZone("CET"));
         try {
-            Workbook wb = XSSFTestDataSamples.openSampleWorkbook("54034.xlsx");
-            Sheet sheet = wb.getSheet("Sheet1");
-            Row row = sheet.getRow(1);
-            Cell cell = row.getCell(2);
-            assertTrue(DateUtil.isCellDateFormatted(cell));
+            try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("54034.xlsx")) {
+                Sheet sheet = wb.getSheet("Sheet1");
+                Row row = sheet.getRow(1);
+                Cell cell = row.getCell(2);
+                assertTrue(DateUtil.isCellDateFormatted(cell));
 
-            DataFormatter fmt = new DataFormatter();
-            assertEquals("yyyy\\-mm\\-dd\\Thh:mm", cell.getCellStyle().getDataFormatString());
-            assertEquals("2012-08-08T22:59", fmt.formatCellValue(cell));
-
-            wb.close();
+                DataFormatter fmt = new DataFormatter();
+                assertEquals("yyyy\\-mm\\-dd\\Thh:mm", cell.getCellStyle().getDataFormatString());
+                assertEquals("2012-08-08T22:59", fmt.formatCellValue(cell));
+            }
         } finally {
             LocaleUtil.setUserTimeZone(tz);
         }
@@ -1632,21 +1623,21 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
     @Test
     public void testBug53798XLSX() throws IOException {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("53798_shiftNegative_TMPL.xlsx");
-        File xlsOutput = TempFile.createTempFile("testBug53798", ".xlsx");
-        bug53798Work(wb, xlsOutput);
-        wb.close();
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("53798_shiftNegative_TMPL.xlsx")) {
+            File xlsOutput = TempFile.createTempFile("testBug53798", ".xlsx");
+            bug53798Work(wb, xlsOutput);
+        }
     }
 
     @Ignore("Shifting rows is not yet implemented in SXSSFSheet")
     @Test
     public void testBug53798XLSXStream() throws IOException {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("53798_shiftNegative_TMPL.xlsx");
-        File xlsOutput = TempFile.createTempFile("testBug53798", ".xlsx");
-        SXSSFWorkbook wb2 = new SXSSFWorkbook(wb);
-        bug53798Work(wb2, xlsOutput);
-        wb2.close();
-        wb.close();
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("53798_shiftNegative_TMPL.xlsx")) {
+            File xlsOutput = TempFile.createTempFile("testBug53798", ".xlsx");
+            SXSSFWorkbook wb2 = new SXSSFWorkbook(wb);
+            bug53798Work(wb2, xlsOutput);
+            wb2.close();
+        }
     }
 
     @Test
@@ -1662,17 +1653,17 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      */
     @Test
     public void testBug56420SumIfNPE() throws IOException {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56420.xlsx");
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56420.xlsx")) {
 
-        FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+            FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
 
-        Sheet sheet = wb.getSheetAt(0);
-        Row r = sheet.getRow(2);
-        Cell c = r.getCell(2);
-        assertEquals("SUMIF($A$1:$A$4,A3,$B$1:$B$4)", c.getCellFormula());
-        Cell eval = evaluator.evaluateInCell(c);
-        assertEquals(0.0, eval.getNumericCellValue(), 0.0001);
-        wb.close();
+            Sheet sheet = wb.getSheetAt(0);
+            Row r = sheet.getRow(2);
+            Cell c = r.getCell(2);
+            assertEquals("SUMIF($A$1:$A$4,A3,$B$1:$B$4)", c.getCellFormula());
+            Cell eval = evaluator.evaluateInCell(c);
+            assertEquals(0.0, eval.getNumericCellValue(), 0.0001);
+        }
     }
 
     private void bug53798Work(Workbook wb, File xlsOutput) throws IOException {
@@ -1724,24 +1715,24 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      */
     @Test
     public void bug56702() throws IOException {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56702.xlsx");
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56702.xlsx")) {
 
-        Sheet sheet = wb.getSheetAt(0);
+            Sheet sheet = wb.getSheetAt(0);
 
-        // Get wrong cell by row 8 & column 7
-        Cell cell = sheet.getRow(8).getCell(7);
-        assertEquals(CellType.NUMERIC, cell.getCellType());
+            // Get wrong cell by row 8 & column 7
+            Cell cell = sheet.getRow(8).getCell(7);
+            assertEquals(CellType.NUMERIC, cell.getCellType());
 
-        // Check the value - will be zero as it is <c><v/></c>
-        assertEquals(0.0, cell.getNumericCellValue(), 0.001);
+            // Check the value - will be zero as it is <c><v/></c>
+            assertEquals(0.0, cell.getNumericCellValue(), 0.001);
 
-        // Try to format
-        DataFormatter formatter = new DataFormatter();
-        formatter.formatCellValue(cell);
+            // Try to format
+            DataFormatter formatter = new DataFormatter();
+            formatter.formatCellValue(cell);
 
-        // Check the formatting
-        assertEquals("0", formatter.formatCellValue(cell));
-        wb.close();
+            // Check the formatting
+            assertEquals("0", formatter.formatCellValue(cell));
+        }
     }
 
     /**
@@ -1753,36 +1744,36 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      */
     @Test
     public void bug56737() throws IOException {
-        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56737.xlsx");
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56737.xlsx")) {
 
-        // Check the named range definitions
-        Name nSheetScope = wb.getName("NR_To_A1");
-        Name nWBScope = wb.getName("NR_Global_B2");
+            // Check the named range definitions
+            Name nSheetScope = wb.getName("NR_To_A1");
+            Name nWBScope = wb.getName("NR_Global_B2");
 
-        assertNotNull(nSheetScope);
-        assertNotNull(nWBScope);
+            assertNotNull(nSheetScope);
+            assertNotNull(nWBScope);
 
-        assertEquals("Defines!$A$1", nSheetScope.getRefersToFormula());
-        assertEquals("Defines!$B$2", nWBScope.getRefersToFormula());
+            assertEquals("Defines!$A$1", nSheetScope.getRefersToFormula());
+            assertEquals("Defines!$B$2", nWBScope.getRefersToFormula());
 
-        // Check the different kinds of formulas
-        Sheet s = wb.getSheetAt(0);
-        Cell cRefSName = s.getRow(1).getCell(3);
-        Cell cRefWName = s.getRow(2).getCell(3);
+            // Check the different kinds of formulas
+            Sheet s = wb.getSheetAt(0);
+            Cell cRefSName = s.getRow(1).getCell(3);
+            Cell cRefWName = s.getRow(2).getCell(3);
 
-        assertEquals("Defines!NR_To_A1", cRefSName.getCellFormula());
-        // Note the formula, as stored in the file, has the external name index not filename
-        // TODO Provide a way to get the one with the filename
-        assertEquals("[0]!NR_Global_B2", cRefWName.getCellFormula());
+            assertEquals("Defines!NR_To_A1", cRefSName.getCellFormula());
+            // Note the formula, as stored in the file, has the external name index not filename
+            // TODO Provide a way to get the one with the filename
+            assertEquals("[0]!NR_Global_B2", cRefWName.getCellFormula());
 
-        // Try to evaluate them
-        FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
-        assertEquals("Test A1", eval.evaluate(cRefSName).getStringValue());
-        assertEquals(142, (int) eval.evaluate(cRefWName).getNumberValue());
+            // Try to evaluate them
+            FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
+            assertEquals("Test A1", eval.evaluate(cRefSName).getStringValue());
+            assertEquals(142, (int) eval.evaluate(cRefWName).getNumberValue());
 
-        // Try to evaluate everything
-        eval.evaluateAll();
-        wb.close();
+            // Try to evaluate everything
+            eval.evaluateAll();
+        }
     }
 
     private void saveAndReloadReport(Workbook wb, File outFile) throws IOException {
@@ -1897,23 +1888,23 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      */
     @Test
     public void bug56502() throws IOException {
-        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56502.xlsx");
-        Sheet sheet = wb.getSheetAt(0);
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56502.xlsx")) {
+            Sheet sheet = wb.getSheetAt(0);
 
-        Cell cFunc = sheet.getRow(3).getCell(0);
-        assertEquals("[1]!LUCANET(\"Ist\")", cFunc.getCellFormula());
-        Cell cRef = sheet.getRow(3).createCell(1);
-        cRef.setCellFormula("A3");
+            Cell cFunc = sheet.getRow(3).getCell(0);
+            assertEquals("[1]!LUCANET(\"Ist\")", cFunc.getCellFormula());
+            Cell cRef = sheet.getRow(3).createCell(1);
+            cRef.setCellFormula("A3");
 
-        // Shift it down one row
-        sheet.shiftRows(1, sheet.getLastRowNum(), 1);
+            // Shift it down one row
+            sheet.shiftRows(1, sheet.getLastRowNum(), 1);
 
-        // Check the new formulas: Function won't change, Reference will
-        cFunc = sheet.getRow(4).getCell(0);
-        assertEquals("[1]!LUCANET(\"Ist\")", cFunc.getCellFormula());
-        cRef = sheet.getRow(4).getCell(1);
-        assertEquals("A4", cRef.getCellFormula());
-        wb.close();
+            // Check the new formulas: Function won't change, Reference will
+            cFunc = sheet.getRow(4).getCell(0);
+            assertEquals("[1]!LUCANET(\"Ist\")", cFunc.getCellFormula());
+            cRef = sheet.getRow(4).getCell(1);
+            assertEquals("A4", cRef.getCellFormula());
+        }
     }
 
     @Test
@@ -1945,9 +1936,9 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         }
 
         // Check we can still parse valid files after all that
-        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("sample.xlsx");
-        assertEquals(3, wb.getNumberOfSheets());
-        wb.close();
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("sample.xlsx")) {
+            assertEquals(3, wb.getNumberOfSheets());
+        }
     }
 
     @Test
@@ -1985,15 +1976,15 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      */
     @Test
     public void bug57176() throws IOException {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("57176.xlsx");
-        CTDefinedNames definedNames = wb.getCTWorkbook().getDefinedNames();
-        List<CTDefinedName> definedNameList = definedNames.getDefinedNameList();
-        for (CTDefinedName defName : definedNameList) {
-            assertNotNull(defName.getName());
-            assertNotNull(defName.getStringValue());
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("57176.xlsx")) {
+            CTDefinedNames definedNames = wb.getCTWorkbook().getDefinedNames();
+            List<CTDefinedName> definedNameList = definedNames.getDefinedNameList();
+            for (CTDefinedName defName : definedNameList) {
+                assertNotNull(defName.getName());
+                assertNotNull(defName.getStringValue());
+            }
+            assertEquals("TestDefinedName", definedNameList.get(0).getName());
         }
-        assertEquals("TestDefinedName", definedNameList.get(0).getName());
-        wb.close();
     }
 
     /**
@@ -2045,15 +2036,15 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
     @Test
     public void testBug57196() throws IOException {
-        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("57196.xlsx");
-        Sheet sheet = wb.getSheet("Feuil1");
-        Row mod = sheet.getRow(1);
-        mod.getCell(1).setCellValue(3);
-        HSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("57196.xlsx")) {
+            Sheet sheet = wb.getSheet("Feuil1");
+            Row mod = sheet.getRow(1);
+            mod.getCell(1).setCellValue(3);
+            HSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
 //        FileOutputStream fileOutput = new FileOutputStream("/tmp/57196.xlsx");
 //        wb.write(fileOutput);
 //        fileOutput.close();
-        wb.close();
+        }
     }
 
     @Test
@@ -2232,22 +2223,21 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      */
     @Test
     public void bug57535() throws IOException {
-        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("57535.xlsx");
-        FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
-        evaluator.clearAllCachedResultValues();
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("57535.xlsx")) {
+            FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+            evaluator.clearAllCachedResultValues();
 
-        Sheet sheet = wb.getSheet("Sheet1");
-        Cell cell = sheet.getRow(5).getCell(4);
-        assertEquals(CellType.FORMULA, cell.getCellType());
-        assertEquals("E4+E5", cell.getCellFormula());
+            Sheet sheet = wb.getSheet("Sheet1");
+            Cell cell = sheet.getRow(5).getCell(4);
+            assertEquals(CellType.FORMULA, cell.getCellType());
+            assertEquals("E4+E5", cell.getCellFormula());
 
-        CellValue value = evaluator.evaluate(cell);
-        assertEquals(CellType.ERROR, value.getCellType());
-        assertEquals(-60, value.getErrorValue());
-        assertEquals("~CIRCULAR~REF~", FormulaError.forInt(value.getErrorValue()).getString());
-        assertEquals("CIRCULAR_REF", FormulaError.forInt(value.getErrorValue()).toString());
-
-        wb.close();
+            CellValue value = evaluator.evaluate(cell);
+            assertEquals(CellType.ERROR, value.getCellType());
+            assertEquals(-60, value.getErrorValue());
+            assertEquals("~CIRCULAR~REF~", FormulaError.forInt(value.getErrorValue()).getString());
+            assertEquals("CIRCULAR_REF", FormulaError.forInt(value.getErrorValue()).toString());
+        }
     }
 
 
@@ -2379,18 +2369,17 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     @Test
     @Ignore("XMLBeans namespace mis-match on ooxml-strict files")
     public void test57699() throws IOException {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("sample.strict.xlsx");
-        assertEquals(3, wb.getNumberOfSheets());
-        // TODO Check sheet contents
-        // TODO Check formula evaluation
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("sample.strict.xlsx")) {
+            assertEquals(3, wb.getNumberOfSheets());
+            // TODO Check sheet contents
+            // TODO Check formula evaluation
 
-        XSSFWorkbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
-        assertEquals(3, wbBack.getNumberOfSheets());
-        // TODO Re-check sheet contents
-        // TODO Re-check formula evaluation
-
-        wb.close();
-        wbBack.close();
+            try (XSSFWorkbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                assertEquals(3, wbBack.getNumberOfSheets());
+                // TODO Re-check sheet contents
+                // TODO Re-check formula evaluation
+            }
+        }
     }
 
     @Test
@@ -2548,64 +2537,64 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     private void runTest56574(boolean createRow) throws IOException {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56574.xlsx");
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("56574.xlsx")) {
 
-        Sheet sheet = wb.getSheet("Func");
-        assertNotNull(sheet);
+            Sheet sheet = wb.getSheet("Func");
+            assertNotNull(sheet);
 
-        Map<String, Object[]> data;
-        data = new TreeMap<>();
-        data.put("1", new Object[]{"ID", "NAME", "LASTNAME"});
-        data.put("2", new Object[]{2, "Amit", "Shukla"});
-        data.put("3", new Object[]{1, "Lokesh", "Gupta"});
-        data.put("4", new Object[]{4, "John", "Adwards"});
-        data.put("5", new Object[]{2, "Brian", "Schultz"});
+            Map<String, Object[]> data;
+            data = new TreeMap<>();
+            data.put("1", new Object[]{"ID", "NAME", "LASTNAME"});
+            data.put("2", new Object[]{2, "Amit", "Shukla"});
+            data.put("3", new Object[]{1, "Lokesh", "Gupta"});
+            data.put("4", new Object[]{4, "John", "Adwards"});
+            data.put("5", new Object[]{2, "Brian", "Schultz"});
 
-        int rownum = 1;
-        for (Map.Entry<String, Object[]> me : data.entrySet()) {
-            final Row row;
-            if (createRow) {
-                row = sheet.createRow(rownum++);
-            } else {
-                row = sheet.getRow(rownum++);
-            }
-            assertNotNull(row);
-
-            int cellnum = 0;
-            for (Object obj : me.getValue()) {
-                Cell cell = row.getCell(cellnum);
-                if (cell == null) {
-                    cell = row.createCell(cellnum);
+            int rownum = 1;
+            for (Map.Entry<String, Object[]> me : data.entrySet()) {
+                final Row row;
+                if (createRow) {
+                    row = sheet.createRow(rownum++);
                 } else {
-                    if (cell.getCellType() == CellType.FORMULA) {
-                        cell.setCellFormula(null);
-                        cell.getCellStyle().setDataFormat((short) 0);
+                    row = sheet.getRow(rownum++);
+                }
+                assertNotNull(row);
+
+                int cellnum = 0;
+                for (Object obj : me.getValue()) {
+                    Cell cell = row.getCell(cellnum);
+                    if (cell == null) {
+                        cell = row.createCell(cellnum);
+                    } else {
+                        if (cell.getCellType() == CellType.FORMULA) {
+                            cell.setCellFormula(null);
+                            cell.getCellStyle().setDataFormat((short) 0);
+                        }
                     }
+                    if (obj instanceof String) {
+                        cell.setCellValue((String) obj);
+                    } else if (obj instanceof Integer) {
+                        cell.setCellValue((Integer) obj);
+                    }
+                    cellnum++;
                 }
-                if (obj instanceof String) {
-                    cell.setCellValue((String) obj);
-                } else if (obj instanceof Integer) {
-                    cell.setCellValue((Integer) obj);
-                }
-                cellnum++;
             }
+
+            XSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
+            wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
+
+            CalculationChain chain = wb.getCalculationChain();
+            checkCellsAreGone(chain);
+
+            XSSFWorkbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
+            Sheet sheetBack = wbBack.getSheet("Func");
+            assertNotNull(sheetBack);
+
+            chain = wbBack.getCalculationChain();
+            checkCellsAreGone(chain);
+
+            wbBack.close();
         }
-
-        XSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
-        wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
-
-        CalculationChain chain = wb.getCalculationChain();
-        checkCellsAreGone(chain);
-
-        XSSFWorkbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
-        Sheet sheetBack = wbBack.getSheet("Func");
-        assertNotNull(sheetBack);
-
-        chain = wbBack.getCalculationChain();
-        checkCellsAreGone(chain);
-
-        wbBack.close();
-        wb.close();
     }
 
     private void checkCellsAreGone(CalculationChain chain) {
@@ -2624,61 +2613,61 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      */
     @Test
     public void bug57181() throws IOException {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("57181.xlsm");
-        assertEquals(9, wb.getNumberOfSheets());
-        wb.close();
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("57181.xlsm")) {
+            assertEquals(9, wb.getNumberOfSheets());
+        }
     }
 
     @Test
     public void bug52111() throws IOException {
-        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("Intersection-52111-xssf.xlsx");
-        Sheet s = wb.getSheetAt(0);
-        assertFormula(wb, s.getRow(2).getCell(0), "(C2:D3 D3:E4)", "4.0");
-        assertFormula(wb, s.getRow(6).getCell(0), "Tabelle2!E:E Tabelle2!11:11", "5.0");
-        assertFormula(wb, s.getRow(8).getCell(0), "Tabelle2!E:F Tabelle2!11:12", null);
-        wb.close();
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("Intersection-52111-xssf.xlsx")) {
+            Sheet s = wb.getSheetAt(0);
+            assertFormula(wb, s.getRow(2).getCell(0), "(C2:D3 D3:E4)", "4.0");
+            assertFormula(wb, s.getRow(6).getCell(0), "Tabelle2!E:E Tabelle2!11:11", "5.0");
+            assertFormula(wb, s.getRow(8).getCell(0), "Tabelle2!E:F Tabelle2!11:12", null);
+        }
     }
 
     @Test
     public void test48962() throws IOException {
-        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("48962.xlsx");
-        Sheet sh = wb.getSheetAt(0);
-        Row row = sh.getRow(1);
-        Cell cell = row.getCell(0);
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("48962.xlsx")) {
+            Sheet sh = wb.getSheetAt(0);
+            Row row = sh.getRow(1);
+            Cell cell = row.getCell(0);
 
-        CellStyle style = cell.getCellStyle();
-        assertNotNull(style);
+            CellStyle style = cell.getCellStyle();
+            assertNotNull(style);
 
-        // color index
-        assertEquals(64, style.getFillBackgroundColor());
-        XSSFColor color = ((XSSFCellStyle) style).getFillBackgroundXSSFColor();
-        assertNotNull(color);
+            // color index
+            assertEquals(64, style.getFillBackgroundColor());
+            XSSFColor color = ((XSSFCellStyle) style).getFillBackgroundXSSFColor();
+            assertNotNull(color);
 
-        // indexed color
-        assertEquals(64, color.getIndexed());
-        assertEquals(64, color.getIndex());
+            // indexed color
+            assertEquals(64, color.getIndexed());
+            assertEquals(64, color.getIndex());
 
-        // not an RGB color
-        assertFalse(color.isRGB());
-        assertNull(color.getRGB());
-        wb.close();
+            // not an RGB color
+            assertFalse(color.isRGB());
+            assertNull(color.getRGB());
+        }
     }
 
     @Test
     public void test50755_workday_formula_example() throws IOException {
-        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("50755_workday_formula_example.xlsx");
-        Sheet sheet = wb.getSheet("Sheet1");
-        for (Row aRow : sheet) {
-            Cell cell = aRow.getCell(1);
-            if (cell.getCellType() == CellType.FORMULA) {
-                String formula = cell.getCellFormula();
-                assertNotNull(formula);
-                assertTrue(formula.contains("WORKDAY"));
-            } else {
-                assertNotNull(cell.toString());
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("50755_workday_formula_example.xlsx")) {
+            Sheet sheet = wb.getSheet("Sheet1");
+            for (Row aRow : sheet) {
+                Cell cell = aRow.getCell(1);
+                if (cell.getCellType() == CellType.FORMULA) {
+                    String formula = cell.getCellFormula();
+                    assertNotNull(formula);
+                    assertTrue(formula.contains("WORKDAY"));
+                } else {
+                    assertNotNull(cell.toString());
+                }
             }
         }
-        wb.close();
     }
 
     @Test
@@ -2726,68 +2715,65 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
     @Test
     public void test53105() throws IOException {
-        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("53105.xlsx");
-        assertNotNull(wb);
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("53105.xlsx")) {
+            assertNotNull(wb);
 
 
-        // Act
-        // evaluate SUM('Skye Lookup Input'!A4:XFD4), cells in range each contain "1"
-        FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
-        double numericValue = evaluator.evaluate(wb.getSheetAt(0).getRow(1).getCell(0)).getNumberValue();
+            // Act
+            // evaluate SUM('Skye Lookup Input'!A4:XFD4), cells in range each contain "1"
+            FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+            double numericValue = evaluator.evaluate(wb.getSheetAt(0).getRow(1).getCell(0)).getNumberValue();
 
-        // Assert
-        assertEquals(16384.0, numericValue, 0.0);
-
-        wb.close();
+            // Assert
+            assertEquals(16384.0, numericValue, 0.0);
+        }
     }
 
 
     @Test
     public void test58315() throws IOException {
-        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("58315.xlsx");
-        Cell cell = wb.getSheetAt(0).getRow(0).getCell(0);
-        assertNotNull(cell);
-        StringBuilder tmpCellContent = new StringBuilder(cell.getStringCellValue());
-        XSSFRichTextString richText = (XSSFRichTextString) cell.getRichStringCellValue();
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("58315.xlsx")) {
+            Cell cell = wb.getSheetAt(0).getRow(0).getCell(0);
+            assertNotNull(cell);
+            StringBuilder tmpCellContent = new StringBuilder(cell.getStringCellValue());
+            XSSFRichTextString richText = (XSSFRichTextString) cell.getRichStringCellValue();
 
-        for (int i = richText.length() - 1; i >= 0; i--) {
-            Font f = richText.getFontAtIndex(i);
-            if (f != null && f.getStrikeout()) {
-                tmpCellContent.deleteCharAt(i);
+            for (int i = richText.length() - 1; i >= 0; i--) {
+                Font f = richText.getFontAtIndex(i);
+                if (f != null && f.getStrikeout()) {
+                    tmpCellContent.deleteCharAt(i);
+                }
             }
+            String result = tmpCellContent.toString();
+            assertEquals("320 350", result);
         }
-        String result = tmpCellContent.toString();
-        assertEquals("320 350", result);
-
-        wb.close();
     }
 
     @Test
     public void test55406() throws IOException {
-        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("55406_Conditional_formatting_sample.xlsx");
-        Sheet sheet = wb.getSheetAt(0);
-        Cell cellA1 = sheet.getRow(0).getCell(0);
-        Cell cellA2 = sheet.getRow(1).getCell(0);
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("55406_Conditional_formatting_sample.xlsx")) {
+            Sheet sheet = wb.getSheetAt(0);
+            Cell cellA1 = sheet.getRow(0).getCell(0);
+            Cell cellA2 = sheet.getRow(1).getCell(0);
 
-        assertEquals(0, cellA1.getCellStyle().getFillForegroundColor());
-        assertEquals("FFFDFDFD", ((XSSFColor) cellA1.getCellStyle().getFillForegroundColorColor()).getARGBHex());
-        assertEquals(0, cellA2.getCellStyle().getFillForegroundColor());
-        assertEquals("FFFDFDFD", ((XSSFColor) cellA2.getCellStyle().getFillForegroundColorColor()).getARGBHex());
+            assertEquals(0, cellA1.getCellStyle().getFillForegroundColor());
+            assertEquals("FFFDFDFD", ((XSSFColor) cellA1.getCellStyle().getFillForegroundColorColor()).getARGBHex());
+            assertEquals(0, cellA2.getCellStyle().getFillForegroundColor());
+            assertEquals("FFFDFDFD", ((XSSFColor) cellA2.getCellStyle().getFillForegroundColorColor()).getARGBHex());
 
-        SheetConditionalFormatting cond = sheet.getSheetConditionalFormatting();
-        assertEquals(2, cond.getNumConditionalFormattings());
+            SheetConditionalFormatting cond = sheet.getSheetConditionalFormatting();
+            assertEquals(2, cond.getNumConditionalFormattings());
 
-        assertEquals(1, cond.getConditionalFormattingAt(0).getNumberOfRules());
-        assertEquals(64, cond.getConditionalFormattingAt(0).getRule(0).getPatternFormatting().getFillForegroundColor());
-        assertEquals("ISEVEN(ROW())", cond.getConditionalFormattingAt(0).getRule(0).getFormula1());
-        assertNull(((XSSFColor) cond.getConditionalFormattingAt(0).getRule(0).getPatternFormatting().getFillForegroundColorColor()).getARGBHex());
+            assertEquals(1, cond.getConditionalFormattingAt(0).getNumberOfRules());
+            assertEquals(64, cond.getConditionalFormattingAt(0).getRule(0).getPatternFormatting().getFillForegroundColor());
+            assertEquals("ISEVEN(ROW())", cond.getConditionalFormattingAt(0).getRule(0).getFormula1());
+            assertNull(((XSSFColor) cond.getConditionalFormattingAt(0).getRule(0).getPatternFormatting().getFillForegroundColorColor()).getARGBHex());
 
-        assertEquals(1, cond.getConditionalFormattingAt(1).getNumberOfRules());
-        assertEquals(64, cond.getConditionalFormattingAt(1).getRule(0).getPatternFormatting().getFillForegroundColor());
-        assertEquals("ISEVEN(ROW())", cond.getConditionalFormattingAt(1).getRule(0).getFormula1());
-        assertNull(((XSSFColor) cond.getConditionalFormattingAt(1).getRule(0).getPatternFormatting().getFillForegroundColorColor()).getARGBHex());
-
-        wb.close();
+            assertEquals(1, cond.getConditionalFormattingAt(1).getNumberOfRules());
+            assertEquals(64, cond.getConditionalFormattingAt(1).getRule(0).getPatternFormatting().getFillForegroundColor());
+            assertEquals("ISEVEN(ROW())", cond.getConditionalFormattingAt(1).getRule(0).getFormula1());
+            assertNull(((XSSFColor) cond.getConditionalFormattingAt(1).getRule(0).getPatternFormatting().getFillForegroundColorColor()).getARGBHex());
+        }
     }
 
     @Test
@@ -2821,39 +2807,38 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
     @Test
     public void test58731() throws IOException {
-        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("58731.xlsx");
-        Sheet sheet = wb.createSheet("Java Books");
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("58731.xlsx")) {
+            Sheet sheet = wb.createSheet("Java Books");
 
-        Object[][] bookData = {
-                {"Head First Java", "Kathy Serria", 79},
-                {"Effective Java", "Joshua Bloch", 36},
-                {"Clean Code", "Robert martin", 42},
-                {"Thinking in Java", "Bruce Eckel", 35},
-        };
+            Object[][] bookData = {
+                    {"Head First Java", "Kathy Serria", 79},
+                    {"Effective Java", "Joshua Bloch", 36},
+                    {"Clean Code", "Robert martin", 42},
+                    {"Thinking in Java", "Bruce Eckel", 35},
+            };
 
-        int rowCount = 0;
-        for (Object[] aBook : bookData) {
-            Row row = sheet.createRow(rowCount++);
+            int rowCount = 0;
+            for (Object[] aBook : bookData) {
+                Row row = sheet.createRow(rowCount++);
 
-            int columnCount = 0;
-            for (Object field : aBook) {
-                Cell cell = row.createCell(columnCount++);
-                if (field instanceof String) {
-                    cell.setCellValue((String) field);
-                } else if (field instanceof Integer) {
-                    cell.setCellValue((Integer) field);
+                int columnCount = 0;
+                for (Object field : aBook) {
+                    Cell cell = row.createCell(columnCount++);
+                    if (field instanceof String) {
+                        cell.setCellValue((String) field);
+                    } else if (field instanceof Integer) {
+                        cell.setCellValue((Integer) field);
+                    }
                 }
             }
+
+            try (Workbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                sheet = wb2.getSheet("Java Books");
+                assertNotNull(sheet.getRow(0));
+                assertNotNull(sheet.getRow(0).getCell(0));
+                assertEquals(bookData[0][0], sheet.getRow(0).getCell(0).getStringCellValue());
+            }
         }
-
-        Workbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb);
-        sheet = wb2.getSheet("Java Books");
-        assertNotNull(sheet.getRow(0));
-        assertNotNull(sheet.getRow(0).getCell(0));
-        assertEquals(bookData[0][0], sheet.getRow(0).getCell(0).getStringCellValue());
-
-        wb2.close();
-        wb.close();
     }
 
     /**
@@ -2886,21 +2871,20 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
         DataFormatter formatter = new DataFormatter(true);
 
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("57236.xlsx");
-        for (int sheetNum = 0; sheetNum < wb.getNumberOfSheets(); sheetNum++) {
-            Sheet sheet = wb.getSheetAt(sheetNum);
-            for (int rowNum = sheet.getFirstRowNum(); rowNum < sheet.getLastRowNum(); rowNum++) {
-                Row row = sheet.getRow(rowNum);
-                for (int cellNum = row.getFirstCellNum(); cellNum < row.getLastCellNum(); cellNum++) {
-                    Cell cell = row.getCell(cellNum);
-                    String fmtCellValue = formatter.formatCellValue(cell);
-                    assertNotNull(fmtCellValue);
-                    assertNotEquals("0", fmtCellValue);
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("57236.xlsx")) {
+            for (int sheetNum = 0; sheetNum < wb.getNumberOfSheets(); sheetNum++) {
+                Sheet sheet = wb.getSheetAt(sheetNum);
+                for (int rowNum = sheet.getFirstRowNum(); rowNum < sheet.getLastRowNum(); rowNum++) {
+                    Row row = sheet.getRow(rowNum);
+                    for (int cellNum = row.getFirstCellNum(); cellNum < row.getLastCellNum(); cellNum++) {
+                        Cell cell = row.getCell(cellNum);
+                        String fmtCellValue = formatter.formatCellValue(cell);
+                        assertNotNull(fmtCellValue);
+                        assertNotEquals("0", fmtCellValue);
+                    }
                 }
             }
         }
-
-        wb.close();
     }
 
     /**
@@ -3032,35 +3016,37 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
     @Ignore("currently fails on POI 3.15 beta 2")
     @Test
-    public void test55273() {
-        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("ExcelTables.xlsx");
-        Sheet sheet = wb.getSheet("ExcelTable");
+    public void test55273() throws IOException {
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("ExcelTables.xlsx")) {
+            Sheet sheet = wb.getSheet("ExcelTable");
 
-        Name name = wb.getName("TableAsRangeName");
-        assertEquals("TableName[#All]", name.getRefersToFormula());
-        // POI 3.15-beta 2 (2016-06-15): getSheetName throws IllegalArgumentException: Invalid CellReference: TableName[#All]
-        assertEquals("TableName", name.getSheetName());
+            Name name = wb.getName("TableAsRangeName");
+            assertEquals("TableName[#All]", name.getRefersToFormula());
+            // POI 3.15-beta 2 (2016-06-15): getSheetName throws IllegalArgumentException: Invalid CellReference: TableName[#All]
+            assertEquals("TableName", name.getSheetName());
 
-        XSSFSheet xsheet = (XSSFSheet) sheet;
-        List<XSSFTable> tables = xsheet.getTables();
-        assertEquals(2, tables.size()); //FIXME: how many tables are there in this spreadsheet?
-        assertEquals("Table1", tables.get(0).getName()); //FIXME: what is the table name?
-        assertEquals("Table2", tables.get(1).getName()); //FIXME: what is the table name?
+            XSSFSheet xsheet = (XSSFSheet) sheet;
+            List<XSSFTable> tables = xsheet.getTables();
+            assertEquals(2, tables.size()); //FIXME: how many tables are there in this spreadsheet?
+            assertEquals("Table1", tables.get(0).getName()); //FIXME: what is the table name?
+            assertEquals("Table2", tables.get(1).getName()); //FIXME: what is the table name?
+        }
     }
 
     @Test
-    public void test57523() {
-        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("57523.xlsx");
-        Sheet sheet = wb.getSheet("Attribute Master");
-        Row row = sheet.getRow(15);
+    public void test57523() throws IOException {
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("57523.xlsx")) {
+            Sheet sheet = wb.getSheet("Attribute Master");
+            Row row = sheet.getRow(15);
 
-        int N = CellReference.convertColStringToIndex("N");
-        Cell N16 = row.getCell(N);
-        assertEquals(500.0, N16.getNumericCellValue(), 0.00001);
+            int N = CellReference.convertColStringToIndex("N");
+            Cell N16 = row.getCell(N);
+            assertEquals(500.0, N16.getNumericCellValue(), 0.00001);
 
-        int P = CellReference.convertColStringToIndex("P");
-        Cell P16 = row.getCell(P);
-        assertEquals(10.0, P16.getNumericCellValue(), 0.00001);
+            int P = CellReference.convertColStringToIndex("P");
+            Cell P16 = row.getCell(P);
+            assertEquals(10.0, P16.getNumericCellValue(), 0.00001);
+        }
     }
 
     /**
@@ -3068,29 +3054,31 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      * to include the row number on the row tags
      */
     @Test
-    public void noRowNumbers59746() {
-        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("59746_NoRowNums.xlsx");
-        Sheet sheet = wb.getSheetAt(0);
-        assertTrue("Last row num: " + sheet.getLastRowNum(), sheet.getLastRowNum() > 20);
-        assertEquals("Checked", sheet.getRow(0).getCell(0).getStringCellValue());
-        assertEquals("Checked", sheet.getRow(9).getCell(2).getStringCellValue());
-        assertFalse(sheet.getRow(70).getCell(8).getBooleanCellValue());
-        assertEquals(71, sheet.getPhysicalNumberOfRows());
-        assertEquals(70, sheet.getLastRowNum());
-        assertEquals(70, sheet.getRow(sheet.getLastRowNum()).getRowNum());
+    public void noRowNumbers59746() throws IOException {
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("59746_NoRowNums.xlsx")) {
+            Sheet sheet = wb.getSheetAt(0);
+            assertTrue("Last row num: " + sheet.getLastRowNum(), sheet.getLastRowNum() > 20);
+            assertEquals("Checked", sheet.getRow(0).getCell(0).getStringCellValue());
+            assertEquals("Checked", sheet.getRow(9).getCell(2).getStringCellValue());
+            assertFalse(sheet.getRow(70).getCell(8).getBooleanCellValue());
+            assertEquals(71, sheet.getPhysicalNumberOfRows());
+            assertEquals(70, sheet.getLastRowNum());
+            assertEquals(70, sheet.getRow(sheet.getLastRowNum()).getRowNum());
+        }
     }
 
     @Test
-    public void testWorkdayFunction() {
-        XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("59106.xlsx");
-        XSSFSheet sheet = workbook.getSheet("Test");
-        Row row = sheet.getRow(1);
-        Cell cell = row.getCell(0);
-        DataFormatter form = new DataFormatter();
-        FormulaEvaluator evaluator = cell.getSheet().getWorkbook().getCreationHelper().createFormulaEvaluator();
-        String result = form.formatCellValue(cell, evaluator);
+    public void testWorkdayFunction() throws IOException {
+        try (XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("59106.xlsx")) {
+            XSSFSheet sheet = workbook.getSheet("Test");
+            Row row = sheet.getRow(1);
+            Cell cell = row.getCell(0);
+            DataFormatter form = new DataFormatter();
+            FormulaEvaluator evaluator = cell.getSheet().getWorkbook().getCreationHelper().createFormulaEvaluator();
+            String result = form.formatCellValue(cell, evaluator);
 
-        assertEquals("09 Mar 2016", result);
+            assertEquals("09 Mar 2016", result);
+        }
     }
 
     // This bug is currently open. When this bug is fixed, it should not throw an AssertionError
@@ -3136,41 +3124,42 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      * part with a part number)
      */
     @Test
-    public void drawingNumbersAlreadyTaken_60255() {
-        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("60255_extra_drawingparts.xlsx");
-        assertEquals(4, wb.getNumberOfSheets());
+    public void drawingNumbersAlreadyTaken_60255() throws IOException {
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("60255_extra_drawingparts.xlsx")) {
+            assertEquals(4, wb.getNumberOfSheets());
 
-        // Sheet 3 starts with a drawing
-        Sheet sheet = wb.getSheetAt(0);
-        assertNull(sheet.getDrawingPatriarch());
-        sheet = wb.getSheetAt(1);
-        assertNull(sheet.getDrawingPatriarch());
-        sheet = wb.getSheetAt(2);
-        assertNotNull(sheet.getDrawingPatriarch());
-        sheet = wb.getSheetAt(3);
-        assertNull(sheet.getDrawingPatriarch());
+            // Sheet 3 starts with a drawing
+            Sheet sheet = wb.getSheetAt(0);
+            assertNull(sheet.getDrawingPatriarch());
+            sheet = wb.getSheetAt(1);
+            assertNull(sheet.getDrawingPatriarch());
+            sheet = wb.getSheetAt(2);
+            assertNotNull(sheet.getDrawingPatriarch());
+            sheet = wb.getSheetAt(3);
+            assertNull(sheet.getDrawingPatriarch());
 
-        // Add another sheet, and give it a drawing
-        sheet = wb.createSheet();
-        assertNull(sheet.getDrawingPatriarch());
-        sheet.createDrawingPatriarch();
-        assertNotNull(sheet.getDrawingPatriarch());
+            // Add another sheet, and give it a drawing
+            sheet = wb.createSheet();
+            assertNull(sheet.getDrawingPatriarch());
+            sheet.createDrawingPatriarch();
+            assertNotNull(sheet.getDrawingPatriarch());
 
-        // Save and check
-        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
-        assertEquals(5, wb.getNumberOfSheets());
+            // Save and check
+            Workbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
+            assertEquals(5, wbBack.getNumberOfSheets());
 
-        // Sheets 3 and 5 now
-        sheet = wb.getSheetAt(0);
-        assertNull(sheet.getDrawingPatriarch());
-        sheet = wb.getSheetAt(1);
-        assertNull(sheet.getDrawingPatriarch());
-        sheet = wb.getSheetAt(2);
-        assertNotNull(sheet.getDrawingPatriarch());
-        sheet = wb.getSheetAt(3);
-        assertNull(sheet.getDrawingPatriarch());
-        sheet = wb.getSheetAt(4);
-        assertNotNull(sheet.getDrawingPatriarch());
+            // Sheets 3 and 5 now
+            sheet = wbBack.getSheetAt(0);
+            assertNull(sheet.getDrawingPatriarch());
+            sheet = wbBack.getSheetAt(1);
+            assertNull(sheet.getDrawingPatriarch());
+            sheet = wbBack.getSheetAt(2);
+            assertNotNull(sheet.getDrawingPatriarch());
+            sheet = wbBack.getSheetAt(3);
+            assertNull(sheet.getDrawingPatriarch());
+            sheet = wbBack.getSheetAt(4);
+            assertNotNull(sheet.getDrawingPatriarch());
+        }
     }
 
     @Test
@@ -3220,24 +3209,23 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
     @Test
     public void bug61063() throws Exception {
-        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("61063.xlsx");
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("61063.xlsx")) {
 
-        FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
-        Sheet s = wb.getSheetAt(0);
+            FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
+            Sheet s = wb.getSheetAt(0);
 
-        Row r = s.getRow(3);
-        Cell c = r.getCell(0);
-        assertEquals(CellType.FORMULA, c.getCellType());
-        eval.setDebugEvaluationOutputForNextEval(true);
-        CellValue cv = eval.evaluate(c);
-        assertNotNull(cv);
-        assertEquals("Had: " + cv, 2.0, cv.getNumberValue(), 0.00001);
-
-        wb.close();
+            Row r = s.getRow(3);
+            Cell c = r.getCell(0);
+            assertEquals(CellType.FORMULA, c.getCellType());
+            eval.setDebugEvaluationOutputForNextEval(true);
+            CellValue cv = eval.evaluate(c);
+            assertNotNull(cv);
+            assertEquals("Had: " + cv, 2.0, cv.getNumberValue(), 0.00001);
+        }
     }
 
     @Test
-    public void bug61516(){
+    public void bug61516() throws IOException {
         final String initialFormula = "A1";
         final String expectedFormula = "#REF!"; // from ms excel
 
@@ -3287,6 +3275,8 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             CellValue cellValue = evaluator.evaluate(c2);
             assertEquals(1, cellValue.getNumberValue(), 0.0001);
         }
+
+        wb.close();
     }
 
     @Test
@@ -3310,23 +3300,21 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
     @Test
     public void test61543() throws IOException {
-        XSSFWorkbook wb = new XSSFWorkbook();
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+            XSSFTable table1 = sheet.createTable(null);
+            XSSFTable table2 = sheet.createTable(null);
+            XSSFTable table3 = sheet.createTable(null);
 
-        XSSFSheet sheet = wb.createSheet();
-        XSSFTable table1 = sheet.createTable(null);
-        XSSFTable table2 = sheet.createTable(null);
-        XSSFTable table3 = sheet.createTable(null);
+            sheet.removeTable(table1);
 
-        sheet.removeTable(table1);
+            sheet.createTable(null);
 
-        sheet.createTable(null);
+            sheet.removeTable(table2);
+            sheet.removeTable(table3);
 
-        sheet.removeTable(table2);
-        sheet.removeTable(table3);
-
-        sheet.createTable(null);
-
-        wb.close();
+            sheet.createTable(null);
+        }
     }
 
     /**
@@ -3334,54 +3322,57 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
      *  errors like ArrayIndexOutOfBoundsException: -32765
      */
     @Test
-    public void test62108() {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        XSSFSheet sheet = wb.createSheet();
-        XSSFRow row = sheet.createRow(0);
+    public void test62108() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+            XSSFRow row = sheet.createRow(0);
 
-        // Create lots of fonts
-        XSSFDataFormat formats = wb.createDataFormat();
-        XSSFFont[] fonts = new XSSFFont[50000];
-        for (int i=0; i<fonts.length; i++) {
-            XSSFFont font = wb.createFont();
-            font.setFontHeight(i);
-            fonts[i] = font;
-        }
+            // Create lots of fonts
+            XSSFDataFormat formats = wb.createDataFormat();
+            XSSFFont[] fonts = new XSSFFont[50000];
+            for (int i = 0; i < fonts.length; i++) {
+                XSSFFont font = wb.createFont();
+                font.setFontHeight(i);
+                fonts[i] = font;
+            }
 
-        // Create a moderate number of columns, which use
-        //  fonts from the start and end of the font list
-        final int numCols = 125;
-        for (int i=0; i<numCols; i++) {
-            XSSFCellStyle cs = wb.createCellStyle();
-            cs.setDataFormat(formats.getFormat("'Test "+i+"' #,###"));
+            // Create a moderate number of columns, which use
+            //  fonts from the start and end of the font list
+            final int numCols = 125;
+            for (int i = 0; i < numCols; i++) {
+                XSSFCellStyle cs = wb.createCellStyle();
+                cs.setDataFormat(formats.getFormat("'Test " + i + "' #,###"));
 
-            XSSFFont font = fonts[i];
-            if (i%2==1) { font = fonts[fonts.length-i]; }
-            cs.setFont(font);
+                XSSFFont font = fonts[i];
+                if (i % 2 == 1) {
+                    font = fonts[fonts.length - i];
+                }
+                cs.setFont(font);
 
-            XSSFCell c = row.createCell(i);
-            c.setCellValue(i);
-            c.setCellStyle(cs);
-        }
+                XSSFCell c = row.createCell(i);
+                c.setCellValue(i);
+                c.setCellStyle(cs);
+            }
 
-        // Do the auto-size
-        for (int i=0; i<numCols; i++) {
-            sheet.autoSizeColumn(i);
+            // Do the auto-size
+            for (int i = 0; i < numCols; i++) {
+                sheet.autoSizeColumn(i);
+            }
         }
     }
 
     @Test
     public void test61905xlsx() throws IOException {
-        Workbook wb = new XSSFWorkbook();
-        checkActiveSheet(wb, XSSFITestDataProvider.instance);
-        wb.close();
+        try (Workbook wb = new XSSFWorkbook()) {
+            checkActiveSheet(wb, XSSFITestDataProvider.instance);
+        }
     }
 
     @Test
     public void test61905xls() throws IOException {
-        Workbook wb = new HSSFWorkbook();
-        checkActiveSheet(wb, HSSFITestDataProvider.instance);
-        wb.close();
+        try (Workbook wb = new HSSFWorkbook()) {
+            checkActiveSheet(wb, HSSFITestDataProvider.instance);
+        }
     }
 
     private void checkActiveSheet(Workbook wb, ITestDataProvider instance) throws IOException {
@@ -3398,25 +3389,25 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     @Test
     public void testBug54084Unicode() throws IOException {
         // sample XLSX with the same text-contents as the text-file above
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("54084 - Greek - beyond BMP.xlsx");
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("54084 - Greek - beyond BMP.xlsx")) {
 
-        verifyBug54084Unicode(wb);
+            verifyBug54084Unicode(wb);
 
-        //XSSFTestDataSamples.writeOut(wb, "bug 54084 for manual review");
+            //XSSFTestDataSamples.writeOut(wb, "bug 54084 for manual review");
 
-        // now write the file and read it back in
-        XSSFWorkbook wbWritten = XSSFTestDataSamples.writeOutAndReadBack(wb);
-        verifyBug54084Unicode(wbWritten);
+            // now write the file and read it back in
+            XSSFWorkbook wbWritten = XSSFTestDataSamples.writeOutAndReadBack(wb);
+            verifyBug54084Unicode(wbWritten);
 
-        // finally also write it out via the streaming interface and verify that we still can read it back in
-        SXSSFWorkbook swb = new SXSSFWorkbook(wb);
-        Workbook wbStreamingWritten = SXSSFITestDataProvider.instance.writeOutAndReadBack(swb);
-        verifyBug54084Unicode(wbStreamingWritten);
+            // finally also write it out via the streaming interface and verify that we still can read it back in
+            SXSSFWorkbook swb = new SXSSFWorkbook(wb);
+            Workbook wbStreamingWritten = SXSSFITestDataProvider.instance.writeOutAndReadBack(swb);
+            verifyBug54084Unicode(wbStreamingWritten);
 
-        wbWritten.close();
-        swb.close();
-        wbStreamingWritten.close();
-        wb.close();
+            wbWritten.close();
+            swb.close();
+            wbStreamingWritten.close();
+        }
     }
 
     private void verifyBug54084Unicode(Workbook wb) {
@@ -3436,21 +3427,21 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
 
     @Test
-    public void bug63371() {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        XSSFSheet sheet = wb.createSheet();
+    public void bug63371() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
 
-        CellRangeAddress region = new CellRangeAddress(1, 1, 1, 2);
-        assertEquals(0, sheet.addMergedRegion(region));
-        //System.out.println(String.format("%s: index=%d", "testAddMergedRegion", index));
+            CellRangeAddress region = new CellRangeAddress(1, 1, 1, 2);
+            assertEquals(0, sheet.addMergedRegion(region));
+            //System.out.println(String.format("%s: index=%d", "testAddMergedRegion", index));
 
-        final List<CellRangeAddress> ranges = sheet.getMergedRegions();
-        final int numMergedRegions = sheet.getNumMergedRegions();
-        final CTWorksheet ctSheet = sheet.getCTWorksheet();
-        final CTMergeCells ctMergeCells = ctSheet.getMergeCells();
-        final List<CTMergeCell> ctMergeCellList = ctMergeCells.getMergeCellList();
-        final long ctMergeCellCount = ctMergeCells.getCount();
-        final int ctMergeCellListSize = ctMergeCellList.size();
+            final List<CellRangeAddress> ranges = sheet.getMergedRegions();
+            final int numMergedRegions = sheet.getNumMergedRegions();
+            final CTWorksheet ctSheet = sheet.getCTWorksheet();
+            final CTMergeCells ctMergeCells = ctSheet.getMergeCells();
+            final List<CTMergeCell> ctMergeCellList = ctMergeCells.getMergeCellList();
+            final long ctMergeCellCount = ctMergeCells.getCount();
+            final int ctMergeCellListSize = ctMergeCellList.size();
 
         /*System.out.println(String.format("\ntestMergeRegions(%s)", "After adding first region"));
         System.out.println(String.format("ranges.size=%d", ranges.size()));
@@ -3458,35 +3449,35 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         System.out.println(String.format("ctMergeCellCount=%d", ctMergeCellCount));
         System.out.println(String.format("ctMergeCellListSize=%d", ctMergeCellListSize));*/
 
-        assertEquals(1, ranges.size());
-        assertEquals(1, numMergedRegions);
-        assertEquals(1, ctMergeCellCount);
-        assertEquals(1, ctMergeCellListSize);
+            assertEquals(1, ranges.size());
+            assertEquals(1, numMergedRegions);
+            assertEquals(1, ctMergeCellCount);
+            assertEquals(1, ctMergeCellListSize);
+        }
     }
 
     @Test
     public void testBug63509() throws IOException {
-        XSSFWorkbook workbook = new XSSFWorkbook();
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
 
-        XSSFSheet sheet = workbook.createSheet("sheet1");
+            XSSFSheet sheet = workbook.createSheet("sheet1");
 
-        Row row = sheet.createRow(0);
+            Row row = sheet.createRow(0);
 
-        Cell cell = row.createCell(0);
-        cell.setCellValue("1000");
+            Cell cell = row.createCell(0);
+            cell.setCellValue("1000");
 
-        // This causes the error
-        sheet.addIgnoredErrors(new CellReference(cell), IgnoredErrorType.NUMBER_STORED_AS_TEXT);
+            // This causes the error
+            sheet.addIgnoredErrors(new CellReference(cell), IgnoredErrorType.NUMBER_STORED_AS_TEXT);
 
-        // Workaround
-        // sheet.addIgnoredErrors(new CellReference(cell.getRowIndex(), cell.getColumnIndex(), false, false),
-        //        IgnoredErrorType.NUMBER_STORED_AS_TEXT);
+            // Workaround
+            // sheet.addIgnoredErrors(new CellReference(cell.getRowIndex(), cell.getColumnIndex(), false, false),
+            //        IgnoredErrorType.NUMBER_STORED_AS_TEXT);
 
-        /*File file = new File("/tmp/63509.xlsx");
-        try(FileOutputStream outputStream = new FileOutputStream(file)) {
-            workbook.write(outputStream);
-        }*/
-
-        workbook.close();
+            /*File file = new File("/tmp/63509.xlsx");
+            try(FileOutputStream outputStream = new FileOutputStream(file)) {
+                workbook.write(outputStream);
+            }*/
+        }
     }
 }

@@ -34,7 +34,7 @@ public final class TestXSSFSheetRowGrouping extends TestCase {
 
     //private int o_groupsNumber = 0;
 
-    public void test55640() throws IOException {
+    public void test55640() {
         //long startTime = System.currentTimeMillis();
         Workbook wb = new XSSFWorkbook();
         fillData(wb);
@@ -78,7 +78,7 @@ public final class TestXSSFSheetRowGrouping extends TestCase {
         return Math.random() > 0.5d;
     }
 
-    private void writeToFile(Workbook p_wb) throws IOException {
+    private void writeToFile(Workbook p_wb) {
 //        FileOutputStream fileOut = new FileOutputStream("/tmp/55640.xlsx");
 //        try {
 //            p_wb.write(fileOut);
@@ -88,7 +88,7 @@ public final class TestXSSFSheetRowGrouping extends TestCase {
         assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(p_wb));
     }
 
-    public void test55640reduce1() throws IOException {
+    public void test55640reduce1() {
         Workbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet("sheet123");
         sheet.setRowSumsBelow(false);
@@ -117,7 +117,7 @@ public final class TestXSSFSheetRowGrouping extends TestCase {
     }
 
 
-    public void test55640_VerifyCases() throws IOException {
+    public void test55640_VerifyCases() {
         // NOTE: This is currently based on current behavior of POI, somehow
         // what POI returns in the calls to collapsed/hidden is not fully matching 
         // the examples in the spec or I did not fully understand how POI stores the data internally...
@@ -210,7 +210,7 @@ public final class TestXSSFSheetRowGrouping extends TestCase {
     
    
     private void verifyGroupCollapsed(boolean level1, boolean level2, boolean level3, 
-            Boolean[] collapsed, boolean[] hidden, int[] outlineLevel) throws IOException {
+            Boolean[] collapsed, boolean[] hidden, int[] outlineLevel) {
         Workbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet("sheet123");
 
@@ -282,7 +282,7 @@ public final class TestXSSFSheetRowGrouping extends TestCase {
     }
 
     private void verifyGroupCollapsedSpec(boolean level1, boolean level2, boolean level3, 
-            Boolean[] collapsed, boolean[] hidden, int[] outlineLevel) throws IOException {
+            Boolean[] collapsed, boolean[] hidden, int[] outlineLevel) {
         Workbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet("sheet123");
 
@@ -301,7 +301,7 @@ public final class TestXSSFSheetRowGrouping extends TestCase {
         checkWorkbookGrouping(wb, collapsed, hidden, outlineLevel);
     }
 
-    private void checkWorkbookGrouping(Workbook wb, Boolean[] collapsed, boolean[] hidden, int[] outlineLevel) throws IOException {
+    private void checkWorkbookGrouping(Workbook wb, Boolean[] collapsed, boolean[] hidden, int[] outlineLevel) {
         printWorkbook(wb);
         Sheet sheet = wb.getSheetAt(0);
         
@@ -327,7 +327,7 @@ public final class TestXSSFSheetRowGrouping extends TestCase {
     }
 
  
-    public void test55640working() throws IOException {
+    public void test55640working() {
         Workbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet("sheet123");
 
@@ -366,50 +366,51 @@ public final class TestXSSFSheetRowGrouping extends TestCase {
     }
     
     public void testGroupingTest() throws IOException {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("GroupTest.xlsx");       
-        
-        assertEquals(31, wb.getSheetAt(0).getLastRowNum());
-        
-        // NOTE: This is currently based on current behavior of POI, somehow
-        // what POI returns in the calls to collapsed/hidden is not fully matching 
-        // the examples in the spec or I did not fully understand how POI stores the data internally...
-        checkWorkbookGrouping(wb, 
-                new Boolean [] {
-                    // 0-4
-                    false, false, false, false, false, null, null, 
-                    // 7-11
-                    false, false, true, true, true, null, null, 
-                    // 14-18
-                    false, false, true, false, false, null,
-                    // 20-24
-                    false, false, true, true, false, null, null, 
-                    // 27-31
-                    false, false, false, true, false }, 
-                new boolean[] { 
-                    // 0-4
-                    false, false, false, false, false, false, false,  
-                    // 7-11
-                    true,  true, true, true, false, false, false, 
-                    // 14-18
-                    true, true, false, false, false, false,  
-                    // 20-24
-                    true, true, true, false, false, false, false, 
-                    // 27-31
-                    true, true, true, true, false },
-                // outlineLevel
-                new int[] { 
-                    // 0-4
-                    3, 3, 2, 1, 0, 0, 0,
-                    // 7-11
-                    3, 3, 2, 1, 0, 0, 0,
-                    // 14-18
-                    3, 3, 2, 1, 0, 0,
-                    // 20-24
-                    3, 3, 2, 1, 0, 0, 0, 
-                    // 27-31
-                    3, 3, 2, 1, 0,
-                }
-                );
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("GroupTest.xlsx")) {
+
+            assertEquals(31, wb.getSheetAt(0).getLastRowNum());
+
+            // NOTE: This is currently based on current behavior of POI, somehow
+            // what POI returns in the calls to collapsed/hidden is not fully matching
+            // the examples in the spec or I did not fully understand how POI stores the data internally...
+            checkWorkbookGrouping(wb,
+                    new Boolean[]{
+                            // 0-4
+                            false, false, false, false, false, null, null,
+                            // 7-11
+                            false, false, true, true, true, null, null,
+                            // 14-18
+                            false, false, true, false, false, null,
+                            // 20-24
+                            false, false, true, true, false, null, null,
+                            // 27-31
+                            false, false, false, true, false},
+                    new boolean[]{
+                            // 0-4
+                            false, false, false, false, false, false, false,
+                            // 7-11
+                            true, true, true, true, false, false, false,
+                            // 14-18
+                            true, true, false, false, false, false,
+                            // 20-24
+                            true, true, true, false, false, false, false,
+                            // 27-31
+                            true, true, true, true, false},
+                    // outlineLevel
+                    new int[]{
+                            // 0-4
+                            3, 3, 2, 1, 0, 0, 0,
+                            // 7-11
+                            3, 3, 2, 1, 0, 0, 0,
+                            // 14-18
+                            3, 3, 2, 1, 0, 0,
+                            // 20-24
+                            3, 3, 2, 1, 0, 0, 0,
+                            // 27-31
+                            3, 3, 2, 1, 0,
+                    }
+            );
+        }
         /*
 Row: 0: Level: 3 Collapsed: false Hidden: false
 Row: 1: Level: 3 Collapsed: false Hidden: false

@@ -39,15 +39,16 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
     }
 
     @Test
-    public void testLoadExisting() {
-        XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("WithMoreVariousData.xlsx");
-        assertEquals(3, workbook.getNumberOfSheets());
+    public void testLoadExisting() throws IOException {
+        try (XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("WithMoreVariousData.xlsx")) {
+            assertEquals(3, workbook.getNumberOfSheets());
 
-        XSSFSheet sheet = workbook.getSheetAt(0);
+            XSSFSheet sheet = workbook.getSheetAt(0);
 
-        // Check the hyperlinks
-        assertEquals(4, sheet.getNumHyperlinks());
-        doTestHyperlinkContents(sheet);
+            // Check the hyperlinks
+            assertEquals(4, sheet.getNumHyperlinks());
+            doTestHyperlinkContents(sheet);
+        }
     }
 
     @Test
@@ -117,73 +118,74 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
     }
 
     @Test
-    public void testLoadSave() {
-        XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("WithMoreVariousData.xlsx");
-        CreationHelper createHelper = workbook.getCreationHelper();
-        assertEquals(3, workbook.getNumberOfSheets());
-        XSSFSheet sheet = workbook.getSheetAt(0);
+    public void testLoadSave() throws IOException {
+        try (XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("WithMoreVariousData.xlsx")) {
+            CreationHelper createHelper = workbook.getCreationHelper();
+            assertEquals(3, workbook.getNumberOfSheets());
+            XSSFSheet sheet = workbook.getSheetAt(0);
 
-        // Check hyperlinks
-        assertEquals(4, sheet.getNumHyperlinks());
-        doTestHyperlinkContents(sheet);
-
-
-        // Write out, and check
-
-        // Load up again, check all links still there
-        XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(workbook);
-        assertEquals(3, wb2.getNumberOfSheets());
-        assertNotNull(wb2.getSheetAt(0));
-        assertNotNull(wb2.getSheetAt(1));
-        assertNotNull(wb2.getSheetAt(2));
-
-        sheet = wb2.getSheetAt(0);
+            // Check hyperlinks
+            assertEquals(4, sheet.getNumHyperlinks());
+            doTestHyperlinkContents(sheet);
 
 
-        // Check hyperlinks again
-        assertEquals(4, sheet.getNumHyperlinks());
-        doTestHyperlinkContents(sheet);
+            // Write out, and check
+
+            // Load up again, check all links still there
+            XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(workbook);
+            assertEquals(3, wb2.getNumberOfSheets());
+            assertNotNull(wb2.getSheetAt(0));
+            assertNotNull(wb2.getSheetAt(1));
+            assertNotNull(wb2.getSheetAt(2));
+
+            sheet = wb2.getSheetAt(0);
 
 
-        // Add one more, and re-check
-        Row r17 = sheet.createRow(17);
-        Cell r17c = r17.createCell(2);
-
-        Hyperlink hyperlink = createHelper.createHyperlink(HyperlinkType.URL);
-        hyperlink.setAddress("http://poi.apache.org/spreadsheet/");
-        hyperlink.setLabel("POI SS Link");
-        r17c.setHyperlink(hyperlink);
-
-        assertEquals(5, sheet.getNumHyperlinks());
-        doTestHyperlinkContents(sheet);
-
-        assertEquals(HyperlinkType.URL,
-                sheet.getRow(17).getCell(2).getHyperlink().getType());
-        assertEquals("POI SS Link",
-                sheet.getRow(17).getCell(2).getHyperlink().getLabel());
-        assertEquals("http://poi.apache.org/spreadsheet/",
-                sheet.getRow(17).getCell(2).getHyperlink().getAddress());
+            // Check hyperlinks again
+            assertEquals(4, sheet.getNumHyperlinks());
+            doTestHyperlinkContents(sheet);
 
 
-        // Save and re-load once more
+            // Add one more, and re-check
+            Row r17 = sheet.createRow(17);
+            Cell r17c = r17.createCell(2);
 
-        XSSFWorkbook wb3 = XSSFTestDataSamples.writeOutAndReadBack(wb2);
-        assertEquals(3, wb3.getNumberOfSheets());
-        assertNotNull(wb3.getSheetAt(0));
-        assertNotNull(wb3.getSheetAt(1));
-        assertNotNull(wb3.getSheetAt(2));
+            Hyperlink hyperlink = createHelper.createHyperlink(HyperlinkType.URL);
+            hyperlink.setAddress("http://poi.apache.org/spreadsheet/");
+            hyperlink.setLabel("POI SS Link");
+            r17c.setHyperlink(hyperlink);
 
-        sheet = wb3.getSheetAt(0);
+            assertEquals(5, sheet.getNumHyperlinks());
+            doTestHyperlinkContents(sheet);
 
-        assertEquals(5, sheet.getNumHyperlinks());
-        doTestHyperlinkContents(sheet);
+            assertEquals(HyperlinkType.URL,
+                    sheet.getRow(17).getCell(2).getHyperlink().getType());
+            assertEquals("POI SS Link",
+                    sheet.getRow(17).getCell(2).getHyperlink().getLabel());
+            assertEquals("http://poi.apache.org/spreadsheet/",
+                    sheet.getRow(17).getCell(2).getHyperlink().getAddress());
 
-        assertEquals(HyperlinkType.URL,
-                sheet.getRow(17).getCell(2).getHyperlink().getType());
-        assertEquals("POI SS Link",
-                sheet.getRow(17).getCell(2).getHyperlink().getLabel());
-        assertEquals("http://poi.apache.org/spreadsheet/",
-                sheet.getRow(17).getCell(2).getHyperlink().getAddress());
+
+            // Save and re-load once more
+
+            XSSFWorkbook wb3 = XSSFTestDataSamples.writeOutAndReadBack(wb2);
+            assertEquals(3, wb3.getNumberOfSheets());
+            assertNotNull(wb3.getSheetAt(0));
+            assertNotNull(wb3.getSheetAt(1));
+            assertNotNull(wb3.getSheetAt(2));
+
+            sheet = wb3.getSheetAt(0);
+
+            assertEquals(5, sheet.getNumHyperlinks());
+            doTestHyperlinkContents(sheet);
+
+            assertEquals(HyperlinkType.URL,
+                    sheet.getRow(17).getCell(2).getHyperlink().getType());
+            assertEquals("POI SS Link",
+                    sheet.getRow(17).getCell(2).getHyperlink().getLabel());
+            assertEquals("http://poi.apache.org/spreadsheet/",
+                    sheet.getRow(17).getCell(2).getHyperlink().getAddress());
+        }
     }
 
     /**
@@ -198,8 +200,7 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
         // First is a link to poi
         assertEquals(HyperlinkType.URL,
                 sheet.getRow(3).getCell(2).getHyperlink().getType());
-        assertEquals(null,
-                sheet.getRow(3).getCell(2).getHyperlink().getLabel());
+        assertNull(sheet.getRow(3).getCell(2).getHyperlink().getLabel());
         assertEquals("http://poi.apache.org/",
                 sheet.getRow(3).getCell(2).getHyperlink().getAddress());
 
@@ -214,60 +215,63 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
         // Next is a file
         assertEquals(HyperlinkType.FILE,
                 sheet.getRow(15).getCell(2).getHyperlink().getType());
-        assertEquals(null,
-                sheet.getRow(15).getCell(2).getHyperlink().getLabel());
+        assertNull(sheet.getRow(15).getCell(2).getHyperlink().getLabel());
         assertEquals("WithVariousData.xlsx",
                 sheet.getRow(15).getCell(2).getHyperlink().getAddress());
 
         // Last is a mailto
         assertEquals(HyperlinkType.EMAIL,
                 sheet.getRow(16).getCell(2).getHyperlink().getType());
-        assertEquals(null,
-                sheet.getRow(16).getCell(2).getHyperlink().getLabel());
+        assertNull(sheet.getRow(16).getCell(2).getHyperlink().getLabel());
         assertEquals("mailto:dev@poi.apache.org?subject=XSSF%20Hyperlinks",
                 sheet.getRow(16).getCell(2).getHyperlink().getAddress());
     }
 
     @Test
-    public void test52716() {
-        XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("52716.xlsx");
-        XSSFSheet sh1 = wb1.getSheetAt(0);
+    public void test52716() throws IOException {
+        try (XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("52716.xlsx")) {
+            XSSFSheet sh1 = wb1.getSheetAt(0);
 
-        XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1);
-        XSSFSheet sh2 = wb2.getSheetAt(0);
+            XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1);
+            XSSFSheet sh2 = wb2.getSheetAt(0);
 
-        assertEquals(sh1.getNumberOfComments(), sh2.getNumberOfComments());
-        XSSFHyperlink l1 = sh1.getHyperlink(0, 1);
-        assertEquals(HyperlinkType.DOCUMENT, l1.getType());
-        assertEquals("B1", l1.getCellRef());
-        assertEquals("Sort on Titel", l1.getTooltip());
+            assertEquals(sh1.getNumberOfComments(), sh2.getNumberOfComments());
+            XSSFHyperlink l1 = sh1.getHyperlink(0, 1);
+            assertEquals(HyperlinkType.DOCUMENT, l1.getType());
+            assertEquals("B1", l1.getCellRef());
+            assertEquals("Sort on Titel", l1.getTooltip());
 
-        XSSFHyperlink l2 = sh2.getHyperlink(0, 1);
-        assertEquals(l1.getTooltip(), l2.getTooltip());
-        assertEquals(HyperlinkType.DOCUMENT, l2.getType());
-        assertEquals("B1", l2.getCellRef());
+            XSSFHyperlink l2 = sh2.getHyperlink(0, 1);
+            assertEquals(l1.getTooltip(), l2.getTooltip());
+            assertEquals(HyperlinkType.DOCUMENT, l2.getType());
+            assertEquals("B1", l2.getCellRef());
+        }
     }
 
     @Test
-    public void test53734() {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("53734.xlsx");
-        XSSFHyperlink link = wb.getSheetAt(0).getRow(0).getCell(0).getHyperlink();
-        assertEquals("javascript:///", link.getAddress());
+    public void test53734() throws IOException {
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("53734.xlsx")) {
+            Hyperlink link = wb.getSheetAt(0).getRow(0).getCell(0).getHyperlink();
+            assertEquals("javascript:///", link.getAddress());
 
-        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
-        link = wb.getSheetAt(0).getRow(0).getCell(0).getHyperlink();
-        assertEquals("javascript:///", link.getAddress());
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                link = wb2.getSheetAt(0).getRow(0).getCell(0).getHyperlink();
+                assertEquals("javascript:///", link.getAddress());
+            }
+        }
     }
 
     @Test
-    public void test53282() {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("53282.xlsx");
-        XSSFHyperlink link = wb.getSheetAt(0).getRow(0).getCell(14).getHyperlink();
-        assertEquals("mailto:nobody@nowhere.uk%C2%A0", link.getAddress());
+    public void test53282() throws IOException {
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("53282.xlsx")) {
+            Hyperlink link = wb.getSheetAt(0).getRow(0).getCell(14).getHyperlink();
+            assertEquals("mailto:nobody@nowhere.uk%C2%A0", link.getAddress());
 
-        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
-        link = wb.getSheetAt(0).getRow(0).getCell(14).getHyperlink();
-        assertEquals("mailto:nobody@nowhere.uk%C2%A0", link.getAddress());
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                link = wb2.getSheetAt(0).getRow(0).getCell(14).getHyperlink();
+                assertEquals("mailto:nobody@nowhere.uk%C2%A0", link.getAddress());
+            }
+        }
     }
     
     @Override

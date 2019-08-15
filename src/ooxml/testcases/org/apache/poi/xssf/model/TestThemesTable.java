@@ -18,9 +18,13 @@
 package org.apache.poi.xssf.model;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -70,7 +74,9 @@ public class TestThemesTable {
         XSSFWorkbook simpleRS = XSSFTestDataSamples.writeOutAndReadBack(simple);
         XSSFWorkbook complexRS = XSSFTestDataSamples.writeOutAndReadBack(complex);
         // Fetch fresh copies to test with
+        simple.close();
         simple = XSSFTestDataSamples.openSampleWorkbook(testFileSimple);
+        complex.close();
         complex = XSSFTestDataSamples.openSampleWorkbook(testFileComplex);
         // Files and descriptions
         Map<String,XSSFWorkbook> workbooks = new LinkedHashMap<>();
@@ -111,13 +117,13 @@ public class TestThemesTable {
                 XSSFFont font = cell.getCellStyle().getFont();
                 CTColor ctColor = font.getCTFont().getColorArray(0);
                 assertNotNull(ctColor);
-                assertEquals(true, ctColor.isSetTheme());
+                assertTrue(ctColor.isSetTheme());
                 assertEquals(themeElem.idx, ctColor.getTheme());
                 
                 // Get the colour, via the theme
                 XSSFColor color = font.getXSSFColor();
                 // Theme colours aren't tinted
-                assertEquals(false, color.hasTint());
+                assertFalse(color.hasTint());
                 // Check the RGB part (no tint)
                 assertEquals(
                         "Wrong theme colour " + themeElem.name + " on " + whatWorkbook,
@@ -141,6 +147,11 @@ public class TestThemesTable {
                 fos.close();
             }
         }
+
+        simpleRS.close();
+        simple.close();
+        complexRS.close();
+        complex.close();
     }
 
     /**
@@ -155,80 +166,78 @@ public class TestThemesTable {
      * Note - Grey Row has an odd way of doing the styling... 
      */
     @Test
-    public void themedAndNonThemedColours() {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook(testFileComplex);
-        XSSFSheet sheet = wb.getSheetAt(0);
-        XSSFCellStyle style;
-        XSSFColor color;
-        XSSFCell cell;
-        
-        String[] names = {"White","Black","Grey","Dark Blue","Blue","Red","Green"};
-        String[] explicitFHexes = { "FFFFFFFF", "FF000000", "FFC0C0C0", "FF002060",
-                                    "FF0070C0", "FFFF0000", "FF00B050" };
-        String[] explicitBHexes = { "FFFFFFFF", "FF000000", "FFC0C0C0", "FF002060",
-                                    "FF0000FF", "FFFF0000", "FF00FF00" };
-        assertEquals(7, names.length);
-        
-        // Check the non-CF colours in Columns A, B, C and E
-        for (int rn=1; rn<8; rn++) {
-            int idx = rn-1;
-            XSSFRow row = sheet.getRow(rn);
-            assertNotNull("Missing row " + rn, row);
-            
-            // Theme cells come first
-            XSSFCell themeCell = row.getCell(0);
-            ThemeElement themeElem = ThemeElement.byId(idx);
-            assertCellContents(themeElem.name, themeCell);
+    public void themedAndNonThemedColours() throws IOException {
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook(testFileComplex)) {
+            XSSFSheet sheet = wb.getSheetAt(0);
 
-            // Sanity check names
-            assertCellContents(names[idx], row.getCell(1));
-            assertCellContents(names[idx], row.getCell(2));
-            assertCellContents(names[idx], row.getCell(4));
-            
-            
-            // Check the colours
-            
-            //  A: Theme Based, Foreground
-            style = themeCell.getCellStyle();
-            color = style.getFont().getXSSFColor();
-            assertEquals(true, color.isThemed());
-            assertEquals(idx, color.getTheme());
-            assertEquals(rgbExpected[idx], Hex.encodeHexString(color.getRGB()));
-            
-            //  B: Theme Based, Foreground
-            cell = row.getCell(1);
-            style = cell.getCellStyle();
-            color = style.getFont().getXSSFColor();
-            assertEquals(true, color.isThemed());
-            if (idx != 2) {
+            String[] names = {"White", "Black", "Grey", "Dark Blue", "Blue", "Red", "Green"};
+            String[] explicitFHexes = {"FFFFFFFF", "FF000000", "FFC0C0C0", "FF002060",
+                    "FF0070C0", "FFFF0000", "FF00B050"};
+            String[] explicitBHexes = {"FFFFFFFF", "FF000000", "FFC0C0C0", "FF002060",
+                    "FF0000FF", "FFFF0000", "FF00FF00"};
+            assertEquals(7, names.length);
+
+            // Check the non-CF colours in Columns A, B, C and E
+            for (int rn = 1; rn < 8; rn++) {
+                int idx = rn - 1;
+                XSSFRow row = sheet.getRow(rn);
+                assertNotNull("Missing row " + rn, row);
+
+                // Theme cells come first
+                XSSFCell themeCell = row.getCell(0);
+                ThemeElement themeElem = ThemeElement.byId(idx);
+                assertCellContents(themeElem.name, themeCell);
+
+                // Sanity check names
+                assertCellContents(names[idx], row.getCell(1));
+                assertCellContents(names[idx], row.getCell(2));
+                assertCellContents(names[idx], row.getCell(4));
+
+
+                // Check the colours
+
+                //  A: Theme Based, Foreground
+                XSSFCellStyle style = themeCell.getCellStyle();
+                XSSFColor color = style.getFont().getXSSFColor();
+                assertTrue(color.isThemed());
                 assertEquals(idx, color.getTheme());
                 assertEquals(rgbExpected[idx], Hex.encodeHexString(color.getRGB()));
-            } else {
-                assertEquals(1, color.getTheme());
-                assertEquals(0.50, color.getTint(), 0.001);
+
+                //  B: Theme Based, Foreground
+                XSSFCell cell = row.getCell(1);
+                style = cell.getCellStyle();
+                color = style.getFont().getXSSFColor();
+                assertTrue(color.isThemed());
+                if (idx != 2) {
+                    assertEquals(idx, color.getTheme());
+                    assertEquals(rgbExpected[idx], Hex.encodeHexString(color.getRGB()));
+                } else {
+                    assertEquals(1, color.getTheme());
+                    assertEquals(0.50, color.getTint(), 0.001);
+                }
+
+                //  C: Explicit, Foreground
+                cell = row.getCell(2);
+                style = cell.getCellStyle();
+                color = style.getFont().getXSSFColor();
+                assertFalse(color.isThemed());
+                assertEquals(explicitFHexes[idx], color.getARGBHex());
+
+                // E: Explicit Background, Foreground all Black
+                cell = row.getCell(4);
+                style = cell.getCellStyle();
+
+                color = style.getFont().getXSSFColor();
+                assertTrue(color.isThemed());
+                assertEquals("FF000000", color.getARGBHex());
+
+                color = style.getFillForegroundXSSFColor();
+                assertFalse(color.isThemed());
+                assertEquals(explicitBHexes[idx], color.getARGBHex());
+                color = style.getFillBackgroundColorColor();
+                assertFalse(color.isThemed());
+                assertNull(color.getARGBHex());
             }
-            
-            //  C: Explicit, Foreground
-            cell = row.getCell(2);
-            style = cell.getCellStyle();
-            color = style.getFont().getXSSFColor();
-            assertEquals(false, color.isThemed());
-            assertEquals(explicitFHexes[idx], color.getARGBHex());
-            
-            // E: Explicit Background, Foreground all Black
-            cell = row.getCell(4);
-            style = cell.getCellStyle();
-            
-            color = style.getFont().getXSSFColor();
-            assertEquals(true, color.isThemed());
-            assertEquals("FF000000", color.getARGBHex());
-            
-            color = style.getFillForegroundXSSFColor();
-            assertEquals(false, color.isThemed());
-            assertEquals(explicitBHexes[idx], color.getARGBHex());
-            color = style.getFillBackgroundColorColor();
-            assertEquals(false, color.isThemed());
-            assertEquals(null, color.getARGBHex());
         }
         
         // Check the CF colours
@@ -242,13 +251,13 @@ public class TestThemesTable {
     
     @Test
     @SuppressWarnings("resource")
-    public void testAddNew() throws Exception {
+    public void testAddNew() {
         XSSFWorkbook wb = new XSSFWorkbook();
         wb.createSheet();
-        assertEquals(null, wb.getTheme());
+        assertNull(wb.getTheme());
         
         StylesTable styles = wb.getStylesSource();
-        assertEquals(null, styles.getTheme());
+        assertNull(styles.getTheme());
         
         styles.ensureThemesTable();
         

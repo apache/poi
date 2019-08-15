@@ -20,6 +20,7 @@ package org.apache.poi.xwpf.usermodel;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -28,6 +29,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
@@ -96,7 +98,7 @@ public final class TestXWPFDocument {
             assertEquals(1315, xml.getProperties().getExtendedProperties().getUnderlyingProperties().getCharacters());
             assertEquals(10, xml.getProperties().getExtendedProperties().getUnderlyingProperties().getLines());
 
-            assertEquals(null, xml.getProperties().getCoreProperties().getTitle());
+            assertNull(xml.getProperties().getCoreProperties().getTitle());
             assertFalse(xml.getProperties().getCoreProperties().getUnderlyingProperties().getSubjectProperty().isPresent());
         }
     }
@@ -112,7 +114,9 @@ public final class TestXWPFDocument {
         assertEquals(0, xml.getProperties().getExtendedProperties().getUnderlyingProperties().getLines());
 
         assertEquals(" ", xml.getProperties().getCoreProperties().getTitle());
-        assertEquals(" ", xml.getProperties().getCoreProperties().getUnderlyingProperties().getSubjectProperty().get());
+        Optional<String> subjectProperty = xml.getProperties().getCoreProperties().getUnderlyingProperties().getSubjectProperty();
+        assertTrue(subjectProperty.isPresent());
+        assertEquals(" ", subjectProperty.get());
         xml.close();
     }
 
@@ -153,7 +157,9 @@ public final class TestXWPFDocument {
         byte[] jpeg = XWPFTestDataSamples.getImage("nature1.jpg");
         String relationId = doc.addPictureData(jpeg, Document.PICTURE_TYPE_JPEG);
 
-        byte[] newJpeg = ((XWPFPictureData) doc.getRelationById(relationId)).getData();
+        XWPFPictureData relationById = (XWPFPictureData) doc.getRelationById(relationId);
+        assertNotNull(relationById);
+        byte[] newJpeg = relationById.getData();
         assertEquals(newJpeg.length, jpeg.length);
         for (int i = 0; i < jpeg.length; i++) {
             assertEquals(newJpeg[i], jpeg[i]);
@@ -187,225 +193,225 @@ public final class TestXWPFDocument {
 
     @Test
     public void testAddHyperlink() throws IOException {
-        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("SampleDoc.docx");
-        XWPFParagraph p = doc.createParagraph();
-        XWPFHyperlinkRun h = p.createHyperlinkRun("http://poi.apache.org/");
-        h.setText("Apache POI");
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("SampleDoc.docx")) {
+            XWPFParagraph p = doc.createParagraph();
+            XWPFHyperlinkRun h = p.createHyperlinkRun("http://poi.apache.org/");
+            h.setText("Apache POI");
 
-        assertEquals("http://poi.apache.org/", h.getHyperlink(doc).getURL());
-        assertEquals(p.getRuns().size(), 1);
-        assertEquals(p.getRuns().get(0), h);
+            assertEquals("http://poi.apache.org/", h.getHyperlink(doc).getURL());
+            assertEquals(p.getRuns().size(), 1);
+            assertEquals(p.getRuns().get(0), h);
+        }
     }
 
     @Test
     public void testRemoveBodyElement() throws IOException {
-        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
-        assertEquals(3, doc.getParagraphs().size());
-        assertEquals(3, doc.getBodyElements().size());
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx")) {
+            assertEquals(3, doc.getParagraphs().size());
+            assertEquals(3, doc.getBodyElements().size());
 
-        XWPFParagraph p1 = doc.getParagraphs().get(0);
-        XWPFParagraph p2 = doc.getParagraphs().get(1);
-        XWPFParagraph p3 = doc.getParagraphs().get(2);
+            XWPFParagraph p1 = doc.getParagraphs().get(0);
+            XWPFParagraph p2 = doc.getParagraphs().get(1);
+            XWPFParagraph p3 = doc.getParagraphs().get(2);
 
-        assertEquals(p1, doc.getBodyElements().get(0));
-        assertEquals(p1, doc.getParagraphs().get(0));
-        assertEquals(p2, doc.getBodyElements().get(1));
-        assertEquals(p2, doc.getParagraphs().get(1));
-        assertEquals(p3, doc.getBodyElements().get(2));
-        assertEquals(p3, doc.getParagraphs().get(2));
+            assertEquals(p1, doc.getBodyElements().get(0));
+            assertEquals(p1, doc.getParagraphs().get(0));
+            assertEquals(p2, doc.getBodyElements().get(1));
+            assertEquals(p2, doc.getParagraphs().get(1));
+            assertEquals(p3, doc.getBodyElements().get(2));
+            assertEquals(p3, doc.getParagraphs().get(2));
 
-        // Add another
-        XWPFParagraph p4 = doc.createParagraph();
+            // Add another
+            XWPFParagraph p4 = doc.createParagraph();
 
-        assertEquals(4, doc.getParagraphs().size());
-        assertEquals(4, doc.getBodyElements().size());
-        assertEquals(p1, doc.getBodyElements().get(0));
-        assertEquals(p1, doc.getParagraphs().get(0));
-        assertEquals(p2, doc.getBodyElements().get(1));
-        assertEquals(p2, doc.getParagraphs().get(1));
-        assertEquals(p3, doc.getBodyElements().get(2));
-        assertEquals(p3, doc.getParagraphs().get(2));
-        assertEquals(p4, doc.getBodyElements().get(3));
-        assertEquals(p4, doc.getParagraphs().get(3));
+            assertEquals(4, doc.getParagraphs().size());
+            assertEquals(4, doc.getBodyElements().size());
+            assertEquals(p1, doc.getBodyElements().get(0));
+            assertEquals(p1, doc.getParagraphs().get(0));
+            assertEquals(p2, doc.getBodyElements().get(1));
+            assertEquals(p2, doc.getParagraphs().get(1));
+            assertEquals(p3, doc.getBodyElements().get(2));
+            assertEquals(p3, doc.getParagraphs().get(2));
+            assertEquals(p4, doc.getBodyElements().get(3));
+            assertEquals(p4, doc.getParagraphs().get(3));
 
-        // Remove the 2nd
-        assertEquals(true, doc.removeBodyElement(1));
-        assertEquals(3, doc.getParagraphs().size());
-        assertEquals(3, doc.getBodyElements().size());
+            // Remove the 2nd
+            assertTrue(doc.removeBodyElement(1));
+            assertEquals(3, doc.getParagraphs().size());
+            assertEquals(3, doc.getBodyElements().size());
 
-        assertEquals(p1, doc.getBodyElements().get(0));
-        assertEquals(p1, doc.getParagraphs().get(0));
-        assertEquals(p3, doc.getBodyElements().get(1));
-        assertEquals(p3, doc.getParagraphs().get(1));
-        assertEquals(p4, doc.getBodyElements().get(2));
-        assertEquals(p4, doc.getParagraphs().get(2));
+            assertEquals(p1, doc.getBodyElements().get(0));
+            assertEquals(p1, doc.getParagraphs().get(0));
+            assertEquals(p3, doc.getBodyElements().get(1));
+            assertEquals(p3, doc.getParagraphs().get(1));
+            assertEquals(p4, doc.getBodyElements().get(2));
+            assertEquals(p4, doc.getParagraphs().get(2));
 
-        // Remove the 1st
-        assertEquals(true, doc.removeBodyElement(0));
-        assertEquals(2, doc.getParagraphs().size());
-        assertEquals(2, doc.getBodyElements().size());
+            // Remove the 1st
+            assertTrue(doc.removeBodyElement(0));
+            assertEquals(2, doc.getParagraphs().size());
+            assertEquals(2, doc.getBodyElements().size());
 
-        assertEquals(p3, doc.getBodyElements().get(0));
-        assertEquals(p3, doc.getParagraphs().get(0));
-        assertEquals(p4, doc.getBodyElements().get(1));
-        assertEquals(p4, doc.getParagraphs().get(1));
+            assertEquals(p3, doc.getBodyElements().get(0));
+            assertEquals(p3, doc.getParagraphs().get(0));
+            assertEquals(p4, doc.getBodyElements().get(1));
+            assertEquals(p4, doc.getParagraphs().get(1));
 
-        // Remove the last
-        assertEquals(true, doc.removeBodyElement(1));
-        assertEquals(1, doc.getParagraphs().size());
-        assertEquals(1, doc.getBodyElements().size());
+            // Remove the last
+            assertTrue(doc.removeBodyElement(1));
+            assertEquals(1, doc.getParagraphs().size());
+            assertEquals(1, doc.getBodyElements().size());
 
-        assertEquals(p3, doc.getBodyElements().get(0));
-        assertEquals(p3, doc.getParagraphs().get(0));
-        doc.close();
+            assertEquals(p3, doc.getBodyElements().get(0));
+            assertEquals(p3, doc.getParagraphs().get(0));
+        }
     }
 
     @Test
     public void testRegisterPackagePictureData() throws IOException, InvalidFormatException {
-        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("issue_51265_1.docx");
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("issue_51265_1.docx")) {
+            /* manually assemble a new image package part*/
+            OPCPackage opcPkg = doc.getPackage();
+            XWPFRelation jpgRelation = XWPFRelation.IMAGE_JPEG;
+            PackagePartName partName = PackagingURIHelper.createPartName(jpgRelation.getDefaultFileName().replace('#', '2'));
+            PackagePart newImagePart = opcPkg.createPart(partName, jpgRelation.getContentType());
+            byte[] nature1 = XWPFTestDataSamples.getImage("abstract4.jpg");
+            OutputStream os = newImagePart.getOutputStream();
+            os.write(nature1);
+            os.close();
+            XWPFHeader xwpfHeader = doc.getHeaderArray(0);
+            XWPFPictureData newPicData = new XWPFPictureData(newImagePart);
+            /* new part is now ready to rumble */
 
-        /* manually assemble a new image package part*/
-        OPCPackage opcPckg = doc.getPackage();
-        XWPFRelation jpgRelation = XWPFRelation.IMAGE_JPEG;
-        PackagePartName partName = PackagingURIHelper.createPartName(jpgRelation.getDefaultFileName().replace('#', '2'));
-        PackagePart newImagePart = opcPckg.createPart(partName, jpgRelation.getContentType());
-        byte[] nature1 = XWPFTestDataSamples.getImage("abstract4.jpg");
-        OutputStream os = newImagePart.getOutputStream();
-        os.write(nature1);
-        os.close();
-        XWPFHeader xwpfHeader = doc.getHeaderArray(0);
-        XWPFPictureData newPicData = new XWPFPictureData(newImagePart);
-        /* new part is now ready to rumble */
+            assertFalse(xwpfHeader.getAllPictures().contains(newPicData));
+            assertFalse(doc.getAllPictures().contains(newPicData));
+            assertFalse(doc.getAllPackagePictures().contains(newPicData));
 
-        assertFalse(xwpfHeader.getAllPictures().contains(newPicData));
-        assertFalse(doc.getAllPictures().contains(newPicData));
-        assertFalse(doc.getAllPackagePictures().contains(newPicData));
+            doc.registerPackagePictureData(newPicData);
 
-        doc.registerPackagePictureData(newPicData);
+            assertFalse(xwpfHeader.getAllPictures().contains(newPicData));
+            assertFalse(doc.getAllPictures().contains(newPicData));
+            assertTrue(doc.getAllPackagePictures().contains(newPicData));
 
-        assertFalse(xwpfHeader.getAllPictures().contains(newPicData));
-        assertFalse(doc.getAllPictures().contains(newPicData));
-        assertTrue(doc.getAllPackagePictures().contains(newPicData));
-
-        doc.getPackage().revert();
-        opcPckg.close();
-        doc.close();
+            doc.getPackage().revert();
+            opcPkg.close();
+        }
     }
 
     @Test
     public void testFindPackagePictureData() throws IOException {
-        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("issue_51265_1.docx");
-        byte[] nature1 = XWPFTestDataSamples.getImage("nature1.gif");
-        XWPFPictureData part = doc.findPackagePictureData(nature1, Document.PICTURE_TYPE_GIF);
-        assertNotNull(part);
-        assertTrue(doc.getAllPictures().contains(part));
-        assertTrue(doc.getAllPackagePictures().contains(part));
-        doc.getPackage().revert();
-        doc.close();
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("issue_51265_1.docx")) {
+            byte[] nature1 = XWPFTestDataSamples.getImage("nature1.gif");
+            XWPFPictureData part = doc.findPackagePictureData(nature1, Document.PICTURE_TYPE_GIF);
+            assertNotNull(part);
+            assertTrue(doc.getAllPictures().contains(part));
+            assertTrue(doc.getAllPackagePictures().contains(part));
+            doc.getPackage().revert();
+        }
     }
 
     @Test
     public void testGetAllPictures() throws IOException {
-        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("issue_51265_3.docx");
-        List<XWPFPictureData> allPictures = doc.getAllPictures();
-        List<XWPFPictureData> allPackagePictures = doc.getAllPackagePictures();
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("issue_51265_3.docx")) {
+            List<XWPFPictureData> allPictures = doc.getAllPictures();
+            List<XWPFPictureData> allPackagePictures = doc.getAllPackagePictures();
 
-        assertNotNull(allPictures);
-        assertEquals(3, allPictures.size());
-        for (XWPFPictureData xwpfPictureData : allPictures) {
-            assertTrue(allPackagePictures.contains(xwpfPictureData));
+            assertNotNull(allPictures);
+            assertEquals(3, allPictures.size());
+            for (XWPFPictureData xwpfPictureData : allPictures) {
+                assertTrue(allPackagePictures.contains(xwpfPictureData));
+            }
+
+            try {
+                allPictures.add(allPictures.get(0));
+                fail("This list must be unmodifiable!");
+            } catch (UnsupportedOperationException e) {
+                // all ok
+            }
+
+            doc.getPackage().revert();
         }
-
-        try {
-            allPictures.add(allPictures.get(0));
-            fail("This list must be unmodifiable!");
-        } catch (UnsupportedOperationException e) {
-            // all ok
-        }
-
-        doc.getPackage().revert();
-        doc.close();
     }
 
     @Test
     public void testGetAllPackagePictures() throws IOException {
-        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("issue_51265_3.docx");
-        List<XWPFPictureData> allPackagePictures = doc.getAllPackagePictures();
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("issue_51265_3.docx")) {
+            List<XWPFPictureData> allPackagePictures = doc.getAllPackagePictures();
 
-        assertNotNull(allPackagePictures);
-        assertEquals(5, allPackagePictures.size());
+            assertNotNull(allPackagePictures);
+            assertEquals(5, allPackagePictures.size());
 
-        try {
-            allPackagePictures.add(allPackagePictures.get(0));
-            fail("This list must be unmodifiable!");
-        } catch (UnsupportedOperationException e) {
-            // all ok
+            try {
+                allPackagePictures.add(allPackagePictures.get(0));
+                fail("This list must be unmodifiable!");
+            } catch (UnsupportedOperationException e) {
+                // all ok
+            }
+
+            doc.getPackage().revert();
         }
-
-        doc.getPackage().revert();
-        doc.close();
     }
 
     @Test
     public void testPictureHandlingSimpleFile() throws IOException, InvalidFormatException {
-        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("issue_51265_1.docx");
-        assertEquals(1, doc.getAllPackagePictures().size());
-        byte[] newPic = XWPFTestDataSamples.getImage("abstract4.jpg");
-        String id1 = doc.addPictureData(newPic, Document.PICTURE_TYPE_JPEG);
-        assertEquals(2, doc.getAllPackagePictures().size());
-        /* copy data, to avoid instance-equality */
-        byte[] newPicCopy = Arrays.copyOf(newPic, newPic.length);
-        String id2 = doc.addPictureData(newPicCopy, Document.PICTURE_TYPE_JPEG);
-        assertEquals(id1, id2);
-        doc.getPackage().revert();
-        doc.close();
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("issue_51265_1.docx")) {
+            assertEquals(1, doc.getAllPackagePictures().size());
+            byte[] newPic = XWPFTestDataSamples.getImage("abstract4.jpg");
+            String id1 = doc.addPictureData(newPic, Document.PICTURE_TYPE_JPEG);
+            assertEquals(2, doc.getAllPackagePictures().size());
+            /* copy data, to avoid instance-equality */
+            byte[] newPicCopy = Arrays.copyOf(newPic, newPic.length);
+            String id2 = doc.addPictureData(newPicCopy, Document.PICTURE_TYPE_JPEG);
+            assertEquals(id1, id2);
+            doc.getPackage().revert();
+        }
     }
 
     @Test
     public void testPictureHandlingHeaderDocumentImages() throws IOException {
-        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("issue_51265_2.docx");
-        assertEquals(1, doc.getAllPictures().size());
-        assertEquals(1, doc.getAllPackagePictures().size());
-        assertEquals(1, doc.getHeaderArray(0).getAllPictures().size());
-        doc.getPackage().revert();
-        doc.close();
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("issue_51265_2.docx")) {
+            assertEquals(1, doc.getAllPictures().size());
+            assertEquals(1, doc.getAllPackagePictures().size());
+            assertEquals(1, doc.getHeaderArray(0).getAllPictures().size());
+            doc.getPackage().revert();
+        }
     }
 
     @Test
     public void testPictureHandlingComplex() throws IOException, InvalidFormatException {
-        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("issue_51265_3.docx");
-        XWPFHeader xwpfHeader = doc.getHeaderArray(0);
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("issue_51265_3.docx")) {
+            XWPFHeader xwpfHeader = doc.getHeaderArray(0);
 
-        assertEquals(3, doc.getAllPictures().size());
-        assertEquals(3, xwpfHeader.getAllPictures().size());
-        assertEquals(5, doc.getAllPackagePictures().size());
+            assertEquals(3, doc.getAllPictures().size());
+            assertEquals(3, xwpfHeader.getAllPictures().size());
+            assertEquals(5, doc.getAllPackagePictures().size());
 
-        byte[] nature1 = XWPFTestDataSamples.getImage("nature1.jpg");
-        String id = doc.addPictureData(nature1, Document.PICTURE_TYPE_JPEG);
-        POIXMLDocumentPart part1 = xwpfHeader.getRelationById("rId1");
-        XWPFPictureData part2 = (XWPFPictureData) doc.getRelationById(id);
-        assertSame(part1, part2);
+            byte[] nature1 = XWPFTestDataSamples.getImage("nature1.jpg");
+            String id = doc.addPictureData(nature1, Document.PICTURE_TYPE_JPEG);
+            POIXMLDocumentPart part1 = xwpfHeader.getRelationById("rId1");
+            XWPFPictureData part2 = (XWPFPictureData) doc.getRelationById(id);
+            assertSame(part1, part2);
 
-        doc.getPackage().revert();
-        doc.close();
+            doc.getPackage().revert();
+        }
     }
 
     @Test
     public void testZeroLengthLibreOfficeDocumentWithWaterMarkHeader() throws IOException {
-        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("zero-length.docx");
-        POIXMLProperties properties = doc.getProperties();
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("zero-length.docx")) {
+            POIXMLProperties properties = doc.getProperties();
 
-        assertNotNull(properties.getCoreProperties());
+            assertNotNull(properties.getCoreProperties());
 
-        XWPFHeader headerArray = doc.getHeaderArray(0);
-        assertEquals(1, headerArray.getAllPictures().size());
-        assertEquals("image1.png", headerArray.pictures.get(0).getFileName());
-        assertEquals("", headerArray.getText());
+            XWPFHeader headerArray = doc.getHeaderArray(0);
+            assertEquals(1, headerArray.getAllPictures().size());
+            assertEquals("image1.png", headerArray.pictures.get(0).getFileName());
+            assertEquals("", headerArray.getText());
 
-        POIXMLProperties.ExtendedProperties extendedProperties = properties.getExtendedProperties();
-        assertNotNull(extendedProperties);
-        assertEquals(0, extendedProperties.getUnderlyingProperties().getCharacters());
-        doc.close();
+            POIXMLProperties.ExtendedProperties extendedProperties = properties.getExtendedProperties();
+            assertNotNull(extendedProperties);
+            assertEquals(0, extendedProperties.getUnderlyingProperties().getCharacters());
+        }
     }
 
     @Test
@@ -414,14 +420,14 @@ public final class TestXWPFDocument {
         assertEquals(100, settings.getZoomPercent());
         settings.setZoomPercent(50);
         assertEquals(50, settings.getZoomPercent());
-        
-        assertEquals(false, settings.getEvenAndOddHeadings());
-        settings.setEvenAndOddHeadings(true);
-        assertEquals(true, settings.getEvenAndOddHeadings());
 
-        assertEquals(false, settings.getMirrorMargins());
+        assertFalse(settings.getEvenAndOddHeadings());
+        settings.setEvenAndOddHeadings(true);
+        assertTrue(settings.getEvenAndOddHeadings());
+
+        assertFalse(settings.getMirrorMargins());
         settings.setMirrorMargins(true);
-        assertEquals(true, settings.getMirrorMargins());
+        assertTrue(settings.getMirrorMargins());
 
         XWPFDocument doc = new XWPFDocument();
         assertEquals(100, doc.getZoomPercent());
@@ -432,13 +438,13 @@ public final class TestXWPFDocument {
         doc.setZoomPercent(200);
         assertEquals(200, doc.getZoomPercent());
 
-        assertEquals(false, doc.getEvenAndOddHeadings());
+        assertFalse(doc.getEvenAndOddHeadings());
         doc.setEvenAndOddHeadings(true);
-        assertEquals(true, doc.getEvenAndOddHeadings());
+        assertTrue(doc.getEvenAndOddHeadings());
 
-        assertEquals(false, doc.getMirrorMargins());
+        assertFalse(doc.getMirrorMargins());
         doc.setMirrorMargins(true);
-        assertEquals(true, doc.getMirrorMargins());
+        assertTrue(doc.getMirrorMargins());
 
         XWPFDocument back = XWPFTestDataSamples.writeOutAndReadBack(doc);
         assertEquals(200, back.getZoomPercent());
@@ -453,10 +459,10 @@ public final class TestXWPFDocument {
 	
 	@Test
 	public void testEnforcedWith() throws IOException {
-		XWPFDocument docx = XWPFTestDataSamples.openSampleDocument("EnforcedWith.docx");
-		assertTrue(docx.isEnforcedProtection());
-		docx.close();
-	}
+        try (XWPFDocument docx = XWPFTestDataSamples.openSampleDocument("EnforcedWith.docx")) {
+            assertTrue(docx.isEnforcedProtection());
+        }
+    }
 	
 	@Test
 	@Ignore("XWPF should be able to write to a new Stream when opened Read-Only")
@@ -466,14 +472,15 @@ public final class TestXWPFDocument {
 	            PackageAccess.READ
 	    );
 	    XWPFDocument doc = new XWPFDocument(opc);
-	    XWPFWordExtractor ext = new XWPFWordExtractor(doc);
-	    String origText = ext.getText();
-	    
-	    doc = XWPFTestDataSamples.writeOutAndReadBack(doc);
-	    ext.close();
-	    ext = new XWPFWordExtractor(doc);
-	    
-	    assertEquals(origText, ext.getText());
-	    ext.close();
-	}
+
+        final String origText;
+        try (XWPFWordExtractor ext = new XWPFWordExtractor(doc)) {
+            origText = ext.getText();
+
+            doc = XWPFTestDataSamples.writeOutAndReadBack(doc);
+        }
+        try (XWPFWordExtractor ext = new XWPFWordExtractor(doc)) {
+            assertEquals(origText, ext.getText());
+        }
+    }
 }
