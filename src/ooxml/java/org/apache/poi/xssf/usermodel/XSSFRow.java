@@ -20,7 +20,6 @@ package org.apache.poi.xssf.usermodel;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
@@ -557,9 +556,35 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         // _row.cArray and _cells.getCTCell might be out of sync after adding/removing cells,
         // thus we need to re-order it here to make the resulting file correct
 
+        // do a quick check if there is work to do to not incur the overhead if not necessary anyway
+        CTCell[] cArrayOrig = _row.getCArray();
+        if(cArrayOrig.length == _cells.size()) {
+            boolean allEqual = true;
+            Iterator<XSSFCell> it = _cells.values().iterator();
+            for (CTCell ctCell : cArrayOrig) {
+                XSSFCell cell = it.next();
+
+                // we want to compare on identity here on purpose
+                // as we want to ensure that both lists contain the
+                // same documents, not copies!
+                if (ctCell != cell.getCTCell()) {
+                    allEqual = false;
+                    break;
+                }
+            }
+
+            // we did not find any difference, so we can skip the work
+            if(allEqual) {
+                return;
+            }
+        }
+
+        fixupCTCells(cArrayOrig);
+    }
+
+    private void fixupCTCells(CTCell[] cArrayOrig) {
         // copy all values to 2nd array and a map for lookup of index
-        List<CTCell> cArrayOrig = _row.getCList();
-        CTCell[] cArrayCopy = new CTCell[cArrayOrig.size()];
+        CTCell[] cArrayCopy = new CTCell[cArrayOrig.length];
         IdentityHashMap<CTCell, Integer> map = new IdentityHashMap<>(_cells.size());
         int i = 0;
         for (CTCell ctCell : cArrayOrig) {
@@ -583,7 +608,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         }
 
         // remove any remaining illegal references in _rows.cArray
-        while(cArrayOrig.size() > _cells.size()) {
+        while(cArrayOrig.length > _cells.size()) {
             _row.removeC(_cells.size());
         }
     }
