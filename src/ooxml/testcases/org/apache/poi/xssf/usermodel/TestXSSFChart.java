@@ -21,62 +21,70 @@ import org.apache.poi.xssf.XSSFTestDataSamples;
 
 import junit.framework.TestCase;
 
+import java.io.IOException;
+
 public final class TestXSSFChart extends TestCase {
 
-    public void testGetAccessors() {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("WithThreeCharts.xlsx");
-        XSSFSheet s1 = wb.getSheetAt(0);
-        XSSFSheet s2 = wb.getSheetAt(1);
-        XSSFSheet s3 = wb.getSheetAt(2);
+    public void testGetAccessors() throws IOException {
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("WithThreeCharts.xlsx")) {
+            XSSFSheet s1 = wb.getSheetAt(0);
+            XSSFSheet s2 = wb.getSheetAt(1);
+            XSSFSheet s3 = wb.getSheetAt(2);
 
-        assertEquals(0, s1.getRelations().size());
-        assertEquals(1, s2.getRelations().size());
-        assertEquals(1, s3.getRelations().size());
+            assertEquals(0, s1.getRelations().size());
+            assertEquals(1, s2.getRelations().size());
+            assertEquals(1, s3.getRelations().size());
 
-        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
+            assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
+        }
     }
 
     public void testGetCharts() throws Exception {
-       XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("WithThreeCharts.xlsx");
+       try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("WithThreeCharts.xlsx")) {
+           XSSFSheet s1 = wb.getSheetAt(0);
+           XSSFSheet s2 = wb.getSheetAt(1);
+           XSSFSheet s3 = wb.getSheetAt(2);
 
-       XSSFSheet s1 = wb.getSheetAt(0);
-       XSSFSheet s2 = wb.getSheetAt(1);
-       XSSFSheet s3 = wb.getSheetAt(2);
+           assertEquals(0, s1.createDrawingPatriarch().getCharts().size());
+           assertEquals(2, s2.createDrawingPatriarch().getCharts().size());
+           assertEquals(1, s3.createDrawingPatriarch().getCharts().size());
 
-       assertEquals(0, s1.createDrawingPatriarch().getCharts().size());
-       assertEquals(2, s2.createDrawingPatriarch().getCharts().size());
-       assertEquals(1, s3.createDrawingPatriarch().getCharts().size());
+           // Check the titles
+           XSSFChart chart = s2.createDrawingPatriarch().getCharts().get(0);
+           assertNull(chart.getTitleText());
 
-       // Check the titles
-       XSSFChart chart = s2.createDrawingPatriarch().getCharts().get(0);
-       assertEquals(null, chart.getTitleText());
+           chart = s2.createDrawingPatriarch().getCharts().get(1);
+           XSSFRichTextString title = chart.getTitleText();
+           assertNotNull(title);
+           assertEquals("Pie Chart Title Thingy", title.getString());
 
-       chart = s2.createDrawingPatriarch().getCharts().get(1);
-       assertEquals("Pie Chart Title Thingy", chart.getTitleText().getString());
+           chart = s3.createDrawingPatriarch().getCharts().get(0);
+           title = chart.getTitleText();
+           assertNotNull(title);
+           assertEquals("Sheet 3 Chart with Title", title.getString());
 
-       chart = s3.createDrawingPatriarch().getCharts().get(0);
-       assertEquals("Sheet 3 Chart with Title", chart.getTitleText().getString());
-
-       assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
+           assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
+       }
     }
 
 	public void testAddChartsToNewWorkbook() throws Exception {
-		XSSFWorkbook wb = new XSSFWorkbook();
-		XSSFSheet s1 = wb.createSheet();
-		XSSFDrawing d1 = s1.createDrawingPatriarch();
-		XSSFClientAnchor a1 = new XSSFClientAnchor(0, 0, 0, 0, 1, 1, 10, 30);
-		XSSFChart c1 = d1.createChart(a1);
+		try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet s1 = wb.createSheet();
+            XSSFDrawing d1 = s1.createDrawingPatriarch();
+            XSSFClientAnchor a1 = new XSSFClientAnchor(0, 0, 0, 0, 1, 1, 10, 30);
+            XSSFChart c1 = d1.createChart(a1);
 
-		assertEquals(1, d1.getCharts().size());
+            assertEquals(1, d1.getCharts().size());
 
-		assertNotNull(c1.getGraphicFrame());
-		assertNotNull(c1.getOrAddLegend());
+            assertNotNull(c1.getGraphicFrame());
+            assertNotNull(c1.getOrAddLegend());
 
-		XSSFClientAnchor a2 = new XSSFClientAnchor(0, 0, 0, 0, 1, 11, 10, 60);
-		XSSFChart c2 = d1.createChart(a2);
-		assertNotNull(c2);
-		assertEquals(2, d1.getCharts().size());
+            XSSFClientAnchor a2 = new XSSFClientAnchor(0, 0, 0, 0, 1, 11, 10, 60);
+            XSSFChart c2 = d1.createChart(a2);
+            assertNotNull(c2);
+            assertEquals(2, d1.getCharts().size());
 
-        assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
+            assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
+        }
 	}
 }

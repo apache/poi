@@ -19,14 +19,31 @@ package org.apache.poi.xssf.streaming;
 import org.apache.poi.ss.formula.EvaluationSheet;
 import org.apache.poi.ss.usermodel.BaseTestXEvaluationSheet;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.junit.After;
 
+import java.io.IOException;
 import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class TestSXSSFEvaluationSheet extends BaseTestXEvaluationSheet {
+    private List<Workbook> workbooksToClose = new ArrayList<>();
+
+    @After
+    public void closeWorkbooks() throws IOException {
+        for (Workbook workbook : workbooksToClose) {
+            workbook.close();
+        }
+    }
+
     @Override
     protected Map.Entry<Sheet, EvaluationSheet> getInstance() {
-        SXSSFSheet sheet = new SXSSFWorkbook().createSheet();
+        SXSSFWorkbook workbook = new SXSSFWorkbook();
+        workbooksToClose.add(workbook);
+
+        SXSSFSheet sheet = workbook.createSheet();
         return new AbstractMap.SimpleEntry<>(sheet, new SXSSFEvaluationSheet(sheet));
     }
 }

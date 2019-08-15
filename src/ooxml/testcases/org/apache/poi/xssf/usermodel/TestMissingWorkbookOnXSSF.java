@@ -20,6 +20,9 @@ package org.apache.poi.xssf.usermodel;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.formula.TestMissingWorkbook;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.junit.Before;
+
+import static org.junit.Assert.assertNotNull;
 
 /**
  * XSSF Specific version of the Missing Workbooks test
@@ -28,12 +31,13 @@ public final class TestMissingWorkbookOnXSSF extends TestMissingWorkbook {
     public TestMissingWorkbookOnXSSF() {
         super("52575_main.xlsx", "source_dummy.xlsx", "52575_source.xls");
     }
-    
+
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() {
         mainWorkbook = XSSFTestDataSamples.openSampleWorkbook(MAIN_WORKBOOK_FILENAME);
         sourceWorkbook = HSSFTestDataSamples.openSampleWorkbook(SOURCE_WORKBOOK_FILENAME);
-        
+
         assertNotNull(mainWorkbook);
         assertNotNull(sourceWorkbook);
     }

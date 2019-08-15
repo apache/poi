@@ -30,9 +30,11 @@ import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -42,6 +44,7 @@ import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.LocaleUtil;
+import org.junit.After;
 import org.junit.Test;
 
 /**
@@ -1423,7 +1426,17 @@ public abstract class BaseTestCell {
         verify(cell).setBlank();
     }
 
+    private List<Workbook> workbooksToClose = new ArrayList<>();
+
+    @After
+    public void closeWorkbooks() throws IOException {
+        for (Workbook workbook : workbooksToClose) {
+            workbook.close();
+        }
+    }
     private Cell getInstance() {
-        return _testDataProvider.createWorkbook().createSheet().createRow(0).createCell(0);
+        Workbook workbookToClose = _testDataProvider.createWorkbook();
+        workbooksToClose.add(workbookToClose);
+        return workbookToClose.createSheet().createRow(0).createCell(0);
     }
 }

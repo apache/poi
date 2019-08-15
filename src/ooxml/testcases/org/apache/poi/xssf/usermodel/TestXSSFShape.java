@@ -20,7 +20,7 @@ package org.apache.poi.xssf.usermodel;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.util.Iterator;
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.xssf.XSSFTestDataSamples;
@@ -32,13 +32,17 @@ import org.junit.Test;
 public final class TestXSSFShape {
 
     @Test
-    public void test58325_one() {
-        check58325(XSSFTestDataSamples.openSampleWorkbook("58325_lt.xlsx"), 1);
+    public void test58325_one() throws IOException {
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("58325_lt.xlsx")) {
+            check58325(wb, 1);
+        }
     }
 
     @Test
-    public void test58325_three() {
-        check58325(XSSFTestDataSamples.openSampleWorkbook("58325_db.xlsx"), 3);
+    public void test58325_three() throws IOException {
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("58325_db.xlsx")) {
+            check58325(wb, 3);
+        }
     }
 
     private void check58325(XSSFWorkbook wb, int expectedShapes) {
@@ -46,21 +50,19 @@ public final class TestXSSFShape {
         assertNotNull(sheet);
 
         StringBuilder str = new StringBuilder();
-        str.append("sheet " + sheet.getSheetName() + " - ");
+        str.append("sheet ").append(sheet.getSheetName()).append(" - ");
 
         XSSFDrawing drawing = sheet.getDrawingPatriarch();
         //drawing = ((XSSFSheet)sheet).createDrawingPatriarch();
 
         List<XSSFShape> shapes = drawing.getShapes();
-        str.append("drawing.getShapes().size() = " + shapes.size());
-        Iterator<XSSFShape> it = shapes.iterator();
-        while(it.hasNext()) {           
-            XSSFShape shape = it.next();
-            str.append(", " + shape);
-            str.append(", Col1:"+((XSSFClientAnchor)shape.getAnchor()).getCol1());
-            str.append(", Col2:"+((XSSFClientAnchor)shape.getAnchor()).getCol2());
-            str.append(", Row1:"+((XSSFClientAnchor)shape.getAnchor()).getRow1());
-            str.append(", Row2:"+((XSSFClientAnchor)shape.getAnchor()).getRow2());
+        str.append("drawing.getShapes().size() = ").append(shapes.size());
+        for (XSSFShape shape : shapes) {
+            str.append(", ").append(shape);
+            str.append(", Col1:").append(((XSSFClientAnchor) shape.getAnchor()).getCol1());
+            str.append(", Col2:").append(((XSSFClientAnchor) shape.getAnchor()).getCol2());
+            str.append(", Row1:").append(((XSSFClientAnchor) shape.getAnchor()).getRow1());
+            str.append(", Row2:").append(((XSSFClientAnchor) shape.getAnchor()).getRow2());
         }
         
         assertEquals("Having shapes: " + str, 

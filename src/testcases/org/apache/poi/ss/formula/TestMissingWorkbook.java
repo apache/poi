@@ -19,12 +19,6 @@
 
 package org.apache.poi.ss.formula;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import junit.framework.TestCase;
-
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -32,8 +26,20 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class TestMissingWorkbook extends TestCase {
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+public class TestMissingWorkbook {
     protected Workbook mainWorkbook;
     protected Workbook sourceWorkbook;
     
@@ -44,6 +50,7 @@ public class TestMissingWorkbook extends TestCase {
     public TestMissingWorkbook() {
         this("52575_main.xls", "source_dummy.xls", "52575_source.xls");
     }
+
     protected TestMissingWorkbook(String MAIN_WORKBOOK_FILENAME, 
             String SOURCE_DUMMY_WORKBOOK_FILENAME, String SOURCE_WORKBOOK_FILENAME) {
         this.MAIN_WORKBOOK_FILENAME = MAIN_WORKBOOK_FILENAME; 
@@ -51,8 +58,8 @@ public class TestMissingWorkbook extends TestCase {
         this.SOURCE_WORKBOOK_FILENAME = SOURCE_WORKBOOK_FILENAME;
     }
 	
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		mainWorkbook = HSSFTestDataSamples.openSampleWorkbook(MAIN_WORKBOOK_FILENAME);
 		sourceWorkbook = HSSFTestDataSamples.openSampleWorkbook(SOURCE_WORKBOOK_FILENAME);
 		
@@ -60,7 +67,19 @@ public class TestMissingWorkbook extends TestCase {
 		assertNotNull(sourceWorkbook);
 	}
 
-	public void testMissingWorkbookMissing() throws IOException {
+	@After
+	public void tearDown() throws Exception {
+		if(mainWorkbook != null) {
+			mainWorkbook.close();
+		}
+
+		if(sourceWorkbook != null) {
+			sourceWorkbook.close();
+		}
+	}
+
+	@Test
+	public void testMissingWorkbookMissing() {
 		FormulaEvaluator evaluator = mainWorkbook.getCreationHelper().createFormulaEvaluator();
 		
 		Sheet lSheet = mainWorkbook.getSheetAt(0);
@@ -71,12 +90,13 @@ public class TestMissingWorkbook extends TestCase {
 		try {
 			evaluator.evaluateFormulaCell(lA1Cell);
 			fail("Missing external workbook reference exception expected!");
-		}catch(RuntimeException re) {
+		} catch(RuntimeException re) {
 			assertTrue("Unexpected exception: " + re, re.getMessage().contains(SOURCE_DUMMY_WORKBOOK_FILENAME));
 		}
 	}
-	
-	public void testMissingWorkbookMissingOverride() throws IOException {
+
+	@Test
+	public void testMissingWorkbookMissingOverride() {
 		Sheet lSheet = mainWorkbook.getSheetAt(0);
 		Cell lA1Cell = lSheet.getRow(0).getCell(0);
 		Cell lB1Cell = lSheet.getRow(1).getCell(0);
@@ -89,7 +109,7 @@ public class TestMissingWorkbook extends TestCase {
 		// Check cached values
         assertEquals(10.0d, lA1Cell.getNumericCellValue(), 0.00001d);
         assertEquals("POI rocks!", lB1Cell.getStringCellValue());
-        assertEquals(true, lC1Cell.getBooleanCellValue());
+		assertTrue(lC1Cell.getBooleanCellValue());
 		
         // Evaluate
 		FormulaEvaluator evaluator = mainWorkbook.getCreationHelper().createFormulaEvaluator();
@@ -101,11 +121,11 @@ public class TestMissingWorkbook extends TestCase {
 
 		assertEquals(10.0d, lA1Cell.getNumericCellValue(), 0.00001d);
 		assertEquals("POI rocks!", lB1Cell.getStringCellValue());
-		assertEquals(true, lC1Cell.getBooleanCellValue());
+		assertTrue(lC1Cell.getBooleanCellValue());
 	}
-	
 
-	public void testExistingWorkbook() throws IOException {
+	@Test
+	public void testExistingWorkbook() {
 		Sheet lSheet = mainWorkbook.getSheetAt(0);
 		Cell lA1Cell = lSheet.getRow(0).getCell(0);
 		Cell lB1Cell = lSheet.getRow(1).getCell(0);
@@ -128,6 +148,6 @@ public class TestMissingWorkbook extends TestCase {
 
 		assertEquals(20.0d, lA1Cell.getNumericCellValue(), 0.00001d);
 		assertEquals("Apache rocks!", lB1Cell.getStringCellValue());
-		assertEquals(false, lC1Cell.getBooleanCellValue());
+		assertFalse(lC1Cell.getBooleanCellValue());
 	}
 }
