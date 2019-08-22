@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -142,7 +141,7 @@ public class WordToTextConverter extends AbstractWordConverter
     public WordToTextConverter() throws ParserConfigurationException
     {
         this.textDocumentFacade = new TextDocumentFacade(
-                DocumentBuilderFactory.newInstance().newDocumentBuilder()
+                XMLHelper.getDocumentBuilderFactory().newDocumentBuilder()
                         .newDocument() );
     }
 
