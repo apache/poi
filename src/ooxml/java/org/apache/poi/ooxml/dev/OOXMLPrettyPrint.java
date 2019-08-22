@@ -27,7 +27,6 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipOutputStream;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
@@ -39,6 +38,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.openxml4j.opc.internal.ZipHelper;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.util.IOUtils;
@@ -53,14 +53,13 @@ import org.xml.sax.InputSource;
  *  use different formatting of the XML.
  */
 public class OOXMLPrettyPrint {
-    private final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
     private final DocumentBuilder documentBuilder;
 
-    public OOXMLPrettyPrint() throws ParserConfigurationException {
+    public OOXMLPrettyPrint() {
         // allow files with much lower inflation rate here as there is no risk of Zip Bomb attacks in this developer tool
         ZipSecureFile.setMinInflateRatio(0.00001);
 
-        documentBuilder = documentBuilderFactory.newDocumentBuilder();
+        documentBuilder = DocumentHelper.newDocumentBuilder();
     }
 
     public static void main(String[] args) throws Exception {
