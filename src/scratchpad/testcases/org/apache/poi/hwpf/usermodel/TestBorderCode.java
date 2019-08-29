@@ -75,7 +75,7 @@ public final class TestBorderCode extends TestCase {
                 break;
         }
 
-        assertEquals(true, par.isInTable());
+        assertTrue(par.isInTable());
         Table tab = range.getTable(par);
 
         // Border could be defined for the entire row, or for each cell, with the same visual appearance.
