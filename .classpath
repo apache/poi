@@ -42,8 +42,8 @@
 	<classpathentry kind="lib" path="lib/objenesis-2.6.jar"/>
 	<classpathentry kind="lib" path="lib/commons-compress-1.18.jar"/>
 	<classpathentry kind="lib" path="lib/mockito-core-3.0.0.jar"/>
-	<classpathentry kind="lib" path="lib/byte-buddy-1.9.3.jar"/>
-	<classpathentry kind="lib" path="lib/byte-buddy-agent-1.9.3.jar"/>
+	<classpathentry kind="lib" path="lib/byte-buddy-1.10.1.jar"/>
+	<classpathentry kind="lib" path="lib/byte-buddy-agent-1.10.1.jar"/>
 	<classpathentry kind="lib" path="compile-lib/batik-all-1.11.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
