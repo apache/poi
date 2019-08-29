@@ -17,58 +17,64 @@
 
 package org.apache.poi.hwpf.model;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * Test the table which handles author revision marks
  */
-public final class TestRevisionMarkAuthorTable extends TestCase {
-   /**
-    * Tests that an empty file doesn't have one
-    */
-   public void testEmptyDocument() {
-      HWPFDocument doc = HWPFTestDataSamples.openSampleFile("empty.doc");
-      
-      RevisionMarkAuthorTable rmt = doc.getRevisionMarkAuthorTable();
-      assertNull(rmt);
-   }
-   
-   /**
-    * Tests that we can load a document with
-    *  only simple entries in the table
-    */
-	public void testSimpleDocument() {
-		HWPFDocument doc = HWPFTestDataSamples.openSampleFile("two_images.doc");
-		
-		RevisionMarkAuthorTable rmt = doc.getRevisionMarkAuthorTable();
-		assertNotNull(rmt);
-		assertEquals(1, rmt.getSize());
-		assertEquals("Unknown", rmt.getAuthor(0));
-		
-		assertEquals(null, rmt.getAuthor(1));
-      assertEquals(null, rmt.getAuthor(2));
-      assertEquals(null, rmt.getAuthor(3));
-	}
-	
-	/**
-	 * Several authors, one of whom has no name
-	 */
-	public void testMultipleAuthors() {
-      HWPFDocument doc = HWPFTestDataSamples.openSampleFile("MarkAuthorsTable.doc");
-      
-      RevisionMarkAuthorTable rmt = doc.getRevisionMarkAuthorTable();
-      assertNotNull(rmt);
-      assertEquals(4, rmt.getSize());
-      assertEquals("Unknown", rmt.getAuthor(0));
-      assertEquals("BSanders", rmt.getAuthor(1));
-      assertEquals(" ", rmt.getAuthor(2));
-      assertEquals("Ryan Lauck", rmt.getAuthor(3));
-      
-      assertEquals(null, rmt.getAuthor(4));
-      assertEquals(null, rmt.getAuthor(5));
-      assertEquals(null, rmt.getAuthor(6));
-	}
+public final class TestRevisionMarkAuthorTable {
+    /**
+     * Tests that an empty file doesn't have one
+     */
+    @Test
+    public void testEmptyDocument() {
+        HWPFDocument doc = HWPFTestDataSamples.openSampleFile("empty.doc");
+
+        RevisionMarkAuthorTable rmt = doc.getRevisionMarkAuthorTable();
+        assertNull(rmt);
+    }
+
+    /**
+     * Tests that we can load a document with
+     * only simple entries in the table
+     */
+    @Test
+    public void testSimpleDocument() {
+        HWPFDocument doc = HWPFTestDataSamples.openSampleFile("two_images.doc");
+
+        RevisionMarkAuthorTable rmt = doc.getRevisionMarkAuthorTable();
+        assertNotNull(rmt);
+        assertEquals(1, rmt.getSize());
+        assertEquals("Unknown", rmt.getAuthor(0));
+
+        assertNull(rmt.getAuthor(1));
+        assertNull(rmt.getAuthor(2));
+        assertNull(rmt.getAuthor(3));
+    }
+
+    /**
+     * Several authors, one of whom has no name
+     */
+    @Test
+    public void testMultipleAuthors() {
+        HWPFDocument doc = HWPFTestDataSamples.openSampleFile("MarkAuthorsTable.doc");
+
+        RevisionMarkAuthorTable rmt = doc.getRevisionMarkAuthorTable();
+        assertNotNull(rmt);
+        assertEquals(4, rmt.getSize());
+        assertEquals("Unknown", rmt.getAuthor(0));
+        assertEquals("BSanders", rmt.getAuthor(1));
+        assertEquals(" ", rmt.getAuthor(2));
+        assertEquals("Ryan Lauck", rmt.getAuthor(3));
+
+        assertNull(rmt.getAuthor(4));
+        assertNull(rmt.getAuthor(5));
+        assertNull(rmt.getAuthor(6));
+    }
 }

@@ -306,7 +306,9 @@ public class HexDump {
     }
 
     /**
-     * Converts the string to a string of hex values.
+     * Converts the string to a string of hex values by
+     * using String.getBytes(LocaleUtil.CHARSET_1252) to
+     * convert the string to a byte-array.
      *
      * @param value     The value to convert
      * @return          The resulted hex string
