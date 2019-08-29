@@ -20,6 +20,7 @@ import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.POITestCase.assertNotContained;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -39,14 +40,16 @@ import org.apache.poi.hwpf.converter.AbstractWordUtils;
 import org.apache.poi.hwpf.converter.WordToTextConverter;
 import org.apache.poi.hwpf.extractor.Word6Extractor;
 import org.apache.poi.hwpf.extractor.WordExtractor;
-import org.apache.poi.hwpf.model.*;
+import org.apache.poi.hwpf.model.FieldsDocumentPart;
+import org.apache.poi.hwpf.model.FileInformationBlock;
+import org.apache.poi.hwpf.model.PicturesTable;
+import org.apache.poi.hwpf.model.PlexOfField;
+import org.apache.poi.hwpf.model.SubdocumentType;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.junit.Test;
-
-import junit.framework.TestCase;
 
 /**
  * Test different problems reported in the Apache Bugzilla
@@ -61,7 +64,7 @@ public class TestBugs{
                 .replaceAll("\r", "\n").trim();
         String newActual = actual.replaceAll("\r\n", "\n" )
                 .replaceAll("\r", "\n").trim();
-        TestCase.assertEquals(newExpected, newActual);
+        assertEquals(newExpected, newActual);
     }
 
     private static void assertTableStructures(Range expected, Range actual ) {
@@ -72,7 +75,7 @@ public class TestBugs{
             Paragraph actParagraph = actual.getParagraph(p);
 
             assertEqualsIgnoreNewline(expParagraph.text(), actParagraph.text());
-            assertEquals("Diffent isInTable flags for paragraphs #" + p
+            assertEquals("Different isInTable flags for paragraphs #" + p
                     + " -- " + expParagraph + " -- " + actParagraph + ".",
                     expParagraph.isInTable(), actParagraph.isInTable());
             assertEquals(expParagraph.isTableRowEnd(),
@@ -98,8 +101,8 @@ public class TestBugs{
         }
     }
 
-    private String getText(String samplefile) throws IOException {
-        HWPFDocument doc = HWPFTestDataSamples.openSampleFile(samplefile);
+    private String getText(String sampleFile) throws IOException {
+        HWPFDocument doc = HWPFTestDataSamples.openSampleFile(sampleFile);
         WordExtractor extractor = new WordExtractor(doc);
         try {
             return extractor.getText();
@@ -667,7 +670,7 @@ public class TestBugs{
     }
 
     /**
-     * Bug 52032 - [BUG] & [partial-PATCH] HWPF - ArrayIndexOutofBoundsException
+     * Bug 52032 - [BUG] & [partial-PATCH] HWPF - ArrayIndexOutOfBoundsException
      * with no stack trace (broken after revision 1178063)
      */
     @Test
@@ -676,7 +679,7 @@ public class TestBugs{
     }
 
     /**
-     * Bug 52032 - [BUG] & [partial-PATCH] HWPF - ArrayIndexOutofBoundsException
+     * Bug 52032 - [BUG] & [partial-PATCH] HWPF - ArrayIndexOutOfBoundsException
      * with no stack trace (broken after revision 1178063)
      */
     @Test
@@ -685,7 +688,7 @@ public class TestBugs{
     }
 
     /**
-     * Bug 52032 - [BUG] & [partial-PATCH] HWPF - ArrayIndexOutofBoundsException
+     * Bug 52032 - [BUG] & [partial-PATCH] HWPF - ArrayIndexOutOfBoundsException
      * with no stack trace (broken after revision 1178063)
      */
     @Test
@@ -782,7 +785,7 @@ public class TestBugs{
             }
         }
         
-        // Save away and re-read the document to prove the chages are permanent
+        // Save away and re-read the document to prove the changes are permanent
         document = HWPFTestDataSamples.writeOutAndReadBack(document);
         overallRange = document.getOverallRange();
         numParas = overallRange.numParagraphs();
@@ -870,5 +873,23 @@ public class TestBugs{
         assertEquals(0, pictures.size());
 
         document.close();
+    }
+
+    @Test
+    public void test61490CellCountInTable() throws Exception {
+        try(HWPFDocument doc = HWPFTestDataSamples.openSampleFile("61490.doc")){
+            Range range = doc.getRange();
+
+            System.out.println("print table");
+            TableIterator tableIter = new TableIterator(range);
+            assertTrue(tableIter.hasNext());
+            Table table = tableIter.next();
+            TableRow row = table.getRow(2);
+            assertEquals(3, row.numCells());
+            for(int cellIdx = 0;cellIdx < row.numCells(); cellIdx++) {
+                TableCell cell = row.getCell(cellIdx);
+                assertEquals("3" + (cellIdx+1), cell.text().trim());
+            }
+        }
     }
 }
