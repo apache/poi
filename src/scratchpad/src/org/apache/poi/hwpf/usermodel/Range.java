@@ -17,7 +17,6 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import java.lang.ref.WeakReference;
 import java.util.List;
 
 import org.apache.poi.hwpf.HWPFDocument;
@@ -98,7 +97,7 @@ public class Range { // TODO -instantiable superclass
     public static final int TYPE_UNDEFINED = 6;
 
 	/** Needed so inserts and deletes will ripple up through containing Ranges */
-	private final WeakReference<Range> _parent;
+	private final Range _parent;
 
 	/** The starting character offset of this range. */
 	protected final int _start;
@@ -167,7 +166,7 @@ public class Range { // TODO -instantiable superclass
 		_paragraphs = _doc.getParagraphTable().getParagraphs();
 		_characters = _doc.getCharacterTable().getTextRuns();
 		_text = _doc.getText();
-		_parent = new WeakReference<>(null);
+		_parent = null;
 
 		sanityCheckStartEnd();
 	}
@@ -190,7 +189,7 @@ public class Range { // TODO -instantiable superclass
 		_paragraphs = parent._paragraphs;
 		_characters = parent._characters;
 		_text = parent._text;
-		_parent = new WeakReference<>(parent);
+		_parent = parent;
 
 		sanityCheckStartEnd();
 		sanityCheck();
@@ -558,7 +557,7 @@ public class Range { // TODO -instantiable superclass
         }
 
         _text.delete( _start, _end );
-        Range parent = _parent.get();
+        Range parent = _parent;
         if ( parent != null )
         {
             parent.adjustForInsert( -( _end - _start ) );
@@ -776,7 +775,7 @@ public class Range { // TODO -instantiable superclass
 		}
 
 		Range r = paragraph;
-		if (r._parent.get() != this) {
+		if (r._parent != this) {
 			throw new IllegalArgumentException("This paragraph is not a child of this range instance");
 		}
 
@@ -1119,7 +1118,7 @@ public class Range { // TODO -instantiable superclass
 		_end += length;
 
 		reset();
-		Range parent = _parent.get();
+		Range parent = _parent;
 		if (parent != null) {
 			parent.adjustForInsert(length);
 		}

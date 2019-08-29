@@ -18,10 +18,12 @@ package org.apache.poi.hwpf.usermodel;
 
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
+import org.apache.poi.util.HexDump;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -29,7 +31,7 @@ import java.util.List;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Bug 47563 - Exception when working with table 
+ * Bug 47563 - Exception when working with table
  */
 @RunWith(Parameterized.class)
 public class TestBug47563 {
@@ -94,11 +96,12 @@ public class TestBug47563 {
 			}
 
 			String text = range.text();
+			String textBytes = HexDump.toHex(text.getBytes(StandardCharsets.UTF_8));
 			int mustBeAfter = 0;
 			for (int i = 0; i < rows * columns; i++) {
 				int next = text.indexOf(Integer.toString(i), mustBeAfter);
-				assertTrue("Test with " + rows + "/" + columns + ": Should not find " + i +
-								" but found it at " + next + " with " + mustBeAfter + " in " + text + "\n" +
+				assertTrue("Test with " + rows + "/" + columns + ": Should find " + i +
+								" but did not find it (" + next + ") with " + mustBeAfter + " in " + textBytes + "\n" +
 								text.indexOf(Integer.toString(i), mustBeAfter),
 						next != -1);
 				mustBeAfter = next;
