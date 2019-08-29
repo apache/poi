@@ -174,7 +174,8 @@ public final class TableRow extends Range
             cells.add( tableCell );
         }
 
-        if ( !cells.isEmpty() )
+        // sometimes there are "fake" cells which we need to exclude
+        if ( !cells.isEmpty() && cells.size() != expectedCellsCount )
         {
             TableCell lastCell = cells.get( cells.size() - 1 );
             if ( lastCell.numParagraphs() == 1
@@ -196,7 +197,7 @@ public final class TableRow extends Range
             _tprops.setItcMac( (short) cells.size() );
         }
 
-        _cells = cells.toArray( new TableCell[cells.size()] );
+        _cells = cells.toArray(new TableCell[0]);
         _cellsFound = true;
     }
 
