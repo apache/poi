@@ -180,7 +180,7 @@ project('main') {
     dependencies {
         compile 'commons-codec:commons-codec:1.13'
         compile 'commons-logging:commons-logging:1.2'
-        compile 'org.apache.commons:commons-collections4:4.3'
+        compile 'org.apache.commons:commons-collections4:4.4'
         compile 'org.apache.commons:commons-math3:3.6.1'
         compile 'javax.xml.bind:jaxb-api:2.3.1'
         compile 'com.sun.xml.bind:jaxb-impl:2.3.2'
@@ -231,7 +231,7 @@ project('ooxml') {
 
     dependencies {
         compile 'org.apache.xmlbeans:xmlbeans:3.1.0'
-        compile 'org.apache.commons:commons-collections4:4.3'
+        compile 'org.apache.commons:commons-collections4:4.4'
         compile 'org.apache.commons:commons-math3:3.6.1'
         compile 'org.apache.commons:commons-compress:1.18'
         compile 'org.apache.santuario:xmlsec:2.1.2'
