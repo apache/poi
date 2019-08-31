@@ -46,11 +46,11 @@ import org.apache.poi.hwpf.model.FileInformationBlock;
 import org.apache.poi.hwpf.model.PicturesTable;
 import org.apache.poi.hwpf.model.PlexOfField;
 import org.apache.poi.hwpf.model.SubdocumentType;
-import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.XMLHelper;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
@@ -899,7 +899,7 @@ public class TestBugs{
     @Test
     public void test59322() throws Exception {
         try(HWPFDocument doc = HWPFTestDataSamples.openSampleFile("59322.doc")) {
-            Document document = DocumentHelper.createDocument();
+            Document document = XMLHelper.getDocumentBuilderFactory().newDocumentBuilder().newDocument();
             WordToHtmlConverter wordToHtmlConverter = new WordToHtmlConverter(document);
             wordToHtmlConverter.processDocument(doc);
             assertNotNull(document);
