@@ -69,7 +69,7 @@ public class OOXMLURIDereferencer implements URIDereferencer, SignatureConfigura
             throw new NullPointerException("URIReference cannot be null");
         }
         if (null == context) {
-            throw new NullPointerException("XMLCrytoContext cannot be null");
+            throw new NullPointerException("XMLCryptoContext cannot be null");
         }
 
         URI uri;
@@ -104,7 +104,7 @@ public class OOXMLURIDereferencer implements URIDereferencer, SignatureConfigura
         } catch (IOException e) {
             throw new URIReferenceException("I/O error: " + e.getMessage(), e);
         }
-        
+
         return new OctetStreamData(dataStream, uri.toString(), null);
     }
 
