@@ -18,97 +18,132 @@
 package org.apache.poi.hwpf.usermodel;
 
 public final class TableCell
-  extends Range
-{
+        extends Range {
   private int _levelNum;
   private TableCellDescriptor _tcd;
   private int _leftEdge;
   private int _width;
 
-    public TableCell( int startIdxInclusive, int endIdxExclusive,
-            TableRow parent, int levelNum, TableCellDescriptor tcd,
-            int leftEdge, int width )
-    {
-        super( startIdxInclusive, endIdxExclusive, parent );
-        _tcd = tcd;
-        _leftEdge = leftEdge;
-        _width = width;
-        _levelNum = levelNum;
+  public TableCell(int startIdxInclusive, int endIdxExclusive,
+                   TableRow parent, int levelNum, TableCellDescriptor tcd,
+                   int leftEdge, int width) {
+    super(startIdxInclusive, endIdxExclusive, parent);
+    _tcd = tcd;
+    _leftEdge = leftEdge;
+    _width = width;
+    _levelNum = levelNum;
+  }
+
+  public boolean isFirstMerged() {
+    if (_tcd == null) {
+      return false;
     }
 
-  public boolean isFirstMerged()
-  {
     return _tcd.isFFirstMerged();
   }
 
-  public boolean isMerged()
-  {
+  public boolean isMerged() {
+    if (_tcd == null) {
+      return false;
+    }
+
     return _tcd.isFMerged();
   }
 
-  public boolean isVertical()
-  {
+  public boolean isVertical() {
+    if (_tcd == null) {
+      return false;
+    }
+
     return _tcd.isFVertical();
   }
 
-  public boolean isBackward()
-  {
+  public boolean isBackward() {
+    if (_tcd == null) {
+      return false;
+    }
+
     return _tcd.isFBackward();
   }
 
-    public boolean isRotateFont()
-  {
+  public boolean isRotateFont() {
+    if (_tcd == null) {
+      return false;
+    }
+
     return _tcd.isFRotateFont();
   }
 
-  public boolean isVerticallyMerged()
-  {
+  public boolean isVerticallyMerged() {
+    if (_tcd == null) {
+      return false;
+    }
+
     return _tcd.isFVertMerge();
   }
 
-  public boolean isFirstVerticallyMerged()
-  {
+  public boolean isFirstVerticallyMerged() {
+    if (_tcd == null) {
+      return false;
+    }
+
     return _tcd.isFVertRestart();
   }
 
-  public byte getVertAlign()
-  {
+  public byte getVertAlign() {
+    if (_tcd == null) {
+      return 0;
+    }
+
     return _tcd.getVertAlign();
   }
 
-  public BorderCode getBrcTop()
-  {
+  public BorderCode getBrcTop() {
+    if (_tcd == null) {
+      return new BorderCode();
+    }
+
     return _tcd.getBrcTop();
   }
 
-  public BorderCode getBrcBottom()
-  {
+  public BorderCode getBrcBottom() {
+    if (_tcd == null) {
+      return new BorderCode();
+    }
+
     return _tcd.getBrcBottom();
   }
 
-  public BorderCode getBrcLeft()
-  {
+  public BorderCode getBrcLeft() {
+    if (_tcd == null) {
+      return new BorderCode();
+    }
+
     return _tcd.getBrcLeft();
   }
 
-  public BorderCode getBrcRight()
-  {
+  public BorderCode getBrcRight() {
+    if (_tcd == null) {
+      return new BorderCode();
+    }
+
     return _tcd.getBrcRight();
   }
 
-  public int getLeftEdge() // twips
-  {
+  // twips
+  public int getLeftEdge() {
     return _leftEdge;
   }
 
-  public int getWidth() // twips
-  {
+  // twips
+  public int getWidth() {
     return _width;
   }
 
-  /** Returns the TableCellDescriptor for this cell.*/
-  public TableCellDescriptor getDescriptor(){
-  	return _tcd;
+  /**
+   * Returns the TableCellDescriptor for this cell.
+   */
+  public TableCellDescriptor getDescriptor() {
+    return _tcd;
   }
-
 }
