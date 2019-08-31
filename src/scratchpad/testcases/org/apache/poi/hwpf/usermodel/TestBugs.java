@@ -24,19 +24,23 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.HWPFDocumentCore;
 import org.apache.poi.hwpf.HWPFOldDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.hwpf.converter.AbstractWordUtils;
+import org.apache.poi.hwpf.converter.WordToHtmlConverter;
 import org.apache.poi.hwpf.converter.WordToTextConverter;
 import org.apache.poi.hwpf.extractor.Word6Extractor;
 import org.apache.poi.hwpf.extractor.WordExtractor;
@@ -50,6 +54,9 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.junit.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Test different problems reported in the Apache Bugzilla
@@ -892,4 +899,29 @@ public class TestBugs{
             }
         }
     }
+
+    @Test
+    public void test60217() throws Exception {
+        File file = new File("/tmp/word-doc-with-revised-table.doc");
+        FileInputStream fileInputStream = new FileInputStream(file);
+        Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+        WordToHtmlConverter wordToHtmlConverter = new WordToHtmlConverter(document);
+        HWPFDocumentCore hwpfDocumentCore = new HWPFDocument(HWPFDocumentCore.verifyAndBuildPOIFS(fileInputStream));
+        wordToHtmlConverter.processDocument(hwpfDocumentCore);
+        System.out.println(document);
+
+        System.out.println(document.getNodeName() + " -> " + document.getNodeValue());
+
+        printNode(document, " ");
+
+        System.out.println("Process Complete");
+    }
+
+    private void printNode(Node rootNode, String spacer) {
+        System.out.println(spacer + rootNode.getNodeName() + " -> " + rootNode.getNodeValue());
+        NodeList nl = rootNode.getChildNodes();
+        for (int i = 0; i < nl.getLength(); i++)
+            printNode(nl.item(i), spacer + "   ");
+    }
+
 }
