@@ -244,9 +244,9 @@ under the License.
     <property name="ooxml.xmlbeans.jar" location="${ooxml.lib}/xmlbeans-3.1.0.jar"/>
     <property name="ooxml.xmlbeans.url"
               value="https://repository.apache.org/content/repositories/releases/org/apache/xmlbeans/xmlbeans/3.1.0/xmlbeans-3.1.0.jar"/>
-    <property name="ooxml.commons-compress.jar" location="${main.lib}/commons-compress-1.18.jar"/>
+    <property name="ooxml.commons-compress.jar" location="${main.lib}/commons-compress-1.19.jar"/>
     <property name="ooxml.commons-compress.url"
-              value="${repository.m2}/maven2/org/apache/commons/commons-compress/1.18/commons-compress-1.18.jar"/>
+              value="${repository.m2}/maven2/org/apache/commons/commons-compress/1.19/commons-compress-1.19.jar"/>
 
     <!-- jars in the ooxml-test-lib directory, see the fetch-ooxml-jars target-->
     <property name="ooxml.test.reflections.jar" location="${ooxml.test.lib}/reflections.jar"/>
@@ -652,6 +652,7 @@ under the License.
                 <include name="commons-codec-1.12*"/>
                 <include name="commons-compress-1.16*"/>
                 <include name="commons-compress-1.17*"/>
+                <include name="commons-compress-1.18*"/>
                 <include name="commons-collections4-4.1*"/>
                 <include name="commons-collections4-4.2*"/>
                 <include name="commons-collections4-4.3*"/>

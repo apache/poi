@@ -40,7 +40,7 @@
 	<classpathentry kind="lib" path="lib/commons-math3-3.6.1.jar"/>
 	<classpathentry kind="lib" path="lib/xmlunit-core-2.5.1.jar"/>
 	<classpathentry kind="lib" path="lib/objenesis-2.6.jar"/>
-	<classpathentry kind="lib" path="lib/commons-compress-1.18.jar"/>
+	<classpathentry kind="lib" path="lib/commons-compress-1.19.jar"/>
 	<classpathentry kind="lib" path="lib/mockito-core-3.0.0.jar"/>
 	<classpathentry kind="lib" path="lib/byte-buddy-1.10.1.jar"/>
 	<classpathentry kind="lib" path="lib/byte-buddy-agent-1.10.1.jar"/>
