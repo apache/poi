@@ -117,9 +117,6 @@ public final class POIDataSamples {
     }
 
     public static POIDataSamples getXmlDSignInstance() {
-        if (System.getProperty(TEST_PROPERTY) == null) {
-            System.setProperty(TEST_PROPERTY, "../../test-data");
-        }
         if(_instXmlDSign == null) _instXmlDSign = new POIDataSamples("xmldsign");
         return _instXmlDSign;
     }

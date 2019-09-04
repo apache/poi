@@ -70,7 +70,8 @@ import org.etsi.uri.x01903.v13.SignedSignaturePropertiesType;
 import org.etsi.uri.x01903.v13.SignerRoleType;
 import org.w3.x2000.x09.xmldsig.DigestMethodType;
 import org.w3.x2000.x09.xmldsig.X509IssuerSerialType;
-import org.w3c.dom.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 /**
  * XAdES Signature Facet. Implements XAdES v1.4.1 which is compatible with XAdES
@@ -223,30 +224,8 @@ public class XAdESSignatureFacet extends SignatureFacet {
     private XMLObject addXadesObject(Document document, QualifyingPropertiesType qualifyingProperties) {
         Node qualDocElSrc = qualifyingProperties.getDomNode();
         Node qualDocEl = document.importNode(qualDocElSrc, true);
-        markIds(qualDocEl);
         List<XMLStructure> xadesObjectContent = Arrays.asList(new DOMStructure(qualDocEl));
         return getSignatureFactory().newXMLObject(xadesObjectContent, null, null, null);
-    }
-
-    private void markIds(Node node) {
-        if (node instanceof Element) {
-            markIds((Element)node);
-        } else if (node instanceof Document) {
-            markIds(((Document)node).getDocumentElement());
-        }
-    }
-
-    private void markIds(Element element) {
-        if (element != null) {
-            Attr att = element.getAttributeNode("Id");
-            if (att != null) {
-                element.setIdAttributeNode(att, true);
-            }
-            NodeList nl = element.getChildNodes();
-            for (int i = 0; i < nl.getLength(); i++) {
-                markIds(nl.item(i));
-            }
-        }
     }
 
     private Reference addXadesReference() throws XMLSignatureException {

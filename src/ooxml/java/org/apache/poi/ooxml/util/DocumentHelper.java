@@ -19,7 +19,6 @@ package org.apache.poi.ooxml.util;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 
@@ -28,11 +27,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.events.Namespace;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -100,33 +94,6 @@ public final class DocumentHelper {
         } catch (ParserConfigurationException e) {
             throw new IllegalStateException("cannot create a DocumentBuilder", e);
         }
-    }
-
-    public static String domToString(Node node) throws Exception {
-        TransformerFactory tf = TransformerFactory.newInstance();
-        Transformer t = tf.newTransformer();
-        t.setOutputProperty(OutputKeys.INDENT, "yes");
-        StringWriter sw = new StringWriter();
-        t.transform(new DOMSource(node), new StreamResult(sw));
-        return sw.toString();
-    }
-
-    public static Attr findIdAttr(Element e, String name) throws Exception {
-        Attr att = e.getAttributeNode("Id");
-        if(att != null && name.equals(att.getValue())) {
-            return att;
-        }
-        NodeList nl = e.getChildNodes();
-        for (int i = 0; i < nl.getLength(); i++) {
-            Node child = nl.item(i);
-            if (child instanceof Element) {
-                Attr x = findIdAttr((Element)child, name);
-                if (x != null) {
-                    return x;
-                }
-            }
-        }
-        return null;
     }
 
     static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
