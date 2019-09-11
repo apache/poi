@@ -18,13 +18,16 @@
 package org.apache.poi.hwmf.record;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordJsonWriter;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.LittleEndianCP950Reader;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
@@ -32,6 +35,7 @@ import org.apache.poi.util.LittleEndianInputStream;
  * The MetafileEscapes specifies printer driver functionality that
  * might not be directly accessible through WMF records
  */
+@SuppressWarnings("WeakerAccess")
 public class HwmfEscape implements HwmfRecord {
     private static final int MAX_OBJECT_SIZE = 0xFFFF;
 
@@ -221,13 +225,18 @@ public class HwmfEscape implements HwmfRecord {
     }
     
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("escape - function: "+escapeFunction+"\n");
-        sb.append(escapeData.toString());
-        return sb.toString();
+        return GenericRecordJsonWriter.marshal(this);
     }
 
-    public static class WmfEscapeUnknownData implements HwmfEscapeData {
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "escapeFunction", this::getEscapeFunction,
+            "escapeData", this::getEscapeData
+        );
+    }
+
+    public static class WmfEscapeUnknownData implements HwmfEscapeData, GenericRecord {
         EscapeFunction escapeFunction;
         private byte[] escapeDataBytes;
 
@@ -239,16 +248,21 @@ public class HwmfEscape implements HwmfRecord {
         public int init(LittleEndianInputStream leis, long recordSize, EscapeFunction escapeFunction) throws IOException {
             this.escapeFunction = escapeFunction;
             escapeDataBytes = IOUtils.toByteArray(leis,recordSize,MAX_OBJECT_SIZE);
-            return 0;
+            return (int)recordSize;
         }
 
         @Override
         public String toString() {
-            return HexDump.dump(escapeDataBytes, 0, 0);
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("escapeDataBytes", this::getEscapeDataBytes);
         }
     }
 
-    public static class WmfEscapeEMF implements HwmfEscapeData {
+    public static class WmfEscapeEMF implements HwmfEscapeData, GenericRecord {
         // The magic for EMF parts, i.e. the byte sequence for "WMFC"
         private static final int EMF_COMMENT_IDENTIFIER = 0x43464D57;
 
@@ -276,7 +290,9 @@ public class HwmfEscape implements HwmfRecord {
             if (commentIdentifier != EMF_COMMENT_IDENTIFIER) {
                 // there are some WMF implementation using this record as a MFCOMMENT or similar
                 // if the commentIdentifier doesn't match, then return immediately
-                return LittleEndianConsts.INT_SIZE;
+                emfData = IOUtils.toByteArray(leis, recordSize-LittleEndianConsts.INT_SIZE, MAX_OBJECT_SIZE);
+                remainingBytes = emfData.length;
+                return (int)recordSize;
             }
 
             // A 32-bit unsigned integer that identifies the type of comment in this record.
@@ -343,6 +359,22 @@ public class HwmfEscape implements HwmfRecord {
 
         public byte[] getEmfData() {
             return emfData;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            final Map<String,Supplier<?>> m = new LinkedHashMap<>();
+            m.put("commentIdentifier", () -> commentIdentifier);
+            m.put("commentType", () -> commentType);
+            m.put("version", () -> version);
+            m.put("checksum", () -> checksum);
+            m.put("flags", () -> flags);
+            m.put("commentRecordCount", this::getCommentRecordCount);
+            m.put("currentRecordSize", this::getCurrentRecordSize);
+            m.put("remainingBytes", this::getRemainingBytes);
+            m.put("emfRecordSize", this::getEmfRecordSize);
+            m.put("emfData", this::getEmfData);
+            return Collections.unmodifiableMap(m);
         }
     }
 }

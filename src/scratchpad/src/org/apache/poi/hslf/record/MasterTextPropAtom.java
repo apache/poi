@@ -22,9 +22,12 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.commons.math3.util.ArithmeticUtils;
 import org.apache.poi.hslf.model.textproperties.IndentProp;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogger;
@@ -156,5 +159,12 @@ public final class MasterTextPropAtom extends RecordAtom {
 
     public List<IndentProp> getIndents() {
         return Collections.unmodifiableList(indents);
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "indents", this::getIndents
+        );
     }
 }

@@ -169,43 +169,7 @@ public enum RecordTypes {
 
     // Records ~12050 seem to be related to Document Encryption
     DocumentEncryptionAtom(12052,DocumentEncryptionAtom::new),
-
-    // records greater then 0xF000 belong to with Microsoft Office Drawing format also known as Escher
-    EscherDggContainer(0xF000,null),
-    EscherDgg(0xf006,null),
-    EscherCLSID(0xf016,null),
-    EscherOPT(0xf00b,null),
-    EscherBStoreContainer(0xf001,null),
-    EscherBSE(0xf007,null),
-    EscherBlip_START(0xf018,null),
-    EscherBlip_END(0xf117,null),
-    EscherDgContainer(0xf002,null),
-    EscherDg(0xf008,null),
-    EscherRegroupItems(0xf118,null),
-    EscherColorScheme(0xf120,null),
-    EscherSpgrContainer(0xf003,null),
-    EscherSpContainer(0xf004,null),
-    EscherSpgr(0xf009,null),
-    EscherSp(0xf00a,null),
-    EscherTextbox(0xf00c,null),
-    EscherClientTextbox(0xf00d,null),
-    EscherAnchor(0xf00e,null),
-    EscherChildAnchor(0xf00f,null),
-    EscherClientAnchor(0xf010,null),
-    EscherClientData(0xf011,null),
-    EscherSolverContainer(0xf005,null),
-    EscherConnectorRule(0xf012,null),
-    EscherAlignRule(0xf013,null),
-    EscherArcRule(0xf014,null),
-    EscherClientRule(0xf015,null),
-    EscherCalloutRule(0xf017,null),
-    EscherSelection(0xf119,null),
-    EscherColorMRU(0xf11a,null),
-    EscherDeletedPspl(0xf11d,null),
-    EscherSplitMenuColors(0xf11e,null),
-    EscherOleObject(0xf11f,null),
-    // same as EscherTertiaryOptRecord.RECORD_ID
-    EscherUserDefined(0xf122,null);
+    ;
 
     @FunctionalInterface
     public interface RecordConstructor<T extends Record> {

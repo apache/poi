@@ -31,7 +31,6 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
@@ -45,6 +44,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.TreeMap;
+import java.util.function.BiConsumer;
 
 import org.apache.commons.codec.Charsets;
 import org.apache.poi.common.usermodel.fonts.FontCharset;
@@ -68,7 +68,24 @@ import org.apache.poi.util.LocaleUtil;
 public class HwmfGraphics {
 
     public enum FillDrawStyle {
-        NONE, FILL, DRAW, FILL_DRAW
+        NONE(FillDrawStyle::fillNone),
+        FILL(HwmfGraphics::fill),
+        DRAW(HwmfGraphics::draw),
+        FILL_DRAW(FillDrawStyle::fillDraw);
+
+        public final BiConsumer<HwmfGraphics,Shape> handler;
+
+        FillDrawStyle(BiConsumer<HwmfGraphics,Shape> handler) {
+            this.handler = handler;
+        }
+
+        private static void fillNone(HwmfGraphics g, Shape s) {
+        }
+
+        private static void fillDraw(HwmfGraphics g, Shape s) {
+            g.fill(s);
+            g.draw(s);
+        }
     }
 
     protected final List<HwmfDrawProperties> propStack = new LinkedList<>();

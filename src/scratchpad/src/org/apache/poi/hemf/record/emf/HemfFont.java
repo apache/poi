@@ -19,10 +19,17 @@ package org.apache.poi.hemf.record.emf;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Supplier;
 
-import org.apache.poi.util.IOUtils;
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.common.usermodel.fonts.FontCharset;
 import org.apache.poi.hwmf.record.HwmfFont;
+import org.apache.poi.util.GenericRecordJsonWriter;
+import org.apache.poi.util.GenericRecordUtil;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
@@ -41,7 +48,7 @@ public class HemfFont extends HwmfFont {
         }
     }
 
-    protected static class LogFontPanose implements LogFontDetails {
+    protected static class LogFontPanose implements LogFontDetails, GenericRecord {
         enum FamilyType {
             PAN_ANY,
             PAN_NO_FIT,
@@ -201,21 +208,26 @@ public class HemfFont extends HwmfFont {
 
         @Override
         public String toString() {
-            return
-                "{ styleSize: " + styleSize +
-                ", vendorId: " + vendorId +
-                ", culture: " +  culture +
-                ", familyType: '" + familyType + "'" +
-                ", serifStyle: '" + serifStyle + "'" +
-                ", weight: '" + weight + "'" +
-                ", proportion: '" + proportion + "'" +
-                ", contrast: '" + contrast + "'" +
-                ", strokeVariation: '" + strokeVariation + "'" +
-                ", armStyle: '" + armStyle + "'" +
-                ", letterform: '" + letterform + "'" +
-                ", midLine: '" + midLine + "'" +
-                ", xHeight: '" + xHeight + "'" +
-                "}";
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            final Map<String,Supplier<?>> m = new LinkedHashMap<>();
+            m.put("styleSize", () -> styleSize);
+            m.put("vendorId", () -> vendorId);
+            m.put("culture", () -> culture);
+            m.put("familyType", () -> familyType);
+            m.put("serifStyle", () -> serifStyle);
+            m.put("weight", () -> weight);
+            m.put("proportion", () -> proportion);
+            m.put("contrast", () -> contrast);
+            m.put("strokeVariation", () -> strokeVariation);
+            m.put("armStyle", () -> armStyle);
+            m.put("letterform", () -> letterform);
+            m.put("midLine", () -> midLine);
+            m.put("xHeight", () -> xHeight);
+            return Collections.unmodifiableMap(m);
         }
     }
 
@@ -466,12 +478,18 @@ public class HemfFont extends HwmfFont {
 
     @Override
     public String toString() {
-        return
-            "{ fullname: '" + (fullname == null ? "" : fullname) + "'" +
-            ", style: '" + (style == null ? "" : style) + "'" +
-            ", script: '" + (script == null ? "" : script) + "'" +
-            ", details: " + details +
-            "," + super.toString().substring(1);
+        return GenericRecordJsonWriter.marshal(this);
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "base", super::getGenericProperties,
+            "fullname", () -> fullname,
+            "style", () -> style,
+            "script", () -> script,
+            "details", () -> details
+        );
     }
 
     @Override

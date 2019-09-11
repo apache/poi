@@ -21,6 +21,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.poifs.crypt.CipherAlgorithm;
@@ -29,6 +30,7 @@ import org.apache.poi.poifs.crypt.EncryptionMode;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIEncryptionHeader;
 import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIEncryptionVerifier;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianInputStream;
@@ -40,7 +42,7 @@ import org.apache.poi.util.LittleEndianInputStream;
  * @author Nick Burch
  */
 public final class DocumentEncryptionAtom extends PositionDependentRecordAtom {
-    private static final long _type = 12052l;
+    private static final long _type = RecordTypes.DocumentEncryptionAtom.typeID;
 	private final byte[] _header;
 	private EncryptionInfo ei;
 
@@ -132,4 +134,11 @@ public final class DocumentEncryptionAtom extends PositionDependentRecordAtom {
     public void updateOtherRecordReferences(Map<Integer,Integer> oldToNewReferencesLookup) {
         // nothing to update
     }
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"encryptionInfo", this::getEncryptionInfo
+		);
+	}
 }

@@ -30,7 +30,7 @@ import org.apache.poi.util.POILogger;
  */
 public final class Comment2000 extends RecordContainer {
 	private byte[] _header;
-	private static long _type = 12000;
+	private static final long _type = RecordTypes.Comment2000.typeID;
 
 	// Links to our more interesting children
 
@@ -172,5 +172,4 @@ public final class Comment2000 extends RecordContainer {
 	public void writeOut(OutputStream out) throws IOException {
 		writeOut(_header[0],_header[1],_type,_children,out);
 	}
-
 }

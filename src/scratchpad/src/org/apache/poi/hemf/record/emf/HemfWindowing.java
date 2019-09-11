@@ -21,15 +21,21 @@ import static org.apache.poi.hemf.record.emf.HemfDraw.readDimensionInt;
 import static org.apache.poi.hemf.record.emf.HemfDraw.readPointL;
 import static org.apache.poi.hwmf.record.HwmfDraw.normalizeBounds;
 
+import java.awt.geom.Dimension2D;
 import java.io.IOException;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.poi.hemf.draw.HemfDrawProperties;
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hwmf.record.HwmfRegionMode;
 import org.apache.poi.hwmf.record.HwmfWindowing;
+import org.apache.poi.util.GenericRecordJsonWriter;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
+@SuppressWarnings("WeakerAccess")
 public class HemfWindowing {
 
     /**
@@ -44,6 +50,11 @@ public class HemfWindowing {
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             return readDimensionInt(leis, size);
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
         }
     }
 
@@ -60,6 +71,11 @@ public class HemfWindowing {
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             return readPointL(leis, origin);
         }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
+        }
     }
 
     /**
@@ -75,6 +91,11 @@ public class HemfWindowing {
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             return readDimensionInt(leis, extents);
         }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
+        }
     }
 
     /**
@@ -89,6 +110,11 @@ public class HemfWindowing {
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             return readPointL(leis, origin);
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
         }
     }
 
@@ -106,6 +132,11 @@ public class HemfWindowing {
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             return readPointL(leis, offset);
         }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
+        }
     }
 
     /**
@@ -121,6 +152,11 @@ public class HemfWindowing {
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             return HemfDraw.readRectL(leis, bounds);
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
         }
     }
 
@@ -138,6 +174,11 @@ public class HemfWindowing {
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             return HemfDraw.readRectL(leis, normalizeBounds(bounds));
         }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
+        }
     }
 
     /**
@@ -152,12 +193,12 @@ public class HemfWindowing {
 
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
-            double xNum = leis.readInt();
-            double xDenom = leis.readInt();
-            double yNum = leis.readInt();
-            double yDenom = leis.readInt();
-            scale.setSize(xNum / xDenom, yNum / yDenom);
-            return 4*LittleEndianConsts.INT_SIZE;
+            return readScale(leis, scale);
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
         }
     }
 
@@ -173,14 +214,12 @@ public class HemfWindowing {
 
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
-            double xNum = leis.readInt();
-            double xDenom = leis.readInt();
-            double yNum = leis.readInt();
-            double yDenom = leis.readInt();
+            return readScale(leis, scale);
+        }
 
-            scale.setSize(xNum / xDenom, yNum / yDenom);
-
-            return 4*LittleEndianConsts.INT_SIZE;
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
         }
     }
 
@@ -213,8 +252,25 @@ public class HemfWindowing {
 
         @Override
         public String toString() {
-            return "{ regionMode: '"+regionMode+"' }";
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public HwmfRegionMode getRegionMode() {
+            return regionMode;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("regionMode", this::getRegionMode);
         }
     }
 
+    private static int readScale(LittleEndianInputStream leis, Dimension2D scale) {
+        double xNum = leis.readInt();
+        double xDenom = leis.readInt();
+        double yNum = leis.readInt();
+        double yDenom = leis.readInt();
+        scale.setSize(xNum / xDenom, yNum / yDenom);
+        return 4*LittleEndianConsts.INT_SIZE;
+    }
 }

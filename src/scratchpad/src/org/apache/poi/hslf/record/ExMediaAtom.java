@@ -17,9 +17,14 @@
 
 package org.apache.poi.hslf.record;
 
+import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
+
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
+import java.util.function.Supplier;
 
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
@@ -45,6 +50,12 @@ public final class ExMediaAtom extends RecordAtom
      * A bit that specifies whether the audio data is recorded narration for the slide show. It MUST be FALSE if this ExMediaAtom record is contained by an ExVideoContainer record.
      */
     public static final int fNarration = 4;
+
+
+    private static final int[] FLAG_MASKS = { fLoop, fRewind, fNarration };
+
+    private static final String[] FLAG_NAMES = { "LOOP", "REWIND", "NARRATION" };
+
 
     /**
      * Record header.
@@ -169,4 +180,11 @@ public final class ExMediaAtom extends RecordAtom
         return buf.toString();
     }
 
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "objectId", this::getObjectId,
+            "flags", getBitsAsString(this::getMask, FLAG_MASKS, FLAG_NAMES)
+        );
+    }
 }

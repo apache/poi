@@ -17,11 +17,11 @@
 
 package org.apache.poi.hslf.record;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogger;
-
-import java.io.OutputStream;
-import java.io.IOException;
 
 /**
  * A container record that specifies information about the footers on a presentation slide.
@@ -63,24 +63,39 @@ public final class HeadersFootersContainer extends RecordContainer {
         System.arraycopy(source,start,_header,0,8);
 
         _children = Record.findChildRecords(source,start+8,len-8);
-        for(int i=0; i < _children.length; i++){
-            if(_children[i] instanceof HeadersFootersAtom) hdAtom = (HeadersFootersAtom)_children[i];
-            else if(_children[i] instanceof CString) {
-                CString cs = (CString)_children[i];
+        findInterestingChildren();
+    }
+
+    /**
+     * Go through our child records, picking out the ones that are
+     *  interesting, and saving those for use by the easy helper
+     *  methods.
+     */
+    private void findInterestingChildren() {
+        for (Record child : _children) {
+            if (child instanceof HeadersFootersAtom) {
+                hdAtom = (HeadersFootersAtom) child;
+            } else if (child instanceof CString) {
+                CString cs = (CString) child;
                 int opts = cs.getOptions() >> 4;
-                switch(opts){
-                    case USERDATEATOM: csDate = cs; break;
-                    case HEADERATOM: csHeader = cs; break;
-                    case FOOTERATOM: csFooter = cs; break;
+                switch (opts) {
+                    case USERDATEATOM:
+                        csDate = cs;
+                        break;
+                    case HEADERATOM:
+                        csHeader = cs;
+                        break;
+                    case FOOTERATOM:
+                        csFooter = cs;
+                        break;
                     default:
                         logger.log(POILogger.WARN, "Unexpected CString.Options in HeadersFootersContainer: " + opts);
                         break;
                 }
             } else {
-                logger.log(POILogger.WARN, "Unexpected record in HeadersFootersContainer: " + _children[i]);
+                logger.log(POILogger.WARN, "Unexpected record in HeadersFootersContainer: " + child);
             }
         }
-
     }
 
     public HeadersFootersContainer(short options) {

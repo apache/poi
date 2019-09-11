@@ -27,7 +27,7 @@ import org.apache.poi.util.LittleEndian;
  */
 public final class VBAInfoContainer extends RecordContainer {
     private byte[] _header;
-    private static long _type = RecordTypes.VBAInfo.typeID;
+    private static final long _type = RecordTypes.VBAInfo.typeID;
 
     // Links to our more interesting children
 

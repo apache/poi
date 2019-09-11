@@ -17,12 +17,17 @@
 
 package org.apache.poi.ddf;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.util.LittleEndian;
 
 public class EscherBitmapBlip extends EscherBlipRecord {
-    public static final short RECORD_ID_JPEG = (short) 0xF018 + 5;
-    public static final short RECORD_ID_PNG = (short) 0xF018 + 6;
-    public static final short RECORD_ID_DIB = (short) 0xF018 + 7;
+    public static final short RECORD_ID_JPEG = EscherRecordTypes.BLIP_JPEG.typeID;
+    public static final short RECORD_ID_PNG = EscherRecordTypes.BLIP_PNG.typeID;
+    public static final short RECORD_ID_DIB = EscherRecordTypes.BLIP_DIB.typeID;
 
     private static final int HEADER_SIZE = 8;
 
@@ -115,4 +120,14 @@ public class EscherBitmapBlip extends EscherBlipRecord {
             { "Extra Data", getPicturedata() }
         };
     }
+
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        final Map<String, Supplier<?>> m = new LinkedHashMap<>(super.getGenericProperties());
+        m.put("uid", this::getUID);
+        m.put("marker", this::getMarker);
+        return Collections.unmodifiableMap(m);
+    }
+
 }

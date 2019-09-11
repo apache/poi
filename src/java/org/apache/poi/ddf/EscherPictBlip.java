@@ -22,6 +22,10 @@ import java.awt.Rectangle;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Supplier;
 import java.util.zip.InflaterInputStream;
 
 import org.apache.poi.util.IOUtils;
@@ -34,9 +38,9 @@ public final class EscherPictBlip extends EscherBlipRecord {
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
 
-    public static final short RECORD_ID_EMF = (short) 0xF018 + 2;
-    public static final short RECORD_ID_WMF = (short) 0xF018 + 3;
-    public static final short RECORD_ID_PICT = (short) 0xF018 + 4;
+    public static final short RECORD_ID_EMF = EscherRecordTypes.BLIP_EMF.typeID;
+    public static final short RECORD_ID_WMF = EscherRecordTypes.BLIP_WMF.typeID;
+    public static final short RECORD_ID_PICT = EscherRecordTypes.BLIP_PICT.typeID;
 
     private static final int HEADER_SIZE = 8;
 
@@ -292,5 +296,18 @@ public final class EscherPictBlip extends EscherBlipRecord {
             { "Filter", field_7_fFilter },
             { "Extra Data", getPicturedata() },
         };
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        final Map<String, Supplier<?>> m = new LinkedHashMap<>(super.getGenericProperties());
+        m.put("uid", this::getUID);
+        m.put("uncompressedSize", this::getUncompressedSize);
+        m.put("bounds", this::getBounds);
+        m.put("sizeInEMU", this::getSizeEMU);
+        m.put("compressedSize", this::getCompressedSize);
+        m.put("isCompressed", this::isCompressed);
+        m.put("filter", this::getFilter);
+        return Collections.unmodifiableMap(m);
     }
 }

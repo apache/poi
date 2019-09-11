@@ -22,10 +22,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection.TextPropType;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
@@ -109,11 +112,7 @@ public final class StyleTextPropAtom extends RecordAtom {
         return getCharactersCovered(charStyles);
     }
     private int getCharactersCovered(List<TextPropCollection> styles) {
-        int length = 0;
-        for(TextPropCollection tpc : styles) {
-            length += tpc.getCharactersCovered();
-        }
-        return length;
+        return styles.stream().mapToInt(TextPropCollection::getCharactersCovered).sum();
     }
 
     /* *************** record code follows ********************** */
@@ -405,5 +404,13 @@ public final class StyleTextPropAtom extends RecordAtom {
         out.append( HexDump.dump(buf, 0, 0) );
 
         return out.toString();
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return !initialised ? null : GenericRecordUtil.getGenericProperties(
+            "paragraphStyles", this::getParagraphStyles,
+            "characterStyles", this::getCharacterStyles
+        );
     }
 }

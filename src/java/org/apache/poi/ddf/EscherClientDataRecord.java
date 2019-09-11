@@ -18,6 +18,10 @@
 
 package org.apache.poi.ddf;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
@@ -31,8 +35,7 @@ public class EscherClientDataRecord
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
 
-    public static final short RECORD_ID = (short) 0xF011;
-    public static final String RECORD_DESCRIPTION = "MsofbtClientData";
+    public static final short RECORD_ID = EscherRecordTypes.CLIENT_DATA.typeID;
 
     private byte[] remainingData;
 
@@ -75,7 +78,7 @@ public class EscherClientDataRecord
 
     @Override
     public String getRecordName() {
-        return "ClientData";
+        return EscherRecordTypes.CLIENT_DATA.recordName;
     }
 
     /**
@@ -104,5 +107,18 @@ public class EscherClientDataRecord
         return new Object[][] {
             { "Extra Data", getRemainingData() }
         };
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "base", super::getGenericProperties,
+            "remainingData", this::getRemainingData
+        );
+    }
+
+    @Override
+    public Enum getGenericRecordType() {
+        return EscherRecordTypes.CLIENT_DATA;
     }
 }

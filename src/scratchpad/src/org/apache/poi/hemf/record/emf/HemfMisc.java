@@ -18,7 +18,6 @@
 package org.apache.poi.hemf.record.emf;
 
 import static org.apache.poi.hemf.record.emf.HemfDraw.readPointL;
-import static org.apache.poi.hemf.record.emf.HemfDraw.xformToString;
 import static org.apache.poi.hemf.record.emf.HemfFill.readBitmap;
 import static org.apache.poi.hemf.record.emf.HemfFill.readXForm;
 import static org.apache.poi.hemf.record.emf.HemfRecordIterator.HEADER_SIZE;
@@ -28,9 +27,10 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import org.apache.poi.hemf.draw.HemfDrawProperties;
 import org.apache.poi.hemf.draw.HemfGraphics;
@@ -49,9 +49,12 @@ import org.apache.poi.hwmf.record.HwmfObjectTableEntry;
 import org.apache.poi.hwmf.record.HwmfPalette.PaletteEntry;
 import org.apache.poi.hwmf.record.HwmfPenStyle;
 import org.apache.poi.hwmf.record.HwmfPenStyle.HwmfLineDash;
+import org.apache.poi.util.GenericRecordJsonWriter;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
+@SuppressWarnings("WeakerAccess")
 public class HemfMisc {
 
     public enum HemfModifyWorldTransformMode {
@@ -138,12 +141,21 @@ public class HemfMisc {
 
             return size;
         }
+
+        public List<PaletteEntry> getPalette() {
+            return palette;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("palette", this::getPalette);
+        }
     }
 
     /**
      * The EMF_SAVEDC record saves the playback device context for later retrieval.
      */
-    public static class EmfSaveDc extends HwmfMisc.WmfSaveDc implements HemfRecord {
+    public static class EmfSaveDc extends HwmfMisc.WmfSaveDc implements HemfRecordWithoutProperties {
         @Override
         public HemfRecordType getEmfRecordType() {
             return HemfRecordType.saveDc;
@@ -152,6 +164,11 @@ public class HemfMisc {
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             return 0;
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
         }
     }
 
@@ -174,6 +191,11 @@ public class HemfMisc {
             nSavedDC = leis.readInt();
             return LittleEndianConsts.INT_SIZE;
         }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
+        }
     }
 
     /**
@@ -190,6 +212,11 @@ public class HemfMisc {
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             return colorRef.init(leis);
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
         }
     }
 
@@ -213,6 +240,11 @@ public class HemfMisc {
             bkMode = HwmfBkMode.valueOf((int) leis.readUInt());
             return LittleEndianConsts.INT_SIZE;
         }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
+        }
     }
 
     /**
@@ -227,6 +259,11 @@ public class HemfMisc {
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             return super.init(leis, recordSize, (int) recordId);
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
         }
     }
 
@@ -246,6 +283,11 @@ public class HemfMisc {
             mapMode = HwmfMapMode.valueOf((int) leis.readUInt());
             return LittleEndianConsts.INT_SIZE;
         }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
+        }
     }
 
     /**
@@ -263,6 +305,11 @@ public class HemfMisc {
             // MUST be in the WMF Binary Raster Op enumeration
             drawMode = HwmfBinaryRasterOp.valueOf((int) leis.readUInt());
             return LittleEndianConsts.INT_SIZE;
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
         }
     }
 
@@ -283,6 +330,11 @@ public class HemfMisc {
             // in the StretchMode enumeration.
             stretchBltMode = StretchBltMode.valueOf((int) leis.readUInt());
             return LittleEndianConsts.INT_SIZE;
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
         }
     }
 
@@ -317,14 +369,26 @@ public class HemfMisc {
             ctx.addObjectTableEntry(this, brushIdx);
         }
 
+        public int getBrushIdx() {
+            return brushIdx;
+        }
 
         @Override
         public String toString() {
-            return
-                "{ brushIndex: "+brushIdx+
-                ", brushStyle: '"+brushStyle+"'"+
-                ", colorRef: "+colorRef+
-                ", brushHatch: '"+brushHatch+"' }";
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "base", super::getGenericProperties,
+                "brushIdx", this::getBrushIdx
+            );
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
         }
     }
 
@@ -379,6 +443,22 @@ public class HemfMisc {
             ctx.addObjectTableEntry(this, brushIdx);
         }
 
+        public int getBrushIdx() {
+            return brushIdx;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "base", super::getGenericProperties,
+                "brushIdx", this::getBrushIdx
+            );
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
+        }
     }
 
     /**
@@ -396,6 +476,11 @@ public class HemfMisc {
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             objectIndex = (int) leis.readUInt();
             return LittleEndianConsts.INT_SIZE;
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
         }
     }
 
@@ -439,7 +524,24 @@ public class HemfMisc {
 
         @Override
         public String toString() {
-            return super.toString().replaceFirst("\\{", "{ penIndex: "+penIndex+", ");
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public int getPenIndex() {
+            return penIndex;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "base", super::getGenericProperties,
+                "penIndex", this::getPenIndex
+            );
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
         }
     }
 
@@ -539,12 +641,34 @@ public class HemfMisc {
 
         @Override
         public String toString() {
-            // TODO: add style entries + bmp
-            return
-                "{ brushStyle: '"+brushStyle+"'"+
-                ", hatchStyle: '"+hatchStyle+"'"+
-                ", dashPattern: "+ Arrays.toString(penStyle.getLineDashes())+
-                ", "+super.toString().substring(1);
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public HwmfBrushStyle getBrushStyle() {
+            return brushStyle;
+        }
+
+        public HwmfHatchStyle getHatchStyle() {
+            return hatchStyle;
+        }
+
+        public HwmfBitmapDib getBitmap() {
+            return bitmap;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "base", super::getGenericProperties,
+                "brushStyle", this::getBrushStyle,
+                "hatchStyle", this::getHatchStyle,
+                "bitmap", this::getBitmap
+            );
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
         }
     }
 
@@ -573,7 +697,16 @@ public class HemfMisc {
 
         @Override
         public String toString() {
-            return "{ miterLimit: "+miterLimit+" }";
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public int getMiterLimit() {
+            return miterLimit;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("miterLimit", this::getMiterLimit);
         }
     }
 
@@ -593,7 +726,16 @@ public class HemfMisc {
 
         @Override
         public String toString() {
-            return "{ x: "+origin.getX()+", y: "+origin.getY()+" }";
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public Point2D getOrigin() {
+            return origin;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("origin", this::getOrigin);
         }
     }
 
@@ -620,7 +762,16 @@ public class HemfMisc {
 
         @Override
         public String toString() {
-            return "{ xForm: " + xformToString(xForm)+" }";
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public AffineTransform getXForm() {
+            return xForm;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("xForm", this::getXForm);
         }
     }
 
@@ -687,9 +838,23 @@ public class HemfMisc {
 
         @Override
         public String toString() {
-            return
-                "{ xForm: " + xformToString(xForm) +
-                ", modifyWorldTransformMode: '"+modifyWorldTransformMode+"' }";
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public AffineTransform getXForm() {
+            return xForm;
+        }
+
+        public HemfModifyWorldTransformMode getModifyWorldTransformMode() {
+            return modifyWorldTransformMode;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "xForm", this::getXForm,
+                "modifyWorldTransformMode", this::getModifyWorldTransformMode
+            );
         }
     }
 
@@ -760,11 +925,28 @@ public class HemfMisc {
 
         @Override
         public String toString() {
-            return
-                "{ penIndex: " + penIndex +
-                ", colorUsage: " + colorUsage +
-                ", bitmap: " + bitmap +
-                "}";
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public int getPenIndex() {
+            return penIndex;
+        }
+
+        public HwmfFill.ColorUsage getColorUsage() {
+            return colorUsage;
+        }
+
+        public HwmfBitmapDib getBitmap() {
+            return bitmap;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "penIndex", this::getPenIndex,
+                "colorUsage", this::getColorUsage,
+                "bitmap", this::getBitmap
+            );
         }
     }
 

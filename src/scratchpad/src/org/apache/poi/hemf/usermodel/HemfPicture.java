@@ -30,9 +30,12 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Spliterator;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hemf.draw.HemfDrawProperties;
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.record.emf.HemfHeader;
@@ -49,7 +52,7 @@ import org.apache.poi.util.Units;
  * Read-only EMF extractor.  Lots remain
  */
 @Internal
-public class HemfPicture implements Iterable<HemfRecord> {
+public class HemfPicture implements Iterable<HemfRecord>, GenericRecord {
     private final LittleEndianInputStream stream;
     private final List<HemfRecord> records = new ArrayList<>();
     private boolean isParsed = false;
@@ -178,5 +181,15 @@ public class HemfPicture implements Iterable<HemfRecord> {
 
     public Iterable<HwmfEmbedded> getEmbeddings() {
         return () -> new HemfEmbeddedIterator(HemfPicture.this);
+    }
+
+    @Override
+    public List<? extends GenericRecord> getGenericChildren() {
+        return getRecords();
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return null;
     }
 }

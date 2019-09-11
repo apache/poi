@@ -31,7 +31,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.common.usermodel.fonts.FontInfo;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherContainerRecord;
@@ -63,7 +65,7 @@ import org.apache.poi.util.Units;
  * TODO: - figure out how to match notes to their correct sheet (will involve
  * understanding DocSlideList and DocNotesList) - handle Slide creation cleaner
  */
-public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagraph>, Closeable {
+public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagraph>, Closeable, GenericRecord {
 
 	//arbitrarily selected; may need to increase
 	private static final int MAX_RECORD_LENGTH = 10_000_000;
@@ -1162,5 +1164,15 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 	@Override
 	public Object getPersistDocument() {
 		return getSlideShowImpl();
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return null;
+	}
+
+	@Override
+	public List<? extends GenericRecord> getGenericChildren() {
+		return Arrays.asList(_hslfSlideShow.getRecords());
 	}
 }

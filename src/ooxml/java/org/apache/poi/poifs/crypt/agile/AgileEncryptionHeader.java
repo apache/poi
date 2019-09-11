@@ -16,16 +16,19 @@
 ==================================================================== */
 package org.apache.poi.poifs.crypt.agile;
 
-import org.apache.poi.EncryptedDocumentException;
-import org.apache.poi.poifs.crypt.ChainingMode;
-import org.apache.poi.poifs.crypt.CipherAlgorithm;
-import org.apache.poi.poifs.crypt.EncryptionHeader;
-import org.apache.poi.poifs.crypt.HashAlgorithm;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import com.microsoft.schemas.office.x2006.encryption.CTDataIntegrity;
 import com.microsoft.schemas.office.x2006.encryption.CTKeyData;
 import com.microsoft.schemas.office.x2006.encryption.EncryptionDocument;
 import com.microsoft.schemas.office.x2006.encryption.STCipherChaining;
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.poifs.crypt.ChainingMode;
+import org.apache.poi.poifs.crypt.CipherAlgorithm;
+import org.apache.poi.poifs.crypt.EncryptionHeader;
+import org.apache.poi.poifs.crypt.HashAlgorithm;
+import org.apache.poi.util.GenericRecordUtil;
 
 public class AgileEncryptionHeader extends EncryptionHeader implements Cloneable {
     private byte[] encryptedHmacKey;
@@ -132,4 +135,12 @@ public class AgileEncryptionHeader extends EncryptionHeader implements Cloneable
         return other;
     }
 
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "base", super::getGenericProperties,
+            "encryptedHmacKey", this::getEncryptedHmacKey,
+            "encryptedHmacValue", this::getEncryptedHmacValue
+        );
+    }
 }

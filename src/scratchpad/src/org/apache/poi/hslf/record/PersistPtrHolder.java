@@ -25,10 +25,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.function.Supplier;
 
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogger;
@@ -41,8 +44,6 @@ import org.apache.poi.util.POILogger;
  *  moves, then we have update all of these. If we come up with a new version
  *  of a slide, then we have to add one of these to the end of the chain
  *  (via CurrentUserAtom and UserEditAtom) pointing to the new slide location
- *
- * @author Nick Burch
  */
 
 public final class PersistPtrHolder extends PositionDependentRecordAtom
@@ -62,8 +63,8 @@ public final class PersistPtrHolder extends PositionDependentRecordAtom
 	 */
 	private Map<Integer,Integer> _slideLocations;
 
-	private static final BitField persistIdFld = new BitField(0X000FFFFF);
-	private static final BitField cntPersistFld  = new BitField(0XFFF00000);
+	private static final BitField persistIdFld = BitFieldFactory.getInstance(0X000FFFFF);
+	private static final BitField cntPersistFld  = BitFieldFactory.getInstance(0XFFF00000);
 	
     /**
      * Return the value we were given at creation, be it 6001 or 6002
@@ -248,4 +249,11 @@ public final class PersistPtrHolder extends PositionDependentRecordAtom
             return buf;
         }
     }
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"slideLocations", this::getSlideLocationsLookup
+		);
+	}
 }

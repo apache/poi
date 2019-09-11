@@ -17,10 +17,17 @@
 
 package org.apache.poi.hslf.record;
 
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.LittleEndian;
+import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
+import static org.apache.poi.util.GenericRecordUtil.safeEnum;
+
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * An atom record that specifies options for displaying headers and footers
@@ -31,9 +38,32 @@ import java.io.OutputStream;
 
 public final class HeadersFootersAtom extends RecordAtom {
 
+    /** FormatIndex enum without LCID mapping */
+    public enum FormatIndex {
+        SHORT_DATE,
+        LONG_DATE,
+        LONG_DATE_WITHOUT_WEEKDAY,
+        ALTERNATE_SHORT_DATE,
+        ISO_STANDARD_DATE,
+        SHORT_DATE_WITH_ABBREVIATED_MONTH,
+        SHORT_DATE_WITH_SLASHES,
+        ALTERNATE_SHORT_DATE_WITH_ABBREVIATED_MONTH,
+        ENGLISH_DATE,
+        MONTH_AND_YEAR,
+        ABBREVIATED_MONTH_AND_YEAR,
+        DATE_AND_HOUR12_TIME,
+        DATE_AND_HOUR12_TIME_WITH_SECONDS,
+        HOUR12_TIME,
+        HOUR12_TIME_WITH_SECONDS,
+        HOUR24_TIME,
+        HOUR24_TIME_WITH_SECONDS,
+        CHINESE1,
+        CHINESE2,
+        CHINESE3
+    }
+
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
-
 
     /**
      * A bit that specifies whether the date is displayed in the footer.
@@ -81,6 +111,21 @@ public final class HeadersFootersAtom extends RecordAtom {
      * @see #setMask(int)
      */
     public static final int fHasFooter = 32;
+
+    private static final int[] PLACEHOLDER_MASKS = {
+        fHasDate,
+        fHasTodayDate,
+        fHasUserDate,
+        fHasSlideNumber,
+        fHasHeader,
+        fHasFooter
+    };
+
+    private static final String[] PLACEHOLDER_NAMES = {
+        "DATE", "TODAY_DATE", "USER_DATE", "SLIDE_NUMBER", "HEADER", "FOOTER"
+    };
+
+
 
     /**
      * record header
@@ -212,5 +257,13 @@ public final class HeadersFootersAtom extends RecordAtom {
         buf.append("\t  fHasHeader      : " + getFlag(fHasHeader) + "\n");
         buf.append("\t  fHasFooter      : " + getFlag(fHasFooter) + "\n");
         return buf.toString();
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "formatIndex", safeEnum(FormatIndex.values(), this::getFormatId),
+            "flags", getBitsAsString(this::getMask, PLACEHOLDER_MASKS, PLACEHOLDER_NAMES)
+        );
     }
 }

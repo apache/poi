@@ -18,12 +18,16 @@
 package org.apache.poi.hemf.record.emf;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hwmf.record.HwmfPalette;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
+@SuppressWarnings("WeakerAccess")
 public class HemfPalette {
     /** The EMR_SELECTPALETTE record specifies a logical palette for the playback device context. */
     public static class EmfSelectPalette extends HwmfPalette.WmfSelectPalette implements HemfRecord {
@@ -41,6 +45,11 @@ public class HemfPalette {
              */
             paletteIndex = (int)leis.readUInt();
             return LittleEndianConsts.INT_SIZE;
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
         }
     }
 
@@ -73,6 +82,23 @@ public class HemfPalette {
         public void draw(HemfGraphics ctx) {
             ctx.addObjectTableEntry(this, paletteIndex);
         }
+
+        public int getPaletteIndex() {
+            return paletteIndex;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "base", super::getGenericProperties,
+                "paletteIndex", this::getPaletteIndex
+            );
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
+        }
     }
 
     /**
@@ -104,6 +130,23 @@ public class HemfPalette {
         public void draw(HemfGraphics ctx) {
             ctx.addObjectTableEntry(this, paletteIndex);
         }
+
+        public int getPaletteIndex() {
+            return paletteIndex;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "base", super::getGenericProperties,
+                "paletteIndex", this::getPaletteIndex
+            );
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
+        }
     }
 
     /**
@@ -134,6 +177,23 @@ public class HemfPalette {
         public void draw(HemfGraphics ctx) {
             ctx.addObjectTableEntry(this, paletteIndex);
         }
+
+        public int getPaletteIndex() {
+            return paletteIndex;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "base", super::getGenericProperties,
+                "paletteIndex", this::getPaletteIndex
+            );
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
+        }
     }
 
     /**
@@ -149,6 +209,11 @@ public class HemfPalette {
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             return 0;
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
         }
     }
 
@@ -204,6 +269,15 @@ public class HemfPalette {
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             icmMode = ICMMode.valueOf(leis.readInt());
             return LittleEndianConsts.INT_SIZE;
+        }
+
+        public ICMMode getIcmMode() {
+            return icmMode;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("icmMode", this::getIcmMode);
         }
     }
 }

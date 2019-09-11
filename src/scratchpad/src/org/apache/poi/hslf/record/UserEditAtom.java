@@ -19,7 +19,10 @@ package org.apache.poi.hslf.record;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.util.LittleEndian;
@@ -32,8 +35,6 @@ import org.apache.poi.util.LittleEndianConsts;
  * ** WARNING ** stores byte offsets from the start of the PPT stream to
  *  other records! If you change the size of any elements before one of
  *  these, you'll need to update the offsets!
- *
- * @author Nick Burch
  */
 
 public final class UserEditAtom extends PositionDependentRecordAtom
@@ -44,7 +45,7 @@ public final class UserEditAtom extends PositionDependentRecordAtom
 	public static final int LAST_VIEW_NOTES = 3;
 
 	private byte[] _header;
-	private static long _type = 4085l;
+	private static final long _type = RecordTypes.UserEditAtom.typeID;
 	private short unused;
 
 	private int lastViewedSlideID;
@@ -189,5 +190,19 @@ public final class UserEditAtom extends PositionDependentRecordAtom
 		    // optional field
 		    writeLittleEndian(encryptSessionPersistIdRef,out);
 		}
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		final Map<String, Supplier<?>> m = new LinkedHashMap<>();
+		m.put("lastViewedSlideID", this::getLastViewedSlideID);
+		m.put("pptVersion", () -> pptVersion);
+		m.put("lastUserEditAtomOffset", this::getLastUserEditAtomOffset);
+		m.put("persistPointersOffset", this::getPersistPointersOffset);
+		m.put("docPersistRef", this::getDocPersistRef);
+		m.put("maxPersistWritten", this::getMaxPersistWritten);
+		m.put("lastViewType", this::getLastViewType);
+		m.put("encryptSessionPersistIdRef", this::getEncryptSessionPersistIdRef);
+		return Collections.unmodifiableMap(m);
 	}
 }

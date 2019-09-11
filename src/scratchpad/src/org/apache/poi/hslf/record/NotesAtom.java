@@ -17,10 +17,14 @@
 
 package org.apache.poi.hslf.record;
 
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.LittleEndian;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * A Notes Atom (type 1009). Holds information on the parent Notes, such
@@ -120,5 +124,15 @@ public final class NotesAtom extends RecordAtom
 
 		// Reserved fields
 		out.write(reserved);
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"slideId", this::getSlideID,
+			"followMasterObjects", this::getFollowMasterObjects,
+			"followMasterScheme", this::getFollowMasterScheme,
+			"followMasterBackground", this::getFollowMasterBackground
+		);
 	}
 }

@@ -50,6 +50,7 @@ import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.sl.usermodel.TabStop;
 import org.apache.poi.sl.usermodel.TabStop.TabStopType;
 import org.apache.poi.sl.usermodel.TextParagraph;
+import org.apache.poi.sl.usermodel.TextShape.TextPlaceholder;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.StringUtil;
@@ -1291,20 +1292,12 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         // them to \n
         String text = rawText.replace('\r', '\n');
 
-        switch (runType) {
-        // 0xB acts like cariage return in page titles and like blank in the
-        // others
-        case -1:
-        case org.apache.poi.hslf.record.TextHeaderAtom.TITLE_TYPE:
-        case org.apache.poi.hslf.record.TextHeaderAtom.CENTER_TITLE_TYPE:
-            text = text.replace((char) 0x0B, '\n');
-            break;
-        default:
-            text = text.replace((char) 0x0B, ' ');
-            break;
-        }
+        // 0xB acts like carriage return in page titles and like blank in the others
+        final char repl = (runType == -1 ||
+            runType == TextPlaceholder.TITLE.nativeId ||
+            runType == TextPlaceholder.CENTER_TITLE.nativeId) ? '\n' : ' ';
 
-        return text;
+        return text.replace('\u000b', repl);
     }
 
     /**

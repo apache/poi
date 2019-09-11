@@ -48,7 +48,7 @@ public class TestPPTX2PNG {
     private static final String files =
         "53446.ppt, alterman_security.ppt, alterman_security.pptx, KEY02.pptx, themes.pptx, " +
         "backgrounds.pptx, layouts.pptx, sample.pptx, shapes.pptx, 54880_chinese.ppt, keyframes.pptx," +
-        "customGeo.pptx, customGeo.ppt";
+        "customGeo.pptx, customGeo.ppt, wrench.emf, santa.wmf";
 
         
     
@@ -83,8 +83,12 @@ public class TestPPTX2PNG {
             "-slide", "-1", // -1 for all
             "-outdir", new File("build/tmp/").getCanonicalPath(),
             "-outpat", "${basename}-${slideno}-${ext}.${format}",
-            "-scale", "1.333333333",
+            // "-dump", new File("build/tmp/", pptFile+".dump").getCanonicalPath(),
+            "-dump", "null",
             "-quiet",
+            "-fixside", "long",
+            "-scale", "800",
+            // "-scale", "1.333333333",
             (basedir == null ? samples.getFile(pptFile) : new File(basedir, pptFile)).getAbsolutePath()
         };
         PPTX2PNG.main(args);

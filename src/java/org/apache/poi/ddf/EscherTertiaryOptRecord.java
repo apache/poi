@@ -22,11 +22,15 @@ package org.apache.poi.ddf;
  */
 public class EscherTertiaryOptRecord extends AbstractEscherOptRecord
 {
-    public static final short RECORD_ID = (short) 0xF122;
+    public static final short RECORD_ID = EscherRecordTypes.USER_DEFINED.typeID;
 
     @Override
-    public String getRecordName()
-    {
-        return "TertiaryOpt";
+    public String getRecordName() {
+        return EscherRecordTypes.USER_DEFINED.recordName;
+    }
+
+    @Override
+    public Enum getGenericRecordType() {
+        return EscherRecordTypes.USER_DEFINED;
     }
 }

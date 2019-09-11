@@ -19,19 +19,24 @@ package org.apache.poi.hemf.record.emfplus;
 
 import static org.apache.poi.hemf.record.emf.HemfMisc.adaptXForm;
 import static org.apache.poi.hemf.record.emfplus.HemfPlusDraw.readRectF;
+import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.record.emf.HemfFill;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
+@SuppressWarnings("WeakerAccess")
 public class HemfPlusMisc {
     public interface EmfPlusObjectId {
         BitField OBJECT_ID = BitFieldFactory.getInstance(0x00FF);
@@ -75,6 +80,9 @@ public class HemfPlusMisc {
         private int flags;
         private HemfPlusRecordType recordType;
 
+        private static final int[] FLAGS_MASK = { 0x0F00 };
+        private static final String[] FLAGS_NAMES = { "COMBINE_MODE" };
+
         @Override
         public int getFlags() {
             return flags;
@@ -91,6 +99,18 @@ public class HemfPlusMisc {
             assert(dataSize == 0);
             recordType = HemfPlusRecordType.getById(recordId);
             return 0;
+        }
+
+        @Override
+        public HemfPlusRecordType getGenericRecordType() {
+            return getEmfPlusRecordType();
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "flags", getBitsAsString(this::getFlags,FLAGS_MASK,FLAGS_NAMES)
+            );
         }
     }
 
@@ -193,6 +213,14 @@ public class HemfPlusMisc {
             tx.concatenate(getMatrixData());
             ctx.setTransform(tx);
         }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "flags", this::getFlags,
+                "matrixData", this::getMatrixData
+            );
+        }
     }
 
     /**
@@ -239,6 +267,18 @@ public class HemfPlusMisc {
             pageScale = leis.readFloat();
             return LittleEndianConsts.INT_SIZE;
         }
+
+        public double getPageScale() {
+            return pageScale;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "flags", this::getFlags,
+                "pageScale", this::getPageScale
+            );
+        }
     }
 
     /**
@@ -264,6 +304,9 @@ public class HemfPlusMisc {
     public static class EmfPlusSetClipRect implements HemfPlusRecord {
         private static final BitField COMBINE_MODE = BitFieldFactory.getInstance(0x0F00);
 
+        private static final int[] FLAGS_MASK = { 0x0F00 };
+        private static final String[] FLAGS_NAMES = { "COMBINE_MODE" };
+
         private int flags;
         private final Rectangle2D clipRect = new Rectangle2D.Double();
 
@@ -287,6 +330,18 @@ public class HemfPlusMisc {
 
             // An EmfPlusRectF object that defines the rectangle to use in the CombineMode operation.
             return readRectF(leis, clipRect);
+        }
+
+        public Rectangle2D getClipRect() {
+            return clipRect;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "flags", getBitsAsString(this::getFlags, FLAGS_MASK, FLAGS_NAMES),
+                "clipRect", this::getClipRect
+            );
         }
     }
 
@@ -314,6 +369,10 @@ public class HemfPlusMisc {
             return flags;
         }
 
+        public int getStackIndex() {
+            return stackIndex;
+        }
+
         @Override
         public long init(LittleEndianInputStream leis, long dataSize, long recordId, int flags) throws IOException {
             this.flags = flags;
@@ -323,6 +382,14 @@ public class HemfPlusMisc {
             stackIndex = leis.readInt();
 
             return LittleEndianConsts.INT_SIZE;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "flags", this::getFlags,
+                "stackIndex", this::getStackIndex
+            );
         }
     }
 
@@ -368,6 +435,14 @@ public class HemfPlusMisc {
             origin.setLocation(x,y);
 
             return LittleEndianConsts.INT_SIZE*2;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "flags", this::getFlags,
+                "origin", this::getOrigin
+            );
         }
     }
 

@@ -23,10 +23,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
 import org.apache.poi.util.BoundedInputStream;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
@@ -184,5 +186,15 @@ public class ExOleObjStg extends PositionDependentRecordAtom implements PersistR
     @Override
     public void updateOtherRecordReferences(Map<Integer,Integer> oldToNewReferencesLookup) {
         // nothing to update
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "compressed", this::isCompressed,
+            "persistId", this::getPersistId,
+            "dataLength", this::getDataLength,
+            "data", this::getData
+        );
     }
 }

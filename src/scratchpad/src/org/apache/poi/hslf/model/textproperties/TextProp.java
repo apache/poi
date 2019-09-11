@@ -18,6 +18,11 @@
 package org.apache.poi.hslf.model.textproperties;
 
 import java.util.Locale;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.common.usermodel.GenericRecord;
+import org.apache.poi.util.GenericRecordUtil;
 
 /** 
  * Definition of a property of some text, or its paragraph. Defines 
@@ -30,7 +35,7 @@ import java.util.Locale;
  *  TxMasterTextProps, the definitions of the standard
  *  TextProps is stored in the different record classes 
  */
-public class TextProp implements Cloneable {
+public class TextProp implements Cloneable, GenericRecord {
 	private int sizeOfDataBlock; // Number of bytes the data part uses
 	private String propName;
 	private int dataValue;
@@ -152,4 +157,14 @@ public class TextProp implements Cloneable {
         }
         return String.format(Locale.ROOT, "%s = %d (%0#"+len+"X mask / %d bytes)", getName(), getValue(), getMask(), getSize());
     }
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"sizeOfDataBlock", this::getSize,
+			"propName", this::getName,
+			"dataValue", this::getValue,
+			"maskInHeader", this::getMask
+		);
+	}
 }

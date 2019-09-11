@@ -17,11 +17,14 @@
 
 package org.apache.poi.hslf.record;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
-
-import java.io.OutputStream;
-import java.io.IOException;
 
 /**
  * Tne atom that holds starting and ending character positions of a hyperlink
@@ -124,5 +127,13 @@ public final class TxInteractiveInfoAtom extends RecordAtom {
     public void writeOut(OutputStream out) throws IOException {
         out.write(_header);
         out.write(_data);
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "startIndex", this::getStartIndex,
+            "endIndex", this::getEndIndex
+        );
     }
 }

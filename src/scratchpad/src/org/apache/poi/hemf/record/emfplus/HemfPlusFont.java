@@ -19,13 +19,18 @@ package org.apache.poi.hemf.record.emfplus;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.record.emfplus.HemfPlusDraw.EmfPlusUnitType;
 import org.apache.poi.hemf.record.emfplus.HemfPlusHeader.EmfPlusGraphicsVersion;
 import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectData;
+import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectType;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.GenericRecordJsonWriter;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.StringUtil;
@@ -69,7 +74,7 @@ public class HemfPlusFont {
         private String family;
 
         @Override
-        public long init(LittleEndianInputStream leis, long dataSize, HemfPlusObject.EmfPlusObjectType objectType, int flags) throws IOException {
+        public long init(LittleEndianInputStream leis, long dataSize, EmfPlusObjectType objectType, int flags) throws IOException {
             // An EmfPlusGraphicsVersion object that specifies the version of operating system graphics that was used
             // to create this object.
             long size = graphicsVersion.init(leis);
@@ -107,6 +112,27 @@ public class HemfPlusFont {
         @Override
         public EmfPlusGraphicsVersion getGraphicsVersion() {
             return graphicsVersion;
+        }
+
+        @Override
+        public String toString() {
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "graphicsVersion", () -> graphicsVersion,
+                "emSize", () -> emSize,
+                "sizeUnit", () -> sizeUnit,
+                "styleFlags", () -> styleFlags,
+                "family", () -> family
+            );
+        }
+
+        @Override
+        public EmfPlusObjectType getGenericRecordType() {
+            return EmfPlusObjectType.FONT;
         }
     }
 }

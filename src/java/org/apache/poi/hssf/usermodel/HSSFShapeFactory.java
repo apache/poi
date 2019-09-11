@@ -26,7 +26,7 @@ import org.apache.poi.ddf.EscherOptRecord;
 import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.ddf.EscherProperty;
 import org.apache.poi.ddf.EscherRecord;
-import org.apache.poi.ddf.EscherTextboxRecord;
+import org.apache.poi.ddf.EscherRecordTypes;
 import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
 import org.apache.poi.hssf.record.EmbeddedObjectRefSubRecord;
 import org.apache.poi.hssf.record.EscherAggregate;
@@ -71,11 +71,11 @@ public class HSSFShapeFactory {
             TextObjectRecord txtRecord = null;
 
             for (EscherRecord record : container) {
-                switch (record.getRecordId()) {
-                    case EscherClientDataRecord.RECORD_ID:
+                switch (EscherRecordTypes.forTypeID(record.getRecordId())) {
+                    case CLIENT_DATA:
                         objRecord = (ObjRecord) shapeToObj.get(record);
                         break;
-                    case EscherTextboxRecord.RECORD_ID:
+                    case CLIENT_TEXTBOX:
                         txtRecord = (TextObjectRecord) shapeToObj.get(record);
                         break;
                     default:

@@ -17,10 +17,7 @@
 
 package org.apache.poi.hwmf.record;
 
-import static org.apache.poi.hwmf.record.HwmfDraw.boundsToString;
-import static org.apache.poi.hwmf.record.HwmfDraw.dimToString;
 import static org.apache.poi.hwmf.record.HwmfDraw.normalizeBounds;
-import static org.apache.poi.hwmf.record.HwmfDraw.pointToString;
 import static org.apache.poi.hwmf.record.HwmfDraw.readBounds;
 import static org.apache.poi.hwmf.record.HwmfDraw.readPointS;
 
@@ -31,10 +28,18 @@ import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Supplier;
 
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hwmf.draw.HwmfDrawProperties;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.util.Dimension2DDouble;
+import org.apache.poi.util.GenericRecordJsonWriter;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
@@ -71,7 +76,16 @@ public class HwmfWindowing {
 
         @Override
         public String toString() {
-            return pointToString(origin);
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public Point2D getOrigin() {
+            return origin;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("origin", this::getOrigin);
         }
     }
 
@@ -112,7 +126,16 @@ public class HwmfWindowing {
 
         @Override
         public String toString() {
-            return dimToString(extents);
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public Dimension2D getExtents() {
+            return extents;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("extents", this::getExtents);
         }
     }
 
@@ -148,7 +171,16 @@ public class HwmfWindowing {
 
         @Override
         public String toString() {
-            return pointToString(offset);
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public Point2D getOffset() {
+            return offset;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("offset", this::getOffset);
         }
     }
 
@@ -189,8 +221,18 @@ public class HwmfWindowing {
 
         @Override
         public String toString() {
-            return pointToString(origin);
+            return GenericRecordJsonWriter.marshal(this);
         }
+
+        public Point2D getOrigin() {
+            return origin;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("origin", this::getOrigin);
+        }
+
     }
 
     /**
@@ -234,7 +276,12 @@ public class HwmfWindowing {
 
         @Override
         public String toString() {
-            return dimToString(size);
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("size", this::getSize);
         }
     }
 
@@ -268,7 +315,16 @@ public class HwmfWindowing {
 
         @Override
         public String toString() {
-            return pointToString(offset);
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public Point2D getOffset() {
+            return offset;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("offset", this::getOffset);
         }
     }
 
@@ -319,8 +375,18 @@ public class HwmfWindowing {
 
         @Override
         public String toString() {
-            return "{ scaleX: "+scale.getWidth()+", scaleY: "+scale.getHeight()+" }";
+            return GenericRecordJsonWriter.marshal(this);
         }
+
+        public Dimension2D getScale() {
+            return scale;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("scale", this::getScale);
+        }
+
     }
 
 
@@ -373,7 +439,16 @@ public class HwmfWindowing {
 
         @Override
         public String toString() {
-            return "{ scaleX: "+scale.getWidth()+", scaleY: "+scale.getHeight()+" }";
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public Dimension2D getScale() {
+            return scale;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("scale", this::getScale);
         }
     }
 
@@ -409,8 +484,18 @@ public class HwmfWindowing {
 
         @Override
         public String toString() {
-            return pointToString(offset);
+            return GenericRecordJsonWriter.marshal(this);
         }
+
+        public Point2D getOffset() {
+            return offset;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("offset", this::getOffset);
+        }
+
     }
 
     /**
@@ -439,7 +524,16 @@ public class HwmfWindowing {
         
         @Override
         public String toString() {
-            return boundsToString(bounds);
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public Rectangle2D getBounds() {
+            return bounds;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("bounds", this::getBounds);
         }
     }
 
@@ -470,7 +564,16 @@ public class HwmfWindowing {
         
         @Override
         public String toString() {
-            return boundsToString(bounds);
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public Rectangle2D getBounds() {
+            return bounds;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("bounds", this::getBounds);
         }
     }
 
@@ -500,9 +603,18 @@ public class HwmfWindowing {
         public void draw(HwmfGraphics ctx) {
 
         }
+
+        public int getRegion() {
+            return region;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("region", this::getRegion);
+        }
     }
 
-    public static class WmfScanObject {
+    public static class WmfScanObject implements GenericRecord {
         /**
          * A 16-bit unsigned integer that specifies the number of horizontal (x-axis)
          * coordinates in the ScanLines array. This value MUST be a multiple of 2, since left and right
@@ -549,6 +661,19 @@ public class HwmfWindowing {
             size += LittleEndianConsts.SHORT_SIZE;
             return size;
         }
+
+        @SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "count", () -> count,
+                "top", () -> top,
+                "bottom", () -> bottom,
+                "left_scanline", () -> Arrays.asList(left_scanline),
+                "right_scanline", () -> Arrays.asList(right_scanline),
+                "count2", () -> count2
+            );
+        }
     }
 
     public static class WmfCreateRegion implements HwmfRecord, HwmfObjectTableEntry {
@@ -578,7 +703,7 @@ public class HwmfWindowing {
          */
         private int maxScan;
 
-        private Rectangle2D bounds = new Rectangle2D.Double();
+        private final Rectangle2D bounds = new Rectangle2D.Double();
 
         /**
          * An array of Scan objects that define the scanlines in the region.
@@ -650,6 +775,21 @@ public class HwmfWindowing {
             }
 
             ctx.getProperties().setRegion(region);
+        }
+
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            final Map<String,Supplier<?>> m = new LinkedHashMap<>();
+            m.put("nextInChain", () -> nextInChain);
+            m.put("objectType", () -> objectType);
+            m.put("objectCount", () -> objectCount);
+            m.put("regionSize", () -> regionSize);
+            m.put("scanCount", () -> scanCount);
+            m.put("maxScan", () -> maxScan);
+            m.put("bounds", () -> bounds);
+            m.put("scanObjects", () -> Arrays.asList(scanObjects));
+            return Collections.unmodifiableMap(m);
         }
     }
 }

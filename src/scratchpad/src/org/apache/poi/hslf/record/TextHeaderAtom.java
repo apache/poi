@@ -19,8 +19,12 @@ package org.apache.poi.hslf.record;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.poi.hslf.exceptions.HSLFException;
+import org.apache.poi.sl.usermodel.TextShape.TextPlaceholder;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -34,15 +38,6 @@ public final class TextHeaderAtom extends RecordAtom implements ParentAwareRecor
 	private byte[] _header;
 	private RecordContainer parentRecord;
 
-	public static final int TITLE_TYPE = 0;
-	public static final int BODY_TYPE = 1;
-	public static final int NOTES_TYPE = 2;
-	public static final int OTHER_TYPE = 4;
-	public static final int CENTRE_BODY_TYPE = 5;
-	public static final int CENTER_TITLE_TYPE = 6;
-	public static final int HALF_BODY_TYPE = 7;
-	public static final int QUARTER_BODY_TYPE = 8;
-
 	/** The kind of text it is */
 	private int textType;
 	/** position in the owning SlideListWithText */
@@ -50,7 +45,15 @@ public final class TextHeaderAtom extends RecordAtom implements ParentAwareRecor
 
 	public int getTextType() { return textType; }
 	public void setTextType(int type) { textType = type; }
-	
+
+	public TextPlaceholder getTextTypeEnum() {
+		return TextPlaceholder.fromNativeId(textType);
+	}
+
+	public void setTextTypeEnum(TextPlaceholder placeholder) {
+		textType = placeholder.nativeId;
+	}
+
     /**
      * @return  0-based index of the text run in the SLWT container
      */
@@ -97,7 +100,7 @@ public final class TextHeaderAtom extends RecordAtom implements ParentAwareRecor
 		LittleEndian.putUShort(_header, 2, (int)_type);
 		LittleEndian.putInt(_header, 4, 4);
 
-		textType = OTHER_TYPE;
+		textType = TextPlaceholder.OTHER.nativeId;
 	}
 
 	/**
@@ -117,5 +120,13 @@ public final class TextHeaderAtom extends RecordAtom implements ParentAwareRecor
 
 		// Write out our type
 		writeLittleEndian(textType,out);
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"index", this::getIndex,
+			"textType", this::getTextTypeEnum
+		);
 	}
 }

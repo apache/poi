@@ -26,6 +26,7 @@ import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.record.MainMaster;
 import org.apache.poi.hslf.record.TextHeaderAtom;
 import org.apache.poi.hslf.record.TxMasterStyleAtom;
+import org.apache.poi.sl.usermodel.TextShape.TextPlaceholder;
 import org.apache.poi.util.Internal;
 
 /**
@@ -106,13 +107,15 @@ public final class HSLFSlideMaster extends HSLFMasterSheet {
             }
         }
 
-        switch (txtype) {
-            case TextHeaderAtom.CENTRE_BODY_TYPE:
-            case TextHeaderAtom.HALF_BODY_TYPE:
-            case TextHeaderAtom.QUARTER_BODY_TYPE:
-                return getPropCollection(TextHeaderAtom.BODY_TYPE, level, name, isCharacter);
-            case TextHeaderAtom.CENTER_TITLE_TYPE:
-                return getPropCollection(TextHeaderAtom.TITLE_TYPE, level, name, isCharacter);
+        switch (TextPlaceholder.fromNativeId(txtype)) {
+            case BODY:
+            case CENTER_BODY:
+            case HALF_BODY:
+            case QUARTER_BODY:
+                return getPropCollection(TextPlaceholder.BODY.nativeId, level, name, isCharacter);
+            case TITLE:
+            case CENTER_TITLE:
+                return getPropCollection(TextPlaceholder.TITLE.nativeId, level, name, isCharacter);
             default:
                 return null;
         }

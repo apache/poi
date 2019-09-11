@@ -22,10 +22,10 @@ import java.util.List;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
-
 import org.apache.poi.hslf.model.textproperties.TextProp;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.sl.usermodel.TextShape.TextPlaceholder;
 
 
 /**
@@ -47,26 +47,26 @@ public final class TestTxMasterStyleAtom extends TestCase {
         TxMasterStyleAtom[] txmaster = getMasterStyles();
         for (final TxMasterStyleAtom atom : txmaster) {
             final int txtype = atom.getTextType();
-            switch (txtype){
-                case TextHeaderAtom.TITLE_TYPE:
+            switch (TextPlaceholder.fromNativeId(txtype)){
+                case TITLE:
                     checkTitleType(atom);
                     break;
-                case TextHeaderAtom.BODY_TYPE:
+                case BODY:
                     checkBodyType(atom);
                     break;
-                case TextHeaderAtom.NOTES_TYPE:
+                case NOTES:
                     checkNotesType(atom);
                     break;
-                case TextHeaderAtom.OTHER_TYPE:
+                case OTHER:
                     checkOtherType(atom);
                     break;
-                case TextHeaderAtom.CENTRE_BODY_TYPE:
+                case CENTER_BODY:
                     break;
-                case TextHeaderAtom.CENTER_TITLE_TYPE:
+                case CENTER_TITLE:
                     break;
-                case TextHeaderAtom.HALF_BODY_TYPE:
+                case HALF_BODY:
                     break;
-                case TextHeaderAtom.QUARTER_BODY_TYPE:
+                case QUARTER_BODY:
                     break;
                 default:
                     fail("Unknown text type: " + txtype);
@@ -230,7 +230,7 @@ public final class TestTxMasterStyleAtom extends TestCase {
                 }
 
                 assertEquals("Document.Environment must contain TxMasterStyleAtom  with type=TextHeaderAtom.OTHER_TYPE",
-                        TextHeaderAtom.OTHER_TYPE, txstyle.getTextType());
+                        TextPlaceholder.OTHER.nativeId, txstyle.getTextType());
                 lst.add(txstyle);
             }
         }

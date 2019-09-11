@@ -20,8 +20,11 @@ package org.apache.poi.hslf.model.textproperties;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.poi.sl.usermodel.TabStop.TabStopType;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianConsts;
@@ -150,5 +153,13 @@ public class HSLFTabStopPropCollection extends TextProp {
         
         return sb.toString();
     }
-    
+
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "base", super::getGenericProperties,
+            "tabStops", this::getTabStops
+        );
+    }
 }

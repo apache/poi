@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.poi.common.usermodel.fonts.FontHeader;
 import org.apache.poi.common.usermodel.fonts.FontInfo;
@@ -199,5 +200,10 @@ public final class FontCollection extends RecordContainer {
 
     public List<HSLFFontInfo> getFonts() {
         return new ArrayList<>(fonts.values());
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return null;
     }
 }

@@ -24,11 +24,11 @@ import java.awt.RenderingHints;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.RescaleOp;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hwmf.usermodel.HwmfPicture;
 import org.apache.poi.sl.draw.BitmapImageRenderer;
 import org.apache.poi.sl.draw.DrawPictureShape;
@@ -111,5 +111,10 @@ public class HwmfImageRenderer implements ImageRenderer {
             image.draw(graphics, anchor);
             return true;
         }
+    }
+
+    @Override
+    public GenericRecord getGenericRecord() {
+        return image;
     }
 }

@@ -17,11 +17,12 @@
 
 package org.apache.poi.hslf.model;
 
-import static org.apache.poi.hslf.record.TextHeaderAtom.BODY_TYPE;
-import static org.apache.poi.hslf.record.TextHeaderAtom.CENTER_TITLE_TYPE;
-import static org.apache.poi.hslf.record.TextHeaderAtom.CENTRE_BODY_TYPE;
-import static org.apache.poi.hslf.record.TextHeaderAtom.TITLE_TYPE;
+import static org.apache.poi.sl.usermodel.TextShape.TextPlaceholder.BODY;
+import static org.apache.poi.sl.usermodel.TextShape.TextPlaceholder.CENTER_BODY;
+import static org.apache.poi.sl.usermodel.TextShape.TextPlaceholder.CENTER_TITLE;
+import static org.apache.poi.sl.usermodel.TextShape.TextPlaceholder.TITLE;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -33,7 +34,6 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.model.textproperties.CharFlagsTextProp;
 import org.apache.poi.hslf.model.textproperties.TextProp;
 import org.apache.poi.hslf.record.Environment;
-import org.apache.poi.hslf.record.TextHeaderAtom;
 import org.apache.poi.hslf.usermodel.HSLFMasterSheet;
 import org.apache.poi.hslf.usermodel.HSLFSlide;
 import org.apache.poi.hslf.usermodel.HSLFSlideMaster;
@@ -42,6 +42,7 @@ import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 import org.apache.poi.hslf.usermodel.HSLFTextParagraph;
 import org.apache.poi.hslf.usermodel.HSLFTextRun;
 import org.apache.poi.hslf.usermodel.HSLFTitleMaster;
+import org.apache.poi.sl.usermodel.TextShape.TextPlaceholder;
 import org.junit.Test;
 
 /**
@@ -63,30 +64,30 @@ public final class TestSlideMaster {
         assertEquals(2, ppt.getSlideMasters().size());
 
         //character attributes
-        assertEquals(40, getMasterVal(ppt, 0, TITLE_TYPE, "font.size", true));
-        assertEquals(48, getMasterVal(ppt, 1, TITLE_TYPE, "font.size", true));
+        assertEquals(40, getMasterVal(ppt, 0, TITLE, "font.size", true));
+        assertEquals(48, getMasterVal(ppt, 1, TITLE, "font.size", true));
 
-        int font1 = getMasterVal(ppt, 0, TITLE_TYPE, "font.index", true);
-        int font2 = getMasterVal(ppt, 1, TITLE_TYPE, "font.index", true);
+        int font1 = getMasterVal(ppt, 0, TITLE, "font.index", true);
+        int font2 = getMasterVal(ppt, 1, TITLE, "font.index", true);
         assertEquals("Arial", env.getFontCollection().getFontInfo(font1).getTypeface());
         assertEquals("Georgia", env.getFontCollection().getFontInfo(font2).getTypeface());
 
-        CharFlagsTextProp prop1 = getMasterProp(ppt, 0, TITLE_TYPE, "char_flags", true);
-        assertEquals(false, prop1.getSubValue(CharFlagsTextProp.BOLD_IDX));
-        assertEquals(false, prop1.getSubValue(CharFlagsTextProp.ITALIC_IDX));
-        assertEquals(true, prop1.getSubValue(CharFlagsTextProp.UNDERLINE_IDX));
+        CharFlagsTextProp prop1 = getMasterProp(ppt, 0, TITLE, "char_flags", true);
+        assertFalse(prop1.getSubValue(CharFlagsTextProp.BOLD_IDX));
+        assertFalse(prop1.getSubValue(CharFlagsTextProp.ITALIC_IDX));
+        assertTrue(prop1.getSubValue(CharFlagsTextProp.UNDERLINE_IDX));
 
-        CharFlagsTextProp prop2 = getMasterProp(ppt, 1, TITLE_TYPE, "char_flags", true);
-        assertEquals(false, prop2.getSubValue(CharFlagsTextProp.BOLD_IDX));
-        assertEquals(true, prop2.getSubValue(CharFlagsTextProp.ITALIC_IDX));
-        assertEquals(false, prop2.getSubValue(CharFlagsTextProp.UNDERLINE_IDX));
+        CharFlagsTextProp prop2 = getMasterProp(ppt, 1, TITLE, "char_flags", true);
+        assertFalse(prop2.getSubValue(CharFlagsTextProp.BOLD_IDX));
+        assertTrue(prop2.getSubValue(CharFlagsTextProp.ITALIC_IDX));
+        assertFalse(prop2.getSubValue(CharFlagsTextProp.UNDERLINE_IDX));
 
         //now paragraph attributes
-        assertEquals(0x266B, getMasterVal(ppt, 0, BODY_TYPE, "bullet.char", false));
-        assertEquals(0x2022, getMasterVal(ppt, 1, BODY_TYPE, "bullet.char", false));
+        assertEquals(0x266B, getMasterVal(ppt, 0, BODY, "bullet.char", false));
+        assertEquals(0x2022, getMasterVal(ppt, 1, BODY, "bullet.char", false));
 
-        int b1 = getMasterVal(ppt, 0, BODY_TYPE, "bullet.font", false);
-        int b2 = getMasterVal(ppt, 1, BODY_TYPE, "bullet.font", false);
+        int b1 = getMasterVal(ppt, 0, BODY, "bullet.font", false);
+        int b2 = getMasterVal(ppt, 1, BODY, "bullet.font", false);
         assertEquals("Arial", env.getFontCollection().getFontInfo(b1).getTypeface());
         assertEquals("Georgia", env.getFontCollection().getFontInfo(b2).getTypeface());
 
@@ -94,11 +95,11 @@ public final class TestSlideMaster {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T extends TextProp> T getMasterProp(HSLFSlideShow ppt, int masterIdx, int txtype, String propName, boolean isCharacter) {
-        return (T)ppt.getSlideMasters().get(masterIdx).getPropCollection(txtype, 0, propName, isCharacter).findByName(propName);
+    private static <T extends TextProp> T getMasterProp(HSLFSlideShow ppt, int masterIdx, TextPlaceholder txtype, String propName, boolean isCharacter) {
+        return (T)ppt.getSlideMasters().get(masterIdx).getPropCollection(txtype.nativeId, 0, propName, isCharacter).findByName(propName);
     }
 
-    private static int getMasterVal(HSLFSlideShow ppt, int masterIdx, int txtype, String propName, boolean isCharacter) {
+    private static int getMasterVal(HSLFSlideShow ppt, int masterIdx, TextPlaceholder txtype, String propName, boolean isCharacter) {
         return getMasterProp(ppt, masterIdx, txtype, propName, isCharacter).getValue();
     }
 
@@ -111,17 +112,17 @@ public final class TestSlideMaster {
         HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("slide_master.ppt"));
         assertEquals(1, ppt.getTitleMasters().size());
 
-        assertEquals(40, getMasterVal(ppt, 0, CENTER_TITLE_TYPE, "font.size", true));
-        CharFlagsTextProp prop1 = getMasterProp(ppt, 0, CENTER_TITLE_TYPE, "char_flags", true);
-        assertEquals(false, prop1.getSubValue(CharFlagsTextProp.BOLD_IDX));
-        assertEquals(false, prop1.getSubValue(CharFlagsTextProp.ITALIC_IDX));
-        assertEquals(true, prop1.getSubValue(CharFlagsTextProp.UNDERLINE_IDX));
+        assertEquals(40, getMasterVal(ppt, 0, CENTER_TITLE, "font.size", true));
+        CharFlagsTextProp prop1 = getMasterProp(ppt, 0, CENTER_TITLE, "char_flags", true);
+        assertFalse(prop1.getSubValue(CharFlagsTextProp.BOLD_IDX));
+        assertFalse(prop1.getSubValue(CharFlagsTextProp.ITALIC_IDX));
+        assertTrue(prop1.getSubValue(CharFlagsTextProp.UNDERLINE_IDX));
 
-        assertEquals(32, getMasterVal(ppt, 0, CENTRE_BODY_TYPE, "font.size", true));
-        CharFlagsTextProp prop2 = getMasterProp(ppt, 0, CENTRE_BODY_TYPE, "char_flags", true);
-        assertEquals(false, prop2.getSubValue(CharFlagsTextProp.BOLD_IDX));
-        assertEquals(false, prop2.getSubValue(CharFlagsTextProp.ITALIC_IDX));
-        assertEquals(false, prop2.getSubValue(CharFlagsTextProp.UNDERLINE_IDX));
+        assertEquals(32, getMasterVal(ppt, 0, CENTER_BODY, "font.size", true));
+        CharFlagsTextProp prop2 = getMasterProp(ppt, 0, CENTER_BODY, "char_flags", true);
+        assertFalse(prop2.getSubValue(CharFlagsTextProp.BOLD_IDX));
+        assertFalse(prop2.getSubValue(CharFlagsTextProp.ITALIC_IDX));
+        assertFalse(prop2.getSubValue(CharFlagsTextProp.UNDERLINE_IDX));
 
         ppt.close();
     }
@@ -138,18 +139,18 @@ public final class TestSlideMaster {
 
         for (List<HSLFTextParagraph> txt : slide.getTextParagraphs()) {
             HSLFTextRun rt = txt.get(0).getTextRuns().get(0);
-            switch(txt.get(0).getRunType()){
-                case TextHeaderAtom.CENTER_TITLE_TYPE:
+            switch(TextPlaceholder.fromNativeId(txt.get(0).getRunType())){
+                case CENTER_TITLE:
                     assertEquals("Arial", rt.getFontFamily());
                     assertEquals(32, rt.getFontSize(), 0);
-                    assertEquals(true, rt.isBold());
-                    assertEquals(true, rt.isUnderlined());
+                    assertTrue(rt.isBold());
+                    assertTrue(rt.isUnderlined());
                     break;
-                case TextHeaderAtom.CENTRE_BODY_TYPE:
+                case CENTER_BODY:
                     assertEquals("Courier New", rt.getFontFamily());
                     assertEquals(20, rt.getFontSize(), 0);
-                    assertEquals(true, rt.isBold());
-                    assertEquals(false, rt.isUnderlined());
+                    assertTrue(rt.isBold());
+                    assertFalse(rt.isUnderlined());
                     break;
             }
 
@@ -167,12 +168,12 @@ public final class TestSlideMaster {
         assertEquals(3, slide.size());
         for (List<HSLFTextParagraph> tparas : slide.get(0).getTextParagraphs()) {
             HSLFTextParagraph tpara = tparas.get(0);
-            if (tpara.getRunType() == TextHeaderAtom.TITLE_TYPE){
+            if (tpara.getRunType() == TITLE.nativeId){
                 HSLFTextRun rt = tpara.getTextRuns().get(0);
                 assertEquals(40, rt.getFontSize(), 0);
-                assertEquals(true, rt.isUnderlined());
+                assertTrue(rt.isUnderlined());
                 assertEquals("Arial", rt.getFontFamily());
-            } else if (tpara.getRunType() == TextHeaderAtom.BODY_TYPE){
+            } else if (tpara.getRunType() == BODY.nativeId){
                 HSLFTextRun rt = tpara.getTextRuns().get(0);
                 assertEquals(0, tpara.getIndentLevel());
                 assertEquals(32, rt.getFontSize(), 0);
@@ -189,12 +190,12 @@ public final class TestSlideMaster {
 
         for (List<HSLFTextParagraph> tparas : slide.get(1).getTextParagraphs()) {
             HSLFTextParagraph tpara = tparas.get(0);
-            if (tpara.getRunType() == TextHeaderAtom.TITLE_TYPE){
+            if (tpara.getRunType() == TITLE.nativeId){
                 HSLFTextRun rt = tpara.getTextRuns().get(0);
                 assertEquals(48, rt.getFontSize(), 0);
-                assertEquals(true, rt.isItalic());
+                assertTrue(rt.isItalic());
                 assertEquals("Georgia", rt.getFontFamily());
-            } else if (tpara.getRunType() == TextHeaderAtom.BODY_TYPE){
+            } else if (tpara.getRunType() == BODY.nativeId){
                 HSLFTextRun rt;
                 rt = tpara.getTextRuns().get(0);
                 assertEquals(0, tpara.getIndentLevel());
@@ -253,12 +254,12 @@ public final class TestSlideMaster {
 
         for (List<HSLFTextParagraph> tparas : slide.getTextParagraphs()) {
             HSLFTextParagraph tpara = tparas.get(0);
-            if (tpara.getRunType() == TextHeaderAtom.TITLE_TYPE){
+            if (tpara.getRunType() == TITLE.nativeId){
                 HSLFTextRun rt = tpara.getTextRuns().get(0);
                 assertEquals(40, rt.getFontSize(), 0);
-                assertEquals(true, rt.isUnderlined());
+                assertTrue(rt.isUnderlined());
                 assertEquals("Arial", rt.getFontFamily());
-            } else if (tpara.getRunType() == TextHeaderAtom.BODY_TYPE){
+            } else if (tpara.getRunType() == BODY.nativeId){
                 int[] indents = {32, 28, 24};
                 for (HSLFTextRun rt : tpara.getTextRuns()) {
                     int indent = tpara.getIndentLevel();

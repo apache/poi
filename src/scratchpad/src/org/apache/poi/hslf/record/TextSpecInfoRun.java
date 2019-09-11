@@ -17,15 +17,23 @@
 
 package org.apache.poi.hslf.record;
 
+import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
+
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Supplier;
 
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 
-public class TextSpecInfoRun {
+public class TextSpecInfoRun implements GenericRecord {
 
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 1_000_000;
@@ -51,34 +59,42 @@ public class TextSpecInfoRun {
     }
 
     /** A bit that specifies whether the spellInfo field exists. */
-    private static final BitField spellFld    = new BitField(0X00000001);
+    private static final BitField spellFld    = BitFieldFactory.getInstance(0X00000001);
     /** A bit that specifies whether the lid field exists. */
-    private static final BitField langFld     = new BitField(0X00000002);
+    private static final BitField langFld     = BitFieldFactory.getInstance(0X00000002);
     /** A bit that specifies whether the altLid field exists. */
-    private static final BitField altLangFld  = new BitField(0X00000004);
+    private static final BitField altLangFld  = BitFieldFactory.getInstance(0X00000004);
     // unused1, unused2 - Undefined and MUST be ignored.
     /** A bit that specifies whether the pp10runid, reserved3, and grammarError fields exist. */
-    private static final BitField pp10extFld  = new BitField(0X00000020);
+    private static final BitField pp10extFld  = BitFieldFactory.getInstance(0X00000020);
     /** A bit that specifies whether the bidi field exists. */
-    private static final BitField bidiFld     = new BitField(0X00000040);
+    private static final BitField bidiFld     = BitFieldFactory.getInstance(0X00000040);
     // unused3 - Undefined and MUST be ignored.
     // reserved1 - MUST be zero and MUST be ignored.
     /** A bit that specifies whether the smartTags field exists. */
-    private static final BitField smartTagFld = new BitField(0X00000200);
+    private static final BitField smartTagFld = BitFieldFactory.getInstance(0X00000200);
     // reserved2 - MUST be zero and MUST be ignored.
 
     /**
      * An optional unsigned integer that specifies an identifier for a character
      * run that contains StyleTextProp11 data. It MUST exist if and only if pp10ext is TRUE.
      **/
-    private static final BitField pp10runidFld = new BitField(0X0000000F);
+    private static final BitField pp10runidFld = BitFieldFactory.getInstance(0X0000000F);
     // reserved3 - An optional unsigned integer that MUST be zero, and MUST be ignored. It
     // MUST exist if and only if fPp10ext is TRUE.
     /**
      * An optional bit that specifies a grammar error. It MUST exist if and
      * only if fPp10ext is TRUE.
      **/
-    private static final BitField grammarErrorFld = new BitField(0X80000000);
+    private static final BitField grammarErrorFld = BitFieldFactory.getInstance(0X80000000);
+
+    private static final int[] FLAGS_MASKS = {
+        0X00000001, 0X00000002, 0X00000004, 0X00000020, 0X00000040, 0X00000200,
+    };
+
+    private static final String[] FLAGS_NAMES = {
+        "SPELL", "LANG", "ALT_LANG", "PP10_EXT", "BIDI", "SMART_TAG"
+    };
 
     //Length of special info run.
     private int length;
@@ -356,5 +372,19 @@ public class TextSpecInfoRun {
         }
         // if both parameters are invalid, remove the extension mask
         mask = pp10extFld.setBoolean(mask, pp10extMask != -1);
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        final Map<String,Supplier<?>> m = new LinkedHashMap<>();
+        m.put("flags", getBitsAsString(() -> mask, FLAGS_MASKS, FLAGS_NAMES));
+        m.put("spellInfo", this::getSpellInfo);
+        m.put("langId", this::getLangId);
+        m.put("altLangId", this::getAltLangId);
+        m.put("bidi", this::getBidi);
+        m.put("pp10RunId", this::getPP10RunId);
+        m.put("grammarError", this::getGrammarError);
+        m.put("smartTags", this::getSmartTagsBytes);
+        return Collections.unmodifiableMap(m);
     }
 }

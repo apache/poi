@@ -20,6 +20,10 @@ package org.apache.poi.hslf.record;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.util.LittleEndian;
@@ -216,5 +220,19 @@ public final class ColorSchemeAtom extends RecordAtom {
 		int[] clr = {backgroundColourRGB, textAndLinesColourRGB, shadowsColourRGB, titleTextColourRGB,
 				fillsColourRGB, accentColourRGB, accentAndHyperlinkColourRGB, accentAndFollowingHyperlinkColourRGB};
 		return clr[idx];
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		final Map<String, Supplier<?>> m = new LinkedHashMap<>();
+		m.put("backgroundColourRGB", this::getBackgroundColourRGB);
+	  	m.put("textAndLinesColourRGB", this::getTextAndLinesColourRGB);
+		m.put("shadowsColourRGB", this::getShadowsColourRGB);
+		m.put("titleTextColourRGB", this::getTitleTextColourRGB);
+		m.put("fillsColourRGB", this::getFillsColourRGB);
+		m.put("accentColourRGB", this::getAccentColourRGB);
+		m.put("accentAndHyperlinkColourRGB", this::getAccentAndHyperlinkColourRGB);
+		m.put("accentAndFollowingHyperlinkColourRGB", this::getAccentAndFollowingHyperlinkColourRGB);
+		return Collections.unmodifiableMap(m);
 	}
 }

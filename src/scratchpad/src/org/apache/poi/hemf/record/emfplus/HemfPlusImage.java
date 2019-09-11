@@ -36,8 +36,12 @@ import java.awt.image.WritableRaster;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
 import javax.imageio.ImageIO;
 
@@ -50,6 +54,8 @@ import org.apache.poi.hemf.usermodel.HemfPicture;
 import org.apache.poi.hwmf.usermodel.HwmfPicture;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.GenericRecordJsonWriter;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
@@ -279,7 +285,6 @@ public class HemfPlusImage {
 
     public static class EmfPlusImage implements EmfPlusObjectData {
         private static final int MAX_OBJECT_SIZE = 50_000_000;
-
 
         private final EmfPlusGraphicsVersion graphicsVersion = new EmfPlusGraphicsVersion();
         private EmfPlusImageDataType imageDataType;
@@ -595,9 +600,35 @@ public class HemfPlusImage {
 
             return bufImg;
         }
+
+        @Override
+        public String toString() {
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        @Override
+        public EmfPlusObjectType getGenericRecordType() {
+            return EmfPlusObjectType.IMAGE;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            final Map<String,Supplier<?>> m = new LinkedHashMap<>();
+
+            m.put("graphicsVersion", this::getGraphicsVersion);
+            m.put("imageDataType", this::getImageDataType);
+            m.put("bitmapWidth", this::getBitmapWidth);
+            m.put("bitmapHeight", this::getBitmapHeight);
+            m.put("bitmapStride", this::getBitmapStride);
+            m.put("pixelFormat", this::getPixelFormat);
+            m.put("bitmapType", this::getBitmapType);
+            m.put("imageData", this::getImageData);
+            m.put("metafileType", this::getMetafileType);
+            m.put("metafileDataSize", () -> metafileDataSize);
+
+            return Collections.unmodifiableMap(m);
+        }
     }
-
-
 
     public static class EmfPlusImageAttributes implements EmfPlusObjectData {
         private final EmfPlusGraphicsVersion graphicsVersion = new EmfPlusGraphicsVersion();
@@ -649,6 +680,26 @@ public class HemfPlusImage {
 
         @Override
         public void applyObject(HemfGraphics ctx, List<? extends EmfPlusObjectData> continuedObjectData) {
+        }
+
+        @Override
+        public String toString() {
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "graphicsVersion", this::getGraphicsVersion,
+                "wrapMode", this::getWrapMode,
+                "clampColor", this::getClampColor,
+                "objectClamp", this::getObjectClamp
+            );
+        }
+
+        @Override
+        public EmfPlusObjectType getGenericRecordType() {
+            return EmfPlusObjectType.IMAGE_ATTRIBUTES;
         }
     }
 

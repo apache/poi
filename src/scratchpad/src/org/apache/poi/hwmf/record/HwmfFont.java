@@ -19,7 +19,12 @@ package org.apache.poi.hwmf.record;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Supplier;
 
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.common.usermodel.fonts.FontCharset;
 import org.apache.poi.common.usermodel.fonts.FontFamily;
 import org.apache.poi.common.usermodel.fonts.FontHeader;
@@ -27,6 +32,8 @@ import org.apache.poi.common.usermodel.fonts.FontInfo;
 import org.apache.poi.common.usermodel.fonts.FontPitch;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.GenericRecordJsonWriter;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
@@ -34,7 +41,7 @@ import org.apache.poi.util.LittleEndianInputStream;
  * The Font object specifies the attributes of a logical font
  */
 @SuppressWarnings({"unused", "Duplicates"})
-public class HwmfFont implements FontInfo {
+public class HwmfFont implements FontInfo, GenericRecord {
 
     /**
      * The output precision defines how closely the output must match the requested font's height,
@@ -108,17 +115,17 @@ public class HwmfFont implements FontInfo {
      * ClipPrecision Flags specify clipping precision, which defines how to clip characters that are
      * partially outside a clipping region. These flags can be combined to specify multiple options.
      */
-    public static class WmfClipPrecision {
+    public static class WmfClipPrecision implements GenericRecord {
 
         /** Specifies that default clipping MUST be used. */
-        private static final BitField CLIP_DEFAULT_PRECIS = BitFieldFactory.getInstance(0x0000);
+        private static final BitField DEFAULT_PRECIS = BitFieldFactory.getInstance(0x0003);
 
 
         /** This value SHOULD NOT be used. */
-        private static final BitField CLIP_CHARACTER_PRECIS = BitFieldFactory.getInstance(0x0001);
+        private static final BitField CHARACTER_PRECIS = BitFieldFactory.getInstance(0x0001);
 
         /** This value MAY be returned when enumerating rasterized, TrueType and vector fonts. */
-        private static final BitField CLIP_STROKE_PRECIS = BitFieldFactory.getInstance(0x0002);
+        private static final BitField STROKE_PRECIS = BitFieldFactory.getInstance(0x0002);
 
         /**
          * This value is used to control font rotation, as follows:
@@ -128,39 +135,79 @@ public class HwmfFont implements FontInfo {
          * If clear, device fonts SHOULD rotate counterclockwise, but the rotation of other fonts
          * SHOULD be determined by the orientation of the coordinate system.
          */
-        private static final BitField CLIP_LH_ANGLES = BitFieldFactory.getInstance(0x0010);
+        private static final BitField LH_ANGLES = BitFieldFactory.getInstance(0x0010);
 
         /** This value SHOULD NOT be used. */
-        private static final BitField CLIP_TT_ALWAYS = BitFieldFactory.getInstance(0x0020);
+        private static final BitField TT_ALWAYS = BitFieldFactory.getInstance(0x0020);
 
-        /** This value specifies that font association SHOULD< be turned off. */
-        private static final BitField CLIP_DFA_DISABLE = BitFieldFactory.getInstance(0x0040);
+        /** This value specifies that font association SHOULD be turned off. */
+        private static final BitField DFA_DISABLE = BitFieldFactory.getInstance(0x0040);
 
         /**
          * This value specifies that font embedding MUST be used to render document content;
          * embedded fonts are read-only.
          */
-        private static final BitField CLIP_EMBEDDED = BitFieldFactory.getInstance(0x0080);
+        private static final BitField EMBEDDED = BitFieldFactory.getInstance(0x0080);
 
-        int flag;
+        private static final int[] FLAG_MASKS = {
+            0x0001, 0x0002, 0x0010, 0x0020, 0x0040, 0x0080
+        };
+
+        private static final String[] FLAG_NAMES = {
+            "CHARACTER_PRECIS",
+            "STROKE_PRECIS",
+            "LH_ANGLES",
+            "TT_ALWAYS",
+            "DFA_DISABLE",
+            "EMBEDDED"
+        };
+
+        private int flag;
 
         public int init(LittleEndianInputStream leis) {
             flag = leis.readUByte();
             return LittleEndianConsts.BYTE_SIZE;
         }
 
+        public boolean isDefaultPrecision() {
+            return !DEFAULT_PRECIS.isSet(flag);
+        }
+
+        public boolean isCharacterPrecision() {
+            return CHARACTER_PRECIS.isSet(flag);
+        }
+
+        public boolean isStrokePrecision() {
+            return STROKE_PRECIS.isSet(flag);
+        }
+
+        public boolean isLeftHandAngles() {
+            return LH_ANGLES.isSet(flag);
+        }
+
+        public boolean isTrueTypeAlways() {
+            return TT_ALWAYS.isSet(flag);
+        }
+
+        public boolean isFontAssociated() {
+            return !DFA_DISABLE.isSet(flag);
+        }
+
+        public boolean useEmbeddedFont() {
+            return EMBEDDED.isSet(flag);
+        }
+
         @Override
         public String toString() {
-            return
-                (((flag&0x3) == 0 ? "default " : " ")+
-                (CLIP_CHARACTER_PRECIS.isSet(flag) ? "char " : " ")+
-                (CLIP_STROKE_PRECIS.isSet(flag) ? "stroke " : " ")+
-                (CLIP_LH_ANGLES.isSet(flag) ? "angles " : " ")+
-                (CLIP_TT_ALWAYS.isSet(flag) ? "tt_always " : " ")+
-                (CLIP_DFA_DISABLE.isSet(flag) ? "dfa " : " ")+
-                (CLIP_EMBEDDED.isSet(flag) ? "embedded " : " ")
-                ).trim()
-            ;
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "isDefaultPrecision", this::isDefaultPrecision,
+                "flag", GenericRecordUtil.getBitsAsString(() -> flag, FLAG_MASKS, FLAG_NAMES)
+            );
         }
     }
 
@@ -456,21 +503,7 @@ public class HwmfFont implements FontInfo {
 
     @Override
     public String toString() {
-        return "{ height: "+height+
-                ", width: "+width+
-                ", escapment: "+escapement+
-                ", weight: "+weight+
-                ", italic: "+italic+
-                ", underline: "+underline+
-                ", strikeOut: "+strikeOut+
-                ", charset: '"+charSet+"'"+
-                ", outPrecision: '"+outPrecision+"'"+
-                ", clipPrecision: '"+clipPrecision+"'"+
-                ", quality: '"+quality+"'"+
-                ", pitch: '"+getPitch()+"'"+
-                ", family: '"+getFamily()+"'"+
-                ", facename: '"+facename+"'"+
-                "}";
+        return GenericRecordJsonWriter.marshal(this);
     }
 
     protected int readString(LittleEndianInputStream leis, StringBuilder sb, int limit) throws IOException {
@@ -488,5 +521,25 @@ public class HwmfFont implements FontInfo {
         sb.append(new String(buf, 0, readBytes-1, StandardCharsets.ISO_8859_1));
 
         return readBytes;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        final Map<String,Supplier<?>> m = new LinkedHashMap<>();
+        m.put("height", this::getHeight);
+        m.put("width", this::getWidth);
+        m.put("escapment", this::getEscapement);
+        m.put("weight", this::getWeight);
+        m.put("italic", this::isItalic);
+        m.put("underline", this::isUnderline);
+        m.put("strikeOut", this::isStrikeOut);
+        m.put("charset", this::getCharset);
+        m.put("outPrecision", this::getOutPrecision);
+        m.put("clipPrecision", this::getClipPrecision);
+        m.put("quality", this::getQuality);
+        m.put("pitch", this::getPitch);
+        m.put("family", this::getFamily);
+        m.put("typeface", this::getTypeface);
+        return Collections.unmodifiableMap(m);
     }
 }

@@ -17,10 +17,13 @@
 
 package org.apache.poi.hslf.record;
 
-import org.apache.poi.util.LittleEndian;
-
-import java.io.OutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * OEPlaceholderAtom (3998).
@@ -106,4 +109,10 @@ public final class OutlineTextRefAtom extends RecordAtom {
         return _index;
     }
 
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "textIndex", this::getTextIndex
+        );
+    }
 }

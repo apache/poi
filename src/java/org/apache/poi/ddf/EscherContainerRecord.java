@@ -22,7 +22,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
@@ -35,12 +38,12 @@ import org.apache.poi.util.POILogger;
  * used to represent many different types of records.
  */
 public final class EscherContainerRecord extends EscherRecord implements Iterable<EscherRecord> {
-    public static final short DGG_CONTAINER    = (short)0xF000;
-    public static final short BSTORE_CONTAINER = (short)0xF001;
-    public static final short DG_CONTAINER     = (short)0xF002;
-    public static final short SPGR_CONTAINER   = (short)0xF003;
-    public static final short SP_CONTAINER     = (short)0xF004;
-    public static final short SOLVER_CONTAINER = (short)0xF005;
+    public static final short DGG_CONTAINER    = EscherRecordTypes.DGG_CONTAINER.typeID;
+    public static final short BSTORE_CONTAINER = EscherRecordTypes.BSTORE_CONTAINER.typeID;
+    public static final short DG_CONTAINER     = EscherRecordTypes.DG_CONTAINER.typeID;
+    public static final short SPGR_CONTAINER   = EscherRecordTypes.SPGR_CONTAINER.typeID;
+    public static final short SP_CONTAINER     = EscherRecordTypes.SP_CONTAINER.typeID;
+    public static final short SOLVER_CONTAINER = EscherRecordTypes.SOLVER_CONTAINER.typeID;
 
     private static final POILogger log = POILogFactory.getLogger(EscherContainerRecord.class);
 
@@ -201,22 +204,9 @@ public final class EscherContainerRecord extends EscherRecord implements Iterabl
 
     @Override
     public String getRecordName() {
-        switch (getRecordId()) {
-            case DGG_CONTAINER:
-                return "DggContainer";
-            case BSTORE_CONTAINER:
-                return "BStoreContainer";
-            case DG_CONTAINER:
-                return "DgContainer";
-            case SPGR_CONTAINER:
-                return "SpgrContainer";
-            case SP_CONTAINER:
-                return "SpContainer";
-            case SOLVER_CONTAINER:
-                return "SolverContainer";
-            default:
-                return "Container 0x" + HexDump.toHex(getRecordId());
-        }
+        final short id = getRecordId();
+        EscherRecordTypes t = EscherRecordTypes.forTypeID(id);
+        return (t != EscherRecordTypes.UNKNOWN) ? t.recordName : "Container 0x" + HexDump.toHex(id);
     }
 
     @Override
@@ -297,5 +287,18 @@ public final class EscherContainerRecord extends EscherRecord implements Iterabl
         	{ "isContainer", isContainerRecord() },
             chList.toArray()
         };
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "base", super::getGenericProperties,
+            "isContainer", this::isContainerRecord
+        );
+    }
+
+    @Override
+    public Enum getGenericRecordType() {
+        return EscherRecordTypes.forTypeID(getRecordId());
     }
 }

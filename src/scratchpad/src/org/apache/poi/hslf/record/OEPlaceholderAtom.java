@@ -19,8 +19,11 @@ package org.apache.poi.hslf.record;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.poi.sl.usermodel.Placeholder;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -176,4 +179,13 @@ public final class OEPlaceholderAtom extends RecordAtom{
 
         out.write(recdata);
 	}
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "placementId", this::getPlacementId,
+            "placeholderId", this::getPlaceholderId,
+            "placeholderSize", this::getPlaceholderSize
+        );
+    }
 }

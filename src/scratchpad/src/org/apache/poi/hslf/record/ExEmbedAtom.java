@@ -19,7 +19,10 @@ package org.apache.poi.hslf.record;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
+import java.util.function.Supplier;
 
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
@@ -166,4 +169,25 @@ public class ExEmbedAtom extends RecordAtom {
         out.write(_data);
     }
 
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "followColorScheme", this::getFollowColorSchemeString,
+            "cantLockServer", this::getCantLockServerB,
+            "noSizeToServer", this::getNoSizeToServerB,
+            "isTable", this::getIsTable
+        );
+    }
+
+    private String getFollowColorSchemeString() {
+        switch (getFollowColorScheme()) {
+            default:
+            case DOES_NOT_FOLLOW_COLOR_SCHEME:
+                return "DOES_NOT_FOLLOW_COLOR_SCHEME";
+            case FOLLOWS_ENTIRE_COLOR_SCHEME:
+                return "FOLLOWS_ENTIRE_COLOR_SCHEME";
+            case FOLLOWS_TEXT_AND_BACKGROUND_SCHEME:
+                return "FOLLOWS_TEXT_AND_BACKGROUND_SCHEME";
+        }
+    }
 }

@@ -25,10 +25,13 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.poi.hslf.model.textproperties.HSLFTabStop;
 import org.apache.poi.hslf.model.textproperties.HSLFTabStopPropCollection;
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
@@ -221,5 +224,16 @@ public final class TextRulerAtom extends RecordAtom {
         this.leftMargin[0] = (int)leftMargin;
         this.indent[0] = (int)indent;
         this.indent[1] = (int)indent;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "defaultTabSize", this::getDefaultTabSize,
+            "numLevels", this::getNumberOfLevels,
+            "tabStops", this::getTabStops,
+            "leftMargins", () -> leftMargin,
+            "indents", () -> indent
+        );
     }
 }

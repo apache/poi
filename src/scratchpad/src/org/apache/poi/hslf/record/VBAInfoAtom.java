@@ -17,10 +17,12 @@
 
 package org.apache.poi.hslf.record;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
+import java.util.function.Supplier;
 
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -114,5 +116,12 @@ public final class VBAInfoAtom extends RecordAtom {
         this.version = version;
     }
 
-    
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "persistIdRef", this::getPersistIdRef,
+            "hasMacros", this::isHasMacros,
+            "version", this::getVersion
+        );
+    }
 }

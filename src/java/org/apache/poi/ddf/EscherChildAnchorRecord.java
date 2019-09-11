@@ -18,6 +18,10 @@
 
 package org.apache.poi.ddf;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -26,11 +30,8 @@ import org.apache.poi.util.LittleEndian;
  *
  * @see EscherChildAnchorRecord
  */
-public class EscherChildAnchorRecord
-        extends EscherRecord
-{
-    public static final short RECORD_ID = (short) 0xF00F;
-    public static final String RECORD_DESCRIPTION = "MsofbtChildAnchor";
+public class EscherChildAnchorRecord extends EscherRecord {
+    public static final short RECORD_ID = EscherRecordTypes.CHILD_ANCHOR.typeID;
 
     private int field_1_dx1;
     private int field_2_dy1;
@@ -91,7 +92,7 @@ public class EscherChildAnchorRecord
 
     @Override
     public String getRecordName() {
-        return "ChildAnchor";
+        return EscherRecordTypes.CHILD_ANCHOR.recordName;
     }
 
 
@@ -183,5 +184,21 @@ public class EscherChildAnchorRecord
             { "X2", field_3_dx2 },
             { "Y2", field_4_dy2 }
         };
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "base", super::getGenericProperties,
+            "x1", this::getDx1,
+            "y1", this::getDy1,
+            "x2", this::getDx2,
+            "y2", this::getDy2
+        );
+    }
+
+    @Override
+    public Enum getGenericRecordType() {
+        return EscherRecordTypes.CHILD_ANCHOR;
     }
 }

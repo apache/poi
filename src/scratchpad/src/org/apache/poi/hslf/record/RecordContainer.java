@@ -21,6 +21,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.poi.hslf.util.MutableByteArrayOutputStream;
 import org.apache.poi.util.ArrayUtil;
@@ -370,5 +372,8 @@ public abstract class RecordContainer extends Record
         }
     }
 
-
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return null;
+	}
 }

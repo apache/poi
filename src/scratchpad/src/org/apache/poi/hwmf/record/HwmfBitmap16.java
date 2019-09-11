@@ -19,20 +19,26 @@ package org.apache.poi.hwmf.record;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Supplier;
 
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
-public class HwmfBitmap16 {
-    final boolean isPartial;
-    int type;
-    int width;
-    int height;
-    int widthBytes;
-    int planes;
-    int bitsPixel;
-    
+public class HwmfBitmap16 implements GenericRecord {
+    private final boolean isPartial;
+    private int type;
+    private int width;
+    private int height;
+    private int widthBytes;
+    private int planes;
+    private int bitsPixel;
+    private byte[] bitmap;
+
     public HwmfBitmap16() {
         this(false);
     }
@@ -74,7 +80,7 @@ public class HwmfBitmap16 {
         }
 
         int length = (((width * bitsPixel + 15) >> 4) << 1) * height;
-        /*byte buf[] =*/ IOUtils.toByteArray(leis, length);
+        bitmap = IOUtils.toByteArray(leis, length);
         
         // TODO: this is not implemented ... please provide a sample, if it
         // ever happens to you, to come here ...
@@ -84,5 +90,19 @@ public class HwmfBitmap16 {
 
     public BufferedImage getImage() {
         return new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        final Map<String,Supplier<?>> m = new LinkedHashMap<>();
+        m.put("isPartial", () -> isPartial);
+        m.put("type", () -> type);
+        m.put("width", () -> width);
+        m.put("height", () -> height);
+        m.put("widthBytes", () -> widthBytes);
+        m.put("planes", () -> planes);
+        m.put("bitsPixel", () -> bitsPixel);
+        m.put("bitmap", () -> bitmap);
+        return Collections.unmodifiableMap(m);
     }
 }

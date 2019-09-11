@@ -18,12 +18,18 @@
 package org.apache.poi.hemf.record.emfplus;
 
 
+import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
+
 import java.io.IOException;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.draw.HemfGraphics.EmfRenderState;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.GenericRecordJsonWriter;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
@@ -53,6 +59,8 @@ public class HemfPlusHeader implements HemfPlusRecord {
         }
     }
 
+    private static final int[] FLAGS_MASK = { 0x0001 };
+    private static final String[] FLAGS_NAMES = { "DUAL_MODE" };
 
     private int flags;
     private final EmfPlusGraphicsVersion version = new EmfPlusGraphicsVersion();
@@ -121,13 +129,18 @@ public class HemfPlusHeader implements HemfPlusRecord {
 
     @Override
     public String toString() {
-        return "HemfPlusHeader{" +
-                "flags=" + flags +
-                ", version=" + version +
-                ", emfPlusFlags=" + emfPlusFlags +
-                ", logicalDpiX=" + logicalDpiX +
-                ", logicalDpiY=" + logicalDpiY +
-                '}';
+        return GenericRecordJsonWriter.marshal(this);
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "flags", this::getFlags,
+            "version", this::getVersion,
+            "emfPlusFlags", getBitsAsString(this::getEmfPlusFlags, FLAGS_MASK, FLAGS_NAMES),
+            "logicalDpiX", this::getLogicalDpiX,
+            "logicalDpiY", this::getLogicalDpiY
+        );
     }
 
     public static class EmfPlusGraphicsVersion {

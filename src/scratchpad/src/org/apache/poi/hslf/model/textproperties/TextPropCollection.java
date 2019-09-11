@@ -21,10 +21,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.record.StyleTextPropAtom;
 import org.apache.poi.util.HexDump;
@@ -38,7 +42,7 @@ import org.apache.poi.util.POILogger;
  * Used to hold the number of characters affected, the list of active
  *  properties, and the indent level if required.
  */
-public class TextPropCollection {
+public class TextPropCollection implements GenericRecord {
     private static final POILogger LOG = POILogFactory.getLogger(TextPropCollection.class);
     
     /** All the different kinds of paragraph properties we might handle */
@@ -392,5 +396,16 @@ public class TextPropCollection {
         }
         
         return out.toString();
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        Map<String,Supplier<?>> m = new LinkedHashMap<>();
+        m.put("charactersCovered", this::getCharactersCovered);
+        m.put("indentLevel", this::getIndentLevel);
+        textProps.forEach((s,t) -> m.put(s, () -> t));
+        m.put("maskSpecial", this::getSpecialMask);
+        m.put("textPropType", this::getTextPropType);
+        return Collections.unmodifiableMap(m);
     }
 }

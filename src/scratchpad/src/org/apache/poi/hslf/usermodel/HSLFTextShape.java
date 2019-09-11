@@ -19,6 +19,8 @@ package org.apache.poi.hslf.usermodel;
 
 import static org.apache.poi.hslf.record.RecordTypes.OEPlaceholderAtom;
 import static org.apache.poi.hslf.record.RecordTypes.RoundTripHFPlaceholder12;
+import static org.apache.poi.sl.usermodel.TextShape.TextPlaceholder.CENTER_TITLE;
+import static org.apache.poi.sl.usermodel.TextShape.TextPlaceholder.TITLE;
 
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
@@ -376,7 +378,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
     /* package */ HSLFTextAnchor getAlignment(){
         AbstractEscherOptRecord opt = getEscherOptRecord();
         EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.TEXT__ANCHORTEXT);
-        HSLFTextAnchor align = HSLFTextAnchor.TOP;
+        final HSLFTextAnchor align;
         if (prop == null){
             /**
              * If vertical alignment was not found in the shape properties then try to
@@ -386,29 +388,17 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
             HSLFSheet sh = getSheet();
             HSLFMasterSheet master = (sh != null) ? sh.getMasterSheet() : null;
             HSLFTextShape masterShape = (master != null) ? master.getPlaceholderByTextType(type) : null;
-            if (masterShape != null && type != TextHeaderAtom.OTHER_TYPE) {
+            if (masterShape != null && type != TextPlaceholder.OTHER.nativeId) {
                 align = masterShape.getAlignment();
             } else {
                 //not found in the master sheet. Use the hardcoded defaults.
-                switch (type){
-                     case TextHeaderAtom.TITLE_TYPE:
-                     case TextHeaderAtom.CENTER_TITLE_TYPE:
-                         align = HSLFTextAnchor.MIDDLE;
-                         break;
-                     default:
-                         align = HSLFTextAnchor.TOP;
-                         break;
-                 }
+                align = (TextPlaceholder.isTitle(type)) ? HSLFTextAnchor.MIDDLE : HSLFTextAnchor.TOP;
             }
         } else {
             align = HSLFTextAnchor.fromNativeId(prop.getPropertyValue());
         }
 
-        if (align == null) {
-            align = HSLFTextAnchor.TOP;
-        }
-
-        return align;
+        return (align == null) ?  HSLFTextAnchor.TOP : align;
     }
 
     /**
@@ -866,34 +856,34 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
         switch (placeholder) {
             default:
             case BODY:
-                runType = TextHeaderAtom.BODY_TYPE;
+                runType = TextPlaceholder.BODY.nativeId;
                 ph = Placeholder.BODY;
                 break;
             case TITLE:
-                runType = TextHeaderAtom.TITLE_TYPE;
+                runType = TITLE.nativeId;
                 ph = Placeholder.TITLE;
                 break;
             case CENTER_BODY:
-                runType = TextHeaderAtom.CENTRE_BODY_TYPE;
+                runType = TextPlaceholder.CENTER_BODY.nativeId;
                 ph = Placeholder.BODY;
                 break;
             case CENTER_TITLE:
-                runType = TextHeaderAtom.CENTER_TITLE_TYPE;
+                runType = CENTER_TITLE.nativeId;
                 ph = Placeholder.TITLE;
                 break;
             case HALF_BODY:
-                runType = TextHeaderAtom.HALF_BODY_TYPE;
+                runType = TextPlaceholder.HALF_BODY.nativeId;
                 ph = Placeholder.BODY;
                 break;
             case QUARTER_BODY:
-                runType = TextHeaderAtom.QUARTER_BODY_TYPE;
+                runType = TextPlaceholder.QUARTER_BODY.nativeId;
                 ph = Placeholder.BODY;
                 break;
             case NOTES:
-                runType = TextHeaderAtom.NOTES_TYPE;
+                runType = TextPlaceholder.NOTES.nativeId;
                 break;
             case OTHER:
-                runType = TextHeaderAtom.OTHER_TYPE;
+                runType = TextPlaceholder.OTHER.nativeId;
                 break;
         }
         setRunType(runType);
@@ -904,17 +894,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
 
     @Override
     public TextPlaceholder getTextPlaceholder() {
-        switch (getRunType()) {
-            default:
-            case TextHeaderAtom.BODY_TYPE: return TextPlaceholder.BODY;
-            case TextHeaderAtom.TITLE_TYPE: return TextPlaceholder.TITLE;
-            case TextHeaderAtom.NOTES_TYPE: return TextPlaceholder.NOTES;
-            case TextHeaderAtom.OTHER_TYPE: return TextPlaceholder.OTHER;
-            case TextHeaderAtom.CENTRE_BODY_TYPE: return TextPlaceholder.CENTER_BODY;
-            case TextHeaderAtom.CENTER_TITLE_TYPE: return TextPlaceholder.CENTER_TITLE;
-            case TextHeaderAtom.HALF_BODY_TYPE: return TextPlaceholder.HALF_BODY;
-            case TextHeaderAtom.QUARTER_BODY_TYPE: return TextPlaceholder.QUARTER_BODY;
-        }
+        return TextPlaceholder.fromNativeId(getRunType());
     }
 
 

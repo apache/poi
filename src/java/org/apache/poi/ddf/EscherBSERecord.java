@@ -17,6 +17,11 @@
 
 package org.apache.poi.ddf;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
@@ -32,8 +37,7 @@ public final class EscherBSERecord extends EscherRecord {
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
 
-    public static final short RECORD_ID = (short) 0xF007;
-    public static final String RECORD_DESCRIPTION = "MsofbtBSE";
+    public static final short RECORD_ID = EscherRecordTypes.BSE.typeID;
 
     public static final byte BT_ERROR = 0;
     public static final byte BT_UNKNOWN = 1;
@@ -147,7 +151,7 @@ public final class EscherBSERecord extends EscherRecord {
 
     @Override
     public String getRecordName() {
-        return "BSE";
+        return EscherRecordTypes.BSE.recordName;
     }
 
     /**
@@ -400,5 +404,29 @@ public final class EscherBSERecord extends EscherRecord {
             { "Blip Record", field_12_blipRecord },
             { "Extra Data", _remainingData }
         };
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        final Map<String, Supplier<?>> m = new LinkedHashMap<>(super.getGenericProperties());
+        m.put("blipTypeWin32", this::getBlipTypeWin32);
+        m.put("blipTypeMacOS", this::getBlipTypeMacOS);
+        m.put("suid", this::getUid);
+        m.put("tag", this::getTag);
+        m.put("size", this::getSize);
+        m.put("ref", this::getRef);
+        m.put("offset", this::getOffset);
+        m.put("usage", this::getUsage);
+        m.put("name", this::getName);
+        m.put("unused2", this::getUnused2);
+        m.put("unused3", this::getUnused3);
+        m.put("blipRecord", this::getBlipRecord);
+        m.put("remainingData", this::getRemainingData);
+        return Collections.unmodifiableMap(m);
+    }
+
+    @Override
+    public Enum getGenericRecordType() {
+        return EscherRecordTypes.BSE;
     }
 }

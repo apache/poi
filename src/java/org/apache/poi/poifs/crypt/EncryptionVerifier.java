@@ -16,10 +16,17 @@
 ==================================================================== */
 package org.apache.poi.poifs.crypt;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.common.usermodel.GenericRecord;
+
 /**
  * Used when checking if a key is valid for a document 
  */
-public abstract class EncryptionVerifier implements Cloneable {
+public abstract class EncryptionVerifier implements Cloneable, GenericRecord {
     private byte[] salt;
     private byte[] encryptedVerifier;
     private byte[] encryptedVerifierHash;
@@ -104,5 +111,19 @@ public abstract class EncryptionVerifier implements Cloneable {
         other.encryptedVerifierHash = (encryptedVerifierHash == null) ? null : encryptedVerifierHash.clone();
         other.encryptedKey = (encryptedKey == null) ? null : encryptedKey.clone();
         return other;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        final Map<String,Supplier<?>> m = new LinkedHashMap<>();
+        m.put("salt", this::getSalt);
+        m.put("encryptedVerifier", this::getEncryptedVerifier);
+        m.put("encryptedVerifierHash", this::getEncryptedVerifierHash);
+        m.put("encryptedKey", this::getEncryptedKey);
+        m.put("spinCount", this::getSpinCount);
+        m.put("cipherAlgorithm", this::getCipherAlgorithm);
+        m.put("chainingMode", this::getChainingMode);
+        m.put("hashAlgorithm", this::getHashAlgorithm);
+        return Collections.unmodifiableMap(m);
     }
 }

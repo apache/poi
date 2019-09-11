@@ -18,17 +18,18 @@
 
 package org.apache.poi.ddf;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndian;
 
 /**
  * This record simply holds the number of shapes in the drawing group and the
  * last shape id used for this drawing group.
  */
-public class EscherDgRecord
-    extends EscherRecord
-{
-    public static final short RECORD_ID = (short) 0xF008;
-    public static final String RECORD_DESCRIPTION = "MsofbtDg";
+public class EscherDgRecord extends EscherRecord {
+    public static final short RECORD_ID = EscherRecordTypes.DG.typeID;
 
     private int field_1_numShapes;
     private int field_2_lastMSOSPID;
@@ -81,7 +82,7 @@ public class EscherDgRecord
 
     @Override
     public String getRecordName() {
-        return "Dg";
+        return EscherRecordTypes.DG.recordName;
     }
 
     /**
@@ -149,5 +150,20 @@ public class EscherDgRecord
             { "NumShapes", field_1_numShapes },
             { "LastMSOSPID", field_2_lastMSOSPID }
         };
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "base", super::getGenericProperties,
+            "numShapes", this::getNumShapes,
+            "lastMSOSPID", this::getLastMSOSPID,
+            "drawingGroupId", this::getDrawingGroupId
+        );
+    }
+
+    @Override
+    public Enum getGenericRecordType() {
+        return EscherRecordTypes.DG;
     }
 }

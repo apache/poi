@@ -76,9 +76,9 @@ public class DrawPictureShape extends DrawSimpleShape {
      * @param graphics the graphics context
      * @return the image renderer
      */
-    @SuppressWarnings({"WeakerAccess", "unchecked"})
+    @SuppressWarnings({"unchecked"})
     public static ImageRenderer getImageRenderer(Graphics2D graphics, String contentType) {
-        final ImageRenderer renderer = (ImageRenderer)graphics.getRenderingHint(Drawable.IMAGE_RENDERER);
+        final ImageRenderer renderer = (graphics != null) ? (ImageRenderer)graphics.getRenderingHint(Drawable.IMAGE_RENDERER) : null;
         if (renderer != null && renderer.canRender(contentType)) {
             return renderer;
         }

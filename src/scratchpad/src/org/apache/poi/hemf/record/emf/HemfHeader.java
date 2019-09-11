@@ -20,15 +20,18 @@ package org.apache.poi.hemf.record.emf;
 import static org.apache.poi.hemf.record.emf.HemfDraw.readDimensionInt;
 import static org.apache.poi.hemf.record.emf.HemfDraw.readRectL;
 import static org.apache.poi.hemf.record.emf.HemfRecordIterator.HEADER_SIZE;
-import static org.apache.poi.hwmf.record.HwmfDraw.boundsToString;
-import static org.apache.poi.hwmf.record.HwmfDraw.dimToString;
 
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.poi.util.Dimension2DDouble;
+import org.apache.poi.util.GenericRecordJsonWriter;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
@@ -82,7 +85,7 @@ public class HemfHeader implements HemfRecord {
 
     public String getDescription() { return description; }
 
-    public long getnPalEntries() {
+    public long getNPalEntries() {
         return nPalEntries;
     }
 
@@ -120,23 +123,7 @@ public class HemfHeader implements HemfRecord {
 
     @Override
     public String toString() {
-        return "HemfHeader{" +
-                "boundsRectangle: " + boundsToString(boundsRectangle) +
-                ", frameRectangle: " + boundsToString(frameRectangle) +
-                ", bytes: " + bytes +
-                ", records: " + records +
-                ", handles: " + handles +
-                ", description: '" + (description == null ? "" : description) + "'" +
-                ", nPalEntries: " + nPalEntries +
-                ", hasExtension1: " + hasExtension1 +
-                ", cbPixelFormat: " + cbPixelFormat +
-                ", offPixelFormat: " + offPixelFormat +
-                ", bOpenGL: " + bOpenGL +
-                ", hasExtension2: " + hasExtension2 +
-                ", deviceDimension: " + dimToString(deviceDimension) +
-                ", microDimension: " + dimToString(microDimension) +
-                ", milliDimension: " + dimToString(milliDimension) +
-                '}';
+        return GenericRecordJsonWriter.marshal(this);
     }
 
     @Override
@@ -203,5 +190,26 @@ public class HemfHeader implements HemfRecord {
         }
 
         return size;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        final Map<String,Supplier<?>> m = new LinkedHashMap<>();
+        m.put("boundsRectangle", this::getBoundsRectangle);
+        m.put("frameRectangle", this::getFrameRectangle);
+        m.put("bytes", this::getBytes);
+        m.put("records", this::getRecords);
+        m.put("handles", this::getHandles);
+        m.put("description", this::getDescription);
+        m.put("nPalEntries", this::getNPalEntries);
+        m.put("hasExtension1", this::isHasExtension1);
+        m.put("cbPixelFormat", this::getCbPixelFormat);
+        m.put("offPixelFormat", this::getOffPixelFormat);
+        m.put("bOpenGL", this::getbOpenGL);
+        m.put("hasExtension2", this::isHasExtension2);
+        m.put("deviceDimension", this::getDeviceDimension);
+        m.put("milliDimension", this::getMilliDimension);
+        m.put("microDimension", this::getMicroDimension);
+        return Collections.unmodifiableMap(m);
     }
 }

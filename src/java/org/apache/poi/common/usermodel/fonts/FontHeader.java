@@ -17,10 +17,18 @@
 
 package org.apache.poi.common.usermodel.fonts;
 
+import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
+import static org.apache.poi.util.GenericRecordUtil.safeEnum;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Supplier;
 
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianInput;
@@ -34,8 +42,76 @@ import org.apache.poi.util.LittleEndianInputStream;
  *
  * @see <a href="http://www.w3.org/Submission/EOT">Embedded OpenType (EOT) File Format</a>
  */
-@SuppressWarnings({"FieldCanBeLocal", "unused", "Duplicates"})
-public class FontHeader implements FontInfo {
+@SuppressWarnings({"FieldCanBeLocal", "unused", "Duplicates", "WeakerAccess"})
+public class FontHeader implements FontInfo, GenericRecord {
+
+    public enum PanoseFamily {
+        ANY, NO_FIT, TEXT_DISPLAY, SCRIPT, DECORATIVE, PICTORIAL
+    }
+
+    public enum PanoseSerif {
+        ANY, NO_FIT, COVE, OBTUSE_COVE, SQUARE_COVE, OBTUSE_SQUARE_COVE, SQUARE, THIN, BONE,
+        EXAGGERATED, TRIANGLE, NORMAL_SANS, OBTUSE_SANS, PERP_SANS, FLARED, ROUNDED
+    }
+
+    public enum PanoseWeight {
+        ANY, NO_FIT, VERY_LIGHT, LIGHT, THIN, BOOK, MEDIUM, DEMI, BOLD, HEAVY, BLACK, NORD
+    }
+
+    public enum PanoseProportion {
+        ANY, NO_FIT, OLD_STYLE, MODERN, EVEN_WIDTH, EXPANDED, CONDENSED, VERY_EXPANDED, VERY_CONDENSED, MONOSPACED
+    }
+
+    public enum PanoseContrast {
+        ANY, NO_FIT, NONE, VERY_LOW, LOW, MEDIUM_LOW, MEDIUM, MEDIUM_HIGH, HIGH, VERY_HIGH
+    }
+
+    public enum PanoseStroke {
+        ANY, NO_FIT, GRADUAL_DIAG, GRADUAL_TRAN, GRADUAL_VERT, GRADUAL_HORZ, RAPID_VERT, RAPID_HORZ, INSTANT_VERT
+    }
+
+    public enum PanoseArmStyle {
+        ANY, NO_FIT, STRAIGHT_ARMS_HORZ, STRAIGHT_ARMS_WEDGE, STRAIGHT_ARMS_VERT, STRAIGHT_ARMS_SINGLE_SERIF,
+        STRAIGHT_ARMS_DOUBLE_SERIF, BENT_ARMS_HORZ, BENT_ARMS_WEDGE, BENT_ARMS_VERT, BENT_ARMS_SINGLE_SERIF,
+        BENT_ARMS_DOUBLE_SERIF,
+    }
+
+    public enum PanoseLetterForm {
+        ANY, NO_FIT, NORMAL_CONTACT, NORMAL_WEIGHTED, NORMAL_BOXED, NORMAL_FLATTENED, NORMAL_ROUNDED,
+        NORMAL_OFF_CENTER, NORMAL_SQUARE, OBLIQUE_CONTACT, OBLIQUE_WEIGHTED, OBLIQUE_BOXED, OBLIQUE_FLATTENED,
+        OBLIQUE_ROUNDED, OBLIQUE_OFF_CENTER, OBLIQUE_SQUARE
+    }
+
+    public enum PanoseMidLine {
+        ANY, NO_FIT, STANDARD_TRIMMED, STANDARD_POINTED, STANDARD_SERIFED, HIGH_TRIMMED, HIGH_POINTED, HIGH_SERIFED,
+        CONSTANT_TRIMMED, CONSTANT_POINTED, CONSTANT_SERIFED, LOW_TRIMMED, LOW_POINTED, LOW_SERIFED
+    }
+
+    public enum PanoseXHeight {
+        ANY, NO_FIT, CONSTANT_SMALL, CONSTANT_STD, CONSTANT_LARGE, DUCKING_SMALL, DUCKING_STD, DUCKING_LARGE
+    }
+
+    private static final int[] FLAGS_MASKS = {
+        0x00000001, 0x00000004, 0x00000010, 0x00000020, 0x00000040, 0x00000080, 0x10000000
+    };
+
+    private static final String[] FLAGS_NAMES = {
+        "SUBSET", "TTCOMPRESSED", "FAILIFVARIATIONSIMULATED", "EMBEDEUDC", "VALIDATIONTESTS", "WEBOBJECT", "XORENCRYPTDATA"
+    };
+
+    private static final int[] FSTYPE_MASKS = {
+        0x0000, 0x0002, 0x0004, 0x0008, 0x0100, 0x0200
+    };
+
+    private static final String[] FSTYPE_NAMES = {
+        "INSTALLABLE_EMBEDDING",
+        "RESTRICTED_LICENSE_EMBEDDING",
+        "PREVIEW_PRINT_EMBEDDING",
+        "EDITABLE_EMBEDDING",
+        "NO_SUBSETTING",
+        "BITMAP_EMBEDDING_ONLY"
+    };
+
     /**
      * Fonts with a font weight of 400 are regarded as regular weighted.
      * Higher font weights (up to 1000) are bold - lower weights are thin.
@@ -142,53 +218,54 @@ public class FontHeader implements FontInfo {
     }
 
     public FontPitch getPitch() {
-        byte familyKind = panose[0];
-        switch (familyKind) {
+        switch (getPanoseFamily()) {
             default:
-            // Any
-            case 0:
-            // No Fit
-            case 1:
+            case ANY:
+            case NO_FIT:
                 return FontPitch.VARIABLE;
 
             // Latin Text
-            case 2:
-                // Latin Decorative
-            case 4:
-                byte proportion = panose[3];
-                return proportion == 9 ? FontPitch.FIXED : FontPitch.VARIABLE;
+            case TEXT_DISPLAY:
+            // Latin Decorative
+            case DECORATIVE:
+                return (getPanoseProportion() == PanoseProportion.MONOSPACED) ? FontPitch.FIXED : FontPitch.VARIABLE;
 
             // Latin Hand Written
-            case 3:
-                // Latin Symbol
-            case 5:
-                byte spacing = panose[3];
-                return spacing == 3 ? FontPitch.FIXED : FontPitch.VARIABLE;
+            case SCRIPT:
+            // Latin Symbol
+            case PICTORIAL:
+                return (getPanoseProportion() == PanoseProportion.MODERN) ? FontPitch.FIXED : FontPitch.VARIABLE;
         }
 
     }
 
     public FontFamily getFamily() {
-        switch (panose[0]) {
-            // Any
-            case 0:
-            // No Fit
-            case 1:
+        switch (getPanoseFamily()) {
+            case ANY:
+            case NO_FIT:
                 return FontFamily.FF_DONTCARE;
             // Latin Text
-            case 2:
-                byte serifStyle = panose[1];
-                return (10 <= serifStyle && serifStyle <= 15)
-                    ? FontFamily.FF_SWISS : FontFamily.FF_ROMAN;
+            case TEXT_DISPLAY:
+                switch (getPanoseSerif()) {
+                    case TRIANGLE:
+                    case NORMAL_SANS:
+                    case OBTUSE_SANS:
+                    case PERP_SANS:
+                    case FLARED:
+                    case ROUNDED:
+                        return FontFamily.FF_SWISS;
+                    default:
+                        return FontFamily.FF_ROMAN;
+                }
             // Latin Hand Written
-            case 3:
+            case SCRIPT:
                 return FontFamily.FF_SCRIPT;
             // Latin Decorative
             default:
-            case 4:
+            case DECORATIVE:
                 return FontFamily.FF_DECORATIVE;
             // Latin Symbol
-            case 5:
+            case PICTORIAL:
                 return FontFamily.FF_MODERN;
         }
     }
@@ -221,7 +298,79 @@ public class FontHeader implements FontInfo {
     public int getFlags() {
         return flags;
     }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        final Map<String,Supplier<?>> m = new LinkedHashMap<>();
+        m.put("eotSize", () -> eotSize);
+        m.put("fontDataSize", () -> fontDataSize);
+        m.put("version", () -> version);
+        m.put("flags", getBitsAsString(this::getFlags, FLAGS_MASKS, FLAGS_NAMES));
+        m.put("panose.familyType", this::getPanoseFamily);
+        m.put("panose.serifType", this::getPanoseSerif);
+        m.put("panose.weight", this::getPanoseWeight);
+        m.put("panose.proportion", this::getPanoseProportion);
+        m.put("panose.contrast", this::getPanoseContrast);
+        m.put("panose.stroke", this::getPanoseStroke);
+        m.put("panose.armStyle", this::getPanoseArmStyle);
+        m.put("panose.letterForm", this::getPanoseLetterForm);
+        m.put("panose.midLine", this::getPanoseMidLine);
+        m.put("panose.xHeight", this::getPanoseXHeight);
+        m.put("charset", this::getCharset);
+        m.put("italic", this::isItalic);
+        m.put("weight", this::getWeight);
+        m.put("fsType", getBitsAsString(() -> fsType, FSTYPE_MASKS, FSTYPE_NAMES));
+        m.put("unicodeRange1", () -> unicodeRange1);
+        m.put("unicodeRange2", () -> unicodeRange2);
+        m.put("unicodeRange3", () -> unicodeRange3);
+        m.put("unicodeRange4", () -> unicodeRange4);
+        m.put("codePageRange1", () -> codePageRange1);
+        m.put("codePageRange2", () -> codePageRange2);
+        m.put("checkSumAdjustment", () -> checkSumAdjustment);
+        m.put("familyName", this::getFamilyName);
+        m.put("styleName", this::getStyleName);
+        m.put("versionName", this::getVersionName);
+        m.put("fullName", this::getFullName);
+        return Collections.unmodifiableMap(m);
+    }
+
+    public PanoseFamily getPanoseFamily() {
+        return safeEnum(PanoseFamily.values(), () -> panose[0]).get();
+    }
+
+    public PanoseSerif getPanoseSerif() {
+        return safeEnum(PanoseSerif.values(), () -> panose[1]).get();
+    }
+
+    public PanoseWeight getPanoseWeight() {
+        return safeEnum(PanoseWeight.values(), () -> panose[2]).get();
+    }
+
+    public PanoseProportion getPanoseProportion() {
+        return safeEnum(PanoseProportion.values(), () -> panose[3]).get();
+    }
+
+    public PanoseContrast getPanoseContrast() {
+        return safeEnum(PanoseContrast.values(), () -> panose[4]).get();
+    }
+
+    public PanoseStroke getPanoseStroke() {
+        return safeEnum(PanoseStroke.values(), () -> panose[5]).get();
+    }
+
+    public PanoseArmStyle getPanoseArmStyle() {
+        return safeEnum(PanoseArmStyle.values(), () -> panose[6]).get();
+    }
+
+    public PanoseLetterForm getPanoseLetterForm() {
+        return safeEnum(PanoseLetterForm.values(), () -> panose[7]).get();
+    }
+
+    public PanoseMidLine getPanoseMidLine() {
+        return safeEnum(PanoseMidLine.values(), () -> panose[8]).get();
+    }
+
+    public PanoseXHeight getPanoseXHeight() {
+        return safeEnum(PanoseXHeight.values(), () -> panose[9]).get();
+    }
 }
-
-
-

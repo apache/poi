@@ -22,8 +22,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.poi.hslf.exceptions.HSLFException;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
@@ -177,4 +180,11 @@ public final class TextSpecInfoAtom extends RecordAtom {
         return lst.toArray(new TextSpecInfoRun[lst.size()]);
     }
 
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "charactersCovered", this::getCharactersCovered,
+            "textSpecInfoRuns", this::getTextSpecInfoRuns
+        );
+    }
 }

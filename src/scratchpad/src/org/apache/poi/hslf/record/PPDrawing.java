@@ -20,8 +20,15 @@ package org.apache.poi.hslf.record;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
 import org.apache.poi.ddf.EscherBoolProperty;
@@ -31,11 +38,13 @@ import org.apache.poi.ddf.EscherOptRecord;
 import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.ddf.EscherRGBProperty;
 import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.ddf.EscherRecordTypes;
 import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.ddf.EscherSpgrRecord;
 import org.apache.poi.ddf.EscherTextboxRecord;
 import org.apache.poi.sl.usermodel.ShapeType;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogger;
@@ -52,7 +61,7 @@ import org.apache.poi.util.POILogger;
 
 // For now, pretending to be an atom. Might not always be, but that
 //  would require a wrapping class
-public final class PPDrawing extends RecordAtom {
+public final class PPDrawing extends RecordAtom implements Iterable<EscherRecord> {
 
 	//arbitrarily selected; may need to increase
 	private static final int MAX_RECORD_LENGTH = 10_485_760;
@@ -70,7 +79,13 @@ public final class PPDrawing extends RecordAtom {
 	/**
 	 * Get access to the underlying Escher Records
 	 */
+	@SuppressWarnings("WeakerAccess")
 	public List<EscherRecord> getEscherRecords() { return childRecords; }
+
+	@Override
+	public Iterator<EscherRecord> iterator() {
+		return childRecords.iterator();
+	}
 
 	/**
 	 * Get access to the atoms inside Textboxes
@@ -97,7 +112,7 @@ public final class PPDrawing extends RecordAtom {
 	/**
 	 * Sets everything up, groks the escher etc
 	 */
-	protected PPDrawing(byte[] source, int start, int len) {
+	PPDrawing(byte[] source, int start, int len) {
 		// Get the header
 		_header = new byte[8];
 		System.arraycopy(source,start,_header,0,8);
@@ -115,61 +130,59 @@ public final class PPDrawing extends RecordAtom {
 		EscherContainerRecord dgContainer = getDgContainer();
 
 		if (dgContainer != null) {
-			textboxWrappers = findInDgContainer(dgContainer);
+			textboxWrappers = Stream.of(dgContainer).
+				flatMap(findEscherContainer(EscherRecordTypes.SPGR_CONTAINER)).
+				flatMap(findEscherContainer(EscherRecordTypes.SP_CONTAINER)).
+				flatMap(PPDrawing::getTextboxHelper).
+				toArray(EscherTextboxWrapper[]::new);
 		} else {
 			// Find and EscherTextboxRecord's, and wrap them up
 			final List<EscherTextboxWrapper> textboxes = new ArrayList<>();
 			findEscherTextboxRecord(childRecords, textboxes);
-			this.textboxWrappers = textboxes.toArray(new EscherTextboxWrapper[textboxes.size()]);
+			this.textboxWrappers = textboxes.toArray(new EscherTextboxWrapper[0]);
 		}
 	}
-	private EscherTextboxWrapper[] findInDgContainer(final EscherContainerRecord dgContainer) {
-		final List<EscherTextboxWrapper> found = new LinkedList<>();
-		final EscherContainerRecord spgrContainer = findFirstEscherContainerRecordOfType(RecordTypes.EscherSpgrContainer, dgContainer);
-		final EscherContainerRecord[] spContainers = findAllEscherContainerRecordOfType(RecordTypes.EscherSpContainer, spgrContainer);
-		for (EscherContainerRecord spContainer : spContainers) {
-			EscherSpRecord sp = (EscherSpRecord)findFirstEscherRecordOfType(RecordTypes.EscherSp, spContainer);
-			EscherTextboxRecord clientTextbox = (EscherTextboxRecord)findFirstEscherRecordOfType(RecordTypes.EscherClientTextbox, spContainer);
-			if (null == clientTextbox) { continue; }
 
-			EscherTextboxWrapper w = new EscherTextboxWrapper(clientTextbox);
-            StyleTextProp9Atom nineAtom = findInSpContainer(spContainer);
-			w.setStyleTextProp9Atom(nineAtom);
-			if (null != sp) {
-			    w.setShapeId(sp.getShapeId());
+	private static Stream<EscherTextboxWrapper> getTextboxHelper(EscherContainerRecord spContainer) {
+		Optional<EscherTextboxRecord> oTB = firstEscherRecord(spContainer, EscherRecordTypes.CLIENT_TEXTBOX);
+		if (!oTB.isPresent()) {
+			return Stream.empty();
+		}
+
+		EscherTextboxWrapper tbw = new EscherTextboxWrapper(oTB.get());
+		findInSpContainer(spContainer).ifPresent(tbw::setStyleTextProp9Atom);
+
+		Optional<EscherSpRecord> oSP = firstEscherRecord(spContainer, EscherRecordTypes.SP);
+		oSP.map(EscherSpRecord::getShapeId).ifPresent(tbw::setShapeId);
+
+		return Stream.of(tbw);
+	}
+
+	private static Optional<StyleTextProp9Atom> findInSpContainer(final EscherContainerRecord spContainer) {
+		Optional<HSLFEscherClientDataRecord> oCD = firstEscherRecord(spContainer, EscherRecordTypes.CLIENT_DATA);
+		return oCD.map(HSLFEscherClientDataRecord::getHSLFChildRecords).map(List::stream).orElseGet(Stream::empty).
+			filter(sameHSLF(RecordTypes.ProgTags)).
+			flatMap(r -> Stream.of(r.getChildRecords())).
+			filter(sameHSLF(RecordTypes.ProgBinaryTag)).
+			flatMap(PPDrawing::findInProgBinaryTag).
+			findFirst();
+	}
+
+	private static Stream<StyleTextProp9Atom> findInProgBinaryTag(Record r) {
+		Record[] ch = r.getChildRecords();
+		if (ch != null &&
+			ch.length == 2 &&
+			ch[0] instanceof CString &&
+			ch[1] instanceof BinaryTagDataBlob &&
+			"___PPT9".equals(((CString)ch[0]).getText())
+		) {
+			BinaryTagDataBlob blob = (BinaryTagDataBlob) ch[1];
+			StyleTextProp9Atom prop9 = (StyleTextProp9Atom) blob.findFirstOfType(RecordTypes.StyleTextProp9Atom.typeID);
+			if (prop9 != null) {
+				return Stream.of(prop9);
 			}
-			found.add(w);
 		}
-		return found.toArray(new EscherTextboxWrapper[found.size()]);
-	}
-	
-	private StyleTextProp9Atom findInSpContainer(final EscherContainerRecord spContainer) {
-        HSLFEscherClientDataRecord cldata = spContainer.getChildById(RecordTypes.EscherClientData.typeID);
-        if (cldata == null) {
-            return null;
-        }
-        DummyPositionSensitiveRecordWithChildren progTags =
-            getChildRecord(cldata.getHSLFChildRecords(), RecordTypes.ProgTags);
-        if (progTags == null) {
-            return null;
-        }
-        DummyPositionSensitiveRecordWithChildren progBinaryTag =
-            (DummyPositionSensitiveRecordWithChildren)progTags.findFirstOfType(RecordTypes.ProgBinaryTag.typeID);
-        if (progBinaryTag == null) {
-            return null;
-        }
-		int size = progBinaryTag.getChildRecords().length;
-		if (2 != size) { return null; }
-
-		final Record r0 = progBinaryTag.getChildRecords()[0];
-		final Record r1 = progBinaryTag.getChildRecords()[1];
-		
-		if (!(r0 instanceof CString)) { return null; }
-		if (!("___PPT9".equals(((CString) r0).getText()))) { return null; }
-		if (!(r1 instanceof BinaryTagDataBlob )) { return null; }
-		final BinaryTagDataBlob blob = (BinaryTagDataBlob) r1;
-		if (1 != blob.getChildRecords().length) { return null; }
-		return (StyleTextProp9Atom) blob.findFirstOfType(RecordTypes.StyleTextProp9Atom.typeID);
+		return Stream.empty();
 	}
 
 	/**
@@ -192,7 +205,7 @@ public final class PPDrawing extends RecordAtom {
 			logger.log(POILogger.WARN, "Hit short DDF record at " + startPos + " - " + size);
 		}
 
-		/**
+		/*
 		 * Sanity check. Always advance the cursor by the correct value.
 		 *
 		 * getRecordSize() must return exactly the same number of bytes that was written in fillFields.
@@ -349,15 +362,7 @@ public final class PPDrawing extends RecordAtom {
 	 * @since POI 3.14-Beta2
 	 */
 	public EscherContainerRecord getDgContainer() {
-	    if (childRecords.isEmpty()) {
-	        return null;
-	    }
-	    EscherRecord r = childRecords.get(0);
-	    if (r instanceof EscherContainerRecord && r.getRecordId() == RecordTypes.EscherDgContainer.typeID) {
-	        return (EscherContainerRecord)r;
-	    } else {
-	        return null;
-	    }
+		return (EscherContainerRecord)firstEscherRecord(this, EscherRecordTypes.DG_CONTAINER).orElse(null);
 	}
 	
 	/**
@@ -367,72 +372,45 @@ public final class PPDrawing extends RecordAtom {
 	 */
 	public EscherDgRecord getEscherDgRecord(){
 		if (dg == null) {
-		    EscherContainerRecord dgr = getDgContainer();
-		    if (dgr != null) {
-    			for(EscherRecord r : dgr.getChildRecords()){
-    				if(r instanceof EscherDgRecord){
-    					dg = (EscherDgRecord)r;
-    					break;
-    				}
-    			}
-		    }
+			firstEscherRecord(this, EscherRecordTypes.DG_CONTAINER).
+			flatMap(c -> firstEscherRecord((EscherContainerRecord)c, EscherRecordTypes.DG)).
+			ifPresent(c -> dg = (EscherDgRecord)c);
 		}
 		return dg;
 	}
 
-    protected EscherContainerRecord findFirstEscherContainerRecordOfType(RecordTypes type, EscherContainerRecord parent) {
-    	if (null == parent) { return null; }
-		final List<EscherContainerRecord> children = parent.getChildContainers();
-		for (EscherContainerRecord child : children) {
-			if (type.typeID == child.getRecordId()) {
-				return child;
-			}
-		}
-		return null;
-    }
-    protected EscherRecord findFirstEscherRecordOfType(RecordTypes type, EscherContainerRecord parent) {
-    	if (null == parent) { return null; }
-		final List<EscherRecord> children = parent.getChildRecords();
-		for (EscherRecord child : children) {
-			if (type.typeID == child.getRecordId()) {
-				return child;
-			}
-		}
-		return null;
-    }
-    protected EscherContainerRecord[] findAllEscherContainerRecordOfType(RecordTypes type, EscherContainerRecord parent) {
-    	if (null == parent) { return new EscherContainerRecord[0]; }
-		final List<EscherContainerRecord> children = parent.getChildContainers();
-		final List<EscherContainerRecord> result = new LinkedList<>();
-		for (EscherContainerRecord child : children) {
-			if (type.typeID == child.getRecordId()) {
-				result.add(child);
-			}
-		}
-		return result.toArray(new EscherContainerRecord[result.size()]);
+    public StyleTextProp9Atom[] getNumberedListInfo() {
+		EscherContainerRecord dgContainer = getDgContainer();
+
+		return (dgContainer == null) ? new StyleTextProp9Atom[0] : Stream.of(dgContainer).
+			flatMap(findEscherContainer(EscherRecordTypes.SPGR_CONTAINER)).
+			flatMap(findEscherContainer(EscherRecordTypes.SP_CONTAINER)).
+			map(PPDrawing::findInSpContainer).
+			filter(Optional::isPresent).
+			map(Optional::get).
+			toArray(StyleTextProp9Atom[]::new);
     }
 
-    public StyleTextProp9Atom[] getNumberedListInfo() {
-    	final List<StyleTextProp9Atom> result = new LinkedList<>();
-    	EscherContainerRecord dgContainer = getDgContainer();
-		final EscherContainerRecord spgrContainer = findFirstEscherContainerRecordOfType(RecordTypes.EscherSpgrContainer, dgContainer);
-		final EscherContainerRecord[] spContainers = findAllEscherContainerRecordOfType(RecordTypes.EscherSpContainer, spgrContainer);
-		for (EscherContainerRecord spContainer : spContainers) {
-		    StyleTextProp9Atom prop9 = findInSpContainer(spContainer);
-		    if (prop9 != null) {
-		        result.add(prop9);
-		    }
-		}
-    	return result.toArray(new StyleTextProp9Atom[result.size()]);
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties("escherRecords", this::getEscherRecords);
 	}
-    
-    @SuppressWarnings("unchecked")
-    private static <T extends Record> T getChildRecord(List<? extends Record> children, RecordTypes type) {
-        for (Record r : children) {
-            if (r.getRecordType() == type.typeID) {
-                return (T)r;
-            }
-        }
-        return null;
-    }
+
+	private static Predicate<Record> sameHSLF(RecordTypes type) {
+		return (p) -> p.getRecordType() == type.typeID;
+	}
+
+	private static Predicate<EscherRecord> sameEscher(EscherRecordTypes type) {
+		return (p) -> p.getRecordId() == type.typeID;
+	}
+
+	@SuppressWarnings("unchecked")
+	private static <T extends EscherRecord> Optional<T> firstEscherRecord(Iterable<EscherRecord> container, EscherRecordTypes type) {
+		return StreamSupport.stream(container.spliterator(), false).filter(sameEscher(type)).map(o -> (T)o).findFirst();
+	}
+
+	private static Function<EscherContainerRecord,Stream<EscherContainerRecord>> findEscherContainer(EscherRecordTypes type) {
+		return (r) -> r.getChildContainers().stream().filter(sameEscher(type));
+	}
+
 }

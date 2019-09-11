@@ -27,6 +27,7 @@ import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.ddf.EscherProperty;
 import org.apache.poi.ddf.EscherPropertyFactory;
 import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.ddf.EscherRecordTypes;
 import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.ddf.EscherTextboxRecord;
@@ -64,7 +65,7 @@ public final class HSLFShapeFactory {
     public static HSLFGroupShape createShapeGroup(EscherContainerRecord spContainer, ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
         boolean isTable = false;
         EscherContainerRecord ecr = (EscherContainerRecord)spContainer.getChild(0);
-        EscherRecord opt = HSLFShape.getEscherChild(ecr, RecordTypes.EscherUserDefined);
+        EscherRecord opt = HSLFShape.getEscherChild(ecr, EscherRecordTypes.USER_DEFINED);
 
         if (opt != null) {
             EscherPropertyFactory f = new EscherPropertyFactory();

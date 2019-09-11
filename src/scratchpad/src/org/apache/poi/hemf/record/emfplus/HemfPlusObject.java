@@ -17,11 +17,15 @@
 
 package org.apache.poi.hemf.record.emfplus;
 
+import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.record.emfplus.HemfPlusBrush.EmfPlusBrush;
 import org.apache.poi.hemf.record.emfplus.HemfPlusFont.EmfPlusFont;
@@ -36,6 +40,7 @@ import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.hwmf.record.HwmfObjectTableEntry;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
@@ -113,8 +118,6 @@ public class HemfPlusObject {
      * can span multiple records), which is indicated by the value of the Flags field.
      */
     public static class EmfPlusObject implements HemfPlusRecord, EmfPlusObjectId, HwmfObjectTableEntry {
-
-
         /**
          * Indicates that the object definition continues on in the next EmfPlusObject
          * record. This flag is never set in the final record that defines the object.
@@ -126,6 +129,10 @@ public class HemfPlusObject {
          * ObjectType enumeration
          */
         private static final BitField OBJECT_TYPE = BitFieldFactory.getInstance(0x7F00);
+
+        private static final int[] FLAGS_MASKS = { 0x7F00, 0x8000 };
+
+        private static final String[] FLAGS_NAMES = { "OBJECT_TYPE", "CONTINUABLE" };
 
         private int flags;
         // for debugging
@@ -211,9 +218,20 @@ public class HemfPlusObject {
         List<EmfPlusObjectData> getContinuedObject() {
             return continuedObjectData;
         }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "flags", getBitsAsString(this::getFlags, FLAGS_MASKS, FLAGS_NAMES),
+                "objectId", this::getObjectId,
+                "continuedObjectData", this::getContinuedObject,
+                "totalObjectSize", () -> totalObjectSize
+            );
+        }
+
     }
 
-    public interface EmfPlusObjectData {
+    public interface EmfPlusObjectData extends GenericRecord {
         long init(LittleEndianInputStream leis, long dataSize, EmfPlusObjectType objectType, int flags) throws IOException;
 
         void applyObject(HemfGraphics ctx, List<? extends EmfPlusObjectData> continuedObjectData);
@@ -250,6 +268,19 @@ public class HemfPlusObject {
         @Override
         public EmfPlusGraphicsVersion getGraphicsVersion() {
             return graphicsVersion;
+        }
+
+        @Override
+        public EmfPlusObjectType getGenericRecordType() {
+            return objectType;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "graphicsVersion", this::getGraphicsVersion,
+                "objectDataBytes", () -> objectDataBytes
+            );
         }
     }
 }

@@ -17,9 +17,13 @@
 
 package org.apache.poi.hslf.record;
 
-import org.apache.poi.util.LittleEndian;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * ExObjRefAtom (3009).
@@ -91,4 +95,9 @@ public final class ExObjRefAtom extends RecordAtom {
 
         out.write(recdata);
 	}
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("exObjIdRef", this::getExObjIdRef);
+    }
 }

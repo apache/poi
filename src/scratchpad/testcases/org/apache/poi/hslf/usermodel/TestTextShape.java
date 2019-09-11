@@ -32,8 +32,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.hslf.HSLFTestDataSamples;
-import org.apache.poi.hslf.record.TextHeaderAtom;
 import org.apache.poi.sl.usermodel.ShapeType;
+import org.apache.poi.sl.usermodel.TextShape.TextPlaceholder;
 import org.junit.Test;
 
 /**
@@ -90,9 +90,9 @@ public final class TestTextShape {
                     assertEquals("Text in a TextBox", rawText);
                     break;
                 case RECT:
-                    if(runType == TextHeaderAtom.OTHER_TYPE) {
+                    if(runType == TextPlaceholder.OTHER.nativeId) {
                         assertEquals("Rectangle", rawText);
-                    } else if(runType == TextHeaderAtom.TITLE_TYPE) {
+                    } else if(runType == TextPlaceholder.TITLE.nativeId) {
                         assertEquals("Title Placeholder", rawText);
                     }
                     break;

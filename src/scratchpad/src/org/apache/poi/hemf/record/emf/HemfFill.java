@@ -19,10 +19,7 @@ package org.apache.poi.hemf.record.emf;
 
 import static org.apache.poi.hemf.record.emf.HemfDraw.readPointL;
 import static org.apache.poi.hemf.record.emf.HemfDraw.readRectL;
-import static org.apache.poi.hemf.record.emf.HemfDraw.xformToString;
 import static org.apache.poi.hemf.record.emf.HemfRecordIterator.HEADER_SIZE;
-import static org.apache.poi.hwmf.record.HwmfDraw.boundsToString;
-import static org.apache.poi.hwmf.record.HwmfDraw.pointToString;
 
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
@@ -33,7 +30,11 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.poi.hemf.draw.HemfDrawProperties;
 import org.apache.poi.hemf.draw.HemfGraphics;
@@ -45,6 +46,8 @@ import org.apache.poi.hwmf.record.HwmfFill;
 import org.apache.poi.hwmf.record.HwmfFill.ColorUsage;
 import org.apache.poi.hwmf.record.HwmfRegionMode;
 import org.apache.poi.hwmf.record.HwmfTernaryRasterOp;
+import org.apache.poi.util.GenericRecordJsonWriter;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
@@ -70,6 +73,11 @@ public class HemfFill {
             polyFillMode = HwmfPolyfillMode.valueOf((int)leis.readUInt());
             return LittleEndianConsts.INT_SIZE;
         }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
+        }
     }
 
     public static class EmfExtFloodFill extends HwmfFill.WmfExtFloodFill implements HemfRecord {
@@ -85,8 +93,13 @@ public class HemfFill {
             size += colorRef.init(leis);
             // A 32-bit unsigned integer that specifies how to use the Color value to determine the area for
             // the flood fill operation. The value MUST be in the FloodFill enumeration
-            mode = (int)leis.readUInt();
+            mode = HwmfFloodFillMode.values()[(int)leis.readUInt()];
             return size + LittleEndianConsts.INT_SIZE;
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
         }
     }
 
@@ -185,11 +198,34 @@ public class HemfFill {
 
         @Override
         public String toString() {
-            return
-                "{ bounds: "+boundsToString(bounds)+
-                ", xFormSrc: " + xformToString(xFormSrc) +
-                ", bkColorSrc: "+bkColorSrc+
-                ","+super.toString().substring(1);
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public Rectangle2D getBounds() {
+            return bounds;
+        }
+
+        public AffineTransform getXFormSrc() {
+            return xFormSrc;
+        }
+
+        public HwmfColorRef getBkColorSrc() {
+            return bkColorSrc;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "base", super::getGenericProperties,
+                "bounds", this::getBounds,
+                "xFormSrc", this::getXFormSrc,
+                "bkColorSrc", this::getBkColorSrc
+            );
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
         }
     }
 
@@ -259,6 +295,23 @@ public class HemfFill {
 
             return size;
         }
+
+        public Rectangle2D getBounds() {
+            return bounds;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "base", super::getGenericProperties,
+                "bounds", this::getBounds
+            );
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
+        }
     }
 
     /**
@@ -296,9 +349,10 @@ public class HemfFill {
             // A 32-bit unsigned integer that specifies the brush EMF Object Table index.
             brushIndex = (int)leis.readUInt();
             // A 32-bit signed integer that specifies the width of the vertical brush stroke, in logical units.
-            width = leis.readInt();
+            int width = leis.readInt();
             // A 32-bit signed integer that specifies the height of the horizontal brush stroke, in logical units.
-            height = leis.readInt();
+            int height = leis.readInt();
+            frame.setSize(width,height);
             size += 4*LittleEndianConsts.INT_SIZE;
             size += readRgnData(leis, rgnRects);
             return size;
@@ -312,6 +366,28 @@ public class HemfFill {
 
         protected Shape getShape() {
             return getRgnShape(rgnRects);
+        }
+
+        public Rectangle2D getBounds() {
+            return bounds;
+        }
+
+        public List<Rectangle2D> getRgnRects() {
+            return rgnRects;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "base", super::getGenericProperties,
+                "bounds", this::getBounds,
+                "rgnRects", this::getRgnRects
+            );
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
         }
     }
 
@@ -337,6 +413,22 @@ public class HemfFill {
 
         protected Shape getShape() {
             return getRgnShape(rgnRects);
+        }
+
+        public Rectangle2D getBounds() {
+            return bounds;
+        }
+
+        public List<Rectangle2D> getRgnRects() {
+            return rgnRects;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "bounds", this::getBounds,
+                "rgnRects", this::getRgnRects
+            );
         }
     }
 
@@ -374,6 +466,28 @@ public class HemfFill {
 
         protected Shape getShape() {
             return getRgnShape(rgnRects);
+        }
+
+        public Rectangle2D getBounds() {
+            return bounds;
+        }
+
+        public List<Rectangle2D> getRgnRects() {
+            return rgnRects;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "base", super::getGenericProperties,
+                "bounds", this::getBounds,
+                "rgnRects", this::getRgnRects
+            );
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
         }
     }
 
@@ -414,19 +528,23 @@ public class HemfFill {
 
         @Override
         public String toString() {
-            StringBuilder sb = new StringBuilder();
-            sb.append("{ regionMode: '"+regionMode+"'");
-            sb.append(", regions: [");
-            boolean isFirst = true;
-            for (Rectangle2D r : rgnRects) {
-                if (!isFirst) {
-                    sb.append(",");
-                }
-                isFirst = false;
-                sb.append(boundsToString(r));
-            }
-            sb.append("]}");
-            return sb.toString();
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public HwmfRegionMode getRegionMode() {
+            return regionMode;
+        }
+
+        public List<Rectangle2D> getRgnRects() {
+            return rgnRects;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "regionMode", this::getRegionMode,
+                "rgnRects", this::getRgnRects
+            );
         }
     }
 
@@ -539,6 +657,23 @@ public class HemfFill {
 
             return size;
         }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            final Map<String,Supplier<?>> m = new LinkedHashMap<>();
+            m.put("bounds", () -> bounds);
+            m.put("destRect", () -> destRect);
+            m.put("srcRect", () -> srcRect);
+            m.put("blendOperation", () -> blendOperation);
+            m.put("blendFlags", () -> blendFlags);
+            m.put("srcConstantAlpha", () -> srcConstantAlpha);
+            m.put("alphaFormat", () -> alphaFormat);
+            m.put("xFormSrc", () -> xFormSrc);
+            m.put("bkColorSrc", () -> bkColorSrc);
+            m.put("usageSrc", () -> usageSrc);
+            m.put("bitmap", () -> bitmap);
+            return Collections.unmodifiableMap(m);
+        }
     }
 
     /**
@@ -591,15 +726,40 @@ public class HemfFill {
             return size;
         }
 
+        public Rectangle2D getBounds() {
+            return bounds;
+        }
+
+        public Point2D getDest() {
+            return dest;
+        }
+
+        public Rectangle2D getSrc() {
+            return src;
+        }
+
+        public ColorUsage getUsageSrc() {
+            return usageSrc;
+        }
+
+        public HwmfBitmapDib getBitmap() {
+            return bitmap;
+        }
+
         @Override
         public String toString() {
-            return
-                "{ bounds: " + boundsToString(bounds) +
-                ", dest: " + pointToString(dest) +
-                ", src: " + boundsToString(src) +
-                ", usageSrc: '" + usageSrc + "'" +
-                ", bitmap: " + bitmap +
-                "}";
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "bounds", this::getBounds,
+                "dest", this::getDest,
+                "src", this::getSrc,
+                "usageSrc", this::getUsageSrc,
+                "bitmap", this::getBitmap
+            );
         }
     }
 
@@ -670,9 +830,7 @@ public class HemfFill {
 
 
     static int readBounds2(LittleEndianInputStream leis, Rectangle2D bounds) {
-        /**
-         * The 32-bit signed integers that defines the corners of the bounding rectangle.
-         */
+        // The 32-bit signed integers that defines the corners of the bounding rectangle.
         int x = leis.readInt();
         int y = leis.readInt();
         int w = leis.readInt();

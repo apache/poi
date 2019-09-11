@@ -19,7 +19,10 @@ package org.apache.poi.hslf.record;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
+import java.util.function.Supplier;
 
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
@@ -75,5 +78,10 @@ public final class UnknownRecordPlaceholder extends RecordAtom
 	 */
 	public void writeOut(OutputStream out) throws IOException {
 		out.write(_contents);
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties("contents", () -> _contents);
 	}
 }

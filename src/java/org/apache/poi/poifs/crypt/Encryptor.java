@@ -19,15 +19,19 @@ package org.apache.poi.poifs.crypt;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.GenericRecordUtil;
 
-public abstract class Encryptor implements Cloneable {
+public abstract class Encryptor implements Cloneable, GenericRecord {
     protected static final String DEFAULT_POIFS_ENTRY = Decryptor.DEFAULT_POIFS_ENTRY;
     private EncryptionInfo encryptionInfo;
     private SecretKey secretKey;
@@ -92,5 +96,12 @@ public abstract class Encryptor implements Cloneable {
         other.secretKey = new SecretKeySpec(secretKey.getEncoded(), secretKey.getAlgorithm());
         // encryptionInfo is set from outside
         return other;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "secretKey", secretKey::getEncoded
+        );
     }
 }

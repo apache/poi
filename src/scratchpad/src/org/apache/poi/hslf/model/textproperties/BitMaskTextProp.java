@@ -17,6 +17,12 @@
 
 package org.apache.poi.hslf.model.textproperties;
 
+import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
+
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -178,5 +184,13 @@ public abstract class BitMaskTextProp extends TextProp implements Cloneable {
 	
     public BitMaskTextProp cloneAll(){
         return (BitMaskTextProp)super.clone();
-    }	
+    }
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"base", super::getGenericProperties,
+			"flags", getBitsAsString(this::getValue, subPropMasks, subPropNames)
+		);
+	}
 }

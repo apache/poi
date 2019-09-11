@@ -19,10 +19,11 @@ package org.apache.poi.hwmf.record;
 
 import java.io.IOException;
 
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.util.LittleEndianInputStream;
 
-public interface HwmfRecord {
+public interface HwmfRecord extends GenericRecord {
     HwmfRecordType getWmfRecordType();
 
     /**
@@ -40,4 +41,9 @@ public interface HwmfRecord {
      * @param ctx the graphics context to modify
      */
     void draw(HwmfGraphics ctx);
+
+    @Override
+    default Enum getGenericRecordType() {
+        return getWmfRecordType();
+    }
 }

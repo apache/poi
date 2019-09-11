@@ -17,16 +17,21 @@
 
 package org.apache.poi.hslf.record;
 
+import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
+import static org.apache.poi.util.GenericRecordUtil.safeEnum;
+
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
+import java.util.function.Supplier;
 
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
 /**
  * Atom storing information for an OLE object.
  *
- * <!--
  * offset   type    name         description
  *
  * 0        uint4   drawAspect   Stores whether the object can be completely seen
@@ -60,11 +65,44 @@ import org.apache.poi.util.LittleEndian;
  *
  * 20       bool1    isBlank          Set if the object's image is blank
  *           (note: KOffice has this as an int.)
- * -->
- *
- * @author Daniel Noll
  */
 public class ExOleObjAtom extends RecordAtom {
+
+    public enum OleType {
+        /** An embedded OLE object; the object is serialized and saved within the file. */
+        EMBEDDED,
+        /** A linked OLE object; the object is saved outside of the file. */
+        LINKED,
+        /** The OLE object is an ActiveX control. */
+        CONTROL
+    }
+
+    public enum Subtype {
+        DEFAULT,
+        CLIPART_GALLERY,
+        WORD_TABLE,
+        EXCEL,
+        GRAPH,
+        ORGANIZATION_CHART,
+        EQUATION,
+        WORDART,
+        SOUND,
+        IMAGE,
+        POWERPOINT_PRESENTATION,
+        POWERPOINT_SLIDE,
+        PROJECT,
+        NOTEIT,
+        EXCEL_CHART,
+        MEDIA_PLAYER
+    }
+
+    private static final int[] DRAWASPECT_MASKS = {
+        0x0001, 0x0002, 0x0004, 0x0008
+    };
+
+    private static final String[] DRAWASPECT_NAMES = {
+        "CONTENT", "THUMBNAIL", "ICON", "DOCPRINT"
+    };
 
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 10_485_760;
@@ -313,5 +351,17 @@ public class ExOleObjAtom extends RecordAtom {
         buf.append("  objStgDataRef: " + getObjStgDataRef() + "\n");
         buf.append("  options: " + getOptions() + "\n");
         return buf.toString();
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "drawAspect", getBitsAsString(this::getDrawAspect, DRAWASPECT_MASKS, DRAWASPECT_NAMES),
+            "type", safeEnum(OleType.values(), this::getType),
+            "objID", this::getObjID,
+            "subType", safeEnum(Subtype.values(), this::getSubType),
+            "objStgDataRef", this::getObjStgDataRef,
+            "options", this::getOptions
+        );
     }
 }

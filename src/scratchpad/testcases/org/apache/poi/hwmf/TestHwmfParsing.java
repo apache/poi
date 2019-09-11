@@ -20,44 +20,22 @@ package org.apache.poi.hwmf;
 import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.Assert.assertEquals;
 
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.geom.Dimension2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Locale;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
-import javax.imageio.ImageIO;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.hwmf.record.HwmfFill.HwmfImageRecord;
 import org.apache.poi.hwmf.record.HwmfFont;
 import org.apache.poi.hwmf.record.HwmfRecord;
 import org.apache.poi.hwmf.record.HwmfRecordType;
 import org.apache.poi.hwmf.record.HwmfText;
-import org.apache.poi.hwmf.usermodel.HwmfEmbedded;
 import org.apache.poi.hwmf.usermodel.HwmfPicture;
-import org.apache.poi.sl.usermodel.PictureData;
-import org.apache.poi.sl.usermodel.PictureData.PictureType;
-import org.apache.poi.sl.usermodel.SlideShow;
-import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.RecordFormatException;
-import org.apache.poi.util.Units;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -65,6 +43,9 @@ public class TestHwmfParsing {
 
     private static final POIDataSamples samples = POIDataSamples.getSlideShowInstance();
 
+    // ******************************************************************************
+    // for manual mass parsing and rendering tests of .wmfs use HemfPictureTest.paint() !
+    // ******************************************************************************
 
     @Test
     public void parse() throws IOException {
@@ -82,158 +63,6 @@ public class TestHwmfParsing {
         }
     }
 
-    @Test
-    @Ignore("This is work-in-progress and not a real unit test ...")
-    public void paint() throws IOException {
-        boolean dumpEmbedded = true;
-        boolean dumpRecords = false;
-
-        File f = new File("testme.wmf");
-        FileInputStream fis = new FileInputStream(f);
-        HwmfPicture wmf = new HwmfPicture(fis);
-        fis.close();
-        
-        Dimension2D dim = wmf.getSize();
-        double width = Units.pointsToPixel(dim.getWidth());
-        // keep aspect ratio for height
-        double height = Units.pointsToPixel(dim.getHeight());
-        double scale = (width > height) ? 1500 / width : 1500 / width;
-        width = Math.abs(width * scale);
-        height = Math.abs(height * scale);
-
-        BufferedImage bufImg = new BufferedImage((int)width, (int)height, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = bufImg.createGraphics();
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-        g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-        
-        wmf.draw(g, new Rectangle2D.Double(0,0,width,height));
-
-        g.dispose();
-        
-        ImageIO.write(bufImg, "PNG", new File("bla.png"));
-
-        if (dumpEmbedded) {
-            int embIdx = 0;
-            for (HwmfEmbedded emb : wmf.getEmbeddings()) {
-                final File embName = new File("build/tmp", "emb_"+embIdx + emb.getEmbeddedType().extension);
-                try (FileOutputStream fos = new FileOutputStream(embName)) {
-                    fos.write(emb.getRawData());
-                }
-                embIdx++;
-            }
-        }
-
-        if (dumpRecords) {
-            try (FileWriter fw = new FileWriter("wmf-records.log")) {
-                for (HwmfRecord r : wmf.getRecords()) {
-                    fw.write(r.getWmfRecordType().name());
-                    fw.write(":");
-                    fw.write(r.toString());
-                    fw.write("\n");
-                }
-            }
-        }
-    }
-
-    @Test
-    @Ignore("This is work-in-progress and not a real unit test ...")
-    public void fetchWmfFromGovdocs() throws IOException {
-        URL url = new URL("http://digitalcorpora.org/corpora/files/govdocs1/by_type/ppt.zip");
-        File outdir = new File("build/ppt");
-        outdir.mkdirs();
-        ZipInputStream zis = new ZipInputStream(url.openStream());
-        ZipEntry ze;
-        while ((ze = zis.getNextEntry()) != null) {
-            String basename = ze.getName().replaceAll(".*?([^/]+)\\.wmf", "$1");
-            FilterInputStream fis = new FilterInputStream(zis){
-                @Override
-                public void close() throws IOException {}
-            };
-            try {
-                SlideShow<?,?> ss = SlideShowFactory.create(fis);
-                int wmfIdx = 1;
-                for (PictureData pd : ss.getPictureData()) {
-                    if (pd.getType() != PictureType.WMF) {
-                        continue;
-                    }
-                    byte[] wmfData = pd.getData();
-                    String filename = String.format(Locale.ROOT, "%s-%04d.wmf", basename, wmfIdx);
-                    FileOutputStream fos = new FileOutputStream(new File(outdir, filename));
-                    fos.write(wmfData);
-                    fos.close();
-                    wmfIdx++;
-                }
-                ss.close();
-            } catch (Exception e) {
-                System.out.println(ze.getName()+" ignored.");
-            }
-        }
-    }
-
-    @Test
-    @Ignore("This is work-in-progress and not a real unit test ...")
-    public void parseWmfs() throws IOException {
-        // parse and render the extracted wmfs from the fetchWmfFromGovdocs step
-        boolean outputFiles = false;
-        boolean renderWmf = true;
-        File indir = new File("E:\\project\\poi\\misc\\govdocs-ppt");
-        File outdir = new File("build/wmf");
-        outdir.mkdirs();
-        final String startFile = "";
-        File[] files = indir.listFiles(new FileFilter() {
-            boolean foundStartFile;
-
-            @Override
-            public boolean accept(File pathname) {
-                foundStartFile |= startFile.isEmpty() || pathname.getName().contains(startFile);
-                return foundStartFile && pathname.getName().matches("(?i).*\\.wmf?$");
-            }
-        });
-        for (File f : files) {
-            try {
-                String basename = f.getName().replaceAll(".*?([^/]+)\\.wmf", "$1");
-                FileInputStream fis = new FileInputStream(f);
-                HwmfPicture wmf = new HwmfPicture(fis);
-                fis.close();
-                
-                int bmpIndex = 1;
-                for (HwmfRecord r : wmf.getRecords()) {
-                    if (r instanceof HwmfImageRecord) {
-                        BufferedImage bi = ((HwmfImageRecord)r).getImage();
-                        if (bi != null && outputFiles) {
-                            String filename = String.format(Locale.ROOT, "%s-%04d.png", basename, bmpIndex);
-                            ImageIO.write(bi, "PNG", new File(outdir, filename));
-                        }
-                        bmpIndex++;
-                    }
-                }
-
-                if (renderWmf) {
-                    Dimension2D dim = wmf.getSize();
-                    int width = Units.pointsToPixel(dim.getWidth());
-                    // keep aspect ratio for height
-                    int height = Units.pointsToPixel(dim.getHeight());
-
-                    BufferedImage bufImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-                    Graphics2D g = bufImg.createGraphics();
-                    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                    g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-                    g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-                    g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-                    
-                    wmf.draw(g);
-
-                    g.dispose();
-                    
-                    ImageIO.write(bufImg, "PNG", new File(outdir, basename+".png"));
-                }
-            } catch (Exception e) {
-                System.out.println(f.getName()+" ignored.");                
-            }
-        }
-    }
 
     @Test
     @Ignore("If we decide we can use common crawl file specified, we can turn this back on")

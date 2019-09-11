@@ -20,12 +20,13 @@ package org.apache.poi.hemf.record.emfplus;
 
 import java.io.IOException;
 
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianInputStream;
 
 @Internal
-public interface HemfPlusRecord {
+public interface HemfPlusRecord extends GenericRecord {
 
     HemfPlusRecordType getEmfPlusRecordType();
 

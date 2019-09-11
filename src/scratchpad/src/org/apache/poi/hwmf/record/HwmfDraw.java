@@ -18,28 +18,35 @@
 package org.apache.poi.hwmf.record;
 
 import java.awt.Shape;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Area;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
-import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.hwmf.draw.HwmfGraphics.FillDrawStyle;
+import org.apache.poi.util.Dimension2DDouble;
+import org.apache.poi.util.GenericRecordJsonWriter;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
-public class HwmfDraw {
+@SuppressWarnings("WeakerAccess")
+public final class HwmfDraw {
+
+    private HwmfDraw() {}
+
     /**
      * The META_MOVETO record sets the output position in the playback device context to a specified
      * point.
@@ -65,7 +72,16 @@ public class HwmfDraw {
 
         @Override
         public String toString() {
-            return pointToString(point);
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public Point2D getPoint() {
+            return point;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("point", this::getPoint);
         }
     }
 
@@ -97,7 +113,16 @@ public class HwmfDraw {
 
         @Override
         public String toString() {
-            return pointToString(point);
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public Point2D getPoint() {
+            return point;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("point", this::getPoint);
         }
     }
 
@@ -117,9 +142,7 @@ public class HwmfDraw {
 
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            /**
-             * A 16-bit signed integer that defines the number of points in the array.
-             */
+            //A 16-bit signed integer that defines the number of points in the array.
             int numberofPoints = leis.readShort();
 
             poly = new Path2D.Double(Path2D.WIND_EVEN_ODD, numberofPoints);
@@ -143,23 +166,12 @@ public class HwmfDraw {
             Path2D p = (Path2D)poly.clone();
             // don't close the path
             p.setWindingRule(ctx.getProperties().getWindingRule());
-            switch (getFillDrawStyle()) {
-                case FILL:
-                    ctx.fill(p);
-                    break;
-                case DRAW:
-                    ctx.draw(p);
-                    break;
-                case FILL_DRAW:
-                    ctx.fill(p);
-                    ctx.draw(p);
-                    break;
-            }
+            getFillDrawStyle().handler.accept(ctx, p);
         }
 
         @Override
         public String toString() {
-            return "{ poly: "+polyToString(poly)+" }";
+            return GenericRecordJsonWriter.marshal(this);
         }
 
         /**
@@ -167,6 +179,15 @@ public class HwmfDraw {
          */
         protected FillDrawStyle getFillDrawStyle() {
             return FillDrawStyle.FILL;
+        }
+
+        public Path2D getPoly() {
+            return poly;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("poly", this::getPoly);
         }
     }
 
@@ -216,7 +237,16 @@ public class HwmfDraw {
 
         @Override
         public String toString() {
-            return boundsToString(bounds);
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public Rectangle2D getBounds() {
+            return bounds;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("bounds", this::getBounds);
         }
     }
 
@@ -235,16 +265,11 @@ public class HwmfDraw {
          * Brush to use for filling the region.
          */
         protected int brushIndex;
+
         /**
-         * A 16-bit signed integer that defines the height, in logical units, of the
-         * region frame.
+         * The region frame, in logical units
          */
-        protected int height;
-        /**
-         * A 16-bit signed integer that defines the width, in logical units, of the
-         * region frame.
-         */
-        protected int width;
+        protected final Dimension2D frame = new Dimension2DDouble();
 
         @Override
         public HwmfRecordType getWmfRecordType() {
@@ -255,8 +280,10 @@ public class HwmfDraw {
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             regionIndex = leis.readUShort();
             brushIndex = leis.readUShort();
-            height = leis.readShort();
-            width = leis.readShort();
+            // A 16-bit signed integer that defines the height/width, in logical units, of the region frame.
+            int height = leis.readShort();
+            int width = leis.readShort();
+            frame.setSize(width, height);
             return 4*LittleEndianConsts.SHORT_SIZE;
         }
 
@@ -265,14 +292,34 @@ public class HwmfDraw {
             ctx.applyObjectTableEntry(brushIndex);
             ctx.applyObjectTableEntry(regionIndex);
             Rectangle2D inner = ctx.getProperties().getRegion().getBounds();
-            double x = inner.getX()-width;
-            double y = inner.getY()-height;
-            double w = inner.getWidth()+2.0*width;
-            double h = inner.getHeight()+2.0*height;
+            double x = inner.getX()-frame.getWidth();
+            double y = inner.getY()-frame.getHeight();
+            double w = inner.getWidth()+2.0*frame.getWidth();
+            double h = inner.getHeight()+2.0*frame.getHeight();
             Rectangle2D outer = new Rectangle2D.Double(x,y,w,h);
             Area frame = new Area(outer);
             frame.subtract(new Area(inner));
             ctx.fill(frame);
+        }
+
+        public int getRegionIndex() {
+            return regionIndex;
+        }
+
+        public int getBrushIndex() {
+            return brushIndex;
+        }
+
+        public Dimension2D getFrame() {
+            return frame;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "regionIndex", this::getRegionIndex,
+                "brushIndex", this::getBrushIndex,
+                "frame", this::getFrame);
         }
     }
 
@@ -292,15 +339,11 @@ public class HwmfDraw {
 
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            // see http://secunia.com/gfx/pdf/SA31675_BA.pdf ;)
-            /**
-             * A 16-bit unsigned integer that defines the number of polygons in the object.
-             */
+            // see also CVE-2008-3014 - https://dl.packetstormsecurity.net/papers/attack/CVE-2008-3014.pdf ;)
+            // A 16-bit unsigned integer that defines the number of polygons in the object.
             int numberOfPolygons = leis.readUShort();
-            /**
-             * A NumberOfPolygons array of 16-bit unsigned integers that define the number of
-             * points for each polygon in the object.
-             */
+            // A NumberOfPolygons array of 16-bit unsigned integers that define the number of points for
+            // each polygon in the object.
             int[] pointsPerPolygon = new int[numberOfPolygons];
 
             int size = LittleEndianConsts.SHORT_SIZE;
@@ -311,10 +354,8 @@ public class HwmfDraw {
             }
 
             for (int nPoints : pointsPerPolygon) {
-                /**
-                 * An array of 16-bit signed integers that define the coordinates of the polygons.
-                 * (Note: MS-WMF wrongly says unsigned integers ...)
-                 */
+                // An array of 16-bit signed integers that define the coordinates of the polygons.
+                // (Note: MS-WMF wrongly says unsigned integers ...)
                 Path2D poly = new Path2D.Double(Path2D.WIND_EVEN_ODD, nPoints);
                 for (int i=0; i<nPoints; i++) {
                     int x = leis.readShort();
@@ -396,20 +437,16 @@ public class HwmfDraw {
 
         @Override
         public String toString() {
-            final StringBuilder sb = new StringBuilder();
-            sb.append("{ polyList: [");
-            boolean isFirst = true;
-            for (Path2D p : polyList) {
-                if (!isFirst) {
-                    sb.append(",");
-                }
-                isFirst = false;
-                sb.append("{ points: ");
-                sb.append(polyToString(p));
-                sb.append(" }");
-            }
-            sb.append(" }");
-            return sb.toString();
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public List<Path2D> getPolyList() {
+            return polyList;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("polyList", this::getPolyList);
         }
     }
 
@@ -437,7 +474,16 @@ public class HwmfDraw {
 
         @Override
         public String toString() {
-            return boundsToString(bounds);
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public Rectangle2D getBounds() {
+            return bounds;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("bounds", this::getBounds);
         }
     }
 
@@ -469,6 +515,22 @@ public class HwmfDraw {
             Shape s = new Rectangle2D.Double(point.getX(), point.getY(), 1, 1);
             ctx.fill(s);
         }
+
+        public HwmfColorRef getColorRef() {
+            return colorRef;
+        }
+
+        public Point2D getPoint() {
+            return point;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "colorRef", this::getColorRef,
+                "point", this::getPoint
+            );
+        }
     }
 
     /**
@@ -476,17 +538,7 @@ public class HwmfDraw {
      * using the pen and filled using the brush, as defined in the playback device context.
      */
     public static class WmfRoundRect implements HwmfRecord {
-        /**
-         * A 16-bit signed integer that defines the height, in logical coordinates, of the
-         * ellipse used to draw the rounded corners.
-         */
-        protected int height;
-
-        /**
-         * A 16-bit signed integer that defines the width, in logical coordinates, of the
-         * ellipse used to draw the rounded corners.
-         */
-        protected int width;
+        protected final Dimension2D corners = new Dimension2DDouble();
 
         protected final Rectangle2D bounds = new Rectangle2D.Double();
 
@@ -498,8 +550,11 @@ public class HwmfDraw {
 
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            height = leis.readShort();
-            width = leis.readShort();
+            // A 16-bit signed integer that defines the height/width, in logical coordinates,
+            // of the ellipse used to draw the rounded corners.
+            int height = leis.readShort();
+            int width = leis.readShort();
+            corners.setSize(width, height);
             return 2*LittleEndianConsts.SHORT_SIZE+readBounds(leis, bounds);
         }
 
@@ -509,8 +564,28 @@ public class HwmfDraw {
         }
 
         protected RoundRectangle2D getShape() {
-            return new RoundRectangle2D.Double(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight(), width, height);
+            return new RoundRectangle2D.Double(
+                bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight(),
+                corners.getWidth(), corners.getHeight()
+            );
         }
+
+        public Dimension2D getCorners() {
+            return corners;
+        }
+
+        public Rectangle2D getBounds() {
+            return bounds;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "bounds", this::getBounds,
+                "corners", this::getCorners
+            );
+        }
+
     }
 
 
@@ -518,6 +593,22 @@ public class HwmfDraw {
      * The META_ARC record draws an elliptical arc.
      */
     public static class WmfArc implements HwmfRecord {
+        public enum WmfArcClosure {
+            ARC(HwmfRecordType.arc, Arc2D.OPEN, FillDrawStyle.DRAW),
+            CHORD(HwmfRecordType.chord, Arc2D.CHORD, FillDrawStyle.FILL_DRAW),
+            PIE(HwmfRecordType.pie, Arc2D.PIE, FillDrawStyle.FILL_DRAW);
+
+            public final HwmfRecordType recordType;
+            public final int awtType;
+            public final FillDrawStyle drawStyle;
+
+            WmfArcClosure(HwmfRecordType recordType, int awtType, FillDrawStyle drawStyle) {
+                this.recordType = recordType;
+                this.awtType = awtType;
+                this.drawStyle = drawStyle;
+            }
+        }
+
         /** starting point of the arc */
         protected final Point2D startPoint = new Point2D.Double();
 
@@ -544,30 +635,23 @@ public class HwmfDraw {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            Shape s = getShape();
-            switch (getFillDrawStyle()) {
-                case FILL:
-                    ctx.fill(s);
-                    break;
-                case DRAW:
-                    ctx.draw(s);
-                    break;
-                case FILL_DRAW:
-                    ctx.fill(s);
-                    ctx.draw(s);
-                    break;
+            getFillDrawStyle().handler.accept(ctx, getShape());
+        }
+
+        public WmfArcClosure getArcClosure() {
+            switch (getWmfRecordType()) {
+                default:
+                case arc:
+                    return WmfArcClosure.ARC;
+                case chord:
+                    return WmfArcClosure.CHORD;
+                case pie:
+                    return WmfArcClosure.PIE;
             }
         }
 
         protected FillDrawStyle getFillDrawStyle() {
-            switch (getWmfRecordType()) {
-                default:
-                case arc:
-                    return FillDrawStyle.DRAW;
-                case chord:
-                case pie:
-                    return FillDrawStyle.FILL_DRAW;
-            }
+            return getArcClosure().drawStyle;
         }
 
         protected Arc2D getShape() {
@@ -578,33 +662,37 @@ public class HwmfDraw {
                 startAngle += 360;
             }
 
-            int arcClosure;
-            switch (getWmfRecordType()) {
-                default:
-                case arc:
-                    arcClosure = Arc2D.OPEN;
-                    break;
-                case chord:
-                    arcClosure = Arc2D.CHORD;
-                    break;
-                case pie:
-                    arcClosure = Arc2D.PIE;
-                    break;
-            }
-
-            return new Arc2D.Double(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight(), startAngle, arcAngle, arcClosure);
+            return new Arc2D.Double(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight(),
+                startAngle, arcAngle, getArcClosure().awtType);
         }
 
         @Override
         public String toString() {
-            Arc2D arc = getShape();
-            return
-                "{ startPoint: "+pointToString(startPoint)+
-                ", endPoint: "+pointToString(endPoint)+
-                ", startAngle: "+arc.getAngleStart()+
-                ", extentAngle: "+arc.getAngleExtent()+
-                ", bounds: "+boundsToString(bounds)+
-                " }";
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public Point2D getStartPoint() {
+            return startPoint;
+        }
+
+        public Point2D getEndPoint() {
+            return endPoint;
+        }
+
+        public Rectangle2D getBounds() {
+            return bounds;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            final Arc2D arc = getShape();
+            return GenericRecordUtil.getGenericProperties(
+                "startPoint", this::getStartPoint,
+                "endPoint", this::getEndPoint,
+                "startAngle", arc::getAngleStart,
+                "extentAngle", arc::getAngleExtent,
+                "bounds", this::getBounds
+            );
         }
     }
 
@@ -668,14 +756,22 @@ public class HwmfDraw {
 
         @Override
         public String toString() {
-            return "{ index: "+objectIndex +" }";
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public int getObjectIndex() {
+            return objectIndex;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("objectIndex", this::getObjectIndex);
         }
     }
 
+    @SuppressWarnings("DuplicatedCode")
     static int readBounds(LittleEndianInputStream leis, Rectangle2D bounds) {
-        /**
-         * The 16-bit signed integers that defines the corners of the bounding rectangle.
-         */
+        // The 16-bit signed integers that defines the corners of the bounding rectangle.
         int bottom = leis.readShort();
         int right = leis.readShort();
         int top = leis.readShort();
@@ -691,10 +787,9 @@ public class HwmfDraw {
         return 4 * LittleEndianConsts.SHORT_SIZE;
     }
 
+    @SuppressWarnings("DuplicatedCode")
     static int readRectS(LittleEndianInputStream leis, Rectangle2D bounds) {
-        /**
-         * The 16-bit signed integers that defines the corners of the bounding rectangle.
-         */
+        // The 16-bit signed integers that defines the corners of the bounding rectangle.
         int left = leis.readShort();
         int top = leis.readShort();
         int right = leis.readShort();
@@ -711,56 +806,11 @@ public class HwmfDraw {
     }
 
     static int readPointS(LittleEndianInputStream leis, Point2D point) {
-        /** a signed integer that defines the x/y-coordinate, in logical units. */
+        // a signed integer that defines the x/y-coordinate, in logical units.
         int y = leis.readShort();
         int x = leis.readShort();
         point.setLocation(x, y);
         return 2*LittleEndianConsts.SHORT_SIZE;
-    }
-
-    static String polyToString(Path2D poly) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("[");
-        final PathIterator iter = poly.getPathIterator(null);
-        double[] pnts = new double[6];
-        while (!iter.isDone()) {
-            int segType = iter.currentSegment(pnts);
-            switch (segType) {
-                case PathIterator.SEG_MOVETO:
-                    sb.append("{ type: 'move', x: "+pnts[0]+", y: "+pnts[1]+" }, ");
-                    break;
-                case PathIterator.SEG_LINETO:
-                    sb.append("{ type: 'lineto', x: "+pnts[0]+", y: "+pnts[1]+" }, ");
-                    break;
-                case PathIterator.SEG_QUADTO:
-                    sb.append("{ type: 'quad', x1: "+pnts[0]+", y1: "+pnts[1]+", x2: "+pnts[2]+", y2: "+pnts[3]+" }, ");
-                    break;
-                case PathIterator.SEG_CUBICTO:
-                    sb.append("{ type: 'cubic', x1: "+pnts[0]+", y1: "+pnts[1]+", x2: "+pnts[2]+", y2: "+pnts[3]+", x3: "+pnts[4]+", y3: "+pnts[5]+" }, ");
-                    break;
-                case PathIterator.SEG_CLOSE:
-                    sb.append("{ type: 'close' }, ");
-                    break;
-            }
-            iter.next();
-        }
-        sb.append("]");
-        return sb.toString();
-    }
-
-    @Internal
-    public static String pointToString(Point2D point) {
-        return (point == null) ? "null" : "{ x: "+point.getX()+", y: "+point.getY()+" }";
-    }
-
-    @Internal
-    public static String boundsToString(Rectangle2D bounds) {
-        return (bounds == null) ? "null" : "{ x: "+bounds.getX()+", y: "+bounds.getY()+", w: "+bounds.getWidth()+", h: "+bounds.getHeight()+" }";
-    }
-
-    @Internal
-    public static String dimToString(Dimension2D dim) {
-        return (dim == null) ? "null" : "{ w: "+dim.getWidth()+", h: "+dim.getHeight()+" }";
     }
 
     @Internal

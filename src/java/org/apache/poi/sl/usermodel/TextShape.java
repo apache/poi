@@ -105,21 +105,38 @@ public interface TextShape<
      */
     enum TextPlaceholder {
         /** Title placeholder shape text */
-        TITLE,
+        TITLE(0),
         /** Body placeholder shape text */
-        BODY,
+        BODY(1),
         /** Center title placeholder shape text */
-        CENTER_TITLE,
+        CENTER_TITLE(6),
         /** Center body placeholder shape text */
-        CENTER_BODY,
+        CENTER_BODY(5),
         /** Half-sized body placeholder shape text */
-        HALF_BODY,
+        HALF_BODY(7),
         /** Quarter-sized body placeholder shape text */
-        QUARTER_BODY,
+        QUARTER_BODY(8),
         /** Notes placeholder shape text */
-        NOTES,
+        NOTES(2),
         /** Any other text */
-        OTHER
+        OTHER(4);
+
+        public final int nativeId;
+
+        TextPlaceholder(int nativeId) {
+            this.nativeId = nativeId;
+        }
+
+        public static TextPlaceholder fromNativeId(int nativeId) {
+            for (TextPlaceholder ld : values()) {
+                if (ld.nativeId == nativeId) return ld;
+            }
+            return null;
+        }
+
+        public static boolean isTitle(int nativeId) {
+            return (nativeId == TITLE.nativeId || nativeId == CENTER_TITLE.nativeId);
+        }
     }
 
     /**

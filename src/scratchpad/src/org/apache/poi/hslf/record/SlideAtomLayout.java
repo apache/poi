@@ -19,8 +19,12 @@ package org.apache.poi.hslf.record;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
+import java.util.function.Supplier;
 
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hslf.exceptions.HSLFException;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
@@ -32,7 +36,7 @@ import org.apache.poi.util.LittleEndian;
  * This might eventually merged with the XSLF counterpart
  */
 @Internal
-public class SlideAtomLayout {
+public class SlideAtomLayout implements GenericRecord {
     // The different kinds of geometry
     public enum SlideLayoutType {
         /** One title and one subtitle placeholder shapes. */
@@ -130,4 +134,11 @@ public class SlideAtomLayout {
         out.write(placeholderIDs);
     }
 
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "geometry", this::getGeometryType,
+            "placeholderIDs", () -> placeholderIDs
+        );
+    }
 }

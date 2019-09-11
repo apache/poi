@@ -17,7 +17,6 @@
 
 package org.apache.poi.hwmf.record;
 
-import static org.apache.poi.hwmf.record.HwmfDraw.boundsToString;
 import static org.apache.poi.hwmf.record.HwmfDraw.readPointS;
 
 import java.awt.Color;
@@ -27,17 +26,20 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.poi.hwmf.draw.HwmfDrawProperties;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.hwmf.record.HwmfMisc.WmfSetBkMode.HwmfBkMode;
+import org.apache.poi.util.GenericRecordJsonWriter;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
+@SuppressWarnings("WeakerAccess")
 public class HwmfFill {
-    /**
-     * A record which contains an image (to be extracted)
-     */
+    /** A record which contains an image (to be extracted) */
     public interface HwmfImageRecord {
 
         default BufferedImage getImage() {
@@ -70,9 +72,7 @@ public class HwmfFill {
      * i.e. if contains explicit RGB values or indexes into a palette.
      */
     public enum ColorUsage {
-        /**
-         * The color table contains RGB values
-         */
+        /** The color table contains RGB values */
         DIB_RGB_COLORS(0x0000),
         /**
          * The color table contains 16-bit indices into the current logical palette in
@@ -139,7 +139,22 @@ public class HwmfFill {
             if (region != null) {
                 ctx.fill(region);
             }
-            
+        }
+
+        public int getRegionIndex() {
+            return regionIndex;
+        }
+
+        public int getBrushIndex() {
+            return brushIndex;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "regionIndex", this::getRegionIndex,
+                "brushIndex", this::getBrushIndex
+            );
         }
     }
 
@@ -173,6 +188,15 @@ public class HwmfFill {
                 ctx.fill(region);
             }        
         }
+
+        public int getRegionIndex() {
+            return regionIndex;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("regionIndex", this::getRegionIndex);
+        }
     }
     
     
@@ -182,9 +206,7 @@ public class HwmfFill {
      */
     public static class WmfFloodFill implements HwmfRecord {
         
-        /**
-         * A 32-bit ColorRef Object that defines the color value.
-         */
+        /** A 32-bit ColorRef Object that defines the color value. */
         protected final HwmfColorRef colorRef = new HwmfColorRef();
 
         /** the point where filling is to start. */
@@ -205,6 +227,22 @@ public class HwmfFill {
         @Override
         public void draw(HwmfGraphics ctx) {
             
+        }
+
+        public HwmfColorRef getColorRef() {
+            return colorRef;
+        }
+
+        public Point2D getStart() {
+            return start;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "colorRef", this::getColorRef,
+                "start", this::getStart
+            );
         }
     }
 
@@ -267,7 +305,16 @@ public class HwmfFill {
 
         @Override
         public String toString() {
-            return "{ polyFillMode: '"+ polyFillMode +"' }";
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public HwmfPolyfillMode getPolyFillMode() {
+            return polyFillMode;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("polyFillMode", this::getPolyFillMode);
         }
     }
 
@@ -277,21 +324,22 @@ public class HwmfFill {
      * the playback device context.
      */
     public static class WmfExtFloodFill extends WmfFloodFill {
-        
-        /**
-         * A 16-bit unsigned integer that defines the fill operation to be performed. This
-         * member MUST be one of the values in the FloodFill Enumeration table:
-         * 
-         * FLOODFILLBORDER = 0x0000:
-         * The fill area is bounded by the color specified by the Color member.
-         * This style is identical to the filling performed by the META_FLOODFILL record.
-         * 
-         * FLOODFILLSURFACE = 0x0001:
-         * The fill area is bounded by the color that is specified by the Color member.
-         * Filling continues outward in all directions as long as the color is encountered.
-         * This style is useful for filling areas with multicolored boundaries.
-         */
-        protected int mode;
+
+        public enum HwmfFloodFillMode {
+            /**
+             * The fill area is bounded by the color specified by the Color member.
+             * This style is identical to the filling performed by the META_FLOODFILL record.
+             */
+            FLOOD_FILL_BORDER,
+            /**
+             * The fill area is bounded by the color that is specified by the Color member.
+             * Filling continues outward in all directions as long as the color is encountered.
+             * This style is useful for filling areas with multicolored boundaries.
+             */
+            FLOOD_FILL_SURFACE
+        }
+
+        protected HwmfFloodFillMode mode;
         
         @Override
         public HwmfRecordType getWmfRecordType() {
@@ -300,13 +348,24 @@ public class HwmfFill {
         
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            mode = leis.readUShort();
+            // A 16-bit unsigned integer that defines the fill operation to be performed. This
+            // member MUST be one of the values in the FloodFill Enumeration table:
+            mode = HwmfFloodFillMode.values()[leis.readUShort()];
             return super.init(leis, recordSize, recordFunction)+LittleEndianConsts.SHORT_SIZE;
         }
 
         @Override
         public void draw(HwmfGraphics ctx) {
             
+        }
+
+        public HwmfFloodFillMode getMode() {
+            return mode;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("mode", this::getMode);
         }
     }
 
@@ -319,7 +378,7 @@ public class HwmfFill {
          * A 16-bit unsigned integer used to index into the WMF Object Table to get
          * the region to be inverted.
          */
-        private int region;
+        private int regionIndex;
         
         @Override
         public HwmfRecordType getWmfRecordType() {
@@ -328,13 +387,22 @@ public class HwmfFill {
         
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            region = leis.readUShort();
+            regionIndex = leis.readUShort();
             return LittleEndianConsts.SHORT_SIZE;
         }
 
         @Override
         public void draw(HwmfGraphics ctx) {
             
+        }
+
+        public int getRegionIndex() {
+            return regionIndex;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("regionIndex", this::getRegionIndex);
         }
     }
     
@@ -361,18 +429,28 @@ public class HwmfFill {
         
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            int rasterOpCode = leis.readUShort();
-            int rasterOpIndex = leis.readUShort();
-
-            rasterOperation = HwmfTernaryRasterOp.valueOf(rasterOpIndex);
-            assert(rasterOpCode == rasterOperation.opCode);
-            
+            rasterOperation = readRasterOperation(leis);
             return readBounds2(leis, bounds)+2*LittleEndianConsts.SHORT_SIZE;
         }
 
         @Override
         public void draw(HwmfGraphics ctx) {
             
+        }
+
+        public HwmfTernaryRasterOp getRasterOperation() {
+            return rasterOperation;
+        }
+
+        public Rectangle2D getBounds() {
+            return bounds;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "rasterOperation", this::getRasterOperation,
+                "bounds", this::getBounds);
         }
     }
 
@@ -415,13 +493,9 @@ public class HwmfFill {
         
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            boolean hasBitmap = (recordSize > ((recordFunction >> 8) + 3));
+            final boolean hasBitmap = hasBitmap(recordSize, recordFunction);
 
-            int rasterOpCode = leis.readUShort();
-            int rasterOpIndex = leis.readUShort();
-            
-            rasterOperation = HwmfTernaryRasterOp.valueOf(rasterOpIndex);
-            assert(rasterOpCode == rasterOperation.opCode);
+            rasterOperation = readRasterOperation(leis);
 
             int size = 2*LittleEndianConsts.SHORT_SIZE;
 
@@ -449,11 +523,33 @@ public class HwmfFill {
 
         @Override
         public String toString() {
-            return
-                "{ rasterOperation: '"+rasterOperation+"'"+
-                ", srcBounds: "+boundsToString(srcBounds)+
-                ", dstBounds: "+boundsToString(dstBounds)+
-                "}";
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public HwmfTernaryRasterOp getRasterOperation() {
+            return rasterOperation;
+        }
+
+        public Rectangle2D getSrcBounds() {
+            return srcBounds;
+        }
+
+        public Rectangle2D getDstBounds() {
+            return dstBounds;
+        }
+
+        public HwmfBitmap16 getTarget() {
+            return target;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "rasterOperation", this::getRasterOperation,
+                "srcBounds", this::getSrcBounds,
+                "dstBounds", this::getDstBounds,
+                "target", this::getTarget
+            );
         }
     }
 
@@ -498,12 +594,7 @@ public class HwmfFill {
         
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            int rasterOpCode = leis.readUShort();
-            int rasterOpIndex = leis.readUShort();
-            
-            rasterOperation = HwmfTernaryRasterOp.valueOf(rasterOpIndex);
-            assert(rasterOpCode == rasterOperation.opCode);
-
+            rasterOperation = readRasterOperation(leis);
             colorUsage = ColorUsage.valueOf(leis.readUShort());
 
             int size = 3*LittleEndianConsts.SHORT_SIZE;
@@ -546,12 +637,33 @@ public class HwmfFill {
 
         @Override
         public String toString() {
-            return
-                "{ rasterOperation: '"+rasterOperation+"'"+
-                ", colorUsage: '"+colorUsage+"'"+
-                ", srcBounds: "+boundsToString(srcBounds)+
-                ", dstBounds: "+boundsToString(dstBounds)+
-                "}";
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public HwmfTernaryRasterOp getRasterOperation() {
+            return rasterOperation;
+        }
+
+        public ColorUsage getColorUsage() {
+            return colorUsage;
+        }
+
+        public Rectangle2D getSrcBounds() {
+            return srcBounds;
+        }
+
+        public Rectangle2D getDstBounds() {
+            return dstBounds;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "rasterOperation", this::getRasterOperation,
+                "colorUsage", this::getColorUsage,
+                "srcBounds", this::getSrcBounds,
+                "dstBounds", this::getDstBounds
+            );
         }
     }
     
@@ -564,13 +676,9 @@ public class HwmfFill {
         
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            boolean hasBitmap = (recordSize/2 != ((recordFunction >> 8) + 3));
+            final boolean hasBitmap = hasBitmap(recordSize/2, recordFunction);
 
-            int rasterOpCode = leis.readUShort();
-            int rasterOpIndex = leis.readUShort();
-            
-            rasterOperation = HwmfTernaryRasterOp.valueOf(rasterOpIndex);
-            assert(rasterOpCode == rasterOperation.opCode);
+            rasterOperation = readRasterOperation(leis);
 
             int size = 2*LittleEndianConsts.SHORT_SIZE;
 
@@ -674,6 +782,38 @@ public class HwmfFill {
         public byte[] getBMPData() {
             return dib.getBMPData();
         }
+
+        public ColorUsage getColorUsage() {
+            return colorUsage;
+        }
+
+        public int getScanCount() {
+            return scanCount;
+        }
+
+        public int getStartScan() {
+            return startScan;
+        }
+
+        public Rectangle2D getSrcBounds() {
+            return srcBounds;
+        }
+
+        public Rectangle2D getDstBounds() {
+            return dstBounds;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "colorUsage", this::getColorUsage,
+                "scanCount", this::getScanCount,
+                "startScan", this::getStartScan,
+                "srcBounds", this::getSrcBounds,
+                "dstBounds", this::getDstBounds,
+                "dib", () -> dib
+            );
+        }
     }
 
 
@@ -685,13 +825,9 @@ public class HwmfFill {
         
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            boolean hasBitmap = (recordSize/2 != ((recordFunction >> 8) + 3));
+            final boolean hasBitmap = hasBitmap(recordSize/2, recordFunction);
 
-            int rasterOpCode = leis.readUShort();
-            int rasterOpIndex = leis.readUShort();
-            
-            rasterOperation = HwmfTernaryRasterOp.valueOf(rasterOpIndex);
-            assert(rasterOpCode == rasterOperation.opCode);
+            rasterOperation = readRasterOperation(leis);
 
             int size = 2*LittleEndianConsts.SHORT_SIZE;
 
@@ -752,13 +888,9 @@ public class HwmfFill {
         
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
-            boolean hasBitmap = (recordSize > ((recordFunction >> 8) + 3));
+            final boolean hasBitmap = hasBitmap(recordSize, recordFunction);
 
-            int rasterOpCode = leis.readUShort();
-            int rasterOpIndex = leis.readUShort();
-            
-            rasterOperation = HwmfTernaryRasterOp.valueOf(rasterOpIndex);
-            assert(rasterOperation != null && rasterOpCode == rasterOperation.opCode);
+            rasterOperation = readRasterOperation(leis);
 
             int size = 2*LittleEndianConsts.SHORT_SIZE;
 
@@ -802,12 +934,36 @@ public class HwmfFill {
         public byte[] getBMPData() {
             return (target != null && target.isValid()) ? target.getBMPData() : null;
         }
+
+        public HwmfTernaryRasterOp getRasterOperation() {
+            return rasterOperation;
+        }
+
+        public Rectangle2D getSrcBounds() {
+            return srcBounds;
+        }
+
+        public Rectangle2D getDstBounds() {
+            return dstBounds;
+        }
+
+        public HwmfBitmapDib getTarget() {
+            return target;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "rasterOperation", this::getRasterOperation,
+                "srcBounds", this::getSrcBounds,
+                "dstBounds", this::getDstBounds,
+                "target", this::getTarget
+            );
+        }
     }
 
     static int readBounds2(LittleEndianInputStream leis, Rectangle2D bounds) {
-        /**
-         * The 16-bit signed integers that defines the corners of the bounding rectangle.
-         */
+        // The 16-bit signed integers that defines the corners of the bounding rectangle.
         int h = leis.readShort();
         int w = leis.readShort();
         int y = leis.readShort();
@@ -818,4 +974,16 @@ public class HwmfFill {
         return 4 * LittleEndianConsts.SHORT_SIZE;
     }
 
+    private static boolean hasBitmap(long recordSize, int recordFunction) {
+        return (recordSize > ((recordFunction >> 8) + 3));
+    }
+
+    private static HwmfTernaryRasterOp readRasterOperation(LittleEndianInputStream leis) {
+        int rasterOpCode = leis.readUShort();
+        int rasterOpIndex = leis.readUShort();
+
+        HwmfTernaryRasterOp rasterOperation = HwmfTernaryRasterOp.valueOf(rasterOpIndex);
+        assert(rasterOperation != null && rasterOpCode == rasterOperation.opCode);
+        return rasterOperation;
+    }
 }

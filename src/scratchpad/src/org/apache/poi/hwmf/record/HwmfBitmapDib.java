@@ -29,10 +29,16 @@ import java.awt.image.IndexColorModel;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import javax.imageio.ImageIO;
 
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hwmf.usermodel.HwmfPicture;
+import org.apache.poi.util.GenericRecordJsonWriter;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
@@ -44,7 +50,7 @@ import org.apache.poi.util.RecordFormatException;
 /**
  * The DeviceIndependentBitmap Object defines an image in device-independent bitmap (DIB) format.
  */
-public class HwmfBitmapDib {
+public class HwmfBitmapDib implements GenericRecord {
 
     private static final POILogger logger = POILogFactory.getLogger(HwmfBitmapDib.class);
     private static final int BMP_HEADER_SIZE = 14;
@@ -435,8 +441,12 @@ public class HwmfBitmapDib {
     }
 
     public byte[] getBMPData() {
+        if (headerWidth <= 0 || headerHeight <= 0) {
+            return null;
+        }
+
         if (imageData == null) {
-            throw new RecordFormatException("bitmap not initialized ... need to call init() before");
+            throw new RecordFormatException("used to throw exception: bitmap not initialized ... need to call init() before");
         }
 
         // sometimes there are missing bytes after the imageData which will be 0-filled
@@ -488,23 +498,33 @@ public class HwmfBitmapDib {
 
     @Override
     public String toString() {
-        return
-            "{ headerSize: " + headerSize +
-            ", width: " + headerWidth +
-            ", height: " + headerHeight +
-            ", planes: " + headerPlanes +
-            ", bitCount: '" + headerBitCount + "'" +
-            ", compression: '" + headerCompression + "'" +
-            ", imageSize: " + headerImageSize +
-            ", xPelsPerMeter: " + headerXPelsPerMeter +
-            ", yPelsPerMeter: " + headerYPelsPerMeter +
-            ", colorUsed: " + headerColorUsed +
-            ", colorImportant: " + headerColorImportant +
-            ", imageSize: " + (imageData == null ? 0 : imageData.length) +
-            "}";
+        return GenericRecordJsonWriter.marshal(this);
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        final Map<String,Supplier<?>> m = new LinkedHashMap<>();
+        m.put("headerSize", () -> headerSize);
+        m.put("width", () -> headerWidth);
+        m.put("height", () -> headerHeight);
+        m.put("planes", () -> headerPlanes);
+        m.put("bitCount", () -> headerBitCount);
+        m.put("compression", () -> headerCompression);
+        m.put("imageSize", () -> headerImageSize);
+        m.put("xPelsPerMeter", () -> headerXPelsPerMeter);
+        m.put("yPelsPerMeter", () -> headerYPelsPerMeter);
+        m.put("colorUsed", () -> headerColorUsed);
+        m.put("colorImportant", () -> headerColorImportant);
+        m.put("image", this::getImage);
+        m.put("bmpData", this::getBMPData);
+        return Collections.unmodifiableMap(m);
     }
 
     protected BufferedImage getPlaceholder() {
+        if (headerHeight <= 0 || headerWidth <= 0) {
+            return new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+        }
+
         BufferedImage bi = new BufferedImage(headerWidth, headerHeight, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = bi.createGraphics();
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);

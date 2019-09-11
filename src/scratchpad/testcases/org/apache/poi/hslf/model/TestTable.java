@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.hslf.record.TextHeaderAtom;
 import org.apache.poi.hslf.usermodel.HSLFShape;
 import org.apache.poi.hslf.usermodel.HSLFSlide;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
@@ -39,6 +38,7 @@ import org.apache.poi.sl.usermodel.Shape;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.TableShape;
+import org.apache.poi.sl.usermodel.TextShape.TextPlaceholder;
 import org.junit.Test;
 
 /**
@@ -60,7 +60,7 @@ public final class TestTable {
 
         HSLFTableCell cell = tbl.getCell(0, 0);
         //table cells have type=TextHeaderAtom.OTHER_TYPE, see bug #46033
-        assertEquals(TextHeaderAtom.OTHER_TYPE, cell.getTextParagraphs().get(0).getRunType());
+        assertEquals(TextPlaceholder.OTHER.nativeId, cell.getTextParagraphs().get(0).getRunType());
 
         HSLFShape tblSh = slide.getShapes().get(0);
         assertTrue(tblSh instanceof HSLFTable);

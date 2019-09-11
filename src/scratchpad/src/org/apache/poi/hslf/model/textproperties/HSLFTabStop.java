@@ -17,12 +17,17 @@
 
 package org.apache.poi.hslf.model.textproperties;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.sl.usermodel.TabStop;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Units;
 
 @Internal
-public class HSLFTabStop implements TabStop, Cloneable {
+public class HSLFTabStop implements TabStop, Cloneable, GenericRecord {
     /**
      * A signed integer that specifies an offset, in master units, of the tab stop.
      * 
@@ -112,5 +117,13 @@ public class HSLFTabStop implements TabStop, Cloneable {
     @Override
     public String toString() {
         return type + " @ " + position;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "type", this::getType,
+            "position", this::getPosition
+        );
     }
 }

@@ -19,9 +19,14 @@ package org.apache.poi.hslf.record;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
+import org.apache.poi.util.Removal;
 
 /**
  * A Document Atom (type 1001). Holds misc information on the PowerPoint
@@ -29,10 +34,36 @@ import org.apache.poi.util.LittleEndianByteArrayInputStream;
  */
 
 @SuppressWarnings({"WeakerAccess", "unused"})
-public final class DocumentAtom extends RecordAtom
-{
+public final class DocumentAtom extends RecordAtom {
+
+	/**
+	 * Holds the different Slide Size values
+	 */
+	public enum SlideSize {
+		/** Slide size ratio is consistent with a computer screen. */
+		ON_SCREEN,
+		/** Slide size ratio is consistent with letter paper. */
+		LETTER_SIZED_PAPER,
+		/** Slide size ratio is consistent with A4 paper. */
+		A4_SIZED_PAPER,
+		/** Slide size ratio is consistent with 35mm photo slides. */
+		ON_35MM,
+		/** Slide size ratio is consistent with overhead projector slides. */
+		OVERHEAD,
+		/** Slide size ratio is consistent with a banner. */
+		BANNER,
+		/**
+		 * Slide size ratio that is not consistent with any of the other specified slide sizes in
+		 * this enumeration.
+		 */
+		CUSTOM
+	}
+
+
 	//arbitrarily selected; may need to increase
 	private static final int MAX_RECORD_LENGTH = 1_000_000;
+
+
 
 	private final byte[] _header = new byte[8];
 	private static long _type = RecordTypes.DocumentAtom.typeID;
@@ -79,8 +110,21 @@ public final class DocumentAtom extends RecordAtom
 
 	public int getFirstSlideNum() { return firstSlideNum; }
 
-	/** The Size of the Document's slides, @see DocumentAtom.SlideSize for values */
+	/**
+	 * The Size of the Document's slides, @see DocumentAtom.SlideSize for values
+	 * @deprecated to be replaced by enum
+	 */
+	@Deprecated
+	@Removal(version = "5.0.0")
 	public int getSlideSizeType() { return slideSizeType; }
+
+	public SlideSize getSlideSizeTypeEnum() {
+		return SlideSize.values()[slideSizeType];
+	}
+
+	public void setSlideSize(SlideSize size) {
+		slideSizeType = size.ordinal();
+	}
 
 	/** Was the document saved with True Type fonts embeded? */
 	public boolean getSaveWithFonts() {
@@ -191,16 +235,23 @@ public final class DocumentAtom extends RecordAtom
 		out.write(reserved);
 	}
 
-	/**
-	 * Holds the different Slide Size values
-	 */
-	public static final class SlideSize {
-		public static final int ON_SCREEN = 0;
-		public static final int LETTER_SIZED_PAPER = 1;
-		public static final int A4_SIZED_PAPER = 2;
-		public static final int ON_35MM = 3;
-		public static final int OVERHEAD = 4;
-		public static final int BANNER = 5;
-		public static final int CUSTOM = 6;
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		final Map<String, Supplier<?>> m = new LinkedHashMap<>();
+		m.put("slideSizeX", this::getSlideSizeX);
+		m.put("slideSizeY", this::getSlideSizeY);
+		m.put("notesSizeX", this::getNotesSizeX);
+		m.put("notesSizeY", this::getNotesSizeY);
+		m.put("serverZoomFrom", this::getServerZoomFrom);
+		m.put("serverZoomTo", this::getServerZoomTo);
+		m.put("notesMasterPersist", this::getNotesMasterPersist);
+		m.put("handoutMasterPersist", this::getHandoutMasterPersist);
+		m.put("firstSlideNum", this::getFirstSlideNum);
+		m.put("slideSize", this::getSlideSizeTypeEnum);
+		m.put("saveWithFonts", this::getSaveWithFonts);
+		m.put("omitTitlePlace", this::getOmitTitlePlace);
+		m.put("rightToLeft", this::getRightToLeft);
+		m.put("showComments", this::getShowComments);
+		return Collections.unmodifiableMap(m);
 	}
 }

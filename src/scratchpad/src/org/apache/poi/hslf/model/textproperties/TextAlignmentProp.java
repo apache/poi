@@ -17,6 +17,12 @@
 
 package org.apache.poi.hslf.model.textproperties;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
+import org.apache.poi.util.GenericRecordUtil;
+
 /**
  * Definition for the text alignment property.
  */
@@ -62,5 +68,31 @@ public class TextAlignmentProp extends TextProp {
 
 	public TextAlignmentProp() {
 		super(2, 0x800, "alignment");
+	}
+
+	public TextAlign getTextAlign() {
+		switch (getValue()) {
+			default:
+			case LEFT:
+				return TextAlign.LEFT;
+			case CENTER:
+				return TextAlign.CENTER;
+			case RIGHT:
+				return TextAlign.RIGHT;
+			case JUSTIFY:
+				return TextAlign.JUSTIFY;
+			case DISTRIBUTED:
+				return TextAlign.DIST;
+			case THAIDISTRIBUTED:
+				return TextAlign.THAI_DIST;
+		}
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"base", super::getGenericProperties,
+			"textAlign", this::getTextAlign
+		);
 	}
 }

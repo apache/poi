@@ -30,7 +30,7 @@ import org.apache.poi.util.POILogger;
  */
 public class InteractiveInfo extends RecordContainer {
 	private byte[] _header;
-	private static long _type = 4082;
+	private static final long _type = RecordTypes.InteractiveInfo.typeID;
 	
 	// Links to our more interesting children
 	private InteractiveInfoAtom infoAtom;

@@ -26,8 +26,8 @@ import org.apache.poi.util.Internal;
  */
 public class EscherOptRecord extends AbstractEscherOptRecord
 {
-    public static final String RECORD_DESCRIPTION = "msofbtOPT";
-    public static final short RECORD_ID = (short) 0xF00B;
+    public static final short RECORD_ID = EscherRecordTypes.OPT.typeID;
+    public static final String RECORD_DESCRIPTION = EscherRecordTypes.OPT.description;
 
     @Override
     public short getInstance()
@@ -50,9 +50,8 @@ public class EscherOptRecord extends AbstractEscherOptRecord
     }
 
     @Override
-    public String getRecordName()
-    {
-        return "Opt";
+    public String getRecordName() {
+        return EscherRecordTypes.OPT.recordName;
     }
 
     @Override
@@ -71,5 +70,10 @@ public class EscherOptRecord extends AbstractEscherOptRecord
         }
 
         super.setVersion( value );
+    }
+
+    @Override
+    public Enum getGenericRecordType() {
+        return EscherRecordTypes.OPT;
     }
 }

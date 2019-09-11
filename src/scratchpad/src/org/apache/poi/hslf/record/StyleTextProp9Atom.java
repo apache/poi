@@ -21,8 +21,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.poi.hslf.model.textproperties.TextPFException9;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
@@ -144,5 +147,12 @@ public final class StyleTextProp9Atom extends RecordAtom {
 
         // Update the size (header bytes 5-8)
         LittleEndian.putInt(header, 4, data.length);
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "autoNumberSchemes", this::getAutoNumberTypes
+        );
     }
 }

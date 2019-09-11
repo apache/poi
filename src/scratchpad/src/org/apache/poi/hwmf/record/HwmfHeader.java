@@ -18,12 +18,21 @@
 package org.apache.poi.hwmf.record;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Supplier;
 
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
-public class HwmfHeader {
-    private int type;
+public class HwmfHeader implements GenericRecord {
+    public enum HwmfHeaderMetaType {
+        MEMORY_METAFILE, DISK_METAFILE
+    }
+
+    private HwmfHeaderMetaType type;
     private int recordSize;
     private int version;
     private int filesize;
@@ -34,7 +43,7 @@ public class HwmfHeader {
     public HwmfHeader(LittleEndianInputStream leis) throws IOException {
         // Type (2 bytes):  A 16-bit unsigned integer that defines the type of metafile
         // MEMORYMETAFILE = 0x0001, DISKMETAFILE = 0x0002 
-        type = leis.readUShort();
+        type = HwmfHeaderMetaType.values()[leis.readUShort()-1];
 
         // HeaderSize (2 bytes):  A 16-bit unsigned integer that defines the number
         // of 16-bit words in the header.
@@ -73,5 +82,18 @@ public class HwmfHeader {
             long len = leis.skip(bytesLeft);
             assert(len == bytesLeft);
         }
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        final Map<String,Supplier<?>> m = new LinkedHashMap<>();
+        m.put("type", () -> type);
+        m.put("recordSize", () -> recordSize);
+        m.put("version", () -> version);
+        m.put("filesize", () -> filesize);
+        m.put("numberOfObjects", () -> numberOfObjects);
+        m.put("maxRecord", () -> maxRecord);
+        m.put("numberOfMembers", () -> numberOfMembers);
+        return Collections.unmodifiableMap(m);
     }
 }

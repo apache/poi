@@ -24,12 +24,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.record.emfplus.HemfPlusRecord;
 import org.apache.poi.hemf.record.emfplus.HemfPlusRecordIterator;
 import org.apache.poi.hwmf.usermodel.HwmfPicture;
+import org.apache.poi.util.GenericRecordJsonWriter;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianConsts;
@@ -78,10 +82,15 @@ public class HemfComment {
         }
     }
 
-    public interface EmfCommentData {
+    public interface EmfCommentData extends GenericRecord {
         HemfCommentRecordType getCommentRecordType();
 
         long init(LittleEndianInputStream leis, long dataSize) throws IOException;
+
+        @Override
+        default Enum getGenericRecordType() {
+            return getCommentRecordType();
+        }
     }
 
     public static class EmfComment implements HemfRecord {
@@ -116,7 +125,12 @@ public class HemfComment {
 
         @Override
         public String toString() {
-            return "{ data: "+data+" }";
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("data", this::getCommentData);
         }
     }
 
@@ -241,7 +255,19 @@ public class HemfComment {
 
         @Override
         public String toString() {
-            return "\""+new String(privateData, LocaleUtil.CHARSET_1252).replaceAll("\\p{Cntrl}", ".")+"\"";
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public String getPrivateDataAsString() {
+            return new String(privateData, LocaleUtil.CHARSET_1252);
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "privateData", this::getPrivateData,
+                "privateDataAsString", this::getPrivateDataAsString
+            );
         }
     }
 
@@ -270,6 +296,16 @@ public class HemfComment {
 
         public void draw(HemfGraphics ctx) {
             records.forEach(ctx::draw);
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return null;
+        }
+
+        @Override
+        public List<HemfPlusRecord> getGenericChildren() {
+            return getRecords();
         }
     }
 
@@ -301,6 +337,22 @@ public class HemfComment {
 
             return leis.getReadIndex()-startIdx;
         }
+
+        public Rectangle2D getBounds() {
+            return bounds;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "bounds", this::getBounds,
+                "description", this::getDescription
+            );
+        }
     }
 
     public static class EmfCommentDataEndGroup implements EmfCommentData {
@@ -318,6 +370,11 @@ public class HemfComment {
             final int publicCommentIdentifier = (int)leis.readUInt();
             assert(publicCommentIdentifier == HemfCommentRecordType.emfEndGroup.id);
             return leis.getReadIndex()-startIdx;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return null;
         }
     }
 
@@ -369,6 +426,20 @@ public class HemfComment {
         public List<EmfCommentDataFormat> getFormats() {
             return Collections.unmodifiableList(formats);
         }
+
+        public Rectangle2D getBounds() {
+            return bounds;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("bounds", this::getBounds);
+        }
+
+        @Override
+        public List<EmfCommentDataFormat> getGenericChildren() {
+            return getFormats();
+        }
     }
 
     public enum EmfFormatSignature {
@@ -400,7 +471,7 @@ public class HemfComment {
 
     }
 
-    public static class EmfCommentDataFormat {
+    public static class EmfCommentDataFormat implements GenericRecord {
         private EmfFormatSignature signature;
         private int version;
         private int sizeData;
@@ -439,11 +510,20 @@ public class HemfComment {
         public EmfFormatSignature getSignature() {
             return signature;
         }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "signature", this::getSignature,
+                "version", () -> version,
+                "sizeData", () -> sizeData,
+                "offData", () -> offData
+            );
+        }
     }
 
     public static class EmfCommentDataWMF implements EmfCommentData {
         private final Rectangle2D bounds = new Rectangle2D.Double();
-        private final List<EmfCommentDataFormat> formats = new ArrayList<>();
         private byte[] wmfData;
         @Override
         public HemfCommentRecordType getCommentRecordType() {
@@ -485,12 +565,21 @@ public class HemfComment {
         public byte[] getWMFData() {
             return wmfData;
         }
+
+        public Rectangle2D getBounds() {
+            return bounds;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "bounds", this::getBounds,
+                "wmfData", this::getWMFData
+            );
+        }
     }
 
     public static class EmfCommentDataUnicode implements EmfCommentData {
-        private final Rectangle2D bounds = new Rectangle2D.Double();
-        private final List<EmfCommentDataFormat> formats = new ArrayList<>();
-
         @Override
         public HemfCommentRecordType getCommentRecordType() {
             return HemfCommentRecordType.emfUnicodeString;
@@ -500,6 +589,11 @@ public class HemfComment {
         public long init(final LittleEndianInputStream leis, final long dataSize)
                 throws IOException {
             throw new RecordFormatException("UNICODE_STRING/UNICODE_END values are reserved in CommentPublic records");
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return null;
         }
     }
 }

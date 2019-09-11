@@ -19,14 +19,17 @@ package org.apache.poi.hemf.record.emf;
 
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.function.Supplier;
 
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hwmf.record.HwmfRecord;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianInputStream;
 
 @Internal
-public interface HemfRecord {
+public interface HemfRecord extends GenericRecord {
 
     HemfRecordType getEmfRecordType();
 
@@ -58,4 +61,16 @@ public interface HemfRecord {
      * @param header the emf header
      */
     default void setHeader(HemfHeader header) {}
+
+    @Override
+    default Enum getGenericRecordType() {
+        return getEmfRecordType();
+    }
+}
+
+interface HemfRecordWithoutProperties extends HemfRecord {
+    default Map<String, Supplier<?>> getGenericProperties() {
+        return null;
+    }
+
 }

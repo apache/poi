@@ -17,9 +17,14 @@
 
 package org.apache.poi.hslf.record;
 
+import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
+
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
+import java.util.function.Supplier;
 
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
@@ -36,35 +41,57 @@ public final class AnimationInfoAtom extends RecordAtom {
     /**
      * whether the animation plays in the reverse direction
      */
-    public static final int Reverse = 1;
+    public static final int Reverse = 0x0001;
     /**
      * whether the animation starts automatically
      */
-    public static final int Automatic = 4;
+    public static final int Automatic = 0x0004;
     /**
      * whether the animation has an associated sound
      */
-    public static final int Sound = 16;
+    public static final int Sound = 0x0010;
     /**
      * whether all playing sounds are stopped when this animation begins
      */
-    public static final int StopSound = 64;
+    public static final int StopSound = 0x0040;
     /**
      * whether an associated sound, media or action verb is activated when the shape is clicked.
      */
-    public static final int Play = 256;
+    public static final int Play = 0x0100;
     /**
      * specifies that the animation, while playing, stops other slide show actions.
      */
-    public static final int Synchronous = 1024;
+    public static final int Synchronous = 0x0400;
     /**
      * whether the shape is hidden while the animation is not playing
      */
-    public static final int Hide = 4096;
+    public static final int Hide = 0x1000;
     /**
      * whether the background of the shape is animated
      */
-    public static final int AnimateBg = 16384;
+    public static final int AnimateBg = 0x4000;
+
+    private static final int[] FLAGS_MASKS = {
+        Reverse,
+        Automatic,
+        Sound,
+        StopSound,
+        Play,
+        Synchronous,
+        Hide,
+        AnimateBg
+    };
+
+    private static final String[] FLAGS_NAMES = {
+        "REVERSE",
+        "AUTOMATIC",
+        "SOUND",
+        "STOP_SOUND",
+        "PLAY",
+        "SYNCHRONOUS",
+        "HIDE",
+        "ANIMATE_BG"
+    };
 
     /**
      * Record header.
@@ -275,4 +302,15 @@ public final class AnimationInfoAtom extends RecordAtom {
         return buf.toString();
     }
 
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "dimColor", this::getDimColor,
+            "flags", getBitsAsString(this::getMask, FLAGS_MASKS, FLAGS_NAMES),
+            "soundIdRef", this::getSoundIdRef,
+            "delayTime", this::getDelayTime,
+            "orderID", this::getOrderID,
+            "slideCount", this::getSlideCount
+        );
+    }
 }

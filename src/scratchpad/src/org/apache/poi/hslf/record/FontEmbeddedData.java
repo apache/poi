@@ -19,9 +19,12 @@ package org.apache.poi.hslf.record;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.poi.common.usermodel.fonts.FontFacet;
 import org.apache.poi.common.usermodel.fonts.FontHeader;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
@@ -112,5 +115,10 @@ public class FontEmbeddedData extends RecordAtom implements FontFacet {
     @Override
     public Object getFontData() {
         return this;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("fontHeader", this::getFontHeader);
     }
 }

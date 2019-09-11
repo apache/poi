@@ -22,10 +22,14 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection.TextPropType;
+import org.apache.poi.sl.usermodel.TextShape.TextPlaceholder;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianOutputStream;
@@ -45,8 +49,6 @@ import org.apache.poi.util.POILogger;
  *  each pair describes an indent level. The first pair describes
  *  first-level paragraph with no indentation.
  * </p>
- *
- *  @author Yegor Kozlov
  */
 public final class TxMasterStyleAtom extends RecordAtom {
     private static final POILogger LOG = POILogFactory.getLogger(TxMasterStyleAtom.class);
@@ -58,8 +60,9 @@ public final class TxMasterStyleAtom extends RecordAtom {
      */
     public static final int MAX_INDENT = 5;
 
+    private static final long _type = RecordTypes.TxMasterStyleAtom.typeID;
+
     private byte[] _header;
-    private static long _type = 4003;
     private byte[] _data;
 
     private List<TextPropCollection> paragraphStyles;
@@ -152,7 +155,7 @@ public final class TxMasterStyleAtom extends RecordAtom {
 
         for(short i = 0; i < levels; i++) {
             TextPropCollection prprops = new TextPropCollection(0, TextPropType.paragraph);
-            if (type >= TextHeaderAtom.CENTRE_BODY_TYPE) {
+            if (type >= TextPlaceholder.CENTER_BODY.nativeId) {
                 // Fetch the 2 byte value, that is safe to ignore for some types of text
                 short indentLevel = LittleEndian.getShort(_data, pos);
                 prprops.setIndentLevel(indentLevel);
@@ -195,7 +198,7 @@ public final class TxMasterStyleAtom extends RecordAtom {
             for (int i=0; i<levels; i++) {
                 prdummy.copy(paragraphStyles.get(i));
                 chdummy.copy(charStyles.get(i));
-                if (type >= TextHeaderAtom.CENTRE_BODY_TYPE) {
+                if (type >= TextPlaceholder.CENTER_BODY.nativeId) {
                     leos.writeShort(prdummy.getIndentLevel());
                 }
                 
@@ -212,5 +215,13 @@ public final class TxMasterStyleAtom extends RecordAtom {
         } catch (IOException e) {
             throw new HSLFException("error in updating master style properties", e);
         }
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "paragraphStyles", this::getParagraphStyles,
+            "charStyles", this::getCharacterStyles
+        );
     }
 }

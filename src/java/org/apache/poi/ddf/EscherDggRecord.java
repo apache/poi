@@ -22,7 +22,11 @@ import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
+import org.apache.poi.common.usermodel.GenericRecord;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.RecordFormatException;
 
@@ -30,9 +34,8 @@ import org.apache.poi.util.RecordFormatException;
  * This record defines the drawing groups used for a particular sheet.
  */
 public final class EscherDggRecord extends EscherRecord {
-    public static final short RECORD_ID = (short) 0xF006;
-    public static final String RECORD_DESCRIPTION = "MsofbtDgg";
-    
+    public static final short RECORD_ID = EscherRecordTypes.DGG.typeID;
+
     private int field_1_shapeIdMax;
     // for some reason the number of clusters is actually the real number + 1
     // private int field_2_numIdClusters;
@@ -41,7 +44,7 @@ public final class EscherDggRecord extends EscherRecord {
     private final List<FileIdCluster> field_5_fileIdClusters = new ArrayList<>();
     private int maxDgId;
 
-    public static class FileIdCluster {
+    public static class FileIdCluster implements GenericRecord {
         private int field_1_drawingGroupId;
         private int field_2_numShapeIdsUsed;
 
@@ -60,6 +63,14 @@ public final class EscherDggRecord extends EscherRecord {
 
         private void incrementUsedShapeId() {
             field_2_numShapeIdsUsed++;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "drawingGroupId", this::getDrawingGroupId,
+                "numShapeIdUsed", this::getNumShapeIdsUsed
+            );
         }
     }
 
@@ -129,7 +140,7 @@ public final class EscherDggRecord extends EscherRecord {
 
     @Override
     public String getRecordName() {
-        return "Dgg";
+        return EscherRecordTypes.DGG.recordName;
     }
 
     /**
@@ -343,5 +354,22 @@ public final class EscherDggRecord extends EscherRecord {
             { "DrawingsSaved", field_4_drawingsSaved },
             fldIds.toArray()
         };
+    }
+
+    @Override
+    public Enum getGenericRecordType() {
+        return EscherRecordTypes.DGG;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "base", super::getGenericProperties,
+            "fileIdClusters", () -> field_5_fileIdClusters,
+            "shapeIdMax", this::getShapeIdMax,
+            "numIdClusters", this::getNumIdClusters,
+            "numShapesSaved", this::getNumShapesSaved,
+            "drawingsSaved", this::getDrawingsSaved
+        );
     }
 }

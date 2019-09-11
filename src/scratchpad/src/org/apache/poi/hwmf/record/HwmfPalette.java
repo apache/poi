@@ -17,24 +17,34 @@
 
 package org.apache.poi.hwmf.record;
 
+import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
+
 import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hwmf.draw.HwmfDrawProperties;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
 public class HwmfPalette {
 
-    public static class PaletteEntry {
+    public static class PaletteEntry implements GenericRecord {
         private static final BitField PC_RESERVED   = BitFieldFactory.getInstance(0x01);
         private static final BitField PC_EXPLICIT   = BitFieldFactory.getInstance(0x02);
         private static final BitField PC_NOCOLLAPSE = BitFieldFactory.getInstance(0x04);
+
+        private static final int[] FLAGS_MASKS = { 1,2,4 };
+
+        private static final String[] FLAGS_NAMES = { "RESERVED", "EXPLICIT", "NOCOLLAPSE" };
 
         private int values;
         private Color colorRef;
@@ -91,6 +101,18 @@ public class HwmfPalette {
         public boolean isNoCollapse() {
             return PC_NOCOLLAPSE.isSet(values);
         }
+
+        public Color getColorRef() {
+            return colorRef;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "flags", getBitsAsString(() -> values, FLAGS_MASKS, FLAGS_NAMES),
+                "color", this::getColorRef
+            );
+        }
     }
 
     public static abstract class WmfPaletteParent implements HwmfRecord, HwmfObjectTableEntry  {
@@ -112,10 +134,8 @@ public class HwmfPalette {
         }
 
         protected int readPaletteEntries(LittleEndianInputStream leis, int nbrOfEntries) throws IOException {
-            /**
-             * NumberOfEntries (2 bytes):  A 16-bit unsigned integer that defines the number of objects in
-             * aPaletteEntries.
-             */
+            // NumberOfEntries (2 bytes):  A 16-bit unsigned integer that defines the number of objects in
+            // aPaletteEntries.
             final int numberOfEntries = (nbrOfEntries > -1) ? nbrOfEntries : leis.readUShort();
             int size = (nbrOfEntries > -1) ? 0 : LittleEndianConsts.SHORT_SIZE;
             for (int i=0; i<numberOfEntries; i++) {
@@ -131,7 +151,7 @@ public class HwmfPalette {
             ctx.addObjectTableEntry(this);
         }
         
-        protected List<PaletteEntry> getPaletteCopy() {
+        List<PaletteEntry> getPaletteCopy() {
             List<PaletteEntry> newPalette = new ArrayList<>();
             for (PaletteEntry et : palette) {
                 newPalette.add(new PaletteEntry(et));
@@ -139,8 +159,16 @@ public class HwmfPalette {
             return newPalette;
         }
 
-        protected int getPaletteStart() {
+        int getPaletteStart() {
             return start;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "paletteStart", this::getPaletteStart,
+                "pallete", this::getPaletteCopy
+            );
         }
     }
 
@@ -233,6 +261,15 @@ public class HwmfPalette {
             palette = palette.subList(0, numberOfEntries);
             props.setPalette(palette);
         }
+
+        public int getNumberOfEntries() {
+            return numberOfEntries;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("numberOfEntries", this::getNumberOfEntries);
+        }
     }
 
     /**
@@ -260,6 +297,15 @@ public class HwmfPalette {
         public void draw(HwmfGraphics ctx) {
             ctx.applyObjectTableEntry(paletteIndex);
         }
+
+        public int getPaletteIndex() {
+            return paletteIndex;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("paletteIndex", this::getPaletteIndex);
+        }
     }
 
     /**
@@ -280,6 +326,11 @@ public class HwmfPalette {
         @Override
         public void draw(HwmfGraphics ctx) {
 
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return null;
         }
     }
 
@@ -306,7 +357,7 @@ public class HwmfPalette {
             HwmfDrawProperties props = ctx.getProperties();
             List<PaletteEntry> dest = props.getPalette();
             List<PaletteEntry> src = getPaletteCopy();
-            int start = getPaletteStart();
+            final int start = getPaletteStart();
             if (dest == null) {
                 dest = new ArrayList<>();
             }

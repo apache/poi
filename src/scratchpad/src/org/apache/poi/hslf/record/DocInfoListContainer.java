@@ -19,6 +19,8 @@ package org.apache.poi.hslf.record;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.poi.util.LittleEndian;
 
@@ -27,7 +29,7 @@ import org.apache.poi.util.LittleEndian;
  */
 public final class DocInfoListContainer extends RecordContainer {
 	private byte[] _header;
-	private static long _type = RecordTypes.List.typeID;
+	private static final long _type = RecordTypes.List.typeID;
 
 	// Links to our more interesting children
 
@@ -81,4 +83,8 @@ public final class DocInfoListContainer extends RecordContainer {
 		writeOut(_header[0],_header[1],_type,_children,out);
 	}
 
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return null;
+	}
 }

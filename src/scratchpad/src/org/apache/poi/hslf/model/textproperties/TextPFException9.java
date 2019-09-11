@@ -21,7 +21,12 @@
  */
 package org.apache.poi.hslf.model.textproperties;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.sl.usermodel.AutoNumberingScheme;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -34,7 +39,11 @@ import org.apache.poi.util.LittleEndian;
  * @author Alex Nikiforov [mailto:anikif@gmail.com]
  *
  */
-public class TextPFException9 {
+public class TextPFException9 implements GenericRecord {
+
+	private final static AutoNumberingScheme DEFAULT_AUTONUMBER_SCHEME = AutoNumberingScheme.arabicPeriod;
+	private final static Short DEFAULT_START_NUMBER = 1;
+
 	//private final byte mask1;
 	//private final byte mask2;
 	private final byte mask3;
@@ -42,9 +51,7 @@ public class TextPFException9 {
 	private final Short bulletBlipRef;
 	private final Short fBulletHasAutoNumber;
 	private final AutoNumberingScheme autoNumberScheme;
-	private final static AutoNumberingScheme DEFAULT_AUTONUMBER_SHEME = AutoNumberingScheme.arabicPeriod;
 	private final Short autoNumberStartNumber;
-	private final static Short DEFAULT_START_NUMBER = 1;
 	private final int recordLength;
 	public TextPFException9(final byte[] source, final int startIndex) { // NOSONAR
 		//this.mask1 = source[startIndex];
@@ -86,23 +93,24 @@ public class TextPFException9 {
 		return fBulletHasAutoNumber;
 	}
 	public AutoNumberingScheme getAutoNumberScheme() {
-		if (null != this.autoNumberScheme) {
-			return this.autoNumberScheme;
+		if (autoNumberScheme != null) {
+			return autoNumberScheme;
 		}
-		if (null != this.fBulletHasAutoNumber && 1 == this.fBulletHasAutoNumber.shortValue()) {
-			return DEFAULT_AUTONUMBER_SHEME;
-		}
-		return null;
+		return hasBulletAutoNumber() ? DEFAULT_AUTONUMBER_SCHEME : null;
 	}
+
 	public Short getAutoNumberStartNumber() {
-		if (null != this.autoNumberStartNumber) {
-			return this.autoNumberStartNumber;
+		if (autoNumberStartNumber != null) {
+			return autoNumberStartNumber;
 		}
-		if (null != this.fBulletHasAutoNumber && 1 == this.fBulletHasAutoNumber.shortValue()) {
-			return DEFAULT_START_NUMBER;
-		}
-		return null;
+		return hasBulletAutoNumber() ? DEFAULT_START_NUMBER : null;
 	}
+
+	private boolean hasBulletAutoNumber() {
+		final Short one = 1;
+		return one.equals(fBulletHasAutoNumber);
+	}
+
 	public int getRecordLength() {
 		return recordLength;
 	}
@@ -114,5 +122,15 @@ public class TextPFException9 {
 		sb.append("autoNumberScheme: ").append(this.autoNumberScheme).append("\n");
 		sb.append("autoNumberStartNumber: ").append(this.autoNumberStartNumber).append("\n");
 		return sb.toString();
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"bulletBlipRef", this::getBulletBlipRef,
+			"bulletHasAutoNumber", this::hasBulletAutoNumber,
+			"autoNumberScheme", this::getAutoNumberScheme,
+			"autoNumberStartNumber", this::getAutoNumberStartNumber
+		);
 	}
 }

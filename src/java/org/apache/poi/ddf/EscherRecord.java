@@ -21,9 +21,13 @@ package org.apache.poi.ddf;
 import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
@@ -32,7 +36,7 @@ import org.apache.poi.util.LittleEndian;
  * The base abstract record from which all escher records are defined.  Subclasses will need
  * to define methods for serialization/deserialization and for determining the record size.
  */
-public abstract class EscherRecord implements Cloneable {
+public abstract class EscherRecord implements Cloneable, GenericRecord {
     private static final BitField fInstance = BitFieldFactory.getInstance(0xfff0);
     private static final BitField fVersion = BitFieldFactory.getInstance(0x000f);
 
@@ -499,5 +503,21 @@ public abstract class EscherRecord implements Cloneable {
                 out.append(c);
             }
         }
+    }
+
+    @Override
+    public List<? extends GenericRecord> getGenericChildren() {
+        return getChildRecords();
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "recordId", this::getRecordId,
+            "version", this::getVersion,
+            "instance", this::getInstance,
+            "options", this::getOptions,
+            "recordSize", this::getRecordSize
+        );
     }
 }

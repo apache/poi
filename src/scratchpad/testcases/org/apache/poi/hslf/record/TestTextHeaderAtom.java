@@ -18,8 +18,10 @@
 package org.apache.poi.hslf.record;
 
 
-import junit.framework.TestCase;
 import java.io.ByteArrayOutputStream;
+
+import junit.framework.TestCase;
+import org.apache.poi.sl.usermodel.TextShape.TextPlaceholder;
 
 /**
  * Tests that TextHeaderAtom works properly
@@ -40,9 +42,9 @@ public final class TestTextHeaderAtom extends TestCase {
 		TextHeaderAtom n_tha = new TextHeaderAtom(notes_data,0,12);
 		TextHeaderAtom t_tha = new TextHeaderAtom(title_data,0,12);
 		TextHeaderAtom b_tha = new TextHeaderAtom(body_data,0,12);
-		assertEquals(TextHeaderAtom.NOTES_TYPE, n_tha.getTextType());
-		assertEquals(TextHeaderAtom.TITLE_TYPE, t_tha.getTextType());
-		assertEquals(TextHeaderAtom.BODY_TYPE, b_tha.getTextType());
+		assertEquals(TextPlaceholder.NOTES.nativeId, n_tha.getTextType());
+		assertEquals(TextPlaceholder.TITLE.nativeId, t_tha.getTextType());
+		assertEquals(TextPlaceholder.BODY.nativeId, b_tha.getTextType());
 	}
 
 	public void testWrite() throws Exception {

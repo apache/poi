@@ -19,13 +19,19 @@ package org.apache.poi.hemf.record.emfplus;
 
 import static org.apache.poi.hemf.record.emf.HemfFill.readXForm;
 import static org.apache.poi.hemf.record.emfplus.HemfPlusDraw.readPointF;
+import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hemf.draw.HemfDrawProperties;
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.record.emfplus.HemfPlusDraw.EmfPlusUnitType;
@@ -40,6 +46,7 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
+@SuppressWarnings("WeakerAccess")
 public class HemfPlusPen {
     /**
      * The LineCapType enumeration defines types of line caps to use at the ends of lines that are drawn
@@ -222,7 +229,7 @@ public class HemfPlusPen {
 
 
     @Internal
-    public interface EmfPlusCustomLineCap {
+    public interface EmfPlusCustomLineCap extends GenericRecord {
         long init(LittleEndianInputStream leis) throws IOException;
     }
 
@@ -289,6 +296,18 @@ public class HemfPlusPen {
          * the OptionalData field of an EmfPlusPenData object.
          */
         private final static BitField CUSTOM_END_CAP = BitFieldFactory.getInstance(0x00001000);
+
+        private static final int[] FLAGS_MASKS = {
+            0x00000001, 0x00000002, 0x00000004, 0x00000008, 0x00000010,
+            0x00000020, 0x00000040, 0x00000080, 0x00000100, 0x00000200,
+            0x00000400, 0x00000800, 0x00001000
+        };
+
+        private static final String[] FLAGS_NAMES = {
+            "TRANSFORM", "START_CAP", "END_CAP", "JOIN", "MITER_LIMIT",
+            "LINE_STYLE", "DASHED_LINE_CAP", "DASHED_LINE_OFFSET", "DASHED_LINE", "NON_CENTER",
+            "COMPOUND_LINE", "CUSTOM_START_CAP", "CUSTOM_END_CAP"
+        };
 
         private final EmfPlusGraphicsVersion graphicsVersion = new EmfPlusGraphicsVersion();
 
@@ -528,6 +547,34 @@ public class HemfPlusPen {
                 }
             });
         }
+
+        @Override
+        public EmfPlusObjectType getGenericRecordType() {
+            return EmfPlusObjectType.PEN;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            final Map<String,Supplier<?>> m = new LinkedHashMap<>();
+            m.put("type", () -> type);
+            m.put("flags", getBitsAsString(() -> penDataFlags, FLAGS_MASKS, FLAGS_NAMES));
+            m.put("unitType", () -> unitType);
+            m.put("penWidth", () -> penWidth);
+            m.put("trans", () -> trans);
+            m.put("startCap", () -> startCap);
+            m.put("endCap", () -> endCap);
+            m.put("join", () -> join);
+            m.put("miterLimit", () -> miterLimit);
+            m.put("style", () -> style);
+            m.put("dashedLineCapType", () -> dashedLineCapType);
+            m.put("dashOffset", () -> dashOffset);
+            m.put("dashedLineData", () -> dashedLineData);
+            m.put("penAlignment", () -> penAlignment);
+            m.put("compoundLineData", () -> compoundLineData);
+            m.put("customStartCap", () -> customStartCap);
+            m.put("customEndCap", () -> customEndCap);
+            return Collections.unmodifiableMap(m);
+        }
     }
 
     public static class EmfPlusPathArrowCap implements EmfPlusCustomLineCap {
@@ -542,6 +589,9 @@ public class HemfPlusPen {
          */
         private static final BitField LINE_PATH = BitFieldFactory.getInstance(0x00000002);
 
+        private static final int[] FLAGS_MASKS = { 0x00000001, 0x00000002 };
+
+        private static final String[] FLAGS_NAMES = { "FILL_PATH", "LINE_PATH" };
 
         private int dataFlags;
         private EmfPlusLineCapType baseCap;
@@ -549,7 +599,7 @@ public class HemfPlusPen {
         private EmfPlusLineCapType startCap;
         private EmfPlusLineCapType endCap;
         private EmfPlusLineJoin join;
-        private double mitterLimit;
+        private double miterLimit;
         private double widthScale;
         private final Point2D fillHotSpot = new Point2D.Double();
         private final Point2D lineHotSpot = new Point2D.Double();
@@ -582,7 +632,7 @@ public class HemfPlusPen {
 
             // A 32-bit floating-point value that contains the limit of the thickness of the join on a mitered corner
             // by setting the maximum allowed ratio of miter length to line width.
-            mitterLimit = leis.readFloat();
+            miterLimit = leis.readFloat();
 
             // A 32-bit floating-point value that specifies the amount by which to scale the custom line cap with
             // respect to the width of the EmfPlusPen object that is used to draw the lines.
@@ -606,6 +656,24 @@ public class HemfPlusPen {
 
             return size;
         }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            final Map<String,Supplier<?>> m = new LinkedHashMap<>();
+            m.put("flags", getBitsAsString(() -> dataFlags, FLAGS_MASKS, FLAGS_NAMES));
+            m.put("baseCap", () -> baseCap);
+            m.put("baseInset", () -> baseInset);
+            m.put("startCap", () -> startCap);
+            m.put("endCap", () -> endCap);
+            m.put("join", () -> join);
+            m.put("miterLimit", () -> miterLimit);
+            m.put("widthScale", () -> widthScale);
+            m.put("fillHotSpot", () -> fillHotSpot);
+            m.put("lineHotSpot", () -> lineHotSpot);
+            m.put("fillPath", () -> fillPath);
+            m.put("outlinePath", () -> outlinePath);
+            return Collections.unmodifiableMap(m);
+        }
     }
 
     public static class EmfPlusAdjustableArrowCap implements EmfPlusCustomLineCap {
@@ -616,7 +684,7 @@ public class HemfPlusPen {
         private EmfPlusLineCapType startCap;
         private EmfPlusLineCapType endCap;
         private EmfPlusLineJoin join;
-        private double mitterLimit;
+        private double miterLimit;
         private double widthScale;
         private final Point2D fillHotSpot = new Point2D.Double();
         private final Point2D lineHotSpot = new Point2D.Double();
@@ -655,7 +723,7 @@ public class HemfPlusPen {
 
             // A 32-bit floating-point value that specifies the limit of the thickness of the join on a mitered
             // corner by setting the maximum allowed ratio of miter length to line width.
-            mitterLimit = leis.readFloat();
+            miterLimit = leis.readFloat();
 
             // A 32-bit floating-point value that specifies the amount by which to scale an EmfPlusCustomLineCap
             // object with respect to the width of the graphics pen that is used to draw the lines.
@@ -670,6 +738,24 @@ public class HemfPlusPen {
             size += readPointF(leis, lineHotSpot);
 
             return size;
+        }
+
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            final Map<String,Supplier<?>> m = new LinkedHashMap<>();
+            m.put("width", () -> width);
+            m.put("height", () -> height);
+            m.put("middleInset", () -> middleInset);
+            m.put("isFilled", () -> isFilled);
+            m.put("startCap", () -> startCap);
+            m.put("endCap", () -> endCap);
+            m.put("join", () -> join);
+            m.put("miterLimit", () -> miterLimit);
+            m.put("widthScale", () -> widthScale);
+            m.put("fillHotSpot", () -> fillHotSpot);
+            m.put("lineHotSpot", () -> lineHotSpot);
+            return Collections.unmodifiableMap(m);
         }
     }
 }

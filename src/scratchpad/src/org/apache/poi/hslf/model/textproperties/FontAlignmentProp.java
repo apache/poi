@@ -17,6 +17,12 @@
 
 package org.apache.poi.hslf.model.textproperties;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.sl.usermodel.TextParagraph.FontAlign;
+import org.apache.poi.util.GenericRecordUtil;
+
 /**
  * Definition for the font alignment property.
  */
@@ -29,5 +35,28 @@ public class FontAlignmentProp extends TextProp {
 
 	public FontAlignmentProp() {
 		super(2, 0x10000, NAME);
+	}
+
+	public FontAlign getFontAlign() {
+		switch (getValue()) {
+			default:
+				return FontAlign.AUTO;
+			case BASELINE:
+				return FontAlign.BASELINE;
+			case TOP:
+				return FontAlign.TOP;
+			case CENTER:
+				return FontAlign.CENTER;
+			case BOTTOM:
+				return FontAlign.BOTTOM;
+		}
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"base", super::getGenericProperties,
+			"fontAlign", this::getFontAlign
+		);
 	}
 }

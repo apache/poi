@@ -17,9 +17,13 @@
 
 package org.apache.poi.hslf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherRecordFactory;
 import org.apache.poi.ddf.EscherSerializationListener;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -77,6 +81,18 @@ public class EscherPlaceholder extends EscherRecord {
         return "ClientTextboxPlaceholder";
     }
 
+    public int getPosition() {
+        return position;
+    }
+
+    public byte getPlacementId() {
+        return placementId;
+    }
+
+    public byte getSize() {
+        return size;
+    }
+
     @Override
     protected Object[][] getAttributeMap() {
         return new Object[][] {
@@ -85,5 +101,20 @@ public class EscherPlaceholder extends EscherRecord {
             { "placehoder size", size },
             { "unused", unused }
         };
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "base", super::getGenericProperties,
+            "position", this::getPosition,
+            "placementId", this::getPlacementId,
+            "size", this::getSize
+        );
+    }
+
+    @Override
+    public Enum getGenericRecordType() {
+        return RecordTypes.OEPlaceholderAtom;
     }
 }

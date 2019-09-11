@@ -17,11 +17,18 @@
 
 package org.apache.poi.hslf.record;
 
+import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.function.Supplier;
 
+import org.apache.poi.common.usermodel.fonts.FontFamily;
+import org.apache.poi.common.usermodel.fonts.FontPitch;
 import org.apache.poi.hslf.exceptions.HSLFException;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
@@ -39,6 +46,18 @@ public final class FontEntityAtom extends RecordAtom {
 
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 1_000_000;
+
+    private static final int[] FLAGS_MASKS = {
+        0x0001, 0x0100, 0x0200, 0x0400, 0x0800
+    };
+
+    private static final String[] FLAGS_NAMES = {
+        "EMBED_SUBSETTED",
+        "RASTER_FONT",
+        "DEVICE_FONT",
+        "TRUETYPE_FONT",
+        "NO_FONT_SUBSTITUTION"
+    };
 
     /**
      * record header
@@ -210,4 +229,16 @@ public final class FontEntityAtom extends RecordAtom {
 		out.write(_header);
 		out.write(_recdata);
 	}
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "fontName", this::getFontName,
+            "fontIndex", this::getFontIndex,
+            "charset", this::getCharSet,
+            "fontFlags", getBitsAsString(this::getFontFlags, FLAGS_MASKS, FLAGS_NAMES),
+            "fontPitch", () -> FontPitch.valueOfPitchFamily((byte)getPitchAndFamily()),
+            "fontFamily", () -> FontFamily.valueOfPitchFamily((byte)getPitchAndFamily())
+        );
+    }
 }

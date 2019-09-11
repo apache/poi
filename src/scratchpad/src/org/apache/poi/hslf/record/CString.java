@@ -19,7 +19,10 @@ package org.apache.poi.hslf.record;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
+import java.util.function.Supplier;
 
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
@@ -38,7 +41,6 @@ public final class CString extends RecordAtom {
 	private static final int MAX_RECORD_LENGTH = 1_000_000;
 
 	private byte[] _header;
-	private static long _type = 4026l;
 
 	/** The bytes that make up the text */
 	private byte[] _text;
@@ -104,7 +106,9 @@ public final class CString extends RecordAtom {
 	/**
 	 * We are of type 4026
 	 */
-	public long getRecordType() { return _type; }
+	public long getRecordType() {
+		return RecordTypes.CString.typeID;
+	}
 
 	/**
 	 * Write the contents of the record back, so it can be written
@@ -125,4 +129,9 @@ public final class CString extends RecordAtom {
     public String toString() {
         return getText();
     }
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties("text", this::getText);
+	}
 }

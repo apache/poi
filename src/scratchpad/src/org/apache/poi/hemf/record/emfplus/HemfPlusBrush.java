@@ -17,26 +17,24 @@
 
 package org.apache.poi.hemf.record.emfplus;
 
-import static java.util.stream.Collectors.joining;
-import static org.apache.poi.hemf.record.emf.HemfDraw.xformToString;
 import static org.apache.poi.hemf.record.emf.HemfFill.readXForm;
 import static org.apache.poi.hemf.record.emfplus.HemfPlusDraw.readARGB;
 import static org.apache.poi.hemf.record.emfplus.HemfPlusDraw.readPointF;
 import static org.apache.poi.hemf.record.emfplus.HemfPlusDraw.readRectF;
-import static org.apache.poi.hwmf.record.HwmfDraw.boundsToString;
-import static org.apache.poi.hwmf.record.HwmfDraw.pointToString;
 
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hemf.draw.HemfDrawProperties;
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.record.emfplus.HemfPlusHeader.EmfPlusGraphicsVersion;
@@ -47,10 +45,10 @@ import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectType;
 import org.apache.poi.hemf.record.emfplus.HemfPlusPath.EmfPlusPath;
 import org.apache.poi.hwmf.record.HwmfBrushStyle;
 import org.apache.poi.hwmf.record.HwmfColorRef;
-import org.apache.poi.hwmf.record.HwmfDraw;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.Internal;
+import org.apache.poi.util.GenericRecordJsonWriter;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
@@ -243,7 +241,7 @@ public class HemfPlusBrush {
 
     }
 
-    public interface EmfPlusBrushData {
+    public interface EmfPlusBrushData extends GenericRecord {
         /**
          * This flag is meaningful in EmfPlusPathGradientBrushData objects.
          *
@@ -343,9 +341,24 @@ public class HemfPlusBrush {
 
         @Override
         public String toString() {
-            return
-                "{ brushType: '"+brushType+"'" +
-                ", brushData: "+brushData+" }";
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public EmfPlusBrushData getBrushData() {
+            return brushData;
+        }
+
+        @Override
+        public EmfPlusBrushType getGenericRecordType() {
+            return brushType;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "graphicsVersion", this::getGraphicsVersion,
+                "brushData", this::getBrushData
+            );
         }
     }
 
@@ -366,7 +379,17 @@ public class HemfPlusBrush {
 
         @Override
         public String toString() {
-            return "{ solidColor: "+new HwmfColorRef(solidColor)+" }";
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return EmfPlusBrushType.SOLID_COLOR;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("solidColor", () -> solidColor);
         }
     }
 
@@ -392,10 +415,21 @@ public class HemfPlusBrush {
 
         @Override
         public String toString() {
-            return
-                "{ style: '"+style+"'" +
-                ", foreColor: "+new HwmfColorRef(foreColor) +
-                ", backColor: "+new HwmfColorRef(backColor) + " }";
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return EmfPlusBrushType.HATCH_FILL;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "style", () -> style,
+                "foreColor", () -> foreColor,
+                "backColor", () -> backColor
+            );
         }
     }
 
@@ -462,23 +496,31 @@ public class HemfPlusBrush {
 
         @Override
         public String toString() {
-            return
-                "{ flags: "+dataFlags+
-                ", wrapMode: '"+wrapMode+"'"+
-                ", rect: "+boundsToString(rect)+
-                ", startColor: "+new HwmfColorRef(startColor)+
-                ", endColor: "+new HwmfColorRef(endColor)+
-                ", transform: "+xformToString(transform)+
-                ", positions: "+ Arrays.toString(positions)+
-                ", blendColors: "+ colorsToString(blendColors)+
-                ", positionsV: "+ Arrays.toString(positionsV)+
-                ", blendFactorsV: "+ Arrays.toString(blendFactorsV)+
-                ", positionsH: "+ Arrays.toString(positionsH)+
-                ", blendFactorsH: "+ Arrays.toString(blendFactorsH)+
-                "}";
+            return GenericRecordJsonWriter.marshal(this);
         }
 
+        @Override
+        public Enum getGenericRecordType() {
+            return EmfPlusBrushType.LINEAR_GRADIENT;
+        }
 
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            final Map<String,Supplier<?>> m = new LinkedHashMap<>();
+            m.put("flags", () -> dataFlags);
+            m.put("wrapMode", () -> wrapMode);
+            m.put("rect", () -> rect);
+            m.put("startColor", () -> startColor);
+            m.put("endColor", () -> endColor);
+            m.put("transform", () -> transform);
+            m.put("positions", () -> positions);
+            m.put("blendColors", () -> blendColors);
+            m.put("positionsV", () -> positionsV);
+            m.put("blendFactorsV", () -> blendFactorsV);
+            m.put("positionsH", () -> positionsH);
+            m.put("blendFactorsH", () -> blendFactorsH);
+            return Collections.unmodifiableMap(m);
+        }
     }
 
     /** The EmfPlusPathGradientBrushData object specifies a path gradient for a graphics brush. */
@@ -593,22 +635,32 @@ public class HemfPlusBrush {
 
         @Override
         public String toString() {
-            return
-                "{ flags: "+dataFlags+
-                ", wrapMode: '"+wrapMode+"'"+
-                ", centerColor: "+new HwmfColorRef(centerColor)+
-                ", centerPoint: "+pointToString(centerPoint)+
-                ", surroundingColor: "+colorsToString(surroundingColor)+
-                ", boundaryPath: "+(boundaryPath == null ? "null" : boundaryPath)+
-                ", boundaryPoints: "+pointsToString(boundaryPoints)+
-                ", transform: "+xformToString(transform)+
-                ", positions: "+Arrays.toString(positions)+
-                ", blendColors: "+colorsToString(blendColors)+
-                ", blendFactorsH: "+Arrays.toString(blendFactorsH)+
-                ", focusScaleX: "+focusScaleX+
-                ", focusScaleY: "+focusScaleY+
-                "}"
-                ;
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+
+        @Override
+        public Enum getGenericRecordType() {
+            return EmfPlusBrushType.PATH_GRADIENT;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            final Map<String,Supplier<?>> m = new LinkedHashMap<>();
+            m.put("flags", () -> dataFlags);
+            m.put("wrapMode", () -> wrapMode);
+            m.put("centerColor", () -> centerColor);
+            m.put("centerPoint", () -> centerPoint);
+            m.put("surroundingColor", () -> surroundingColor);
+            m.put("boundaryPath", () -> boundaryPath);
+            m.put("boundaryPoints", () -> boundaryPoints);
+            m.put("transform", () -> transform);
+            m.put("positions", () -> positions);
+            m.put("blendColors", () -> blendColors);
+            m.put("blendFactorsH", () -> blendFactorsH);
+            m.put("focusScaleX", () -> focusScaleX);
+            m.put("focusScaleY", () -> focusScaleY);
+            return Collections.unmodifiableMap(m);
         }
     }
 
@@ -652,12 +704,22 @@ public class HemfPlusBrush {
 
         @Override
         public String toString() {
-            return
-                "{ flags: "+dataFlags+
-                ", wrapMode: '"+wrapMode+"'"+
-                ", transform: "+xformToString(transform)+
-                ", image: "+image+
-                "]";
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return EmfPlusBrushType.TEXTURE_FILL;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "dataFlags", () -> dataFlags,
+                "wrapMode", () -> wrapMode,
+                "transform", () -> transform,
+                "image", () -> image
+            );
         }
     }
 
@@ -695,19 +757,5 @@ public class HemfPlusBrush {
         }
         facs.accept(factors);
         return size + factors.length * LittleEndianConsts.INT_SIZE;
-    }
-
-    @Internal
-    public static String colorsToString(Color[] colors) {
-        return (colors == null ? "null" :
-            Stream.of(colors).map(HwmfColorRef::new).map(Object::toString).
-            collect(joining(",", "{", "}")));
-    }
-
-    @Internal
-    public static String pointsToString(Point2D[] points) {
-        return (points == null ? "null" :
-            Stream.of(points).map(HwmfDraw::pointToString).
-            collect(joining(",", "{", "}")));
     }
 }

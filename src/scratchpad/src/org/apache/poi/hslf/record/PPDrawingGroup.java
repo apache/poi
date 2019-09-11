@@ -17,22 +17,25 @@
 
 package org.apache.poi.hslf.record;
 
-import org.apache.poi.ddf.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.ddf.DefaultEscherRecordFactory;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherDggRecord;
+import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
-
-import java.io.OutputStream;
-import java.io.IOException;
-import java.io.ByteArrayOutputStream;
-import java.util.Iterator;
 
 /**
  * Container records which always exists inside Document.
  * It always acts as a holder for escher DGG container
  *  which may contain which Escher BStore container information
  *  about pictures containes in the presentation (if any).
- *
- * @author Yegor Kozlov
  */
 public final class PPDrawingGroup extends RecordAtom {
 
@@ -130,5 +133,12 @@ public final class PPDrawingGroup extends RecordAtom {
             }
         }
         return dgg;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+           "dggContainer", this::getDggContainer
+        );
     }
 }

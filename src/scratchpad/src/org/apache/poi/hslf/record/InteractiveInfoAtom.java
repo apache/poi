@@ -17,9 +17,15 @@
 
 package org.apache.poi.hslf.record;
 
+import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
+import static org.apache.poi.util.GenericRecordUtil.safeEnum;
+
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
+import java.util.function.Supplier;
 
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
@@ -35,6 +41,39 @@ public class InteractiveInfoAtom extends RecordAtom {
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
 
+    public enum Action {
+        NONE,
+        MACRO,
+        RUN_PROGRAM,
+        JUMP,
+        HYPERLINK,
+        OLE,
+        MEDIA,
+        CUSTOM_SHOW
+    }
+
+    public enum Jump {
+        NONE,
+        NEXT_SLIDE,
+        PREVIOUS_SLIDE,
+        FIRST_SLIDE,
+        LAST_SLIDE,
+        LAST_SLIDE_VIEWED,
+        END_SHOW
+    }
+
+    public enum Link {
+        NEXT_SLIDE,
+        PREVIOUS_SLIDE,
+        FIRST_SLIDE,
+        LAST_SLIDE,
+        CUSTOM_SHOW,
+        SLIDE_NUMBER,
+        URL,
+        OTHER_PRESENTATION,
+        OTHER_FILE,
+        NULL
+    }
 
     /**
      * Action Table
@@ -72,6 +111,14 @@ public class InteractiveInfoAtom extends RecordAtom {
     public static final byte LINK_OtherPresentation = 0x09;
     public static final byte LINK_OtherFile = 0x0A;
     public static final byte LINK_NULL = (byte)0xFF;
+
+    private static final int[] FLAGS_MASKS = {
+        0x0001, 0x0002, 0x0004, 0x0008
+    };
+
+    private static final String[] FLAGS_NAMES = {
+        "ANIMATED", "STOP_SOUND", "CUSTOM_SHOW_RETURN", "VISITED"
+    };
 
     /**
      * Record header.
@@ -279,5 +326,17 @@ public class InteractiveInfoAtom extends RecordAtom {
     public void writeOut(OutputStream out) throws IOException {
         out.write(_header);
         out.write(_data);
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "hyperlinkID", this::getHyperlinkID,
+            "soundRef", this::getSoundRef,
+            "action", safeEnum(Action.values(), this::getAction),
+            "jump", safeEnum(Jump.values(), this::getJump),
+            "hyperlinkType", safeEnum(Link.values(), this::getHyperlinkType, Link.NULL),
+            "flags", getBitsAsString(this::getFlags, FLAGS_MASKS, FLAGS_NAMES)
+        );
     }
 }

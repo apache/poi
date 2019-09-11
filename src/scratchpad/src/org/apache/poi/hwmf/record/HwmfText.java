@@ -17,28 +17,31 @@
 
 package org.apache.poi.hwmf.record;
 
-import static org.apache.poi.hwmf.record.HwmfDraw.boundsToString;
-import static org.apache.poi.hwmf.record.HwmfDraw.pointToString;
 import static org.apache.poi.hwmf.record.HwmfDraw.readPointS;
 import static org.apache.poi.hwmf.record.HwmfDraw.readRectS;
+import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
 
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
-import org.apache.commons.codec.Charsets;
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hwmf.draw.HwmfDrawProperties;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.hwmf.record.HwmfMisc.WmfSetMapMode;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.GenericRecordJsonWriter;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
-import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -76,6 +79,11 @@ public class HwmfText {
         public void draw(HwmfGraphics ctx) {
 
         }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("charExtra", () -> charExtra);
+        }
     }
     
     /**
@@ -102,7 +110,16 @@ public class HwmfText {
 
         @Override
         public String toString() {
-            return "{ colorRef: "+colorRef+" }";
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public HwmfColorRef getColorRef() {
+            return colorRef;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("colorRef", this::getColorRef);
         }
     }
     
@@ -140,6 +157,14 @@ public class HwmfText {
         @Override
         public void draw(HwmfGraphics ctx) {
 
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "breakCount", () -> breakCount,
+                "breakExtra", () -> breakExtra
+            );
         }
     }
     
@@ -204,9 +229,14 @@ public class HwmfText {
             System.arraycopy(rawTextBytes, 0, ret, 0, stringLength);
             return ret;
         }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("text", () -> getText(StandardCharsets.US_ASCII));
+        }
     }
 
-    public static class WmfExtTextOutOptions {
+    public static class WmfExtTextOutOptions implements GenericRecord {
         /**
          * Indicates that the background color that is defined in the playback device context
          * SHOULD be used to fill the rectangle.
@@ -272,23 +302,37 @@ public class HwmfText {
         /** This bit is reserved and SHOULD NOT be used. */
         private static final BitField ETO_REVERSE_INDEX_MAP = BitFieldFactory.getInstance(0x10000);
 
-        protected int flag;
+        private static final int[] FLAGS_MASKS = {
+            0x0002, 0x0004, 0x0010, 0x0080, 0x0100, 0x0200, 0x0400, 0x0800, 0x1000, 0x2000, 0x10000
+        };
+
+        private static final String[] FLAGS_NAMES = {
+            "OPAQUE", "CLIPPED", "GLYPH_INDEX", "RTLREADING", "NO_RECT", "SMALL_CHARS", "NUMERICSLOCAL",
+            "NUMERICSLATIN", "IGNORELANGUAGE", "PDY", "REVERSE_INDEX_MAP"
+        };
+
+        protected int flags;
 
         public int init(LittleEndianInputStream leis) {
-            flag = leis.readUShort();
+            flags = leis.readUShort();
             return LittleEndianConsts.SHORT_SIZE;
         }
 
         public boolean isOpaque() {
-            return ETO_OPAQUE.isSet(flag);
+            return ETO_OPAQUE.isSet(flags);
         }
 
         public boolean isClipped() {
-            return ETO_CLIPPED.isSet(flag);
+            return ETO_CLIPPED.isSet(flags);
         }
 
         public boolean isYDisplaced() {
-            return ETO_PDY.isSet(flag);
+            return ETO_PDY.isSet(flags);
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("flags", getBitsAsString(() -> flags, FLAGS_MASKS, FLAGS_NAMES));
         }
     }
 
@@ -417,17 +461,24 @@ public class HwmfText {
 
         @Override
         public String toString() {
-            String text = "";
-            try {
-                text = getText(isUnicode() ? Charsets.UTF_16LE : LocaleUtil.CHARSET_1252);
-            } catch (IOException ignored) {
-            }
+            return GenericRecordJsonWriter.marshal(this);
+        }
 
-            return
-                "{ reference: " + pointToString(reference) +
-                ", bounds: " + boundsToString(bounds) +
-                ", text: '"+text.replaceAll("\\p{Cntrl}",".")+"'"+
-                "}";
+        private String getGenericText() {
+            try {
+                return getText(isUnicode() ? StandardCharsets.UTF_16LE : StandardCharsets.US_ASCII);
+            } catch (IOException e) {
+                return "";
+            }
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "reference", this::getReference,
+                "bounds", this::getBounds,
+                "text", this::getGenericText
+            );
         }
     }
     
@@ -555,12 +606,17 @@ public class HwmfText {
 
         @Override
         public String toString() {
-            return
-                "{ align: '"+ getAlignLatin() + "'" +
-                ", valign: '"+ getVAlignLatin() + "'" +
-                ", alignAsian: '"+ getAlignAsian() + "'" +
-                ", valignAsian: '"+ getVAlignAsian() + "'" +
-                "}";
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "align", this::getAlignLatin,
+                "valign", this::getVAlignLatin,
+                "alignAsian", this::getAlignAsian,
+                "valignAsian", this::getVAlignAsian
+            );
         }
 
         private HwmfTextAlignment getAlignLatin() {
@@ -649,7 +705,12 @@ public class HwmfText {
 
         @Override
         public String toString() {
-            return "{ font: "+font+" } ";
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("font", this::getFont);
         }
     }
 }

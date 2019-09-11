@@ -17,7 +17,12 @@
 
 package org.apache.poi.hslf.model.textproperties;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hslf.record.TxMasterStyleAtom;
+import org.apache.poi.util.GenericRecordUtil;
 
 /** 
  * Definition of the indent level of some text. Defines how many
@@ -25,7 +30,7 @@ import org.apache.poi.hslf.record.TxMasterStyleAtom;
  * 
  * This is defined by the slightly confusingly named MasterTextPropRun 
  */
-public class IndentProp  {
+public class IndentProp implements GenericRecord {
     private int charactersCovered;
     private short indentLevel;
 
@@ -61,5 +66,13 @@ public class IndentProp  {
      */
     public void updateTextSize(int textSize) {
         charactersCovered = textSize;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "charactersCovered", this::getCharactersCovered,
+            "indentLevel", this::getIndentLevel
+        );
     }
 }

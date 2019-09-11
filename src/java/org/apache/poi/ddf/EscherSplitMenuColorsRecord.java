@@ -17,6 +17,10 @@
 
 package org.apache.poi.ddf;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.RecordFormatException;
 
@@ -24,11 +28,8 @@ import org.apache.poi.util.RecordFormatException;
  * A list of the most recently used colours for the drawings contained in
  * this document.
  */
-public class EscherSplitMenuColorsRecord
-    extends EscherRecord
-{
-    public static final short RECORD_ID = (short) 0xF11E;
-    public static final String RECORD_DESCRIPTION = "MsofbtSplitMenuColors";
+public class EscherSplitMenuColorsRecord extends EscherRecord {
+    public static final short RECORD_ID = EscherRecordTypes.SPLIT_MENU_COLORS.typeID;
 
     private int field_1_color1;
     private int field_2_color2;
@@ -82,7 +83,7 @@ public class EscherSplitMenuColorsRecord
 
     @Override
     public String getRecordName() {
-        return "SplitMenuColors";
+        return EscherRecordTypes.SPLIT_MENU_COLORS.recordName;
     }
 
     /**
@@ -165,5 +166,21 @@ public class EscherSplitMenuColorsRecord
             { "Color3", field_3_color3 },
             { "Color4", field_4_color4 }
         };
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "base", super::getGenericProperties,
+            "color1", this::getColor1,
+            "color2", this::getColor2,
+            "color3", this::getColor3,
+            "color4", this::getColor4
+        );
+    }
+
+    @Override
+    public Enum getGenericRecordType() {
+        return EscherRecordTypes.SPLIT_MENU_COLORS;
     }
 }

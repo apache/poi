@@ -20,8 +20,10 @@ package org.apache.poi.hslf.record;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.record.RecordTypes.RecordConstructor;
@@ -37,7 +39,7 @@ import org.apache.poi.util.POILogger;
  * @author Nick Burch
  */
 
-public abstract class Record
+public abstract class Record implements GenericRecord
 {
     // For logging
 	protected static final POILogger logger = POILogFactory.getLogger(Record.class);
@@ -70,6 +72,17 @@ public abstract class Record
 	 *  children, then chuck on their header and return)
 	 */
 	public abstract void writeOut(OutputStream o) throws IOException;
+
+	@Override
+	public Enum getGenericRecordType() {
+		return RecordTypes.forTypeID((int)getRecordType());
+	}
+
+	@Override
+	public List<Record> getGenericChildren() {
+		Record[] recs = getChildRecords();
+		return (recs == null) ? null : Arrays.asList(recs);
+	}
 
 	/**
 	 * When writing out, write out a signed int (32bit) in Little Endian format
@@ -188,4 +201,6 @@ public abstract class Record
 		// Return the created record
 		return toReturn;
 	}
+
+
 }

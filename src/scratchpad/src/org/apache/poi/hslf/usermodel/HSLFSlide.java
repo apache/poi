@@ -24,6 +24,7 @@ import java.util.List;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherDgRecord;
 import org.apache.poi.ddf.EscherDggRecord;
+import org.apache.poi.ddf.EscherRecordTypes;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.model.HeadersFooters;
@@ -47,6 +48,7 @@ import org.apache.poi.sl.usermodel.Notes;
 import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.sl.usermodel.Slide;
+import org.apache.poi.sl.usermodel.TextShape.TextPlaceholder;
 
 /**
  * This class represents a slide in a PowerPoint Document. It allows
@@ -168,12 +170,12 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
 
         for (EscherContainerRecord c : dgContainer.getChildContainers()) {
             EscherSpRecord spr = null;
-            switch(c.getRecordId()){
-                case EscherContainerRecord.SPGR_CONTAINER:
+            switch(EscherRecordTypes.forTypeID(c.getRecordId())){
+                case SPGR_CONTAINER:
                     EscherContainerRecord dc = (EscherContainerRecord)c.getChild(0);
                     spr = dc.getChildById(EscherSpRecord.RECORD_ID);
                     break;
-                case EscherContainerRecord.SP_CONTAINER:
+                case SP_CONTAINER:
                     spr = c.getChildById(EscherSpRecord.RECORD_ID);
                     break;
                 default:
@@ -197,7 +199,7 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
 		HSLFPlaceholder pl = new HSLFPlaceholder();
 		pl.setShapeType(ShapeType.RECT);
 		pl.setPlaceholder(Placeholder.TITLE);
-		pl.setRunType(TextHeaderAtom.TITLE_TYPE);
+		pl.setRunType(TextPlaceholder.TITLE.nativeId);
 		pl.setText("Click to edit title");
 		pl.setAnchor(new java.awt.Rectangle(54, 48, 612, 90));
 		addShape(pl);
@@ -222,12 +224,10 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
                 continue;
             }
 			int type = tp.get(0).getRunType();
-			switch (type) {
-    			case TextHeaderAtom.CENTER_TITLE_TYPE:
-    			case TextHeaderAtom.TITLE_TYPE:
-    			    String str = HSLFTextParagraph.getRawText(tp);
-    			    return HSLFTextParagraph.toExternalString(str, type);
-			}
+		    if (TextPlaceholder.isTitle(type)) {
+                String str = HSLFTextParagraph.getRawText(tp);
+                return HSLFTextParagraph.toExternalString(str, type);
+            }
 		}
 		return null;
 	}

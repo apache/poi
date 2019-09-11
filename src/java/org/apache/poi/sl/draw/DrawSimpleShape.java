@@ -23,8 +23,8 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Paint;
+import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
@@ -61,6 +61,10 @@ public class DrawSimpleShape extends DrawShape {
         if (getAnchor(graphics, getShape()) == null) {
             return;
         }
+
+        Paint oldPaint = graphics.getPaint();
+        Stroke oldStroke = graphics.getStroke();
+        Color oldColor = graphics.getColor();
 
         Paint fill = getFillPaint(graphics);
         Paint line = getLinePaint(graphics);
@@ -115,8 +119,12 @@ public class DrawSimpleShape extends DrawShape {
             }
         }
 
-		// draw line decorations
+        // draw line decorations
         drawDecoration(graphics, line, stroke);
+
+        graphics.setColor(oldColor);
+        graphics.setPaint(oldPaint);
+        graphics.setStroke(oldStroke);
     }
 
     private void fillArea(Graphics2D graphics, PaintModifier pm, Path2D area) {

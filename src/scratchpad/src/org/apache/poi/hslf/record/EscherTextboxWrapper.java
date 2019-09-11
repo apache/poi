@@ -17,11 +17,14 @@
 
 package org.apache.poi.hslf.record;
 
-import org.apache.poi.ddf.*;
-
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.ByteArrayOutputStream;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.ddf.EscherTextboxRecord;
+import org.apache.poi.util.GenericRecordUtil;
 
 /**
  * A wrapper around a DDF (Escher) EscherTextbox Record. Causes the DDF
@@ -117,5 +120,13 @@ public final class EscherTextboxWrapper extends RecordContainer {
 	}
 	public StyleTextProp9Atom getStyleTextProp9Atom() {
 		return this.styleTextProp9Atom;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"shapeId", this::getShapeId,
+			"escherRecord", this::getEscherRecord
+		);
 	}
 }

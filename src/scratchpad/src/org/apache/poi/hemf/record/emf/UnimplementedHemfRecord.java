@@ -25,7 +25,7 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianInputStream;
 
 @Internal
-public class UnimplementedHemfRecord implements HemfRecord {
+public class UnimplementedHemfRecord implements HemfRecordWithoutProperties {
 
     private HemfRecordType recordType;
 

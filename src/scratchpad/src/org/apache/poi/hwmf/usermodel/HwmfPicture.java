@@ -26,9 +26,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Spliterator;
+import java.util.function.Supplier;
 
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hwmf.draw.HwmfDrawProperties;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.hwmf.record.HwmfHeader;
@@ -45,7 +50,7 @@ import org.apache.poi.util.POILogger;
 import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.Units;
 
-public class HwmfPicture {
+public class HwmfPicture implements Iterable<HwmfRecord>, GenericRecord {
     /** Max. record length - processing longer records will throw an exception */
     public static final int MAX_RECORD_LENGTH = 50_000_000;
 
@@ -226,5 +231,25 @@ public class HwmfPicture {
 
     public Iterable<HwmfEmbedded> getEmbeddings() {
         return () -> new HwmfEmbeddedIterator(HwmfPicture.this);
+    }
+
+    @Override
+    public Iterator<HwmfRecord> iterator() {
+        return getRecords().iterator();
+    }
+
+    @Override
+    public Spliterator<HwmfRecord> spliterator() {
+        return getRecords().spliterator();
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return null;
+    }
+
+    @Override
+    public List<? extends GenericRecord> getGenericChildren() {
+        return getRecords();
     }
 }

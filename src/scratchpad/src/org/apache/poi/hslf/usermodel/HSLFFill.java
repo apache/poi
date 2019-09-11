@@ -29,9 +29,9 @@ import org.apache.poi.ddf.EscherColorRef;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.ddf.EscherRecordTypes;
 import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.hslf.record.Document;
-import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.ColorStyle;
 import org.apache.poi.sl.usermodel.FillStyle;
@@ -257,7 +257,7 @@ public final class HSLFFill {
     private boolean isRotatedWithShape() {
         // NOFILLHITTEST can be in the normal escher opt record but also in the tertiary record
         // the extended bit fields seem to be in the second
-        AbstractEscherOptRecord opt = shape.getEscherChild(RecordTypes.EscherUserDefined);
+        AbstractEscherOptRecord opt = shape.getEscherChild(EscherRecordTypes.USER_DEFINED);
         EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST);
         int propVal = (p == null) ? 0 : p.getPropertyValue();
         return FILL_USE_USE_SHAPE_ANCHOR.isSet(propVal) && FILL_USE_SHAPE_ANCHOR.isSet(propVal);

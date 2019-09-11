@@ -161,6 +161,8 @@ public final class TestEscherContainerRecord {
         public String getRecordName() { return ""; }
         @Override
 		protected Object[][] getAttributeMap() { return null; }
+		@Override
+		public Enum getGenericRecordType() { return EscherRecordTypes.UNKNOWN; }
 	}
 
     @Test

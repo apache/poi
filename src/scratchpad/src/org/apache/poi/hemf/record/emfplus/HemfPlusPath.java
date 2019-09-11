@@ -17,13 +17,20 @@
 
 package org.apache.poi.hemf.record.emfplus;
 
+import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
+
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hemf.draw.HemfDrawProperties;
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.record.emfplus.HemfPlusDraw.EmfPlusCompressed;
@@ -32,6 +39,7 @@ import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectData;
 import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectType;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
@@ -72,6 +80,12 @@ public class HemfPlusPath {
         private static final BitField POINT_RLE_BEZIER = BitFieldFactory.getInstance(0x80);
 
         private static final BitField POINT_RLE_COUNT = BitFieldFactory.getInstance(0x3F);
+
+        private static final int[] FLAGS_MASKS = { 0x0800, 0x1000, 0x4000 };
+        private static final String[] FLAGS_NAMES = { "RELATIVE_POSITION", "RLE_COMPRESSED", "FORMAT_COMPRESSED" };
+
+        private static final int[] TYPE_MASKS = { 0x10, 0x20, 0x80 };
+        private static final String[] TYPE_NAMES = { "DASHED", "MARKER", "CLOSE" };
 
         private final HemfPlusHeader.EmfPlusGraphicsVersion graphicsVersion = new HemfPlusHeader.EmfPlusGraphicsVersion();
         private int pointFlags;
@@ -154,7 +168,9 @@ public class HemfPlusPath {
             return pointFlags;
         }
 
-
+        public Point2D getPoint(int index) {
+            return pathPoints[index];
+        }
 
         @Override
         public void applyObject(HemfGraphics ctx, List<? extends EmfPlusObjectData> continuedObjectData) {
@@ -184,8 +200,32 @@ public class HemfPlusPath {
             }
         }
 
+        @Override
+        public EmfPlusObjectType getGenericRecordType() {
+            return EmfPlusObjectType.PATH;
+        }
 
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "graphicsVersion", this::getGraphicsVersion,
+                "flags", getBitsAsString(this::getFlags, FLAGS_MASKS, FLAGS_NAMES),
+                "points", this::getGenericPoints
+            );
+        }
+
+        private List<GenericRecord> getGenericPoints() {
+            return IntStream.range(0, pathPoints.length).
+                mapToObj(this::getGenericPoint).
+                collect(Collectors.toList());
+        }
+
+        private GenericRecord getGenericPoint(final int idx) {
+            return () -> GenericRecordUtil.getGenericProperties(
+                "flags", getBitsAsString(() -> pointTypes[idx], TYPE_MASKS, TYPE_NAMES),
+                "type", () -> getPointType(idx),
+                "point", () -> getPoint(idx)
+            );
+        }
     }
-
-
 }

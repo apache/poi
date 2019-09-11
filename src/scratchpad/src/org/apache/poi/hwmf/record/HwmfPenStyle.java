@@ -18,9 +18,14 @@
 package org.apache.poi.hwmf.record;
 
 import java.awt.BasicStroke;
+import java.util.Map;
+import java.util.function.Supplier;
 
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.GenericRecordJsonWriter;
+import org.apache.poi.util.GenericRecordUtil;
 
 /**
  * The 16-bit PenStyle Enumeration is used to specify different types of pens
@@ -32,7 +37,7 @@ import org.apache.poi.util.BitFieldFactory;
  * The defaults in case the other values of the subsection aren't set are
  * solid, round end caps, round joins and cosmetic type.
  */
-public class HwmfPenStyle implements Cloneable {
+public class HwmfPenStyle implements Cloneable, GenericRecord {
     public enum HwmfLineCap {
         /** Rounded ends */
         ROUND(0, BasicStroke.CAP_ROUND),
@@ -207,12 +212,18 @@ public class HwmfPenStyle implements Cloneable {
 
     @Override
     public String toString() {
-        return
-            "{ lineCap: '"+getLineCap()+"'"+
-            ", lineDash: '"+getLineDash()+"'"+
-            ", lineJoin: '"+getLineJoin()+"'"+
-            (isAlternateDash()?", alternateDash: true ":"")+
-            (isGeometric()?", geometric: true ":"")+
-            "}";
+        return GenericRecordJsonWriter.marshal(this);
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "lineCap", this::getLineCap,
+            "lineJoin", this::getLineJoin,
+            "lineDash", this::getLineDash,
+            "lineDashes", this::getLineDashes,
+            "alternateDash", this::isAlternateDash,
+            "geometric", this::isGeometric
+        );
     }
 }

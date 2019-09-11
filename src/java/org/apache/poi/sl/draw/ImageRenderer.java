@@ -26,6 +26,8 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.poi.common.usermodel.GenericRecord;
+
 /**
  * Classes can implement this interfaces to support other formats, for
  * example, use Apache Batik to render WMF, PICT can be rendered using Apple QuickTime API for Java:
@@ -134,4 +136,7 @@ public interface ImageRenderer {
      * @return true if the picture data was successfully rendered
      */
     boolean drawImage(Graphics2D graphics, Rectangle2D anchor, Insets clip);
+
+    default GenericRecord getGenericRecord() { return null; }
+
 }

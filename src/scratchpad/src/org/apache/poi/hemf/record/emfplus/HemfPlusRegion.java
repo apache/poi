@@ -22,14 +22,17 @@ import static org.apache.poi.hemf.record.emfplus.HemfPlusDraw.readRectF;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.record.emfplus.HemfPlusHeader.EmfPlusGraphicsVersion;
 import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectData;
 import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectType;
 import org.apache.poi.hemf.record.emfplus.HemfPlusPath.EmfPlusPath;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
@@ -122,10 +125,23 @@ public class HemfPlusRegion {
         public EmfPlusGraphicsVersion getGraphicsVersion() {
             return graphicsVersion;
         }
+
+        @Override
+        public EmfPlusObjectType getGenericRecordType() {
+            return EmfPlusObjectType.REGION;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "graphicsVersion", this::getGraphicsVersion,
+                "regionNode", () -> regionNode
+            );
+        }
     }
 
 
-    public interface EmfPlusRegionNodeData {
+    public interface EmfPlusRegionNodeData extends GenericRecord {
         long init(LittleEndianInputStream leis) throws IOException;
     }
 
@@ -141,12 +157,22 @@ public class HemfPlusRegion {
         public long init(LittleEndianInputStream leis) throws IOException {
             return 0;
         }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return null;
+        }
     }
 
     public static class EmfPlusRegionEmpty implements EmfPlusRegionNodeData {
         @Override
         public long init(LittleEndianInputStream leis) throws IOException {
             return 0;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return null;
         }
     }
 
@@ -156,6 +182,11 @@ public class HemfPlusRegion {
         @Override
         public long init(LittleEndianInputStream leis) {
             return readRectF(leis, rect);
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("rect", () -> rect);
         }
     }
 
@@ -168,8 +199,15 @@ public class HemfPlusRegion {
             size += readNode(leis, n -> right = n);
             return size;
         }
-    }
 
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "left", () -> left,
+                "right", () -> right
+            );
+        }
+    }
 
     private static long readNode(LittleEndianInputStream leis, Consumer<EmfPlusRegionNodeData> con) throws IOException {
         // A 32-bit unsigned integer that specifies the type of data in the RegionNodeData field.

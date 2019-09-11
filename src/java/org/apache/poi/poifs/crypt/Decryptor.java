@@ -19,16 +19,20 @@ package org.apache.poi.poifs.crypt;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.GenericRecordUtil;
 
-public abstract class Decryptor implements Cloneable {
+public abstract class Decryptor implements Cloneable, GenericRecord {
     public static final String DEFAULT_PASSWORD="VelvetSweatshop";
     public static final String DEFAULT_POIFS_ENTRY="EncryptedPackage";
     
@@ -184,5 +188,15 @@ public abstract class Decryptor implements Cloneable {
         other.secretKey = new SecretKeySpec(secretKey.getEncoded(), secretKey.getAlgorithm());
         // encryptionInfo is set from outside
         return other;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "secretKey", secretKey::getEncoded,
+            "verifier", this::getVerifier,
+            "integrityHmacKey", this::getIntegrityHmacKey,
+            "integrityHmacValue", this::getIntegrityHmacValue
+        );
     }
 }

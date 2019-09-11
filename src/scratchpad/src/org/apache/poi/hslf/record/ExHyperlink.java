@@ -27,9 +27,10 @@ import org.apache.poi.util.POILogger;
  * @author Nick Burch
  */
 public class ExHyperlink extends RecordContainer {
+	private static final long _type = RecordTypes.ExHyperlink.typeID;
+
 	private byte[] _header;
-	private static long _type = 4055;
-	
+
 	// Links to our more interesting children
 	private ExHyperlinkAtom linkAtom;
 	private CString linkDetailsA;

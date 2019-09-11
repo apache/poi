@@ -27,12 +27,16 @@ import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.hwmf.record.HwmfText;
 import org.apache.poi.hwmf.record.HwmfText.WmfSetTextAlign;
 import org.apache.poi.util.Dimension2DDouble;
+import org.apache.poi.util.GenericRecordJsonWriter;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianConsts;
@@ -45,6 +49,7 @@ import org.apache.poi.util.RecordFormatException;
  * implemented at this point!
  */
 @Internal
+@SuppressWarnings("WeakerAccess")
 public class HemfText {
 
     private static final int MAX_RECORD_LENGTH = 1_000_000;
@@ -181,7 +186,7 @@ public class HemfText {
          *
          * @param charset the charset to be used to decode the character bytes
          * @return text from this text element
-         * @throws IOException
+         * @throws IOException if the charset is not compatible to the underlying bytes
          */
         public String getText(Charset charset) throws IOException {
             return super.getText(charset);
@@ -206,10 +211,21 @@ public class HemfText {
 
         @Override
         public String toString() {
-            return
-                "{ graphicsMode: '"+graphicsMode+"'"+
-                ", scale: { w: "+scale.getWidth()+", h: "+scale.getHeight()+" },"+
-                super.toString().substring(1);
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "base", super::getGenericProperties,
+                "boundsIgnored", () -> boundsIgnored,
+                "graphicsMode", this::getGraphicsMode
+            );
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
         }
     }
 
@@ -240,14 +256,17 @@ public class HemfText {
 
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
-            /**
-             * A 32-bit unsigned integer that specifies text alignment by using a mask of text alignment flags.
-             * These are either WMF TextAlignmentMode Flags for text with a horizontal baseline,
-             * or WMF VerticalTextAlignmentMode Flags for text with a vertical baseline.
-             * Only one value can be chosen from those that affect horizontal and vertical alignment.
-             */
+            // A 32-bit unsigned integer that specifies text alignment by using a mask of text alignment flags.
+            // These are either WMF TextAlignmentMode Flags for text with a horizontal baseline,
+            // or WMF VerticalTextAlignmentMode Flags for text with a vertical baseline.
+            // Only one value can be chosen from those that affect horizontal and vertical alignment.
             textAlignmentMode = (int)leis.readUInt();
             return LittleEndianConsts.INT_SIZE;
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
         }
     }
 
@@ -263,6 +282,11 @@ public class HemfText {
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             return colorRef.init(leis);
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
         }
     }
 
@@ -297,7 +321,24 @@ public class HemfText {
 
         @Override
         public String toString() {
-            return "{ index: "+fontIdx+", font: "+font+" } ";
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public int getFontIdx() {
+            return fontIdx;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "base", super::getGenericProperties,
+                "fontIdx", this::getFontIdx
+            );
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
         }
     }
 
@@ -306,7 +347,7 @@ public class HemfText {
         public int init(LittleEndianInputStream leis) {
             // A 32-bit unsigned integer that specifies how to use the rectangle specified in the Rectangle field.
             // This field can be a combination of more than one ExtTextOutOptions enumeration
-            flag = (int)leis.readUInt();
+            flags = (int)leis.readUInt();
             return LittleEndianConsts.INT_SIZE;
         }
     }

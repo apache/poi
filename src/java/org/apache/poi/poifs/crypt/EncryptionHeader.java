@@ -16,13 +16,19 @@
 ==================================================================== */
 package org.apache.poi.poifs.crypt;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.common.usermodel.GenericRecord;
 
 /**
  * Reads and processes OOXML Encryption Headers
  * The constants are largely based on ZIP constants.
  */
-public abstract class EncryptionHeader implements Cloneable {
+public abstract class EncryptionHeader implements Cloneable, GenericRecord {
     public static final int ALGORITHM_RC4 = CipherAlgorithm.rc4.ecmaId;
     public static final int ALGORITHM_AES_128 = CipherAlgorithm.aes128.ecmaId;
     public static final int ALGORITHM_AES_192 = CipherAlgorithm.aes192.ecmaId;
@@ -155,5 +161,21 @@ public abstract class EncryptionHeader implements Cloneable {
         EncryptionHeader other = (EncryptionHeader)super.clone();
         other.keySalt = (keySalt == null) ? null : keySalt.clone();
         return other;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        final Map<String,Supplier<?>> m = new LinkedHashMap<>();
+        m.put("flags", this::getFlags);
+        m.put("sizeExtra", this::getSizeExtra);
+        m.put("cipherAlgorithm", this::getCipherAlgorithm);
+        m.put("hashAlgorithm", this::getHashAlgorithm);
+        m.put("keyBits", this::getKeySize);
+        m.put("blockSize", this::getBlockSize);
+        m.put("providerType", this::getCipherProvider);
+        m.put("chainingMode", this::getChainingMode);
+        m.put("keySalt", this::getKeySalt);
+        m.put("cspName", this::getCspName);
+        return Collections.unmodifiableMap(m);
     }
 }

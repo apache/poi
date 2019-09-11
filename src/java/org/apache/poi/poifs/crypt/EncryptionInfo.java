@@ -21,10 +21,16 @@ import static org.apache.poi.poifs.crypt.EncryptionMode.binaryRC4;
 import static org.apache.poi.poifs.crypt.EncryptionMode.cryptoAPI;
 import static org.apache.poi.poifs.crypt.EncryptionMode.standard;
 import static org.apache.poi.poifs.crypt.EncryptionMode.xor;
+import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.BitField;
@@ -36,7 +42,7 @@ import org.apache.poi.util.LittleEndianInput;
  * some {@link EncryptionMode}s.
  * @see #getBuilder(EncryptionMode)
  */
-public class EncryptionInfo implements Cloneable {
+public class EncryptionInfo implements Cloneable, GenericRecord {
     private final EncryptionMode encryptionMode;
     private final int versionMajor;
     private final int versionMinor;
@@ -72,8 +78,15 @@ public class EncryptionInfo implements Cloneable {
      * ECMA-376. If the fAES bit is 1, the fCryptoAPI bit MUST also be 1.
      */
     public static final BitField flagAES = BitFieldFactory.getInstance(0x20);
-    
-    
+
+    private static final int[] FLAGS_MASKS = {
+        0x04, 0x08, 0x10, 0x20
+    };
+
+    private static final String[] FLAGS_NAMES = {
+        "CRYPTO_API", "DOC_PROPS", "EXTERNAL", "AES"
+    };
+
     /**
      * Opens for decryption
      */
@@ -276,5 +289,19 @@ public class EncryptionInfo implements Cloneable {
         other.encryptor = encryptor.clone();
         other.encryptor.setEncryptionInfo(other);
         return other;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        final Map<String,Supplier<?>> m = new LinkedHashMap<>();
+        m.put("encryptionMode", this::getEncryptionMode);
+        m.put("versionMajor", this::getVersionMajor);
+        m.put("versionMinor", this::getVersionMinor);
+        m.put("encryptionFlags", getBitsAsString(this::getEncryptionFlags, FLAGS_MASKS, FLAGS_NAMES));
+        m.put("header", this::getHeader);
+        m.put("verifier", this::getVerifier);
+        m.put("decryptor", this::getDecryptor);
+        m.put("encryptor", this::getEncryptor);
+        return Collections.unmodifiableMap(m);
     }
 }

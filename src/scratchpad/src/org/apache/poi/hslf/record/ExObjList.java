@@ -29,7 +29,7 @@ import org.apache.poi.util.LittleEndian;
  */
 public class ExObjList extends RecordContainer {
 	private byte[] _header;
-	private static long _type = 1033;
+	private static final long _type = RecordTypes.ExObjList.typeID;
 	
 	// Links to our more interesting children
 	private ExObjListAtom exObjListAtom; 

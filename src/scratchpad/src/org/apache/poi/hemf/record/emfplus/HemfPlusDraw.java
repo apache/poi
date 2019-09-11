@@ -17,10 +17,7 @@
 
 package org.apache.poi.hemf.record.emfplus;
 
-import static java.util.stream.Collectors.joining;
-import static org.apache.poi.hemf.record.emf.HemfDraw.xformToString;
-import static org.apache.poi.hwmf.record.HwmfDraw.boundsToString;
-import static org.apache.poi.hwmf.record.HwmfDraw.pointToString;
+import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
 
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
@@ -32,8 +29,12 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiFunction;
+import java.util.function.Supplier;
 
 import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.MatrixUtils;
@@ -46,16 +47,18 @@ import org.apache.poi.hemf.record.emfplus.HemfPlusMisc.EmfPlusObjectId;
 import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObject;
 import org.apache.poi.hwmf.record.HwmfBrushStyle;
 import org.apache.poi.hwmf.record.HwmfColorRef;
-import org.apache.poi.hwmf.record.HwmfDraw;
 import org.apache.poi.hwmf.record.HwmfMisc.WmfSetBkMode.HwmfBkMode;
 import org.apache.poi.hwmf.record.HwmfTernaryRasterOp;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.GenericRecordJsonWriter;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.StringUtil;
 
+@SuppressWarnings("WeakerAccess")
 public class HemfPlusDraw {
     private static final int MAX_OBJECT_SIZE = 1_000_000;
 
@@ -185,6 +188,10 @@ public class HemfPlusDraw {
             return flags;
         }
 
+        public int getPenId() {
+            return penId;
+        }
+
         @Override
         public long init(LittleEndianInputStream leis, long dataSize, long recordId, int flags) throws IOException {
             this.flags = flags;
@@ -213,9 +220,20 @@ public class HemfPlusDraw {
 
         @Override
         public String toString() {
-            return
-                "{ flags: "+flags+
-                ", penId: "+penId+" }";
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        @Override
+        public HemfPlusRecordType getGenericRecordType() {
+            return getEmfPlusRecordType();
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "flags", this::getFlags,
+                "penId", this::getPenId
+            );
         }
     }
 
@@ -278,11 +296,25 @@ public class HemfPlusDraw {
 
         @Override
         public String toString() {
-            return
-                "{ flags: "+flags+
-                ", brushId: "+brushId+
-                ", rectData: "+rectData.stream().map(HwmfDraw::boundsToString).collect(joining(",", "{", "}"))+
-                "}";
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        @Override
+        public HemfPlusRecordType getGenericRecordType() {
+            return getEmfPlusRecordType();
+        }
+
+        public List<Rectangle2D> getRectData() {
+            return rectData;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "flags", this::getFlags,
+                "brushId", this::getBrushId,
+                "rectData", this::getRectData
+            );
         }
     }
 
@@ -428,17 +460,21 @@ public class HemfPlusDraw {
 
         @Override
         public String toString() {
-            return
-                "{ flags: "+flags+
-                ", imageAttributesID: "+imageAttributesID+
-                ", srcUnit: '"+srcUnit+"'"+
-                ", srcRect: "+boundsToString(srcRect)+
-                ", upperLeft: "+pointToString(upperLeft)+
-                ", lowerLeft: "+pointToString(lowerLeft)+
-                ", lowerRight: "+pointToString(lowerRight)+
-                ", transform: "+xformToString(trans)+
-                "}"
-                ;
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            final Map<String,Supplier<?>> m = new LinkedHashMap<>();
+            m.put("flags", this::getFlags);
+            m.put("imageAttributesID", () -> imageAttributesID);
+            m.put("srcUnit", () -> srcUnit);
+            m.put("srcRect", () -> srcRect);
+            m.put("upperLeft", () -> upperLeft);
+            m.put("lowerLeft", () -> lowerLeft);
+            m.put("lowerRight", () -> lowerRight);
+            m.put("transform", () -> trans);
+            return Collections.unmodifiableMap(m);
         }
     }
 
@@ -500,14 +536,18 @@ public class HemfPlusDraw {
 
         @Override
         public String toString() {
-            return
-                "{ flags: "+flags+
-                ", imageAttributesID: "+imageAttributesID+
-                ", srcUnit: '"+srcUnit+"'"+
-                ", srcRect: "+boundsToString(srcRect)+
-                ", rectData: "+boundsToString(rectData)+
-                "}"
-                ;
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "flags", this::getFlags,
+                "imageAttributesID", () -> imageAttributesID,
+                "srcUnit", () -> srcUnit,
+                "srcRect", () -> srcRect,
+                "rectData", () -> rectData
+            );
         }
     }
 
@@ -554,9 +594,15 @@ public class HemfPlusDraw {
 
         @Override
         public String toString() {
-            return
-                "{ flags: "+flags+
-                ", brushId: "+brushId+" }";
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "flags", this::getFlags,
+                "brushId", () -> brushId
+            );
         }
     }
 
@@ -596,7 +642,11 @@ public class HemfPlusDraw {
          */
         private static final BitField LIMIT_SUBPIXEL = BitFieldFactory.getInstance(0x0008);
 
+        private static final int[] OPTIONS_MASK = { 0x0001, 0x0002, 0x0004, 0x0008 };
 
+        private static final String[] OPTIONS_NAMES = {
+            "CMAP_LOOKUP", "VERTICAL", "REALIZED_ADVANCE", "LIMIT_SUBPIXEL"
+        };
 
         private int flags;
         private int brushId;
@@ -671,6 +721,23 @@ public class HemfPlusDraw {
 
             return size;
         }
+
+        @Override
+        public String toString() {
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "flags", this::getFlags,
+                "brushId", this::getBrushId,
+                "optionsFlags", getBitsAsString(() -> optionsFlags, OPTIONS_MASK, OPTIONS_NAMES),
+                "glyphs", () -> glyphs,
+                "glyphPos", () -> glpyhPos,
+                "transform", () -> transformMatrix
+            );
+        }
     }
 
     /** The EmfPlusDrawRects record specifies drawing a series of rectangles. */
@@ -704,6 +771,19 @@ public class HemfPlusDraw {
             }
 
             return size;
+        }
+
+        @Override
+        public String toString() {
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "flags", this::getFlags,
+                "rectData", () -> rectData
+            );
         }
     }
 

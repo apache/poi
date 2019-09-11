@@ -21,6 +21,8 @@ import java.awt.Color;
 import java.awt.geom.Dimension2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.poi.hwmf.draw.HwmfDrawProperties;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
@@ -28,9 +30,12 @@ import org.apache.poi.hwmf.record.HwmfFill.ColorUsage;
 import org.apache.poi.hwmf.record.HwmfFill.HwmfImageRecord;
 import org.apache.poi.hwmf.record.HwmfMisc.WmfSetBkMode.HwmfBkMode;
 import org.apache.poi.util.Dimension2DDouble;
+import org.apache.poi.util.GenericRecordJsonWriter;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
+@SuppressWarnings("WeakerAccess")
 public class HwmfMisc {
 
     /**
@@ -56,6 +61,11 @@ public class HwmfMisc {
         public String toString() {
             return "{}";
         }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return null;
+        }
     }
 
     /**
@@ -73,6 +83,11 @@ public class HwmfMisc {
         @Override
         public void draw(HwmfGraphics ctx) {
 
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return null;
         }
     }
 
@@ -107,7 +122,16 @@ public class HwmfMisc {
 
         @Override
         public String toString() {
-            return "{ nSavedDC: "+nSavedDC+" }";
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public int getNSavedDC() {
+            return nSavedDC;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("nSavedDC", this::getNSavedDC);
         }
     }
 
@@ -136,7 +160,16 @@ public class HwmfMisc {
 
         @Override
         public String toString() {
-            return "{ colorRef: "+colorRef+" }";
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public HwmfColorRef getColorRef() {
+            return colorRef;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("colorRef", this::getColorRef);
         }
     }
 
@@ -184,7 +217,16 @@ public class HwmfMisc {
 
         @Override
         public String toString() {
-            return "{ bkMode: '"+bkMode+"' }";
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public HwmfBkMode getBkMode() {
+            return bkMode;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("bkMode", this::getBkMode);
         }
     }
 
@@ -219,6 +261,11 @@ public class HwmfMisc {
         public void draw(HwmfGraphics ctx) {
 
         }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("layout", () -> layout);
+        }
     }
 
     /**
@@ -249,7 +296,16 @@ public class HwmfMisc {
 
         @Override
         public String toString() {
-            return "{ mapMode: '"+mapMode+"' }";
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public HwmfMapMode getMapMode() {
+            return mapMode;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("mapMode", this::getMapMode);
         }
     }
 
@@ -285,7 +341,12 @@ public class HwmfMisc {
 
         @Override
         public String toString() {
-            return "{ mapperValues: "+mapperValues+" }";
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("mapperValues", () -> mapperValues);
         }
     }
 
@@ -317,7 +378,16 @@ public class HwmfMisc {
 
         @Override
         public String toString() {
-            return "{ drawMode: '"+drawMode+"' }";
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public HwmfBinaryRasterOp getDrawMode() {
+            return drawMode;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("drawMode", this::getDrawMode);
         }
     }
 
@@ -394,7 +464,16 @@ public class HwmfMisc {
 
         @Override
         public String toString() {
-            return "{ stretchBltMode: '"+stretchBltMode+"' }";
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public StretchBltMode getStretchBltMode() {
+            return stretchBltMode;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("stretchBltMode", this::getStretchBltMode);
         }
     }
 
@@ -486,6 +565,24 @@ public class HwmfMisc {
                 return null;
             }
         }
+
+        public HwmfBrushStyle getStyle() {
+            return style;
+        }
+
+        public ColorUsage getColorUsage() {
+            return colorUsage;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "style", this::getStyle,
+                "colorUsage", this::getColorUsage,
+                "pattern", () -> (patternDib != null && patternDib.isValid()) ? patternDib : pattern16,
+                "bmpData", this::getBMPData
+            );
+        }
     }
 
     /**
@@ -524,7 +621,16 @@ public class HwmfMisc {
 
         @Override
         public String toString() {
-            return "{ index: "+objectIndex+" }";
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public int getObjectIndex() {
+            return objectIndex;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("objectIndex", this::getObjectIndex);
         }
     }
 
@@ -553,6 +659,15 @@ public class HwmfMisc {
             HwmfDrawProperties dp = ctx.getProperties();
             dp.setBrushBitmap(pattern.getImage());
             dp.setBrushStyle(HwmfBrushStyle.BS_PATTERN);
+        }
+
+        public HwmfBitmap16 getPattern() {
+            return pattern;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("pattern", this::getPattern);
         }
     }
 
@@ -599,10 +714,28 @@ public class HwmfMisc {
 
         @Override
         public String toString() {
-            return
-                "{ penStyle: "+penStyle+
-                ", dimension: { width: "+dimension.getWidth()+", height: "+dimension.getHeight()+" }"+
-                ", colorRef: "+colorRef+"}";
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public HwmfPenStyle getPenStyle() {
+            return penStyle;
+        }
+
+        public Dimension2D getDimension() {
+            return dimension;
+        }
+
+        public HwmfColorRef getColorRef() {
+            return colorRef;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "penStyle", this::getPenStyle,
+                "dimension", this::getDimension,
+                "colorRef", this::getColorRef
+            );
         }
     }
 
@@ -687,10 +820,28 @@ public class HwmfMisc {
 
         @Override
         public String toString() {
-            return
-                "{ brushStyle: '"+brushStyle+"'"+
-                ", colorRef: "+colorRef+
-                ", brushHatch: '"+brushHatch+"' }";
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public HwmfBrushStyle getBrushStyle() {
+            return brushStyle;
+        }
+
+        public HwmfColorRef getColorRef() {
+            return colorRef;
+        }
+
+        public HwmfHatchStyle getBrushHatch() {
+            return brushHatch;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "brushStyle", this::getBrushStyle,
+                "colorRef", this::getColorRef,
+                "brushHatch", this::getBrushHatch
+            );
         }
     }
 }

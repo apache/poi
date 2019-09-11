@@ -18,9 +18,10 @@
 package org.apache.poi.hslf.record;
 
 
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
+
+import org.apache.poi.ddf.EscherRecordTypes;
+import org.junit.Test;
 
 /**
  * Tests that RecordTypes returns the right records and classes when asked
@@ -35,9 +36,9 @@ public final class TestRecordTypes {
 
     @Test
 	public void testEscherNameLookups() {
-		assertEquals("EscherDggContainer", RecordTypes.EscherDggContainer.name());
-		assertEquals("EscherClientTextbox", RecordTypes.EscherClientTextbox.name());
-		assertEquals("EscherSelection", RecordTypes.EscherSelection.name());
+		assertEquals("DGG_CONTAINER", EscherRecordTypes.DGG_CONTAINER.name());
+		assertEquals("CLIENT_TEXTBOX", EscherRecordTypes.CLIENT_TEXTBOX.name());
+		assertEquals("SELECTION", EscherRecordTypes.SELECTION.name());
 	}
 
     @Test
@@ -45,12 +46,5 @@ public final class TestRecordTypes {
 		// If this record is ever implemented, change to one that isn't!
 		// This is checking the "unhandled default" stuff works
 		assertEquals(RecordTypes.UnknownRecordPlaceholder, RecordTypes.forTypeID(-10));
-	}
-
-    @Test
-    public void testEscherClassLookups() {
-		// Should all come back with null, as DDF handles them
-		assertEquals(null, RecordTypes.EscherDggContainer.recordConstructor);
-		assertEquals(null, RecordTypes.EscherBStoreContainer.recordConstructor);
 	}
 }

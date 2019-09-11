@@ -19,7 +19,10 @@ package org.apache.poi.ddf;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.RecordFormatException;
@@ -35,8 +38,7 @@ public final class EscherTextboxRecord extends EscherRecord implements Cloneable
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
 
-    public static final short RECORD_ID = (short)0xF00D;
-    public static final String RECORD_DESCRIPTION = "msofbtClientTextbox";
+    public static final short RECORD_ID = EscherRecordTypes.CLIENT_TEXTBOX.typeID;
 
     private static final byte[] NO_BYTES = new byte[0];
 
@@ -134,7 +136,7 @@ public final class EscherTextboxRecord extends EscherRecord implements Cloneable
 
     @Override
     public String getRecordName() {
-        return "ClientTextbox";
+        return EscherRecordTypes.CLIENT_TEXTBOX.recordName;
     }
 
     @Override
@@ -153,5 +155,19 @@ public final class EscherTextboxRecord extends EscherRecord implements Cloneable
             chLst.toArray(),
             { "Extra Data", thedata }
         };
+    }
+
+    @Override
+    public Enum getGenericRecordType() {
+        return EscherRecordTypes.CLIENT_TEXTBOX;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "base", super::getGenericProperties,
+            "isContainer", this::isContainerRecord,
+            "extraData", this::getData
+        );
     }
 }

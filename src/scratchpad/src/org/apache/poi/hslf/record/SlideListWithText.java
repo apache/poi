@@ -47,6 +47,7 @@ import org.apache.poi.util.LittleEndian;
 
 // For now, pretend to be an atom
 public final class SlideListWithText extends RecordContainer {
+	private static final long _type = RecordTypes.SlideListWithText.typeID;
 
 	/**
 	 * Instance filed of the record header indicates that this SlideListWithText stores
@@ -65,7 +66,6 @@ public final class SlideListWithText extends RecordContainer {
 	public static final int NOTES = 2;
 
 	private byte[] _header;
-	private static long _type = 4080;
 
 	private SlideAtomsSet[] slideAtomsSets;
 

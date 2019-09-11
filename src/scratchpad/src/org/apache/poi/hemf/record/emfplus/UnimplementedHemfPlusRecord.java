@@ -19,7 +19,10 @@ package org.apache.poi.hemf.record.emfplus;
 
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.function.Supplier;
 
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianInputStream;
@@ -55,5 +58,13 @@ public class UnimplementedHemfPlusRecord implements HemfPlusRecord {
     public byte[] getRecordBytes() {
         //should probably defensively return a copy.
         return recordBytes;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "flags", this::getFlags,
+            "recordBytes", () -> recordBytes
+        );
     }
 }

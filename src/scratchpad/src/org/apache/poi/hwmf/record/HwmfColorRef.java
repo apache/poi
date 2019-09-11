@@ -19,8 +19,12 @@ package org.apache.poi.hwmf.record;
 
 import java.awt.Color;
 import java.io.IOException;
-import java.util.Locale;
+import java.util.Map;
+import java.util.function.Supplier;
 
+import org.apache.poi.common.usermodel.GenericRecord;
+import org.apache.poi.util.GenericRecordJsonWriter;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
@@ -31,7 +35,7 @@ import org.apache.poi.util.LittleEndianInputStream;
  * Blue (1 byte):  An 8-bit unsigned integer that defines the relative intensity of blue.
  * Reserved (1 byte):  An 8-bit unsigned integer that MUST be 0x00.
  */
-public class HwmfColorRef implements Cloneable {
+public class HwmfColorRef implements Cloneable, GenericRecord {
     private Color colorRef = Color.BLACK;
     
     public HwmfColorRef() {}
@@ -77,6 +81,11 @@ public class HwmfColorRef implements Cloneable {
 
     @Override
     public String toString() {
-        return String.format(Locale.ROOT, "%#08X", colorRef.getRGB()&0xFFFFFF);
+        return GenericRecordJsonWriter.marshal(this);
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("color", colorRef::getRGB);
     }
 }

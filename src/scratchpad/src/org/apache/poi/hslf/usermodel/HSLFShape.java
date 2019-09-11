@@ -35,13 +35,13 @@ import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.ddf.EscherProperty;
 import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.ddf.EscherRecordTypes;
 import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.ddf.EscherTextboxRecord;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
 import org.apache.poi.hslf.record.HSLFEscherClientDataRecord;
 import org.apache.poi.hslf.record.Record;
-import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.usermodel.FillStyle;
 import org.apache.poi.sl.usermodel.PresetColor;
@@ -241,7 +241,7 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
     /**
      * @since POI 3.14-Beta2
      */
-    public static <T extends EscherRecord> T getEscherChild(EscherContainerRecord owner, RecordTypes recordId){
+    public static <T extends EscherRecord> T getEscherChild(EscherContainerRecord owner, EscherRecordTypes recordId){
         return getEscherChild(owner, recordId.typeID);
     }
 
@@ -252,7 +252,7 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
     /**
      * @since POI 3.14-Beta2
      */
-    public <T extends EscherRecord> T getEscherChild(RecordTypes recordId){
+    public <T extends EscherRecord> T getEscherChild(EscherRecordTypes recordId){
         return getEscherChild(recordId.typeID);
     }
     
@@ -577,9 +577,9 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
     }
 
     public AbstractEscherOptRecord getEscherOptRecord() {
-        AbstractEscherOptRecord opt = getEscherChild(RecordTypes.EscherOPT);
+        AbstractEscherOptRecord opt = getEscherChild(EscherRecordTypes.OPT);
         if (opt == null) {
-            opt = getEscherChild(RecordTypes.EscherUserDefined);
+            opt = getEscherChild(EscherRecordTypes.USER_DEFINED);
         }
         return opt;
     }

@@ -17,9 +17,14 @@
 
 package org.apache.poi.hslf.record;
 
+import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
+
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
+import java.util.function.Supplier;
 
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 
@@ -108,7 +113,27 @@ public class SSSlideInfoAtom extends RecordAtom {
     // public static int RESERVED5_BIT       = 1 << 9;
     // public static int RESERVED6_BIT       = 1 << 11;
     // public static int RESERVED7_BIT       = 1 << 13 | 1 << 14 | 1 << 15;
-    
+
+    private static final int[] EFFECT_MASKS = {
+        MANUAL_ADVANCE_BIT,
+        HIDDEN_BIT,
+        SOUND_BIT,
+        LOOP_SOUND_BIT,
+        STOP_SOUND_BIT,
+        AUTO_ADVANCE_BIT,
+        CURSOR_VISIBLE_BIT
+    };
+
+    private static final String[] EFFECT_NAMES = {
+        "MANUAL_ADVANCE",
+        "HIDDEN",
+        "SOUND",
+        "LOOP_SOUND",
+        "STOP_SOUND",
+        "AUTO_ADVANCE",
+        "CURSOR_VISIBLE"
+    };
+
     private static final long _type = RecordTypes.SSSlideInfoAtom.typeID;
 
     private byte[] _header;
@@ -285,5 +310,17 @@ public class SSSlideInfoAtom extends RecordAtom {
 
     public void setSpeed(short speed) {
         this._speed = speed;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "effectTransitionFlags", getBitsAsString(this::getEffectTransitionFlags, EFFECT_MASKS, EFFECT_NAMES),
+            "slideTime", this::getSlideTime,
+            "soundIdRef", this::getSoundIdRef,
+            "effectDirection", this::getEffectDirection,
+            "effectType", this::getEffectType,
+            "speed", this::getSpeed
+        );
     }
 }

@@ -17,11 +17,10 @@
 
 package org.apache.poi.hemf.record.emf;
 
-import static org.apache.poi.hwmf.record.HwmfDraw.boundsToString;
 import static org.apache.poi.hwmf.record.HwmfDraw.normalizeBounds;
+import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
 
 import java.awt.Shape;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Path2D;
@@ -29,13 +28,17 @@ import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
+import java.util.Map;
+import java.util.function.Supplier;
+import java.util.stream.IntStream;
 
 import org.apache.poi.hemf.draw.HemfDrawProperties;
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hwmf.draw.HwmfGraphics.FillDrawStyle;
 import org.apache.poi.hwmf.record.HwmfDraw;
 import org.apache.poi.hwmf.record.HwmfDraw.WmfSelectObject;
-import org.apache.poi.util.Internal;
+import org.apache.poi.util.GenericRecordJsonWriter;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
@@ -47,26 +50,30 @@ public class HemfDraw {
      */
     public static class EmfSelectObject extends WmfSelectObject implements HemfRecord {
 
-        private static final String[] STOCK_IDS = {
-            "0x80000000 /* WHITE_BRUSH */",
-            "0x80000001 /* LTGRAY_BRUSH */",
-            "0x80000002 /* GRAY_BRUSH */",
-            "0x80000003 /* DKGRAY_BRUSH */",
-            "0x80000004 /* BLACK_BRUSH */",
-            "0x80000005 /* NULL_BRUSH */",
-            "0x80000006 /* WHITE_PEN */",
-            "0x80000007 /* BLACK_PEN */",
-            "0x80000008 /* NULL_PEN */",
-            "0x8000000A /* OEM_FIXED_FONT */",
-            "0x8000000B /* ANSI_FIXED_FONT */",
-            "0x8000000C /* ANSI_VAR_FONT */",
-            "0x8000000D /* SYSTEM_FONT */",
-            "0x8000000E /* DEVICE_DEFAULT_FONT */",
-            "0x8000000F /* DEFAULT_PALETTE */",
-            "0x80000010 /* SYSTEM_FIXED_FONT */",
-            "0x80000011 /* DEFAULT_GUI_FONT */",
-            "0x80000012 /* DC_BRUSH */",
-            "0x80000013 /* DC_PEN */"
+        private static final int[] IDX_MASKS = IntStream.rangeClosed(0x80000000,0x80000013).toArray();
+
+        private static final String[] IDX_NAMES = {
+            "WHITE_BRUSH",
+            "LTGRAY_BRUSH",
+            "GRAY_BRUSH",
+            "DKGRAY_BRUSH",
+            "BLACK_BRUSH",
+            "NULL_BRUSH",
+            "WHITE_PEN",
+            "BLACK_PEN",
+            "NULL_PEN",
+            // 0x80000009 is not a valid stock object
+            "INVALID",
+            "OEM_FIXED_FONT",
+            "ANSI_FIXED_FONT",
+            "ANSI_VAR_FONT",
+            "SYSTEM_FONT",
+            "DEVICE_DEFAULT_FONT",
+            "DEFAULT_PALETTE",
+            "SYSTEM_FIXED_FONT",
+            "DEFAULT_GUI_FONT",
+            "DC_BRUSH",
+            "DC_PEN"
         };
 
         @Override
@@ -84,12 +91,20 @@ public class HemfDraw {
 
         @Override
         public String toString() {
-            return "{ index: "+
-                (((objectIndex & 0x80000000) != 0 && (objectIndex & 0x3FFFFFFF) <= 13 )
-                ? STOCK_IDS[objectIndex & 0x3FFFFFFF]
-                : objectIndex)+" }";
+            return GenericRecordJsonWriter.marshal(this);
         }
 
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "objectIndex", getBitsAsString(this::getObjectIndex, IDX_MASKS, IDX_NAMES)
+            );
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
+        }
     }
 
 
@@ -183,6 +198,23 @@ public class HemfDraw {
         public void draw(HemfGraphics ctx) {
             ctx.draw(path -> path.append(poly, !hasStartPoint()), getFillDrawStyle());
         }
+
+        public Rectangle2D getBounds() {
+            return bounds;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "base", super::getGenericProperties,
+                "bounds", this::getBounds
+            );
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
+        }
     }
 
     /**
@@ -266,6 +298,23 @@ public class HemfDraw {
         @Override
         public void draw(HemfGraphics ctx) {
             ctx.draw(path -> path.append(poly, false), getFillDrawStyle());
+        }
+
+        public Rectangle2D getBounds() {
+            return bounds;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "base", super::getGenericProperties,
+                "bounds", this::getBounds
+            );
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
         }
     }
 
@@ -429,10 +478,8 @@ public class HemfDraw {
 
             Point2D pnt = new Point2D.Double();
             for (long nPoints : polygonPointCount) {
-                /**
-                 * An array of WMF PointL objects that specifies the points for all polygons in logical units.
-                 * The number of points is specified by the Count field value.
-                 */
+                // An array of WMF PointL objects that specifies the points for all polygons in logical units.
+                // The number of points is specified by the Count field value.
                 Path2D poly = new Path2D.Double(Path2D.WIND_EVEN_ODD, (int)nPoints);
                 for (int i=0; i<nPoints; i++) {
                     size += readPoint(leis, pnt);
@@ -459,6 +506,23 @@ public class HemfDraw {
             }
 
             ctx.draw(path -> path.append(shape, false), getFillDrawStyle());
+        }
+
+        public Rectangle2D getBounds() {
+            return bounds;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "base", super::getGenericProperties,
+                "bounds", this::getBounds
+            );
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
         }
     }
 
@@ -527,6 +591,11 @@ public class HemfDraw {
             size += colorRef.init(leis);
             return size;
         }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
+        }
     }
 
     /**
@@ -546,6 +615,11 @@ public class HemfDraw {
         @Override
         public void draw(final HemfGraphics ctx) {
             ctx.draw((path) -> path.moveTo(point.getX(), point.getY()), FillDrawStyle.NONE);
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
         }
     }
 
@@ -570,6 +644,11 @@ public class HemfDraw {
         @Override
         public void draw(HemfGraphics ctx) {
             ctx.draw(path -> path.append(getShape(), false), getFillDrawStyle());
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
         }
     }
 
@@ -596,6 +675,11 @@ public class HemfDraw {
         public void draw(HemfGraphics ctx) {
             ctx.draw(path -> path.append(getShape(), false), getFillDrawStyle());
         }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
+        }
     }
 
     /**
@@ -620,6 +704,11 @@ public class HemfDraw {
         public void draw(HemfGraphics ctx) {
             ctx.draw(path -> path.append(getShape(), false), getFillDrawStyle());
         }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
+        }
     }
 
     /**
@@ -642,6 +731,11 @@ public class HemfDraw {
         public void draw(HemfGraphics ctx) {
             ctx.draw(path -> path.append(getShape(), false), FillDrawStyle.FILL_DRAW);
         }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
+        }
     }
 
     /**
@@ -663,6 +757,11 @@ public class HemfDraw {
         public void draw(HemfGraphics ctx) {
             ctx.draw(path -> path.append(normalizeBounds(bounds), false), FillDrawStyle.FILL_DRAW);
         }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
+        }
     }
 
     /**
@@ -680,8 +779,9 @@ public class HemfDraw {
             long size = readRectL(leis, bounds);
 
             // A 32-bit unsigned integer that defines the x-coordinate of the point.
-            width = (int)leis.readUInt();
-            height = (int)leis.readUInt();
+            int width = (int)leis.readUInt();
+            int height = (int)leis.readUInt();
+            corners.setSize(width, height);
 
             return size + 2*LittleEndianConsts.INT_SIZE;
         }
@@ -689,6 +789,11 @@ public class HemfDraw {
         @Override
         public void draw(HemfGraphics ctx) {
             ctx.draw(path -> path.append(getShape(), false), FillDrawStyle.FILL_DRAW);
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
         }
     }
 
@@ -710,6 +815,11 @@ public class HemfDraw {
         @Override
         public void draw(final HemfGraphics ctx) {
             ctx.draw((path) -> path.lineTo(point.getX(), point.getY()), FillDrawStyle.DRAW);
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
         }
     }
 
@@ -735,6 +845,11 @@ public class HemfDraw {
         public void draw(final HemfGraphics ctx) {
             final Arc2D arc = getShape();
             ctx.draw((path) -> path.append(arc, true), getFillDrawStyle());
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
         }
     }
 
@@ -829,6 +944,23 @@ public class HemfDraw {
         public void draw(HemfGraphics ctx) {
             ctx.draw(path -> path.append(poly, false), getFillDrawStyle());
         }
+
+        public Rectangle2D getBounds() {
+            return bounds;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "base", super::getGenericProperties,
+                "bounds", this::getBounds
+            );
+        }
+
+        @Override
+        public Enum getGenericRecordType() {
+            return getEmfRecordType();
+        }
     }
 
     public static class EmfPolyDraw16 extends EmfPolyDraw {
@@ -852,7 +984,7 @@ public class HemfDraw {
      * When an application processes the EMR_BEGINPATH record, all previous paths
      * MUST be discarded from the playback device context.
      */
-    public static class EmfBeginPath implements HemfRecord {
+    public static class EmfBeginPath implements HemfRecordWithoutProperties {
         @Override
         public HemfRecordType getEmfRecordType() {
             return HemfRecordType.beginPath;
@@ -880,7 +1012,7 @@ public class HemfDraw {
      * This record closes a path bracket and selects the path defined by the bracket into
      * the playback device context.
      */
-    public static class EmfEndPath implements HemfRecord {
+    public static class EmfEndPath implements HemfRecordWithoutProperties {
         @Override
         public HemfRecordType getEmfRecordType() {
             return HemfRecordType.endPath;
@@ -906,7 +1038,7 @@ public class HemfDraw {
     /**
      * This record aborts a path bracket or discards the path from a closed path bracket.
      */
-    public static class EmfAbortPath implements HemfRecord {
+    public static class EmfAbortPath implements HemfRecordWithoutProperties {
         @Override
         public HemfRecordType getEmfRecordType() {
             return HemfRecordType.abortPath;
@@ -949,7 +1081,7 @@ public class HemfDraw {
      * After processing the EMR_CLOSEFIGURE record, adding a line or curve to the path
      * MUST start a new figure.
      */
-    public static class EmfCloseFigure implements HemfRecord {
+    public static class EmfCloseFigure implements HemfRecordWithoutProperties {
         @Override
         public HemfRecordType getEmfRecordType() {
             return HemfRecordType.closeFigure;
@@ -980,7 +1112,7 @@ public class HemfDraw {
      * This record transforms any curves in the selected path into the playback device
      * context; each curve MUST be turned into a sequence of lines.
      */
-    public static class EmfFlattenPath implements HemfRecord {
+    public static class EmfFlattenPath implements HemfRecordWithoutProperties {
         @Override
         public HemfRecordType getEmfRecordType() {
             return HemfRecordType.flattenPath;
@@ -996,7 +1128,7 @@ public class HemfDraw {
      * This record redefines the current path as the area that would be painted if the path
      * were drawn using the pen currently selected into the playback device context.
      */
-    public static class EmfWidenPath implements HemfRecord {
+    public static class EmfWidenPath implements HemfRecordWithoutProperties {
         @Override
         public HemfRecordType getEmfRecordType() {
             return HemfRecordType.widenPath;
@@ -1040,7 +1172,16 @@ public class HemfDraw {
 
         @Override
         public String toString() {
-            return boundsToString(bounds);
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        public Rectangle2D getBounds() {
+            return bounds;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties("bounds", this::getBounds);
         }
     }
 
@@ -1154,17 +1295,5 @@ public class HemfDraw {
         }
 
         ctx.draw((path) -> path.append(pi, true), fillDrawStyle);
-    }
-
-
-    @Internal
-    public static String xformToString(AffineTransform xForm) {
-        return (xForm == null) ? "null" :
-            "{ scaleX: "+xForm.getScaleX()+
-            ", shearX: "+xForm.getShearX()+
-            ", transX: "+xForm.getTranslateX()+
-            ", scaleY: "+xForm.getScaleY()+
-            ", shearY: "+xForm.getShearY()+
-            ", transY: "+xForm.getTranslateY()+" }";
     }
 }

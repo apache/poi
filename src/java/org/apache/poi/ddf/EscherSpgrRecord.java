@@ -17,6 +17,10 @@
 
 package org.apache.poi.ddf;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.RecordFormatException;
 
@@ -24,11 +28,8 @@ import org.apache.poi.util.RecordFormatException;
  * The spgr record defines information about a shape group.  Groups in escher
  * are simply another form of shape that you can't physically see.
  */
-public class EscherSpgrRecord
-    extends EscherRecord
-{
-    public static final short RECORD_ID = (short) 0xF009;
-    public static final String RECORD_DESCRIPTION = "MsofbtSpgr";
+public class EscherSpgrRecord extends EscherRecord {
+    public static final short RECORD_ID = EscherRecordTypes.SPGR.typeID;
 
     private int field_1_rectX1;
     private int field_2_rectY1;
@@ -84,7 +85,7 @@ public class EscherSpgrRecord
 
     @Override
     public String getRecordName() {
-        return "Spgr";
+        return EscherRecordTypes.SPGR.recordName;
     }
 
     /**
@@ -174,5 +175,21 @@ public class EscherSpgrRecord
             { "RectWidth", field_3_rectX2 },
             { "RectHeight", field_4_rectY2 }
         };
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "base", super::getGenericProperties,
+            "rectX1", this::getRectX1,
+            "rectY1", this::getRectY1,
+            "rectX2", this::getRectX2,
+            "rectY2", this::getRectY2
+        );
+    }
+
+    @Override
+    public Enum getGenericRecordType() {
+        return EscherRecordTypes.SPGR;
     }
 }
