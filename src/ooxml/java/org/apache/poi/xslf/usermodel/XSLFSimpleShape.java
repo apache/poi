@@ -151,7 +151,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
     public Rectangle2D getAnchor() {
 
         CTTransform2D xfrm = getXfrm(false);
-        if (xfrm == null) {
+        if (xfrm == null || !xfrm.isSetOff()) {
             return null;
         }
 
