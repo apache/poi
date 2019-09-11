@@ -18,12 +18,11 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.ddf.EscherBitmapBlip;
 import org.apache.poi.ddf.EscherBlipRecord;
-import org.apache.poi.ddf.EscherMetafileBlip;
+import org.apache.poi.ddf.EscherRecordTypes;
+import org.apache.poi.sl.image.ImageHeaderPNG;
 import org.apache.poi.ss.usermodel.PictureData;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.util.PngUtils;
 
 /**
  * Represents binary data stored in the file.  Eg. A GIF, JPEG etc...
@@ -58,20 +57,8 @@ public class HSSFPictureData implements PictureData
     /* (non-Javadoc)
      * @see org.apache.poi.hssf.usermodel.PictureData#getData()
      */
-    public byte[] getData()
-    {
-        byte[] pictureData = blip.getPicturedata();
-
-        //PNG created on MAC may have a 16-byte prefix which prevents successful reading.
-        //Just cut it off!.
-        if (PngUtils.matchesPngHeader(pictureData, 16))
-        {
-            byte[] png = new byte[pictureData.length-16];
-            System.arraycopy(pictureData, 16, png, 0, png.length);
-            pictureData = png;
-        }
-
-        return pictureData;
+    public byte[] getData() {
+        return new ImageHeaderPNG(blip.getPicturedata()).extractPNG();
     }
 
     /**
@@ -93,18 +80,18 @@ public class HSSFPictureData implements PictureData
     * @return 'wmf', 'jpeg' etc depending on the format. never <code>null</code>
     */
     public String suggestFileExtension() {
-        switch (blip.getRecordId()) {
-            case EscherMetafileBlip.RECORD_ID_WMF:
+        switch (EscherRecordTypes.forTypeID(blip.getRecordId())) {
+            case BLIP_WMF:
                 return "wmf";
-            case EscherMetafileBlip.RECORD_ID_EMF:
+            case BLIP_EMF:
                 return "emf";
-            case EscherMetafileBlip.RECORD_ID_PICT:
+            case BLIP_PICT:
                 return "pict";
-            case EscherBitmapBlip.RECORD_ID_PNG:
+            case BLIP_PNG:
                 return "png";
-            case EscherBitmapBlip.RECORD_ID_JPEG:
+            case BLIP_JPEG:
                 return "jpeg";
-            case EscherBitmapBlip.RECORD_ID_DIB:
+            case BLIP_DIB:
                 return "dib";
             default:
                 return "";
@@ -115,18 +102,18 @@ public class HSSFPictureData implements PictureData
      * Returns the mime type for the image
      */
     public String getMimeType() {
-       switch (blip.getRecordId()) {
-           case EscherMetafileBlip.RECORD_ID_WMF:
+       switch (EscherRecordTypes.forTypeID(blip.getRecordId())) {
+           case BLIP_WMF:
                return "image/x-wmf";
-           case EscherMetafileBlip.RECORD_ID_EMF:
+           case BLIP_EMF:
                return "image/x-emf";
-           case EscherMetafileBlip.RECORD_ID_PICT:
+           case BLIP_PICT:
                return "image/x-pict";
-           case EscherBitmapBlip.RECORD_ID_PNG:
+           case BLIP_PNG:
                return "image/png";
-           case EscherBitmapBlip.RECORD_ID_JPEG:
+           case BLIP_JPEG:
                return "image/jpeg";
-           case EscherBitmapBlip.RECORD_ID_DIB:
+           case BLIP_DIB:
                return "image/bmp";
            default:
                return "image/unknown";
@@ -144,18 +131,18 @@ public class HSSFPictureData implements PictureData
      * @see Workbook#PICTURE_TYPE_WMF
      */
     public int getPictureType() {
-        switch (blip.getRecordId()) {
-            case EscherMetafileBlip.RECORD_ID_WMF:
+        switch (EscherRecordTypes.forTypeID(blip.getRecordId())) {
+            case BLIP_WMF:
                 return Workbook.PICTURE_TYPE_WMF;
-            case EscherMetafileBlip.RECORD_ID_EMF:
+            case BLIP_EMF:
                 return Workbook.PICTURE_TYPE_EMF;
-            case EscherMetafileBlip.RECORD_ID_PICT:
+            case BLIP_PICT:
                 return Workbook.PICTURE_TYPE_PICT;
-            case EscherBitmapBlip.RECORD_ID_PNG:
+            case BLIP_PNG:
                 return Workbook.PICTURE_TYPE_PNG;
-            case EscherBitmapBlip.RECORD_ID_JPEG:
+            case BLIP_JPEG:
                 return Workbook.PICTURE_TYPE_JPEG;
-            case EscherBitmapBlip.RECORD_ID_DIB:
+            case BLIP_DIB:
                 return Workbook.PICTURE_TYPE_DIB;
             default:
                 return -1;

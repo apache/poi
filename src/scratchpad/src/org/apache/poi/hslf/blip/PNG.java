@@ -17,7 +17,7 @@
 
 package org.apache.poi.hslf.blip;
 
-import org.apache.poi.util.PngUtils;
+import org.apache.poi.sl.image.ImageHeaderPNG;
 
 /**
  * Represents a PNG picture data in a PPT file
@@ -26,17 +26,7 @@ public final class PNG extends Bitmap {
 
     @Override
     public byte[] getData() {
-        byte[] data = super.getData();
-
-        //PNG created on MAC may have a 16-byte prefix which prevents successful reading.
-        //Just cut it off!.
-        if (PngUtils.matchesPngHeader(data, 16)) {
-            byte[] png = new byte[data.length-16];
-            System.arraycopy(data, 16, png, 0, png.length);
-            data = png;
-        }
-
-        return data;
+        return new ImageHeaderPNG(super.getData()).extractPNG();
     }
 
     @Override
