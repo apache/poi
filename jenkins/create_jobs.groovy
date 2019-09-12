@@ -350,7 +350,7 @@ poijobs.each { poijob ->
                 shellEx(delegate, shellcmds, poijob)
                 gradle {
                     tasks('japicmp')
-                    useWrapper(false)
+                    useWrapper(true)
                 }
             }
             publishers {
