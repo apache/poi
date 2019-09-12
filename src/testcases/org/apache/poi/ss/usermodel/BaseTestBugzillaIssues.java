@@ -378,7 +378,6 @@ public abstract class BaseTestBugzillaIssues {
     @Test
     public final void bug50681_testAutoSize() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
-        BaseTestSheetAutosizeColumn.fixFonts(wb);
         Sheet sheet = wb.createSheet("Sheet1");
         _testDataProvider.trackAllColumnsForAutosizing(sheet);
         Row row = sheet.createRow(0);
@@ -435,7 +434,6 @@ public abstract class BaseTestBugzillaIssues {
     @Test
     public final void bug51622_testAutoSizeShouldRecognizeLeadingSpaces() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
-        BaseTestSheetAutosizeColumn.fixFonts(wb);
         Sheet sheet = wb.createSheet();
         _testDataProvider.trackAllColumnsForAutosizing(sheet);
         Row row = sheet.createRow(0);
