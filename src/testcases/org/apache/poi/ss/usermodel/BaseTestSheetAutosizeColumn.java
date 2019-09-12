@@ -25,7 +25,6 @@ import java.util.Locale;
 
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.util.JvmBugs;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -64,7 +63,6 @@ public abstract class BaseTestSheetAutosizeColumn {
     @Test
     public void numericCells() throws Exception {
         Workbook workbook = _testDataProvider.createWorkbook();
-        fixFonts(workbook);
         DataFormat df = workbook.getCreationHelper().createDataFormat();
         Sheet sheet = workbook.createSheet();
         trackColumnsForAutoSizingIfSXSSF(sheet);
@@ -107,7 +105,6 @@ public abstract class BaseTestSheetAutosizeColumn {
     @Test
     public void booleanCells() throws Exception {
         Workbook workbook = _testDataProvider.createWorkbook();
-        fixFonts(workbook);
         Sheet sheet = workbook.createSheet();
         trackColumnsForAutoSizingIfSXSSF(sheet);
 
@@ -139,7 +136,6 @@ public abstract class BaseTestSheetAutosizeColumn {
     @Test
     public void dateCells() throws Exception {
         Workbook workbook = _testDataProvider.createWorkbook();
-        fixFonts(workbook);
         Sheet sheet = workbook.createSheet();
         trackColumnsForAutoSizingIfSXSSF(sheet);
         DataFormat df = workbook.getCreationHelper().createDataFormat();
@@ -207,7 +203,6 @@ public abstract class BaseTestSheetAutosizeColumn {
     @Test
     public void stringCells() throws Exception {
         Workbook workbook = _testDataProvider.createWorkbook();
-        fixFonts(workbook);
         Sheet sheet = workbook.createSheet();
         trackColumnsForAutoSizingIfSXSSF(sheet);
         Row row = sheet.createRow(0);
@@ -234,8 +229,7 @@ public abstract class BaseTestSheetAutosizeColumn {
         assertTrue(2*sheet.getColumnWidth(0) < sheet.getColumnWidth(1)); // width is roughly proportional to the number of characters
         assertTrue(2*sheet.getColumnWidth(1) < sheet.getColumnWidth(2));
         assertEquals(sheet.getColumnWidth(4), sheet.getColumnWidth(3));
-        boolean ignoreFontSizeX2 = JvmBugs.hasLineBreakMeasurerBug();
-        assertTrue(ignoreFontSizeX2 || sheet.getColumnWidth(5) > sheet.getColumnWidth(4)); //larger font results in a wider column width
+        assertTrue(sheet.getColumnWidth(5) > sheet.getColumnWidth(4)); //larger font results in a wider column width
         
         workbook.close();
     }
@@ -243,7 +237,6 @@ public abstract class BaseTestSheetAutosizeColumn {
     @Test
     public void rotatedText() throws Exception {
         Workbook workbook = _testDataProvider.createWorkbook();
-        fixFonts(workbook);
         Sheet sheet = workbook.createSheet();
         trackColumnsForAutoSizingIfSXSSF(sheet);
         Row row = sheet.createRow(0);
@@ -271,7 +264,6 @@ public abstract class BaseTestSheetAutosizeColumn {
     @Test
     public void mergedCells() throws Exception {
         Workbook workbook = _testDataProvider.createWorkbook();
-        fixFonts(workbook);
         Sheet sheet = workbook.createSheet();
         trackColumnsForAutoSizingIfSXSSF(sheet);
 
@@ -299,7 +291,6 @@ public abstract class BaseTestSheetAutosizeColumn {
     @Test
     public void largeRowNumbers() throws Exception {
        Workbook workbook = _testDataProvider.createWorkbook();
-       fixFonts(workbook);
        Sheet sheet = workbook.createSheet();
        trackColumnsForAutoSizingIfSXSSF(sheet);
        
@@ -347,18 +338,6 @@ public abstract class BaseTestSheetAutosizeColumn {
                         eval.evaluateFormulaCell(c);
                     }
                 }
-            }
-        }
-    }
-
-    protected static void fixFonts(Workbook workbook) {
-        if (!JvmBugs.hasLineBreakMeasurerBug()) return;
-        for (int i=workbook.getNumberOfFontsAsInt()-1; i>=0; i--) {
-            Font f = workbook.getFontAt(0);
-            if ("Calibri".equals(f.getFontName())) {
-                f.setFontName("Lucida Sans");
-            } else if ("Cambria".equals(f.getFontName())) {
-                f.setFontName("Lucida Bright");
             }
         }
     }
