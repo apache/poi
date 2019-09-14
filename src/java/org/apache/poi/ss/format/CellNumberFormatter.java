@@ -304,7 +304,7 @@ public class CellNumberFormatter extends CellFormatter {
     }
 
     private static int maxValue(List<Special> s) {
-        return (int) Math.round(Math.pow(10, s.size()) - 1);
+        return Math.toIntExact(Math.round(Math.pow(10, s.size()) - 1));
     }
 
     private List<Special> specialsFor(int pos, int takeFirst) {

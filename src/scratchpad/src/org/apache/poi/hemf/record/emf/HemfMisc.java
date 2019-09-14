@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import org.apache.commons.math3.util.ArithmeticUtils;
 import org.apache.poi.hemf.draw.HemfDrawProperties;
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hwmf.draw.HwmfDrawProperties;
@@ -900,7 +901,7 @@ public class HemfMisc {
             // contains a DIB.
             int cbBits = (int) leis.readUInt();
 
-            int size = 6 * LittleEndianConsts.INT_SIZE;
+            int size = ArithmeticUtils.mulAndCheck(6, LittleEndianConsts.INT_SIZE);
 
             size += readBitmap(leis, bitmap, startIdx, offBmi, cbBmi, offBits, cbBits);
 

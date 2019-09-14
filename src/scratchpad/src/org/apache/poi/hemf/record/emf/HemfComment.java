@@ -198,9 +198,9 @@ public class HemfComment {
                 // Valid comment identifier values are listed in the following table.
                 //
                 // If this field contains any other value, the comment record MUST be an EMR_COMMENT record
-                final int commentIdentifier = Math.toIntExact(leis.readUInt());
+                final long commentIdentifier = leis.readUInt();
                 // A 32-bit unsigned integer that identifies the type of public comment record.
-                final int publicCommentIdentifier = Math.toIntExact(leis.readUInt());
+                final long publicCommentIdentifier = leis.readUInt();
 
                 final boolean isEmfPublic = (commentIdentifier == HemfCommentRecordType.emfPublic.id);
                 leis.reset();
@@ -322,14 +322,14 @@ public class HemfComment {
         public long init(final LittleEndianInputStream leis, final long dataSize)
         throws IOException {
             final int startIdx = leis.getReadIndex();
-            final int commentIdentifier = Math.toIntExact(leis.readUInt());
+            final long commentIdentifier = leis.readUInt();
             assert(commentIdentifier == HemfCommentRecordType.emfPublic.id);
-            final int publicCommentIdentifier = Math.toIntExact(leis.readUInt());
+            final long publicCommentIdentifier = leis.readUInt();
             assert(publicCommentIdentifier == HemfCommentRecordType.emfBeginGroup.id);
             HemfDraw.readRectL(leis, bounds);
 
             // The number of Unicode characters in the optional description string that follows.
-            int nDescription = Math.toIntExact(leis.readUInt());
+            long nDescription = leis.readUInt();
 
             byte[] buf = IOUtils.safelyAllocate(nDescription * 2L, MAX_RECORD_LENGTH);
             leis.readFully(buf);
@@ -365,9 +365,9 @@ public class HemfComment {
         public long init(final LittleEndianInputStream leis, final long dataSize)
         throws IOException {
             final int startIdx = leis.getReadIndex();
-            final int commentIdentifier = Math.toIntExact(leis.readUInt());
+            final long commentIdentifier = leis.readUInt();
             assert(commentIdentifier == HemfCommentRecordType.emfPublic.id);
-            final int publicCommentIdentifier = Math.toIntExact(leis.readUInt());
+            final long publicCommentIdentifier = leis.readUInt();
             assert(publicCommentIdentifier == HemfCommentRecordType.emfEndGroup.id);
             return leis.getReadIndex()-startIdx;
         }
@@ -391,15 +391,15 @@ public class HemfComment {
         public long init(final LittleEndianInputStream leis, final long dataSize)
                 throws IOException {
             final int startIdx = leis.getReadIndex();
-            final int commentIdentifier = Math.toIntExact(leis.readUInt());
+            final long commentIdentifier = leis.readUInt();
             assert(commentIdentifier == HemfCommentRecordType.emfPublic.id);
-            final int publicCommentIdentifier = Math.toIntExact(leis.readUInt());
+            final long publicCommentIdentifier = leis.readUInt();
             assert(publicCommentIdentifier == HemfCommentRecordType.emfMultiFormats.id);
             HemfDraw.readRectL(leis, bounds);
 
             // A 32-bit unsigned integer that specifies the number of graphics formats contained in this record.
-            int countFormats = Math.toIntExact(leis.readUInt());
-            for (int i=0; i<countFormats; i++) {
+            long countFormats = leis.readUInt();
+            for (long pos = 0; pos < countFormats; pos++) {
                 EmfCommentDataFormat fmt = new EmfCommentDataFormat();
                 long readBytes = fmt.init(leis, dataSize, startIdx);
                 formats.add(fmt);
@@ -533,9 +533,9 @@ public class HemfComment {
         @Override
         public long init(final LittleEndianInputStream leis, final long dataSize) throws IOException {
             final int startIdx = leis.getReadIndex();
-            final int commentIdentifier = Math.toIntExact(leis.readUInt());
+            final long commentIdentifier = leis.readUInt();
             assert(commentIdentifier == HemfCommentRecordType.emfPublic.id);
-            final int publicCommentIdentifier = Math.toIntExact(leis.readUInt());
+            final long publicCommentIdentifier = leis.readUInt();
             assert(publicCommentIdentifier == HemfCommentRecordType.emfWMF.id);
 
             // A 16-bit unsigned integer that specifies the WMF metafile version in terms
