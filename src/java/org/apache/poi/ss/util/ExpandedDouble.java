@@ -54,7 +54,7 @@ final class ExpandedDouble {
 	private final int _binaryExponent;
 
 	public ExpandedDouble(long rawBits) {
-		int biasedExp = (int) (rawBits >> 52);
+		int biasedExp = Math.toIntExact(rawBits >> 52);
 		if (biasedExp == 0) {
 			// sub-normal numbers
 			BigInteger frac = BigInteger.valueOf(rawBits).and(BI_FRAC_MASK);

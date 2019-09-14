@@ -142,7 +142,7 @@ public class XDDFRunProperties {
         } else if (size < 1 || 400 < size) {
             throw new IllegalArgumentException("Minimum inclusive = 1. Maximum inclusive = 400.");
         } else {
-            props.setSz((int) (100 * size));
+            props.setSz((int)(100 * size));
         }
     }
 

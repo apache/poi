@@ -216,8 +216,8 @@ public class PPTX2PNG {
                     break;
             }
 
-            final int width = (int) Math.rint(pgsize.getWidth() * scale / lenSide);
-            final int height = (int) Math.rint(pgsize.getHeight() * scale / lenSide);
+            final int width = Math.toIntExact(Math.round(pgsize.getWidth() * scale / lenSide));
+            final int height = Math.toIntExact(Math.round(pgsize.getHeight() * scale / lenSide));
 
 
             for (int slideNo : slidenum) {

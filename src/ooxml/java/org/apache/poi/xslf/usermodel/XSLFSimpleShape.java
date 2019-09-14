@@ -78,7 +78,6 @@ import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndType;
 import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndWidth;
 import org.openxmlformats.schemas.drawingml.x2006.main.STPresetLineDashVal;
 import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 
 /**
  * Represents a single (non-group) shape in a .pptx slide show
@@ -242,7 +241,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
             return null;
         }
         // 1-based index of a line style within the style matrix
-        int idx = (int)lnRef.getIdx();
+        int idx = Math.toIntExact(lnRef.getIdx());
 
         XSLFTheme theme = getSheet().getTheme();
         if (theme == null) {
@@ -359,7 +358,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
                 if (lnRef == null) {
                     return null;
                 }
-                int idx = (int)lnRef.getIdx();
+                int idx = Math.toIntExact(lnRef.getIdx());
                 CTSchemeColor phClr = lnRef.getSchemeClr();
                 if(idx <= 0){
                     return null;

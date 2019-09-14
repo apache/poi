@@ -236,7 +236,7 @@ public class XSSFCellStyle implements CellStyle {
     public BorderStyle getBorderBottom() {
         if(!_cellXf.getApplyBorder()) return BorderStyle.NONE;
 
-        int idx = (int)_cellXf.getBorderId();
+        int idx = Math.toIntExact(_cellXf.getBorderId());
         CTBorder ct = _stylesSource.getBorderAt(idx).getCTBorder();
         STBorderStyle.Enum ptrn = ct.isSetBottom() ? ct.getBottom().getStyle() : null;
         if (ptrn == null) {
@@ -254,7 +254,7 @@ public class XSSFCellStyle implements CellStyle {
     public BorderStyle getBorderLeft() {
         if(!_cellXf.getApplyBorder()) return BorderStyle.NONE;
 
-        int idx = (int)_cellXf.getBorderId();
+        int idx = Math.toIntExact(_cellXf.getBorderId());
         CTBorder ct = _stylesSource.getBorderAt(idx).getCTBorder();
         STBorderStyle.Enum ptrn = ct.isSetLeft() ? ct.getLeft().getStyle() : null;
         if (ptrn == null) {
@@ -270,7 +270,7 @@ public class XSSFCellStyle implements CellStyle {
     public BorderStyle getBorderRight() {
         if(!_cellXf.getApplyBorder()) return BorderStyle.NONE;
 
-        int idx = (int)_cellXf.getBorderId();
+        int idx = Math.toIntExact(_cellXf.getBorderId());
         CTBorder ct = _stylesSource.getBorderAt(idx).getCTBorder();
         STBorderStyle.Enum ptrn = ct.isSetRight() ? ct.getRight().getStyle() : null;
         if (ptrn == null) {
@@ -288,7 +288,7 @@ public class XSSFCellStyle implements CellStyle {
     public BorderStyle getBorderTop() {
         if(!_cellXf.getApplyBorder()) return BorderStyle.NONE;
 
-        int idx = (int)_cellXf.getBorderId();
+        int idx = Math.toIntExact(_cellXf.getBorderId());
         CTBorder ct = _stylesSource.getBorderAt(idx).getCTBorder();
         STBorderStyle.Enum ptrn = ct.isSetTop() ? ct.getTop().getStyle() : null;
         if (ptrn == null) {
@@ -323,7 +323,7 @@ public class XSSFCellStyle implements CellStyle {
     public XSSFColor getBottomBorderXSSFColor() {
         if(!_cellXf.getApplyBorder()) return null;
 
-        int idx = (int)_cellXf.getBorderId();
+        int idx = Math.toIntExact(_cellXf.getBorderId());
         XSSFCellBorder border = _stylesSource.getBorderAt(idx);
 
         return border.getBorderColor(BorderSide.BOTTOM);
@@ -549,7 +549,7 @@ public class XSSFCellStyle implements CellStyle {
     public XSSFColor getLeftBorderXSSFColor() {
         if(!_cellXf.getApplyBorder()) return null;
 
-        int idx = (int)_cellXf.getBorderId();
+        int idx = Math.toIntExact(_cellXf.getBorderId());
         XSSFCellBorder border = _stylesSource.getBorderAt(idx);
 
         return border.getBorderColor(BorderSide.LEFT);
@@ -592,7 +592,7 @@ public class XSSFCellStyle implements CellStyle {
     public XSSFColor getRightBorderXSSFColor() {
         if(!_cellXf.getApplyBorder()) return null;
 
-        int idx = (int)_cellXf.getBorderId();
+        int idx = Math.toIntExact(_cellXf.getBorderId());
         XSSFCellBorder border = _stylesSource.getBorderAt(idx);
 
         return border.getBorderColor(BorderSide.RIGHT);
@@ -644,7 +644,7 @@ public class XSSFCellStyle implements CellStyle {
     public XSSFColor getTopBorderXSSFColor() {
         if(!_cellXf.getApplyBorder()) return null;
 
-        int idx = (int)_cellXf.getBorderId();
+        int idx = Math.toIntExact(_cellXf.getBorderId());
         XSSFCellBorder border = _stylesSource.getBorderAt(idx);
 
         return border.getBorderColor(BorderSide.TOP);
@@ -960,7 +960,7 @@ public class XSSFCellStyle implements CellStyle {
     private CTBorder getCTBorder(){
         CTBorder ct;
         if(_cellXf.getApplyBorder()) {
-            int idx = (int)_cellXf.getBorderId();
+            int idx = Math.toIntExact(_cellXf.getBorderId());
             XSSFCellBorder cf = _stylesSource.getBorderAt(idx);
 
             ct = (CTBorder)cf.getCTBorder().copy();

@@ -16,9 +16,6 @@
 ==================================================================== */
 package org.apache.poi.openxml4j.util;
 
-import static org.apache.commons.collections4.IteratorUtils.asIterable;
-import static org.apache.commons.collections4.IteratorUtils.asIterator;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
@@ -76,7 +73,9 @@ public class ZipFileZipEntrySource implements ZipEntrySource {
       }
 
       // the opc spec allows case-insensitive filename matching (see #49609)
-      for (final ZipArchiveEntry ze : asIterable(asIterator(zipArchive.getEntries()))) {
+      final Enumeration<ZipArchiveEntry> zipArchiveEntryEnumeration = zipArchive.getEntries();
+      while (zipArchiveEntryEnumeration.hasMoreElements()) {
+         ZipArchiveEntry ze = zipArchiveEntryEnumeration.nextElement();
          if (normalizedPath.equalsIgnoreCase(ze.getName().replace('\\','/'))) {
             return ze;
          }

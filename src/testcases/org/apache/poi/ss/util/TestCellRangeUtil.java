@@ -20,9 +20,10 @@ package org.apache.poi.ss.util;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertArrayEquals;
+
+import java.util.Iterator;
 import java.util.Set;
 import java.util.HashSet;
-import org.apache.commons.collections4.IteratorUtils;
 
 /**
  * Tests CellRangeUtil.
@@ -76,7 +77,9 @@ public final class TestCellRangeUtil {
     private static Set<CellAddress> getCellAddresses(CellRangeAddress[] ranges) {
         final Set<CellAddress> set = new HashSet<>();
         for (final CellRangeAddress range : ranges) {
-            set.addAll(IteratorUtils.toList(range.iterator()));
+            for (Iterator<CellAddress> iter = range.iterator(); iter.hasNext(); ) {
+                set.add(iter.next());
+            }
         }
         return set;
     }

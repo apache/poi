@@ -119,7 +119,7 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
 
     @Override
     public String getAuthor(long authorId) {
-        return comments.getAuthors().getAuthorArray((int)authorId);
+        return comments.getAuthors().getAuthorArray(Math.toIntExact(authorId));
     }
 
     @Override

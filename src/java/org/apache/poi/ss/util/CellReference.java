@@ -354,7 +354,7 @@ public class CellReference {
         if(rowNum > Integer.MAX_VALUE) {
             return false;
         }
-        return isRowWithinRange((int)rowNum, ssVersion);
+        return isRowWithinRange(Math.toIntExact(rowNum), ssVersion);
     }
 
     /**

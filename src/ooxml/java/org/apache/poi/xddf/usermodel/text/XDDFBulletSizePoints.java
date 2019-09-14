@@ -45,6 +45,6 @@ public class XDDFBulletSizePoints implements XDDFBulletSize {
     }
 
     public void setPoints(double value) {
-        points.setVal((int) (100 * value));
+        points.setVal(Math.toIntExact(Math.round(100 * value)));
     }
 }

@@ -62,6 +62,6 @@ final class ParityFunction implements FreeRefFunction {
 			d = -d;
 		}
 		long v = (long) Math.floor(d);
-		return (int) (v & 0x0001);
+		return Math.toIntExact(v & 0x0001);
 	}
 }

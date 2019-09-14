@@ -399,7 +399,7 @@ public class ToHtml {
      * @return the approximate number of pixels for a typical display
      */
     protected int widthToPixels(final double widthUnits) {
-        return (int) (Math.round(widthUnits * 9 / 256));
+        return Math.toIntExact(Math.round(widthUnits * 9 / 256));
     }
 
     private void printCols(Map<Integer, Integer> widths) {

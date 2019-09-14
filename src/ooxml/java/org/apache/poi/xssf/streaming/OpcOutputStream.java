@@ -85,7 +85,7 @@ class OpcOutputStream extends DeflaterOutputStream {
         }
 
         current.size = def.getBytesRead();
-        current.compressedSize = (int) def.getBytesWritten();
+        current.compressedSize = Math.toIntExact(def.getBytesWritten());
         current.crc = crc.getValue();
 
         written += current.compressedSize;

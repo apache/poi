@@ -465,7 +465,8 @@ public final class XSSFCell extends CellBase {
         if (f == null) {
             return null;
         } else if (f.getT() == STCellFormulaType.SHARED) {
-            return convertSharedFormula((int)f.getSi(), fpb == null ? XSSFEvaluationWorkbook.create(getSheet().getWorkbook()) : fpb);
+            return convertSharedFormula(Math.toIntExact(f.getSi()),
+                    fpb == null ? XSSFEvaluationWorkbook.create(getSheet().getWorkbook()) : fpb);
         } else {
             return f.getStringValue();
         }
@@ -614,7 +615,7 @@ public final class XSSFCell extends CellBase {
         XSSFCellStyle style = null;
         if(_stylesSource.getNumCellStyles() > 0){
             long idx = _cell.isSetS() ? _cell.getS() : 0;
-            style = _stylesSource.getStyleAt((int)idx);
+            style = _stylesSource.getStyleAt(Math.toIntExact(idx));
         }
         return style;
     }
@@ -1224,7 +1225,7 @@ public final class XSSFCell extends CellBase {
         }
 
         CalculationChain calcChain = getSheet().getWorkbook().getCalculationChain();
-        int sheetId = (int)getSheet().sheet.getSheetId();
+        int sheetId = Math.toIntExact(getSheet().sheet.getSheetId());
     
         //remove the reference in the calculation chain
         if(calcChain != null) calcChain.removeItem(sheetId, getReference());

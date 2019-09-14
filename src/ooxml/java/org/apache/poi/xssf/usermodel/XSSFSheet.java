@@ -559,7 +559,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             if (width > maxColumnWidth) {
                 width = maxColumnWidth;
             }
-            setColumnWidth(column, (int)(width));
+            setColumnWidth(column, Math.toIntExact(Math.round(width)));
             columnHelper.setColBestFit(column, true);
         }
     }
@@ -900,7 +900,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         CTBreak[] brkArray = ctPageBreak.getBrkArray();
         int[] breaks = new int[brkArray.length];
         for (int i = 0 ; i < brkArray.length ; i++) {
-            breaks[i] = (int) brkArray[i].getId() - 1;
+            breaks[i] = Math.toIntExact(brkArray[i].getId() - 1);
         }
         return breaks;
     }
@@ -944,7 +944,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     public int getColumnWidth(int columnIndex) {
         CTCol col = columnHelper.getColumn(columnIndex, false);
         double width = col == null || !col.isSetWidth() ? getDefaultColumnWidth() : col.getWidth();
-        return (int)(width*256);
+        return Math.toIntExact(Math.round(width*256));
     }
 
     /**
@@ -973,7 +973,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     @Override
     public int getDefaultColumnWidth() {
         CTSheetFormatPr pr = worksheet.getSheetFormatPr();
-        return pr == null ? 8 : (int)pr.getBaseColWidth();
+        return pr == null ? 8 : Math.toIntExact(pr.getBaseColWidth());
     }
 
     /**
@@ -1686,7 +1686,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             //col must exist
             short outlineLevel=col.getOutlineLevel();
             col.setOutlineLevel((short)(outlineLevel+1));
-            index=(int)col.getMax();
+            index = Math.toIntExact(col.getMax());
         }
         worksheet.setColsArray(0,ctCols);
         setSheetFormatPrOutlineLevelCol();
@@ -2256,7 +2256,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             // split to 3 records
             CTCol ciMid = columnHelper.cloneCol(cols, ci);
             CTCol ciEnd = columnHelper.cloneCol(cols, ci);
-            int lastcolumn = (int) ciMax;
+            int lastcolumn = Math.toIntExact(ciMax);
 
             ci.setMax(targetColumnIx - 1);
 
@@ -2308,7 +2308,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             }
             idx++;
         }
-        return (int) columnInfo.getMax();
+        return Math.toIntExact(columnInfo.getMax());
     }
 
     private boolean isAdjacentBefore(CTCol col, CTCol otherCol) {
@@ -2363,7 +2363,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         CTCol col = columnHelper.getColumn(columnIndex, false);
         int colInfoIx = columnHelper.getIndexOfColumn(cols, col);
 
-        int idx = findColInfoIdx((int) col.getMax(), colInfoIx);
+        int idx = findColInfoIdx(Math.toIntExact(col.getMax()), colInfoIx);
         if (idx == -1) {
             return;
         }
@@ -2408,7 +2408,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         }
         // Write collapse flag (stored in a single col info record after this
         // outline group)
-        setColumn((int) columnInfo.getMax() + 1, null, null,
+        setColumn(Math.toIntExact(columnInfo.getMax() + 1), null, null,
                 Boolean.FALSE, Boolean.FALSE);
     }
 
@@ -3286,7 +3286,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             if (col != null) {
                 short outlineLevel = col.getOutlineLevel();
                 col.setOutlineLevel((short) (outlineLevel - 1));
-                index = (int) col.getMax();
+                index = Math.toIntExact(col.getMax());
 
                 if (col.getOutlineLevel() <= 0) {
                     int colIndex = columnHelper.getIndexOfColumn(cols, col);
@@ -3492,7 +3492,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             //  the sheet has (i.e. sheet 1 -> comments 1)
             try {
                 sheetComments = (CommentsTable)createRelationship(
-                        XSSFRelation.SHEET_COMMENTS, XSSFFactory.getInstance(), (int)sheet.getSheetId());
+                        XSSFRelation.SHEET_COMMENTS, XSSFFactory.getInstance(), Math.toIntExact(sheet.getSheetId()));
             } catch(PartAlreadyExistsException e) {
                 // Technically a sheet doesn't need the same number as
                 //  it's comments, and clearly someone has already pinched
@@ -3563,7 +3563,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
                 sf.setRef(effectiveRef);
             }
 
-            sharedFormulas.put((int)f.getSi(), sf);
+            sharedFormulas.put(Math.toIntExact(f.getSi()), sf);
         }
         if (f != null && f.getT() == STCellFormulaType.ARRAY && f.getRef() != null) {
             arrayFormulas.add(CellRangeAddress.valueOf(f.getRef()));
@@ -4649,7 +4649,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
                                     nextCell.getColumnIndex(), ref.getLastColumn());
                             nextF.setRef(nextRef.formatAsString());
 
-                            sharedFormulas.put((int)nextF.getSi(), nextF);
+                            sharedFormulas.put(Math.toIntExact(nextF.getSi()), nextF);
                             break DONE;
                         }
                     }

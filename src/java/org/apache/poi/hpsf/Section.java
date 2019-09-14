@@ -182,10 +182,10 @@ public class Section {
         final TreeBidiMap<Long,Long> offset2Id = new TreeBidiMap<>();
         for (int i = 0; i < propertyCount; i++) {
             /* Read the property ID. */
-            long id = (int)leis.readUInt();
+            long id = leis.readUInt();
 
             /* Offset from the section's start. */
-            long off = (int)leis.readUInt();
+            long off = leis.readUInt();
 
             offset2Id.put(off, id);
         }
@@ -196,7 +196,7 @@ public class Section {
         int codepage = -1;
         if (cpOffset != null) {
             /* Read the property's value type. It must be VT_I2. */
-            leis.setReadIndex((int)(this._offset + cpOffset));
+            leis.setReadIndex(Math.toIntExact(this._offset + cpOffset));
             final long type = leis.readUInt();
 
             if (type != Variant.VT_I2) {
@@ -221,7 +221,7 @@ public class Section {
             }
             
             int pLen = propLen(offset2Id, off, size);
-            leis.setReadIndex((int)(this._offset + off));
+            leis.setReadIndex(Math.toIntExact(this._offset + off));
 
             if (id == PropertyIDMap.PID_DICTIONARY) {
                 leis.mark(100000);
@@ -242,7 +242,7 @@ public class Section {
             }
         }
         
-        sectionBytes.write(src, (int)_offset, size);
+        sectionBytes.write(src, Math.toIntExact(_offset), size);
         padSectionBytes();
     }
 
@@ -261,7 +261,7 @@ public class Section {
         Long nextKey = offset2Id.nextKey(entryOffset);
         long begin = entryOffset;
         long end = (nextKey != null) ? nextKey : maxSize;
-        return (int)(end - begin);
+        return Math.toIntExact(end - begin);
     }
 
 
@@ -823,7 +823,7 @@ public class Section {
 
             /* Read the string - Strip 0x00 characters from the end of the string. */
             int cp = (codepage == -1) ? Property.DEFAULT_CODEPAGE : codepage;
-            int nrBytes = (int)((sLength-1) * (cp == CodePageUtil.CP_UNICODE ? 2 : 1));
+            int nrBytes = Math.toIntExact(((sLength-1) * (cp == CodePageUtil.CP_UNICODE ? 2 : 1)));
             if (nrBytes > 0xFFFFFF) {
                 LOG.log(POILogger.WARN, errMsg);
                 isCorrupted = true;
@@ -946,7 +946,7 @@ public class Section {
         for (Property aPa : pa) {
             hashCode += aPa.hashCode();
         }
-        return (int) (hashCode & 0x0ffffffffL);
+        return Math.toIntExact(hashCode & 0x0ffffffffL);
     }
 
 

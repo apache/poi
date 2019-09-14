@@ -281,7 +281,7 @@ import org.apache.poi.util.Internal;
             }
         }
         final double width = maxColumnWidths.get(column).getMaxColumnWidth(useMergedCells);
-        return (int) (256*width);
+        return Math.toIntExact(Math.round(256*width));
     }
     
 

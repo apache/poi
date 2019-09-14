@@ -401,7 +401,7 @@ public class HexDump {
         char[] buf = new char[nDigits];
         long acc = value;
         for(int i=nDigits-1; i>=0; i--) {
-            int digit = (int)(acc & 0x0F);
+            int digit = Math.toIntExact(acc & 0x0F);
             buf[i] = (char) (digit < 10 ? ('0' + digit) : ('A' + digit - 10));
             acc >>>= 4;
         }

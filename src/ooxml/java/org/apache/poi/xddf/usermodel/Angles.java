@@ -27,7 +27,7 @@ public class Angles {
     public static final int OOXML_DEGREE = 60_000;
 
     public static final int degreesToAttribute(double angle) {
-        return (int) (OOXML_DEGREE * angle);
+        return Math.toIntExact(Math.round(OOXML_DEGREE * angle));
     }
 
     public static final double attributeToDegrees(int angle) {

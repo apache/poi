@@ -703,7 +703,7 @@ public class ToCSV {
         
         if (converted) {
             System.out.println("Conversion took " + 
-                  (int)((System.currentTimeMillis() - startTime)/1000) + " seconds");
+                  ((System.currentTimeMillis() - startTime)/1000) + " seconds");
         }
     }
 

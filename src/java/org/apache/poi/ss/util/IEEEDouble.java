@@ -39,6 +39,6 @@ final class IEEEDouble {
 	 * @return the top 12 bits (sign and biased exponent value)
 	 */
 	public static int getBiasedExponent(long rawBits) {
-		return (int) ((rawBits & EXPONENT_MASK) >> EXPONENT_SHIFT);
+		return Math.toIntExact((rawBits & EXPONENT_MASK) >> EXPONENT_SHIFT);
 	}
 }

@@ -407,7 +407,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      */
     @Override
     public int getRowNum() {
-        return (int) (_row.getR() - 1);
+        return Math.toIntExact(_row.getR() - 1);
     }
 
     /**
@@ -469,7 +469,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
 
        StylesTable stylesSource = getSheet().getWorkbook().getStylesSource();
        if(stylesSource.getNumCellStyles() > 0) {
-           return stylesSource.getStyleAt((int)_row.getS());
+           return stylesSource.getStyleAt(Math.toIntExact(_row.getS()));
        } else {
           return null;
        }

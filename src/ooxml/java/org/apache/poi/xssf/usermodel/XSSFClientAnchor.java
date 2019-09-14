@@ -256,7 +256,7 @@ public class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
     }
 
     public int getDx1() {
-        return (int) getCell1().getColOff();
+        return Math.toIntExact(getCell1().getColOff());
     }
 
     /**
@@ -268,7 +268,7 @@ public class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
     }
 
     public int getDy1() {
-        return (int) getCell1().getRowOff();
+        return Math.toIntExact(getCell1().getRowOff());
     }
 
     /**
@@ -280,7 +280,7 @@ public class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
     }
 
     public int getDy2() {
-        return (int) getCell2().getRowOff();
+        return Math.toIntExact(getCell2().getRowOff());
     }
 
     /**
@@ -292,7 +292,7 @@ public class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
     }
 
     public int getDx2() {
-        return (int) getCell2().getColOff();
+        return Math.toIntExact(getCell2().getColOff());
     }
 
     /**

@@ -109,7 +109,7 @@ import java.util.List;
                     if (shiftedFormula != null) {
                         f.setStringValue(shiftedFormula);
                         if(f.getT() == STCellFormulaType.SHARED){
-                            int si = (int)f.getSi();
+                            int si = Math.toIntExact(f.getSi());
                             CTCellFormula sf = sheet.getSharedFormula(si);
                             sf.setStringValue(shiftedFormula);
                             updateRefInCTCellFormula(row, formulaShifter, sf);

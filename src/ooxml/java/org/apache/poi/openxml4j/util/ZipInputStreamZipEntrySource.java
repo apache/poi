@@ -18,11 +18,11 @@ package org.apache.poi.openxml4j.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 
 /**
@@ -58,7 +58,7 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
 
 	@Override
 	public Enumeration<? extends ZipArchiveEntry> getEntries() {
-		return IteratorUtils.asEnumeration(zipEntries.values().iterator());
+		return Collections.enumeration(zipEntries.values());
 	}
 
 	@Override

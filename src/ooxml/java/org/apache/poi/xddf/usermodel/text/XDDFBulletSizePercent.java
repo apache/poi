@@ -47,6 +47,6 @@ public class XDDFBulletSizePercent implements XDDFBulletSize {
     }
 
     public void setPercent(double value) {
-        percent.setVal((int) (1000 * value));
+        percent.setVal(Math.toIntExact(Math.round(1000 * value)));
     }
 }

@@ -577,10 +577,10 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
         // value of 0 or 1000 indicates no background,
         // values 1-999 refer to the index of a fill style within the fillStyleLst element
         // values 1001 and above refer to the index of a background fill style within the bgFillStyleLst element.
-        int idx = (int)fillRef.getIdx();
+        long idx = fillRef.getIdx();
         CTStyleMatrix matrix = theme.getXmlObject().getThemeElements().getFmtScheme();
         final XmlObject styleLst;
-        int childIdx;
+        long childIdx;
         if (idx >= 1 && idx <= 999) {
             childIdx = idx-1;
             styleLst = (isLineStyle) ? matrix.getLnStyleLst() : matrix.getFillStyleLst();
@@ -592,7 +592,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
         }
         XmlCursor cur = styleLst.newCursor();
         XSLFFillProperties fp = null;
-        if (cur.toChild(childIdx)) {
+        if (cur.toChild(Math.toIntExact(childIdx))) {
             fp = XSLFPropertiesDelegate.getFillDelegate(cur.getObject());
         }
         cur.dispose();
