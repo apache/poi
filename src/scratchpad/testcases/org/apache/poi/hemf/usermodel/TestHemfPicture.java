@@ -51,7 +51,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.RecordFormatException;
 import org.junit.Test;
 
-public class HemfPictureTest {
+public class TestHemfPicture {
 
     private static final POIDataSamples ss_samples = POIDataSamples.getSpreadSheetInstance();
     private static final POIDataSamples sl_samples = POIDataSamples.getSlideShowInstance();

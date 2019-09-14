@@ -34,7 +34,7 @@ import org.apache.poi.hemf.record.emfplus.HemfPlusRecordType;
 import org.apache.poi.hemf.usermodel.HemfPicture;
 import org.junit.Test;
 
-public class HemfPlusExtractorTest {
+public class TestHemfPlusExtractor {
 
     @Test
     public void testBasic() throws Exception {
