@@ -76,8 +76,8 @@ public class TestPPTX2PNG {
 
     @Test
     public void render() throws Exception {
-        assumeFalse("ignore HSLF / .ppt files in no-scratchpad run", xslfOnly && pptFile.toLowerCase(Locale.ROOT).endsWith("ppt"));
-        
+        assumeFalse("ignore HSLF (.ppt) / HEMF (.emf) / HWMF (.wmf) files in no-scratchpad run", xslfOnly && pptFile.matches(".*\\.(ppt|emf|wmf)$"));
+
         String[] args = {
             "-format", "null", // png,gif,jpg or null for test
             "-slide", "-1", // -1 for all

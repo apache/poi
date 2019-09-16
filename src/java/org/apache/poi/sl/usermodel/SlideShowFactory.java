@@ -295,8 +295,13 @@ public class SlideShowFactory {
         S extends Shape<S,P>,
         P extends TextParagraph<S,P,? extends TextRun>
     > SlideShow<S,P> createSlideShow(String factoryClass, Object[] args) throws IOException, EncryptedDocumentException {
+        final Class<?> clazz;
         try {
-            Class<?> clazz = SlideShowFactory.class.getClassLoader().loadClass(factoryClass);
+            clazz = SlideShowFactory.class.getClassLoader().loadClass(factoryClass);
+        } catch (ClassNotFoundException e) {
+            throw new IOException(factoryClass+" not found - check if poi-scratchpad.jar is on the classpath.");
+        }
+        try {
             Class<?>[] argsClz = new Class<?>[args.length];
             int i=0;
             for (Object o : args) {

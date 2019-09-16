@@ -50,6 +50,7 @@ import java.util.stream.StreamSupport;
 import javax.imageio.ImageIO;
 
 import org.apache.poi.common.usermodel.GenericRecord;
+import org.apache.poi.sl.draw.BitmapImageRenderer;
 import org.apache.poi.sl.draw.DrawPictureShape;
 import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.sl.draw.ImageRenderer;
@@ -196,6 +197,7 @@ public class PPTX2PNG {
             }
 
             final Dimension2D pgsize = proxy.getSize();
+
             final double lenSide;
             switch (fixSide) {
                 default:
@@ -268,6 +270,9 @@ public class PPTX2PNG {
                 graphics.dispose();
                 img.flush();
             }
+        } catch (NoScratchpadException e) {
+            usage("'"+file.getName()+"': Format not supported - try to include poi-scratchpad.jar into the CLASSPATH.");
+            return;
         }
 
         if (!quiet) {
@@ -322,7 +327,15 @@ public class PPTX2PNG {
 
         @Override
         public void parse(File file) throws IOException {
-            ppt = SlideShowFactory.create(file, null, true);
+            try {
+                ppt = SlideShowFactory.create(file, null, true);
+            } catch (IOException e) {
+                if (e.getMessage().contains("scratchpad")) {
+                    throw new NoScratchpadException(e);
+                } else {
+                    throw e;
+                }
+            }
             slide = ppt.getSlides().get(0);
         }
 
@@ -403,6 +416,10 @@ public class PPTX2PNG {
         @Override
         public void parse(File file) throws IOException {
             imgr = DrawPictureShape.getImageRenderer(null, getContentType());
+            if (imgr instanceof BitmapImageRenderer) {
+                throw new NoScratchpadException();
+            }
+
             // stream needs to be kept open
             is = file.toURI().toURL().openStream();
             imgr.loadImage(is, getContentType());
@@ -452,4 +469,12 @@ public class PPTX2PNG {
         }
     }
 
+    private static class NoScratchpadException extends IOException {
+        public NoScratchpadException() {
+        }
+
+        public NoScratchpadException(Throwable cause) {
+            super(cause);
+        }
+    }
 }
