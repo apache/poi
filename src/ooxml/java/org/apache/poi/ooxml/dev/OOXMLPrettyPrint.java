@@ -16,34 +16,23 @@
 ==================================================================== */
 package org.apache.poi.ooxml.dev;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Enumeration;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
-import java.util.zip.ZipOutputStream;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.poi.ooxml.util.DocumentHelper;
+import org.apache.poi.ooxml.util.TransformerHelper;
 import org.apache.poi.openxml4j.opc.internal.ZipHelper;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.util.IOUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.*;
+import java.util.Enumeration;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * Reads a zipped OOXML file and produces a copy with the included
@@ -82,8 +71,7 @@ public class OOXMLPrettyPrint {
         System.out.println("Done.");
     }
 
-    private static void handleFile(File file, File outFile) throws ZipException,
-            IOException, ParserConfigurationException {
+    private static void handleFile(File file, File outFile) throws IOException {
         System.out.println("Reading zip-file " + file + " and writing pretty-printed XML to " + outFile);
 
         try (ZipSecureFile zipFile = ZipHelper.openZipFile(file)) {
@@ -121,7 +109,7 @@ public class OOXMLPrettyPrint {
     }
 
     private static void pretty(Document document, OutputStream outputStream, int indent) throws TransformerException {
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        TransformerFactory transformerFactory = TransformerHelper.getFactory();
         Transformer transformer = transformerFactory.newTransformer();
         transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
         if (indent > 0) {

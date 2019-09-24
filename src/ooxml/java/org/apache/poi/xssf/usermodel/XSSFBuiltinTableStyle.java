@@ -25,6 +25,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.EnumMap;
 import java.util.Map;
 
+import org.apache.poi.ooxml.util.TransformerHelper;
 import org.apache.poi.ss.usermodel.DifferentialStyleProvider;
 import org.apache.poi.ss.usermodel.TableStyle;
 import org.apache.poi.ss.usermodel.TableStyleType;
@@ -439,7 +440,7 @@ public enum XSSFBuiltinTableStyle {
     }
 
     private static String writeToString(Node node) throws IOException, TransformerException {
-        TransformerFactory tf = TransformerFactory.newInstance();
+        TransformerFactory tf = TransformerHelper.getFactory();
         try (StringWriter sw = new StringWriter()){
             Transformer transformer = tf.newTransformer();
             transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
