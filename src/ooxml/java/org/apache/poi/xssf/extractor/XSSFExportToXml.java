@@ -28,6 +28,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.xml.XMLConstants;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -241,9 +242,10 @@ public class XSSFExportToXml implements Comparator<String>{
      * @throws SAXException If validating the document fails
      */
     private boolean isValid(Document xml) throws SAXException{
-        try{
+        try {
             String language = "http://www.w3.org/2001/XMLSchema";
             SchemaFactory factory = SchemaFactory.newInstance(language);
+            trySetFeature(factory, XMLConstants.FEATURE_SECURE_PROCESSING, true);
 
             Source source = new DOMSource(map.getSchema());
             Schema schema = factory.newSchema(source);
@@ -313,7 +315,7 @@ public class XSSFExportToXml implements Comparator<String>{
         String[] xpathTokens = xpath.split("/");
 
 
-        Node currentNode =rootNode;
+        Node currentNode = rootNode;
         // The first token is empty, the second is the root node
         for(int i =2; i<xpathTokens.length;i++) {
 
@@ -534,5 +536,15 @@ public class XSSFExportToXml implements Comparator<String>{
             node = node.getNextSibling();
         }
         return complexTypeNode;
+    }
+
+    private static void trySetFeature(SchemaFactory sf, String feature, boolean enabled) {
+        try {
+            sf.setFeature(feature, enabled);
+        } catch (Exception e) {
+            LOG.log(POILogger.WARN, "SchemaFactory Feature unsupported", feature, e);
+        } catch (AbstractMethodError ame) {
+            LOG.log(POILogger.WARN, "Cannot set SchemaFactory feature because outdated XML parser in classpath", feature, ame);
+        }
     }
 }
