@@ -276,6 +276,7 @@ public class TestAllFiles {
         "spreadsheet/CustomXMLMapping-singleattributenamespace.xlsx",
         "spreadsheet/55864.xlsx",
         "spreadsheet/57890.xlsx",
+        "spreadsheet/xxe_in_schema.xlsx",
 
         // TODO: these fail now with some NPE/file read error because we now try to compute every value via Cell.toString()!
         "spreadsheet/44958.xls",
