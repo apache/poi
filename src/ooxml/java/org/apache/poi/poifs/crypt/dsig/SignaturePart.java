@@ -38,10 +38,10 @@ import javax.xml.namespace.NamespaceContext;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ooxml.util.DocumentHelper;
+import org.apache.poi.ooxml.util.XPathHelper;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -107,7 +107,7 @@ public class SignaturePart {
      */
     public boolean validate() {
         KeyInfoKeySelector keySelector = new KeyInfoKeySelector();
-        XPath xpath = XPathFactory.newInstance().newXPath();
+        XPath xpath = XPathHelper.getFactory().newXPath();
         xpath.setNamespaceContext(new XPathNSContext());
 
         try {
@@ -165,7 +165,7 @@ public class SignaturePart {
         signatureConfig.setSigningCertificateChain(certChain);
         signatureConfig.setSignatureMethodFromUri(xmlSignature.getSignedInfo().getSignatureMethod().getAlgorithm());
 
-        final XPath xpath = XPathFactory.newInstance().newXPath();
+        final XPath xpath = XPathHelper.getFactory().newXPath();
         xpath.setNamespaceContext(new XPathNSContext());
 
         final Map<String,Consumer<String>> m = new HashMap();

@@ -34,8 +34,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 
+import org.apache.poi.ooxml.util.XPathHelper;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ooxml.util.DocumentHelper;
@@ -95,8 +95,7 @@ public class XSSFImportFromXML {
 
         List<XSSFTable> tables = _map.getRelatedTables();
 
-        XPathFactory xpathFactory = XPathFactory.newInstance();
-        XPath xpath = xpathFactory.newXPath();
+        XPath xpath = XPathHelper.getFactory().newXPath();
 
         // Setting namespace context to XPath
         // Assuming that the namespace prefix in the mapping xpath is the
@@ -305,4 +304,5 @@ public class XSSFImportFromXML {
             return null;
         }
     }
+
 }
