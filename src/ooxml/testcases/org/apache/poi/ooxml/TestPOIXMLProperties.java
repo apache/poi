@@ -316,6 +316,18 @@ public final class TestPOIXMLProperties {
     }
 
     @Test
+    public void testAddProperty() throws IOException {
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("documentProperties.docx")) {
+            POIXMLProperties.CustomProperties cps = doc.getProperties().getCustomProperties();
+            assertEquals(1, cps.getLastPid());
+            cps.addProperty("prop1", "abc");
+            assertEquals(2, cps.getLastPid());
+            assertEquals(2, cps.getProperty("prop1").getPid());
+            assertEquals("abc", cps.getProperty("prop1").getLpwstr());
+        }
+    }
+
+    @Test
     public void testBug60977() throws IOException {
         
         try (final XSSFWorkbook workbook = new XSSFWorkbook()) {

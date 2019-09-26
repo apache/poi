@@ -34,19 +34,19 @@ public class WorkbookProperties {
 
             POIXMLProperties props = workbook.getProperties();
 
-        /*
-         * Extended properties are a predefined set of metadata properties
-         * that are specifically applicable to Office Open XML documents.
-         * Extended properties consist of 24 simple properties and 3 complex properties stored in the
-         *  part targeted by the relationship of type
-         */
+            /*
+             * Extended properties are a predefined set of metadata properties
+             * that are specifically applicable to Office Open XML documents.
+             * Extended properties consist of 24 simple properties and 3 complex properties stored in the
+             *  part targeted by the relationship of type
+             */
             POIXMLProperties.ExtendedProperties ext = props.getExtendedProperties();
             ext.getUnderlyingProperties().setCompany("Apache Software Foundation");
             ext.getUnderlyingProperties().setTemplate("XSSF");
 
-        /*
-         * Custom properties enable users to define custom metadata properties.
-         */
+            /*
+             * Custom properties enable users to define custom metadata properties.
+             */
 
             POIXMLProperties.CustomProperties cust = props.getCustomProperties();
             cust.addProperty("Author", "John Smith");

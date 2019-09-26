@@ -86,7 +86,8 @@ public final class TestHPSFPropertiesExtractor {
 	public void testCustomProperties() throws Exception {
 		try (InputStream is = _samples.openResourceAsStream("TestMickey.doc");
 			 POIFSFileSystem fs = new POIFSFileSystem(is);
-			HPSFPropertiesExtractor ext = new HPSFPropertiesExtractor(fs)) {
+			 HPSFPropertiesExtractor ext = new HPSFPropertiesExtractor(fs)) {
+
 			// Custom properties are part of the document info stream
 			String dinfText = ext.getDocumentSummaryInformationText();
 			assertContains(dinfText, "Client = sample client");

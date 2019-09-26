@@ -565,6 +565,8 @@ public class POIXMLProperties {
         public static final String FORMAT_ID = "{D5CDD505-2E9C-101B-9397-08002B2CF9AE}";
 
         private org.openxmlformats.schemas.officeDocument.x2006.customProperties.PropertiesDocument props;
+        private Integer lastPid = null;
+
         private CustomProperties(org.openxmlformats.schemas.officeDocument.x2006.customProperties.PropertiesDocument props) {
             this.props = props;
         }
@@ -651,11 +653,23 @@ public class POIXMLProperties {
          * @return next property id starting with 2
          */
         protected int nextPid() {
+            int propid = lastPid == null ? getLastPid() : lastPid;
+            int nextid = propid + 1;
+            this.lastPid = nextid;
+            return nextid;
+        }
+
+        /**
+         * Find the highest Pid in use
+         *
+         * @return the highest Pid in use in the property set; returns 1 if no properties are set
+         */
+        protected int getLastPid() {
             int propid = 1;
             for(CTProperty p : props.getProperties().getPropertyList()) {
                 if(p.getPid() > propid) propid = p.getPid();
             }
-            return propid + 1;
+            return propid;
         }
 
         /**
