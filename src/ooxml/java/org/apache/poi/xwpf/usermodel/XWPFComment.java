@@ -37,6 +37,7 @@ public class XWPFComment {
         for (CTP ctp : comment.getPArray()) {
             XWPFParagraph p = new XWPFParagraph(ctp, document);
             text.append(p.getText());
+            text.append('\n');   
         }
     }
 
