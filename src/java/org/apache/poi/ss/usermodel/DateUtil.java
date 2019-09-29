@@ -18,7 +18,11 @@
 
 package org.apache.poi.ss.usermodel;
 
+import org.apache.poi.ss.formula.ConditionalFormattingEvaluator;
+import org.apache.poi.util.LocaleUtil;
+
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -30,9 +34,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
-
-import org.apache.poi.ss.formula.ConditionalFormattingEvaluator;
-import org.apache.poi.util.LocaleUtil;
 
 /**
  * Contains methods for dealing with Excel dates.
@@ -76,6 +77,66 @@ public class DateUtil {
             .toFormatter();
 
     /**
+     * Given a LocalDate, converts it into a double representing its internal Excel representation,
+     *   which is the number of days since 1/1/1900. Fractional days represent hours, minutes, and seconds.
+     *
+     * @return Excel representation of Date (-1 if error - test for error by checking for less than 0.1)
+     * @param  date the Date
+     */
+    public static double getExcelDate(LocalDate date) {
+        return getExcelDate(date, false);
+    }
+
+    /**
+     * Given a LocalDate, converts it into a double representing its internal Excel representation,
+     *   which is the number of days since 1/1/1900. Fractional days represent hours, minutes, and seconds.
+     *
+     * @return Excel representation of Date (-1 if error - test for error by checking for less than 0.1)
+     * @param date the Date
+     * @param use1904windowing Should 1900 or 1904 date windowing be used?
+     */
+    public static double getExcelDate(LocalDate date, boolean use1904windowing) {
+        int year = date.getYear();
+        int dayOfYear = date.getDayOfYear();
+        int hour = 0;
+        int minute = 0;
+        int second = 0;
+        int milliSecond = 0;
+
+        return internalGetExcelDate(year, dayOfYear, hour, minute, second, milliSecond, use1904windowing);
+    }
+
+    /**
+     * Given a LocalDateTime, converts it into a double representing its internal Excel representation,
+     *   which is the number of days since 1/1/1900. Fractional days represent hours, minutes, and seconds.
+     *
+     * @return Excel representation of Date (-1 if error - test for error by checking for less than 0.1)
+     * @param  date the Date
+     */
+    public static double getExcelDate(LocalDateTime date) {
+        return getExcelDate(date, false);
+    }
+
+    /**
+     * Given a LocalDateTime, converts it into a double representing its internal Excel representation,
+     *   which is the number of days since 1/1/1900. Fractional days represent hours, minutes, and seconds.
+     *
+     * @return Excel representation of Date (-1 if error - test for error by checking for less than 0.1)
+     * @param date the Date
+     * @param use1904windowing Should 1900 or 1904 date windowing be used?
+     */
+    public static double getExcelDate(LocalDateTime date, boolean use1904windowing) {
+        int year = date.getYear();
+        int dayOfYear = date.getDayOfYear();
+        int hour = date.getHour();
+        int minute = date.getMinute();
+        int second = date.getSecond();
+        int milliSecond = date.getNano()/1_000_000;
+
+        return internalGetExcelDate(year, dayOfYear, hour, minute, second, milliSecond, use1904windowing);
+    }
+
+    /**
      * Given a Date, converts it into a double representing its internal Excel representation,
      *   which is the number of days since 1/1/1900. Fractional days represent hours, minutes, and seconds.
      *
@@ -85,6 +146,7 @@ public class DateUtil {
     public static double getExcelDate(Date date) {
         return getExcelDate(date, false);
     }
+    
     /**
      * Given a Date, converts it into a double representing its internal Excel representation,
      *   which is the number of days since 1/1/1900. Fractional days represent hours, minutes, and seconds.
@@ -95,9 +157,17 @@ public class DateUtil {
      */
     public static double getExcelDate(Date date, boolean use1904windowing) {
         Calendar calStart = LocaleUtil.getLocaleCalendar();
-        calStart.setTime(date);   // If date includes hours, minutes, and seconds, set them to 0
-        return internalGetExcelDate(calStart, use1904windowing);
+        int year = calStart.get(Calendar.YEAR);
+        int dayOfYear = calStart.get(Calendar.DAY_OF_YEAR);
+        // If date includes hours, minutes, and seconds, set them to 0
+        int hour = 0;
+        int minute = 0;
+        int second = 0;
+        int milliSecond = 0;
+        
+        return internalGetExcelDate(year, dayOfYear, hour, minute, second, milliSecond, use1904windowing);
     }
+
     /**
      * Given a Date in the form of a Calendar, converts it into a double
      *  representing its internal Excel representation, which is the
@@ -109,15 +179,23 @@ public class DateUtil {
      * @param use1904windowing Should 1900 or 1904 date windowing be used?
      */
     public static double getExcelDate(Calendar date, boolean use1904windowing) {
-        // Don't alter the supplied Calendar as we do our work
-        return internalGetExcelDate( (Calendar)date.clone(), use1904windowing );
+        int year = date.get(Calendar.YEAR);
+        int dayOfYear = date.get(Calendar.DAY_OF_YEAR);
+        int hour = date.get(Calendar.HOUR_OF_DAY);
+        int minute = date.get(Calendar.MINUTE);
+        int second = date.get(Calendar.SECOND);
+        int milliSecond = date.get(Calendar.MILLISECOND);
+
+        return internalGetExcelDate(year, dayOfYear, hour, minute, second, milliSecond, use1904windowing);
     }
-    private static double internalGetExcelDate(Calendar date, boolean use1904windowing) {
-        if ((!use1904windowing && date.get(Calendar.YEAR) < 1900) ||
-            (use1904windowing && date.get(Calendar.YEAR) < 1904))
+    
+    private static double internalGetExcelDate(int year, int dayOfYear, int hour, int minute, int second, int milliSecond, boolean use1904windowing) {
+        if ((!use1904windowing && year < 1900) ||
+            (use1904windowing && year < 1904))
         {
             return BAD_DATE;
         }
+
         // Because of daylight time saving we cannot use
         //     date.getTime() - calStart.getTimeInMillis()
         // as the difference in milliseconds between 00:00 and 04:00
@@ -125,14 +203,13 @@ public class DateUtil {
         // be 4 hours.
         // E.g. 2004-03-28 04:00 CEST - 2004-03-28 00:00 CET is 3 hours
         // and 2004-10-31 04:00 CET - 2004-10-31 00:00 CEST is 5 hours
-        double fraction = (((date.get(Calendar.HOUR_OF_DAY) * 60.0
-                             + date.get(Calendar.MINUTE)
-                            ) * 60.0 + date.get(Calendar.SECOND)
-                           ) * 1000.0 + date.get(Calendar.MILLISECOND)
+        double fraction = (((hour * 60.0
+                             + minute
+                            ) * 60.0 + second
+                           ) * 1000.0 + milliSecond
                           ) / DAY_MILLISECONDS;
-        Calendar calStart = dayStart(date);
 
-        double value = fraction + absoluteDay(calStart, use1904windowing);
+        double value = fraction + absoluteDay(year, dayOfYear, use1904windowing);
 
         if (!use1904windowing && value >= 60) {
             value++;
@@ -617,10 +694,33 @@ public class DateUtil {
      */
     protected static int absoluteDay(Calendar cal, boolean use1904windowing)
     {
-        return cal.get(Calendar.DAY_OF_YEAR)
-               + daysInPriorYears(cal.get(Calendar.YEAR), use1904windowing);
+        return absoluteDay(cal.get(Calendar.YEAR), cal.get(Calendar.DAY_OF_YEAR), use1904windowing);
     }
 
+    /**
+     * Given a LocalDateTime, return the number of days since 1900/12/31.
+     *
+     * @return days number of days since 1900/12/31
+     * @param  date the Date
+     * @exception IllegalArgumentException if date is invalid
+     */
+    protected static int absoluteDay(LocalDateTime date, boolean use1904windowing)
+    {
+        return absoluteDay(date.getYear(), date.getDayOfYear(), use1904windowing);
+    }
+
+    /**
+     * Given a year and day of year, return the number of days since 1900/12/31.
+     *
+     * @return days number of days since 1900/12/31
+     * @param  dayOfYear the day of the year
+     * @param  year the year
+     * @exception IllegalArgumentException if date is invalid
+     */
+    private static int absoluteDay(int year, int dayOfYear, boolean use1904windowing) {
+        return dayOfYear + daysInPriorYears(year, use1904windowing);
+    }
+    
     /**
      * Return the number of days in prior years since 1900
      *
