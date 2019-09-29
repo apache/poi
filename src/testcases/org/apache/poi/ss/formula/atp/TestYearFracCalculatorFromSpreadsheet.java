@@ -26,13 +26,13 @@ import java.util.Iterator;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.Test;
@@ -97,7 +97,7 @@ public final class TestYearFracCalculatorFromSpreadsheet {
 		int month = getIntCell(row, yearColumn + 1);
 		int day = getIntCell(row, yearColumn + 2);
 		Calendar c = LocaleUtil.getLocaleCalendar(year, month-1, day);
-		return HSSFDateUtil.getExcelDate(c.getTime());
+		return DateUtil.getExcelDate(c.getTime());
 	}
 
 	private static int getIntCell(HSSFRow row, int colIx) {

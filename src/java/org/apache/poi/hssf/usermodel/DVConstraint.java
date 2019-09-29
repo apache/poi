@@ -31,6 +31,7 @@ import org.apache.poi.ss.formula.ptg.NumberPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.StringPtg;
 import org.apache.poi.ss.usermodel.DataValidationConstraint;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.LocaleUtil;
 
 /**
@@ -242,7 +243,7 @@ public class DVConstraint implements DataValidationConstraint {
 		if (timeStr == null) {
 			return null;
 		}
-		return Double.valueOf(HSSFDateUtil.convertTime(timeStr));
+		return Double.valueOf(DateUtil.convertTime(timeStr));
 	}
 	/**
 	 * @param dateFormat pass <code>null</code> for default YYYYMMDD
@@ -254,7 +255,7 @@ public class DVConstraint implements DataValidationConstraint {
 		}
 		Date dateVal; 
 		if (dateFormat == null) {
-			dateVal = HSSFDateUtil.parseYYYYMMDDDate(dateStr);
+			dateVal = DateUtil.parseYYYYMMDDDate(dateStr);
 		} else {
 			try {
 				dateVal = dateFormat.parse(dateStr);
@@ -263,7 +264,7 @@ public class DVConstraint implements DataValidationConstraint {
 						+ "' using specified format '" + dateFormat + "'", e);
 			}
 		}
-		return Double.valueOf(HSSFDateUtil.getExcelDate(dateVal));
+		return Double.valueOf(DateUtil.getExcelDate(dateVal));
 	}
 
 	public static DVConstraint createCustomFormulaConstraint(String formula) {

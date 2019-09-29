@@ -24,10 +24,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.Test;
 
@@ -160,6 +160,6 @@ public final class TestDays360 {
     }
     
     private static NumberEval convert(Date d) {
-        return new NumberEval(HSSFDateUtil.getExcelDate(d));
+        return new NumberEval(DateUtil.getExcelDate(d));
     }
 }

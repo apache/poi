@@ -38,6 +38,7 @@ import org.apache.poi.util.LocaleUtil;
  * Contains methods for dealing with Excel dates.
  */
 public class DateUtil {
+    // FIXME this should be changed to private and the class marked final once HSSFDateUtil can be removed
     protected DateUtil() {
         // no instances of this class
     }
@@ -629,7 +630,7 @@ public class DateUtil {
      * @exception IllegalArgumentException if year is outside of range.
      */
 
-    private static int daysInPriorYears(int yr, boolean use1904windowing)
+    static int daysInPriorYears(int yr, boolean use1904windowing)
     {
         if ((!use1904windowing && yr < 1900) || (use1904windowing && yr < 1904)) {
             throw new IllegalArgumentException("'year' must be 1900 or greater");

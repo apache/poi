@@ -24,16 +24,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.TempFile;
 import org.junit.Test;
@@ -439,7 +430,7 @@ public final class TestCellStyle extends TestCase {
                             Cell cell = row.getCell(idxCell);
                             cell.getCellStyle().getDataFormatString();
                             if (cell.getCellType() == CellType.NUMERIC) {
-                                boolean isDate = HSSFDateUtil.isCellDateFormatted(cell);
+                                boolean isDate = DateUtil.isCellDateFormatted(cell);
                                 if (idxCell > 0 && isDate) {
                                     fail("cell " + idxCell + " is not a date: " + idxCell);
                                 }

@@ -42,14 +42,7 @@ import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.ptg.ExpPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.usermodel.CellBase;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.CellValue;
-import org.apache.poi.ss.usermodel.Comment;
-import org.apache.poi.ss.usermodel.FormulaError;
-import org.apache.poi.ss.usermodel.Hyperlink;
-import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.NumberToTextConverter;
@@ -453,11 +446,11 @@ public class HSSFCell extends CellBase {
      * {@inheritDoc}
      *
      * <p>In HSSF, only the number of days is stored. The fractional part is ignored.</p>
-     * @see HSSFDateUtil
+     * @see DateUtil
      * @see org.apache.poi.ss.usermodel.DateUtil
      */
     protected void setCellValueImpl(Date value) {
-        setCellValue(HSSFDateUtil.getExcelDate(value, _book.getWorkbook().isUsing1904DateWindowing()));
+        setCellValue(DateUtil.getExcelDate(value, _book.getWorkbook().isUsing1904DateWindowing()));
     }
 
     /**
@@ -465,7 +458,7 @@ public class HSSFCell extends CellBase {
      */
     @Override
     protected void setCellValueImpl(Calendar value) {
-        setCellValue( HSSFDateUtil.getExcelDate(value, _book.getWorkbook().isUsing1904DateWindowing()) );
+        setCellValue( DateUtil.getExcelDate(value, _book.getWorkbook().isUsing1904DateWindowing()) );
     }
 
     /**
@@ -679,9 +672,9 @@ public class HSSFCell extends CellBase {
         }
         double value = getNumericCellValue();
         if (_book.getWorkbook().isUsing1904DateWindowing()) {
-            return HSSFDateUtil.getJavaDate(value, true);
+            return DateUtil.getJavaDate(value, true);
         }
-        return HSSFDateUtil.getJavaDate(value, false);
+        return DateUtil.getJavaDate(value, false);
     }
 
     /**
@@ -853,7 +846,7 @@ public class HSSFCell extends CellBase {
             default:
                 throw new IllegalStateException("Unexpected formula result type (" + _cellType + ")");
         }
-        
+
     }
 
     /**
@@ -899,7 +892,7 @@ public class HSSFCell extends CellBase {
     /**
      * <p>Set the style for the cell.  The style should be an HSSFCellStyle created/retreived from
      * the HSSFWorkbook.</p>
-     * 
+     *
      * <p>To change the style of a cell without affecting other cells that use the same style,
      * use {@link org.apache.poi.ss.util.CellUtil#setCellStyleProperties(org.apache.poi.ss.usermodel.Cell, java.util.Map)}</p>
      *
@@ -1001,7 +994,7 @@ public class HSSFCell extends CellBase {
                 return getCellFormula();
             case NUMERIC:
                 //TODO apply the dataformat for this cell
-                if (HSSFDateUtil.isCellDateFormatted(this)) {
+                if (DateUtil.isCellDateFormatted(this)) {
                     SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", LocaleUtil.getUserLocale());
                     sdf.setTimeZone(LocaleUtil.getUserTimeZone());
                     return sdf.format(getDateCellValue());

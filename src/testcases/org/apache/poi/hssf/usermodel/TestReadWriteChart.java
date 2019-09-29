@@ -29,6 +29,7 @@ import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.record.BOFRecord;
 import org.apache.poi.hssf.record.EOFRecord;
 import org.apache.poi.hssf.record.RecordBase;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.Test;
 
@@ -49,7 +50,7 @@ public final class TestReadWriteChart {
 
         //System.out.println("first assertion for date");
         Calendar calExp = LocaleUtil.getLocaleCalendar(2000, 0, 1, 10, 51, 2);
-        Date dateAct = HSSFDateUtil.getJavaDate(firstCell.getNumericCellValue(), false);
+        Date dateAct = DateUtil.getJavaDate(firstCell.getNumericCellValue(), false);
         assertEquals(calExp.getTime(), dateAct);
         HSSFRow  row  = sheet.createRow(15);
         HSSFCell cell = row.createCell(1);
