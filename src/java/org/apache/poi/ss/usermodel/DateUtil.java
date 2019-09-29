@@ -157,6 +157,7 @@ public class DateUtil {
      */
     public static double getExcelDate(Date date, boolean use1904windowing) {
         Calendar calStart = LocaleUtil.getLocaleCalendar();
+        calStart.setTime(date);   // If date includes hours, minutes, and seconds, set them to 0
         int year = calStart.get(Calendar.YEAR);
         int dayOfYear = calStart.get(Calendar.DAY_OF_YEAR);
         // If date includes hours, minutes, and seconds, set them to 0
