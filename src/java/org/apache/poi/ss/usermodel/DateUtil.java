@@ -157,14 +157,13 @@ public class DateUtil {
      */
     public static double getExcelDate(Date date, boolean use1904windowing) {
         Calendar calStart = LocaleUtil.getLocaleCalendar();
-        calStart.setTime(date);   // If date includes hours, minutes, and seconds, set them to 0
+        calStart.setTime(date);
         int year = calStart.get(Calendar.YEAR);
         int dayOfYear = calStart.get(Calendar.DAY_OF_YEAR);
-        // If date includes hours, minutes, and seconds, set them to 0
-        int hour = 0;
-        int minute = 0;
-        int second = 0;
-        int milliSecond = 0;
+        int hour = calStart.get(Calendar.HOUR_OF_DAY);
+        int minute = calStart.get(Calendar.MINUTE);
+        int second = calStart.get(Calendar.SECOND);
+        int milliSecond = calStart.get(Calendar.MILLISECOND);
         
         return internalGetExcelDate(year, dayOfYear, hour, minute, second, milliSecond, use1904windowing);
     }
