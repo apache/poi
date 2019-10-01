@@ -86,7 +86,18 @@ public class DateUtil {
                 .atZone(TimeZone.getTimeZone("UTC").toZoneId()) // java.util.Date uses UTC
                 .toLocalDateTime();
     }
-    
+
+    /**
+     * Convert a Java Calendar (at UTC) to LocalDateTime.
+     * @param date the date
+     * @return LocalDateTime instance
+     */
+    public static LocalDateTime toLocalDateTime(Calendar date) {
+        return date.toInstant()
+                .atZone(TimeZone.getTimeZone("UTC").toZoneId()) // java.util.Date uses UTC
+                .toLocalDateTime();
+    }
+
     /**
      * Given a LocalDate, converts it into a double representing its internal Excel representation,
      *   which is the number of days since 1/1/1900. Fractional days represent hours, minutes, and seconds.

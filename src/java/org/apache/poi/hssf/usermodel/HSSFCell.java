@@ -456,6 +456,17 @@ public class HSSFCell extends CellBase {
 
     /**
      * {@inheritDoc}
+     *
+     * <p>In HSSF, only the number of days is stored. The fractional part is ignored.</p>
+     * @see DateUtil
+     * @see org.apache.poi.ss.usermodel.DateUtil
+     */
+    protected void setCellValueImpl(LocalDateTime value) {
+        setCellValue(DateUtil.getExcelDate(value, _book.getWorkbook().isUsing1904DateWindowing()));
+    }
+
+    /**
+     * {@inheritDoc}
      */
     @Override
     protected void setCellValueImpl(Calendar value) {

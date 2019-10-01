@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.usermodel;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
@@ -178,6 +179,42 @@ public interface Cell {
      *        will change the cell to a numerics cell and set its value.
      */
     void setCellValue(Date value);
+
+    /**
+     * <p>Converts the supplied date to its equivalent Excel numeric value and sets
+     * that into the cell.</p>
+     *
+     * <p><b>Note</b> - There is actually no 'DATE' cell type in Excel. In many
+     * cases (when entering date values), Excel automatically adjusts the
+     * <i>cell style</i> to some date format, creating the illusion that the cell
+     * data type is now something besides {@link CellType#NUMERIC}.  POI
+     * does not attempt to replicate this behaviour.  To make a numeric cell
+     * display as a date, use {@link #setCellStyle(CellStyle)} etc.</p>
+     *
+     * @param value the numeric value to set this cell to.  For formulas we'll set the
+     *        precalculated value, for numerics we'll set its value. For other types we
+     *        will change the cell to a numerics cell and set its value.
+     */
+    void setCellValue(LocalDateTime value);
+
+    /**
+     * <p>Converts the supplied date to its equivalent Excel numeric value and sets
+     * that into the cell.</p>
+     *
+     * <p><b>Note</b> - There is actually no 'DATE' cell type in Excel. In many
+     * cases (when entering date values), Excel automatically adjusts the
+     * <i>cell style</i> to some date format, creating the illusion that the cell
+     * data type is now something besides {@link CellType#NUMERIC}.  POI
+     * does not attempt to replicate this behaviour.  To make a numeric cell
+     * display as a date, use {@link #setCellStyle(CellStyle)} etc.</p>
+     *
+     * @param value the numeric value to set this cell to.  For formulas we'll set the
+     *        precalculated value, for numerics we'll set its value. For other types we
+     *        will change the cell to a numerics cell and set its value.
+     */
+    default void setCellValue(LocalDate value) {
+        setCellValue(value.atStartOfDay());
+    }
 
     /**
      * <p>Set a date value for the cell. Excel treats dates as numeric so you will need to format the cell as

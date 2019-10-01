@@ -186,7 +186,15 @@ public class SXSSFCell extends CellBase {
         setCellValue(DateUtil.getExcelDate(value, date1904));
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void setCellValueImpl(LocalDateTime value) {
+        boolean date1904 = getSheet().getWorkbook().isDate1904();
+        setCellValue(DateUtil.getExcelDate(value, date1904));
+    }
+    
     /**
      * {@inheritDoc}
      */
