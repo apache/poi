@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.usermodel;
 
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
@@ -278,6 +279,18 @@ public interface Cell {
      * @see DataFormatter for formatting  this date into a string similar to how excel does.
      */
     Date getDateCellValue();
+
+    /**
+     * Get the value of the cell as a LocalDateTime.
+     * <p>
+     * For strings we throw an exception. For blank cells we return a null.
+     * </p>
+     * @return the value of the cell as a LocalDateTime
+     * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is {@link CellType#STRING}
+     * @exception NumberFormatException if the cell value isn't a parsable <code>double</code>.
+     * @see DataFormatter for formatting  this date into a string similar to how excel does.
+     */
+    LocalDateTime getLocalDateTimeCellValue();
 
     /**
      * Get the value of the cell as a XSSFRichTextString

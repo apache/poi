@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.usermodel;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
@@ -675,6 +676,25 @@ public class HSSFCell extends CellBase {
             return DateUtil.getJavaDate(value, true);
         }
         return DateUtil.getJavaDate(value, false);
+    }
+
+    /**
+     * Get the value of the cell as a LocalDateTime.
+     * For strings we throw an exception.
+     * For blank cells we return a null.
+     * See {@link HSSFDataFormatter} for formatting
+     *  this date into a string similar to how excel does.
+     */
+    public LocalDateTime getLocalDateTimeCellValue() {
+
+        if (_cellType == CellType.BLANK) {
+            return null;
+        }
+        double value = getNumericCellValue();
+        if (_book.getWorkbook().isUsing1904DateWindowing()) {
+            return DateUtil.getLocalDateTime(value, true);
+        }
+        return DateUtil.getLocalDateTime(value, false);
     }
 
     /**

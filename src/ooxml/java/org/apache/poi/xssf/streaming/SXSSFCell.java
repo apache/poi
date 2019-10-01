@@ -19,6 +19,7 @@ package org.apache.poi.xssf.streaming;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
@@ -365,6 +366,27 @@ public class SXSSFCell extends CellBase {
         double value = getNumericCellValue();
         boolean date1904 = getSheet().getWorkbook().isDate1904();
         return DateUtil.getJavaDate(value, date1904);
+    }
+
+    /**
+     * Get the value of the cell as a LocalDateTime.
+     * <p>
+     * For strings we throw an exception. For blank cells we return a null.
+     * </p>
+     * @return the value of the cell as a date
+     * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is CellType.STRING
+     * @exception NumberFormatException if the cell value isn't a parsable <code>double</code>.
+     * @see org.apache.poi.ss.usermodel.DataFormatter for formatting  this date into a string similar to how excel does.
+     */
+    @Override
+    public LocalDateTime getLocalDateTimeCellValue() {
+        if (getCellType() == CellType.BLANK) {
+            return null;
+        }
+
+        double value = getNumericCellValue();
+        boolean date1904 = getSheet().getWorkbook().isDate1904();
+        return DateUtil.getLocalDateTime(value, date1904);
     }
 
     /**
