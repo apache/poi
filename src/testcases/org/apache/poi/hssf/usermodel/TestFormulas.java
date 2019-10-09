@@ -729,7 +729,7 @@ public final class TestFormulas {
         c.setCellStyle(cellStyle);
 
        // assertEquals("Checking hour = " + hour, date.getTime().getTime(),
-       //              HSSFDateUtil.getJavaDate(excelDate).getTime());
+       //              DateUtil.getJavaDate(excelDate).getTime());
 
         for (int k=1; k < 100; k++) {
           r=s.createRow(k);

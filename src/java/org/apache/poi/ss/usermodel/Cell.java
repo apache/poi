@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.usermodel;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
@@ -179,6 +181,42 @@ public interface Cell {
     void setCellValue(Date value);
 
     /**
+     * <p>Converts the supplied date to its equivalent Excel numeric value and sets
+     * that into the cell.</p>
+     *
+     * <p><b>Note</b> - There is actually no 'DATE' cell type in Excel. In many
+     * cases (when entering date values), Excel automatically adjusts the
+     * <i>cell style</i> to some date format, creating the illusion that the cell
+     * data type is now something besides {@link CellType#NUMERIC}.  POI
+     * does not attempt to replicate this behaviour.  To make a numeric cell
+     * display as a date, use {@link #setCellStyle(CellStyle)} etc.</p>
+     *
+     * @param value the numeric value to set this cell to.  For formulas we'll set the
+     *        precalculated value, for numerics we'll set its value. For other types we
+     *        will change the cell to a numerics cell and set its value.
+     */
+    void setCellValue(LocalDateTime value);
+
+    /**
+     * <p>Converts the supplied date to its equivalent Excel numeric value and sets
+     * that into the cell.</p>
+     *
+     * <p><b>Note</b> - There is actually no 'DATE' cell type in Excel. In many
+     * cases (when entering date values), Excel automatically adjusts the
+     * <i>cell style</i> to some date format, creating the illusion that the cell
+     * data type is now something besides {@link CellType#NUMERIC}.  POI
+     * does not attempt to replicate this behaviour.  To make a numeric cell
+     * display as a date, use {@link #setCellStyle(CellStyle)} etc.</p>
+     *
+     * @param value the numeric value to set this cell to.  For formulas we'll set the
+     *        precalculated value, for numerics we'll set its value. For other types we
+     *        will change the cell to a numerics cell and set its value.
+     */
+    default void setCellValue(LocalDate value) {
+        setCellValue(value.atStartOfDay());
+    }
+
+    /**
      * <p>Set a date value for the cell. Excel treats dates as numeric so you will need to format the cell as
      * a date.</p>
      * <p>
@@ -278,6 +316,18 @@ public interface Cell {
      * @see DataFormatter for formatting  this date into a string similar to how excel does.
      */
     Date getDateCellValue();
+
+    /**
+     * Get the value of the cell as a LocalDateTime.
+     * <p>
+     * For strings we throw an exception. For blank cells we return a null.
+     * </p>
+     * @return the value of the cell as a LocalDateTime
+     * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is {@link CellType#STRING}
+     * @exception NumberFormatException if the cell value isn't a parsable <code>double</code>.
+     * @see DataFormatter for formatting  this date into a string similar to how excel does.
+     */
+    LocalDateTime getLocalDateTimeCellValue();
 
     /**
      * Get the value of the cell as a XSSFRichTextString

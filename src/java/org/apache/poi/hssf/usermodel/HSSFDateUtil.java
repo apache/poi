@@ -30,8 +30,10 @@ import org.apache.poi.ss.usermodel.DateUtil;
 
 /**
  * Contains methods for dealing with Excel dates.
+ * @deprecated Use {@link DateUtil} instead
  */
-public class HSSFDateUtil extends DateUtil {
+@Deprecated
+public final class HSSFDateUtil extends DateUtil {
 	protected static int absoluteDay(Calendar cal, boolean use1904windowing) {
 		return DateUtil.absoluteDay(cal, use1904windowing);
 	}

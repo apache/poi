@@ -28,6 +28,7 @@ import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
@@ -439,7 +440,7 @@ public final class TestCellStyle extends TestCase {
                             Cell cell = row.getCell(idxCell);
                             cell.getCellStyle().getDataFormatString();
                             if (cell.getCellType() == CellType.NUMERIC) {
-                                boolean isDate = HSSFDateUtil.isCellDateFormatted(cell);
+                                boolean isDate = DateUtil.isCellDateFormatted(cell);
                                 if (idxCell > 0 && isDate) {
                                     fail("cell " + idxCell + " is not a date: " + idxCell);
                                 }

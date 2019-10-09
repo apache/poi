@@ -30,6 +30,8 @@ import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -109,6 +111,26 @@ public abstract class BaseTestCell {
 
         cell.setCellValue(c);
         assertEquals(c.getTime().getTime(), cell.getDateCellValue().getTime());
+        assertEquals(CellType.NUMERIC, cell.getCellType());
+        assertProhibitedValueAccess(cell, CellType.BOOLEAN, CellType.STRING,
+                CellType.FORMULA, CellType.ERROR);
+
+        cell.setCellErrorValue(FormulaError.NA.getCode());
+        assertEquals(FormulaError.NA.getCode(), cell.getErrorCellValue());
+        assertEquals(CellType.ERROR, cell.getCellType());
+        assertProhibitedValueAccess(cell, CellType.NUMERIC, CellType.BOOLEAN,
+                CellType.FORMULA, CellType.STRING);
+
+        LocalDateTime ldt = DateUtil.toLocalDateTime(c);
+        cell.setCellValue(ldt);
+        assertEquals(ldt, cell.getLocalDateTimeCellValue());
+        assertEquals(CellType.NUMERIC, cell.getCellType());
+        assertProhibitedValueAccess(cell, CellType.BOOLEAN, CellType.STRING,
+                CellType.FORMULA, CellType.ERROR);
+
+        LocalDate ld = ldt.toLocalDate();
+        cell.setCellValue(ld);
+        assertEquals(ld, cell.getLocalDateTimeCellValue().toLocalDate());
         assertEquals(CellType.NUMERIC, cell.getCellType());
         assertProhibitedValueAccess(cell, CellType.BOOLEAN, CellType.STRING,
                 CellType.FORMULA, CellType.ERROR);
