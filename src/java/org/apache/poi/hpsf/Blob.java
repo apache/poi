@@ -24,7 +24,7 @@ import org.apache.poi.util.LittleEndianInput;
 public class Blob {
 
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 1_000_000;
+    private static final int MAX_RECORD_LENGTH = 10_000_000;
 
     private byte[] _value;
 
